@@ -14,7 +14,6 @@
  */
 package org.eclipse.e4.ui.model.fragment;
 
-
 /**
  * <!-- begin-user-doc -->
  * The <b>Factory</b> for the model.

@@ -109,7 +109,15 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	@Override
 	public List<MTrimElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MTrimElement>(MTrimElement.class, this, MenuPackageImpl.TRIM_CONTRIBUTION__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
+			children = new EObjectContainmentWithInverseEList<MTrimElement>(MTrimElement.class, this,
+					MenuPackageImpl.TRIM_CONTRIBUTION__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Class<?> getInverseFeatureClass() {
+					return MUIElement.class;
+				}
+			};
 		}
 		return children;
 	}
@@ -145,7 +153,8 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 		String oldParentId = parentId;
 		parentId = newParentId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID, oldParentId, parentId));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID,
+					oldParentId, parentId));
 	}
 
 	/**
@@ -168,7 +177,8 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 		String oldPositionInParent = positionInParent;
 		positionInParent = newPositionInParent;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT, oldPositionInParent, positionInParent));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT,
+					oldPositionInParent, positionInParent));
 	}
 
 	/**
@@ -179,10 +189,10 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID:
-				return getParentId();
-			case MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT:
-				return getPositionInParent();
+		case MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID:
+			return getParentId();
+		case MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT:
+			return getPositionInParent();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -195,12 +205,12 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID:
-				setParentId((String)newValue);
-				return;
-			case MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT:
-				setPositionInParent((String)newValue);
-				return;
+		case MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID:
+			setParentId((String) newValue);
+			return;
+		case MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT:
+			setPositionInParent((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -213,12 +223,12 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID:
-				setParentId(PARENT_ID_EDEFAULT);
-				return;
-			case MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT:
-				setPositionInParent(POSITION_IN_PARENT_EDEFAULT);
-				return;
+		case MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID:
+			setParentId(PARENT_ID_EDEFAULT);
+			return;
+		case MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT:
+			setPositionInParent(POSITION_IN_PARENT_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -231,10 +241,11 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID:
-				return PARENT_ID_EDEFAULT == null ? parentId != null : !PARENT_ID_EDEFAULT.equals(parentId);
-			case MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT:
-				return POSITION_IN_PARENT_EDEFAULT == null ? positionInParent != null : !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
+		case MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID:
+			return PARENT_ID_EDEFAULT == null ? parentId != null : !PARENT_ID_EDEFAULT.equals(parentId);
+		case MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT:
+			return POSITION_IN_PARENT_EDEFAULT == null ? positionInParent != null
+					: !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -246,7 +257,8 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (parentId: "); //$NON-NLS-1$

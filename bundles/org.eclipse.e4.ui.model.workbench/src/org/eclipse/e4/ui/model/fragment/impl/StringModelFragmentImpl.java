@@ -151,7 +151,8 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		String oldFeaturename = featurename;
 		featurename = newFeaturename;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME, oldFeaturename, featurename));
+			eNotify(new ENotificationImpl(this, Notification.SET,
+					FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME, oldFeaturename, featurename));
 	}
 
 	/**
@@ -174,7 +175,8 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		String oldParentElementId = parentElementId;
 		parentElementId = newParentElementId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID, oldParentElementId, parentElementId));
+			eNotify(new ENotificationImpl(this, Notification.SET,
+					FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID, oldParentElementId, parentElementId));
 	}
 
 	/**
@@ -197,7 +199,8 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		String oldPositionInList = positionInList;
 		positionInList = newPositionInList;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST, oldPositionInList, positionInList));
+			eNotify(new ENotificationImpl(this, Notification.SET,
+					FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST, oldPositionInList, positionInList));
 	}
 
 	/**
@@ -208,12 +211,12 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME:
-				return getFeaturename();
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
-				return getParentElementId();
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
-				return getPositionInList();
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME:
+			return getFeaturename();
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
+			return getParentElementId();
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
+			return getPositionInList();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -226,15 +229,15 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME:
-				setFeaturename((String)newValue);
-				return;
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
-				setParentElementId((String)newValue);
-				return;
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
-				setPositionInList((String)newValue);
-				return;
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME:
+			setFeaturename((String) newValue);
+			return;
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
+			setParentElementId((String) newValue);
+			return;
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
+			setPositionInList((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -247,15 +250,15 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME:
-				setFeaturename(FEATURENAME_EDEFAULT);
-				return;
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
-				setParentElementId(PARENT_ELEMENT_ID_EDEFAULT);
-				return;
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
-				setPositionInList(POSITION_IN_LIST_EDEFAULT);
-				return;
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME:
+			setFeaturename(FEATURENAME_EDEFAULT);
+			return;
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
+			setParentElementId(PARENT_ELEMENT_ID_EDEFAULT);
+			return;
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
+			setPositionInList(POSITION_IN_LIST_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -268,12 +271,14 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME:
-				return FEATURENAME_EDEFAULT == null ? featurename != null : !FEATURENAME_EDEFAULT.equals(featurename);
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
-				return PARENT_ELEMENT_ID_EDEFAULT == null ? parentElementId != null : !PARENT_ELEMENT_ID_EDEFAULT.equals(parentElementId);
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
-				return POSITION_IN_LIST_EDEFAULT == null ? positionInList != null : !POSITION_IN_LIST_EDEFAULT.equals(positionInList);
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME:
+			return FEATURENAME_EDEFAULT == null ? featurename != null : !FEATURENAME_EDEFAULT.equals(featurename);
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
+			return PARENT_ELEMENT_ID_EDEFAULT == null ? parentElementId != null
+					: !PARENT_ELEMENT_ID_EDEFAULT.equals(parentElementId);
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
+			return POSITION_IN_LIST_EDEFAULT == null ? positionInList != null
+					: !POSITION_IN_LIST_EDEFAULT.equals(positionInList);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -285,7 +290,8 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (featurename: "); //$NON-NLS-1$
@@ -368,6 +374,5 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 			}
 		}
 	}
-
 
 } //StringModelFragmentImpl

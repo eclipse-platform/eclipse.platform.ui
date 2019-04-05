@@ -13,7 +13,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Dialog</b></em>'.

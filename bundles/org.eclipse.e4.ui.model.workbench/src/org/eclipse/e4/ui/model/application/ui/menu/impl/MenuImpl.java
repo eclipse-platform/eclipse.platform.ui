@@ -114,7 +114,15 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	@Override
 	public List<MMenuElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MMenuElement>(MMenuElement.class, this, MenuPackageImpl.MENU__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
+			children = new EObjectContainmentWithInverseEList<MMenuElement>(MMenuElement.class, this,
+					MenuPackageImpl.MENU__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Class<?> getInverseFeatureClass() {
+					return MUIElement.class;
+				}
+			};
 		}
 		return children;
 	}
@@ -126,12 +134,13 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 */
 	@Override
 	public MMenuElement getSelectedElement() {
-		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
-			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
-			selectedElement = (MMenuElement)eResolveProxy(oldSelectedElement);
+		if (selectedElement != null && ((EObject) selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject) selectedElement;
+			selectedElement = (MMenuElement) eResolveProxy(oldSelectedElement);
 			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.MENU__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.MENU__SELECTED_ELEMENT,
+							oldSelectedElement, selectedElement));
 			}
 		}
 		return selectedElement;
@@ -156,7 +165,8 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 		MMenuElement oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__SELECTED_ELEMENT,
+					oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -191,8 +201,8 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__CHILDREN:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
+		case MenuPackageImpl.MENU__CHILDREN:
+			return ((InternalEList<InternalEObject>) (InternalEList<?>) getChildren()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -205,8 +215,8 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__CHILDREN:
-				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+		case MenuPackageImpl.MENU__CHILDREN:
+			return ((InternalEList<?>) getChildren()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -219,13 +229,14 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__CHILDREN:
-				return getChildren();
-			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
-				if (resolve) return getSelectedElement();
-				return basicGetSelectedElement();
-			case MenuPackageImpl.MENU__ENABLED:
-				return isEnabled();
+		case MenuPackageImpl.MENU__CHILDREN:
+			return getChildren();
+		case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+			if (resolve)
+				return getSelectedElement();
+			return basicGetSelectedElement();
+		case MenuPackageImpl.MENU__ENABLED:
+			return isEnabled();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -239,16 +250,16 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__CHILDREN:
-				getChildren().clear();
-				getChildren().addAll((Collection<? extends MMenuElement>)newValue);
-				return;
-			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
-				setSelectedElement((MMenuElement)newValue);
-				return;
-			case MenuPackageImpl.MENU__ENABLED:
-				setEnabled((Boolean)newValue);
-				return;
+		case MenuPackageImpl.MENU__CHILDREN:
+			getChildren().clear();
+			getChildren().addAll((Collection<? extends MMenuElement>) newValue);
+			return;
+		case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+			setSelectedElement((MMenuElement) newValue);
+			return;
+		case MenuPackageImpl.MENU__ENABLED:
+			setEnabled((Boolean) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -261,15 +272,15 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__CHILDREN:
-				getChildren().clear();
-				return;
-			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
-				setSelectedElement((MMenuElement)null);
-				return;
-			case MenuPackageImpl.MENU__ENABLED:
-				setEnabled(ENABLED_EDEFAULT);
-				return;
+		case MenuPackageImpl.MENU__CHILDREN:
+			getChildren().clear();
+			return;
+		case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+			setSelectedElement((MMenuElement) null);
+			return;
+		case MenuPackageImpl.MENU__ENABLED:
+			setEnabled(ENABLED_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -282,12 +293,12 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU__CHILDREN:
-				return children != null && !children.isEmpty();
-			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
-				return selectedElement != null;
-			case MenuPackageImpl.MENU__ENABLED:
-				return enabled != ENABLED_EDEFAULT;
+		case MenuPackageImpl.MENU__CHILDREN:
+			return children != null && !children.isEmpty();
+		case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+			return selectedElement != null;
+		case MenuPackageImpl.MENU__ENABLED:
+			return enabled != ENABLED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -301,9 +312,12 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
-				case MenuPackageImpl.MENU__CHILDREN: return UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
-				case MenuPackageImpl.MENU__SELECTED_ELEMENT: return UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
-				default: return -1;
+			case MenuPackageImpl.MENU__CHILDREN:
+				return UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
+			case MenuPackageImpl.MENU__SELECTED_ELEMENT:
+				return UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -318,9 +332,12 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN: return MenuPackageImpl.MENU__CHILDREN;
-				case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT: return MenuPackageImpl.MENU__SELECTED_ELEMENT;
-				default: return -1;
+			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+				return MenuPackageImpl.MENU__CHILDREN;
+			case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+				return MenuPackageImpl.MENU__SELECTED_ELEMENT;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -333,7 +350,8 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (enabled: "); //$NON-NLS-1$

@@ -34,7 +34,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * @since 1.0
  * @generated
  */
-public abstract class GenericTrimContainerImpl<T extends MUIElement> extends ElementContainerImpl<T> implements MGenericTrimContainer<T> {
+public abstract class GenericTrimContainerImpl<T extends MUIElement> extends ElementContainerImpl<T>
+		implements MGenericTrimContainer<T> {
 	/**
 	 * The default value of the '{@link #getSide() <em>Side</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -94,7 +95,8 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 		SideValue oldSide = side;
 		side = newSide == null ? SIDE_EDEFAULT : newSide;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE, oldSide, side));
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE, oldSide,
+					side));
 	}
 
 	/**
@@ -105,8 +107,8 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
-				return getSide();
+		case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
+			return getSide();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -119,9 +121,9 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
-				setSide((SideValue)newValue);
-				return;
+		case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
+			setSide((SideValue) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -134,9 +136,9 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
-				setSide(SIDE_EDEFAULT);
-				return;
+		case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
+			setSide(SIDE_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -149,8 +151,8 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
-				return side != SIDE_EDEFAULT;
+		case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
+			return side != SIDE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -162,7 +164,8 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (side: "); //$NON-NLS-1$

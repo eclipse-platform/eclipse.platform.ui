@@ -193,7 +193,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 		String oldLabel = label;
 		label = newLabel;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LABEL, oldLabel, label));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LABEL, oldLabel,
+					label));
 	}
 
 	/**
@@ -218,7 +219,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__ICON_URI, oldIconURI, iconURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__ICON_URI, oldIconURI,
+					iconURI));
 	}
 
 	/**
@@ -243,7 +245,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__TOOLTIP, oldTooltip, tooltip));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__TOOLTIP, oldTooltip,
+					tooltip));
 	}
 
 	/**
@@ -286,7 +289,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 		String oldMnemonics = mnemonics;
 		mnemonics = newMnemonics;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__MNEMONICS, oldMnemonics, mnemonics));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__MNEMONICS, oldMnemonics,
+					mnemonics));
 	}
 
 	/**
@@ -310,10 +314,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
 			super.updateLocalization();
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL, null, getLocalizedLabel()));
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL, null,
+					getLocalizedLabel()));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP, null,
+					getLocalizedTooltip()));
 		}
 	}
 
@@ -325,18 +329,18 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU_ELEMENT__LABEL:
-				return getLabel();
-			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
-				return getIconURI();
-			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
-				return getTooltip();
-			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
-			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
-				return getMnemonics();
+		case MenuPackageImpl.MENU_ELEMENT__LABEL:
+			return getLabel();
+		case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
+			return getIconURI();
+		case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
+			return getTooltip();
+		case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL:
+			return getLocalizedLabel();
+		case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP:
+			return getLocalizedTooltip();
+		case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
+			return getMnemonics();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -349,18 +353,18 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU_ELEMENT__LABEL:
-				setLabel((String)newValue);
-				return;
-			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
-				setIconURI((String)newValue);
-				return;
-			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
-				setTooltip((String)newValue);
-				return;
-			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
-				setMnemonics((String)newValue);
-				return;
+		case MenuPackageImpl.MENU_ELEMENT__LABEL:
+			setLabel((String) newValue);
+			return;
+		case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
+			setIconURI((String) newValue);
+			return;
+		case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
+			setTooltip((String) newValue);
+			return;
+		case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
+			setMnemonics((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -373,18 +377,18 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU_ELEMENT__LABEL:
-				setLabel(LABEL_EDEFAULT);
-				return;
-			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
-				setIconURI(ICON_URI_EDEFAULT);
-				return;
-			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
-				setTooltip(TOOLTIP_EDEFAULT);
-				return;
-			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
-				setMnemonics(MNEMONICS_EDEFAULT);
-				return;
+		case MenuPackageImpl.MENU_ELEMENT__LABEL:
+			setLabel(LABEL_EDEFAULT);
+			return;
+		case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
+			setIconURI(ICON_URI_EDEFAULT);
+			return;
+		case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
+			setTooltip(TOOLTIP_EDEFAULT);
+			return;
+		case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
+			setMnemonics(MNEMONICS_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -397,18 +401,20 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.MENU_ELEMENT__LABEL:
-				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
-			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
-				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
-			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
-				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL:
-				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
-			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP:
-				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
-			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
-				return MNEMONICS_EDEFAULT == null ? mnemonics != null : !MNEMONICS_EDEFAULT.equals(mnemonics);
+		case MenuPackageImpl.MENU_ELEMENT__LABEL:
+			return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+		case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
+			return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
+		case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
+			return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+		case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL:
+			return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null
+					: !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+		case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP:
+			return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null
+					: !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
+		case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
+			return MNEMONICS_EDEFAULT == null ? mnemonics != null : !MNEMONICS_EDEFAULT.equals(mnemonics);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -422,12 +428,18 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
-				case MenuPackageImpl.MENU_ELEMENT__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
-				case MenuPackageImpl.MENU_ELEMENT__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
-				case MenuPackageImpl.MENU_ELEMENT__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
-				case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
-				default: return -1;
+			case MenuPackageImpl.MENU_ELEMENT__LABEL:
+				return UiPackageImpl.UI_LABEL__LABEL;
+			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
+				return UiPackageImpl.UI_LABEL__ICON_URI;
+			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
+				return UiPackageImpl.UI_LABEL__TOOLTIP;
+			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL:
+				return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+			case MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP:
+				return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -442,12 +454,18 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.UI_LABEL__LABEL: return MenuPackageImpl.MENU_ELEMENT__LABEL;
-				case UiPackageImpl.UI_LABEL__ICON_URI: return MenuPackageImpl.MENU_ELEMENT__ICON_URI;
-				case UiPackageImpl.UI_LABEL__TOOLTIP: return MenuPackageImpl.MENU_ELEMENT__TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP;
-				default: return -1;
+			case UiPackageImpl.UI_LABEL__LABEL:
+				return MenuPackageImpl.MENU_ELEMENT__LABEL;
+			case UiPackageImpl.UI_LABEL__ICON_URI:
+				return MenuPackageImpl.MENU_ELEMENT__ICON_URI;
+			case UiPackageImpl.UI_LABEL__TOOLTIP:
+				return MenuPackageImpl.MENU_ELEMENT__TOOLTIP;
+			case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL:
+				return MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL;
+			case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP:
+				return MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -462,19 +480,24 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
 		if (baseClass == MLocalizable.class) {
 			switch (baseOperationID) {
-				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION;
-				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION:
+				return MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION;
+			default:
+				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
 		if (baseClass == MUIElement.class) {
 			switch (baseOperationID) {
-				case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION;
-				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION:
+				return MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION;
+			default:
+				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
 		if (baseClass == MUILabel.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedOperationID(baseOperationID, baseClass);
@@ -488,11 +511,11 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_MNEMONICS:
-				return getLocalizedMnemonics();
-			case MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION:
-				updateLocalization();
-				return null;
+		case MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_MNEMONICS:
+			return getLocalizedMnemonics();
+		case MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION:
+			updateLocalization();
+			return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}
@@ -504,7 +527,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$

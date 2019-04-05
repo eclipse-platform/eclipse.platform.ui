@@ -66,7 +66,7 @@ public class FragmentAdapterFactory extends AdapterFactoryImpl {
 			return true;
 		}
 		if (object instanceof EObject) {
-			return ((EObject)object).eClass().getEPackage() == modelPackage;
+			return ((EObject) object).eClass().getEPackage() == modelPackage;
 		}
 		return false;
 	}
@@ -77,25 +77,27 @@ public class FragmentAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected FragmentSwitch<Adapter> modelSwitch =
-		new FragmentSwitch<Adapter>() {
-			@Override
-			public Adapter caseModelFragments(MModelFragments object) {
-				return createModelFragmentsAdapter();
-			}
-			@Override
-			public Adapter caseModelFragment(MModelFragment object) {
-				return createModelFragmentAdapter();
-			}
-			@Override
-			public Adapter caseStringModelFragment(MStringModelFragment object) {
-				return createStringModelFragmentAdapter();
-			}
-			@Override
-			public Adapter defaultCase(EObject object) {
-				return createEObjectAdapter();
-			}
-		};
+	protected FragmentSwitch<Adapter> modelSwitch = new FragmentSwitch<Adapter>() {
+		@Override
+		public Adapter caseModelFragments(MModelFragments object) {
+			return createModelFragmentsAdapter();
+		}
+
+		@Override
+		public Adapter caseModelFragment(MModelFragment object) {
+			return createModelFragmentAdapter();
+		}
+
+		@Override
+		public Adapter caseStringModelFragment(MStringModelFragment object) {
+			return createStringModelFragmentAdapter();
+		}
+
+		@Override
+		public Adapter defaultCase(EObject object) {
+			return createEObjectAdapter();
+		}
+	};
 
 	/**
 	 * Creates an adapter for the <code>target</code>.
@@ -107,9 +109,8 @@ public class FragmentAdapterFactory extends AdapterFactoryImpl {
 	 */
 	@Override
 	public Adapter createAdapter(Notifier target) {
-		return modelSwitch.doSwitch((EObject)target);
+		return modelSwitch.doSwitch((EObject) target);
 	}
-
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.fragment.MModelFragments <em>Model Fragments</em>}'.

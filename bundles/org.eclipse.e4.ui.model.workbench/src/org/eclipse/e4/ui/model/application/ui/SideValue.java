@@ -124,13 +124,7 @@ public enum SideValue implements InternalSideValue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final SideValue[] VALUES_ARRAY =
-		new SideValue[] {
-			TOP,
-			BOTTOM,
-			LEFT,
-			RIGHT,
-		};
+	private static final SideValue[] VALUES_ARRAY = new SideValue[] { TOP, BOTTOM, LEFT, RIGHT, };
 
 	/**
 	 * A public read-only list of all the '<em><b>Side Value</b></em>' enumerators.
@@ -186,10 +180,14 @@ public enum SideValue implements InternalSideValue {
 	 */
 	public static SideValue get(int value) {
 		switch (value) {
-			case TOP_VALUE: return TOP;
-			case BOTTOM_VALUE: return BOTTOM;
-			case LEFT_VALUE: return LEFT;
-			case RIGHT_VALUE: return RIGHT;
+		case TOP_VALUE:
+			return TOP;
+		case BOTTOM_VALUE:
+			return BOTTOM;
+		case LEFT_VALUE:
+			return LEFT;
+		case RIGHT_VALUE:
+			return RIGHT;
 		}
 		return null;
 	}
@@ -234,7 +232,7 @@ public enum SideValue implements InternalSideValue {
 	 */
 	@Override
 	public int getValue() {
-	  return value;
+		return value;
 	}
 
 	/**
@@ -244,7 +242,7 @@ public enum SideValue implements InternalSideValue {
 	 */
 	@Override
 	public String getName() {
-	  return name;
+		return name;
 	}
 
 	/**
@@ -254,7 +252,7 @@ public enum SideValue implements InternalSideValue {
 	 */
 	@Override
 	public String getLiteral() {
-	  return literal;
+		return literal;
 	}
 
 	/**
@@ -267,7 +265,7 @@ public enum SideValue implements InternalSideValue {
 	public String toString() {
 		return literal;
 	}
-	
+
 } //SideValue
 
 /**

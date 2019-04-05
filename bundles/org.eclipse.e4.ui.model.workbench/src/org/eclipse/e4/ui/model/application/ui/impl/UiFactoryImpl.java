@@ -47,12 +47,11 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	 */
 	public static UiFactoryImpl init() {
 		try {
-			UiFactoryImpl theUiFactory = (UiFactoryImpl)EPackage.Registry.INSTANCE.getEFactory(UiPackageImpl.eNS_URI);
+			UiFactoryImpl theUiFactory = (UiFactoryImpl) EPackage.Registry.INSTANCE.getEFactory(UiPackageImpl.eNS_URI);
 			if (theUiFactory != null) {
 				return theUiFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new UiFactoryImpl();
@@ -76,10 +75,12 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case UiPackageImpl.CORE_EXPRESSION: return (EObject)createCoreExpression();
-			case UiPackageImpl.IMPERATIVE_EXPRESSION: return (EObject)createImperativeExpression();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		case UiPackageImpl.CORE_EXPRESSION:
+			return (EObject) createCoreExpression();
+		case UiPackageImpl.IMPERATIVE_EXPRESSION:
+			return (EObject) createImperativeExpression();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -91,10 +92,10 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case UiPackageImpl.SIDE_VALUE:
-				return createSideValueFromString(eDataType, initialValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		case UiPackageImpl.SIDE_VALUE:
+			return createSideValueFromString(eDataType, initialValue);
+		default:
+			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -106,10 +107,10 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case UiPackageImpl.SIDE_VALUE:
-				return convertSideValueToString(eDataType, instanceValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		case UiPackageImpl.SIDE_VALUE:
+			return convertSideValueToString(eDataType, instanceValue);
+		default:
+			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -144,7 +145,9 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	 */
 	public SideValue createSideValueFromString(EDataType eDataType, String initialValue) {
 		SideValue result = SideValue.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (result == null)
+			throw new IllegalArgumentException(
+					"The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return result;
 	}
 
@@ -164,7 +167,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	 * @generated
 	 */
 	public UiPackageImpl getUiPackage() {
-		return (UiPackageImpl)getEPackage();
+		return (UiPackageImpl) getEPackage();
 	}
 
 	/**

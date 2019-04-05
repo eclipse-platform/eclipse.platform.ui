@@ -115,7 +115,16 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	@Override
 	public List<MPartSashContainerElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MPartSashContainerElement>(MPartSashContainerElement.class, this, BasicPackageImpl.COMPOSITE_PART__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
+			children = new EObjectContainmentWithInverseEList<MPartSashContainerElement>(
+					MPartSashContainerElement.class, this, BasicPackageImpl.COMPOSITE_PART__CHILDREN,
+					UiPackageImpl.UI_ELEMENT__PARENT) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Class<?> getInverseFeatureClass() {
+					return MUIElement.class;
+				}
+			};
 		}
 		return children;
 	}
@@ -127,12 +136,13 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	 */
 	@Override
 	public MPartSashContainerElement getSelectedElement() {
-		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
-			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
-			selectedElement = (MPartSashContainerElement)eResolveProxy(oldSelectedElement);
+		if (selectedElement != null && ((EObject) selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject) selectedElement;
+			selectedElement = (MPartSashContainerElement) eResolveProxy(oldSelectedElement);
 			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE,
+							BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
 		return selectedElement;
@@ -157,7 +167,8 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 		MPartSashContainerElement oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT,
+					oldSelectedElement, selectedElement));
 	}
 
 	/**
@@ -180,7 +191,8 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 		boolean oldHorizontal = horizontal;
 		horizontal = newHorizontal;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.COMPOSITE_PART__HORIZONTAL, oldHorizontal, horizontal));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.COMPOSITE_PART__HORIZONTAL,
+					oldHorizontal, horizontal));
 	}
 
 	/**
@@ -192,8 +204,8 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
+		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
+			return ((InternalEList<InternalEObject>) (InternalEList<?>) getChildren()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -206,8 +218,8 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
-				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
+			return ((InternalEList<?>) getChildren()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -220,13 +232,14 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
-				return getChildren();
-			case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
-				if (resolve) return getSelectedElement();
-				return basicGetSelectedElement();
-			case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
-				return isHorizontal();
+		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
+			return getChildren();
+		case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
+			if (resolve)
+				return getSelectedElement();
+			return basicGetSelectedElement();
+		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
+			return isHorizontal();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -240,16 +253,16 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
-				getChildren().clear();
-				getChildren().addAll((Collection<? extends MPartSashContainerElement>)newValue);
-				return;
-			case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
-				setSelectedElement((MPartSashContainerElement)newValue);
-				return;
-			case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
-				setHorizontal((Boolean)newValue);
-				return;
+		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
+			getChildren().clear();
+			getChildren().addAll((Collection<? extends MPartSashContainerElement>) newValue);
+			return;
+		case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
+			setSelectedElement((MPartSashContainerElement) newValue);
+			return;
+		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
+			setHorizontal((Boolean) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -262,15 +275,15 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
-				getChildren().clear();
-				return;
-			case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
-				setSelectedElement((MPartSashContainerElement)null);
-				return;
-			case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
-				setHorizontal(HORIZONTAL_EDEFAULT);
-				return;
+		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
+			getChildren().clear();
+			return;
+		case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
+			setSelectedElement((MPartSashContainerElement) null);
+			return;
+		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
+			setHorizontal(HORIZONTAL_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -283,12 +296,12 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
-				return children != null && !children.isEmpty();
-			case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
-				return selectedElement != null;
-			case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
-				return horizontal != HORIZONTAL_EDEFAULT;
+		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
+			return children != null && !children.isEmpty();
+		case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
+			return selectedElement != null;
+		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
+			return horizontal != HORIZONTAL_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -302,15 +315,20 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.COMPOSITE_PART__CHILDREN: return UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
-				case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT: return UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
-				default: return -1;
+			case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
+				return UiPackageImpl.ELEMENT_CONTAINER__CHILDREN;
+			case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
+				return UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MGenericTile.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL: return UiPackageImpl.GENERIC_TILE__HORIZONTAL;
-				default: return -1;
+			case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
+				return UiPackageImpl.GENERIC_TILE__HORIZONTAL;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -325,15 +343,20 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN: return BasicPackageImpl.COMPOSITE_PART__CHILDREN;
-				case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT: return BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT;
-				default: return -1;
+			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+				return BasicPackageImpl.COMPOSITE_PART__CHILDREN;
+			case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+				return BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MGenericTile.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.GENERIC_TILE__HORIZONTAL: return BasicPackageImpl.COMPOSITE_PART__HORIZONTAL;
-				default: return -1;
+			case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
+				return BasicPackageImpl.COMPOSITE_PART__HORIZONTAL;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -346,7 +369,8 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (horizontal: "); //$NON-NLS-1$

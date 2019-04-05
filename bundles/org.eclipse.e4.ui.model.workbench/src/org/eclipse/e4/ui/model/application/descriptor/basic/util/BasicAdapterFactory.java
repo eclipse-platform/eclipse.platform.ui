@@ -69,7 +69,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 			return true;
 		}
 		if (object instanceof EObject) {
-			return ((EObject)object).eClass().getEPackage() == modelPackage;
+			return ((EObject) object).eClass().getEPackage() == modelPackage;
 		}
 		return false;
 	}
@@ -80,41 +80,47 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected BasicSwitch<Adapter> modelSwitch =
-		new BasicSwitch<Adapter>() {
-			@Override
-			public Adapter casePartDescriptor(MPartDescriptor object) {
-				return createPartDescriptorAdapter();
-			}
-			@Override
-			public Adapter casePartDescriptorContainer(MPartDescriptorContainer object) {
-				return createPartDescriptorContainerAdapter();
-			}
-			@Override
-			public Adapter caseApplicationElement(MApplicationElement object) {
-				return createApplicationElementAdapter();
-			}
-			@Override
-			public Adapter caseLocalizable(MLocalizable object) {
-				return createLocalizableAdapter();
-			}
-			@Override
-			public Adapter caseUILabel(MUILabel object) {
-				return createUILabelAdapter();
-			}
-			@Override
-			public Adapter caseHandlerContainer(MHandlerContainer object) {
-				return createHandlerContainerAdapter();
-			}
-			@Override
-			public Adapter caseBindings(MBindings object) {
-				return createBindingsAdapter();
-			}
-			@Override
-			public Adapter defaultCase(EObject object) {
-				return createEObjectAdapter();
-			}
-		};
+	protected BasicSwitch<Adapter> modelSwitch = new BasicSwitch<Adapter>() {
+		@Override
+		public Adapter casePartDescriptor(MPartDescriptor object) {
+			return createPartDescriptorAdapter();
+		}
+
+		@Override
+		public Adapter casePartDescriptorContainer(MPartDescriptorContainer object) {
+			return createPartDescriptorContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseApplicationElement(MApplicationElement object) {
+			return createApplicationElementAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalizable(MLocalizable object) {
+			return createLocalizableAdapter();
+		}
+
+		@Override
+		public Adapter caseUILabel(MUILabel object) {
+			return createUILabelAdapter();
+		}
+
+		@Override
+		public Adapter caseHandlerContainer(MHandlerContainer object) {
+			return createHandlerContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseBindings(MBindings object) {
+			return createBindingsAdapter();
+		}
+
+		@Override
+		public Adapter defaultCase(EObject object) {
+			return createEObjectAdapter();
+		}
+	};
 
 	/**
 	 * Creates an adapter for the <code>target</code>.
@@ -126,9 +132,8 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 */
 	@Override
 	public Adapter createAdapter(Notifier target) {
-		return modelSwitch.doSwitch((EObject)target);
+		return modelSwitch.doSwitch((EObject) target);
 	}
-
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor <em>Part Descriptor</em>}'.

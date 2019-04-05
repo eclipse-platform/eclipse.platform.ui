@@ -34,7 +34,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container implements BasicEMap.Entry<String,Object> {
+public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container
+		implements BasicEMap.Entry<String, Object> {
 	/**
 	 * The default value of the '{@link #getTypedKey() <em>Key</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -112,7 +113,8 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 		String oldKey = key;
 		key = newKey;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY, oldKey, key));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY,
+					oldKey, key));
 	}
 
 	/**
@@ -133,7 +135,8 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 		Object oldValue = value;
 		value = newValue;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE, oldValue, value));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE,
+					oldValue, value));
 	}
 
 	/**
@@ -144,10 +147,10 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY:
-				return getTypedKey();
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE:
-				return getTypedValue();
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY:
+			return getTypedKey();
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE:
+			return getTypedValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -160,12 +163,12 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY:
-				setTypedKey((String)newValue);
-				return;
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE:
-				setTypedValue(newValue);
-				return;
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY:
+			setTypedKey((String) newValue);
+			return;
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE:
+			setTypedValue(newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -178,12 +181,12 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY:
-				setTypedKey(KEY_EDEFAULT);
-				return;
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE:
-				setTypedValue(VALUE_EDEFAULT);
-				return;
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY:
+			setTypedKey(KEY_EDEFAULT);
+			return;
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE:
+			setTypedValue(VALUE_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -196,10 +199,10 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY:
-				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE:
-				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__KEY:
+			return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP__VALUE:
+			return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -211,7 +214,8 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (key: "); //$NON-NLS-1$
@@ -303,7 +307,7 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	@SuppressWarnings("unchecked")
 	public EMap<String, Object> getEMap() {
 		EObject container = eContainer();
-		return container == null ? null : (EMap<String, Object>)container.eGet(eContainmentFeature());
+		return container == null ? null : (EMap<String, Object>) container.eGet(eContainmentFeature());
 	}
 
 } //StringToObjectMapImpl

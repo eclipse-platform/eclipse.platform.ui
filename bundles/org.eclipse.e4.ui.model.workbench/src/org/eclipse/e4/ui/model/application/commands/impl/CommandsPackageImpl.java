@@ -88,7 +88,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final CommandsPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl.init();
+	public static final CommandsPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl
+			.init();
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.MBindingTableContainer <em>Binding Table Container</em>}' class.
@@ -281,7 +282,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int BINDING_CONTEXT_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	public static final int BINDING_CONTEXT_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 3;
 
 	/**
 	 * The number of operations of the '<em>Binding Context</em>' class.
@@ -291,7 +293,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int BINDING_CONTEXT_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
+	public static final int BINDING_CONTEXT_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT
+			+ 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.BindingTableImpl <em>Binding Table</em>}' class.
@@ -372,7 +375,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int BINDING_TABLE__BINDING_CONTEXT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	public static final int BINDING_TABLE__BINDING_CONTEXT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 1;
 
 	/**
 	 * The number of structural features of the '<em>Binding Table</em>' class.
@@ -392,7 +396,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int BINDING_TABLE_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
+	public static final int BINDING_TABLE_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT
+			+ 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl <em>Command</em>}' class.
@@ -503,7 +508,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND__LOCALIZED_COMMAND_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	public static final int COMMAND__LOCALIZED_COMMAND_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 4;
 
 	/**
 	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
@@ -513,7 +519,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+	public static final int COMMAND__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 5;
 
 	/**
 	 * The number of structural features of the '<em>Command</em>' class.
@@ -533,7 +540,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
+	public static final int COMMAND___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT
+			+ 1;
 
 	/**
 	 * The number of operations of the '<em>Command</em>' class.
@@ -644,7 +652,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND_PARAMETER_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	public static final int COMMAND_PARAMETER_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 3;
 
 	/**
 	 * The number of operations of the '<em>Command Parameter</em>' class.
@@ -654,7 +663,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND_PARAMETER_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
+	public static final int COMMAND_PARAMETER_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT
+			+ 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.HandlerImpl <em>Handler</em>}' class.
@@ -917,7 +927,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int KEY_BINDING_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
+	public static final int KEY_BINDING_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT
+			+ 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.MKeySequence <em>Key Sequence</em>}' class.
@@ -1160,7 +1171,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int CATEGORY__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	public static final int CATEGORY__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 3;
 
 	/**
 	 * The number of structural features of the '<em>Category</em>' class.
@@ -1180,7 +1192,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int CATEGORY___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
+	public static final int CATEGORY___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT
+			+ 1;
 
 	/**
 	 * The number of operations of the '<em>Category</em>' class.
@@ -1321,7 +1334,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private CommandsPackageImpl() {
-		super(eNS_URI, ((EFactory)MCommandsFactory.INSTANCE));
+		super(eNS_URI, ((EFactory) MCommandsFactory.INSTANCE));
 	}
 
 	/**
@@ -1344,27 +1357,42 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static CommandsPackageImpl init() {
-		if (isInited) return (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
+		if (isInited)
+			return (CommandsPackageImpl) EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
 		Object registeredCommandsPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		CommandsPackageImpl theCommandsPackage = registeredCommandsPackage instanceof CommandsPackageImpl ? (CommandsPackageImpl)registeredCommandsPackage : new CommandsPackageImpl();
+		CommandsPackageImpl theCommandsPackage = registeredCommandsPackage instanceof CommandsPackageImpl
+				? (CommandsPackageImpl) registeredCommandsPackage
+				: new CommandsPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
 		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) (registeredPackage instanceof ApplicationPackageImpl
+				? registeredPackage
+				: ApplicationPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		UiPackageImpl theUiPackage = (UiPackageImpl) (registeredPackage instanceof UiPackageImpl ? registeredPackage
+				: UiPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl) (registeredPackage instanceof MenuPackageImpl
+				? registeredPackage
+				: MenuPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(registeredPackage instanceof BasicPackageImpl ? registeredPackage : BasicPackageImpl.eINSTANCE);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl) (registeredPackage instanceof BasicPackageImpl
+				? registeredPackage
+				: BasicPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl) (registeredPackage instanceof AdvancedPackageImpl
+				? registeredPackage
+				: AdvancedPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE
+				.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl) (registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl
+				? registeredPackage
+				: org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theCommandsPackage.createPackageContents();
@@ -1392,7 +1420,6 @@ public class CommandsPackageImpl extends EPackageImpl {
 		return theCommandsPackage;
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.commands.MBindingTableContainer <em>Binding Table Container</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1417,7 +1444,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getBindingTableContainer_BindingTables() {
-		return (EReference)bindingTableContainerEClass.getEStructuralFeatures().get(0);
+		return (EReference) bindingTableContainerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1431,7 +1458,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getBindingTableContainer_RootContext() {
-		return (EReference)bindingTableContainerEClass.getEStructuralFeatures().get(1);
+		return (EReference) bindingTableContainerEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1458,7 +1485,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getBindings_BindingContexts() {
-		return (EReference)bindingsEClass.getEStructuralFeatures().get(0);
+		return (EReference) bindingsEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1485,7 +1512,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getBindingContext_Name() {
-		return (EAttribute)bindingContextEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) bindingContextEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1499,7 +1526,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getBindingContext_Description() {
-		return (EAttribute)bindingContextEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) bindingContextEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1513,7 +1540,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getBindingContext_Children() {
-		return (EReference)bindingContextEClass.getEStructuralFeatures().get(2);
+		return (EReference) bindingContextEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1540,7 +1567,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getBindingTable_Bindings() {
-		return (EReference)bindingTableEClass.getEStructuralFeatures().get(0);
+		return (EReference) bindingTableEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1554,7 +1581,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getBindingTable_BindingContext() {
-		return (EReference)bindingTableEClass.getEStructuralFeatures().get(1);
+		return (EReference) bindingTableEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1581,7 +1608,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommand_CommandName() {
-		return (EAttribute)commandEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) commandEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1595,7 +1622,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommand_Description() {
-		return (EAttribute)commandEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) commandEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1609,7 +1636,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getCommand_Parameters() {
-		return (EReference)commandEClass.getEStructuralFeatures().get(2);
+		return (EReference) commandEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1623,7 +1650,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getCommand_Category() {
-		return (EReference)commandEClass.getEStructuralFeatures().get(3);
+		return (EReference) commandEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -1637,7 +1664,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommand_LocalizedCommandName() {
-		return (EAttribute)commandEClass.getEStructuralFeatures().get(4);
+		return (EAttribute) commandEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1651,7 +1678,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommand_LocalizedDescription() {
-		return (EAttribute)commandEClass.getEStructuralFeatures().get(5);
+		return (EAttribute) commandEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -1666,7 +1693,6 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public EOperation getCommand__UpdateLocalization() {
 		return commandEClass.getEOperations().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.commands.MCommandParameter <em>Command Parameter</em>}'.
@@ -1692,7 +1718,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommandParameter_Name() {
-		return (EAttribute)commandParameterEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) commandParameterEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1706,7 +1732,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommandParameter_TypeId() {
-		return (EAttribute)commandParameterEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) commandParameterEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1720,7 +1746,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommandParameter_Optional() {
-		return (EAttribute)commandParameterEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) commandParameterEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1747,7 +1773,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getHandler_Command() {
-		return (EReference)handlerEClass.getEStructuralFeatures().get(0);
+		return (EReference) handlerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1774,7 +1800,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getHandlerContainer_Handlers() {
-		return (EReference)handlerContainerEClass.getEStructuralFeatures().get(0);
+		return (EReference) handlerContainerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1801,7 +1827,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getKeyBinding_Command() {
-		return (EReference)keyBindingEClass.getEStructuralFeatures().get(0);
+		return (EReference) keyBindingEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1815,7 +1841,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getKeyBinding_Parameters() {
-		return (EReference)keyBindingEClass.getEStructuralFeatures().get(1);
+		return (EReference) keyBindingEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1842,7 +1868,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getKeySequence_KeySequence() {
-		return (EAttribute)keySequenceEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) keySequenceEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1869,7 +1895,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getParameter_Name() {
-		return (EAttribute)parameterEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) parameterEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1883,7 +1909,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getParameter_Value() {
-		return (EAttribute)parameterEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) parameterEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1910,7 +1936,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCategory_Name() {
-		return (EAttribute)categoryEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) categoryEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1924,7 +1950,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCategory_Description() {
-		return (EAttribute)categoryEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) categoryEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1938,7 +1964,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCategory_LocalizedName() {
-		return (EAttribute)categoryEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) categoryEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1952,7 +1978,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCategory_LocalizedDescription() {
-		return (EAttribute)categoryEClass.getEStructuralFeatures().get(3);
+		return (EAttribute) categoryEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -1967,7 +1993,6 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public EOperation getCategory__UpdateLocalization() {
 		return categoryEClass.getEOperations().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.core.commands.ParameterizedCommand <em>Parameterized Command</em>}'.
@@ -1990,7 +2015,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public MCommandsFactory getCommandsFactory() {
-		return (MCommandsFactory)getEFactoryInstance();
+		return (MCommandsFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -2008,7 +2033,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -2085,7 +2111,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -2094,8 +2121,9 @@ public class CommandsPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(ApplicationPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl) EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 
 		// Create type parameters
 
@@ -2115,64 +2143,123 @@ public class CommandsPackageImpl extends EPackageImpl {
 		categoryEClass.getESuperTypes().add(theUiPackage.getLocalizable());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(bindingTableContainerEClass, MBindingTableContainer.class, "BindingTableContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getBindingTableContainer_BindingTables(), this.getBindingTable(), null, "bindingTables", null, 0, -1, MBindingTableContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getBindingTableContainer_RootContext(), this.getBindingContext(), null, "rootContext", null, 0, -1, MBindingTableContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(bindingTableContainerEClass, MBindingTableContainer.class, "BindingTableContainer", IS_ABSTRACT, //$NON-NLS-1$
+				IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getBindingTableContainer_BindingTables(), this.getBindingTable(), null, "bindingTables", null, 0, //$NON-NLS-1$
+				-1, MBindingTableContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getBindingTableContainer_RootContext(), this.getBindingContext(), null, "rootContext", null, 0, //$NON-NLS-1$
+				-1, MBindingTableContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(bindingsEClass, MBindings.class, "Bindings", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getBindings_BindingContexts(), this.getBindingContext(), null, "bindingContexts", null, 0, -1, MBindings.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getBindings_BindingContexts(), this.getBindingContext(), null, "bindingContexts", null, 0, -1, //$NON-NLS-1$
+				MBindings.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(bindingContextEClass, MBindingContext.class, "BindingContext", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getBindingContext_Name(), ecorePackage.getEString(), "name", null, 0, 1, MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getBindingContext_Description(), ecorePackage.getEString(), "description", null, 0, 1, MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getBindingContext_Children(), this.getBindingContext(), null, "children", null, 0, -1, MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(bindingContextEClass, MBindingContext.class, "BindingContext", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getBindingContext_Name(), ecorePackage.getEString(), "name", null, 0, 1, MBindingContext.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBindingContext_Description(), ecorePackage.getEString(), "description", null, 0, 1, //$NON-NLS-1$
+				MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEReference(getBindingContext_Children(), this.getBindingContext(), null, "children", null, 0, -1, //$NON-NLS-1$
+				MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(bindingTableEClass, MBindingTable.class, "BindingTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getBindingTable_Bindings(), this.getKeyBinding(), null, "bindings", null, 0, -1, MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getBindingTable_BindingContext(), this.getBindingContext(), null, "bindingContext", null, 1, 1, MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(bindingTableEClass, MBindingTable.class, "BindingTable", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getBindingTable_Bindings(), this.getKeyBinding(), null, "bindings", null, 0, -1, //$NON-NLS-1$
+				MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getBindingTable_BindingContext(), this.getBindingContext(), null, "bindingContext", null, 1, 1, //$NON-NLS-1$
+				MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(commandEClass, MCommand.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getCommand_CommandName(), ecorePackage.getEString(), "commandName", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCommand_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getCommand_Parameters(), this.getCommandParameter(), null, "parameters", null, 0, -1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getCommand_Category(), this.getCategory(), null, "category", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCommand_LocalizedCommandName(), ecorePackage.getEString(), "localizedCommandName", null, 0, 1, MCommand.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCommand_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MCommand.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getCommand_CommandName(), ecorePackage.getEString(), "commandName", null, 0, 1, MCommand.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCommand_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCommand.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCommand_Parameters(), this.getCommandParameter(), null, "parameters", null, 0, -1, //$NON-NLS-1$
+				MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCommand_Category(), this.getCategory(), null, "category", null, 0, 1, MCommand.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCommand_LocalizedCommandName(), ecorePackage.getEString(), "localizedCommandName", null, 0, 1, //$NON-NLS-1$
+				MCommand.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCommand_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, //$NON-NLS-1$
+				MCommand.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getCommand__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(commandParameterEClass, MCommandParameter.class, "CommandParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getCommandParameter_Name(), ecorePackage.getEString(), "name", null, 1, 1, MCommandParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCommandParameter_TypeId(), ecorePackage.getEString(), "typeId", null, 0, 1, MCommandParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCommandParameter_Optional(), ecorePackage.getEBoolean(), "optional", "true", 0, 1, MCommandParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEClass(commandParameterEClass, MCommandParameter.class, "CommandParameter", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCommandParameter_Name(), ecorePackage.getEString(), "name", null, 1, 1, //$NON-NLS-1$
+				MCommandParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCommandParameter_TypeId(), ecorePackage.getEString(), "typeId", null, 0, 1, //$NON-NLS-1$
+				MCommandParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCommandParameter_Optional(), ecorePackage.getEBoolean(), "optional", "true", 0, 1, //$NON-NLS-1$//$NON-NLS-2$
+				MCommandParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
 
 		initEClass(handlerEClass, MHandler.class, "Handler", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getHandler_Command(), this.getCommand(), null, "command", null, 1, 1, MHandler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getHandler_Command(), this.getCommand(), null, "command", null, 1, 1, MHandler.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(handlerContainerEClass, MHandlerContainer.class, "HandlerContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getHandlerContainer_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, MHandlerContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(handlerContainerEClass, MHandlerContainer.class, "HandlerContainer", IS_ABSTRACT, IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getHandlerContainer_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, //$NON-NLS-1$
+				MHandlerContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(keyBindingEClass, MKeyBinding.class, "KeyBinding", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getKeyBinding_Command(), this.getCommand(), null, "command", null, 1, 1, MKeyBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getKeyBinding_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, MKeyBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(keyBindingEClass, MKeyBinding.class, "KeyBinding", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getKeyBinding_Command(), this.getCommand(), null, "command", null, 1, 1, MKeyBinding.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getKeyBinding_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, //$NON-NLS-1$
+				MKeyBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(keySequenceEClass, MKeySequence.class, "KeySequence", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getKeySequence_KeySequence(), ecorePackage.getEString(), "keySequence", null, 1, 1, MKeySequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(keySequenceEClass, MKeySequence.class, "KeySequence", IS_ABSTRACT, IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getKeySequence_KeySequence(), ecorePackage.getEString(), "keySequence", null, 1, 1, //$NON-NLS-1$
+				MKeySequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
 
-		initEClass(parameterEClass, MParameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getParameter_Name(), ecorePackage.getEString(), "name", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getParameter_Value(), ecorePackage.getEString(), "value", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(parameterEClass, MParameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getParameter_Name(), ecorePackage.getEString(), "name", null, 0, 1, MParameter.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getParameter_Value(), ecorePackage.getEString(), "value", null, 0, 1, MParameter.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(categoryEClass, MCategory.class, "Category", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getCategory_Name(), ecorePackage.getEString(), "name", null, 1, 1, MCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCategory_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCategory_LocalizedName(), ecorePackage.getEString(), "localizedName", "", 0, 1, MCategory.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getCategory_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MCategory.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(categoryEClass, MCategory.class, "Category", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCategory_Name(), ecorePackage.getEString(), "name", null, 1, 1, MCategory.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCategory_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCategory.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCategory_LocalizedName(), ecorePackage.getEString(), "localizedName", "", 0, 1, //$NON-NLS-1$//$NON-NLS-2$
+				MCategory.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCategory_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, //$NON-NLS-1$
+				1, MCategory.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getCategory__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize data types
-		initEDataType(parameterizedCommandEDataType, ParameterizedCommand.class, "ParameterizedCommand", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEDataType(parameterizedCommandEDataType, ParameterizedCommand.class, "ParameterizedCommand", //$NON-NLS-1$
+				!IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 	}
 
 	/**
@@ -2207,7 +2294,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EReference BINDING_TABLE_CONTAINER__BINDING_TABLES = eINSTANCE.getBindingTableContainer_BindingTables();
+		public static final EReference BINDING_TABLE_CONTAINER__BINDING_TABLES = eINSTANCE
+				.getBindingTableContainer_BindingTables();
 
 		/**
 		 * The meta object literal for the '<em><b>Root Context</b></em>' containment reference list feature.
@@ -2216,7 +2304,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EReference BINDING_TABLE_CONTAINER__ROOT_CONTEXT = eINSTANCE.getBindingTableContainer_RootContext();
+		public static final EReference BINDING_TABLE_CONTAINER__ROOT_CONTEXT = eINSTANCE
+				.getBindingTableContainer_RootContext();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.commands.MBindings <em>Bindings</em>}' class.

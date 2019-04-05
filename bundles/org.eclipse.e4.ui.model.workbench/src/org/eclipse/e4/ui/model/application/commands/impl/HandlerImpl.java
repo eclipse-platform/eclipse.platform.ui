@@ -73,12 +73,13 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	 */
 	@Override
 	public MCommand getCommand() {
-		if (command != null && ((EObject)command).eIsProxy()) {
-			InternalEObject oldCommand = (InternalEObject)command;
-			command = (MCommand)eResolveProxy(oldCommand);
+		if (command != null && ((EObject) command).eIsProxy()) {
+			InternalEObject oldCommand = (InternalEObject) command;
+			command = (MCommand) eResolveProxy(oldCommand);
 			if (command != oldCommand) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, CommandsPackageImpl.HANDLER__COMMAND, oldCommand, command));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, CommandsPackageImpl.HANDLER__COMMAND,
+							oldCommand, command));
 			}
 		}
 		return command;
@@ -103,7 +104,8 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 		MCommand oldCommand = command;
 		command = newCommand;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.HANDLER__COMMAND, oldCommand, command));
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.HANDLER__COMMAND, oldCommand,
+					command));
 	}
 
 	/**
@@ -114,9 +116,10 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case CommandsPackageImpl.HANDLER__COMMAND:
-				if (resolve) return getCommand();
-				return basicGetCommand();
+		case CommandsPackageImpl.HANDLER__COMMAND:
+			if (resolve)
+				return getCommand();
+			return basicGetCommand();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -129,9 +132,9 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case CommandsPackageImpl.HANDLER__COMMAND:
-				setCommand((MCommand)newValue);
-				return;
+		case CommandsPackageImpl.HANDLER__COMMAND:
+			setCommand((MCommand) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -144,9 +147,9 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case CommandsPackageImpl.HANDLER__COMMAND:
-				setCommand((MCommand)null);
-				return;
+		case CommandsPackageImpl.HANDLER__COMMAND:
+			setCommand((MCommand) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -159,8 +162,8 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case CommandsPackageImpl.HANDLER__COMMAND:
-				return command != null;
+		case CommandsPackageImpl.HANDLER__COMMAND:
+			return command != null;
 		}
 		return super.eIsSet(featureID);
 	}

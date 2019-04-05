@@ -135,7 +135,8 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__NAME, oldName,
+					name));
 	}
 
 	/**
@@ -158,7 +159,8 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 		String oldTypeId = typeId;
 		typeId = newTypeId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID, oldTypeId, typeId));
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID,
+					oldTypeId, typeId));
 	}
 
 	/**
@@ -181,7 +183,8 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 		boolean oldOptional = optional;
 		optional = newOptional;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL, oldOptional, optional));
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL,
+					oldOptional, optional));
 	}
 
 	/**
@@ -192,12 +195,12 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case CommandsPackageImpl.COMMAND_PARAMETER__NAME:
-				return getName();
-			case CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID:
-				return getTypeId();
-			case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
-				return isOptional();
+		case CommandsPackageImpl.COMMAND_PARAMETER__NAME:
+			return getName();
+		case CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID:
+			return getTypeId();
+		case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
+			return isOptional();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -210,15 +213,15 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case CommandsPackageImpl.COMMAND_PARAMETER__NAME:
-				setName((String)newValue);
-				return;
-			case CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID:
-				setTypeId((String)newValue);
-				return;
-			case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
-				setOptional((Boolean)newValue);
-				return;
+		case CommandsPackageImpl.COMMAND_PARAMETER__NAME:
+			setName((String) newValue);
+			return;
+		case CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID:
+			setTypeId((String) newValue);
+			return;
+		case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
+			setOptional((Boolean) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -231,15 +234,15 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case CommandsPackageImpl.COMMAND_PARAMETER__NAME:
-				setName(NAME_EDEFAULT);
-				return;
-			case CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID:
-				setTypeId(TYPE_ID_EDEFAULT);
-				return;
-			case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
-				setOptional(OPTIONAL_EDEFAULT);
-				return;
+		case CommandsPackageImpl.COMMAND_PARAMETER__NAME:
+			setName(NAME_EDEFAULT);
+			return;
+		case CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID:
+			setTypeId(TYPE_ID_EDEFAULT);
+			return;
+		case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
+			setOptional(OPTIONAL_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -252,12 +255,12 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case CommandsPackageImpl.COMMAND_PARAMETER__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID:
-				return TYPE_ID_EDEFAULT == null ? typeId != null : !TYPE_ID_EDEFAULT.equals(typeId);
-			case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
-				return optional != OPTIONAL_EDEFAULT;
+		case CommandsPackageImpl.COMMAND_PARAMETER__NAME:
+			return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+		case CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID:
+			return TYPE_ID_EDEFAULT == null ? typeId != null : !TYPE_ID_EDEFAULT.equals(typeId);
+		case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
+			return optional != OPTIONAL_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -269,7 +272,8 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: "); //$NON-NLS-1$

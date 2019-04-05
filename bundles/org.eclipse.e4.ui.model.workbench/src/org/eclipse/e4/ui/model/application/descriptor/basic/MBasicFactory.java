@@ -13,7 +13,6 @@
  */
 package org.eclipse.e4.ui.model.application.descriptor.basic;
 
-
 /**
  * <!-- begin-user-doc -->
  * The <b>Factory</b> for the model.

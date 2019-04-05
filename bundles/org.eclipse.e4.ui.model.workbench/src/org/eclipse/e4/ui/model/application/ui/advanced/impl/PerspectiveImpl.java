@@ -273,7 +273,16 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MPartSashContainerElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MPartSashContainerElement>(MPartSashContainerElement.class, this, AdvancedPackageImpl.PERSPECTIVE__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
+			children = new EObjectContainmentWithInverseEList<MPartSashContainerElement>(
+					MPartSashContainerElement.class, this, AdvancedPackageImpl.PERSPECTIVE__CHILDREN,
+					UiPackageImpl.UI_ELEMENT__PARENT) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Class<?> getInverseFeatureClass() {
+					return MUIElement.class;
+				}
+			};
 		}
 		return children;
 	}
@@ -311,7 +320,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		String oldLabel = label;
 		label = newLabel;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LABEL, oldLabel, label));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LABEL, oldLabel,
+					label));
 	}
 
 	/**
@@ -336,7 +346,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__ICON_URI, oldIconURI, iconURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__ICON_URI, oldIconURI,
+					iconURI));
 	}
 
 	/**
@@ -361,7 +372,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__TOOLTIP, oldTooltip, tooltip));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__TOOLTIP, oldTooltip,
+					tooltip));
 	}
 
 	/**
@@ -404,7 +416,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		IEclipseContext oldContext = context;
 		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__CONTEXT, oldContext, context));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__CONTEXT, oldContext,
+					context));
 	}
 
 	/**
@@ -415,7 +428,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, AdvancedPackageImpl.PERSPECTIVE__VARIABLES);
+			variables = new EDataTypeUniqueEList<String>(String.class, this,
+					AdvancedPackageImpl.PERSPECTIVE__VARIABLES);
 		}
 		return variables;
 	}
@@ -428,7 +442,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, AdvancedPackageImpl.PERSPECTIVE__PROPERTIES);
+			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+					StringToStringMapImpl.class, this, AdvancedPackageImpl.PERSPECTIVE__PROPERTIES);
 		}
 		return properties.map();
 	}
@@ -441,7 +456,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, AdvancedPackageImpl.PERSPECTIVE__HANDLERS);
+			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this,
+					AdvancedPackageImpl.PERSPECTIVE__HANDLERS);
 		}
 		return handlers;
 	}
@@ -454,7 +470,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+					AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -467,7 +484,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MWindow> getWindows() {
 		if (windows == null) {
-			windows = new EObjectContainmentEList<MWindow>(MWindow.class, this, AdvancedPackageImpl.PERSPECTIVE__WINDOWS);
+			windows = new EObjectContainmentEList<MWindow>(MWindow.class, this,
+					AdvancedPackageImpl.PERSPECTIVE__WINDOWS);
 		}
 		return windows;
 	}
@@ -482,7 +500,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MTrimBar> getTrimBars() {
 		if (trimBars == null) {
-			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this, AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS);
+			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this,
+					AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS);
 		}
 		return trimBars;
 	}
@@ -497,10 +516,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
 			super.updateLocalization();
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL, null, getLocalizedLabel()));
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL,
+					null, getLocalizedLabel()));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP,
+					null, getLocalizedTooltip()));
 		}
 	}
 
@@ -512,14 +531,15 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
-			case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
-				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
-				return ((InternalEList<?>)getWindows()).basicRemove(otherEnd, msgs);
-			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
-				return ((InternalEList<?>)getTrimBars()).basicRemove(otherEnd, msgs);
+		case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
+			return ((InternalEList<?>) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.basicRemove(otherEnd, msgs);
+		case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
+			return ((InternalEList<?>) getHandlers()).basicRemove(otherEnd, msgs);
+		case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
+			return ((InternalEList<?>) getWindows()).basicRemove(otherEnd, msgs);
+		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+			return ((InternalEList<?>) getTrimBars()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -532,31 +552,33 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PERSPECTIVE__LABEL:
-				return getLabel();
-			case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
-				return getIconURI();
-			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
-				return getTooltip();
-			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
-			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
-				return getContext();
-			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
-				return getVariables();
-			case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
-				else return getProperties();
-			case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
-				return getHandlers();
-			case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
-				return getBindingContexts();
-			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
-				return getWindows();
-			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
-				return getTrimBars();
+		case AdvancedPackageImpl.PERSPECTIVE__LABEL:
+			return getLabel();
+		case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
+			return getIconURI();
+		case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
+			return getTooltip();
+		case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL:
+			return getLocalizedLabel();
+		case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP:
+			return getLocalizedTooltip();
+		case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
+			return getContext();
+		case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
+			return getVariables();
+		case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
+			if (coreType)
+				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
+			else
+				return getProperties();
+		case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
+			return getHandlers();
+		case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
+			return getBindingContexts();
+		case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
+			return getWindows();
+		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+			return getTrimBars();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -570,41 +592,42 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PERSPECTIVE__LABEL:
-				setLabel((String)newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
-				setIconURI((String)newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
-				setTooltip((String)newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
-				setContext((IEclipseContext)newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
-				getVariables().clear();
-				getVariables().addAll((Collection<? extends String>)newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
-				getHandlers().clear();
-				getHandlers().addAll((Collection<? extends MHandler>)newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
-				getBindingContexts().clear();
-				getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
-				getWindows().clear();
-				getWindows().addAll((Collection<? extends MWindow>)newValue);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
-				getTrimBars().clear();
-				getTrimBars().addAll((Collection<? extends MTrimBar>)newValue);
-				return;
+		case AdvancedPackageImpl.PERSPECTIVE__LABEL:
+			setLabel((String) newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
+			setIconURI((String) newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
+			setTooltip((String) newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
+			setContext((IEclipseContext) newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
+			getVariables().clear();
+			getVariables().addAll((Collection<? extends String>) newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
+			((EStructuralFeature.Setting) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.set(newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
+			getHandlers().clear();
+			getHandlers().addAll((Collection<? extends MHandler>) newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
+			getBindingContexts().clear();
+			getBindingContexts().addAll((Collection<? extends MBindingContext>) newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
+			getWindows().clear();
+			getWindows().addAll((Collection<? extends MWindow>) newValue);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+			getTrimBars().clear();
+			getTrimBars().addAll((Collection<? extends MTrimBar>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -617,36 +640,36 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PERSPECTIVE__LABEL:
-				setLabel(LABEL_EDEFAULT);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
-				setIconURI(ICON_URI_EDEFAULT);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
-				setTooltip(TOOLTIP_EDEFAULT);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
-				setContext(CONTEXT_EDEFAULT);
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
-				getVariables().clear();
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
-				getProperties().clear();
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
-				getHandlers().clear();
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
-				getBindingContexts().clear();
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
-				getWindows().clear();
-				return;
-			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
-				getTrimBars().clear();
-				return;
+		case AdvancedPackageImpl.PERSPECTIVE__LABEL:
+			setLabel(LABEL_EDEFAULT);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
+			setIconURI(ICON_URI_EDEFAULT);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
+			setTooltip(TOOLTIP_EDEFAULT);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
+			setContext(CONTEXT_EDEFAULT);
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
+			getVariables().clear();
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
+			getProperties().clear();
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
+			getHandlers().clear();
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
+			getBindingContexts().clear();
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
+			getWindows().clear();
+			return;
+		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+			getTrimBars().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -659,30 +682,32 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PERSPECTIVE__LABEL:
-				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
-			case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
-				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
-			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
-				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL:
-				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
-			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP:
-				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
-			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
-				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
-				return variables != null && !variables.isEmpty();
-			case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
-				return properties != null && !properties.isEmpty();
-			case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
-				return handlers != null && !handlers.isEmpty();
-			case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
-				return bindingContexts != null && !bindingContexts.isEmpty();
-			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
-				return windows != null && !windows.isEmpty();
-			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
-				return trimBars != null && !trimBars.isEmpty();
+		case AdvancedPackageImpl.PERSPECTIVE__LABEL:
+			return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+		case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
+			return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
+		case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
+			return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+		case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL:
+			return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null
+					: !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+		case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP:
+			return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null
+					: !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
+		case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
+			return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
+		case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
+			return variables != null && !variables.isEmpty();
+		case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
+			return properties != null && !properties.isEmpty();
+		case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
+			return handlers != null && !handlers.isEmpty();
+		case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
+			return bindingContexts != null && !bindingContexts.isEmpty();
+		case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
+			return windows != null && !windows.isEmpty();
+		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+			return trimBars != null && !trimBars.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -696,32 +721,46 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
-				case AdvancedPackageImpl.PERSPECTIVE__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
-				case AdvancedPackageImpl.PERSPECTIVE__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
-				case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
-				case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
-				default: return -1;
+			case AdvancedPackageImpl.PERSPECTIVE__LABEL:
+				return UiPackageImpl.UI_LABEL__LABEL;
+			case AdvancedPackageImpl.PERSPECTIVE__ICON_URI:
+				return UiPackageImpl.UI_LABEL__ICON_URI;
+			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
+				return UiPackageImpl.UI_LABEL__TOOLTIP;
+			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL:
+				return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+			case AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP:
+				return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case AdvancedPackageImpl.PERSPECTIVE__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
-				case AdvancedPackageImpl.PERSPECTIVE__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
-				case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
-				default: return -1;
+			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
+				return UiPackageImpl.CONTEXT__CONTEXT;
+			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
+				return UiPackageImpl.CONTEXT__VARIABLES;
+			case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
+				return UiPackageImpl.CONTEXT__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (derivedFeatureID) {
-				case AdvancedPackageImpl.PERSPECTIVE__HANDLERS: return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
-				default: return -1;
+			case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
+				return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (derivedFeatureID) {
-				case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS: return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
-				default: return -1;
+			case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
+				return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -736,32 +775,46 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.UI_LABEL__LABEL: return AdvancedPackageImpl.PERSPECTIVE__LABEL;
-				case UiPackageImpl.UI_LABEL__ICON_URI: return AdvancedPackageImpl.PERSPECTIVE__ICON_URI;
-				case UiPackageImpl.UI_LABEL__TOOLTIP: return AdvancedPackageImpl.PERSPECTIVE__TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP;
-				default: return -1;
+			case UiPackageImpl.UI_LABEL__LABEL:
+				return AdvancedPackageImpl.PERSPECTIVE__LABEL;
+			case UiPackageImpl.UI_LABEL__ICON_URI:
+				return AdvancedPackageImpl.PERSPECTIVE__ICON_URI;
+			case UiPackageImpl.UI_LABEL__TOOLTIP:
+				return AdvancedPackageImpl.PERSPECTIVE__TOOLTIP;
+			case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL:
+				return AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL;
+			case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP:
+				return AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.CONTEXT__CONTEXT: return AdvancedPackageImpl.PERSPECTIVE__CONTEXT;
-				case UiPackageImpl.CONTEXT__VARIABLES: return AdvancedPackageImpl.PERSPECTIVE__VARIABLES;
-				case UiPackageImpl.CONTEXT__PROPERTIES: return AdvancedPackageImpl.PERSPECTIVE__PROPERTIES;
-				default: return -1;
+			case UiPackageImpl.CONTEXT__CONTEXT:
+				return AdvancedPackageImpl.PERSPECTIVE__CONTEXT;
+			case UiPackageImpl.CONTEXT__VARIABLES:
+				return AdvancedPackageImpl.PERSPECTIVE__VARIABLES;
+			case UiPackageImpl.CONTEXT__PROPERTIES:
+				return AdvancedPackageImpl.PERSPECTIVE__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseFeatureID) {
-				case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS: return AdvancedPackageImpl.PERSPECTIVE__HANDLERS;
-				default: return -1;
+			case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS:
+				return AdvancedPackageImpl.PERSPECTIVE__HANDLERS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
-				case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS: return AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS;
-				default: return -1;
+			case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS:
+				return AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -776,34 +829,42 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
 		if (baseClass == MLocalizable.class) {
 			switch (baseOperationID) {
-				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION;
-				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION:
+				return AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION;
+			default:
+				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
 		if (baseClass == MUIElement.class) {
 			switch (baseOperationID) {
-				case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION;
-				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION:
+				return AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION;
+			default:
+				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
 		if (baseClass == MUILabel.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedOperationID(baseOperationID, baseClass);
@@ -817,9 +878,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION:
-				updateLocalization();
-				return null;
+		case AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION:
+			updateLocalization();
+			return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}
@@ -831,7 +892,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$

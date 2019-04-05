@@ -15,7 +15,6 @@
  */
 package org.eclipse.e4.ui.model.fragment;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>String Model Fragment</b></em>'.

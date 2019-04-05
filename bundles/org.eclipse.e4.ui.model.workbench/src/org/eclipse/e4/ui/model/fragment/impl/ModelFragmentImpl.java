@@ -41,7 +41,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @since 1.0
  * @generated
  */
-public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container implements MModelFragment {
+public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container
+		implements MModelFragment {
 	/**
 	 * The cached value of the '{@link #getElements() <em>Elements</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -79,7 +80,8 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	@Override
 	public List<MApplicationElement> getElements() {
 		if (elements == null) {
-			elements = new EObjectContainmentEList<MApplicationElement>(MApplicationElement.class, this, FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS);
+			elements = new EObjectContainmentEList<MApplicationElement>(MApplicationElement.class, this,
+					FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS);
 		}
 		return elements;
 	}
@@ -104,8 +106,8 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
-				return ((InternalEList<?>)getElements()).basicRemove(otherEnd, msgs);
+		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
+			return ((InternalEList<?>) getElements()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -118,8 +120,8 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
-				return getElements();
+		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
+			return getElements();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -133,10 +135,10 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
-				getElements().clear();
-				getElements().addAll((Collection<? extends MApplicationElement>)newValue);
-				return;
+		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
+			getElements().clear();
+			getElements().addAll((Collection<? extends MApplicationElement>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -149,9 +151,9 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
-				getElements().clear();
-				return;
+		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
+			getElements().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -164,8 +166,8 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
-				return elements != null && !elements.isEmpty();
+		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
+			return elements != null && !elements.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -178,8 +180,8 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case FragmentPackageImpl.MODEL_FRAGMENT___MERGE__MAPPLICATION:
-				return merge((MApplication)arguments.get(0));
+		case FragmentPackageImpl.MODEL_FRAGMENT___MERGE__MAPPLICATION:
+			return merge((MApplication) arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

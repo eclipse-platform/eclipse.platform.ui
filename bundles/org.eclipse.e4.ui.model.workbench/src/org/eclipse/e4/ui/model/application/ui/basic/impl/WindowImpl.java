@@ -377,7 +377,15 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MWindowElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MWindowElement>(MWindowElement.class, this, BasicPackageImpl.WINDOW__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
+			children = new EObjectContainmentWithInverseEList<MWindowElement>(MWindowElement.class, this,
+					BasicPackageImpl.WINDOW__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Class<?> getInverseFeatureClass() {
+					return MUIElement.class;
+				}
+			};
 		}
 		return children;
 	}
@@ -440,7 +448,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__ICON_URI, oldIconURI, iconURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__ICON_URI, oldIconURI,
+					iconURI));
 	}
 
 	/**
@@ -465,7 +474,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__TOOLTIP, oldTooltip, tooltip));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__TOOLTIP, oldTooltip,
+					tooltip));
 	}
 
 	/**
@@ -508,7 +518,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		IEclipseContext oldContext = context;
 		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__CONTEXT, oldContext, context));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__CONTEXT, oldContext,
+					context));
 	}
 
 	/**
@@ -532,7 +543,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, BasicPackageImpl.WINDOW__PROPERTIES);
+			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+					StringToStringMapImpl.class, this, BasicPackageImpl.WINDOW__PROPERTIES);
 		}
 		return properties.map();
 	}
@@ -558,7 +570,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, BasicPackageImpl.WINDOW__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+					BasicPackageImpl.WINDOW__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -571,7 +584,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MUIElement> getSnippets() {
 		if (snippets == null) {
-			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, BasicPackageImpl.WINDOW__SNIPPETS);
+			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this,
+					BasicPackageImpl.WINDOW__SNIPPETS);
 		}
 		return snippets;
 	}
@@ -595,8 +609,12 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		MMenu oldMainMenu = mainMenu;
 		mainMenu = newMainMenu;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__MAIN_MENU, oldMainMenu, newMainMenu);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
+					BasicPackageImpl.WINDOW__MAIN_MENU, oldMainMenu, newMainMenu);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -611,14 +629,17 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		if (newMainMenu != mainMenu) {
 			NotificationChain msgs = null;
 			if (mainMenu != null)
-				msgs = ((InternalEObject)mainMenu).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.WINDOW__MAIN_MENU, null, msgs);
+				msgs = ((InternalEObject) mainMenu).eInverseRemove(this,
+						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.WINDOW__MAIN_MENU, null, msgs);
 			if (newMainMenu != null)
-				msgs = ((InternalEObject)newMainMenu).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.WINDOW__MAIN_MENU, null, msgs);
+				msgs = ((InternalEObject) newMainMenu).eInverseAdd(this,
+						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.WINDOW__MAIN_MENU, null, msgs);
 			msgs = basicSetMainMenu(newMainMenu, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__MAIN_MENU, newMainMenu, newMainMenu));
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__MAIN_MENU, newMainMenu,
+					newMainMenu));
 	}
 
 	/**
@@ -734,7 +755,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MUIElement> getSharedElements() {
 		if (sharedElements == null) {
-			sharedElements = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, BasicPackageImpl.WINDOW__SHARED_ELEMENTS);
+			sharedElements = new EObjectContainmentEList<MUIElement>(MUIElement.class, this,
+					BasicPackageImpl.WINDOW__SHARED_ELEMENTS);
 		}
 		return sharedElements;
 	}
@@ -749,10 +771,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
 			super.updateLocalization();
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, BasicPackageImpl.WINDOW__LOCALIZED_LABEL, null, getLocalizedLabel()));
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__LOCALIZED_LABEL, null,
+					getLocalizedLabel()));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP, null,
+					getLocalizedTooltip()));
 		}
 	}
 
@@ -765,17 +787,18 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 		case BasicPackageImpl.WINDOW__PROPERTIES:
-			return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
+			return ((InternalEList<?>) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.basicRemove(otherEnd, msgs);
 		case BasicPackageImpl.WINDOW__HANDLERS:
-			return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
+			return ((InternalEList<?>) getHandlers()).basicRemove(otherEnd, msgs);
 		case BasicPackageImpl.WINDOW__SNIPPETS:
-			return ((InternalEList<?>)getSnippets()).basicRemove(otherEnd, msgs);
+			return ((InternalEList<?>) getSnippets()).basicRemove(otherEnd, msgs);
 		case BasicPackageImpl.WINDOW__MAIN_MENU:
 			return basicSetMainMenu(null, msgs);
 		case BasicPackageImpl.WINDOW__WINDOWS:
-			return ((InternalEList<?>)getWindows()).basicRemove(otherEnd, msgs);
+			return ((InternalEList<?>) getWindows()).basicRemove(otherEnd, msgs);
 		case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
-			return ((InternalEList<?>)getSharedElements()).basicRemove(otherEnd, msgs);
+			return ((InternalEList<?>) getSharedElements()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -803,8 +826,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		case BasicPackageImpl.WINDOW__VARIABLES:
 			return getVariables();
 		case BasicPackageImpl.WINDOW__PROPERTIES:
-			if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
-			else return getProperties();
+			if (coreType)
+				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
+			else
+				return getProperties();
 		case BasicPackageImpl.WINDOW__HANDLERS:
 			return getHandlers();
 		case BasicPackageImpl.WINDOW__BINDING_CONTEXTS:
@@ -839,58 +864,59 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 		case BasicPackageImpl.WINDOW__LABEL:
-			setLabel((String)newValue);
+			setLabel((String) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__ICON_URI:
-			setIconURI((String)newValue);
+			setIconURI((String) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__TOOLTIP:
-			setTooltip((String)newValue);
+			setTooltip((String) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__CONTEXT:
-			setContext((IEclipseContext)newValue);
+			setContext((IEclipseContext) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__VARIABLES:
 			getVariables().clear();
-			getVariables().addAll((Collection<? extends String>)newValue);
+			getVariables().addAll((Collection<? extends String>) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__PROPERTIES:
-			((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
+			((EStructuralFeature.Setting) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.set(newValue);
 			return;
 		case BasicPackageImpl.WINDOW__HANDLERS:
 			getHandlers().clear();
-			getHandlers().addAll((Collection<? extends MHandler>)newValue);
+			getHandlers().addAll((Collection<? extends MHandler>) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__BINDING_CONTEXTS:
 			getBindingContexts().clear();
-			getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
+			getBindingContexts().addAll((Collection<? extends MBindingContext>) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__SNIPPETS:
 			getSnippets().clear();
-			getSnippets().addAll((Collection<? extends MUIElement>)newValue);
+			getSnippets().addAll((Collection<? extends MUIElement>) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__MAIN_MENU:
-			setMainMenu((MMenu)newValue);
+			setMainMenu((MMenu) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__X:
-			setX((Integer)newValue);
+			setX((Integer) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__Y:
-			setY((Integer)newValue);
+			setY((Integer) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__WIDTH:
-			setWidth((Integer)newValue);
+			setWidth((Integer) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__HEIGHT:
-			setHeight((Integer)newValue);
+			setHeight((Integer) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__WINDOWS:
 			getWindows().clear();
-			getWindows().addAll((Collection<? extends MWindow>)newValue);
+			getWindows().addAll((Collection<? extends MWindow>) newValue);
 			return;
 		case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
 			getSharedElements().clear();
-			getSharedElements().addAll((Collection<? extends MUIElement>)newValue);
+			getSharedElements().addAll((Collection<? extends MUIElement>) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -932,7 +958,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			getSnippets().clear();
 			return;
 		case BasicPackageImpl.WINDOW__MAIN_MENU:
-			setMainMenu((MMenu)null);
+			setMainMenu((MMenu) null);
 			return;
 		case BasicPackageImpl.WINDOW__X:
 			setX(X_EDEFAULT);
@@ -971,9 +997,11 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		case BasicPackageImpl.WINDOW__TOOLTIP:
 			return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
 		case BasicPackageImpl.WINDOW__LOCALIZED_LABEL:
-			return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+			return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null
+					: !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
 		case BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP:
-			return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
+			return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null
+					: !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 		case BasicPackageImpl.WINDOW__CONTEXT:
 			return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 		case BasicPackageImpl.WINDOW__VARIABLES:
@@ -1013,38 +1041,54 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
-			case BasicPackageImpl.WINDOW__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
-			case BasicPackageImpl.WINDOW__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
-			case BasicPackageImpl.WINDOW__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-			case BasicPackageImpl.WINDOW__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
-			case BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
-			default: return -1;
+			case BasicPackageImpl.WINDOW__LABEL:
+				return UiPackageImpl.UI_LABEL__LABEL;
+			case BasicPackageImpl.WINDOW__ICON_URI:
+				return UiPackageImpl.UI_LABEL__ICON_URI;
+			case BasicPackageImpl.WINDOW__TOOLTIP:
+				return UiPackageImpl.UI_LABEL__TOOLTIP;
+			case BasicPackageImpl.WINDOW__LOCALIZED_LABEL:
+				return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+			case BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP:
+				return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-			case BasicPackageImpl.WINDOW__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
-			case BasicPackageImpl.WINDOW__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
-			case BasicPackageImpl.WINDOW__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
-			default: return -1;
+			case BasicPackageImpl.WINDOW__CONTEXT:
+				return UiPackageImpl.CONTEXT__CONTEXT;
+			case BasicPackageImpl.WINDOW__VARIABLES:
+				return UiPackageImpl.CONTEXT__VARIABLES;
+			case BasicPackageImpl.WINDOW__PROPERTIES:
+				return UiPackageImpl.CONTEXT__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (derivedFeatureID) {
-			case BasicPackageImpl.WINDOW__HANDLERS: return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
-			default: return -1;
+			case BasicPackageImpl.WINDOW__HANDLERS:
+				return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (derivedFeatureID) {
-			case BasicPackageImpl.WINDOW__BINDING_CONTEXTS: return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
-			default: return -1;
+			case BasicPackageImpl.WINDOW__BINDING_CONTEXTS:
+				return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MSnippetContainer.class) {
 			switch (derivedFeatureID) {
-			case BasicPackageImpl.WINDOW__SNIPPETS: return UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS;
-			default: return -1;
+			case BasicPackageImpl.WINDOW__SNIPPETS:
+				return UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -1059,38 +1103,54 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
-			case UiPackageImpl.UI_LABEL__LABEL: return BasicPackageImpl.WINDOW__LABEL;
-			case UiPackageImpl.UI_LABEL__ICON_URI: return BasicPackageImpl.WINDOW__ICON_URI;
-			case UiPackageImpl.UI_LABEL__TOOLTIP: return BasicPackageImpl.WINDOW__TOOLTIP;
-			case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return BasicPackageImpl.WINDOW__LOCALIZED_LABEL;
-			case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP;
-			default: return -1;
+			case UiPackageImpl.UI_LABEL__LABEL:
+				return BasicPackageImpl.WINDOW__LABEL;
+			case UiPackageImpl.UI_LABEL__ICON_URI:
+				return BasicPackageImpl.WINDOW__ICON_URI;
+			case UiPackageImpl.UI_LABEL__TOOLTIP:
+				return BasicPackageImpl.WINDOW__TOOLTIP;
+			case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL:
+				return BasicPackageImpl.WINDOW__LOCALIZED_LABEL;
+			case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP:
+				return BasicPackageImpl.WINDOW__LOCALIZED_TOOLTIP;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-			case UiPackageImpl.CONTEXT__CONTEXT: return BasicPackageImpl.WINDOW__CONTEXT;
-			case UiPackageImpl.CONTEXT__VARIABLES: return BasicPackageImpl.WINDOW__VARIABLES;
-			case UiPackageImpl.CONTEXT__PROPERTIES: return BasicPackageImpl.WINDOW__PROPERTIES;
-			default: return -1;
+			case UiPackageImpl.CONTEXT__CONTEXT:
+				return BasicPackageImpl.WINDOW__CONTEXT;
+			case UiPackageImpl.CONTEXT__VARIABLES:
+				return BasicPackageImpl.WINDOW__VARIABLES;
+			case UiPackageImpl.CONTEXT__PROPERTIES:
+				return BasicPackageImpl.WINDOW__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseFeatureID) {
-			case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS: return BasicPackageImpl.WINDOW__HANDLERS;
-			default: return -1;
+			case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS:
+				return BasicPackageImpl.WINDOW__HANDLERS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
-			case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS: return BasicPackageImpl.WINDOW__BINDING_CONTEXTS;
-			default: return -1;
+			case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS:
+				return BasicPackageImpl.WINDOW__BINDING_CONTEXTS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MSnippetContainer.class) {
 			switch (baseFeatureID) {
-			case UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS: return BasicPackageImpl.WINDOW__SNIPPETS;
-			default: return -1;
+			case UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS:
+				return BasicPackageImpl.WINDOW__SNIPPETS;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -1105,39 +1165,48 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
 		if (baseClass == MLocalizable.class) {
 			switch (baseOperationID) {
-			case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return BasicPackageImpl.WINDOW___UPDATE_LOCALIZATION;
-			default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION:
+				return BasicPackageImpl.WINDOW___UPDATE_LOCALIZATION;
+			default:
+				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
 		if (baseClass == MUIElement.class) {
 			switch (baseOperationID) {
-			case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return BasicPackageImpl.WINDOW___UPDATE_LOCALIZATION;
-			default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION:
+				return BasicPackageImpl.WINDOW___UPDATE_LOCALIZATION;
+			default:
+				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
 		if (baseClass == MUILabel.class) {
 			switch (baseOperationID) {
-			default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (baseOperationID) {
-			default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseOperationID) {
-			default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (baseOperationID) {
-			default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MSnippetContainer.class) {
 			switch (baseOperationID) {
-			default: return -1;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedOperationID(baseOperationID, baseClass);
@@ -1165,7 +1234,8 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$

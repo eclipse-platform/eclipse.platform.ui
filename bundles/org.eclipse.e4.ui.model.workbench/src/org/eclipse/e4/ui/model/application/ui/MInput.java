@@ -14,7 +14,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Input</b></em>'.

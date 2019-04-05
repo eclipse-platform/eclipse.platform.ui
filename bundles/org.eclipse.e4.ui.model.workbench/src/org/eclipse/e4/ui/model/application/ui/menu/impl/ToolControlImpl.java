@@ -120,7 +120,8 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI, oldContributionURI, contributionURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI,
+					oldContributionURI, contributionURI));
 	}
 
 	/**
@@ -143,7 +144,8 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 		Object oldObject = object;
 		object = newObject;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_CONTROL__OBJECT, oldObject, object));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_CONTROL__OBJECT, oldObject,
+					object));
 	}
 
 	/**
@@ -154,10 +156,10 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
-				return getContributionURI();
-			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
-				return getObject();
+		case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
+			return getContributionURI();
+		case MenuPackageImpl.TOOL_CONTROL__OBJECT:
+			return getObject();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -170,12 +172,12 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
-				setContributionURI((String)newValue);
-				return;
-			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
-				setObject(newValue);
-				return;
+		case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
+			setContributionURI((String) newValue);
+			return;
+		case MenuPackageImpl.TOOL_CONTROL__OBJECT:
+			setObject(newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -188,12 +190,12 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
-				setContributionURI(CONTRIBUTION_URI_EDEFAULT);
-				return;
-			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
-				setObject(OBJECT_EDEFAULT);
-				return;
+		case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
+			setContributionURI(CONTRIBUTION_URI_EDEFAULT);
+			return;
+		case MenuPackageImpl.TOOL_CONTROL__OBJECT:
+			setObject(OBJECT_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -206,10 +208,11 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
-				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
-			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
-				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+		case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
+			return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null
+					: !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
+		case MenuPackageImpl.TOOL_CONTROL__OBJECT:
+			return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -223,14 +226,18 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MContribution.class) {
 			switch (derivedFeatureID) {
-				case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI: return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
-				case MenuPackageImpl.TOOL_CONTROL__OBJECT: return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-				default: return -1;
+			case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
+				return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
+			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
+				return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MTrimElement.class) {
 			switch (derivedFeatureID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -245,14 +252,18 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MContribution.class) {
 			switch (baseFeatureID) {
-				case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI: return MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI;
-				case ApplicationPackageImpl.CONTRIBUTION__OBJECT: return MenuPackageImpl.TOOL_CONTROL__OBJECT;
-				default: return -1;
+			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI:
+				return MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI;
+			case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
+				return MenuPackageImpl.TOOL_CONTROL__OBJECT;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MTrimElement.class) {
 			switch (baseFeatureID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -265,7 +276,8 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$

@@ -96,7 +96,8 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 		String oldInputURI = inputURI;
 		inputURI = newInputURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.INPUT_PART__INPUT_URI, oldInputURI, inputURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.INPUT_PART__INPUT_URI, oldInputURI,
+					inputURI));
 	}
 
 	/**
@@ -107,8 +108,8 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BasicPackageImpl.INPUT_PART__INPUT_URI:
-				return getInputURI();
+		case BasicPackageImpl.INPUT_PART__INPUT_URI:
+			return getInputURI();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -121,9 +122,9 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BasicPackageImpl.INPUT_PART__INPUT_URI:
-				setInputURI((String)newValue);
-				return;
+		case BasicPackageImpl.INPUT_PART__INPUT_URI:
+			setInputURI((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -136,9 +137,9 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.INPUT_PART__INPUT_URI:
-				setInputURI(INPUT_URI_EDEFAULT);
-				return;
+		case BasicPackageImpl.INPUT_PART__INPUT_URI:
+			setInputURI(INPUT_URI_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -151,8 +152,8 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.INPUT_PART__INPUT_URI:
-				return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
+		case BasicPackageImpl.INPUT_PART__INPUT_URI:
+			return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -166,8 +167,10 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MInput.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.INPUT_PART__INPUT_URI: return UiPackageImpl.INPUT__INPUT_URI;
-				default: return -1;
+			case BasicPackageImpl.INPUT_PART__INPUT_URI:
+				return UiPackageImpl.INPUT__INPUT_URI;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -182,8 +185,10 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MInput.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.INPUT__INPUT_URI: return BasicPackageImpl.INPUT_PART__INPUT_URI;
-				default: return -1;
+			case UiPackageImpl.INPUT__INPUT_URI:
+				return BasicPackageImpl.INPUT_PART__INPUT_URI;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -196,7 +201,8 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (inputURI: "); //$NON-NLS-1$

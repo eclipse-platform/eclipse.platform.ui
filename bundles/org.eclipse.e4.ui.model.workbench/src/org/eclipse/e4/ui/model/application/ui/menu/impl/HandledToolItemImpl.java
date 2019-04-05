@@ -115,12 +115,13 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	 */
 	@Override
 	public MCommand getCommand() {
-		if (command != null && ((EObject)command).eIsProxy()) {
-			InternalEObject oldCommand = (InternalEObject)command;
-			command = (MCommand)eResolveProxy(oldCommand);
+		if (command != null && ((EObject) command).eIsProxy()) {
+			InternalEObject oldCommand = (InternalEObject) command;
+			command = (MCommand) eResolveProxy(oldCommand);
 			if (command != oldCommand) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND, oldCommand, command));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE,
+							MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND, oldCommand, command));
 			}
 		}
 		return command;
@@ -145,7 +146,8 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 		MCommand oldCommand = command;
 		command = newCommand;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND, oldCommand, command));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND,
+					oldCommand, command));
 	}
 
 	/**
@@ -170,7 +172,8 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 		ParameterizedCommand oldWbCommand = wbCommand;
 		wbCommand = newWbCommand;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND, oldWbCommand, wbCommand));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND,
+					oldWbCommand, wbCommand));
 	}
 
 	/**
@@ -181,7 +184,8 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	@Override
 	public List<MParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this, MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS);
+			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this,
+					MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS);
 		}
 		return parameters;
 	}
@@ -194,8 +198,8 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
-				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
+			return ((InternalEList<?>) getParameters()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -208,13 +212,14 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
-				if (resolve) return getCommand();
-				return basicGetCommand();
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
-				return getWbCommand();
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
-				return getParameters();
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
+			if (resolve)
+				return getCommand();
+			return basicGetCommand();
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
+			return getWbCommand();
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
+			return getParameters();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -228,16 +233,16 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
-				setCommand((MCommand)newValue);
-				return;
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
-				setWbCommand((ParameterizedCommand)newValue);
-				return;
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
-				getParameters().clear();
-				getParameters().addAll((Collection<? extends MParameter>)newValue);
-				return;
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
+			setCommand((MCommand) newValue);
+			return;
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
+			setWbCommand((ParameterizedCommand) newValue);
+			return;
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
+			getParameters().clear();
+			getParameters().addAll((Collection<? extends MParameter>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -250,15 +255,15 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
-				setCommand((MCommand)null);
-				return;
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
-				setWbCommand(WB_COMMAND_EDEFAULT);
-				return;
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
-				getParameters().clear();
-				return;
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
+			setCommand((MCommand) null);
+			return;
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
+			setWbCommand(WB_COMMAND_EDEFAULT);
+			return;
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
+			getParameters().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -271,12 +276,12 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
-				return command != null;
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
-				return WB_COMMAND_EDEFAULT == null ? wbCommand != null : !WB_COMMAND_EDEFAULT.equals(wbCommand);
-			case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
-				return parameters != null && !parameters.isEmpty();
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
+			return command != null;
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
+			return WB_COMMAND_EDEFAULT == null ? wbCommand != null : !WB_COMMAND_EDEFAULT.equals(wbCommand);
+		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
+			return parameters != null && !parameters.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -290,10 +295,14 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MHandledItem.class) {
 			switch (derivedFeatureID) {
-				case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND: return MenuPackageImpl.HANDLED_ITEM__COMMAND;
-				case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND: return MenuPackageImpl.HANDLED_ITEM__WB_COMMAND;
-				case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS: return MenuPackageImpl.HANDLED_ITEM__PARAMETERS;
-				default: return -1;
+			case MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND:
+				return MenuPackageImpl.HANDLED_ITEM__COMMAND;
+			case MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND:
+				return MenuPackageImpl.HANDLED_ITEM__WB_COMMAND;
+			case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
+				return MenuPackageImpl.HANDLED_ITEM__PARAMETERS;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -308,10 +317,14 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MHandledItem.class) {
 			switch (baseFeatureID) {
-				case MenuPackageImpl.HANDLED_ITEM__COMMAND: return MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND;
-				case MenuPackageImpl.HANDLED_ITEM__WB_COMMAND: return MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND;
-				case MenuPackageImpl.HANDLED_ITEM__PARAMETERS: return MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS;
-				default: return -1;
+			case MenuPackageImpl.HANDLED_ITEM__COMMAND:
+				return MenuPackageImpl.HANDLED_TOOL_ITEM__COMMAND;
+			case MenuPackageImpl.HANDLED_ITEM__WB_COMMAND:
+				return MenuPackageImpl.HANDLED_TOOL_ITEM__WB_COMMAND;
+			case MenuPackageImpl.HANDLED_ITEM__PARAMETERS:
+				return MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -324,7 +337,8 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (wbCommand: "); //$NON-NLS-1$

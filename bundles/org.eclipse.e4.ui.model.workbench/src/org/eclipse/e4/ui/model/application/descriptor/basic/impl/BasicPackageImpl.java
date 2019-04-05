@@ -76,7 +76,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final BasicPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.init();
+	public static final BasicPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl
+			.init();
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl <em>Part Descriptor</em>}' class.
@@ -177,7 +178,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__LOCALIZED_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	public static final int PART_DESCRIPTOR__LOCALIZED_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 3;
 
 	/**
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
@@ -187,7 +189,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__LOCALIZED_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	public static final int PART_DESCRIPTOR__LOCALIZED_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 4;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -207,7 +210,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+	public static final int PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 6;
 
 	/**
 	 * The feature id for the '<em><b>Allow Multiple</b></em>' attribute.
@@ -217,7 +221,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__ALLOW_MULTIPLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
+	public static final int PART_DESCRIPTOR__ALLOW_MULTIPLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 7;
 
 	/**
 	 * The feature id for the '<em><b>Category</b></em>' attribute.
@@ -280,7 +285,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 13;
+	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 13;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -290,7 +296,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 14;
+	public static final int PART_DESCRIPTOR__DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 14;
 
 	/**
 	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
@@ -300,7 +307,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 15;
+	public static final int PART_DESCRIPTOR__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 15;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -341,7 +349,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 19;
+	public static final int PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
+			+ 19;
 
 	/**
 	 * The operation id for the '<em>Update Localization</em>' operation.
@@ -351,7 +360,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
+	public static final int PART_DESCRIPTOR___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT
+			+ 1;
 
 	/**
 	 * The number of operations of the '<em>Part Descriptor</em>' class.
@@ -361,7 +371,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 2;
+	public static final int PART_DESCRIPTOR_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT
+			+ 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.
@@ -436,7 +447,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private BasicPackageImpl() {
-		super(eNS_URI, ((EFactory)MBasicFactory.INSTANCE));
+		super(eNS_URI, ((EFactory) MBasicFactory.INSTANCE));
 	}
 
 	/**
@@ -459,27 +470,42 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static BasicPackageImpl init() {
-		if (isInited) return (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		if (isInited)
+			return (BasicPackageImpl) EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
 		Object registeredBasicPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		BasicPackageImpl theBasicPackage = registeredBasicPackage instanceof BasicPackageImpl ? (BasicPackageImpl)registeredBasicPackage : new BasicPackageImpl();
+		BasicPackageImpl theBasicPackage = registeredBasicPackage instanceof BasicPackageImpl
+				? (BasicPackageImpl) registeredBasicPackage
+				: new BasicPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
 		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) (registeredPackage instanceof ApplicationPackageImpl
+				? registeredPackage
+				: ApplicationPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) (registeredPackage instanceof CommandsPackageImpl
+				? registeredPackage
+				: CommandsPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		UiPackageImpl theUiPackage = (UiPackageImpl) (registeredPackage instanceof UiPackageImpl ? registeredPackage
+				: UiPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI);
-		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eINSTANCE);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl) (registeredPackage instanceof MenuPackageImpl
+				? registeredPackage
+				: MenuPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE
+				.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl) (registeredPackage instanceof org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl
+				? registeredPackage
+				: org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl) (registeredPackage instanceof AdvancedPackageImpl
+				? registeredPackage
+				: AdvancedPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theBasicPackage.createPackageContents();
@@ -507,7 +533,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		return theBasicPackage;
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor <em>Part Descriptor</em>}'.
 	 * <!-- begin-user-doc -->
@@ -532,7 +557,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_AllowMultiple() {
-		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) partDescriptorEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -546,7 +571,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Category() {
-		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) partDescriptorEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -560,7 +585,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPartDescriptor_Menus() {
-		return (EReference)partDescriptorEClass.getEStructuralFeatures().get(2);
+		return (EReference) partDescriptorEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -574,7 +599,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPartDescriptor_Toolbar() {
-		return (EReference)partDescriptorEClass.getEStructuralFeatures().get(3);
+		return (EReference) partDescriptorEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -588,7 +613,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Closeable() {
-		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(4);
+		return (EAttribute) partDescriptorEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -605,7 +630,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 */
 	@Deprecated
 	public EAttribute getPartDescriptor_Dirtyable() {
-		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(5);
+		return (EAttribute) partDescriptorEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -619,7 +644,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_ContributionURI() {
-		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(6);
+		return (EAttribute) partDescriptorEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -633,7 +658,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Description() {
-		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(7);
+		return (EAttribute) partDescriptorEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -647,7 +672,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_LocalizedDescription() {
-		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(8);
+		return (EAttribute) partDescriptorEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -661,7 +686,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Variables() {
-		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(9);
+		return (EAttribute) partDescriptorEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -675,7 +700,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPartDescriptor_Properties() {
-		return (EReference)partDescriptorEClass.getEStructuralFeatures().get(10);
+		return (EReference) partDescriptorEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -690,7 +715,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPartDescriptor_TrimBars() {
-		return (EReference)partDescriptorEClass.getEStructuralFeatures().get(11);
+		return (EReference) partDescriptorEClass.getEStructuralFeatures().get(11);
 	}
 
 	/**
@@ -705,7 +730,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public EOperation getPartDescriptor__UpdateLocalization() {
 		return partDescriptorEClass.getEOperations().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}'.
@@ -731,7 +755,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPartDescriptorContainer_Descriptors() {
-		return (EReference)partDescriptorContainerEClass.getEStructuralFeatures().get(0);
+		return (EReference) partDescriptorContainerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -742,7 +766,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public MBasicFactory getBasicFactory() {
-		return (MBasicFactory)getEFactoryInstance();
+		return (MBasicFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -760,7 +784,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -798,7 +823,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -807,11 +833,15 @@ public class BasicPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
-		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(ApplicationPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl) EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(CommandsPackageImpl.eNS_URI);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(MenuPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI);
 
 		// Create type parameters
 
@@ -824,24 +854,53 @@ public class BasicPackageImpl extends EPackageImpl {
 		partDescriptorEClass.getESuperTypes().add(theCommandsPackage.getBindings());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(partDescriptorEClass, MPartDescriptor.class, "PartDescriptor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getPartDescriptor_AllowMultiple(), ecorePackage.getEBoolean(), "allowMultiple", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPartDescriptor_Category(), ecorePackage.getEString(), "category", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPartDescriptor_Menus(), theMenuPackage.getMenu(), null, "menus", null, 0, -1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPartDescriptor_Toolbar(), theMenuPackage.getToolBar(), null, "toolbar", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPartDescriptor_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getPartDescriptor_Dirtyable(), ecorePackage.getEBoolean(), "dirtyable", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPartDescriptor_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPartDescriptor_Description(), ecorePackage.getEString(), "description", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPartDescriptor_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MPartDescriptor.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPartDescriptor_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPartDescriptor_Properties(), theApplicationPackage.getStringToStringMap(), null, "properties", null, 0, -1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPartDescriptor_TrimBars(), theBasicPackage_1.getTrimBar(), null, "trimBars", null, 0, -1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(partDescriptorEClass, MPartDescriptor.class, "PartDescriptor", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPartDescriptor_AllowMultiple(), ecorePackage.getEBoolean(), "allowMultiple", null, 0, 1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPartDescriptor_Category(), ecorePackage.getEString(), "category", null, 0, 1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEReference(getPartDescriptor_Menus(), theMenuPackage.getMenu(), null, "menus", null, 0, -1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPartDescriptor_Toolbar(), theMenuPackage.getToolBar(), null, "toolbar", null, 0, 1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPartDescriptor_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, //$NON-NLS-1$//$NON-NLS-2$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPartDescriptor_Dirtyable(), ecorePackage.getEBoolean(), "dirtyable", null, 0, 1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPartDescriptor_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPartDescriptor_Description(), ecorePackage.getEString(), "description", null, 0, 1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPartDescriptor_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", //$NON-NLS-1$
+				null, 0, 1, MPartDescriptor.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPartDescriptor_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, !IS_ORDERED);
+		initEReference(getPartDescriptor_Properties(), theApplicationPackage.getStringToStringMap(), null, "properties", //$NON-NLS-1$
+				null, 0, -1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPartDescriptor_TrimBars(), theBasicPackage_1.getTrimBar(), null, "trimBars", null, 0, -1, //$NON-NLS-1$
+				MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEOperation(getPartDescriptor__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+		initEOperation(getPartDescriptor__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, //$NON-NLS-1$
+				IS_ORDERED);
 
-		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, -1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", //$NON-NLS-1$
+				IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, //$NON-NLS-1$
+				-1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 	}
 
 	/**
@@ -933,7 +992,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EAttribute PART_DESCRIPTOR__CONTRIBUTION_URI = eINSTANCE.getPartDescriptor_ContributionURI();
+		public static final EAttribute PART_DESCRIPTOR__CONTRIBUTION_URI = eINSTANCE
+				.getPartDescriptor_ContributionURI();
 
 		/**
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
@@ -951,7 +1011,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EAttribute PART_DESCRIPTOR__LOCALIZED_DESCRIPTION = eINSTANCE.getPartDescriptor_LocalizedDescription();
+		public static final EAttribute PART_DESCRIPTOR__LOCALIZED_DESCRIPTION = eINSTANCE
+				.getPartDescriptor_LocalizedDescription();
 
 		/**
 		 * The meta object literal for the '<em><b>Variables</b></em>' attribute list feature.
@@ -988,7 +1049,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @since 1.1
 		 * @generated
 		 */
-		public static final EOperation PART_DESCRIPTOR___UPDATE_LOCALIZATION = eINSTANCE.getPartDescriptor__UpdateLocalization();
+		public static final EOperation PART_DESCRIPTOR___UPDATE_LOCALIZATION = eINSTANCE
+				.getPartDescriptor__UpdateLocalization();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.
@@ -1008,7 +1070,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EReference PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = eINSTANCE.getPartDescriptorContainer_Descriptors();
+		public static final EReference PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = eINSTANCE
+				.getPartDescriptorContainer_Descriptors();
 
 	}
 

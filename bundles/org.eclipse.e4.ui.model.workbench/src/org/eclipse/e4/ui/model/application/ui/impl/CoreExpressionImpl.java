@@ -113,7 +113,8 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 		String oldCoreExpressionId = coreExpressionId;
 		coreExpressionId = newCoreExpressionId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID, oldCoreExpressionId, coreExpressionId));
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID,
+					oldCoreExpressionId, coreExpressionId));
 	}
 
 	/**
@@ -136,7 +137,8 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 		Object oldCoreExpression = coreExpression;
 		coreExpression = newCoreExpression;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION, oldCoreExpression, coreExpression));
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION,
+					oldCoreExpression, coreExpression));
 	}
 
 	/**
@@ -147,10 +149,10 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
-				return getCoreExpressionId();
-			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
-				return getCoreExpression();
+		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
+			return getCoreExpressionId();
+		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
+			return getCoreExpression();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -163,12 +165,12 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
-				setCoreExpressionId((String)newValue);
-				return;
-			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
-				setCoreExpression(newValue);
-				return;
+		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
+			setCoreExpressionId((String) newValue);
+			return;
+		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
+			setCoreExpression(newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -181,12 +183,12 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
-				setCoreExpressionId(CORE_EXPRESSION_ID_EDEFAULT);
-				return;
-			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
-				setCoreExpression(CORE_EXPRESSION_EDEFAULT);
-				return;
+		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
+			setCoreExpressionId(CORE_EXPRESSION_ID_EDEFAULT);
+			return;
+		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
+			setCoreExpression(CORE_EXPRESSION_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -199,10 +201,12 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
-				return CORE_EXPRESSION_ID_EDEFAULT == null ? coreExpressionId != null : !CORE_EXPRESSION_ID_EDEFAULT.equals(coreExpressionId);
-			case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
-				return CORE_EXPRESSION_EDEFAULT == null ? coreExpression != null : !CORE_EXPRESSION_EDEFAULT.equals(coreExpression);
+		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID:
+			return CORE_EXPRESSION_ID_EDEFAULT == null ? coreExpressionId != null
+					: !CORE_EXPRESSION_ID_EDEFAULT.equals(coreExpressionId);
+		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
+			return CORE_EXPRESSION_EDEFAULT == null ? coreExpression != null
+					: !CORE_EXPRESSION_EDEFAULT.equals(coreExpression);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -214,7 +218,8 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (coreExpressionId: "); //$NON-NLS-1$

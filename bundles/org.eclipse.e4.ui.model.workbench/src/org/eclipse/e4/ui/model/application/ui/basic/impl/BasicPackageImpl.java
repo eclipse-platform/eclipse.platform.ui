@@ -90,7 +90,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final BasicPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.init();
+	public static final BasicPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl
+			.init();
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl <em>Part</em>}' class.
@@ -4584,7 +4585,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private BasicPackageImpl() {
-		super(eNS_URI, ((EFactory)MBasicFactory.INSTANCE));
+		super(eNS_URI, ((EFactory) MBasicFactory.INSTANCE));
 	}
 
 	/**
@@ -4607,27 +4608,42 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static BasicPackageImpl init() {
-		if (isInited) return (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		if (isInited)
+			return (BasicPackageImpl) EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
 		Object registeredBasicPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		BasicPackageImpl theBasicPackage = registeredBasicPackage instanceof BasicPackageImpl ? (BasicPackageImpl)registeredBasicPackage : new BasicPackageImpl();
+		BasicPackageImpl theBasicPackage = registeredBasicPackage instanceof BasicPackageImpl
+				? (BasicPackageImpl) registeredBasicPackage
+				: new BasicPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
 		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) (registeredPackage instanceof ApplicationPackageImpl
+				? registeredPackage
+				: ApplicationPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) (registeredPackage instanceof CommandsPackageImpl
+				? registeredPackage
+				: CommandsPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		UiPackageImpl theUiPackage = (UiPackageImpl) (registeredPackage instanceof UiPackageImpl ? registeredPackage
+				: UiPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl) (registeredPackage instanceof MenuPackageImpl
+				? registeredPackage
+				: MenuPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl) (registeredPackage instanceof AdvancedPackageImpl
+				? registeredPackage
+				: AdvancedPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE
+				.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl) (registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl
+				? registeredPackage
+				: org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theBasicPackage.createPackageContents();
@@ -4655,7 +4671,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		return theBasicPackage;
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart <em>Part</em>}'.
 	 * <!-- begin-user-doc -->
@@ -4680,7 +4695,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPart_Menus() {
-		return (EReference)partEClass.getEStructuralFeatures().get(0);
+		return (EReference) partEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -4694,7 +4709,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPart_Toolbar() {
-		return (EReference)partEClass.getEStructuralFeatures().get(1);
+		return (EReference) partEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -4708,7 +4723,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPart_Closeable() {
-		return (EAttribute)partEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) partEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -4722,7 +4737,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPart_Description() {
-		return (EAttribute)partEClass.getEStructuralFeatures().get(3);
+		return (EAttribute) partEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -4736,7 +4751,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPart_LocalizedDescription() {
-		return (EAttribute)partEClass.getEStructuralFeatures().get(4);
+		return (EAttribute) partEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -4751,7 +4766,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPart_TrimBars() {
-		return (EReference)partEClass.getEStructuralFeatures().get(5);
+		return (EReference) partEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -4766,7 +4781,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public EOperation getPart__UpdateLocalization() {
 		return partEClass.getEOperations().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MCompositePart <em>Composite Part</em>}'.
@@ -4847,7 +4861,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getWindow_MainMenu() {
-		return (EReference)windowEClass.getEStructuralFeatures().get(0);
+		return (EReference) windowEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -4861,7 +4875,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getWindow_X() {
-		return (EAttribute)windowEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) windowEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -4875,7 +4889,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getWindow_Y() {
-		return (EAttribute)windowEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) windowEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -4889,7 +4903,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getWindow_Width() {
-		return (EAttribute)windowEClass.getEStructuralFeatures().get(3);
+		return (EAttribute) windowEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -4903,7 +4917,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getWindow_Height() {
-		return (EAttribute)windowEClass.getEStructuralFeatures().get(4);
+		return (EAttribute) windowEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -4917,7 +4931,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getWindow_Windows() {
-		return (EReference)windowEClass.getEStructuralFeatures().get(5);
+		return (EReference) windowEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -4931,7 +4945,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getWindow_SharedElements() {
-		return (EReference)windowEClass.getEStructuralFeatures().get(6);
+		return (EReference) windowEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -4946,7 +4960,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public EOperation getWindow__UpdateLocalization() {
 		return windowEClass.getEOperations().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow <em>Trimmed Window</em>}'.
@@ -4972,7 +4985,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getTrimmedWindow_TrimBars() {
-		return (EReference)trimmedWindowEClass.getEStructuralFeatures().get(0);
+		return (EReference) trimmedWindowEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -5039,7 +5052,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getTrimBar_PendingCleanup() {
-		return (EReference)trimBarEClass.getEStructuralFeatures().get(0);
+		return (EReference) trimBarEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -5095,7 +5108,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public MBasicFactory getBasicFactory() {
-		return (MBasicFactory)getEFactoryInstance();
+		return (MBasicFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -5113,7 +5126,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -5178,7 +5192,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -5187,10 +5202,13 @@ public class BasicPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl) EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(ApplicationPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(CommandsPackageImpl.eNS_URI);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(MenuPackageImpl.eNS_URI);
 
 		// Create type parameters
 
@@ -5261,51 +5279,85 @@ public class BasicPackageImpl extends EPackageImpl {
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(partEClass, MPart.class, "Part", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getPart_Menus(), theMenuPackage.getMenu(), null, "menus", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPart_Toolbar(), theMenuPackage.getToolBar(), null, "toolbar", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPart_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getPart_Description(), ecorePackage.getEString(), "description", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPart_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MPart.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPart_TrimBars(), this.getTrimBar(), null, "trimBars", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getPart_Menus(), theMenuPackage.getMenu(), null, "menus", null, 0, -1, MPart.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPart_Toolbar(), theMenuPackage.getToolBar(), null, "toolbar", null, 0, 1, MPart.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPart_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPart.class, //$NON-NLS-1$//$NON-NLS-2$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPart_Description(), ecorePackage.getEString(), "description", null, 0, 1, MPart.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPart_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, //$NON-NLS-1$
+				MPart.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED,
+				IS_ORDERED);
+		initEReference(getPart_TrimBars(), this.getTrimBar(), null, "trimBars", null, 0, -1, MPart.class, !IS_TRANSIENT, //$NON-NLS-1$
+				!IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
+				IS_ORDERED);
 
 		initEOperation(getPart__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(compositePartEClass, MCompositePart.class, "CompositePart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(compositePartEClass, MCompositePart.class, "CompositePart", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(inputPartEClass, MInputPart.class, "InputPart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(inputPartEClass, MInputPart.class, "InputPart", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(partStackEClass, MPartStack.class, "PartStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(partStackEClass, MPartStack.class, "PartStack", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(partSashContainerEClass, MPartSashContainer.class, "PartSashContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(partSashContainerEClass, MPartSashContainer.class, "PartSashContainer", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(windowEClass, MWindow.class, "Window", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getWindow_MainMenu(), theMenuPackage.getMenu(), null, "mainMenu", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getWindow_X(), ecorePackage.getEInt(), "x", "-2147483648", 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getWindow_Y(), ecorePackage.getEInt(), "y", "-2147483648", 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getWindow_Width(), ecorePackage.getEInt(), "width", "-1", 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getWindow_Height(), ecorePackage.getEInt(), "height", "-1", 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEReference(getWindow_Windows(), this.getWindow(), null, "windows", null, 0, -1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getWindow_SharedElements(), theUiPackage.getUIElement(), null, "sharedElements", null, 0, -1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getWindow_MainMenu(), theMenuPackage.getMenu(), null, "mainMenu", null, 0, 1, MWindow.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getWindow_X(), ecorePackage.getEInt(), "x", "-2147483648", 0, 1, MWindow.class, !IS_TRANSIENT, //$NON-NLS-1$//$NON-NLS-2$
+				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getWindow_Y(), ecorePackage.getEInt(), "y", "-2147483648", 0, 1, MWindow.class, !IS_TRANSIENT, //$NON-NLS-1$//$NON-NLS-2$
+				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getWindow_Width(), ecorePackage.getEInt(), "width", "-1", 0, 1, MWindow.class, !IS_TRANSIENT, //$NON-NLS-1$//$NON-NLS-2$
+				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getWindow_Height(), ecorePackage.getEInt(), "height", "-1", 0, 1, MWindow.class, !IS_TRANSIENT, //$NON-NLS-1$//$NON-NLS-2$
+				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getWindow_Windows(), this.getWindow(), null, "windows", null, 0, -1, MWindow.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getWindow_SharedElements(), theUiPackage.getUIElement(), null, "sharedElements", null, 0, -1, //$NON-NLS-1$
+				MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getWindow__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(trimmedWindowEClass, MTrimmedWindow.class, "TrimmedWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getTrimmedWindow_TrimBars(), this.getTrimBar(), null, "trimBars", null, 0, -1, MTrimmedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(trimmedWindowEClass, MTrimmedWindow.class, "TrimmedWindow", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getTrimmedWindow_TrimBars(), this.getTrimBar(), null, "trimBars", null, 0, -1, //$NON-NLS-1$
+				MTrimmedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(trimElementEClass, MTrimElement.class, "TrimElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(trimElementEClass, MTrimElement.class, "TrimElement", IS_ABSTRACT, IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(partSashContainerElementEClass, MPartSashContainerElement.class, "PartSashContainerElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(partSashContainerElementEClass, MPartSashContainerElement.class, "PartSashContainerElement", //$NON-NLS-1$
+				IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(windowElementEClass, MWindowElement.class, "WindowElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(windowElementEClass, MWindowElement.class, "WindowElement", IS_ABSTRACT, IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(trimBarEClass, MTrimBar.class, "TrimBar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getTrimBar_PendingCleanup(), this.getTrimElement(), null, "pendingCleanup", null, 0, -1, MTrimBar.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getTrimBar_PendingCleanup(), this.getTrimElement(), null, "pendingCleanup", null, 0, -1, //$NON-NLS-1$
+				MTrimBar.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(stackElementEClass, MStackElement.class, "StackElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(stackElementEClass, MStackElement.class, "StackElement", IS_ABSTRACT, IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(dialogEClass, MDialog.class, "Dialog", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
-		initEClass(wizardDialogEClass, MWizardDialog.class, "WizardDialog", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(wizardDialogEClass, MWizardDialog.class, "WizardDialog", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 	}
 
 	/**

@@ -79,7 +79,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 			return true;
 		}
 		if (object instanceof EObject) {
-			return ((EObject)object).eClass().getEPackage() == modelPackage;
+			return ((EObject) object).eClass().getEPackage() == modelPackage;
 		}
 		return false;
 	}
@@ -90,77 +90,92 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected UiSwitch<Adapter> modelSwitch =
-		new UiSwitch<Adapter>() {
-			@Override
-			public Adapter caseContext(MContext object) {
-				return createContextAdapter();
-			}
-			@Override
-			public Adapter caseDirtyable(MDirtyable object) {
-				return createDirtyableAdapter();
-			}
-			@Override
-			public Adapter caseInput(MInput object) {
-				return createInputAdapter();
-			}
-			@Override
-			public Adapter caseUIElement(MUIElement object) {
-				return createUIElementAdapter();
-			}
-			@Override
-			public <T extends MUIElement> Adapter caseElementContainer(MElementContainer<T> object) {
-				return createElementContainerAdapter();
-			}
-			@Override
-			public Adapter caseUILabel(MUILabel object) {
-				return createUILabelAdapter();
-			}
-			@Override
-			public <T extends MUIElement> Adapter caseGenericStack(MGenericStack<T> object) {
-				return createGenericStackAdapter();
-			}
-			@Override
-			public <T extends MUIElement> Adapter caseGenericTile(MGenericTile<T> object) {
-				return createGenericTileAdapter();
-			}
-			@Override
-			public <T extends MUIElement> Adapter caseGenericTrimContainer(MGenericTrimContainer<T> object) {
-				return createGenericTrimContainerAdapter();
-			}
-			@Override
-			public Adapter caseExpression(MExpression object) {
-				return createExpressionAdapter();
-			}
-			@Override
-			public Adapter caseCoreExpression(MCoreExpression object) {
-				return createCoreExpressionAdapter();
-			}
-			@Override
-			public Adapter caseImperativeExpression(MImperativeExpression object) {
-				return createImperativeExpressionAdapter();
-			}
-			@Override
-			public Adapter caseSnippetContainer(MSnippetContainer object) {
-				return createSnippetContainerAdapter();
-			}
-			@Override
-			public Adapter caseLocalizable(MLocalizable object) {
-				return createLocalizableAdapter();
-			}
-			@Override
-			public Adapter caseApplicationElement(MApplicationElement object) {
-				return createApplicationElementAdapter();
-			}
-			@Override
-			public Adapter caseContribution(MContribution object) {
-				return createContributionAdapter();
-			}
-			@Override
-			public Adapter defaultCase(EObject object) {
-				return createEObjectAdapter();
-			}
-		};
+	protected UiSwitch<Adapter> modelSwitch = new UiSwitch<Adapter>() {
+		@Override
+		public Adapter caseContext(MContext object) {
+			return createContextAdapter();
+		}
+
+		@Override
+		public Adapter caseDirtyable(MDirtyable object) {
+			return createDirtyableAdapter();
+		}
+
+		@Override
+		public Adapter caseInput(MInput object) {
+			return createInputAdapter();
+		}
+
+		@Override
+		public Adapter caseUIElement(MUIElement object) {
+			return createUIElementAdapter();
+		}
+
+		@Override
+		public <T extends MUIElement> Adapter caseElementContainer(MElementContainer<T> object) {
+			return createElementContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseUILabel(MUILabel object) {
+			return createUILabelAdapter();
+		}
+
+		@Override
+		public <T extends MUIElement> Adapter caseGenericStack(MGenericStack<T> object) {
+			return createGenericStackAdapter();
+		}
+
+		@Override
+		public <T extends MUIElement> Adapter caseGenericTile(MGenericTile<T> object) {
+			return createGenericTileAdapter();
+		}
+
+		@Override
+		public <T extends MUIElement> Adapter caseGenericTrimContainer(MGenericTrimContainer<T> object) {
+			return createGenericTrimContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseExpression(MExpression object) {
+			return createExpressionAdapter();
+		}
+
+		@Override
+		public Adapter caseCoreExpression(MCoreExpression object) {
+			return createCoreExpressionAdapter();
+		}
+
+		@Override
+		public Adapter caseImperativeExpression(MImperativeExpression object) {
+			return createImperativeExpressionAdapter();
+		}
+
+		@Override
+		public Adapter caseSnippetContainer(MSnippetContainer object) {
+			return createSnippetContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalizable(MLocalizable object) {
+			return createLocalizableAdapter();
+		}
+
+		@Override
+		public Adapter caseApplicationElement(MApplicationElement object) {
+			return createApplicationElementAdapter();
+		}
+
+		@Override
+		public Adapter caseContribution(MContribution object) {
+			return createContributionAdapter();
+		}
+
+		@Override
+		public Adapter defaultCase(EObject object) {
+			return createEObjectAdapter();
+		}
+	};
 
 	/**
 	 * Creates an adapter for the <code>target</code>.
@@ -172,9 +187,8 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 */
 	@Override
 	public Adapter createAdapter(Notifier target) {
-		return modelSwitch.doSwitch((EObject)target);
+		return modelSwitch.doSwitch((EObject) target);
 	}
-
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MContext <em>Context</em>}'.
@@ -219,7 +233,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * @noreference See {@link MInput model documentation} for details.
 	 * @generated
 	 */
-		@Deprecated
+	@Deprecated
 	public Adapter createInputAdapter() {
 		return null;
 	}

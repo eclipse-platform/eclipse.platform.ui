@@ -100,7 +100,8 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final MenuPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl.init();
+	public static final MenuPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl
+			.init();
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl <em>Item</em>}' class.
@@ -5089,7 +5090,8 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+	public static final int TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT
+			+ 1;
 
 	/**
 	 * The number of structural features of the '<em>Tool Bar Contribution</em>' class.
@@ -5995,7 +5997,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private MenuPackageImpl() {
-		super(eNS_URI, ((EFactory)MMenuFactory.INSTANCE));
+		super(eNS_URI, ((EFactory) MMenuFactory.INSTANCE));
 	}
 
 	/**
@@ -6018,27 +6020,42 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static MenuPackageImpl init() {
-		if (isInited) return (MenuPackageImpl)EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
+		if (isInited)
+			return (MenuPackageImpl) EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
 		Object registeredMenuPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		MenuPackageImpl theMenuPackage = registeredMenuPackage instanceof MenuPackageImpl ? (MenuPackageImpl)registeredMenuPackage : new MenuPackageImpl();
+		MenuPackageImpl theMenuPackage = registeredMenuPackage instanceof MenuPackageImpl
+				? (MenuPackageImpl) registeredMenuPackage
+				: new MenuPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
 		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) (registeredPackage instanceof ApplicationPackageImpl
+				? registeredPackage
+				: ApplicationPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) (registeredPackage instanceof CommandsPackageImpl
+				? registeredPackage
+				: CommandsPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		UiPackageImpl theUiPackage = (UiPackageImpl) (registeredPackage instanceof UiPackageImpl ? registeredPackage
+				: UiPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(registeredPackage instanceof BasicPackageImpl ? registeredPackage : BasicPackageImpl.eINSTANCE);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl) (registeredPackage instanceof BasicPackageImpl
+				? registeredPackage
+				: BasicPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl) (registeredPackage instanceof AdvancedPackageImpl
+				? registeredPackage
+				: AdvancedPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE
+				.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl) (registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl
+				? registeredPackage
+				: org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theMenuPackage.createPackageContents();
@@ -6066,7 +6083,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return theMenuPackage;
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MItem <em>Item</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6091,7 +6107,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getItem_Enabled() {
-		return (EAttribute)itemEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) itemEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6105,7 +6121,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getItem_Selected() {
-		return (EAttribute)itemEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) itemEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -6119,7 +6135,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getItem_Type() {
-		return (EAttribute)itemEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) itemEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -6134,7 +6150,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EOperation getItem__UpdateLocalization() {
 		return itemEClass.getEOperations().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem <em>Handled Item</em>}'.
@@ -6160,7 +6175,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getHandledItem_Command() {
-		return (EReference)handledItemEClass.getEStructuralFeatures().get(0);
+		return (EReference) handledItemEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6175,7 +6190,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getHandledItem_WbCommand() {
-		return (EAttribute)handledItemEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) handledItemEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -6189,7 +6204,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getHandledItem_Parameters() {
-		return (EReference)handledItemEClass.getEStructuralFeatures().get(2);
+		return (EReference) handledItemEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -6216,7 +6231,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getMenuElement_Mnemonics() {
-		return (EAttribute)menuElementEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) menuElementEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6232,7 +6247,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return menuElementEClass.getEOperations().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#updateLocalization() <em>Update Localization</em>}' operation.
 	 * <!-- begin-user-doc -->
@@ -6245,7 +6259,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EOperation getMenuElement__UpdateLocalization() {
 		return menuElementEClass.getEOperations().get(1);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuItem <em>Item</em>}'.
@@ -6272,7 +6285,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EOperation getMenuItem__UpdateLocalization() {
 		return menuItemEClass.getEOperations().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator <em>Separator</em>}'.
@@ -6311,7 +6323,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getMenu_Enabled() {
-		return (EAttribute)menuEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) menuEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6339,7 +6351,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getMenuContribution_PositionInParent() {
-		return (EAttribute)menuContributionEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) menuContributionEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6353,7 +6365,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getMenuContribution_ParentId() {
-		return (EAttribute)menuContributionEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) menuContributionEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -6419,7 +6431,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getToolItem_Menu() {
-		return (EReference)toolItemEClass.getEStructuralFeatures().get(0);
+		return (EReference) toolItemEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6525,7 +6537,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getMenuContributions_MenuContributions() {
-		return (EReference)menuContributionsEClass.getEStructuralFeatures().get(0);
+		return (EReference) menuContributionsEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6553,7 +6565,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getToolBarContribution_ParentId() {
-		return (EAttribute)toolBarContributionEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) toolBarContributionEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6567,7 +6579,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getToolBarContribution_PositionInParent() {
-		return (EAttribute)toolBarContributionEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) toolBarContributionEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -6595,7 +6607,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getToolBarContributions_ToolBarContributions() {
-		return (EReference)toolBarContributionsEClass.getEStructuralFeatures().get(0);
+		return (EReference) toolBarContributionsEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6623,7 +6635,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getTrimContribution_ParentId() {
-		return (EAttribute)trimContributionEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) trimContributionEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6637,7 +6649,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getTrimContribution_PositionInParent() {
-		return (EAttribute)trimContributionEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) trimContributionEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -6665,7 +6677,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getTrimContributions_TrimContributions() {
-		return (EReference)trimContributionsEClass.getEStructuralFeatures().get(0);
+		return (EReference) trimContributionsEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6702,7 +6714,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public MMenuFactory getMenuFactory() {
-		return (MMenuFactory)getEFactoryInstance();
+		return (MMenuFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -6720,7 +6732,8 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -6811,7 +6824,8 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -6820,10 +6834,13 @@ public class MenuPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl) EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(CommandsPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(ApplicationPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(BasicPackageImpl.eNS_URI);
 
 		// Create type parameters
 
@@ -6884,76 +6901,129 @@ public class MenuPackageImpl extends EPackageImpl {
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(itemEClass, MItem.class, "Item", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getItem_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getItem_Selected(), ecorePackage.getEBoolean(), "selected", null, 0, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getItem_Type(), this.getItemType(), "type", null, 1, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getItem_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, MItem.class, //$NON-NLS-1$//$NON-NLS-2$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getItem_Selected(), ecorePackage.getEBoolean(), "selected", null, 0, 1, MItem.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getItem_Type(), this.getItemType(), "type", null, 1, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, //$NON-NLS-1$
+				IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getItem__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(handledItemEClass, MHandledItem.class, "HandledItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getHandledItem_Command(), theCommandsPackage.getCommand(), null, "command", null, 0, 1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getHandledItem_WbCommand(), theCommandsPackage.getParameterizedCommand(), "wbCommand", null, 0, 1, MHandledItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getHandledItem_Parameters(), theCommandsPackage.getParameter(), null, "parameters", null, 0, -1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(handledItemEClass, MHandledItem.class, "HandledItem", IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getHandledItem_Command(), theCommandsPackage.getCommand(), null, "command", null, 0, 1, //$NON-NLS-1$
+				MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getHandledItem_WbCommand(), theCommandsPackage.getParameterizedCommand(), "wbCommand", null, 0, //$NON-NLS-1$
+				1, MHandledItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEReference(getHandledItem_Parameters(), theCommandsPackage.getParameter(), null, "parameters", null, 0, -1, //$NON-NLS-1$
+				MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(menuElementEClass, MMenuElement.class, "MenuElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getMenuElement_Mnemonics(), ecorePackage.getEString(), "mnemonics", null, 0, 1, MMenuElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(menuElementEClass, MMenuElement.class, "MenuElement", IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMenuElement_Mnemonics(), ecorePackage.getEString(), "mnemonics", null, 0, 1, //$NON-NLS-1$
+				MMenuElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
 
-		initEOperation(getMenuElement__GetLocalizedMnemonics(), ecorePackage.getEString(), "getLocalizedMnemonics", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+		initEOperation(getMenuElement__GetLocalizedMnemonics(), ecorePackage.getEString(), "getLocalizedMnemonics", 0, //$NON-NLS-1$
+				1, IS_UNIQUE, IS_ORDERED);
 
 		initEOperation(getMenuElement__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(menuItemEClass, MMenuItem.class, "MenuItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(menuItemEClass, MMenuItem.class, "MenuItem", IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
 		initEOperation(getMenuItem__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(menuSeparatorEClass, MMenuSeparator.class, "MenuSeparator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(menuSeparatorEClass, MMenuSeparator.class, "MenuSeparator", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(menuEClass, MMenu.class, "Menu", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getMenu_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, MMenu.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEAttribute(getMenu_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, MMenu.class, //$NON-NLS-1$//$NON-NLS-2$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(menuContributionEClass, MMenuContribution.class, "MenuContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getMenuContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", "", 0, 1, MMenuContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getMenuContribution_ParentId(), ecorePackage.getEString(), "parentId", null, 1, 1, MMenuContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(menuContributionEClass, MMenuContribution.class, "MenuContribution", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMenuContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", "", 0, 1, //$NON-NLS-1$//$NON-NLS-2$
+				MMenuContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMenuContribution_ParentId(), ecorePackage.getEString(), "parentId", null, 1, 1, //$NON-NLS-1$
+				MMenuContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
 
-		initEClass(popupMenuEClass, MPopupMenu.class, "PopupMenu", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(popupMenuEClass, MPopupMenu.class, "PopupMenu", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(directMenuItemEClass, MDirectMenuItem.class, "DirectMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(directMenuItemEClass, MDirectMenuItem.class, "DirectMenuItem", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(handledMenuItemEClass, MHandledMenuItem.class, "HandledMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(handledMenuItemEClass, MHandledMenuItem.class, "HandledMenuItem", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(toolItemEClass, MToolItem.class, "ToolItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getToolItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, MToolItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(toolItemEClass, MToolItem.class, "ToolItem", IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getToolItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, MToolItem.class, !IS_TRANSIENT, //$NON-NLS-1$
+				!IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
+				IS_ORDERED);
 
 		initEClass(toolBarEClass, MToolBar.class, "ToolBar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
-		initEClass(toolBarElementEClass, MToolBarElement.class, "ToolBarElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(toolBarElementEClass, MToolBarElement.class, "ToolBarElement", IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(toolControlEClass, MToolControl.class, "ToolControl", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(toolControlEClass, MToolControl.class, "ToolControl", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(handledToolItemEClass, MHandledToolItem.class, "HandledToolItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(handledToolItemEClass, MHandledToolItem.class, "HandledToolItem", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(directToolItemEClass, MDirectToolItem.class, "DirectToolItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(directToolItemEClass, MDirectToolItem.class, "DirectToolItem", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(toolBarSeparatorEClass, MToolBarSeparator.class, "ToolBarSeparator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(toolBarSeparatorEClass, MToolBarSeparator.class, "ToolBarSeparator", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(menuContributionsEClass, MMenuContributions.class, "MenuContributions", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getMenuContributions_MenuContributions(), this.getMenuContribution(), null, "menuContributions", null, 0, -1, MMenuContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(menuContributionsEClass, MMenuContributions.class, "MenuContributions", IS_ABSTRACT, IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getMenuContributions_MenuContributions(), this.getMenuContribution(), null, "menuContributions", //$NON-NLS-1$
+				null, 0, -1, MMenuContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(toolBarContributionEClass, MToolBarContribution.class, "ToolBarContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getToolBarContribution_ParentId(), ecorePackage.getEString(), "parentId", null, 0, 1, MToolBarContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getToolBarContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", null, 0, 1, MToolBarContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(toolBarContributionEClass, MToolBarContribution.class, "ToolBarContribution", !IS_ABSTRACT, //$NON-NLS-1$
+				!IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getToolBarContribution_ParentId(), ecorePackage.getEString(), "parentId", null, 0, 1, //$NON-NLS-1$
+				MToolBarContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getToolBarContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", null, //$NON-NLS-1$
+				0, 1, MToolBarContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(toolBarContributionsEClass, MToolBarContributions.class, "ToolBarContributions", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getToolBarContributions_ToolBarContributions(), this.getToolBarContribution(), null, "toolBarContributions", null, 0, -1, MToolBarContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(toolBarContributionsEClass, MToolBarContributions.class, "ToolBarContributions", IS_ABSTRACT, //$NON-NLS-1$
+				IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getToolBarContributions_ToolBarContributions(), this.getToolBarContribution(), null,
+				"toolBarContributions", null, 0, -1, MToolBarContributions.class, !IS_TRANSIENT, !IS_VOLATILE, //$NON-NLS-1$
+				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(trimContributionEClass, MTrimContribution.class, "TrimContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getTrimContribution_ParentId(), ecorePackage.getEString(), "parentId", null, 0, 1, MTrimContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getTrimContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", null, 0, 1, MTrimContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(trimContributionEClass, MTrimContribution.class, "TrimContribution", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getTrimContribution_ParentId(), ecorePackage.getEString(), "parentId", null, 0, 1, //$NON-NLS-1$
+				MTrimContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTrimContribution_PositionInParent(), ecorePackage.getEString(), "positionInParent", null, 0, //$NON-NLS-1$
+				1, MTrimContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(trimContributionsEClass, MTrimContributions.class, "TrimContributions", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getTrimContributions_TrimContributions(), this.getTrimContribution(), null, "trimContributions", null, 0, -1, MTrimContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(trimContributionsEClass, MTrimContributions.class, "TrimContributions", IS_ABSTRACT, IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getTrimContributions_TrimContributions(), this.getTrimContribution(), null, "trimContributions", //$NON-NLS-1$
+				null, 0, -1, MTrimContributions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(dynamicMenuContributionEClass, MDynamicMenuContribution.class, "DynamicMenuContribution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(dynamicMenuContributionEClass, MDynamicMenuContribution.class, "DynamicMenuContribution", //$NON-NLS-1$
+				!IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize enums and add enum literals
 		initEEnum(itemTypeEEnum, ItemType.class, "ItemType"); //$NON-NLS-1$
@@ -7089,7 +7159,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EOperation MENU_ELEMENT___GET_LOCALIZED_MNEMONICS = eINSTANCE.getMenuElement__GetLocalizedMnemonics();
+		public static final EOperation MENU_ELEMENT___GET_LOCALIZED_MNEMONICS = eINSTANCE
+				.getMenuElement__GetLocalizedMnemonics();
 
 		/**
 		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
@@ -7098,7 +7169,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @since 1.1
 		 * @generated
 		 */
-		public static final EOperation MENU_ELEMENT___UPDATE_LOCALIZATION = eINSTANCE.getMenuElement__UpdateLocalization();
+		public static final EOperation MENU_ELEMENT___UPDATE_LOCALIZATION = eINSTANCE
+				.getMenuElement__UpdateLocalization();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
@@ -7170,7 +7242,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EAttribute MENU_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getMenuContribution_PositionInParent();
+		public static final EAttribute MENU_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE
+				.getMenuContribution_PositionInParent();
 
 		/**
 		 * The meta object literal for the '<em><b>Parent Id</b></em>' attribute feature.
@@ -7319,7 +7392,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EReference MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS = eINSTANCE.getMenuContributions_MenuContributions();
+		public static final EReference MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS = eINSTANCE
+				.getMenuContributions_MenuContributions();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl <em>Tool Bar Contribution</em>}' class.
@@ -7349,7 +7423,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EAttribute TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getToolBarContribution_PositionInParent();
+		public static final EAttribute TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE
+				.getToolBarContribution_PositionInParent();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions <em>Tool Bar Contributions</em>}' class.
@@ -7370,7 +7445,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EReference TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS = eINSTANCE.getToolBarContributions_ToolBarContributions();
+		public static final EReference TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS = eINSTANCE
+				.getToolBarContributions_ToolBarContributions();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionImpl <em>Trim Contribution</em>}' class.
@@ -7400,7 +7476,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EAttribute TRIM_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getTrimContribution_PositionInParent();
+		public static final EAttribute TRIM_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE
+				.getTrimContribution_PositionInParent();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions <em>Trim Contributions</em>}' class.
@@ -7421,7 +7498,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @since 1.0
 		 * @generated
 		 */
-		public static final EReference TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS = eINSTANCE.getTrimContributions_TrimContributions();
+		public static final EReference TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS = eINSTANCE
+				.getTrimContributions_TrimContributions();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DynamicMenuContributionImpl <em>Dynamic Menu Contribution</em>}' class.

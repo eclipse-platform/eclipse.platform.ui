@@ -419,7 +419,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CONTRIBUTION_URI, oldContributionURI, contributionURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CONTRIBUTION_URI,
+					oldContributionURI, contributionURI));
 	}
 
 	/**
@@ -489,7 +490,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, BasicPackageImpl.PART__PROPERTIES);
+			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+					StringToStringMapImpl.class, this, BasicPackageImpl.PART__PROPERTIES);
 		}
 		return properties.map();
 	}
@@ -541,7 +543,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__ICON_URI, oldIconURI, iconURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__ICON_URI, oldIconURI,
+					iconURI));
 	}
 
 	/**
@@ -633,7 +636,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, BasicPackageImpl.PART__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+					BasicPackageImpl.PART__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -670,8 +674,12 @@ public class PartImpl extends UIElementImpl implements MPart {
 		MToolBar oldToolbar = toolbar;
 		toolbar = newToolbar;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__TOOLBAR, oldToolbar, newToolbar);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
+					BasicPackageImpl.PART__TOOLBAR, oldToolbar, newToolbar);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -686,14 +694,17 @@ public class PartImpl extends UIElementImpl implements MPart {
 		if (newToolbar != toolbar) {
 			NotificationChain msgs = null;
 			if (toolbar != null)
-				msgs = ((InternalEObject)toolbar).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__TOOLBAR, null, msgs);
+				msgs = ((InternalEObject) toolbar).eInverseRemove(this,
+						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__TOOLBAR, null, msgs);
 			if (newToolbar != null)
-				msgs = ((InternalEObject)newToolbar).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__TOOLBAR, null, msgs);
+				msgs = ((InternalEObject) newToolbar).eInverseAdd(this,
+						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__TOOLBAR, null, msgs);
 			msgs = basicSetToolbar(newToolbar, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__TOOLBAR, newToolbar, newToolbar));
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__TOOLBAR, newToolbar,
+					newToolbar));
 	}
 
 	/**
@@ -716,7 +727,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 		boolean oldCloseable = closeable;
 		closeable = newCloseable;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CLOSEABLE, oldCloseable, closeable));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CLOSEABLE, oldCloseable,
+					closeable));
 	}
 
 	/**
@@ -739,7 +751,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__DESCRIPTION, oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__DESCRIPTION, oldDescription,
+					description));
 	}
 
 	/**
@@ -776,12 +789,12 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_LABEL, null, getLocalizedLabel()));
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_DESCRIPTION, null, getLocalizedDescription()));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_LABEL, null,
+					getLocalizedLabel()));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_TOOLTIP, null,
+					getLocalizedTooltip()));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_DESCRIPTION, null,
+					getLocalizedDescription()));
 		}
 	}
 
@@ -793,16 +806,17 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BasicPackageImpl.PART__PROPERTIES:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
-			case BasicPackageImpl.PART__HANDLERS:
-				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case BasicPackageImpl.PART__MENUS:
-				return ((InternalEList<?>)getMenus()).basicRemove(otherEnd, msgs);
-			case BasicPackageImpl.PART__TOOLBAR:
-				return basicSetToolbar(null, msgs);
-			case BasicPackageImpl.PART__TRIM_BARS:
-				return ((InternalEList<?>)getTrimBars()).basicRemove(otherEnd, msgs);
+		case BasicPackageImpl.PART__PROPERTIES:
+			return ((InternalEList<?>) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.basicRemove(otherEnd, msgs);
+		case BasicPackageImpl.PART__HANDLERS:
+			return ((InternalEList<?>) getHandlers()).basicRemove(otherEnd, msgs);
+		case BasicPackageImpl.PART__MENUS:
+			return ((InternalEList<?>) getMenus()).basicRemove(otherEnd, msgs);
+		case BasicPackageImpl.PART__TOOLBAR:
+			return basicSetToolbar(null, msgs);
+		case BasicPackageImpl.PART__TRIM_BARS:
+			return ((InternalEList<?>) getTrimBars()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -815,45 +829,47 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BasicPackageImpl.PART__CONTRIBUTION_URI:
-				return getContributionURI();
-			case BasicPackageImpl.PART__OBJECT:
-				return getObject();
-			case BasicPackageImpl.PART__CONTEXT:
-				return getContext();
-			case BasicPackageImpl.PART__VARIABLES:
-				return getVariables();
-			case BasicPackageImpl.PART__PROPERTIES:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
-				else return getProperties();
-			case BasicPackageImpl.PART__LABEL:
-				return getLabel();
-			case BasicPackageImpl.PART__ICON_URI:
-				return getIconURI();
-			case BasicPackageImpl.PART__TOOLTIP:
-				return getTooltip();
-			case BasicPackageImpl.PART__LOCALIZED_LABEL:
-				return getLocalizedLabel();
-			case BasicPackageImpl.PART__LOCALIZED_TOOLTIP:
-				return getLocalizedTooltip();
-			case BasicPackageImpl.PART__HANDLERS:
-				return getHandlers();
-			case BasicPackageImpl.PART__DIRTY:
-				return isDirty();
-			case BasicPackageImpl.PART__BINDING_CONTEXTS:
-				return getBindingContexts();
-			case BasicPackageImpl.PART__MENUS:
-				return getMenus();
-			case BasicPackageImpl.PART__TOOLBAR:
-				return getToolbar();
-			case BasicPackageImpl.PART__CLOSEABLE:
-				return isCloseable();
-			case BasicPackageImpl.PART__DESCRIPTION:
-				return getDescription();
-			case BasicPackageImpl.PART__LOCALIZED_DESCRIPTION:
-				return getLocalizedDescription();
-			case BasicPackageImpl.PART__TRIM_BARS:
-				return getTrimBars();
+		case BasicPackageImpl.PART__CONTRIBUTION_URI:
+			return getContributionURI();
+		case BasicPackageImpl.PART__OBJECT:
+			return getObject();
+		case BasicPackageImpl.PART__CONTEXT:
+			return getContext();
+		case BasicPackageImpl.PART__VARIABLES:
+			return getVariables();
+		case BasicPackageImpl.PART__PROPERTIES:
+			if (coreType)
+				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
+			else
+				return getProperties();
+		case BasicPackageImpl.PART__LABEL:
+			return getLabel();
+		case BasicPackageImpl.PART__ICON_URI:
+			return getIconURI();
+		case BasicPackageImpl.PART__TOOLTIP:
+			return getTooltip();
+		case BasicPackageImpl.PART__LOCALIZED_LABEL:
+			return getLocalizedLabel();
+		case BasicPackageImpl.PART__LOCALIZED_TOOLTIP:
+			return getLocalizedTooltip();
+		case BasicPackageImpl.PART__HANDLERS:
+			return getHandlers();
+		case BasicPackageImpl.PART__DIRTY:
+			return isDirty();
+		case BasicPackageImpl.PART__BINDING_CONTEXTS:
+			return getBindingContexts();
+		case BasicPackageImpl.PART__MENUS:
+			return getMenus();
+		case BasicPackageImpl.PART__TOOLBAR:
+			return getToolbar();
+		case BasicPackageImpl.PART__CLOSEABLE:
+			return isCloseable();
+		case BasicPackageImpl.PART__DESCRIPTION:
+			return getDescription();
+		case BasicPackageImpl.PART__LOCALIZED_DESCRIPTION:
+			return getLocalizedDescription();
+		case BasicPackageImpl.PART__TRIM_BARS:
+			return getTrimBars();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -867,59 +883,60 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BasicPackageImpl.PART__CONTRIBUTION_URI:
-				setContributionURI((String)newValue);
-				return;
-			case BasicPackageImpl.PART__OBJECT:
-				setObject(newValue);
-				return;
-			case BasicPackageImpl.PART__CONTEXT:
-				setContext((IEclipseContext)newValue);
-				return;
-			case BasicPackageImpl.PART__VARIABLES:
-				getVariables().clear();
-				getVariables().addAll((Collection<? extends String>)newValue);
-				return;
-			case BasicPackageImpl.PART__PROPERTIES:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
-				return;
-			case BasicPackageImpl.PART__LABEL:
-				setLabel((String)newValue);
-				return;
-			case BasicPackageImpl.PART__ICON_URI:
-				setIconURI((String)newValue);
-				return;
-			case BasicPackageImpl.PART__TOOLTIP:
-				setTooltip((String)newValue);
-				return;
-			case BasicPackageImpl.PART__HANDLERS:
-				getHandlers().clear();
-				getHandlers().addAll((Collection<? extends MHandler>)newValue);
-				return;
-			case BasicPackageImpl.PART__DIRTY:
-				setDirty((Boolean)newValue);
-				return;
-			case BasicPackageImpl.PART__BINDING_CONTEXTS:
-				getBindingContexts().clear();
-				getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
-				return;
-			case BasicPackageImpl.PART__MENUS:
-				getMenus().clear();
-				getMenus().addAll((Collection<? extends MMenu>)newValue);
-				return;
-			case BasicPackageImpl.PART__TOOLBAR:
-				setToolbar((MToolBar)newValue);
-				return;
-			case BasicPackageImpl.PART__CLOSEABLE:
-				setCloseable((Boolean)newValue);
-				return;
-			case BasicPackageImpl.PART__DESCRIPTION:
-				setDescription((String)newValue);
-				return;
-			case BasicPackageImpl.PART__TRIM_BARS:
-				getTrimBars().clear();
-				getTrimBars().addAll((Collection<? extends MTrimBar>)newValue);
-				return;
+		case BasicPackageImpl.PART__CONTRIBUTION_URI:
+			setContributionURI((String) newValue);
+			return;
+		case BasicPackageImpl.PART__OBJECT:
+			setObject(newValue);
+			return;
+		case BasicPackageImpl.PART__CONTEXT:
+			setContext((IEclipseContext) newValue);
+			return;
+		case BasicPackageImpl.PART__VARIABLES:
+			getVariables().clear();
+			getVariables().addAll((Collection<? extends String>) newValue);
+			return;
+		case BasicPackageImpl.PART__PROPERTIES:
+			((EStructuralFeature.Setting) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.set(newValue);
+			return;
+		case BasicPackageImpl.PART__LABEL:
+			setLabel((String) newValue);
+			return;
+		case BasicPackageImpl.PART__ICON_URI:
+			setIconURI((String) newValue);
+			return;
+		case BasicPackageImpl.PART__TOOLTIP:
+			setTooltip((String) newValue);
+			return;
+		case BasicPackageImpl.PART__HANDLERS:
+			getHandlers().clear();
+			getHandlers().addAll((Collection<? extends MHandler>) newValue);
+			return;
+		case BasicPackageImpl.PART__DIRTY:
+			setDirty((Boolean) newValue);
+			return;
+		case BasicPackageImpl.PART__BINDING_CONTEXTS:
+			getBindingContexts().clear();
+			getBindingContexts().addAll((Collection<? extends MBindingContext>) newValue);
+			return;
+		case BasicPackageImpl.PART__MENUS:
+			getMenus().clear();
+			getMenus().addAll((Collection<? extends MMenu>) newValue);
+			return;
+		case BasicPackageImpl.PART__TOOLBAR:
+			setToolbar((MToolBar) newValue);
+			return;
+		case BasicPackageImpl.PART__CLOSEABLE:
+			setCloseable((Boolean) newValue);
+			return;
+		case BasicPackageImpl.PART__DESCRIPTION:
+			setDescription((String) newValue);
+			return;
+		case BasicPackageImpl.PART__TRIM_BARS:
+			getTrimBars().clear();
+			getTrimBars().addAll((Collection<? extends MTrimBar>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -932,54 +949,54 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.PART__CONTRIBUTION_URI:
-				setContributionURI(CONTRIBUTION_URI_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__OBJECT:
-				setObject(OBJECT_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__CONTEXT:
-				setContext(CONTEXT_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__VARIABLES:
-				getVariables().clear();
-				return;
-			case BasicPackageImpl.PART__PROPERTIES:
-				getProperties().clear();
-				return;
-			case BasicPackageImpl.PART__LABEL:
-				setLabel(LABEL_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__ICON_URI:
-				setIconURI(ICON_URI_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__TOOLTIP:
-				setTooltip(TOOLTIP_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__HANDLERS:
-				getHandlers().clear();
-				return;
-			case BasicPackageImpl.PART__DIRTY:
-				setDirty(DIRTY_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__BINDING_CONTEXTS:
-				getBindingContexts().clear();
-				return;
-			case BasicPackageImpl.PART__MENUS:
-				getMenus().clear();
-				return;
-			case BasicPackageImpl.PART__TOOLBAR:
-				setToolbar((MToolBar)null);
-				return;
-			case BasicPackageImpl.PART__CLOSEABLE:
-				setCloseable(CLOSEABLE_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__DESCRIPTION:
-				setDescription(DESCRIPTION_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__TRIM_BARS:
-				getTrimBars().clear();
-				return;
+		case BasicPackageImpl.PART__CONTRIBUTION_URI:
+			setContributionURI(CONTRIBUTION_URI_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__OBJECT:
+			setObject(OBJECT_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__CONTEXT:
+			setContext(CONTEXT_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__VARIABLES:
+			getVariables().clear();
+			return;
+		case BasicPackageImpl.PART__PROPERTIES:
+			getProperties().clear();
+			return;
+		case BasicPackageImpl.PART__LABEL:
+			setLabel(LABEL_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__ICON_URI:
+			setIconURI(ICON_URI_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__TOOLTIP:
+			setTooltip(TOOLTIP_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__HANDLERS:
+			getHandlers().clear();
+			return;
+		case BasicPackageImpl.PART__DIRTY:
+			setDirty(DIRTY_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__BINDING_CONTEXTS:
+			getBindingContexts().clear();
+			return;
+		case BasicPackageImpl.PART__MENUS:
+			getMenus().clear();
+			return;
+		case BasicPackageImpl.PART__TOOLBAR:
+			setToolbar((MToolBar) null);
+			return;
+		case BasicPackageImpl.PART__CLOSEABLE:
+			setCloseable(CLOSEABLE_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__DESCRIPTION:
+			setDescription(DESCRIPTION_EDEFAULT);
+			return;
+		case BasicPackageImpl.PART__TRIM_BARS:
+			getTrimBars().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -992,44 +1009,48 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BasicPackageImpl.PART__CONTRIBUTION_URI:
-				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
-			case BasicPackageImpl.PART__OBJECT:
-				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
-			case BasicPackageImpl.PART__CONTEXT:
-				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case BasicPackageImpl.PART__VARIABLES:
-				return variables != null && !variables.isEmpty();
-			case BasicPackageImpl.PART__PROPERTIES:
-				return properties != null && !properties.isEmpty();
-			case BasicPackageImpl.PART__LABEL:
-				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
-			case BasicPackageImpl.PART__ICON_URI:
-				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
-			case BasicPackageImpl.PART__TOOLTIP:
-				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case BasicPackageImpl.PART__LOCALIZED_LABEL:
-				return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null : !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
-			case BasicPackageImpl.PART__LOCALIZED_TOOLTIP:
-				return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null : !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
-			case BasicPackageImpl.PART__HANDLERS:
-				return handlers != null && !handlers.isEmpty();
-			case BasicPackageImpl.PART__DIRTY:
-				return dirty != DIRTY_EDEFAULT;
-			case BasicPackageImpl.PART__BINDING_CONTEXTS:
-				return bindingContexts != null && !bindingContexts.isEmpty();
-			case BasicPackageImpl.PART__MENUS:
-				return menus != null && !menus.isEmpty();
-			case BasicPackageImpl.PART__TOOLBAR:
-				return toolbar != null;
-			case BasicPackageImpl.PART__CLOSEABLE:
-				return closeable != CLOSEABLE_EDEFAULT;
-			case BasicPackageImpl.PART__DESCRIPTION:
-				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
-			case BasicPackageImpl.PART__LOCALIZED_DESCRIPTION:
-				return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null : !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
-			case BasicPackageImpl.PART__TRIM_BARS:
-				return trimBars != null && !trimBars.isEmpty();
+		case BasicPackageImpl.PART__CONTRIBUTION_URI:
+			return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null
+					: !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
+		case BasicPackageImpl.PART__OBJECT:
+			return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+		case BasicPackageImpl.PART__CONTEXT:
+			return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
+		case BasicPackageImpl.PART__VARIABLES:
+			return variables != null && !variables.isEmpty();
+		case BasicPackageImpl.PART__PROPERTIES:
+			return properties != null && !properties.isEmpty();
+		case BasicPackageImpl.PART__LABEL:
+			return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+		case BasicPackageImpl.PART__ICON_URI:
+			return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
+		case BasicPackageImpl.PART__TOOLTIP:
+			return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+		case BasicPackageImpl.PART__LOCALIZED_LABEL:
+			return LOCALIZED_LABEL_EDEFAULT == null ? getLocalizedLabel() != null
+					: !LOCALIZED_LABEL_EDEFAULT.equals(getLocalizedLabel());
+		case BasicPackageImpl.PART__LOCALIZED_TOOLTIP:
+			return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null
+					: !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
+		case BasicPackageImpl.PART__HANDLERS:
+			return handlers != null && !handlers.isEmpty();
+		case BasicPackageImpl.PART__DIRTY:
+			return dirty != DIRTY_EDEFAULT;
+		case BasicPackageImpl.PART__BINDING_CONTEXTS:
+			return bindingContexts != null && !bindingContexts.isEmpty();
+		case BasicPackageImpl.PART__MENUS:
+			return menus != null && !menus.isEmpty();
+		case BasicPackageImpl.PART__TOOLBAR:
+			return toolbar != null;
+		case BasicPackageImpl.PART__CLOSEABLE:
+			return closeable != CLOSEABLE_EDEFAULT;
+		case BasicPackageImpl.PART__DESCRIPTION:
+			return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+		case BasicPackageImpl.PART__LOCALIZED_DESCRIPTION:
+			return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null
+					: !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
+		case BasicPackageImpl.PART__TRIM_BARS:
+			return trimBars != null && !trimBars.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1043,60 +1064,82 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MPartSashContainerElement.class) {
 			switch (derivedFeatureID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MStackElement.class) {
 			switch (derivedFeatureID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContribution.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART__CONTRIBUTION_URI: return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
-				case BasicPackageImpl.PART__OBJECT: return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-				default: return -1;
+			case BasicPackageImpl.PART__CONTRIBUTION_URI:
+				return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
+			case BasicPackageImpl.PART__OBJECT:
+				return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
-				case BasicPackageImpl.PART__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
-				case BasicPackageImpl.PART__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
-				default: return -1;
+			case BasicPackageImpl.PART__CONTEXT:
+				return UiPackageImpl.CONTEXT__CONTEXT;
+			case BasicPackageImpl.PART__VARIABLES:
+				return UiPackageImpl.CONTEXT__VARIABLES;
+			case BasicPackageImpl.PART__PROPERTIES:
+				return UiPackageImpl.CONTEXT__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
-				case BasicPackageImpl.PART__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
-				case BasicPackageImpl.PART__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				case BasicPackageImpl.PART__LOCALIZED_LABEL: return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
-				case BasicPackageImpl.PART__LOCALIZED_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
-				default: return -1;
+			case BasicPackageImpl.PART__LABEL:
+				return UiPackageImpl.UI_LABEL__LABEL;
+			case BasicPackageImpl.PART__ICON_URI:
+				return UiPackageImpl.UI_LABEL__ICON_URI;
+			case BasicPackageImpl.PART__TOOLTIP:
+				return UiPackageImpl.UI_LABEL__TOOLTIP;
+			case BasicPackageImpl.PART__LOCALIZED_LABEL:
+				return UiPackageImpl.UI_LABEL__LOCALIZED_LABEL;
+			case BasicPackageImpl.PART__LOCALIZED_TOOLTIP:
+				return UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART__HANDLERS: return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
-				default: return -1;
+			case BasicPackageImpl.PART__HANDLERS:
+				return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MDirtyable.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART__DIRTY: return UiPackageImpl.DIRTYABLE__DIRTY;
-				default: return -1;
+			case BasicPackageImpl.PART__DIRTY:
+				return UiPackageImpl.DIRTYABLE__DIRTY;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (derivedFeatureID) {
-				case BasicPackageImpl.PART__BINDING_CONTEXTS: return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
-				default: return -1;
+			case BasicPackageImpl.PART__BINDING_CONTEXTS:
+				return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MWindowElement.class) {
 			switch (derivedFeatureID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -1111,60 +1154,82 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MPartSashContainerElement.class) {
 			switch (baseFeatureID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MStackElement.class) {
 			switch (baseFeatureID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContribution.class) {
 			switch (baseFeatureID) {
-				case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI: return BasicPackageImpl.PART__CONTRIBUTION_URI;
-				case ApplicationPackageImpl.CONTRIBUTION__OBJECT: return BasicPackageImpl.PART__OBJECT;
-				default: return -1;
+			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI:
+				return BasicPackageImpl.PART__CONTRIBUTION_URI;
+			case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
+				return BasicPackageImpl.PART__OBJECT;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.CONTEXT__CONTEXT: return BasicPackageImpl.PART__CONTEXT;
-				case UiPackageImpl.CONTEXT__VARIABLES: return BasicPackageImpl.PART__VARIABLES;
-				case UiPackageImpl.CONTEXT__PROPERTIES: return BasicPackageImpl.PART__PROPERTIES;
-				default: return -1;
+			case UiPackageImpl.CONTEXT__CONTEXT:
+				return BasicPackageImpl.PART__CONTEXT;
+			case UiPackageImpl.CONTEXT__VARIABLES:
+				return BasicPackageImpl.PART__VARIABLES;
+			case UiPackageImpl.CONTEXT__PROPERTIES:
+				return BasicPackageImpl.PART__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.UI_LABEL__LABEL: return BasicPackageImpl.PART__LABEL;
-				case UiPackageImpl.UI_LABEL__ICON_URI: return BasicPackageImpl.PART__ICON_URI;
-				case UiPackageImpl.UI_LABEL__TOOLTIP: return BasicPackageImpl.PART__TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL: return BasicPackageImpl.PART__LOCALIZED_LABEL;
-				case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP: return BasicPackageImpl.PART__LOCALIZED_TOOLTIP;
-				default: return -1;
+			case UiPackageImpl.UI_LABEL__LABEL:
+				return BasicPackageImpl.PART__LABEL;
+			case UiPackageImpl.UI_LABEL__ICON_URI:
+				return BasicPackageImpl.PART__ICON_URI;
+			case UiPackageImpl.UI_LABEL__TOOLTIP:
+				return BasicPackageImpl.PART__TOOLTIP;
+			case UiPackageImpl.UI_LABEL__LOCALIZED_LABEL:
+				return BasicPackageImpl.PART__LOCALIZED_LABEL;
+			case UiPackageImpl.UI_LABEL__LOCALIZED_TOOLTIP:
+				return BasicPackageImpl.PART__LOCALIZED_TOOLTIP;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseFeatureID) {
-				case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS: return BasicPackageImpl.PART__HANDLERS;
-				default: return -1;
+			case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS:
+				return BasicPackageImpl.PART__HANDLERS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MDirtyable.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.DIRTYABLE__DIRTY: return BasicPackageImpl.PART__DIRTY;
-				default: return -1;
+			case UiPackageImpl.DIRTYABLE__DIRTY:
+				return BasicPackageImpl.PART__DIRTY;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
-				case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS: return BasicPackageImpl.PART__BINDING_CONTEXTS;
-				default: return -1;
+			case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS:
+				return BasicPackageImpl.PART__BINDING_CONTEXTS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MWindowElement.class) {
 			switch (baseFeatureID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -1179,59 +1244,72 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
 		if (baseClass == MLocalizable.class) {
 			switch (baseOperationID) {
-				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return BasicPackageImpl.PART___UPDATE_LOCALIZATION;
-				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION:
+				return BasicPackageImpl.PART___UPDATE_LOCALIZATION;
+			default:
+				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
 		if (baseClass == MUIElement.class) {
 			switch (baseOperationID) {
-				case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return BasicPackageImpl.PART___UPDATE_LOCALIZATION;
-				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION:
+				return BasicPackageImpl.PART___UPDATE_LOCALIZATION;
+			default:
+				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
 		if (baseClass == MPartSashContainerElement.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MStackElement.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContribution.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MContext.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MUILabel.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MDirtyable.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MWindowElement.class) {
 			switch (baseOperationID) {
-				default: return -1;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedOperationID(baseOperationID, baseClass);
@@ -1245,9 +1323,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case BasicPackageImpl.PART___UPDATE_LOCALIZATION:
-				updateLocalization();
-				return null;
+		case BasicPackageImpl.PART___UPDATE_LOCALIZATION:
+			updateLocalization();
+			return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}
@@ -1259,7 +1337,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$

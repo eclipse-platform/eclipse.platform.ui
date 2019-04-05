@@ -93,7 +93,8 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 		boolean oldHorizontal = horizontal;
 		horizontal = newHorizontal;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.GENERIC_TILE__HORIZONTAL, oldHorizontal, horizontal));
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.GENERIC_TILE__HORIZONTAL, oldHorizontal,
+					horizontal));
 	}
 
 	/**
@@ -104,8 +105,8 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
-				return isHorizontal();
+		case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
+			return isHorizontal();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -118,9 +119,9 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
-				setHorizontal((Boolean)newValue);
-				return;
+		case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
+			setHorizontal((Boolean) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -133,9 +134,9 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
-				setHorizontal(HORIZONTAL_EDEFAULT);
-				return;
+		case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
+			setHorizontal(HORIZONTAL_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -148,8 +149,8 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
-				return horizontal != HORIZONTAL_EDEFAULT;
+		case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
+			return horizontal != HORIZONTAL_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -161,7 +162,8 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (horizontal: "); //$NON-NLS-1$

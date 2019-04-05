@@ -84,8 +84,12 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 		MMenu oldMenu = menu;
 		menu = newMenu;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_ITEM__MENU, oldMenu, newMenu);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
+					MenuPackageImpl.TOOL_ITEM__MENU, oldMenu, newMenu);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -100,13 +104,15 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 		if (newMenu != menu) {
 			NotificationChain msgs = null;
 			if (menu != null)
-				msgs = ((InternalEObject)menu).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MenuPackageImpl.TOOL_ITEM__MENU, null, msgs);
+				msgs = ((InternalEObject) menu).eInverseRemove(this,
+						EOPPOSITE_FEATURE_BASE - MenuPackageImpl.TOOL_ITEM__MENU, null, msgs);
 			if (newMenu != null)
-				msgs = ((InternalEObject)newMenu).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MenuPackageImpl.TOOL_ITEM__MENU, null, msgs);
+				msgs = ((InternalEObject) newMenu).eInverseAdd(this,
+						EOPPOSITE_FEATURE_BASE - MenuPackageImpl.TOOL_ITEM__MENU, null, msgs);
 			msgs = basicSetMenu(newMenu, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_ITEM__MENU, newMenu, newMenu));
 	}
 
@@ -118,8 +124,8 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__MENU:
-				return basicSetMenu(null, msgs);
+		case MenuPackageImpl.TOOL_ITEM__MENU:
+			return basicSetMenu(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -132,8 +138,8 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__MENU:
-				return getMenu();
+		case MenuPackageImpl.TOOL_ITEM__MENU:
+			return getMenu();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -146,9 +152,9 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__MENU:
-				setMenu((MMenu)newValue);
-				return;
+		case MenuPackageImpl.TOOL_ITEM__MENU:
+			setMenu((MMenu) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -161,9 +167,9 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__MENU:
-				setMenu((MMenu)null);
-				return;
+		case MenuPackageImpl.TOOL_ITEM__MENU:
+			setMenu((MMenu) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -176,8 +182,8 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.TOOL_ITEM__MENU:
-				return menu != null;
+		case MenuPackageImpl.TOOL_ITEM__MENU:
+			return menu != null;
 		}
 		return super.eIsSet(featureID);
 	}

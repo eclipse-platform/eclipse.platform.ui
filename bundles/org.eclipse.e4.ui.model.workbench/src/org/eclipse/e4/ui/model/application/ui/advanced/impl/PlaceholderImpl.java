@@ -94,12 +94,13 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 */
 	@Override
 	public MUIElement getRef() {
-		if (ref != null && ((EObject)ref).eIsProxy()) {
-			InternalEObject oldRef = (InternalEObject)ref;
-			ref = (MUIElement)eResolveProxy(oldRef);
+		if (ref != null && ((EObject) ref).eIsProxy()) {
+			InternalEObject oldRef = (InternalEObject) ref;
+			ref = (MUIElement) eResolveProxy(oldRef);
 			if (ref != oldRef) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, AdvancedPackageImpl.PLACEHOLDER__REF, oldRef, ref));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, AdvancedPackageImpl.PLACEHOLDER__REF,
+							oldRef, ref));
 			}
 		}
 		return ref;
@@ -147,7 +148,8 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 		boolean oldCloseable = closeable;
 		closeable = newCloseable;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE, oldCloseable, closeable));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE,
+					oldCloseable, closeable));
 	}
 
 	/**
@@ -158,11 +160,12 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PLACEHOLDER__REF:
-				if (resolve) return getRef();
-				return basicGetRef();
-			case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
-				return isCloseable();
+		case AdvancedPackageImpl.PLACEHOLDER__REF:
+			if (resolve)
+				return getRef();
+			return basicGetRef();
+		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
+			return isCloseable();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -175,12 +178,12 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PLACEHOLDER__REF:
-				setRef((MUIElement)newValue);
-				return;
-			case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
-				setCloseable((Boolean)newValue);
-				return;
+		case AdvancedPackageImpl.PLACEHOLDER__REF:
+			setRef((MUIElement) newValue);
+			return;
+		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
+			setCloseable((Boolean) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -193,12 +196,12 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PLACEHOLDER__REF:
-				setRef((MUIElement)null);
-				return;
-			case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
-				setCloseable(CLOSEABLE_EDEFAULT);
-				return;
+		case AdvancedPackageImpl.PLACEHOLDER__REF:
+			setRef((MUIElement) null);
+			return;
+		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
+			setCloseable(CLOSEABLE_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -211,10 +214,10 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case AdvancedPackageImpl.PLACEHOLDER__REF:
-				return ref != null;
-			case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
-				return closeable != CLOSEABLE_EDEFAULT;
+		case AdvancedPackageImpl.PLACEHOLDER__REF:
+			return ref != null;
+		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
+			return closeable != CLOSEABLE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -226,7 +229,8 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (closeable: "); //$NON-NLS-1$

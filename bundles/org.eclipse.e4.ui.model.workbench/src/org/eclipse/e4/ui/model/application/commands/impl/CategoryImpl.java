@@ -164,7 +164,8 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.CATEGORY__DESCRIPTION, oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.CATEGORY__DESCRIPTION,
+					oldDescription, description));
 	}
 
 	/**
@@ -196,10 +197,10 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, CommandsPackageImpl.CATEGORY__LOCALIZED_NAME, null, getLocalizedName()));
-			eNotify(new ENotificationImpl(
-					this, Notification.SET, CommandsPackageImpl.CATEGORY__LOCALIZED_DESCRIPTION, null, getLocalizedDescription()));
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.CATEGORY__LOCALIZED_NAME, null,
+					getLocalizedName()));
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.CATEGORY__LOCALIZED_DESCRIPTION,
+					null, getLocalizedDescription()));
 		}
 	}
 
@@ -211,14 +212,14 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case CommandsPackageImpl.CATEGORY__NAME:
-				return getName();
-			case CommandsPackageImpl.CATEGORY__DESCRIPTION:
-				return getDescription();
-			case CommandsPackageImpl.CATEGORY__LOCALIZED_NAME:
-				return getLocalizedName();
-			case CommandsPackageImpl.CATEGORY__LOCALIZED_DESCRIPTION:
-				return getLocalizedDescription();
+		case CommandsPackageImpl.CATEGORY__NAME:
+			return getName();
+		case CommandsPackageImpl.CATEGORY__DESCRIPTION:
+			return getDescription();
+		case CommandsPackageImpl.CATEGORY__LOCALIZED_NAME:
+			return getLocalizedName();
+		case CommandsPackageImpl.CATEGORY__LOCALIZED_DESCRIPTION:
+			return getLocalizedDescription();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -231,12 +232,12 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case CommandsPackageImpl.CATEGORY__NAME:
-				setName((String)newValue);
-				return;
-			case CommandsPackageImpl.CATEGORY__DESCRIPTION:
-				setDescription((String)newValue);
-				return;
+		case CommandsPackageImpl.CATEGORY__NAME:
+			setName((String) newValue);
+			return;
+		case CommandsPackageImpl.CATEGORY__DESCRIPTION:
+			setDescription((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -249,12 +250,12 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case CommandsPackageImpl.CATEGORY__NAME:
-				setName(NAME_EDEFAULT);
-				return;
-			case CommandsPackageImpl.CATEGORY__DESCRIPTION:
-				setDescription(DESCRIPTION_EDEFAULT);
-				return;
+		case CommandsPackageImpl.CATEGORY__NAME:
+			setName(NAME_EDEFAULT);
+			return;
+		case CommandsPackageImpl.CATEGORY__DESCRIPTION:
+			setDescription(DESCRIPTION_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -267,14 +268,16 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case CommandsPackageImpl.CATEGORY__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case CommandsPackageImpl.CATEGORY__DESCRIPTION:
-				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
-			case CommandsPackageImpl.CATEGORY__LOCALIZED_NAME:
-				return LOCALIZED_NAME_EDEFAULT == null ? getLocalizedName() != null : !LOCALIZED_NAME_EDEFAULT.equals(getLocalizedName());
-			case CommandsPackageImpl.CATEGORY__LOCALIZED_DESCRIPTION:
-				return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null : !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
+		case CommandsPackageImpl.CATEGORY__NAME:
+			return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+		case CommandsPackageImpl.CATEGORY__DESCRIPTION:
+			return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+		case CommandsPackageImpl.CATEGORY__LOCALIZED_NAME:
+			return LOCALIZED_NAME_EDEFAULT == null ? getLocalizedName() != null
+					: !LOCALIZED_NAME_EDEFAULT.equals(getLocalizedName());
+		case CommandsPackageImpl.CATEGORY__LOCALIZED_DESCRIPTION:
+			return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null
+					: !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
 		}
 		return super.eIsSet(featureID);
 	}
@@ -288,8 +291,10 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
 		if (baseClass == MLocalizable.class) {
 			switch (baseOperationID) {
-				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return CommandsPackageImpl.CATEGORY___UPDATE_LOCALIZATION;
-				default: return -1;
+			case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION:
+				return CommandsPackageImpl.CATEGORY___UPDATE_LOCALIZATION;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedOperationID(baseOperationID, baseClass);
@@ -303,9 +308,9 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case CommandsPackageImpl.CATEGORY___UPDATE_LOCALIZATION:
-				updateLocalization();
-				return null;
+		case CommandsPackageImpl.CATEGORY___UPDATE_LOCALIZATION:
+			updateLocalization();
+			return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}
@@ -317,7 +322,8 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: "); //$NON-NLS-1$

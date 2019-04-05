@@ -92,16 +92,18 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	@Override
 	public List<T> getChildren() {
 		if (children == null) {
-			EClassifier classifier = ModelUtils.getTypeArgument(eClass(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
+			EClassifier classifier = ModelUtils.getTypeArgument(eClass(),
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
 			final Class<?> clazz;
 
-			if( classifier != null && classifier.getInstanceClass() != null ) {
+			if (classifier != null && classifier.getInstanceClass() != null) {
 				clazz = classifier.getInstanceClass();
 			} else {
 				clazz = null;
 			}
 
-			children = new EObjectContainmentWithInverseEList<T>(MUIElement.class, this, UiPackageImpl.ELEMENT_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
+			children = new EObjectContainmentWithInverseEList<T>(MUIElement.class, this,
+					UiPackageImpl.ELEMENT_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 
 				/**
 				 *
@@ -115,10 +117,11 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 
 				@Override
 				protected T validate(int index, T object) {
-					if( isInstance(object) ) {
+					if (isInstance(object)) {
 						return object;
 					} else {
-						throw new IllegalArgumentException("The added object '"+object+"' is not assignable to '"+clazz.getName()+"'");
+						throw new IllegalArgumentException(
+								"The added object '" + object + "' is not assignable to '" + clazz.getName() + "'");
 					}
 				}
 			};
@@ -134,12 +137,13 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public T getSelectedElement() {
-		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
-			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
-			selectedElement = (T)eResolveProxy(oldSelectedElement);
+		if (selectedElement != null && ((EObject) selectedElement).eIsProxy()) {
+			InternalEObject oldSelectedElement = (InternalEObject) selectedElement;
+			selectedElement = (T) eResolveProxy(oldSelectedElement);
 			if (selectedElement != oldSelectedElement) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE,
+							UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
 			}
 		}
 		return selectedElement;
@@ -163,7 +167,8 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		T oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT,
+					oldSelectedElement, selectedElement));
 	}
 
 	@Override
@@ -192,8 +197,8 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
+		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+			return ((InternalEList<InternalEObject>) (InternalEList<?>) getChildren()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -206,8 +211,8 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
-				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+			return ((InternalEList<?>) getChildren()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -220,11 +225,12 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
-				return getChildren();
-			case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
-				if (resolve) return getSelectedElement();
-				return basicGetSelectedElement();
+		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+			return getChildren();
+		case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+			if (resolve)
+				return getSelectedElement();
+			return basicGetSelectedElement();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -238,13 +244,13 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
-				getChildren().clear();
-				getChildren().addAll((Collection<? extends T>)newValue);
-				return;
-			case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
-				setSelectedElement((T)newValue);
-				return;
+		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+			getChildren().clear();
+			getChildren().addAll((Collection<? extends T>) newValue);
+			return;
+		case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+			setSelectedElement((T) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -257,12 +263,12 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
-				getChildren().clear();
-				return;
-			case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
-				setSelectedElement((T)null);
-				return;
+		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+			getChildren().clear();
+			return;
+		case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+			setSelectedElement((T) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -275,10 +281,10 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
-				return children != null && !children.isEmpty();
-			case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
-				return selectedElement != null;
+		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+			return children != null && !children.isEmpty();
+		case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
+			return selectedElement != null;
 		}
 		return super.eIsSet(featureID);
 	}

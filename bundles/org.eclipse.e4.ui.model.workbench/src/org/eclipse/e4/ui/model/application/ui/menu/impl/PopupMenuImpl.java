@@ -130,7 +130,8 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 		IEclipseContext oldContext = context;
 		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.POPUP_MENU__CONTEXT, oldContext, context));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.POPUP_MENU__CONTEXT, oldContext,
+					context));
 	}
 
 	/**
@@ -154,7 +155,8 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MenuPackageImpl.POPUP_MENU__PROPERTIES);
+			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+					StringToStringMapImpl.class, this, MenuPackageImpl.POPUP_MENU__PROPERTIES);
 		}
 		return properties.map();
 	}
@@ -167,8 +169,9 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case MenuPackageImpl.POPUP_MENU__PROPERTIES:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
+		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
+			return ((InternalEList<?>) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -181,13 +184,15 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MenuPackageImpl.POPUP_MENU__CONTEXT:
-				return getContext();
-			case MenuPackageImpl.POPUP_MENU__VARIABLES:
-				return getVariables();
-			case MenuPackageImpl.POPUP_MENU__PROPERTIES:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
-				else return getProperties();
+		case MenuPackageImpl.POPUP_MENU__CONTEXT:
+			return getContext();
+		case MenuPackageImpl.POPUP_MENU__VARIABLES:
+			return getVariables();
+		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
+			if (coreType)
+				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
+			else
+				return getProperties();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -201,16 +206,17 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MenuPackageImpl.POPUP_MENU__CONTEXT:
-				setContext((IEclipseContext)newValue);
-				return;
-			case MenuPackageImpl.POPUP_MENU__VARIABLES:
-				getVariables().clear();
-				getVariables().addAll((Collection<? extends String>)newValue);
-				return;
-			case MenuPackageImpl.POPUP_MENU__PROPERTIES:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
-				return;
+		case MenuPackageImpl.POPUP_MENU__CONTEXT:
+			setContext((IEclipseContext) newValue);
+			return;
+		case MenuPackageImpl.POPUP_MENU__VARIABLES:
+			getVariables().clear();
+			getVariables().addAll((Collection<? extends String>) newValue);
+			return;
+		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
+			((EStructuralFeature.Setting) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.set(newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -223,15 +229,15 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.POPUP_MENU__CONTEXT:
-				setContext(CONTEXT_EDEFAULT);
-				return;
-			case MenuPackageImpl.POPUP_MENU__VARIABLES:
-				getVariables().clear();
-				return;
-			case MenuPackageImpl.POPUP_MENU__PROPERTIES:
-				getProperties().clear();
-				return;
+		case MenuPackageImpl.POPUP_MENU__CONTEXT:
+			setContext(CONTEXT_EDEFAULT);
+			return;
+		case MenuPackageImpl.POPUP_MENU__VARIABLES:
+			getVariables().clear();
+			return;
+		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
+			getProperties().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -244,12 +250,12 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MenuPackageImpl.POPUP_MENU__CONTEXT:
-				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case MenuPackageImpl.POPUP_MENU__VARIABLES:
-				return variables != null && !variables.isEmpty();
-			case MenuPackageImpl.POPUP_MENU__PROPERTIES:
-				return properties != null && !properties.isEmpty();
+		case MenuPackageImpl.POPUP_MENU__CONTEXT:
+			return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
+		case MenuPackageImpl.POPUP_MENU__VARIABLES:
+			return variables != null && !variables.isEmpty();
+		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
+			return properties != null && !properties.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -263,10 +269,14 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case MenuPackageImpl.POPUP_MENU__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
-				case MenuPackageImpl.POPUP_MENU__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
-				case MenuPackageImpl.POPUP_MENU__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
-				default: return -1;
+			case MenuPackageImpl.POPUP_MENU__CONTEXT:
+				return UiPackageImpl.CONTEXT__CONTEXT;
+			case MenuPackageImpl.POPUP_MENU__VARIABLES:
+				return UiPackageImpl.CONTEXT__VARIABLES;
+			case MenuPackageImpl.POPUP_MENU__PROPERTIES:
+				return UiPackageImpl.CONTEXT__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -281,10 +291,14 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.CONTEXT__CONTEXT: return MenuPackageImpl.POPUP_MENU__CONTEXT;
-				case UiPackageImpl.CONTEXT__VARIABLES: return MenuPackageImpl.POPUP_MENU__VARIABLES;
-				case UiPackageImpl.CONTEXT__PROPERTIES: return MenuPackageImpl.POPUP_MENU__PROPERTIES;
-				default: return -1;
+			case UiPackageImpl.CONTEXT__CONTEXT:
+				return MenuPackageImpl.POPUP_MENU__CONTEXT;
+			case UiPackageImpl.CONTEXT__VARIABLES:
+				return MenuPackageImpl.POPUP_MENU__VARIABLES;
+			case UiPackageImpl.CONTEXT__PROPERTIES:
+				return MenuPackageImpl.POPUP_MENU__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -297,7 +311,8 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (context: "); //$NON-NLS-1$

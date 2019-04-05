@@ -13,7 +13,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Tool Bar Separator</b></em>'.

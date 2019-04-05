@@ -47,12 +47,12 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 */
 	public static ApplicationFactoryImpl init() {
 		try {
-			ApplicationFactoryImpl theApplicationFactory = (ApplicationFactoryImpl)EPackage.Registry.INSTANCE.getEFactory(ApplicationPackageImpl.eNS_URI);
+			ApplicationFactoryImpl theApplicationFactory = (ApplicationFactoryImpl) EPackage.Registry.INSTANCE
+					.getEFactory(ApplicationPackageImpl.eNS_URI);
 			if (theApplicationFactory != null) {
 				return theApplicationFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new ApplicationFactoryImpl();
@@ -76,12 +76,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case ApplicationPackageImpl.STRING_TO_STRING_MAP: return (EObject)createStringToStringMap();
-			case ApplicationPackageImpl.APPLICATION: return (EObject)createApplication();
-			case ApplicationPackageImpl.ADDON: return (EObject)createAddon();
-			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		case ApplicationPackageImpl.STRING_TO_STRING_MAP:
+			return (EObject) createStringToStringMap();
+		case ApplicationPackageImpl.APPLICATION:
+			return (EObject) createApplication();
+		case ApplicationPackageImpl.ADDON:
+			return (EObject) createAddon();
+		case ApplicationPackageImpl.STRING_TO_OBJECT_MAP:
+			return (EObject) createStringToObjectMap();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -93,8 +97,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		default:
+			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -106,8 +110,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		default:
+			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -161,7 +165,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * @generated
 	 */
 	public ApplicationPackageImpl getApplicationPackage() {
-		return (ApplicationPackageImpl)getEPackage();
+		return (ApplicationPackageImpl) getEPackage();
 	}
 
 	/**

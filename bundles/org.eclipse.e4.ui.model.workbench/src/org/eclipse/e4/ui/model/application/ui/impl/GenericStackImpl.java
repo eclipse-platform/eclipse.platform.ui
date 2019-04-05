@@ -25,7 +25,8 @@ import org.eclipse.emf.ecore.EClass;
  * @since 1.0
  * @generated
  */
-public abstract class GenericStackImpl<T extends MUIElement> extends ElementContainerImpl<T> implements MGenericStack<T> {
+public abstract class GenericStackImpl<T extends MUIElement> extends ElementContainerImpl<T>
+		implements MGenericStack<T> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

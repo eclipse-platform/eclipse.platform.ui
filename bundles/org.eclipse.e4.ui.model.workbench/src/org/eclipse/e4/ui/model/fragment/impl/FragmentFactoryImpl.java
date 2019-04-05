@@ -46,12 +46,12 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 	 */
 	public static FragmentFactoryImpl init() {
 		try {
-			FragmentFactoryImpl theFragmentFactory = (FragmentFactoryImpl)EPackage.Registry.INSTANCE.getEFactory(FragmentPackageImpl.eNS_URI);
+			FragmentFactoryImpl theFragmentFactory = (FragmentFactoryImpl) EPackage.Registry.INSTANCE
+					.getEFactory(FragmentPackageImpl.eNS_URI);
 			if (theFragmentFactory != null) {
 				return theFragmentFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new FragmentFactoryImpl();
@@ -75,10 +75,12 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case FragmentPackageImpl.MODEL_FRAGMENTS: return (EObject)createModelFragments();
-			case FragmentPackageImpl.STRING_MODEL_FRAGMENT: return (EObject)createStringModelFragment();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		case FragmentPackageImpl.MODEL_FRAGMENTS:
+			return (EObject) createModelFragments();
+		case FragmentPackageImpl.STRING_MODEL_FRAGMENT:
+			return (EObject) createStringModelFragment();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -112,7 +114,7 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 	 * @generated
 	 */
 	public FragmentPackageImpl getFragmentPackage() {
-		return (FragmentPackageImpl)getEPackage();
+		return (FragmentPackageImpl) getEPackage();
 	}
 
 	/**

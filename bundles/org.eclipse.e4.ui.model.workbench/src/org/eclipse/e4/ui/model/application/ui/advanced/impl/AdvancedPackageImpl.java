@@ -79,7 +79,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final AdvancedPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl.init();
+	public static final AdvancedPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl
+			.init();
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PlaceholderImpl <em>Placeholder</em>}' class.
@@ -1194,7 +1195,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private AdvancedPackageImpl() {
-		super(eNS_URI, ((EFactory)MAdvancedFactory.INSTANCE));
+		super(eNS_URI, ((EFactory) MAdvancedFactory.INSTANCE));
 	}
 
 	/**
@@ -1217,27 +1218,42 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static AdvancedPackageImpl init() {
-		if (isInited) return (AdvancedPackageImpl)EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
+		if (isInited)
+			return (AdvancedPackageImpl) EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
 		Object registeredAdvancedPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		AdvancedPackageImpl theAdvancedPackage = registeredAdvancedPackage instanceof AdvancedPackageImpl ? (AdvancedPackageImpl)registeredAdvancedPackage : new AdvancedPackageImpl();
+		AdvancedPackageImpl theAdvancedPackage = registeredAdvancedPackage instanceof AdvancedPackageImpl
+				? (AdvancedPackageImpl) registeredAdvancedPackage
+				: new AdvancedPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
 		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) (registeredPackage instanceof ApplicationPackageImpl
+				? registeredPackage
+				: ApplicationPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) (registeredPackage instanceof CommandsPackageImpl
+				? registeredPackage
+				: CommandsPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		UiPackageImpl theUiPackage = (UiPackageImpl) (registeredPackage instanceof UiPackageImpl ? registeredPackage
+				: UiPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl) (registeredPackage instanceof MenuPackageImpl
+				? registeredPackage
+				: MenuPackageImpl.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(registeredPackage instanceof BasicPackageImpl ? registeredPackage : BasicPackageImpl.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl) (registeredPackage instanceof BasicPackageImpl
+				? registeredPackage
+				: BasicPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE
+				.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl) (registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl
+				? registeredPackage
+				: org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theAdvancedPackage.createPackageContents();
@@ -1265,7 +1281,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		return theAdvancedPackage;
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder <em>Placeholder</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1290,7 +1305,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPlaceholder_Ref() {
-		return (EReference)placeholderEClass.getEStructuralFeatures().get(0);
+		return (EReference) placeholderEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1304,7 +1319,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getPlaceholder_Closeable() {
-		return (EAttribute)placeholderEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) placeholderEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1331,7 +1346,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPerspective_Windows() {
-		return (EReference)perspectiveEClass.getEStructuralFeatures().get(0);
+		return (EReference) perspectiveEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1346,7 +1361,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getPerspective_TrimBars() {
-		return (EReference)perspectiveEClass.getEStructuralFeatures().get(1);
+		return (EReference) perspectiveEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1361,7 +1376,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public EOperation getPerspective__UpdateLocalization() {
 		return perspectiveEClass.getEOperations().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack <em>Perspective Stack</em>}'.
@@ -1402,7 +1416,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		return areaEClass.getEOperations().get(0);
 	}
 
-
 	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
@@ -1411,7 +1424,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public MAdvancedFactory getAdvancedFactory() {
-		return (MAdvancedFactory)getEFactoryInstance();
+		return (MAdvancedFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -1429,7 +1442,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -1463,7 +1477,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -1472,9 +1487,11 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl) EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(BasicPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) EPackage.Registry.INSTANCE
+				.getEPackage(CommandsPackageImpl.eNS_URI);
 
 		// Create type parameters
 
@@ -1510,17 +1527,28 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		areaEClass.getESuperTypes().add(theUiPackage.getUILabel());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(placeholderEClass, MPlaceholder.class, "Placeholder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getPlaceholder_Ref(), theUiPackage.getUIElement(), null, "ref", null, 1, 1, MPlaceholder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getPlaceholder_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPlaceholder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEClass(placeholderEClass, MPlaceholder.class, "Placeholder", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getPlaceholder_Ref(), theUiPackage.getUIElement(), null, "ref", null, 1, 1, MPlaceholder.class, //$NON-NLS-1$
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPlaceholder_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, //$NON-NLS-1$//$NON-NLS-2$
+				MPlaceholder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
 
-		initEClass(perspectiveEClass, MPerspective.class, "Perspective", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getPerspective_Windows(), theBasicPackage.getWindow(), null, "windows", null, 0, -1, MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPerspective_TrimBars(), theBasicPackage.getTrimBar(), null, "trimBars", null, 0, -1, MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(perspectiveEClass, MPerspective.class, "Perspective", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getPerspective_Windows(), theBasicPackage.getWindow(), null, "windows", null, 0, -1, //$NON-NLS-1$
+				MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPerspective_TrimBars(), theBasicPackage.getTrimBar(), null, "trimBars", null, 0, -1, //$NON-NLS-1$
+				MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getPerspective__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(perspectiveStackEClass, MPerspectiveStack.class, "PerspectiveStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(perspectiveStackEClass, MPerspectiveStack.class, "PerspectiveStack", !IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
+				IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(areaEClass, MArea.class, "Area", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -1607,7 +1635,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * @since 1.1
 		 * @generated
 		 */
-		public static final EOperation PERSPECTIVE___UPDATE_LOCALIZATION = eINSTANCE.getPerspective__UpdateLocalization();
+		public static final EOperation PERSPECTIVE___UPDATE_LOCALIZATION = eINSTANCE
+				.getPerspective__UpdateLocalization();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.

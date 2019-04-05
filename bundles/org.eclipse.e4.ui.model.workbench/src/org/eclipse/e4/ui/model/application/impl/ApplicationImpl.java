@@ -297,7 +297,15 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MWindow> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MWindow>(MWindow.class, this, ApplicationPackageImpl.APPLICATION__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
+			children = new EObjectContainmentWithInverseEList<MWindow>(MWindow.class, this,
+					ApplicationPackageImpl.APPLICATION__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Class<?> getInverseFeatureClass() {
+					return MUIElement.class;
+				}
+			};
 		}
 		return children;
 	}
@@ -333,7 +341,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		IEclipseContext oldContext = context;
 		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__CONTEXT, oldContext, context));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__CONTEXT,
+					oldContext, context));
 	}
 
 	/**
@@ -344,7 +353,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.APPLICATION__VARIABLES);
+			variables = new EDataTypeUniqueEList<String>(String.class, this,
+					ApplicationPackageImpl.APPLICATION__VARIABLES);
 		}
 		return variables;
 	}
@@ -357,7 +367,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION__PROPERTIES);
+			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+					StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION__PROPERTIES);
 		}
 		return properties.map();
 	}
@@ -370,7 +381,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, ApplicationPackageImpl.APPLICATION__HANDLERS);
+			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this,
+					ApplicationPackageImpl.APPLICATION__HANDLERS);
 		}
 		return handlers;
 	}
@@ -383,7 +395,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MBindingTable> getBindingTables() {
 		if (bindingTables == null) {
-			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this, ApplicationPackageImpl.APPLICATION__BINDING_TABLES);
+			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this,
+					ApplicationPackageImpl.APPLICATION__BINDING_TABLES);
 		}
 		return bindingTables;
 	}
@@ -396,7 +409,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MBindingContext> getRootContext() {
 		if (rootContext == null) {
-			rootContext = new EObjectContainmentEList<MBindingContext>(MBindingContext.class, this, ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT);
+			rootContext = new EObjectContainmentEList<MBindingContext>(MBindingContext.class, this,
+					ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT);
 		}
 		return rootContext;
 	}
@@ -409,7 +423,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MPartDescriptor> getDescriptors() {
 		if (descriptors == null) {
-			descriptors = new EObjectContainmentEList<MPartDescriptor>(MPartDescriptor.class, this, ApplicationPackageImpl.APPLICATION__DESCRIPTORS);
+			descriptors = new EObjectContainmentEList<MPartDescriptor>(MPartDescriptor.class, this,
+					ApplicationPackageImpl.APPLICATION__DESCRIPTORS);
 		}
 		return descriptors;
 	}
@@ -422,7 +437,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+					ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -435,7 +451,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MMenuContribution> getMenuContributions() {
 		if (menuContributions == null) {
-			menuContributions = new EObjectContainmentEList<MMenuContribution>(MMenuContribution.class, this, ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS);
+			menuContributions = new EObjectContainmentEList<MMenuContribution>(MMenuContribution.class, this,
+					ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS);
 		}
 		return menuContributions;
 	}
@@ -448,7 +465,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MToolBarContribution> getToolBarContributions() {
 		if (toolBarContributions == null) {
-			toolBarContributions = new EObjectContainmentEList<MToolBarContribution>(MToolBarContribution.class, this, ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS);
+			toolBarContributions = new EObjectContainmentEList<MToolBarContribution>(MToolBarContribution.class, this,
+					ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS);
 		}
 		return toolBarContributions;
 	}
@@ -461,7 +479,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MTrimContribution> getTrimContributions() {
 		if (trimContributions == null) {
-			trimContributions = new EObjectContainmentEList<MTrimContribution>(MTrimContribution.class, this, ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS);
+			trimContributions = new EObjectContainmentEList<MTrimContribution>(MTrimContribution.class, this,
+					ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS);
 		}
 		return trimContributions;
 	}
@@ -474,7 +493,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MUIElement> getSnippets() {
 		if (snippets == null) {
-			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, ApplicationPackageImpl.APPLICATION__SNIPPETS);
+			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this,
+					ApplicationPackageImpl.APPLICATION__SNIPPETS);
 		}
 		return snippets;
 	}
@@ -510,7 +530,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MAddon> getAddons() {
 		if (addons == null) {
-			addons = new EObjectContainmentEList<MAddon>(MAddon.class, this, ApplicationPackageImpl.APPLICATION__ADDONS);
+			addons = new EObjectContainmentEList<MAddon>(MAddon.class, this,
+					ApplicationPackageImpl.APPLICATION__ADDONS);
 		}
 		return addons;
 	}
@@ -523,7 +544,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MCategory> getCategories() {
 		if (categories == null) {
-			categories = new EObjectContainmentEList<MCategory>(MCategory.class, this, ApplicationPackageImpl.APPLICATION__CATEGORIES);
+			categories = new EObjectContainmentEList<MCategory>(MCategory.class, this,
+					ApplicationPackageImpl.APPLICATION__CATEGORIES);
 		}
 		return categories;
 	}
@@ -540,7 +562,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MDialog> getDialogs() {
 		if (dialogs == null) {
-			dialogs = new EObjectResolvingEList<MDialog>(MDialog.class, this, ApplicationPackageImpl.APPLICATION__DIALOGS);
+			dialogs = new EObjectResolvingEList<MDialog>(MDialog.class, this,
+					ApplicationPackageImpl.APPLICATION__DIALOGS);
 		}
 		return dialogs;
 	}
@@ -561,7 +584,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 					result.put(command.getElementId(), otherCommand);
 				}
 			}
-		
+
 			elementIdToCommandMap = result;
 		}
 		return elementIdToCommandMap.get(elementId);
@@ -575,30 +598,31 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__HANDLERS:
-				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
-				return ((InternalEList<?>)getBindingTables()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				return ((InternalEList<?>)getRootContext()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
-				return ((InternalEList<?>)getDescriptors()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
-				return ((InternalEList<?>)getMenuContributions()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
-				return ((InternalEList<?>)getToolBarContributions()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
-				return ((InternalEList<?>)getTrimContributions()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
-				return ((InternalEList<?>)getSnippets()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__COMMANDS:
-				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__ADDONS:
-				return ((InternalEList<?>)getAddons()).basicRemove(otherEnd, msgs);
-			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
-				return ((InternalEList<?>)getCategories()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+			return ((InternalEList<?>) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__HANDLERS:
+			return ((InternalEList<?>) getHandlers()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
+			return ((InternalEList<?>) getBindingTables()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
+			return ((InternalEList<?>) getRootContext()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
+			return ((InternalEList<?>) getDescriptors()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+			return ((InternalEList<?>) getMenuContributions()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+			return ((InternalEList<?>) getToolBarContributions()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+			return ((InternalEList<?>) getTrimContributions()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+			return ((InternalEList<?>) getSnippets()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			return ((InternalEList<?>) getCommands()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__ADDONS:
+			return ((InternalEList<?>) getAddons()).basicRemove(otherEnd, msgs);
+		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+			return ((InternalEList<?>) getCategories()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -611,39 +635,41 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ApplicationPackageImpl.APPLICATION__CONTEXT:
-				return getContext();
-			case ApplicationPackageImpl.APPLICATION__VARIABLES:
-				return getVariables();
-			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getProperties()).eMap();
-				else return getProperties();
-			case ApplicationPackageImpl.APPLICATION__HANDLERS:
-				return getHandlers();
-			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
-				return getBindingTables();
-			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				return getRootContext();
-			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
-				return getDescriptors();
-			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
-				return getBindingContexts();
-			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
-				return getMenuContributions();
-			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
-				return getToolBarContributions();
-			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
-				return getTrimContributions();
-			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
-				return getSnippets();
-			case ApplicationPackageImpl.APPLICATION__COMMANDS:
-				return getCommands();
-			case ApplicationPackageImpl.APPLICATION__ADDONS:
-				return getAddons();
-			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
-				return getCategories();
-			case ApplicationPackageImpl.APPLICATION__DIALOGS:
-				return getDialogs();
+		case ApplicationPackageImpl.APPLICATION__CONTEXT:
+			return getContext();
+		case ApplicationPackageImpl.APPLICATION__VARIABLES:
+			return getVariables();
+		case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+			if (coreType)
+				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
+			else
+				return getProperties();
+		case ApplicationPackageImpl.APPLICATION__HANDLERS:
+			return getHandlers();
+		case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
+			return getBindingTables();
+		case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
+			return getRootContext();
+		case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
+			return getDescriptors();
+		case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
+			return getBindingContexts();
+		case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+			return getMenuContributions();
+		case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+			return getToolBarContributions();
+		case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+			return getTrimContributions();
+		case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+			return getSnippets();
+		case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			return getCommands();
+		case ApplicationPackageImpl.APPLICATION__ADDONS:
+			return getAddons();
+		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+			return getCategories();
+		case ApplicationPackageImpl.APPLICATION__DIALOGS:
+			return getDialogs();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -657,68 +683,69 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ApplicationPackageImpl.APPLICATION__CONTEXT:
-				setContext((IEclipseContext)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__VARIABLES:
-				getVariables().clear();
-				getVariables().addAll((Collection<? extends String>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getProperties()).eMap()).set(newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__HANDLERS:
-				getHandlers().clear();
-				getHandlers().addAll((Collection<? extends MHandler>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
-				getBindingTables().clear();
-				getBindingTables().addAll((Collection<? extends MBindingTable>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				getRootContext().clear();
-				getRootContext().addAll((Collection<? extends MBindingContext>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
-				getDescriptors().clear();
-				getDescriptors().addAll((Collection<? extends MPartDescriptor>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
-				getBindingContexts().clear();
-				getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
-				getMenuContributions().clear();
-				getMenuContributions().addAll((Collection<? extends MMenuContribution>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
-				getToolBarContributions().clear();
-				getToolBarContributions().addAll((Collection<? extends MToolBarContribution>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
-				getTrimContributions().clear();
-				getTrimContributions().addAll((Collection<? extends MTrimContribution>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
-				getSnippets().clear();
-				getSnippets().addAll((Collection<? extends MUIElement>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__COMMANDS:
-				getCommands().clear();
-				getCommands().addAll((Collection<? extends MCommand>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__ADDONS:
-				getAddons().clear();
-				getAddons().addAll((Collection<? extends MAddon>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
-				getCategories().clear();
-				getCategories().addAll((Collection<? extends MCategory>)newValue);
-				return;
-			case ApplicationPackageImpl.APPLICATION__DIALOGS:
-				getDialogs().clear();
-				getDialogs().addAll((Collection<? extends MDialog>)newValue);
-				return;
+		case ApplicationPackageImpl.APPLICATION__CONTEXT:
+			setContext((IEclipseContext) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__VARIABLES:
+			getVariables().clear();
+			getVariables().addAll((Collection<? extends String>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+			((EStructuralFeature.Setting) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
+					.set(newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__HANDLERS:
+			getHandlers().clear();
+			getHandlers().addAll((Collection<? extends MHandler>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
+			getBindingTables().clear();
+			getBindingTables().addAll((Collection<? extends MBindingTable>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
+			getRootContext().clear();
+			getRootContext().addAll((Collection<? extends MBindingContext>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
+			getDescriptors().clear();
+			getDescriptors().addAll((Collection<? extends MPartDescriptor>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
+			getBindingContexts().clear();
+			getBindingContexts().addAll((Collection<? extends MBindingContext>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+			getMenuContributions().clear();
+			getMenuContributions().addAll((Collection<? extends MMenuContribution>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+			getToolBarContributions().clear();
+			getToolBarContributions().addAll((Collection<? extends MToolBarContribution>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+			getTrimContributions().clear();
+			getTrimContributions().addAll((Collection<? extends MTrimContribution>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+			getSnippets().clear();
+			getSnippets().addAll((Collection<? extends MUIElement>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			getCommands().clear();
+			getCommands().addAll((Collection<? extends MCommand>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__ADDONS:
+			getAddons().clear();
+			getAddons().addAll((Collection<? extends MAddon>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+			getCategories().clear();
+			getCategories().addAll((Collection<? extends MCategory>) newValue);
+			return;
+		case ApplicationPackageImpl.APPLICATION__DIALOGS:
+			getDialogs().clear();
+			getDialogs().addAll((Collection<? extends MDialog>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -731,54 +758,54 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ApplicationPackageImpl.APPLICATION__CONTEXT:
-				setContext(CONTEXT_EDEFAULT);
-				return;
-			case ApplicationPackageImpl.APPLICATION__VARIABLES:
-				getVariables().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-				getProperties().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__HANDLERS:
-				getHandlers().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
-				getBindingTables().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				getRootContext().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
-				getDescriptors().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
-				getBindingContexts().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
-				getMenuContributions().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
-				getToolBarContributions().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
-				getTrimContributions().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
-				getSnippets().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__COMMANDS:
-				getCommands().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__ADDONS:
-				getAddons().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
-				getCategories().clear();
-				return;
-			case ApplicationPackageImpl.APPLICATION__DIALOGS:
-				getDialogs().clear();
-				return;
+		case ApplicationPackageImpl.APPLICATION__CONTEXT:
+			setContext(CONTEXT_EDEFAULT);
+			return;
+		case ApplicationPackageImpl.APPLICATION__VARIABLES:
+			getVariables().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+			getProperties().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__HANDLERS:
+			getHandlers().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
+			getBindingTables().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
+			getRootContext().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
+			getDescriptors().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
+			getBindingContexts().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+			getMenuContributions().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+			getToolBarContributions().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+			getTrimContributions().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+			getSnippets().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			getCommands().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__ADDONS:
+			getAddons().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+			getCategories().clear();
+			return;
+		case ApplicationPackageImpl.APPLICATION__DIALOGS:
+			getDialogs().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -791,38 +818,38 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ApplicationPackageImpl.APPLICATION__CONTEXT:
-				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case ApplicationPackageImpl.APPLICATION__VARIABLES:
-				return variables != null && !variables.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-				return properties != null && !properties.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__HANDLERS:
-				return handlers != null && !handlers.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
-				return bindingTables != null && !bindingTables.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				return rootContext != null && !rootContext.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
-				return descriptors != null && !descriptors.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
-				return bindingContexts != null && !bindingContexts.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
-				return menuContributions != null && !menuContributions.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
-				return toolBarContributions != null && !toolBarContributions.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
-				return trimContributions != null && !trimContributions.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
-				return snippets != null && !snippets.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__COMMANDS:
-				return commands != null && !commands.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__ADDONS:
-				return addons != null && !addons.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
-				return categories != null && !categories.isEmpty();
-			case ApplicationPackageImpl.APPLICATION__DIALOGS:
-				return dialogs != null && !dialogs.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__CONTEXT:
+			return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
+		case ApplicationPackageImpl.APPLICATION__VARIABLES:
+			return variables != null && !variables.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+			return properties != null && !properties.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__HANDLERS:
+			return handlers != null && !handlers.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
+			return bindingTables != null && !bindingTables.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
+			return rootContext != null && !rootContext.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
+			return descriptors != null && !descriptors.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
+			return bindingContexts != null && !bindingContexts.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+			return menuContributions != null && !menuContributions.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+			return toolBarContributions != null && !toolBarContributions.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+			return trimContributions != null && !trimContributions.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+			return snippets != null && !snippets.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__COMMANDS:
+			return commands != null && !commands.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__ADDONS:
+			return addons != null && !addons.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+			return categories != null && !categories.isEmpty();
+		case ApplicationPackageImpl.APPLICATION__DIALOGS:
+			return dialogs != null && !dialogs.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -836,59 +863,80 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__CONTEXT: return UiPackageImpl.CONTEXT__CONTEXT;
-				case ApplicationPackageImpl.APPLICATION__VARIABLES: return UiPackageImpl.CONTEXT__VARIABLES;
-				case ApplicationPackageImpl.APPLICATION__PROPERTIES: return UiPackageImpl.CONTEXT__PROPERTIES;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__CONTEXT:
+				return UiPackageImpl.CONTEXT__CONTEXT;
+			case ApplicationPackageImpl.APPLICATION__VARIABLES:
+				return UiPackageImpl.CONTEXT__VARIABLES;
+			case ApplicationPackageImpl.APPLICATION__PROPERTIES:
+				return UiPackageImpl.CONTEXT__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__HANDLERS: return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__HANDLERS:
+				return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindingTableContainer.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__BINDING_TABLES: return CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES;
-				case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT: return CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
+				return CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES;
+			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
+				return CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MPartDescriptorContainer.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__DESCRIPTORS: return BasicPackageImpl.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
+				return BasicPackageImpl.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS: return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
+				return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MMenuContributions.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS: return MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+				return MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MToolBarContributions.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS: return MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+				return MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MTrimContributions.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS: return MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+				return MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MSnippetContainer.class) {
 			switch (derivedFeatureID) {
-				case ApplicationPackageImpl.APPLICATION__SNIPPETS: return UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS;
-				default: return -1;
+			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+				return UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -903,59 +951,80 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MContext.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.CONTEXT__CONTEXT: return ApplicationPackageImpl.APPLICATION__CONTEXT;
-				case UiPackageImpl.CONTEXT__VARIABLES: return ApplicationPackageImpl.APPLICATION__VARIABLES;
-				case UiPackageImpl.CONTEXT__PROPERTIES: return ApplicationPackageImpl.APPLICATION__PROPERTIES;
-				default: return -1;
+			case UiPackageImpl.CONTEXT__CONTEXT:
+				return ApplicationPackageImpl.APPLICATION__CONTEXT;
+			case UiPackageImpl.CONTEXT__VARIABLES:
+				return ApplicationPackageImpl.APPLICATION__VARIABLES;
+			case UiPackageImpl.CONTEXT__PROPERTIES:
+				return ApplicationPackageImpl.APPLICATION__PROPERTIES;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseFeatureID) {
-				case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS: return ApplicationPackageImpl.APPLICATION__HANDLERS;
-				default: return -1;
+			case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS:
+				return ApplicationPackageImpl.APPLICATION__HANDLERS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindingTableContainer.class) {
 			switch (baseFeatureID) {
-				case CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES: return ApplicationPackageImpl.APPLICATION__BINDING_TABLES;
-				case CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT: return ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT;
-				default: return -1;
+			case CommandsPackageImpl.BINDING_TABLE_CONTAINER__BINDING_TABLES:
+				return ApplicationPackageImpl.APPLICATION__BINDING_TABLES;
+			case CommandsPackageImpl.BINDING_TABLE_CONTAINER__ROOT_CONTEXT:
+				return ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MPartDescriptorContainer.class) {
 			switch (baseFeatureID) {
-				case BasicPackageImpl.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS: return ApplicationPackageImpl.APPLICATION__DESCRIPTORS;
-				default: return -1;
+			case BasicPackageImpl.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS:
+				return ApplicationPackageImpl.APPLICATION__DESCRIPTORS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
-				case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS: return ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS;
-				default: return -1;
+			case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS:
+				return ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MMenuContributions.class) {
 			switch (baseFeatureID) {
-				case MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS: return ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS;
-				default: return -1;
+			case MenuPackageImpl.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS:
+				return ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MToolBarContributions.class) {
 			switch (baseFeatureID) {
-				case MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS: return ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS;
-				default: return -1;
+			case MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS:
+				return ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MTrimContributions.class) {
 			switch (baseFeatureID) {
-				case MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS: return ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS;
-				default: return -1;
+			case MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS:
+				return ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == MSnippetContainer.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS: return ApplicationPackageImpl.APPLICATION__SNIPPETS;
-				default: return -1;
+			case UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS:
+				return ApplicationPackageImpl.APPLICATION__SNIPPETS;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -969,8 +1038,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case ApplicationPackageImpl.APPLICATION___GET_COMMAND__STRING:
-				return getCommand((String)arguments.get(0));
+		case ApplicationPackageImpl.APPLICATION___GET_COMMAND__STRING:
+			return getCommand((String) arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
 	}
@@ -982,7 +1051,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (context: "); //$NON-NLS-1$

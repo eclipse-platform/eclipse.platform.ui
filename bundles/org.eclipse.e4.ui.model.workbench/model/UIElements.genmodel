@@ -5,8 +5,8 @@
     modelPluginID="org.eclipse.e4.ui.model.workbench" templateDirectory="" modelName="UIElements"
     updateClasspath="false" nonNLSMarkers="true" rootExtendsInterface="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container"
     suppressEMFTypes="true" suppressEMFMetaData="true" featureMapWrapperInternalInterface=""
-    testsDirectory="" importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0"
-    copyrightFields="false" interfaceNamePattern="M{0}" operationReflection="true"
+    codeFormatting="true" testsDirectory="" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" copyrightFields="false" interfaceNamePattern="M{0}" operationReflection="true"
     importOrganizing="true" cleanup="true">
   <foreignModel>UIElements.ecore</foreignModel>
   <genPackages prefix="Application" basePackage="org.eclipse.e4.ui.model" disposableProviderFactory="true"

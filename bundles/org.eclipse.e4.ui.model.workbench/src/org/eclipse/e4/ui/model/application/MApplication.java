@@ -29,7 +29,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Application</b></em>'.
@@ -69,7 +68,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  * @generated
  */
 @SuppressWarnings("deprecation")
-public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingTableContainer, MPartDescriptorContainer, MBindings, MMenuContributions, MToolBarContributions, MTrimContributions, MSnippetContainer {
+public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingTableContainer,
+		MPartDescriptorContainer, MBindings, MMenuContributions, MToolBarContributions, MTrimContributions,
+		MSnippetContainer {
 	/**
 	 * Returns the value of the '<em><b>Commands</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.commands.MCommand}.
