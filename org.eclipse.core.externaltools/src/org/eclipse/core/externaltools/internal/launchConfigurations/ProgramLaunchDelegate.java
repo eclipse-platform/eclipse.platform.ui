@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,6 +48,17 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 	 * </p>
 	 */
 	private static final String ATTR_LAUNCH_IN_BACKGROUND = "org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute - a boolean value indicating whether a
+	 * configuration should be launched with merged error and standard output.
+	 * Default value is <code>false</code>.
+	 * <p>
+	 * This constant is defined in org.eclipse.debug.ui, but has to be copied
+	 * here to support headless launching.
+	 * </p>
+	 */
+	private static final String ATTR_MERGE_OUTPUT = "org.eclipse.debug.ui.ATTR_MERGE_OUTPUT"; //$NON-NLS-1$
 
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration,
@@ -110,7 +121,8 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 			return;
 		}
 
-		Process p = DebugPlugin.exec(cmdLine, workingDir, envp);
+		boolean mergeOutput = configuration.getAttribute(ATTR_MERGE_OUTPUT, false);
+		Process p = DebugPlugin.exec(cmdLine, workingDir, envp, mergeOutput);
 		IProcess process = null;
 
 		// add process type to process attributes

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -365,4 +365,14 @@ public interface IConfigurationElementConstants {
 	 * @since 3.13
 	 */
 	String ALLOW_COMMANDLINE = "allowCommandLine"; //$NON-NLS-1$
+
+	/**
+	 * The allowOutputMerging node name for a configuration element
+	 * <p>
+	 * Equal to the word: <code>allowOutputMerging</code>
+	 * </p>
+	 *
+	 * @since 3.14
+	 */
+	String ALLOW_OUTPUT_MERGING = "allowOutputMerging"; //$NON-NLS-1$
 }

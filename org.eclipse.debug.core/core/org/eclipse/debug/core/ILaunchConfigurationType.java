@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -374,4 +374,14 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @since 3.13
 	 */
 	boolean supportsCommandLine();
+
+	/**
+	 * Returns whether this type of launch configuration supports launching
+	 * processes with error stream redirected and merged with standard output
+	 * stream.
+	 *
+	 * @return whether this kind of launch configuration supports output merging
+	 * @since 3.14
+	 */
+	boolean supportsOutputMerging();
 }

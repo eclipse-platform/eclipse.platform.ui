@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -123,21 +123,23 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private static final String BAD_CONTAINER = "bad_container_name"; //$NON-NLS-1$
 
 	// Local/shared UI widgets
+	private Composite fIoComposit;
 	private Button fLocalRadioButton;
 	private Button fSharedRadioButton;
 	private Text fSharedLocationText;
 	private Button fSharedLocationButton;
 	private Button fLaunchInBackgroundButton;
-	private Button fDefaultEncodingButton;
-	private Button fAltEncodingButton;
-	private Combo fEncodingCombo;
+    private Button fDefaultEncodingButton;
+    private Button fAltEncodingButton;
+    private Combo fEncodingCombo;
 	private Button fConsoleOutput;
-	private Button fFileOutput;
-	private Button fFileBrowse;
-	private Text fFileText;
-	private Button fVariables;
-	private Button fAppend;
-	private Button fWorkspaceBrowse;
+    private Button fFileOutput;
+    private Button fFileBrowse;
+    private Text fFileText;
+    private Button fVariables;
+    private Button fAppend;
+	private Button fMergeOutput;
+    private Button fWorkspaceBrowse;
 
 	private Button fInputFileCheckButton;
 	private Text fInputFileLocationText;
@@ -160,7 +162,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}
 	};
 
-	/**
+    /**
 	 * Constructs a new tab with default context help.
 	 */
 	public CommonTab() {
@@ -260,96 +262,97 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setSharedEnabled(false);
 	}
 
-	/**
-	 * Creates the component set for the capture output composite
-	 * @param parent the parent to add this component to
-	 */
+    /**
+     * Creates the component set for the capture output composite
+     * @param parent the parent to add this component to
+     */
 	private void createOutputCaptureComponent(Composite parent) {
-		Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_4, 5, 2, GridData.FILL_HORIZONTAL);
+        Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_4, 5, 2, GridData.FILL_HORIZONTAL);
 		createInputCaptureComponent(group);
 		Composite comp = SWTFactory.createComposite(group, group.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
+		fIoComposit = comp;
 		fFileOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_6);
-		fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
-		fFileOutput.addSelectionListener(new SelectionAdapter() {
-			@Override
+        fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
+        fFileOutput.addSelectionListener(new SelectionAdapter() {
+            @Override
 			public void widgetSelected(SelectionEvent e) {
-				enableOuputCaptureWidgets(fFileOutput.getSelection());
-				updateLaunchConfigurationDialog();
-			}
-		});
-		fFileText = SWTFactory.createSingleText(comp, 4);
-		fFileText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
+                enableOuputCaptureWidgets(fFileOutput.getSelection());
+                updateLaunchConfigurationDialog();
+            }
+        });
+        fFileText = SWTFactory.createSingleText(comp, 4);
+        fFileText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+        	@Override
 			public void getName(AccessibleEvent e) {
-				e.result = LaunchConfigurationsMessages.CommonTab_6;
-			}
-		});
-		fFileText.addModifyListener(fBasicModifyListener);
+        		e.result = LaunchConfigurationsMessages.CommonTab_6;
+        	}
+        });
+        fFileText.addModifyListener(fBasicModifyListener);
 
-		Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
+        Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
 		GridLayout ld = (GridLayout)bcomp.getLayout();
-		ld.marginHeight = 1;
-		ld.marginWidth = 0;
-		fWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_12, null);
-		fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
+        ld.marginHeight = 1;
+        ld.marginWidth = 0;
+        fWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_12, null);
+        fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
+            @Override
 			public void widgetSelected(SelectionEvent e) {
-				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-				dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
-				dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14);
-				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-				dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-				dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG), Dialog.DIALOG_PERSISTSIZE);
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					IResource resource = (IResource) dialog.getFirstResult();
-					if(resource != null) {
-						String arg = resource.getFullPath().toString();
-						String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
-						fFileText.setText(fileLoc);
-					}
-				}
-			}
-		});
-		fFileBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_7, null);
-		fFileBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
+                ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+                dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
+                dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14);
+                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+                dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
+                dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG), Dialog.DIALOG_PERSISTSIZE);
+                if (dialog.open() == IDialogConstants.OK_ID) {
+                    IResource resource = (IResource) dialog.getFirstResult();
+                    if(resource != null) {
+                    	String arg = resource.getFullPath().toString();
+                    	String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
+                    	fFileText.setText(fileLoc);
+                    }
+                }
+            }
+        });
+        fFileBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_7, null);
+        fFileBrowse.addSelectionListener(new SelectionAdapter() {
+            @Override
 			public void widgetSelected(SelectionEvent e) {
-				String filePath = fFileText.getText();
+                String filePath = fFileText.getText();
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE | SWT.SHEET);
-				filePath = dialog.open();
-				if (filePath != null) {
-					fFileText.setText(filePath);
-				}
-			}
-		});
-		fVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_9, null);
-		fVariables.addSelectionListener(new SelectionListener() {
-			@Override
+                filePath = dialog.open();
+                if (filePath != null) {
+                    fFileText.setText(filePath);
+                }
+            }
+        });
+        fVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_9, null);
+        fVariables.addSelectionListener(new SelectionListener() {
+            @Override
 			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+                StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
 				String variable = dialog.getVariableExpression();
 				if (variable != null) {
 					fFileText.insert(variable);
 				}
-			}
-			@Override
+            }
+            @Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
-		});
-		fAppend = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_11);
+        });
+        fAppend = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_11);
 
 		GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
-		gd.horizontalSpan = 4;
-		fAppend.setLayoutData(gd);
+		gd.horizontalSpan = 5;
+        fAppend.setLayoutData(gd);
 		fAppend.addSelectionListener(new SelectionAdapter() {
-			@Override
+		    @Override
 			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
+		        updateLaunchConfigurationDialog();
+		    }
 		});
-	}
+    }
 
-	private void createInputCaptureComponent(Composite parent){
+    private void createInputCaptureComponent(Composite parent){
 		Composite comp1 = SWTFactory.createComposite(parent, parent.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
 		fConsoleOutput = createCheckButton(comp1, LaunchConfigurationsMessages.CommonTab_5);
 		fConsoleOutput.addSelectionListener(new SelectionAdapter() {
@@ -450,30 +453,30 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		});
 
 		setInputFileEnabled(false);
-	}
-	/**
-	 * Enables or disables the output capture widgets based on the the specified enablement
-	 * @param enable if the output capture widgets should be enabled or not
-	 * @since 3.2
-	 */
-	private void enableOuputCaptureWidgets(boolean enable) {
-		fFileText.setEnabled(enable);
-		fFileBrowse.setEnabled(enable);
-		fWorkspaceBrowse.setEnabled(enable);
-		fVariables.setEnabled(enable);
-		fAppend.setEnabled(enable);
-	}
+    }
+    /**
+     * Enables or disables the output capture widgets based on the the specified enablement
+     * @param enable if the output capture widgets should be enabled or not
+     * @since 3.2
+     */
+    private void enableOuputCaptureWidgets(boolean enable) {
+    	fFileText.setEnabled(enable);
+        fFileBrowse.setEnabled(enable);
+        fWorkspaceBrowse.setEnabled(enable);
+        fVariables.setEnabled(enable);
+        fAppend.setEnabled(enable);
+    }
 
-	/**
-	 * Returns the default encoding for the specified config
-	 * @param config the configuration to get the encoding for
-	 * @return the default encoding
-	 *
-	 * @since 3.4
-	 */
-	private String getDefaultEncoding(ILaunchConfiguration config) {
-		try {
-			IResource[] resources = config.getMappedResources();
+    /**
+     * Returns the default encoding for the specified config
+     * @param config the configuration to get the encoding for
+     * @return the default encoding
+     *
+     * @since 3.4
+     */
+    private String getDefaultEncoding(ILaunchConfiguration config) {
+    	try {
+	    	IResource[] resources = config.getMappedResources();
 			if(resources != null && resources.length > 0) {
 				IResource res = resources[0];
 				if(res instanceof IFile) {
@@ -483,62 +486,62 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 					return ((IContainer)res).getDefaultCharset();
 				}
 			}
-		}
-		catch(CoreException ce) {
-			DebugUIPlugin.log(ce);
-		}
-		return ResourcesPlugin.getEncoding();
-	}
+    	}
+    	catch(CoreException ce) {
+    		DebugUIPlugin.log(ce);
+    	}
+    	return ResourcesPlugin.getEncoding();
+    }
 
-	/**
-	 * Creates the encoding component
-	 * @param parent the parent to add this composite to
-	 */
-	private void createEncodingComponent(Composite parent) {
-		Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
+    /**
+     * Creates the encoding component
+     * @param parent the parent to add this composite to
+     */
+    private void createEncodingComponent(Composite parent) {
+	    Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
 
-		fDefaultEncodingButton = createRadioButton(group, IInternalDebugCoreConstants.EMPTY_STRING);
-		GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
-		gd.horizontalSpan = 2;
-		fDefaultEncodingButton.setLayoutData(gd);
+	    fDefaultEncodingButton = createRadioButton(group, IInternalDebugCoreConstants.EMPTY_STRING);
+	    GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
+	    gd.horizontalSpan = 2;
+	    fDefaultEncodingButton.setLayoutData(gd);
 
-		fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_3);
-		fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_3);
+	    fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-		fEncodingCombo = new Combo(group, SWT.NONE);
-		fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fEncodingCombo.setFont(parent.getFont());
-		List<String> allEncodings = IDEEncoding.getIDEEncodings();
-		String[] encodingArray = allEncodings.toArray(new String[0]);
-		fEncodingCombo.setItems(encodingArray);
-		if (encodingArray.length > 0) {
-			fEncodingCombo.select(0);
-		}
-		fEncodingCombo.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
+	    fEncodingCombo = new Combo(group, SWT.NONE);
+	    fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    fEncodingCombo.setFont(parent.getFont());
+	    List<String> allEncodings = IDEEncoding.getIDEEncodings();
+        String[] encodingArray = allEncodings.toArray(new String[0]);
+	    fEncodingCombo.setItems(encodingArray);
+        if (encodingArray.length > 0) {
+            fEncodingCombo.select(0);
+        }
+        fEncodingCombo.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+        	@Override
 			public void getName(AccessibleEvent e) {
-				e.result = LaunchConfigurationsMessages.CommonTab_3;
-			}
-		});
-		SelectionListener listener = new SelectionAdapter() {
-			@Override
+        		e.result = LaunchConfigurationsMessages.CommonTab_3;
+        	}
+        });
+	    SelectionListener listener = new SelectionAdapter() {
+	        @Override
 			public void widgetSelected(SelectionEvent e) {
-				if(e.getSource() instanceof Button) {
-					Button button = (Button)e.getSource();
-					if(button.getSelection()) {
-						updateLaunchConfigurationDialog();
-						fEncodingCombo.setEnabled(fAltEncodingButton.getSelection() == true);
-					}
-				}
-				else {
-					updateLaunchConfigurationDialog();
-				}
-			}
-		};
-		fAltEncodingButton.addSelectionListener(listener);
-		fDefaultEncodingButton.addSelectionListener(listener);
-		fEncodingCombo.addSelectionListener(listener);
-		fEncodingCombo.addKeyListener(new KeyAdapter() {
+	        	if(e.getSource() instanceof Button) {
+	        		Button button = (Button)e.getSource();
+	        		if(button.getSelection()) {
+		        		updateLaunchConfigurationDialog();
+			            fEncodingCombo.setEnabled(fAltEncodingButton.getSelection() == true);
+	        		}
+	        	}
+	        	else {
+	        		updateLaunchConfigurationDialog();
+	        	}
+	        }
+	    };
+	    fAltEncodingButton.addSelectionListener(listener);
+	    fDefaultEncodingButton.addSelectionListener(listener);
+	    fEncodingCombo.addSelectionListener(listener);
+	    fEncodingCombo.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				scheduleUpdateJob();
@@ -658,9 +661,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		String currentContainerString = fSharedLocationText.getText();
 		IContainer currentContainer = getContainer(currentContainerString);
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
-					currentContainer,
-					false,
-					LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13);
+				   currentContainer,
+				   false,
+				   LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13);
 		dialog.showClosedProjects(false);
 		dialog.setDialogBoundsSettings(getDialogBoundsSettings(SHARED_LAUNCH_CONFIGURATON_DIALOG), Dialog.DIALOG_PERSISTSIZE);
 		dialog.open();
@@ -706,33 +709,54 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateConsoleOutput(configuration);
 	}
 
-	/**
-	 * Updates the console output form the local configuration
-	 * @param configuration the local configuration
-	 */
-	private void updateConsoleOutput(ILaunchConfiguration configuration) {
-		boolean outputToConsole = true;
+    /**
+     * Updates the console output form the local configuration
+     * @param configuration the local configuration
+     */
+    private void updateConsoleOutput(ILaunchConfiguration configuration) {
+        boolean outputToConsole = true;
 		String stdinFromFile = null;
-		String outputFile = null;
-		boolean append = false;
+        String outputFile = null;
+        boolean append = false;
+		boolean mergeOutput = false;
+		boolean supportsMergeOutput = false;
 
-		try {
-			outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
+        try {
+            outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
 			stdinFromFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, (String) null);
 
-			outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
-			append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
-		} catch (CoreException e) {
-		}
+            outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+            append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+			mergeOutput = configuration.getAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, false);
+			supportsMergeOutput = configuration.getType().supportsOutputMerging();
+        } catch (CoreException e) {
+        }
 
 		fConsoleOutput.setSelection(outputToConsole);
-		fAppend.setSelection(append);
-		boolean haveOutputFile= outputFile != null;
-		if (haveOutputFile) {
-			fFileText.setText(outputFile);
+        fAppend.setSelection(append);
+		if (supportsMergeOutput) {
+			fMergeOutput = createCheckButton(fIoComposit, LaunchConfigurationsMessages.CommonTab_21);
+			GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
+			gd.horizontalSpan = 5;
+			fMergeOutput.setLayoutData(gd);
+			fMergeOutput.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					updateLaunchConfigurationDialog();
+				}
+			});
+			fMergeOutput.setSelection(mergeOutput);
 		}
-		fFileOutput.setSelection(haveOutputFile);
-		enableOuputCaptureWidgets(haveOutputFile);
+		else if (fMergeOutput != null) {
+			fMergeOutput.dispose();
+			fMergeOutput = null;
+		}
+        boolean haveOutputFile= outputFile != null;
+        if (haveOutputFile) {
+            fFileText.setText(outputFile);
+        }
+        fFileOutput.setSelection(haveOutputFile);
+        enableOuputCaptureWidgets(haveOutputFile);
 
 		boolean haveInputFile = stdinFromFile != null;
 		if (haveInputFile) {
@@ -740,13 +764,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}
 		fInputFileCheckButton.setSelection(haveInputFile);
 		setInputFileEnabled(haveInputFile);
-	}
+    }
 
-	/**
-	 * Updates the launch on background check button
-	 * @param configuration the local launch configuration
-	 */
-	protected void updateLaunchInBackground(ILaunchConfiguration configuration) {
+    /**
+     * Updates the launch on background check button
+     * @param configuration the local launch configuration
+     */
+    protected void updateLaunchInBackground(ILaunchConfiguration configuration) {
 		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
 	}
 
@@ -755,24 +779,24 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param configuration the local configuration
 	 */
 	private void updateEncoding(ILaunchConfiguration configuration) {
-		String encoding = null;
-		try {
-			encoding = configuration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
-		} catch (CoreException e) {
-		}
-		String defaultEncoding = getDefaultEncoding(configuration);
+	    String encoding = null;
+	    try {
+	        encoding = configuration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
+        } catch (CoreException e) {
+        }
+	    String defaultEncoding = getDefaultEncoding(configuration);
 		fDefaultEncodingButton.setText(MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new Object[] { defaultEncoding }));
-		fDefaultEncodingButton.pack();
-		if (encoding != null) {
-			fAltEncodingButton.setSelection(true);
-			fDefaultEncodingButton.setSelection(false);
-			fEncodingCombo.setText(encoding);
-			fEncodingCombo.setEnabled(true);
-		} else {
-			fDefaultEncodingButton.setSelection(true);
-			fAltEncodingButton.setSelection(false);
-			fEncodingCombo.setEnabled(false);
-		}
+	    fDefaultEncodingButton.pack();
+        if (encoding != null) {
+            fAltEncodingButton.setSelection(true);
+            fDefaultEncodingButton.setSelection(false);
+            fEncodingCombo.setText(encoding);
+            fEncodingCombo.setEnabled(true);
+        } else {
+            fDefaultEncodingButton.setSelection(true);
+            fAltEncodingButton.setSelection(false);
+            fEncodingCombo.setEnabled(false);
+        }
 	}
 
 	/**
@@ -925,42 +949,42 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return validateLocalShared() && validateRedirectFile() && validateEncoding() && validateStdinFile();
 	}
 
-	/**
-	 * validates the encoding selection
-	 * @return true if the validate encoding is allowable, false otherwise
-	 */
-	private boolean validateEncoding() {
-		if (fAltEncodingButton.getSelection()) {
-			if (fEncodingCombo.getSelectionIndex() == -1) {
-				if (!isValidEncoding(fEncodingCombo.getText().trim())) {
-					setErrorMessage(LaunchConfigurationsMessages.CommonTab_15);
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+    /**
+     * validates the encoding selection
+     * @return true if the validate encoding is allowable, false otherwise
+     */
+    private boolean validateEncoding() {
+        if (fAltEncodingButton.getSelection()) {
+            if (fEncodingCombo.getSelectionIndex() == -1) {
+            	if (!isValidEncoding(fEncodingCombo.getText().trim())) {
+                	setErrorMessage(LaunchConfigurationsMessages.CommonTab_15);
+                	return false;
+                }
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * Validates if the redirect file is valid
-	 * @return true if the filename is not zero, false otherwise
-	 */
-	private boolean validateRedirectFile() {
-		if(fFileOutput.getSelection()) {
-			int len = fFileText.getText().trim().length();
-			if (len == 0) {
-				setErrorMessage(LaunchConfigurationsMessages.CommonTab_8);
-				return false;
-			}
-		}
-		return true;
-	}
+    /**
+     * Validates if the redirect file is valid
+     * @return true if the filename is not zero, false otherwise
+     */
+    private boolean validateRedirectFile() {
+        if(fFileOutput.getSelection()) {
+            int len = fFileText.getText().trim().length();
+            if (len == 0) {
+                setErrorMessage(LaunchConfigurationsMessages.CommonTab_8);
+                return false;
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * validates the local shared config file location
-	 * @return true if the local shared file exists, false otherwise
-	 */
-	private boolean validateLocalShared() {
+    /**
+     * validates the local shared config file location
+     * @return true if the local shared file exists, false otherwise
+     */
+    private boolean validateLocalShared() {
 		if (isShared()) {
 			String path = fSharedLocationText.getText().trim();
 			IContainer container = getContainer(path);
@@ -1004,15 +1028,15 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), true);
 		String encoding = null;
 		if(fAltEncodingButton.getSelection()) {
-			encoding = fEncodingCombo.getText().trim();
+		    encoding = fEncodingCombo.getText().trim();
 		}
 		configuration.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, encoding);
 		boolean captureOutput = false;
 		if (fConsoleOutput.getSelection()) {
-			captureOutput = true;
+		    captureOutput = true;
 			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, (String) null);
 		} else {
-			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
+		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
 		}
 		if (fInputFileCheckButton.getSelection()) {
 			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, fInputFileLocationText.getText());
@@ -1020,22 +1044,29 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, (String) null);
 		}
 		if (fFileOutput.getSelection()) {
-			captureOutput = true;
-			String file = fFileText.getText();
-			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, file);
-			if(fAppend.getSelection()) {
-				configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, true);
-			} else {
-				configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, (String)null);
-			}
+		    captureOutput = true;
+		    String file = fFileText.getText();
+		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, file);
+		    if(fAppend.getSelection()) {
+		        configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, true);
+		    } else {
+		        configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, (String)null);
+		    }
 		} else {
-			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+		}
+		if (fMergeOutput != null) {
+			if (fMergeOutput.getSelection()) {
+				configuration.setAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, true);
+			} else {
+				configuration.setAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, (String) null);
+			}
 		}
 
 		if (!captureOutput) {
-			configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
+		    configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
 		} else {
-			configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, (String)null);
+		    configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, (String)null);
 		}
 	}
 

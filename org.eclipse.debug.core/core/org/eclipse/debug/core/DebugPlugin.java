@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -868,12 +868,60 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
-		Process p= null;
+		return exec(cmdLine, workingDirectory, envp, false);
+	}
+
+	/**
+	 * Convenience method that performs a runtime exec on the given command line
+	 * in the context of the specified working directory, and returns the
+	 * resulting process. If the current runtime does not support the
+	 * specification of a working directory, the status handler for error code
+	 * <code>ERR_WORKING_DIRECTORY_NOT_SUPPORTED</code> is queried to see if the
+	 * exec should be re-executed without specifying a working directory.
+	 *
+	 * @param cmdLine the command line
+	 * @param workingDirectory the working directory, or <code>null</code>
+	 * @param envp the environment variables set in the process, or
+	 *            <code>null</code>
+	 * @param mergeOutput if <code>true</code> the error stream will be merged
+	 *            with standard output stream and both can be read through the
+	 *            same output stream
+	 * @return the resulting process or <code>null</code> if the exec is
+	 *         canceled
+	 * @exception CoreException if the exec fails
+	 * @see Runtime
+	 *
+	 * @since 3.14
+	 */
+	public static Process exec(String[] cmdLine, File workingDirectory, String[] envp, boolean mergeOutput) throws CoreException {
+		Process p = null;
 		try {
-			if (workingDirectory == null) {
-				p= Runtime.getRuntime().exec(cmdLine, envp);
+			// starting with and without merged output could be done with the
+			// same process builder approach but since the handling of
+			// environment variables is slightly different between
+			// ProcessBuilder and Runtime.exec only the new option uses process
+			// builder to not break existing caller of this method
+			if (mergeOutput) {
+				ProcessBuilder pb = new ProcessBuilder(cmdLine);
+				pb.directory(workingDirectory);
+				pb.redirectErrorStream(mergeOutput);
+				if (envp != null) {
+					Map<String, String> env = pb.environment();
+					env.clear();
+					for (String e : envp) {
+						int index = e.indexOf('=');
+						if (index != -1) {
+							env.put(e.substring(0, index), e.substring(index + 1));
+						}
+					}
+				}
+				p = pb.start();
 			} else {
-				p= Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
+				if (workingDirectory == null) {
+					p = Runtime.getRuntime().exec(cmdLine, envp);
+				} else {
+					p = Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
+				}
 			}
 		} catch (IOException e) {
 			Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_0, e);
@@ -885,8 +933,8 @@ public class DebugPlugin extends Plugin {
 
 			if (handler != null) {
 				Object result = handler.handleStatus(status, null);
-				if (result instanceof Boolean && ((Boolean)result).booleanValue()) {
-					p= exec(cmdLine, null);
+				if (result instanceof Boolean && ((Boolean) result).booleanValue()) {
+					p = exec(cmdLine, null);
 				}
 			}
 		}

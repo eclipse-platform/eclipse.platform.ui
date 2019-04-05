@@ -30,23 +30,28 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Proxy to a launch delegate extension
- * Clients can contribute launch delegates through the <code>launchDelegates</code> extension point
- *
+ * Proxy to a launch delegate extension.
+ * <p>
+ * Clients can contribute launch delegates through the
+ * <code>launchDelegates</code> extension point
+ * </p>
+ * <p>
  * Example contribution of the local java launch delegate
+ * </p>
+ *
  * <pre>
- * <extension point="org.eclipse.debug.core.launchDelegates">
-      <launchDelegate
-            delegate="org.eclipse.jdt.launching.JavaLaunchDelegate"
-            id="org.eclipse.jdt.launching.localJavaApplicationDelegate"
-            modes="run, debug"
-            name="%localJavaApplication"
-            type="org.eclipse.jdt.launching.localJavaApplication">
-          <modeCombination
-    		modes="run, profile">
-    		perspective="com.example.Perspective">
-   		  </modeCombination>
-      </launchDelegate>
+ * &lt;extension point="org.eclipse.debug.core.launchDelegates"&gt;
+ *    &lt;launchDelegate
+ *          delegate="org.eclipse.jdt.launching.JavaLaunchDelegate"
+ *          id="org.eclipse.jdt.launching.localJavaApplicationDelegate"
+ *          modes="run, debug"
+ *          name="%localJavaApplication"
+ *          type="org.eclipse.jdt.launching.localJavaApplication"&gt;
+ *        &lt;modeCombination
+ *          modes="run, profile"&gt;
+ *          perspective="com.example.Perspective"&gt;
+ *        &lt;/modeCombination&gt;
+ *    &lt;/launchDelegate&gt;
  * </pre>
  *
  * Clients are NOT intended to subclass this class
