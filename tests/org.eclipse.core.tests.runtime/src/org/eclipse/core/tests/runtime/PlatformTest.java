@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
+import static java.util.Collections.emptyMap;
+
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.jar.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.osgi.framework.*;
@@ -23,9 +27,6 @@ import org.osgi.framework.*;
  * Test cases for the Platform API
  */
 public class PlatformTest extends RuntimeTest {
-
-	private static final String PI_JDT_ANNOTATION = "org.eclipse.jdt.annotation";
-	private static final String PI_FILESYSTEM = "org.eclipse.core.filesystem";
 	private FrameworkLog logService;
 	private ServiceReference<FrameworkLog> logRef;
 	private java.io.File originalLocation;
@@ -150,50 +151,200 @@ public class PlatformTest extends RuntimeTest {
 		assertEquals("2.1", RuntimeTest.PI_RUNTIME_TESTS, collected.get(0).getPlugin());
 	}
 
-	public void testIsFragment() {
-		String bundleId = PI_FILESYSTEM;
-		Bundle bundle = Platform.getBundle(bundleId);
-		assertNotNull(bundleId + ": bundle not found", bundle);
-		assertFalse(Platform.isFragment(bundle));
+	/**
+	 * Test for method {@link Platform#isFragment(Bundle)}.
+	 * <p>
+	 * This test creates a simple bundle and a fragment for it, packages them to
+	 * jars and installs them into the OSGi container.
+	 * </p>
+	 * <p>
+	 * The test checks that {@link Platform#isFragment(Bundle)} returns
+	 * <code>false</code> for the host bundle and <code>true</code> for the fragment
+	 * bundle.
+	 * </p>
+	 */
+	public void testIsFragment() throws Exception {
+		String bundleName = getName();
+		File config = RuntimeTestsPlugin.getContext().getDataFile(bundleName);
+		Files.createDirectories(config.toPath());
 
-		bundleId = PI_FILESYSTEM + "." + System.getProperty("osgi.os");
-		if (!Platform.OS_MACOSX.equals(System.getProperty("osgi.os"))) {
-			bundleId += "." + System.getProperty("osgi.arch");
-		}
-		bundle = Platform.getBundle(bundleId);
-		if (bundle != null) {
-			// bundle not available on Gerrit build
-			assertTrue(Platform.isFragment(bundle));
-		}
+		Map<String, String> headers = new HashMap<>();
+		headers.put(Constants.BUNDLE_SYMBOLICNAME, bundleName);
+		headers.put(Constants.BUNDLE_VERSION, "1.0.0");
+		File testBundleJarFile = createBundle(config, bundleName, headers, emptyMap());
+		Bundle hostBundle = getContext().installBundle(testBundleJarFile.getName(),
+				new FileInputStream(testBundleJarFile));
+		assertNotNull(hostBundle);
+
+		assertFalse(Platform.isFragment(hostBundle));
+
+		String fragmentName = bundleName + "_fragment";
+		headers.put(Constants.BUNDLE_SYMBOLICNAME, fragmentName);
+		headers.put(Constants.BUNDLE_VERSION, "1.0.0");
+		headers.put(Constants.FRAGMENT_HOST, bundleName);
+		testBundleJarFile = createBundle(config, fragmentName, headers, emptyMap());
+		Bundle fragmentBundle = getContext().installBundle(testBundleJarFile.getName(),
+				new FileInputStream(testBundleJarFile));
+		assertNotNull(fragmentBundle);
+
+		assertTrue(Platform.isFragment(fragmentBundle));
 	}
 
-	// temporarily disabled - bug#545935
-	public void XXXtestGetBundle() throws BundleException {
-		Bundle bundle = Platform.getBundle(PI_JDT_ANNOTATION);
-		assertNotNull("org.eclipse.jdt.annotation bundle not available", bundle);
-		assertEquals(2, bundle.getVersion().getMajor()); // new 2.x version
+	/**
+	 * Test for method {@link Platform#getBundle(String)}.
+	 * <p>
+	 * This test creates 2 bundles with the same symbolic name in 2 versions,
+	 * packages them to jars and installs them into the OSGi container.
+	 * </p>
+	 * <p>
+	 * After installing the bundles they are in {@link Bundle#INSTALLED} state,
+	 * which are filtered out when querying the Platform for bundles. The test
+	 * checks that the bundles are not returned by the method yet.
+	 * </p>
+	 * <p>
+	 * Next, the test starts the bundles which makes them visible. It is checked
+	 * that {@link Platform#getBundle(String)} returns the bundle with the highest
+	 * version.
+	 * </p>
+	 * <p>
+	 * The bundle with the highest version is uninstalled then, and afterwards the
+	 * bundle with the lower version will be returned by the Platform.
+	 * </p>
+	 * <p>
+	 * Last, the second bundle is also uninstalled, and the test checks that no
+	 * bundle is returned by Platform.
+	 * </p>
+	 */
+	public void testGetBundle() throws Exception {
+		Map<String, Bundle> bundles = createSimpleTestBundles("1.0.0", "2.0.0");
+		Bundle bundle;
 
+		bundle = Platform.getBundle(getName());
+		assertNull(getName() + " bundle just installed, but not started => expect null result", bundle);
+		for (Bundle b : bundles.values()) {
+			b.start();
+		}
+
+		// now get it from Platform
+		// 2 versions installed, highest version should be returned
+		bundle = Platform.getBundle(getName());
+		assertNotNull("bundle must be available", bundle);
+		assertEquals("2.0.0", bundle.getVersion().toString());
+
+		// uninstall it; now lower version will be returned
 		bundle.uninstall();
-		bundle = Platform.getBundle(PI_JDT_ANNOTATION);
-		assertNull(PI_JDT_ANNOTATION + " bundle => expect null result", bundle);
+		bundle = Platform.getBundle(getName());
+		assertNotNull("bundle must be available", bundle);
+		assertEquals("1.0.0", bundle.getVersion().toString());
+
+		// uninstall it; no bundle available
+		bundle.uninstall();
+		bundle = Platform.getBundle(getName());
+		assertNull(getName() + " bundle => expect null result", bundle);
 	}
 
-	// temporarily disabled - bug#545935
-	public void XXXtestGetBundles() {
-		Bundle[] bundles = Platform.getBundles(PI_JDT_ANNOTATION, null);
-		assertNotNull(PI_JDT_ANNOTATION + " bundle not available", bundles);
-		// there may be only one version available, and then it will be the new version
-		assertEquals(1, bundles.length);
-		assertEquals(2, bundles[0].getVersion().getMajor()); // new 2.x version
+	/**
+	 * Test for method {@link Platform#getBundles(String, String)}.
+	 * <p>
+	 * This test creates 3 bundles with the same symbolic name in 3 versions,
+	 * packages them to jars and installs them into the OSGi container.
+	 * </p>
+	 * <p>
+	 * First, the test checks that the method returns no result, since the bundles
+	 * are in {@link Bundle#INSTALLED} state, which are filtered out by the method.
+	 * The bundles are started then to become visible.
+	 * </p>
+	 * <p>
+	 * Next, it is tested that the method returns all bundle in descending version
+	 * order when no version constraint is given.
+	 * </p>
+	 * <p>
+	 * Then different version constraints are given and it is tested that the
+	 * expected number of bundles in the expected order are returned by
+	 * {@link Platform#getBundles(String, String)}.
+	 * </p>
+	 */
+	public void testGetBundles() throws Exception {
+		Map<String, Bundle> bundles = createSimpleTestBundles("1.0.0", "3.0.0", "2.0.0");
+		Bundle bundle;
 
-		bundles = Platform.getBundles(PI_JDT_ANNOTATION, "2.0.0");
-		assertNotNull(PI_JDT_ANNOTATION + " bundle not available", bundles);
-		assertEquals(1, bundles.length);
-		assertEquals(2, bundles[0].getVersion().getMajor()); // new 2.x version
+		bundle = Platform.getBundle(getName());
+		assertNull(getName() + " bundle just installed, but not started => expect null result", bundle);
+		for (Bundle b : bundles.values()) {
+			b.start();
+		}
 
-		// version out of range
-		bundles = Platform.getBundles(PI_JDT_ANNOTATION, "[1.1.0,2.0.0)");
-		assertNull("No bundle should match => expect null result", bundles);
+		Bundle[] result = Platform.getBundles(getName(), null); // no version constraint => get all 3
+		assertNotNull(getName() + " bundle not available", bundles);
+		assertEquals(3, result.length);
+		assertEquals(3, result[0].getVersion().getMajor()); // 3.0.0 version first
+		assertEquals(1, result[2].getVersion().getMajor()); // 1.0.0 version last
+
+		result = Platform.getBundles(getName(), "2.0.0");
+		assertEquals(2, result.length);
+		assertEquals(3, result[0].getVersion().getMajor()); // 3.0.0 version first
+		assertEquals(2, result[1].getVersion().getMajor()); // 2.0.0 version last
+
+		result = Platform.getBundles(getName(), "[1.0.0,2.0.0)");
+		assertEquals(1, result.length);
+		assertEquals(1, result[0].getVersion().getMajor()); // 1.0.0 version
+
+		result = Platform.getBundles(getName(), "[1.1.0,2.0.0)");
+		assertNull("no match => null result", result);
 	}
 
+	/**
+	 * Helper method to create empty bundles with just name and version given. The
+	 * bundles are packaged to jars and installed into the container. The jars are
+	 * marked for deletion on exit.
+	 */
+	private Map<String, Bundle> createSimpleTestBundles(String... versions) throws BundleException, IOException {
+		Map<String, Bundle> bundles = new HashMap<>();
+		String bundleName = getName();
+		File config = RuntimeTestsPlugin.getContext().getDataFile(bundleName);
+		Files.createDirectories(config.toPath());
+
+		for (String v : versions) {
+			Map<String, String> headers = new HashMap<>();
+			headers.put(Constants.BUNDLE_SYMBOLICNAME, bundleName);
+			headers.put(Constants.BUNDLE_VERSION, v);
+			File testBundleJarFile = createBundle(config, bundleName + "_" + v, headers, emptyMap());
+			Bundle testBundle = getContext().installBundle(testBundleJarFile.getName(),
+					new FileInputStream(testBundleJarFile));
+			assertNotNull(testBundle);
+			bundles.put(v, testBundle);
+		}
+		return bundles;
+	}
+
+	// copied from
+	// org.eclipse.osgi.tests.bundles.SystemBundleTests.createBundle(File, String,
+	// Map<String, String>, Map<String, String>...)
+	@SafeVarargs
+	static File createBundle(File outputDir, String bundleName, Map<String, String> headers,
+			Map<String, String>... entries) throws IOException {
+		Manifest m = new Manifest();
+		Attributes attributes = m.getMainAttributes();
+		attributes.putValue("Manifest-Version", "1.0");
+		for (Map.Entry<String, String> entry : headers.entrySet()) {
+			attributes.putValue(entry.getKey(), entry.getValue());
+		}
+		File file = new File(outputDir, "bundle" + bundleName + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
+		try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(file), m)) {
+			if (entries != null) {
+				for (Map<String, String> entryMap : entries) {
+					for (Map.Entry<String, String> entry : entryMap.entrySet()) {
+						jos.putNextEntry(new JarEntry(entry.getKey()));
+						if (entry.getValue() != null) {
+							jos.write(entry.getValue().getBytes());
+						}
+						jos.closeEntry();
+					}
+				}
+			}
+			jos.flush();
+		}
+		file.deleteOnExit();
+		return file;
+	}
 }
