@@ -74,8 +74,8 @@ public class AnonymousPojoValueProperty extends DelegatingValueProperty {
 
 	private Object inferValueType(Object masterObservableValueType) {
 		if (masterObservableValueType instanceof Class) {
-			return getClassDelegate((Class) masterObservableValueType)
-					.getValueType();
+			IValueProperty classDelegate = getClassDelegate((Class) masterObservableValueType);
+			return classDelegate != null ? classDelegate.getValueType() : null;
 		}
 		return null;
 	}
