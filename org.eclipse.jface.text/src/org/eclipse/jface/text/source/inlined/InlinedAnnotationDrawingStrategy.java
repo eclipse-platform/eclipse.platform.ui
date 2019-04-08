@@ -264,7 +264,6 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				StyleRange newStyle= annotation.updateStyle(style);
 				if (newStyle != null) {
 					textWidget.setStyleRange(newStyle);
-					System.err.println(newStyle);
 					return;
 				}
 
