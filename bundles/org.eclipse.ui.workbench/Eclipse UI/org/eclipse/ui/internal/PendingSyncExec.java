@@ -38,10 +38,16 @@ public final class PendingSyncExec {
 		return semaphore.tryAcquire(delay, TimeUnit.MILLISECONDS);
     }
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        return (runnable == ((PendingSyncExec) obj).runnable);
-    }
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof PendingSyncExec)) {
+			return false;
+		}
+		return (runnable == ((PendingSyncExec) obj).runnable);
+	}
 
     public Thread getOperationThread() {
         return operation;

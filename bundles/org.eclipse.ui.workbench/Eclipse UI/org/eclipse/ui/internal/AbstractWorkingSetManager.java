@@ -306,24 +306,27 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 
     //---- equals and hash code -----------------------------------------------
 
-    /**
-     * Tests the receiver and the object for equality
-     *
-     * @param object object to compare the receiver to
-     * @return true=the object equals the receiver, it has the same
-     * 	working sets. false otherwise
-     */
-    @Override
+	/**
+	 * Tests the receiver and the object for equality
+	 *
+	 * @param object object to compare the receiver to
+	 * @return true=the object equals the receiver, it has the same working sets.
+	 *         false otherwise
+	 */
+	@Override
 	public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!getClass().getName().equals(object.getClass().getName())) {
+		if (object == null) {
 			return false;
 		}
-        AbstractWorkingSetManager other= (AbstractWorkingSetManager)object;
-        return other.workingSets.equals(workingSets);
-    }
+		if (this == object) {
+			return true;
+		}
+		if (!getClass().getName().equals(object.getClass().getName())) {
+			return false;
+		}
+		AbstractWorkingSetManager other = (AbstractWorkingSetManager) object;
+		return other.workingSets.equals(workingSets);
+	}
 
     /**
      * Returns the hash code.
