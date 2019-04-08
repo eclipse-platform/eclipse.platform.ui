@@ -118,34 +118,32 @@ public class SearchField {
 	private static final int MINIMUM_DIALOG_HEIGHT = 50;
 	private static final int MINIMUM_DIALOG_WIDTH = 150;
 
-	Shell shell;
+	private MApplication application;
+	private MWindow window;
+
 	private Text txtQuickAccess;
+	Shell shell;
+	private Table table;
 
 	private QuickAccessContents quickAccessContents;
 
-	private MWindow window;
-
-	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
-
 	private Map<String, QuickAccessElement> elementMap = Collections.synchronizedMap(new HashMap<>());
-
 	private Map<QuickAccessElement, ArrayList<String>> textMap = Collections.synchronizedMap(new HashMap<>());
-
 	private List<QuickAccessElement> previousPicksList = Collections.synchronizedList(new LinkedList<>());
+
 	private int dialogHeight = -1;
 	private int dialogWidth = -1;
 	private Control previousFocusControl;
 	boolean activated = false;
 
-	@Inject
-	private EPartService partService;
-	private Table table;
 
 	private String selectedString = ""; //$NON-NLS-1$
 	private AccessibleAdapter accessibleListener;
 
 	@Inject
 	private IBindingService bindingService;
+	@Inject
+	private EPartService partService;
 
 	private TriggerSequence triggerSequence = null;
 
@@ -156,6 +154,7 @@ public class SearchField {
 	@PostConstruct
 	void createControls(final Composite parent, MApplication application, MWindow window) {
 		this.window = window;
+		this.application = application;
 		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
 		txtQuickAccess = createText(comp);
@@ -181,7 +180,69 @@ public class SearchField {
 
 		hookUpSelectAll();
 
+		txtQuickAccess.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				// release mouse button = click = CTRL+3 -> activate QuickAccess
+				showList();
+			}
+		});
+		txtQuickAccess.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Once the focus event is complete, check if we should close the shell
+				if (table != null) {
+					table.getDisplay().asyncExec(() -> checkFocusLost(table, txtQuickAccess));
+				}
+				activated = false;
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				previousFocusControl = (Control) e.getSource();
+				activated = true;
+			}
+		});
+		txtQuickAccess.addModifyListener(e -> showList());
+		txtQuickAccess.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ESC) {
+					activated = false;
+					txtQuickAccess.setText(""); //$NON-NLS-1$
+					if (txtQuickAccess == previousFocusControl) {
+						txtQuickAccess.getShell().forceFocus();
+					} else if (previousFocusControl != null && !previousFocusControl.isDisposed())
+						previousFocusControl.setFocus();
+				} else if (e.keyCode == SWT.ARROW_UP) {
+					// Windows moves caret left/right when pressing up/down,
+					// avoid this as the table selection changes for up/down
+					e.doit = false;
+				} else if (e.keyCode == SWT.ARROW_DOWN) {
+					e.doit = false;
+				}
+				if (e.doit == false) {
+					// arrow key pressed
+					notifyAccessibleTextChanged();
+				}
+			}
+		});
+	}
+
+	private void createContentsAndTable() {
+		if (quickAccessContents != null) {
+			return;
+		}
 		final CommandProvider commandProvider = new CommandProvider();
+		txtQuickAccess.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				IHandlerService hs = SearchField.this.window.getContext().get(IHandlerService.class);
+				if (commandProvider.getContextSnapshot() == null) {
+					commandProvider.setSnapshot(hs.createContextSnapshot(true));
+				}
+			}
+		});
 		List<QuickAccessProvider> providers = new ArrayList<>();
 		providers.add(new PreviousPicksProvider(previousPicksList));
 		providers.add(new EditorProvider());
@@ -193,13 +254,9 @@ public class SearchField {
 		providers.add(new PreferenceProvider());
 		providers.add(new PropertiesProvider());
 		providers.addAll(QuickAccessExtensionManager.getProviders());
-		for (QuickAccessProvider provider : providers) {
-			providerMap.put(provider.getId(), provider);
-		}
 		restoreDialog();
 
 		quickAccessContents = new QuickAccessContents(providers.toArray(new QuickAccessProvider[providers.size()])) {
-
 			@Override
 			protected void updateFeedback(boolean filterTextEmpty, boolean showAllMatches) {
 			}
@@ -265,68 +322,19 @@ public class SearchField {
 			}
 		};
 		quickAccessContents.hookFilterText(txtQuickAccess);
-		shell = new Shell(parent.getShell(), SWT.RESIZE | SWT.ON_TOP);
+		shell = new Shell(txtQuickAccess.getShell(), SWT.RESIZE | SWT.ON_TOP);
 		shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		shell.setMinimumSize(new Point(MINIMUM_DIALOG_WIDTH, MINIMUM_DIALOG_HEIGHT));
 		shell.setText(QuickAccessMessages.QuickAccess_EnterSearch); // just for debugging, not shown anywhere
 		GridLayoutFactory.fillDefaults().applyTo(shell);
 		quickAccessContents.createHintText(shell, Window.getDefaultOrientation());
 		table = quickAccessContents.createTable(shell, Window.getDefaultOrientation());
-		txtQuickAccess.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				// release mouse button = click = CTRL+3 -> activate QuickAccess
-				showList();
-			}
-		});
-		txtQuickAccess.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				// Once the focus event is complete, check if we should close the shell
-				table.getDisplay().asyncExec(() -> checkFocusLost(table, txtQuickAccess));
-				activated = false;
-			}
-
-			@Override
-			public void focusGained(FocusEvent e) {
-				IHandlerService hs = SearchField.this.window.getContext().get(IHandlerService.class);
-				if (commandProvider.getContextSnapshot() == null) {
-					commandProvider.setSnapshot(hs.createContextSnapshot(true));
-				}
-				previousFocusControl = (Control) e.getSource();
-				activated = true;
-			}
-		});
 		table.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
 				// Once the focus event is complete, check if we should close
 				// the shell
 				table.getDisplay().asyncExec(() -> checkFocusLost(table, txtQuickAccess));
-			}
-		});
-		txtQuickAccess.addModifyListener(e -> showList());
-		txtQuickAccess.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ESC) {
-					activated = false;
-					txtQuickAccess.setText(""); //$NON-NLS-1$
-					if (txtQuickAccess == previousFocusControl) {
-						txtQuickAccess.getShell().forceFocus();
-					} else if (previousFocusControl != null && !previousFocusControl.isDisposed())
-						previousFocusControl.setFocus();
-				} else if (e.keyCode == SWT.ARROW_UP) {
-					// Windows moves caret left/right when pressing up/down,
-					// avoid this as the table selection changes for up/down
-					e.doit = false;
-				} else if (e.keyCode == SWT.ARROW_DOWN) {
-					e.doit = false;
-				}
-				if (e.doit == false) {
-					// arrow key pressed
-					notifyAccessibleTextChanged();
-				}
 			}
 		});
 		quickAccessContents.createInfoLabel(shell);
@@ -344,9 +352,10 @@ public class SearchField {
 	}
 
 	private void showList() {
-		boolean wasVisible = shell.getVisible();
+		boolean wasVisible = shell != null && shell.getVisible();
 		boolean nowVisible = txtQuickAccess.getText().length() > 0 || activated;
 		if (!wasVisible && nowVisible) {
+			createContentsAndTable();
 			layoutShell();
 			addAccessibleListener();
 			quickAccessContents.preOpen();
@@ -522,6 +531,7 @@ public class SearchField {
 
 	public void activate(Control previousFocusControl) {
 		this.previousFocusControl = previousFocusControl;
+		createContentsAndTable();
 		if (!shell.isVisible()) {
 			layoutShell();
 			quickAccessContents.preOpen();
@@ -542,6 +552,9 @@ public class SearchField {
 	 *            the search text field
 	 */
 	protected void checkFocusLost(final Table table, final Text text) {
+		if (shell == null) {
+			return;
+		}
 		if (!shell.isDisposed() && !table.isDisposed() && !text.isDisposed()) {
 			if (table.getDisplay().getActiveShell() == table.getShell()) {
 				// If the user selects the trim shell, leave focus on the text
@@ -674,7 +687,7 @@ public class SearchField {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, "Restoring quick access elements.", elementCount); //$NON-NLS-1$
 
 			for (int i = 0; i < elementCount; i++) {
-				QuickAccessProvider quickAccessProvider = providerMap.get(orderedProviders[i]);
+				QuickAccessProvider quickAccessProvider = quickAccessContents.getProvider(orderedProviders[i]);
 				int numTexts = Integer.parseInt(textEntries[i]);
 				subMonitor.split(1).setTaskName("Restoring quick access element \"" + orderedElements[i] + "\"."); //$NON-NLS-1$ //$NON-NLS-2$
 				if (quickAccessProvider != null && restoreUiElements == quickAccessProvider.requiresUiAccess()) {
@@ -711,7 +724,6 @@ public class SearchField {
 		storeDialog();
 		elementMap.clear();
 		previousPicksList.clear();
-		providerMap.clear();
 		textMap.clear();
 		partService = null;
 	}
@@ -833,6 +845,7 @@ public class SearchField {
 	 * @return the current quick access shell or <code>null</code>
 	 */
 	public Shell getQuickAccessShell() {
+		createContentsAndTable();
 		return shell;
 	}
 
@@ -853,6 +866,7 @@ public class SearchField {
 	 * @return the table created in the shell or <code>null</code>
 	 */
 	public Table getQuickAccessTable(){
+		createContentsAndTable();
 		return table;
 	}
 

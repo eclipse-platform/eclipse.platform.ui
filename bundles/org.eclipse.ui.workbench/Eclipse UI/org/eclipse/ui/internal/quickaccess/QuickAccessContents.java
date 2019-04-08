@@ -18,12 +18,17 @@
 package org.eclipse.ui.internal.quickaccess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -93,6 +98,7 @@ public abstract class QuickAccessContents {
 	protected Text filterText;
 
 	private QuickAccessProvider[] providers;
+	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
 
 	protected Table table;
 	protected Label infoLabel;
@@ -922,6 +928,13 @@ public abstract class QuickAccessContents {
 		for (QuickAccessProvider provider : providers) {
 			provider.reset();
 		}
+	}
+
+	QuickAccessProvider getProvider(String providerId) {
+		if (providerMap == null) {
+			providerMap = Arrays.stream(providers).collect(Collectors.toMap(QuickAccessProvider::getId, Function.identity()));
+		}
+		return providerMap.get(providerId);
 	}
 
 }
