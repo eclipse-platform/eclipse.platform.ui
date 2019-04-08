@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * <p>
@@ -129,6 +131,15 @@ public final class WidgetFactory {
 	}
 
 	/**
+	 * @param style SWT style applicable for Tree. Refer to
+	 *              {@link Tree#Tree(Composite, int)} for supported styles.
+	 * @return TreeFactory
+	 */
+	public static TreeFactory tree(int style) {
+		return TreeFactory.newTree(style);
+	}
+
+	/**
 	 * @param style SWT style applicable for TableColumn. Refer to
 	 *              {@link TableColumn#TableColumn(Table, int)} for supported
 	 *              styles.
@@ -136,5 +147,14 @@ public final class WidgetFactory {
 	 */
 	public static TableColumnFactory tableColumn(int style) {
 		return TableColumnFactory.newTableColumn(style);
+	}
+
+	/**
+	 * @param style SWT style applicable for TreeColumn. Refer to
+	 *              {@link TreeColumn#TreeColumn(Tree, int)} for supported styles.
+	 * @return TreeColumnFactory
+	 */
+	public static TreeColumnFactory treeColumn(int style) {
+		return TreeColumnFactory.newTreeColumn(style);
 	}
 }
