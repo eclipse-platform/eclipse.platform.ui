@@ -93,7 +93,7 @@ public class TableFactory extends AbstractCompositeFactory<TableFactory, Table> 
 	 * @return this
 	 */
 	public TableFactory headerVisible(boolean visible) {
-		addProperty((t) -> t.setHeaderVisible(true));
+		addProperty((t) -> t.setHeaderVisible(visible));
 		return this;
 	}
 
@@ -104,7 +104,7 @@ public class TableFactory extends AbstractCompositeFactory<TableFactory, Table> 
 	 * @return this
 	 */
 	public TableFactory linesVisible(boolean visible) {
-		addProperty((t) -> t.setLinesVisible(true));
+		addProperty((t) -> t.setLinesVisible(visible));
 		return this;
 	}
 

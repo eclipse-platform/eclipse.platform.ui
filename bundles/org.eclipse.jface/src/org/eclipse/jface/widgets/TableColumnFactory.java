@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * normal way:
  *
  * <ul>
- * <li>The same factory can be used many times to create several Table
+ * <li>The same factory can be used many times to create several TableColumn
  * instances</li>
  * <li>The setters on TableColumnFactory all return "this", allowing them to be
  * chained</li>
@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * </pre>
  * <p>
  * The above example creates a table column, sets text, registers a
- * SelectionListener and finally creates the table in "table".
+ * SelectionListener and finally creates the table column in "table".
  * <p>
  *
  * <pre>
