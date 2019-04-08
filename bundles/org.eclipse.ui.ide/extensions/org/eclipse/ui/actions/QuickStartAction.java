@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - [486901] Avoid blocking URL.equals
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 460381
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -141,10 +142,10 @@ public class QuickStartAction extends Action implements
                 product == null ? null : product.getId(), IDEWorkbenchMessages.WelcomePageSelectionDialog_title,
                 IDEWorkbenchMessages.WelcomePageSelectionDialog_message,
                 IIDEHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
-        if (d.open() != Window.OK || d.getResult().length != 1) {
+        if (d.open() != Window.OK || d.getResult().size() != 1) {
 			return null;
 		}
-        return (AboutInfo) d.getResult()[0];
+		return d.getFirstResult().orElse(null);
     }
 
     /**

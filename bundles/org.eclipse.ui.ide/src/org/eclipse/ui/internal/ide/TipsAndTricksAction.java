@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 93373 - [Intro]
  *     		TipsAndTricksAction should not use magic numbers
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 460381
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -99,13 +100,12 @@ public class TipsAndTricksAction extends PartEventAction implements
                 IDEWorkbenchMessages.TipsAndTricksPageSelectionDialog_message,
                 IIDEHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
         d.create();
-        d.getOkButton().setEnabled(false);
 
-        if (d.open() != Window.OK || d.getResult().length != 1) {
+        if (d.open() != Window.OK || d.getResult().size() != 1) {
 			return;
 		}
 
-        AboutInfo feature = (AboutInfo) d.getResult()[0];
+		AboutInfo feature = d.getFirstResult().orElse(null);
 
         /**
          * Open the tips and trick help topic

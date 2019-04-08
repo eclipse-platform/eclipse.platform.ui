@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 vogella GmbH and others.
+ * Copyright (c) 2015-2019 vogella GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 446616
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 460381
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -18,7 +19,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -39,8 +44,7 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public abstract class AbstractSelectionDialog<T> extends TrayDialog {
-	// the final collection of selected elements, or null if this dialog was
-	// canceled
+	// the final collection of selected elements
 	private Collection<T> result;
 
 	// a list of the initially-selected elements
@@ -121,11 +125,28 @@ public abstract class AbstractSelectionDialog<T> extends TrayDialog {
 	/**
 	 * Returns the collection of selections made by the user.
 	 *
-	 * @return the collection of selected elements, or <code>null</code> if no
-	 *         result was set
+	 * @return the collection of selected elements, or
+	 *         <code>Collections.emptyList()</code> if no result was set
 	 */
 	public Collection<T> getResult() {
-		return result;
+		return result != null ? result : Collections.emptyList();
+	}
+
+	/**
+	 * Returns an <code>java.util.Optional&lt;T&gt;</code> containing the first
+	 * element from the collection of selections made by the user. Returns
+	 * {@link Optional#empty()} if no element has been selected.
+	 *
+	 * @return an <code>java.util.Optional&lt;T&gt;</code> containing the first
+	 *         result element if one exists. Otherwise {@link Optional#empty()} is
+	 *         returned.
+	 * @since 3.16
+	 */
+	public Optional<T> getFirstResult() {
+		if (result != null) {
+			return result.stream().findFirst();
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -161,37 +182,48 @@ public abstract class AbstractSelectionDialog<T> extends TrayDialog {
 	}
 
 	/**
-	 * Set the selections made by the user, or <code>null</code> if the
-	 * selection was canceled.
+	 * Set the selections made by the user.
+	 * <p>
+	 * The result may be accessed using <code>getResult</code>.
+	 * </p>
 	 *
-	 * @param newUserSelection
-	 *            collection of selected elements, or <code>null</code> if
-	 *            Cancel was pressed
+	 * @param newUserSelection collection of selected elements
 	 */
 	protected void setResult(Collection<T> newUserSelection) {
+		result = newUserSelection;
+	}
+
+	/**
+	 * Set the selections made by the user.
+	 * <p>
+	 * The result may be accessed using <code>getResult</code>.
+	 * </p>
+	 *
+	 * @param newUserSelection - the new values
+	 */
+	protected void setResult(T... newUserSelection) {
 		if (newUserSelection == null) {
-			result = Collections.emptyList();
+			result = null;
 		} else {
-			result = newUserSelection;
+			result = Arrays.asList(newUserSelection);
 		}
 	}
 
 	/**
-	 * Set the selections made by the user, or <code>null</code> if the
-	 * selection was canceled.
-	 * <p>
-	 * The selections may accessed using <code>getResult</code>.
-	 * </p>
+	 * Set the selections obtained from a viewer.
 	 *
-	 * @param newUserSelection
-	 *            - the new values
+	 * @param selection selection obtained from a viewer
+	 * @param target    target type to check for <code>instanceof</code>
+	 * @since 3.16
 	 */
-	protected void setResult(T... newUserSelection) {
-		if (newUserSelection == null) {
-			result = Collections.emptyList();
-		} else {
-			result = Arrays.asList(newUserSelection);
+	protected void setResult(ISelection selection, Class<T> target) {
+		List<T> selected = null;
+		if (selection instanceof IStructuredSelection && target != null) {
+			IStructuredSelection structured = (IStructuredSelection) selection;
+			selected = ((List<?>) structured.toList()).stream().filter(p -> target.isInstance(p))
+					.map(p -> target.cast(p)).collect(Collectors.toList());
 		}
+		setResult(selected);
 	}
 
 	/**

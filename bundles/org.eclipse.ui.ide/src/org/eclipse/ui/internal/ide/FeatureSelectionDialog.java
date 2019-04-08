@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 448060
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 460381
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide;
@@ -19,8 +20,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
 
+import org.eclipse.jface.dialogs.AbstractSelectionDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -30,14 +32,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.SelectionDialog;
 
 import com.ibm.icu.text.Collator;
 
 /**
  * Dialog to allow the user to select a feature from a list.
  */
-public class FeatureSelectionDialog extends SelectionDialog {
+public class FeatureSelectionDialog extends AbstractSelectionDialog<AboutInfo> {
     /**
      * List width in characters.
      */
@@ -112,13 +113,10 @@ public class FeatureSelectionDialog extends SelectionDialog {
         // Find primary feature
         for (AboutInfo feature : features) {
             if (feature.getFeatureId().equals(primaryFeatureId)) {
-				setInitialSelections(feature);
+				setInitialSelection(feature);
                 return;
             }
         }
-
-        // set a safe default
-        setInitialSelections(new Object[0]);
     }
 
     @Override
@@ -155,12 +153,12 @@ public class FeatureSelectionDialog extends SelectionDialog {
 		listViewer.setContentProvider(ArrayContentProvider.getInstance());
 		listViewer.setInput(features);
 
-        // Set the initial selection
-        listViewer.setSelection(new StructuredSelection(
-                getInitialElementSelections()), true);
+		// Add a selection change listener
+		listViewer.addSelectionChangedListener(
+				event -> getButton(IDialogConstants.OK_ID).setEnabled(!event.getSelection().isEmpty()));
 
-        // Add a selection change listener
-        listViewer.addSelectionChangedListener(event -> getOkButton().setEnabled(!event.getSelection().isEmpty()));
+        // Set the initial selection
+		listViewer.setSelection(new StructuredSelection(getInitialSelection()), true);
 
         // Add double-click listener
         listViewer.addDoubleClickListener(event -> okPressed());
@@ -169,8 +167,7 @@ public class FeatureSelectionDialog extends SelectionDialog {
 
     @Override
 	protected void okPressed() {
-		IStructuredSelection selection = listViewer.getStructuredSelection();
-        setResult(selection.toList());
-        super.okPressed();
+		setResult(listViewer.getStructuredSelection(), AboutInfo.class);
+		super.okPressed();
     }
 }
