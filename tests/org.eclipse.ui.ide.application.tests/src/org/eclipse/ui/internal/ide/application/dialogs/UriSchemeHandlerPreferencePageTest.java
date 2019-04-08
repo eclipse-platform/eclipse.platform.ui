@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.ide.application.dialogs;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -229,7 +231,22 @@ public class UriSchemeHandlerPreferencePageTest {
 
 		this.page.createContents(this.page.getShell());
 
+		assertFalse(page.tableViewer.getControl().getEnabled());
 		assertTrue(((Collection<?>) page.tableViewer.getInput()).isEmpty());
+
+		assertTrue(page.performOk());
+	}
+
+	@Test
+	public void doesNothingIfEclipseLauncherPathCannotBeDetermined() {
+		operatingSystemRegistration.launcherPath = null;
+
+		this.page.init(null);
+
+		this.page.createContents(this.page.getShell());
+
+		assertFalse(page.tableViewer.getControl().getEnabled());
+		assertNotNull(page.getErrorMessage());
 
 		assertTrue(page.performOk());
 	}
@@ -431,6 +448,7 @@ public class UriSchemeHandlerPreferencePageTest {
 		public Collection<IScheme> addedSchemes = Collections.emptyList();
 		public Collection<IScheme> removedSchemes = Collections.emptyList();
 		public boolean canOverwriteOtherApplicationsRegistration = false;
+		public String launcherPath = THIS_ECLIPSE_HANDLER_LOCATION;
 
 		public OperatingSystemRegistrationMock(List<ISchemeInformation> schemeInformations) {
 			this.schemeInformations = schemeInformations;
@@ -455,7 +473,7 @@ public class UriSchemeHandlerPreferencePageTest {
 
 		@Override
 		public String getEclipseLauncher() {
-			return THIS_ECLIPSE_HANDLER_LOCATION;
+			return launcherPath;
 		}
 
 		@Override

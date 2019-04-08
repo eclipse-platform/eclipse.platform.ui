@@ -24,7 +24,9 @@ import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPrefere
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_Error_Writing_Scheme;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_Handler_Label;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_Handler_Text_No_Application;
+import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_LauncherCannotBeDetermined;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_Page_Description;
+import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_UnsupportedOperatingSystem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -122,6 +125,14 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		addFiller(parent);
 		createTableViewerForSchemes(parent);
 		createHandlerLocationControls(parent);
+		if (operatingSystemRegistration == null) {
+			setErrorMessage(NLS.bind(UrlHandlerPreferencePage_UnsupportedOperatingSystem,
+					Platform.isRunning() ? Platform.getOS() : null)); // running check for plain JUnit tests
+			tableViewer.getControl().setEnabled(false);
+		} else if (currentLocation == null) {
+			setErrorMessage(UrlHandlerPreferencePage_LauncherCannotBeDetermined);
+			tableViewer.getControl().setEnabled(false);
+		}
 		return parent;
 	}
 
@@ -221,7 +232,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean performOk() {
-		if (operatingSystemRegistration == null) {
+		if (operatingSystemRegistration == null || currentLocation == null) {
 			return true;
 		}
 

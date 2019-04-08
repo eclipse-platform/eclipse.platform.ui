@@ -544,6 +544,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String UriHandlerPreferencePage_Confirm_Handle;
 	public static String UrlHandlerPreferencePage_Error_Reading_Scheme;
 	public static String UrlHandlerPreferencePage_Error_Writing_Scheme;
+	public static String UrlHandlerPreferencePage_UnsupportedOperatingSystem;
+	public static String UrlHandlerPreferencePage_LauncherCannotBeDetermined;
 
 	// ---workspace ---
 	public static String IDEWorkspacePreference_autobuild;
