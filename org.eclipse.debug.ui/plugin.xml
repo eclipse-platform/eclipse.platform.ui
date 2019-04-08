@@ -3316,10 +3316,4 @@ M4 = Platform-specific fourth key
          </enablement>
       </decorator>
    </extension>
-   <extension
-         point="org.eclipse.ui.quickAccess">
-      <provider class="org.eclipse.debug.internal.ui.quickaccess.RunQuickAccessProvider"/>
-      <provider class="org.eclipse.debug.internal.ui.quickaccess.DebugQuickAccessProvider"/>
-      <provider class="org.eclipse.debug.internal.ui.quickaccess.ProfileQuickAccessProvider"/>
-   </extension>
 </plugin>
