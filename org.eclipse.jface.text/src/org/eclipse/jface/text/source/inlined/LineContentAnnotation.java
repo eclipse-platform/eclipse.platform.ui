@@ -19,7 +19,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
@@ -102,10 +104,14 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	/**
 	 * Returns the style to apply with GlyphMetrics width only if needed.
 	 *
-	 * @param annotation the line content annotation
-	 * @param usePreviousChar whether to attach the metrics to the offset char or previous one
+	 * As it's using Widget position, the results can be passed directly to
+	 * {@link StyledText#setStyleRange(StyleRange)} and family. However, in case of a Viewer
+	 * providing project/folder with {@link ITextViewerExtension5}, the range must be transformed to
+	 * model position before passing it to a {@link TextPresentation}.
+	 *
 	 * @param style the current style and null otherwise.
-	 * @return the style to apply with GlyphMetrics width only if needed.
+	 * @return the style to apply with GlyphMetrics width only if needed. It uses widget position,
+	 *         not model position.
 	 */
 	StyleRange updateStyle(StyleRange style) {
 		Position widgetPosition= computeWidgetPosition();

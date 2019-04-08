@@ -138,10 +138,10 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 	}
 
-	protected static void drawAsLeftOf1stCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
+	protected static void drawAsLeftOf1stCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
 		StyleRange style= null;
 		try {
-			style= textWidget.getStyleRangeAtOffset(offset);
+			style= textWidget.getStyleRangeAtOffset(widgetOffset);
 		} catch (Exception e) {
 			return;
 		}
@@ -154,11 +154,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			return;
 		}
 		if (gc != null) {
-			String s= textWidget.getText(offset, offset);
+			String s= textWidget.getText(widgetOffset, widgetOffset);
 			boolean isEndOfLine= ("\r".equals(s) || "\n".equals(s)); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Compute the location of the annotation
-			Rectangle bounds= textWidget.getTextBounds(offset, offset);
+			Rectangle bounds= textWidget.getTextBounds(widgetOffset, widgetOffset);
 			int x= bounds.x + (isEndOfLine ? bounds.width * 2 : 0);
 			int y= bounds.y;
 
@@ -167,7 +167,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
 			// Draw the line content annotation
 			annotation.setLocation(x, y);
-			annotation.draw(gc, textWidget, offset, length, color, x, y);
+			annotation.draw(gc, textWidget, widgetOffset, length, color, x, y);
 			int width= annotation.getWidth();
 			if (width != 0) {
 				if (isEndOfLine) {
@@ -222,7 +222,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				textWidget.setStyleRange(style);
 			}
 		} else {
-			textWidget.redrawRange(offset, length, true);
+			textWidget.redrawRange(widgetOffset, length, true);
 		}
 	}
 
@@ -264,6 +264,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				StyleRange newStyle= annotation.updateStyle(style);
 				if (newStyle != null) {
 					textWidget.setStyleRange(newStyle);
+					System.err.println(newStyle);
 					return;
 				}
 

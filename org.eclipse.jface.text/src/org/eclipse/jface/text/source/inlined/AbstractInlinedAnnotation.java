@@ -131,15 +131,15 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 * Draw the inlined annotation. By default it draw the text of the annotation with gray color.
 	 * User can override this method to draw anything.
 	 *
-	 * @param gc         the graphics context
+	 * @param gc the graphics context
 	 * @param textWidget the text widget to draw on
-	 * @param offset     the offset of the line
-	 * @param length     the length of the line
-	 * @param color      the color of the line
-	 * @param x          the x position of the annotation
-	 * @param y          the y position of the annotation
+	 * @param widgetOffset the offset
+	 * @param length the length of the line
+	 * @param color the color of the line
+	 * @param x the x position of the annotation
+	 * @param y the y position of the annotation
 	 */
-	public void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
+	public void draw(GC gc, StyledText textWidget, int widgetOffset, int length, Color color, int x, int y) {
 		gc.setForeground(color);
 		gc.setBackground(textWidget.getBackground());
 		gc.drawString(getText(), x, y, true);
