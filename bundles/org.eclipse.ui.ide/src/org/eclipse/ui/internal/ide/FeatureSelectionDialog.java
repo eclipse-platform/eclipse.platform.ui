@@ -157,12 +157,17 @@ public class FeatureSelectionDialog extends AbstractSelectionDialog<AboutInfo> {
 		listViewer.addSelectionChangedListener(
 				event -> getButton(IDialogConstants.OK_ID).setEnabled(!event.getSelection().isEmpty()));
 
+		// Add double-click listener
+		listViewer.addDoubleClickListener(event -> okPressed());
+		return composite;
+	}
+
+	@Override
+	protected Control createContents(Composite parent) {
+		Control contents = super.createContents(parent);
         // Set the initial selection
 		listViewer.setSelection(new StructuredSelection(getInitialSelection()), true);
-
-        // Add double-click listener
-        listViewer.addDoubleClickListener(event -> okPressed());
-        return composite;
+		return contents;
     }
 
     @Override
