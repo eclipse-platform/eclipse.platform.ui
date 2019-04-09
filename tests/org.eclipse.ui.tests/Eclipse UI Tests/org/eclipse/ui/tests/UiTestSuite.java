@@ -85,6 +85,7 @@ import org.junit.runners.Suite;
 	DirectoryProposalContentAssistTestSuite.class,
 	InternalTestSuite.class,
 	LeaksTestSuite.class,
+	StyledStringHighlighterTest.class
 })
 public class UiTestSuite {
 

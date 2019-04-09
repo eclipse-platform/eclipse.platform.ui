@@ -56,6 +56,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.text.contentassist.BoldStylerProvider;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -226,6 +227,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	private IHandlerActivation showViewHandler;
 
+	private IStyledStringHighlighter styledStringHighlighter;
+
 	/**
 	 * Creates a new instance of the class.
 	 *
@@ -304,7 +307,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	private ItemsListLabelProvider getItemsListLabelProvider() {
 		if (itemsListLabelProvider == null) {
-			itemsListLabelProvider = new ItemsListLabelProvider(new LabelProvider(), null);
+			itemsListLabelProvider = new ItemsListLabelProvider(
+					new TypeItemLabelProvider(), null);
 		}
 		return itemsListLabelProvider;
 	}
@@ -2947,6 +2951,70 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	public Control getPatternControl() {
 		return pattern;
+	}
+
+	/**
+	 * A <code>LabelProvider</code> for (the table of) types.
+	 */
+	private class TypeItemLabelProvider extends LabelProvider implements ILabelDecorator, IStyledLabelProvider {
+
+		private BoldStylerProvider boldStylerProvider;
+
+		@Override
+		public void dispose() {
+			super.dispose();
+
+			if (boldStylerProvider != null) {
+				boldStylerProvider.dispose();
+				boldStylerProvider = null;
+			}
+		}
+
+		@Override
+		public Image decorateImage(Image image, Object element) {
+			return image;
+		}
+
+		@Override
+		public String decorateText(String text, Object element) {
+			return text;
+		}
+
+		@Override
+		public StyledString getStyledText(Object element) {
+			String text = getText(element);
+			String namePattern = filter != null ? filter.getPattern() : null;
+
+			return getStyledStringHighlighter().highlight(text, namePattern, getBoldStylerProvider().getBoldStyler());
+		}
+
+		private BoldStylerProvider getBoldStylerProvider() {
+			if (boldStylerProvider == null) {
+				boldStylerProvider = new BoldStylerProvider(getDialogArea().getFont());
+			}
+			return boldStylerProvider;
+		}
+
+	}
+
+	/**
+	 * @return Returns the styledStringHighlighter.
+	 * @since 3.114
+	 */
+	public IStyledStringHighlighter getStyledStringHighlighter() {
+		if (styledStringHighlighter == null) {
+			styledStringHighlighter = new StyledStringHighlighter();
+		}
+
+		return styledStringHighlighter;
+	}
+
+	/**
+	 * @param styledStringHighlighter The styledStringHighlighter to set.
+	 * @since 3.114
+	 */
+	public void setStyledStringHighlighter(IStyledStringHighlighter styledStringHighlighter) {
+		this.styledStringHighlighter = styledStringHighlighter;
 	}
 
 }
