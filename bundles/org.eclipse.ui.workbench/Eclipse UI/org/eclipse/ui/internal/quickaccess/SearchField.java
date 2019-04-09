@@ -254,7 +254,6 @@ public class SearchField {
 		providers.add(new PreferenceProvider());
 		providers.add(new PropertiesProvider());
 		providers.addAll(QuickAccessExtensionManager.getProviders());
-		restoreDialog();
 
 		quickAccessContents = new QuickAccessContents(providers.toArray(new QuickAccessProvider[providers.size()])) {
 			@Override
@@ -321,6 +320,9 @@ public class SearchField {
 				}
 			}
 		};
+
+		restoreDialog();
+
 		quickAccessContents.hookFilterText(txtQuickAccess);
 		shell = new Shell(txtQuickAccess.getShell(), SWT.RESIZE | SWT.ON_TOP);
 		shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
