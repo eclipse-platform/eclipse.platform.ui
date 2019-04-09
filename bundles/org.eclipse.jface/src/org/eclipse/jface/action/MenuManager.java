@@ -121,11 +121,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 */
 	private String definitionId = null;
 
-	/**
-	 * Indicates whether the menu is currently show or not
-	 */
-	private boolean isShowing = false;
-
     /**
      * Creates a menu manager.  The text and id are <code>null</code>.
      * Typically used for creating a context menu, where it doesn't need to be referred to by id.
@@ -209,7 +204,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         if (!menuExist()) {
             menu = new Menu(parent, SWT.BAR);
             menu.setData(MANAGER_KEY, this);
-			isShowing = true;
             update(false);
         }
         return menu;
@@ -238,7 +232,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     @Override
 	public void dispose() {
-		isShowing = false;
         if (menuExist()) {
 			menu.dispose();
 		}
@@ -479,7 +472,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         MenuManagerEventHelper.getInstance().showEventPreHelper(this);
         fireAboutToShow(this);
         MenuManagerEventHelper.getInstance().showEventPostHelper(this);
-		isShowing = true;
         update(false, false);
     }
 
@@ -487,7 +479,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * Notifies all listeners that this menu is about to disappear.
      */
     private void handleAboutToHide() {
-		isShowing = false;
     	MenuManagerEventHelper.getInstance().hideEventPreHelper(this);
         fireAboutToHide(this);
         MenuManagerEventHelper.getInstance().hideEventPostHelper(this);
@@ -753,7 +744,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 *            <code>false</code> means just this menu
 	 */
     protected void update(boolean force, boolean recursive) {
-		if ((isShowing && isDirty()) || force) {
+        if (isDirty() || force) {
             if (menuExist()) {
                 // clean contains all active items without double separators
                 IContributionItem[] items = getItems();
