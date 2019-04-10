@@ -931,7 +931,10 @@ public abstract class QuickAccessContents {
 	}
 
 	QuickAccessProvider getProvider(String providerId) {
-		if (providerMap == null) {
+		if (providers == null || providers.length == 0) {
+			return null;
+		}
+		if (providerMap == null || providerMap.size() != providers.length) {
 			providerMap = Arrays.stream(providers).collect(Collectors.toMap(QuickAccessProvider::getId, Function.identity()));
 		}
 		return providerMap.get(providerId);
