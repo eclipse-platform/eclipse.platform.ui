@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2019 Matthew Hall and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,7 +11,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
  *     Matthew Hall - bugs 264307, 264619
- *     Justin Künzel - NPE
+ *     Justin Kuenzel - NPE
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
