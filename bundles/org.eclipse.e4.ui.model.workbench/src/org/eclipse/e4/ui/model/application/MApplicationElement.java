@@ -26,6 +26,7 @@ import java.util.Map;
  * <p>
  * This is the root element for all UI Model elements, defining common attributes
  * to every element; the element's id as well as three general storage elements:
+ * </p>
  * <ul>
  * <li>Tags: This is a set of strings which can be used to classify a particular
  * element. Tags can be specified in element searches and can also be referred
@@ -35,7 +36,6 @@ import java.util.Map;
  * <li>TransientData: A string to object map which can be used to store runtime data
  * relevant to a particular model element.</li>
  * </ul>
- * </p>
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->

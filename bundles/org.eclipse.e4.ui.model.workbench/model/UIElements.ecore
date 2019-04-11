@@ -10,11 +10,11 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Application">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;p>&#xD;&#xA;The MApplication acts as the root of the UI Model. It's children are the&#xD;&#xA; MWindows representing the UI for this application. It also owns the application's&#xD;&#xA;context (which is hooked to the OSGI context, allowing access not only to its&#xD;&#xA;own runtime information but also to any registered OSGI service.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;It also owns a number of caches which, while independent of the UI itself are&#xD;&#xA;used by the appliecation to populate new windows or to define state that is&#xD;&#xA;epected to be the same for all windows:&#xD;&#xA;&lt;ui>&#xD;&#xA;&lt;li>Keybindings, Handlers, Commands&lt;/li>&#xD;&#xA;&lt;li>Part Descriptors (to support a 'Show View' dialog...)&lt;/li>&#xD;&#xA;&lt;li>Snippets of model (such as saved perspectives...)&lt;/li>&#xD;&#xA;&lt;/ui>&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
+      <details key="documentation" value="&lt;p>&#xA;The MApplication acts as the root of the UI Model. It's children are the&#xA;MWindows representing the UI for this application. It also owns the application's&#xA;context (which is hooked to the OSGI context, allowing access not only to its&#xA;own runtime information but also to any registered OSGI service.&#xA;&lt;/p>&#xA;&lt;p>&#xA;It also owns a number of caches which, while independent of the UI itself are&#xA;used by the application to populate new windows or to define state that is&#xA;expected to be the same for all windows:&#xA;&lt;/p>&#xA;&lt;ul>&#xA;&lt;li>Keybindings, Handlers, Commands&lt;/li>&#xA;&lt;li>Part Descriptors (to support a 'Show View' dialog...)&lt;/li>&#xA;&lt;li>Snippets of model (such as saved perspectives...)&lt;/li>&#xA;&lt;/ul>&#xA;@since 1.0&#xA;@noimplement This interface is not intended to be implemented by clients."/>
     </eAnnotations>
     <eOperations name="getCommand" eType="#//commands/Command">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Returns the model element for the command identified via the elementId or null if the element cannot be found.&#xA;@parameter elementId the ID of the command.&#xA;@return the model element for the command identified via the elementId or null if the element cannot be found.&#xA;@since 1.2"/>
+        <details key="documentation" value="Returns the model element for the command identified via the elementId or null if the element cannot be found.&#xA;@param elementId the ID of the command.&#xA;@return the model element for the command identified via the elementId or null if the element cannot be found.&#xA;@since 1.2"/>
         <details key="body" value="if (elementIdToCommandMap == null) {&#xA;&#x9;Map&lt;String, MCommand> result = new &lt;%java.util.HashMap%>&lt;String, MCommand>();&#xA;&#x9;for (MCommand command : getCommands()) {&#xA;&#x9;&#x9;MCommand otherCommand = result.put(command.getElementId(), command);&#xA;&#x9;&#x9;if (otherCommand != null) {&#xA;&#x9;&#x9;&#x9;result.put(command.getElementId(), otherCommand);&#xA;&#x9;&#x9;}&#xA;&#x9;}&#xA;&#xA;&#x9;elementIdToCommandMap = result;&#xA;}&#xA;return elementIdToCommandMap.get(elementId);"/>
       </eAnnotations>
       <eParameters name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -58,7 +58,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;p>&#xD;&#xA;This is the root element for all UI Model elements, defining common attributes&#xD;&#xA;to every element; the element's id as well as three general storage elements:&#xD;&#xA;&lt;ul>&#xD;&#xA;&lt;li>Tags: This is a set of strings which can be used to classify a particular&#xD;&#xA;element. Tags can be specified in element searches and can also be referred&#xD;&#xA;to in the CSS styling definition.&lt;/li>&#xD;&#xA;&lt;li>PersistedState: A string to string map used to store information that needs&#xD;&#xA;to be persisted between sessions.&lt;/li>&#xD;&#xA;&lt;li>TransientData: A string to object map which can be used to store runtime data&#xD;&#xA;relevant to a particular model element.&lt;/li>&#xD;&#xA;&lt;/ul>&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
+      <details key="documentation" value="&lt;p>&#xA;This is the root element for all UI Model elements, defining common attributes&#xA;to every element; the element's id as well as three general storage elements:&#xA;&lt;/p>&#xA;&lt;ul>&#xA;&lt;li>Tags: This is a set of strings which can be used to classify a particular&#xA;element. Tags can be specified in element searches and can also be referred&#xA;to in the CSS styling definition.&lt;/li>&#xA;&lt;li>PersistedState: A string to string map used to store information that needs&#xA;to be persisted between sessions.&lt;/li>&#xA;&lt;li>TransientData: A string to object map which can be used to store runtime data&#xA;relevant to a particular model element.&lt;/li>&#xA;&lt;/ul>&#xA;@since 1.0&#xA;@noimplement This interface is not intended to be implemented by clients."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -485,7 +485,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true"
         eSuperTypes="#//ui/UIElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base for the two different types of containment used in the model;&#xD;&#xA;'Stacks' (where only one element would be visible at a time) and 'Tiles' (where &#xD;&#xA;all the ele elements are visible at the same time.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;All containers define the type of element that they are to contain. By design this is&#xD;&#xA;always a single type. Where different concrete types are to be contained within the&#xD;&#xA;same container they all both mix in a container-specific type. For example both&#xD;&#xA;MParts and MPlaceholders are valid children for an MPartStack so they both mix in&#xD;&#xA;'StackElement' (which is an empty stub used only to constran the stack's types.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0&#xD;&#xA;@noimplement This interface is not intended to be implemented by clients."/>
+        <details key="documentation" value="&lt;p>&#xA;This is the base for the two different types of containment used in the model;&#xA;'Stacks' (where only one element would be visible at a time) and 'Tiles' (where &#xA;all the elements are visible at the same time.&#xA;&lt;/p>&lt;p>&#xA;All containers define the type of element that they are to contain. By design this is&#xA;always a single type. Where different concrete types are to be contained within the&#xA;same container they all both mix in a container-specific type. For example both&#xA;MParts and MPlaceholders are valid children for an MPartStack so they both mix in&#xA;'StackElement' (which is an empty stub used only to constrain the stack's types.&#xA;&lt;/p>&#xA;@param &lt;T> the type of contained children&#xA;@since 1.0&#xA;@noimplement This interface is not intended to be implemented by clients."/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
@@ -493,7 +493,7 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
           containment="true" eOpposite="#//ui/UIElement/parent">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the list of contained elements in this container. All elements must be of type &lt;T>.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xA;This is the list of contained elements in this container. All elements must be of type T.&#xA;&lt;/p>"/>
         </eAnnotations>
         <eGenericType eTypeParameter="#//ui/ElementContainer/T"/>
       </eStructuralFeatures>
@@ -930,7 +930,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;This defines the list of the menus associated with this part. There are two specific menus&#xD;&#xA;that are managed by the core UI;&#xD;&#xA;&lt;ul>&#xD;&#xA;&lt;li>If the menu is the part's id prefixed with &quot;menu:&quot; then it will appear as the &#xD;&#xA;drop down menu available from the view's toolbar.&lt;/li>&#xD;&#xA;&lt;li>If the menu is the part's id prefixed with &quot;popup:&quot; then it will appear as the &#xD;&#xA;ddefault context menu for this view.&lt;/li>&#xD;&#xA;&lt;/ul>&#xD;&#xA;Other menus can be added here but have to be managed by the part itsefl...&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xA;This defines the list of the menus associated with this part. There are two specific menus&#xA;that are managed by the core UI:&#xA;&lt;/p>&#xA;&lt;ul>&#xA;&lt;li>If the menu is the part's id prefixed with &quot;menu:&quot; then it will appear as the &#xA;drop down menu available from the view's toolbar.&lt;/li>&#xA;&lt;li>If the menu is the part's id prefixed with &quot;popup:&quot; then it will appear as the &#xA;ddefault context menu for this view.&lt;/li>&#xA;&lt;/ul>&#xA;&lt;p>&#xA;Other menus can be added here but have to be managed by the part itself...&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
@@ -1224,7 +1224,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;This defines the list of the menus associated with the part represented by this descriptor. &#xD;&#xA;There are two specific menus that are managed by the core UI;&#xD;&#xA;&lt;ul>&#xD;&#xA;&lt;li>If the menu is the part's id prefixed with &quot;menu:&quot; then it will appear as the &#xD;&#xA;drop down menu available from the view's toolbar.&lt;/li>&#xD;&#xA;&lt;li>If the menu is the part's id prefixed with &quot;popup:&quot; then it will appear as the &#xD;&#xA;ddefault context menu for this view.&lt;/li>&#xD;&#xA;&lt;/ul>&#xD;&#xA;Other menus can be added here but have to be managed by the part itsefl...&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xA;This defines the list of the menus associated with the part represented by this descriptor. &#xA;There are two specific menus that are managed by the core UI:&#xA;&lt;/p>&#xA;&lt;ul>&#xA;&lt;li>If the menu is the part's id prefixed with &quot;menu:&quot; then it will appear as the &#xA;drop down menu available from the view's toolbar.&lt;/li>&#xA;&lt;li>If the menu is the part's id prefixed with &quot;popup:&quot; then it will appear as the &#xA;default context menu for this view.&lt;/li>&#xA;&lt;/ul>&#xA;&lt;p>&#xA;Other menus can be added here but have to be managed by the part itself...&#xA;&lt;/p>&#xA;"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
@@ -1241,7 +1241,7 @@
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirtyable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xA;Determines whether Parts generated from this template can participate in the&#xA;Dirty -> Save cycle. At best this is a hint since all Parts are inherently dirtyable.&#xA;&lt;/p>&#xA;@deprecated dirtyable is managed by part.&#xA;@noreference This method is not intended to be referenced by clients.&#xA;@see &lt;a href=&quot;https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887&quot;>Bug 530887&lt;/a>"/>
+            <details key="documentation" value="&lt;p>&#xA;Determines whether Parts generated from this template can participate in the&#xA;Dirty -&amp;gt; Save cycle. At best this is a hint since all Parts are inherently dirtyable.&#xA;&lt;/p>&#xA;@deprecated dirtyable is managed by part.&#xA;@noreference This method is not intended to be referenced by clients.&#xA;@see &lt;a href=&quot;https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887&quot;>Bug 530887&lt;/a>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">

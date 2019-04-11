@@ -75,18 +75,23 @@ public interface MStringModelFragment extends MModelFragment {
 	/**
 	 * Returns the value of the '<em><b>Parent Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * The parentElementId specifies the targeted parent or parents when a fragment is merged.  The ID can be specified in 3 ways: <br />
+	 * <p>
+	 * The parentElementId specifies the targeted parent or parents when a fragment is merged.  The ID can be specified in 3 ways:
+	 * </p>
 	 * <ol>
 	 * <li> elementId (a single elementId)
 	 * <li> elementId1,elementId2,elementId3 (a comma delimited list of elementIds)
 	 * <li> xpath:[xpath goes here] (an xpath expression)
 	 * </ol>
-	 * <br />
-	 * An xpath example targeting 2 destinations in the model <br />
+	 * <p>
+	 * The following is an xpath example targeting 2 destinations in the model:
+	 * </p>
 	 * <pre>
 	 * xpath://*[@elementId='app.menu.primary' or @elementId='app.menu.secondary']
 	 * </pre>
+	 * <p>
 	 * The parentElementId expression must not be null, but may be an empty string if the fragment did not specify a target.
+	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>

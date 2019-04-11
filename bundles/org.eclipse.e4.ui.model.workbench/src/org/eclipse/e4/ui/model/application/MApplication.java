@@ -37,19 +37,20 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  * <!-- begin-model-doc -->
  * <p>
  * The MApplication acts as the root of the UI Model. It's children are the
- *  MWindows representing the UI for this application. It also owns the application's
+ * MWindows representing the UI for this application. It also owns the application's
  * context (which is hooked to the OSGI context, allowing access not only to its
  * own runtime information but also to any registered OSGI service.
- * </p><p>
+ * </p>
+ * <p>
  * It also owns a number of caches which, while independent of the UI itself are
- * used by the appliecation to populate new windows or to define state that is
- * epected to be the same for all windows:
- * <ui>
+ * used by the application to populate new windows or to define state that is
+ * expected to be the same for all windows:
+ * </p>
+ * <ul>
  * <li>Keybindings, Handlers, Commands</li>
  * <li>Part Descriptors (to support a 'Show View' dialog...)</li>
  * <li>Snippets of model (such as saved perspectives...)</li>
- * </ui>
- * </p>
+ * </ul>
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-model-doc -->
@@ -153,7 +154,7 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Returns the model element for the command identified via the elementId or null if the element cannot be found.
-	 * @parameter elementId the ID of the command.
+	 * @param elementId the ID of the command.
 	 * @return the model element for the command identified via the elementId or null if the element cannot be found.
 	 * @since 1.2
 	 * <!-- end-model-doc -->
