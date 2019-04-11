@@ -40,3 +40,13 @@ body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt 
 body	     { font-size: 83%; background: #FFFFFF; margin-bottom: 1em }
 h1           { font-size: 140%; margin-top: 25px; margin-bottom: 3px }	
 h2           { font-size: 110%; margin-top: 20px; margin-bottom: 3px }
+
+@media (prefers-color-scheme: dark) {
+	body { 
+		color: #f0f0f0; 
+		background: #3d3d3d;
+	} 
+	body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {
+		color: #f0f0f0;
+	}
+}

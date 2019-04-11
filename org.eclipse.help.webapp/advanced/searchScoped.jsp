@@ -43,8 +43,8 @@ BODY {
 }
 
 TABLE {
-	font: <%=prefs.getToolbarFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
+	font: <%=prefs.getToolbarFont()%>;
 	margin: 0px;
 	padding: 0px;
 	height:100%;
@@ -129,6 +129,7 @@ A {
 <%
 	}
 %>
+<%@ include file="darkTheme.css"%>
 </style>
 
 <script type="text/javascript">

@@ -92,4 +92,4 @@ TABLE {
 	padding-<%=isRTL?"left":"right"%>:5px;
 }
 
- 
+<%@ include file="darkTheme.css"%>

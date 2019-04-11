@@ -105,6 +105,7 @@ IMG {
 	width:16px;
 }
 
+<%@ include file="darkTheme.css"%>
 </style>
  
 <script type="text/javascript">

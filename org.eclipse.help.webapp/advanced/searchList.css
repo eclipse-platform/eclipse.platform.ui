@@ -95,3 +95,5 @@ a:hover {
 .description {
 	display: <%=data.isShowDescriptions() ? "block" : "none"%>;
 }
+
+<%@ include file="darkTheme.css"%>
