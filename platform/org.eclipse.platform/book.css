@@ -107,7 +107,29 @@ div.revision { border-left-style: solid; border-left-width: thin;
 				   border-left-color: #7B68EE; padding-left:5 }
 th	     { font-weight: bold }
 
-
 .related {
 	color: #747474;
+}
+
+@media (prefers-color-scheme: dark) {
+	body { 
+		color:      #f0f0f0; 
+		background: #3d3d3d;
+	} 
+	body, h1, h2, h3, h4, h5, h6, caption, p, 
+	table, td,  th, ul, ol, dl, li, dd, dt{
+		color: #f0f0f0;
+	}
+	
+	a:visited{
+		color: #75d7ff;
+	}
+	
+	a:link{
+		color: #3ac6ff;
+	}
+	
+	a:hover{
+		color: #f0f0f0;
+	}
 }

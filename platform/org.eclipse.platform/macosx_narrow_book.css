@@ -1,1 +1,7 @@
 h1,h2           { color: Black }
+
+@media (prefers-color-scheme: dark) {
+	h1, h2{
+		color: #f0f0f0;
+	}
+}
