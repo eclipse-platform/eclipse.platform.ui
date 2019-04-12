@@ -60,15 +60,12 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 	 * @param context
 	 * @param modelService
 	 * @param partService
-	 * @param window
-	 *            the workbench window
-	 * @param dimmedForeground
-	 *            the dimmed foreground color to use for views that are already
-	 *            open
+	 * @param window           the workbench window
+	 * @param dimmedForeground the dimmed foreground color to use for views that are
+	 *                         already open
 	 */
 	public ViewLabelProvider(IEclipseContext context, EModelService modelService, EPartService partService,
-			MWindow window,
-			Color dimmedForeground) {
+			MWindow window, Color dimmedForeground) {
 		this.context = context;
 		this.modelService = modelService;
 		this.partService = partService;
@@ -91,8 +88,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 			if (iconURI != null && iconURI.length() > 0) {
 				Image image = imageMap.get(iconURI);
 				if (image == null) {
-					ISWTResourceUtilities resUtils = (ISWTResourceUtilities) context
-							.get(IResourceUtilities.class);
+					ISWTResourceUtilities resUtils = (ISWTResourceUtilities) context.get(IResourceUtilities.class);
 					image = resUtils.imageDescriptorFromURI(URI.createURI(iconURI)).createImage();
 					imageMap.put(iconURI, image);
 				}
@@ -102,8 +98,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 		} else if (element instanceof String) {
 			Image image = imageMap.get(FOLDER_ICON);
 			if (image == null) {
-				ImageDescriptor desc = WorkbenchImages
-						.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+				ImageDescriptor desc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 				image = desc.createImage();
 				imageMap.put(FOLDER_ICON, desc.createImage());
 			}
@@ -128,7 +123,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 		if (element instanceof MApplicationElement) {
 			String elementId = ((MApplicationElement) element).getElementId();
 			MPerspective activePerspective = modelService.getActivePerspective(window);
-			if(partService.isPartOrPlaceholderInPerspective(elementId, activePerspective)){
+			if (partService.isPartOrPlaceholderInPerspective(elementId, activePerspective)) {
 				return dimmedForeground;
 			}
 		}

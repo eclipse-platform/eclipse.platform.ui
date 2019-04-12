@@ -32,60 +32,58 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * @since 3.0
  */
 public class HelpContentsAction extends Action implements IWorkbenchAction {
-    /**
-     * The workbench window; or <code>null</code> if this
-     * action has been <code>dispose</code>d.
-     */
-    private IWorkbenchWindow workbenchWindow;
+	/**
+	 * The workbench window; or <code>null</code> if this action has been
+	 * <code>dispose</code>d.
+	 */
+	private IWorkbenchWindow workbenchWindow;
 
-    /**
-     * Zero-arg constructor to allow cheat sheets to reuse this action.
-     */
-    public HelpContentsAction() {
-        this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-    }
+	/**
+	 * Zero-arg constructor to allow cheat sheets to reuse this action.
+	 */
+	public HelpContentsAction() {
+		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+	}
 
-    /**
-     * Constructor for use by ActionFactory.
-     *
-     * @param window the window
-     */
-    public HelpContentsAction(IWorkbenchWindow window) {
-        if (window == null) {
-            throw new IllegalArgumentException();
-        }
-        this.workbenchWindow = window;
-        setActionDefinitionId(IWorkbenchCommandConstants.HELP_HELP_CONTENTS);
+	/**
+	 * Constructor for use by ActionFactory.
+	 *
+	 * @param window the window
+	 */
+	public HelpContentsAction(IWorkbenchWindow window) {
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		setActionDefinitionId(IWorkbenchCommandConstants.HELP_HELP_CONTENTS);
 
-        // support for allowing a product to override the text for the action
-        String overrideText = PrefUtil.getAPIPreferenceStore().getString(
-                IWorkbenchPreferenceConstants.HELP_CONTENTS_ACTION_TEXT);
-        if ("".equals(overrideText)) { //$NON-NLS-1$
-            setText(WorkbenchMessages.HelpContentsAction_text);
-            setToolTipText(WorkbenchMessages.HelpContentsAction_toolTip);
-        } else {
-            setText(overrideText);
-            setToolTipText(Action.removeMnemonics(overrideText));
-        }
-        setImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS));
-        window.getWorkbench().getHelpSystem().setHelp(this,
-				IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
-    }
+		// support for allowing a product to override the text for the action
+		String overrideText = PrefUtil.getAPIPreferenceStore()
+				.getString(IWorkbenchPreferenceConstants.HELP_CONTENTS_ACTION_TEXT);
+		if ("".equals(overrideText)) { //$NON-NLS-1$
+			setText(WorkbenchMessages.HelpContentsAction_text);
+			setToolTipText(WorkbenchMessages.HelpContentsAction_toolTip);
+		} else {
+			setText(overrideText);
+			setToolTipText(Action.removeMnemonics(overrideText));
+		}
+		setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS));
+		window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
+	}
 
-    @Override
+	@Override
 	public void run() {
-        if (workbenchWindow == null) {
-            // action has been disposed
-            return;
-        }
-        //This may take a while, so use the busy indicator
-        BusyIndicator.showWhile(null, () -> workbenchWindow.getWorkbench().getHelpSystem().displayHelp());
-    }
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
+		// This may take a while, so use the busy indicator
+		BusyIndicator.showWhile(null, () -> workbenchWindow.getWorkbench().getHelpSystem().displayHelp());
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        workbenchWindow = null;
-    }
+		workbenchWindow = null;
+	}
 
 }

@@ -22,80 +22,80 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  */
 public final class PreferenceStoreAdapter extends PropertyMapAdapter {
 
-    private IPreferenceStore store;
+	private IPreferenceStore store;
 
-    private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
+	private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
 
-    public PreferenceStoreAdapter(IPreferenceStore toConvert) {
-        this.store = toConvert;
-    }
+	public PreferenceStoreAdapter(IPreferenceStore toConvert) {
+		this.store = toConvert;
+	}
 
-    @Override
+	@Override
 	protected void attachListener() {
-        store.addPropertyChangeListener(listener);
-    }
+		store.addPropertyChangeListener(listener);
+	}
 
-    @Override
+	@Override
 	protected void detachListener() {
-        store.removePropertyChangeListener(listener);
-    }
+		store.removePropertyChangeListener(listener);
+	}
 
-    @Override
+	@Override
 	public Set keySet() {
-        throw new UnsupportedOperationException();
-    }
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
+	@Override
 	public Object getValue(String propertyId, Class propertyType) {
-        if (propertyType.isAssignableFrom(String.class)) {
-            return store.getString(propertyId);
-        }
+		if (propertyType.isAssignableFrom(String.class)) {
+			return store.getString(propertyId);
+		}
 
-        if (propertyType == Boolean.class) {
-            return store.getBoolean(propertyId) ? Boolean.TRUE : Boolean.FALSE;
-        }
+		if (propertyType == Boolean.class) {
+			return store.getBoolean(propertyId) ? Boolean.TRUE : Boolean.FALSE;
+		}
 
-        if (propertyType == Double.class) {
+		if (propertyType == Double.class) {
 			return Double.valueOf(store.getDouble(propertyId));
-        }
+		}
 
-        if (propertyType == Float.class) {
-            return Float.valueOf(store.getFloat(propertyId));
-        }
+		if (propertyType == Float.class) {
+			return Float.valueOf(store.getFloat(propertyId));
+		}
 
-        if (propertyType == Integer.class) {
+		if (propertyType == Integer.class) {
 			return Integer.valueOf(store.getInt(propertyId));
-        }
+		}
 
-        if (propertyType == Long.class) {
-            return Long.valueOf(store.getLong(propertyId));
-        }
+		if (propertyType == Long.class) {
+			return Long.valueOf(store.getLong(propertyId));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean propertyExists(String propertyId) {
-        return store.contains(propertyId);
-    }
+		return store.contains(propertyId);
+	}
 
-    @Override
+	@Override
 	public void setValue(String propertyId, Object newValue) {
-        if (newValue instanceof String) {
-            store.setValue(propertyId, (String)newValue);
-        } else if (newValue instanceof Integer) {
-            store.setValue(propertyId, ((Integer)newValue).intValue());
-        } else if (newValue instanceof Boolean) {
-            store.setValue(propertyId, ((Boolean)newValue).booleanValue());
-        } else if (newValue instanceof Double) {
-            store.setValue(propertyId, ((Double)newValue).doubleValue());
-        } else if (newValue instanceof Float) {
-            store.setValue(propertyId, ((Float)newValue).floatValue());
-        } else if (newValue instanceof Integer) {
-            store.setValue(propertyId, ((Integer)newValue).intValue());
-        } else if (newValue instanceof Long) {
-            store.setValue(propertyId, ((Long)newValue).longValue());
-        }
-    }
+		if (newValue instanceof String) {
+			store.setValue(propertyId, (String) newValue);
+		} else if (newValue instanceof Integer) {
+			store.setValue(propertyId, ((Integer) newValue).intValue());
+		} else if (newValue instanceof Boolean) {
+			store.setValue(propertyId, ((Boolean) newValue).booleanValue());
+		} else if (newValue instanceof Double) {
+			store.setValue(propertyId, ((Double) newValue).doubleValue());
+		} else if (newValue instanceof Float) {
+			store.setValue(propertyId, ((Float) newValue).floatValue());
+		} else if (newValue instanceof Integer) {
+			store.setValue(propertyId, ((Integer) newValue).intValue());
+		} else if (newValue instanceof Long) {
+			store.setValue(propertyId, ((Long) newValue).longValue());
+		}
+	}
 
 }

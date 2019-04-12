@@ -37,16 +37,17 @@ import org.eclipse.swt.graphics.Image;
  * Manages a tree which provides "standard checkbox tree behavior". I.e. it
  * follows these rules:
  * <ol>
- * 	<li>If a check box is checked, all its children must be checked.</li>
- * 	<li>If a check box is unchecked, all its children must be unchecked.</li>
- * 	<li>If a check box is grayed, each of its children may be either checked or
- * 		unchecked, however, there must be one of each.</li>
- * 	<li>If a user checks a check box, its children or parents must change state
- * 		accordingly.</li>
+ * <li>If a check box is checked, all its children must be checked.</li>
+ * <li>If a check box is unchecked, all its children must be unchecked.</li>
+ * <li>If a check box is grayed, each of its children may be either checked or
+ * unchecked, however, there must be one of each.</li>
+ * <li>If a user checks a check box, its children or parents must change state
+ * accordingly.</li>
  * </ol>
  * <p>
  * <b>Note:</b> be sure to call dispose()
  * </p>
+ * 
  * @since 3.5
  *
  */
@@ -64,25 +65,25 @@ public class TreeManager {
 	private LocalResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 
 	/**
-	 * Instances of this interface will handle changes in the model
-	 * representation of checkstates.
+	 * Instances of this interface will handle changes in the model representation
+	 * of checkstates.
 	 */
 	public interface CheckListener {
 		/**
-		 * Invoked when a {@link TreeManager.TreeItem}'s check state has
-		 * changed.
+		 * Invoked when a {@link TreeManager.TreeItem}'s check state has changed.
 		 *
-		 * @param changedItem
-		 *            The item whose check state has changed
+		 * @param changedItem The item whose check state has changed
 		 */
 		void checkChanged(TreeItem changedItem);
 	}
 
 	/**
-	 * Implementation of {@link TreeManager.CheckListener} for use in a {@link CheckboxTreeViewer}.
+	 * Implementation of {@link TreeManager.CheckListener} for use in a
+	 * {@link CheckboxTreeViewer}.
 	 */
 	public static class ModelListenerForCheckboxTree implements CheckListener {
 		private CheckboxTreeViewer treeViewer;
+
 		public ModelListenerForCheckboxTree(TreeManager manager, CheckboxTreeViewer treeViewer) {
 			this.treeViewer = treeViewer;
 			manager.addListener(this);
@@ -100,6 +101,7 @@ public class TreeManager {
 	 */
 	public static class ModelListenerForCheckboxTable implements CheckListener {
 		private CheckboxTableViewer tableViewer;
+
 		public ModelListenerForCheckboxTable(TreeManager manager, CheckboxTableViewer tableViewer) {
 			this.tableViewer = tableViewer;
 			manager.addListener(this);
@@ -115,9 +117,9 @@ public class TreeManager {
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Object checked = event.getElement();
-			if(checked instanceof TreeItem) {
-				((TreeItem)checked).setChangedByUser(true);
-				((TreeItem)checked).setCheckState(event.getChecked());
+			if (checked instanceof TreeItem) {
+				((TreeItem) checked).setChangedByUser(true);
+				((TreeItem) checked).setCheckState(event.getChecked());
 			}
 		}
 	}
@@ -129,12 +131,12 @@ public class TreeManager {
 	public static class CheckStateProvider implements ICheckStateProvider {
 		@Override
 		public boolean isChecked(Object element) {
-			return ((TreeItem)element).checkState != CHECKSTATE_UNCHECKED;
+			return ((TreeItem) element).checkState != CHECKSTATE_UNCHECKED;
 		}
 
 		@Override
 		public boolean isGrayed(Object element) {
-			return ((TreeItem)element).checkState == CHECKSTATE_GRAY;
+			return ((TreeItem) element).checkState == CHECKSTATE_GRAY;
 		}
 	}
 
@@ -160,18 +162,19 @@ public class TreeManager {
 	}
 
 	/**
-	 * An {@link ITreeContentProvider} for {@link TreeManager.TreeItem}s - will completely build the
-	 * tree structure represented by {@link TreeManager.TreeItem}s.
+	 * An {@link ITreeContentProvider} for {@link TreeManager.TreeItem}s - will
+	 * completely build the tree structure represented by
+	 * {@link TreeManager.TreeItem}s.
 	 */
 	public static class TreeItemContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			return ((TreeItem)parentElement).getChildren().toArray();
+			return ((TreeItem) parentElement).getChildren().toArray();
 		}
 
 		@Override
 		public Object getParent(Object element) {
-			return ((TreeItem)element).getParent();
+			return ((TreeItem) element).getParent();
 		}
 
 		@Override
@@ -185,51 +188,52 @@ public class TreeManager {
 		}
 
 		@Override
-		public void dispose() {}
+		public void dispose() {
+		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
 	}
 
 	/**
-	 * @return	an {@link ICheckStateProvider} which will operate on
-	 * 		{@link TreeItem}s
+	 * @return an {@link ICheckStateProvider} which will operate on
+	 *         {@link TreeItem}s
 	 */
 	public static ICheckStateProvider getCheckStateProvider() {
-		if(checkStateProvider == null) {
+		if (checkStateProvider == null) {
 			checkStateProvider = new CheckStateProvider();
 		}
 		return checkStateProvider;
 	}
 
 	/**
-	 * @return	an {@link IBaseLabelProvider} which will provide the labels and
-	 * 		images of {@link TreeItem}s
+	 * @return an {@link IBaseLabelProvider} which will provide the labels and
+	 *         images of {@link TreeItem}s
 	 */
 	public static IBaseLabelProvider getLabelProvider() {
-		if(labelProvider == null) {
+		if (labelProvider == null) {
 			labelProvider = new TreeItemLabelProvider();
 		}
 		return labelProvider;
 	}
 
 	/**
-	 * @return	an {@link ITreeContentProvider} which will provide
-	 * 		{@link TreeItem} content in tree format.
+	 * @return an {@link ITreeContentProvider} which will provide {@link TreeItem}
+	 *         content in tree format.
 	 */
 	public static ITreeContentProvider getTreeContentProvider() {
-		if(treeContentProvider == null)
+		if (treeContentProvider == null)
 			treeContentProvider = new TreeItemContentProvider();
 		return treeContentProvider;
 	}
 
 	/**
-	 * @return	an {@link ICheckStateListener} which will respond to
-	 * 		{@link CheckStateChangedEvent}s by updating the model to reflect
-	 * 		them
+	 * @return an {@link ICheckStateListener} which will respond to
+	 *         {@link CheckStateChangedEvent}s by updating the model to reflect them
 	 */
 	public ICheckStateListener getViewerCheckStateListener() {
-		if(viewerCheckListener == null)
+		if (viewerCheckListener == null)
 			viewerCheckListener = new ViewerCheckStateListener();
 		return viewerCheckListener;
 	}
@@ -260,8 +264,8 @@ public class TreeManager {
 		}
 
 		public Image getImage() {
-			if(image == null) {
-				if(imageDescriptor == null) {
+			if (image == null) {
+				if (imageDescriptor == null) {
 					return null;
 				}
 				image = resourceManager.createImage(imageDescriptor);
@@ -274,10 +278,10 @@ public class TreeManager {
 		}
 
 		public void addChild(TreeItem newChild) {
-            newChild.parent = this;
-            children.add(newChild);
-            synchParents(newChild);
-        }
+			newChild.parent = this;
+			children.add(newChild);
+			synchParents(newChild);
+		}
 
 		public List<TreeItem> getChildren() {
 			return children;
@@ -291,24 +295,24 @@ public class TreeManager {
 			return parent;
 		}
 
-        /**
-		 * An internal call that forwards the change events but does <b>not</b>
-		 * cause any iterative synchronization to take place.
+		/**
+		 * An internal call that forwards the change events but does <b>not</b> cause
+		 * any iterative synchronization to take place.
 		 *
 		 * @param newState
 		 */
-        private void internalSetCheckState(int newState) {
+		private void internalSetCheckState(int newState) {
 			if (newState == checkState)
 				return;
 
 			checkState = newState;
 			fireListeners(this);
-        }
+		}
 
 		/**
 		 * External call to explicitly set the particular state of a
-		 * {@link TreeManager.TreeItem}. This is usually a response to an SWT
-		 * check changed event generated by a Tree/Table.
+		 * {@link TreeManager.TreeItem}. This is usually a response to an SWT check
+		 * changed event generated by a Tree/Table.
 		 *
 		 * @param checked
 		 */
@@ -338,8 +342,8 @@ public class TreeManager {
 		}
 
 		/**
-		 * If the new state is not "GRAY" then force all children to match that
-		 * state (recursively).
+		 * If the new state is not "GRAY" then force all children to match that state
+		 * (recursively).
 		 *
 		 * @param changedItem
 		 */
@@ -359,8 +363,8 @@ public class TreeManager {
 		}
 
 		/**
-		 * Set the parent's state based on the aggregate state of its children
-		 * using the following rules:
+		 * Set the parent's state based on the aggregate state of its children using the
+		 * following rules:
 		 * <ul>
 		 * <li>All children checked...parent checked</li>
 		 * <li>All children unchecked...parent unchecked</li>
@@ -370,7 +374,7 @@ public class TreeManager {
 		 * @param changedItem
 		 */
 		private void synchParents(TreeItem changedItem) {
-			if(changedItem.parent == null)
+			if (changedItem.parent == null)
 				return;
 
 			int newState = changedItem.checkState;
@@ -393,28 +397,31 @@ public class TreeManager {
 				for (Iterator<TreeItem> i = changedItem.parent.children.iterator(); i.hasNext()
 						&& (!checkedFound || !uncheckedFound);) {
 					TreeItem item = i.next();
-					switch(item.checkState) {
+					switch (item.checkState) {
 					case CHECKSTATE_CHECKED: {
 						checkedFound = true;
 						break;
-					} case CHECKSTATE_GRAY: {
+					}
+					case CHECKSTATE_GRAY: {
 						checkedFound = uncheckedFound = true;
 						break;
-					} case CHECKSTATE_UNCHECKED: {
+					}
+					case CHECKSTATE_UNCHECKED: {
 						uncheckedFound = true;
 						break;
-					}}
+					}
+					}
 				}
 
 				int oldState = changedItem.parent.checkState;
-				if(checkedFound && uncheckedFound) {
+				if (checkedFound && uncheckedFound) {
 					changedItem.parent.internalSetCheckState(CHECKSTATE_GRAY);
 				} else if (checkedFound) {
 					changedItem.parent.internalSetCheckState(CHECKSTATE_CHECKED);
 				} else {
 					changedItem.parent.internalSetCheckState(CHECKSTATE_UNCHECKED);
 				}
-				if(oldState != changedItem.parent.checkState) {
+				if (oldState != changedItem.parent.checkState) {
 					if (changedItem.isChangedByUser()) {
 						changedItem.parent.setChangedByUser(true);
 					}
@@ -466,35 +473,37 @@ public class TreeManager {
 	/**
 	 * Provides a {@link CheckListener} which updates a viewer whenever the
 	 * {@link TreeManager} model changes.
-	 * @param viewer	The viewer whose check states will be appropriately
-	 * 		updated on a change to the model.
-	 * @return	The created {@link CheckListener}.
+	 * 
+	 * @param viewer The viewer whose check states will be appropriately updated on
+	 *               a change to the model.
+	 * @return The created {@link CheckListener}.
 	 */
 	public CheckListener getCheckListener(ICheckable viewer) {
-		if(viewer instanceof CheckboxTreeViewer)
-			return new ModelListenerForCheckboxTree(this, (CheckboxTreeViewer)viewer);
-		if(viewer instanceof CheckboxTableViewer)
-			return new ModelListenerForCheckboxTable(this, (CheckboxTableViewer)viewer);
+		if (viewer instanceof CheckboxTreeViewer)
+			return new ModelListenerForCheckboxTree(this, (CheckboxTreeViewer) viewer);
+		if (viewer instanceof CheckboxTableViewer)
+			return new ModelListenerForCheckboxTable(this, (CheckboxTableViewer) viewer);
 		return null;
 	}
 
 	/**
-	 * Sets up this {@link TreeManager} for standard interaction with the
-	 * provided {@link CheckboxTreeViewer}. In particular:
+	 * Sets up this {@link TreeManager} for standard interaction with the provided
+	 * {@link CheckboxTreeViewer}. In particular:
 	 * <ul>
-	 * 	<li>Adds a Label Provider for {@link TreeItem}s which provides both
-	 * 		labels and images.</li>
-	 * 	<li>Adds a {@link CheckStateProvider} for {@link TreeItem}s.</li>
-	 * 	<li>Adds an {@link IContentProvider} to build a tree from input
-	 * 		{@link TreeItem}s.</li>
-	 * 	<li>Adds an {@link ICheckStateListener} to the viewer to update the
-	 * 		appropriate {@link TreeItem}s upon a check box state change in the
-	 * 		viewer.</li>
-	 * 	<li>Adds a {@link CheckListener} to the {@link TreeManager} which will
-	 * 		automatically update the viewer on a {@link TreeItem} check state
-	 * 		change.</li>
+	 * <li>Adds a Label Provider for {@link TreeItem}s which provides both labels
+	 * and images.</li>
+	 * <li>Adds a {@link CheckStateProvider} for {@link TreeItem}s.</li>
+	 * <li>Adds an {@link IContentProvider} to build a tree from input
+	 * {@link TreeItem}s.</li>
+	 * <li>Adds an {@link ICheckStateListener} to the viewer to update the
+	 * appropriate {@link TreeItem}s upon a check box state change in the
+	 * viewer.</li>
+	 * <li>Adds a {@link CheckListener} to the {@link TreeManager} which will
+	 * automatically update the viewer on a {@link TreeItem} check state
+	 * change.</li>
 	 * </ul>
-	 * @param viewer	the viewer to configure with this TreeManager.
+	 * 
+	 * @param viewer the viewer to configure with this TreeManager.
 	 */
 	public void attachAll(CheckboxTreeViewer viewer) {
 		viewer.setLabelProvider(getLabelProvider());
@@ -505,22 +514,23 @@ public class TreeManager {
 	}
 
 	/**
-	 * Sets up this {@link TreeManager} for standard interaction with the
-	 * provided {@link CheckboxTableViewer}. In particular:
+	 * Sets up this {@link TreeManager} for standard interaction with the provided
+	 * {@link CheckboxTableViewer}. In particular:
 	 * <ul>
-	 * 	<li>Adds a Label Provider for {@link TreeItem}s which provides both
-	 * 		labels and images.</li>
-	 * 	<li>Adds a {@link CheckStateProvider} for {@link TreeItem}s.</li>
-	 * 	<li>Adds an {@link IContentProvider} to build a tree from input
-	 * 		{@link TreeItem}s.</li>
-	 * 	<li>Adds an {@link ICheckStateListener} to the viewer to update the
-	 * 		appropriate {@link TreeItem}s upon a check box state change in the
-	 * 		viewer.</li>
-	 * 	<li>Adds a {@link CheckListener} to the {@link TreeManager} which will
-	 * 		automatically update the viewer on a {@link TreeItem} check state
-	 * 		change.</li>
+	 * <li>Adds a Label Provider for {@link TreeItem}s which provides both labels
+	 * and images.</li>
+	 * <li>Adds a {@link CheckStateProvider} for {@link TreeItem}s.</li>
+	 * <li>Adds an {@link IContentProvider} to build a tree from input
+	 * {@link TreeItem}s.</li>
+	 * <li>Adds an {@link ICheckStateListener} to the viewer to update the
+	 * appropriate {@link TreeItem}s upon a check box state change in the
+	 * viewer.</li>
+	 * <li>Adds a {@link CheckListener} to the {@link TreeManager} which will
+	 * automatically update the viewer on a {@link TreeItem} check state
+	 * change.</li>
 	 * </ul>
-	 * @param viewer	the viewer to configure with this TreeManager.
+	 * 
+	 * @param viewer the viewer to configure with this TreeManager.
 	 */
 	public void attachAll(CheckboxTableViewer viewer) {
 		viewer.setLabelProvider(getLabelProvider());
@@ -532,7 +542,8 @@ public class TreeManager {
 
 	/**
 	 * Dissociates a listener.
-	 * @param listener	The listener to remove.
+	 * 
+	 * @param listener The listener to remove.
 	 */
 	public void removeListener(CheckListener listener) {
 		listeners.remove(listener);
@@ -540,7 +551,8 @@ public class TreeManager {
 
 	/**
 	 * Fires all listeners.
-	 * @param item	The {@link TreeItem} that changed.
+	 * 
+	 * @param item The {@link TreeItem} that changed.
 	 */
 	private void fireListeners(TreeItem item) {
 		for (CheckListener checkListener : listeners) {

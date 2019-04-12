@@ -23,38 +23,38 @@ import java.util.Set;
  */
 public class CascadingMap {
 
-    private Map base, override;
+	private Map base, override;
 
-    /**
-     * @param base the base (default) map
-     * @param override the override map
-     */
-    public CascadingMap(Map base, Map override) {
-        this.base = base;
-        this.override = override;
-    }
+	/**
+	 * @param base     the base (default) map
+	 * @param override the override map
+	 */
+	public CascadingMap(Map base, Map override) {
+		this.base = base;
+		this.override = override;
+	}
 
-    /**
-     * Return the union of the parent and child key sets.
-     *
-     * @return the union.  This set is read only.
-     */
-    public Set keySet() {
-        Set keySet = new HashSet(base.keySet());
-        keySet.addAll(override.keySet());
-        return Collections.unmodifiableSet(keySet);
-    }
+	/**
+	 * Return the union of the parent and child key sets.
+	 *
+	 * @return the union. This set is read only.
+	 */
+	public Set keySet() {
+		Set keySet = new HashSet(base.keySet());
+		keySet.addAll(override.keySet());
+		return Collections.unmodifiableSet(keySet);
+	}
 
-    /**
-     * Get the value.  Preference will be given to entries in the override map.
-     *
-     * @param key the key
-     * @return the value
-     */
-    public Object get(Object key) {
-        if (override.containsKey(key)) {
+	/**
+	 * Get the value. Preference will be given to entries in the override map.
+	 *
+	 * @param key the key
+	 * @return the value
+	 */
+	public Object get(Object key) {
+		if (override.containsKey(key)) {
 			return override.get(key);
 		}
-        return base.get(key);
-    }
+		return base.get(key);
+	}
 }

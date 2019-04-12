@@ -78,166 +78,174 @@ package org.eclipse.ui;
  */
 public interface IPageLayout {
 
-    /**
-     * The part id for the workbench's editor area.  This may only be used
-     * as a reference part for view addition.
-     */
+	/**
+	 * The part id for the workbench's editor area. This may only be used as a
+	 * reference part for view addition.
+	 */
 	String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
 
 	/**
 	 * The view id for the workbench's Resource Navigator standard component.
 	 *
-	 * @deprecated this has been replaced by the Common Navigator Framework as
-	 *             of release 3.5.
+	 * @deprecated this has been replaced by the Common Navigator Framework as of
+	 *             release 3.5.
 	 */
-    @Deprecated
+	@Deprecated
 	String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
 
-    /**
-     * The view id for the Project Explorer.
-     * @since 3.5
-     */
+	/**
+	 * The view id for the Project Explorer.
+	 * 
+	 * @since 3.5
+	 */
 	String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
 
-    /**
-     * The view id for the workbench's Property Sheet standard component.
-     */
+	/**
+	 * The view id for the workbench's Property Sheet standard component.
+	 */
 	String ID_PROP_SHEET = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
 
-    /**
-     * The view id for the workbench's Content Outline standard component.
-     */
+	/**
+	 * The view id for the workbench's Content Outline standard component.
+	 */
 	String ID_OUTLINE = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
 
-    /**
-     * The view id for the workbench's Bookmark Navigator standard component.
-     */
+	/**
+	 * The view id for the workbench's Bookmark Navigator standard component.
+	 */
 	String ID_BOOKMARKS = "org.eclipse.ui.views.BookmarkView"; //$NON-NLS-1$
 
-    /**
-     * The view id for the workbench's Problems View standard component.
-     * @since 3.0
-     */
+	/**
+	 * The view id for the workbench's Problems View standard component.
+	 * 
+	 * @since 3.0
+	 */
 	String ID_PROBLEM_VIEW = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
 
-    /**
-     * The view id for the workbench's Progress View standard component.
-     * @since 3.2
-     */
+	/**
+	 * The view id for the workbench's Progress View standard component.
+	 * 
+	 * @since 3.2
+	 */
 	String ID_PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
-    /**
-     * The view id for the workbench's Task List standard component.
-     */
+	/**
+	 * The view id for the workbench's Task List standard component.
+	 */
 	String ID_TASK_LIST = "org.eclipse.ui.views.TaskList"; //$NON-NLS-1$
 
-    /**
-     * Id of the navigate action set.
-     * (value <code>"org.eclipse.ui.NavigateActionSet"</code>)
-     * @since 2.1
-     */
+	/**
+	 * Id of the navigate action set. (value
+	 * <code>"org.eclipse.ui.NavigateActionSet"</code>)
+	 * 
+	 * @since 2.1
+	 */
 	String ID_NAVIGATE_ACTION_SET = "org.eclipse.ui.NavigateActionSet"; //$NON-NLS-1$
 
-    /**
-     * Relationship constant indicating a part should be placed to the left of
-     * its relative.
-     */
+	/**
+	 * Relationship constant indicating a part should be placed to the left of its
+	 * relative.
+	 */
 	int LEFT = 1;
 
-    /**
-     * Relationship constant indicating a part should be placed to the right of
-     * its relative.
-     */
+	/**
+	 * Relationship constant indicating a part should be placed to the right of its
+	 * relative.
+	 */
 	int RIGHT = 2;
 
-    /**
-     * Relationship constant indicating a part should be placed above its
-     * relative.
-     */
+	/**
+	 * Relationship constant indicating a part should be placed above its relative.
+	 */
 	int TOP = 3;
 
-    /**
-     * Relationship constant indicating a part should be placed below its
-     * relative.
-     */
+	/**
+	 * Relationship constant indicating a part should be placed below its relative.
+	 */
 	int BOTTOM = 4;
 
-    /**
-     * Minimum acceptable ratio value when adding a view
-     * @since 2.0
-     */
+	/**
+	 * Minimum acceptable ratio value when adding a view
+	 * 
+	 * @since 2.0
+	 */
 	float RATIO_MIN = 0.05f;
 
-    /**
-     * Maximum acceptable ratio value when adding a view
-     * @since 2.0
-     */
+	/**
+	 * Maximum acceptable ratio value when adding a view
+	 * 
+	 * @since 2.0
+	 */
 	float RATIO_MAX = 0.95f;
 
-    /**
-     * The default fast view ratio width.
-     * @since 2.0
-     * @deprecated discontinued support for fast views
-     */
-    @Deprecated
+	/**
+	 * The default fast view ratio width.
+	 * 
+	 * @since 2.0
+	 * @deprecated discontinued support for fast views
+	 */
+	@Deprecated
 	float DEFAULT_FASTVIEW_RATIO = 0.3f;
 
-    /**
-     * The default view ratio width for regular (non-fast) views.
-     * @since 2.0
-     */
+	/**
+	 * The default view ratio width for regular (non-fast) views.
+	 * 
+	 * @since 2.0
+	 */
 	float DEFAULT_VIEW_RATIO = 0.5f;
 
-    /**
-     * A variable used to represent invalid  ratios.
-     * @since 2.0
-     */
+	/**
+	 * A variable used to represent invalid ratios.
+	 * 
+	 * @since 2.0
+	 */
 	float INVALID_RATIO = -1f;
 
-    /**
-     * A variable used to represent a ratio which has not been specified.
-     * @since 2.0
-     */
+	/**
+	 * A variable used to represent a ratio which has not been specified.
+	 * 
+	 * @since 2.0
+	 */
 	float NULL_RATIO = -2f;
 
-    /**
-     * Adds an action set with the given id to this page layout.
-     * The id must name an action set contributed to the workbench's extension
-     * point (named <code>"org.eclipse.ui.actionSet"</code>).
-     *
-     * @param actionSetId the action set id
-     */
+	/**
+	 * Adds an action set with the given id to this page layout. The id must name an
+	 * action set contributed to the workbench's extension point (named
+	 * <code>"org.eclipse.ui.actionSet"</code>).
+	 *
+	 * @param actionSetId the action set id
+	 */
 	void addActionSet(String actionSetId);
 
-    /**
-     * Adds the view with the given compound id to the page layout as a fast view.
-     * See the {@link IPageLayout} type documentation for more details about compound ids.
-     * The primary id must name a view contributed to the workbench's view extension
-     * point (named <code>"org.eclipse.ui.views"</code>).
-     *
-     * @param viewId the compound id of the view to be added
-     * @since 2.0
-     * @deprecated discontinued support for fast views
-     */
-    @Deprecated
+	/**
+	 * Adds the view with the given compound id to the page layout as a fast view.
+	 * See the {@link IPageLayout} type documentation for more details about
+	 * compound ids. The primary id must name a view contributed to the workbench's
+	 * view extension point (named <code>"org.eclipse.ui.views"</code>).
+	 *
+	 * @param viewId the compound id of the view to be added
+	 * @since 2.0
+	 * @deprecated discontinued support for fast views
+	 */
+	@Deprecated
 	void addFastView(String viewId);
 
-    /**
-     * Adds the view with the given compound id to the page layout as a fast view
-     * with the given width ratio.
-     * See the {@link IPageLayout} type documentation for more details about compound ids.
-     * The primary id must name a view contributed to the workbench's view extension
-     * point (named <code>"org.eclipse.ui.views"</code>).
-     *
-     * @param viewId the compound id of the view to be added
-     * @param ratio the percentage of the workbench the fast view will cover
-     * @since 2.0
-     * @deprecated discontinued support for fast views
-     */
-    @Deprecated
+	/**
+	 * Adds the view with the given compound id to the page layout as a fast view
+	 * with the given width ratio. See the {@link IPageLayout} type documentation
+	 * for more details about compound ids. The primary id must name a view
+	 * contributed to the workbench's view extension point (named
+	 * <code>"org.eclipse.ui.views"</code>).
+	 *
+	 * @param viewId the compound id of the view to be added
+	 * @param ratio  the percentage of the workbench the fast view will cover
+	 * @since 2.0
+	 * @deprecated discontinued support for fast views
+	 */
+	@Deprecated
 	void addFastView(String viewId, float ratio);
 
-    /**
+	/**
 	 * Adds a new wizard shortcut to the page layout. These are typically shown in
 	 * the UI to allow rapid navigation to appropriate new wizards. For example, in
 	 * the Eclipse IDE, these appear as items under the File &gt; New menu. The id
@@ -248,7 +256,7 @@ public interface IPageLayout {
 	 */
 	void addNewWizardShortcut(String id);
 
-    /**
+	/**
 	 * Adds a perspective shortcut to the page layout. These are typically shown in
 	 * the UI to allow rapid navigation to appropriate new wizards. For example, in
 	 * the Eclipse IDE, these appear as items under the Window &gt; Open Perspective
@@ -260,48 +268,48 @@ public interface IPageLayout {
 	 */
 	void addPerspectiveShortcut(String id);
 
-    /**
-     * Adds a view placeholder to this page layout.
-     * A view placeholder is used to define the position of a view before the view
-     * appears.  Initially, it is invisible; however, if the user ever opens a view
-     * whose compound id matches the placeholder, the view will appear at the same
-     * location as the placeholder.
-     * See the {@link IPageLayout} type documentation for more details about compound ids.
-     * If the placeholder contains wildcards, it remains in the layout, otherwise
-     * it is replaced by the view.
-     * If the primary id of the placeholder has no wildcards, it must refer to a view
-     * contributed to the workbench's view extension point
-     * (named <code>"org.eclipse.ui.views"</code>).
-     *
-     * @param viewId the compound view id (wildcards allowed)
-     * @param relationship the position relative to the reference part;
-     *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
-     *  or <code>RIGHT</code>
-     * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
-     *    in the range <code>0.05f</code> to <code>0.95f</code>.
-     *    Values outside this range will be clipped to facilitate direct manipulation.
-     *    For a vertical split, the part on top gets the specified ratio of the current space
-     *    and the part on bottom gets the rest.
-     *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
-     *    and the part at right gets the rest.
-     * @param refId the id of the reference part; either a view id, a folder id,
-     *   or the special editor area id returned by <code>getEditorArea</code>
-     */
-	void addPlaceholder(String viewId, int relationship, float ratio,
-            String refId);
+	/**
+	 * Adds a view placeholder to this page layout. A view placeholder is used to
+	 * define the position of a view before the view appears. Initially, it is
+	 * invisible; however, if the user ever opens a view whose compound id matches
+	 * the placeholder, the view will appear at the same location as the
+	 * placeholder. See the {@link IPageLayout} type documentation for more details
+	 * about compound ids. If the placeholder contains wildcards, it remains in the
+	 * layout, otherwise it is replaced by the view. If the primary id of the
+	 * placeholder has no wildcards, it must refer to a view contributed to the
+	 * workbench's view extension point (named <code>"org.eclipse.ui.views"</code>).
+	 *
+	 * @param viewId       the compound view id (wildcards allowed)
+	 * @param relationship the position relative to the reference part; one of
+	 *                     <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
+	 *                     or <code>RIGHT</code>
+	 * @param ratio        a ratio specifying how to divide the space currently
+	 *                     occupied by the reference part, in the range
+	 *                     <code>0.05f</code> to <code>0.95f</code>. Values outside
+	 *                     this range will be clipped to facilitate direct
+	 *                     manipulation. For a vertical split, the part on top gets
+	 *                     the specified ratio of the current space and the part on
+	 *                     bottom gets the rest. Likewise, for a horizontal split,
+	 *                     the part at left gets the specified ratio of the current
+	 *                     space and the part at right gets the rest.
+	 * @param refId        the id of the reference part; either a view id, a folder
+	 *                     id, or the special editor area id returned by
+	 *                     <code>getEditorArea</code>
+	 */
+	void addPlaceholder(String viewId, int relationship, float ratio, String refId);
 
-    /**
-     * Adds an item to the Show In prompter.
-     * The id must name a view contributed to the workbench's view extension point
-     * (named <code>"org.eclipse.ui.views"</code>).
-     *
-     * @param id the view id
-     *
-     * @since 2.1
-     */
+	/**
+	 * Adds an item to the Show In prompter. The id must name a view contributed to
+	 * the workbench's view extension point (named
+	 * <code>"org.eclipse.ui.views"</code>).
+	 *
+	 * @param id the view id
+	 *
+	 * @since 2.1
+	 */
 	void addShowInPart(String id);
 
-    /**
+	/**
 	 * Adds a show view shortcut to the page layout. These are typically shown in
 	 * the UI to allow rapid navigation to appropriate views. For example, in the
 	 * Eclipse IDE, these appear as items under the Window &gt; Show View menu. The
@@ -312,119 +320,125 @@ public interface IPageLayout {
 	 */
 	void addShowViewShortcut(String id);
 
-    /**
-     * Adds a view with the given compound id to this page layout.
-     * See the {@link IPageLayout} type documentation for more details about compound ids.
-     * The primary id must name a view contributed to the workbench's view extension point
-     * (named <code>"org.eclipse.ui.views"</code>).
-     *
-     * @param viewId the compound view id
-     * @param relationship the position relative to the reference part;
-     *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
-     *  or <code>RIGHT</code>
-     * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
-     *    in the range <code>0.05f</code> to <code>0.95f</code>.
-     *    Values outside this range will be clipped to facilitate direct manipulation.
-     *    For a vertical split, the part on top gets the specified ratio of the current space
-     *    and the part on bottom gets the rest.
-     *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
-     *    and the part at right gets the rest.
-     * @param refId the id of the reference part; either a view id, a folder id,
-     *   or the special editor area id returned by <code>getEditorArea</code>
-     */
-	void addView(String viewId, int relationship, float ratio,
-            String refId);
+	/**
+	 * Adds a view with the given compound id to this page layout. See the
+	 * {@link IPageLayout} type documentation for more details about compound ids.
+	 * The primary id must name a view contributed to the workbench's view extension
+	 * point (named <code>"org.eclipse.ui.views"</code>).
+	 *
+	 * @param viewId       the compound view id
+	 * @param relationship the position relative to the reference part; one of
+	 *                     <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
+	 *                     or <code>RIGHT</code>
+	 * @param ratio        a ratio specifying how to divide the space currently
+	 *                     occupied by the reference part, in the range
+	 *                     <code>0.05f</code> to <code>0.95f</code>. Values outside
+	 *                     this range will be clipped to facilitate direct
+	 *                     manipulation. For a vertical split, the part on top gets
+	 *                     the specified ratio of the current space and the part on
+	 *                     bottom gets the rest. Likewise, for a horizontal split,
+	 *                     the part at left gets the specified ratio of the current
+	 *                     space and the part at right gets the rest.
+	 * @param refId        the id of the reference part; either a view id, a folder
+	 *                     id, or the special editor area id returned by
+	 *                     <code>getEditorArea</code>
+	 */
+	void addView(String viewId, int relationship, float ratio, String refId);
 
-    /**
-     * Creates and adds a new folder with the given id to this page layout.
-     * The position and relative size of the folder is expressed relative to
-     * a reference part.
-     *
-     * @param folderId the id for the new folder.  This must be unique within
-     *  the layout to avoid collision with other parts.
-     * @param relationship the position relative to the reference part;
-     *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
-     *  or <code>RIGHT</code>
-     * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
-     *    in the range <code>0.05f</code> to <code>0.95f</code>.
-     *    Values outside this range will be clipped to facilitate direct manipulation.
-     *    For a vertical split, the part on top gets the specified ratio of the current space
-     *    and the part on bottom gets the rest.
-     *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
-     *    and the part at right gets the rest.
-     * @param refId the id of the reference part; either a view id, a folder id,
-     *   or the special editor area id returned by <code>getEditorArea</code>
-     * @return the new folder
-     */
-	IFolderLayout createFolder(String folderId, int relationship,
-            float ratio, String refId);
+	/**
+	 * Creates and adds a new folder with the given id to this page layout. The
+	 * position and relative size of the folder is expressed relative to a reference
+	 * part.
+	 *
+	 * @param folderId     the id for the new folder. This must be unique within the
+	 *                     layout to avoid collision with other parts.
+	 * @param relationship the position relative to the reference part; one of
+	 *                     <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
+	 *                     or <code>RIGHT</code>
+	 * @param ratio        a ratio specifying how to divide the space currently
+	 *                     occupied by the reference part, in the range
+	 *                     <code>0.05f</code> to <code>0.95f</code>. Values outside
+	 *                     this range will be clipped to facilitate direct
+	 *                     manipulation. For a vertical split, the part on top gets
+	 *                     the specified ratio of the current space and the part on
+	 *                     bottom gets the rest. Likewise, for a horizontal split,
+	 *                     the part at left gets the specified ratio of the current
+	 *                     space and the part at right gets the rest.
+	 * @param refId        the id of the reference part; either a view id, a folder
+	 *                     id, or the special editor area id returned by
+	 *                     <code>getEditorArea</code>
+	 * @return the new folder
+	 */
+	IFolderLayout createFolder(String folderId, int relationship, float ratio, String refId);
 
-    /**
-     * Creates and adds a placeholder for a new folder with the given id to this page layout.
-     * The position and relative size of the folder is expressed relative to
-     * a reference part.
-     *
-     * @param folderId the id for the new folder.  This must be unique within
-     *  the layout to avoid collision with other parts.
-     * @param relationship the position relative to the reference part;
-     *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
-     *  or <code>RIGHT</code>
-     * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
-     *    in the range <code>0.05f</code> to <code>0.95f</code>.
-     *    Values outside this range will be clipped to facilitate direct manipulation.
-     *    For a vertical split, the part on top gets the specified ratio of the current space
-     *    and the part on bottom gets the rest.
-     *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
-     *    and the part at right gets the rest.
-     * @param refId the id of the reference part; either a view id, a folder id,
-     *   or the special editor area id returned by <code>getEditorArea</code>
-     * @return a placeholder for the new folder
-     * @since 2.0
-     */
-	IPlaceholderFolderLayout createPlaceholderFolder(String folderId,
-            int relationship, float ratio, String refId);
+	/**
+	 * Creates and adds a placeholder for a new folder with the given id to this
+	 * page layout. The position and relative size of the folder is expressed
+	 * relative to a reference part.
+	 *
+	 * @param folderId     the id for the new folder. This must be unique within the
+	 *                     layout to avoid collision with other parts.
+	 * @param relationship the position relative to the reference part; one of
+	 *                     <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
+	 *                     or <code>RIGHT</code>
+	 * @param ratio        a ratio specifying how to divide the space currently
+	 *                     occupied by the reference part, in the range
+	 *                     <code>0.05f</code> to <code>0.95f</code>. Values outside
+	 *                     this range will be clipped to facilitate direct
+	 *                     manipulation. For a vertical split, the part on top gets
+	 *                     the specified ratio of the current space and the part on
+	 *                     bottom gets the rest. Likewise, for a horizontal split,
+	 *                     the part at left gets the specified ratio of the current
+	 *                     space and the part at right gets the rest.
+	 * @param refId        the id of the reference part; either a view id, a folder
+	 *                     id, or the special editor area id returned by
+	 *                     <code>getEditorArea</code>
+	 * @return a placeholder for the new folder
+	 * @since 2.0
+	 */
+	IPlaceholderFolderLayout createPlaceholderFolder(String folderId, int relationship, float ratio, String refId);
 
-    /**
-     * Returns the special identifier for the editor area in this page
-     * layout.  The identifier for the editor area is also stored in
-     * <code>ID_EDITOR_AREA</code>.
-     * <p>
-     * The editor area is automatically added to each layout before anything else.
-     * It should be used as the point of reference when adding views to a layout.
-     * </p>
-     *
-     * @return the special id of the editor area
-     */
+	/**
+	 * Returns the special identifier for the editor area in this page layout. The
+	 * identifier for the editor area is also stored in <code>ID_EDITOR_AREA</code>.
+	 * <p>
+	 * The editor area is automatically added to each layout before anything else.
+	 * It should be used as the point of reference when adding views to a layout.
+	 * </p>
+	 *
+	 * @return the special id of the editor area
+	 */
 	String getEditorArea();
 
-    /**
-     * Returns whether the page's layout will show
-     * the editor area.
-     *
-     * @return <code>true</code> when editor area visible, <code>false</code> otherwise
-     */
+	/**
+	 * Returns whether the page's layout will show the editor area.
+	 *
+	 * @return <code>true</code> when editor area visible, <code>false</code>
+	 *         otherwise
+	 */
 	boolean isEditorAreaVisible();
 
-    /**
-     * Show or hide the editor area for the page's layout.
-     *
-     * @param showEditorArea <code>true</code> to show the editor area, <code>false</code> to hide the editor area
-     */
+	/**
+	 * Show or hide the editor area for the page's layout.
+	 *
+	 * @param showEditorArea <code>true</code> to show the editor area,
+	 *                       <code>false</code> to hide the editor area
+	 */
 	void setEditorAreaVisible(boolean showEditorArea);
 
-    /**
-     * Returns the number of open editors before reusing editors or -1 if the
-     * preference settings should be used instead.
-     *
-     * @return the number of open editors before reusing editors or -1 if the
-     * preference settings should be used instead.
-     *
-     * @deprecated this always returns -1 as of Eclipse 2.1
-     */
-    @Deprecated
+	/**
+	 * Returns the number of open editors before reusing editors or -1 if the
+	 * preference settings should be used instead.
+	 *
+	 * @return the number of open editors before reusing editors or -1 if the
+	 *         preference settings should be used instead.
+	 *
+	 * @deprecated this always returns -1 as of Eclipse 2.1
+	 */
+	@Deprecated
 	int getEditorReuseThreshold();
 
-    /**
+	/**
 	 * Sets the number of open editors before reusing editors. If &lt; 0 the user
 	 * preference settings will be used.
 	 *
@@ -432,117 +446,111 @@ public interface IPageLayout {
 	 *
 	 * @deprecated this method has no effect, as of Eclipse 2.1
 	 */
-    @Deprecated
+	@Deprecated
 	void setEditorReuseThreshold(int openEditors);
 
-    /**
-     * Sets whether this layout is fixed.
-     * In a fixed layout, layout parts cannot be moved or zoomed, and the initial
-     * set of views cannot be closed.
-     *
-     * @param isFixed <code>true</code> if this layout is fixed, <code>false</code> if not
-     * @since 3.0
-     */
+	/**
+	 * Sets whether this layout is fixed. In a fixed layout, layout parts cannot be
+	 * moved or zoomed, and the initial set of views cannot be closed.
+	 *
+	 * @param isFixed <code>true</code> if this layout is fixed, <code>false</code>
+	 *                if not
+	 * @since 3.0
+	 */
 	void setFixed(boolean isFixed);
 
-    /**
-     * Returns <code>true</code> if this layout is fixed, <code>false</code> if not.
-     * In a fixed layout, layout parts cannot be moved or zoomed, and the initial
-     * set of views cannot be closed.
-     * The default is <code>false</code>.
-     *
-     * @return <code>true</code> if this layout is fixed, <code>false</code> if not.
-     * @since 3.0
-     */
+	/**
+	 * Returns <code>true</code> if this layout is fixed, <code>false</code> if not.
+	 * In a fixed layout, layout parts cannot be moved or zoomed, and the initial
+	 * set of views cannot be closed. The default is <code>false</code>.
+	 *
+	 * @return <code>true</code> if this layout is fixed, <code>false</code> if not.
+	 * @since 3.0
+	 */
 	boolean isFixed();
 
-    /**
-     * Returns the layout for the view or placeholder with the given compound id in
-     * this page layout.
-     * See the {@link IPageLayout} type documentation for more details about compound ids.
-     * Returns <code>null</code> if the specified view or placeholder is unknown to the layout.
-     *
-     * @param id the compound view id or placeholder
-     * @return the view layout, or <code>null</code>
-     * @since 3.0
-     */
+	/**
+	 * Returns the layout for the view or placeholder with the given compound id in
+	 * this page layout. See the {@link IPageLayout} type documentation for more
+	 * details about compound ids. Returns <code>null</code> if the specified view
+	 * or placeholder is unknown to the layout.
+	 *
+	 * @param id the compound view id or placeholder
+	 * @return the view layout, or <code>null</code>
+	 * @since 3.0
+	 */
 	IViewLayout getViewLayout(String id);
 
-    /**
-     * Adds a standalone view with the given compound id to this page layout.
-     * See the {@link IPageLayout} type documentation for more details about compound ids.
-     * A standalone view cannot be docked together with other views.
-     * A standalone view's title can optionally be hidden.  If hidden,
-     * then any controls typically shown with the title (such as the close button)
-     * are also hidden.  Any contributions or other content from the view itself
-     * are always shown (e.g. toolbar or view menu contributions, content description).
-     * <p>
-     * The id must name a view contributed to the workbench's view extension point
-     * (named <code>"org.eclipse.ui.views"</code>).
-     * </p>
-     *
-     * @param viewId the compound view id
-     * @param showTitle <code>true</code> to show the title and related controls,
-     *  <code>false</code> to hide them
-     * @param relationship the position relative to the reference part;
-     *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
-     *  or <code>RIGHT</code>
-     * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
-     *    in the range <code>0.05f</code> to <code>0.95f</code>.
-     *    Values outside this range will be clipped to facilitate direct manipulation.
-     *    For a vertical split, the part on top gets the specified ratio of the current space
-     *    and the part on bottom gets the rest.
-     *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
-     *    and the part at right gets the rest.
-     * @param refId the id of the reference part; either a view id, a folder id,
-     *   or the special editor area id returned by <code>getEditorArea</code>
-     *
-     * @since 3.0
-     */
-	void addStandaloneView(String viewId, boolean showTitle,
-            int relationship, float ratio, String refId);
-
-    /**
-	 * Adds a standalone view placeholder to this page layout. A view
-	 * placeholder is used to define the position of a view before the view
-	 * appears. Initially, it is invisible; however, if the user ever opens a
-	 * view whose compound id matches the placeholder, the view will appear at
-	 * the same location as the placeholder. See the {@link IPageLayout} type
-	 * documentation for more details about compound ids. If the placeholder
-	 * contains wildcards, it remains in the layout, otherwise it is replaced by
-	 * the view. If the primary id of the placeholder has no wildcards, it must
-	 * refer to a view contributed to the workbench's view extension point
+	/**
+	 * Adds a standalone view with the given compound id to this page layout. See
+	 * the {@link IPageLayout} type documentation for more details about compound
+	 * ids. A standalone view cannot be docked together with other views. A
+	 * standalone view's title can optionally be hidden. If hidden, then any
+	 * controls typically shown with the title (such as the close button) are also
+	 * hidden. Any contributions or other content from the view itself are always
+	 * shown (e.g. toolbar or view menu contributions, content description).
+	 * <p>
+	 * The id must name a view contributed to the workbench's view extension point
 	 * (named <code>"org.eclipse.ui.views"</code>).
+	 * </p>
 	 *
-	 * @param viewId
-	 *            the compound view id (wildcards allowed)
-	 * @param relationship
-	 *            the position relative to the reference part; one of
-	 *            <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
-	 *            or <code>RIGHT</code>
-	 * @param ratio
-	 *            a ratio specifying how to divide the space currently occupied
-	 *            by the reference part, in the range <code>0.05f</code> to
-	 *            <code>0.95f</code>. Values outside this range will be
-	 *            clipped to facilitate direct manipulation. For a vertical
-	 *            split, the part on top gets the specified ratio of the current
-	 *            space and the part on bottom gets the rest. Likewise, for a
-	 *            horizontal split, the part at left gets the specified ratio of
-	 *            the current space and the part at right gets the rest.
-	 * @param refId
-	 *            the id of the reference part; either a view id, a folder id,
-	 *            or the special editor area id returned by
-	 *            <code>getEditorArea</code>
-	 * @param showTitle
-	 *            true to show the view's title, false if not
+	 * @param viewId       the compound view id
+	 * @param showTitle    <code>true</code> to show the title and related controls,
+	 *                     <code>false</code> to hide them
+	 * @param relationship the position relative to the reference part; one of
+	 *                     <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
+	 *                     or <code>RIGHT</code>
+	 * @param ratio        a ratio specifying how to divide the space currently
+	 *                     occupied by the reference part, in the range
+	 *                     <code>0.05f</code> to <code>0.95f</code>. Values outside
+	 *                     this range will be clipped to facilitate direct
+	 *                     manipulation. For a vertical split, the part on top gets
+	 *                     the specified ratio of the current space and the part on
+	 *                     bottom gets the rest. Likewise, for a horizontal split,
+	 *                     the part at left gets the specified ratio of the current
+	 *                     space and the part at right gets the rest.
+	 * @param refId        the id of the reference part; either a view id, a folder
+	 *                     id, or the special editor area id returned by
+	 *                     <code>getEditorArea</code>
+	 *
+	 * @since 3.0
+	 */
+	void addStandaloneView(String viewId, boolean showTitle, int relationship, float ratio, String refId);
+
+	/**
+	 * Adds a standalone view placeholder to this page layout. A view placeholder is
+	 * used to define the position of a view before the view appears. Initially, it
+	 * is invisible; however, if the user ever opens a view whose compound id
+	 * matches the placeholder, the view will appear at the same location as the
+	 * placeholder. See the {@link IPageLayout} type documentation for more details
+	 * about compound ids. If the placeholder contains wildcards, it remains in the
+	 * layout, otherwise it is replaced by the view. If the primary id of the
+	 * placeholder has no wildcards, it must refer to a view contributed to the
+	 * workbench's view extension point (named <code>"org.eclipse.ui.views"</code>).
+	 *
+	 * @param viewId       the compound view id (wildcards allowed)
+	 * @param relationship the position relative to the reference part; one of
+	 *                     <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
+	 *                     or <code>RIGHT</code>
+	 * @param ratio        a ratio specifying how to divide the space currently
+	 *                     occupied by the reference part, in the range
+	 *                     <code>0.05f</code> to <code>0.95f</code>. Values outside
+	 *                     this range will be clipped to facilitate direct
+	 *                     manipulation. For a vertical split, the part on top gets
+	 *                     the specified ratio of the current space and the part on
+	 *                     bottom gets the rest. Likewise, for a horizontal split,
+	 *                     the part at left gets the specified ratio of the current
+	 *                     space and the part at right gets the rest.
+	 * @param refId        the id of the reference part; either a view id, a folder
+	 *                     id, or the special editor area id returned by
+	 *                     <code>getEditorArea</code>
+	 * @param showTitle    true to show the view's title, false if not
 	 *
 	 * @since 3.2
 	 */
-	void addStandaloneViewPlaceholder(String viewId, int relationship,
-			float ratio, String refId, boolean showTitle);
+	void addStandaloneViewPlaceholder(String viewId, int relationship, float ratio, String refId, boolean showTitle);
 
-
-    /**
+	/**
 	 * Returns the perspective descriptor for the perspective being layed out.
 	 *
 	 * @return the perspective descriptor for the perspective being layed out
@@ -550,16 +558,14 @@ public interface IPageLayout {
 	 */
 	IPerspectiveDescriptor getDescriptor();
 
-    /**
-	 * Returns the folder layout for the view or placeholder with the given
-	 * compound id in this page layout. See the {@link IPageLayout} type
-	 * documentation for more details about compound ids. Returns
-	 * <code>null</code> if the specified view or placeholder is unknown to
-	 * the layout, or the placeholder was not in a folder.
+	/**
+	 * Returns the folder layout for the view or placeholder with the given compound
+	 * id in this page layout. See the {@link IPageLayout} type documentation for
+	 * more details about compound ids. Returns <code>null</code> if the specified
+	 * view or placeholder is unknown to the layout, or the placeholder was not in a
+	 * folder.
 	 *
-	 * @param id
-	 *            the compound view id or placeholder. Must not be
-	 *            <code>null</code>.
+	 * @param id the compound view id or placeholder. Must not be <code>null</code>.
 	 * @return the folder layout, or <code>null</code>
 	 * @since 3.3
 	 */

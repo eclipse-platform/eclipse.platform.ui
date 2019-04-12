@@ -82,20 +82,17 @@ public class PerspectiveTagger {
 	}
 
 	static void tagDebugPerspective(MPerspective perspective, EModelService modelService) {
-		MUIElement element = modelService.find(
-				"org.eclipse.debug.internal.ui.NavigatorFolderView", perspective); //$NON-NLS-1$
+		MUIElement element = modelService.find("org.eclipse.debug.internal.ui.NavigatorFolderView", perspective); //$NON-NLS-1$
 		if (element != null) {
 			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
 		}
 
-		element = modelService.find(
-				"org.eclipse.debug.internal.ui.ConsoleFolderView", perspective); //$NON-NLS-1$
+		element = modelService.find("org.eclipse.debug.internal.ui.ConsoleFolderView", perspective); //$NON-NLS-1$
 		if (element != null) {
 			element.getTags().add("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
 		}
 
-		element = modelService.find(
-				"org.eclipse.debug.internal.ui.OutlineFolderView", perspective); //$NON-NLS-1$
+		element = modelService.find("org.eclipse.debug.internal.ui.OutlineFolderView", perspective); //$NON-NLS-1$
 		if (element != null) {
 			element.getTags().add("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
 		}
@@ -118,8 +115,7 @@ public class PerspectiveTagger {
 		}
 	}
 
-	static void tagPluginDevelopmentPerspective(MPerspective perspective,
-			EModelService modelService) {
+	static void tagPluginDevelopmentPerspective(MPerspective perspective, EModelService modelService) {
 		MUIElement element = modelService.find("topLeft", perspective); //$NON-NLS-1$
 		if (element != null) {
 			element.getTags().add("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$

@@ -43,8 +43,7 @@ public class ExtensionContribution implements IDelegateInitializer {
 			CompatibilityPart part = (CompatibilityPart) ((MPart) object).getObject();
 			return part.getReference().getSite();
 		} else if (object instanceof MWindow) {
-			IWorkbenchWindow workbenchWindow = ((MWindow) object).getContext().get(
-					IWorkbenchWindow.class);
+			IWorkbenchWindow workbenchWindow = ((MWindow) object).getContext().get(IWorkbenchWindow.class);
 			if (workbenchWindow != null) {
 				return workbenchWindow;
 			}

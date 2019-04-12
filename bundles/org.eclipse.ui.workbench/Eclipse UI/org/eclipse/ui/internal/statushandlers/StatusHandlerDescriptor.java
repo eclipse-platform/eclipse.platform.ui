@@ -55,19 +55,15 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 	 * Gets an instance of the status handler defined in the descriptor.
 	 *
 	 * @return the status handler
-	 * @throws CoreException
-	 *             thrown if there is a problem creating the handler
+	 * @throws CoreException thrown if there is a problem creating the handler
 	 */
-	public synchronized AbstractStatusHandler getStatusHandler()
-			throws CoreException {
+	public synchronized AbstractStatusHandler getStatusHandler() throws CoreException {
 		if (cachedInstance == null) {
 			AbstractStatusHandler statusHandler = (AbstractStatusHandler) configElement
 					.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
-			statusHandler.setId(configElement
-					.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
+			statusHandler.setId(configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 
-			IConfigurationElement parameters[] = configElement
-					.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
+			IConfigurationElement parameters[] = configElement.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
 
 			Map params = new HashMap();
 

@@ -102,14 +102,14 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	private IContributionManagerOverrides toolbarOverrides;
 
 	/**
-	 * Field to indicate whether the trim bars have been added to the window's
-	 * model or not. They should only ever be added once.
+	 * Field to indicate whether the trim bars have been added to the window's model
+	 * or not. They should only ever be added once.
 	 */
 	private boolean trimBarsAdded;
 	private EModelService modelService;
 
-	public CoolBarToTrimManager(MApplication app, MTrimmedWindow window,
-			List<MTrimElement> workbenchTrimElements, IRendererFactory rf) {
+	public CoolBarToTrimManager(MApplication app, MTrimmedWindow window, List<MTrimElement> workbenchTrimElements,
+			IRendererFactory rf) {
 		application = app;
 		this.window = window;
 		rendererFactory = rf;
@@ -189,8 +189,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				return;
 			}
 			for (MTrimElement toolBar : topTrim.getChildren()) {
-				if (item.getId().equals(toolBar.getElementId())
-						&& toolBar.getTags().contains(TOOLBAR_SEPARATOR)) {
+				if (item.getId().equals(toolBar.getElementId()) && toolBar.getTags().contains(TOOLBAR_SEPARATOR)) {
 					// already in the coolbar
 					return;
 				}
@@ -771,7 +770,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	private Boolean getOverridenVisibility(IContributionItem item, IContributionManager manager) {
 		IContributionManagerOverrides overrides = manager.getOverrides();
 		return overrides == null ? null : overrides.getVisible(item);
-		}
+	}
 
 	/**
 	 * Computes real item visibility considering possibly overridden state from

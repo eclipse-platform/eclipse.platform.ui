@@ -33,14 +33,12 @@ import org.eclipse.ui.IWorkbenchWindow;
  *
  * @since 3.2
  */
-public final class LegacyViewContributionExpression extends
-		WorkbenchWindowExpression {
+public final class LegacyViewContributionExpression extends WorkbenchWindowExpression {
 
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = LegacyViewContributionExpression.class
-			.getName().hashCode();
+	private static final int HASH_INITIAL = LegacyViewContributionExpression.class.getName().hashCode();
 
 	/**
 	 * The identifier for the part that must be active for this expression to
@@ -49,23 +47,18 @@ public final class LegacyViewContributionExpression extends
 	private final String activePartId;
 
 	/**
-	 * Constructs a new instance of
-	 * <code>LegacyViewContributionExpression</code>
+	 * Constructs a new instance of <code>LegacyViewContributionExpression</code>
 	 *
-	 * @param activePartId
-	 *            The identifier of the part to match with the active part; may
-	 *            be <code>null</code>
-	 * @param window
-	 *            The workbench window in which this handler should be active.
-	 *            This value is never <code>null</code>.
+	 * @param activePartId The identifier of the part to match with the active part;
+	 *                     may be <code>null</code>
+	 * @param window       The workbench window in which this handler should be
+	 *                     active. This value is never <code>null</code>.
 	 */
-	public LegacyViewContributionExpression(final String activePartId,
-			final IWorkbenchWindow window) {
+	public LegacyViewContributionExpression(final String activePartId, final IWorkbenchWindow window) {
 		super(window);
 
 		if (activePartId == null) {
-			throw new NullPointerException(
-					"The targetId for a view contribution must not be null"); //$NON-NLS-1$
+			throw new NullPointerException("The targetId for a view contribution must not be null"); //$NON-NLS-1$
 		}
 		this.activePartId = activePartId;
 	}
@@ -87,23 +80,20 @@ public final class LegacyViewContributionExpression extends
 	public boolean equals(final Object object) {
 		if (object instanceof LegacyViewContributionExpression) {
 			final LegacyViewContributionExpression that = (LegacyViewContributionExpression) object;
-			return equals(this.activePartId, that.activePartId)
-					&& equals(this.getWindow(), that.getWindow());
+			return equals(this.activePartId, that.activePartId) && equals(this.getWindow(), that.getWindow());
 		}
 
 		return false;
 	}
 
 	@Override
-	public EvaluationResult evaluate(final IEvaluationContext context)
-			throws CoreException {
+	public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
 		if (result == EvaluationResult.FALSE) {
 			return result;
 		}
 
-		final Object variable = context
-				.getVariable(ISources.ACTIVE_PART_ID_NAME);
+		final Object variable = context.getVariable(ISources.ACTIVE_PART_ID_NAME);
 		if (equals(activePartId, variable)) {
 			return EvaluationResult.TRUE;
 		}

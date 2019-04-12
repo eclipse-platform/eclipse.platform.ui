@@ -29,24 +29,24 @@ import org.eclipse.jface.viewers.ViewerComparator;
  */
 public class WorkbenchViewerComparator extends ViewerComparator {
 
-    /**
-     * Creates a workbench viewer sorter using the default collator.
-     */
-    public WorkbenchViewerComparator() {
-        super();
-    }
+	/**
+	 * Creates a workbench viewer sorter using the default collator.
+	 */
+	public WorkbenchViewerComparator() {
+		super();
+	}
 
-    /**
-     * Creates a workbench viewer sorter using the given collator.
-     *
-     * @param comparator the comparator to use to sort strings
-     */
-    public WorkbenchViewerComparator(Comparator comparator) {
-        super(comparator);
-    }
+	/**
+	 * Creates a workbench viewer sorter using the given collator.
+	 *
+	 * @param comparator the comparator to use to sort strings
+	 */
+	public WorkbenchViewerComparator(Comparator comparator) {
+		super(comparator);
+	}
 
-    @Override
+	@Override
 	public boolean isSorterProperty(Object element, String propertyId) {
-        return propertyId.equals(IBasicPropertyConstants.P_TEXT);
-    }
+		return propertyId.equals(IBasicPropertyConstants.P_TEXT);
+	}
 }

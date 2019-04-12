@@ -18,89 +18,88 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CategoryActivityBinding implements ICategoryActivityBinding {
-    private static final int HASH_FACTOR = 89;
+	private static final int HASH_FACTOR = 89;
 
-    private static final int HASH_INITIAL = CategoryActivityBinding.class
-            .getName().hashCode();
+	private static final int HASH_INITIAL = CategoryActivityBinding.class.getName().hashCode();
 
-    private String activityId;
+	private String activityId;
 
-    private String categoryId;
+	private String categoryId;
 
-    private transient int hashCode = HASH_INITIAL;
+	private transient int hashCode = HASH_INITIAL;
 
-    private transient String string;
+	private transient String string;
 
-    public CategoryActivityBinding(String activityId, String categoryId) {
-        if (activityId == null || categoryId == null) {
+	public CategoryActivityBinding(String activityId, String categoryId) {
+		if (activityId == null || categoryId == null) {
 			throw new NullPointerException();
 		}
 
-        this.activityId = activityId;
-        this.categoryId = categoryId;
-    }
+		this.activityId = activityId;
+		this.categoryId = categoryId;
+	}
 
-    @Override
+	@Override
 	public int compareTo(ICategoryActivityBinding object) {
-        CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
-        int compareTo = Util.compare(activityId, castedObject.activityId);
+		CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
+		int compareTo = Util.compare(activityId, castedObject.activityId);
 
-        if (compareTo == 0) {
+		if (compareTo == 0) {
 			compareTo = Util.compare(categoryId, castedObject.categoryId);
 		}
 
-        return compareTo;
-    }
+		return compareTo;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (!(object instanceof CategoryActivityBinding)) {
+		if (!(object instanceof CategoryActivityBinding)) {
 			return false;
 		}
 
-        final CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
-        if (!Util.equals(activityId, castedObject.activityId)) {
-            return false;
-        }
+		final CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
+		if (!Util.equals(activityId, castedObject.activityId)) {
+			return false;
+		}
 
-        return Util.equals(categoryId, castedObject.categoryId);
-    }
+		return Util.equals(categoryId, castedObject.categoryId);
+	}
 
-    @Override
+	@Override
 	public String getActivityId() {
-        return activityId;
-    }
+		return activityId;
+	}
 
-    @Override
+	@Override
 	public String getCategoryId() {
-        return categoryId;
-    }
+		return categoryId;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        if (hashCode == HASH_INITIAL){
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
-            if (hashCode == HASH_INITIAL) {
+		if (hashCode == HASH_INITIAL) {
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
+			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}
-        }
+		}
 
-        return hashCode;
-    }
+		return hashCode;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        if (string == null) {
-            final StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append('[');
-            stringBuffer.append(activityId);
-            stringBuffer.append(',');
-            stringBuffer.append(categoryId);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+		if (string == null) {
+			final StringBuilder stringBuffer = new StringBuilder();
+			stringBuffer.append('[');
+			stringBuffer.append(activityId);
+			stringBuffer.append(',');
+			stringBuffer.append(categoryId);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
 
-        return string;
-    }
+		return string;
+	}
 }

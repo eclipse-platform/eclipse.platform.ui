@@ -46,11 +46,11 @@ import org.osgi.service.event.EventHandler;
  */
 public final class ViewIntroAdapterPart extends ViewPart {
 
-    private IIntroPart introPart;
+	private IIntroPart introPart;
 
-    private IIntroSite introSite;
+	private IIntroSite introSite;
 
-    private boolean handleZoomEvents = true;
+	private boolean handleZoomEvents = true;
 
 	private IEventBroker eventBroker;
 
@@ -66,21 +66,18 @@ public final class ViewIntroAdapterPart extends ViewPart {
 			return;
 
 		if (UIEvents.isADD(event)
-				&& UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
-						IPresentationEngine.MAXIMIZED)) {
+				&& UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE, IPresentationEngine.MAXIMIZED)) {
 			setStandby(false);
 		} else if (UIEvents.isREMOVE(event)
-				&& UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE,
-						IPresentationEngine.MAXIMIZED)) {
+				&& UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE, IPresentationEngine.MAXIMIZED)) {
 			setStandby(true);
 		}
 	};
 
-
-    /**
-     * Adds a listener that toggles standby state if the view pane is zoomed.
-     */
-    private void addZoomListener() {
+	/**
+	 * Adds a listener that toggles standby state if the view pane is zoomed.
+	 */
+	private void addZoomListener() {
 		ViewSite site = (ViewSite) getViewSite();
 		MPart introModelPart = site.getModel();
 		if (introModelPart == null || introModelPart.getContext() == null)
@@ -88,7 +85,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 
 		eventBroker = introModelPart.getContext().get(IEventBroker.class);
 		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, zoomChangeListener);
-    }
+	}
 
 	private MPartStack getIntroStack() {
 		ViewSite site = (ViewSite) getViewSite();
@@ -104,38 +101,38 @@ public final class ViewIntroAdapterPart extends ViewPart {
 		return null;
 	}
 
-    /**
-     * Forces the standby state of the intro part.
-     *
-     * @param standby update the standby state
-     */
-    public void setStandby(final boolean standby) {
+	/**
+	 * Forces the standby state of the intro part.
+	 *
+	 * @param standby update the standby state
+	 */
+	public void setStandby(final boolean standby) {
 		final Control control = (Control) ((PartSite) getSite()).getModel().getWidget();
-        BusyIndicator.showWhile(control.getDisplay(), () -> {
-		    try {
-		        control.setRedraw(false);
-		        introPart.standbyStateChanged(standby);
-		    } finally {
-		        control.setRedraw(true);
-		    }
+		BusyIndicator.showWhile(control.getDisplay(), () -> {
+			try {
+				control.setRedraw(false);
+				introPart.standbyStateChanged(standby);
+			} finally {
+				control.setRedraw(true);
+			}
 
-		    setBarVisibility(standby);
+			setBarVisibility(standby);
 		});
-    }
+	}
 
-    /**
-     * Toggles handling of zoom events.
-     *
-     * @param handle whether to handle zoom events
-     */
-    public void setHandleZoomEvents(boolean handle) {
-        handleZoomEvents = handle;
-    }
+	/**
+	 * Toggles handling of zoom events.
+	 *
+	 * @param handle whether to handle zoom events
+	 */
+	public void setHandleZoomEvents(boolean handle) {
+		handleZoomEvents = handle;
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        addZoomListener();
-        introPart.createPartControl(parent);
+		addZoomListener();
+		introPart.createPartControl(parent);
 
 		ViewSite site = (ViewSite) getViewSite();
 		MPart introModelPart = site.getModel();
@@ -145,69 +142,64 @@ public final class ViewIntroAdapterPart extends ViewPart {
 				setStandby(!parentElement.getTags().contains(IPresentationEngine.MAXIMIZED));
 			}
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void dispose() {
 		eventBroker.unsubscribe(zoomChangeListener);
 
-    	setBarVisibility(true);
-        getSite().getWorkbenchWindow().getWorkbench().getIntroManager()
-                .closeIntro(introPart);
-        introPart.dispose();
+		setBarVisibility(true);
+		getSite().getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro(introPart);
+		introPart.dispose();
 		super.dispose();
-    }
+	}
 
-    @Override
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return Adapters.adapt(introPart, adapter);
-    }
+	}
 
-    @Override
+	@Override
 	public Image getTitleImage() {
-        return introPart.getTitleImage();
-    }
+		return introPart.getTitleImage();
+	}
 
-    @Override
+	@Override
 	public String getTitle() {
-    	// this method is called eagerly before our init method is called (and
-    	// therefore before our intropart is created).  By default return
-    	// the view title from the view declaration.  We will fire a property
-    	// change to set the title to the proper value in the init method.
-    	return introPart == null ? super.getTitle() : introPart.getTitle();
-    }
+		// this method is called eagerly before our init method is called (and
+		// therefore before our intropart is created). By default return
+		// the view title from the view declaration. We will fire a property
+		// change to set the title to the proper value in the init method.
+		return introPart == null ? super.getTitle() : introPart.getTitle();
+	}
 
-    @Override
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-        super.init(site);
-        Workbench workbench = (Workbench) site.getWorkbenchWindow()
-                .getWorkbench();
-        try {
-            introPart = workbench.getWorkbenchIntroManager()
-                    .createNewIntroPart();
-            // reset the part name of this view to be that of the intro title
-            setPartName(introPart.getTitle());
-            introPart.addPropertyListener((source, propId) -> firePropertyChange(propId));
-            introSite = new ViewIntroAdapterSite(site, workbench
-                    .getIntroDescriptor());
-            introPart.init(introSite, memento);
+		super.init(site);
+		Workbench workbench = (Workbench) site.getWorkbenchWindow().getWorkbench();
+		try {
+			introPart = workbench.getWorkbenchIntroManager().createNewIntroPart();
+			// reset the part name of this view to be that of the intro title
+			setPartName(introPart.getTitle());
+			introPart.addPropertyListener((source, propId) -> firePropertyChange(propId));
+			introSite = new ViewIntroAdapterSite(site, workbench.getIntroDescriptor());
+			introPart.init(introSite, memento);
 
-        } catch (CoreException e) {
-            WorkbenchPlugin
-                    .log(
-                            IntroMessages.Intro_could_not_create_proxy, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.Intro_could_not_create_proxy, e));
-        }
-    }
+		} catch (CoreException e) {
+			WorkbenchPlugin.log(IntroMessages.Intro_could_not_create_proxy, new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.Intro_could_not_create_proxy, e));
+		}
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
-        introPart.setFocus();
-    }
+		introPart.setFocus();
+	}
 
-    @Override
+	@Override
 	public void saveState(IMemento memento) {
-        introPart.saveState(memento);
-    }
+		introPart.saveState(memento);
+	}
 
 	/**
 	 * Sets whether the CoolBar/PerspectiveBar should be visible.
@@ -216,20 +208,17 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	 * @since 3.1
 	 */
 	private void setBarVisibility(final boolean visible) {
-		WorkbenchWindow window = (WorkbenchWindow) getSite()
-				.getWorkbenchWindow();
+		WorkbenchWindow window = (WorkbenchWindow) getSite().getWorkbenchWindow();
 
 		boolean layout = false; // don't layout unless things have actually changed
 		if (visible) {
 			// Restore the last 'saved' state
-			boolean coolbarVisible = PrefUtil
-					.getInternalPreferenceStore().getBoolean(
-							IPreferenceConstants.COOLBAR_VISIBLE);
-			boolean persBarVisible = PrefUtil
-					.getInternalPreferenceStore().getBoolean(
-							IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
+			boolean coolbarVisible = PrefUtil.getInternalPreferenceStore()
+					.getBoolean(IPreferenceConstants.COOLBAR_VISIBLE);
+			boolean persBarVisible = PrefUtil.getInternalPreferenceStore()
+					.getBoolean(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
 			layout = (coolbarVisible != window.getCoolBarVisible())
-				|| (persBarVisible != window.getPerspectiveBarVisible());
+					|| (persBarVisible != window.getPerspectiveBarVisible());
 			window.setCoolBarVisible(coolbarVisible);
 			window.setPerspectiveBarVisible(persBarVisible);
 		} else {

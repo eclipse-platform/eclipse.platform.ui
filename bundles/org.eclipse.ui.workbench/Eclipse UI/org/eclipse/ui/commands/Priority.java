@@ -64,14 +64,14 @@ public final class Priority implements Comparable {
 	public static final Priority MEDIUM = new Priority(ISources.LEGACY_MEDIUM);
 
 	/**
-	 * The string representation of this priority. This is computed once
-	 * (lazily). Before it is computed, this value is <code>null</code>.
+	 * The string representation of this priority. This is computed once (lazily).
+	 * Before it is computed, this value is <code>null</code>.
 	 */
 	private transient String string = null;
 
 	/**
-	 * The priority value for this instance. A lesser integer is considered to
-	 * have a higher priority.
+	 * The priority value for this instance. A lesser integer is considered to have
+	 * a higher priority.
 	 */
 	private int value;
 
@@ -80,9 +80,8 @@ public final class Priority implements Comparable {
 	 * constructor should only be used internally. Priority instances should be
 	 * retrieved from the static members defined above.
 	 *
-	 * @param value
-	 *            The priority value; a lesser integer is consider to have a
-	 *            higher priority value.
+	 * @param value The priority value; a lesser integer is consider to have a
+	 *              higher priority value.
 	 */
 	private Priority(int value) {
 		this.value = value;
@@ -100,8 +99,8 @@ public final class Priority implements Comparable {
 	}
 
 	/**
-	 * The value for this priority. The lesser the value, the higher priority
-	 * this represents.
+	 * The value for this priority. The lesser the value, the higher priority this
+	 * represents.
 	 *
 	 * @return The integer priority value.
 	 */

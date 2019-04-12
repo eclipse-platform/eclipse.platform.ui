@@ -83,7 +83,8 @@ public class CommandToModelProcessor {
 			final MCommand mCommand = commands.get(cmd.getId());
 			if (mCommand != null) {
 				try {
-					// This is needed to set the command name and description using the correct locale.
+					// This is needed to set the command name and description using the correct
+					// locale.
 					String cmdName = cmd.getName();
 					if (!cmdName.equals(mCommand.getCommandName())) {
 						mCommand.setCommandName(cmdName);
@@ -109,8 +110,6 @@ public class CommandToModelProcessor {
 			}
 		}
 	}
-
-
 
 	/**
 	 * @param commandManager

@@ -46,8 +46,8 @@ import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * This implementation of <code>IPageSite</code> provides a site for a page
- * within a <code>PageBookView</code>. Most methods are forwarded to the
- * view's site.
+ * within a <code>PageBookView</code>. Most methods are forwarded to the view's
+ * site.
  */
 public class PageSite implements IPageSite, INestable {
 
@@ -62,8 +62,7 @@ public class PageSite implements IPageSite, INestable {
 	private IViewSite parentSite;
 
 	/**
-	 * A selection provider set by the page. Value is <code>null</code> until
-	 * set.
+	 * A selection provider set by the page. Value is <code>null</code> until set.
 	 */
 	private ISelectionProvider selectionProvider;
 
@@ -87,8 +86,7 @@ public class PageSite implements IPageSite, INestable {
 	/**
 	 * Creates a new sub view site of the given parent view site.
 	 *
-	 * @param parentViewSite
-	 *            the parent view site
+	 * @param parentViewSite the parent view site
 	 */
 	public PageSite(final IViewSite parentViewSite) {
 		Assert.isNotNull(parentViewSite);
@@ -96,18 +94,16 @@ public class PageSite implements IPageSite, INestable {
 		subActionBars = new SubActionBars(parentViewSite.getActionBars(), this);
 
 		// Initialize the service locator.
-		IServiceLocatorCreator slc = parentSite
-				.getService(IServiceLocatorCreator.class);
+		IServiceLocatorCreator slc = parentSite.getService(IServiceLocatorCreator.class);
 		e4Context = ((PartSite) parentViewSite).getContext().createChild("PageSite"); //$NON-NLS-1$
-		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(parentViewSite, null,
-				() -> {
-					// final Control control =
-					// ((PartSite)parentViewSite).getPane().getControl();
-					// if (control != null && !control.isDisposed()) {
-					// ((PartSite)parentViewSite).getPane().doHide();
-					// }
-					// TODO compat: not tsure what this should do
-				}, e4Context);
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(parentViewSite, null, () -> {
+			// final Control control =
+			// ((PartSite)parentViewSite).getPane().getControl();
+			// if (control != null && !control.isDisposed()) {
+			// ((PartSite)parentViewSite).getPane().doHide();
+			// }
+			// TODO compat: not tsure what this should do
+		}, e4Context);
 		initializeDefaultServices();
 	}
 
@@ -116,11 +112,9 @@ public class PageSite implements IPageSite, INestable {
 	 */
 	private void initializeDefaultServices() {
 		serviceLocator.registerService(IWorkbenchLocationService.class,
-				new WorkbenchLocationService(IServiceScopes.PAGESITE_SCOPE,
-						getWorkbenchWindow().getWorkbench(),
+				new WorkbenchLocationService(IServiceScopes.PAGESITE_SCOPE, getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), parentSite, null, this, 3));
-		serviceLocator.registerService(IPageSiteHolder.class,
-				(IPageSiteHolder) () -> PageSite.this);
+		serviceLocator.registerService(IPageSiteHolder.class, (IPageSiteHolder) () -> PageSite.this);
 
 		// create a local handler service so that when this page
 		// activates/deactivates, its handlers will also be taken into/out of
@@ -132,8 +126,8 @@ public class PageSite implements IPageSite, INestable {
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				if (contextService == null) {
-					contextService = new NestableContextService(context.getParent().get(
-							IContextService.class), new ActivePartExpression(parentSite.getPart()));
+					contextService = new NestableContextService(context.getParent().get(IContextService.class),
+							new ActivePartExpression(parentSite.getPart()));
 				}
 				return contextService;
 			}
@@ -151,9 +145,8 @@ public class PageSite implements IPageSite, INestable {
 				managers.add(ext.getManager());
 				ext.dispose();
 			}
-			if (managers.size()>0) {
-				for (Iterator iterator = managers.iterator(); iterator
-						.hasNext();) {
+			if (managers.size() > 0) {
+				for (Iterator iterator = managers.iterator(); iterator.hasNext();) {
 					MenuManager mgr = (MenuManager) iterator.next();
 					mgr.dispose();
 				}
@@ -171,8 +164,8 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	/**
-	 * The PageSite implementation of this <code>IPageSite</code> method
-	 * returns the <code>SubActionBars</code> for this site.
+	 * The PageSite implementation of this <code>IPageSite</code> method returns the
+	 * <code>SubActionBars</code> for this site.
 	 *
 	 * @return the subactionbars for this site
 	 */
@@ -221,13 +214,12 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	@Override
-	public void registerContextMenu(String menuID, MenuManager menuMgr,
-			ISelectionProvider selProvider) {
+	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		PartSite.registerContextMenu(menuID, menuMgr, selProvider, false, parentSite.getPart(),
-				e4Context, menuExtenders);
+		PartSite.registerContextMenu(menuID, menuMgr, selProvider, false, parentSite.getPart(), e4Context,
+				menuExtenders);
 	}
 
 	@Override

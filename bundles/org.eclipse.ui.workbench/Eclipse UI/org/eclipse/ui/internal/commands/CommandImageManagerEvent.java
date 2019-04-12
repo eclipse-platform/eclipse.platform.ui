@@ -21,9 +21,9 @@ package org.eclipse.ui.internal.commands;
  * Clients must neither instantiate nor extend.
  * </p>
  * <p>
- * <strong>PROVISIONAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
+ * <strong>PROVISIONAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is a guarantee neither that this API will work
+ * nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
  * <p>
@@ -37,8 +37,8 @@ package org.eclipse.ui.internal.commands;
 public final class CommandImageManagerEvent {
 
 	/**
-	 * The identifiers of the commands whose image bindings have changed. This
-	 * value is never <code>null</code> and never empty.
+	 * The identifiers of the commands whose image bindings have changed. This value
+	 * is never <code>null</code> and never empty.
 	 */
 	private final String[] changedCommandIds;
 
@@ -61,23 +61,21 @@ public final class CommandImageManagerEvent {
 	/**
 	 * Creates a new instance of this class.
 	 *
-	 * @param commandImageManager
-	 *            the instance of the manager that changed; must not be
-	 *            <code>null</code>.
-	 * @param changedCommandIds
-	 *            The identifiers of the commands whose image bindings have
-	 *            changed; this value must not be <code>null</code> and must
-	 *            not be empty. This value is not copied.
+	 * @param commandImageManager the instance of the manager that changed; must not
+	 *                            be <code>null</code>.
+	 * @param changedCommandIds   The identifiers of the commands whose image
+	 *                            bindings have changed; this value must not be
+	 *                            <code>null</code> and must not be empty. This
+	 *                            value is not copied.
 	 */
-	CommandImageManagerEvent(final CommandImageManager commandImageManager,
-			final String[] changedCommandIds, final int type, final String style) {
+	CommandImageManagerEvent(final CommandImageManager commandImageManager, final String[] changedCommandIds,
+			final int type, final String style) {
 		if (commandImageManager == null) {
 			throw new NullPointerException("An event must refer to its manager"); //$NON-NLS-1$
 		}
 
 		if ((changedCommandIds == null) || (changedCommandIds.length < 1)) {
-			throw new IllegalArgumentException(
-					"There must be at least one change command identifier"); //$NON-NLS-1$
+			throw new IllegalArgumentException("There must be at least one change command identifier"); //$NON-NLS-1$
 		}
 
 		this.commandImageManager = commandImageManager;
@@ -89,13 +87,12 @@ public final class CommandImageManagerEvent {
 	/**
 	 * Returns the identifiers of the commands whose bindings have changed.
 	 *
-	 * @return The identifiers of the commands whose bindings have changed;
-	 *         neither <code>null</code> nor empty.
+	 * @return The identifiers of the commands whose bindings have changed; neither
+	 *         <code>null</code> nor empty.
 	 */
 	public String[] getChangedCommandIds() {
 		final String[] copy = new String[changedCommandIds.length];
-		System.arraycopy(changedCommandIds, 0, copy, 0,
-				changedCommandIds.length);
+		System.arraycopy(changedCommandIds, 0, copy, 0, changedCommandIds.length);
 		return copy;
 	}
 
@@ -112,9 +109,8 @@ public final class CommandImageManagerEvent {
 	/**
 	 * Returns whether one of the images of the given command has changed.
 	 *
-	 * @param commandId
-	 *            The identifier of the command to check; must not be
-	 *            <code>null</code>.
+	 * @param commandId The identifier of the command to check; must not be
+	 *                  <code>null</code>.
 	 * @return <code>true</code> if one of the command's images has changed;
 	 *         <code>false</code> otherwise.
 	 */
@@ -132,37 +128,30 @@ public final class CommandImageManagerEvent {
 	/**
 	 * Returns whether the image for the command has changed.
 	 *
-	 * @param commandId
-	 *            The identifier of the command to check; must not be
-	 *            <code>null</code>.
+	 * @param commandId The identifier of the command to check; must not be
+	 *                  <code>null</code>.
 	 * @return <code>true</code> if the command's image has changed
 	 * @see CommandImageManager#getImageDescriptor(String)
 	 */
 	public boolean isCommandImageChanged(final String commandId) {
-		return isCommandIdChanged(commandId)
-				&& (type == CommandImageManager.TYPE_DEFAULT)
-				&& (style == null);
+		return isCommandIdChanged(commandId) && (type == CommandImageManager.TYPE_DEFAULT) && (style == null);
 	}
 
 	/**
 	 * Returns whether the image of the given type for the command has changed.
 	 *
-	 * @param commandId
-	 *            The identifier of the command to check; must not be
-	 *            <code>null</code>.
-	 * @param type
-	 *            The type of image, one of
-	 *            {@link CommandImageManager#TYPE_DEFAULT},
-	 *            {@link CommandImageManager#TYPE_DISABLED} or
-	 *            {@link CommandImageManager#TYPE_HOVER}.
+	 * @param commandId The identifier of the command to check; must not be
+	 *                  <code>null</code>.
+	 * @param type      The type of image, one of
+	 *                  {@link CommandImageManager#TYPE_DEFAULT},
+	 *                  {@link CommandImageManager#TYPE_DISABLED} or
+	 *                  {@link CommandImageManager#TYPE_HOVER}.
 	 * @return <code>true</code> if the command's image of the given type has
 	 *         changed.
 	 * @see CommandImageManager#getImageDescriptor(String, int)
 	 */
-	public boolean isCommandImageChanged(final String commandId,
-			final int type) {
-		return isCommandIdChanged(commandId)
-				&& ((type == CommandImageManager.TYPE_DEFAULT) || (type == this.type))
+	public boolean isCommandImageChanged(final String commandId, final int type) {
+		return isCommandIdChanged(commandId) && ((type == CommandImageManager.TYPE_DEFAULT) || (type == this.type))
 				&& (style == null);
 	}
 
@@ -170,43 +159,34 @@ public final class CommandImageManagerEvent {
 	 * Returns whether the image of the given type and style for the command has
 	 * changed.
 	 *
-	 * @param commandId
-	 *            The identifier of the command to check; must not be
-	 *            <code>null</code>.
-	 * @param type
-	 *            The type of image, one of
-	 *            {@link CommandImageManager#TYPE_DEFAULT},
-	 *            {@link CommandImageManager#TYPE_DISABLED} or
-	 *            {@link CommandImageManager#TYPE_HOVER}.
-	 * @param style
-	 *            The style of the image; may be anything.
-	 * @return <code>true</code> if the command's image of the given type and
-	 *         style has changed.
+	 * @param commandId The identifier of the command to check; must not be
+	 *                  <code>null</code>.
+	 * @param type      The type of image, one of
+	 *                  {@link CommandImageManager#TYPE_DEFAULT},
+	 *                  {@link CommandImageManager#TYPE_DISABLED} or
+	 *                  {@link CommandImageManager#TYPE_HOVER}.
+	 * @param style     The style of the image; may be anything.
+	 * @return <code>true</code> if the command's image of the given type and style
+	 *         has changed.
 	 * @see CommandImageManager#getImageDescriptor(String, int, String)
 	 */
-	public boolean isCommandImageChanged(final String commandId,
-			final int type, final String style) {
-		return isCommandIdChanged(commandId)
-				&& ((type == CommandImageManager.TYPE_DEFAULT) || (type == this.type))
+	public boolean isCommandImageChanged(final String commandId, final int type, final String style) {
+		return isCommandIdChanged(commandId) && ((type == CommandImageManager.TYPE_DEFAULT) || (type == this.type))
 				&& ((style == null) || (style.equals(this.style)));
 	}
 
 	/**
 	 * Returns whether the image of the given style for the command has changed.
 	 *
-	 * @param commandId
-	 *            The identifier of the command to check; must not be
-	 *            <code>null</code>.
-	 * @param style
-	 *            The style of the image; may be anything.
+	 * @param commandId The identifier of the command to check; must not be
+	 *                  <code>null</code>.
+	 * @param style     The style of the image; may be anything.
 	 * @return <code>true</code> if the command's image of the given style has
 	 *         changed.
 	 * @see CommandImageManager#getImageDescriptor(String, String)
 	 */
-	public boolean isCommandImageChanged(final String commandId,
-			final String style) {
-		return isCommandIdChanged(commandId)
-				&& (type == CommandImageManager.TYPE_DEFAULT)
+	public boolean isCommandImageChanged(final String commandId, final String style) {
+		return isCommandIdChanged(commandId) && (type == CommandImageManager.TYPE_DEFAULT)
 				&& ((style == null) || (style.equals(this.style)));
 	}
 }

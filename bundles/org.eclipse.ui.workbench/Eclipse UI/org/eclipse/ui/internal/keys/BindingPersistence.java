@@ -76,14 +76,13 @@ import org.eclipse.ui.keys.IBindingService;
 public class BindingPersistence extends PreferencePersistence {
 
 	/**
-	 * Whether this class should print out debugging information when it reads
-	 * in data, or writes to the preference store.
+	 * Whether this class should print out debugging information when it reads in
+	 * data, or writes to the preference store.
 	 */
 	private static final boolean DEBUG = Policy.DEBUG_KEY_BINDINGS;
 
 	/**
-	 * The index of the active scheme configuration elements in the indexed
-	 * array.
+	 * The index of the active scheme configuration elements in the indexed array.
 	 *
 	 * @see BindingPersistence#read()
 	 */
@@ -118,90 +117,52 @@ public class BindingPersistence extends PreferencePersistence {
 
 	static {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
-		r2_1KeysByName.put(IKeyLookup.BACKSPACE_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.BACKSPACE_NAME));
-		r2_1KeysByName.put(IKeyLookup.TAB_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.TAB_NAME));
-		r2_1KeysByName.put(IKeyLookup.RETURN_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.RETURN_NAME));
-		r2_1KeysByName.put(IKeyLookup.ENTER_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.ENTER_NAME));
-		r2_1KeysByName.put(IKeyLookup.ESCAPE_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.ESCAPE_NAME));
-		r2_1KeysByName.put(IKeyLookup.ESC_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.ESC_NAME));
-		r2_1KeysByName.put(IKeyLookup.DELETE_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.DELETE_NAME));
-		r2_1KeysByName.put(IKeyLookup.SPACE_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.SPACE_NAME));
-		r2_1KeysByName.put(IKeyLookup.ARROW_UP_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.ARROW_UP_NAME));
-		r2_1KeysByName.put(IKeyLookup.ARROW_DOWN_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.ARROW_DOWN_NAME));
-		r2_1KeysByName.put(IKeyLookup.ARROW_LEFT_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.ARROW_LEFT_NAME));
-		r2_1KeysByName.put(IKeyLookup.ARROW_RIGHT_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.ARROW_RIGHT_NAME));
-		r2_1KeysByName.put(IKeyLookup.PAGE_UP_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.PAGE_UP_NAME));
-		r2_1KeysByName.put(IKeyLookup.PAGE_DOWN_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.PAGE_DOWN_NAME));
-		r2_1KeysByName.put(IKeyLookup.HOME_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.HOME_NAME));
-		r2_1KeysByName.put(IKeyLookup.END_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.END_NAME));
-		r2_1KeysByName.put(IKeyLookup.INSERT_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.INSERT_NAME));
-		r2_1KeysByName.put(IKeyLookup.F1_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F1_NAME));
-		r2_1KeysByName.put(IKeyLookup.F2_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F2_NAME));
-		r2_1KeysByName.put(IKeyLookup.F3_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F3_NAME));
-		r2_1KeysByName.put(IKeyLookup.F4_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F4_NAME));
-		r2_1KeysByName.put(IKeyLookup.F5_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F5_NAME));
-		r2_1KeysByName.put(IKeyLookup.F6_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F6_NAME));
-		r2_1KeysByName.put(IKeyLookup.F7_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F7_NAME));
-		r2_1KeysByName.put(IKeyLookup.F8_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F8_NAME));
-		r2_1KeysByName.put(IKeyLookup.F9_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F9_NAME));
-		r2_1KeysByName.put(IKeyLookup.F10_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F10_NAME));
-		r2_1KeysByName.put(IKeyLookup.F11_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F11_NAME));
-		r2_1KeysByName.put(IKeyLookup.F12_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F12_NAME));
-		r2_1KeysByName.put(IKeyLookup.F13_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F13_NAME));
-		r2_1KeysByName.put(IKeyLookup.F14_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F14_NAME));
-		r2_1KeysByName.put(IKeyLookup.F15_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F15_NAME));
-		r2_1KeysByName.put(IKeyLookup.F16_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F16_NAME));
-		r2_1KeysByName.put(IKeyLookup.F17_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F17_NAME));
-		r2_1KeysByName.put(IKeyLookup.F18_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F18_NAME));
-		r2_1KeysByName.put(IKeyLookup.F19_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F19_NAME));
-		r2_1KeysByName.put(IKeyLookup.F20_NAME, lookup
-				.formalKeyLookupInteger(IKeyLookup.F20_NAME));
+		r2_1KeysByName.put(IKeyLookup.BACKSPACE_NAME, lookup.formalKeyLookupInteger(IKeyLookup.BACKSPACE_NAME));
+		r2_1KeysByName.put(IKeyLookup.TAB_NAME, lookup.formalKeyLookupInteger(IKeyLookup.TAB_NAME));
+		r2_1KeysByName.put(IKeyLookup.RETURN_NAME, lookup.formalKeyLookupInteger(IKeyLookup.RETURN_NAME));
+		r2_1KeysByName.put(IKeyLookup.ENTER_NAME, lookup.formalKeyLookupInteger(IKeyLookup.ENTER_NAME));
+		r2_1KeysByName.put(IKeyLookup.ESCAPE_NAME, lookup.formalKeyLookupInteger(IKeyLookup.ESCAPE_NAME));
+		r2_1KeysByName.put(IKeyLookup.ESC_NAME, lookup.formalKeyLookupInteger(IKeyLookup.ESC_NAME));
+		r2_1KeysByName.put(IKeyLookup.DELETE_NAME, lookup.formalKeyLookupInteger(IKeyLookup.DELETE_NAME));
+		r2_1KeysByName.put(IKeyLookup.SPACE_NAME, lookup.formalKeyLookupInteger(IKeyLookup.SPACE_NAME));
+		r2_1KeysByName.put(IKeyLookup.ARROW_UP_NAME, lookup.formalKeyLookupInteger(IKeyLookup.ARROW_UP_NAME));
+		r2_1KeysByName.put(IKeyLookup.ARROW_DOWN_NAME, lookup.formalKeyLookupInteger(IKeyLookup.ARROW_DOWN_NAME));
+		r2_1KeysByName.put(IKeyLookup.ARROW_LEFT_NAME, lookup.formalKeyLookupInteger(IKeyLookup.ARROW_LEFT_NAME));
+		r2_1KeysByName.put(IKeyLookup.ARROW_RIGHT_NAME, lookup.formalKeyLookupInteger(IKeyLookup.ARROW_RIGHT_NAME));
+		r2_1KeysByName.put(IKeyLookup.PAGE_UP_NAME, lookup.formalKeyLookupInteger(IKeyLookup.PAGE_UP_NAME));
+		r2_1KeysByName.put(IKeyLookup.PAGE_DOWN_NAME, lookup.formalKeyLookupInteger(IKeyLookup.PAGE_DOWN_NAME));
+		r2_1KeysByName.put(IKeyLookup.HOME_NAME, lookup.formalKeyLookupInteger(IKeyLookup.HOME_NAME));
+		r2_1KeysByName.put(IKeyLookup.END_NAME, lookup.formalKeyLookupInteger(IKeyLookup.END_NAME));
+		r2_1KeysByName.put(IKeyLookup.INSERT_NAME, lookup.formalKeyLookupInteger(IKeyLookup.INSERT_NAME));
+		r2_1KeysByName.put(IKeyLookup.F1_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F1_NAME));
+		r2_1KeysByName.put(IKeyLookup.F2_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F2_NAME));
+		r2_1KeysByName.put(IKeyLookup.F3_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F3_NAME));
+		r2_1KeysByName.put(IKeyLookup.F4_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F4_NAME));
+		r2_1KeysByName.put(IKeyLookup.F5_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F5_NAME));
+		r2_1KeysByName.put(IKeyLookup.F6_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F6_NAME));
+		r2_1KeysByName.put(IKeyLookup.F7_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F7_NAME));
+		r2_1KeysByName.put(IKeyLookup.F8_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F8_NAME));
+		r2_1KeysByName.put(IKeyLookup.F9_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F9_NAME));
+		r2_1KeysByName.put(IKeyLookup.F10_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F10_NAME));
+		r2_1KeysByName.put(IKeyLookup.F11_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F11_NAME));
+		r2_1KeysByName.put(IKeyLookup.F12_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F12_NAME));
+		r2_1KeysByName.put(IKeyLookup.F13_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F13_NAME));
+		r2_1KeysByName.put(IKeyLookup.F14_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F14_NAME));
+		r2_1KeysByName.put(IKeyLookup.F15_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F15_NAME));
+		r2_1KeysByName.put(IKeyLookup.F16_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F16_NAME));
+		r2_1KeysByName.put(IKeyLookup.F17_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F17_NAME));
+		r2_1KeysByName.put(IKeyLookup.F18_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F18_NAME));
+		r2_1KeysByName.put(IKeyLookup.F19_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F19_NAME));
+		r2_1KeysByName.put(IKeyLookup.F20_NAME, lookup.formalKeyLookupInteger(IKeyLookup.F20_NAME));
 	}
 
 	/**
-	 * Converts a 2.1.x style key sequence (as parsed from the
-	 * <code>string</code> attribute of the <code>keyBinding</code>) to a
-	 * 3.1 key sequence.
+	 * Converts a 2.1.x style key sequence (as parsed from the <code>string</code>
+	 * attribute of the <code>keyBinding</code>) to a 3.1 key sequence.
 	 *
-	 * @param r21KeySequence
-	 *            The sequence of 2.1.x key strokes that should be converted
-	 *            into a 3.1 key sequence; never <code>null</code>.
+	 * @param r21KeySequence The sequence of 2.1.x key strokes that should be
+	 *                       converted into a 3.1 key sequence; never
+	 *                       <code>null</code>.
 	 * @return A 3.1 key sequence; never <code>null</code>.
 	 */
 	private static final KeySequence convert2_1Sequence(int[] r21KeySequence) {
@@ -218,8 +179,8 @@ public class BindingPersistence extends PreferencePersistence {
 	 * Converts a 2.1.x style key stroke (as parsed from the <code>string</code>
 	 * attribute of the <code>keyBinding</code> to a 3.1 key stroke.
 	 *
-	 * @param r21Stroke
-	 *            The 2.1.x stroke to convert; must never be <code>null</code>.
+	 * @param r21Stroke The 2.1.x stroke to convert; must never be
+	 *                  <code>null</code>.
 	 * @return A 3.1 key stroke; never <code>null</code>.
 	 */
 	private static final KeyStroke convert2_1Stroke(final int r21Stroke) {
@@ -227,28 +188,23 @@ public class BindingPersistence extends PreferencePersistence {
 	}
 
 	/**
-	 * Returns the default scheme identifier for the currently running
-	 * application.
+	 * Returns the default scheme identifier for the currently running application.
 	 *
 	 * @return The default scheme identifier (<code>String</code>); never
-	 *         <code>null</code>, but may be empty or point to an undefined
-	 *         scheme.
+	 *         <code>null</code>, but may be empty or point to an undefined scheme.
 	 */
 	public static final String getDefaultSchemeId() {
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
-		return store
-				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		return store.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
 	}
 
 	/**
-	 * Parses a 2.1.x <code>string</code> attribute of the
-	 * <code>keyBinding</code> element.
+	 * Parses a 2.1.x <code>string</code> attribute of the <code>keyBinding</code>
+	 * element.
 	 *
-	 * @param string
-	 *            The string to parse; must not be <code>null</code>.
-	 * @return An array of integer values -- each integer representing a single
-	 *         key stroke. This array may be empty, but it is never
-	 *         <code>null</code>.
+	 * @param string The string to parse; must not be <code>null</code>.
+	 * @return An array of integer values -- each integer representing a single key
+	 *         stroke. This array may be empty, but it is never <code>null</code>.
 	 */
 	private static final int[] parse2_1Sequence(final String string) {
 		final StringTokenizer stringTokenizer = new StringTokenizer(string);
@@ -266,13 +222,11 @@ public class BindingPersistence extends PreferencePersistence {
 	 * Parses a single 2.1.x key stroke string, as provided by
 	 * <code>parse2_1Sequence</code>.
 	 *
-	 * @param string
-	 *            The string to parse; must not be <code>null</code>.
+	 * @param string The string to parse; must not be <code>null</code>.
 	 * @return An single integer value representing this key stroke.
 	 */
 	private static final int parse2_1Stroke(final String string) {
-		final StringTokenizer stringTokenizer = new StringTokenizer(string,
-				KeyStroke.KEY_DELIMITER, true);
+		final StringTokenizer stringTokenizer = new StringTokenizer(string, KeyStroke.KEY_DELIMITER, true);
 
 		// Copy out the tokens so we have random access.
 		final int size = stringTokenizer.countTokens();
@@ -284,8 +238,7 @@ public class BindingPersistence extends PreferencePersistence {
 		int value = 0;
 		if (size % 2 == 1) {
 			String token = tokens[size - 1];
-			final Integer integer = (Integer) r2_1KeysByName.get(token
-					.toUpperCase(Locale.ENGLISH));
+			final Integer integer = (Integer) r2_1KeysByName.get(token.toUpperCase(Locale.ENGLISH));
 
 			if (integer != null) {
 				value = integer.intValue();
@@ -312,16 +265,14 @@ public class BindingPersistence extends PreferencePersistence {
 
 							value |= SWT.ALT;
 
-						} else if (token
-								.equalsIgnoreCase(IKeyLookup.SHIFT_NAME)) {
+						} else if (token.equalsIgnoreCase(IKeyLookup.SHIFT_NAME)) {
 							if ((value & SWT.SHIFT) != 0) {
 								return 0;
 							}
 
 							value |= SWT.SHIFT;
 
-						} else if (token
-								.equalsIgnoreCase(IKeyLookup.COMMAND_NAME)) {
+						} else if (token.equalsIgnoreCase(IKeyLookup.COMMAND_NAME)) {
 							if ((value & SWT.COMMAND) != 0) {
 								return 0;
 							}
@@ -345,50 +296,42 @@ public class BindingPersistence extends PreferencePersistence {
 
 	/**
 	 * <p>
-	 * Reads the registry and the preference store, and determines the
-	 * identifier for the scheme that should be active. There is a complicated
-	 * order of priorities for this. The registry will only be read if there is
-	 * no user preference, and the default active scheme id is different than
-	 * the default default active scheme id.
+	 * Reads the registry and the preference store, and determines the identifier
+	 * for the scheme that should be active. There is a complicated order of
+	 * priorities for this. The registry will only be read if there is no user
+	 * preference, and the default active scheme id is different than the default
+	 * default active scheme id.
 	 * </p>
 	 * <ol>
 	 * <li>A non-default preference.</li>
 	 * <li>The legacy preference XML memento.</li>
-	 * <li>A default preference value that is different than the default
-	 * default active scheme id.</li>
+	 * <li>A default preference value that is different than the default default
+	 * active scheme id.</li>
 	 * <li>The registry.</li>
 	 * <li>The default default active scheme id.</li>
 	 * </ol>
 	 *
-	 * @param configurationElements
-	 *            The configuration elements from the commands extension point;
-	 *            must not be <code>null</code>.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param preferences
-	 *            The memento wrapping the commands preference key; may be
-	 *            <code>null</code>.
-	 * @param bindingManager
-	 *            The binding manager that should be updated with the active
-	 *            scheme. This binding manager must already have its schemes
-	 *            defined. This value must not be <code>null</code>.
+	 * @param configurationElements     The configuration elements from the commands
+	 *                                  extension point; must not be
+	 *                                  <code>null</code>.
+	 * @param configurationElementCount The number of configuration elements that
+	 *                                  are really in the array.
+	 * @param preferences               The memento wrapping the commands preference
+	 *                                  key; may be <code>null</code>.
+	 * @param bindingManager            The binding manager that should be updated
+	 *                                  with the active scheme. This binding manager
+	 *                                  must already have its schemes defined. This
+	 *                                  value must not be <code>null</code>.
 	 */
-	private static final void readActiveScheme(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount, final IMemento preferences,
-			final BindingManager bindingManager) {
+	private static final void readActiveScheme(final IConfigurationElement[] configurationElements,
+			final int configurationElementCount, final IMemento preferences, final BindingManager bindingManager) {
 		// A non-default preference.
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
-		final String defaultActiveSchemeId = store
-				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
-		final String preferenceActiveSchemeId = store
-				.getString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
-		if ((preferenceActiveSchemeId != null)
-				&& (!preferenceActiveSchemeId.equals(defaultActiveSchemeId))) {
+		final String defaultActiveSchemeId = store.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		final String preferenceActiveSchemeId = store.getString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		if ((preferenceActiveSchemeId != null) && (!preferenceActiveSchemeId.equals(defaultActiveSchemeId))) {
 			try {
-				bindingManager.setActiveScheme(bindingManager
-						.getScheme(preferenceActiveSchemeId));
+				bindingManager.setActiveScheme(bindingManager.getScheme(preferenceActiveSchemeId));
 				return;
 			} catch (final NotDefinedException e) {
 				// Let's keep looking....
@@ -397,16 +340,14 @@ public class BindingPersistence extends PreferencePersistence {
 
 		// A legacy preference XML memento.
 		if (preferences != null) {
-			final IMemento[] preferenceMementos = preferences
-					.getChildren(TAG_ACTIVE_KEY_CONFIGURATION);
+			final IMemento[] preferenceMementos = preferences.getChildren(TAG_ACTIVE_KEY_CONFIGURATION);
 			int preferenceMementoCount = preferenceMementos.length;
 			for (int i = preferenceMementoCount - 1; i >= 0; i--) {
 				final IMemento memento = preferenceMementos[i];
 				String id = memento.getString(ATT_KEY_CONFIGURATION_ID);
 				if (id != null) {
 					try {
-						bindingManager.setActiveScheme(bindingManager
-								.getScheme(id));
+						bindingManager.setActiveScheme(bindingManager.getScheme(id));
 						return;
 					} catch (final NotDefinedException e) {
 						// Let's keep looking....
@@ -417,11 +358,9 @@ public class BindingPersistence extends PreferencePersistence {
 
 		// A default preference value that is different than the default.
 		if ((defaultActiveSchemeId != null && defaultActiveSchemeId.length() > 0)
-				&& (!defaultActiveSchemeId
-						.equals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID))) {
+				&& (!defaultActiveSchemeId.equals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID))) {
 			try {
-				bindingManager.setActiveScheme(bindingManager
-						.getScheme(defaultActiveSchemeId));
+				bindingManager.setActiveScheme(bindingManager.getScheme(defaultActiveSchemeId));
 				return;
 			} catch (final NotDefinedException e) {
 				// Let's keep looking....
@@ -432,12 +371,10 @@ public class BindingPersistence extends PreferencePersistence {
 		for (int i = configurationElementCount - 1; i >= 0; i--) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
-			String id = configurationElement
-					.getAttribute(ATT_KEY_CONFIGURATION_ID);
+			String id = configurationElement.getAttribute(ATT_KEY_CONFIGURATION_ID);
 			if (id != null) {
 				try {
-					bindingManager
-							.setActiveScheme(bindingManager.getScheme(id));
+					bindingManager.setActiveScheme(bindingManager.getScheme(id));
 					return;
 				} catch (final NotDefinedException e) {
 					// Let's keep looking....
@@ -447,8 +384,7 @@ public class BindingPersistence extends PreferencePersistence {
 			id = configurationElement.getAttribute(ATT_VALUE);
 			if (id != null) {
 				try {
-					bindingManager
-							.setActiveScheme(bindingManager.getScheme(id));
+					bindingManager.setActiveScheme(bindingManager.getScheme(id));
 					return;
 				} catch (final NotDefinedException e) {
 					// Let's keep looking....
@@ -458,35 +394,28 @@ public class BindingPersistence extends PreferencePersistence {
 
 		// The default default active scheme id.
 		try {
-			bindingManager
-					.setActiveScheme(bindingManager
-							.getScheme(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID));
+			bindingManager.setActiveScheme(bindingManager.getScheme(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID));
 		} catch (final NotDefinedException e) {
-			//this is bad - the default default scheme should always exist
-			throw new Error(
-					"The default default active scheme id is not defined."); //$NON-NLS-1$
+			// this is bad - the default default scheme should always exist
+			throw new Error("The default default active scheme id is not defined."); //$NON-NLS-1$
 		}
 	}
 
 	/**
 	 * Reads all of the binding definitions from the preferences.
 	 *
-	 * @param preferences
-	 *            The memento for the commands preferences key.
-	 * @param bindingManager
-	 *            The binding manager to which the bindings should be added;
-	 *            must not be <code>null</code>.
-	 * @param commandService
-	 *            The command service for the workbench; must not be
-	 *            <code>null</code>.
+	 * @param preferences    The memento for the commands preferences key.
+	 * @param bindingManager The binding manager to which the bindings should be
+	 *                       added; must not be <code>null</code>.
+	 * @param commandService The command service for the workbench; must not be
+	 *                       <code>null</code>.
 	 */
 	private static final void readBindingsFromPreferences(final IMemento preferences,
 			final BindingManager bindingManager, final CommandManager commandService) {
 		List warningsToLog = new ArrayList(1);
 
 		if (preferences != null) {
-			final IMemento[] preferenceMementos = preferences
-					.getChildren(TAG_KEY_BINDING);
+			final IMemento[] preferenceMementos = preferences.getChildren(TAG_KEY_BINDING);
 			int preferenceMementoCount = preferenceMementos.length;
 			for (int i = preferenceMementoCount - 1; i >= 0; i--) {
 				final IMemento memento = preferenceMementos[i];
@@ -504,11 +433,9 @@ public class BindingPersistence extends PreferencePersistence {
 				}
 
 				// Read out the scheme id.
-				String schemeId = readOptional(memento,
-						ATT_KEY_CONFIGURATION_ID);
+				String schemeId = readOptional(memento, ATT_KEY_CONFIGURATION_ID);
 				if (schemeId == null) {
-					schemeId = readRequired(memento, ATT_CONFIGURATION,
-							warningsToLog,
+					schemeId = readRequired(memento, ATT_CONFIGURATION, warningsToLog,
 							"Key bindings need a scheme or key configuration"); //$NON-NLS-1$
 					if (schemeId == null) {
 						continue;
@@ -531,8 +458,7 @@ public class BindingPersistence extends PreferencePersistence {
 				String keySequenceText = readOptional(memento, ATT_KEY_SEQUENCE);
 				KeySequence keySequence = null;
 				if (keySequenceText == null) {
-					keySequenceText = readRequired(memento, ATT_STRING,
-							warningsToLog,
+					keySequenceText = readRequired(memento, ATT_STRING, warningsToLog,
 							"Key bindings need a key sequence or string"); //$NON-NLS-1$
 					if (keySequenceText == null) {
 						continue;
@@ -551,9 +477,7 @@ public class BindingPersistence extends PreferencePersistence {
 						continue;
 					}
 					if (keySequence.isEmpty() || !keySequence.isComplete()) {
-						addWarning(
-								warningsToLog,
-								"Key bindings cannot use an empty or incomplete key sequence", //$NON-NLS-1$
+						addWarning(warningsToLog, "Key bindings cannot use an empty or incomplete key sequence", //$NON-NLS-1$
 								null, commandId, "keySequence", keySequence //$NON-NLS-1$
 										.toString());
 						continue;
@@ -566,41 +490,36 @@ public class BindingPersistence extends PreferencePersistence {
 				final String platform = readOptional(memento, ATT_PLATFORM);
 
 				// Read out the parameters
-				final ParameterizedCommand parameterizedCommand = command != null ? readParameters(
-						memento, warningsToLog, command) : null;
+				final ParameterizedCommand parameterizedCommand = command != null
+						? readParameters(memento, warningsToLog, command)
+						: null;
 
-				final Binding binding = new KeyBinding(keySequence,
-						parameterizedCommand, schemeId, contextId, locale,
+				final Binding binding = new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale,
 						platform, null, Binding.USER);
 				bindingManager.addBinding(binding);
 			}
 		}
 
 		// If there were any warnings, then log them now.
-		logWarnings(warningsToLog,
-				"Warnings while parsing the key bindings from the preference store"); //$NON-NLS-1$
+		logWarnings(warningsToLog, "Warnings while parsing the key bindings from the preference store"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Reads all of the binding definitions from the commands extension point.
 	 *
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param bindingManager
-	 *            The binding manager to which the bindings should be added;
-	 *            must not be <code>null</code>.
-	 * @param commandService
-	 *            The command service for the workbench; must not be
-	 *            <code>null</code>.
+	 * @param configurationElements     The configuration elements in the commands
+	 *                                  extension point; must not be
+	 *                                  <code>null</code>, but may be empty.
+	 * @param configurationElementCount The number of configuration elements that
+	 *                                  are really in the array.
+	 * @param bindingManager            The binding manager to which the bindings
+	 *                                  should be added; must not be
+	 *                                  <code>null</code>.
+	 * @param commandService            The command service for the workbench; must
+	 *                                  not be <code>null</code>.
 	 */
-	private static final void readBindingsFromRegistry(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount,
-			final BindingManager bindingManager,
+	private static final void readBindingsFromRegistry(final IConfigurationElement[] configurationElements,
+			final int configurationElementCount, final BindingManager bindingManager,
 			final CommandManager commandService) {
 		final Collection bindings = new ArrayList(configurationElementCount);
 		final List warningsToLog = new ArrayList(1);
@@ -611,21 +530,21 @@ public class BindingPersistence extends PreferencePersistence {
 
 		// the local cache for the sequence modifiers
 		IConfigurationElement[] sequenceModifiers = new IConfigurationElement[0];
-		if(configurationElementCount >0)
-			sequenceModifiers =  getSequenceModifierElements(configurationElements[0]);
+		if (configurationElementCount > 0)
+			sequenceModifiers = getSequenceModifierElements(configurationElements[0]);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// different extension. update the cache ...
-			if( i>0 && !configurationElement.getDeclaringExtension().equals(configurationElements[i-1].getDeclaringExtension()))
+			if (i > 0 && !configurationElement.getDeclaringExtension()
+					.equals(configurationElements[i - 1].getDeclaringExtension()))
 				sequenceModifiers = getSequenceModifierElements(configurationElement);
 
 			/*
-			 * Read out the command id. Doing this before determining if the key
-			 * binding is actually valid is a bit wasteful. However, it is
-			 * helpful to have the command identifier when logging syntax
-			 * errors.
+			 * Read out the command id. Doing this before determining if the key binding is
+			 * actually valid is a bit wasteful. However, it is helpful to have the command
+			 * identifier when logging syntax errors.
 			 */
 			String commandId = readCommandId(configurationElement);
 
@@ -647,27 +566,23 @@ public class BindingPersistence extends PreferencePersistence {
 
 			// Read out the scheme id.
 			String schemeId = readSchemeId(configurationElement, warningsToLog, commandId);
-			if(isEmpty(schemeId))
+			if (isEmpty(schemeId))
 				continue;
 
 			// Read out the context id.
 			String contextId = readContextId(configurationElement);
 
 			String keySequenceText = readKeySequenceText(configurationElement);
-			if(isEmpty(keySequenceText)) {
+			if (isEmpty(keySequenceText)) {
 				// The key sequence should never be null. This is pointless
-				addWarning(
-						warningsToLog,
-						"Defining a key binding with no key sequence has no effect", //$NON-NLS-1$
+				addWarning(warningsToLog, "Defining a key binding with no key sequence has no effect", //$NON-NLS-1$
 						configurationElement, commandId);
 				continue;
 			}
 
-
-
 			// Read out the key sequence.
 			KeySequence keySequence = readKeySequence(configurationElement, warningsToLog, commandId, keySequenceText);
-			if(keySequence == null)
+			if (keySequence == null)
 				continue;
 
 			// Read out the locale and platform.
@@ -676,13 +591,14 @@ public class BindingPersistence extends PreferencePersistence {
 			String platform = readNonEmptyAttribute(configurationElement, ATT_PLATFORM);
 
 			// Read out the parameters, if any.
-			ParameterizedCommand parameterizedCommand =
-				readParameterizedCommand(warningsToLog, configurationElement, viewParameter, command);
+			ParameterizedCommand parameterizedCommand = readParameterizedCommand(warningsToLog, configurationElement,
+					viewParameter, command);
 
-			List modifiedBindings = applyModifiers(keySequence, keySequenceText, platform, sequenceModifiers, parameterizedCommand, schemeId, contextId, locale, warningsToLog);
+			List modifiedBindings = applyModifiers(keySequence, keySequenceText, platform, sequenceModifiers,
+					parameterizedCommand, schemeId, contextId, locale, warningsToLog);
 
 			KeyBinding binding = (KeyBinding) modifiedBindings.get(0);
-			if(modifiedBindings.size() > 1) {
+			if (modifiedBindings.size() > 1) {
 				for (int j = 1; j < modifiedBindings.size(); j++) {
 					bindings.add(modifiedBindings.get(j));
 				}
@@ -694,8 +610,7 @@ public class BindingPersistence extends PreferencePersistence {
 				bindings.add(binding);
 				// temp work around ... simply honour the carbon
 				// bindings for cocoa.
-				cocoaTempList.add(new KeyBinding(keySequence,
-						parameterizedCommand, schemeId, contextId, locale,
+				cocoaTempList.add(new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale,
 						Util.WS_COCOA, null, Binding.SYSTEM));
 			} else {
 				bindings.add(binding);
@@ -705,18 +620,15 @@ public class BindingPersistence extends PreferencePersistence {
 			bindings.addAll(cocoaTempList);
 		}
 
-		final Binding[] bindingArray = (Binding[]) bindings
-				.toArray(new Binding[bindings.size()]);
+		final Binding[] bindingArray = (Binding[]) bindings.toArray(new Binding[bindings.size()]);
 		bindingManager.setBindings(bindingArray);
 
-		logWarnings(
-				warningsToLog,
+		logWarnings(warningsToLog,
 				"Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' and 'org.eclipse.ui.bindings' extension point"); //$NON-NLS-1$
 	}
 
-	private static List applyModifiers(KeySequence keySequence, String keySequenceText,
-			String platform, IConfigurationElement[] sequenceModifiers,
-			ParameterizedCommand parameterizedCommand, String schemeId,
+	private static List applyModifiers(KeySequence keySequence, String keySequenceText, String platform,
+			IConfigurationElement[] sequenceModifiers, ParameterizedCommand parameterizedCommand, String schemeId,
 			String contextId, String locale, List warningsToLog) {
 
 		List bindings = new ArrayList();
@@ -734,31 +646,26 @@ public class BindingPersistence extends PreferencePersistence {
 
 				try {
 					if (platform == null) {
-						addGenericBindings(keySequence, parameterizedCommand, schemeId, contextId, locale,
-								bindings, modifiedSequence, platforms);
+						addGenericBindings(keySequence, parameterizedCommand, schemeId, contextId, locale, bindings,
+								modifiedSequence, platforms);
 
 					} else {
-						getBindingForPlatform(keySequence, platform,
-								parameterizedCommand, schemeId, contextId, locale,
+						getBindingForPlatform(keySequence, platform, parameterizedCommand, schemeId, contextId, locale,
 								bindings, modifiedSequence, platforms);
 					}
-				}catch(ParseException e) {
+				} catch (ParseException e) {
 					bindings.clear();
-					addWarning(
-							warningsToLog,
-							"Cannot create modified sequence for key binding", //$NON-NLS-1$
-							sequenceModifier, parameterizedCommand.getId(), ATT_REPLACE,
-							replaceSequence);
+					addWarning(warningsToLog, "Cannot create modified sequence for key binding", //$NON-NLS-1$
+							sequenceModifier, parameterizedCommand.getId(), ATT_REPLACE, replaceSequence);
 
 				}
 				break;
 			}
 		}
 
-		if(bindings.isEmpty()) {
-			// no modifier was applied/error occurred  ...
-			KeyBinding binding = new KeyBinding(keySequence,
-					parameterizedCommand, schemeId, contextId, locale,
+		if (bindings.isEmpty()) {
+			// no modifier was applied/error occurred ...
+			KeyBinding binding = new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale,
 					platform, null, Binding.SYSTEM);
 			bindings.add(binding);
 		}
@@ -766,58 +673,50 @@ public class BindingPersistence extends PreferencePersistence {
 		return bindings;
 	}
 
-	private static void getBindingForPlatform(KeySequence keySequence,
-			String platform, ParameterizedCommand parameterizedCommand,
-			String schemeId, String contextId, String locale, List bindings,
+	private static void getBindingForPlatform(KeySequence keySequence, String platform,
+			ParameterizedCommand parameterizedCommand, String schemeId, String contextId, String locale, List bindings,
 			String modifiedSequence, String[] platforms) throws ParseException {
 
 		int j = 0;
 		for (; j < platforms.length; j++) {
-			if(platforms[j].equals(SWT.getPlatform())) {
-				KeyBinding newBinding = new KeyBinding(KeySequence
-						.getInstance(modifiedSequence),
-						parameterizedCommand, schemeId, contextId,
-						locale, platforms[j], null, Binding.SYSTEM);
+			if (platforms[j].equals(SWT.getPlatform())) {
+				KeyBinding newBinding = new KeyBinding(KeySequence.getInstance(modifiedSequence), parameterizedCommand,
+						schemeId, contextId, locale, platforms[j], null, Binding.SYSTEM);
 				bindings.add(newBinding);
 				break;
 			}
 		}
-		if(j == platforms.length) {
+		if (j == platforms.length) {
 			// platform doesn't match. use the unmodified sequence
-			KeyBinding newBinding = new KeyBinding(keySequence,
-					parameterizedCommand, schemeId, contextId,
-					locale, null, null, Binding.SYSTEM);
+			KeyBinding newBinding = new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale, null,
+					null, Binding.SYSTEM);
 			bindings.add(newBinding);
 		}
 	}
 
 	private static void addGenericBindings(KeySequence keySequence, ParameterizedCommand parameterizedCommand,
-			String schemeId, String contextId, String locale, List bindings,
-			String modifiedSequence, String[] platforms) throws ParseException {
+			String schemeId, String contextId, String locale, List bindings, String modifiedSequence,
+			String[] platforms) throws ParseException {
 
-
-		KeyBinding originalBinding = new KeyBinding(keySequence,
-				parameterizedCommand, schemeId, contextId, locale, null, null,
-				Binding.SYSTEM);
+		KeyBinding originalBinding = new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale,
+				null, null, Binding.SYSTEM);
 		bindings.add(originalBinding);
 
 		String platform = SWT.getPlatform();
 		boolean modifierExists = false;
 		for (String currentPlatform : platforms) {
-			if(currentPlatform.equals(platform)) {
+			if (currentPlatform.equals(platform)) {
 				modifierExists = true;
 				break;
 			}
 		}
 
-		if(modifierExists) {
-			KeyBinding newBinding = new KeyBinding(KeySequence.getInstance(modifiedSequence),
-					parameterizedCommand, schemeId, contextId,
-					locale, SWT.getPlatform(), null, Binding.SYSTEM);
+		if (modifierExists) {
+			KeyBinding newBinding = new KeyBinding(KeySequence.getInstance(modifiedSequence), parameterizedCommand,
+					schemeId, contextId, locale, SWT.getPlatform(), null, Binding.SYSTEM);
 
-			KeyBinding deleteBinding = new KeyBinding(keySequence,
-					null, schemeId, contextId,
-					locale, SWT.getPlatform(), null, Binding.SYSTEM);
+			KeyBinding deleteBinding = new KeyBinding(keySequence, null, schemeId, contextId, locale, SWT.getPlatform(),
+					null, Binding.SYSTEM);
 
 			bindings.add(newBinding);
 			bindings.add(deleteBinding);
@@ -830,22 +729,21 @@ public class BindingPersistence extends PreferencePersistence {
 		IExtension extension = configurationElement.getDeclaringExtension();
 		List modifierElements = new ArrayList();
 		for (final IConfigurationElement configElement : extension.getConfigurationElements()) {
-			if(TAG_SEQUENCE_MODIFIER.equals(configElement.getName()))
+			if (TAG_SEQUENCE_MODIFIER.equals(configElement.getName()))
 				modifierElements.add(configElement);
 		}
 		return (IConfigurationElement[]) modifierElements.toArray(new IConfigurationElement[modifierElements.size()]);
 	}
 
 	public static String[] parseCommaSeparatedString(String commaSeparatedString) {
-			StringTokenizer tokenizer = new StringTokenizer(commaSeparatedString, ", "); //$NON-NLS-1$
-			int count = tokenizer.countTokens();
-			String[] tokens = new String[count];
-			for (int i = 0; i < tokens.length; i++) {
-				tokens[i] = tokenizer.nextToken();
-			}
-			return tokens;
+		StringTokenizer tokenizer = new StringTokenizer(commaSeparatedString, ", "); //$NON-NLS-1$
+		int count = tokenizer.countTokens();
+		String[] tokens = new String[count];
+		for (int i = 0; i < tokens.length; i++) {
+			tokens[i] = tokenizer.nextToken();
+		}
+		return tokens;
 	}
-
 
 	private static String readKeySequenceText(IConfigurationElement configurationElement) {
 
@@ -860,10 +758,11 @@ public class BindingPersistence extends PreferencePersistence {
 
 	}
 
-	private static KeySequence readKeySequence(IConfigurationElement configurationElement, List warningsToLog, String commandId, String keySequenceText) {
+	private static KeySequence readKeySequence(IConfigurationElement configurationElement, List warningsToLog,
+			String commandId, String keySequenceText) {
 
 		KeySequence keySequence = null;
-		if(keySequenceText.equals(configurationElement.getAttribute(ATT_STRING))){
+		if (keySequenceText.equals(configurationElement.getAttribute(ATT_STRING))) {
 			// The key sequence is in the old-style format.
 			try {
 				keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
@@ -884,9 +783,7 @@ public class BindingPersistence extends PreferencePersistence {
 				return null;
 			}
 			if (keySequence.isEmpty() || !keySequence.isComplete()) {
-				addWarning(
-						warningsToLog,
-						"Key bindings should not have an empty or incomplete key sequence", //$NON-NLS-1$
+				addWarning(warningsToLog, "Key bindings should not have an empty or incomplete key sequence", //$NON-NLS-1$
 						configurationElement, commandId, "keySequence", //$NON-NLS-1$
 						keySequence.toString());
 				return null;
@@ -896,10 +793,8 @@ public class BindingPersistence extends PreferencePersistence {
 		return keySequence;
 	}
 
-	private static ParameterizedCommand readParameterizedCommand(
-			final List warningsToLog,
-			final IConfigurationElement configurationElement,
-			String viewParameter, final Command command) {
+	private static ParameterizedCommand readParameterizedCommand(final List warningsToLog,
+			final IConfigurationElement configurationElement, String viewParameter, final Command command) {
 		final ParameterizedCommand parameterizedCommand;
 		if (command == null) {
 			parameterizedCommand = null;
@@ -908,15 +803,14 @@ public class BindingPersistence extends PreferencePersistence {
 			parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
 			parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 		} else {
-			parameterizedCommand = readParameters(configurationElement,
-					warningsToLog, command);
+			parameterizedCommand = readParameters(configurationElement, warningsToLog, command);
 		}
 		return parameterizedCommand;
 	}
 
 	/**
-	 *  Reads the specified attribute from the configuration element.
-	 *  If the value is an empty string, will return null.
+	 * Reads the specified attribute from the configuration element. If the value is
+	 * an empty string, will return null.
 	 *
 	 * @param configurationElement
 	 * @return the attribute value
@@ -929,11 +823,8 @@ public class BindingPersistence extends PreferencePersistence {
 		return attributeValue;
 	}
 
-
-	private static String readContextId(
-			final IConfigurationElement configurationElement) {
-		String contextId = configurationElement
-				.getAttribute(ATT_CONTEXT_ID);
+	private static String readContextId(final IConfigurationElement configurationElement) {
+		String contextId = configurationElement.getAttribute(ATT_CONTEXT_ID);
 		if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 			contextId = null;
 		} else if ((contextId == null) || (contextId.length() == 0)) {
@@ -948,16 +839,14 @@ public class BindingPersistence extends PreferencePersistence {
 		return contextId;
 	}
 
-
-	private static String readSchemeId(IConfigurationElement configurationElement, List warningsToLog, String commandId) {
+	private static String readSchemeId(IConfigurationElement configurationElement, List warningsToLog,
+			String commandId) {
 
 		String schemeId = configurationElement.getAttribute(ATT_SCHEME_ID);
 		if ((schemeId == null) || (schemeId.length() == 0)) {
-			schemeId = configurationElement
-					.getAttribute(ATT_KEY_CONFIGURATION_ID);
+			schemeId = configurationElement.getAttribute(ATT_KEY_CONFIGURATION_ID);
 			if ((schemeId == null) || (schemeId.length() == 0)) {
-				schemeId = configurationElement
-						.getAttribute(ATT_CONFIGURATION);
+				schemeId = configurationElement.getAttribute(ATT_CONFIGURATION);
 				if ((schemeId == null) || (schemeId.length() == 0)) {
 					// The scheme id should never be null. This is invalid.
 					addWarning(warningsToLog, "Key bindings need a scheme", //$NON-NLS-1$
@@ -968,10 +857,8 @@ public class BindingPersistence extends PreferencePersistence {
 		return schemeId;
 	}
 
-	private static String readCommandId(
-			final IConfigurationElement configurationElement) {
-		String commandId = configurationElement
-				.getAttribute(ATT_COMMAND_ID);
+	private static String readCommandId(final IConfigurationElement configurationElement) {
+		String commandId = configurationElement.getAttribute(ATT_COMMAND_ID);
 		if ((commandId == null) || (commandId.length() == 0)) {
 			commandId = configurationElement.getAttribute(ATT_COMMAND);
 		}
@@ -988,20 +875,17 @@ public class BindingPersistence extends PreferencePersistence {
 	/**
 	 * Reads all of the scheme definitions from the registry.
 	 *
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param bindingManager
-	 *            The binding manager to which the schemes should be added; must
-	 *            not be <code>null</code>.
+	 * @param configurationElements     The configuration elements in the commands
+	 *                                  extension point; must not be
+	 *                                  <code>null</code>, but may be empty.
+	 * @param configurationElementCount The number of configuration elements that
+	 *                                  are really in the array.
+	 * @param bindingManager            The binding manager to which the schemes
+	 *                                  should be added; must not be
+	 *                                  <code>null</code>.
 	 */
-	private static final void readSchemesFromRegistry(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount,
-			final BindingManager bindingManager) {
+	private static final void readSchemesFromRegistry(final IConfigurationElement[] configurationElements,
+			final int configurationElementCount, final BindingManager bindingManager) {
 		// Undefine all the previous handle objects.
 		final HandleObject[] handleObjects = bindingManager.getDefinedSchemes();
 		if (handleObjects != null) {
@@ -1016,18 +900,16 @@ public class BindingPersistence extends PreferencePersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the attributes.
-			final String id = readRequired(configurationElement, ATT_ID,
-					warningsToLog, "Schemes need an id"); //$NON-NLS-1$
+			final String id = readRequired(configurationElement, ATT_ID, warningsToLog, "Schemes need an id"); //$NON-NLS-1$
 			if (id == null) {
 				continue;
 			}
-			final String name = readRequired(configurationElement, ATT_NAME,
-					warningsToLog, "A scheme needs a name", id); //$NON-NLS-1$
+			final String name = readRequired(configurationElement, ATT_NAME, warningsToLog, "A scheme needs a name", //$NON-NLS-1$
+					id);
 			if (name == null) {
 				continue;
 			}
-			final String description = readOptional(configurationElement,
-					ATT_DESCRIPTION);
+			final String description = readOptional(configurationElement, ATT_DESCRIPTION);
 
 			String parentId = configurationElement.getAttribute(ATT_PARENT_ID);
 			if ((parentId != null) && (parentId.length() == 0)) {
@@ -1042,27 +924,23 @@ public class BindingPersistence extends PreferencePersistence {
 			scheme.define(name, description, parentId);
 		}
 
-		logWarnings(
-				warningsToLog,
+		logWarnings(warningsToLog,
 				"Warnings while parsing the key bindings from the 'org.eclipse.ui.bindings', 'org.eclipse.ui.acceleratorConfigurations' and 'org.eclipse.ui.commands' extension point"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Writes the given active scheme and bindings to the preference store. Only
-	 * bindings that are of the <code>Binding.USER</code> type will be
-	 * written; the others will be ignored.
+	 * bindings that are of the <code>Binding.USER</code> type will be written; the
+	 * others will be ignored.
 	 *
-	 * @param activeScheme
-	 *            The scheme which should be persisted; may be <code>null</code>.
-	 * @param bindings
-	 *            The bindings which should be persisted; may be
-	 *            <code>null</code>
-	 * @throws IOException
-	 *             If something happens while trying to write to the workbench
-	 *             preference store.
+	 * @param activeScheme The scheme which should be persisted; may be
+	 *                     <code>null</code>.
+	 * @param bindings     The bindings which should be persisted; may be
+	 *                     <code>null</code>
+	 * @throws IOException If something happens while trying to write to the
+	 *                     workbench preference store.
 	 */
-	static final void write(final Scheme activeScheme, final Binding[] bindings)
-			throws IOException {
+	static final void write(final Scheme activeScheme, final Binding[] bindings) throws IOException {
 		// Print out debugging information, if requested.
 		if (DEBUG) {
 			Tracing.printTrace("BINDINGS", "Persisting active scheme '" //$NON-NLS-1$ //$NON-NLS-2$
@@ -1074,8 +952,7 @@ public class BindingPersistence extends PreferencePersistence {
 		writeActiveScheme(activeScheme);
 
 		// Build the XML block for writing the bindings and active scheme.
-		final XMLMemento xmlMemento = XMLMemento
-				.createWriteRoot(EXTENSION_COMMANDS);
+		final XMLMemento xmlMemento = XMLMemento.createWriteRoot(EXTENSION_COMMANDS);
 		if (activeScheme != null) {
 			writeActiveSchemeToPreferences(xmlMemento, activeScheme);
 		}
@@ -1090,8 +967,7 @@ public class BindingPersistence extends PreferencePersistence {
 		}
 
 		// Write the XML block to the workbench preference store.
-		final IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
+		final IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 		final Writer writer = new StringWriter();
 		try {
 			xmlMemento.save(writer);
@@ -1102,89 +978,69 @@ public class BindingPersistence extends PreferencePersistence {
 	}
 
 	/**
-	 * Writes the active scheme to its own preference key. This key is used by
-	 * RCP applications as part of their plug-in customization.
+	 * Writes the active scheme to its own preference key. This key is used by RCP
+	 * applications as part of their plug-in customization.
 	 *
-	 * @param scheme
-	 *            The scheme to write to the preference store. If the scheme is
-	 *            <code>null</code>, then it is removed.
+	 * @param scheme The scheme to write to the preference store. If the scheme is
+	 *               <code>null</code>, then it is removed.
 	 */
 	private static final void writeActiveScheme(final Scheme scheme) {
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
 		final String schemeId = (scheme == null) ? null : scheme.getId();
-		final String defaultSchemeId = store
-				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
-		if ((defaultSchemeId == null) ? (scheme != null) : (!defaultSchemeId
-				.equals(schemeId))) {
-			store.setValue(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
-					scheme.getId());
+		final String defaultSchemeId = store.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		if ((defaultSchemeId == null) ? (scheme != null) : (!defaultSchemeId.equals(schemeId))) {
+			store.setValue(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID, scheme.getId());
 		} else {
-			store
-					.setToDefault(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+			store.setToDefault(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
 		}
 	}
 
 	/**
-	 * Writes the active scheme to the memento. If the scheme is
-	 * <code>null</code>, then all schemes in the memento are removed.
+	 * Writes the active scheme to the memento. If the scheme is <code>null</code>,
+	 * then all schemes in the memento are removed.
 	 *
-	 * @param memento
-	 *            The memento to which the scheme should be written; must not be
-	 *            <code>null</code>.
-	 * @param scheme
-	 *            The scheme that should be written; must not be
-	 *            <code>null</code>.
+	 * @param memento The memento to which the scheme should be written; must not be
+	 *                <code>null</code>.
+	 * @param scheme  The scheme that should be written; must not be
+	 *                <code>null</code>.
 	 */
-	private static final void writeActiveSchemeToPreferences(
-			final IMemento memento, final Scheme scheme) {
+	private static final void writeActiveSchemeToPreferences(final IMemento memento, final Scheme scheme) {
 		// Add this active scheme, if it is not the default.
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
 		final String schemeId = scheme.getId();
-		final String defaultSchemeId = store
-				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
-		if ((defaultSchemeId == null) ? (schemeId != null) : (!defaultSchemeId
-				.equals(schemeId))) {
-			final IMemento child = memento
-					.createChild(TAG_ACTIVE_KEY_CONFIGURATION);
+		final String defaultSchemeId = store.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
+		if ((defaultSchemeId == null) ? (schemeId != null) : (!defaultSchemeId.equals(schemeId))) {
+			final IMemento child = memento.createChild(TAG_ACTIVE_KEY_CONFIGURATION);
 			child.putString(ATT_KEY_CONFIGURATION_ID, schemeId);
 		}
 	}
 
 	/**
-	 * Writes the binding to the memento. This creates a new child element on
-	 * the memento, and places the properties of the binding as its attributes.
+	 * Writes the binding to the memento. This creates a new child element on the
+	 * memento, and places the properties of the binding as its attributes.
 	 *
-	 * @param parent
-	 *            The parent memento for the binding element; must not be
-	 *            <code>null</code>.
-	 * @param binding
-	 *            The binding to write; must not be <code>null</code>.
+	 * @param parent  The parent memento for the binding element; must not be
+	 *                <code>null</code>.
+	 * @param binding The binding to write; must not be <code>null</code>.
 	 */
-	private static final void writeBindingToPreferences(final IMemento parent,
-			final Binding binding) {
+	private static final void writeBindingToPreferences(final IMemento parent, final Binding binding) {
 		final IMemento element = parent.createChild(TAG_KEY_BINDING);
 		element.putString(ATT_CONTEXT_ID, binding.getContextId());
-		final ParameterizedCommand parameterizedCommand = binding
-				.getParameterizedCommand();
-		final String commandId = (parameterizedCommand == null) ? null
-				: parameterizedCommand.getId();
+		final ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
+		final String commandId = (parameterizedCommand == null) ? null : parameterizedCommand.getId();
 		element.putString(ATT_COMMAND_ID, commandId);
 		element.putString(ATT_KEY_CONFIGURATION_ID, binding.getSchemeId());
-		element.putString(ATT_KEY_SEQUENCE, binding.getTriggerSequence()
-				.toString());
+		element.putString(ATT_KEY_SEQUENCE, binding.getTriggerSequence().toString());
 		element.putString(ATT_LOCALE, binding.getLocale());
 		element.putString(ATT_PLATFORM, binding.getPlatform());
 		if (parameterizedCommand != null) {
-			final Map parameterizations = parameterizedCommand
-					.getParameterMap();
-			final Iterator parameterizationItr = parameterizations.entrySet()
-					.iterator();
+			final Map parameterizations = parameterizedCommand.getParameterMap();
+			final Iterator parameterizationItr = parameterizations.entrySet().iterator();
 			while (parameterizationItr.hasNext()) {
 				final Map.Entry entry = (Map.Entry) parameterizationItr.next();
 				final String id = (String) entry.getKey();
 				final String value = (String) entry.getValue();
-				final IMemento parameterElement = element
-						.createChild(TAG_PARAMETER);
+				final IMemento parameterElement = element.createChild(TAG_PARAMETER);
 				parameterElement.putString(ATT_ID, id);
 				parameterElement.putString(ATT_VALUE, value);
 			}
@@ -1205,19 +1061,16 @@ public class BindingPersistence extends PreferencePersistence {
 	/**
 	 * Constructs a new instance of <code>BindingPersistence</code>.
 	 *
-	 * @param bindingManager
-	 *            The binding manager which should be populated with the values
-	 *            from the registry and preference store; must not be
-	 *            <code>null</code>.
-	 * @param commandService
-	 *            The command service for the workbench; must not be
-	 *            <code>null</code>.
+	 * @param bindingManager The binding manager which should be populated with the
+	 *                       values from the registry and preference store; must not
+	 *                       be <code>null</code>.
+	 * @param commandService The command service for the workbench; must not be
+	 *                       <code>null</code>.
 	 */
-	public BindingPersistence(final BindingManager bindingManager,
-			final CommandManager commandManager) {
+	public BindingPersistence(final BindingManager bindingManager, final CommandManager commandManager) {
 		this.bindingManager = bindingManager;
 		this.commandManager = commandManager;
-		// HACK.  Calling super.read() installs a required preferences change listener.
+		// HACK. Calling super.read() installs a required preferences change listener.
 		// See bug 266604.
 		super.read();
 	}
@@ -1228,32 +1081,23 @@ public class BindingPersistence extends PreferencePersistence {
 	}
 
 	public boolean bindingsNeedUpdating(final IRegistryChangeEvent event) {
-		final IExtensionDelta[] acceleratorConfigurationDeltas = event
-				.getExtensionDeltas(
-						PlatformUI.PLUGIN_ID,
-						IWorkbenchRegistryConstants.PL_ACCELERATOR_CONFIGURATIONS);
+		final IExtensionDelta[] acceleratorConfigurationDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_ACCELERATOR_CONFIGURATIONS);
 		if (acceleratorConfigurationDeltas.length == 0) {
-			final IExtensionDelta[] bindingDeltas = event.getExtensionDeltas(
-					PlatformUI.PLUGIN_ID,
+			final IExtensionDelta[] bindingDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
 					IWorkbenchRegistryConstants.PL_BINDINGS);
 			if (bindingDeltas.length == 0) {
-				final IExtensionDelta[] commandDeltas = event
-						.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-								IWorkbenchRegistryConstants.PL_COMMANDS);
+				final IExtensionDelta[] commandDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+						IWorkbenchRegistryConstants.PL_COMMANDS);
 				if (commandDeltas.length == 0) {
-					final IExtensionDelta[] acceleratorScopeDeltas = event
-							.getExtensionDeltas(
-									PlatformUI.PLUGIN_ID,
-									IWorkbenchRegistryConstants.PL_ACCELERATOR_SCOPES);
+					final IExtensionDelta[] acceleratorScopeDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+							IWorkbenchRegistryConstants.PL_ACCELERATOR_SCOPES);
 					if (acceleratorScopeDeltas.length == 0) {
-						final IExtensionDelta[] contextDeltas = event
-								.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-										IWorkbenchRegistryConstants.PL_CONTEXTS);
+						final IExtensionDelta[] contextDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+								IWorkbenchRegistryConstants.PL_CONTEXTS);
 						if (contextDeltas.length == 0) {
-							final IExtensionDelta[] actionDefinitionDeltas = event
-									.getExtensionDeltas(
-											PlatformUI.PLUGIN_ID,
-											IWorkbenchRegistryConstants.PL_ACTION_DEFINITIONS);
+							final IExtensionDelta[] actionDefinitionDeltas = event.getExtensionDeltas(
+									PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_ACTION_DEFINITIONS);
 							if (actionDefinitionDeltas.length == 0) {
 								return false;
 							}
@@ -1290,48 +1134,41 @@ public class BindingPersistence extends PreferencePersistence {
 		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
 
 		// Sort the bindings extension point based on element name.
-		final IConfigurationElement[] bindingsExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_BINDINGS);
+		final IConfigurationElement[] bindingsExtensionPoint = registry.getConfigurationElementsFor(EXTENSION_BINDINGS);
 		for (final IConfigurationElement configurationElement : bindingsExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
 			if (TAG_KEY.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements,
-						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_BINDING_DEFINITIONS,
+						bindingDefinitionCount++);
 			} else
 			// Check to see if it is a scheme definition.
 			if (TAG_SCHEME.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
 						schemeDefinitionCount++);
 			}
 
 		}
 
 		// Sort the commands extension point based on element name.
-		final IConfigurationElement[] commandsExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_COMMANDS);
+		final IConfigurationElement[] commandsExtensionPoint = registry.getConfigurationElementsFor(EXTENSION_COMMANDS);
 		for (final IConfigurationElement configurationElement : commandsExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
 			if (TAG_KEY_BINDING.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements,
-						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_BINDING_DEFINITIONS,
+						bindingDefinitionCount++);
 
 				// Check if it is a scheme defintion.
 			} else if (TAG_KEY_CONFIGURATION.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
 						schemeDefinitionCount++);
 
 				// Check if it is an active scheme identifier.
 			} else if (TAG_ACTIVE_KEY_CONFIGURATION.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
 						activeSchemeElementCount++);
 			}
 		}
@@ -1347,15 +1184,13 @@ public class BindingPersistence extends PreferencePersistence {
 
 			// Check if the name matches the accelerator configuration element
 			if (TAG_ACCELERATOR_CONFIGURATION.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
 						schemeDefinitionCount++);
 			}
 		}
 
 		// Create the preference memento.
-		final IPreferenceStore store = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
+		final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		final String preferenceString = store.getString(EXTENSION_COMMANDS);
 		IMemento preferenceMemento = null;
 		if ((preferenceString != null) && (preferenceString.length() > 0)) {
@@ -1368,15 +1203,12 @@ public class BindingPersistence extends PreferencePersistence {
 		}
 
 		// Read the scheme definitions.
-		readSchemesFromRegistry(
-				indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS],
-				schemeDefinitionCount, bindingManager);
-		readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
-				activeSchemeElementCount, preferenceMemento, bindingManager);
-		readBindingsFromRegistry(
-				indexedConfigurationElements[INDEX_BINDING_DEFINITIONS],
-				bindingDefinitionCount, bindingManager, commandManager);
-		readBindingsFromPreferences(preferenceMemento, bindingManager,
-				commandManager);
+		readSchemesFromRegistry(indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS], schemeDefinitionCount,
+				bindingManager);
+		readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME], activeSchemeElementCount, preferenceMemento,
+				bindingManager);
+		readBindingsFromRegistry(indexedConfigurationElements[INDEX_BINDING_DEFINITIONS], bindingDefinitionCount,
+				bindingManager, commandManager);
+		readBindingsFromPreferences(preferenceMemento, bindingManager, commandManager);
 	}
 }

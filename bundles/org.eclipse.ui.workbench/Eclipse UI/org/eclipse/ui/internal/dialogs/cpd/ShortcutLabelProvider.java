@@ -24,8 +24,7 @@ import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.ShortcutIt
  *
  * @since 3.5
  */
-class ShortcutLabelProvider extends
-		TreeManager.TreeItemLabelProvider implements ITableLabelProvider {
+class ShortcutLabelProvider extends TreeManager.TreeItemLabelProvider implements ITableLabelProvider {
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex == 0) {

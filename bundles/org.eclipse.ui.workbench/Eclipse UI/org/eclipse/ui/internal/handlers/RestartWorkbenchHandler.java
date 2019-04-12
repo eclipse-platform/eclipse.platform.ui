@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
 public class RestartWorkbenchHandler extends AbstractHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event){
+	public Object execute(ExecutionEvent event) {
 
 		PlatformUI.getWorkbench().restart(true);
 		return null;

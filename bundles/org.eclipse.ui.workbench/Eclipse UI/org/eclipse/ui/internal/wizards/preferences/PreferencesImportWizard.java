@@ -29,26 +29,26 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-
 /**
  * Standard workbench wizard for importing resources from the local file system
  * into the workspace.
  * <p>
- * This class may be instantiated and used without further configuration;
- * this class is not intended to be subclassed.
+ * This class may be instantiated and used without further configuration; this
+ * class is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * 
  * <pre>
  * IWizard wizard = new PreferencesImportWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
+ * 
  * During the call to <code>open</code>, the wizard dialog is presented to the
- * user. When the user hits Finish, the user-selected files are imported
- * into the workspace, the dialog closes, and the call to <code>open</code>
- * returns.
+ * user. When the user hits Finish, the user-selected files are imported into
+ * the workspace, the dialog closes, and the call to <code>open</code> returns.
  * </p>
  *
  * @since 3.1
@@ -58,54 +58,52 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
 
 	public static final String EVENT_IMPORT_END = "org/eclipse/ui/internal/wizards/preferences/import/end"; //$NON-NLS-1$
 
-    private WizardPreferencesImportPage1 mainPage;
+	private WizardPreferencesImportPage1 mainPage;
 
 	private IEventBroker eventBroker;
 
-    /**
-     * Creates a wizard for importing resources into the workspace from
-     * the file system.
-     */
-    public PreferencesImportWizard() {
-        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = workbenchSettings
-                .getSection("PreferencesImportWizard");//$NON-NLS-1$
-        if (section == null) {
+	/**
+	 * Creates a wizard for importing resources into the workspace from the file
+	 * system.
+	 */
+	public PreferencesImportWizard() {
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = workbenchSettings.getSection("PreferencesImportWizard");//$NON-NLS-1$
+		if (section == null) {
 			section = workbenchSettings.addNewSection("PreferencesImportWizard");//$NON-NLS-1$
 		}
-        setDialogSettings(section);
-    }
+		setDialogSettings(section);
+	}
 
-    @Override
+	@Override
 	public void addPages() {
-        super.addPages();
-        mainPage = new WizardPreferencesImportPage1();
-        addPage(mainPage);
-    }
+		super.addPages();
+		mainPage = new WizardPreferencesImportPage1();
+		addPage(mainPage);
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		eventBroker = workbench.getService(IEventBroker.class);
-        setWindowTitle(PreferencesMessages.PreferencesImportWizard_import);
-        setDefaultPageImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_PREF_WIZ));
-        setNeedsProgressMonitor(true);
-    }
+		setWindowTitle(PreferencesMessages.PreferencesImportWizard_import);
+		setDefaultPageImageDescriptor(
+				WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_PREF_WIZ));
+		setNeedsProgressMonitor(true);
+	}
 
-    @Override
+	@Override
 	public boolean performFinish() {
-        boolean success = mainPage.finish();
-        sendEvent(EVENT_IMPORT_END);
-        showRestartDialog();
-        return success;
-    }
+		boolean success = mainPage.finish();
+		sendEvent(EVENT_IMPORT_END);
+		showRestartDialog();
+		return success;
+	}
 
 	private void showRestartDialog() {
 		if (0 == MessageDialog.open(MessageDialog.CONFIRM, mainPage.getShell(),
 				PreferencesMessages.WizardPreferencesImportRestartDialog_title,
 				PreferencesMessages.WizardPreferencesImportRestartDialog_message, SWT.NONE,
-				PreferencesMessages.WizardPreferencesImportRestartDialog_restart,
-				IDialogConstants.CANCEL_LABEL)) {
+				PreferencesMessages.WizardPreferencesImportRestartDialog_restart, IDialogConstants.CANCEL_LABEL)) {
 			Display.getDefault().asyncExec(() -> {
 				PlatformUI.getWorkbench().restart();
 			});

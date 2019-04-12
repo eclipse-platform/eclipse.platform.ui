@@ -24,131 +24,131 @@ import org.eclipse.core.runtime.jobs.LockListener;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * The UI lock listener is used to prevent the UI thread from deadlocking on
- * a lock when the thread owning the lock is attempting to syncExec.
+ * The UI lock listener is used to prevent the UI thread from deadlocking on a
+ * lock when the thread owning the lock is attempting to syncExec.
  */
 public class UILockListener extends LockListener {
 
-    /**
-     * The Queue is the construct that keeps track of Semaphores.
-     */
-    public static class Queue {
-        private static final int BASE_SIZE = 8;
+	/**
+	 * The Queue is the construct that keeps track of Semaphores.
+	 */
+	public static class Queue {
+		private static final int BASE_SIZE = 8;
 
-        protected PendingSyncExec[] elements = new PendingSyncExec[BASE_SIZE];
+		protected PendingSyncExec[] elements = new PendingSyncExec[BASE_SIZE];
 
-        protected int head = 0;
+		protected int head = 0;
 
-        protected int tail = 0;
+		protected int tail = 0;
 
-        /**
-         * Add the semaphore to the queue.
-         * @param element
-         */
-        public synchronized void add(PendingSyncExec element) {
-            int newTail = increment(tail);
-            if (newTail == head) {
-                grow();
-                newTail = tail + 1;
-            }
-            elements[tail] = element;
-            tail = newTail;
-        }
+		/**
+		 * Add the semaphore to the queue.
+		 * 
+		 * @param element
+		 */
+		public synchronized void add(PendingSyncExec element) {
+			int newTail = increment(tail);
+			if (newTail == head) {
+				grow();
+				newTail = tail + 1;
+			}
+			elements[tail] = element;
+			tail = newTail;
+		}
 
-        private void grow() {
-            int newSize = elements.length * 2;
-            PendingSyncExec[] newElements = new PendingSyncExec[newSize];
-            if (tail >= head) {
+		private void grow() {
+			int newSize = elements.length * 2;
+			PendingSyncExec[] newElements = new PendingSyncExec[newSize];
+			if (tail >= head) {
 				System.arraycopy(elements, head, newElements, head, size());
 			} else {
-                int newHead = newSize - (elements.length - head);
-                System.arraycopy(elements, 0, newElements, 0, tail + 1);
-                System.arraycopy(elements, head, newElements, newHead,
-                        (newSize - newHead));
-                head = newHead;
-            }
-            elements = newElements;
-        }
+				int newHead = newSize - (elements.length - head);
+				System.arraycopy(elements, 0, newElements, 0, tail + 1);
+				System.arraycopy(elements, head, newElements, newHead, (newSize - newHead));
+				head = newHead;
+			}
+			elements = newElements;
+		}
 
-        private int increment(int index) {
-            return (index == (elements.length - 1)) ? 0 : index + 1;
-        }
+		private int increment(int index) {
+			return (index == (elements.length - 1)) ? 0 : index + 1;
+		}
 
-        /**
-         * Remove the next semaphore to be woken up.
-         * @return
-         */
-        public synchronized PendingSyncExec remove() {
-            if (tail == head) {
+		/**
+		 * Remove the next semaphore to be woken up.
+		 * 
+		 * @return
+		 */
+		public synchronized PendingSyncExec remove() {
+			if (tail == head) {
 				return null;
 			}
-            PendingSyncExec result = elements[head];
-            elements[head] = null;
-            head = increment(head);
-            //reset the queue if it is empty and it has grown
-            if (tail == head && elements.length > BASE_SIZE) {
-                elements = new PendingSyncExec[BASE_SIZE];
-                tail = head = 0;
-            }
-            return result;
-        }
+			PendingSyncExec result = elements[head];
+			elements[head] = null;
+			head = increment(head);
+			// reset the queue if it is empty and it has grown
+			if (tail == head && elements.length > BASE_SIZE) {
+				elements = new PendingSyncExec[BASE_SIZE];
+				tail = head = 0;
+			}
+			return result;
+		}
 
-        private int size() {
-            return tail > head ? (tail - head)
-                    : ((elements.length - head) + tail);
-        }
-    }
+		private int size() {
+			return tail > head ? (tail - head) : ((elements.length - head) + tail);
+		}
+	}
 
-    protected Display display;
+	protected Display display;
 
-    protected final Queue pendingWork = new Queue();
+	protected final Queue pendingWork = new Queue();
 
-    protected PendingSyncExec currentWork = null;
+	protected PendingSyncExec currentWork = null;
 
 	/**
 	 * Points to the UI thread if it is currently waiting on a lock or null
 	 */
 	protected volatile Thread ui;
 
-    /**
-     * Create a new instance of the receiver.
-     * @param display
-     */
-    public UILockListener(Display display) {
-        this.display = display;
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 * 
+	 * @param display
+	 */
+	public UILockListener(Display display) {
+		this.display = display;
+	}
 
-    @Override
+	@Override
 	public void aboutToRelease() {
-        if (isUI()) {
+		if (isUI()) {
 			ui = null;
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean aboutToWait(Thread lockOwner) {
-        if (isUI()) {
-            // If a syncExec was executed from the current operation, it
-            // has already acquired the lock. So, just return true.
-            if (currentWork != null
-                    && currentWork.getOperationThread() == lockOwner) {
+		if (isUI()) {
+			// If a syncExec was executed from the current operation, it
+			// has already acquired the lock. So, just return true.
+			if (currentWork != null && currentWork.getOperationThread() == lockOwner) {
 				return true;
 			}
-            ui = Thread.currentThread();
-            try {
-                doPendingWork();
-            } finally {
-                //UI field may be nulled if there is a nested wait during execution
-                //of pending work, so make sure it is assigned before we start waiting
-                ui = Thread.currentThread();
-            }
-        }
-        return false;
-    }
+			ui = Thread.currentThread();
+			try {
+				doPendingWork();
+			} finally {
+				// UI field may be nulled if there is a nested wait during execution
+				// of pending work, so make sure it is assigned before we start waiting
+				ui = Thread.currentThread();
+			}
+		}
+		return false;
+	}
 
-    void addPendingWork(PendingSyncExec work) {
-        pendingWork.add(work);
-    }
+	void addPendingWork(PendingSyncExec work) {
+		pendingWork.add(work);
+	}
 
 	@Override
 	public boolean canBlock() {
@@ -177,17 +177,16 @@ public class UILockListener extends LockListener {
 
 	void interruptUI(Runnable runnable) {
 		reportInterruption(runnable);
-        display.getThread().interrupt();
-    }
+		display.getThread().interrupt();
+	}
 
-    boolean isLockOwner() {
-        return isLockOwnerThread();
-    }
+	boolean isLockOwner() {
+		return isLockOwnerThread();
+	}
 
-    boolean isUI() {
-        return (!display.isDisposed())
-                && (display.getThread() == Thread.currentThread());
-    }
+	boolean isUI() {
+		return (!display.isDisposed()) && (display.getThread() == Thread.currentThread());
+	}
 
 	boolean isUIWaiting() {
 		Thread localUi = ui;
@@ -195,8 +194,8 @@ public class UILockListener extends LockListener {
 	}
 
 	/**
-	 * Adds a 'UI thread interrupted' message to the log with extra lock state
-	 * and thread stack information.
+	 * Adds a 'UI thread interrupted' message to the log with extra lock state and
+	 * thread stack information.
 	 */
 	private void reportInterruption(Runnable runnable) {
 		Thread nonUiThread = Thread.currentThread();
@@ -206,7 +205,8 @@ public class UILockListener extends LockListener {
 				+ " will interrupt UI thread."; //$NON-NLS-1$
 		MultiStatus main = new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, msg, null);
 
-		ThreadInfo[] threads = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { nonUiThread.getId(), display.getThread().getId() }, true, true);
+		ThreadInfo[] threads = ManagementFactory.getThreadMXBean()
+				.getThreadInfo(new long[] { nonUiThread.getId(), display.getThread().getId() }, true, true);
 
 		for (ThreadInfo info : threads) {
 			String childMsg;

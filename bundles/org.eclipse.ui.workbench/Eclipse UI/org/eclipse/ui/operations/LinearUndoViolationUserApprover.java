@@ -41,8 +41,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *
  * @since 3.1
  */
-public final class LinearUndoViolationUserApprover extends
-		LinearUndoViolationDetector {
+public final class LinearUndoViolationUserApprover extends LinearUndoViolationDetector {
 
 	private IWorkbenchPart part;
 
@@ -52,35 +51,30 @@ public final class LinearUndoViolationUserApprover extends
 	 * Create a LinearUndoViolationUserApprover associated with the specified
 	 * workbench part.
 	 *
-	 * @param context
-	 *            the undo context with the linear undo violation
-	 * @param part
-	 *            the part that should be used for prompting the user
+	 * @param context the undo context with the linear undo violation
+	 * @param part    the part that should be used for prompting the user
 	 */
-	public LinearUndoViolationUserApprover(IUndoContext context,
-			IWorkbenchPart part) {
+	public LinearUndoViolationUserApprover(IUndoContext context, IWorkbenchPart part) {
 		super();
 		this.part = part;
 		this.context = context;
 	}
 
 	@Override
-	protected IStatus allowLinearRedoViolation(IUndoableOperation operation,
-			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
+	protected IStatus allowLinearRedoViolation(IUndoableOperation operation, IUndoContext context,
+			IOperationHistory history, IAdaptable uiInfo) {
 
 		if (this.context != context) {
 			return Status.OK_STATUS;
 		}
 
-		final String message = NLS.bind(
-				WorkbenchMessages.Operations_linearRedoViolation,
-				getTitle(part), operation.getLabel());
-		final boolean [] proceed = new boolean[1];
+		final String message = NLS.bind(WorkbenchMessages.Operations_linearRedoViolation, getTitle(part),
+				operation.getLabel());
+		final boolean[] proceed = new boolean[1];
 		PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
 			// Show a dialog.
 			part.setFocus();
-			proceed[0] = MessageDialog.openQuestion(part.getSite()
-					.getShell(), getTitle(part), message);
+			proceed[0] = MessageDialog.openQuestion(part.getSite().getShell(), getTitle(part), message);
 		});
 
 		if (proceed[0]) {
@@ -107,22 +101,20 @@ public final class LinearUndoViolationUserApprover extends
 	}
 
 	@Override
-	protected IStatus allowLinearUndoViolation(IUndoableOperation operation,
-			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
+	protected IStatus allowLinearUndoViolation(IUndoableOperation operation, IUndoContext context,
+			IOperationHistory history, IAdaptable uiInfo) {
 
 		if (this.context != context) {
 			return Status.OK_STATUS;
 		}
 
-		final String message = NLS.bind(
-				WorkbenchMessages.Operations_linearUndoViolation,
-				getTitle(part), operation.getLabel());
-		final boolean [] proceed = new boolean[1];
+		final String message = NLS.bind(WorkbenchMessages.Operations_linearUndoViolation, getTitle(part),
+				operation.getLabel());
+		final boolean[] proceed = new boolean[1];
 		PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
 			// Show a dialog.
 			part.setFocus();
-			proceed[0] = MessageDialog.openQuestion(part.getSite()
-					.getShell(), getTitle(part), message);
+			proceed[0] = MessageDialog.openQuestion(part.getSite().getShell(), getTitle(part), message);
 		});
 
 		if (proceed[0]) {
@@ -148,8 +140,8 @@ public final class LinearUndoViolationUserApprover extends
 	}
 
 	/*
-	 * Get the title for the specified part. Use the newer interface
-	 * IWorkbenchPart2 if available.
+	 * Get the title for the specified part. Use the newer interface IWorkbenchPart2
+	 * if available.
 	 */
 	private String getTitle(IWorkbenchPart part) {
 		String title;

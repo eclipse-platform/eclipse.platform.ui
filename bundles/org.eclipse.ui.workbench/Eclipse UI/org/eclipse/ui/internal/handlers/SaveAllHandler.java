@@ -44,8 +44,7 @@ public class SaveAllHandler extends AbstractSaveHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
 			((WorkbenchPage) page).saveAllEditors(false, false, true);
@@ -73,8 +72,8 @@ public class SaveAllHandler extends AbstractSaveHandler {
 
 		// Since Save All also saves saveables from non-part sources,
 		// look if any such saveables exist and are dirty.
-		SaveablesList saveablesList = (SaveablesList) window.getWorkbench().getService(
-				ISaveablesLifecycleListener.class);
+		SaveablesList saveablesList = (SaveablesList) window.getWorkbench()
+				.getService(ISaveablesLifecycleListener.class);
 		if (saveablesList == null) {
 			return EvaluationResult.FALSE;
 		}

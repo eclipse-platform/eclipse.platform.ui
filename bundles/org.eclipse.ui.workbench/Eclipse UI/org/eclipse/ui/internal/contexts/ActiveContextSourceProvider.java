@@ -35,8 +35,7 @@ import org.eclipse.ui.services.IServiceLocator;
  *
  * @since 3.2
  */
-public final class ActiveContextSourceProvider extends AbstractSourceProvider
-		implements IContextManagerListener {
+public final class ActiveContextSourceProvider extends AbstractSourceProvider implements IContextManagerListener {
 
 	/**
 	 * The names of the sources supported by this source provider.
@@ -44,8 +43,8 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { ISources.ACTIVE_CONTEXT_NAME };
 
 	/**
-	 * The context service with which this source provider should communicate.
-	 * This value is never <code>null</code>.
+	 * The context service with which this source provider should communicate. This
+	 * value is never <code>null</code>.
 	 */
 	private IContextService contextService;
 
@@ -71,8 +70,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 	@Override
 	public Map getCurrentState() {
 		final Map currentState = new TreeMap();
-		final Collection activeContextIds = contextService
-				.getActiveContextIds();
+		final Collection activeContextIds = contextService.getActiveContextIds();
 		currentState.put(ISources.ACTIVE_CONTEXT_NAME, activeContextIds);
 		return currentState;
 	}
@@ -84,8 +82,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 
 	@Override
 	public void initialize(IServiceLocator locator) {
-		contextService = locator
-				.getService(IContextService.class);
+		contextService = locator.getService(IContextService.class);
 		contextService.addContextManagerListener(this);
 	}
 }

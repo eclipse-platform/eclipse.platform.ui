@@ -68,33 +68,35 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	private ArrayList elementsAndAdapters;
 
 	/**
-	 * Create a NonLocalUndoUserApprover associated with the specified editor
-	 * and undo context
+	 * Create a NonLocalUndoUserApprover associated with the specified editor and
+	 * undo context
 	 *
-	 * @param context
-	 *            the undo context of operations in question.
-	 * @param part
-	 *            the editor part that is displaying the element
-	 * @param affectedObjects
-	 *            the objects that are affected by the editor and considered to
-	 *            be objects local to the editor. The objects are typically
-	 *            instances of the preferredComparisonClass or else provide
-	 *            adapters for the preferredComparisonClass, although this is
-	 *            not required.
-	 * @param preferredComparisonClass
-	 *            the preferred class to be used when comparing the editor's
-	 *            affectedObjects with those provided by the undoable operation
-	 *            using
-	 *            {@link org.eclipse.core.commands.operations.IAdvancedUndoableOperation#getAffectedObjects()}.
-	 *            If the operation's affected objects are not instances of the
-	 *            specified class, but are instances of
-	 *            {@link org.eclipse.core.runtime.IAdaptable}, then an adapter
-	 *            for this class will be requested. The preferredComparisonClass
-	 *            may be <code>null</code>, which indicates that there is no
-	 *            expected class or adapter necessary for the comparison.
+	 * @param context                  the undo context of operations in question.
+	 * @param part                     the editor part that is displaying the
+	 *                                 element
+	 * @param affectedObjects          the objects that are affected by the editor
+	 *                                 and considered to be objects local to the
+	 *                                 editor. The objects are typically instances
+	 *                                 of the preferredComparisonClass or else
+	 *                                 provide adapters for the
+	 *                                 preferredComparisonClass, although this is
+	 *                                 not required.
+	 * @param preferredComparisonClass the preferred class to be used when comparing
+	 *                                 the editor's affectedObjects with those
+	 *                                 provided by the undoable operation using
+	 *                                 {@link org.eclipse.core.commands.operations.IAdvancedUndoableOperation#getAffectedObjects()}.
+	 *                                 If the operation's affected objects are not
+	 *                                 instances of the specified class, but are
+	 *                                 instances of
+	 *                                 {@link org.eclipse.core.runtime.IAdaptable},
+	 *                                 then an adapter for this class will be
+	 *                                 requested. The preferredComparisonClass may
+	 *                                 be <code>null</code>, which indicates that
+	 *                                 there is no expected class or adapter
+	 *                                 necessary for the comparison.
 	 */
-	public NonLocalUndoUserApprover(IUndoContext context, IEditorPart part,
-			Object[] affectedObjects, Class preferredComparisonClass) {
+	public NonLocalUndoUserApprover(IUndoContext context, IEditorPart part, Object[] affectedObjects,
+			Class preferredComparisonClass) {
 		super();
 		this.context = context;
 		this.part = part;
@@ -103,43 +105,41 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	}
 
 	@Override
-	public IStatus proceedRedoing(IUndoableOperation operation,
-			IOperationHistory history, IAdaptable uiInfo) {
+	public IStatus proceedRedoing(IUndoableOperation operation, IOperationHistory history, IAdaptable uiInfo) {
 
 		// return immediately if the operation is not relevant
 		if (!requiresApproval(operation, uiInfo)) {
 			return Status.OK_STATUS;
 		}
 
-		String message = NLS.bind(
-				WorkbenchMessages.Operations_nonLocalRedoWarning, operation
-						.getLabel(), part.getEditorInput().getName());
-		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardRedo, WorkbenchMessages.Workbench_redoToolTip);
+		String message = NLS.bind(WorkbenchMessages.Operations_nonLocalRedoWarning, operation.getLabel(),
+				part.getEditorInput().getName());
+		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardRedo,
+				WorkbenchMessages.Workbench_redoToolTip);
 	}
 
 	@Override
-	public IStatus proceedUndoing(IUndoableOperation operation,
-			IOperationHistory history, IAdaptable uiInfo) {
+	public IStatus proceedUndoing(IUndoableOperation operation, IOperationHistory history, IAdaptable uiInfo) {
 
 		// return immediately if the operation is not relevant
 		if (!requiresApproval(operation, uiInfo)) {
 			return Status.OK_STATUS;
 		}
 
-		String message = NLS.bind(
-				WorkbenchMessages.Operations_nonLocalUndoWarning, operation
-						.getLabel(), part.getEditorInput().getName());
-		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardUndo, WorkbenchMessages.Workbench_undoToolTip);
+		String message = NLS.bind(WorkbenchMessages.Operations_nonLocalUndoWarning, operation.getLabel(),
+				part.getEditorInput().getName());
+		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardUndo,
+				WorkbenchMessages.Workbench_undoToolTip);
 
 	}
 
 	/*
-	 * Determine whether the operation in question affects elements outside of
-	 * the editor. If this can be determined and it does affect other elements,
-	 * prompt the user as to whether the operation should proceed.
+	 * Determine whether the operation in question affects elements outside of the
+	 * editor. If this can be determined and it does affect other elements, prompt
+	 * the user as to whether the operation should proceed.
 	 */
-	private IStatus proceedWithOperation(IUndoableOperation operation,
-			final String message, final String discardButton, final String title) {
+	private IStatus proceedWithOperation(IUndoableOperation operation, final String message, final String discardButton,
+			final String title) {
 
 		// if the operation cannot tell us about its modified elements, there's
 		// nothing we can do.
@@ -148,8 +148,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		}
 
 		// Obtain the operation's affected objects.
-		Object[] modifiedElements = ((IAdvancedUndoableOperation) operation)
-				.getAffectedObjects();
+		Object[] modifiedElements = ((IAdvancedUndoableOperation) operation).getAffectedObjects();
 
 		// Since the operation participates in describing its affected objects,
 		// we assume for the rest of this method that an inability to
@@ -192,17 +191,19 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 			return Status.OK_STATUS;
 		}
 
-		// The operation affects more than just our element.  Find out if
-		// we should proceed, cancel, or discard the undo.  Must be done in
+		// The operation affects more than just our element. Find out if
+		// we should proceed, cancel, or discard the undo. Must be done in
 		// a syncExec because operation approval notifications may come from
 		// a background thread.
 		final int[] answer = new int[1];
 		PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
-			MessageDialog dialog = new MessageDialog(part.getSite().getShell(), title,
-					null, message, MessageDialog.QUESTION, 0, IDialogConstants.OK_LABEL, discardButton,
-					IDialogConstants.CANCEL_LABEL); // yes is the default
-		    answer[0] = dialog.open();
-});
+			MessageDialog dialog = new MessageDialog(part.getSite().getShell(), title, null, message,
+					MessageDialog.QUESTION, 0, IDialogConstants.OK_LABEL, discardButton, IDialogConstants.CANCEL_LABEL); // yes
+																															// is
+																															// the
+																															// default
+			answer[0] = dialog.open();
+		});
 		switch (answer[0]) {
 		case 0:
 			return Status.OK_STATUS;
@@ -216,11 +217,10 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	}
 
 	/*
-	 * Answer whether this operation is relevant enough to this operation
-	 * approver that it should be examined in detail.
+	 * Answer whether this operation is relevant enough to this operation approver
+	 * that it should be examined in detail.
 	 */
-	private boolean requiresApproval(IUndoableOperation operation,
-			IAdaptable uiInfo) {
+	private boolean requiresApproval(IUndoableOperation operation, IAdaptable uiInfo) {
 		// no approval is required if the operation doesn't have our undo
 		// context
 		if (!(operation.hasContext(context))) {
@@ -237,8 +237,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		// in our context.
 		if (uiInfo != null) {
 			IUndoContext originatingContext = Adapters.adapt(uiInfo, IUndoContext.class);
-			if (originatingContext != null
-					&& !(originatingContext.matches(context))) {
+			if (originatingContext != null && !(originatingContext.matches(context))) {
 				return false;
 			}
 		}
@@ -261,8 +260,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 			elementsAndAdapters = new ArrayList(elements.length);
 			for (Object element : elements) {
 				elementsAndAdapters.add(element);
-				if (affectedObjectsClass != null
-						&& !affectedObjectsClass.isInstance(element)) {
+				if (affectedObjectsClass != null && !affectedObjectsClass.isInstance(element)) {
 					Object adapter = Adapters.adapt(element, affectedObjectsClass);
 					if (adapter != null) {
 						elementsAndAdapters.add(adapter);

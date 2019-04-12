@@ -90,10 +90,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	private AboutBundleGroupData[] bundleGroupInfos;
 
-	private String columnTitles[] = {
-			WorkbenchMessages.AboutFeaturesDialog_provider,
-			WorkbenchMessages.AboutFeaturesDialog_featureName,
-			WorkbenchMessages.AboutFeaturesDialog_version,
+	private String columnTitles[] = { WorkbenchMessages.AboutFeaturesDialog_provider,
+			WorkbenchMessages.AboutFeaturesDialog_featureName, WorkbenchMessages.AboutFeaturesDialog_version,
 			WorkbenchMessages.AboutFeaturesDialog_featureId, };
 
 	private int lastColumnChosen = 0; // initially sort by provider
@@ -135,15 +133,14 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			// copy, since the client set this value.
 			AboutBundleGroupData[] clientArray = bundleGroupInfos;
 			bundleGroupInfos = new AboutBundleGroupData[clientArray.length];
-			System.arraycopy(clientArray, 0, bundleGroupInfos, 0,
-					clientArray.length);
+			System.arraycopy(clientArray, 0, bundleGroupInfos, 0, clientArray.length);
 		}
 		AboutData.sortByProvider(reverseSort, bundleGroupInfos);
 	}
 
 	/**
-	 * The Plugins button was pressed. Open an about dialog on the plugins for
-	 * the selected feature.
+	 * The Plugins button was pressed. Open an about dialog on the plugins for the
+	 * selected feature.
 	 */
 	private void handlePluginInfoPressed() {
 		TableItem[] items = table.getSelection();
@@ -153,30 +150,20 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 		AboutBundleGroupData info = (AboutBundleGroupData) items[0].getData();
 		IBundleGroup bundleGroup = info.getBundleGroup();
-		Bundle[] bundles = bundleGroup == null ? new Bundle[0] : bundleGroup
-				.getBundles();
+		Bundle[] bundles = bundleGroup == null ? new Bundle[0] : bundleGroup.getBundles();
 
-		AboutPluginsDialog d = new AboutPluginsDialog(
-				getShell(),
-				getProductName(),
-				bundles,
+		AboutPluginsDialog d = new AboutPluginsDialog(getShell(), getProductName(), bundles,
 				WorkbenchMessages.AboutFeaturesDialog_pluginInfoTitle,
-				NLS
-						.bind(
-								WorkbenchMessages.AboutFeaturesDialog_pluginInfoMessage,
-								bundleGroup.getIdentifier()),
+				NLS.bind(WorkbenchMessages.AboutFeaturesDialog_pluginInfoMessage, bundleGroup.getIdentifier()),
 				IWorkbenchHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
 		d.open();
 	}
 
 	@Override
 	public void createPageButtons(Composite parent) {
-		moreButton = createButton(parent, MORE_ID,
-				WorkbenchMessages.AboutFeaturesDialog_moreInfo);
-		pluginsButton = createButton(parent, PLUGINS_ID,
-				WorkbenchMessages.AboutFeaturesDialog_pluginsInfo);
-		createButton(parent, COLUMNS_ID,
-				WorkbenchMessages.AboutFeaturesDialog_columns);
+		moreButton = createButton(parent, MORE_ID, WorkbenchMessages.AboutFeaturesDialog_moreInfo);
+		pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutFeaturesDialog_pluginsInfo);
+		createButton(parent, COLUMNS_ID, WorkbenchMessages.AboutFeaturesDialog_columns);
 		TableItem[] items = table.getSelection();
 		if (items.length > 0) {
 			updateButtons((AboutBundleGroupData) items[0].getData());
@@ -187,8 +174,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		parent.getShell().addDisposeListener(arg0 -> disposeImages());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IWorkbenchHelpContextIds.ABOUT_FEATURES_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.ABOUT_FEATURES_DIALOG);
 
 		Composite outer = createOuterComposite(parent);
 
@@ -204,8 +190,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		Font font = parent.getFont();
 
 		infoArea = new Composite(parent, SWT.BORDER);
-		infoArea.setBackground(infoArea.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
+		infoArea.setBackground(infoArea.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		infoArea.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridData data = new GridData(GridData.FILL, GridData.FILL, true, false);
 		// need to provide space for arbitrary feature infos, not just the
@@ -248,18 +233,15 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	/**
 	 * Create the table part of the dialog.
 	 *
-	 * @param parent
-	 *            the parent composite to contain the dialog area
+	 * @param parent the parent composite to contain the dialog area
 	 */
 	protected void createTable(Composite parent) {
 
 		initializeBundleGroupInfos();
 
-		table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE
-				| SWT.FULL_SELECTION | SWT.BORDER);
+		table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
 
-		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true,
-				true);
+		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
 		table.setLayoutData(gridData);
 		table.setHeaderVisible(true);
@@ -271,8 +253,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=266177
 			if (e.item == null)
 				return;
-			AboutBundleGroupData info = (AboutBundleGroupData) e.item
-					.getData();
+			AboutBundleGroupData info = (AboutBundleGroupData) e.item.getData();
 			updateInfoArea(info);
 			updateButtons(info);
 		}));
@@ -280,10 +261,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			handlePluginInfoPressed();
 		}));
 
-		int[] columnWidths = { convertHorizontalDLUsToPixels(120),
-				convertHorizontalDLUsToPixels(120),
-				convertHorizontalDLUsToPixels(70),
-				convertHorizontalDLUsToPixels(130) };
+		int[] columnWidths = { convertHorizontalDLUsToPixels(120), convertHorizontalDLUsToPixels(120),
+				convertHorizontalDLUsToPixels(70), convertHorizontalDLUsToPixels(130) };
 
 		for (int i = 0; i < columnTitles.length; i++) {
 			TableColumn tableColumn = new TableColumn(table, SWT.NULL);
@@ -382,8 +361,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	/**
 	 * Select the initial selection
 	 *
-	 * @param info
-	 *            the info
+	 * @param info the info
 	 */
 	public void setInitialSelection(AboutBundleGroupData info) {
 		lastSelection = info;
@@ -392,8 +370,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	/**
 	 * Sort the rows of the table based on the selected column.
 	 *
-	 * @param column
-	 *            index of table column selected as sort criteria
+	 * @param column index of table column selected as sort criteria
 	 */
 	private void sort(int column) {
 		if (lastColumnChosen == column) {
@@ -468,12 +445,10 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 * Return an array of strings containing the argument's information in the
 	 * proper order for this table's columns.
 	 *
-	 * @param info
-	 *            the source information for the new row, must not be null
+	 * @param info the source information for the new row, must not be null
 	 */
 	private static String[] createRow(AboutBundleGroupData info) {
-		return new String[] { info.getProviderName(), info.getName(),
-				info.getVersion(), info.getId() };
+		return new String[] { info.getProviderName(), info.getName(), info.getVersion(), info.getId() };
 	}
 
 	protected Collection<Object> getSelectionValue() {
@@ -494,8 +469,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	/**
 	 * The More Info button was pressed. Open a browser with the license for the
-	 * selected item or an information dialog if there is no license, or the
-	 * browser cannot be opened.
+	 * selected item or an information dialog if there is no license, or the browser
+	 * cannot be opened.
 	 */
 	private void handleMoreInfoPressed() {
 		TableItem[] items = table.getSelection();
@@ -504,10 +479,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		}
 
 		AboutBundleGroupData info = (AboutBundleGroupData) items[0].getData();
-		if (info == null
-				|| !AboutUtils.openBrowser(getShell(), info.getLicenseUrl())) {
-			MessageDialog.openInformation(getShell(),
-					WorkbenchMessages.AboutFeaturesDialog_noInfoTitle,
+		if (info == null || !AboutUtils.openBrowser(getShell(), info.getLicenseUrl())) {
+			MessageDialog.openInformation(getShell(), WorkbenchMessages.AboutFeaturesDialog_noInfoTitle,
 					WorkbenchMessages.AboutFeaturesDialog_noInformation);
 		}
 	}

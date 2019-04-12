@@ -48,9 +48,9 @@ public class SlaveContextService implements IContextService {
 	protected IContextService fParentService;
 
 	/**
-	 * The default expression used when {@link #activateContext(String) } is
-	 * called. Contexts contributed that use this expression will only be active
-	 * with this service is active.
+	 * The default expression used when {@link #activateContext(String) } is called.
+	 * Contexts contributed that use this expression will only be active with this
+	 * service is active.
 	 */
 	protected Expression fDefaultExpression;
 
@@ -60,10 +60,9 @@ public class SlaveContextService implements IContextService {
 	protected Set fParentActivations;
 
 	/**
-	 * A map of the local activation to the parent activations. If this service
-	 * is inactive, then all parent activations are <code>null</code>.
-	 * Otherwise, they point to the corresponding activation in the parent
-	 * service.
+	 * A map of the local activation to the parent activations. If this service is
+	 * inactive, then all parent activations are <code>null</code>. Otherwise, they
+	 * point to the corresponding activation in the parent service.
 	 */
 	protected Map fLocalActivations;
 
@@ -82,8 +81,8 @@ public class SlaveContextService implements IContextService {
 	private Collection fSourceProviders;
 
 	/**
-	 * A collection of shells registered through this service. The listeners are
-	 * not activated/deactivated, but they will be removed when this service is
+	 * A collection of shells registered through this service. The listeners are not
+	 * activated/deactivated, but they will be removed when this service is
 	 * disposed.
 	 */
 	private Collection fRegisteredShells;
@@ -91,18 +90,15 @@ public class SlaveContextService implements IContextService {
 	/**
 	 * Construct the new slave.
 	 *
-	 * @param parentService
-	 *            the parent context service; must not be <code>null</code>.
-	 * @param defaultExpression
-	 *            A default expression to use to determine viability. It's
-	 *            mainly used for conflict resolution. It can be
-	 *            <code>null</code>.
+	 * @param parentService     the parent context service; must not be
+	 *                          <code>null</code>.
+	 * @param defaultExpression A default expression to use to determine viability.
+	 *                          It's mainly used for conflict resolution. It can be
+	 *                          <code>null</code>.
 	 */
-	public SlaveContextService(IContextService parentService,
-			Expression defaultExpression) {
+	public SlaveContextService(IContextService parentService, Expression defaultExpression) {
 		if (parentService == null) {
-			throw new NullPointerException(
-					"The parent context service must not be null"); //$NON-NLS-1$
+			throw new NullPointerException("The parent context service must not be null"); //$NON-NLS-1$
 		}
 		fParentService = parentService;
 		fDefaultExpression = defaultExpression;
@@ -121,23 +117,19 @@ public class SlaveContextService implements IContextService {
 	@Override
 	public IContextActivation activateContext(String contextId) {
 
-		ContextActivation activation = new ContextActivation(contextId,
-				fDefaultExpression, this);
+		ContextActivation activation = new ContextActivation(contextId, fDefaultExpression, this);
 		return doActivateContext(activation);
 	}
 
 	@Override
-	public IContextActivation activateContext(String contextId,
-			Expression expression) {
+	public IContextActivation activateContext(String contextId, Expression expression) {
 		return activateContext(contextId, expression, false);
 	}
 
 	@Override
-	public IContextActivation activateContext(String contextId,
-			Expression expression, boolean global) {
+	public IContextActivation activateContext(String contextId, Expression expression, boolean global) {
 		if (global) {
-			IContextActivation activation = fParentService.activateContext(
-					contextId, expression, global);
+			IContextActivation activation = fParentService.activateContext(contextId, expression, global);
 			fParentActivations.add(activation);
 			return activation;
 		}
@@ -152,14 +144,12 @@ public class SlaveContextService implements IContextService {
 			aExpression = expression;
 		}
 
-		ContextActivation activation = new ContextActivation(contextId,
-				aExpression, this);
+		ContextActivation activation = new ContextActivation(contextId, aExpression, this);
 		return doActivateContext(activation);
 	}
 
 	@Override
-	public IContextActivation activateContext(String contextId,
-			Expression expression, int sourcePriorities) {
+	public IContextActivation activateContext(String contextId, Expression expression, int sourcePriorities) {
 		return activateContext(contextId, expression);
 	}
 
@@ -183,8 +173,7 @@ public class SlaveContextService implements IContextService {
 	public void deactivateContext(IContextActivation activation) {
 		IContextActivation parentActivation = null;
 		if (fLocalActivations.containsKey(activation)) {
-			parentActivation = (IContextActivation) fLocalActivations
-					.remove(activation);
+			parentActivation = (IContextActivation) fLocalActivations.remove(activation);
 		} else {
 			parentActivation = activation;
 		}
@@ -234,15 +223,13 @@ public class SlaveContextService implements IContextService {
 	/**
 	 * Activate the context with respect to this slave service.
 	 *
-	 * @param contextId
-	 *            the context id
-	 * @param expression
-	 *            the expression to use
+	 * @param contextId  the context id
+	 * @param expression the expression to use
 	 * @return the activated context
 	 */
 	protected IContextActivation doActivateContext(IContextActivation activation) {
-		IContextActivation parentActivation = fParentService.activateContext(
-				activation.getContextId(), activation.getExpression());
+		IContextActivation parentActivation = fParentService.activateContext(activation.getContextId(),
+				activation.getExpression());
 		fParentActivations.add(parentActivation);
 		fLocalActivations.put(activation, parentActivation);
 		return activation;

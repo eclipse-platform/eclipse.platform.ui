@@ -33,14 +33,12 @@ import org.eclipse.ui.IWorkbenchWindow;
  *
  * @since 3.2
  */
-public final class LegacyEditorContributionExpression extends
-		WorkbenchWindowExpression {
+public final class LegacyEditorContributionExpression extends WorkbenchWindowExpression {
 
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = LegacyEditorContributionExpression.class
-			.getName().hashCode();
+	private static final int HASH_INITIAL = LegacyEditorContributionExpression.class.getName().hashCode();
 
 	/**
 	 * The identifier for the editor that must be active for this expression to
@@ -49,23 +47,18 @@ public final class LegacyEditorContributionExpression extends
 	private final String activeEditorId;
 
 	/**
-	 * Constructs a new instance of
-	 * <code>LegacyEditorContributionExpression</code>
+	 * Constructs a new instance of <code>LegacyEditorContributionExpression</code>
 	 *
-	 * @param activeEditorId
-	 *            The identifier of the editor to match with the active editor;
-	 *            may be <code>null</code>
-	 * @param window
-	 *            The workbench window in which this handler should be active.
-	 *            This value is never <code>null</code>.
+	 * @param activeEditorId The identifier of the editor to match with the active
+	 *                       editor; may be <code>null</code>
+	 * @param window         The workbench window in which this handler should be
+	 *                       active. This value is never <code>null</code>.
 	 */
-	public LegacyEditorContributionExpression(final String activeEditorId,
-			final IWorkbenchWindow window) {
+	public LegacyEditorContributionExpression(final String activeEditorId, final IWorkbenchWindow window) {
 		super(window);
 
 		if (activeEditorId == null) {
-			throw new NullPointerException(
-					"The targetId for an editor contribution must not be null"); //$NON-NLS-1$
+			throw new NullPointerException("The targetId for an editor contribution must not be null"); //$NON-NLS-1$
 		}
 		this.activeEditorId = activeEditorId;
 	}
@@ -87,23 +80,20 @@ public final class LegacyEditorContributionExpression extends
 	public boolean equals(final Object object) {
 		if (object instanceof LegacyEditorContributionExpression) {
 			final LegacyEditorContributionExpression that = (LegacyEditorContributionExpression) object;
-			return equals(this.activeEditorId, that.activeEditorId)
-					&& equals(this.getWindow(), that.getWindow());
+			return equals(this.activeEditorId, that.activeEditorId) && equals(this.getWindow(), that.getWindow());
 		}
 
 		return false;
 	}
 
 	@Override
-	public EvaluationResult evaluate(final IEvaluationContext context)
-			throws CoreException {
+	public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
 		if (result == EvaluationResult.FALSE) {
 			return result;
 		}
 
-		final Object variable = context
-				.getVariable(ISources.ACTIVE_PART_ID_NAME);
+		final Object variable = context.getVariable(ISources.ACTIVE_PART_ID_NAME);
 		if (equals(activeEditorId, variable)) {
 			return EvaluationResult.TRUE;
 		}

@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.osgi.framework.Bundle;
 
 /**
- * This class puts basic platform information into the system summary log.  This
+ * This class puts basic platform information into the system summary log. This
  * includes sections for the java properties, the ids of all installed features
  * and plugins, as well as a the current contents of the preferences service.
  *
@@ -48,66 +48,66 @@ import org.osgi.framework.Bundle;
  */
 public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
-    private static final String ECLIPSE_PROPERTY_PREFIX = "eclipse."; //$NON-NLS-1$
+	private static final String ECLIPSE_PROPERTY_PREFIX = "eclipse."; //$NON-NLS-1$
 
-    @Override
+	@Override
 	public void write(PrintWriter writer) {
-        appendProperties(writer);
+		appendProperties(writer);
 		appendEnvironmentVariables(writer);
-        appendFeatures(writer);
-        appendRegistry(writer);
-        appendUserPreferences(writer);
-    }
+		appendFeatures(writer);
+		appendRegistry(writer);
+		appendUserPreferences(writer);
+	}
 
-    /**
-     * Appends the <code>System</code> properties.
-     */
-    private void appendProperties(PrintWriter writer) {
-        writer.println();
-        writer.println(WorkbenchMessages.SystemSummary_systemProperties);
-        Properties properties = System.getProperties();
+	/**
+	 * Appends the <code>System</code> properties.
+	 */
+	private void appendProperties(PrintWriter writer) {
+		writer.println();
+		writer.println(WorkbenchMessages.SystemSummary_systemProperties);
+		Properties properties = System.getProperties();
 		SortedSet<Object> set = new TreeSet<>((o1, o2) -> {
-		    String s1 = (String) o1;
-		    String s2 = (String) o2;
-		    return s1.compareTo(s2);
+			String s1 = (String) o1;
+			String s2 = (String) o2;
+			return s1.compareTo(s2);
 		});
-        set.addAll(properties.keySet());
+		set.addAll(properties.keySet());
 		Iterator<Object> i = set.iterator();
-        while (i.hasNext()) {
-            String key = (String)i.next();
-            String value = properties.getProperty(key);
+		while (i.hasNext()) {
+			String key = (String) i.next();
+			String value = properties.getProperty(key);
 
-            writer.print(key);
-            writer.print('=');
+			writer.print(key);
+			writer.print('=');
 
-            // some types of properties have special characters embedded
-            if (key.startsWith(ECLIPSE_PROPERTY_PREFIX)) {
+			// some types of properties have special characters embedded
+			if (key.startsWith(ECLIPSE_PROPERTY_PREFIX)) {
 				printEclipseProperty(writer, value);
-            } else if (key.toUpperCase().indexOf("PASSWORD") != -1) { //$NON-NLS-1$
-            	// We should obscure any property that may be a password
-            	for (int j = 0; j < value.length(); j++) {
+			} else if (key.toUpperCase().indexOf("PASSWORD") != -1) { //$NON-NLS-1$
+				// We should obscure any property that may be a password
+				for (int j = 0; j < value.length(); j++) {
 					writer.print('*');
 				}
-            	writer.println();
+				writer.println();
 			} else {
 				writer.println(value);
 			}
-        }
-    }
+		}
+	}
 
-    private static void printEclipseProperty(PrintWriter writer, String value) {
+	private static void printEclipseProperty(PrintWriter writer, String value) {
 		String[] lines = value.split("\n"); //$NON-NLS-1$
-        for (String line : lines) {
+		for (String line : lines) {
 			writer.println(line);
 		}
-    }
+	}
 
-    /**
-     * Appends the installed and configured features.
-     */
-    private void appendFeatures(PrintWriter writer) {
-        writer.println();
-        writer.println(WorkbenchMessages.SystemSummary_features);
+	/**
+	 * Appends the installed and configured features.
+	 */
+	private void appendFeatures(PrintWriter writer) {
+		writer.println();
+		writer.println(WorkbenchMessages.SystemSummary_features);
 
 		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
 		LinkedList<AboutBundleGroupData> groups = new LinkedList<>();
@@ -121,75 +121,73 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 		}
 		AboutBundleGroupData[] bundleGroupInfos = groups.toArray(new AboutBundleGroupData[0]);
 
-        AboutData.sortById(false, bundleGroupInfos);
+		AboutData.sortById(false, bundleGroupInfos);
 
 		for (AboutBundleGroupData info : bundleGroupInfos) {
 			String[] args = new String[] { info.getId(), info.getVersion(), info.getName() };
 			writer.println(NLS.bind(WorkbenchMessages.SystemSummary_featureVersion, args));
 		}
-    }
+	}
 
-    /**
-     * Appends the contents of the Plugin Registry.
-     */
-    private void appendRegistry(PrintWriter writer) {
-        writer.println();
-        writer.println(WorkbenchMessages.SystemSummary_pluginRegistry);
+	/**
+	 * Appends the contents of the Plugin Registry.
+	 */
+	private void appendRegistry(PrintWriter writer) {
+		writer.println();
+		writer.println(WorkbenchMessages.SystemSummary_pluginRegistry);
 
-        Bundle[] bundles = WorkbenchPlugin.getDefault().getBundles();
-        AboutBundleData[] bundleInfos = new AboutBundleData[bundles.length];
+		Bundle[] bundles = WorkbenchPlugin.getDefault().getBundles();
+		AboutBundleData[] bundleInfos = new AboutBundleData[bundles.length];
 
-        for (int i = 0; i < bundles.length; ++i) {
+		for (int i = 0; i < bundles.length; ++i) {
 			bundleInfos[i] = new AboutBundleData(bundles[i]);
 		}
 
-        AboutData.sortById(false, bundleInfos);
+		AboutData.sortById(false, bundleInfos);
 
-        for (AboutBundleData info : bundleInfos) {
-            String[] args = new String[] { info.getId(), info.getVersion(),
-                    info.getName(), info.getStateName() };
-            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_descriptorIdVersionState, args));
-        }
-    }
+		for (AboutBundleData info : bundleInfos) {
+			String[] args = new String[] { info.getId(), info.getVersion(), info.getName(), info.getStateName() };
+			writer.println(NLS.bind(WorkbenchMessages.SystemSummary_descriptorIdVersionState, args));
+		}
+	}
 
-    /**
-     * Appends the preferences
-     */
-    private void appendUserPreferences(PrintWriter writer) {
-        // write the prefs to a byte array
-        IPreferencesService service = Platform.getPreferencesService();
-        IEclipsePreferences node = service.getRootNode();
-        ByteArrayOutputStream stm = new ByteArrayOutputStream();
-        try {
-            service.exportPreferences(node, stm, null);
-        } catch (CoreException e) {
-            writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$
-        }
+	/**
+	 * Appends the preferences
+	 */
+	private void appendUserPreferences(PrintWriter writer) {
+		// write the prefs to a byte array
+		IPreferencesService service = Platform.getPreferencesService();
+		IEclipsePreferences node = service.getRootNode();
+		ByteArrayOutputStream stm = new ByteArrayOutputStream();
+		try {
+			service.exportPreferences(node, stm, null);
+		} catch (CoreException e) {
+			writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$
+		}
 
-        // copy the prefs from the byte array to the writer
-        writer.println();
-        writer.println(WorkbenchMessages.SystemSummary_userPreferences);
+		// copy the prefs from the byte array to the writer
+		writer.println();
+		writer.println(WorkbenchMessages.SystemSummary_userPreferences);
 
-        BufferedReader reader = null;
-        try {
-            ByteArrayInputStream in = new ByteArrayInputStream(stm
-                    .toByteArray());
-            reader = new BufferedReader(new InputStreamReader(in, "8859_1")); //$NON-NLS-1$
-            char[] chars = new char[8192];
+		BufferedReader reader = null;
+		try {
+			ByteArrayInputStream in = new ByteArrayInputStream(stm.toByteArray());
+			reader = new BufferedReader(new InputStreamReader(in, "8859_1")); //$NON-NLS-1$
+			char[] chars = new char[8192];
 
-            while (true) {
-                int read = reader.read(chars);
-                if (read <= 0) {
+			while (true) {
+				int read = reader.read(chars);
+				if (read <= 0) {
 					break;
 				}
-                writer.write(chars, 0, read);
-            }
-        } catch (IOException e) {
-            writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$
-        }
+				writer.write(chars, 0, read);
+			}
+		} catch (IOException e) {
+			writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$
+		}
 
-        // ByteArray streams don't need to be closed
-    }
+		// ByteArray streams don't need to be closed
+	}
 
 	/**
 	 * Appends environment variables.

@@ -19,42 +19,43 @@ package org.eclipse.ui.part;
  * of bytes. When the drop occurs, the data is interpreted by an action defined
  * in the specified extension.
  * <p>
- * Clients using PluginTransfer should create an instance to contain the
- * drop data.
+ * Clients using PluginTransfer should create an instance to contain the drop
+ * data.
  * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class PluginTransferData {
-    String extensionName;
+	String extensionName;
 
-    byte[] transferData;
+	byte[] transferData;
 
-    /**
-     * Creates a new record for the given extension id and data.
-     *
-     * @param extensionId the extension id
-     * @param data the data to transfer
-     */
-    public PluginTransferData(String extensionId, byte[] data) {
-        this.extensionName = extensionId;
-        this.transferData = data;
-    }
+	/**
+	 * Creates a new record for the given extension id and data.
+	 *
+	 * @param extensionId the extension id
+	 * @param data        the data to transfer
+	 */
+	public PluginTransferData(String extensionId, byte[] data) {
+		this.extensionName = extensionId;
+		this.transferData = data;
+	}
 
-    /**
-     * Returns the data being transferred.
-     *
-     * @return the data
-     */
-    public byte[] getData() {
-        return transferData;
-    }
+	/**
+	 * Returns the data being transferred.
+	 *
+	 * @return the data
+	 */
+	public byte[] getData() {
+		return transferData;
+	}
 
-    /**
-     * Returns the id of the extension that will provide the drop action.
-     *
-     * @return the extension id
-     */
-    public String getExtensionId() {
-        return extensionName;
-    }
+	/**
+	 * Returns the id of the extension that will provide the drop action.
+	 *
+	 * @return the extension id
+	 */
+	public String getExtensionId() {
+		return extensionName;
+	}
 }

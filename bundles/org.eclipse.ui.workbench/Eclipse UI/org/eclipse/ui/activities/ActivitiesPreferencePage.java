@@ -44,108 +44,109 @@ import org.eclipse.ui.internal.activities.ws.ActivityMessages;
  * @see #ACTIVITY_PROMPT_BUTTON_TOOLTIP
  * @since 3.1
  */
-public final class ActivitiesPreferencePage extends PreferencePage implements
-        IWorkbenchPreferencePage, IExecutableExtension {
+public final class ActivitiesPreferencePage extends PreferencePage
+		implements IWorkbenchPreferencePage, IExecutableExtension {
 
 	/**
-	 * The name to use for the activities.  Ie: "Capabilities".
+	 * The name to use for the activities. Ie: "Capabilities".
 	 */
-    public static final String ACTIVITY_NAME = "activityName"; //$NON-NLS-1$
+	public static final String ACTIVITY_NAME = "activityName"; //$NON-NLS-1$
 
 	/**
 	 * The label to be used for the prompt button. Ie: "&amp;Prompt when enabling
 	 * capabilities".
 	 */
-    public static final String ACTIVITY_PROMPT_BUTTON = "activityPromptButton"; //$NON-NLS-1$
+	public static final String ACTIVITY_PROMPT_BUTTON = "activityPromptButton"; //$NON-NLS-1$
 
 	/**
-	 * The tooltip to be used for the prompt button. Ie: "Prompt when a feature is first used that requires enablement of capabilities".
+	 * The tooltip to be used for the prompt button. Ie: "Prompt when a feature is
+	 * first used that requires enablement of capabilities".
 	 */
-    public static final String ACTIVITY_PROMPT_BUTTON_TOOLTIP = "activityPromptButtonTooltip"; //$NON-NLS-1$
+	public static final String ACTIVITY_PROMPT_BUTTON_TOOLTIP = "activityPromptButtonTooltip"; //$NON-NLS-1$
 
 	private Button activityPromptButton;
 
-    private IWorkbench workbench;
+	private IWorkbench workbench;
 
-    private ActivityEnabler enabler;
+	private ActivityEnabler enabler;
 
-    private Properties strings = new Properties();
+	private Properties strings = new Properties();
 
-    private IMutableActivityManager workingCopy;
+	private IMutableActivityManager workingCopy;
 
-    /**
-     * Create the prompt for activity enablement.
-     *
-     * @param composite the parent
-     */
-    protected void createActivityPromptPref(Composite composite) {
-        activityPromptButton = new Button(composite, SWT.CHECK);
-        activityPromptButton.setText(strings.getProperty(ACTIVITY_PROMPT_BUTTON, ActivityMessages.activityPromptButton));
-        activityPromptButton.setToolTipText(strings.getProperty(ACTIVITY_PROMPT_BUTTON_TOOLTIP, ActivityMessages.activityPromptToolTip));
+	/**
+	 * Create the prompt for activity enablement.
+	 *
+	 * @param composite the parent
+	 */
+	protected void createActivityPromptPref(Composite composite) {
+		activityPromptButton = new Button(composite, SWT.CHECK);
+		activityPromptButton
+				.setText(strings.getProperty(ACTIVITY_PROMPT_BUTTON, ActivityMessages.activityPromptButton));
+		activityPromptButton.setToolTipText(
+				strings.getProperty(ACTIVITY_PROMPT_BUTTON_TOOLTIP, ActivityMessages.activityPromptToolTip));
 
-        setActivityButtonState();
-    }
+		setActivityButtonState();
+	}
 
-    /**
-     * Sets the state of the activity prompt button from preferences.
-     */
-    private void setActivityButtonState() {
-        activityPromptButton.setSelection(getPreferenceStore().getBoolean(
-                IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
-    }
+	/**
+	 * Sets the state of the activity prompt button from preferences.
+	 */
+	private void setActivityButtonState() {
+		activityPromptButton
+				.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
+	}
 
-    @Override
+	@Override
 	protected Control createContents(Composite parent) {
-    	initializeDialogUnits(parent);
+		initializeDialogUnits(parent);
 
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-        composite.setLayout(layout);
+		composite.setLayout(layout);
 
-        createActivityPromptPref(composite);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        activityPromptButton.setLayoutData(data);
+		createActivityPromptPref(composite);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		activityPromptButton.setLayoutData(data);
 
-        data = new GridData(GridData.FILL_BOTH);
-        workingCopy = workbench.getActivitySupport().createWorkingCopy();
-        enabler = new ActivityEnabler(workingCopy, strings);
-        enabler.createControl(composite).setLayoutData(data);
+		data = new GridData(GridData.FILL_BOTH);
+		workingCopy = workbench.getActivitySupport().createWorkingCopy();
+		enabler = new ActivityEnabler(workingCopy, strings);
+		enabler.createControl(composite).setLayoutData(data);
 
-        Dialog.applyDialogFont(composite);
+		Dialog.applyDialogFont(composite);
 
-        return composite;
-    }
+		return composite;
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbench aWorkbench) {
-        this.workbench = aWorkbench;
-        setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-    }
+		this.workbench = aWorkbench;
+		setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
+	}
 
-    @Override
+	@Override
 	public boolean performOk() {
-        enabler.updateActivityStates();
-        workbench.getActivitySupport().setEnabledActivityIds(workingCopy.getEnabledActivityIds());
+		enabler.updateActivityStates();
+		workbench.getActivitySupport().setEnabledActivityIds(workingCopy.getEnabledActivityIds());
 
-        getPreferenceStore().setValue(
-                IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
-                activityPromptButton.getSelection());
+		getPreferenceStore().setValue(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
+				activityPromptButton.getSelection());
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	protected void performDefaults() {
-        enabler.restoreDefaults();
-        activityPromptButton.setSelection(getPreferenceStore()
-                .getDefaultBoolean(
-                        IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
-        super.performDefaults();
-    }
+		enabler.restoreDefaults();
+		activityPromptButton.setSelection(
+				getPreferenceStore().getDefaultBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
+		super.performDefaults();
+	}
 
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {

@@ -27,71 +27,68 @@ import org.eclipse.ui.internal.PerspectiveTracker;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * Action which, when run, will open the new wizard dialog.
- * In addition, it has a drop-down showing the new wizard shortcuts
- * associated with the current perspective.
+ * Action which, when run, will open the new wizard dialog. In addition, it has
+ * a drop-down showing the new wizard shortcuts associated with the current
+ * perspective.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  *
  * @since 3.1
  */
-public class NewWizardDropDownAction extends Action implements
-        ActionFactory.IWorkbenchAction {
+public class NewWizardDropDownAction extends Action implements ActionFactory.IWorkbenchAction {
 
-    /**
-     * The workbench window; or <code>null</code> if this
-     * action has been <code>dispose</code>d.
-     */
-    private IWorkbenchWindow workbenchWindow;
+	/**
+	 * The workbench window; or <code>null</code> if this action has been
+	 * <code>dispose</code>d.
+	 */
+	private IWorkbenchWindow workbenchWindow;
 
-    /**
-     * Tracks perspective activation, to update this action's
-     * enabled state.
-     */
-    private PerspectiveTracker tracker;
+	/**
+	 * Tracks perspective activation, to update this action's enabled state.
+	 */
+	private PerspectiveTracker tracker;
 
-    private ActionFactory.IWorkbenchAction showDlgAction;
+	private ActionFactory.IWorkbenchAction showDlgAction;
 
-    private IContributionItem newWizardMenu;
+	private IContributionItem newWizardMenu;
 
-    private IMenuCreator menuCreator = new IMenuCreator() {
+	private IMenuCreator menuCreator = new IMenuCreator() {
 
-        private MenuManager dropDownMenuMgr;
+		private MenuManager dropDownMenuMgr;
 
-        /**
-         * Creates the menu manager for the drop-down.
-         */
-        private void createDropDownMenuMgr() {
-            if (dropDownMenuMgr == null) {
-                dropDownMenuMgr = new MenuManager();
-                dropDownMenuMgr.add(newWizardMenu);
-            }
-        }
+		/**
+		 * Creates the menu manager for the drop-down.
+		 */
+		private void createDropDownMenuMgr() {
+			if (dropDownMenuMgr == null) {
+				dropDownMenuMgr = new MenuManager();
+				dropDownMenuMgr.add(newWizardMenu);
+			}
+		}
 
-        @Override
+		@Override
 		public Menu getMenu(Control parent) {
-            createDropDownMenuMgr();
-            return dropDownMenuMgr.createContextMenu(parent);
-        }
+			createDropDownMenuMgr();
+			return dropDownMenuMgr.createContextMenu(parent);
+		}
 
-        @Override
+		@Override
 		public Menu getMenu(Menu parent) {
-            createDropDownMenuMgr();
-            Menu menu = new Menu(parent);
-            IContributionItem[] items = dropDownMenuMgr.getItems();
-            for (IContributionItem item : items) {
-                IContributionItem newItem = item;
-                if (item instanceof ActionContributionItem) {
-                    newItem = new ActionContributionItem(
-                            ((ActionContributionItem) item).getAction());
-                }
-                newItem.fill(menu, -1);
-            }
-            return menu;
-        }
+			createDropDownMenuMgr();
+			Menu menu = new Menu(parent);
+			IContributionItem[] items = dropDownMenuMgr.getItems();
+			for (IContributionItem item : items) {
+				IContributionItem newItem = item;
+				if (item instanceof ActionContributionItem) {
+					newItem = new ActionContributionItem(((ActionContributionItem) item).getAction());
+				}
+				newItem.fill(menu, -1);
+			}
+			return menu;
+		}
 
-        @Override
+		@Override
 		public void dispose() {
 			if (dropDownMenuMgr != null) {
 				// remove the wizard menu before disposing the menu manager, the
@@ -106,76 +103,72 @@ public class NewWizardDropDownAction extends Action implements
 				dropDownMenuMgr.dispose();
 				dropDownMenuMgr = null;
 			}
-        }
-    };
+		}
+	};
 
-    /**
-     * Create a new <code>NewWizardDropDownAction</code>, with the default
-     * action for opening the new wizard dialog, and the default contribution item
-     * for populating the drop-down menu.
-     *
-     * @param window the window in which this action appears
-     */
-    public NewWizardDropDownAction(IWorkbenchWindow window) {
-        this(window, ActionFactory.NEW.create(window), ContributionItemFactory.NEW_WIZARD_SHORTLIST.create(window));
-    }
+	/**
+	 * Create a new <code>NewWizardDropDownAction</code>, with the default action
+	 * for opening the new wizard dialog, and the default contribution item for
+	 * populating the drop-down menu.
+	 *
+	 * @param window the window in which this action appears
+	 */
+	public NewWizardDropDownAction(IWorkbenchWindow window) {
+		this(window, ActionFactory.NEW.create(window), ContributionItemFactory.NEW_WIZARD_SHORTLIST.create(window));
+	}
 
-    /**
-     * Create a new <code>NewWizardDropDownAction</code>.
-     *
-     * @param window the window in which this action appears
-     * @param showDlgAction the action to delegate to when this action is run directly,
-     *   rather than being dropped down
-     * @param newWizardMenu the contribution item that adds the contents to the drop-down menu
-     */
-    public NewWizardDropDownAction(IWorkbenchWindow window,
-            ActionFactory.IWorkbenchAction showDlgAction,
-            IContributionItem newWizardMenu) {
-        super(WorkbenchMessages.NewWizardDropDown_text);
-        if (window == null) {
-            throw new IllegalArgumentException();
-        }
-        this.workbenchWindow = window;
-        this.showDlgAction = showDlgAction;
-        this.newWizardMenu = newWizardMenu;
-        tracker = new PerspectiveTracker(window, this);
+	/**
+	 * Create a new <code>NewWizardDropDownAction</code>.
+	 *
+	 * @param window        the window in which this action appears
+	 * @param showDlgAction the action to delegate to when this action is run
+	 *                      directly, rather than being dropped down
+	 * @param newWizardMenu the contribution item that adds the contents to the
+	 *                      drop-down menu
+	 */
+	public NewWizardDropDownAction(IWorkbenchWindow window, ActionFactory.IWorkbenchAction showDlgAction,
+			IContributionItem newWizardMenu) {
+		super(WorkbenchMessages.NewWizardDropDown_text);
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		this.showDlgAction = showDlgAction;
+		this.newWizardMenu = newWizardMenu;
+		tracker = new PerspectiveTracker(window, this);
 
-        setToolTipText(showDlgAction.getToolTipText());
+		setToolTipText(showDlgAction.getToolTipText());
 
-        ISharedImages sharedImages = window.getWorkbench()
-                .getSharedImages();
-        setImageDescriptor(sharedImages
-                .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
-        setDisabledImageDescriptor(sharedImages
-                .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
+		ISharedImages sharedImages = window.getWorkbench().getSharedImages();
+		setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 
-        setMenuCreator(menuCreator);
-    }
+		setMenuCreator(menuCreator);
+	}
 
-
-    @Override
+	@Override
 	public void dispose() {
-        if (workbenchWindow == null) {
-            // action has already been disposed
-            return;
-        }
-        tracker.dispose();
-        showDlgAction.dispose();
-        newWizardMenu.dispose();
-        menuCreator.dispose();
-        workbenchWindow = null;
-    }
+		if (workbenchWindow == null) {
+			// action has already been disposed
+			return;
+		}
+		tracker.dispose();
+		showDlgAction.dispose();
+		newWizardMenu.dispose();
+		menuCreator.dispose();
+		workbenchWindow = null;
+	}
 
-    /**
-     * Runs the action, which opens the New wizard dialog.
-     */
-    @Override
+	/**
+	 * Runs the action, which opens the New wizard dialog.
+	 */
+	@Override
 	public void run() {
-        if (workbenchWindow == null) {
-            // action has been disposed
-            return;
-        }
-        showDlgAction.run();
-    }
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
+		showDlgAction.run();
+	}
 
 }

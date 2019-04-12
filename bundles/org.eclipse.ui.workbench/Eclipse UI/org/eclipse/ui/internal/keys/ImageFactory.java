@@ -33,8 +33,7 @@ final class ImageFactory {
 		put("change", "$nl$/icons/full/obj16/change_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
 
 		/*
-		 * TODO Remove these images from the registry if they are no longer
-		 * needed.
+		 * TODO Remove these images from the registry if they are no longer needed.
 		 */
 		put("minus", "$nl$/icons/full/obj16/delete_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
 		put("plus", "$nl$/icons/full/obj16/add_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
@@ -50,7 +49,7 @@ final class ImageFactory {
 				image = imageDescriptor.createImage(false);
 
 				if (image == null) {
-					WorkbenchPlugin.log(ImageFactory.class +": error creating image for " + key); //$NON-NLS-1$
+					WorkbenchPlugin.log(ImageFactory.class + ": error creating image for " + key); //$NON-NLS-1$
 				}
 
 				imageRegistry.put(key, image);
@@ -64,7 +63,7 @@ final class ImageFactory {
 		ImageDescriptor imageDescriptor = (ImageDescriptor) map.get(key);
 
 		if (imageDescriptor == null) {
-			WorkbenchPlugin.log(ImageFactory.class +": no image descriptor for " + key); //$NON-NLS-1$
+			WorkbenchPlugin.log(ImageFactory.class + ": no image descriptor for " + key); //$NON-NLS-1$
 		}
 
 		return imageDescriptor;

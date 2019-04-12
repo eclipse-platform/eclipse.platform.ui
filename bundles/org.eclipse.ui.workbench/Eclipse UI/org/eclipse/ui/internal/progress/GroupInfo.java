@@ -95,8 +95,8 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	}
 
 	/**
-	 * Updates the receiver in the progress manager. If all of the jobs are
-	 * finished and the receiver is not being kept then remove it.
+	 * Updates the receiver in the progress manager. If all of the jobs are finished
+	 * and the receiver is not being kept then remove it.
 	 */
 	private void updateInProgressManager() {
 		for (JobInfo info : infos) {

@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  *
  * <p>
- * The area provider can be set in {@link WorkbenchStatusDialogManager} as well as in
- * JFace {@link Policy} since its extends {@link ErrorSupportProvider}.
+ * The area provider can be set in {@link WorkbenchStatusDialogManager} as well
+ * as in JFace {@link Policy} since its extends {@link ErrorSupportProvider}.
  * </p>
  *
  * @see Policy#setErrorSupportProvider(ErrorSupportProvider)
@@ -41,14 +41,11 @@ public abstract class AbstractStatusAreaProvider extends ErrorSupportProvider {
 	/**
 	 * Create an area for detailed support area as a child of the given parent.
 	 *
-	 * @param parent
-	 *            A {@link Composite} that will host support area.
-	 * @param statusAdapter
-	 *            The {@link StatusAdapter} to be supported.
+	 * @param parent        A {@link Composite} that will host support area.
+	 * @param statusAdapter The {@link StatusAdapter} to be supported.
 	 * @return a control, that hold all support elements.
 	 */
-	public abstract Control createSupportArea(Composite parent,
-			StatusAdapter statusAdapter);
+	public abstract Control createSupportArea(Composite parent, StatusAdapter statusAdapter);
 
 	@Override
 	public final Control createSupportArea(Composite parent, IStatus status) {
@@ -61,15 +58,13 @@ public abstract class AbstractStatusAreaProvider extends ErrorSupportProvider {
 	 * display any significant implementation.
 	 * <p>
 	 * <b>Important</b>: This API is a part of work in progress and therefore is
-	 * suitable only for support area providers (which are presented in the
-	 * status dialog tray).
+	 * suitable only for support area providers (which are presented in the status
+	 * dialog tray).
 	 * </p>
 	 *
-	 * @param statusAdapter
-	 *            - {@link StatusAdapter} for which status are will be
-	 *            requested.
-	 * @return true if provider is able to process particular
-	 *         {@link StatusAdapter}
+	 * @param statusAdapter - {@link StatusAdapter} for which status are will be
+	 *                      requested.
+	 * @return true if provider is able to process particular {@link StatusAdapter}
 	 * @since 3.6
 	 */
 	public boolean validFor(StatusAdapter statusAdapter) {

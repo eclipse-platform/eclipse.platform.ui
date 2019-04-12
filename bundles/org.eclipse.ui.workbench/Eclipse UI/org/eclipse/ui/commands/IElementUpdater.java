@@ -27,20 +27,18 @@ import org.eclipse.ui.menus.UIElement;
  */
 public interface IElementUpdater {
 	/**
-	 * Whenever the elements for a command are refreshed, this method is called
-	 * on the active handler for that command.
+	 * Whenever the elements for a command are refreshed, this method is called on
+	 * the active handler for that command.
 	 * <p>
-	 * <b>Note:</b> Handlers must never cache the element, which can disappear
-	 * or be replaced at any time. Everybody should go through the
-	 * ICommandService refreshElements(*) method.
+	 * <b>Note:</b> Handlers must never cache the element, which can disappear or be
+	 * replaced at any time. Everybody should go through the ICommandService
+	 * refreshElements(*) method.
 	 * </p>
 	 *
-	 * @param element
-	 *            An element for a specific UI element. Will not be
-	 *            <code>null</code>.
-	 * @param parameters
-	 *            Any parameters registered with the callback. Will not be
-	 *            <code>null</code>, but it may be empty.
+	 * @param element    An element for a specific UI element. Will not be
+	 *                   <code>null</code>.
+	 * @param parameters Any parameters registered with the callback. Will not be
+	 *                   <code>null</code>, but it may be empty.
 	 */
 	void updateElement(UIElement element, Map parameters);
 }

@@ -27,20 +27,21 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  */
 public class WizardTagFilter extends ViewerFilter {
 
-	private String [] myTags;
+	private String[] myTags;
 
 	/**
 	 * Create a new instance of this filter
+	 * 
 	 * @param tags the wizard tags to allow
 	 */
-	public WizardTagFilter(String [] tags) {
+	public WizardTagFilter(String[] tags) {
 		myTags = tags;
 	}
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof IWizardDescriptor) {
-			IWizardDescriptor desc = (IWizardDescriptor)element;
+			IWizardDescriptor desc = (IWizardDescriptor) element;
 			for (String tag : desc.getTags()) {
 				for (String myTag : myTags) {
 					if (tag.equals(myTag)) {
@@ -50,9 +51,9 @@ public class WizardTagFilter extends ViewerFilter {
 			}
 			return false;
 		}
-        Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
-                .getContentProvider()).getChildren(element);
-        if (children.length > 0) {
+		Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer).getContentProvider())
+				.getChildren(element);
+		if (children.length > 0) {
 			return filter(viewer, element, children).length > 0;
 		}
 

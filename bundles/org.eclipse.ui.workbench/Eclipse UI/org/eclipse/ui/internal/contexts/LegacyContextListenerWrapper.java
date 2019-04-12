@@ -30,18 +30,17 @@ import org.eclipse.ui.contexts.IContext;
  *
  * @since 3.1
  */
-public class LegacyContextListenerWrapper implements IContextListener,
-		IContextManagerListener {
+public class LegacyContextListenerWrapper implements IContextListener, IContextManagerListener {
 
 	/**
-	 * The legacy context that this listener would previously have been attached
-	 * to. This value is never <code>null</code>.
+	 * The legacy context that this listener would previously have been attached to.
+	 * This value is never <code>null</code>.
 	 */
 	private final IContext context;
 
 	/**
-	 * The context manager used for constructing the context wrapper when an
-	 * event occurs; must not be <code>null</code>.
+	 * The context manager used for constructing the context wrapper when an event
+	 * occurs; must not be <code>null</code>.
 	 */
 	private final ContextManager contextManager;
 
@@ -53,31 +52,26 @@ public class LegacyContextListenerWrapper implements IContextListener,
 	/**
 	 * Constructs a new instance of <code>ContextListenerWrapper</code>.
 	 *
-	 * @param listener
-	 *            The listener to be wrapped. Must not be <code>null</code>.
-	 * @param contextManager
-	 *            The context manager used for constructing the context wrapper
-	 *            when an event occurs; must not be <code>null</code>.
-	 * @param context
-	 *            The legacy context this listener will be listening to; must
-	 *            not be <code>null</code>.
+	 * @param listener       The listener to be wrapped. Must not be
+	 *                       <code>null</code>.
+	 * @param contextManager The context manager used for constructing the context
+	 *                       wrapper when an event occurs; must not be
+	 *                       <code>null</code>.
+	 * @param context        The legacy context this listener will be listening to;
+	 *                       must not be <code>null</code>.
 	 */
-	public LegacyContextListenerWrapper(
-			final org.eclipse.ui.contexts.IContextListener listener,
+	public LegacyContextListenerWrapper(final org.eclipse.ui.contexts.IContextListener listener,
 			final ContextManager contextManager, final IContext context) {
 		if (listener == null) {
-			throw new NullPointerException(
-					"Cannot create a listener wrapper on a null listener"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot create a listener wrapper on a null listener"); //$NON-NLS-1$
 		}
 
 		if (contextManager == null) {
-			throw new NullPointerException(
-					"Cannot create a listener wrapper with a null context manager"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot create a listener wrapper with a null context manager"); //$NON-NLS-1$
 		}
 
 		if (context == null) {
-			throw new NullPointerException(
-					"Cannot create a listener wrapper with a null context"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot create a listener wrapper with a null context"); //$NON-NLS-1$
 		}
 
 		wrappedListener = listener;
@@ -87,13 +81,9 @@ public class LegacyContextListenerWrapper implements IContextListener,
 
 	@Override
 	public final void contextChanged(final ContextEvent contextEvent) {
-		wrappedListener
-				.contextChanged(new org.eclipse.ui.contexts.ContextEvent(
-						new ContextLegacyWrapper(contextEvent.getContext(),
-								contextManager), contextEvent
-								.isDefinedChanged(), false, contextEvent
-								.isNameChanged(), contextEvent
-								.isParentIdChanged()));
+		wrappedListener.contextChanged(new org.eclipse.ui.contexts.ContextEvent(
+				new ContextLegacyWrapper(contextEvent.getContext(), contextManager), contextEvent.isDefinedChanged(),
+				false, contextEvent.isNameChanged(), contextEvent.isParentIdChanged()));
 	}
 
 	@Override
@@ -103,15 +93,11 @@ public class LegacyContextListenerWrapper implements IContextListener,
 		if (event.isActiveContextsChanged()) {
 			final Set previousContexts = event.getPreviouslyActiveContextIds();
 			final Set currentContexts = contextManager.getActiveContextIds();
-			if ((previousContexts != null)
-					&& (previousContexts.contains(contextId))
-					&& ((currentContexts == null) || (currentContexts
-							.contains(contextId)))) {
+			if ((previousContexts != null) && (previousContexts.contains(contextId))
+					&& ((currentContexts == null) || (currentContexts.contains(contextId)))) {
 				enabledChanged = true;
-			} else if ((currentContexts != null)
-					&& (currentContexts.contains(contextId))
-					&& ((previousContexts == null) || (previousContexts
-							.contains(contextId)))) {
+			} else if ((currentContexts != null) && (currentContexts.contains(contextId))
+					&& ((previousContexts == null) || (previousContexts.contains(contextId)))) {
 				enabledChanged = true;
 			} else {
 				enabledChanged = false;
@@ -121,8 +107,7 @@ public class LegacyContextListenerWrapper implements IContextListener,
 		}
 
 		wrappedListener
-				.contextChanged(new org.eclipse.ui.contexts.ContextEvent(
-						context, false, enabledChanged, false, false));
+				.contextChanged(new org.eclipse.ui.contexts.ContextEvent(context, false, enabledChanged, false, false));
 	}
 
 	@Override

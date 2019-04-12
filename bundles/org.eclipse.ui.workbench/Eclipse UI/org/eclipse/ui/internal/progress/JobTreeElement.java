@@ -53,8 +53,7 @@ public abstract class JobTreeElement implements Comparable<JobTreeElement> {
 	/**
 	 * Returns the displayString for the receiver.
 	 *
-	 * @param showProgress
-	 *            Whether or not progress is being shown (if relevant).
+	 * @param showProgress Whether or not progress is being shown (if relevant).
 	 * @return String
 	 */
 	String getDisplayString(boolean showProgress) {

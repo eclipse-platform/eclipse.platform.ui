@@ -93,8 +93,8 @@ public class WorkbenchMigrationProcessor {
 		IModelBuilderFactory builderFactory = ContextInjectionFactory.make(ModelBuilderFactoryImpl.class,
 				builderContext);
 		builderContext.set(IModelBuilderFactory.class, builderFactory);
-		ApplicationBuilder modelBuilder = builderFactory.createApplicationBuilder(new WorkbenchMementoReader(
-				workbenchMemento));
+		ApplicationBuilder modelBuilder = builderFactory
+				.createApplicationBuilder(new WorkbenchMementoReader(workbenchMemento));
 		modelBuilder.createApplication();
 		context.remove(E4Workbench.NO_SAVED_MODEL_FOUND);
 		PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_INTRO, false);
@@ -104,7 +104,7 @@ public class WorkbenchMigrationProcessor {
 	private IMemento loadMemento() {
 		IMemento memento = null;
 		try (BufferedReader reader = new BufferedReader(
-					new InputStreamReader(new FileInputStream(legacyWorkbenchFile), StandardCharsets.UTF_8))){
+				new InputStreamReader(new FileInputStream(legacyWorkbenchFile), StandardCharsets.UTF_8))) {
 			memento = XMLMemento.createReadRoot(reader);
 		} catch (IOException | WorkbenchException e) {
 			WorkbenchPlugin.log("Failed to load " + legacyWorkbenchFile.getAbsolutePath(), e); //$NON-NLS-1$
@@ -176,8 +176,8 @@ public class WorkbenchMigrationProcessor {
 	}
 
 	private void removeStickyViewFromPerspectives(IStickyViewDescriptor stickyView, MWindow window) {
-		for (MPlaceholder placeholder : modelService.findElements(window, stickyView.getId(),
-				MPlaceholder.class, null)) {
+		for (MPlaceholder placeholder : modelService.findElements(window, stickyView.getId(), MPlaceholder.class,
+				null)) {
 			MElementContainer<MUIElement> parent = placeholder.getParent();
 			if (StickyViewDescriptor.STICKY_FOLDER_RIGHT.equals(parent.getElementId())) {
 				continue;

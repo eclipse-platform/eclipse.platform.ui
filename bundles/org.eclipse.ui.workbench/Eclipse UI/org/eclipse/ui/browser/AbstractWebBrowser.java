@@ -26,8 +26,7 @@ public abstract class AbstractWebBrowser implements IWebBrowser {
 	/**
 	 * The constructor that accepts the unique browser identifier.
 	 *
-	 * @param id
-	 *            the unique browser identifier
+	 * @param id the unique browser identifier
 	 */
 	public AbstractWebBrowser(String id) {
 		this.id = id;

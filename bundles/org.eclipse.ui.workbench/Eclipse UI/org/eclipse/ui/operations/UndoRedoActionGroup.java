@@ -37,21 +37,17 @@ public final class UndoRedoActionGroup extends ActionGroup {
 	private RedoActionHandler redoActionHandler;
 
 	/**
-	 * Construct an undo redo action group for the specified workbench part
-	 * site, using the specified undo context.
+	 * Construct an undo redo action group for the specified workbench part site,
+	 * using the specified undo context.
 	 *
-	 * @param site
-	 *            the workbench part site that is creating the action group
-	 * @param undoContext
-	 *            the undo context to be used for filtering the operation
-	 *            history
-	 * @param pruneHistory
-	 *            a boolean that indicates whether the history for the specified
-	 *            context should be pruned whenever an invalid operation is
-	 *            encountered.
+	 * @param site         the workbench part site that is creating the action group
+	 * @param undoContext  the undo context to be used for filtering the operation
+	 *                     history
+	 * @param pruneHistory a boolean that indicates whether the history for the
+	 *                     specified context should be pruned whenever an invalid
+	 *                     operation is encountered.
 	 */
-	public UndoRedoActionGroup(IWorkbenchPartSite site,
-			IUndoContext undoContext, boolean pruneHistory) {
+	public UndoRedoActionGroup(IWorkbenchPartSite site, IUndoContext undoContext, boolean pruneHistory) {
 
 		// create the undo action handler
 		undoActionHandler = new UndoActionHandler(site, undoContext);
@@ -66,10 +62,8 @@ public final class UndoRedoActionGroup extends ActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		if (undoActionHandler != null) {
-			actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
-					undoActionHandler);
-			actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
-					redoActionHandler);
+			actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), undoActionHandler);
+			actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), redoActionHandler);
 		}
 	}
 }

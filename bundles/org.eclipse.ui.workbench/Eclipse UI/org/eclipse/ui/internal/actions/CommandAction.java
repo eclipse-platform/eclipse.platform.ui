@@ -58,31 +58,25 @@ public class CommandAction extends Action {
 	 * Creates the action backed by a command. For commands that don't take
 	 * parameters.
 	 *
-	 * @param serviceLocator
-	 *            The service locator that is closest in lifecycle to this
-	 *            action.
-	 * @param commandIdIn
-	 *            the command id. Must not be <code>null</code>.
+	 * @param serviceLocator The service locator that is closest in lifecycle to
+	 *                       this action.
+	 * @param commandIdIn    the command id. Must not be <code>null</code>.
 	 */
 	public CommandAction(IServiceLocator serviceLocator, String commandIdIn) {
 		this(serviceLocator, commandIdIn, null);
 	}
 
 	/**
-	 * Creates the action backed by a parameterized command. The parameterMap
-	 * must contain only all required parameters, and may contain the optional
+	 * Creates the action backed by a parameterized command. The parameterMap must
+	 * contain only all required parameters, and may contain the optional
 	 * parameters.
 	 *
-	 * @param serviceLocator
-	 *            The service locator that is closest in lifecycle to this
-	 *            action.
-	 * @param commandIdIn
-	 *            the command id. Must not be <code>null</code>.
-	 * @param parameterMap
-	 *            the parameter map. May be <code>null</code>.
+	 * @param serviceLocator The service locator that is closest in lifecycle to
+	 *                       this action.
+	 * @param commandIdIn    the command id. Must not be <code>null</code>.
+	 * @param parameterMap   the parameter map. May be <code>null</code>.
 	 */
-	public CommandAction(IServiceLocator serviceLocator, String commandIdIn,
-			Map parameterMap) {
+	public CommandAction(IServiceLocator serviceLocator, String commandIdIn, Map parameterMap) {
 		if (commandIdIn == null) {
 			throw new NullPointerException("commandIdIn must not be null"); //$NON-NLS-1$
 		}
@@ -92,8 +86,7 @@ public class CommandAction extends Action {
 	protected ICommandListener getCommandListener() {
 		if (commandListener == null) {
 			commandListener = commandEvent -> {
-				if (commandEvent.isHandledChanged()
-						|| commandEvent.isEnabledChanged()) {
+				if (commandEvent.isHandledChanged() || commandEvent.isEnabledChanged()) {
 					if (commandEvent.getCommand().isDefined()) {
 						setEnabled(commandEvent.getCommand().isEnabled());
 					}
@@ -106,14 +99,11 @@ public class CommandAction extends Action {
 	/**
 	 * Build a command from the executable extension information.
 	 *
-	 * @param commandService
-	 *            to get the Command object
-	 * @param commandId
-	 *            the command id for this action
+	 * @param commandService to get the Command object
+	 * @param commandId      the command id for this action
 	 * @param parameterMap
 	 */
-	private void createCommand(ICommandService commandService,
-			String commandId, Map parameterMap) {
+	private void createCommand(ICommandService commandService, String commandId, Map parameterMap) {
 		Command cmd = commandService.getCommand(commandId);
 		if (!cmd.isDefined()) {
 			WorkbenchPlugin.log("Command " + commandId + " is undefined"); //$NON-NLS-1$//$NON-NLS-2$
@@ -125,16 +115,14 @@ public class CommandAction extends Action {
 			return;
 		}
 
-		parameterizedCommand = ParameterizedCommand.generateCommand(cmd,
-				parameterMap);
+		parameterizedCommand = ParameterizedCommand.generateCommand(cmd, parameterMap);
 	}
 
 	public void dispose() {
 		// not important for command ID, maybe for command though.
 		handlerService = null;
 		if (commandListener != null) {
-			parameterizedCommand.getCommand().removeCommandListener(
-					commandListener);
+			parameterizedCommand.getCommand().removeCommandListener(commandListener);
 			commandListener = null;
 		}
 		parameterizedCommand = null;
@@ -164,18 +152,14 @@ public class CommandAction extends Action {
 		runWithEvent(null);
 	}
 
-	protected void init(IServiceLocator serviceLocator, String commandIdIn,
-			Map parameterMap) {
+	protected void init(IServiceLocator serviceLocator, String commandIdIn, Map parameterMap) {
 		if (handlerService != null) {
 			// already initialized
 			return;
 		}
-		handlerService = serviceLocator
-				.getService(IHandlerService.class);
-		ICommandService commandService = serviceLocator
-				.getService(ICommandService.class);
-		ICommandImageService commandImageService = serviceLocator
-				.getService(ICommandImageService.class);
+		handlerService = serviceLocator.getService(IHandlerService.class);
+		ICommandService commandService = serviceLocator.getService(ICommandService.class);
+		ICommandImageService commandImageService = serviceLocator.getService(ICommandImageService.class);
 
 		createCommand(commandService, commandIdIn, parameterMap);
 		if (parameterizedCommand != null) {
@@ -186,17 +170,14 @@ public class CommandAction extends Action {
 			} catch (NotDefinedException e) {
 				// if we get this far it shouldn't be a problem
 			}
-			parameterizedCommand.getCommand().addCommandListener(
-					getCommandListener());
-			parameterizedCommand.getCommand().setEnabled(
-					handlerService.getCurrentState());
+			parameterizedCommand.getCommand().addCommandListener(getCommandListener());
+			parameterizedCommand.getCommand().setEnabled(handlerService.getCurrentState());
 			setEnabled(parameterizedCommand.getCommand().isEnabled());
-			setImageDescriptor(commandImageService.getImageDescriptor(
-					commandIdIn, ICommandImageService.TYPE_DEFAULT));
-			setDisabledImageDescriptor(commandImageService.getImageDescriptor(
-					commandIdIn, ICommandImageService.TYPE_DISABLED));
-			setHoverImageDescriptor(commandImageService.getImageDescriptor(
-					commandIdIn, ICommandImageService.TYPE_HOVER));
+			setImageDescriptor(commandImageService.getImageDescriptor(commandIdIn, ICommandImageService.TYPE_DEFAULT));
+			setDisabledImageDescriptor(
+					commandImageService.getImageDescriptor(commandIdIn, ICommandImageService.TYPE_DISABLED));
+			setHoverImageDescriptor(
+					commandImageService.getImageDescriptor(commandIdIn, ICommandImageService.TYPE_HOVER));
 		}
 	}
 

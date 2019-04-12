@@ -66,10 +66,8 @@ public class QuickAccessHandler extends AbstractHandler {
 	/**
 	 * Utility method to displays the original/legacy QuickAccess dialog.
 	 *
-	 * @param window
-	 *            the active workbench window
-	 * @param command
-	 *            the command which invokes the open of the dialog
+	 * @param window  the active workbench window
+	 * @param command the command which invokes the open of the dialog
 	 */
 	private static void displayQuickAccessDialog(IWorkbenchWindow window, Command command) {
 		PopupDialog popupDialog = new QuickAccessDialog(window, command);

@@ -43,41 +43,41 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class ActionSetManager {
 
-    private static class ActionSetRec {
-        int showCount;
+	private static class ActionSetRec {
+		int showCount;
 
-        int maskCount;
+		int maskCount;
 
-        public boolean isVisible() {
-            return maskCount == 0 && showCount > 0;
-        }
+		public boolean isVisible() {
+			return maskCount == 0 && showCount > 0;
+		}
 
-        public boolean isEmpty() {
-            return maskCount == 0 && showCount == 0;
-        }
-    }
+		public boolean isEmpty() {
+			return maskCount == 0 && showCount == 0;
+		}
+	}
 
-    private HashMap actionSets = new HashMap();
-    private HashSet visibleItems = new HashSet();
+	private HashMap actionSets = new HashMap();
+	private HashSet visibleItems = new HashSet();
 
-    public static final int PROP_VISIBLE = 0;
-    public static final int PROP_HIDDEN = 1;
-    public static final int CHANGE_MASK = 0;
-    public static final int CHANGE_UNMASK = 1;
-    public static final int CHANGE_SHOW = 2;
-    public static final int CHANGE_HIDE = 3;
+	public static final int PROP_VISIBLE = 0;
+	public static final int PROP_HIDDEN = 1;
+	public static final int CHANGE_MASK = 0;
+	public static final int CHANGE_UNMASK = 1;
+	public static final int CHANGE_SHOW = 2;
+	public static final int CHANGE_HIDE = 3;
 
 	private ListenerList<IPropertyListener> listeners = new ListenerList<>();
 	private IPropertyListener contextListener;
 	private Map activationsById = new HashMap();
 	private IContextService contextService;
 
-    public ActionSetManager(IServiceLocator locator) {
-    	contextService = locator.getService(IContextService.class);
+	public ActionSetManager(IServiceLocator locator) {
+		contextService = locator.getService(IContextService.class);
 		addListener(getContextListener());
-    }
+	}
 
-    /**
+	/**
 	 * @return
 	 */
 	private IPropertyListener getContextListener() {
@@ -87,11 +87,9 @@ public class ActionSetManager {
 					IActionSetDescriptor desc = (IActionSetDescriptor) source;
 					String id = desc.getId();
 					if (propId == PROP_VISIBLE) {
-						activationsById.put(id, contextService
-								.activateContext(id));
+						activationsById.put(id, contextService.activateContext(id));
 					} else if (propId == PROP_HIDDEN) {
-						IContextActivation act = (IContextActivation) activationsById
-								.remove(id);
+						IContextActivation act = (IContextActivation) activationsById.remove(id);
 						if (act != null) {
 							contextService.deactivateContext(act);
 						}
@@ -103,100 +101,104 @@ public class ActionSetManager {
 	}
 
 	public void addListener(IPropertyListener l) {
-        listeners.add(l);
-    }
+		listeners.add(l);
+	}
 
-    public void removeListener(IPropertyListener l) {
-        listeners.remove(l);
-    }
+	public void removeListener(IPropertyListener l) {
+		listeners.remove(l);
+	}
 
-    private void firePropertyChange(IActionSetDescriptor descriptor, int id) {
+	private void firePropertyChange(IActionSetDescriptor descriptor, int id) {
 		for (IPropertyListener listener : listeners) {
-            listener.propertyChanged(descriptor, id);
-        }
-    }
+			listener.propertyChanged(descriptor, id);
+		}
+	}
 
-    private ActionSetRec getRec(IActionSetDescriptor descriptor) {
-        ActionSetRec rec = (ActionSetRec)actionSets.get(descriptor);
+	private ActionSetRec getRec(IActionSetDescriptor descriptor) {
+		ActionSetRec rec = (ActionSetRec) actionSets.get(descriptor);
 
-        if (rec == null) {
-            rec = new ActionSetRec();
-            actionSets.put(descriptor, rec);
-        }
+		if (rec == null) {
+			rec = new ActionSetRec();
+			actionSets.put(descriptor, rec);
+		}
 
-        return rec;
-    }
+		return rec;
+	}
 
-    public void showAction(IActionSetDescriptor descriptor) {
-        ActionSetRec rec = getRec(descriptor);
+	public void showAction(IActionSetDescriptor descriptor) {
+		ActionSetRec rec = getRec(descriptor);
 
-        boolean wasVisible = rec.isVisible();
-        rec.showCount++;
-        if (!wasVisible && rec.isVisible()) {
-            visibleItems.add(descriptor);
-            firePropertyChange(descriptor, PROP_VISIBLE);
-            if (rec.isEmpty()) {
-                actionSets.remove(descriptor);
-            }
-        }
-    }
+		boolean wasVisible = rec.isVisible();
+		rec.showCount++;
+		if (!wasVisible && rec.isVisible()) {
+			visibleItems.add(descriptor);
+			firePropertyChange(descriptor, PROP_VISIBLE);
+			if (rec.isEmpty()) {
+				actionSets.remove(descriptor);
+			}
+		}
+	}
 
-    public void hideAction(IActionSetDescriptor descriptor) {
-        ActionSetRec rec = getRec(descriptor);
+	public void hideAction(IActionSetDescriptor descriptor) {
+		ActionSetRec rec = getRec(descriptor);
 
-        boolean wasVisible = rec.isVisible();
-        rec.showCount--;
-        if (wasVisible && !rec.isVisible()) {
-            visibleItems.remove(descriptor);
-            firePropertyChange(descriptor, PROP_HIDDEN);
-            if (rec.isEmpty()) {
-                actionSets.remove(descriptor);
-            }
-        }
-    }
+		boolean wasVisible = rec.isVisible();
+		rec.showCount--;
+		if (wasVisible && !rec.isVisible()) {
+			visibleItems.remove(descriptor);
+			firePropertyChange(descriptor, PROP_HIDDEN);
+			if (rec.isEmpty()) {
+				actionSets.remove(descriptor);
+			}
+		}
+	}
 
-    public void maskAction(IActionSetDescriptor descriptor) {
-        ActionSetRec rec = getRec(descriptor);
+	public void maskAction(IActionSetDescriptor descriptor) {
+		ActionSetRec rec = getRec(descriptor);
 
-        boolean wasVisible = rec.isVisible();
-        rec.maskCount++;
-        if (wasVisible && !rec.isVisible()) {
-            visibleItems.remove(descriptor);
-            firePropertyChange(descriptor, PROP_HIDDEN);
-            if (rec.isEmpty()) {
-                actionSets.remove(descriptor);
-            }
-        }
-    }
+		boolean wasVisible = rec.isVisible();
+		rec.maskCount++;
+		if (wasVisible && !rec.isVisible()) {
+			visibleItems.remove(descriptor);
+			firePropertyChange(descriptor, PROP_HIDDEN);
+			if (rec.isEmpty()) {
+				actionSets.remove(descriptor);
+			}
+		}
+	}
 
-    public void unmaskAction(IActionSetDescriptor descriptor) {
-        ActionSetRec rec = getRec(descriptor);
+	public void unmaskAction(IActionSetDescriptor descriptor) {
+		ActionSetRec rec = getRec(descriptor);
 
-        boolean wasVisible = rec.isVisible();
-        rec.maskCount--;
-        if (!wasVisible && rec.isVisible()) {
-            visibleItems.add(descriptor);
-            firePropertyChange(descriptor, PROP_VISIBLE);
-            if (rec.isEmpty()) {
-                actionSets.remove(descriptor);
-            }
-        }
-    }
+		boolean wasVisible = rec.isVisible();
+		rec.maskCount--;
+		if (!wasVisible && rec.isVisible()) {
+			visibleItems.add(descriptor);
+			firePropertyChange(descriptor, PROP_VISIBLE);
+			if (rec.isEmpty()) {
+				actionSets.remove(descriptor);
+			}
+		}
+	}
 
-    public Collection getVisibleItems() {
-        return visibleItems;
-    }
+	public Collection getVisibleItems() {
+		return visibleItems;
+	}
 
-    public void change(IActionSetDescriptor descriptor, int changeType) {
-        switch(changeType) {
-        case CHANGE_SHOW:
-            showAction(descriptor); break;
-        case CHANGE_HIDE:
-            hideAction(descriptor); break;
-        case CHANGE_MASK:
-            maskAction(descriptor); break;
-        case CHANGE_UNMASK:
-            unmaskAction(descriptor); break;
-        }
-    }
+	public void change(IActionSetDescriptor descriptor, int changeType) {
+		switch (changeType) {
+		case CHANGE_SHOW:
+			showAction(descriptor);
+			break;
+		case CHANGE_HIDE:
+			hideAction(descriptor);
+			break;
+		case CHANGE_MASK:
+			maskAction(descriptor);
+			break;
+		case CHANGE_UNMASK:
+			unmaskAction(descriptor);
+			break;
+		}
+	}
 }

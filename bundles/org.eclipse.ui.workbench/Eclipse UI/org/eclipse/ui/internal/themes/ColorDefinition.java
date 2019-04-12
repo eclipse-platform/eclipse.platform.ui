@@ -26,90 +26,87 @@ import org.eclipse.ui.themes.ColorUtil;
  * A <code>ColorDefiniton </code> is the representation of the extensions
  * defined by the <code>org.eclipse.ui.colorDefinitions</code> extension point.
  *
- *  @since 3.0
+ * @since 3.0
  */
 public class ColorDefinition extends ThemeElementDefinition implements IPluginContribution,
-		IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition, IEditable,
-		IColorDefinitionOverridable {
+		IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition, IEditable, IColorDefinitionOverridable {
 	/**
 	 * Default color value - black - for colors that cannot be parsed.
 	 */
-    private static final RGB DEFAULT_COLOR_VALUE = new RGB(0,0,0);
+	private static final RGB DEFAULT_COLOR_VALUE = new RGB(0, 0, 0);
 
 	private String defaultsTo;
 
-    private String pluginId;
+	private String pluginId;
 
-    private String rawValue;
+	private String rawValue;
 
-    boolean isEditable;
+	boolean isEditable;
 
-    private RGB parsedValue;
+	private RGB parsedValue;
 
-    /**
-     * Create a new instance of the receiver.
-     *
-     * @param label the label for this definition
-     * @param id the identifier for this definition
-     * @param defaultsTo the id of a definition that this definition will
-     * 		default to.
-     * @param value the default value of this definition, either in the form
-     * rrr,ggg,bbb or the name of an SWT color constant.
-     * @param description the description for this definition.
-     * @param pluginId the identifier of the plugin that contributed this
-     * 		definition.
-     */
-    public ColorDefinition(String label, String id, String defaultsTo,
-            String value, String categoryId, boolean isEditable,
-            String description, String pluginId) {
+	/**
+	 * Create a new instance of the receiver.
+	 *
+	 * @param label       the label for this definition
+	 * @param id          the identifier for this definition
+	 * @param defaultsTo  the id of a definition that this definition will default
+	 *                    to.
+	 * @param value       the default value of this definition, either in the form
+	 *                    rrr,ggg,bbb or the name of an SWT color constant.
+	 * @param description the description for this definition.
+	 * @param pluginId    the identifier of the plugin that contributed this
+	 *                    definition.
+	 */
+	public ColorDefinition(String label, String id, String defaultsTo, String value, String categoryId,
+			boolean isEditable, String description, String pluginId) {
 		super(id, label, description, categoryId);
-        this.defaultsTo = defaultsTo;
-        this.rawValue = value;
-        this.isEditable = isEditable;
-        this.pluginId = pluginId;
-    }
+		this.defaultsTo = defaultsTo;
+		this.rawValue = value;
+		this.isEditable = isEditable;
+		this.pluginId = pluginId;
+	}
 
-    /**
-     * Create a new instance of the receiver.
-     *
-     * @param original the original definition.  This will be used to populate
-     * all fields except defaultsTo and value.  defaultsTo will always be
-     * <code>null</code>.
-     * @param value the RGB value
-     */
-    public ColorDefinition(ColorDefinition original, RGB value) {
-		super(original.getId(), original.getName(), original.getDescription(), original
-				.getCategoryId());
-        this.isEditable = original.isEditable();
-        this.pluginId = original.getPluginId();
-        this.parsedValue = value;
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 *
+	 * @param original the original definition. This will be used to populate all
+	 *                 fields except defaultsTo and value. defaultsTo will always be
+	 *                 <code>null</code>.
+	 * @param value    the RGB value
+	 */
+	public ColorDefinition(ColorDefinition original, RGB value) {
+		super(original.getId(), original.getName(), original.getDescription(), original.getCategoryId());
+		this.isEditable = original.isEditable();
+		this.pluginId = original.getPluginId();
+		this.parsedValue = value;
+	}
 
-    /**
-     * @return the defaultsTo value, or <code>null</code> if none was supplied.
-     */
-    @Override
+	/**
+	 * @return the defaultsTo value, or <code>null</code> if none was supplied.
+	 */
+	@Override
 	public String getDefaultsTo() {
-        return defaultsTo;
-    }
+		return defaultsTo;
+	}
 
-    @Override
+	@Override
 	public String getLocalId() {
-        return getId();
-    }
+		return getId();
+	}
 
-    @Override
+	@Override
 	public String getPluginId() {
-        return pluginId;
-    }
+		return pluginId;
+	}
 
-    /**
-     * @return the value. Any SWT constants  supplied to the constructor will be
-     * evaluated and converted into their RGB value.
-     */
-    @Override
+	/**
+	 * @return the value. Any SWT constants supplied to the constructor will be
+	 *         evaluated and converted into their RGB value.
+	 */
+	@Override
 	public RGB getValue() {
-        if (parsedValue == null) {
+		if (parsedValue == null) {
 			try {
 				parsedValue = ColorUtil.getColorValue(rawValue);
 			} catch (DataFormatException e) {
@@ -119,8 +116,8 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 				StatusManager.getManager().handle(status, StatusManager.LOG);
 			}
 		}
-        return parsedValue;
-    }
+		return parsedValue;
+	}
 
 	@Override
 	public void resetToDefaultValue() {
@@ -128,28 +125,28 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 		super.resetToDefaultValue();
 	}
 
-    @Override
+	@Override
 	public String toString() {
-        return getId();
-    }
+		return getId();
+	}
 
-    @Override
+	@Override
 	public boolean isEditable() {
-        return isEditable;
-    }
+		return isEditable;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        if (obj instanceof ColorDefinition) {
-            return getId().equals(((ColorDefinition)obj).getId());
-        }
-        return false;
-    }
+		if (obj instanceof ColorDefinition) {
+			return getId().equals(((ColorDefinition) obj).getId());
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
 		return getId().hashCode();
-    }
+	}
 
 	@Override
 	public void setValue(RGB data) {

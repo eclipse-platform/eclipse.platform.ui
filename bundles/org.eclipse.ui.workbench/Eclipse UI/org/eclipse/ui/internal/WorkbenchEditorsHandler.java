@@ -32,8 +32,7 @@ public class WorkbenchEditorsHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow workbenchWindow = HandlerUtil
-				.getActiveWorkbenchWindow(event);
+		IWorkbenchWindow workbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		if (workbenchWindow == null) {
 			// action has been disposed
 			return null;

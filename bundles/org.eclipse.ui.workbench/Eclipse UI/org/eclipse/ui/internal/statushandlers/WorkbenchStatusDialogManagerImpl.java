@@ -63,8 +63,7 @@ import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
  */
 public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 
-	static final QualifiedName HINT = new QualifiedName(
-			IStatusAdapterConstants.PROPERTY_PREFIX, "hint"); //$NON-NLS-1$
+	static final QualifiedName HINT = new QualifiedName(IStatusAdapterConstants.PROPERTY_PREFIX, "hint"); //$NON-NLS-1$
 
 	private final class StatusDialogDisposeListener implements DisposeListener {
 
@@ -89,8 +88,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	/**
 	 * Returns whether the given StatusAdapter object should be displayed.
 	 *
-	 * @param statusAdapter
-	 *            a status object
+	 * @param statusAdapter a status object
 	 * @return <code>true</code> if the given status should be displayed, and
 	 *         <code>false</code> otherwise
 	 * @see org.eclipse.core.runtime.IStatus#matches(int)
@@ -98,10 +96,9 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	public boolean shouldAccept(StatusAdapter statusAdapter) {
 		IStatus status = statusAdapter.getStatus();
 		IStatus[] children = status.getChildren();
-		int mask = ((Integer) dialogState.get(IStatusDialogConstants.MASK))
-				.intValue();
-		boolean handleOKStatuses = ((Boolean) dialogState
-				.get(IStatusDialogConstants.HANDLE_OK_STATUSES)).booleanValue();
+		int mask = ((Integer) dialogState.get(IStatusDialogConstants.MASK)).intValue();
+		boolean handleOKStatuses = ((Boolean) dialogState.get(IStatusDialogConstants.HANDLE_OK_STATUSES))
+				.booleanValue();
 		if (children == null || children.length == 0) {
 			return status.matches(mask) || (handleOKStatuses && status.isOK());
 		}
@@ -119,17 +116,15 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	/**
 	 * Creates workbench status dialog.
 	 *
-	 * @param displayMask
-	 *            the mask used to filter the handled <code>StatusAdapter</code>
-	 *            objects, the mask is a logical sum of status severities
-	 * @param dialogTitle
-	 *            the title of the dialog. If null, than default will be used.
+	 * @param displayMask the mask used to filter the handled
+	 *                    <code>StatusAdapter</code> objects, the mask is a logical
+	 *                    sum of status severities
+	 * @param dialogTitle the title of the dialog. If null, than default will be
+	 *                    used.
 	 */
 	public WorkbenchStatusDialogManagerImpl(int displayMask, String dialogTitle) {
 
-		Assert
-				.isNotNull(Display.getCurrent(),
-						"WorkbenchStatusDialogManager must be instantiated in UI thread"); //$NON-NLS-1$
+		Assert.isNotNull(Display.getCurrent(), "WorkbenchStatusDialogManager must be instantiated in UI thread"); //$NON-NLS-1$
 
 		dialogState = initDialogState(dialogState, displayMask, dialogTitle);
 		FinishedJobs.getInstance().addListener(this);
@@ -138,35 +133,26 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	/**
 	 * This method creates the initial state of the dialog.
 	 *
-	 * @param dialogState
-	 *            - the map to fill in.
-	 * @param displayMask
-	 *            - the mask suggesting which statuses should be displayed
-	 * @param dialogTitle
-	 *            - the dialog title.
+	 * @param dialogState - the map to fill in.
+	 * @param displayMask - the mask suggesting which statuses should be displayed
+	 * @param dialogTitle - the dialog title.
 	 * @return populated dialogState
 	 */
 	public Map initDialogState(Map dialogState, int displayMask, String dialogTitle) {
 		dialogState.put(IStatusDialogConstants.MASK, Integer.valueOf(displayMask));
 		dialogState.put(IStatusDialogConstants.TITLE,
-				dialogTitle == null ? JFaceResources
-						.getString("Problem_Occurred") : //$NON-NLS-1$
+				dialogTitle == null ? JFaceResources.getString("Problem_Occurred") : //$NON-NLS-1$
 						dialogTitle);
-		dialogState.put(IStatusDialogConstants.HANDLE_OK_STATUSES,
-				Boolean.FALSE);
+		dialogState.put(IStatusDialogConstants.HANDLE_OK_STATUSES, Boolean.FALSE);
 
 		dialogState.put(IStatusDialogConstants.SHOW_SUPPORT, Boolean.FALSE);
-		dialogState.put(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA,
-				Boolean.FALSE);
+		dialogState.put(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA, Boolean.FALSE);
 		dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.FALSE);
 		dialogState.put(IStatusDialogConstants.TRAY_OPENED, Boolean.FALSE);
-		dialogState.put(IStatusDialogConstants.HIDE_SUPPORT_BUTTON,
-				Boolean.FALSE);
-		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, Collections
-				.synchronizedSet(new LinkedHashSet()));
+		dialogState.put(IStatusDialogConstants.HIDE_SUPPORT_BUTTON, Boolean.FALSE);
+		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, Collections.synchronizedSet(new LinkedHashSet()));
 		dialogState.put(IStatusDialogConstants.STATUS_MODALS, new HashMap());
-		dialogState.put(IStatusDialogConstants.LABEL_PROVIDER, new LabelProviderWrapper(
-				dialogState));
+		dialogState.put(IStatusDialogConstants.LABEL_PROVIDER, new LabelProviderWrapper(dialogState));
 		dialogState.put(IStatusDialogConstants.MODALITY_SWITCH, Boolean.FALSE);
 		dialogState.put(IStatusDialogConstants.ANIMATION, Boolean.TRUE);
 		return dialogState;
@@ -174,31 +160,28 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 
 	/**
 	 * <p>
-	 * Adds a new {@link StatusAdapter} to the status adapters list in the
-	 * dialog.
+	 * Adds a new {@link StatusAdapter} to the status adapters list in the dialog.
 	 * </p>
 	 * <p>
 	 * If the dialog is already visible, the status adapter will be shown
-	 * immediately. Otherwise, the dialog with the added status adapter will
-	 * show up, if all conditions below are false.
+	 * immediately. Otherwise, the dialog with the added status adapter will show
+	 * up, if all conditions below are false.
 	 * <ul>
 	 * <li>the status adapter has
-	 * {@link IProgressConstants#NO_IMMEDIATE_ERROR_PROMPT_PROPERTY} set to true</li>
+	 * {@link IProgressConstants#NO_IMMEDIATE_ERROR_PROMPT_PROPERTY} set to
+	 * true</li>
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * All not shown status adapters will be displayed as soon as the dialog
-	 * shows up.
+	 * All not shown status adapters will be displayed as soon as the dialog shows
+	 * up.
 	 * </p>
 	 *
-	 * @param modal
-	 *            <code>true</code> if the dialog should be modal,
-	 *            <code>false</code> otherwise
-	 * @param statusAdapter
-	 *            the status adapter
+	 * @param modal         <code>true</code> if the dialog should be modal,
+	 *                      <code>false</code> otherwise
+	 * @param statusAdapter the status adapter
 	 */
-	public void addStatusAdapter(final StatusAdapter statusAdapter,
-			final boolean modal) {
+	public void addStatusAdapter(final StatusAdapter statusAdapter, final boolean modal) {
 		if (ErrorDialog.AUTOMATED_MODE == true) {
 			return;
 		}
@@ -220,8 +203,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	}
 
 	private boolean isDialogClosed() {
-		return dialog == null || dialog.getShell() == null
-				|| dialog.getShell().isDisposed();
+		return dialog == null || dialog.getShell() == null || dialog.getShell().isDisposed();
 	}
 
 	private void cleanUp() {
@@ -234,8 +216,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 		dialogState.remove(IStatusDialogConstants.CURRENT_STATUS_ADAPTER);
 	}
 
-	private void doAddStatusAdapter(final StatusAdapter statusAdapter,
-			final boolean modal) {
+	private void doAddStatusAdapter(final StatusAdapter statusAdapter, final boolean modal) {
 
 		if (!PlatformUI.isWorkbenchRunning()) {
 			// we are shutting down, so just log
@@ -258,23 +239,19 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 			if (shouldPrompt(statusAdapter)) {
 				// notify all interested parties that status adapters will be
 				// handled
-				StatusManager.getManager().fireNotification(
-						INotificationTypes.HANDLED,
-						getErrors()
-								.toArray(new StatusAdapter[] {}));
+				StatusManager.getManager().fireNotification(INotificationTypes.HANDLED,
+						getErrors().toArray(new StatusAdapter[] {}));
 
 				if (dialog == null) {
 					setSelectedStatusAdapter(statusAdapter);
 					dialog = new InternalDialog(dialogState, shouldBeModal());
 					dialog.create();
 					dialog.getShell().addDisposeListener(disposeListener);
-					boolean showSupport = ((Boolean) dialogState
-							.get(IStatusDialogConstants.SHOW_SUPPORT))
+					boolean showSupport = ((Boolean) dialogState.get(IStatusDialogConstants.SHOW_SUPPORT))
 							.booleanValue();
 					if (showSupport) {
 						dialog.openTray();
-						dialog.getShell().setLocation(
-								dialog.getInitialLocation(dialog.getShell().getSize()));
+						dialog.getShell().setLocation(dialog.getInitialLocation(dialog.getShell().getSize()));
 					}
 					dialog.open();
 				}
@@ -283,14 +260,10 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 			}
 
 		} else {
-			StatusManager.getManager().fireNotification(
-					INotificationTypes.HANDLED,
+			StatusManager.getManager().fireNotification(INotificationTypes.HANDLED,
 					new StatusAdapter[] { statusAdapter });
-			if (statusAdapter
-					.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != null) {
-				statusAdapter.setProperty(
-						IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
-						Boolean.FALSE);
+			if (statusAdapter.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != null) {
+				statusAdapter.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.FALSE);
 			}
 			openStatusDialog(modal, statusAdapter);
 		}
@@ -308,13 +281,10 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	/**
 	 * Opens status dialog with particular statusAdapter selected.
 	 *
-	 * @param modal
-	 *            decides if window is modal or not.
-	 * @param statusAdapter
-	 *            status adapter to be selected.
+	 * @param modal         decides if window is modal or not.
+	 * @param statusAdapter status adapter to be selected.
 	 */
-	private void openStatusDialog(final boolean modal,
-			final StatusAdapter statusAdapter) {
+	private void openStatusDialog(final boolean modal, final StatusAdapter statusAdapter) {
 		getErrors().add(statusAdapter);
 		getModals().put(statusAdapter, Boolean.valueOf(modal));
 		boolean shouldBeModal = shouldBeModal();
@@ -333,34 +303,30 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	/**
 	 * Sets current status adapter.
 	 *
-	 * @param statusAdapter
-	 *            The statusAdapter to set.
+	 * @param statusAdapter The statusAdapter to set.
 	 */
 	public void setSelectedStatusAdapter(StatusAdapter statusAdapter) {
-		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER,
-				statusAdapter);
+		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, statusAdapter);
 	}
 
 	/**
-	 * Sets new label provider for the status list. This label provider is used
-	 * also to display the second message on the dialog if only one status is
-	 * available.
+	 * Sets new label provider for the status list. This label provider is used also
+	 * to display the second message on the dialog if only one status is available.
 	 *
 	 * <p>
-	 * This method is no longer recommended to use as it is impossible to
-	 * achieve consistent behavior after changing only one label provider.
+	 * This method is no longer recommended to use as it is impossible to achieve
+	 * consistent behavior after changing only one label provider.
 	 * </p>
 	 *
 	 * @deprecated As of 3.5 {@link #setMessageDecorator} is recommended.
 	 *
-	 * @param labelProvider
-	 *            a label provider to be used when displaying status adapters.
+	 * @param labelProvider a label provider to be used when displaying status
+	 *                      adapters.
 	 */
 	@Deprecated
 	public void setStatusListLabelProvider(ITableLabelProvider labelProvider) {
 		Assert.isLegal(labelProvider != null, "Label Provider cannot be null"); //$NON-NLS-1$
-		dialogState.put(IStatusDialogConstants.CUSTOM_LABEL_PROVIDER,
-				labelProvider);
+		dialogState.put(IStatusDialogConstants.CUSTOM_LABEL_PROVIDER, labelProvider);
 	}
 
 	/**
@@ -371,8 +337,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 * @return true if any StatusHandler should be displayed in modal window
 	 */
 	public boolean shouldBeModal() {
-		Map<?, ?> modals = (Map<?, ?>) dialogState
-				.get(IStatusDialogConstants.STATUS_MODALS);
+		Map<?, ?> modals = (Map<?, ?>) dialogState.get(IStatusDialogConstants.STATUS_MODALS);
 		for (Object value : modals.values()) {
 			if (value instanceof Boolean) {
 				Boolean b = (Boolean) value;
@@ -385,16 +350,13 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	}
 
 	/**
-	 * Checks if the user should be prompted immediately about
-	 * {@link StatusAdapter}
+	 * Checks if the user should be prompted immediately about {@link StatusAdapter}
 	 *
-	 * @param statusAdapter
-	 *            to be checked.
+	 * @param statusAdapter to be checked.
 	 * @return true if the statusAdapter should be prompted, false otherwise.
 	 */
 	public boolean shouldPrompt(final StatusAdapter statusAdapter) {
-		Object noPromptProperty = statusAdapter
-				.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY);
+		Object noPromptProperty = statusAdapter.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY);
 
 		boolean prompt = true;
 		if (noPromptProperty instanceof Boolean) {
@@ -417,46 +379,41 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 
 	/**
 	 * <p>
-	 * This methods sets up the decorator, which is used to modify displayed
-	 * strings extracted from StatusAdapter. The decorator should be used to
-	 * remove technical codes from the dialog, f.e. following message
-	 * "<i>ERR2008 Invalid password</i>" can be translated into
-	 * "<i>Invalid password</i>".
+	 * This methods sets up the decorator, which is used to modify displayed strings
+	 * extracted from StatusAdapter. The decorator should be used to remove
+	 * technical codes from the dialog, f.e. following message "<i>ERR2008 Invalid
+	 * password</i>" can be translated into "<i>Invalid password</i>".
 	 * </p>
 	 * <p>
-	 * The decorator will be applied only to messages extracted from
-	 * StatusAdapter (predefined messages like
-	 * "This status has children statuses. See 'Details' for more information."
-	 * are not affected.
+	 * The decorator will be applied only to messages extracted from StatusAdapter
+	 * (predefined messages like "This status has children statuses. See 'Details'
+	 * for more information." are not affected.
 	 * </p>
 	 * <p>
 	 * This method should not be used together with
 	 * {@link #setStatusListLabelProvider(ITableLabelProvider)}.
 	 * </p>
 	 *
-	 * @param decorator
-	 *            - the decorator to be set. Only
-	 *            {@link ILabelDecorator#decorateText(String, Object)} method
-	 *            will be used. This method should return <code>null</code> if
-	 *            and only if the first argument is null. StatusAdapter is
-	 *            passed as second parameter. Other methods should have default
-	 *            behavior as they may be used in future versions of the dialog.
+	 * @param decorator - the decorator to be set. Only
+	 *                  {@link ILabelDecorator#decorateText(String, Object)} method
+	 *                  will be used. This method should return <code>null</code> if
+	 *                  and only if the first argument is null. StatusAdapter is
+	 *                  passed as second parameter. Other methods should have
+	 *                  default behavior as they may be used in future versions of
+	 *                  the dialog.
 	 * @since 3.5
 	 */
-	public void setMessageDecorator(ILabelDecorator decorator){
+	public void setMessageDecorator(ILabelDecorator decorator) {
 		dialogState.put(IStatusDialogConstants.DECORATOR, decorator);
 	}
-
 
 	/**
 	 * This method sets various properties on the manager.
 	 *
-	 * @param key
-	 *            a key of the property to be set.
-	 * @param value
-	 *            a value of the property to be set. The value must be of type
-	 *            specified by the property key. <code>null</code> should never
-	 *            be passed unless the property key javadoc allows for that.
+	 * @param key   a key of the property to be set.
+	 * @param value a value of the property to be set. The value must be of type
+	 *              specified by the property key. <code>null</code> should never be
+	 *              passed unless the property key javadoc allows for that.
 	 * @since 3.5
 	 */
 	public void setProperty(Object key, Object value) {
@@ -466,14 +423,13 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	/**
 	 * This method gets various dialog properties.
 	 *
-	 * @param key
-	 *            a key of the property to be get.
-	 * @return a value of the property. The value will be of type specified by
-	 *         the property key. <code>null</code> can be returned.
+	 * @param key a key of the property to be get.
+	 * @return a value of the property. The value will be of type specified by the
+	 *         property key. <code>null</code> can be returned.
 	 * @since 3.5
 	 */
-	public Object getProperty(Object key){
-		if(key == IStatusDialogConstants.SHELL){
+	public Object getProperty(Object key) {
+		if (key == IStatusDialogConstants.SHELL) {
 			return getShell();
 		}
 		if (key == IStatusDialogConstants.MANAGER_IMPL) {
@@ -484,14 +440,14 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 
 	/**
 	 * This method makes the dialog to be similar to the JFace ErrorDialog. The
-	 * dialog handles {@link StatusAdapter}s wrapping {@link IStatus} with
-	 * severity {@link IStatus#OK}, does not display the link to the error log,
-	 * does not display the link to the support area but always opens it.
+	 * dialog handles {@link StatusAdapter}s wrapping {@link IStatus} with severity
+	 * {@link IStatus#OK}, does not display the link to the error log, does not
+	 * display the link to the support area but always opens it.
 	 *
 	 * @see ErrorDialog
 	 * @since 3.6
 	 */
-	public void enableErrorDialogCompatibility(){
+	public void enableErrorDialogCompatibility() {
 		setProperty(IStatusDialogConstants.ERRORLOG_LINK, Boolean.FALSE);
 		setProperty(IStatusDialogConstants.HANDLE_OK_STATUSES, Boolean.TRUE);
 		setProperty(IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
@@ -510,8 +466,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	/**
 	 * This method is public for testing purposes only.
 	 *
-	 * @param dialog
-	 *            The dialog to set.
+	 * @param dialog The dialog to set.
 	 */
 	public void setDialog(InternalDialog dialog) {
 		this.dialog = dialog;
@@ -542,8 +497,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 * @return Collection of StatusAdapter modal flag.
 	 */
 	private Map getModals() {
-		return (Map) dialogState
-				.get(IStatusDialogConstants.STATUS_MODALS);
+		return (Map) dialogState.get(IStatusDialogConstants.STATUS_MODALS);
 	}
 
 	@Override

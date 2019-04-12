@@ -70,17 +70,16 @@ public final class ContextService implements IContextService {
 	private final ContextPersistence contextPersistence;
 
 	/**
-	 * Constructs a new instance of <code>ContextService</code> using a
-	 * context manager.
+	 * Constructs a new instance of <code>ContextService</code> using a context
+	 * manager.
 	 *
-	 * @param contextManager
-	 *            The context manager to use; must not be <code>null</code>.
+	 * @param contextManager The context manager to use; must not be
+	 *                       <code>null</code>.
 	 */
 	@Inject
 	public ContextService(final ContextManager contextManager) {
 		if (contextManager == null) {
-			throw new NullPointerException(
-					"Cannot create a context service with a null manager"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot create a context service with a null manager"); //$NON-NLS-1$
 		}
 		this.contextManager = contextManager;
 		this.contextAuthority = new ContextAuthority(contextManager, this);
@@ -120,8 +119,8 @@ public final class ContextService implements IContextService {
 			try {
 				if (updating) {
 					EvaluationResult result = expression.evaluate(ctx);
-					if (cached != null
-							&& (cached == result || (cached != EvaluationResult.FALSE && result != EvaluationResult.FALSE))) {
+					if (cached != null && (cached == result
+							|| (cached != EvaluationResult.FALSE && result != EvaluationResult.FALSE))) {
 						return updating;
 					}
 					if (result != EvaluationResult.FALSE) {
@@ -140,11 +139,9 @@ public final class ContextService implements IContextService {
 	}
 
 	@Override
-	public IContextActivation activateContext(final String contextId,
-			final Expression expression) {
+	public IContextActivation activateContext(final String contextId, final Expression expression) {
 
-		final IContextActivation activation = new ContextActivation(contextId,
-				expression, this);
+		final IContextActivation activation = new ContextActivation(contextId, expression, this);
 		contextAuthority.activateContext(activation);
 		if (expression == null) {
 			contextService.activateContext(contextId);
@@ -157,20 +154,18 @@ public final class ContextService implements IContextService {
 	}
 
 	@Override
-	public IContextActivation activateContext(String contextId,
-			Expression expression, boolean global) {
+	public IContextActivation activateContext(String contextId, Expression expression, boolean global) {
 		return activateContext(contextId, expression);
 	}
 
 	@Override
-	public IContextActivation activateContext(final String contextId,
-			final Expression expression, final int sourcePriority) {
+	public IContextActivation activateContext(final String contextId, final Expression expression,
+			final int sourcePriority) {
 		return activateContext(contextId, expression);
 	}
 
 	@Override
-	public void addContextManagerListener(
-			final IContextManagerListener listener) {
+	public void addContextManagerListener(final IContextManagerListener listener) {
 		contextManager.addContextManagerListener(listener);
 	}
 
@@ -251,8 +246,7 @@ public final class ContextService implements IContextService {
 	}
 
 	@Override
-	public void removeContextManagerListener(
-			final IContextManagerListener listener) {
+	public void removeContextManagerListener(final IContextManagerListener listener) {
 		contextManager.removeContextManagerListener(listener);
 	}
 
@@ -269,8 +263,8 @@ public final class ContextService implements IContextService {
 	/**
 	 * <p>
 	 * Bug 95792. A mechanism by which the key binding architecture can force an
-	 * update of the contexts (based on the active shell) before trying to
-	 * execute a command. This mechanism is required for GTK+ only.
+	 * update of the contexts (based on the active shell) before trying to execute a
+	 * command. This mechanism is required for GTK+ only.
 	 * </p>
 	 * <p>
 	 * DO NOT CALL THIS METHOD.
@@ -283,22 +277,20 @@ public final class ContextService implements IContextService {
 	/**
 	 * <p>
 	 * Bug 95792. A mechanism by which the key binding architecture can force an
-	 * update of the contexts (based on the active shell) before trying to
-	 * execute a command. This mechanism is required for GTK+ only.
+	 * update of the contexts (based on the active shell) before trying to execute a
+	 * command. This mechanism is required for GTK+ only.
 	 * </p>
 	 * <p>
 	 * DO NOT CALL THIS METHOD.
 	 * </p>
 	 *
-	 * @param shell
-	 *            The shell that should be considered active; must not be
-	 *            <code>null</code>.
+	 * @param shell The shell that should be considered active; must not be
+	 *              <code>null</code>.
 	 */
 	public void updateShellKludge(final Shell shell) {
 		final Shell currentActiveShell = contextAuthority.getActiveShell();
 		if (currentActiveShell != shell) {
-			contextAuthority.sourceChanged(ISources.ACTIVE_SHELL,
-					ISources.ACTIVE_SHELL_NAME, shell);
+			contextAuthority.sourceChanged(ISources.ACTIVE_SHELL, ISources.ACTIVE_SHELL_NAME, shell);
 		}
 	}
 }

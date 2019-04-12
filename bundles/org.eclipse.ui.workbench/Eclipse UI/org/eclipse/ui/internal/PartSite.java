@@ -74,54 +74,45 @@ import org.eclipse.ui.testing.IWorkbenchPartTestable;
  * The <code>PartSite</code> lifecycle is as follows ..
  *
  * <ol>
- * <li>a site is constructed </li>
- * <li>a part is constructed and stored in the part </li>
- * <li>the site calls part.init() </li>
- * <li>a pane is constructed and stored in the site </li>
- * <li>the action bars for a part are constructed and stored in the site </li>
- * <li>the pane is added to a presentation </li>
- * <li>the SWT widgets for the pane and part are created </li>
- * <li>the site is activated, causing the actions to become visible </li>
+ * <li>a site is constructed</li>
+ * <li>a part is constructed and stored in the part</li>
+ * <li>the site calls part.init()</li>
+ * <li>a pane is constructed and stored in the site</li>
+ * <li>the action bars for a part are constructed and stored in the site</li>
+ * <li>the pane is added to a presentation</li>
+ * <li>the SWT widgets for the pane and part are created</li>
+ * <li>the site is activated, causing the actions to become visible</li>
  * </ol>
  */
 public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
-	 * This is a helper method for the register context menu functionality. It
-	 * is provided so that different implementations of the
+	 * This is a helper method for the register context menu functionality. It is
+	 * provided so that different implementations of the
 	 * <code>IWorkbenchPartSite</code> interface don't have to worry about how
 	 * context menus should work.
 	 *
-	 * @param menuId
-	 *            the menu id
-	 * @param menuManager
-	 *            the menu manager
-	 * @param selectionProvider
-	 *            the selection provider
-	 * @param includeEditorInput
-	 *            whether editor inputs should be included in the structured
-	 *            selection when calculating contributions
-	 * @param part
-	 *            the part for this site
-	 * @param menuExtenders
-	 *            the collection of menu extenders for this site
-	 * @see IWorkbenchPartSite#registerContextMenu(MenuManager,
-	 *      ISelectionProvider)
+	 * @param menuId             the menu id
+	 * @param menuManager        the menu manager
+	 * @param selectionProvider  the selection provider
+	 * @param includeEditorInput whether editor inputs should be included in the
+	 *                           structured selection when calculating contributions
+	 * @param part               the part for this site
+	 * @param menuExtenders      the collection of menu extenders for this site
+	 * @see IWorkbenchPartSite#registerContextMenu(MenuManager, ISelectionProvider)
 	 */
-	public static final void registerContextMenu(final String menuId,
-			final MenuManager menuManager, final ISelectionProvider selectionProvider,
-			final boolean includeEditorInput, final IWorkbenchPart part, IEclipseContext context,
-			final Collection menuExtenders) {
+	public static final void registerContextMenu(final String menuId, final MenuManager menuManager,
+			final ISelectionProvider selectionProvider, final boolean includeEditorInput, final IWorkbenchPart part,
+			IEclipseContext context, final Collection menuExtenders) {
 		/*
-		 * Check to see if the same menu manager and selection provider have
-		 * already been used. If they have, then we can just add another menu
-		 * identifier to the existing PopupMenuExtender.
+		 * Check to see if the same menu manager and selection provider have already
+		 * been used. If they have, then we can just add another menu identifier to the
+		 * existing PopupMenuExtender.
 		 */
 		final Iterator extenderItr = menuExtenders.iterator();
 		boolean foundMatch = false;
 		while (extenderItr.hasNext()) {
-			final PopupMenuExtender existingExtender = (PopupMenuExtender) extenderItr
-					.next();
+			final PopupMenuExtender existingExtender = (PopupMenuExtender) extenderItr.next();
 			if (existingExtender.matches(menuManager, selectionProvider, part)) {
 				existingExtender.addMenuId(menuId);
 				foundMatch = true;
@@ -130,8 +121,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		}
 
 		if (!foundMatch) {
-			menuExtenders.add(new PopupMenuExtender(menuId, menuManager, selectionProvider, part,
-					context, includeEditorInput));
+			menuExtenders.add(
+					new PopupMenuExtender(menuId, menuManager, selectionProvider, part, context, includeEditorInput));
 		}
 	}
 
@@ -174,15 +165,11 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	/**
 	 * Build the part site.
 	 *
-	 * @param ref
-	 *            the part reference
-	 * @param part
-	 *            the part
-	 * @param page
-	 *            the page it belongs to
+	 * @param ref  the part reference
+	 * @param part the part
+	 * @param page the page it belongs to
 	 */
-	public PartSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
-			IConfigurationElement element) {
+	public PartSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref, IConfigurationElement element) {
 		this.model = model;
 		this.part = part;
 		this.partReference = ref;
@@ -196,13 +183,11 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		setWindow((MWindow) parent);
 
 		e4Context = model.getContext();
-		IServiceLocatorCreator slc = e4Context
-				.get(IServiceLocatorCreator.class);
+		IServiceLocatorCreator slc = e4Context.get(IServiceLocatorCreator.class);
 		IWorkbenchWindow workbenchWindow = getWorkbenchWindow();
-		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbenchWindow, null,
-				() -> {
-					// not sure what to do here
-				}, e4Context);
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbenchWindow, null, () -> {
+			// not sure what to do here
+		}, e4Context);
 		initializeDefaultServices();
 	}
 
@@ -215,24 +200,21 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		MApplication application = topWindow.getContext().get(MApplication.class);
 		Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class);
 
-		workbenchWindow = workbench.createWorkbenchWindow(
-				workbench.getDefaultPageInput(),
+		workbenchWindow = workbench.createWorkbenchWindow(workbench.getDefaultPageInput(),
 				workbench.getPerspectiveRegistry().findPerspectiveWithId(
-						workbench.getPerspectiveRegistry().getDefaultPerspective()), topWindow,
-				false);
+						workbench.getPerspectiveRegistry().getDefaultPerspective()),
+				topWindow, false);
 	}
 
 	/**
 	 * Initialize the local services.
 	 */
 	private void initializeDefaultServices() {
-		IHandlerService handlerService = new LegacyHandlerService(e4Context,
-				new ActivePartExpression(part));
+		IHandlerService handlerService = new LegacyHandlerService(e4Context, new ActivePartExpression(part));
 		e4Context.set(IHandlerService.class, handlerService);
 
 		serviceLocator.registerService(IWorkbenchLocationService.class,
-				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE,
-						getWorkbenchWindow().getWorkbench(),
+				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE, getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), this, null, null, 2));
 		// added back for legacy reasons
 		serviceLocator.registerService(IWorkbenchPartSite.class, this);
@@ -289,8 +271,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				if (selectionService == null) {
-					selectionService = new SlaveSelectionService(context.getParent().get(
-							ISelectionService.class));
+					selectionService = new SlaveSelectionService(context.getParent().get(ISelectionService.class));
 				}
 				return selectionService;
 			}
@@ -299,8 +280,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				if (contextService == null) {
-					contextService = new SlaveContextService(context.getParent().get(
-							IContextService.class), new ActivePartExpression(part));
+					contextService = new SlaveContextService(context.getParent().get(IContextService.class),
+							new ActivePartExpression(part));
 				}
 				return contextService;
 			}
@@ -309,8 +290,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				if (menuService == null) {
-					menuService = new SlaveMenuService(context.getParent().get(IMenuService.class),
-							model);
+					menuService = new SlaveMenuService(context.getParent().get(IMenuService.class), model);
 				}
 				return menuService;
 			}
@@ -328,9 +308,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				managers.add(ext.getManager());
 				ext.dispose();
 			}
-			if (managers.size()>0) {
-				for (Iterator iterator = managers.iterator(); iterator
-						.hasNext();) {
+			if (managers.size() > 0) {
+				for (Iterator iterator = managers.iterator(); iterator.hasNext();) {
 					MenuManager mgr = (MenuManager) iterator.next();
 					mgr.dispose();
 				}
@@ -338,10 +317,10 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			menuExtenders = null;
 		}
 
-		 if (keyBindingService != null) {
+		if (keyBindingService != null) {
 			keyBindingService.dispose();
 			keyBindingService = null;
-		 }
+		}
 
 		if (progressService != null) {
 			progressService.dispose();
@@ -383,9 +362,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Returns the action bars for the part. If this part is a view then it has
-	 * exclusive use of the action bars. If this part is an editor then the
-	 * action bars are shared among this editor and other editors of the same
-	 * type.
+	 * exclusive use of the action bars. If this part is an editor then the action
+	 * bars are shared among this editor and other editors of the same type.
 	 */
 	public IActionBars getActionBars() {
 		return actionBars;
@@ -393,8 +371,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	@Override
 	public String getId() {
-		return extensionId == null ? element == null ? model.getElementId() : element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_ID)
+		return extensionId == null
+				? element == null ? model.getElementId() : element.getAttribute(IWorkbenchRegistryConstants.ATT_ID)
 				: extensionId;
 	}
 
@@ -405,8 +383,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	@Override
 	public String getRegisteredName() {
-		return element == null ? model.getLocalizedLabel() : element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+		return element == null ? model.getLocalizedLabel() : element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
 	/**
@@ -419,7 +396,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		IWorkbenchWindow window = getWorkbenchWindow();
 		return window == null ? null : window.getActivePage();
 	}
-
 
 	/**
 	 * Returns the part.
@@ -490,7 +466,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	private MWindow getTopLevelModelWindow(MWindow window) {
 		EObject previousParent = (EObject) window;
 		EObject parent = previousParent.eContainer();
-		// we can't simply stop at an MWindow because the part may be in a detached window
+		// we can't simply stop at an MWindow because the part may be in a detached
+		// window
 		while (!(parent instanceof MApplication)) {
 			previousParent = parent;
 			parent = parent.eContainer();
@@ -513,8 +490,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * Register a popup menu for extension.
 	 */
 	@Override
-	public void registerContextMenu(String menuID, MenuManager menuMgr,
-			ISelectionProvider selProvider) {
+	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
@@ -526,8 +502,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * Register a popup menu with the default id for extension.
 	 */
 	@Override
-	public void registerContextMenu(MenuManager menuMgr,
-			ISelectionProvider selProvider) {
+	public void registerContextMenu(MenuManager menuMgr, ISelectionProvider selProvider) {
 		registerContextMenu(getId(), menuMgr, selProvider);
 	}
 
@@ -554,14 +529,12 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		actionBars = bars;
 	}
 
-
 	/**
 	 * Sets the part.
 	 */
 	public void setPart(IWorkbenchPart newPart) {
 		part = newPart;
 	}
-
 
 	/**
 	 * Set the selection provider for a part.
@@ -642,8 +615,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	}
 
 	/**
-	 * Prints out the identifier, the plug-in identifier and the registered
-	 * name. This is for debugging purposes only.
+	 * Prints out the identifier, the plug-in identifier and the registered name.
+	 * This is for debugging purposes only.
 	 *
 	 * @since 3.2
 	 */

@@ -60,14 +60,14 @@ import org.eclipse.swt.widgets.Control;
  */
 public interface IFocusService {
 	/**
-	 * Use the value to provide default copy behaviour in a handler element
-	 * class attribute.
+	 * Use the value to provide default copy behaviour in a handler element class
+	 * attribute.
 	 */
 	String COPY_HANDLER = "org.eclipse.ui.internal.handlers.WidgetMethodHandler:copy"; //$NON-NLS-1$
 
 	/**
-	 * Use the value to provide default paste behaviour in a handler element
-	 * class attribute.
+	 * Use the value to provide default paste behaviour in a handler element class
+	 * attribute.
 	 */
 	String PASTE_HANDLER = "org.eclipse.ui.internal.handlers.WidgetMethodHandler:paste"; //$NON-NLS-1$
 
@@ -78,16 +78,15 @@ public interface IFocusService {
 	String CUT_HANDLER = "org.eclipse.ui.internal.handlers.WidgetMethodHandler:cut"; //$NON-NLS-1$
 
 	/**
-	 * Use the value to provide default select all behaviour in a handler
-	 * element class attribute.
+	 * Use the value to provide default select all behaviour in a handler element
+	 * class attribute.
 	 */
 	String SELECT_ALL_HANDLER = "org.eclipse.ui.internal.handlers.SelectAllHandler"; //$NON-NLS-1$
 
 	/**
-	 * A Control for which the service will track focus. When in focus, this
-	 * Control and its ID will be provided as variables to core expressions for
-	 * the various services, as activeFocusControl and activeFocusControlId
-	 * respectively.
+	 * A Control for which the service will track focus. When in focus, this Control
+	 * and its ID will be provided as variables to core expressions for the various
+	 * services, as activeFocusControl and activeFocusControlId respectively.
 	 * <p>
 	 * A control must only be registered once, but different controls can be
 	 * registered with the same ID. Expressions evaluated against the
@@ -98,11 +97,9 @@ public interface IFocusService {
 	 * We will remove ourselves as a listener when the Control is disposed.
 	 * </p>
 	 *
-	 * @param control
-	 *            the control. Must not be <code>null</code>. If the control
-	 *            is already registered with this service this call is a no-op.
-	 * @param id
-	 *            an ID for this control. Must not be <code>null</code>.
+	 * @param control the control. Must not be <code>null</code>. If the control is
+	 *                already registered with this service this call is a no-op.
+	 * @param id      an ID for this control. Must not be <code>null</code>.
 	 */
 	void addFocusTracker(Control control, String id);
 
@@ -110,9 +107,8 @@ public interface IFocusService {
 	 * No longer track focus events for this control. Use this method when the
 	 * control should no longer be tracked, but is not disposed.
 	 *
-	 * @param control
-	 *            the control registered with the service. Must not be
-	 *            <code>null</code>.
+	 * @param control the control registered with the service. Must not be
+	 *                <code>null</code>.
 	 */
 	void removeFocusTracker(Control control);
 }

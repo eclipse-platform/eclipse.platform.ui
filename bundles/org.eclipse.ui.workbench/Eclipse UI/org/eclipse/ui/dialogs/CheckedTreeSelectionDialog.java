@@ -52,67 +52,59 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 2.0
  */
 public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
-    private CheckboxTreeViewer fViewer;
+	private CheckboxTreeViewer fViewer;
 
-    private ILabelProvider fLabelProvider;
+	private ILabelProvider fLabelProvider;
 
-    private ITreeContentProvider fContentProvider;
+	private ITreeContentProvider fContentProvider;
 
-    private ISelectionStatusValidator fValidator = null;
+	private ISelectionStatusValidator fValidator = null;
 
-    private ViewerComparator fComparator;
+	private ViewerComparator fComparator;
 
-    private String fEmptyListMessage = WorkbenchMessages.CheckedTreeSelectionDialog_nothing_available;
+	private String fEmptyListMessage = WorkbenchMessages.CheckedTreeSelectionDialog_nothing_available;
 
-    private IStatus fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
-            0, "", null); //$NON-NLS-1$
+	private IStatus fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 
-    private List fFilters;
+	private List fFilters;
 
-    private Object fInput;
+	private Object fInput;
 
-    private boolean fIsEmpty;
+	private boolean fIsEmpty;
 
-    private int fWidth = 60;
+	private int fWidth = 60;
 
-    private int fHeight = 18;
+	private int fHeight = 18;
 
-    private boolean fContainerMode;
+	private boolean fContainerMode;
 
-    private Object[] fExpandedElements;
+	private Object[] fExpandedElements;
 
 	private int fStyle = SWT.BORDER;
-
-    /**
-     * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
-     *
-     * @param parent
-     *            The shell to parent from.
-     * @param labelProvider
-     *            the label provider to render the entries
-     * @param contentProvider
-     *            the content provider to evaluate the tree structure
-     */
-    public CheckedTreeSelectionDialog(Shell parent,
-            ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
-		this(parent, labelProvider, contentProvider, SWT.BORDER);
-    }
 
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
 	 *
-	 * @param parent
-	 *            The shell to parent from.
-	 * @param labelProvider
-	 *            the label provider to render the entries
-	 * @param contentProvider
-	 *            the content provider to evaluate the tree structure
-	 * @param style
-	 *            the style of the tree
-	 * @since 3.105
+	 * @param parent          The shell to parent from.
+	 * @param labelProvider   the label provider to render the entries
+	 * @param contentProvider the content provider to evaluate the tree structure
 	 */
 	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider,
-			ITreeContentProvider contentProvider, int style) {
+			ITreeContentProvider contentProvider) {
+		this(parent, labelProvider, contentProvider, SWT.BORDER);
+	}
+
+	/**
+	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
+	 *
+	 * @param parent          The shell to parent from.
+	 * @param labelProvider   the label provider to render the entries
+	 * @param contentProvider the content provider to evaluate the tree structure
+	 * @param style           the style of the tree
+	 * @since 3.105
+	 */
+	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
+			int style) {
 		super(parent);
 		fLabelProvider = labelProvider;
 		fContentProvider = contentProvider;
@@ -123,38 +115,35 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 		fStyle = style;
 	}
 
-    /**
-     * If set, the checked /gray state of containers (inner nodes) is derived
-     * from the checked state of its leaf nodes.
-     *
-     * @param containerMode
-     *            The containerMode to set
-     */
-    public void setContainerMode(boolean containerMode) {
-        fContainerMode = containerMode;
-    }
+	/**
+	 * If set, the checked /gray state of containers (inner nodes) is derived from
+	 * the checked state of its leaf nodes.
+	 *
+	 * @param containerMode The containerMode to set
+	 */
+	public void setContainerMode(boolean containerMode) {
+		fContainerMode = containerMode;
+	}
 
-    /**
-     * Sets the initial selection. Convenience method.
-     *
-     * @param selection
-     *            the initial selection.
-     */
-    public void setInitialSelection(Object selection) {
+	/**
+	 * Sets the initial selection. Convenience method.
+	 *
+	 * @param selection the initial selection.
+	 */
+	public void setInitialSelection(Object selection) {
 		setInitialSelections(selection);
-    }
+	}
 
-    /**
-     * Sets the message to be displayed if the list is empty.
-     *
-     * @param message
-     *            the message to be displayed.
-     */
-    public void setEmptyListMessage(String message) {
-        fEmptyListMessage = message;
-    }
+	/**
+	 * Sets the message to be displayed if the list is empty.
+	 *
+	 * @param message the message to be displayed.
+	 */
+	public void setEmptyListMessage(String message) {
+		fEmptyListMessage = message;
+	}
 
-    /**
+	/**
 	 * Sets the sorter used by the tree viewer.
 	 *
 	 * @param sorter
@@ -162,17 +151,16 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 *             {@link CheckedTreeSelectionDialog#setComparator(ViewerComparator)}
 	 *             instead
 	 */
-    @Deprecated
+	@Deprecated
 	public void setSorter(ViewerSorter sorter) {
-        fComparator = sorter;
-    }
+		fComparator = sorter;
+	}
 
-    /**
-	 * Set the style used for the creation of the Tree. Changing this will only
-	 * have an effect up to the time the Tree is created.
+	/**
+	 * Set the style used for the creation of the Tree. Changing this will only have
+	 * an effect up to the time the Tree is created.
 	 *
-	 * @param style
-	 *            the style of the tree
+	 * @param style the style of the tree
 	 * @since 3.105
 	 */
 	public void setStyle(int style) {
@@ -185,239 +173,225 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 * @param comparator
 	 * @since 3.3
 	 */
-    public void setComparator(ViewerComparator comparator){
-    	fComparator = comparator;
-    }
+	public void setComparator(ViewerComparator comparator) {
+		fComparator = comparator;
+	}
 
-    /**
-     * Adds a filter to the tree viewer.
-     *
-     * @param filter
-     *            a filter.
-     */
-    public void addFilter(ViewerFilter filter) {
-        if (fFilters == null) {
+	/**
+	 * Adds a filter to the tree viewer.
+	 *
+	 * @param filter a filter.
+	 */
+	public void addFilter(ViewerFilter filter) {
+		if (fFilters == null) {
 			fFilters = new ArrayList(4);
 		}
-        fFilters.add(filter);
-    }
+		fFilters.add(filter);
+	}
 
-    /**
-     * Sets an optional validator to check if the selection is valid. The
-     * validator is invoked whenever the selection changes.
-     *
-     * @param validator
-     *            the validator to validate the selection.
-     */
-    public void setValidator(ISelectionStatusValidator validator) {
-        fValidator = validator;
-    }
+	/**
+	 * Sets an optional validator to check if the selection is valid. The validator
+	 * is invoked whenever the selection changes.
+	 *
+	 * @param validator the validator to validate the selection.
+	 */
+	public void setValidator(ISelectionStatusValidator validator) {
+		fValidator = validator;
+	}
 
-    /**
-     * Sets the tree input.
-     *
-     * @param input
-     *            the tree input.
-     */
-    public void setInput(Object input) {
-        fInput = input;
-    }
+	/**
+	 * Sets the tree input.
+	 *
+	 * @param input the tree input.
+	 */
+	public void setInput(Object input) {
+		fInput = input;
+	}
 
-    /**
-     * Expands elements in the tree.
-     *
-     * @param elements
-     *            The elements that will be expanded.
-     */
-    public void setExpandedElements(Object[] elements) {
-        fExpandedElements = elements;
-    }
+	/**
+	 * Expands elements in the tree.
+	 *
+	 * @param elements The elements that will be expanded.
+	 */
+	public void setExpandedElements(Object[] elements) {
+		fExpandedElements = elements;
+	}
 
-    /**
-     * Sets the size of the tree in unit of characters.
-     *
-     * @param width
-     *            the width of the tree.
-     * @param height
-     *            the height of the tree.
-     */
-    public void setSize(int width, int height) {
-        fWidth = width;
-        fHeight = height;
-    }
+	/**
+	 * Sets the size of the tree in unit of characters.
+	 *
+	 * @param width  the width of the tree.
+	 * @param height the height of the tree.
+	 */
+	public void setSize(int width, int height) {
+		fWidth = width;
+		fHeight = height;
+	}
 
-    /**
-     * Validate the receiver and update the status with the result.
-     *
-     */
-    protected void updateOKStatus() {
-        if (!fIsEmpty) {
-            if (fValidator != null) {
-                fCurrStatus = fValidator.validate(fViewer.getCheckedElements());
-                updateStatus(fCurrStatus);
-            } else if (!fCurrStatus.isOK()) {
-                fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
-                        IStatus.OK, "", //$NON-NLS-1$
-                        null);
-            }
-        } else {
-            fCurrStatus = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
-                    IStatus.OK, fEmptyListMessage, null);
-        }
-        updateStatus(fCurrStatus);
-    }
+	/**
+	 * Validate the receiver and update the status with the result.
+	 *
+	 */
+	protected void updateOKStatus() {
+		if (!fIsEmpty) {
+			if (fValidator != null) {
+				fCurrStatus = fValidator.validate(fViewer.getCheckedElements());
+				updateStatus(fCurrStatus);
+			} else if (!fCurrStatus.isOK()) {
+				fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
+						null);
+			}
+		} else {
+			fCurrStatus = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, fEmptyListMessage, null);
+		}
+		updateStatus(fCurrStatus);
+	}
 
-    @Override
+	@Override
 	public int open() {
-        fIsEmpty = evaluateIfTreeEmpty(fInput);
-        super.open();
-        return getReturnCode();
-    }
+		fIsEmpty = evaluateIfTreeEmpty(fInput);
+		super.open();
+		return getReturnCode();
+	}
 
-    private void access$superCreate() {
-        super.create();
-    }
+	private void access$superCreate() {
+		super.create();
+	}
 
-    /**
-     * Handles cancel button pressed event.
-     */
-    @Override
+	/**
+	 * Handles cancel button pressed event.
+	 */
+	@Override
 	protected void cancelPressed() {
-        setResult(null);
-        super.cancelPressed();
-    }
+		setResult(null);
+		super.cancelPressed();
+	}
 
-    /*
-     * @see SelectionStatusDialog#computeResult()
-     */
-    @Override
+	/*
+	 * @see SelectionStatusDialog#computeResult()
+	 */
+	@Override
 	protected void computeResult() {
-        setResult(Arrays.asList(fViewer.getCheckedElements()));
-    }
+		setResult(Arrays.asList(fViewer.getCheckedElements()));
+	}
 
-    @Override
+	@Override
 	public void create() {
-        BusyIndicator.showWhile(null, () -> {
-		    access$superCreate();
-		    fViewer.setCheckedElements(getInitialElementSelections()
-		            .toArray());
-		    if (fExpandedElements != null) {
-		        fViewer.setExpandedElements(fExpandedElements);
-		    }
-		    updateOKStatus();
+		BusyIndicator.showWhile(null, () -> {
+			access$superCreate();
+			fViewer.setCheckedElements(getInitialElementSelections().toArray());
+			if (fExpandedElements != null) {
+				fViewer.setExpandedElements(fExpandedElements);
+			}
+			updateOKStatus();
 		});
-    }
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        Composite composite = (Composite) super.createDialogArea(parent);
-        Label messageLabel = createMessageArea(composite);
-        CheckboxTreeViewer treeViewer = createTreeViewer(composite);
-        Control buttonComposite = createSelectionButtons(composite);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = convertWidthInCharsToPixels(fWidth);
-        data.heightHint = convertHeightInCharsToPixels(fHeight);
-        Tree treeWidget = treeViewer.getTree();
-        treeWidget.setLayoutData(data);
-        treeWidget.setFont(parent.getFont());
-        if (fIsEmpty) {
-            messageLabel.setEnabled(false);
-            treeWidget.setEnabled(false);
-            buttonComposite.setEnabled(false);
-        }
-        return composite;
-    }
+		Composite composite = (Composite) super.createDialogArea(parent);
+		Label messageLabel = createMessageArea(composite);
+		CheckboxTreeViewer treeViewer = createTreeViewer(composite);
+		Control buttonComposite = createSelectionButtons(composite);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = convertWidthInCharsToPixels(fWidth);
+		data.heightHint = convertHeightInCharsToPixels(fHeight);
+		Tree treeWidget = treeViewer.getTree();
+		treeWidget.setLayoutData(data);
+		treeWidget.setFont(parent.getFont());
+		if (fIsEmpty) {
+			messageLabel.setEnabled(false);
+			treeWidget.setEnabled(false);
+			buttonComposite.setEnabled(false);
+		}
+		return composite;
+	}
 
-    /**
-     * Creates the tree viewer.
-     *
-     * @param parent
-     *            the parent composite
-     * @return the tree viewer
-     */
-    protected CheckboxTreeViewer createTreeViewer(Composite parent) {
-        if (fContainerMode) {
+	/**
+	 * Creates the tree viewer.
+	 *
+	 * @param parent the parent composite
+	 * @return the tree viewer
+	 */
+	protected CheckboxTreeViewer createTreeViewer(Composite parent) {
+		if (fContainerMode) {
 			fViewer = new ContainerCheckedTreeViewer(parent, fStyle);
-        } else {
+		} else {
 			fViewer = new CheckboxTreeViewer(parent, fStyle);
-        }
-        fViewer.setContentProvider(fContentProvider);
-        fViewer.setLabelProvider(fLabelProvider);
-        fViewer.addCheckStateListener(event -> updateOKStatus());
-        fViewer.setComparator(fComparator);
-        if (fFilters != null) {
-            for (int i = 0; i != fFilters.size(); i++) {
+		}
+		fViewer.setContentProvider(fContentProvider);
+		fViewer.setLabelProvider(fLabelProvider);
+		fViewer.addCheckStateListener(event -> updateOKStatus());
+		fViewer.setComparator(fComparator);
+		if (fFilters != null) {
+			for (int i = 0; i != fFilters.size(); i++) {
 				fViewer.addFilter((ViewerFilter) fFilters.get(i));
 			}
-        }
-        fViewer.setInput(fInput);
-        return fViewer;
-    }
+		}
+		fViewer.setInput(fInput);
+		return fViewer;
+	}
 
-    /**
-     * Returns the tree viewer.
-     *
-     * @return the tree viewer
-     */
-    protected CheckboxTreeViewer getTreeViewer() {
-        return fViewer;
-    }
+	/**
+	 * Returns the tree viewer.
+	 *
+	 * @return the tree viewer
+	 */
+	protected CheckboxTreeViewer getTreeViewer() {
+		return fViewer;
+	}
 
-    /**
-     * Adds the selection and deselection buttons to the dialog.
-     *
-     * @param composite
-     *            the parent composite
-     * @return Composite the composite the buttons were created in.
-     */
-    protected Composite createSelectionButtons(Composite composite) {
-        Composite buttonComposite = new Composite(composite, SWT.RIGHT);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 0;
+	/**
+	 * Adds the selection and deselection buttons to the dialog.
+	 *
+	 * @param composite the parent composite
+	 * @return Composite the composite the buttons were created in.
+	 */
+	protected Composite createSelectionButtons(Composite composite) {
+		Composite buttonComposite = new Composite(composite, SWT.RIGHT);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 0;
 		layout.marginWidth = 0;
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		buttonComposite.setLayout(layout);
-        buttonComposite.setFont(composite.getFont());
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
-                | GridData.GRAB_HORIZONTAL);
-        data.grabExcessHorizontalSpace = true;
-        buttonComposite.setLayoutData(data);
-        Button selectButton = createButton(buttonComposite,
-                IDialogConstants.SELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_select_all,
-                false);
-        SelectionListener listener = widgetSelectedAdapter(e -> {
-		    Object[] viewerElements = fContentProvider.getElements(fInput);
-		    if (fContainerMode) {
+		buttonComposite.setFont(composite.getFont());
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		buttonComposite.setLayoutData(data);
+		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID,
+				WorkbenchMessages.CheckedTreeSelectionDialog_select_all, false);
+		SelectionListener listener = widgetSelectedAdapter(e -> {
+			Object[] viewerElements = fContentProvider.getElements(fInput);
+			if (fContainerMode) {
 				fViewer.setCheckedElements(viewerElements);
 			} else {
-		        for (Object viewerElement : viewerElements) {
+				for (Object viewerElement : viewerElements) {
 					fViewer.setSubtreeChecked(viewerElement, true);
 				}
-		    }
-		    updateOKStatus();
+			}
+			updateOKStatus();
 		});
-        selectButton.addSelectionListener(listener);
-        Button deselectButton = createButton(buttonComposite,
-                IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_deselect_all,
-                false);
-        listener = widgetSelectedAdapter(e -> {
-		    fViewer.setCheckedElements(new Object[0]);
-		    updateOKStatus();
+		selectButton.addSelectionListener(listener);
+		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID,
+				WorkbenchMessages.CheckedTreeSelectionDialog_deselect_all, false);
+		listener = widgetSelectedAdapter(e -> {
+			fViewer.setCheckedElements(new Object[0]);
+			updateOKStatus();
 		});
-        deselectButton.addSelectionListener(listener);
-        return buttonComposite;
-    }
+		deselectButton.addSelectionListener(listener);
+		return buttonComposite;
+	}
 
-    private boolean evaluateIfTreeEmpty(Object input) {
-        Object[] elements = fContentProvider.getElements(input);
-        if (elements.length > 0) {
-            if (fFilters != null) {
-                for (int i = 0; i < fFilters.size(); i++) {
-                    ViewerFilter curr = (ViewerFilter) fFilters.get(i);
-                    elements = curr.filter(fViewer, input, elements);
-                }
-            }
-        }
-        return elements.length == 0;
-    }
+	private boolean evaluateIfTreeEmpty(Object input) {
+		Object[] elements = fContentProvider.getElements(input);
+		if (elements.length > 0) {
+			if (fFilters != null) {
+				for (int i = 0; i < fFilters.size(); i++) {
+					ViewerFilter curr = (ViewerFilter) fFilters.get(i);
+					elements = curr.filter(fViewer, input, elements);
+				}
+			}
+		}
+		return elements.length == 0;
+	}
 }

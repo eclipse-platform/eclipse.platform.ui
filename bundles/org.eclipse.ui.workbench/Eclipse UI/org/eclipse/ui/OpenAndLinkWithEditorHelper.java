@@ -24,9 +24,9 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 
-
 /**
- * Helper for opening editors on the viewer's selection and link the selection with the editor.
+ * Helper for opening editors on the viewer's selection and link the selection
+ * with the editor.
  *
  * @since 3.5
  */
@@ -39,7 +39,6 @@ public abstract class OpenAndLinkWithEditorHelper {
 	private ISelection lastOpenSelection;
 
 	private InternalListener listener;
-
 
 	private final class InternalListener implements IOpenListener, ISelectionChangedListener, IDoubleClickListener {
 
@@ -65,7 +64,6 @@ public abstract class OpenAndLinkWithEditorHelper {
 
 	}
 
-
 	/**
 	 * Creates a new helper for the given viewer.
 	 *
@@ -81,7 +79,8 @@ public abstract class OpenAndLinkWithEditorHelper {
 	}
 
 	/**
-	 * Sets whether editor that corresponds to the viewer's selection should be brought to front.
+	 * Sets whether editor that corresponds to the viewer's selection should be
+	 * brought to front.
 	 *
 	 * @param enabled <code>true</code> to enable, <code>false</code> to disable
 	 */
@@ -92,7 +91,8 @@ public abstract class OpenAndLinkWithEditorHelper {
 	/**
 	 * Disposes this helper.
 	 * <p>
-	 * Clients only need to call this method if their viewer has a longer life-cycle than this helper.
+	 * Clients only need to call this method if their viewer has a longer life-cycle
+	 * than this helper.
 	 * </p>
 	 */
 	public void dispose() {
@@ -117,8 +117,8 @@ public abstract class OpenAndLinkWithEditorHelper {
 	 * Tells to open an editor for the given selection.
 	 *
 	 * @param selection the viewer's selection
-	 * @param activate <code>true</code> if the editor should be activated, <code>false</code>
-	 *            otherwise
+	 * @param activate  <code>true</code> if the editor should be activated,
+	 *                  <code>false</code> otherwise
 	 * @since 3.5
 	 */
 	protected abstract void open(ISelection selection, boolean activate);
@@ -137,8 +137,7 @@ public abstract class OpenAndLinkWithEditorHelper {
 	 * The default implementation does nothing i.e. does not implement linking.
 	 * </p>
 	 *
-	 * @param selection
-	 *            the viewer's selection
+	 * @param selection the viewer's selection
 	 * @since 3.5, non-abstract since 4.3
 	 */
 	protected void linkToEditor(ISelection selection) {

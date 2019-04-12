@@ -37,8 +37,8 @@ public interface IContributionService {
 	/**
 	 * Return a comparator for ordering contributions within the user interface.
 	 *
-	 * @param contributionType
-	 *            the type of contribution, must not be <code>null</code>.
+	 * @param contributionType the type of contribution, must not be
+	 *                         <code>null</code>.
 	 * @return the comparator
 	 * @see #TYPE_PREFERENCE
 	 * @see #TYPE_PROPERTY

@@ -46,10 +46,8 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 			if (!(menu instanceof ContributionManager)) {
 				return;
 			}
-			IMenuService service = PlatformUI.getWorkbench()
-					.getService(IMenuService.class);
-			service.populateContributionManager((ContributionManager) menu,
-					locationURI);
+			IMenuService service = PlatformUI.getWorkbench().getService(IMenuService.class);
+			service.populateContributionManager((ContributionManager) menu, locationURI);
 			menu.addMenuListener(QuickMenuHandler.this);
 		}
 
@@ -81,8 +79,7 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				IMenuService service = PlatformUI.getWorkbench()
-						.getService(IMenuService.class);
+				IMenuService service = PlatformUI.getWorkbench().getService(IMenuService.class);
 				service.releaseContributions((ContributionManager) managerM);
 				return Status.OK_STATUS;
 			}

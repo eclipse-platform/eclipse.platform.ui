@@ -48,17 +48,14 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 			File workspaceFile = createFileAndDirectories(newWorkspaceRoot);
 
 			if (workspaceFile == null)
-				return new Status(
-						IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH,
+				return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 						WorkbenchMessages.WorkbenchSettings_CouldNotCreateDirectories);
 
 			File deltas = new File(currentLocation.toOSString(), "deltas.xml"); //$NON-NLS-1$
 			if (deltas.exists()) {
 				byte[] bytes = new byte[8192];
 				FileInputStream inputStream = new FileInputStream(deltas);
-				FileOutputStream outputStream = new FileOutputStream(new File(workspaceFile,
-						"deltas.xml")); //$NON-NLS-1$
+				FileOutputStream outputStream = new FileOutputStream(new File(workspaceFile, "deltas.xml")); //$NON-NLS-1$
 				int read = inputStream.read(bytes, 0, 8192);
 				while (read != -1) {
 					outputStream.write(bytes, 0, read);
@@ -72,8 +69,7 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 			if (workbenchModel.exists()) {
 				byte[] bytes = new byte[8192];
 				FileInputStream inputStream = new FileInputStream(workbenchModel);
-				FileOutputStream outputStream = new FileOutputStream(new File(workspaceFile,
-						"workbench.xmi")); //$NON-NLS-1$
+				FileOutputStream outputStream = new FileOutputStream(new File(workspaceFile, "workbench.xmi")); //$NON-NLS-1$
 				int read = inputStream.read(bytes, 0, 8192);
 				while (read != -1) {
 					outputStream.write(bytes, 0, read);
@@ -92,12 +88,12 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	}
 
 	/**
-	 * Create the parent directories for the workbench layout file and then
-	 * return the File.
+	 * Create the parent directories for the workbench layout file and then return
+	 * the File.
 	 *
 	 * @param newWorkspaceRoot
-	 * @return File the new layout file. Return <code>null</code> if the file
-	 *         cannot be created.
+	 * @return File the new layout file. Return <code>null</code> if the file cannot
+	 *         be created.
 	 */
 	private File createFileAndDirectories(IPath newWorkspaceRoot) {
 		IPath newWorkspaceLocation = getNewWorkbenchStateLocation(newWorkspaceRoot);

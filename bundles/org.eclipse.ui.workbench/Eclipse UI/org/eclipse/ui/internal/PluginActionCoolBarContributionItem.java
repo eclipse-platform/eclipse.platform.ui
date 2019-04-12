@@ -20,33 +20,33 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Contribution item for actions provided by plugins via workbench
- * action extension points.
+ * Contribution item for actions provided by plugins via workbench action
+ * extension points.
  */
-public class PluginActionCoolBarContributionItem extends
-        PluginActionContributionItem implements IActionSetContributionItem {
-    private String actionSetId;
+public class PluginActionCoolBarContributionItem extends PluginActionContributionItem
+		implements IActionSetContributionItem {
+	private String actionSetId;
 
-    /**
-     * Creates a new contribution item from the given action.
-     * The id of the action is used as the id of the item.
-     *
-     * @param action the action
-     */
-    public PluginActionCoolBarContributionItem(PluginAction action) {
-        super(action);
-        setActionSetId(((WWinPluginAction) action).getActionSetId());
-    }
+	/**
+	 * Creates a new contribution item from the given action. The id of the action
+	 * is used as the id of the item.
+	 *
+	 * @param action the action
+	 */
+	public PluginActionCoolBarContributionItem(PluginAction action) {
+		super(action);
+		setActionSetId(((WWinPluginAction) action).getActionSetId());
+	}
 
-    @Override
+	@Override
 	public String getActionSetId() {
-        return actionSetId;
-    }
+		return actionSetId;
+	}
 
-    @Override
+	@Override
 	public void setActionSetId(String id) {
-        this.actionSetId = id;
-    }
+		this.actionSetId = id;
+	}
 
 	@Override
 	protected void invalidateParent() {

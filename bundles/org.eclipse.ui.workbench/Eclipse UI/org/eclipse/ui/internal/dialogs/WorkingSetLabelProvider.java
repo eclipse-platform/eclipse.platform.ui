@@ -24,40 +24,40 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkingSet;
 
 public class WorkingSetLabelProvider extends LabelProvider {
-    private ResourceManager images;
+	private ResourceManager images;
 
-    /**
-     * Create a new instance of the receiver.
-     */
-    public WorkingSetLabelProvider() {
-        images = new LocalResourceManager(JFaceResources.getResources());
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 */
+	public WorkingSetLabelProvider() {
+		images = new LocalResourceManager(JFaceResources.getResources());
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        images.dispose();
+		images.dispose();
 
-        super.dispose();
-    }
+		super.dispose();
+	}
 
-    @Override
+	@Override
 	public Image getImage(Object object) {
-        Assert.isTrue(object instanceof IWorkingSet);
-        IWorkingSet workingSet = (IWorkingSet) object;
-        ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
+		Assert.isTrue(object instanceof IWorkingSet);
+		IWorkingSet workingSet = (IWorkingSet) object;
+		ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
 
-        if (imageDescriptor == null) {
+		if (imageDescriptor == null) {
 			return null;
 		}
 
-        Image icon = (Image) images.get(imageDescriptor);
-        return icon;
-    }
+		Image icon = (Image) images.get(imageDescriptor);
+		return icon;
+	}
 
-    @Override
+	@Override
 	public String getText(Object object) {
-        Assert.isTrue(object instanceof IWorkingSet);
-        IWorkingSet workingSet = (IWorkingSet) object;
-        return workingSet.getLabel();
-    }
+		Assert.isTrue(object instanceof IWorkingSet);
+		IWorkingSet workingSet = (IWorkingSet) object;
+		return workingSet.getLabel();
+	}
 }

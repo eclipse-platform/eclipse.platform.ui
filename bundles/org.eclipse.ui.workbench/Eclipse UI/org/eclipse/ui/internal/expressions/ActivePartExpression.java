@@ -37,8 +37,7 @@ public final class ActivePartExpression extends Expression {
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = ActivePartExpression.class
-			.getName().hashCode();
+	private static final int HASH_INITIAL = ActivePartExpression.class.getName().hashCode();
 
 	/**
 	 * The part that must be active for this expression to evaluate to
@@ -49,9 +48,8 @@ public final class ActivePartExpression extends Expression {
 	/**
 	 * Constructs a new instance of <code>ActivePartExpression</code>
 	 *
-	 * @param activePart
-	 *            The part to match with the active part; may be
-	 *            <code>null</code>
+	 * @param activePart The part to match with the active part; may be
+	 *                   <code>null</code>
 	 */
 	public ActivePartExpression(final IWorkbenchPart activePart) {
 		if (activePart == null) {

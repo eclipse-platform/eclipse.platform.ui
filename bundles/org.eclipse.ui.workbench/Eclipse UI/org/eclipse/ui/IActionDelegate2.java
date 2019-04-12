@@ -24,11 +24,13 @@ import org.eclipse.swt.widgets.Event;
  * An action delegate that implements this interface will have its
  * <code>runWithEvent(IAction, Event)</code> called instead of its
  * <code>run(IAction)</code> method.
- * </p><p>
+ * </p>
+ * <p>
  * Clients should implement this interface, in addition to
  * <code>IActionDelegate</code> or sub-interfaces, if interested in the
  * triggering event or in the lifecycle of the delegate object.
- * </p><p>
+ * </p>
+ * <p>
  * Clients can choose to subclass the provided abstract implementation
  * <code>org. eclipse. ui. actions. ActionDelegate</code> or implement the
  * interface directly.
@@ -39,36 +41,35 @@ import org.eclipse.swt.widgets.Event;
  * @since 2.1
  */
 public interface IActionDelegate2 extends IActionDelegate {
-    /**
-     * Allows the action delegate to initialize itself after being created by
-     * the proxy action. This lifecycle method is called after the
-     * action delegate has been created and before any other method of the
-     * action delegate is called.
-     *
-     * @param action the proxy action that handles the presentation portion of
-     * the action.
-     */
-    void init(IAction action);
+	/**
+	 * Allows the action delegate to initialize itself after being created by the
+	 * proxy action. This lifecycle method is called after the action delegate has
+	 * been created and before any other method of the action delegate is called.
+	 *
+	 * @param action the proxy action that handles the presentation portion of the
+	 *               action.
+	 */
+	void init(IAction action);
 
-    /**
-     * Allows the action delegate to clean up. This lifecycle method is called
-     * when the proxy action is done with this action delegate. This is the last
-     * method called.
-     */
-    void dispose();
+	/**
+	 * Allows the action delegate to clean up. This lifecycle method is called when
+	 * the proxy action is done with this action delegate. This is the last method
+	 * called.
+	 */
+	void dispose();
 
-    /**
-     * Performs this action, passing the SWT event which triggered it. This
-     * method is called by the proxy action when the action has been triggered.
-     * Implement this method to do the actual work.
-     * <p>
-     * <b>Note:</b> This method is called instead of <code>run(IAction)</code>.
-     * </p>
-     *
-     * @param action the action proxy that handles the presentation portion of
-     * the action
-     * @param event the SWT event which triggered this action being run
-     * @since 2.0
-     */
-    void runWithEvent(IAction action, Event event);
+	/**
+	 * Performs this action, passing the SWT event which triggered it. This method
+	 * is called by the proxy action when the action has been triggered. Implement
+	 * this method to do the actual work.
+	 * <p>
+	 * <b>Note:</b> This method is called instead of <code>run(IAction)</code>.
+	 * </p>
+	 *
+	 * @param action the action proxy that handles the presentation portion of the
+	 *               action
+	 * @param event  the SWT event which triggered this action being run
+	 * @since 2.0
+	 */
+	void runWithEvent(IAction action, Event event);
 }

@@ -23,44 +23,44 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public class ThemeManagerAdapter extends PropertyMapAdapter {
 
-    private IThemeManager manager;
+	private IThemeManager manager;
 
-    private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
+	private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
 
-    public ThemeManagerAdapter(IThemeManager manager) {
-        this.manager = manager;
-    }
+	public ThemeManagerAdapter(IThemeManager manager) {
+		this.manager = manager;
+	}
 
-    @Override
+	@Override
 	protected void attachListener() {
-        manager.addPropertyChangeListener(listener);
-    }
+		manager.addPropertyChangeListener(listener);
+	}
 
-    @Override
+	@Override
 	protected void detachListener() {
-        manager.removePropertyChangeListener(listener);
-    }
+		manager.removePropertyChangeListener(listener);
+	}
 
-    @Override
+	@Override
 	public Set keySet() {
-        Set result = ThemeAdapter.getKeySet(manager.getCurrentTheme());
+		Set result = ThemeAdapter.getKeySet(manager.getCurrentTheme());
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
+	@Override
 	public Object getValue(String propertyId, Class propertyType) {
-        return ThemeAdapter.getValue(manager.getCurrentTheme(), propertyId, propertyType);
-    }
+		return ThemeAdapter.getValue(manager.getCurrentTheme(), propertyId, propertyType);
+	}
 
-    @Override
+	@Override
 	public boolean propertyExists(String propertyId) {
-        return keySet().contains(propertyId);
-    }
+		return keySet().contains(propertyId);
+	}
 
-    @Override
+	@Override
 	public void setValue(String propertyId, Object newValue) {
-        throw new UnsupportedOperationException();
-    }
+		throw new UnsupportedOperationException();
+	}
 
 }

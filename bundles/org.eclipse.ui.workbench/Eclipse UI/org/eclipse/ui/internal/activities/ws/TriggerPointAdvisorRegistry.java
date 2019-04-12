@@ -58,9 +58,8 @@ public class TriggerPointAdvisorRegistry {
 	 * @return the advisors
 	 */
 	public TriggerPointAdvisorDescriptor[] getAdvisors() {
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
 		if (point == null) {
 			return new TriggerPointAdvisorDescriptor[0];
 		}
@@ -91,14 +90,12 @@ public class TriggerPointAdvisorRegistry {
 	/**
 	 * Return the trigger point advisor bound to a given product.
 	 *
-	 * @param productId
-	 *            the product id
+	 * @param productId the product id
 	 * @return the advisor
 	 */
 	public TriggerPointAdvisorDescriptor getAdvisorForProduct(String productId) {
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
 		if (point == null) {
 			return null;
 		}
@@ -126,29 +123,19 @@ public class TriggerPointAdvisorRegistry {
 	 * @param extensions
 	 * @return the advisor id
 	 */
-	private String getAdvisorForProduct(String targetProductId,
-			IExtension[] extensions) {
+	private String getAdvisorForProduct(String targetProductId, IExtension[] extensions) {
 		for (IExtension extension : extensions) {
-			IConfigurationElement[] elements = extension
-					.getConfigurationElements();
+			IConfigurationElement[] elements = extension.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
-				if (element.getName().equals(
-						IWorkbenchRegistryConstants.TAG_ADVISORPRODUCTBINDING)) {
-					String advisorId = element
-							.getAttribute(IWorkbenchRegistryConstants.ATT_ADVISORID);
-					String productId = element
-							.getAttribute(IWorkbenchRegistryConstants.ATT_PRODUCTID);
+				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_ADVISORPRODUCTBINDING)) {
+					String advisorId = element.getAttribute(IWorkbenchRegistryConstants.ATT_ADVISORID);
+					String productId = element.getAttribute(IWorkbenchRegistryConstants.ATT_PRODUCTID);
 
 					if (advisorId == null || productId == null) {
-						IStatus status = new Status(
-								IStatus.ERROR,
-								element.getDeclaringExtension()
-										.getContributor().getName(),
-								IStatus.ERROR,
+						IStatus status = new Status(IStatus.ERROR,
+								element.getDeclaringExtension().getContributor().getName(), IStatus.ERROR,
 								"triggerPointAdvisorId and productId must be defined.", new IllegalArgumentException()); //$NON-NLS-1$
-						WorkbenchPlugin
-								.log(
-										"Invalid trigger point advisor binding", status); //$NON-NLS-1$
+						WorkbenchPlugin.log("Invalid trigger point advisor binding", status); //$NON-NLS-1$
 						continue;
 					}
 

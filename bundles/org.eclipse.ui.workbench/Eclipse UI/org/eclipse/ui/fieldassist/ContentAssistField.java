@@ -52,40 +52,35 @@ public class ContentAssistField extends DecoratedField {
 	 * Construct a content assist field that shows a content assist cue and can
 	 * assist the user with choosing content for the field.
 	 *
-	 * @param parent
-	 *            the parent of the decorated field.
-	 * @param style
-	 *            the desired style bits for the field.
-	 * @param controlCreator
-	 *            the IControlCreator used to specify the specific kind of
-	 *            control that is to be decorated.
-	 * @param controlContentAdapter
-	 *            the <code>IControlContentAdapter</code> used to obtain and
-	 *            update the control's contents as proposals are accepted. May
-	 *            not be <code>null</code>.
-	 * @param proposalProvider
-	 *            the <code>IContentProposalProvider</code> used to obtain
-	 *            content proposals for this control, or <code>null</code> if
-	 *            no content proposal is available.
-	 * @param commandId
-	 *            the String id of the command that will invoke the content
-	 *            assistant. If not supplied, the default value will be
-	 *            "org.eclipse.ui.edit.text.contentAssist.proposals".
-	 * @param autoActivationCharacters
-	 *            An array of characters that trigger auto-activation of content
-	 *            proposal. If specified, these characters will trigger
-	 *            auto-activation of the proposal popup, regardless of the
-	 *            specified command id.
+	 * @param parent                   the parent of the decorated field.
+	 * @param style                    the desired style bits for the field.
+	 * @param controlCreator           the IControlCreator used to specify the
+	 *                                 specific kind of control that is to be
+	 *                                 decorated.
+	 * @param controlContentAdapter    the <code>IControlContentAdapter</code> used
+	 *                                 to obtain and update the control's contents
+	 *                                 as proposals are accepted. May not be
+	 *                                 <code>null</code>.
+	 * @param proposalProvider         the <code>IContentProposalProvider</code>
+	 *                                 used to obtain content proposals for this
+	 *                                 control, or <code>null</code> if no content
+	 *                                 proposal is available.
+	 * @param commandId                the String id of the command that will invoke
+	 *                                 the content assistant. If not supplied, the
+	 *                                 default value will be
+	 *                                 "org.eclipse.ui.edit.text.contentAssist.proposals".
+	 * @param autoActivationCharacters An array of characters that trigger
+	 *                                 auto-activation of content proposal. If
+	 *                                 specified, these characters will trigger
+	 *                                 auto-activation of the proposal popup,
+	 *                                 regardless of the specified command id.
 	 */
-	public ContentAssistField(Composite parent, int style,
-			IControlCreator controlCreator,
-			IControlContentAdapter controlContentAdapter,
-			IContentProposalProvider proposalProvider, String commandId,
+	public ContentAssistField(Composite parent, int style, IControlCreator controlCreator,
+			IControlContentAdapter controlContentAdapter, IContentProposalProvider proposalProvider, String commandId,
 			char[] autoActivationCharacters) {
 
 		super(parent, style, controlCreator);
-		adapter = new ContentAssistCommandAdapter(getControl(),
-				controlContentAdapter, proposalProvider, commandId,
+		adapter = new ContentAssistCommandAdapter(getControl(), controlContentAdapter, proposalProvider, commandId,
 				autoActivationCharacters);
 
 		addFieldDecoration(getFieldDecoration(), SWT.LEFT | SWT.TOP, true);
@@ -93,13 +88,11 @@ public class ContentAssistField extends DecoratedField {
 	}
 
 	/**
-	 * Set the boolean flag that determines whether the content assist is
-	 * enabled.
+	 * Set the boolean flag that determines whether the content assist is enabled.
 	 *
-	 * @param enabled
-	 *            <code>true</code> if content assist is enabled and
-	 *            responding to user input, <code>false</code> if it is
-	 *            ignoring user input.
+	 * @param enabled <code>true</code> if content assist is enabled and responding
+	 *                to user input, <code>false</code> if it is ignoring user
+	 *                input.
 	 *
 	 */
 	public void setEnabled(boolean enabled) {
@@ -124,21 +117,16 @@ public class ContentAssistField extends DecoratedField {
 
 		// If there is not one, base ours on the standard JFace one.
 		if (dec == null) {
-			FieldDecoration originalDec = registry
-					.getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
+			FieldDecoration originalDec = registry.getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
 
-			registry.registerFieldDecoration(decId, null, originalDec
-					.getImage());
+			registry.registerFieldDecoration(decId, null, originalDec.getImage());
 			dec = registry.getFieldDecoration(decId);
 		}
 		// Always update the decoration text since the key binding may
 		// have changed since it was last retrieved.
-		IBindingService bindingService = PlatformUI
-				.getWorkbench().getService(IBindingService.class);
-		dec.setDescription(NLS.bind(
-				WorkbenchMessages.ContentAssist_Cue_Description_Key,
-				bindingService.getBestActiveBindingFormattedFor(adapter
-						.getCommandId())));
+		IBindingService bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
+		dec.setDescription(NLS.bind(WorkbenchMessages.ContentAssist_Cue_Description_Key,
+				bindingService.getBestActiveBindingFormattedFor(adapter.getCommandId())));
 
 		// Now return the field decoration
 		return dec;
@@ -146,8 +134,8 @@ public class ContentAssistField extends DecoratedField {
 
 	/**
 	 * Return the ContentAssistCommandAdapter installed on the receiver. This
-	 * adapter is provided so that clients can configure the adapter if the
-	 * default values are not appropriate.
+	 * adapter is provided so that clients can configure the adapter if the default
+	 * values are not appropriate.
 	 *
 	 * @return the ContentAssistCommandAdapter installed on the field.
 	 */

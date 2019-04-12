@@ -22,12 +22,12 @@ package org.eclipse.ui;
  * @see IWorkbenchPart#addPropertyListener
  */
 public interface IPropertyListener {
-    /**
-     * Indicates that a property has changed.
-     *
-     * @param source the object whose property has changed
-     * @param propId the id of the property which has changed; property ids
-     *   are generally defined as constants on the source class
-     */
-    void propertyChanged(Object source, int propId);
+	/**
+	 * Indicates that a property has changed.
+	 *
+	 * @param source the object whose property has changed
+	 * @param propId the id of the property which has changed; property ids are
+	 *               generally defined as constants on the source class
+	 */
+	void propertyChanged(Object source, int propId);
 }

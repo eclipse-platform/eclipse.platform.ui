@@ -41,8 +41,8 @@ import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
- * A tooltip which, given a model element, will display its icon (if there
- * is one), name, and a description (if there is one).
+ * A tooltip which, given a model element, will display its icon (if there is
+ * one), name, and a description (if there is one).
  *
  * @since 3.5
  */
@@ -54,18 +54,15 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 	protected abstract Object getModelElement(Event event);
 
 	/**
-	 * Adds logic to only show a tooltip if a meaningful item is under the
-	 * cursor.
+	 * Adds logic to only show a tooltip if a meaningful item is under the cursor.
 	 */
 	@Override
 	protected boolean shouldCreateToolTip(Event event) {
-		return super.shouldCreateToolTip(event)
-				&& getModelElement(event) != null;
+		return super.shouldCreateToolTip(event) && getModelElement(event) != null;
 	}
 
 	@Override
-	protected Composite createToolTipContentArea(Event event,
-			Composite parent) {
+	protected Composite createToolTipContentArea(Event event, Composite parent) {
 		Object modelElement = getModelElement(event);
 
 		Image iconImage = null;
@@ -80,17 +77,14 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 
 		// Create the content area
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_INFO_BACKGROUND));
+		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		composite.setLayout(new GridLayout(2, false));
 
 		// The title area with the icon (if there is one) and label.
 		Label title = createEntry(composite, iconImage, nameString);
 		title.setFont(getTitleFont());
-		GridDataFactory.createFrom((GridData)title.getLayoutData())
-			.hint(SWT.DEFAULT, SWT.DEFAULT)
-			.minSize(CustomizePerspectiveDialog.MIN_TOOLTIP_WIDTH, 1)
-			.applyTo(title);
+		GridDataFactory.createFrom((GridData) title.getLayoutData()).hint(SWT.DEFAULT, SWT.DEFAULT)
+				.minSize(CustomizePerspectiveDialog.MIN_TOOLTIP_WIDTH, 1).applyTo(title);
 
 		// The description (if there is one)
 		String descriptionString = NameAndDescriptionToolTip.getDescription(modelElement);
@@ -112,17 +106,13 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 	}
 
 	/**
-	 * Adds a line of information to <code>parent</code>. If
-	 * <code>icon</code> is not <code>null</code>, an icon is placed on the
-	 * left, and then a label with <code>text</code>.
+	 * Adds a line of information to <code>parent</code>. If <code>icon</code> is
+	 * not <code>null</code>, an icon is placed on the left, and then a label with
+	 * <code>text</code>.
 	 *
-	 * @param parent
-	 *            the composite to add the entry to
-	 * @param icon
-	 *            the icon to place next to the text. <code>null</code> for
-	 *            none.
-	 * @param text
-	 *            the text to display
+	 * @param parent the composite to add the entry to
+	 * @param icon   the icon to place next to the text. <code>null</code> for none.
+	 * @param text   the text to display
 	 * @return the created label
 	 */
 	protected Label createEntry(Composite parent, Image icon, String text) {
@@ -138,7 +128,7 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 
 		Label textLabel = new Label(parent, SWT.WRAP);
 
-		if(icon == null) {
+		if (icon == null) {
 			GridDataFactory.generate(textLabel, 2, 1);
 		} else {
 			GridDataFactory.generate(textLabel, 1, 1);
@@ -153,22 +143,16 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 	}
 
 	/**
-	 * Adds a line of information to <code>parent</code>. If
-	 * <code>icon</code> is not <code>null</code>, an icon is placed on the
-	 * left, and then a label with <code>text</code>, which supports using
-	 * anchor tags to creates links
+	 * Adds a line of information to <code>parent</code>. If <code>icon</code> is
+	 * not <code>null</code>, an icon is placed on the left, and then a label with
+	 * <code>text</code>, which supports using anchor tags to creates links
 	 *
-	 * @param parent
-	 *            the composite to add the entry to
-	 * @param icon
-	 *            the icon to place next to the text. <code>null</code> for
-	 *            none.
-	 * @param text
-	 *            the text to display
+	 * @param parent the composite to add the entry to
+	 * @param icon   the icon to place next to the text. <code>null</code> for none.
+	 * @param text   the text to display
 	 * @return the created link
 	 */
-	protected Link createEntryWithLink(Composite parent, Image icon,
-			String text) {
+	protected Link createEntryWithLink(Composite parent, Image icon, String text) {
 		Color fg = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		Color bg = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		if (icon != null) {
@@ -181,7 +165,7 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 
 		Link textLink = new Link(parent, SWT.WRAP);
 
-		if(icon == null) {
+		if (icon == null) {
 			GridDataFactory.generate(textLink, 2, 1);
 		}
 
@@ -221,22 +205,19 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 
 			if (CustomizePerspectiveDialog.isNewWizard(item)) {
 				ShortcutItem shortcut = (ShortcutItem) item;
-				IWizardDescriptor descriptor = (IWizardDescriptor) shortcut
-						.getDescriptor();
+				IWizardDescriptor descriptor = (IWizardDescriptor) shortcut.getDescriptor();
 				return descriptor.getDescription();
 			}
 
 			if (CustomizePerspectiveDialog.isShowPerspective(item)) {
 				ShortcutItem shortcut = (ShortcutItem) item;
-				IPerspectiveDescriptor descriptor = (IPerspectiveDescriptor) shortcut
-						.getDescriptor();
+				IPerspectiveDescriptor descriptor = (IPerspectiveDescriptor) shortcut.getDescriptor();
 				return descriptor.getDescription();
 			}
 
 			if (CustomizePerspectiveDialog.isShowView(item)) {
 				ShortcutItem shortcut = (ShortcutItem) item;
-				IViewDescriptor descriptor = (IViewDescriptor) shortcut
-						.getDescriptor();
+				IViewDescriptor descriptor = (IViewDescriptor) shortcut.getDescriptor();
 				return descriptor.getDescription();
 			}
 

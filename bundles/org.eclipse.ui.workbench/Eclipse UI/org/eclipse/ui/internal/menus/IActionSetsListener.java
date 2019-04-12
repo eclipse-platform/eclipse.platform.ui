@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.menus;
 
 import org.eclipse.ui.internal.ActionSetsEvent;
 
-
 /**
  * <p>
  * A listener to changes in the list of active action sets.
@@ -36,11 +35,9 @@ public interface IActionSetsListener {
 	/**
 	 * Indicates that the list of active action sets has changed.
 	 *
-	 * @param event
-	 *            The event carrying information about the new state of the
-	 *            action sets; never <code>null</code>.
+	 * @param event The event carrying information about the new state of the action
+	 *              sets; never <code>null</code>.
 	 */
 	void actionSetsChanged(ActionSetsEvent event);
 
 }
-

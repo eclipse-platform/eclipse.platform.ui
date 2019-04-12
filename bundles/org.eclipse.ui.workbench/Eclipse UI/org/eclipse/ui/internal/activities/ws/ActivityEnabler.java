@@ -109,8 +109,7 @@ public class ActivityEnabler {
 
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			Set<Object> checked = new HashSet<>(Arrays.asList(dualViewer
-					.getCheckedElements()));
+			Set<Object> checked = new HashSet<>(Arrays.asList(dualViewer.getCheckedElements()));
 			Object element = event.getElement();
 			if (element instanceof ICategory) {
 				// clicking on a category should enable/disable all activities
@@ -122,8 +121,7 @@ public class ActivityEnabler {
 				// Update the category's activities for multiplicity in other
 				// categories
 				for (Object categoryActivity : provider.getChildren(element)) {
-					handleDuplicateActivities(event.getChecked(),
-							categoryActivity);
+					handleDuplicateActivities(event.getChecked(), categoryActivity);
 				}
 
 			} else {
@@ -136,13 +134,10 @@ public class ActivityEnabler {
 		/**
 		 * Handle duplicate activities.
 		 *
-		 * @param checkedState
-		 *            Checked state of the element.
-		 * @param element
-		 *            The checked element.
+		 * @param checkedState Checked state of the element.
+		 * @param element      The checked element.
 		 */
-		private void handleDuplicateActivities(boolean checkedState,
-				Object element) {
+		private void handleDuplicateActivities(boolean checkedState, Object element) {
 			// Retrieve duplicate activities from the other categories
 			Object[] duplicateActivities = provider.getDuplicateCategoryActivities((CategorizedActivity) element);
 			for (Object activity : duplicateActivities) {
@@ -151,19 +146,15 @@ public class ActivityEnabler {
 				dualViewer.setChecked(activity, checkedState);
 				// handle the activity check to potentially update its
 				// category's enablement
-				handleActivityCheck(new HashSet<>(Arrays.asList(dualViewer
-						.getCheckedElements())), activity);
+				handleActivityCheck(new HashSet<>(Arrays.asList(dualViewer.getCheckedElements())), activity);
 			}
 		}
 
 		/**
-		 * Handle the checking of an activity and update its category's checked
-		 * state.
+		 * Handle the checking of an activity and update its category's checked state.
 		 *
-		 * @param checked
-		 *            The set of checked elements in the viewer.
-		 * @param element
-		 *            The checked element.
+		 * @param checked The set of checked elements in the viewer.
+		 * @param element The checked element.
 		 */
 		private void handleActivityCheck(Set<Object> checked, Object element) {
 			// clicking on an activity can potentially change the check/gray
@@ -200,10 +191,8 @@ public class ActivityEnabler {
 		/**
 		 * Handle the activity's required activities (parent and child).
 		 *
-		 * @param checked
-		 *            The set of checked elements in the viewer.
-		 * @param element
-		 *            The checked element.
+		 * @param checked The set of checked elements in the viewer.
+		 * @param element The checked element.
 		 *
 		 */
 		private void handleRequiredActivities(Set<?> checked, Object element) {
@@ -211,9 +200,7 @@ public class ActivityEnabler {
 			// An element has been checked - we want to check its child required
 			// activities
 			if (checked.contains(element)) {
-				requiredActivities = provider
-						.getChildRequiredActivities(((CategorizedActivity) element)
-								.getId());
+				requiredActivities = provider.getChildRequiredActivities(((CategorizedActivity) element).getId());
 				for (int index = 0; index < requiredActivities.length; index++) {
 					// We want to check the element if it is unchecked
 					if (!checked.contains(requiredActivities[index])) {
@@ -243,12 +230,10 @@ public class ActivityEnabler {
 	/**
 	 * Create a new instance.
 	 *
-	 * @param activitySupport
-	 *            the <code>IMutableActivityMananger</code> to use.
-	 * @param strings
-	 *            map of strings to use. See the constants on
-	 *            {@link org.eclipse.ui.activities.ActivitiesPreferencePage} for
-	 *            details.
+	 * @param activitySupport the <code>IMutableActivityMananger</code> to use.
+	 * @param strings         map of strings to use. See the constants on
+	 *                        {@link org.eclipse.ui.activities.ActivitiesPreferencePage}
+	 *                        for details.
 	 */
 	public ActivityEnabler(IMutableActivityManager activitySupport, Properties strings) {
 		this.activitySupport = activitySupport;
@@ -258,15 +243,14 @@ public class ActivityEnabler {
 	/**
 	 * Create the controls.
 	 *
-	 * @param parent
-	 *            the parent in which to create the controls.
+	 * @param parent the parent in which to create the controls.
 	 * @return the composite in which the controls exist.
 	 */
 	public Control createControl(Composite parent) {
-        GC gc = new GC(parent);
-        gc.setFont(JFaceResources.getDialogFont());
-        FontMetrics fontMetrics = gc.getFontMetrics();
-        gc.dispose();
+		GC gc = new GC(parent);
+		gc.setFont(JFaceResources.getDialogFont());
+		FontMetrics fontMetrics = gc.getFontMetrics();
+		gc.dispose();
 
 		Composite composite = new Composite(parent, SWT.NONE);
 
@@ -314,13 +298,12 @@ public class ActivityEnabler {
 		deselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> toggleTreeEnablement(false)));
 		setButtonLayoutData(deselectAllButton, fontMetrics);
 
-
 		dualViewer.addCheckStateListener(checkListener);
 		dualViewer.addSelectionChangedListener(selectionListener);
 
 		dualViewer.setSelection(new StructuredSelection());
 
-        Dialog.applyDialogFont(composite);
+		Dialog.applyDialogFont(composite);
 
 		return composite;
 	}
@@ -329,23 +312,24 @@ public class ActivityEnabler {
 		GridLayout layout = new GridLayout(nColumns, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		layout.horizontalSpacing = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.HORIZONTAL_SPACING);
+		layout.horizontalSpacing = Dialog.convertHorizontalDLUsToPixels(fontMetrics,
+				IDialogConstants.HORIZONTAL_SPACING);
 		layout.verticalSpacing = Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.VERTICAL_SPACING);
 		return layout;
 	}
 
-    private GridData setButtonLayoutData(Button button, FontMetrics fontMetrics) {
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
-        Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-        data.widthHint = Math.max(widthHint, minSize.x);
-        button.setLayoutData(data);
-        return data;
-    }
+	private GridData setButtonLayoutData(Button button, FontMetrics fontMetrics) {
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
+		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		data.widthHint = Math.max(widthHint, minSize.x);
+		button.setLayoutData(data);
+		return data;
+	}
 
 	/**
-	 * Set the enabled category/activity check/grey states based on initial
-	 * activity enablement.
+	 * Set the enabled category/activity check/grey states based on initial activity
+	 * enablement.
 	 */
 	private void setInitialStates() {
 		Set<String> enabledActivities = activitySupport.getEnabledActivityIds();
@@ -353,8 +337,7 @@ public class ActivityEnabler {
 	}
 
 	private void setEnabledStates(Set<String> enabledActivities) {
-		Set<String> categories = activitySupport
-				.getDefinedCategoryIds();
+		Set<String> categories = activitySupport.getDefinedCategoryIds();
 		List<Object> checked = new ArrayList<>(10), grayed = new ArrayList<>(10);
 		for (String categoryId : categories) {
 			ICategory category = activitySupport.getCategory(categoryId);
@@ -420,16 +403,16 @@ public class ActivityEnabler {
 		Set<String> defaultEnabled = new HashSet<>();
 		Set<String> activityIds = activitySupport.getDefinedActivityIds();
 		for (Iterator<String> i = activityIds.iterator(); i.hasNext();) {
-            String activityId = i.next();
-            IActivity activity = activitySupport.getActivity(activityId);
-            try {
-                if (activity.isDefaultEnabled()) {
-                    defaultEnabled.add(activityId);
-                }
-            } catch (NotDefinedException e) {
-                // this can't happen - we're iterating over defined activities.
-            }
-        }
+			String activityId = i.next();
+			IActivity activity = activitySupport.getActivity(activityId);
+			try {
+				if (activity.isDefaultEnabled()) {
+					defaultEnabled.add(activityId);
+				}
+			} catch (NotDefinedException e) {
+				// this can't happen - we're iterating over defined activities.
+			}
+		}
 
 		setEnabledStates(defaultEnabled);
 	}
@@ -437,19 +420,17 @@ public class ActivityEnabler {
 	/**
 	 * Toggles the enablement state of all activities.
 	 *
-	 * @param enabled
-	 *            whether the tree should be enabled
+	 * @param enabled whether the tree should be enabled
 	 */
 	protected void toggleTreeEnablement(boolean enabled) {
 		Object[] elements = provider.getElements(activitySupport);
 
-		//reset grey state to null
+		// reset grey state to null
 		dualViewer.setGrayedElements(new Object[0]);
 
-		//enable all categories
+		// enable all categories
 		for (Object element : elements) {
-			dualViewer
-					.expandToLevel(element, AbstractTreeViewer.ALL_LEVELS);
+			dualViewer.expandToLevel(element, AbstractTreeViewer.ALL_LEVELS);
 			dualViewer.setSubtreeChecked(element, enabled);
 		}
 	}

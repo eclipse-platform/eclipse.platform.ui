@@ -64,8 +64,8 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private final IMemento editorState;
 	private final String factoryId;
 
-	public EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
-			IEditorInput input, EditorDescriptor descriptor, IMemento editorState) {
+	public EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part, IEditorInput input,
+			EditorDescriptor descriptor, IMemento editorState) {
 		super(windowContext, page, part);
 		this.input = input;
 		this.descriptor = descriptor;
@@ -73,37 +73,34 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 		String factory = null;
 		if (descriptor == null) {
-				String memento = getModel().getPersistedState().get(MEMENTO_KEY);
-				if (memento == null) {
+			String memento = getModel().getPersistedState().get(MEMENTO_KEY);
+			if (memento == null) {
+				descriptorId = EditorRegistry.EMPTY_EDITOR_ID;
+			} else {
+				XMLMemento createReadRoot;
+				try {
+					createReadRoot = XMLMemento.createReadRoot(new StringReader(memento));
+				} catch (WorkbenchException e) {
+					WorkbenchPlugin.log(e);
 					descriptorId = EditorRegistry.EMPTY_EDITOR_ID;
-				} else {
-					XMLMemento createReadRoot;
-					try {
-						createReadRoot = XMLMemento
-								.createReadRoot(new StringReader(memento));
-					} catch (WorkbenchException e) {
-						WorkbenchPlugin.log(e);
-						descriptorId = EditorRegistry.EMPTY_EDITOR_ID;
-						factoryId = null;
-						return;
-					}
-					IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
-							.getEditorRegistry();
-					descriptorId = createReadRoot.getString(IWorkbenchConstants.TAG_ID);
-					this.descriptor = (EditorDescriptor) registry.findEditor(descriptorId);
-
-					boolean pinnedVal = "true".equals(createReadRoot.getString(IWorkbenchConstants.TAG_PINNED)); //$NON-NLS-1$
-					setPinned(pinnedVal);
-
-					String ttip = createReadRoot.getString(IWorkbenchConstants.TAG_TOOLTIP);
-					part.getTransientData().put(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY,
-							ttip);
-
-					IMemento inputMem = createReadRoot.getChild(IWorkbenchConstants.TAG_INPUT);
-					if (inputMem != null) {
-						factory = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-					}
+					factoryId = null;
+					return;
 				}
+				IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench().getEditorRegistry();
+				descriptorId = createReadRoot.getString(IWorkbenchConstants.TAG_ID);
+				this.descriptor = (EditorDescriptor) registry.findEditor(descriptorId);
+
+				boolean pinnedVal = "true".equals(createReadRoot.getString(IWorkbenchConstants.TAG_PINNED)); //$NON-NLS-1$
+				setPinned(pinnedVal);
+
+				String ttip = createReadRoot.getString(IWorkbenchConstants.TAG_TOOLTIP);
+				part.getTransientData().put(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY, ttip);
+
+				IMemento inputMem = createReadRoot.getChild(IWorkbenchConstants.TAG_INPUT);
+				if (inputMem != null) {
+					factory = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				}
+			}
 		} else {
 			descriptorId = this.descriptor.getId();
 		}
@@ -170,8 +167,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			if (!properties.isEmpty()) {
 				IMemento propBag = editorMem.createChild(IWorkbenchConstants.TAG_PROPERTIES);
 				for (Map.Entry<String, String> entry : properties.entrySet()) {
-					IMemento p = propBag.createChild(IWorkbenchConstants.TAG_PROPERTY,
- entry.getKey());
+					IMemento p = propBag.createChild(IWorkbenchConstants.TAG_PROPERTY, entry.getKey());
 					p.putTextData(entry.getValue());
 				}
 			}
@@ -224,8 +220,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	public String getName() {
 		IEditorPart editor = getEditor(false);
 		if (input == null) {
-			return editor == null ? getModel().getLocalizedLabel() : editor.getEditorInput()
-					.getName();
+			return editor == null ? getModel().getLocalizedLabel() : editor.getEditorInput().getName();
 		}
 		return editor == null ? input.getName() : editor.getEditorInput().getName();
 	}
@@ -249,8 +244,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return createInput(editorMem);
 	}
 
-	public static IEditorInput createInput(IMemento editorMem)
-			throws PartInitException {
+	public static IEditorInput createInput(IMemento editorMem) throws PartInitException {
 		String editorId = editorMem.getString(IWorkbenchConstants.TAG_ID);
 
 		IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
@@ -262,28 +256,25 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 		}
 		if (factoryID == null) {
-			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.EditorManager_no_input_factory_ID, editorId, editorName));
+			throw new PartInitException(
+					NLS.bind(WorkbenchMessages.EditorManager_no_input_factory_ID, editorId, editorName));
 		}
 		IAdaptable input = null;
 		IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 		if (factory == null) {
-			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.EditorManager_bad_element_factory, new Object[] { factoryID,
-							editorId, editorName }));
+			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_bad_element_factory,
+					new Object[] { factoryID, editorId, editorName }));
 		}
 
 		// Get the input element.
 		input = factory.createElement(inputMem);
 		if (input == null) {
-			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.EditorManager_create_element_returned_null, new Object[] {
-							factoryID, editorId, editorName }));
+			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_create_element_returned_null,
+					new Object[] { factoryID, editorId, editorName }));
 		}
 		if (!(input instanceof IEditorInput)) {
-			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.EditorManager_wrong_createElement_result, new Object[] {
-							factoryID, editorId, editorName }));
+			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_wrong_createElement_result,
+					new Object[] { factoryID, editorId, editorName }));
 		}
 		return (IEditorInput) input;
 	}
@@ -306,8 +297,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 				input = new NullEditorInput();
 			} else {
 				try {
-					XMLMemento createReadRoot = XMLMemento
-							.createReadRoot(new StringReader(memento));
+					XMLMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(memento));
 					input = restoreInput(createReadRoot);
 				} catch (WorkbenchException e) {
 					throw new PartInitException(e.getStatus());
@@ -332,17 +322,16 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			return descriptor.createEditor();
 		} catch (CoreException e) {
 			IStatus status = e.getStatus();
-			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					status.getCode(), status.getMessage(), e));
+			throw new PartInitException(
+					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, status.getCode(), status.getMessage(), e));
 		}
 	}
 
 	@Override
 	IWorkbenchPart createErrorPart() {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
-				WorkbenchMessages.EditorManager_missing_editor_descriptor, descriptorId), new Exception());
-		IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
-				.getEditorRegistry();
+		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+				NLS.bind(WorkbenchMessages.EditorManager_missing_editor_descriptor, descriptorId), new Exception());
+		IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench().getEditorRegistry();
 		descriptor = (EditorDescriptor) registry.findEditor(EditorRegistry.EMPTY_EDITOR_ID);
 		return createErrorPart(status);
 	}
@@ -383,10 +372,8 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 				String mementoString = getModel().getPersistedState().get(MEMENTO_KEY);
 				if (mementoString != null) {
 					try {
-						IMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(
-								mementoString));
-						IMemento editorStateMemento = createReadRoot
-								.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+						IMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(mementoString));
+						IMemento editorStateMemento = createReadRoot.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
 						if (editorStateMemento != null) {
 							((IPersistableEditor) part).restoreState(editorStateMemento);
 						}
@@ -412,9 +399,9 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private static HashMap<String, Set<EditorActionBars>> actionCache = new HashMap<>();
 
 	/*
-	 * Creates the action bars for an editor. Editors of the same type should
-	 * share a single editor action bar, so this implementation may return an
-	 * existing action bar vector.
+	 * Creates the action bars for an editor. Editors of the same type should share
+	 * a single editor action bar, so this implementation may return an existing
+	 * action bar vector.
 	 */
 	private static EditorActionBars createEditorActionBars(WorkbenchPage page, EditorDescriptor desc) {
 		// Get the editor type.
@@ -469,8 +456,8 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 				set.remove(actionBars);
 			}
 			// refresh the cool bar manager before disposing of a cool item
-			ICoolBarManager2 coolBar = (ICoolBarManager2) ((WorkbenchWindow) actionBars.getPage()
-					.getWorkbenchWindow()).getCoolBarManager2();
+			ICoolBarManager2 coolBar = (ICoolBarManager2) ((WorkbenchWindow) actionBars.getPage().getWorkbenchWindow())
+					.getCoolBarManager2();
 			if (coolBar != null) {
 				coolBar.refresh();
 			}

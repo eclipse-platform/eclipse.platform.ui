@@ -22,8 +22,8 @@ import org.eclipse.core.runtime.QualifiedName;
 /**
  * <p>
  * The StatusAdapter wraps an instance of IStatus subclass and can hold
- * additional information either by using properties or by adding a new adapter. Used during
- * status handling process.
+ * additional information either by using properties or by adding a new adapter.
+ * Used during status handling process.
  * </p>
  *
  * @since 3.3
@@ -31,8 +31,8 @@ import org.eclipse.core.runtime.QualifiedName;
 public class StatusAdapter implements IAdaptable {
 
 	/**
-	 * This property is used to add title to the adapter. If the adapter is
-	 * shown in a dialog, this property is used to create title of the dialog.
+	 * This property is used to add title to the adapter. If the adapter is shown in
+	 * a dialog, this property is used to create title of the dialog.
 	 *
 	 * @deprecated use {@link IStatusAdapterConstants#TITLE_PROPERTY} instead
 	 */
@@ -40,16 +40,15 @@ public class StatusAdapter implements IAdaptable {
 	public static final QualifiedName TITLE_PROPERTY = IStatusAdapterConstants.TITLE_PROPERTY;
 
 	/**
-	 * This property is used to add a timestamp to the adapter. If the adapter
-	 * is shown in the UI, this property can be used for sorting and showing
+	 * This property is used to add a timestamp to the adapter. If the adapter is
+	 * shown in the UI, this property can be used for sorting and showing
 	 * information about the status creation time.
 	 *
 	 * <p>
 	 * The property must be of type <code>Long</code>.
 	 * </p>
 	 *
-	 * @deprecated use {@link IStatusAdapterConstants#TIMESTAMP_PROPERTY}
-	 *             instead
+	 * @deprecated use {@link IStatusAdapterConstants#TIMESTAMP_PROPERTY} instead
 	 */
 	@Deprecated
 	public static final QualifiedName TIMESTAMP_PROPERTY = IStatusAdapterConstants.TIMESTAMP_PROPERTY;
@@ -63,8 +62,7 @@ public class StatusAdapter implements IAdaptable {
 	/**
 	 * Creates an instance of this class.
 	 *
-	 * @param status
-	 *            the status to wrap. May not be <code>null</code>.
+	 * @param status the status to wrap. May not be <code>null</code>.
 	 */
 	public StatusAdapter(IStatus status) {
 		this.status = status;
@@ -72,13 +70,11 @@ public class StatusAdapter implements IAdaptable {
 
 	/**
 	 * Associates new object which is an instance of the given class with this
-	 * adapter. object will be returned when {@link IAdaptable#getAdapter(Class)}
-	 * is called on the receiver with {@link Class} adapter as a parameter.
+	 * adapter. object will be returned when {@link IAdaptable#getAdapter(Class)} is
+	 * called on the receiver with {@link Class} adapter as a parameter.
 	 *
-	 * @param adapter
-	 *            the adapter class
-	 * @param object
-	 *            the adapter instance
+	 * @param adapter the adapter class
+	 * @param object  the adapter instance
 	 */
 	public void addAdapter(Class adapter, Object object) {
 		if (adapters == null) {
@@ -108,21 +104,19 @@ public class StatusAdapter implements IAdaptable {
 	/**
 	 * Sets a new status for this adapter.
 	 *
-	 * @param status
-	 *            the status to set. May not be <code>null</code>.
+	 * @param status the status to set. May not be <code>null</code>.
 	 */
 	public void setStatus(IStatus status) {
 		this.status = status;
 	}
 
 	/**
-	 * Returns the value of the adapter's property identified by the given key,
-	 * or <code>null</code> if this adapter has no such property.
+	 * Returns the value of the adapter's property identified by the given key, or
+	 * <code>null</code> if this adapter has no such property.
 	 *
-	 * @param key
-	 *            the qualified name of the property
-	 * @return the value of the property, or <code>null</code> if this adapter
-	 *         has no such property
+	 * @param key the qualified name of the property
+	 * @return the value of the property, or <code>null</code> if this adapter has
+	 *         no such property
 	 */
 	public Object getProperty(QualifiedName key) {
 		if (properties == null) {
@@ -134,10 +128,8 @@ public class StatusAdapter implements IAdaptable {
 	/**
 	 * Sets the value of the receiver's property identified by the given key.
 	 *
-	 * @param key
-	 *            the qualified name of the property
-	 * @param value
-	 *            the value of the property
+	 * @param key   the qualified name of the property
+	 * @param value the value of the property
 	 */
 	public void setProperty(QualifiedName key, Object value) {
 		if (properties == null) {

@@ -40,31 +40,29 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	private static WorkbenchPreferenceDialog instance = null;
 
 	/**
-	 * The bounds of this dialog will be persisted in the dialog settings.
-	 * This is defined at the most concrete level of the hierarchy so that
-	 * different concrete implementations don't necessarily store their bounds
-	 * in the same settings.
+	 * The bounds of this dialog will be persisted in the dialog settings. This is
+	 * defined at the most concrete level of the hierarchy so that different
+	 * concrete implementations don't necessarily store their bounds in the same
+	 * settings.
 	 *
 	 * @since 3.2
 	 */
 	private static final String DIALOG_SETTINGS_SECTION = "WorkbenchPreferenceDialogSettings"; //$NON-NLS-1$
 
-
 	/**
-	 * Creates a workbench preference dialog to a particular preference page. It
-	 * is the responsibility of the caller to then call <code>open()</code>.
-	 * The call to <code>open()</code> will not return until the dialog
-	 * closes, so this is the last chance to manipulate the dialog.
+	 * Creates a workbench preference dialog to a particular preference page. It is
+	 * the responsibility of the caller to then call <code>open()</code>. The call
+	 * to <code>open()</code> will not return until the dialog closes, so this is
+	 * the last chance to manipulate the dialog.
 	 *
-	 * @param shell
-	 * 			The Shell to parent the dialog off of if it is not
-	 * 			already created. May be <code>null</code>
-	 * 			in which case the active workbench window will be used
-	 * 			if available.
-	 * @param preferencePageId
-	 *            The identifier of the preference page to open; may be
-	 *            <code>null</code>. If it is <code>null</code>, then the
-	 *            preference page is not selected or modified in any way.
+	 * @param shell            The Shell to parent the dialog off of if it is not
+	 *                         already created. May be <code>null</code> in which
+	 *                         case the active workbench window will be used if
+	 *                         available.
+	 * @param preferencePageId The identifier of the preference page to open; may be
+	 *                         <code>null</code>. If it is <code>null</code>, then
+	 *                         the preference page is not selected or modified in
+	 *                         any way.
 	 * @return The selected preference page.
 	 * @since 3.1
 	 */
@@ -73,8 +71,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 		if (instance == null) {
 			/*
-			 * There is no existing preference dialog, so open a new one with
-			 * the given selected page.
+			 * There is no existing preference dialog, so open a new one with the given
+			 * selected page.
 			 */
 
 			Shell parentShell = shell;
@@ -90,8 +88,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			}
 
 			// Create the dialog
-			final PreferenceManager preferenceManager = PlatformUI.getWorkbench()
-					.getPreferenceManager();
+			final PreferenceManager preferenceManager = PlatformUI.getWorkbench().getPreferenceManager();
 			dialog = new WorkbenchPreferenceDialog(parentShell, preferenceManager);
 			if (preferencePageId != null) {
 				dialog.setSelectedNode(preferencePageId);
@@ -100,14 +97,13 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			if (preferencePageId != null) {
 				dialog.getCurrentPage().getControl().setFocus();
 			}
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(
-					dialog.getShell(),
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
 					IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
 
 		} else {
 			/*
-			 * There is an existing preference dialog, so let's just select the
-			 * given preference page.
+			 * There is an existing preference dialog, so let's just select the given
+			 * preference page.
 			 */
 			dialog = instance;
 			if (preferencePageId != null) {
@@ -125,19 +121,15 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * Creates a new preference dialog under the control of the given preference
 	 * manager.
 	 *
-	 * @param parentShell
-	 *            the parent shell
-	 * @param manager
-	 *            the preference manager
+	 * @param parentShell the parent shell
+	 * @param manager     the preference manager
 	 */
 	public WorkbenchPreferenceDialog(Shell parentShell, PreferenceManager manager) {
 		super(parentShell, manager);
-		Assert.isTrue((instance == null),
-				"There cannot be two preference dialogs at once in the workbench."); //$NON-NLS-1$
+		Assert.isTrue((instance == null), "There cannot be two preference dialogs at once in the workbench."); //$NON-NLS-1$
 		instance = this;
 
 	}
-
 
 	@Override
 	public boolean close() {
@@ -145,12 +137,10 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		return super.close();
 	}
 
-
 	/**
-	 * Differs from super implementation in that if the node is found but should
-	 * be filtered based on a call to
-	 * <code>WorkbenchActivityHelper.filterItem()</code> then
-	 * <code>null</code> is returned.
+	 * Differs from super implementation in that if the node is found but should be
+	 * filtered based on a call to <code>WorkbenchActivityHelper.filterItem()</code>
+	 * then <code>null</code> is returned.
 	 *
 	 * @see org.eclipse.jface.preference.PreferenceDialog#findNodeMatching(java.lang.String)
 	 */
@@ -170,17 +160,17 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-        IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-        if (section == null) {
-            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-        }
-        return section;
+		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null) {
+			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+		}
+		return section;
 	}
 
 	/**
-	 * Overridden to persist only the location, not the size, since the current
-	 * page dictates the most appropriate size for the dialog.
+	 * Overridden to persist only the location, not the size, since the current page
+	 * dictates the most appropriate size for the dialog.
 	 *
 	 * @since 3.2
 	 */

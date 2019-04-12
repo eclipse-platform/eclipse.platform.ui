@@ -89,15 +89,12 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	 */
 	public DefaultDetailsArea(Map dialogState) {
 		this.dialogState = dialogState;
-		handleOkStatuses = ((Boolean) dialogState
-				.get(IStatusDialogConstants.HANDLE_OK_STATUSES)).booleanValue();
-		mask = ((Integer) dialogState.get(IStatusDialogConstants.MASK))
-				.intValue();
+		handleOkStatuses = ((Boolean) dialogState.get(IStatusDialogConstants.HANDLE_OK_STATUSES)).booleanValue();
+		mask = ((Integer) dialogState.get(IStatusDialogConstants.MASK)).intValue();
 	}
 
 	@Override
-	public Control createSupportArea(Composite parent,
-			StatusAdapter statusAdapter) {
+	public Control createSupportArea(Composite parent, StatusAdapter statusAdapter) {
 		Composite area = createArea(parent);
 		setStatusAdapter(statusAdapter);
 		return area;
@@ -107,8 +104,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout());
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		text = new StyledText(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
-				| SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
+		text = new StyledText(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
 		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = true;
@@ -118,11 +114,9 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		text.setLayoutData(gd);
 		// There is no support for triggering commands in the dialogs. I am
 		// trying to emulate the workbench behavior as exactly as possible.
-		IBindingService binding = PlatformUI.getWorkbench()
-				.getService(IBindingService.class);
+		IBindingService binding = PlatformUI.getWorkbench().getService(IBindingService.class);
 		// find bindings for copy action
-		final TriggerSequence ts[] = binding
-				.getActiveBindingsFor(ActionFactory.COPY.getCommandId());
+		final TriggerSequence ts[] = binding.getActiveBindingsFor(ActionFactory.COPY.getCommandId());
 		text.addKeyListener(new KeyListener() {
 
 			ArrayList keyList = new ArrayList();
@@ -132,8 +126,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 				// get the character. reverse the ctrl modifier if necessary
 				char character = e.character;
 				boolean ctrlDown = (e.stateMask & SWT.CTRL) != 0;
-				if (ctrlDown && e.character != e.keyCode && e.character < 0x20
-						&& (e.keyCode & SWT.KEYCODE_BIT) == 0) {
+				if (ctrlDown && e.character != e.keyCode && e.character < 0x20 && (e.keyCode & SWT.KEYCODE_BIT) == 0) {
 					character += 0x40;
 				}
 				// do not process modifier keys
@@ -142,8 +135,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 				}
 				// if there is a character, use it. if no character available,
 				// try with key code
-				KeyStroke ks = KeyStroke.getInstance(e.stateMask,
-						character != 0 ? character : e.keyCode);
+				KeyStroke ks = KeyStroke.getInstance(e.stateMask, character != 0 ? character : e.keyCode);
 				keyList.add(ks);
 				KeySequence sequence = KeySequence.getInstance(keyList);
 				boolean partialMatch = false;
@@ -202,20 +194,16 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	private void setStatusAdapter(StatusAdapter adapter) {
 		populateList(text, adapter.getStatus(), 0, new int[] { 0 });
 		if (!isMulti()) {
-			Long timestamp = (Long) adapter
-					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
+			Long timestamp = (Long) adapter.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
 
 			if (timestamp != null) {
-				String date = DateFormat.getDateTimeInstance(DateFormat.LONG,
-						DateFormat.LONG)
+				String date = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG)
 						.format(new Date(timestamp.longValue()));
-				text.append(NLS.bind(ProgressMessages.JobInfo_Error,
-						(new Object[] { "", date }))); //$NON-NLS-1$
+				text.append(NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] { "", date }))); //$NON-NLS-1$
 			}
 		}
 		int delimiterLength = getLineSeparator().length();
-		text.replaceTextRange(text.getText().length() - delimiterLength,
-				delimiterLength, ""); //$NON-NLS-1$
+		text.replaceTextRange(text.getText().length() - delimiterLength, delimiterLength, ""); //$NON-NLS-1$
 		adjustHeight(text);
 	}
 
@@ -287,8 +275,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		}
 	}
 
-	private void populateList(StyledText text, IStatus status, int nesting,
-			int[] lineNumber) {
+	private void populateList(StyledText text, IStatus status, int nesting, int[] lineNumber) {
 		if (!status.matches(mask) && !(handleOkStatuses && status.isOK())) {
 			return;
 		}
@@ -317,8 +304,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 
-	private void appendNewLine(StyledText text, String line, int indentLevel,
-			int lineNumber) {
+	private void appendNewLine(StyledText text, String line, int indentLevel, int lineNumber) {
 		text.append(line + getLineSeparator());
 		int pixelIndent = indentLevel * NESTING_INDENT;
 		if (lineNumber != 0) {
@@ -347,7 +333,6 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	 * @return true if the dialog has one more than one status.
 	 */
 	private boolean isMulti() {
-		return ((Collection) dialogState
-				.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() != 1;
+		return ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() != 1;
 	}
 }

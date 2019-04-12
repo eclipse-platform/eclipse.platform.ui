@@ -39,127 +39,119 @@ import org.eclipse.ui.themes.IThemePreview;
  */
 public class WorkbenchPreview implements IThemePreview {
 
-	  // don't reset this dynamically, so just keep the information static.
+	// don't reset this dynamically, so just keep the information static.
 	// see bug:
-	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
-    private static int tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+	// 75422 [Presentations] Switching presentation to R21 switches immediately, but
+	// only partially
+	private static int tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 
-    private boolean disposed = false;
+	private boolean disposed = false;
 
-    private CTabFolder folder;
+	private CTabFolder folder;
 
-    private ITheme theme;
+	private ITheme theme;
 
-    private ToolBar toolBar;
+	private ToolBar toolBar;
 
-    private CLabel viewMessage;
+	private CLabel viewMessage;
 
-    private ViewForm viewForm;
+	private ViewForm viewForm;
 
-    private IPropertyChangeListener fontAndColorListener = event -> {
-	    if (!disposed) {
-	        setColorsAndFonts();
-	        //viewMessage.setSize(viewMessage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
-	        viewForm.layout(true);
-	    }
+	private IPropertyChangeListener fontAndColorListener = event -> {
+		if (!disposed) {
+			setColorsAndFonts();
+			// viewMessage.setSize(viewMessage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+			viewForm.layout(true);
+		}
 	};
 
-    @Override
+	@Override
 	public void createControl(Composite parent, ITheme currentTheme) {
-        this.theme = currentTheme;
-        folder = new CTabFolder(parent, SWT.BORDER);
-        folder.setUnselectedCloseVisible(false);
-        folder.setEnabled(false);
-        folder.setMaximizeVisible(true);
-        folder.setMinimizeVisible(true);
+		this.theme = currentTheme;
+		folder = new CTabFolder(parent, SWT.BORDER);
+		folder.setUnselectedCloseVisible(false);
+		folder.setEnabled(false);
+		folder.setMaximizeVisible(true);
+		folder.setMinimizeVisible(true);
 
-        viewForm = new ViewForm(folder, SWT.NONE);
-        viewForm.marginHeight = 0;
-        viewForm.marginWidth = 0;
-        viewForm.verticalSpacing = 0;
-        viewForm.setBorderVisible(false);
-        toolBar = new ToolBar(viewForm, SWT.FLAT | SWT.WRAP);
-        ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
+		viewForm = new ViewForm(folder, SWT.NONE);
+		viewForm.marginHeight = 0;
+		viewForm.marginWidth = 0;
+		viewForm.verticalSpacing = 0;
+		viewForm.setBorderVisible(false);
+		toolBar = new ToolBar(viewForm, SWT.FLAT | SWT.WRAP);
+		ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
 
-        Image hoverImage = WorkbenchImages
-                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
-        toolItem.setImage(hoverImage);
+		Image hoverImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+		toolItem.setImage(hoverImage);
 
-        viewForm.setTopRight(toolBar);
+		viewForm.setTopRight(toolBar);
 
-        viewMessage = new CLabel(viewForm, SWT.NONE);
-        viewMessage.setText("Etu?"); //$NON-NLS-1$
-        viewForm.setTopLeft(viewMessage);
+		viewMessage = new CLabel(viewForm, SWT.NONE);
+		viewMessage.setText("Etu?"); //$NON-NLS-1$
+		viewForm.setTopLeft(viewMessage);
 
-        CTabItem item = new CTabItem(folder, SWT.CLOSE);
-        item.setText("Lorem"); //$NON-NLS-1$
-        Label text = new Label(viewForm, SWT.NONE);
-        viewForm.setContent(text);
-        text.setText("Lorem ipsum dolor sit amet"); //$NON-NLS-1$
-        item = new CTabItem(folder, SWT.CLOSE);
-        item.setText("Ipsum"); //$NON-NLS-1$
-        item.setControl(viewForm);
-        item.setImage(WorkbenchImages.getImage(ISharedImages.IMG_TOOL_COPY));
+		CTabItem item = new CTabItem(folder, SWT.CLOSE);
+		item.setText("Lorem"); //$NON-NLS-1$
+		Label text = new Label(viewForm, SWT.NONE);
+		viewForm.setContent(text);
+		text.setText("Lorem ipsum dolor sit amet"); //$NON-NLS-1$
+		item = new CTabItem(folder, SWT.CLOSE);
+		item.setText("Ipsum"); //$NON-NLS-1$
+		item.setControl(viewForm);
+		item.setImage(WorkbenchImages.getImage(ISharedImages.IMG_TOOL_COPY));
 
-        folder.setSelection(item);
+		folder.setSelection(item);
 
-        item = new CTabItem(folder, SWT.CLOSE);
-        item.setText("Dolor"); //$NON-NLS-1$
-        item = new CTabItem(folder, SWT.CLOSE);
-        item.setText("Sit"); //$NON-NLS-1$
+		item = new CTabItem(folder, SWT.CLOSE);
+		item.setText("Dolor"); //$NON-NLS-1$
+		item = new CTabItem(folder, SWT.CLOSE);
+		item.setText("Sit"); //$NON-NLS-1$
 
-        currentTheme.addPropertyChangeListener(fontAndColorListener);
-        setColorsAndFonts();
-        setTabPosition();
-        setTabStyle();
-    }
+		currentTheme.addPropertyChangeListener(fontAndColorListener);
+		setColorsAndFonts();
+		setTabPosition();
+		setTabStyle();
+	}
 
-    /**
-     * Set the tab style from preferences.
-     */
-    protected void setTabStyle() {
-        boolean traditionalTab = PlatformUI.getPreferenceStore()
-                .getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
-        folder.setSimple(traditionalTab);
-    }
+	/**
+	 * Set the tab style from preferences.
+	 */
+	protected void setTabStyle() {
+		boolean traditionalTab = PlatformUI.getPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+		folder.setSimple(traditionalTab);
+	}
 
-    /**
-     * Set the tab location from preferences.
-     */
-    protected void setTabPosition() {
-        tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
-        folder.setTabPosition(tabPos);
-    }
+	/**
+	 * Set the tab location from preferences.
+	 */
+	protected void setTabPosition() {
+		tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+		folder.setTabPosition(tabPos);
+	}
 
-    /**
-     * Set the folder colors and fonts
-     */
-    private void setColorsAndFonts() {
-        folder.setSelectionForeground(theme.getColorRegistry().get(
-                IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));
-        folder.setForeground(theme.getColorRegistry().get(
-                IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR));
+	/**
+	 * Set the folder colors and fonts
+	 */
+	private void setColorsAndFonts() {
+		folder.setSelectionForeground(theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));
+		folder.setForeground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR));
 
-        Color[] colors = new Color[2];
-        colors[0] = theme.getColorRegistry().get(
-                IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
-        colors[1] = theme.getColorRegistry().get(
-                IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
-        colors[0] = theme.getColorRegistry().get(
-                IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-        colors[1] = theme.getColorRegistry().get(
-                IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-        folder.setSelectionBackground(colors, new int[] { theme
-                .getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT) }, theme
-                .getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
+		Color[] colors = new Color[2];
+		colors[0] = theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
+		colors[1] = theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
+		colors[0] = theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+		colors[1] = theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+		folder.setSelectionBackground(colors, new int[] { theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT) },
+				theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
 
-        folder.setFont(theme.getFontRegistry().get(
-                IWorkbenchThemeConstants.TAB_TEXT_FONT));
-    }
+		folder.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        disposed = true;
-        theme.removePropertyChangeListener(fontAndColorListener);
-    }
+		disposed = true;
+		theme.removePropertyChangeListener(fontAndColorListener);
+	}
 }

@@ -40,7 +40,7 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 	public ImageBindingRegistry(String tag) {
 		super();
 		this.tag = tag;
-		IExtension [] extensions = getExtensionPointFilter().getExtensions();
+		IExtension[] extensions = getExtensionPointFilter().getExtensions();
 		for (IExtension extension : extensions) {
 			addExtension(PlatformUI.getWorkbench().getExtensionTracker(), extension);
 		}
@@ -48,14 +48,15 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-		IConfigurationElement [] elements = extension.getConfigurationElements();
+		IConfigurationElement[] elements = extension.getConfigurationElements();
 		for (IConfigurationElement element : elements) {
 			if (element.getName().equals(tag)) {
 				String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 				String file = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 				if (file == null || id == null) {
-					Persistence.log(element, Persistence.ACTIVITY_IMAGE_BINDING_DESC, "definition must contain icon and ID"); //$NON-NLS-1$
-					continue; //ignore - malformed
+					Persistence.log(element, Persistence.ACTIVITY_IMAGE_BINDING_DESC,
+							"definition must contain icon and ID"); //$NON-NLS-1$
+					continue; // ignore - malformed
 				}
 				if (registry.getDescriptor(id) == null) { // first come, first serve
 					ImageDescriptor descriptor = AbstractUIPlugin
@@ -70,14 +71,15 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 
 	}
 
-    /**
-     * Return the activity support extension point that this registry is interested in.
-     *
-     * @return the extension point
-     */
+	/**
+	 * Return the activity support extension point that this registry is interested
+	 * in.
+	 *
+	 * @return the extension point
+	 */
 	public IExtensionPoint getExtensionPointFilter() {
-		return Platform.getExtensionRegistry().getExtensionPoint(
-                PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
 	}
 
 	@Override

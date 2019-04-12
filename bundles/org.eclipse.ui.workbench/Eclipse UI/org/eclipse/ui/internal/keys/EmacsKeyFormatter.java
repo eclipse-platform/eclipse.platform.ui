@@ -31,55 +31,51 @@ import org.eclipse.ui.keys.ModifierKey;
  */
 public class EmacsKeyFormatter extends AbstractKeyFormatter {
 
-    /**
-     * A comparator that guarantees that modifier keys will be sorted the same
-     * across different platforms.
-     */
-    private static final Comparator EMACS_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
+	/**
+	 * A comparator that guarantees that modifier keys will be sorted the same
+	 * across different platforms.
+	 */
+	private static final Comparator EMACS_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
 
-    /**
-     * The resource bundle used by <code>format()</code> to translate formal
-     * string representations by locale.
-     */
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(EmacsKeyFormatter.class.getName());
+	/**
+	 * The resource bundle used by <code>format()</code> to translate formal string
+	 * representations by locale.
+	 */
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(EmacsKeyFormatter.class.getName());
 
-    /**
-     * Formats an individual key into a human readable format. This converts
-     * the key into a format similar to Xemacs.
-     *
-     * @param key
-     *            The key to format; must not be <code>null</code>.
-     * @return The key formatted as a string; should not be <code>null</code>.
-     */
-    @Override
+	/**
+	 * Formats an individual key into a human readable format. This converts the key
+	 * into a format similar to Xemacs.
+	 *
+	 * @param key The key to format; must not be <code>null</code>.
+	 * @return The key formatted as a string; should not be <code>null</code>.
+	 */
+	@Override
 	public String format(Key key) {
-        if (key instanceof ModifierKey) {
-            String formattedName = Util.translateString(RESOURCE_BUNDLE, key
-                    .toString(), null, false, false);
-            if (formattedName != null) {
-                return formattedName;
-            }
-        }
+		if (key instanceof ModifierKey) {
+			String formattedName = Util.translateString(RESOURCE_BUNDLE, key.toString(), null, false, false);
+			if (formattedName != null) {
+				return formattedName;
+			}
+		}
 
-        return super.format(key).toLowerCase();
-    }
+		return super.format(key).toLowerCase();
+	}
 
-    @Override
+	@Override
 	protected String getKeyDelimiter() {
-        return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY,
-                KeyStroke.KEY_DELIMITER, false, false);
-    }
+		return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY, KeyStroke.KEY_DELIMITER, false, false);
+	}
 
-    @Override
+	@Override
 	protected String getKeyStrokeDelimiter() {
-        return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY,
-                KeySequence.KEY_STROKE_DELIMITER, false, false);
-    }
+		return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY, KeySequence.KEY_STROKE_DELIMITER, false,
+				false);
+	}
 
-    @Override
+	@Override
 	protected Comparator getModifierKeyComparator() {
-        return EMACS_MODIFIER_KEY_COMPARATOR;
-    }
+		return EMACS_MODIFIER_KEY_COMPARATOR;
+	}
 
 }

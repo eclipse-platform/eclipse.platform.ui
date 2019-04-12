@@ -45,8 +45,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	private class Filter extends ViewerFilter {
 
 		@Override
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return isCompatible((IWorkingSet) element);
 		}
 
@@ -88,14 +87,12 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	/**
 	 * Create a new instance of this class.
 	 *
-	 * @param shell
-	 *            the shell to parent this dialog on
-	 * @param workingSetTypeIds
-	 *            the types of working set IDs that will be shown in this dialog
-	 * @param selectedWorkingSets
-	 *            the currently selected working sets (if any)
-	 * @param canEdit
-	 *            whether or not this dialog will display edit controls
+	 * @param shell               the shell to parent this dialog on
+	 * @param workingSetTypeIds   the types of working set IDs that will be shown in
+	 *                            this dialog
+	 * @param selectedWorkingSets the currently selected working sets (if any)
+	 * @param canEdit             whether or not this dialog will display edit
+	 *                            controls
 	 */
 	public SimpleWorkingSetSelectionDialog(Shell shell, String[] workingSetTypeIds, IWorkingSet[] selectedWorkingSets,
 			boolean canEdit) {
@@ -124,8 +121,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		viewer.setLabelProvider(new WorkingSetLabelProvider());
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.addFilter(new WorkingSetFilter(null));
-		IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager()
-				.getWorkingSets();
+		IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 		viewer.setInput(workingSets);
 		viewer.setFilters(new Filter());
 
@@ -144,8 +140,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 		Dialog.applyDialogFont(composite);
 
-		viewerData.heightHint = viewer.getTable().getItemHeight()
-				* Math.min(30, Math.max(10, workingSets.length));
+		viewerData.heightHint = viewer.getTable().getItemHeight() * Math.min(30, Math.max(10, workingSets.length));
 
 		return composite;
 	}
@@ -166,8 +161,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 	@Override
 	protected void availableWorkingSetsChanged() {
-		viewer.setInput(PlatformUI.getWorkbench().getWorkingSetManager()
-				.getWorkingSets());
+		viewer.setInput(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets());
 		super.availableWorkingSetsChanged();
 	}
 
@@ -186,8 +180,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 	@Override
 	protected void selectAllSets() {
-		viewer.setCheckedElements(PlatformUI.getWorkbench()
-				.getWorkingSetManager().getWorkingSets());
+		viewer.setCheckedElements(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets());
 		updateButtonAvailability();
 	}
 

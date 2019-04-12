@@ -24,12 +24,11 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
-
 /**
  * <p>
- * UndoActionHandler provides common behavior for performing an undo, as
- * well as labelling and enabling the undo menu item.  This class may be
- * instantiated by clients.
+ * UndoActionHandler provides common behavior for performing an undo, as well as
+ * labelling and enabling the undo menu item. This class may be instantiated by
+ * clients.
  * </p>
  *
  * @since 3.1
@@ -37,20 +36,17 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public final class UndoActionHandler extends OperationHistoryActionHandler {
 
 	/**
-	 * Construct an action handler that handles the labelling and enabling of
-	 * the undo action for the specified undo context.
+	 * Construct an action handler that handles the labelling and enabling of the
+	 * undo action for the specified undo context.
 	 *
-	 * @param site
-	 *            the workbench part site that created the action.
-	 * @param context
-	 *            the undo context to be used for the undo
+	 * @param site    the workbench part site that created the action.
+	 * @param context the undo context to be used for the undo
 	 */
 	public UndoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
 		super(site, context);
-        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-                .getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
-        setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-                .getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
+		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
+		setDisabledImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
 		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 	}
 
@@ -86,7 +82,7 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	@Override
-	IStatus runCommand(IProgressMonitor pm) throws ExecutionException  {
+	IStatus runCommand(IProgressMonitor pm) throws ExecutionException {
 		return getHistory().undo(getUndoContext(), pm, this);
 	}
 

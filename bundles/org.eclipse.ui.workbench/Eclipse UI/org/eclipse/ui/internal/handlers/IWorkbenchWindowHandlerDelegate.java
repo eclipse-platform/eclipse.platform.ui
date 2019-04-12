@@ -21,7 +21,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  *
  * @since 3.1
  */
-public interface IWorkbenchWindowHandlerDelegate extends
-        IWorkbenchWindowActionDelegate {
+public interface IWorkbenchWindowHandlerDelegate extends IWorkbenchWindowActionDelegate {
 
 }

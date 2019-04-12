@@ -21,24 +21,26 @@ import java.util.Map;
  * @since 3.0
  */
 public interface IThemeDescriptor extends IThemeElementDefinition {
-    String TAB_BORDER_STYLE = "TAB_BORDER_STYLE"; //$NON-NLS-1$
+	String TAB_BORDER_STYLE = "TAB_BORDER_STYLE"; //$NON-NLS-1$
 
-    /**
-     * Returns the color overrides for this theme.
-     * @return ColorDefinition []
-     */
-    ColorDefinition[] getColors();
+	/**
+	 * Returns the color overrides for this theme.
+	 * 
+	 * @return ColorDefinition []
+	 */
+	ColorDefinition[] getColors();
 
-    /**
-     * Returns the font overrides for this theme.
-     * @return GradientDefinition []
-     */
-    FontDefinition[] getFonts();
+	/**
+	 * Returns the font overrides for this theme.
+	 * 
+	 * @return GradientDefinition []
+	 */
+	FontDefinition[] getFonts();
 
-    /**
-     * Returns the data map for this theme.
-     *
-     * @return the data map.  This will be read only.
-     */
-    Map getData();
+	/**
+	 * Returns the data map for this theme.
+	 *
+	 * @return the data map. This will be read only.
+	 */
+	Map getData();
 }

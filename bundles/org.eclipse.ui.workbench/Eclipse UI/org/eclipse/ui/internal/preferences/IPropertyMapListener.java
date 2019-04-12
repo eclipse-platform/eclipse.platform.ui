@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.preferences;
  * @since 3.1
  */
 public interface IPropertyMapListener {
-    void propertyChanged(String[] propertyIds);
-    void listenerAttached();
+	void propertyChanged(String[] propertyIds);
+
+	void listenerAttached();
 }

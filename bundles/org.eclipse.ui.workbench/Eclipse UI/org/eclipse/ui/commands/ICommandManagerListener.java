@@ -30,15 +30,14 @@ package org.eclipse.ui.commands;
 @SuppressWarnings("all")
 public interface ICommandManagerListener {
 
-    /**
-     * Notifies that one or more properties of an instance of
-     * <code>ICommandManager</code> have changed. Specific details are
-     * described in the <code>CommandManagerEvent</code>.
-     *
-     * @param commandManagerEvent
-     *            the commandManager event. Guaranteed not to be
-     *            <code>null</code>.
-     */
+	/**
+	 * Notifies that one or more properties of an instance of
+	 * <code>ICommandManager</code> have changed. Specific details are described in
+	 * the <code>CommandManagerEvent</code>.
+	 *
+	 * @param commandManagerEvent the commandManager event. Guaranteed not to be
+	 *                            <code>null</code>.
+	 */
 	@Deprecated
-    void commandManagerChanged(CommandManagerEvent commandManagerEvent);
+	void commandManagerChanged(CommandManagerEvent commandManagerEvent);
 }

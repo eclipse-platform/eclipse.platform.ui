@@ -72,32 +72,27 @@ public interface IWorkbenchHelpSystem {
 	 * Ignored if no help UI is available.
 	 * </p>
 	 *
-	 * @param expression
-	 *            the search expression. The actual syntax rules of the
-	 *            expression are dependent on the active
-	 *            help system. Refer to the help system
-	 *            documentation for more details.
+	 * @param expression the search expression. The actual syntax rules of the
+	 *                   expression are dependent on the active help system. Refer
+	 *                   to the help system documentation for more details.
 	 */
 	void search(String expression);
 
 	/**
 	 * Displays context-sensitive help for the given context.
 	 * <p>
-	 * (x,y) coordinates specify the location where the context sensitive help
-	 * UI will be presented. These coordinates are screen-relative (ie: (0,0) is
-	 * the top left-most screen corner). The platform is responsible for calling
-	 * this method and supplying the appropriate location.
+	 * (x,y) coordinates specify the location where the context sensitive help UI
+	 * will be presented. These coordinates are screen-relative (ie: (0,0) is the
+	 * top left-most screen corner). The platform is responsible for calling this
+	 * method and supplying the appropriate location.
 	 * </p>
 	 * <p>
 	 * Ignored if no help UI is available.
 	 * </p>
 	 *
-	 * @param context
-	 *            the context to display
-	 * @param x
-	 *            horizontal position
-	 * @param y
-	 *            vertical position
+	 * @param context the context to display
+	 * @param x       horizontal position
+	 * @param y       vertical position
 	 */
 	void displayContext(IContext context, int x, int y);
 
@@ -105,8 +100,7 @@ public interface IWorkbenchHelpSystem {
 	 * Displays help content for the help resource with the given URL.
 	 * <p>
 	 * This method is called by the platform to launch the help system UI,
-	 * displaying the documentation identified by the <code>href</code>
-	 * parameter.
+	 * displaying the documentation identified by the <code>href</code> parameter.
 	 * </p>
 	 * <p>
 	 * The help system makes no guarantee that all the help resources can be
@@ -116,12 +110,12 @@ public interface IWorkbenchHelpSystem {
 	 * Ignored if no help UI is available.
 	 * </p>
 	 *
-	 * @param href
-	 *            the URL of the help resource.
-	 *            <p>
-	 *            Valid href are as described in
-	 *            {@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
-	 *            </p>
+	 * @param href the URL of the help resource.
+	 *             <p>
+	 *             Valid href are as described in
+	 *             {@link org.eclipse.help.IHelpResource#getHref()
+	 *             IHelpResource.getHref()}
+	 *             </p>
 	 */
 	void displayHelpResource(String href);
 
@@ -131,8 +125,7 @@ public interface IWorkbenchHelpSystem {
 	 * May only be called from a UI thread.
 	 * <p>
 	 *
-	 * @param helpContextId
-	 *            the id of the context to display
+	 * @param helpContextId the id of the context to display
 	 */
 	void displayHelp(String helpContextId);
 
@@ -142,58 +135,49 @@ public interface IWorkbenchHelpSystem {
 	 * May only be called from a UI thread.
 	 * <p>
 	 *
-	 * @param context
-	 *            the context to display
+	 * @param context the context to display
 	 */
 	void displayHelp(IContext context);
 
 	/**
 	 * Returns whether the context-sensitive help window is currently being
-	 * displayed. Returns <code>false</code> if the help UI has not been
-	 * activated yet.
+	 * displayed. Returns <code>false</code> if the help UI has not been activated
+	 * yet.
 	 *
-	 * @return <code>true</code> if the context-sensitive help window is
-	 *         currently being displayed, <code>false</code> otherwise
+	 * @return <code>true</code> if the context-sensitive help window is currently
+	 *         being displayed, <code>false</code> otherwise
 	 */
 	boolean isContextHelpDisplayed();
 
 	/**
 	 * Sets the given help id on the given action.
 	 *
-	 * @param action
-	 *            the action on which to register the id
-	 * @param helpContextId
-	 *            the id to use when F1 help is invoked
+	 * @param action        the action on which to register the id
+	 * @param helpContextId the id to use when F1 help is invoked
 	 */
 	void setHelp(IAction action, String helpContextId);
 
 	/**
 	 * Sets the given help id on the given control.
 	 *
-	 * @param control
-	 *            the control on which to register the id
-	 * @param helpContextId
-	 *            the id to use when F1 help is invoked
+	 * @param control       the control on which to register the id
+	 * @param helpContextId the id to use when F1 help is invoked
 	 */
 	void setHelp(Control control, String helpContextId);
 
 	/**
 	 * Sets the given help id on the given menu.
 	 *
-	 * @param menu
-	 *            the menu on which to register the id
-	 * @param helpContextId
-	 *            the id to use when F1 help is invoked
+	 * @param menu          the menu on which to register the id
+	 * @param helpContextId the id to use when F1 help is invoked
 	 */
 	void setHelp(Menu menu, String helpContextId);
 
 	/**
 	 * Sets the given help id on the given menu item.
 	 *
-	 * @param item
-	 *            the menu item on which to register the id
-	 * @param helpContextId
-	 *            the id to use when F1 help is invoked
+	 * @param item          the menu item on which to register the id
+	 * @param helpContextId the id to use when F1 help is invoked
 	 */
 	void setHelp(MenuItem item, String helpContextId);
 
@@ -203,12 +187,11 @@ public interface IWorkbenchHelpSystem {
 	 * already have a protocol will be unchanged.
 	 *
 	 * @param href
-	 * @param documentOnly if <code>true</code>, the resulting URL must point
-	 * at the document referenced by href. Otherwise, it can be a URL that
-	 * contains additional elements like navigation that the help system
-	 * adds to the document.
-	 * @return the resolved URL or <code>null</code> if no help UI is
-	 *         available.
+	 * @param documentOnly if <code>true</code>, the resulting URL must point at the
+	 *                     document referenced by href. Otherwise, it can be a URL
+	 *                     that contains additional elements like navigation that
+	 *                     the help system adds to the document.
+	 * @return the resolved URL or <code>null</code> if no help UI is available.
 	 */
 	URL resolve(String href, boolean documentOnly);
 }

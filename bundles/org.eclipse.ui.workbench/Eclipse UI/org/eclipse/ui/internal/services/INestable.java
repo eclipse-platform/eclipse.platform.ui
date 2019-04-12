@@ -47,16 +47,15 @@ package org.eclipse.ui.internal.services;
 public interface INestable {
 
 	/**
-	 * Notifies this service that the component within which it exists has
-	 * become active. The service should modify its state as appropriate.
+	 * Notifies this service that the component within which it exists has become
+	 * active. The service should modify its state as appropriate.
 	 *
 	 */
 	void activate();
 
 	/**
-	 * Notifies this service that the component within which it exists has
-	 * become inactive. The service should modify its state as appropriate.
+	 * Notifies this service that the component within which it exists has become
+	 * inactive. The service should modify its state as appropriate.
 	 */
 	void deactivate();
 }
-

@@ -35,8 +35,7 @@ import org.eclipse.ui.internal.util.Util;
  *
  * @since 3.2
  */
-public final class ActionSetSourceProvider extends AbstractSourceProvider
-		implements IActionSetsListener {
+public final class ActionSetSourceProvider extends AbstractSourceProvider implements IActionSetsListener {
 
 	/**
 	 * The names of the sources supported by this source provider.
@@ -44,8 +43,8 @@ public final class ActionSetSourceProvider extends AbstractSourceProvider
 	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { ISources.ACTIVE_ACTION_SETS_NAME };
 
 	/**
-	 * The action sets last seen as active by this source provider. This value
-	 * may be <code>null</code>.
+	 * The action sets last seen as active by this source provider. This value may
+	 * be <code>null</code>.
 	 */
 	private IActionSetDescriptor[] activeActionSets;
 
@@ -73,8 +72,7 @@ public final class ActionSetSourceProvider extends AbstractSourceProvider
 			}
 
 			activeActionSets = newActionSets;
-			fireSourceChanged(ISources.ACTIVE_ACTION_SETS,
-					ISources.ACTIVE_ACTION_SETS_NAME, activeActionSets);
+			fireSourceChanged(ISources.ACTIVE_ACTION_SETS, ISources.ACTIVE_ACTION_SETS_NAME, activeActionSets);
 
 		}
 	}

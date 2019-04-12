@@ -42,8 +42,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	/**
 	 * Create an instance of this class.
 	 *
-	 * @param pluginPointId
-	 *            java.lang.String
+	 * @param pluginPointId java.lang.String
 	 */
 	public PreferenceTransferRegistryReader(String pluginPointId) {
 		pluginPoint = pluginPointId;
@@ -53,13 +52,11 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	 * Returns a new PreferenceTransferElement configured according to the
 	 * parameters contained in the passed element.
 	 *
-	 * @param element
-	 *            the configuration element
-	 * @return the preference transfer element or <code>null</code> if there was
-	 *         not enough information in the element
+	 * @param element the configuration element
+	 * @return the preference transfer element or <code>null</code> if there was not
+	 *         enough information in the element
 	 */
-	protected PreferenceTransferElement createPreferenceTransferElement(
-			IConfigurationElement element) {
+	protected PreferenceTransferElement createPreferenceTransferElement(IConfigurationElement element) {
 		// PreferenceTransfers must have a class attribute
 		if (element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null) {
 			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
@@ -82,8 +79,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	 */
 	public PreferenceTransferElement[] getPreferenceTransfers() {
 		readPreferenceTransfers();
-		PreferenceTransferElement[] transfers = new PreferenceTransferElement[preferenceTransfers
-				.size()];
+		PreferenceTransferElement[] transfers = new PreferenceTransferElement[preferenceTransfers.size()];
 		Collections.sort(preferenceTransfers, (o1, o2) -> {
 			String name1 = ((PreferenceTransferElement) o1).getName();
 			String name2 = ((PreferenceTransferElement) o2).getName();
@@ -106,8 +102,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 
 		// Allow settings transfers as well.
 
-		return element.getName().equals(
-				IWorkbenchRegistryConstants.TAG_SETTINGS_TRANSFER);
+		return element.getName().equals(IWorkbenchRegistryConstants.TAG_SETTINGS_TRANSFER);
 	}
 
 	/**
@@ -125,13 +120,10 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	 * @param configElement
 	 * @return the child configuration elements
 	 */
-	public static IConfigurationElement[] getMappings(
-			IConfigurationElement configElement) {
-		IConfigurationElement[] children = configElement
-				.getChildren(IWorkbenchRegistryConstants.TAG_MAPPING);
+	public static IConfigurationElement[] getMappings(IConfigurationElement configElement) {
+		IConfigurationElement[] children = configElement.getChildren(IWorkbenchRegistryConstants.TAG_MAPPING);
 		if (children.length < 1) {
-			logMissingElement(configElement,
-					IWorkbenchRegistryConstants.TAG_MAPPING);
+			logMissingElement(configElement, IWorkbenchRegistryConstants.TAG_MAPPING);
 			return new IConfigurationElement[0];
 		}
 		return children;
@@ -146,10 +138,9 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	}
 
 	/**
-	 * @param element
-	 *            the configuration element
-	 * @return a map that maps nodes to keys for this element or
-	 *         <code>null</code> for all nodes
+	 * @param element the configuration element
+	 * @return a map that maps nodes to keys for this element or <code>null</code>
+	 *         for all nodes
 	 */
 	public static Map getEntry(IConfigurationElement element) {
 		IConfigurationElement[] entries = element.getChildren(IWorkbenchRegistryConstants.TAG_ENTRY);

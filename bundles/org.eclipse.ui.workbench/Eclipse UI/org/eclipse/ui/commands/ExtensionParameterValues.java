@@ -52,8 +52,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
  *
  * @since 3.1
  */
-public final class ExtensionParameterValues implements IParameterValues,
-		IExecutableExtension {
+public final class ExtensionParameterValues implements IParameterValues, IExecutableExtension {
 
 	/**
 	 * The delimiter between elements if the name-value pairs are specified in a
@@ -73,15 +72,14 @@ public final class ExtensionParameterValues implements IParameterValues,
 	}
 
 	@Override
-	public void setInitializationData(final IConfigurationElement config,
-			final String propertyName, final Object data) {
+	public void setInitializationData(final IConfigurationElement config, final String propertyName,
+			final Object data) {
 		if (data == null) {
 			parameterValues = Collections.EMPTY_MAP;
 
 		} else if (data instanceof String) {
 			parameterValues = new HashMap();
-			final StringTokenizer tokenizer = new StringTokenizer(
-					(String) data, DELIMITER);
+			final StringTokenizer tokenizer = new StringTokenizer((String) data, DELIMITER);
 			while (tokenizer.hasMoreTokens()) {
 				final String name = tokenizer.nextToken();
 				if (tokenizer.hasMoreTokens()) {

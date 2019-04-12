@@ -53,18 +53,15 @@ public class ResetPerspectiveHandler extends AbstractHandler {
 					}
 
 					if (offerRevertToBase) {
-						String message = NLS.bind(WorkbenchMessages.RevertPerspective_message,
-								descriptor.getLabel());
+						String message = NLS.bind(WorkbenchMessages.RevertPerspective_message, descriptor.getLabel());
 						boolean toggleState = false;
-						MessageDialogWithToggle dialog = MessageDialogWithToggle.open(
-								MessageDialog.QUESTION, activeWorkbenchWindow.getShell(),
-								WorkbenchMessages.RevertPerspective_title, message,
-								WorkbenchMessages.RevertPerspective_option, toggleState, null,
-								null, SWT.SHEET);
+						MessageDialogWithToggle dialog = MessageDialogWithToggle.open(MessageDialog.QUESTION,
+								activeWorkbenchWindow.getShell(), WorkbenchMessages.RevertPerspective_title, message,
+								WorkbenchMessages.RevertPerspective_option, toggleState, null, null, SWT.SHEET);
 						if (dialog.getReturnCode() == IDialogConstants.YES_ID) {
 							if (dialog.getToggleState()) {
-								PerspectiveRegistry reg = (PerspectiveRegistry) PlatformUI
-										.getWorkbench().getPerspectiveRegistry();
+								PerspectiveRegistry reg = (PerspectiveRegistry) PlatformUI.getWorkbench()
+										.getPerspectiveRegistry();
 								reg.revertPerspective(descriptor);
 							}
 							page.resetPerspective();
@@ -73,8 +70,8 @@ public class ResetPerspectiveHandler extends AbstractHandler {
 						String message = NLS.bind(WorkbenchMessages.ResetPerspective_message, descriptor.getLabel());
 
 						int result = MessageDialog.open(MessageDialog.CONFIRM, activeWorkbenchWindow.getShell(),
-								WorkbenchMessages.ResetPerspective_title, message, SWT.SHEET, WorkbenchMessages.ResetPerspective_buttonLabel,
-								IDialogConstants.NO_LABEL);
+								WorkbenchMessages.ResetPerspective_title, message, SWT.SHEET,
+								WorkbenchMessages.ResetPerspective_buttonLabel, IDialogConstants.NO_LABEL);
 
 						if (result == Window.OK) {
 							page.resetPerspective();

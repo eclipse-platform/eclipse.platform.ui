@@ -77,68 +77,68 @@ public class AboutDialog extends TrayDialog {
 
 	private static final int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
 
-    private static final int DETAILS_ID = IDialogConstants.CLIENT_ID + 1;
+	private static final int DETAILS_ID = IDialogConstants.CLIENT_ID + 1;
 
-    private String productName;
+	private String productName;
 
-    private IProduct product;
+	private IProduct product;
 
-    private AboutBundleGroupData[] bundleGroupInfos;
+	private AboutBundleGroupData[] bundleGroupInfos;
 
-    private ArrayList<Image> images = new ArrayList<>();
+	private ArrayList<Image> images = new ArrayList<>();
 
-    private AboutFeaturesButtonManager buttonManager = new AboutFeaturesButtonManager();
+	private AboutFeaturesButtonManager buttonManager = new AboutFeaturesButtonManager();
 
-    private StyledText text;
+	private StyledText text;
 
-    private AboutTextManager aboutTextManager;
+	private AboutTextManager aboutTextManager;
 
-    /**
-     * Create an instance of the AboutDialog for the given window.
-     * @param parentShell The parent of the dialog.
-     */
-    public AboutDialog(Shell parentShell) {
-        super(parentShell);
+	/**
+	 * Create an instance of the AboutDialog for the given window.
+	 * 
+	 * @param parentShell The parent of the dialog.
+	 */
+	public AboutDialog(Shell parentShell) {
+		super(parentShell);
 
-        product = Platform.getProduct();
-        if (product != null) {
+		product = Platform.getProduct();
+		if (product != null) {
 			productName = product.getName();
 		}
-        if (productName == null) {
+		if (productName == null) {
 			productName = WorkbenchMessages.AboutDialog_defaultProductName;
 		}
 
-        // create a descriptive object for each BundleGroup
-        IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+		// create a descriptive object for each BundleGroup
+		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
 		LinkedList<AboutBundleGroupData> groups = new LinkedList<>();
-        if (providers != null) {
+		if (providers != null) {
 			for (IBundleGroupProvider provider : providers) {
-                IBundleGroup[] bundleGroups = provider.getBundleGroups();
-                for (IBundleGroup bundleGroup : bundleGroups) {
+				IBundleGroup[] bundleGroups = provider.getBundleGroups();
+				for (IBundleGroup bundleGroup : bundleGroups) {
 					groups.add(new AboutBundleGroupData(bundleGroup));
 				}
-            }
+			}
 		}
-        bundleGroupInfos = groups
-                .toArray(new AboutBundleGroupData[0]);
-    }
+		bundleGroupInfos = groups.toArray(new AboutBundleGroupData[0]);
+	}
 
-    @Override
+	@Override
 	protected void buttonPressed(int buttonId) {
-        switch (buttonId) {
-        case DETAILS_ID:
+		switch (buttonId) {
+		case DETAILS_ID:
 			BusyIndicator.showWhile(getShell().getDisplay(), () -> {
 				IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				InstallationDialog dialog = new InstallationDialog(getShell(), workbenchWindow);
 				dialog.setModalParent(AboutDialog.this);
 				dialog.open();
 			});
-            break;
-        default:
-            super.buttonPressed(buttonId);
-            break;
-        }
-    }
+			break;
+		default:
+			super.buttonPressed(buttonId);
+			break;
+		}
+	}
 
 	@Override
 	public boolean close() {
@@ -150,246 +150,238 @@ public class AboutDialog extends TrayDialog {
 		return super.close();
 	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText(NLS.bind(WorkbenchMessages.AboutDialog_shellTitle,productName ));
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
-				IWorkbenchHelpContextIds.ABOUT_DIALOG);
-    }
+		super.configureShell(newShell);
+		newShell.setText(NLS.bind(WorkbenchMessages.AboutDialog_shellTitle, productName));
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IWorkbenchHelpContextIds.ABOUT_DIALOG);
+	}
 
-    /**
-     * Add buttons to the dialog's button bar.
-     *
-     * Subclasses should override.
-     *
-     * @param parent
-     *            the button bar composite
-     */
-    @Override
+	/**
+	 * Add buttons to the dialog's button bar.
+	 *
+	 * Subclasses should override.
+	 *
+	 * @param parent the button bar composite
+	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-        parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        createButton(parent, DETAILS_ID, WorkbenchMessages.AboutDialog_DetailsButton, false);
+		createButton(parent, DETAILS_ID, WorkbenchMessages.AboutDialog_DetailsButton, false);
 
-        Label l = new Label(parent, SWT.NONE);
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        GridLayout layout = (GridLayout) parent.getLayout();
-        layout.numColumns++;
-        layout.makeColumnsEqualWidth = false;
+		Label l = new Label(parent, SWT.NONE);
+		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = (GridLayout) parent.getLayout();
+		layout.numColumns++;
+		layout.makeColumnsEqualWidth = false;
 
 		Button b = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.CLOSE_LABEL, true);
-        b.setFocus();
-    }
+		b.setFocus();
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-         // brand the about box if there is product info
-        Image aboutImage = null;
-        AboutItem item = null;
-        if (product != null) {
-            ImageDescriptor imageDescriptor = ProductProperties
-                    .getAboutImage(product);
-            if (imageDescriptor != null) {
+		// brand the about box if there is product info
+		Image aboutImage = null;
+		AboutItem item = null;
+		if (product != null) {
+			ImageDescriptor imageDescriptor = ProductProperties.getAboutImage(product);
+			if (imageDescriptor != null) {
 				aboutImage = imageDescriptor.createImage();
 			}
 
-            // if the about image is small enough, then show the text
-            if (aboutImage == null
-                    || aboutImage.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
-                String aboutText = ProductProperties.getAboutText(product);
-                if (aboutText != null) {
+			// if the about image is small enough, then show the text
+			if (aboutImage == null || aboutImage.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
+				String aboutText = ProductProperties.getAboutText(product);
+				if (aboutText != null) {
 					item = AboutTextManager.scan(aboutText);
 				}
-            }
+			}
 
-            if (aboutImage != null) {
+			if (aboutImage != null) {
 				images.add(aboutImage);
 			}
-        }
+		}
 
-        // create a composite which is the parent of the top area and the bottom
-        // button bar, this allows there to be a second child of this composite with
-        // a banner background on top but not have on the bottom
-        Composite workArea = new Composite(parent, SWT.NONE);
-        GridLayout workLayout = new GridLayout();
-        workLayout.marginHeight = 0;
-        workLayout.marginWidth = 0;
-        workLayout.verticalSpacing = 0;
-        workLayout.horizontalSpacing = 0;
-        workArea.setLayout(workLayout);
-        workArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+		// create a composite which is the parent of the top area and the bottom
+		// button bar, this allows there to be a second child of this composite with
+		// a banner background on top but not have on the bottom
+		Composite workArea = new Composite(parent, SWT.NONE);
+		GridLayout workLayout = new GridLayout();
+		workLayout.marginHeight = 0;
+		workLayout.marginWidth = 0;
+		workLayout.verticalSpacing = 0;
+		workLayout.horizontalSpacing = 0;
+		workArea.setLayout(workLayout);
+		workArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        // page group
-        Color background = JFaceColors.getBannerBackground(parent.getDisplay());
-        Color foreground = JFaceColors.getBannerForeground(parent.getDisplay());
-        Composite top = (Composite) super.createDialogArea(workArea);
+		// page group
+		Color background = JFaceColors.getBannerBackground(parent.getDisplay());
+		Color foreground = JFaceColors.getBannerForeground(parent.getDisplay());
+		Composite top = (Composite) super.createDialogArea(workArea);
 
-        // override any layout inherited from createDialogArea
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        layout.verticalSpacing = 0;
-        layout.horizontalSpacing = 0;
-        top.setLayout(layout);
-        top.setLayoutData(new GridData(GridData.FILL_BOTH));
-        top.setBackground(background);
-        top.setForeground(foreground);
+		// override any layout inherited from createDialogArea
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		top.setLayout(layout);
+		top.setLayoutData(new GridData(GridData.FILL_BOTH));
+		top.setBackground(background);
+		top.setForeground(foreground);
 
-        // the image & text
-        final Composite topContainer = new Composite(top, SWT.NONE);
-        topContainer.setBackground(background);
-        topContainer.setForeground(foreground);
+		// the image & text
+		final Composite topContainer = new Composite(top, SWT.NONE);
+		topContainer.setBackground(background);
+		topContainer.setForeground(foreground);
 
-        layout = new GridLayout();
-        layout.numColumns = (aboutImage == null || item == null ? 1 : 2);
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        layout.verticalSpacing = 0;
-        layout.horizontalSpacing = 0;
-        topContainer.setLayout(layout);
+		layout = new GridLayout();
+		layout.numColumns = (aboutImage == null || item == null ? 1 : 2);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		topContainer.setLayout(layout);
 
-
-        GC gc = new GC(parent);
-        // arbitrary default
-        int topContainerHeightHint = 100;
-        try {
+		GC gc = new GC(parent);
+		// arbitrary default
+		int topContainerHeightHint = 100;
+		try {
 			// default height enough for 6 lines of text
-			topContainerHeightHint = Math.max(topContainerHeightHint, gc
-					.getFontMetrics().getHeight() * 6);
-        }
-        finally {
-        	gc.dispose();
-        }
+			topContainerHeightHint = Math.max(topContainerHeightHint, gc.getFontMetrics().getHeight() * 6);
+		} finally {
+			gc.dispose();
+		}
 
-        //image on left side of dialog
-        if (aboutImage != null) {
-            Label imageLabel = new Label(topContainer, SWT.NONE);
-            imageLabel.setBackground(background);
-            imageLabel.setForeground(foreground);
+		// image on left side of dialog
+		if (aboutImage != null) {
+			Label imageLabel = new Label(topContainer, SWT.NONE);
+			imageLabel.setBackground(background);
+			imageLabel.setForeground(foreground);
 
-            GridData data = new GridData();
-            data.horizontalAlignment = GridData.FILL;
-            data.verticalAlignment = GridData.BEGINNING;
-            data.grabExcessHorizontalSpace = false;
-            imageLabel.setLayoutData(data);
-            imageLabel.setImage(aboutImage);
-            topContainerHeightHint = Math.max(topContainerHeightHint, aboutImage.getBounds().height);
-        }
+			GridData data = new GridData();
+			data.horizontalAlignment = GridData.FILL;
+			data.verticalAlignment = GridData.BEGINNING;
+			data.grabExcessHorizontalSpace = false;
+			imageLabel.setLayoutData(data);
+			imageLabel.setImage(aboutImage);
+			topContainerHeightHint = Math.max(topContainerHeightHint, aboutImage.getBounds().height);
+		}
 
-        GridData data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.verticalAlignment = GridData.FILL;
-        data.grabExcessHorizontalSpace = true;
-        data.grabExcessVerticalSpace = true;
-        data.heightHint = topContainerHeightHint;
-        topContainer.setLayoutData(data);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
+		data.heightHint = topContainerHeightHint;
+		topContainer.setLayoutData(data);
 
-        if (item != null) {
+		if (item != null) {
 			final int minWidth = 400; // This value should really be calculated
-        	// from the computeSize(SWT.DEFAULT,
-        	// SWT.DEFAULT) of all the
-        	// children in infoArea excluding the
-        	// wrapped styled text
-        	// There is no easy way to do this.
-        	final ScrolledComposite scroller = new ScrolledComposite(topContainer,
-    				SWT.V_SCROLL | SWT.H_SCROLL);
-        	data = new GridData(GridData.FILL_BOTH);
-        	data.widthHint = minWidth;
-    		scroller.setLayoutData(data);
+			// from the computeSize(SWT.DEFAULT,
+			// SWT.DEFAULT) of all the
+			// children in infoArea excluding the
+			// wrapped styled text
+			// There is no easy way to do this.
+			final ScrolledComposite scroller = new ScrolledComposite(topContainer, SWT.V_SCROLL | SWT.H_SCROLL);
+			data = new GridData(GridData.FILL_BOTH);
+			data.widthHint = minWidth;
+			scroller.setLayoutData(data);
 
-    		final Composite textComposite = new Composite(scroller, SWT.NONE);
-    		textComposite.setBackground(background);
+			final Composite textComposite = new Composite(scroller, SWT.NONE);
+			textComposite.setBackground(background);
 
-    		layout = new GridLayout();
-    		textComposite.setLayout(layout);
+			layout = new GridLayout();
+			textComposite.setLayout(layout);
 
-    		text = new StyledText(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
+			text = new StyledText(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
 
-    		// Don't set caret to 'null' as this causes https://bugs.eclipse.org/293263.
+			// Don't set caret to 'null' as this causes https://bugs.eclipse.org/293263.
 //    		text.setCaret(null);
 
-            text.setFont(parent.getFont());
-            text.setText(item.getText());
-            text.setCursor(null);
-            text.setBackground(background);
-            text.setForeground(foreground);
+			text.setFont(parent.getFont());
+			text.setText(item.getText());
+			text.setCursor(null);
+			text.setBackground(background);
+			text.setForeground(foreground);
 
-            aboutTextManager = new AboutTextManager(text);
-            aboutTextManager.setItem(item);
+			aboutTextManager = new AboutTextManager(text);
+			aboutTextManager.setItem(item);
 
-            createTextMenu();
+			createTextMenu();
 
-    		GridData gd = new GridData();
-    		gd.verticalAlignment = GridData.BEGINNING;
-    		gd.horizontalAlignment = GridData.FILL;
-    		gd.grabExcessHorizontalSpace = true;
-    		text.setLayoutData(gd);
+			GridData gd = new GridData();
+			gd.verticalAlignment = GridData.BEGINNING;
+			gd.horizontalAlignment = GridData.FILL;
+			gd.grabExcessHorizontalSpace = true;
+			text.setLayoutData(gd);
 
-    		// Adjust the scrollbar increments
-    		scroller.getHorizontalBar().setIncrement(20);
-    		scroller.getVerticalBar().setIncrement(20);
+			// Adjust the scrollbar increments
+			scroller.getHorizontalBar().setIncrement(20);
+			scroller.getVerticalBar().setIncrement(20);
 
-    		final boolean[] inresize = new boolean[1]; // flag to stop unneccesary
-    		// recursion
-    		textComposite.addControlListener(new ControlAdapter() {
-    			@Override
+			final boolean[] inresize = new boolean[1]; // flag to stop unneccesary
+			// recursion
+			textComposite.addControlListener(new ControlAdapter() {
+				@Override
 				public void controlResized(ControlEvent e) {
-    				if (inresize[0]) {
+					if (inresize[0]) {
 						return;
 					}
-    				inresize[0] = true;
-    				// required because of bugzilla report 4579
-    				textComposite.layout(true);
-    				// required because you want to change the height that the
-    				// scrollbar will scroll over when the width changes.
-    				int width = textComposite.getClientArea().width;
-    				Point p = textComposite.computeSize(width, SWT.DEFAULT);
-    				scroller.setMinSize(minWidth, p.y);
-    				inresize[0] = false;
-    			}
-    		});
+					inresize[0] = true;
+					// required because of bugzilla report 4579
+					textComposite.layout(true);
+					// required because you want to change the height that the
+					// scrollbar will scroll over when the width changes.
+					int width = textComposite.getClientArea().width;
+					Point p = textComposite.computeSize(width, SWT.DEFAULT);
+					scroller.setMinSize(minWidth, p.y);
+					inresize[0] = false;
+				}
+			});
 
-    		scroller.setExpandHorizontal(true);
-    		scroller.setExpandVertical(true);
-    		Point p = textComposite.computeSize(minWidth, SWT.DEFAULT);
-    		textComposite.setSize(p.x, p.y);
-    		scroller.setMinWidth(minWidth);
-    		scroller.setMinHeight(p.y);
+			scroller.setExpandHorizontal(true);
+			scroller.setExpandVertical(true);
+			Point p = textComposite.computeSize(minWidth, SWT.DEFAULT);
+			textComposite.setSize(p.x, p.y);
+			scroller.setMinWidth(minWidth);
+			scroller.setMinHeight(p.y);
 
-    		scroller.setContent(textComposite);
-        }
+			scroller.setContent(textComposite);
+		}
 
-        // horizontal bar
-        Label bar = new Label(workArea, SWT.HORIZONTAL | SWT.SEPARATOR);
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        bar.setLayoutData(data);
+		// horizontal bar
+		Label bar = new Label(workArea, SWT.HORIZONTAL | SWT.SEPARATOR);
+		data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		bar.setLayoutData(data);
 
-        // add image buttons for bundle groups that have them
-        Composite bottom = (Composite) super.createDialogArea(workArea);
-        // override any layout inherited from createDialogArea
-        layout = new GridLayout();
-        bottom.setLayout(layout);
-        data = new GridData();
-        data.horizontalAlignment = SWT.FILL;
-        data.verticalAlignment = SWT.FILL;
-        data.grabExcessHorizontalSpace = true;
+		// add image buttons for bundle groups that have them
+		Composite bottom = (Composite) super.createDialogArea(workArea);
+		// override any layout inherited from createDialogArea
+		layout = new GridLayout();
+		bottom.setLayout(layout);
+		data = new GridData();
+		data.horizontalAlignment = SWT.FILL;
+		data.verticalAlignment = SWT.FILL;
+		data.grabExcessHorizontalSpace = true;
 
-        bottom.setLayoutData(data);
+		bottom.setLayoutData(data);
 
-        createFeatureImageButtonRow(bottom);
+		createFeatureImageButtonRow(bottom);
 
-        // spacer
-        bar = new Label(bottom, SWT.NONE);
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        bar.setLayoutData(data);
+		// spacer
+		bar = new Label(bottom, SWT.NONE);
+		data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		bar.setLayoutData(data);
 
-        return workArea;
-    }
+		return workArea;
+	}
 
-    /**
+	/**
 	 * Create the context menu for the text widget.
 	 *
 	 * @since 3.4
@@ -398,66 +390,63 @@ public class AboutDialog extends TrayDialog {
 		final MenuManager textManager = new MenuManager();
 		IServiceLocator serviceLocator = PlatformUI.getWorkbench();
 		ICommandService commandService = serviceLocator.getService(ICommandService.class);
-		textManager.add(new CommandContributionItem(
-				new CommandContributionItemParameter(serviceLocator, null, IWorkbenchCommandConstants.EDIT_COPY,
-						CommandContributionItem.STYLE_PUSH)));
+		textManager.add(new CommandContributionItem(new CommandContributionItemParameter(serviceLocator, null,
+				IWorkbenchCommandConstants.EDIT_COPY, CommandContributionItem.STYLE_PUSH)));
 		if (commandService.getCommand(COPY_BUILD_ID_COMMAND).isDefined()) {
 			textManager.add(new CommandContributionItem(new CommandContributionItemParameter(serviceLocator, null,
 					COPY_BUILD_ID_COMMAND, CommandContributionItem.STYLE_PUSH)));
 		}
 		textManager.add(new CommandContributionItem(new CommandContributionItemParameter(serviceLocator, null,
-				IWorkbenchCommandConstants.EDIT_SELECT_ALL,
-						CommandContributionItem.STYLE_PUSH)));
+				IWorkbenchCommandConstants.EDIT_SELECT_ALL, CommandContributionItem.STYLE_PUSH)));
 		text.setMenu(textManager.createContextMenu(text));
 		text.addDisposeListener(e -> textManager.dispose());
 
 	}
 
 	private void createFeatureImageButtonRow(Composite parent) {
-        Composite featureContainer = new Composite(parent, SWT.NONE);
-        RowLayout rowLayout = new RowLayout();
-        rowLayout.wrap = true;
-        featureContainer.setLayout(rowLayout);
-        GridData data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        featureContainer.setLayoutData(data);
+		Composite featureContainer = new Composite(parent, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.wrap = true;
+		featureContainer.setLayout(rowLayout);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		featureContainer.setLayoutData(data);
 
-        for (AboutBundleGroupData bundleGroupInfo : bundleGroupInfos) {
+		for (AboutBundleGroupData bundleGroupInfo : bundleGroupInfos) {
 			createFeatureButton(featureContainer, bundleGroupInfo);
 		}
-    }
+	}
 
-    private Button createFeatureButton(Composite parent,
-            final AboutBundleGroupData info) {
-        if (!buttonManager.add(info)) {
+	private Button createFeatureButton(Composite parent, final AboutBundleGroupData info) {
+		if (!buttonManager.add(info)) {
 			return null;
 		}
 
-        ImageDescriptor desc = info.getFeatureImage();
-        Image featureImage = null;
+		ImageDescriptor desc = info.getFeatureImage();
+		Image featureImage = null;
 
-        Button button = new Button(parent, SWT.FLAT | SWT.PUSH);
-        button.setData(info);
-        featureImage = desc.createImage();
-        images.add(featureImage);
-        button.setImage(featureImage);
-        button.setToolTipText(info.getProviderName());
+		Button button = new Button(parent, SWT.FLAT | SWT.PUSH);
+		button.setData(info);
+		featureImage = desc.createImage();
+		images.add(featureImage);
+		button.setImage(featureImage);
+		button.setToolTipText(info.getProviderName());
 
-        button.getAccessible().addAccessibleListener(new AccessibleAdapter(){
+		button.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = info.getProviderName();
 			}
-        });
-        button.addSelectionListener(widgetSelectedAdapter(event -> {
+		});
+		button.addSelectionListener(widgetSelectedAdapter(event -> {
 			AboutBundleGroupData[] groupInfos = buttonManager.getRelatedInfos(info);
 			AboutBundleGroupData selection = (AboutBundleGroupData) event.widget.getData();
 			AboutFeaturesDialog d = new AboutFeaturesDialog(getShell(), productName, groupInfos, selection);
-		    d.open();
+			d.open();
 		}));
 
-        return button;
-    }
+		return button;
+	}
 
 	@Override
 	protected boolean isResizable() {

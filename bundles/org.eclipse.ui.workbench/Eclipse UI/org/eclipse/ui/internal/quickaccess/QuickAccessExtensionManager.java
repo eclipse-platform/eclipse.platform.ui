@@ -35,17 +35,14 @@ public class QuickAccessExtensionManager {
 
 	public static Collection<QuickAccessProvider> getProviders() {
 		return Arrays.stream(Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID))
-				.filter(element -> PROVIDER_TAG.equals(element.getName()))
-				.map(element -> {
+				.filter(element -> PROVIDER_TAG.equals(element.getName())).map(element -> {
 					try {
 						return element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 					} catch (CoreException e) {
 						WorkbenchPlugin.log(e);
 						return null;
 					}
-				})
-				.filter(QuickAccessProvider.class::isInstance)
-				.map(QuickAccessProvider.class::cast)
+				}).filter(QuickAccessProvider.class::isInstance).map(QuickAccessProvider.class::cast)
 				.collect(Collectors.toList());
 	}
 }

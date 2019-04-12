@@ -21,62 +21,61 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This class represents a pseudo-group defined by an action set.
- * It is not a real group ( aka GroupMarker ) because that would interfere with
- * the pre-existing groups in a menu or toolbar.
+ * This class represents a pseudo-group defined by an action set. It is not a
+ * real group ( aka GroupMarker ) because that would interfere with the
+ * pre-existing groups in a menu or toolbar.
  */
-public class ActionSetSeparator extends ContributionItem implements
-        IActionSetContributionItem {
-    private String actionSetId;
+public class ActionSetSeparator extends ContributionItem implements IActionSetContributionItem {
+	private String actionSetId;
 
-    /**
-     * Constructs a new group marker.
-     */
-    public ActionSetSeparator(String groupName, String newActionSetId) {
-        super(groupName);
-        actionSetId = newActionSetId;
-    }
+	/**
+	 * Constructs a new group marker.
+	 */
+	public ActionSetSeparator(String groupName, String newActionSetId) {
+		super(groupName);
+		actionSetId = newActionSetId;
+	}
 
-    @Override
+	@Override
 	public void fill(Menu menu, int index) {
-        if (index >= 0) {
+		if (index >= 0) {
 			new MenuItem(menu, SWT.SEPARATOR, index);
 		} else {
 			new MenuItem(menu, SWT.SEPARATOR);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void fill(ToolBar toolbar, int index) {
-        if (index >= 0) {
+		if (index >= 0) {
 			new ToolItem(toolbar, SWT.SEPARATOR, index);
 		} else {
 			new ToolItem(toolbar, SWT.SEPARATOR);
 		}
-    }
+	}
 
-    /**
-     * Returns the action set id.
-     */
-    @Override
+	/**
+	 * Returns the action set id.
+	 */
+	@Override
 	public String getActionSetId() {
-        return actionSetId;
-    }
+		return actionSetId;
+	}
 
-    /**
-     * The <code>Separator</code> implementation of this <code>IContributionItem</code>
-     * method returns <code>true</code>
-     */
-    @Override
+	/**
+	 * The <code>Separator</code> implementation of this
+	 * <code>IContributionItem</code> method returns <code>true</code>
+	 */
+	@Override
 	public boolean isSeparator() {
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sets the action set id.
-     */
-    @Override
+	/**
+	 * Sets the action set id.
+	 */
+	@Override
 	public void setActionSetId(String newActionSetId) {
-        actionSetId = newActionSetId;
-    }
+		actionSetId = newActionSetId;
+	}
 }

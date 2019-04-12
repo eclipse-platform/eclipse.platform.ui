@@ -49,8 +49,7 @@ public class ContextModel extends CommonModel {
 	 * @param locator
 	 */
 	public void init(IServiceLocator locator) {
-		contextService = locator
-				.getService(IContextService.class);
+		contextService = locator.getService(IContextService.class);
 		contexts = new ArrayList();
 		contextIdToFilteredContexts = new HashMap();
 		contextIdToElement = new HashMap();
@@ -73,8 +72,7 @@ public class ContextModel extends CommonModel {
 	}
 
 	/**
-	 * @param contexts
-	 *            The contexts to set.
+	 * @param contexts The contexts to set.
 	 */
 	public void setContexts(List contexts) {
 		List old = this.contexts;
@@ -90,24 +88,20 @@ public class ContextModel extends CommonModel {
 	}
 
 	/**
-	 * @param contextToElement
-	 *            The contextToElement to set.
+	 * @param contextToElement The contextToElement to set.
 	 */
 	public void setContextIdToElement(Map contextToElement) {
 		Map old = this.contextIdToElement;
 		this.contextIdToElement = contextToElement;
-		controller.firePropertyChange(this, PROP_CONTEXT_MAP, old,
-				contextToElement);
+		controller.firePropertyChange(this, PROP_CONTEXT_MAP, old, contextToElement);
 	}
 
 	/**
-	 * Removes any contexts according to the parameters. The contexts are stored
-	 * in a {@link List} to they can be easily restored.
+	 * Removes any contexts according to the parameters. The contexts are stored in
+	 * a {@link List} to they can be easily restored.
 	 *
-	 * @param actionSets
-	 *            <code>true</code> to filter action set contexts.
-	 * @param internal
-	 *            <code>true</code> to filter internal contexts
+	 * @param actionSets <code>true</code> to filter action set contexts.
+	 * @param internal   <code>true</code> to filter internal contexts
 	 */
 	public void filterContexts(boolean actionSets, boolean internal) {
 		// Remove undesired contexts
@@ -115,35 +109,29 @@ public class ContextModel extends CommonModel {
 			boolean removeContext = false;
 			ContextElement contextElement = (ContextElement) contexts.get(i);
 
-			if (actionSets == true
-					&& contextElement.getId().equalsIgnoreCase(
-							CONTEXT_ID_ACTION_SETS)) {
+			if (actionSets == true && contextElement.getId().equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
 				removeContext = true;
 			} else {
 				String parentId;
 				try {
-					parentId = ((Context) contextElement.getModelObject())
-							.getParentId();
+					parentId = ((Context) contextElement.getModelObject()).getParentId();
 					while (parentId != null) {
 						if (parentId.equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
 							removeContext = true;
 						}
-						parentId = contextService.getContext(parentId)
-								.getParentId();
+						parentId = contextService.getContext(parentId).getParentId();
 					}
 				} catch (NotDefinedException e) {
 					// No parentId to check
 				}
 			}
 
-			if (internal == true
-					&& contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
+			if (internal == true && contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
 				removeContext = true;
 			}
 
 			if (removeContext) {
-				contextIdToFilteredContexts.put(contextElement.getId(),
-						contextElement);
+				contextIdToFilteredContexts.put(contextElement.getId(), contextElement);
 				contextIdToElement.remove(contextElement);
 			}
 		}
@@ -154,8 +142,7 @@ public class ContextModel extends CommonModel {
 		// Restore desired contexts
 		while (iterator.hasNext()) {
 			boolean restoreContext = false;
-			ContextElement contextElement = (ContextElement) contextIdToFilteredContexts
-					.get(iterator.next());
+			ContextElement contextElement = (ContextElement) contextIdToFilteredContexts.get(iterator.next());
 
 			try {
 				if (actionSets == false) {
@@ -171,8 +158,7 @@ public class ContextModel extends CommonModel {
 			} catch (NotDefinedException e) {
 				// No parentId to check
 			}
-			if (internal == false
-					&& contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
+			if (internal == false && contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
 				restoreContext = true;
 			}
 

@@ -44,12 +44,11 @@ public class IntroHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) {
 
 		if (introDescriptor == null) {
-				MessageDialog.openWarning(HandlerUtil.getActiveShell(event),
-						IntroMessages.Intro_missing_product_title,
-						IntroMessages.Intro_missing_product_message);
+			MessageDialog.openWarning(HandlerUtil.getActiveShell(event), IntroMessages.Intro_missing_product_title,
+					IntroMessages.Intro_missing_product_message);
 		} else {
-				IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-				workbench.getIntroManager().showIntro(window, false);
+			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+			workbench.getIntroManager().showIntro(window, false);
 		}
 		return null;
 	}

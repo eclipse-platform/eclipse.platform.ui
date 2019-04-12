@@ -36,8 +36,7 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  * @since 3.3
  */
 public class CyclePerspectiveHandler extends FilteredTableBaseHandler {
-	private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(
-            false);
+	private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(false);
 
 	@Override
 	protected Object getInput(WorkbenchPage page) {
@@ -69,7 +68,7 @@ public class CyclePerspectiveHandler extends FilteredTableBaseHandler {
 
 	@Override
 	public void dispose() {
-		if (labelProvider!=null) {
+		if (labelProvider != null) {
 			labelProvider.dispose();
 			labelProvider = null;
 		}

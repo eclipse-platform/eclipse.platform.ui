@@ -105,11 +105,8 @@ public class TabBehaviourMRU extends TabBehaviour {
 	}
 
 	@Override
-	public IEditorReference reuseInternalEditor(WorkbenchPage page,
- Object manager,
-			Object editorPresentation,
-			EditorDescriptor desc, IEditorInput input,
-			IEditorReference reusableEditorRef) {
+	public IEditorReference reuseInternalEditor(WorkbenchPage page, Object manager, Object editorPresentation,
+			EditorDescriptor desc, IEditorInput input, IEditorReference reusableEditorRef) {
 		E4Util.unsupported("reuseInternalEditor: we reuse nothing"); //$NON-NLS-1$
 		return reusableEditorRef;
 	}

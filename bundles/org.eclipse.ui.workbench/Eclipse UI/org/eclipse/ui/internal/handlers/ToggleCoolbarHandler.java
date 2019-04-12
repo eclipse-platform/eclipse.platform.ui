@@ -33,13 +33,11 @@ import org.eclipse.ui.menus.UIElement;
  *
  * @since 3.3
  */
-public class ToggleCoolbarHandler extends AbstractHandler implements
-		IElementUpdater {
+public class ToggleCoolbarHandler extends AbstractHandler implements IElementUpdater {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if (activeWorkbenchWindow instanceof WorkbenchWindow) {
 			WorkbenchWindow window = (WorkbenchWindow) activeWorkbenchWindow;
 			window.toggleToolbarVisibility();
@@ -50,22 +48,19 @@ public class ToggleCoolbarHandler extends AbstractHandler implements
 
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
-		IWorkbenchLocationService wls = element
-				.getServiceLocator()
-				.getService(IWorkbenchLocationService.class);
+		IWorkbenchLocationService wls = element.getServiceLocator().getService(IWorkbenchLocationService.class);
 		IWorkbenchWindow window = wls.getWorkbenchWindow();
 		if (window == null || !(window instanceof WorkbenchWindow))
 			return;
-		element
-				.setText(isCoolbarVisible((WorkbenchWindow) window) ? WorkbenchMessages.ToggleCoolbarVisibilityAction_hide_text
+		element.setText(
+				isCoolbarVisible((WorkbenchWindow) window) ? WorkbenchMessages.ToggleCoolbarVisibilityAction_hide_text
 						: WorkbenchMessages.ToggleCoolbarVisibilityAction_show_text);
 	}
 
 	/**
 	 * Return whether the coolbar is currently visible.
 	 *
-	 * @param window
-	 * 		the window to test
+	 * @param window the window to test
 	 * @return whether or not the coolbar is visible
 	 */
 	private boolean isCoolbarVisible(WorkbenchWindow window) {

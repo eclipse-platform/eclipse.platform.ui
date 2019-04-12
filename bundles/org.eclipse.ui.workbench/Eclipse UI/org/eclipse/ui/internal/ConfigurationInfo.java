@@ -42,8 +42,8 @@ import com.ibm.icu.text.DateFormat;
 public final class ConfigurationInfo {
 
 	/**
-	 * Return the build id for this instance. This may be <code>null</code> in
-	 * the event that this property is undefined.
+	 * Return the build id for this instance. This may be <code>null</code> in the
+	 * event that this property is undefined.
 	 *
 	 * @return the build id or <code>null</code>
 	 */
@@ -52,15 +52,15 @@ public final class ConfigurationInfo {
 	}
 
 	/**
-	 * Return a multi-line String that describes the current configuration. This
-	 * may include but is not limited to system properties, installed bundles,
-	 * and installed features. The specific format of this message is undefined
-	 * and may change at any time.
+	 * Return a multi-line String that describes the current configuration. This may
+	 * include but is not limited to system properties, installed bundles, and
+	 * installed features. The specific format of this message is undefined and may
+	 * change at any time.
 	 *
 	 * <p>
 	 * The contents of this String are in part constructed via
-	 * {@link ISystemSummarySection} that are registered with this running
-	 * instance of the workbench.
+	 * {@link ISystemSummarySection} that are registered with this running instance
+	 * of the workbench.
 	 * </p>
 	 *
 	 * @return the configuration info
@@ -69,9 +69,7 @@ public final class ConfigurationInfo {
 		StringWriter out = new StringWriter();
 		PrintWriter writer = new PrintWriter(out);
 		writer.println(NLS.bind(WorkbenchMessages.SystemSummary_timeStamp,
-				DateFormat
-						.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
-						.format(new Date())));
+				DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new Date())));
 
 		ConfigurationInfo.appendExtensions(writer);
 		writer.close();
@@ -83,25 +81,21 @@ public final class ConfigurationInfo {
 	 * extension point.
 	 */
 	private static void appendExtensions(PrintWriter writer) {
-		IConfigurationElement[] configElements = getSortedExtensions(Platform
-				.getExtensionRegistry().getConfigurationElementsFor(
-						PlatformUI.PLUGIN_ID,
+		IConfigurationElement[] configElements = getSortedExtensions(
+				Platform.getExtensionRegistry().getConfigurationElementsFor(PlatformUI.PLUGIN_ID,
 						IWorkbenchRegistryConstants.PL_SYSTEM_SUMMARY_SECTIONS));
 		for (IConfigurationElement element : configElements) {
 			Object obj = null;
 			try {
-				obj = WorkbenchPlugin.createExtension(element,
-						IWorkbenchConstants.TAG_CLASS);
+				obj = WorkbenchPlugin.createExtension(element, IWorkbenchConstants.TAG_CLASS);
 			} catch (CoreException e) {
-				WorkbenchPlugin.log(
-						"could not create class attribute for extension", //$NON-NLS-1$
+				WorkbenchPlugin.log("could not create class attribute for extension", //$NON-NLS-1$
 						e.getStatus());
 			}
 
 			writer.println();
-			writer.println(NLS.bind(
-					WorkbenchMessages.SystemSummary_sectionTitle, element
-							.getAttribute("sectionTitle"))); //$NON-NLS-1$
+			writer.println(
+					NLS.bind(WorkbenchMessages.SystemSummary_sectionTitle, element.getAttribute("sectionTitle"))); //$NON-NLS-1$
 
 			if (obj instanceof ISystemSummarySection) {
 				ISystemSummarySection logSection = (ISystemSummarySection) obj;

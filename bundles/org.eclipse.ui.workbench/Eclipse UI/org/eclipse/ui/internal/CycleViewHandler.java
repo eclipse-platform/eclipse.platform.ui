@@ -54,9 +54,9 @@ public class CycleViewHandler extends FilteredTableBaseHandler {
 		EModelService modelService = page.getWorkbenchWindow().getService(EModelService.class);
 		MPerspective currentPerspective = page.getCurrentPerspective();
 
-		List<MPart> parts = modelService.findElements(currentPerspective, null, MPart.class, null,
-				EModelService.PRESENTATION).stream().filter((p) -> !(p.getObject() instanceof SplitHost))
-				.collect(Collectors.toList());
+		List<MPart> parts = modelService
+				.findElements(currentPerspective, null, MPart.class, null, EModelService.PRESENTATION).stream()
+				.filter((p) -> !(p.getObject() instanceof SplitHost)).collect(Collectors.toList());
 
 		AtomicBoolean includeEditor = new AtomicBoolean(true);
 
@@ -97,8 +97,8 @@ public class CycleViewHandler extends FilteredTableBaseHandler {
 	}
 
 	/**
-	 * Adds the {@link IWorkbenchPartReference} contained in part's transient
-	 * data, if exists.
+	 * Adds the {@link IWorkbenchPartReference} contained in part's transient data,
+	 * if exists.
 	 */
 	protected void addExistingReference(List<IWorkbenchPartReference> refs, MPart part) {
 		Object tData = part.getTransientData().get(IWorkbenchPartReference.class.getName());
@@ -118,8 +118,7 @@ public class CycleViewHandler extends FilteredTableBaseHandler {
 		return getParametrizedCommand(IWorkbenchCommandConstants.WINDOW_NEXT_VIEW);
 	}
 
-    private ParameterizedCommand getParametrizedCommand(String workbenchCommand)
-	{
+	private ParameterizedCommand getParametrizedCommand(String workbenchCommand) {
 		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(workbenchCommand);
 		ParameterizedCommand parameterizedCommand = new ParameterizedCommand(command, null);

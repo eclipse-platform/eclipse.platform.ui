@@ -31,46 +31,44 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
+	private IConfigurationElement element;
 
-    private IConfigurationElement element;
+	private ImageDescriptor imageDescriptor;
 
-    private ImageDescriptor imageDescriptor;
+	/**
+	 * Create a new IntroDescriptor for an extension.
+	 */
+	public IntroDescriptor(IConfigurationElement configElement) throws CoreException {
+		element = configElement;
 
-    /**
-     * Create a new IntroDescriptor for an extension.
-     */
-    public IntroDescriptor(IConfigurationElement configElement)
-            throws CoreException {
-    	element = configElement;
+		if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) == null) {
+			throw new CoreException(new Status(IStatus.ERROR, configElement.getContributor().getName(), 0,
+					"Invalid extension (Missing class name): " + getId(), //$NON-NLS-1$
+					null));
+		}
+	}
 
-    	if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) == null) {
-            throw new CoreException(new Status(IStatus.ERROR, configElement
-					.getContributor().getName(), 0,
-                    "Invalid extension (Missing class name): " + getId(), //$NON-NLS-1$
-                    null));
-        }
-    }
-
-    @Override
+	@Override
 	public IIntroPart createIntro() throws CoreException {
-    	return (IIntroPart) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
-    }
+		return (IIntroPart) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+	}
 
-    public IntroContentDetector getIntroContentDetector() throws CoreException {
-    	if (element.getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_DETECTOR) == null) {
-    		return null;
-    	}
-    	return (IntroContentDetector) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CONTENT_DETECTOR);
-    }
+	public IntroContentDetector getIntroContentDetector() throws CoreException {
+		if (element.getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_DETECTOR) == null) {
+			return null;
+		}
+		return (IntroContentDetector) element
+				.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CONTENT_DETECTOR);
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-    }
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        if (imageDescriptor != null) {
+		if (imageDescriptor != null) {
 			return imageDescriptor;
 		}
 		String iconName = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
@@ -78,30 +76,29 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 			return null;
 		}
 
-		imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(element
-				.getContributor().getName(), iconName);
-        return imageDescriptor;
-    }
+		imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(element.getContributor().getName(), iconName);
+		return imageDescriptor;
+	}
 
-    @Override
+	@Override
 	public String getLocalId() {
-        return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-    }
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+	}
 
-    @Override
+	@Override
 	public String getPluginId() {
 		return element.getContributor().getName();
-    }
+	}
 
-    /**
-     * Returns the configuration element.
-     *
-     * @return the configuration element
-     * @since 3.1
-     */
-    public IConfigurationElement getConfigurationElement() {
-    	return element;
-    }
+	/**
+	 * Returns the configuration element.
+	 *
+	 * @return the configuration element
+	 * @since 3.1
+	 */
+	public IConfigurationElement getConfigurationElement() {
+		return element;
+	}
 
 	@Override
 	public String getLabelOverride() {

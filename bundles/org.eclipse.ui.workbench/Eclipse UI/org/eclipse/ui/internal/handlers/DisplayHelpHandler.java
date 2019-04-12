@@ -33,8 +33,7 @@ public final class DisplayHelpHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) {
-		final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench()
-				.getHelpSystem();
+		final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
 		final String href = event.getParameter(PARAM_ID_HREF);
 
 		if (href == null) {

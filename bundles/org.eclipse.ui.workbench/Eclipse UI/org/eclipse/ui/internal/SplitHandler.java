@@ -31,6 +31,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
+ * 
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
@@ -52,7 +53,7 @@ public class SplitHandler extends AbstractHandler {
 		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		// Get services
-		modelService =  editorPart.getContext().get(EModelService.class);
+		modelService = editorPart.getContext().get(EModelService.class);
 
 		MPartStack stack = getStackFor(editorPart);
 		if (stack == null)

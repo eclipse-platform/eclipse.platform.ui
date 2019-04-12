@@ -36,68 +36,59 @@ import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
 	/**
-	 * The map of activations that have been given to the handler service (<code>IHandlerActivation</code>),
-	 * indexed by the submissions (<code>HandlerSubmission</code>). This map
-	 * should be <code>null</code> if there are no such activations.
+	 * The map of activations that have been given to the handler service
+	 * (<code>IHandlerActivation</code>), indexed by the submissions
+	 * (<code>HandlerSubmission</code>). This map should be <code>null</code> if
+	 * there are no such activations.
 	 */
 	private Map activationsBySubmission = null;
 
 	/**
-	 * The mutable command manager that should be notified of changes to the
-	 * list of active handlers. This value is never <code>null</code>.
+	 * The mutable command manager that should be notified of changes to the list of
+	 * active handlers. This value is never <code>null</code>.
 	 */
 	private final CommandManagerLegacyWrapper commandManagerWrapper;
 
 	/**
-	 * The handler service for the workbench. This value is never
-	 * <code>null</code>.
+	 * The handler service for the workbench. This value is never <code>null</code>.
 	 */
 	private final IHandlerService handlerService;
 
 	/**
 	 * Constructs a new instance of <code>WorkbenchCommandSupport</code>
 	 *
-	 * @param bindingManager
-	 *            The binding manager providing support for the command manager;
-	 *            must not be <code>null</code>.
-	 * @param commandManager
-	 *            The command manager for the workbench; must not be
-	 *            <code>null</code>.
-	 * @param contextManager
-	 *            The context manager providing support for the command manager
-	 *            and binding manager; must not be <code>null</code>.
-	 * @param handlerService
-	 *            The handler service for the workbench; must not be
-	 *            <code>null</code>.
+	 * @param bindingManager The binding manager providing support for the command
+	 *                       manager; must not be <code>null</code>.
+	 * @param commandManager The command manager for the workbench; must not be
+	 *                       <code>null</code>.
+	 * @param contextManager The context manager providing support for the command
+	 *                       manager and binding manager; must not be
+	 *                       <code>null</code>.
+	 * @param handlerService The handler service for the workbench; must not be
+	 *                       <code>null</code>.
 	 */
-	public WorkbenchCommandSupport(final BindingManager bindingManager,
-			final CommandManager commandManager,
-			final ContextManager contextManager,
-			final IHandlerService handlerService) {
+	public WorkbenchCommandSupport(final BindingManager bindingManager, final CommandManager commandManager,
+			final ContextManager contextManager, final IHandlerService handlerService) {
 		if (handlerService == null) {
 			throw new NullPointerException("The handler service cannot be null"); //$NON-NLS-1$
 		}
 
 		this.handlerService = handlerService;
 
-		commandManagerWrapper = CommandManagerFactory.getCommandManagerWrapper(
-				bindingManager, commandManager, contextManager);
+		commandManagerWrapper = CommandManagerFactory.getCommandManagerWrapper(bindingManager, commandManager,
+				contextManager);
 
 		// Initialize the old key formatter settings.
 		org.eclipse.ui.keys.KeyFormatterFactory
-				.setDefault(org.eclipse.ui.keys.SWTKeySupport
-						.getKeyFormatterForPlatform());
+				.setDefault(org.eclipse.ui.keys.SWTKeySupport.getKeyFormatterForPlatform());
 	}
 
 	@Override
-	public final void addHandlerSubmission(
-			final HandlerSubmission handlerSubmission) {
-		final IHandlerActivation activation = handlerService.activateHandler(
-				handlerSubmission.getCommandId(), new LegacyHandlerWrapper(
-						handlerSubmission.getHandler()),
-				new LegacyHandlerSubmissionExpression(handlerSubmission
-						.getActivePartId(), handlerSubmission.getActiveShell(),
-						handlerSubmission.getActiveWorkbenchPartSite()));
+	public final void addHandlerSubmission(final HandlerSubmission handlerSubmission) {
+		final IHandlerActivation activation = handlerService.activateHandler(handlerSubmission.getCommandId(),
+				new LegacyHandlerWrapper(handlerSubmission.getHandler()),
+				new LegacyHandlerSubmissionExpression(handlerSubmission.getActivePartId(),
+						handlerSubmission.getActiveShell(), handlerSubmission.getActiveWorkbenchPartSite()));
 		if (activationsBySubmission == null) {
 			activationsBySubmission = new HashMap();
 		}
@@ -118,8 +109,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 	}
 
 	@Override
-	public final void removeHandlerSubmission(
-			final HandlerSubmission handlerSubmission) {
+	public final void removeHandlerSubmission(final HandlerSubmission handlerSubmission) {
 		if (activationsBySubmission == null) {
 			return;
 		}
@@ -132,8 +122,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 	}
 
 	@Override
-	public final void removeHandlerSubmissions(
-			final Collection handlerSubmissions) {
+	public final void removeHandlerSubmissions(final Collection handlerSubmissions) {
 		final Iterator submissionItr = handlerSubmissions.iterator();
 		while (submissionItr.hasNext()) {
 			removeHandlerSubmission((HandlerSubmission) submissionItr.next());

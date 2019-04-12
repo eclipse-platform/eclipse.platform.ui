@@ -46,212 +46,203 @@ import org.eclipse.ui.internal.util.Util;
 @SuppressWarnings("all")
 public final class HandlerSubmission implements Comparable {
 
-    /**
-     * The part identifier for the part that should be active before this
-     * submission can be considered.  This value can be <code>null</code>, which
-     * indicates that it should match any part.
-     */
-    private final String activePartId;
+	/**
+	 * The part identifier for the part that should be active before this submission
+	 * can be considered. This value can be <code>null</code>, which indicates that
+	 * it should match any part.
+	 */
+	private final String activePartId;
 
-    /**
-     * The shell that must be active before this submission can be considered.
-     * This value can be <code>null</code>, which indicates that it should match
-     * any shell.
-     */
-    private final Shell activeShell;
+	/**
+	 * The shell that must be active before this submission can be considered. This
+	 * value can be <code>null</code>, which indicates that it should match any
+	 * shell.
+	 */
+	private final Shell activeShell;
 
-    /**
-     * The workbench site that must be active before this submission can be
-     * considered.  This value can be <code>null</code>, which indicates that it
-     * should match an workbench part site.
-     */
-    private final IWorkbenchPartSite activeWorkbenchPartSite;
+	/**
+	 * The workbench site that must be active before this submission can be
+	 * considered. This value can be <code>null</code>, which indicates that it
+	 * should match an workbench part site.
+	 */
+	private final IWorkbenchPartSite activeWorkbenchPartSite;
 
-    /**
-     * The identifier for the command which the submitted handler handles.  This
-     * value cannot be <code>null</code>.
-     */
-    private final String commandId;
+	/**
+	 * The identifier for the command which the submitted handler handles. This
+	 * value cannot be <code>null</code>.
+	 */
+	private final String commandId;
 
-    /**
-     * The handler being submitted.  This value cannot be <code>null</code>.
-     */
-    private final IHandler handler;
+	/**
+	 * The handler being submitted. This value cannot be <code>null</code>.
+	 */
+	private final IHandler handler;
 
-    /**
-     * The priority for this submission.  In the event of all other factors
-     * being equal, the priority will be considered in an attempt to resolve
-     * conflicts.  This value cannot be <code>null</code>.
-     */
-    private final Priority priority;
+	/**
+	 * The priority for this submission. In the event of all other factors being
+	 * equal, the priority will be considered in an attempt to resolve conflicts.
+	 * This value cannot be <code>null</code>.
+	 */
+	private final Priority priority;
 
-    /**
-     * A lazily computed cache of the string representation of this submission.
-     * This value is computed once; before it is computed, it is
-     * <code>null</code>.
-     */
-    private transient String string;
+	/**
+	 * A lazily computed cache of the string representation of this submission. This
+	 * value is computed once; before it is computed, it is <code>null</code>.
+	 */
+	private transient String string;
 
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param activePartId
-     *            the identifier of the part that must be active for this
-     *            request to be considered. May be <code>null</code>.
-     * @param activeShell
-     *            the shell that must be active for this request to be
-     *            considered. May be <code>null</code>.
-     * @param activeWorkbenchPartSite
-     *            the workbench part site of the part that must be active for
-     *            this request to be considered. May be <code>null</code>.
-     * @param commandId
-     *            the identifier of the command to be handled. Must not be
-     *            <code>null</code>.
-     * @param handler
-     *            the handler. Must not be <code>null</code>.
-     * @param priority
-     *            the priority. Must not be <code>null</code>.
-     */
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param activePartId            the identifier of the part that must be active
+	 *                                for this request to be considered. May be
+	 *                                <code>null</code>.
+	 * @param activeShell             the shell that must be active for this request
+	 *                                to be considered. May be <code>null</code>.
+	 * @param activeWorkbenchPartSite the workbench part site of the part that must
+	 *                                be active for this request to be considered.
+	 *                                May be <code>null</code>.
+	 * @param commandId               the identifier of the command to be handled.
+	 *                                Must not be <code>null</code>.
+	 * @param handler                 the handler. Must not be <code>null</code>.
+	 * @param priority                the priority. Must not be <code>null</code>.
+	 */
 	@Deprecated
-    public HandlerSubmission(String activePartId, Shell activeShell,
-            IWorkbenchPartSite activeWorkbenchPartSite, String commandId,
-            IHandler handler, Priority priority) {
-        if (commandId == null || handler == null || priority == null) {
+	public HandlerSubmission(String activePartId, Shell activeShell, IWorkbenchPartSite activeWorkbenchPartSite,
+			String commandId, IHandler handler, Priority priority) {
+		if (commandId == null || handler == null || priority == null) {
 			throw new NullPointerException();
 		}
 
-        this.activePartId = activePartId;
-        this.activeShell = activeShell;
-        this.activeWorkbenchPartSite = activeWorkbenchPartSite;
-        this.commandId = commandId;
-        this.handler = handler;
-        this.priority = priority;
-    }
+		this.activePartId = activePartId;
+		this.activeShell = activeShell;
+		this.activeWorkbenchPartSite = activeWorkbenchPartSite;
+		this.commandId = commandId;
+		this.handler = handler;
+		this.priority = priority;
+	}
 
-    /**
-     * @see Comparable#compareTo(java.lang.Object)
-     */
+	/**
+	 * @see Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	@Deprecated
-    public int compareTo(Object object) {
-        HandlerSubmission castedObject = (HandlerSubmission) object;
-        int compareTo = Util.compare(activeWorkbenchPartSite,
-                castedObject.activeWorkbenchPartSite);
+	public int compareTo(Object object) {
+		HandlerSubmission castedObject = (HandlerSubmission) object;
+		int compareTo = Util.compare(activeWorkbenchPartSite, castedObject.activeWorkbenchPartSite);
 
-        if (compareTo == 0) {
-            compareTo = Util.compare(activePartId, castedObject.activePartId);
+		if (compareTo == 0) {
+			compareTo = Util.compare(activePartId, castedObject.activePartId);
 
-            if (compareTo == 0) {
-                compareTo = Util.compare(activeShell, castedObject.activeShell);
+			if (compareTo == 0) {
+				compareTo = Util.compare(activeShell, castedObject.activeShell);
 
-                if (compareTo == 0) {
-                    compareTo = Util.compare(priority, castedObject.priority);
+				if (compareTo == 0) {
+					compareTo = Util.compare(priority, castedObject.priority);
 
-                    if (compareTo == 0) {
-                        compareTo = Util.compare(commandId,
-                                castedObject.commandId);
+					if (compareTo == 0) {
+						compareTo = Util.compare(commandId, castedObject.commandId);
 
-                        if (compareTo == 0) {
-							compareTo = Util.compare(handler,
-                                    castedObject.handler);
+						if (compareTo == 0) {
+							compareTo = Util.compare(handler, castedObject.handler);
 						}
-                    }
-                }
-            }
-        }
+					}
+				}
+			}
+		}
 
-        return compareTo;
-    }
+		return compareTo;
+	}
 
-    /**
-     * Returns the identifier of the part that must be active for this request
-     * to be considered.
-     *
-     * @return the identifier of the part that must be active for this request
-     *         to be considered. May be <code>null</code>.
-     */
+	/**
+	 * Returns the identifier of the part that must be active for this request to be
+	 * considered.
+	 *
+	 * @return the identifier of the part that must be active for this request to be
+	 *         considered. May be <code>null</code>.
+	 */
 	@Deprecated
-    public String getActivePartId() {
-        return activePartId;
-    }
+	public String getActivePartId() {
+		return activePartId;
+	}
 
-    /**
-     * Returns the shell that must be active for this request to be considered.
-     *
-     * @return the shell that must be active for this request to be considered.
-     *         May be <code>null</code>.
-     */
+	/**
+	 * Returns the shell that must be active for this request to be considered.
+	 *
+	 * @return the shell that must be active for this request to be considered. May
+	 *         be <code>null</code>.
+	 */
 	@Deprecated
-    public Shell getActiveShell() {
-        return activeShell;
-    }
+	public Shell getActiveShell() {
+		return activeShell;
+	}
 
-    /**
-     * Returns the workbench part site of the part that must be active for this
-     * request to be considered.
-     *
-     * @return the workbench part site of the part that must be active for this
-     *         request to be considered. May be <code>null</code>.
-     */
+	/**
+	 * Returns the workbench part site of the part that must be active for this
+	 * request to be considered.
+	 *
+	 * @return the workbench part site of the part that must be active for this
+	 *         request to be considered. May be <code>null</code>.
+	 */
 	@Deprecated
-    public IWorkbenchPartSite getActiveWorkbenchPartSite() {
-        return activeWorkbenchPartSite;
-    }
+	public IWorkbenchPartSite getActiveWorkbenchPartSite() {
+		return activeWorkbenchPartSite;
+	}
 
-    /**
-     * Returns the identifier of the command to be handled.
-     *
-     * @return the identifier of the command to be handled. Guaranteed not to be
-     *         <code>null</code>.
-     */
+	/**
+	 * Returns the identifier of the command to be handled.
+	 *
+	 * @return the identifier of the command to be handled. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
 	@Deprecated
-    public String getCommandId() {
-        return commandId;
-    }
+	public String getCommandId() {
+		return commandId;
+	}
 
-    /**
-     * Returns the handler.
-     *
-     * @return the handler. Guaranteed not to be <code>null</code>.
-     */
+	/**
+	 * Returns the handler.
+	 *
+	 * @return the handler. Guaranteed not to be <code>null</code>.
+	 */
 	@Deprecated
-    public IHandler getHandler() {
-        return handler;
-    }
+	public IHandler getHandler() {
+		return handler;
+	}
 
-    /**
-     * Returns the priority.
-     *
-     * @return the priority. Guaranteed not to be <code>null</code>.
-     */
+	/**
+	 * Returns the priority.
+	 *
+	 * @return the priority. Guaranteed not to be <code>null</code>.
+	 */
 	@Deprecated
-    public Priority getPriority() {
-        return priority;
-    }
+	public Priority getPriority() {
+		return priority;
+	}
 
-    /**
-     * @see Object#toString()
-     */
-    @Override
+	/**
+	 * @see Object#toString()
+	 */
+	@Override
 	public String toString() {
-        if (string == null) {
-            final StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append("[activePartId="); //$NON-NLS-1$
-            stringBuffer.append(activePartId);
-            stringBuffer.append(",activeShell="); //$NON-NLS-1$
-            stringBuffer.append(activeShell);
-            stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
-            stringBuffer.append(activeWorkbenchPartSite);
-            stringBuffer.append(",commandId="); //$NON-NLS-1$
-            stringBuffer.append(commandId);
-            stringBuffer.append(",handler="); //$NON-NLS-1$
-            stringBuffer.append(handler);
-            stringBuffer.append(",priority="); //$NON-NLS-1$
-            stringBuffer.append(priority);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+		if (string == null) {
+			final StringBuilder stringBuffer = new StringBuilder();
+			stringBuffer.append("[activePartId="); //$NON-NLS-1$
+			stringBuffer.append(activePartId);
+			stringBuffer.append(",activeShell="); //$NON-NLS-1$
+			stringBuffer.append(activeShell);
+			stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
+			stringBuffer.append(activeWorkbenchPartSite);
+			stringBuffer.append(",commandId="); //$NON-NLS-1$
+			stringBuffer.append(commandId);
+			stringBuffer.append(",handler="); //$NON-NLS-1$
+			stringBuffer.append(handler);
+			stringBuffer.append(",priority="); //$NON-NLS-1$
+			stringBuffer.append(priority);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
 
-        return string;
-    }
+		return string;
+	}
 }

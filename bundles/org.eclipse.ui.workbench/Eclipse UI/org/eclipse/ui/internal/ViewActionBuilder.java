@@ -20,66 +20,63 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
- * This class reads the registry for extensions that plug into
- * 'viewActions' extension point.
+ * This class reads the registry for extensions that plug into 'viewActions'
+ * extension point.
  */
 public class ViewActionBuilder extends PluginActionBuilder {
-    public static final String TAG_CONTRIBUTION_TYPE = "viewContribution"; //$NON-NLS-1$
+	public static final String TAG_CONTRIBUTION_TYPE = "viewContribution"; //$NON-NLS-1$
 
-    private IViewPart targetPart;
+	private IViewPart targetPart;
 
-    /**
-     * Basic constructor
-     */
-    public ViewActionBuilder() {
-    }
+	/**
+	 * Basic constructor
+	 */
+	public ViewActionBuilder() {
+	}
 
-    /**
-     * Contribute the external menus and actions applicable for this view part.
-     */
-    private void contributeToPart(IViewPart part) {
-        IActionBars bars = part.getViewSite().getActionBars();
-        contribute(bars.getMenuManager(), bars.getToolBarManager(), true);
-    }
+	/**
+	 * Contribute the external menus and actions applicable for this view part.
+	 */
+	private void contributeToPart(IViewPart part) {
+		IActionBars bars = part.getViewSite().getActionBars();
+		contribute(bars.getMenuManager(), bars.getToolBarManager(), true);
+	}
 
-    @Override
-	protected ActionDescriptor createActionDescriptor(
-            org.eclipse.core.runtime.IConfigurationElement element) {
-        return new ActionDescriptor(element, ActionDescriptor.T_VIEW,
-                targetPart);
-    }
+	@Override
+	protected ActionDescriptor createActionDescriptor(org.eclipse.core.runtime.IConfigurationElement element) {
+		return new ActionDescriptor(element, ActionDescriptor.T_VIEW, targetPart);
+	}
 
-    /**
-     * Return all extended actions.
-     */
-    public ActionDescriptor[] getExtendedActions() {
-        if (cache == null) {
+	/**
+	 * Return all extended actions.
+	 */
+	public ActionDescriptor[] getExtendedActions() {
+		if (cache == null) {
 			return new ActionDescriptor[0];
 		}
 
-        ArrayList results = new ArrayList();
-        for (int i = 0; i < cache.size(); i++) {
-            BasicContribution bc = (BasicContribution) cache.get(i);
-            if (bc.actions != null) {
+		ArrayList results = new ArrayList();
+		for (int i = 0; i < cache.size(); i++) {
+			BasicContribution bc = (BasicContribution) cache.get(i);
+			if (bc.actions != null) {
 				results.addAll(bc.actions);
 			}
-        }
-        return (ActionDescriptor[]) results
-                .toArray(new ActionDescriptor[results.size()]);
-    }
+		}
+		return (ActionDescriptor[]) results.toArray(new ActionDescriptor[results.size()]);
+	}
 
-    /**
-     * Reads and apply all external contributions for this view's ID registered
-     * in 'viewActions' extension point.
-     */
-    public void readActionExtensions(IViewPart viewPart) {
-        targetPart = viewPart;
-        readContributions(viewPart.getSite().getId(), TAG_CONTRIBUTION_TYPE,
-                IWorkbenchRegistryConstants.PL_VIEW_ACTIONS);
-        contributeToPart(targetPart);
-    }
+	/**
+	 * Reads and apply all external contributions for this view's ID registered in
+	 * 'viewActions' extension point.
+	 */
+	public void readActionExtensions(IViewPart viewPart) {
+		targetPart = viewPart;
+		readContributions(viewPart.getSite().getId(), TAG_CONTRIBUTION_TYPE,
+				IWorkbenchRegistryConstants.PL_VIEW_ACTIONS);
+		contributeToPart(targetPart);
+	}
 
-    public void dispose() {
+	public void dispose() {
 		if (cache != null) {
 			for (int i = 0; i < cache.size(); i++) {
 				((BasicContribution) cache.get(i)).disposeActions();

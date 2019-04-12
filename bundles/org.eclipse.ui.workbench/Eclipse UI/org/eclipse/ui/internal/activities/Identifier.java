@@ -25,178 +25,176 @@ import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.internal.util.Util;
 
 final class Identifier implements IIdentifier {
-    private static final int HASH_FACTOR = 89;
+	private static final int HASH_FACTOR = 89;
 
-    private static final int HASH_INITIAL = Identifier.class.getName()
-            .hashCode();
+	private static final int HASH_INITIAL = Identifier.class.getName().hashCode();
 
 	private static final Set<Identifier> strongReferences = new HashSet<>();
 
 	private Set<String> activityIds = Collections.emptySet();
 
-    private transient String[] activityIdsAsArray = {};
+	private transient String[] activityIdsAsArray = {};
 
-    private boolean enabled;
+	private boolean enabled;
 
-    private transient int hashCode = HASH_INITIAL;
+	private transient int hashCode = HASH_INITIAL;
 
-    private String id;
+	private String id;
 
 	private ListenerList<IIdentifierListener> identifierListeners;
 
-    private transient String string;
+	private transient String string;
 
-    Identifier(String id) {
-        if (id == null) {
+	Identifier(String id) {
+		if (id == null) {
 			throw new NullPointerException();
 		}
 
-        this.id = id;
-    }
+		this.id = id;
+	}
 
-    @Override
+	@Override
 	public void addIdentifierListener(IIdentifierListener identifierListener) {
-        if (identifierListener == null) {
+		if (identifierListener == null) {
 			throw new NullPointerException();
 		}
 
-        if (identifierListeners == null) {
+		if (identifierListeners == null) {
 			identifierListeners = new ListenerList<>(ListenerList.IDENTITY);
 		}
 
 		identifierListeners.add(identifierListener);
-        strongReferences.add(this);
-    }
+		strongReferences.add(this);
+	}
 
-    @Override
+	@Override
 	public int compareTo(IIdentifier object) {
-        Identifier castedObject = (Identifier) object;
-        int compareTo = Util.compare(activityIdsAsArray,
-                castedObject.activityIdsAsArray);
+		Identifier castedObject = (Identifier) object;
+		int compareTo = Util.compare(activityIdsAsArray, castedObject.activityIdsAsArray);
 
-        if (compareTo == 0) {
-            compareTo = Util.compare(enabled, castedObject.enabled);
+		if (compareTo == 0) {
+			compareTo = Util.compare(enabled, castedObject.enabled);
 
-            if (compareTo == 0) {
+			if (compareTo == 0) {
 				compareTo = Util.compare(id, castedObject.id);
 			}
-        }
+		}
 
-        return compareTo;
-    }
+		return compareTo;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (!(object instanceof Identifier)) {
+		if (!(object instanceof Identifier)) {
 			return false;
 		}
 
-        final Identifier castedObject = (Identifier) object;
-        if (!Util.equals(activityIds, castedObject.activityIds)) {
-            return false;
-        }
+		final Identifier castedObject = (Identifier) object;
+		if (!Util.equals(activityIds, castedObject.activityIds)) {
+			return false;
+		}
 
-        if (!Util.equals(enabled, castedObject.enabled)) {
-            return false;
-        }
+		if (!Util.equals(enabled, castedObject.enabled)) {
+			return false;
+		}
 
-        return Util.equals(id, castedObject.id);
-    }
+		return Util.equals(id, castedObject.id);
+	}
 
-    void fireIdentifierChanged(IdentifierEvent identifierEvent) {
-        if (identifierEvent == null) {
+	void fireIdentifierChanged(IdentifierEvent identifierEvent) {
+		if (identifierEvent == null) {
 			throw new NullPointerException();
 		}
 
-        if (identifierListeners != null) {
+		if (identifierListeners != null) {
 			for (IIdentifierListener listener : identifierListeners) {
 				listener.identifierChanged(identifierEvent);
 			}
 		}
-    }
+	}
 
 	@Override
 	public Set<String> getActivityIds() {
-        return activityIds;
-    }
+		return activityIds;
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return id;
-    }
+		return id;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        if (hashCode == HASH_INITIAL) {
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-            if (hashCode == HASH_INITIAL) {
+		if (hashCode == HASH_INITIAL) {
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}
-        }
+		}
 
-        return hashCode;
-    }
+		return hashCode;
+	}
 
-    @Override
+	@Override
 	public boolean isEnabled() {
-        return enabled;
-    }
+		return enabled;
+	}
 
-    @Override
+	@Override
 	public void removeIdentifierListener(IIdentifierListener identifierListener) {
-        if (identifierListener == null) {
+		if (identifierListener == null) {
 			throw new NullPointerException();
 		}
 
-        if (identifierListeners != null) {
+		if (identifierListeners != null) {
 			identifierListeners.remove(identifierListener);
 			if (identifierListeners.isEmpty()) {
 				strongReferences.remove(this);
 			}
 		}
-    }
+	}
 
 	boolean setActivityIds(Set<String> activityIds) {
 		activityIds = Util.safeCopy(activityIds, String.class);
 
-        if (!Util.equals(activityIds, this.activityIds)) {
-            this.activityIds = activityIds;
+		if (!Util.equals(activityIds, this.activityIds)) {
+			this.activityIds = activityIds;
 			this.activityIdsAsArray = this.activityIds.toArray(new String[this.activityIds.size()]);
-            hashCode = HASH_INITIAL;
-            string = null;
-            return true;
-        }
+			hashCode = HASH_INITIAL;
+			string = null;
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    boolean setEnabled(boolean enabled) {
-        if (enabled != this.enabled) {
-            this.enabled = enabled;
-            hashCode = HASH_INITIAL;
-            string = null;
-            return true;
-        }
+	boolean setEnabled(boolean enabled) {
+		if (enabled != this.enabled) {
+			this.enabled = enabled;
+			hashCode = HASH_INITIAL;
+			string = null;
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        if (string == null) {
-            final StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append('[');
-            stringBuffer.append(activityIds);
-            stringBuffer.append(',');
-            stringBuffer.append(enabled);
-            stringBuffer.append(',');
-            stringBuffer.append(id);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+		if (string == null) {
+			final StringBuilder stringBuffer = new StringBuilder();
+			stringBuffer.append('[');
+			stringBuffer.append(activityIds);
+			stringBuffer.append(',');
+			stringBuffer.append(enabled);
+			stringBuffer.append(',');
+			stringBuffer.append(id);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
 
-        return string;
-    }
+		return string;
+	}
 }

@@ -20,87 +20,85 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IActionFilter;
 
 /**
- * An ObjectFilterTest is used to read an object filter from XML,
- * and evaluate the results for a given object.
+ * An ObjectFilterTest is used to read an object filter from XML, and evaluate
+ * the results for a given object.
  */
 public class ObjectFilterTest {
 	private HashMap<String, String> filterElements;
 
-    /**
-     * Create a new object filter.
-     */
-    public ObjectFilterTest() {
-        // do nothing
-    }
+	/**
+	 * Create a new object filter.
+	 */
+	public ObjectFilterTest() {
+		// do nothing
+	}
 
-    /**
-     * Add a filter element to the test.  This element must contain
-     * a name value filter pair, as defined by the
-     * <code>org.eclipse.ui.actionFilters</code> extension point.
-     */
-    public boolean addFilterElement(IConfigurationElement element) {
-        String name = element.getAttribute("name");//$NON-NLS-1$
-        if (name == null) {
+	/**
+	 * Add a filter element to the test. This element must contain a name value
+	 * filter pair, as defined by the <code>org.eclipse.ui.actionFilters</code>
+	 * extension point.
+	 */
+	public boolean addFilterElement(IConfigurationElement element) {
+		String name = element.getAttribute("name");//$NON-NLS-1$
+		if (name == null) {
 			return false;
 		}
 
-        // Get positive property.
-        String value = element.getAttribute("value");//$NON-NLS-1$
-        if (value == null) {
+		// Get positive property.
+		String value = element.getAttribute("value");//$NON-NLS-1$
+		if (value == null) {
 			return false;
 		}
-        if (filterElements == null) {
+		if (filterElements == null) {
 			filterElements = new HashMap();
 		}
-        filterElements.put(name, value);
-        return true;
-    }
+		filterElements.put(name, value);
+		return true;
+	}
 
 	/**
 	 * Returns whether the object filter correctly matches a given object. The
 	 * results will be <code>true</code> if there is a filter match.
 	 * <p>
-	 * If <code>adaptable is true</code>, the result will also be
-	 * <code>true</code> if the object is a wrapper for a resource, and the
-	 * resource produces a filter match.
+	 * If <code>adaptable is true</code>, the result will also be <code>true</code>
+	 * if the object is a wrapper for a resource, and the resource produces a filter
+	 * match.
 	 * </p>
 	 *
-	 * @param object
-	 *            the object to examine
+	 * @param object the object to examine
 	 * @returns <code>true</code> if there is a filter match.
 	 */
-    public boolean matches(Object object, boolean adaptable) {
-        // Optimize it.
-        if (filterElements == null) {
+	public boolean matches(Object object, boolean adaptable) {
+		// Optimize it.
+		if (filterElements == null) {
 			return true;
 		}
 
-        // Try out the object.
-        if (this.preciselyMatches(object)) {
+		// Try out the object.
+		if (this.preciselyMatches(object)) {
 			return true;
 		}
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Returns whether the object filter correctly matches a given object.
-     */
-    private boolean preciselyMatches(Object object) {
-        // Get the action filter.
-        IActionFilter filter = Adapters.adapt(object, IActionFilter.class);
-        if (filter == null) {
+	/**
+	 * Returns whether the object filter correctly matches a given object.
+	 */
+	private boolean preciselyMatches(Object object) {
+		// Get the action filter.
+		IActionFilter filter = Adapters.adapt(object, IActionFilter.class);
+		if (filter == null) {
 			return false;
 		}
 
-        // Run the action filter.
+		// Run the action filter.
 		for (Entry<String, String> entry : filterElements.entrySet()) {
 			String name = entry.getKey();
 			String value = entry.getValue();
-            if (!filter.testAttribute(object, name, value)) {
+			if (!filter.testAttribute(object, name, value)) {
 				return false;
 			}
-        }
-        return true;
-    }
+		}
+		return true;
+	}
 }
-

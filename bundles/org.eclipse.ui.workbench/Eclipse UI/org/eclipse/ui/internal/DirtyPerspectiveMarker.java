@@ -34,8 +34,7 @@ public class DirtyPerspectiveMarker {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof DirtyPerspectiveMarker) {
-			return perspectiveId
-					.equals(((DirtyPerspectiveMarker) o).perspectiveId);
+			return perspectiveId.equals(((DirtyPerspectiveMarker) o).perspectiveId);
 		}
 		return false;
 	}

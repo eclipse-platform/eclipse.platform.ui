@@ -20,14 +20,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
 /**
- * A pagebook is a composite control where only a single control is visible
- * at a time. It is similar to a notebook, but without tabs.
+ * A pagebook is a composite control where only a single control is visible at a
+ * time. It is similar to a notebook, but without tabs.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
- * Note that although this class is a subclass of <code>Composite</code>,
- * it does not make sense to set a layout on it.
+ * Note that although this class is a subclass of <code>Composite</code>, it
+ * does not make sense to set a layout on it.
  * </p>
  *
  * @see PageBookView
@@ -35,75 +35,74 @@ import org.eclipse.swt.widgets.Layout;
  */
 public class PageBook extends Composite {
 
-    /**
-     * <p>
-     * [Issue: This class should be declared private.]
-     * </p>
-     */
-    public class PageBookLayout extends Layout {
+	/**
+	 * <p>
+	 * [Issue: This class should be declared private.]
+	 * </p>
+	 */
+	public class PageBookLayout extends Layout {
 
-        @Override
-		protected Point computeSize(Composite composite, int wHint, int hHint,
-                boolean flushCache) {
-            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+		@Override
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
+			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 				return new Point(wHint, hHint);
 			}
 
-            Point result = null;
+			Point result = null;
 			if (currentPage != null && !currentPage.isDisposed()) {
-                result = currentPage.computeSize(wHint, hHint, flushCache);
-            } else {
-                //Rectangle rect= composite.getClientArea();
-                //result= new Point(rect.width, rect.height);
-                result = new Point(0, 0);
-            }
-            if (wHint != SWT.DEFAULT) {
+				result = currentPage.computeSize(wHint, hHint, flushCache);
+			} else {
+				// Rectangle rect= composite.getClientArea();
+				// result= new Point(rect.width, rect.height);
+				result = new Point(0, 0);
+			}
+			if (wHint != SWT.DEFAULT) {
 				result.x = wHint;
 			}
-            if (hHint != SWT.DEFAULT) {
+			if (hHint != SWT.DEFAULT) {
 				result.y = hHint;
 			}
-            return result;
-        }
+			return result;
+		}
 
-        @Override
+		@Override
 		protected void layout(Composite composite, boolean flushCache) {
 			if (currentPage != null && !currentPage.isDisposed()) {
-                currentPage.setBounds(composite.getClientArea());
-            }
-        }
-    }
+				currentPage.setBounds(composite.getClientArea());
+			}
+		}
+	}
 
-    /**
-     * The current control; <code>null</code> if none.
-     */
-    private Control currentPage = null;
+	/**
+	 * The current control; <code>null</code> if none.
+	 */
+	private Control currentPage = null;
 
-    /**
-     * Creates a new empty pagebook.
-     *
-     * @param parent the parent composite
-     * @param style the SWT style bits
-     */
-    public PageBook(Composite parent, int style) {
-        super(parent, style);
-        setLayout(new PageBookLayout());
-    }
+	/**
+	 * Creates a new empty pagebook.
+	 *
+	 * @param parent the parent composite
+	 * @param style  the SWT style bits
+	 */
+	public PageBook(Composite parent, int style) {
+		super(parent, style);
+		setLayout(new PageBookLayout());
+	}
 
-    /**
-     * Shows the given page. This method has no effect if the given page is not
-     * contained in this pagebook.
-     *
-     * @param page the page to show
-     */
-    public void showPage(Control page) {
+	/**
+	 * Shows the given page. This method has no effect if the given page is not
+	 * contained in this pagebook.
+	 *
+	 * @param page the page to show
+	 */
+	public void showPage(Control page) {
 		if (page.isDisposed() || page.getParent() != this) {
 			return;
 		}
 
 		currentPage = page;
 
-        // show new page
+		// show new page
 		page.setVisible(true);
 		layout(true);
 
@@ -114,5 +113,5 @@ public class PageBook extends Composite {
 				child.setVisible(false);
 			}
 		}
-    }
+	}
 }

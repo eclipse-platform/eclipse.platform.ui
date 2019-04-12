@@ -148,14 +148,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	public static final int NONE = 0;
 
 	/**
-	 * Pattern input field selection where caret is at the beginning (used only
-	 * for initial pattern).
+	 * Pattern input field selection where caret is at the beginning (used only for
+	 * initial pattern).
 	 */
 	public static final int CARET_BEGINNING = 1;
 
 	/**
-	 * Represents a full selection in the pattern input field (used only for
-	 * initial pattern).
+	 * Represents a full selection in the pattern input field (used only for initial
+	 * pattern).
 	 */
 	public static final int FULL_SELECTION = 2;
 
@@ -166,9 +166,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	private DetailsContentViewer details;
 
 	/**
-	 * It is a duplicate of a field in the CLabel class in DetailsContentViewer.
-	 * It is maintained, because the <code>setDetailsLabelProvider()</code>
-	 * could be called before content area is created.
+	 * It is a duplicate of a field in the CLabel class in DetailsContentViewer. It
+	 * is maintained, because the <code>setDetailsLabelProvider()</code> could be
+	 * called before content area is created.
 	 */
 	private ILabelProvider detailsLabelProvider;
 
@@ -229,11 +229,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Creates a new instance of the class.
 	 *
-	 * @param shell
-	 *            shell to parent the dialog on
-	 * @param multi
-	 *            indicates whether dialog allows to select more than one
-	 *            position in its list of items
+	 * @param shell shell to parent the dialog on
+	 * @param multi indicates whether dialog allows to select more than one position
+	 *              in its list of items
 	 */
 	public FilteredItemsSelectionDialog(Shell shell, boolean multi) {
 		super(shell);
@@ -242,8 +240,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		filterJob = new FilterJob();
 		contentProvider = new ContentProvider();
 		refreshCacheJob = new RefreshCacheJob();
-		itemsListSeparator = new ItemsListSeparator(
-				WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel);
+		itemsListSeparator = new ItemsListSeparator(WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel);
 		selectionMode = NONE;
 	}
 
@@ -251,8 +248,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * Creates a new instance of the class. Created dialog won't allow to select
 	 * more than one item.
 	 *
-	 * @param shell
-	 *            shell to parent the dialog on
+	 * @param shell shell to parent the dialog on
 	 */
 	public FilteredItemsSelectionDialog(Shell shell) {
 		this(shell, false);
@@ -261,24 +257,22 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Adds viewer filter to the dialog items list.
 	 *
-	 * @param filter
-	 *            the new filter
+	 * @param filter the new filter
 	 */
 	protected void addListFilter(ViewerFilter filter) {
 		contentProvider.addFilter(filter);
 	}
 
 	/**
-	 * Sets a new label provider for items in the list. If the label provider
-	 * also implements {@link
-	 * org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider
-	 * .IStyledLabelProvider}, the style text labels provided by it will be used
-	 * provided that the corresponding preference is set.
+	 * Sets a new label provider for items in the list. If the label provider also
+	 * implements
+	 * {@link org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider .IStyledLabelProvider},
+	 * the style text labels provided by it will be used provided that the
+	 * corresponding preference is set.
 	 *
 	 * @see IWorkbenchPreferenceConstants#USE_COLORED_LABELS
 	 *
-	 * @param listLabelProvider
-	 * 		the label provider for items in the list
+	 * @param listLabelProvider the label provider for items in the list
 	 */
 	public void setListLabelProvider(ILabelProvider listLabelProvider) {
 		getItemsListLabelProvider().setProvider(listLabelProvider);
@@ -296,13 +290,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Sets the label decorator for selected items in the list.
 	 *
-	 * @param listSelectionLabelDecorator
-	 *            the label decorator for selected items in the list
+	 * @param listSelectionLabelDecorator the label decorator for selected items in
+	 *                                    the list
 	 */
-	public void setListSelectionLabelDecorator(
-			ILabelDecorator listSelectionLabelDecorator) {
-		getItemsListLabelProvider().setSelectionDecorator(
-				listSelectionLabelDecorator);
+	public void setListSelectionLabelDecorator(ILabelDecorator listSelectionLabelDecorator) {
+		getItemsListLabelProvider().setSelectionDecorator(listSelectionLabelDecorator);
 	}
 
 	/**
@@ -312,8 +304,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	private ItemsListLabelProvider getItemsListLabelProvider() {
 		if (itemsListLabelProvider == null) {
-			itemsListLabelProvider = new ItemsListLabelProvider(
-					new LabelProvider(), null);
+			itemsListLabelProvider = new ItemsListLabelProvider(new LabelProvider(), null);
 		}
 		return itemsListLabelProvider;
 	}
@@ -323,15 +314,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 *
 	 * For a single selection, the element sent to
 	 * {@link ILabelProvider#getImage(Object)} and
-	 * {@link ILabelProvider#getText(Object)} is the selected object, for
-	 * multiple selection a {@link String} with amount of selected items is the
-	 * element.
+	 * {@link ILabelProvider#getText(Object)} is the selected object, for multiple
+	 * selection a {@link String} with amount of selected items is the element.
 	 *
-	 * @see #getSelectedItems() getSelectedItems() can be used to retrieve
-	 *      selected items and get the items count.
+	 * @see #getSelectedItems() getSelectedItems() can be used to retrieve selected
+	 *      items and get the items count.
 	 *
-	 * @param detailsLabelProvider
-	 *            the label provider for the details field
+	 * @param detailsLabelProvider the label provider for the details field
 	 */
 	public void setDetailsLabelProvider(ILabelProvider detailsLabelProvider) {
 		this.detailsLabelProvider = detailsLabelProvider;
@@ -354,11 +343,10 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * Restores dialog using persisted settings. The default implementation
-	 * restores the status of the details line and the selection history.
+	 * Restores dialog using persisted settings. The default implementation restores
+	 * the status of the details line and the selection history.
 	 *
-	 * @param settings
-	 *            settings used to restore dialog
+	 * @param settings settings used to restore dialog
 	 */
 	protected void restoreDialog(IDialogSettings settings) {
 		boolean toggleStatusLine = true;
@@ -374,20 +362,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		String setting = settings.get(HISTORY_SETTINGS);
 		if (setting != null) {
 			try {
-				IMemento memento = XMLMemento.createReadRoot(new StringReader(
-						setting));
+				IMemento memento = XMLMemento.createReadRoot(new StringReader(setting));
 				this.contentProvider.loadHistory(memento);
 			} catch (WorkbenchException e) {
 				// Simply don't restore the settings
-				StatusManager
-						.getManager()
-						.handle(
-								new Status(
-										IStatus.ERROR,
-										PlatformUI.PLUGIN_ID,
-										IStatus.ERROR,
-										WorkbenchMessages.FilteredItemsSelectionDialog_restoreError,
-										e));
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+						WorkbenchMessages.FilteredItemsSelectionDialog_restoreError, e));
 			}
 		}
 	}
@@ -398,8 +378,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		this.refreshCacheJob.cancel();
 		this.refreshProgressMessageJob.cancel();
 		if (showViewHandler != null) {
-			IHandlerService service = PlatformUI
-					.getWorkbench().getService(IHandlerService.class);
+			IHandlerService service = PlatformUI.getWorkbench().getService(IHandlerService.class);
 			service.deactivateHandler(showViewHandler);
 			showViewHandler.getHandler().dispose();
 			showViewHandler = null;
@@ -415,8 +394,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Stores dialog settings.
 	 *
-	 * @param settings
-	 *            settings used to store dialog
+	 * @param settings settings used to store dialog
 	 */
 	protected void storeDialog(IDialogSettings settings) {
 		settings.put(SHOW_STATUS_LINE, toggleStatusLineAction.isChecked());
@@ -429,15 +407,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			settings.put(HISTORY_SETTINGS, writer.getBuffer().toString());
 		} catch (IOException e) {
 			// Simply don't store the settings
-			StatusManager
-					.getManager()
-					.handle(
-							new Status(
-									IStatus.ERROR,
-									PlatformUI.PLUGIN_ID,
-									IStatus.ERROR,
-									WorkbenchMessages.FilteredItemsSelectionDialog_storeError,
-									e));
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+					WorkbenchMessages.FilteredItemsSelectionDialog_storeError, e));
 		}
 	}
 
@@ -457,8 +428,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		header.setLayout(layout);
 
 		Label headerLabel = new Label(header, SWT.NONE);
-		headerLabel.setText((getMessage() != null && getMessage().trim()
-				.length() > 0) ? getMessage()
+		headerLabel.setText((getMessage() != null && getMessage().trim().length() > 0) ? getMessage()
 				: WorkbenchMessages.FilteredItemsSelectionDialog_patternLabel);
 		headerLabel.addTraverseListener(e -> {
 			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
@@ -491,8 +461,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		labels.setLayout(layout);
 
 		Label listLabel = new Label(labels, SWT.NONE);
-		listLabel
-				.setText(WorkbenchMessages.FilteredItemsSelectionDialog_listLabel);
+		listLabel.setText(WorkbenchMessages.FilteredItemsSelectionDialog_listLabel);
 
 		listLabel.addTraverseListener(e -> {
 			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
@@ -526,18 +495,15 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			}
 		});
 
-		toolItem.setImage(WorkbenchImages
-				.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
-		toolItem
-				.setToolTipText(WorkbenchMessages.FilteredItemsSelectionDialog_menu);
+		toolItem.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
+		toolItem.setToolTipText(WorkbenchMessages.FilteredItemsSelectionDialog_menu);
 		toolItem.addSelectionListener(widgetSelectedAdapter(e -> showViewMenu()));
 
 		menuManager = new MenuManager();
 
 		fillViewMenu(menuManager);
 
-		IHandlerService service = PlatformUI.getWorkbench()
-				.getService(IHandlerService.class);
+		IHandlerService service = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		IHandler handler = new AbstractHandler() {
 			@Override
 			public Object execute(ExecutionEvent event) {
@@ -545,16 +511,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				return null;
 			}
 		};
-		showViewHandler = service.activateHandler(
-				IWorkbenchCommandConstants.WINDOW_SHOW_VIEW_MENU, handler,
+		showViewHandler = service.activateHandler(IWorkbenchCommandConstants.WINDOW_SHOW_VIEW_MENU, handler,
 				new ActiveShellExpression(getShell()));
 	}
 
 	/**
 	 * Fills the menu of the dialog.
 	 *
-	 * @param menuManager
-	 *            the menu manager
+	 * @param menuManager the menu manager
 	 */
 	protected void fillViewMenu(IMenuManager menuManager) {
 		toggleStatusLineAction = new ToggleStatusLineAction();
@@ -570,28 +534,30 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		menu.setVisible(true);
 	}
 
-    /**
-     * Hook that allows to add actions to the context menu.
+	/**
+	 * Hook that allows to add actions to the context menu.
 	 * <p>
-	 * Subclasses may extend in order to add other actions.</p>
-     *
-     * @param menuManager the context menu manager
-     * @since 3.5
-     */
+	 * Subclasses may extend in order to add other actions.
+	 * </p>
+	 *
+	 * @param menuManager the context menu manager
+	 * @since 3.5
+	 */
 	protected void fillContextMenu(IMenuManager menuManager) {
 		List<?> selectedElements = list.getStructuredSelection().toList();
 
-		Object item= null;
+		Object item = null;
 
 		for (Iterator<?> it = selectedElements.iterator(); it.hasNext();) {
-			item= it.next();
+			item = it.next();
 			if (item instanceof ItemsListSeparator || !isHistoryElement(item)) {
 				return;
 			}
 		}
 
 		if (selectedElements.size() > 0) {
-			removeHistoryItemAction.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
+			removeHistoryItemAction
+					.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
 
 			menuManager.add(removeHistoryActionContributionItem);
 
@@ -607,15 +573,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		contextMenuManager.addMenuListener(manager -> fillContextMenu(manager));
 
 		final Table table = list.getTable();
-		Menu menu= contextMenuManager.createContextMenu(table);
+		Menu menu = contextMenuManager.createContextMenu(table);
 		table.setMenu(menu);
 	}
 
 	/**
 	 * Creates an extra content area, which will be located above the details.
 	 *
-	 * @param parent
-	 *            parent to create the dialog widgets in
+	 * @param parent parent to create the dialog widgets in
 	 * @return an extra content area
 	 */
 	protected abstract Control createExtendedContentArea(Composite parent);
@@ -640,8 +605,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		pattern.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = LegacyActionTools.removeMnemonics(headerLabel
-						.getText());
+				e.result = LegacyActionTools.removeMnemonics(headerLabel.getText());
 			}
 		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -649,25 +613,22 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		final Label listLabel = createLabels(content);
 
-		list = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE)
-				| SWT.BORDER | SWT.V_SCROLL | SWT.VIRTUAL);
-		list.getTable().getAccessible().addAccessibleListener(
-				new AccessibleAdapter() {
-					@Override
-					public void getName(AccessibleEvent e) {
-						if (e.childID == ACC.CHILDID_SELF) {
-							e.result = LegacyActionTools
-									.removeMnemonics(listLabel.getText());
-						}
-					}
-				});
+		list = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE) | SWT.BORDER | SWT.V_SCROLL | SWT.VIRTUAL);
+		list.getTable().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				if (e.childID == ACC.CHILDID_SELF) {
+					e.result = LegacyActionTools.removeMnemonics(listLabel.getText());
+				}
+			}
+		});
 		list.setContentProvider(contentProvider);
 		list.setLabelProvider(getItemsListLabelProvider());
 		list.setInput(new Object[0]);
 		list.setItemCount(contentProvider.getNumberOfElements());
 		gd = new GridData(GridData.FILL_BOTH);
 		applyDialogFont(list.getTable());
-		gd.heightHint= list.getTable().getItemHeight() * 15;
+		gd.heightHint = list.getTable().getItemHeight() * 15;
 		list.getTable().setLayoutData(gd);
 
 		createPopupMenu();
@@ -698,17 +659,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 				if (e.keyCode == SWT.DEL) {
 
-					List<?> selectedElements = ((StructuredSelection) list
-							.getSelection()).toList();
+					List<?> selectedElements = ((StructuredSelection) list.getSelection()).toList();
 
 					Object item = null;
 					boolean isSelectedHistory = true;
 
-					for (Iterator<?> it = selectedElements.iterator(); it
-							.hasNext();) {
+					for (Iterator<?> it = selectedElements.iterator(); it.hasNext();) {
 						item = it.next();
-						if (item instanceof ItemsListSeparator
-								|| !isHistoryElement(item)) {
+						if (item instanceof ItemsListSeparator || !isHistoryElement(item)) {
 							isSelectedHistory = false;
 							break;
 						}
@@ -718,8 +676,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 				}
 
-				if (e.keyCode == SWT.ARROW_UP && (e.stateMask & SWT.SHIFT) != 0
-						&& (e.stateMask & SWT.CTRL) != 0) {
+				if (e.keyCode == SWT.ARROW_UP && (e.stateMask & SWT.SHIFT) != 0 && (e.stateMask & SWT.CTRL) != 0) {
 					IStructuredSelection selection = list.getStructuredSelection();
 
 					if (selection.size() == 1) {
@@ -727,23 +684,17 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 						if (element.equals(list.getElementAt(0))) {
 							pattern.setFocus();
 						}
-						if (list.getElementAt(list.getTable()
-								.getSelectionIndex() - 1) instanceof ItemsListSeparator)
-							list.getTable().setSelection(
-									list.getTable().getSelectionIndex() - 1);
+						if (list.getElementAt(list.getTable().getSelectionIndex() - 1) instanceof ItemsListSeparator)
+							list.getTable().setSelection(list.getTable().getSelectionIndex() - 1);
 						list.getTable().notifyListeners(SWT.Selection, new Event());
 
 					}
 				}
 
-				if (e.keyCode == SWT.ARROW_DOWN
-						&& (e.stateMask & SWT.SHIFT) != 0
-						&& (e.stateMask & SWT.CTRL) != 0) {
+				if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.SHIFT) != 0 && (e.stateMask & SWT.CTRL) != 0) {
 
-					if (list
-							.getElementAt(list.getTable().getSelectionIndex() + 1) instanceof ItemsListSeparator)
-						list.getTable().setSelection(
-								list.getTable().getSelectionIndex() + 1);
+					if (list.getElementAt(list.getTable().getSelectionIndex() + 1) instanceof ItemsListSeparator)
+						list.getTable().setSelection(list.getTable().getSelectionIndex() + 1);
 					list.getTable().notifyListeners(SWT.Selection, new Event());
 				}
 
@@ -783,9 +734,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * This method is a hook for subclasses to override default dialog behavior.
-	 * The <code>handleDoubleClick()</code> method handles double clicks on
-	 * the list of filtered elements.
+	 * This method is a hook for subclasses to override default dialog behavior. The
+	 * <code>handleDoubleClick()</code> method handles double clicks on the list of
+	 * filtered elements.
 	 * <p>
 	 * Current implementation makes double-clicking on the list do the same as
 	 * pressing <code>OK</code> button on the dialog.
@@ -795,8 +746,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * Refreshes the details field according to the current selection in the
-	 * items list.
+	 * Refreshes the details field according to the current selection in the items
+	 * list.
 	 */
 	private void refreshDetails() {
 		StructuredSelection selection = getSelectedItems();
@@ -809,11 +760,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			details.setInput(selection.getFirstElement());
 			break;
 		default:
-			details
-					.setInput(NLS
-							.bind(
-									WorkbenchMessages.FilteredItemsSelectionDialog_nItemsSelected,
-									Integer.valueOf(selection.size())));
+			details.setInput(NLS.bind(WorkbenchMessages.FilteredItemsSelectionDialog_nItemsSelected,
+					Integer.valueOf(selection.size())));
 			break;
 		}
 
@@ -823,31 +771,26 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * Handle selection in the items list by updating labels of selected and
 	 * unselected items and refresh the details field using the selection.
 	 *
-	 * @param selection
-	 *            the new selection
+	 * @param selection the new selection
 	 */
 	protected void handleSelected(StructuredSelection selection) {
-		IStatus status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
-				IStatus.OK, EMPTY_STRING, null);
+		IStatus status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EMPTY_STRING, null);
 
 		Object[] lastSelection = currentSelection;
 
 		currentSelection = selection.toArray();
 
 		if (selection.isEmpty()) {
-			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
-					IStatus.ERROR, EMPTY_STRING, null);
+			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, EMPTY_STRING, null);
 
-			if (lastSelection != null
-					&& getListSelectionLabelDecorator() != null) {
+			if (lastSelection != null && getListSelectionLabelDecorator() != null) {
 				list.update(lastSelection, null);
 			}
 
 			currentSelection = null;
 
 		} else {
-			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
-					IStatus.ERROR, EMPTY_STRING, null);
+			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, EMPTY_STRING, null);
 
 			List<?> items = selection.toList();
 
@@ -865,8 +808,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				tempStatus = validateItem(item);
 
 				if (tempStatus.isOK()) {
-					status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
-							IStatus.OK, EMPTY_STRING, null);
+					status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EMPTY_STRING, null);
 				} else {
 					status = tempStatus;
 					// if any selected element is not valid status is set to
@@ -875,8 +817,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				}
 			}
 
-			if (lastSelection != null
-					&& getListSelectionLabelDecorator() != null) {
+			if (lastSelection != null && getListSelectionLabelDecorator() != null) {
 				list.update(lastSelection, null);
 			}
 
@@ -914,8 +855,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
 
-			List<?> lastRefreshSelection = ((StructuredSelection) list
-					.getSelection()).toList();
+			List<?> lastRefreshSelection = ((StructuredSelection) list.getSelection()).toList();
 			list.getTable().deselectAll();
 
 			list.setItemCount(contentProvider.getNumberOfElements());
@@ -923,10 +863,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			if (list.getTable().getItemCount() > 0) {
 				// preserve previous selection
-				if (refreshWithLastSelection && lastRefreshSelection != null
-						&& lastRefreshSelection.size() > 0) {
-					list.setSelection(new StructuredSelection(
-							lastRefreshSelection));
+				if (refreshWithLastSelection && lastRefreshSelection != null && lastRefreshSelection.size() > 0) {
+					list.setSelection(new StructuredSelection(lastRefreshSelection));
 				} else {
 					refreshWithLastSelection = true;
 					list.getTable().setSelection(0);
@@ -952,23 +890,20 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * Notifies the content provider - fires filtering of content provider
-	 * elements. During the filtering, a separator between history and workspace
-	 * matches is added.
+	 * Notifies the content provider - fires filtering of content provider elements.
+	 * During the filtering, a separator between history and workspace matches is
+	 * added.
 	 * <p>
 	 * This is a long running operation and should be called in a job.
 	 *
-	 * @param checkDuplicates
-	 *            <code>true</code> if data concerning elements duplication
-	 *            should be computed - it takes much more time than the standard
-	 *            filtering
-	 * @param monitor
-	 *            a progress monitor or <code>null</code> if no monitor is
-	 *            available
+	 * @param checkDuplicates <code>true</code> if data concerning elements
+	 *                        duplication should be computed - it takes much more
+	 *                        time than the standard filtering
+	 * @param monitor         a progress monitor or <code>null</code> if no monitor
+	 *                        is available
 	 */
 	public void reloadCache(boolean checkDuplicates, IProgressMonitor monitor) {
-		if (list != null && !list.getTable().isDisposed()
-				&& contentProvider != null) {
+		if (list != null && !list.getTable().isDisposed() && contentProvider != null) {
 			contentProvider.reloadCache(checkDuplicates, monitor);
 		}
 	}
@@ -985,8 +920,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * Schedules progress message refresh.
 	 */
 	public void scheduleProgressMessageRefresh() {
-		if (filterJob.getState() != Job.RUNNING
-				&& refreshProgressMessageJob.getState() != Job.RUNNING)
+		if (filterJob.getState() != Job.RUNNING && refreshProgressMessageJob.getState() != Job.RUNNING)
 			refreshProgressMessageJob.scheduleProgressRefresh(null);
 	}
 
@@ -1012,7 +946,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/*
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#updateStatus(org.eclipse.core.runtime.IStatus)
+	 * @see
+	 * org.eclipse.ui.dialogs.SelectionStatusDialog#updateStatus(org.eclipse.core.
+	 * runtime.IStatus)
 	 */
 	@Override
 	protected void updateStatus(IStatus status) {
@@ -1025,19 +961,17 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	@Override
 	protected void okPressed() {
-		if (status != null
-				&& (status.isOK() || status.getCode() == IStatus.INFO)) {
+		if (status != null && (status.isOK() || status.getCode() == IStatus.INFO)) {
 			super.okPressed();
 		}
 	}
 
 	/**
 	 * Sets the initial pattern used by the filter. This text is copied into the
-	 * selection input on the dialog. A full selection is used in the pattern
-	 * input field.
+	 * selection input on the dialog. A full selection is used in the pattern input
+	 * field.
 	 *
-	 * @param text
-	 *            initial pattern for the filter
+	 * @param text initial pattern for the filter
 	 * @see FilteredItemsSelectionDialog#FULL_SELECTION
 	 */
 	public void setInitialPattern(String text) {
@@ -1046,15 +980,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	/**
 	 * Sets the initial pattern used by the filter. This text is copied into the
-	 * selection input on the dialog. The <code>selectionMode</code> is used
-	 * to choose selection type for the input field.
+	 * selection input on the dialog. The <code>selectionMode</code> is used to
+	 * choose selection type for the input field.
 	 *
-	 * @param text
-	 *            initial pattern for the filter
-	 * @param selectionMode
-	 *            one of: {@link FilteredItemsSelectionDialog#NONE},
-	 *            {@link FilteredItemsSelectionDialog#CARET_BEGINNING},
-	 *            {@link FilteredItemsSelectionDialog#FULL_SELECTION}
+	 * @param text          initial pattern for the filter
+	 * @param selectionMode one of: {@link FilteredItemsSelectionDialog#NONE},
+	 *                      {@link FilteredItemsSelectionDialog#CARET_BEGINNING},
+	 *                      {@link FilteredItemsSelectionDialog#FULL_SELECTION}
 	 */
 	public void setInitialPattern(String text, int selectionMode) {
 		this.initialPatternText = text;
@@ -1064,8 +996,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Gets initial pattern.
 	 *
-	 * @return initial pattern, or <code>null</code> if initial pattern is not
-	 *         set
+	 * @return initial pattern, or <code>null</code> if initial pattern is not set
 	 */
 	protected String getInitialPattern() {
 		return this.initialPatternText;
@@ -1101,12 +1032,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * Validates the item. When items on the items list are selected or
-	 * deselected, it validates each item in the selection and the dialog status
-	 * depends on all validations.
+	 * Validates the item. When items on the items list are selected or deselected,
+	 * it validates each item in the selection and the dialog status depends on all
+	 * validations.
 	 *
-	 * @param item
-	 *            an item to be checked
+	 * @param item an item to be checked
 	 * @return status of the dialog to be set
 	 */
 	protected abstract IStatus validateItem(Object item);
@@ -1114,15 +1044,15 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Creates an instance of a filter.
 	 *
-	 * @return a filter for items on the items list. Can be <code>null</code>,
-	 *         no filtering will be applied then, causing no item to be shown in
-	 *         the list.
+	 * @return a filter for items on the items list. Can be <code>null</code>, no
+	 *         filtering will be applied then, causing no item to be shown in the
+	 *         list.
 	 */
 	protected abstract ItemsFilter createFilter();
 
 	/**
-	 * Applies the filter created by <code>createFilter()</code> method to the
-	 * items list. When new filter is different than previous one it will cause
+	 * Applies the filter created by <code>createFilter()</code> method to the items
+	 * list. When new filter is different than previous one it will cause
 	 * refiltering.
 	 */
 	protected void applyFilter() {
@@ -1148,8 +1078,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Returns comparator to sort items inside content provider. Returned object
 	 * will be probably created as an anonymous class. Parameters passed to the
-	 * <code>compare(java.lang.Object, java.lang.Object)</code> are going to
-	 * be the same type as the one used in the content provider.
+	 * <code>compare(java.lang.Object, java.lang.Object)</code> are going to be the
+	 * same type as the one used in the content provider.
 	 *
 	 * @return comparator to sort items content provider
 	 */
@@ -1158,26 +1088,23 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Fills the content provider with matching items.
 	 *
-	 * @param contentProvider
-	 *            collector to add items to.
-	 *            {@link FilteredItemsSelectionDialog.AbstractContentProvider#add(Object, FilteredItemsSelectionDialog.ItemsFilter)}
-	 *            only adds items that pass the given <code>itemsFilter</code>.
-	 * @param itemsFilter
-	 *            the items filter
-	 * @param progressMonitor
-	 *            must be used to report search progress. The state of this
-	 *            progress monitor reflects the state of the filtering process.
+	 * @param contentProvider collector to add items to.
+	 *                        {@link FilteredItemsSelectionDialog.AbstractContentProvider#add(Object, FilteredItemsSelectionDialog.ItemsFilter)}
+	 *                        only adds items that pass the given
+	 *                        <code>itemsFilter</code>.
+	 * @param itemsFilter     the items filter
+	 * @param progressMonitor must be used to report search progress. The state of
+	 *                        this progress monitor reflects the state of the
+	 *                        filtering process.
 	 * @throws CoreException
 	 */
-	protected abstract void fillContentProvider(
-			AbstractContentProvider contentProvider, ItemsFilter itemsFilter,
+	protected abstract void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter,
 			IProgressMonitor progressMonitor) throws CoreException;
 
 	/**
 	 * Removes selected items from history.
 	 *
-	 * @param items
-	 *            items to be removed
+	 * @param items items to be removed
 	 */
 	private void removeSelectedItems(List<?> items) {
 		for (Iterator<?> iter = items.iterator(); iter.hasNext();) {
@@ -1191,8 +1118,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Removes an item from history.
 	 *
-	 * @param item
-	 *            an item to remove
+	 * @param item an item to remove
 	 * @return removed item
 	 */
 	protected Object removeHistoryItem(Object item) {
@@ -1202,8 +1128,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Adds item to history.
 	 *
-	 * @param item
-	 *            the item to be added
+	 * @param item the item to be added
 	 */
 	protected void accessedHistoryItem(Object item) {
 		contentProvider.addHistoryElement(item);
@@ -1221,8 +1146,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Returns the history of selected elements.
 	 *
-	 * @return history of selected elements, or <code>null</code> if it is not
-	 *         set
+	 * @return history of selected elements, or <code>null</code> if it is not set
 	 */
 	protected SelectionHistory getSelectionHistory() {
 		return this.contentProvider.getSelectionHistory();
@@ -1231,8 +1155,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Sets new history.
 	 *
-	 * @param selectionHistory
-	 *            the history
+	 * @param selectionHistory the history
 	 */
 	protected void setSelectionHistory(SelectionHistory selectionHistory) {
 		if (this.contentProvider != null)
@@ -1242,8 +1165,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Indicates whether the given item is a history item.
 	 *
-	 * @param item
-	 *            the item to be investigated
+	 * @param item the item to be investigated
 	 * @return <code>true</code> if the given item exists in history,
 	 *         <code>false</code> otherwise
 	 */
@@ -1254,8 +1176,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Indicates whether the given item is a duplicate.
 	 *
-	 * @param item
-	 *            the item to be investigated
+	 * @param item the item to be investigated
 	 * @return <code>true</code> if the item is duplicate, <code>false</code>
 	 *         otherwise
 	 */
@@ -1266,8 +1187,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Sets separator label
 	 *
-	 * @param separatorLabel
-	 *            the label showed on separator
+	 * @param separatorLabel the label showed on separator
 	 */
 	public void setSeparatorLabel(String separatorLabel) {
 		this.itemsListSeparator = new ItemsListSeparator(separatorLabel);
@@ -1276,12 +1196,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Returns name for then given object.
 	 *
-	 * @param item
-	 *            an object from the content provider. Subclasses should pay
-	 *            attention to the passed argument. They should either only pass
-	 *            objects of a known type (one used in content provider) or make
-	 *            sure that passed parameter is the expected one (by type
-	 *            checking like <code>instanceof</code> inside the method).
+	 * @param item an object from the content provider. Subclasses should pay
+	 *             attention to the passed argument. They should either only pass
+	 *             objects of a known type (one used in content provider) or make
+	 *             sure that passed parameter is the expected one (by type checking
+	 *             like <code>instanceof</code> inside the method).
 	 * @return name of the given item
 	 */
 	public abstract String getElementName(Object item);
@@ -1292,9 +1211,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Creates a new instance of the class.
 		 */
 		public ToggleStatusLineAction() {
-			super(
-					WorkbenchMessages.FilteredItemsSelectionDialog_toggleStatusAction,
-					IAction.AS_CHECK_BOX);
+			super(WorkbenchMessages.FilteredItemsSelectionDialog_toggleStatusAction, IAction.AS_CHECK_BOX);
 		}
 
 		@Override
@@ -1309,12 +1226,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * <p>
 	 * Standard invocation scenario:
 	 * <ol>
-	 * <li>filtering job (<code>FilterJob</code> class extending
-	 * <code>Job</code> class)</li>
-	 * <li>cache refresh without checking for duplicates (<code>RefreshCacheJob</code>
-	 * class extending <code>Job</code> class)</li>
-	 * <li>UI refresh (<code>RefreshJob</code> class extending
-	 * <code>UIJob</code> class)</li>
+	 * <li>filtering job (<code>FilterJob</code> class extending <code>Job</code>
+	 * class)</li>
+	 * <li>cache refresh without checking for duplicates
+	 * (<code>RefreshCacheJob</code> class extending <code>Job</code> class)</li>
+	 * <li>UI refresh (<code>RefreshJob</code> class extending <code>UIJob</code>
+	 * class)</li>
 	 * <li>cache refresh with checking for duplicates (<cod>CacheRefreshJob</code>
 	 * class extending <code>Job</code> class)</li>
 	 * <li>UI refresh (<code>RefreshJob</code> class extending <code>UIJob</code>
@@ -1322,12 +1239,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * </ol>
 	 * The scenario is rather complicated, but it had to be applied, because:
 	 * <ul>
-	 * <li> refreshing cache is rather a long action and cannot be run in the UI -
+	 * <li>refreshing cache is rather a long action and cannot be run in the UI -
 	 * cannot be run in a UIJob</li>
-	 * <li> refreshing cache checking for duplicates is twice as long as
-	 * refreshing cache without checking for duplicates; results of the search
-	 * could be displayed earlier</li>
-	 * <li> refreshing the UI have to be run in a UIJob</li>
+	 * <li>refreshing cache checking for duplicates is twice as long as refreshing
+	 * cache without checking for duplicates; results of the search could be
+	 * displayed earlier</li>
+	 * <li>refreshing the UI have to be run in a UIJob</li>
 	 * </ul>
 	 *
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilterJob
@@ -1340,8 +1257,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Creates a new instance of the class.
 		 */
 		public RefreshJob() {
-			super(FilteredItemsSelectionDialog.this.getParentShell()
-					.getDisplay(),
+			super(FilteredItemsSelectionDialog.this.getParentShell().getDisplay(),
 					WorkbenchMessages.FilteredItemsSelectionDialog_refreshJob);
 			setSystem(true);
 		}
@@ -1349,15 +1265,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (monitor.isCanceled())
-				return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
-						IStatus.OK, EMPTY_STRING, null);
+				return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, EMPTY_STRING, null);
 
 			if (FilteredItemsSelectionDialog.this != null) {
 				FilteredItemsSelectionDialog.this.refresh();
 			}
 
-			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK,
-					EMPTY_STRING, null);
+			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EMPTY_STRING, null);
 		}
 
 	}
@@ -1365,8 +1279,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Refreshes the progress message cyclically with 500 milliseconds delay.
 	 * <code>RefreshProgressMessageJob</code> is strictly connected with
-	 * <code>GranualProgressMonitor</code> and use it to to get progress
-	 * message and to decide about break of cyclical refresh.
+	 * <code>GranualProgressMonitor</code> and use it to to get progress message and
+	 * to decide about break of cyclical refresh.
 	 */
 	private class RefreshProgressMessageJob extends UIJob {
 
@@ -1376,9 +1290,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Creates a new instance of the class.
 		 */
 		public RefreshProgressMessageJob() {
-			super(
-					FilteredItemsSelectionDialog.this.getParentShell()
-							.getDisplay(),
+			super(FilteredItemsSelectionDialog.this.getParentShell().getDisplay(),
 					WorkbenchMessages.FilteredItemsSelectionDialog_progressRefreshJob);
 			setSystem(true);
 		}
@@ -1387,29 +1299,24 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
 			if (!progressLabel.isDisposed())
-				progressLabel.setText(progressMonitor != null ? progressMonitor
-						.getMessage() : EMPTY_STRING);
+				progressLabel.setText(progressMonitor != null ? progressMonitor.getMessage() : EMPTY_STRING);
 
 			if (progressMonitor == null || progressMonitor.isDone()) {
-				return new Status(IStatus.CANCEL, PlatformUI.PLUGIN_ID,
-						IStatus.CANCEL, EMPTY_STRING, null);
+				return new Status(IStatus.CANCEL, PlatformUI.PLUGIN_ID, IStatus.CANCEL, EMPTY_STRING, null);
 			}
 
 			// Schedule cyclical with 500 milliseconds delay
 			schedule(500);
 
-			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK,
-					EMPTY_STRING, null);
+			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EMPTY_STRING, null);
 		}
 
 		/**
 		 * Schedule progress refresh job.
 		 *
-		 * @param progressMonitor
-		 *            used during refresh progress label
+		 * @param progressMonitor used during refresh progress label
 		 */
-		public void scheduleProgressRefresh(
-				GranualProgressMonitor progressMonitor) {
+		public void scheduleProgressRefresh(GranualProgressMonitor progressMonitor) {
 			this.progressMonitor = progressMonitor;
 			// Schedule with initial delay to avoid flickering when the user
 			// types quickly
@@ -1433,8 +1340,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Creates a new instance of the class.
 		 */
 		public RefreshCacheJob() {
-			super(
-					WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob);
+			super(WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob);
 			setSystem(true);
 		}
 
@@ -1449,23 +1355,19 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			if (monitor.isCanceled()) {
-				return new Status(IStatus.CANCEL, WorkbenchPlugin.PI_WORKBENCH,
-						IStatus.CANCEL, EMPTY_STRING, null);
+				return new Status(IStatus.CANCEL, WorkbenchPlugin.PI_WORKBENCH, IStatus.CANCEL, EMPTY_STRING, null);
 			}
 
 			if (FilteredItemsSelectionDialog.this != null) {
-				GranualProgressMonitor wrappedMonitor = new GranualProgressMonitor(
-						monitor);
-				FilteredItemsSelectionDialog.this.reloadCache(true,
-						wrappedMonitor);
+				GranualProgressMonitor wrappedMonitor = new GranualProgressMonitor(monitor);
+				FilteredItemsSelectionDialog.this.reloadCache(true, wrappedMonitor);
 			}
 
 			if (!monitor.isCanceled()) {
 				refreshJob.schedule();
 			}
 
-			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK,
-					EMPTY_STRING, null);
+			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EMPTY_STRING, null);
 
 		}
 
@@ -1483,8 +1385,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Creates a new instance of the class.
 		 */
 		public RemoveHistoryItemAction() {
-			super(
-					WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
+			super(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
 		}
 
 		@Override
@@ -1509,13 +1410,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Creates a new instance of the class.
 		 *
-		 * @param provider
-		 *            the label provider for all items, not <code>null</code>
-		 * @param selectionDecorator
-		 *            the decorator for selected items, can be <code>null</code>
+		 * @param provider           the label provider for all items, not
+		 *                           <code>null</code>
+		 * @param selectionDecorator the decorator for selected items, can be
+		 *                           <code>null</code>
 		 */
-		public ItemsListLabelProvider(ILabelProvider provider,
-				ILabelDecorator selectionDecorator) {
+		public ItemsListLabelProvider(ILabelProvider provider, ILabelDecorator selectionDecorator) {
 			Assert.isNotNull(provider);
 			this.provider = provider;
 			this.selectionDecorator = selectionDecorator;
@@ -1532,8 +1432,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Sets new selection decorator.
 		 *
-		 * @param newSelectionDecorator
-		 *            new label decorator for selected items in the list
+		 * @param newSelectionDecorator new label decorator for selected items in the
+		 *                              list
 		 */
 		public void setSelectionDecorator(ILabelDecorator newSelectionDecorator) {
 			if (selectionDecorator != null) {
@@ -1560,9 +1460,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Sets new label provider.
 		 *
-		 * @param newProvider
-		 *            new label provider for items in the list, not
-		 *            <code>null</code>
+		 * @param newProvider new label provider for items in the list, not
+		 *                    <code>null</code>
 		 */
 		public void setProvider(ILabelProvider newProvider) {
 			Assert.isNotNull(newProvider);
@@ -1577,8 +1476,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		private Image getImage(Object element) {
 			if (element instanceof ItemsListSeparator) {
-				return WorkbenchImages
-						.getImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR);
+				return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR);
 			}
 
 			return provider.getImage(element);
@@ -1622,11 +1520,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		public void update(ViewerCell cell) {
 			Object element = cell.getElement();
 
-			if (!(element instanceof ItemsListSeparator)
-					&& provider instanceof IStyledLabelProvider) {
+			if (!(element instanceof ItemsListSeparator) && provider instanceof IStyledLabelProvider) {
 				IStyledLabelProvider styledLabelProvider = (IStyledLabelProvider) provider;
-				StyledString styledString = getStyledText(element,
-						styledLabelProvider);
+				StyledString styledString = getStyledText(element, styledLabelProvider);
 
 				cell.setText(styledString.getString());
 				cell.setStyleRanges(styledString.getStyleRanges());
@@ -1647,8 +1543,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			int borderWidth = list.getTable().computeTrim(0, 0, 0, 0).width;
 
-			int imageWidth = WorkbenchImages.getImage(
-					IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR).getBounds().width;
+			int imageWidth = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR).getBounds().width;
 
 			int width = rect.width - borderWidth - imageWidth;
 
@@ -1696,8 +1591,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			if (provider.isLabelProperty(element, property)) {
 				return true;
 			}
-			if (selectionDecorator != null
-					&& selectionDecorator.isLabelProperty(element, property)) {
+			if (selectionDecorator != null && selectionDecorator.isLabelProperty(element, property)) {
 				return true;
 			}
 			return false;
@@ -1720,8 +1614,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		private Color getForeground(Object element) {
 			if (element instanceof ItemsListSeparator) {
-				return Display.getCurrent().getSystemColor(
-						SWT.COLOR_WIDGET_NORMAL_SHADOW);
+				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
 			if (provider instanceof IColorProvider) {
 				return ((IColorProvider) provider).getForeground(element);
@@ -1748,8 +1641,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * Used in ItemsListContentProvider, separates history and non-history
-	 * items.
+	 * Used in ItemsListContentProvider, separates history and non-history items.
 	 */
 	private static class ItemsListSeparator {
 
@@ -1758,8 +1650,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Creates a new instance of the class.
 		 *
-		 * @param name
-		 *            the name of the separator
+		 * @param name the name of the separator
 		 */
 		public ItemsListSeparator(String name) {
 			this.name = name;
@@ -1776,10 +1667,10 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * GranualProgressMonitor is used for monitoring progress of filtering
-	 * process. It is used by <code>RefreshProgressMessageJob</code> to
-	 * refresh progress message. State of this monitor illustrates state of
-	 * filtering or cache refreshing process.
+	 * GranualProgressMonitor is used for monitoring progress of filtering process.
+	 * It is used by <code>RefreshProgressMessageJob</code> to refresh progress
+	 * message. State of this monitor illustrates state of filtering or cache
+	 * refreshing process.
 	 *
 	 */
 	private class GranualProgressMonitor extends ProgressMonitorWrapper {
@@ -1797,8 +1688,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Creates instance of <code>GranualProgressMonitor</code>.
 		 *
-		 * @param monitor
-		 *            progress to be wrapped
+		 * @param monitor progress to be wrapped
 		 */
 		public GranualProgressMonitor(IProgressMonitor monitor) {
 			super(monitor);
@@ -1868,20 +1758,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				message = subName == null ? "" : subName; //$NON-NLS-1$
 			} else {
 				message = subName == null ? name
-						: NLS
-								.bind(
-										WorkbenchMessages.FilteredItemsSelectionDialog_subtaskProgressMessage,
-										new Object[] { name, subName });
+						: NLS.bind(WorkbenchMessages.FilteredItemsSelectionDialog_subtaskProgressMessage,
+								new Object[] { name, subName });
 			}
 			if (totalWork == 0)
 				return message;
 
-			return NLS
-					.bind(
-							WorkbenchMessages.FilteredItemsSelectionDialog_taskProgressMessage,
-							new Object[] {
-									message,
-									Integer.valueOf((int) ((worked * 100) / totalWork)) });
+			return NLS.bind(WorkbenchMessages.FilteredItemsSelectionDialog_taskProgressMessage,
+					new Object[] { message, Integer.valueOf((int) ((worked * 100) / totalWork)) });
 
 		}
 
@@ -1916,8 +1800,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			contentProvider.addHistoryItems(itemsFilter);
 
-			if (!(lastCompletedFilter != null && lastCompletedFilter
-					.isSubFilter(this.itemsFilter)))
+			if (!(lastCompletedFilter != null && lastCompletedFilter.isSubFilter(this.itemsFilter)))
 				contentProvider.refresh();
 
 			filterJob.schedule();
@@ -1928,16 +1811,16 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * Filters items in indicated set and history. During filtering, it
-	 * refreshes the dialog (progress monitor and elements list).
+	 * Filters items in indicated set and history. During filtering, it refreshes
+	 * the dialog (progress monitor and elements list).
 	 *
-	 * Depending on the filter, <code>FilterJob</code> decides which kind of
-	 * search will be run inside <code>filterContent</code>. If the last
-	 * filtering is done (last completed filter), is not null, and the new
-	 * filter is a sub-filter ({@link FilteredItemsSelectionDialog.ItemsFilter#isSubFilter(FilteredItemsSelectionDialog.ItemsFilter)})
-	 * of the last, then <code>FilterJob</code> only filters in the cache. If
-	 * it is the first filtering or the new filter isn't a sub-filter of the
-	 * last one, a full search is run.
+	 * Depending on the filter, <code>FilterJob</code> decides which kind of search
+	 * will be run inside <code>filterContent</code>. If the last filtering is done
+	 * (last completed filter), is not null, and the new filter is a sub-filter
+	 * ({@link FilteredItemsSelectionDialog.ItemsFilter#isSubFilter(FilteredItemsSelectionDialog.ItemsFilter)})
+	 * of the last, then <code>FilterJob</code> only filters in the cache. If it is
+	 * the first filtering or the new filter isn't a sub-filter of the last one, a
+	 * full search is run.
 	 */
 	private class FilterJob extends Job {
 
@@ -1964,8 +1847,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Executes job using the given filtering progress monitor. A hook for
 		 * subclasses.
 		 *
-		 * @param monitor
-		 *            progress monitor
+		 * @param monitor progress monitor
 		 * @return result of the execution
 		 */
 		protected IStatus doRun(GranualProgressMonitor monitor) {
@@ -1973,12 +1855,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				internalRun(monitor);
 			} catch (CoreException e) {
 				cancel();
-				return new Status(
-						IStatus.ERROR,
-						PlatformUI.PLUGIN_ID,
-						IStatus.ERROR,
-						WorkbenchMessages.FilteredItemsSelectionDialog_jobError,
-						e);
+				return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+						WorkbenchMessages.FilteredItemsSelectionDialog_jobError, e);
 			}
 			return Status.OK_STATUS;
 		}
@@ -1989,8 +1867,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * @param monitor
 		 * @throws CoreException
 		 */
-		private void internalRun(GranualProgressMonitor monitor)
-				throws CoreException {
+		private void internalRun(GranualProgressMonitor monitor) throws CoreException {
 			try {
 				if (monitor.isCanceled())
 					return;
@@ -2013,21 +1890,15 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Filters items.
 		 *
-		 * @param monitor
-		 *            for monitoring progress
+		 * @param monitor for monitoring progress
 		 * @throws CoreException
 		 */
-		protected void filterContent(GranualProgressMonitor monitor)
-				throws CoreException {
+		protected void filterContent(GranualProgressMonitor monitor) throws CoreException {
 
-			if (lastCompletedFilter != null
-					&& lastCompletedFilter.isSubFilter(this.itemsFilter)) {
+			if (lastCompletedFilter != null && lastCompletedFilter.isSubFilter(this.itemsFilter)) {
 
 				int length = lastCompletedResult.size() / 500;
-				monitor
-						.beginTask(
-								WorkbenchMessages.FilteredItemsSelectionDialog_cacheSearchJob_taskName,
-								length);
+				monitor.beginTask(WorkbenchMessages.FilteredItemsSelectionDialog_cacheSearchJob_taskName, length);
 
 				for (int pos = 0; pos < lastCompletedResult.size(); pos++) {
 
@@ -2047,8 +1918,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				lastCompletedResult = null;
 
 				SubMonitor subMonitor = SubMonitor.convert(monitor,
-									WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName,
-									100);
+						WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName, 100);
 
 				fillContentProvider(contentProvider, itemsFilter, subMonitor.split(95));
 
@@ -2064,9 +1934,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * History stores a list of key, object pairs. The list is bounded at a
-	 * certain size. If the list exceeds this size the oldest element is removed
-	 * from the list. An element can be added/renewed with a call to
+	 * History stores a list of key, object pairs. The list is bounded at a certain
+	 * size. If the list exceeds this size the oldest element is removed from the
+	 * list. An element can be added/renewed with a call to
 	 * <code>accessed(Object)</code>.
 	 * <p>
 	 * The history can be stored to/loaded from an XML file.
@@ -2117,8 +1987,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Adds object to history.
 		 *
-		 * @param object
-		 *            the item to be added to the history
+		 * @param object the item to be added to the history
 		 */
 		public synchronized void accessed(Object object) {
 			historyList.remove(object);
@@ -2128,10 +1997,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Returns <code>true</code> if history contains object.
 		 *
-		 * @param object
-		 *            the item for which check will be executed
-		 * @return <code>true</code> if history contains object
-		 *         <code>false</code> in other way
+		 * @param object the item for which check will be executed
+		 * @return <code>true</code> if history contains object <code>false</code> in
+		 *         other way
 		 */
 		public synchronized boolean contains(Object object) {
 			return historyList.contains(object);
@@ -2149,10 +2017,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Remove element from history.
 		 *
-		 * @param element
-		 *            to remove form the history
-		 * @return <code>true</code> if this list contained the specified
-		 *         element
+		 * @param element to remove form the history
+		 * @return <code>true</code> if this list contained the specified element
 		 */
 		public synchronized boolean remove(Object element) {
 			return historyList.remove(element);
@@ -2161,20 +2027,17 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Load history elements from memento.
 		 *
-		 * @param memento
-		 *            memento from which the history will be retrieved
+		 * @param memento memento from which the history will be retrieved
 		 */
 		public void load(IMemento memento) {
 
-			XMLMemento historyMemento = (XMLMemento) memento
-					.getChild(rootNodeName);
+			XMLMemento historyMemento = (XMLMemento) memento.getChild(rootNodeName);
 
 			if (historyMemento == null) {
 				return;
 			}
 
-			IMemento[] mementoElements = historyMemento
-					.getChildren(infoNodeName);
+			IMemento[] mementoElements = historyMemento.getChildren(infoNodeName);
 			for (IMemento mementoElement : mementoElements) {
 				Object object = restoreItemFromMemento(mementoElement);
 				if (object != null) {
@@ -2186,8 +2049,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Save history elements to memento.
 		 *
-		 * @param memento
-		 *            memento to which the history will be added
+		 * @param memento memento to which the history will be added
 		 */
 		public void save(IMemento memento) {
 
@@ -2195,8 +2057,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			Object[] items = getHistoryItems();
 			for (Object item : items) {
-				IMemento elementMemento = historyMemento
-						.createChild(infoNodeName);
+				IMemento elementMemento = historyMemento.createChild(infoNodeName);
 				storeItemToMemento(item, elementMemento);
 			}
 
@@ -2214,8 +2075,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Creates an object using given memento.
 		 *
-		 * @param memento
-		 *            memento used for creating new object
+		 * @param memento memento used for creating new object
 		 *
 		 * @return the restored object
 		 */
@@ -2224,18 +2084,16 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Store object in <code>IMemento</code>.
 		 *
-		 * @param item
-		 *            the item to store
-		 * @param memento
-		 *            the memento to store to
+		 * @param item    the item to store
+		 * @param memento the memento to store to
 		 */
 		protected abstract void storeItemToMemento(Object item, IMemento memento);
 
 	}
 
 	/**
-	 * Filters elements using SearchPattern by comparing the names of items with
-	 * the filter pattern.
+	 * Filters elements using SearchPattern by comparing the names of items with the
+	 * filter pattern.
 	 */
 	protected abstract class ItemsFilter {
 
@@ -2251,8 +2109,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Creates new instance of ItemsFilter.
 		 *
-		 * @param searchPattern
-		 *            the pattern to be used when filtering
+		 * @param searchPattern the pattern to be used when filtering
 		 */
 		public ItemsFilter(SearchPattern searchPattern) {
 			patternMatcher = searchPattern;
@@ -2265,20 +2122,18 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		/**
 		 * Check if the given filter is a sub-filter of this filter. The default
-		 * implementation checks if the <code>SearchPattern</code> from the
-		 * given filter is a sub-pattern of the one from this filter.
+		 * implementation checks if the <code>SearchPattern</code> from the given filter
+		 * is a sub-pattern of the one from this filter.
 		 * <p>
 		 * <i>WARNING: This method is <b>not</b> defined in reading order, i.e.
-		 * <code>a.isSubFilter(b)</code> is <code>true</code> iff
-		 * <code>b</code> is a sub-filter of <code>a</code>, and not
-		 * vice-versa. </i>
+		 * <code>a.isSubFilter(b)</code> is <code>true</code> iff <code>b</code> is a
+		 * sub-filter of <code>a</code>, and not vice-versa. </i>
 		 * </p>
 		 *
-		 * @param filter
-		 *            the filter to be checked, or <code>null</code>
-		 * @return <code>true</code> if the given filter is sub-filter of this
-		 *         filter, <code>false</code> if the given filter isn't a
-		 *         sub-filter or is <code>null</code>
+		 * @param filter the filter to be checked, or <code>null</code>
+		 * @return <code>true</code> if the given filter is sub-filter of this filter,
+		 *         <code>false</code> if the given filter isn't a sub-filter or is
+		 *         <code>null</code>
 		 *
 		 * @see org.eclipse.ui.dialogs.SearchPattern#isSubPattern(org.eclipse.ui.dialogs.SearchPattern)
 		 */
@@ -2290,21 +2145,19 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		}
 
 		/**
-		 * Checks whether the provided filter is equal to the current filter.
-		 * The default implementation checks if <code>SearchPattern</code>
-		 * from current filter is equal to the one from provided filter.
+		 * Checks whether the provided filter is equal to the current filter. The
+		 * default implementation checks if <code>SearchPattern</code> from current
+		 * filter is equal to the one from provided filter.
 		 *
-		 * @param filter
-		 *            filter to be checked, or <code>null</code>
-		 * @return <code>true</code> if the given filter is equal to current
-		 *         filter, <code>false</code> if given filter isn't equal to
-		 *         current one or if it is <code>null</code>
+		 * @param filter filter to be checked, or <code>null</code>
+		 * @return <code>true</code> if the given filter is equal to current filter,
+		 *         <code>false</code> if given filter isn't equal to current one or if
+		 *         it is <code>null</code>
 		 *
 		 * @see org.eclipse.ui.dialogs.SearchPattern#equalsPattern(org.eclipse.ui.dialogs.SearchPattern)
 		 */
 		public boolean equalsFilter(ItemsFilter filter) {
-			if (filter != null
-					&& filter.patternMatcher.equalsPattern(this.patternMatcher)) {
+			if (filter != null && filter.patternMatcher.equalsPattern(this.patternMatcher)) {
 				return true;
 			}
 			return false;
@@ -2336,8 +2189,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 *
 		 * @return an implementation-specific match rule
 		 *
-		 * @see SearchPattern#getMatchRule() for match rules returned by the
-		 *      default implementation
+		 * @see SearchPattern#getMatchRule() for match rules returned by the default
+		 *      implementation
 		 */
 		public int getMatchRule() {
 			return patternMatcher.getMatchRule();
@@ -2346,8 +2199,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Matches text with filter.
 		 *
-		 * @param text
-		 *            the text to match with the filter
+		 * @param text the text to match with the filter
 		 * @return <code>true</code> if text matches with filter pattern,
 		 *         <code>false</code> otherwise
 		 */
@@ -2356,14 +2208,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		}
 
 		/**
-		 * General method for matching raw name pattern. Checks whether current
-		 * pattern is prefix of name provided item.
+		 * General method for matching raw name pattern. Checks whether current pattern
+		 * is prefix of name provided item.
 		 *
-		 * @param item
-		 *            item to check
-		 * @return <code>true</code> if current pattern is a prefix of name
-		 *         provided item, <code>false</code> if item's name is shorter
-		 *         than prefix or sequences of characters don't match.
+		 * @param item item to check
+		 * @return <code>true</code> if current pattern is a prefix of name provided
+		 *         item, <code>false</code> if item's name is shorter than prefix or
+		 *         sequences of characters don't match.
 		 */
 		public boolean matchesRawNamePattern(Object item) {
 			String prefix = patternMatcher.getPattern();
@@ -2378,8 +2229,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				return false;
 			}
 			for (int i = prefixLength - 1; i >= 0; i--) {
-				if (Character.toLowerCase(prefix.charAt(i)) != Character
-						.toLowerCase(text.charAt(i)))
+				if (Character.toLowerCase(prefix.charAt(i)) != Character.toLowerCase(text.charAt(i)))
 					return false;
 			}
 			return true;
@@ -2399,8 +2249,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * removed.
 		 *
 		 * @param item
-		 * @return <code>true</code> if item is consistent, <code>false</code>
-		 *         if item is inconsistent
+		 * @return <code>true</code> if item is consistent, <code>false</code> if item
+		 *         is inconsistent
 		 */
 		public abstract boolean isConsistentItem(Object item);
 
@@ -2412,13 +2262,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	protected abstract class AbstractContentProvider {
 		/**
-		 * Adds the item to the content provider iff the filter matches the
-		 * item. Otherwise does nothing.
+		 * Adds the item to the content provider iff the filter matches the item.
+		 * Otherwise does nothing.
 		 *
-		 * @param item
-		 *            the item to add
-		 * @param itemsFilter
-		 *            the filter
+		 * @param item        the item to add
+		 * @param itemsFilter the filter
 		 *
 		 * @see FilteredItemsSelectionDialog.ItemsFilter#matchItem(Object)
 		 */
@@ -2429,20 +2277,19 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * Collects filtered elements. Contains one synchronized, sorted set for
 	 * collecting filtered elements. All collected elements are sorted using
 	 * comparator. Comparator is returned by getElementComparator() method.
-	 * Implementation of <code>ItemsFilter</code> is used to filter elements.
-	 * The key function of filter used in to filtering is
+	 * Implementation of <code>ItemsFilter</code> is used to filter elements. The
+	 * key function of filter used in to filtering is
 	 * <code>matchElement(Object item)</code>.
 	 * <p>
-	 * The <code>ContentProvider</code> class also provides item filtering
-	 * methods. The filtering has been moved from the standard TableView
+	 * The <code>ContentProvider</code> class also provides item filtering methods.
+	 * The filtering has been moved from the standard TableView
 	 * <code>getFilteredItems()</code> method to content provider, because
-	 * <code>ILazyContentProvider</code> and virtual tables are used. This
-	 * class is responsible for adding a separator below history items and
-	 * marking each items as duplicate if its name repeats more than once on the
-	 * filtered list.
+	 * <code>ILazyContentProvider</code> and virtual tables are used. This class is
+	 * responsible for adding a separator below history items and marking each items
+	 * as duplicate if its name repeats more than once on the filtered list.
 	 */
-	private class ContentProvider extends AbstractContentProvider implements
-			IStructuredContentProvider, ILazyContentProvider {
+	private class ContentProvider extends AbstractContentProvider
+			implements IStructuredContentProvider, ILazyContentProvider {
 
 		private SelectionHistory selectionHistory;
 
@@ -2481,13 +2328,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		private List<Object> lastSortedItems;
 
 		/**
-		 * Used for <code>getFilteredItems()</code> method canceling (when the
-		 * job that invoked the method was canceled).
+		 * Used for <code>getFilteredItems()</code> method canceling (when the job that
+		 * invoked the method was canceled).
 		 * <p>
-		 * Method canceling could be based (only) on monitor canceling
-		 * unfortunately sometimes the method <code>getFilteredElements()</code>
-		 * could be run with a null monitor, the <code>reset</code> flag have
-		 * to be left intact.
+		 * Method canceling could be based (only) on monitor canceling unfortunately
+		 * sometimes the method <code>getFilteredElements()</code> could be run with a
+		 * null monitor, the <code>reset</code> flag have to be left intact.
 		 */
 		private boolean reset;
 
@@ -2498,15 +2344,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			this.items = Collections.synchronizedSet(new HashSet<>(2048));
 			this.duplicates = Collections.synchronizedSet(new HashSet<>(256));
 			this.lastFilteredItems = new ArrayList<>();
-			this.lastSortedItems = Collections.synchronizedList(new ArrayList<>(
-					2048));
+			this.lastSortedItems = Collections.synchronizedList(new ArrayList<>(2048));
 		}
 
 		/**
 		 * Sets selection history.
 		 *
-		 * @param selectionHistory
-		 *            The selectionHistory to set.
+		 * @param selectionHistory The selectionHistory to set.
 		 */
 		public void setSelectionHistory(SelectionHistory selectionHistory) {
 			this.selectionHistory = selectionHistory;
@@ -2589,8 +2433,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Removes items from history and refreshes the view.
 		 *
-		 * @param item
-		 *            to remove
+		 * @param item to remove
 		 *
 		 * @return removed item
 		 */
@@ -2612,8 +2455,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Adds item to history and refresh view.
 		 *
-		 * @param item
-		 *            to add
+		 * @param item to add
 		 */
 		public void addHistoryElement(Object item) {
 			if (this.selectionHistory != null)
@@ -2643,11 +2485,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Sets/unsets given item as duplicate.
 		 *
-		 * @param item
-		 *            item to change
+		 * @param item        item to change
 		 *
-		 * @param isDuplicate
-		 *            duplicate flag
+		 * @param isDuplicate duplicate flag
 		 */
 		public void setDuplicateElement(Object item, boolean isDuplicate) {
 			if (this.items.contains(item)) {
@@ -2661,8 +2501,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Indicates whether given item is a duplicate.
 		 *
-		 * @param item
-		 *            item to check
+		 * @param item item to check
 		 * @return <code>true</code> if item is duplicate
 		 */
 		public boolean isDuplicateElement(Object item) {
@@ -2672,8 +2511,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Load history from memento.
 		 *
-		 * @param memento
-		 *            memento from which the history will be retrieved
+		 * @param memento memento from which the history will be retrieved
 		 */
 		public void loadHistory(IMemento memento) {
 			if (this.selectionHistory != null) {
@@ -2684,8 +2522,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Save history to memento.
 		 *
-		 * @param memento
-		 *            memento to which the history will be added
+		 * @param memento memento to which the history will be added
 		 */
 		public void saveHistory(IMemento memento) {
 			if (this.selectionHistory != null) {
@@ -2715,8 +2552,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * @param itemsFilter
 		 */
 		public void rememberResult(ItemsFilter itemsFilter) {
-			List<Object> itemsList = Collections.synchronizedList(Arrays
-					.asList(getSortedItems()));
+			List<Object> itemsList = Collections.synchronizedList(Arrays.asList(getSortedItems()));
 			// synchronization
 			if (itemsFilter == filter) {
 				lastCompletedFilter = itemsFilter;
@@ -2745,24 +2581,21 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		@Override
 		public void updateElement(int index) {
 
-			FilteredItemsSelectionDialog.this.list.replace((lastFilteredItems
-					.size() > index) ? lastFilteredItems.get(index) : null,
-					index);
+			FilteredItemsSelectionDialog.this.list
+					.replace((lastFilteredItems.size() > index) ? lastFilteredItems.get(index) : null, index);
 
 		}
 
 		/**
-		 * Main method responsible for getting the filtered items and checking
-		 * for duplicates. It is based on the
+		 * Main method responsible for getting the filtered items and checking for
+		 * duplicates. It is based on the
 		 * {@link FilteredItemsSelectionDialog.ContentProvider#getFilteredItems(Object, IProgressMonitor)}.
 		 *
-		 * @param checkDuplicates
-		 *            <code>true</code> if data concerning elements
-		 *            duplication should be computed - it takes much more time
-		 *            than standard filtering
+		 * @param checkDuplicates <code>true</code> if data concerning elements
+		 *                        duplication should be computed - it takes much more
+		 *                        time than standard filtering
 		 *
-		 * @param monitor
-		 *            progress monitor
+		 * @param monitor         progress monitor
 		 */
 		public void reloadCache(boolean checkDuplicates, IProgressMonitor monitor) {
 			reset = false;
@@ -2818,23 +2651,18 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Returns an array of items filtered using the provided
 		 * <code>ViewerFilter</code>s with a separator added.
 		 *
-		 * @param parent
-		 *            the parent
-		 * @param monitor
-		 *            progress monitor, can be <code>null</code>
+		 * @param parent  the parent
+		 * @param monitor progress monitor, can be <code>null</code>
 		 * @return an array of filtered items
 		 */
-		protected Object[] getFilteredItems(Object parent,
-				IProgressMonitor monitor) {
+		protected Object[] getFilteredItems(Object parent, IProgressMonitor monitor) {
 			int ticks = 100;
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
 
-			monitor
-					.beginTask(
-							WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_getFilteredElements,
-							ticks);
+			monitor.beginTask(WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_getFilteredElements,
+					ticks);
 			if (filters != null) {
 				ticks /= (filters.size() + 2);
 			} else {
@@ -2911,13 +2739,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		}
 
 		/**
-		 * Adds a filter to this content provider. For an example usage of such
-		 * filters look at the project <code>org.eclipse.ui.ide</code>, class
+		 * Adds a filter to this content provider. For an example usage of such filters
+		 * look at the project <code>org.eclipse.ui.ide</code>, class
 		 * <code>org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog.CustomWorkingSetFilter</code>.
 		 *
 		 *
-		 * @param filter
-		 *            the filter to be added
+		 * @param filter the filter to be added
 		 */
 		public void addFilter(ViewerFilter filter) {
 			if (filters == null) {
@@ -2932,29 +2759,27 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	}
 
 	/**
-	 * DetailsContentViewer objects are wrappers for labels.
-	 * DetailsContentViewer provides means to change label's image and text when
-	 * the attached LabelProvider is updated.
+	 * DetailsContentViewer objects are wrappers for labels. DetailsContentViewer
+	 * provides means to change label's image and text when the attached
+	 * LabelProvider is updated.
 	 */
 	private class DetailsContentViewer extends ContentViewer {
 
 		private CLabel label;
 
 		/**
-		 * Unfortunately, it was impossible to delegate displaying border to
-		 * label. The <code>ViewForm</code> is used because
-		 * <code>CLabel</code> displays shadow when border is present.
+		 * Unfortunately, it was impossible to delegate displaying border to label. The
+		 * <code>ViewForm</code> is used because <code>CLabel</code> displays shadow
+		 * when border is present.
 		 */
 		private ViewForm viewForm;
 
 		/**
-		 * Constructs a new instance of this class given its parent and a style
-		 * value describing its behavior and appearance.
+		 * Constructs a new instance of this class given its parent and a style value
+		 * describing its behavior and appearance.
 		 *
-		 * @param parent
-		 *            the parent component
-		 * @param style
-		 *            SWT style bits
+		 * @param parent the parent component
+		 * @param style  SWT style bits
 		 */
 		public DetailsContentViewer(Composite parent, int style) {
 			viewForm = new ViewForm(parent, style);
@@ -2970,8 +2795,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Shows/hides the content viewer.
 		 *
-		 * @param visible
-		 *            if the content viewer should be visible.
+		 * @param visible if the content viewer should be visible.
 		 */
 		public void setVisible(boolean visible) {
 			viewForm.setVisible(visible);
@@ -2995,8 +2819,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		}
 
 		@Override
-		protected void handleLabelProviderChanged(
-				LabelProviderChangedEvent event) {
+		protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 			if (event != null) {
 				refresh(event.getElements());
 			}
@@ -3018,8 +2841,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			Object input = this.getInput();
 			if (input != null) {
 				ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
-				doRefresh(labelProvider.getText(input), labelProvider
-						.getImage(input));
+				doRefresh(labelProvider.getText(input), labelProvider.getImage(input));
 			} else {
 				doRefresh(null, null);
 			}
@@ -3028,13 +2850,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Sets the given text and image to the label.
 		 *
-		 * @param text
-		 *            the new text or null
-		 * @param image
-		 *            the new image
+		 * @param text  the new text or null
+		 * @param image the new image
 		 */
 		private void doRefresh(String text, Image image) {
-			if ( text != null ) {
+			if (text != null) {
 				text = LegacyActionTools.escapeMnemonics(text);
 			}
 			label.setText(text);
@@ -3049,8 +2869,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Refreshes the label if currently chosen element is on the list.
 		 *
-		 * @param objs
-		 *            list of changed object
+		 * @param objs list of changed object
 		 */
 		private void refresh(Object[] objs) {
 			if (objs == null || getInput() == null) {
@@ -3073,7 +2892,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		final String filterPattern;
 		final Comparator<Object> itemsComparator;
 
-		HistoryComparator(){
+		HistoryComparator() {
 			itemsComparator = getItemsComparator();
 			if (currentlyCompletingFilter != null) {
 				filterPattern = currentlyCompletingFilter.getPattern();
@@ -3117,15 +2936,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	}
 
-
 	/**
-	 * Get the control where the search pattern is entered. Any filtering should
-	 * be done using an {@link ItemsFilter}. This control should only be
-	 * accessed for listeners that wish to handle events that do not affect
-	 * filtering such as custom traversal.
+	 * Get the control where the search pattern is entered. Any filtering should be
+	 * done using an {@link ItemsFilter}. This control should only be accessed for
+	 * listeners that wish to handle events that do not affect filtering such as
+	 * custom traversal.
 	 *
-	 * @return Control or <code>null</code> if the pattern control has not
-	 *         been created.
+	 * @return Control or <code>null</code> if the pattern control has not been
+	 *         created.
 	 */
 	public Control getPatternControl() {
 		return pattern;

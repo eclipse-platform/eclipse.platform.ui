@@ -23,79 +23,79 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 /**
- * An implementation of <code>WorkbenchWindowAdvisor</code> that
- * calls back to the 3.0 legacy methods on <code>WorkbenchAdvisor</code>
- * for backwards compatibility.
+ * An implementation of <code>WorkbenchWindowAdvisor</code> that calls back to
+ * the 3.0 legacy methods on <code>WorkbenchAdvisor</code> for backwards
+ * compatibility.
  *
  * @since 3.1
  */
 public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
-    private WorkbenchAdvisor wbAdvisor;
+	private WorkbenchAdvisor wbAdvisor;
 
-    /**
-     * Creates a new compatibility workbench window advisor.
-     *
-     * @param wbAdvisor the workbench advisor
-     * @param windowConfigurer the window configurer
-     */
-    public CompatibilityWorkbenchWindowAdvisor(WorkbenchAdvisor wbAdvisor, IWorkbenchWindowConfigurer windowConfigurer) {
-        super(windowConfigurer);
-        this.wbAdvisor = wbAdvisor;
-    }
+	/**
+	 * Creates a new compatibility workbench window advisor.
+	 *
+	 * @param wbAdvisor        the workbench advisor
+	 * @param windowConfigurer the window configurer
+	 */
+	public CompatibilityWorkbenchWindowAdvisor(WorkbenchAdvisor wbAdvisor,
+			IWorkbenchWindowConfigurer windowConfigurer) {
+		super(windowConfigurer);
+		this.wbAdvisor = wbAdvisor;
+	}
 
-    @Override
+	@Override
 	public void preWindowOpen() {
-        wbAdvisor.preWindowOpen(getWindowConfigurer());
-    }
+		wbAdvisor.preWindowOpen(getWindowConfigurer());
+	}
 
-    @Override
+	@Override
 	public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
-        return new CompatibilityActionBarAdvisor(wbAdvisor, configurer);
-    }
+		return new CompatibilityActionBarAdvisor(wbAdvisor, configurer);
+	}
 
-    @Override
+	@Override
 	public void postWindowRestore() throws WorkbenchException {
-        wbAdvisor.postWindowRestore(getWindowConfigurer());
-    }
+		wbAdvisor.postWindowRestore(getWindowConfigurer());
+	}
 
-    @Override
+	@Override
 	public void openIntro() {
-        wbAdvisor.openIntro(getWindowConfigurer());
-    }
+		wbAdvisor.openIntro(getWindowConfigurer());
+	}
 
-    @Override
+	@Override
 	public void postWindowCreate() {
-        wbAdvisor.postWindowCreate(getWindowConfigurer());
-    }
+		wbAdvisor.postWindowCreate(getWindowConfigurer());
+	}
 
-    @Override
+	@Override
 	public void postWindowOpen() {
-        wbAdvisor.postWindowOpen(getWindowConfigurer());
-    }
+		wbAdvisor.postWindowOpen(getWindowConfigurer());
+	}
 
-    @Override
+	@Override
 	public boolean preWindowShellClose() {
-        return wbAdvisor.preWindowShellClose(getWindowConfigurer());
-    }
+		return wbAdvisor.preWindowShellClose(getWindowConfigurer());
+	}
 
-    @Override
+	@Override
 	public void postWindowClose() {
-        wbAdvisor.postWindowClose(getWindowConfigurer());
-    }
+		wbAdvisor.postWindowClose(getWindowConfigurer());
+	}
 
-    public boolean isApplicationMenu(String menuId) {
-        return wbAdvisor.isApplicationMenu(getWindowConfigurer(), menuId);
-    }
+	public boolean isApplicationMenu(String menuId) {
+		return wbAdvisor.isApplicationMenu(getWindowConfigurer(), menuId);
+	}
 
-    public IAdaptable getDefaultPageInput() {
-        return wbAdvisor.getDefaultPageInput();
-    }
+	public IAdaptable getDefaultPageInput() {
+		return wbAdvisor.getDefaultPageInput();
+	}
 
-    @Override
+	@Override
 	public void createWindowContents(Shell shell) {
-        wbAdvisor.createWindowContents(getWindowConfigurer(), shell);
-    }
-
+		wbAdvisor.createWindowContents(getWindowConfigurer(), shell);
+	}
 
 }

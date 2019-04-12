@@ -91,8 +91,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * {@link Display#getDefault Display.getDefault()}.
 	 * </p>
 	 *
-	 * @return the display to be used for all UI interactions with this
-	 *         workbench
+	 * @return the display to be used for all UI interactions with this workbench
 	 * @since 3.0
 	 */
 	Display getDisplay();
@@ -108,8 +107,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Adds a workbench listener.
 	 *
-	 * @param listener
-	 *            the workbench listener to add
+	 * @param listener the workbench listener to add
 	 * @since 3.2
 	 */
 	void addWorkbenchListener(IWorkbenchListener listener);
@@ -117,8 +115,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Removes a workbench listener.
 	 *
-	 * @param listener
-	 *            the workbench listener to remove
+	 * @param listener the workbench listener to remove
 	 * @since 3.2
 	 */
 	void removeWorkbenchListener(IWorkbenchListener listener);
@@ -126,8 +123,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Adds a window listener.
 	 *
-	 * @param listener
-	 *            the window listener to add
+	 * @param listener the window listener to add
 	 * @since 2.0
 	 */
 	void addWindowListener(IWindowListener listener);
@@ -135,8 +131,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Removes a window listener.
 	 *
-	 * @param listener
-	 *            the window listener to remove
+	 * @param listener the window listener to remove
 	 * @since 2.0
 	 */
 	void removeWindowListener(IWindowListener listener);
@@ -144,8 +139,8 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Closes this workbench and all its open windows.
 	 * <p>
-	 * If the workbench has an open editor with unsaved content, the user will
-	 * be given the opportunity to save it.
+	 * If the workbench has an open editor with unsaved content, the user will be
+	 * given the opportunity to save it.
 	 * </p>
 	 *
 	 * @return <code>true</code> if the workbench was successfully closed, and
@@ -207,11 +202,10 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @since 2.0
 	 * @deprecated this returns the internal preference store for the workbench,
 	 *             which clients should not use. Use
-	 *             {@link PlatformUI#getPreferenceStore()} instead. Note that
-	 *             these preference stores are not the same. If you were
-	 *             previously storing preferences in the store returned by this
-	 *             method you should move them to your own plugin preference
-	 *             store.
+	 *             {@link PlatformUI#getPreferenceStore()} instead. Note that these
+	 *             preference stores are not the same. If you were previously
+	 *             storing preferences in the store returned by this method you
+	 *             should move them to your own plugin preference store.
 	 */
 	@Deprecated
 	IPreferenceStore getPreferenceStore();
@@ -224,9 +218,9 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	ISharedImages getSharedImages();
 
 	/**
-	 * Returns the number of open main windows associated with this workbench.
-	 * Note that wizards and dialogs are not included in this list since they
-	 * are not considered main windows.
+	 * Returns the number of open main windows associated with this workbench. Note
+	 * that wizards and dialogs are not included in this list since they are not
+	 * considered main windows.
 	 *
 	 * @return the number of open windows
 	 * @since 3.0
@@ -234,9 +228,9 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	int getWorkbenchWindowCount();
 
 	/**
-	 * Returns a list of the open main windows associated with this workbench.
-	 * Note that wizards and dialogs are not included in this list since they
-	 * are not considered main windows.
+	 * Returns a list of the open main windows associated with this workbench. Note
+	 * that wizards and dialogs are not included in this list since they are not
+	 * considered main windows.
 	 *
 	 * @return a list of open windows
 	 */
@@ -261,70 +255,60 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	ILocalWorkingSetManager createLocalWorkingSetManager();
 
 	/**
-	 * Creates and opens a new workbench window with one page. The perspective
-	 * of the new page is defined by the specified perspective ID. The new
-	 * window and new page become active.
+	 * Creates and opens a new workbench window with one page. The perspective of
+	 * the new page is defined by the specified perspective ID. The new window and
+	 * new page become active.
 	 * <p>
-	 * <b>Note:</b> The caller is responsible to ensure the action using this
-	 * method will explicitly inform the user a new window will be opened.
-	 * Otherwise, callers are strongly recommended to use the
-	 * <code>openPerspective</code> APIs to programmatically show a
-	 * perspective to avoid confusing the user.
+	 * <b>Note:</b> The caller is responsible to ensure the action using this method
+	 * will explicitly inform the user a new window will be opened. Otherwise,
+	 * callers are strongly recommended to use the <code>openPerspective</code> APIs
+	 * to programmatically show a perspective to avoid confusing the user.
 	 * </p>
 	 * <p>
-	 * In most cases where this method is used the caller is tightly coupled to
-	 * a particular perspective. They define it in the registry and contribute
-	 * some user interface action to open or activate it. In situations like
-	 * this a static variable is often used to identify the perspective ID.
+	 * In most cases where this method is used the caller is tightly coupled to a
+	 * particular perspective. They define it in the registry and contribute some
+	 * user interface action to open or activate it. In situations like this a
+	 * static variable is often used to identify the perspective ID.
 	 * </p>
 	 *
-	 * @param perspectiveId
-	 *            the perspective id for the window's initial page, or
-	 *            <code>null</code> for no initial page
-	 * @param input
-	 *            the page input, or <code>null</code> if there is no current
-	 *            input. This is used to seed the input for the new page's
-	 *            views.
+	 * @param perspectiveId the perspective id for the window's initial page, or
+	 *                      <code>null</code> for no initial page
+	 * @param input         the page input, or <code>null</code> if there is no
+	 *                      current input. This is used to seed the input for the
+	 *                      new page's views.
 	 * @return the new workbench window
-	 * @exception WorkbenchException
-	 *                if a new window and page could not be opened
+	 * @exception WorkbenchException if a new window and page could not be opened
 	 *
 	 * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
 	 */
-	IWorkbenchWindow openWorkbenchWindow(String perspectiveId,
-			IAdaptable input) throws WorkbenchException;
+	IWorkbenchWindow openWorkbenchWindow(String perspectiveId, IAdaptable input) throws WorkbenchException;
 
 	/**
-	 * Creates and opens a new workbench window with one page. The perspective
-	 * of the new page is defined by the default perspective ID. The new window
-	 * and new page become active.
+	 * Creates and opens a new workbench window with one page. The perspective of
+	 * the new page is defined by the default perspective ID. The new window and new
+	 * page become active.
 	 * <p>
-	 * <b>Note:</b> The caller is responsible to ensure the action using this
-	 * method will explicitly inform the user a new window will be opened.
-	 * Otherwise, callers are strongly recommended to use the
-	 * <code>openPerspective</code> APIs to programmatically show a
-	 * perspective to avoid confusing the user.
+	 * <b>Note:</b> The caller is responsible to ensure the action using this method
+	 * will explicitly inform the user a new window will be opened. Otherwise,
+	 * callers are strongly recommended to use the <code>openPerspective</code> APIs
+	 * to programmatically show a perspective to avoid confusing the user.
 	 * </p>
 	 *
-	 * @param input
-	 *            the page input, or <code>null</code> if there is no current
-	 *            input. This is used to seed the input for the new page's
-	 *            views.
+	 * @param input the page input, or <code>null</code> if there is no current
+	 *              input. This is used to seed the input for the new page's views.
 	 * @return the new workbench window
-	 * @exception WorkbenchException
-	 *                if a new window and page could not be opened
+	 * @exception WorkbenchException if a new window and page could not be opened
 	 *
 	 * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
 	 */
-	IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
-			throws WorkbenchException;
+	IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException;
 
 	/**
-	 * Closes then restarts the workbench with the same command line as used for
-	 * the previous launch.
+	 * Closes then restarts the workbench with the same command line as used for the
+	 * previous launch.
 	 * <p>
-	 * If the workbench has an open editor with unsaved content, the user will
-	 * be given the opportunity to save it.
+	 * If the workbench has an open editor with unsaved content, the user will be
+	 * given the opportunity to save it.
 	 * </p>
 	 *
 	 * @return <code>true</code> if the workbench was successfully closed, and
@@ -336,18 +320,18 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 
 	/**
 	 * Closes then restarts this workbench using the current workspace if
-	 * <code>useCurrentWorkspace</code> is <code>true</code>. Otherwise, works
-	 * as {@link IWorkbench#restart()}.
+	 * <code>useCurrentWorkspace</code> is <code>true</code>. Otherwise, works as
+	 * {@link IWorkbench#restart()}.
 	 * <p>
-	 * If the workbench has an open editor with unsaved content, the user will
-	 * be given the opportunity to save it.
+	 * If the workbench has an open editor with unsaved content, the user will be
+	 * given the opportunity to save it.
 	 * </p>
 	 *
-	 * @param useCurrentWorkspace
-	 *            <code>true</code> to use the current workspace while
-	 *            restarting this workbench, and <code>false</code> to restart
-	 *            the workbench with the same command line as used for the
-	 *            previous launch
+	 * @param useCurrentWorkspace <code>true</code> to use the current workspace
+	 *                            while restarting this workbench, and
+	 *                            <code>false</code> to restart the workbench with
+	 *                            the same command line as used for the previous
+	 *                            launch
 	 *
 	 * @return <code>true</code> if the workbench was successfully closed, and
 	 *         <code>false</code> if it could not be closed
@@ -389,8 +373,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @since 2.0
 	 */
-	IWorkbenchPage showPerspective(String perspectiveId,
-			IWorkbenchWindow window) throws WorkbenchException;
+	IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window) throws WorkbenchException;
 
 	/**
 	 * Shows the specified perspective to the user. The caller should use this
@@ -431,27 +414,26 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @since 2.0
 	 */
-	IWorkbenchPage showPerspective(String perspectiveId,
-			IWorkbenchWindow window, IAdaptable input)
+	IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input)
 			throws WorkbenchException;
 
 	/**
 	 * Returns the decorator manager.
 	 * <p>
-	 * Any client using the decorator manager should come up with the text and
-	 * image for the element (including any of the part's own decorations)
-	 * before calling the decorator manager. It should also add a listener to be
-	 * notified when decorations change.
+	 * Any client using the decorator manager should come up with the text and image
+	 * for the element (including any of the part's own decorations) before calling
+	 * the decorator manager. It should also add a listener to be notified when
+	 * decorations change.
 	 * </p>
 	 * <p>
-	 * Note that if the element implements <code>IAdaptable</code>,
-	 * decorators may use this mechanism to obtain an adapter (for example an
-	 * <code>IResource</code>), and derive the decoration from the adapter
-	 * rather than the element. Since the adapter may differ from the original
-	 * element, those using the decorator manager should be prepared to handle
-	 * notification that the decoration for the adapter has changed, in addition
-	 * to handling notification that the decoration for the element has changed.
-	 * That is, it needs to be able to map back from the adapter to the element.
+	 * Note that if the element implements <code>IAdaptable</code>, decorators may
+	 * use this mechanism to obtain an adapter (for example an
+	 * <code>IResource</code>), and derive the decoration from the adapter rather
+	 * than the element. Since the adapter may differ from the original element,
+	 * those using the decorator manager should be prepared to handle notification
+	 * that the decoration for the adapter has changed, in addition to handling
+	 * notification that the decoration for the element has changed. That is, it
+	 * needs to be able to map back from the adapter to the element.
 	 * </p>
 	 *
 	 * @return the decorator manager
@@ -459,24 +441,23 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	IDecoratorManager getDecoratorManager();
 
 	/**
-	 * Save all dirty editors in the workbench. Opens a dialog to prompt the
-	 * user if <code>confirm</code> is true. Return true if successful. Return
-	 * false if the user has canceled the command.
+	 * Save all dirty editors in the workbench. Opens a dialog to prompt the user if
+	 * <code>confirm</code> is true. Return true if successful. Return false if the
+	 * user has canceled the command.
 	 *
 	 * @param confirm <code>true</code> to ask the user before saving unsaved
-	 *            changes (recommended), and <code>false</code> to save
-	 *            unsaved changes without asking
-	 * @return <code>true</code> if the command succeeded, and
-	 *         <code>false</code> if the operation was canceled by the user or
-	 *         an error occurred while saving
+	 *                changes (recommended), and <code>false</code> to save unsaved
+	 *                changes without asking
+	 * @return <code>true</code> if the command succeeded, and <code>false</code> if
+	 *         the operation was canceled by the user or an error occurred while
+	 *         saving
 	 */
 	boolean saveAllEditors(boolean confirm);
 
 	/**
 	 * Returns the element factory with the given id.
 	 *
-	 * @param factoryId
-	 *            the id of the element factory
+	 * @param factoryId the id of the element factory
 	 * @return the element factory, or <code>null</code> if none
 	 * @see IElementFactory
 	 * @since 3.0
@@ -486,8 +467,8 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Returns an interface to manage activities at the workbench level.
 	 *
-	 * @return an interface to manage activities at the workbench level.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return an interface to manage activities at the workbench level. Guaranteed
+	 *         not to be <code>null</code>.
 	 * @since 3.0
 	 */
 	IWorkbenchActivitySupport getActivitySupport();
@@ -495,8 +476,8 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Returns an interface to manage commands at the workbench level.
 	 *
-	 * @return an interface to manage commands at the workbench level.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return an interface to manage commands at the workbench level. Guaranteed
+	 *         not to be <code>null</code>.
 	 * @since 3.0
 	 * @deprecated Please use {@link IServiceLocator#getService(Class)} instead.
 	 * @see ICommandService
@@ -508,8 +489,8 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Returns an interface to manage contexts at the workbench level.
 	 *
-	 * @return an interface to manage contexts at the workbench level.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return an interface to manage contexts at the workbench level. Guaranteed
+	 *         not to be <code>null</code>.
 	 * @since 3.0
 	 * @deprecated Please use {@link IServiceLocator#getService(Class)} instead.
 	 * @see IContextService
@@ -553,10 +534,10 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 
 	/**
 	 * Returns a boolean indicating whether the workbench is in the process of
-	 * starting. During this phase, it is not safe to make calls to other
-	 * methods of the workbench, or of objects owned by the workbench. To delay
-	 * work until after the workbench has been initialized, use {@link IStartup}
-	 * or {@link Display#asyncExec(Runnable)}.
+	 * starting. During this phase, it is not safe to make calls to other methods of
+	 * the workbench, or of objects owned by the workbench. To delay work until
+	 * after the workbench has been initialized, use {@link IStartup} or
+	 * {@link Display#asyncExec(Runnable)}.
 	 *
 	 * @return <code>true</code> if the workbench is in the process of starting,
 	 *         <code>false</code> otherwise
@@ -568,16 +549,16 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * Returns a boolean indicating whether the workbench is in the process of
 	 * closing.
 	 *
-	 * @return <code>true</code> if the workbench is in the process of
-	 *         closing, <code>false</code> otherwise
+	 * @return <code>true</code> if the workbench is in the process of closing,
+	 *         <code>false</code> otherwise
 	 * @since 3.1
 	 */
 	boolean isClosing();
 
 	/**
 	 * <p>
-	 * Return the extension tracker for the workbench. This tracker may be used
-	 * by plug-ins to ensure responsiveness to changes to the plug-in registry.
+	 * Return the extension tracker for the workbench. This tracker may be used by
+	 * plug-ins to ensure responsiveness to changes to the plug-in registry.
 	 * </p>
 	 * <p>
 	 * The tracker at this level of the workbench is typically used to track
@@ -625,37 +606,35 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	IWizardRegistry getExportWizardRegistry();
 
 	/**
-	 * Save all dirty saveables in the workbench that match the given filter.
-	 * Opens a dialog to prompt the user if <code>confirm</code> is true.
-	 * Return true if successful. Return false if the user has canceled the
-	 * command.
+	 * Save all dirty saveables in the workbench that match the given filter. Opens
+	 * a dialog to prompt the user if <code>confirm</code> is true. Return true if
+	 * successful. Return false if the user has canceled the command.
 	 *
 	 * @since 3.3
 	 *
-	 * @param shellProvider the provider used to obtain a shell in prompting is
-	 *            required. Clients can use a workbench window for this.
+	 * @param shellProvider   the provider used to obtain a shell in prompting is
+	 *                        required. Clients can use a workbench window for this.
 	 * @param runnableContext a runnable context that will be used to provide a
-	 *            progress monitor while the save is taking place. Clients can
-	 *            use a workbench window for this.
-	 * @param filter the filter used to determine if a particular dirty saveable
-	 *            needs to be saved or <code>null</code> if all dirty
-	 *            saveables should be saved.
-	 * @param confirm <code>true</code> to ask the user before saving unsaved
-	 *            changes (recommended), and <code>false</code> to save
-	 *            unsaved changes without asking
-	 * @return <code>true</code> if the command succeeded, and
-	 *         <code>false</code> if the operation was canceled by the user or
-	 *         an error occurred while saving
+	 *                        progress monitor while the save is taking place.
+	 *                        Clients can use a workbench window for this.
+	 * @param filter          the filter used to determine if a particular dirty
+	 *                        saveable needs to be saved or <code>null</code> if all
+	 *                        dirty saveables should be saved.
+	 * @param confirm         <code>true</code> to ask the user before saving
+	 *                        unsaved changes (recommended), and <code>false</code>
+	 *                        to save unsaved changes without asking
+	 * @return <code>true</code> if the command succeeded, and <code>false</code> if
+	 *         the operation was canceled by the user or an error occurred while
+	 *         saving
 	 */
-	boolean saveAll(IShellProvider shellProvider,
-			IRunnableContext runnableContext, ISaveableFilter filter,
+	boolean saveAll(IShellProvider shellProvider, IRunnableContext runnableContext, ISaveableFilter filter,
 			boolean confirm);
 
 	/**
-	 * Return a shell provider that can be used to get the best parenting
-	 * possible for a modal dialog. If modal shells are already created, use the
-	 * topmost modal shell as the parent to avoid two modal dialogs. If there
-	 * are no modal shells, use the shell of the active workbench window.
+	 * Return a shell provider that can be used to get the best parenting possible
+	 * for a modal dialog. If modal shells are already created, use the topmost
+	 * modal shell as the parent to avoid two modal dialogs. If there are no modal
+	 * shells, use the shell of the active workbench window.
 	 *
 	 * @return a shell provider that provides the best parenting possible for a
 	 *         modal dialog.

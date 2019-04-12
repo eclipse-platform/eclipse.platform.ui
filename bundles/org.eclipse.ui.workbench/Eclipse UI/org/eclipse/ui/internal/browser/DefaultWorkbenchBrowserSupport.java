@@ -28,8 +28,7 @@ import org.eclipse.ui.browser.IWebBrowser;
  *
  * @since 3.1
  */
-public class DefaultWorkbenchBrowserSupport extends
-		AbstractWorkbenchBrowserSupport {
+public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	private Hashtable browsers;
 	private static final String DEFAULT_BROWSER_ID_BASE = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
 
@@ -52,15 +51,15 @@ public class DefaultWorkbenchBrowserSupport extends
 		return (IWebBrowser) browsers.get(id);
 	}
 
-	protected IWebBrowser doCreateBrowser(int style, String browserId,
-			String name, String tooltip) throws PartInitException {
+	protected IWebBrowser doCreateBrowser(int style, String browserId, String name, String tooltip)
+			throws PartInitException {
 		return new DefaultWebBrowser(this, browserId);
 	}
 
 	@Override
-	public IWebBrowser createBrowser(int style, String browserId, String name,
-			String tooltip) throws PartInitException {
-		IWebBrowser browser = findBrowser(browserId == null? getDefaultId():browserId);
+	public IWebBrowser createBrowser(int style, String browserId, String name, String tooltip)
+			throws PartInitException {
+		IWebBrowser browser = findBrowser(browserId == null ? getDefaultId() : browserId);
 		if (browser != null) {
 			return browser;
 		}

@@ -36,104 +36,98 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * </p>
  */
 public class PluginDropAdapter extends ViewerDropAdapter {
-    /**
-     * The extension point attribute that defines the drop action class.
-     */
-    public static final String ATT_CLASS = "class";//$NON-NLS-1$
+	/**
+	 * The extension point attribute that defines the drop action class.
+	 */
+	public static final String ATT_CLASS = "class";//$NON-NLS-1$
 
-    /**
-     * The current transfer data, or <code>null</code> if none.
-     */
-    private TransferData currentTransfer;
+	/**
+	 * The current transfer data, or <code>null</code> if none.
+	 */
+	private TransferData currentTransfer;
 
-    /**
-     * Creates a plug-in drop adapter for the given viewer.
-     *
-     * @param viewer the viewer
-     */
-    public PluginDropAdapter(StructuredViewer viewer) {
-        super(viewer);
-    }
+	/**
+	 * Creates a plug-in drop adapter for the given viewer.
+	 *
+	 * @param viewer the viewer
+	 */
+	public PluginDropAdapter(StructuredViewer viewer) {
+		super(viewer);
+	}
 
-    @Override
+	@Override
 	public void drop(DropTargetEvent event) {
-        try {
-            if (PluginTransfer.getInstance().isSupportedType(
-                    event.currentDataType)) {
-                PluginTransferData pluginData = (PluginTransferData) event.data;
-                IDropActionDelegate delegate = getPluginAdapter(pluginData);
-                if (!delegate.run(pluginData.getData(), getCurrentTarget())) {
-                    event.detail = DND.DROP_NONE;
-                }
-            } else {
-                super.drop(event);
-            }
-        } catch (CoreException e) {
-            WorkbenchPlugin.log("Drop Failed", e.getStatus());//$NON-NLS-1$
-        }
-    }
+		try {
+			if (PluginTransfer.getInstance().isSupportedType(event.currentDataType)) {
+				PluginTransferData pluginData = (PluginTransferData) event.data;
+				IDropActionDelegate delegate = getPluginAdapter(pluginData);
+				if (!delegate.run(pluginData.getData(), getCurrentTarget())) {
+					event.detail = DND.DROP_NONE;
+				}
+			} else {
+				super.drop(event);
+			}
+		} catch (CoreException e) {
+			WorkbenchPlugin.log("Drop Failed", e.getStatus());//$NON-NLS-1$
+		}
+	}
 
-    /**
-     * Returns the current transfer.
-     */
-    protected TransferData getCurrentTransfer() {
-        return currentTransfer;
-    }
+	/**
+	 * Returns the current transfer.
+	 */
+	protected TransferData getCurrentTransfer() {
+		return currentTransfer;
+	}
 
-    /**
-     * Loads the class that will perform the action associated with the given drop
-     * data.
-     *
-     * @param data the drop data
-     * @return the viewer drop adapter
-     */
-    protected static IDropActionDelegate getPluginAdapter(
-            PluginTransferData data) throws CoreException {
+	/**
+	 * Loads the class that will perform the action associated with the given drop
+	 * data.
+	 *
+	 * @param data the drop data
+	 * @return the viewer drop adapter
+	 */
+	protected static IDropActionDelegate getPluginAdapter(PluginTransferData data) throws CoreException {
 
-        IExtensionRegistry registry = Platform.getExtensionRegistry();
-        String adapterName = data.getExtensionId();
-        IExtensionPoint xpt = registry.getExtensionPoint(PlatformUI.PLUGIN_ID,
-                IWorkbenchRegistryConstants.PL_DROP_ACTIONS);
-        IExtension[] extensions = xpt.getExtensions();
-        for (IExtension extension : extensions) {
-            IConfigurationElement[] configs = extension.getConfigurationElements();
-            if (configs != null && configs.length > 0) {
-                for (IConfigurationElement config : configs) {
-                	String id = config.getAttribute("id");//$NON-NLS-1$
-                    if (id != null && id.equals(adapterName)) {
-                        return (IDropActionDelegate) WorkbenchPlugin
-                                .createExtension(config, ATT_CLASS);
-                    }
-                }
-            }
-        }
-        return null;
-    }
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		String adapterName = data.getExtensionId();
+		IExtensionPoint xpt = registry.getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_DROP_ACTIONS);
+		IExtension[] extensions = xpt.getExtensions();
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] configs = extension.getConfigurationElements();
+			if (configs != null && configs.length > 0) {
+				for (IConfigurationElement config : configs) {
+					String id = config.getAttribute("id");//$NON-NLS-1$
+					if (id != null && id.equals(adapterName)) {
+						return (IDropActionDelegate) WorkbenchPlugin.createExtension(config, ATT_CLASS);
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-    /**
-     * @see ViewerDropAdapter#performDrop
-     */
-    @Override
+	/**
+	 * @see ViewerDropAdapter#performDrop
+	 */
+	@Override
 	public boolean performDrop(Object data) {
-        //should never be called, since we override the drop() method.
-        return false;
-    }
+		// should never be called, since we override the drop() method.
+		return false;
+	}
 
-    /**
-     * The <code>PluginDropAdapter</code> implementation of this
-     * <code>ViewerDropAdapter</code> method is used to notify the action that some
-     * aspect of the drop operation has changed. Subclasses may override.
-     */
-    @Override
-	public boolean validateDrop(Object target, int operation,
-            TransferData transferType) {
-        currentTransfer = transferType;
-        if (currentTransfer != null
-                && PluginTransfer.getInstance()
-                        .isSupportedType(currentTransfer)) {
-            //plugin cannot be loaded without the plugin data
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * The <code>PluginDropAdapter</code> implementation of this
+	 * <code>ViewerDropAdapter</code> method is used to notify the action that some
+	 * aspect of the drop operation has changed. Subclasses may override.
+	 */
+	@Override
+	public boolean validateDrop(Object target, int operation, TransferData transferType) {
+		currentTransfer = transferType;
+		if (currentTransfer != null && PluginTransfer.getInstance().isSupportedType(currentTransfer)) {
+			// plugin cannot be loaded without the plugin data
+			return true;
+		}
+		return false;
+	}
 }

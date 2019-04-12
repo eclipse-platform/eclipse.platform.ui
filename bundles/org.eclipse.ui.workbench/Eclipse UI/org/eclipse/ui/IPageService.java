@@ -35,56 +35,54 @@ package org.eclipse.ui;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPageService {
-    /**
-     * Adds the given listener for page lifecycle events.
-     * Has no effect if an identical listener is already registered.
+	/**
+	 * Adds the given listener for page lifecycle events. Has no effect if an
+	 * identical listener is already registered.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
-     *
-     * @param listener a page listener
-     * @see #removePageListener(IPageListener)
-     */
-    void addPageListener(IPageListener listener);
+	 *
+	 * @param listener a page listener
+	 * @see #removePageListener(IPageListener)
+	 */
+	void addPageListener(IPageListener listener);
 
-    /**
-     * Adds the given listener for a page's perspective lifecycle events.
-     * Has no effect if an identical listener is already registered.
+	/**
+	 * Adds the given listener for a page's perspective lifecycle events. Has no
+	 * effect if an identical listener is already registered.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
-     *
-     * @param listener a perspective listener
-     * @see #removePerspectiveListener(IPerspectiveListener)
-     */
-    void addPerspectiveListener(IPerspectiveListener listener);
-
-    /**
-     * Returns the active page.
-     *
-     * @return the active page, or <code>null</code> if no page is currently active
-     */
-    IWorkbenchPage getActivePage();
-
-    /**
-	 * Removes the given page listener. Has no effect if an identical listener
-	 * is not registered.
 	 *
-	 * @param listener
-	 *            a page listener
+	 * @param listener a perspective listener
+	 * @see #removePerspectiveListener(IPerspectiveListener)
 	 */
-    void removePageListener(IPageListener listener);
+	void addPerspectiveListener(IPerspectiveListener listener);
 
-    /**
-	 * Removes the given page's perspective listener. Has no effect if an
-	 * identical listener is not registered.
+	/**
+	 * Returns the active page.
 	 *
-	 * @param listener
-	 *            a perspective listener
+	 * @return the active page, or <code>null</code> if no page is currently active
 	 */
-    void removePerspectiveListener(IPerspectiveListener listener);
+	IWorkbenchPage getActivePage();
+
+	/**
+	 * Removes the given page listener. Has no effect if an identical listener is
+	 * not registered.
+	 *
+	 * @param listener a page listener
+	 */
+	void removePageListener(IPageListener listener);
+
+	/**
+	 * Removes the given page's perspective listener. Has no effect if an identical
+	 * listener is not registered.
+	 *
+	 * @param listener a perspective listener
+	 */
+	void removePerspectiveListener(IPerspectiveListener listener);
 }

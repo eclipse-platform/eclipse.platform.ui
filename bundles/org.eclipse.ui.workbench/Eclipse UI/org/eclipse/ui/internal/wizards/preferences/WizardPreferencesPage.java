@@ -65,8 +65,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  *
  * @since 3.1
  */
-public abstract class WizardPreferencesPage extends WizardPage implements
-		Listener, IOverwriteQuery {
+public abstract class WizardPreferencesPage extends WizardPage implements Listener, IOverwriteQuery {
 
 	// widgets
 	protected Combo destinationNameField;
@@ -108,7 +107,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	protected static final int COMBO_HISTORY_LENGTH = 5;
 
-
 	/**
 	 * @param pageName
 	 */
@@ -119,27 +117,23 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	/**
 	 * Creates a new button with the given id.
 	 * <p>
-	 * The <code>Dialog</code> implementation of this framework method creates
-	 * a standard push button, registers for selection events including button
-	 * presses and registers default buttons with its shell. The button id is
-	 * stored as the buttons client data. Note that the parent's layout is
-	 * assumed to be a GridLayout and the number of columns in this layout is
-	 * incremented. Subclasses may override.
+	 * The <code>Dialog</code> implementation of this framework method creates a
+	 * standard push button, registers for selection events including button presses
+	 * and registers default buttons with its shell. The button id is stored as the
+	 * buttons client data. Note that the parent's layout is assumed to be a
+	 * GridLayout and the number of columns in this layout is incremented.
+	 * Subclasses may override.
 	 * </p>
 	 *
-	 * @param parent
-	 *            the parent composite
-	 * @param id
-	 *            the id of the button (see <code>IDialogConstants.*_ID</code>
-	 *            constants for standard dialog button ids)
-	 * @param label
-	 *            the label from the button
-	 * @param defaultButton
-	 *            <code>true</code> if the button is to be the default button,
-	 *            and <code>false</code> otherwise
+	 * @param parent        the parent composite
+	 * @param id            the id of the button (see
+	 *                      <code>IDialogConstants.*_ID</code> constants for
+	 *                      standard dialog button ids)
+	 * @param label         the label from the button
+	 * @param defaultButton <code>true</code> if the button is to be the default
+	 *                      button, and <code>false</code> otherwise
 	 */
-	protected Button createButton(Composite parent, int id, String label,
-			boolean defaultButton) {
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		// increment the number of columns in the button bar
 		((GridLayout) parent.getLayout()).numColumns++;
 
@@ -164,8 +158,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	/**
 	 * Add the passed value to self's destination widget's history
 	 *
-	 * @param value
-	 *            java.lang.String
+	 * @param value java.lang.String
 	 */
 	protected void addDestinationItem(String value) {
 		destinationNameField.add(value);
@@ -176,9 +169,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		initializeDialogUnits(parent);
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
-				| GridData.HORIZONTAL_ALIGN_FILL));
-
+		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
 		createTransferArea(composite);
 		setPreferenceTransfers();
@@ -205,8 +196,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	/**
 	 * Validate the destination group.
-	 * @return <code>true</code> if the group is valid. If
-	 * not set the error message and return <code>false</code>.
+	 * 
+	 * @return <code>true</code> if the group is valid. If not set the error message
+	 *         and return <code>false</code>.
 	 */
 	protected boolean validateDestinationGroup() {
 		if (!validDestination()) {
@@ -219,6 +211,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	/**
 	 * Return the message that indicates an invalid destination.
+	 * 
 	 * @return String
 	 */
 	abstract protected String getInvalidDestinationMessage();
@@ -281,8 +274,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		description.setText(PreferencesMessages.WizardPreferences_description);
 
-		descText = new Text(group, SWT.V_SCROLL | SWT.READ_ONLY
-				| SWT.BORDER | SWT.WRAP);
+		descText = new Text(group, SWT.V_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
 		GridData descriptionData = new GridData(GridData.FILL_BOTH);
 		descriptionData.heightHint = convertHeightInCharsToPixels(3);
 		descText.setLayoutData(descriptionData);
@@ -321,8 +313,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	private FilteredTree createFilteredTree(Group group) {
 		int style = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
-		FilteredTree transfersTree = new FilteredTree(group, style,
-				new PatternFilter(), true) {
+		FilteredTree transfersTree = new FilteredTree(group, style, new PatternFilter(), true) {
 			@Override
 			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 				return new CheckboxTreeViewer(parent, style);
@@ -338,8 +329,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	/**
 	 * Add the selection and deselection buttons to the composite.
 	 *
-	 * @param composite
-	 *            org.eclipse.swt.widgets.Composite
+	 * @param composite org.eclipse.swt.widgets.Composite
 	 */
 	private void addSelectionButtons(Composite composite) {
 		Font parentFont = composite.getFont();
@@ -387,8 +377,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	/**
 	 * Create the export destination specification widgets
 	 *
-	 * @param parent
-	 *            org.eclipse.swt.widgets.Composite
+	 * @param parent org.eclipse.swt.widgets.Composite
 	 */
 	protected void createDestinationGroup(Composite parent) {
 		// destination specification group
@@ -396,26 +385,22 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		destinationSelectionGroup.setLayout(layout);
-		destinationSelectionGroup.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
+		destinationSelectionGroup
+				.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
 		Label dest = new Label(destinationSelectionGroup, SWT.NONE);
 		dest.setText(getDestinationLabel());
 
 		// destination name entry field
-		destinationNameField = new Combo(destinationSelectionGroup, SWT.SINGLE
-				| SWT.BORDER);
+		destinationNameField = new Combo(destinationSelectionGroup, SWT.SINGLE | SWT.BORDER);
 		destinationNameField.addListener(SWT.Modify, this);
 		destinationNameField.addListener(SWT.Selection, this);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.GRAB_HORIZONTAL);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		destinationNameField.setLayoutData(data);
 
 		// destination browse button
-		destinationBrowseButton = new Button(destinationSelectionGroup,
-				SWT.PUSH);
-		destinationBrowseButton
-				.setText(PreferencesMessages.PreferencesExport_browse);
+		destinationBrowseButton = new Button(destinationSelectionGroup, SWT.PUSH);
+		destinationBrowseButton.setText(PreferencesMessages.PreferencesExport_browse);
 		setButtonLayoutData(destinationBrowseButton);
 		destinationBrowseButton.addListener(SWT.Selection, this);
 
@@ -425,8 +410,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	/**
 	 * Create the export options specification widgets.
 	 *
-	 * @param parent
-	 *            org.eclipse.swt.widgets.Composite
+	 * @param parent org.eclipse.swt.widgets.Composite
 	 */
 	protected void createOptionsGroup(Composite parent) {
 		// options group
@@ -435,14 +419,11 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		optionsGroup.setLayout(layout);
-		optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.GRAB_HORIZONTAL));
+		optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 		// overwrite... checkbox
-		overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK
-				| SWT.LEFT);
-		overwriteExistingFilesCheckbox
-				.setText(PreferencesMessages.ExportFile_overwriteExisting);
+		overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+		overwriteExistingFilesCheckbox.setText(PreferencesMessages.ExportFile_overwriteExisting);
 
 	}
 
@@ -451,8 +432,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * system. Answers a boolean indicating success.
 	 *
 	 * @return boolean
-	 * @param directory
-	 *            java.io.File
+	 * @param directory java.io.File
 	 */
 	protected boolean ensureDirectoryExists(File directory) {
 		if (!directory.exists()) {
@@ -461,13 +441,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			}
 
 			if (!directory.mkdirs()) {
-				MessageDialog
-						.open(
-								MessageDialog.ERROR,
-								getContainer().getShell(),
-								PreferencesMessages.PreferencesExport_error,
-								PreferencesMessages.PreferencesExport_directoryCreationError,
-								SWT.SHEET);
+				MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
+						PreferencesMessages.PreferencesExport_error,
+						PreferencesMessages.PreferencesExport_directoryCreationError, SWT.SHEET);
 				return false;
 			}
 		}
@@ -475,17 +451,15 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-	 * Displays a Yes/No question to the user with the specified message and
-	 * returns the user's response.
+	 * Displays a Yes/No question to the user with the specified message and returns
+	 * the user's response.
 	 *
-	 * @param message
-	 *            the question to ask
+	 * @param message the question to ask
 	 * @return <code>true</code> for Yes, and <code>false</code> for No
 	 */
 	protected boolean queryYesNoQuestion(String message) {
-		MessageDialog dialog = new MessageDialog(getContainer().getShell(),
-				PreferencesMessages.Question, (Image) null, message,
-				MessageDialog.NONE, 0, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL) {
+		MessageDialog dialog = new MessageDialog(getContainer().getShell(), PreferencesMessages.Question, (Image) null,
+				message, MessageDialog.NONE, 0, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL) {
 			@Override
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;
@@ -497,19 +471,17 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-	 * If the target for export does not exist then attempt to create it. Answer
-	 * a boolean indicating whether the target exists (ie.- if it either
-	 * pre-existed or this method was able to create it)
+	 * If the target for export does not exist then attempt to create it. Answer a
+	 * boolean indicating whether the target exists (ie.- if it either pre-existed
+	 * or this method was able to create it)
 	 *
 	 * @return boolean
 	 */
 	protected boolean ensureTargetIsValid(File file) {
 		if (file.exists()) {
 			if (!getOverwriteExisting()) {
-				String msg = NLS
-						.bind(
-								PreferencesMessages.WizardPreferencesExportPage1_overwrite,
-								file.getAbsolutePath());
+				String msg = NLS.bind(PreferencesMessages.WizardPreferencesExportPage1_overwrite,
+						file.getAbsolutePath());
 				if (!queryYesNoQuestion(msg)) {
 					return false;
 				}
@@ -528,8 +500,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
-			String[] directoryNames = settings
-					.getArray(STORE_DESTINATION_NAMES_ID);
+			String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
 			if (directoryNames == null) {
 				directoryNames = new String[0];
 			}
@@ -542,8 +513,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			}
 			// options
 			if (overwriteExistingFilesCheckbox != null) {
-				settings.put(STORE_OVERWRITE_EXISTING_FILES_ID,
-						overwriteExistingFilesCheckbox.getSelection());
+				settings.put(STORE_OVERWRITE_EXISTING_FILES_ID, overwriteExistingFilesCheckbox.getSelection());
 			}
 
 			if (shouldSaveTransferAll()) {
@@ -565,9 +535,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-	 * The Finish button was pressed. Try to do the required work now and answer
-	 * a boolean indicating success. If false is returned then the wizard will
-	 * not close.
+	 * The Finish button was pressed. Try to do the required work now and answer a
+	 * boolean indicating success. If false is returned then the wizard will not
+	 * close.
 	 *
 	 * @return boolean
 	 */
@@ -587,8 +557,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 				@Override
 				public String[] getScopes() {
-					return new String[] { InstanceScope.SCOPE,
-							ConfigurationScope.SCOPE };
+					return new String[] { InstanceScope.SCOPE, ConfigurationScope.SCOPE };
 				}
 
 				@Override
@@ -639,8 +608,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	protected PreferenceTransferElement[] getPreferenceTransferElements() {
 		Object[] checkedElements = viewer.getCheckedElements();
 		PreferenceTransferElement[] transferElements = new PreferenceTransferElement[checkedElements.length];
-		System.arraycopy(checkedElements, 0, transferElements, 0,
-				checkedElements.length);
+		System.arraycopy(checkedElements, 0, transferElements, 0, checkedElements.length);
 		return transferElements;
 	}
 
@@ -665,22 +633,21 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-	 * Returns whether this page is complete. This determination is made based
-	 * upon the current contents of this page's controls. Subclasses wishing to
-	 * include their controls in this determination should override the hook
-	 * methods <code>validateSourceGroup</code> and/or
-	 * <code>validateOptionsGroup</code>.
+	 * Returns whether this page is complete. This determination is made based upon
+	 * the current contents of this page's controls. Subclasses wishing to include
+	 * their controls in this determination should override the hook methods
+	 * <code>validateSourceGroup</code> and/or <code>validateOptionsGroup</code>.
 	 *
-	 * @return <code>true</code> if this page is complete, and
-	 *         <code>false</code> if incomplete
+	 * @return <code>true</code> if this page is complete, and <code>false</code> if
+	 *         incomplete
 	 * @see #validateSourceGroup
 	 * @see #validateOptionsGroup
 	 */
 	protected boolean determinePageCompletion() {
 
-		// validate groups in order of priority so error message is the most important one
-		boolean complete = validateSourceGroup() && validateDestinationGroup()
-				&& validateOptionsGroup();
+		// validate groups in order of priority so error message is the most important
+		// one
+		boolean complete = validateSourceGroup() && validateDestinationGroup() && validateOptionsGroup();
 
 		// Avoid draw flicker by not clearing the error
 		// message unless all is valid.
@@ -694,17 +661,17 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-	 * Returns whether this page's options group's controls currently all
-	 * contain valid values.
+	 * Returns whether this page's options group's controls currently all contain
+	 * valid values.
 	 * <p>
-	 * The <code>WizardPreferencesPage</code> implementation of this method
-	 * returns <code>true</code> if the button to transfer all preferences is
-	 * selected OR at least one of the individual items are checked. Subclasses
-	 * may reimplement this method.
+	 * The <code>WizardPreferencesPage</code> implementation of this method returns
+	 * <code>true</code> if the button to transfer all preferences is selected OR at
+	 * least one of the individual items are checked. Subclasses may reimplement
+	 * this method.
 	 * </p>
 	 *
-	 * @return <code>true</code> indicating validity of all controls in the
-	 *         options group
+	 * @return <code>true</code> indicating validity of all controls in the options
+	 *         group
 	 */
 	protected boolean validateOptionsGroup() {
 		boolean isValid = true;
@@ -722,13 +689,12 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * Returns whether this page's source specification controls currently all
 	 * contain valid values.
 	 * <p>
-	 * The <code>WizardDataTransferPage</code> implementation of this method
-	 * returns <code>true</code>. Subclasses may reimplement this hook
-	 * method.
+	 * The <code>WizardDataTransferPage</code> implementation of this method returns
+	 * <code>true</code>. Subclasses may reimplement this hook method.
 	 * </p>
 	 *
-	 * @return <code>true</code> indicating validity of all controls in the
-	 *         source specification group
+	 * @return <code>true</code> indicating validity of all controls in the source
+	 *         specification group
 	 */
 	protected boolean validateSourceGroup() {
 		return true;
@@ -758,15 +724,14 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-	 * Open an appropriate destination browser so that the user can specify a
-	 * source to import from
+	 * Open an appropriate destination browser so that the user can specify a source
+	 * to import from
 	 */
 	protected void handleDestinationBrowseButtonPressed() {
-		FileDialog dialog = new FileDialog(getContainer().getShell(),
-				getFileDialogStyle());
+		FileDialog dialog = new FileDialog(getContainer().getShell(), getFileDialogStyle());
 		dialog.setText(getFileDialogTitle());
 		dialog.setFilterPath(getDestinationValue());
-		dialog.setFilterExtensions(new String[] { "*.epf" ,"*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
+		dialog.setFilterExtensions(new String[] { "*.epf", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
 		String selectedFileName = dialog.open();
 
 		if (selectedFileName != null) {
@@ -781,8 +746,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	/**
 	 * Handle all events and enablements for widgets in this page
 	 *
-	 * @param e
-	 *            Event
+	 * @param e Event
 	 */
 	@Override
 	public void handleEvent(Event e) {
@@ -807,39 +771,39 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-     * Adds an entry to a history, while taking care of duplicate history items
-     * and excessively long histories.  The assumption is made that all histories
-     * should be of length <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
-     *
-     * @param history the current history
-     * @param newEntry the entry to add to the history
-     */
-    protected String[] addToHistory(String[] history, String newEntry) {
-        java.util.ArrayList l = new java.util.ArrayList(Arrays.asList(history));
-        addToHistory(l, newEntry);
-        String[] r = new String[l.size()];
-        l.toArray(r);
-        return r;
-    }
+	 * Adds an entry to a history, while taking care of duplicate history items and
+	 * excessively long histories. The assumption is made that all histories should
+	 * be of length <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
+	 *
+	 * @param history  the current history
+	 * @param newEntry the entry to add to the history
+	 */
+	protected String[] addToHistory(String[] history, String newEntry) {
+		java.util.ArrayList l = new java.util.ArrayList(Arrays.asList(history));
+		addToHistory(l, newEntry);
+		String[] r = new String[l.size()];
+		l.toArray(r);
+		return r;
+	}
 
-    /**
-     * Adds an entry to a history, while taking care of duplicate history items
-     * and excessively long histories.  The assumption is made that all histories
-     * should be of length <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
-     *
-     * @param history the current history
-     * @param newEntry the entry to add to the history
-     */
-    protected void addToHistory(List history, String newEntry) {
-        history.remove(newEntry);
-        history.add(0, newEntry);
+	/**
+	 * Adds an entry to a history, while taking care of duplicate history items and
+	 * excessively long histories. The assumption is made that all histories should
+	 * be of length <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
+	 *
+	 * @param history  the current history
+	 * @param newEntry the entry to add to the history
+	 */
+	protected void addToHistory(List history, String newEntry) {
+		history.remove(newEntry);
+		history.add(0, newEntry);
 
-        // since only one new item was added, we can be over the limit
-        // by at most one item
-        if (history.size() > COMBO_HISTORY_LENGTH) {
+		// since only one new item was added, we can be over the limit
+		// by at most one item
+		if (history.size() > COMBO_HISTORY_LENGTH) {
 			history.remove(COMBO_HISTORY_LENGTH);
 		}
-    }
+	}
 
 	/**
 	 * Hook method for restoring widget values to the values that they held last
@@ -854,12 +818,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			if (settings.get(TRANSFER_ALL_PREFERENCES_ID) == null)
 				transferAll = true;
 			else
-				transferAll = settings
-					.getBoolean(TRANSFER_ALL_PREFERENCES_ID);
+				transferAll = settings.getBoolean(TRANSFER_ALL_PREFERENCES_ID);
 			transferAllButton.setSelection(transferAll);
 			if (!transferAll) {
-				String[] preferenceIds = settings
-						.getArray(TRANSFER_PREFERENCES_NAMES_ID);
+				String[] preferenceIds = settings.getArray(TRANSFER_PREFERENCES_NAMES_ID);
 				if (preferenceIds != null) {
 					PreferenceTransferElement[] transfers = getTransfers();
 					for (PreferenceTransferElement transfer : transfers) {
@@ -878,8 +840,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		updateEnablement();
 
 		if (settings != null) {
-			String[] directoryNames = settings
-					.getArray(STORE_DESTINATION_NAMES_ID);
+			String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
 			if (directoryNames != null) {
 				// destination
 				setDestinationValue(directoryNames[0]);
@@ -893,8 +854,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				}
 				// options
 				if (overwriteExistingFilesCheckbox != null) {
-					overwriteExistingFilesCheckbox.setSelection(settings
-							.getBoolean(STORE_OVERWRITE_EXISTING_FILES_ID));
+					overwriteExistingFilesCheckbox.setSelection(settings.getBoolean(STORE_OVERWRITE_EXISTING_FILES_ID));
 				}
 			}
 		}
@@ -914,8 +874,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * Set the contents of self's destination specification widget to the passed
 	 * value
 	 *
-	 * @param value
-	 *            java.lang.String
+	 * @param value java.lang.String
 	 */
 	protected void setDestinationValue(String value) {
 		destinationNameField.setText(value);
@@ -949,15 +908,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		// Break the message up if there is a file name and a directory
 		// and there are at least 2 segments.
 		if (path.getFileExtension() == null || path.segmentCount() < 2) {
-			messageString = NLS.bind(
-					PreferencesMessages.WizardDataTransfer_existsQuestion,
-					pathString);
+			messageString = NLS.bind(PreferencesMessages.WizardDataTransfer_existsQuestion, pathString);
 		} else {
-			messageString = NLS
-					.bind(
-							PreferencesMessages.WizardDataTransfer_overwriteNameAndPathQuestion,
-							path.lastSegment(), path.removeLastSegments(1)
-									.toOSString());
+			messageString = NLS.bind(PreferencesMessages.WizardDataTransfer_overwriteNameAndPathQuestion,
+					path.lastSegment(), path.removeLastSegments(1).toOSString());
 		}
 
 		final MessageDialog dialog = new MessageDialog(getContainer().getShell(), PreferencesMessages.Question, null,
@@ -972,8 +926,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		// run in syncExec because callback is from an operation,
 		// which is probably not running in the UI thread.
 		getControl().getDisplay().syncExec(() -> dialog.open());
-		return dialog.getReturnCode() < 0 ? CANCEL : response[dialog
-				.getReturnCode()];
+		return dialog.getReturnCode() < 0 ? CANCEL : response[dialog.getReturnCode()];
 	}
 
 	private void updateEnablement() {

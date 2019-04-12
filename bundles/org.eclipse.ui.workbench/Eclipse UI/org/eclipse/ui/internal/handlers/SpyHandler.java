@@ -111,8 +111,7 @@ public class SpyHandler extends AbstractHandler {
 	 * @param offset
 	 * @param contributionInfo
 	 */
-	protected void doShowTooltip(Control control, Point offset,
-			final ContributionInfo contributionInfo) {
+	protected void doShowTooltip(Control control, Point offset, final ContributionInfo contributionInfo) {
 		ToolTip toolTip = new ToolTip(control, ToolTip.NO_RECREATE, true) {
 
 			@Override
@@ -140,11 +139,11 @@ public class SpyHandler extends AbstractHandler {
 
 	/**
 	 * Returns a ContributionInfo for the given data object (typically, a data
-	 * object associated with a widget). If the data object is a
-	 * ContributionInfo, return it. If it can be adapted to ContributionInfo,
-	 * return the result of the adaptation. Otherwise, if a non-null
-	 * 'optionalElementType' string is given, return a contribution info based
-	 * on it and the bundle that contains the given object's class.
+	 * object associated with a widget). If the data object is a ContributionInfo,
+	 * return it. If it can be adapted to ContributionInfo, return the result of the
+	 * adaptation. Otherwise, if a non-null 'optionalElementType' string is given,
+	 * return a contribution info based on it and the bundle that contains the given
+	 * object's class.
 	 */
 	ContributionInfo getContributionInfo(Object data, String optionalElementType) {
 		if (data instanceof ContributionInfo) {

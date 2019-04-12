@@ -26,244 +26,236 @@ import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Category implements ICategory {
-    private static final int HASH_FACTOR = 89;
+	private static final int HASH_FACTOR = 89;
 
-    private static final int HASH_INITIAL = Category.class.getName().hashCode();
+	private static final int HASH_INITIAL = Category.class.getName().hashCode();
 
 	private static final Set<Category> strongReferences = new HashSet<>();
 
 	private Set<ICategoryActivityBinding> categoryActivityBindings;
 
-    private transient ICategoryActivityBinding[] categoryActivityBindingsAsArray;
+	private transient ICategoryActivityBinding[] categoryActivityBindingsAsArray;
 
 	private List<ICategoryListener> categoryListeners;
 
-    private boolean defined;
+	private boolean defined;
 
-    private transient int hashCode = HASH_INITIAL;
+	private transient int hashCode = HASH_INITIAL;
 
-    private String id;
+	private String id;
 
-    private String name;
+	private String name;
 
-    private transient String string;
+	private transient String string;
 
-    private String description;
+	private String description;
 
-    Category(String id) {
-        if (id == null) {
+	Category(String id) {
+		if (id == null) {
 			throw new NullPointerException();
 		}
 
-        this.id = id;
-    }
+		this.id = id;
+	}
 
-    @Override
+	@Override
 	public void addCategoryListener(ICategoryListener categoryListener) {
-        if (categoryListener == null) {
+		if (categoryListener == null) {
 			throw new NullPointerException();
 		}
 
-        if (categoryListeners == null) {
+		if (categoryListeners == null) {
 			categoryListeners = new ArrayList<>();
 		}
 
-        if (!categoryListeners.contains(categoryListener)) {
+		if (!categoryListeners.contains(categoryListener)) {
 			categoryListeners.add(categoryListener);
 		}
 
-        strongReferences.add(this);
-    }
+		strongReferences.add(this);
+	}
 
-    @Override
+	@Override
 	public int compareTo(ICategory object) {
-        Category castedObject = (Category) object;
-        int compareTo = Util.compare(
-                categoryActivityBindingsAsArray,
-                castedObject.categoryActivityBindingsAsArray);
+		Category castedObject = (Category) object;
+		int compareTo = Util.compare(categoryActivityBindingsAsArray, castedObject.categoryActivityBindingsAsArray);
 
-        if (compareTo == 0) {
+		if (compareTo == 0) {
 			compareTo = Util.compare(defined, castedObject.defined);
 
-            if (compareTo == 0) {
-                compareTo = Util.compare(id, castedObject.id);
+			if (compareTo == 0) {
+				compareTo = Util.compare(id, castedObject.id);
 
-                if (compareTo == 0) {
+				if (compareTo == 0) {
 					compareTo = Util.compare(name, castedObject.name);
 				}
-            }
-        }
+			}
+		}
 
-        return compareTo;
-    }
+		return compareTo;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (!(object instanceof Category)) {
+		if (!(object instanceof Category)) {
 			return false;
 		}
 
-        final Category castedObject = (Category) object;
-        if (!Util.equals(categoryActivityBindings,
-                castedObject.categoryActivityBindings)) {
-            return false;
-        }
+		final Category castedObject = (Category) object;
+		if (!Util.equals(categoryActivityBindings, castedObject.categoryActivityBindings)) {
+			return false;
+		}
 
-        if (!Util.equals(defined, castedObject.defined)) {
-            return false;
-        }
+		if (!Util.equals(defined, castedObject.defined)) {
+			return false;
+		}
 
-        if (!Util.equals(id, castedObject.id)) {
-            return false;
-        }
+		if (!Util.equals(id, castedObject.id)) {
+			return false;
+		}
 
-        return Util.equals(name, castedObject.name);
-    }
+		return Util.equals(name, castedObject.name);
+	}
 
-    void fireCategoryChanged(CategoryEvent categoryEvent) {
-        if (categoryEvent == null) {
+	void fireCategoryChanged(CategoryEvent categoryEvent) {
+		if (categoryEvent == null) {
 			throw new NullPointerException();
 		}
 
-        if (categoryListeners != null) {
+		if (categoryListeners != null) {
 			for (int i = 0; i < categoryListeners.size(); i++) {
-				categoryListeners.get(i)
-                        .categoryChanged(categoryEvent);
+				categoryListeners.get(i).categoryChanged(categoryEvent);
 			}
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public Set<ICategoryActivityBinding> getCategoryActivityBindings() {
-        return categoryActivityBindings;
-    }
+		return categoryActivityBindings;
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return id;
-    }
+		return id;
+	}
 
-    @Override
+	@Override
 	public String getName() throws NotDefinedException {
-        if (!defined) {
+		if (!defined) {
 			throw new NotDefinedException();
 		}
 
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        if (hashCode == HASH_INITIAL) {
-            hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(categoryActivityBindings);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-            if (hashCode == HASH_INITIAL) {
+		if (hashCode == HASH_INITIAL) {
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryActivityBindings);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}
-        }
+		}
 
-        return hashCode;
-    }
+		return hashCode;
+	}
 
-    @Override
+	@Override
 	public boolean isDefined() {
-        return defined;
-    }
+		return defined;
+	}
 
-    @Override
+	@Override
 	public void removeCategoryListener(ICategoryListener categoryListener) {
-        if (categoryListener == null) {
+		if (categoryListener == null) {
 			throw new NullPointerException();
 		}
 
-        if (categoryListeners != null) {
+		if (categoryListeners != null) {
 			categoryListeners.remove(categoryListener);
 		}
 
-        if (categoryListeners.isEmpty()) {
+		if (categoryListeners.isEmpty()) {
 			strongReferences.remove(this);
 		}
-    }
+	}
 
 	boolean setCategoryActivityBindings(Set<ICategoryActivityBinding> categoryActivityBindings) {
-        categoryActivityBindings = Util.safeCopy(categoryActivityBindings,
-                ICategoryActivityBinding.class);
+		categoryActivityBindings = Util.safeCopy(categoryActivityBindings, ICategoryActivityBinding.class);
 
-        if (!Util.equals(categoryActivityBindings,
-                this.categoryActivityBindings)) {
-            this.categoryActivityBindings = categoryActivityBindings;
-            this.categoryActivityBindingsAsArray = this.categoryActivityBindings
-                    .toArray(new ICategoryActivityBinding[this.categoryActivityBindings
-                            .size()]);
-            hashCode = HASH_INITIAL;
-            string = null;
-            return true;
-        }
+		if (!Util.equals(categoryActivityBindings, this.categoryActivityBindings)) {
+			this.categoryActivityBindings = categoryActivityBindings;
+			this.categoryActivityBindingsAsArray = this.categoryActivityBindings
+					.toArray(new ICategoryActivityBinding[this.categoryActivityBindings.size()]);
+			hashCode = HASH_INITIAL;
+			string = null;
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    boolean setDefined(boolean defined) {
-        if (defined != this.defined) {
-            this.defined = defined;
-            hashCode = HASH_INITIAL;
-            string = null;
-            return true;
-        }
+	boolean setDefined(boolean defined) {
+		if (defined != this.defined) {
+			this.defined = defined;
+			hashCode = HASH_INITIAL;
+			string = null;
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    boolean setName(String name) {
-        if (!Util.equals(name, this.name)) {
-            this.name = name;
-            hashCode = HASH_INITIAL;
-            string = null;
-            return true;
-        }
+	boolean setName(String name) {
+		if (!Util.equals(name, this.name)) {
+			this.name = name;
+			hashCode = HASH_INITIAL;
+			string = null;
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        if (string == null) {
-            final StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append('[');
-            stringBuffer.append(categoryActivityBindings);
-            stringBuffer.append(',');
-            stringBuffer.append(defined);
-            stringBuffer.append(',');
-            stringBuffer.append(id);
-            stringBuffer.append(',');
-            stringBuffer.append(name);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+		if (string == null) {
+			final StringBuilder stringBuffer = new StringBuilder();
+			stringBuffer.append('[');
+			stringBuffer.append(categoryActivityBindings);
+			stringBuffer.append(',');
+			stringBuffer.append(defined);
+			stringBuffer.append(',');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
 
-        return string;
-    }
+		return string;
+	}
 
-    @Override
+	@Override
 	public String getDescription() throws NotDefinedException {
-        if (!defined) {
+		if (!defined) {
 			throw new NotDefinedException();
 		}
 
-        return description;
-    }
+		return description;
+	}
 
-    public boolean setDescription(String description) {
-        if (!Util.equals(description, this.description)) {
-            this.description = description;
-            hashCode = HASH_INITIAL;
-            string = null;
-            return true;
-        }
+	public boolean setDescription(String description) {
+		if (!Util.equals(description, this.description)) {
+			this.description = description;
+			hashCode = HASH_INITIAL;
+			string = null;
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 }

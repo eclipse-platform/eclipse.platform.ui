@@ -28,8 +28,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ContextMenuHandler extends AbstractHandler {
 	/**
-	 * @throws ExecutionException
-	 *             {@inheritDoc}
+	 * @throws ExecutionException {@inheritDoc}
 	 */
 	@Override
 	public Object execute(ExecutionEvent exEvent) throws ExecutionException {

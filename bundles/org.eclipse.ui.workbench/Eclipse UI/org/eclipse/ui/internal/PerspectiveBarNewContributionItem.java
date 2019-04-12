@@ -29,60 +29,57 @@ import org.eclipse.ui.actions.ContributionItemFactory;
 
 public class PerspectiveBarNewContributionItem extends ContributionItem {
 
-    private MenuManager menuManager = null;
+	private MenuManager menuManager = null;
 
-    private Image image;
+	private Image image;
 
-    private ToolItem toolItem = null;
+	private ToolItem toolItem = null;
 
-    public PerspectiveBarNewContributionItem(IWorkbenchWindow workbenchWindow) {
-        super(PerspectiveBarNewContributionItem.class.getName());
-        menuManager = new MenuManager();
-        menuManager.add(ContributionItemFactory.PERSPECTIVES_SHORTLIST
-                .create(workbenchWindow));
-    }
+	public PerspectiveBarNewContributionItem(IWorkbenchWindow workbenchWindow) {
+		super(PerspectiveBarNewContributionItem.class.getName());
+		menuManager = new MenuManager();
+		menuManager.add(ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(workbenchWindow));
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        super.dispose();
-        if (image != null && !image.isDisposed()) {
-            image.dispose();
-            image = null;
-        }
-    }
+		super.dispose();
+		if (image != null && !image.isDisposed()) {
+			image.dispose();
+			image = null;
+		}
+	}
 
-    @Override
+	@Override
 	public void fill(final ToolBar parent, int index) {
-        if (toolItem == null && parent != null) {
-            parent.addDisposeListener(e -> {
-			    //toolItem.getImage().dispose();
-			    toolItem.dispose();
-			    toolItem = null;
+		if (toolItem == null && parent != null) {
+			parent.addDisposeListener(e -> {
+				// toolItem.getImage().dispose();
+				toolItem.dispose();
+				toolItem = null;
 			});
 
-            toolItem = new ToolItem(parent, SWT.PUSH);
-            if (image == null || image.isDisposed()) {
-                image = WorkbenchImages.getImageDescriptor(
-                        IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE)
-                        .createImage();
-            }
-            toolItem.setImage(image);
+			toolItem = new ToolItem(parent, SWT.PUSH);
+			if (image == null || image.isDisposed()) {
+				image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE).createImage();
+			}
+			toolItem.setImage(image);
 
-            toolItem.setText(""); //$NON-NLS-1$
-            toolItem.setToolTipText(WorkbenchMessages.PerspectiveBarNewContributionItem_toolTip);
-            toolItem.addSelectionListener(widgetSelectedAdapter(event -> {
-			    menuManager.update(true);
-			    Point point = new Point(event.x, event.y);
-			    if (event.widget instanceof ToolItem) {
-			        ToolItem toolItem = (ToolItem) event.widget;
-			        Rectangle rectangle = toolItem.getBounds();
+			toolItem.setText(""); //$NON-NLS-1$
+			toolItem.setToolTipText(WorkbenchMessages.PerspectiveBarNewContributionItem_toolTip);
+			toolItem.addSelectionListener(widgetSelectedAdapter(event -> {
+				menuManager.update(true);
+				Point point = new Point(event.x, event.y);
+				if (event.widget instanceof ToolItem) {
+					ToolItem toolItem = (ToolItem) event.widget;
+					Rectangle rectangle = toolItem.getBounds();
 					point = new Point(rectangle.x, rectangle.y + rectangle.height);
-			    }
-			    Menu menu = menuManager.createContextMenu(parent);
-			    point = parent.toDisplay(point);
-			    menu.setLocation(point.x, point.y);
-			    menu.setVisible(true);
+				}
+				Menu menu = menuManager.createContextMenu(parent);
+				point = parent.toDisplay(point);
+				menu.setLocation(point.x, point.y);
+				menu.setVisible(true);
 			}));
-        }
-    }
+		}
+	}
 }

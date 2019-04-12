@@ -47,30 +47,30 @@ import org.eclipse.ui.internal.util.Util;
  * @since 2.1
  */
 public class WorkingSetFilterActionGroup extends ActionGroup {
-    private static final String TAG_WORKING_SET_NAME = "workingSetName"; //$NON-NLS-1$
+	private static final String TAG_WORKING_SET_NAME = "workingSetName"; //$NON-NLS-1$
 
-    /**
-     * Indicates if working set was changed
-     */
-    public static final String CHANGE_WORKING_SET = "changeWorkingSet"; //$NON-NLS-1$
+	/**
+	 * Indicates if working set was changed
+	 */
+	public static final String CHANGE_WORKING_SET = "changeWorkingSet"; //$NON-NLS-1$
 
-    private static final String START_SEPARATOR_ID = "workingSetGroupStartSeparator"; //$NON-NLS-1$
+	private static final String START_SEPARATOR_ID = "workingSetGroupStartSeparator"; //$NON-NLS-1$
 
-    private static final String SEPARATOR_ID = "workingSetGroupSeparator"; //$NON-NLS-1$
+	private static final String SEPARATOR_ID = "workingSetGroupSeparator"; //$NON-NLS-1$
 
 	private static final String WORKING_SET_ACTION_GROUP = "workingSetActionGroup"; //$NON-NLS-1$
 
-    private IWorkingSet workingSet = null;
+	private IWorkingSet workingSet = null;
 
-    private ClearWorkingSetAction clearWorkingSetAction;
+	private ClearWorkingSetAction clearWorkingSetAction;
 
-    private SelectWorkingSetAction selectWorkingSetAction;
+	private SelectWorkingSetAction selectWorkingSetAction;
 
-    private EditWorkingSetAction editWorkingSetAction;
+	private EditWorkingSetAction editWorkingSetAction;
 
-    private IPropertyChangeListener workingSetUpdater;
+	private IPropertyChangeListener workingSetUpdater;
 
-    private IMenuManager menuManager;
+	private IMenuManager menuManager;
 
 	private IWorkbenchWindow workbenchWindow;
 
@@ -80,61 +80,54 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
 	private CompoundContributionItem mruList;
 
-    /**
+	/**
 	 * Creates a new instance of the receiver.
 	 *
-	 * @param shell
-	 *            shell to open dialogs and wizards on
-	 * @param workingSetUpdater
-	 *            property change listener notified when a working set is set
-	 * @since 3.2 Please note that it is expected that clients treat any
-	 *        selected working sets whose
-	 *        {@link IWorkingSet#isAggregateWorkingSet()} method returns
-	 *        <code>true</code> somewhat differently from traditional working
-	 *        sets. Please see the documentation for
+	 * @param shell             shell to open dialogs and wizards on
+	 * @param workingSetUpdater property change listener notified when a working set
+	 *                          is set
+	 * @since 3.2 Please note that it is expected that clients treat any selected
+	 *        working sets whose {@link IWorkingSet#isAggregateWorkingSet()} method
+	 *        returns <code>true</code> somewhat differently from traditional
+	 *        working sets. Please see the documentation for
 	 *        {@link IWorkbenchPage#getAggregateWorkingSet()} for details.
 	 */
-    public WorkingSetFilterActionGroup(Shell shell,
-            IPropertyChangeListener workingSetUpdater) {
-        Assert.isNotNull(shell);
+	public WorkingSetFilterActionGroup(Shell shell, IPropertyChangeListener workingSetUpdater) {
+		Assert.isNotNull(shell);
 
-        this.workingSetUpdater = workingSetUpdater;
-        clearWorkingSetAction = new ClearWorkingSetAction(this);
-        selectWorkingSetAction = new SelectWorkingSetAction(this, shell);
-        editWorkingSetAction = new EditWorkingSetAction(this, shell);
-        mruList = new CompoundContributionItem() {
+		this.workingSetUpdater = workingSetUpdater;
+		clearWorkingSetAction = new ClearWorkingSetAction(this);
+		selectWorkingSetAction = new SelectWorkingSetAction(this, shell);
+		editWorkingSetAction = new EditWorkingSetAction(this, shell);
+		mruList = new CompoundContributionItem() {
 
 			@Override
 			protected IContributionItem[] getContributionItems() {
-				IWorkingSet[] workingSets = PlatformUI.getWorkbench()
-						.getWorkingSetManager().getRecentWorkingSets();
+				IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
 				List items = new ArrayList(workingSets.length);
 				List sortedWorkingSets = Arrays.asList(workingSets);
 				Collections.sort(sortedWorkingSets, new WorkingSetComparator());
 
 				int mruMenuCount = 0;
 				if (page != null && page.getAggregateWorkingSet() != null) {
-					IContributionItem item = new WorkingSetMenuContributionItem(
-							++mruMenuCount,
+					IContributionItem item = new WorkingSetMenuContributionItem(++mruMenuCount,
 							WorkingSetFilterActionGroup.this, page.getAggregateWorkingSet());
 					items.add(item);
 				}
 				for (Iterator i = sortedWorkingSets.iterator(); i.hasNext();) {
 					IWorkingSet workingSet = (IWorkingSet) i.next();
 					if (workingSet != null && !workingSet.isAggregateWorkingSet()) {
-						IContributionItem item = new WorkingSetMenuContributionItem(
-								++mruMenuCount,
+						IContributionItem item = new WorkingSetMenuContributionItem(++mruMenuCount,
 								WorkingSetFilterActionGroup.this, workingSet);
 						items.add(item);
 					}
 				}
-				return (IContributionItem[]) items
-						.toArray(new IContributionItem[items.size()]);
+				return (IContributionItem[]) items.toArray(new IContributionItem[items.size()]);
 			}
-        };
+		};
 
-        workbenchWindow = Util.getWorkbenchWindowForShell(shell);
-        allowWindowWorkingSetByDefault = false;
+		workbenchWindow = Util.getWorkbenchWindowForShell(shell);
+		allowWindowWorkingSetByDefault = false;
 		// set the default working set to be that of the window.
 		page = workbenchWindow.getActivePage();
 		if (page == null) {
@@ -143,25 +136,24 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 				page = pages[0];
 			}
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
-        menuManager = actionBars.getMenuManager();
+		menuManager = actionBars.getMenuManager();
 
-        if(menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null)
-        	menuManager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(WORKING_SET_ACTION_GROUP));
-        else
-        	menuManager.add(new Separator(WORKING_SET_ACTION_GROUP));
+		if (menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null)
+			menuManager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(WORKING_SET_ACTION_GROUP));
+		else
+			menuManager.add(new Separator(WORKING_SET_ACTION_GROUP));
 
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, selectWorkingSetAction);
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, clearWorkingSetAction);
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, editWorkingSetAction);
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(START_SEPARATOR_ID));
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, mruList);
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(SEPARATOR_ID));
-    }
-
+		menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, selectWorkingSetAction);
+		menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, clearWorkingSetAction);
+		menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, editWorkingSetAction);
+		menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(START_SEPARATOR_ID));
+		menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, mruList);
+		menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(SEPARATOR_ID));
+	}
 
 	@Override
 	public void fillContextMenu(IMenuManager menuManager) {
@@ -169,56 +161,54 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		menuManager.add(clearWorkingSetAction);
 		menuManager.add(editWorkingSetAction);
 		menuManager.add(new Separator());
-        menuManager.add(mruList);
+		menuManager.add(mruList);
 		menuManager.add(new Separator(SEPARATOR_ID));
 	}
 
-    /**
-     * Returns the working set which is currently selected.
-     *
-     * @return the working set which is currently selected.
-     */
-    public IWorkingSet getWorkingSet() {
-        return workingSet;
-    }
+	/**
+	 * Returns the working set which is currently selected.
+	 *
+	 * @return the working set which is currently selected.
+	 */
+	public IWorkingSet getWorkingSet() {
+		return workingSet;
+	}
 
-    /**
-     * Sets the current working set.
-     *
-     * @param newWorkingSet the new working set
-     */
-    public void setWorkingSet(IWorkingSet newWorkingSet) {
-        IWorkingSet oldWorkingSet = workingSet;
+	/**
+	 * Sets the current working set.
+	 *
+	 * @param newWorkingSet the new working set
+	 */
+	public void setWorkingSet(IWorkingSet newWorkingSet) {
+		IWorkingSet oldWorkingSet = workingSet;
 
-        workingSet = newWorkingSet;
-        // Update action
-        clearWorkingSetAction.setEnabled(newWorkingSet != null);
-        editWorkingSetAction.setEnabled(newWorkingSet != null && newWorkingSet.isEditable());
+		workingSet = newWorkingSet;
+		// Update action
+		clearWorkingSetAction.setEnabled(newWorkingSet != null);
+		editWorkingSetAction.setEnabled(newWorkingSet != null && newWorkingSet.isEditable());
 
-        firePropertyChange(newWorkingSet, oldWorkingSet);
-    }
+		firePropertyChange(newWorkingSet, oldWorkingSet);
+	}
 
-    /**
-     * Fire the property change to the updater if there is one available.
-     *
-     * @param newWorkingSet the new working set
-     * @param oldWorkingSet the previous working set
-     * @since 3.2
-     */
+	/**
+	 * Fire the property change to the updater if there is one available.
+	 *
+	 * @param newWorkingSet the new working set
+	 * @param oldWorkingSet the previous working set
+	 * @since 3.2
+	 */
 	private void firePropertyChange(IWorkingSet newWorkingSet, IWorkingSet oldWorkingSet) {
 		// Update viewer
 		if (workingSetUpdater != null && newWorkingSet != oldWorkingSet) {
-            workingSetUpdater.propertyChange(new PropertyChangeEvent(this,
-                    WorkingSetFilterActionGroup.CHANGE_WORKING_SET,
-                    oldWorkingSet, newWorkingSet));
-        }
+			workingSetUpdater.propertyChange(new PropertyChangeEvent(this,
+					WorkingSetFilterActionGroup.CHANGE_WORKING_SET, oldWorkingSet, newWorkingSet));
+		}
 	}
 
 	/**
 	 * Saves the state of the filter actions in a memento.
 	 *
-	 * @param memento
-	 *            the memento
+	 * @param memento the memento
 	 * @since 3.3
 	 */
 	public void saveState(IMemento memento) {
@@ -248,10 +238,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	}
 
 	private boolean useWindowWorkingSetByDefault() {
-		return allowWindowWorkingSetByDefault
-				&& PlatformUI
-						.getPreferenceStore()
-						.getBoolean(
-								IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT);
+		return allowWindowWorkingSetByDefault && PlatformUI.getPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT);
 	}
 }

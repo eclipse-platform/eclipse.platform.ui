@@ -22,55 +22,56 @@ import org.eclipse.ui.IPersistableElement;
 /**
  * Implements an input for a <code>AbstractMultiEditor</code>.
  *
- * This class is intended to be instantiated by clients but is
- * not intended to be subclassed.
+ * This class is intended to be instantiated by clients but is not intended to
+ * be subclassed.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MultiEditorInput implements IEditorInput {
 
-    IEditorInput input[];
+	IEditorInput input[];
 
-    String editors[];
+	String editors[];
 
-    /**
-     * Constructs a new MultiEditorInput.
-     */
-    public MultiEditorInput(String[] editorIDs, IEditorInput[] innerEditors) {
-        Assert.isNotNull(editorIDs);
-        Assert.isNotNull(innerEditors);
-        editors = editorIDs;
-        input = innerEditors;
-    }
+	/**
+	 * Constructs a new MultiEditorInput.
+	 */
+	public MultiEditorInput(String[] editorIDs, IEditorInput[] innerEditors) {
+		Assert.isNotNull(editorIDs);
+		Assert.isNotNull(innerEditors);
+		editors = editorIDs;
+		input = innerEditors;
+	}
 
-    /**
-     * Returns an array with the input of all inner editors.
-     */
-    public IEditorInput[] getInput() {
-        return input;
-    }
+	/**
+	 * Returns an array with the input of all inner editors.
+	 */
+	public IEditorInput[] getInput() {
+		return input;
+	}
 
-    /**
-     * Retunrs an array with the id of all inner editors.
-     */
-    public String[] getEditors() {
-        return editors;
-    }
+	/**
+	 * Retunrs an array with the id of all inner editors.
+	 */
+	public String[] getEditors() {
+		return editors;
+	}
 
-    /*
-     * @see IEditorInput#exists()
-     */
-    @Override
+	/*
+	 * @see IEditorInput#exists()
+	 */
+	@Override
 	public boolean exists() {
-        return true;
-    }
+		return true;
+	}
 
-    /*
-     * @see IEditorInput#getImageDescriptor()
-     */
-    @Override
+	/*
+	 * @see IEditorInput#getImageDescriptor()
+	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return null;
-    }
+		return null;
+	}
 
 	@Override
 	public String getName() {
@@ -82,50 +83,48 @@ public class MultiEditorInput implements IEditorInput {
 		return name.toString();
 	}
 
-    @Override
+	@Override
 	public IPersistableElement getPersistable() {
-        return null;
-    }
+		return null;
+	}
 
-    /*
-     * @see IEditorInput#getToolTipText()
-     */
-    @Override
+	/*
+	 * @see IEditorInput#getToolTipText()
+	 */
+	@Override
 	public String getToolTipText() {
-        return getName();
-    }
+		return getName();
+	}
 
-    /*
-     * @see IAdaptable#getAdapter(Class)
-     */
-    @Override
+	/*
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        return null;
-    }
+		return null;
+	}
 
-
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        if (this == obj) {
+		if (this == obj) {
 			return true;
 		}
-        if (!(obj instanceof MultiEditorInput)) {
+		if (!(obj instanceof MultiEditorInput)) {
 			return false;
 		}
-        MultiEditorInput other = (MultiEditorInput) obj;
-        return Arrays.equals(this.editors, other.editors) && Arrays.equals(this.input, other.input);
-    }
+		MultiEditorInput other = (MultiEditorInput) obj;
+		return Arrays.equals(this.editors, other.editors) && Arrays.equals(this.input, other.input);
+	}
 
-
-    @Override
+	@Override
 	public int hashCode() {
-        int hash = 0;
-        for (String editor : editors) {
-            hash = hash * 37 + editor.hashCode();
-        }
-        for (IEditorInput editorInput : input) {
-            hash = hash * 37 + editorInput.hashCode();
-        }
-        return hash;
-    }
+		int hash = 0;
+		for (String editor : editors) {
+			hash = hash * 37 + editor.hashCode();
+		}
+		for (IEditorInput editorInput : input) {
+			hash = hash * 37 + editorInput.hashCode();
+		}
+		return hash;
+	}
 }

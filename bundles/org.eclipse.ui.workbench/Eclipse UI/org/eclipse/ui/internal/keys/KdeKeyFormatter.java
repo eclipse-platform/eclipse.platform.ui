@@ -24,46 +24,43 @@ import org.eclipse.ui.keys.ModifierKey;
 
 public final class KdeKeyFormatter extends AbstractKeyFormatter {
 
-    private static final class KdeModifierKeyComparator extends
-            AbstractModifierKeyComparator {
+	private static final class KdeModifierKeyComparator extends AbstractModifierKeyComparator {
 
-        @Override
+		@Override
 		protected int rank(ModifierKey modifierKey) {
-            if (ModifierKey.ALT.equals(modifierKey)) {
-                return 0;
-            }
+			if (ModifierKey.ALT.equals(modifierKey)) {
+				return 0;
+			}
 
-            if (ModifierKey.CTRL.equals(modifierKey)) {
-                return 1;
-            }
+			if (ModifierKey.CTRL.equals(modifierKey)) {
+				return 1;
+			}
 
-            if (ModifierKey.SHIFT.equals(modifierKey)) {
-                return 2;
-            }
+			if (ModifierKey.SHIFT.equals(modifierKey)) {
+				return 2;
+			}
 
-            return Integer.MAX_VALUE;
-        }
-    }
+			return Integer.MAX_VALUE;
+		}
+	}
 
-    private static final Comparator MODIFIER_KEY_COMPARATOR = new KdeModifierKeyComparator();
+	private static final Comparator MODIFIER_KEY_COMPARATOR = new KdeModifierKeyComparator();
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(KdeKeyFormatter.class.getName());
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KdeKeyFormatter.class.getName());
 
-    @Override
+	@Override
 	protected String getKeyDelimiter() {
-        return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY,
-                KeyStroke.KEY_DELIMITER, false, false);
-    }
+		return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY, KeyStroke.KEY_DELIMITER, false, false);
+	}
 
-    @Override
+	@Override
 	protected String getKeyStrokeDelimiter() {
-        return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY,
-                KeySequence.KEY_STROKE_DELIMITER, false, false);
-    }
+		return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY, KeySequence.KEY_STROKE_DELIMITER, false,
+				false);
+	}
 
-    @Override
+	@Override
 	protected Comparator getModifierKeyComparator() {
-        return MODIFIER_KEY_COMPARATOR;
-    }
+		return MODIFIER_KEY_COMPARATOR;
+	}
 }

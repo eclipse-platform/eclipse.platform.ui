@@ -22,11 +22,12 @@ import org.eclipse.core.runtime.IStatus;
  */
 public interface ISelectionStatusValidator {
 
-    /**
-     * Validates an array of elements and returns the resulting status.
-     * @param selection The elements to validate
-     * @return The resulting status
-     */
-    IStatus validate(Object[] selection);
+	/**
+	 * Validates an array of elements and returns the resulting status.
+	 * 
+	 * @param selection The elements to validate
+	 * @return The resulting status
+	 */
+	IStatus validate(Object[] selection);
 
 }

@@ -26,49 +26,43 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  *
  * @since 3.2
  */
-public final class ParameterValueConverterProxy extends
-		AbstractParameterValueConverter {
+public final class ParameterValueConverterProxy extends AbstractParameterValueConverter {
 
 	/**
-	 * The configuration element providing the executable extension that will
-	 * extend <code>AbstractParameterValueConverter</code>. This value will
-	 * not be <code>null</code>.
+	 * The configuration element providing the executable extension that will extend
+	 * <code>AbstractParameterValueConverter</code>. This value will not be
+	 * <code>null</code>.
 	 */
 	private final IConfigurationElement converterConfigurationElement;
 
 	/**
-	 * The real parameter value converter instance. This will be
-	 * <code>null</code> until one of the conversion methods are used.
+	 * The real parameter value converter instance. This will be <code>null</code>
+	 * until one of the conversion methods are used.
 	 */
 	private AbstractParameterValueConverter parameterValueConverter;
 
 	/**
-	 * Constructs a <code>ParameterValueConverterProxy</code> to represent the
-	 * real converter until it is needed.
+	 * Constructs a <code>ParameterValueConverterProxy</code> to represent the real
+	 * converter until it is needed.
 	 *
-	 * @param converterConfigurationElement
-	 *            The configuration element from which the real converter can be
-	 *            loaded.
+	 * @param converterConfigurationElement The configuration element from which the
+	 *                                      real converter can be loaded.
 	 */
-	public ParameterValueConverterProxy(
-			final IConfigurationElement converterConfigurationElement) {
+	public ParameterValueConverterProxy(final IConfigurationElement converterConfigurationElement) {
 		if (converterConfigurationElement == null) {
-			throw new NullPointerException(
-					"converterConfigurationElement must not be null"); //$NON-NLS-1$
+			throw new NullPointerException("converterConfigurationElement must not be null"); //$NON-NLS-1$
 		}
 
 		this.converterConfigurationElement = converterConfigurationElement;
 	}
 
 	@Override
-	public Object convertToObject(final String parameterValue)
-			throws ParameterValueConversionException {
+	public Object convertToObject(final String parameterValue) throws ParameterValueConversionException {
 		return getConverter().convertToObject(parameterValue);
 	}
 
 	@Override
-	public String convertToString(final Object parameterValue)
-			throws ParameterValueConversionException {
+	public String convertToString(final Object parameterValue) throws ParameterValueConversionException {
 		return getConverter().convertToString(parameterValue);
 	}
 
@@ -77,18 +71,16 @@ public final class ParameterValueConverterProxy extends
 	 * exception indicating the converter could not be obtained.
 	 *
 	 * @return the real converter for this proxy; never <code>null</code>.
-	 * @throws ParameterValueConversionException
-	 *             if the converter could not be obtained
+	 * @throws ParameterValueConversionException if the converter could not be
+	 *                                           obtained
 	 */
-	private AbstractParameterValueConverter getConverter()
-			throws ParameterValueConversionException {
+	private AbstractParameterValueConverter getConverter() throws ParameterValueConversionException {
 		if (parameterValueConverter == null) {
 			try {
 				parameterValueConverter = (AbstractParameterValueConverter) converterConfigurationElement
 						.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CONVERTER);
 			} catch (final CoreException e) {
-				throw new ParameterValueConversionException(
-						"Problem creating parameter value converter", e); //$NON-NLS-1$
+				throw new ParameterValueConversionException("Problem creating parameter value converter", e); //$NON-NLS-1$
 			} catch (final ClassCastException e) {
 				throw new ParameterValueConversionException(
 						"Parameter value converter was not a subclass of AbstractParameterValueConverter", e); //$NON-NLS-1$

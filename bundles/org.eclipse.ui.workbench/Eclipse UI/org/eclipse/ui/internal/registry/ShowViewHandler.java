@@ -33,27 +33,24 @@ import org.eclipse.ui.statushandlers.StatusManager;
 public final class ShowViewHandler extends AbstractHandler {
 
 	/**
-	 * The identifier of the view this handler should open. This value should
-	 * never be <code>null</code>.
+	 * The identifier of the view this handler should open. This value should never
+	 * be <code>null</code>.
 	 */
 	private final String viewId;
 
 	/**
 	 * Constructs a new instance of <code>ShowViewHandler</code>.
 	 *
-	 * @param viewId
-	 *            The identifier of the view this handler should open; must not
-	 *            be <code>null</code>.
+	 * @param viewId The identifier of the view this handler should open; must not
+	 *               be <code>null</code>.
 	 */
 	public ShowViewHandler(final String viewId) {
 		this.viewId = viewId;
 	}
 
 	@Override
-	public Object execute(final ExecutionEvent event)
-			throws ExecutionException {
-		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
+		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
 		if (activePage == null) {
@@ -63,8 +60,7 @@ public final class ShowViewHandler extends AbstractHandler {
 		try {
 			activePage.showView(viewId);
 		} catch (PartInitException e) {
-			IStatus status = StatusUtil
-					.newStatus(e.getStatus(), e.getMessage());
+			IStatus status = StatusUtil.newStatus(e.getStatus(), e.getMessage());
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
 		}
 

@@ -67,15 +67,14 @@ import org.eclipse.ui.keys.IBindingService;
  *
  */
 
-public abstract class CycleBaseHandler extends AbstractHandler implements
-		IExecutableExtension {
+public abstract class CycleBaseHandler extends AbstractHandler implements IExecutableExtension {
 	private Object selection;
 	protected IWorkbenchWindow window;
 	// true to go to next and false to go to previous part
 	protected boolean gotoDirection;
 	/**
-	 * The list of key bindings for the backward command when it is open. This
-	 * value is <code>null</code> if the dialog is not open.
+	 * The list of key bindings for the backward command when it is open. This value
+	 * is <code>null</code> if the dialog is not open.
 	 */
 	private TriggerSequence[] backwardTriggerSequences = null;
 
@@ -83,11 +82,10 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 
 	protected ParameterizedCommand commandForward = null;
 	/**
-	 * The list of key bindings for the forward command when it is open. This
-	 * value is <code>null</code> if the dialog is not open.
+	 * The list of key bindings for the forward command when it is open. This value
+	 * is <code>null</code> if the dialog is not open.
 	 */
 	private TriggerSequence[] forwardTriggerSequences = null;
-
 
 	/**
 	 * Add all items to the dialog in the activation order
@@ -116,7 +114,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		IWorkbenchPage page = window.getActivePage();
-		IWorkbenchPart activePart= page.getActivePart();
+		IWorkbenchPart activePart = page.getActivePart();
 		getTriggers();
 		openDialog((WorkbenchPage) page, activePart);
 		clearTriggers();
@@ -160,13 +158,13 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		default:
 			int i;
 			if (gotoDirection) {
-				i= getCurrentItemIndex() + 1;
+				i = getCurrentItemIndex() + 1;
 				if (i >= tableItemCount)
-					i= 0;
+					i = 0;
 			} else {
-				i= getCurrentItemIndex() - 1;
+				i = getCurrentItemIndex() - 1;
 				if (i < 0)
-					i= tableItemCount - 1;
+					i = tableItemCount - 1;
 			}
 			table.setSelection(i);
 		}
@@ -176,12 +174,10 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		dialog.pack();
 
 		Rectangle tableBounds = table.getBounds();
-		tableBounds.height = Math.min(tableBounds.height, table.getItemHeight()
-				* MAX_ITEMS);
+		tableBounds.height = Math.min(tableBounds.height, table.getItemHeight() * MAX_ITEMS);
 		table.setBounds(tableBounds);
 
-		dialog.setBounds(dialog.computeTrim(tableBounds.x, tableBounds.y,
-				tableBounds.width, tableBounds.height));
+		dialog.setBounds(dialog.computeTrim(tableBounds.x, tableBounds.y, tableBounds.width, tableBounds.height));
 
 		tc.setWidth(table.getClientArea().width);
 		table.setFocus();
@@ -205,8 +201,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 				if (table.equals(e.getSource())) {
 					TableItem tableItem = table.getItem(new Point(e.x, e.y));
 					if (fLastItem == null ^ tableItem == null) {
-						table.setCursor(tableItem == null ? null : table.getDisplay().getSystemCursor(
-								SWT.CURSOR_HAND));
+						table.setCursor(tableItem == null ? null : table.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 					}
 					if (tableItem != null) {
 						if (!tableItem.equals(fLastItem)) {
@@ -222,8 +217,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 
 		setDialogLocation(dialog, activePart);
 
-		final IContextService contextService = window
-				.getWorkbench().getService(IContextService.class);
+		final IContextService contextService = window.getWorkbench().getService(IContextService.class);
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
@@ -255,26 +249,19 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		Rectangle parentBounds = dialog.getParent().getBounds();
 
 		// the bounds of the monitor that contains the currently active part.
-		Rectangle monitorBounds = activePart == null ? display
-.getPrimaryMonitor().getBounds()
-				: ((Control) ((PartSite) activePart.getSite()).getModel().getWidget()).getMonitor()
-						.getBounds();
+		Rectangle monitorBounds = activePart == null ? display.getPrimaryMonitor().getBounds()
+				: ((Control) ((PartSite) activePart.getSite()).getModel().getWidget()).getMonitor().getBounds();
 
 		// Place it in the center of its parent;
-		dialogBounds.x = parentBounds.x
-				+ ((parentBounds.width - dialogBounds.width) / 2);
-		dialogBounds.y = parentBounds.y
-				+ ((parentBounds.height - dialogBounds.height) / 2);
+		dialogBounds.x = parentBounds.x + ((parentBounds.width - dialogBounds.width) / 2);
+		dialogBounds.y = parentBounds.y + ((parentBounds.height - dialogBounds.height) / 2);
 		if (!monitorBounds.contains(dialogBounds.x, dialogBounds.y)
-				|| !monitorBounds.contains(dialogBounds.x + dialogBounds.width,
-						dialogBounds.y + dialogBounds.height)) {
+				|| !monitorBounds.contains(dialogBounds.x + dialogBounds.width, dialogBounds.y + dialogBounds.height)) {
 			// Place it in the center of the monitor if it is not visible
 			// when placed in the center of its parent.
 			// Ensure the origin is visible on the screen.
-			dialogBounds.x = Math.max(0,
-					monitorBounds.x + (monitorBounds.width - dialogBounds.width) / 2);
-			dialogBounds.y =  Math.max(0,
-					monitorBounds.y + (monitorBounds.height - dialogBounds.height) / 2);
+			dialogBounds.x = Math.max(0, monitorBounds.x + (monitorBounds.width - dialogBounds.width) / 2);
+			dialogBounds.y = Math.max(0, monitorBounds.y + (monitorBounds.height - dialogBounds.height) / 2);
 		}
 
 		dialog.setLocation(dialogBounds.x, dialogBounds.y);
@@ -289,19 +276,16 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	}
 
 	/**
-	 * Fetch the key bindings for the forward and backward commands. They will
-	 * not change while the dialog is open, but the context will. Bug 55581.
+	 * Fetch the key bindings for the forward and backward commands. They will not
+	 * change while the dialog is open, but the context will. Bug 55581.
 	 */
 	protected void getTriggers() {
 		commandForward = getForwardCommand();
 		commandBackward = getBackwardCommand();
 
-		final IBindingService bindingService = window
-				.getWorkbench().getService(IBindingService.class);
-		forwardTriggerSequences = bindingService
-				.getActiveBindingsFor(commandForward);
-		backwardTriggerSequences = bindingService
-				.getActiveBindingsFor(commandBackward);
+		final IBindingService bindingService = window.getWorkbench().getService(IBindingService.class);
+		forwardTriggerSequences = bindingService.getActiveBindingsFor(commandForward);
+		backwardTriggerSequences = bindingService.getActiveBindingsFor(commandBackward);
 	}
 
 	protected void addKeyListener(final Table table, final Shell dialog) {
@@ -314,10 +298,8 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 			public void keyPressed(KeyEvent e) {
 				int keyCode = e.keyCode;
 				char character = e.character;
-				int accelerator = SWTKeySupport
-						.convertEventToUnmodifiedAccelerator(e);
-				KeyStroke keyStroke = SWTKeySupport
-						.convertAcceleratorToKeyStroke(accelerator);
+				int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(e);
+				KeyStroke keyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(accelerator);
 
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
@@ -329,12 +311,9 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 							final TriggerSequence triggerSequence = forwardTriggerSequences[i];
 
 							// Compare the last key stroke of the binding.
-							final Trigger[] triggers = triggerSequence
-									.getTriggers();
+							final Trigger[] triggers = triggerSequence.getTriggers();
 							final int triggersLength = triggers.length;
-							if ((triggersLength > 0)
-									&& (triggers[triggersLength - 1]
-											.equals(keyStroke))) {
+							if ((triggersLength > 0) && (triggers[triggersLength - 1].equals(keyStroke))) {
 								acceleratorForward = true;
 								break;
 							}
@@ -349,12 +328,9 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 							final TriggerSequence triggerSequence = backwardTriggerSequences[i];
 
 							// Compare the last key stroke of the binding.
-							final Trigger[] triggers = triggerSequence
-									.getTriggers();
+							final Trigger[] triggers = triggerSequence.getTriggers();
 							final int triggersLength = triggers.length;
-							if ((triggersLength > 0)
-									&& (triggers[triggersLength - 1]
-											.equals(keyStroke))) {
+							if ((triggersLength > 0) && (triggers[triggersLength - 1].equals(keyStroke))) {
 								acceleratorBackward = true;
 								break;
 							}
@@ -377,12 +353,9 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 					}
 
 					int index = table.getSelectionIndex();
-					table.setSelection(index >= 1 ? index - 1 : table
-							.getItemCount() - 1);
-				} else if (keyCode != SWT.ALT && keyCode != SWT.COMMAND
-						&& keyCode != SWT.CTRL && keyCode != SWT.SHIFT
-						&& keyCode != SWT.ARROW_DOWN && keyCode != SWT.ARROW_UP
-						&& keyCode != SWT.ARROW_LEFT
+					table.setSelection(index >= 1 ? index - 1 : table.getItemCount() - 1);
+				} else if (keyCode != SWT.ALT && keyCode != SWT.COMMAND && keyCode != SWT.CTRL && keyCode != SWT.SHIFT
+						&& keyCode != SWT.ARROW_DOWN && keyCode != SWT.ARROW_UP && keyCode != SWT.ARROW_LEFT
 						&& keyCode != SWT.ARROW_RIGHT) {
 					cancel(dialog);
 				}
@@ -395,12 +368,9 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 				int keyCode = e.keyCode;
 				int stateMask = e.stateMask;
 
-				final IPreferenceStore store = WorkbenchPlugin.getDefault()
-						.getPreferenceStore();
-				final boolean stickyCycle = store
-						.getBoolean(IPreferenceConstants.STICKY_CYCLE);
-				if ((!stickyCycle && (firstKey || quickReleaseMode))
-						&& keyCode == stateMask) {
+				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				final boolean stickyCycle = store.getBoolean(IPreferenceConstants.STICKY_CYCLE);
+				if ((!stickyCycle && (firstKey || quickReleaseMode)) && keyCode == stateMask) {
 					ok(dialog, table);
 				}
 			}
@@ -410,9 +380,8 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	/**
 	 * Adds a listener to the given table that blocks all traversal operations.
 	 *
-	 * @param table
-	 *            The table to which the traversal suppression should be added;
-	 *            must not be <code>null</code>.
+	 * @param table The table to which the traversal suppression should be added;
+	 *              must not be <code>null</code>.
 	 */
 	protected final void addTraverseListener(final Table table) {
 		table.addTraverseListener(event -> event.doit = false);
@@ -421,10 +390,8 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	/**
 	 * Activate the selected item.
 	 *
-	 * @param page
-	 *            the page
-	 * @param selectedItem
-	 *            the selected item
+	 * @param page         the page
+	 * @param selectedItem the selected item
 	 */
 	protected void activate(IWorkbenchPage page, Object selectedItem) {
 		if (selectedItem != null) {
@@ -439,17 +406,16 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 				page.setEditorAreaVisible(true);
 			}
 			if (selectedItem instanceof IWorkbenchPartReference) {
-				IWorkbenchPart part = ((IWorkbenchPartReference) selectedItem)
-						.getPart(true);
+				IWorkbenchPart part = ((IWorkbenchPartReference) selectedItem).getPart(true);
 				if (part != null) {
 					page.activate(part);
 				}
 				// the if conditions below do not need to be checked then
 				return;
 			}
-			if (selectedItem instanceof IPerspectiveDescriptor){
-	            IPerspectiveDescriptor persp = (IPerspectiveDescriptor) selectedItem;
-	            page.setPerspective(persp);
+			if (selectedItem instanceof IPerspectiveDescriptor) {
+				IPerspectiveDescriptor persp = (IPerspectiveDescriptor) selectedItem;
+				page.setPerspective(persp);
 				IWorkbenchPart activePart = page.getActivePart();
 				if (activePart != null) {
 					activePart.setFocus();
@@ -522,8 +488,8 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	}
 
 	@Override
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 		gotoDirection = "true".equals(data); //$NON-NLS-1$
 	}
 }

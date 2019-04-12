@@ -14,7 +14,6 @@
 
 package org.eclipse.ui.services;
 
-
 /**
  * Different levels of service locators supported by the workbench.
  *
@@ -40,12 +39,12 @@ public interface IServiceScopes {
 	String WINDOW_SCOPE = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
 
 	/**
-	 * A part site service locator scope.  Found in editors and views.
+	 * A part site service locator scope. Found in editors and views.
 	 */
 	String PARTSITE_SCOPE = "org.eclipse.ui.part.IWorkbenchPartSite"; //$NON-NLS-1$
 
 	/**
-	 * A page site service locator scope.  Found in pages in a PageBookView.
+	 * A page site service locator scope. Found in pages in a PageBookView.
 	 */
 	String PAGESITE_SCOPE = "org.eclipse.ui.part.PageSite"; //$NON-NLS-1$
 

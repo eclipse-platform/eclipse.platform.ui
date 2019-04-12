@@ -21,8 +21,9 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.model.AdaptableList;
 
 /**
- * Viewer filter designed to work with the new wizard page (and its input/content provider).
- * This will filter all non-primary wizards that are not enabled by activity.
+ * Viewer filter designed to work with the new wizard page (and its
+ * input/content provider). This will filter all non-primary wizards that are
+ * not enabled by activity.
  *
  * @since 3.0
  */
@@ -33,18 +34,18 @@ public class WizardActivityFilter extends ViewerFilter {
 		filterPrimaryWizards = filter;
 	}
 
-    @Override
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (parentElement.getClass().equals(AdaptableList.class) && !filterPrimaryWizards) {
-			return true; //top-level ("primary") wizards should always be returned
+			return true; // top-level ("primary") wizards should always be returned
 		}
 
-        if (WorkbenchActivityHelper.filterItem(element)) {
+		if (WorkbenchActivityHelper.filterItem(element)) {
 			return false;
 		}
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {

@@ -58,10 +58,10 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
- * A tooltip with useful information based on the type of ContributionItem
- * the cursor hovers over in a Tree. In addition to the content provided by
- * the {@link NameAndDescriptionToolTip} this includes action set
- * information and key binding data.
+ * A tooltip with useful information based on the type of ContributionItem the
+ * cursor hovers over in a Tree. In addition to the content provided by the
+ * {@link NameAndDescriptionToolTip} this includes action set information and
+ * key binding data.
  *
  * @since 3.5
  */
@@ -75,12 +75,11 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 
 	/**
 	 * @param dialog
-	 * @param tree
-	 *            The tree for the tooltip to hover over
+	 * @param tree   The tree for the tooltip to hover over
 	 */
 	ItemDetailToolTip(CustomizePerspectiveDialog dialog, TreeViewer v, Tree tree, boolean showActionSet,
 			boolean showKeyBindings, ViewerFilter filter) {
-		super(tree,NO_RECREATE);
+		super(tree, NO_RECREATE);
 		this.dialog = dialog;
 		this.tree = tree;
 		this.v = v;
@@ -95,8 +94,8 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 		// try to position the tooltip at the bottom of the cell
 		ViewerCell cell = v.getCell(new Point(event.x, event.y));
 
-		if( cell != null ) {
-			return tree.toDisplay(event.x,cell.getBounds().y+cell.getBounds().height);
+		if (cell != null) {
+			return tree.toDisplay(event.x, cell.getBounds().y + cell.getBounds().height);
 		}
 
 		return super.getLocation(tipSize, event);
@@ -117,78 +116,64 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 			String text = null;
 			Image image = null;
 
-			if(CustomizePerspectiveDialog.isEffectivelyAvailable(item, filter)) {
-				if(item.actionSet != null) {
-					//give information on which command group the item is in
+			if (CustomizePerspectiveDialog.isEffectivelyAvailable(item, filter)) {
+				if (item.actionSet != null) {
+					// give information on which command group the item is in
 
-					final String actionSetName = item.getActionSet().descriptor
-							.getLabel();
+					final String actionSetName = item.getActionSet().descriptor.getLabel();
 
-					text = NLS.bind(
-							WorkbenchMessages.HideItems_itemInActionSet,
-							actionSetName);
+					text = NLS.bind(WorkbenchMessages.HideItems_itemInActionSet, actionSetName);
 				}
 			} else {
-				//give feedback on why item is unavailable
+				// give feedback on why item is unavailable
 
 				image = dialog.warningImageDescriptor.createImage();
 
 				if (item.getChildren().isEmpty() && item.getActionSet() != null) {
-					//i.e. is a leaf
+					// i.e. is a leaf
 
-					final String actionSetName = item.getActionSet().
-							descriptor.getLabel();
+					final String actionSetName = item.getActionSet().descriptor.getLabel();
 
-					text = NLS.bind(
-							WorkbenchMessages.HideItems_itemInUnavailableActionSet,
-							actionSetName);
+					text = NLS.bind(WorkbenchMessages.HideItems_itemInUnavailableActionSet, actionSetName);
 
 				} else if (item.getChildren().isEmpty() && item.getActionSet() == null
 						&& item.getIContributionItem() instanceof HandledContributionItem) {
 					text = WorkbenchMessages.HideItems_itemInUnavailableCommand;
 				} else {
-					//i.e. has children
+					// i.e. has children
 					Set<ActionSet> actionGroup = new LinkedHashSet<>();
-					ItemDetailToolTip.collectDescendantCommandGroups(actionGroup, item,
-							filter);
+					ItemDetailToolTip.collectDescendantCommandGroups(actionGroup, item, filter);
 
 					if (actionGroup.size() == 1) {
-						//i.e. only one child
-						ActionSet actionSet = actionGroup.
-								iterator().next();
-						text = NLS.bind(
-								WorkbenchMessages.HideItems_unavailableChildCommandGroup,
-								actionSet.descriptor.getId(),
-								actionSet.descriptor.getLabel());
+						// i.e. only one child
+						ActionSet actionSet = actionGroup.iterator().next();
+						text = NLS.bind(WorkbenchMessages.HideItems_unavailableChildCommandGroup,
+								actionSet.descriptor.getId(), actionSet.descriptor.getLabel());
 					} else {
-						//i.e. multiple children
+						// i.e. multiple children
 						String commandGroupList = null;
 
 						for (ActionSet actionSet : actionGroup) {
 							// For each action set, make a link for it, set
 							// the href to its id
-							String commandGroupLink = MessageFormat.format(
-									"<a href=\"{0}\">{1}</a>", //$NON-NLS-1$
+							String commandGroupLink = MessageFormat.format("<a href=\"{0}\">{1}</a>", //$NON-NLS-1$
 									actionSet.descriptor.getId(), actionSet.descriptor.getLabel());
 
 							if (commandGroupList == null) {
 								commandGroupList = commandGroupLink;
 							} else {
-								commandGroupList = Util.createList(
-										commandGroupList, commandGroupLink);
+								commandGroupList = Util.createList(commandGroupList, commandGroupLink);
 							}
 						}
 
-						commandGroupList = NLS.bind(
-								"{0}{1}", new Object[] { CustomizePerspectiveDialog.NEW_LINE, commandGroupList }); //$NON-NLS-1$
-						text = NLS.bind(
-								WorkbenchMessages.HideItems_unavailableChildCommandGroups,
-								commandGroupList);
+						commandGroupList = NLS.bind("{0}{1}", //$NON-NLS-1$
+								new Object[] { CustomizePerspectiveDialog.NEW_LINE, commandGroupList });
+						text = NLS.bind(WorkbenchMessages.HideItems_unavailableChildCommandGroups, commandGroupList);
 					}
 				}
 			}
 
-			if(text != null) {
+			if (text != null) {
 				Link link = createEntryWithLink(destination, image, text);
 				link.addSelectionListener(new SelectionListener() {
 					@Override
@@ -214,8 +199,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 		// Show key binding info
 		if (showKeyBindings && CustomizePerspectiveDialog.getCommandID(item) != null) {
 			// See if there is a command associated with the command id
-			ICommandService commandService = dialog.window
-					.getService(ICommandService.class);
+			ICommandService commandService = dialog.window.getService(ICommandService.class);
 			Command command = commandService.getCommand(CustomizePerspectiveDialog.getCommandID(item));
 
 			if (command != null && command.isDefined()) {
@@ -226,19 +210,13 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 				String text = null;
 
 				// Is it possible for this item to be visible?
-				final boolean available = (item.getActionSet() == null)
-						|| (item.getActionSet().isActive());
+				final boolean available = (item.getActionSet() == null) || (item.getActionSet().isActive());
 
 				if (bindings.length > 0) {
 					if (available) {
-						text = NLS.bind(
-								WorkbenchMessages.HideItems_keyBindings,
-								keybindings);
+						text = NLS.bind(WorkbenchMessages.HideItems_keyBindings, keybindings);
 					} else {
-						text = NLS
-								.bind(
-										WorkbenchMessages.HideItems_keyBindingsActionSetUnavailable,
-										keybindings);
+						text = NLS.bind(WorkbenchMessages.HideItems_keyBindingsActionSetUnavailable, keybindings);
 					}
 				} else {
 					if (available) {
@@ -259,30 +237,24 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 					// the correct item
 					if (item instanceof ShortcutItem) {
 						if (CustomizePerspectiveDialog.isNewWizard(item)) {
-							parameters.put(
-											IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID,
+							parameters.put(IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID,
 									CustomizePerspectiveDialog.getParamID(item));
 						} else if (CustomizePerspectiveDialog.isShowPerspective(item)) {
-							parameters
-									.put(
-											IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID,
-											CustomizePerspectiveDialog.getParamID(item));
+							parameters.put(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID,
+									CustomizePerspectiveDialog.getParamID(item));
 						} else if (CustomizePerspectiveDialog.isShowView(item)) {
-							parameters.put(
-									IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID,
+							parameters.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID,
 									CustomizePerspectiveDialog.getParamID(item));
 						}
 					}
 
-					ParameterizedCommand pc = ParameterizedCommand
-							.generateCommand(command, parameters);
+					ParameterizedCommand pc = ParameterizedCommand.generateCommand(command, parameters);
 					highlight = pc;
 				} else {
 					highlight = bindings[0];
 				}
 
-				Link bindingLink = createEntryWithLink(destination, null,
-						text);
+				Link bindingLink = createEntryWithLink(destination, null, text);
 
 				bindingLink.addSelectionListener(new SelectionListener() {
 					@Override
@@ -293,8 +265,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						PreferenceDialog pdialog = PreferencesUtil.createPreferenceDialogOn(dialog.getShell(),
-										CustomizePerspectiveDialog.KEYS_PREFERENCE_PAGE_ID,
-										new String[0], highlight);
+								CustomizePerspectiveDialog.KEYS_PREFERENCE_PAGE_ID, new String[0], highlight);
 						hide();
 						pdialog.open();
 					}
@@ -316,8 +287,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 							.append(menuItem.getText());
 				}
 			} else {
-				text
-						.append(WorkbenchMessages.HideItems_dynamicItemEmptyList);
+				text.append(WorkbenchMessages.HideItems_dynamicItemEmptyList);
 			}
 			createEntry(destination, null, text.toString());
 		}
@@ -325,8 +295,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 
 	@Override
 	protected Object getModelElement(Event event) {
-		org.eclipse.swt.widgets.TreeItem treeItem = tree.getItem(new Point(
-				event.x, event.y));
+		org.eclipse.swt.widgets.TreeItem treeItem = tree.getItem(new Point(event.x, event.y));
 		if (treeItem == null) {
 			return null;
 		}
@@ -334,22 +303,18 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 	}
 
 	/**
-	 * @param collection
-	 *            a collection, into which all command groups (action sets)
-	 *            which contribute <code>item</code> or its descendants will be
-	 *            placed
-	 * @param item
-	 *            the item to collect descendants of
-	 * @param filter
-	 *            the filter currently being used
+	 * @param collection a collection, into which all command groups (action sets)
+	 *                   which contribute <code>item</code> or its descendants will
+	 *                   be placed
+	 * @param item       the item to collect descendants of
+	 * @param filter     the filter currently being used
 	 */
-	static void collectDescendantCommandGroups(Collection<ActionSet> collection,
-			DisplayItem item, ViewerFilter filter) {
+	static void collectDescendantCommandGroups(Collection<ActionSet> collection, DisplayItem item,
+			ViewerFilter filter) {
 		List<TreeItem> children = item.getChildren();
 		for (TreeItem treeItem : children) {
 			DisplayItem child = (DisplayItem) treeItem;
-			if ((filter == null || filter.select(null, null, child))
-					&& child.getActionSet() != null) {
+			if ((filter == null || filter.select(null, null, child)) && child.getActionSet() != null) {
 				collection.add(child.getActionSet());
 			}
 			collectDescendantCommandGroups(collection, child, filter);
@@ -367,8 +332,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 			// check to see if this one has already been recorded.
 			boolean alreadyRecorded = false;
 			for (int j = 0; j < i && !alreadyRecorded; j++) {
-				if (bindings[i].getTriggerSequence().equals(
-						bindings[j].getTriggerSequence())) {
+				if (bindings[i].getTriggerSequence().equals(bindings[j].getTriggerSequence())) {
 					alreadyRecorded = true;
 				}
 			}
@@ -397,11 +361,9 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 		String id = CustomizePerspectiveDialog.getCommandID(item);
 		String param = CustomizePerspectiveDialog.getParamID(item);
 
-		BindingManager bindingManager = ((BindingService) bindingService)
-				.getBindingManager();
+		BindingManager bindingManager = ((BindingService) bindingService).getBindingManager();
 
-		Collection<?> allBindings = bindingManager
-				.getActiveBindingsDisregardingContextFlat();
+		Collection<?> allBindings = bindingManager.getActiveBindingsDisregardingContextFlat();
 
 		List<Binding> foundBindings = new ArrayList<>(2);
 
@@ -438,8 +400,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 			}
 		}
 
-		Binding[] bindings = foundBindings
-				.toArray(new Binding[foundBindings.size()]);
+		Binding[] bindings = foundBindings.toArray(new Binding[foundBindings.size()]);
 
 		return bindings;
 	}

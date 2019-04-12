@@ -56,14 +56,11 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	/**
 	 * Create a new instance of the receiver with progress reported on the job.
 	 *
-	 * @param parentShell
-	 *            The shell this is parented from.
+	 * @param parentShell The shell this is parented from.
 	 */
 	public ProgressMonitorFocusJobDialog(Shell parentShell) {
-		super(parentShell == null ? ProgressManagerUtil.getNonModalShell()
-				: parentShell);
-		setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
-				| SWT.RESIZE | SWT.MAX | SWT.MODELESS);
+		super(parentShell == null ? ProgressManagerUtil.getNonModalShell() : parentShell);
+		setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE | SWT.RESIZE | SWT.MAX | SWT.MODELESS);
 		setCancelable(true);
 		enableDetailsButton = true;
 	}
@@ -89,11 +86,8 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		Button runInWorkspace = createButton(
-				parent,
-				IDialogConstants.CLOSE_ID,
-				ProgressMessages.ProgressMonitorFocusJobDialog_RunInBackgroundButton,
-				true);
+		Button runInWorkspace = createButton(parent, IDialogConstants.CLOSE_ID,
+				ProgressMessages.ProgressMonitorFocusJobDialog_RunInBackgroundButton, true);
 		runInWorkspace.addSelectionListener(widgetSelectedAdapter(e -> {
 			Rectangle shellPosition = getShell().getBounds();
 			job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, Boolean.FALSE);
@@ -102,8 +96,7 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		}));
 		runInWorkspace.setCursor(arrowCursor);
 
-		cancel = createButton(parent, IDialogConstants.CANCEL_ID,
-				IDialogConstants.CANCEL_LABEL, false);
+		cancel = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		cancel.setCursor(arrowCursor);
 
 		createDetailsButton(parent);
@@ -167,9 +160,8 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 * Opens this dialog for the duration that the given job is running.
 	 *
 	 * @param jobToWatch
-	 * @param originatingShell
-	 *            The shell this request was created from. Do not block on this
-	 *            shell.
+	 * @param originatingShell The shell this request was created from. Do not block
+	 *                         on this shell.
 	 */
 	public void show(Job jobToWatch, final Shell originatingShell) {
 		job = jobToWatch;
@@ -192,23 +184,21 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 		// start with a quick busy indicator. Lock the UI as we
 		// want to preserve modality
-		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(),
-				() -> {
-					try {
-						synchronized (jobIsDone) {
-							if (job.getState() != Job.NONE) {
-								jobIsDone.wait(ProgressManagerUtil.SHORT_OPERATION_TIME);
-							}
-						}
-					} catch (InterruptedException e) {
-						// Do not log as this is a common operation from the
-						// lock listener
+		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), () -> {
+			try {
+				synchronized (jobIsDone) {
+					if (job.getState() != Job.NONE) {
+						jobIsDone.wait(ProgressManagerUtil.SHORT_OPERATION_TIME);
 					}
-				});
+				}
+			} catch (InterruptedException e) {
+				// Do not log as this is a common operation from the
+				// lock listener
+			}
+		});
 		job.removeJobChangeListener(jobListener);
 
-		WorkbenchJob openJob = new WorkbenchJob(
-				ProgressMessages.ProgressMonitorFocusJobDialog_UserDialogJob) {
+		WorkbenchJob openJob = new WorkbenchJob(ProgressMessages.ProgressMonitorFocusJobDialog_UserDialogJob) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
@@ -220,8 +210,7 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				}
 
 				// now open the progress dialog if nothing else is
-				if (!ProgressManagerUtil.safeToOpen(
-						ProgressMonitorFocusJobDialog.this, originatingShell)) {
+				if (!ProgressManagerUtil.safeToOpen(ProgressMonitorFocusJobDialog.this, originatingShell)) {
 					return Status.CANCEL_STATUS;
 				}
 
@@ -246,8 +235,7 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	}
 
 	/**
-	 * The job finished before we did anything so clean up the finished
-	 * reference.
+	 * The job finished before we did anything so clean up the finished reference.
 	 */
 	private void cleanUpFinishedJob() {
 		ProgressManager.getInstance().checkForStaleness(job);
@@ -257,9 +245,8 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	protected Control createDialogArea(Composite parent) {
 		Control area = super.createDialogArea(parent);
 		// Give the job info as the initial details
-		getProgressMonitor().setTaskName(
-				ProgressManager.getInstance().progressFor(this.job).getJobInfo()
-						.getDisplayString());
+		getProgressMonitor()
+				.setTaskName(ProgressManager.getInstance().progressFor(this.job).getJobInfo().getDisplayString());
 		return area;
 	}
 
@@ -269,16 +256,15 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		showDialog = WorkbenchPlugin.getDefault().getPreferenceStore()
 				.getBoolean(IPreferenceConstants.RUN_IN_BACKGROUND);
 		final Button showUserDialogButton = new Button(parent, SWT.CHECK);
-		showUserDialogButton
-				.setText(WorkbenchMessages.WorkbenchPreference_RunInBackgroundButton);
-		showUserDialogButton
-				.setToolTipText(WorkbenchMessages.WorkbenchPreference_RunInBackgroundToolTip);
+		showUserDialogButton.setText(WorkbenchMessages.WorkbenchPreference_RunInBackgroundButton);
+		showUserDialogButton.setToolTipText(WorkbenchMessages.WorkbenchPreference_RunInBackgroundToolTip);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.horizontalAlignment = GridData.FILL;
 		showUserDialogButton.setLayoutData(gd);
 
-		showUserDialogButton.addSelectionListener(widgetSelectedAdapter(e -> showDialog = showUserDialogButton.getSelection()));
+		showUserDialogButton
+				.addSelectionListener(widgetSelectedAdapter(e -> showDialog = showUserDialogButton.getSelection()));
 
 		super.createExtendedDialogArea(parent);
 	}
@@ -286,8 +272,8 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	@Override
 	public boolean close() {
 		if (getReturnCode() != CANCEL)
-			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
-					IPreferenceConstants.RUN_IN_BACKGROUND, showDialog);
+			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.RUN_IN_BACKGROUND,
+					showDialog);
 
 		return super.close();
 	}

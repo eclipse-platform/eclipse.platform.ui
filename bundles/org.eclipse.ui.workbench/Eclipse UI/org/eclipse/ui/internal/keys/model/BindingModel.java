@@ -49,8 +49,7 @@ public class BindingModel extends CommonModel {
 	static final boolean deletes(final Binding del, final Binding binding) {
 		boolean deletes = true;
 		deletes &= Util.equals(del.getContextId(), binding.getContextId());
-		deletes &= Util.equals(del.getTriggerSequence(), binding
-				.getTriggerSequence());
+		deletes &= Util.equals(del.getTriggerSequence(), binding.getTriggerSequence());
 		if (del.getLocale() != null) {
 			deletes &= Util.equals(del.getLocale(), binding.getLocale());
 		}
@@ -108,8 +107,7 @@ public class BindingModel extends CommonModel {
 			return;
 		}
 		BindingElement be = new BindingElement(controller);
-		ParameterizedCommand parameterizedCommand = ((Binding) element
-				.getModelObject()).getParameterizedCommand();
+		ParameterizedCommand parameterizedCommand = ((Binding) element.getModelObject()).getParameterizedCommand();
 		be.init(parameterizedCommand);
 		be.setParent(this);
 		bindingElements.add(be);
@@ -146,8 +144,7 @@ public class BindingModel extends CommonModel {
 	 * @param manager
 	 * @param model
 	 */
-	public void init(IServiceLocator locator, BindingManager manager,
-			ContextModel model) {
+	public void init(IServiceLocator locator, BindingManager manager, ContextModel model) {
 		Set cmdsForBindings = new HashSet();
 		bindingToElement = new HashMap();
 		commandToElement = new HashMap();
@@ -155,8 +152,7 @@ public class BindingModel extends CommonModel {
 		bindingElements = new HashSet();
 		bindingManager = manager;
 
-		Iterator i = manager.getActiveBindingsDisregardingContextFlat()
-				.iterator();
+		Iterator i = manager.getActiveBindingsDisregardingContextFlat().iterator();
 		while (i.hasNext()) {
 			Binding b = (Binding) i.next();
 			BindingElement be = new BindingElement(controller);
@@ -167,18 +163,15 @@ public class BindingModel extends CommonModel {
 			cmdsForBindings.add(b.getParameterizedCommand());
 		}
 
-		ICommandService commandService = locator
-				.getService(ICommandService.class);
+		ICommandService commandService = locator.getService(ICommandService.class);
 		final Collection commandIds = commandService.getDefinedCommandIds();
 		allParameterizedCommands = new HashSet();
 		final Iterator commandIdItr = commandIds.iterator();
 		while (commandIdItr.hasNext()) {
 			final String currentCommandId = (String) commandIdItr.next();
-			final Command currentCommand = commandService
-					.getCommand(currentCommandId);
+			final Command currentCommand = commandService.getCommand(currentCommandId);
 			try {
-				allParameterizedCommands.addAll(ParameterizedCommand
-						.generateCombinations(currentCommand));
+				allParameterizedCommands.addAll(ParameterizedCommand.generateCombinations(currentCommand));
 			} catch (final NotDefinedException e) {
 				// It is safe to just ignore undefined commands.
 			}
@@ -204,15 +197,13 @@ public class BindingModel extends CommonModel {
 	 */
 	public void refresh(ContextModel contextModel) {
 		Set cmdsForBindings = new HashSet();
-		Collection activeManagerBindings = bindingManager
-				.getActiveBindingsDisregardingContextFlat();
+		Collection activeManagerBindings = bindingManager.getActiveBindingsDisregardingContextFlat();
 
 		// add any bindings that we don't already have.
 		Iterator i = activeManagerBindings.iterator();
 		while (i.hasNext()) {
 			KeyBinding b = (KeyBinding) i.next();
-			ParameterizedCommand parameterizedCommand = b
-					.getParameterizedCommand();
+			ParameterizedCommand parameterizedCommand = b.getParameterizedCommand();
 			cmdsForBindings.add(parameterizedCommand);
 			if (!bindingToElement.containsKey(b)) {
 				BindingElement be = new BindingElement(controller);
@@ -226,8 +217,7 @@ public class BindingModel extends CommonModel {
 						&& be.getUserDelta().intValue() == Binding.SYSTEM) {
 					Object remove = commandToElement.remove(parameterizedCommand);
 					bindingElements.remove(remove);
-					controller.firePropertyChange(this, PROP_BINDING_REMOVE,
-							null, remove);
+					controller.firePropertyChange(this, PROP_BINDING_REMOVE, null, remove);
 				}
 			}
 		}
@@ -246,8 +236,7 @@ public class BindingModel extends CommonModel {
 					}
 					bindingToElement.remove(b);
 					i.remove();
-					controller.firePropertyChange(this, PROP_BINDING_REMOVE,
-							null, be);
+					controller.firePropertyChange(this, PROP_BINDING_REMOVE, null, be);
 				}
 			} else {
 				cmdsForBindings.add(obj);
@@ -285,8 +274,7 @@ public class BindingModel extends CommonModel {
 	 * @param bindingElement
 	 */
 	public void remove(BindingElement bindingElement) {
-		if (bindingElement == null
-				|| !(bindingElement.getModelObject() instanceof Binding)) {
+		if (bindingElement == null || !(bindingElement.getModelObject() instanceof Binding)) {
 			return;
 		}
 		KeyBinding keyBinding = (KeyBinding) bindingElement.getModelObject();
@@ -296,9 +284,8 @@ public class BindingModel extends CommonModel {
 			KeySequence keySequence = keyBinding.getKeySequence();
 
 			// Add the delete binding
-			bindingManager.addBinding(new KeyBinding(keySequence, null,
-					keyBinding.getSchemeId(), keyBinding.getContextId(), null,
-					null, null, Binding.USER));
+			bindingManager.addBinding(new KeyBinding(keySequence, null, keyBinding.getSchemeId(),
+					keyBinding.getContextId(), null, null, null, Binding.USER));
 
 			// Unbind any conflicts affected by the delete binding
 			ConflictModel conflictModel = controller.getConflictModel();
@@ -317,20 +304,17 @@ public class BindingModel extends CommonModel {
 						if (binding.getType() != Binding.SYSTEM) {
 							continue;
 						}
-						ParameterizedCommand pCommand = binding
-								.getParameterizedCommand();
+						ParameterizedCommand pCommand = binding.getParameterizedCommand();
 						be.fill(pCommand);
 						commandToElement.put(pCommand, be);
 					}
 				}
 			}
 		}
-		ParameterizedCommand parameterizedCommand = keyBinding
-				.getParameterizedCommand();
+		ParameterizedCommand parameterizedCommand = keyBinding.getParameterizedCommand();
 		bindingElement.fill(parameterizedCommand);
 		commandToElement.put(parameterizedCommand, bindingElement);
-		controller.firePropertyChange(this, PROP_CONFLICT_ELEMENT_MAP, null,
-				bindingElement);
+		controller.firePropertyChange(this, PROP_CONFLICT_ELEMENT_MAP, null, bindingElement);
 	}
 
 	/**
@@ -350,8 +334,7 @@ public class BindingModel extends CommonModel {
 		ParameterizedCommand cmd = null;
 		if (modelObject instanceof ParameterizedCommand) {
 			cmd = (ParameterizedCommand) modelObject;
-			TriggerSequence trigger = bindingManager
-					.getBestActiveBindingFor(cmd.getId());
+			TriggerSequence trigger = bindingManager.getBestActiveBindingFor(cmd.getId());
 			Binding binding = bindingManager.getPerfectMatch(trigger);
 			if (binding != null && binding.getType() == Binding.SYSTEM) {
 				return;
@@ -440,8 +423,7 @@ public class BindingModel extends CommonModel {
 	}
 
 	/**
-	 * @param bindings
-	 *            The bindings to set.
+	 * @param bindings The bindings to set.
 	 */
 	public void setBindings(HashSet bindings) {
 		HashSet old = this.bindingElements;
@@ -450,13 +432,11 @@ public class BindingModel extends CommonModel {
 	}
 
 	/**
-	 * @param bindingToElement
-	 *            The bindingToElement to set.
+	 * @param bindingToElement The bindingToElement to set.
 	 */
 	public void setBindingToElement(Map bindingToElement) {
 		Map old = this.bindingToElement;
 		this.bindingToElement = bindingToElement;
-		controller.firePropertyChange(this, PROP_BINDING_ELEMENT_MAP, old,
-				bindingToElement);
+		controller.firePropertyChange(this, PROP_BINDING_ELEMENT_MAP, old, bindingToElement);
 	}
 }

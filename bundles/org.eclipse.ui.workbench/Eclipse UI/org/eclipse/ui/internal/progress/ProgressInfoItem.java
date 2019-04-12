@@ -153,65 +153,41 @@ public class ProgressInfoItem extends Composite {
 	private boolean isThemed;
 
 	static {
-		JFaceResources
-				.getImageRegistry()
-				.put(
-						STOP_IMAGE_KEY,
-						WorkbenchImages
-								.getWorkbenchImageDescriptor("elcl16/progress_stop.png"));//$NON-NLS-1$
+		JFaceResources.getImageRegistry().put(STOP_IMAGE_KEY,
+				WorkbenchImages.getWorkbenchImageDescriptor("elcl16/progress_stop.png"));//$NON-NLS-1$
 
-		JFaceResources
-				.getImageRegistry()
-				.put(
-						DISABLED_STOP_IMAGE_KEY,
-						WorkbenchImages
-								.getWorkbenchImageDescriptor("dlcl16/progress_stop.png"));//$NON-NLS-1$
+		JFaceResources.getImageRegistry().put(DISABLED_STOP_IMAGE_KEY,
+				WorkbenchImages.getWorkbenchImageDescriptor("dlcl16/progress_stop.png"));//$NON-NLS-1$
 
-		JFaceResources
-				.getImageRegistry()
-				.put(
-						DEFAULT_JOB_KEY,
-						WorkbenchImages
-								.getWorkbenchImageDescriptor("progress/progress_task.png")); //$NON-NLS-1$
+		JFaceResources.getImageRegistry().put(DEFAULT_JOB_KEY,
+				WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_task.png")); //$NON-NLS-1$
 
-		JFaceResources
-				.getImageRegistry()
-				.put(
-						CLEAR_FINISHED_JOB_KEY,
-						WorkbenchImages
-								.getWorkbenchImageDescriptor("elcl16/progress_rem.png")); //$NON-NLS-1$
+		JFaceResources.getImageRegistry().put(CLEAR_FINISHED_JOB_KEY,
+				WorkbenchImages.getWorkbenchImageDescriptor("elcl16/progress_rem.png")); //$NON-NLS-1$
 
-		JFaceResources
-				.getImageRegistry()
-				.put(
-						DISABLED_CLEAR_FINISHED_JOB_KEY,
-						WorkbenchImages
-								.getWorkbenchImageDescriptor("dlcl16/progress_rem.png")); //$NON-NLS-1$
+		JFaceResources.getImageRegistry().put(DISABLED_CLEAR_FINISHED_JOB_KEY,
+				WorkbenchImages.getWorkbenchImageDescriptor("dlcl16/progress_rem.png")); //$NON-NLS-1$
 
 		// Mac has different Gamma value
 		int shift = Util.isMac() ? -25 : -10;
 
-		Color lightColor = PlatformUI.getWorkbench().getDisplay()
-				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		Color lightColor = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 
 		// Determine a dark color by shifting the list color
-		RGB darkRGB = new RGB(Math.max(0, lightColor.getRed() + shift), Math
-				.max(0, lightColor.getGreen() + shift), Math.max(0, lightColor
-				.getBlue()
-				+ shift));
+		RGB darkRGB = new RGB(Math.max(0, lightColor.getRed() + shift), Math.max(0, lightColor.getGreen() + shift),
+				Math.max(0, lightColor.getBlue() + shift));
 		JFaceResources.getColorRegistry().put(DARK_COLOR_KEY, darkRGB);
 	}
 
 	/**
-	 * Create a new instance of the receiver with the specified parent, style
-	 * and info object/
+	 * Create a new instance of the receiver with the specified parent, style and
+	 * info object/
 	 *
 	 * @param parent
 	 * @param style
 	 * @param progressInfo
 	 */
-	public ProgressInfoItem(Composite parent, int style,
-			JobTreeElement progressInfo) {
+	public ProgressInfoItem(Composite parent, int style, JobTreeElement progressInfo) {
 		super(parent, style);
 		info = progressInfo;
 		isThemed = getCustomThemeFlag();
@@ -234,14 +210,11 @@ public class ProgressInfoItem extends Composite {
 		FormData imageData = new FormData();
 		if (infoImage != null) {
 			// position it in the center
-			imageData.top = new FormAttachment(50,
-					-infoImage.getBounds().height / 2);
+			imageData.top = new FormAttachment(50, -infoImage.getBounds().height / 2);
 		} else {
-			imageData.top = new FormAttachment(0,
-					IDialogConstants.VERTICAL_SPACING);
+			imageData.top = new FormAttachment(0, IDialogConstants.VERTICAL_SPACING);
 		}
-		imageData.left = new FormAttachment(0,
-				IDialogConstants.HORIZONTAL_SPACING / 2);
+		imageData.left = new FormAttachment(0, IDialogConstants.HORIZONTAL_SPACING / 2);
 		jobImageLabel.setLayoutData(imageData);
 
 		progressLabel = new Label(this, SWT.NONE);
@@ -253,8 +226,7 @@ public class ProgressInfoItem extends Composite {
 		// set cursor to overwrite any busy cursor we might have
 
 		actionButton = new ToolItem(actionBar, SWT.NONE);
-		actionButton
-				.setToolTipText(ProgressMessages.NewProgressView_CancelJobToolTip);
+		actionButton.setToolTipText(ProgressMessages.NewProgressView_CancelJobToolTip);
 		actionButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			actionButton.setEnabled(false);
 			cancelOrRemove();
@@ -275,12 +247,9 @@ public class ProgressInfoItem extends Composite {
 		updateToolBarValues();
 
 		FormData progressData = new FormData();
-		progressData.top = new FormAttachment(0,
-				IDialogConstants.VERTICAL_SPACING);
-		progressData.left = new FormAttachment(jobImageLabel,
-				IDialogConstants.HORIZONTAL_SPACING / 2);
-		progressData.right = new FormAttachment(actionBar,
-				IDialogConstants.HORIZONTAL_SPACING * -1);
+		progressData.top = new FormAttachment(0, IDialogConstants.VERTICAL_SPACING);
+		progressData.left = new FormAttachment(jobImageLabel, IDialogConstants.HORIZONTAL_SPACING / 2);
+		progressData.right = new FormAttachment(actionBar, IDialogConstants.HORIZONTAL_SPACING * -1);
 		progressLabel.setLayoutData(progressData);
 
 		mouseListener = new MouseAdapter() {
@@ -304,8 +273,7 @@ public class ProgressInfoItem extends Composite {
 	 * Set the main text of the receiver. Truncate to fit the available space.
 	 */
 	private void setMainText() {
-		progressLabel
-				.setText(Dialog.shortenText(getMainTitle(), progressLabel));
+		progressLabel.setText(Dialog.shortenText(getMainTitle(), progressLabel));
 	}
 
 	/**
@@ -316,14 +284,12 @@ public class ProgressInfoItem extends Composite {
 
 		FormData buttonData = new FormData();
 		buttonData.top = new FormAttachment(progressLabel, 0, SWT.TOP);
-		buttonData.right = new FormAttachment(100,
-				IDialogConstants.HORIZONTAL_SPACING * -1);
+		buttonData.right = new FormAttachment(100, IDialogConstants.HORIZONTAL_SPACING * -1);
 
 		actionBar.setLayoutData(buttonData);
 		if (taskEntries.size() > 0) {
 			FormData linkData = new FormData();
-			linkData.top = new FormAttachment(progressLabel,
-					IDialogConstants.VERTICAL_SPACING);
+			linkData.top = new FormAttachment(progressLabel, IDialogConstants.VERTICAL_SPACING);
 			linkData.left = new FormAttachment(progressLabel, 0, SWT.LEFT);
 			linkData.right = new FormAttachment(actionBar, 0, SWT.LEFT);
 			taskEntries.get(0).setLayoutData(linkData);
@@ -359,8 +325,7 @@ public class ProgressInfoItem extends Composite {
 		JobInfo jobInfo = (JobInfo) info;
 
 		ImageDescriptor descriptor = null;
-		Object property = jobInfo.getJob().getProperty(
-				IProgressConstants.ICON_PROPERTY);
+		Object property = jobInfo.getJob().getProperty(IProgressConstants.ICON_PROPERTY);
 
 		if (property instanceof ImageDescriptor) {
 			descriptor = (ImageDescriptor) property;
@@ -388,8 +353,7 @@ public class ProgressInfoItem extends Composite {
 	 */
 	private ResourceManager getResourceManager() {
 		if (resourceManager == null)
-			resourceManager = new LocalResourceManager(JFaceResources
-					.getResources());
+			resourceManager = new LocalResourceManager(JFaceResources.getResources());
 		return resourceManager;
 	}
 
@@ -428,15 +392,13 @@ public class ProgressInfoItem extends Composite {
 
 		if (jobInfo.isCanceled()) {
 			if (job.getState() == Job.RUNNING)
-				return NLS
-						.bind(ProgressMessages.JobInfo_Cancel_Requested, name);
+				return NLS.bind(ProgressMessages.JobInfo_Cancel_Requested, name);
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, name);
 		}
 
 		IStatus blockedStatus = jobInfo.getBlockedStatus();
 		if (blockedStatus != null) {
-			return NLS.bind(ProgressMessages.JobInfo_Blocked, name,
-					blockedStatus.getMessage());
+			return NLS.bind(ProgressMessages.JobInfo_Blocked, name, blockedStatus.getMessage());
 		}
 
 		switch (job.getState()) {
@@ -456,8 +418,7 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Return the finished String for a job.
 	 *
-	 * @param job
-	 *            the completed Job
+	 * @param job      the completed Job
 	 * @param withTime
 	 * @return String
 	 */
@@ -467,8 +428,7 @@ public class ProgressInfoItem extends Composite {
 			time = getTimeString();
 		}
 		if (time != null) {
-			return NLS.bind(ProgressMessages.JobInfo_FinishedAt, job.getName(),
-					time);
+			return NLS.bind(ProgressMessages.JobInfo_FinishedAt, job.getName(), time);
 		}
 		return NLS.bind(ProgressMessages.JobInfo_Finished, job.getName());
 	}
@@ -476,8 +436,7 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Get the time string the finished job
 	 *
-	 * @return String or <code>null</code> if this is not one of the finished
-	 *         jobs.
+	 * @return String or <code>null</code> if this is not one of the finished jobs.
 	 */
 	private String getTimeString() {
 		Date date = FinishedJobs.getInstance().getFinishDate(info);
@@ -509,8 +468,7 @@ public class ProgressInfoItem extends Composite {
 					// There may be no task so we don't want to create it
 					// until we know for sure
 					for (JobInfo jobInfo : infos) {
-						if (jobInfo.hasTaskInfo()
-								&& jobInfo.getTaskInfo().totalWork == IProgressMonitor.UNKNOWN) {
+						if (jobInfo.hasTaskInfo() && jobInfo.getTaskInfo().totalWork == IProgressMonitor.UNKNOWN) {
 							createProgressBar(SWT.INDETERMINATE);
 							break;
 						}
@@ -523,8 +481,7 @@ public class ProgressInfoItem extends Composite {
 			}
 
 			// Protect against bad counters
-			if (percentDone >= 0 && percentDone <= 100
-					&& percentDone != progressBar.getSelection()) {
+			if (percentDone >= 0 && percentDone <= 100 && percentDone != progressBar.getSelection()) {
 				progressBar.setSelection(percentDone);
 			}
 		}
@@ -549,17 +506,15 @@ public class ProgressInfoItem extends Composite {
 				String subTaskString = null;
 				Object[] jobChildren = jobInfo.getChildren();
 				if (jobChildren.length > 0) {
-					subTaskString = ((JobTreeElement) jobChildren[0])
-							.getDisplayString();
+					subTaskString = ((JobTreeElement) jobChildren[0]).getDisplayString();
 				}
 
 				if (subTaskString != null) {
 					if (taskString == null || taskString.length() == 0) {
 						taskString = subTaskString;
 					} else {
-						taskString = NLS.bind(
-								ProgressMessages.JobInfo_DoneNoProgressMessage,
-								taskString, subTaskString);
+						taskString = NLS.bind(ProgressMessages.JobInfo_DoneNoProgressMessage, taskString,
+								subTaskString);
 					}
 				}
 				if (taskString != null) {
@@ -569,8 +524,7 @@ public class ProgressInfoItem extends Composite {
 				Job job = jobInfo.getJob();
 				IStatus result = job.getResult();
 
-				if (result == null || result.getMessage().length() == 0
-						&& !info.isJobInfo()) {
+				if (result == null || result.getMessage().length() == 0 && !info.isJobInfo()) {
 					setLinkText(job, getJobNameAndStatus(jobInfo), i);
 				} else {
 					setLinkText(job, result.getMessage(), i);
@@ -672,22 +626,18 @@ public class ProgressInfoItem extends Composite {
 	}
 
 	/**
-	 * Set the images in the toolbar based on whether the receiver is finished
-	 * or not. Also update tooltips if required.
+	 * Set the images in the toolbar based on whether the receiver is finished or
+	 * not. Also update tooltips if required.
 	 *
 	 */
 	private void updateToolBarValues() {
 		if (isCompleted()) {
-			actionButton.setImage(JFaceResources
-					.getImage(CLEAR_FINISHED_JOB_KEY));
-			actionButton.setDisabledImage(JFaceResources
-					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
-			actionButton
-					.setToolTipText(ProgressMessages.NewProgressView_ClearJobToolTip);
+			actionButton.setImage(JFaceResources.getImage(CLEAR_FINISHED_JOB_KEY));
+			actionButton.setDisabledImage(JFaceResources.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
+			actionButton.setToolTipText(ProgressMessages.NewProgressView_ClearJobToolTip);
 		} else {
 			actionButton.setImage(JFaceResources.getImage(STOP_IMAGE_KEY));
-			actionButton.setDisabledImage(JFaceResources
-					.getImage(DISABLED_STOP_IMAGE_KEY));
+			actionButton.setDisabledImage(JFaceResources.getImage(DISABLED_STOP_IMAGE_KEY));
 
 		}
 
@@ -709,18 +659,15 @@ public class ProgressInfoItem extends Composite {
 	void createProgressBar(int style) {
 		FormData buttonData = new FormData();
 		buttonData.top = new FormAttachment(progressLabel, 0);
-		buttonData.right = new FormAttachment(100,
-				IDialogConstants.HORIZONTAL_SPACING * -1);
+		buttonData.right = new FormAttachment(100, IDialogConstants.HORIZONTAL_SPACING * -1);
 
 		actionBar.setLayoutData(buttonData);
 
 		progressBar = new ProgressBar(this, SWT.HORIZONTAL | style);
 		FormData barData = new FormData();
-		barData.top = new FormAttachment(actionBar,
-				IDialogConstants.VERTICAL_SPACING, SWT.TOP);
+		barData.top = new FormAttachment(actionBar, IDialogConstants.VERTICAL_SPACING, SWT.TOP);
 		barData.left = new FormAttachment(progressLabel, 0, SWT.LEFT);
-		barData.right = new FormAttachment(actionBar,
-				IDialogConstants.HORIZONTAL_SPACING * -1);
+		barData.right = new FormAttachment(actionBar, IDialogConstants.HORIZONTAL_SPACING * -1);
 		barData.height = MAX_PROGRESS_HEIGHT;
 		barData.width = 0;// default is too large
 		progressBar.setLayoutData(barData);
@@ -728,8 +675,7 @@ public class ProgressInfoItem extends Composite {
 		if (taskEntries.size() > 0) {
 			// Reattach the link label if there is one
 			FormData linkData = new FormData();
-			linkData.top = new FormAttachment(progressBar,
-					IDialogConstants.VERTICAL_SPACING);
+			linkData.top = new FormAttachment(progressBar, IDialogConstants.VERTICAL_SPACING);
 			linkData.left = new FormAttachment(progressBar, 0, SWT.LEFT);
 			linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
 			// Give an initial value so as to constrain the link shortening
@@ -754,16 +700,14 @@ public class ProgressInfoItem extends Composite {
 				if (top == null) {
 					top = progressLabel;
 				}
-				linkData.top = new FormAttachment(top,
-						IDialogConstants.VERTICAL_SPACING);
+				linkData.top = new FormAttachment(top, IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(top, 0, SWT.LEFT);
 				linkData.right = new FormAttachment(top, 0, SWT.RIGHT);
 				// Give an initial value so as to constrain the link shortening
 				linkData.width = 20;
 			} else {
 				Link previous = taskEntries.get(index - 1);
-				linkData.top = new FormAttachment(previous,
-						IDialogConstants.VERTICAL_SPACING);
+				linkData.top = new FormAttachment(previous, IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(previous, 0, SWT.LEFT);
 				linkData.right = new FormAttachment(previous, 0, SWT.RIGHT);
 				// Give an initial value so as to constrain the link shortening
@@ -789,22 +733,18 @@ public class ProgressInfoItem extends Composite {
 		}
 
 		// check for action property
-		Object actionProperty = linkJob
-				.getProperty(IProgressConstants.ACTION_PROPERTY);
-		Object commandProperty = linkJob
-				.getProperty(IProgressConstants2.COMMAND_PROPERTY);
+		Object actionProperty = linkJob.getProperty(IProgressConstants.ACTION_PROPERTY);
+		Object commandProperty = linkJob.getProperty(IProgressConstants2.COMMAND_PROPERTY);
 
 		if (actionProperty != null && commandProperty != null) {
 			// if both are specified, then use neither
 			updateTrigger(null, link);
 		} else {
-			Object property = actionProperty != null ? actionProperty
-					: commandProperty;
+			Object property = actionProperty != null ? actionProperty : commandProperty;
 			updateTrigger(property, link);
 		}
 
-		if (link.getData(TRIGGER_KEY) == null
-				&& (taskString == null || taskString.equals(getMainTitle()))) {
+		if (link.getData(TRIGGER_KEY) == null && (taskString == null || taskString.equals(getMainTitle()))) {
 			// workaround for https://bugs.eclipse.org/383570
 			taskString = ""; //$NON-NLS-1$
 		}
@@ -822,32 +762,23 @@ public class ProgressInfoItem extends Composite {
 				action.run();
 			updateTrigger(action, link);
 		} else if (data instanceof ParameterizedCommand) {
-			IWorkbench workbench = PlatformUI
-					.getWorkbench();
-			IHandlerService handlerService = workbench
-					.getService(
-							IHandlerService.class);
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IHandlerService handlerService = workbench.getService(IHandlerService.class);
 			IStatus status = Status.OK_STATUS;
 			try {
-				handlerService
-						.executeCommand((ParameterizedCommand) data, null);
+				handlerService.executeCommand((ParameterizedCommand) data, null);
 			} catch (ExecutionException e) {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
-						.getMessage(), e);
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			} catch (NotDefinedException e) {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
-						.getMessage(), e);
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			} catch (NotEnabledException e) {
-				status = new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, e
-						.getMessage(), e);
+				status = new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			} catch (NotHandledException e) {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
-						.getMessage(), e);
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			}
 
 			if (!status.isOK()) {
-				StatusManager.getManager().handle(status,
-						StatusManager.LOG | StatusManager.SHOW);
+				StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 			}
 		}
 
@@ -864,11 +795,10 @@ public class ProgressInfoItem extends Composite {
 	}
 
 	/**
-	 * Update the trigger key if either action is available and enabled or
-	 * command is available
+	 * Update the trigger key if either action is available and enabled or command
+	 * is available
 	 *
-	 * @param trigger
-	 *            {@link Object} or <code>null</code>
+	 * @param trigger {@link Object} or <code>null</code>
 	 * @param link
 	 */
 	private void updateTrigger(Object trigger, Link link) {
@@ -893,8 +823,8 @@ public class ProgressInfoItem extends Composite {
 	 * @param link
 	 */
 	private void updateText(String taskString, Link link) {
-		if(taskString == null){
-			taskString = "";  //$NON-NLS-1$
+		if (taskString == null) {
+			taskString = ""; //$NON-NLS-1$
 		}
 		if (!taskString.isEmpty()) {
 			taskString = Dialog.shortenText(taskString, link);
@@ -916,10 +846,8 @@ public class ProgressInfoItem extends Composite {
 		currentIndex = i;
 
 		if (selected) {
-			setAllBackgrounds(getDisplay().getSystemColor(
-					SWT.COLOR_LIST_SELECTION));
-			setAllForegrounds(getDisplay().getSystemColor(
-					SWT.COLOR_LIST_SELECTION_TEXT));
+			setAllBackgrounds(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+			setAllForegrounds(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 			return;
 		}
 
@@ -979,8 +907,7 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Set the selection colors.
 	 *
-	 * @param select
-	 *            boolean that indicates whether or not to show selection.
+	 * @param select boolean that indicates whether or not to show selection.
 	 */
 	void selectWidgets(boolean select) {
 		if (select) {
@@ -1038,7 +965,7 @@ public class ProgressInfoItem extends Composite {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if(resourceManager != null)
+		if (resourceManager != null)
 			resourceManager.dispose();
 	}
 
@@ -1105,8 +1032,8 @@ public class ProgressInfoItem extends Composite {
 		}
 	}
 	/*
-	 * Check if workspace is using a theme. If it is, confirm it is not the
-	 * default theme.
+	 * Check if workspace is using a theme. If it is, confirm it is not the default
+	 * theme.
 	 */
 
 	private boolean getCustomThemeFlag() {

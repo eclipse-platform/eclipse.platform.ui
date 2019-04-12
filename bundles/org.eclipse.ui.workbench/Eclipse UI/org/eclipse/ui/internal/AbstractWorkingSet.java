@@ -47,7 +47,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 
 	private String label;
 
-	//Workspace wide unique id for workingsets
+	// Workspace wide unique id for workingsets
 	private String uniqueId;
 
 	private static int counter;
@@ -61,7 +61,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 	/**
 	 * Create a new instance of this class
 	 *
-	 * @param name the unique name for this working set
+	 * @param name  the unique name for this working set
 	 * @param label the user-friendly name for this working set
 	 */
 	public AbstractWorkingSet(String name, String label) {
@@ -73,46 +73,44 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 	}
 
 	/**
-	 * Returns the receiver if the requested type is either IWorkingSet
-	 * or IPersistableElement.
+	 * Returns the receiver if the requested type is either IWorkingSet or
+	 * IPersistableElement.
 	 *
 	 * @param adapter the requested type
-	 * @return the receiver if the requested type is either IWorkingSet
-	 * 	or IPersistableElement.
+	 * @return the receiver if the requested type is either IWorkingSet or
+	 *         IPersistableElement.
 	 */
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-	    if (adapter == IWorkingSet.class
-	            || adapter == IPersistableElement.class) {
+		if (adapter == IWorkingSet.class || adapter == IPersistableElement.class) {
 			return adapter.cast(this);
-	    }
-	    return Platform.getAdapterManager().getAdapter(this, adapter);
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	@Override
 	public String getName() {
-	    return name;
+		return name;
 	}
 
 	@Override
 	public void setName(String newName) {
-	    Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
+		Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
 		if (manager != null) {
 			IWorkingSet wSet = manager.getWorkingSet(newName);
 			if (wSet != this) {
-				Assert.isTrue(wSet == null,
-						"working set with same name already registered"); //$NON-NLS-1$
+				Assert.isTrue(wSet == null, "working set with same name already registered"); //$NON-NLS-1$
 			}
-	    }
+		}
 
-	    AbstractWorkingSet oldWorkingSet = clone();
-	    name = newName;
+		AbstractWorkingSet oldWorkingSet = clone();
+		name = newName;
 
-	    fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, oldWorkingSet);
+		fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, oldWorkingSet);
 
-	    if (labelBoundToName) {
-	    		setLabel(newName);
-	    }
+		if (labelBoundToName) {
+			setLabel(newName);
+		}
 	}
 
 	/**
@@ -122,43 +120,40 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 	 */
 	public void connect(IWorkingSetManager manager) {
 		Assert.isTrue(this.manager == null, "A working set can only be connected to one manager"); //$NON-NLS-1$
-		this.manager= manager;
+		this.manager = manager;
 	}
 
 	/**
 	 * Disconnect this working set from its manager, if any.
 	 */
 	public void disconnect() {
-		this.manager= null;
+		this.manager = null;
 	}
 
 	protected void fireWorkingSetChanged(String property, Object oldValue) {
-		AbstractWorkingSetManager receiver= manager != null
-			? (AbstractWorkingSetManager)manager
-			: (AbstractWorkingSetManager)WorkbenchPlugin.getDefault().getWorkingSetManager();
+		AbstractWorkingSetManager receiver = manager != null ? (AbstractWorkingSetManager) manager
+				: (AbstractWorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();
 		receiver.workingSetChanged(this, property, oldValue);
 	}
 
 	/**
 	 * Create a copy of the elements to store in the receiver.
 	 *
-	 * @param elements the elements to store a copy of in the
-	 * 	receiver.
+	 * @param elements the elements to store a copy of in the receiver.
 	 */
 	protected void internalSetElements(IAdaptable[] newElements) {
-	    Assert.isNotNull(newElements,
-	            "Working set elements array must not be null"); //$NON-NLS-1$
+		Assert.isNotNull(newElements, "Working set elements array must not be null"); //$NON-NLS-1$
 
-	    elements = new ArrayList(newElements.length);
-	    for (IAdaptable newElement : newElements) {
-	        elements.add(newElement);
-	    }
+		elements = new ArrayList(newElements.length);
+		for (IAdaptable newElement : newElements) {
+			elements.add(newElement);
+		}
 	}
 
 	@Override
 	public IAdaptable[] getElements() {
-	    ArrayList list = getElementsArray();
-	    return (IAdaptable[]) list.toArray(new IAdaptable[list.size()]);
+		ArrayList list = getElementsArray();
+		return (IAdaptable[]) list.toArray(new IAdaptable[list.size()]);
 	}
 
 	/**
@@ -168,11 +163,11 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 	 * @return the elements array list
 	 */
 	protected ArrayList getElementsArray() {
-	    if (elements == null) {
-	        restoreWorkingSet();
-	        workingSetMemento = null;
-	    }
-	    return elements;
+		if (elements == null) {
+			restoreWorkingSet();
+			workingSetMemento = null;
+		}
+		return elements;
 	}
 
 	abstract void restoreWorkingSet();
@@ -183,7 +178,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 
 	@Override
 	public String getFactoryId() {
-	    return FACTORY_ID;
+		return FACTORY_ID;
 	}
 
 	@Override
@@ -196,7 +191,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 		AbstractWorkingSet oldWorkingSet = clone();
 
 		this.label = label == null ? getName() : label;
-		labelBoundToName = Util.equals(label, name);  // rebind the label to the name
+		labelBoundToName = Util.equals(label, name); // rebind the label to the name
 
 		fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, oldWorkingSet);
 	}
@@ -206,17 +201,16 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 		return getElementsArray().isEmpty();
 	}
 
-    @Override
+	@Override
 	public final ImageDescriptor getImage() {
-        return getImageDescriptor();
-    }
+		return getImageDescriptor();
+	}
 
-
-    /*package*/String getUniqueId() {
+	/* package */String getUniqueId() {
 		return uniqueId;
 	}
 
-	/*package*/void setUniqueId(String uniqueId) {
+	/* package */void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
 	}
 

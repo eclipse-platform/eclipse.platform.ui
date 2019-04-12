@@ -20,99 +20,100 @@ import java.util.ArrayList;
  */
 public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
 
-    private PropertyListenerList listeners;
-    private int ignoreCount = 0;
-    private ArrayList queuedEvents = new ArrayList();
+	private PropertyListenerList listeners;
+	private int ignoreCount = 0;
+	private ArrayList queuedEvents = new ArrayList();
 
-    @Override
+	@Override
 	public final void addListener(IPropertyMapListener listener) {
-        if (listeners == null) {
-            listeners = new PropertyListenerList();
-            attachListener();
-        }
-        listeners.add(listener);
-    }
+		if (listeners == null) {
+			listeners = new PropertyListenerList();
+			attachListener();
+		}
+		listeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public final void removeListener(IPropertyMapListener listener) {
-        if (listeners != null) {
-            listeners.remove(listener);
-            if (listeners.isEmpty()) {
-                detachListener();
-                listeners = null;
-            }
-        }
-    }
+		if (listeners != null) {
+			listeners.remove(listener);
+			if (listeners.isEmpty()) {
+				detachListener();
+				listeners = null;
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public final boolean isCommonProperty(String propertyId) {
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Detaches all listeners which have been registered with other objects
-     *
-     * @since 3.1
-     */
-    public void dispose() {
-        if (listeners != null) {
-            detachListener();
-            listeners = null;
-        }
-    }
+	/**
+	 * Detaches all listeners which have been registered with other objects
+	 *
+	 * @since 3.1
+	 */
+	public void dispose() {
+		if (listeners != null) {
+			detachListener();
+			listeners = null;
+		}
+	}
 
-    protected final void firePropertyChange(String prefId) {
-        if (ignoreCount > 0) {
-            queuedEvents.add(prefId);
-            return;
-        }
+	protected final void firePropertyChange(String prefId) {
+		if (ignoreCount > 0) {
+			queuedEvents.add(prefId);
+			return;
+		}
 
-        if (listeners != null) {
-            listeners.firePropertyChange(prefId);
-        }
-    }
+		if (listeners != null) {
+			listeners.firePropertyChange(prefId);
+		}
+	}
 
-    @Override
+	@Override
 	public final void addListener(String[] eventsOfInterest, IPropertyMapListener listener) {
-        if (listeners == null) {
-            listeners = new PropertyListenerList();
-            attachListener();
-        }
-        listeners.add(eventsOfInterest, listener);
-    }
+		if (listeners == null) {
+			listeners = new PropertyListenerList();
+			attachListener();
+		}
+		listeners.add(eventsOfInterest, listener);
+	}
 
-    protected final void firePropertyChange(String[] prefIds) {
-        if (ignoreCount > 0) {
-            for (String prefId : prefIds) {
-                queuedEvents.add(prefId);
-            }
-            return;
-        }
+	protected final void firePropertyChange(String[] prefIds) {
+		if (ignoreCount > 0) {
+			for (String prefId : prefIds) {
+				queuedEvents.add(prefId);
+			}
+			return;
+		}
 
-        if (listeners != null) {
-            listeners.firePropertyChange(prefIds);
-        }
-    }
+		if (listeners != null) {
+			listeners.firePropertyChange(prefIds);
+		}
+	}
 
-    public final void startTransaction() {
-        ignoreCount++;
-    }
+	public final void startTransaction() {
+		ignoreCount++;
+	}
 
-    public final void endTransaction() {
-        ignoreCount--;
-        if (ignoreCount == 0 && !queuedEvents.isEmpty()) {
-            if (listeners != null) {
-                listeners.firePropertyChange((String[]) queuedEvents.toArray(new String[queuedEvents.size()]));
-            }
-            queuedEvents.clear();
-        }
-    }
+	public final void endTransaction() {
+		ignoreCount--;
+		if (ignoreCount == 0 && !queuedEvents.isEmpty()) {
+			if (listeners != null) {
+				listeners.firePropertyChange((String[]) queuedEvents.toArray(new String[queuedEvents.size()]));
+			}
+			queuedEvents.clear();
+		}
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object toCompare) {
-        return toCompare instanceof IPropertyMap && PropertyUtil.isEqual(this, (IPropertyMap)toCompare);
-    }
+		return toCompare instanceof IPropertyMap && PropertyUtil.isEqual(this, (IPropertyMap) toCompare);
+	}
 
-    protected abstract void attachListener();
-    protected abstract void detachListener();
+	protected abstract void attachListener();
+
+	protected abstract void detachListener();
 }

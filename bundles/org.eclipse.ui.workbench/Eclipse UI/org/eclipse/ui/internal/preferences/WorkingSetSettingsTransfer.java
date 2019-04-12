@@ -48,14 +48,12 @@ public class WorkingSetSettingsTransfer extends WorkbenchSettingsTransfer {
 		if (dataLocation == null)
 			return noWorkingSettingsStatus();
 
-		dataLocation = dataLocation
-				.append(WorkingSetManager.WORKING_SET_STATE_FILENAME);
+		dataLocation = dataLocation.append(WorkingSetManager.WORKING_SET_STATE_FILENAME);
 
 		File stateFile = new File(dataLocation.toOSString());
 
 		try {
-			IWorkingSetManager manager = PlatformUI.getWorkbench()
-					.getWorkingSetManager();
+			IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 			if (manager instanceof AbstractWorkingSetManager)
 				((AbstractWorkingSetManager) manager).saveState(stateFile);
 			else

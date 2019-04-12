@@ -20,24 +20,26 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.internal.preferences.SettingsTransferRegistryReader;
 
 /**
- * The SettingsTransfer is the abstract superclass of settings transfers
- * used when switching workspaces.
+ * The SettingsTransfer is the abstract superclass of settings transfers used
+ * when switching workspaces.
+ * 
  * @since 3.3
  *
  */
 public abstract class SettingsTransfer {
 
 	/**
-	 * Return the configuration elements for all of the settings
-	 * transfers.
+	 * Return the configuration elements for all of the settings transfers.
+	 * 
 	 * @return IConfigurationElement[]
 	 */
-	public static IConfigurationElement[] getSettingsTransfers(){
+	public static IConfigurationElement[] getSettingsTransfers() {
 		return (new SettingsTransferRegistryReader()).getSettingTransfers();
 	}
 
 	/**
 	 * Transfer the settings to a workspace rooted at newWorkspacwe
+	 * 
 	 * @param newWorkspaceRoot
 	 * @return {@link IStatus} the status of the transfer.
 	 */
@@ -45,8 +47,9 @@ public abstract class SettingsTransfer {
 
 	/**
 	 * Return the name for the receiver.
+	 * 
 	 * @return String
 	 */
-	public abstract String getName() ;
+	public abstract String getName();
 
 }

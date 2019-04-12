@@ -45,20 +45,16 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitializer {
 
-
-
 	@Override
 	public void initializeDefaultPreferences() {
 		IScopeContext context = DefaultScope.INSTANCE;
-		IEclipsePreferences node = context.getNode(WorkbenchPlugin
-				.getDefault().getBundle().getSymbolicName());
+		IEclipsePreferences node = context.getNode(WorkbenchPlugin.getDefault().getBundle().getSymbolicName());
 
 		node.putBoolean(IPreferenceConstants.RUN_IN_BACKGROUND, true);
 		node.putBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
 
 		node.putBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
-		node.putBoolean(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME,
-				false);
+		node.putBoolean(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
 		node.putBoolean(IPreferenceConstants.STICKY_CYCLE, false);
 		node.putBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
 		node.putInt(IPreferenceConstants.REUSE_EDITORS, 8);
@@ -80,14 +76,12 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, true);
 
 		node.putInt(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
-		node.putInt(IPreferenceConstants.OPEN_PERSP_MODE,
-				IPreferenceConstants.OPM_ACTIVE_PAGE);
+		node.putInt(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
 		node.put(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
-		node.putInt(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE,
-				IPreferenceConstants.EDITORLIST_SET_PAGE_SCOPE); // Current
-																 // Window
-		node.putInt(IPreferenceConstants.EDITORLIST_SORT_CRITERIA,
-				IPreferenceConstants.EDITORLIST_NAME_SORT); // Name Sort
+		node.putInt(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE, IPreferenceConstants.EDITORLIST_SET_PAGE_SCOPE); // Current
+																														// Window
+		node.putInt(IPreferenceConstants.EDITORLIST_SORT_CRITERIA, IPreferenceConstants.EDITORLIST_NAME_SORT); // Name
+																												// Sort
 		node.putBoolean(IPreferenceConstants.COLOR_ICONS, true);
 		node.putInt(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB, 0);
 		node.putBoolean(IPreferenceConstants.MULTI_KEY_ASSIST, true);
@@ -101,7 +95,7 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean("ENABLE_COOL_BARS", true); //$NON-NLS-1$
 		// Temporary option to enable new menu organization
 		node.putBoolean("ENABLE_NEW_MENUS", true); //$NON-NLS-1$
-		//Temporary option to turn off the dialog font
+		// Temporary option to turn off the dialog font
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 
 		// Heap status preferences
@@ -125,22 +119,18 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		// Progress view
 		node.putInt(IPreferenceConstants.MAX_PROGRESS_ENTRIES, 20);
 
-		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
-				.getPreferencesService().getRootNode()
+		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
 
-		final String workbenchName = WorkbenchPlugin.getDefault().getBundle()
-				.getSymbolicName();
+		final String workbenchName = WorkbenchPlugin.getDefault().getBundle().getSymbolicName();
 		try {
 			if (rootNode.nodeExists(workbenchName)) {
 				((IEclipsePreferences) rootNode.node(workbenchName))
-						.addPreferenceChangeListener(PlatformUIPreferenceListener
-								.getSingleton());
+						.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
 			}
 		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin
-					.getDefault().getBundle().getSymbolicName(), IStatus.ERROR,
-					e.getLocalizedMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getBundle().getSymbolicName(),
+					IStatus.ERROR, e.getLocalizedMessage(), e);
 			WorkbenchPlugin.getDefault().getLog().log(status);
 		}
 

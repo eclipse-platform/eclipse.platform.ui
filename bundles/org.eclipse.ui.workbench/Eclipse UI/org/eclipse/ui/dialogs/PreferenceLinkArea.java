@@ -36,71 +36,63 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class PreferenceLinkArea extends Object {
 
-    private Link pageLink;
+	private Link pageLink;
 
-    /**
-     * Create a new instance of the receiver
-     *
-     * @param parent
-     *            the parent Composite
-     * @param style
-     *            the SWT style
-     * @param pageId
-     *            the page id
-     * @param message
-     *            the message to use as text. If this message has {0} in
-     *            its value it will be bound with the displayed name of
-     *            the preference page. This message must be well formed
-     *            html if you wish to link to another page.
-     * @param pageContainer -
-     *            The container another page will be opened in.
-     * @param pageData -
-     *            The data to apply to the page.
-     */
-    public PreferenceLinkArea(Composite parent, int style, final String pageId,
-            String message, final IWorkbenchPreferenceContainer pageContainer,
-            final Object pageData) {
-        pageLink = new Link(parent, style);
+	/**
+	 * Create a new instance of the receiver
+	 *
+	 * @param parent        the parent Composite
+	 * @param style         the SWT style
+	 * @param pageId        the page id
+	 * @param message       the message to use as text. If this message has {0} in
+	 *                      its value it will be bound with the displayed name of
+	 *                      the preference page. This message must be well formed
+	 *                      html if you wish to link to another page.
+	 * @param pageContainer - The container another page will be opened in.
+	 * @param pageData      - The data to apply to the page.
+	 */
+	public PreferenceLinkArea(Composite parent, int style, final String pageId, String message,
+			final IWorkbenchPreferenceContainer pageContainer, final Object pageData) {
+		pageLink = new Link(parent, style);
 
-        IPreferenceNode node = getPreferenceNode(pageId);
-        String result;
-        if (node == null) {
-			result = NLS.bind(
-                    WorkbenchMessages.PreferenceNode_NotFound, pageId);
+		IPreferenceNode node = getPreferenceNode(pageId);
+		String result;
+		if (node == null) {
+			result = NLS.bind(WorkbenchMessages.PreferenceNode_NotFound, pageId);
 		} else {
 			result = MessageFormat.format(message, node.getLabelText());
 
-            //Only add the selection listener if the node is found
-            pageLink.addSelectionListener(widgetSelectedAdapter(e -> pageContainer.openPage(pageId, pageData)));
-        }
-        pageLink.setText(result);
+			// Only add the selection listener if the node is found
+			pageLink.addSelectionListener(widgetSelectedAdapter(e -> pageContainer.openPage(pageId, pageData)));
+		}
+		pageLink.setText(result);
 
-    }
+	}
 
-    /**
-     * Get the preference node with pageId.
-     *
-     * @param pageId
-     * @return IPreferenceNode
-     */
-    private IPreferenceNode getPreferenceNode(String pageId) {
-        Iterator iterator = PlatformUI.getWorkbench().getPreferenceManager()
-                .getElements(PreferenceManager.PRE_ORDER).iterator();
-        while (iterator.hasNext()) {
-            IPreferenceNode next = (IPreferenceNode) iterator.next();
-            if (next.getId().equals(pageId)) {
+	/**
+	 * Get the preference node with pageId.
+	 *
+	 * @param pageId
+	 * @return IPreferenceNode
+	 */
+	private IPreferenceNode getPreferenceNode(String pageId) {
+		Iterator iterator = PlatformUI.getWorkbench().getPreferenceManager().getElements(PreferenceManager.PRE_ORDER)
+				.iterator();
+		while (iterator.hasNext()) {
+			IPreferenceNode next = (IPreferenceNode) iterator.next();
+			if (next.getId().equals(pageId)) {
 				return next;
 			}
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
-    /**
-     * Return the control for the receiver.
-     *
-     * @return Control
-     */
-    public Control getControl() {
-        return pageLink;
-    }
+	/**
+	 * Return the control for the receiver.
+	 *
+	 * @return Control
+	 */
+	public Control getControl() {
+		return pageLink;
+	}
 }

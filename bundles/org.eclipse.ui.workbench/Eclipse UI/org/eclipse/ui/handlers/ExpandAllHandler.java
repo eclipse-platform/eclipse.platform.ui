@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 package org.eclipse.ui.handlers;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.Assert;
@@ -55,8 +56,7 @@ public class ExpandAllHandler extends AbstractHandler {
 	/**
 	 * Create the handler for this tree viewer.
 	 *
-	 * @param viewer
-	 *            The viewer to expand. Must not be <code>null</code>.
+	 * @param viewer The viewer to expand. Must not be <code>null</code>.
 	 */
 	public ExpandAllHandler(AbstractTreeViewer viewer) {
 		Assert.isNotNull(viewer);

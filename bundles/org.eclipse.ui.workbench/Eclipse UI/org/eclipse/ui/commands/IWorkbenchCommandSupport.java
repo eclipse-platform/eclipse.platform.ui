@@ -38,27 +38,25 @@ public interface IWorkbenchCommandSupport {
 	 * Adds a single handler submissions for consideration by the workbench. The
 	 * submission indicates to the workbench a set of conditions under which the
 	 * handler should become active. The workbench, however, ultimately decides
-	 * which handler becomes active (in the event of conflicts or changes in
-	 * state). This could cause the handlers for one or more commands to change.
+	 * which handler becomes active (in the event of conflicts or changes in state).
+	 * This could cause the handlers for one or more commands to change.
 	 *
-	 * @param handlerSubmission
-	 *            The submission to be added; must not be <code>null</code>.
+	 * @param handlerSubmission The submission to be added; must not be
+	 *                          <code>null</code>.
 	 */
 	@Deprecated
 	void addHandlerSubmission(HandlerSubmission handlerSubmission);
 
 	/**
-	 * Adds a collection of handler submissions for consideration by the
-	 * workbench. The submission indicates to the workbench a set of conditions
-	 * under which the handler should become active. The workbench, however,
-	 * ultimately decides which handler becomes active (in the event of
-	 * conflicts or changes in state). This could cause the handlers for one or
-	 * more commands to change.
+	 * Adds a collection of handler submissions for consideration by the workbench.
+	 * The submission indicates to the workbench a set of conditions under which the
+	 * handler should become active. The workbench, however, ultimately decides
+	 * which handler becomes active (in the event of conflicts or changes in state).
+	 * This could cause the handlers for one or more commands to change.
 	 *
-	 * @param handlerSubmissions
-	 *            The submissions to be added; must not be <code>null</code>,
-	 *            and must contain zero or more instances of
-	 *            <code>HandlerSubmission</code>.
+	 * @param handlerSubmissions The submissions to be added; must not be
+	 *                           <code>null</code>, and must contain zero or more
+	 *                           instances of <code>HandlerSubmission</code>.
 	 */
 	@Deprecated
 	void addHandlerSubmissions(Collection handlerSubmissions);
@@ -73,27 +71,24 @@ public interface IWorkbenchCommandSupport {
 	ICommandManager getCommandManager();
 
 	/**
-	 * Removes a single handler submission from consideration by the workbench.
-	 * The handler submission must be the same as the one added (not just
-	 * equivalent). This could cause the handlers for one or more commands to
-	 * change.
+	 * Removes a single handler submission from consideration by the workbench. The
+	 * handler submission must be the same as the one added (not just equivalent).
+	 * This could cause the handlers for one or more commands to change.
 	 *
-	 * @param handlerSubmission
-	 *            The submission to be removed; must not be <code>null</code>.
+	 * @param handlerSubmission The submission to be removed; must not be
+	 *                          <code>null</code>.
 	 */
 	@Deprecated
 	void removeHandlerSubmission(HandlerSubmission handlerSubmission);
 
 	/**
-	 * Removes a single handler submission from consideration by the workbench.
-	 * The handler submission must be the same as the one added (not just
-	 * equivalent). This could cause the handlers for one or more commands to
-	 * change.
+	 * Removes a single handler submission from consideration by the workbench. The
+	 * handler submission must be the same as the one added (not just equivalent).
+	 * This could cause the handlers for one or more commands to change.
 	 *
-	 * @param handlerSubmissions
-	 *            The submissions to be removed; must not be <code>null</code>,
-	 *            and must contain instances of <code>HandlerSubmission</code>
-	 *            only.
+	 * @param handlerSubmissions The submissions to be removed; must not be
+	 *                           <code>null</code>, and must contain instances of
+	 *                           <code>HandlerSubmission</code> only.
 	 */
 	@Deprecated
 	void removeHandlerSubmissions(Collection handlerSubmissions);

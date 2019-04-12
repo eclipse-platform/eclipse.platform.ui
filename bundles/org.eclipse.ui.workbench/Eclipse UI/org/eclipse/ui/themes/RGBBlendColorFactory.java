@@ -46,43 +46,43 @@ import org.eclipse.swt.graphics.RGB;
  * @see org.eclipse.swt.SWT
  * @since 3.0
  */
-public class RGBBlendColorFactory implements IColorFactory,
-        IExecutableExtension {
+public class RGBBlendColorFactory implements IColorFactory, IExecutableExtension {
 
-    private String color1, color2;
+	private String color1, color2;
 
-    @Override
+	@Override
 	public RGB createColor() {
-        if (color1 == null && color2 == null) {
-            return new RGB(0, 0, 0);
-        } else if (color1 != null && color2 == null) {
-            return ColorUtil.getColorValue(color1);
-        } else if (color1 == null && color2 != null) {
-            return ColorUtil.getColorValue(color2);
-        } else {
-            RGB rgb1 = ColorUtil.getColorValue(color1);
-            RGB rgb2 = ColorUtil.getColorValue(color2);
-            return ColorUtil.blend(rgb1, rgb2);
-        }
-    }
+		if (color1 == null && color2 == null) {
+			return new RGB(0, 0, 0);
+		} else if (color1 != null && color2 == null) {
+			return ColorUtil.getColorValue(color1);
+		} else if (color1 == null && color2 != null) {
+			return ColorUtil.getColorValue(color2);
+		} else {
+			RGB rgb1 = ColorUtil.getColorValue(color1);
+			RGB rgb2 = ColorUtil.getColorValue(color2);
+			return ColorUtil.blend(rgb1, rgb2);
+		}
+	}
 
-    /**
-     * This executable extension requires parameters to be explicitly declared
-     * via the second method described in the <code>IExecutableExtension</code>
-     * documentation.  This class expects that there will be two parameters,
-     * <code>color1</code> and <code>color2</code>, that describe the two colors
-     * to be blended.  These values may either be RGB triples or SWT constants.
-     *
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-     */
-    @Override
-	public void setInitializationData(IConfigurationElement config,
-            String propertyName, Object data) throws CoreException {
+	/**
+	 * This executable extension requires parameters to be explicitly declared via
+	 * the second method described in the <code>IExecutableExtension</code>
+	 * documentation. This class expects that there will be two parameters,
+	 * <code>color1</code> and <code>color2</code>, that describe the two colors to
+	 * be blended. These values may either be RGB triples or SWT constants.
+	 *
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
+	 *      java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 
-        if (data instanceof Hashtable) {
-            Hashtable table = (Hashtable) data;
-            color1 = (String) table.get("color1"); //$NON-NLS-1$
-            color2 = (String) table.get("color2"); //$NON-NLS-1$
-        }
-    }
+		if (data instanceof Hashtable) {
+			Hashtable table = (Hashtable) data;
+			color1 = (String) table.get("color1"); //$NON-NLS-1$
+			color2 = (String) table.get("color2"); //$NON-NLS-1$
+		}
+	}
 }

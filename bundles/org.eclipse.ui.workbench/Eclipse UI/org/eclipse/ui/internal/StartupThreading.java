@@ -61,8 +61,7 @@ public final class StartupThreading {
 			} else if (throwable instanceof WorkbenchException) {
 				throw (WorkbenchException) throwable;
 			} else {
-				throw new WorkbenchException(StatusUtil.newStatus(
-						WorkbenchPlugin.PI_WORKBENCH, throwable));
+				throw new WorkbenchException(StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, throwable));
 			}
 		}
 	}
@@ -78,8 +77,7 @@ public final class StartupThreading {
 			} else if (throwable instanceof WorkbenchException) {
 				throw (PartInitException) throwable;
 			} else {
-				throw new PartInitException(StatusUtil.newStatus(
-						WorkbenchPlugin.PI_WORKBENCH, throwable));
+				throw new PartInitException(StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, throwable));
 			}
 		}
 	}

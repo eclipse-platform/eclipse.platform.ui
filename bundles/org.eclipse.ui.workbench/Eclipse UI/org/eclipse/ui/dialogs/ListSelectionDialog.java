@@ -59,162 +59,160 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ListSelectionDialog extends SelectionDialog {
-    // the root element to populate the viewer with
-    private Object inputElement;
+	// the root element to populate the viewer with
+	private Object inputElement;
 
-    // providers for populating this dialog
-    private ILabelProvider labelProvider;
+	// providers for populating this dialog
+	private ILabelProvider labelProvider;
 
-    private IStructuredContentProvider contentProvider;
+	private IStructuredContentProvider contentProvider;
 
-    // the visual selection widget group
-    CheckboxTableViewer listViewer;
+	// the visual selection widget group
+	CheckboxTableViewer listViewer;
 
-    // sizing constants
-    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 250;
+	// sizing constants
+	private static final int SIZING_SELECTION_WIDGET_HEIGHT = 250;
 
-    private static final int SIZING_SELECTION_WIDGET_WIDTH = 300;
+	private static final int SIZING_SELECTION_WIDGET_WIDTH = 300;
 
-    /**
-     * Creates a list selection dialog.
-     *
-     * @param parentShell the parent shell
-     * @param input	the root element to populate this dialog with
-     * @param contentProvider the content provider for navigating the model
-     * @param labelProvider the label provider for displaying model elements
-     * @param message the message to be displayed at the top of this dialog, or
-     *    <code>null</code> to display a default message
-     */
-    public ListSelectionDialog(Shell parentShell, Object input,
-            IStructuredContentProvider contentProvider,
-            ILabelProvider labelProvider, String message) {
-        super(parentShell);
-        setTitle(WorkbenchMessages.ListSelection_title);
-        inputElement = input;
-        this.contentProvider = contentProvider;
-        this.labelProvider = labelProvider;
-        if (message != null) {
+	/**
+	 * Creates a list selection dialog.
+	 *
+	 * @param parentShell     the parent shell
+	 * @param input           the root element to populate this dialog with
+	 * @param contentProvider the content provider for navigating the model
+	 * @param labelProvider   the label provider for displaying model elements
+	 * @param message         the message to be displayed at the top of this dialog,
+	 *                        or <code>null</code> to display a default message
+	 */
+	public ListSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider,
+			ILabelProvider labelProvider, String message) {
+		super(parentShell);
+		setTitle(WorkbenchMessages.ListSelection_title);
+		inputElement = input;
+		this.contentProvider = contentProvider;
+		this.labelProvider = labelProvider;
+		if (message != null) {
 			setMessage(message);
 		} else {
 			setMessage(WorkbenchMessages.ListSelection_message);
 		}
-    }
+	}
 
-    /**
-     * Add the selection and deselection buttons to the dialog.
-     * @param composite org.eclipse.swt.widgets.Composite
-     */
-    private void addSelectionButtons(Composite composite) {
-        Composite buttonComposite = new Composite(composite, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 0;
+	/**
+	 * Add the selection and deselection buttons to the dialog.
+	 * 
+	 * @param composite org.eclipse.swt.widgets.Composite
+	 */
+	private void addSelectionButtons(Composite composite) {
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 0;
 		layout.marginWidth = 0;
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-        buttonComposite.setLayout(layout);
-        buttonComposite.setLayoutData(new GridData(SWT.END, SWT.TOP, true, false));
+		buttonComposite.setLayout(layout);
+		buttonComposite.setLayoutData(new GridData(SWT.END, SWT.TOP, true, false));
 
-        Button selectButton = createButton(buttonComposite,
-                IDialogConstants.SELECT_ALL_ID, SELECT_ALL_TITLE, false);
+		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, SELECT_ALL_TITLE, false);
 
-        SelectionListener listener = widgetSelectedAdapter(e -> listViewer.setAllChecked(true));
-        selectButton.addSelectionListener(listener);
+		SelectionListener listener = widgetSelectedAdapter(e -> listViewer.setAllChecked(true));
+		selectButton.addSelectionListener(listener);
 
-        Button deselectButton = createButton(buttonComposite,
-                IDialogConstants.DESELECT_ALL_ID, DESELECT_ALL_TITLE, false);
+		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, DESELECT_ALL_TITLE,
+				false);
 
-        listener = widgetSelectedAdapter(e -> listViewer.setAllChecked(false));
-        deselectButton.addSelectionListener(listener);
-    }
+		listener = widgetSelectedAdapter(e -> listViewer.setAllChecked(false));
+		deselectButton.addSelectionListener(listener);
+	}
 
-    /**
-     * Visually checks the previously-specified elements in this dialog's list
-     * viewer.
-     */
-    private void checkInitialSelections() {
-        Iterator itemsToCheck = getInitialElementSelections().iterator();
+	/**
+	 * Visually checks the previously-specified elements in this dialog's list
+	 * viewer.
+	 */
+	private void checkInitialSelections() {
+		Iterator itemsToCheck = getInitialElementSelections().iterator();
 
-        while (itemsToCheck.hasNext()) {
+		while (itemsToCheck.hasNext()) {
 			listViewer.setChecked(itemsToCheck.next(), true);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IWorkbenchHelpContextIds.LIST_SELECTION_DIALOG);
-    }
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IWorkbenchHelpContextIds.LIST_SELECTION_DIALOG);
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        // page group
-        Composite composite = (Composite) super.createDialogArea(parent);
+		// page group
+		Composite composite = (Composite) super.createDialogArea(parent);
 
-        initializeDialogUnits(composite);
+		initializeDialogUnits(composite);
 
-        createMessageArea(composite);
+		createMessageArea(composite);
 
-        listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
-        data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
-        listViewer.getTable().setLayoutData(data);
+		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
+		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
+		listViewer.getTable().setLayoutData(data);
 
-        listViewer.setLabelProvider(labelProvider);
-        listViewer.setContentProvider(contentProvider);
+		listViewer.setLabelProvider(labelProvider);
+		listViewer.setContentProvider(contentProvider);
 
-        addSelectionButtons(composite);
+		addSelectionButtons(composite);
 
-        initializeViewer();
+		initializeViewer();
 
-        // initialize page
-        if (!getInitialElementSelections().isEmpty()) {
+		// initialize page
+		if (!getInitialElementSelections().isEmpty()) {
 			checkInitialSelections();
 		}
 
-        Dialog.applyDialogFont(composite);
+		Dialog.applyDialogFont(composite);
 
-        return composite;
-    }
+		return composite;
+	}
 
-    /**
-     * Returns the viewer used to show the list.
-     *
-     * @return the viewer, or <code>null</code> if not yet created
-     */
-    protected CheckboxTableViewer getViewer() {
-        return listViewer;
-    }
+	/**
+	 * Returns the viewer used to show the list.
+	 *
+	 * @return the viewer, or <code>null</code> if not yet created
+	 */
+	protected CheckboxTableViewer getViewer() {
+		return listViewer;
+	}
 
-    /**
-     * Initializes this dialog's viewer after it has been laid out.
-     */
-    private void initializeViewer() {
-        listViewer.setInput(inputElement);
-    }
+	/**
+	 * Initializes this dialog's viewer after it has been laid out.
+	 */
+	private void initializeViewer() {
+		listViewer.setInput(inputElement);
+	}
 
-    /**
-     * The <code>ListSelectionDialog</code> implementation of this
-     * <code>Dialog</code> method builds a list of the selected elements for later
-     * retrieval by the client and closes this dialog.
-     */
-    @Override
+	/**
+	 * The <code>ListSelectionDialog</code> implementation of this
+	 * <code>Dialog</code> method builds a list of the selected elements for later
+	 * retrieval by the client and closes this dialog.
+	 */
+	@Override
 	protected void okPressed() {
 
-        // Get the input children.
-        Object[] children = contentProvider.getElements(inputElement);
+		// Get the input children.
+		Object[] children = contentProvider.getElements(inputElement);
 
-        // Build a list of selected children.
-        if (children != null) {
-            ArrayList list = new ArrayList();
-            for (Object element : children) {
-                if (listViewer.getChecked(element)) {
+		// Build a list of selected children.
+		if (children != null) {
+			ArrayList list = new ArrayList();
+			for (Object element : children) {
+				if (listViewer.getChecked(element)) {
 					list.add(element);
 				}
-            }
-            setResult(list);
-        }
+			}
+			setResult(list);
+		}
 
-        super.okPressed();
-    }
+		super.okPressed();
+	}
 }

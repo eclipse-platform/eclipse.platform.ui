@@ -28,8 +28,7 @@ public class OpenPerspectivePropertyTester extends PropertyTester {
 	private static final String PROPERTY_IS_PERSPECTIVE_OPEN = "isPerspectiveOpen"; //$NON-NLS-1$
 
 	@Override
-	public boolean test(Object receiver, String property, Object[] args,
-			Object expectedValue) {
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (args.length == 0 && receiver instanceof WorkbenchWindow) {
 			final WorkbenchWindow window = (WorkbenchWindow) receiver;
 			if (PROPERTY_IS_PERSPECTIVE_OPEN.equals(property)) {

@@ -22,14 +22,14 @@ import org.eclipse.ui.activities.IActivityManager;
  */
 public class ActivityContentProvider implements IStructuredContentProvider {
 
-    @Override
+	@Override
 	public Object[] getElements(Object inputElement) {
-        Object[] activities = new Object[0];
-        if (inputElement instanceof IActivityManager) {
+		Object[] activities = new Object[0];
+		if (inputElement instanceof IActivityManager) {
 			activities = ((IActivityManager) inputElement).getDefinedActivityIds().toArray();
-        } else if (inputElement instanceof Collection) {
+		} else if (inputElement instanceof Collection) {
 			activities = ((Collection<?>) inputElement).toArray();
-        }
-        return activities;
-    }
+		}
+		return activities;
+	}
 }

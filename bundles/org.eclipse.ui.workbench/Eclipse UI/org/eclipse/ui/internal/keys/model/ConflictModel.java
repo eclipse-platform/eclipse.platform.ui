@@ -63,12 +63,10 @@ public class ConflictModel extends CommonModel {
 	}
 
 	/**
-	 * Sets the conflicts to the given collection. Any conflicts in the
-	 * collection that do not exist in the <code>bindingModel</code> are
-	 * removed.
+	 * Sets the conflicts to the given collection. Any conflicts in the collection
+	 * that do not exist in the <code>bindingModel</code> are removed.
 	 *
-	 * @param conflicts
-	 *            The conflicts to set.
+	 * @param conflicts The conflicts to set.
 	 */
 	public void setConflicts(Collection conflicts) {
 		Object old = this.conflicts;
@@ -79,8 +77,7 @@ public class ConflictModel extends CommonModel {
 			Map bindingToElement = bindingModel.getBindingToElement();
 			while (i.hasNext()) {
 				Object next = i.next();
-				if (!bindingToElement.containsValue(next)
-						&& !next.equals(getSelectedElement())) {
+				if (!bindingToElement.containsValue(next) && !next.equals(getSelectedElement())) {
 					i.remove();
 				}
 			}
@@ -93,8 +90,7 @@ public class ConflictModel extends CommonModel {
 		updateConflictsFor(source, false);
 	}
 
-	public void updateConflictsFor(BindingElement oldValue,
-			BindingElement newValue) {
+	public void updateConflictsFor(BindingElement oldValue, BindingElement newValue) {
 		updateConflictsFor(oldValue, newValue, false);
 	}
 
@@ -102,15 +98,12 @@ public class ConflictModel extends CommonModel {
 		updateConflictsFor(null, source, removal);
 	}
 
-	private void updateConflictsFor(BindingElement oldValue,
-			BindingElement newValue, boolean removal) {
-		updateConflictsFor(newValue, oldValue == null ? null : oldValue
-				.getTrigger(), newValue == null ? null : newValue.getTrigger(),
-				removal);
+	private void updateConflictsFor(BindingElement oldValue, BindingElement newValue, boolean removal) {
+		updateConflictsFor(newValue, oldValue == null ? null : oldValue.getTrigger(),
+				newValue == null ? null : newValue.getTrigger(), removal);
 	}
 
-	public void updateConflictsFor(BindingElement newValue,
-			TriggerSequence oldTrigger, TriggerSequence newTrigger,
+	public void updateConflictsFor(BindingElement newValue, TriggerSequence oldTrigger, TriggerSequence newTrigger,
 			boolean removal) {
 		Collection matches = (Collection) conflictsMap.get(newValue);
 		if (matches != null) {
@@ -119,12 +112,10 @@ public class ConflictModel extends CommonModel {
 				matches.remove(newValue);
 				conflictsMap.remove(newValue);
 				if (matches == conflicts) {
-					controller.firePropertyChange(this, PROP_CONFLICTS_REMOVE,
-							null, newValue);
+					controller.firePropertyChange(this, PROP_CONFLICTS_REMOVE, null, newValue);
 				}
 				if (matches.size() == 1) {
-					BindingElement tbe = (BindingElement) matches.iterator()
-							.next();
+					BindingElement tbe = (BindingElement) matches.iterator().next();
 					conflictsMap.remove(tbe);
 					tbe.setConflict(Boolean.FALSE);
 					if (matches == conflicts) {
@@ -138,12 +129,10 @@ public class ConflictModel extends CommonModel {
 				conflictsMap.remove(newValue);
 
 				if (matches == conflicts) {
-					controller.firePropertyChange(this, PROP_CONFLICTS_REMOVE,
-							null, newValue);
+					controller.firePropertyChange(this, PROP_CONFLICTS_REMOVE, null, newValue);
 				}
 				if (matches.size() == 1) {
-					BindingElement tbe = (BindingElement) matches.iterator()
-							.next();
+					BindingElement tbe = (BindingElement) matches.iterator().next();
 					conflictsMap.remove(tbe);
 					tbe.setConflict(Boolean.FALSE);
 					if (matches == conflicts) {
@@ -155,23 +144,20 @@ public class ConflictModel extends CommonModel {
 			}
 		}
 
-		if (newValue.getTrigger() == null
-				|| !(newValue.getModelObject() instanceof Binding)) {
+		if (newValue.getTrigger() == null || !(newValue.getModelObject() instanceof Binding)) {
 			return;
 		}
 		Binding binding = (Binding) newValue.getModelObject();
 		TriggerSequence trigger = binding.getTriggerSequence();
 
-		matches = (Collection) bindingManager
-				.getActiveBindingsDisregardingContext().get(trigger);
+		matches = (Collection) bindingManager.getActiveBindingsDisregardingContext().get(trigger);
 		ArrayList localConflicts = new ArrayList();
 		if (matches != null) {
 			localConflicts.add(newValue);
 			Iterator i = matches.iterator();
 			while (i.hasNext()) {
 				Binding b = (Binding) i.next();
-				if (binding != b
-						&& b.getContextId().equals(binding.getContextId())
+				if (binding != b && b.getContextId().equals(binding.getContextId())
 						&& b.getSchemeId().equals(binding.getSchemeId())) {
 					Object element = bindingModel.getBindingToElement().get(b);
 					if (element != null) {
@@ -194,8 +180,7 @@ public class ConflictModel extends CommonModel {
 				conflictsMap.put(newValue, knownConflicts);
 				newValue.setConflict(Boolean.TRUE);
 				if (knownConflicts == conflicts) {
-					controller.firePropertyChange(this, PROP_CONFLICTS_ADD,
-							null, newValue);
+					controller.firePropertyChange(this, PROP_CONFLICTS_ADD, null, newValue);
 				} else if (newValue == getSelectedElement()) {
 					setConflicts(knownConflicts);
 				}
@@ -232,21 +217,15 @@ public class ConflictModel extends CommonModel {
 		}
 		controller.addPropertyChangeListener(event -> {
 			if (event.getSource() == ConflictModel.this
-					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-							.getProperty())) {
+					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
 				if (event.getNewValue() != null) {
-					updateConflictsFor(
-							(BindingElement) event.getOldValue(),
-							(BindingElement) event.getNewValue());
-					setConflicts((Collection) conflictsMap.get(event
-							.getNewValue()));
+					updateConflictsFor((BindingElement) event.getOldValue(), (BindingElement) event.getNewValue());
+					setConflicts((Collection) conflictsMap.get(event.getNewValue()));
 				} else {
 					setConflicts(null);
 				}
-			} else if (BindingModel.PROP_BINDING_REMOVE.equals(event
-					.getProperty())) {
-				updateConflictsFor((BindingElement) event.getOldValue(),
-						(BindingElement) event.getNewValue(), true);
+			} else if (BindingModel.PROP_BINDING_REMOVE.equals(event.getProperty())) {
+				updateConflictsFor((BindingElement) event.getOldValue(), (BindingElement) event.getNewValue(), true);
 			}
 		});
 	}

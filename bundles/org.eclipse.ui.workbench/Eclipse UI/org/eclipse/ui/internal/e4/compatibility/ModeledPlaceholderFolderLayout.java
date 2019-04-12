@@ -28,8 +28,7 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 	protected ModeledPageLayout layout;
 	protected IViewRegistry viewRegistry;
 
-	public ModeledPlaceholderFolderLayout(ModeledPageLayout l, MApplication application,
-			MPartStack stackModel) {
+	public ModeledPlaceholderFolderLayout(ModeledPageLayout l, MApplication application, MPartStack stackModel) {
 		this.application = application;
 		this.viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 		folderModel = stackModel;
@@ -44,8 +43,8 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 			return;
 		}
 
-		MStackElement viewModel = ModeledPageLayout.createViewModel(application, viewId, false,
-				layout.page, layout.partService, layout.createReferences);
+		MStackElement viewModel = ModeledPageLayout.createViewModel(application, viewId, false, layout.page,
+				layout.partService, layout.createReferences);
 		if (viewModel != null) {
 			folderModel.getChildren().add(viewModel);
 		}

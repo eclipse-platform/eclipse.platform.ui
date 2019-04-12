@@ -27,85 +27,82 @@ import org.eclipse.ui.keys.ModifierKey;
  */
 class NativeModifierKeyComparator implements Comparator {
 
-    /**
-     * The sort order value to use when the modifier key is not recognized.
-     */
-    private static final int UNKNOWN_KEY = Integer.MAX_VALUE;
+	/**
+	 * The sort order value to use when the modifier key is not recognized.
+	 */
+	private static final int UNKNOWN_KEY = Integer.MAX_VALUE;
 
-    @Override
+	@Override
 	public int compare(Object left, Object right) {
-        ModifierKey modifierKeyLeft = (ModifierKey) left;
-        ModifierKey modifierKeyRight = (ModifierKey) right;
-        int modifierKeyLeftRank = rank(modifierKeyLeft);
-        int modifierKeyRightRank = rank(modifierKeyRight);
+		ModifierKey modifierKeyLeft = (ModifierKey) left;
+		ModifierKey modifierKeyRight = (ModifierKey) right;
+		int modifierKeyLeftRank = rank(modifierKeyLeft);
+		int modifierKeyRightRank = rank(modifierKeyRight);
 
-        if (modifierKeyLeftRank != modifierKeyRightRank) {
-            return modifierKeyLeftRank - modifierKeyRightRank;
-        }
+		if (modifierKeyLeftRank != modifierKeyRightRank) {
+			return modifierKeyLeftRank - modifierKeyRightRank;
+		}
 		return modifierKeyLeft.compareTo(modifierKeyRight);
-    }
+	}
 
-    /**
-     * Calculates a rank for a given modifier key.
-     *
-     * @param modifierKey
-     *            The modifier key to rank; may be <code>null</code>.
-     * @return The rank of this modifier key. This is a non-negative number
-     *         where a lower number suggests a higher rank.
-     */
-    private int rank(ModifierKey modifierKey) {
+	/**
+	 * Calculates a rank for a given modifier key.
+	 *
+	 * @param modifierKey The modifier key to rank; may be <code>null</code>.
+	 * @return The rank of this modifier key. This is a non-negative number where a
+	 *         lower number suggests a higher rank.
+	 */
+	private int rank(ModifierKey modifierKey) {
 
-        if (Util.isWindows()) {
-            return rankWindows(modifierKey);
-        }
+		if (Util.isWindows()) {
+			return rankWindows(modifierKey);
+		}
 
-        if (Util.isGtk()) {
-            // TODO Do a look-up on window manager.
-            return rankGNOME(modifierKey);
-        }
+		if (Util.isGtk()) {
+			// TODO Do a look-up on window manager.
+			return rankGNOME(modifierKey);
+		}
 
-        if (Util.isMac()) {
-            return rankMacOSX(modifierKey);
-        }
+		if (Util.isMac()) {
+			return rankMacOSX(modifierKey);
+		}
 
-        return UNKNOWN_KEY;
-    }
+		return UNKNOWN_KEY;
+	}
 
-    /**
-     * Provides a ranking for the modifier key based on the modifier key
-     * ordering used in the GNOME window manager.
-     *
-     * @param modifierKey
-     *            The modifier key to rank; may be <code>null</code>.
-     * @return The rank of this modifier key. This is a non-negative number
-     *         where a lower number suggests a higher rank.
-     */
-    private final int rankGNOME(ModifierKey modifierKey) {
-        if (ModifierKey.SHIFT.equals(modifierKey)) {
-            return 0;
-        }
+	/**
+	 * Provides a ranking for the modifier key based on the modifier key ordering
+	 * used in the GNOME window manager.
+	 *
+	 * @param modifierKey The modifier key to rank; may be <code>null</code>.
+	 * @return The rank of this modifier key. This is a non-negative number where a
+	 *         lower number suggests a higher rank.
+	 */
+	private final int rankGNOME(ModifierKey modifierKey) {
+		if (ModifierKey.SHIFT.equals(modifierKey)) {
+			return 0;
+		}
 
-        if (ModifierKey.CTRL.equals(modifierKey)) {
-            return 1;
-        }
+		if (ModifierKey.CTRL.equals(modifierKey)) {
+			return 1;
+		}
 
-        if (ModifierKey.ALT.equals(modifierKey)) {
-            return 2;
-        }
+		if (ModifierKey.ALT.equals(modifierKey)) {
+			return 2;
+		}
 
-        return UNKNOWN_KEY;
+		return UNKNOWN_KEY;
 
-    }
+	}
 
-    /**
-     * Provides a ranking for the modifier key based on the modifier key
-     * ordering used in the KDE window manager.
-     *
-     * @param modifierKey
-     *            The modifier key to rank; may be <code>null</code>.
-     * @return The rank of this modifier key. This is a non-negative number
-     *         where a lower number suggests a higher rank.
-     */
+	/**
+	 * Provides a ranking for the modifier key based on the modifier key ordering
+	 * used in the KDE window manager.
+	 *
+	 * @param modifierKey The modifier key to rank; may be <code>null</code>.
+	 * @return The rank of this modifier key. This is a non-negative number where a
+	 *         lower number suggests a higher rank.
+	 */
 //    private final int rankKDE(ModifierKey modifierKey) {
 //        if (ModifierKey.ALT.equals(modifierKey)) {
 //            return 0;
@@ -122,57 +119,55 @@ class NativeModifierKeyComparator implements Comparator {
 //        return UNKNOWN_KEY;
 //    }
 
-    /**
-     * Provides a ranking for the modifier key based on the modifier key
-     * ordering used in the MacOS X operating system.
-     *
-     * @param modifierKey
-     *            The modifier key to rank; may be <code>null</code>.
-     * @return The rank of this modifier key. This is a non-negative number
-     *         where a lower number suggests a higher rank.
-     */
-    private final int rankMacOSX(ModifierKey modifierKey) {
-        if (ModifierKey.SHIFT.equals(modifierKey)) {
-            return 0;
-        }
+	/**
+	 * Provides a ranking for the modifier key based on the modifier key ordering
+	 * used in the MacOS X operating system.
+	 *
+	 * @param modifierKey The modifier key to rank; may be <code>null</code>.
+	 * @return The rank of this modifier key. This is a non-negative number where a
+	 *         lower number suggests a higher rank.
+	 */
+	private final int rankMacOSX(ModifierKey modifierKey) {
+		if (ModifierKey.SHIFT.equals(modifierKey)) {
+			return 0;
+		}
 
-        if (ModifierKey.CTRL.equals(modifierKey)) {
-            return 1;
-        }
+		if (ModifierKey.CTRL.equals(modifierKey)) {
+			return 1;
+		}
 
-        if (ModifierKey.ALT.equals(modifierKey)) {
-            return 2;
-        }
+		if (ModifierKey.ALT.equals(modifierKey)) {
+			return 2;
+		}
 
-        if (ModifierKey.COMMAND.equals(modifierKey)) {
-            return 3;
-        }
+		if (ModifierKey.COMMAND.equals(modifierKey)) {
+			return 3;
+		}
 
-        return UNKNOWN_KEY;
-    }
+		return UNKNOWN_KEY;
+	}
 
-    /**
-     * Provides a ranking for the modifier key based on the modifier key
-     * ordering used in the Windows operating system.
-     *
-     * @param modifierKey
-     *            The modifier key to rank; may be <code>null</code>.
-     * @return The rank of this modifier key. This is a non-negative number
-     *         where a lower number suggests a higher rank.
-     */
-    private final int rankWindows(ModifierKey modifierKey) {
-        if (ModifierKey.CTRL.equals(modifierKey)) {
-            return 0;
-        }
+	/**
+	 * Provides a ranking for the modifier key based on the modifier key ordering
+	 * used in the Windows operating system.
+	 *
+	 * @param modifierKey The modifier key to rank; may be <code>null</code>.
+	 * @return The rank of this modifier key. This is a non-negative number where a
+	 *         lower number suggests a higher rank.
+	 */
+	private final int rankWindows(ModifierKey modifierKey) {
+		if (ModifierKey.CTRL.equals(modifierKey)) {
+			return 0;
+		}
 
-        if (ModifierKey.ALT.equals(modifierKey)) {
-            return 1;
-        }
+		if (ModifierKey.ALT.equals(modifierKey)) {
+			return 1;
+		}
 
-        if (ModifierKey.SHIFT.equals(modifierKey)) {
-            return 2;
-        }
+		if (ModifierKey.SHIFT.equals(modifierKey)) {
+			return 2;
+		}
 
-        return UNKNOWN_KEY;
-    }
+		return UNKNOWN_KEY;
+	}
 }

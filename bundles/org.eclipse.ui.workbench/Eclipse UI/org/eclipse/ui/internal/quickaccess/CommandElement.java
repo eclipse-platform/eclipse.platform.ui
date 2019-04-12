@@ -44,8 +44,7 @@ public class CommandElement extends QuickAccessElement {
 
 	private String id;
 
-	/* package */CommandElement(ParameterizedCommand command, String id,
-			CommandProvider commandProvider) {
+	/* package */ CommandElement(ParameterizedCommand command, String id, CommandProvider commandProvider) {
 		super(commandProvider);
 		this.id = id;
 		this.command = command;
@@ -58,27 +57,22 @@ public class CommandElement extends QuickAccessElement {
 			CommandProvider provider = (CommandProvider) o;
 			if (provider.getHandlerService() != null && provider.getContextSnapshot() != null) {
 				try {
-					provider.getHandlerService().executeCommandInContext(command, null,
-							provider.getContextSnapshot());
+					provider.getHandlerService().executeCommandInContext(command, null, provider.getContextSnapshot());
 				} catch (Exception ex) {
-					StatusUtil.handleStatus(ex, StatusManager.SHOW
-							| StatusManager.LOG);
+					StatusUtil.handleStatus(ex, StatusManager.SHOW | StatusManager.LOG);
 				}
 				return;
 			}
 		}
 
 		// let's try the old fashioned way
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
-			IHandlerService handlerService = window
-					.getWorkbench().getService(IHandlerService.class);
+			IHandlerService handlerService = window.getWorkbench().getService(IHandlerService.class);
 			try {
 				handlerService.executeCommand(command, null);
 			} catch (Exception ex) {
-				StatusUtil.handleStatus(ex, StatusManager.SHOW
-						| StatusManager.LOG);
+				StatusUtil.handleStatus(ex, StatusManager.SHOW | StatusManager.LOG);
 			}
 		}
 	}
@@ -128,18 +122,16 @@ public class CommandElement extends QuickAccessElement {
 	}
 
 	/**
-	 * Returns a formatted string that can be used to invoke this element's
-	 * command. <code>null</code> may be returned if a binding cannot be found.
+	 * Returns a formatted string that can be used to invoke this element's command.
+	 * <code>null</code> may be returned if a binding cannot be found.
 	 *
 	 * @return the string keybinding for invoking this element's command, may be
 	 *         <code>null</code>
 	 * @since 3.6
 	 */
 	public String getBinding() {
-		BindingService service = (BindingService) PlatformUI.getWorkbench().getService(
-				IBindingService.class);
-		TriggerSequence[] triggerSeq = service.getBindingManager()
-				.getActiveBindingsDisregardingContextFor(command);
+		BindingService service = (BindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
+		TriggerSequence[] triggerSeq = service.getBindingManager().getActiveBindingsDisregardingContextFor(command);
 		if (triggerSeq != null && triggerSeq.length > 0) {
 			return triggerSeq[0].format();
 		}

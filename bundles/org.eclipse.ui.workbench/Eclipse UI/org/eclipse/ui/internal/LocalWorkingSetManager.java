@@ -19,7 +19,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.osgi.framework.BundleContext;
 
-
 public class LocalWorkingSetManager extends AbstractWorkingSetManager implements ILocalWorkingSetManager {
 
 	public LocalWorkingSetManager(BundleContext context) {
@@ -47,8 +46,8 @@ public class LocalWorkingSetManager extends AbstractWorkingSetManager implements
 	 */
 	@Override
 	public void saveState(IMemento memento) {
-        saveWorkingSetState(memento);
-        saveMruList(memento);
+		saveWorkingSetState(memento);
+		saveMruList(memento);
 	}
 
 	/**
@@ -58,7 +57,7 @@ public class LocalWorkingSetManager extends AbstractWorkingSetManager implements
 	public void restoreState(IMemento memento) {
 		Assert.isNotNull(memento);
 		Assert.isTrue(getWorkingSets().length == 0);
-        restoreWorkingSetState(memento);
-        restoreMruList(memento);
+		restoreWorkingSetState(memento);
+		restoreMruList(memento);
 	}
 }

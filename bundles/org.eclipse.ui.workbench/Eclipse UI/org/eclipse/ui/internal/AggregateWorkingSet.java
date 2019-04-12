@@ -32,8 +32,7 @@ import org.eclipse.ui.internal.util.Util;
  *
  * @since 3.2
  */
-public class AggregateWorkingSet extends AbstractWorkingSet implements
-		IAggregateWorkingSet, IPropertyChangeListener {
+public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregateWorkingSet, IPropertyChangeListener {
 
 	private IWorkingSet[] components;
 
@@ -48,8 +47,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	 * @param label
 	 * @param components
 	 */
-	public AggregateWorkingSet(String name, String label,
-			IWorkingSet[] components) {
+	public AggregateWorkingSet(String name, String label, IWorkingSet[] components) {
 		super(name, label);
 
 		IWorkingSet[] componentCopy = new IWorkingSet[components.length];
@@ -68,8 +66,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		super(name, label);
 		workingSetMemento = memento;
 		if (workingSetMemento != null) {
-			String uniqueId = workingSetMemento
-					.getString(IWorkbenchConstants.TAG_ID);
+			String uniqueId = workingSetMemento.getString(IWorkbenchConstants.TAG_ID);
 			if (uniqueId != null) {
 				setUniqueId(uniqueId);
 			}
@@ -86,16 +83,16 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	}
 
 	/**
-	 * Takes the elements from all component working sets and sets them to be
-	 * the elements of this working set. Any duplicates are trimmed.
+	 * Takes the elements from all component working sets and sets them to be the
+	 * elements of this working set. Any duplicates are trimmed.
 	 *
 	 * @param fireEvent whether a working set change event should be fired
 	 */
 	private void constructElements(boolean fireEvent) {
 		if (inElementConstruction) {
 			String msg = NLS.bind(WorkbenchMessages.ProblemCyclicDependency, getName());
-            WorkbenchPlugin.log(msg);
-            throw new IllegalStateException(msg);
+			WorkbenchPlugin.log(msg);
+			throw new IllegalStateException(msg);
 		}
 		inElementConstruction = true;
 		try {
@@ -121,8 +118,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			}
 			internalSetElements(elements.toArray(new IAdaptable[elements.size()]));
 			if (fireEvent) {
-				fireWorkingSetChanged(
-					IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
+				fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
 			}
 		} finally {
 			inElementConstruction = false;
@@ -136,8 +132,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS);
 	}
 
 	/**
@@ -178,8 +173,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			memento.putString(IWorkbenchConstants.TAG_NAME, getName());
 			memento.putString(IWorkbenchConstants.TAG_LABEL, getLabel());
 			memento.putString(IWorkbenchConstants.TAG_ID, getUniqueId());
-			memento.putString(AbstractWorkingSet.TAG_AGGREGATE, Boolean.TRUE
-					.toString());
+			memento.putString(AbstractWorkingSet.TAG_AGGREGATE, Boolean.TRUE.toString());
 
 			for (IWorkingSet workingSet : getComponentsInternal()) {
 				memento.createChild(IWorkbenchConstants.TAG_WORKING_SET, workingSet.getName());
@@ -231,14 +225,11 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 				IWorkingSet set = localComponents[i];
 				if (set.equals(event.getOldValue())) {
 					IWorkingSet[] newComponents = new IWorkingSet[localComponents.length - 1];
-					Util
-							.arrayCopyWithRemoval(localComponents,
-									newComponents, i);
+					Util.arrayCopyWithRemoval(localComponents, newComponents, i);
 					setComponents(newComponents);
 				}
 			}
-		} else if (property
-				.equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
+		} else if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
 			IWorkingSet[] localComponents = getComponentsInternal();
 			for (IWorkingSet set : localComponents) {
 				if (set.equals(event.getNewValue())) {
@@ -255,8 +246,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		if (manager == null) {
 			throw new IllegalStateException();
 		}
-		IMemento[] workingSetReferences = workingSetMemento
-				.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
+		IMemento[] workingSetReferences = workingSetMemento.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
 		ArrayList list = new ArrayList(workingSetReferences.length);
 
 		for (IMemento memento : workingSetReferences) {
@@ -266,8 +256,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 				list.add(set);
 			}
 		}
-		internalSetComponents((IWorkingSet[]) list
-				.toArray(new IWorkingSet[list.size()]));
+		internalSetComponents((IWorkingSet[]) list.toArray(new IWorkingSet[list.size()]));
 		constructElements(false);
 	}
 
@@ -297,7 +286,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		if (localComponents == null || localComponents.length == 0) {
 			return false;
 		}
-		for (int i= 0; i < localComponents.length; i++) {
+		for (int i = 0; i < localComponents.length; i++) {
 			if (!localComponents[i].isSelfUpdating()) {
 				return false;
 			}

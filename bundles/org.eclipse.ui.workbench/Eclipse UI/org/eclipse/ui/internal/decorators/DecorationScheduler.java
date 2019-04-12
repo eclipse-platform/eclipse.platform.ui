@@ -95,16 +95,14 @@ public class DecorationScheduler {
 	}
 
 	/**
-	 * Decorate the text for the receiver. If it has already been done then
-	 * return the result, otherwise queue it for decoration.
+	 * Decorate the text for the receiver. If it has already been done then return
+	 * the result, otherwise queue it for decoration.
 	 *
 	 * @return String
 	 * @param text
 	 * @param element
-	 * @param adaptedElement
-	 *            The adapted value of element. May be null.
-	 * @param context
-	 *            the decoration context
+	 * @param adaptedElement The adapted value of element. May be null.
+	 * @param context        the decoration context
 	 */
 
 	public String decorateWithText(String text, Object element, Object adaptedElement, IDecorationContext context) {
@@ -123,15 +121,11 @@ public class DecorationScheduler {
 	 * Queue the element and its adapted value if it has not been already.
 	 *
 	 * @param element
-	 * @param adaptedElement
-	 *            The adapted value of element. May be null.
-	 * @param forceUpdate
-	 *            If true then a labelProviderChanged is fired whether
-	 *            decoration occurred or not.
-	 * @param undecoratedText
-	 *            The original text for the element if it is known.
-	 * @param context
-	 *            The decoration context
+	 * @param adaptedElement  The adapted value of element. May be null.
+	 * @param forceUpdate     If true then a labelProviderChanged is fired whether
+	 *                        decoration occurred or not.
+	 * @param undecoratedText The original text for the element if it is known.
+	 * @param context         The decoration context
 	 */
 
 	synchronized void queueForDecoration(Object element, Object adaptedElement, boolean forceUpdate,
@@ -164,10 +158,8 @@ public class DecorationScheduler {
 	 * @return Image
 	 * @param image
 	 * @param element
-	 * @param adaptedElement
-	 *            The adapted value of element. May be null.
-	 * @param context
-	 *            the decoration context
+	 * @param adaptedElement The adapted value of element. May be null.
+	 * @param context        the decoration context
 	 * @param manager
 	 *
 	 */
@@ -186,13 +178,10 @@ public class DecorationScheduler {
 	 * Return the DecorationResult for element. If there isn't one queue for
 	 * decoration and return <code>null</code>.
 	 *
-	 * @param element
-	 *            The element to be decorated. If it is <code>null</code>
-	 *            return <code>null</code>.
-	 * @param adaptedElement
-	 *            It's adapted value.
-	 * @param context
-	 *            The deocration context
+	 * @param element        The element to be decorated. If it is <code>null</code>
+	 *                       return <code>null</code>.
+	 * @param adaptedElement It's adapted value.
+	 * @param context        The deocration context
 	 * @return DecorationResult or <code>null</code>
 	 */
 	private DecorationResult getResult(Object element, Object adaptedElement, IDecorationContext context) {
@@ -212,8 +201,7 @@ public class DecorationScheduler {
 
 	}
 
-	private DecorationResult internalGetResult(Object element,
-			IDecorationContext context) {
+	private DecorationResult internalGetResult(Object element, IDecorationContext context) {
 		Map results = (Map) resultCache.get(context);
 		if (results != null) {
 			return (DecorationResult) results.get(element);
@@ -221,8 +209,7 @@ public class DecorationScheduler {
 		return null;
 	}
 
-	protected void internalPutResult(Object element,
-			IDecorationContext context, DecorationResult result) {
+	protected void internalPutResult(Object element, IDecorationContext context, DecorationResult result) {
 		Map results = (Map) resultCache.get(context);
 		if (results == null) {
 			results = new HashMap();
@@ -327,15 +314,11 @@ public class DecorationScheduler {
 			/**
 			 * Ensure that a result is cached for the given element and context
 			 *
-			 * @param element
-			 *            the elements
-			 * @param force
-			 *            whether an update should be forced
-			 * @param context
-			 *            the decoration context
+			 * @param element the elements
+			 * @param force   whether an update should be forced
+			 * @param context the decoration context
 			 */
-			private void ensureResultCached(Object element, boolean force,
-					IDecorationContext context) {
+			private void ensureResultCached(Object element, boolean force, IDecorationContext context) {
 				boolean elementIsCached = internalGetResult(element, context) != null;
 				if (elementIsCached) {
 					synchronized (pendingKey) {
@@ -370,7 +353,6 @@ public class DecorationScheduler {
 						synchronized (pendingKey) {
 							pendingUpdate.add(element);
 						}
-
 
 					}
 				}
@@ -465,15 +447,15 @@ public class DecorationScheduler {
 				// someone has already cleared it out.
 				if (currentIndex == NEEDS_INIT) {
 					if (hasPendingUpdates()) {
-					    resetState();
+						resetState();
 						return Status.OK_STATUS;
 					}
 					setUpUpdates();
 				}
 
 				if (listeners.length == 0) {
-				    resetState();
-				    return Status.OK_STATUS;
+					resetState();
+					return Status.OK_STATUS;
 				}
 
 				monitor.beginTask(WorkbenchMessages.DecorationScheduler_UpdatingTask, IProgressMonitor.UNKNOWN);
@@ -485,8 +467,7 @@ public class DecorationScheduler {
 
 					// If it was removed in the meantime then skip it.
 					if (!removedListeners.contains(listener)) {
-						decoratorManager.fireListener(
-								labelProviderChangedEvent, listener);
+						decoratorManager.fireListener(labelProviderChangedEvent, listener);
 					}
 
 					// If it is taking long enough for the user to notice then
@@ -499,7 +480,7 @@ public class DecorationScheduler {
 				monitor.done();
 
 				if (currentIndex >= listeners.length) {
-				    resetState();
+					resetState();
 					if (!hasPendingUpdates()) {
 						decorated();
 					}
@@ -511,19 +492,19 @@ public class DecorationScheduler {
 				return Status.OK_STATUS;
 			}
 
-            /**
-             * Clear any cached information.
-             */
-            private void resetState() {
-                currentIndex = NEEDS_INIT;// Reset
-                removedListeners.clear();
-                // Other decoration requests may have occurred due to
-                // updates or we may have timed out updating listeners.
-                // Only clear the results if there are none pending.
-                if (awaitingDecoration.isEmpty()) {
-                    resultCache.clear();
-                }
-            }
+			/**
+			 * Clear any cached information.
+			 */
+			private void resetState() {
+				currentIndex = NEEDS_INIT;// Reset
+				removedListeners.clear();
+				// Other decoration requests may have occurred due to
+				// updates or we may have timed out updating listeners.
+				// Only clear the results if there are none pending.
+				if (awaitingDecoration.isEmpty()) {
+					resultCache.clear();
+				}
+			}
 
 			private void setUpUpdates() {
 				// Get the elements awaiting update and then
@@ -557,8 +538,7 @@ public class DecorationScheduler {
 	 * Return whether or not there is a decoration for this element ready.
 	 *
 	 * @param element
-	 * @param context
-	 *            The decoration context
+	 * @param context The decoration context
 	 * @return boolean true if the element is ready.
 	 */
 	public boolean isDecorationReady(Object element, IDecorationContext context) {
@@ -569,11 +549,10 @@ public class DecorationScheduler {
 	 * Return the background Color for element. If there is no result cue for
 	 * decoration and return null, otherwise return the value in the result.
 	 *
-	 * @param element
-	 *            The Object to be decorated
+	 * @param element        The Object to be decorated
 	 * @param adaptedElement
-	 * @return Color or <code>null</code> if there is no value or if it is has
-	 *         not been decorated yet.
+	 * @return Color or <code>null</code> if there is no value or if it is has not
+	 *         been decorated yet.
 	 */
 	public Color getBackgroundColor(Object element, Object adaptedElement) {
 		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
@@ -588,11 +567,10 @@ public class DecorationScheduler {
 	 * Return the font for element. If there is no result cue for decoration and
 	 * return null, otherwise return the value in the result.
 	 *
-	 * @param element
-	 *            The Object to be decorated
+	 * @param element        The Object to be decorated
 	 * @param adaptedElement
-	 * @return Font or <code>null</code> if there is no value or if it is has
-	 *         not been decorated yet.
+	 * @return Font or <code>null</code> if there is no value or if it is has not
+	 *         been decorated yet.
 	 */
 	public Font getFont(Object element, Object adaptedElement) {
 		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
@@ -607,11 +585,10 @@ public class DecorationScheduler {
 	 * Return the foreground Color for element. If there is no result cue for
 	 * decoration and return null, otherwise return the value in the result.
 	 *
-	 * @param element
-	 *            The Object to be decorated
+	 * @param element        The Object to be decorated
 	 * @param adaptedElement
-	 * @return Color or <code>null</code> if there is no value or if it is has
-	 *         not been decorated yet.
+	 * @return Color or <code>null</code> if there is no value or if it is has not
+	 *         been decorated yet.
 	 */
 	public Color getForegroundColor(Object element, Object adaptedElement) {
 		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);

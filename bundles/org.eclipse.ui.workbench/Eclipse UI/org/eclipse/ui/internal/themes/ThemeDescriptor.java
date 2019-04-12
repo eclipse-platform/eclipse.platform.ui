@@ -29,124 +29,123 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class ThemeDescriptor implements IThemeDescriptor {
 
-    /* Theme */
-    public static final String ATT_ID = "id";//$NON-NLS-1$
+	/* Theme */
+	public static final String ATT_ID = "id";//$NON-NLS-1$
 
-    private static final String ATT_NAME = "name";//$NON-NLS-1$
+	private static final String ATT_NAME = "name";//$NON-NLS-1$
 
-    private Collection colors = new HashSet();
+	private Collection colors = new HashSet();
 
-    private String description;
+	private String description;
 
-    private Collection fonts = new HashSet();
+	private Collection fonts = new HashSet();
 
-    private String id;
+	private String id;
 
-    private String name;
+	private String name;
 
-    private Map dataMap = new HashMap();
+	private Map dataMap = new HashMap();
 
-    /**
-     * Create a new ThemeDescriptor
-     * @param id
-     */
-    public ThemeDescriptor(String id) {
-        this.id = id;
-    }
+	/**
+	 * Create a new ThemeDescriptor
+	 * 
+	 * @param id
+	 */
+	public ThemeDescriptor(String id) {
+		this.id = id;
+	}
 
-    /**
-     * Add a color override to this descriptor.
-     *
-     * @param definition the definition to add
-     */
-    void add(ColorDefinition definition) {
-    	if (colors.contains(definition)) {
-    		colors.remove(definition);
+	/**
+	 * Add a color override to this descriptor.
+	 *
+	 * @param definition the definition to add
+	 */
+	void add(ColorDefinition definition) {
+		if (colors.contains(definition)) {
+			colors.remove(definition);
 		}
-        colors.add(definition);
-    }
+		colors.add(definition);
+	}
 
-    /**
-     * Add a font override to this descriptor.
-     *
-     * @param definition the definition to add
-     */
-    void add(FontDefinition definition) {
-        if (fonts.contains(definition)) {
+	/**
+	 * Add a font override to this descriptor.
+	 *
+	 * @param definition the definition to add
+	 */
+	void add(FontDefinition definition) {
+		if (fonts.contains(definition)) {
 			return;
 		}
-        fonts.add(definition);
-    }
+		fonts.add(definition);
+	}
 
-    /**
-     * Add a data object to this descriptor.
-     *
-     * @param key the key
-     * @param data the data
-     */
-    void setData(String key, Object data) {
-        if (dataMap.containsKey(key)) {
+	/**
+	 * Add a data object to this descriptor.
+	 *
+	 * @param key  the key
+	 * @param data the data
+	 */
+	void setData(String key, Object data) {
+		if (dataMap.containsKey(key)) {
 			return;
 		}
 
-        dataMap.put(key, data);
-    }
+		dataMap.put(key, data);
+	}
 
-    @Override
+	@Override
 	public ColorDefinition[] getColors() {
-        ColorDefinition[] defs = (ColorDefinition[]) colors
-                .toArray(new ColorDefinition[colors.size()]);
-        Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
-        return defs;
-    }
+		ColorDefinition[] defs = (ColorDefinition[]) colors.toArray(new ColorDefinition[colors.size()]);
+		Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
+		return defs;
+	}
 
-    @Override
+	@Override
 	public String getDescription() {
-        return description;
-    }
+		return description;
+	}
 
-    @Override
+	@Override
 	public FontDefinition[] getFonts() {
-        FontDefinition[] defs = (FontDefinition[]) fonts
-                .toArray(new FontDefinition[fonts.size()]);
-        Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
-        return defs;
-    }
+		FontDefinition[] defs = (FontDefinition[]) fonts.toArray(new FontDefinition[fonts.size()]);
+		Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
+		return defs;
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return id;
-    }
+		return id;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-    	if (name == null)
-    		return getId();
-        return name;
-    }
+		if (name == null)
+			return getId();
+		return name;
+	}
 
-    /*
-     * load the name if it is not already set.
-     */
-    void extractName(IConfigurationElement configElement) {
-        if (name == null) {
+	/*
+	 * load the name if it is not already set.
+	 */
+	void extractName(IConfigurationElement configElement) {
+		if (name == null) {
 			name = configElement.getAttribute(ATT_NAME);
 		}
-    }
+	}
 
-    /**
-     * Set the description.
-     *
-     * @param description the description
-     */
-    void setDescription(String description) {
-        if (this.description == null) {
+	/**
+	 * Set the description.
+	 *
+	 * @param description the description
+	 */
+	void setDescription(String description) {
+		if (this.description == null) {
 			this.description = description;
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public Map getData() {
-        return Collections.unmodifiableMap(dataMap);
-    }
+		return Collections.unmodifiableMap(dataMap);
+	}
 }

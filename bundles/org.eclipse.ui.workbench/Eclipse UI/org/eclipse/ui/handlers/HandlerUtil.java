@@ -43,31 +43,26 @@ import org.eclipse.ui.IWorkbenchWindow;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class HandlerUtil {
-	private static void noVariableFound(ExecutionEvent event, String name)
-			throws ExecutionException {
+	private static void noVariableFound(ExecutionEvent event, String name) throws ExecutionException {
 		throw new ExecutionException("No " + name //$NON-NLS-1$
 				+ " found while executing " + event.getCommand().getId()); //$NON-NLS-1$
 	}
 
-	private static void incorrectTypeFound(ExecutionEvent event, String name,
-			Class expectedType, Class wrongType) throws ExecutionException {
+	private static void incorrectTypeFound(ExecutionEvent event, String name, Class expectedType, Class wrongType)
+			throws ExecutionException {
 		throw new ExecutionException("Incorrect type for " //$NON-NLS-1$
-				+ name
-				+ " found while executing " //$NON-NLS-1$
-				+ event.getCommand().getId()
-				+ ", expected " + expectedType.getName() //$NON-NLS-1$
+				+ name + " found while executing " //$NON-NLS-1$
+				+ event.getCommand().getId() + ", expected " + expectedType.getName() //$NON-NLS-1$
 				+ " found " + wrongType.getName()); //$NON-NLS-1$
 	}
 
 	/**
 	 * Extract the variable.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
-	 * @param name
-	 *            The variable name to extract.
-	 * @return The object from the application context, or <code>null</code>
-	 *         if it could not be found.
+	 * @param event The execution event that contains the application context
+	 * @param name  The variable name to extract.
+	 * @return The object from the application context, or <code>null</code> if it
+	 *         could not be found.
 	 */
 	public static Object getVariable(ExecutionEvent event, String name) {
 		if (event.getApplicationContext() instanceof IEvaluationContext) {
@@ -80,17 +75,13 @@ public class HandlerUtil {
 	/**
 	 * Extract the variable.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
-	 * @param name
-	 *            The variable name to extract.
+	 * @param event The execution event that contains the application context
+	 * @param name  The variable name to extract.
 	 * @return The object from the application context. Will not return
 	 *         <code>null</code>.
-	 * @throws ExecutionException
-	 *             if the variable is not found.
+	 * @throws ExecutionException if the variable is not found.
 	 */
-	public static Object getVariableChecked(ExecutionEvent event, String name)
-			throws ExecutionException {
+	public static Object getVariableChecked(ExecutionEvent event, String name) throws ExecutionException {
 		Object o = getVariable(event, name);
 		if (o == null) {
 			noVariableFound(event, name);
@@ -101,12 +92,10 @@ public class HandlerUtil {
 	/**
 	 * Extract the variable.
 	 *
-	 * @param context
-	 *            The IEvaluationContext or <code>null</code>
-	 * @param name
-	 *            The variable name to extract.
-	 * @return The object from the application context, or <code>null</code>
-	 *         if it could not be found.
+	 * @param context The IEvaluationContext or <code>null</code>
+	 * @param name    The variable name to extract.
+	 * @return The object from the application context, or <code>null</code> if it
+	 *         could not be found.
 	 * @since 3.4
 	 */
 	public static Object getVariable(Object context, String name) {
@@ -120,8 +109,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active contexts.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return a collection of String contextIds, or <code>null</code>.
 	 */
 	public static Collection getActiveContexts(ExecutionEvent event) {
@@ -135,19 +123,14 @@ public class HandlerUtil {
 	/**
 	 * Return the active contexts.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
-	 * @return a collection of String contextIds. Will not return
-	 *         <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the context variable is not found.
+	 * @param event The execution event that contains the application context
+	 * @return a collection of String contextIds. Will not return <code>null</code>.
+	 * @throws ExecutionException If the context variable is not found.
 	 */
-	public static Collection getActiveContextsChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static Collection getActiveContextsChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_CONTEXT_NAME);
 		if (!(o instanceof Collection)) {
-			incorrectTypeFound(event, ISources.ACTIVE_CONTEXT_NAME,
-					Collection.class, o.getClass());
+			incorrectTypeFound(event, ISources.ACTIVE_CONTEXT_NAME, Collection.class, o.getClass());
 		}
 		return (Collection) o;
 	}
@@ -156,8 +139,7 @@ public class HandlerUtil {
 	 * Return the active shell. Is not necessarily the active workbench window
 	 * shell.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active shell, or <code>null</code>.
 	 */
 	public static Shell getActiveShell(ExecutionEvent event) {
@@ -172,14 +154,11 @@ public class HandlerUtil {
 	 * Return the active shell. Is not necessarily the active workbench window
 	 * shell.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active shell. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active shell variable is not found.
+	 * @throws ExecutionException If the active shell variable is not found.
 	 */
-	public static Shell getActiveShellChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static Shell getActiveShellChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_SHELL_NAME);
 		if (!(o instanceof Shell)) {
 			incorrectTypeFound(event, ISources.ACTIVE_SHELL_NAME, Shell.class, o.getClass());
@@ -190,8 +169,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active workbench window.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active workbench window, or <code>null</code>.
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow(ExecutionEvent event) {
@@ -205,14 +183,12 @@ public class HandlerUtil {
 	/**
 	 * Return the active workbench window.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active workbench window. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active workbench window variable is not found.
+	 * @throws ExecutionException If the active workbench window variable is not
+	 *                            found.
 	 */
-	public static IWorkbenchWindow getActiveWorkbenchWindowChecked(
-			ExecutionEvent event) throws ExecutionException {
+	public static IWorkbenchWindow getActiveWorkbenchWindowChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
 		if (!(o instanceof IWorkbenchWindow)) {
 			incorrectTypeFound(event, ISources.ACTIVE_WORKBENCH_WINDOW_NAME, IWorkbenchWindow.class, o.getClass());
@@ -223,8 +199,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active editor.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active editor, or <code>null</code>.
 	 */
 	public static IEditorPart getActiveEditor(ExecutionEvent event) {
@@ -238,14 +213,11 @@ public class HandlerUtil {
 	/**
 	 * Return the active editor.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active editor. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active editor variable is not found.
+	 * @throws ExecutionException If the active editor variable is not found.
 	 */
-	public static IEditorPart getActiveEditorChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static IEditorPart getActiveEditorChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_EDITOR_NAME);
 		if (!(o instanceof IEditorPart)) {
 			incorrectTypeFound(event, ISources.ACTIVE_EDITOR_NAME, IEditorPart.class, o.getClass());
@@ -256,8 +228,7 @@ public class HandlerUtil {
 	/**
 	 * Return the part id of the active editor.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the part id of the active editor, or <code>null</code>.
 	 */
 	public static String getActiveEditorId(ExecutionEvent event) {
@@ -271,15 +242,11 @@ public class HandlerUtil {
 	/**
 	 * Return the part id of the active editor.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
-	 * @return the part id of the active editor. Will not return
-	 *         <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active editor id variable is not found.
+	 * @param event The execution event that contains the application context
+	 * @return the part id of the active editor. Will not return <code>null</code>.
+	 * @throws ExecutionException If the active editor id variable is not found.
 	 */
-	public static String getActiveEditorIdChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static String getActiveEditorIdChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_EDITOR_ID_NAME);
 		if (!(o instanceof String)) {
 			incorrectTypeFound(event, ISources.ACTIVE_EDITOR_ID_NAME, String.class, o.getClass());
@@ -290,8 +257,7 @@ public class HandlerUtil {
 	/**
 	 * Return the input of the active editor.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the input of the active editor, or <code>null</code>.
 	 * @since 3.7
 	 */
@@ -306,16 +272,12 @@ public class HandlerUtil {
 	/**
 	 * Return the input of the active editor.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
-	 * @return the input of the active editor. Will not return <code>null</code>
-	 *         .
-	 * @throws ExecutionException
-	 *             If the active editor input variable is not found.
+	 * @param event The execution event that contains the application context
+	 * @return the input of the active editor. Will not return <code>null</code> .
+	 * @throws ExecutionException If the active editor input variable is not found.
 	 * @since 3.7
 	 */
-	public static IEditorInput getActiveEditorInputChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static IEditorInput getActiveEditorInputChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_EDITOR_INPUT_NAME);
 		if (!(o instanceof IEditorInput)) {
 			incorrectTypeFound(event, ISources.ACTIVE_EDITOR_INPUT_NAME, IEditorInput.class, o.getClass());
@@ -326,8 +288,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active part.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active part, or <code>null</code>.
 	 */
 	public static IWorkbenchPart getActivePart(ExecutionEvent event) {
@@ -341,14 +302,11 @@ public class HandlerUtil {
 	/**
 	 * Return the active part.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active part. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active part variable is not found.
+	 * @throws ExecutionException If the active part variable is not found.
 	 */
-	public static IWorkbenchPart getActivePartChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static IWorkbenchPart getActivePartChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_PART_NAME);
 		if (!(o instanceof IWorkbenchPart)) {
 			incorrectTypeFound(event, ISources.ACTIVE_PART_NAME, IWorkbenchPart.class, o.getClass());
@@ -359,8 +317,7 @@ public class HandlerUtil {
 	/**
 	 * Return the part id of the active part.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the part id of the active part, or <code>null</code>.
 	 */
 	public static String getActivePartId(ExecutionEvent event) {
@@ -374,14 +331,11 @@ public class HandlerUtil {
 	/**
 	 * Return the part id of the active part.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the part id of the active part. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active part id variable is not found.
+	 * @throws ExecutionException If the active part id variable is not found.
 	 */
-	public static String getActivePartIdChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static String getActivePartIdChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_PART_ID_NAME);
 		if (!(o instanceof String)) {
 			incorrectTypeFound(event, ISources.ACTIVE_PART_ID_NAME, String.class, o.getClass());
@@ -392,8 +346,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active part site.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active part site, or <code>null</code>.
 	 */
 	public static IWorkbenchSite getActiveSite(ExecutionEvent event) {
@@ -407,14 +360,11 @@ public class HandlerUtil {
 	/**
 	 * Return the active part site.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active part site. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active part site variable is not found.
+	 * @throws ExecutionException If the active part site variable is not found.
 	 */
-	public static IWorkbenchSite getActiveSiteChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static IWorkbenchSite getActiveSiteChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_SITE_NAME);
 		if (!(o instanceof IWorkbenchSite)) {
 			incorrectTypeFound(event, ISources.ACTIVE_SITE_NAME, IWorkbenchSite.class, o.getClass());
@@ -425,8 +375,7 @@ public class HandlerUtil {
 	/**
 	 * Return the current selection.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the current selection, or <code>null</code>.
 	 */
 	public static ISelection getCurrentSelection(ExecutionEvent event) {
@@ -438,11 +387,11 @@ public class HandlerUtil {
 	}
 
 	/**
-	 * Return the current structured selection, or <code>StructuredSelection.EMPTY</code>
-	 * if the current selection is not a structured selection or <code>null</code>.
+	 * Return the current structured selection, or
+	 * <code>StructuredSelection.EMPTY</code> if the current selection is not a
+	 * structured selection or <code>null</code>.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the current IStructuredSelection, or
 	 *         <code>StructuredSelection.EMPTY</code>.
 	 * @since 3.108
@@ -459,16 +408,12 @@ public class HandlerUtil {
 	/**
 	 * Return the current selection.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the current selection. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the current selection variable is not found.
+	 * @throws ExecutionException If the current selection variable is not found.
 	 */
-	public static ISelection getCurrentSelectionChecked(ExecutionEvent event)
-			throws ExecutionException {
-		Object o = getVariableChecked(event,
-				ISources.ACTIVE_CURRENT_SELECTION_NAME);
+	public static ISelection getCurrentSelectionChecked(ExecutionEvent event) throws ExecutionException {
+		Object o = getVariableChecked(event, ISources.ACTIVE_CURRENT_SELECTION_NAME);
 		if (!(o instanceof ISelection)) {
 			incorrectTypeFound(event, ISources.ACTIVE_CURRENT_SELECTION_NAME, ISelection.class, o.getClass());
 		}
@@ -479,8 +424,7 @@ public class HandlerUtil {
 	 * Return the menu IDs that were applied to the registered context menu. For
 	 * example, #CompilationUnitEditorContext.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the menu IDs, or <code>null</code>.
 	 */
 	public static Collection getActiveMenus(ExecutionEvent event) {
@@ -495,14 +439,11 @@ public class HandlerUtil {
 	 * Return the menu IDs that were applied to the registered context menu. For
 	 * example, #CompilationUnitEditorContext.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the menu IDs. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active menus variable is not found.
+	 * @throws ExecutionException If the active menus variable is not found.
 	 */
-	public static Collection getActiveMenusChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static Collection getActiveMenusChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.ACTIVE_MENU_NAME);
 		if (!(o instanceof Collection)) {
 			incorrectTypeFound(event, ISources.ACTIVE_MENU_NAME, Collection.class, o.getClass());
@@ -514,8 +455,7 @@ public class HandlerUtil {
 	 * Return the active menu selection. The active menu is a registered context
 	 * menu.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active menu selection, or <code>null</code>.
 	 */
 	public static ISelection getActiveMenuSelection(ExecutionEvent event) {
@@ -530,16 +470,13 @@ public class HandlerUtil {
 	 * Return the active menu selection. The active menu is a registered context
 	 * menu.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active menu selection. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active menu selection variable is not found.
+	 * @throws ExecutionException If the active menu selection variable is not
+	 *                            found.
 	 */
-	public static ISelection getActiveMenuSelectionChecked(ExecutionEvent event)
-			throws ExecutionException {
-		Object o = getVariableChecked(event,
-				ISources.ACTIVE_MENU_SELECTION_NAME);
+	public static ISelection getActiveMenuSelectionChecked(ExecutionEvent event) throws ExecutionException {
+		Object o = getVariableChecked(event, ISources.ACTIVE_MENU_SELECTION_NAME);
 		if (!(o instanceof ISelection)) {
 			incorrectTypeFound(event, ISources.ACTIVE_MENU_SELECTION_NAME, ISelection.class, o.getClass());
 		}
@@ -550,8 +487,7 @@ public class HandlerUtil {
 	 * Return the active menu editor input, if available. The active menu is a
 	 * registered context menu.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active menu editor, or <code>null</code>.
 	 */
 	public static ISelection getActiveMenuEditorInput(ExecutionEvent event) {
@@ -563,20 +499,17 @@ public class HandlerUtil {
 	}
 
 	/**
-	 * Return the active menu editor input. The active menu is a registered
-	 * context menu. Some context menus do not include the editor input which
-	 * will throw an exception.
+	 * Return the active menu editor input. The active menu is a registered context
+	 * menu. Some context menus do not include the editor input which will throw an
+	 * exception.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the active menu editor input. Will not return <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the active menu editor input variable is not found.
+	 * @throws ExecutionException If the active menu editor input variable is not
+	 *                            found.
 	 */
-	public static ISelection getActiveMenuEditorInputChecked(
-			ExecutionEvent event) throws ExecutionException {
-		Object o = getVariableChecked(event,
-				ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
+	public static ISelection getActiveMenuEditorInputChecked(ExecutionEvent event) throws ExecutionException {
+		Object o = getVariableChecked(event, ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
 		if (!(o instanceof ISelection)) {
 			incorrectTypeFound(event, ISources.ACTIVE_MENU_EDITOR_INPUT_NAME, ISelection.class, o.getClass());
 		}
@@ -586,8 +519,7 @@ public class HandlerUtil {
 	/**
 	 * Return the ShowInContext selection.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the show in selection, or <code>null</code>.
 	 * @since 3.4
 	 */
@@ -602,19 +534,15 @@ public class HandlerUtil {
 	/**
 	 * Return the ShowInContext selection. Will not return <code>null</code>.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the show in selection, or <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the show in selection variable is not found.
+	 * @throws ExecutionException If the show in selection variable is not found.
 	 * @since 3.4
 	 */
-	public static ISelection getShowInSelectionChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static ISelection getShowInSelectionChecked(ExecutionEvent event) throws ExecutionException {
 		Object o = getVariableChecked(event, ISources.SHOW_IN_SELECTION);
 		if (!(o instanceof ISelection)) {
-			incorrectTypeFound(event, ISources.SHOW_IN_SELECTION,
-					ISelection.class, o.getClass());
+			incorrectTypeFound(event, ISources.SHOW_IN_SELECTION, ISelection.class, o.getClass());
 		}
 		return (ISelection) o;
 	}
@@ -622,8 +550,7 @@ public class HandlerUtil {
 	/**
 	 * Return the ShowInContext input.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the show in input, or <code>null</code>.
 	 * @since 3.4
 	 */
@@ -635,15 +562,12 @@ public class HandlerUtil {
 	/**
 	 * Return the ShowInContext input. Will not return <code>null</code>.
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return the show in input, or <code>null</code>.
-	 * @throws ExecutionException
-	 *             If the show in input variable is not found.
+	 * @throws ExecutionException If the show in input variable is not found.
 	 * @since 3.4
 	 */
-	public static Object getShowInInputChecked(ExecutionEvent event)
-			throws ExecutionException {
+	public static Object getShowInInputChecked(ExecutionEvent event) throws ExecutionException {
 		Object var = getVariableChecked(event, ISources.SHOW_IN_INPUT);
 		return var;
 	}
@@ -654,16 +578,16 @@ public class HandlerUtil {
 	 * @param command The command whose state needs to be toggled
 	 * @return the original value before toggling
 	 *
-	 * @throws ExecutionException
-	 * 	When the command doesn't contain the toggle state or when the state doesn't contain a boolean value
+	 * @throws ExecutionException When the command doesn't contain the toggle state
+	 *                            or when the state doesn't contain a boolean value
 	 *
 	 * @since 3.5
 	 */
 	public static boolean toggleCommandState(Command command) throws ExecutionException {
 		State state = command.getState(RegistryToggleState.STATE_ID);
-		if(state == null)
+		if (state == null)
 			throw new ExecutionException("The command does not have a toggle state"); //$NON-NLS-1$
-		 if(!(state.getValue() instanceof Boolean))
+		if (!(state.getValue() instanceof Boolean))
 			throw new ExecutionException("The command's toggle state doesn't contain a boolean value"); //$NON-NLS-1$
 
 		boolean oldValue = ((Boolean) state.getValue()).booleanValue();
@@ -675,23 +599,19 @@ public class HandlerUtil {
 	 * Checks whether the radio state of the command is same as the radio state
 	 * parameter's value
 	 *
-	 * @param event
-	 *            The execution event that contains the application context
+	 * @param event The execution event that contains the application context
 	 * @return <code>true</code> whe the values are same, <code>false</code>
 	 *         otherwise
 	 *
-	 * @throws ExecutionException
-	 *             When the command doesn't have the radio state or the event
-	 *             doesn't have the radio state parameter
+	 * @throws ExecutionException When the command doesn't have the radio state or
+	 *                            the event doesn't have the radio state parameter
 	 * @since 3.5
 	 */
-	public static boolean matchesRadioState(ExecutionEvent event)
-			throws ExecutionException {
+	public static boolean matchesRadioState(ExecutionEvent event) throws ExecutionException {
 
 		String parameter = event.getParameter(RadioState.PARAMETER_ID);
 		if (parameter == null)
-			throw new ExecutionException(
-					"The event does not have the radio state parameter"); //$NON-NLS-1$
+			throw new ExecutionException("The event does not have the radio state parameter"); //$NON-NLS-1$
 
 		Command command = event.getCommand();
 		State state = command.getState(RadioState.STATE_ID);
@@ -706,17 +626,13 @@ public class HandlerUtil {
 	/**
 	 * Updates the radio state of the command to the given value
 	 *
-	 * @param command
-	 *            the command whose state should be updated
-	 * @param newState
-	 *            the new state
+	 * @param command  the command whose state should be updated
+	 * @param newState the new state
 	 *
-	 * @throws ExecutionException
-	 *             When the command doesn't have a radio state
+	 * @throws ExecutionException When the command doesn't have a radio state
 	 * @since 3.5
 	 */
-	public static void updateRadioState(Command command, String newState)
-			throws ExecutionException {
+	public static void updateRadioState(Command command, String newState) throws ExecutionException {
 
 		State state = command.getState(RadioState.STATE_ID);
 		if (state == null)

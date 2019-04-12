@@ -50,88 +50,88 @@ import org.eclipse.ui.IActionBars;
  * @see PageBookView
  */
 public abstract class Page implements IPageBookViewPage {
-    /**
-     * The site which contains this page
-     */
-    private IPageSite site;
+	/**
+	 * The site which contains this page
+	 */
+	private IPageSite site;
 
-    /*
-     * Creates a new page for a pagebook view.
-     */
-    protected Page() {
-    }
+	/*
+	 * Creates a new page for a pagebook view.
+	 */
+	protected Page() {
+	}
 
-    @Override
+	@Override
 	public abstract void createControl(Composite parent);
 
-    /**
-     * The <code>Page</code> implementation of this <code>IPage</code> method
-     * disposes of this page's control (if it has one and it has not already
-     * been disposed). Subclasses may extend.
-     */
-    @Override
+	/**
+	 * The <code>Page</code> implementation of this <code>IPage</code> method
+	 * disposes of this page's control (if it has one and it has not already been
+	 * disposed). Subclasses may extend.
+	 */
+	@Override
 	public void dispose() {
-        Control ctrl = getControl();
-        if (ctrl != null && !ctrl.isDisposed()) {
+		Control ctrl = getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
 			ctrl.dispose();
 		}
 		site = null;
-    }
+	}
 
-    /**
-     * The <code>Page</code> implementation of this <code>IPage</code> method returns
-     * <code>null</code>. Subclasses must reimplement.
-     */
-    @Override
-    public abstract Control getControl();
-
-    /**
-	 * This method exists for backward compatibility. Subclasses should
-	 * reimplement <code>init</code>.
+	/**
+	 * The <code>Page</code> implementation of this <code>IPage</code> method
+	 * returns <code>null</code>. Subclasses must reimplement.
 	 */
-    public void makeContributions(IMenuManager menuManager,
-            IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
-    }
+	@Override
+	public abstract Control getControl();
 
-    /**
-	 * This method exists for backward compatibility. Subclasses should
-	 * reimplement <code>init</code>.
+	/**
+	 * This method exists for backward compatibility. Subclasses should reimplement
+	 * <code>init</code>.
 	 */
-    @Override
-    public void setActionBars(IActionBars actionBars) {
-        makeContributions(actionBars.getMenuManager(), actionBars
-                .getToolBarManager(), actionBars.getStatusLineManager());
-    }
+	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager,
+			IStatusLineManager statusLineManager) {
+	}
 
-    /**
-     * The <code>Page</code> implementation of this <code>IPageBookViewPage</code> method
-     * stores a reference to the supplied site (the site which contains this
-     * page).
-     * <p>
-     * Subclasses may extend.
-     * </p>
-     *
-     * @since 2.0
-     */
-    @Override
-    public void init(IPageSite pageSite) {
-        site = pageSite;
-    }
+	/**
+	 * This method exists for backward compatibility. Subclasses should reimplement
+	 * <code>init</code>.
+	 */
+	@Override
+	public void setActionBars(IActionBars actionBars) {
+		makeContributions(actionBars.getMenuManager(), actionBars.getToolBarManager(),
+				actionBars.getStatusLineManager());
+	}
 
-    /**
-     * Returns the site which contains this page.
-     *
-     * @return the site which contains this page
-     */
-    @Override
-    public IPageSite getSite() {
-        return site;
-    }
+	/**
+	 * The <code>Page</code> implementation of this <code>IPageBookViewPage</code>
+	 * method stores a reference to the supplied site (the site which contains this
+	 * page).
+	 * <p>
+	 * Subclasses may extend.
+	 * </p>
+	 *
+	 * @since 2.0
+	 */
+	@Override
+	public void init(IPageSite pageSite) {
+		site = pageSite;
+	}
 
-    /**
-     * The <code>Page</code> implementation of this <code>IPage</code> method
-     * does nothing. Subclasses must implement.
-     */
-    @Override
+	/**
+	 * Returns the site which contains this page.
+	 *
+	 * @return the site which contains this page
+	 */
+	@Override
+	public IPageSite getSite() {
+		return site;
+	}
+
+	/**
+	 * The <code>Page</code> implementation of this <code>IPage</code> method does
+	 * nothing. Subclasses must implement.
+	 */
+	@Override
 	public abstract void setFocus();
 }

@@ -29,9 +29,9 @@ import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.ActionSet;
 import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.DisplayItem;
 
 /**
- * A label provider which takes the default label provider in the
- * TreeManager, and adds on functionality to gray out text and icons of
- * contribution items whose action sets are unavailable.
+ * A label provider which takes the default label provider in the TreeManager,
+ * and adds on functionality to gray out text and icons of contribution items
+ * whose action sets are unavailable.
  *
  * @since 3.5
  *

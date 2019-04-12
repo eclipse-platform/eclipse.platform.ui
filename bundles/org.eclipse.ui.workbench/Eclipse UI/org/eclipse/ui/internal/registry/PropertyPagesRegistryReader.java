@@ -46,13 +46,16 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 	/**
 	 * Value "<code>selectionFilter</code>". Is an enum allowing propertyPages to
-	 * support multiple selection when enum value is <code>ATT_SELECTION_FILTER_MULTI</code>
+	 * support multiple selection when enum value is
+	 * <code>ATT_SELECTION_FILTER_MULTI</code>
+	 * 
 	 * @since 3.7
 	 */
 	public static final String ATT_SELECTION_FILTER = "selectionFilter";//$NON-NLS-1$
 
 	/**
 	 * Selection filter attribute value indicating support for multiple selection.
+	 * 
 	 * @since 3.7
 	 */
 	public static final String ATT_SELECTION_FILTER_MULTI = "multi";//$NON-NLS-1$
@@ -79,7 +82,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	 */
 	public static final String ATT_ADAPTABLE = "adaptable";//$NON-NLS-1$
 
-	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$;
+	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$ ;
 
 	private Collection pages = new ArrayList();
 
@@ -95,8 +98,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 		 * @param reader
 		 * @param propertyPage
 		 */
-		PropertyCategoryNode(CategorizedPageRegistryReader reader,
-				RegistryPageContributor propertyPage) {
+		PropertyCategoryNode(CategorizedPageRegistryReader reader, RegistryPageContributor propertyPage) {
 			super(reader);
 			page = propertyPage;
 		}
@@ -120,8 +122,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	/**
 	 * The constructor.
 	 *
-	 * @param manager
-	 *            the manager
+	 * @param manager the manager
 	 */
 	public PropertyPagesRegistryReader(PropertyPageContributorManager manager) {
 		this.manager = manager;
@@ -131,19 +132,16 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	 * Reads static property page specification.
 	 */
 	private void processPageElement(IConfigurationElement element) {
-		String pageId = element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+		String pageId = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 
 		if (pageId == null) {
 			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
 			return;
 		}
 
-		RegistryPageContributor contributor = new RegistryPageContributor(
-				pageId, element);
+		RegistryPageContributor contributor = new RegistryPageContributor(pageId, element);
 
-		String pageClassName = getClassValue(element,
-				IWorkbenchRegistryConstants.ATT_CLASS);
+		String pageClassName = getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS);
 		if (pageClassName == null) {
 			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CLASS);
 			return;
@@ -164,8 +162,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	 * @param contributor
 	 * @param objectClassNames
 	 */
-	private void registerContributors(RegistryPageContributor contributor,
-			List objectClassNames) {
+	private void registerContributors(RegistryPageContributor contributor, List objectClassNames) {
 
 		pages.add(contributor);
 		for (Iterator iter = objectClassNames.iterator(); iter.hasNext();) {
@@ -173,7 +170,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 		}
 
 	}
-
 
 	/**
 	 * Reads the next contribution element.
@@ -205,27 +201,22 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	/**
 	 * Reads all occurances of propertyPages extension in the registry.
 	 *
-	 * @param registry
-	 *            the registry
+	 * @param registry the registry
 	 */
 	public void registerPropertyPages(IExtensionRegistry registry) {
-		readRegistry(registry, PlatformUI.PLUGIN_ID,
-				IWorkbenchRegistryConstants.PL_PROPERTY_PAGES);
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_PROPERTY_PAGES);
 		processNodes();
 	}
 
 	@Override
 	void add(Object parent, Object node) {
-		((RegistryPageContributor) parent)
-				.addSubPage((RegistryPageContributor) node);
+		((RegistryPageContributor) parent).addSubPage((RegistryPageContributor) node);
 
 	}
 
 	@Override
-	CategoryNode createCategoryNode(CategorizedPageRegistryReader reader,
-			Object object) {
-		return new PropertyCategoryNode(reader,
-				(RegistryPageContributor) object);
+	CategoryNode createCategoryNode(CategorizedPageRegistryReader reader, Object object) {
+		return new PropertyCategoryNode(reader, (RegistryPageContributor) object);
 	}
 
 	@Override
@@ -237,8 +228,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	Object findNode(String id) {
 		Iterator iterator = pages.iterator();
 		while (iterator.hasNext()) {
-			RegistryPageContributor next = (RegistryPageContributor) iterator
-					.next();
+			RegistryPageContributor next = (RegistryPageContributor) iterator.next();
 			if (next.getPageId().equals(id))
 				return next;
 		}
@@ -253,7 +243,8 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	@Override
 	protected String invalidCategoryNodeMessage(CategoryNode categoryNode) {
 		RegistryPageContributor rpc = (RegistryPageContributor) categoryNode.getNode();
-		return "Invalid property category path: " + rpc.getCategory() + " (bundle: " + rpc.getPluginId() + ", propertyPage: " + rpc.getLocalId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return "Invalid property category path: " + rpc.getCategory() + " (bundle: " + rpc.getPluginId() //$NON-NLS-1$ //$NON-NLS-2$
+				+ ", propertyPage: " + rpc.getLocalId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

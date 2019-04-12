@@ -31,165 +31,170 @@ import org.eclipse.ui.internal.MessageLine;
 
 /**
  * An abstract base class for dialogs with a status bar and ok/cancel buttons.
- * The status message must be passed over as StatusInfo object and can be
- * an error, warning or ok. The OK button is enabled or disabled depending
- * on the status.
+ * The status message must be passed over as StatusInfo object and can be an
+ * error, warning or ok. The OK button is enabled or disabled depending on the
+ * status.
  *
  * @since 2.0
  */
 public abstract class SelectionStatusDialog extends SelectionDialog {
 
-    private MessageLine fStatusLine;
+	private MessageLine fStatusLine;
 
-    private IStatus fLastStatus;
+	private IStatus fLastStatus;
 
-    private Image fImage;
+	private Image fImage;
 
-    private boolean fStatusLineAboveButtons = false;
+	private boolean fStatusLineAboveButtons = false;
 
-    /**
-     * Creates an instance of a <code>SelectionStatusDialog</code>.
-     * @param parent
-     */
-    public SelectionStatusDialog(Shell parent) {
-        super(parent);
-    }
+	/**
+	 * Creates an instance of a <code>SelectionStatusDialog</code>.
+	 * 
+	 * @param parent
+	 */
+	public SelectionStatusDialog(Shell parent) {
+		super(parent);
+	}
 
-    /**
-     * Controls whether status line appears to the left of the buttons (default)
-     * or above them.
-     *
-     * @param aboveButtons if <code>true</code> status line is placed above buttons; if
-     * 	<code>false</code> to the right
-     */
-    public void setStatusLineAboveButtons(boolean aboveButtons) {
-        fStatusLineAboveButtons = aboveButtons;
-    }
+	/**
+	 * Controls whether status line appears to the left of the buttons (default) or
+	 * above them.
+	 *
+	 * @param aboveButtons if <code>true</code> status line is placed above buttons;
+	 *                     if <code>false</code> to the right
+	 */
+	public void setStatusLineAboveButtons(boolean aboveButtons) {
+		fStatusLineAboveButtons = aboveButtons;
+	}
 
-    /**
-     * Sets the image for this dialog.
-     * @param image the image.
-     */
-    public void setImage(Image image) {
-        fImage = image;
-    }
+	/**
+	 * Sets the image for this dialog.
+	 * 
+	 * @param image the image.
+	 */
+	public void setImage(Image image) {
+		fImage = image;
+	}
 
-    /**
-     * Returns the first element from the list of results. Returns <code>null</code>
-     * if no element has been selected.
-     *
-     * @return the first result element if one exists. Otherwise <code>null</code> is
-     *  returned.
-     */
-    public Object getFirstResult() {
-        Object[] result = getResult();
-        if (result == null || result.length == 0) {
+	/**
+	 * Returns the first element from the list of results. Returns <code>null</code>
+	 * if no element has been selected.
+	 *
+	 * @return the first result element if one exists. Otherwise <code>null</code>
+	 *         is returned.
+	 */
+	public Object getFirstResult() {
+		Object[] result = getResult();
+		if (result == null || result.length == 0) {
 			return null;
 		}
-        return result[0];
-    }
+		return result[0];
+	}
 
-    /**
-     * Sets a result element at the given position.
-     * @param position
-     * @param element
-     */
-    protected void setResult(int position, Object element) {
-        Object[] result = getResult();
-        result[position] = element;
-        setResult(Arrays.asList(result));
-    }
+	/**
+	 * Sets a result element at the given position.
+	 * 
+	 * @param position
+	 * @param element
+	 */
+	protected void setResult(int position, Object element) {
+		Object[] result = getResult();
+		result[position] = element;
+		setResult(Arrays.asList(result));
+	}
 
-    /**
-     * Compute the result and return it.
-     */
-    protected abstract void computeResult();
+	/**
+	 * Compute the result and return it.
+	 */
+	protected abstract void computeResult();
 
-    @Override
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        if (fImage != null) {
+		super.configureShell(shell);
+		if (fImage != null) {
 			shell.setImage(fImage);
 		}
-    }
+	}
 
-    /**
-     * Update the dialog's status line to reflect the given status. It is safe to call
-     * this method before the dialog has been opened.
-     * @param status
-     */
-    protected void updateStatus(IStatus status) {
-        fLastStatus = status;
-        if (fStatusLine != null && !fStatusLine.isDisposed()) {
-            updateButtonsEnableState(status);
-            fStatusLine.setErrorStatus(status);
-        }
-    }
+	/**
+	 * Update the dialog's status line to reflect the given status. It is safe to
+	 * call this method before the dialog has been opened.
+	 * 
+	 * @param status
+	 */
+	protected void updateStatus(IStatus status) {
+		fLastStatus = status;
+		if (fStatusLine != null && !fStatusLine.isDisposed()) {
+			updateButtonsEnableState(status);
+			fStatusLine.setErrorStatus(status);
+		}
+	}
 
-    /**
-     * Update the status of the ok button to reflect the given status. Subclasses
-     * may override this method to update additional buttons.
-     * @param status
-     */
-    protected void updateButtonsEnableState(IStatus status) {
-        Button okButton = getOkButton();
-        if (okButton != null && !okButton.isDisposed()) {
+	/**
+	 * Update the status of the ok button to reflect the given status. Subclasses
+	 * may override this method to update additional buttons.
+	 * 
+	 * @param status
+	 */
+	protected void updateButtonsEnableState(IStatus status) {
+		Button okButton = getOkButton();
+		if (okButton != null && !okButton.isDisposed()) {
 			okButton.setEnabled(!status.matches(IStatus.ERROR));
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected void okPressed() {
-        computeResult();
-        super.okPressed();
-    }
+		computeResult();
+		super.okPressed();
+	}
 
-    @Override
+	@Override
 	public void create() {
-        super.create();
-        if (fLastStatus != null) {
+		super.create();
+		if (fLastStatus != null) {
 			updateStatus(fLastStatus);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected Control createButtonBar(Composite parent) {
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        if (!fStatusLineAboveButtons) {
-            layout.numColumns = 2;
-        }
-        layout.marginHeight = 0;
-        layout.marginLeft = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-        layout.marginWidth = 0;
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        composite.setFont(font);
+		Font font = parent.getFont();
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		if (!fStatusLineAboveButtons) {
+			layout.numColumns = 2;
+		}
+		layout.marginHeight = 0;
+		layout.marginLeft = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginWidth = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setFont(font);
 
-        if (!fStatusLineAboveButtons && isHelpAvailable()) {
-        	createHelpControl(composite);
-        }
-        fStatusLine = new MessageLine(composite);
-        fStatusLine.setAlignment(SWT.LEFT);
-        GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
-        fStatusLine.setErrorStatus(null);
-        fStatusLine.setFont(font);
-        if (fStatusLineAboveButtons && isHelpAvailable()) {
-        	statusData.horizontalSpan = 2;
-        	createHelpControl(composite);
-        }
-        fStatusLine.setLayoutData(statusData);
+		if (!fStatusLineAboveButtons && isHelpAvailable()) {
+			createHelpControl(composite);
+		}
+		fStatusLine = new MessageLine(composite);
+		fStatusLine.setAlignment(SWT.LEFT);
+		GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
+		fStatusLine.setErrorStatus(null);
+		fStatusLine.setFont(font);
+		if (fStatusLineAboveButtons && isHelpAvailable()) {
+			statusData.horizontalSpan = 2;
+			createHelpControl(composite);
+		}
+		fStatusLine.setLayoutData(statusData);
 
 		/*
-		 * Create the rest of the button bar, but tell it not to
-		 * create a help button (we've already created it).
+		 * Create the rest of the button bar, but tell it not to create a help button
+		 * (we've already created it).
 		 */
 		boolean helpAvailable = isHelpAvailable();
 		setHelpAvailable(false);
 		super.createButtonBar(composite);
 		setHelpAvailable(helpAvailable);
-        return composite;
-    }
+		return composite;
+	}
 
 }

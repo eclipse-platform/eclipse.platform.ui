@@ -21,23 +21,23 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkingSet;
 
 public class WorkingSetFilter extends ViewerFilter {
-		Set workingSetIds;
+	Set workingSetIds;
 
-		public WorkingSetFilter(Set workingSetIds) {
-			this.workingSetIds = workingSetIds;
-		}
+	public WorkingSetFilter(Set workingSetIds) {
+		this.workingSetIds = workingSetIds;
+	}
 
-    @Override
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-        if (element instanceof IWorkingSet) {
-            IWorkingSet workingSet = (IWorkingSet) element;
+		if (element instanceof IWorkingSet) {
+			IWorkingSet workingSet = (IWorkingSet) element;
 			String id = workingSet.getId();
-            //if (!workingSet.isVisible())
-            //	return false;
-            if (workingSetIds != null && id != null) {
-                return workingSetIds.contains(id);
-            }
-        }
-        return true;
-    }
+			// if (!workingSet.isVisible())
+			// return false;
+			if (workingSetIds != null && id != null) {
+				return workingSetIds.contains(id);
+			}
+		}
+		return true;
+	}
 }

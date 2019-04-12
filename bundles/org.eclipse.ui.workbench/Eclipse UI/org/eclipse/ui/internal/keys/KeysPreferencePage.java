@@ -110,31 +110,29 @@ import org.eclipse.ui.statushandlers.StatusManager;
  *
  * @since 3.0
  */
-public final class KeysPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public final class KeysPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
-	 * A selection listener to be used on the columns in the table on the view
-	 * tab. This selection listener modifies the sort order so that the
-	 * appropriate column is in the first position.
+	 * A selection listener to be used on the columns in the table on the view tab.
+	 * This selection listener modifies the sort order so that the appropriate
+	 * column is in the first position.
 	 *
 	 * @since 3.1
 	 */
 	private class SortOrderSelectionListener extends SelectionAdapter {
 
 		/**
-		 * The column to be put in the first position. This value should be one
-		 * of the constants defined by <code>SORT_COLUMN_</code>.
+		 * The column to be put in the first position. This value should be one of the
+		 * constants defined by <code>SORT_COLUMN_</code>.
 		 */
 		private final int columnSelected;
 
 		/**
 		 * Constructs a new instance of <code>SortOrderSelectionListener</code>.
 		 *
-		 * @param columnSelected
-		 *            The column to be given first priority in the sort order;
-		 *            this value should be one of the constants defined as
-		 *            <code>SORT_COLUMN_</code>.
+		 * @param columnSelected The column to be given first priority in the sort
+		 *                       order; this value should be one of the constants
+		 *                       defined as <code>SORT_COLUMN_</code>.
 		 */
 		private SortOrderSelectionListener(final int columnSelected) {
 			this.columnSelected = columnSelected;
@@ -144,11 +142,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 		public void widgetSelected(SelectionEvent e) {
 			// Change the column titles.
 			final int oldSortIndex = sortOrder[0];
-			final TableColumn oldSortColumn = tableBindings
-					.getColumn(oldSortIndex);
+			final TableColumn oldSortColumn = tableBindings.getColumn(oldSortIndex);
 			oldSortColumn.setText(UNSORTED_COLUMN_NAMES[oldSortIndex]);
-			final TableColumn newSortColumn = tableBindings
-					.getColumn(columnSelected);
+			final TableColumn newSortColumn = tableBindings.getColumn(columnSelected);
 			newSortColumn.setText(SORTED_COLUMN_NAMES[columnSelected]);
 
 			// Change the sort order.
@@ -158,9 +154,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 			for (int i = 0; i < sortOrder.length; i++) {
 				if (sortOrder[i] == columnSelected) {
 					/*
-					 * We've found the place where the column existing in the
-					 * old sort order. No matter what at this point, we have
-					 * completed the reshuffling.
+					 * We've found the place where the column existing in the old sort order. No
+					 * matter what at this point, we have completed the reshuffling.
 					 */
 					enoughRoom = true;
 					if (bumpedColumn != -1) {
@@ -181,8 +176,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 				} else {
 					/*
-					 * We are not currently bumping, so drop the column and
-					 * start bumping.
+					 * We are not currently bumping, so drop the column and start bumping.
 					 */
 					bumpedColumn = sortOrder[i];
 					sortOrder[i] = columnSelected;
@@ -193,8 +187,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			// Grow the sort order.
 			if (!enoughRoom) {
 				final int[] newSortOrder = new int[sortOrder.length + 1];
-				System.arraycopy(sortOrder, 0, newSortOrder, 0,
-						sortOrder.length);
+				System.arraycopy(sortOrder, 0, newSortOrder, 0, sortOrder.length);
 				newSortOrder[sortOrder.length] = bumpedColumn;
 				sortOrder = newSortOrder;
 			}
@@ -206,8 +199,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * The data key for the binding stored on an SWT widget. The key is a
-	 * fully-qualified name, but in reverse order. This is so that the equals
-	 * method will detect misses faster.
+	 * fully-qualified name, but in reverse order. This is so that the equals method
+	 * will detect misses faster.
 	 */
 	private static final String BINDING_KEY = "Binding.bindings.jface.eclipse.org"; //$NON-NLS-1$
 
@@ -223,8 +216,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private static final Image IMAGE_CHANGE = ImageFactory.getImage("change"); //$NON-NLS-1$
 
 	/**
-	 * The data key at which the <code>Binding</code> instance for a table
-	 * item is stored.
+	 * The data key at which the <code>Binding</code> instance for a table item is
+	 * stored.
 	 */
 	private static final String ITEM_DATA_KEY = "org.eclipse.jface.bindings"; //$NON-NLS-1$
 
@@ -236,8 +229,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * The resource bundle from which translations can be retrieved.
 	 */
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(KeysPreferencePage.class.getName());
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeysPreferencePage.class.getName());
 
 	/**
 	 * The total number of columns on the view tab.
@@ -258,8 +250,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private static final int TAB_INDEX_MODIFY = 1;
 
 	/**
-	 * The translated names for the columns when they are not the primary sort
-	 * key (e.g., "Category").
+	 * The translated names for the columns when they are not the primary sort key
+	 * (e.g., "Category").
 	 */
 	private static final String[] UNSORTED_COLUMN_NAMES = new String[VIEW_TOTAL_COLUMNS];
 
@@ -284,24 +276,21 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private static final int VIEW_KEY_SEQUENCE_COLUMN_INDEX = 2;
 
 	static {
-		UNSORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX] = Util
-				.translateString(RESOURCE_BUNDLE, "tableColumnCategory"); //$NON-NLS-1$
-		UNSORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX] = Util
-				.translateString(RESOURCE_BUNDLE, "tableColumnCommand"); //$NON-NLS-1$
-		UNSORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX] = Util
-				.translateString(RESOURCE_BUNDLE, "tableColumnKeySequence"); //$NON-NLS-1$
-		UNSORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX] = Util
-				.translateString(RESOURCE_BUNDLE, "tableColumnContext"); //$NON-NLS-1$
+		UNSORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX] = Util.translateString(RESOURCE_BUNDLE,
+				"tableColumnCategory"); //$NON-NLS-1$
+		UNSORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX] = Util.translateString(RESOURCE_BUNDLE, "tableColumnCommand"); //$NON-NLS-1$
+		UNSORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX] = Util.translateString(RESOURCE_BUNDLE,
+				"tableColumnKeySequence"); //$NON-NLS-1$
+		UNSORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX] = Util.translateString(RESOURCE_BUNDLE, "tableColumnContext"); //$NON-NLS-1$
 
-		SORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX] = Util.translateString(
-				RESOURCE_BUNDLE, "tableColumnCategorySorted"); //$NON-NLS-1$
-		SORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX] = Util.translateString(
-				RESOURCE_BUNDLE, "tableColumnCommandSorted"); //$NON-NLS-1$
-		SORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX] = Util
-				.translateString(RESOURCE_BUNDLE,
-						"tableColumnKeySequenceSorted"); //$NON-NLS-1$
-		SORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX] = Util.translateString(
-				RESOURCE_BUNDLE, "tableColumnContextSorted"); //$NON-NLS-1$
+		SORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX] = Util.translateString(RESOURCE_BUNDLE,
+				"tableColumnCategorySorted"); //$NON-NLS-1$
+		SORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX] = Util.translateString(RESOURCE_BUNDLE,
+				"tableColumnCommandSorted"); //$NON-NLS-1$
+		SORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX] = Util.translateString(RESOURCE_BUNDLE,
+				"tableColumnKeySequenceSorted"); //$NON-NLS-1$
+		SORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX] = Util.translateString(RESOURCE_BUNDLE,
+				"tableColumnContextSorted"); //$NON-NLS-1$
 	}
 
 	/**
@@ -311,15 +300,14 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private IActivityManager activityManager;
 
 	/**
-	 * The workbench's binding service. This binding service is used to access
-	 * the current set of bindings, and to persist changes.
+	 * The workbench's binding service. This binding service is used to access the
+	 * current set of bindings, and to persist changes.
 	 */
 	private IBindingService bindingService;
 
 	/**
-	 * The add button located on the bottom left of the preference page. This
-	 * button adds the current trigger sequence to the currently selected
-	 * command.
+	 * The add button located on the bottom left of the preference page. This button
+	 * adds the current trigger sequence to the currently selected command.
 	 */
 	private Button buttonAdd;
 
@@ -330,15 +318,15 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private Button buttonRemove;
 
 	/**
-	 * The restore button located on the bottom left of the preference page.
-	 * This button attempts to restore the currently trigger sequence to its
-	 * initial (i.e., Binding.SYSTEM) state -- undoing all user modifications.
+	 * The restore button located on the bottom left of the preference page. This
+	 * button attempts to restore the currently trigger sequence to its initial
+	 * (i.e., Binding.SYSTEM) state -- undoing all user modifications.
 	 */
 	private Button buttonRestore;
 
 	/**
-	 * A map of all the category identifiers indexed by the names that appear in
-	 * the user interface. This look-up table is built during initialization.
+	 * A map of all the category identifiers indexed by the names that appear in the
+	 * user interface. This look-up table is built during initialization.
 	 */
 	private Map categoryIdsByUniqueName;
 
@@ -370,34 +358,34 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private Combo comboScheme;
 
 	/**
-	 * A map of all the command identifiers indexed by the categories to which
-	 * they belong. This look-up table is built during initialization.
+	 * A map of all the command identifiers indexed by the categories to which they
+	 * belong. This look-up table is built during initialization.
 	 */
 	private Map commandIdsByCategoryId;
 
 	/**
 	 * The parameterized commands corresponding to the current contents of
-	 * <code>comboCommand</code>. The commands in this array are in the same
-	 * order as in the combo. This value can be <code>null</code> if nothing
-	 * is selected in the combo.
+	 * <code>comboCommand</code>. The commands in this array are in the same order
+	 * as in the combo. This value can be <code>null</code> if nothing is selected
+	 * in the combo.
 	 */
 	private ParameterizedCommand[] commands = null;
 
 	/**
-	 * The workbench's command service. This command service is used to access
-	 * the list of commands.
+	 * The workbench's command service. This command service is used to access the
+	 * list of commands.
 	 */
 	private ICommandService commandService;
 
 	/**
-	 * A map of all the context identifiers indexed by the names that appear in
-	 * the user interface. This look-up table is built during initialization.
+	 * A map of all the context identifiers indexed by the names that appear in the
+	 * user interface. This look-up table is built during initialization.
 	 */
 	private Map contextIdsByUniqueName;
 
 	/**
-	 * The workbench's context service. This context service is used to access
-	 * the list of contexts.
+	 * The workbench's context service. This context service is used to access the
+	 * list of contexts.
 	 */
 	private IContextService contextService;
 
@@ -408,54 +396,53 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private Map contextUniqueNamesById;
 
 	/**
-	 * The workbench's help system. This is used to register the page with the
-	 * help system.
+	 * The workbench's help system. This is used to register the page with the help
+	 * system.
 	 *
 	 * TODO Add a help context
 	 */
 	// private IWorkbenchHelpSystem helpSystem;
 	/**
 	 * This is the label next to the table showing the bindings matching a
-	 * particular command. The label is disabled if there isn't a selected
-	 * command identifier.
+	 * particular command. The label is disabled if there isn't a selected command
+	 * identifier.
 	 */
 	private Label labelBindingsForCommand;
 
 	/**
 	 * This is the label next to the table showing the bindings matching a
-	 * particular trigger sequence. The label is disabled if there isn't a
-	 * current key sequence.
+	 * particular trigger sequence. The label is disabled if there isn't a current
+	 * key sequence.
 	 */
 	private Label labelBindingsForTriggerSequence;
 
 	/**
 	 * The label next to the context combo box. This label indicates whether the
-	 * context is a child of another context. If the current context is not a
-	 * child, then this label is blank.
+	 * context is a child of another context. If the current context is not a child,
+	 * then this label is blank.
 	 */
 	private Label labelContextExtends;
 
 	/**
 	 * The label next to the scheme combo box. This label indicates whether the
-	 * scheme is a child of another scheme. If the current scheme is not a
-	 * child, then this label is blank.
+	 * scheme is a child of another scheme. If the current scheme is not a child,
+	 * then this label is blank.
 	 */
 	private Label labelSchemeExtends;
 
 	/**
 	 * A binding manager local to this preference page. When the page is
-	 * initialized, the current bindings are read out from the binding service
-	 * and placed in this manager. This manager is then updated as the user
-	 * makes changes. When the user has finished, the contents of this manager
-	 * are compared with the contents of the binding service. The changes are
-	 * then persisted.
+	 * initialized, the current bindings are read out from the binding service and
+	 * placed in this manager. This manager is then updated as the user makes
+	 * changes. When the user has finished, the contents of this manager are
+	 * compared with the contents of the binding service. The changes are then
+	 * persisted.
 	 */
-	private final BindingManager localChangeManager = new BindingManager(
-			new ContextManager(), new CommandManager());
+	private final BindingManager localChangeManager = new BindingManager(new ContextManager(), new CommandManager());
 
 	/**
-	 * A map of all the scheme identifiers indexed by the names that appear in
-	 * the user interface. This look-up table is built during initialization.
+	 * A map of all the scheme identifiers indexed by the names that appear in the
+	 * user interface. This look-up table is built during initialization.
 	 */
 	private Map schemeIdsByUniqueName;
 
@@ -466,25 +453,24 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private Map schemeUniqueNamesById;
 
 	/**
-	 * The sort order to be used on the view tab to display all of the key
-	 * bindings. This sort order can be changed by the user. This array is never
+	 * The sort order to be used on the view tab to display all of the key bindings.
+	 * This sort order can be changed by the user. This array is never
 	 * <code>null</code>, but may be empty.
 	 */
-	private int[] sortOrder = { VIEW_CATEGORY_COLUMN_INDEX,
-			VIEW_COMMAND_COLUMN_INDEX, VIEW_KEY_SEQUENCE_COLUMN_INDEX,
+	private int[] sortOrder = { VIEW_CATEGORY_COLUMN_INDEX, VIEW_COMMAND_COLUMN_INDEX, VIEW_KEY_SEQUENCE_COLUMN_INDEX,
 			VIEW_CONTEXT_COLUMN_INDEX };
 
 	/**
-	 * The top-most tab folder for the preference page -- containing a view and
-	 * a modify tab.
+	 * The top-most tab folder for the preference page -- containing a view and a
+	 * modify tab.
 	 */
 	private TabFolder tabFolder;
 
 	/**
-	 * A table of the key bindings currently defined. This table appears on the
-	 * view tab; it is intended to be an easy way for users to learn the key
-	 * bindings in Eclipse. This value is only <code>null</code> until the
-	 * controls are first created.
+	 * A table of the key bindings currently defined. This table appears on the view
+	 * tab; it is intended to be an easy way for users to learn the key bindings in
+	 * Eclipse. This value is only <code>null</code> until the controls are first
+	 * created.
 	 */
 	private Table tableBindings;
 
@@ -507,24 +493,23 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private Text textTriggerSequence;
 
 	/**
-	 * The manager for the text widget that traps incoming key events. This
-	 * manager should be used to access the widget, rather than accessing the
-	 * widget directly.
+	 * The manager for the text widget that traps incoming key events. This manager
+	 * should be used to access the widget, rather than accessing the widget
+	 * directly.
 	 */
 	private KeySequenceText textTriggerSequenceManager;
 
-
 	@Override
 	public void applyData(Object data) {
-		if(data instanceof Binding) {
+		if (data instanceof Binding) {
 			editBinding((Binding) data);
 		}
 	}
+
 	@Override
 	protected Control createContents(final Composite parent) {
 
-		PlatformUI.getWorkbench().getHelpSystem()
-			.setHelp(parent, IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
 
 		tabFolder = new TabFolder(parent, SWT.NULL);
 
@@ -535,15 +520,13 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 		// Modify tab
 		final TabItem modifyTab = new TabItem(tabFolder, SWT.NULL);
-		modifyTab.setText(Util.translateString(RESOURCE_BUNDLE,
-				"modifyTab.Text")); //$NON-NLS-1$
+		modifyTab.setText(Util.translateString(RESOURCE_BUNDLE, "modifyTab.Text")); //$NON-NLS-1$
 		modifyTab.setControl(createModifyTab(tabFolder));
 
 		// Do some fancy stuff.
 		applyDialogFont(tabFolder);
 		final IPreferenceStore store = getPreferenceStore();
-		final int selectedTab = store
-				.getInt(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB);
+		final int selectedTab = store.getInt(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB);
 		if ((tabFolder.getItemCount() > selectedTab) && (selectedTab > 0)) {
 			tabFolder.setSelection(selectedTab);
 		}
@@ -554,9 +537,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * Creates the tab that allows the user to change the keyboard shortcuts.
 	 *
-	 * @param parent
-	 *            The tab folder in which the tab should be created; must not be
-	 *            <code>null</code>.
+	 * @param parent The tab folder in which the tab should be created; must not be
+	 *               <code>null</code>.
 	 * @return The composite which represents the contents of the tab; never
 	 *         <code>null</code>.
 	 */
@@ -565,17 +547,14 @@ public final class KeysPreferencePage extends PreferencePage implements
 		composite.setLayout(new GridLayout());
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gridData);
-		final Composite compositeKeyConfiguration = new Composite(composite,
-				SWT.NULL);
+		final Composite compositeKeyConfiguration = new Composite(composite, SWT.NULL);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
 		compositeKeyConfiguration.setLayout(gridLayout);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		compositeKeyConfiguration.setLayoutData(gridData);
-		final Label labelKeyConfiguration = new Label(
-				compositeKeyConfiguration, SWT.LEFT);
-		labelKeyConfiguration.setText(Util.translateString(RESOURCE_BUNDLE,
-				"labelScheme")); //$NON-NLS-1$
+		final Label labelKeyConfiguration = new Label(compositeKeyConfiguration, SWT.LEFT);
+		labelKeyConfiguration.setText(Util.translateString(RESOURCE_BUNDLE, "labelScheme")); //$NON-NLS-1$
 		comboScheme = new Combo(compositeKeyConfiguration, SWT.READ_ONLY);
 		gridData = new GridData();
 		gridData.widthHint = 200;
@@ -598,13 +577,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 		groupCommand.setLayout(gridLayout);
 		gridData = new GridData(GridData.FILL_BOTH);
 		groupCommand.setLayoutData(gridData);
-		groupCommand.setText(Util.translateString(RESOURCE_BUNDLE,
-				"groupCommand")); //$NON-NLS-1$
+		groupCommand.setText(Util.translateString(RESOURCE_BUNDLE, "groupCommand")); //$NON-NLS-1$
 		final Label labelCategory = new Label(groupCommand, SWT.LEFT);
 		gridData = new GridData();
 		labelCategory.setLayoutData(gridData);
-		labelCategory.setText(Util.translateString(RESOURCE_BUNDLE,
-				"labelCategory")); //$NON-NLS-1$
+		labelCategory.setText(Util.translateString(RESOURCE_BUNDLE, "labelCategory")); //$NON-NLS-1$
 		comboCategory = new Combo(groupCommand, SWT.READ_ONLY);
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
@@ -617,8 +594,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final Label labelCommand = new Label(groupCommand, SWT.LEFT);
 		gridData = new GridData();
 		labelCommand.setLayoutData(gridData);
-		labelCommand.setText(Util.translateString(RESOURCE_BUNDLE,
-				"labelCommand")); //$NON-NLS-1$
+		labelCommand.setText(Util.translateString(RESOURCE_BUNDLE, "labelCommand")); //$NON-NLS-1$
 		comboCommand = new Combo(groupCommand, SWT.READ_ONLY);
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
@@ -632,34 +608,28 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		gridData.verticalAlignment = GridData.FILL_VERTICAL;
 		labelBindingsForCommand.setLayoutData(gridData);
-		labelBindingsForCommand.setText(Util.translateString(RESOURCE_BUNDLE,
-				"labelAssignmentsForCommand")); //$NON-NLS-1$
-		tableBindingsForCommand = new Table(groupCommand, SWT.BORDER
-				| SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		labelBindingsForCommand.setText(Util.translateString(RESOURCE_BUNDLE, "labelAssignmentsForCommand")); //$NON-NLS-1$
+		tableBindingsForCommand = new Table(groupCommand,
+				SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableBindingsForCommand.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
 		gridData.horizontalSpan = 2;
 		boolean isMac = org.eclipse.jface.util.Util.isMac();
-		gridData.widthHint =  isMac ? 620 : 520;
+		gridData.widthHint = isMac ? 620 : 520;
 		tableBindingsForCommand.setLayoutData(gridData);
-		TableColumn tableColumnDelta = new TableColumn(tableBindingsForCommand,
-				SWT.NULL, 0);
+		TableColumn tableColumnDelta = new TableColumn(tableBindingsForCommand, SWT.NULL, 0);
 		tableColumnDelta.setResizable(false);
 		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
 		tableColumnDelta.setWidth(20);
-		TableColumn tableColumnContext = new TableColumn(
-				tableBindingsForCommand, SWT.NULL, 1);
+		TableColumn tableColumnContext = new TableColumn(tableBindingsForCommand, SWT.NULL, 1);
 		tableColumnContext.setResizable(true);
-		tableColumnContext.setText(Util.translateString(RESOURCE_BUNDLE,
-				"tableColumnContext")); //$NON-NLS-1$
+		tableColumnContext.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnContext")); //$NON-NLS-1$
 		tableColumnContext.pack();
 		tableColumnContext.setWidth(200);
-		final TableColumn tableColumnKeySequence = new TableColumn(
-				tableBindingsForCommand, SWT.NULL, 2);
+		final TableColumn tableColumnKeySequence = new TableColumn(tableBindingsForCommand, SWT.NULL, 2);
 		tableColumnKeySequence.setResizable(true);
-		tableColumnKeySequence.setText(Util.translateString(RESOURCE_BUNDLE,
-				"tableColumnKeySequence")); //$NON-NLS-1$
+		tableColumnKeySequence.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnKeySequence")); //$NON-NLS-1$
 		tableColumnKeySequence.pack();
 		tableColumnKeySequence.setWidth(300);
 
@@ -671,7 +641,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 			}
 		});
 
-		tableBindingsForCommand.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedTableBindingsForCommand()));
+		tableBindingsForCommand
+				.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedTableBindingsForCommand()));
 
 		final Group groupKeySequence = new Group(composite, SWT.SHADOW_NONE);
 		gridLayout = new GridLayout();
@@ -679,13 +650,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 		groupKeySequence.setLayout(gridLayout);
 		gridData = new GridData(GridData.FILL_BOTH);
 		groupKeySequence.setLayoutData(gridData);
-		groupKeySequence.setText(Util.translateString(RESOURCE_BUNDLE,
-				"groupKeySequence")); //$NON-NLS-1$
+		groupKeySequence.setText(Util.translateString(RESOURCE_BUNDLE, "groupKeySequence")); //$NON-NLS-1$
 		final Label labelKeySequence = new Label(groupKeySequence, SWT.LEFT);
 		gridData = new GridData();
 		labelKeySequence.setLayoutData(gridData);
-		labelKeySequence.setText(Util.translateString(RESOURCE_BUNDLE,
-				"labelKeySequence")); //$NON-NLS-1$
+		labelKeySequence.setText(Util.translateString(RESOURCE_BUNDLE, "labelKeySequence")); //$NON-NLS-1$
 
 		// The text widget into which the key strokes will be entered.
 		textTriggerSequence = new Text(groupKeySequence, SWT.BORDER);
@@ -718,10 +687,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		textTriggerSequenceManager.setKeyStrokeLimit(4);
 
 		// Button for adding trapped key strokes
-		final Button buttonAddKey = new Button(groupKeySequence, SWT.LEFT
-				| SWT.ARROW);
-		buttonAddKey.setToolTipText(Util.translateString(RESOURCE_BUNDLE,
-				"buttonAddKey.ToolTipText")); //$NON-NLS-1$
+		final Button buttonAddKey = new Button(groupKeySequence, SWT.LEFT | SWT.ARROW);
+		buttonAddKey.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "buttonAddKey.ToolTipText")); //$NON-NLS-1$
 		gridData = new GridData();
 		gridData.heightHint = comboCategory.getTextHeight();
 		buttonAddKey.setLayoutData(gridData);
@@ -735,8 +702,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				newTabStops.add(buttonAddKey);
 			}
 		}
-		final Control[] newTabStopArray = (Control[]) newTabStops
-				.toArray(new Control[newTabStops.size()]);
+		final Control[] newTabStopArray = (Control[]) newTabStops.toArray(new Control[newTabStops.size()]);
 		groupKeySequence.setTabList(newTabStopArray);
 
 		// Construct the menu to attach to the above button.
@@ -764,8 +730,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		gridData.verticalAlignment = GridData.FILL_VERTICAL;
 		labelBindingsForTriggerSequence.setLayoutData(gridData);
-		labelBindingsForTriggerSequence.setText(Util.translateString(
-				RESOURCE_BUNDLE, "labelAssignmentsForKeySequence")); //$NON-NLS-1$
+		labelBindingsForTriggerSequence
+				.setText(Util.translateString(RESOURCE_BUNDLE, "labelAssignmentsForKeySequence")); //$NON-NLS-1$
 		tableBindingsForTriggerSequence = new Table(groupKeySequence,
 				SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableBindingsForTriggerSequence.setHeaderVisible(true);
@@ -774,23 +740,18 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData.horizontalSpan = 3;
 		gridData.widthHint = isMac ? 620 : 520;
 		tableBindingsForTriggerSequence.setLayoutData(gridData);
-		tableColumnDelta = new TableColumn(tableBindingsForTriggerSequence,
-				SWT.NULL, 0);
+		tableColumnDelta = new TableColumn(tableBindingsForTriggerSequence, SWT.NULL, 0);
 		tableColumnDelta.setResizable(false);
 		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
 		tableColumnDelta.setWidth(20);
-		tableColumnContext = new TableColumn(tableBindingsForTriggerSequence,
-				SWT.NULL, 1);
+		tableColumnContext = new TableColumn(tableBindingsForTriggerSequence, SWT.NULL, 1);
 		tableColumnContext.setResizable(true);
-		tableColumnContext.setText(Util.translateString(RESOURCE_BUNDLE,
-				"tableColumnContext")); //$NON-NLS-1$
+		tableColumnContext.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnContext")); //$NON-NLS-1$
 		tableColumnContext.pack();
 		tableColumnContext.setWidth(200);
-		final TableColumn tableColumnCommand = new TableColumn(
-				tableBindingsForTriggerSequence, SWT.NULL, 2);
+		final TableColumn tableColumnCommand = new TableColumn(tableBindingsForTriggerSequence, SWT.NULL, 2);
 		tableColumnCommand.setResizable(true);
-		tableColumnCommand.setText(Util.translateString(RESOURCE_BUNDLE,
-				"tableColumnCommand")); //$NON-NLS-1$
+		tableColumnCommand.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnCommand")); //$NON-NLS-1$
 		tableColumnCommand.pack();
 		tableColumnCommand.setWidth(300);
 
@@ -802,8 +763,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 			}
 		});
 
-		tableBindingsForTriggerSequence
-				.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedTableBindingsForTriggerSequence()));
+		tableBindingsForTriggerSequence.addSelectionListener(
+				widgetSelectedAdapter(selectionEvent -> selectedTableBindingsForTriggerSequence()));
 
 		final Composite compositeContext = new Composite(composite, SWT.NULL);
 		gridLayout = new GridLayout();
@@ -812,8 +773,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		compositeContext.setLayoutData(gridData);
 		final Label labelContext = new Label(compositeContext, SWT.LEFT);
-		labelContext.setText(Util.translateString(RESOURCE_BUNDLE,
-				"labelContext")); //$NON-NLS-1$
+		labelContext.setText(Util.translateString(RESOURCE_BUNDLE, "labelContext")); //$NON-NLS-1$
 		comboContext = new Combo(compositeContext, SWT.READ_ONLY);
 		gridData = new GridData();
 		gridData.widthHint = 250;
@@ -837,8 +797,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData();
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		buttonAdd.setText(Util.translateString(RESOURCE_BUNDLE, "buttonAdd")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(
-				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonAdd.setLayoutData(gridData);
 
 		buttonAdd.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedButtonAdd()));
@@ -846,10 +805,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		buttonRemove = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
 		gridData = new GridData();
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonRemove.setText(Util.translateString(RESOURCE_BUNDLE,
-				"buttonRemove")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonRemove.computeSize(
-				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonRemove.setText(Util.translateString(RESOURCE_BUNDLE, "buttonRemove")); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonRemove.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonRemove.setLayoutData(gridData);
 
 		buttonRemove.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedButtonRemove()));
@@ -857,10 +814,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		buttonRestore = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
 		gridData = new GridData();
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonRestore.setText(Util.translateString(RESOURCE_BUNDLE,
-				"buttonRestore")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonRestore.computeSize(
-				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonRestore.setText(Util.translateString(RESOURCE_BUNDLE, "buttonRestore")); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonRestore.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonRestore.setLayoutData(gridData);
 
 		buttonRestore.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedButtonRestore()));
@@ -870,13 +825,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * Creates a tab on the main page for displaying an uneditable list of the
-	 * current key bindings. This is intended as a discovery tool for new users.
-	 * It shows all of the key bindings for the current key configuration,
-	 * platform and locale.
+	 * current key bindings. This is intended as a discovery tool for new users. It
+	 * shows all of the key bindings for the current key configuration, platform and
+	 * locale.
 	 *
-	 * @param parent
-	 *            The tab folder in which the tab should be created; must not be
-	 *            <code>null</code>.
+	 * @param parent The tab folder in which the tab should be created; must not be
+	 *               <code>null</code>.
 	 * @return The newly created composite containing all of the controls; never
 	 *         <code>null</code>.
 	 * @since 3.1
@@ -891,39 +845,25 @@ public final class KeysPreferencePage extends PreferencePage implements
 		composite.setLayout(new GridLayout());
 
 		// Place a table inside the tab.
-		tableBindings = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION
-				| SWT.H_SCROLL | SWT.V_SCROLL);
+		tableBindings = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableBindings.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 400;
 		gridData.horizontalSpan = 2;
 		tableBindings.setLayoutData(gridData);
-		final TableColumn tableColumnCategory = new TableColumn(tableBindings,
-				SWT.NONE, VIEW_CATEGORY_COLUMN_INDEX);
-		tableColumnCategory
-				.setText(SORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX]);
-		tableColumnCategory
-				.addSelectionListener(new SortOrderSelectionListener(
-						VIEW_CATEGORY_COLUMN_INDEX));
-		final TableColumn tableColumnCommand = new TableColumn(tableBindings,
-				SWT.NONE, VIEW_COMMAND_COLUMN_INDEX);
-		tableColumnCommand
-				.setText(UNSORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX]);
-		tableColumnCommand.addSelectionListener(new SortOrderSelectionListener(
-				VIEW_COMMAND_COLUMN_INDEX));
-		final TableColumn tableColumnKeySequence = new TableColumn(
-				tableBindings, SWT.NONE, VIEW_KEY_SEQUENCE_COLUMN_INDEX);
-		tableColumnKeySequence
-				.setText(UNSORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX]);
-		tableColumnKeySequence
-				.addSelectionListener(new SortOrderSelectionListener(
-						VIEW_KEY_SEQUENCE_COLUMN_INDEX));
-		final TableColumn tableColumnContext = new TableColumn(tableBindings,
-				SWT.NONE, VIEW_CONTEXT_COLUMN_INDEX);
-		tableColumnContext
-				.setText(UNSORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX]);
-		tableColumnContext.addSelectionListener(new SortOrderSelectionListener(
-				VIEW_CONTEXT_COLUMN_INDEX));
+		final TableColumn tableColumnCategory = new TableColumn(tableBindings, SWT.NONE, VIEW_CATEGORY_COLUMN_INDEX);
+		tableColumnCategory.setText(SORTED_COLUMN_NAMES[VIEW_CATEGORY_COLUMN_INDEX]);
+		tableColumnCategory.addSelectionListener(new SortOrderSelectionListener(VIEW_CATEGORY_COLUMN_INDEX));
+		final TableColumn tableColumnCommand = new TableColumn(tableBindings, SWT.NONE, VIEW_COMMAND_COLUMN_INDEX);
+		tableColumnCommand.setText(UNSORTED_COLUMN_NAMES[VIEW_COMMAND_COLUMN_INDEX]);
+		tableColumnCommand.addSelectionListener(new SortOrderSelectionListener(VIEW_COMMAND_COLUMN_INDEX));
+		final TableColumn tableColumnKeySequence = new TableColumn(tableBindings, SWT.NONE,
+				VIEW_KEY_SEQUENCE_COLUMN_INDEX);
+		tableColumnKeySequence.setText(UNSORTED_COLUMN_NAMES[VIEW_KEY_SEQUENCE_COLUMN_INDEX]);
+		tableColumnKeySequence.addSelectionListener(new SortOrderSelectionListener(VIEW_KEY_SEQUENCE_COLUMN_INDEX));
+		final TableColumn tableColumnContext = new TableColumn(tableBindings, SWT.NONE, VIEW_CONTEXT_COLUMN_INDEX);
+		tableColumnContext.setText(UNSORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX]);
+		tableColumnContext.addSelectionListener(new SortOrderSelectionListener(VIEW_CONTEXT_COLUMN_INDEX));
 		tableBindings.addSelectionListener(widgetDefaultSelectedAdapter(e -> selectedTableKeyBindings()));
 
 		// A composite for the buttons.
@@ -938,8 +878,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData();
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		editButton.setText(Util.translateString(RESOURCE_BUNDLE, "buttonEdit")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, editButton.computeSize(
-				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		gridData.widthHint = Math.max(widthHint, editButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		editButton.setLayoutData(gridData);
 		editButton.addSelectionListener(new SelectionListener() {
 
@@ -958,10 +897,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final Button buttonExport = new Button(buttonBar, SWT.PUSH);
 		gridData = new GridData();
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonExport.setText(Util.translateString(RESOURCE_BUNDLE,
-				"buttonExport")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonExport.computeSize(
-				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonExport.setText(Util.translateString(RESOURCE_BUNDLE, "buttonExport")); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonExport.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonExport.setLayoutData(gridData);
 		buttonExport.addSelectionListener(new SelectionListener() {
 
@@ -985,16 +922,15 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Allows the user to change the key bindings for a particular command.
-	 * Switches the tab to the modify tab, and then selects the category and
-	 * command that corresponds with the given command name. It then selects the
-	 * given key sequence and gives focus to the key sequence text widget.
+	 * Allows the user to change the key bindings for a particular command. Switches
+	 * the tab to the modify tab, and then selects the category and command that
+	 * corresponds with the given command name. It then selects the given key
+	 * sequence and gives focus to the key sequence text widget.
 	 *
-	 * @param binding
-	 *            The binding to be edited; if <code>null</code>, then just
-	 *            switch to the modify tab. If the <code>binding</code> does
-	 *            not correspond to anything in the keys preference page, then
-	 *            this also just switches to the modify tab.
+	 * @param binding The binding to be edited; if <code>null</code>, then just
+	 *                switch to the modify tab. If the <code>binding</code> does not
+	 *                correspond to anything in the keys preference page, then this
+	 *                also just switches to the modify tab.
 	 * @since 3.1
 	 */
 	public void editBinding(final Binding binding) {
@@ -1007,9 +943,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		}
 
 		/*
-		 * Get the corresponding category and command names. If either is
-		 * undefined, then we can just stop now. We won't be able to find their
-		 * name.
+		 * Get the corresponding category and command names. If either is undefined,
+		 * then we can just stop now. We won't be able to find their name.
 		 */
 		final ParameterizedCommand command = binding.getParameterizedCommand();
 		String categoryName = null;
@@ -1069,8 +1004,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		int k = 0;
 		for (; k < items.length; k++) {
 			final String currentKeySequence = items[k].getText(2);
-			if (binding.getTriggerSequence().format()
-					.equals(currentKeySequence)) {
+			if (binding.getTriggerSequence().format().equals(currentKeySequence)) {
 				break;
 			}
 		}
@@ -1087,9 +1021,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @return The selected category; <code>null</code> if none.
 	 */
 	private String getCategoryId() {
-		return !commandIdsByCategoryId.containsKey(null)
-				|| comboCategory.getSelectionIndex() > 0 ? (String) categoryIdsByUniqueName
-				.get(comboCategory.getText())
+		return !commandIdsByCategoryId.containsKey(null) || comboCategory.getSelectionIndex() > 0
+				? (String) categoryIdsByUniqueName.get(comboCategory.getText())
 				: null;
 	}
 
@@ -1099,8 +1032,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @return The selected context; <code>null</code> if none.
 	 */
 	private String getContextId() {
-		return comboContext.getSelectionIndex() >= 0 ? (String) contextIdsByUniqueName
-				.get(comboContext.getText())
+		return comboContext.getSelectionIndex() >= 0 ? (String) contextIdsByUniqueName.get(comboContext.getText())
 				: null;
 	}
 
@@ -1116,13 +1048,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * Returns the currently-selected fully-parameterized command.
 	 *
-	 * @return The selected fully-parameterized command; <code>null</code> if
-	 *         none.
+	 * @return The selected fully-parameterized command; <code>null</code> if none.
 	 */
 	private ParameterizedCommand getParameterizedCommand() {
 		final int selectionIndex = comboCommand.getSelectionIndex();
-		if ((selectionIndex >= 0) && (commands != null)
-				&& (selectionIndex < commands.length)) {
+		if ((selectionIndex >= 0) && (commands != null) && (selectionIndex < commands.length)) {
 			return commands[selectionIndex];
 		}
 
@@ -1135,9 +1065,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @return The selected scheme; <code>null</code> if none.
 	 */
 	private String getSchemeId() {
-		return comboScheme.getSelectionIndex() >= 0 ? (String) schemeIdsByUniqueName
-				.get(comboScheme.getText())
-				: null;
+		return comboScheme.getSelectionIndex() >= 0 ? (String) schemeIdsByUniqueName.get(comboScheme.getText()) : null;
 	}
 
 	@Override
@@ -1150,12 +1078,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * Checks whether the activity manager knows anything about this command
-	 * identifier. If the activity manager is currently filtering this command,
-	 * then it does not appear in the user interface.
+	 * identifier. If the activity manager is currently filtering this command, then
+	 * it does not appear in the user interface.
 	 *
-	 * @param command
-	 *            The command which should be checked against the activities;
-	 *            must not be <code>null</code>.
+	 * @param command The command which should be checked against the activities;
+	 *                must not be <code>null</code>.
 	 * @return <code>true</code> if the command identifier is not filtered;
 	 *         <code>false</code> if it is
 	 */
@@ -1168,18 +1095,15 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * went wrong. The exception is assumed to have something to do with the
 	 * preference store.
 	 *
-	 * @param exception
-	 *            The exception to be logged; must not be <code>null</code>.
+	 * @param exception The exception to be logged; must not be <code>null</code>.
 	 */
 	private void logPreferenceStoreException(final Throwable exception) {
-		final String message = Util.translateString(RESOURCE_BUNDLE,
-				"PreferenceStoreError.Message"); //$NON-NLS-1$
+		final String message = Util.translateString(RESOURCE_BUNDLE, "PreferenceStoreError.Message"); //$NON-NLS-1$
 		String exceptionMessage = exception.getMessage();
 		if (exceptionMessage == null) {
 			exceptionMessage = message;
 		}
-		final IStatus status = new Status(IStatus.ERROR,
-				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+		final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
 		WorkbenchPlugin.log(message, status);
 		StatusUtil.handleStatus(message, exception, StatusManager.SHOW);
 	}
@@ -1195,18 +1119,14 @@ public final class KeysPreferencePage extends PreferencePage implements
 	@Override
 	protected void performDefaults() {
 		// Ask the user to confirm
-		final String title = Util.translateString(RESOURCE_BUNDLE,
-				"restoreDefaultsMessageBoxText"); //$NON-NLS-1$
-		final String message = Util.translateString(RESOURCE_BUNDLE,
-				"restoreDefaultsMessageBoxMessage"); //$NON-NLS-1$
-		final boolean confirmed = MessageDialog.open(MessageDialog.CONFIRM,
-				getShell(), title, message, SWT.SHEET);
+		final String title = Util.translateString(RESOURCE_BUNDLE, "restoreDefaultsMessageBoxText"); //$NON-NLS-1$
+		final String message = Util.translateString(RESOURCE_BUNDLE, "restoreDefaultsMessageBoxMessage"); //$NON-NLS-1$
+		final boolean confirmed = MessageDialog.open(MessageDialog.CONFIRM, getShell(), title, message, SWT.SHEET);
 
 		if (confirmed) {
 			// Fix the scheme in the local changes.
 			final String defaultSchemeId = bindingService.getDefaultSchemeId();
-			final Scheme defaultScheme = localChangeManager
-					.getScheme(defaultSchemeId);
+			final Scheme defaultScheme = localChangeManager.getScheme(defaultSchemeId);
 			try {
 				localChangeManager.setActiveScheme(defaultScheme);
 			} catch (final NotDefinedException e) {
@@ -1229,8 +1149,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 			// Apply the changes.
 			try {
-				bindingService.savePreferences(defaultScheme,
-						trimmedBindingArray);
+				bindingService.savePreferences(defaultScheme, trimmedBindingArray);
 			} catch (final IOException e) {
 				logPreferenceStoreException(e);
 			}
@@ -1245,9 +1164,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 		// Save the preferences.
 		try {
-			bindingService.savePreferences(
-					localChangeManager.getActiveScheme(), localChangeManager
-							.getBindings());
+			bindingService.savePreferences(localChangeManager.getActiveScheme(), localChangeManager.getBindings());
 		} catch (final IOException e) {
 			logPreferenceStoreException(e);
 		}
@@ -1259,46 +1176,40 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Remembers the currently selected tab for when the preference page next
-	 * opens.
+	 * Remembers the currently selected tab for when the preference page next opens.
 	 */
 	private void persistSelectedTab() {
 		final IPreferenceStore store = getPreferenceStore();
-		store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB,
-				tabFolder.getSelectionIndex());
+		store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB, tabFolder.getSelectionIndex());
 	}
 
 	/**
-	 * Handles the selection event on the add button. This removes all
-	 * user-defined bindings matching the given key sequence, scheme and
-	 * context. It then adds a new binding with the current selections.
+	 * Handles the selection event on the add button. This removes all user-defined
+	 * bindings matching the given key sequence, scheme and context. It then adds a
+	 * new binding with the current selections.
 	 */
 	private void selectedButtonAdd() {
 		final ParameterizedCommand command = getParameterizedCommand();
 		final String contextId = getContextId();
 		final String schemeId = getSchemeId();
 		final KeySequence keySequence = getKeySequence();
-		localChangeManager.removeBindings(keySequence, schemeId, contextId,
-				null, null, null, Binding.USER);
-		localChangeManager.addBinding(new KeyBinding(keySequence, command,
-				schemeId, contextId, null, null, null, Binding.USER));
+		localChangeManager.removeBindings(keySequence, schemeId, contextId, null, null, null, Binding.USER);
+		localChangeManager
+				.addBinding(new KeyBinding(keySequence, command, schemeId, contextId, null, null, null, Binding.USER));
 		update(true);
 	}
 
 	/**
 	 * Provides a facility for exporting the viewable list of key bindings to a
-	 * file. Currently, this only supports exporting to a list of
-	 * comma-separated values. The user is prompted for which file should
-	 * receive our bounty.
+	 * file. Currently, this only supports exporting to a list of comma-separated
+	 * values. The user is prompted for which file should receive our bounty.
 	 *
 	 * @since 3.1
 	 */
 	private void selectedButtonExport() {
-		final FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE
-				| SWT.SHEET);
+		final FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE | SWT.SHEET);
 		fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
-		fileDialog.setFilterNames(new String[] { Util.translateString(
-				RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
+		fileDialog.setFilterNames(new String[] { Util.translateString(RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
 		final String filePath = fileDialog.open();
 		if (filePath == null) {
 			return;
@@ -1316,7 +1227,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 						for (int j = 0; j < numColumns; j++) {
 							String buf = Util.replaceAll(item.getText(j), "\"", //$NON-NLS-1$
 									"\"\""); //$NON-NLS-1$
-							fileWriter.write("\"" + buf + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+							fileWriter.write("\"" + buf + "\""); //$NON-NLS-1$//$NON-NLS-2$
 							if (j < numColumns - 1) {
 								fileWriter.write(',');
 							}
@@ -1341,32 +1252,28 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * Handles the selection event on the remove button. This removes all
-	 * user-defined bindings matching the given key sequence, scheme and
-	 * context. It then adds a new deletion binding for the selected trigger
-	 * sequence.
+	 * user-defined bindings matching the given key sequence, scheme and context. It
+	 * then adds a new deletion binding for the selected trigger sequence.
 	 */
 	private void selectedButtonRemove() {
 		final String contextId = getContextId();
 		final String schemeId = getSchemeId();
 		final KeySequence keySequence = getKeySequence();
-		localChangeManager.removeBindings(keySequence, schemeId, contextId,
-				null, null, null, Binding.USER);
-		localChangeManager.addBinding(new KeyBinding(keySequence, null,
-				schemeId, contextId, null, null, null, Binding.USER));
+		localChangeManager.removeBindings(keySequence, schemeId, contextId, null, null, null, Binding.USER);
+		localChangeManager
+				.addBinding(new KeyBinding(keySequence, null, schemeId, contextId, null, null, null, Binding.USER));
 		update(true);
 	}
 
 	/**
 	 * Handles the selection event on the restore button. This removes all
-	 * user-defined bindings matching the given key sequence, scheme and
-	 * context.
+	 * user-defined bindings matching the given key sequence, scheme and context.
 	 */
 	private void selectedButtonRestore() {
 		String contextId = getContextId();
 		String schemeId = getSchemeId();
 		KeySequence keySequence = getKeySequence();
-		localChangeManager.removeBindings(keySequence, schemeId, contextId,
-				null, null, null, Binding.USER);
+		localChangeManager.removeBindings(keySequence, schemeId, contextId, null, null, null, Binding.USER);
 		update(true);
 	}
 
@@ -1375,8 +1282,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 */
 	private void selectedComboScheme() {
 		final String activeSchemeId = getSchemeId();
-		final Scheme activeScheme = localChangeManager
-				.getScheme(activeSchemeId);
+		final Scheme activeScheme = localChangeManager.getScheme(activeSchemeId);
 		try {
 			localChangeManager.setActiveScheme(activeScheme);
 		} catch (final NotDefinedException e) {
@@ -1387,13 +1293,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * Handles the selection event on the table containing the bindings for a
-	 * particular command. This updates the context and trigger sequence based
-	 * on the selected binding.
+	 * particular command. This updates the context and trigger sequence based on
+	 * the selected binding.
 	 */
 	private void selectedTableBindingsForCommand() {
 		final int selection = tableBindingsForCommand.getSelectionIndex();
-		if ((selection >= 0)
-				&& (selection < tableBindingsForCommand.getItemCount())) {
+		if ((selection >= 0) && (selection < tableBindingsForCommand.getItemCount())) {
 			final TableItem item = tableBindingsForCommand.getItem(selection);
 			final KeyBinding binding = (KeyBinding) item.getData(ITEM_DATA_KEY);
 			setContextId(binding.getContextId());
@@ -1405,16 +1310,13 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * Handles the selection event on the table containing the bindings for a
-	 * particular trigger sequence. This updates the context based on the
-	 * selected binding.
+	 * particular trigger sequence. This updates the context based on the selected
+	 * binding.
 	 */
 	private void selectedTableBindingsForTriggerSequence() {
-		final int selection = tableBindingsForTriggerSequence
-				.getSelectionIndex();
-		if ((selection >= 0)
-				&& (selection < tableBindingsForTriggerSequence.getItemCount())) {
-			final TableItem item = tableBindingsForTriggerSequence
-					.getItem(selection);
+		final int selection = tableBindingsForTriggerSequence.getSelectionIndex();
+		if ((selection >= 0) && (selection < tableBindingsForTriggerSequence.getItemCount())) {
+			final TableItem item = tableBindingsForTriggerSequence.getItem(selection);
 			final Binding binding = (Binding) item.getData(ITEM_DATA_KEY);
 			setContextId(binding.getContextId());
 		}
@@ -1424,8 +1326,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * Responds to some kind of trigger on the View tab by taking the current
-	 * selection on the key bindings table and selecting the appropriate items
-	 * in the Modify tab.
+	 * selection on the key bindings table and selecting the appropriate items in
+	 * the Modify tab.
 	 *
 	 * @since 3.1
 	 */
@@ -1443,13 +1345,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * Changes the selected context name in the context combo box. The context
-	 * selected is either the one matching the identifier provided (if
-	 * possible), or the default context identifier. If no matching name can be
-	 * found in the combo, then the first item is selected.
+	 * selected is either the one matching the identifier provided (if possible), or
+	 * the default context identifier. If no matching name can be found in the
+	 * combo, then the first item is selected.
 	 *
-	 * @param contextId
-	 *            The context identifier for the context to be selected in the
-	 *            combo box; may be <code>null</code>.
+	 * @param contextId The context identifier for the context to be selected in the
+	 *                  combo box; may be <code>null</code>.
 	 */
 	private void setContextId(final String contextId) {
 		// Clear the current selection.
@@ -1459,8 +1360,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		// Figure out which name to look for.
 		String contextName = (String) contextUniqueNamesById.get(contextId);
 		if (contextName == null) {
-			contextName = (String) contextUniqueNamesById
-					.get(IContextIds.CONTEXT_ID_WINDOW);
+			contextName = (String) contextUniqueNamesById.get(IContextIds.CONTEXT_ID_WINDOW);
 		}
 		if (contextName == null) {
 			contextName = Util.ZERO_LENGTH_STRING;
@@ -1486,8 +1386,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * Sets the current trigger sequence.
 	 *
-	 * @param keySequence
-	 *            The trigger sequence; may be <code>null</code>.
+	 * @param keySequence The trigger sequence; may be <code>null</code>.
 	 */
 	private void setKeySequence(final KeySequence keySequence) {
 		textTriggerSequenceManager.setKeySequence(keySequence);
@@ -1496,26 +1395,22 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * Changes the selection in the command combo box.
 	 *
-	 * @param command
-	 *            The fully-parameterized command to select; may be
-	 *            <code>null</code>.
+	 * @param command The fully-parameterized command to select; may be
+	 *                <code>null</code>.
 	 */
-	private void setParameterizedCommand(
-			final ParameterizedCommand command) {
+	private void setParameterizedCommand(final ParameterizedCommand command) {
 		int i = 0;
 		if (commands != null) {
 			final int commandCount = commands.length;
 			for (; i < commandCount; i++) {
 				if (commands[i].equals(command)) {
-					if ((comboCommand.getSelectionIndex() != i)
-							&& (i < comboCommand.getItemCount())) {
+					if ((comboCommand.getSelectionIndex() != i) && (i < comboCommand.getItemCount())) {
 						comboCommand.select(i);
 					}
 					break;
 				}
 			}
-			if ((i >= comboCommand.getItemCount())
-					&& (comboCommand.getSelectionIndex() != 0)) {
+			if ((i >= comboCommand.getItemCount()) && (comboCommand.getSelectionIndex() != 0)) {
 				comboCommand.select(0);
 			}
 		}
@@ -1524,14 +1419,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * Sets the currently selected scheme
 	 *
-	 * @param scheme
-	 *            The scheme to select; may be <code>null</code>.
+	 * @param scheme The scheme to select; may be <code>null</code>.
 	 */
 	private void setScheme(final Scheme scheme) {
 		comboScheme.clearSelection();
 		comboScheme.deselectAll();
-		final String schemeUniqueName = (String) schemeUniqueNamesById
-				.get(scheme.getId());
+		final String schemeUniqueName = (String) schemeUniqueNamesById.get(scheme.getId());
 
 		if (schemeUniqueName != null) {
 			final String items[] = comboScheme.getItems();
@@ -1554,10 +1447,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		if (visible == true) {
 			Map contextsByName = new HashMap();
 
-			for (Iterator iterator = contextService.getDefinedContextIds()
-					.iterator(); iterator.hasNext();) {
-				Context context = contextService.getContext((String) iterator
-						.next());
+			for (Iterator iterator = contextService.getDefinedContextIds().iterator(); iterator.hasNext();) {
+				Context context = contextService.getContext((String) iterator.next());
 				try {
 					String name = context.getName();
 					Collection contexts = (Collection) contextsByName.get(name);
@@ -1575,10 +1466,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 			Map commandsByName = new HashMap();
 
-			for (Iterator iterator = commandService.getDefinedCommandIds()
-					.iterator(); iterator.hasNext();) {
-				Command command = commandService.getCommand((String) iterator
-						.next());
+			for (Iterator iterator = commandService.getDefinedCommandIds().iterator(); iterator.hasNext();) {
+				Command command = commandService.getCommand((String) iterator.next());
 				if (!isActive(command)) {
 					continue;
 				}
@@ -1601,18 +1490,15 @@ public final class KeysPreferencePage extends PreferencePage implements
 			// moved here to allow us to remove any empty categories
 			commandIdsByCategoryId = new HashMap();
 
-			for (Iterator iterator = commandService.getDefinedCommandIds()
-					.iterator(); iterator.hasNext();) {
-				final Command command = commandService
-						.getCommand((String) iterator.next());
+			for (Iterator iterator = commandService.getDefinedCommandIds().iterator(); iterator.hasNext();) {
+				final Command command = commandService.getCommand((String) iterator.next());
 				if (!isActive(command)) {
 					continue;
 				}
 
 				try {
 					String categoryId = command.getCategory().getId();
-					Collection commandIds = (Collection) commandIdsByCategoryId
-							.get(categoryId);
+					Collection commandIds = (Collection) commandIdsByCategoryId.get(categoryId);
 
 					if (commandIds == null) {
 						commandIds = new HashSet();
@@ -1627,16 +1513,13 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 			Map categoriesByName = new HashMap();
 
-			for (Iterator iterator = commandService.getDefinedCategoryIds()
-					.iterator(); iterator.hasNext();) {
-				Category category = commandService
-						.getCategory((String) iterator.next());
+			for (Iterator iterator = commandService.getDefinedCategoryIds().iterator(); iterator.hasNext();) {
+				Category category = commandService.getCategory((String) iterator.next());
 
 				try {
 					if (commandIdsByCategoryId.containsKey(category.getId())) {
 						String name = category.getName();
-						Collection categories = (Collection) categoriesByName
-								.get(name);
+						Collection categories = (Collection) categoriesByName.get(name);
 
 						if (categories == null) {
 							categories = new HashSet();
@@ -1672,8 +1555,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			contextIdsByUniqueName = new HashMap();
 			contextUniqueNamesById = new HashMap();
 
-			for (Iterator iterator = contextsByName.entrySet().iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = contextsByName.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String name = (String) entry.getKey();
 				Set contexts = (Set) entry.getValue();
@@ -1686,8 +1568,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				} else {
 					while (iterator2.hasNext()) {
 						Context context = (Context) iterator2.next();
-						String uniqueName = MessageFormat.format(
-								Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
+						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
 								name, context.getId());
 						contextIdsByUniqueName.put(uniqueName, context.getId());
 						contextUniqueNamesById.put(context.getId(), uniqueName);
@@ -1698,8 +1579,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			categoryIdsByUniqueName = new HashMap();
 			categoryUniqueNamesById = new HashMap();
 
-			for (Iterator iterator = categoriesByName.entrySet().iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = categoriesByName.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String name = (String) entry.getKey();
 				Set categories = (Set) entry.getValue();
@@ -1712,14 +1592,10 @@ public final class KeysPreferencePage extends PreferencePage implements
 				} else {
 					while (iterator2.hasNext()) {
 						Category category = (Category) iterator2.next();
-						String uniqueName = MessageFormat.format(
-								Util.translateString(RESOURCE_BUNDLE,
-										"uniqueName"), new Object[] { name, //$NON-NLS-1$
-										category.getId() });
-						categoryIdsByUniqueName.put(uniqueName, category
-								.getId());
-						categoryUniqueNamesById.put(category.getId(),
-								uniqueName);
+						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
+								new Object[] { name, category.getId() });
+						categoryIdsByUniqueName.put(uniqueName, category.getId());
+						categoryUniqueNamesById.put(category.getId(), uniqueName);
 					}
 				}
 			}
@@ -1727,8 +1603,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			schemeIdsByUniqueName = new HashMap();
 			schemeUniqueNamesById = new HashMap();
 
-			for (Iterator iterator = schemesByName.entrySet().iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = schemesByName.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String name = (String) entry.getKey();
 				Set keyConfigurations = (Set) entry.getValue();
@@ -1741,10 +1616,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 				} else {
 					while (iterator2.hasNext()) {
 						Scheme scheme = (Scheme) iterator2.next();
-						String uniqueName = MessageFormat.format(
-								Util.translateString(RESOURCE_BUNDLE,
-										"uniqueName"), new Object[] { name, //$NON-NLS-1$
-										scheme.getId() });
+						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
+								new Object[] { name, scheme.getId() });
 						schemeIdsByUniqueName.put(uniqueName, scheme.getId());
 						schemeUniqueNamesById.put(scheme.getId(), uniqueName);
 					}
@@ -1756,16 +1629,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 			// Make an internal copy of the binding manager, for local changes.
 			try {
 				for (final Scheme scheme : definedSchemes) {
-					final Scheme copy = localChangeManager.getScheme(scheme
-							.getId());
-					copy.define(scheme.getName(), scheme.getDescription(),
-							scheme.getParentId());
+					final Scheme copy = localChangeManager.getScheme(scheme.getId());
+					copy.define(scheme.getName(), scheme.getDescription(), scheme.getParentId());
 				}
-				localChangeManager.setActiveScheme(bindingService
-						.getActiveScheme());
+				localChangeManager.setActiveScheme(bindingService.getActiveScheme());
 			} catch (final NotDefinedException e) {
-				throw new Error(
-						"There is a programmer error in the keys preference page"); //$NON-NLS-1$
+				throw new Error("There is a programmer error in the keys preference page"); //$NON-NLS-1$
 			}
 			localChangeManager.setLocale(bindingService.getLocale());
 			localChangeManager.setPlatform(bindingService.getPlatform());
@@ -1775,23 +1644,19 @@ public final class KeysPreferencePage extends PreferencePage implements
 			List categoryNames = new ArrayList(categoryIdsByUniqueName.keySet());
 			Collections.sort(categoryNames, Collator.getInstance());
 			if (commandIdsByCategoryId.containsKey(null)) {
-				categoryNames.add(0, Util.translateString(RESOURCE_BUNDLE,
-						"other")); //$NON-NLS-1$
+				categoryNames.add(0, Util.translateString(RESOURCE_BUNDLE, "other")); //$NON-NLS-1$
 			}
-			comboCategory.setItems((String[]) categoryNames
-					.toArray(new String[categoryNames.size()]));
+			comboCategory.setItems((String[]) categoryNames.toArray(new String[categoryNames.size()]));
 			comboCategory.clearSelection();
 			comboCategory.deselectAll();
-			if (commandIdsByCategoryId.containsKey(null)
-					|| !categoryNames.isEmpty()) {
+			if (commandIdsByCategoryId.containsKey(null) || !categoryNames.isEmpty()) {
 				comboCategory.select(0);
 			}
 
 			// Populate the scheme combo box.
 			List schemeNames = new ArrayList(schemeIdsByUniqueName.keySet());
 			Collections.sort(schemeNames, Collator.getInstance());
-			comboScheme.setItems((String[]) schemeNames
-					.toArray(new String[schemeNames.size()]));
+			comboScheme.setItems((String[]) schemeNames.toArray(new String[schemeNames.size()]));
 			setScheme(activeScheme);
 
 			// Update the entire page.
@@ -1802,26 +1667,24 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Updates the entire preference page -- except the view tab -- based on
-	 * current selection sate. This preference page is written so that
-	 * everything can be made consistent simply by inspecting the state of its
-	 * widgets. A change is triggered by the user, and an event is fired. The
-	 * event triggers an update. It is possible for extra work to be done by
-	 * this page before calling update.
+	 * Updates the entire preference page -- except the view tab -- based on current
+	 * selection sate. This preference page is written so that everything can be
+	 * made consistent simply by inspecting the state of its widgets. A change is
+	 * triggered by the user, and an event is fired. The event triggers an update.
+	 * It is possible for extra work to be done by this page before calling update.
 	 */
 	private void update() {
 		update(false);
 	}
 
 	/**
-	 * Updates the entire preference page based on current changes. This
-	 * preference page is written so that everything can be made consistent
-	 * simply by inspecting the state of its widgets. A change is triggered by
-	 * the user, and an event is fired. The event triggers an update. It is
-	 * possible for extra work to be done by this page before calling update.
+	 * Updates the entire preference page based on current changes. This preference
+	 * page is written so that everything can be made consistent simply by
+	 * inspecting the state of its widgets. A change is triggered by the user, and
+	 * an event is fired. The event triggers an update. It is possible for extra
+	 * work to be done by this page before calling update.
 	 *
-	 * @param updateViewTab
-	 *            Whether the view tab should be updated as well.
+	 * @param updateViewTab Whether the view tab should be updated as well.
 	 */
 	private void update(final boolean updateViewTab) {
 		if (updateViewTab) {
@@ -1834,8 +1697,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final ParameterizedCommand command = getParameterizedCommand();
 		updateTableBindingsForCommand(command);
 		final String contextId = getContextId();
-		updateSelection(tableBindingsForTriggerSequence, contextId,
-				triggerSequence);
+		updateSelection(tableBindingsForTriggerSequence, contextId, triggerSequence);
 		updateSelection(tableBindingsForCommand, contextId, triggerSequence);
 		updateLabelSchemeExtends();
 		updateLabelContextExtends();
@@ -1853,24 +1715,21 @@ public final class KeysPreferencePage extends PreferencePage implements
 		// Figure out where command identifiers apply to the selected category.
 		final String categoryId = getCategoryId();
 		Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
-		if (commandIds==null) {
+		if (commandIds == null) {
 			commandIds = Collections.EMPTY_SET;
 		}
 
 		/*
-		 * Generate an array of parameterized commands based on these
-		 * identifiers. The parameterized commands will be sorted based on their
-		 * names.
+		 * Generate an array of parameterized commands based on these identifiers. The
+		 * parameterized commands will be sorted based on their names.
 		 */
 		List commands = new ArrayList();
 		final Iterator commandIdItr = commandIds.iterator();
 		while (commandIdItr.hasNext()) {
 			final String currentCommandId = (String) commandIdItr.next();
-			final Command currentCommand = commandService
-					.getCommand(currentCommandId);
+			final Command currentCommand = commandService.getCommand(currentCommandId);
 			try {
-				commands.addAll(ParameterizedCommand
-						.generateCombinations(currentCommand));
+				commands.addAll(ParameterizedCommand.generateCombinations(currentCommand));
 			} catch (final NotDefinedException e) {
 				// It is safe to just ignore undefined commands.
 			}
@@ -1881,28 +1740,25 @@ public final class KeysPreferencePage extends PreferencePage implements
 		commands = sortParameterizedCommands(commands);
 
 		final int commandCount = commands.size();
-		this.commands = (ParameterizedCommand[]) commands
-				.toArray(new ParameterizedCommand[commandCount]);
+		this.commands = (ParameterizedCommand[]) commands.toArray(new ParameterizedCommand[commandCount]);
 
 		/*
-		 * Generate an array of command names based on this array of
-		 * parameterized commands.
+		 * Generate an array of command names based on this array of parameterized
+		 * commands.
 		 */
 		final String[] commandNames = new String[commandCount];
 		for (int i = 0; i < commandCount; i++) {
 			try {
 				commandNames[i] = this.commands[i].getName();
 			} catch (final NotDefinedException e) {
-				throw new Error(
-						"Concurrent modification of the command's defined state"); //$NON-NLS-1$
+				throw new Error("Concurrent modification of the command's defined state"); //$NON-NLS-1$
 			}
 		}
 
 		/*
-		 * Copy the command names into the combo box, but only if they've
-		 * changed. We do this to try to avoid unnecessary calls out to the
-		 * operating system, as well as to defend against bugs in SWT's event
-		 * mechanism.
+		 * Copy the command names into the combo box, but only if they've changed. We do
+		 * this to try to avoid unnecessary calls out to the operating system, as well
+		 * as to defend against bugs in SWT's event mechanism.
 		 */
 		final String[] currentItems = comboCommand.getItems();
 		if (!Arrays.equals(currentItems, commandNames)) {
@@ -1913,9 +1769,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		setParameterizedCommand(command);
 
 		/*
-		 * Just to be extra careful, make sure that we have a selection at this
-		 * point. This line could probably be removed, but it makes the code a
-		 * bit more robust.
+		 * Just to be extra careful, make sure that we have a selection at this point.
+		 * This line could probably be removed, but it makes the code a bit more robust.
 		 */
 		if ((comboCommand.getSelectionIndex() == -1) && (commandCount > 0)) {
 			comboCommand.select(0);
@@ -1924,6 +1779,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	/**
 	 * Sort the commands using the correct language.
+	 * 
 	 * @param commands the List of ParameterizedCommands
 	 * @return The sorted List
 	 */
@@ -1968,8 +1824,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final List contextNames = new ArrayList(contextIdsByName.keySet());
 		Collections.sort(contextNames, Collator.getInstance());
 
-		comboContext.setItems((String[]) contextNames
-				.toArray(new String[contextNames.size()]));
+		comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
 		setContextId(contextId);
 
 		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty()) {
@@ -1978,19 +1833,15 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Updates the enabled state of the various widgets on this page. The
-	 * decision is based on the current trigger sequence and the currently
-	 * selected command.
+	 * Updates the enabled state of the various widgets on this page. The decision
+	 * is based on the current trigger sequence and the currently selected command.
 	 *
-	 * @param triggerSequence
-	 *            The current trigger sequence; may be empty, but never
-	 *            <code>null</code>.
-	 * @param command
-	 *            The currently selected command, if any; <code>null</code>
-	 *            otherwise.
+	 * @param triggerSequence The current trigger sequence; may be empty, but never
+	 *                        <code>null</code>.
+	 * @param command         The currently selected command, if any;
+	 *                        <code>null</code> otherwise.
 	 */
-	private void updateEnabled(final TriggerSequence triggerSequence,
-			final ParameterizedCommand command) {
+	private void updateEnabled(final TriggerSequence triggerSequence, final ParameterizedCommand command) {
 		final boolean commandSelected = command != null;
 		labelBindingsForCommand.setEnabled(commandSelected);
 		tableBindingsForCommand.setEnabled(commandSelected);
@@ -2002,17 +1853,16 @@ public final class KeysPreferencePage extends PreferencePage implements
 		/*
 		 * TODO Do some better button enablement.
 		 */
-		final boolean buttonsEnabled = commandSelected
-				&& triggerSequenceSelected;
+		final boolean buttonsEnabled = commandSelected && triggerSequenceSelected;
 		buttonAdd.setEnabled(buttonsEnabled);
 		buttonRemove.setEnabled(buttonsEnabled);
 		buttonRestore.setEnabled(buttonsEnabled);
 	}
 
 	/**
-	 * Updates the label next to the context that says "extends" if the context
-	 * is a child of another context. If the context is not a child of another
-	 * context, then the label is simply blank.
+	 * Updates the label next to the context that says "extends" if the context is a
+	 * child of another context. If the context is not a child of another context,
+	 * then the label is simply blank.
 	 */
 	private void updateLabelContextExtends() {
 		final String contextId = getContextId();
@@ -2023,12 +1873,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 				try {
 					final String parentId = context.getParentId();
 					if (parentId != null) {
-						final String name = (String) contextUniqueNamesById
-								.get(parentId);
+						final String name = (String) contextUniqueNamesById.get(parentId);
 						if (name != null) {
-							labelContextExtends.setText(MessageFormat.format(
-									Util.translateString(RESOURCE_BUNDLE, "extends"), //$NON-NLS-1$
-									name));
+							labelContextExtends
+									.setText(MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "extends"), //$NON-NLS-1$
+											name));
 							return;
 						}
 					}
@@ -2042,9 +1891,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Updates the label next to the scheme that says "extends" if the scheme is
-	 * a child of another scheme. If the scheme is not a child of another
-	 * scheme, then the label is simply blank.
+	 * Updates the label next to the scheme that says "extends" if the scheme is a
+	 * child of another scheme. If the scheme is not a child of another scheme, then
+	 * the label is simply blank.
 	 */
 	private void updateLabelSchemeExtends() {
 		final String schemeId = getSchemeId();
@@ -2052,11 +1901,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 		if (schemeId != null) {
 			final Scheme scheme = bindingService.getScheme(schemeId);
 			try {
-				final String name = (String) schemeUniqueNamesById.get(scheme
-						.getParentId());
+				final String name = (String) schemeUniqueNamesById.get(scheme.getParentId());
 				if (name != null) {
-					labelSchemeExtends.setText(MessageFormat.format(Util
-							.translateString(RESOURCE_BUNDLE, "extends"), //$NON-NLS-1$
+					labelSchemeExtends.setText(MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "extends"), //$NON-NLS-1$
 							name));
 					return;
 				}
@@ -2069,22 +1916,19 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Tries to select the correct entry in table based on the currently
-	 * selected context and trigger sequence. If the table hasn't really
-	 * changed, then this method is essentially trying to restore the selection.
-	 * If it has changed, then it is trying to select the most entry based on
-	 * the context.
+	 * Tries to select the correct entry in table based on the currently selected
+	 * context and trigger sequence. If the table hasn't really changed, then this
+	 * method is essentially trying to restore the selection. If it has changed,
+	 * then it is trying to select the most entry based on the context.
 	 *
-	 * @param table
-	 *            The table to be changed; must not be <code>null</code>.
-	 * @param contextId
-	 *            The currently selected context; should not be
-	 *            <code>null</code>.
-	 * @param triggerSequence
-	 *            The current trigger sequence; should not be <code>null</code>.
+	 * @param table           The table to be changed; must not be
+	 *                        <code>null</code>.
+	 * @param contextId       The currently selected context; should not be
+	 *                        <code>null</code>.
+	 * @param triggerSequence The current trigger sequence; should not be
+	 *                        <code>null</code>.
 	 */
-	private void updateSelection(final Table table,
-			final String contextId, final TriggerSequence triggerSequence) {
+	private void updateSelection(final Table table, final String contextId, final TriggerSequence triggerSequence) {
 		if (table.getSelectionCount() > 1) {
 			table.deselectAll();
 		}
@@ -2094,8 +1938,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		for (int i = 0; i < items.length; i++) {
 			final Binding binding = (Binding) items[i].getData(ITEM_DATA_KEY);
 			if ((Util.equals(contextId, binding.getContextId()))
-					&& (Util.equals(triggerSequence, binding
-							.getTriggerSequence()))) {
+					&& (Util.equals(triggerSequence, binding.getTriggerSequence()))) {
 				selection = i;
 				break;
 			}
@@ -2110,33 +1953,28 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * Updates the contents of the table showing the bindings for the currently
 	 * selected command. The selection is destroyed by this process.
 	 *
-	 * @param parameterizedCommand
-	 *            The currently selected fully-parameterized command; may be
-	 *            <code>null</code>.
+	 * @param parameterizedCommand The currently selected fully-parameterized
+	 *                             command; may be <code>null</code>.
 	 */
-	private void updateTableBindingsForCommand(
-			final ParameterizedCommand parameterizedCommand) {
+	private void updateTableBindingsForCommand(final ParameterizedCommand parameterizedCommand) {
 		// Clear the table of existing items.
 		tableBindingsForCommand.removeAll();
 
 		// Add each of the bindings, if the command identifier matches.
-		final Collection bindings = localChangeManager
-				.getActiveBindingsDisregardingContextFlat();
+		final Collection bindings = localChangeManager.getActiveBindingsDisregardingContextFlat();
 		final Iterator bindingItr = bindings.iterator();
 		while (bindingItr.hasNext()) {
 			final Binding binding = (Binding) bindingItr.next();
-			if (!Util.equals(parameterizedCommand, binding
-					.getParameterizedCommand())) {
+			if (!Util.equals(parameterizedCommand, binding.getParameterizedCommand())) {
 				continue; // binding does not match
 			}
 
-			final TableItem tableItem = new TableItem(tableBindingsForCommand,
-					SWT.NULL);
+			final TableItem tableItem = new TableItem(tableBindingsForCommand, SWT.NULL);
 			tableItem.setData(ITEM_DATA_KEY, binding);
 
 			/*
-			 * Set the associated image based on the type of binding. Either it
-			 * is a user binding or a system binding.
+			 * Set the associated image based on the type of binding. Either it is a user
+			 * binding or a system binding.
 			 *
 			 * TODO Identify more image types.
 			 */
@@ -2146,8 +1984,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				tableItem.setImage(0, IMAGE_CHANGE);
 			}
 
-			String contextName = (String) contextUniqueNamesById.get(binding
-					.getContextId());
+			String contextName = (String) contextUniqueNamesById.get(binding.getContextId());
 			if (contextName == null) {
 				contextName = Util.ZERO_LENGTH_STRING;
 			}
@@ -2160,20 +1997,16 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * Updates the contents of the table showing the bindings for the current
 	 * trigger sequence. The selection is destroyed by this process.
 	 *
-	 * @param triggerSequence
-	 *            The current trigger sequence; may be <code>null</code> or
-	 *            empty.
+	 * @param triggerSequence The current trigger sequence; may be <code>null</code>
+	 *                        or empty.
 	 */
-	private void updateTableBindingsForTriggerSequence(
-			final TriggerSequence triggerSequence) {
+	private void updateTableBindingsForTriggerSequence(final TriggerSequence triggerSequence) {
 		// Clear the table of its existing items.
 		tableBindingsForTriggerSequence.removeAll();
 
 		// Get the collection of bindings for the current command.
-		final Map activeBindings = localChangeManager
-				.getActiveBindingsDisregardingContext();
-		final Collection bindings = (Collection) activeBindings
-				.get(triggerSequence);
+		final Map activeBindings = localChangeManager.getActiveBindingsDisregardingContext();
+		final Collection bindings = (Collection) activeBindings.get(triggerSequence);
 		if (bindings == null) {
 			return;
 		}
@@ -2182,22 +2015,19 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final Iterator bindingItr = bindings.iterator();
 		while (bindingItr.hasNext()) {
 			final Binding binding = (Binding) bindingItr.next();
-			final Context context = contextService.getContext(binding
-					.getContextId());
-			final ParameterizedCommand parameterizedCommand = binding
-					.getParameterizedCommand();
+			final Context context = contextService.getContext(binding.getContextId());
+			final ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
 			final Command command = parameterizedCommand.getCommand();
 			if ((!context.isDefined()) && (!command.isDefined())) {
 				continue;
 			}
 
-			final TableItem tableItem = new TableItem(
-					tableBindingsForTriggerSequence, SWT.NULL);
+			final TableItem tableItem = new TableItem(tableBindingsForTriggerSequence, SWT.NULL);
 			tableItem.setData(ITEM_DATA_KEY, binding);
 
 			/*
-			 * Set the associated image based on the type of binding. Either it
-			 * is a user binding or a system binding.
+			 * Set the associated image based on the type of binding. Either it is a user
+			 * binding or a system binding.
 			 *
 			 * TODO Identify more image types.
 			 */
@@ -2218,9 +2048,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Updates the contents of the view tab. This queries the command manager
-	 * for a list of key sequence binding definitions, and these definitions are
-	 * then added to the table.
+	 * Updates the contents of the view tab. This queries the command manager for a
+	 * list of key sequence binding definitions, and these definitions are then
+	 * added to the table.
 	 *
 	 * @since 3.1
 	 */
@@ -2229,21 +2059,18 @@ public final class KeysPreferencePage extends PreferencePage implements
 		tableBindings.removeAll();
 
 		// Get a sorted list of key binding contents.
-		final List bindings = new ArrayList(localChangeManager
-				.getActiveBindingsDisregardingContextFlat());
+		final List bindings = new ArrayList(localChangeManager.getActiveBindingsDisregardingContextFlat());
 		Collections.sort(bindings, new Comparator() {
 			/**
-			 * Compares two instances of <code>Binding</code> based on the
-			 * current sort order.
+			 * Compares two instances of <code>Binding</code> based on the current sort
+			 * order.
 			 *
-			 * @param object1
-			 *            The first object to compare; must be an instance of
-			 *            <code>Binding</code> (i.e., not <code>null</code>).
-			 * @param object2
-			 *            The second object to compare; must be an instance of
-			 *            <code>Binding</code> (i.e., not <code>null</code>).
-			 * @return The integer value representing the comparison. The
-			 *         comparison is based on the current sort order.
+			 * @param object1 The first object to compare; must be an instance of
+			 *                <code>Binding</code> (i.e., not <code>null</code>).
+			 * @param object2 The second object to compare; must be an instance of
+			 *                <code>Binding</code> (i.e., not <code>null</code>).
+			 * @return The integer value representing the comparison. The comparison is
+			 *         based on the current sort order.
 			 * @since 3.1
 			 */
 			@Override
@@ -2252,11 +2079,10 @@ public final class KeysPreferencePage extends PreferencePage implements
 				final Binding binding2 = (Binding) object2;
 
 				/*
-				 * Get the category name, command name, formatted key sequence
-				 * and context name for the first binding.
+				 * Get the category name, command name, formatted key sequence and context name
+				 * for the first binding.
 				 */
-				final Command command1 = binding1.getParameterizedCommand()
-						.getCommand();
+				final Command command1 = binding1.getParameterizedCommand().getCommand();
 				String categoryName1 = Util.ZERO_LENGTH_STRING;
 				String commandName1 = Util.ZERO_LENGTH_STRING;
 				try {
@@ -2265,13 +2091,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 				} catch (final NotDefinedException e) {
 					// Just use the zero-length string.
 				}
-				final String triggerSequence1 = binding1.getTriggerSequence()
-						.format();
+				final String triggerSequence1 = binding1.getTriggerSequence().format();
 				final String contextId1 = binding1.getContextId();
 				String contextName1 = Util.ZERO_LENGTH_STRING;
 				if (contextId1 != null) {
-					final Context context = contextService
-							.getContext(contextId1);
+					final Context context = contextService.getContext(contextId1);
 					try {
 						contextName1 = context.getName();
 					} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
@@ -2280,11 +2104,10 @@ public final class KeysPreferencePage extends PreferencePage implements
 				}
 
 				/*
-				 * Get the category name, command name, formatted key sequence
-				 * and context name for the first binding.
+				 * Get the category name, command name, formatted key sequence and context name
+				 * for the first binding.
 				 */
-				final Command command2 = binding2.getParameterizedCommand()
-						.getCommand();
+				final Command command2 = binding2.getParameterizedCommand().getCommand();
 				String categoryName2 = Util.ZERO_LENGTH_STRING;
 				String commandName2 = Util.ZERO_LENGTH_STRING;
 				try {
@@ -2293,13 +2116,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 				} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
 					// Just use the zero-length string.
 				}
-				final String keySequence2 = binding2.getTriggerSequence()
-						.format();
+				final String keySequence2 = binding2.getTriggerSequence().format();
 				final String contextId2 = binding2.getContextId();
 				String contextName2 = Util.ZERO_LENGTH_STRING;
 				if (contextId2 != null) {
-					final Context context = contextService
-							.getContext(contextId2);
+					final Context context = contextService.getContext(contextId2);
 					try {
 						contextName2 = context.getName();
 					} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
@@ -2359,8 +2180,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			final Binding binding = (Binding) keyBindingItr.next();
 
 			// Get the command and category name.
-			final ParameterizedCommand command = binding
-					.getParameterizedCommand();
+			final ParameterizedCommand command = binding.getParameterizedCommand();
 			String commandName = Util.ZERO_LENGTH_STRING;
 			String categoryName = Util.ZERO_LENGTH_STRING;
 			try {
@@ -2391,8 +2211,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			final TableItem item = new TableItem(tableBindings, SWT.NONE);
 			item.setText(VIEW_CATEGORY_COLUMN_INDEX, categoryName);
 			item.setText(VIEW_COMMAND_COLUMN_INDEX, commandName);
-			item.setText(VIEW_KEY_SEQUENCE_COLUMN_INDEX, binding
-					.getTriggerSequence().format());
+			item.setText(VIEW_KEY_SEQUENCE_COLUMN_INDEX, binding.getTriggerSequence().format());
 			item.setText(VIEW_CONTEXT_COLUMN_INDEX, contextName);
 			item.setData(BINDING_KEY, binding);
 		}
@@ -2402,6 +2221,5 @@ public final class KeysPreferencePage extends PreferencePage implements
 			tableBindings.getColumn(i).pack();
 		}
 	}
-
 
 }

@@ -18,14 +18,13 @@ package org.eclipse.ui.internal.themes;
  *
  * @since 3.0
  */
-public interface IHierarchalThemeElementDefinition extends
-        IThemeElementDefinition {
+public interface IHierarchalThemeElementDefinition extends IThemeElementDefinition {
 
-    /**
-     * Return the id of the element this element defaults to.
-     *
-     * @return the id of the element this element defaults to, or
-     * <code>null</code> if it does not default to another element.
-     */
-    String getDefaultsTo();
+	/**
+	 * Return the id of the element this element defaults to.
+	 *
+	 * @return the id of the element this element defaults to, or <code>null</code>
+	 *         if it does not default to another element.
+	 */
+	String getDefaultsTo();
 }

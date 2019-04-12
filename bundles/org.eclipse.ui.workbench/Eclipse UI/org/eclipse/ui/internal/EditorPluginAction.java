@@ -20,69 +20,66 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.WorkbenchException;
 
 /**
- * Extends PartPluginAction for usage in editor parts. Objects
- * of this class are created by reading the registry (extension point "editorActions").
+ * Extends PartPluginAction for usage in editor parts. Objects of this class are
+ * created by reading the registry (extension point "editorActions").
  */
 public final class EditorPluginAction extends PartPluginAction {
-    private IEditorPart currentEditor;
+	private IEditorPart currentEditor;
 
-    /**
-     * This class adds the requirement that action delegates
-     * loaded on demand implement IViewActionDelegate
-     */
-    public EditorPluginAction(IConfigurationElement actionElement,
-            IEditorPart part, String id, int style) {
-        super(actionElement, id, style);
-        if (part != null) {
+	/**
+	 * This class adds the requirement that action delegates loaded on demand
+	 * implement IViewActionDelegate
+	 */
+	public EditorPluginAction(IConfigurationElement actionElement, IEditorPart part, String id, int style) {
+		super(actionElement, id, style);
+		if (part != null) {
 			editorChanged(part);
 		}
-    }
+	}
 
-    @Override
-	protected IActionDelegate validateDelegate(Object obj)
-            throws WorkbenchException {
-        if (obj instanceof IEditorActionDelegate) {
+	@Override
+	protected IActionDelegate validateDelegate(Object obj) throws WorkbenchException {
+		if (obj instanceof IEditorActionDelegate) {
 			return (IEditorActionDelegate) obj;
 		}
 		throw new WorkbenchException("Action must implement IEditorActionDelegate"); //$NON-NLS-1$
-    }
+	}
 
-    @Override
+	@Override
 	protected void initDelegate() {
-        super.initDelegate();
-        ((IEditorActionDelegate) getDelegate()).setActiveEditor(this,
-                currentEditor);
-    }
+		super.initDelegate();
+		((IEditorActionDelegate) getDelegate()).setActiveEditor(this, currentEditor);
+	}
 
-    /**
-     * Handles editor change by re-registering for selection
-     * changes and updating IEditorActionDelegate.
-     */
-    public void editorChanged(IEditorPart part) {
-        if (currentEditor != null) {
+	/**
+	 * Handles editor change by re-registering for selection changes and updating
+	 * IEditorActionDelegate.
+	 */
+	public void editorChanged(IEditorPart part) {
+		if (currentEditor != null) {
 			unregisterSelectionListener(currentEditor);
 		}
 
-        currentEditor = part;
+		currentEditor = part;
 
-        if (getDelegate() == null && isOkToCreateDelegate()) {
+		if (getDelegate() == null && isOkToCreateDelegate()) {
 			createDelegate();
 		}
-        if (getDelegate() != null) {
+		if (getDelegate() != null) {
 			((IEditorActionDelegate) getDelegate()).setActiveEditor(this, part);
 		}
 
-        if (part != null) {
+		if (part != null) {
 			registerSelectionListener(part);
 		}
-    }
+	}
 
 	@Override
 	public void dispose() {
-        if (currentEditor != null) {
-            unregisterSelectionListener(currentEditor);
+		if (currentEditor != null) {
+			unregisterSelectionListener(currentEditor);
 			currentEditor = null;
-        }
+		}
 		super.dispose();
 	}
 }

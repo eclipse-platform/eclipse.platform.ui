@@ -33,8 +33,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  *
  * @since 3.1
  */
-public class PreferenceTransferElement extends WorkbenchAdapter implements
-		IPluginContribution {
+public class PreferenceTransferElement extends WorkbenchAdapter implements IPluginContribution {
 	private String id;
 
 	private ImageDescriptor imageDescriptor;
@@ -51,8 +50,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 	 */
 	public PreferenceTransferElement(IConfigurationElement configurationElement) {
 		this.configurationElement = configurationElement;
-		id = configurationElement
-				.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+		id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 	}
 
 	/**
@@ -76,8 +74,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 			Set scopes = new HashSet(size);
 			Map mappingsMap = new HashMap(size);
 			for (int i = 0; i < size; i++) {
-				String scope = PreferenceTransferRegistryReader
-						.getScope(mappingConfigurations[i]);
+				String scope = PreferenceTransferRegistryReader.getScope(mappingConfigurations[i]);
 				scopes.add(scope);
 
 				Map mappings;
@@ -91,16 +88,14 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 					}
 				}
 
-				Map entries = PreferenceTransferRegistryReader
-						.getEntry(mappingConfigurations[i]);
+				Map entries = PreferenceTransferRegistryReader.getEntry(mappingConfigurations[i]);
 				if (entries == null) {
 					mappingsMap.put(scope, null);
 				} else {
 					mappings.putAll(entries);
 				}
 			}
-			filter = new PreferenceFilter((String[]) scopes
-					.toArray(new String[scopes.size()]), mappingsMap);
+			filter = new PreferenceFilter((String[]) scopes.toArray(new String[scopes.size()]), mappingsMap);
 		}
 		return filter;
 	}
@@ -129,8 +124,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 	 * @return the name of the element
 	 */
 	public String getName() {
-		return configurationElement
-				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+		return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
 	@Override
@@ -140,8 +134,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	@Override
 	public String getPluginId() {
-		return (configurationElement != null) ? configurationElement
-				.getContributor().getName() : null;
+		return (configurationElement != null) ? configurationElement.getContributor().getName() : null;
 	}
 
 	static class PreferenceFilter implements IPreferenceFilter {
@@ -174,13 +167,11 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (imageDescriptor == null) {
-			String iconName = configurationElement
-					.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+			String iconName = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 			if (iconName == null) {
 				return null;
 			}
-			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-					getPluginId(), iconName);
+			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(getPluginId(), iconName);
 		}
 		return imageDescriptor;
 

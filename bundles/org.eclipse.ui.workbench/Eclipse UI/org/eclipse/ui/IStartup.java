@@ -14,15 +14,14 @@
 package org.eclipse.ui;
 
 /**
- * Plug-ins that register a startup extension will be activated after
- * the Workbench initializes and have an opportunity to run
- * code that can't be implemented using the normal contribution
- * mechanisms.
+ * Plug-ins that register a startup extension will be activated after the
+ * Workbench initializes and have an opportunity to run code that can't be
+ * implemented using the normal contribution mechanisms.
  *
  * @since 2.0
  */
 public interface IStartup {
-    /**
+	/**
 	 * Will be called in a separate thread after the workbench initializes.
 	 * <p>
 	 * Note that most workbench methods must be called in the UI thread since they
@@ -46,6 +45,5 @@ public interface IStartup {
 	 * @see org.eclipse.swt.widgets.Display#asyncExec
 	 * @see org.eclipse.swt.widgets.Display#syncExec
 	 */
-    void earlyStartup();
+	void earlyStartup();
 }
-

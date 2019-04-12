@@ -24,29 +24,26 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
  */
 public class SavePerspectiveAction extends PerspectiveAction {
 
-    /**
-     * Creates an instance of this class.
-     *
-     * @param window the workbench window in which this action appears
-     */
-    public SavePerspectiveAction(IWorkbenchWindow window) {
-        super(window);
-        setText(WorkbenchMessages.SavePerspective_text);
-        setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS);
-        // @issue missing action id
-        setToolTipText(WorkbenchMessages.SavePerspective_toolTip);
-        window.getWorkbench().getHelpSystem().setHelp(this,
-				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
-    }
+	/**
+	 * Creates an instance of this class.
+	 *
+	 * @param window the workbench window in which this action appears
+	 */
+	public SavePerspectiveAction(IWorkbenchWindow window) {
+		super(window);
+		setText(WorkbenchMessages.SavePerspective_text);
+		setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS);
+		// @issue missing action id
+		setToolTipText(WorkbenchMessages.SavePerspective_toolTip);
+		window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
+	}
 
-    @Override
+	@Override
 	protected void run(IWorkbenchPage page, IPerspectiveDescriptor persp) {
-        PerspectiveDescriptor desc = (PerspectiveDescriptor) persp;
-        if (desc != null) {
+		PerspectiveDescriptor desc = (PerspectiveDescriptor) persp;
+		if (desc != null) {
 			// saveNonSingleton(page, desc);
-        }
-    }
-
-
+		}
+	}
 
 }

@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 3.110
  *
  */
-public class PreferencesSettingsTransfer extends WorkbenchSettingsTransfer{
+public class PreferencesSettingsTransfer extends WorkbenchSettingsTransfer {
 
 	@Override
 	public IStatus transferSettings(IPath newWorkspaceRoot) {

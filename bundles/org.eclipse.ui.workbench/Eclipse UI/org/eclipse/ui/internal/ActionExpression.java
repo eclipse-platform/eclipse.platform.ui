@@ -36,22 +36,20 @@ public class ActionExpression {
 	private static abstract class AbstractExpression {
 
 		/**
-		 * The hash code for this object. This value is computed lazily, and
-		 * marked as invalid when one of the values on which it is based
-		 * changes.
+		 * The hash code for this object. This value is computed lazily, and marked as
+		 * invalid when one of the values on which it is based changes.
 		 */
 		protected transient int expressionHashCode = HASH_CODE_NOT_COMPUTED;
 
 		/**
-		 * Extract the object class tests from the expression. This allows
-		 * clients (e.g. the decorator manager) to handle object class testing
-		 * in a more optimized way. This method extracts the objectClass test
-		 * from the expression and returns the object classes. The expression is
-		 * not changed and a <code>null</code> is returned if no object class
-		 * is found.
+		 * Extract the object class tests from the expression. This allows clients (e.g.
+		 * the decorator manager) to handle object class testing in a more optimized
+		 * way. This method extracts the objectClass test from the expression and
+		 * returns the object classes. The expression is not changed and a
+		 * <code>null</code> is returned if no object class is found.
 		 *
-		 * @return String[] the object class names or <code>null</code> if
-		 *         none was found.
+		 * @return String[] the object class names or <code>null</code> if none was
+		 *         found.
 		 */
 		public String[] extractObjectClasses() {
 			return null;
@@ -60,39 +58,34 @@ public class ActionExpression {
 		/**
 		 * Returns whether the expression is valid for the given object.
 		 *
-		 * @param object
-		 *            the object to validate against (can be <code>null</code>)
+		 * @param object the object to validate against (can be <code>null</code>)
 		 * @return boolean whether the expression is valid for the object.
 		 */
 		public abstract boolean isEnabledFor(Object object);
 
 		/**
-		 * Returns whether or not the receiver is potentially valid for the
-		 * object via just the extension type. Currently the only supported
-		 * expression type is <code>EXP_TYPE_OBJECT_CLASS</code>.
+		 * Returns whether or not the receiver is potentially valid for the object via
+		 * just the extension type. Currently the only supported expression type is
+		 * <code>EXP_TYPE_OBJECT_CLASS</code>.
 		 *
-		 * @param object
-		 *            the object to validate against (can be <code>null</code>)
-		 * @param expressionType
-		 *            the expression type to consider
-		 * @return boolean whether the expression is potentially valid for the
-		 *         object.
+		 * @param object         the object to validate against (can be
+		 *                       <code>null</code>)
+		 * @param expressionType the expression type to consider
+		 * @return boolean whether the expression is potentially valid for the object.
 		 */
-		public boolean isEnabledForExpression(Object object,
-				String expressionType) {
+		public boolean isEnabledForExpression(Object object, String expressionType) {
 			return false;
 		}
 
 		/**
-		 * Return the value of the expression type that the receiver is enabled
-		 * for. If the receiver is not enabled for the expressionType then
-		 * return <code>null</code>.
+		 * Return the value of the expression type that the receiver is enabled for. If
+		 * the receiver is not enabled for the expressionType then return
+		 * <code>null</code>.
 		 *
-		 * @param expressionType
-		 *            the expression type to consider
-		 * @return Collection of String if there are values for this expression
-		 *         or <code>null</code> if this is not possible in the
-		 *         receiver or any of it's children
+		 * @param expressionType the expression type to consider
+		 * @return Collection of String if there are values for this expression or
+		 *         <code>null</code> if this is not possible in the receiver or any of
+		 *         it's children
 		 */
 		public Collection valuesForExpression(String expressionType) {
 			return null;
@@ -102,17 +95,15 @@ public class ActionExpression {
 	private static class AndExpression extends CompositeExpression {
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The element that will be used to determine the expressions
-		 *            for And.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The element that will be used to determine the expressions for
+		 *                And.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public AndExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public AndExpression(IConfigurationElement element) throws IllegalStateException {
 			super(element);
 		}
 
@@ -139,30 +130,26 @@ public class ActionExpression {
 		}
 	}
 
-	private static abstract class CompositeExpression extends
-			AbstractExpression {
+	private static abstract class CompositeExpression extends AbstractExpression {
 		/**
 		 *
 		 */
 		protected ArrayList list;
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The composite element we will create the expression from.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The composite element we will create the expression from.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public CompositeExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public CompositeExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
 
 			IConfigurationElement[] children = element.getChildren();
 			if (children.length == 0) {
-				throw new IllegalStateException(
-						"Composite expression cannot be empty"); //$NON-NLS-1$
+				throw new IllegalStateException("Composite expression cannot be empty"); //$NON-NLS-1$
 			}
 
 			list = new ArrayList(children.length);
@@ -219,8 +206,7 @@ public class ActionExpression {
 		}
 
 		@Override
-		public boolean isEnabledForExpression(Object object,
-				String expressionType) {
+		public boolean isEnabledForExpression(Object object, String expressionType) {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
 				AbstractExpression next = (AbstractExpression) iterator.next();
@@ -254,17 +240,15 @@ public class ActionExpression {
 	private static class NotExpression extends SingleExpression {
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The element that will be used to create the definition for
-		 *            the receiver.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The element that will be used to create the definition for the
+		 *                receiver.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public NotExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public NotExpression(IConfigurationElement element) throws IllegalStateException {
 			super(element);
 		}
 
@@ -280,29 +264,26 @@ public class ActionExpression {
 		private boolean extracted;
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The element that will be used to determine the expressions
-		 *            for objectClass.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The element that will be used to determine the expressions for
+		 *                objectClass.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public ObjectClassExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public ObjectClassExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
 
 			className = element.getAttribute(ATT_NAME);
 			if (className == null) {
-				throw new IllegalStateException(
-						"Object class expression missing name attribute"); //$NON-NLS-1$
+				throw new IllegalStateException("Object class expression missing name attribute"); //$NON-NLS-1$
 			}
 		}
 
 		/**
-		 * Create an ObjectClass expression based on the className. Added for
-		 * backwards compatibility.
+		 * Create an ObjectClass expression based on the className. Added for backwards
+		 * compatibility.
 		 *
 		 * @param className
 		 */
@@ -312,19 +293,17 @@ public class ActionExpression {
 			if (className != null) {
 				this.className = className;
 			} else {
-				throw new IllegalStateException(
-						"Object class expression must have class name"); //$NON-NLS-1$
+				throw new IllegalStateException("Object class expression must have class name"); //$NON-NLS-1$
 			}
 		}
 
 		/**
-		 * Check the interfaces the whole way up. If one of them matches
-		 * className return <code>true</code>.
+		 * Check the interfaces the whole way up. If one of them matches className
+		 * return <code>true</code>.
 		 *
-		 * @param interfaceToCheck
-		 *            The interface whose name we are testing against.
-		 * @return <code>true</code> if one of the interfaces in the hierarchy
-		 *         matches className, <code>false</code> otherwise.
+		 * @param interfaceToCheck The interface whose name we are testing against.
+		 * @return <code>true</code> if one of the interfaces in the hierarchy matches
+		 *         className, <code>false</code> otherwise.
 		 */
 		private boolean checkInterfaceHierarchy(Class interfaceToCheck) {
 			if (interfaceToCheck.getName().equals(className)) {
@@ -343,8 +322,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof ObjectClassExpression) {
 				final ObjectClassExpression that = (ObjectClassExpression) object;
-				return Util.equals(this.className, that.className)
-						&& Util.equals(this.extracted, that.extracted);
+				return Util.equals(this.className, that.className) && Util.equals(this.extracted, that.extracted);
 			}
 
 			return false;
@@ -364,8 +342,7 @@ public class ActionExpression {
 		@Override
 		public final int hashCode() {
 			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
-				expressionHashCode = HASH_INITIAL * HASH_FACTOR
-						+ Util.hashCode(className);
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(className);
 				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(extracted);
 				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
 					expressionHashCode++;
@@ -406,8 +383,7 @@ public class ActionExpression {
 		}
 
 		@Override
-		public boolean isEnabledForExpression(Object object,
-				String expressionType) {
+		public boolean isEnabledForExpression(Object object, String expressionType) {
 			if (expressionType.equals(EXP_TYPE_OBJECT_CLASS)) {
 				return isEnabledFor(object);
 			}
@@ -421,24 +397,21 @@ public class ActionExpression {
 		private String value;
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The element that will be used to determine the expressions
-		 *            for objectState.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The element that will be used to determine the expressions for
+		 *                objectState.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public ObjectStateExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public ObjectStateExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
 
 			name = element.getAttribute(ATT_NAME);
 			value = element.getAttribute(ATT_VALUE);
 			if (name == null || value == null) {
-				throw new IllegalStateException(
-						"Object state expression missing attribute"); //$NON-NLS-1$
+				throw new IllegalStateException("Object state expression missing attribute"); //$NON-NLS-1$
 			}
 		}
 
@@ -446,8 +419,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof ObjectStateExpression) {
 				final ObjectStateExpression that = (ObjectStateExpression) object;
-				return Util.equals(this.name, that.name)
-						&& Util.equals(this.value, that.value);
+				return Util.equals(this.name, that.name) && Util.equals(this.value, that.value);
 			}
 
 			return false;
@@ -530,17 +502,15 @@ public class ActionExpression {
 	private static class OrExpression extends CompositeExpression {
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The element that will be used to determine the expressions
-		 *            for Or.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The element that will be used to determine the expressions for
+		 *                Or.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public OrExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public OrExpression(IConfigurationElement element) throws IllegalStateException {
 			super(element);
 		}
 
@@ -573,24 +543,21 @@ public class ActionExpression {
 		private String value;
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The element that will be used to determine the expressions
-		 *            for pluginState.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The element that will be used to determine the expressions for
+		 *                pluginState.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public PluginStateExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public PluginStateExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
 
 			id = element.getAttribute(ATT_ID);
 			value = element.getAttribute(ATT_VALUE);
 			if (id == null || value == null) {
-				throw new IllegalStateException(
-						"Plugin state expression missing attribute"); //$NON-NLS-1$
+				throw new IllegalStateException("Plugin state expression missing attribute"); //$NON-NLS-1$
 			}
 		}
 
@@ -598,8 +565,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof PluginStateExpression) {
 				final PluginStateExpression that = (PluginStateExpression) object;
-				return Util.equals(this.id, that.id)
-						&& Util.equals(this.value, that.value);
+				return Util.equals(this.id, that.id) && Util.equals(this.value, that.value);
 			}
 
 			return false;
@@ -644,41 +610,35 @@ public class ActionExpression {
 		/**
 		 * Create a single expression from the abstract definition.
 		 *
-		 * @param expression
-		 *            The expression that will be the child of the new single
-		 *            expression.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param expression The expression that will be the child of the new single
+		 *                   expression.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public SingleExpression(AbstractExpression expression)
-				throws IllegalStateException {
+		public SingleExpression(AbstractExpression expression) throws IllegalStateException {
 			super();
 
 			if (expression != null) {
 				child = expression;
 			} else {
-				throw new IllegalStateException(
-						"Single expression must contain 1 expression"); //$NON-NLS-1$
+				throw new IllegalStateException("Single expression must contain 1 expression"); //$NON-NLS-1$
 			}
 		}
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The element to create the expression from.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The element to create the expression from.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public SingleExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public SingleExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
 
 			IConfigurationElement[] children = element.getChildren();
 			if (children.length != 1) {
-				throw new IllegalStateException(
-						"Single expression does not contain only 1 expression"); //$NON-NLS-1$
+				throw new IllegalStateException("Single expression does not contain only 1 expression"); //$NON-NLS-1$
 			}
 			child = createExpression(children[0]);
 		}
@@ -720,8 +680,7 @@ public class ActionExpression {
 		}
 
 		@Override
-		public boolean isEnabledForExpression(Object object,
-				String expressionType) {
+		public boolean isEnabledForExpression(Object object, String expressionType) {
 			return child.isEnabledForExpression(object, expressionType);
 		}
 
@@ -738,24 +697,21 @@ public class ActionExpression {
 		private String value;
 
 		/**
-		 * Creates and populates the expression from the attributes and sub-
-		 * elements of the configuration element.
+		 * Creates and populates the expression from the attributes and sub- elements of
+		 * the configuration element.
 		 *
-		 * @param element
-		 *            The element that will be used to determine the expressions
-		 *            for systemProperty.
-		 * @throws IllegalStateException
-		 *             if the expression tag is not defined in the schema.
+		 * @param element The element that will be used to determine the expressions for
+		 *                systemProperty.
+		 * @throws IllegalStateException if the expression tag is not defined in the
+		 *                               schema.
 		 */
-		public SystemPropertyExpression(IConfigurationElement element)
-				throws IllegalStateException {
+		public SystemPropertyExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
 
 			name = element.getAttribute(ATT_NAME);
 			value = element.getAttribute(ATT_VALUE);
 			if (name == null || value == null) {
-				throw new IllegalStateException(
-						"System property expression missing attribute"); //$NON-NLS-1$
+				throw new IllegalStateException("System property expression missing attribute"); //$NON-NLS-1$
 			}
 		}
 
@@ -772,8 +728,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof SystemPropertyExpression) {
 				final SystemPropertyExpression that = (SystemPropertyExpression) object;
-				return Util.equals(this.name, that.name)
-						&& Util.equals(this.value, that.value);
+				return Util.equals(this.name, that.name) && Util.equals(this.value, that.value);
 			}
 
 			return false;
@@ -846,8 +801,8 @@ public class ActionExpression {
 	public static final String EXP_TYPE_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$
 
 	/**
-	 * The constant integer hash code value meaning the hash code has not yet
-	 * been computed.
+	 * The constant integer hash code value meaning the hash code has not yet been
+	 * computed.
 	 */
 	private static final int HASH_CODE_NOT_COMPUTED = -1;
 
@@ -859,8 +814,7 @@ public class ActionExpression {
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = ActionExpression.class.getName()
-			.hashCode();
+	private static final int HASH_INITIAL = ActionExpression.class.getName().hashCode();
 
 	private static final String PLUGIN_ACTIVATED = "activated"; //$NON-NLS-1$
 
@@ -870,15 +824,13 @@ public class ActionExpression {
 	 * Create an expression from the attributes and sub-elements of the
 	 * configuration element.
 	 *
-	 * @param element
-	 *            The IConfigurationElement with a tag defined in the public
-	 *            constants.
+	 * @param element The IConfigurationElement with a tag defined in the public
+	 *                constants.
 	 * @return AbstractExpression based on the definition
-	 * @throws IllegalStateException
-	 *             if the expression tag is not defined in the schema.
+	 * @throws IllegalStateException if the expression tag is not defined in the
+	 *                               schema.
 	 */
-	private static AbstractExpression createExpression(
-			IConfigurationElement element) throws IllegalStateException {
+	private static AbstractExpression createExpression(IConfigurationElement element) throws IllegalStateException {
 		String tag = element.getName();
 		if (tag.equals(EXP_TYPE_OR)) {
 			return new OrExpression(element);
@@ -902,13 +854,12 @@ public class ActionExpression {
 			return new SystemPropertyExpression(element);
 		}
 
-		throw new IllegalStateException(
-				"Action expression unrecognized element: " + tag); //$NON-NLS-1$
+		throw new IllegalStateException("Action expression unrecognized element: " + tag); //$NON-NLS-1$
 	}
 
 	/**
-	 * The hash code for this object. This value is computed lazily, and marked
-	 * as invalid when one of the values on which it is based changes.
+	 * The hash code for this object. This value is computed lazily, and marked as
+	 * invalid when one of the values on which it is based changes.
 	 */
 	private transient int hashCode = HASH_CODE_NOT_COMPUTED;
 
@@ -917,8 +868,7 @@ public class ActionExpression {
 	/**
 	 * Creates an action expression for the given configuration element.
 	 *
-	 * @param element
-	 *            The element to build the expression from.
+	 * @param element The element to build the expression from.
 	 */
 	public ActionExpression(IConfigurationElement element) {
 		try {
@@ -930,19 +880,18 @@ public class ActionExpression {
 	}
 
 	/**
-	 * Create an instance of the receiver with the given expression type and
-	 * value. Currently the only supported expression type is
+	 * Create an instance of the receiver with the given expression type and value.
+	 * Currently the only supported expression type is
 	 * <code>EXP_TYPE_OBJECT_CLASS</code>.
 	 *
-	 * @param expressionType
-	 *            The expression constant we are creating an instance of.
-	 * @param expressionValue
-	 *            The name of the class we are creating an expression for.
+	 * @param expressionType  The expression constant we are creating an instance
+	 *                        of.
+	 * @param expressionValue The name of the class we are creating an expression
+	 *                        for.
 	 */
 	public ActionExpression(String expressionType, String expressionValue) {
 		if (expressionType.equals(EXP_TYPE_OBJECT_CLASS)) {
-			root = new SingleExpression(new ObjectClassExpression(
-					expressionValue));
+			root = new SingleExpression(new ObjectClassExpression(expressionValue));
 		}
 	}
 
@@ -957,11 +906,11 @@ public class ActionExpression {
 	}
 
 	/**
-	 * Extract the object class test from the expression. This allows clients
-	 * (e.g. the decorator manager) to handle object class testing in a more
-	 * optimized way. This method removes the objectClass test from the
-	 * expression and returns the object class. The expression is not changed
-	 * and a <code>null</code> is returned if no object class is found.
+	 * Extract the object class test from the expression. This allows clients (e.g.
+	 * the decorator manager) to handle object class testing in a more optimized
+	 * way. This method removes the objectClass test from the expression and returns
+	 * the object class. The expression is not changed and a <code>null</code> is
+	 * returned if no object class is found.
 	 *
 	 * @return the object class or <code>null</code> if none was found.
 	 */
@@ -989,8 +938,7 @@ public class ActionExpression {
 	 * Returns whether the expression is valid for all elements of the given
 	 * selection.
 	 *
-	 * @param selection
-	 *            the structured selection to use
+	 * @param selection the structured selection to use
 	 * @return boolean whether the expression is valid for the selection.
 	 */
 	public boolean isEnabledFor(IStructuredSelection selection) {
@@ -1014,8 +962,7 @@ public class ActionExpression {
 	/**
 	 * Returns whether the expression is valid for the given object.
 	 *
-	 * @param object
-	 *            the object to validate against (can be <code>null</code>)
+	 * @param object the object to validate against (can be <code>null</code>)
 	 * @return boolean whether the expression is valid for the object.
 	 */
 	public boolean isEnabledFor(Object object) {
@@ -1026,16 +973,14 @@ public class ActionExpression {
 	}
 
 	/**
-	 * Returns whether or not the receiver is potentially valid for the object
-	 * via just the extension type. Currently the only supported expression type
-	 * is <code>EXP_TYPE_OBJECT_CLASS</code>.
+	 * Returns whether or not the receiver is potentially valid for the object via
+	 * just the extension type. Currently the only supported expression type is
+	 * <code>EXP_TYPE_OBJECT_CLASS</code>.
 	 *
-	 * @param object
-	 *            the object to validate against (can be <code>null</code>)
-	 * @param expressionType
-	 *            the expression type to consider
-	 * @return boolean whether the expression is potentially valid for the
-	 *         object.
+	 * @param object         the object to validate against (can be
+	 *                       <code>null</code>)
+	 * @param expressionType the expression type to consider
+	 * @return boolean whether the expression is potentially valid for the object.
 	 */
 	public boolean isEnabledForExpression(Object object, String expressionType) {
 		if (root == null) {
@@ -1045,15 +990,14 @@ public class ActionExpression {
 	}
 
 	/**
-	 * Return the values of the expression type that the receiver is enabled
-	 * for. If the receiver is not enabled for the expressionType then return
+	 * Return the values of the expression type that the receiver is enabled for. If
+	 * the receiver is not enabled for the expressionType then return
 	 * <code>null</code>.
 	 *
-	 * @param expressionType
-	 *            the expression type to consider
+	 * @param expressionType the expression type to consider
 	 * @return Collection if there are values for this expression or
-	 *         <code>null</code> if this is not possible in the receiver or
-	 *         any of it's children
+	 *         <code>null</code> if this is not possible in the receiver or any of
+	 *         it's children
 	 */
 	public Collection valuesForExpression(String expressionType) {
 		return root.valuesForExpression(expressionType);

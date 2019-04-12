@@ -41,68 +41,52 @@ public final class CommandImageService implements ICommandImageService {
 	private final CommandImagePersistence commandImagePersistence;
 
 	/**
-	 * Constructs a new instance of <code>CommandService</code> using a
-	 * command image manager.
+	 * Constructs a new instance of <code>CommandService</code> using a command
+	 * image manager.
 	 *
-	 * @param commandImageManager
-	 *            The command image manager to use; must not be
-	 *            <code>null</code>.
-	 * @param commandService
-	 *            The workbench command service; must not be <code>null</code>.
-	 *            This is used for checking whether a command is defined when
-	 *            reading the registry.
+	 * @param commandImageManager The command image manager to use; must not be
+	 *                            <code>null</code>.
+	 * @param commandService      The workbench command service; must not be
+	 *                            <code>null</code>. This is used for checking
+	 *                            whether a command is defined when reading the
+	 *                            registry.
 	 */
-	public CommandImageService(final CommandImageManager commandImageManager,
-			final ICommandService commandService) {
+	public CommandImageService(final CommandImageManager commandImageManager, final ICommandService commandService) {
 		if (commandImageManager == null) {
-			throw new NullPointerException(
-					"Cannot create a command image service with a null manager"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot create a command image service with a null manager"); //$NON-NLS-1$
 		}
 		if (commandService == null) {
-			throw new NullPointerException(
-					"Cannot create a command image service with a null command service"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot create a command image service with a null command service"); //$NON-NLS-1$
 		}
 		this.commandImageManager = commandImageManager;
-		this.commandImagePersistence = new CommandImagePersistence(
-				commandImageManager, commandService);
+		this.commandImagePersistence = new CommandImagePersistence(commandImageManager, commandService);
 	}
 
 	/**
-	 * Binds a particular image descriptor to a command id, type and style
-	 * triple
+	 * Binds a particular image descriptor to a command id, type and style triple
 	 *
-	 * @param commandId
-	 *            The identifier of the command to which the image should be
-	 *            bound; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this class.
-	 * @param style
-	 *            The style of the image; may be <code>null</code>.
-	 * @param descriptor
-	 *            The image descriptor. Should not be <code>null</code>.
+	 * @param commandId  The identifier of the command to which the image should be
+	 *                   bound; must not be <code>null</code>.
+	 * @param type       The type of image to retrieve. This value must be one of
+	 *                   the <code>TYPE</code> constants defined in this class.
+	 * @param style      The style of the image; may be <code>null</code>.
+	 * @param descriptor The image descriptor. Should not be <code>null</code>.
 	 */
-	public void bind(final String commandId, final int type,
-			final String style, final ImageDescriptor descriptor) {
+	public void bind(final String commandId, final int type, final String style, final ImageDescriptor descriptor) {
 		commandImageManager.bind(commandId, type, style, descriptor);
 	}
 
 	/**
 	 * Binds a particular image path to a command id, type and style triple
 	 *
-	 * @param commandId
-	 *            The identifier of the command to which the image should be
-	 *            bound; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this class.
-	 * @param style
-	 *            The style of the image; may be <code>null</code>.
-	 * @param url
-	 *            The URL to the image. Should not be <code>null</code>.
+	 * @param commandId The identifier of the command to which the image should be
+	 *                  bound; must not be <code>null</code>.
+	 * @param type      The type of image to retrieve. This value must be one of the
+	 *                  <code>TYPE</code> constants defined in this class.
+	 * @param style     The style of the image; may be <code>null</code>.
+	 * @param url       The URL to the image. Should not be <code>null</code>.
 	 */
-	public void bind(final String commandId, final int type,
-			final String style, final URL url) {
+	public void bind(final String commandId, final int type, final String style, final URL url) {
 		commandImageManager.bind(commandId, type, style, url);
 	}
 
@@ -112,13 +96,12 @@ public final class CommandImageService implements ICommandImageService {
 	}
 
 	/**
-	 * Generates a style tag that is not currently used for the given command.
-	 * This can be used by applications trying to create a unique style for a
-	 * new set of images.
+	 * Generates a style tag that is not currently used for the given command. This
+	 * can be used by applications trying to create a unique style for a new set of
+	 * images.
 	 *
-	 * @param commandId
-	 *            The identifier of the command for which a unique style is
-	 *            required; must not be <code>null</code>.
+	 * @param commandId The identifier of the command for which a unique style is
+	 *                  required; must not be <code>null</code>.
 	 * @return A style tag that is not currently used; may be <code>null</code>.
 	 */
 	public String generateUnusedStyle(final String commandId) {
@@ -131,20 +114,17 @@ public final class CommandImageService implements ICommandImageService {
 	}
 
 	@Override
-	public ImageDescriptor getImageDescriptor(final String commandId,
-			final int type) {
+	public ImageDescriptor getImageDescriptor(final String commandId, final int type) {
 		return commandImageManager.getImageDescriptor(commandId, type);
 	}
 
 	@Override
-	public ImageDescriptor getImageDescriptor(final String commandId,
-			final int type, final String style) {
+	public ImageDescriptor getImageDescriptor(final String commandId, final int type, final String style) {
 		return commandImageManager.getImageDescriptor(commandId, type, style);
 	}
 
 	@Override
-	public ImageDescriptor getImageDescriptor(final String commandId,
-			final String style) {
+	public ImageDescriptor getImageDescriptor(final String commandId, final String style) {
 		return commandImageManager.getImageDescriptor(commandId, style);
 	}
 

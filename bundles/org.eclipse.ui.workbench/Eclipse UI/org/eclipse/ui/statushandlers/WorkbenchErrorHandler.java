@@ -56,22 +56,18 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 		}
 
 		if ((style & StatusManager.LOG) == StatusManager.LOG) {
-			StatusManager.getManager().addLoggedStatus(
-					statusAdapter.getStatus());
-			WorkbenchPlugin.getDefault().getLog()
-					.log(statusAdapter.getStatus());
+			StatusManager.getManager().addLoggedStatus(statusAdapter.getStatus());
+			WorkbenchPlugin.getDefault().getLog().log(statusAdapter.getStatus());
 		}
 	}
 
 	/**
 	 * Requests the status dialog manager to show the status adapter.
 	 *
-	 * @param statusAdapter
-	 *            the status adapter to show
-	 * @param block
-	 *            <code>true</code> to request a modal dialog and suspend the
-	 *            calling thread till the dialog is closed, <code>false</code>
-	 *            otherwise.
+	 * @param statusAdapter the status adapter to show
+	 * @param block         <code>true</code> to request a modal dialog and suspend
+	 *                      the calling thread till the dialog is closed,
+	 *                      <code>false</code> otherwise.
 	 */
 	private void showStatusAdapter(StatusAdapter statusAdapter, boolean block) {
 		if (!PlatformUI.isWorkbenchRunning()) {
@@ -84,8 +80,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 
 		if (block) {
 			Shell shell;
-			while ((shell = getStatusDialogShell()) != null
-					&& !shell.isDisposed()) {
+			while ((shell = getStatusDialogShell()) != null && !shell.isDisposed()) {
 				if (!shell.getDisplay().readAndDispatch()) {
 					Display.getDefault().sleep();
 				}
@@ -94,8 +89,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	}
 
 	private Shell getStatusDialogShell() {
-		return (Shell) getStatusDialogManager().getProperty(
-				IStatusDialogConstants.SHELL);
+		return (Shell) getStatusDialogManager().getProperty(IStatusDialogConstants.SHELL);
 	}
 
 	/**
@@ -108,13 +102,9 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 			synchronized (this) {
 				if (statusDialogManager == null) {
 					statusDialogManager = new WorkbenchStatusDialogManager(null);
-					statusDialogManager.setProperty(
-							IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
-					statusDialogManager.setProperty(
-							IStatusDialogConstants.HANDLE_OK_STATUSES,
-							Boolean.TRUE);
-					statusDialogManager.setProperty(
-							IStatusDialogConstants.ERRORLOG_LINK, Boolean.TRUE);
+					statusDialogManager.setProperty(IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
+					statusDialogManager.setProperty(IStatusDialogConstants.HANDLE_OK_STATUSES, Boolean.TRUE);
+					statusDialogManager.setProperty(IStatusDialogConstants.ERRORLOG_LINK, Boolean.TRUE);
 					configureStatusDialog(statusDialogManager);
 				}
 			}
@@ -133,12 +123,10 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 * </ul>
 	 * Default configuration does nothing.
 	 *
-	 * @param statusDialog
-	 *            a status dialog to be configured.
+	 * @param statusDialog a status dialog to be configured.
 	 * @since 3.4
 	 */
-	protected void configureStatusDialog(
-			final WorkbenchStatusDialogManager statusDialog) {
+	protected void configureStatusDialog(final WorkbenchStatusDialogManager statusDialog) {
 		// default configuration does nothing
 	}
 }

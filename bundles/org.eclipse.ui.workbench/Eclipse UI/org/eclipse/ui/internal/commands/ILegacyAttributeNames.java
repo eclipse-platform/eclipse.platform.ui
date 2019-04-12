@@ -29,8 +29,8 @@ public interface ILegacyAttributeNames {
 	String ENABLED = IAction.ENABLED;
 
 	/**
-	 * Whether the handler is capable of handling delegation of responsibilities
-	 * at this time.
+	 * Whether the handler is capable of handling delegation of responsibilities at
+	 * this time.
 	 */
 	String HANDLED = IAction.HANDLED;
 }

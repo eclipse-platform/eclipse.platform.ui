@@ -36,14 +36,12 @@ import org.eclipse.ui.SelectionEnabler;
  *
  * @since 3.2
  */
-public final class LegacySelectionEnablerWrapper extends
-		WorkbenchWindowExpression {
+public final class LegacySelectionEnablerWrapper extends WorkbenchWindowExpression {
 
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = LegacySelectionEnablerWrapper.class
-			.getName().hashCode();
+	private static final int HASH_INITIAL = LegacySelectionEnablerWrapper.class.getName().hashCode();
 
 	/**
 	 * The enabler for this expression; never <code>null</code>.
@@ -53,15 +51,12 @@ public final class LegacySelectionEnablerWrapper extends
 	/**
 	 * Constructs a new instance of <code>SelectionEnablerExpression</code>.
 	 *
-	 * @param enabler
-	 *            The enabler; must not be <code>null</code>.
-	 * @param window
-	 *            The workbench window which must be active for this expression
-	 *            to evaluate to <code>true</code>; may be <code>null</code>
-	 *            if the window should be disregarded.
+	 * @param enabler The enabler; must not be <code>null</code>.
+	 * @param window  The workbench window which must be active for this expression
+	 *                to evaluate to <code>true</code>; may be <code>null</code> if
+	 *                the window should be disregarded.
 	 */
-	public LegacySelectionEnablerWrapper(final SelectionEnabler enabler,
-			final IWorkbenchWindow window) {
+	public LegacySelectionEnablerWrapper(final SelectionEnabler enabler, final IWorkbenchWindow window) {
 		super(window);
 
 		if (enabler == null) {
@@ -87,23 +82,20 @@ public final class LegacySelectionEnablerWrapper extends
 	public boolean equals(final Object object) {
 		if (object instanceof LegacySelectionEnablerWrapper) {
 			final LegacySelectionEnablerWrapper that = (LegacySelectionEnablerWrapper) object;
-			return equals(this.enabler, that.enabler)
-					&& equals(this.getWindow(), that.getWindow());
+			return equals(this.enabler, that.enabler) && equals(this.getWindow(), that.getWindow());
 		}
 
 		return false;
 	}
 
 	@Override
-	public EvaluationResult evaluate(final IEvaluationContext context)
-			throws CoreException {
+	public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
 		if (result == EvaluationResult.FALSE) {
 			return result;
 		}
 
-		final Object defaultVariable = context
-				.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		final Object defaultVariable = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 		if (defaultVariable instanceof ISelection) {
 			final ISelection selection = (ISelection) defaultVariable;
 			if (enabler.isEnabledForSelection(selection)) {

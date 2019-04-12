@@ -54,13 +54,11 @@ public class BindingToModelProcessor {
 
 		CommandManager commandManager = context.get(CommandManager.class);
 		if (commandManager == null) {
-			WorkbenchPlugin
-					.log("Command manager was null in org.eclipse.ui.internal.BindingToModelProcessor"); //$NON-NLS-1$
+			WorkbenchPlugin.log("Command manager was null in org.eclipse.ui.internal.BindingToModelProcessor"); //$NON-NLS-1$
 		}
 		ContextManager contextManager = context.get(ContextManager.class);
 		if (contextManager == null) {
-			WorkbenchPlugin
-					.log("Context manager was null in org.eclipse.ui.internal.BindingToModelProcessor"); //$NON-NLS-1$
+			WorkbenchPlugin.log("Context manager was null in org.eclipse.ui.internal.BindingToModelProcessor"); //$NON-NLS-1$
 		}
 		BindingManager bindingManager = new BindingManager(contextManager, commandManager);
 		context.set(BindingManager.class, bindingManager);
@@ -68,11 +66,9 @@ public class BindingToModelProcessor {
 		persistence.read();
 
 		// we'll make this available, although I doubt we have a use for it
-		application.getTags().add(
-				EBindingService.ACTIVE_SCHEME_TAG + ':' + bindingManager.getActiveScheme().getId());
+		application.getTags().add(EBindingService.ACTIVE_SCHEME_TAG + ':' + bindingManager.getActiveScheme().getId());
 
-		Collection<?> activeBindingsForScheme = bindingManager
-				.getActiveBindingsDisregardingContextFlat();
+		Collection<?> activeBindingsForScheme = bindingManager.getActiveBindingsDisregardingContextFlat();
 
 		for (Object obj : activeBindingsForScheme) {
 			Binding binding = (Binding) obj;
@@ -96,7 +92,6 @@ public class BindingToModelProcessor {
 	}
 
 	public final void addBinding(final MApplication application, final Binding binding) {
-
 
 		MBindingTable table = tables.get(binding.getContextId());
 		if (table == null) {

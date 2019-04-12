@@ -26,22 +26,23 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 public class OpenPreferencesAction extends Action implements ActionFactory.IWorkbenchAction {
 
 	/**
-	 * The workbench window; or <code>null</code> if this
-	 * action has been <code>dispose</code>d.
+	 * The workbench window; or <code>null</code> if this action has been
+	 * <code>dispose</code>d.
 	 */
 	private IWorkbenchWindow workbenchWindow;
 
 	/**
-	 * Create a new <code>OpenPreferenceAction</code>
-	 * This default constructor allows the the action to be called from the welcome page.
+	 * Create a new <code>OpenPreferenceAction</code> This default constructor
+	 * allows the the action to be called from the welcome page.
 	 */
 	public OpenPreferencesAction() {
 		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 	}
 
 	/**
-	 * Create a new <code>OpenPreferenceAction</code> and initialize it
-	 * from the given resource bundle.
+	 * Create a new <code>OpenPreferenceAction</code> and initialize it from the
+	 * given resource bundle.
+	 * 
 	 * @param window
 	 */
 	public OpenPreferencesAction(IWorkbenchWindow window) {
@@ -52,8 +53,7 @@ public class OpenPreferencesAction extends Action implements ActionFactory.IWork
 		this.workbenchWindow = window;
 		// @issue action id not set
 		setToolTipText(WorkbenchMessages.OpenPreferences_toolTip);
-		window.getWorkbench().getHelpSystem().setHelp(this,
-				IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
+		window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
 	}
 
 	@Override

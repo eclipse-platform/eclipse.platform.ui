@@ -25,8 +25,7 @@ import org.eclipse.ui.menus.UIElement;
  * @since 3.5
  *
  */
-public class WorkbenchHandlerServiceHandler extends HandlerServiceHandler implements
-		IElementUpdater {
+public class WorkbenchHandlerServiceHandler extends HandlerServiceHandler implements IElementUpdater {
 
 	/**
 	 * @param commandId

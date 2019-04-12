@@ -43,8 +43,7 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 	 * products might rely on them.
 	 * </p>
 	 *
-	 * @param splash
-	 *            the shell that contains the splash screen
+	 * @param splash the shell that contains the splash screen
 	 */
 	@Override
 	public void init(Shell splash) {
@@ -54,38 +53,29 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 		String foregroundColorString = null;
 		IProduct product = Platform.getProduct();
 		if (product != null) {
-			progressRectString = product
-					.getProperty(IProductConstants.STARTUP_PROGRESS_RECT);
-			messageRectString = product
-					.getProperty(IProductConstants.STARTUP_MESSAGE_RECT);
-			foregroundColorString = product
-					.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR);
+			progressRectString = product.getProperty(IProductConstants.STARTUP_PROGRESS_RECT);
+			messageRectString = product.getProperty(IProductConstants.STARTUP_MESSAGE_RECT);
+			foregroundColorString = product.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR);
 		}
-		Rectangle progressRect = StringConverter.asRectangle(
-				progressRectString, new Rectangle(10, 10, 300, 15));
+		Rectangle progressRect = StringConverter.asRectangle(progressRectString, new Rectangle(10, 10, 300, 15));
 		setProgressRect(progressRect);
 
-		Rectangle messageRect = StringConverter.asRectangle(messageRectString,
-				new Rectangle(10, 35, 300, 15));
+		Rectangle messageRect = StringConverter.asRectangle(messageRectString, new Rectangle(10, 35, 300, 15));
 		setMessageRect(messageRect);
 
 		int foregroundColorInteger;
 		try {
-			foregroundColorInteger = Integer
-					.parseInt(foregroundColorString, 16);
+			foregroundColorInteger = Integer.parseInt(foregroundColorString, 16);
 		} catch (Exception ex) {
 			foregroundColorInteger = 0xD2D7FF; // off white
 		}
 
-		setForeground(new RGB((foregroundColorInteger & 0xFF0000) >> 16,
-				(foregroundColorInteger & 0xFF00) >> 8,
+		setForeground(new RGB((foregroundColorInteger & 0xFF0000) >> 16, (foregroundColorInteger & 0xFF00) >> 8,
 				foregroundColorInteger & 0xFF));
 		// the following code will be removed for release time
-		if (PrefUtil.getInternalPreferenceStore().getBoolean(
-				"SHOW_BUILDID_ON_STARTUP")) { //$NON-NLS-1$
-			final String buildId = System.getProperty(
-					"eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
-			// find the specified location.  Not currently API
+		if (PrefUtil.getInternalPreferenceStore().getBoolean("SHOW_BUILDID_ON_STARTUP")) { //$NON-NLS-1$
+			final String buildId = System.getProperty("eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
+			// find the specified location. Not currently API
 			// hardcoded to be sensible with our current splash Graphic
 
 			String buildIdLocString = product.getProperty("buildIdLocation"); //$NON-NLS-1$
@@ -105,8 +95,7 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 			idLabel.setBounds(buildIdRectangle);
 			idLabel.setText(buildId);
 			idLabel.setData(CSSSWTConstants.CSS_ID_KEY, CSS_ID_SPLASH_BUILD_ID);
-		}
-		else {
+		} else {
 			getContent(); // ensure creation of the progress
 		}
 	}

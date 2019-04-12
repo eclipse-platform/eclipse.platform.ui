@@ -24,7 +24,6 @@ public class ExtensionEventHandlerMessages extends NLS {
 	public static String ExtensionEventHandler_need_to_reset;
 	public static String ExtensionEventHandler_reset_perspective;
 
-
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ExtensionEventHandlerMessages.class);

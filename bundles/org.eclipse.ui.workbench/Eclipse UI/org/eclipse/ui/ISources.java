@@ -37,24 +37,25 @@ import org.eclipse.ui.part.IShowInSource;
  * conflicts. Another way to look at this is that the higher the value, the more
  * "local" the source is to what the user is currently doing. This is similar
  * to, but distinct from the concept of components. The nesting support provided
- * by components represent only one source (<code>ACTIVE_SITE</code>) that
- * the workbench understands.
+ * by components represent only one source (<code>ACTIVE_SITE</code>) that the
+ * workbench understands.
  * </p>
  * <p>
  * Note that for backward compatibility, we must reserve the lowest three bits
  * for <code>Priority</code> instances using the old
- * <code>HandlerSubmission</code> mechanism. This mechanism was used in
- * Eclipse 3.0.
+ * <code>HandlerSubmission</code> mechanism. This mechanism was used in Eclipse
+ * 3.0.
  * </p>
  * <p>
  * <b>Note in 3.3:</b>
  * </p>
  * <p>
- * Currently, source variables are not extensible by user plugins, and
- * the number of bits available for resolving conflicts is limited.  When
- * the variable sources become user extensible a new conflict resolution
- * mechanism will be implemented.
+ * Currently, source variables are not extensible by user plugins, and the
+ * number of bits available for resolving conflicts is limited. When the
+ * variable sources become user extensible a new conflict resolution mechanism
+ * will be implemented.
  * </p>
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  *
@@ -64,8 +65,8 @@ import org.eclipse.ui.part.IShowInSource;
 public interface ISources {
 
 	/**
-	 * The priority given to default handlers and handlers that are active
-	 * across the entire workbench.
+	 * The priority given to default handlers and handlers that are active across
+	 * the entire workbench.
 	 */
 	int WORKBENCH = 0;
 
@@ -95,12 +96,14 @@ public interface ISources {
 	/**
 	 * The variable name for the active contexts. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * 
 	 * @since 3.2
 	 */
 	String ACTIVE_CONTEXT_NAME = "activeContexts"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes a particular action set.
+	 * 
 	 * @since 3.2
 	 */
 	int ACTIVE_ACTION_SETS = 1 << 8;
@@ -108,6 +111,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active action sets. This is for use with the
 	 * {@link ISourceProvider} and {@link IEvaluationContext}.
+	 * 
 	 * @since 3.2
 	 */
 	String ACTIVE_ACTION_SETS_NAME = "activeActionSets"; //$NON-NLS-1$
@@ -124,54 +128,54 @@ public interface ISources {
 	String ACTIVE_SHELL_NAME = "activeShell"; //$NON-NLS-1$
 
 	/**
-	 * The priority given when the source includes the currently active
-	 * workbench window shell.
+	 * The priority given when the source includes the currently active workbench
+	 * window shell.
+	 * 
 	 * @since 3.2
 	 */
 	int ACTIVE_WORKBENCH_WINDOW_SHELL = 1 << 12;
 
 	/**
-	 * The variable name for the active workbench window shell. This is for use
-	 * with the <code>ISourceProvider</code> and
-	 * <code>IEvaluationContext</code>.
+	 * The variable name for the active workbench window shell. This is for use with
+	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * 
 	 * @since 3.2
 	 */
 	String ACTIVE_WORKBENCH_WINDOW_SHELL_NAME = "activeWorkbenchWindowShell"; //$NON-NLS-1$
 
 	/**
-	 * The priority given when the source includes the currently active
-	 * workbench window.
+	 * The priority given when the source includes the currently active workbench
+	 * window.
 	 */
 	int ACTIVE_WORKBENCH_WINDOW = 1 << 14;
 
 	/**
-	 * The variable name for the active workbench window. This is for use with
-	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * The variable name for the active workbench window. This is for use with the
+	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
 	String ACTIVE_WORKBENCH_WINDOW_NAME = "activeWorkbenchWindow"; //$NON-NLS-1$
 
 	/**
-	 * The priority given when the source includes subordinate properties of the currently active
-	 * workbench window.
+	 * The priority given when the source includes subordinate properties of the
+	 * currently active workbench window.
 	 *
 	 * @since 3.3
 	 */
 	int ACTIVE_WORKBENCH_WINDOW_SUBORDINATE = 1 << 15;
 
 	/**
-	 * The variable name for the coolbar visibility state of the active
-	 * workbench window. This is for use with the <code>ISourceProvider</code>
-	 * and <code>IEvaluationContext</code>.
+	 * The variable name for the coolbar visibility state of the active workbench
+	 * window. This is for use with the <code>ISourceProvider</code> and
+	 * <code>IEvaluationContext</code>.
 	 *
 	 * @since 3.3
 	 */
-	String ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
-			+ ".isCoolbarVisible"; //$NON-NLS-1$
+	String ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME + ".isCoolbarVisible"; //$NON-NLS-1$
 
 	/**
 	 * The variable name for the perspective bar visibility state of the active
-	 * workbench window. This is for use with the <code>ISourceProvider</code>
-	 * and <code>IEvaluationContext</code>.
+	 * workbench window. This is for use with the <code>ISourceProvider</code> and
+	 * <code>IEvaluationContext</code>.
 	 *
 	 * @since 3.3
 	 */
@@ -179,14 +183,13 @@ public interface ISources {
 			+ ".isPerspectiveBarVisible"; //$NON-NLS-1$
 
 	/**
-	 * The variable name for the current perspective of the active workbench
-	 * window. This is for use with the <code>ISourceProvider</code> and
+	 * The variable name for the current perspective of the active workbench window.
+	 * This is for use with the <code>ISourceProvider</code> and
 	 * <code>IEvaluationContext</code>.
 	 *
 	 * @since 3.4
 	 */
-	String ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
-	+ ".activePerspective"; //$NON-NLS-1$
+	String ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME + ".activePerspective"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the active editor part.
@@ -196,12 +199,14 @@ public interface ISources {
 	/**
 	 * The variable name for the active editor part. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * 
 	 * @since 3.2
 	 */
 	String ACTIVE_EDITOR_NAME = "activeEditor"; //$NON-NLS-1$
 
 	/**
 	 * The editor input of the currently active editor.
+	 * 
 	 * @since 3.5
 	 */
 	String ACTIVE_EDITOR_INPUT_NAME = "activeEditorInput"; //$NON-NLS-1$
@@ -214,8 +219,8 @@ public interface ISources {
 	int ACTIVE_EDITOR_ID = 1 << 18;
 
 	/**
-	 * The variable name for the active editor identifier. This is for use with
-	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * The variable name for the active editor identifier. This is for use with the
+	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 *
 	 * @since 3.2
 	 */
@@ -248,9 +253,9 @@ public interface ISources {
 	String ACTIVE_PART_ID_NAME = "activePartId"; //$NON-NLS-1$
 
 	/**
-	 * The priority given when the source includes the active workbench site. In
-	 * the case of nesting components, one should be careful to only activate
-	 * the most nested component.
+	 * The priority given when the source includes the active workbench site. In the
+	 * case of nesting components, one should be careful to only activate the most
+	 * nested component.
 	 */
 	int ACTIVE_SITE = 1 << 26;
 
@@ -261,16 +266,18 @@ public interface ISources {
 	String ACTIVE_SITE_NAME = "activeSite"; //$NON-NLS-1$
 
 	/**
-	 * The variable for the showIn selection.  This is for use with the
+	 * The variable for the showIn selection. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * 
 	 * @since 3.4
 	 * @see IShowInSource
 	 */
 	String SHOW_IN_SELECTION = "showInSelection"; //$NON-NLS-1$
 
 	/**
-	 * The variable for the showIn input.  This is for use with the
+	 * The variable for the showIn input. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * 
 	 * @since 3.4
 	 * @see IShowInSource
 	 */
@@ -284,12 +291,14 @@ public interface ISources {
 	/**
 	 * The variable name for the active selection. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * 
 	 * @since 3.2
 	 */
 	String ACTIVE_CURRENT_SELECTION_NAME = "selection"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the current menu.
+	 * 
 	 * @since 3.2
 	 */
 	int ACTIVE_MENU = 1 << 31;
@@ -297,13 +306,14 @@ public interface ISources {
 	/**
 	 * The variable name for the active menu. This is for use with the
 	 * {@link ISourceProvider} and {@link IEvaluationContext}.
+	 * 
 	 * @since 3.2
 	 */
 	String ACTIVE_MENU_NAME = "activeMenu"; //$NON-NLS-1$
 
 	/**
-	 * The variable name for the <b>local</b> selection, available while a
-	 * context menu is visible.
+	 * The variable name for the <b>local</b> selection, available while a context
+	 * menu is visible.
 	 *
 	 * @since 3.3
 	 */

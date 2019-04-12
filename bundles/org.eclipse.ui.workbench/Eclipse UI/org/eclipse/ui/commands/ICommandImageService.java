@@ -60,77 +60,69 @@ public interface ICommandImageService extends IDisposable {
 	int TYPE_DISABLED = CommandImageManager.TYPE_DISABLED;
 
 	/**
-	 * The type of image to display if the mouse is hovering over the command
-	 * and the command is enabled.
+	 * The type of image to display if the mouse is hovering over the command and
+	 * the command is enabled.
 	 */
 	int TYPE_HOVER = CommandImageManager.TYPE_HOVER;
 
 	/**
-	 * The default image style. This is provided when no style is requested or
-	 * when the requested style is unavailable. (Value is <b>null</b>)
+	 * The default image style. This is provided when no style is requested or when
+	 * the requested style is unavailable. (Value is <b>null</b>)
 	 */
 	String IMAGE_STYLE_DEFAULT = null;
 
 	/**
-	 * The image style used for commands in a toolbar. This is useful if you
-	 * want the icon for the command in the toolbar to be different than the one
-	 * that is displayed with menu items. (Value is <b>toolbar</b>)
+	 * The image style used for commands in a toolbar. This is useful if you want
+	 * the icon for the command in the toolbar to be different than the one that is
+	 * displayed with menu items. (Value is <b>toolbar</b>)
 	 */
 	String IMAGE_STYLE_TOOLBAR = "toolbar"; //$NON-NLS-1$
 
 	/**
-	 * Retrieves the default image associated with the given command in the
-	 * default style.
+	 * Retrieves the default image associated with the given command in the default
+	 * style.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @return An image appropriate for the given command; may be
-	 *         <code>null</code>.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
+	 * @return An image appropriate for the given command; may be <code>null</code>.
 	 */
 	ImageDescriptor getImageDescriptor(String commandId);
 
 	/**
-	 * Retrieves the image of the given type associated with the given command
-	 * in the default style.
+	 * Retrieves the image of the given type associated with the given command in
+	 * the default style.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
 	 *
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this interface.
-	 * @return An image appropriate for the given command; <code>null</code>
-	 *         if the given image type cannot be found.
+	 * @param type      The type of image to retrieve. This value must be one of the
+	 *                  <code>TYPE</code> constants defined in this interface.
+	 * @return An image appropriate for the given command; <code>null</code> if the
+	 *         given image type cannot be found.
 	 */
 	ImageDescriptor getImageDescriptor(String commandId, int type);
 
 	/**
-	 * Retrieves the image of the given type associated with the given command
-	 * in the given style.
+	 * Retrieves the image of the given type associated with the given command in
+	 * the given style.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this interface.
-	 * @param style
-	 *            The style of the image to retrieve; may be <code>null</code>.
-	 * @return An image appropriate for the given command; <code>null</code>
-	 *         if the given image style and type cannot be found.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
+	 * @param type      The type of image to retrieve. This value must be one of the
+	 *                  <code>TYPE</code> constants defined in this interface.
+	 * @param style     The style of the image to retrieve; may be
+	 *                  <code>null</code>.
+	 * @return An image appropriate for the given command; <code>null</code> if the
+	 *         given image style and type cannot be found.
 	 */
-	ImageDescriptor getImageDescriptor(String commandId, int type,
-			String style);
+	ImageDescriptor getImageDescriptor(String commandId, int type, String style);
 
 	/**
-	 * Retrieves the default image associated with the given command in the
-	 * given style.
+	 * Retrieves the default image associated with the given command in the given
+	 * style.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @param style
-	 *            The style of the image to retrieve; may be <code>null</code>.
-	 * @return An image appropriate for the given command; <code>null</code>
-	 *         if the given image style cannot be found.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
+	 * @param style     The style of the image to retrieve; may be
+	 *                  <code>null</code>.
+	 * @return An image appropriate for the given command; <code>null</code> if the
+	 *         given image style cannot be found.
 	 */
 	ImageDescriptor getImageDescriptor(String commandId, String style);
 }

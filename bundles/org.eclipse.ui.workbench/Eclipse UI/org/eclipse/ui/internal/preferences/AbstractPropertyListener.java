@@ -18,15 +18,15 @@ package org.eclipse.ui.internal.preferences;
  */
 public abstract class AbstractPropertyListener implements IPropertyMapListener {
 
-    @Override
+	@Override
 	public void propertyChanged(String[] propertyIds) {
-        update();
-    }
+		update();
+	}
 
-    @Override
+	@Override
 	public void listenerAttached() {
-        update();
-    }
+		update();
+	}
 
-    protected abstract void update();
+	protected abstract void update();
 }

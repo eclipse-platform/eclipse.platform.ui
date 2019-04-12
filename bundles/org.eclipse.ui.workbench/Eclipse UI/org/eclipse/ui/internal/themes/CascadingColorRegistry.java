@@ -27,76 +27,75 @@ import org.eclipse.ui.PlatformUI;
  */
 public class CascadingColorRegistry extends ColorRegistry {
 
-    private ColorRegistry parent;
+	private ColorRegistry parent;
 
-    private IPropertyChangeListener listener = event -> {
+	private IPropertyChangeListener listener = event -> {
 		// check to see if we have an override for the given key. If so,
 		// then a change in our parent registry shouldn't cause a change in
 		// us. Without this check we will propagate a new value
 		// (event.getNewValue()) to our listeners despite the fact that this
 		// value is NOT our current value.
 		if (!hasOverrideFor(event.getProperty()))
-			fireMappingChanged(event.getProperty(), event.getOldValue(),
-					event.getNewValue());
+			fireMappingChanged(event.getProperty(), event.getOldValue(), event.getNewValue());
 	};
 
-    /**
-     * Create a new instance of this class.
-     *
-     * @param parent the parent registry
-     */
-    public CascadingColorRegistry(ColorRegistry parent) {
-    	super(Display.getCurrent(), false);
-        this.parent = parent;
-        parent.addListener(listener);
-    }
+	/**
+	 * Create a new instance of this class.
+	 *
+	 * @param parent the parent registry
+	 */
+	public CascadingColorRegistry(ColorRegistry parent) {
+		super(Display.getCurrent(), false);
+		this.parent = parent;
+		parent.addListener(listener);
+	}
 
-    @Override
+	@Override
 	public Color get(String symbolicName) {
-        if (super.hasValueFor(symbolicName)) {
+		if (super.hasValueFor(symbolicName)) {
 			return super.get(symbolicName);
 		}
 
-        return parent.get(symbolicName);
-    }
+		return parent.get(symbolicName);
+	}
 
-    @Override
+	@Override
 	public Set getKeySet() {
-        Set keyUnion = new HashSet(super.getKeySet());
-        keyUnion.addAll(parent.getKeySet());
-        return keyUnion;
-    }
+		Set keyUnion = new HashSet(super.getKeySet());
+		keyUnion.addAll(parent.getKeySet());
+		return keyUnion;
+	}
 
-    @Override
+	@Override
 	public RGB getRGB(String symbolicName) {
-        if (super.hasValueFor(symbolicName)) {
+		if (super.hasValueFor(symbolicName)) {
 			return super.getRGB(symbolicName);
 		}
 
-        return parent.getRGB(symbolicName);
-    }
+		return parent.getRGB(symbolicName);
+	}
 
-    @Override
+	@Override
 	public boolean hasValueFor(String colorKey) {
-        return super.hasValueFor(colorKey) || parent.hasValueFor(colorKey);
-    }
+		return super.hasValueFor(colorKey) || parent.hasValueFor(colorKey);
+	}
 
-    /**
-     * Returns whether this cascading registry has an override for the provided
-     * color key.
-     *
-     * @param colorKey the provided color key
-     * @return hether this cascading registry has an override
-     */
-    public boolean hasOverrideFor(String colorKey) {
-        return super.hasValueFor(colorKey);
-    }
+	/**
+	 * Returns whether this cascading registry has an override for the provided
+	 * color key.
+	 *
+	 * @param colorKey the provided color key
+	 * @return hether this cascading registry has an override
+	 */
+	public boolean hasOverrideFor(String colorKey) {
+		return super.hasValueFor(colorKey);
+	}
 
-    /**
-     * Disposes of all allocated resources.
-     */
-    public void dispose() {
-        parent.removeListener(listener);
-        PlatformUI.getWorkbench().getDisplay().asyncExec(displayRunnable);
-    }
+	/**
+	 * Disposes of all allocated resources.
+	 */
+	public void dispose() {
+		parent.removeListener(listener);
+		PlatformUI.getWorkbench().getDisplay().asyncExec(displayRunnable);
+	}
 }

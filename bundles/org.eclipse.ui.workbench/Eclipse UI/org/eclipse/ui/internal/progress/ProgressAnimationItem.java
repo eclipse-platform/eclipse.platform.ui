@@ -58,8 +58,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 /**
  * The ProgressAnimationItem is the animation items that uses the progress bar.
  */
-public class ProgressAnimationItem extends AnimationItem implements
-		FinishedJobs.KeptJobsListener {
+public class ProgressAnimationItem extends AnimationItem implements FinishedJobs.KeptJobsListener {
 
 	ProgressBar bar;
 
@@ -88,10 +87,8 @@ public class ProgressAnimationItem extends AnimationItem implements
 	/**
 	 * Create an instance of the receiver in the supplied region.
 	 *
-	 * @param region
-	 *            The ProgressRegion that contains the receiver.
-	 * @param flags
-	 *            flags to use for creation of the progress bar
+	 * @param region The ProgressRegion that contains the receiver.
+	 * @param flags  flags to use for creation of the progress bar
 	 */
 	ProgressAnimationItem(ProgressRegion region, int flags) {
 		super(region.workbenchWindow);
@@ -109,8 +106,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 
 	void doAction() {
 
-		JobTreeElement[] jobTreeElements = FinishedJobs.getInstance()
-				.getKeptElements();
+		JobTreeElement[] jobTreeElements = FinishedJobs.getInstance().getKeptElements();
 		// search from end (youngest)
 		for (int i = jobTreeElements.length - 1; i >= 0; i--) {
 			if (jobTreeElements[i] instanceof JobInfo) {
@@ -120,14 +116,12 @@ public class ProgressAnimationItem extends AnimationItem implements
 
 					IStatus status = job.getResult();
 					if (status != null && status.getSeverity() == IStatus.ERROR) {
-						StatusAdapter statusAdapter = StatusAdapterHelper
-								.getInstance().getStatusAdapter(ji);
+						StatusAdapter statusAdapter = StatusAdapterHelper.getInstance().getStatusAdapter(ji);
 
 						if (statusAdapter == null)
 							statusAdapter = new StatusAdapter(status);
 
-						StatusManager.getManager().handle(statusAdapter,
-								StatusManager.SHOW);
+						StatusManager.getManager().handle(statusAdapter, StatusManager.SHOW);
 
 						removeTopElement(ji);
 					}
@@ -165,8 +159,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 		if (prop instanceof ParameterizedCommand) {
 			ParameterizedCommand command = (ParameterizedCommand) prop;
 			IWorkbenchWindow window = getWindow();
-			IHandlerService service = window
-					.getService(IHandlerService.class);
+			IHandlerService service = window.getService(IHandlerService.class);
 			Exception exception = null;
 			try {
 				service.executeCommand(command, null);
@@ -182,10 +175,8 @@ public class ProgressAnimationItem extends AnimationItem implements
 			}
 
 			if (exception != null) {
-				Status status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
-						exception.getMessage(), exception);
-				StatusManager.getManager().handle(status,
-						StatusManager.LOG | StatusManager.SHOW);
+				Status status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, exception.getMessage(), exception);
+				StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 			}
 			return true;
 		}
@@ -222,8 +213,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 			return;
 		}
 
-		JobTreeElement[] jobTreeElements = FinishedJobs.getInstance()
-				.getKeptElements();
+		JobTreeElement[] jobTreeElements = FinishedJobs.getInstance().getKeptElements();
 		// search from end (youngest)
 		for (int i = jobTreeElements.length - 1; i >= 0; i--) {
 			if (jobTreeElements[i] instanceof JobInfo) {
@@ -233,9 +223,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 					IStatus status = job.getResult();
 					if (status != null && status.getSeverity() == IStatus.ERROR) {
 						// green arrow with error overlay
-						initButton(errorImage, NLS.bind(
-								ProgressMessages.ProgressAnimationItem_error,
-								job.getName()));
+						initButton(errorImage, NLS.bind(ProgressMessages.ProgressAnimationItem_error, job.getName()));
 						return;
 					}
 					IAction action = getAction(job);
@@ -243,16 +231,13 @@ public class ProgressAnimationItem extends AnimationItem implements
 						// green arrow with exclamation mark
 						String tt = action.getToolTipText();
 						if (tt == null || tt.trim().length() == 0) {
-							tt = NLS.bind(
-									ProgressMessages.ProgressAnimationItem_ok,
-									job.getName());
+							tt = NLS.bind(ProgressMessages.ProgressAnimationItem_ok, job.getName());
 						}
 						initButton(okImage, tt);
 						return;
 					}
 					// just the green arrow
-					initButton(noneImage,
-							ProgressMessages.ProgressAnimationItem_tasks);
+					initButton(noneImage, ProgressMessages.ProgressAnimationItem_tasks);
 					return;
 				}
 			}
@@ -270,7 +255,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 	private void initButton(Image im, final String tt) {
 		toolButton.setImage(im);
 		toolButton.setToolTipText(tt);
-    	toolbar.setVisible(true);
+		toolbar.setVisible(true);
 		toolbar.getParent().requestLayout(); // must layout
 
 		if (currentAccessibleListener != null)
@@ -289,18 +274,15 @@ public class ProgressAnimationItem extends AnimationItem implements
 
 		if (okImage == null) {
 			Display display = parent.getDisplay();
-			noneImage = WorkbenchImages.getWorkbenchImageDescriptor(
-					"progress/progress_none.png").createImage(display); //$NON-NLS-1$
-			okImage = WorkbenchImages.getWorkbenchImageDescriptor(
-					"progress/progress_ok.png").createImage(display); //$NON-NLS-1$
-			errorImage = WorkbenchImages.getWorkbenchImageDescriptor(
-					"progress/progress_error.png").createImage(display); //$NON-NLS-1$
+			noneImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_none.png").createImage(display); //$NON-NLS-1$
+			okImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_ok.png").createImage(display); //$NON-NLS-1$
+			errorImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_error.png") //$NON-NLS-1$
+					.createImage(display);
 		}
 
 		top = new Composite(parent, SWT.NULL);
 		top.addDisposeListener(e -> {
-			FinishedJobs.getInstance().removeListener(
-					ProgressAnimationItem.this);
+			FinishedJobs.getInstance().removeListener(ProgressAnimationItem.this);
 			noneImage.dispose();
 			okImage.dispose();
 			errorImage.dispose();

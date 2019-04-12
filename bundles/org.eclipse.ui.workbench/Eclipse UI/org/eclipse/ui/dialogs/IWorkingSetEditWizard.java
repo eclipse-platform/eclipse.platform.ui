@@ -17,9 +17,9 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.ui.IWorkingSet;
 
 /**
- * A working set edit wizard allows editing a working set using
- * the IWorkingSetPage associated with the working set.
- * See the org.eclipse.ui.workingSets extension point for details.
+ * A working set edit wizard allows editing a working set using the
+ * IWorkingSetPage associated with the working set. See the
+ * org.eclipse.ui.workingSets extension point for details.
  * <p>
  * Use org.eclipse.ui.IWorkingSetManager#createWorkingSetEditWizard(IWorkingSet)
  * to create an instance of this wizard.
@@ -27,15 +27,16 @@ import org.eclipse.ui.IWorkingSet;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * 
  * @see org.eclipse.ui.IWorkingSetManager
  * @since 2.1
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkingSetEditWizard extends IWizard {
-    /**
-     * Returns the working set edited in the wizard.
-     *
-     * @return the working set edited in the wizard.
-     */
-    IWorkingSet getSelection();
+	/**
+	 * Returns the working set edited in the wizard.
+	 *
+	 * @return the working set edited in the wizard.
+	 */
+	IWorkingSet getSelection();
 }

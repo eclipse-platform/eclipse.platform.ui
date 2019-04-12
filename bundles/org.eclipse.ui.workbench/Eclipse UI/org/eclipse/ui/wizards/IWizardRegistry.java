@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.wizards;
 
-
 /**
  * A registry describing all wizard extensions known to the workbench.
  * <p>
@@ -36,9 +35,9 @@ public interface IWizardRegistry {
 	/**
 	 * Return the wizards that have been designated as "primary".
 	 *
-	 * @return the primary wizard descriptors.  Never <code>null</code>.
+	 * @return the primary wizard descriptors. Never <code>null</code>.
 	 */
-	IWizardDescriptor [] getPrimaryWizards();
+	IWizardDescriptor[] getPrimaryWizards();
 
 	/**
 	 * Find the category with the given id.
@@ -51,7 +50,7 @@ public interface IWizardRegistry {
 	/**
 	 * Return the root category.
 	 *
-	 * @return the root category.  Never <code>null</code>.
+	 * @return the root category. Never <code>null</code>.
 	 */
 	IWizardCategory getRootCategory();
 }

@@ -68,12 +68,12 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
 	/**
 	 * Given the object class, this method will find all the registered matching
-	 * contributors and sequentially invoke them to contribute to the property
-	 * page manager. Matching algorithm will also check subclasses and
-	 * implemented interfaces.
+	 * contributors and sequentially invoke them to contribute to the property page
+	 * manager. Matching algorithm will also check subclasses and implemented
+	 * interfaces.
 	 *
-	 * If object is an IStructuredSelection then attempt to match all the
-	 * contained objects.
+	 * If object is an IStructuredSelection then attempt to match all the contained
+	 * objects.
 	 *
 	 * @param manager
 	 * @param object
@@ -108,8 +108,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		// Allow each contributor to add its page to the manager.
 		boolean actualContributions = false;
 		while (resultIterator.hasNext()) {
-			CategorizedPageNode next = (CategorizedPageNode) resultIterator
-					.next();
+			CategorizedPageNode next = (CategorizedPageNode) resultIterator.next();
 			IPropertyPageContributor ppcont = next.contributor;
 			if (!ppcont.isApplicableTo(object)) {
 				continue;
@@ -125,8 +124,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		if (actualContributions) {
 			resultIterator = catNodes.iterator();
 			while (resultIterator.hasNext()) {
-				CategorizedPageNode next = (CategorizedPageNode) resultIterator
-						.next();
+				CategorizedPageNode next = (CategorizedPageNode) resultIterator.next();
 				PreferenceNode child = (PreferenceNode) catPageNodeToPages.get(next);
 				if (child == null)
 					continue;
@@ -146,6 +144,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
 	/**
 	 * Build the list of nodes to be sorted.
+	 * 
 	 * @param nodes
 	 * @return List of CategorizedPageNode
 	 */
@@ -153,21 +152,21 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		Hashtable mapping = new Hashtable();
 
 		Iterator nodesIterator = nodes.iterator();
-		while(nodesIterator.hasNext()){
+		while (nodesIterator.hasNext()) {
 			RegistryPageContributor page = (RegistryPageContributor) nodesIterator.next();
-			mapping.put(page.getPageId(),new CategorizedPageNode(page));
+			mapping.put(page.getPageId(), new CategorizedPageNode(page));
 		}
 
 		Iterator values = mapping.values().iterator();
 		List returnValue = new ArrayList();
-		while(values.hasNext()){
+		while (values.hasNext()) {
 			CategorizedPageNode next = (CategorizedPageNode) values.next();
 			returnValue.add(next);
-			if(next.contributor.getCategory() == null) {
+			if (next.contributor.getCategory() == null) {
 				continue;
 			}
 			Object parent = mapping.get(next.contributor.getCategory());
-			if(parent != null) {
+			if (parent != null) {
 				next.setParent((CategorizedPageNode) parent);
 			}
 		}
@@ -175,8 +174,9 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	}
 
 	/**
-	 * Ideally, shared instance should not be used and manager should be located
-	 * in the workbench class.
+	 * Ideally, shared instance should not be used and manager should be located in
+	 * the workbench class.
+	 * 
 	 * @return PropertyPageContributorManager
 	 */
 	public static PropertyPageContributorManager getManager() {
@@ -190,21 +190,21 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	 * Loads property page contributors from the registry.
 	 */
 	private void loadContributors() {
-		PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(
-				this);
+		PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(this);
 		reader.registerPropertyPages(Platform.getExtensionRegistry());
 	}
 
-    @Override
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		for (IConfigurationElement addedElement : extension.getConfigurationElements()) {
-            PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(this);
-            reader.readElement(addedElement);
-        }
-    }
+			PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(this);
+			reader.readElement(addedElement);
+		}
+	}
 
 	/**
 	 * Return the contributors for element filters on the enablement.
+	 * 
 	 * @param element
 	 * @return Collection of PropertyPageContribution
 	 */
@@ -215,7 +215,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		Collection result = new ArrayList();
 		for (Iterator iter = contributors.iterator(); iter.hasNext();) {
 			RegistryPageContributor contributor = (RegistryPageContributor) iter.next();
-			if(contributor.isApplicableTo(element))
+			if (contributor.isApplicableTo(element))
 				result.add(contributor);
 
 		}
@@ -244,8 +244,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 			// only add contributors which can handle multi selection
 			it = result.iterator();
 			while (it.hasNext()) {
-				RegistryPageContributor contrib = (RegistryPageContributor) it
-						.next();
+				RegistryPageContributor contrib = (RegistryPageContributor) it.next();
 				if (!contrib.supportsMultipleSelection())
 					it.remove();
 			}

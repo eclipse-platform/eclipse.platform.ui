@@ -58,9 +58,9 @@ public class DeferredTreeContentManager {
 	private ListenerList<IJobChangeListener> updateCompleteListenerList;
 
 	/**
-	 * The DeferredContentFamily is a class used to keep track of a
-	 * manager-object pair so that only jobs scheduled by the receiver are
-	 * canceled by the receiver.
+	 * The DeferredContentFamily is a class used to keep track of a manager-object
+	 * pair so that only jobs scheduled by the receiver are canceled by the
+	 * receiver.
 	 *
 	 * @since 3.1
 	 *
@@ -70,22 +70,21 @@ public class DeferredTreeContentManager {
 		protected Object element;
 
 		/**
-		 * Create a new instance of the receiver to define a family for object
-		 * in a particular scheduling manager.
+		 * Create a new instance of the receiver to define a family for object in a
+		 * particular scheduling manager.
 		 *
 		 * @param schedulingManager
 		 * @param object
 		 */
-		DeferredContentFamily(DeferredTreeContentManager schedulingManager,
-				Object object) {
+		DeferredContentFamily(DeferredTreeContentManager schedulingManager, Object object) {
 			this.manager = schedulingManager;
 			this.element = object;
 		}
 	}
 
 	/**
-	 * Create a new instance of the receiver using the supplied content provider
-	 * and viewer. Run any jobs using the site.
+	 * Create a new instance of the receiver using the supplied content provider and
+	 * viewer. Run any jobs using the site.
 	 *
 	 * @param provider
 	 * @param viewer
@@ -93,38 +92,34 @@ public class DeferredTreeContentManager {
 	 * @deprecated in 3.4. provider is not used by this class
 	 */
 	@Deprecated
-	public DeferredTreeContentManager(ITreeContentProvider provider,
-			AbstractTreeViewer viewer, IWorkbenchPartSite site) {
+	public DeferredTreeContentManager(ITreeContentProvider provider, AbstractTreeViewer viewer,
+			IWorkbenchPartSite site) {
 		this(viewer, site);
 	}
 
 	/**
-	 * Create a new instance of the receiver using the supplied content provider
-	 * and viewer.
+	 * Create a new instance of the receiver using the supplied content provider and
+	 * viewer.
 	 *
-	 * @param provider
-	 *            The content provider that will be updated
-	 * @param viewer
-	 *            The tree viewer that the results are added to
+	 * @param provider The content provider that will be updated
+	 * @param viewer   The tree viewer that the results are added to
 	 * @deprecated in 3.4. provider is not used by this class
 	 */
 	@Deprecated
-	public DeferredTreeContentManager(ITreeContentProvider provider,
-			AbstractTreeViewer viewer) {
+	public DeferredTreeContentManager(ITreeContentProvider provider, AbstractTreeViewer viewer) {
 		this(viewer);
 	}
 
 	/**
-	 * Create a new instance of the receiver using the supplied content provider
-	 * and viewer. Run any jobs using the site.
+	 * Create a new instance of the receiver using the supplied content provider and
+	 * viewer. Run any jobs using the site.
 	 *
 	 * @param viewer
 	 * @param site
 	 *
 	 * @since 3.4
 	 */
-	public DeferredTreeContentManager(AbstractTreeViewer viewer,
-			IWorkbenchPartSite site) {
+	public DeferredTreeContentManager(AbstractTreeViewer viewer, IWorkbenchPartSite site) {
 		this(viewer);
 		Object siteService = Adapters.adapt(site, IWorkbenchSiteProgressService.class);
 		if (siteService != null) {
@@ -133,11 +128,10 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Create a new instance of the receiver using the supplied content provider
-	 * and viewer.
+	 * Create a new instance of the receiver using the supplied content provider and
+	 * viewer.
 	 *
-	 * @param viewer
-	 *            The tree viewer that the results are added to
+	 * @param viewer The tree viewer that the results are added to
 	 *
 	 * @since 3.4
 	 */
@@ -146,31 +140,27 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Provides an optimized lookup for determining if an element has children.
-	 * This is required because elements that are populated lazilly can't answer
-	 * <code>getChildren</code> just to determine the potential for children.
-	 * Throw an AssertionFailedException if element is null.
+	 * Provides an optimized lookup for determining if an element has children. This
+	 * is required because elements that are populated lazilly can't answer
+	 * <code>getChildren</code> just to determine the potential for children. Throw
+	 * an AssertionFailedException if element is null.
 	 *
-	 * @param element
-	 *            The Object being tested. This should not be <code>null</code>.
+	 * @param element The Object being tested. This should not be <code>null</code>.
 	 * @return boolean <code>true</code> if there are potentially children.
-	 * @throws RuntimeException
-	 *             if the element is null.
+	 * @throws RuntimeException if the element is null.
 	 */
 	public boolean mayHaveChildren(Object element) {
-		Assert.isNotNull(element,
-				ProgressMessages.DeferredTreeContentManager_NotDeferred);
+		Assert.isNotNull(element, ProgressMessages.DeferredTreeContentManager_NotDeferred);
 		IDeferredWorkbenchAdapter adapter = getAdapter(element);
 		return adapter != null && adapter.isContainer();
 	}
 
 	/**
-	 * Returns the child elements of the given element, or in the case of a
-	 * deferred element, returns a placeholder. If a deferred element is used, a
-	 * job is created to fetch the children in the background.
+	 * Returns the child elements of the given element, or in the case of a deferred
+	 * element, returns a placeholder. If a deferred element is used, a job is
+	 * created to fetch the children in the background.
 	 *
-	 * @param parent
-	 *            The parent object.
+	 * @param parent The parent object.
 	 * @return Object[] or <code>null</code> if parent is not an instance of
 	 *         IDeferredWorkbenchAdapter.
 	 */
@@ -196,9 +186,8 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Return the IDeferredWorkbenchAdapter for element or the element if it is
-	 * an instance of IDeferredWorkbenchAdapter. If it does not exist return
-	 * null.
+	 * Return the IDeferredWorkbenchAdapter for element or the element if it is an
+	 * instance of IDeferredWorkbenchAdapter. If it does not exist return null.
 	 *
 	 * @param element
 	 * @return IDeferredWorkbenchAdapter or <code>null</code>
@@ -212,19 +201,14 @@ public class DeferredTreeContentManager {
 	 * deferred adapter. If children are waiting to be retrieved for this parent
 	 * already, that job is cancelled and another is started.
 	 *
-	 * @param parent
-	 *            The parent object being filled in,
-	 * @param adapter
-	 *            The adapter being used to fetch the children.
-	 * @param placeholder
-	 *            The adapter that will be used to indicate that results are
-	 *            pending.
+	 * @param parent      The parent object being filled in,
+	 * @param adapter     The adapter being used to fetch the children.
+	 * @param placeholder The adapter that will be used to indicate that results are
+	 *                    pending.
 	 */
-	protected void startFetchingDeferredChildren(final Object parent,
-			final IDeferredWorkbenchAdapter adapter,
+	protected void startFetchingDeferredChildren(final Object parent, final IDeferredWorkbenchAdapter adapter,
 			final PendingUpdateAdapter placeholder) {
-		final IElementCollector collector = createElementCollector(parent,
-				placeholder);
+		final IElementCollector collector = createElementCollector(parent, placeholder);
 		// Cancel any jobs currently fetching children for the same parent
 		// instance.
 		cancel(parent);
@@ -252,17 +236,13 @@ public class DeferredTreeContentManager {
 			}
 
 			/**
-			 * Check if the parent of element is equal to the parent used in
-			 * this job.
+			 * Check if the parent of element is equal to the parent used in this job.
 			 *
-			 * @param family
-			 *            The DeferredContentFamily that defines a potential
-			 *            ancestor of the current parent in a particular
-			 *            manager.
-			 * @param child
-			 *            The object to check against.
-			 * @return boolean <code>true</code> if the child or one of its
-			 *         parents are the same as the element of the family.
+			 * @param family The DeferredContentFamily that defines a potential ancestor of
+			 *               the current parent in a particular manager.
+			 * @param child  The object to check against.
+			 * @return boolean <code>true</code> if the child or one of its parents are the
+			 *         same as the element of the family.
 			 */
 			private boolean isParent(DeferredContentFamily family, Object child) {
 				if (family.element.equals(child)) {
@@ -282,8 +262,7 @@ public class DeferredTreeContentManager {
 			/**
 			 * Get the workbench adapter for the element.
 			 *
-			 * @param element
-			 *            The object we are adapting to.
+			 * @param element The object we are adapting to.
 			 */
 			private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
 				return Adapters.adapt(element, IWorkbenchAdapter.class);
@@ -304,20 +283,15 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Returns a name to use for the job that fetches children of the given
-	 * parent. Subclasses may override. Default job name is parent's label.
+	 * Returns a name to use for the job that fetches children of the given parent.
+	 * Subclasses may override. Default job name is parent's label.
 	 *
-	 * @param parent
-	 *            parent that children are to be fetched for
-	 * @param adapter
-	 *            parent's deferred adapter
+	 * @param parent  parent that children are to be fetched for
+	 * @param adapter parent's deferred adapter
 	 * @return job name
 	 */
-	protected String getFetchJobName(Object parent,
-			IDeferredWorkbenchAdapter adapter) {
-		return NLS.bind(
-				ProgressMessages.DeferredTreeContentManager_FetchingName,
-				adapter.getLabel(parent));
+	protected String getFetchJobName(Object parent, IDeferredWorkbenchAdapter adapter) {
+		return NLS.bind(ProgressMessages.DeferredTreeContentManager_FetchingName, adapter.getLabel(parent));
 	}
 
 	/**
@@ -327,15 +301,12 @@ public class DeferredTreeContentManager {
 	 * @param children
 	 * @param monitor
 	 */
-	protected void addChildren(final Object parent, final Object[] children,
-			IProgressMonitor monitor) {
-		WorkbenchJob updateJob = new WorkbenchJob(
-				ProgressMessages.DeferredTreeContentManager_AddingChildren) {
+	protected void addChildren(final Object parent, final Object[] children, IProgressMonitor monitor) {
+		WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.DeferredTreeContentManager_AddingChildren) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor updateMonitor) {
 				// Cancel the job if the tree viewer got closed
-				if (treeViewer.getControl().isDisposed()
-						|| updateMonitor.isCanceled()) {
+				if (treeViewer.getControl().isDisposed() || updateMonitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 				treeViewer.add(parent, children);
@@ -360,9 +331,8 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Run a job to clear the placeholder. This is used when the update for the
-	 * tree is complete so that the user is aware that no more updates are
-	 * pending.
+	 * Run a job to clear the placeholder. This is used when the update for the tree
+	 * is complete so that the user is aware that no more updates are pending.
 	 *
 	 * @param placeholder
 	 */
@@ -371,8 +341,7 @@ public class DeferredTreeContentManager {
 			return;
 		}
 		// Clear the placeholder if it is still there
-		WorkbenchJob clearJob = new WorkbenchJob(
-				ProgressMessages.DeferredTreeContentManager_ClearJob) {
+		WorkbenchJob clearJob = new WorkbenchJob(ProgressMessages.DeferredTreeContentManager_ClearJob) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (!placeholder.isRemoved()) {
@@ -401,8 +370,8 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Cancel all jobs that are fetching content for the given parent or any of
-	 * its children.
+	 * Cancel all jobs that are fetching content for the given parent or any of its
+	 * children.
 	 *
 	 * @param parent
 	 */
@@ -417,15 +386,12 @@ public class DeferredTreeContentManager {
 	/**
 	 * Create the element collector for the receiver.
 	 *
-	 * @param parent
-	 *            The parent object being filled in,
-	 * @param placeholder
-	 *            The adapter that will be used to indicate that results are
-	 *            pending.
+	 * @param parent      The parent object being filled in,
+	 * @param placeholder The adapter that will be used to indicate that results are
+	 *                    pending.
 	 * @return IElementCollector
 	 */
-	protected IElementCollector createElementCollector(final Object parent,
-			final PendingUpdateAdapter placeholder) {
+	protected IElementCollector createElementCollector(final Object parent, final PendingUpdateAdapter placeholder) {
 		return new IElementCollector() {
 			@Override
 			public void add(Object element, IProgressMonitor monitor) {
@@ -449,19 +415,18 @@ public class DeferredTreeContentManager {
 	 * attached to the job that updates the viewer content (clears the pending
 	 * entry, etc.) after all deferred content has been retrieved.
 	 *
-	 * This method has no effect if the listener has already been added to the
-	 * list of listeners.
+	 * This method has no effect if the listener has already been added to the list
+	 * of listeners.
 	 *
 	 * Since 3.6, this listener is added to a list of listeners rather than
-	 * replacing the previously added listener. For backward compatibility,
-	 * adding a null listener will be interpreted as removal of a listener if
-	 * only one listener has been registered.
+	 * replacing the previously added listener. For backward compatibility, adding a
+	 * null listener will be interpreted as removal of a listener if only one
+	 * listener has been registered.
 	 *
-	 * @param listener
-	 *            the listener to add to the list of update listeners
+	 * @param listener the listener to add to the list of update listeners
 	 * @since 3.4
 	 */
-	public void addUpdateCompleteListener(IJobChangeListener listener){
+	public void addUpdateCompleteListener(IJobChangeListener listener) {
 		// Maintain backward compatibility.
 		// Earlier only one listener was supported, so it can be removed by
 		// passing null
@@ -479,17 +444,16 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Removes the listener from the list of update listeners that are attached
-	 * to the job that updates the viewer content (clears the pending entry,
-	 * etc.) after all deferred content has been retrieved. If the listener is
-	 * already attached to a running job, it is not removed, but it will not be
-	 * added to any subsequent jobs that are run.
+	 * Removes the listener from the list of update listeners that are attached to
+	 * the job that updates the viewer content (clears the pending entry, etc.)
+	 * after all deferred content has been retrieved. If the listener is already
+	 * attached to a running job, it is not removed, but it will not be added to any
+	 * subsequent jobs that are run.
 	 *
 	 * This method has no effect if the listener was not previously added to the
 	 * listener list.
 	 *
-	 * @param listener
-	 *            the listener to be removed
+	 * @param listener the listener to be removed
 	 * @since 3.6
 	 */
 	public void removeUpdateCompleteListener(IJobChangeListener listener) {

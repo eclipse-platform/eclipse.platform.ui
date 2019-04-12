@@ -72,9 +72,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 			try {
 				Runtime.getRuntime().exec("/usr/bin/open " + localHref); //$NON-NLS-1$
 			} catch (IOException e) {
-				throw new PartInitException(
-						WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser,
-						e);
+				throw new PartInitException(WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser, e);
 			}
 		} else {
 			Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
@@ -82,17 +80,12 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 				public void run() {
 					try {
 						/*
-						 * encoding the href as the browser does not open if
-						 * there is a space in the url. Bug 77840
+						 * encoding the href as the browser does not open if there is a space in the
+						 * url. Bug 77840
 						 */
-						String encodedLocalHref = urlEncodeForSpaces(localHref
-								.toCharArray());
+						String encodedLocalHref = urlEncodeForSpaces(localHref.toCharArray());
 						if (webBrowserOpened) {
-							Runtime
-									.getRuntime()
-									.exec(
-											webBrowser
-													+ " -remote openURL(" + encodedLocalHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+							Runtime.getRuntime().exec(webBrowser + " -remote openURL(" + encodedLocalHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
 							Process p = openWebBrowser(encodedLocalHref);
 							webBrowserOpened = true;
@@ -122,9 +115,8 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 	}
 
 	/**
-	 * This method encodes the url, removes the spaces from the url and replaces
-	 * the same with <code>"%20"</code>. This method is required to fix Bug
-	 * 77840.
+	 * This method encodes the url, removes the spaces from the url and replaces the
+	 * same with <code>"%20"</code>. This method is required to fix Bug 77840.
 	 *
 	 */
 	private String urlEncodeForSpaces(char[] input) {
@@ -145,7 +137,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 		if (webBrowser == null) {
 			try {
 				webBrowser = "firefox"; //$NON-NLS-1$
-				p = Runtime.getRuntime().exec(webBrowser + "  " + href); //$NON-NLS-1$;
+				p = Runtime.getRuntime().exec(webBrowser + "  " + href); //$NON-NLS-1$ ;
 			} catch (IOException e) {
 				p = null;
 				webBrowser = "mozilla"; //$NON-NLS-1$
@@ -154,7 +146,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 
 		if (p == null) {
 			try {
-				p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$;
+				p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$ ;
 			} catch (IOException e) {
 				p = null;
 				webBrowser = "netscape"; //$NON-NLS-1$
@@ -163,7 +155,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 
 		if (p == null) {
 			try {
-				p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$;
+				p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$ ;
 			} catch (IOException e) {
 				p = null;
 				throw e;
@@ -177,10 +169,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 	 * display an error message
 	 */
 	private void openWebBrowserError(Display display) {
-		display.asyncExec(() -> MessageDialog
-				.openError(
-						null,
-						WorkbenchMessages.ProductInfoDialog_errorTitle,
-						WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser));
+		display.asyncExec(() -> MessageDialog.openError(null, WorkbenchMessages.ProductInfoDialog_errorTitle,
+				WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser));
 	}
 }

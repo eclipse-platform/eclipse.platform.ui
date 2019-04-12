@@ -246,8 +246,8 @@ public class TaskBarProgressManager {
 
 			/**
 			 * If the job isn't running or doesn't specify the
-			 * IProgressConstants#SHOW_IN_TASKBAR_ICON_PROPERTY property, don't
-			 * bother tracking it.
+			 * IProgressConstants#SHOW_IN_TASKBAR_ICON_PROPERTY property, don't bother
+			 * tracking it.
 			 */
 			private boolean isNotTracked(JobInfo info) {
 				Job job = info.getJob();

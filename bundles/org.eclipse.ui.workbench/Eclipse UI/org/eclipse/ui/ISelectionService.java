@@ -39,143 +39,145 @@ import org.eclipse.jface.viewers.ISelection;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISelectionService {
-    /**
-     * Adds the given selection listener.
-     * Has no effect if an identical listener is already registered.
+	/**
+	 * Adds the given selection listener. Has no effect if an identical listener is
+	 * already registered.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
-     *
-     * @param listener a selection listener
-     * @see #removeSelectionListener(ISelectionListener)
-     */
-    void addSelectionListener(ISelectionListener listener);
+	 *
+	 * @param listener a selection listener
+	 * @see #removeSelectionListener(ISelectionListener)
+	 */
+	void addSelectionListener(ISelectionListener listener);
 
-    /**
-     * Adds a part-specific selection listener which is notified when selection changes
-     * in the part with the given id. This is independent of part activation - the part
-     * need not be active for notification to be sent.
-     * <p>
-     * When the part is created, the listener is passed the part's initial selection.
-     * When the part is disposed, the listener is passed a <code>null</code> selection,
-     * but only if the listener implements <code>INullSelectionListener</code>.
-     * </p>
-     * <p>
-     * Note: This will not correctly track editor parts as each editor does
-     * not have a unique partId.
-     * </p>
+	/**
+	 * Adds a part-specific selection listener which is notified when selection
+	 * changes in the part with the given id. This is independent of part activation
+	 * - the part need not be active for notification to be sent.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * When the part is created, the listener is passed the part's initial
+	 * selection. When the part is disposed, the listener is passed a
+	 * <code>null</code> selection, but only if the listener implements
+	 * <code>INullSelectionListener</code>.
 	 * </p>
-     *
-     * @param partId the id of the part to track
-     * @param listener a selection listener
-     * @since 2.0
-     * @see #removeSelectionListener(String, ISelectionListener)
-     */
-    void addSelectionListener(String partId, ISelectionListener listener);
+	 * <p>
+	 * Note: This will not correctly track editor parts as each editor does not have
+	 * a unique partId.
+	 * </p>
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
+	 * </p>
+	 *
+	 * @param partId   the id of the part to track
+	 * @param listener a selection listener
+	 * @since 2.0
+	 * @see #removeSelectionListener(String, ISelectionListener)
+	 */
+	void addSelectionListener(String partId, ISelectionListener listener);
 
-    /**
-     * Adds the given post selection listener.It is equivalent to selection
-     * changed if the selection was triggered by the mouse but it has a
-     * delay if the selection is triggered by the keyboard arrows.
-     * Has no effect if an identical listener is already registered.
-     *
-     * Note: Works only for StructuredViewer(s).
+	/**
+	 * Adds the given post selection listener.It is equivalent to selection changed
+	 * if the selection was triggered by the mouse but it has a delay if the
+	 * selection is triggered by the keyboard arrows. Has no effect if an identical
+	 * listener is already registered.
+	 *
+	 * Note: Works only for StructuredViewer(s).
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
-     *
-     * @param listener a selection listener
-     * @see #removePostSelectionListener(ISelectionListener)
-     */
-    void addPostSelectionListener(ISelectionListener listener);
+	 *
+	 * @param listener a selection listener
+	 * @see #removePostSelectionListener(ISelectionListener)
+	 */
+	void addPostSelectionListener(ISelectionListener listener);
 
-    /**
-     * Adds a part-specific selection listener which is notified when selection changes
-     * in the part with the given id. This is independent of part activation - the part
-     * need not be active for notification to be sent.
-     * <p>
-     * When the part is created, the listener is passed the part's initial selection.
-     * When the part is disposed, the listener is passed a <code>null</code> selection,
-     * but only if the listener implements <code>INullSelectionListener</code>.
-     * </p>
-     * <p>
-     * Note: This will not correctly track editor parts as each editor does
-     * not have a unique partId.
-     * </p>
+	/**
+	 * Adds a part-specific selection listener which is notified when selection
+	 * changes in the part with the given id. This is independent of part activation
+	 * - the part need not be active for notification to be sent.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * When the part is created, the listener is passed the part's initial
+	 * selection. When the part is disposed, the listener is passed a
+	 * <code>null</code> selection, but only if the listener implements
+	 * <code>INullSelectionListener</code>.
 	 * </p>
-     *
-     * @param partId the id of the part to track
-     * @param listener a selection listener
-     * @since 2.0
-     * @see #removePostSelectionListener(String, ISelectionListener)
-     */
+	 * <p>
+	 * Note: This will not correctly track editor parts as each editor does not have
+	 * a unique partId.
+	 * </p>
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
+	 * </p>
+	 *
+	 * @param partId   the id of the part to track
+	 * @param listener a selection listener
+	 * @since 2.0
+	 * @see #removePostSelectionListener(String, ISelectionListener)
+	 */
 	void addPostSelectionListener(String partId, ISelectionListener listener);
 
-    /**
-     * Returns the current selection in the active part.  If the selection in the
-     * active part is <em>undefined</em> (the active part has no selection provider)
-     * the result will be <code>null</code>.
-     *
-     * @return the current selection, or <code>null</code> if undefined
-     */
-    ISelection getSelection();
+	/**
+	 * Returns the current selection in the active part. If the selection in the
+	 * active part is <em>undefined</em> (the active part has no selection provider)
+	 * the result will be <code>null</code>.
+	 *
+	 * @return the current selection, or <code>null</code> if undefined
+	 */
+	ISelection getSelection();
 
-    /**
-     * Returns the current selection in the part with the given id.  If the part is not open,
-     * or if the selection in the active part is <em>undefined</em> (the active part has no selection provider)
-     * the result will be <code>null</code>.
-     *
-     * @param partId the id of the part
-     * @return the current selection, or <code>null</code> if undefined
-     * @since 2.0
-     */
-    ISelection getSelection(String partId);
+	/**
+	 * Returns the current selection in the part with the given id. If the part is
+	 * not open, or if the selection in the active part is <em>undefined</em> (the
+	 * active part has no selection provider) the result will be <code>null</code>.
+	 *
+	 * @param partId the id of the part
+	 * @return the current selection, or <code>null</code> if undefined
+	 * @since 2.0
+	 */
+	ISelection getSelection(String partId);
 
-    /**
-     * Removes the given selection listener.
-     * Has no effect if an identical listener is not registered.
-     *
-     * @param listener a selection listener
-     */
-    void removeSelectionListener(ISelectionListener listener);
+	/**
+	 * Removes the given selection listener. Has no effect if an identical listener
+	 * is not registered.
+	 *
+	 * @param listener a selection listener
+	 */
+	void removeSelectionListener(ISelectionListener listener);
 
-    /**
-     * Removes the given part-specific selection listener.
-     * Has no effect if an identical listener is not registered for the given part id.
-     *
-     * @param partId the id of the part to track
-     * @param listener a selection listener
-     * @since 2.0
-     */
+	/**
+	 * Removes the given part-specific selection listener. Has no effect if an
+	 * identical listener is not registered for the given part id.
+	 *
+	 * @param partId   the id of the part to track
+	 * @param listener a selection listener
+	 * @since 2.0
+	 */
 	void removeSelectionListener(String partId, ISelectionListener listener);
 
-    /**
-     * Removes the given post selection listener.
-     * Has no effect if an identical listener is not registered.
-     *
-     * @param listener a selection listener
-     */
-    void removePostSelectionListener(ISelectionListener listener);
+	/**
+	 * Removes the given post selection listener. Has no effect if an identical
+	 * listener is not registered.
+	 *
+	 * @param listener a selection listener
+	 */
+	void removePostSelectionListener(ISelectionListener listener);
 
-    /**
-     * Removes the given part-specific post selection listener.
-     * Has no effect if an identical listener is not registered for the given part id.
-     *
-     * @param partId the id of the part to track
-     * @param listener a selection listener
-     * @since 2.0
-     */
+	/**
+	 * Removes the given part-specific post selection listener. Has no effect if an
+	 * identical listener is not registered for the given part id.
+	 *
+	 * @param partId   the id of the part to track
+	 * @param listener a selection listener
+	 * @since 2.0
+	 */
 	void removePostSelectionListener(String partId, ISelectionListener listener);
 }

@@ -20,84 +20,87 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * The FontDefiniton is the representation of the fontDefinition
- * from the plugin.xml of a type.
+ * The FontDefiniton is the representation of the fontDefinition from the
+ * plugin.xml of a type.
  */
-public class FontDefinition extends ThemeElementDefinition implements
-		IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition, IEditable,
-		IFontDefinitionOverridable {
+public class FontDefinition extends ThemeElementDefinition implements IHierarchalThemeElementDefinition,
+		ICategorizedThemeElementDefinition, IEditable, IFontDefinitionOverridable {
 
 	private String defaultsTo;
 
-    private String value;
+	private String value;
 
 	private String defaultValue;
 
-    private boolean isEditable;
+	private boolean isEditable;
 
-    private FontData[] parsedValue;
+	private FontData[] parsedValue;
 
-    /**
-     * Create a new instance of the receiver.
-     *
-     * @param fontName The name display
-     * ed in the preference page.
-     * @param uniqueId The id used to refer to this definition.
-     * @param defaultsId The id of the font this defaults to.
-     * @param fontDescription The description of the font in the preference page.
-     */
-    public FontDefinition(String fontName, String uniqueId, String defaultsId,
-            String value, String categoryId, boolean isEditable,
-            String fontDescription) {
+	/**
+	 * Create a new instance of the receiver.
+	 *
+	 * @param fontName        The name display ed in the preference page.
+	 * @param uniqueId        The id used to refer to this definition.
+	 * @param defaultsId      The id of the font this defaults to.
+	 * @param fontDescription The description of the font in the preference page.
+	 */
+	public FontDefinition(String fontName, String uniqueId, String defaultsId, String value, String categoryId,
+			boolean isEditable, String fontDescription) {
 		super(uniqueId, fontName, fontDescription, categoryId);
-        this.defaultsTo = defaultsId;
-        this.value = value;
-        this.isEditable = isEditable;
-    }
+		this.defaultsTo = defaultsId;
+		this.value = value;
+		this.isEditable = isEditable;
+	}
 
-    /**
-     * Create a new instance of the receiver.
-     *
-     * @param originalFont the original definition.  This will be used to populate
-     * all fields except defaultsTo and value.  defaultsTo will always be
-     * <code>null</code>.
-     * @param datas the FontData[] value
-     */
-    public FontDefinition(FontDefinition originalFont, FontData[] datas) {
+	/**
+	 * Create a new instance of the receiver.
+	 *
+	 * @param originalFont the original definition. This will be used to populate
+	 *                     all fields except defaultsTo and value. defaultsTo will
+	 *                     always be <code>null</code>.
+	 * @param datas        the FontData[] value
+	 */
+	public FontDefinition(FontDefinition originalFont, FontData[] datas) {
 		super(originalFont.getId(), originalFont.getName(), originalFont.getDescription(),
 				originalFont.getCategoryId());
-        this.isEditable = originalFont.isEditable();
-        this.parsedValue = datas;
-    }
+		this.isEditable = originalFont.isEditable();
+		this.parsedValue = datas;
+	}
 
-    /**
-     * Returns the defaultsTo. This is the id of the text font
-     * that this font defualts to.
-     * @return String or <pre>null</pre>.
-     */
-    @Override
+	/**
+	 * Returns the defaultsTo. This is the id of the text font that this font
+	 * defualts to.
+	 * 
+	 * @return String or
+	 * 
+	 *         <pre>
+	 *         null
+	 *         </pre>
+	 * 
+	 *         .
+	 */
+	@Override
 	public String getDefaultsTo() {
-        return defaultsTo;
-    }
+		return defaultsTo;
+	}
 
-    /**
-     * Returns the value.
-     *
-     * @return FontData []
-     */
-    @Override
+	/**
+	 * Returns the value.
+	 *
+	 * @return FontData []
+	 */
+	@Override
 	public FontData[] getValue() {
-        if (value == null) {
+		if (value == null) {
 			return null;
 		}
-        if (parsedValue == null) {
-            parsedValue = JFaceResources.getFontRegistry().filterData(
-                    StringConverter.asFontDataArray(value),
-                    PlatformUI.getWorkbench().getDisplay());
-        }
+		if (parsedValue == null) {
+			parsedValue = JFaceResources.getFontRegistry().filterData(StringConverter.asFontDataArray(value),
+					PlatformUI.getWorkbench().getDisplay());
+		}
 
-        return parsedValue;
-    }
+		return parsedValue;
+	}
 
 	@Override
 	public void resetToDefaultValue() {
@@ -106,20 +109,20 @@ public class FontDefinition extends ThemeElementDefinition implements
 		super.resetToDefaultValue();
 	}
 
-    @Override
+	@Override
 	public boolean isEditable() {
-        return isEditable;
-    }
+		return isEditable;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        if (obj instanceof FontDefinition) {
-            return getId().equals(((FontDefinition)obj).getId());
-        }
-        return false;
-    }
+		if (obj instanceof FontDefinition) {
+			return getId().equals(((FontDefinition) obj).getId());
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
 		return getId().hashCode();
 	}

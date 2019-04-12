@@ -39,213 +39,201 @@ import org.eclipse.core.commands.IHandlerAttributes;
  */
 @Deprecated
 @SuppressWarnings({ "unchecked" })
-public abstract class AbstractHandler extends
-        org.eclipse.core.commands.AbstractHandler implements IHandler {
+public abstract class AbstractHandler extends org.eclipse.core.commands.AbstractHandler implements IHandler {
 
-    /**
-     * Those interested in hearing about changes to this instance of
-     * <code>IHandler</code>. This member is null iff there are
-     * no listeners attached to this handler. (Most handlers don't
-     * have any listeners, and this optimization saves some memory.)
-     */
+	/**
+	 * Those interested in hearing about changes to this instance of
+	 * <code>IHandler</code>. This member is null iff there are no listeners
+	 * attached to this handler. (Most handlers don't have any listeners, and this
+	 * optimization saves some memory.)
+	 */
 	private List<IHandlerListener> handlerListeners;
 
-    /**
-     * @see IHandler#addHandlerListener(IHandlerListener)
-     */
+	/**
+	 * @see IHandler#addHandlerListener(IHandlerListener)
+	 */
 	@Override
 	@Deprecated
 	public void addHandlerListener(IHandlerListener handlerListener) {
-        if (handlerListener == null) {
+		if (handlerListener == null) {
 			throw new NullPointerException();
 		}
-        if (handlerListeners == null) {
+		if (handlerListeners == null) {
 			handlerListeners = new ArrayList<>();
 		}
-        if (!handlerListeners.contains(handlerListener)) {
+		if (!handlerListeners.contains(handlerListener)) {
 			handlerListeners.add(handlerListener);
 		}
-    }
+	}
 
-    /**
-     * The default implementation does nothing. Subclasses who attach listeners
-     * to other objects are encouraged to detach them in this method.
-     *
-     * @see org.eclipse.ui.commands.IHandler#dispose()
-     */
+	/**
+	 * The default implementation does nothing. Subclasses who attach listeners to
+	 * other objects are encouraged to detach them in this method.
+	 *
+	 * @see org.eclipse.ui.commands.IHandler#dispose()
+	 */
 	@Override
 	@Deprecated
-    public void dispose() {
-        // Do nothing.
-    }
+	public void dispose() {
+		// Do nothing.
+	}
 
 	@Override
 	@Deprecated
-    public Object execute(final ExecutionEvent event) throws ExecutionException {
-        try {
-            return execute(event.getParameters());
-        } catch (final org.eclipse.ui.commands.ExecutionException e) {
-            throw new ExecutionException(e.getMessage(), e.getCause());
-        }
-    }
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
+		try {
+			return execute(event.getParameters());
+		} catch (final org.eclipse.ui.commands.ExecutionException e) {
+			throw new ExecutionException(e.getMessage(), e.getCause());
+		}
+	}
 
-    /**
-     * Fires an event to all registered listeners describing changes to this
-     * instance.
-     *
-     * @param handlerEvent
-     *            the event describing changes to this instance. Must not be
-     *            <code>null</code>.
-     */
+	/**
+	 * Fires an event to all registered listeners describing changes to this
+	 * instance.
+	 *
+	 * @param handlerEvent the event describing changes to this instance. Must not
+	 *                     be <code>null</code>.
+	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
-    protected void fireHandlerChanged(HandlerEvent handlerEvent) {
-        super.fireHandlerChanged(handlerEvent);
+	protected void fireHandlerChanged(HandlerEvent handlerEvent) {
+		super.fireHandlerChanged(handlerEvent);
 
-        if (handlerListeners != null) {
-            final boolean attributesChanged = handlerEvent.isEnabledChanged()
-                    || handlerEvent.isHandledChanged();
-            final Map previousAttributes;
-            if (attributesChanged) {
-                previousAttributes = new HashMap();
-                previousAttributes.putAll(getAttributeValuesByName());
-                if (handlerEvent.isEnabledChanged()) {
-                	Boolean disabled = !isEnabled() ? Boolean.TRUE: Boolean.FALSE;
-                    previousAttributes
-                            .put("enabled", disabled); //$NON-NLS-1$
-                }
-                if (handlerEvent.isHandledChanged()) {
-                	Boolean notHandled = !isHandled() ? Boolean.TRUE: Boolean.FALSE;
-                    previousAttributes.put(
-                            IHandlerAttributes.ATTRIBUTE_HANDLED, notHandled);
-                }
-            } else {
-                previousAttributes = null;
-            }
-            final org.eclipse.ui.commands.HandlerEvent legacyEvent = new org.eclipse.ui.commands.HandlerEvent(
-                    this, attributesChanged, previousAttributes);
+		if (handlerListeners != null) {
+			final boolean attributesChanged = handlerEvent.isEnabledChanged() || handlerEvent.isHandledChanged();
+			final Map previousAttributes;
+			if (attributesChanged) {
+				previousAttributes = new HashMap();
+				previousAttributes.putAll(getAttributeValuesByName());
+				if (handlerEvent.isEnabledChanged()) {
+					Boolean disabled = !isEnabled() ? Boolean.TRUE : Boolean.FALSE;
+					previousAttributes.put("enabled", disabled); //$NON-NLS-1$
+				}
+				if (handlerEvent.isHandledChanged()) {
+					Boolean notHandled = !isHandled() ? Boolean.TRUE : Boolean.FALSE;
+					previousAttributes.put(IHandlerAttributes.ATTRIBUTE_HANDLED, notHandled);
+				}
+			} else {
+				previousAttributes = null;
+			}
+			final org.eclipse.ui.commands.HandlerEvent legacyEvent = new org.eclipse.ui.commands.HandlerEvent(this,
+					attributesChanged, previousAttributes);
 
-            for (int i = 0; i < handlerListeners.size(); i++) {
-                handlerListeners
-                        .get(i).handlerChanged(legacyEvent);
-            }
-        }
-    }
+			for (int i = 0; i < handlerListeners.size(); i++) {
+				handlerListeners.get(i).handlerChanged(legacyEvent);
+			}
+		}
+	}
 
 	@SuppressWarnings("rawtypes")
 	@Deprecated
-    protected void fireHandlerChanged(
-            final org.eclipse.ui.commands.HandlerEvent handlerEvent) {
-        if (handlerEvent == null) {
+	protected void fireHandlerChanged(final org.eclipse.ui.commands.HandlerEvent handlerEvent) {
+		if (handlerEvent == null) {
 			throw new NullPointerException();
 		}
 
-        if (handlerListeners != null) {
-            for (int i = 0; i < handlerListeners.size(); i++) {
-				handlerListeners
-                        .get(i).handlerChanged(handlerEvent);
+		if (handlerListeners != null) {
+			for (int i = 0; i < handlerListeners.size(); i++) {
+				handlerListeners.get(i).handlerChanged(handlerEvent);
 			}
-        }
+		}
 
-        if (super.hasListeners()) {
-            final boolean enabledChanged;
-            final boolean handledChanged;
-            if (handlerEvent.haveAttributeValuesByNameChanged()) {
-                Map previousAttributes = handlerEvent
-                        .getPreviousAttributeValuesByName();
+		if (super.hasListeners()) {
+			final boolean enabledChanged;
+			final boolean handledChanged;
+			if (handlerEvent.haveAttributeValuesByNameChanged()) {
+				Map previousAttributes = handlerEvent.getPreviousAttributeValuesByName();
 
-                Object attribute = previousAttributes.get("enabled"); //$NON-NLS-1$
-                if (attribute instanceof Boolean) {
-                    enabledChanged = ((Boolean) attribute).booleanValue();
-                } else {
-                    enabledChanged = false;
-                }
+				Object attribute = previousAttributes.get("enabled"); //$NON-NLS-1$
+				if (attribute instanceof Boolean) {
+					enabledChanged = ((Boolean) attribute).booleanValue();
+				} else {
+					enabledChanged = false;
+				}
 
-                attribute = previousAttributes
-                        .get(IHandlerAttributes.ATTRIBUTE_HANDLED);
-                if (attribute instanceof Boolean) {
-                    handledChanged = ((Boolean) attribute).booleanValue();
-                } else {
-                    handledChanged = false;
-                }
-            } else {
-                enabledChanged = false;
-                handledChanged = true;
-            }
-            final HandlerEvent newEvent = new HandlerEvent(this,
-                    enabledChanged, handledChanged);
-            super.fireHandlerChanged(newEvent);
-        }
-    }
+				attribute = previousAttributes.get(IHandlerAttributes.ATTRIBUTE_HANDLED);
+				if (attribute instanceof Boolean) {
+					handledChanged = ((Boolean) attribute).booleanValue();
+				} else {
+					handledChanged = false;
+				}
+			} else {
+				enabledChanged = false;
+				handledChanged = true;
+			}
+			final HandlerEvent newEvent = new HandlerEvent(this, enabledChanged, handledChanged);
+			super.fireHandlerChanged(newEvent);
+		}
+	}
 
-    /**
-     * This simply return an empty map. The default implementation has no
-     * attributes.
-     *
-     * @see IHandler#getAttributeValuesByName()
-     */
+	/**
+	 * This simply return an empty map. The default implementation has no
+	 * attributes.
+	 *
+	 * @see IHandler#getAttributeValuesByName()
+	 */
 	@Override
 	@Deprecated
-    public Map getAttributeValuesByName() {
-        return Collections.EMPTY_MAP;
-    }
+	public Map getAttributeValuesByName() {
+		return Collections.EMPTY_MAP;
+	}
 
-    /**
-     * Returns true iff there is one or more IHandlerListeners attached to this
-     * AbstractHandler.
-     *
-     * @return true iff there is one or more IHandlerListeners attached to this
-     *         AbstractHandler
-     * @since 3.1
-     */
+	/**
+	 * Returns true iff there is one or more IHandlerListeners attached to this
+	 * AbstractHandler.
+	 *
+	 * @return true iff there is one or more IHandlerListeners attached to this
+	 *         AbstractHandler
+	 * @since 3.1
+	 */
 	@Override
 	@Deprecated
-    protected final boolean hasListeners() {
-        return super.hasListeners() || handlerListeners != null;
-    }
+	protected final boolean hasListeners() {
+		return super.hasListeners() || handlerListeners != null;
+	}
 
 	@Override
 	@Deprecated
-    public boolean isEnabled() {
-        final Object handled = getAttributeValuesByName().get("enabled"); //$NON-NLS-1$
-        if (handled instanceof Boolean) {
-            return ((Boolean) handled).booleanValue();
-        }
+	public boolean isEnabled() {
+		final Object handled = getAttributeValuesByName().get("enabled"); //$NON-NLS-1$
+		if (handled instanceof Boolean) {
+			return ((Boolean) handled).booleanValue();
+		}
 
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	@Deprecated
-    public boolean isHandled() {
-        final Object handled = getAttributeValuesByName().get(
-                IHandlerAttributes.ATTRIBUTE_HANDLED);
-        if (handled instanceof Boolean) {
-            return ((Boolean) handled).booleanValue();
-        }
+	public boolean isHandled() {
+		final Object handled = getAttributeValuesByName().get(IHandlerAttributes.ATTRIBUTE_HANDLED);
+		if (handled instanceof Boolean) {
+			return ((Boolean) handled).booleanValue();
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * @see IHandler#removeHandlerListener(IHandlerListener)
-     */
+	/**
+	 * @see IHandler#removeHandlerListener(IHandlerListener)
+	 */
 	@Override
 	@Deprecated
 	public void removeHandlerListener(IHandlerListener handlerListener) {
-        if (handlerListener == null) {
+		if (handlerListener == null) {
 			throw new NullPointerException();
 		}
-        if (handlerListeners == null) {
-            return;
-        }
+		if (handlerListeners == null) {
+			return;
+		}
 
-        if (handlerListeners != null) {
+		if (handlerListeners != null) {
 			handlerListeners.remove(handlerListener);
 		}
-        if (handlerListeners.isEmpty()) {
-            handlerListeners = null;
-        }
-    }
+		if (handlerListeners.isEmpty()) {
+			handlerListeners = null;
+		}
+	}
 }

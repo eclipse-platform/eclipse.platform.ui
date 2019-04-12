@@ -24,58 +24,54 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class WorkingSetRegistryReader extends RegistryReader {
 
+	private WorkingSetRegistry registry;
 
-    private WorkingSetRegistry registry;
+	/**
+	 * Create a new instance of this reader.
+	 */
+	public WorkingSetRegistryReader() {
+		super();
+	}
 
-    /**
-     * Create a new instance of this reader.
-     */
-    public WorkingSetRegistryReader() {
-        super();
-    }
+	/**
+	 * Create a new instance of this reader.
+	 *
+	 * @param registry the registry to populate
+	 */
+	public WorkingSetRegistryReader(WorkingSetRegistry registry) {
+		super();
+		this.registry = registry;
+	}
 
-    /**
-     * Create a new instance of this reader.
-     *
-     * @param registry the registry to populate
-     */
-    public WorkingSetRegistryReader(WorkingSetRegistry registry) {
-        super();
-        this.registry = registry;
-    }
-
-    /**
-     * Overrides method in RegistryReader.
-     *
-     * @see RegistryReader#readElement(IConfigurationElement)
-     */
-    @Override
+	/**
+	 * Overrides method in RegistryReader.
+	 *
+	 * @see RegistryReader#readElement(IConfigurationElement)
+	 */
+	@Override
 	public boolean readElement(IConfigurationElement element) {
-        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_WORKING_SET)) {
-            try {
-                WorkingSetDescriptor desc = new WorkingSetDescriptor(element);
-                registry.addWorkingSetDescriptor(desc);
-            } catch (CoreException e) {
-                // log an error since its not safe to open a dialog here
-                WorkbenchPlugin
-                        .log(
-                                "Unable to create working set descriptor.", e.getStatus());//$NON-NLS-1$
-            }
-            return true;
-        }
+		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_WORKING_SET)) {
+			try {
+				WorkingSetDescriptor desc = new WorkingSetDescriptor(element);
+				registry.addWorkingSetDescriptor(desc);
+			} catch (CoreException e) {
+				// log an error since its not safe to open a dialog here
+				WorkbenchPlugin.log("Unable to create working set descriptor.", e.getStatus());//$NON-NLS-1$
+			}
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Reads the working set extensions within a registry.
-     *
-     * @param in the plugin registry to read from
-     * @param out the working set registry to store read entries in.
-     */
-    public void readWorkingSets(IExtensionRegistry in, WorkingSetRegistry out) {
-        registry = out;
-        readRegistry(in, PlatformUI.PLUGIN_ID,
-                IWorkbenchRegistryConstants.PL_WORKINGSETS);
-    }
+	/**
+	 * Reads the working set extensions within a registry.
+	 *
+	 * @param in  the plugin registry to read from
+	 * @param out the working set registry to store read entries in.
+	 */
+	public void readWorkingSets(IExtensionRegistry in, WorkingSetRegistry out) {
+		registry = out;
+		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_WORKINGSETS);
+	}
 }

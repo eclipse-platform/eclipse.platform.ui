@@ -34,6 +34,7 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 
 	/**
 	 * Create a new instance of the receiver.
+	 * 
 	 * @param nodeId
 	 * @param element
 	 */
@@ -48,8 +49,8 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 	public void createPage() {
 		IWorkbenchPreferencePage page;
 		try {
-			page = (IWorkbenchPreferencePage) WorkbenchPlugin.createExtension(
-					getConfigurationElement(), IWorkbenchRegistryConstants.ATT_CLASS);
+			page = (IWorkbenchPreferencePage) WorkbenchPlugin.createExtension(getConfigurationElement(),
+					IWorkbenchRegistryConstants.ATT_CLASS);
 		} catch (CoreException e) {
 			// Just inform the user about the error. The details are
 			// written to the log by now.
@@ -68,10 +69,10 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 
 	/**
 	 * Return the category name for the node.
+	 * 
 	 * @return java.lang.String
 	 */
 	public String getCategory() {
-		return getConfigurationElement().getAttribute(
-				CategorizedPageRegistryReader.ATT_CATEGORY);
+		return getConfigurationElement().getAttribute(CategorizedPageRegistryReader.ATT_CATEGORY);
 	}
 }

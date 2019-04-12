@@ -69,7 +69,6 @@ import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-
 /**
  * This class is used to allow the user to select a dialog from the set of
  * internal and external editors.
@@ -186,13 +185,11 @@ public class EditorSelectionDialog extends Dialog {
 	/**
 	 * Create an instance of this class.
 	 *
-	 * @param parentShell
-	 *            the parent shell
+	 * @param parentShell the parent shell
 	 */
 	public EditorSelectionDialog(Shell parentShell) {
 		super(parentShell);
-		resourceManager = new LocalResourceManager(JFaceResources.getResources(parentShell
-				.getDisplay()));
+		resourceManager = new LocalResourceManager(JFaceResources.getResources(parentShell.getDisplay()));
 	}
 
 	/**
@@ -221,18 +218,16 @@ public class EditorSelectionDialog extends Dialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(WorkbenchMessages.EditorSelection_title);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IWorkbenchHelpContextIds.EDITOR_SELECTION_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IWorkbenchHelpContextIds.EDITOR_SELECTION_DIALOG);
 	}
 
 	/**
-	 * Creates and returns the contents of the upper part of the dialog (above
-	 * the button bar).
+	 * Creates and returns the contents of the upper part of the dialog (above the
+	 * button bar).
 	 *
 	 * Subclasses should overide.
 	 *
-	 * @param parent
-	 *            the parent composite to contain the dialog area
+	 * @param parent the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */
 	@Override
@@ -303,13 +298,11 @@ public class EditorSelectionDialog extends Dialog {
 		});
 
 		browseExternalEditorsButton = new Button(contents, SWT.PUSH);
-		browseExternalEditorsButton
-				.setText(WorkbenchMessages.EditorSelection_browse);
+		browseExternalEditorsButton.setText(WorkbenchMessages.EditorSelection_browse);
 		browseExternalEditorsButton.addListener(SWT.Selection, listener);
 		data = new GridData();
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, browseExternalEditorsButton
-				.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		data.widthHint = Math.max(widthHint, browseExternalEditorsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		data.horizontalSpan = 2;
 		browseExternalEditorsButton.setLayoutData(data);
 		browseExternalEditorsButton.setFont(font);
@@ -339,7 +332,8 @@ public class EditorSelectionDialog extends Dialog {
 		initializeSuggestion();
 		restoreWidgetValues(); // Place buttons to the appropriate state
 
-		// Run async to restore selection on *visible* dialog - otherwise three won't scroll
+		// Run async to restore selection on *visible* dialog - otherwise three won't
+		// scroll
 		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
 			if (editorTable.isDisposed()) {
 				return;
@@ -347,7 +341,7 @@ public class EditorSelectionDialog extends Dialog {
 			fillEditorTable();
 			updateEnableState();
 		});
-	    return contents;
+		return contents;
 	}
 
 	private String getFileType() {
@@ -416,10 +410,8 @@ public class EditorSelectionDialog extends Dialog {
 	 * Return the dialog store to cache values into
 	 */
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
-				.getDialogSettings();
-		IDialogSettings section = workbenchSettings
-				.getSection("EditorSelectionDialog");//$NON-NLS-1$
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = workbenchSettings.getSection("EditorSelectionDialog");//$NON-NLS-1$
 		if (section == null) {
 			section = workbenchSettings.addNewSection("EditorSelectionDialog");//$NON-NLS-1$
 		}
@@ -448,8 +440,8 @@ public class EditorSelectionDialog extends Dialog {
 				if (cause instanceof CoreException) {
 					status = ((CoreException) cause).getStatus();
 				} else {
-					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
-							"Error while retrieving native editors", cause); //$NON-NLS-1$
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, "Error while retrieving native editors", //$NON-NLS-1$
+							cause);
 				}
 				StatusManager.getManager().handle(status);
 			} catch (InterruptedException e) {
@@ -461,11 +453,10 @@ public class EditorSelectionDialog extends Dialog {
 	}
 
 	/**
-	 * Returns an array of editors which have been filtered according to the
-	 * array of editors in the editorsToFilter instance variable.
+	 * Returns an array of editors which have been filtered according to the array
+	 * of editors in the editorsToFilter instance variable.
 	 *
-	 * @param editors
-	 *            an array of editors to filter
+	 * @param editors an array of editors to filter
 	 * @return a filtered array of editors
 	 */
 	protected IEditorDescriptor[] filterEditors(IEditorDescriptor[] editors) {
@@ -498,8 +489,7 @@ public class EditorSelectionDialog extends Dialog {
 	 */
 	protected IEditorDescriptor[] getInternalEditors() {
 		if (internalEditors == null) {
-			EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault()
-					.getEditorRegistry();
+			EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry();
 			internalEditors = reg.getSortedEditorsFromPlugins();
 			internalEditors = filterEditors(internalEditors);
 		}
@@ -516,20 +506,18 @@ public class EditorSelectionDialog extends Dialog {
 	}
 
 	protected void promptForExternalEditor() {
-		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN
-				| SWT.PRIMARY_MODAL | SWT.SHEET);
+		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.PRIMARY_MODAL | SWT.SHEET);
 		dialog.setFilterExtensions(Executable_Filters);
 		String result = dialog.open();
 		if (result != null) {
 			EditorDescriptor editor = EditorDescriptor.createForProgram(result);
 
 			/*
-			 * add to our collection of cached external editors in case the user
-			 * flips back and forth between internal/external
+			 * add to our collection of cached external editors in case the user flips back
+			 * and forth between internal/external
 			 */
 			IEditorDescriptor[] newEditors = new IEditorDescriptor[externalEditors.length + 1];
-			System.arraycopy(externalEditors, 0, newEditors, 0,
-					externalEditors.length);
+			System.arraycopy(externalEditors, 0, newEditors, 0, externalEditors.length);
 			newEditors[newEditors.length - 1] = editor;
 			externalEditors = newEditors;
 			editorTableViewer.setInput(externalEditors);
@@ -580,9 +568,9 @@ public class EditorSelectionDialog extends Dialog {
 	}
 
 	/**
-	 * Use the dialog store to restore widget values to the values that they
-	 * held last time this wizard was used to completion, if the previous file
-	 * has same extension.
+	 * Use the dialog store to restore widget values to the values that they held
+	 * last time this wizard was used to completion, if the previous file has same
+	 * extension.
 	 */
 	protected void restoreWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
@@ -684,19 +672,16 @@ public class EditorSelectionDialog extends Dialog {
 	/**
 	 * Set the message displayed by this message dialog
 	 *
-	 * @param aMessage
-	 *            the message
+	 * @param aMessage the message
 	 */
 	public void setMessage(String aMessage) {
 		message = aMessage;
 	}
 
 	/**
-	 * Set the file name which can be used to store the selected editor
-	 * preference
+	 * Set the file name which can be used to store the selected editor preference
 	 *
-	 * @param fileName
-	 *            the file name
+	 * @param fileName the file name
 	 * @since 3.107
 	 */
 	public void setFileName(String fileName) {
@@ -706,8 +691,7 @@ public class EditorSelectionDialog extends Dialog {
 	/**
 	 * Set the editors which will not appear in the dialog.
 	 *
-	 * @param editors
-	 *            an array of editors
+	 * @param editors an array of editors
 	 */
 	public void setEditorsToFilter(IEditorDescriptor[] editors) {
 		editorsToFilter = editors;
@@ -724,10 +708,8 @@ public class EditorSelectionDialog extends Dialog {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		okButton = createButton(parent, IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL, true);
-		createButton(parent, IDialogConstants.CANCEL_ID,
-				IDialogConstants.CANCEL_LABEL, false);
+		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		// initially there is no selection so OK button should not be enabled
 		okButton.setEnabled(false);
 

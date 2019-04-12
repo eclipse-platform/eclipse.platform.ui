@@ -43,12 +43,10 @@ public abstract class CompositeExpression extends Expression {
 		if (fExpressions == null) {
 			return EMPTY_ARRAY;
 		}
-		return (Expression[]) fExpressions.toArray(new Expression[fExpressions
-				.size()]);
+		return (Expression[]) fExpressions.toArray(new Expression[fExpressions.size()]);
 	}
 
-	protected EvaluationResult evaluateAnd(IEvaluationContext scope)
-			throws CoreException {
+	protected EvaluationResult evaluateAnd(IEvaluationContext scope) throws CoreException {
 		if (fExpressions == null) {
 			return EvaluationResult.TRUE;
 		}
@@ -65,8 +63,7 @@ public abstract class CompositeExpression extends Expression {
 		return result;
 	}
 
-	protected EvaluationResult evaluateOr(IEvaluationContext scope)
-			throws CoreException {
+	protected EvaluationResult evaluateOr(IEvaluationContext scope) throws CoreException {
 		if (fExpressions == null) {
 			return EvaluationResult.TRUE;
 		}
@@ -105,4 +102,3 @@ public abstract class CompositeExpression extends Expression {
 	}
 
 }
-

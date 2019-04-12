@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  * <p>
  * RedoActionHandler provides common behavior for redoing an operation, as well
- * as labelling and enabling the menu item.  This class may be instantiated by
+ * as labelling and enabling the menu item. This class may be instantiated by
  * clients.
  * </p>
  *
@@ -36,20 +36,17 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public final class RedoActionHandler extends OperationHistoryActionHandler {
 
 	/**
-	 * Construct an action handler that handles the labelling and enabling of
-	 * the redo action for the specified undo context.
+	 * Construct an action handler that handles the labelling and enabling of the
+	 * redo action for the specified undo context.
 	 *
-	 * @param site
-	 *            the workbench part site that created the action.
-	 * @param context
-	 *            the undo context to be used for redoing.
+	 * @param site    the workbench part site that created the action.
+	 * @param context the undo context to be used for redoing.
 	 */
 	public RedoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
 		super(site, context);
-		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-		setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
+		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+		setDisabledImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
 		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 	}
 
@@ -77,7 +74,6 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 	String getSimpleTooltipString() {
 		return WorkbenchMessages.Workbench_redoToolTip;
 	}
-
 
 	@Override
 	IUndoableOperation getOperation() {

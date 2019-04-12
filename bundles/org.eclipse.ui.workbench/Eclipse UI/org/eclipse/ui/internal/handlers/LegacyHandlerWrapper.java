@@ -33,8 +33,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * This flag can be set to <code>true</code> if commands should print
 	 * information to <code>System.out</code> when changing handlers.
 	 */
-	private static final boolean DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
-			&& Policy.DEBUG_HANDLERS_VERBOSE;
+	private static final boolean DEBUG_HANDLERS = Policy.DEBUG_HANDLERS && Policy.DEBUG_HANDLERS_VERBOSE;
 
 	/**
 	 * The wrapped handler; never <code>null</code>.
@@ -44,14 +43,12 @@ public final class LegacyHandlerWrapper implements IHandler {
 	/**
 	 * Constructs a new instance of <code>HandlerWrapper</code>.
 	 *
-	 * @param handler
-	 *            The handler that should be wrapped; must not be
-	 *            <code>null</code>.
+	 * @param handler The handler that should be wrapped; must not be
+	 *                <code>null</code>.
 	 */
 	public LegacyHandlerWrapper(final org.eclipse.ui.commands.IHandler handler) {
 		if (handler == null) {
-			throw new NullPointerException(
-					"A handler wrapper cannot be constructed on a null handler"); //$NON-NLS-1$
+			throw new NullPointerException("A handler wrapper cannot be constructed on a null handler"); //$NON-NLS-1$
 		}
 
 		this.handler = handler;
@@ -59,8 +56,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 
 	@Override
 	public void addHandlerListener(final IHandlerListener handlerListener) {
-		handler.addHandlerListener(new LegacyHandlerListenerWrapper(this,
-				handlerListener));
+		handler.addHandlerListener(new LegacyHandlerListenerWrapper(this, handlerListener));
 	}
 
 	@Override
@@ -82,8 +78,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 	}
 
 	@Override
-	public Object execute(final ExecutionEvent event)
-			throws ExecutionException {
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		// Debugging output
 		if (DEBUG_HANDLERS) {
 			final StringBuilder buffer = new StringBuilder("Executing LegacyHandlerWrapper for "); //$NON-NLS-1$
@@ -111,8 +106,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 
 	@Override
 	public boolean isEnabled() {
-		final Object enabled = handler.getAttributeValuesByName().get(
-				ILegacyAttributeNames.ENABLED);
+		final Object enabled = handler.getAttributeValuesByName().get(ILegacyAttributeNames.ENABLED);
 		if (enabled instanceof Boolean) {
 			return ((Boolean) enabled).booleanValue();
 		}
@@ -122,8 +116,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 
 	@Override
 	public boolean isHandled() {
-		final Object handled = handler.getAttributeValuesByName().get(
-				ILegacyAttributeNames.HANDLED);
+		final Object handled = handler.getAttributeValuesByName().get(ILegacyAttributeNames.HANDLED);
 		if (handled instanceof Boolean) {
 			return ((Boolean) handled).booleanValue();
 		}
@@ -132,10 +125,8 @@ public final class LegacyHandlerWrapper implements IHandler {
 	}
 
 	@Override
-	public void removeHandlerListener(
-			final IHandlerListener handlerListener) {
-		handler.removeHandlerListener(new LegacyHandlerListenerWrapper(this,
-				handlerListener));
+	public void removeHandlerListener(final IHandlerListener handlerListener) {
+		handler.removeHandlerListener(new LegacyHandlerListenerWrapper(this, handlerListener));
 	}
 
 	@Override

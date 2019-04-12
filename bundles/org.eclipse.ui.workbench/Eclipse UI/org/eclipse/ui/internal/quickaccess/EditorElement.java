@@ -34,7 +34,7 @@ public class EditorElement extends QuickAccessElement {
 
 	private IEditorReference editorReference;
 
-	/* package */EditorElement(IEditorReference editorReference, EditorProvider editorProvider) {
+	/* package */ EditorElement(IEditorReference editorReference, EditorProvider editorProvider) {
 		super(editorProvider);
 		this.editorReference = editorReference;
 	}
@@ -43,8 +43,7 @@ public class EditorElement extends QuickAccessElement {
 	public void execute() {
 		IWorkbenchPart part = editorReference.getPart(true);
 		if (part != null) {
-			IWorkbenchPage activePage = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if (activePage != null) {
 				activePage.activate(part);
 			}
@@ -80,8 +79,7 @@ public class EditorElement extends QuickAccessElement {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((editorReference == null) ? 0 : editorReference.hashCode());
+		result = prime * result + ((editorReference == null) ? 0 : editorReference.hashCode());
 		return result;
 	}
 

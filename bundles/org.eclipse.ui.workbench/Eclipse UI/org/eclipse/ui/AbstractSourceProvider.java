@@ -40,15 +40,12 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	protected static boolean DEBUG = Policy.DEBUG_SOURCES;
 
 	/**
-	 * The listeners to this source provider. This value is never
-	 * <code>null</code>.
+	 * The listeners to this source provider. This value is never <code>null</code>.
 	 */
 	private final ListenerList<ISourceProviderListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
 
-
 	@Override
-	public final void addSourceProviderListener(
-			final ISourceProviderListener listener) {
+	public final void addSourceProviderListener(final ISourceProviderListener listener) {
 		if (listener == null) {
 			throw new NullPointerException("The listener cannot be null"); //$NON-NLS-1$
 		}
@@ -59,16 +56,13 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	/**
 	 * Notifies all listeners that a single source has changed.
 	 *
-	 * @param sourcePriority
-	 *            The source priority that has changed.
-	 * @param sourceName
-	 *            The name of the source that has changed; must not be
-	 *            <code>null</code>.
-	 * @param sourceValue
-	 *            The new value for the source; may be <code>null</code>.
+	 * @param sourcePriority The source priority that has changed.
+	 * @param sourceName     The name of the source that has changed; must not be
+	 *                       <code>null</code>.
+	 * @param sourceValue    The new value for the source; may be <code>null</code>.
 	 */
-	protected final void fireSourceChanged(final int sourcePriority,
-			final String sourceName, final Object sourceValue) {
+	protected final void fireSourceChanged(final int sourcePriority, final String sourceName,
+			final Object sourceValue) {
 		for (ISourceProviderListener listener : listeners) {
 			listener.sourceChanged(sourcePriority, sourceName, sourceValue);
 		}
@@ -77,16 +71,14 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	/**
 	 * Notifies all listeners that multiple sources have changed.
 	 *
-	 * @param sourcePriority
-	 *            The source priority that has changed.
-	 * @param sourceValuesByName
-	 *            The map of source names (<code>String</code>) to source
-	 *            values (<code>Object</code>) that have changed; must not
-	 *            be <code>null</code>. The names must not be
-	 *            <code>null</code>, but the values may be <code>null</code>.
+	 * @param sourcePriority     The source priority that has changed.
+	 * @param sourceValuesByName The map of source names (<code>String</code>) to
+	 *                           source values (<code>Object</code>) that have
+	 *                           changed; must not be <code>null</code>. The names
+	 *                           must not be <code>null</code>, but the values may
+	 *                           be <code>null</code>.
 	 */
-	protected final void fireSourceChanged(final int sourcePriority,
-			final Map sourceValuesByName) {
+	protected final void fireSourceChanged(final int sourcePriority, final Map sourceValuesByName) {
 
 		for (ISourceProviderListener listener : listeners) {
 			listener.sourceChanged(sourcePriority, sourceValuesByName);
@@ -95,12 +87,11 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 
 	/**
 	 * Logs a debugging message in an appropriate manner. If the message is
-	 * <code>null</code> or the <code>DEBUG</code> is <code>false</code>,
-	 * then this method does nothing.
+	 * <code>null</code> or the <code>DEBUG</code> is <code>false</code>, then this
+	 * method does nothing.
 	 *
-	 * @param message
-	 *            The debugging message to log; if <code>null</code>, then
-	 *            nothing is logged.
+	 * @param message The debugging message to log; if <code>null</code>, then
+	 *                nothing is logged.
 	 * @since 3.2
 	 */
 	protected final void logDebuggingInfo(final String message) {
@@ -110,8 +101,7 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	}
 
 	@Override
-	public final void removeSourceProviderListener(
-			final ISourceProviderListener listener) {
+	public final void removeSourceProviderListener(final ISourceProviderListener listener) {
 		if (listener == null) {
 			throw new NullPointerException("The listener cannot be null"); //$NON-NLS-1$
 		}
@@ -121,12 +111,11 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 
 	/**
 	 * This method is called when the source provider is instantiated by
-	 * <code>org.eclipse.ui.services</code>. Clients may override this method
-	 * to perform initialization.
+	 * <code>org.eclipse.ui.services</code>. Clients may override this method to
+	 * perform initialization.
 	 *
-	 * @param locator
-	 *            The global service locator. It can be used to retrieve
-	 *            services like the IContextService
+	 * @param locator The global service locator. It can be used to retrieve
+	 *                services like the IContextService
 	 * @since 3.4
 	 */
 	public void initialize(final IServiceLocator locator) {

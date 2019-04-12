@@ -20,9 +20,9 @@ package org.eclipse.ui.internal.intro;
  */
 public interface IIntroConstants {
 
-    /**
-     * The id of the view that is used as the intro host.
-     */
-    String INTRO_VIEW_ID = "org.eclipse.ui.internal.introview"; //$NON-NLS-1$
+	/**
+	 * The id of the view that is used as the intro host.
+	 */
+	String INTRO_VIEW_ID = "org.eclipse.ui.internal.introview"; //$NON-NLS-1$
 
 }

@@ -33,10 +33,10 @@ import org.eclipse.swt.graphics.RGB;
  */
 public interface IColorFactory {
 
-    /**
-     * Create a new color.
-     *
-     * @return a new color.  This must never be <code>null</code>.
-     */
-    RGB createColor();
+	/**
+	 * Create a new color.
+	 *
+	 * @return a new color. This must never be <code>null</code>.
+	 */
+	RGB createColor();
 }

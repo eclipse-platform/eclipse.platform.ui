@@ -35,8 +35,7 @@ public class OpenInNewWindowHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
-				.getActiveWorkbenchWindow(event);
+		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		if (activeWorkbenchWindow == null) {
 			return null;
 		}
@@ -44,22 +43,18 @@ public class OpenInNewWindowHandler extends AbstractHandler {
 			String perspId = null;
 
 			IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
-			IAdaptable pageInput = ((Workbench) activeWorkbenchWindow
-					.getWorkbench()).getDefaultPageInput();
+			IAdaptable pageInput = ((Workbench) activeWorkbenchWindow.getWorkbench()).getDefaultPageInput();
 			if (page != null && page.getPerspective() != null) {
 				perspId = page.getPerspective().getId();
 				pageInput = page.getInput();
 			} else {
-				perspId = activeWorkbenchWindow.getWorkbench()
-						.getPerspectiveRegistry().getDefaultPerspective();
+				perspId = activeWorkbenchWindow.getWorkbench().getPerspectiveRegistry().getDefaultPerspective();
 			}
 
-			activeWorkbenchWindow.getWorkbench().openWorkbenchWindow(perspId,
-					pageInput);
+			activeWorkbenchWindow.getWorkbench().openWorkbenchWindow(perspId, pageInput);
 		} catch (WorkbenchException e) {
 			StatusUtil.handleStatus(e.getStatus(),
-					WorkbenchMessages.OpenInNewWindowAction_errorTitle
-							+ ": " + e.getMessage(), //$NON-NLS-1$
+					WorkbenchMessages.OpenInNewWindowAction_errorTitle + ": " + e.getMessage(), //$NON-NLS-1$
 					StatusManager.SHOW);
 		}
 		return null;

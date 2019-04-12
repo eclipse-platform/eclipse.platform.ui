@@ -30,191 +30,183 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
  * Manage the configurable actions for one window.
  */
 public class ActionPresentation {
-    private WorkbenchWindow window;
+	private WorkbenchWindow window;
 
-    private HashMap mapDescToRec = new HashMap(3);
+	private HashMap mapDescToRec = new HashMap(3);
 
-    private HashMap invisibleBars = new HashMap(3);
+	private HashMap invisibleBars = new HashMap(3);
 
 	private static class SetRec {
-        public SetRec(IActionSet set,
-                SubActionBars bars) {
-            this.set = set;
-            this.bars = bars;
-        }
+		public SetRec(IActionSet set, SubActionBars bars) {
+			this.set = set;
+			this.bars = bars;
+		}
 
-        public IActionSet set;
+		public IActionSet set;
 
-        public SubActionBars bars;
-    }
+		public SubActionBars bars;
+	}
 
-    /**
-     * ActionPresentation constructor comment.
-     */
-    public ActionPresentation(WorkbenchWindow window) {
-        super();
-        this.window = window;
-    }
+	/**
+	 * ActionPresentation constructor comment.
+	 */
+	public ActionPresentation(WorkbenchWindow window) {
+		super();
+		this.window = window;
+	}
 
-    /**
-     * Remove all action sets.
-     */
-    public void clearActionSets() {
-        // Get all of the action sets -- both visible and invisible.
-        final List oldList = new ArrayList();
-        oldList.addAll(mapDescToRec.keySet());
-        oldList.addAll(invisibleBars.keySet());
+	/**
+	 * Remove all action sets.
+	 */
+	public void clearActionSets() {
+		// Get all of the action sets -- both visible and invisible.
+		final List oldList = new ArrayList();
+		oldList.addAll(mapDescToRec.keySet());
+		oldList.addAll(invisibleBars.keySet());
 
-        Iterator iter = oldList.iterator();
-        while (iter.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
-            removeActionSet(desc);
-        }
-    }
+		Iterator iter = oldList.iterator();
+		while (iter.hasNext()) {
+			IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
+			removeActionSet(desc);
+		}
+	}
 
-    /**
-     * Destroy an action set.
-     */
-    public void removeActionSet(IActionSetDescriptor desc) {
-        SetRec rec = (SetRec) mapDescToRec.remove(desc);
-        if (rec == null) {
-            rec = (SetRec) invisibleBars.remove(desc);
-        }
-        if (rec != null) {
-            IActionSet set = rec.set;
-            SubActionBars bars = rec.bars;
-            if (bars != null) {
-                bars.dispose();
-            }
-            if (set != null) {
-                set.dispose();
-            }
-        }
-    }
+	/**
+	 * Destroy an action set.
+	 */
+	public void removeActionSet(IActionSetDescriptor desc) {
+		SetRec rec = (SetRec) mapDescToRec.remove(desc);
+		if (rec == null) {
+			rec = (SetRec) invisibleBars.remove(desc);
+		}
+		if (rec != null) {
+			IActionSet set = rec.set;
+			SubActionBars bars = rec.bars;
+			if (bars != null) {
+				bars.dispose();
+			}
+			if (set != null) {
+				set.dispose();
+			}
+		}
+	}
 
-    /**
-     * Sets the list of visible action set.
-     */
-    public void setActionSets(IActionSetDescriptor[] newArray) {
-        // Convert array to list.
-        HashSet newList = new HashSet();
+	/**
+	 * Sets the list of visible action set.
+	 */
+	public void setActionSets(IActionSetDescriptor[] newArray) {
+		// Convert array to list.
+		HashSet newList = new HashSet();
 
-        for (IActionSetDescriptor descriptor : newArray) {
-            newList.add(descriptor);
-        }
-        List oldList = new ArrayList(mapDescToRec.keySet());
+		for (IActionSetDescriptor descriptor : newArray) {
+			newList.add(descriptor);
+		}
+		List oldList = new ArrayList(mapDescToRec.keySet());
 
-        // Remove obsolete actions.
-        Iterator iter = oldList.iterator();
-        while (iter.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
-            if (!newList.contains(desc)) {
-                SetRec rec = (SetRec) mapDescToRec.get(desc);
-                if (rec != null) {
-                    mapDescToRec.remove(desc);
-                    IActionSet set = rec.set;
-                    SubActionBars bars = rec.bars;
-                    if (bars != null) {
-                        SetRec invisibleRec = new SetRec(set, bars);
-                        invisibleBars.put(desc, invisibleRec);
-                        bars.deactivate();
-                    }
-                }
-            }
-        }
+		// Remove obsolete actions.
+		Iterator iter = oldList.iterator();
+		while (iter.hasNext()) {
+			IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
+			if (!newList.contains(desc)) {
+				SetRec rec = (SetRec) mapDescToRec.get(desc);
+				if (rec != null) {
+					mapDescToRec.remove(desc);
+					IActionSet set = rec.set;
+					SubActionBars bars = rec.bars;
+					if (bars != null) {
+						SetRec invisibleRec = new SetRec(set, bars);
+						invisibleBars.put(desc, invisibleRec);
+						bars.deactivate();
+					}
+				}
+			}
+		}
 
-        // Add new actions.
-        ArrayList sets = new ArrayList();
+		// Add new actions.
+		ArrayList sets = new ArrayList();
 
 		for (IActionSetDescriptor desc : newArray) {
-            if (!mapDescToRec.containsKey(desc)) {
-                try {
-                    SetRec rec;
-                    // If the action bars and sets have already been created
-                    // then
-                    // reuse those action sets
-                    if (invisibleBars.containsKey(desc)) {
-                        rec = (SetRec) invisibleBars.get(desc);
-                        if (rec.bars != null) {
-                            rec.bars.activate();
-                        }
-                        invisibleBars.remove(desc);
-                    } else {
-                        IActionSet set = desc.createActionSet();
-                        SubActionBars bars = new ActionSetActionBars(window
-								.getActionBars(), window,
-								(IActionBarConfigurer2) window.getWindowConfigurer()
-										.getActionBarConfigurer(), desc.getId());
-                        rec = new SetRec(set, bars);
-                        set.init(window, bars);
-                        sets.add(set);
+			if (!mapDescToRec.containsKey(desc)) {
+				try {
+					SetRec rec;
+					// If the action bars and sets have already been created
+					// then
+					// reuse those action sets
+					if (invisibleBars.containsKey(desc)) {
+						rec = (SetRec) invisibleBars.get(desc);
+						if (rec.bars != null) {
+							rec.bars.activate();
+						}
+						invisibleBars.remove(desc);
+					} else {
+						IActionSet set = desc.createActionSet();
+						SubActionBars bars = new ActionSetActionBars(window.getActionBars(), window,
+								(IActionBarConfigurer2) window.getWindowConfigurer().getActionBarConfigurer(),
+								desc.getId());
+						rec = new SetRec(set, bars);
+						set.init(window, bars);
+						sets.add(set);
 
-                        // only register against the tracker once - check for
-                        // other registrations against the provided extension
-                        Object[] existingRegistrations = window
-                                .getExtensionTracker().getObjects(
-                                        desc.getConfigurationElement()
-                                                .getDeclaringExtension());
-                        if (existingRegistrations.length == 0
-                                || !containsRegistration(existingRegistrations,
-                                        desc)) {
-                            //register the set with the page tracker
-                            //this will be cleaned up by WorkbenchWindow listener
-                            window.getExtensionTracker().registerObject(
-                                    desc.getConfigurationElement().getDeclaringExtension(),
-                                    desc, IExtensionTracker.REF_WEAK);
-                        }
-                    }
-                    mapDescToRec.put(desc, rec);
-                } catch (CoreException e) {
-                    WorkbenchPlugin
-                            .log("Unable to create ActionSet: " + desc.getId(), e);//$NON-NLS-1$
-                }
-            }
-        }
-        // We process action sets in two passes for coolbar purposes. First we
-        // process base contributions
-        // (i.e., actions that the action set contributes to its toolbar), then
-        // we process adjunct contributions
-        // (i.e., actions that the action set contributes to other toolbars).
-        // This type of processing is
-        // necessary in order to maintain group order within a coolitem.
-        PluginActionSetBuilder.processActionSets(sets, window);
+						// only register against the tracker once - check for
+						// other registrations against the provided extension
+						Object[] existingRegistrations = window.getExtensionTracker()
+								.getObjects(desc.getConfigurationElement().getDeclaringExtension());
+						if (existingRegistrations.length == 0 || !containsRegistration(existingRegistrations, desc)) {
+							// register the set with the page tracker
+							// this will be cleaned up by WorkbenchWindow listener
+							window.getExtensionTracker().registerObject(
+									desc.getConfigurationElement().getDeclaringExtension(), desc,
+									IExtensionTracker.REF_WEAK);
+						}
+					}
+					mapDescToRec.put(desc, rec);
+				} catch (CoreException e) {
+					WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId(), e);//$NON-NLS-1$
+				}
+			}
+		}
+		// We process action sets in two passes for coolbar purposes. First we
+		// process base contributions
+		// (i.e., actions that the action set contributes to its toolbar), then
+		// we process adjunct contributions
+		// (i.e., actions that the action set contributes to other toolbars).
+		// This type of processing is
+		// necessary in order to maintain group order within a coolitem.
+		PluginActionSetBuilder.processActionSets(sets, window);
 
-        iter = sets.iterator();
-        while (iter.hasNext()) {
-            PluginActionSet set = (PluginActionSet) iter.next();
-            set.getBars().activate();
-        }
-    }
+		iter = sets.iterator();
+		while (iter.hasNext()) {
+			PluginActionSet set = (PluginActionSet) iter.next();
+			set.getBars().activate();
+		}
+	}
 
-    /**
-     * Return whether the array contains the given action set.
-     *
-     * @param existingRegistrations the array to check
-     * @param set the set to look for
-     * @return whether the set is in the array
-     * @since 3.1
-     */
-    private boolean containsRegistration(Object[] existingRegistrations, IActionSetDescriptor set) {
-        for (Object existingRegistration : existingRegistrations) {
-            if (existingRegistration == set) {
+	/**
+	 * Return whether the array contains the given action set.
+	 *
+	 * @param existingRegistrations the array to check
+	 * @param set                   the set to look for
+	 * @return whether the set is in the array
+	 * @since 3.1
+	 */
+	private boolean containsRegistration(Object[] existingRegistrations, IActionSetDescriptor set) {
+		for (Object existingRegistration : existingRegistrations) {
+			if (existingRegistration == set) {
 				return true;
 			}
-        }
-        return false;
-    }
+		}
+		return false;
+	}
 
-    /**
-     */
-    public IActionSet[] getActionSets() {
-        Collection setRecCollection = mapDescToRec.values();
-        IActionSet result[] = new IActionSet[setRecCollection.size()];
-        int i = 0;
-        for (Iterator iterator = setRecCollection.iterator(); iterator
-                .hasNext(); i++) {
+	/**
+	 */
+	public IActionSet[] getActionSets() {
+		Collection setRecCollection = mapDescToRec.values();
+		IActionSet result[] = new IActionSet[setRecCollection.size()];
+		int i = 0;
+		for (Iterator iterator = setRecCollection.iterator(); iterator.hasNext(); i++) {
 			result[i] = ((SetRec) iterator.next()).set;
 		}
-        return result;
-    }
+		return result;
+	}
 }

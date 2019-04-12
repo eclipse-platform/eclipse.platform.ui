@@ -32,54 +32,49 @@ public interface IStatusAdapterConstants {
 	/**
 	 * Common prefix for properties defined in this interface.
 	 */
-	String PROPERTY_PREFIX = PlatformUI.PLUGIN_ID
-			+ ".workbench.statusHandlers.adapters"; //$NON-NLS-1$
+	String PROPERTY_PREFIX = PlatformUI.PLUGIN_ID + ".workbench.statusHandlers.adapters"; //$NON-NLS-1$
 
 	/**
-	 * This property is used to add title to the adapter. If the adapter is
-	 * shown in a dialog, this property is used to create title of the dialog.
+	 * This property is used to add title to the adapter. If the adapter is shown in
+	 * a dialog, this property is used to create title of the dialog.
 	 *
 	 * <p>
 	 * The property must be of type <code>String</code>.
 	 * </p>
 	 */
-	QualifiedName TITLE_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "title"); //$NON-NLS-1$
+	QualifiedName TITLE_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "title"); //$NON-NLS-1$
 
 	/**
-	 * This property is used to add a timestamp to the adapter. If the adapter
-	 * is shown in the UI, this property can be used for sorting and showing
+	 * This property is used to add a timestamp to the adapter. If the adapter is
+	 * shown in the UI, this property can be used for sorting and showing
 	 * information about the status creation time.
 	 *
 	 * <p>
 	 * The property must be of type <code>Long</code>.
 	 * </p>
 	 */
-	QualifiedName TIMESTAMP_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "timestamp"); //$NON-NLS-1$
+	QualifiedName TIMESTAMP_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "timestamp"); //$NON-NLS-1$
 
 	/**
-	 * This property is used to add an explanation to the adapter. If the
-	 * adapter is shown in the UI, this property should be used to present
-	 * additional explanation for the status.
+	 * This property is used to add an explanation to the adapter. If the adapter is
+	 * shown in the UI, this property should be used to present additional
+	 * explanation for the status.
 	 *
 	 * <p>
 	 * The property must be of type <code>String</code>.
 	 * </p>
 	 */
-	QualifiedName EXPLANATION_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "explanation"); //$NON-NLS-1$
+	QualifiedName EXPLANATION_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "explanation"); //$NON-NLS-1$
 
 	/**
-	 * This property is used to add a hint to the adapter. If the adapter is
-	 * shown in the UI, this property should be used to present suggested
-	 * actions that have to be performed by the user.
+	 * This property is used to add a hint to the adapter. If the adapter is shown
+	 * in the UI, this property should be used to present suggested actions that
+	 * have to be performed by the user.
 	 *
 	 * <p>
 	 * The property must be of type <code>String</code>.
 	 * </p>
 	 */
-	QualifiedName HINT_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "suggestedAction"); //$NON-NLS-1$
+	QualifiedName HINT_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "suggestedAction"); //$NON-NLS-1$
 
 }

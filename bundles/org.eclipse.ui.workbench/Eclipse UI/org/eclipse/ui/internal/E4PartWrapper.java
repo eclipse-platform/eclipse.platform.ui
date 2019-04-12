@@ -66,4 +66,3 @@ public class E4PartWrapper extends ViewPart {
 		}
 	}
 }
-

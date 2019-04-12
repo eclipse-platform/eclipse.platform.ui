@@ -29,7 +29,6 @@ public final class AlwaysEnabledExpression extends Expression {
 
 	public static final AlwaysEnabledExpression INSTANCE = new AlwaysEnabledExpression();
 
-
 	/**
 	 * Not to be instantiated
 	 */

@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
- * The CapabilityFilter is a filter that uses the capabilities
- * support as filter for items.
+ * The CapabilityFilter is a filter that uses the capabilities support as filter
+ * for items.
  */
 public class CapabilityFilter extends ViewerFilter {
 
@@ -33,7 +33,7 @@ public class CapabilityFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		return ! WorkbenchActivityHelper.filterItem(element);
+		return !WorkbenchActivityHelper.filterItem(element);
 	}
 
 }

@@ -44,45 +44,45 @@ import org.osgi.framework.Constants;
  * The Startup preference page.
  */
 public class StartupPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-    private Table pluginsList;
+	private Table pluginsList;
 
-    private Workbench workbench;
+	private Workbench workbench;
 
-    @Override
+	@Override
 	protected Control createContents(Composite parent) {
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
-        Composite composite = createComposite(parent);
+		Composite composite = createComposite(parent);
 
-        createEarlyStartupSelection(composite);
+		createEarlyStartupSelection(composite);
 
-        return composite;
-    }
+		return composite;
+	}
 
-    protected Composite createComposite(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        composite.setLayout(layout);
+	protected Composite createComposite(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
 		GridData data = new GridData(
 				GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL);
-        composite.setLayoutData(data);
-        composite.setFont(parent.getFont());
+		composite.setLayoutData(data);
+		composite.setFont(parent.getFont());
 
-        return composite;
-    }
+		return composite;
+	}
 
-    protected void createEarlyStartupSelection(Composite parent) {
-        Label label = new Label(parent, SWT.NONE);
-        label.setText(WorkbenchMessages.StartupPreferencePage_label);
-        label.setFont(parent.getFont());
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        label.setLayoutData(data);
+	protected void createEarlyStartupSelection(Composite parent) {
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(WorkbenchMessages.StartupPreferencePage_label);
+		label.setFont(parent.getFont());
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(data);
 		pluginsList = new Table(parent, SWT.BORDER | SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL);
-        data = new GridData(GridData.FILL_BOTH);
-        pluginsList.setFont(parent.getFont());
-        pluginsList.setLayoutData(data);
+		data = new GridData(GridData.FILL_BOTH);
+		pluginsList.setFont(parent.getFont());
+		pluginsList.setLayoutData(data);
 		TableViewer viewer = new TableViewer(pluginsList);
 		viewer.setLabelProvider(new LabelProvider() {
 			@Override
@@ -94,43 +94,43 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setInput(workbench.getEarlyActivatedPlugins());
 		updateCheckState();
-    }
+	}
 
 	private void updateCheckState() {
 		HashSet<String> disabledPlugins = new HashSet<>(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
 		for (int i = 0; i < pluginsList.getItemCount(); i++) {
 			TableItem item = pluginsList.getItem(i);
 			String pluginId = ((ContributionInfo) item.getData()).getBundleId();
-            item.setChecked(!disabledPlugins.contains(pluginId));
-        }
-    }
+			item.setChecked(!disabledPlugins.contains(pluginId));
+		}
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench) {
-        this.workbench = (Workbench) workbench;
-    }
+		this.workbench = (Workbench) workbench;
+	}
 
-    @Override
+	@Override
 	protected void performDefaults() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		store.setToDefault(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 		updateCheckState();
-    }
+	}
 
-    @Override
+	@Override
 	public boolean performOk() {
-        StringBuilder preference = new StringBuilder();
+		StringBuilder preference = new StringBuilder();
 		TableItem[] items = pluginsList.getItems();
-        for (int i = 0; i < items.length; i++) {
-            if (!items[i].getChecked()) {
+		for (int i = 0; i < items.length; i++) {
+			if (!items[i].getChecked()) {
 				preference.append(((ContributionInfo) items[i].getData()).getBundleId());
-                preference.append(IPreferenceConstants.SEPARATOR);
-            }
-        }
-        String pref = preference.toString();
-        IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+				preference.append(IPreferenceConstants.SEPARATOR);
+			}
+		}
+		String pref = preference.toString();
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		store.setValue(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP, pref);
-        PrefUtil.savePrefs();
-        return true;
-    }
+		PrefUtil.savePrefs();
+		return true;
+	}
 }

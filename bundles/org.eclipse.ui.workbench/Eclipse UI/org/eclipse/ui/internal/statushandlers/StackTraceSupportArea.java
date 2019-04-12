@@ -40,10 +40,10 @@ import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 
 /**
  * This class is responsible for displaying stack trace retrieved from IStatus.
- * It has similar functionality as details area in {@link WorkbenchStatusDialogManager}.
- * This class will be visible only if it is enabled in
- * {@link WorkbenchStatusDialogManager} and no support provider is passed by
- * {@link Policy}
+ * It has similar functionality as details area in
+ * {@link WorkbenchStatusDialogManager}. This class will be visible only if it
+ * is enabled in {@link WorkbenchStatusDialogManager} and no support provider is
+ * passed by {@link Policy}
  *
  * @see Policy#setErrorSupportProvider
  * @see Policy#getErrorSupportProvider()
@@ -59,8 +59,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 	private List list;
 
 	@Override
-	public Control createSupportArea(final Composite parent,
-			StatusAdapter statusAdapter) {
+	public Control createSupportArea(final Composite parent, StatusAdapter statusAdapter) {
 
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(WorkbenchMessages.StackTraceSupportArea_Title);

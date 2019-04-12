@@ -24,94 +24,93 @@ import org.eclipse.ui.branding.IBundleGroupConstants;
 
 /**
  * A small class to manage the information related to IBundleGroup's.
+ * 
  * @since 3.0
  */
 public class AboutBundleGroupData extends AboutData {
-    private IBundleGroup bundleGroup;
+	private IBundleGroup bundleGroup;
 
-    private URL licenseUrl;
+	private URL licenseUrl;
 
-    private URL featureImageUrl;
+	private URL featureImageUrl;
 
-    private Long featureImageCrc;
+	private Long featureImageCrc;
 
-    private ImageDescriptor featureImage;
+	private ImageDescriptor featureImage;
 
-    public AboutBundleGroupData(IBundleGroup bundleGroup) {
-        super(bundleGroup.getProviderName(), bundleGroup.getName(), bundleGroup
-                .getVersion(), bundleGroup.getIdentifier());
-        this.bundleGroup = bundleGroup;
-    }
+	public AboutBundleGroupData(IBundleGroup bundleGroup) {
+		super(bundleGroup.getProviderName(), bundleGroup.getName(), bundleGroup.getVersion(),
+				bundleGroup.getIdentifier());
+		this.bundleGroup = bundleGroup;
+	}
 
-    public IBundleGroup getBundleGroup() {
-        return bundleGroup;
-    }
+	public IBundleGroup getBundleGroup() {
+		return bundleGroup;
+	}
 
-    public URL getLicenseUrl() {
-        if (licenseUrl == null) {
-			licenseUrl = getURL(bundleGroup
-                    .getProperty(IBundleGroupConstants.LICENSE_HREF));
+	public URL getLicenseUrl() {
+		if (licenseUrl == null) {
+			licenseUrl = getURL(bundleGroup.getProperty(IBundleGroupConstants.LICENSE_HREF));
 		}
 
-        return licenseUrl;
-    }
+		return licenseUrl;
+	}
 
-    public URL getFeatureImageUrl() {
-        if (featureImageUrl == null) {
-			featureImageUrl = getURL(bundleGroup
-                    .getProperty(IBundleGroupConstants.FEATURE_IMAGE));
+	public URL getFeatureImageUrl() {
+		if (featureImageUrl == null) {
+			featureImageUrl = getURL(bundleGroup.getProperty(IBundleGroupConstants.FEATURE_IMAGE));
 		}
-        return featureImageUrl;
-    }
+		return featureImageUrl;
+	}
 
-    public ImageDescriptor getFeatureImage() {
-        if (featureImage == null) {
+	public ImageDescriptor getFeatureImage() {
+		if (featureImage == null) {
 			featureImage = getImage(getFeatureImageUrl());
 		}
-        return featureImage;
-    }
+		return featureImage;
+	}
 
-    public Long getFeatureImageCrc() {
-        if (featureImageCrc != null) {
+	public Long getFeatureImageCrc() {
+		if (featureImageCrc != null) {
 			return featureImageCrc;
 		}
 
-        URL url = getFeatureImageUrl();
-        if (url == null) {
+		URL url = getFeatureImageUrl();
+		if (url == null) {
 			return null;
 		}
 
-        // Get the image bytes
-        InputStream in = null;
-        try {
-            CRC32 checksum = new CRC32();
-            in = new CheckedInputStream(url.openStream(), checksum);
+		// Get the image bytes
+		InputStream in = null;
+		try {
+			CRC32 checksum = new CRC32();
+			in = new CheckedInputStream(url.openStream(), checksum);
 
-            // the contents don't matter, the read just needs a place to go
-            byte[] sink = new byte[1024];
-            while (true) {
+			// the contents don't matter, the read just needs a place to go
+			byte[] sink = new byte[1024];
+			while (true) {
 				if (in.read(sink) <= 0) {
 					break;
 				}
 			}
 
 			featureImageCrc = Long.valueOf(checksum.getValue());
-            return featureImageCrc;
+			return featureImageCrc;
 
-        } catch (IOException e) {
-            return null;
-        } finally {
-            if (in != null) {
+		} catch (IOException e) {
+			return null;
+		} finally {
+			if (in != null) {
 				try {
-                    in.close();
-                } catch (IOException e) {
-                    // do nothing
-                }
+					in.close();
+				} catch (IOException e) {
+					// do nothing
+				}
 			}
-        }
-    }
+		}
+	}
 
-    public String getAboutText() {
-        return bundleGroup.getProperty(IBundleGroupConstants.ABOUT_TEXT);
-    }
+	public String getAboutText() {
+		return bundleGroup.getProperty(IBundleGroupConstants.ABOUT_TEXT);
+	}
 }

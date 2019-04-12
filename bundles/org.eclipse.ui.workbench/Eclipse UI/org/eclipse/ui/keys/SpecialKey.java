@@ -42,306 +42,301 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 public final class SpecialKey extends NaturalKey {
 
 	/**
-	 * An internal map used to lookup instances of <code>SpecialKey</code>
-	 * given the formal string representation of a special key.
+	 * An internal map used to lookup instances of <code>SpecialKey</code> given the
+	 * formal string representation of a special key.
 	 */
 	static SortedMap specialKeysByName = new TreeMap();
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Arrow Down' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Arrow Down' key.
 	 */
 	public static final SpecialKey ARROW_DOWN;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Arrow Left' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Arrow Left' key.
 	 */
 	public static final SpecialKey ARROW_LEFT;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Arrow Right' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Arrow Right' key.
 	 */
 	public static final SpecialKey ARROW_RIGHT;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Arrow Up' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Arrow Up' key.
 	 */
 	public static final SpecialKey ARROW_UP;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Break' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Break' key.
 	 */
 	public static final SpecialKey BREAK;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Caps Lock' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Caps Lock' key.
 	 */
 	public static final SpecialKey CAPS_LOCK;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'End' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'End' key.
 	 */
 	public static final SpecialKey END;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F1' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F1' key.
 	 */
 	public static final SpecialKey F1;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F10' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F10' key.
 	 */
 	public static final SpecialKey F10;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F11' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F11' key.
 	 */
 	public static final SpecialKey F11;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F12' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F12' key.
 	 */
 	public static final SpecialKey F12;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F13' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F13' key.
 	 */
 	public static final SpecialKey F13;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F14' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F14' key.
 	 */
 	public static final SpecialKey F14;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F15' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F15' key.
 	 */
 	public static final SpecialKey F15;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F2' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F2' key.
 	 */
 	public static final SpecialKey F2;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F3' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F3' key.
 	 */
 	public static final SpecialKey F3;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F4' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F4' key.
 	 */
 	public static final SpecialKey F4;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F5' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F5' key.
 	 */
 	public static final SpecialKey F5;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F6' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F6' key.
 	 */
 	public static final SpecialKey F6;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F7' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F7' key.
 	 */
 	public static final SpecialKey F7;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F8' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F8' key.
 	 */
 	public static final SpecialKey F8;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'F9' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'F9' key.
 	 */
 	public static final SpecialKey F9;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Home' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Home' key.
 	 */
 	public static final SpecialKey HOME;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Insert' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Insert' key.
 	 */
 	public static final SpecialKey INSERT;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'NumLock' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'NumLock' key.
 	 */
 	public static final SpecialKey NUM_LOCK;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '0' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '0' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_0;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '1' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '1' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_1;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '2' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '2' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_2;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '3' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '3' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_3;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '4' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '4' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_4;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '5' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '5' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_5;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '6' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '6' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_6;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '7' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '7' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_7;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '8' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '8' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_8;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '9' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '9' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_9;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Add' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Add' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_ADD;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Decimal' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Decimal' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_DECIMAL;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Divide' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Divide' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_DIVIDE;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Enter' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Enter' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_ENTER;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the '=' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * '=' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_EQUAL;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Multiply' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Multiply' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_MULTIPLY;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Subtract' key on the numpad.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Subtract' key on the numpad.
 	 */
 	public static final SpecialKey NUMPAD_SUBTRACT;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Page Down' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Page Down' key.
 	 */
 	public static final SpecialKey PAGE_DOWN;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Page Up' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Page Up' key.
 	 */
 	public static final SpecialKey PAGE_UP;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Pause' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Pause' key.
 	 */
 	public static final SpecialKey PAUSE;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Print Screen' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Print Screen' key.
 	 */
 	public static final SpecialKey PRINT_SCREEN;
 
 	/**
-	 * The single static instance of <code>SpecialKey</code> which represents
-	 * the 'Scroll Lock' key.
+	 * The single static instance of <code>SpecialKey</code> which represents the
+	 * 'Scroll Lock' key.
 	 */
 	public static final SpecialKey SCROLL_LOCK;
 
 	static {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
-		ARROW_DOWN = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.ARROW_DOWN_NAME));
-		ARROW_LEFT = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.ARROW_LEFT_NAME));
-		ARROW_RIGHT = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.ARROW_RIGHT_NAME));
-		ARROW_UP = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.ARROW_UP_NAME));
+		ARROW_DOWN = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.ARROW_DOWN_NAME));
+		ARROW_LEFT = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.ARROW_LEFT_NAME));
+		ARROW_RIGHT = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.ARROW_RIGHT_NAME));
+		ARROW_UP = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.ARROW_UP_NAME));
 		BREAK = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.BREAK_NAME));
-		CAPS_LOCK = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.CAPS_LOCK_NAME));
+		CAPS_LOCK = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.CAPS_LOCK_NAME));
 		END = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.END_NAME));
 		F1 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F1_NAME));
 		F2 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F2_NAME));
@@ -360,63 +355,36 @@ public final class SpecialKey extends NaturalKey {
 		F15 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F15_NAME));
 		HOME = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.HOME_NAME));
 		INSERT = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.INSERT_NAME));
-		NUM_LOCK = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUM_LOCK_NAME));
-		NUMPAD_0 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_0_NAME));
-		NUMPAD_1 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_1_NAME));
-		NUMPAD_2 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_2_NAME));
-		NUMPAD_3 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_3_NAME));
-		NUMPAD_4 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_4_NAME));
-		NUMPAD_5 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_5_NAME));
-		NUMPAD_6 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_6_NAME));
-		NUMPAD_7 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_7_NAME));
-		NUMPAD_8 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_8_NAME));
-		NUMPAD_9 = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_9_NAME));
-		NUMPAD_ADD = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_ADD_NAME));
-		NUMPAD_DECIMAL = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_DECIMAL_NAME));
-		NUMPAD_DIVIDE = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_DIVIDE_NAME));
-		NUMPAD_ENTER = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_ENTER_NAME));
-		NUMPAD_EQUAL = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_EQUAL_NAME));
-		NUMPAD_MULTIPLY = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_MULTIPLY_NAME));
-		NUMPAD_SUBTRACT = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.NUMPAD_SUBTRACT_NAME));
-		PAGE_DOWN = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.PAGE_DOWN_NAME));
-		PAGE_UP = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.PAGE_UP_NAME));
+		NUM_LOCK = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUM_LOCK_NAME));
+		NUMPAD_0 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_0_NAME));
+		NUMPAD_1 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_1_NAME));
+		NUMPAD_2 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_2_NAME));
+		NUMPAD_3 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_3_NAME));
+		NUMPAD_4 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_4_NAME));
+		NUMPAD_5 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_5_NAME));
+		NUMPAD_6 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_6_NAME));
+		NUMPAD_7 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_7_NAME));
+		NUMPAD_8 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_8_NAME));
+		NUMPAD_9 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_9_NAME));
+		NUMPAD_ADD = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_ADD_NAME));
+		NUMPAD_DECIMAL = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_DECIMAL_NAME));
+		NUMPAD_DIVIDE = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_DIVIDE_NAME));
+		NUMPAD_ENTER = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_ENTER_NAME));
+		NUMPAD_EQUAL = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_EQUAL_NAME));
+		NUMPAD_MULTIPLY = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_MULTIPLY_NAME));
+		NUMPAD_SUBTRACT = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.NUMPAD_SUBTRACT_NAME));
+		PAGE_DOWN = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.PAGE_DOWN_NAME));
+		PAGE_UP = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.PAGE_UP_NAME));
 		PAUSE = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.PAUSE_NAME));
-		PRINT_SCREEN = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.PRINT_SCREEN_NAME));
-		SCROLL_LOCK = new SpecialKey(lookup
-				.formalKeyLookup(IKeyLookup.SCROLL_LOCK_NAME));
+		PRINT_SCREEN = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.PRINT_SCREEN_NAME));
+		SCROLL_LOCK = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.SCROLL_LOCK_NAME));
 
-		specialKeysByName.put(SpecialKey.ARROW_DOWN.toString(),
-				SpecialKey.ARROW_DOWN);
-		specialKeysByName.put(SpecialKey.ARROW_LEFT.toString(),
-				SpecialKey.ARROW_LEFT);
-		specialKeysByName.put(SpecialKey.ARROW_RIGHT.toString(),
-				SpecialKey.ARROW_RIGHT);
-		specialKeysByName.put(SpecialKey.ARROW_UP.toString(),
-				SpecialKey.ARROW_UP);
+		specialKeysByName.put(SpecialKey.ARROW_DOWN.toString(), SpecialKey.ARROW_DOWN);
+		specialKeysByName.put(SpecialKey.ARROW_LEFT.toString(), SpecialKey.ARROW_LEFT);
+		specialKeysByName.put(SpecialKey.ARROW_RIGHT.toString(), SpecialKey.ARROW_RIGHT);
+		specialKeysByName.put(SpecialKey.ARROW_UP.toString(), SpecialKey.ARROW_UP);
 		specialKeysByName.put(SpecialKey.BREAK.toString(), SpecialKey.BREAK);
-		specialKeysByName.put(SpecialKey.CAPS_LOCK.toString(),
-				SpecialKey.CAPS_LOCK);
+		specialKeysByName.put(SpecialKey.CAPS_LOCK.toString(), SpecialKey.CAPS_LOCK);
 		specialKeysByName.put(SpecialKey.END.toString(), SpecialKey.END);
 		specialKeysByName.put(SpecialKey.F1.toString(), SpecialKey.F1);
 		specialKeysByName.put(SpecialKey.F10.toString(), SpecialKey.F10);
@@ -433,60 +401,37 @@ public final class SpecialKey extends NaturalKey {
 		specialKeysByName.put(SpecialKey.F7.toString(), SpecialKey.F7);
 		specialKeysByName.put(SpecialKey.F8.toString(), SpecialKey.F8);
 		specialKeysByName.put(SpecialKey.F9.toString(), SpecialKey.F9);
-		specialKeysByName.put(SpecialKey.NUM_LOCK.toString(),
-				SpecialKey.NUM_LOCK);
-		specialKeysByName.put(SpecialKey.NUMPAD_0.toString(),
-				SpecialKey.NUMPAD_0);
-		specialKeysByName.put(SpecialKey.NUMPAD_1.toString(),
-				SpecialKey.NUMPAD_1);
-		specialKeysByName.put(SpecialKey.NUMPAD_2.toString(),
-				SpecialKey.NUMPAD_2);
-		specialKeysByName.put(SpecialKey.NUMPAD_3.toString(),
-				SpecialKey.NUMPAD_3);
-		specialKeysByName.put(SpecialKey.NUMPAD_4.toString(),
-				SpecialKey.NUMPAD_4);
-		specialKeysByName.put(SpecialKey.NUMPAD_5.toString(),
-				SpecialKey.NUMPAD_5);
-		specialKeysByName.put(SpecialKey.NUMPAD_6.toString(),
-				SpecialKey.NUMPAD_6);
-		specialKeysByName.put(SpecialKey.NUMPAD_7.toString(),
-				SpecialKey.NUMPAD_7);
-		specialKeysByName.put(SpecialKey.NUMPAD_8.toString(),
-				SpecialKey.NUMPAD_8);
-		specialKeysByName.put(SpecialKey.NUMPAD_9.toString(),
-				SpecialKey.NUMPAD_9);
-		specialKeysByName.put(SpecialKey.NUMPAD_ADD.toString(),
-				SpecialKey.NUMPAD_ADD);
-		specialKeysByName.put(SpecialKey.NUMPAD_DECIMAL.toString(),
-				SpecialKey.NUMPAD_DECIMAL);
-		specialKeysByName.put(SpecialKey.NUMPAD_DIVIDE.toString(),
-				SpecialKey.NUMPAD_DIVIDE);
-		specialKeysByName.put(SpecialKey.NUMPAD_ENTER.toString(),
-				SpecialKey.NUMPAD_ENTER);
-		specialKeysByName.put(SpecialKey.NUMPAD_EQUAL.toString(),
-				SpecialKey.NUMPAD_EQUAL);
-		specialKeysByName.put(SpecialKey.NUMPAD_MULTIPLY.toString(),
-				SpecialKey.NUMPAD_MULTIPLY);
-		specialKeysByName.put(SpecialKey.NUMPAD_SUBTRACT.toString(),
-				SpecialKey.NUMPAD_SUBTRACT);
+		specialKeysByName.put(SpecialKey.NUM_LOCK.toString(), SpecialKey.NUM_LOCK);
+		specialKeysByName.put(SpecialKey.NUMPAD_0.toString(), SpecialKey.NUMPAD_0);
+		specialKeysByName.put(SpecialKey.NUMPAD_1.toString(), SpecialKey.NUMPAD_1);
+		specialKeysByName.put(SpecialKey.NUMPAD_2.toString(), SpecialKey.NUMPAD_2);
+		specialKeysByName.put(SpecialKey.NUMPAD_3.toString(), SpecialKey.NUMPAD_3);
+		specialKeysByName.put(SpecialKey.NUMPAD_4.toString(), SpecialKey.NUMPAD_4);
+		specialKeysByName.put(SpecialKey.NUMPAD_5.toString(), SpecialKey.NUMPAD_5);
+		specialKeysByName.put(SpecialKey.NUMPAD_6.toString(), SpecialKey.NUMPAD_6);
+		specialKeysByName.put(SpecialKey.NUMPAD_7.toString(), SpecialKey.NUMPAD_7);
+		specialKeysByName.put(SpecialKey.NUMPAD_8.toString(), SpecialKey.NUMPAD_8);
+		specialKeysByName.put(SpecialKey.NUMPAD_9.toString(), SpecialKey.NUMPAD_9);
+		specialKeysByName.put(SpecialKey.NUMPAD_ADD.toString(), SpecialKey.NUMPAD_ADD);
+		specialKeysByName.put(SpecialKey.NUMPAD_DECIMAL.toString(), SpecialKey.NUMPAD_DECIMAL);
+		specialKeysByName.put(SpecialKey.NUMPAD_DIVIDE.toString(), SpecialKey.NUMPAD_DIVIDE);
+		specialKeysByName.put(SpecialKey.NUMPAD_ENTER.toString(), SpecialKey.NUMPAD_ENTER);
+		specialKeysByName.put(SpecialKey.NUMPAD_EQUAL.toString(), SpecialKey.NUMPAD_EQUAL);
+		specialKeysByName.put(SpecialKey.NUMPAD_MULTIPLY.toString(), SpecialKey.NUMPAD_MULTIPLY);
+		specialKeysByName.put(SpecialKey.NUMPAD_SUBTRACT.toString(), SpecialKey.NUMPAD_SUBTRACT);
 		specialKeysByName.put(SpecialKey.HOME.toString(), SpecialKey.HOME);
 		specialKeysByName.put(SpecialKey.INSERT.toString(), SpecialKey.INSERT);
-		specialKeysByName.put(SpecialKey.PAGE_DOWN.toString(),
-				SpecialKey.PAGE_DOWN);
-		specialKeysByName
-				.put(SpecialKey.PAGE_UP.toString(), SpecialKey.PAGE_UP);
+		specialKeysByName.put(SpecialKey.PAGE_DOWN.toString(), SpecialKey.PAGE_DOWN);
+		specialKeysByName.put(SpecialKey.PAGE_UP.toString(), SpecialKey.PAGE_UP);
 		specialKeysByName.put(SpecialKey.PAUSE.toString(), SpecialKey.PAUSE);
-		specialKeysByName.put(SpecialKey.PRINT_SCREEN.toString(),
-				SpecialKey.PRINT_SCREEN);
-		specialKeysByName.put(SpecialKey.SCROLL_LOCK.toString(),
-				SpecialKey.SCROLL_LOCK);
+		specialKeysByName.put(SpecialKey.PRINT_SCREEN.toString(), SpecialKey.PRINT_SCREEN);
+		specialKeysByName.put(SpecialKey.SCROLL_LOCK.toString(), SpecialKey.SCROLL_LOCK);
 	}
 
 	/**
 	 * Constructs an instance of <code>SpecialKey</code> given a name.
 	 *
-	 * @param key
-	 *            The key to be wrapped.
+	 * @param key The key to be wrapped.
 	 */
 	private SpecialKey(final int key) {
 		super(key);

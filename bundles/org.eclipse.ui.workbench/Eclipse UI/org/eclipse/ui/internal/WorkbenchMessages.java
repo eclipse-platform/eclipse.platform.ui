@@ -26,13 +26,12 @@ package org.eclipse.ui.internal;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Message class for workbench messages.  These messages are used
- * throughout the workbench.
+ * Message class for workbench messages. These messages are used throughout the
+ * workbench.
  *
  */
 public class WorkbenchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.messages";//$NON-NLS-1$
-
 
 	public static String ThemingEnabled;
 
@@ -42,36 +41,27 @@ public class WorkbenchMessages extends NLS {
 
 	public static String BundleSigningTray_Cant_Find_Service;
 
-
 	public static String BundleSigningTray_Determine_Signer_For;
-
 
 	public static String BundleSigningTray_Signing_Certificate;
 
-
 	public static String BundleSigningTray_Signing_Date;
-
 
 	public static String BundleSigningTray_Unget_Signing_Service;
 
-
 	public static String BundleSigningTray_Unknown;
-
 
 	public static String BundleSigningTray_Unsigned;
 
-
 	public static String BundleSigningTray_Working;
 
-
 	public static String NewWorkingSet;
-
 
 	public static String PlatformUI_NoWorkbench;
 
 	public static String Workbench_CreatingWorkbenchTwice;
 
-    public static String StatusUtil_errorOccurred;
+	public static String StatusUtil_errorOccurred;
 
 	// ==============================================================================
 	// Workbench Actions
@@ -109,7 +99,6 @@ public class WorkbenchMessages extends NLS {
 	public static String Workbench_properties;
 	public static String Workbench_propertiesToolTip;
 
-
 	public static String Workbench_print;
 	public static String Workbench_printToolTip;
 	public static String ExportResourcesAction_text;
@@ -124,7 +113,6 @@ public class WorkbenchMessages extends NLS {
 	public static String OpenRecent_unableToOpen;
 	public static String Exit_text;
 	public static String Exit_toolTip;
-
 
 	// --- Edit Menu ---
 	public static String Workbench_undo;
@@ -181,10 +169,10 @@ public class WorkbenchMessages extends NLS {
 	public static String SelectPerspective_open_button_label;
 	public static String Workbench_showPerspectiveError;
 	public static String ChangeToPerspectiveMenu_errorTitle;
-    public static String OpenPerspectiveDialogAction_text;
-    public static String OpenPerspectiveDialogAction_tooltip;
+	public static String OpenPerspectiveDialogAction_text;
+	public static String OpenPerspectiveDialogAction_tooltip;
 
-    public static String ShowView_title;
+	public static String ShowView_title;
 	public static String ShowView_shellTitle;
 	public static String ShowView_selectViewHelp;
 	public static String ShowView_noDesc;
@@ -304,8 +292,6 @@ public class WorkbenchMessages extends NLS {
 	// --- Filtered Table Base ---
 	public static String FilteredTableBase_Filter;
 
-
-
 	// --- Help Menu ---
 	public static String AboutAction_text;
 	public static String AboutAction_toolTip;
@@ -317,7 +303,6 @@ public class WorkbenchMessages extends NLS {
 	public static String DynamicHelpAction_toolTip;
 	public static String AboutDialog_shellTitle;
 	public static String AboutDialog_defaultProductName;
-
 
 	public static String AboutDialog_DetailsButton;
 	public static String ProductInfoDialog_errorTitle;
@@ -357,16 +342,13 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutFeaturesDialog_pluginInfoMessage;
 	public static String AboutFeaturesDialog_noInfoTitle;
 
-
 	public static String AboutFeaturesDialog_SimpleTitle;
 	public static String AboutSystemDialog_browseErrorLogName;
 	public static String AboutSystemDialog_copyToClipboardName;
 	public static String AboutSystemDialog_noLogTitle;
 	public static String AboutSystemDialog_noLogMessage;
 
-
 	public static String AboutSystemPage_FetchJobTitle;
-
 
 	public static String AboutSystemPage_RetrievingSystemInfo;
 
@@ -374,14 +356,13 @@ public class WorkbenchMessages extends NLS {
 	public static String PerspectiveBarContributionItem_toolTip;
 	public static String PerspectiveBarNewContributionItem_toolTip;
 
-	//--- Coolbar ---
+	// --- Coolbar ---
 	public static String WorkbenchWindow_FileToolbar;
 	public static String WorkbenchWindow_EditToolbar;
 	public static String WorkbenchWindow_NavigateToolbar;
 	public static String WorkbenchWindow_HelpToolbar;
 	public static String WorkbenchWindow_searchCombo_toolTip;
 	public static String WorkbenchWindow_searchCombo_text;
-
 
 	public static String WorkbenchWindow_close;
 	public static String WorkbenchPage_ErrorCreatingPerspective;
@@ -408,7 +389,6 @@ public class WorkbenchMessages extends NLS {
 	public static String GoBack_toolTip;
 	public static String GoInto_text;
 	public static String GoInto_toolTip;
-
 
 	public static String ICategory_other;
 	public static String ICategory_general;
@@ -457,7 +437,7 @@ public class WorkbenchMessages extends NLS {
 	// Preference Pages
 	// ==============================================================================
 	public static String PreferenceNode_errorMessage;
-    public static String PreferenceNode_NotFound;
+	public static String PreferenceNode_NotFound;
 	public static String Preference_note;
 	public static String Preference_import;
 	public static String Preference_export;
@@ -500,13 +480,12 @@ public class WorkbenchMessages extends NLS {
 	public static String FileEditorPreference_existsTitle;
 	public static String FileEditorPreference_existsMessage;
 	public static String FileEditorPreference_defaultLabel;
-    public static String FileEditorPreference_contentTypesRelatedLink;
-    public static String FileEditorPreference_isLocked;
+	public static String FileEditorPreference_contentTypesRelatedLink;
+	public static String FileEditorPreference_isLocked;
 
 	public static String FileExtension_extensionEmptyMessage;
 	public static String FileExtension_fileNameInvalidMessage;
 	public static String FilteredPreferenceDialog_Key_Scrolling;
-
 
 	public static String FilteredPreferenceDialog_PreferenceSaveFailed;
 	public static String FilteredPreferenceDialog_Resize;
@@ -544,7 +523,7 @@ public class WorkbenchMessages extends NLS {
 
 	public static String PerspectiveLabelProvider_unknown;
 
-	//---- General Preferences----
+	// ---- General Preferences----
 	public static String PreferencePage_noDescription;
 	public static String PreferencePageParameterValues_pageLabelSeparator;
 
@@ -601,7 +580,6 @@ public class WorkbenchMessages extends NLS {
 	public static String Error;
 	public static String Information;
 
-
 	public static String InstallationDialog_ShellTitle;
 
 	public static String Workbench_NeedsClose_Title;
@@ -635,16 +613,15 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorManager_saveChangesQuestion;
 	public static String EditorManager_closeWithoutPromptingOption;
 	public static String EditorManager_saveChangesOptionallyQuestion;
-    public static String EditorManager_missing_editor_descriptor;
-    public static String EditorManager_no_in_place_support;
-    public static String EditorManager_no_persisted_state;
-    public static String EditorManager_no_input_factory_ID;
-    public static String EditorManager_bad_element_factory;
-    public static String EditorManager_create_element_returned_null;
-    public static String EditorManager_wrong_createElement_result;
-    public static String EditorManager_backgroundSaveJobName;
+	public static String EditorManager_missing_editor_descriptor;
+	public static String EditorManager_no_in_place_support;
+	public static String EditorManager_no_persisted_state;
+	public static String EditorManager_no_input_factory_ID;
+	public static String EditorManager_bad_element_factory;
+	public static String EditorManager_create_element_returned_null;
+	public static String EditorManager_wrong_createElement_result;
+	public static String EditorManager_backgroundSaveJobName;
 	public static String EditorManager_largeDocumentWarning;
-
 
 	public static String ExternalEditor_errorMessage;
 	public static String Save;
@@ -657,7 +634,6 @@ public class WorkbenchMessages extends NLS {
 	public static String SaveableHelper_Cancel;
 	public static String SaveableHelper_Dont_Save;
 	public static String SaveableHelper_Save_Selected;
-
 
 	// ==============================================================================
 	// Perspective Framework
@@ -673,8 +649,6 @@ public class WorkbenchMessages extends NLS {
 
 	public static String Perspective_localCopyLabel;
 	public static String WorkbenchPage_problemRestoringTitle;
-
-
 
 	// ==============================================================================
 	// Views Framework
@@ -693,8 +667,8 @@ public class WorkbenchMessages extends NLS {
 
 	public static String WorkbenchPage_UnknownLabel;
 
-
-	// These four keys are marked as unused by the NLS search, but they are indirectly used
+	// These four keys are marked as unused by the NLS search, but they are
+	// indirectly used
 	// and should be removed.
 	public static String PartPane_sizeLeft;
 	public static String PartPane_sizeRight;
@@ -716,7 +690,6 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPage_IllegalSecondaryId;
 	public static String WorkbenchPage_IllegalViewMode;
 	public static String WorkbenchPart_AutoTitleFormat;
-
 
 	public static String AbstractWorkingSetManager_updatersActivating;
 	public static String DecoratorManager_ErrorActivatingDecorator;
@@ -820,7 +793,8 @@ public class WorkbenchMessages extends NLS {
 	public static String SystemSummary_sectionTitle;
 	public static String SystemSummary_sectionError;
 
-	// paramter 0 is the feature name, parameter 1 is the version and parameter 2 is the Id
+	// paramter 0 is the feature name, parameter 1 is the version and parameter 2 is
+	// the Id
 	public static String SystemSummary_featureVersion;
 
 	public static String SystemSummary_descriptorIdVersionState;
@@ -856,7 +830,7 @@ public class WorkbenchMessages extends NLS {
 
 	public static String WorkbenchEncoding_invalidCharset;
 
-	//==============================================================
+	// ==============================================================
 	// Undo/Redo Support
 
 	public static String Operations_undoCommand;
@@ -886,7 +860,7 @@ public class WorkbenchMessages extends NLS {
 	public static String Operations_stoppedOnUndoErrorStatus;
 	public static String Operations_stoppedOnRedoErrorStatus;
 
-	//==============================================================
+	// ==============================================================
 	// Heap Status
 
 	public static String HeapStatus_status;
@@ -902,33 +876,31 @@ public class WorkbenchMessages extends NLS {
 
 	public static String SplitValues_Horizontal;
 
-
 	public static String SplitValues_Vertical;
 
+	// ==============================================================================
+	// Content Types preference page
+	// ==============================================================================
 
-    // ==============================================================================
-    // Content Types preference page
-    // ==============================================================================
-
-    public static String ContentTypes_lockedFormat;
-    public static String ContentTypes_characterSetLabel;
-    public static String ContentTypes_characterSetUpdateLabel;
-    public static String ContentTypes_unsupportedEncoding;
-    public static String ContentTypes_fileAssociationsLabel;
-    public static String ContentTypes_fileAssociationsAddLabel;
-    public static String ContentTypes_fileAssociationsEditLabel;
-    public static String ContentTypes_fileAssociationsRemoveLabel;
-    public static String ContentTypes_contentTypesLabel;
-    public static String ContentTypes_errorDialogMessage;
-    public static String ContentTypes_FileEditorsRelatedLink;
-    public static String ContentTypes_addDialog_title;
-    public static String ContentTypes_addDialog_messageHeader;
-    public static String ContentTypes_addDialog_message;
-    public static String ContentTypes_addDialog_label;
-    public static String ContentTypes_editDialog_title;
-    public static String ContentTypes_editDialog_messageHeader;
-    public static String ContentTypes_editDialog_message;
-    public static String ContentTypes_editDialog_label;
+	public static String ContentTypes_lockedFormat;
+	public static String ContentTypes_characterSetLabel;
+	public static String ContentTypes_characterSetUpdateLabel;
+	public static String ContentTypes_unsupportedEncoding;
+	public static String ContentTypes_fileAssociationsLabel;
+	public static String ContentTypes_fileAssociationsAddLabel;
+	public static String ContentTypes_fileAssociationsEditLabel;
+	public static String ContentTypes_fileAssociationsRemoveLabel;
+	public static String ContentTypes_contentTypesLabel;
+	public static String ContentTypes_errorDialogMessage;
+	public static String ContentTypes_FileEditorsRelatedLink;
+	public static String ContentTypes_addDialog_title;
+	public static String ContentTypes_addDialog_messageHeader;
+	public static String ContentTypes_addDialog_message;
+	public static String ContentTypes_addDialog_label;
+	public static String ContentTypes_editDialog_title;
+	public static String ContentTypes_editDialog_messageHeader;
+	public static String ContentTypes_editDialog_message;
+	public static String ContentTypes_editDialog_label;
 	public static String ContentTypes_addRootContentTypeButton;
 	public static String ContentTypes_addChildContentTypeButton;
 	public static String ContentTypes_removeContentTypeButton;
@@ -939,36 +911,36 @@ public class WorkbenchMessages extends NLS {
 	public static String ContentTypes_newContentTypeDialog_defaultNameWithParent;
 	public static String ContentTypes_newContentTypeDialog_invalidContentTypeName;
 	public static String ContentTypes_failedAtEditingContentTypes;
-    public static String Edit;
+	public static String Edit;
 	public static String ContentTypes_editorAssociations;
 	public static String ContentTypes_editorAssociationAddLabel;
 	public static String ContentTypes_editorAssociationRemoveLabel;
 
-    // =========================================================================
-    // Deprecated actions support
-    // =========================================================================
-    public static String CommandService_AutogeneratedCategoryName;
-    public static String CommandService_AutogeneratedCategoryDescription;
-    public static String LegacyActionPersistence_AutogeneratedCommandName;
+	// =========================================================================
+	// Deprecated actions support
+	// =========================================================================
+	public static String CommandService_AutogeneratedCategoryName;
+	public static String CommandService_AutogeneratedCategoryDescription;
+	public static String LegacyActionPersistence_AutogeneratedCommandName;
 
-    // ==============================================================================
-    // Trim Common UI
-    // ==============================================================================
+	// ==============================================================================
+	// Trim Common UI
+	// ==============================================================================
 
-    // Trim Menu item labels
-    public static String TrimCommon_DockOn;
-    public static String TrimCommon_Left;
-    public static String TrimCommon_Right;
-    public static String TrimCommon_Bottom;
-    public static String TrimCommon_Top;
-    public static String TrimCommon_Close;
+	// Trim Menu item labels
+	public static String TrimCommon_DockOn;
+	public static String TrimCommon_Left;
+	public static String TrimCommon_Right;
+	public static String TrimCommon_Bottom;
+	public static String TrimCommon_Top;
+	public static String TrimCommon_Close;
 
-    // Trim area Display Names
-    public static String TrimCommon_Progress_TrimName;
+	// Trim area Display Names
+	public static String TrimCommon_Progress_TrimName;
 
-    // FilteredItemsSelectionDialog
-    public static String FilteredItemsSelectionDialog_cacheSearchJob_taskName;
-    public static String FilteredItemsSelectionDialog_menu;
+	// FilteredItemsSelectionDialog
+	public static String FilteredItemsSelectionDialog_cacheSearchJob_taskName;
+	public static String FilteredItemsSelectionDialog_menu;
 	public static String FilteredItemsSelectionDialog_refreshJob;
 	public static String FilteredItemsSelectionDialog_progressRefreshJob;
 	public static String FilteredItemsSelectionDialog_cacheRefreshJob;
@@ -980,28 +952,27 @@ public class WorkbenchMessages extends NLS {
 	public static String FilteredItemsSelectionDialog_removeItemsFromHistoryAction;
 	public static String FilteredItemsSelectionDialog_searchJob_taskName;
 	public static String FilteredItemsSelectionDialog_separatorLabel;
-    public static String FilteredItemsSelectionDialog_storeError;
-    public static String FilteredItemsSelectionDialog_restoreError;
-    public static String FilteredItemsSelectionDialog_nItemsSelected;
+	public static String FilteredItemsSelectionDialog_storeError;
+	public static String FilteredItemsSelectionDialog_restoreError;
+	public static String FilteredItemsSelectionDialog_nItemsSelected;
 
-    // AbstractSearcher
-    public static String FilteredItemsSelectionDialog_jobLabel;
-    public static String FilteredItemsSelectionDialog_jobError;
+	// AbstractSearcher
+	public static String FilteredItemsSelectionDialog_jobLabel;
+	public static String FilteredItemsSelectionDialog_jobError;
 
-    // GranualProgressMonitor
-    public static String FilteredItemsSelectionDialog_taskProgressMessage;
-    public static String FilteredItemsSelectionDialog_subtaskProgressMessage;
+	// GranualProgressMonitor
+	public static String FilteredItemsSelectionDialog_taskProgressMessage;
+	public static String FilteredItemsSelectionDialog_subtaskProgressMessage;
 
-    static {
+	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, WorkbenchMessages.class);
 	}
 
+	// Content assist support
+	public static String ContentAssist_Cue_Description_Key;
 
-    // Content assist support
-    public static String ContentAssist_Cue_Description_Key;
-
-	//Settings transfer
+	// Settings transfer
 	public static String WorkbenchLayoutSettings_Name;
 	public static String WorkbenchSettings_CouldNotCreateDirectories;
 	public static String WorkbenchSettings_CouldNotFindLocation;

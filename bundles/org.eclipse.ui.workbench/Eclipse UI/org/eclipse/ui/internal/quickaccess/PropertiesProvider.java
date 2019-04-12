@@ -53,23 +53,19 @@ public class PropertiesProvider extends QuickAccessProvider {
 			if (activePage != null) {
 				PropertyPageManager pageManager = new PropertyPageManager();
 				ISelection selection = activePage.getSelection();
-				if (selection instanceof IStructuredSelection
-						&& !selection.isEmpty()) {
+				if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 					Object element = ((IStructuredSelection) selection).getFirstElement();
 					PropertyPageContributorManager.getManager().contribute(pageManager, element);
 					List list = pageManager.getElements(PreferenceManager.PRE_ORDER);
 					IPreferenceNode[] properties = (IPreferenceNode[]) list.toArray(new IPreferenceNode[list.size()]);
 					for (IPreferenceNode property : properties) {
-						PropertiesElement propertiesElement = new PropertiesElement(
-								element, property, this);
-						idToElement.put(propertiesElement.getId(),
-								propertiesElement);
+						PropertiesElement propertiesElement = new PropertiesElement(element, property, this);
+						idToElement.put(propertiesElement.getId(), propertiesElement);
 					}
 				}
 			}
 		}
-		return (QuickAccessElement[]) idToElement.values().toArray(
-				new QuickAccessElement[idToElement.values().size()]);
+		return (QuickAccessElement[]) idToElement.values().toArray(new QuickAccessElement[idToElement.values().size()]);
 	}
 
 	@Override
@@ -79,8 +75,7 @@ public class PropertiesProvider extends QuickAccessProvider {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 	}
 
 	@Override

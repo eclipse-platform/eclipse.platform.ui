@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class E4Util {
 
 	// debug tracing
-	private static final String OPTION_DEBUG_E4 = "org.eclipse.ui.workbench/debug/e4"; //$NON-NLS-1$;
+	private static final String OPTION_DEBUG_E4 = "org.eclipse.ui.workbench/debug/e4"; //$NON-NLS-1$ ;
 
 	public static final boolean DEBUG_E4;
 

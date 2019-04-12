@@ -45,147 +45,144 @@ import org.eclipse.ui.intro.IntroContentDetector;
  */
 public class WorkbenchIntroManager implements IIntroManager {
 
-    private final Workbench workbench;
+	private final Workbench workbench;
 
-    /**
-     * Create a new instance of the receiver.
-     *
-     * @param workbench the workbench instance
-     */
-    WorkbenchIntroManager(Workbench workbench) {
-        this.workbench = workbench;
-        workbench.getExtensionTracker().registerHandler(new IExtensionChangeHandler(){
+	/**
+	 * Create a new instance of the receiver.
+	 *
+	 * @param workbench the workbench instance
+	 */
+	WorkbenchIntroManager(Workbench workbench) {
+		this.workbench = workbench;
+		workbench.getExtensionTracker().registerHandler(new IExtensionChangeHandler() {
 
-            @Override
-			public void addExtension(IExtensionTracker tracker,IExtension extension) {
-                //Do nothing
-            }
+			@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {
+				// Do nothing
+			}
 
 			@Override
 			public void removeExtension(IExtension source, Object[] objects) {
-                for (Object object : objects) {
-                    if (object instanceof IIntroPart) {
-                        closeIntro((IIntroPart) object);
-                    }
-                }
+				for (Object object : objects) {
+					if (object instanceof IIntroPart) {
+						closeIntro((IIntroPart) object);
+					}
+				}
 
-			}}, null);
+			}
+		}, null);
 
-    }
+	}
 
-    /**
-     * The currently active introPart in this workspace, <code>null</code> if none.
-     */
-    private IIntroPart introPart;
+	/**
+	 * The currently active introPart in this workspace, <code>null</code> if none.
+	 */
+	private IIntroPart introPart;
 
-    @Override
+	@Override
 	public boolean closeIntro(IIntroPart part) {
-        if (introPart == null || !introPart.equals(part)) {
+		if (introPart == null || !introPart.equals(part)) {
 			return false;
 		}
 
-        IViewPart introView = getViewIntroAdapterPart();
-        if (introView != null) {
-            //assumption is that there is only ever one intro per workbench
-            //if we ever support one per window then this will need revisiting
-            IWorkbenchPage page = introView.getSite().getPage();
+		IViewPart introView = getViewIntroAdapterPart();
+		if (introView != null) {
+			// assumption is that there is only ever one intro per workbench
+			// if we ever support one per window then this will need revisiting
+			IWorkbenchPage page = introView.getSite().getPage();
 			if (page == null) {
 				introPart = null;
 				return true;
 			}
-            IViewReference reference = page
-                    .findViewReference(IIntroConstants.INTRO_VIEW_ID);
-            page.hideView(introView);
-            if (reference == null || reference.getPart(false) == null) {
-                introPart = null;
-                return true;
-            }
-            return false;
-        }
+			IViewReference reference = page.findViewReference(IIntroConstants.INTRO_VIEW_ID);
+			page.hideView(introView);
+			if (reference == null || reference.getPart(false) == null) {
+				introPart = null;
+				return true;
+			}
+			return false;
+		}
 
 		// if there is no part then null our reference
 		introPart = null;
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-	public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
-            boolean standby) {
-        if (preferredWindow == null) {
+	@Override
+	public IIntroPart showIntro(IWorkbenchWindow preferredWindow, boolean standby) {
+		if (preferredWindow == null) {
 			preferredWindow = this.workbench.getActiveWorkbenchWindow();
 		}
 
-        if (preferredWindow == null) {
+		if (preferredWindow == null) {
 			return null;
 		}
 
-        ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
-        if (viewPart == null) {
-            createIntro(preferredWindow);
-        } else {
-            try {
-                IWorkbenchPage page = viewPart.getSite().getPage();
-                IWorkbenchWindow window = page.getWorkbenchWindow();
-                if (!window.equals(preferredWindow)) {
-                    window.getShell().setActive();
-                }
+		ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
+		if (viewPart == null) {
+			createIntro(preferredWindow);
+		} else {
+			try {
+				IWorkbenchPage page = viewPart.getSite().getPage();
+				IWorkbenchWindow window = page.getWorkbenchWindow();
+				if (!window.equals(preferredWindow)) {
+					window.getShell().setActive();
+				}
 
-                page.showView(IIntroConstants.INTRO_VIEW_ID);
-            } catch (PartInitException e) {
-                WorkbenchPlugin
-                        .log(
-                                "Could not open intro", new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open intro", e)); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-        }
-        setIntroStandby(introPart, standby);
-        return introPart;
-    }
+				page.showView(IIntroConstants.INTRO_VIEW_ID);
+			} catch (PartInitException e) {
+				WorkbenchPlugin.log("Could not open intro", new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, //$NON-NLS-1$
+						IStatus.ERROR, "Could not open intro", e)); //$NON-NLS-1$
+			}
+		}
+		setIntroStandby(introPart, standby);
+		return introPart;
+	}
 
-    /**
-     * @param testWindow the window to test
-     * @return whether the intro exists in the given window
-     */
-    /*package*/boolean isIntroInWindow(IWorkbenchWindow testWindow) {
-        ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
-        if (viewPart == null) {
+	/**
+	 * @param testWindow the window to test
+	 * @return whether the intro exists in the given window
+	 */
+	/* package */boolean isIntroInWindow(IWorkbenchWindow testWindow) {
+		ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
+		if (viewPart == null) {
 			return false;
 		}
 
-        IWorkbenchWindow window = viewPart.getSite().getWorkbenchWindow();
-        if (window.equals(testWindow)) {
-            return true;
-        }
-        return false;
-    }
+		IWorkbenchWindow window = viewPart.getSite().getWorkbenchWindow();
+		if (window.equals(testWindow)) {
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     * Create a new Intro area (a view, currently) in the provided window.  If there is no intro
-     * descriptor for this workbench then no work is done.
-     *
-     * @param preferredWindow the window to create the intro in.
-     */
-    private void createIntro(IWorkbenchWindow preferredWindow) {
-        if (this.workbench.getIntroDescriptor() == null) {
+	/**
+	 * Create a new Intro area (a view, currently) in the provided window. If there
+	 * is no intro descriptor for this workbench then no work is done.
+	 *
+	 * @param preferredWindow the window to create the intro in.
+	 */
+	private void createIntro(IWorkbenchWindow preferredWindow) {
+		if (this.workbench.getIntroDescriptor() == null) {
 			return;
 		}
 
-        IWorkbenchPage workbenchPage = preferredWindow.getActivePage();
-        if (workbenchPage == null) {
+		IWorkbenchPage workbenchPage = preferredWindow.getActivePage();
+		if (workbenchPage == null) {
 			return;
 		}
-        try {
-            workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID);
-        } catch (PartInitException e) {
-            WorkbenchPlugin
-                    .log(
-                            IntroMessages.Intro_could_not_create_part, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.Intro_could_not_create_part, e));
-        }
-    }
+		try {
+			workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID);
+		} catch (PartInitException e) {
+			WorkbenchPlugin.log(IntroMessages.Intro_could_not_create_part, new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.Intro_could_not_create_part, e));
+		}
+	}
 
-    @Override
+	@Override
 	public void setIntroStandby(IIntroPart part, boolean standby) {
-        if (introPart == null || !introPart.equals(part)) {
+		if (introPart == null || !introPart.equals(part)) {
 			return;
 		}
 
@@ -225,32 +222,32 @@ public class WorkbenchIntroManager implements IIntroManager {
 			return false;
 
 		return introStack.getTags().contains(IPresentationEngine.MAXIMIZED);
-    }
+	}
 
-    @Override
+	@Override
 	public boolean isIntroStandby(IIntroPart part) {
-        if (introPart == null || !introPart.equals(part)) {
+		if (introPart == null || !introPart.equals(part)) {
 			return false;
 		}
 
-        ViewIntroAdapterPart viewIntroAdapterPart = getViewIntroAdapterPart();
-        if (viewIntroAdapterPart == null) {
+		ViewIntroAdapterPart viewIntroAdapterPart = getViewIntroAdapterPart();
+		if (viewIntroAdapterPart == null) {
 			return false;
 		}
 
 		return !isIntroMaximized(viewIntroAdapterPart);
-    }
+	}
 
-    @Override
+	@Override
 	public IIntroPart getIntro() {
-        return introPart;
-    }
+		return introPart;
+	}
 
-    /**
-     * @return the <code>ViewIntroAdapterPart</code> for this workbench, <code>null</code> if it
-     * cannot be found.
-     */
-    /*package*/ViewIntroAdapterPart getViewIntroAdapterPart() {
+	/**
+	 * @return the <code>ViewIntroAdapterPart</code> for this workbench,
+	 *         <code>null</code> if it cannot be found.
+	 */
+	/* package */ViewIntroAdapterPart getViewIntroAdapterPart() {
 		for (IWorkbenchWindow iWorkbenchWindow : this.workbench.getWorkbenchWindows()) {
 			WorkbenchWindow window = (WorkbenchWindow) iWorkbenchWindow;
 			MUIElement introPart = window.modelService.find(IIntroConstants.INTRO_VIEW_ID, window.getModel());
@@ -265,46 +262,42 @@ public class WorkbenchIntroManager implements IIntroManager {
 				}
 			}
 		}
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @return a new IIntroPart.  This has the side effect of setting the introPart field to the new
-     * value.
-     */
-    /*package*/IIntroPart createNewIntroPart() throws CoreException {
-        IntroDescriptor introDescriptor = workbench.getIntroDescriptor();
-		introPart = introDescriptor == null ? null
-                : introDescriptor.createIntro();
-        if (introPart != null) {
-        	workbench.getExtensionTracker().registerObject(
-					introDescriptor.getConfigurationElement()
-							.getDeclaringExtension(), introPart,
+	/**
+	 * @return a new IIntroPart. This has the side effect of setting the introPart
+	 *         field to the new value.
+	 */
+	/* package */IIntroPart createNewIntroPart() throws CoreException {
+		IntroDescriptor introDescriptor = workbench.getIntroDescriptor();
+		introPart = introDescriptor == null ? null : introDescriptor.createIntro();
+		if (introPart != null) {
+			workbench.getExtensionTracker().registerObject(
+					introDescriptor.getConfigurationElement().getDeclaringExtension(), introPart,
 					IExtensionTracker.REF_WEAK);
-        }
-    	return introPart;
-    }
+		}
+		return introPart;
+	}
 
-    @Override
+	@Override
 	public boolean hasIntro() {
-        return workbench.getIntroDescriptor() != null;
-    }
+		return workbench.getIntroDescriptor() != null;
+	}
 
-    @Override
+	@Override
 	public boolean isNewContentAvailable() {
 		IntroDescriptor introDescriptor = workbench.getIntroDescriptor();
 		if (introDescriptor == null) {
 			return false;
 		}
 		try {
-			IntroContentDetector contentDetector = introDescriptor
-					.getIntroContentDetector();
+			IntroContentDetector contentDetector = introDescriptor.getIntroContentDetector();
 			if (contentDetector != null) {
 				return contentDetector.isNewContentAvailable();
 			}
 		} catch (CoreException ex) {
-			WorkbenchPlugin.log(new Status(IStatus.WARNING,
-					WorkbenchPlugin.PI_WORKBENCH, IStatus.WARNING,
+			WorkbenchPlugin.log(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH, IStatus.WARNING,
 					"Could not load intro content detector", ex)); //$NON-NLS-1$
 		}
 		return false;

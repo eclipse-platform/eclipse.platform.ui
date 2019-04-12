@@ -27,27 +27,26 @@ import org.eclipse.swt.widgets.Widget;
  */
 final class CancelOnModifyListener implements Listener {
 
-    /**
-     * The listener to remove when this listener catches any event. This value
-     * should not be <code>null</code>.
-     */
-    private final Listener chainedListener;
+	/**
+	 * The listener to remove when this listener catches any event. This value
+	 * should not be <code>null</code>.
+	 */
+	private final Listener chainedListener;
 
-    /**
-     * Constructs a new instance of <code>CancelOnModifyListener</code>
-     *
-     * @param listener
-     *            The listener which should be removed in the event of a
-     *            modification event arriving; should not be <code>null</code>.
-     */
-    CancelOnModifyListener(Listener listener) {
-        chainedListener = listener;
-    }
+	/**
+	 * Constructs a new instance of <code>CancelOnModifyListener</code>
+	 *
+	 * @param listener The listener which should be removed in the event of a
+	 *                 modification event arriving; should not be <code>null</code>.
+	 */
+	CancelOnModifyListener(Listener listener) {
+		chainedListener = listener;
+	}
 
-    @Override
+	@Override
 	public void handleEvent(Event event) {
-        Widget widget = event.widget;
-        widget.removeListener(SWT.Modify, this);
-        widget.removeListener(SWT.KeyDown, chainedListener);
-    }
+		Widget widget = event.widget;
+		widget.removeListener(SWT.Modify, this);
+		widget.removeListener(SWT.KeyDown, chainedListener);
+	}
 }

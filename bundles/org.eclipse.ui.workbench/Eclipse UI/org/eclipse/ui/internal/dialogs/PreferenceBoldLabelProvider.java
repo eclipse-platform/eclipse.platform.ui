@@ -31,13 +31,12 @@ public class PreferenceBoldLabelProvider extends PreferenceLabelProvider impleme
 
 	PreferenceBoldLabelProvider(FilteredTree filterTree) {
 		this.filterTree = filterTree;
-		this.filterForBoldElements= filterTree.getPatternFilter();
+		this.filterForBoldElements = filterTree.getPatternFilter();
 	}
 
 	@Override
 	public Font getFont(Object element) {
-		return FilteredTree.getBoldFont(element, filterTree,
-				filterForBoldElements);
+		return FilteredTree.getBoldFont(element, filterTree, filterForBoldElements);
 	}
 
 }

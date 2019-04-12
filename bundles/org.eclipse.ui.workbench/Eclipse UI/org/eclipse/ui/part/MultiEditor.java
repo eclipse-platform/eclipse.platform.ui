@@ -35,60 +35,50 @@ import org.eclipse.ui.themes.ITheme;
 public abstract class MultiEditor extends AbstractMultiEditor {
 
 	/**
-     * The colors used to draw the title bar of the inner editors
-     */
-    public static class Gradient {
-        public Color fgColor;
+	 * The colors used to draw the title bar of the inner editors
+	 */
+	public static class Gradient {
+		public Color fgColor;
 
-        public Color[] bgColors;
+		public Color[] bgColors;
 
-        public int[] bgPercents;
-    }
+		public int[] bgPercents;
+	}
 
 	/**
 	 * Updates the gradient in the title bar.
+	 * 
 	 * @param editor
 	 */
 	public void updateGradient(IEditorPart editor) {
-	    boolean activeEditor = editor == getSite().getPage().getActiveEditor();
-	    boolean activePart = editor == getSite().getPage().getActivePart();
+		boolean activeEditor = editor == getSite().getPage().getActiveEditor();
+		boolean activePart = editor == getSite().getPage().getActivePart();
 
-	    ITheme theme = editor.getEditorSite().getWorkbenchWindow()
-	            .getWorkbench().getThemeManager().getCurrentTheme();
-	    Gradient g = new Gradient();
+		ITheme theme = editor.getEditorSite().getWorkbenchWindow().getWorkbench().getThemeManager().getCurrentTheme();
+		Gradient g = new Gradient();
 
-	    ColorRegistry colorRegistry = theme.getColorRegistry();
-	    if (activePart) {
-	        g.fgColor = colorRegistry
-	                .get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
-	        g.bgColors = new Color[2];
-	        g.bgColors[0] = colorRegistry
-	                .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-	        g.bgColors[1] = colorRegistry
-	                .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-	    } else {
-	        if (activeEditor) {
-	            g.fgColor = colorRegistry
-	                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
-	            g.bgColors = new Color[2];
-	            g.bgColors[0] = colorRegistry
-	                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-	            g.bgColors[1] = colorRegistry
-	                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-	        } else {
-	            g.fgColor = colorRegistry
-	                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);
-	            g.bgColors = new Color[2];
-	            g.bgColors[0] = colorRegistry
-	                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
-	            g.bgColors[1] = colorRegistry
-	                    .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
-	        }
-	    }
-	    g.bgPercents = new int[] { theme
-	            .getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT) };
+		ColorRegistry colorRegistry = theme.getColorRegistry();
+		if (activePart) {
+			g.fgColor = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
+			g.bgColors = new Color[2];
+			g.bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+			g.bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+		} else {
+			if (activeEditor) {
+				g.fgColor = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
+				g.bgColors = new Color[2];
+				g.bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+				g.bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+			} else {
+				g.fgColor = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);
+				g.bgColors = new Color[2];
+				g.bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
+				g.bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
+			}
+		}
+		g.bgPercents = new int[] { theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT) };
 
-	    drawGradient(editor, g);
+		drawGradient(editor, g);
 	}
 
 	/**
@@ -96,58 +86,55 @@ public abstract class MultiEditor extends AbstractMultiEditor {
 	 */
 	protected abstract void drawGradient(IEditorPart innerEditor, Gradient g);
 
-    /**
-     * Create the control of the inner editor.
-     *
-     * Must be called by subclass.
-     */
-    public Composite createInnerPartControl(Composite parent,
-            final IEditorPart e) {
-        Composite content = new Composite(parent, SWT.NONE);
-        content.setLayout(new FillLayout());
-        e.createPartControl(content);
-        parent.addListener(SWT.Activate, event -> {
-		    if (event.type == SWT.Activate) {
+	/**
+	 * Create the control of the inner editor.
+	 *
+	 * Must be called by subclass.
+	 */
+	public Composite createInnerPartControl(Composite parent, final IEditorPart e) {
+		Composite content = new Composite(parent, SWT.NONE);
+		content.setLayout(new FillLayout());
+		e.createPartControl(content);
+		parent.addListener(SWT.Activate, event -> {
+			if (event.type == SWT.Activate) {
 				activateEditor(e);
 			}
 		});
-        return content;
-    }
+		return content;
+	}
 
-    /*
-     * @see IWorkbenchPart#setFocus()
-     */
-    @Override
+	/*
+	 * @see IWorkbenchPart#setFocus()
+	 */
+	@Override
 	public void setFocus() {
-    	super.setFocus();
-        updateGradient(getActiveEditor());
-    }
+		super.setFocus();
+		updateGradient(getActiveEditor());
+	}
 
-    /**
-     * Activates the given nested editor.
-     *
-     * @param part the nested editor
-     * @since 3.5
-     */
-    @Override
+	/**
+	 * Activates the given nested editor.
+	 *
+	 * @param part the nested editor
+	 * @since 3.5
+	 */
+	@Override
 	public void activateEditor(IEditorPart part) {
-        IEditorPart oldEditor = getActiveEditor();
-        super.activateEditor(part);
-        updateGradient(oldEditor);
-    }
+		IEditorPart oldEditor = getActiveEditor();
+		super.activateEditor(part);
+		updateGradient(oldEditor);
+	}
 
-    /**
-     * Return true if the shell is activated.
-     */
-    protected boolean getShellActivated() {
-        WorkbenchWindow window = (WorkbenchWindow) getSite().getPage()
-                .getWorkbenchWindow();
-        return window.getShellActivated();
-    }
+	/**
+	 * Return true if the shell is activated.
+	 */
+	protected boolean getShellActivated() {
+		WorkbenchWindow window = (WorkbenchWindow) getSite().getPage().getWorkbenchWindow();
+		return window.getShellActivated();
+	}
 
 	@Override
-	public Composite getInnerEditorContainer(
-			IEditorReference innerEditorReference) {
+	public Composite getInnerEditorContainer(IEditorReference innerEditorReference) {
 		// This method is not used by MutliEditor
 		return null;
 	}

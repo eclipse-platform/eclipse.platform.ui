@@ -55,48 +55,41 @@ public final class CommandImageManager extends EventManager {
 	public static final int TYPE_DISABLED = 1;
 
 	/**
-	 * The type of image to display if the mouse is hovering over the command
-	 * and the command is enabled.
+	 * The type of image to display if the mouse is hovering over the command and
+	 * the command is enabled.
 	 */
 	public static final int TYPE_HOVER = 2;
 
 	/**
-	 * The map of command identifiers (<code>String</code>) to images. The
-	 * images are an array indexed by type. The values in the array are either
-	 * an <code>ImageDescriptor</code> or a <code>Map</code> of style (<code>String</code>)
-	 * to <code>ImageDescriptor</code>.
+	 * The map of command identifiers (<code>String</code>) to images. The images
+	 * are an array indexed by type. The values in the array are either an
+	 * <code>ImageDescriptor</code> or a <code>Map</code> of style
+	 * (<code>String</code>) to <code>ImageDescriptor</code>.
 	 */
 	private final Map imagesById = new HashMap();
 
 	/**
-	 * Adds a listener to this command image manager. The listener will be
-	 * notified when the set of image bindings changes. This can be used to
-	 * track the global appearance and disappearance of image bindings.
+	 * Adds a listener to this command image manager. The listener will be notified
+	 * when the set of image bindings changes. This can be used to track the global
+	 * appearance and disappearance of image bindings.
 	 *
-	 * @param listener
-	 *            The listener to attach; must not be <code>null</code>.
+	 * @param listener The listener to attach; must not be <code>null</code>.
 	 */
-	public void addCommandImageManagerListener(
-			final ICommandImageManagerListener listener) {
+	public void addCommandImageManagerListener(final ICommandImageManagerListener listener) {
 		addListenerObject(listener);
 	}
 
 	/**
 	 * Binds a particular image path to a command id, type and style triple
 	 *
-	 * @param commandId
-	 *            The identifier of the command to which the image should be
-	 *            bound; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this class.
-	 * @param style
-	 *            The style of the image; may be <code>null</code>.
-	 * @param url
-	 *            The URL to the image. Should not be <code>null</code>.
+	 * @param commandId The identifier of the command to which the image should be
+	 *                  bound; must not be <code>null</code>.
+	 * @param type      The type of image to retrieve. This value must be one of the
+	 *                  <code>TYPE</code> constants defined in this class.
+	 * @param style     The style of the image; may be <code>null</code>.
+	 * @param url       The URL to the image. Should not be <code>null</code>.
 	 */
-	public void bind(final String commandId, final int type,
-			final String style, final URL url) {
+	public void bind(final String commandId, final int type, final String style, final URL url) {
 		final ImageDescriptor descriptor = ImageDescriptor.createFromURL(url);
 		bind(commandId, type, style, descriptor);
 	}
@@ -104,19 +97,14 @@ public final class CommandImageManager extends EventManager {
 	/**
 	 * Binds a particular image path to a command id, type and style triple
 	 *
-	 * @param commandId
-	 *            The identifier of the command to which the image should be
-	 *            bound; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this class.
-	 * @param style
-	 *            The style of the image; may be <code>null</code>.
-	 * @param descriptor
-	 *            The image descriptor. Should not be <code>null</code>.
+	 * @param commandId  The identifier of the command to which the image should be
+	 *                   bound; must not be <code>null</code>.
+	 * @param type       The type of image to retrieve. This value must be one of
+	 *                   the <code>TYPE</code> constants defined in this class.
+	 * @param style      The style of the image; may be <code>null</code>.
+	 * @param descriptor The image descriptor. Should not be <code>null</code>.
 	 */
-	public void bind(final String commandId, final int type,
-			final String style, final ImageDescriptor descriptor) {
+	public void bind(final String commandId, final int type, final String style, final ImageDescriptor descriptor) {
 		Object[] images = (Object[]) imagesById.get(commandId);
 		if (images == null) {
 			images = new Object[3];
@@ -124,8 +112,7 @@ public final class CommandImageManager extends EventManager {
 		}
 
 		if ((type < 0) || (type >= images.length)) {
-			throw new IllegalArgumentException(
-					"The type must be one of TYPE_DEFAULT, TYPE_DISABLED and TYPE_HOVER."); //$NON-NLS-1$
+			throw new IllegalArgumentException("The type must be one of TYPE_DEFAULT, TYPE_DISABLED and TYPE_HOVER."); //$NON-NLS-1$
 		}
 
 		final Object typedImage = images[type];
@@ -140,8 +127,7 @@ public final class CommandImageManager extends EventManager {
 			if (typedImage instanceof Map) {
 				final Map styleMap = (Map) typedImage;
 				styleMap.put(style, descriptor);
-			} else if (typedImage instanceof ImageDescriptor
-					|| typedImage == null) {
+			} else if (typedImage instanceof ImageDescriptor || typedImage == null) {
 				final Map styleMap = new HashMap();
 				styleMap.put(null, typedImage);
 				styleMap.put(style, descriptor);
@@ -149,8 +135,7 @@ public final class CommandImageManager extends EventManager {
 			}
 		}
 
-		fireManagerChanged(new CommandImageManagerEvent(this,
-				new String[] { commandId }, type, style));
+		fireManagerChanged(new CommandImageManagerEvent(this, new String[] { commandId }, type, style));
 	}
 
 	/**
@@ -159,20 +144,17 @@ public final class CommandImageManager extends EventManager {
 	public void clear() {
 		imagesById.clear();
 		if (isListenerAttached()) {
-			final String[] commandIds = (String[]) imagesById.keySet().toArray(
-					new String[imagesById.size()]);
-			fireManagerChanged(new CommandImageManagerEvent(this, commandIds,
-					TYPE_DEFAULT, null));
+			final String[] commandIds = (String[]) imagesById.keySet().toArray(new String[imagesById.size()]);
+			fireManagerChanged(new CommandImageManagerEvent(this, commandIds, TYPE_DEFAULT, null));
 		}
 	}
 
 	/**
-	 * Notifies all of the listeners to this manager that the image bindings
-	 * have changed.
+	 * Notifies all of the listeners to this manager that the image bindings have
+	 * changed.
 	 *
-	 * @param event
-	 *            The event to send to all of the listeners; must not be
-	 *            <code>null</code>.
+	 * @param event The event to send to all of the listeners; must not be
+	 *              <code>null</code>.
 	 */
 	private void fireManagerChanged(final CommandImageManagerEvent event) {
 		if (event == null) {
@@ -187,13 +169,12 @@ public final class CommandImageManager extends EventManager {
 	}
 
 	/**
-	 * Generates a style tag that is not currently used for the given command.
-	 * This can be used by applications trying to create a unique style for a
-	 * new set of images.
+	 * Generates a style tag that is not currently used for the given command. This
+	 * can be used by applications trying to create a unique style for a new set of
+	 * images.
 	 *
-	 * @param commandId
-	 *            The identifier of the command for which a unique style is
-	 *            required; must not be <code>null</code>.
+	 * @param commandId The identifier of the command for which a unique style is
+	 *                  required; must not be <code>null</code>.
 	 * @return A style tag that is not currently used; may be <code>null</code>.
 	 */
 	public String generateUnusedStyle(final String commandId) {
@@ -215,7 +196,7 @@ public final class CommandImageManager extends EventManager {
 		if (!existingStyles.contains(null)) {
 			return null;
 		}
-		StringBuilder generatedStyle = new StringBuilder("AUTOGEN:::");  //$NON-NLS-1$
+		StringBuilder generatedStyle = new StringBuilder("AUTOGEN:::"); //$NON-NLS-1$
 		int index = 0;
 		while (existingStyles.contains(generatedStyle)) {
 			generatedStyle.append(index % 10);
@@ -226,51 +207,43 @@ public final class CommandImageManager extends EventManager {
 	}
 
 	/**
-	 * Retrieves the default image associated with the given command in the
-	 * default style.
+	 * Retrieves the default image associated with the given command in the default
+	 * style.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @return An image appropriate for the given command; never
-	 *         <code>null</code>.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
+	 * @return An image appropriate for the given command; never <code>null</code>.
 	 */
 	public ImageDescriptor getImageDescriptor(final String commandId) {
 		return getImageDescriptor(commandId, TYPE_DEFAULT, null);
 	}
 
 	/**
-	 * Retrieves the image of the given type associated with the given command
-	 * in the default style.
+	 * Retrieves the image of the given type associated with the given command in
+	 * the default style.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this class.
-	 * @return An image appropriate for the given command; <code>null</code>
-	 *         if the given image type cannot be found.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
+	 * @param type      The type of image to retrieve. This value must be one of the
+	 *                  <code>TYPE</code> constants defined in this class.
+	 * @return An image appropriate for the given command; <code>null</code> if the
+	 *         given image type cannot be found.
 	 */
-	public ImageDescriptor getImageDescriptor(final String commandId,
-			final int type) {
+	public ImageDescriptor getImageDescriptor(final String commandId, final int type) {
 		return getImageDescriptor(commandId, type, null);
 	}
 
 	/**
-	 * Retrieves the image of the given type associated with the given command
-	 * in the given style.
+	 * Retrieves the image of the given type associated with the given command in
+	 * the given style.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this class.
-	 * @param style
-	 *            The style of the image to retrieve; may be <code>null</code>.
-	 * @return An image appropriate for the given command; <code>null</code>
-	 *         if the given image style and type cannot be found.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
+	 * @param type      The type of image to retrieve. This value must be one of the
+	 *                  <code>TYPE</code> constants defined in this class.
+	 * @param style     The style of the image to retrieve; may be
+	 *                  <code>null</code>.
+	 * @return An image appropriate for the given command; <code>null</code> if the
+	 *         given image style and type cannot be found.
 	 */
-	public ImageDescriptor getImageDescriptor(final String commandId,
-			final int type, final String style) {
+	public ImageDescriptor getImageDescriptor(final String commandId, final int type, final String style) {
 		if (commandId == null) {
 			throw new NullPointerException();
 		}
@@ -281,8 +254,7 @@ public final class CommandImageManager extends EventManager {
 		}
 
 		if ((type < 0) || (type >= images.length)) {
-			throw new IllegalArgumentException(
-					"The type must be one of TYPE_DEFAULT, TYPE_DISABLED and TYPE_HOVER."); //$NON-NLS-1$
+			throw new IllegalArgumentException("The type must be one of TYPE_DEFAULT, TYPE_DISABLED and TYPE_HOVER."); //$NON-NLS-1$
 		}
 
 		Object typedImage = images[type];
@@ -314,29 +286,25 @@ public final class CommandImageManager extends EventManager {
 	}
 
 	/**
-	 * Retrieves the default image associated with the given command in the
-	 * given style.
+	 * Retrieves the default image associated with the given command in the given
+	 * style.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @param style
-	 *            The style of the image to retrieve; may be <code>null</code>.
-	 * @return An image appropriate for the given command; <code>null</code>
-	 *         if the given image style cannot be found.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
+	 * @param style     The style of the image to retrieve; may be
+	 *                  <code>null</code>.
+	 * @return An image appropriate for the given command; <code>null</code> if the
+	 *         given image style cannot be found.
 	 */
-	public ImageDescriptor getImageDescriptor(final String commandId,
-			final String style) {
+	public ImageDescriptor getImageDescriptor(final String commandId, final String style) {
 		return getImageDescriptor(commandId, TYPE_DEFAULT, style);
 	}
 
 	/**
 	 * Removes a listener from this command image manager.
 	 *
-	 * @param listener
-	 *            The listener to be removed; must not be <code>null</code>.
+	 * @param listener The listener to be removed; must not be <code>null</code>.
 	 */
-	public void removeCommandImageManagerListener(
-			final ICommandImageManagerListener listener) {
+	public void removeCommandImageManagerListener(final ICommandImageManagerListener listener) {
 		removeListenerObject(listener);
 	}
 }

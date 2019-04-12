@@ -62,8 +62,7 @@ public class DecorationBuilder implements IDecoration {
 	/**
 	 * Create a decoration builder for the given context
 	 *
-	 * @param context
-	 *            a decoration context
+	 * @param context a decoration context
 	 */
 	public DecorationBuilder(IDecorationContext context) {
 		this.context = context;
@@ -101,8 +100,8 @@ public class DecorationBuilder implements IDecoration {
 			}
 			valueSet = true;
 		} else {
-			WorkbenchPlugin
-					.log("Unable to apply decoration for " + currentDefinition.getId() + " invalid quadrant: " + quadrant); //$NON-NLS-1$ //$NON-NLS-2$
+			WorkbenchPlugin.log(
+					"Unable to apply decoration for " + currentDefinition.getId() + " invalid quadrant: " + quadrant); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -143,8 +142,7 @@ public class DecorationBuilder implements IDecoration {
 		if (clearReplacementImage) {
 			descriptors[IDecoration.REPLACE] = null;
 		}
-		DecorationResult newResult = new DecorationResult(new ArrayList(
-				prefixes), new ArrayList(suffixes), descriptors,
+		DecorationResult newResult = new DecorationResult(new ArrayList(prefixes), new ArrayList(suffixes), descriptors,
 				foregroundColor, backgroundColor, font);
 
 		return newResult;
@@ -191,7 +189,6 @@ public class DecorationBuilder implements IDecoration {
 		setFont(result.getFont());
 		valueSet = true;
 	}
-
 
 	@Override
 	public void setBackgroundColor(Color bgColor) {

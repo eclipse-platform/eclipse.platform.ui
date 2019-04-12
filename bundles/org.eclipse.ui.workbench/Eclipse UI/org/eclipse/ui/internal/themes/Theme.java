@@ -40,87 +40,77 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public class Theme extends EventManager implements ITheme {
 
-    /**
-     * The translation bundle in which to look up internationalized text.
-     */
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(Theme.class.getName());
+	/**
+	 * The translation bundle in which to look up internationalized text.
+	 */
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Theme.class.getName());
 
-    private CascadingColorRegistry themeColorRegistry;
+	private CascadingColorRegistry themeColorRegistry;
 
-    private CascadingFontRegistry themeFontRegistry;
+	private CascadingFontRegistry themeFontRegistry;
 
-    private IThemeDescriptor descriptor;
+	private IThemeDescriptor descriptor;
 
-    private IPropertyChangeListener themeListener;
+	private IPropertyChangeListener themeListener;
 
-    private CascadingMap dataMap;
+	private CascadingMap dataMap;
 
-    private ThemeRegistry themeRegistry;
+	private ThemeRegistry themeRegistry;
 
-    private IPropertyChangeListener propertyListener;
+	private IPropertyChangeListener propertyListener;
 
-    /**
-     * @param descriptor
-     */
-    public Theme(IThemeDescriptor descriptor) {
-        themeRegistry = ((ThemeRegistry) WorkbenchPlugin.getDefault()
-                .getThemeRegistry());
-        this.descriptor = descriptor;
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        if (descriptor != null) {
-        	ITheme defaultTheme = workbench.getThemeManager().getTheme(
-                    IThemeManager.DEFAULT_THEME);
+	/**
+	 * @param descriptor
+	 */
+	public Theme(IThemeDescriptor descriptor) {
+		themeRegistry = ((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry());
+		this.descriptor = descriptor;
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (descriptor != null) {
+			ITheme defaultTheme = workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME);
 
-            ColorDefinition[] colorDefinitions = this.descriptor.getColors();
-            themeColorRegistry = new CascadingColorRegistry(defaultTheme
-                    .getColorRegistry());
-            if (colorDefinitions.length > 0) {
-                ThemeElementHelper.populateRegistry(this, colorDefinitions,
-                		PrefUtil.getInternalPreferenceStore());
-            }
+			ColorDefinition[] colorDefinitions = this.descriptor.getColors();
+			themeColorRegistry = new CascadingColorRegistry(defaultTheme.getColorRegistry());
+			if (colorDefinitions.length > 0) {
+				ThemeElementHelper.populateRegistry(this, colorDefinitions, PrefUtil.getInternalPreferenceStore());
+			}
 
-            FontDefinition[] fontDefinitions = this.descriptor.getFonts();
-            themeFontRegistry = new CascadingFontRegistry(defaultTheme
-                    .getFontRegistry());
-            if (fontDefinitions.length > 0) {
-                ThemeElementHelper.populateRegistry(this, fontDefinitions,
-                		PrefUtil.getInternalPreferenceStore());
-            }
+			FontDefinition[] fontDefinitions = this.descriptor.getFonts();
+			themeFontRegistry = new CascadingFontRegistry(defaultTheme.getFontRegistry());
+			if (fontDefinitions.length > 0) {
+				ThemeElementHelper.populateRegistry(this, fontDefinitions, PrefUtil.getInternalPreferenceStore());
+			}
 
-            dataMap = new CascadingMap(((ThemeRegistry) WorkbenchPlugin
-                    .getDefault().getThemeRegistry()).getData(), descriptor
-                    .getData());
-        }
+			dataMap = new CascadingMap(((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry()).getData(),
+					descriptor.getData());
+		}
 
-        getColorRegistry().addListener(getCascadeListener());
-        getFontRegistry().addListener(getCascadeListener());
-        PrefUtil.getInternalPreferenceStore().addPropertyChangeListener(
-                getPropertyListener());
-    }
+		getColorRegistry().addListener(getCascadeListener());
+		getFontRegistry().addListener(getCascadeListener());
+		PrefUtil.getInternalPreferenceStore().addPropertyChangeListener(getPropertyListener());
+	}
 
-    /**
-     * Listener that is responsible for responding to preference changes.
-     *
-     * @return the property change listener
-     */
-    private IPropertyChangeListener getPropertyListener() {
-        if (propertyListener == null) {
-            propertyListener = new IPropertyChangeListener() {
+	/**
+	 * Listener that is responsible for responding to preference changes.
+	 *
+	 * @return the property change listener
+	 */
+	private IPropertyChangeListener getPropertyListener() {
+		if (propertyListener == null) {
+			propertyListener = new IPropertyChangeListener() {
 
-                @Override
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
-                    String[] split = ThemeElementHelper.splitPropertyName(
-                            Theme.this, event.getProperty());
-                    String key = split[1];
-                    String theme = split[0];
-                    if (key.equals(IWorkbenchPreferenceConstants.CURRENT_THEME_ID)) {
+					String[] split = ThemeElementHelper.splitPropertyName(Theme.this, event.getProperty());
+					String key = split[1];
+					String theme = split[0];
+					if (key.equals(IWorkbenchPreferenceConstants.CURRENT_THEME_ID)) {
 						return;
 					}
-                    try {
-                    	String thisTheme = getId();
+					try {
+						String thisTheme = getId();
 
-                        if (Util.equals(thisTheme, theme)) {
+						if (Util.equals(thisTheme, theme)) {
 							if (getFontRegistry().hasValueFor(key)) {
 								FontData[] data = event.getNewValue() instanceof String
 										? PreferenceConverter.basicGetFontData((String) event.getNewValue())
@@ -129,8 +119,7 @@ public class Theme extends EventManager implements ITheme {
 								getFontRegistry().put(key, data);
 								processDefaultsTo(key, data);
 								return;
-							}
-							else if (getColorRegistry().hasValueFor(key)) {
+							} else if (getColorRegistry().hasValueFor(key)) {
 								RGB rgb = event.getNewValue() instanceof String
 										? StringConverter.asRGB((String) event.getNewValue())
 										: (RGB) event.getNewValue();
@@ -140,166 +129,162 @@ public class Theme extends EventManager implements ITheme {
 								return;
 							}
 						}
-                    } catch (DataFormatException e) {
-                        //no-op
-                    }
-                }
+					} catch (DataFormatException e) {
+						// no-op
+					}
+				}
 
-                /**
-                 * Process all fonts that default to the given ID.
-                 *
-                 * @param key the font ID
-                 * @param fd the new FontData for defaulted fonts
-                 */
-                private void processDefaultsTo(String key, FontData[] fd) {
+				/**
+				 * Process all fonts that default to the given ID.
+				 *
+				 * @param key the font ID
+				 * @param fd  the new FontData for defaulted fonts
+				 */
+				private void processDefaultsTo(String key, FontData[] fd) {
 					FontDefinition[] defs = WorkbenchPlugin.getDefault().getThemeRegistry().getFontsFor(getId());
-                    for (FontDefinition fontDefinition : defs) {
-                        String defaultsTo = fontDefinition.getDefaultsTo();
-                        if (defaultsTo != null && defaultsTo.equals(key)) {
+					for (FontDefinition fontDefinition : defs) {
+						String defaultsTo = fontDefinition.getDefaultsTo();
+						if (defaultsTo != null && defaultsTo.equals(key)) {
 							IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-                            if (store.isDefault(ThemeElementHelper
-									.createPreferenceKey(Theme.this, fontDefinition.getId()))) {
-                                getFontRegistry().put(fontDefinition.getId(), fd);
-                                processDefaultsTo(fontDefinition.getId(), fd);
-                            }
-                        }
-                    }
-                }
+							if (store.isDefault(
+									ThemeElementHelper.createPreferenceKey(Theme.this, fontDefinition.getId()))) {
+								getFontRegistry().put(fontDefinition.getId(), fd);
+								processDefaultsTo(fontDefinition.getId(), fd);
+							}
+						}
+					}
+				}
 
-                /**
-                 * Process all colors that default to the given ID.
-                 *
-                 * @param key the color ID
-                 * @param rgb the new RGB value for defaulted colors
-                 */
-                private void processDefaultsTo(String key, RGB rgb) {
+				/**
+				 * Process all colors that default to the given ID.
+				 *
+				 * @param key the color ID
+				 * @param rgb the new RGB value for defaulted colors
+				 */
+				private void processDefaultsTo(String key, RGB rgb) {
 					ColorDefinition[] defs = WorkbenchPlugin.getDefault().getThemeRegistry().getColorsFor(getId());
-                    for (ColorDefinition colorDefinition : defs) {
-                        String defaultsTo = colorDefinition.getDefaultsTo();
-                        if (defaultsTo != null && defaultsTo.equals(key)) {
+					for (ColorDefinition colorDefinition : defs) {
+						String defaultsTo = colorDefinition.getDefaultsTo();
+						if (defaultsTo != null && defaultsTo.equals(key)) {
 							IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 							if (store.isDefault(
 									ThemeElementHelper.createPreferenceKey(Theme.this, colorDefinition.getId()))) {
-                                getColorRegistry().put(colorDefinition.getId(), rgb);
-                                processDefaultsTo(colorDefinition.getId(), rgb);
-                            }
-                        }
-                    }
-                }
-            };
-        }
-        return propertyListener;
-    }
+								getColorRegistry().put(colorDefinition.getId(), rgb);
+								processDefaultsTo(colorDefinition.getId(), rgb);
+							}
+						}
+					}
+				}
+			};
+		}
+		return propertyListener;
+	}
 
-    /**
-     * Listener that is responsible for rebroadcasting events fired from the base font/color registry
-     */
-    private IPropertyChangeListener getCascadeListener() {
-        if (themeListener == null) {
-            themeListener = event -> firePropertyChange(event);
-        }
-        return themeListener;
-    }
+	/**
+	 * Listener that is responsible for rebroadcasting events fired from the base
+	 * font/color registry
+	 */
+	private IPropertyChangeListener getCascadeListener() {
+		if (themeListener == null) {
+			themeListener = event -> firePropertyChange(event);
+		}
+		return themeListener;
+	}
 
-    @Override
+	@Override
 	public ColorRegistry getColorRegistry() {
 		if (themeColorRegistry != null) {
 			return themeColorRegistry;
 		}
 
-		return WorkbenchThemeManager.getInstance()
-				.getDefaultThemeColorRegistry();
+		return WorkbenchThemeManager.getInstance().getDefaultThemeColorRegistry();
 	}
 
-    @Override
+	@Override
 	public FontRegistry getFontRegistry() {
 		if (themeFontRegistry != null) {
 			return themeFontRegistry;
 		}
 
-		return WorkbenchThemeManager.getInstance()
-				.getDefaultThemeFontRegistry();
+		return WorkbenchThemeManager.getInstance().getDefaultThemeFontRegistry();
 	}
 
-    @Override
+	@Override
 	public void dispose() {
-        if (themeColorRegistry != null) {
-            themeColorRegistry.removeListener(themeListener);
-            themeColorRegistry.dispose();
-        }
-        if (themeFontRegistry != null) {
-            themeFontRegistry.removeListener(themeListener);
-            themeFontRegistry.dispose();
-        }
-        PrefUtil.getInternalPreferenceStore()
-                .removePropertyChangeListener(getPropertyListener());
-    }
+		if (themeColorRegistry != null) {
+			themeColorRegistry.removeListener(themeListener);
+			themeColorRegistry.dispose();
+		}
+		if (themeFontRegistry != null) {
+			themeFontRegistry.removeListener(themeListener);
+			themeFontRegistry.dispose();
+		}
+		PrefUtil.getInternalPreferenceStore().removePropertyChangeListener(getPropertyListener());
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return descriptor == null ? IThemeManager.DEFAULT_THEME : descriptor
-                .getId();
-    }
+		return descriptor == null ? IThemeManager.DEFAULT_THEME : descriptor.getId();
+	}
 
-    @Override
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        addListenerObject(listener);
-    }
+		addListenerObject(listener);
+	}
 
-    @Override
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        removeListenerObject(listener);
-    }
+		removeListenerObject(listener);
+	}
 
-    private void firePropertyChange(PropertyChangeEvent event) {
+	private void firePropertyChange(PropertyChangeEvent event) {
 		for (Object listener : getListeners()) {
 			((IPropertyChangeListener) listener).propertyChange(event);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public String getLabel() {
-        return descriptor == null ? RESOURCE_BUNDLE
-                .getString("DefaultTheme.label") : descriptor.getName(); //$NON-NLS-1$
-    }
+		return descriptor == null ? RESOURCE_BUNDLE.getString("DefaultTheme.label") : descriptor.getName(); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getString(String key) {
-        if (dataMap != null) {
+		if (dataMap != null) {
 			return (String) dataMap.get(key);
 		}
-        return (String) themeRegistry.getData().get(key);
-    }
+		return (String) themeRegistry.getData().get(key);
+	}
 
-    @Override
+	@Override
 	public Set keySet() {
-        if (dataMap != null) {
+		if (dataMap != null) {
 			return dataMap.keySet();
 		}
 
-        return themeRegistry.getData().keySet();
-    }
+		return themeRegistry.getData().keySet();
+	}
 
-    @Override
+	@Override
 	public int getInt(String key) {
-        String string = getString(key);
-        if (string == null) {
+		String string = getString(key);
+		if (string == null) {
 			return 0;
 		}
-        try {
-            return Integer.parseInt(string);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-    }
+		try {
+			return Integer.parseInt(string);
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
 
-    @Override
+	@Override
 	public boolean getBoolean(String key) {
-        String string = getString(key);
-        if (string == null) {
+		String string = getString(key);
+		if (string == null) {
 			return false;
 		}
 
-        return Boolean.parseBoolean(getString(key));
-    }
+		return Boolean.parseBoolean(getString(key));
+	}
 }

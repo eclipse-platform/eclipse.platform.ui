@@ -33,13 +33,11 @@ import org.eclipse.ui.services.IServiceLocator;
 public class ContextServiceFactory extends AbstractServiceFactory {
 
 	@Override
-	public Object create(Class serviceInterface, IServiceLocator parentLocator,
-			IServiceLocator locator) {
+	public Object create(Class serviceInterface, IServiceLocator parentLocator, IServiceLocator locator) {
 		if (!IContextService.class.equals(serviceInterface)) {
 			return null;
 		}
-		IWorkbenchLocationService wls = locator
-				.getService(IWorkbenchLocationService.class);
+		IWorkbenchLocationService wls = locator.getService(IWorkbenchLocationService.class);
 		final IWorkbench wb = wls.getWorkbench();
 		if (wb == null) {
 			return null;

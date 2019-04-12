@@ -22,8 +22,7 @@ import org.eclipse.ui.PartInitException;
  *
  * @since 3.1
  */
-public abstract class AbstractWorkbenchBrowserSupport implements
-		IWorkbenchBrowserSupport {
+public abstract class AbstractWorkbenchBrowserSupport implements IWorkbenchBrowserSupport {
 
 	private static final String SHARED_EXTERNAL_BROWSER_ID = "org.eclipse.ui.externalBrowser"; //$NON-NLS-1$
 
@@ -35,8 +34,7 @@ public abstract class AbstractWorkbenchBrowserSupport implements
 
 	@Override
 	public IWebBrowser getExternalBrowser() throws PartInitException {
-		return createBrowser(AS_EXTERNAL, SHARED_EXTERNAL_BROWSER_ID, null,
-				null);
+		return createBrowser(AS_EXTERNAL, SHARED_EXTERNAL_BROWSER_ID, null, null);
 	}
 
 	@Override

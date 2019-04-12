@@ -23,18 +23,18 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.1
  */
 public class UIExtensionTracker extends ExtensionTracker {
-    private Display display;
+	private Display display;
 
-    // SOMETHING HAS NOT BEEN DONE IN THE REGISTTRY CHANGED CODE
-    // if (!PlatformUI.isWorkbenchRunning())
-    // return;
-    // int numDeltas = 0;
-    // Display display = PlatformUI.getWorkbench().getDisplay();
-    // if (display == null || display.isDisposed())
-    // return;
-    // It seems that the tracker should be closed.
+	// SOMETHING HAS NOT BEEN DONE IN THE REGISTTRY CHANGED CODE
+	// if (!PlatformUI.isWorkbenchRunning())
+	// return;
+	// int numDeltas = 0;
+	// Display display = PlatformUI.getWorkbench().getDisplay();
+	// if (display == null || display.isDisposed())
+	// return;
+	// It seems that the tracker should be closed.
 
-    /**
+	/**
 	 * @param display
 	 */
 	public UIExtensionTracker(Display display) {
@@ -42,20 +42,21 @@ public class UIExtensionTracker extends ExtensionTracker {
 	}
 
 	@Override
-	protected void applyRemove(final IExtensionChangeHandler handler, final IExtension removedExtension, final Object[] objects) {
+	protected void applyRemove(final IExtensionChangeHandler handler, final IExtension removedExtension,
+			final Object[] objects) {
 		if (display.isDisposed())
 			return;
 
 		display.asyncExec(() -> {
-            try {
-                handler.removeExtension(removedExtension, objects);
-            } catch (Exception e) {
-                WorkbenchPlugin.log(getClass(), "doRemove", e); //$NON-NLS-1$
-            }
-        });
-    }
+			try {
+				handler.removeExtension(removedExtension, objects);
+			} catch (Exception e) {
+				WorkbenchPlugin.log(getClass(), "doRemove", e); //$NON-NLS-1$
+			}
+		});
+	}
 
-    @Override
+	@Override
 	protected void applyAdd(final IExtensionChangeHandler handler, final IExtension addedExtension) {
 		if (display.isDisposed())
 			return;
@@ -65,7 +66,7 @@ public class UIExtensionTracker extends ExtensionTracker {
 				handler.addExtension(UIExtensionTracker.this, addedExtension);
 			} catch (Exception e) {
 				WorkbenchPlugin.log(getClass(), "doAdd", e); //$NON-NLS-1$
-            }
-        });
-    }
+			}
+		});
+	}
 }

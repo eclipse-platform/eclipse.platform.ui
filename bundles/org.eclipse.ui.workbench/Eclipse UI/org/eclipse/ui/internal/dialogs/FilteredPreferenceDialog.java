@@ -84,15 +84,13 @@ import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.service.prefs.BackingStoreException;
 
-
 /**
  * Baseclass for preference dialogs that will show two tabs of preferences -
  * filtered and unfiltered.
  *
  * @since 3.0
  */
-public abstract class FilteredPreferenceDialog extends PreferenceDialog
-		implements IWorkbenchPreferenceContainer {
+public abstract class FilteredPreferenceDialog extends PreferenceDialog implements IWorkbenchPreferenceContainer {
 
 	/**
 	 *
@@ -111,29 +109,25 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		private ViewerFilter viewerFilter;
 
 		/**
-		 * Initial title of dialog. This is only used if the additional filter
-		 * provided by the addFilter(ViewerFilter) method is utilized.
+		 * Initial title of dialog. This is only used if the additional filter provided
+		 * by the addFilter(ViewerFilter) method is utilized.
 		 */
 		private String cachedTitle;
 
 		/**
 		 * Constructor.
 		 *
-		 * @param parent
-		 *            parent Composite
-		 * @param treeStyle
-		 *            SWT style bits for Tree
-		 * @param filter
-		 *            the PatternFilter to use for the TreeViewer
+		 * @param parent    parent Composite
+		 * @param treeStyle SWT style bits for Tree
+		 * @param filter    the PatternFilter to use for the TreeViewer
 		 */
-		PreferenceFilteredTree(Composite parent, int treeStyle,
-				PatternFilter filter) {
+		PreferenceFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
 			super(parent, treeStyle, filter, true);
 		}
 
 		/**
-		 * Add an additional, optional filter to the viewer. If the filter text
-		 * is cleared, this filter will be removed from the TreeViewer.
+		 * Add an additional, optional filter to the viewer. If the filter text is
+		 * cleared, this filter will be removed from the TreeViewer.
 		 *
 		 * @param filter
 		 */
@@ -147,10 +141,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 			}
 
 			cachedTitle = getShell().getText();
-			getShell().setText(
-					NLS.bind(
-							WorkbenchMessages.FilteredTree_FilteredDialogTitle,
-							cachedTitle));
+			getShell().setText(NLS.bind(WorkbenchMessages.FilteredTree_FilteredDialogTitle, cachedTitle));
 		}
 
 		@Override
@@ -200,10 +191,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	 * Creates a new preference dialog under the control of the given preference
 	 * manager.
 	 *
-	 * @param parentShell
-	 *            the parent shell
-	 * @param manager
-	 *            the preference manager
+	 * @param parentShell the parent shell
+	 * @param manager     the preference manager
 	 */
 	public FilteredPreferenceDialog(Shell parentShell, PreferenceManager manager) {
 		super(parentShell, manager);
@@ -211,10 +200,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	}
 
 	/**
-	 * Differs from super implementation in that if the node is found but should
-	 * be filtered based on a call to
-	 * <code>WorkbenchActivityHelper.filterItem()</code> then
-	 * <code>null</code> is returned.
+	 * Differs from super implementation in that if the node is found but should be
+	 * filtered based on a call to <code>WorkbenchActivityHelper.filterItem()</code>
+	 * then <code>null</code> is returned.
 	 *
 	 * @see org.eclipse.jface.preference.PreferenceDialog#findNodeMatching(java.lang.String)
 	 */
@@ -232,16 +220,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		int styleBits = SWT.SINGLE;
 		TreeViewer tree;
 		if (!hasAtMostOnePage()) {
-			filteredTree= new PreferenceFilteredTree(parent, styleBits, new PreferencePatternFilter());
+			filteredTree = new PreferenceFilteredTree(parent, styleBits, new PreferencePatternFilter());
 			filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
-			tree= filteredTree.getViewer();
+			tree = filteredTree.getViewer();
 		} else
-			tree= new TreeViewer(parent, styleBits);
+			tree = new TreeViewer(parent, styleBits);
 
 		setContentAndLabelProviders(tree);
 		tree.setInput(getPreferenceManager());
-
 
 		tree.addFilter(new CapabilityFilter());
 
@@ -257,9 +244,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	 * @return <code>true</code> if there are less than two pages.
 	 */
 	private boolean hasAtMostOnePage() {
-		ITreeContentProvider contentProvider= new PreferenceContentProvider();
+		ITreeContentProvider contentProvider = new PreferenceContentProvider();
 		try {
-			Object[] children= contentProvider.getElements(getPreferenceManager());
+			Object[] children = contentProvider.getElements(getPreferenceManager());
 			return children.length == 0 || children.length == 1 && !contentProvider.hasChildren(children[0]);
 		} finally {
 			contentProvider.dispose();
@@ -277,9 +264,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		} else {
 			treeViewer.setLabelProvider(new PreferenceBoldLabelProvider(filteredTree));
 		}
-		IContributionService cs = PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getService(
-						IContributionService.class);
+		IContributionService cs = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getService(IContributionService.class);
 		treeViewer.setComparator(cs.getComparatorFor(getContributionType()));
 		treeViewer.setContentProvider(new PreferenceContentProvider());
 	}
@@ -298,8 +284,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	/**
 	 * A selection has been made in the tree.
 	 *
-	 * @param event
-	 *            SelectionChangedEvent
+	 * @param event SelectionChangedEvent
 	 */
 	protected void handleTreeSelectionChanged(SelectionChangedEvent event) {
 		// Do nothing by default
@@ -308,8 +293,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	@Override
 	protected Control createTreeAreaContents(Composite parent) {
 		Composite leftArea = new Composite(parent, SWT.NONE);
-		leftArea.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
+		leftArea.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		leftArea.setFont(parent.getFont());
 		GridLayout leftLayout = new GridLayout();
 		leftLayout.numColumns = 1;
@@ -325,8 +309,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		setTreeViewer(viewer);
 
 		updateTreeFont(JFaceResources.getDialogFont());
-		GridData viewerData = new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_VERTICAL);
+		GridData viewerData = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		viewer.getControl().getParent().setLayoutData(viewerData);
 
 		layoutTreeAreaControl(leftArea);
@@ -348,8 +331,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	/**
 	 * Set the data to be applied to a page after it is created.
 	 *
-	 * @param pageData
-	 *            Object
+	 * @param pageData Object
 	 */
 	public void setPageData(Object pageData) {
 		this.pageData = pageData;
@@ -383,15 +365,13 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 			ToolBar toolBar = (ToolBar) control;
 
 			ToolItem importButton = new ToolItem(toolBar, SWT.PUSH);
-			importImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_IMPORT)
-					.createImage();
+			importImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_IMPORT).createImage();
 			importButton.setImage(importImage);
 			importButton.setToolTipText(WorkbenchMessages.Preference_import);
 			importButton.addListener(SWT.Selection, e -> openImportWizard(parent));
 
 			ToolItem exportButton = new ToolItem(toolBar, SWT.PUSH);
-			exportImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_EXPORT)
-					.createImage();
+			exportImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_EXPORT).createImage();
 			exportButton.setImage(exportImage);
 			exportButton.setToolTipText(WorkbenchMessages.Preference_export);
 			exportButton.addListener(SWT.Selection, e -> openExportWizard(parent));
@@ -459,12 +439,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	}
 
 	/**
-	 * Selects the current page based on the given preference page identifier.
-	 * If no node can be found, then nothing will change.
+	 * Selects the current page based on the given preference page identifier. If no
+	 * node can be found, then nothing will change.
 	 *
-	 * @param preferencePageId
-	 *            The preference page identifier to select; should not be
-	 *            <code>null</code>.
+	 * @param preferencePageId The preference page identifier to select; should not
+	 *                         be <code>null</code>.
 	 */
 	public final void setCurrentPageId(final String preferencePageId) {
 		final IPreferenceNode node = findNodeMatching(preferencePageId);
@@ -498,11 +477,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 				if (msg == null) {
 					msg = WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed;
 				}
-				StatusUtil
-						.handleStatus(
-								WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle
-										+ ": " + msg, e, StatusManager.SHOW, //$NON-NLS-1$
-								getShell());
+				StatusUtil.handleStatus(WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle + ": " + msg, e, //$NON-NLS-1$
+						StatusManager.SHOW, getShell());
 			}
 		}
 
@@ -522,18 +498,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	 */
 	Control getContainerToolBar(Composite composite) {
 
-		final ToolBarManager historyManager = new ToolBarManager(SWT.HORIZONTAL
-				| SWT.FLAT);
+		final ToolBarManager historyManager = new ToolBarManager(SWT.HORIZONTAL | SWT.FLAT);
 		historyManager.createControl(composite);
 
-		history.createHistoryControls(historyManager.getControl(),
-				historyManager);
+		history.createHistoryControls(historyManager.getControl(), historyManager);
 
 		Action popupMenuAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return WorkbenchImages
-						.getImageDescriptor(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+				return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 			}
 
 			@Override
@@ -546,15 +519,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 						sash.addFocusListener(new FocusAdapter() {
 							@Override
 							public void focusGained(FocusEvent e) {
-								sash.setBackground(sash.getDisplay()
-										.getSystemColor(
-												SWT.COLOR_LIST_SELECTION));
+								sash.setBackground(sash.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 							}
 
 							@Override
 							public void focusLost(FocusEvent e) {
-								sash.setBackground(sash.getDisplay()
-										.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+								sash.setBackground(sash.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 							}
 						});
 						sash.setFocus();
@@ -586,13 +556,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		};
 		popupMenuAction.setToolTipText(WorkbenchMessages.FilteredPreferenceDialog_FilterToolTip);
 		historyManager.add(popupMenuAction);
-		IHandlerService service = PlatformUI.getWorkbench()
-				.getService(IHandlerService.class);
-		showViewHandler = service
-				.activateHandler(
-						IWorkbenchCommandConstants.WINDOW_SHOW_VIEW_MENU,
-						new ActionHandler(popupMenuAction),
-						new ActiveShellExpression(getShell()));
+		IHandlerService service = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		showViewHandler = service.activateHandler(IWorkbenchCommandConstants.WINDOW_SHOW_VIEW_MENU,
+				new ActionHandler(popupMenuAction), new ActiveShellExpression(getShell()));
 
 		historyManager.update(false);
 
@@ -615,28 +581,22 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 				}
 				switch (event.keyCode) {
 				case SWT.ARROW_DOWN:
-					sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y
-							+ INCREMENT);
+					sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y + INCREMENT);
 					break;
 				case SWT.ARROW_UP:
-					sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y
-							- INCREMENT);
+					sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y - INCREMENT);
 					break;
 				case SWT.ARROW_LEFT:
-					sc.setOrigin(sc.getOrigin().x - INCREMENT, sc
-							.getOrigin().y);
+					sc.setOrigin(sc.getOrigin().x - INCREMENT, sc.getOrigin().y);
 					break;
 				case SWT.ARROW_RIGHT:
-					sc.setOrigin(sc.getOrigin().x + INCREMENT, sc
-							.getOrigin().y);
+					sc.setOrigin(sc.getOrigin().x + INCREMENT, sc.getOrigin().y);
 					break;
 				case SWT.PAGE_DOWN:
-					sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y
-							+ PAGE_MULTIPLIER * INCREMENT);
+					sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y + PAGE_MULTIPLIER * INCREMENT);
 					break;
 				case SWT.PAGE_UP:
-					sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y
-							- PAGE_MULTIPLIER * INCREMENT);
+					sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y - PAGE_MULTIPLIER * INCREMENT);
 					break;
 				case SWT.HOME:
 					sc.setOrigin(0, 0);
@@ -674,8 +634,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	protected boolean showPage(IPreferenceNode node) {
 		final boolean success = super.showPage(node);
 		if (success) {
-			history.addHistoryEntry(new PreferenceHistoryEntry(node.getId(),
-					node.getLabelText(), null));
+			history.addHistoryEntry(new PreferenceHistoryEntry(node.getId(), node.getLabelText(), null));
 		}
 		return success;
 	}
@@ -683,8 +642,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	@Override
 	public boolean close() {
 		if (showViewHandler != null) {
-			IHandlerService service = PlatformUI
-					.getWorkbench().getService(IHandlerService.class);
+			IHandlerService service = PlatformUI.getWorkbench().getService(IHandlerService.class);
 			service.deactivateHandler(showViewHandler);
 			showViewHandler.getHandler().dispose();
 			showViewHandler = null;
@@ -738,7 +696,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	@Override
 	protected void updateTreeFont(Font dialogFont) {
 		if (hasAtMostOnePage()) {
-			Composite composite= getTreeViewer().getTree();
+			Composite composite = getTreeViewer().getTree();
 			applyDialogFont(composite, dialogFont);
 			composite.layout(true);
 		} else {
@@ -750,7 +708,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	/**
 	 * Apply the dialog font to the given control and it's children.
 	 *
-	 * @param control the control
+	 * @param control    the control
 	 * @param dialogFont the dialog font
 	 */
 	private void applyDialogFont(Control control, Font dialogFont) {
@@ -770,8 +728,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	}
 
 	/**
-	 * <code>true</code> if upon clearing the filter field, the list of pages
-	 * should not be reset to all property or preference pages.
+	 * <code>true</code> if upon clearing the filter field, the list of pages should
+	 * not be reset to all property or preference pages.
 	 *
 	 * @param b
 	 */

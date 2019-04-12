@@ -76,16 +76,14 @@ public class ActionSet {
 		return id;
 	}
 
-	public ActionSet(MApplication application, IEclipseContext appContext,
-			IConfigurationElement element) {
+	public ActionSet(MApplication application, IEclipseContext appContext, IConfigurationElement element) {
 		this.application = application;
 		this.configElement = element;
 		this.id = MenuHelper.getId(configElement);
 	}
 
 	public void addToModel(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions,
-			ArrayList<MTrimContribution> trimContributions) {
+			ArrayList<MToolBarContribution> toolBarContributions, ArrayList<MTrimContribution> trimContributions) {
 
 		String idContrib = MenuHelper.getId(configElement);
 		visibleWhen = createExpression(configElement);
@@ -93,12 +91,11 @@ public class ActionSet {
 		EContextService contextService = application.getContext().get(EContextService.class);
 		Context actionSetContext = contextService.getContext(idContrib);
 		if (!actionSetContext.isDefined()) {
-			actionSetContext.define(MenuHelper.getLabel(configElement),
-					MenuHelper.getDescription(configElement), "org.eclipse.ui.contexts.actionSet"); //$NON-NLS-1$
+			actionSetContext.define(MenuHelper.getLabel(configElement), MenuHelper.getDescription(configElement),
+					"org.eclipse.ui.contexts.actionSet"); //$NON-NLS-1$
 		}
 
-		IConfigurationElement[] menus = configElement
-				.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
+		IConfigurationElement[] menus = configElement.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
 		if (menus.length > 0) {
 			for (int i = menus.length; i > 0; i--) {
 				IConfigurationElement element = menus[i - 1];
@@ -107,15 +104,13 @@ public class ActionSet {
 
 		}
 
-		IConfigurationElement[] actions = configElement
-				.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
+		IConfigurationElement[] actions = configElement.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
 		if (actions.length > 0) {
 			for (int i = 0; i < actions.length; i++) {
 				IConfigurationElement up = actions[i];
 				IConfigurationElement down = actions[actions.length - 1 - i];
 				addContribution(idContrib, menuContributions, down, false, MAIN_MENU);
-				addToolBarContribution(idContrib, toolBarContributions, trimContributions, up,
-						MAIN_TOOLBAR);
+				addToolBarContribution(idContrib, toolBarContributions, trimContributions, up, MAIN_TOOLBAR);
 			}
 		}
 	}
@@ -129,16 +124,14 @@ public class ActionSet {
 	private Set<String> actionSetPartAssociations(String actionSetId) {
 		HashSet<String> result = new HashSet<>();
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		final IConfigurationElement[] associations = registry
-				.getConfigurationElementsFor(PlatformUI.PLUGIN_ID + '.'
-						+ IWorkbenchRegistryConstants.PL_ACTION_SET_PART_ASSOCIATIONS);
+		final IConfigurationElement[] associations = registry.getConfigurationElementsFor(
+				PlatformUI.PLUGIN_ID + '.' + IWorkbenchRegistryConstants.PL_ACTION_SET_PART_ASSOCIATIONS);
 		for (IConfigurationElement element : associations) {
 			String targetId = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
 			if (!actionSetId.equals(targetId)) {
 				continue;
 			}
-			IConfigurationElement[] children = element
-					.getChildren(IWorkbenchRegistryConstants.TAG_PART);
+			IConfigurationElement[] children = element.getChildren(IWorkbenchRegistryConstants.TAG_PART);
 			for (IConfigurationElement part : children) {
 				String id = MenuHelper.getId(part);
 				if (id != null && id.length() > 0) {
@@ -178,8 +171,7 @@ public class ActionSet {
 				}
 			}
 			if (!partIds.isEmpty()) {
-				return EvaluationResult.valueOf(partIds.contains(context
-						.getVariable(ISources.ACTIVE_PART_ID_NAME)));
+				return EvaluationResult.valueOf(partIds.contains(context.getVariable(ISources.ACTIVE_PART_ID_NAME)));
 			}
 			return EvaluationResult.FALSE;
 		}
@@ -290,14 +282,12 @@ public class ActionSet {
 		contributions.add(menuContribution);
 	}
 
-	private void contributeToolBarGroup(ArrayList<MToolBarContribution> contributions,
-			String parentId, String group) {
+	private void contributeToolBarGroup(ArrayList<MToolBarContribution> contributions, String parentId, String group) {
 		if (toolbarContributionGroupIds.contains(parentId + group)) {
 			return;
 		}
 		toolbarContributionGroupIds.add(parentId + group);
-		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
-				.createToolBarContribution();
+		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
 		toolBarContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		toolBarContribution.getTags().add("scheme:toolbar"); //$NON-NLS-1$
 		toolBarContribution.setParentId(parentId);
@@ -309,10 +299,8 @@ public class ActionSet {
 		contributions.add(toolBarContribution);
 	}
 
-	protected void addToolBarContribution(String idContrib,
-			ArrayList<MToolBarContribution> contributions,
-			ArrayList<MTrimContribution> trimContributions, IConfigurationElement element,
-			String parentId) {
+	protected void addToolBarContribution(String idContrib, ArrayList<MToolBarContribution> contributions,
+			ArrayList<MTrimContribution> trimContributions, IConfigurationElement element, String parentId) {
 		String tpath = MenuHelper.getToolBarPath(element);
 		if (tpath == null || isEditorAction(element)) {
 			return;
@@ -322,14 +310,12 @@ public class ActionSet {
 			tpath += IWorkbenchActionConstants.MB_ADDITIONS;
 		}
 
-		MToolBarElement action = MenuHelper
-				.createLegacyToolBarActionAdditions(application, element);
+		MToolBarElement action = MenuHelper.createLegacyToolBarActionAdditions(application, element);
 
 		action.getTransientData().put("Name", MenuHelper.getLabel(element)); //$NON-NLS-1$
 		action.getTransientData().put("ActionSet", id); //$NON-NLS-1$
 
-		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
-				.createToolBarContribution();
+		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
 		toolBarContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		toolBarContribution.getTags().add("scheme:toolbar"); //$NON-NLS-1$
 		final String elementId = MenuHelper.getId(element);
@@ -359,15 +345,14 @@ public class ActionSet {
 		tpath = menuPath.segment(0);
 
 		if (MAIN_TOOLBAR.equals(parentId)) {
-			addTrimContribution(idContrib, contributions, trimContributions, element, parentId,
-					tpath, tgroup);
+			addTrimContribution(idContrib, contributions, trimContributions, element, parentId, tpath, tgroup);
 		} else {
 			tpath = parentId;
 		}
 
 		// String positionInParent =
 		// MenuHelper.isSeparatorVisible(configElement) ? null
-		//					: "after=" + tpath; //$NON-NLS-1$
+		// : "after=" + tpath; //$NON-NLS-1$
 		String positionInParent = "after=" + tgroup;//$NON-NLS-1$
 		contributeToolBarGroup(contributions, tpath, tgroup);
 		toolBarContribution.setParentId(tpath);
@@ -380,14 +365,13 @@ public class ActionSet {
 	}
 
 	private boolean isEditorAction(IConfigurationElement element) {
-		return IWorkbenchRegistryConstants.EXTENSION_EDITOR_ACTIONS.equals(element
-				.getDeclaringExtension().getExtensionPointUniqueIdentifier());
+		return IWorkbenchRegistryConstants.EXTENSION_EDITOR_ACTIONS
+				.equals(element.getDeclaringExtension().getExtensionPointUniqueIdentifier());
 	}
 
-	private void addTrimContribution(String idContrib,
-			ArrayList<MToolBarContribution> contributions,
-			ArrayList<MTrimContribution> trimContributions, IConfigurationElement element,
-			String parentId, String tpath, String tgroup) {
+	private void addTrimContribution(String idContrib, ArrayList<MToolBarContribution> contributions,
+			ArrayList<MTrimContribution> trimContributions, IConfigurationElement element, String parentId,
+			String tpath, String tgroup) {
 
 		final String elementId = MenuHelper.getId(element);
 		MTrimContribution trimContribution = MenuFactoryImpl.eINSTANCE.createTrimContribution();
@@ -399,7 +383,7 @@ public class ActionSet {
 			trimContribution.setElementId(elementId);
 		}
 		trimContribution.setParentId(parentId);
-		trimContribution.setPositionInParent("after=additions"); //$NON-NLS-1$		trimContribution.setVisibleWhen(createVisibleWhen());
+		trimContribution.setPositionInParent("after=additions"); //$NON-NLS-1$ trimContribution.setVisibleWhen(createVisibleWhen());
 		MToolBar tb = MenuFactoryImpl.eINSTANCE.createToolBar();
 		tb.setElementId(tpath);
 		tb.getTransientData().put("Name", MenuHelper.getLabel(this.configElement)); //$NON-NLS-1$
@@ -439,8 +423,7 @@ public class ActionSet {
 		}
 	}
 
-	MElementContainer<MMenuElement> findMenuFromPath(MElementContainer<MMenuElement> menu,
-			Path menuPath, int segment) {
+	MElementContainer<MMenuElement> findMenuFromPath(MElementContainer<MMenuElement> menu, Path menuPath, int segment) {
 		int idx = ContributionsAnalyzer.indexForId(menu, menuPath.segment(segment));
 		if (idx == -1) {
 			if (segment + 1 < menuPath.segmentCount() || !menuPath.hasTrailingSeparator()) {
@@ -448,8 +431,7 @@ public class ActionSet {
 			}
 			return menu;
 		}
-		MElementContainer<MMenuElement> item = (MElementContainer<MMenuElement>) menu.getChildren()
-				.get(idx);
+		MElementContainer<MMenuElement> item = (MElementContainer<MMenuElement>) menu.getChildren().get(idx);
 		if (item.getChildren().isEmpty()) {
 			if (segment + 1 == menuPath.segmentCount()) {
 				return menu;

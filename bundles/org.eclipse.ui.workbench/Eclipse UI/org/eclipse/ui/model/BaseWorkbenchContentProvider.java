@@ -29,62 +29,61 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class BaseWorkbenchContentProvider implements ITreeContentProvider {
 
-    /**
-     * Creates a new workbench content provider.
-     *
-     */
-    public BaseWorkbenchContentProvider() {
-        super();
-    }
+	/**
+	 * Creates a new workbench content provider.
+	 *
+	 */
+	public BaseWorkbenchContentProvider() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        // do nothing
-    }
+		// do nothing
+	}
 
-    /**
-     * Returns the implementation of IWorkbenchAdapter for the given
-     * object.  Returns null if the adapter is not defined or the
-     * object is not adaptable.
-     *
-     * @param element the element
-     * @return the corresponding workbench adapter object
-     */
-    protected IWorkbenchAdapter getAdapter(Object element) {
-        return Adapters.adapt(element, IWorkbenchAdapter.class);
-    }
+	/**
+	 * Returns the implementation of IWorkbenchAdapter for the given object. Returns
+	 * null if the adapter is not defined or the object is not adaptable.
+	 *
+	 * @param element the element
+	 * @return the corresponding workbench adapter object
+	 */
+	protected IWorkbenchAdapter getAdapter(Object element) {
+		return Adapters.adapt(element, IWorkbenchAdapter.class);
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object element) {
-        IWorkbenchAdapter adapter = getAdapter(element);
-        if (adapter != null) {
-            return adapter.getChildren(element);
-        }
-        return new Object[0];
-    }
+		IWorkbenchAdapter adapter = getAdapter(element);
+		if (adapter != null) {
+			return adapter.getChildren(element);
+		}
+		return new Object[0];
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object element) {
-        return getChildren(element);
-    }
+		return getChildren(element);
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {
-        IWorkbenchAdapter adapter = getAdapter(element);
-        if (adapter != null) {
-            return adapter.getParent(element);
-        }
-        return null;
-    }
+		IWorkbenchAdapter adapter = getAdapter(element);
+		if (adapter != null) {
+			return adapter.getParent(element);
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        return getChildren(element).length > 0;
-    }
+		return getChildren(element).length > 0;
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        // do nothing
-    }
+		// do nothing
+	}
 
 }

@@ -63,15 +63,13 @@ public class PreferenceProvider extends QuickAccessProvider {
 		return cachedElements;
 	}
 
-	private void collectElements(String prefix, IPreferenceNode[] subNodes,
-			List<PreferenceElement> result) {
+	private void collectElements(String prefix, IPreferenceNode[] subNodes, List<PreferenceElement> result) {
 		for (int i = 0; i < subNodes.length; i++) {
 			if (!WorkbenchActivityHelper.filterItem(subNodes[i])) {
-				PreferenceElement preferenceElement = new PreferenceElement(subNodes[i], prefix,
-						this);
+				PreferenceElement preferenceElement = new PreferenceElement(subNodes[i], prefix, this);
 				result.add(preferenceElement);
-				String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText() : (prefix
-						+ "/" + subNodes[i].getLabelText()); //$NON-NLS-1$
+				String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText()
+						: (prefix + "/" + subNodes[i].getLabelText()); //$NON-NLS-1$
 				collectElements(nestedPrefix, subNodes[i].getSubNodes(), result);
 			}
 		}
@@ -79,8 +77,7 @@ public class PreferenceProvider extends QuickAccessProvider {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 	}
 
 	@Override

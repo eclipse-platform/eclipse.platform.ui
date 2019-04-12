@@ -31,58 +31,50 @@ package org.eclipse.ui;
  */
 public class PerspectiveAdapter implements IPerspectiveListener4 {
 
-
 	@Override
-	public void perspectiveOpened(IWorkbenchPage page,
-			IPerspectiveDescriptor perspective) {
+	public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		// do nothing
 	}
 
 	@Override
-	public void perspectiveClosed(IWorkbenchPage page,
-			IPerspectiveDescriptor perspective) {
+	public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		// do nothing
 	}
 
 	@Override
-	public void perspectiveChanged(IWorkbenchPage page,
-			IPerspectiveDescriptor perspective,
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective,
 			IWorkbenchPartReference partRef, String changeId) {
 		// do nothing
 	}
 
 	@Override
-	public void perspectiveActivated(IWorkbenchPage page,
-			IPerspectiveDescriptor perspective) {
+	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		// do nothing
 	}
 
 	@Override
-	public void perspectiveChanged(IWorkbenchPage page,
-			IPerspectiveDescriptor perspective, String changeId) {
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		// do nothing
 	}
 
 	@Override
-	public void perspectiveDeactivated(IWorkbenchPage page,
-			IPerspectiveDescriptor perspective) {
+	public void perspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		// do nothing
 	}
 
 	@Override
-	public void perspectiveSavedAs(IWorkbenchPage page,
-			IPerspectiveDescriptor oldPerspective,
+	public void perspectiveSavedAs(IWorkbenchPage page, IPerspectiveDescriptor oldPerspective,
 			IPerspectiveDescriptor newPerspective) {
 		// do nothing
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @since 3.2
 	 */
 	@Override
-	public void perspectivePreDeactivate(IWorkbenchPage page,
-			IPerspectiveDescriptor perspective) {
+	public void perspectivePreDeactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		// do nothing
 	}
 }

@@ -19,71 +19,73 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * The PendingUpdateAdapter is a convenience object that can be used
- * by a BaseWorkbenchContentProvider that wants to show a pending update.
+ * The PendingUpdateAdapter is a convenience object that can be used by a
+ * BaseWorkbenchContentProvider that wants to show a pending update.
  *
  * @since 3.2
  */
 public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
 
-    private boolean removed = false;
+	private boolean removed = false;
 
-    /**
-     * Return whether or not this has been removed from the tree.
-     * @return boolean
-     */
-    protected boolean isRemoved() {
-        return removed;
-    }
+	/**
+	 * Return whether or not this has been removed from the tree.
+	 * 
+	 * @return boolean
+	 */
+	protected boolean isRemoved() {
+		return removed;
+	}
 
-    /**
-     * Set whether or not this has been removed from the tree.
-     * @param removedValue boolean
-     */
-    protected void setRemoved(boolean removedValue) {
-        this.removed = removedValue;
-    }
+	/**
+	 * Set whether or not this has been removed from the tree.
+	 * 
+	 * @param removedValue boolean
+	 */
+	protected void setRemoved(boolean removedValue) {
+		this.removed = removedValue;
+	}
 
-    /**
-     * Create a new instance of the receiver.
-     */
-    public PendingUpdateAdapter() {
-        //No initial behavior
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 */
+	public PendingUpdateAdapter() {
+		// No initial behavior
+	}
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter == IWorkbenchAdapter.class) {
+		if (adapter == IWorkbenchAdapter.class) {
 			return adapter.cast(this);
 		}
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object o) {
-        return new Object[0];
-    }
+		return new Object[0];
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public String getLabel(Object o) {
-        return ProgressMessages.PendingUpdateAdapter_PendingLabel;
-    }
+		return ProgressMessages.PendingUpdateAdapter_PendingLabel;
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object o) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
+	/**
 	 * @since 3.4
 	 */
-    @Override
+	@Override
 	public String toString() {
-    	return getLabel(null);
-    }
+		return getLabel(null);
+	}
 }

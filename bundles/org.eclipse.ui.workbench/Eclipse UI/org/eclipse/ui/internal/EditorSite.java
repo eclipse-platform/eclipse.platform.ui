@@ -32,23 +32,22 @@ import org.eclipse.ui.dnd.IDragAndDropService;
  * An editor container manages the services for an editor.
  */
 public class EditorSite extends PartSite implements IEditorSite {
-    /* package */ //static final int PROP_REUSE_EDITOR = -0x101;
+	/* package */
+	// static final int PROP_REUSE_EDITOR = -0x101;
 
+	// private ListenerList propChangeListeners = new ListenerList(1);
 
-    //private ListenerList propChangeListeners = new ListenerList(1);
+	private SubActionBars ab = null;
 
-    private SubActionBars ab = null;
-
-    /**
-     * Constructs an EditorSite for an editor.
-     */
-	public EditorSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
-			IConfigurationElement element) {
+	/**
+	 * Constructs an EditorSite for an editor.
+	 */
+	public EditorSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref, IConfigurationElement element) {
 		super(model, part, ref, element);
 
 		// Initialize the services specific to this editor site.
-        initializeDefaultServices();
-    }
+		initializeDefaultServices();
+	}
 
 	/**
 	 * Initialize the local services.
@@ -61,105 +60,101 @@ public class EditorSite extends PartSite implements IEditorSite {
 		serviceLocator.registerService(IEditorPart.class, getPart());
 	}
 
-    @Override
+	@Override
 	public void setActionBars(SubActionBars bars) {
-        super.setActionBars(bars);
+		super.setActionBars(bars);
 
-        if (bars instanceof IActionBars2) {
-            ab = new SubActionBars2((IActionBars2)bars, this);
-        } else {
-            ab = new SubActionBars(bars, this);
-        }
-    }
+		if (bars instanceof IActionBars2) {
+			ab = new SubActionBars2((IActionBars2) bars, this);
+		} else {
+			ab = new SubActionBars(bars, this);
+		}
+	}
 
-    @Override
+	@Override
 	public void activateActionBars(boolean forceVisibility) {
-        if (ab != null) {
-            ab.activate(forceVisibility);
-        }
-        super.activateActionBars(forceVisibility);
-    }
+		if (ab != null) {
+			ab.activate(forceVisibility);
+		}
+		super.activateActionBars(forceVisibility);
+	}
 
-    @Override
+	@Override
 	public void deactivateActionBars(boolean forceHide) {
-        if (ab != null) {
-            ab.deactivate(forceHide);
-        }
-        super.deactivateActionBars(forceHide);
-    }
+		if (ab != null) {
+			ab.deactivate(forceHide);
+		}
+		super.deactivateActionBars(forceHide);
+	}
 
-    /**
-     * Returns the editor action bar contributor for this editor.
-     * <p>
-     * An action contributor is responsable for the creation of actions.
-     * By design, this contributor is used for one or more editors of the same type.
-     * Thus, the contributor returned by this method is not owned completely
-     * by the editor.  It is shared.
-     * </p>
-     *
-     * @return the editor action bar contributor
-     */
-    @Override
+	/**
+	 * Returns the editor action bar contributor for this editor.
+	 * <p>
+	 * An action contributor is responsable for the creation of actions. By design,
+	 * this contributor is used for one or more editors of the same type. Thus, the
+	 * contributor returned by this method is not owned completely by the editor. It
+	 * is shared.
+	 * </p>
+	 *
+	 * @return the editor action bar contributor
+	 */
+	@Override
 	public IEditorActionBarContributor getActionBarContributor() {
-        EditorActionBars bars = (EditorActionBars) getActionBars();
-        if (bars != null) {
+		EditorActionBars bars = (EditorActionBars) getActionBars();
+		if (bars != null) {
 			return bars.getEditorContributor();
 		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Returns the extension editor action bar contributor for this editor.
-     */
-    public IEditorActionBarContributor getExtensionActionBarContributor() {
-        EditorActionBars bars = (EditorActionBars) getActionBars();
-        if (bars != null) {
+	/**
+	 * Returns the extension editor action bar contributor for this editor.
+	 */
+	public IEditorActionBarContributor getExtensionActionBarContributor() {
+		EditorActionBars bars = (EditorActionBars) getActionBars();
+		if (bars != null) {
 			return bars.getExtensionContributor();
 		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Returns the editor
-     */
-    public IEditorPart getEditorPart() {
-        return (IEditorPart) getPart();
-    }
+	/**
+	 * Returns the editor
+	 */
+	public IEditorPart getEditorPart() {
+		return (IEditorPart) getPart();
+	}
 
-    @Override
+	@Override
 	protected String getInitialScopeId() {
-        return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$
-    }
+		return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        if (ab != null) {
-            ab.dispose();
+		if (ab != null) {
+			ab.dispose();
 			ab = null;
-        }
+		}
 		super.dispose();
-    }
+	}
 
-    @Override
-	public final void registerContextMenu(final MenuManager menuManager,
-            final ISelectionProvider selectionProvider,
-            final boolean includeEditorInput) {
-        registerContextMenu(getId(), menuManager, selectionProvider,
-                includeEditorInput);
-    }
+	@Override
+	public final void registerContextMenu(final MenuManager menuManager, final ISelectionProvider selectionProvider,
+			final boolean includeEditorInput) {
+		registerContextMenu(getId(), menuManager, selectionProvider, includeEditorInput);
+	}
 
-    @Override
-	public final void registerContextMenu(final String menuId,
-            final MenuManager menuManager,
-            final ISelectionProvider selectionProvider,
-            final boolean includeEditorInput) {
-        if (menuExtenders == null) {
-            menuExtenders = new ArrayList(1);
-        }
+	@Override
+	public final void registerContextMenu(final String menuId, final MenuManager menuManager,
+			final ISelectionProvider selectionProvider, final boolean includeEditorInput) {
+		if (menuExtenders == null) {
+			menuExtenders = new ArrayList(1);
+		}
 
-		PartSite.registerContextMenu(menuId, menuManager, selectionProvider, includeEditorInput,
-				getPart(), getModel().getContext(), menuExtenders);
-    }
+		PartSite.registerContextMenu(menuId, menuManager, selectionProvider, includeEditorInput, getPart(),
+				getModel().getContext(), menuExtenders);
+	}
 }

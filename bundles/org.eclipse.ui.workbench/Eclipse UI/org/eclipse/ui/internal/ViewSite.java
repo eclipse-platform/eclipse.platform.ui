@@ -28,15 +28,13 @@ import org.eclipse.ui.internal.e4.compatibility.ActionBars;
  */
 public class ViewSite extends PartSite implements IViewSite {
 
-	public ViewSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
-			IConfigurationElement element) {
+	public ViewSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref, IConfigurationElement element) {
 		super(model, part, ref, element);
 		initializeDefaultServices();
 	}
 
 	private void initializeDefaultServices() {
-		setActionBars(new ActionBars(((WorkbenchPage) getPage()).getActionBars(), serviceLocator,
-				model));
+		setActionBars(new ActionBars(((WorkbenchPage) getPage()).getActionBars(), serviceLocator, model));
 		serviceLocator.registerService(IViewPart.class, getPart());
 	}
 

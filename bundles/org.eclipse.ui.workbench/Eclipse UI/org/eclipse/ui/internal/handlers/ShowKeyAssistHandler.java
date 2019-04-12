@@ -31,8 +31,7 @@ public class ShowKeyAssistHandler extends WorkbenchWindowHandlerDelegate {
 	 * Opens the key assistant. This should never be called until initialization
 	 * occurs.
 	 *
-	 * @param event
-	 *            Ignored
+	 * @param event Ignored
 	 * @return <code>null</code>
 	 */
 	@Override

@@ -28,13 +28,12 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class ErrorPreferencePage extends EmptyPreferencePage {
 
-    @Override
+	@Override
 	protected Control createContents(Composite parent) {
-        Text text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
-        text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
-        text.setBackground(text.getDisplay().getSystemColor(
-                SWT.COLOR_WIDGET_BACKGROUND));
-        text.setText(WorkbenchMessages.ErrorPreferencePage_errorMessage);
-        return text;
-    }
+		Text text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
+		text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		text.setText(WorkbenchMessages.ErrorPreferencePage_errorMessage);
+		return text;
+	}
 }

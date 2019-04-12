@@ -21,19 +21,15 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.ui.IFolderLayout;
 
-public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout
-		implements IFolderLayout {
-	public ModeledFolderLayout(ModeledPageLayout layout, MApplication application,
-			MPartStack stackModel) {
+public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout implements IFolderLayout {
+	public ModeledFolderLayout(ModeledPageLayout layout, MApplication application, MPartStack stackModel) {
 		super(layout, application, stackModel);
 	}
 
 	@Override
 	public void addView(String viewId) {
-		MStackElement viewModel = ModeledPageLayout.createViewModel(application, viewId, true,
-				layout.page,
-				layout.partService,
-				layout.createReferences);
+		MStackElement viewModel = ModeledPageLayout.createViewModel(application, viewId, true, layout.page,
+				layout.partService, layout.createReferences);
 		if (viewModel != null) {
 			// adding a non-placeholder to this folder, make sure the folder
 			// will be rendered

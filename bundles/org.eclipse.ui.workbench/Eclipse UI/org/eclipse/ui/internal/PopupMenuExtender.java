@@ -63,35 +63,34 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 /**
  * This class extends a single popup menu
  */
-public class PopupMenuExtender implements IMenuListener2,
-		IRegistryChangeListener {
+public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListener {
 
-    /**
-     * The bit in <code>bitSet</code> that stores whether the static actions
-     * have been read from the registry.
-     */
-    private static final int STATIC_ACTION_READ = 1;
+	/**
+	 * The bit in <code>bitSet</code> that stores whether the static actions have
+	 * been read from the registry.
+	 */
+	private static final int STATIC_ACTION_READ = 1;
 
-    /**
-     * The bit in <code>bitSet</code> that stores whether the editor input
-     * should be included for the sake of object contributions.
-     */
-    private static final int INCLUDE_EDITOR_INPUT = 1 << 1;
+	/**
+	 * The bit in <code>bitSet</code> that stores whether the editor input should be
+	 * included for the sake of object contributions.
+	 */
+	private static final int INCLUDE_EDITOR_INPUT = 1 << 1;
 
-    private final MenuManager menu;
+	private final MenuManager menu;
 
-    private SubMenuManager menuWrapper;
+	private SubMenuManager menuWrapper;
 
-    private final ISelectionProvider selProvider;
+	private final ISelectionProvider selProvider;
 
-    private final IWorkbenchPart part;
+	private final IWorkbenchPart part;
 
 	private Map<String, ViewerActionBuilder> staticActionBuilders = null;
 
-    /**
-     * The boolean properties maintained by this extender. A bit set is used to
-     * save memory.
-     */
+	/**
+	 * The boolean properties maintained by this extender. A bit set is used to save
+	 * memory.
+	 */
 	private int bitSet = 0;
 
 	private ArrayList<PluginActionContributionItem> actionContributionCache = new ArrayList<>();
@@ -104,45 +103,34 @@ public class PopupMenuExtender implements IMenuListener2,
 	 */
 	private IEclipseContext context;
 
-    /**
-     * Construct a new menu extender.
-     *
-     * @param id
-     *            the menu id
-     * @param menu
-     *            the menu to extend
-     * @param prov
-     *            the selection provider
-     * @param part
-     *            the part to extend
-	 * @param context
-	 *            the context to create the child popup menu context under
-     */
-	public PopupMenuExtender(String id, MenuManager menu, ISelectionProvider prov,
-			IWorkbenchPart part, IEclipseContext context) {
+	/**
+	 * Construct a new menu extender.
+	 *
+	 * @param id      the menu id
+	 * @param menu    the menu to extend
+	 * @param prov    the selection provider
+	 * @param part    the part to extend
+	 * @param context the context to create the child popup menu context under
+	 */
+	public PopupMenuExtender(String id, MenuManager menu, ISelectionProvider prov, IWorkbenchPart part,
+			IEclipseContext context) {
 		this(id, menu, prov, part, context, true);
 	}
 
-    /**
-     * Construct a new menu extender.
-     *
-     * @param id
-     *            the menu id
-     * @param menu
-     *            the menu to extend
-     * @param prov
-     *            the selection provider
-     * @param part
-     *            the part to extend
-	 * @param context
-	 *            the context to create the child popup menu context under
-     * @param includeEditorInput
-     *            Whether the editor input should be included when adding object
-     *            contributions to this context menu.
-     */
-	public PopupMenuExtender(final String id, final MenuManager menu,
-			final ISelectionProvider prov, final IWorkbenchPart part, IEclipseContext context,
-			final boolean includeEditorInput) {
+	/**
+	 * Construct a new menu extender.
+	 *
+	 * @param id                 the menu id
+	 * @param menu               the menu to extend
+	 * @param prov               the selection provider
+	 * @param part               the part to extend
+	 * @param context            the context to create the child popup menu context
+	 *                           under
+	 * @param includeEditorInput Whether the editor input should be included when
+	 *                           adding object contributions to this context menu.
+	 */
+	public PopupMenuExtender(final String id, final MenuManager menu, final ISelectionProvider prov,
+			final IWorkbenchPart part, IEclipseContext context, final boolean includeEditorInput) {
 		super();
 		this.menu = menu;
 		this.selProvider = prov;
@@ -169,8 +157,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		}
 		menuModel = null;
 		for (MMenu item : modelPart.getMenus()) {
-			if (id.equals(item.getElementId()) && item instanceof MPopupMenu
-					&& item.getTags().contains("popup")) { //$NON-NLS-1$
+			if (id.equals(item.getElementId()) && item instanceof MPopupMenu && item.getTags().contains("popup")) { //$NON-NLS-1$
 				menuModel = (MPopupMenu) item;
 				break;
 			}
@@ -195,41 +182,40 @@ public class PopupMenuExtender implements IMenuListener2,
 			MenuService.registerMenu(menu.getMenu().getParent(), menuModel, context);
 		}
 	}
+
 	// getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
-    /**
-     * Return the menu identifiers for this extender.
-     *
-     * @return The set of all identifiers that represent this extender.
-     */
+	/**
+	 * Return the menu identifiers for this extender.
+	 *
+	 * @return The set of all identifiers that represent this extender.
+	 */
 	public Set<String> getMenuIds() {
-    	if (staticActionBuilders == null) {
+		if (staticActionBuilders == null) {
 			return Collections.emptySet();
-    	}
+		}
 
-        return staticActionBuilders.keySet();
-    }
+		return staticActionBuilders.keySet();
+	}
 
-    /**
-     * <p>
-     * Adds another menu identifier to this extender. An extender can represent
-     * many menu identifiers. These identifiers should represent the same menu
-     * manager, selection provider and part. Duplicate identifiers are
-     * automatically ignored.
-     * </p>
-     * <p>
-     * For example, it is necessary to filter out duplicate identifiers for
-     * <code>CompilationUnitEditor</code> instances, as these define both
-     * <code>"#CompilationUnitEditorContext"</code> and
-     * <code>"org.eclipse.jdt.ui.CompilationUnitEditor.EditorContext"</code>
-     * as menu identifier for the same pop-up menu. We don't want to contribute
-     * duplicate items in this case.
-     * </p>
-     *
-     * @param menuId
-     *            The menu identifier to add to this extender; should not be
-     *            <code>null</code>.
-     */
-    public final void addMenuId(final String menuId) {
+	/**
+	 * <p>
+	 * Adds another menu identifier to this extender. An extender can represent many
+	 * menu identifiers. These identifiers should represent the same menu manager,
+	 * selection provider and part. Duplicate identifiers are automatically ignored.
+	 * </p>
+	 * <p>
+	 * For example, it is necessary to filter out duplicate identifiers for
+	 * <code>CompilationUnitEditor</code> instances, as these define both
+	 * <code>"#CompilationUnitEditorContext"</code> and
+	 * <code>"org.eclipse.jdt.ui.CompilationUnitEditor.EditorContext"</code> as menu
+	 * identifier for the same pop-up menu. We don't want to contribute duplicate
+	 * items in this case.
+	 * </p>
+	 *
+	 * @param menuId The menu identifier to add to this extender; should not be
+	 *               <code>null</code>.
+	 */
+	public final void addMenuId(final String menuId) {
 		bitSet &= ~STATIC_ACTION_READ;
 		if (menuModel != null) {
 			List<String> tags = menuModel.getTags();
@@ -241,97 +227,83 @@ public class PopupMenuExtender implements IMenuListener2,
 		readStaticActionsFor(menuId);
 	}
 
-    /**
-     * Determines whether this extender would be the same as another extender
-     * created with the given values. Two extenders are equivalent if they have
-     * the same menu manager, selection provider and part (i.e., if the menu
-     * they represent is about to show, they would populate it with duplicate
-     * values).
-     *
-     * @param menuManager
-     *            The menu manager with which to compare; may be
-     *            <code>null</code>.
-     * @param selectionProvider
-     *            The selection provider with which to compare; may be
-     *            <code>null</code>.
-     * @param part
-     *            The part with which to compare; may be <code>null</code>.
-     * @return <code>true</code> if the menu manager, selection provider and
-     *         part are all the same.
-     */
-    public final boolean matches(final MenuManager menuManager,
-            final ISelectionProvider selectionProvider,
-            final IWorkbenchPart part) {
-        return (this.menu == menuManager)
-                && (this.selProvider == selectionProvider)
-                && (this.part == part);
-    }
+	/**
+	 * Determines whether this extender would be the same as another extender
+	 * created with the given values. Two extenders are equivalent if they have the
+	 * same menu manager, selection provider and part (i.e., if the menu they
+	 * represent is about to show, they would populate it with duplicate values).
+	 *
+	 * @param menuManager       The menu manager with which to compare; may be
+	 *                          <code>null</code>.
+	 * @param selectionProvider The selection provider with which to compare; may be
+	 *                          <code>null</code>.
+	 * @param part              The part with which to compare; may be
+	 *                          <code>null</code>.
+	 * @return <code>true</code> if the menu manager, selection provider and part
+	 *         are all the same.
+	 */
+	public final boolean matches(final MenuManager menuManager, final ISelectionProvider selectionProvider,
+			final IWorkbenchPart part) {
+		return (this.menu == menuManager) && (this.selProvider == selectionProvider) && (this.part == part);
+	}
 
-    /**
-     * Contributes items registered for the currently active editor.
-     */
+	/**
+	 * Contributes items registered for the currently active editor.
+	 */
 	private void addEditorActions(IMenuManager mgr, Set<IObjectActionContributor> alreadyContributed) {
-        ISelectionProvider activeEditor = new ISelectionProvider() {
+		ISelectionProvider activeEditor = new ISelectionProvider() {
 
-            @Override
-			public void addSelectionChangedListener(
-                    ISelectionChangedListener listener) {
-                throw new UnsupportedOperationException(
-                "This ISelectionProvider is static, and cannot be modified."); //$NON-NLS-1$
-            }
+			@Override
+			public void addSelectionChangedListener(ISelectionChangedListener listener) {
+				throw new UnsupportedOperationException("This ISelectionProvider is static, and cannot be modified."); //$NON-NLS-1$
+			}
 
-            @Override
+			@Override
 			public ISelection getSelection() {
-                if (part instanceof IEditorPart) {
-                    final IEditorPart editorPart = (IEditorPart) part;
-                    return new StructuredSelection(new Object[] { editorPart
-                            .getEditorInput() });
-                }
+				if (part instanceof IEditorPart) {
+					final IEditorPart editorPart = (IEditorPart) part;
+					return new StructuredSelection(new Object[] { editorPart.getEditorInput() });
+				}
 
-                return new StructuredSelection(new Object[0]);
-            }
+				return new StructuredSelection(new Object[0]);
+			}
 
-            @Override
-			public void removeSelectionChangedListener(
-                    ISelectionChangedListener listener) {
-                throw new UnsupportedOperationException(
-                "This ISelectionProvider is static, and cannot be modified."); //$NON-NLS-1$
-            }
+			@Override
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+				throw new UnsupportedOperationException("This ISelectionProvider is static, and cannot be modified."); //$NON-NLS-1$
+			}
 
-            @Override
+			@Override
 			public void setSelection(ISelection selection) {
-                throw new UnsupportedOperationException(
-                        "This ISelectionProvider is static, and cannot be modified."); //$NON-NLS-1$
-            }
-        };
+				throw new UnsupportedOperationException("This ISelectionProvider is static, and cannot be modified."); //$NON-NLS-1$
+			}
+		};
 
-		if (ObjectActionContributorManager.getManager().contributeObjectActions(part, mgr,
-				activeEditor, alreadyContributed)) {
+		if (ObjectActionContributorManager.getManager().contributeObjectActions(part, mgr, activeEditor,
+				alreadyContributed)) {
 			mgr.add(new Separator());
 		}
-    }
+	}
 
-    /**
-     * Contributes items registered for the object type(s) in
-     * the current selection.
-     */
+	/**
+	 * Contributes items registered for the object type(s) in the current selection.
+	 */
 	private void addObjectActions(IMenuManager mgr, Set<IObjectActionContributor> alreadyContributed) {
-        if (selProvider != null) {
-			if (ObjectActionContributorManager.getManager().contributeObjectActions(part, mgr,
-					selProvider, alreadyContributed)) {
+		if (selProvider != null) {
+			if (ObjectActionContributorManager.getManager().contributeObjectActions(part, mgr, selProvider,
+					alreadyContributed)) {
 				mgr.add(new Separator());
-            }
-        }
-    }
+			}
+		}
+	}
 
-    /**
-     * Disposes all of the static actions.
-     */
-    private final void clearStaticActions() {
+	/**
+	 * Disposes all of the static actions.
+	 */
+	private final void clearStaticActions() {
 		bitSet &= ~STATIC_ACTION_READ;
 		if (staticActionBuilders != null) {
-			final Iterator<ViewerActionBuilder> staticActionBuilderItr = staticActionBuilders
-					.values().iterator();
+			final Iterator<ViewerActionBuilder> staticActionBuilderItr = staticActionBuilders.values().iterator();
 			while (staticActionBuilderItr.hasNext()) {
 				final ViewerActionBuilder staticActionBuilder = staticActionBuilderItr.next();
 				staticActionBuilder.dispose();
@@ -339,13 +311,12 @@ public class PopupMenuExtender implements IMenuListener2,
 		}
 	}
 
-    /**
-     * Adds static items to the context menu.
-     */
-    private void addStaticActions(IMenuManager mgr) {
+	/**
+	 * Adds static items to the context menu.
+	 */
+	private void addStaticActions(IMenuManager mgr) {
 		if (staticActionBuilders != null) {
-			final Iterator<ViewerActionBuilder> staticActionBuilderItr = staticActionBuilders
-					.values().iterator();
+			final Iterator<ViewerActionBuilder> staticActionBuilderItr = staticActionBuilders.values().iterator();
 			while (staticActionBuilderItr.hasNext()) {
 				final ViewerActionBuilder staticActionBuilder = staticActionBuilderItr.next();
 				staticActionBuilder.contribute(mgr, null, true);
@@ -353,18 +324,17 @@ public class PopupMenuExtender implements IMenuListener2,
 		}
 	}
 
-    /**
-     * Notifies the listener that the menu is about to be shown.
-     */
-    @Override
+	/**
+	 * Notifies the listener that the menu is about to be shown.
+	 */
+	@Override
 	public void menuAboutToShow(IMenuManager mgr) {
 		registerE4Support();
 
-    	// Add this menu as a visible menu.
-    	final IWorkbenchPartSite site = part.getSite();
-    	if (site != null) {
-			final IWorkbench workbench = site.getWorkbenchWindow()
-					.getWorkbench();
+		// Add this menu as a visible menu.
+		final IWorkbenchPartSite site = part.getSite();
+		if (site != null) {
+			final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
 			if (workbench instanceof Workbench) {
 				final Workbench realWorkbench = (Workbench) workbench;
 				runCleanUp(realWorkbench);
@@ -372,32 +342,29 @@ public class PopupMenuExtender implements IMenuListener2,
 				if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
 					if (part instanceof IEditorPart) {
 						final IEditorPart editorPart = (IEditorPart) part;
-						input = new StructuredSelection(
-								new Object[] { editorPart.getEditorInput() });
+						input = new StructuredSelection(new Object[] { editorPart.getEditorInput() });
 					}
 				}
-				ISelection s = (selProvider == null ? null : selProvider
-						.getSelection());
+				ISelection s = (selProvider == null ? null : selProvider.getSelection());
 				realWorkbench.addShowingMenus(getMenuIds(), s, input);
 			}
 		}
 
 		addMenuContributions(mgr);
 
-    	readStaticActions();
-        // test for additions removed to comply with menu contributions
-        if (menuWrapper != null) {
-            mgr = menuWrapper;
-            menuWrapper.removeAll();
-        }
+		readStaticActions();
+		// test for additions removed to comply with menu contributions
+		if (menuWrapper != null) {
+			mgr = menuWrapper;
+			menuWrapper.removeAll();
+		}
 		Set<IObjectActionContributor> contributedItems = new HashSet<>();
-        if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
+		if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
 			addEditorActions(mgr, contributedItems);
-        }
+		}
 		addObjectActions(mgr, contributedItems);
-        addStaticActions(mgr);
-    }
-
+		addStaticActions(mgr);
+	}
 
 	/**
 	 * well, this goes to the renderer.
@@ -418,29 +385,29 @@ public class PopupMenuExtender implements IMenuListener2,
 
 	private MPopupMenu menuModel;
 
-    /**
+	/**
 	 * Notifies the listener that the menu is about to be hidden.
 	 */
-    @Override
+	@Override
 	public final void menuAboutToHide(final IMenuManager mgr) {
-    	gatherContributions(mgr);
+		gatherContributions(mgr);
 		cleanupNeeded = true;
-    	// Remove this menu as a visible menu.
-    	final IWorkbenchPartSite site = part.getSite();
-    	if (site != null) {
-    		final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
-    		if (workbench instanceof Workbench) {
-    			// try delaying this until after the selection event
-    			// has been fired.
-    			// This is less threatening if the popup: menu
-    			// contributions aren't tied to the evaluation service
+		// Remove this menu as a visible menu.
+		final IWorkbenchPartSite site = part.getSite();
+		if (site != null) {
+			final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
+			if (workbench instanceof Workbench) {
+				// try delaying this until after the selection event
+				// has been fired.
+				// This is less threatening if the popup: menu
+				// contributions aren't tied to the evaluation service
 				workbench.getDisplay().asyncExec(() -> {
 					final Workbench realWorkbench = (Workbench) workbench;
 					runCleanUp(realWorkbench);
 				});
 			}
-    	}
-    }
+		}
+	}
 
 	private void runCleanUp(Workbench realWorkbench) {
 		if (!cleanupNeeded) {
@@ -489,22 +456,22 @@ public class PopupMenuExtender implements IMenuListener2,
 	}
 
 	/**
-     * Read all of the static items for the content menu.
-     */
-    private final void readStaticActions() {
-    	if (staticActionBuilders != null) {
+	 * Read all of the static items for the content menu.
+	 */
+	private final void readStaticActions() {
+		if (staticActionBuilders != null) {
 			final Iterator<String> menuIdItr = staticActionBuilders.keySet().iterator();
 			while (menuIdItr.hasNext()) {
 				final String menuId = menuIdItr.next();
 				readStaticActionsFor(menuId);
 			}
 		}
-    }
+	}
 
-    /**
+	/**
 	 * Read static items for a particular menu id, into the context menu.
 	 */
-    private void readStaticActionsFor(final String menuId) {
+	private void readStaticActionsFor(final String menuId) {
 		if ((bitSet & STATIC_ACTION_READ) != 0) {
 			return;
 		}
@@ -529,11 +496,11 @@ public class PopupMenuExtender implements IMenuListener2,
 		builder.readViewerContributions(menuId, selProvider, part);
 	}
 
-    /**
-     * Dispose of the menu extender. Should only be called when the part
-     * is disposed.
-     */
-    public void dispose() {
+	/**
+	 * Dispose of the menu extender. Should only be called when the part is
+	 * disposed.
+	 */
+	public void dispose() {
 		clearStaticActions();
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		menu.removeMenuListener(this);
@@ -555,11 +522,9 @@ public class PopupMenuExtender implements IMenuListener2,
 	/**
 	 * Unlink all contribution items from the given model menu.
 	 *
-	 * @param renderer
-	 *            the renderer that is holding the links
-	 * @param menu
-	 *            the model menu whose children should have its items unlinked
-	 *            from their corresponding contribution items
+	 * @param renderer the renderer that is holding the links
+	 * @param menu     the model menu whose children should have its items unlinked
+	 *                 from their corresponding contribution items
 	 */
 	private void unlink(MenuManagerRenderer renderer, MMenu menu) {
 		for (MMenuElement menuElement : menu.getChildren()) {
@@ -592,16 +557,16 @@ public class PopupMenuExtender implements IMenuListener2,
 		if (part != null) {
 			display = part.getSite().getPage().getWorkbenchWindow().getWorkbench().getDisplay();
 		}
-		//check the delta to see if there are any viewer contribution changes.  if so, null our builder to cause reparsing on the next menu show
-		IExtensionDelta [] deltas = event.getExtensionDeltas();
+		// check the delta to see if there are any viewer contribution changes. if so,
+		// null our builder to cause reparsing on the next menu show
+		IExtensionDelta[] deltas = event.getExtensionDeltas();
 		for (IExtensionDelta delta : deltas) {
 			IExtensionPoint extensionPoint = delta.getExtensionPoint();
 			if (extensionPoint.getContributor().getName().equals(WorkbenchPlugin.PI_WORKBENCH)
-					&& extensionPoint.getSimpleIdentifier().equals(
-							IWorkbenchRegistryConstants.PL_POPUP_MENU)) {
+					&& extensionPoint.getSimpleIdentifier().equals(IWorkbenchRegistryConstants.PL_POPUP_MENU)) {
 
 				boolean clearPopups = false;
-				IConfigurationElement [] elements = delta.getExtension().getConfigurationElements();
+				IConfigurationElement[] elements = delta.getExtension().getConfigurationElements();
 				for (IConfigurationElement element : elements) {
 					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEWER_CONTRIBUTION)) {
 						clearPopups = true;

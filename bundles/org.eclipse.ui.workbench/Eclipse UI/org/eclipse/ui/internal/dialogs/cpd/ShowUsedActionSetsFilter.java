@@ -19,8 +19,8 @@ import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.ActionSet;
 import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.DisplayItem;
 
 /**
- * A filter which will only show action sets which contribute items in the
- * given tree structure.
+ * A filter which will only show action sets which contribute items in the given
+ * tree structure.
  *
  * @since 3.5
  */

@@ -17,8 +17,8 @@ package org.eclipse.ui.activities;
 import java.util.Set;
 
 /**
- * An instance of this interface allows clients to manage activities, as
- * defined by the extension point <code>org.eclipse.ui.activities</code>.
+ * An instance of this interface allows clients to manage activities, as defined
+ * by the extension point <code>org.eclipse.ui.activities</code>.
  * <p>
  * This interface extends <code>IActivityManager</code> by granting the ability
  * to alter the set of currently enabled activities.
@@ -32,13 +32,13 @@ import java.util.Set;
  */
 public interface IMutableActivityManager extends IActivityManager {
 
-    /**
-     * Sets the set of identifiers to enabled activities.
-     *
-     * @param enabledActivityIds
-     *            the set of identifiers to enabled activities. This set may be
-     *            empty, but it must not be <code>null</code>. If this set
-     *            is not empty, it must only contain instances of <code>String</code>.
-     */
+	/**
+	 * Sets the set of identifiers to enabled activities.
+	 *
+	 * @param enabledActivityIds the set of identifiers to enabled activities. This
+	 *                           set may be empty, but it must not be
+	 *                           <code>null</code>. If this set is not empty, it
+	 *                           must only contain instances of <code>String</code>.
+	 */
 	void setEnabledActivityIds(Set<String> enabledActivityIds);
 }

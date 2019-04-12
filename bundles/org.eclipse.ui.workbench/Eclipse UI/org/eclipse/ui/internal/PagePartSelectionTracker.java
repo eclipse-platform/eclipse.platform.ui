@@ -17,28 +17,26 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Provides debug view selection management/notification for
- * a debug view in a specific workbench page. This selection
- * provider shields clients from a debug view opening and closing,
- * and still provides selection notification/information even
- * when the debug view is not the active part.
+ * Provides debug view selection management/notification for a debug view in a
+ * specific workbench page. This selection provider shields clients from a debug
+ * view opening and closing, and still provides selection
+ * notification/information even when the debug view is not the active part.
  */
 public class PagePartSelectionTracker {
-    /**
-     * Returns the id for the given part, taking into account
-     * multi-view instances which may have a secondary id.
-     *
-     * @since 3.0
-     */
+	/**
+	 * Returns the id for the given part, taking into account multi-view instances
+	 * which may have a secondary id.
+	 *
+	 * @since 3.0
+	 */
 	static String getPartId(IWorkbenchPart part) {
-        String id = part.getSite().getId();
-        if (part instanceof IViewPart) {
-            String secondaryId = ((IViewPart) part).getViewSite()
-                    .getSecondaryId();
-            if (secondaryId != null) {
-                id = id + ':' + secondaryId;
-            }
-        }
-        return id;
-    }
+		String id = part.getSite().getId();
+		if (part instanceof IViewPart) {
+			String secondaryId = ((IViewPart) part).getViewSite().getSecondaryId();
+			if (secondaryId != null) {
+				id = id + ':' + secondaryId;
+			}
+		}
+		return id;
+	}
 }

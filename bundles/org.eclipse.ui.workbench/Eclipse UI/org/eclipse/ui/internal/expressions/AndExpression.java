@@ -25,8 +25,7 @@ public final class AndExpression extends CompositeExpression {
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = AndExpression.class.getName()
-			.hashCode();
+	private static final int HASH_INITIAL = AndExpression.class.getName().hashCode();
 
 	@Override
 	protected int computeHashCode() {
@@ -44,8 +43,7 @@ public final class AndExpression extends CompositeExpression {
 	}
 
 	@Override
-	public EvaluationResult evaluate(final IEvaluationContext context)
-			throws CoreException {
+	public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 		return evaluateAnd(context);
 	}
 

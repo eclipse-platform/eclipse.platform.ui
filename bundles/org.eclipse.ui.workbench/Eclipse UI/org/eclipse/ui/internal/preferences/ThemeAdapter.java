@@ -26,84 +26,84 @@ import org.eclipse.ui.themes.ITheme;
  */
 public class ThemeAdapter extends PropertyMapAdapter {
 
-    private ITheme targetTheme;
+	private ITheme targetTheme;
 
-    private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
+	private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
 
-    public ThemeAdapter(ITheme targetTheme) {
-        this.targetTheme = targetTheme;
-    }
+	public ThemeAdapter(ITheme targetTheme) {
+		this.targetTheme = targetTheme;
+	}
 
-    @Override
+	@Override
 	protected void attachListener() {
-        targetTheme.addPropertyChangeListener(listener);
-    }
+		targetTheme.addPropertyChangeListener(listener);
+	}
 
-    @Override
+	@Override
 	protected void detachListener() {
-        targetTheme.removePropertyChangeListener(listener);
-    }
+		targetTheme.removePropertyChangeListener(listener);
+	}
 
-    @Override
+	@Override
 	public Set keySet() {
-        return getKeySet(targetTheme);
-    }
+		return getKeySet(targetTheme);
+	}
 
-    @Override
+	@Override
 	public Object getValue(String propertyId, Class propertyType) {
-        return getValue(targetTheme, propertyId, propertyType);
-    }
+		return getValue(targetTheme, propertyId, propertyType);
+	}
 
-    public static Set getKeySet(ITheme targetTheme) {
-        Set result = new HashSet();
+	public static Set getKeySet(ITheme targetTheme) {
+		Set result = new HashSet();
 
-        result.addAll(targetTheme.keySet());
-        result.addAll(targetTheme.getColorRegistry().getKeySet());
-        result.addAll(targetTheme.getFontRegistry().getKeySet());
+		result.addAll(targetTheme.keySet());
+		result.addAll(targetTheme.getColorRegistry().getKeySet());
+		result.addAll(targetTheme.getFontRegistry().getKeySet());
 
-        return result;
-    }
+		return result;
+	}
 
-    public static Object getValue(ITheme targetTheme, String propertyId, Class propertyType) {
+	public static Object getValue(ITheme targetTheme, String propertyId, Class propertyType) {
 
-        if (propertyType.isAssignableFrom(String.class)) {
-            return targetTheme.getString(propertyId);
-        }
+		if (propertyType.isAssignableFrom(String.class)) {
+			return targetTheme.getString(propertyId);
+		}
 
-        if (propertyType.isAssignableFrom(Color.class)) {
-            Color result = targetTheme.getColorRegistry().get(propertyId);
-            if (result != null) {
-                return result;
-            }
-        }
+		if (propertyType.isAssignableFrom(Color.class)) {
+			Color result = targetTheme.getColorRegistry().get(propertyId);
+			if (result != null) {
+				return result;
+			}
+		}
 
-        if (propertyType.isAssignableFrom(Font.class)) {
-            FontRegistry fonts = targetTheme.getFontRegistry();
+		if (propertyType.isAssignableFrom(Font.class)) {
+			FontRegistry fonts = targetTheme.getFontRegistry();
 
-            if (fonts.hasValueFor(propertyId)) {
-                return fonts.get(propertyId);
-            }
-        }
+			if (fonts.hasValueFor(propertyId)) {
+				return fonts.get(propertyId);
+			}
+		}
 
-        if (propertyType == Integer.class) {
+		if (propertyType == Integer.class) {
 			return Integer.valueOf(targetTheme.getInt(propertyId));
-        }
+		}
 
-        if (propertyType == Boolean.class) {
-            return targetTheme.getBoolean(propertyId) ? Boolean.TRUE : Boolean.FALSE;
-        }
+		if (propertyType == Boolean.class) {
+			return targetTheme.getBoolean(propertyId) ? Boolean.TRUE : Boolean.FALSE;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean propertyExists(String propertyId) {
-        return keySet().contains(propertyId);
-    }
+		return keySet().contains(propertyId);
+	}
 
-    @Override
+	@Override
 	public void setValue(String propertyId, Object newValue) {
-        throw new UnsupportedOperationException();
-    }
+		throw new UnsupportedOperationException();
+	}
 
 }

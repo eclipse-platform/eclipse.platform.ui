@@ -32,38 +32,35 @@ public interface ISourceProviderListener {
 
 	/**
 	 * Handles a change to multiple sources. The source priority should be a bit
-	 * mask indicating the sources. The map will be used to construct the
-	 * variables on an <code>IEvaluationContext</code>
+	 * mask indicating the sources. The map will be used to construct the variables
+	 * on an <code>IEvaluationContext</code>
 	 *
-	 * @param sourcePriority
-	 *            A bit mask of all the source priorities that have changed.
-	 * @param sourceValuesByName
-	 *            A mapping of the source names (<code>String</code>) to the
-	 *            source values (<code>Object</code>). The names should
-	 *            never be <code>null</code>, but the values may be. The map
-	 *            must not be <code>null</code>, and should contain at least
-	 *            two elements (one for each source).
+	 * @param sourcePriority     A bit mask of all the source priorities that have
+	 *                           changed.
+	 * @param sourceValuesByName A mapping of the source names (<code>String</code>)
+	 *                           to the source values (<code>Object</code>). The
+	 *                           names should never be <code>null</code>, but the
+	 *                           values may be. The map must not be
+	 *                           <code>null</code>, and should contain at least two
+	 *                           elements (one for each source).
 	 * @see org.eclipse.core.expressions.IEvaluationContext
 	 * @see ISources
 	 */
-	void sourceChanged(final int sourcePriority,
-			final Map sourceValuesByName);
+	void sourceChanged(final int sourcePriority, final Map sourceValuesByName);
 
 	/**
 	 * Handles a change to one source. The source priority should indicate the
 	 * source, and the name-value pair will be used to create an
 	 * <code>IEvaluationContext</code> with a single variable.
 	 *
-	 * @param sourcePriority
-	 *            A bit mask of all the source priorities that have changed.
-	 * @param sourceName
-	 *            The name of the source that changed; must not be
-	 *            <code>null</code>.
-	 * @param sourceValue
-	 *            The new value for that source; may be <code>null</code>.
+	 * @param sourcePriority A bit mask of all the source priorities that have
+	 *                       changed.
+	 * @param sourceName     The name of the source that changed; must not be
+	 *                       <code>null</code>.
+	 * @param sourceValue    The new value for that source; may be
+	 *                       <code>null</code>.
 	 * @see org.eclipse.core.expressions.IEvaluationContext
 	 * @see ISources
 	 */
-	void sourceChanged(final int sourcePriority,
-			final String sourceName, final Object sourceValue);
+	void sourceChanged(final int sourcePriority, final String sourceName, final Object sourceValue);
 }

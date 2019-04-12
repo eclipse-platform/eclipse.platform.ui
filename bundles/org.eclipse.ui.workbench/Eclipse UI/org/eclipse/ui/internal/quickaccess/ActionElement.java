@@ -30,7 +30,7 @@ public class ActionElement extends QuickAccessElement {
 
 	private ActionContributionItem item;
 
-	/* package */ActionElement(ActionContributionItem item, ActionProvider actionProvider) {
+	/* package */ ActionElement(ActionContributionItem item, ActionProvider actionProvider) {
 		super(actionProvider);
 		this.item = item;
 	}
@@ -53,10 +53,8 @@ public class ActionElement extends QuickAccessElement {
 	@Override
 	public String getLabel() {
 		IAction action = item.getAction();
-		if (action.getToolTipText() != null
-				&& action.getToolTipText().length() != 0) {
-			return LegacyActionTools.removeMnemonics(action.getText()
-					+ separator + action.getToolTipText());
+		if (action.getToolTipText() != null && action.getToolTipText().length() != 0) {
+			return LegacyActionTools.removeMnemonics(action.getText() + separator + action.getToolTipText());
 		}
 		return LegacyActionTools.removeMnemonics(action.getText());
 	}

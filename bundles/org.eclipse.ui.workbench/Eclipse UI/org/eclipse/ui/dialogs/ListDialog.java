@@ -35,155 +35,152 @@ import org.eclipse.swt.widgets.Table;
  * @since 2.1
  */
 public class ListDialog extends SelectionDialog {
-    private IStructuredContentProvider fContentProvider;
+	private IStructuredContentProvider fContentProvider;
 
-    private ILabelProvider fLabelProvider;
+	private ILabelProvider fLabelProvider;
 
-    private Object fInput;
+	private Object fInput;
 
-    private TableViewer fTableViewer;
+	private TableViewer fTableViewer;
 
-    private boolean fAddCancelButton = true;
+	private boolean fAddCancelButton = true;
 
-    private int widthInChars = 55;
+	private int widthInChars = 55;
 
-    private int heightInChars = 15;
+	private int heightInChars = 15;
 
-    /**
-     * Create a new instance of the receiver with parent shell of parent.
-     * @param parent
-     */
-    public ListDialog(Shell parent) {
-        super(parent);
-    }
+	/**
+	 * Create a new instance of the receiver with parent shell of parent.
+	 * 
+	 * @param parent
+	 */
+	public ListDialog(Shell parent) {
+		super(parent);
+	}
 
-    /**
-     * @param input The input for the list.
-     */
-    public void setInput(Object input) {
-        fInput = input;
-    }
+	/**
+	 * @param input The input for the list.
+	 */
+	public void setInput(Object input) {
+		fInput = input;
+	}
 
-    /**
-     * @param sp The content provider for the list.
-     */
-    public void setContentProvider(IStructuredContentProvider sp) {
-        fContentProvider = sp;
-    }
+	/**
+	 * @param sp The content provider for the list.
+	 */
+	public void setContentProvider(IStructuredContentProvider sp) {
+		fContentProvider = sp;
+	}
 
-    /**
-     * @param lp The labelProvider for the list.
-     */
-    public void setLabelProvider(ILabelProvider lp) {
-        fLabelProvider = lp;
-    }
+	/**
+	 * @param lp The labelProvider for the list.
+	 */
+	public void setLabelProvider(ILabelProvider lp) {
+		fLabelProvider = lp;
+	}
 
-    /**
-     *@param addCancelButton if <code>true</code> there will be a cancel
-     * button.
-     */
-    public void setAddCancelButton(boolean addCancelButton) {
-        fAddCancelButton = addCancelButton;
-    }
+	/**
+	 * @param addCancelButton if <code>true</code> there will be a cancel button.
+	 */
+	public void setAddCancelButton(boolean addCancelButton) {
+		fAddCancelButton = addCancelButton;
+	}
 
-    /**
-     * @return the TableViewer for the receiver.
-     */
-    public TableViewer getTableViewer() {
-        return fTableViewer;
-    }
+	/**
+	 * @return the TableViewer for the receiver.
+	 */
+	public TableViewer getTableViewer() {
+		return fTableViewer;
+	}
 
-    @Override
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-        if (!fAddCancelButton) {
-			createButton(parent, IDialogConstants.OK_ID,
-                    IDialogConstants.OK_LABEL, true);
+		if (!fAddCancelButton) {
+			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		} else {
 			super.createButtonsForButtonBar(parent);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite container) {
-        Composite parent = (Composite) super.createDialogArea(container);
-        createMessageArea(parent);
-        fTableViewer = new TableViewer(parent, getTableStyle());
-        fTableViewer.setContentProvider(fContentProvider);
-        fTableViewer.setLabelProvider(fLabelProvider);
-        fTableViewer.setInput(fInput);
-        fTableViewer.addDoubleClickListener(event -> {
-		    if (fAddCancelButton) {
+		Composite parent = (Composite) super.createDialogArea(container);
+		createMessageArea(parent);
+		fTableViewer = new TableViewer(parent, getTableStyle());
+		fTableViewer.setContentProvider(fContentProvider);
+		fTableViewer.setLabelProvider(fLabelProvider);
+		fTableViewer.setInput(fInput);
+		fTableViewer.addDoubleClickListener(event -> {
+			if (fAddCancelButton) {
 				okPressed();
 			}
 		});
-        List initialSelection = getInitialElementSelections();
-        if (initialSelection != null) {
-			fTableViewer
-                    .setSelection(new StructuredSelection(initialSelection));
+		List initialSelection = getInitialElementSelections();
+		if (initialSelection != null) {
+			fTableViewer.setSelection(new StructuredSelection(initialSelection));
 		}
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.heightHint = convertHeightInCharsToPixels(heightInChars);
-        gd.widthHint = convertWidthInCharsToPixels(widthInChars);
-        Table table = fTableViewer.getTable();
-        table.setLayoutData(gd);
-        table.setFont(container.getFont());
-        return parent;
-    }
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = convertHeightInCharsToPixels(heightInChars);
+		gd.widthHint = convertWidthInCharsToPixels(widthInChars);
+		Table table = fTableViewer.getTable();
+		table.setLayoutData(gd);
+		table.setFont(container.getFont());
+		return parent;
+	}
 
-    /**
-     * Return the style flags for the table viewer.
-     * @return int
-     */
-    protected int getTableStyle() {
-        return SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
-    }
+	/**
+	 * Return the style flags for the table viewer.
+	 * 
+	 * @return int
+	 */
+	protected int getTableStyle() {
+		return SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
+	}
 
-    /*
-     * Overrides method from Dialog
-     */
-    @Override
+	/*
+	 * Overrides method from Dialog
+	 */
+	@Override
 	protected void okPressed() {
-        // Build a list of selected children.
+		// Build a list of selected children.
 		IStructuredSelection selection = fTableViewer.getStructuredSelection();
-        setResult(selection.toList());
-        super.okPressed();
-    }
+		setResult(selection.toList());
+		super.okPressed();
+	}
 
-    /**
-     * Returns the initial height of the dialog in number of characters.
-     *
-     * @return the initial height of the dialog in number of characters
-     */
-    public int getHeightInChars() {
-        return heightInChars;
-    }
+	/**
+	 * Returns the initial height of the dialog in number of characters.
+	 *
+	 * @return the initial height of the dialog in number of characters
+	 */
+	public int getHeightInChars() {
+		return heightInChars;
+	}
 
-    /**
-     * Returns the initial width of the dialog in number of characters.
-     *
-     * @return the initial width of the dialog in number of characters
-     */
-    public int getWidthInChars() {
-        return widthInChars;
-    }
+	/**
+	 * Returns the initial width of the dialog in number of characters.
+	 *
+	 * @return the initial width of the dialog in number of characters
+	 */
+	public int getWidthInChars() {
+		return widthInChars;
+	}
 
-    /**
-     * Sets the initial height of the dialog in number of characters.
-     *
-     * @param heightInChars
-     *            the initialheight of the dialog in number of characters
-     */
-    public void setHeightInChars(int heightInChars) {
-        this.heightInChars = heightInChars;
-    }
+	/**
+	 * Sets the initial height of the dialog in number of characters.
+	 *
+	 * @param heightInChars the initialheight of the dialog in number of characters
+	 */
+	public void setHeightInChars(int heightInChars) {
+		this.heightInChars = heightInChars;
+	}
 
-    /**
-     * Sets the initial width of the dialog in number of characters.
-     *
-     * @param widthInChars
-     *            the initial width of the dialog in number of characters
-     */
-    public void setWidthInChars(int widthInChars) {
-        this.widthInChars = widthInChars;
-    }
+	/**
+	 * Sets the initial width of the dialog in number of characters.
+	 *
+	 * @param widthInChars the initial width of the dialog in number of characters
+	 */
+	public void setWidthInChars(int widthInChars) {
+		this.widthInChars = widthInChars;
+	}
 }

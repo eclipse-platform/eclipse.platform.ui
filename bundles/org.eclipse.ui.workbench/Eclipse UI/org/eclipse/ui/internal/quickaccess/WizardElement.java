@@ -31,18 +31,16 @@ public class WizardElement extends QuickAccessElement {
 
 	private IWizardDescriptor wizardDescriptor;
 
-	/* package */WizardElement(IWizardDescriptor wizardDescriptor, WizardProvider wizardProvider) {
+	/* package */ WizardElement(IWizardDescriptor wizardDescriptor, WizardProvider wizardProvider) {
 		super(wizardProvider);
 		this.wizardDescriptor = wizardDescriptor;
 	}
 
 	@Override
 	public void execute() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
-			NewWizardShortcutAction wizardAction = new NewWizardShortcutAction(
-					window, wizardDescriptor);
+			NewWizardShortcutAction wizardAction = new NewWizardShortcutAction(window, wizardDescriptor);
 			wizardAction.run();
 		}
 	}
@@ -59,17 +57,14 @@ public class WizardElement extends QuickAccessElement {
 
 	@Override
 	public String getLabel() {
-		return wizardDescriptor.getLabel() + separator
-				+ wizardDescriptor.getDescription();
+		return wizardDescriptor.getLabel() + separator + wizardDescriptor.getDescription();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((wizardDescriptor == null) ? 0 : wizardDescriptor.hashCode());
+		result = prime * result + ((wizardDescriptor == null) ? 0 : wizardDescriptor.hashCode());
 		return result;
 	}
 

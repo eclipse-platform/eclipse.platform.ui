@@ -44,56 +44,54 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class Util {
 
-    public static final SortedMap EMPTY_SORTED_MAP = Collections
-            .unmodifiableSortedMap(new TreeMap());
+	public static final SortedMap EMPTY_SORTED_MAP = Collections.unmodifiableSortedMap(new TreeMap());
 
-    public static final SortedSet EMPTY_SORTED_SET = Collections
-            .unmodifiableSortedSet(new TreeSet());
+	public static final SortedSet EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet());
 
-    public static final String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
+	public static final String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
-    public static final String[] EMPTY_STRING_ARRAY = new String[0];
+	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-    /**
-     * Ensures that a string is not null. Converts null strings into empty
-     * strings, and leaves any other string unmodified. Use this to help
-     * wrap calls to methods that return null instead of the empty string.
-     * Can also help protect against implementation errors in methods that
-     * are not supposed to return null.
-     *
-     * @param input input string (may be null)
-     * @return input if not null, or the empty string if input is null
-     */
-    public static String safeString(String input) {
-        if (input != null) {
-            return input;
-        }
+	/**
+	 * Ensures that a string is not null. Converts null strings into empty strings,
+	 * and leaves any other string unmodified. Use this to help wrap calls to
+	 * methods that return null instead of the empty string. Can also help protect
+	 * against implementation errors in methods that are not supposed to return
+	 * null.
+	 *
+	 * @param input input string (may be null)
+	 * @return input if not null, or the empty string if input is null
+	 */
+	public static String safeString(String input) {
+		if (input != null) {
+			return input;
+		}
 
-        return ZERO_LENGTH_STRING;
-    }
+		return ZERO_LENGTH_STRING;
+	}
 
-    public static void assertInstance(Object object, Class c) {
-        assertInstance(object, c, false);
-    }
+	public static void assertInstance(Object object, Class c) {
+		assertInstance(object, c, false);
+	}
 
-    public static void assertInstance(Object object, Class c, boolean allowNull) {
-        if (object == null && allowNull) {
+	public static void assertInstance(Object object, Class c, boolean allowNull) {
+		if (object == null && allowNull) {
 			return;
 		}
 
-        if (object == null || c == null) {
+		if (object == null || c == null) {
 			throw new NullPointerException();
 		} else if (!c.isInstance(object)) {
 			throw new IllegalArgumentException();
 		}
-    }
+	}
 
-    public static int compare(boolean left, boolean right) {
-        return left == false ? (right == true ? -1 : 0) : 1;
-    }
+	public static int compare(boolean left, boolean right) {
+		return left == false ? (right == true ? -1 : 0) : 1;
+	}
 
-    public static int compare(Comparable left, Comparable right) {
-        if (left == null && right == null) {
+	public static int compare(Comparable left, Comparable right) {
+		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
 			return -1;
@@ -102,20 +100,20 @@ public final class Util {
 		} else {
 			return left.compareTo(right);
 		}
-    }
+	}
 
-    public static int compare(Comparable[] left, Comparable[] right) {
-        if (left == null && right == null) {
+	public static int compare(Comparable[] left, Comparable[] right) {
+		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
 			return -1;
 		} else if (right == null) {
 			return 1;
 		} else {
-            int l = left.length;
-            int r = right.length;
+			int l = left.length;
+			int r = right.length;
 
-            if (l != r) {
+			if (l != r) {
 				return l - r;
 			}
 			for (int i = 0; i < l; i++) {
@@ -127,25 +125,25 @@ public final class Util {
 			}
 
 			return 0;
-        }
-    }
+		}
+	}
 
-    public static int compare(int left, int right) {
-        return left - right;
-    }
+	public static int compare(int left, int right) {
+		return left - right;
+	}
 
-    public static int compare(List left, List right) {
-        if (left == null && right == null) {
+	public static int compare(List left, List right) {
+		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
 			return -1;
 		} else if (right == null) {
 			return 1;
 		} else {
-            int l = left.size();
-            int r = right.size();
+			int l = left.size();
+			int r = right.size();
 
-            if (l != r) {
+			if (l != r) {
 				return l - r;
 			}
 			for (int i = 0; i < l; i++) {
@@ -157,11 +155,11 @@ public final class Util {
 			}
 
 			return 0;
-        }
-    }
+		}
+	}
 
-    public static int compare(Object left, Object right) {
-        if (left == null && right == null) {
+	public static int compare(Object left, Object right) {
+		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
 			return -1;
@@ -170,91 +168,83 @@ public final class Util {
 		} else if (left == right) {
 			return 0;
 		} else {
-			return compare(System.identityHashCode(left), System
-                    .identityHashCode(right));
+			return compare(System.identityHashCode(left), System.identityHashCode(right));
 		}
-    }
+	}
 
-    /**
-     * An optimized comparison that uses identity hash codes to perform the
-     * comparison between non- <code>null</code> objects.
-     *
-     * @param left
-     *            The left-hand side of the comparison; may be <code>null</code>.
-     * @param right
-     *            The right-hand side of the comparison; may be
-     *            <code>null</code>.
-     * @return <code>0</code> if they are the same, <code>-1</code> if left
-     *         is <code>null</code>;<code>1</code> if right is
-     *         <code>null</code>. Otherwise, the left identity hash code
-     *         minus the right identity hash code.
-     */
-    public static int compareIdentity(Object left, Object right) {
-        if (left == null && right == null) {
+	/**
+	 * An optimized comparison that uses identity hash codes to perform the
+	 * comparison between non- <code>null</code> objects.
+	 *
+	 * @param left  The left-hand side of the comparison; may be <code>null</code>.
+	 * @param right The right-hand side of the comparison; may be <code>null</code>.
+	 * @return <code>0</code> if they are the same, <code>-1</code> if left is
+	 *         <code>null</code>;<code>1</code> if right is <code>null</code>.
+	 *         Otherwise, the left identity hash code minus the right identity hash
+	 *         code.
+	 */
+	public static int compareIdentity(Object left, Object right) {
+		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
 			return -1;
 		} else if (right == null) {
 			return 1;
 		} else {
-			return System.identityHashCode(left)
-                    - System.identityHashCode(right);
+			return System.identityHashCode(left) - System.identityHashCode(right);
 		}
-    }
+	}
 
-	public static void diff(Map<?, ?> left, Map<?, ?> right, Set leftOnly, Set different,
-            Set rightOnly) {
-        if (left == null || right == null || leftOnly == null
-                || different == null || rightOnly == null) {
+	public static void diff(Map<?, ?> left, Map<?, ?> right, Set leftOnly, Set different, Set rightOnly) {
+		if (left == null || right == null || leftOnly == null || different == null || rightOnly == null) {
 			throw new NullPointerException();
 		}
 
 		for (Entry<?, ?> leftEntry : left.entrySet()) {
 			Object key = leftEntry.getKey();
 
-            if (!right.containsKey(key)) {
+			if (!right.containsKey(key)) {
 				leftOnly.add(key);
 			} else if (!Util.equals(leftEntry.getValue(), right.get(key))) {
 				different.add(key);
 			}
-        }
+		}
 
 		for (Object rightKey : right.keySet()) {
 			if (!left.containsKey(rightKey)) {
 				rightOnly.add(rightKey);
 			}
-        }
-    }
+		}
+	}
 
-    public static void diff(Set left, Set right, Set leftOnly, Set rightOnly) {
-        if (left == null || right == null || leftOnly == null
-                || rightOnly == null) {
+	public static void diff(Set left, Set right, Set leftOnly, Set rightOnly) {
+		if (left == null || right == null || leftOnly == null || rightOnly == null) {
 			throw new NullPointerException();
 		}
 
-        Iterator iterator = left.iterator();
+		Iterator iterator = left.iterator();
 
-        while (iterator.hasNext()) {
-            Object object = iterator.next();
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
 
-            if (!right.contains(object)) {
+			if (!right.contains(object)) {
 				leftOnly.add(object);
 			}
-        }
+		}
 
-        iterator = right.iterator();
+		iterator = right.iterator();
 
-        while (iterator.hasNext()) {
-            Object object = iterator.next();
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
 
-            if (!left.contains(object)) {
+			if (!left.contains(object)) {
 				rightOnly.add(object);
 			}
-        }
-    }
+		}
+	}
 
-    public static boolean endsWith(List left, List right, boolean equals) {
-        if (left == null || right == null) {
+	public static boolean endsWith(List left, List right, boolean equals) {
+		if (left == null || right == null) {
 			return false;
 		}
 		int l = left.size();
@@ -271,10 +261,10 @@ public final class Util {
 		}
 
 		return true;
-    }
+	}
 
-    public static boolean endsWith(Object[] left, Object[] right, boolean equals) {
-        if (left == null || right == null) {
+	public static boolean endsWith(Object[] left, Object[] right, boolean equals) {
+		if (left == null || right == null) {
 			return false;
 		}
 		int l = left.length;
@@ -291,38 +281,32 @@ public final class Util {
 		}
 
 		return true;
-    }
+	}
 
-    public static boolean equals(boolean left, boolean right) {
-        return left == right;
-    }
+	public static boolean equals(boolean left, boolean right) {
+		return left == right;
+	}
 
-    public static boolean equals(int left, int right) {
-        return left == right;
-    }
+	public static boolean equals(int left, int right) {
+		return left == right;
+	}
 
-    public static boolean equals(Object left, Object right) {
-        return left == null ? right == null : ((right != null) && left
-                .equals(right));
-    }
+	public static boolean equals(Object left, Object right) {
+		return left == null ? right == null : ((right != null) && left.equals(right));
+	}
 
 	/**
-	 * Tests whether two arrays of objects are equal to each other. The arrays
-	 * must not be <code>null</code>, but their elements may be
-	 * <code>null</code>.
+	 * Tests whether two arrays of objects are equal to each other. The arrays must
+	 * not be <code>null</code>, but their elements may be <code>null</code>.
 	 *
-	 * @param leftArray
-	 *            The left array to compare; may be <code>null</code>, and
-	 *            may be empty and may contain <code>null</code> elements.
-	 * @param rightArray
-	 *            The right array to compare; may be <code>null</code>, and
-	 *            may be empty and may contain <code>null</code> elements.
-	 * @return <code>true</code> if the arrays are equal length and the
-	 *         elements at the same position are equal; <code>false</code>
-	 *         otherwise.
+	 * @param leftArray  The left array to compare; may be <code>null</code>, and
+	 *                   may be empty and may contain <code>null</code> elements.
+	 * @param rightArray The right array to compare; may be <code>null</code>, and
+	 *                   may be empty and may contain <code>null</code> elements.
+	 * @return <code>true</code> if the arrays are equal length and the elements at
+	 *         the same position are equal; <code>false</code> otherwise.
 	 */
-	public static boolean equals(final Object[] leftArray,
-			final Object[] rightArray) {
+	public static boolean equals(final Object[] leftArray, final Object[] rightArray) {
 		if (leftArray == rightArray) {
 			return true;
 		}
@@ -340,8 +324,7 @@ public final class Util {
 		for (int i = 0; i < leftArray.length; i++) {
 			final Object left = leftArray[i];
 			final Object right = rightArray[i];
-			final boolean equal = (left == null) ? (right == null) : (left
-					.equals(right));
+			final boolean equal = (left == null) ? (right == null) : (left.equals(right));
 			if (!equal) {
 				return false;
 			}
@@ -350,246 +333,240 @@ public final class Util {
 		return true;
 	}
 
-    public static int hashCode(boolean b) {
-        return b ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode();
-    }
+	public static int hashCode(boolean b) {
+		return b ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode();
+	}
 
-    public static int hashCode(int i) {
-        return i;
-    }
+	public static int hashCode(int i) {
+		return i;
+	}
 
-    public static int hashCode(Object object) {
-        return object != null ? object.hashCode() : 0;
-    }
+	public static int hashCode(Object object) {
+		return object != null ? object.hashCode() : 0;
+	}
 
-    public static Collection safeCopy(Collection collection, Class c) {
-        return safeCopy(collection, c, false);
-    }
+	public static Collection safeCopy(Collection collection, Class c) {
+		return safeCopy(collection, c, false);
+	}
 
-    public static Collection safeCopy(Collection collection, Class c,
-            boolean allowNullElements) {
-        if (collection == null || c == null) {
+	public static Collection safeCopy(Collection collection, Class c, boolean allowNullElements) {
+		if (collection == null || c == null) {
 			throw new NullPointerException();
 		}
 
-        collection = Collections.unmodifiableCollection(new ArrayList(
-                collection));
-        Iterator iterator = collection.iterator();
+		collection = Collections.unmodifiableCollection(new ArrayList(collection));
+		Iterator iterator = collection.iterator();
 
-        while (iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			assertInstance(iterator.next(), c, allowNullElements);
 		}
 
-        return collection;
-    }
+		return collection;
+	}
 
-    public static List safeCopy(List list, Class c) {
-        return safeCopy(list, c, false);
-    }
+	public static List safeCopy(List list, Class c) {
+		return safeCopy(list, c, false);
+	}
 
-    public static List safeCopy(List list, Class c, boolean allowNullElements) {
-        if (list == null || c == null) {
+	public static List safeCopy(List list, Class c, boolean allowNullElements) {
+		if (list == null || c == null) {
 			throw new NullPointerException();
 		}
 
-        list = Collections.unmodifiableList(new ArrayList(list));
-        Iterator iterator = list.iterator();
+		list = Collections.unmodifiableList(new ArrayList(list));
+		Iterator iterator = list.iterator();
 
-        while (iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			assertInstance(iterator.next(), c, allowNullElements);
 		}
 
-        return list;
-    }
+		return list;
+	}
 
-    public static Map safeCopy(Map map, Class keyClass, Class valueClass) {
-        return safeCopy(map, keyClass, valueClass, false, false);
-    }
+	public static Map safeCopy(Map map, Class keyClass, Class valueClass) {
+		return safeCopy(map, keyClass, valueClass, false, false);
+	}
 
-    public static Map safeCopy(Map map, Class keyClass, Class valueClass,
-            boolean allowNullKeys, boolean allowNullValues) {
-        if (map == null || keyClass == null || valueClass == null) {
+	public static Map safeCopy(Map map, Class keyClass, Class valueClass, boolean allowNullKeys,
+			boolean allowNullValues) {
+		if (map == null || keyClass == null || valueClass == null) {
 			throw new NullPointerException();
 		}
 
-        map = Collections.unmodifiableMap(new HashMap(map));
-        Iterator iterator = map.entrySet().iterator();
+		map = Collections.unmodifiableMap(new HashMap(map));
+		Iterator iterator = map.entrySet().iterator();
 
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            assertInstance(entry.getKey(), keyClass, allowNullKeys);
-            assertInstance(entry.getValue(), valueClass, allowNullValues);
-        }
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			assertInstance(entry.getKey(), keyClass, allowNullKeys);
+			assertInstance(entry.getValue(), valueClass, allowNullValues);
+		}
 
-        return map;
-    }
+		return map;
+	}
 
-    public static Set safeCopy(Set set, Class c) {
-        return safeCopy(set, c, false);
-    }
+	public static Set safeCopy(Set set, Class c) {
+		return safeCopy(set, c, false);
+	}
 
-    public static Set safeCopy(Set set, Class c, boolean allowNullElements) {
-        if (set == null || c == null) {
+	public static Set safeCopy(Set set, Class c, boolean allowNullElements) {
+		if (set == null || c == null) {
 			throw new NullPointerException();
 		}
 
-        set = Collections.unmodifiableSet(new HashSet(set));
-        Iterator iterator = set.iterator();
+		set = Collections.unmodifiableSet(new HashSet(set));
+		Iterator iterator = set.iterator();
 
-        while (iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			assertInstance(iterator.next(), c, allowNullElements);
 		}
 
-        return set;
-    }
+		return set;
+	}
 
-    public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass,
-            Class valueClass) {
-        return safeCopy(sortedMap, keyClass, valueClass, false, false);
-    }
+	public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass, Class valueClass) {
+		return safeCopy(sortedMap, keyClass, valueClass, false, false);
+	}
 
-    public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass,
-            Class valueClass, boolean allowNullKeys, boolean allowNullValues) {
-        if (sortedMap == null || keyClass == null || valueClass == null) {
+	public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass, Class valueClass, boolean allowNullKeys,
+			boolean allowNullValues) {
+		if (sortedMap == null || keyClass == null || valueClass == null) {
 			throw new NullPointerException();
 		}
 
-        sortedMap = Collections.unmodifiableSortedMap(new TreeMap(sortedMap));
-        Iterator iterator = sortedMap.entrySet().iterator();
+		sortedMap = Collections.unmodifiableSortedMap(new TreeMap(sortedMap));
+		Iterator iterator = sortedMap.entrySet().iterator();
 
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            assertInstance(entry.getKey(), keyClass, allowNullKeys);
-            assertInstance(entry.getValue(), valueClass, allowNullValues);
-        }
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			assertInstance(entry.getKey(), keyClass, allowNullKeys);
+			assertInstance(entry.getValue(), valueClass, allowNullValues);
+		}
 
-        return sortedMap;
-    }
+		return sortedMap;
+	}
 
-    public static SortedSet safeCopy(SortedSet sortedSet, Class c) {
-        return safeCopy(sortedSet, c, false);
-    }
+	public static SortedSet safeCopy(SortedSet sortedSet, Class c) {
+		return safeCopy(sortedSet, c, false);
+	}
 
-    public static SortedSet safeCopy(SortedSet sortedSet, Class c,
-            boolean allowNullElements) {
-        if (sortedSet == null || c == null) {
+	public static SortedSet safeCopy(SortedSet sortedSet, Class c, boolean allowNullElements) {
+		if (sortedSet == null || c == null) {
 			throw new NullPointerException();
 		}
 
-        sortedSet = Collections.unmodifiableSortedSet(new TreeSet(sortedSet));
-        Iterator iterator = sortedSet.iterator();
+		sortedSet = Collections.unmodifiableSortedSet(new TreeSet(sortedSet));
+		Iterator iterator = sortedSet.iterator();
 
-        while (iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			assertInstance(iterator.next(), c, allowNullElements);
 		}
 
-        return sortedSet;
-    }
+		return sortedSet;
+	}
 
-    public static boolean startsWith(List left, List right, boolean equals) {
-        if (left == null || right == null) {
+	public static boolean startsWith(List left, List right, boolean equals) {
+		if (left == null || right == null) {
 			return false;
 		} else {
-            int l = left.size();
-            int r = right.size();
+			int l = left.size();
+			int r = right.size();
 
-            if (r > l || !equals && r == l) {
+			if (r > l || !equals && r == l) {
 				return false;
 			}
 
-            for (int i = 0; i < r; i++) {
+			for (int i = 0; i < r; i++) {
 				if (!equals(left.get(i), right.get(i))) {
 					return false;
 				}
 			}
 
-            return true;
-        }
-    }
+			return true;
+		}
+	}
 
-    public static boolean startsWith(Object[] left, Object[] right,
-            boolean equals) {
-        if (left == null || right == null) {
+	public static boolean startsWith(Object[] left, Object[] right, boolean equals) {
+		if (left == null || right == null) {
 			return false;
 		} else {
-            int l = left.length;
-            int r = right.length;
+			int l = left.length;
+			int r = right.length;
 
-            if (r > l || !equals && r == l) {
+			if (r > l || !equals && r == l) {
 				return false;
 			}
 
-            for (int i = 0; i < r; i++) {
+			for (int i = 0; i < r; i++) {
 				if (!equals(left[i], right[i])) {
 					return false;
 				}
 			}
 
-            return true;
-        }
-    }
+			return true;
+		}
+	}
 
-    public static String translateString(ResourceBundle resourceBundle,
-            String key) {
-        return Util.translateString(resourceBundle, key, key, true, true);
-    }
+	public static String translateString(ResourceBundle resourceBundle, String key) {
+		return Util.translateString(resourceBundle, key, key, true, true);
+	}
 
-    public static String translateString(ResourceBundle resourceBundle,
-            String key, String string, boolean signal, boolean trim) {
-        if (resourceBundle != null && key != null) {
+	public static String translateString(ResourceBundle resourceBundle, String key, String string, boolean signal,
+			boolean trim) {
+		if (resourceBundle != null && key != null) {
 			try {
-                final String translatedString = resourceBundle.getString(key);
+				final String translatedString = resourceBundle.getString(key);
 
-                if (translatedString != null) {
+				if (translatedString != null) {
 					return trim ? translatedString.trim() : translatedString;
 				}
-            } catch (MissingResourceException eMissingResource) {
-                if (signal) {
+			} catch (MissingResourceException eMissingResource) {
+				if (signal) {
 					WorkbenchPlugin.log(eMissingResource);
 				}
-            }
+			}
 		}
 
-        return trim ? string.trim() : string;
-    }
+		return trim ? string.trim() : string;
+	}
 
-    public static void arrayCopyWithRemoval(Object [] src, Object [] dst, int idxToRemove) {
-    	if (src == null || dst == null || src.length - 1 != dst.length || idxToRemove < 0 || idxToRemove >= src.length) {
+	public static void arrayCopyWithRemoval(Object[] src, Object[] dst, int idxToRemove) {
+		if (src == null || dst == null || src.length - 1 != dst.length || idxToRemove < 0
+				|| idxToRemove >= src.length) {
 			throw new IllegalArgumentException();
 		}
 
-    	if (idxToRemove == 0) {
-    		System.arraycopy(src, 1, dst, 0, src.length - 1);
-    	}
-    	else if (idxToRemove == src.length - 1) {
-    		System.arraycopy(src, 0, dst, 0, src.length - 1);
-    	}
-    	else {
-    		System.arraycopy(src, 0, dst, 0, idxToRemove);
-    		System.arraycopy(src, idxToRemove + 1, dst, idxToRemove, src.length - idxToRemove - 1);
-    	}
-    }
+		if (idxToRemove == 0) {
+			System.arraycopy(src, 1, dst, 0, src.length - 1);
+		} else if (idxToRemove == src.length - 1) {
+			System.arraycopy(src, 0, dst, 0, src.length - 1);
+		} else {
+			System.arraycopy(src, 0, dst, 0, idxToRemove);
+			System.arraycopy(src, idxToRemove + 1, dst, idxToRemove, src.length - idxToRemove - 1);
+		}
+	}
 
-    /**
-     * Appends array2 to the end of array1 and returns the result
-     *
-     * @param array1
-     * @param array2
-     * @return
-     * @since 3.1
-     */
-    public static Object[] appendArray(Object[] array1, Object[] array2) {
-        Object[] result = new Object[array1.length + array2.length];
-        System.arraycopy(array1, 0, result, 0, array1.length);
-        System.arraycopy(array2, 0, result, array1.length, array2.length);
-        return result;
-    }
+	/**
+	 * Appends array2 to the end of array1 and returns the result
+	 *
+	 * @param array1
+	 * @param array2
+	 * @return
+	 * @since 3.1
+	 */
+	public static Object[] appendArray(Object[] array1, Object[] array2) {
+		Object[] result = new Object[array1.length + array2.length];
+		System.arraycopy(array1, 0, result, 0, array1.length);
+		System.arraycopy(array2, 0, result, array1.length, array2.length);
+		return result;
+	}
 
-    private Util() {
-    }
+	private Util() {
+	}
 
 	/**
 	 * Returns an interned representation of the given string
+	 * 
 	 * @param string The string to intern
 	 * @return The interned string
 	 */
@@ -598,33 +575,33 @@ public final class Util {
 	}
 
 	/**
-	 * Two {@link String}s presented in a list form.
-	 * This method can be used to form a longer list by providing a list for
-	 * <code>item1</code> and an item to append to the list for
-	 * <code>item2</code>.
+	 * Two {@link String}s presented in a list form. This method can be used to form
+	 * a longer list by providing a list for <code>item1</code> and an item to
+	 * append to the list for <code>item2</code>.
 	 *
-	 * @param item1	a string
-	 * @param item2	a string
-	 * @return	a string which presents <code>item1</code> and
-	 * 	<code>item2</code> in a list form.
+	 * @param item1 a string
+	 * @param item2 a string
+	 * @return a string which presents <code>item1</code> and <code>item2</code> in
+	 *         a list form.
 	 */
 	public static String createList(String item1, String item2) {
 		return NLS.bind(WorkbenchMessages.Util_List, item1, item2);
 	}
 
 	/**
-	 * Creates a {@link String} representing the elements in <code>items</code>
-	 * as a list. This method uses the {@link Object#toString()} method on the
-	 * objects to create them as a String.
-	 * @param items	the List to make into a String
-	 * @return	a string which presents <code>items</code> in String form.
+	 * Creates a {@link String} representing the elements in <code>items</code> as a
+	 * list. This method uses the {@link Object#toString()} method on the objects to
+	 * create them as a String.
+	 * 
+	 * @param items the List to make into a String
+	 * @return a string which presents <code>items</code> in String form.
 	 */
 	public static String createList(List items) {
 		String list = null;
 		for (Iterator i = items.iterator(); i.hasNext();) {
 			Object object = i.next();
 			final String string = object == null ? WorkbenchMessages.Util_listNull : object.toString();
-			if(list == null) {
+			if (list == null) {
 				list = string;
 			} else {
 				list = createList(list, string);
@@ -634,16 +611,17 @@ public final class Util {
 	}
 
 	/**
-	 * Creates a {@link String} representing the elements in <code>items</code>
-	 * as a list. This method uses the {@link Object#toString()} method on the
-	 * objects to create them as a String.
-	 * @param items	the array to make into a String
-	 * @return	a string which presents <code>items</code> in String form.
+	 * Creates a {@link String} representing the elements in <code>items</code> as a
+	 * list. This method uses the {@link Object#toString()} method on the objects to
+	 * create them as a String.
+	 * 
+	 * @param items the array to make into a String
+	 * @return a string which presents <code>items</code> in String form.
 	 */
 	public static String createList(Object[] items) {
 		String list = null;
 		for (Object item : items) {
-			if(list == null) {
+			if (list == null) {
 				list = item.toString();
 			} else {
 				list = createList(list, item.toString());
@@ -653,13 +631,12 @@ public final class Util {
 	}
 
 	/**
-	 * Return the window for the given shell or the currently active window if
-	 * one could not be determined.
+	 * Return the window for the given shell or the currently active window if one
+	 * could not be determined.
 	 *
-	 * @param shellToCheck
-	 *            the shell to search on
-	 * @return the window for the given shell or the currently active window if
-	 *         one could not be determined
+	 * @param shellToCheck the shell to search on
+	 * @return the window for the given shell or the currently active window if one
+	 *         could not be determined
 	 * @since 3.2
 	 */
 	public static IWorkbenchWindow getWorkbenchWindowForShell(Shell shellToCheck) {
@@ -673,8 +650,7 @@ public final class Util {
 		}
 
 		if (workbenchWindow == null) {
-			workbenchWindow = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
+			workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		}
 
 		return workbenchWindow;
@@ -692,9 +668,9 @@ public final class Util {
 	public static Shell getShellToParentOn() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-		IWorkbenchWindow windowToParentOn = activeWindow == null ? (workbench
-				.getWorkbenchWindowCount() > 0 ? workbench
-				.getWorkbenchWindows()[0] : null) : activeWindow;
+		IWorkbenchWindow windowToParentOn = activeWindow == null
+				? (workbench.getWorkbenchWindowCount() > 0 ? workbench.getWorkbenchWindows()[0] : null)
+				: activeWindow;
 		return windowToParentOn == null ? null : windowToParentOn.getShell();
 	}
 
@@ -702,10 +678,8 @@ public final class Util {
 	 * A String#split(*) replacement that splits on the provided char. No Regex
 	 * involved.
 	 *
-	 * @param src
-	 *            The string to be split
-	 * @param delim
-	 *            The character to split on
+	 * @param src   The string to be split
+	 * @param delim The character to split on
 	 * @return An array containing the split. Might be empty, but will not be
 	 *         <code>null</code>.
 	 */
@@ -736,7 +710,7 @@ public final class Util {
 		String[] resultArray = (String[]) result.toArray(new String[result.size()]);
 		boolean allEmpty = true;
 		for (int i = 0; i < resultArray.length && allEmpty; i++) {
-			if (resultArray[i].length()>0) {
+			if (resultArray[i].length() > 0) {
 				allEmpty = false;
 			}
 		}
@@ -749,8 +723,8 @@ public final class Util {
 	/**
 	 * Foundation replacement for String.replaceAll(*).
 	 *
-	 * @param src the starting string.
-	 * @param find the string to find.
+	 * @param src         the starting string.
+	 * @param find        the string to find.
 	 * @param replacement the string to replace.
 	 * @return The new string.
 	 * @since 3.3
@@ -760,23 +734,22 @@ public final class Util {
 	}
 
 	/**
-	 * Attempt to load the executable extension from the element/attName. If
-	 * the load fails or the resulting object is not castable to the
-	 * provided classSpec (if any) an error is logged and a null is returned.
+	 * Attempt to load the executable extension from the element/attName. If the
+	 * load fails or the resulting object is not castable to the provided classSpec
+	 * (if any) an error is logged and a null is returned.
 	 *
-	 * @param element The {@link IConfigurationElement} containing the
-	 * executable extension's specification
-	 * @param attName The attribute name of the executable extension
-	 * @param classSpec An optional <code>Class</code> defining the type
-	 * that the loaded Object must be castable to. This is optional to support
-	 * code where the client has a choice of mutually non-castable types to
-	 * choose from.
+	 * @param element   The {@link IConfigurationElement} containing the executable
+	 *                  extension's specification
+	 * @param attName   The attribute name of the executable extension
+	 * @param classSpec An optional <code>Class</code> defining the type that the
+	 *                  loaded Object must be castable to. This is optional to
+	 *                  support code where the client has a choice of mutually
+	 *                  non-castable types to choose from.
 	 *
-	 * @return The loaded object which is guaranteed to be
-	 * castable to the given classSpec or null if a failure occurred
+	 * @return The loaded object which is guaranteed to be castable to the given
+	 *         classSpec or null if a failure occurred
 	 */
-	public static Object safeLoadExecutableExtension(IConfigurationElement element,
-			String attName, Class classSpec) {
+	public static Object safeLoadExecutableExtension(IConfigurationElement element, String attName, Class classSpec) {
 		Object loadedEE = null;
 
 		// Load the handler.
@@ -787,9 +760,8 @@ public final class Util {
 			// Gather formatting info
 			final String classDef = element.getAttribute(attName);
 
-			final String message = "Class load Failure: '" + classDef + "'";  //$NON-NLS-1$//$NON-NLS-2$
-			IStatus status = new Status(IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+			final String message = "Class load Failure: '" + classDef + "'"; //$NON-NLS-1$//$NON-NLS-2$
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 			WorkbenchPlugin.log(message, status);
 		}
 
@@ -797,11 +769,10 @@ public final class Util {
 		if (classSpec != null && loadedEE != null && !classSpec.isInstance(loadedEE)) {
 			// ooops, the loaded class is not castable to the given type
 			final String message = "Loaded class is of incorrect type: expected(" + //$NON-NLS-1$
-				classSpec.getName() + ") got (" + loadedEE.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+					classSpec.getName() + ") got (" + loadedEE.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
 			IllegalArgumentException e = new IllegalArgumentException(message);
-			final IStatus status = new Status(IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+			final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 			WorkbenchPlugin.log(message, status);
 
 			// This 'failed'

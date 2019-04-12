@@ -52,16 +52,14 @@ public class ViewRegistry implements IViewRegistry {
 	public static final String VIEW_TAG = "View"; //$NON-NLS-1$
 
 	/**
-	 * This constant is used as key for persisting the original class for a
-	 * legacy {@link ViewPart} in the persisted state of a
-	 * {@link MPartDescriptor}.
+	 * This constant is used as key for persisting the original class for a legacy
+	 * {@link ViewPart} in the persisted state of a {@link MPartDescriptor}.
 	 */
 	public static final String ORIGINAL_COMPATIBILITY_VIEW_CLASS = "originalCompatibilityViewClass"; //$NON-NLS-1$
 
 	/**
-	 * This constant is used as key for persisting the original bundle for a
-	 * legacy {@link ViewPart} in the persisted state of a
-	 * {@link MPartDescriptor}.
+	 * This constant is used as key for persisting the original bundle for a legacy
+	 * {@link ViewPart} in the persisted state of a {@link MPartDescriptor}.
 	 */
 	public static final String ORIGINAL_COMPATIBILITY_VIEW_BUNDLE = "originalCompatibilityViewBundle"; //$NON-NLS-1$
 
@@ -95,8 +93,7 @@ public class ViewRegistry implements IViewRegistry {
 			// find the category first
 			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CATEGORY)) {
-					ViewCategory category = new ViewCategory(
-							element.getAttribute(IWorkbenchRegistryConstants.ATT_ID),
+					ViewCategory category = new ViewCategory(element.getAttribute(IWorkbenchRegistryConstants.ATT_ID),
 							element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
 					categories.put(category.getId(), category);
 				} else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_STICKYVIEW)) {
@@ -110,8 +107,7 @@ public class ViewRegistry implements IViewRegistry {
 			}
 		}
 		if (!categories.containsKey(miscCategory.getId())) {
-			categories.put(miscCategory.getId(), new ViewCategory(miscCategory.getId(),
-					miscCategory.getLabel()));
+			categories.put(miscCategory.getId(), new ViewCategory(miscCategory.getId(), miscCategory.getLabel()));
 		}
 
 		for (IExtension extension : point.getExtensions()) {
@@ -149,8 +145,8 @@ public class ViewRegistry implements IViewRegistry {
 		tags.add(VIEW_TAG);
 
 		descriptor.setCloseable(true);
-		descriptor.setAllowMultiple(Boolean.parseBoolean(element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
+		descriptor.setAllowMultiple(
+				Boolean.parseBoolean(element.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
 
 		// make view description available as tooltip
 		String viewDescription = RegistryReader.getDescription(element);
@@ -183,8 +179,8 @@ public class ViewRegistry implements IViewRegistry {
 
 		String iconURI = MenuHelper.getIconURI(element, IWorkbenchRegistryConstants.ATT_ICON);
 		if (iconURI == null) {
-			descriptor.setIconURI(MenuHelper.getImageUrl(workbench.getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_DEF_VIEW)));
+			descriptor.setIconURI(
+					MenuHelper.getImageUrl(workbench.getSharedImages().getImageDescriptor(ISharedImages.IMG_DEF_VIEW)));
 		} else {
 			descriptor.setIconURI(iconURI);
 		}
@@ -226,24 +222,22 @@ public class ViewRegistry implements IViewRegistry {
 
 	@Override
 	public IViewDescriptor[] getViews() {
-		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(
-				descriptors.values(), new ArrayList<>());
+		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(descriptors.values(),
+				new ArrayList<>());
 		return allowedViews.toArray(new IViewDescriptor[allowedViews.size()]);
 	}
 
 	@Override
 	public IStickyViewDescriptor[] getStickyViews() {
-		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(stickyDescriptors,
-				new ArrayList<>());
+		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(stickyDescriptors, new ArrayList<>());
 		return allowedViews.toArray(new IStickyViewDescriptor[allowedViews.size()]);
 	}
 
 	/**
-	 * Returns the {@link ViewCategory} for the given id or <code>null</code> if
-	 * one cannot be found or the id is <code>null</code>
+	 * Returns the {@link ViewCategory} for the given id or <code>null</code> if one
+	 * cannot be found or the id is <code>null</code>
 	 *
-	 * @param id
-	 *            the {@link ViewCategory} id
+	 * @param id the {@link ViewCategory} id
 	 * @return the {@link ViewCategory} with the given id or <code>null</code>
 	 */
 	public ViewCategory findCategory(String id) {

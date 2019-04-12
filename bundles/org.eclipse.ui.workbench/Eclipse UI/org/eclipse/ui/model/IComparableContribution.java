@@ -51,11 +51,12 @@ public interface IComparableContribution extends IAdaptable {
 	 * Possible adaptations include:
 	 * <dl>
 	 * <dt>{@link org.eclipse.core.runtime.IConfigurationElement}</dt>
-	 * <dd>useful for contributions that eventually work back to registry
-	 * elements. The majority of {@link IComparableContribution} instances
-	 * provided by the platform will provide this adapter.</dd>
+	 * <dd>useful for contributions that eventually work back to registry elements.
+	 * The majority of {@link IComparableContribution} instances provided by the
+	 * platform will provide this adapter.</dd>
 	 * </dl>
 	 */
-	@Override <T> T getAdapter(Class<T> adapter);
+	@Override
+	<T> T getAdapter(Class<T> adapter);
 
 }

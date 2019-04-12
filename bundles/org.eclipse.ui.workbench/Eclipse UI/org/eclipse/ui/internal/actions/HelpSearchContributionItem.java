@@ -28,8 +28,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * This is the contribution item that is used to add a help search field to
- * the cool bar.
+ * This is the contribution item that is used to add a help search field to the
+ * cool bar.
  *
  * @since 3.1
  */
@@ -55,11 +55,11 @@ public class HelpSearchContributionItem extends ControlContribution {
 	 * Creates the contribution item.
 	 *
 	 * @param window the window
-	 * @param id the contribution item id
+	 * @param id     the contribution item id
 	 */
 	public HelpSearchContributionItem(IWorkbenchWindow window, String id) {
 		super(id);
-        Assert.isNotNull(window);
+		Assert.isNotNull(window);
 		this.window = window;
 	}
 
@@ -67,8 +67,7 @@ public class HelpSearchContributionItem extends ControlContribution {
 	protected Control createControl(Composite parent) {
 		combo = new Combo(parent, SWT.NONE);
 		combo.setToolTipText(WorkbenchMessages.WorkbenchWindow_searchCombo_toolTip);
-		String[] items = WorkbenchPlugin.getDefault().getDialogSettings()
-				.getArray(ID);
+		String[] items = WorkbenchPlugin.getDefault().getDialogSettings().getArray(ID);
 		if (items != null) {
 			combo.setItems(items);
 		}
@@ -97,7 +96,7 @@ public class HelpSearchContributionItem extends ControlContribution {
 
 	private void doSearch(String phrase, boolean updateList) {
 		if (phrase.length() == 0) {
-            window.getWorkbench().getHelpSystem().displaySearch();
+			window.getWorkbench().getHelpSystem().displaySearch();
 			return;
 		}
 		if (updateList) {
@@ -114,8 +113,7 @@ public class HelpSearchContributionItem extends ControlContribution {
 				if (combo.getItemCount() > MAX_ITEM_COUNT) {
 					combo.remove(combo.getItemCount() - 1);
 				}
-				WorkbenchPlugin.getDefault().getDialogSettings().put(ID,
-						combo.getItems());
+				WorkbenchPlugin.getDefault().getDialogSettings().put(ID, combo.getItems());
 			}
 		}
 		window.getWorkbench().getHelpSystem().search(phrase);

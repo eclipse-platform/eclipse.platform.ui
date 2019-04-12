@@ -56,8 +56,8 @@ final class HandlerActivation implements IHandlerActivation {
 	private int sourcePriority;
 	boolean participating = true;
 
-	public HandlerActivation(IEclipseContext context, String cmdId, IHandler handler,
-			E4HandlerProxy handlerProxy, Expression expr) {
+	public HandlerActivation(IEclipseContext context, String cmdId, IHandler handler, E4HandlerProxy handlerProxy,
+			Expression expr) {
 		this.context = context;
 		this.commandId = cmdId;
 		this.handler = handler;
@@ -91,11 +91,10 @@ final class HandlerActivation implements IHandlerActivation {
 				active = activeWhen.evaluate(context) != EvaluationResult.FALSE;
 			} catch (CoreException e) {
 				/*
-				 * Swallow the exception. It simply means the variable is not
-				 * valid (most frequently, that the value is null or has a
-				 * complex core expression with a property tester). This kind of
-				 * information is not really useful to us, so we can just treat
-				 * it as false.
+				 * Swallow the exception. It simply means the variable is not valid (most
+				 * frequently, that the value is null or has a complex core expression with a
+				 * property tester). This kind of information is not really useful to us, so we
+				 * can just treat it as false.
 				 */
 				if (Policy.DEBUG_CMDS) {
 					Activator.trace(Policy.DEBUG_CMDS_FLAG, "Failed to calculate active", e); //$NON-NLS-1$

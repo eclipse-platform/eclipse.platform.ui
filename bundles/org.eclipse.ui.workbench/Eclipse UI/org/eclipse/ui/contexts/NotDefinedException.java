@@ -37,8 +37,7 @@ public final class NotDefinedException extends ContextException {
 	/**
 	 * Creates a new instance of this class with the specified detail message.
 	 *
-	 * @param message
-	 *            the detail message.
+	 * @param message the detail message.
 	 */
 	public NotDefinedException(String message) {
 		super(message);
@@ -47,12 +46,10 @@ public final class NotDefinedException extends ContextException {
 	/**
 	 * Constructs a new instance of <code>NotDefinedException</code>.
 	 *
-	 * @param e
-	 *            The exception being thrown; must not be <code>null</code>.
+	 * @param e The exception being thrown; must not be <code>null</code>.
 	 * @since 3.1
 	 */
-	public NotDefinedException(
-			org.eclipse.core.commands.common.NotDefinedException e) {
+	public NotDefinedException(org.eclipse.core.commands.common.NotDefinedException e) {
 		super(e.getMessage(), e);
 	}
 }

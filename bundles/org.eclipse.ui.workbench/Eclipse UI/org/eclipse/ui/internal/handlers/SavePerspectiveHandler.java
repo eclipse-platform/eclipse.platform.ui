@@ -42,7 +42,7 @@ public class SavePerspectiveHandler extends AbstractHandler {
 
 	@Inject
 	EModelService modelService;
-
+
 	@Override
 	public Object execute(ExecutionEvent event) {
 
@@ -81,12 +81,10 @@ public class SavePerspectiveHandler extends AbstractHandler {
 	 */
 	private void saveNonSingleton(IWorkbenchPage page, PerspectiveDescriptor oldDesc) {
 		// Get reg.
-		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin.getDefault()
-				.getPerspectiveRegistry();
+		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 
 		// Get persp name.
-		SavePerspectiveDialog dlg = new SavePerspectiveDialog(page.getWorkbenchWindow().getShell(),
-				reg);
+		SavePerspectiveDialog dlg = new SavePerspectiveDialog(page.getWorkbenchWindow().getShell(), reg);
 		// Look up the descriptor by id again to ensure it is still valid.
 		IPerspectiveDescriptor description = reg.findPerspectiveWithId(oldDesc.getId());
 		dlg.setInitialSelection(description);
@@ -100,8 +98,7 @@ public class SavePerspectiveHandler extends AbstractHandler {
 			String name = dlg.getPerspName();
 			newDesc = reg.createPerspective(name, (PerspectiveDescriptor) description);
 			if (newDesc == null) {
-				MessageDialog.openError(dlg.getShell(),
-						WorkbenchMessages.SavePerspective_errorTitle,
+				MessageDialog.openError(dlg.getShell(), WorkbenchMessages.SavePerspective_errorTitle,
 						WorkbenchMessages.SavePerspective_errorMessage);
 				return;
 			}

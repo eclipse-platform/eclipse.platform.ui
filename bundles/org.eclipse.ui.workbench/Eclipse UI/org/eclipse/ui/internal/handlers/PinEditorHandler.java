@@ -32,8 +32,7 @@ import org.eclipse.ui.menus.UIElement;
  * Replacement for the PinEditorAction.
  *
  */
-public class PinEditorHandler extends AbstractHandler implements
-		IElementUpdater {
+public class PinEditorHandler extends AbstractHandler implements IElementUpdater {
 
 	@Override
 	public Object execute(ExecutionEvent event) {
@@ -45,14 +44,12 @@ public class PinEditorHandler extends AbstractHandler implements
 		if (editor == null) {
 			return null;
 		}
-		IWorkbenchPartReference ref = window.getActivePage().getReference(
-				editor);
+		IWorkbenchPartReference ref = window.getActivePage().getReference(editor);
 		if (ref instanceof WorkbenchPartReference) {
 			WorkbenchPartReference concreteRef = (WorkbenchPartReference) ref;
 
 			concreteRef.setPinned(!concreteRef.isPinned());
-			ICommandService commandService = window
-					.getService(ICommandService.class);
+			ICommandService commandService = window.getService(ICommandService.class);
 			commandService.refreshElements(event.getCommand().getId(), null);
 		}
 		return null;
@@ -60,8 +57,7 @@ public class PinEditorHandler extends AbstractHandler implements
 
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
-		IWorkbenchWindow window = element
-				.getServiceLocator().getService(IWorkbenchWindow.class);
+		IWorkbenchWindow window = element.getServiceLocator().getService(IWorkbenchWindow.class);
 		if (window == null) {
 			return;
 		}
@@ -73,8 +69,7 @@ public class PinEditorHandler extends AbstractHandler implements
 		if (editor == null) {
 			return;
 		}
-		IWorkbenchPartReference ref = page.getReference(
-				editor);
+		IWorkbenchPartReference ref = page.getReference(editor);
 		if (ref instanceof WorkbenchPartReference) {
 			WorkbenchPartReference concreteRef = (WorkbenchPartReference) ref;
 			element.setChecked(concreteRef.isPinned());

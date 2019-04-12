@@ -28,8 +28,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The abstract implementation of a selection dialog. It can be primed with
- * initial selections (<code>setInitialSelections</code>), and returns the
- * final selection (via <code>getResult</code>) after completion.
+ * initial selections (<code>setInitialSelections</code>), and returns the final
+ * selection (via <code>getResult</code>) after completion.
  * <p>
  * Clients may subclass this dialog to inherit its selection facilities.
  * </p>
@@ -62,8 +62,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	 * Creates a dialog instance. Note that the dialog will have no visual
 	 * representation (no widgets) until it is told to open.
 	 *
-	 * @param parentShell
-	 *            the parent shell
+	 * @param parentShell the parent shell
 	 */
 	protected SelectionDialog(Shell parentShell) {
 		super(parentShell);
@@ -86,12 +85,11 @@ public abstract class SelectionDialog extends TrayDialog {
 	/**
 	 * Creates the message area for this dialog.
 	 * <p>
-	 * This method is provided to allow subclasses to decide where the message
-	 * will appear on the screen.
+	 * This method is provided to allow subclasses to decide where the message will
+	 * appear on the screen.
 	 * </p>
 	 *
-	 * @param composite
-	 *            the parent composite
+	 * @param composite the parent composite
 	 * @return the message label
 	 */
 	protected Label createMessageArea(Composite composite) {
@@ -138,30 +136,27 @@ public abstract class SelectionDialog extends TrayDialog {
 	/**
 	 * Returns the ok button.
 	 *
-	 * @return the ok button or <code>null</code> if the button is not created
-	 *         yet.
+	 * @return the ok button or <code>null</code> if the button is not created yet.
 	 */
 	public Button getOkButton() {
 		return getButton(IDialogConstants.OK_ID);
 	}
 
 	/**
-	 * Returns the list of selections made by the user, or <code>null</code>
-	 * if the selection was canceled.
+	 * Returns the list of selections made by the user, or <code>null</code> if the
+	 * selection was canceled.
 	 *
-	 * @return the array of selected elements, or <code>null</code> if Cancel
-	 *         was pressed
+	 * @return the array of selected elements, or <code>null</code> if Cancel was
+	 *         pressed
 	 */
 	public Object[] getResult() {
 		return result;
 	}
 
 	/**
-	 * Sets the initial selection in this selection dialog to the given
-	 * elements.
+	 * Sets the initial selection in this selection dialog to the given elements.
 	 *
-	 * @param selectedElements
-	 *            the array of elements to select
+	 * @param selectedElements the array of elements to select
 	 */
 	public void setInitialSelections(Object... selectedElements) {
 		initialSelections = new ArrayList(selectedElements.length);
@@ -171,11 +166,9 @@ public abstract class SelectionDialog extends TrayDialog {
 	}
 
 	/**
-	 * Sets the initial selection in this selection dialog to the given
-	 * elements.
+	 * Sets the initial selection in this selection dialog to the given elements.
 	 *
-	 * @param selectedElements
-	 *            the List of elements to select
+	 * @param selectedElements the List of elements to select
 	 */
 	public void setInitialElementSelections(List selectedElements) {
 		initialSelections = selectedElements;
@@ -184,20 +177,18 @@ public abstract class SelectionDialog extends TrayDialog {
 	/**
 	 * Sets the message for this dialog.
 	 *
-	 * @param message
-	 *            the message
+	 * @param message the message
 	 */
 	public void setMessage(String message) {
 		this.message = message;
 	}
 
 	/**
-	 * Set the selections made by the user, or <code>null</code> if the
-	 * selection was canceled.
+	 * Set the selections made by the user, or <code>null</code> if the selection
+	 * was canceled.
 	 *
-	 * @param newResult
-	 *            list of selected elements, or <code>null</code> if Cancel
-	 *            was pressed
+	 * @param newResult list of selected elements, or <code>null</code> if Cancel
+	 *                  was pressed
 	 */
 	protected void setResult(List newResult) {
 		if (newResult == null) {
@@ -209,14 +200,13 @@ public abstract class SelectionDialog extends TrayDialog {
 	}
 
 	/**
-	 * Set the selections made by the user, or <code>null</code> if the
-	 * selection was canceled.
+	 * Set the selections made by the user, or <code>null</code> if the selection
+	 * was canceled.
 	 * <p>
 	 * The selections may accessed using <code>getResult</code>.
 	 * </p>
 	 *
-	 * @param newResult -
-	 *            the new values
+	 * @param newResult - the new values
 	 * @since 2.0
 	 */
 	protected void setSelectionResult(Object[] newResult) {
@@ -226,8 +216,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	/**
 	 * Sets the title for this dialog.
 	 *
-	 * @param title
-	 *            the title
+	 * @param title the title
 	 */
 	public void setTitle(String title) {
 		this.title = title;
@@ -236,17 +225,15 @@ public abstract class SelectionDialog extends TrayDialog {
 	/**
 	 * Set the dialog settings that should be used to save the bounds of this
 	 * dialog. This method is provided so that clients that directly use
-	 * SelectionDialogs without subclassing them may specify how the bounds of
-	 * the dialog are to be saved.
+	 * SelectionDialogs without subclassing them may specify how the bounds of the
+	 * dialog are to be saved.
 	 *
-	 * @param settings
-	 *            the {@link IDialogSettings} that should be used to store the
-	 *            bounds of the dialog
+	 * @param settings the {@link IDialogSettings} that should be used to store the
+	 *                 bounds of the dialog
 	 *
-	 * @param strategy
-	 *            the integer constant specifying how the bounds are saved.
-	 *            Specified using {@link Dialog#DIALOG_PERSISTLOCATION}
-	 *            and {@link Dialog#DIALOG_PERSISTSIZE}.
+	 * @param strategy the integer constant specifying how the bounds are saved.
+	 *                 Specified using {@link Dialog#DIALOG_PERSISTLOCATION} and
+	 *                 {@link Dialog#DIALOG_PERSISTSIZE}.
 	 *
 	 * @since 3.2
 	 *
@@ -259,14 +246,13 @@ public abstract class SelectionDialog extends TrayDialog {
 	}
 
 	/**
-	 * Gets the dialog settings that should be used for remembering the bounds
-	 * of the dialog, according to the dialog bounds strategy. Overridden to
-	 * provide the dialog settings that were set using
+	 * Gets the dialog settings that should be used for remembering the bounds of
+	 * the dialog, according to the dialog bounds strategy. Overridden to provide
+	 * the dialog settings that were set using
 	 * {@link #setDialogBoundsSettings(IDialogSettings, int)}.
 	 *
-	 * @return the dialog settings used to store the dialog's location and/or
-	 *         size, or <code>null</code> if the dialog's bounds should not be
-	 *         stored.
+	 * @return the dialog settings used to store the dialog's location and/or size,
+	 *         or <code>null</code> if the dialog's bounds should not be stored.
 	 *
 	 * @since 3.2
 	 *
@@ -280,8 +266,8 @@ public abstract class SelectionDialog extends TrayDialog {
 
 	/**
 	 * Get the integer constant that describes the strategy for persisting the
-	 * dialog bounds. Overridden to provide the dialog bounds strategy that was
-	 * set using {@link #setDialogBoundsSettings(IDialogSettings, int)}.
+	 * dialog bounds. Overridden to provide the dialog bounds strategy that was set
+	 * using {@link #setDialogBoundsSettings(IDialogSettings, int)}.
 	 *
 	 * @return the constant describing the strategy for persisting the dialog
 	 *         bounds.
@@ -297,11 +283,11 @@ public abstract class SelectionDialog extends TrayDialog {
 		return dialogBoundsStrategy;
 	}
 
-    /**
+	/**
 	 * @since 3.4
 	 */
-    @Override
+	@Override
 	protected boolean isResizable() {
-    	return true;
-    }
+		return true;
+	}
 }

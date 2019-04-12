@@ -63,14 +63,14 @@ public class ProgressManagerUtil {
 			/*
 			 * https://bugs.eclipse.org/371354
 			 *
-			 * This ordering is inherently unstable, since it relies on
-			 * modifiable properties of the elements: E.g. the default
-			 * implementation in JobTreeElement compares getDisplayString(),
-			 * many of whose implementations use getPercentDone().
+			 * This ordering is inherently unstable, since it relies on modifiable
+			 * properties of the elements: E.g. the default implementation in JobTreeElement
+			 * compares getDisplayString(), many of whose implementations use
+			 * getPercentDone().
 			 *
-			 * JavaSE 7+'s TimSort introduced a breaking change: It now throws a
-			 * new IllegalArgumentException for bad comparators. Workaround is
-			 * to retry a few times.
+			 * JavaSE 7+'s TimSort introduced a breaking change: It now throws a new
+			 * IllegalArgumentException for bad comparators. Workaround is to retry a few
+			 * times.
 			 */
 			for (int retries = 3; retries > 0; retries--) {
 				try {
@@ -87,8 +87,8 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * A constant used by the progress support to determine if an operation is
-	 * too short to show progress.
+	 * A constant used by the progress support to determine if an operation is too
+	 * short to show progress.
 	 */
 	public static long SHORT_OPERATION_TIME = 250;
 
@@ -107,8 +107,7 @@ public class ProgressManagerUtil {
 	 * @return IStatus
 	 */
 	static IStatus exceptionStatus(Throwable exception) {
-		return StatusUtil.newStatus(IStatus.ERROR,
-				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
+		return StatusUtil.newStatus(IStatus.ERROR, exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
 				exception);
 	}
 
@@ -149,8 +148,7 @@ public class ProgressManagerUtil {
 			return;
 		}
 		try {
-			IViewDescriptor reference = WorkbenchPlugin.getDefault()
-					.getViewRegistry()
+			IViewDescriptor reference = WorkbenchPlugin.getDefault().getViewRegistry()
 					.find(IProgressConstants.PROGRESS_VIEW_ID);
 
 			if (reference == null) {
@@ -163,10 +161,10 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Shorten the given text <code>t</code> so that its length doesn't exceed
-	 * the given width. The default implementation replaces characters in the
-	 * center of the original string with an ellipsis ("..."). Override if you
-	 * need a different strategy.
+	 * Shorten the given text <code>t</code> so that its length doesn't exceed the
+	 * given width. The default implementation replaces characters in the center of
+	 * the original string with an ellipsis ("..."). Override if you need a
+	 * different strategy.
 	 *
 	 * @param textValue
 	 * @param control
@@ -210,8 +208,7 @@ public class ProgressManagerUtil {
 			if (maxExtent <= maxWidth) {
 				return textValue;
 			}
-			currentLength = Math.max(0,
-					Math.round(length * ((float) maxWidth / maxExtent)) - ellipsisString.length());
+			currentLength = Math.max(0, Math.round(length * ((float) maxWidth / maxExtent)) - ellipsisString.length());
 			upperBoundWidth = maxExtent;
 			upperBoundLength = length;
 		} else {
@@ -334,18 +331,15 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Find the second index of a whitespace. Return the first index if there
-	 * isn't one or 0 if there is no space at all.
+	 * Find the second index of a whitespace. Return the first index if there isn't
+	 * one or 0 if there is no space at all.
 	 *
 	 * @param textValue
-	 * @param gc
-	 *            The GC to test max length
-	 * @param maxWidth
-	 *            The maximim extent
+	 * @param gc        The GC to test max length
+	 * @param maxWidth  The maximim extent
 	 * @return int
 	 */
-	private static int findSecondWhitespace(String textValue, GC gc,
-			int maxWidth) {
+	private static int findSecondWhitespace(String textValue, GC gc, int maxWidth) {
 		int firstCharacter = 0;
 		char[] chars = textValue.toCharArray();
 		// Find the first whitespace
@@ -380,9 +374,8 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * If there are any modal shells open reschedule openJob to wait until they
-	 * are closed. Return true if it rescheduled, false if there is nothing
-	 * blocking it.
+	 * If there are any modal shells open reschedule openJob to wait until they are
+	 * closed. Return true if it rescheduled, false if there is nothing blocking it.
 	 *
 	 * @param openJob
 	 * @return boolean. true if the job was rescheduled due to modal dialogs.
@@ -394,8 +387,7 @@ public class ProgressManagerUtil {
 		}
 
 		// try again in a few seconds
-		openJob.schedule(PlatformUI.getWorkbench().getProgressService()
-				.getLongOperationTime());
+		openJob.schedule(PlatformUI.getWorkbench().getProgressService().getLongOperationTime());
 		return true;
 	}
 
@@ -404,15 +396,12 @@ public class ProgressManagerUtil {
 	 * <code>true</code>. If not then set it to open itself when it has had
 	 * ProgressManager#longOperationTime worth of ticks.
 	 *
-	 * @param dialog
-	 *            ProgressMonitorJobsDialog that will be opening
-	 * @param excludedShell
-	 *            The shell
-	 * @return boolean. <code>true</code> if it can open. Otherwise return
-	 *         false and set the dialog to tick.
+	 * @param dialog        ProgressMonitorJobsDialog that will be opening
+	 * @param excludedShell The shell
+	 * @return boolean. <code>true</code> if it can open. Otherwise return false and
+	 *         set the dialog to tick.
 	 */
-	public static boolean safeToOpen(ProgressMonitorJobsDialog dialog,
-			Shell excludedShell) {
+	public static boolean safeToOpen(ProgressMonitorJobsDialog dialog, Shell excludedShell) {
 		Shell modal = getModalShellExcluding(excludedShell);
 		if (modal == null) {
 			return true;
@@ -423,11 +412,10 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Return the modal shell that is currently open. If there isn't one then
-	 * return null. If there are stacked modal shells, return the top one.
+	 * Return the modal shell that is currently open. If there isn't one then return
+	 * null. If there are stacked modal shells, return the top one.
 	 *
-	 * @param shell
-	 *            A shell to exclude from the search. May be <code>null</code>.
+	 * @param shell A shell to exclude from the search. May be <code>null</code>.
 	 *
 	 * @return Shell or <code>null</code>.
 	 */
@@ -436,8 +424,7 @@ public class ProgressManagerUtil {
 
 		// If shell is null or disposed, then look through all shells
 		if (shell == null || shell.isDisposed()) {
-			return getModalChildExcluding(PlatformUI.getWorkbench()
-					.getDisplay().getShells(), shell);
+			return getModalChildExcluding(PlatformUI.getWorkbench().getDisplay().getShells(), shell);
 		}
 
 		// Start with the shell to exclude and check it's shells
@@ -445,16 +432,15 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Return the modal shell that is currently open. If there isn't one then
-	 * return null.
+	 * Return the modal shell that is currently open. If there isn't one then return
+	 * null.
 	 *
-	 * @param toSearch shells to search for modal children
+	 * @param toSearch  shells to search for modal children
 	 * @param toExclude shell to ignore
 	 * @return the most specific modal child, or null if none
 	 */
 	private static Shell getModalChildExcluding(Shell[] toSearch, Shell toExclude) {
-		int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
-				| SWT.PRIMARY_MODAL;
+		int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
 
 		// Make sure we don't pick a parent that has a modal child (this can
 		// lock the app)
@@ -462,7 +448,7 @@ public class ProgressManagerUtil {
 
 		for (int i = toSearch.length - 1; i >= 0; i--) {
 			Shell shell = toSearch[i];
-			if(shell.equals(toExclude)) {
+			if (shell.equals(toExclude)) {
 				continue;
 			}
 
@@ -483,11 +469,11 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Utility method to get the best parenting possible for a dialog. If there
-	 * is a modal shell return it so as to avoid two modal dialogs. If not then
-	 * return the shell of the active workbench window. If that shell is
-	 * <code>null</code> or not visible, then return the splash shell if still
-	 * visible. Otherwise return the shell of the active workbench window.
+	 * Utility method to get the best parenting possible for a dialog. If there is a
+	 * modal shell return it so as to avoid two modal dialogs. If not then return
+	 * the shell of the active workbench window. If that shell is <code>null</code>
+	 * or not visible, then return the splash shell if still visible. Otherwise
+	 * return the shell of the active workbench window.
 	 *
 	 * @return the best parent shell or <code>null</code>
 	 */
@@ -543,15 +529,13 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Animate the closing of a window given the start position down to the
-	 * progress region.
+	 * Animate the closing of a window given the start position down to the progress
+	 * region.
 	 *
-	 * @param startPosition
-	 *            Rectangle. The position to start drawing from.
+	 * @param startPosition Rectangle. The position to start drawing from.
 	 */
 	public static void animateDown(Rectangle startPosition) {
-		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (currentWindow == null) {
 			return;
 		}
@@ -572,15 +556,13 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Animate the opening of a window given the start position down to the
-	 * progress region.
+	 * Animate the opening of a window given the start position down to the progress
+	 * region.
 	 *
-	 * @param endPosition
-	 *            Rectangle. The position to end drawing at.
+	 * @param endPosition Rectangle. The position to end drawing at.
 	 */
 	public static void animateUp(Rectangle endPosition) {
-		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (currentWindow == null) {
 			return;
 		}
@@ -600,9 +582,9 @@ public class ProgressManagerUtil {
 	}
 
 	/**
-	 * Get the shell provider to use in the progress support dialogs. This
-	 * provider will try to always parent off of an existing modal shell. If
-	 * there isn't one it will use the current workbench window.
+	 * Get the shell provider to use in the progress support dialogs. This provider
+	 * will try to always parent off of an existing modal shell. If there isn't one
+	 * it will use the current workbench window.
 	 *
 	 * @return IShellProvider
 	 */
@@ -616,8 +598,7 @@ public class ProgressManagerUtil {
 	 * @return URL
 	 */
 	public static URL getIconsRoot() {
-		return BundleUtility.find(PlatformUI.PLUGIN_ID,
-				ProgressManager.PROGRESS_FOLDER);
+		return BundleUtility.find(PlatformUI.PLUGIN_ID, ProgressManager.PROGRESS_FOLDER);
 	}
 
 	/**

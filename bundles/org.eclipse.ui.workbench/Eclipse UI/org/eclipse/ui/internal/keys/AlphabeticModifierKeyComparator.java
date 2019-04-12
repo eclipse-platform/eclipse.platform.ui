@@ -25,11 +25,10 @@ import org.eclipse.ui.keys.ModifierKey;
  */
 public class AlphabeticModifierKeyComparator implements Comparator {
 
-    @Override
+	@Override
 	public int compare(Object left, Object right) {
-        ModifierKey modifierKeyLeft = (ModifierKey) left;
-        ModifierKey modifierKeyRight = (ModifierKey) right;
-        return modifierKeyLeft.toString()
-                .compareTo(modifierKeyRight.toString());
-    }
+		ModifierKey modifierKeyLeft = (ModifierKey) left;
+		ModifierKey modifierKeyRight = (ModifierKey) right;
+		return modifierKeyLeft.toString().compareTo(modifierKeyRight.toString());
+	}
 }

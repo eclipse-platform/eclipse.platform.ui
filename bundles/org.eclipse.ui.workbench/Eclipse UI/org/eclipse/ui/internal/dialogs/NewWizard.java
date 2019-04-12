@@ -31,80 +31,76 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * extension point.
  */
 public class NewWizard extends Wizard {
-    private static final String CATEGORY_SEPARATOR = "/"; //$NON-NLS-1$
+	private static final String CATEGORY_SEPARATOR = "/"; //$NON-NLS-1$
 
-    private String categoryId = null;
+	private String categoryId = null;
 
-    private NewWizardSelectionPage mainPage;
+	private NewWizardSelectionPage mainPage;
 
-    private boolean projectsOnly = false;
+	private boolean projectsOnly = false;
 
-    private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-    private IWorkbench workbench;
+	private IWorkbench workbench;
 
-    /**
-     * Create the wizard pages
-     */
-    @Override
+	/**
+	 * Create the wizard pages
+	 */
+	@Override
 	public void addPages() {
-        IWizardCategory root = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
-        IWizardDescriptor [] primary = WorkbenchPlugin.getDefault().getNewWizardRegistry().getPrimaryWizards();
+		IWizardCategory root = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
+		IWizardDescriptor[] primary = WorkbenchPlugin.getDefault().getNewWizardRegistry().getPrimaryWizards();
 
-        if (categoryId != null) {
-            IWizardCategory categories = root;
-            StringTokenizer familyTokenizer = new StringTokenizer(categoryId,
-                    CATEGORY_SEPARATOR);
-            while (familyTokenizer.hasMoreElements()) {
-                categories = getChildWithID(categories, familyTokenizer
-                        .nextToken());
-                if (categories == null) {
+		if (categoryId != null) {
+			IWizardCategory categories = root;
+			StringTokenizer familyTokenizer = new StringTokenizer(categoryId, CATEGORY_SEPARATOR);
+			while (familyTokenizer.hasMoreElements()) {
+				categories = getChildWithID(categories, familyTokenizer.nextToken());
+				if (categories == null) {
 					break;
 				}
-            }
-            if (categories != null) {
+			}
+			if (categories != null) {
 				root = categories;
 			}
-        }
+		}
 
-        mainPage = new NewWizardSelectionPage(workbench, selection, root,
-				primary, projectsOnly);
-        addPage(mainPage);
-    }
+		mainPage = new NewWizardSelectionPage(workbench, selection, root, primary, projectsOnly);
+		addPage(mainPage);
+	}
 
-    /**
-     * Returns the id of the category of wizards to show or <code>null</code>
-     * to show all categories. If no entries can be found with this id then all
-     * categories are shown.
-     *
-     * @return String or <code>null</code>.
-     */
-    public String getCategoryId() {
-        return categoryId;
-    }
+	/**
+	 * Returns the id of the category of wizards to show or <code>null</code> to
+	 * show all categories. If no entries can be found with this id then all
+	 * categories are shown.
+	 *
+	 * @return String or <code>null</code>.
+	 */
+	public String getCategoryId() {
+		return categoryId;
+	}
 
-    /**
-     * Returns the child collection element for the given id
-     */
-    private IWizardCategory getChildWithID(
-            IWizardCategory parent, String id) {
+	/**
+	 * Returns the child collection element for the given id
+	 */
+	private IWizardCategory getChildWithID(IWizardCategory parent, String id) {
 		for (IWizardCategory wizardCategory : parent.getCategories()) {
 			if (wizardCategory.getId().equals(id)) {
 				return wizardCategory;
 			}
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
-    /**
-     * Lazily create the wizards pages
-     * @param aWorkbench the workbench
-     * @param currentSelection the current selection
-     */
-    public void init(IWorkbench aWorkbench,
-            IStructuredSelection currentSelection) {
-        this.workbench = aWorkbench;
-        this.selection = currentSelection;
+	/**
+	 * Lazily create the wizards pages
+	 * 
+	 * @param aWorkbench       the workbench
+	 * @param currentSelection the current selection
+	 */
+	public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
+		this.workbench = aWorkbench;
+		this.selection = currentSelection;
 
 		if (getWindowTitle() == null) {
 			// No title supplied. Set the default title
@@ -114,61 +110,63 @@ public class NewWizard extends Wizard {
 				setWindowTitle(WorkbenchMessages.NewWizard_title);
 			}
 		}
-        setDefaultPageImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
-        setNeedsProgressMonitor(true);
-    }
+		setDefaultPageImageDescriptor(
+				WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
+		setNeedsProgressMonitor(true);
+	}
 
-    /**
-     * The user has pressed Finish. Instruct self's pages to finish, and answer
-     * a boolean indicating success.
-     *
-     * @return boolean
-     */
-    @Override
+	/**
+	 * The user has pressed Finish. Instruct self's pages to finish, and answer a
+	 * boolean indicating success.
+	 *
+	 * @return boolean
+	 */
+	@Override
 	public boolean performFinish() {
-        //save our selection state
-        mainPage.saveWidgetValues();
-        // if we're finishing from the main page then perform finish on the selected wizard.
-        if (getContainer().getCurrentPage() == mainPage) {
+		// save our selection state
+		mainPage.saveWidgetValues();
+		// if we're finishing from the main page then perform finish on the selected
+		// wizard.
+		if (getContainer().getCurrentPage() == mainPage) {
 			if (mainPage.canFinishEarly()) {
 				IWizard wizard = mainPage.getSelectedNode().getWizard();
 				wizard.setContainer(getContainer());
 				return wizard.performFinish();
 			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sets the id of the category of wizards to show or <code>null</code> to
-     * show all categories. If no entries can be found with this id then all
-     * categories are shown.
-     *
-     * @param id may be <code>null</code>.
-     */
-    public void setCategoryId(String id) {
-        categoryId = id;
-    }
+	/**
+	 * Sets the id of the category of wizards to show or <code>null</code> to show
+	 * all categories. If no entries can be found with this id then all categories
+	 * are shown.
+	 *
+	 * @param id may be <code>null</code>.
+	 */
+	public void setCategoryId(String id) {
+		categoryId = id;
+	}
 
-    /**
-     * Sets the projects only flag. If <code>true</code> only projects will
-     * be shown in this wizard.
-     * @param b if only projects should be shown
-     */
-    public void setProjectsOnly(boolean b) {
-        projectsOnly = b;
-    }
+	/**
+	 * Sets the projects only flag. If <code>true</code> only projects will be shown
+	 * in this wizard.
+	 * 
+	 * @param b if only projects should be shown
+	 */
+	public void setProjectsOnly(boolean b) {
+		projectsOnly = b;
+	}
 
-    @Override
+	@Override
 	public boolean canFinish() {
-         // we can finish if the first page is current and the the page can finish early.
-	    	if (getContainer().getCurrentPage() == mainPage) {
-	    		if (mainPage.canFinishEarly()) {
-					return true;
-				}
-	    	}
-	    	return super.canFinish();
-    }
+		// we can finish if the first page is current and the the page can finish early.
+		if (getContainer().getCurrentPage() == mainPage) {
+			if (mainPage.canFinishEarly()) {
+				return true;
+			}
+		}
+		return super.canFinish();
+	}
 
 }

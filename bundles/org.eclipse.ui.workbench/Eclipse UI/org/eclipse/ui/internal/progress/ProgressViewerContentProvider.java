@@ -39,17 +39,13 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	/**
 	 * Create a new instance of the receiver.
 	 *
-	 * @param structured
-	 *            The Viewer we are providing content for
-	 * @param debug
-	 *            If true debug information will be shown if the debug flag in
-	 *            the ProgressManager is true.
-	 * @param showFinished
-	 *            A boolean that indicates whether or not the finished jobs
-	 *            should be shown.
+	 * @param structured   The Viewer we are providing content for
+	 * @param debug        If true debug information will be shown if the debug flag
+	 *                     in the ProgressManager is true.
+	 * @param showFinished A boolean that indicates whether or not the finished jobs
+	 *                     should be shown.
 	 */
-	public ProgressViewerContentProvider(AbstractProgressViewer structured,
-			boolean debug, boolean showFinished) {
+	public ProgressViewerContentProvider(AbstractProgressViewer structured, boolean debug, boolean showFinished) {
 		super(debug);
 		progressViewer = structured;
 		this.showFinished = showFinished;
@@ -169,10 +165,8 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	 * Get the root elements of the passed elements as we only show roots. Replace
 	 * the element with its parent if subWithParent is true
 	 *
-	 * @param elements
-	 *            the array of elements.
-	 * @param subWithParent
-	 *            sub with parent flag.
+	 * @param elements      the array of elements.
+	 * @param subWithParent sub with parent flag.
 	 * @return JobTreeElement[]
 	 */
 	private JobTreeElement[] getRoots(JobTreeElement[] elements, boolean subWithParent) {

@@ -43,8 +43,7 @@ public interface ISourceProviderService {
 	 * Retrieves a source provider providing the given source. This is used by
 	 * clients who only need specific sources.
 	 *
-	 * @param sourceName
-	 *            The name of the source; must not be <code>null</code>.
+	 * @param sourceName The name of the source; must not be <code>null</code>.
 	 * @return A source provider which provides the request source, or
 	 *         <code>null</code> if no such source exists.
 	 * @see org.eclipse.ui.ISources
@@ -55,9 +54,9 @@ public interface ISourceProviderService {
 	 * Retrieves all of the source providers registered with this service at the
 	 * time of this call.
 	 * <p>
-	 * <code>org.eclipse.ui.services.IEvaluationService</code> can be used
-	 * to receive notifications about source variable changes and to
-	 * evaluate core expressions against source providers.
+	 * <code>org.eclipse.ui.services.IEvaluationService</code> can be used to
+	 * receive notifications about source variable changes and to evaluate core
+	 * expressions against source providers.
 	 * </p>
 	 *
 	 * @return The source providers registered with this service. This value is

@@ -39,22 +39,22 @@ import org.eclipse.ui.menus.IWorkbenchWidget;
 final class WidgetProxy implements IWorkbenchWidget {
 
 	/**
-	 * Used to determine whether the load has been tried to
-	 * prevent multiple retries at a failed load.
+	 * Used to determine whether the load has been tried to prevent multiple retries
+	 * at a failed load.
 	 */
 	private boolean firstLoad = true;
 
 	/**
-	 * The configuration element from which the widget can be created. This
-	 * value will exist until the element is converted into a real class -- at
-	 * which point this value will be set to <code>null</code>.
+	 * The configuration element from which the widget can be created. This value
+	 * will exist until the element is converted into a real class -- at which point
+	 * this value will be set to <code>null</code>.
 	 */
 	private IConfigurationElement configurationElement;
 
 	/**
-	 * The real widget. This value is <code>null</code> until the proxy is
-	 * forced to load the real widget. At this point, the configuration element
-	 * is converted, nulled out, and this widget gains a reference.
+	 * The real widget. This value is <code>null</code> until the proxy is forced to
+	 * load the real widget. At this point, the configuration element is converted,
+	 * nulled out, and this widget gains a reference.
 	 */
 	private IWorkbenchWidget widget = null;
 
@@ -68,23 +68,20 @@ final class WidgetProxy implements IWorkbenchWidget {
 	 * Constructs a new instance of <code>WidgetProxy</code> with all the
 	 * information it needs to try to load the class at a later point in time.
 	 *
-	 * @param configurationElement
-	 *            The configuration element from which the real class can be
-	 *            loaded at run-time; must not be <code>null</code>.
-	 * @param widgetAttributeName
-	 *            The name of the attibute or element containing the widget
-	 *            executable extension; must not be <code>null</code>.
+	 * @param configurationElement The configuration element from which the real
+	 *                             class can be loaded at run-time; must not be
+	 *                             <code>null</code>.
+	 * @param widgetAttributeName  The name of the attibute or element containing
+	 *                             the widget executable extension; must not be
+	 *                             <code>null</code>.
 	 */
-	public WidgetProxy(final IConfigurationElement configurationElement,
-			final String widgetAttributeName) {
+	public WidgetProxy(final IConfigurationElement configurationElement, final String widgetAttributeName) {
 		if (configurationElement == null) {
-			throw new NullPointerException(
-					"The configuration element backing a widget proxy cannot be null"); //$NON-NLS-1$
+			throw new NullPointerException("The configuration element backing a widget proxy cannot be null"); //$NON-NLS-1$
 		}
 
 		if (widgetAttributeName == null) {
-			throw new NullPointerException(
-					"The attribute containing the widget class must be known"); //$NON-NLS-1$
+			throw new NullPointerException("The attribute containing the widget class must be known"); //$NON-NLS-1$
 		}
 
 		this.configurationElement = configurationElement;
@@ -134,12 +131,12 @@ final class WidgetProxy implements IWorkbenchWidget {
 	}
 
 	/**
-	 * Convenience method that allows the trim layout manager to
-	 * inform widgets if they have changed locations. If the IWidget
-	 * implementation does not support the method then we default
-	 * to using the simpler <code>fill(final Composite parent)</code>.
+	 * Convenience method that allows the trim layout manager to inform widgets if
+	 * they have changed locations. If the IWidget implementation does not support
+	 * the method then we default to using the simpler
+	 * <code>fill(final Composite parent)</code>.
 	 *
-	 * @param parent The composite to create the controls in
+	 * @param parent  The composite to create the controls in
 	 * @param oldSide The side the trim was previously displayed on
 	 * @param newSide The new side that the trim will be displayed on
 	 */
@@ -157,27 +154,24 @@ final class WidgetProxy implements IWorkbenchWidget {
 	 * Loads the widget, if possible. If the widget is loaded, then the member
 	 * variables are updated accordingly.
 	 *
-	 * @return <code>true</code> if the widget is now non-null;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the widget is now non-null; <code>false</code>
+	 *         otherwise.
 	 */
 	private boolean loadWidget() {
 		if (firstLoad) {
 			// Load the handler.
 			try {
-				widget = (IWorkbenchWidget) configurationElement
-						.createExecutableExtension(widgetAttributeName);
+				widget = (IWorkbenchWidget) configurationElement.createExecutableExtension(widgetAttributeName);
 				configurationElement = null;
 			} catch (final ClassCastException e) {
 				final String message = "The proxied widget was the wrong class"; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 
 			} catch (final CoreException e) {
-				final String message = "The proxied widget for '" + configurationElement.getAttribute(widgetAttributeName) //$NON-NLS-1$
-						+ "' could not be loaded"; //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				final String message = "The proxied widget for '" //$NON-NLS-1$
+						+ configurationElement.getAttribute(widgetAttributeName) + "' could not be loaded"; //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 			}
 		}
@@ -190,11 +184,11 @@ final class WidgetProxy implements IWorkbenchWidget {
 	}
 
 	/**
-	 * Determine if the widget knows how to respond to changes in the
-	 * workbench 'side' that it is being displayed on.
+	 * Determine if the widget knows how to respond to changes in the workbench
+	 * 'side' that it is being displayed on.
 	 *
-	 * @return <code>true</code> iff the <code>IWidget</code> implementation
-	 * is actually based on <code>AbstractTrimWidget</code>
+	 * @return <code>true</code> iff the <code>IWidget</code> implementation is
+	 *         actually based on <code>AbstractTrimWidget</code>
 	 */
 	private boolean isMoveableTrimWidget() {
 		if (loadWidget()) {

@@ -91,7 +91,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 				MPerspective perspective = (MPerspective) snippet;
 				String id = perspective.getElementId();
 
-				// See if the clone is customizing an a predefined perspective without changing its name
+				// See if the clone is customizing an a predefined perspective without changing
+				// its name
 				PerspectiveDescriptor existingDescriptor = descriptors.get(id);
 
 				if (existingDescriptor == null) {
@@ -144,8 +145,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	}
 
 	@Override
-	public IPerspectiveDescriptor clonePerspective(String id, String label,
-			IPerspectiveDescriptor desc) throws IllegalArgumentException {
+	public IPerspectiveDescriptor clonePerspective(String id, String label, IPerspectiveDescriptor desc)
+			throws IllegalArgumentException {
 		// FIXME: compat clonePerspective. Not called in 3.8
 		E4Util.unsupported("clonePerspective"); //$NON-NLS-1$
 		return null;
@@ -179,14 +180,12 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		}
 	}
 
-
 	@Override
 	public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId) {
 		return findPerspectiveWithId(perspectiveId, true);
 	}
 
-	public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId,
-			boolean considerRestrictRules) {
+	public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId, boolean considerRestrictRules) {
 		IPerspectiveDescriptor candidate = descriptors.get(perspectiveId);
 		if (considerRestrictRules && WorkbenchActivityHelper.restrictUseOf(candidate)) {
 			return null;
@@ -209,8 +208,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	@Override
 	public String getDefaultPerspective() {
-		String defaultId = PrefUtil.getAPIPreferenceStore().getString(
-				IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+		String defaultId = PrefUtil.getAPIPreferenceStore()
+				.getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 		// empty string may be returned but we want to return null if nothing
 		// found
 		if (defaultId.length() == 0 || findPerspectiveWithId(defaultId) == null) {
@@ -223,8 +222,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	@Override
 	public IPerspectiveDescriptor[] getPerspectives() {
-		Collection<?> descs = WorkbenchActivityHelper.restrictCollection(descriptors.values(),
-				new ArrayList<>());
+		Collection<?> descs = WorkbenchActivityHelper.restrictCollection(descriptors.values(), new ArrayList<>());
 		return descs.toArray(new IPerspectiveDescriptor[descs.size()]);
 	}
 
@@ -235,18 +233,16 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	public void setDefaultPerspective(String id) {
 		IPerspectiveDescriptor desc = findPerspectiveWithId(id);
 		if (desc != null) {
-			PrefUtil.getAPIPreferenceStore().setValue(
-					IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, id);
+			PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, id);
 		}
 	}
 
 	/**
 	 * Return <code>true</code> if a label is valid. This checks only the given
-	 * label in isolation. It does not check whether the given label is used by
-	 * any existing perspectives.
+	 * label in isolation. It does not check whether the given label is used by any
+	 * existing perspectives.
 	 *
-	 * @param label
-	 *            the label to test
+	 * @param label the label to test
 	 * @return whether the label is valid
 	 */
 	public boolean validateLabel(String label) {
@@ -256,7 +252,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		}
 		return true;
 	}
-
 
 	@Override
 	public void revertPerspective(IPerspectiveDescriptor perspToRevert) {
@@ -294,19 +289,15 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	/**
 	 * Create a new perspective.
 	 *
-	 * @param label
-	 *            the name of the new descriptor
-	 * @param originalDescriptor
-	 *            the descriptor on which to base the new descriptor
+	 * @param label              the name of the new descriptor
+	 * @param originalDescriptor the descriptor on which to base the new descriptor
 	 * @return a new perspective descriptor or <code>null</code> if the creation
 	 *         failed.
 	 */
-	public PerspectiveDescriptor createPerspective(String label,
-			PerspectiveDescriptor originalDescriptor) {
+	public PerspectiveDescriptor createPerspective(String label, PerspectiveDescriptor originalDescriptor) {
 
 		String newID = createNewId(label, originalDescriptor);
-		PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(newID, label,
-				originalDescriptor);
+		PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(newID, label, originalDescriptor);
 		descriptors.put(newDescriptor.getId(), newDescriptor);
 		return newDescriptor;
 	}

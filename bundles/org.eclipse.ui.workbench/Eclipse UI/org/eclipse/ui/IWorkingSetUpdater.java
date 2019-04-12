@@ -14,17 +14,18 @@
 package org.eclipse.ui;
 
 /**
- * An <code>IWorkingSetUpdater</code> can be used to dynamically update
- * the content of a working set.
+ * An <code>IWorkingSetUpdater</code> can be used to dynamically update the
+ * content of a working set.
  * <p>
- * A working set updater manages a set of working sets. It is contributed
- * via the attribute <code>updaterClass</code> of the <code>
+ * A working set updater manages a set of working sets. It is contributed via
+ * the attribute <code>updaterClass</code> of the <code>
  * org.eclipse.ui.workingSets</code> extension point. Extensions of this
  * extension point must therefore implement this interface.
  * </p>
  * <p>
  * API under construction and subject to change at any time.
  * </p>
+ * 
  * @since 3.1
  */
 public interface IWorkingSetUpdater {
@@ -40,26 +41,24 @@ public interface IWorkingSetUpdater {
 	 *
 	 * @param workingSet the working set to remove
 	 *
-	 * @return <code>true</code> if the updater changed (e.g.
-	 *  the element got removed)
+	 * @return <code>true</code> if the updater changed (e.g. the element got
+	 *         removed)
 	 */
 	boolean remove(IWorkingSet workingSet);
 
 	/**
-	 * Returns <code>true</code> if the updater contains the
-	 * given working set; otherwise <code>false</code> is
-	 * returned.
+	 * Returns <code>true</code> if the updater contains the given working set;
+	 * otherwise <code>false</code> is returned.
 	 *
 	 * @param workingSet the parameter to check
 	 *
-	 * @return whether the updater contains the given working
-	 *  set
+	 * @return whether the updater contains the given working set
 	 */
 	boolean contains(IWorkingSet workingSet);
 
 	/**
-	 * Disposes this working set updater. Implementations of this
-	 * method typically remove listeners from some delta providers.
+	 * Disposes this working set updater. Implementations of this method typically
+	 * remove listeners from some delta providers.
 	 */
 	void dispose();
 }

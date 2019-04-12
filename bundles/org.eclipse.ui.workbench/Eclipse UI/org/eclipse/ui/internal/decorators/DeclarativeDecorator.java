@@ -29,60 +29,60 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
 
 	private String iconLocation;
 
-    private IConfigurationElement configElement;
+	private IConfigurationElement configElement;
 
-    private ImageDescriptor descriptor;
+	private ImageDescriptor descriptor;
 
-    DeclarativeDecorator(IConfigurationElement definingElement, String iconPath) {
-        this.iconLocation = iconPath;
-        this.configElement = definingElement;
-    }
-
-    /**
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-     */
-    @Override
-	public void addListener(ILabelProviderListener listener) {
-    }
-
-    /**
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-     */
-    @Override
-	public void dispose() {
-    	//Nothing to do here
-    }
+	DeclarativeDecorator(IConfigurationElement definingElement, String iconPath) {
+		this.iconLocation = iconPath;
+		this.configElement = definingElement;
+	}
 
 	/**
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
-     *      java.lang.String)
-     */
-    @Override
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+	 */
+	@Override
+	public void addListener(ILabelProviderListener listener) {
+	}
+
+	/**
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	@Override
+	public void dispose() {
+		// Nothing to do here
+	}
+
+	/**
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
+	 *      java.lang.String)
+	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
-    }
+	}
 
-    /**
-     * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
-     *      org.eclipse.jface.viewers.IDecoration)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
+	 *      org.eclipse.jface.viewers.IDecoration)
+	 */
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
-        if (descriptor == null) {
-            URL url = BundleUtility.find(configElement.getDeclaringExtension()
-					.getContributor().getName(), iconLocation);
-            if (url == null) {
+		if (descriptor == null) {
+			URL url = BundleUtility.find(configElement.getDeclaringExtension().getContributor().getName(),
+					iconLocation);
+			if (url == null) {
 				return;
 			}
-            descriptor = ImageDescriptor.createFromURL(url);
-        }
-        decoration.addOverlay(descriptor);
-    }
+			descriptor = ImageDescriptor.createFromURL(url);
+		}
+		decoration.addOverlay(descriptor);
+	}
 }

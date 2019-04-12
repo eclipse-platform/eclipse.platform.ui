@@ -40,8 +40,7 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
  */
 public final class InternalActivityHelper {
 
-	public static Set<String> getActivityIdsForCategory(
-			IActivityManager activityManager, ICategory category) {
+	public static Set<String> getActivityIdsForCategory(IActivityManager activityManager, ICategory category) {
 		Set<ICategoryActivityBinding> bindings = category.getCategoryActivityBindings();
 		Set<String> activityIds = new HashSet<>();
 		for (Iterator<ICategoryActivityBinding> i = bindings.iterator(); i.hasNext();) {
@@ -79,8 +78,7 @@ public final class InternalActivityHelper {
 		return enabledCategories;
 	}
 
-	public static Set<String> getPartiallyEnabledCategories(
-			IActivityManager activityManager) {
+	public static Set<String> getPartiallyEnabledCategories(IActivityManager activityManager) {
 		Set<String> definedCategoryIds = activityManager.getDefinedCategoryIds();
 		Set<String> partialCategories = new HashSet<>();
 		for (Iterator<String> i = definedCategoryIds.iterator(); i.hasNext();) {
@@ -93,10 +91,8 @@ public final class InternalActivityHelper {
 		return partialCategories;
 	}
 
-	private static boolean isPartiallyEnabled(IActivityManager activityManager,
-			String categoryId) {
-		Set<String> activityIds = getActivityIdsForCategory(activityManager,
-				activityManager.getCategory(categoryId));
+	private static boolean isPartiallyEnabled(IActivityManager activityManager, String categoryId) {
+		Set<String> activityIds = getActivityIdsForCategory(activityManager, activityManager.getCategory(categoryId));
 		int foundCount = 0;
 		for (Iterator<String> i = activityIds.iterator(); i.hasNext();) {
 			String activityId = i.next();

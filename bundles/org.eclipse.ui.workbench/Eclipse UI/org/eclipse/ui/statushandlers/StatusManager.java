@@ -79,9 +79,8 @@ import org.osgi.framework.BundleContext;
  */
 public class StatusManager {
 	/**
-	 * A style indicating that the status should not be acted on. This is used
-	 * by objects such as log listeners that do not want to report a status
-	 * twice.
+	 * A style indicating that the status should not be acted on. This is used by
+	 * objects such as log listeners that do not want to report a status twice.
 	 */
 	public static final int NONE = 0;
 
@@ -92,21 +91,22 @@ public class StatusManager {
 
 	/**
 	 * A style indicating that handlers should show a problem to an user without
-	 * blocking the calling method while awaiting user response. This is
-	 * generally done using a non modal {@link Dialog}.
+	 * blocking the calling method while awaiting user response. This is generally
+	 * done using a non modal {@link Dialog}.
 	 */
 	public static final int SHOW = 0x02;
 
 	/**
-	 * A style indicating that the handling should block the calling thread
-	 * until the status has been handled.
+	 * A style indicating that the handling should block the calling thread until
+	 * the status has been handled.
 	 * <p>
 	 * A typical usage of this would be to ensure that the user's actions are
-	 * blocked until they've dealt with the status in some manner. It is
-	 * therefore likely but not required that the <code>StatusHandler</code>
-	 * would achieve this through the use of a modal dialog.
-	 * </p><p>Due to the fact
-	 * that use of <code>BLOCK</code> will block UI, care should be
+	 * blocked until they've dealt with the status in some manner. It is therefore
+	 * likely but not required that the <code>StatusHandler</code> would achieve
+	 * this through the use of a modal dialog.
+	 * </p>
+	 * <p>
+	 * Due to the fact that use of <code>BLOCK</code> will block UI, care should be
 	 * taken in this use of this flag.
 	 * </p>
 	 */
@@ -141,7 +141,7 @@ public class StatusManager {
 		Platform.addLogListener(new StatusManagerLogListener());
 	}
 
-	private AbstractStatusHandler getStatusHandler(){
+	private AbstractStatusHandler getStatusHandler() {
 		if (statusHandler != null) {
 			return statusHandler;
 		}
@@ -171,31 +171,29 @@ public class StatusManager {
 		}
 		return statusHandler;
 	}
+
 	/**
 	 * Handles the given status adapter due to the style. Because the facility
 	 * depends on Workbench, this method will log the status, if Workbench isn't
-	 * initialized and the style isn't {@link #NONE}. If Workbench isn't
-	 * initialized and the style is {@link #NONE}, the manager will do nothing.
+	 * initialized and the style isn't {@link #NONE}. If Workbench isn't initialized
+	 * and the style is {@link #NONE}, the manager will do nothing.
 	 *
-	 * @param statusAdapter
-	 *            the status adapter
-	 * @param style
-	 *            the style. Value can be combined with logical OR. One of
-	 *            {@link #NONE}, {@link #LOG}, {@link #SHOW} and
-	 *            {@link #BLOCK}.
+	 * @param statusAdapter the status adapter
+	 * @param style         the style. Value can be combined with logical OR. One of
+	 *                      {@link #NONE}, {@link #LOG}, {@link #SHOW} and
+	 *                      {@link #BLOCK}.
 	 */
 	public void handle(StatusAdapter statusAdapter, int style) {
 		try {
 			// The manager will only log the error when the status adapter or
 			// the embedded status is null.
 			if (statusAdapter == null) {
-				logError(
-						"Error occurred during status handling",//$NON-NLS-1$
+				logError("Error occurred during status handling", //$NON-NLS-1$
 						new NullPointerException("StatusAdapter object is null")); //$NON-NLS-1$
 				return;
 			}
 			if (statusAdapter.getStatus() == null) {
-				logError("Error occurred during status handling",//$NON-NLS-1$
+				logError("Error occurred during status handling", //$NON-NLS-1$
 						new NullPointerException("Status object is null")); //$NON-NLS-1$
 				return;
 			}
@@ -221,8 +219,7 @@ public class StatusManager {
 			// if attached status handler is not able to notify StatusManager
 			// about particular event, use the default policy and fake the
 			// notification
-			if (handler == null || !handler.supportsNotification(
-					INotificationTypes.HANDLED)) {
+			if (handler == null || !handler.supportsNotification(INotificationTypes.HANDLED)) {
 				generateFakeNotification(statusAdapter, style);
 			}
 		} catch (Throwable ex) {
@@ -235,28 +232,24 @@ public class StatusManager {
 	}
 
 	/**
-	 * Handles the given status adapter. The {@link #LOG} style is used when
-	 * this method is called.
+	 * Handles the given status adapter. The {@link #LOG} style is used when this
+	 * method is called.
 	 *
-	 * @param statusAdapter
-	 *            the status adapter
+	 * @param statusAdapter the status adapter
 	 */
 	public void handle(StatusAdapter statusAdapter) {
 		handle(statusAdapter, StatusManager.LOG);
 	}
 
 	/**
-	 * Handles the given status due to the style. Because the facility depends
-	 * on Workbench, this method will log the status, if Workbench isn't
-	 * initialized and the style isn't {@link #NONE}. If Workbench isn't
-	 * initialized and the style is {@link #NONE}, the manager will do nothing.
+	 * Handles the given status due to the style. Because the facility depends on
+	 * Workbench, this method will log the status, if Workbench isn't initialized
+	 * and the style isn't {@link #NONE}. If Workbench isn't initialized and the
+	 * style is {@link #NONE}, the manager will do nothing.
 	 *
-	 * @param status
-	 *            the status to handle
-	 * @param style
-	 *            the style. Value can be combined with logical OR. One of
-	 *            {@link #NONE}, {@link #LOG}, {@link #SHOW} and
-	 *            {@link #BLOCK}.
+	 * @param status the status to handle
+	 * @param style  the style. Value can be combined with logical OR. One of
+	 *               {@link #NONE}, {@link #LOG}, {@link #SHOW} and {@link #BLOCK}.
 	 */
 	public void handle(IStatus status, int style) {
 		StatusAdapter statusAdapter = new StatusAdapter(status);
@@ -264,11 +257,10 @@ public class StatusManager {
 	}
 
 	/**
-	 * Handles the given status. The {@link #LOG} style is used when this method
-	 * is called.
+	 * Handles the given status. The {@link #LOG} style is used when this method is
+	 * called.
 	 *
-	 * @param status
-	 *            the status to handle
+	 * @param status the status to handle
 	 */
 	public void handle(IStatus status) {
 		handle(status, StatusManager.LOG);
@@ -283,6 +275,7 @@ public class StatusManager {
 	 * StatusManager.getManager().handle(coreException.getStatus());
 	 * </code>
 	 * </pre>
+	 * 
 	 * that does not print the stack trace to the log.
 	 *
 	 * @param coreException a CoreException to be handled.
@@ -291,27 +284,23 @@ public class StatusManager {
 	 * @since 3.4
 	 *
 	 */
-	public void handle(CoreException coreException,String pluginId) {
+	public void handle(CoreException coreException, String pluginId) {
 		IStatus exceptionStatus = coreException.getStatus();
-		handle(new Status(exceptionStatus.getSeverity(), pluginId,
-				coreException
-				.getLocalizedMessage(), coreException));
+		handle(new Status(exceptionStatus.getSeverity(), pluginId, coreException.getLocalizedMessage(), coreException));
 	}
 
 	/**
-	 * This method informs the StatusManager that this IStatus is being handled
-	 * by the handler and to ignore it when it shows up in our ILogListener.
+	 * This method informs the StatusManager that this IStatus is being handled by
+	 * the handler and to ignore it when it shows up in our ILogListener.
 	 *
-	 * @param status
-	 *            already handled and logged status
+	 * @param status already handled and logged status
 	 */
 	public void addLoggedStatus(IStatus status) {
 		loggedStatuses.add(status);
 	}
 
 	private void logError(String message, Throwable ex) {
-		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
-				message, ex);
+		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, message, ex);
 		addLoggedStatus(status);
 		WorkbenchPlugin.log(status);
 	}
@@ -341,19 +330,17 @@ public class StatusManager {
 	}
 
 	/**
-	 * This method should be called by custom status handlers when an event
-	 * occurs. This method has no effect if statushandler does not support
-	 * particular event type.
+	 * This method should be called by custom status handlers when an event occurs.
+	 * This method has no effect if statushandler does not support particular event
+	 * type.
 	 *
-	 * @param type
-	 *            - type of the event.
-	 * @param adapters
-	 *            - array of affected {@link StatusAdapter}s.
+	 * @param type     - type of the event.
+	 * @param adapters - array of affected {@link StatusAdapter}s.
 	 * @see INotificationTypes
 	 * @see AbstractStatusHandler#supportsNotification(int)
 	 * @since 3.5
 	 */
-	public void fireNotification(int type, StatusAdapter[] adapters){
+	public void fireNotification(int type, StatusAdapter[] adapters) {
 		AbstractStatusHandler handler = getStatusHandler();
 		if (handler != null && handler.supportsNotification(type)) {
 			doFireNotification(type, adapters);
@@ -368,18 +355,15 @@ public class StatusManager {
 
 	private void generateFakeNotification(StatusAdapter statusAdapter, int style) {
 		if (((style & StatusManager.SHOW) == StatusManager.SHOW || (style & StatusManager.BLOCK) == StatusManager.BLOCK)
-				&& statusAdapter
-						.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != Boolean.TRUE) {
-			doFireNotification(INotificationTypes.HANDLED,
-					new StatusAdapter[] { statusAdapter });
+				&& statusAdapter.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != Boolean.TRUE) {
+			doFireNotification(INotificationTypes.HANDLED, new StatusAdapter[] { statusAdapter });
 		}
 	}
 
 	/**
 	 * Adds a listener to the StatusManager.
 	 *
-	 * @param listener
-	 *            - a listener to be added.
+	 * @param listener - a listener to be added.
 	 * @since 3.5
 	 */
 	public void addListener(INotificationListener listener) {
@@ -389,11 +373,10 @@ public class StatusManager {
 	/**
 	 * Removes a listener from StatusManager.
 	 *
-	 * @param listener
-	 *            - a listener to be removed.
+	 * @param listener - a listener to be removed.
 	 * @since 3.5
 	 */
-	public void removeListener(INotificationListener listener){
+	public void removeListener(INotificationListener listener) {
 		this.listeners.remove(listener);
 	}
 
@@ -407,13 +390,11 @@ public class StatusManager {
 	 * @since 3.5
 	 *
 	 */
-	public interface INotificationListener{
+	public interface INotificationListener {
 		/**
 		 *
-		 * @param type
-		 *            - a type of notification.
-		 * @param adapters
-		 *            - affected {@link StatusAdapter}s
+		 * @param type     - a type of notification.
+		 * @param adapters - affected {@link StatusAdapter}s
 		 */
 		void statusManagerNotified(int type, StatusAdapter[] adapters);
 	}
@@ -429,8 +410,8 @@ public class StatusManager {
 	public interface INotificationTypes {
 
 		/**
-		 * This type notifications are used when a particular
-		 * {@link StatusAdapter} was handled.
+		 * This type notifications are used when a particular {@link StatusAdapter} was
+		 * handled.
 		 */
 		int HANDLED = 0x01;
 

@@ -28,12 +28,12 @@ import org.eclipse.ui.ISources;
  * <p>
  * In the future, it will possible to define a new variable (i.e., piece of
  * application state) that you want to use inside of the
- * <code>org.eclipse.ui.contexts</code>, <code>org.eclipse.ui.handlers</code>
- * or <code>org.eclipse.ui.menus</code> extension points. As it stands right
- * now, it is not possible to run code soon enough for the
+ * <code>org.eclipse.ui.contexts</code>, <code>org.eclipse.ui.handlers</code> or
+ * <code>org.eclipse.ui.menus</code> extension points. As it stands right now,
+ * it is not possible to run code soon enough for the
  * <code>IHandlerService</code>, <code>IMenuService</code> or
- * <code>IContextService</code> to become aware of the new variables. This
- * will likely be fixed with a new extension point.
+ * <code>IContextService</code> to become aware of the new variables. This will
+ * likely be fixed with a new extension point.
  * </p>
  * <p>
  * TODO Move to "org.eclipse.ui" and resolve the above issue.
@@ -82,35 +82,29 @@ public final class SourcePriorityNameMapping implements ISources {
 		addMapping(ACTIVE_SHELL_NAME, ACTIVE_SHELL);
 		addMapping(ACTIVE_SITE_NAME, ACTIVE_SITE);
 		addMapping(ACTIVE_WORKBENCH_WINDOW_NAME, ACTIVE_WORKBENCH_WINDOW);
-		addMapping(ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
-				ACTIVE_WORKBENCH_WINDOW_SHELL);
-		addMapping(ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
-				ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
-		addMapping(ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME,
-				ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
-		addMapping(ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
-				ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
+		addMapping(ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, ACTIVE_WORKBENCH_WINDOW_SHELL);
+		addMapping(ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME, ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
+		addMapping(ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME, ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
+		addMapping(ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME, ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
 		addMapping(LEGACY_LEGACY_NAME, LEGACY_LEGACY);
 		addMapping("workbench", WORKBENCH); //$NON-NLS-1$
 	}
 
 	/**
-	 * Adds a mapping between a source name and a source priority. This method
-	 * also cleans up any existing mappings using the same name or priority.
-	 * There is a one-to-one relationship between name and priority.
+	 * Adds a mapping between a source name and a source priority. This method also
+	 * cleans up any existing mappings using the same name or priority. There is a
+	 * one-to-one relationship between name and priority.
 	 *
-	 * @param sourceName
-	 *            The name of the variable as it would appear in an XML
-	 *            expression; must not be <code>null</code>.
-	 * @param sourcePriority
-	 *            The priority of the source with respect to other sources. A
-	 *            higher value means that expressions including this priority
-	 *            will win ties more often. It is recommended that this value is
-	 *            simply a single bit shifted to a particular place.
+	 * @param sourceName     The name of the variable as it would appear in an XML
+	 *                       expression; must not be <code>null</code>.
+	 * @param sourcePriority The priority of the source with respect to other
+	 *                       sources. A higher value means that expressions
+	 *                       including this priority will win ties more often. It is
+	 *                       recommended that this value is simply a single bit
+	 *                       shifted to a particular place.
 	 * @see ISources
 	 */
-	public static void addMapping(final String sourceName,
-			final int sourcePriority) {
+	public static void addMapping(final String sourceName, final int sourcePriority) {
 		if (sourceName == null) {
 			throw new NullPointerException("The source name cannot be null."); //$NON-NLS-1$
 		}
@@ -123,16 +117,14 @@ public final class SourcePriorityNameMapping implements ISources {
 	}
 
 	/**
-	 * Computes the source priority for the given expression. The source
-	 * priority is a bit mask of all of the variables references by the
-	 * expression. The default variable is considered to be
-	 * {@link ISources#ACTIVE_CURRENT_SELECTION}. The source priority is used
-	 * to minimize recomputations of the expression, and it can also be used for
-	 * conflict resolution.
+	 * Computes the source priority for the given expression. The source priority is
+	 * a bit mask of all of the variables references by the expression. The default
+	 * variable is considered to be {@link ISources#ACTIVE_CURRENT_SELECTION}. The
+	 * source priority is used to minimize recomputations of the expression, and it
+	 * can also be used for conflict resolution.
 	 *
-	 * @param expression
-	 *            The expression for which the source priority should be
-	 *            computed; may be <code>null</code>.
+	 * @param expression The expression for which the source priority should be
+	 *                   computed; may be <code>null</code>.
 	 * @return The bit mask of all the sources required for this expression;
 	 *         <code>0</code> if none.
 	 */
@@ -162,9 +154,8 @@ public final class SourcePriorityNameMapping implements ISources {
 	/**
 	 * Gets the priority for the source with the given name.
 	 *
-	 * @param sourceName
-	 *            The name of the variable as it would appear in an XML
-	 *            expression; should not be <code>null</code>.
+	 * @param sourceName The name of the variable as it would appear in an XML
+	 *                   expression; should not be <code>null</code>.
 	 * @return The source priority that matches, if any;
 	 *         <code>NO_SOURCE_PRIORITY</code> if none is found.
 	 */

@@ -41,35 +41,31 @@ public final class WorkbenchActivityHelper {
 	public static final String TRIGGER_PRE_UI_POINT = "org.eclipse.ui.workbenchModel"; //$NON-NLS-1$
 
 	private static ITriggerPoint getTriggerPoint(String id) {
-		return PlatformUI.getWorkbench().getActivitySupport()
-				.getTriggerPointManager().getTriggerPoint(id);
+		return PlatformUI.getWorkbench().getActivitySupport().getTriggerPointManager().getTriggerPoint(id);
 	}
 
 	/**
 	 * Return the identifier that maps to the given contribution.
 	 *
-	 * @param contribution
-	 *            the contribution
+	 * @param contribution the contribution
 	 * @return the identifier
 	 * @since 3.1
 	 */
 	public static IIdentifier getIdentifier(IPluginContribution contribution) {
-		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-				.getWorkbench().getActivitySupport();
+		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		IIdentifier identifier = workbenchActivitySupport.getActivityManager()
 				.getIdentifier(createUnifiedId(contribution));
 		return identifier;
 	}
 
 	/**
-	 * Answers whether a given contribution is allowed to be used based on
-	 * activity enablement. If it is currently disabled, then a dialog is opened
-	 * and the user is prompted to activate the requried activities. If the user
-	 * declines their activation then false is returned. In all other cases
-	 * <code>true</code> is returned.
+	 * Answers whether a given contribution is allowed to be used based on activity
+	 * enablement. If it is currently disabled, then a dialog is opened and the user
+	 * is prompted to activate the requried activities. If the user declines their
+	 * activation then false is returned. In all other cases <code>true</code> is
+	 * returned.
 	 *
-	 * @param object
-	 *            the contribution to test.
+	 * @param object the contribution to test.
 	 * @return whether the contribution is allowed to be used based on activity
 	 *         enablement.
 	 * @deprecated
@@ -77,22 +73,19 @@ public final class WorkbenchActivityHelper {
 	 */
 	@Deprecated
 	public static boolean allowUseOf(Object object) {
-		return allowUseOf(PlatformUI.getWorkbench().getActivitySupport()
-				.getTriggerPointManager().getTriggerPoint(
-						ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID), object);
+		return allowUseOf(PlatformUI.getWorkbench().getActivitySupport().getTriggerPointManager()
+				.getTriggerPoint(ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID), object);
 	}
 
 	/**
-	 * Answers whether a given contribution is allowed to be used based on
-	 * activity enablement. If it is currently disabled, then a dialog is opened
-	 * and the user is prompted to activate the required activities. If the user
-	 * declines their activation then false is returned. In all other cases
-	 * <code>true</code> is returned.
+	 * Answers whether a given contribution is allowed to be used based on activity
+	 * enablement. If it is currently disabled, then a dialog is opened and the user
+	 * is prompted to activate the required activities. If the user declines their
+	 * activation then false is returned. In all other cases <code>true</code> is
+	 * returned.
 	 *
-	 * @param triggerPoint
-	 *            the trigger point being hit
-	 * @param object
-	 *            the contribution to test.
+	 * @param triggerPoint the trigger point being hit
+	 * @param object       the contribution to test.
 	 * @return whether the contribution is allowed to be used based on activity
 	 *         enablement.
 	 */
@@ -112,14 +105,13 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Restrict the use of the object only if it is matched by an activity with
-	 * a core expression. A normal disabled activity will not restrict the use
-	 * of this object.
+	 * Restrict the use of the object only if it is matched by an activity with a
+	 * core expression. A normal disabled activity will not restrict the use of this
+	 * object.
 	 *
-	 * @param object
-	 *            the object to restrict
-	 * @return <code>true</code> if this object is matched by a disabled
-	 *         activity with an expression.
+	 * @param object the object to restrict
+	 * @return <code>true</code> if this object is matched by a disabled activity
+	 *         with an expression.
 	 * @since 3.4
 	 */
 	public static boolean restrictUseOf(Object object) {
@@ -127,24 +119,21 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Answers whether a given identifier is enabled. If it is not enabled, then
-	 * a dialog is opened and the user is prompted to enable the associated
+	 * Answers whether a given identifier is enabled. If it is not enabled, then a
+	 * dialog is opened and the user is prompted to enable the associated
 	 * activities.
 	 *
-	 * @param triggerPoint
-	 *            the trigger point to test
-	 * @param identifier
-	 *            the identifier to test.
+	 * @param triggerPoint the trigger point to test
+	 * @param identifier   the identifier to test.
 	 * @return whether the identifier is enabled.
 	 */
-	private static boolean allow(ITriggerPoint triggerPoint,
-			IIdentifier identifier) {
+	private static boolean allow(ITriggerPoint triggerPoint, IIdentifier identifier) {
 		if (identifier.isEnabled()) {
 			return true;
 		}
 
-		ITriggerPointAdvisor advisor = ((WorkbenchActivitySupport) PlatformUI
-				.getWorkbench().getActivitySupport()).getTriggerPointAdvisor();
+		ITriggerPointAdvisor advisor = ((WorkbenchActivitySupport) PlatformUI.getWorkbench().getActivitySupport())
+				.getTriggerPointAdvisor();
 		Set<String> activitiesToEnable = advisor.allow(triggerPoint, identifier);
 
 		if (activitiesToEnable == null) {
@@ -162,22 +151,22 @@ public final class WorkbenchActivityHelper {
 		// are now enabled. this means if something has an expression bound
 		// activity that is not currently enabled this call will always return
 		// false - trying to manually set such an activity will always fail.
-		Set<?> newEnabled = PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
-				.getEnabledActivityIds();
+		Set<?> newEnabled = PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getEnabledActivityIds();
 		return newEnabled.containsAll(activitiesToEnable);
 	}
 
 	/**
-	 * Utility method to create a <code>String</code> containing the plugin
-	 * and extension ids of a contribution. This will have the form
+	 * Utility method to create a <code>String</code> containing the plugin and
+	 * extension ids of a contribution. This will have the form
 	 *
 	 * <pre>
 	 * pluginId / extensionId
-	 * </pre>. If the IPluginContribution does not define a plugin id then the
-	 * extension id alone is returned.
+	 * </pre>
+	 * 
+	 * . If the IPluginContribution does not define a plugin id then the extension
+	 * id alone is returned.
 	 *
-	 * @param contribution
-	 *            the contribution to use
+	 * @param contribution the contribution to use
 	 * @return the unified id
 	 */
 	public static String createUnifiedId(IPluginContribution contribution) {
@@ -191,36 +180,31 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Enables the set of activities.
 	 *
-	 * @param activities
-	 *            the activities to enable
+	 * @param activities the activities to enable
 	 */
 	private static void enableActivities(Collection<String> activities) {
-		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench()
-				.getActivitySupport();
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		Set<String> newSet = new HashSet<>(activitySupport.getActivityManager().getEnabledActivityIds());
 		newSet.addAll(activities);
 		activitySupport.setEnabledActivityIds(newSet);
 	}
 
 	/**
-	 * Answers whether the provided object should be filtered from the UI based
-	 * on activity state. Returns <code>false</code> except when the object is
-	 * an instance of <code>IPluginContribution</code> whos unified id matches
-	 * an <code>IIdentifier</code> that is currently disabled.
+	 * Answers whether the provided object should be filtered from the UI based on
+	 * activity state. Returns <code>false</code> except when the object is an
+	 * instance of <code>IPluginContribution</code> whos unified id matches an
+	 * <code>IIdentifier</code> that is currently disabled.
 	 *
-	 * @param object
-	 *            the object to test
+	 * @param object the object to test
 	 * @return whether the object should be filtered
 	 * @see #createUnifiedId(IPluginContribution)
 	 */
 	public static boolean filterItem(Object object) {
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
-			IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-					.getWorkbench().getActivitySupport();
-			IIdentifier identifier = workbenchActivitySupport
-					.getActivityManager().getIdentifier(
-							createUnifiedId(contribution));
+			IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+			IIdentifier identifier = workbenchActivitySupport.getActivityManager()
+					.getIdentifier(createUnifiedId(contribution));
 			if (!identifier.isEnabled()) {
 				return true;
 			}
@@ -229,32 +213,28 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Returns whether the UI is set up to filter contributions. This is the
-	 * case if there are defined activities.
+	 * Returns whether the UI is set up to filter contributions. This is the case if
+	 * there are defined activities.
 	 *
 	 * @return whether the UI is set up to filter contributions
 	 */
 	public static boolean isFiltering() {
-		return !PlatformUI.getWorkbench().getActivitySupport()
-				.getActivityManager().getDefinedActivityIds().isEmpty();
+		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedActivityIds().isEmpty();
 	}
 
 	/**
-	 * Return a list of category ids that will become implicity enabled if the
-	 * given category becomes enabled Note that the set returned by this set
-	 * represents the delta of categories that would be enabled - if the
-	 * category is already enabled then it is omitted.
+	 * Return a list of category ids that will become implicity enabled if the given
+	 * category becomes enabled Note that the set returned by this set represents
+	 * the delta of categories that would be enabled - if the category is already
+	 * enabled then it is omitted.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test against
-	 * @param categoryId
-	 *            the category to be enabled
+	 * @param activityManager the activity manager to test against
+	 * @param categoryId      the category to be enabled
 	 * @return a list of category ids that will become implicity enabled if the
 	 *         given category becomes enabled
 	 * @since 3.1
 	 */
-	public static Set<String> getEnabledCategories(IActivityManager activityManager,
-			String categoryId) {
+	public static Set<String> getEnabledCategories(IActivityManager activityManager, String categoryId) {
 		ICategory category = activityManager.getCategory(categoryId);
 		if (!category.isDefined()) {
 			return Collections.emptySet();
@@ -268,11 +248,9 @@ public final class WorkbenchActivityHelper {
 			if (otherCategoryId.equals(categoryId)) {
 				continue;
 			}
-			ICategory otherCategory = activityManager
-					.getCategory(otherCategoryId);
+			ICategory otherCategory = activityManager.getCategory(otherCategoryId);
 			Set<?> otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
-			if (activityManager.getEnabledActivityIds().containsAll(
-					otherCategoryActivityIds)) {
+			if (activityManager.getEnabledActivityIds().containsAll(otherCategoryActivityIds)) {
 				continue;
 			}
 			if (activities.containsAll(otherCategoryActivityIds)) {
@@ -284,11 +262,10 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Return the expanded activities for the given activity set. This will
-	 * resolve all activity requirement bindings.
+	 * Return the expanded activities for the given activity set. This will resolve
+	 * all activity requirement bindings.
 	 *
-	 * @param baseActivities
-	 *            the set of activities to expand
+	 * @param baseActivities the set of activities to expand
 	 * @return the expanded activities
 	 * @since 3.1
 	 */
@@ -305,14 +282,12 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Return the activities required for this activity.
 	 *
-	 * @param activityId
-	 *            the activity id
+	 * @param activityId the activity id
 	 * @return the activities required for this activity
 	 * @since 3.1
 	 */
 	public static Set<String> getRequiredActivityIds(String activityId) {
-		IActivityManager manager = PlatformUI.getWorkbench()
-				.getActivitySupport().getActivityManager();
+		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 		IActivity activity = manager.getActivity(activityId);
 		if (!activity.isDefined()) {
 			return Collections.EMPTY_SET;
@@ -334,8 +309,7 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Return the activities directly required by a given category.
 	 *
-	 * @param category
-	 *            the category
+	 * @param category the category
 	 * @return the activities directly required by a given category
 	 * @since 3.1
 	 */
@@ -352,19 +326,16 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Return a list of category ids that will become implicity disabled if the
 	 * given category becomes disabled Note that the set returned by this set
-	 * represents the delta of categories that would be enabled - if the
-	 * category is already enabled then it is omitted.
+	 * represents the delta of categories that would be enabled - if the category is
+	 * already enabled then it is omitted.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test against
-	 * @param categoryId
-	 *            the category to be enabled
+	 * @param activityManager the activity manager to test against
+	 * @param categoryId      the category to be enabled
 	 * @return a list of category ids that will become implicity enabled if the
 	 *         given category becomes enabled
 	 * @since 3.1
 	 */
-	public static Set<String> getDisabledCategories(IActivityManager activityManager,
-			String categoryId) {
+	public static Set<String> getDisabledCategories(IActivityManager activityManager, String categoryId) {
 		ICategory category = activityManager.getCategory(categoryId);
 		if (!category.isDefined()) {
 			return Collections.emptySet();
@@ -378,8 +349,7 @@ public final class WorkbenchActivityHelper {
 			if (otherCategoryId.equals(categoryId)) {
 				continue;
 			}
-			ICategory otherCategory = activityManager
-					.getCategory(otherCategoryId);
+			ICategory otherCategory = activityManager.getCategory(otherCategoryId);
 			Set<?> otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
 
 			if (otherCategoryActivityIds.isEmpty()) {
@@ -390,8 +360,7 @@ public final class WorkbenchActivityHelper {
 				continue;
 			}
 
-			if (activityManager.getEnabledActivityIds().containsAll(
-					otherCategoryActivityIds)) {
+			if (activityManager.getEnabledActivityIds().containsAll(otherCategoryActivityIds)) {
 				otherDisabledCategories.add(otherCategoryId);
 			}
 
@@ -400,19 +369,16 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Return a list of category ids that are implicitly contained within the
-	 * given category.
+	 * Return a list of category ids that are implicitly contained within the given
+	 * category.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test agaisnt
-	 * @param categoryId
-	 *            the category to be enabled
+	 * @param activityManager the activity manager to test agaisnt
+	 * @param categoryId      the category to be enabled
 	 * @return a list of category ids that will become implicity enabled if the
 	 *         given category becomes enabled
 	 * @since 3.1
 	 */
-	public static Set<String> getContainedCategories(
-			IActivityManager activityManager, String categoryId) {
+	public static Set<String> getContainedCategories(IActivityManager activityManager, String categoryId) {
 		ICategory category = activityManager.getCategory(categoryId);
 		if (!category.isDefined()) {
 			return Collections.emptySet();
@@ -426,8 +392,7 @@ public final class WorkbenchActivityHelper {
 			if (otherCategoryId.equals(categoryId)) {
 				continue;
 			}
-			ICategory otherCategory = activityManager
-					.getCategory(otherCategoryId);
+			ICategory otherCategory = activityManager.getCategory(otherCategoryId);
 			Set<?> otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
 
 			if (otherCategoryActivityIds.isEmpty()) {
@@ -444,11 +409,10 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Return the set of enabled categories. An enabled category is one in which
-	 * all contained activities are enabled.
+	 * Return the set of enabled categories. An enabled category is one in which all
+	 * contained activities are enabled.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test against
+	 * @param activityManager the activity manager to test against
 	 * @return the set of enabled categories.
 	 * @since 3.1
 	 */
@@ -467,13 +431,11 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Return the set of partially enabled categories.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test against
+	 * @param activityManager the activity manager to test against
 	 * @return the set of partially enabled categories
 	 * @since 3.2
 	 */
-	public static Set<String> getPartiallyEnabledCategories(
-			IActivityManager activityManager) {
+	public static Set<String> getPartiallyEnabledCategories(IActivityManager activityManager) {
 		Set<String> definedCategoryIds = activityManager.getDefinedCategoryIds();
 		Set<String> partialCategories = new HashSet<>();
 		for (String categoryId : definedCategoryIds) {
@@ -486,19 +448,16 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Returns whether the given category is partially enabled. A partially
-	 * enabled category is one in which the number of enabled activites is both
-	 * non-zero and less than the total number of activities in the category.
+	 * Returns whether the given category is partially enabled. A partially enabled
+	 * category is one in which the number of enabled activites is both non-zero and
+	 * less than the total number of activities in the category.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test against
-	 * @param categoryId
-	 *            the category id
+	 * @param activityManager the activity manager to test against
+	 * @param categoryId      the category id
 	 * @return whether the category is enabled
 	 * @since 3.2
 	 */
-	public static boolean isPartiallyEnabled(IActivityManager activityManager,
-			String categoryId) {
+	public static boolean isPartiallyEnabled(IActivityManager activityManager, String categoryId) {
 		Set<String> activityIds = getActivityIdsForCategory(activityManager.getCategory(categoryId));
 		int foundCount = 0;
 		for (Object name : activityIds) {
@@ -514,10 +473,8 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Return the number of enabled categories that this activity belongs to.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test against *
-	 * @param activityId
-	 *            the activity id to query on
+	 * @param activityManager the activity manager to test against *
+	 * @param activityId      the activity id to query on
 	 * @return the set of enabled category ids that this activity belongs to
 	 * @since 3.1
 	 */
@@ -533,18 +490,15 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Returns whether the given category is enabled. A category is enabled if
-	 * all of its activities are enabled.
+	 * Returns whether the given category is enabled. A category is enabled if all
+	 * of its activities are enabled.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test against
-	 * @param categoryId
-	 *            the category id
+	 * @param activityManager the activity manager to test against
+	 * @param categoryId      the category id
 	 * @return whether the category is enabled
 	 * @since 3.1
 	 */
-	public static boolean isEnabled(IActivityManager activityManager,
-			String categoryId) {
+	public static boolean isEnabled(IActivityManager activityManager, String categoryId) {
 
 		ICategory category = activityManager.getCategory(categoryId);
 		if (category.isDefined()) {
@@ -558,19 +512,15 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * Resolve the collection of category ids to an array of
-	 * <code>ICategory</code> objects.
+	 * Resolve the collection of category ids to an array of <code>ICategory</code>
+	 * objects.
 	 *
-	 * @param activityManager
-	 *            the activity manager to test against
-	 * @param categoryIds
-	 *            the category ids
-	 * @return the array of category ids resolved to <code>ICategory</code>
-	 *         objects
+	 * @param activityManager the activity manager to test against
+	 * @param categoryIds     the category ids
+	 * @return the array of category ids resolved to <code>ICategory</code> objects
 	 * @since 3.1
 	 */
-	public static ICategory[] resolveCategories(
-			IMutableActivityManager activityManager, Set<String> categoryIds) {
+	public static ICategory[] resolveCategories(IMutableActivityManager activityManager, Set<String> categoryIds) {
 		ICategory[] categories = new ICategory[categoryIds.size()];
 		String[] categoryIdArray = categoryIds.toArray(new String[categoryIds.size()]);
 		for (int i = 0; i < categoryIdArray.length; i++) {
@@ -584,7 +534,8 @@ public final class WorkbenchActivityHelper {
 	 * argument that pass the {@link #restrictUseOf(Object)} test.
 	 *
 	 * @param toBeFiltered the input collection
-	 * @param result the collection to which objects passing the test should be added
+	 * @param result       the collection to which objects passing the test should
+	 *                     be added
 	 * @return the <code>result</code> collection for convenience
 	 *
 	 * @since 3.4
@@ -603,8 +554,7 @@ public final class WorkbenchActivityHelper {
 	 * Returns an array with those objects of the argument array that pass the
 	 * {@link #restrictUseOf(Object)} test.
 	 *
-	 * @param array
-	 *            the input array
+	 * @param array the input array
 	 * @return a new array of the same type as the argument array, containing
 	 *         objects that pass the test
 	 *
@@ -617,8 +567,7 @@ public final class WorkbenchActivityHelper {
 				list.add(array[i]);
 			}
 		}
-		return list.toArray((Object[]) Array.newInstance(array.getClass()
-				.getComponentType(), list.size()));
+		return list.toArray((Object[]) Array.newInstance(array.getClass().getComponentType(), list.size()));
 	}
 
 	/**
@@ -626,7 +575,8 @@ public final class WorkbenchActivityHelper {
 	 * argument that pass the {@link #filterItem(Object)} test.
 	 *
 	 * @param toBeFiltered the input collection
-	 * @param result the collection to which objects passing the test should be added
+	 * @param result       the collection to which objects passing the test should
+	 *                     be added
 	 * @return the <code>result</code> collection for convenience
 	 *
 	 * @since 3.4
@@ -645,8 +595,7 @@ public final class WorkbenchActivityHelper {
 	 * Returns an array with those objects of the argument array that pass the
 	 * {@link #filterItem(Object)} test.
 	 *
-	 * @param array
-	 *            the input array
+	 * @param array the input array
 	 * @return a new array of the same type as the argument array, containing
 	 *         objects that pass the test
 	 *
@@ -659,8 +608,7 @@ public final class WorkbenchActivityHelper {
 				list.add(array[i]);
 			}
 		}
-		return list.toArray((Object[]) Array.newInstance(array.getClass()
-				.getComponentType(), list.size()));
+		return list.toArray((Object[]) Array.newInstance(array.getClass().getComponentType(), list.size()));
 	}
 
 	/**

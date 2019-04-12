@@ -64,19 +64,15 @@ public final class CommandService implements ICommandService, IUpdateService {
 	private static final String PREFERENCE_KEY_PREFIX = "org.eclipse.ui.commands/state"; //$NON-NLS-1$
 
 	/**
-	 * Creates a preference key for the given piece of state on the given
-	 * command.
+	 * Creates a preference key for the given piece of state on the given command.
 	 *
-	 * @param command
-	 *            The command for which the preference key should be created;
-	 *            must not be <code>null</code>.
-	 * @param stateId
-	 *            The identifier of the state for which the preference key
-	 *            should be created; must not be <code>null</code>.
+	 * @param command The command for which the preference key should be created;
+	 *                must not be <code>null</code>.
+	 * @param stateId The identifier of the state for which the preference key
+	 *                should be created; must not be <code>null</code>.
 	 * @return A suitable preference key; never <code>null</code>.
 	 */
-	static String createPreferenceKey(final Command command,
-			final String stateId) {
+	static String createPreferenceKey(final Command command, final String stateId) {
 		return PREFERENCE_KEY_PREFIX + '/' + command.getId() + '/' + stateId;
 	}
 
@@ -96,16 +92,15 @@ public final class CommandService implements ICommandService, IUpdateService {
 	private ICommandHelpService commandHelpService;
 
 	/**
-	 * Constructs a new instance of <code>CommandService</code> using a
-	 * command manager.
+	 * Constructs a new instance of <code>CommandService</code> using a command
+	 * manager.
 	 *
-	 * @param commandManager
-	 *            The command manager to use; must not be <code>null</code>.
+	 * @param commandManager The command manager to use; must not be
+	 *                       <code>null</code>.
 	 */
 	public CommandService(final CommandManager commandManager, IEclipseContext context) {
 		if (commandManager == null) {
-			throw new NullPointerException(
-					"Cannot create a command service with a null manager"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot create a command service with a null manager"); //$NON-NLS-1$
 		}
 		this.commandManager = commandManager;
 		this.commandPersistence = new CommandPersistence(commandManager);
@@ -119,14 +114,12 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public void defineUncategorizedCategory(final String name,
-			final String description) {
+	public void defineUncategorizedCategory(final String name, final String description) {
 		commandManager.defineUncategorizedCategory(name, description);
 	}
 
 	@Override
-	public ParameterizedCommand deserialize(
-			final String serializedParameterizedCommand)
+	public ParameterizedCommand deserialize(final String serializedParameterizedCommand)
 			throws NotDefinedException, SerializationException {
 		return commandManager.deserialize(serializedParameterizedCommand);
 	}
@@ -136,8 +129,8 @@ public final class CommandService implements ICommandService, IUpdateService {
 		commandPersistence.dispose();
 
 		/*
-		 * All state on all commands neeeds to be disposed. This is so that the
-		 * state has a chance to persist any changes.
+		 * All state on all commands neeeds to be disposed. This is so that the state
+		 * has a chance to persist any changes.
 		 */
 		final Command[] commands = commandManager.getAllCommands();
 		for (final Command command : commands) {
@@ -147,8 +140,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 				if (state instanceof PersistentState) {
 					final PersistentState persistentState = (PersistentState) state;
 					if (persistentState.shouldPersist()) {
-						persistentState.save(PrefUtil
-								.getInternalPreferenceStore(),
+						persistentState.save(PrefUtil.getInternalPreferenceStore(),
 								createPreferenceKey(command, stateId));
 					}
 				}
@@ -198,18 +190,15 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	/**
-	 * @throws NotDefinedException
-	 *             if the given command is not defined
+	 * @throws NotDefinedException if the given command is not defined
 	 */
 	@Override
-	public String getHelpContextId(final Command command)
-			throws NotDefinedException {
+	public String getHelpContextId(final Command command) throws NotDefinedException {
 		return commandHelpService.getHelpContextId(command.getId(), context);
 	}
 
 	@Override
-	public String getHelpContextId(final String commandId)
-			throws NotDefinedException {
+	public String getHelpContextId(final String commandId) throws NotDefinedException {
 		final Command command = getCommand(commandId);
 		return getHelpContextId(command);
 	}
@@ -260,12 +249,11 @@ public final class CommandService implements ICommandService, IUpdateService {
 
 		for (Iterator i = callbackRefs.iterator(); i.hasNext();) {
 			final IElementReference callbackRef = (IElementReference) i.next();
-			final Map parms = Collections.unmodifiableMap(callbackRef
-					.getParameters());
+			final Map parms = Collections.unmodifiableMap(callbackRef.getParameters());
 			ISafeRunnable run = new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {
-					WorkbenchPlugin.log("Failed to update callback: "  //$NON-NLS-1$
+					WorkbenchPlugin.log("Failed to update callback: " //$NON-NLS-1$
 							+ callbackRef.getCommandId(), exception);
 				}
 
@@ -278,8 +266,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 				SafeRunner.run(run);
 			} else {
 				boolean match = true;
-				for (Iterator j = filter.entrySet().iterator(); j.hasNext()
-						&& match;) {
+				for (Iterator j = filter.entrySet().iterator(); j.hasNext() && match;) {
 					Map.Entry parmEntry = (Map.Entry) j.next();
 					Object value = parms.get(parmEntry.getKey());
 					if (!parmEntry.getValue().equals(value)) {
@@ -294,33 +281,28 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public IElementReference registerElementForCommand(
-			ParameterizedCommand command, UIElement element)
+	public IElementReference registerElementForCommand(ParameterizedCommand command, UIElement element)
 			throws NotDefinedException {
 		if (!command.getCommand().isDefined()) {
-			throw new NotDefinedException(
-					"Cannot define a callback for undefined command " //$NON-NLS-1$
-							+ command.getCommand().getId());
+			throw new NotDefinedException("Cannot define a callback for undefined command " //$NON-NLS-1$
+					+ command.getCommand().getId());
 		}
 		if (element == null) {
 			throw new NotDefinedException("No callback defined for command " //$NON-NLS-1$
 					+ command.getCommand().getId());
 		}
 
-		ElementReference ref = new ElementReference(command.getId(), element,
-				command.getParameterMap());
+		ElementReference ref = new ElementReference(command.getId(), element, command.getParameterMap());
 		registerElement(ref);
 		return ref;
 	}
 
 	@Override
 	public void registerElement(IElementReference elementReference) {
-		List parameterizedCommands = (List) commandCallbacks
-				.get(elementReference.getCommandId());
+		List parameterizedCommands = (List) commandCallbacks.get(elementReference.getCommandId());
 		if (parameterizedCommands == null) {
 			parameterizedCommands = new ArrayList();
-			commandCallbacks.put(elementReference.getCommandId(),
-					parameterizedCommands);
+			commandCallbacks.put(elementReference.getCommandId(), parameterizedCommands);
 		}
 		parameterizedCommands.add(elementReference);
 
@@ -329,9 +311,8 @@ public final class CommandService implements ICommandService, IUpdateService {
 		Command command = getCommand(elementReference.getCommandId());
 		if (command.isDefined()) {
 			if (command.getHandler() instanceof IElementUpdater) {
-				((IElementUpdater) command.getHandler()).updateElement(
-						elementReference.getElement(), elementReference
-								.getParameters());
+				((IElementUpdater) command.getHandler()).updateElement(elementReference.getElement(),
+						elementReference.getParameters());
 			}
 		}
 	}
@@ -340,8 +321,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	public void unregisterElement(IElementReference elementReference) {
 		if (commandCallbacks == null)
 			return;
-		List parameterizedCommands = (List) commandCallbacks
-				.get(elementReference.getCommandId());
+		List parameterizedCommands = (List) commandCallbacks.get(elementReference.getCommandId());
 		if (parameterizedCommands != null) {
 			parameterizedCommands.remove(elementReference);
 			if (parameterizedCommands.isEmpty()) {
@@ -358,8 +338,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public Runnable registerElementForUpdate(ParameterizedCommand parameterizedCommand,
-			final MItem item) {
+	public Runnable registerElementForUpdate(ParameterizedCommand parameterizedCommand, final MItem item) {
 		UIElement element = new UIElement(context.get(IWorkbench.class)) {
 
 			@Override
@@ -395,8 +374,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 		};
 
 		try {
-			final IElementReference reference = registerElementForCommand(parameterizedCommand,
-					element);
+			final IElementReference reference = registerElementForCommand(parameterizedCommand, element);
 			return () -> unregisterElement(reference);
 		} catch (NotDefinedException e) {
 			WorkbenchPlugin.log(e);

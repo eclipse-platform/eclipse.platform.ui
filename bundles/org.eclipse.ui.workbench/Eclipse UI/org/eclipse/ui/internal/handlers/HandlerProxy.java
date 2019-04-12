@@ -60,8 +60,7 @@ import org.eclipse.ui.services.IEvaluationService;
  *
  * @since 3.0
  */
-public final class HandlerProxy extends AbstractHandlerWithState implements
-		IElementUpdater {
+public final class HandlerProxy extends AbstractHandlerWithState implements IElementUpdater {
 
 	private static Map CEToProxyMap = new HashMap();
 
@@ -71,23 +70,23 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	private static final String PROP_ENABLED = "enabled"; //$NON-NLS-1$
 
 	/**
-	 * The configuration element from which the handler can be created. This
-	 * value will exist until the element is converted into a real class -- at
-	 * which point this value will be set to <code>null</code>.
+	 * The configuration element from which the handler can be created. This value
+	 * will exist until the element is converted into a real class -- at which point
+	 * this value will be set to <code>null</code>.
 	 */
 	private IConfigurationElement configurationElement;
 
 	/**
 	 * The <code>enabledWhen</code> expression for the handler. Only if this
-	 * expression evaluates to <code>true</code> (or the value is
-	 * <code>null</code>) should we consult the handler.
+	 * expression evaluates to <code>true</code> (or the value is <code>null</code>)
+	 * should we consult the handler.
 	 */
 	private final Expression enabledWhenExpression;
 
 	/**
-	 * The real handler. This value is <code>null</code> until the proxy is
-	 * forced to load the real handler. At this point, the configuration element
-	 * is converted, nulled out, and this handler gains a reference.
+	 * The real handler. This value is <code>null</code> until the proxy is forced
+	 * to load the real handler. At this point, the configuration element is
+	 * converted, nulled out, and this handler gains a reference.
 	 */
 	private IHandler handler;
 
@@ -101,9 +100,8 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 
 	/**
 	 * The evaluation service to use when evaluating
-	 * <code>enabledWhenExpression</code>. This value may be
-	 * <code>null</code> only if the <code>enabledWhenExpression</code> is
-	 * <code>null</code>.
+	 * <code>enabledWhenExpression</code>. This value may be <code>null</code> only
+	 * if the <code>enabledWhenExpression</code> is <code>null</code>.
 	 */
 	private IEvaluationService evaluationService;
 
@@ -128,13 +126,13 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
 	 * information it needs to try to avoid loading until it is needed.
 	 *
-	 * @param commandId the id for this handler
-	 * @param configurationElement
-	 *            The configuration element from which the real class can be
-	 *            loaded at run-time; must not be <code>null</code>.
-	 * @param handlerAttributeName
-	 *            The name of the attibute or element containing the handler
-	 *            executable extension; must not be <code>null</code>.
+	 * @param commandId            the id for this handler
+	 * @param configurationElement The configuration element from which the real
+	 *                             class can be loaded at run-time; must not be
+	 *                             <code>null</code>.
+	 * @param handlerAttributeName The name of the attibute or element containing
+	 *                             the handler executable extension; must not be
+	 *                             <code>null</code>.
 	 */
 	public HandlerProxy(final String commandId, final IConfigurationElement configurationElement,
 			final String handlerAttributeName) {
@@ -145,39 +143,35 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
 	 * information it needs to try to avoid loading until it is needed.
 	 *
-	 * @param commandId the id for this handler
-	 * @param configurationElement
-	 *            The configuration element from which the real class can be
-	 *            loaded at run-time; must not be <code>null</code>.
-	 * @param handlerAttributeName
-	 *            The name of the attribute or element containing the handler
-	 *            executable extension; must not be <code>null</code>.
-	 * @param enabledWhenExpression
-	 *            The name of the element containing the enabledWhen expression.
-	 *            This should be a child of the
-	 *            <code>configurationElement</code>. If this value is
-	 *            <code>null</code>, then there is no enablement expression
-	 *            (i.e., enablement will be delegated to the handler when
-	 *            possible).
-	 * @param evaluationService
-	 *            The evaluation service to manage enabledWhen expressions
-	 *            trying to evaluate the <code>enabledWhenExpression</code>.
-	 *            This value may be <code>null</code> only if the
-	 *            <code>enabledWhenExpression</code> is <code>null</code>.
+	 * @param commandId             the id for this handler
+	 * @param configurationElement  The configuration element from which the real
+	 *                              class can be loaded at run-time; must not be
+	 *                              <code>null</code>.
+	 * @param handlerAttributeName  The name of the attribute or element containing
+	 *                              the handler executable extension; must not be
+	 *                              <code>null</code>.
+	 * @param enabledWhenExpression The name of the element containing the
+	 *                              enabledWhen expression. This should be a child
+	 *                              of the <code>configurationElement</code>. If
+	 *                              this value is <code>null</code>, then there is
+	 *                              no enablement expression (i.e., enablement will
+	 *                              be delegated to the handler when possible).
+	 * @param evaluationService     The evaluation service to manage enabledWhen
+	 *                              expressions trying to evaluate the
+	 *                              <code>enabledWhenExpression</code>. This value
+	 *                              may be <code>null</code> only if the
+	 *                              <code>enabledWhenExpression</code> is
+	 *                              <code>null</code>.
 	 */
-	public HandlerProxy(final String commandId,
-			final IConfigurationElement configurationElement,
-			final String handlerAttributeName,
-			final Expression enabledWhenExpression,
+	public HandlerProxy(final String commandId, final IConfigurationElement configurationElement,
+			final String handlerAttributeName, final Expression enabledWhenExpression,
 			final IEvaluationService evaluationService) {
 		if (configurationElement == null) {
-			throw new NullPointerException(
-					"The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
+			throw new NullPointerException("The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
 		}
 
 		if (handlerAttributeName == null) {
-			throw new NullPointerException(
-					"The attribute containing the handler class must be known"); //$NON-NLS-1$
+			throw new NullPointerException("The attribute containing the handler class must be known"); //$NON-NLS-1$
 		}
 
 		if ((enabledWhenExpression != null) && (evaluationService == null)) {
@@ -202,8 +196,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 
 	public static void updateStaleCEs(IConfigurationElement[] replacements) {
 		for (IConfigurationElement replacement : replacements) {
-			HandlerProxy proxy = (HandlerProxy) CEToProxyMap
-					.get(replacement);
+			HandlerProxy proxy = (HandlerProxy) CEToProxyMap.get(replacement);
 			if (proxy != null)
 				proxy.configurationElement = replacement;
 		}
@@ -213,8 +206,8 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 *
 	 */
 	private void registerEnablement() {
-		enablementRef = evaluationService.addEvaluationListener(
-				enabledWhenExpression, getEnablementListener(), PROP_ENABLED);
+		enablementRef = evaluationService.addEvaluationListener(enabledWhenExpression, getEnablementListener(),
+				PROP_ENABLED);
 	}
 
 	@Override
@@ -250,11 +243,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 		if (enablementListener == null) {
 			enablementListener = event -> {
 				if (event.getProperty() == PROP_ENABLED) {
-					setProxyEnabled(event.getNewValue() == null ? false
-							: ((Boolean) event.getNewValue())
-									.booleanValue());
-					fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
-							true, false));
+					setProxyEnabled(
+							event.getNewValue() == null ? false : ((Boolean) event.getNewValue()).booleanValue());
+					fireHandlerChanged(new HandlerEvent(HandlerProxy.this, true, false));
 				}
 			};
 		}
@@ -282,19 +273,17 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	}
 
 	@Override
-	public Object execute(final ExecutionEvent event)
-			throws ExecutionException {
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		if (loadHandler()) {
 			if (!isEnabled()) {
-				MessageDialog.openInformation(Util.getShellToParentOn(),
-						WorkbenchMessages.Information,
+				MessageDialog.openInformation(Util.getShellToParentOn(), WorkbenchMessages.Information,
 						WorkbenchMessages.PluginAction_disabledMessage);
 				return null;
 			}
 			return handler.execute(event);
 		}
 
-		if(loadException !=null)
+		if (loadException != null)
 			throw new ExecutionException("Exception occured when loading the handler", loadException); //$NON-NLS-1$
 
 		return null;
@@ -315,8 +304,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 		}
 
 		/*
-		 * There is no enabled when expression, so we just need to consult the
-		 * handler.
+		 * There is no enabled when expression, so we just need to consult the handler.
 		 */
 		if (isOkToLoad() && loadHandler()) {
 			return handler.isEnabled();
@@ -343,36 +331,32 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 * Loads the handler, if possible. If the handler is loaded, then the member
 	 * variables are updated accordingly.
 	 *
-	 * @return <code>true</code> if the handler is now non-null;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the handler is now non-null; <code>false</code>
+	 *         otherwise.
 	 */
 	private boolean loadHandler() {
 		if (handler == null) {
 			// Load the handler.
 			try {
 				if (configurationElement != null) {
-					handler = (IHandler) configurationElement
-							.createExecutableExtension(handlerAttributeName);
+					handler = (IHandler) configurationElement.createExecutableExtension(handlerAttributeName);
 					handler.addHandlerListener(getHandlerListener());
-					setEnabled(evaluationService == null ? null
-							: evaluationService.getCurrentState());
+					setEnabled(evaluationService == null ? null : evaluationService.getCurrentState());
 					refreshElements();
 					return true;
 				}
 
 			} catch (final ClassCastException e) {
 				final String message = "The proxied handler was the wrong class"; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				configurationElement = null;
 				loadException = e;
 
 			} catch (final CoreException e) {
-				final String message = "The proxied handler for '" + configurationElement.getAttribute(handlerAttributeName) //$NON-NLS-1$
-						+ "' could not be loaded"; //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				final String message = "The proxied handler for '" //$NON-NLS-1$
+						+ configurationElement.getAttribute(handlerAttributeName) + "' could not be loaded"; //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				configurationElement = null;
 				loadException = e;
@@ -386,8 +370,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	private IHandlerListener getHandlerListener() {
 		if (handlerListener == null) {
 			handlerListener = handlerEvent -> fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
-					handlerEvent.isEnabledChanged(), handlerEvent
-							.isHandledChanged()));
+					handlerEvent.isEnabledChanged(), handlerEvent.isHandledChanged()));
 		}
 		return handlerListener;
 	}
@@ -414,12 +397,10 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 * @return the handlerAttributeName value, may be <code>null</code>.
 	 */
 	private String getConfigurationElementAttribute() {
-		String attribute = configurationElement
-				.getAttribute(handlerAttributeName);
+		String attribute = configurationElement.getAttribute(handlerAttributeName);
 		if (attribute == null) {
 			for (IConfigurationElement configElement : configurationElement.getChildren(handlerAttributeName)) {
-				String childAttribute = configElement
-						.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+				String childAttribute = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 				if (childAttribute != null) {
 					return childAttribute;
 				}
@@ -433,8 +414,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 			return handler != null;
 
 		if (configurationElement != null && handler == null) {
-			final String bundleId = configurationElement.getContributor()
-					.getName();
+			final String bundleId = configurationElement.getContributor().getName();
 			return BundleUtility.isActive(bundleId);
 		}
 		return true;
@@ -456,12 +436,11 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	}
 
 	private void refreshElements() {
-		if (commandId == null || !(handler instanceof IElementUpdater)
-				&& (checkedState == null && radioState == null)) {
+		if (commandId == null
+				|| !(handler instanceof IElementUpdater) && (checkedState == null && radioState == null)) {
 			return;
 		}
-		ICommandService cs = PlatformUI.getWorkbench()
-				.getService(ICommandService.class);
+		ICommandService cs = PlatformUI.getWorkbench().getService(ICommandService.class);
 		cs.refreshElements(commandId, null);
 	}
 

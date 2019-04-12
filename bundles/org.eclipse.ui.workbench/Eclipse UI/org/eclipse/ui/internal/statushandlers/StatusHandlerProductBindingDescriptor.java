@@ -23,8 +23,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  *
  * @since 3.3
  */
-class StatusHandlerProductBindingDescriptor implements
-		IPluginContribution {
+class StatusHandlerProductBindingDescriptor implements IPluginContribution {
 
 	/**
 	 * Handler id attribute. Value <code>handlerId</code>.
@@ -42,8 +41,7 @@ class StatusHandlerProductBindingDescriptor implements
 	/**
 	 * @param configElement
 	 */
-	public StatusHandlerProductBindingDescriptor(
-			IConfigurationElement configElement) {
+	public StatusHandlerProductBindingDescriptor(IConfigurationElement configElement) {
 		super();
 		id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 		pluginId = configElement.getContributor().getName();

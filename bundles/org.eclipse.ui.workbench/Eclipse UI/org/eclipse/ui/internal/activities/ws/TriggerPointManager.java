@@ -37,92 +37,86 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
 	private HashMap<String, AbstractTriggerPoint> triggerMap = new HashMap<>();
 
-    /**
-     *
-     */
-    public TriggerPointManager() {
-        super();
-        triggerMap.put(ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID,
-                new AbstractTriggerPoint() {
+	/**
+	 *
+	 */
+	public TriggerPointManager() {
+		super();
+		triggerMap.put(ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID, new AbstractTriggerPoint() {
 
-                    @Override
-					public String getId() {
-                        return ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID;
-                    }
+			@Override
+			public String getId() {
+				return ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID;
+			}
 
-                    @Override
-					public String getStringHint(String key) {
-                        if (ITriggerPoint.HINT_INTERACTIVE.equals(key)) {
-                            // TODO: change to false when we have mapped our
-                            // trigger points
-                            return Boolean.TRUE.toString();
-                        }
-                        return null;
-                    }
+			@Override
+			public String getStringHint(String key) {
+				if (ITriggerPoint.HINT_INTERACTIVE.equals(key)) {
+					// TODO: change to false when we have mapped our
+					// trigger points
+					return Boolean.TRUE.toString();
+				}
+				return null;
+			}
 
-                    @Override
-					public boolean getBooleanHint(String key) {
-                        if (ITriggerPoint.HINT_INTERACTIVE.equals(key)) {
-                            // TODO: change to false when we have mapped our
-                            // trigger points
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-        IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
+			@Override
+			public boolean getBooleanHint(String key) {
+				if (ITriggerPoint.HINT_INTERACTIVE.equals(key)) {
+					// TODO: change to false when we have mapped our
+					// trigger points
+					return true;
+				}
+				return false;
+			}
+		});
+		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 
-        IExtensionPoint point = getExtensionPointFilter();
-        IExtension[] extensions = point.getExtensions();
-        for (IExtension extension : extensions) {
-            addExtension(tracker,
-                    extension);
-        }
-    }
+		IExtensionPoint point = getExtensionPointFilter();
+		IExtension[] extensions = point.getExtensions();
+		for (IExtension extension : extensions) {
+			addExtension(tracker, extension);
+		}
+	}
 
-    @Override
+	@Override
 	public ITriggerPoint getTriggerPoint(String id) {
-        return triggerMap.get(id);
-    }
+		return triggerMap.get(id);
+	}
 
-    @Override
+	@Override
 	public Set<String> getDefinedTriggerPointIds() {
 		return triggerMap.keySet();
-    }
+	}
 
-    @Override
+	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
-        for (Object object : objects) {
-            if (object instanceof RegistryTriggerPoint) {
-                triggerMap.remove(((RegistryTriggerPoint) object).getId());
-            }
-        }
-    }
+		for (Object object : objects) {
+			if (object instanceof RegistryTriggerPoint) {
+				triggerMap.remove(((RegistryTriggerPoint) object).getId());
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-        IConfigurationElement[] elements = extension.getConfigurationElements();
-        for (IConfigurationElement element : elements) {
-            if (element.getName().equals(
-                    IWorkbenchRegistryConstants.TAG_TRIGGERPOINT)) {
-                String id = element
-                        .getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-                if (id == null) {
+		IConfigurationElement[] elements = extension.getConfigurationElements();
+		for (IConfigurationElement element : elements) {
+			if (element.getName().equals(IWorkbenchRegistryConstants.TAG_TRIGGERPOINT)) {
+				String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				if (id == null) {
 					Persistence.log(element, Persistence.ACTIVITY_TRIGGER_DESC, "missing a unique identifier"); //$NON-NLS-1$
 					continue;
 				}
-                RegistryTriggerPoint triggerPoint = new RegistryTriggerPoint(
-                        id, element);
-                triggerMap.put(id, triggerPoint);
-                tracker.registerObject(extension, triggerPoint,
-                        IExtensionTracker.REF_WEAK);
-            }
-        }
-    }
+				RegistryTriggerPoint triggerPoint = new RegistryTriggerPoint(id, element);
+				triggerMap.put(id, triggerPoint);
+				tracker.registerObject(extension, triggerPoint, IExtensionTracker.REF_WEAK);
+			}
+		}
+	}
 
-    private IExtensionPoint getExtensionPointFilter() {
-        return Platform.getExtensionRegistry().getExtensionPoint(
-                PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
-    }
+	private IExtensionPoint getExtensionPointFilter() {
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
+	}
 }

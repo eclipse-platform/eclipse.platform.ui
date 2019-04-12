@@ -65,81 +65,80 @@ import org.eclipse.ui.internal.util.BundleUtility;
  * Add a constant to IWorkbenchGraphicConstants following the conventions Add
  * the declaration to this file
  */
-public/*final*/class WorkbenchImages {
+public/* final */class WorkbenchImages {
 
-    private static Map<String, ImageDescriptor> descriptors;
+	private static Map<String, ImageDescriptor> descriptors;
 
-    private static ImageRegistry imageRegistry;
+	private static ImageRegistry imageRegistry;
 
-    /* Declare Common paths */
+	/* Declare Common paths */
 
-    public static final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
+	public static final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
-    private static final String PATH_ETOOL = ICONS_PATH + "etool16/"; //Enabled toolbar icons.//$NON-NLS-1$
+	private static final String PATH_ETOOL = ICONS_PATH + "etool16/"; // Enabled toolbar icons.//$NON-NLS-1$
 
-    private static final String PATH_DTOOL = ICONS_PATH + "dtool16/"; //Disabled toolbar icons.//$NON-NLS-1$
+	private static final String PATH_DTOOL = ICONS_PATH + "dtool16/"; // Disabled toolbar icons.//$NON-NLS-1$
 
-    private static final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //Enabled local toolbar icons.//$NON-NLS-1$
+	private static final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; // Enabled local toolbar icons.//$NON-NLS-1$
 
-    private static final String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; //Disabled local toolbar icons.//$NON-NLS-1$
+	private static final String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; // Disabled local toolbar icons.//$NON-NLS-1$
 
-    private static final String PATH_EVIEW = ICONS_PATH + "eview16/"; //View icons//$NON-NLS-1$
+	private static final String PATH_EVIEW = ICONS_PATH + "eview16/"; // View icons//$NON-NLS-1$
 
 	private static final String PATH_OVERLAY = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 
-    private static final String PATH_OBJECT = ICONS_PATH + "obj16/"; //Model object icons//$NON-NLS-1$
+	private static final String PATH_OBJECT = ICONS_PATH + "obj16/"; // Model object icons//$NON-NLS-1$
 
-    private static final String PATH_POINTER = ICONS_PATH + "pointer/"; //Pointer icons//$NON-NLS-1$
+	private static final String PATH_POINTER = ICONS_PATH + "pointer/"; // Pointer icons//$NON-NLS-1$
 
-    private static final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
+	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/"; // Wizard icons//$NON-NLS-1$
 
 	private static final String PATH_PREF = ICONS_PATH + "pref/"; // Preferences icons//$NON-NLS-1$
 
-    /**
-     * Declares a workbench image given the path of the image file (relative to
-     * the workbench plug-in). This is a helper method that creates the image
-     * descriptor and passes it to the main <code>declareImage</code> method.
-     *
-     * @param key the symbolic name of the image
-     * @param path the path of the image file relative to the base of the workbench
-     * plug-ins install directory
-     * @param shared <code>true</code> if this is a shared image, and
-     * <code>false</code> if this is not a shared image
-     */
-    private static final void declareImage(String key, String path,
-            boolean shared) {
-        URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, path);
-        ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-        declareImage(key, desc, shared);
-    }
+	/**
+	 * Declares a workbench image given the path of the image file (relative to the
+	 * workbench plug-in). This is a helper method that creates the image descriptor
+	 * and passes it to the main <code>declareImage</code> method.
+	 *
+	 * @param key    the symbolic name of the image
+	 * @param path   the path of the image file relative to the base of the
+	 *               workbench plug-ins install directory
+	 * @param shared <code>true</code> if this is a shared image, and
+	 *               <code>false</code> if this is not a shared image
+	 */
+	private static final void declareImage(String key, String path, boolean shared) {
+		URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, path);
+		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+		declareImage(key, desc, shared);
+	}
 
-    private static void drawViewMenu(GC gc, GC maskgc) {
-    	Display display = Display.getCurrent();
+	private static void drawViewMenu(GC gc, GC maskgc) {
+		Display display = Display.getCurrent();
 
-    	gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-    	gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+		gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
-	    int[] shapeArray = new int[] {1, 1, 10, 1, 6, 5, 5, 5};
-	    gc.fillPolygon(shapeArray);
-	    gc.drawPolygon(shapeArray);
+		int[] shapeArray = new int[] { 1, 1, 10, 1, 6, 5, 5, 5 };
+		gc.fillPolygon(shapeArray);
+		gc.drawPolygon(shapeArray);
 
-	    Color black = display.getSystemColor(SWT.COLOR_BLACK);
-	    Color white = display.getSystemColor(SWT.COLOR_WHITE);
+		Color black = display.getSystemColor(SWT.COLOR_BLACK);
+		Color white = display.getSystemColor(SWT.COLOR_WHITE);
 
-	    maskgc.setBackground(black);
-	    maskgc.fillRectangle(0,0,12,16);
+		maskgc.setBackground(black);
+		maskgc.fillRectangle(0, 0, 12, 16);
 
-	    maskgc.setBackground(white);
-	    maskgc.setForeground(white);
-	    maskgc.fillPolygon(shapeArray);
-	    maskgc.drawPolygon(shapeArray);
-    }
+		maskgc.setBackground(white);
+		maskgc.setForeground(white);
+		maskgc.fillPolygon(shapeArray);
+		maskgc.drawPolygon(shapeArray);
+	}
 
-    /**
-     * Declares all the workbench's images, including both "shared" ones and
-     * internal ones.
-     */
-    private static final void declareImages() {
+	/**
+	 * Declares all the workbench's images, including both "shared" ones and
+	 * internal ones.
+	 */
+	private static final void declareImages() {
 		// Overlays
 		declareImage(ISharedImages.IMG_DEC_FIELD_ERROR, PATH_OVERLAY + "error_ovr.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_DEC_FIELD_WARNING, PATH_OVERLAY + "warning_ovr.png", true); //$NON-NLS-1$
@@ -334,217 +333,201 @@ public/*final*/class WorkbenchImages {
 
 		getImageRegistry().put(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU, vm2);
 
-    }
+	}
 
-    /**
-     * Declares all the workbench's deprecated hover images, including both "shared" ones and
-     * internal ones.
-     *
-     * @deprecated As of 3.0, since the workbench itself no longer uses the hover image variants
-     */
-    @Deprecated
+	/**
+	 * Declares all the workbench's deprecated hover images, including both "shared"
+	 * ones and internal ones.
+	 *
+	 * @deprecated As of 3.0, since the workbench itself no longer uses the hover
+	 *             image variants
+	 */
+	@Deprecated
 	private static final void declareHoverImages() {
-        declareImage(ISharedImages.IMG_TOOL_UNDO_HOVER, PATH_ETOOL
-        		+ "undo_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_REDO_HOVER, PATH_ETOOL
-                + "redo_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_CUT_HOVER, PATH_ETOOL
-        		+ "cut_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_COPY_HOVER, PATH_ETOOL
-                + "copy_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_PASTE_HOVER, PATH_ETOOL
-                + "paste_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_FORWARD_HOVER, PATH_ELOCALTOOL
-                + "forward_nav.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_DELETE_HOVER, PATH_ETOOL
-        		+ "delete_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_ETOOL
-                        + "new_wiz.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_BACK_HOVER, PATH_ELOCALTOOL
-        		+ "backward_nav.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_UP_HOVER, PATH_ELOCALTOOL
-                + "up_nav.png", true); //$NON-NLS-1$
-    }
+		declareImage(ISharedImages.IMG_TOOL_UNDO_HOVER, PATH_ETOOL + "undo_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_REDO_HOVER, PATH_ETOOL + "redo_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_CUT_HOVER, PATH_ETOOL + "cut_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_COPY_HOVER, PATH_ETOOL + "copy_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_PASTE_HOVER, PATH_ETOOL + "paste_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_FORWARD_HOVER, PATH_ELOCALTOOL + "forward_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_DELETE_HOVER, PATH_ETOOL + "delete_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_ETOOL + "new_wiz.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_BACK_HOVER, PATH_ELOCALTOOL + "backward_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_UP_HOVER, PATH_ELOCALTOOL + "up_nav.png", true); //$NON-NLS-1$
+	}
 
-    /**
-     * Declares a workbench image.
-     * <p>
-     * The workbench remembers the given image descriptor under the given name,
-     * and makes the image available to plug-ins via
-     * {@link org.eclipse.ui.ISharedImages IWorkbench.getSharedImages()}.
-     * For "shared" images, the workbench remembers the image descriptor and
-     * will manages the image object create from it; clients retrieve "shared"
-     * images via
-     * {@link org.eclipse.ui.ISharedImages#getImage ISharedImages.getImage()}.
-     * For the other, "non-shared" images, the workbench remembers only the
-     * image descriptor; clients retrieve the image descriptor via
-     * {@link org.eclipse.ui.ISharedImages#getImageDescriptor
-     * ISharedImages.getImageDescriptor()} and are entirely
-     * responsible for managing the image objects they create from it.
-     * (This is made confusing by the historical fact that the API interface
-     *  is called "ISharedImages".)
-     * </p>
-     *
-     * @param symbolicName the symbolic name of the image
-     * @param descriptor the image descriptor
-     * @param shared <code>true</code> if this is a shared image, and
-     * <code>false</code> if this is not a shared image
-     * @see org.eclipse.ui.ISharedImages#getImage
-     * @see org.eclipse.ui.ISharedImages#getImageDescriptor
-     */
-    public static void declareImage(String symbolicName,
-            ImageDescriptor descriptor, boolean shared) {
-        if (Policy.DEBUG_DECLARED_IMAGES) {
-            Image image = descriptor.createImage(false);
-            if (image == null) {
-                WorkbenchPlugin.log("Image not found in WorkbenchImages.declaredImage().  symbolicName=" + symbolicName + " descriptor=" + descriptor, new Exception("stack dump"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-            }
-            else {
-                image.dispose();
-            }
-        }
-        getDescriptors().put(symbolicName, descriptor);
-        if (shared) {
-            getImageRegistry().put(symbolicName, descriptor);
-        }
-    }
+	/**
+	 * Declares a workbench image.
+	 * <p>
+	 * The workbench remembers the given image descriptor under the given name, and
+	 * makes the image available to plug-ins via {@link org.eclipse.ui.ISharedImages
+	 * IWorkbench.getSharedImages()}. For "shared" images, the workbench remembers
+	 * the image descriptor and will manages the image object create from it;
+	 * clients retrieve "shared" images via
+	 * {@link org.eclipse.ui.ISharedImages#getImage ISharedImages.getImage()}. For
+	 * the other, "non-shared" images, the workbench remembers only the image
+	 * descriptor; clients retrieve the image descriptor via
+	 * {@link org.eclipse.ui.ISharedImages#getImageDescriptor
+	 * ISharedImages.getImageDescriptor()} and are entirely responsible for managing
+	 * the image objects they create from it. (This is made confusing by the
+	 * historical fact that the API interface is called "ISharedImages".)
+	 * </p>
+	 *
+	 * @param symbolicName the symbolic name of the image
+	 * @param descriptor   the image descriptor
+	 * @param shared       <code>true</code> if this is a shared image, and
+	 *                     <code>false</code> if this is not a shared image
+	 * @see org.eclipse.ui.ISharedImages#getImage
+	 * @see org.eclipse.ui.ISharedImages#getImageDescriptor
+	 */
+	public static void declareImage(String symbolicName, ImageDescriptor descriptor, boolean shared) {
+		if (Policy.DEBUG_DECLARED_IMAGES) {
+			Image image = descriptor.createImage(false);
+			if (image == null) {
+				WorkbenchPlugin.log("Image not found in WorkbenchImages.declaredImage().  symbolicName=" + symbolicName //$NON-NLS-1$
+						+ " descriptor=" + descriptor, new Exception("stack dump")); //$NON-NLS-1$//$NON-NLS-2$
+			} else {
+				image.dispose();
+			}
+		}
+		getDescriptors().put(symbolicName, descriptor);
+		if (shared) {
+			getImageRegistry().put(symbolicName, descriptor);
+		}
+	}
 
-    /**
-     * Returns the map from symbolic name to ImageDescriptor.
-     *
-     * @return the map from symbolic name to ImageDescriptor.
-     */
-    public static Map<String, ImageDescriptor> getDescriptors() {
-        if (descriptors == null) {
-            initializeImageRegistry();
-        }
-        return descriptors;
-    }
+	/**
+	 * Returns the map from symbolic name to ImageDescriptor.
+	 *
+	 * @return the map from symbolic name to ImageDescriptor.
+	 */
+	public static Map<String, ImageDescriptor> getDescriptors() {
+		if (descriptors == null) {
+			initializeImageRegistry();
+		}
+		return descriptors;
+	}
 
-    /**
-     * Returns the image stored in the workbench plugin's image registry
-     * under the given symbolic name.  If there isn't any value associated
-     * with the name then <code>null</code> is returned.
-     *
-     * The returned Image is managed by the workbench plugin's image registry.
-     * Callers of this method must not dispose the returned image.
-     *
-     * This method is essentially a convenient short form of
-     * WorkbenchImages.getImageRegistry.get(symbolicName).
-     *
-     * @param symbolicName the symbolic name
-     * @return the image
-     */
-    public static Image getImage(String symbolicName) {
-        return getImageRegistry().get(symbolicName);
-    }
+	/**
+	 * Returns the image stored in the workbench plugin's image registry under the
+	 * given symbolic name. If there isn't any value associated with the name then
+	 * <code>null</code> is returned.
+	 *
+	 * The returned Image is managed by the workbench plugin's image registry.
+	 * Callers of this method must not dispose the returned image.
+	 *
+	 * This method is essentially a convenient short form of
+	 * WorkbenchImages.getImageRegistry.get(symbolicName).
+	 *
+	 * @param symbolicName the symbolic name
+	 * @return the image
+	 */
+	public static Image getImage(String symbolicName) {
+		return getImageRegistry().get(symbolicName);
+	}
 
-    /**
-     * Returns the image descriptor stored under the given symbolic name.
-     * If there isn't any value associated with the name then <code>null
-     * </code> is returned.
-     *
-     * The class also "caches" commonly used images in the image registry.
-     * If you are looking for one of these common images it is recommended you use
-     * the getImage() method instead.
-     *
-     * @param symbolicName the symbolic name
-     * @return the image descriptor
-     */
-    public static ImageDescriptor getImageDescriptor(String symbolicName) {
-        return getDescriptors().get(symbolicName);
-    }
+	/**
+	 * Returns the image descriptor stored under the given symbolic name. If there
+	 * isn't any value associated with the name then <code>null
+	 * </code> is returned.
+	 *
+	 * The class also "caches" commonly used images in the image registry. If you
+	 * are looking for one of these common images it is recommended you use the
+	 * getImage() method instead.
+	 *
+	 * @param symbolicName the symbolic name
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String symbolicName) {
+		return getDescriptors().get(symbolicName);
+	}
 
-    /**
-     * Convenience Method.
-     * Returns an ImageDescriptor obtained from an external program.
-     * If there isn't any image then <code>null</code> is returned.
-     *
-     * This method is convenience and only intended for use by the workbench because it
-     * explicitly uses the workbench's registry for caching/retrieving images from other
-     * extensions -- other plugins must user their own registry.
-     * This convenience method is subject to removal.
-     *
-     * Note:
-     * This consults the plugin for extension and obtains its installation location.
-     * all requested images are assumed to be in a directory below and relative to that
-     * plugins installation directory.
-     *
-     * @param filename the file name
-     * @param offset the offset
-     * @return the image descriptor
-     */
+	/**
+	 * Convenience Method. Returns an ImageDescriptor obtained from an external
+	 * program. If there isn't any image then <code>null</code> is returned.
+	 *
+	 * This method is convenience and only intended for use by the workbench because
+	 * it explicitly uses the workbench's registry for caching/retrieving images
+	 * from other extensions -- other plugins must user their own registry. This
+	 * convenience method is subject to removal.
+	 *
+	 * Note: This consults the plugin for extension and obtains its installation
+	 * location. all requested images are assumed to be in a directory below and
+	 * relative to that plugins installation directory.
+	 *
+	 * @param filename the file name
+	 * @param offset   the offset
+	 * @return the image descriptor
+	 */
 
-    public static ImageDescriptor getImageDescriptorFromProgram(
-            String filename, int offset) {
-        Assert.isNotNull(filename);
-        String key = filename + "*" + offset; //use * as it is not a valid filename character//$NON-NLS-1$
-        ImageDescriptor desc = getImageDescriptor(key);
-        if (desc == null) {
-            desc = new ProgramImageDescriptor(filename, offset);
-            getDescriptors().put(key, desc);
-        }
-        return desc;
-    }
+	public static ImageDescriptor getImageDescriptorFromProgram(String filename, int offset) {
+		Assert.isNotNull(filename);
+		String key = filename + "*" + offset; // use * as it is not a valid filename character//$NON-NLS-1$
+		ImageDescriptor desc = getImageDescriptor(key);
+		if (desc == null) {
+			desc = new ProgramImageDescriptor(filename, offset);
+			getDescriptors().put(key, desc);
+		}
+		return desc;
+	}
 
-    /**
-     * Returns the ImageRegistry.
-     *
-     * @return the image registry
-     */
-    public static ImageRegistry getImageRegistry() {
-        if (imageRegistry == null) {
-            initializeImageRegistry();
-        }
-        return imageRegistry;
-    }
+	/**
+	 * Returns the ImageRegistry.
+	 *
+	 * @return the image registry
+	 */
+	public static ImageRegistry getImageRegistry() {
+		if (imageRegistry == null) {
+			initializeImageRegistry();
+		}
+		return imageRegistry;
+	}
 
-    /**
-	 * Initialize the image registry by declaring all of the required graphics.
-	 * This involves creating JFace image descriptors describing how to
-	 * create/find the image should it be needed. The image is not actually
-	 * allocated until requested.
+	/**
+	 * Initialize the image registry by declaring all of the required graphics. This
+	 * involves creating JFace image descriptors describing how to create/find the
+	 * image should it be needed. The image is not actually allocated until
+	 * requested.
 	 *
 	 * Prefix conventions Wizard Banners WIZBAN_ Preference Banners PREF_BAN_
-	 * Property Page Banners PROPBAN_ Enable toolbar ETOOL_ Disable toolbar
-	 * DTOOL_ Local enabled toolbar ELCL_ Local Disable toolbar DLCL_ Object
-	 * large OBJL_ Object small OBJS_ View VIEW_ Product images PROD_ Misc
-	 * images MISC_
+	 * Property Page Banners PROPBAN_ Enable toolbar ETOOL_ Disable toolbar DTOOL_
+	 * Local enabled toolbar ELCL_ Local Disable toolbar DLCL_ Object large OBJL_
+	 * Object small OBJS_ View VIEW_ Product images PROD_ Misc images MISC_
 	 *
-	 * Where are the images? The images (typically png files) are found in the
-	 * same location as this plugin class. This may mean the same package
-	 * directory as the package holding this class. The images are declared
-	 * using this.getClass() to ensure they are looked up via this plugin class.
+	 * Where are the images? The images (typically png files) are found in the same
+	 * location as this plugin class. This may mean the same package directory as
+	 * the package holding this class. The images are declared using this.getClass()
+	 * to ensure they are looked up via this plugin class.
 	 *
 	 * @see ImageRegistry
 	 */
-    private static void initializeImageRegistry() {
-        imageRegistry = new ImageRegistry();
+	private static void initializeImageRegistry() {
+		imageRegistry = new ImageRegistry();
 		descriptors = new HashMap<>();
-        declareImages();
-    }
-
-    /**
-     * Disposes and clears the workbench images.
-     * Called when the workbench is shutting down.
-     *
-     * @since 3.1
-     */
-    public static void dispose() {
-        if (imageRegistry != null) {
-            imageRegistry.dispose();
-            imageRegistry = null;
-            descriptors = null;
-        }
-    }
+		declareImages();
+	}
 
 	/**
-	 * Get the workbench image with the given path relative to
-	 * ICON_PATH.
+	 * Disposes and clears the workbench images. Called when the workbench is
+	 * shutting down.
+	 *
+	 * @since 3.1
+	 */
+	public static void dispose() {
+		if (imageRegistry != null) {
+			imageRegistry.dispose();
+			imageRegistry = null;
+			descriptors = null;
+		}
+	}
+
+	/**
+	 * Get the workbench image with the given path relative to ICON_PATH.
+	 * 
 	 * @param relativePath
 	 * @return ImageDescriptor
 	 */
-	public static ImageDescriptor getWorkbenchImageDescriptor(String relativePath){
+	public static ImageDescriptor getWorkbenchImageDescriptor(String relativePath) {
 		return ImageDescriptor.createFromURL(BundleUtility.find(PlatformUI.PLUGIN_ID, ICONS_PATH + relativePath));
 	}
 }

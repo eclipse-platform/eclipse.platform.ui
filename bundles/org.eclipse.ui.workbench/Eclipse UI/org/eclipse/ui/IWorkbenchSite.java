@@ -49,8 +49,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IWorkbenchSite extends IAdaptable, IShellProvider,
-		IServiceLocator {
+public interface IWorkbenchSite extends IAdaptable, IShellProvider, IServiceLocator {
 
 	/**
 	 * Returns the page containing this workbench site.
@@ -68,8 +67,8 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 
 	/**
 	 * Returns the shell for this workbench site. Not intended to be called from
-	 * outside the UI thread. Clients should call IWorkbench.getDisplay() to
-	 * gain access to the display rather than calling getShell().getDisplay().
+	 * outside the UI thread. Clients should call IWorkbench.getDisplay() to gain
+	 * access to the display rather than calling getShell().getDisplay().
 	 *
 	 * <p>
 	 * For compatibility, this method will not throw an exception if called from
@@ -78,7 +77,8 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 	 *
 	 * @return the shell for this workbench site
 	 */
-	@Override Shell getShell();
+	@Override
+	Shell getShell();
 
 	/**
 	 * Returns the workbench window containing this workbench site.
@@ -90,8 +90,7 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 	/**
 	 * Sets the selection provider for this workbench site.
 	 *
-	 * @param provider
-	 *            the selection provider, or <code>null</code> to clear it
+	 * @param provider the selection provider, or <code>null</code> to clear it
 	 */
 	void setSelectionProvider(ISelectionProvider provider);
 

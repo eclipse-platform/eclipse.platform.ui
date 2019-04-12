@@ -45,8 +45,7 @@ public class CloseEditorHandler extends AbstractEvaluationHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		IEditorPart part = HandlerUtil.getActiveEditorChecked(event);
 		window.getActivePage().closeEditor(part, true);
 
@@ -58,10 +57,8 @@ public class CloseEditorHandler extends AbstractEvaluationHandler {
 		if (enabledWhen == null) {
 			enabledWhen = new Expression() {
 				@Override
-				public EvaluationResult evaluate(IEvaluationContext context)
-						throws CoreException {
-					IEditorPart part = InternalHandlerUtil
-							.getActiveEditor(context);
+				public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+					IEditorPart part = InternalHandlerUtil.getActiveEditor(context);
 					if (part != null) {
 						return EvaluationResult.TRUE;
 

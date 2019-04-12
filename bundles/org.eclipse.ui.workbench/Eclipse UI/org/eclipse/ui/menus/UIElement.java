@@ -38,11 +38,9 @@ public abstract class UIElement {
 	 * Construct a new instance of this class keyed off of the provided service
 	 * locator.
 	 *
-	 * @param serviceLocator
-	 *            the locator. May not be <code>null</code>.
+	 * @param serviceLocator the locator. May not be <code>null</code>.
 	 */
-	protected UIElement(IServiceLocator serviceLocator)
-			throws IllegalArgumentException {
+	protected UIElement(IServiceLocator serviceLocator) throws IllegalArgumentException {
 		if (serviceLocator == null)
 			throw new IllegalArgumentException();
 		this.serviceLocator = serviceLocator;
@@ -51,41 +49,36 @@ public abstract class UIElement {
 	/**
 	 * Update the label on this UI element.
 	 *
-	 * @param text
-	 *            The new label to display.
+	 * @param text The new label to display.
 	 */
 	public abstract void setText(String text);
 
 	/**
-	 * Update the tooltip on this UI element. Tooltips are currently only valid
-	 * for toolbar contributions.
+	 * Update the tooltip on this UI element. Tooltips are currently only valid for
+	 * toolbar contributions.
 	 *
-	 * @param text
-	 *            The new tooltip to display.
+	 * @param text The new tooltip to display.
 	 */
 	public abstract void setTooltip(String text);
 
 	/**
 	 * Update the icon on this UI element.
 	 *
-	 * @param desc
-	 *            The descriptor for the new icon to display.
+	 * @param desc The descriptor for the new icon to display.
 	 */
 	public abstract void setIcon(ImageDescriptor desc);
 
 	/**
 	 * Update the disabled icon on this UI element.
 	 *
-	 * @param desc
-	 *            The descriptor for the new icon to display.
+	 * @param desc The descriptor for the new icon to display.
 	 */
 	public abstract void setDisabledIcon(ImageDescriptor desc);
 
 	/**
 	 * Update the hover icon on this UI element.
 	 *
-	 * @param desc
-	 *            The descriptor for the new icon to display.
+	 * @param desc The descriptor for the new icon to display.
 	 */
 	public abstract void setHoverIcon(ImageDescriptor desc);
 
@@ -93,22 +86,20 @@ public abstract class UIElement {
 	 * Update the checked state on this UI element. For example, if this was a
 	 * toggle or radio button.
 	 *
-	 * @param checked
-	 *            true to set toggle on
+	 * @param checked true to set toggle on
 	 */
 	public abstract void setChecked(boolean checked);
 
 	/**
-	 * Get the service locator scope in which this UI element resides. May not
-	 * be <code>null</code>.
+	 * Get the service locator scope in which this UI element resides. May not be
+	 * <code>null</code>.
 	 *
 	 * <p>
-	 * The locator may be used to obtain services that are scoped in the same
-	 * way as the {@link UIElement}. Such services include but are not limited
-	 * to {@link IWorkbench}, {@link IWorkbenchWindow}, and
-	 * {@link IWorkbenchPartSite}. While this method may not return
-	 * <code>null</code> requests for any of these particular services may
-	 * return <code>null</code>.
+	 * The locator may be used to obtain services that are scoped in the same way as
+	 * the {@link UIElement}. Such services include but are not limited to
+	 * {@link IWorkbench}, {@link IWorkbenchWindow}, and {@link IWorkbenchPartSite}.
+	 * While this method may not return <code>null</code> requests for any of these
+	 * particular services may return <code>null</code>.
 	 * </p>
 	 *
 	 * @return the service locator for this element
@@ -120,15 +111,13 @@ public abstract class UIElement {
 
 	/**
 	 * Set the menu contribution id to use. This is only applicable to menu
-	 * contributions that support a drop-down style menu. The default
-	 * implementation does nothing.
+	 * contributions that support a drop-down style menu. The default implementation
+	 * does nothing.
 	 * <p>
 	 * Example: element.setDropdownId("org.eclipse.ui.navigate.back.my.menu");
 	 * </p>
 	 *
-	 * @param id
-	 *            used to populate the dropdown menu. Must not be
-	 *            <code>null</code>.
+	 * @param id used to populate the dropdown menu. Must not be <code>null</code>.
 	 */
 	public void setDropDownId(String id) {
 		// This does nothing.

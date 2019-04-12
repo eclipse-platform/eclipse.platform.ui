@@ -32,7 +32,8 @@ public class NoKeysPreferencePage extends PreferencePage implements IWorkbenchPr
 	@Override
 	protected Control createContents(Composite parent) {
 		Label info = new Label(parent, SWT.NONE);
-		info.setText("Custom key preferences are not available at this time.\nPlease create key bindings through the model."); //$NON-NLS-1$
+		info.setText(
+				"Custom key preferences are not available at this time.\nPlease create key bindings through the model."); //$NON-NLS-1$
 		return info;
 	}
 

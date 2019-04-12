@@ -37,8 +37,7 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
  * The WorkbenchPreferenceManager is the manager that can handle categories and
  * preference nodes.
  */
-public class WorkbenchPreferenceManager extends PreferenceManager implements
-		IExtensionChangeHandler {
+public class WorkbenchPreferenceManager extends PreferenceManager implements IExtensionChangeHandler {
 
 	/**
 	 * Create a new instance of the receiver with the specified seperatorChar
@@ -52,15 +51,13 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 
 		// add a listener for keyword deltas. If any occur clear all page caches
-		Platform.getExtensionRegistry().addRegistryChangeListener(
-				event -> {
-					if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-							IWorkbenchRegistryConstants.PL_KEYWORDS).length > 0) {
-						for (Object element : getElements(PreferenceManager.POST_ORDER)) {
-							((WorkbenchPreferenceNode) element).clearKeywords();
-						}
-					}
-				});
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
+			if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_KEYWORDS).length > 0) {
+				for (Object element : getElements(PreferenceManager.POST_ORDER)) {
+					((WorkbenchPreferenceNode) element).clearKeywords();
+				}
+			}
+		});
 	}
 
 	/**
@@ -86,14 +83,12 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	/**
 	 * Register a node with the extension tracker.
 	 *
-	 * @param node
-	 *            register the given node and its subnodes with the extension
-	 *            tracker
+	 * @param node register the given node and its subnodes with the extension
+	 *             tracker
 	 */
 	private void registerNode(WorkbenchPreferenceNode node) {
 		PlatformUI.getWorkbench().getExtensionTracker().registerObject(
-				node.getConfigurationElement().getDeclaringExtension(), node,
-				IExtensionTracker.REF_WEAK);
+				node.getConfigurationElement().getDeclaringExtension(), node, IExtensionTracker.REF_WEAK);
 		for (IPreferenceNode subNode : node.getSubNodes()) {
 			registerNode((WorkbenchPreferenceNode) subNode);
 		}
@@ -103,8 +98,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		for (IConfigurationElement configElement : extension.getConfigurationElements()) {
-			WorkbenchPreferenceNode node = PreferencePageRegistryReader
-					.createNode(configElement);
+			WorkbenchPreferenceNode node = PreferencePageRegistryReader.createNode(configElement);
 			if (node == null) {
 				continue;
 			}
@@ -122,7 +116,8 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 				}
 				if (parent == null) {
 					// Could not find the parent - log
-					String message = "Invalid preference category path: " + category + " (bundle: " + node.getPluginId() + ", page: " + node.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					String message = "Invalid preference category path: " + category + " (bundle: " + node.getPluginId() //$NON-NLS-1$ //$NON-NLS-2$
+							+ ", page: " + node.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING, message, null));
 					addToRoot(node);
 				} else {
@@ -133,8 +128,8 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	}
 
 	private IExtensionPoint getExtensionPointFilter() {
-		return Platform.getExtensionRegistry().getExtensionPoint(
-				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_PREFERENCES);
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_PREFERENCES);
 	}
 
 	@Override
@@ -151,14 +146,11 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	/**
 	 * Removes the node from the manager, searching through all subnodes.
 	 *
-	 * @param parent
-	 *            the node to search
-	 * @param nodeToRemove
-	 *            the node to remove
+	 * @param parent       the node to search
+	 * @param nodeToRemove the node to remove
 	 * @return whether the node was removed
 	 */
-	private boolean deepRemove(IPreferenceNode parent,
-			IPreferenceNode nodeToRemove) {
+	private boolean deepRemove(IPreferenceNode parent, IPreferenceNode nodeToRemove) {
 		if (parent == nodeToRemove) {
 			if (parent == getRoot()) {
 				removeAll(); // we're removing the root

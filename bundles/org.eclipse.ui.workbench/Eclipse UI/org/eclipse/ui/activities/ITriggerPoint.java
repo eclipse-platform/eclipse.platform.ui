@@ -32,7 +32,7 @@ package org.eclipse.ui.activities;
 public interface ITriggerPoint {
 
 	/**
-	 * The interactive hint key.  Value <code>"interactive"</code>.
+	 * The interactive hint key. Value <code>"interactive"</code>.
 	 */
 	String HINT_INTERACTIVE = "interactive"; //$NON-NLS-1$
 
@@ -58,14 +58,13 @@ public interface ITriggerPoint {
 	 */
 	String getStringHint(String key);
 
-
 	/**
-     * Return the hint with the given key defined on this trigger point as
-     * interpreted as a <code>boolean</code>.
-     *
-     * @param key the hint key
-     * @return the hint
-     * @see Boolean#valueOf(java.lang.String)
-     */
+	 * Return the hint with the given key defined on this trigger point as
+	 * interpreted as a <code>boolean</code>.
+	 *
+	 * @param key the hint key
+	 * @return the hint
+	 * @see Boolean#valueOf(java.lang.String)
+	 */
 	boolean getBooleanHint(String key);
 }

@@ -56,11 +56,8 @@ public abstract class TabBehaviour {
 	 */
 	public abstract IEditorReference findReusableEditor(WorkbenchPage page);
 
-	public abstract IEditorReference reuseInternalEditor(WorkbenchPage page,
- Object manager,
-			Object editorPresentation,
-			EditorDescriptor desc, IEditorInput input,
-			IEditorReference reusableEditorRef);
+	public abstract IEditorReference reuseInternalEditor(WorkbenchPage page, Object manager, Object editorPresentation,
+			EditorDescriptor desc, IEditorInput input, IEditorReference reusableEditorRef);
 
 	/**
 	 * Does nothing by default. Can be overridden by subclasses.
@@ -68,8 +65,7 @@ public abstract class TabBehaviour {
 	 * @param editorReuseGroup
 	 * @param showMultipleEditorTabs
 	 */
-	public void setPreferenceVisibility(Composite editorReuseGroup,
-			Button showMultipleEditorTabs) {
+	public void setPreferenceVisibility(Composite editorReuseGroup, Button showMultipleEditorTabs) {
 	}
 
 	/**
@@ -98,8 +94,7 @@ public abstract class TabBehaviour {
 	 * @return
 	 */
 	public int getEditorReuseThreshold() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		return store.getInt(IPreferenceConstants.REUSE_EDITORS);
 	}
 
@@ -124,12 +119,12 @@ public abstract class TabBehaviour {
 	}
 
 	public Font createInvisibleEditorsFont(Display display, Font originalFont) {
-        FontData fontData[] = originalFont.getFontData();
-        // Adding the bold attribute
-        for (FontData element : fontData) {
+		FontData fontData[] = originalFont.getFontData();
+		// Adding the bold attribute
+		for (FontData element : fontData) {
 			element.setStyle(element.getStyle() | SWT.BOLD);
 		}
-        return new Font(display, fontData);
+		return new Font(display, fontData);
 	}
 
 }

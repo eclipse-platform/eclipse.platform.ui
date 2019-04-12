@@ -30,12 +30,10 @@ public class EditActionSetsHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
-				.getActiveWorkbenchWindow(event);
+		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 
 		if (activeWorkbenchWindow != null) {
-			WorkbenchPage page = (WorkbenchPage) activeWorkbenchWindow
-					.getActivePage();
+			WorkbenchPage page = (WorkbenchPage) activeWorkbenchWindow.getActivePage();
 			if (page != null) {
 				page.editActionSets();
 			}

@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * <p>
  * Usage of this interface is achieved via the <code>elementAdapterClass</code>
  * attribute of the <code>org.eclipse.ui.workingSets</code> extension point.
- * Usage of this interface in <code>org.eclipse.ui.workingSets</code>
- * extensions is optional.
+ * Usage of this interface in <code>org.eclipse.ui.workingSets</code> extensions
+ * is optional.
  * </p>
  *
  * @since 3.3
@@ -38,12 +38,9 @@ public interface IWorkingSetElementAdapter {
 	/**
 	 * Converts the given elements for addition to/removal from the working set.
 	 *
-	 * @param ws
-	 *            the target working set that elements should be adapted for
-	 * @param elements
-	 *            the elements to adapt
-	 * @return the (possibly adapted) elements to add to/remove from the working
-	 *         set
+	 * @param ws       the target working set that elements should be adapted for
+	 * @param elements the elements to adapt
+	 * @return the (possibly adapted) elements to add to/remove from the working set
 	 */
 	IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements);
 
@@ -52,4 +49,3 @@ public interface IWorkingSetElementAdapter {
 	 */
 	void dispose();
 }
-

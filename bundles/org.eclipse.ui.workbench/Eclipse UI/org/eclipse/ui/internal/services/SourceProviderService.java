@@ -36,19 +36,18 @@ import org.eclipse.ui.services.ISourceProviderService;
  *
  * @since 3.2
  */
-public final class SourceProviderService implements ISourceProviderService,
-		IDisposable {
+public final class SourceProviderService implements ISourceProviderService, IDisposable {
 
 	/**
 	 * The source providers registered with this service. This value is never
-	 * <code>null</code>. This is a map of the source name ({@link String})
-	 * to the source provider ({@link ISourceProvider}).
+	 * <code>null</code>. This is a map of the source name ({@link String}) to the
+	 * source provider ({@link ISourceProvider}).
 	 */
 	private final Map sourceProvidersByName = new HashMap();
 
 	/**
-	 * All of the source providers registered with this service. This value is
-	 * never <code>null</code>.
+	 * All of the source providers registered with this service. This value is never
+	 * <code>null</code>.
 	 */
 	private final Set sourceProviders = new HashSet();
 
@@ -62,8 +61,7 @@ public final class SourceProviderService implements ISourceProviderService,
 	public void dispose() {
 		final Iterator sourceProviderItr = sourceProviders.iterator();
 		while (sourceProviderItr.hasNext()) {
-			final ISourceProvider sourceProvider = (ISourceProvider) sourceProviderItr
-					.next();
+			final ISourceProvider sourceProvider = (ISourceProvider) sourceProviderItr.next();
 			sourceProvider.dispose();
 		}
 		sourceProviders.clear();
@@ -77,8 +75,7 @@ public final class SourceProviderService implements ISourceProviderService,
 
 	@Override
 	public ISourceProvider[] getSourceProviders() {
-		return (ISourceProvider[]) sourceProviders
-				.toArray(new ISourceProvider[sourceProviders.size()]);
+		return (ISourceProvider[]) sourceProviders.toArray(new ISourceProvider[sourceProviders.size()]);
 	}
 
 	public void registerProvider(final ISourceProvider sourceProvider) {

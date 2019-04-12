@@ -28,7 +28,6 @@ import org.eclipse.ui.dialogs.PatternFilter;
  */
 public class ViewPatternFilter extends PatternFilter {
 
-
 	@Override
 	public boolean isElementSelectable(Object element) {
 		return element instanceof MPartDescriptor;

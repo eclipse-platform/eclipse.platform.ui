@@ -47,14 +47,12 @@ public class SlavePartService implements IPartService, IDisposable {
 	/**
 	 * Constructs a new instance.
 	 *
-	 * @param parentPartService
-	 *            The parent part service for this slave. Never
-	 *            <code>null</code>.
+	 * @param parentPartService The parent part service for this slave. Never
+	 *                          <code>null</code>.
 	 */
 	public SlavePartService(IPartService parentPartService) {
 		if (parentPartService == null) {
-			throw new IllegalArgumentException(
-					"The parent part service cannot be null"); //$NON-NLS-1$
+			throw new IllegalArgumentException("The parent part service cannot be null"); //$NON-NLS-1$
 		}
 		this.parent = parentPartService;
 	}

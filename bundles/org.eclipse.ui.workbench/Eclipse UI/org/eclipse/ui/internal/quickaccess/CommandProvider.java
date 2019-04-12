@@ -15,6 +15,7 @@
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -115,8 +116,7 @@ public class CommandProvider extends QuickAccessProvider {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 	}
 
 	@Override
@@ -130,8 +130,7 @@ public class CommandProvider extends QuickAccessProvider {
 				IEclipseContext ctx = ((ExpressionContext) currentSnapshot).eclipseContext;
 				ehandlerService = ctx.get(EHandlerService.class);
 			} else {
-				ehandlerService = PlatformUI.getWorkbench().getService(
-						EHandlerService.class);
+				ehandlerService = PlatformUI.getWorkbench().getService(EHandlerService.class);
 			}
 		}
 		return ehandlerService;
@@ -143,8 +142,7 @@ public class CommandProvider extends QuickAccessProvider {
 				IEclipseContext ctx = ((ExpressionContext) currentSnapshot).eclipseContext;
 				commandService = ctx.get(ICommandService.class);
 			} else {
-				commandService = PlatformUI.getWorkbench().getService(
-						ICommandService.class);
+				commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 			}
 		}
 		return commandService;
@@ -156,8 +154,7 @@ public class CommandProvider extends QuickAccessProvider {
 				IEclipseContext ctx = ((ExpressionContext) currentSnapshot).eclipseContext;
 				handlerService = ctx.get(IHandlerService.class);
 			} else {
-				handlerService = PlatformUI.getWorkbench().getService(
-						IHandlerService.class);
+				handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 			}
 		}
 		return handlerService;

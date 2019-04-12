@@ -59,13 +59,15 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
- * Implementation of {@link org.eclipse.ui.activities.IWorkbenchActivitySupport}.
+ * Implementation of
+ * {@link org.eclipse.ui.activities.IWorkbenchActivitySupport}.
+ * 
  * @since 3.0
  */
 public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExtensionChangeHandler {
-    private MutableActivityManager mutableActivityManager;
+	private MutableActivityManager mutableActivityManager;
 
-    private ProxyActivityManager proxyActivityManager;
+	private ProxyActivityManager proxyActivityManager;
 
 	private ImageBindingRegistry activityImageBindingRegistry;
 
@@ -78,248 +80,209 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	/**
 	 * Create a new instance of this class.
 	 */
-    public WorkbenchActivitySupport() {
+	public WorkbenchActivitySupport() {
 		triggerPointManager = new TriggerPointManager();
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getActivitySupportExtensionPoint()));
-        mutableActivityManager = new MutableActivityManager(getTriggerPointAdvisor());
-        proxyActivityManager = new ProxyActivityManager(mutableActivityManager);
-        mutableActivityManager
-                .addActivityManagerListener(new IActivityManagerListener() {
+		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getActivitySupportExtensionPoint()));
+		mutableActivityManager = new MutableActivityManager(getTriggerPointAdvisor());
+		proxyActivityManager = new ProxyActivityManager(mutableActivityManager);
+		mutableActivityManager.addActivityManagerListener(new IActivityManagerListener() {
 
-					private Set<String> lastEnabled = new HashSet<>(
-                            mutableActivityManager.getEnabledActivityIds());
+			private Set<String> lastEnabled = new HashSet<>(mutableActivityManager.getEnabledActivityIds());
 
-                    @Override
-					public void activityManagerChanged(
-                            ActivityManagerEvent activityManagerEvent) {
-						Set<String> activityIds = mutableActivityManager
-                                .getEnabledActivityIds();
-                        // only update the windows if we've not processed this new enablement state already.
-                        if (!activityIds.equals(lastEnabled)) {
-							lastEnabled = new HashSet<>(activityIds);
+			@Override
+			public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+				Set<String> activityIds = mutableActivityManager.getEnabledActivityIds();
+				// only update the windows if we've not processed this new enablement state
+				// already.
+				if (!activityIds.equals(lastEnabled)) {
+					lastEnabled = new HashSet<>(activityIds);
 
-                            // abort if the workbench isn't running
-                            if (!PlatformUI.isWorkbenchRunning()) {
-								return;
-							}
+					// abort if the workbench isn't running
+					if (!PlatformUI.isWorkbenchRunning()) {
+						return;
+					}
 
-                            // refresh the managers on all windows.
-							final IWorkbench workbench = PlatformUI.getWorkbench();
-							IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-                            for (IWorkbenchWindow wWindow : windows) {
-                                if (wWindow instanceof WorkbenchWindow) {
-                                    final WorkbenchWindow window = (WorkbenchWindow) wWindow;
+					// refresh the managers on all windows.
+					final IWorkbench workbench = PlatformUI.getWorkbench();
+					IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+					for (IWorkbenchWindow wWindow : windows) {
+						if (wWindow instanceof WorkbenchWindow) {
+							final WorkbenchWindow window = (WorkbenchWindow) wWindow;
 
-									final ProgressMonitorDialog dialog = new ProgressMonitorDialog(window.getShell());
+							final ProgressMonitorDialog dialog = new ProgressMonitorDialog(window.getShell());
 
-                                    final IRunnableWithProgress runnable = new IRunnableWithProgress() {
+							final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
-                                        /**
-                                         * When this operation should open a dialog
-                                         */
-                                        private long openTime;
+								/**
+								 * When this operation should open a dialog
+								 */
+								private long openTime;
 
-                                        /**
-                                         * Whether the dialog has been opened yet.
-                                         */
-                                        private boolean dialogOpened = false;
+								/**
+								 * Whether the dialog has been opened yet.
+								 */
+								private boolean dialogOpened = false;
 
-                                        @Override
-										public void run(IProgressMonitor monitor) {
+								@Override
+								public void run(IProgressMonitor monitor) {
 
-                                            openTime = System
-                                                    .currentTimeMillis()
-                                                    + workbench
-                                                            .getProgressService()
-                                                            .getLongOperationTime();
+									openTime = System.currentTimeMillis()
+											+ workbench.getProgressService().getLongOperationTime();
 
-                                            //two work units - updating the window bars, and updating view bars
-                                            monitor
-                                                    .beginTask(
-                                                            ActivityMessages.ManagerTask, 2);
+									// two work units - updating the window bars, and updating view bars
+									monitor.beginTask(ActivityMessages.ManagerTask, 2);
 
-                                            monitor
-                                                    .subTask(ActivityMessages.ManagerWindowSubTask);
+									monitor.subTask(ActivityMessages.ManagerWindowSubTask);
 
-                                            //update window managers...
-                                            updateWindowBars(window);
-                                            monitor.worked(1);
+									// update window managers...
+									updateWindowBars(window);
+									monitor.worked(1);
 
-                                            monitor
-                                                    .subTask(ActivityMessages.ManagerViewsSubTask);
-                                            // update all of the (realized) views in all of the pages
-                                            IWorkbenchPage[] pages = window
-                                                    .getPages();
-                                            for (IWorkbenchPage page : pages) {
-												IViewReference[] refs = page.getViewReferences();
-                                                for (IViewReference ref : refs) {
-													IViewPart part = ref.getView(false);
-                                                    if (part != null) {
-                                                        updateViewBars(part);
-                                                    }
-                                                }
-                                            }
-                                            monitor.worked(1);
-
-                                            monitor.done();
-                                        }
-
-                                        /**
-                                         * Update the managers on the given given view.
-                                         *
-                                         * @param part the view to update
-                                         */
-                                        private void updateViewBars(
-                                                IViewPart part) {
-                                            IViewSite viewSite = part
-                                                    .getViewSite();
-                                            // check for badly behaving or badly initialized views
-                                            if (viewSite == null) {
-												return;
+									monitor.subTask(ActivityMessages.ManagerViewsSubTask);
+									// update all of the (realized) views in all of the pages
+									IWorkbenchPage[] pages = window.getPages();
+									for (IWorkbenchPage page : pages) {
+										IViewReference[] refs = page.getViewReferences();
+										for (IViewReference ref : refs) {
+											IViewPart part = ref.getView(false);
+											if (part != null) {
+												updateViewBars(part);
 											}
-                                            IActionBars bars = viewSite
-                                                    .getActionBars();
-                                            IContributionManager manager = bars
-                                                    .getMenuManager();
-                                            if (manager != null) {
-												updateManager(manager);
-											}
-                                            manager = bars.getToolBarManager();
-                                            if (manager != null) {
-												updateManager(manager);
-											}
-                                            manager = bars
-                                                    .getStatusLineManager();
-                                            if (manager != null) {
-												updateManager(manager);
-											}
-                                        }
+										}
+									}
+									monitor.worked(1);
 
-                                        /**
-                                         * Update the managers on the given window.
-                                         *
-                                         * @param window the window to update
-                                         */
-                                        private void updateWindowBars(
-                                                final WorkbenchWindow window) {
-                                            IContributionManager manager = window
-                                                    .getMenuBarManager();
-                                            if (manager != null) {
-												updateManager(manager);
-											}
-                                            manager = window
-                                                    .getCoolBarManager2();
-                                            if (manager != null) {
-												updateManager(manager);
-											}
-                                            manager = window
-                                                    .getToolBarManager2();
-                                            if (manager != null) {
-												updateManager(manager);
-											}
-                                            manager = window
-                                                    .getStatusLineManager();
-                                            if (manager != null) {
-												updateManager(manager);
-											}
-                                        }
+									monitor.done();
+								}
 
-                                        /**
-                                         * Update the given manager in the UI thread.
-                                         * This may also open the progress dialog if
-                                         * the operation is taking too long.
-                                         *
-                                         * @param manager the manager to update
-                                         */
-                                        private void updateManager(
-                                                final IContributionManager manager) {
-                                            if (!dialogOpened
-                                                    && System
-                                                            .currentTimeMillis() > openTime) {
-                                                dialog.open();
-                                                dialogOpened = true;
-                                            }
+								/**
+								 * Update the managers on the given given view.
+								 *
+								 * @param part the view to update
+								 */
+								private void updateViewBars(IViewPart part) {
+									IViewSite viewSite = part.getViewSite();
+									// check for badly behaving or badly initialized views
+									if (viewSite == null) {
+										return;
+									}
+									IActionBars bars = viewSite.getActionBars();
+									IContributionManager manager = bars.getMenuManager();
+									if (manager != null) {
+										updateManager(manager);
+									}
+									manager = bars.getToolBarManager();
+									if (manager != null) {
+										updateManager(manager);
+									}
+									manager = bars.getStatusLineManager();
+									if (manager != null) {
+										updateManager(manager);
+									}
+								}
 
-                                            manager.update(true);
-                                        }
-                                    };
+								/**
+								 * Update the managers on the given window.
+								 *
+								 * @param window the window to update
+								 */
+								private void updateWindowBars(final WorkbenchWindow window) {
+									IContributionManager manager = window.getMenuBarManager();
+									if (manager != null) {
+										updateManager(manager);
+									}
+									manager = window.getCoolBarManager2();
+									if (manager != null) {
+										updateManager(manager);
+									}
+									manager = window.getToolBarManager2();
+									if (manager != null) {
+										updateManager(manager);
+									}
+									manager = window.getStatusLineManager();
+									if (manager != null) {
+										updateManager(manager);
+									}
+								}
 
-                                    // don't open the dialog by default - that'll be
-                                    // handled by the runnable if we take too long
-                                    dialog.setOpenOnRun(false);
-                                    // run this in the UI thread
-                                    workbench.getDisplay().asyncExec(
-                                            () -> BusyIndicator
-											        .showWhile(
-											                workbench
-											                        .getDisplay(),
-											                () -> {
-															    try {
-															        dialog
-															                .run(
-															                        false,
-															                        false,
-															                        runnable);
-															    } catch (InvocationTargetException e1) {
-															        log(e1);
-															    } catch (InterruptedException e2) {
-															        log(e2);
-															    }
-															}));
-                                }
-                            }
-                        }
-                    }
+								/**
+								 * Update the given manager in the UI thread. This may also open the progress
+								 * dialog if the operation is taking too long.
+								 *
+								 * @param manager the manager to update
+								 */
+								private void updateManager(final IContributionManager manager) {
+									if (!dialogOpened && System.currentTimeMillis() > openTime) {
+										dialog.open();
+										dialogOpened = true;
+									}
 
-                    /**
-                     * Logs an error message to the workbench log.
-                     *
-                     * @param e the exception to log
-                     */
-                    private void log(Exception e) {
-                        StatusUtil.newStatus(IStatus.ERROR,
-                                "Could not update contribution managers", e); //$NON-NLS-1$
-                    }
-                });
-    }
+									manager.update(true);
+								}
+							};
 
-    @Override
+							// don't open the dialog by default - that'll be
+							// handled by the runnable if we take too long
+							dialog.setOpenOnRun(false);
+							// run this in the UI thread
+							workbench.getDisplay()
+									.asyncExec(() -> BusyIndicator.showWhile(workbench.getDisplay(), () -> {
+										try {
+											dialog.run(false, false, runnable);
+										} catch (InvocationTargetException e1) {
+											log(e1);
+										} catch (InterruptedException e2) {
+											log(e2);
+										}
+									}));
+						}
+					}
+				}
+			}
+
+			/**
+			 * Logs an error message to the workbench log.
+			 *
+			 * @param e the exception to log
+			 */
+			private void log(Exception e) {
+				StatusUtil.newStatus(IStatus.ERROR, "Could not update contribution managers", e); //$NON-NLS-1$
+			}
+		});
+	}
+
+	@Override
 	public IActivityManager getActivityManager() {
-        return proxyActivityManager;
-    }
+		return proxyActivityManager;
+	}
 
-    @Override
+	@Override
 	public void setEnabledActivityIds(Set<String> enabledActivityIds) {
-        mutableActivityManager.setEnabledActivityIds(enabledActivityIds);
-    }
+		mutableActivityManager.setEnabledActivityIds(enabledActivityIds);
+	}
 
 	@Override
 	public ImageDescriptor getImageDescriptor(IActivity activity) {
 		if (activity.isDefined()) {
-			ImageDescriptor descriptor = getActivityImageBindingRegistry()
-					.getImageDescriptor(activity.getId());
+			ImageDescriptor descriptor = getActivityImageBindingRegistry().getImageDescriptor(activity.getId());
 			if (descriptor != null) {
 				return descriptor;
 			}
 		}
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY);
 	}
 
 	@Override
 	public ImageDescriptor getImageDescriptor(ICategory category) {
 		if (category.isDefined()) {
-			ImageDescriptor descriptor = getCategoryImageBindingRegistry()
-					.getImageDescriptor(category.getId());
+			ImageDescriptor descriptor = getCategoryImageBindingRegistry().getImageDescriptor(category.getId());
 			if (descriptor != null) {
 				return descriptor;
 			}
 		}
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY);
 	}
-
 
 	/**
 	 * Return the activity image registry.
@@ -329,14 +292,10 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	 */
 	private ImageBindingRegistry getActivityImageBindingRegistry() {
 		if (activityImageBindingRegistry == null) {
-			activityImageBindingRegistry = new ImageBindingRegistry(IWorkbenchRegistryConstants.TAG_ACTIVITY_IMAGE_BINDING);
-			PlatformUI
-					.getWorkbench()
-					.getExtensionTracker()
-					.registerHandler(
-							activityImageBindingRegistry,
-							ExtensionTracker
-									.createExtensionPointFilter(getActivitySupportExtensionPoint()));
+			activityImageBindingRegistry = new ImageBindingRegistry(
+					IWorkbenchRegistryConstants.TAG_ACTIVITY_IMAGE_BINDING);
+			PlatformUI.getWorkbench().getExtensionTracker().registerHandler(activityImageBindingRegistry,
+					ExtensionTracker.createExtensionPointFilter(getActivitySupportExtensionPoint()));
 		}
 		return activityImageBindingRegistry;
 	}
@@ -349,14 +308,10 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	 */
 	private ImageBindingRegistry getCategoryImageBindingRegistry() {
 		if (categoryImageBindingRegistry == null) {
-			categoryImageBindingRegistry = new ImageBindingRegistry(IWorkbenchRegistryConstants.TAG_CATEGORY_IMAGE_BINDING);
-			PlatformUI
-			.getWorkbench()
-			.getExtensionTracker()
-			.registerHandler(
-					categoryImageBindingRegistry,
-					ExtensionTracker
-							.createExtensionPointFilter(getActivitySupportExtensionPoint()));
+			categoryImageBindingRegistry = new ImageBindingRegistry(
+					IWorkbenchRegistryConstants.TAG_CATEGORY_IMAGE_BINDING);
+			PlatformUI.getWorkbench().getExtensionTracker().registerHandler(categoryImageBindingRegistry,
+					ExtensionTracker.createExtensionPointFilter(getActivitySupportExtensionPoint()));
 		}
 		return categoryImageBindingRegistry;
 	}
@@ -393,9 +348,9 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 		}
 
 		IProduct product = Platform.getProduct();
-        if (product != null) {
-			TriggerPointAdvisorDescriptor descriptor = TriggerPointAdvisorRegistry
-					.getInstance().getAdvisorForProduct(product.getId());
+		if (product != null) {
+			TriggerPointAdvisorDescriptor descriptor = TriggerPointAdvisorRegistry.getInstance()
+					.getAdvisorForProduct(product.getId());
 			if (descriptor != null) {
 				try {
 					advisor = descriptor.createAdvisor();
@@ -403,7 +358,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 					WorkbenchPlugin.log("could not create trigger point advisor", e); //$NON-NLS-1$
 				}
 			}
-        }
+		}
 
 		if (advisor == null) {
 			advisor = new WorkbenchTriggerPointAdvisor();
@@ -427,15 +382,15 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 		}
 	}
 
-    /**
-     * Return the activity support extension point.
-     *
-     * @return the activity support extension point.
-     * @since 3.1
-     */
+	/**
+	 * Return the activity support extension point.
+	 *
+	 * @return the activity support extension point.
+	 * @since 3.1
+	 */
 	private IExtensionPoint getActivitySupportExtensionPoint() {
-		return Platform.getExtensionRegistry().getExtensionPoint(
-				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_ACTIVITYSUPPORT);
 	}
 
 	@Override
@@ -448,10 +403,10 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 		}
 	}
 
-    @Override
+	@Override
 	public IMutableActivityManager createWorkingCopy() {
-        MutableActivityManager clone = (MutableActivityManager) mutableActivityManager.clone();
-        clone.unhookRegistryListeners();
-        return clone;
-    }
+		MutableActivityManager clone = (MutableActivityManager) mutableActivityManager.clone();
+		clone.unhookRegistryListeners();
+		return clone;
+	}
 }

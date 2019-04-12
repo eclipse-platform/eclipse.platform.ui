@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
-
 /**
  * This class is responsible for managing details area.
  */
@@ -51,14 +50,11 @@ public class DetailsAreaManager {
 	 * This method is responsible for creating details area on the specified
 	 * Composite and displaying specified StatusAdapter
 	 *
-	 * @param parent
-	 *            A composite on which should be the details area created.
-	 * @param statusAdapter
-	 *            StatusAdapter for which should be the details area
-	 *            created.
+	 * @param parent        A composite on which should be the details area created.
+	 * @param statusAdapter StatusAdapter for which should be the details area
+	 *                      created.
 	 */
-	public void createDetailsArea(Composite parent,
-			StatusAdapter statusAdapter) {
+	public void createDetailsArea(Composite parent, StatusAdapter statusAdapter) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(GridLayoutFactory.fillDefaults().create());
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

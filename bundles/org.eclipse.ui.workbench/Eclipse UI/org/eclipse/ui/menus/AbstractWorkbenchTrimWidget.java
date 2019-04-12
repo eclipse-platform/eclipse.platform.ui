@@ -19,10 +19,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * Extension for trim widgets contributed to the workbench.
- * The extension point handler will call the <code>init</code>
- * method to inform the contributed widgets as to which
- * workbench window they're currently being hosted in.
+ * Extension for trim widgets contributed to the workbench. The extension point
+ * handler will call the <code>init</code> method to inform the contributed
+ * widgets as to which workbench window they're currently being hosted in.
  *
  * @since 3.2
  *
@@ -38,12 +37,10 @@ public abstract class AbstractWorkbenchTrimWidget extends AbstractTrimWidget imp
 		super();
 	}
 
-
 	/**
-	 * Define the IWorkbenchWindow that this trim is being hosted in.
-	 * Note that subclasses may extend but should not override. The
-	 * base implementation caches the value for access through the
-	 * <code>getWorkbenchWindow</code> method.
+	 * Define the IWorkbenchWindow that this trim is being hosted in. Note that
+	 * subclasses may extend but should not override. The base implementation caches
+	 * the value for access through the <code>getWorkbenchWindow</code> method.
 	 *
 	 * @see org.eclipse.ui.menus.IWorkbenchWidget#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
@@ -53,8 +50,7 @@ public abstract class AbstractWorkbenchTrimWidget extends AbstractTrimWidget imp
 	}
 
 	/**
-	 * Convenience method to get the IWorkbenchWindow that is
-	 * hosting this widget.
+	 * Convenience method to get the IWorkbenchWindow that is hosting this widget.
 	 *
 	 * @return The IWorkbenchWindow hosting this widget.
 	 */

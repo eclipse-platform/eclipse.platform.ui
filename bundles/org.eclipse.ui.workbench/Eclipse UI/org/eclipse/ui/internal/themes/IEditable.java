@@ -22,11 +22,11 @@ package org.eclipse.ui.internal.themes;
  */
 public interface IEditable {
 
-    /**
-     * Returns whether this object is editable.
-     *
-     * @return whether this object is editable.
-     */
-    boolean isEditable();
+	/**
+	 * Returns whether this object is editable.
+	 *
+	 * @return whether this object is editable.
+	 */
+	boolean isEditable();
 
 }

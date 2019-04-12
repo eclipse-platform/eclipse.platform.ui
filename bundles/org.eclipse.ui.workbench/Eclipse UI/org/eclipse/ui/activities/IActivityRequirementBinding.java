@@ -16,9 +16,9 @@ package org.eclipse.ui.activities;
 
 /**
  * An instance of this interface represents a binding between two activities.
- * The relationship can be interpreted as 'activity needs requiredActivity to
- * be enabled'.
- * Enablement of the activity requires enablement of the required activity.
+ * The relationship can be interpreted as 'activity needs requiredActivity to be
+ * enabled'. Enablement of the activity requires enablement of the required
+ * activity.
  *
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -30,22 +30,21 @@ package org.eclipse.ui.activities;
  */
 public interface IActivityRequirementBinding extends Comparable<IActivityRequirementBinding> {
 
-    /**
-     * Returns the identifier of the activity represented in this
-     * binding.
-     *
-     * @return the identifier of the activity represented in this
-     *         binding. Guaranteed not to be <code>null</code>.
-     */
-    String getActivityId();
+	/**
+	 * Returns the identifier of the activity represented in this binding.
+	 *
+	 * @return the identifier of the activity represented in this binding.
+	 *         Guaranteed not to be <code>null</code>.
+	 */
+	String getActivityId();
 
-    /**
-     * Returns the identifier of the required activity represented in this
-     * binding.  The enablement of the activity described by {@link #getActivityId()}
-     * requires the enablement of this activity.
-     *
-     * @return the identifier of the required activity represented in this
-     *         binding. Guaranteed not to be <code>null</code>.
-     */
-    String getRequiredActivityId();
+	/**
+	 * Returns the identifier of the required activity represented in this binding.
+	 * The enablement of the activity described by {@link #getActivityId()} requires
+	 * the enablement of this activity.
+	 *
+	 * @return the identifier of the required activity represented in this binding.
+	 *         Guaranteed not to be <code>null</code>.
+	 */
+	String getRequiredActivityId();
 }

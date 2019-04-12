@@ -54,8 +54,8 @@ class PreferencePageHistory {
 	private ToolBarManager historyToolbar;
 
 	/**
-	 * A list of preference history domain elements that stores the history of
-	 * the visited preference pages.
+	 * A list of preference history domain elements that stores the history of the
+	 * visited preference pages.
 	 */
 	private List history = new ArrayList();
 
@@ -78,8 +78,7 @@ class PreferencePageHistory {
 	/**
 	 * Creates a new history for the given dialog.
 	 *
-	 * @param dialog
-	 *            the preference dialog to create a history for
+	 * @param dialog the preference dialog to create a history for
 	 */
 	public PreferencePageHistory(FilteredPreferenceDialog dialog) {
 		this.dialog = dialog;
@@ -89,11 +88,9 @@ class PreferencePageHistory {
 	 * Returns the preference page path (for now: its id) for the history at
 	 * <code>index</code>.
 	 *
-	 * @param index
-	 *            the index into the history
-	 * @return the preference page path at <code>index</code> or
-	 *         <code>null</code> if <code>index</code> is not a valid
-	 *         history index
+	 * @param index the index into the history
+	 * @return the preference page path at <code>index</code> or <code>null</code>
+	 *         if <code>index</code> is not a valid history index
 	 */
 	private PreferenceHistoryEntry getHistoryEntry(int index) {
 		if (index >= 0 && index < history.size()) {
@@ -105,8 +102,7 @@ class PreferencePageHistory {
 	/**
 	 * Adds the preference page path and its label to the page history.
 	 *
-	 * @param entry
-	 *            the preference page history entry
+	 * @param entry the preference page history entry
 	 */
 	public void addHistoryEntry(PreferenceHistoryEntry entry) {
 		if (historyIndex == -1 || !history.get(historyIndex).equals(entry)) {
@@ -118,11 +114,10 @@ class PreferencePageHistory {
 	}
 
 	/**
-	 * Sets the current page to be the one corresponding to the given index in
-	 * the page history.
+	 * Sets the current page to be the one corresponding to the given index in the
+	 * page history.
 	 *
-	 * @param index
-	 *            the index into the page history
+	 * @param index the index into the page history
 	 */
 	private void jumpToHistory(int index) {
 		if (index >= 0 && index < history.size()) {
@@ -151,15 +146,13 @@ class PreferencePageHistory {
 	 * @param manager
 	 * @return the control of the history toolbar
 	 */
-	public ToolBar createHistoryControls(ToolBar historyBar,
-			ToolBarManager manager) {
+	public ToolBar createHistoryControls(ToolBar historyBar, ToolBarManager manager) {
 
 		historyToolbar = manager;
 		/**
 		 * Superclass of the two for-/backward actions for the history.
 		 */
-		abstract class HistoryNavigationAction extends Action implements
-				IMenuCreator {
+		abstract class HistoryNavigationAction extends Action implements IMenuCreator {
 			private Menu lastMenu;
 
 			protected static final int MAX_ENTRIES = 5;
@@ -206,8 +199,8 @@ class PreferencePageHistory {
 		}
 
 		/**
-		 * Menu entry for the toolbar dropdowns. Instances are direct-jump
-		 * entries in the navigation history.
+		 * Menu entry for the toolbar dropdowns. Instances are direct-jump entries in
+		 * the navigation history.
 		 */
 		class HistoryItemAction extends Action {
 
@@ -234,7 +227,8 @@ class PreferencePageHistory {
 			public boolean isEnabled() {
 				boolean enabled = historyIndex > 0;
 				if (enabled) {
-					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_backward_toolTipName,getHistoryEntry(historyIndex - 1).getLabel() ));
+					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_backward_toolTipName,
+							getHistoryEntry(historyIndex - 1).getLabel()));
 				} else {
 					setToolTipText(WorkbenchMessages.NavigationHistoryAction_backward_toolTip);
 				}
@@ -245,21 +239,17 @@ class PreferencePageHistory {
 			protected void createEntries(Menu menu) {
 				int limit = Math.max(0, historyIndex - MAX_ENTRIES);
 				for (int i = historyIndex - 1; i >= limit; i--) {
-					IAction action = new HistoryItemAction(i,
-							getHistoryEntry(i).getLabel());
+					IAction action = new HistoryItemAction(i, getHistoryEntry(i).getLabel());
 					addActionToMenu(menu, action);
 				}
 			}
 		};
 		backward.setText(WorkbenchMessages.NavigationHistoryAction_backward_text);
-		backward
-				.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
-		backward.setImageDescriptor(WorkbenchPlugin.getDefault()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_BACK));
-		backward.setDisabledImageDescriptor(WorkbenchPlugin.getDefault()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_BACK_DISABLED));
+		backward.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
+		backward.setImageDescriptor(
+				WorkbenchPlugin.getDefault().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+		backward.setDisabledImageDescriptor(WorkbenchPlugin.getDefault().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		registerKeybindings(backward);
 		historyToolbar.add(backward);
 
@@ -273,7 +263,8 @@ class PreferencePageHistory {
 			public boolean isEnabled() {
 				boolean enabled = historyIndex < history.size() - 1;
 				if (enabled) {
-					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_forward_toolTipName, getHistoryEntry(historyIndex + 1).getLabel() ));
+					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_forward_toolTipName,
+							getHistoryEntry(historyIndex + 1).getLabel()));
 				} else {
 					setToolTipText(WorkbenchMessages.NavigationHistoryAction_forward_toolTip);
 				}
@@ -282,23 +273,19 @@ class PreferencePageHistory {
 
 			@Override
 			protected void createEntries(Menu menu) {
-				int limit = Math.min(history.size(), historyIndex + MAX_ENTRIES
-						+ 1);
+				int limit = Math.min(history.size(), historyIndex + MAX_ENTRIES + 1);
 				for (int i = historyIndex + 1; i < limit; i++) {
-					IAction action = new HistoryItemAction(i,
-							getHistoryEntry(i).getLabel());
+					IAction action = new HistoryItemAction(i, getHistoryEntry(i).getLabel());
 					addActionToMenu(menu, action);
 				}
 			}
 		};
 		forward.setText(WorkbenchMessages.NavigationHistoryAction_forward_text);
 		forward.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
-		forward.setImageDescriptor(WorkbenchPlugin.getDefault()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_FORWARD));
-		forward.setDisabledImageDescriptor(WorkbenchPlugin.getDefault()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_FORWARD_DISABLED));
+		forward.setImageDescriptor(
+				WorkbenchPlugin.getDefault().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+		forward.setDisabledImageDescriptor(WorkbenchPlugin.getDefault().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		registerKeybindings(forward);
 		historyToolbar.add(forward);
 
@@ -308,14 +295,12 @@ class PreferencePageHistory {
 	/**
 	 * Registers the given action with the workbench command support.
 	 *
-	 * @param action
-	 *            the action to register.
+	 * @param action the action to register.
 	 */
 	private void registerKeybindings(IAction action) {
 		final IHandler handler = new ActionHandler(action);
 		final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
-		final IHandlerActivation activation = handlerService.activateHandler(
-				action.getActionDefinitionId(), handler,
+		final IHandlerActivation activation = handlerService.activateHandler(action.getActionDefinitionId(), handler,
 				new ActiveShellExpression(dialog.getShell()));
 		activations.add(activation);
 	}
@@ -328,8 +313,7 @@ class PreferencePageHistory {
 		final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		final Iterator iterator = activations.iterator();
 		while (iterator.hasNext()) {
-			handlerService.deactivateHandler((IHandlerActivation) iterator
-					.next());
+			handlerService.deactivateHandler((IHandlerActivation) iterator.next());
 		}
 		activations.clear();
 

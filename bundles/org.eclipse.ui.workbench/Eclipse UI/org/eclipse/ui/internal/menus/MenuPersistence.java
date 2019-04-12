@@ -55,7 +55,8 @@ final public class MenuPersistence extends RegistryPersistence {
 	private ArrayList<MToolBarContribution> toolBarContributions = new ArrayList<>();
 	private ArrayList<MTrimContribution> trimContributions = new ArrayList<>();
 
-	private final Comparator<IConfigurationElement> comparer = (c1, c2) -> c1.getContributor().getName().compareToIgnoreCase(c2.getContributor().getName());
+	private final Comparator<IConfigurationElement> comparer = (c1, c2) -> c1.getContributor().getName()
+			.compareToIgnoreCase(c2.getContributor().getName());
 	private Pattern contributorFilter;
 
 	/**
@@ -82,6 +83,7 @@ final public class MenuPersistence extends RegistryPersistence {
 		cacheEntries.clear();
 		super.dispose();
 	}
+
 	@Override
 	protected boolean isChangeImportant(IRegistryChangeEvent event) {
 		return false;
@@ -102,8 +104,7 @@ final public class MenuPersistence extends RegistryPersistence {
 		ContributionsAnalyzer.mergeContributions(tmp, menuContributions);
 		application.getMenuContributions().addAll(menuContributions);
 
-		ArrayList<MToolBarContribution> tmpToolbar = new ArrayList<>(
-				toolBarContributions);
+		ArrayList<MToolBarContribution> tmpToolbar = new ArrayList<>(toolBarContributions);
 		toolBarContributions.clear();
 		ContributionsAnalyzer.mergeToolBarContributions(tmpToolbar, toolBarContributions);
 		application.getToolBarContributions().addAll(toolBarContributions);
@@ -121,8 +122,7 @@ final public class MenuPersistence extends RegistryPersistence {
 		for (IConfigurationElement configElement : registry.getConfigurationElementsFor(EXTENSION_MENUS)) {
 			if (PL_MENU_CONTRIBUTION.equals(configElement.getName())) {
 				if (contributorFilter == null
-						|| contributorFilter.matcher(
-								configElement.getContributor().getName()).matches()) {
+						|| contributorFilter.matcher(configElement.getContributor().getName()).matches()) {
 					configElements.add(configElement);
 				}
 			}
@@ -133,22 +133,18 @@ final public class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement configElement = i.next();
 
 			if (isProgramaticContribution(configElement)) {
-				MenuFactoryGenerator gen = new MenuFactoryGenerator(application, appContext,
-						configElement,
+				MenuFactoryGenerator gen = new MenuFactoryGenerator(application, appContext, configElement,
 						configElement.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI));
 				gen.mergeIntoModel(menuContributions, toolBarContributions, trimContributions);
 			} else {
-				MenuAdditionCacheEntry menuContribution = new MenuAdditionCacheEntry(application,
-						appContext, configElement,
-						configElement.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
+				MenuAdditionCacheEntry menuContribution = new MenuAdditionCacheEntry(application, appContext,
+						configElement, configElement.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
 						configElement.getNamespaceIdentifier());
 				cacheEntries.add(menuContribution);
-				menuContribution.mergeIntoModel(menuContributions, toolBarContributions,
-						trimContributions);
+				menuContribution.mergeIntoModel(menuContributions, toolBarContributions, trimContributions);
 			}
 		}
 	}
-
 
 	private boolean isProgramaticContribution(IConfigurationElement menuAddition) {
 		return menuAddition.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null;

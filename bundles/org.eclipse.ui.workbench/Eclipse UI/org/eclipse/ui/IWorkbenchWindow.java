@@ -56,168 +56,161 @@ import org.eclipse.ui.services.IServiceLocator;
  * @see IWorkbenchPage
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IWorkbenchWindow extends IPageService, IRunnableContext,
-		IServiceLocator, IShellProvider {
-    /**
-     * Closes this workbench window.
-     * <p>
-     * If the window has an open editor with unsaved content, the user will be
-     * given the opportunity to save it.
-     * </p>
-     *
-     * @return <code>true</code> if the window was successfully closed, and
-     *         <code>false</code> if it is still open
-     */
-    boolean close();
+public interface IWorkbenchWindow extends IPageService, IRunnableContext, IServiceLocator, IShellProvider {
+	/**
+	 * Closes this workbench window.
+	 * <p>
+	 * If the window has an open editor with unsaved content, the user will be given
+	 * the opportunity to save it.
+	 * </p>
+	 *
+	 * @return <code>true</code> if the window was successfully closed, and
+	 *         <code>false</code> if it is still open
+	 */
+	boolean close();
 
-    /**
-     * Returns the currently active page for this workbench window.
-     *
-     * @return the active page, or <code>null</code> if none
-     */
-    @Override IWorkbenchPage getActivePage();
+	/**
+	 * Returns the currently active page for this workbench window.
+	 *
+	 * @return the active page, or <code>null</code> if none
+	 */
+	@Override
+	IWorkbenchPage getActivePage();
 
-    /**
-     * Returns a list of the pages in this workbench window.
-     * <p>
-     * Note that each window has its own pages; pages are never shared between
-     * different windows.
-     * </p>
-     *
-     * @return a list of pages
-     */
-    IWorkbenchPage[] getPages();
+	/**
+	 * Returns a list of the pages in this workbench window.
+	 * <p>
+	 * Note that each window has its own pages; pages are never shared between
+	 * different windows.
+	 * </p>
+	 *
+	 * @return a list of pages
+	 */
+	IWorkbenchPage[] getPages();
 
-    /**
-     * Returns the part service which tracks part activation within this
-     * workbench window.
-     *
-     * @return the part service
-     */
-    IPartService getPartService();
+	/**
+	 * Returns the part service which tracks part activation within this workbench
+	 * window.
+	 *
+	 * @return the part service
+	 */
+	IPartService getPartService();
 
-    /**
-     * Returns the selection service which tracks selection within this
-     * workbench window.
-     *
-     * @return the selection service
-     */
-    ISelectionService getSelectionService();
+	/**
+	 * Returns the selection service which tracks selection within this workbench
+	 * window.
+	 *
+	 * @return the selection service
+	 */
+	ISelectionService getSelectionService();
 
-    /**
-     * Returns this workbench window's shell.
-     *
-     * @return the shell containing this window's controls or <code>null</code>
-     *   if the shell has not been created yet or if the window has been closed
-     */
-    @Override Shell getShell();
+	/**
+	 * Returns this workbench window's shell.
+	 *
+	 * @return the shell containing this window's controls or <code>null</code> if
+	 *         the shell has not been created yet or if the window has been closed
+	 */
+	@Override
+	Shell getShell();
 
-    /**
-     * Returns the workbench for this window.
-     *
-     * @return the workbench
-     */
-    IWorkbench getWorkbench();
+	/**
+	 * Returns the workbench for this window.
+	 *
+	 * @return the workbench
+	 */
+	IWorkbench getWorkbench();
 
-    /**
-     * Returns whether the specified menu is an application menu as opposed to
-     * a part menu. Application menus contain items which affect the workbench
-     * or window. Part menus contain items which affect the active part (view
-     * or editor).
-     * <p>
-     * This is typically used during "in place" editing. Application menus
-     * should be preserved during menu merging. All other menus may be removed
-     * from the window.
-     * </p>
-     *
-     * @param menuId
-     *            the menu id
-     * @return <code>true</code> if the specified menu is an application
-     *         menu, and <code>false</code> if it is not
-     */
-    boolean isApplicationMenu(String menuId);
+	/**
+	 * Returns whether the specified menu is an application menu as opposed to a
+	 * part menu. Application menus contain items which affect the workbench or
+	 * window. Part menus contain items which affect the active part (view or
+	 * editor).
+	 * <p>
+	 * This is typically used during "in place" editing. Application menus should be
+	 * preserved during menu merging. All other menus may be removed from the
+	 * window.
+	 * </p>
+	 *
+	 * @param menuId the menu id
+	 * @return <code>true</code> if the specified menu is an application menu, and
+	 *         <code>false</code> if it is not
+	 */
+	boolean isApplicationMenu(String menuId);
 
-    /**
-     * Creates and opens a new workbench page. The perspective of the new page
-     * is defined by the specified perspective ID. The new page become active.
-     * <p>
-     * <b>Note:</b> Since release 2.0, a window is limited to contain at most
-     * one page. If a page exist in the window when this method is used, then
-     * another window is created for the new page. Callers are strongly
-     * recommended to use the <code>IWorkbench.showPerspective</code> APIs to
-     * programmatically show a perspective.
-     * </p>
-     *
-     * @param perspectiveId
-     *            the perspective id for the window's initial page
-     * @param input
-     *            the page input, or <code>null</code> if there is no current
-     *            input. This is used to seed the input for the new page's
-     *            views.
-     * @return the new workbench page
-     * @exception WorkbenchException
-     *                if a page could not be opened
-     *
-     * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
-     */
-    IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
-            throws WorkbenchException;
+	/**
+	 * Creates and opens a new workbench page. The perspective of the new page is
+	 * defined by the specified perspective ID. The new page become active.
+	 * <p>
+	 * <b>Note:</b> Since release 2.0, a window is limited to contain at most one
+	 * page. If a page exist in the window when this method is used, then another
+	 * window is created for the new page. Callers are strongly recommended to use
+	 * the <code>IWorkbench.showPerspective</code> APIs to programmatically show a
+	 * perspective.
+	 * </p>
+	 *
+	 * @param perspectiveId the perspective id for the window's initial page
+	 * @param input         the page input, or <code>null</code> if there is no
+	 *                      current input. This is used to seed the input for the
+	 *                      new page's views.
+	 * @return the new workbench page
+	 * @exception WorkbenchException if a page could not be opened
+	 *
+	 * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
+	 */
+	IWorkbenchPage openPage(String perspectiveId, IAdaptable input) throws WorkbenchException;
 
-    /**
-     * Creates and opens a new workbench page. The default perspective is used
-     * as a template for creating the page. The page becomes active.
-     * <p>
-     * <b>Note:</b> Since release 2.0, a window is limited to contain at most
-     * one page. If a page exist in the window when this method is used, then
-     * another window is created for the new page. Callers are strongly
-     * recommended to use the <code>IWorkbench.showPerspective</code> APIs to
-     * programmatically show a perspective.
-     * </p>
-     *
-     * @param input
-     *            the page input, or <code>null</code> if there is no current
-     *            input. This is used to seed the input for the new page's
-     *            views.
-     * @return the new workbench window
-     * @exception WorkbenchException
-     *                if a page could not be opened
-     *
-     * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
-     */
-    IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException;
+	/**
+	 * Creates and opens a new workbench page. The default perspective is used as a
+	 * template for creating the page. The page becomes active.
+	 * <p>
+	 * <b>Note:</b> Since release 2.0, a window is limited to contain at most one
+	 * page. If a page exist in the window when this method is used, then another
+	 * window is created for the new page. Callers are strongly recommended to use
+	 * the <code>IWorkbench.showPerspective</code> APIs to programmatically show a
+	 * perspective.
+	 * </p>
+	 *
+	 * @param input the page input, or <code>null</code> if there is no current
+	 *              input. This is used to seed the input for the new page's views.
+	 * @return the new workbench window
+	 * @exception WorkbenchException if a page could not be opened
+	 *
+	 * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
+	 */
+	IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException;
 
-    /**
-     * This specialization of IRunnableContext#run(boolean, boolean,
-     * IRunnableWithProgress) blocks until the runnable has been run,
-     * regardless of the value of <code>fork</code>.
-     * It is recommended that <code>fork</code> is set to
-     * true in most cases. If <code>fork</code> is set to <code>false</code>,
-     * the runnable will run in the UI thread and it is the runnable's
-     * responsibility to call <code>Display.readAndDispatch()</code>
-     * to ensure UI responsiveness.
-     *
-     * @since 3.2
-     */
-    @Override void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
+	/**
+	 * This specialization of IRunnableContext#run(boolean, boolean,
+	 * IRunnableWithProgress) blocks until the runnable has been run, regardless of
+	 * the value of <code>fork</code>. It is recommended that <code>fork</code> is
+	 * set to true in most cases. If <code>fork</code> is set to <code>false</code>,
+	 * the runnable will run in the UI thread and it is the runnable's
+	 * responsibility to call <code>Display.readAndDispatch()</code> to ensure UI
+	 * responsiveness.
+	 *
+	 * @since 3.2
+	 */
+	@Override
+	void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+			throws InvocationTargetException, InterruptedException;
 
-    /**
+	/**
 	 * Sets or clears the currently active page for this workbench window.
 	 *
-	 * @param page
-	 *            the new active page, or <code>null</code> for no active page
+	 * @param page the new active page, or <code>null</code> for no active page
 	 */
-    void setActivePage(IWorkbenchPage page);
+	void setActivePage(IWorkbenchPage page);
 
-    /**
+	/**
 	 * <p>
-	 * Return the extension tracker for the workbench. This tracker may be used
-	 * by plug-ins to ensure responsiveness to changes to the plug-in registry.
+	 * Return the extension tracker for the workbench. This tracker may be used by
+	 * plug-ins to ensure responsiveness to changes to the plug-in registry.
 	 * </p>
 	 * <p>
 	 * The tracker at this level of the workbench is typically used to track
-	 * elements that persist for the life of the workbench. For example, the
-	 * action objects corresponding to new wizards contributed by plug-ins fall
-	 * into this category.
+	 * elements that persist for the life of the workbench. For example, the action
+	 * objects corresponding to new wizards contributed by plug-ins fall into this
+	 * category.
 	 * </p>
 	 *
 	 * @return the extension tracker
@@ -225,7 +218,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
 	 * @see IWorkbenchPage#getExtensionTracker()
 	 * @since 3.1
 	 */
-    IExtensionTracker getExtensionTracker();
+	IExtensionTracker getExtensionTracker();
 
 	/**
 	 * Returns a boolean indicating whether the workbench window is in the process

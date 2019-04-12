@@ -207,8 +207,7 @@ public final class FinishedJobs extends EventManager {
 			JobInfo ji = (JobInfo) jte;
 			Job job = ji.getJob();
 			if (job != null) {
-				Object prop = job
-						.getProperty(IProgressConstants.ACTION_PROPERTY);
+				Object prop = job.getProperty(IProgressConstants.ACTION_PROPERTY);
 				if (prop instanceof ActionFactory.IWorkbenchAction) {
 					((ActionFactory.IWorkbenchAction) prop).dispose();
 				}
@@ -231,8 +230,7 @@ public final class FinishedJobs extends EventManager {
 					for (JobTreeElement jobTreeElement : all) {
 						if (jobTreeElement != info && jobTreeElement.isJobInfo()) {
 							Job job = ((JobInfo) jobTreeElement).getJob();
-							if (job != null && job != myJob
-									&& job.belongsTo(myJob)) {
+							if (job != null && job != myJob && job.belongsTo(myJob)) {
 								if (found == null) {
 									found = new ArrayList<>();
 								}
@@ -241,8 +239,7 @@ public final class FinishedJobs extends EventManager {
 						}
 					}
 					if (found != null) {
-						return found
-								.toArray(new JobTreeElement[found.size()]);
+						return found.toArray(new JobTreeElement[found.size()]);
 					}
 				}
 			}
@@ -288,8 +285,7 @@ public final class FinishedJobs extends EventManager {
 				if (job != null) {
 					IStatus status = job.getResult();
 					if (status != null && status.getSeverity() == IStatus.ERROR) {
-						JobTreeElement topElement = info1
-								.getParent();
+						JobTreeElement topElement = info1.getParent();
 						if (topElement == null) {
 							topElement = info1;
 						}
@@ -346,8 +342,7 @@ public final class FinishedJobs extends EventManager {
 		}
 
 		synchronized (keptjobinfos) {
-			all = keptjobinfos
-					.toArray(new JobTreeElement[keptjobinfos.size()]);
+			all = keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
 		}
 
 		return all;
@@ -382,8 +377,7 @@ public final class FinishedJobs extends EventManager {
 	 */
 	public void clearAll() {
 		synchronized (keptjobinfos) {
-			JobTreeElement[] all = keptjobinfos
-					.toArray(new JobTreeElement[keptjobinfos.size()]);
+			JobTreeElement[] all = keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
 			for (JobTreeElement jobTreeElement : all) {
 				disposeAction(jobTreeElement);
 			}
@@ -400,6 +394,7 @@ public final class FinishedJobs extends EventManager {
 
 	/**
 	 * Return the set of kept jobs.
+	 * 
 	 * @return Set
 	 */
 	Set<JobTreeElement> getKeptAsSet() {

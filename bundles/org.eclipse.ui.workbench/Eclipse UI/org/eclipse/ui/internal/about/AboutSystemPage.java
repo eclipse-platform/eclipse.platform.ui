@@ -52,17 +52,13 @@ public final class AboutSystemPage extends ProductInfoPage {
 
 	@Override
 	public void createControl(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IWorkbenchHelpContextIds.SYSTEM_SUMMARY_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.SYSTEM_SUMMARY_DIALOG);
 
 		Composite outer = createOuterComposite(parent);
 
-		text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY
-				| SWT.V_SCROLL | SWT.NO_FOCUS | SWT.H_SCROLL);
-		text.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
-		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL);
+		text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.NO_FOCUS | SWT.H_SCROLL);
+		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		gridData.grabExcessVerticalSpace = true;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.heightHint = convertVerticalDLUsToPixels(300);
@@ -80,8 +76,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 		String filename = Platform.getLogFileLocation().toOSString();
 		button.setEnabled(new File(filename).exists());
 
-		createButton(parent, COPY_TO_CLIPBOARD_BUTTON,
-				WorkbenchMessages.AboutSystemDialog_copyToClipboardName);
+		createButton(parent, COPY_TO_CLIPBOARD_BUTTON, WorkbenchMessages.AboutSystemDialog_copyToClipboardName);
 	}
 
 	@Override
@@ -100,8 +95,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 			String contents = text.getSelectionText();
 			if (contents.length() == 0)
 				contents = text.getText();
-			clipboard.setContents(new Object[] { contents },
-					new Transfer[] { TextTransfer.getInstance() });
+			clipboard.setContents(new Object[] { contents }, new Transfer[] { TextTransfer.getInstance() });
 		} finally {
 			if (clipboard != null) {
 				clipboard.dispose();
@@ -134,8 +128,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 		Clipboard clipboard = null;
 		try {
 			clipboard = new Clipboard(getShell().getDisplay());
-			clipboard.setContents(new Object[] { text.getText() },
-					new Transfer[] { TextTransfer.getInstance() });
+			clipboard.setContents(new Object[] { text.getText() }, new Transfer[] { TextTransfer.getInstance() });
 		} finally {
 			if (clipboard != null) {
 				clipboard.dispose();

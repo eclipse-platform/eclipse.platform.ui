@@ -78,233 +78,217 @@ import org.eclipse.ui.PartInitException;
  */
 public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 
-    /**
-     * Editor input, or <code>null</code> if none.
-     */
-    private IEditorInput editorInput = null;
+	/**
+	 * Editor input, or <code>null</code> if none.
+	 */
+	private IEditorInput editorInput = null;
 
-    /**
-     * Listens to PROP_TITLE property changes in this object until the first call to
-     * setContentDescription. Used for compatibility with old parts that call setTitle
-     * or overload getTitle instead of using setContentDescription.
-     */
-    private IPropertyListener compatibilityTitleListener = (source, propId) -> {
-	    if (propId == IWorkbenchPartConstants.PROP_TITLE) {
-	        setDefaultPartName();
-	    }
+	/**
+	 * Listens to PROP_TITLE property changes in this object until the first call to
+	 * setContentDescription. Used for compatibility with old parts that call
+	 * setTitle or overload getTitle instead of using setContentDescription.
+	 */
+	private IPropertyListener compatibilityTitleListener = (source, propId) -> {
+		if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+			setDefaultPartName();
+		}
 	};
 
-    /**
-     * Creates a new workbench editor.
-     */
-    protected EditorPart() {
-        super();
+	/**
+	 * Creates a new workbench editor.
+	 */
+	protected EditorPart() {
+		super();
 
-        addPropertyListener(compatibilityTitleListener);
-    }
+		addPropertyListener(compatibilityTitleListener);
+	}
 
 	/*
-	 * Saves the contents of this editor.
-	 * <p>
-	 * Subclasses must override this method to implement the open-save-close
-	 * lifecycle for an editor. For greater details, see
-	 * <code>IEditorPart</code>
-	 * </p>
+	 * Saves the contents of this editor. <p> Subclasses must override this method
+	 * to implement the open-save-close lifecycle for an editor. For greater
+	 * details, see <code>IEditorPart</code> </p>
 	 *
 	 * @see IEditorPart
 	 */
-    @Override
+	@Override
 	public abstract void doSave(IProgressMonitor monitor);
 
 	/*
-	 * Saves the contents of this editor to another object.
-	 * <p>
-	 * Subclasses must override this method to implement the open-save-close
-	 * lifecycle for an editor. For greater details, see
-	 * <code>IEditorPart</code>
-	 * </p>
+	 * Saves the contents of this editor to another object. <p> Subclasses must
+	 * override this method to implement the open-save-close lifecycle for an
+	 * editor. For greater details, see <code>IEditorPart</code> </p>
 	 *
 	 * @see IEditorPart
 	 */
-    @Override
+	@Override
 	public abstract void doSaveAs();
 
-    @Override
+	@Override
 	public IEditorInput getEditorInput() {
-        return editorInput;
-    }
+		return editorInput;
+	}
 
-    @Override
+	@Override
 	public IEditorSite getEditorSite() {
-        return (IEditorSite) getSite();
-    }
+		return (IEditorSite) getSite();
+	}
 
-    @Override
+	@Override
 	public String getTitleToolTip() {
-        if (editorInput == null) {
+		if (editorInput == null) {
 			return super.getTitleToolTip();
 		}
 		return editorInput.getToolTipText();
-    }
+	}
 
+	/*
+	 * Initializes the editor part with a site and input. <p> Subclasses of
+	 * <code>EditorPart</code> must implement this method. Within the implementation
+	 * subclasses should verify that the input type is acceptable and then save the
+	 * site and input. Here is sample code: </p> <pre> if (!(input instanceof
+	 * IFileEditorInput)) throw new
+	 * PartInitException("Invalid Input: Must be IFileEditorInput"); setSite(site);
+	 * setInput(input); </pre>
+	 */
+	@Override
+	public abstract void init(IEditorSite site, IEditorInput input) throws PartInitException;
 
-    /*
-     * Initializes the editor part with a site and input.
-     * <p>
-     * Subclasses of <code>EditorPart</code> must implement this method.  Within
-     * the implementation subclasses should verify that the input type is acceptable
-     * and then save the site and input.  Here is sample code:
-     * </p>
-     * <pre>
-     *		if (!(input instanceof IFileEditorInput))
-     *			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
-     *		setSite(site);
-     *		setInput(input);
-     * </pre>
-     */
-    @Override
-	public abstract void init(IEditorSite site, IEditorInput input)
-            throws PartInitException;
-
-
-    /* Returns whether the contents of this editor have changed since the last save
-     * operation.
-     * <p>
-     * Subclasses must override this method to implement the open-save-close lifecycle
-     * for an editor.  For greater details, see <code>IEditorPart</code>
-     * </p>
-     *
-     * @see IEditorPart
-     */
-    @Override
+	/*
+	 * Returns whether the contents of this editor have changed since the last save
+	 * operation. <p> Subclasses must override this method to implement the
+	 * open-save-close lifecycle for an editor. For greater details, see
+	 * <code>IEditorPart</code> </p>
+	 *
+	 * @see IEditorPart
+	 */
+	@Override
 	public abstract boolean isDirty();
 
-
-    /*
-	 * Returns whether the "save as" operation is supported by this editor.
-	 * <p>
+	/*
+	 * Returns whether the "save as" operation is supported by this editor. <p>
 	 * Subclasses must override this method to implement the open-save-close
-	 * lifecycle for an editor. For greater details, see
-	 * <code>IEditorPart</code>
+	 * lifecycle for an editor. For greater details, see <code>IEditorPart</code>
 	 * </p>
 	 *
 	 * @see IEditorPart
 	 */
-    @Override
+	@Override
 	public abstract boolean isSaveAsAllowed();
 
-    /* Returns whether the contents of this editor should be saved when the editor
-     * is closed.
-     * <p>
-     * This method returns <code>true</code> if and only if the editor is dirty
-     * (<code>isDirty</code>).
-     * </p>
-     */
-    @Override
+	/*
+	 * Returns whether the contents of this editor should be saved when the editor
+	 * is closed. <p> This method returns <code>true</code> if and only if the
+	 * editor is dirty (<code>isDirty</code>). </p>
+	 */
+	@Override
 	public boolean isSaveOnCloseNeeded() {
-        return isDirty();
-    }
+		return isDirty();
+	}
 
-    /**
-     * Sets the input to this editor.  This method simply updates the internal
-     * member variable.
-     *
-     * <p>Unlike most of the other set methods on this class, this method does
-     * not fire a property change. Clients that call this method from a subclass
-     * must ensure that they fire an IWorkbenchPartConstants.PROP_INPUT property
-     * change after calling this method but before leaving whatever public method
-     * they are in. Clients that expose this method as public API must fire
-     * the property change within their implementation of setInput.</p>
-     *
-     * <p>Note that firing a property change may cause listeners to immediately
-     * reach back and call methods on this editor. Care should be taken not to
-     * fire the property change until the editor has fully updated its internal
-     * state to reflect the new input.</p>
-     *
-     * @param input the editor input
-     *
-     * @see #setInputWithNotify(IEditorInput)
-     */
-    protected void setInput(IEditorInput input) {
-    	Assert.isLegal(input != null);
-        editorInput = input;
-    }
-
-    /**
-     * Sets the input to this editor and fires a PROP_INPUT property change if
-     * the input has changed.  This is the convenience method implementation.
-     *
-     * <p>Note that firing a property change may cause other objects to reach back
-     * and invoke methods on the editor. Care should be taken not to call this method
-     * until the editor has fully updated its internal state to reflect the
-     * new input.</p>
-     *
-     * @since 3.2
-     *
-     * @param input the editor input
-     */
-    protected void setInputWithNotify(IEditorInput input) {
+	/**
+	 * Sets the input to this editor. This method simply updates the internal member
+	 * variable.
+	 *
+	 * <p>
+	 * Unlike most of the other set methods on this class, this method does not fire
+	 * a property change. Clients that call this method from a subclass must ensure
+	 * that they fire an IWorkbenchPartConstants.PROP_INPUT property change after
+	 * calling this method but before leaving whatever public method they are in.
+	 * Clients that expose this method as public API must fire the property change
+	 * within their implementation of setInput.
+	 * </p>
+	 *
+	 * <p>
+	 * Note that firing a property change may cause listeners to immediately reach
+	 * back and call methods on this editor. Care should be taken not to fire the
+	 * property change until the editor has fully updated its internal state to
+	 * reflect the new input.
+	 * </p>
+	 *
+	 * @param input the editor input
+	 *
+	 * @see #setInputWithNotify(IEditorInput)
+	 */
+	protected void setInput(IEditorInput input) {
 		Assert.isLegal(input != null);
-        editorInput = input;
-        firePropertyChange(PROP_INPUT);
-    }
+		editorInput = input;
+	}
 
-    @Override
+	/**
+	 * Sets the input to this editor and fires a PROP_INPUT property change if the
+	 * input has changed. This is the convenience method implementation.
+	 *
+	 * <p>
+	 * Note that firing a property change may cause other objects to reach back and
+	 * invoke methods on the editor. Care should be taken not to call this method
+	 * until the editor has fully updated its internal state to reflect the new
+	 * input.
+	 * </p>
+	 *
+	 * @since 3.2
+	 *
+	 * @param input the editor input
+	 */
+	protected void setInputWithNotify(IEditorInput input) {
+		Assert.isLegal(input != null);
+		editorInput = input;
+		firePropertyChange(PROP_INPUT);
+	}
+
+	@Override
 	protected void setContentDescription(String description) {
-        if (compatibilityTitleListener != null) {
-            removePropertyListener(compatibilityTitleListener);
-            compatibilityTitleListener = null;
-        }
+		if (compatibilityTitleListener != null) {
+			removePropertyListener(compatibilityTitleListener);
+			compatibilityTitleListener = null;
+		}
 
-        super.setContentDescription(description);
-    }
+		super.setContentDescription(description);
+	}
 
-    @Override
+	@Override
 	protected void setPartName(String partName) {
-        if (compatibilityTitleListener != null) {
-            removePropertyListener(compatibilityTitleListener);
-            compatibilityTitleListener = null;
-        }
+		if (compatibilityTitleListener != null) {
+			removePropertyListener(compatibilityTitleListener);
+			compatibilityTitleListener = null;
+		}
 
-        super.setPartName(partName);
-    }
+		super.setPartName(partName);
+	}
 
-    @Override
-	public void setInitializationData(IConfigurationElement cfig,
-            String propertyName, Object data) {
-        super.setInitializationData(cfig, propertyName, data);
+	@Override
+	public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
+		super.setInitializationData(cfig, propertyName, data);
 
-        setDefaultPartName();
-    }
+		setDefaultPartName();
+	}
 
+	private void setDefaultPartName() {
+		if (compatibilityTitleListener == null) {
+			return;
+		}
 
-    private void setDefaultPartName() {
-        if (compatibilityTitleListener == null) {
-            return;
-        }
+		internalSetPartName(getTitle());
+	}
 
-        internalSetPartName(getTitle());
-    }
-
-    /**
-     * Set the default title for the receiver.
-     */
-    @Override
+	/**
+	 * Set the default title for the receiver.
+	 */
+	@Override
 	void setDefaultTitle() {
-        setTitle(getPartName());
-    }
+		setTitle(getPartName());
+	}
 
-    /**
-     * Checks that the given site is valid for this type of part.
-     * The site for an editor must be an <code>IEditorSite</code>.
-     *
-     * @param site the site to check
-     * @since 3.1
-     */
-    @Override
+	/**
+	 * Checks that the given site is valid for this type of part. The site for an
+	 * editor must be an <code>IEditorSite</code>.
+	 *
+	 * @param site the site to check
+	 * @since 3.1
+	 */
+	@Override
 	protected final void checkSite(IWorkbenchPartSite site) {
-        super.checkSite(site);
-        Assert.isTrue(site instanceof IEditorSite, "The site for an editor must be an IEditorSite"); //$NON-NLS-1$
-    }
+		super.checkSite(site);
+		Assert.isTrue(site instanceof IEditorSite, "The site for an editor must be an IEditorSite"); //$NON-NLS-1$
+	}
 
 }

@@ -27,11 +27,11 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.DisplayItem;
 
 /**
- * A check listener which, upon changing the check state of a contribution
- * item, checks if that item is eligible to be checked (i.e. it is in an
- * available action set), and if not, informs the user of the illegal
- * operation. If the operation is legal, the event is forwarded to the check
- * listener to actually perform a useful action.
+ * A check listener which, upon changing the check state of a contribution item,
+ * checks if that item is eligible to be checked (i.e. it is in an available
+ * action set), and if not, informs the user of the illegal operation. If the
+ * operation is legal, the event is forwarded to the check listener to actually
+ * perform a useful action.
  *
  * @since 3.5
  */
@@ -42,12 +42,9 @@ class UnavailableContributionItemCheckListener implements ICheckStateListener {
 	private ICheckStateListener originalListener;
 
 	/**
-	 * @param viewer
-	 *            the viewer being listened to
-	 * @param originalListener
-	 *            the listener to invoke upon a legal action
-	 * @param dialog
-	 *            parent
+	 * @param viewer           the viewer being listened to
+	 * @param originalListener the listener to invoke upon a legal action
+	 * @param dialog           parent
 	 */
 	public UnavailableContributionItemCheckListener(CustomizePerspectiveDialog dialog, CheckboxTreeViewer viewer,
 			ICheckStateListener originalListener) {
@@ -60,7 +57,8 @@ class UnavailableContributionItemCheckListener implements ICheckStateListener {
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		DisplayItem item = (DisplayItem) event.getElement();
 		ViewerFilter[] filters = viewer.getFilters();
-		boolean isEffectivelyAvailable = CustomizePerspectiveDialog.isEffectivelyAvailable(item, filters.length > 0 ? filters[0] : null);
+		boolean isEffectivelyAvailable = CustomizePerspectiveDialog.isEffectivelyAvailable(item,
+				filters.length > 0 ? filters[0] : null);
 
 		if (isEffectivelyAvailable) {
 			// legal action - invoke the listener which will do actual work
@@ -80,8 +78,8 @@ class UnavailableContributionItemCheckListener implements ICheckStateListener {
 			}
 			MessageBox mb = new MessageBox(viewer.getControl().getShell(), SWT.OK | SWT.ICON_WARNING | SWT.SHEET);
 			mb.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
-			mb.setMessage(NLS.bind(WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText,
-					item.getLabel()));
+			mb.setMessage(
+					NLS.bind(WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText, item.getLabel()));
 			mb.open();
 		} else {
 			MessageBox mb;
@@ -91,8 +89,8 @@ class UnavailableContributionItemCheckListener implements ICheckStateListener {
 				// the case of a command contribution which has its own
 				// enablement rules, e.g. "org.eclipse.ui.window.pinEditor"
 				// command
-				final String errorExplanation = NLS.bind(
-						WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandItemText, item.getLabel());
+				final String errorExplanation = NLS
+						.bind(WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandItemText, item.getLabel());
 				mb.setMessage(errorExplanation);
 			} else {
 				// the case where this item is unavailable because it belongs to
@@ -102,8 +100,9 @@ class UnavailableContributionItemCheckListener implements ICheckStateListener {
 				final String errorExplanation = NLS.bind(
 						WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandGroupText, item.getLabel(),
 						item.getActionSet());
-				final String message = NLS
-						.bind("{0}{1}{1}{2}", new Object[] { errorExplanation, CustomizePerspectiveDialog.NEW_LINE, WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab }); //$NON-NLS-1$
+				final String message = NLS.bind("{0}{1}{1}{2}", //$NON-NLS-1$
+						new Object[] { errorExplanation, CustomizePerspectiveDialog.NEW_LINE,
+								WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab });
 				mb.setMessage(message);
 			}
 			if (mb.open() == SWT.YES) {

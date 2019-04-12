@@ -27,23 +27,18 @@ import org.eclipse.ui.internal.e4.compatibility.E4Util;
 
 public class ClosePerspectiveHandler extends AbstractHandler {
 
-
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
-				.getActiveWorkbenchWindow(event);
+		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		if (activeWorkbenchWindow != null) {
-			WorkbenchPage page = (WorkbenchPage) activeWorkbenchWindow
-					.getActivePage();
+			WorkbenchPage page = (WorkbenchPage) activeWorkbenchWindow.getActivePage();
 			if (page != null) {
 				Map parameters = event.getParameters();
-				String value = (String) parameters
-						.get(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID);
+				String value = (String) parameters.get(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID);
 				if (value == null) {
 					page.closePerspective(page.getPerspective(), true, true);
 				} else {
-					IPerspectiveDescriptor perspective = activeWorkbenchWindow
-							.getWorkbench().getPerspectiveRegistry()
+					IPerspectiveDescriptor perspective = activeWorkbenchWindow.getWorkbench().getPerspectiveRegistry()
 							.findPerspectiveWithId(value);
 					if (perspective != null) {
 						page.closePerspective(perspective, true, true);
@@ -55,12 +50,11 @@ public class ClosePerspectiveHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Closes the specified perspective. Nothing will happen if the given page
-	 * or perspective are <code>null</null>.
-	 * @param page
-	 * 		a reference to the page
-	 * @param persp
-	 * 		the perspective to close
+	 * Closes the specified perspective. Nothing will happen if the given page or
+	 * perspective are <code>null</null>.
+	 * 
+	 * @param page  a reference to the page
+	 * @param persp the perspective to close
 	 */
 	public static void closePerspective(WorkbenchPage page, Object persp) {
 		// if (page != null && persp != null) {

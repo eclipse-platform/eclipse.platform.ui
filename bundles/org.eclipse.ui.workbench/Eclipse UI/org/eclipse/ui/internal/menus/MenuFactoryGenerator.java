@@ -51,11 +51,9 @@ public class MenuFactoryGenerator {
 	}
 
 	public void mergeIntoModel(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions,
-			ArrayList<MTrimContribution> trimContributions) {
+			ArrayList<MToolBarContribution> toolBarContributions, ArrayList<MTrimContribution> trimContributions) {
 		if (location.getPath() == null || location.getPath().length() == 0) {
-			WorkbenchPlugin
-					.log("MenuFactoryGenerator.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
+			WorkbenchPlugin.log("MenuFactoryGenerator.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
 			return;
 		}
 		if (inToolbar()) {
@@ -67,8 +65,7 @@ public class MenuFactoryGenerator {
 				if (query == null || query.length() == 0) {
 					query = "after=additions"; //$NON-NLS-1$
 				}
-				processToolbarChildren(toolBarContributions, configElement, location.getPath(),
-						query);
+				processToolbarChildren(toolBarContributions, configElement, location.getPath(), query);
 			}
 			return;
 		}
@@ -99,10 +96,9 @@ public class MenuFactoryGenerator {
 		menuContributions.add(menuContribution);
 	}
 
-	private void processToolbarChildren(ArrayList<MToolBarContribution> contributions,
-			IConfigurationElement toolbar, String parentId, String position) {
-		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
-				.createToolBarContribution();
+	private void processToolbarChildren(ArrayList<MToolBarContribution> contributions, IConfigurationElement toolbar,
+			String parentId, String position) {
+		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
 		String idContrib = MenuHelper.getId(toolbar);
 		if (idContrib != null && idContrib.length() > 0) {
 			toolBarContribution.setElementId(idContrib);

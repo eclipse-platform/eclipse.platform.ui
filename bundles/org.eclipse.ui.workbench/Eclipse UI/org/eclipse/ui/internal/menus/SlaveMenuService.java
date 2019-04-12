@@ -87,15 +87,14 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 		populateContributionManager(model, mgr, location);
 	}
 
-	public void populateContributionManager(MApplicationElement model, ContributionManager mgr,
-			String location) {
+	public void populateContributionManager(MApplicationElement model, ContributionManager mgr, String location) {
 		if (parentService instanceof SlaveMenuService) {
 			((SlaveMenuService) parentService).populateContributionManager(model, mgr, location);
 		} else if (parentService instanceof WorkbenchMenuService) {
-			((WorkbenchMenuService) parentService)
-					.populateContributionManager(model, mgr, location);
+			((WorkbenchMenuService) parentService).populateContributionManager(model, mgr, location);
 		}
 	}
+
 	/**
 	 * @param mgr
 	 * @see org.eclipse.ui.menus.IMenuService#releaseContributions(org.eclipse.jface.action.ContributionManager)

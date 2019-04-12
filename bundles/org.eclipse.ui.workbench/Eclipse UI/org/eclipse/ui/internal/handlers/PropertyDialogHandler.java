@@ -31,6 +31,7 @@ import org.eclipse.ui.internal.dialogs.PropertyDialog;
 public class PropertyDialogHandler extends AbstractHandler {
 
 	private String initialPageId = null;
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		PreferenceDialog dialog;
@@ -41,10 +42,9 @@ public class PropertyDialogHandler extends AbstractHandler {
 
 		element = currentSelection.getFirstElement();
 
-		if (activeWorkbenchWindow != null){
+		if (activeWorkbenchWindow != null) {
 			shell = activeWorkbenchWindow.getShell();
-			dialog = PropertyDialog.createDialogOn(shell,
-					initialPageId, element);
+			dialog = PropertyDialog.createDialogOn(shell, initialPageId, element);
 			if (dialog != null) {
 				dialog.open();
 			}

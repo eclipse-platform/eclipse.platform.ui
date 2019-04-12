@@ -26,8 +26,8 @@ public class TaskInfo extends SubTaskInfo {
 	int totalWork;
 
 	/**
-	 * Creates a new instance of the receiver with the supplied total work and
-	 * task name.
+	 * Creates a new instance of the receiver with the supplied total work and task
+	 * name.
 	 *
 	 * @param parentJobInfo
 	 * @param infoName
@@ -55,12 +55,9 @@ public class TaskInfo extends SubTaskInfo {
 	 * Adds the amount of work to the receiver. Update a parent monitor by the
 	 * increment scaled to the amount of ticks this represents.
 	 *
-	 * @param workIncrement
-	 *            int the amount of work in the receiver
-	 * @param parentMonitor
-	 *            The IProgressMonitor that is also listening
-	 * @param parentTicks
-	 *            the number of ticks this monitor represents
+	 * @param workIncrement int the amount of work in the receiver
+	 * @param parentMonitor The IProgressMonitor that is also listening
+	 * @param parentTicks   the number of ticks this monitor represents
 	 */
 	void addWork(double workIncrement, IProgressMonitor parentMonitor, int parentTicks) {
 		// Don't bother if we are indeterminate.
@@ -100,8 +97,7 @@ public class TaskInfo extends SubTaskInfo {
 	/**
 	 * Returns the display String without the task name.
 	 *
-	 * @param showProgress
-	 *            Whether or not we are showing progress
+	 * @param showProgress Whether or not we are showing progress
 	 *
 	 * @return String
 	 */
@@ -115,8 +111,8 @@ public class TaskInfo extends SubTaskInfo {
 	}
 
 	/**
-	 * Returns an integer representing the amount of work completed. If progress
-	 * is indeterminate return IProgressMonitor.UNKNOWN.
+	 * Returns an integer representing the amount of work completed. If progress is
+	 * indeterminate return IProgressMonitor.UNKNOWN.
 	 *
 	 * @return int IProgressMonitor.UNKNOWN or a value between 0 and 100.
 	 */

@@ -27,8 +27,7 @@ public class ActiveContextInfoHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
-		EContextService service = part.getSite()
-				.getService(EContextService.class);
+		EContextService service = part.getSite().getService(EContextService.class);
 		for (String id : service.getActiveContextIds()) {
 			System.out.println("activeContext: " + id); //$NON-NLS-1$
 		}

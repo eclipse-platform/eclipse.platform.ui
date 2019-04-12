@@ -32,8 +32,7 @@ public interface IWorkbenchAdapter3 {
 	/**
 	 * Returns the styled text label for the given element.
 	 *
-	 * @param element
-	 *            the element to evaluate the styled string for.
+	 * @param element the element to evaluate the styled string for.
 	 *
 	 * @return the styled string.
 	 */

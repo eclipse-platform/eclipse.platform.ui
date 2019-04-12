@@ -23,14 +23,13 @@ import org.eclipse.jface.util.Util;
 
 /**
  * <p>
- * Instances of <code>ModifierKey</code> represent the four keys on the
- * keyboard recognized by convention as 'modifier keys', those keys typically
- * pressed in combination with themselves and/or a
- * {@link org.eclipse.ui.keys.NaturalKey}.
+ * Instances of <code>ModifierKey</code> represent the four keys on the keyboard
+ * recognized by convention as 'modifier keys', those keys typically pressed in
+ * combination with themselves and/or a {@link org.eclipse.ui.keys.NaturalKey}.
  * </p>
  * <p>
- * <code>ModifierKey</code> objects are immutable. Clients are not permitted
- * to extend this class.
+ * <code>ModifierKey</code> objects are immutable. Clients are not permitted to
+ * extend this class.
  * </p>
  *
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
@@ -42,26 +41,26 @@ import org.eclipse.jface.util.Util;
 public final class ModifierKey extends Key {
 
 	/**
-	 * An internal map used to lookup instances of <code>ModifierKey</code>
-	 * given the formal string representation of a modifier key.
+	 * An internal map used to lookup instances of <code>ModifierKey</code> given
+	 * the formal string representation of a modifier key.
 	 */
 	static SortedMap modifierKeysByName = new TreeMap();
 
 	/**
-	 * The single static instance of <code>ModifierKey</code> which represents
-	 * the 'Alt' key.
+	 * The single static instance of <code>ModifierKey</code> which represents the
+	 * 'Alt' key.
 	 */
 	public static final ModifierKey ALT;
 
 	/**
-	 * The single static instance of <code>ModifierKey</code> which represents
-	 * the 'Command' key.
+	 * The single static instance of <code>ModifierKey</code> which represents the
+	 * 'Command' key.
 	 */
 	public static final ModifierKey COMMAND;
 
 	/**
-	 * The single static instance of <code>ModifierKey</code> which represents
-	 * the 'Ctrl' key.
+	 * The single static instance of <code>ModifierKey</code> which represents the
+	 * 'Ctrl' key.
 	 */
 	public static final ModifierKey CTRL;
 
@@ -86,8 +85,8 @@ public final class ModifierKey extends Key {
 	private static final String M4_NAME = "M4"; //$NON-NLS-1$
 
 	/**
-	 * The single static instance of <code>ModifierKey</code> which represents
-	 * the 'Shift' key.
+	 * The single static instance of <code>ModifierKey</code> which represents the
+	 * 'Shift' key.
 	 */
 	public static final ModifierKey SHIFT;
 
@@ -99,27 +98,19 @@ public final class ModifierKey extends Key {
 		SHIFT = new ModifierKey(lookup.getShift());
 
 		modifierKeysByName.put(ModifierKey.ALT.toString(), ModifierKey.ALT);
-		modifierKeysByName.put(ModifierKey.COMMAND.toString(),
-				ModifierKey.COMMAND);
+		modifierKeysByName.put(ModifierKey.COMMAND.toString(), ModifierKey.COMMAND);
 		modifierKeysByName.put(ModifierKey.CTRL.toString(), ModifierKey.CTRL);
 		modifierKeysByName.put(ModifierKey.SHIFT.toString(), ModifierKey.SHIFT);
-		modifierKeysByName
-				.put(
-						M1_NAME,
-						Util.isMac() ? ModifierKey.COMMAND : ModifierKey.CTRL);
+		modifierKeysByName.put(M1_NAME, Util.isMac() ? ModifierKey.COMMAND : ModifierKey.CTRL);
 		modifierKeysByName.put(M2_NAME, ModifierKey.SHIFT);
 		modifierKeysByName.put(M3_NAME, ModifierKey.ALT);
-		modifierKeysByName
-				.put(
-						M4_NAME,
-						Util.isMac() ? ModifierKey.CTRL : ModifierKey.COMMAND);
+		modifierKeysByName.put(M4_NAME, Util.isMac() ? ModifierKey.CTRL : ModifierKey.COMMAND);
 	}
 
 	/**
 	 * Constructs an instance of <code>ModifierKey</code> given a name.
 	 *
-	 * @param key
-	 *            The key which this key wraps.
+	 * @param key The key which this key wraps.
 	 */
 	private ModifierKey(final int key) {
 		super(key);

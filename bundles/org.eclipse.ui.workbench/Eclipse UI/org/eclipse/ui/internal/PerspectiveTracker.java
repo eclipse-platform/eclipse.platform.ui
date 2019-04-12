@@ -27,103 +27,102 @@ import org.eclipse.ui.PerspectiveAdapter;
  *
  * @since 3.1
  */
-public class PerspectiveTracker extends PerspectiveAdapter implements
-        IPageListener {
+public class PerspectiveTracker extends PerspectiveAdapter implements IPageListener {
 
-    private IWorkbenchWindow window;
+	private IWorkbenchWindow window;
 
-    private IAction action;
+	private IAction action;
 
-    /**
-     * Creates a perspective tracker for the given window.
-     * Subclasses should override <code>update(IPerspectiveDescriptor)</code>
-     * to get notified of perspective changes.
-     *
-     * @param window the window to track
-     */
-    protected PerspectiveTracker(IWorkbenchWindow window) {
-        Assert.isNotNull(window);
-        this.window = window;
-        window.addPageListener(this);
-        window.addPerspectiveListener(this);
-    }
+	/**
+	 * Creates a perspective tracker for the given window. Subclasses should
+	 * override <code>update(IPerspectiveDescriptor)</code> to get notified of
+	 * perspective changes.
+	 *
+	 * @param window the window to track
+	 */
+	protected PerspectiveTracker(IWorkbenchWindow window) {
+		Assert.isNotNull(window);
+		this.window = window;
+		window.addPageListener(this);
+		window.addPerspectiveListener(this);
+	}
 
-    /**
-     * Creates a perspective tracker for the given window which will
-     * enable the given action only when there is an active perspective.
-     *
-     * @param window the window to track
-     * @param action the action to enable or disable
-     */
-    public PerspectiveTracker(IWorkbenchWindow window, IAction action) {
-        this(window);
-        this.action = action;
-        update();
-    }
+	/**
+	 * Creates a perspective tracker for the given window which will enable the
+	 * given action only when there is an active perspective.
+	 *
+	 * @param window the window to track
+	 * @param action the action to enable or disable
+	 */
+	public PerspectiveTracker(IWorkbenchWindow window, IAction action) {
+		this(window);
+		this.action = action;
+		update();
+	}
 
-    /**
-     * Disposes the tracker.
-     */
-    public void dispose() {
-        if (window != null) {
-            window.removePageListener(this);
-            window.removePerspectiveListener(this);
+	/**
+	 * Disposes the tracker.
+	 */
+	public void dispose() {
+		if (window != null) {
+			window.removePageListener(this);
+			window.removePerspectiveListener(this);
 			window = null;
-        }
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public void pageActivated(IWorkbenchPage page) {
-        update();
-    }
+		update();
+	}
 
-    @Override
+	@Override
 	public void pageClosed(IWorkbenchPage page) {
-        update();
-    }
+		update();
+	}
 
-    @Override
+	@Override
 	public void pageOpened(IWorkbenchPage page) {
-        // ignore
-    }
+		// ignore
+	}
 
-    @Override
-	public void perspectiveActivated(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective) {
-        update();
-    }
+	@Override
+	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+		update();
+	}
 
-    /**
-     * Determines the active perspective in the window
-     * and calls <code>update(IPerspectiveDescriptor)</code>.
-     */
-    private void update() {
-        if (window != null) {
-            IPerspectiveDescriptor persp = null;
-            IWorkbenchPage page = window.getActivePage();
-            if (page != null) {
-                persp = page.getPerspective();
-            }
-            update(persp);
-        }
-    }
+	/**
+	 * Determines the active perspective in the window and calls
+	 * <code>update(IPerspectiveDescriptor)</code>.
+	 */
+	private void update() {
+		if (window != null) {
+			IPerspectiveDescriptor persp = null;
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				persp = page.getPerspective();
+			}
+			update(persp);
+		}
+	}
 
-    /**
-     * Performs some function based on the active perspective in the window.
-     * <p>
-     * The default implementation enables the action (if given) if there
-     * is an active perspective, otherwise it disables it.
-     * </p>
-     * <p>
-     * Subclasses may override or extend.
-     * </p>
-     *
-     * @param persp the active perspective in the window, or <code>null</code> if none
-     */
-    protected void update(IPerspectiveDescriptor persp) {
-        if (action != null) {
-            action.setEnabled(persp != null);
-        }
-    }
+	/**
+	 * Performs some function based on the active perspective in the window.
+	 * <p>
+	 * The default implementation enables the action (if given) if there is an
+	 * active perspective, otherwise it disables it.
+	 * </p>
+	 * <p>
+	 * Subclasses may override or extend.
+	 * </p>
+	 *
+	 * @param persp the active perspective in the window, or <code>null</code> if
+	 *              none
+	 */
+	protected void update(IPerspectiveDescriptor persp) {
+		if (action != null) {
+			action.setEnabled(persp != null);
+		}
+	}
 
 }

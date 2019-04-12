@@ -40,8 +40,8 @@ package org.eclipse.ui.services;
 public interface IDisposable {
 
 	/**
-	 * Disposes of this service. All resources must be freed. All listeners must
-	 * be detached. Dispose will only be called once during the life cycle of a
+	 * Disposes of this service. All resources must be freed. All listeners must be
+	 * detached. Dispose will only be called once during the life cycle of a
 	 * service.
 	 */
 	void dispose();

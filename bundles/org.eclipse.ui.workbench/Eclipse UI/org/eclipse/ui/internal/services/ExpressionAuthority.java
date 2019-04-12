@@ -50,23 +50,22 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 
 	/**
 	 * The evaluation context instance to use when evaluating expression. This
-	 * context is shared, and so all calls into <code>sourceChanged</code>
-	 * must happen on the event thread.
+	 * context is shared, and so all calls into <code>sourceChanged</code> must
+	 * happen on the event thread.
 	 */
 	private final IEvaluationContext context;
 
 	/**
-	 * The current state of this authority. This is a child of the
-	 * {@link #context} that has been given the selection as the default
-	 * variable. This value is cleared to <code>null</code> whenever the
-	 * selection changes.
+	 * The current state of this authority. This is a child of the {@link #context}
+	 * that has been given the selection as the default variable. This value is
+	 * cleared to <code>null</code> whenever the selection changes.
 	 */
 	private IEvaluationContext currentState = null;
 
 	/**
-	 * The collection of source providers used by this authority. This
-	 * collection is consulted whenever a contribution is made. This collection
-	 * only contains instances of <code>ISourceProvider</code>.
+	 * The collection of source providers used by this authority. This collection is
+	 * consulted whenever a contribution is made. This collection only contains
+	 * instances of <code>ISourceProvider</code>.
 	 */
 	private final Collection providers = new ArrayList();
 
@@ -82,11 +81,10 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	}
 
 	/**
-	 * Adds a source provider to a list of providers to check when updating.
-	 * This also attaches this authority as a listener to the provider.
+	 * Adds a source provider to a list of providers to check when updating. This
+	 * also attaches this authority as a listener to the provider.
 	 *
-	 * @param provider
-	 *            The provider to add; must not be <code>null</code>.
+	 * @param provider The provider to add; must not be <code>null</code>.
 	 */
 	public final void addSourceProvider(final ISourceProvider provider) {
 		provider.addSourceProviderListener(this);
@@ -101,13 +99,10 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 			final Object variableValue = entry.getValue();
 
 			/*
-			 * Bug 84056. If we update the active workbench window, then we risk
-			 * falling back to that shell when the active shell has registered
-			 * as "none".
+			 * Bug 84056. If we update the active workbench window, then we risk falling
+			 * back to that shell when the active shell has registered as "none".
 			 */
-			if ((variableName != null)
-					&& (!ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME
-							.equals(variableName))) {
+			if ((variableName != null) && (!ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME.equals(variableName))) {
 				changeVariable(variableName, variableValue);
 			}
 		}
@@ -115,14 +110,13 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	}
 
 	/**
-	 * Removes all of the source provider listeners. Subclasses may extend, but
-	 * must not override.
+	 * Removes all of the source provider listeners. Subclasses may extend, but must
+	 * not override.
 	 */
 	public void dispose() {
 		final Iterator providerItr = providers.iterator();
 		while (providerItr.hasNext()) {
-			final ISourceProvider provider = (ISourceProvider) providerItr
-					.next();
+			final ISourceProvider provider = (ISourceProvider) providerItr.next();
 			provider.removeSourceProviderListener(this);
 		}
 
@@ -133,18 +127,15 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * Returns whether at least one of the <code>IEvaluationResultCache</code>
 	 * instances in <code>collection</code> evaluates to <code>true</code>.
 	 *
-	 * @param collection
-	 *            The evaluation result caches to check; must not be
-	 *            <code>null</code>, but may be empty.
-	 * @return <code>true</code> if there is at least one expression that
-	 *         evaluates to <code>true</code>; <code>false</code>
-	 *         otherwise.
+	 * @param collection The evaluation result caches to check; must not be
+	 *                   <code>null</code>, but may be empty.
+	 * @return <code>true</code> if there is at least one expression that evaluates
+	 *         to <code>true</code>; <code>false</code> otherwise.
 	 */
 	protected final boolean evaluate(final Collection collection) {
 		final Iterator iterator = collection.iterator();
 		while (iterator.hasNext()) {
-			final IEvaluationResultCache cache = (IEvaluationResultCache) iterator
-					.next();
+			final IEvaluationResultCache cache = (IEvaluationResultCache) iterator.next();
 			if (evaluate(cache)) {
 				return true;
 			}
@@ -157,11 +148,10 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * Returns whether the <code>IEvaluationResultCache</code> evaluates to
 	 * <code>true</code>.
 	 *
-	 * @param expression
-	 *            The evaluation result cache to check; must not be
-	 *            <code>null</code>.
-	 * @return <code>true</code> if the expression evaluates to
-	 *         <code>true</code>; <code>false</code> otherwise.
+	 * @param expression The evaluation result cache to check; must not be
+	 *                   <code>null</code>.
+	 * @return <code>true</code> if the expression evaluates to <code>true</code>;
+	 *         <code>false</code> otherwise.
 	 */
 	protected final boolean evaluate(final IEvaluationResultCache expression) {
 		final IEvaluationContext contextWithDefaultVariable = getCurrentState();
@@ -170,28 +160,23 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 
 	/**
 	 * Creates a new evaluation context based on the current evaluation context
-	 * (i.e., the current state), and places the current selection as the
-	 * default variable.
+	 * (i.e., the current state), and places the current selection as the default
+	 * variable.
 	 *
-	 * @return An evaluation context that can be used for evaluating
-	 *         expressions; never <code>null</code>.
+	 * @return An evaluation context that can be used for evaluating expressions;
+	 *         never <code>null</code>.
 	 */
 	public final IEvaluationContext getCurrentState() {
 		if (currentState == null) {
-			final Object defaultVariable = context
-					.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+			final Object defaultVariable = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 			final IEvaluationContext contextWithDefaultVariable;
 			if (defaultVariable instanceof IStructuredSelection) {
 				final IStructuredSelection selection = (IStructuredSelection) defaultVariable;
-				contextWithDefaultVariable = new EvaluationContext(context,
-						selection.toList());
-			} else if ((defaultVariable instanceof ISelection)
-					&& (!((ISelection) defaultVariable).isEmpty())) {
-				contextWithDefaultVariable = new EvaluationContext(context,
-						Collections.singleton(defaultVariable));
+				contextWithDefaultVariable = new EvaluationContext(context, selection.toList());
+			} else if ((defaultVariable instanceof ISelection) && (!((ISelection) defaultVariable).isEmpty())) {
+				contextWithDefaultVariable = new EvaluationContext(context, Collections.singleton(defaultVariable));
 			} else {
-				contextWithDefaultVariable = new EvaluationContext(context,
-						Collections.EMPTY_LIST);
+				contextWithDefaultVariable = new EvaluationContext(context, Collections.EMPTY_LIST);
 			}
 			currentState = contextWithDefaultVariable;
 		}
@@ -202,8 +187,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	/**
 	 * Returns the variable of the given name.
 	 *
-	 * @param name
-	 *            The name of the variable to get; must not be <code>null</code>.
+	 * @param name The name of the variable to get; must not be <code>null</code>.
 	 * @return The variable of the given name; <code>null</code> if none.
 	 */
 	protected final Object getVariable(final String name) {
@@ -211,11 +195,10 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	}
 
 	/**
-	 * Removes this source provider from the list, and detaches this authority
-	 * as a listener.
+	 * Removes this source provider from the list, and detaches this authority as a
+	 * listener.
 	 *
-	 * @param provider
-	 *            The provider to remove; must not be <code>null</code>.
+	 * @param provider The provider to remove; must not be <code>null</code>.
 	 */
 	public final void removeSourceProvider(final ISourceProvider provider) {
 		provider.removeSourceProviderListener(this);
@@ -234,12 +217,10 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * Changes the variable of the given name. If the <code>value</code> is
 	 * <code>null</code>, then the variable is removed.
 	 *
-	 * @param name
-	 *            The name of the variable to change; must not be
-	 *            <code>null</code>.
-	 * @param value
-	 *            The new value; the variable should be removed if this is
-	 *            <code>null</code>.
+	 * @param name  The name of the variable to change; must not be
+	 *              <code>null</code>.
+	 * @param value The new value; the variable should be removed if this is
+	 *              <code>null</code>.
 	 */
 	protected final void changeVariable(final String name, final Object value) {
 		if (value == null) {
@@ -251,24 +232,23 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 
 	/**
 	 * Carries out the actual source change notification. It assumed that by the
-	 * time this method is called, <code>getEvaluationContext()</code> is
-	 * up-to-date with the current state of the application.
+	 * time this method is called, <code>getEvaluationContext()</code> is up-to-date
+	 * with the current state of the application.
 	 *
-	 * @param sourcePriority
-	 *            A bit mask of all the source priorities that have changed.
+	 * @param sourcePriority A bit mask of all the source priorities that have
+	 *                       changed.
 	 */
 	protected abstract void sourceChanged(final int sourcePriority);
 
 	/**
-	 * Similar to sourceChanged(int) this notifies the subclass about the
-	 * change, but using the array of source names that changed instead of the
-	 * priority ... int based.
+	 * Similar to sourceChanged(int) this notifies the subclass about the change,
+	 * but using the array of source names that changed instead of the priority ...
+	 * int based.
 	 * <p>
 	 * Clients may override this method.
 	 * </p>
 	 *
-	 * @param sourceNames
-	 *            The array of names that changed.
+	 * @param sourceNames The array of names that changed.
 	 * @since 3.3
 	 */
 	protected void sourceChanged(final String[] sourceNames) {
@@ -276,11 +256,9 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	}
 
 	@Override
-	public final void sourceChanged(final int sourcePriority,
-			final Map sourceValuesByName) {
+	public final void sourceChanged(final int sourcePriority, final Map sourceValuesByName) {
 		// If the selection has changed, invalidate the current state.
-		if (sourceValuesByName
-				.containsKey(ISources.ACTIVE_CURRENT_SELECTION_NAME)) {
+		if (sourceValuesByName.containsKey(ISources.ACTIVE_CURRENT_SELECTION_NAME)) {
 			currentState = null;
 		}
 
@@ -291,13 +269,11 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 			final Object sourceValue = entry.getValue();
 			updateEvaluationContext(sourceName, sourceValue);
 		}
-		sourceChanged(sourcePriority, (String[]) sourceValuesByName.keySet()
-				.toArray(new String[0]));
+		sourceChanged(sourcePriority, (String[]) sourceValuesByName.keySet().toArray(new String[0]));
 	}
 
 	@Override
-	public final void sourceChanged(final int sourcePriority,
-			final String sourceName, final Object sourceValue) {
+	public final void sourceChanged(final int sourcePriority, final String sourceName, final Object sourceValue) {
 		// If the selection has changed, invalidate the current state.
 		if (ISources.ACTIVE_CURRENT_SELECTION_NAME.equals(sourceName)) {
 			currentState = null;
@@ -317,14 +293,13 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	}
 
 	/**
-	 * Updates the evaluation context with the current state from all of the
-	 * source providers.
+	 * Updates the evaluation context with the current state from all of the source
+	 * providers.
 	 */
 	protected final void updateCurrentState() {
 		final Iterator providerItr = providers.iterator();
 		while (providerItr.hasNext()) {
-			final ISourceProvider provider = (ISourceProvider) providerItr
-					.next();
+			final ISourceProvider provider = (ISourceProvider) providerItr.next();
 			final Map currentState = provider.getCurrentState();
 			final Iterator variableItr = currentState.entrySet().iterator();
 			while (variableItr.hasNext()) {
@@ -332,13 +307,10 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 				final String variableName = (String) entry.getKey();
 				final Object variableValue = entry.getValue();
 				/*
-				 * Bug 84056. If we update the active workbench window, then we
-				 * risk falling back to that shell when the active shell has
-				 * registered as "none".
+				 * Bug 84056. If we update the active workbench window, then we risk falling
+				 * back to that shell when the active shell has registered as "none".
 				 */
-				if ((variableName != null)
-						&& (!ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME
-								.equals(variableName))) {
+				if ((variableName != null) && (!ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME.equals(variableName))) {
 					changeVariable(variableName, variableValue);
 				}
 			}
@@ -348,12 +320,10 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	/**
 	 * Updates this authority's evaluation context.
 	 *
-	 * @param name
-	 *            The name of the variable to update; must not be
-	 *            <code>null</code>.
-	 * @param value
-	 *            The new value of the variable. If this value is
-	 *            <code>null</code>, then the variable is removed.
+	 * @param name  The name of the variable to update; must not be
+	 *              <code>null</code>.
+	 * @param value The new value of the variable. If this value is
+	 *              <code>null</code>, then the variable is removed.
 	 */
 	protected void updateEvaluationContext(final String name, final Object value) {
 		if (name != null) {

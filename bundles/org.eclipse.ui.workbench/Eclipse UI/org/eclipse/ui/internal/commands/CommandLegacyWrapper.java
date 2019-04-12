@@ -54,53 +54,45 @@ final class CommandLegacyWrapper implements ICommand {
 	private final Command command;
 
 	/**
-	 * A parameterized representation of the command. This is created lazily. If
-	 * it has not yet been created, it is <code>null</code>.
+	 * A parameterized representation of the command. This is created lazily. If it
+	 * has not yet been created, it is <code>null</code>.
 	 */
 	private ParameterizedCommand parameterizedCommand;
 
 	/**
 	 * Constructs a new <code>CommandWrapper</code>
 	 *
-	 * @param command
-	 *            The command to be wrapped; must not be <code>null</code>.
-	 * @param bindingManager
-	 *            The binding manager to support this wrapper; must not be
-	 *            <code>null</code>.
+	 * @param command        The command to be wrapped; must not be
+	 *                       <code>null</code>.
+	 * @param bindingManager The binding manager to support this wrapper; must not
+	 *                       be <code>null</code>.
 	 */
-	CommandLegacyWrapper(final Command command,
-			final BindingManager bindingManager) {
+	CommandLegacyWrapper(final Command command, final BindingManager bindingManager) {
 		if (command == null) {
-			throw new NullPointerException(
-					"The wrapped command cannot be <code>null</code>."); //$NON-NLS-1$
+			throw new NullPointerException("The wrapped command cannot be <code>null</code>."); //$NON-NLS-1$
 		}
 
 		if (bindingManager == null) {
-			throw new NullPointerException(
-					"A binding manager is required to wrap a command"); //$NON-NLS-1$
+			throw new NullPointerException("A binding manager is required to wrap a command"); //$NON-NLS-1$
 		}
 
 		this.command = command;
 		this.bindingManager = bindingManager;
 	}
 
-
 	@Override
 	public void addCommandListener(final ICommandListener commandListener) {
-		command.addCommandListener(new LegacyCommandListenerWrapper(
-				commandListener, bindingManager));
+		command.addCommandListener(new LegacyCommandListenerWrapper(commandListener, bindingManager));
 	}
 
 	@Override
-	public Object execute(Map parameterValuesByName)
-			throws ExecutionException, NotHandledException {
+	public Object execute(Map parameterValuesByName) throws ExecutionException, NotHandledException {
 		try {
-			IHandlerService service = PlatformUI.getWorkbench().getService(
-					IHandlerService.class);
+			IHandlerService service = PlatformUI.getWorkbench().getService(IHandlerService.class);
 
 			return command.execute(new ExecutionEvent(command,
-					(parameterValuesByName == null) ? Collections.EMPTY_MAP
-									: parameterValuesByName, null, service.getCurrentState()));
+					(parameterValuesByName == null) ? Collections.EMPTY_MAP : parameterValuesByName, null,
+					service.getCurrentState()));
 		} catch (final org.eclipse.core.commands.ExecutionException e) {
 			throw new ExecutionException(e);
 		} catch (final org.eclipse.core.commands.NotHandledException e) {
@@ -113,10 +105,8 @@ final class CommandLegacyWrapper implements ICommand {
 		final Map attributeValues = new HashMap();
 		// avoid using Boolean.valueOf to allow compilation against JCL
 		// Foundation (bug 80053)
-		attributeValues.put(ILegacyAttributeNames.ENABLED,
-				command.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
-		attributeValues.put(ILegacyAttributeNames.HANDLED,
-				command.isHandled() ? Boolean.TRUE : Boolean.FALSE);
+		attributeValues.put(ILegacyAttributeNames.ENABLED, command.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
+		attributeValues.put(ILegacyAttributeNames.HANDLED, command.isHandled() ? Boolean.TRUE : Boolean.FALSE);
 		return attributeValues;
 	}
 
@@ -149,19 +139,14 @@ final class CommandLegacyWrapper implements ICommand {
 		if (parameterizedCommand == null) {
 			parameterizedCommand = new ParameterizedCommand(command, null);
 		}
-		IBindingService bindingService = PlatformUI.getWorkbench().getService(
-				IBindingService.class);
-		final TriggerSequence[] activeBindings = bindingService
-				.getActiveBindingsFor(parameterizedCommand);
+		IBindingService bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
+		final TriggerSequence[] activeBindings = bindingService.getActiveBindingsFor(parameterizedCommand);
 		final int activeBindingsCount = activeBindings.length;
 		for (int i = 0; i < activeBindingsCount; i++) {
 			final TriggerSequence triggerSequence = activeBindings[i];
 			if (triggerSequence instanceof org.eclipse.jface.bindings.keys.KeySequence) {
-				legacyBindings
-						.add(new KeySequenceBinding(
-								KeySequence
-										.getInstance((org.eclipse.jface.bindings.keys.KeySequence) triggerSequence),
-								0));
+				legacyBindings.add(new KeySequenceBinding(
+						KeySequence.getInstance((org.eclipse.jface.bindings.keys.KeySequence) triggerSequence), 0));
 			}
 		}
 
@@ -188,10 +173,8 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public void removeCommandListener(
-			final ICommandListener commandListener) {
-		command.removeCommandListener(new LegacyCommandListenerWrapper(
-				commandListener, bindingManager));
+	public void removeCommandListener(final ICommandListener commandListener) {
+		command.removeCommandListener(new LegacyCommandListenerWrapper(commandListener, bindingManager));
 	}
 
 	@Override

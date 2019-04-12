@@ -29,20 +29,17 @@ package org.eclipse.ui;
 public interface IPerspectiveListener4 extends IPerspectiveListener3 {
 	/**
 	 * <p>
-	 * Notifies this listener that a perspective in the given page is about to
-	 * be deactivated.
+	 * Notifies this listener that a perspective in the given page is about to be
+	 * deactivated.
 	 * </p>
 	 * <p>
 	 * Note: This does not have the ability to veto a perspective deactivation.
 	 * </p>
 	 *
-	 * @param page
-	 *            the page containing the deactivated perspective
-	 * @param perspective
-	 *            the perspective descriptor that was deactivated
+	 * @param page        the page containing the deactivated perspective
+	 * @param perspective the perspective descriptor that was deactivated
 	 * @see IWorkbenchPage#setPerspective(IPerspectiveDescriptor)
 	 */
-	void perspectivePreDeactivate(IWorkbenchPage page,
-			IPerspectiveDescriptor perspective);
+	void perspectivePreDeactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective);
 
 }

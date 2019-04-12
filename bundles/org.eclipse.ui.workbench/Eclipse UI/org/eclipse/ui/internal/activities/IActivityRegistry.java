@@ -18,8 +18,7 @@ import java.util.List;
 
 public interface IActivityRegistry {
 
-    void addActivityRegistryListener(
-            IActivityRegistryListener activityRegistryListener);
+	void addActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
 
 	List<ActivityRequirementBindingDefinition> getActivityRequirementBindingDefinitions();
 
@@ -33,6 +32,5 @@ public interface IActivityRegistry {
 
 	List<String> getDefaultEnabledActivities();
 
-    void removeActivityRegistryListener(
-            IActivityRegistryListener activityRegistryListener);
+	void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
 }

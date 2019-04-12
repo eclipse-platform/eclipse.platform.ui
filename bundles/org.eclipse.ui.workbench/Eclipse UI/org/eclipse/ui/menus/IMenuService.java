@@ -43,27 +43,25 @@ public interface IMenuService extends IServiceWithSources {
 
 	/**
 	 * Contribute and initialize the contribution factory. This should only be
-	 * called once per factory. After the call, the factory should be treated as
-	 * an unmodifiable object.
+	 * called once per factory. After the call, the factory should be treated as an
+	 * unmodifiable object.
 	 * <p>
-	 * <b>Note:</b> factories should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> factories should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
 	 *
-	 * @param factory
-	 *            the contribution factory. Must not be <code>null</code>
+	 * @param factory the contribution factory. Must not be <code>null</code>
 	 * @see #removeContributionFactory(AbstractContributionFactory)
 	 */
 	void addContributionFactory(AbstractContributionFactory factory);
 
 	/**
-	 * Remove the contributed factory from the menu service. If the factory is
-	 * not contained by this service, this call does nothing.
+	 * Remove the contributed factory from the menu service. If the factory is not
+	 * contained by this service, this call does nothing.
 	 *
-	 * @param factory
-	 *            the contribution factory to remove. Must not be
-	 *            <code>null</code>.
+	 * @param factory the contribution factory to remove. Must not be
+	 *                <code>null</code>.
 	 */
 	void removeContributionFactory(AbstractContributionFactory factory);
 
@@ -73,20 +71,17 @@ public interface IMenuService extends IServiceWithSources {
 	 * <code>AbstractContributionFactory</code>s that are stored against the
 	 * provided location.
 	 *
-	 * @param mgr
-	 *            The ContributionManager to populate
-	 * @param location
-	 *            The starting location to begin populating this contribution
-	 *            manager. The format is the Menu API URI format.
+	 * @param mgr      The ContributionManager to populate
+	 * @param location The starting location to begin populating this contribution
+	 *                 manager. The format is the Menu API URI format.
 	 * @see #releaseContributions(ContributionManager)
 	 */
-	void populateContributionManager(ContributionManager mgr,
-			String location);
+	void populateContributionManager(ContributionManager mgr, String location);
 
 	/**
 	 * Before calling dispose() on a ContributionManager populated by the menu
-	 * service, you must inform the menu service to release its contributions.
-	 * This takes care of unregistering any IContributionItems that have their
+	 * service, you must inform the menu service to release its contributions. This
+	 * takes care of unregistering any IContributionItems that have their
 	 * visibleWhen clause managed by this menu service.
 	 * <p>
 	 * This will not update the ContributionManager (and any widgets). It will
@@ -94,8 +89,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * ContributionManager.
 	 * </p>
 	 *
-	 * @param mgr
-	 *            The manager that was populated by a call to
+	 * @param mgr The manager that was populated by a call to
 	 *            {@link #populateContributionManager(ContributionManager, String)}
 	 */
 	void releaseContributions(ContributionManager mgr);

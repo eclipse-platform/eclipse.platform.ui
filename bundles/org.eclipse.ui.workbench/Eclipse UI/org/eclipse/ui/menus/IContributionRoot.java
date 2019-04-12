@@ -34,26 +34,20 @@ public interface IContributionRoot {
 	 * called for all top-level elements created in
 	 * {@link AbstractContributionFactory#createContributionItems(org.eclipse.ui.services.IServiceLocator, IContributionRoot)}
 	 *
-	 * @param item
-	 *            the item to add
-	 * @param visibleWhen
-	 *            the visibility expression. May be <code>null</code>.
+	 * @param item        the item to add
+	 * @param visibleWhen the visibility expression. May be <code>null</code>.
 	 */
-	void addContributionItem(IContributionItem item,
-			Expression visibleWhen);
+	void addContributionItem(IContributionItem item, Expression visibleWhen);
 
 	/**
-	 * Registers visibilty for arbitrary {@link IContributionItem} instances
-	 * that are <b>NOT</b> direct children of this container. Ie: children of a
-	 * {@link IContributionManager} that has been previously registered with a
-	 * call to {{@link #addContributionItem(IContributionItem, Expression)}.
+	 * Registers visibilty for arbitrary {@link IContributionItem} instances that
+	 * are <b>NOT</b> direct children of this container. Ie: children of a
+	 * {@link IContributionManager} that has been previously registered with a call
+	 * to {{@link #addContributionItem(IContributionItem, Expression)}.
 	 *
-	 * @param item
-	 *            the item for which to register a visibility clause
-	 * @param visibleWhen
-	 *            the visibility expression. May be <code>null</code> in which
-	 *            case this method is a no-op.
+	 * @param item        the item for which to register a visibility clause
+	 * @param visibleWhen the visibility expression. May be <code>null</code> in
+	 *                    which case this method is a no-op.
 	 */
-	void registerVisibilityForChild(IContributionItem item,
-			Expression visibleWhen);
+	void registerVisibilityForChild(IContributionItem item, Expression visibleWhen);
 }

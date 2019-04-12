@@ -51,8 +51,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * IInstallationPageContainer.
 	 * </p>
 	 *
-	 * @param newMessage
-	 *            the message, or <code>null</code> to clear the message
+	 * @param newMessage the message, or <code>null</code> to clear the message
 	 */
 	@Override
 	public void setMessage(String newMessage) {
@@ -60,8 +59,8 @@ public abstract class InstallationPage extends DialogPage {
 	}
 
 	/**
-	 * Sets the message for this page with an indication of what type of message
-	 * it is.
+	 * Sets the message for this page with an indication of what type of message it
+	 * is.
 	 * <p>
 	 * The valid message types are one of <code>NONE</code>,
 	 * <code>INFORMATION</code>,<code>WARNING</code>, or <code>ERROR</code>.
@@ -71,10 +70,8 @@ public abstract class InstallationPage extends DialogPage {
 	 * IInstallationPageContainer.
 	 * </p>
 	 *
-	 * @param newMessage
-	 *            the message, or <code>null</code> to clear the message
-	 * @param newType
-	 *            the message type
+	 * @param newMessage the message, or <code>null</code> to clear the message
+	 * @param newType    the message type
 	 */
 	@Override
 	public void setMessage(String newMessage, int newType) {
@@ -82,14 +79,13 @@ public abstract class InstallationPage extends DialogPage {
 	}
 
 	/**
-	 * Set the page container that is hosting this page. This method is
-	 * typically called by the container itself so that the pages have access to
-	 * the container when registering buttons using
+	 * Set the page container that is hosting this page. This method is typically
+	 * called by the container itself so that the pages have access to the container
+	 * when registering buttons using
 	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
 	 * or performing other container-related tasks.
 	 *
-	 * @param container
-	 *            the container that is hosting the page.
+	 * @param container the container that is hosting the page.
 	 */
 	public void setPageContainer(IInstallationPageContainer container) {
 		this.container = container;
@@ -98,8 +94,7 @@ public abstract class InstallationPage extends DialogPage {
 	/**
 	 * Create the buttons that belong to this page using the specified parent.
 	 *
-	 * @param parent
-	 *            the parent to use for the buttons.
+	 * @param parent the parent to use for the buttons.
 	 *
 	 * @see #createButton(Composite, int, String)
 	 * @see #buttonPressed(int)
@@ -113,17 +108,14 @@ public abstract class InstallationPage extends DialogPage {
 	 * <p>
 	 * This method creates a standard push button, registers it for selection
 	 * events, and registers it as a button belonging to this page. Subclasses
-	 * should not make any assumptions about the visibility, layout, or
-	 * presentation of this button inside the dialog.
+	 * should not make any assumptions about the visibility, layout, or presentation
+	 * of this button inside the dialog.
 	 * </p>
 	 *
-	 * @param parent
-	 *            the parent composite
-	 * @param id
-	 *            the id of the button (see <code>IDialogConstants.*_ID</code>
-	 *            constants for standard dialog button ids)
-	 * @param label
-	 *            the label from the button
+	 * @param parent the parent composite
+	 * @param id     the id of the button (see <code>IDialogConstants.*_ID</code>
+	 *               constants for standard dialog button ids)
+	 * @param label  the label from the button
 	 * @return the new button
 	 *
 	 * @see #createPageButtons(Composite)
@@ -133,7 +125,8 @@ public abstract class InstallationPage extends DialogPage {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(label);
 		button.setData(Integer.valueOf(id));
-		button.addSelectionListener(widgetSelectedAdapter(event -> buttonPressed(((Integer) event.widget.getData()).intValue())));
+		button.addSelectionListener(
+				widgetSelectedAdapter(event -> buttonPressed(((Integer) event.widget.getData()).intValue())));
 		container.registerPageButton(this, button);
 		return button;
 	}
@@ -143,16 +136,15 @@ public abstract class InstallationPage extends DialogPage {
 	 * Subclasses should extend this method to handle the buttons created in
 	 * {@link #createButton(Composite, int, String)}
 	 *
-	 * @param buttonId
-	 *            the id of the button that was pressed (see
-	 *            <code>IDialogConstants.*_ID</code> constants)
+	 * @param buttonId the id of the button that was pressed (see
+	 *                 <code>IDialogConstants.*_ID</code> constants)
 	 */
 	protected void buttonPressed(int buttonId) {
 	}
 
 	/**
-	 * Get the page container that is hosting this page. This method is
-	 * typically used when registering buttons using
+	 * Get the page container that is hosting this page. This method is typically
+	 * used when registering buttons using
 	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
 	 * or performing other container-related tasks.
 	 *

@@ -49,8 +49,8 @@ import org.eclipse.ui.wizards.IWizardRegistry;
 /**
  * Abstract handler for commands that launch the import, export and new wizards.
  * <p>
- * This class is only intended to be extended by the three inner classes (<code>Export</code>,
- * <code>Import</code> and <code>New</code>) defined here.
+ * This class is only intended to be extended by the three inner classes
+ * (<code>Export</code>, <code>Import</code> and <code>New</code>) defined here.
  * </p>
  *
  * @since 3.2
@@ -61,8 +61,8 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 	 * Default handler for launching export wizards.
 	 */
 	public static final class Export extends WizardHandler {
-	    private static final int SIZING_WIZARD_WIDTH = 470;
-	    private static final int SIZING_WIZARD_HEIGHT = 550;
+		private static final int SIZING_WIZARD_WIDTH = 470;
+		private static final int SIZING_WIZARD_HEIGHT = 550;
 
 		@Override
 		protected String getWizardIdParameterId() {
@@ -76,24 +76,19 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 
 		@Override
 		protected void executeHandler(ExecutionEvent event) {
-			IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
-					.getActiveWorkbenchWindow(event);
+			IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 			if (activeWorkbenchWindow == null) {
 				// action has been disposed
 				return;
 			}
-			ImportExportWizard wizard = new ImportExportWizard(
-					ImportExportWizard.EXPORT);
+			ImportExportWizard wizard = new ImportExportWizard(ImportExportWizard.EXPORT);
 			IStructuredSelection selectionToPass = getSelectionToUse(event);
 
 			wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
-			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
-					.getDialogSettings();
-			IDialogSettings wizardSettings = workbenchSettings
-					.getSection("ImportExportAction"); //$NON-NLS-1$
+			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+			IDialogSettings wizardSettings = workbenchSettings.getSection("ImportExportAction"); //$NON-NLS-1$
 			if (wizardSettings == null) {
-				wizardSettings = workbenchSettings
-						.addNewSection("ImportExportAction"); //$NON-NLS-1$
+				wizardSettings = workbenchSettings.addNewSection("ImportExportAction"); //$NON-NLS-1$
 			}
 			wizard.setDialogSettings(wizardSettings);
 			wizard.setForcePreviousAndNextButtons(true);
@@ -101,11 +96,10 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			Shell parent = activeWorkbenchWindow.getShell();
 			WizardDialog dialog = new WizardDialog(parent, wizard);
 			dialog.create();
-			dialog.getShell().setSize(
-					Math.max(SIZING_WIZARD_WIDTH, dialog.getShell()
-							.getSize().x), SIZING_WIZARD_HEIGHT);
-			activeWorkbenchWindow.getWorkbench().getHelpSystem().setHelp(
-					dialog.getShell(), IWorkbenchHelpContextIds.EXPORT_WIZARD);
+			dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
+					SIZING_WIZARD_HEIGHT);
+			activeWorkbenchWindow.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+					IWorkbenchHelpContextIds.EXPORT_WIZARD);
 			dialog.open();
 		}
 
@@ -115,8 +109,8 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 	 * Default handler for launching import wizards.
 	 */
 	public static final class Import extends WizardHandler {
-	    private static final int SIZING_WIZARD_WIDTH = 470;
-	    private static final int SIZING_WIZARD_HEIGHT = 550;
+		private static final int SIZING_WIZARD_WIDTH = 470;
+		private static final int SIZING_WIZARD_HEIGHT = 550;
 
 		@Override
 		protected String getWizardIdParameterId() {
@@ -131,34 +125,30 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 		@Override
 		protected void executeHandler(ExecutionEvent event) {
 			IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
-	        if (activeWorkbenchWindow == null) {
-	            // action has been disposed
-	            return;
-	        }
-	        ImportExportWizard wizard = new ImportExportWizard(ImportExportWizard.IMPORT);
+			if (activeWorkbenchWindow == null) {
+				// action has been disposed
+				return;
+			}
+			ImportExportWizard wizard = new ImportExportWizard(ImportExportWizard.IMPORT);
 			IStructuredSelection selectionToPass = getSelectionToUse(event);
 
-	        wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
-	        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
-	                .getDialogSettings();
-	        IDialogSettings wizardSettings = workbenchSettings
-	                .getSection("ImportExportAction"); //$NON-NLS-1$
-	        if (wizardSettings == null) {
-				wizardSettings = workbenchSettings
-	                    .addNewSection("ImportExportAction"); //$NON-NLS-1$
+			wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
+			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+			IDialogSettings wizardSettings = workbenchSettings.getSection("ImportExportAction"); //$NON-NLS-1$
+			if (wizardSettings == null) {
+				wizardSettings = workbenchSettings.addNewSection("ImportExportAction"); //$NON-NLS-1$
 			}
-	        wizard.setDialogSettings(wizardSettings);
-	        wizard.setForcePreviousAndNextButtons(true);
+			wizard.setDialogSettings(wizardSettings);
+			wizard.setForcePreviousAndNextButtons(true);
 
-	        Shell parent = activeWorkbenchWindow.getShell();
-	        WizardDialog dialog = new WizardDialog(parent, wizard);
-	        dialog.create();
-	        dialog.getShell().setSize(
-	                Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
-	                SIZING_WIZARD_HEIGHT);
-	        activeWorkbenchWindow.getWorkbench().getHelpSystem().setHelp(
-					dialog.getShell(), IWorkbenchHelpContextIds.IMPORT_WIZARD);
-	        dialog.open();
+			Shell parent = activeWorkbenchWindow.getShell();
+			WizardDialog dialog = new WizardDialog(parent, wizard);
+			dialog.create();
+			dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
+					SIZING_WIZARD_HEIGHT);
+			activeWorkbenchWindow.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+					IWorkbenchHelpContextIds.IMPORT_WIZARD);
+			dialog.open();
 		}
 
 	}
@@ -169,20 +159,20 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 	public static final class New extends WizardHandler {
 
 		/**
-	     * The wizard dialog width
-	     */
-	    private static final int SIZING_WIZARD_WIDTH = 500;
+		 * The wizard dialog width
+		 */
+		private static final int SIZING_WIZARD_WIDTH = 500;
 
-	    /**
-	     * The wizard dialog height
-	     */
-	    private static final int SIZING_WIZARD_HEIGHT = 500;
+		/**
+		 * The wizard dialog height
+		 */
+		private static final int SIZING_WIZARD_HEIGHT = 500;
 
-	    /**
-	     * The id of the category to show or <code>null</code> to
-	     * show all the categories.
-	     */
-	    private String categoryId = null;
+		/**
+		 * The id of the category to show or <code>null</code> to show all the
+		 * categories.
+		 */
+		private String categoryId = null;
 
 		@Override
 		protected String getWizardIdParameterId() {
@@ -194,89 +184,87 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			return PlatformUI.getWorkbench().getNewWizardRegistry();
 		}
 
-	    /**
-	     * Returns the id of the category of wizards to show
-	     * or <code>null</code> to show all categories.
-	     * @return String
-	     */
-	    public String getCategoryId() {
-	        return categoryId;
-	    }
+		/**
+		 * Returns the id of the category of wizards to show or <code>null</code> to
+		 * show all categories.
+		 * 
+		 * @return String
+		 */
+		public String getCategoryId() {
+			return categoryId;
+		}
 
-	    /**
-	     * Sets the id of the category of wizards to show
-	     * or <code>null</code> to show all categories.
-	     * @param id
-	     */
-	    public void setCategoryId(String id) {
-	        categoryId = id;
-	    }
+		/**
+		 * Sets the id of the category of wizards to show or <code>null</code> to show
+		 * all categories.
+		 * 
+		 * @param id
+		 */
+		public void setCategoryId(String id) {
+			categoryId = id;
+		}
 
-	    @Override
+		@Override
 		protected IStructuredSelection getSelectionToUse(ExecutionEvent event) {
-	        ISelection selection = HandlerUtil.getCurrentSelection(event);
-	        IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
-	        if (selection instanceof IStructuredSelection) {
-	            selectionToPass = (IStructuredSelection) selection;
-	        } else {
-	            // @issue the following is resource-specific legacy code
-	            // Build the selection from the IFile of the editor
-	            Class resourceClass = LegacyResourceSupport.getResourceClass();
-	            if (resourceClass != null) {
-	            	IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
-	                IWorkbenchPart part = activeWorkbenchWindow.getPartService()
-	                        .getActivePart();
-	                if (part instanceof IEditorPart) {
-	                    IEditorInput input = ((IEditorPart) part).getEditorInput();
+			ISelection selection = HandlerUtil.getCurrentSelection(event);
+			IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
+			if (selection instanceof IStructuredSelection) {
+				selectionToPass = (IStructuredSelection) selection;
+			} else {
+				// @issue the following is resource-specific legacy code
+				// Build the selection from the IFile of the editor
+				Class resourceClass = LegacyResourceSupport.getResourceClass();
+				if (resourceClass != null) {
+					IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
+					IWorkbenchPart part = activeWorkbenchWindow.getPartService().getActivePart();
+					if (part instanceof IEditorPart) {
+						IEditorInput input = ((IEditorPart) part).getEditorInput();
 						Object resource = Adapters.adapt(input, resourceClass);
-	                    if (resource != null) {
-	                        selectionToPass = new StructuredSelection(resource);
-	                    }
-	                }
-	            }
-	        }
-	        return selectionToPass;
-	    }
+						if (resource != null) {
+							selectionToPass = new StructuredSelection(resource);
+						}
+					}
+				}
+			}
+			return selectionToPass;
+		}
 
 		@Override
 		protected void executeHandler(ExecutionEvent event) {
 			IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
-	        if (activeWorkbenchWindow == null) {
-	            // action has been disposed
-	            return;
-	        }
-	        NewWizard wizard = new NewWizard();
-	        wizard.setCategoryId(categoryId);
+			if (activeWorkbenchWindow == null) {
+				// action has been disposed
+				return;
+			}
+			NewWizard wizard = new NewWizard();
+			wizard.setCategoryId(categoryId);
 
 			IStructuredSelection selectionToPass = getSelectionToUse(event);
-	        wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
+			wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
 
-	        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
-	                .getDialogSettings();
-	        IDialogSettings wizardSettings = workbenchSettings
-	                .getSection("NewWizardAction"); //$NON-NLS-1$
-	        if (wizardSettings == null) {
+			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+			IDialogSettings wizardSettings = workbenchSettings.getSection("NewWizardAction"); //$NON-NLS-1$
+			if (wizardSettings == null) {
 				wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$
 			}
-	        wizard.setDialogSettings(wizardSettings);
-	        wizard.setForcePreviousAndNextButtons(true);
+			wizard.setDialogSettings(wizardSettings);
+			wizard.setForcePreviousAndNextButtons(true);
 
-	        Shell parent = activeWorkbenchWindow.getShell();
-	        WizardDialog dialog = new WizardDialog(parent, wizard);
-	        dialog.create();
-	        dialog.getShell().setSize(
-	                Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
-	                SIZING_WIZARD_HEIGHT);
-	        activeWorkbenchWindow.getWorkbench().getHelpSystem().setHelp(
-					dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD);
-	        dialog.open();
+			Shell parent = activeWorkbenchWindow.getShell();
+			WizardDialog dialog = new WizardDialog(parent, wizard);
+			dialog.create();
+			dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
+					SIZING_WIZARD_HEIGHT);
+			activeWorkbenchWindow.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+					IWorkbenchHelpContextIds.NEW_WIZARD);
+			dialog.open();
 		}
 
 	}
 
-
 	/**
 	 * This is the execution of the handler to open a wizard dialog.
+	 * 
 	 * @param event
 	 */
 	protected abstract void executeHandler(ExecutionEvent event);
@@ -286,16 +274,14 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 
 		String wizardId = event.getParameter(getWizardIdParameterId());
 
-		IWorkbenchWindow activeWindow = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+		IWorkbenchWindow activeWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		if (wizardId == null) {
 			executeHandler(event);
 		} else {
 
 			IWizardRegistry wizardRegistry = getWizardRegistry();
-			IWizardDescriptor wizardDescriptor = wizardRegistry
-					.findWizard(wizardId);
+			IWizardDescriptor wizardDescriptor = wizardRegistry.findWizard(wizardId);
 			if (wizardDescriptor == null) {
 				throw new ExecutionException("unknown wizard: " + wizardId); //$NON-NLS-1$
 			}
@@ -324,9 +310,11 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 	}
 
 	/**
-	 * Returns a structured selection based on the event to initialize the
-	 * wizard with.
-	 * @param event the event object containing information about the current state of the application
+	 * Returns a structured selection based on the event to initialize the wizard
+	 * with.
+	 * 
+	 * @param event the event object containing information about the current state
+	 *              of the application
 	 * @return the current structured selection of the application
 	 */
 	protected IStructuredSelection getSelectionToUse(ExecutionEvent event) {
@@ -352,11 +340,11 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 	}
 
 	/**
-	 * Returns the id of the parameter used to indicate which wizard this
-	 * command should launch.
+	 * Returns the id of the parameter used to indicate which wizard this command
+	 * should launch.
 	 *
-	 * @return The id of the parameter used to indicate which wizard this
-	 *         command should launch.
+	 * @return The id of the parameter used to indicate which wizard this command
+	 *         should launch.
 	 */
 	protected abstract String getWizardIdParameterId();
 

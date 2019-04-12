@@ -25,102 +25,101 @@ import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.services.IDisposable;
 
 /**
- * A PluginActionSet is a proxy for an action set defined in XML.
- * It creates a PluginAction for each action and does the required
- * cleanup on dispose.
+ * A PluginActionSet is a proxy for an action set defined in XML. It creates a
+ * PluginAction for each action and does the required cleanup on dispose.
  */
 public class PluginActionSet implements IActionSet {
-    private ActionSetDescriptor desc;
+	private ActionSetDescriptor desc;
 
-    private ArrayList pluginActions = new ArrayList(4);
+	private ArrayList pluginActions = new ArrayList(4);
 
-    private ActionSetActionBars bars;
+	private ActionSetActionBars bars;
 
 	private IDisposable disposableBuilder;
 
-    /**
-     * PluginActionSet constructor comment.
-     *
-     * @param desc the descriptor
-     */
-    public PluginActionSet(ActionSetDescriptor desc) {
-        super();
-        this.desc = desc;
-    }
+	/**
+	 * PluginActionSet constructor comment.
+	 *
+	 * @param desc the descriptor
+	 */
+	public PluginActionSet(ActionSetDescriptor desc) {
+		super();
+		this.desc = desc;
+	}
 
-    /**
-     * Adds one plugin action ref to the list.
-     *
-     * @param action the action
-     */
-    public void addPluginAction(WWinPluginAction action) {
-        pluginActions.add(action);
-    }
+	/**
+	 * Adds one plugin action ref to the list.
+	 *
+	 * @param action the action
+	 */
+	public void addPluginAction(WWinPluginAction action) {
+		pluginActions.add(action);
+	}
 
-    /**
-     * Returns the list of plugin actions for the set.
-     *
-     * @return the actions for the set
-     */
-    public IAction[] getPluginActions() {
-        IAction result[] = new IAction[pluginActions.size()];
-        pluginActions.toArray(result);
-        return result;
-    }
+	/**
+	 * Returns the list of plugin actions for the set.
+	 *
+	 * @return the actions for the set
+	 */
+	public IAction[] getPluginActions() {
+		IAction result[] = new IAction[pluginActions.size()];
+		pluginActions.toArray(result);
+		return result;
+	}
 
-    /**
-     * Disposes of this action set.
-     */
-    @Override
+	/**
+	 * Disposes of this action set.
+	 */
+	@Override
 	public void dispose() {
-        Iterator iter = pluginActions.iterator();
-        while (iter.hasNext()) {
-            WWinPluginAction action = (WWinPluginAction) iter.next();
-            action.dispose();
-        }
-        pluginActions.clear();
-        bars = null;
+		Iterator iter = pluginActions.iterator();
+		while (iter.hasNext()) {
+			WWinPluginAction action = (WWinPluginAction) iter.next();
+			action.dispose();
+		}
+		pluginActions.clear();
+		bars = null;
 		if (disposableBuilder != null) {
 			disposableBuilder.dispose();
 			disposableBuilder = null;
 		}
-    }
+	}
 
-    /**
-     */
-    /* package */ActionSetActionBars getBars() {
-        return bars;
-    }
+	/**
+	 */
+	/* package */ActionSetActionBars getBars() {
+		return bars;
+	}
 
-    /**
-     * Returns the configuration element.
-     *
-     * @return the configuration element
-     */
-    public IConfigurationElement getConfigElement() {
-        return desc.getConfigurationElement();
-    }
+	/**
+	 * Returns the configuration element.
+	 *
+	 * @return the configuration element
+	 */
+	public IConfigurationElement getConfigElement() {
+		return desc.getConfigurationElement();
+	}
 
-    /**
-     * Returns the underlying descriptor.
-     *
-     * @return the descriptor
-     */
-    public ActionSetDescriptor getDesc() {
-        return desc;
-    }
+	/**
+	 * Returns the underlying descriptor.
+	 *
+	 * @return the descriptor
+	 */
+	public ActionSetDescriptor getDesc() {
+		return desc;
+	}
 
-    /**
-     * Initializes this action set, which is expected to add it actions as required
-     * to the given workbench window and action bars.
-     *
-     * @param window the workbench window
-     * @param bars the action bars
-     */
-    @Override
+	/**
+	 * Initializes this action set, which is expected to add it actions as required
+	 * to the given workbench window and action bars.
+	 *
+	 * @param window the workbench window
+	 * @param bars   the action bars
+	 */
+	@Override
 	public void init(IWorkbenchWindow window, IActionBars bars) {
-        this.bars = (ActionSetActionBars) bars;
-    }
+		this.bars = (ActionSetActionBars) bars;
+	}
 
 	public void setBuilder(IDisposable builder) {
 		if (disposableBuilder != null) {

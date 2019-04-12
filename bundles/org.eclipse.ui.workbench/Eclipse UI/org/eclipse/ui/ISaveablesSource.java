@@ -61,32 +61,31 @@ import org.eclipse.ui.part.EditorPart;
 public interface ISaveablesSource {
 
 	/**
-	 * Returns the saveables presented by the workbench part. If the return
-	 * value of this method changes during the lifetime of
-	 * this part (i.e. after initialization and control creation but before disposal)
-	 * the part must notify an implicit listener using
+	 * Returns the saveables presented by the workbench part. If the return value of
+	 * this method changes during the lifetime of this part (i.e. after
+	 * initialization and control creation but before disposal) the part must notify
+	 * an implicit listener using
 	 * {@link ISaveablesLifecycleListener#handleLifecycleEvent(SaveablesLifecycleEvent)}.
 	 * <p>
-	 * Additions of saveables to the list of saveables of this part are
-	 * announced using an event of type
-	 * {@link SaveablesLifecycleEvent#POST_OPEN}. Removals are announced in a
-	 * two-stage process, first using an event of type
+	 * Additions of saveables to the list of saveables of this part are announced
+	 * using an event of type {@link SaveablesLifecycleEvent#POST_OPEN}. Removals
+	 * are announced in a two-stage process, first using an event of type
 	 * {@link SaveablesLifecycleEvent#PRE_CLOSE} followed by an event of type
 	 * {@link SaveablesLifecycleEvent#POST_CLOSE}. Since firing the
-	 * <code>PRE_CLOSE</code> event may trigger prompts to save dirty
-	 * saveables, the cancellation status of the event must be checked by the
-	 * part after the notification. When removing only non-dirty saveables,
-	 * <code>POST_CLOSE</code> notification is sufficient.
+	 * <code>PRE_CLOSE</code> event may trigger prompts to save dirty saveables, the
+	 * cancellation status of the event must be checked by the part after the
+	 * notification. When removing only non-dirty saveables, <code>POST_CLOSE</code>
+	 * notification is sufficient.
 	 * </p>
 	 * <p>
 	 * The listener is obtained from the part site by calling
 	 * <code>partSite.getService(ISaveablesLifecycleListener.class)</code>.
 	 * </p>
 	 * <p>
-	 * The part must not notify from its initialization methods (e.g. <code>init</code>
-	 * or <code>createPartControl</code>), or from its dispose method. Parts that
-	 * implement {@link IReusableEditor} must notify when their input is changed
-	 * through {@link IReusableEditor#setInput(IEditorInput)}.
+	 * The part must not notify from its initialization methods (e.g.
+	 * <code>init</code> or <code>createPartControl</code>), or from its dispose
+	 * method. Parts that implement {@link IReusableEditor} must notify when their
+	 * input is changed through {@link IReusableEditor#setInput(IEditorInput)}.
 	 * </p>
 	 *
 	 * @return the saveables presented by the workbench part
@@ -98,9 +97,9 @@ public interface ISaveablesSource {
 	/**
 	 * Returns the saveables currently active in the workbench part.
 	 * <p>
-	 * Certain workbench actions, such as Save, target only the active saveables
-	 * in the active part. For example, the active saveables could be determined
-	 * based on the current selection in the part.
+	 * Certain workbench actions, such as Save, target only the active saveables in
+	 * the active part. For example, the active saveables could be determined based
+	 * on the current selection in the part.
 	 * </p>
 	 *
 	 * @return the saveables currently active in the workbench part

@@ -42,21 +42,16 @@ public class CompatibilityWorkbenchWindowControlContribution {
 	/**
 	 * Constructs the control contribution that this proxy represents.
 	 *
-	 * @param window
-	 *            the window that this control contribution is under
-	 * @param toolControl
-	 *            the tool control representing this contribution
-	 * @param composite
-	 *            the composite to create or parent the control under
+	 * @param window      the window that this control contribution is under
+	 * @param toolControl the tool control representing this contribution
+	 * @param composite   the composite to create or parent the control under
 	 */
 	@PostConstruct
 	void construct(MWindow window, MToolControl toolControl, Composite composite) {
-		IConfigurationElement configurationElement = ControlContributionRegistry.get(toolControl
-				.getElementId());
+		IConfigurationElement configurationElement = ControlContributionRegistry.get(toolControl.getElementId());
 		if (configurationElement != null) {
-			contribution = (WorkbenchWindowControlContribution) Util.safeLoadExecutableExtension(
-					configurationElement, IWorkbenchRegistryConstants.ATT_CLASS,
-					WorkbenchWindowControlContribution.class);
+			contribution = (WorkbenchWindowControlContribution) Util.safeLoadExecutableExtension(configurationElement,
+					IWorkbenchRegistryConstants.ATT_CLASS, WorkbenchWindowControlContribution.class);
 			if (contribution != null) {
 				IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
 				contribution.setWorkbenchWindow(workbenchWindow);

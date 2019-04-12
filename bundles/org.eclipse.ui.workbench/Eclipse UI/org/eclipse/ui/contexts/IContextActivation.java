@@ -35,14 +35,15 @@ import org.eclipse.ui.internal.services.IEvaluationResultCache;
 public interface IContextActivation extends IEvaluationResultCache {
 
 	/**
-	 * Clears the cached computation of the <code>isActive</code> method, if
-	 * any. This method is only intended for internal use. It provides a
-	 * mechanism by which <code>ISourceProvider</code> events can invalidate
-	 * state on a <code>IContextActivation</code> instance.
+	 * Clears the cached computation of the <code>isActive</code> method, if any.
+	 * This method is only intended for internal use. It provides a mechanism by
+	 * which <code>ISourceProvider</code> events can invalidate state on a
+	 * <code>IContextActivation</code> instance.
 	 *
 	 * @deprecated Use {@link IEvaluationResultCache#clearResult()} instead.
 	 */
-	@Deprecated void clearActive();
+	@Deprecated
+	void clearActive();
 
 	/**
 	 * Returns the identifier of the context that is being activated.
@@ -52,9 +53,9 @@ public interface IContextActivation extends IEvaluationResultCache {
 	String getContextId();
 
 	/**
-	 * Returns the context service from which this activation was requested.
-	 * This is used to ensure that an activation can only be retracted from the
-	 * same service which issued it.
+	 * Returns the context service from which this activation was requested. This is
+	 * used to ensure that an activation can only be retracted from the same service
+	 * which issued it.
 	 *
 	 * @return The context service; never <code>null</code>.
 	 */
@@ -62,17 +63,16 @@ public interface IContextActivation extends IEvaluationResultCache {
 
 	/**
 	 * Returns whether this context activation is currently active -- given the
-	 * current state of the workbench. This method should cache its computation.
-	 * The cache will be cleared by a call to <code>clearActive</code>.
+	 * current state of the workbench. This method should cache its computation. The
+	 * cache will be cleared by a call to <code>clearActive</code>.
 	 *
-	 * @param context
-	 *            The context in which this state should be evaluated; must not
-	 *            be <code>null</code>.
+	 * @param context The context in which this state should be evaluated; must not
+	 *                be <code>null</code>.
 	 * @return <code>true</code> if the activation is currently active;
 	 *         <code>false</code> otherwise.
-	 * @deprecated Use
-	 *             {@link IEvaluationResultCache#evaluate(IEvaluationContext)}
+	 * @deprecated Use {@link IEvaluationResultCache#evaluate(IEvaluationContext)}
 	 *             instead.
 	 */
-	@Deprecated boolean isActive(IEvaluationContext context);
+	@Deprecated
+	boolean isActive(IEvaluationContext context);
 }

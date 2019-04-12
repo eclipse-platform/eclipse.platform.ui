@@ -68,8 +68,8 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	private static final class MenuLoader implements ISafeRunnable {
 
 		/**
-		 * The parent for the menu to be created. This value is
-		 * <code>null</code> if the parent is a menu.
+		 * The parent for the menu to be created. This value is <code>null</code> if the
+		 * parent is a menu.
 		 */
 		private final Control control;
 
@@ -79,29 +79,26 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 		private final IWorkbenchWindowPulldownDelegate delegate;
 
 		/**
-		 * The loaded menu. This value is <code>null</code> if the load
-		 * failed, or if it hasn't been loaded yet.
+		 * The loaded menu. This value is <code>null</code> if the load failed, or if it
+		 * hasn't been loaded yet.
 		 */
 		private Menu menu = null;
 
 		/**
-		 * The parent for the menu to be created. This value is
-		 * <code>null</code> if the parent is a control.
+		 * The parent for the menu to be created. This value is <code>null</code> if the
+		 * parent is a control.
 		 */
 		private final Menu parent;
 
 		/**
 		 * Constructs a new instance of <code>MenuLoader</code>
 		 *
-		 * @param delegate
-		 *            The delegate from which the menu will be loaded; this
-		 *            value must not be <code>null</code>.
-		 * @param parent
-		 *            The parent of the menu to be loaded; this value must not
-		 *            be <code>null</code>.
+		 * @param delegate The delegate from which the menu will be loaded; this value
+		 *                 must not be <code>null</code>.
+		 * @param parent   The parent of the menu to be loaded; this value must not be
+		 *                 <code>null</code>.
 		 */
-		private MenuLoader(final IWorkbenchWindowPulldownDelegate delegate,
-				final Control parent) {
+		private MenuLoader(final IWorkbenchWindowPulldownDelegate delegate, final Control parent) {
 			this.delegate = delegate;
 			this.parent = null;
 			this.control = parent;
@@ -110,15 +107,12 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 		/**
 		 * Constructs a new instance of <code>MenuLoader</code>
 		 *
-		 * @param delegate
-		 *            The delegate from which the menu will be loaded; this
-		 *            value must not be <code>null</code>.
-		 * @param parent
-		 *            The parent of the menu to be loaded; this value must not
-		 *            be <code>null</code>.
+		 * @param delegate The delegate from which the menu will be loaded; this value
+		 *                 must not be <code>null</code>.
+		 * @param parent   The parent of the menu to be loaded; this value must not be
+		 *                 <code>null</code>.
 		 */
-		private MenuLoader(final IWorkbenchWindowPulldownDelegate2 delegate,
-				final Menu parent) {
+		private MenuLoader(final IWorkbenchWindowPulldownDelegate2 delegate, final Menu parent) {
 			this.delegate = delegate;
 			this.parent = parent;
 			this.control = null;
@@ -149,30 +143,29 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 			if (parent == null) {
 				menu = delegate.getMenu(control);
 			} else {
-				menu = ((IWorkbenchWindowPulldownDelegate2) delegate)
-						.getMenu(parent);
+				menu = ((IWorkbenchWindowPulldownDelegate2) delegate).getMenu(parent);
 			}
 		}
 	}
 
 	/**
-	 * The command to execute when the pulldown delegate appears in a tool bar,
-	 * and the arrow is <em>not</em> clicked. This also carries a help context
+	 * The command to execute when the pulldown delegate appears in a tool bar, and
+	 * the arrow is <em>not</em> clicked. This also carries a help context
 	 * identifier. This value must be <code>null</code>.
 	 */
 	private final ParameterizedCommand command;
 
 	/**
-	 * The configuration element from which the delegate can be created. This
-	 * value will exist until the element is converted into a real class -- at
-	 * which point this value will be set to <code>null</code>.
+	 * The configuration element from which the delegate can be created. This value
+	 * will exist until the element is converted into a real class -- at which point
+	 * this value will be set to <code>null</code>.
 	 */
 	private IConfigurationElement configurationElement;
 
 	/**
-	 * The real delegate. This value is <code>null</code> until the proxy is
-	 * forced to load the real delegate. At this point, the configuration
-	 * element is converted, nulled out, and this delegate gains a reference.
+	 * The real delegate. This value is <code>null</code> until the proxy is forced
+	 * to load the real delegate. At this point, the configuration element is
+	 * converted, nulled out, and this delegate gains a reference.
 	 */
 	private IWorkbenchWindowPulldownDelegate delegate = null;
 
@@ -196,9 +189,9 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	};
 
 	/**
-	 * The service locator from which a handler service can be retrieved. This
-	 * is needed if the pulldown appears in the tool bar, and the drop-down
-	 * arrow is <em>not</em> clicked. This value must not be <code>null</code>.
+	 * The service locator from which a handler service can be retrieved. This is
+	 * needed if the pulldown appears in the tool bar, and the drop-down arrow is
+	 * <em>not</em> clicked. This value must not be <code>null</code>.
 	 */
 	private final IServiceLocator locator;
 
@@ -245,41 +238,32 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 
 	/**
 	 * The widget created for this pulldown delegate. If this proxy has not been
-	 * asked to fill or it has been disposed, then this value is
-	 * <code>null</code>.
+	 * asked to fill or it has been disposed, then this value is <code>null</code>.
 	 */
 	private Widget widget = null;
 
 	/**
-	 * Constructs a new instance of <code>PulldownDelegateWidgetProxy</code>
-	 * with all the information it needs to try to avoid loading until it is
-	 * needed.
+	 * Constructs a new instance of <code>PulldownDelegateWidgetProxy</code> with
+	 * all the information it needs to try to avoid loading until it is needed.
 	 *
-	 * @param configurationElement
-	 *            The configuration element from which the real class can be
-	 *            loaded at run-time; must not be <code>null</code>.
-	 * @param delegateAttributeName
-	 *            The name of the attibute or element containing the delegate;
-	 *            must not be <code>null</code>.
-	 * @param command
-	 *            The command to execute if this the pulldown is not shown; must
-	 *            not be <code>null</code>.
-	 * @param locator
-	 *            A service locator from which a handler service can be
-	 *            retrieved; must not be <code>null</code>.
+	 * @param configurationElement  The configuration element from which the real
+	 *                              class can be loaded at run-time; must not be
+	 *                              <code>null</code>.
+	 * @param delegateAttributeName The name of the attibute or element containing
+	 *                              the delegate; must not be <code>null</code>.
+	 * @param command               The command to execute if this the pulldown is
+	 *                              not shown; must not be <code>null</code>.
+	 * @param locator               A service locator from which a handler service
+	 *                              can be retrieved; must not be <code>null</code>.
 	 */
-	public PulldownDelegateWidgetProxy(
-			final IConfigurationElement configurationElement,
-			final String delegateAttributeName,
-			final ParameterizedCommand command, final IServiceLocator locator) {
+	public PulldownDelegateWidgetProxy(final IConfigurationElement configurationElement,
+			final String delegateAttributeName, final ParameterizedCommand command, final IServiceLocator locator) {
 		if (configurationElement == null) {
-			throw new NullPointerException(
-					"The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
+			throw new NullPointerException("The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
 		}
 
 		if (delegateAttributeName == null) {
-			throw new NullPointerException(
-					"The attribute containing the handler class must be known"); //$NON-NLS-1$
+			throw new NullPointerException("The attribute containing the handler class must be known"); //$NON-NLS-1$
 		}
 
 		if (command == null) {
@@ -329,8 +313,7 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 		widget = menuItem;
 
 		// Create the submenu.
-		if (loadDelegate()
-				&& (delegate instanceof IWorkbenchWindowPulldownDelegate2)) {
+		if (loadDelegate() && (delegate instanceof IWorkbenchWindowPulldownDelegate2)) {
 			final IWorkbenchWindowPulldownDelegate2 delegate2 = (IWorkbenchWindowPulldownDelegate2) delegate;
 			final MenuLoader loader = new MenuLoader(delegate2, parent);
 			SafeRunner.run(loader);
@@ -389,11 +372,11 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	}
 
 	/**
-	 * Loads the delegate, if possible. If the delegate is loaded, then the
-	 * member variables are updated accordingly.
+	 * Loads the delegate, if possible. If the delegate is loaded, then the member
+	 * variables are updated accordingly.
 	 *
-	 * @return <code>true</code> if the delegate is now non-null;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the delegate is now non-null; <code>false</code>
+	 *         otherwise.
 	 */
 	private boolean loadDelegate() {
 		if (delegate == null) {
@@ -406,16 +389,14 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 
 			} catch (final ClassCastException e) {
 				final String message = "The proxied delegate was the wrong class"; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				return false;
 
 			} catch (final CoreException e) {
-				final String message = "The proxied delegate for '" + configurationElement.getAttribute(delegateAttributeName) //$NON-NLS-1$
-						+ "' could not be loaded"; //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				final String message = "The proxied delegate for '" //$NON-NLS-1$
+						+ configurationElement.getAttribute(delegateAttributeName) + "' could not be loaded"; //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				return false;
 			}

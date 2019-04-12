@@ -41,21 +41,18 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
-
 /**
  * This is an utility class which is responsible for text and icon decorators in
  * the StatusDialog.
  *
  * @since 3.6
  */
-public class LabelProviderWrapper extends ViewerComparator implements
-		ITableLabelProvider {
+public class LabelProviderWrapper extends ViewerComparator implements ITableLabelProvider {
 	/**
 	 * The default status label provider.
 	 */
 	private class DefaultLabelProvider implements ITableLabelProvider {
-		ResourceManager manager = new LocalResourceManager(JFaceResources
-				.getResources());
+		ResourceManager manager = new LocalResourceManager(JFaceResources.getResources());
 
 		@Override
 		public void addListener(ILabelProviderListener listener) {
@@ -103,15 +100,12 @@ public class LabelProviderWrapper extends ViewerComparator implements
 					text = getPrimaryMessage(statusAdapter);
 				}
 			}
-			Long timestamp = (Long) statusAdapter
-					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
+			Long timestamp = (Long) statusAdapter.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
 
 			if (timestamp != null && isMulti()) {
-				String date = DateFormat.getDateTimeInstance(DateFormat.LONG,
-						DateFormat.LONG)
+				String date = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG)
 						.format(new Date(timestamp.longValue()));
-				return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] {
-						text, date }));
+				return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] { text, date }));
 			}
 			return text;
 		}
@@ -121,15 +115,13 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		 */
 		private Image getIcon(Job job) {
 			if (job != null) {
-				Object property = job
-						.getProperty(IProgressConstants.ICON_PROPERTY);
+				Object property = job.getProperty(IProgressConstants.ICON_PROPERTY);
 
 				// Create an image from the job's icon property or family
 				if (property instanceof ImageDescriptor) {
 					return manager.createImage((ImageDescriptor) property);
 				} else if (property instanceof URL) {
-					return manager.createImage(ImageDescriptor
-							.createFromURL((URL) property));
+					return manager.createImage(ImageDescriptor.createFromURL((URL) property));
 				} else {
 					// Let the progress manager handle the resource management
 					return ProgressManager.getInstance().getIconFor(job);
@@ -152,8 +144,8 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	private ITableLabelProvider labelProvider;
 
 	/**
-	 * This field stores the decorator which can override various texts produced
-	 * by this class.
+	 * This field stores the decorator which can override various texts produced by
+	 * this class.
 	 */
 	private ILabelDecorator messageDecorator;
 
@@ -189,8 +181,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 */
 	@Override
 	public void dispose() {
-		boolean modalitySwitch = ((Boolean) dialogState.get(IStatusDialogConstants.MODALITY_SWITCH))
-				.booleanValue();
+		boolean modalitySwitch = ((Boolean) dialogState.get(IStatusDialogConstants.MODALITY_SWITCH)).booleanValue();
 		if (!modalitySwitch) {
 			getLabelProvider().dispose();
 		}
@@ -207,13 +198,11 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	}
 
 	/**
-	 * Gets {@link Image} associated with current {@link StatusAdapter}
-	 * severity.
+	 * Gets {@link Image} associated with current {@link StatusAdapter} severity.
 	 *
 	 * @param statusAdapter
 	 *
-	 * @return {@link Image} associated with current {@link StatusAdapter}
-	 *         severity.
+	 * @return {@link Image} associated with current {@link StatusAdapter} severity.
 	 */
 	public Image getImage(StatusAdapter statusAdapter) {
 		if (statusAdapter != null) {
@@ -237,8 +226,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	/**
 	 * Get an <code>Image</code> from the provide SWT image constant.
 	 *
-	 * @param imageID
-	 *            the SWT image constant
+	 * @param imageID the SWT image constant
 	 * @return image the image
 	 */
 	public Image getSWTImage(final int imageID) {
@@ -262,8 +250,8 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 *
 	 * If nothing can be found, some general information should be displayed.
 	 *
-	 * @param statusAdapter
-	 *            A status adapter which is used as the base for computation.
+	 * @param statusAdapter A status adapter which is used as the base for
+	 *                      computation.
 	 * @return main message of the dialog.
 	 *
 	 * @see #getPrimaryMessage(StatusAdapter)
@@ -274,10 +262,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 			Job job = Adapters.adapt(statusAdapter, Job.class);
 			// job
 			if (job != null) {
-				return NLS
-						.bind(
-								WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurredInJob,
-								job.getName());
+				return NLS.bind(WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurredInJob, job.getName());
 			}
 			// we are not handling job
 			return getPrimaryMessage(statusAdapter);
@@ -299,8 +284,8 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	}
 
 	/**
-	 * Retrieves primary message from passed statusAdapter. Primary message
-	 * should be (from the most important):
+	 * Retrieves primary message from passed statusAdapter. Primary message should
+	 * be (from the most important):
 	 * <ul>
 	 * <li>statusAdapter title</li>
 	 * <li>IStatus message</li>
@@ -310,8 +295,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * <li>general message informing about error (no details at all)</li>
 	 * </ul>
 	 *
-	 * @param statusAdapter
-	 *            an status adapter to retrieve primary message from
+	 * @param statusAdapter an status adapter to retrieve primary message from
 	 * @return String containing primary message
 	 *
 	 * @see #getMainMessage(StatusAdapter)
@@ -319,8 +303,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 */
 	public String getPrimaryMessage(StatusAdapter statusAdapter) {
 		// if there was nonempty title set, display the title
-		Object property = statusAdapter
-				.getProperty(IStatusAdapterConstants.TITLE_PROPERTY);
+		Object property = statusAdapter.getProperty(IStatusAdapterConstants.TITLE_PROPERTY);
 		if (property instanceof String) {
 			String header = (String) property;
 			if (header.trim().length() > 0) {
@@ -329,8 +312,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		}
 		// if there was message set in the status
 		IStatus status = statusAdapter.getStatus();
-		if (status.getMessage() != null
-				&& status.getMessage().trim().length() > 0) {
+		if (status.getMessage() != null && status.getMessage().trim().length() > 0) {
 			return decorate(status.getMessage(), statusAdapter);
 		}
 
@@ -351,9 +333,9 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	}
 
 	/**
-	 * Retrieves secondary message from the passed statusAdapter. Secondary
-	 * message is one level lower than primary. Secondary message should be
-	 * (from the most important):
+	 * Retrieves secondary message from the passed statusAdapter. Secondary message
+	 * is one level lower than primary. Secondary message should be (from the most
+	 * important):
 	 * <ul>
 	 * <li>IStatus message</li>
 	 * <li>pointing to child statuses if IStatus has them.</li>
@@ -363,8 +345,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 * Secondary message should not be the same as primary one. If no secondary
 	 * message can be extracted, details should be pointed.
 	 *
-	 * @param statusAdapter
-	 *            an status adapter to retrieve secondary message from
+	 * @param statusAdapter an status adapter to retrieve secondary message from
 	 * @return String containing secondary message
 	 *
 	 * @see #getMainMessage(StatusAdapter)
@@ -377,16 +358,13 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		// if there was message set in the status
 		IStatus status = statusAdapter.getStatus();
 		String message = status.getMessage();
-		String decoratedMessage = message == null ? null : decorate(message,
-				statusAdapter);
-		if (message != null && message.trim().length() > 0
-				&& !primary.equals(decoratedMessage)) {
+		String decoratedMessage = message == null ? null : decorate(message, statusAdapter);
+		if (message != null && message.trim().length() > 0 && !primary.equals(decoratedMessage)) {
 			/* we have not displayed it yet */
 			return decoratedMessage;
 		}
 		// if status has children
-		if (status.getChildren().length > 0
-				&& !primary.equals(decoratedMessage)) {
+		if (status.getChildren().length > 0 && !primary.equals(decoratedMessage)) {
 			return WorkbenchMessages.WorkbenchStatusDialog_StatusWithChildren;
 		}
 
@@ -394,10 +372,8 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		Throwable t = status.getException();
 		if (t != null) {
 			if (t.getMessage() != null) {
-				String decoratedThrowable = decorate(t.getMessage(),
-						statusAdapter);
-				if (t.getMessage().trim().length() > 0
-						&& !primary.equals(decoratedThrowable)) {
+				String decoratedThrowable = decorate(t.getMessage(), statusAdapter);
+				if (t.getMessage().trim().length() > 0 && !primary.equals(decoratedThrowable)) {
 					return decoratedThrowable;
 				}
 			}
@@ -410,8 +386,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	}
 
 	private String decorate(String string, StatusAdapter adapter) {
-		messageDecorator = (ILabelDecorator) dialogState
-				.get(IStatusDialogConstants.DECORATOR);
+		messageDecorator = (ILabelDecorator) dialogState.get(IStatusDialogConstants.DECORATOR);
 		if (messageDecorator != null) {
 			string = messageDecorator.decorateText(string, adapter);
 		}
@@ -419,12 +394,9 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	}
 
 	private int compare(StatusAdapter s1, StatusAdapter s2) {
-		Long timestamp1 = ((Long) s1
-				.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY));
-		Long timestamp2 = ((Long) s2
-				.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY));
-		if (timestamp1 == null || timestamp2 == null
-				|| (timestamp1.equals(timestamp2))) {
+		Long timestamp1 = ((Long) s1.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY));
+		Long timestamp2 = ((Long) s2.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY));
+		if (timestamp1 == null || timestamp2 == null || (timestamp1.equals(timestamp2))) {
 			String text1 = getColumnText(s1, 0);
 			String text2 = getColumnText(s2, 0);
 			return text1.compareTo(text2);
@@ -456,16 +428,14 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	}
 
 	private boolean isMulti() {
-		return ((Collection) dialogState
-				.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() > 1;
+		return ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() > 1;
 	}
 
 	/**
 	 * @return Returns the labelProvider.
 	 */
 	public ITableLabelProvider getLabelProvider() {
-		ITableLabelProvider temp = (ITableLabelProvider) dialogState
-				.get(IStatusDialogConstants.CUSTOM_LABEL_PROVIDER);
+		ITableLabelProvider temp = (ITableLabelProvider) dialogState.get(IStatusDialogConstants.CUSTOM_LABEL_PROVIDER);
 		if (temp != null) {
 			labelProvider = temp;
 		}

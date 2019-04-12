@@ -23,168 +23,165 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityDefinition implements Comparable<ActivityDefinition> {
-    private static final int HASH_FACTOR = 89;
+	private static final int HASH_FACTOR = 89;
 
-    private static final int HASH_INITIAL = ActivityDefinition.class.getName()
-            .hashCode();
+	private static final int HASH_INITIAL = ActivityDefinition.class.getName().hashCode();
 
 	static Map<String, ActivityDefinition> activityDefinitionsById(Collection<ActivityDefinition> activityDefinitions,
-            boolean allowNullIds) {
-        if (activityDefinitions == null) {
+			boolean allowNullIds) {
+		if (activityDefinitions == null) {
 			throw new NullPointerException();
 		}
 
 		Map<String, ActivityDefinition> map = new HashMap<>();
 		Iterator<ActivityDefinition> iterator = activityDefinitions.iterator();
 
-        while (iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			ActivityDefinition activityDefinition = iterator.next();
-            String id = activityDefinition.getId();
+			String id = activityDefinition.getId();
 
-            if (allowNullIds || id != null) {
+			if (allowNullIds || id != null) {
 				map.put(id, activityDefinition);
 			}
-        }
+		}
 
-        return map;
-    }
+		return map;
+	}
 
 	static Map<String, Collection<ActivityDefinition>> activityDefinitionsByName(
-			Collection<ActivityDefinition> activityDefinitions,
-            boolean allowNullNames) {
-        if (activityDefinitions == null) {
+			Collection<ActivityDefinition> activityDefinitions, boolean allowNullNames) {
+		if (activityDefinitions == null) {
 			throw new NullPointerException();
 		}
 
 		Map<String, Collection<ActivityDefinition>> map = new HashMap<>();
 		Iterator<ActivityDefinition> iterator = activityDefinitions.iterator();
 
-        while (iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			ActivityDefinition activityDefinition = iterator.next();
-            String name = activityDefinition.getName();
+			String name = activityDefinition.getName();
 
-            if (allowNullNames || name != null) {
+			if (allowNullNames || name != null) {
 				Collection<ActivityDefinition> activityDefinitions2 = map.get(name);
 
-                if (activityDefinitions2 == null) {
+				if (activityDefinitions2 == null) {
 					activityDefinitions2 = new HashSet<>();
-                    map.put(name, activityDefinitions2);
-                }
+					map.put(name, activityDefinitions2);
+				}
 
-                activityDefinitions2.add(activityDefinition);
-            }
-        }
+				activityDefinitions2.add(activityDefinition);
+			}
+		}
 
-        return map;
-    }
+		return map;
+	}
 
-    private transient int hashCode = HASH_INITIAL;
+	private transient int hashCode = HASH_INITIAL;
 
-    private String id;
+	private String id;
 
-    private String name;
+	private String name;
 
-    private String sourceId;
+	private String sourceId;
 
-    private String description;
+	private String description;
 
-    private transient String string;
+	private transient String string;
 
 	private Expression enabledWhen;
 
-    public ActivityDefinition(String id, String name, String sourceId,
-            String description) {
-        this.id = id;
-        this.name = name;
-        this.sourceId = sourceId;
-        this.description = description;
-    }
+	public ActivityDefinition(String id, String name, String sourceId, String description) {
+		this.id = id;
+		this.name = name;
+		this.sourceId = sourceId;
+		this.description = description;
+	}
 
-    @Override
+	@Override
 	public int compareTo(ActivityDefinition object) {
 		int compareTo = Util.compare(id, object.id);
 
-        if (compareTo == 0) {
+		if (compareTo == 0) {
 			compareTo = Util.compare(name, object.name);
 
-            if (compareTo == 0) {
+			if (compareTo == 0) {
 				compareTo = Util.compare(sourceId, object.sourceId);
 			}
-        }
+		}
 
-        return compareTo;
-    }
+		return compareTo;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (!(object instanceof ActivityDefinition)) {
+		if (!(object instanceof ActivityDefinition)) {
 			return false;
 		}
 
-        final ActivityDefinition castedObject = (ActivityDefinition) object;
-        if (!Util.equals(id, castedObject.id)) {
-            return false;
-        }
+		final ActivityDefinition castedObject = (ActivityDefinition) object;
+		if (!Util.equals(id, castedObject.id)) {
+			return false;
+		}
 
-        if (!Util.equals(name, castedObject.name)) {
-            return false;
-        }
+		if (!Util.equals(name, castedObject.name)) {
+			return false;
+		}
 
-        return Util.equals(sourceId, castedObject.sourceId);
-    }
+		return Util.equals(sourceId, castedObject.sourceId);
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getSourceId() {
-        return sourceId;
-    }
+	public String getSourceId() {
+		return sourceId;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        if (hashCode == HASH_INITIAL) {
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            if (hashCode == HASH_INITIAL) {
+		if (hashCode == HASH_INITIAL) {
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}
-        }
+		}
 
-        return hashCode;
-    }
+		return hashCode;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        if (string == null) {
-            final StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append('[');
-            stringBuffer.append(id);
-            stringBuffer.append(',');
-            stringBuffer.append(name);
-            stringBuffer.append(',');
-            stringBuffer.append(sourceId);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+		if (string == null) {
+			final StringBuilder stringBuffer = new StringBuilder();
+			stringBuffer.append('[');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(sourceId);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
 
-        return string;
-    }
+		return string;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    void setEnabledWhen(Expression expression) {
-    	enabledWhen = expression;
-    }
+	void setEnabledWhen(Expression expression) {
+		enabledWhen = expression;
+	}
 
-    public Expression getEnabledWhen() {
-    	return enabledWhen;
-    }
+	public Expression getEnabledWhen() {
+		return enabledWhen;
+	}
 }

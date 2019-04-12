@@ -43,8 +43,7 @@ public class ViewCategory implements IViewCategory {
 
 	@Override
 	public IViewDescriptor[] getViews() {
-		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(descriptors,
-				new ArrayList<>());
+		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(descriptors, new ArrayList<>());
 		return allowedViews.toArray(new IViewDescriptor[allowedViews.size()]);
 	}
 

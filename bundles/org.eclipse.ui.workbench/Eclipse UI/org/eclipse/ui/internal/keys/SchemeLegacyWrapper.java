@@ -41,21 +41,18 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	/**
 	 * Constructs a new instance of <code>SchemeWrapper</code>.
 	 *
-	 * @param scheme
-	 *            The scheme to be wrapped; must not be <code>null</code>.
-	 * @param bindingManager
-	 *            The binding manager for this scheme; must not be
-	 *            <code>null</code>.
+	 * @param scheme         The scheme to be wrapped; must not be
+	 *                       <code>null</code>.
+	 * @param bindingManager The binding manager for this scheme; must not be
+	 *                       <code>null</code>.
 	 */
-	public SchemeLegacyWrapper(final Scheme scheme,
-			final BindingManager bindingManager) {
+	public SchemeLegacyWrapper(final Scheme scheme, final BindingManager bindingManager) {
 		if (scheme == null) {
 			throw new NullPointerException("Cannot wrap a null scheme"); //$NON-NLS-1$
 		}
 
 		if (bindingManager == null) {
-			throw new NullPointerException(
-					"Cannot wrap a scheme without a binding manager"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot wrap a scheme without a binding manager"); //$NON-NLS-1$
 		}
 
 		this.scheme = scheme;
@@ -63,10 +60,8 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	}
 
 	@Override
-	public void addKeyConfigurationListener(
-			IKeyConfigurationListener keyConfigurationListener) {
-		scheme.addSchemeListener(new LegacySchemeListenerWrapper(
-				keyConfigurationListener, bindingManager));
+	public void addKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener) {
+		scheme.addSchemeListener(new LegacySchemeListenerWrapper(keyConfigurationListener, bindingManager));
 	}
 
 	@Override
@@ -117,10 +112,8 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 	}
 
 	@Override
-	public void removeKeyConfigurationListener(
-			IKeyConfigurationListener keyConfigurationListener) {
-		scheme.removeSchemeListener(new LegacySchemeListenerWrapper(
-				keyConfigurationListener, bindingManager));
+	public void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener) {
+		scheme.removeSchemeListener(new LegacySchemeListenerWrapper(keyConfigurationListener, bindingManager));
 
 	}
 

@@ -33,17 +33,13 @@ public final class TriggerPointAdvisorDescriptor {
 	/**
 	 * Create a new instance of this class.
 	 *
-	 * @param element
-	 *            the configuration element
-	 * @throws IllegalArgumentException
-	 *             thrown if the element is missing an id attribute
+	 * @param element the configuration element
+	 * @throws IllegalArgumentException thrown if the element is missing an id
+	 *                                  attribute
 	 */
-	public TriggerPointAdvisorDescriptor(IConfigurationElement element)
-			throws IllegalArgumentException {
+	public TriggerPointAdvisorDescriptor(IConfigurationElement element) throws IllegalArgumentException {
 		id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-		if (id == null
-				|| RegistryReader.getClassValue(element,
-						IWorkbenchRegistryConstants.ATT_CLASS) == null) {
+		if (id == null || RegistryReader.getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS) == null) {
 			throw new IllegalArgumentException();
 		}
 		this.element = element;
@@ -62,11 +58,9 @@ public final class TriggerPointAdvisorDescriptor {
 	 * Create the advisor for this descriptor.
 	 *
 	 * @return the advisor
-	 * @throws CoreException
-	 *             thrown if there is an issue creating the advisor
+	 * @throws CoreException thrown if there is an issue creating the advisor
 	 */
 	public ITriggerPointAdvisor createAdvisor() throws CoreException {
-		return (ITriggerPointAdvisor) element
-				.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+		return (ITriggerPointAdvisor) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 	}
 }

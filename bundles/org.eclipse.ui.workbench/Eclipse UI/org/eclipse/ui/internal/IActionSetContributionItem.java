@@ -14,18 +14,18 @@
 package org.eclipse.ui.internal;
 
 /**
- * This interface should be implemented by all contribution items
- * defined by an action set.
+ * This interface should be implemented by all contribution items defined by an
+ * action set.
  */
 public interface IActionSetContributionItem {
 
-    /**
-     * Returns the action set id.
-     */
-    String getActionSetId();
+	/**
+	 * Returns the action set id.
+	 */
+	String getActionSetId();
 
-    /**
-     * Sets the action set id.
-     */
-    void setActionSetId(String newActionSetId);
+	/**
+	 * Sets the action set id.
+	 */
+	void setActionSetId(String newActionSetId);
 }

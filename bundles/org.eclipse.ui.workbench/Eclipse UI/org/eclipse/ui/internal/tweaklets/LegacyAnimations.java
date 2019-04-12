@@ -26,7 +26,8 @@ import org.eclipse.ui.internal.RectangleAnimationFeedbackBase;
  */
 public class LegacyAnimations extends Animations {
 	/** Default c'tor */
-	public LegacyAnimations() {}
+	public LegacyAnimations() {
+	}
 
 	@Override
 	public RectangleAnimationFeedbackBase createFeedback(Shell shell) {

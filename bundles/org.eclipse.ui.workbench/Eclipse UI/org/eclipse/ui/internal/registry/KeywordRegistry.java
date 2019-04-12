@@ -62,7 +62,7 @@ public final class KeywordRegistry implements IExtensionChangeHandler {
 	 */
 	private KeywordRegistry() {
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
+		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 		for (IExtension extension : getExtensionPointFilter().getExtensions()) {
 			addExtension(PlatformUI.getWorkbench().getExtensionTracker(), extension);
 		}
@@ -75,15 +75,15 @@ public final class KeywordRegistry implements IExtensionChangeHandler {
 				String name = element.getAttribute(ATT_LABEL);
 				String id = element.getAttribute(ATT_ID);
 				internalKeywordMap.put(id, name);
-				PlatformUI.getWorkbench().getExtensionTracker().registerObject(
-						extension, id, IExtensionTracker.REF_WEAK);
+				PlatformUI.getWorkbench().getExtensionTracker().registerObject(extension, id,
+						IExtensionTracker.REF_WEAK);
 			}
 		}
 	}
 
 	private IExtensionPoint getExtensionPointFilter() {
-		return Platform.getExtensionRegistry().getExtensionPoint(
-				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_KEYWORDS);
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_KEYWORDS);
 	}
 
 	/**

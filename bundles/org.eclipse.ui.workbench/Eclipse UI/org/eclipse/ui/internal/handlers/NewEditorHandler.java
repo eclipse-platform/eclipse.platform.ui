@@ -39,8 +39,7 @@ public class NewEditorHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
-				.getActiveWorkbenchWindow(event);
+		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
 		if (page == null) {
 			return null;
@@ -55,19 +54,15 @@ public class NewEditorHandler extends AbstractHandler {
 		}
 		try {
 			if (editor instanceof IPersistableEditor) {
-				XMLMemento editorState = XMLMemento
-						.createWriteRoot(IWorkbenchConstants.TAG_EDITOR_STATE);
+				XMLMemento editorState = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR_STATE);
 				((IPersistableEditor) editor).saveState(editorState);
-				((WorkbenchPage) page).openEditor(editor.getEditorInput(),
- editorId, true,
-						IWorkbenchPage.MATCH_NONE, editorState, true);
+				((WorkbenchPage) page).openEditor(editor.getEditorInput(), editorId, true, IWorkbenchPage.MATCH_NONE,
+						editorState, true);
 			} else {
-				page.openEditor(editor.getEditorInput(), editorId, true,
-						IWorkbenchPage.MATCH_NONE);
+				page.openEditor(editor.getEditorInput(), editorId, true, IWorkbenchPage.MATCH_NONE);
 			}
 		} catch (PartInitException e) {
-			DialogUtil.openError(activeWorkbenchWindow.getShell(),
-					WorkbenchMessages.Error, e.getMessage(), e);
+			DialogUtil.openError(activeWorkbenchWindow.getShell(), WorkbenchMessages.Error, e.getMessage(), e);
 		}
 		return null;
 	}

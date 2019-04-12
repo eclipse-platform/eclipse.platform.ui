@@ -37,29 +37,22 @@ public final class WorkingSetGroup {
 	/**
 	 * Create a new instance of this class.
 	 *
-	 * @param composite
-	 *            parent composite
-	 * @param currentSelection
-	 *            the initial working set selection to pass to the
-	 *            {@link WorkingSetConfigurationBlock}
-	 * @param workingSetTypes
-	 *            the types of working sets that can be selected by the
-	 *            {@link WorkingSetConfigurationBlock}
+	 * @param composite        parent composite
+	 * @param currentSelection the initial working set selection to pass to the
+	 *                         {@link WorkingSetConfigurationBlock}
+	 * @param workingSetTypes  the types of working sets that can be selected by the
+	 *                         {@link WorkingSetConfigurationBlock}
 	 */
-	public WorkingSetGroup(Composite composite,
-			IStructuredSelection currentSelection, String[] workingSetTypes) {
+	public WorkingSetGroup(Composite composite, IStructuredSelection currentSelection, String[] workingSetTypes) {
 		Group workingSetGroup = new Group(composite, SWT.NONE);
 		workingSetGroup.setFont(composite.getFont());
-		workingSetGroup
-				.setText(WorkbenchMessages.WorkingSetGroup_WorkingSets_group);
-		workingSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
-				false));
+		workingSetGroup.setText(WorkbenchMessages.WorkingSetGroup_WorkingSets_group);
+		workingSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		workingSetGroup.setLayout(new GridLayout(1, false));
 
 		workingSetBlock = new WorkingSetConfigurationBlock(WorkbenchPlugin.getDefault().getDialogSettings(),
 				workingSetTypes);
-		workingSetBlock.setWorkingSets(workingSetBlock
-				.findApplicableWorkingSets(currentSelection));
+		workingSetBlock.setWorkingSets(workingSetBlock.findApplicableWorkingSets(currentSelection));
 		workingSetBlock.createContent(workingSetGroup);
 	}
 

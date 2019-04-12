@@ -27,13 +27,12 @@ public class CamelUtil {
 
 	/**
 	 * Returns a lowercase string consisting of all initials of the words in the
-	 * given String. Words are separated by whitespace and other special
-	 * characters, or by uppercase letters in a word like CamelCase.
+	 * given String. Words are separated by whitespace and other special characters,
+	 * or by uppercase letters in a word like CamelCase.
 	 *
-	 * @param s
-	 *            the string
-	 * @return a lowercase string containing the first character of every wordin
-	 *         the given string.
+	 * @param s the string
+	 * @return a lowercase string containing the first character of every wordin the
+	 *         given string.
 	 */
 	public static String getCamelCase(String s) {
 		StringBuilder result = new StringBuilder();
@@ -48,13 +47,12 @@ public class CamelUtil {
 	}
 
 	/**
-	 * Return an array with start/end indices for the characters used for camel
-	 * case matching, ignoring the first (start) many camel case characters.
-	 * For example, getCamelCaseIndices("some CamelCase", 1, 2) will return
-	 * {{5,5},{10,10}}.
+	 * Return an array with start/end indices for the characters used for camel case
+	 * matching, ignoring the first (start) many camel case characters. For example,
+	 * getCamelCaseIndices("some CamelCase", 1, 2) will return {{5,5},{10,10}}.
 	 *
-	 * @param s the source string
-	 * @param start how many characters of getCamelCase(s) should be ignored
+	 * @param s      the source string
+	 * @param start  how many characters of getCamelCase(s) should be ignored
 	 * @param length for how many characters should indices be returned
 	 * @return an array of length start
 	 */
@@ -76,15 +74,13 @@ public class CamelUtil {
 	/**
 	 * Returns the next index to be used for camel case matching.
 	 *
-	 * @param s the string
+	 * @param s     the string
 	 * @param index the index
 	 * @return the next index, or -1 if not found
 	 */
 	public static int getNextCamelIndex(String s, int index) {
 		char c;
-		while (index < s.length()
-				&& !(isSeparatorForCamelCase(c = s.charAt(index)))
-				&& Character.isLowerCase(c)) {
+		while (index < s.length() && !(isSeparatorForCamelCase(c = s.charAt(index))) && Character.isLowerCase(c)) {
 			index++;
 		}
 		while (index < s.length() && isSeparatorForCamelCase(c = s.charAt(index))) {
@@ -97,8 +93,8 @@ public class CamelUtil {
 	}
 
 	/**
-	 * Returns true if the given character is to be considered a separator
-	 * for camel case matching purposes.
+	 * Returns true if the given character is to be considered a separator for camel
+	 * case matching purposes.
 	 *
 	 * @param c the character
 	 * @return true if the character is a separator

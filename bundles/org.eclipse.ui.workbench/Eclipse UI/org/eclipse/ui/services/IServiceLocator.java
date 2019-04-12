@@ -37,26 +37,23 @@ public interface IServiceLocator {
 	/**
 	 * Retrieves the service corresponding to the given API.
 	 *
-	 * @param api
-	 *            This is the interface that the service implements. Must not be
+	 * @param api This is the interface that the service implements. Must not be
 	 *            <code>null</code>.
-	 * @return The service, or <code>null</code> if no such service could be
-	 *         found.
+	 * @return The service, or <code>null</code> if no such service could be found.
 	 */
 
 	<T> T getService(Class<T> api);
 
 	/**
-	 * Whether this service exists within the scope of this service locator.
-	 * This does not include looking for the service within the scope of the
-	 * parents. This method can be used to determine whether a particular
-	 * service supports nesting in this scope.
+	 * Whether this service exists within the scope of this service locator. This
+	 * does not include looking for the service within the scope of the parents.
+	 * This method can be used to determine whether a particular service supports
+	 * nesting in this scope.
 	 *
-	 * @param api
-	 *            This is the interface that the service implements. Must not be
+	 * @param api This is the interface that the service implements. Must not be
 	 *            <code>null</code>.
-	 * @return <code>true</code> if the service locator can find a service for
-	 *         the given API; <code>false</code> otherwise.
+	 * @return <code>true</code> if the service locator can find a service for the
+	 *         given API; <code>false</code> otherwise.
 	 */
 	boolean hasService(Class<?> api);
 }

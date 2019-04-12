@@ -45,16 +45,12 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	/**
 	 * Create a new property dialog.
 	 *
-	 * @param shell
-	 *            the parent shell
-	 * @param propertyPageId
-	 *            the property page id
-	 * @param element
-	 *            the adaptable element
+	 * @param shell          the parent shell
+	 * @param propertyPageId the property page id
+	 * @param element        the adaptable element
 	 * @return the property dialog
 	 */
-	public static PropertyDialog createDialogOn(Shell shell,
-			final String propertyPageId, Object element) {
+	public static PropertyDialog createDialogOn(Shell shell, final String propertyPageId, Object element) {
 
 		PropertyPageManager pageManager = new PropertyPageManager();
 		String title = "";//$NON-NLS-1$
@@ -64,23 +60,17 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		}
 		// load pages for the selection
 		// fill the manager with contributions from the matching contributors
-		PropertyPageContributorManager.getManager().contribute(pageManager,
-				element);
+		PropertyPageContributorManager.getManager().contribute(pageManager, element);
 		// testing if there are pages in the manager
-		Iterator pages = pageManager.getElements(PreferenceManager.PRE_ORDER)
-				.iterator();
+		Iterator pages = pageManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		String name = getName(element);
 		if (!pages.hasNext()) {
-			MessageDialog.openInformation(shell,
-					WorkbenchMessages.PropertyDialog_messageTitle, NLS.bind(
-							WorkbenchMessages.PropertyDialog_noPropertyMessage,
-							name));
+			MessageDialog.openInformation(shell, WorkbenchMessages.PropertyDialog_messageTitle,
+					NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage, name));
 			return null;
 		}
-		title = NLS
-				.bind(WorkbenchMessages.PropertyDialog_propertyMessage, name);
-		PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager,
-				new StructuredSelection(element));
+		title = NLS.bind(WorkbenchMessages.PropertyDialog_propertyMessage, name);
+		PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager, new StructuredSelection(element));
 
 		if (propertyPageId != null) {
 			propertyDialog.setSelectedNode(propertyPageId);
@@ -88,8 +78,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		propertyDialog.create();
 
 		propertyDialog.getShell().setText(title);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(
-				propertyDialog.getShell(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(propertyDialog.getShell(),
 				IWorkbenchHelpContextIds.PROPERTY_DIALOG);
 
 		return propertyDialog;
@@ -104,8 +93,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	/**
 	 * Returns the name of the given element(s). Prints at most 3 names.
 	 *
-	 * @param element
-	 *            the element / IStructuredSelection
+	 * @param element the element / IStructuredSelection
 	 * @return the name of the element
 	 */
 	private static String getName(Object element) {
@@ -139,8 +127,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	 * @param mng
 	 * @param selection
 	 */
-	public PropertyDialog(Shell parentShell, PreferenceManager mng,
-			ISelection selection) {
+	public PropertyDialog(Shell parentShell, PreferenceManager mng, ISelection selection) {
 		super(parentShell, mng);
 		setSelection(selection);
 	}
@@ -157,8 +144,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	/**
 	 * Sets the selection that will be used to determine target object.
 	 *
-	 * @param newSelection
-	 *            the new selection
+	 * @param newSelection the new selection
 	 */
 	public void setSelection(ISelection newSelection) {
 		selection = newSelection;
@@ -191,7 +177,5 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	protected String getContributionType() {
 		return IContributionService.TYPE_PROPERTY;
 	}
-
-
 
 }

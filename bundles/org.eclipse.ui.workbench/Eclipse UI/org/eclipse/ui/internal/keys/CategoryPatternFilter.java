@@ -49,8 +49,7 @@ class CategoryPatternFilter extends PatternFilter {
 		if (filterCategories) {
 			final ParameterizedCommand cmd = getCommand(element);
 			try {
-				if (cmd != null
-						&& cmd.getCommand().getCategory() == uncategorized) {
+				if (cmd != null && cmd.getCommand().getCategory() == uncategorized) {
 					return false;
 				}
 			} catch (NotDefinedException e) {

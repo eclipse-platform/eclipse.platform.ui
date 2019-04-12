@@ -25,10 +25,9 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
 /**
  * @since 3.0
  */
-public class StickyViewDescriptor implements IStickyViewDescriptor,
-	IPluginContribution {
+public class StickyViewDescriptor implements IStickyViewDescriptor, IPluginContribution {
 
-    private IConfigurationElement configurationElement;
+	private IConfigurationElement configurationElement;
 
 	private String id;
 
@@ -52,81 +51,78 @@ public class StickyViewDescriptor implements IStickyViewDescriptor,
 	 */
 	public static final String STICKY_FOLDER_BOTTOM = "stickyFolderBottom"; //$NON-NLS-1$
 
-    /**
-     * @param element
-     * @throws CoreException
-     */
-    public StickyViewDescriptor(IConfigurationElement element)
-            throws CoreException {
-    	this.configurationElement = element;
-    	id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (id == null) {
-			throw new CoreException(new Status(IStatus.ERROR, element
-					.getContributor().getName(), 0,
-                    "Invalid extension (missing id) ", null));//$NON-NLS-1$
+	/**
+	 * @param element
+	 * @throws CoreException
+	 */
+	public StickyViewDescriptor(IConfigurationElement element) throws CoreException {
+		this.configurationElement = element;
+		id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+		if (id == null) {
+			throw new CoreException(new Status(IStatus.ERROR, element.getContributor().getName(), 0,
+					"Invalid extension (missing id) ", null));//$NON-NLS-1$
 		}
-    }
+	}
 
 	/**
-     * Return the configuration element.
-     *
+	 * Return the configuration element.
+	 *
 	 * @return the configuration element
 	 */
 	public IConfigurationElement getConfigurationElement() {
 		return configurationElement;
 	}
 
-    @Override
+	@Override
 	public int getLocation() {
-    	int direction = IPageLayout.RIGHT;
+		int direction = IPageLayout.RIGHT;
 
-    	String location = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_LOCATION);
-        if (location != null) {
-            if (location.equalsIgnoreCase("left")) { //$NON-NLS-1$
+		String location = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_LOCATION);
+		if (location != null) {
+			if (location.equalsIgnoreCase("left")) { //$NON-NLS-1$
 				direction = IPageLayout.LEFT;
 			} else if (location.equalsIgnoreCase("top")) { //$NON-NLS-1$
 				direction = IPageLayout.TOP;
 			} else if (location.equalsIgnoreCase("bottom")) { //$NON-NLS-1$
 				direction = IPageLayout.BOTTOM;
-            //no else for right - it is the default value;
+				// no else for right - it is the default value;
 			}
-        }
-        return direction;
-    }
+		}
+		return direction;
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return id;
-    }
+		return id;
+	}
 
-    @Override
+	@Override
 	public String getLocalId() {
-    	return id;
-    }
+		return id;
+	}
 
-    @Override
+	@Override
 	public String getPluginId() {
-    	return configurationElement.getContributor().getName();
-    }
+		return configurationElement.getContributor().getName();
+	}
 
-
-    @Override
+	@Override
 	public boolean isCloseable() {
-    	boolean closeable = true;
-    	String closeableString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLOSEABLE);
-        if (closeableString != null) {
-            closeable = !closeableString.equals("false"); //$NON-NLS-1$
-        }
-        return closeable;
-    }
+		boolean closeable = true;
+		String closeableString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLOSEABLE);
+		if (closeableString != null) {
+			closeable = !closeableString.equals("false"); //$NON-NLS-1$
+		}
+		return closeable;
+	}
 
-    @Override
+	@Override
 	public boolean isMoveable() {
-    	boolean moveable = true;
-    	String moveableString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_MOVEABLE);
-        if (moveableString != null) {
-            moveable = !moveableString.equals("false"); //$NON-NLS-1$
-        }
-        return moveable;
-    }
+		boolean moveable = true;
+		String moveableString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_MOVEABLE);
+		if (moveableString != null) {
+			moveable = !moveableString.equals("false"); //$NON-NLS-1$
+		}
+		return moveable;
+	}
 }

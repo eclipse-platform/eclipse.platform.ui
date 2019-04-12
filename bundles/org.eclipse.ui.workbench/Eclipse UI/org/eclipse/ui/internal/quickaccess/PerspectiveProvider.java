@@ -49,26 +49,23 @@ public class PerspectiveProvider extends QuickAccessProvider {
 	@Override
 	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
-			IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench()
-					.getPerspectiveRegistry().getPerspectives();
+			IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench().getPerspectiveRegistry()
+					.getPerspectives();
 			cachedElements = new QuickAccessElement[perspectives.length];
 			for (int i = 0; i < perspectives.length; i++) {
 				if (!WorkbenchActivityHelper.filterItem(perspectives[i])) {
-					PerspectiveElement perspectiveElement = new PerspectiveElement(perspectives[i],
-							this);
+					PerspectiveElement perspectiveElement = new PerspectiveElement(perspectives[i], this);
 					idToElement.put(perspectiveElement.getId(), perspectiveElement);
 				}
 			}
-			cachedElements = idToElement.values().toArray(
-					new QuickAccessElement[idToElement.size()]);
+			cachedElements = idToElement.values().toArray(new QuickAccessElement[idToElement.size()]);
 		}
 		return cachedElements;
 	}
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return WorkbenchImages
-				.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
+		return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
 	}
 
 	@Override

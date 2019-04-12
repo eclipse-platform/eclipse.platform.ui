@@ -25,83 +25,83 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroSite;
 
 /**
- * Simple <code>IIntroSite</code> that wraps a <code>IViewSite</code>.  For use in conjunction with
- * <code>ViewIntroAdapterPart</code>.
+ * Simple <code>IIntroSite</code> that wraps a <code>IViewSite</code>. For use
+ * in conjunction with <code>ViewIntroAdapterPart</code>.
  *
  * @since 3.0
  */
 final class ViewIntroAdapterSite implements IIntroSite {
-    private IntroDescriptor descriptor;
+	private IntroDescriptor descriptor;
 
-    private IViewSite viewSite;
+	private IViewSite viewSite;
 
-    public ViewIntroAdapterSite(IViewSite viewSite, IntroDescriptor descriptor) {
-        this.viewSite = viewSite;
-        this.descriptor = descriptor;
-    }
+	public ViewIntroAdapterSite(IViewSite viewSite, IntroDescriptor descriptor) {
+		this.viewSite = viewSite;
+		this.descriptor = descriptor;
+	}
 
-    @Override
+	@Override
 	public IActionBars getActionBars() {
-        return viewSite.getActionBars();
-    }
+		return viewSite.getActionBars();
+	}
 
-    @Override
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return Adapters.adapt(viewSite, adapter);
-    }
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return descriptor.getId();
-    }
+		return descriptor.getId();
+	}
 
-    @Override
+	@Override
 	public IKeyBindingService getKeyBindingService() {
-        return viewSite.getKeyBindingService();
-    }
+		return viewSite.getKeyBindingService();
+	}
 
-    @Override
+	@Override
 	public IWorkbenchPage getPage() {
-        return viewSite.getPage();
-    }
+		return viewSite.getPage();
+	}
 
-    @Override
+	@Override
 	public String getPluginId() {
-        return descriptor.getPluginId();
-    }
+		return descriptor.getPluginId();
+	}
 
-    @Override
+	@Override
 	public ISelectionProvider getSelectionProvider() {
-        return viewSite.getSelectionProvider();
-    }
+		return viewSite.getSelectionProvider();
+	}
 
-    @Override
+	@Override
 	public <T> T getService(final Class<T> key) {
-    		return viewSite.getService(key);
-    }
+		return viewSite.getService(key);
+	}
 
-    @Override
+	@Override
 	public Shell getShell() {
-        return viewSite.getShell();
-    }
+		return viewSite.getShell();
+	}
 
-    @Override
+	@Override
 	public IWorkbenchWindow getWorkbenchWindow() {
-        return viewSite.getWorkbenchWindow();
-    }
+		return viewSite.getWorkbenchWindow();
+	}
 
 	@Override
 	public boolean hasService(final Class<?> key) {
 		return viewSite.hasService(key);
 	}
 
-    @Override
+	@Override
 	public void setSelectionProvider(ISelectionProvider provider) {
-        viewSite.setSelectionProvider(provider);
-    }
+		viewSite.setSelectionProvider(provider);
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        return viewSite.toString();
-    }
+		return viewSite.toString();
+	}
 }

@@ -117,8 +117,7 @@ public class PerspectiveReader extends MementoReader {
 	Map<String, Integer> getFastViewBars() {
 		Map<String, Integer> bars = new HashMap<>();
 		for (IMemento bar : getFastViewBarMems()) {
-			bars.put(bar.getString(IWorkbenchConstants.TAG_ID),
-					bar.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE));
+			bars.put(bar.getString(IWorkbenchConstants.TAG_ID), bar.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE));
 		}
 		return bars;
 	}

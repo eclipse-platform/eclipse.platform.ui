@@ -38,8 +38,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  *
  * @since 3.5
  */
-public abstract class ExtensionContributionFactory extends
-		AbstractContributionFactory implements IExecutableExtension {
+public abstract class ExtensionContributionFactory extends AbstractContributionFactory implements IExecutableExtension {
 
 	private String namespace;
 	private String locationURI;
@@ -63,17 +62,15 @@ public abstract class ExtensionContributionFactory extends
 
 	/**
 	 * Clients who wish to implement their own {@link IExecutableExtension}
-	 * behaviour <strong>must</strong> invoke this method prior to any
-	 * customization they perform.
+	 * behaviour <strong>must</strong> invoke this method prior to any customization
+	 * they perform.
 	 *
-	 * @throws CoreException
-	 *             so that a subclass may throw this
+	 * @throws CoreException so that a subclass may throw this
 	 */
 	@Override
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
-		locationURI = config
-				.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI);
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
+		locationURI = config.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI);
 		namespace = config.getNamespaceIdentifier();
 	}
 }

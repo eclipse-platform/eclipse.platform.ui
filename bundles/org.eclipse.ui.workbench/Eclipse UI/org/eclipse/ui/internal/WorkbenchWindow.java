@@ -206,6 +206,7 @@ import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
+
 /**
  * A window within the workbench.
  */
@@ -288,9 +289,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * The map of services maintained by the workbench window. These services
-	 * are initialized when the workbench window is being constructed by
-	 * dependency injection.
+	 * The map of services maintained by the workbench window. These services are
+	 * initialized when the workbench window is being constructed by dependency
+	 * injection.
 	 */
 	private ServiceLocator serviceLocator;
 
@@ -408,8 +409,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public static final int SHOW_VIEW_SUBMENU = 0x01;
 
 	/**
-	 * Constant (bit mask) indicating which the Open Perspective submenu is
-	 * probably present somewhere in this window.
+	 * Constant (bit mask) indicating which the Open Perspective submenu is probably
+	 * present somewhere in this window.
 	 *
 	 * @see #addSubmenu
 	 * @since 3.0
@@ -428,11 +429,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * Remembers that this window contains the given submenu.
 	 *
-	 * @param type
-	 *            the type of submenu, one of: {@link #NEW_WIZARD_SUBMENU
-	 *            NEW_WIZARD_SUBMENU}, {@link #OPEN_PERSPECTIVE_SUBMENU
-	 *            OPEN_PERSPECTIVE_SUBMENU}, {@link #SHOW_VIEW_SUBMENU
-	 *            SHOW_VIEW_SUBMENU}
+	 * @param type the type of submenu, one of: {@link #NEW_WIZARD_SUBMENU
+	 *             NEW_WIZARD_SUBMENU}, {@link #OPEN_PERSPECTIVE_SUBMENU
+	 *             OPEN_PERSPECTIVE_SUBMENU}, {@link #SHOW_VIEW_SUBMENU
+	 *             SHOW_VIEW_SUBMENU}
 	 * @see #containsSubmenu
 	 * @since 3.0
 	 */
@@ -443,11 +443,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * Checks to see if this window contains the given type of submenu.
 	 *
-	 * @param type
-	 *            the type of submenu, one of: {@link #NEW_WIZARD_SUBMENU
-	 *            NEW_WIZARD_SUBMENU}, {@link #OPEN_PERSPECTIVE_SUBMENU
-	 *            OPEN_PERSPECTIVE_SUBMENU}, {@link #SHOW_VIEW_SUBMENU
-	 *            SHOW_VIEW_SUBMENU}
+	 * @param type the type of submenu, one of: {@link #NEW_WIZARD_SUBMENU
+	 *             NEW_WIZARD_SUBMENU}, {@link #OPEN_PERSPECTIVE_SUBMENU
+	 *             OPEN_PERSPECTIVE_SUBMENU}, {@link #SHOW_VIEW_SUBMENU
+	 *             SHOW_VIEW_SUBMENU}
 	 * @return <code>true</code> if window contains submenu, <code>false</code>
 	 *         otherwise
 	 * @see #addSubmenu
@@ -462,16 +461,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 *
 	 * @since 3.0
 	 */
-	private static final int FILL_ALL_ACTION_BARS = ActionBarAdvisor.FILL_MENU_BAR
-			| ActionBarAdvisor.FILL_COOL_BAR | ActionBarAdvisor.FILL_STATUS_LINE;
+	private static final int FILL_ALL_ACTION_BARS = ActionBarAdvisor.FILL_MENU_BAR | ActionBarAdvisor.FILL_COOL_BAR
+			| ActionBarAdvisor.FILL_STATUS_LINE;
 
 	/**
 	 * Creates and initializes a new workbench window.
 	 *
-	 * @param input
-	 *            the input for this workbench window
-	 * @param pers
-	 *            the perspective to initialize this workbench window with
+	 * @param input the input for this workbench window
+	 * @param pers  the perspective to initialize this workbench window with
 	 */
 	public WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor pers) {
 		this.input = input;
@@ -490,37 +487,34 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			// Initialize a previous 'saved' state if applicable. We no longer
 			// update the preference store.
 			if (getModel().getPersistedState().containsKey(IPreferenceConstants.COOLBAR_VISIBLE)) {
-				this.coolBarVisible = Boolean.parseBoolean(getModel().getPersistedState().get(
-						IPreferenceConstants.COOLBAR_VISIBLE));
+				this.coolBarVisible = Boolean
+						.parseBoolean(getModel().getPersistedState().get(IPreferenceConstants.COOLBAR_VISIBLE));
 			} else {
-				this.coolBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
-						IPreferenceConstants.COOLBAR_VISIBLE);
+				this.coolBarVisible = PrefUtil.getInternalPreferenceStore()
+						.getBoolean(IPreferenceConstants.COOLBAR_VISIBLE);
 				getModel().getPersistedState().put(IPreferenceConstants.COOLBAR_VISIBLE,
 						Boolean.toString(this.coolBarVisible));
 			}
-			if (getModel().getPersistedState().containsKey(
-					IPreferenceConstants.PERSPECTIVEBAR_VISIBLE)) {
-				this.perspectiveBarVisible = Boolean.parseBoolean(getModel().getPersistedState()
-						.get(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE));
+			if (getModel().getPersistedState().containsKey(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE)) {
+				this.perspectiveBarVisible = Boolean
+						.parseBoolean(getModel().getPersistedState().get(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE));
 			} else {
-				this.perspectiveBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
-						IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
+				this.perspectiveBarVisible = PrefUtil.getInternalPreferenceStore()
+						.getBoolean(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
 				getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE,
 						Boolean.toString(this.perspectiveBarVisible));
 			}
 
-			IServiceLocatorCreator slc = workbench
-					.getService(IServiceLocatorCreator.class);
-			this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null,
-					new IDisposable() {
-						@Override
-						public void dispose() {
-							final Shell shell = getShell();
-							if (shell != null && !shell.isDisposed()) {
-								close();
-							}
-						}
-					}, windowContext);
+			IServiceLocatorCreator slc = workbench.getService(IServiceLocatorCreator.class);
+			this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null, new IDisposable() {
+				@Override
+				public void dispose() {
+					final Shell shell = getShell();
+					if (shell != null && !shell.isDisposed()) {
+						close();
+					}
+				}
+			}, windowContext);
 
 			windowContext.set(IExtensionTracker.class.getName(), new ContextFunction() {
 				@Override
@@ -551,8 +545,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							if (!saveable.isSaveOnCloseNeeded()) {
 								return Save.NO;
 							}
-							return SaveableHelper.savePart(saveable, part,
-									WorkbenchWindow.this, true) ? Save.NO : Save.CANCEL;
+							return SaveableHelper.savePart(saveable, part, WorkbenchWindow.this, true) ? Save.NO
+									: Save.CANCEL;
 						}
 					}
 					return defaultSaveHandler.promptToSave(dirtyPart);
@@ -599,9 +593,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 						if (SaveableHelper.isSaveable(workbenchPart)) {
 							SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
 									.getService(ISaveablesLifecycleListener.class);
-							Object saveResult = saveablesList.preCloseParts(
-									Collections.singletonList(workbenchPart), true,
-									WorkbenchWindow.this);
+							Object saveResult = saveablesList.preCloseParts(Collections.singletonList(workbenchPart),
+									true, WorkbenchWindow.this);
 							return saveResult != null;
 						}
 					}
@@ -647,6 +640,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					}
 					LabelProvider labelProvider = new LabelProvider() {
 						WorkbenchPartLabelProvider workbenchLabelProvider = new WorkbenchPartLabelProvider();
+
 						@Override
 						public String getText(Object element) {
 							if (element instanceof Saveable) {
@@ -690,7 +684,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 						}
 					}
 					Map<Saveable, Save> saveOptionMap = new HashMap<>();
-					for (Saveable saveable: saveablesSet) {
+					for (Saveable saveable : saveablesSet) {
 						boolean found = false;
 						for (Object o : toSave) {
 							if (o == saveable) {
@@ -735,8 +729,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 					SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
 							.getService(ISaveablesLifecycleListener.class);
-					Object saveResult = saveablesList.preCloseParts(saveableParts, true,
-							WorkbenchWindow.this);
+					Object saveResult = saveablesList.preCloseParts(saveableParts, true, WorkbenchWindow.this);
 					return (saveResult != null);
 				}
 			};
@@ -756,14 +749,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			initializeDefaultServices();
 
 			/*
-			 * Remove the second QuickAccess control if an older workspace is
-			 * opened.
+			 * Remove the second QuickAccess control if an older workspace is opened.
 			 *
-			 * An older workspace will create an ApplicationModel which already
-			 * contains the QuickAccess elements, from the old
-			 * "popuolateTopTrimContribution()" method. The new implementation
-			 * of this method doesn't add the QuickAccess elements anymore but
-			 * an old workbench.xmi still has these entries in it and so they
+			 * An older workspace will create an ApplicationModel which already contains the
+			 * QuickAccess elements, from the old "popuolateTopTrimContribution()" method.
+			 * The new implementation of this method doesn't add the QuickAccess elements
+			 * anymore but an old workbench.xmi still has these entries in it and so they
 			 * need to be removed.
 			 */
 			cleanLegacyQuickAccessContribution();
@@ -808,13 +799,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				mainMenu = modelService.createModelElement(MMenu.class);
 				mainMenu.setElementId(ActionSet.MAIN_MENU);
 
-				renderer = (MenuManagerRenderer) rendererFactory
-						.getRenderer(mainMenu, null);
+				renderer = (MenuManagerRenderer) rendererFactory.getRenderer(mainMenu, null);
 				renderer.linkModelToManager(mainMenu, menuManager);
 				fill(renderer, mainMenu, menuManager);
 				model.setMainMenu(mainMenu);
-				final Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(),
-						model.getContext());
+				final Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(), model.getContext());
 				shell.setMenuBar(menu);
 
 				menuUpdater = () -> {
@@ -836,8 +825,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					public boolean changed(IEclipseContext context) {
 						ExpressionInfo info = new ExpressionInfo();
 						IEclipseContext leafContext = windowContext.getActiveLeaf();
-						MenuManagerRendererFilter.collectInfo(info, mainMenu, renderer,
-								leafContext, true);
+						MenuManagerRendererFilter.collectInfo(info, mainMenu, renderer, leafContext, true);
 						// if one of these variables change, re-run the RAT
 						for (String name : info.getAccessedVariableNames()) {
 							leafContext.get(name);
@@ -867,17 +855,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			updateActionSets();
 
 			IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-			boolean enableAnimations = preferenceStore
-					.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+			boolean enableAnimations = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
 			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 
 			// Hack!! don't show the intro if there's more than one open
 			// perspective
-			List<MPerspective> persps = modelService.findElements(model, null, MPerspective.class,
-					null);
+			List<MPerspective> persps = modelService.findElements(model, null, MPerspective.class, null);
 			if (persps.size() > 1) {
-				PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_INTRO,
-						false);
+				PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_INTRO, false);
 				PrefUtil.saveAPIPrefs();
 			}
 
@@ -896,8 +881,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			getWindowAdvisor().postWindowCreate();
 			getWindowAdvisor().openIntro();
 
-			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
-					enableAnimations);
+			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations);
 
 			getShell().setData(this);
 			trackShellActivation();
@@ -959,8 +943,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			perspective = registry.findPerspectiveWithId(forcedPerspectiveId);
 		}
 
-		List<MPerspectiveStack> perspStackList = modelService.findElements(model, null,
-				MPerspectiveStack.class, null);
+		List<MPerspectiveStack> perspStackList = modelService.findElements(model, null, MPerspectiveStack.class, null);
 		MPerspective selectedPersp = null;
 
 		if (!perspStackList.isEmpty()) {
@@ -992,21 +975,20 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// that would remove everything from this method except the fill(*)
 		/*
 		 * Reason Why: The setup() method which calls this method also calls the
-		 * ActionBarAdvisor to fill the TopTrim-Bar. Both this and the
-		 * ActionBarAdvisor fill method will be called after the entire
-		 * application model and all its fragments have been build already. This
-		 * leads to the effect that all the elements contributed via the
-		 * application model would be placed in front of the elements
-		 * contributed by the setup() method. (Means all the "Save", "Save All",
-		 * and so on, buttons which are normally placed at the beginning of the
-		 * trimbar (left) would be moved to the end of it (right).)
+		 * ActionBarAdvisor to fill the TopTrim-Bar. Both this and the ActionBarAdvisor
+		 * fill method will be called after the entire application model and all its
+		 * fragments have been build already. This leads to the effect that all the
+		 * elements contributed via the application model would be placed in front of
+		 * the elements contributed by the setup() method. (Means all the "Save",
+		 * "Save All", and so on, buttons which are normally placed at the beginning of
+		 * the trimbar (left) would be moved to the end of it (right).)
 		 */
 		MToolControl spacerControl = (MToolControl) modelService.find(PERSPECTIVE_SPACER_ID, model);
 		if (spacerControl == null) {
 			spacerControl = modelService.createModelElement(MToolControl.class);
 			spacerControl.setElementId(PERSPECTIVE_SPACER_ID);
-			spacerControl
-					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
+			spacerControl.setContributionURI(
+					"bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 			spacerControl.getTags().add(TrimBarLayout.SPACER);
 			spacerControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
 			trimBar.getChildren().add(spacerControl);
@@ -1016,8 +998,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		}
 
-		MToolControl switcherControl = (MToolControl) modelService.find(
-				"PerspectiveSwitcher", model); //$NON-NLS-1$
+		MToolControl switcherControl = (MToolControl) modelService.find("PerspectiveSwitcher", model); //$NON-NLS-1$
 		if (switcherControl == null && getWindowConfigurer().getShowPerspectiveBar()) {
 			switcherControl = modelService.createModelElement(MToolControl.class);
 			switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
@@ -1025,8 +1006,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			switcherControl.getTags().add(IPresentationEngine.DRAGGABLE);
 			switcherControl.getTags().add("HIDEABLE"); //$NON-NLS-1$
 			switcherControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
-			switcherControl
-					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+			switcherControl.setContributionURI(
+					"bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 			trimBar.getChildren().add(switcherControl);
 		} else if (switcherControl != null) {
 			if (!getWindowConfigurer().getShowPerspectiveBar()) {
@@ -1048,18 +1029,16 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * Removes the "legacy" QuickAccess related fields from the
-	 * ApplicationModel.
+	 * Removes the "legacy" QuickAccess related fields from the ApplicationModel.
 	 * <p>
 	 * The "legacy" QuickAccess fields exist in the ApplicationModel if an older
-	 * workspace is opened which was build before the QuickAccess was
-	 * contributed via e4xmi-fragment.
+	 * workspace is opened which was build before the QuickAccess was contributed
+	 * via e4xmi-fragment.
 	 * </p>
 	 */
 	private void cleanLegacyQuickAccessContribution() {
 		for (String quickAccessElementId : QUICK_ACCESS_ELEMENT_IDS) {
-			MToolControl legacyElement = (MToolControl) modelService.find(quickAccessElementId,
-					model);
+			MToolControl legacyElement = (MToolControl) modelService.find(quickAccessElementId, model);
 			if (legacyElement != null) {
 				EcoreUtil.remove((EObject) legacyElement);
 			}
@@ -1073,31 +1052,29 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * available in the model this method will move them to the correct place if
 	 * required. The movement can be influenced by a tag which begins with
 	 * {@value #MOVE_TAG} followed by the normal positioning information (e.g.:
-	 * move_after:PerspectiveSpacer). For more information about positioning
-	 * have a look at: {@link PositionInfo#parse(String)}.
+	 * move_after:PerspectiveSpacer). For more information about positioning have a
+	 * look at: {@link PositionInfo#parse(String)}.
 	 * </p>
 	 */
 	private void positionQuickAccess() {
 		/*
-		 * The QUICK_ACCESS_ELEMENT_IDS array contains the IDs of optional
-		 * elements provided via an e4xmi application model fragment. The method
-		 * checks if they should be moved to a special position. This behavior
-		 * is required because nearly all elements in the legacy workbench are
-		 * not provided via e4xmi application model. They are provided
-		 * programmatically after the e4xmi application model and the
-		 * corresponding fragment models are already processed.
+		 * The QUICK_ACCESS_ELEMENT_IDS array contains the IDs of optional elements
+		 * provided via an e4xmi application model fragment. The method checks if they
+		 * should be moved to a special position. This behavior is required because
+		 * nearly all elements in the legacy workbench are not provided via e4xmi
+		 * application model. They are provided programmatically after the e4xmi
+		 * application model and the corresponding fragment models are already
+		 * processed.
 		 */
 		for (String quickAccessElementId : QUICK_ACCESS_ELEMENT_IDS) {
-			MToolControl quickAccessElement = (MToolControl) modelService.find(
-					quickAccessElementId, model);
+			MToolControl quickAccessElement = (MToolControl) modelService.find(quickAccessElementId, model);
 			if (quickAccessElement != null) {
 				moveControl(quickAccessElement.getParent(), quickAccessElement);
 
 				// target the quick access field specifically
 				if (QUICK_ACCESS_ID.equals(quickAccessElement.getElementId())) {
 					if (model.getTags().contains(QUICK_ACCESS_HIDDEN)) {
-						if (!quickAccessElement.getTags().contains(
-								IPresentationEngine.HIDDEN_EXPLICITLY)) {
+						if (!quickAccessElement.getTags().contains(IPresentationEngine.HIDDEN_EXPLICITLY)) {
 							quickAccessElement.getTags().add(IPresentationEngine.HIDDEN_EXPLICITLY);
 						}
 					} else if (!model.getTags().contains(QUICK_ACCESS_DEFAULT_VISIBILITY_CHANGED)
@@ -1120,8 +1097,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	@Inject
-	private void hideQuickAccess(
-			@Optional @UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
+	private void hideQuickAccess(@Optional @UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
 		if (event == null) {
 			return;
 		}
@@ -1138,16 +1114,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			return;
 		}
 		if (UIEvents.isADD(event)) {
-			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
-					IPresentationEngine.HIDDEN_EXPLICITLY)) {
+			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE, IPresentationEngine.HIDDEN_EXPLICITLY)) {
 				if (!model.getTags().contains(QUICK_ACCESS_HIDDEN)) {
 					model.getTags().add(QUICK_ACCESS_HIDDEN);
 					quickAccessDefaultVisibilityChanged();
 				}
 			}
 		} else if (UIEvents.isREMOVE(event)) {
-			if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE,
-					IPresentationEngine.HIDDEN_EXPLICITLY)) {
+			if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE, IPresentationEngine.HIDDEN_EXPLICITLY)) {
 				model.getTags().remove(QUICK_ACCESS_HIDDEN);
 				quickAccessDefaultVisibilityChanged();
 			}
@@ -1158,15 +1132,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		model.getTags().add(QUICK_ACCESS_DEFAULT_VISIBILITY_CHANGED);
 	}
 
-
 	/**
-	 * Moves the given element from its current position to the position
-	 * mentioned in one of its tags.
+	 * Moves the given element from its current position to the position mentioned
+	 * in one of its tags.
 	 *
-	 * @param elementContainer
-	 *            the list of elements in which the element should be moved
-	 * @param element
-	 *            the element to move
+	 * @param elementContainer the list of elements in which the element should be
+	 *                         moved
+	 * @param element          the element to move
 	 */
 	private void moveControl(MElementContainer<MUIElement> elementContainer, MUIElement element) {
 		if (element == null || elementContainer == null)
@@ -1228,13 +1200,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * Find the element with the given id in the given list of
-	 * {@link MUIElement}s.
+	 * Find the element with the given id in the given list of {@link MUIElement}s.
 	 *
-	 * @param elements
-	 *            the list of {@link MUIElement}s to search
-	 * @param id
-	 *            the id of the {@link MUIElement} to find
+	 * @param elements the list of {@link MUIElement}s to search
+	 * @param id       the id of the {@link MUIElement} to find
 	 * @return the index of the {@link MUIElement} in the given list or -1 if
 	 *         element wasn't found
 	 */
@@ -1254,14 +1223,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * Checks if the {@link MUIElement} has a tag starting with
-	 * {@value #MOVE_TAG} and if so it will extract the {@link PositionInfo} out
-	 * of it.
+	 * Checks if the {@link MUIElement} has a tag starting with {@value #MOVE_TAG}
+	 * and if so it will extract the {@link PositionInfo} out of it.
 	 *
-	 * @param element
-	 *            the element to check
-	 * @return the found {@link PositionInfo} on the given {@link MUIElement},
-	 *         or <code>null</code> if none was found
+	 * @param element the element to check
+	 * @return the found {@link PositionInfo} on the given {@link MUIElement}, or
+	 *         <code>null</code> if none was found
 	 */
 	private PositionInfo findMovePositionInfo(MUIElement element) {
 		if (element != null) {
@@ -1277,8 +1244,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private void populateStandardTrim(MTrimBar bottomTrim) {
 		// StatusLine
-		MToolControl slElement = (MToolControl) modelService.find(
-STATUS_LINE_ID, model);
+		MToolControl slElement = (MToolControl) modelService.find(STATUS_LINE_ID, model);
 		if (slElement == null) {
 			slElement = modelService.createModelElement(MToolControl.class);
 			slElement.setElementId(STATUS_LINE_ID);
@@ -1289,8 +1255,7 @@ STATUS_LINE_ID, model);
 		slElement.getTags().add(TrimBarLayout.SPACER);
 
 		// Heap Status
-		MToolControl hsElement = (MToolControl) modelService.find(
-				"org.eclipse.ui.HeapStatus", model); //$NON-NLS-1$
+		MToolControl hsElement = (MToolControl) modelService.find("org.eclipse.ui.HeapStatus", model); //$NON-NLS-1$
 		if (hsElement == null) {
 			hsElement = modelService.createModelElement(MToolControl.class);
 			hsElement.setElementId("org.eclipse.ui.HeapStatus"); //$NON-NLS-1$
@@ -1301,8 +1266,7 @@ STATUS_LINE_ID, model);
 		hsElement.setToBeRendered(getShowHeapStatus());
 
 		// Progress Bar
-		MToolControl pbElement = (MToolControl) modelService.find(
-				"org.eclipse.ui.ProgressBar", model); //$NON-NLS-1$
+		MToolControl pbElement = (MToolControl) modelService.find("org.eclipse.ui.ProgressBar", model); //$NON-NLS-1$
 		if (pbElement == null) {
 			pbElement = modelService.createModelElement(MToolControl.class);
 			pbElement.setElementId("org.eclipse.ui.ProgressBar"); //$NON-NLS-1$
@@ -1315,8 +1279,7 @@ STATUS_LINE_ID, model);
 
 	private void populateTrimContributions(MTrimBar bottomTrim) {
 		// Part 1: Add groups
-		IConfigurationElement[] exts = extensionRegistry
-				.getConfigurationElementsFor("org.eclipse.ui.menus"); //$NON-NLS-1$
+		IConfigurationElement[] exts = extensionRegistry.getConfigurationElementsFor("org.eclipse.ui.menus"); //$NON-NLS-1$
 		List<IConfigurationElement> items = new ArrayList<>();
 		for (IConfigurationElement ice : exts) {
 			if ("group".equals(ice.getName()) || "widget".equals(ice.getName())) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -1338,7 +1301,8 @@ STATUS_LINE_ID, model);
 			for (IConfigurationElement item : items) {
 				String id = item.getAttribute("id"); //$NON-NLS-1$
 				String classSpec = item.getAttribute("class"); //$NON-NLS-1$
-				//boolean sepVisible = "true".equals(item.getAttribute("separatorsVisible")); //$NON-NLS-1$ //$NON-NLS-2$
+				// boolean sepVisible = "true".equals(item.getAttribute("separatorsVisible"));
+				// //$NON-NLS-1$ //$NON-NLS-2$
 				IConfigurationElement[] locs = item.getChildren("location"); //$NON-NLS-1$
 				for (IConfigurationElement loc : locs) {
 					IConfigurationElement[] bars = loc.getChildren("bar"); //$NON-NLS-1$
@@ -1348,8 +1312,7 @@ STATUS_LINE_ID, model);
 						if (isTrim) {
 							String path = bar.getAttribute("path"); //$NON-NLS-1$
 							if (path != null && path.length() > 0) {
-								createdTrim = addTrimElement(bottomTrim, item, id, false, path,
-										classSpec);
+								createdTrim = addTrimElement(bottomTrim, item, id, false, path, classSpec);
 							} else {
 								IConfigurationElement[] orders = loc.getChildren("order"); //$NON-NLS-1$
 								if (orders.length > 0) {
@@ -1358,8 +1321,7 @@ STATUS_LINE_ID, model);
 									if ("status".equals(relTo)) //$NON-NLS-1$
 										relTo = STATUS_LINE_ID;
 
-									createdTrim = addTrimElement(bottomTrim, item, id, isBefore,
-											relTo, classSpec);
+									createdTrim = addTrimElement(bottomTrim, item, id, isBefore, relTo, classSpec);
 								}
 							}
 
@@ -1375,8 +1337,8 @@ STATUS_LINE_ID, model);
 		}
 	}
 
-	private MToolControl addTrimElement(MTrimBar bottomTrim, IConfigurationElement ice, String id,
-			boolean isBefore, String relTo, String classSpec) {
+	private MToolControl addTrimElement(MTrimBar bottomTrim, IConfigurationElement ice, String id, boolean isBefore,
+			String relTo, String classSpec) {
 		// is it already in the trim ?
 		MUIElement existingTrim = modelService.find(id, bottomTrim);
 		if (existingTrim != null) {
@@ -1530,20 +1492,20 @@ STATUS_LINE_ID, model);
 	/**
 	 * The handlers for global actions that were last submitted to the workbench
 	 * command support. This is a map of command identifiers to
-	 * <code>ActionHandler</code>. This map is never <code>null</code>, and is
-	 * never empty as long as at least one global action has been registered.
+	 * <code>ActionHandler</code>. This map is never <code>null</code>, and is never
+	 * empty as long as at least one global action has been registered.
 	 */
 	private Map<String, ActionHandler> globalActionHandlersByCommandId = new HashMap<>();
 
 	/**
-	 * The list of handler submissions submitted to the workbench command
-	 * support. This list may be empty, but it is never <code>null</code>.
+	 * The list of handler submissions submitted to the workbench command support.
+	 * This list may be empty, but it is never <code>null</code>.
 	 */
 	private List<IHandlerActivation> handlerActivations = new ArrayList<>();
 
 	/**
-	 * The number of large updates that are currently going on. If this is
-	 * number is greater than zero, then UI updateActionBars is a no-op.
+	 * The number of large updates that are currently going on. If this is number is
+	 * greater than zero, then UI updateActionBars is a no-op.
 	 *
 	 * @since 3.1
 	 */
@@ -1591,30 +1553,28 @@ STATUS_LINE_ID, model);
 
 	/**
 	 * <p>
-	 * Submits the action handlers for action set actions and global actions.
-	 * Global actions are given priority, so that if a global action and an
-	 * action set action both handle the same command, the global action is
-	 * given priority.
+	 * Submits the action handlers for action set actions and global actions. Global
+	 * actions are given priority, so that if a global action and an action set
+	 * action both handle the same command, the global action is given priority.
 	 * </p>
 	 * <p>
-	 * These submissions are submitted as <code>Priority.LEGACY</code>, which
-	 * means that they are the lowest priority. This means that if a higher
-	 * priority submission handles the same command under the same conditions,
-	 * that that submission will become the handler.
+	 * These submissions are submitted as <code>Priority.LEGACY</code>, which means
+	 * that they are the lowest priority. This means that if a higher priority
+	 * submission handles the same command under the same conditions, that that
+	 * submission will become the handler.
 	 * </p>
 	 */
 	void submitGlobalActions() {
 		final IHandlerService handlerService = getService(IHandlerService.class);
 
 		/*
-		 * Mash the action sets and global actions together, with global actions
-		 * taking priority.
+		 * Mash the action sets and global actions together, with global actions taking
+		 * priority.
 		 */
 		Map<String, ActionHandler> handlersByCommandId = new HashMap<>();
 		handlersByCommandId.putAll(globalActionHandlersByCommandId);
 
-		List<IHandlerActivation> newHandlers = new ArrayList<>(
-				handlersByCommandId.size());
+		List<IHandlerActivation> newHandlers = new ArrayList<>(handlersByCommandId.size());
 
 		Iterator<IHandlerActivation> existingIter = handlerActivations.iterator();
 		while (existingIter.hasNext()) {
@@ -1647,8 +1607,7 @@ STATUS_LINE_ID, model);
 	/**
 	 * Add a generic property listener.
 	 *
-	 * @param listener
-	 *            the listener to add
+	 * @param listener the listener to add
 	 * @since 3.3
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
@@ -1658,16 +1617,14 @@ STATUS_LINE_ID, model);
 	/**
 	 * Removes a generic property listener.
 	 *
-	 * @param listener
-	 *            the listener to remove
+	 * @param listener the listener to remove
 	 * @since 3.3
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		genericPropertyListeners.remove(listener);
 	}
 
-	private void firePropertyChanged(final String property, final Object oldValue,
-			final Object newValue) {
+	private void firePropertyChanged(final String property, final Object oldValue, final Object newValue) {
 		PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
 		for (Object listener : genericPropertyListeners.getListeners()) {
 			IPropertyChangeListener propertyChangeListener = (IPropertyChangeListener) listener;
@@ -1698,20 +1655,18 @@ STATUS_LINE_ID, model);
 	 */
 	private boolean busyClose(boolean remove) {
 		/*
-		 * Warning: Intricate flow of control and re-entrant invocations of this
-		 * method:
+		 * Warning: Intricate flow of control and re-entrant invocations of this method:
 		 *
-		 * - busyClose(true) is called from WorkbenchWindow#close() when the
-		 * user closes a workbench window.
+		 * - busyClose(true) is called from WorkbenchWindow#close() when the user closes
+		 * a workbench window.
 		 *
-		 * - busyClose(false) is called from Workbench#close(int, boolean). This
-		 * happens on File > Exit/Restart, [Mac] Quit Eclipse, AND ... tadaa ...
-		 * from busyClose(true) when the user closes the last window => [Case A]
+		 * - busyClose(false) is called from Workbench#close(int, boolean). This happens
+		 * on File > Exit/Restart, [Mac] Quit Eclipse, AND ... tadaa ... from
+		 * busyClose(true) when the user closes the last window => [Case A]
 		 *
-		 * Additional complication: busyClose(true) can also be called again
-		 * when someone runs an event loop during the shutdown sequence. In that
-		 * case, the nested busyClose(true) should be dropped (bug 381555) =>
-		 * [Case B]
+		 * Additional complication: busyClose(true) can also be called again when
+		 * someone runs an event loop during the shutdown sequence. In that case, the
+		 * nested busyClose(true) should be dropped (bug 381555) => [Case B]
 		 */
 		if (closing) {
 			// [Case A] Window is already closing.
@@ -1735,8 +1690,7 @@ STATUS_LINE_ID, model);
 			// Tag the currently active part so we can restore focus on startup
 			IWorkbenchPage activePage = getActivePage();
 			if (activePage != null) {
-				WorkbenchPartReference ref = (WorkbenchPartReference) activePage
-						.getActivePartReference();
+				WorkbenchPartReference ref = (WorkbenchPartReference) activePage.getActivePartReference();
 				if (ref != null) {
 					ref.getModel().getTags().add(EPartService.ACTIVE_ON_CLOSE_TAG);
 				}
@@ -1797,8 +1751,8 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * Notifies interested parties (namely the advisor) that the window is about
-	 * to be opened.
+	 * Notifies interested parties (namely the advisor) that the window is about to
+	 * be opened.
 	 *
 	 * @since 3.1
 	 */
@@ -1816,8 +1770,7 @@ STATUS_LINE_ID, model);
 	 * Notifies interested parties (namely the advisor) that the window has been
 	 * restored from a previously saved state.
 	 *
-	 * @throws WorkbenchException
-	 *             passed through from the advisor
+	 * @throws WorkbenchException passed through from the advisor
 	 * @since 3.1
 	 */
 	void fireWindowRestored() throws WorkbenchException {
@@ -1866,8 +1819,7 @@ STATUS_LINE_ID, model);
 		allowUpdates(windowManager);
 		windowManager.update(false);
 
-		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
-				UIListenerLogging.PLE_PERSP_ACTIVATED);
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_ACTIVATED);
 		perspectiveListeners.firePerspectiveActivated(page, perspective);
 	}
 
@@ -1877,8 +1829,7 @@ STATUS_LINE_ID, model);
 	 * @since 3.2
 	 */
 	void firePerspectivePreDeactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
-				UIListenerLogging.PLE_PERSP_PRE_DEACTIVATE);
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_PRE_DEACTIVATE);
 		perspectiveListeners.firePerspectivePreDeactivate(page, perspective);
 	}
 
@@ -1888,8 +1839,7 @@ STATUS_LINE_ID, model);
 	 * @since 3.1
 	 */
 	void firePerspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
-				UIListenerLogging.PLE_PERSP_DEACTIVATED);
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_DEACTIVATED);
 		perspectiveListeners.firePerspectiveDeactivated(page, perspective);
 	}
 
@@ -1900,8 +1850,7 @@ STATUS_LINE_ID, model);
 	 * @param perspective
 	 * @param changeId
 	 */
-	public void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective,
-			String changeId) {
+	public void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		// Some callers call this even when there is no active perspective.
 		// Just ignore this case.
 		if (perspective != null) {
@@ -1923,8 +1872,7 @@ STATUS_LINE_ID, model);
 		// Some callers call this even when there is no active perspective.
 		// Just ignore this case.
 		if (perspective != null) {
-			UIListenerLogging
-					.logPerspectiveChangedEvent(this, page, perspective, partRef, changeId);
+			UIListenerLogging.logPerspectiveChangedEvent(this, page, perspective, partRef, changeId);
 			perspectiveListeners.firePerspectiveChanged(page, perspective, partRef, changeId);
 		}
 	}
@@ -1933,8 +1881,7 @@ STATUS_LINE_ID, model);
 	 * Fires perspective closed
 	 */
 	void firePerspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
-				UIListenerLogging.PLE_PERSP_CLOSED);
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_CLOSED);
 		perspectiveListeners.firePerspectiveClosed(page, perspective);
 	}
 
@@ -1942,8 +1889,7 @@ STATUS_LINE_ID, model);
 	 * Fires perspective opened
 	 */
 	void firePerspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-		UIListenerLogging.logPerspectiveEvent(this, page, perspective,
-				UIListenerLogging.PLE_PERSP_OPENED);
+		UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_OPENED);
 		perspectiveListeners.firePerspectiveOpened(page, perspective);
 	}
 
@@ -2009,8 +1955,8 @@ STATUS_LINE_ID, model);
 	 * Returns <code>true</code> when the window's shell is activated,
 	 * <code>false</code> when it's shell is deactivated
 	 *
-	 * @return boolean <code>true</code> when shell activated,
-	 *         <code>false</code> when shell deactivated
+	 * @return boolean <code>true</code> when shell activated, <code>false</code>
+	 *         when shell deactivated
 	 */
 	public boolean getShellActivated() {
 		return shellActivated;
@@ -2026,8 +1972,7 @@ STATUS_LINE_ID, model);
 
 	private void hideNonRestorableViews() {
 		List<MPart> sharedPartsToRemove = new ArrayList<>();
-		List<MPlaceholder> phList = modelService
-				.findElements(model, null, MPlaceholder.class, null);
+		List<MPlaceholder> phList = modelService.findElements(model, null, MPlaceholder.class, null);
 		for (MPlaceholder ph : phList) {
 			if (!(ph.getRef() instanceof MPart))
 				continue;
@@ -2076,9 +2021,8 @@ STATUS_LINE_ID, model);
 	 * Unconditionally close this window. Assumes the proper flags have been set
 	 * correctly (e.i. closing and updateDisabled)
 	 *
-	 * @param remove
-	 *            <code>true</code> if this window should be removed from the
-	 *            application model
+	 * @param remove <code>true</code> if this window should be removed from the
+	 *               application model
 	 */
 	private boolean hardClose(boolean remove) {
 		try {
@@ -2104,8 +2048,7 @@ STATUS_LINE_ID, model);
 			globalActionHandlersByCommandId.clear();
 
 			// Remove the enabled submissions. Bug 64024.
-			final IContextService contextService = workbench
-					.getService(IContextService.class);
+			final IContextService contextService = workbench.getService(IContextService.class);
 			contextService.unregisterShell(getShell());
 
 			// time to wipe our our populate
@@ -2212,8 +2155,7 @@ STATUS_LINE_ID, model);
 	}
 
 	@Override
-	public IWorkbenchPage openPage(final String perspectiveId, final IAdaptable input)
-			throws WorkbenchException {
+	public IWorkbenchPage openPage(final String perspectiveId, final IAdaptable input) throws WorkbenchException {
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, () -> {
 			try {
@@ -2232,13 +2174,11 @@ STATUS_LINE_ID, model);
 		}
 	}
 
-	private IWorkbenchPage busyOpenPage(String perspectiveId, IAdaptable input)
-			throws WorkbenchException {
-		IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry()
-				.findPerspectiveWithId(perspectiveId);
+	private IWorkbenchPage busyOpenPage(String perspectiveId, IAdaptable input) throws WorkbenchException {
+		IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 		if (descriptor == null) {
-			throw new WorkbenchException(NLS.bind(
-					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
+			throw new WorkbenchException(
+					NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
 		}
 
 		if (page == null) {
@@ -2333,8 +2273,7 @@ STATUS_LINE_ID, model);
 					}
 				}
 
-
-				//Disable the presentation (except the bottom trim)
+				// Disable the presentation (except the bottom trim)
 				TrimmedPartLayout tpl = (TrimmedPartLayout) getShell().getLayout();
 				disableControl(tpl.clientArea, toEnable);
 				disableControl(tpl.top, toEnable);
@@ -2437,10 +2376,8 @@ STATUS_LINE_ID, model);
 		if (menuRestrictions.isEmpty()) {
 			return;
 		}
-		EvaluationReference[] refs = menuRestrictions
-				.toArray(new EvaluationReference[menuRestrictions.size()]);
-		IEvaluationService es = serviceLocator
-				.getService(IEvaluationService.class);
+		EvaluationReference[] refs = menuRestrictions.toArray(new EvaluationReference[menuRestrictions.size()]);
+		IEvaluationService es = serviceLocator.getService(IEvaluationService.class);
 		IEvaluationContext currentState = es.getCurrentState();
 		for (EvaluationReference reference : refs) {
 			reference.setPostingChanges(true);
@@ -2450,8 +2387,7 @@ STATUS_LINE_ID, model);
 			boolean ns = reference.evaluate(currentState);
 			if (os != ns) {
 				reference.getListener().propertyChange(
-						new PropertyChangeEvent(reference, reference.getProperty(), valueOf(os),
-								valueOf(ns)));
+						new PropertyChangeEvent(reference, reference.getProperty(), valueOf(os), valueOf(ns)));
 			}
 		}
 	}
@@ -2528,9 +2464,9 @@ STATUS_LINE_ID, model);
 	 * <p>
 	 * Indicates the start of a large update within this window. This is used to
 	 * disable CPU-intensive, change-sensitive services that were temporarily
-	 * disabled in the midst of large changes. This method should always be
-	 * called in tandem with <code>largeUpdateEnd</code>, and the event loop
-	 * should not be allowed to spin before that method is called.
+	 * disabled in the midst of large changes. This method should always be called
+	 * in tandem with <code>largeUpdateEnd</code>, and the event loop should not be
+	 * allowed to spin before that method is called.
 	 * </p>
 	 * <p>
 	 * Important: always use with <code>largeUpdateEnd</code>!
@@ -2547,8 +2483,8 @@ STATUS_LINE_ID, model);
 	 * Indicates the end of a large update within this window. This is used to
 	 * re-enable services that were temporarily disabled in the midst of large
 	 * changes. This method should always be called in tandem with
-	 * <code>largeUpdateStart</code>, and the event loop should not be allowed
-	 * to spin before this method is called.
+	 * <code>largeUpdateStart</code>, and the event loop should not be allowed to
+	 * spin before this method is called.
 	 * </p>
 	 * <p>
 	 * Important: always protect this call by using <code>finally</code>!
@@ -2563,9 +2499,8 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * Update the visible action sets. This method is typically called from a
-	 * page when the user changes the visible action sets within the
-	 * prespective.
+	 * Update the visible action sets. This method is typically called from a page
+	 * when the user changes the visible action sets within the prespective.
 	 */
 	public void updateActionSets() {
 		if (updateDisabled) {
@@ -2648,12 +2583,8 @@ STATUS_LINE_ID, model);
 	 */
 	private boolean getShowHeapStatus() {
 		return // Show if the preference is set or debug option is on
-		PrefUtil.getAPIPreferenceStore().getBoolean(
-				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR)
-				|| Boolean
-						.valueOf(
-								Platform.getDebugOption(PlatformUI.PLUGIN_ID
-										+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
+		PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR) || Boolean
+				.valueOf(Platform.getDebugOption(PlatformUI.PLUGIN_ID + "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
 	}
 
 	public void showHeapStatus(boolean show) {
@@ -2667,11 +2598,11 @@ STATUS_LINE_ID, model);
 	/**
 	 * Returns the unique object that applications use to configure this window.
 	 * <p>
-	 * IMPORTANT This method is declared package-private to prevent regular
-	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-	 * hold of the workbench window configurer that would allow them to tamper
-	 * with the workbench window. The workbench window configurer is available
-	 * only to the application.
+	 * IMPORTANT This method is declared package-private to prevent regular plug-ins
+	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of the
+	 * workbench window configurer that would allow them to tamper with the
+	 * workbench window. The workbench window configurer is available only to the
+	 * application.
 	 * </p>
 	 */
 	/* package - DO NOT CHANGE */
@@ -2687,10 +2618,10 @@ STATUS_LINE_ID, model);
 	 * Returns the workbench advisor. Assumes the workbench has been created
 	 * already.
 	 * <p>
-	 * IMPORTANT This method is declared private to prevent regular plug-ins
-	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
-	 * the workbench advisor that would allow them to tamper with the workbench.
-	 * The workbench advisor is internal to the application.
+	 * IMPORTANT This method is declared private to prevent regular plug-ins from
+	 * downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of the
+	 * workbench advisor that would allow them to tamper with the workbench. The
+	 * workbench advisor is internal to the application.
 	 * </p>
 	 */
 	private/* private - DO NOT CHANGE */
@@ -2701,10 +2632,10 @@ STATUS_LINE_ID, model);
 	/**
 	 * Returns the window advisor, creating a new one for this window if needed.
 	 * <p>
-	 * IMPORTANT This method is declared package private to prevent regular
-	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-	 * hold of the window advisor that would allow them to tamper with the
-	 * window. The window advisor is internal to the application.
+	 * IMPORTANT This method is declared package private to prevent regular plug-ins
+	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of the
+	 * window advisor that would allow them to tamper with the window. The window
+	 * advisor is internal to the application.
 	 * </p>
 	 */
 	/* package private - DO NOT CHANGE */
@@ -2717,20 +2648,19 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * Returns the action bar advisor, creating a new one for this window if
-	 * needed.
+	 * Returns the action bar advisor, creating a new one for this window if needed.
 	 * <p>
-	 * IMPORTANT This method is declared private to prevent regular plug-ins
-	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
-	 * the action bar advisor that would allow them to tamper with the window's
-	 * action bars. The action bar advisor is internal to the application.
+	 * IMPORTANT This method is declared private to prevent regular plug-ins from
+	 * downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of the
+	 * action bar advisor that would allow them to tamper with the window's action
+	 * bars. The action bar advisor is internal to the application.
 	 * </p>
 	 */
 	private/* private - DO NOT CHANGE */
 	ActionBarAdvisor getActionBarAdvisor() {
 		if (actionBarAdvisor == null) {
-			actionBarAdvisor = getWindowAdvisor().createActionBarAdvisor(
-					getWindowConfigurer().getActionBarConfigurer());
+			actionBarAdvisor = getWindowAdvisor()
+					.createActionBarAdvisor(getWindowConfigurer().getActionBarConfigurer());
 			Assert.isNotNull(actionBarAdvisor);
 		}
 		return actionBarAdvisor;
@@ -2746,8 +2676,7 @@ STATUS_LINE_ID, model);
 	/**
 	 * Fills the window's real action bars.
 	 *
-	 * @param flags
-	 *            indicate which bars to fill
+	 * @param flags indicate which bars to fill
 	 */
 	public void fillActionBars(int flags) {
 		Workbench workbench = getWorkbenchImpl();
@@ -2762,10 +2691,8 @@ STATUS_LINE_ID, model);
 	/**
 	 * Fills the window's proxy action bars.
 	 *
-	 * @param proxyBars
-	 *            the proxy configurer
-	 * @param flags
-	 *            indicate which bars to fill
+	 * @param proxyBars the proxy configurer
+	 * @param flags     indicate which bars to fill
 	 */
 	public void fillActionBars(IActionBarConfigurer2 proxyBars, int flags) {
 		Assert.isNotNull(proxyBars);
@@ -2780,23 +2707,21 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * Cause the coolbar to be shown or hidden; note that the coolbar may still
-	 * be visible depending on the visibility state of other elements. This
-	 * method is a lower-level method that affects the visibility but does not
-	 * update any associated preference values.
+	 * Cause the coolbar to be shown or hidden; note that the coolbar may still be
+	 * visible depending on the visibility state of other elements. This method is a
+	 * lower-level method that affects the visibility but does not update any
+	 * associated preference values.
 	 *
-	 * @param visible
-	 *            whether the cool bar should be shown. This is only applicable
-	 *            if the window configurer also wishes either the cool bar to be
-	 *            visible.
+	 * @param visible whether the cool bar should be shown. This is only applicable
+	 *                if the window configurer also wishes either the cool bar to be
+	 *                visible.
 	 * @since 3.0
 	 */
 	public void setCoolBarVisible(boolean visible) {
 		boolean oldValue = coolBarVisible;
 		coolBarVisible = visible;
 		if (oldValue != coolBarVisible) {
-			getModel().getPersistedState().put(IPreferenceConstants.COOLBAR_VISIBLE,
-					Boolean.toString(visible));
+			getModel().getPersistedState().put(IPreferenceConstants.COOLBAR_VISIBLE, Boolean.toString(visible));
 			updateLayoutDataForContents();
 			firePropertyChanged(PROP_COOLBAR_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
 					coolBarVisible ? Boolean.TRUE : Boolean.FALSE);
@@ -2804,9 +2729,8 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * @return whether the cool bar should be shown. This is only applicable if
-	 *         the window configurer also wishes either the cool bar to be
-	 *         visible.
+	 * @return whether the cool bar should be shown. This is only applicable if the
+	 *         window configurer also wishes either the cool bar to be visible.
 	 * @since 3.0
 	 */
 	public boolean getCoolBarVisible() {
@@ -2821,33 +2745,31 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * Cause the perspective bar to be shown or hidden; note that the
-	 * perspective bar may still be visible depending on the visibility state of
-	 * other elements. This method is a lower-level method that affects the
-	 * visibility but does not update any associated preference values.
+	 * Cause the perspective bar to be shown or hidden; note that the perspective
+	 * bar may still be visible depending on the visibility state of other elements.
+	 * This method is a lower-level method that affects the visibility but does not
+	 * update any associated preference values.
 	 *
-	 * @param visible
-	 *            whether the perspective bar should be shown. This is only
-	 *            applicable if the window configurer also wishes either the
-	 *            perspective bar to be visible.
+	 * @param visible whether the perspective bar should be shown. This is only
+	 *                applicable if the window configurer also wishes either the
+	 *                perspective bar to be visible.
 	 * @since 3.0
 	 */
 	public void setPerspectiveBarVisible(boolean visible) {
 		boolean oldValue = perspectiveBarVisible;
 		perspectiveBarVisible = visible;
 		if (oldValue != perspectiveBarVisible) {
-			getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE,
-					Boolean.toString(visible));
+			getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, Boolean.toString(visible));
 			updateLayoutDataForContents();
-			firePropertyChanged(PROP_PERSPECTIVEBAR_VISIBLE, oldValue ? Boolean.TRUE
-					: Boolean.FALSE, perspectiveBarVisible ? Boolean.TRUE : Boolean.FALSE);
+			firePropertyChanged(PROP_PERSPECTIVEBAR_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
+					perspectiveBarVisible ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}
 
 	/**
-	 * @return whether the perspective bar should be shown. This is only
-	 *         applicable if the window configurer also wishes either the
-	 *         perspective bar to be visible.
+	 * @return whether the perspective bar should be shown. This is only applicable
+	 *         if the window configurer also wishes either the perspective bar to be
+	 *         visible.
 	 * @since 3.0
 	 */
 	public boolean getPerspectiveBarVisible() {
@@ -2855,18 +2777,16 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * @param visible
-	 *            whether the perspective bar should be shown. This is only
-	 *            applicable if the window configurer also wishes either the
-	 *            perspective bar to be visible.
+	 * @param visible whether the perspective bar should be shown. This is only
+	 *                applicable if the window configurer also wishes either the
+	 *                perspective bar to be visible.
 	 * @since 3.0
 	 */
 	public void setStatusLineVisible(boolean visible) {
 		boolean oldValue = statusLineVisible;
 		statusLineVisible = visible;
 		if (oldValue != statusLineVisible) {
-			getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE,
-					Boolean.toString(visible));
+			getModel().getPersistedState().put(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, Boolean.toString(visible));
 			updateLayoutDataForContents();
 			firePropertyChanged(PROP_STATUS_LINE_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
 					statusLineVisible ? Boolean.TRUE : Boolean.FALSE);
@@ -2874,9 +2794,9 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * @return whether the perspective bar should be shown. This is only
-	 *         applicable if the window configurer also wishes either the
-	 *         perspective bar to be visible.
+	 * @return whether the perspective bar should be shown. This is only applicable
+	 *         if the window configurer also wishes either the perspective bar to be
+	 *         visible.
 	 * @since 3.0
 	 */
 	public boolean getStatusLineVisible() {
@@ -2919,8 +2839,7 @@ STATUS_LINE_ID, model);
 	private final void initializeDefaultServices() {
 		IEclipseContext windowContext = model.getContext();
 		serviceLocator.registerService(IWorkbenchLocationService.class,
-				new WorkbenchLocationService(IServiceScopes.WINDOW_SCOPE, getWorkbench(), this,
-						null, null, null, 1));
+				new WorkbenchLocationService(IServiceScopes.WINDOW_SCOPE, getWorkbench(), this, null, null, null, 1));
 		// added back for legacy reasons
 		serviceLocator.registerService(IWorkbenchWindow.class, this);
 
@@ -2938,13 +2857,12 @@ STATUS_LINE_ID, model);
 		actionPersistence.read();
 
 		ICommandService cmdService = workbench.getService(ICommandService.class);
-		SlaveCommandService slaveCmdService = new SlaveCommandService(cmdService,
-				IServiceScopes.WINDOW_SCOPE, this, model.getContext());
+		SlaveCommandService slaveCmdService = new SlaveCommandService(cmdService, IServiceScopes.WINDOW_SCOPE, this,
+				model.getContext());
 		serviceLocator.registerService(ICommandService.class, slaveCmdService);
 		serviceLocator.registerService(IUpdateService.class, slaveCmdService);
 
-		IContextService cxs = ContextInjectionFactory
-				.make(ContextService.class, model.getContext());
+		IContextService cxs = ContextInjectionFactory.make(ContextService.class, model.getContext());
 		serviceLocator.registerService(IContextService.class, cxs);
 
 		IMenuService parent = getWorkbench().getService(IMenuService.class);
@@ -2963,9 +2881,9 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * Toggle the visibility of the coolbar/perspective bar. This method
-	 * respects the window configurer and will only toggle visibility if the
-	 * item in question was originally declared visible by the window advisor.
+	 * Toggle the visibility of the coolbar/perspective bar. This method respects
+	 * the window configurer and will only toggle visibility if the item in question
+	 * was originally declared visible by the window advisor.
 	 *
 	 * @since 3.3
 	 */
@@ -2988,8 +2906,8 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * Return true if the toolbar is visible. Note that it may not be possible
-	 * to make the toolbar visible (i.e., the window configurer).
+	 * Return true if the toolbar is visible. Note that it may not be possible to
+	 * make the toolbar visible (i.e., the window configurer).
 	 *
 	 * @return true if the toolbar is visible
 	 * @since 4.2
@@ -3040,8 +2958,7 @@ STATUS_LINE_ID, model);
 
 	public ICoolBarManager getCoolBarManager2() {
 		if (coolbarToTrim == null) {
-			coolbarToTrim = new CoolBarToTrimManager(application, model, workbenchTrimElements,
-					rendererFactory);
+			coolbarToTrim = new CoolBarToTrimManager(application, model, workbenchTrimElements, rendererFactory);
 		}
 		return coolbarToTrim;
 	}
@@ -3181,8 +3098,7 @@ STATUS_LINE_ID, model);
 		return getToolBarManager2();
 	}
 
-	public CustomizePerspectiveDialog createCustomizePerspectiveDialog(Perspective persp,
-			IEclipseContext context) {
+	public CustomizePerspectiveDialog createCustomizePerspectiveDialog(Perspective persp, IEclipseContext context) {
 		return new CustomizePerspectiveDialog(getWindowConfigurer(), persp, context);
 	}
 

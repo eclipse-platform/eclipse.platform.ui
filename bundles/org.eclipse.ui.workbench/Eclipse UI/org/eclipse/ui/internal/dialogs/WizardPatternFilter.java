@@ -28,6 +28,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
 public class WizardPatternFilter extends PatternFilter {
 	/**
 	 * Create a new instance of a WizardPatternFilter
+	 * 
 	 * @param isMatchItem
 	 */
 	public WizardPatternFilter() {
@@ -70,8 +71,7 @@ public class WizardPatternFilter extends PatternFilter {
 
 		for (Object elem : super.filter(viewer, parent, elements)) {
 			if (elem instanceof WizardCollectionElement) {
-				Object wizardCollection = WizardCollectionElement.filter(viewer, this,
-						(WizardCollectionElement) elem);
+				Object wizardCollection = WizardCollectionElement.filter(viewer, this, (WizardCollectionElement) elem);
 				if (wizardCollection != null) {
 					result.add(wizardCollection);
 				}

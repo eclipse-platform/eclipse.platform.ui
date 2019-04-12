@@ -33,15 +33,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * <ol>
  * <li>It <code>isPredefined()</code>, in which case it was defined from an
  * extension point.</li>
- * <li>It <code>isPredefined()</code> and <code>hasCustomFile</code>, in
- * which case the user has customized a predefined perspective.</li>
+ * <li>It <code>isPredefined()</code> and <code>hasCustomFile</code>, in which
+ * case the user has customized a predefined perspective.</li>
  * <li>It <code>hasCustomFile</code>, in which case the user created a new
  * perspective.</li>
  * </ol>
  *
  */
-public class PerspectiveDescriptor implements IPerspectiveDescriptor,
-		IPluginContribution {
+public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginContribution {
 
 	private String id;
 	private String label;
@@ -74,8 +73,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 
 	public IPerspectiveFactory createFactory() {
 		try {
-			return (IPerspectiveFactory) configElement
-					.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+			return (IPerspectiveFactory) configElement.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,8 +108,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 		if (configElement != null) {
 			String icon = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 			if (icon != null) {
-				image = AbstractUIPlugin.imageDescriptorFromPlugin(
-						configElement.getNamespaceIdentifier(), icon);
+				image = AbstractUIPlugin.imageDescriptorFromPlugin(configElement.getNamespaceIdentifier(), icon);
 			}
 		}
 
@@ -124,11 +121,9 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 
 	/**
 	 * Set the {@link ImageDescriptor} that should be used to provide the
-	 * perspective icon. Needed for contributing perspectives via model
-	 * fragments.
+	 * perspective icon. Needed for contributing perspectives via model fragments.
 	 *
-	 * @param image
-	 *            The {@link ImageDescriptor} to use
+	 * @param image The {@link ImageDescriptor} to use
 	 */
 	public void setImageDescriptor(ImageDescriptor image) {
 		this.image = image;
@@ -136,8 +131,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 
 	@Override
 	public String getLabel() {
-		return configElement == null ? label : configElement
-				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+		return configElement == null ? label : configElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
 	@Override
@@ -164,8 +158,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	}
 
 	/**
-	 * Returns <code>true</code> if this perspective is predefined by an
-	 * extension.
+	 * Returns <code>true</code> if this perspective is predefined by an extension.
 	 *
 	 * @return boolean whether this perspective is predefined by an extension
 	 */

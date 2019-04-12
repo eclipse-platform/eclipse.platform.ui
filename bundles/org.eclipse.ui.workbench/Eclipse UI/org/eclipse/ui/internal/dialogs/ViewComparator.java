@@ -27,8 +27,8 @@ public class ViewComparator extends ViewerComparator {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
-	 * Returns a negative, zero, or positive number depending on whether the
-	 * first element is less than, equal to, or greater than the second element.
+	 * Returns a negative, zero, or positive number depending on whether the first
+	 * element is less than, equal to, or greater than the second element.
 	 */
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {

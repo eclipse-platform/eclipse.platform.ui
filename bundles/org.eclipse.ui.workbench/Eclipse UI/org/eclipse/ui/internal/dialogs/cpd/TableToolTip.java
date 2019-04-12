@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * A tooltip with useful information based on the type of ContributionItem
- * the cursor hovers over in a Table.
+ * A tooltip with useful information based on the type of ContributionItem the
+ * cursor hovers over in a Table.
  *
  * @since 3.5
  */

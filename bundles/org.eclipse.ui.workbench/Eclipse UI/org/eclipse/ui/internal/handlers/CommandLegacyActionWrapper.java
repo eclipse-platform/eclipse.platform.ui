@@ -55,9 +55,9 @@ import org.eclipse.ui.services.IServiceLocator;
  * Clients may instantiate this class, but must not extend.
  * </p>
  * <p>
- * <strong>PROVISIONAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
+ * <strong>PROVISIONAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is a guarantee neither that this API will work
+ * nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
  * <p>
@@ -70,8 +70,8 @@ import org.eclipse.ui.services.IServiceLocator;
 public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	/**
-	 * Listens to changes to one or more commands, and forwards them out through
-	 * the property change event mechanism.
+	 * Listens to changes to one or more commands, and forwards them out through the
+	 * property change event mechanism.
 	 */
 	private final class CommandListener implements ICommandListener {
 		@Override
@@ -108,11 +108,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 			// Check if the handled property changed.
 			if (commandEvent.isHandledChanged()) {
 				if (baseCommand.isHandled()) {
-					firePropertyChange(IAction.HANDLED, Boolean.FALSE,
-							Boolean.TRUE);
+					firePropertyChange(IAction.HANDLED, Boolean.FALSE, Boolean.TRUE);
 				} else {
-					firePropertyChange(IAction.HANDLED, Boolean.TRUE,
-							Boolean.FALSE);
+					firePropertyChange(IAction.HANDLED, Boolean.TRUE, Boolean.FALSE);
 				}
 			}
 		}
@@ -125,8 +123,8 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	private ParameterizedCommand command;
 
 	/**
-	 * Listens to changes in a command, and forwards them out through the
-	 * property change event mechanism.
+	 * Listens to changes in a command, and forwards them out through the property
+	 * change event mechanism.
 	 */
 	private final ICommandListener commandListener = new CommandListener();
 
@@ -147,37 +145,30 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	private IServiceLocator serviceLocator;
 
 	/**
-	 * The image style to use for this action. This value may be
-	 * <code>null</code>.
+	 * The image style to use for this action. This value may be <code>null</code>.
 	 */
 	private final String style;
 
 	/**
 	 * Constructs a new instance of <code>ActionProxy</code>.
 	 *
-	 * @param id
-	 *            The initial action identifier; may be <code>null</code>.
-	 * @param command
-	 *            The command with which this action is associated; must not be
-	 *            <code>null</code>.
-	 * @param style
-	 *            The image style to use for this action, may be
-	 *            <code>null</code>.
-	 * @param serviceLocator
-	 *            A service locator that can be used to find various
-	 *            command-based services; must not be <code>null</code>.
+	 * @param id             The initial action identifier; may be
+	 *                       <code>null</code>.
+	 * @param command        The command with which this action is associated; must
+	 *                       not be <code>null</code>.
+	 * @param style          The image style to use for this action, may be
+	 *                       <code>null</code>.
+	 * @param serviceLocator A service locator that can be used to find various
+	 *                       command-based services; must not be <code>null</code>.
 	 */
-	public CommandLegacyActionWrapper(final String id,
-			final ParameterizedCommand command, final String style,
+	public CommandLegacyActionWrapper(final String id, final ParameterizedCommand command, final String style,
 			final IServiceLocator serviceLocator) {
 		if (command == null) {
-			throw new NullPointerException(
-					"An action proxy can't be created without a command"); //$NON-NLS-1$
+			throw new NullPointerException("An action proxy can't be created without a command"); //$NON-NLS-1$
 		}
 
 		if (serviceLocator == null) {
-			throw new NullPointerException(
-					"An action proxy can't be created without a service locator"); //$NON-NLS-1$
+			throw new NullPointerException("An action proxy can't be created without a service locator"); //$NON-NLS-1$
 		}
 
 		this.command = command;
@@ -192,10 +183,8 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public int getAccelerator() {
 		final String commandId = getActionDefinitionId();
-		final IBindingService bindingService = serviceLocator
-				.getService(IBindingService.class);
-		final TriggerSequence triggerSequence = bindingService
-				.getBestActiveBindingFor(commandId);
+		final IBindingService bindingService = serviceLocator.getService(IBindingService.class);
+		final TriggerSequence triggerSequence = bindingService.getBestActiveBindingFor(commandId);
 		if (triggerSequence instanceof KeySequence) {
 			final KeySequence keySequence = (KeySequence) triggerSequence;
 			final KeyStroke[] keyStrokes = keySequence.getKeyStrokes();
@@ -225,10 +214,8 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		final ICommandImageService commandImageService = serviceLocator
-				.getService(ICommandImageService.class);
-		return commandImageService.getImageDescriptor(commandId,
-				CommandImageManager.TYPE_DISABLED, style);
+		final ICommandImageService commandImageService = serviceLocator.getService(ICommandImageService.class);
+		return commandImageService.getImageDescriptor(commandId, CommandImageManager.TYPE_DISABLED, style);
 	}
 
 	@Override
@@ -240,10 +227,8 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		final ICommandImageService commandImageService = serviceLocator
-				.getService(ICommandImageService.class);
-		return commandImageService.getImageDescriptor(commandId,
-				CommandImageManager.TYPE_HOVER, style);
+		final ICommandImageService commandImageService = serviceLocator.getService(ICommandImageService.class);
+		return commandImageService.getImageDescriptor(commandId, CommandImageManager.TYPE_HOVER, style);
 	}
 
 	@Override
@@ -254,8 +239,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		final String commandId = getActionDefinitionId();
-		final ICommandImageService commandImageService = serviceLocator
-				.getService(ICommandImageService.class);
+		final ICommandImageService commandImageService = serviceLocator.getService(ICommandImageService.class);
 		return commandImageService.getImageDescriptor(commandId, style);
 	}
 
@@ -309,16 +293,15 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	/**
-	 * Whether this action's local <code>enabled</code> property is set. This
-	 * can be used by handlers that are trying to check if
-	 * {@link #setEnabled(boolean)} has been called. This is typically used by
-	 * legacy action proxies who are trying to avoid a <a
-	 * href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117496">stack
+	 * Whether this action's local <code>enabled</code> property is set. This can be
+	 * used by handlers that are trying to check if {@link #setEnabled(boolean)} has
+	 * been called. This is typically used by legacy action proxies who are trying
+	 * to avoid a
+	 * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=117496">stack
 	 * overflow</a>.
 	 *
-	 * @return <code>false</code> if someone has called
-	 *         {@link #setEnabled(boolean)} with <code>false</code>;
-	 *         <code>true</code> otherwise.
+	 * @return <code>false</code> if someone has called {@link #setEnabled(boolean)}
+	 *         with <code>false</code>; <code>true</code> otherwise.
 	 */
 	public boolean isEnabledDisregardingCommand() {
 		return enabled;
@@ -338,8 +321,8 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	@Override
 	public void runWithEvent(final Event event) {
 		final Command baseCommand = command.getCommand();
-		final ExecutionEvent executionEvent = new ExecutionEvent(command
-				.getCommand(), command.getParameterMap(), event, null);
+		final ExecutionEvent executionEvent = new ExecutionEvent(command.getCommand(), command.getParameterMap(), event,
+				null);
 		try {
 			baseCommand.execute(executionEvent);
 			firePropertyChange(IAction.RESULT, null, Boolean.TRUE);
@@ -374,8 +357,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		// Update the command.
 		final Command oldBaseCommand = command.getCommand();
 		oldBaseCommand.removeCommandListener(commandListener);
-		final ICommandService commandService = serviceLocator
-				.getService(ICommandService.class);
+		final ICommandService commandService = serviceLocator.getService(ICommandService.class);
 		final Command newBaseCommand = commandService.getCommand(id);
 		command = new ParameterizedCommand(newBaseCommand, null);
 		newBaseCommand.addCommandListener(commandListener);
@@ -400,10 +382,8 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		}
 
 		if (!Objects.equals(oldDescription, newDescription)) {
-			firePropertyChange(IAction.DESCRIPTION, oldDescription,
-					newDescription);
-			firePropertyChange(IAction.TOOL_TIP_TEXT, oldDescription,
-					newDescription);
+			firePropertyChange(IAction.DESCRIPTION, oldDescription, newDescription);
+			firePropertyChange(IAction.TOOL_TIP_TEXT, oldDescription, newDescription);
 		}
 
 		if (newEnabled != oldEnabled) {
@@ -427,8 +407,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		}
 
 		if (!Objects.equals(oldDisabledImage, newDisabledImage)) {
-			firePropertyChange(IAction.IMAGE, oldDisabledImage,
-					newDisabledImage);
+			firePropertyChange(IAction.IMAGE, oldDisabledImage, newDisabledImage);
 		}
 
 		if (!Objects.equals(oldHoverImage, newHoverImage)) {
@@ -457,8 +436,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	@Override
 	public void setDescription(final String text) {
-		final State state = command.getCommand().getState(
-				INamedHandleStateIds.DESCRIPTION);
+		final State state = command.getCommand().getState(INamedHandleStateIds.DESCRIPTION);
 		if (state instanceof TextState) {
 			final String currentValue = (String) state.getValue();
 			if (!Objects.equals(text, currentValue)) {
@@ -471,19 +449,16 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public void setDisabledImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_DISABLED;
-		final ICommandImageService commandImageService = serviceLocator
-				.getService(ICommandImageService.class);
+		final ICommandImageService commandImageService = serviceLocator.getService(ICommandImageService.class);
 		if (commandImageService instanceof CommandImageService) {
-			((CommandImageService) commandImageService).bind(commandId, type,
-					style, newImage);
+			((CommandImageService) commandImageService).bind(commandId, type, style, newImage);
 		}
 	}
 
 	@Override
 	public void setEnabled(final boolean enabled) {
 		if (enabled != this.enabled) {
-			final Boolean oldValue = this.enabled ? Boolean.TRUE
-					: Boolean.FALSE;
+			final Boolean oldValue = this.enabled ? Boolean.TRUE : Boolean.FALSE;
 			final Boolean newValue = enabled ? Boolean.TRUE : Boolean.FALSE;
 			this.enabled = enabled;
 			firePropertyChange(ENABLED, oldValue, newValue);
@@ -500,11 +475,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public void setHoverImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_HOVER;
-		final ICommandImageService commandImageService = serviceLocator
-				.getService(ICommandImageService.class);
+		final ICommandImageService commandImageService = serviceLocator.getService(ICommandImageService.class);
 		if (commandImageService instanceof CommandImageService) {
-			((CommandImageService) commandImageService).bind(commandId, type,
-					style, newImage);
+			((CommandImageService) commandImageService).bind(commandId, type, style, newImage);
 		}
 	}
 
@@ -517,11 +490,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	public void setImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_DEFAULT;
-		final ICommandImageService commandImageService = serviceLocator
-				.getService(ICommandImageService.class);
+		final ICommandImageService commandImageService = serviceLocator.getService(ICommandImageService.class);
 		if (commandImageService instanceof CommandImageService) {
-			((CommandImageService) commandImageService).bind(commandId, type,
-					style, newImage);
+			((CommandImageService) commandImageService).bind(commandId, type, style, newImage);
 		}
 	}
 
@@ -532,8 +503,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	@Override
 	public void setText(final String text) {
-		final State state = command.getCommand().getState(
-				INamedHandleStateIds.NAME);
+		final State state = command.getCommand().getState(INamedHandleStateIds.NAME);
 		if (state instanceof TextState) {
 			final String currentValue = (String) state.getValue();
 			if (!Objects.equals(text, currentValue)) {

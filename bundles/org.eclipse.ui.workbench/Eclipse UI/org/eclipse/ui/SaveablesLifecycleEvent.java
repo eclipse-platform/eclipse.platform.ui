@@ -16,7 +16,6 @@ package org.eclipse.ui;
 
 import java.util.EventObject;
 
-
 /**
  * Event object describing a change to a set of Saveable objects.
  *
@@ -65,22 +64,17 @@ public class SaveablesLifecycleEvent extends EventObject {
 	/**
 	 * Creates a new SaveablesLifecycleEvent.
 	 *
-	 * @param source
-	 *            The source of the event. If an ISaveablesSource notifies
-	 *            about changes to the saveables returned by
-	 *            {@link ISaveablesSource#getSaveables()}, the source must be
-	 *            the ISaveablesSource object.
-	 * @param eventType
-	 *            the event type, currently one of POST_OPEN, PRE_CLOSE,
-	 *            POST_CLOSE, DIRTY_CHANGED
-	 * @param saveables
-	 *            The affected saveables
-	 * @param force
-	 *            true if the event type is PRE_CLOSE and this is a closed force
-	 *            that cannot be canceled.
+	 * @param source    The source of the event. If an ISaveablesSource notifies
+	 *                  about changes to the saveables returned by
+	 *                  {@link ISaveablesSource#getSaveables()}, the source must be
+	 *                  the ISaveablesSource object.
+	 * @param eventType the event type, currently one of POST_OPEN, PRE_CLOSE,
+	 *                  POST_CLOSE, DIRTY_CHANGED
+	 * @param saveables The affected saveables
+	 * @param force     true if the event type is PRE_CLOSE and this is a closed
+	 *                  force that cannot be canceled.
 	 */
-	public SaveablesLifecycleEvent(Object source, int eventType,
-			Saveable[] saveables, boolean force) {
+	public SaveablesLifecycleEvent(Object source, int eventType, Saveable[] saveables, boolean force) {
 		super(source);
 		this.eventType = eventType;
 		this.saveables = saveables;
@@ -89,8 +83,8 @@ public class SaveablesLifecycleEvent extends EventObject {
 
 	/**
 	 * Returns the eventType, currently one of POST_OPEN, PRE_CLOSE, POST_CLOSE,
-	 * DIRTY_CHANGED. Listeners should silently ignore unknown event types since
-	 * new event types might be added in the future.
+	 * DIRTY_CHANGED. Listeners should silently ignore unknown event types since new
+	 * event types might be added in the future.
 	 *
 	 * @return the eventType
 	 */
@@ -118,8 +112,7 @@ public class SaveablesLifecycleEvent extends EventObject {
 	}
 
 	/**
-	 * @param veto
-	 *            The veto to set.
+	 * @param veto The veto to set.
 	 */
 	public void setVeto(boolean veto) {
 		this.veto = veto;

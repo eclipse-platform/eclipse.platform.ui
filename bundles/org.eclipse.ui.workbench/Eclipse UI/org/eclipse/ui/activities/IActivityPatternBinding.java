@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 
 /**
  * An instance of this interface represents a binding between an activity and a
- * regular expression pattern.  It's typically unnecessary to use this interface
- * directly.  Rather, clients wishing to test strings against activity patterns
+ * regular expression pattern. It's typically unnecessary to use this interface
+ * directly. Rather, clients wishing to test strings against activity patterns
  * should use instances of <code>IIdentifier</code>.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -33,30 +33,29 @@ import java.util.regex.Pattern;
  */
 public interface IActivityPatternBinding extends Comparable<IActivityPatternBinding> {
 
-    /**
-     * Returns the identifier of the activity represented in this binding.
-     *
-     * @return the identifier of the activity represented in this binding.
-     *         Guaranteed not to be <code>null</code>.
-     */
-    String getActivityId();
+	/**
+	 * Returns the identifier of the activity represented in this binding.
+	 *
+	 * @return the identifier of the activity represented in this binding.
+	 *         Guaranteed not to be <code>null</code>.
+	 */
+	String getActivityId();
 
-    /**
-	 * Returns the pattern represented in this binding. This pattern should
-	 * conform to the regular expression syntax described by the
-	 * <code>java.util.regex.Pattern</code> class. If
-	 * {@link #isEqualityPattern()} is <code>true</code> a Pattern will be
-	 * generated based on the escaped version of the String returned by
-	 * {@link #getString()}.
+	/**
+	 * Returns the pattern represented in this binding. This pattern should conform
+	 * to the regular expression syntax described by the
+	 * <code>java.util.regex.Pattern</code> class. If {@link #isEqualityPattern()}
+	 * is <code>true</code> a Pattern will be generated based on the escaped version
+	 * of the String returned by {@link #getString()}.
 	 *
 	 * @return the pattern. Guaranteed not to be <code>null</code>.
 	 */
 	Pattern getPattern();
 
-    /**
-	 * If {@link #isEqualityPattern()} is <code>true</code> this will return
-	 * the raw <em>pattern</em> string. Otherwise it will return the string
-	 * version of the compiled pattern.
+	/**
+	 * If {@link #isEqualityPattern()} is <code>true</code> this will return the raw
+	 * <em>pattern</em> string. Otherwise it will return the string version of the
+	 * compiled pattern.
 	 *
 	 * @return The raw <em>pattern</em> string, or the string version of the
 	 *         compiled pattern, depending on {@link #isEqualityPattern()}.
@@ -65,10 +64,10 @@ public interface IActivityPatternBinding extends Comparable<IActivityPatternBind
 	String getString();
 
 	/**
-	 * Answers whether or not the pattern should be treated as a regular string
-	 * or a regular expression. If <code>true</code>, this pattern binding
-	 * will represent an equality match between the pattern and a target ID
-	 * rather than a regular expression match.
+	 * Answers whether or not the pattern should be treated as a regular string or a
+	 * regular expression. If <code>true</code>, this pattern binding will represent
+	 * an equality match between the pattern and a target ID rather than a regular
+	 * expression match.
 	 *
 	 * @return whether the pattern should be treated as regular string
 	 * @since 3.4

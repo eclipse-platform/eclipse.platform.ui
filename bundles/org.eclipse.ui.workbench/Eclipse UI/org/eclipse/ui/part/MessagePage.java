@@ -29,57 +29,57 @@ import org.eclipse.swt.widgets.Label;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MessagePage extends Page {
-    private Composite pgComp;
+	private Composite pgComp;
 
-    private Label msgLabel;
+	private Label msgLabel;
 
-    private String message = "";//$NON-NLS-1$
+	private String message = "";//$NON-NLS-1$
 
-    /**
-     * Creates a new page. The message is the empty string.
-     */
-    public MessagePage() {
-        // do nothing
-    }
+	/**
+	 * Creates a new page. The message is the empty string.
+	 */
+	public MessagePage() {
+		// do nothing
+	}
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
-        // Message in default page of Outline should have margins
-        pgComp = new Composite(parent, SWT.NULL);
-        FillLayout layout = new FillLayout();
-        layout.marginHeight = 5;
-        layout.marginWidth = 5;
-        pgComp.setLayout(layout);
+		// Message in default page of Outline should have margins
+		pgComp = new Composite(parent, SWT.NULL);
+		FillLayout layout = new FillLayout();
+		layout.marginHeight = 5;
+		layout.marginWidth = 5;
+		pgComp.setLayout(layout);
 
-        msgLabel = new Label(pgComp, SWT.LEFT | SWT.TOP | SWT.WRAP);
-        msgLabel.setText(message);
-    }
+		msgLabel = new Label(pgComp, SWT.LEFT | SWT.TOP | SWT.WRAP);
+		msgLabel.setText(message);
+	}
 
-    @Override
+	@Override
 	public Control getControl() {
-        return pgComp;
-    }
+		return pgComp;
+	}
 
-    /**
-     * Sets focus to a part in the page.
-     */
-    @Override
+	/**
+	 * Sets focus to a part in the page.
+	 */
+	@Override
 	public void setFocus() {
-        // important to give focus to the composite rather than the label
-        // as the composite will actually take focus (though hidden),
-        // but setFocus on a Label is a no-op
-        pgComp.setFocus();
-    }
+		// important to give focus to the composite rather than the label
+		// as the composite will actually take focus (though hidden),
+		// but setFocus on a Label is a no-op
+		pgComp.setFocus();
+	}
 
-    /**
-     * Sets the message to the given string.
-     *
-     * @param message the message text
-     */
-    public void setMessage(String message) {
-        this.message = message;
-        if (msgLabel != null) {
+	/**
+	 * Sets the message to the given string.
+	 *
+	 * @param message the message text
+	 */
+	public void setMessage(String message) {
+		this.message = message;
+		if (msgLabel != null) {
 			msgLabel.setText(message);
 		}
-    }
+	}
 }

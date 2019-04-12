@@ -32,8 +32,8 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  *
  * @since 3.1
  */
-public abstract class AbstractExtensionWizardRegistry extends
-		AbstractWizardRegistry implements IExtensionChangeHandler{
+public abstract class AbstractExtensionWizardRegistry extends AbstractWizardRegistry
+		implements IExtensionChangeHandler {
 
 	/**
 	 * Create a new instance of this class.
@@ -44,11 +44,9 @@ public abstract class AbstractExtensionWizardRegistry extends
 
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-		WizardsRegistryReader reader = new WizardsRegistryReader(getPlugin(),
-				getExtensionPoint());
+		WizardsRegistryReader reader = new WizardsRegistryReader(getPlugin(), getExtensionPoint());
 		reader.setInitialCollection(getWizardElements());
-		IConfigurationElement[] configurationElements = extension
-				.getConfigurationElements();
+		IConfigurationElement[] configurationElements = extension.getConfigurationElements();
 		for (IConfigurationElement configurationElement : configurationElements) {
 			reader.readElement(configurationElement);
 		}
@@ -68,27 +66,24 @@ public abstract class AbstractExtensionWizardRegistry extends
 		IWizardDescriptor[] localPrimaryWizards = getPrimaryWizards();
 		WorkbenchWizardElement[] newPrimary = new WorkbenchWizardElement[additionalPrimary.length
 				+ localPrimaryWizards.length];
-		System.arraycopy(localPrimaryWizards, 0, newPrimary, 0,
-				localPrimaryWizards.length);
-		System.arraycopy(additionalPrimary, 0, newPrimary,
-				localPrimaryWizards.length, additionalPrimary.length);
+		System.arraycopy(localPrimaryWizards, 0, newPrimary, 0, localPrimaryWizards.length);
+		System.arraycopy(additionalPrimary, 0, newPrimary, localPrimaryWizards.length, additionalPrimary.length);
 		setPrimaryWizards(newPrimary);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		PlatformUI.getWorkbench().getExtensionTracker()
-				.unregisterHandler(this);
+		PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
 	}
 
 	@Override
 	protected void doInitialize() {
 
-		PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
+		PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this,
+				ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 
-		WizardsRegistryReader reader = new WizardsRegistryReader(getPlugin(),
-				getExtensionPoint());
+		WizardsRegistryReader reader = new WizardsRegistryReader(getPlugin(), getExtensionPoint());
 		setWizardElements(reader.getWizardElements());
 		setPrimaryWizards(reader.getPrimaryWizards());
 		registerWizards(getWizardElements());
@@ -103,8 +98,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 	protected abstract String getExtensionPoint();
 
 	private IExtensionPoint getExtensionPointFilter() {
-		return Platform.getExtensionRegistry().getExtensionPoint(getPlugin(),
-				getExtensionPoint());
+		return Platform.getExtensionRegistry().getExtensionPoint(getPlugin(), getExtensionPoint());
 	}
 
 	/**
@@ -117,21 +111,17 @@ public abstract class AbstractExtensionWizardRegistry extends
 	/**
 	 * Register the object with the workbench tracker.
 	 *
-	 * @param extension
-	 *            the originating extension
-	 * @param object
-	 *            the object to track
+	 * @param extension the originating extension
+	 * @param object    the object to track
 	 */
 	private void register(IExtension extension, Object object) {
-		PlatformUI.getWorkbench().getExtensionTracker().registerObject(
-				extension, object, IExtensionTracker.REF_WEAK);
+		PlatformUI.getWorkbench().getExtensionTracker().registerObject(extension, object, IExtensionTracker.REF_WEAK);
 	}
 
 	/**
 	 * Register all wizards in the given collection with the extension tracker.
 	 *
-	 * @param collection
-	 *            the collection to register
+	 * @param collection the collection to register
 	 */
 	private void registerWizards(WizardCollectionElement collection) {
 		registerWizards(collection.getWorkbenchWizardElements());
@@ -139,8 +129,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 		for (WizardCollectionElement wizardCollectionElement : collection.getCollectionElements()) {
 			IConfigurationElement configurationElement = wizardCollectionElement.getConfigurationElement();
 			if (configurationElement != null) {
-				register(configurationElement.getDeclaringExtension(),
-						wizardCollectionElement);
+				register(configurationElement.getDeclaringExtension(), wizardCollectionElement);
 			}
 			registerWizards(wizardCollectionElement);
 		}
@@ -149,20 +138,17 @@ public abstract class AbstractExtensionWizardRegistry extends
 	/**
 	 * Register all wizards in the given array.
 	 *
-	 * @param wizards
-	 *            the wizards to register
+	 * @param wizards the wizards to register
 	 */
 	private void registerWizards(WorkbenchWizardElement[] wizards) {
 		for (WorkbenchWizardElement wizard : wizards) {
-			register(wizard.getConfigurationElement()
-					.getDeclaringExtension(), wizard);
+			register(wizard.getConfigurationElement().getDeclaringExtension(), wizard);
 		}
 	}
 
 	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
-		if (!extension.getExtensionPointUniqueIdentifier().equals(
-				getExtensionPointFilter().getUniqueIdentifier())) {
+		if (!extension.getExtensionPointUniqueIdentifier().equals(getExtensionPointFilter().getUniqueIdentifier())) {
 			return;
 		}
 		for (Object object : objects) {
@@ -180,9 +166,7 @@ public abstract class AbstractExtensionWizardRegistry extends
 				for (int j = 0; j < primaryWizards.length; j++) {
 					if (primaryWizards[j] == wizard) {
 						WorkbenchWizardElement[] newPrimary = new WorkbenchWizardElement[primaryWizards.length - 1];
-						Util
-								.arrayCopyWithRemoval(primaryWizards,
-										newPrimary, j);
+						Util.arrayCopyWithRemoval(primaryWizards, newPrimary, j);
 						primaryWizards = newPrimary;
 						break;
 					}

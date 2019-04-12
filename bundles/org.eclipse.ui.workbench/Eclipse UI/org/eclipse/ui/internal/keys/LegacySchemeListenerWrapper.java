@@ -38,21 +38,18 @@ final class LegacySchemeListenerWrapper implements ISchemeListener {
 	private final IKeyConfigurationListener listener;
 
 	/**
-	 * Constructs a new instance of <code>SchemeListenerWrapper</code> with
-	 * the given listener.
+	 * Constructs a new instance of <code>SchemeListenerWrapper</code> with the
+	 * given listener.
 	 *
-	 * @param listener
-	 *            The listener to be wrapped; must mot be <code>null</code>.
+	 * @param listener The listener to be wrapped; must mot be <code>null</code>.
 	 */
-	LegacySchemeListenerWrapper(final IKeyConfigurationListener listener,
-			final BindingManager bindingManager) {
+	LegacySchemeListenerWrapper(final IKeyConfigurationListener listener, final BindingManager bindingManager) {
 		if (listener == null) {
 			throw new NullPointerException("Cannot wrap a null listener"); //$NON-NLS-1$
 		}
 
 		if (bindingManager == null) {
-			throw new NullPointerException(
-					"Cannot wrap a listener without a binding manager"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot wrap a listener without a binding manager"); //$NON-NLS-1$
 		}
 
 		this.listener = listener;
@@ -81,14 +78,12 @@ final class LegacySchemeListenerWrapper implements ISchemeListener {
 
 	@Override
 	public void schemeChanged(final SchemeEvent schemeEvent) {
-		final IKeyConfiguration keyConfiguration = new SchemeLegacyWrapper(
-				schemeEvent.getScheme(), bindingManager);
+		final IKeyConfiguration keyConfiguration = new SchemeLegacyWrapper(schemeEvent.getScheme(), bindingManager);
 		final boolean definedChanged = schemeEvent.isDefinedChanged();
 		final boolean nameChanged = schemeEvent.isNameChanged();
 		final boolean parentIdChanged = schemeEvent.isParentIdChanged();
 
-		listener.keyConfigurationChanged(new KeyConfigurationEvent(
-				keyConfiguration, false, definedChanged, nameChanged,
-				parentIdChanged));
+		listener.keyConfigurationChanged(
+				new KeyConfigurationEvent(keyConfiguration, false, definedChanged, nameChanged, parentIdChanged));
 	}
 }

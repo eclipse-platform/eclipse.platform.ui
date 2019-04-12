@@ -65,10 +65,8 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	}
 
 	private WorkbenchServiceRegistry() {
-		PlatformUI.getWorkbench().getExtensionTracker().registerHandler(
-				this,
-				ExtensionTracker
-						.createExtensionPointFilter(getExtensionPoint()));
+		PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this,
+				ExtensionTracker.createExtensionPointFilter(getExtensionPoint()));
 	}
 
 	/**
@@ -92,13 +90,13 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 		AbstractServiceFactory factory;
 		WeakHashMap serviceLocators = new WeakHashMap();
 		String[] serviceNames;
+
 		ServiceFactoryHandle(AbstractServiceFactory factory) {
 			this.factory = factory;
 		}
 	}
 
-	public Object getService(Class key, IServiceLocator parentLocator,
-			ServiceLocator locator) {
+	public Object getService(Class key, IServiceLocator parentLocator, ServiceLocator locator) {
 		ServiceFactoryHandle handle = (ServiceFactoryHandle) factories.get(key.getName());
 		if (handle == null) {
 			handle = loadFromRegistry(key);
@@ -115,8 +113,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 
 	private ServiceFactoryHandle loadFromRegistry(Class key) {
 		ServiceFactoryHandle result = null;
-		IConfigurationElement[] serviceFactories = getExtensionPoint()
-				.getConfigurationElements();
+		IConfigurationElement[] serviceFactories = getExtensionPoint().getConfigurationElements();
 		try {
 			final String requestedName = key.getName();
 			boolean done = false;
@@ -134,11 +131,10 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 					final AbstractServiceFactory f = (AbstractServiceFactory) serviceFactories[i]
 							.createExecutableExtension(IWorkbenchRegistryConstants.ATTR_FACTORY_CLASS);
 					ServiceFactoryHandle handle = new ServiceFactoryHandle(f);
-			    	PlatformUI.getWorkbench().getExtensionTracker().registerObject(
-			    			serviceFactories[i].getDeclaringExtension(),
-							handle, IExtensionTracker.REF_WEAK);
+					PlatformUI.getWorkbench().getExtensionTracker().registerObject(
+							serviceFactories[i].getDeclaringExtension(), handle, IExtensionTracker.REF_WEAK);
 
-			    	List serviceNames = new ArrayList();
+					List serviceNames = new ArrayList();
 					for (IConfigurationElement configElement : serviceNameElements) {
 						String serviceName = configElement.getAttribute(IWorkbenchRegistryConstants.ATTR_SERVICE_CLASS);
 						if (factories.containsKey(serviceName)) {
@@ -149,8 +145,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 							serviceNames.add(serviceName);
 						}
 					}
-					handle.serviceNames = (String[]) serviceNames.toArray(new String[serviceNames
-							.size()]);
+					handle.serviceNames = (String[]) serviceNames.toArray(new String[serviceNames.size()]);
 					result = handle;
 				}
 			}
@@ -170,16 +165,14 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 		ArrayList providers = new ArrayList();
 		IExtensionPoint ep = getExtensionPoint();
 		for (IConfigurationElement configElement : ep.getConfigurationElements()) {
-			if (configElement.getName().equals(
-					IWorkbenchRegistryConstants.TAG_SOURCE_PROVIDER)) {
+			if (configElement.getName().equals(IWorkbenchRegistryConstants.TAG_SOURCE_PROVIDER)) {
 				try {
 					Object sourceProvider = configElement
 							.createExecutableExtension(IWorkbenchRegistryConstants.ATTR_PROVIDER);
 					if (!(sourceProvider instanceof AbstractSourceProvider)) {
 						String attributeName = configElement.getAttribute(IWorkbenchRegistryConstants.ATTR_PROVIDER);
 						final String message = "Source Provider '" + //$NON-NLS-1$
-								attributeName
-								+ "' should extend AbstractSourceProvider"; //$NON-NLS-1$
+								attributeName + "' should extend AbstractSourceProvider"; //$NON-NLS-1$
 						final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, message);
 						WorkbenchPlugin.log(status);
 						continue;
@@ -191,17 +184,12 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 				}
 			}
 		}
-		return (AbstractSourceProvider[]) providers
-				.toArray(new AbstractSourceProvider[providers.size()]);
+		return (AbstractSourceProvider[]) providers.toArray(new AbstractSourceProvider[providers.size()]);
 	}
 
-	private static final String[] supportedLevels = { ISources.ACTIVE_CONTEXT_NAME,
-			ISources.ACTIVE_SHELL_NAME,
-			ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
-			ISources.ACTIVE_EDITOR_ID_NAME,
-			ISources.ACTIVE_PART_ID_NAME,
-			ISources.ACTIVE_SITE_NAME
-	};
+	private static final String[] supportedLevels = { ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_SHELL_NAME,
+			ISources.ACTIVE_WORKBENCH_WINDOW_NAME, ISources.ACTIVE_EDITOR_ID_NAME, ISources.ACTIVE_PART_ID_NAME,
+			ISources.ACTIVE_SITE_NAME };
 
 	private void processVariables(IConfigurationElement[] children) {
 		for (IConfigurationElement configElement : children) {
@@ -231,7 +219,8 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-		// we don't need to react to adds because we are not caching the extensions we find -
+		// we don't need to react to adds because we are not caching the extensions we
+		// find -
 		// next time a service is requested, we will look at all extensions again in
 		// loadFromRegistry
 	}
@@ -242,7 +231,8 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 			if (object instanceof ServiceFactoryHandle) {
 				ServiceFactoryHandle handle = (ServiceFactoryHandle) object;
 				Set locatorSet = handle.serviceLocators.keySet();
-				ServiceLocator[] locators = (ServiceLocator[]) locatorSet.toArray(new ServiceLocator[locatorSet.size()]);
+				ServiceLocator[] locators = (ServiceLocator[]) locatorSet
+						.toArray(new ServiceLocator[locatorSet.size()]);
 				Arrays.sort(locators, (loc1, loc2) -> {
 					int l1 = loc1.getService(IWorkbenchLocationService.class).getServiceLevel();
 					int l2 = loc2.getService(IWorkbenchLocationService.class).getServiceLevel();

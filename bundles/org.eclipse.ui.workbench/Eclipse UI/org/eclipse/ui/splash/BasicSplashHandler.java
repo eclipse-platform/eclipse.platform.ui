@@ -44,8 +44,8 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	private static final String SPLASH_PROGRESS_TEXT_ID = "org-eclipse-ui-splash-progressText"; //$NON-NLS-1$
 
 	/**
-	 * Hacks the progress monitor to have absolute positioning for its controls.
-	 * In addition, all methods that access the controls will be wrapped in an
+	 * Hacks the progress monitor to have absolute positioning for its controls. In
+	 * addition, all methods that access the controls will be wrapped in an
 	 * asynchExec().
 	 */
 	class AbsolutePositionProgressMonitorPart extends ProgressMonitorPart {
@@ -75,8 +75,7 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 			updateUI(() -> {
 				if (isDisposed())
 					return;
-				AbsolutePositionProgressMonitorPart.super.beginTask(name,
-						totalWork);
+				AbsolutePositionProgressMonitorPart.super.beginTask(name, totalWork);
 			});
 
 		}
@@ -98,8 +97,7 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 			updateUI(() -> {
 				if (isDisposed())
 					return;
-				AbsolutePositionProgressMonitorPart.super
-						.internalWorked(work);
+				AbsolutePositionProgressMonitorPart.super.internalWorked(work);
 			});
 
 		}
@@ -137,7 +135,7 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		if (monitor == null) {
 			Composite parent = new Composite(getSplash(), Window.getDefaultOrientation());
 			Point size = getSplash().getSize();
-			parent.setBounds(new Rectangle(0,0,size.x,size.y));
+			parent.setBounds(new Rectangle(0, 0, size.x, size.y));
 			monitor = new AbsolutePositionProgressMonitorPart(parent);
 			monitor.setSize(size);
 			if (progressRect != null)
@@ -153,8 +151,7 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 			if (foreground != null)
 				monitor.getProgressText().setForeground(foreground);
 			monitor.setBackgroundMode(SWT.INHERIT_FORCE);
-			monitor.setBackgroundImage(getSplash().getShell()
-					.getBackgroundImage());
+			monitor.setBackgroundImage(getSplash().getShell().getBackgroundImage());
 		}
 		return monitor;
 	}
@@ -170,21 +167,18 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 * Set the foreground text color. This method has no effect after
 	 * {@link #getBundleProgressMonitor()} has been invoked.
 	 *
-	 * @param foregroundRGB
-	 *            the color
+	 * @param foregroundRGB the color
 	 */
 	protected void setForeground(RGB foregroundRGB) {
 		if (monitor != null)
 			return;
 		if (this.foreground != null)
 			this.foreground.dispose();
-		this.foreground = new Color(getSplash().getShell().getDisplay(),
-				foregroundRGB);
+		this.foreground = new Color(getSplash().getShell().getDisplay(), foregroundRGB);
 	}
 
 	/**
-	 * Get the foreground text color. This color should not be disposed by
-	 * callers.
+	 * Get the foreground text color. This color should not be disposed by callers.
 	 *
 	 * @return the foreground color
 	 */
@@ -193,44 +187,41 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	}
 
 	/**
-	 * Set the location of the message text in the splash. This method has no
-	 * effect after {@link #getBundleProgressMonitor()} has been invoked.
+	 * Set the location of the message text in the splash. This method has no effect
+	 * after {@link #getBundleProgressMonitor()} has been invoked.
 	 *
-	 * @param messageRect
-	 *            the location of the message text
+	 * @param messageRect the location of the message text
 	 */
 	protected void setMessageRect(Rectangle messageRect) {
 		this.messageRect = messageRect;
 	}
 
 	/**
-	 * Set the location of the progress bar in the splash. This method has no
-	 * effect after {@link #getBundleProgressMonitor()} has been invoked.
+	 * Set the location of the progress bar in the splash. This method has no effect
+	 * after {@link #getBundleProgressMonitor()} has been invoked.
 	 *
-	 * @param progressRect
-	 *            the location of the progress bar
+	 * @param progressRect the location of the progress bar
 	 */
 	protected void setProgressRect(Rectangle progressRect) {
 		this.progressRect = progressRect;
 	}
 
 	/**
-	 * Get the composite on which any supplemental controls should be drawn.
-	 * This will not have a layout set and clients are responsible for setting
-	 * the location of child controls manually.
+	 * Get the composite on which any supplemental controls should be drawn. This
+	 * will not have a layout set and clients are responsible for setting the
+	 * location of child controls manually.
 	 *
 	 * <p>
 	 * This method must be called in the
-	 * {@link #init(org.eclipse.swt.widgets.Shell)} method of a subclasses to
-	 * ensure proper creation of controls
+	 * {@link #init(org.eclipse.swt.widgets.Shell)} method of a subclasses to ensure
+	 * proper creation of controls
 	 * </p>
 	 *
 	 * <p>
-	 * Please note that the default implementation of this method assumes that
-	 * the {@link IProgressMonitor} returned from
-	 * {@link #getBundleProgressMonitor()} can be safely casted to a
-	 * {@link Composite}. If this is not the case this method must be
-	 * reimplemented to reflect the new progress controls.
+	 * Please note that the default implementation of this method assumes that the
+	 * {@link IProgressMonitor} returned from {@link #getBundleProgressMonitor()}
+	 * can be safely casted to a {@link Composite}. If this is not the case this
+	 * method must be reimplemented to reflect the new progress controls.
 	 * </p>
 	 *
 	 * @see #init(org.eclipse.swt.widgets.Shell)
@@ -241,12 +232,11 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	}
 
 	/**
-	 * Perform some update on the splash. If called from a non-UI thread it will
-	 * be wrapped by a runnable that may be run before the workbench has been
-	 * fully realized.
+	 * Perform some update on the splash. If called from a non-UI thread it will be
+	 * wrapped by a runnable that may be run before the workbench has been fully
+	 * realized.
 	 *
-	 * @param r
-	 *            the update runnable
+	 * @param r the update runnable
 	 * @throws Throwable
 	 */
 	private void updateUI(final Runnable r) {

@@ -66,19 +66,18 @@ import org.eclipse.ui.progress.IProgressConstants;
  */
 public class WorkbenchStatusDialogManager {
 
-	static final QualifiedName HINT = new QualifiedName(
-			IStatusAdapterConstants.PROPERTY_PREFIX, "hint"); //$NON-NLS-1$
+	static final QualifiedName HINT = new QualifiedName(IStatusAdapterConstants.PROPERTY_PREFIX, "hint"); //$NON-NLS-1$
 
 	private WorkbenchStatusDialogManagerImpl manager;
 
 	/**
 	 * Creates workbench status dialog.
 	 *
-	 * @param displayMask
-	 *            the mask used to filter the handled <code>StatusAdapter</code>
-	 *            objects, the mask is a logical sum of status severities
-	 * @param dialogTitle
-	 *            the title of the dialog. If null, than default will be used.
+	 * @param displayMask the mask used to filter the handled
+	 *                    <code>StatusAdapter</code> objects, the mask is a logical
+	 *                    sum of status severities
+	 * @param dialogTitle the title of the dialog. If null, than default will be
+	 *                    used.
 	 */
 
 	public WorkbenchStatusDialogManager(int displayMask, String dialogTitle) {
@@ -98,20 +97,18 @@ public class WorkbenchStatusDialogManager {
 	 * @see #WorkbenchStatusDialogManager(int, String)
 	 */
 	@Deprecated
-	public WorkbenchStatusDialogManager(Shell parentShell, int displayMask,
-			String dialogTitle) {
+	public WorkbenchStatusDialogManager(Shell parentShell, int displayMask, String dialogTitle) {
 		this(displayMask, dialogTitle);
 	}
 
 	/**
 	 * Creates workbench status dialog.
 	 *
-	 * @param dialogTitle
-	 *            the title of the dialog. If null, than default will be used.
+	 * @param dialogTitle the title of the dialog. If null, than default will be
+	 *                    used.
 	 */
 	public WorkbenchStatusDialogManager(String dialogTitle) {
-		this(IStatus.INFO | IStatus.WARNING | IStatus.ERROR | IStatus.CANCEL,
-				dialogTitle);
+		this(IStatus.INFO | IStatus.WARNING | IStatus.ERROR | IStatus.CANCEL, dialogTitle);
 	}
 
 	/**
@@ -151,8 +148,7 @@ public class WorkbenchStatusDialogManager {
 	 *                      <code>false</code> otherwise
 	 * @param statusAdapter the status adapter
 	 */
-	public void addStatusAdapter(final StatusAdapter statusAdapter,
-			final boolean modal) {
+	public void addStatusAdapter(final StatusAdapter statusAdapter, final boolean modal) {
 		manager.addStatusAdapter(statusAdapter, modal);
 	}
 
@@ -160,13 +156,10 @@ public class WorkbenchStatusDialogManager {
 	 * Enables the default support area that shows stack trace of the exception
 	 * contained in the selected status.
 	 *
-	 * @param enable
-	 *            true enables, false disables default support
+	 * @param enable true enables, false disables default support
 	 */
 	public void enableDefaultSupportArea(boolean enable) {
-		manager.getDialogState().put(
-				IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA,
-				Boolean.valueOf(enable));
+		manager.getDialogState().put(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA, Boolean.valueOf(enable));
 	}
 
 	/**
@@ -182,28 +175,25 @@ public class WorkbenchStatusDialogManager {
 	 * Sets the details area provider. If null is set, the default area provider
 	 * will be used.
 	 *
-	 * @param provider
-	 *            A details area provider to be set.
+	 * @param provider A details area provider to be set.
 	 */
 	public void setDetailsAreaProvider(AbstractStatusAreaProvider provider) {
-		manager.setProperty(IStatusDialogConstants.CUSTOM_DETAILS_PROVIDER,
-				provider);
+		manager.setProperty(IStatusDialogConstants.CUSTOM_DETAILS_PROVIDER, provider);
 	}
 
 	/**
-	 * Sets new label provider for the status list. This label provider is used
-	 * also to display the second message on the dialog if only one status is
-	 * available.
+	 * Sets new label provider for the status list. This label provider is used also
+	 * to display the second message on the dialog if only one status is available.
 	 *
 	 * <p>
-	 * This method is no longer recommended to use as it is impossible to
-	 * achieve consistent behavior after changing only one label provider.
+	 * This method is no longer recommended to use as it is impossible to achieve
+	 * consistent behavior after changing only one label provider.
 	 * </p>
 	 *
 	 * @deprecated As of 3.5 {@link #setMessageDecorator} is recommended.
 	 *
-	 * @param labelProvider
-	 *            a label provider to be used when displaying status adapters.
+	 * @param labelProvider a label provider to be used when displaying status
+	 *                      adapters.
 	 */
 	@Deprecated
 	public void setStatusListLabelProvider(ITableLabelProvider labelProvider) {
@@ -220,85 +210,77 @@ public class WorkbenchStatusDialogManager {
 	 * <li>use the default support area, if enabled</li>
 	 * </ol>
 	 *
-	 * @param provider
-	 *            Support provider to be set.
+	 * @param provider Support provider to be set.
 	 */
 	public void setSupportAreaProvider(AbstractStatusAreaProvider provider) {
-		manager.setProperty(IStatusDialogConstants.CUSTOM_SUPPORT_PROVIDER,
-				provider);
+		manager.setProperty(IStatusDialogConstants.CUSTOM_SUPPORT_PROVIDER, provider);
 	}
 
 	/**
 	 * <p>
-	 * This methods sets up the decorator, which is used to modify displayed
-	 * strings extracted from StatusAdapter. The decorator should be used to
-	 * remove technical codes from the dialog, f.e. following message
-	 * "<i>ERR2008 Invalid password</i>" can be translated into
-	 * "<i>Invalid password</i>".
+	 * This methods sets up the decorator, which is used to modify displayed strings
+	 * extracted from StatusAdapter. The decorator should be used to remove
+	 * technical codes from the dialog, f.e. following message "<i>ERR2008 Invalid
+	 * password</i>" can be translated into "<i>Invalid password</i>".
 	 * </p>
 	 * <p>
-	 * The decorator will be applied only to messages extracted from
-	 * StatusAdapter (predefined messages like
-	 * "This status has children statuses. See 'Details' for more information."
-	 * are not affected.
+	 * The decorator will be applied only to messages extracted from StatusAdapter
+	 * (predefined messages like "This status has children statuses. See 'Details'
+	 * for more information." are not affected.
 	 * </p>
 	 * <p>
 	 * This method should not be used together with
 	 * {@link #setStatusListLabelProvider(ITableLabelProvider)}.
 	 * </p>
 	 *
-	 * @param decorator
-	 *            - the decorator to be set. Only
-	 *            {@link ILabelDecorator#decorateText(String, Object)} method
-	 *            will be used. This method should return <code>null</code> if
-	 *            and only if the first argument is null. StatusAdapter is
-	 *            passed as second parameter. Other methods should have default
-	 *            behavior as they may be used in future versions of the dialog.
+	 * @param decorator - the decorator to be set. Only
+	 *                  {@link ILabelDecorator#decorateText(String, Object)} method
+	 *                  will be used. This method should return <code>null</code> if
+	 *                  and only if the first argument is null. StatusAdapter is
+	 *                  passed as second parameter. Other methods should have
+	 *                  default behavior as they may be used in future versions of
+	 *                  the dialog.
 	 * @since 3.5
 	 */
-	public void setMessageDecorator(ILabelDecorator decorator){
+	public void setMessageDecorator(ILabelDecorator decorator) {
 		manager.setMessageDecorator(decorator);
 	}
 
 	/**
 	 * This method sets various properties on the manager.
 	 *
-	 * @param key
-	 *            a key of the property to be set.
-	 * @param value
-	 *            a value of the property to be set. The value must be of type
-	 *            specified by the property key. <code>null</code> should never
-	 *            be passed unless the property key javadoc allows for that.
+	 * @param key   a key of the property to be set.
+	 * @param value a value of the property to be set. The value must be of type
+	 *              specified by the property key. <code>null</code> should never be
+	 *              passed unless the property key javadoc allows for that.
 	 * @since 3.5
 	 */
-	public void setProperty(Object key, Object value){
+	public void setProperty(Object key, Object value) {
 		manager.setProperty(key, value);
 	}
 
 	/**
 	 * This method gets various dialog properties.
 	 *
-	 * @param key
-	 *            a key of the property to be get.
-	 * @return a value of the property. The value will be of type specified by
-	 *         the property key. <code>null</code> can be returned.
+	 * @param key a key of the property to be get.
+	 * @return a value of the property. The value will be of type specified by the
+	 *         property key. <code>null</code> can be returned.
 	 * @since 3.5
 	 */
-	public Object getProperty(Object key){
+	public Object getProperty(Object key) {
 		return manager.getProperty(key);
 	}
 
-
 	/**
 	 * This method makes the dialog to be similar to the JFace ErrorDialog. The
-	 * dialog handles {@link StatusAdapter}s wrapping {@link IStatus} with
-	 * severity {@link IStatus#OK}, does not display the link to the error log,
-	 * does not display the link to the support area but always opens it.
+	 * dialog handles {@link StatusAdapter}s wrapping {@link IStatus} with severity
+	 * {@link IStatus#OK}, does not display the link to the error log, does not
+	 * display the link to the support area but always opens it.
 	 *
 	 * @see ErrorDialog
 	 * @since 3.5
 	 */
-	public void enableErrorDialogCompatibility(){
+	public void enableErrorDialogCompatibility() {
 		manager.enableErrorDialogCompatibility();
 	}
 }

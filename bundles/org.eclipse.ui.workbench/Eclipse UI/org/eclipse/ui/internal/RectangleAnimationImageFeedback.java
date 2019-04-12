@@ -27,15 +27,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Creates an animation effect where the interpolated rectangles are displayed using Canvas
- * controls that show an image of the bits that were originally occupied by the various
- * 'start' rectangles.
+ * Creates an animation effect where the interpolated rectangles are displayed
+ * using Canvas controls that show an image of the bits that were originally
+ * occupied by the various 'start' rectangles.
  *
  * @since 3.3
  *
  */
-public class RectangleAnimationImageFeedback extends
-		RectangleAnimationFeedbackBase {
+public class RectangleAnimationImageFeedback extends RectangleAnimationFeedbackBase {
 	private static class ImageCanvas extends Canvas {
 		private Image image;
 
@@ -54,8 +53,7 @@ public class RectangleAnimationImageFeedback extends
 		 * @param gc
 		 */
 		protected void paintImage(GC gc) {
-			gc.drawImage(image, 0, 0, image.getBounds().width, image
-					.getBounds().height, 0, 0, getBounds().width,
+			gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height, 0, 0, getBounds().width,
 					getBounds().height);
 		}
 
@@ -71,9 +69,7 @@ public class RectangleAnimationImageFeedback extends
 	private Display display;
 	private List controls = new ArrayList();
 
-
-	public RectangleAnimationImageFeedback(Shell parentShell, Rectangle start,
-			Rectangle end) {
+	public RectangleAnimationImageFeedback(Shell parentShell, Rectangle start, Rectangle end) {
 		super(parentShell, start, end);
 	}
 
@@ -122,7 +118,7 @@ public class RectangleAnimationImageFeedback extends
 		if (rect == null)
 			return;
 
-		//	Rectangle start = Geometry.toControl(getAnimationShell(), rect);
+		// Rectangle start = Geometry.toControl(getAnimationShell(), rect);
 		super.addStartRect(rect);
 
 	}
@@ -130,7 +126,7 @@ public class RectangleAnimationImageFeedback extends
 	@Override
 	public void addEndRect(Rectangle rect) {
 		if (rect != null) {
-			//	Rectangle end = Geometry.toControl(getAnimationShell(), rect);
+			// Rectangle end = Geometry.toControl(getAnimationShell(), rect);
 			super.addEndRect(rect);
 		}
 	}
@@ -170,8 +166,7 @@ public class RectangleAnimationImageFeedback extends
 			GC gc = new GC(backingStore);
 			gc.copyArea(image, rect.x, rect.y);
 			gc.dispose();
-			ImageCanvas canvas = new ImageCanvas(theShell, SWT.BORDER
-					| SWT.NO_BACKGROUND, image);
+			ImageCanvas canvas = new ImageCanvas(theShell, SWT.BORDER | SWT.NO_BACKGROUND, image);
 			controls.add(canvas);
 
 		}

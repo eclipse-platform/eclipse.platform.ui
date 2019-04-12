@@ -47,37 +47,37 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPerspectiveDescriptor {
-    /**
-     * Returns the description of this perspective.
-     * This is the value of its <code>"description"</code> attribute.
-     *
-     * @return the description
-     * @since 3.0
-     */
-    String getDescription();
+	/**
+	 * Returns the description of this perspective. This is the value of its
+	 * <code>"description"</code> attribute.
+	 *
+	 * @return the description
+	 * @since 3.0
+	 */
+	String getDescription();
 
-    /**
-     * Returns this perspective's id. For perspectives declared via an extension,
-     * this is the value of its <code>"id"</code> attribute.
-     *
-     * @return the perspective id
-     */
-    String getId();
+	/**
+	 * Returns this perspective's id. For perspectives declared via an extension,
+	 * this is the value of its <code>"id"</code> attribute.
+	 *
+	 * @return the perspective id
+	 */
+	String getId();
 
-    /**
-     * Returns the descriptor of the image to show for this perspective.
-     * If the extension for this perspective specifies an image, the descriptor
-     * for it is returned.  Otherwise a default image is returned.
-     *
-     * @return the descriptor of the image to show for this perspective
-     */
-    ImageDescriptor getImageDescriptor();
+	/**
+	 * Returns the descriptor of the image to show for this perspective. If the
+	 * extension for this perspective specifies an image, the descriptor for it is
+	 * returned. Otherwise a default image is returned.
+	 *
+	 * @return the descriptor of the image to show for this perspective
+	 */
+	ImageDescriptor getImageDescriptor();
 
-    /**
-     * Returns this perspective's label. For perspectives declared via an extension,
-     * this is the value of its <code>"label"</code> attribute.
-     *
-     * @return the label
-     */
-    String getLabel();
+	/**
+	 * Returns this perspective's label. For perspectives declared via an extension,
+	 * this is the value of its <code>"label"</code> attribute.
+	 *
+	 * @return the label
+	 */
+	String getLabel();
 }

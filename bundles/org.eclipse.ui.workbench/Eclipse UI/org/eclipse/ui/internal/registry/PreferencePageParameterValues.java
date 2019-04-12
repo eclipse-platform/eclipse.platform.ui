@@ -45,13 +45,11 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public final class PreferencePageParameterValues implements IParameterValues {
 
 	public PreferencePageParameterValues() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(
-				event -> {
-					if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
-							IWorkbenchRegistryConstants.PL_PREFERENCES).length > 0) {
-						preferenceMap = null;
-					}
-				});
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
+			if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_PREFERENCES).length > 0) {
+				preferenceMap = null;
+			}
+		});
 	}
 
 	private Map preferenceMap;
@@ -60,26 +58,22 @@ public final class PreferencePageParameterValues implements IParameterValues {
 	 * Iterate through the preference page and build the map of preference page
 	 * names to ids.
 	 *
-	 * @param values
-	 *            The Map being populated with parameter values.
-	 * @param preferenceNodes
-	 *            An array of <code>IPreferenceNode</code> to process.
-	 * @param namePrefix
-	 *            A string incorporating the names of each parent
-	 *            <code>IPreferenceNode</code> up to the root of the
-	 *            preference page tree. This will be <code>null</code> for the
-	 *            root level preference page nodes.
+	 * @param values          The Map being populated with parameter values.
+	 * @param preferenceNodes An array of <code>IPreferenceNode</code> to process.
+	 * @param namePrefix      A string incorporating the names of each parent
+	 *                        <code>IPreferenceNode</code> up to the root of the
+	 *                        preference page tree. This will be <code>null</code>
+	 *                        for the root level preference page nodes.
 	 */
-	private void collectParameterValues(final Map values,
-			final IPreferenceNode[] preferenceNodes, final String namePrefix) {
+	private void collectParameterValues(final Map values, final IPreferenceNode[] preferenceNodes,
+			final String namePrefix) {
 
 		for (final IPreferenceNode preferenceNode : preferenceNodes) {
 			final String name;
 			if (namePrefix == null) {
 				name = preferenceNode.getLabelText();
 			} else {
-				name = namePrefix
-						+ WorkbenchMessages.PreferencePageParameterValues_pageLabelSeparator
+				name = namePrefix + WorkbenchMessages.PreferencePageParameterValues_pageLabelSeparator
 						+ preferenceNode.getLabelText();
 			}
 			final String value = preferenceNode.getId();
@@ -94,10 +88,8 @@ public final class PreferencePageParameterValues implements IParameterValues {
 		if (preferenceMap == null) {
 			preferenceMap = new TreeMap();
 
-			final PreferenceManager preferenceManager = PlatformUI
-					.getWorkbench().getPreferenceManager();
-			collectParameterValues(preferenceMap, preferenceManager
-					.getRootSubNodes(), null);
+			final PreferenceManager preferenceManager = PlatformUI.getWorkbench().getPreferenceManager();
+			collectParameterValues(preferenceMap, preferenceManager.getRootSubNodes(), null);
 		}
 
 		return preferenceMap;

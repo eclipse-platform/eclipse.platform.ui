@@ -32,13 +32,11 @@ import org.eclipse.ui.services.IServiceScopes;
 public class CommandServiceFactory extends AbstractServiceFactory {
 
 	@Override
-	public Object create(Class serviceInterface, IServiceLocator parentLocator,
-			IServiceLocator locator) {
+	public Object create(Class serviceInterface, IServiceLocator parentLocator, IServiceLocator locator) {
 		if (!ICommandService.class.equals(serviceInterface)) {
 			return null;
 		}
-		IWorkbenchLocationService wls = locator
-				.getService(IWorkbenchLocationService.class);
+		IWorkbenchLocationService wls = locator.getService(IWorkbenchLocationService.class);
 		final IWorkbench wb = wls.getWorkbench();
 		if (wb == null) {
 			return null;
@@ -53,8 +51,7 @@ public class CommandServiceFactory extends AbstractServiceFactory {
 		final IWorkbenchPartSite site = wls.getPartSite();
 
 		if (site == null) {
-			return new SlaveCommandService((ICommandService) parent,
-					IServiceScopes.WINDOW_SCOPE, window);
+			return new SlaveCommandService((ICommandService) parent, IServiceScopes.WINDOW_SCOPE, window);
 		}
 
 		if (parent instanceof SlaveCommandService) {
@@ -62,26 +59,23 @@ public class CommandServiceFactory extends AbstractServiceFactory {
 			if (pageSite != null) {
 				MContext context = pageSite.getService(MContext.class);
 				if (context == null) {
-					return new SlaveCommandService((ICommandService) parent,
-							IServiceScopes.PAGESITE_SCOPE, pageSite);
+					return new SlaveCommandService((ICommandService) parent, IServiceScopes.PAGESITE_SCOPE, pageSite);
 				}
-				return new SlaveCommandService((ICommandService) parent,
-						IServiceScopes.PAGESITE_SCOPE, pageSite, context.getContext());
+				return new SlaveCommandService((ICommandService) parent, IServiceScopes.PAGESITE_SCOPE, pageSite,
+						context.getContext());
 			}
 			IServiceLocator mpepSite = wls.getMultiPageEditorSite();
 			if (mpepSite != null) {
 				MContext context = mpepSite.getService(MContext.class);
 				if (context == null) {
-					return new SlaveCommandService((ICommandService) parent,
-							IServiceScopes.MPESITE_SCOPE, mpepSite);
+					return new SlaveCommandService((ICommandService) parent, IServiceScopes.MPESITE_SCOPE, mpepSite);
 				}
-				return new SlaveCommandService((ICommandService) parent,
-						IServiceScopes.MPESITE_SCOPE, mpepSite, context.getContext());
+				return new SlaveCommandService((ICommandService) parent, IServiceScopes.MPESITE_SCOPE, mpepSite,
+						context.getContext());
 			}
 		}
 
-		return new SlaveCommandService((ICommandService) parent,
-				IServiceScopes.PARTSITE_SCOPE, site);
+		return new SlaveCommandService((ICommandService) parent, IServiceScopes.PARTSITE_SCOPE, site);
 	}
 
 }

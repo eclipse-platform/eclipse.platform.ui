@@ -62,11 +62,10 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.IViewDescriptor;
 
-
 /**
- * Parent window actually does not use its Shell to build dialog on. The
- * window passes the shell to the InternalDialog, and it can do switching
- * modality and recreate the window silently.
+ * Parent window actually does not use its Shell to build dialog on. The window
+ * passes the shell to the InternalDialog, and it can do switching modality and
+ * recreate the window silently.
  *
  * @since 3.4
  */
@@ -80,8 +79,8 @@ public class InternalDialog extends TrayDialog {
 	static final String LOG_VIEW_ID = "org.eclipse.pde.runtime.LogView"; //$NON-NLS-1$
 
 	/**
-	 * Preference used to indicate whether the user should be prompted to
-	 * confirm the execution of the job's goto action
+	 * Preference used to indicate whether the user should be prompted to confirm
+	 * the execution of the job's goto action
 	 */
 	static final String PREF_SKIP_GOTO_ACTION_PROMPT = "pref_skip_goto_action_prompt"; //$NON-NLS-1$
 
@@ -90,30 +89,29 @@ public class InternalDialog extends TrayDialog {
 	 */
 	private Composite dialogArea;
 	/**
-	 * This composite is initially scrolled to the 0 x 0 size. When more
-	 * than one status arrives, listArea is resized and a list is created on
-	 * it to present statuses to the user.
+	 * This composite is initially scrolled to the 0 x 0 size. When more than one
+	 * status arrives, listArea is resized and a list is created on it to present
+	 * statuses to the user.
 	 */
 	private Composite listArea;
 	/**
-	 * On this composite are presented additional elements for displaying
-	 * single status. Currently it is the second label that displays the
-	 * second most important message to the user.
+	 * On this composite are presented additional elements for displaying single
+	 * status. Currently it is the second label that displays the second most
+	 * important message to the user.
 	 */
 	private Composite singleStatusDisplayArea;
 	/**
-	 * This label is used to display the second most important message to
-	 * the user. It is placed on singleStatusDisplayArea.
+	 * This label is used to display the second most important message to the user.
+	 * It is placed on singleStatusDisplayArea.
 	 */
 	private Label singleStatusLabel;
 	/**
-	 * A list from which the user selects statuses. The list is placed on
-	 * listArea.
+	 * A list from which the user selects statuses. The list is placed on listArea.
 	 */
 	private TableViewer statusListViewer;
 	/**
-	 * Composite on the left bottom corner. Allows for opening support tray
-	 * & Error Log.
+	 * Composite on the left bottom corner. Allows for opening support tray & Error
+	 * Log.
 	 */
 	private Composite linkComposite;
 	/**
@@ -121,8 +119,7 @@ public class InternalDialog extends TrayDialog {
 	 */
 	private Link launchTrayLink;
 	/**
-	 * This fields contains indicator if link to ErrorLog view should be
-	 * present.
+	 * This fields contains indicator if link to ErrorLog view should be present.
 	 */
 	private Link showErrorLogLink;
 	/**
@@ -155,8 +152,7 @@ public class InternalDialog extends TrayDialog {
 		super(ProgressManagerUtil.getDefaultParent());
 		this.dialogState = dialogState;
 		supportTray = new SupportTray(dialogState, event -> {
-			dialogState.put(IStatusDialogConstants.TRAY_OPENED,
-					Boolean.FALSE);
+			dialogState.put(IStatusDialogConstants.TRAY_OPENED, Boolean.FALSE);
 			// close the tray
 			closeTray();
 			// set focus back to shell
@@ -184,8 +180,7 @@ public class InternalDialog extends TrayDialog {
 		}
 		if (id == IDialogConstants.DETAILS_ID) {
 			// was the details button pressed?
-			dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.valueOf(
-					toggleDetailsArea()));
+			dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.valueOf(toggleDetailsArea()));
 		} else {
 			super.buttonPressed(id);
 		}
@@ -226,13 +221,11 @@ public class InternalDialog extends TrayDialog {
 	/**
 	 * Creates title area.
 	 *
-	 * @param parent
-	 *            A composite on which the title area should be created.
+	 * @param parent A composite on which the title area should be created.
 	 */
 	private void createTitleArea(Composite parent) {
 		titleArea = new Composite(parent, SWT.NONE);
-		titleArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false));
+		titleArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -243,8 +236,7 @@ public class InternalDialog extends TrayDialog {
 		titleArea.setLayout(layout);
 
 		titleImageLabel = new Label(titleArea, SWT.NONE);
-		titleImageLabel.setImage(getLabelProviderWrapper()
-				.getImage(getCurrentStatusAdapter()));
+		titleImageLabel.setImage(getLabelProviderWrapper().getImage(getCurrentStatusAdapter()));
 		GridData layoutData = new GridData();
 		layoutData.verticalSpan = 2;
 		layoutData.verticalAlignment = SWT.TOP;
@@ -255,20 +247,17 @@ public class InternalDialog extends TrayDialog {
 		mainMessageLabel = new Label(titleArea, SWT.WRAP);
 		mainMessageLabel.setLayoutData(messageData);
 		// main message set up early, to address bug 222391
-		mainMessageLabel.setText(getLabelProviderWrapper()
-				.getMainMessage(getCurrentStatusAdapter()));
+		mainMessageLabel.setText(getLabelProviderWrapper().getMainMessage(getCurrentStatusAdapter()));
 		if (!isMulti()) {
 			singleStatusDisplayArea = createSingleStatusDisplayArea(titleArea);
 		}
 	}
 
 	/**
-	 * Create an area which allows the user to view the status if only one
-	 * is created or to select one of reported statuses when there are many.
+	 * Create an area which allows the user to view the status if only one is
+	 * created or to select one of reported statuses when there are many.
 	 *
-	 * @param parent
-	 *            the parent composite on which all components should be
-	 *            placed.
+	 * @param parent the parent composite on which all components should be placed.
 	 */
 	private void createListArea(Composite parent) {
 		listArea = new Composite(parent, SWT.NONE);
@@ -301,8 +290,7 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	/**
-	 * @param supportTray
-	 *            The supportTray to set.
+	 * @param supportTray The supportTray to set.
 	 */
 	public void setSupportTray(SupportTray supportTray) {
 		this.supportTray = supportTray;
@@ -333,19 +321,17 @@ public class InternalDialog extends TrayDialog {
 		if (getTray() != null) {
 			super.closeTray();
 		}
-		//preserve state during modality switch
+		// preserve state during modality switch
 		if (!getBooleanValue(IStatusDialogConstants.MODALITY_SWITCH)) {
 			dialogState.put(IStatusDialogConstants.TRAY_OPENED, Boolean.FALSE);
 		}
 		if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
-			launchTrayLink.setEnabled(providesSupport()
-					&& !getBooleanValue(IStatusDialogConstants.TRAY_OPENED));
+			launchTrayLink.setEnabled(providesSupport() && !getBooleanValue(IStatusDialogConstants.TRAY_OPENED));
 		}
 	}
 
 	/**
-	 * Method which should be invoked when new errors become available for
-	 * display.
+	 * Method which should be invoked when new errors become available for display.
 	 */
 	void refresh() {
 		if (dialogArea == null || dialogArea.isDisposed()) {
@@ -356,8 +342,7 @@ public class InternalDialog extends TrayDialog {
 		updateEnablements();
 		// adjust width if necessary
 		Point currentSize = getShell().getSize();
-		Point desiredSize = getShell()
-				.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point desiredSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		if (currentSize.x < desiredSize.x) {
 			getShell().setSize(desiredSize.x, currentSize.y);
 		} else {
@@ -374,34 +359,30 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	/**
-	 * Show the details portion of the dialog if it is not already visible.
-	 * This method will only work when it is invoked after the control of
-	 * the dialog has been set. In other words, after the
-	 * <code>createContents</code> method has been invoked and has returned
-	 * the control for the content area of the dialog. Invoking the method
-	 * before the content area has been set or after the dialog has been
-	 * disposed will have no effect.
+	 * Show the details portion of the dialog if it is not already visible. This
+	 * method will only work when it is invoked after the control of the dialog has
+	 * been set. In other words, after the <code>createContents</code> method has
+	 * been invoked and has returned the control for the content area of the dialog.
+	 * Invoking the method before the content area has been set or after the dialog
+	 * has been disposed will have no effect.
 	 */
 	private void showDetailsArea() {
 		if (dialogArea != null && !dialogArea.isDisposed()) {
 			if (detailsManager.isOpen()) {
 				detailsManager.close();
-				detailsManager.createDetailsArea(dialogArea,
-						getCurrentStatusAdapter());
-				dialogState.put(IStatusDialogConstants.DETAILS_OPENED,
-						Boolean.TRUE);
+				detailsManager.createDetailsArea(dialogArea, getCurrentStatusAdapter());
+				dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.TRUE);
 			} else {
 				toggleDetailsArea();
-				dialogState.put(IStatusDialogConstants.DETAILS_OPENED,
-						Boolean.TRUE);
+				dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.TRUE);
 			}
 			dialogArea.layout();
 		}
 	}
 
 	/**
-	 * Toggles the unfolding of the details area. This is triggered by the
-	 * user pressing the details button.
+	 * Toggles the unfolding of the details area. This is triggered by the user
+	 * pressing the details button.
 	 *
 	 */
 	private boolean toggleDetailsArea() {
@@ -409,14 +390,11 @@ public class InternalDialog extends TrayDialog {
 		Point windowSize = getShell().getSize();
 		if (detailsManager.isOpen()) {
 			detailsManager.close();
-			getButton(IDialogConstants.DETAILS_ID).setText(
-					IDialogConstants.SHOW_DETAILS_LABEL);
+			getButton(IDialogConstants.DETAILS_ID).setText(IDialogConstants.SHOW_DETAILS_LABEL);
 			opened = false;
 		} else {
-			detailsManager.createDetailsArea(dialogArea,
-					getCurrentStatusAdapter());
-			getButton(IDialogConstants.DETAILS_ID).setText(
-					IDialogConstants.HIDE_DETAILS_LABEL);
+			detailsManager.createDetailsArea(dialogArea, getCurrentStatusAdapter());
+			getButton(IDialogConstants.DETAILS_ID).setText(IDialogConstants.HIDE_DETAILS_LABEL);
 			opened = true;
 		}
 
@@ -442,8 +420,7 @@ public class InternalDialog extends TrayDialog {
 		// decrease the dialog height if details were closed and empty space
 		// appeared
 		if ((opened && diffY > 0) || (!opened && diffY < 0)) {
-			getShell().setSize(
-					new Point(windowSize.x, windowSize.y + (diffY)));
+			getShell().setSize(new Point(windowSize.x, windowSize.y + (diffY)));
 		}
 		dialogArea.layout();
 		return opened;
@@ -474,20 +451,17 @@ public class InternalDialog extends TrayDialog {
 	private void handleSelectionChange() {
 		StatusAdapter newSelection = getSingleSelection();
 		if (newSelection != null) {
-			dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER,
-					newSelection);
+			dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, newSelection);
 			showDetailsArea();
 			refresh();
 		}
 	}
 
 	/**
-	 * This method creates display area for {@link StatusAdapter}s when more
-	 * is available.
+	 * This method creates display area for {@link StatusAdapter}s when more is
+	 * available.
 	 *
-	 * @param parent
-	 *            A parent composite on which all components should be
-	 *            placed.
+	 * @param parent A parent composite on which all components should be placed.
 	 */
 	private void fillListArea(Composite parent) {
 		// it is necessary to make list parent composite taller
@@ -499,8 +473,7 @@ public class InternalDialog extends TrayDialog {
 		listAreaGD.heightHint = SWT.DEFAULT;
 
 		// create list viewer
-		statusListViewer = new TableViewer(parent, SWT.SINGLE
-				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		statusListViewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		statusListViewer.setComparator(getLabelProviderWrapper());
 		Control control = statusListViewer.getControl();
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -510,8 +483,7 @@ public class InternalDialog extends TrayDialog {
 		initLabelProvider();
 		statusListViewer.addPostSelectionChangedListener(event -> {
 			handleSelectionChange();
-			if ((getTray() == null) && getBooleanValue(IStatusDialogConstants.TRAY_OPENED)
-					&& providesSupport()) {
+			if ((getTray() == null) && getBooleanValue(IStatusDialogConstants.TRAY_OPENED) && providesSupport()) {
 				silentTrayOpen();
 				return;
 			}
@@ -536,9 +508,10 @@ public class InternalDialog extends TrayDialog {
 		if (getTray() == null)
 			super.openTray(supportTray);
 	}
+
 	/**
-	 * This methods switches StatusAdapters presentation depending if there
-	 * is one status or more.
+	 * This methods switches StatusAdapters presentation depending if there is one
+	 * status or more.
 	 */
 	private void updateListArea() {
 		// take care about list area if there is more than one status
@@ -546,29 +519,25 @@ public class InternalDialog extends TrayDialog {
 			if (singleStatusDisplayArea != null) {
 				singleStatusDisplayArea.dispose();
 			}
-			if (statusListViewer == null
-					|| statusListViewer.getControl().isDisposed()) {
+			if (statusListViewer == null || statusListViewer.getControl().isDisposed()) {
 				fillListArea(listArea);
 				listArea.layout();
 				listArea.getParent().layout();
-				getShell().setSize(
-						getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			}
 			refreshStatusListArea();
 		}
 	}
 
 	/**
-	 * Updated title area. Adjust title, title message and title image
-	 * according to selected {@link StatusAdapter}.
+	 * Updated title area. Adjust title, title message and title image according to
+	 * selected {@link StatusAdapter}.
 	 */
 	private void updateTitleArea() {
-		Image image = getLabelProviderWrapper().getImage(
-				getCurrentStatusAdapter());
+		Image image = getLabelProviderWrapper().getImage(getCurrentStatusAdapter());
 		titleImageLabel.setImage(image);
 		if (getCurrentStatusAdapter() != null) {
-			mainMessageLabel.setText(getLabelProviderWrapper()
-					.getMainMessage(getCurrentStatusAdapter()));
+			mainMessageLabel.setText(getLabelProviderWrapper().getMainMessage(getCurrentStatusAdapter()));
 		}
 		if (singleStatusDisplayArea != null) {
 			if (isMulti()) {
@@ -581,8 +550,7 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	/**
-	 * This method creates button bar that is available on the bottom of the
-	 * dialog.
+	 * This method creates button bar that is available on the bottom of the dialog.
 	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
@@ -591,8 +559,7 @@ public class InternalDialog extends TrayDialog {
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		linkComposite = createLinkComposite(composite);
 
@@ -613,30 +580,25 @@ public class InternalDialog extends TrayDialog {
 		if (gotoAction != null) {
 			text = gotoAction.getText();
 		}
-		Button button = createButton(parent, GOTO_ACTION_ID,
-				text == null ? "" : text, //$NON-NLS-1$
+		Button button = createButton(parent, GOTO_ACTION_ID, text == null ? "" : text, //$NON-NLS-1$
 				false);
 		if (text == null)
 			hideButton(button, true);
 
-		createButton(parent, IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 
-		createButton(parent, IDialogConstants.DETAILS_ID,
-				IDialogConstants.SHOW_DETAILS_LABEL, false);
+		createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
 	}
 
 	/**
-	 * This method creates additional display area for {@link StatusAdapter}
-	 * when only one is available.
+	 * This method creates additional display area for {@link StatusAdapter} when
+	 * only one is available.
 	 *
 	 * It creates one label on a composite currently for secondary message.
 	 *
-	 * @param parent
-	 *            A parent composite on which all components should be
-	 *            placed.
-	 * @return composite the composite on which are all components for
-	 *         displaying status when only one is available.
+	 * @param parent A parent composite on which all components should be placed.
+	 * @return composite the composite on which are all components for displaying
+	 *         status when only one is available.
 	 */
 	private Composite createSingleStatusDisplayArea(Composite parent) {
 		// secondary message is displayed on separate composite with no
@@ -650,13 +612,11 @@ public class InternalDialog extends TrayDialog {
 
 		// label that wraps
 		singleStatusLabel = new Label(singleStatusParent, SWT.WRAP);
-		GridData labelLayoutData = new GridData(SWT.FILL, SWT.FILL, true,
-				true);
+		GridData labelLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		labelLayoutData.widthHint = convertWidthInCharsToPixels(50);
 		singleStatusLabel.setLayoutData(labelLayoutData);
 		// main message set up early, to address bug 222391
-		singleStatusLabel.setText(getLabelProviderWrapper()
-				.getColumnText(getCurrentStatusAdapter(), 0));
+		singleStatusLabel.setText(getLabelProviderWrapper().getColumnText(getCurrentStatusAdapter(), 0));
 
 		singleStatusLabel.addMouseListener(new MouseListener() {
 			@Override
@@ -723,14 +683,12 @@ public class InternalDialog extends TrayDialog {
 		Button gotoButton = getButton(GOTO_ACTION_ID);
 		if (gotoButton != null) {
 			IAction gotoAction = getGotoAction();
-			boolean hasValidGotoAction = (gotoAction != null)
-					&& (gotoAction.getText() != null);
+			boolean hasValidGotoAction = (gotoAction != null) && (gotoAction.getText() != null);
 			if (hasValidGotoAction) {
 				hideButton(gotoButton, false);
 				gotoButton.setText(gotoAction.getText());
 
-				((GridData) gotoButton.getLayoutData()).widthHint = gotoButton
-						.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				((GridData) gotoButton.getLayoutData()).widthHint = gotoButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 				gotoButton.getParent().layout();
 			} else
 				hideButton(gotoButton, true);
@@ -740,8 +698,7 @@ public class InternalDialog extends TrayDialog {
 			if (launchTrayLink == null || launchTrayLink.isDisposed()) {
 				launchTrayLink = createGetSupportLink();
 			}
-			launchTrayLink
-					.setEnabled(!getBooleanValue(IStatusDialogConstants.TRAY_OPENED));
+			launchTrayLink.setEnabled(!getBooleanValue(IStatusDialogConstants.TRAY_OPENED));
 		} else {
 			if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
 				launchTrayLink.dispose();
@@ -768,13 +725,11 @@ public class InternalDialog extends TrayDialog {
 		}
 		/* check handling hint and display link if it is expected */
 		boolean shouldDisplay = false;
-		Iterator it = ((Collection) dialogState
-				.get(IStatusDialogConstants.STATUS_ADAPTERS)).iterator();
+		Iterator it = ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).iterator();
 		while (it.hasNext()) {
 			StatusAdapter adapter = (StatusAdapter) it.next();
 			Integer hint = (Integer) adapter.getProperty(WorkbenchStatusDialogManagerImpl.HINT);
-			if (hint != null
-					&& ((hint.intValue() & StatusManager.LOG) != 0)) {
+			if (hint != null && ((hint.intValue() & StatusManager.LOG) != 0)) {
 				shouldDisplay |= true;
 				break;
 			}
@@ -790,8 +745,7 @@ public class InternalDialog extends TrayDialog {
 	 * Opens the dialog tray (support area at the right side of the dialog)
 	 */
 	@Override
-	public void openTray(DialogTray tray) throws IllegalStateException,
-			UnsupportedOperationException {
+	public void openTray(DialogTray tray) throws IllegalStateException, UnsupportedOperationException {
 		if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
 			launchTrayLink.setEnabled(false);
 		}
@@ -802,12 +756,11 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	/**
-	 * Refreshes the single status area. Is called only when there is one
-	 * and only one error.
+	 * Refreshes the single status area. Is called only when there is one and only
+	 * one error.
 	 */
 	private void refreshSingleStatusArea() {
-		String description = getLabelProviderWrapper()
-				.getColumnText(getCurrentStatusAdapter(), 0);
+		String description = getLabelProviderWrapper().getColumnText(getCurrentStatusAdapter(), 0);
 		if (description.equals(singleStatusLabel.getText()))
 			singleStatusLabel.setText(" "); //$NON-NLS-1$
 		singleStatusLabel.setText(description);
@@ -819,16 +772,12 @@ public class InternalDialog extends TrayDialog {
 	 * Refresh the contents of the viewer.
 	 */
 	private void refreshStatusListArea() {
-		if (statusListViewer != null
-				&& !statusListViewer.getControl().isDisposed()) {
+		if (statusListViewer != null && !statusListViewer.getControl().isDisposed()) {
 			statusListViewer.refresh();
 			if (statusListViewer.getTable().getItemCount() > 1) {
-				getShell()
-						.setText(
-								WorkbenchMessages.WorkbenchStatusDialog_MultipleProblemsHaveOccured);
+				getShell().setText(WorkbenchMessages.WorkbenchStatusDialog_MultipleProblemsHaveOccured);
 			} else {
-				getShell().setText(
-						getString(IStatusDialogConstants.TITLE));
+				getShell().setText(getString(IStatusDialogConstants.TITLE));
 			}
 		}
 	}
@@ -845,13 +794,11 @@ public class InternalDialog extends TrayDialog {
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				return ((Collection) dialogState
-						.get(IStatusDialogConstants.STATUS_ADAPTERS)).toArray();
+				return ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).toArray();
 			}
 
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				if (newInput != null) {
 					refreshStatusListArea();
 				}
@@ -859,23 +806,19 @@ public class InternalDialog extends TrayDialog {
 		};
 		statusListViewer.setContentProvider(provider);
 		statusListViewer.setInput(this);
-		statusListViewer.setSelection(new StructuredSelection(
-				getCurrentStatusAdapter()));
+		statusListViewer.setSelection(new StructuredSelection(getCurrentStatusAdapter()));
 	}
 
 	/**
 	 * Creates a new control that provides access to support providers.
 	 * <p>
-	 * The <code>WorkbenchStatusDialog</code> implementation of this method
-	 * creates the control, registers it for selection events including
-	 * selection, Note that the parent's layout is assumed to be a
-	 * <code>GridLayout</code> and the number of columns in this layout is
-	 * incremented. Subclasses may override.
+	 * The <code>WorkbenchStatusDialog</code> implementation of this method creates
+	 * the control, registers it for selection events including selection, Note that
+	 * the parent's layout is assumed to be a <code>GridLayout</code> and the number
+	 * of columns in this layout is incremented. Subclasses may override.
 	 * </p>
 	 *
-	 * @param parent
-	 *            A parent composite on which all components should be
-	 *            placed.
+	 * @param parent A parent composite on which all components should be placed.
 	 * @return the report control
 	 */
 	private Composite createLinkComposite(Composite parent) {
@@ -902,15 +845,14 @@ public class InternalDialog extends TrayDialog {
 
 		((GridLayout) parent.getLayout()).numColumns++;
 
-		GridData layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, true,
-				false);
+		GridData layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, true, false);
 		linkArea.setLayoutData(layoutData);
 		return linkArea;
 	}
 
 	/**
-	 * Creates a button with a report image. This is only used if there is
-	 * an image available.
+	 * Creates a button with a report image. This is only used if there is an image
+	 * available.
 	 */
 	private Link createGetSupportLink() {
 		// no support
@@ -919,10 +861,8 @@ public class InternalDialog extends TrayDialog {
 		}
 
 		Link link = new Link(linkComposite, SWT.NONE);
-		link
-				.setText(WorkbenchMessages.WorkbenchStatusDialog_SupportHyperlink);
-		link
-				.setToolTipText(WorkbenchMessages.WorkbenchStatusDialog_SupportTooltip);
+		link.setText(WorkbenchMessages.WorkbenchStatusDialog_SupportHyperlink);
+		link.setToolTipText(WorkbenchMessages.WorkbenchStatusDialog_SupportTooltip);
 		link.addSelectionListener(widgetSelectedAdapter(e -> openTray()));
 		Dialog.applyDialogFont(link);
 		return link;
@@ -938,8 +878,7 @@ public class InternalDialog extends TrayDialog {
 			}
 		}));
 		link.setText(WorkbenchMessages.ErrorLogUtil_ShowErrorLogHyperlink);
-		link
-				.setToolTipText(WorkbenchMessages.ErrorLogUtil_ShowErrorLogTooltip);
+		link.setToolTipText(WorkbenchMessages.ErrorLogUtil_ShowErrorLogTooltip);
 		Dialog.applyDialogFont(link);
 		return link;
 	}
@@ -954,8 +893,8 @@ public class InternalDialog extends TrayDialog {
 	/**
 	 * Returns {@link IAction} associated with selected StatusAdapter.
 	 *
-	 * @return {@link IAction} that is set as {@link StatusAdapter} property
-	 *         with Job.class key.
+	 * @return {@link IAction} that is set as {@link StatusAdapter} property with
+	 *         Job.class key.
 	 */
 	private IAction getGotoAction() {
 		Object property = null;
@@ -972,8 +911,8 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	/**
-	 * Get the single selection. Return null if the selection is not just
-	 * one element.
+	 * Get the single selection. Return null if the selection is not just one
+	 * element.
 	 *
 	 * @return StatusAdapter or <code>null</code>.
 	 */
@@ -986,21 +925,17 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	/*
-	 * Prompt to inform the user that the dialog will close and the errors
-	 * cleared.
+	 * Prompt to inform the user that the dialog will close and the errors cleared.
 	 */
 	private boolean isPromptToClose() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (!store.contains(PREF_SKIP_GOTO_ACTION_PROMPT)
-				|| !store.getString(PREF_SKIP_GOTO_ACTION_PROMPT).equals(
-						MessageDialogWithToggle.ALWAYS)) {
-			MessageDialogWithToggle dialog = MessageDialogWithToggle.open(
-					MessageDialog.CONFIRM, getShell(),
+				|| !store.getString(PREF_SKIP_GOTO_ACTION_PROMPT).equals(MessageDialogWithToggle.ALWAYS)) {
+			MessageDialogWithToggle dialog = MessageDialogWithToggle.open(MessageDialog.CONFIRM, getShell(),
 					ProgressMessages.JobErrorDialog_CloseDialogTitle,
 					ProgressMessages.JobErrorDialog_CloseDialogMessage,
-					ProgressMessages.JobErrorDialog_DoNotShowAgainMessage,
-					false, store, PREF_SKIP_GOTO_ACTION_PROMPT, SWT.SHEET);
+					ProgressMessages.JobErrorDialog_DoNotShowAgainMessage, false, store, PREF_SKIP_GOTO_ACTION_PROMPT,
+					SWT.SHEET);
 			return dialog.getReturnCode() == Window.OK;
 		}
 		return true;
@@ -1019,8 +954,7 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	private StatusAdapter getCurrentStatusAdapter() {
-		return (StatusAdapter) dialogState
-				.get(IStatusDialogConstants.CURRENT_STATUS_ADAPTER);
+		return (StatusAdapter) dialogState.get(IStatusDialogConstants.CURRENT_STATUS_ADAPTER);
 	}
 
 	private boolean getBooleanValue(Object key) {
@@ -1036,12 +970,10 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	private LabelProviderWrapper getLabelProviderWrapper() {
-		return (LabelProviderWrapper) dialogState
-				.get(IStatusDialogConstants.LABEL_PROVIDER);
+		return (LabelProviderWrapper) dialogState.get(IStatusDialogConstants.LABEL_PROVIDER);
 	}
 
 	private boolean isMulti() {
-		return ((Collection) dialogState
-				.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() > 1;
+		return ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() > 1;
 	}
 }

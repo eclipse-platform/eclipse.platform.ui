@@ -57,11 +57,9 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	 * Creates an instance of the class.
 	 */
 	private StatusHandlerRegistry() {
-		IExtensionTracker tracker = PlatformUI.getWorkbench()
-				.getExtensionTracker();
-		IExtensionPoint handlersPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(WorkbenchPlugin.PI_WORKBENCH,
-						STATUSHANDLERS_POINT_NAME);
+		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+		IExtensionPoint handlersPoint = Platform.getExtensionRegistry().getExtensionPoint(WorkbenchPlugin.PI_WORKBENCH,
+				STATUSHANDLERS_POINT_NAME);
 		IExtension[] extensions = handlersPoint.getExtensions();
 
 		statusHandlerDescriptorsMap = new StatusHandlerDescriptorsMap();
@@ -71,16 +69,14 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 			addExtension(tracker, extension);
 		}
 
-		tracker.registerHandler(this, ExtensionTracker
-				.createExtensionPointFilter(handlersPoint));
+		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(handlersPoint));
 
 		// registers on products ext. point to, needed
 		// for changing the default handler if product is changed
-		IExtensionPoint productsPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(Platform.PI_RUNTIME, Platform.PT_PRODUCT);
+		IExtensionPoint productsPoint = Platform.getExtensionRegistry().getExtensionPoint(Platform.PI_RUNTIME,
+				Platform.PT_PRODUCT);
 
-		tracker.registerHandler(this, ExtensionTracker
-				.createExtensionPointFilter(productsPoint));
+		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(productsPoint));
 	}
 
 	/**
@@ -103,8 +99,7 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 				StatusHandlerDescriptor descriptor = new StatusHandlerDescriptor(configElement);
 				tracker.registerObject(extension, descriptor, IExtensionTracker.REF_STRONG);
 				statusHandlerDescriptors.add(descriptor);
-			} else if (configElement.getName().equals(
-					TAG_STATUSHANDLER_PRODUCTBINDING)) {
+			} else if (configElement.getName().equals(TAG_STATUSHANDLER_PRODUCTBINDING)) {
 				StatusHandlerProductBindingDescriptor descriptor = new StatusHandlerProductBindingDescriptor(
 						configElement);
 				tracker.registerObject(extension, descriptor, IExtensionTracker.REF_STRONG);
@@ -127,8 +122,8 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Returns the default product handler descriptor, or null if the product is
-	 * not defined or there is no product binding
+	 * Returns the default product handler descriptor, or null if the product is not
+	 * defined or there is no product binding
 	 *
 	 * @return the default handler
 	 */
@@ -137,8 +132,8 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Returns a list of handler descriptors which should be used for statuses
-	 * with given plugin id.
+	 * Returns a list of handler descriptors which should be used for statuses with
+	 * given plugin id.
 	 *
 	 * @param pluginId
 	 * @return list of handler descriptors
@@ -150,8 +145,7 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	/**
 	 * Returns status handler descriptor for given id.
 	 *
-	 * @param statusHandlerId
-	 *            the id to get for
+	 * @param statusHandlerId the id to get for
 	 * @return the status handler descriptor
 	 */
 	public StatusHandlerDescriptor getHandlerDescriptor(String statusHandlerId) {
@@ -163,8 +157,7 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 			}
 		}
 
-		if (defaultHandlerDescriptor != null
-				&& defaultHandlerDescriptor.getId().equals(statusHandlerId)) {
+		if (defaultHandlerDescriptor != null && defaultHandlerDescriptor.getId().equals(statusHandlerId)) {
 			return defaultHandlerDescriptor;
 		}
 
@@ -179,17 +172,17 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * It is possible since Eclipse 3.5 to configure custom status handling
-	 * using the -statushandler parameter.
+	 * It is possible since Eclipse 3.5 to configure custom status handling using
+	 * the -statushandler parameter.
 	 *
 	 * @return the id of the statushandler
 	 * @since 3.5
 	 */
-	private String resolveUserStatusHandlerId(){
+	private String resolveUserStatusHandlerId() {
 		String[] parameters = Platform.getCommandLineArgs();
 
-		for(int i = 0; i < parameters.length - 1; i++){
-			if(STATUSHANDLER_ARG.equals(parameters[i])){
+		for (int i = 0; i < parameters.length - 1; i++) {
+			if (STATUSHANDLER_ARG.equals(parameters[i])) {
 				return parameters[i + 1];
 			}
 		}
@@ -197,15 +190,14 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Sets the default product handler descriptor if product exists and binding
-	 * is defined and creates handler descriptors tree due to the prefix policy.
+	 * Sets the default product handler descriptor if product exists and binding is
+	 * defined and creates handler descriptors tree due to the prefix policy.
 	 */
 	private void buildHandlersStructure() {
 		statusHandlerDescriptorsMap.clear();
 		defaultHandlerDescriptor = null;
 
-		String productId = Platform.getProduct() != null ? Platform
-				.getProduct().getId() : null;
+		String productId = Platform.getProduct() != null ? Platform.getProduct().getId() : null;
 
 		List allHandlers = new ArrayList();
 
@@ -214,10 +206,8 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 		if (defaultHandlerId == null) {
 			// we look for product related statushandler if it was not passed as
 			// an argument to Eclipse
-			for (Iterator it = productBindingDescriptors.iterator(); it
-					.hasNext();) {
-				StatusHandlerProductBindingDescriptor descriptor = ((StatusHandlerProductBindingDescriptor) it
-						.next());
+			for (Iterator it = productBindingDescriptors.iterator(); it.hasNext();) {
+				StatusHandlerProductBindingDescriptor descriptor = ((StatusHandlerProductBindingDescriptor) it.next());
 
 				if (descriptor.getProductId().equals(productId)) {
 					defaultHandlerId = descriptor.getHandlerId();
@@ -226,8 +216,7 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 		}
 
 		for (Iterator it = statusHandlerDescriptors.iterator(); it.hasNext();) {
-			StatusHandlerDescriptor descriptor = ((StatusHandlerDescriptor) it
-					.next());
+			StatusHandlerDescriptor descriptor = ((StatusHandlerDescriptor) it.next());
 
 			allHandlers.add(descriptor);
 		}
@@ -240,8 +229,7 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 			if (handlerDescriptor.getId().equals(defaultHandlerId)) {
 				defaultHandlerDescriptor = handlerDescriptor;
 			} else {
-				statusHandlerDescriptorsMap
-						.addHandlerDescriptor(handlerDescriptor);
+				statusHandlerDescriptorsMap.addHandlerDescriptor(handlerDescriptor);
 			}
 		}
 	}

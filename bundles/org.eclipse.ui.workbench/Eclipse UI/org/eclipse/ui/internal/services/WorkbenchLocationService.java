@@ -25,8 +25,7 @@ import org.eclipse.ui.services.IDisposable;
  * @since 3.4
  *
  */
-public class WorkbenchLocationService implements IWorkbenchLocationService,
-		IDisposable {
+public class WorkbenchLocationService implements IWorkbenchLocationService, IDisposable {
 
 	private IEditorSite mpepSite;
 	private IPageSite pageSite;
@@ -36,9 +35,8 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 	private IWorkbenchWindow window;
 	private int level;
 
-	public WorkbenchLocationService(String serviceScope, IWorkbench workbench,
-			IWorkbenchWindow window, IWorkbenchPartSite partSite,
-			IEditorSite mpepSite, IPageSite pageSite, int level) {
+	public WorkbenchLocationService(String serviceScope, IWorkbench workbench, IWorkbenchWindow window,
+			IWorkbenchPartSite partSite, IEditorSite mpepSite, IPageSite pageSite, int level) {
 		this.mpepSite = mpepSite;
 		this.pageSite = pageSite;
 		this.partSite = partSite;

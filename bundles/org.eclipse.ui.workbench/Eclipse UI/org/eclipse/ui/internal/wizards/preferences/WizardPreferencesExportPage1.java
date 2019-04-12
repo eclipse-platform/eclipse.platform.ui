@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
  *
  * @since 3.1
  */
-public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
+public class WizardPreferencesExportPage1 extends WizardPreferencesPage {
 
 	// constants
 	private static final String PREFERENCESEXPORTPAGE1 = "preferencesExportPage1"; // //$NON-NLS-1$
@@ -56,8 +56,8 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	}
 
 	protected String getOutputSuffix() {
-    	return ".epf"; //$NON-NLS-1$
-    }
+		return ".epf"; //$NON-NLS-1$
+	}
 
 	/**
 	 * Answer the contents of self's destination specification widget
@@ -67,29 +67,27 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	@Override
 	protected String getDestinationValue() {
 		String idealSuffix = getOutputSuffix();
-        String destinationText = super.getDestinationValue();
+		String destinationText = super.getDestinationValue();
 
-        // only append a suffix if the destination doesn't already have a . in
-        // its last path segment.
-        // Also prevent the user from selecting a directory.  Allowing this will
-        // create a ".epf" file in the directory
-        if (destinationText.length() != 0
-                && !destinationText.endsWith(File.separator)) {
-            int dotIndex = destinationText.lastIndexOf('.');
-            if (dotIndex != -1) {
+		// only append a suffix if the destination doesn't already have a . in
+		// its last path segment.
+		// Also prevent the user from selecting a directory. Allowing this will
+		// create a ".epf" file in the directory
+		if (destinationText.length() != 0 && !destinationText.endsWith(File.separator)) {
+			int dotIndex = destinationText.lastIndexOf('.');
+			if (dotIndex != -1) {
 				// the last path separator index
-                int pathSepIndex = destinationText.lastIndexOf(File.separator);
-                if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
-                    destinationText += idealSuffix;
-                }
-            } else {
-                destinationText += idealSuffix;
-            }
-        }
+				int pathSepIndex = destinationText.lastIndexOf(File.separator);
+				if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
+					destinationText += idealSuffix;
+				}
+			} else {
+				destinationText += idealSuffix;
+			}
+		}
 
-        return destinationText;
-    }
-
+		return destinationText;
+	}
 
 	@Override
 	protected String getAllButtonText() {

@@ -27,61 +27,57 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * Displays an IWorkingSetSelectionDialog and sets the selected
- * working set in the action group.
+ * Displays an IWorkingSetSelectionDialog and sets the selected working set in
+ * the action group.
  *
  * @since 2.1
  */
 public class SelectWorkingSetAction extends Action {
-    private Shell shell;
+	private Shell shell;
 
-    private WorkingSetFilterActionGroup actionGroup;
+	private WorkingSetFilterActionGroup actionGroup;
 
-    /**
-     * Creates a new instance of the receiver.
-     *
-     * @param actionGroup the action group this action is created in
-     * @param shell shell to use for opening working set selection dialog.
-     */
-    public SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup,
-            Shell shell) {
-        super(WorkbenchMessages.SelectWorkingSetAction_text);
-        Assert.isNotNull(actionGroup);
-        setToolTipText(WorkbenchMessages.SelectWorkingSetAction_toolTip);
+	/**
+	 * Creates a new instance of the receiver.
+	 *
+	 * @param actionGroup the action group this action is created in
+	 * @param shell       shell to use for opening working set selection dialog.
+	 */
+	public SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup, Shell shell) {
+		super(WorkbenchMessages.SelectWorkingSetAction_text);
+		Assert.isNotNull(actionGroup);
+		setToolTipText(WorkbenchMessages.SelectWorkingSetAction_toolTip);
 
-        this.shell = shell;
-        this.actionGroup = actionGroup;
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IWorkbenchHelpContextIds.SELECT_WORKING_SET_ACTION);
-    }
+		this.shell = shell;
+		this.actionGroup = actionGroup;
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.SELECT_WORKING_SET_ACTION);
+	}
 
-    /**
-     * Overrides method from Action
-     *
-     * @see Action#run()
-     */
-    @Override
+	/**
+	 * Overrides method from Action
+	 *
+	 * @see Action#run()
+	 */
+	@Override
 	public void run() {
-        IWorkingSetManager manager = PlatformUI.getWorkbench()
-                .getWorkingSetManager();
-        IWorkingSetSelectionDialog dialog = manager
-                .createWorkingSetSelectionDialog(shell, false);
-        IWorkingSet workingSet = actionGroup.getWorkingSet();
+		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(shell, false);
+		IWorkingSet workingSet = actionGroup.getWorkingSet();
 
-        if (workingSet != null) {
+		if (workingSet != null) {
 			dialog.setSelection(new IWorkingSet[] { workingSet });
 		}
 
-        if (dialog.open() == Window.OK) {
-            IWorkingSet[] result = dialog.getSelection();
-            if (result != null && result.length > 0) {
-                actionGroup.setWorkingSet(result[0]);
-                manager.addRecentWorkingSet(result[0]);
-            } else {
-                actionGroup.setWorkingSet(null);
-            }
-        } else {
+		if (dialog.open() == Window.OK) {
+			IWorkingSet[] result = dialog.getSelection();
+			if (result != null && result.length > 0) {
+				actionGroup.setWorkingSet(result[0]);
+				manager.addRecentWorkingSet(result[0]);
+			} else {
+				actionGroup.setWorkingSet(null);
+			}
+		} else {
 			actionGroup.setWorkingSet(workingSet);
 		}
-    }
+	}
 }

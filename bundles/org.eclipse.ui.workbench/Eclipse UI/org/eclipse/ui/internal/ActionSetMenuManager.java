@@ -19,46 +19,46 @@ import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.action.SubMenuManager;
 
 /**
- * An <code>EditorMenuManager</code> is used to sort the contributions
- * made by an editor so that they always appear after the action sets.
+ * An <code>EditorMenuManager</code> is used to sort the contributions made by
+ * an editor so that they always appear after the action sets.
  */
 public class ActionSetMenuManager extends SubMenuManager {
-    private String actionSetId;
+	private String actionSetId;
 
-    /**
-     * Constructs a new editor manager.
-     */
-    public ActionSetMenuManager(IMenuManager mgr, String actionSetId) {
-        super(mgr);
-        this.actionSetId = actionSetId;
-    }
+	/**
+	 * Constructs a new editor manager.
+	 */
+	public ActionSetMenuManager(IMenuManager mgr, String actionSetId) {
+		super(mgr);
+		this.actionSetId = actionSetId;
+	}
 
 	/**
 	 * Returns the item passed to us, not the wrapper. In the case of menu's not
 	 * added by this manager, ensure that we return a wrapper for the menu.
 	 */
-    @Override
+	@Override
 	public IContributionItem find(String id) {
-        IContributionItem item = getParentMenuManager().find(id);
-        if (item instanceof SubContributionItem) {
+		IContributionItem item = getParentMenuManager().find(id);
+		if (item instanceof SubContributionItem) {
 			// Return the item passed to us, not the wrapper.
-            item = unwrap(item);
+			item = unwrap(item);
 		}
 
-        if (item instanceof IMenuManager) {
-            // if it is a menu manager wrap it before returning
-            IMenuManager menu = (IMenuManager) item;
-            if (menu instanceof SubMenuManager) {
+		if (item instanceof IMenuManager) {
+			// if it is a menu manager wrap it before returning
+			IMenuManager menu = (IMenuManager) item;
+			if (menu instanceof SubMenuManager) {
 				// it it is already wrapped then remover the wrapper and
-                // rewrap. We have a table of wrappers so we reuse wrappers
-                // we create.
-                menu = (IMenuManager) ((SubMenuManager) menu).getParent();
+				// rewrap. We have a table of wrappers so we reuse wrappers
+				// we create.
+				menu = (IMenuManager) ((SubMenuManager) menu).getParent();
 			}
-            item = getWrapper(menu);
-        }
+			item = getWrapper(menu);
+		}
 
-        return item;
-    }
+		return item;
+	}
 
 	/**
 	 * @return Returns the actionSetId.
@@ -67,20 +67,20 @@ public class ActionSetMenuManager extends SubMenuManager {
 		return actionSetId;
 	}
 
-    @Override
+	@Override
 	public IContributionItem[] getItems() {
-        return getParentMenuManager().getItems();
-    }
+		return getParentMenuManager().getItems();
+	}
 
-    @Override
+	@Override
 	protected SubContributionItem wrap(IContributionItem item) {
-        return new ActionSetContributionItem(item, actionSetId);
-    }
+		return new ActionSetContributionItem(item, actionSetId);
+	}
 
-    @Override
+	@Override
 	protected SubMenuManager wrapMenu(IMenuManager menu) {
-        return new ActionSetMenuManager(menu, actionSetId);
-    }
+		return new ActionSetMenuManager(menu, actionSetId);
+	}
 
 	@Override
 	public String toString() {

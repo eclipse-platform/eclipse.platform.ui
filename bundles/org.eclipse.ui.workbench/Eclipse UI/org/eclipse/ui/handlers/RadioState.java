@@ -42,8 +42,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * @see HandlerUtil#matchesRadioState(org.eclipse.core.commands.ExecutionEvent)
  * @since 3.5
  */
-public final class RadioState extends PersistentState implements
-		IExecutableExtension {
+public final class RadioState extends PersistentState implements IExecutableExtension {
 
 	/**
 	 * The state ID for a radio state understood by the system.
@@ -60,8 +59,7 @@ public final class RadioState extends PersistentState implements
 	}
 
 	@Override
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 
 		boolean shouldPersist = true; // persist by default
 		if (data instanceof String) {
@@ -74,8 +72,7 @@ public final class RadioState extends PersistentState implements
 			}
 
 			final Object persistedObject = parameters.get("persisted"); //$NON-NLS-1$
-			if (persistedObject instanceof String
-					&& "false".equalsIgnoreCase(((String) persistedObject))) //$NON-NLS-1$
+			if (persistedObject instanceof String && "false".equalsIgnoreCase(((String) persistedObject))) //$NON-NLS-1$
 				shouldPersist = false;
 		}
 		setShouldPersist(shouldPersist);

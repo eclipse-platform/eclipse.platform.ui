@@ -79,8 +79,7 @@ public class LegacyHandlerService implements IHandlerService {
 
 	private static final String[] SELECTION_VARIABLES = { ISources.ACTIVE_CURRENT_SELECTION_NAME,
 			ISources.ACTIVE_FOCUS_CONTROL_ID_NAME, ISources.ACTIVE_FOCUS_CONTROL_NAME,
-			ISources.ACTIVE_MENU_EDITOR_INPUT_NAME, ISources.ACTIVE_MENU_NAME,
-			ISources.ACTIVE_MENU_SELECTION_NAME };
+			ISources.ACTIVE_MENU_EDITOR_INPUT_NAME, ISources.ACTIVE_MENU_NAME, ISources.ACTIVE_MENU_SELECTION_NAME };
 
 	public static final String LEGACY_H_ID = "legacy::handler::"; //$NON-NLS-1$
 
@@ -154,15 +153,13 @@ public class LegacyHandlerService implements IHandlerService {
 
 	private static IHandlerActivation systemHandlerActivation;
 
-
-
-	public static IHandlerActivation registerLegacyHandler(final IEclipseContext context,
-			String id, final String cmdId, IHandler handler, Expression activeWhen) {
+	public static IHandlerActivation registerLegacyHandler(final IEclipseContext context, String id, final String cmdId,
+			IHandler handler, Expression activeWhen) {
 		return registerLegacyHandler(context, id, cmdId, handler, activeWhen, null, null);
 	}
 
-	private static IHandlerActivation registerLegacyHandler(final IEclipseContext context,
-			String id, final String cmdId, IHandler handler, Expression activeWhen, String helpContextId,
+	private static IHandlerActivation registerLegacyHandler(final IEclipseContext context, String id,
+			final String cmdId, IHandler handler, Expression activeWhen, String helpContextId,
 			Collection<HandlerActivation> handlerActivations) {
 		ECommandService cs = context.get(ECommandService.class);
 		Command command = cs.getCommand(cmdId);
@@ -170,8 +167,7 @@ public class LegacyHandlerService implements IHandlerService {
 		if (helpContextId != null) {
 			setHelpContextId(handler, helpContextId, context);
 		}
-		HandlerActivation activation = new HandlerActivation(context, cmdId, handler, handlerProxy,
-				activeWhen);
+		HandlerActivation activation = new HandlerActivation(context, cmdId, handler, handlerProxy, activeWhen);
 		addHandlerActivation(activation);
 		EHandlerService hs = context.get(EHandlerService.class);
 		hs.activateHandler(cmdId, new HandlerSelectionFunction(cmdId));
@@ -184,8 +180,7 @@ public class LegacyHandlerService implements IHandlerService {
 	static void addHandlerActivation(HandlerActivation eActivation) {
 		@SuppressWarnings("unchecked")
 		List<HandlerActivation> handlerActivations = (List<HandlerActivation>) eActivation.context
-				.getLocal(LEGACY_H_ID
-				+ eActivation.getCommandId());
+				.getLocal(LEGACY_H_ID + eActivation.getCommandId());
 		if (handlerActivations == null) {
 			handlerActivations = new ArrayList<>();
 		} else {
@@ -202,8 +197,7 @@ public class LegacyHandlerService implements IHandlerService {
 	static void removeHandlerActivation(HandlerActivation eActivation) {
 		@SuppressWarnings("unchecked")
 		List<HandlerActivation> handlerActivations = (List<HandlerActivation>) eActivation.context
-				.getLocal(LEGACY_H_ID
-				+ eActivation.getCommandId());
+				.getLocal(LEGACY_H_ID + eActivation.getCommandId());
 		if (handlerActivations == null) {
 			handlerActivations = new ArrayList<>();
 		} else {
@@ -249,8 +243,8 @@ public class LegacyHandlerService implements IHandlerService {
 	}
 
 	/**
-	 * Deactivates all of the activations read from the registry, and then
-	 * clears the collection. This should be called before every read.
+	 * Deactivates all of the activations read from the registry, and then clears
+	 * the collection. This should be called before every read.
 	 */
 	private void clearActivations() {
 		deactivateHandlers(handlerActivations);
@@ -301,14 +295,13 @@ public class LegacyHandlerService implements IHandlerService {
 	}
 
 	@Override
-	public IHandlerActivation activateHandler(String commandId, IHandler handler,
-			Expression expression) {
+	public IHandlerActivation activateHandler(String commandId, IHandler handler, Expression expression) {
 		return activateHandler(commandId, handler, expression, false);
 	}
 
 	@Override
-	public IHandlerActivation activateHandler(String commandId, IHandler handler,
-			Expression expression, boolean global) {
+	public IHandlerActivation activateHandler(String commandId, IHandler handler, Expression expression,
+			boolean global) {
 		if (global || defaultExpression == null) {
 			return registerLegacyHandler(eclipseContext, commandId, commandId, handler, expression);
 		}
@@ -325,25 +318,22 @@ public class LegacyHandlerService implements IHandlerService {
 	}
 
 	@Override
-	public IHandlerActivation activateHandler(String commandId, IHandler handler,
-			Expression expression, int sourcePriorities) {
+	public IHandlerActivation activateHandler(String commandId, IHandler handler, Expression expression,
+			int sourcePriorities) {
 		return activateHandler(commandId, handler, expression, false);
 	}
 
 	@Override
 	public ExecutionEvent createExecutionEvent(Command command, Event event) {
-		EvaluationContext legacy = new EvaluationContext(evalContext,
-				evalContext.getDefaultVariable());
+		EvaluationContext legacy = new EvaluationContext(evalContext, evalContext.getDefaultVariable());
 		ExecutionEvent e = new ExecutionEvent(command, Collections.EMPTY_MAP, event, legacy);
 		return e;
 	}
 
 	@Override
 	public ExecutionEvent createExecutionEvent(ParameterizedCommand command, Event event) {
-		EvaluationContext legacy = new EvaluationContext(evalContext,
-				evalContext.getDefaultVariable());
-		ExecutionEvent e = new ExecutionEvent(command.getCommand(), command.getParameterMap(),
-				event, legacy);
+		EvaluationContext legacy = new EvaluationContext(evalContext, evalContext.getDefaultVariable());
+		ExecutionEvent e = new ExecutionEvent(command.getCommand(), command.getParameterMap(), event, legacy);
 		return e;
 	}
 
@@ -372,8 +362,8 @@ public class LegacyHandlerService implements IHandlerService {
 	}
 
 	@Override
-	public Object executeCommand(String commandId, Event event) throws ExecutionException,
-			NotDefinedException, NotEnabledException, NotHandledException {
+	public Object executeCommand(String commandId, Event event)
+			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		ECommandService cs = eclipseContext.get(ECommandService.class);
 		final Command command = cs.getCommand(commandId);
 		return executeCommand(ParameterizedCommand.generateCommand(command, null), event);
@@ -381,8 +371,7 @@ public class LegacyHandlerService implements IHandlerService {
 
 	@Override
 	public Object executeCommand(ParameterizedCommand command, Event event)
-			throws ExecutionException, NotDefinedException, NotEnabledException,
-			NotHandledException {
+			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
 
 		if (hs == null) {
@@ -423,9 +412,8 @@ public class LegacyHandlerService implements IHandlerService {
 	}
 
 	@Override
-	public Object executeCommandInContext(ParameterizedCommand command, Event event,
-			IEvaluationContext context) throws ExecutionException, NotDefinedException,
-			NotEnabledException, NotHandledException {
+	public Object executeCommandInContext(ParameterizedCommand command, Event event, IEvaluationContext context)
+			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		IHandler handler = command.getCommand().getHandler();
 		boolean enabled = handler.isEnabled();
 		IEclipseContext staticContext = null;
@@ -529,11 +517,11 @@ public class LegacyHandlerService implements IHandlerService {
 	}
 
 	/**
-	 * Checks the cause of the provided exception and rethrows the cause instead
-	 * if it was one of the expected exception types.
+	 * Checks the cause of the provided exception and rethrows the cause instead if
+	 * it was one of the expected exception types.
 	 */
-	private void rethrow(InjectionException e) throws ExecutionException, NotDefinedException,
-			NotEnabledException, NotHandledException {
+	private void rethrow(InjectionException e)
+			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		Throwable cause = e.getCause();
 		if (cause instanceof ExecutionException) {
 			throw (ExecutionException) cause;
@@ -549,8 +537,7 @@ public class LegacyHandlerService implements IHandlerService {
 	@Override
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		IEvaluationContext tmpContext = getCurrentState();
-		IEvaluationContext context = new EvaluationContext(null,
-				IEvaluationContext.UNDEFINED_VARIABLE);
+		IEvaluationContext context = new EvaluationContext(null, IEvaluationContext.UNDEFINED_VARIABLE);
 
 		if (includeSelection) {
 			for (String variable : SELECTION_VARIABLES) {
@@ -601,17 +588,14 @@ public class LegacyHandlerService implements IHandlerService {
 
 	private void readHandlers() {
 		IExtensionRegistry registry = eclipseContext.get(IExtensionRegistry.class);
-		IExtensionPoint extPoint = registry
-				.getExtensionPoint(IWorkbenchRegistryConstants.EXTENSION_HANDLERS);
+		IExtensionPoint extPoint = registry.getExtensionPoint(IWorkbenchRegistryConstants.EXTENSION_HANDLERS);
 		IConfigurationElement[] elements = extPoint.getConfigurationElements();
 		for (IConfigurationElement configElement : elements) {
-			String commandId = configElement
-					.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND_ID);
+			String commandId = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND_ID);
 			if (commandId == null || commandId.length() == 0) {
 				continue;
 			}
-			String defaultHandler = configElement
-					.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+			String defaultHandler = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 			if ((defaultHandler == null)
 					&& (configElement.getChildren(IWorkbenchRegistryConstants.TAG_CLASS).length == 0)) {
 				continue;
@@ -623,8 +607,7 @@ public class LegacyHandlerService implements IHandlerService {
 				final IConfigurationElement[] subChildren = awChildren[0].getChildren();
 				if (subChildren.length != 1) {
 					if (Policy.DEBUG_CMDS) {
-						Activator.trace(Policy.DEBUG_CMDS_FLAG,
-								"Incorrect activeWhen element " + commandId, null); //$NON-NLS-1$
+						Activator.trace(Policy.DEBUG_CMDS_FLAG, "Incorrect activeWhen element " + commandId, null); //$NON-NLS-1$
 					}
 					continue;
 				}
@@ -634,8 +617,7 @@ public class LegacyHandlerService implements IHandlerService {
 					activeWhen = elementHandler.create(converter, subChildren[0]);
 				} catch (CoreException e) {
 					if (Policy.DEBUG_CMDS) {
-						Activator.trace(Policy.DEBUG_CMDS_FLAG,
-								"Incorrect activeWhen element " + commandId, e); //$NON-NLS-1$
+						Activator.trace(Policy.DEBUG_CMDS_FLAG, "Incorrect activeWhen element " + commandId, e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -646,8 +628,7 @@ public class LegacyHandlerService implements IHandlerService {
 				final IConfigurationElement[] subChildren = ewChildren[0].getChildren();
 				if (subChildren.length != 1) {
 					if (Policy.DEBUG_CMDS) {
-						Activator.trace(Policy.DEBUG_CMDS_FLAG,
-								"Incorrect enableWhen element " + commandId, null); //$NON-NLS-1$
+						Activator.trace(Policy.DEBUG_CMDS_FLAG, "Incorrect enableWhen element " + commandId, null); //$NON-NLS-1$
 					}
 					continue;
 				}
@@ -657,42 +638,35 @@ public class LegacyHandlerService implements IHandlerService {
 					enabledWhen = elementHandler.create(converter, subChildren[0]);
 				} catch (CoreException e) {
 					if (Policy.DEBUG_CMDS) {
-						Activator.trace(Policy.DEBUG_CMDS_FLAG,
-								"Incorrect enableWhen element " + commandId, e); //$NON-NLS-1$
+						Activator.trace(Policy.DEBUG_CMDS_FLAG, "Incorrect enableWhen element " + commandId, e); //$NON-NLS-1$
 					}
 				}
 			}
-			registerLegacyHandler(
-					eclipseContext,
-					commandId,
-					commandId,
+			registerLegacyHandler(eclipseContext, commandId, commandId,
 					new org.eclipse.ui.internal.handlers.HandlerProxy(commandId, configElement,
-							IWorkbenchRegistryConstants.ATT_CLASS, enabledWhen, eclipseContext
-									.get(IEvaluationService.class)), activeWhen,
-					configElement.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_CONTEXT_ID), handlerActivations);
+							IWorkbenchRegistryConstants.ATT_CLASS, enabledWhen,
+							eclipseContext.get(IEvaluationService.class)),
+					activeWhen, configElement.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_CONTEXT_ID),
+					handlerActivations);
 		}
 	}
 
 	private void readDefaultHandlers() {
 		IExtensionRegistry registry = eclipseContext.get(IExtensionRegistry.class);
-		IExtensionPoint extPoint = registry
-				.getExtensionPoint(IWorkbenchRegistryConstants.EXTENSION_COMMANDS);
+		IExtensionPoint extPoint = registry.getExtensionPoint(IWorkbenchRegistryConstants.EXTENSION_COMMANDS);
 		IConfigurationElement[] elements = extPoint.getConfigurationElements();
 		for (IConfigurationElement configElement : elements) {
 			String id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 			if (id == null || id.length() == 0) {
 				continue;
 			}
-			String defaultHandler = configElement
-					.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT_HANDLER);
+			String defaultHandler = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT_HANDLER);
 			if ((defaultHandler == null)
 					&& (configElement.getChildren(IWorkbenchRegistryConstants.TAG_DEFAULT_HANDLER).length == 0)) {
 				continue;
 			}
-			registerLegacyHandler(eclipseContext, id, id,
-					new org.eclipse.ui.internal.handlers.HandlerProxy(id, configElement,
-							IWorkbenchRegistryConstants.ATT_DEFAULT_HANDLER),
-					null, null, handlerActivations);
+			registerLegacyHandler(eclipseContext, id, id, new org.eclipse.ui.internal.handlers.HandlerProxy(id,
+					configElement, IWorkbenchRegistryConstants.ATT_DEFAULT_HANDLER), null, null, handlerActivations);
 
 		}
 	}
@@ -702,8 +676,7 @@ public class LegacyHandlerService implements IHandlerService {
 		setHelpContextId(handler, helpContextId, eclipseContext);
 	}
 
-	private static void setHelpContextId(IHandler handler, String helpContextId,
-			IEclipseContext eclipseContext) {
+	private static void setHelpContextId(IHandler handler, String helpContextId, IEclipseContext eclipseContext) {
 		ICommandHelpService commandHelpService = eclipseContext.get(ICommandHelpService.class);
 		commandHelpService.setHelpContextId(handler, helpContextId);
 	}

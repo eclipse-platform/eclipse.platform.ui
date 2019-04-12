@@ -35,14 +35,14 @@ public class WorkingSetComparator implements Comparator {
 		return (WorkingSetComparator) INSTANCES.get();
 	}
 
-    private Collator fCollator = Collator.getInstance();
+	private Collator fCollator = Collator.getInstance();
 
-    /**
-     * Implements Comparator.
-     *
-     * @see Comparator#compare(Object, Object)
-     */
-    @Override
+	/**
+	 * Implements Comparator.
+	 *
+	 * @see Comparator#compare(Object, Object)
+	 */
+	@Override
 	public int compare(Object o1, Object o2) {
 		String name1 = null;
 		String name2 = null;

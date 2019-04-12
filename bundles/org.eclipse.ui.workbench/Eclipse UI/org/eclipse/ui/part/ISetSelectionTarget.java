@@ -27,10 +27,10 @@ import org.eclipse.jface.viewers.ISelection;
  * @see org.eclipse.ui.part.ViewPart
  */
 public interface ISetSelectionTarget {
-    /**
-     * Reveals and selects the given element within this target view.
-     *
-     * @param selection the new element to select
-     */
-    void selectReveal(ISelection selection);
+	/**
+	 * Reveals and selects the given element within this target view.
+	 *
+	 * @param selection the new element to select
+	 */
+	void selectReveal(ISelection selection);
 }

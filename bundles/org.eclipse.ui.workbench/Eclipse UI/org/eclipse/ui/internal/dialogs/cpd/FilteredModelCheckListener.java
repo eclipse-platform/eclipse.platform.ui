@@ -19,9 +19,8 @@ import org.eclipse.ui.internal.dialogs.cpd.TreeManager.TreeItem;
 
 /**
  * On a model change, update a filtered listener. While the check listener
- * provided by the model will take care of the elements which change, since
- * we simulate our own check state of parents, the parents may need to be
- * updated.
+ * provided by the model will take care of the elements which change, since we
+ * simulate our own check state of parents, the parents may need to be updated.
  *
  * @since 3.5
  */

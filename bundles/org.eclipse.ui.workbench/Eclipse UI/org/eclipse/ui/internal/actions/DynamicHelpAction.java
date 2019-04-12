@@ -46,8 +46,7 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 	/**
 	 * Constructor for use by ActionFactory.
 	 *
-	 * @param window
-	 *            the window
+	 * @param window the window
 	 */
 	public DynamicHelpAction(IWorkbenchWindow window) {
 		if (window == null) {
@@ -57,8 +56,8 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 		setActionDefinitionId(IWorkbenchCommandConstants.HELP_DYNAMIC_HELP);
 
 		// support for allowing a product to override the text for the action
-		String overrideText = PrefUtil.getAPIPreferenceStore().getString(
-				IWorkbenchPreferenceConstants.DYNAMIC_HELP_ACTION_TEXT);
+		String overrideText = PrefUtil.getAPIPreferenceStore()
+				.getString(IWorkbenchPreferenceConstants.DYNAMIC_HELP_ACTION_TEXT);
 		if ("".equals(overrideText)) { //$NON-NLS-1$
 			setText(appendAccelerator(WorkbenchMessages.DynamicHelpAction_text));
 			setToolTipText(WorkbenchMessages.DynamicHelpAction_toolTip);
@@ -66,8 +65,7 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 			setText(appendAccelerator(overrideText));
 			setToolTipText(Action.removeMnemonics(overrideText));
 		}
-		window.getWorkbench().getHelpSystem().setHelp(this,
-				IWorkbenchHelpContextIds.DYNAMIC_HELP_ACTION);
+		window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.DYNAMIC_HELP_ACTION);
 	}
 
 	private String appendAccelerator(String text) {
@@ -77,8 +75,8 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 		// Commented out due to the problem described in
 		// Bugzilla bug #95057
 
-		//if (Platform.getWS().equals(Platform.WS_WIN32))
-		//	return text + "\t" + KeyStroke.getInstance(SWT.F1).format(); //$NON-NLS-1$
+		// if (Platform.getWS().equals(Platform.WS_WIN32))
+		// return text + "\t" + KeyStroke.getInstance(SWT.F1).format(); //$NON-NLS-1$
 		return text;
 	}
 
@@ -89,8 +87,7 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 			return;
 		}
 		// This may take a while, so use the busy indicator
-		BusyIndicator.showWhile(null, () -> workbenchWindow.getWorkbench().getHelpSystem()
-				.displayDynamicHelp());
+		BusyIndicator.showWhile(null, () -> workbenchWindow.getWorkbench().getHelpSystem().displayDynamicHelp());
 	}
 
 	@Override

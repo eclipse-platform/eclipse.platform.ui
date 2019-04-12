@@ -91,8 +91,8 @@ public class FullScreenHandler extends AbstractHandler {
 				message = NLS.bind(WorkbenchMessages.ToggleFullScreenMode_ActivationPopup_Description, keybinding);
 			}
 			if (showInfoPopup) {
-				fullScreenInfoPopup = new FullScreenInfoPopup(shell, PopupDialog.HOVER_SHELLSTYLE, true, false,
-						false, false, false, null, null, message);
+				fullScreenInfoPopup = new FullScreenInfoPopup(shell, PopupDialog.HOVER_SHELLSTYLE, true, false, false,
+						false, false, null, null, message);
 				fullScreenInfoPopup.open();
 			}
 		} else {
@@ -105,9 +105,9 @@ public class FullScreenHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Check if an event is duplicate, by recording and comparing the time of
-	 * the trigger event. Returns true if an event is triggered twice with an
-	 * event with the same time
+	 * Check if an event is duplicate, by recording and comparing the time of the
+	 * trigger event. Returns true if an event is triggered twice with an event with
+	 * the same time
 	 */
 	boolean checkDuplicatedEvent(ExecutionEvent event) {
 		if (event != null && event.getTrigger() != null && event.getTrigger() instanceof Event) {

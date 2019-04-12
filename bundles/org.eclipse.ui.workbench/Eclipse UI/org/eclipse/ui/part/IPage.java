@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 
 /**
- * This interface has been replaced by <code>IPageBookViewPage</code>
- * but is preserved for backward compatibility.
+ * This interface has been replaced by <code>IPageBookViewPage</code> but is
+ * preserved for backward compatibility.
  * <p>
  * This class is not intended to be directly implemented by clients; clients
  * should instead subclass <code>Page</code>.
@@ -30,19 +30,18 @@ import org.eclipse.ui.IActionBars;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPage {
-    /**
-     * Creates the SWT control for this page under the given parent
-     * control.
-     * <p>
-     * Clients should not call this method (the workbench calls this method when
-     * it needs to, which may be never).
-     * </p>
-     *
-     * @param parent the parent control
-     */
-    void createControl(Composite parent);
+	/**
+	 * Creates the SWT control for this page under the given parent control.
+	 * <p>
+	 * Clients should not call this method (the workbench calls this method when it
+	 * needs to, which may be never).
+	 * </p>
+	 *
+	 * @param parent the parent control
+	 */
+	void createControl(Composite parent);
 
-    /**
+	/**
 	 * Disposes of this page.
 	 * <p>
 	 * This is the last method called on the <code>IPage</code>. Implementors should
@@ -59,30 +58,30 @@ public interface IPage {
 	 * control may never have been created.
 	 * </p>
 	 */
-    void dispose();
+	void dispose();
 
-    /**
-     * Returns the SWT control for this page.
-     *
-     * @return the SWT control for this page, or <code>null</code> if this
-     *   page does not have a control
-     */
-    Control getControl();
+	/**
+	 * Returns the SWT control for this page.
+	 *
+	 * @return the SWT control for this page, or <code>null</code> if this page does
+	 *         not have a control
+	 */
+	Control getControl();
 
-    /**
-     * Allows the page to make contributions to the given action bars.
-     * The contributions will be visible when the page is visible.
-     * <p>
-     * This method is automatically called shortly after
-     * <code>createControl</code> is called
-     * </p>
-     *
-     * @param actionBars the action bars for this page
-     */
-    void setActionBars(IActionBars actionBars);
+	/**
+	 * Allows the page to make contributions to the given action bars. The
+	 * contributions will be visible when the page is visible.
+	 * <p>
+	 * This method is automatically called shortly after <code>createControl</code>
+	 * is called
+	 * </p>
+	 *
+	 * @param actionBars the action bars for this page
+	 */
+	void setActionBars(IActionBars actionBars);
 
-    /**
-     * Asks this page to take focus within its pagebook view.
-     */
-    void setFocus();
+	/**
+	 * Asks this page to take focus within its pagebook view.
+	 */
+	void setFocus();
 }

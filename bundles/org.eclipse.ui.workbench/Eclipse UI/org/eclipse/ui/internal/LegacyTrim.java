@@ -46,8 +46,8 @@ public class LegacyTrim {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new RowLayout());
 
-		widget = (IWorkbenchWidget) Util.safeLoadExecutableExtension(ice,
-				IWorkbenchRegistryConstants.ATT_CLASS, IWorkbenchWidget.class);
+		widget = (IWorkbenchWidget) Util.safeLoadExecutableExtension(ice, IWorkbenchRegistryConstants.ATT_CLASS,
+				IWorkbenchWidget.class);
 		widget.init(iwbw);
 		if (widget instanceof AbstractTrimWidget) {
 			((AbstractTrimWidget) widget).fill(parent, SWT.DEFAULT, getSide(toolControl));

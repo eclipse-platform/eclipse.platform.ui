@@ -61,23 +61,19 @@ public final class CommandImagePersistence extends RegistryPersistence {
 	/**
 	 * Reads all of the images from the command images extension point.
 	 *
-	 * @param configurationElements
-	 *            The configuration elements in the command images extension
-	 *            point; must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param commandImageManager
-	 *            The command image manager to which the images should be added;
-	 *            must not be <code>null</code>.
-	 * @param commandService
-	 *            The command service for the workbench; must not be
-	 *            <code>null</code>.
+	 * @param configurationElements     The configuration elements in the command
+	 *                                  images extension point; must not be
+	 *                                  <code>null</code>, but may be empty.
+	 * @param configurationElementCount The number of configuration elements that
+	 *                                  are really in the array.
+	 * @param commandImageManager       The command image manager to which the
+	 *                                  images should be added; must not be
+	 *                                  <code>null</code>.
+	 * @param commandService            The command service for the workbench; must
+	 *                                  not be <code>null</code>.
 	 */
-	private static void readImagesFromRegistry(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount,
-			final CommandImageManager commandImageManager,
+	private static void readImagesFromRegistry(final IConfigurationElement[] configurationElements,
+			final int configurationElementCount, final CommandImageManager commandImageManager,
 			final ICommandService commandService) {
 		// Undefine all the previous images.
 		commandImageManager.clear();
@@ -88,16 +84,15 @@ public final class CommandImagePersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(configurationElement,
-					ATT_COMMAND_ID, warningsToLog, "Image needs an id"); //$NON-NLS-1$
+			final String commandId = readRequired(configurationElement, ATT_COMMAND_ID, warningsToLog,
+					"Image needs an id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
 			}
 
 			if (!commandService.getCommand(commandId).isDefined()) {
 				// Reference to an undefined command. This is invalid.
-				addWarning(warningsToLog,
-						"Cannot bind to an undefined command", //$NON-NLS-1$
+				addWarning(warningsToLog, "Cannot bind to an undefined command", //$NON-NLS-1$
 						configurationElement, commandId);
 				continue;
 			}
@@ -106,46 +101,36 @@ public final class CommandImagePersistence extends RegistryPersistence {
 			final String style = readOptional(configurationElement, ATT_STYLE);
 
 			// Read out the default icon.
-			final String icon = readRequired(configurationElement, ATT_ICON,
-					warningsToLog, commandId);
+			final String icon = readRequired(configurationElement, ATT_ICON, warningsToLog, commandId);
 			if (icon == null) {
 				continue;
 			}
 
-			final String disabledIcon = readOptional(configurationElement,
-					ATT_DISABLEDICON);
-			final String hoverIcon = readOptional(configurationElement,
-					ATT_HOVERICON);
+			final String disabledIcon = readOptional(configurationElement, ATT_DISABLEDICON);
+			final String hoverIcon = readOptional(configurationElement, ATT_HOVERICON);
 
 			String namespaceId = configurationElement.getNamespaceIdentifier();
-			ImageDescriptor iconDescriptor = AbstractUIPlugin
-					.imageDescriptorFromPlugin(namespaceId, icon);
-			commandImageManager.bind(commandId,
-					CommandImageManager.TYPE_DEFAULT, style, iconDescriptor);
+			ImageDescriptor iconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(namespaceId, icon);
+			commandImageManager.bind(commandId, CommandImageManager.TYPE_DEFAULT, style, iconDescriptor);
 			if (disabledIcon != null) {
-				ImageDescriptor disabledIconDescriptor = AbstractUIPlugin
-						.imageDescriptorFromPlugin(namespaceId, disabledIcon);
-				commandImageManager.bind(commandId,
-						CommandImageManager.TYPE_DISABLED, style,
-						disabledIconDescriptor);
+				ImageDescriptor disabledIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(namespaceId,
+						disabledIcon);
+				commandImageManager.bind(commandId, CommandImageManager.TYPE_DISABLED, style, disabledIconDescriptor);
 			}
 			if (hoverIcon != null) {
-				ImageDescriptor hoverIconDescriptor = AbstractUIPlugin
-						.imageDescriptorFromPlugin(namespaceId, hoverIcon);
-				commandImageManager.bind(commandId,
-						CommandImageManager.TYPE_HOVER, style,
-						hoverIconDescriptor);
+				ImageDescriptor hoverIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(namespaceId,
+						hoverIcon);
+				commandImageManager.bind(commandId, CommandImageManager.TYPE_HOVER, style, hoverIconDescriptor);
 			}
 		}
 
-		logWarnings(
-				warningsToLog,
+		logWarnings(warningsToLog,
 				"Warnings while parsing the images from the 'org.eclipse.ui.commandImages' extension point."); //$NON-NLS-1$
 	}
 
 	/**
-	 * The command image manager which should be populated with the values from
-	 * the registry; must not be <code>null</code>.
+	 * The command image manager which should be populated with the values from the
+	 * registry; must not be <code>null</code>.
 	 */
 	private final CommandImageManager commandImageManager;
 
@@ -157,23 +142,20 @@ public final class CommandImagePersistence extends RegistryPersistence {
 	/**
 	 * Constructs a new instance of <code>CommandImagePersistence</code>.
 	 *
-	 * @param commandImageManager
-	 *            The command image manager which should be populated with the
-	 *            values from the registry; must not be <code>null</code>.
-	 * @param commandService
-	 *            The command service for the workbench; must not be
-	 *            <code>null</code>.
+	 * @param commandImageManager The command image manager which should be
+	 *                            populated with the values from the registry; must
+	 *                            not be <code>null</code>.
+	 * @param commandService      The command service for the workbench; must not be
+	 *                            <code>null</code>.
 	 */
-	CommandImagePersistence(final CommandImageManager commandImageManager,
-			final ICommandService commandService) {
+	CommandImagePersistence(final CommandImageManager commandImageManager, final ICommandService commandService) {
 		this.commandImageManager = commandImageManager;
 		this.commandService = commandService;
 	}
 
 	@Override
 	protected boolean isChangeImportant(final IRegistryChangeEvent event) {
-		final IExtensionDelta[] imageDeltas = event.getExtensionDeltas(
-				PlatformUI.PLUGIN_ID,
+		final IExtensionDelta[] imageDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
 				IWorkbenchRegistryConstants.PL_COMMAND_IMAGES);
 		return (imageDeltas.length != 0);
 	}
@@ -202,14 +184,13 @@ public final class CommandImagePersistence extends RegistryPersistence {
 
 			// Check if it is a binding definition.
 			if (TAG_IMAGE.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_IMAGES,
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_IMAGES,
 						imageCount++);
 			}
 		}
 
-		readImagesFromRegistry(indexedConfigurationElements[INDEX_IMAGES],
-				imageCount, commandImageManager, commandService);
+		readImagesFromRegistry(indexedConfigurationElements[INDEX_IMAGES], imageCount, commandImageManager,
+				commandService);
 		// Associate product icon to About command
 		IProduct product = Platform.getProduct();
 		if (product != null) {
@@ -225,8 +206,8 @@ public final class CommandImagePersistence extends RegistryPersistence {
 								CommandImageManager.TYPE_DEFAULT, null, icon);
 						commandImageManager.bind(IWorkbenchCommandConstants.HELP_ABOUT,
 								CommandImageManager.TYPE_DISABLED, null, icon);
-						commandImageManager.bind(IWorkbenchCommandConstants.HELP_ABOUT,
-								CommandImageManager.TYPE_HOVER, null, icon);
+						commandImageManager.bind(IWorkbenchCommandConstants.HELP_ABOUT, CommandImageManager.TYPE_HOVER,
+								null, icon);
 					}
 
 				}

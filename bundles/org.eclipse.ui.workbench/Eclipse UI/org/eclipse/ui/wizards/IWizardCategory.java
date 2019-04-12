@@ -28,22 +28,20 @@ import org.eclipse.core.runtime.IPath;
 public interface IWizardCategory {
 
 	/**
-	 * Returns the category child object corresponding to the passed path
-	 * (relative to this object), or <code>null</code> if such an object could
-	 * not be found.  The segments of this path should correspond to category ids.
+	 * Returns the category child object corresponding to the passed path (relative
+	 * to this object), or <code>null</code> if such an object could not be found.
+	 * The segments of this path should correspond to category ids.
 	 *
-	 * @param path
-	 *            the search path
+	 * @param path the search path
 	 * @return the category or <code>null</code>
 	 */
 	IWizardCategory findCategory(IPath path);
 
 	/**
-	 * Find a wizard that has the provided id. This will search recursivly over
-	 * this categories children.
+	 * Find a wizard that has the provided id. This will search recursivly over this
+	 * categories children.
 	 *
-	 * @param id
-	 *            the id to search for
+	 * @param id the id to search for
 	 * @return the wizard or <code>null</code>
 	 */
 	IWizardDescriptor findWizard(String id);
@@ -85,8 +83,8 @@ public interface IWizardCategory {
 	IPath getPath();
 
 	/**
-	 * Return the wizards in this category, minus the wizards which failed
-	 * the Expressions check.
+	 * Return the wizards in this category, minus the wizards which failed the
+	 * Expressions check.
 	 *
 	 * @return the wizards in this category. Never <code>null</code>
 	 */

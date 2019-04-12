@@ -25,100 +25,99 @@ import org.eclipse.ui.model.AdaptableList;
  */
 public class WizardContentProvider implements ITreeContentProvider {
 
-    private AdaptableList input;
+	private AdaptableList input;
 
-    @Override
+	@Override
 	public void dispose() {
-        input = null;
-    }
+		input = null;
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object parentElement) {
-        if (parentElement instanceof WizardCollectionElement) {
-            ArrayList list = new ArrayList();
-            WizardCollectionElement element = (WizardCollectionElement) parentElement;
+		if (parentElement instanceof WizardCollectionElement) {
+			ArrayList list = new ArrayList();
+			WizardCollectionElement element = (WizardCollectionElement) parentElement;
 
 			for (Object childCollection : element.getChildren()) {
-                handleChild(childCollection, list);
-            }
+				handleChild(childCollection, list);
+			}
 
 			for (Object childWizard : element.getWizards()) {
-                handleChild(childWizard, list);
-            }
+				handleChild(childWizard, list);
+			}
 
-            // flatten lists with only one category
-            if (list.size() == 1
-                    && list.get(0) instanceof WizardCollectionElement) {
-                return getChildren(list.get(0));
-            }
+			// flatten lists with only one category
+			if (list.size() == 1 && list.get(0) instanceof WizardCollectionElement) {
+				return getChildren(list.get(0));
+			}
 
-            return list.toArray();
-        } else if (parentElement instanceof AdaptableList) {
-            AdaptableList aList = (AdaptableList) parentElement;
-            Object[] children = aList.getChildren();
-            ArrayList list = new ArrayList(children.length);
-            for (Object element : children) {
-                handleChild(element, list);
-            }
-            // if there is only one category, return it's children directly (flatten list)
-            if (list.size() == 1
-            		&& list.get(0) instanceof WizardCollectionElement) {
-                return getChildren(list.get(0));
-            }
+			return list.toArray();
+		} else if (parentElement instanceof AdaptableList) {
+			AdaptableList aList = (AdaptableList) parentElement;
+			Object[] children = aList.getChildren();
+			ArrayList list = new ArrayList(children.length);
+			for (Object element : children) {
+				handleChild(element, list);
+			}
+			// if there is only one category, return it's children directly (flatten list)
+			if (list.size() == 1 && list.get(0) instanceof WizardCollectionElement) {
+				return getChildren(list.get(0));
+			}
 
-            return list.toArray();
-        } else {
+			return list.toArray();
+		} else {
 			return new Object[0];
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object inputElement) {
-        return getChildren(inputElement);
-    }
+		return getChildren(inputElement);
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {
-        if (element instanceof WizardCollectionElement) {
+		if (element instanceof WizardCollectionElement) {
 			for (Object child : input.getChildren()) {
-                if (child.equals(element)) {
+				if (child.equals(element)) {
 					return input;
 				}
-            }
-            return ((WizardCollectionElement) element).getParent(element);
-        }
-        return null;
-    }
+			}
+			return ((WizardCollectionElement) element).getParent(element);
+		}
+		return null;
+	}
 
-    /**
-     * Adds the item to the list, unless it's a collection element without any children.
-     *
-     * @param element the element to test and add
-     * @param list the <code>Collection</code> to add to.
-     * @since 3.0
-     */
-    private void handleChild(Object element, ArrayList list) {
-        if (element instanceof WizardCollectionElement) {
-            if (hasChildren(element)) {
+	/**
+	 * Adds the item to the list, unless it's a collection element without any
+	 * children.
+	 *
+	 * @param element the element to test and add
+	 * @param list    the <code>Collection</code> to add to.
+	 * @since 3.0
+	 */
+	private void handleChild(Object element, ArrayList list) {
+		if (element instanceof WizardCollectionElement) {
+			if (hasChildren(element)) {
 				list.add(element);
 			}
-        } else {
-            list.add(element);
-        }
-    }
+		} else {
+			list.add(element);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        if (element instanceof WizardCollectionElement) {
-            if (getChildren(element).length > 0) {
+		if (element instanceof WizardCollectionElement) {
+			if (getChildren(element).length > 0) {
 				return true;
 			}
-        }
-        return false;
-    }
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        input = (AdaptableList) newInput;
-    }
+		input = (AdaptableList) newInput;
+	}
 }

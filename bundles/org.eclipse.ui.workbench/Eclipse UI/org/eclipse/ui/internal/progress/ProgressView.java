@@ -108,8 +108,7 @@ public class ProgressView extends ViewPart {
 		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL);
 		viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IWorkbenchHelpContextIds.RESPONSIVE_UI);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
 		initContentProvider();
 		createClearAllAction();
@@ -143,7 +142,7 @@ public class ProgressView extends ViewPart {
 	 * Sets the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		provider = new ProgressViewerContentProvider(viewer, true ,true);
+		provider = new ProgressViewerContentProvider(viewer, true, true);
 		viewer.setContentProvider(provider);
 		viewer.setInput(ProgressManager.getInstance());
 	}
@@ -172,8 +171,7 @@ public class ProgressView extends ViewPart {
 		menuMgr.add(new ViewPreferencesAction() {
 			@Override
 			public void openViewPreferencesDialog() {
-				new JobsViewPreferenceDialog(viewer.getControl().getShell())
-						.open();
+				new JobsViewPreferenceDialog(viewer.getControl().getShell()).open();
 
 			}
 		});
@@ -206,16 +204,15 @@ public class ProgressView extends ViewPart {
 	}
 
 	/**
-	 * Get the currently selected job info. Only return it if it is the only
-	 * item selected and it is a JobInfo.
+	 * Get the currently selected job info. Only return it if it is the only item
+	 * selected and it is a JobInfo.
 	 *
 	 * @return JobInfo
 	 */
 	JobInfo getSelectedInfo() {
 		IStructuredSelection selection = getSelection();
 		if (selection != null && selection.size() == 1) {
-			JobTreeElement element = (JobTreeElement) selection
-					.getFirstElement();
+			JobTreeElement element = (JobTreeElement) selection.getFirstElement();
 			if (element.isJobInfo()) {
 				return (JobInfo) element;
 			}
@@ -240,22 +237,18 @@ public class ProgressView extends ViewPart {
 	 * Create the clear all action for the receiver.
 	 */
 	private void createClearAllAction() {
-		clearAllAction = new Action(
-				ProgressMessages.ProgressView_ClearAllAction) {
+		clearAllAction = new Action(ProgressMessages.ProgressView_ClearAllAction) {
 			@Override
 			public void run() {
 				FinishedJobs.getInstance().clearAll();
 			}
 		};
-		clearAllAction
-				.setToolTipText(ProgressMessages.NewProgressView_RemoveAllJobsToolTip);
-		ImageDescriptor id = WorkbenchImages
-				.getWorkbenchImageDescriptor("/elcl16/progress_remall.png"); //$NON-NLS-1$
+		clearAllAction.setToolTipText(ProgressMessages.NewProgressView_RemoveAllJobsToolTip);
+		ImageDescriptor id = WorkbenchImages.getWorkbenchImageDescriptor("/elcl16/progress_remall.png"); //$NON-NLS-1$
 		if (id != null) {
 			clearAllAction.setImageDescriptor(id);
 		}
-		id = WorkbenchImages
-				.getWorkbenchImageDescriptor("/dlcl16/progress_remall.png"); //$NON-NLS-1$
+		id = WorkbenchImages.getWorkbenchImageDescriptor("/dlcl16/progress_remall.png"); //$NON-NLS-1$
 		if (id != null) {
 			clearAllAction.setDisabledImageDescriptor(id);
 		}

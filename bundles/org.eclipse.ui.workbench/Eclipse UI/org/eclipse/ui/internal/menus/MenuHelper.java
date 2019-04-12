@@ -192,13 +192,11 @@ public class MenuHelper {
 	}
 
 	/**
-	 * @param element
-	 *            the configuration element
+	 * @param element the configuration element
 	 * @return <code>true</code> if the checkEnabled is <code>true</code>.
 	 */
 	static boolean getVisibleEnabled(IConfigurationElement element) {
-		IConfigurationElement[] children = element
-				.getChildren(IWorkbenchRegistryConstants.TAG_VISIBLE_WHEN);
+		IConfigurationElement[] children = element.getChildren(IWorkbenchRegistryConstants.TAG_VISIBLE_WHEN);
 		String checkEnabled = null;
 
 		if (children.length > 0) {
@@ -215,8 +213,7 @@ public class MenuHelper {
 			if (visibleConfig.length > 0 && visibleConfig.length < 2) {
 				IConfigurationElement[] visibleChild = visibleConfig[0].getChildren();
 				if (visibleChild.length == 0) {
-					String checkEnabled = visibleConfig[0]
-							.getAttribute(IWorkbenchRegistryConstants.ATT_CHECK_ENABLED);
+					String checkEnabled = visibleConfig[0].getAttribute(IWorkbenchRegistryConstants.ATT_CHECK_ENABLED);
 					if (Boolean.parseBoolean(checkEnabled)) {
 						final String commandId = getCommandId(commandAddition);
 						if (commandId == null) {
@@ -226,21 +223,18 @@ public class MenuHelper {
 						Expression visWhen = new Expression() {
 							@Override
 							public EvaluationResult evaluate(IEvaluationContext context) {
-								EHandlerService service = getFromContext(context,
-										EHandlerService.class);
-								ICommandService commandService = getFromContext(context,
-										ICommandService.class);
+								EHandlerService service = getFromContext(context, EHandlerService.class);
+								ICommandService commandService = getFromContext(context, ICommandService.class);
 								if (service == null || commandService == null) {
-									WorkbenchPlugin
-											.log("Could not retrieve EHandlerService or ICommandService from context evaluation context for" //$NON-NLS-1$
+									WorkbenchPlugin.log(
+											"Could not retrieve EHandlerService or ICommandService from context evaluation context for" //$NON-NLS-1$
 													+ commandId);
 									return EvaluationResult.FALSE;
 								}
 								Command c = commandService.getCommand(commandId);
-								ParameterizedCommand generateCommand = ParameterizedCommand
-										.generateCommand(c, Collections.EMPTY_MAP);
-								return EvaluationResult
-										.valueOf(service.canExecute(generateCommand));
+								ParameterizedCommand generateCommand = ParameterizedCommand.generateCommand(c,
+										Collections.EMPTY_MAP);
+								return EvaluationResult.valueOf(service.canExecute(generateCommand));
 							}
 						};
 						MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
@@ -267,13 +261,10 @@ public class MenuHelper {
 	/**
 	 * Do a type-safe extraction of an object from the evalation context
 	 *
-	 * @param context
-	 *            the evaluation context
-	 * @param expectedType
-	 *            the expected type
+	 * @param context      the evaluation context
+	 * @param expectedType the expected type
 	 * @return an object of the expected type or <code>null</code>
-	 * @throws NullPointerException
-	 *             if either argument is <code>null</code>
+	 * @throws NullPointerException if either argument is <code>null</code>
 	 */
 	protected static <T> T getFromContext(IEvaluationContext context, Class<T> expectedType) {
 		if (context == null || expectedType == null) {
@@ -287,8 +278,7 @@ public class MenuHelper {
 	 * Returns id attribute of the element or unique string computed from the
 	 * element registry handle
 	 *
-	 * @param element
-	 *            non null
+	 * @param element non null
 	 * @return non null id
 	 */
 	public static String getId(IConfigurationElement element) {
@@ -360,8 +350,7 @@ public class MenuHelper {
 		if (!SCHEME_PATTERN.matcher(iconPath).matches()) {
 			// First attempt to resolve in ISharedImages (e.g. "IMG_OBJ_FOLDER")
 			// as per bug 391232 & AbstractUIPlugin.imageDescriptorFromPlugin().
-			ImageDescriptor d = WorkbenchPlugin.getDefault().getSharedImages()
-					.getImageDescriptor(iconPath);
+			ImageDescriptor d = WorkbenchPlugin.getDefault().getSharedImages().getImageDescriptor(iconPath);
 			if (d != null) {
 				return getImageUrl(d);
 			}
@@ -430,8 +419,7 @@ public class MenuHelper {
 
 	public static Map<String, String> getParameters(IConfigurationElement element) {
 		HashMap<String, String> map = new HashMap<>();
-		IConfigurationElement[] parameters = element
-				.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
+		IConfigurationElement[] parameters = element.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
 		for (IConfigurationElement parameter : parameters) {
 			String name = parameter.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 			String value = parameter.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
@@ -455,15 +443,13 @@ public class MenuHelper {
 			}
 		}
 		element.setVisibleWhen(getVisibleWhen(menuAddition));
-		element.setIconURI(MenuHelper
-				.getIconURI(menuAddition, IWorkbenchRegistryConstants.ATT_ICON));
+		element.setIconURI(MenuHelper.getIconURI(menuAddition, IWorkbenchRegistryConstants.ATT_ICON));
 		element.setLabel(Util.safeString(text));
 
 		return element;
 	}
 
-	public static MMenuElement createLegacyMenuActionAdditions(MApplication app,
-			final IConfigurationElement element) {
+	public static MMenuElement createLegacyMenuActionAdditions(MApplication app, final IConfigurationElement element) {
 		final String id = MenuHelper.getId(element);
 		String text = MenuHelper.getLabel(element);
 		String mnemonic = MenuHelper.getMnemonic(element);
@@ -482,8 +468,7 @@ public class MenuHelper {
 			Command command = commandService.getCommand(cmdId);
 			if (command == null) {
 				ICommandService ics = app.getContext().get(ICommandService.class);
-				command = commandService.defineCommand(cmdId, text, null, ics.getCategory(null),
-						null);
+				command = commandService.defineCommand(cmdId, text, null, ics.getCategory(null), null);
 			}
 			cmd = CommandsFactoryImpl.eINSTANCE.createCommand();
 			cmd.setCommandName(text);
@@ -493,8 +478,7 @@ public class MenuHelper {
 
 		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
 		String pulldown = element.getAttribute("pulldown"); //$NON-NLS-1$
-		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)
-				|| (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
+		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style) || (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
 			MMenuItem item = RenderedElementUtil.createRenderedMenuItem();
 			item.setLabel(text);
 			if (iconUri != null) {
@@ -507,8 +491,8 @@ public class MenuHelper {
 					if (window == null) {
 						return null;
 					}
-					ActionDescriptor desc = new ActionDescriptor(element,
-							ActionDescriptor.T_WORKBENCH_PULLDOWN, window);
+					ActionDescriptor desc = new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH_PULLDOWN,
+							window);
 					final PluginAction action = desc.getAction();
 					return new ActionContributionItem(action) {
 						@Override
@@ -557,17 +541,14 @@ public class MenuHelper {
 			}
 		}
 		String iconUri = MenuHelper.getIconURI(element, IWorkbenchRegistryConstants.ATT_ICON);
-		String disabledIconUri = MenuHelper.getIconURI(element,
-				IWorkbenchRegistryConstants.ATT_DISABLEDICON);
+		String disabledIconUri = MenuHelper.getIconURI(element, IWorkbenchRegistryConstants.ATT_DISABLEDICON);
 		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
 		if (cmd == null) {
 			ECommandService commandService = app.getContext().get(ECommandService.class);
 			Command command = commandService.getCommand(cmdId);
 			if (command == null) {
-				ICommandService ics = app.getContext().get(
-						ICommandService.class);
-				command = commandService.defineCommand(cmdId, text, null, ics.getCategory(null),
-						null);
+				ICommandService ics = app.getContext().get(ICommandService.class);
+				command = commandService.defineCommand(cmdId, text, null, ics.getCategory(null), null);
 			}
 			cmd = CommandsFactoryImpl.eINSTANCE.createCommand();
 			cmd.setCommandName(text);
@@ -590,8 +571,7 @@ public class MenuHelper {
 			item.setType(ItemType.PUSH);
 		}
 
-		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)
-				|| (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
+		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style) || (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
 			MMenu menu = RenderedElementUtil.createRenderedMenu();
 			ECommandService cs = app.getContext().get(ECommandService.class);
 			final ParameterizedCommand parmCmd = cs.createCommand(cmdId, null);
@@ -605,9 +585,7 @@ public class MenuHelper {
 							if (handlerProxy == null) {
 								handlerProxy = new ActionDelegateHandlerProxy(element,
 										IWorkbenchRegistryConstants.ATT_CLASS, id, parmCmd,
-										PlatformUI
-										.getWorkbench().getActiveWorkbenchWindow(), null, null,
- null);
+										PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, null, null);
 							}
 							return handlerProxy;
 						}
@@ -620,11 +598,10 @@ public class MenuHelper {
 							if (handlerProxy.getDelegate() == null) {
 								handlerProxy.loadDelegate();
 
-								ISelectionService service = PlatformUI.getWorkbench()
-										.getActiveWorkbenchWindow().getSelectionService();
+								ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+										.getSelectionService();
 								IActionDelegate delegate = handlerProxy.getDelegate();
-								delegate.selectionChanged(handlerProxy.getAction(),
-										service.getSelection());
+								delegate.selectionChanged(handlerProxy.getAction(), service.getSelection());
 							}
 							return (IWorkbenchWindowPulldownDelegate) handlerProxy.getDelegate();
 						}
@@ -711,8 +688,7 @@ public class MenuHelper {
 					if (part != null) {
 						Object object = part.getObject();
 						if (object instanceof CompatibilityPart) {
-							return new ActionDescriptor(element, type,
-									((CompatibilityPart) object).getPart());
+							return new ActionDescriptor(element, type, ((CompatibilityPart) object).getPart());
 						}
 					}
 					return null;
@@ -864,11 +840,9 @@ public class MenuHelper {
 					toolItem.setContributorURI(command.getContributorURI());
 					toolItem.setVisible(item.isVisible());
 
-					String iconURI = getIconURI(action.getImageDescriptor(),
-							application.getContext());
+					String iconURI = getIconURI(action.getImageDescriptor(), application.getContext());
 					if (iconURI == null) {
-						iconURI = getIconURI(id, application.getContext(),
-								ICommandImageService.TYPE_DEFAULT);
+						iconURI = getIconURI(id, application.getContext(), ICommandImageService.TYPE_DEFAULT);
 						if (iconURI == null) {
 							toolItem.setLabel(command.getCommandName());
 						} else {
@@ -881,11 +855,9 @@ public class MenuHelper {
 						toolItem.setTooltip(action.getToolTipText());
 					}
 
-					String disabledIconURI = getIconURI(action.getDisabledImageDescriptor(),
-							application.getContext());
+					String disabledIconURI = getIconURI(action.getDisabledImageDescriptor(), application.getContext());
 					if (disabledIconURI == null)
-						disabledIconURI = getIconURI(id, application.getContext(),
-								ICommandImageService.TYPE_DEFAULT);
+						disabledIconURI = getIconURI(id, application.getContext(), ICommandImageService.TYPE_DEFAULT);
 					if (disabledIconURI != null)
 						setDisabledIconURI(toolItem, disabledIconURI);
 
@@ -919,8 +891,7 @@ public class MenuHelper {
 						toolItem.setLabel(action.getText());
 					}
 				} else {
-					iconURI = getIconURI(itemId, application.getContext(),
-							ICommandImageService.TYPE_DEFAULT);
+					iconURI = getIconURI(itemId, application.getContext(), ICommandImageService.TYPE_DEFAULT);
 					if (iconURI == null) {
 						if (action.getText() != null) {
 							toolItem.setLabel(action.getText());
@@ -968,7 +939,8 @@ public class MenuHelper {
 			// property listener is removed in
 			// DirectContributionItem#handleWidgetDispose()
 			action.addPropertyChangeListener(propertyListener);
-			toolItem.getTransientData().put(AbstractContributionItem.DISPOSABLE, (Runnable) () -> action.removePropertyChangeListener(propertyListener));
+			toolItem.getTransientData().put(AbstractContributionItem.DISPOSABLE,
+					(Runnable) () -> action.removePropertyChangeListener(propertyListener));
 			return toolItem;
 		}
 		return null;
@@ -983,8 +955,7 @@ public class MenuHelper {
 					MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 					menuItem.setCommand(command);
 					menuItem.setLabel(command.getCommandName());
-					menuItem.setIconURI(getIconURI(action.getImageDescriptor(),
-							application.getContext()));
+					menuItem.setIconURI(getIconURI(action.getImageDescriptor(), application.getContext()));
 
 					// extract the mnemonic definition
 					String text = action.getText();
@@ -1023,8 +994,7 @@ public class MenuHelper {
 					} else {
 						menuItem.setLabel(command.getCommandName());
 					}
-					menuItem.setIconURI(getIconURI(action.getImageDescriptor(),
-							application.getContext()));
+					menuItem.setIconURI(getIconURI(action.getImageDescriptor(), application.getContext()));
 
 					switch (action.getStyle()) {
 					case IAction.AS_CHECK_BOX:
@@ -1151,11 +1121,10 @@ public class MenuHelper {
 	}
 
 	/**
-	 * Rewrite certain types of URLs to more durable forms, as these URLs may
-	 * may be persisted in the model.
+	 * Rewrite certain types of URLs to more durable forms, as these URLs may may be
+	 * persisted in the model.
 	 *
-	 * @param url
-	 *            the url
+	 * @param url the url
 	 * @return the rewritten URL
 	 */
 	private static String rewriteDurableURL(String url) {

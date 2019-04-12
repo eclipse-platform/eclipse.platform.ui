@@ -54,8 +54,7 @@ public class WorkbenchProperties {
 	 * type, or can be adapted to the target type, this is used as the value of
 	 * property, otherwise <code>null</code>.
 	 *
-	 * @param adapter
-	 *            the adapter class
+	 * @param adapter the adapter class
 	 * @return a value property which observes the source object as the adapted
 	 *         type.
 	 */
@@ -65,25 +64,22 @@ public class WorkbenchProperties {
 
 	/**
 	 * Returns a value property which observes the source object as the adapted
-	 * type. If the source object is of the target type, or can be adapted to
-	 * the target type, this is used as the value of property, otherwise
+	 * type. If the source object is of the target type, or can be adapted to the
+	 * target type, this is used as the value of property, otherwise
 	 * <code>null</code>.
 	 *
-	 * @param adapter
-	 *            the adapter class
-	 * @param adapterManager
-	 *            the adapter manager used to adapt source objects
+	 * @param adapter        the adapter class
+	 * @param adapterManager the adapter manager used to adapt source objects
 	 * @return a value property which observes the source object as the adapted
 	 *         type.
 	 */
-	static IValueProperty adaptedValue(final Class adapter,
-			final IAdapterManager adapterManager) {
+	static IValueProperty adaptedValue(final Class adapter, final IAdapterManager adapterManager) {
 		return new AdaptedValueProperty(adapter, adapterManager);
 	}
 
 	/**
-	 * Returns a property for observing the first element of a structured
-	 * selection as exposed by {@link ISelectionService}.
+	 * Returns a property for observing the first element of a structured selection
+	 * as exposed by {@link ISelectionService}.
 	 *
 	 * @return an observable value
 	 */
@@ -92,26 +88,23 @@ public class WorkbenchProperties {
 	}
 
 	/**
-	 * Returns a property for observing the first element of a structured
-	 * selection as exposed by {@link ISelectionService}.
+	 * Returns a property for observing the first element of a structured selection
+	 * as exposed by {@link ISelectionService}.
 	 *
-	 * @param partId
-	 *            the part id, or <code>null</code> if the selection can be from
-	 *            any part
-	 * @param postSelection
-	 *            <code>true</code> if the selection should be delayed for
-	 *            keyboard-triggered selections
+	 * @param partId        the part id, or <code>null</code> if the selection can
+	 *                      be from any part
+	 * @param postSelection <code>true</code> if the selection should be delayed for
+	 *                      keyboard-triggered selections
 	 *
 	 * @return an observable value
 	 */
-	public static IValueProperty singleSelection(String partId,
-			boolean postSelection) {
+	public static IValueProperty singleSelection(String partId, boolean postSelection) {
 		return new SingleSelectionProperty(partId, postSelection);
 	}
 
 	/**
-	 * Returns a property for observing the elements of a structured selection
-	 * as exposed by {@link ISelectionService}.
+	 * Returns a property for observing the elements of a structured selection as
+	 * exposed by {@link ISelectionService}.
 	 *
 	 * @return an observable value
 	 */
@@ -120,20 +113,17 @@ public class WorkbenchProperties {
 	}
 
 	/**
-	 * Returns a property for observing the elements of a structured selection
-	 * as exposed by {@link ISelectionService}.
+	 * Returns a property for observing the elements of a structured selection as
+	 * exposed by {@link ISelectionService}.
 	 *
-	 * @param partId
-	 *            the part id, or <code>null</code> if the selection can be from
-	 *            any part
-	 * @param postSelection
-	 *            <code>true</code> if the selection should be delayed for
-	 *            keyboard-triggered selections
+	 * @param partId        the part id, or <code>null</code> if the selection can
+	 *                      be from any part
+	 * @param postSelection <code>true</code> if the selection should be delayed for
+	 *                      keyboard-triggered selections
 	 *
 	 * @return an observable value
 	 */
-	public static IListProperty multipleSelection(String partId,
-			boolean postSelection) {
+	public static IListProperty multipleSelection(String partId, boolean postSelection) {
 		return new MultiSelectionProperty(partId, postSelection);
 	}
 
@@ -141,8 +131,7 @@ public class WorkbenchProperties {
 		private final Class adapter;
 		private final IAdapterManager adapterManager;
 
-		private AdaptedValueProperty(Class adapter,
-				IAdapterManager adapterManager) {
+		private AdaptedValueProperty(Class adapter, IAdapterManager adapterManager) {
 			this.adapter = adapter;
 			this.adapterManager = adapterManager;
 		}
@@ -165,8 +154,7 @@ public class WorkbenchProperties {
 		}
 
 		@Override
-		public INativePropertyListener adaptListener(
-				ISimplePropertyListener listener) {
+		public INativePropertyListener adaptListener(ISimplePropertyListener listener) {
 			return null;
 		}
 	}
@@ -181,8 +169,7 @@ public class WorkbenchProperties {
 		}
 
 		@Override
-		public INativePropertyListener adaptListener(
-				ISimplePropertyListener listener) {
+		public INativePropertyListener adaptListener(ISimplePropertyListener listener) {
 			return new SelectionServiceListener(this, listener, partId, post);
 		}
 
@@ -221,8 +208,7 @@ public class WorkbenchProperties {
 		}
 
 		@Override
-		public INativePropertyListener adaptListener(
-				ISimplePropertyListener listener) {
+		public INativePropertyListener adaptListener(ISimplePropertyListener listener) {
 			return new SelectionServiceListener(this, listener, partId, post);
 		}
 
@@ -240,8 +226,7 @@ public class WorkbenchProperties {
 				selection = ((ISelectionService) source).getSelection();
 			}
 			if (selection instanceof IStructuredSelection) {
-				return new ArrayList(((IStructuredSelection) selection)
-						.toList());
+				return new ArrayList(((IStructuredSelection) selection).toList());
 			}
 			return Collections.EMPTY_LIST;
 		}
@@ -252,13 +237,12 @@ public class WorkbenchProperties {
 		}
 	}
 
-	static class SelectionServiceListener extends NativePropertyListener
-			implements ISelectionListener {
+	static class SelectionServiceListener extends NativePropertyListener implements ISelectionListener {
 		private final String partId;
 		private final boolean post;
 
-		public SelectionServiceListener(IProperty property,
-				ISimplePropertyListener wrapped, String partID, boolean post) {
+		public SelectionServiceListener(IProperty property, ISimplePropertyListener wrapped, String partID,
+				boolean post) {
 			super(property, wrapped);
 			this.partId = partID;
 			this.post = post;

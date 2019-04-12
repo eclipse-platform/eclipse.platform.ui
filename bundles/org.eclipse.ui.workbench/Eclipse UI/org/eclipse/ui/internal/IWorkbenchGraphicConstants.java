@@ -14,8 +14,8 @@
 package org.eclipse.ui.internal;
 
 /**
- * This class defines constants for looking up resources that are available
- * only within the Eclipse UI and Eclipse UI Standard Components projects.
+ * This class defines constants for looking up resources that are available only
+ * within the Eclipse UI and Eclipse UI Standard Components projects.
  */
 public interface IWorkbenchGraphicConstants {
 
@@ -35,16 +35,15 @@ public interface IWorkbenchGraphicConstants {
 
 	String IMG_ETOOL_TIPS_AND_TRICKS = "IMG_ETOOL_TIPS_AND_TRICKS"; //$NON-NLS-1$
 
-
-    //Fast view enabled and disabled icons
+	// Fast view enabled and disabled icons
 	String IMG_ETOOL_NEW_FASTVIEW = "IMG_ETOOL_NEW_FASTVIEW"; //$NON-NLS-1$
 	String IMG_DTOOL_NEW_FASTVIEW = "IMG_DTOOL_NEW_FASTVIEW"; //$NON-NLS-1$
 
-    // TrimStack buttons
+	// TrimStack buttons
 	String IMG_ETOOL_RESTORE_TRIMPART = "IMG_ETOOL_RESTORE_TRIMPART"; //$NON-NLS-1$
 	String IMG_ETOOL_EDITOR_TRIMPART = "IMG_ETOOL_EDITOR_TRIMPART"; //$NON-NLS-1$
 
-    // local toolbars
+	// local toolbars
 
 	String IMG_LCL_CLOSE_VIEW = "IMG_LCL_CLOSE_VIEW"; //$NON-NLS-1$
 
@@ -78,7 +77,7 @@ public interface IWorkbenchGraphicConstants {
 
 	String IMG_LCL_VIEW_MENU_THIN = "IMG_LCL_VIEW_MENU_THIN"; //$NON-NLS-1$
 
-    //wizard images
+	// wizard images
 	String IMG_WIZBAN_NEW_WIZ = "IMG_WIZBAN_NEW_WIZ"; //$NON-NLS-1$
 
 	String IMG_WIZBAN_EXPORT_WIZ = "IMG_WIZBAN_EXPORT_WIZ"; //$NON-NLS-1$
@@ -93,75 +92,75 @@ public interface IWorkbenchGraphicConstants {
 
 	String IMG_VIEW_DEFAULTVIEW_MISC = "IMG_VIEW_DEFAULTVIEW_MISC"; //$NON-NLS-1$
 
-    /**
-     * Identifies an activity category.
-     *
-     * @since 3.0
-     */
+	/**
+	 * Identifies an activity category.
+	 *
+	 * @since 3.0
+	 */
 	String IMG_OBJ_ACTIVITY_CATEGORY = "IMG_OBJ_ACTIVITY_CATEGORY"; //$NON-NLS-1$
 
-    /**
-     * Identifies an activity.
-     *
-     * @since 3.0
-     */
+	/**
+	 * Identifies an activity.
+	 *
+	 * @since 3.0
+	 */
 	String IMG_OBJ_ACTIVITY = "IMG_OBJ_ACTIVITY"; //$NON-NLS-1$
 
-    /**
-     * Identifies a font.
-     *
-     * @since 3.0
-     */
+	/**
+	 * Identifies a font.
+	 *
+	 * @since 3.0
+	 */
 	String IMG_OBJ_FONT = "IMG_OBJ_FONT"; //$NON-NLS-1$
 
-    /**
-     * Identifies a theme category.
-     *
-     * @since 3.0
-     */
+	/**
+	 * Identifies a theme category.
+	 *
+	 * @since 3.0
+	 */
 	String IMG_OBJ_THEME_CATEGORY = "IMG_OBJ_THEME_CATEGORY"; //$NON-NLS-1$
 
-    /**
-     * Generic working set icon.
-     *
-     * @since 3.2
-     */
+	/**
+	 * Generic working set icon.
+	 *
+	 * @since 3.2
+	 */
 	String IMG_OBJ_WORKING_SETS = "IMG_OBJ_WORKING_SETS"; //$NON-NLS-1$
 
-    /**
-     * Separator icon for selection dialogs.
-     */
+	/**
+	 * Separator icon for selection dialogs.
+	 */
 	String IMG_OBJ_SEPARATOR = "IMG_OBJ_SEPARATOR"; //$NON-NLS-1$
 
-    /**
-     * Default icon for Quick Access nodes.
-     */
+	/**
+	 * Default icon for Quick Access nodes.
+	 */
 	String IMG_OBJ_NODE = "IMG_OBJ_NODE"; //$NON-NLS-1$
 
-    /**
-     * Default icon for Quick Access elements.
-     */
+	/**
+	 * Default icon for Quick Access elements.
+	 */
 	String IMG_OBJ_ELEMENT = "IMG_OBJ_ELEMENT"; //$NON-NLS-1$
 
-    /**
-     * Icon for signed objects (such as bundles).
-     *
-     * @since 3.3
-     */
+	/**
+	 * Icon for signed objects (such as bundles).
+	 *
+	 * @since 3.3
+	 */
 	String IMG_OBJ_SIGNED_YES = "IMG_OBJ_SIGNED_YES"; //$NON-NLS-1$
 
 	/**
-     * Icon for unsigned objects (such as bundles).
-     *
-     * @since 3.3
-     */
+	 * Icon for unsigned objects (such as bundles).
+	 *
+	 * @since 3.3
+	 */
 	String IMG_OBJ_SIGNED_NO = "IMG_OBJ_SIGNED_NO"; //$NON-NLS-1$
 
 	/**
-     * Icon for objects whos signing state is not known (such as bundles).
-     *
-     * @since 3.3
-     */
+	 * Icon for objects whos signing state is not known (such as bundles).
+	 *
+	 * @since 3.3
+	 */
 	String IMG_OBJ_SIGNED_UNKNOWN = "IMG_OBJ_SIGNED_UNKNOWN"; //$NON-NLS-1$
 
 	String IMG_PREF_IMPORT = "IMG_PREF_IMPORT"; //$NON-NLS-1$

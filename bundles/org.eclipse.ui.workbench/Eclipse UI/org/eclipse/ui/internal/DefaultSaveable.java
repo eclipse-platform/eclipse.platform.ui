@@ -28,8 +28,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.Saveable;
 
 /**
- * A default {@link Saveable} implementation that wrappers a regular
- * workbench part (one that does not itself adapt to Saveable).
+ * A default {@link Saveable} implementation that wrappers a regular workbench
+ * part (one that does not itself adapt to Saveable).
  *
  * @since 3.2
  */
@@ -40,8 +40,7 @@ public class DefaultSaveable extends Saveable {
 	/**
 	 * Creates a new DefaultSaveable.
 	 *
-	 * @param part
-	 *            the part represented by this model
+	 * @param part the part represented by this model
 	 */
 	public DefaultSaveable(IWorkbenchPart part) {
 		this.part = part;
@@ -118,8 +117,7 @@ public class DefaultSaveable extends Saveable {
 		if (part instanceof IViewPart) {
 			IViewPart viewPart = (IViewPart) part;
 			try {
-				page.showView(viewPart.getViewSite().getId(), viewPart
-						.getViewSite().getSecondaryId(),
+				page.showView(viewPart.getViewSite().getId(), viewPart.getViewSite().getSecondaryId(),
 						IWorkbenchPage.VIEW_ACTIVATE);
 			} catch (PartInitException e) {
 				return false;

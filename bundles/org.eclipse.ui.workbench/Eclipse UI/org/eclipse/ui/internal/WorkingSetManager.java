@@ -42,8 +42,7 @@ import org.osgi.framework.BundleListener;
  * @see IWorkingSetManager
  * @since 2.0
  */
-public class WorkingSetManager extends AbstractWorkingSetManager implements
-		IWorkingSetManager, BundleListener {
+public class WorkingSetManager extends AbstractWorkingSetManager implements IWorkingSetManager, BundleListener {
 
 	// Working set persistence
 	public static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
@@ -69,8 +68,8 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 	}
 
 	/**
-	 * Returns the file used as the persistence store, or <code>null</code> if
-	 * there is no available file.
+	 * Returns the file used as the persistence store, or <code>null</code> if there
+	 * is no available file.
 	 *
 	 * @return the file used as the persistence store, or <code>null</code>
 	 */
@@ -101,17 +100,14 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 				restoreInProgress = true;
 
 				FileInputStream input = new FileInputStream(stateFile);
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(input, StandardCharsets.UTF_8));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
 
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				restoreWorkingSetState(memento);
 				restoreMruList(memento);
 				reader.close();
 			} catch (IOException | WorkbenchException e) {
-				handleInternalError(
-						e,
-						WorkbenchMessages.ProblemRestoringWorkingSetState_title,
+				handleInternalError(e, WorkbenchMessages.ProblemRestoringWorkingSetState_title,
 						WorkbenchMessages.ProblemRestoringWorkingSetState_message);
 			} finally {
 				restoreInProgress = false;
@@ -142,26 +138,22 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 			saveState(stateFile);
 		} catch (IOException e) {
 			stateFile.delete();
-			handleInternalError(e,
-					WorkbenchMessages.ProblemSavingWorkingSetState_title,
+			handleInternalError(e, WorkbenchMessages.ProblemSavingWorkingSetState_title,
 					WorkbenchMessages.ProblemSavingWorkingSetState_message);
 		}
 	}
 
 	/**
-	 * Persists all working sets and fires a property change event for the
-	 * changed working set. Should only be called by
-	 * org.eclipse.ui.internal.WorkingSet.
+	 * Persists all working sets and fires a property change event for the changed
+	 * working set. Should only be called by org.eclipse.ui.internal.WorkingSet.
 	 *
-	 * @param changedWorkingSet
-	 *            the working set that has changed
-	 * @param propertyChangeId
-	 *            the changed property. one of CHANGE_WORKING_SET_CONTENT_CHANGE
-	 *            and CHANGE_WORKING_SET_NAME_CHANGE
+	 * @param changedWorkingSet the working set that has changed
+	 * @param propertyChangeId  the changed property. one of
+	 *                          CHANGE_WORKING_SET_CONTENT_CHANGE and
+	 *                          CHANGE_WORKING_SET_NAME_CHANGE
 	 */
 	@Override
-	public void workingSetChanged(IWorkingSet changedWorkingSet,
-			String propertyChangeId, Object oldValue) {
+	public void workingSetChanged(IWorkingSet changedWorkingSet, String propertyChangeId, Object oldValue) {
 		saveState();
 		super.workingSetChanged(changedWorkingSet, propertyChangeId, oldValue);
 	}
@@ -170,12 +162,10 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 	 * Show and Log the exception using StatusManager.
 	 */
 	private void handleInternalError(Exception exp, String title, String message) {
-		Status status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-				message, exp);
+		Status status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, message, exp);
 		StatusAdapter sa = new StatusAdapter(status);
 		sa.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, title);
-		StatusManager.getManager().handle(sa,
-				StatusManager.SHOW | StatusManager.LOG);
+		StatusManager.getManager().handle(sa, StatusManager.SHOW | StatusManager.LOG);
 	}
 
 	@Override

@@ -63,8 +63,8 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	private ICommandService fParentService;
 
 	/**
-	 * The scoping constant added to callback registrations submitted through
-	 * this service.
+	 * The scoping constant added to callback registrations submitted through this
+	 * service.
 	 *
 	 * @since 3.3
 	 */
@@ -83,19 +83,16 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	/**
 	 * Build the slave service.
 	 *
-	 * @param parent
-	 *            the parent service. This must not be <code>null</code>.
+	 * @param parent the parent service. This must not be <code>null</code>.
 	 */
 	public SlaveCommandService(ICommandService parent, String scopeName, IServiceLocator scopeValue) {
 		this(parent, scopeName, scopeValue, null);
 	}
 
-	public SlaveCommandService(ICommandService parent, String scopeName,
-			IServiceLocator scopeValue,
+	public SlaveCommandService(ICommandService parent, String scopeName, IServiceLocator scopeValue,
 			IEclipseContext context) {
 		if (parent == null) {
-			throw new NullPointerException(
-					"The parent command service must not be null"); //$NON-NLS-1$
+			throw new NullPointerException("The parent command service must not be null"); //$NON-NLS-1$
 		}
 		fParentService = parent;
 		fScopingName = scopeName;
@@ -117,9 +114,8 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public ParameterizedCommand deserialize(
-			String serializedParameterizedCommand) throws NotDefinedException,
-			SerializationException {
+	public ParameterizedCommand deserialize(String serializedParameterizedCommand)
+			throws NotDefinedException, SerializationException {
 		return fParentService.deserialize(serializedParameterizedCommand);
 	}
 
@@ -184,14 +180,12 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public final String getHelpContextId(final Command command)
-			throws NotDefinedException {
+	public final String getHelpContextId(final Command command) throws NotDefinedException {
 		return fParentService.getHelpContextId(command);
 	}
 
 	@Override
-	public final String getHelpContextId(final String commandId)
-			throws NotDefinedException {
+	public final String getHelpContextId(final String commandId) throws NotDefinedException {
 		return fParentService.getHelpContextId(commandId);
 	}
 
@@ -212,8 +206,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public final void setHelpContextId(final IHandler handler,
-			final String helpContextId) {
+	public final void setHelpContextId(final IHandler handler, final String helpContextId) {
 		fParentService.setHelpContextId(handler, helpContextId);
 	}
 
@@ -223,21 +216,18 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public IElementReference registerElementForCommand(
-			ParameterizedCommand command, UIElement element)
+	public IElementReference registerElementForCommand(ParameterizedCommand command, UIElement element)
 			throws NotDefinedException {
 		if (!command.getCommand().isDefined()) {
-			throw new NotDefinedException(
-					"Cannot define a callback for undefined command " //$NON-NLS-1$
-							+ command.getCommand().getId());
+			throw new NotDefinedException("Cannot define a callback for undefined command " //$NON-NLS-1$
+					+ command.getCommand().getId());
 		}
 		if (element == null) {
 			throw new NotDefinedException("No callback defined for command " //$NON-NLS-1$
 					+ command.getCommand().getId());
 		}
 
-		ElementReference ref = new ElementReference(command.getId(), element,
-				command.getParameterMap());
+		ElementReference ref = new ElementReference(command.getId(), element, command.getParameterMap());
 		registerElement(ref);
 		return ref;
 	}
@@ -256,8 +246,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public Runnable registerElementForUpdate(ParameterizedCommand parameterizedCommand,
-			final MItem item) {
+	public Runnable registerElementForUpdate(ParameterizedCommand parameterizedCommand, final MItem item) {
 		UIElement element = new UIElement(fScopingValue) {
 
 			@Override
@@ -293,8 +282,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 		};
 
 		try {
-			final IElementReference reference = registerElementForCommand(parameterizedCommand,
-					element);
+			final IElementReference reference = registerElementForCommand(parameterizedCommand, element);
 			return () -> unregisterElement(reference);
 		} catch (NotDefinedException e) {
 			WorkbenchPlugin.log(e);

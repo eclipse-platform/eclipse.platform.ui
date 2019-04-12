@@ -84,8 +84,7 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  *
  */
 
-public abstract class FilteredTableBaseHandler extends AbstractHandler implements
-		IExecutableExtension {
+public abstract class FilteredTableBaseHandler extends AbstractHandler implements IExecutableExtension {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -101,8 +100,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	protected boolean gotoDirection;
 
 	/**
-	 * The list of key bindings for the backward command when it is open. This
-	 * value is <code>null</code> if the dialog is not open.
+	 * The list of key bindings for the backward command when it is open. This value
+	 * is <code>null</code> if the dialog is not open.
 	 */
 	private TriggerSequence[] backwardTriggerSequences = null;
 
@@ -110,11 +109,10 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 	protected ParameterizedCommand commandForward = null;
 	/**
-	 * The list of key bindings for the forward command when it is open. This
-	 * value is <code>null</code> if the dialog is not open.
+	 * The list of key bindings for the forward command when it is open. This value
+	 * is <code>null</code> if the dialog is not open.
 	 */
 	private TriggerSequence[] forwardTriggerSequences = null;
-
 
 	/**
 	 * Get the index of the current item (not valid if there are no items).
@@ -127,7 +125,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		page = (WorkbenchPage) window.getActivePage();
-		IWorkbenchPart activePart= page.getActivePart();
+		IWorkbenchPart activePart = page.getActivePart();
 		getTriggers();
 		openDialog(page, activePart);
 		clearTriggers();
@@ -175,9 +173,9 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 			text.setBackground(getBackground());
 		} else {
 			/*
-			 * For issues with dark theme, don't use
-			 * table.setHeaderVisible(true); and table.setLinesVisible(true);
-			 * see: https://bugs.eclipse.org/bugs/attachment.cgi?id=264527
+			 * For issues with dark theme, don't use table.setHeaderVisible(true); and
+			 * table.setLinesVisible(true); see:
+			 * https://bugs.eclipse.org/bugs/attachment.cgi?id=264527
 			 */
 			labelTitle = new Label(composite, SWT.NONE);
 			labelTitle.setText(getTableHeader(activePart));
@@ -228,12 +226,12 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 			int i;
 			int currentItemIndex = getCurrentItemIndex();
 			if (gotoDirection) {
-				i= currentItemIndex + 1;
+				i = currentItemIndex + 1;
 				if (i >= tableItemCount) {
 					i = 0;
 				}
 			} else {
-				i= currentItemIndex - 1;
+				i = currentItemIndex - 1;
 				if (i < 0) {
 					i = tableItemCount - 1;
 				}
@@ -277,9 +275,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				if (table.equals(e.getSource())) {
 					TableItem tableItem = table.getItem(new Point(e.x, e.y));
 					if (fLastItem == null ^ tableItem == null) {
-						table.setCursor(tableItem == null ? null
-								: table.getDisplay().getSystemCursor(
-								SWT.CURSOR_HAND));
+						table.setCursor(tableItem == null ? null : table.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 					}
 					if (tableItem != null) {
 						if (!tableItem.equals(fLastItem)) {
@@ -295,8 +291,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 		setDialogLocation(dialog, activePart);
 
-		final IContextService contextService = window
-				.getWorkbench().getService(IContextService.class);
+		final IContextService contextService = window.getWorkbench().getService(IContextService.class);
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
@@ -331,9 +326,9 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	/**
-	 * {@link FocusListener} for active controls. When the focus event is
-	 * complete, the listener check if focus is still on one of the active
-	 * components. If not, closes the dialog.
+	 * {@link FocusListener} for active controls. When the focus event is complete,
+	 * the listener check if focus is still on one of the active components. If not,
+	 * closes the dialog.
 	 *
 	 */
 	private FocusAdapter fAdapter = new FocusAdapter() {
@@ -369,20 +364,15 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				: ((Control) ((PartSite) activePart.getSite()).getModel().getWidget()).getMonitor().getBounds();
 
 		// Place it in the center of its parent;
-		dialogBounds.x = parentBounds.x
-				+ ((parentBounds.width - dialogBounds.width) / 2);
-		dialogBounds.y = parentBounds.y
-				+ ((parentBounds.height - dialogBounds.height) / 2);
+		dialogBounds.x = parentBounds.x + ((parentBounds.width - dialogBounds.width) / 2);
+		dialogBounds.y = parentBounds.y + ((parentBounds.height - dialogBounds.height) / 2);
 		if (!monitorBounds.contains(dialogBounds.x, dialogBounds.y)
-				|| !monitorBounds.contains(dialogBounds.x + dialogBounds.width,
-						dialogBounds.y + dialogBounds.height)) {
+				|| !monitorBounds.contains(dialogBounds.x + dialogBounds.width, dialogBounds.y + dialogBounds.height)) {
 			// Place it in the center of the monitor if it is not visible
 			// when placed in the center of its parent.
 			// Ensure the origin is visible on the screen.
-			dialogBounds.x = Math.max(0,
-					monitorBounds.x + (monitorBounds.width - dialogBounds.width) / 2);
-			dialogBounds.y =  Math.max(0,
-					monitorBounds.y + (monitorBounds.height - dialogBounds.height) / 2);
+			dialogBounds.x = Math.max(0, monitorBounds.x + (monitorBounds.width - dialogBounds.width) / 2);
+			dialogBounds.y = Math.max(0, monitorBounds.y + (monitorBounds.height - dialogBounds.height) / 2);
 		}
 
 		dialog.setLocation(dialogBounds.x, dialogBounds.y);
@@ -397,19 +387,16 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	/**
-	 * Fetch the key bindings for the forward and backward commands. They will
-	 * not change while the dialog is open, but the context will. Bug 55581.
+	 * Fetch the key bindings for the forward and backward commands. They will not
+	 * change while the dialog is open, but the context will. Bug 55581.
 	 */
 	protected void getTriggers() {
 		commandForward = getForwardCommand();
 		commandBackward = getBackwardCommand();
 
-		final IBindingService bindingService = window
-				.getWorkbench().getService(IBindingService.class);
-		forwardTriggerSequences = bindingService
-				.getActiveBindingsFor(commandForward);
-		backwardTriggerSequences = bindingService
-				.getActiveBindingsFor(commandBackward);
+		final IBindingService bindingService = window.getWorkbench().getService(IBindingService.class);
+		forwardTriggerSequences = bindingService.getActiveBindingsFor(commandForward);
+		backwardTriggerSequences = bindingService.getActiveBindingsFor(commandBackward);
 	}
 
 	private KeyStroke computeKeyStroke(KeyEvent e) {
@@ -516,9 +503,10 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		});
 	}
 
-	protected Color getForeground(){
+	protected Color getForeground() {
 		return dialog.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 	}
+
 	protected Color getBackground() {
 		return dialog.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
@@ -562,12 +550,9 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				} else if (keyCode == SWT.DEL && isFiltered()) {
 					e.doit = false;
 					deleteSelectedItem();
-				} else if (keyCode != SWT.ALT && keyCode != SWT.COMMAND
-						&& keyCode != SWT.CTRL && keyCode != SWT.SHIFT
-						&& keyCode != SWT.ARROW_DOWN && keyCode != SWT.ARROW_UP
-						&& keyCode != SWT.PAGE_DOWN && keyCode != SWT.PAGE_UP
-						&& keyCode != SWT.ARROW_LEFT
-						&& keyCode != SWT.ARROW_RIGHT) {
+				} else if (keyCode != SWT.ALT && keyCode != SWT.COMMAND && keyCode != SWT.CTRL && keyCode != SWT.SHIFT
+						&& keyCode != SWT.ARROW_DOWN && keyCode != SWT.ARROW_UP && keyCode != SWT.PAGE_DOWN
+						&& keyCode != SWT.PAGE_UP && keyCode != SWT.ARROW_LEFT && keyCode != SWT.ARROW_RIGHT) {
 					if (!isFiltered()) {
 						cancel(dialog);
 					} else {
@@ -581,8 +566,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 						} else if (s.matches(RE_TEXT)) {
 							// alphanumeric, add to text
 							text.append(Character.toString(e.character));
-						}
-						else {
+						} else {
 							cancel(dialog);
 						}
 					}
@@ -605,12 +589,9 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				int keyCode = e.keyCode;
 				int stateMask = e.stateMask;
 
-				final IPreferenceStore store = WorkbenchPlugin.getDefault()
-						.getPreferenceStore();
-				final boolean stickyCycle = store
-						.getBoolean(IPreferenceConstants.STICKY_CYCLE);
-				if (!isFiltered() && (!stickyCycle && (firstKey || quickReleaseMode))
-						&& keyCode == stateMask) {
+				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				final boolean stickyCycle = store.getBoolean(IPreferenceConstants.STICKY_CYCLE);
+				if (!isFiltered() && (!stickyCycle && (firstKey || quickReleaseMode)) && keyCode == stateMask) {
 					ok(dialog, table);
 				}
 			}
@@ -696,9 +677,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	/**
 	 * Adds a listener to the given table that blocks all traversal operations.
 	 *
-	 * @param table
-	 *            The table to which the traversal suppression should be added;
-	 *            must not be <code>null</code>.
+	 * @param table The table to which the traversal suppression should be added;
+	 *              must not be <code>null</code>.
 	 */
 	protected final void addTraverseListener(final Table table) {
 		table.addTraverseListener(event -> event.doit = false);
@@ -707,10 +687,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	/**
 	 * Activate the selected item.
 	 *
-	 * @param page
-	 *            the page
-	 * @param selectedItem
-	 *            the selected item
+	 * @param page         the page
+	 * @param selectedItem the selected item
 	 */
 	protected void activate(IWorkbenchPage page, Object selectedItem) {
 		if (selectedItem != null) {
@@ -725,17 +703,16 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				page.setEditorAreaVisible(true);
 			}
 			if (selectedItem instanceof IWorkbenchPartReference) {
-				IWorkbenchPart part = ((IWorkbenchPartReference) selectedItem)
-						.getPart(true);
+				IWorkbenchPart part = ((IWorkbenchPartReference) selectedItem).getPart(true);
 				if (part != null) {
 					page.activate(part);
 				}
 				// the if conditions below do not need to be checked then
 				return;
 			}
-			if (selectedItem instanceof IPerspectiveDescriptor){
-	            IPerspectiveDescriptor persp = (IPerspectiveDescriptor) selectedItem;
-	            page.setPerspective(persp);
+			if (selectedItem instanceof IPerspectiveDescriptor) {
+				IPerspectiveDescriptor persp = (IPerspectiveDescriptor) selectedItem;
+				page.setPerspective(persp);
 				IWorkbenchPart activePart = page.getActivePart();
 				if (activePart != null) {
 					activePart.setFocus();
@@ -836,9 +813,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	/**
-	 * Sets the label provider for the only column visible in the table.
-	 * Subclasses can override this method to style the table, using a
-	 * StyledCellLabelProvider.
+	 * Sets the label provider for the only column visible in the table. Subclasses
+	 * can override this method to style the table, using a StyledCellLabelProvider.
 	 *
 	 * @param tableViewerColumn
 	 * @return
@@ -899,8 +875,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	protected abstract ParameterizedCommand getForwardCommand();
 
 	/**
-	 * Get TableHeader, return title for non-filtered lists. By default returns
-	 * an empty String. Subclasses can use the active part to detect the type of
+	 * Get TableHeader, return title for non-filtered lists. By default returns an
+	 * empty String. Subclasses can use the active part to detect the type of
 	 * object.
 	 */
 	protected String getTableHeader(IWorkbenchPart activePart) {
@@ -924,8 +900,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	@Override
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
 		// true by default, but depends on data
 		gotoDirection = data == null || "true".equals(data); //$NON-NLS-1$
 	}

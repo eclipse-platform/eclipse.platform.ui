@@ -28,11 +28,11 @@ public class RGBInfoColorFactory implements IColorFactory, IExecutableExtension 
 			return rgb;
 		}
 		/**
-		 * Starting with ~Gnome 3.06, COLOR_INFO_BACKGROUND and
-		 * COLOR_INFO_FOREGROUND are inverted, often producing hoverboxes with
-		 * black background with white text on an otherwise white background and
-		 * black text. However, on Windows/Cocoa COLOR_INFO_* looks ok. Solution
-		 * is to generate a different color based on platform.
+		 * Starting with ~Gnome 3.06, COLOR_INFO_BACKGROUND and COLOR_INFO_FOREGROUND
+		 * are inverted, often producing hoverboxes with black background with white
+		 * text on an otherwise white background and black text. However, on
+		 * Windows/Cocoa COLOR_INFO_* looks ok. Solution is to generate a different
+		 * color based on platform.
 		 */
 		if (Util.isGtk()) {
 			switch (color) {
@@ -49,7 +49,7 @@ public class RGBInfoColorFactory implements IColorFactory, IExecutableExtension 
 				rgb = ColorUtil.getColorValue("COLOR_INFO_FOREGROUND"); //$NON-NLS-1$
 				break;
 			case "background": //$NON-NLS-1$
-				rgb = ColorUtil.getColorValue("COLOR_INFO_BACKGROUND");  //$NON-NLS-1$
+				rgb = ColorUtil.getColorValue("COLOR_INFO_BACKGROUND"); //$NON-NLS-1$
 				break;
 			}
 		}

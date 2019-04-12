@@ -35,20 +35,21 @@ import org.osgi.framework.Bundle;
 /**
  * Determines the enablement status given a selection. This calculation is done
  * based on the definition of the <code>enablesFor</code> attribute,
- * <code>enablement</code> element, and the <code>selection</code> element
- * found in the <code>IConfigurationElement</code> provided.
+ * <code>enablement</code> element, and the <code>selection</code> element found
+ * in the <code>IConfigurationElement</code> provided.
  * <p>
  * This class can be instantiated by clients. It is not intended to be extended.
  * </p>
  *
  * @since 3.0
  *
- * Note: The dependency on org.eclipse.jface.text for ITextSelection must be
- * severed It may be possible to do with IActionFilter generic workbench
- * registers IActionFilter for "size" property against IStructuredSelection
- * workbench text registers IActionFilter for "size" property against
- * ITextSelection code here: sel.getAdapter(IActionFilter.class) As an interim
- * solution, use reflection to access selections implementing ITextSelection
+ *        Note: The dependency on org.eclipse.jface.text for ITextSelection must
+ *        be severed It may be possible to do with IActionFilter generic
+ *        workbench registers IActionFilter for "size" property against
+ *        IStructuredSelection workbench text registers IActionFilter for "size"
+ *        property against ITextSelection code here:
+ *        sel.getAdapter(IActionFilter.class) As an interim solution, use
+ *        reflection to access selections implementing ITextSelection
  */
 public final class SelectionEnabler {
 
@@ -63,8 +64,8 @@ public final class SelectionEnabler {
 	public static final int ANY_NUMBER = -2;
 
 	/**
-	 * The constant integer hash code value meaning the hash code has not yet
-	 * been computed.
+	 * The constant integer hash code value meaning the hash code has not yet been
+	 * computed.
 	 */
 	private static final int HASH_CODE_NOT_COMPUTED = -1;
 
@@ -76,8 +77,7 @@ public final class SelectionEnabler {
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = SelectionEnabler.class.getName()
-			.hashCode();
+	private static final int HASH_INITIAL = SelectionEnabler.class.getName().hashCode();
 
 	/**
 	 * Cached value of <code>org.eclipse.jface.text.ITextSelection.class</code>;
@@ -99,25 +99,25 @@ public final class SelectionEnabler {
 	public static final int ONE_OR_MORE = -1;
 
 	/**
-	 * Hard-wired fully qualified name of the text selection class (not on
-	 * pre-req chain).
+	 * Hard-wired fully qualified name of the text selection class (not on pre-req
+	 * chain).
 	 */
 	private static final String TEXT_SELECTION_CLASS = "org.eclipse.jface.text.ITextSelection"; //$NON-NLS-1$
 
 	/**
-	 * Indicates whether the JFace text plug-in is even around. Without the
-	 * JFace text plug-in, text selections are moot.
+	 * Indicates whether the JFace text plug-in is even around. Without the JFace
+	 * text plug-in, text selections are moot.
 	 */
 	private static boolean textSelectionPossible = true;
 
 	public static final int UNKNOWN = 0;
 
 	/**
-	 * Returns <code>ITextSelection.class</code> or <code>null</code> if the
-	 * class is not available.
+	 * Returns <code>ITextSelection.class</code> or <code>null</code> if the class
+	 * is not available.
 	 *
-	 * @return <code>ITextSelection.class</code> or <code>null</code> if
-	 *         class not available
+	 * @return <code>ITextSelection.class</code> or <code>null</code> if class not
+	 *         available
 	 * @since 3.0
 	 */
 	private static Class getTextSelectionClass() {
@@ -164,8 +164,8 @@ public final class SelectionEnabler {
 	}
 
 	/**
-	 * Verifies that the given name matches the given wildcard filter. Returns
-	 * true if it does.
+	 * Verifies that the given name matches the given wildcard filter. Returns true
+	 * if it does.
 	 *
 	 * @param name
 	 * @param filter
@@ -180,8 +180,8 @@ public final class SelectionEnabler {
 	private ActionExpression enablementExpression;
 
 	/**
-	 * The hash code for this object. This value is computed lazily, and marked
-	 * as invalid when one of the values on which it is based changes.
+	 * The hash code for this object. This value is computed lazily, and marked as
+	 * invalid when one of the values on which it is based changes.
 	 */
 	private transient int hashCode = HASH_CODE_NOT_COMPUTED;
 
@@ -205,8 +205,7 @@ public final class SelectionEnabler {
 		if (object instanceof SelectionEnabler) {
 			final SelectionEnabler that = (SelectionEnabler) object;
 			return Util.equals(this.classes, that.classes)
-					&& Util.equals(this.enablementExpression,
-							that.enablementExpression)
+					&& Util.equals(this.enablementExpression, that.enablementExpression)
 					&& Util.equals(this.mode, that.mode);
 		}
 
@@ -222,8 +221,7 @@ public final class SelectionEnabler {
 	public int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(classes);
-			hashCode = hashCode * HASH_FACTOR
-					+ Util.hashCode(enablementExpression);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enablementExpression);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(mode);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
@@ -233,8 +231,8 @@ public final class SelectionEnabler {
 	}
 
 	/**
-	 * Returns true if given structured selection matches the conditions
-	 * specified in the registry for this action.
+	 * Returns true if given structured selection matches the conditions specified
+	 * in the registry for this action.
 	 */
 	private boolean isEnabledFor(ISelection sel) {
 		Object obj = sel;
@@ -266,8 +264,8 @@ public final class SelectionEnabler {
 	}
 
 	/**
-	 * Returns true if given text selection matches the conditions specified in
-	 * the registry for this action.
+	 * Returns true if given text selection matches the conditions specified in the
+	 * registry for this action.
 	 */
 	private boolean isEnabledFor(ISelection sel, int count) {
 		if (verifySelectionCount(count) == false) {
@@ -293,8 +291,8 @@ public final class SelectionEnabler {
 	}
 
 	/**
-	 * Returns true if given structured selection matches the conditions
-	 * specified in the registry for this action.
+	 * Returns true if given structured selection matches the conditions specified
+	 * in the registry for this action.
 	 */
 	private boolean isEnabledFor(IStructuredSelection ssel) {
 		int count = ssel.size();
@@ -386,13 +384,12 @@ public final class SelectionEnabler {
 	}
 
 	/**
-	 * Parses registry element to extract mode and selection elements that will
-	 * be used for verification.
+	 * Parses registry element to extract mode and selection elements that will be
+	 * used for verification.
 	 */
 	private void parseClasses(IConfigurationElement config) {
 		// Get enables for.
-		String enablesFor = config
-				.getAttribute(IWorkbenchRegistryConstants.ATT_ENABLES_FOR);
+		String enablesFor = config.getAttribute(IWorkbenchRegistryConstants.ATT_ENABLES_FOR);
 		if (enablesFor == null) {
 			enablesFor = "*"; //$NON-NLS-1$
 		}
@@ -416,23 +413,19 @@ public final class SelectionEnabler {
 		}
 
 		// Get enablement block.
-		IConfigurationElement[] children = config
-				.getChildren(IWorkbenchRegistryConstants.TAG_ENABLEMENT);
+		IConfigurationElement[] children = config.getChildren(IWorkbenchRegistryConstants.TAG_ENABLEMENT);
 		if (children.length > 0) {
 			enablementExpression = new ActionExpression(children[0]);
 			return;
 		}
 
 		// Get selection block.
-		children = config
-				.getChildren(IWorkbenchRegistryConstants.TAG_SELECTION);
+		children = config.getChildren(IWorkbenchRegistryConstants.TAG_SELECTION);
 		if (children.length > 0) {
 			classes = new ArrayList();
 			for (IConfigurationElement sel : children) {
-				String cname = sel
-						.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
-				String name = sel
-						.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+				String cname = sel.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+				String name = sel.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 				SelectionClass sclass = new SelectionClass();
 				sclass.className = cname;
 				sclass.nameFilter = name;
@@ -442,9 +435,9 @@ public final class SelectionEnabler {
 	}
 
 	/**
-	 * Verifies if the element is an instance of a class with a given class
-	 * name. If direct match fails, implementing interfaces will be tested, then
-	 * recursively all superclasses and their interfaces.
+	 * Verifies if the element is an instance of a class with a given class name. If
+	 * direct match fails, implementing interfaces will be tested, then recursively
+	 * all superclasses and their interfaces.
 	 */
 	private boolean verifyClass(Object element, String className) {
 		Class eclass = element.getClass();
@@ -475,8 +468,7 @@ public final class SelectionEnabler {
 
 	/**
 	 * Verifies if the given element matches one of the selection requirements.
-	 * Element must at least pass the type test, and optionally wildcard name
-	 * match.
+	 * Element must at least pass the type test, and optionally wildcard name match.
 	 */
 	private boolean verifyElement(IAdaptable element) {
 		if (classes.isEmpty()) {
@@ -491,8 +483,7 @@ public final class SelectionEnabler {
 				return true;
 			}
 			IWorkbenchAdapter de = Adapters.adapt(element, IWorkbenchAdapter.class);
-			if ((de != null)
-					&& verifyNameMatch(de.getLabel(element), sc.nameFilter)) {
+			if ((de != null) && verifyNameMatch(de.getLabel(element), sc.nameFilter)) {
 				return true;
 			}
 		}

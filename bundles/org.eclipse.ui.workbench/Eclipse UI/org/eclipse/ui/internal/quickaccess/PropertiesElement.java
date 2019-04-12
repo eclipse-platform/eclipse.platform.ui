@@ -31,7 +31,8 @@ public class PropertiesElement extends QuickAccessElement {
 	private Object selectedElement;
 	private IPreferenceNode preferenceNode;
 
-	/* package */PropertiesElement(Object selectedElement, IPreferenceNode preferenceNode, PropertiesProvider propertiesProvider) {
+	/* package */ PropertiesElement(Object selectedElement, IPreferenceNode preferenceNode,
+			PropertiesProvider propertiesProvider) {
 		super(propertiesProvider);
 		this.selectedElement = selectedElement;
 		this.preferenceNode = preferenceNode;
@@ -39,11 +40,10 @@ public class PropertiesElement extends QuickAccessElement {
 
 	@Override
 	public void execute() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
-			PropertyDialog dialog = PropertyDialog.createDialogOn(window
-					.getShell(), preferenceNode.getId(), selectedElement);
+			PropertyDialog dialog = PropertyDialog.createDialogOn(window.getShell(), preferenceNode.getId(),
+					selectedElement);
 			dialog.open();
 		}
 	}
@@ -72,8 +72,7 @@ public class PropertiesElement extends QuickAccessElement {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((preferenceNode == null) ? 0 : preferenceNode.hashCode());
+		result = prime * result + ((preferenceNode == null) ? 0 : preferenceNode.hashCode());
 		return result;
 	}
 

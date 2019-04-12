@@ -26,92 +26,91 @@ import org.eclipse.ui.themes.ITheme;
  */
 public class CascadingTheme extends EventManager implements ITheme {
 
-    private CascadingFontRegistry fontRegistry;
+	private CascadingFontRegistry fontRegistry;
 
-    private CascadingColorRegistry colorRegistry;
+	private CascadingColorRegistry colorRegistry;
 
-    private ITheme currentTheme;
+	private ITheme currentTheme;
 
-    private IPropertyChangeListener listener = event -> fire(event);
+	private IPropertyChangeListener listener = event -> fire(event);
 
-    /**
-     * @param colorRegistry
-     * @param fontRegistry
-     */
-    public CascadingTheme(ITheme currentTheme,
-            CascadingColorRegistry colorRegistry,
-            CascadingFontRegistry fontRegistry) {
-        this.currentTheme = currentTheme;
-        this.colorRegistry = colorRegistry;
-        this.fontRegistry = fontRegistry;
+	/**
+	 * @param colorRegistry
+	 * @param fontRegistry
+	 */
+	public CascadingTheme(ITheme currentTheme, CascadingColorRegistry colorRegistry,
+			CascadingFontRegistry fontRegistry) {
+		this.currentTheme = currentTheme;
+		this.colorRegistry = colorRegistry;
+		this.fontRegistry = fontRegistry;
 
-        fontRegistry.addListener(listener);
-        colorRegistry.addListener(listener);
-    }
+		fontRegistry.addListener(listener);
+		colorRegistry.addListener(listener);
+	}
 
-    /**
-     * @param event
-     */
-    protected void fire(PropertyChangeEvent event) {
+	/**
+	 * @param event
+	 */
+	protected void fire(PropertyChangeEvent event) {
 		for (Object listener : getListeners()) {
 			((IPropertyChangeListener) listener).propertyChange(event);
-        }
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        addListenerObject(listener);
-    }
+		addListenerObject(listener);
+	}
 
-    @Override
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        removeListenerObject(listener);
-    }
+		removeListenerObject(listener);
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return currentTheme.getId();
-    }
+		return currentTheme.getId();
+	}
 
-    @Override
+	@Override
 	public String getLabel() {
-        return currentTheme.getLabel();
-    }
+		return currentTheme.getLabel();
+	}
 
-    @Override
+	@Override
 	public ColorRegistry getColorRegistry() {
-        return colorRegistry;
-    }
+		return colorRegistry;
+	}
 
-    @Override
+	@Override
 	public FontRegistry getFontRegistry() {
-        return fontRegistry;
-    }
+		return fontRegistry;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        colorRegistry.removeListener(listener);
-        fontRegistry.removeListener(listener);
-    }
+		colorRegistry.removeListener(listener);
+		fontRegistry.removeListener(listener);
+	}
 
-    @Override
+	@Override
 	public String getString(String key) {
-        return currentTheme.getString(key);
-    }
+		return currentTheme.getString(key);
+	}
 
-    @Override
+	@Override
 	public int getInt(String key) {
-        return currentTheme.getInt(key);
-    }
+		return currentTheme.getInt(key);
+	}
 
-    @Override
+	@Override
 	public boolean getBoolean(String key) {
-        return currentTheme.getBoolean(key);
-    }
+		return currentTheme.getBoolean(key);
+	}
 
-    @Override
+	@Override
 	public Set keySet() {
-        return currentTheme.keySet();
-    }
+		return currentTheme.keySet();
+	}
 
 }

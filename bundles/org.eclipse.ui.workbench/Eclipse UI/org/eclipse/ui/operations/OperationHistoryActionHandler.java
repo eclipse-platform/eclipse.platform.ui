@@ -74,8 +74,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
  *
  * @since 3.1
  */
-public abstract class OperationHistoryActionHandler extends Action implements
-		ActionFactory.IWorkbenchAction, IAdaptable {
+public abstract class OperationHistoryActionHandler extends Action
+		implements ActionFactory.IWorkbenchAction, IAdaptable {
 
 	private static final int MAX_LABEL_LENGTH = 33;
 
@@ -104,8 +104,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				// Special case for MultiPageEditorSite
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=103379
 			} else if ((site instanceof MultiPageEditorSite)
-					&& (part.equals(((MultiPageEditorSite) site)
-							.getMultiPageEditor()))) {
+					&& (part.equals(((MultiPageEditorSite) site).getMultiPageEditor()))) {
 				dispose();
 			}
 		}
@@ -152,12 +151,10 @@ public abstract class OperationHistoryActionHandler extends Action implements
 						if (pruning) {
 							IStatus status = event.getStatus();
 							/*
-							 * Prune the history unless we can determine
-							 * that this was a cancelled attempt. See
-							 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=101215
+							 * Prune the history unless we can determine that this was a cancelled attempt.
+							 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=101215
 							 */
-							if (status == null
-									|| status.getSeverity() != IStatus.CANCEL) {
+							if (status == null || status.getSeverity() != IStatus.CANCEL) {
 								flush();
 							}
 							// not all flushes will trigger an update so
@@ -191,13 +188,11 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	IWorkbenchPartSite site;
 
 	/**
-	 * Construct an operation history action for the specified workbench window
-	 * with the specified undo context.
+	 * Construct an operation history action for the specified workbench window with
+	 * the specified undo context.
 	 *
-	 * @param site -
-	 *            the workbench part site for the action.
-	 * @param context -
-	 *            the undo context to be used
+	 * @param site    - the workbench part site for the action.
+	 * @param context - the undo context to be used
 	 */
 	OperationHistoryActionHandler(IWorkbenchPartSite site, IUndoContext context) {
 		// string will be reset inside action
@@ -246,8 +241,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	abstract String getCommandString();
 
 	/*
-	 * Return the string describing the command for a tooltip, including the
-	 * binding for the operation label.
+	 * Return the string describing the command for a tooltip, including the binding
+	 * for the operation label.
 	 */
 	abstract String getTooltipString();
 
@@ -271,8 +266,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			return null;
 		}
 
-		return PlatformUI.getWorkbench().getOperationSupport()
-				.getOperationHistory();
+		return PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
 	}
 
 	/*
@@ -288,23 +282,21 @@ public abstract class OperationHistoryActionHandler extends Action implements
 
 		Shell parent = getWorkbenchWindow().getShell();
 		progressDialog = new TimeTriggeredProgressMonitorDialog(parent,
-				getWorkbenchWindow().getWorkbench().getProgressService()
-						.getLongOperationTime());
+				getWorkbenchWindow().getWorkbench().getProgressService().getLongOperationTime());
 		IRunnableWithProgress runnable = pm -> {
-try {
-		runCommand(pm);
-} catch (ExecutionException e) {
-		if (pruning) {
-			flush();
-		}
-		throw new InvocationTargetException(e);
-}
-};
+			try {
+				runCommand(pm);
+			} catch (ExecutionException e) {
+				if (pruning) {
+					flush();
+				}
+				throw new InvocationTargetException(e);
+			}
+		};
 		try {
 			boolean runInBackground = false;
 			if (getOperation() instanceof IAdvancedUndoableOperation2) {
-				runInBackground = ((IAdvancedUndoableOperation2) getOperation())
-						.runInBackground();
+				runInBackground = ((IAdvancedUndoableOperation2) getOperation()).runInBackground();
 			}
 			progressDialog.run(runInBackground, true, runnable);
 		} catch (InvocationTargetException e) {
@@ -375,12 +367,10 @@ try {
 	abstract boolean shouldBeEnabled();
 
 	/**
-	 * Set the context shown by the handler. Normally the context is set up when
-	 * the action handler is created, but the context can also be changed
-	 * dynamically.
+	 * Set the context shown by the handler. Normally the context is set up when the
+	 * action handler is created, but the context can also be changed dynamically.
 	 *
-	 * @param context
-	 *            the context to be used for the undo history
+	 * @param context the context to be used for the undo history
 	 */
 	public void setContext(IUndoContext context) {
 		// optimization - do nothing if there was no real change
@@ -396,9 +386,8 @@ try {
 	 * history when invalid operations are encountered. The default value is
 	 * <code>false</code>.
 	 *
-	 * @param prune
-	 *            <code>true</code> if the history should be pruned by the
-	 *            handler, and <code>false</code> if it should not.
+	 * @param prune <code>true</code> if the history should be pruned by the
+	 *              handler, and <code>false</code> if it should not.
 	 *
 	 */
 	public void setPruneHistory(boolean prune) {
@@ -406,8 +395,8 @@ try {
 	}
 
 	/**
-	 * Update enabling and labels according to the current status of the
-	 * operation history.
+	 * Update enabling and labels according to the current status of the operation
+	 * history.
 	 */
 	public void update() {
 		if (isInvalid()) {
@@ -417,18 +406,15 @@ try {
 		boolean enabled = shouldBeEnabled();
 		String text, tooltipText;
 		if (enabled) {
-			tooltipText = NLS.bind(getTooltipString(), getOperation()
-					.getLabel());
+			tooltipText = NLS.bind(getTooltipString(), getOperation().getLabel());
 			text = NLS.bind(getCommandString(),
 					LegacyActionTools.escapeMnemonics(shortenText(getOperation().getLabel()))) + '@';
 		} else {
-			tooltipText = NLS.bind(
-					WorkbenchMessages.Operations_undoRedoCommandDisabled,
-					getSimpleTooltipString());
+			tooltipText = NLS.bind(WorkbenchMessages.Operations_undoRedoCommandDisabled, getSimpleTooltipString());
 			text = getSimpleCommandString();
 			/*
-			 * if there is nothing to do and we are pruning the history, flush
-			 * the history of this context.
+			 * if there is nothing to do and we are pruning the history, flush the history
+			 * of this context.
 			 */
 			if (undoContext != null && pruning) {
 				flush();
@@ -468,18 +454,16 @@ try {
 		if (exceptionMessage == null) {
 			exceptionMessage = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
 		}
-		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
-				exceptionMessage, exception);
+		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, exceptionMessage, exception);
 
 		// Log and show the problem
 		WorkbenchPlugin.log(exceptionMessage, status);
-		StatusUtil.handleStatus(status, StatusManager.SHOW,
-				getWorkbenchWindow().getShell());
+		StatusUtil.handleStatus(status, StatusManager.SHOW, getWorkbenchWindow().getShell());
 	}
 
 	/*
-	 * Answer true if the receiver is not valid for running commands, accessing
-	 * the history, etc.
+	 * Answer true if the receiver is not valid for running commands, accessing the
+	 * history, etc.
 	 */
 	final boolean isInvalid() {
 		return undoContext == null || site == null;

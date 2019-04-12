@@ -26,7 +26,8 @@ import org.eclipse.ui.internal.RectangleAnimationImageFeedback;
  */
 public class ImageAnimationTweak extends Animations {
 	/** Default c'tor */
-	public ImageAnimationTweak() {}
+	public ImageAnimationTweak() {
+	}
 
 	@Override
 	public RectangleAnimationFeedbackBase createFeedback(Shell shell) {

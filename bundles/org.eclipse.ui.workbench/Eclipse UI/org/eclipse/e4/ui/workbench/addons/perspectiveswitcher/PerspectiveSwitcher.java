@@ -417,8 +417,7 @@ public class PerspectiveSwitcher {
 				ToolItem curItem = bar.getItem(new Point(e.x, e.y));
 				if (curItem != null && curItem.getData() instanceof MPerspective) {
 					Rectangle bounds = curItem.getBounds();
-					Point center = new Point(bounds.x + (bounds.width / 2), bounds.y
-							+ (bounds.height / 2));
+					Point center = new Point(bounds.x + (bounds.width / 2), bounds.y + (bounds.height / 2));
 					boolean atStart = (perspSwitcherToolbar.getStyle() & SWT.HORIZONTAL) != 0 ? e.x < center.x
 							: e.y < center.y;
 
@@ -488,8 +487,7 @@ public class PerspectiveSwitcher {
 
 	private Image getOpenPerspectiveImage() {
 		if (perspectiveImage == null || perspectiveImage.isDisposed()) {
-			ImageDescriptor desc = WorkbenchImages
-					.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE);
+			ImageDescriptor desc = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE);
 			perspectiveImage = desc.createImage();
 		}
 		return perspectiveImage;
@@ -507,7 +505,8 @@ public class PerspectiveSwitcher {
 
 		int index = perspIndex + 2; // HACK !! accounts for the 'open' and the
 									// separator
-		final ToolItem psItem = index < perspSwitcherToolbar.getItemCount() ? new ToolItem(perspSwitcherToolbar, SWT.RADIO, index)
+		final ToolItem psItem = index < perspSwitcherToolbar.getItemCount()
+				? new ToolItem(perspSwitcherToolbar, SWT.RADIO, index)
 				: new ToolItem(perspSwitcherToolbar, SWT.RADIO);
 		psItem.setData(persp);
 		IPerspectiveDescriptor descriptor = getDescriptorFor(persp.getElementId());
@@ -529,9 +528,8 @@ public class PerspectiveSwitcher {
 				}
 			}
 		}
-		if (!foundImage
-				|| PrefUtil.getAPIPreferenceStore().getBoolean(
-						IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
+		if (!foundImage || PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
 			psItem.setText(persp.getLocalizedLabel());
 			psItem.setToolTipText(persp.getLocalizedTooltip());
 		}
@@ -565,8 +563,7 @@ public class PerspectiveSwitcher {
 
 	// FIXME see https://bugs.eclipse.org/bugs/show_bug.cgi?id=385547
 	private IPerspectiveDescriptor getDescriptorFor(String id) {
-		IPerspectiveRegistry perspectiveRegistry = PlatformUI.getWorkbench()
-				.getPerspectiveRegistry();
+		IPerspectiveRegistry perspectiveRegistry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		if (perspectiveRegistry instanceof PerspectiveRegistry) {
 			return ((PerspectiveRegistry) perspectiveRegistry).findPerspectiveWithId(id, false);
 		}
@@ -576,8 +573,8 @@ public class PerspectiveSwitcher {
 
 	private void selectPerspective() {
 		// let the handler perform the work to consolidate all the code
-		ParameterizedCommand command = commandService.createCommand(
-				IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE, Collections.EMPTY_MAP);
+		ParameterizedCommand command = commandService
+				.createCommand(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE, Collections.EMPTY_MAP);
 		handlerService.executeHandler(command);
 	}
 
@@ -656,8 +653,7 @@ public class PerspectiveSwitcher {
 			} catch (NotHandledException e) {
 			}
 			if (!status.isOK())
-				StatusManager.getManager().handle(status,
-						StatusManager.SHOW | StatusManager.LOG);
+				StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
 		}));
 	}
 
@@ -683,8 +679,7 @@ public class PerspectiveSwitcher {
 			} catch (NotHandledException e) {
 			}
 			if (!status.isOK())
-				StatusManager.getManager().handle(status,
-						StatusManager.SHOW | StatusManager.LOG);
+				StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
 		}));
 	}
 
@@ -732,8 +727,7 @@ public class PerspectiveSwitcher {
 
 	private void setPropertyChangeListener() {
 		propertyChangeListener = propertyChangeEvent -> {
-			if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
-					.equals(propertyChangeEvent.getProperty())) {
+			if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR.equals(propertyChangeEvent.getProperty())) {
 				Object newValue = propertyChangeEvent.getNewValue();
 				boolean showText = true; // default
 				if (newValue instanceof Boolean)
@@ -846,8 +840,8 @@ public class PerspectiveSwitcher {
 		Color border = comp.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		RGB backgroundRGB = background.getRGB();
 		// TODO naive and hard coded, doesn't deal with high contrast, etc.
-		Color gradientTop = new Color(comp.getDisplay(), backgroundRGB.red + 12,
-				backgroundRGB.green + 10, backgroundRGB.blue + 10);
+		Color gradientTop = new Color(comp.getDisplay(), backgroundRGB.red + 12, backgroundRGB.green + 10,
+				backgroundRGB.blue + 10);
 		int h = size.y;
 		int curveStart = 0;
 		int curve_width = 5;

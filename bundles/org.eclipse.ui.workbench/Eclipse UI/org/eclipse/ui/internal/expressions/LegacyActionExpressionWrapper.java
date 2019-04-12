@@ -36,14 +36,12 @@ import org.eclipse.ui.internal.ActionExpression;
  *
  * @since 3.2
  */
-public final class LegacyActionExpressionWrapper extends
-		WorkbenchWindowExpression {
+public final class LegacyActionExpressionWrapper extends WorkbenchWindowExpression {
 
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = LegacyActionExpressionWrapper.class
-			.getName().hashCode();
+	private static final int HASH_INITIAL = LegacyActionExpressionWrapper.class.getName().hashCode();
 
 	/**
 	 * The legacy action expression being wrapped; never <code>null</code>.
@@ -53,20 +51,16 @@ public final class LegacyActionExpressionWrapper extends
 	/**
 	 * Constructs a new instance of {@link LegacyActionExpressionWrapper}.
 	 *
-	 * @param expression
-	 *            The expression to wrap; must not be <code>null</code>.
-	 * @param window
-	 *            The workbench window which must be active for this expression
-	 *            to evaluate to <code>true</code>; may be <code>null</code>
-	 *            if the window should be disregarded.
+	 * @param expression The expression to wrap; must not be <code>null</code>.
+	 * @param window     The workbench window which must be active for this
+	 *                   expression to evaluate to <code>true</code>; may be
+	 *                   <code>null</code> if the window should be disregarded.
 	 */
-	public LegacyActionExpressionWrapper(final ActionExpression expression,
-			final IWorkbenchWindow window) {
+	public LegacyActionExpressionWrapper(final ActionExpression expression, final IWorkbenchWindow window) {
 		super(window);
 
 		if (expression == null) {
-			throw new NullPointerException(
-					"The action expression cannot be null"); //$NON-NLS-1$
+			throw new NullPointerException("The action expression cannot be null"); //$NON-NLS-1$
 		}
 		this.expression = expression;
 	}
@@ -88,23 +82,20 @@ public final class LegacyActionExpressionWrapper extends
 	public boolean equals(final Object object) {
 		if (object instanceof LegacyActionExpressionWrapper) {
 			final LegacyActionExpressionWrapper that = (LegacyActionExpressionWrapper) object;
-			return equals(this.expression, that.expression)
-					&& equals(this.getWindow(), that.getWindow());
+			return equals(this.expression, that.expression) && equals(this.getWindow(), that.getWindow());
 		}
 
 		return false;
 	}
 
 	@Override
-	public EvaluationResult evaluate(final IEvaluationContext context)
-			throws CoreException {
+	public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
 		if (result == EvaluationResult.FALSE) {
 			return result;
 		}
 
-		final Object defaultVariable = context
-				.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		final Object defaultVariable = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 		if (defaultVariable instanceof IStructuredSelection) {
 			final IStructuredSelection selection = (IStructuredSelection) defaultVariable;
 			if (expression.isEnabledFor(selection)) {

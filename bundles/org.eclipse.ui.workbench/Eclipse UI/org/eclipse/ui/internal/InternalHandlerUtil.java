@@ -44,12 +44,10 @@ public class InternalHandlerUtil {
 	/**
 	 * Extract the variable.
 	 *
-	 * @param appContext
-	 *            The application context
-	 * @param name
-	 *            The variable name to extract.
-	 * @return The object from the application context, or <code>null</code>
-	 *         if it could not be found.
+	 * @param appContext The application context
+	 * @param name       The variable name to extract.
+	 * @return The object from the application context, or <code>null</code> if it
+	 *         could not be found.
 	 */
 	public static Object getVariable(Object appContext, String name) {
 		if (appContext instanceof IEvaluationContext) {
@@ -61,8 +59,8 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the active contexts.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return a collection of String contextIds, or <code>null</code>.
 	 */
 	public static Collection getActiveContexts(Object appContext) {
@@ -77,8 +75,8 @@ public class InternalHandlerUtil {
 	 * Return the active shell. Is not necessarily the active workbench window
 	 * shell.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return the active shell, or <code>null</code>.
 	 */
 	public static Shell getActiveShell(Object appContext) {
@@ -92,13 +90,12 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the active workbench window.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return the active workbench window, or <code>null</code>.
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow(Object appContext) {
-		Object o = getVariable(appContext,
-				ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+		Object o = getVariable(appContext, ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
 		if (o instanceof IWorkbenchWindow) {
 			return (IWorkbenchWindow) o;
 		}
@@ -108,8 +105,8 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the active editor.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return the active editor, or <code>null</code>.
 	 */
 	public static IEditorPart getActiveEditor(Object appContext) {
@@ -123,8 +120,8 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the part id of the active editor.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return the part id of the active editor, or <code>null</code>.
 	 */
 	public static String getActiveEditorId(Object appContext) {
@@ -138,8 +135,8 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the active part.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return the active part, or <code>null</code>.
 	 */
 	public static IWorkbenchPart getActivePart(Object appContext) {
@@ -153,8 +150,8 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the part id of the active part.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return the part id of the active part, or <code>null</code>.
 	 */
 	public static String getActivePartId(Object appContext) {
@@ -168,8 +165,8 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the active part site.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return the active part site, or <code>null</code>.
 	 */
 	public static IWorkbenchSite getActiveSite(Object appContext) {
@@ -183,13 +180,12 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the current selection.
 	 *
-	 * @param appContext
-	 *            The execution appContext that contains the application context
+	 * @param appContext The execution appContext that contains the application
+	 *                   context
 	 * @return the current selection, or <code>null</code>.
 	 */
 	public static ISelection getCurrentSelection(Object appContext) {
-		Object o = getVariable(appContext,
-				ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		Object o = getVariable(appContext, ISources.ACTIVE_CURRENT_SELECTION_NAME);
 		if (o instanceof ISelection) {
 			return (ISelection) o;
 		}

@@ -24,128 +24,126 @@ import org.eclipse.ui.activities.NotDefinedException;
 
 /**
  * IActivity proxy that is used by the
- * <code>IActivityCategoryContentProvider</code>.  Each
- * proxy keeps a pointer to the <code>ICategory</code> under which it is being
- * provided.
+ * <code>IActivityCategoryContentProvider</code>. Each proxy keeps a pointer to
+ * the <code>ICategory</code> under which it is being provided.
  *
  * @since 3.0
  */
 public class CategorizedActivity implements IActivity {
 
-    /**
-     * The real <code>IActivity</code>.
-     */
-    private IActivity activity;
+	/**
+	 * The real <code>IActivity</code>.
+	 */
+	private IActivity activity;
 
-    /**
-     * The <code>ICategory</code> under which this proxy will be rendered.
-     */
-    private ICategory category;
+	/**
+	 * The <code>ICategory</code> under which this proxy will be rendered.
+	 */
+	private ICategory category;
 
-    /**
-     * Create a new instance.
-     *
-     * @param category the <code>ICategory</code> under which this proxy will be
-     * rendered.
-     * @param activity the real <code>IActivity</code>.
-     */
-    public CategorizedActivity(ICategory category, IActivity activity) {
-        this.activity = activity;
-        this.category = category;
-    }
+	/**
+	 * Create a new instance.
+	 *
+	 * @param category the <code>ICategory</code> under which this proxy will be
+	 *                 rendered.
+	 * @param activity the real <code>IActivity</code>.
+	 */
+	public CategorizedActivity(ICategory category, IActivity activity) {
+		this.activity = activity;
+		this.category = category;
+	}
 
-    @Override
+	@Override
 	public void addActivityListener(IActivityListener activityListener) {
-        activity.addActivityListener(activityListener);
-    }
+		activity.addActivityListener(activityListener);
+	}
 
-    @Override
+	@Override
 	public int compareTo(IActivity o) {
-        return activity.compareTo(o);
-    }
+		return activity.compareTo(o);
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object o) {
-        if (o instanceof CategorizedActivity) {
-            if (((CategorizedActivity) o).getCategory().equals(getCategory())) {
-				return ((CategorizedActivity) o).getActivity().equals(
-                        getActivity());
+		if (o instanceof CategorizedActivity) {
+			if (((CategorizedActivity) o).getCategory().equals(getCategory())) {
+				return ((CategorizedActivity) o).getActivity().equals(getActivity());
 			}
-        }
-        return false;
-    }
+		}
+		return false;
+	}
 
-    /**
-     * @return returns the <code>IActivity</code>.
-     */
-    public IActivity getActivity() {
-        return activity;
-    }
+	/**
+	 * @return returns the <code>IActivity</code>.
+	 */
+	public IActivity getActivity() {
+		return activity;
+	}
 
-    @Override
+	@Override
 	public Set<IActivityRequirementBinding> getActivityRequirementBindings() {
-        return activity.getActivityRequirementBindings();
-    }
+		return activity.getActivityRequirementBindings();
+	}
 
-    @Override
+	@Override
 	public Set<IActivityPatternBinding> getActivityPatternBindings() {
-        return activity.getActivityPatternBindings();
-    }
+		return activity.getActivityPatternBindings();
+	}
 
-    /**
-     * @return returns the <code>ICategory</code>.
-     */
-    public ICategory getCategory() {
-        return category;
-    }
+	/**
+	 * @return returns the <code>ICategory</code>.
+	 */
+	public ICategory getCategory() {
+		return category;
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return activity.getId();
-    }
+		return activity.getId();
+	}
 
-    @Override
+	@Override
 	public String getName() throws NotDefinedException {
-        return activity.getName();
-    }
+		return activity.getName();
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return activity.hashCode();
-    }
+		return activity.hashCode();
+	}
 
-    @Override
+	@Override
 	public boolean isDefined() {
-        return activity.isDefined();
-    }
+		return activity.isDefined();
+	}
 
-    @Override
+	@Override
 	public boolean isEnabled() {
-        return activity.isEnabled();
-    }
+		return activity.isEnabled();
+	}
 
-    @Override
+	@Override
 	public void removeActivityListener(IActivityListener activityListener) {
-        activity.removeActivityListener(activityListener);
-    }
+		activity.removeActivityListener(activityListener);
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        return category.getId() + " -> " + activity.getId(); //$NON-NLS-1$
-    }
+		return category.getId() + " -> " + activity.getId(); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getDescription() throws NotDefinedException {
-        return activity.getDescription();
-    }
+		return activity.getDescription();
+	}
 
-    @Override
+	@Override
 	public boolean isDefaultEnabled() throws NotDefinedException {
-        return activity.isDefaultEnabled();
-    }
+		return activity.isDefaultEnabled();
+	}
 
-    @Override
+	@Override
 	public Expression getExpression() {
-    	return activity.getExpression();
-    }
+		return activity.getExpression();
+	}
 }

@@ -76,8 +76,7 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 							final Control topRight = ctf.getTopRight();
 							if (topRight instanceof Composite) {
 								for (Control child : ((Composite) topRight).getChildren()) {
-									if (child instanceof ToolBar
-											&& "ViewMenu".equals(child.getData())) { //$NON-NLS-1$
+									if (child instanceof ToolBar && "ViewMenu".equals(child.getData())) { //$NON-NLS-1$
 										ToolBar tb = (ToolBar) child;
 										ToolItem ti = tb.getItem(0);
 										Event sevent = new Event();
@@ -102,8 +101,7 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 		return null;
 	}
 
-	private void showStandaloneViewMenu(ExecutionEvent event, MPart model, MMenu menuModel,
-			Composite partContainer) {
+	private void showStandaloneViewMenu(ExecutionEvent event, MPart model, MMenu menuModel, Composite partContainer) {
 		Shell shell = partContainer.getShell();
 		Menu menu = (Menu) menuModel.getWidget();
 		if (menu == null) {

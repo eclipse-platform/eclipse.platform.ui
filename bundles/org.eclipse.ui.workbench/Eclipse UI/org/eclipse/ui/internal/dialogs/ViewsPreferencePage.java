@@ -83,8 +83,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * appearance of the workbench. Originally this applied only to views but now
  * applies to the overall appearance, hence the name.
  */
-public class ViewsPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private static final String E4_THEME_EXTENSION_POINT = "org.eclipse.e4.ui.css.swt.theme"; //$NON-NLS-1$
 
 	/** The workbench theme engine; may be {@code null} if no engine */
@@ -159,8 +158,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 				themeComboDecorator.hide();
 			}
 			try {
-				((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY))
-						.setSelection(selection);
+				((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).setSelection(selection);
 			} catch (SWTException e) {
 				WorkbenchPlugin.log("Failed to set CSS preferences", e); //$NON-NLS-1$
 			}
@@ -173,15 +171,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		createThemeIndependentComposits(comp);
 
-		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY))
-				.setSelection(currentTheme);
+		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).setSelection(currentTheme);
 		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).createContents(comp);
 
 		if (currentTheme != null) {
-			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme
-					.getId());
-			if (colorsAndFontsThemeId != null
-					&& !currentColorsAndFontsTheme.getId().equals(colorsAndFontsThemeId)) {
+			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme.getId());
+			if (colorsAndFontsThemeId != null && !currentColorsAndFontsTheme.getId().equals(colorsAndFontsThemeId)) {
 				colorsAndFontsThemeId = currentColorsAndFontsTheme.getId();
 			}
 			selectColorsAndFontsTheme(colorsAndFontsThemeId);
@@ -201,18 +196,16 @@ public class ViewsPreferencePage extends PreferencePage implements
 		ArrayList<ITheme> themes = new ArrayList<>();
 		for (ITheme theme : engine.getThemes()) {
 			/*
-			 * When we have Win32 OS - when the high contrast mode is enabled on
-			 * the platform, we display the 'high-contrast' special theme only.
-			 * If not, we don't want to mess the themes combo with the theme
-			 * since it is the special variation of the 'classic' one
+			 * When we have Win32 OS - when the high contrast mode is enabled on the
+			 * platform, we display the 'high-contrast' special theme only. If not, we don't
+			 * want to mess the themes combo with the theme since it is the special
+			 * variation of the 'classic' one
 			 *
-			 * When we have GTK - we have to display the entire list of the
-			 * themes since we are not able to figure out if the high contrast
-			 * mode is enabled on the platform. The user has to manually select
-			 * the theme if they need it
+			 * When we have GTK - we have to display the entire list of the themes since we
+			 * are not able to figure out if the high contrast mode is enabled on the
+			 * platform. The user has to manually select the theme if they need it
 			 */
-			if (!highContrastMode && !Util.isGtk()
-					&& theme.getId().equals(E4Application.HIGH_CONTRAST_THEME_ID)) {
+			if (!highContrastMode && !Util.isGtk() && theme.getId().equals(E4Application.HIGH_CONTRAST_THEME_ID)) {
 				continue;
 			}
 			themes.add(theme);
@@ -224,8 +217,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private void createColoredLabelsPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		useColoredLabels = createCheckButton(composite,
-				WorkbenchMessages.ViewsPreference_useColoredLabels,
+		useColoredLabels = createCheckButton(composite, WorkbenchMessages.ViewsPreference_useColoredLabels,
 				apiStore.getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 	}
 
@@ -264,8 +256,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	protected void createEnableAnimationsPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		enableAnimations = createCheckButton(composite,
-				WorkbenchMessages.ViewsPreference_enableAnimations,
+		enableAnimations = createCheckButton(composite, WorkbenchMessages.ViewsPreference_enableAnimations,
 				apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
 	}
 
@@ -318,8 +309,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private void setColorsAndFontsTheme(ColorsAndFontsTheme theme) {
-		org.eclipse.ui.themes.ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager()
-				.getCurrentTheme();
+		org.eclipse.ui.themes.ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 		if (theme != null && !currentTheme.getId().equals(theme.getId())) {
 			PlatformUI.getWorkbench().getThemeManager().setCurrentTheme(theme.getId());
 		}
@@ -379,9 +369,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 			themeComboDecorator.hide();
 			colorFontsDecorator.hide();
 
-
-
-		if (themeChanged || colorsAndFontsThemeChanged) {
+			if (themeChanged || colorsAndFontsThemeChanged) {
 				MessageDialog.openWarning(getShell(), WorkbenchMessages.ThemeChangeWarningTitle,
 						WorkbenchMessages.ThemeChangeWarningText);
 			}
@@ -392,16 +380,14 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private void createColorsAndFontsThemeCombo(Composite composite) {
 		new Label(composite, SWT.NONE).setText(WorkbenchMessages.ViewsPreference_currentTheme);
 		colorsAndFontsThemeCombo = new ComboViewer(composite, SWT.READ_ONLY);
-		colorsAndFontsThemeCombo.getControl().setLayoutData(
-				new GridData(SWT.FILL, SWT.CENTER, true, false));
+		colorsAndFontsThemeCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		colorsAndFontsThemeCombo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				return ((ColorsAndFontsTheme) element).getLabel();
 			}
 		});
-		colorFontsDecorator = new ControlDecoration(colorsAndFontsThemeCombo.getCombo(), SWT.TOP
-				| SWT.LEFT);
+		colorFontsDecorator = new ControlDecoration(colorsAndFontsThemeCombo.getCombo(), SWT.TOP | SWT.LEFT);
 		colorsAndFontsThemeCombo.setContentProvider(new ArrayContentProvider());
 		colorsAndFontsThemeCombo.setInput(getColorsAndFontsThemes());
 		colorsAndFontsThemeCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -411,8 +397,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 				Image decorationImage = FieldDecorationRegistry.getDefault()
 						.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
 				colorFontsDecorator.setImage(decorationImage);
-				colorFontsDecorator
-						.setDescriptionText(WorkbenchMessages.ThemeChangeWarningText);
+				colorFontsDecorator.setDescriptionText(WorkbenchMessages.ThemeChangeWarningText);
 				colorFontsDecorator.show();
 			} else
 				colorFontsDecorator.hide();
@@ -422,19 +407,16 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Create the text box that will contain the current theme description text
-	 * (if any).
+	 * Create the text box that will contain the current theme description text (if
+	 * any).
 	 *
-	 * @param parent
-	 *            the parent <code>Composite</code>.
+	 * @param parent the parent <code>Composite</code>.
 	 */
 	private void createColorsAndFontsThemeDescriptionText(Composite parent) {
-		new Label(parent, SWT.NONE)
-				.setText(WorkbenchMessages.ViewsPreference_currentThemeDescription);
+		new Label(parent, SWT.NONE).setText(WorkbenchMessages.ViewsPreference_currentThemeDescription);
 
-		colorsAndFontsThemeDescriptionText = new Text(parent, SWT.H_SCROLL | SWT.V_SCROLL
-				| SWT.READ_ONLY
-				| SWT.BORDER | SWT.WRAP);
+		colorsAndFontsThemeDescriptionText = new Text(parent,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		// give a height hint that'll show at least two lines (and let the
 		// scroll bars draw nicely if necessary)
@@ -501,12 +483,11 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 	private List<ColorsAndFontsTheme> getColorsAndFontsThemes() {
 		List<ColorsAndFontsTheme> result = new ArrayList<>();
-		org.eclipse.ui.themes.ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager()
-				.getCurrentTheme();
+		org.eclipse.ui.themes.ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 
 		IThemeDescriptor[] descs = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
-		String defaultThemeString = PlatformUI.getWorkbench().getThemeManager()
-				.getTheme(IThemeManager.DEFAULT_THEME).getLabel();
+		String defaultThemeString = PlatformUI.getWorkbench().getThemeManager().getTheme(IThemeManager.DEFAULT_THEME)
+				.getLabel();
 		if (currentTheme.getId().equals(IThemeManager.DEFAULT_THEME)) {
 			defaultThemeString = NLS.bind(WorkbenchMessages.ViewsPreference_currentThemeFormat,
 					new Object[] { defaultThemeString });
@@ -544,12 +525,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private ColorsAndFontsTheme getCurrentColorsAndFontsTheme() {
-		org.eclipse.ui.themes.ITheme theme = PlatformUI.getWorkbench().getThemeManager()
-				.getCurrentTheme();
+		org.eclipse.ui.themes.ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 
 		return new ColorsAndFontsTheme(theme.getId(), theme.getLabel());
 	}
-
 
 	private static class ColorsAndFontsTheme {
 		private String label;

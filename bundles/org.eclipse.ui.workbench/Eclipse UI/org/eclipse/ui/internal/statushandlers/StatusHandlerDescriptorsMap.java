@@ -40,19 +40,16 @@ class StatusHandlerDescriptorsMap {
 	/**
 	 * Adds a new handler descriptor to the prefix tree
 	 *
-	 * @param handlerDescriptor
-	 *            the handler descriptor to add
+	 * @param handlerDescriptor the handler descriptor to add
 	 */
 	public void addHandlerDescriptor(StatusHandlerDescriptor handlerDescriptor) {
 		add(this.map, handlerDescriptor.getPrefix(), handlerDescriptor);
 	}
 
 	/*
-	 * Recursively searches the tree for the best place for the handler
-	 * descriptor
+	 * Recursively searches the tree for the best place for the handler descriptor
 	 */
-	private void add(Map map, String prefix,
-			StatusHandlerDescriptor handlerDescriptor) {
+	private void add(Map map, String prefix, StatusHandlerDescriptor handlerDescriptor) {
 		if (prefix == null) {
 			if (map.get(ASTERISK) == null) {
 				map.put(ASTERISK, new ArrayList());
@@ -88,8 +85,8 @@ class StatusHandlerDescriptorsMap {
 	}
 
 	/**
-	 * Returns status handler descriptors whose prefixes are the most specific
-	 * for given pluginId.
+	 * Returns status handler descriptors whose prefixes are the most specific for
+	 * given pluginId.
 	 *
 	 * @param pluginId
 	 * @return handler descriptors list
@@ -99,8 +96,8 @@ class StatusHandlerDescriptorsMap {
 	}
 
 	/*
-	 * Recursively searches the prefix tree for the most specific handler
-	 * descriptor for the given pluginId.
+	 * Recursively searches the prefix tree for the most specific handler descriptor
+	 * for the given pluginId.
 	 */
 	private List get(String pluginId, Map map) {
 		if (pluginId == null) {

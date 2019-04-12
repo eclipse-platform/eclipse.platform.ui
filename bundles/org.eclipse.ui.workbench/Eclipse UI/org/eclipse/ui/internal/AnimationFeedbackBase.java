@@ -17,10 +17,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * AnimationFeedBackBase is an abstract class which provides renderStep(), jobInit() and
- * initialize() methods for AnimationEngine.
- * Its the base class for all the
- * animationFeedbacks
+ * AnimationFeedBackBase is an abstract class which provides renderStep(),
+ * jobInit() and initialize() methods for AnimationEngine. Its the base class
+ * for all the animationFeedbacks
  *
  * @since 3.3
  *
@@ -45,16 +44,15 @@ public abstract class AnimationFeedbackBase {
 	}
 
 	/**
-	 * Perform any initialization you want to do -prior- to the Job actually
-	 * gets scheduled.
+	 * Perform any initialization you want to do -prior- to the Job actually gets
+	 * scheduled.
 	 *
 	 * @param animationEngine The engine we're hosted in.
 	 */
 	public abstract void initialize(AnimationEngine animationEngine);
 
 	/**
-	 * Its a draw method. All the code to render an animation goes in this
-	 * method.
+	 * Its a draw method. All the code to render an animation goes in this method.
 	 *
 	 * @param engine
 	 */
@@ -62,7 +60,8 @@ public abstract class AnimationFeedbackBase {
 
 	/**
 	 * Perform any initialization you want to have happen -before- the animation
-	 * starts. Subclasses may subclass but not override (i.e. you have to call super).
+	 * starts. Subclasses may subclass but not override (i.e. you have to call
+	 * super).
 	 *
 	 * @param engine The AnimationEngine hosting the feedback
 	 * @return 'true' iff the animation is capable of running

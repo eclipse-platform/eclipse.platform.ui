@@ -39,24 +39,22 @@ import org.eclipse.ui.internal.activities.InternalActivityHelper;
  */
 public class ActivityCategoryContentProvider implements ITreeContentProvider {
 
-    /**
-     * The manager to extract content from.
-     */
-    private IActivityManager manager;
+	/**
+	 * The manager to extract content from.
+	 */
+	private IActivityManager manager;
 
-    @Override
+	@Override
 	public void dispose() {
-        manager = null;
-    }
+		manager = null;
+	}
 
-    /**
-	 * @param category
-	 * 		the category to fetch.
+	/**
+	 * @param category the category to fetch.
 	 * @return all activities in the category.
 	 */
 	private IActivity[] getCategoryActivities(ICategory category) {
-		Set<String> activityIds = InternalActivityHelper.getActivityIdsForCategory(
-				manager, category);
+		Set<String> activityIds = InternalActivityHelper.getActivityIdsForCategory(manager, category);
 		List<IActivity> categoryActivities = new ArrayList<>(activityIds.size());
 		for (String activityId : activityIds) {
 			categoryActivities.add(new CategorizedActivity(category, manager.getActivity(activityId)));
@@ -68,12 +66,10 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	/**
 	 * Get the duplicate activities found in the other defined categories.
 	 *
-	 * @param categorizedActivity
-	 *            The categorized activity.
+	 * @param categorizedActivity The categorized activity.
 	 * @return the list of duplicate categorized activities.
 	 */
-	public Object[] getDuplicateCategoryActivities(
-			CategorizedActivity categorizedActivity) {
+	public Object[] getDuplicateCategoryActivities(CategorizedActivity categorizedActivity) {
 		ArrayList<CategorizedActivity> duplicateCategorizedactivities = new ArrayList<>();
 		Set<String> categoryIds = manager.getDefinedCategoryIds();
 		ICategory currentCategory = null;
@@ -107,15 +103,13 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	/**
 	 * Get the child required activities.
 	 *
-	 * @param activityId
-	 *            The parent activity id.
+	 * @param activityId The parent activity id.
 	 * @return the list of child required activities.
 	 */
 	public Object[] getChildRequiredActivities(String activityId) {
 		ArrayList<CategorizedActivity> childRequiredActivities = new ArrayList<>();
 		IActivity activity = manager.getActivity(activityId);
-		Set<IActivityRequirementBinding> actvitiyRequirementBindings = activity
-				.getActivityRequirementBindings();
+		Set<IActivityRequirementBinding> actvitiyRequirementBindings = activity.getActivityRequirementBindings();
 		String requiredActivityId = null;
 		IActivityRequirementBinding currentActivityRequirementBinding = null;
 		Object[] currentCategoryIds = null;
@@ -136,8 +130,7 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	/**
 	 * Get the parent required activities.
 	 *
-	 * @param activityId
-	 *            The child activity id.
+	 * @param activityId The child activity id.
 	 * @return the list of parent required activities.
 	 */
 	public Object[] getParentRequiredActivities(String activityId) {
@@ -169,8 +162,7 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	/**
 	 * Get the activity's categories (there could be more than one).
 	 *
-	 * @param activityId
-	 *            The activity id.
+	 * @param activityId The activity id.
 	 * @return the activity's categories.
 	 */
 	private Object[] getActivityCategories(String activityId) {
@@ -191,49 +183,49 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 		return activityCategories.toArray();
 	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object parentElement) {
-        if (parentElement instanceof IActivityManager) {
+		if (parentElement instanceof IActivityManager) {
 			Set<String> categoryIds = manager.getDefinedCategoryIds();
 			ArrayList<ICategory> categories = new ArrayList<>(categoryIds.size());
 			for (String categoryId : categoryIds) {
-                ICategory category = manager.getCategory(categoryId);
+				ICategory category = manager.getCategory(categoryId);
 				if (getCategoryActivities(category).length > 0) {
 					categories.add(category);
 				}
-            }
-            return categories.toArray();
-        } else if (parentElement instanceof ICategory) {
-            return getCategoryActivities((ICategory) parentElement);
-        }
-        return new Object[0];
-    }
+			}
+			return categories.toArray();
+		} else if (parentElement instanceof ICategory) {
+			return getCategoryActivities((ICategory) parentElement);
+		}
+		return new Object[0];
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object inputElement) {
-        return getChildren(inputElement);
-    }
+		return getChildren(inputElement);
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {
-        if (element instanceof CategorizedActivity) {
-            return ((CategorizedActivity) element).getCategory();
-        }
-        return null;
-    }
+		if (element instanceof CategorizedActivity) {
+			return ((CategorizedActivity) element).getCategory();
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        if (element instanceof IActivityManager || element instanceof ICategory) {
+		if (element instanceof IActivityManager || element instanceof ICategory) {
 			return true;
 		}
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput instanceof IActivityManager) {
 			manager = (IActivityManager) newInput;
 		}
-    }
+	}
 }

@@ -44,8 +44,7 @@ public class Tweaklets {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result
-					+ ((tweakClass == null) ? 0 : tweakClass.hashCode());
+			result = prime * result + ((tweakClass == null) ? 0 : tweakClass.hashCode());
 			return result;
 		}
 
@@ -100,12 +99,10 @@ public class Tweaklets {
 	 * @return
 	 */
 	private static Object createTweaklet(TweakKey definition) {
-		IConfigurationElement[] elements = Platform
-				.getExtensionRegistry()
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.ui.internalTweaklets"); //$NON-NLS-1$
 		for (IConfigurationElement element : elements) {
-			if (definition.tweakClass.getName().equals(
-					element.getAttribute("definition"))) { //$NON-NLS-1$
+			if (definition.tweakClass.getName().equals(element.getAttribute("definition"))) { //$NON-NLS-1$
 				try {
 					Object tweaklet = element.createExecutableExtension("implementation"); //$NON-NLS-1$
 					tweaklets.put(definition, tweaklet);

@@ -88,8 +88,7 @@ public class BundleSigningInfo {
 			date = new Text(composite, SWT.READ_ONLY);
 			GC gc = new GC(date);
 			gc.setFont(JFaceResources.getDialogFont());
-			Point size = gc.stringExtent(DateFormat.getDateTimeInstance()
-					.format(new Date()));
+			Point size = gc.stringExtent(DateFormat.getDateTimeInstance().format(new Date()));
 			data.widthHint = size.x;
 			gc.dispose();
 			date.setText(WorkbenchMessages.BundleSigningTray_Working);
@@ -98,15 +97,12 @@ public class BundleSigningInfo {
 		// signer
 		{
 			Label label = new Label(composite, SWT.NONE);
-			label
-					.setText(WorkbenchMessages.BundleSigningTray_Signing_Certificate);
-			GridData data = new GridData(SWT.BEGINNING, SWT.BEGINNING, true,
-					false);
+			label.setText(WorkbenchMessages.BundleSigningTray_Signing_Certificate);
+			GridData data = new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false);
 			data.horizontalSpan = 2;
 			data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			data.horizontalSpan = 2;
-			certificate = new StyledText(composite, SWT.READ_ONLY | SWT.MULTI
-					| SWT.WRAP);
+			certificate = new StyledText(composite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
 			certificate.setText(WorkbenchMessages.BundleSigningTray_Working);
 			certificate.setLayoutData(data);
 		}
@@ -141,14 +137,13 @@ public class BundleSigningInfo {
 		}
 
 		final AboutBundleData myData = data;
-		final Job signerJob = Job.create(NLS.bind(
-				WorkbenchMessages.BundleSigningTray_Determine_Signer_For,
-				myData.getId()), (IJobFunction) monitor -> {
+		final Job signerJob = Job.create(
+				NLS.bind(WorkbenchMessages.BundleSigningTray_Determine_Signer_For, myData.getId()),
+				(IJobFunction) monitor -> {
 					try {
 						if (myData != data)
 							return Status.OK_STATUS;
-						SignedContent signedContent = contentFactory
-								.getSignedContent(myData.getBundle());
+						SignedContent signedContent = contentFactory.getSignedContent(myData.getBundle());
 						if (myData != data)
 							return Status.OK_STATUS;
 						SignerInfo[] signers = signedContent.getSignerInfos();
@@ -160,14 +155,12 @@ public class BundleSigningInfo {
 							signerText = WorkbenchMessages.BundleSigningTray_Unsigned;
 							dateText = WorkbenchMessages.BundleSigningTray_Unsigned;
 						} else {
-							Properties[] certs = parseCerts(signers[0]
-									.getCertificateChain());
+							Properties[] certs = parseCerts(signers[0].getCertificateChain());
 							if (certs.length == 0)
 								signerText = WorkbenchMessages.BundleSigningTray_Unknown;
 							else {
 								StringBuilder buffer = new StringBuilder();
-								for (Iterator<Entry<Object, Object>> i = certs[0].entrySet().iterator(); i
-										.hasNext();) {
+								for (Iterator<Entry<Object, Object>> i = certs[0].entrySet().iterator(); i.hasNext();) {
 									Entry<Object, Object> entry = i.next();
 									buffer.append(entry.getKey());
 									buffer.append('=');
@@ -178,33 +171,27 @@ public class BundleSigningInfo {
 								signerText = buffer.toString();
 							}
 
-							Date signDate = signedContent
-									.getSigningTime(signers[0]);
+							Date signDate = signedContent.getSigningTime(signers[0]);
 							if (signDate != null)
-								dateText = DateFormat.getDateTimeInstance().format(
-										signDate);
+								dateText = DateFormat.getDateTimeInstance().format(signDate);
 							else
 								dateText = WorkbenchMessages.BundleSigningTray_Unknown;
 						}
 
-						PlatformUI.getWorkbench().getDisplay().asyncExec(
-								() -> {
-									// check to see if the tray is still visible
-									// and if
-									// we're still looking at the same item
-									if (!isOpen()
-											&& BundleSigningInfo.this.data != myData)
-										return;
-									certificate.setText(signerText);
-									date.setText(dateText);
-								});
+						PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+							// check to see if the tray is still visible
+							// and if
+							// we're still looking at the same item
+							if (!isOpen() && BundleSigningInfo.this.data != myData)
+								return;
+							certificate.setText(signerText);
+							date.setText(dateText);
+						});
 
 					} catch (IOException e1) {
-						return new Status(IStatus.ERROR,
-								WorkbenchPlugin.PI_WORKBENCH, e1.getMessage(), e1);
+						return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, e1.getMessage(), e1);
 					} catch (GeneralSecurityException e2) {
-						return new Status(IStatus.ERROR,
-								WorkbenchPlugin.PI_WORKBENCH, e2.getMessage(), e2);
+						return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, e2.getMessage(), e2);
 					}
 					return Status.OK_STATUS;
 				});

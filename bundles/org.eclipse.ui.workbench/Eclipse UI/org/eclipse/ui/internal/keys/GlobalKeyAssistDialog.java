@@ -47,8 +47,8 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 	private final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
 
 	/**
-	 * Whether this dialog is currently open, if the dialog is opened again, we
-	 * open the preference page instead
+	 * Whether this dialog is currently open, if the dialog is opened again, we open
+	 * the preference page instead
 	 */
 	private boolean isOpen;
 
@@ -79,9 +79,9 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 	}
 
 	/**
-	 * Determines what keybinding was used to open this dialog and returns an
-	 * info string using that binding. ex:
-	 * "Press 'Ctrl-Shift-L') to open the preference page";
+	 * Determines what keybinding was used to open this dialog and returns an info
+	 * string using that binding. ex: "Press 'Ctrl-Shift-L') to open the preference
+	 * page";
 	 *
 	 * @return info text for this dialog
 	 */
@@ -91,8 +91,7 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 
 		if (cmd != null) {
 			EBindingService bindingService = context.getActiveLeaf().get(EBindingService.class);
-			TriggerSequence keySeq = bindingService.getBestSequenceFor(new ParameterizedCommand(
-					cmd, null));
+			TriggerSequence keySeq = bindingService.getBestSequenceFor(new ParameterizedCommand(cmd, null));
 
 			if (keySeq != null) {
 				return NLS.bind(KeyAssistMessages.openPreferencePage, keySeq.format());
@@ -113,8 +112,8 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 			shell = shell.getParent().getShell();
 		}
 
-		PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(shell,
-				keysPageId, null, getSelectedBinding());
+		PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(shell, keysPageId, null,
+				getSelectedBinding());
 		close();
 		return dialog.open();
 	}

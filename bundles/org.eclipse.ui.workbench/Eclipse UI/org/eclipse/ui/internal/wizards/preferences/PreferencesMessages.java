@@ -16,10 +16,9 @@ package org.eclipse.ui.internal.wizards.preferences;
 
 import org.eclipse.osgi.util.NLS;
 
-
 /**
  * NLS messages class for preferences messages.
-
+ * 
  * @since 3.1
  *
  */
@@ -61,7 +60,6 @@ public class PreferencesMessages extends NLS {
 
 	public static String SelectionDialog_selectLabel;
 	public static String SelectionDialog_deselectLabel;
-
 
 	public static String WizardDataTransfer_existsQuestion;
 	public static String WizardDataTransfer_overwriteNameAndPathQuestion;

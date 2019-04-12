@@ -26,9 +26,9 @@ import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 
 /**
  * <p>
- * Provides undoable operation support for the workbench.  This includes  providing access to the default
- * operation history and installing a workbench-specific operation approver that enforces a linear
- * undo strategy.
+ * Provides undoable operation support for the workbench. This includes
+ * providing access to the default operation history and installing a
+ * workbench-specific operation approver that enforces a linear undo strategy.
  * </p>
  *
  * @since 3.1
@@ -43,8 +43,10 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_UNEXPECTED = Policy.DEBUG_OPERATIONS;
 		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_OPENOPERATION = Policy.DEBUG_OPERATIONS;
 		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_APPROVAL = Policy.DEBUG_OPERATIONS;
-		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_NOTIFICATION = Policy.DEBUG_OPERATIONS && Policy.DEBUG_OPERATIONS_VERBOSE;
-		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_DISPOSE = Policy.DEBUG_OPERATIONS && Policy.DEBUG_OPERATIONS_VERBOSE;
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_NOTIFICATION = Policy.DEBUG_OPERATIONS
+				&& Policy.DEBUG_OPERATIONS_VERBOSE;
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_DISPOSE = Policy.DEBUG_OPERATIONS
+				&& Policy.DEBUG_OPERATIONS_VERBOSE;
 	}
 
 	/**
@@ -62,9 +64,8 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	}
 
 	/**
-	 * Returns the undo context for workbench operations.
-	 * The workbench configures an undo context with the appropriate policies
-	 * for the workbench undo model.
+	 * Returns the undo context for workbench operations. The workbench configures
+	 * an undo context with the appropriate policies for the workbench undo model.
 	 *
 	 * @return the workbench operation context.
 	 * @since 3.1
@@ -72,8 +73,7 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	@Override
 	public IUndoContext getUndoContext() {
 		if (undoContext == null) {
-			undoContext = new ObjectUndoContext(PlatformUI.getWorkbench(),
-					"Workbench Context"); //$NON-NLS-1$
+			undoContext = new ObjectUndoContext(PlatformUI.getWorkbench(), "Workbench Context"); //$NON-NLS-1$
 		}
 		return undoContext;
 	}
@@ -92,8 +92,8 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 		 */
 		if (approver == null) {
 			/*
-			 * install an operation approver that prevents linear undo violations
-			 * in any context
+			 * install an operation approver that prevents linear undo violations in any
+			 * context
 			 */
 			approver = new AdvancedValidationUserApprover(getUndoContext());
 			history.addOperationApprover(approver);

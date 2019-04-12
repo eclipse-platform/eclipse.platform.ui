@@ -87,14 +87,11 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 		topComposite.setLayout(layout);
 		topComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
 		actionSetFilterCheckBox = new Button(topComposite, SWT.CHECK);
-		actionSetFilterCheckBox
-				.setText(NewKeysPreferenceMessages.ActionSetFilterCheckBox_Text);
+		actionSetFilterCheckBox.setText(NewKeysPreferenceMessages.ActionSetFilterCheckBox_Text);
 		internalFilterCheckBox = new Button(topComposite, SWT.CHECK);
-		internalFilterCheckBox
-				.setText(NewKeysPreferenceMessages.InternalFilterCheckBox_Text);
+		internalFilterCheckBox.setText(NewKeysPreferenceMessages.InternalFilterCheckBox_Text);
 		uncategorizedFilterCheckBox = new Button(topComposite, SWT.CHECK);
-		uncategorizedFilterCheckBox
-				.setText(NewKeysPreferenceMessages.UncategorizedFilterCheckBox_Text);
+		uncategorizedFilterCheckBox.setText(NewKeysPreferenceMessages.UncategorizedFilterCheckBox_Text);
 
 		actionSetFilterCheckBox.setSelection(filterActionSet);
 		internalFilterCheckBox.setSelection(filterInternal);
@@ -115,8 +112,7 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell
-				.setText(NewKeysPreferenceMessages.KeysPreferenceFilterDialog_Title);
+		newShell.setText(NewKeysPreferenceMessages.KeysPreferenceFilterDialog_Title);
 	}
 
 	boolean getFilterShowUnboundCommands() {

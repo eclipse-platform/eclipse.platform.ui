@@ -88,12 +88,12 @@ public class RGBVisibleContrastColorFactory implements IColorFactory, IExecutabl
 	}
 
 	/**
-	 * This executable extension requires parameters to be explicitly declared
-	 * via the second method described in the <code>IExecutableExtension</code>
+	 * This executable extension requires parameters to be explicitly declared via
+	 * the second method described in the <code>IExecutableExtension</code>
 	 * documentation. This class expects that there will be three parameters,
 	 * <code>foreground</code>, <code>background</code> and
-	 * <code>alternativeBackground</code>. These values may either be RGB
-	 * triples or SWT constants.
+	 * <code>alternativeBackground</code>. These values may either be RGB triples or
+	 * SWT constants.
 	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)

@@ -24,63 +24,60 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
-    private String id;
+	private String id;
 
-    private IConfigurationElement element;
+	private IConfigurationElement element;
 
 	private Map<String, String> hints;
 
-    /**
-     * Create a new instance of this class.
-     *
-     * @param id the id of the trigger point
-     * @param element the defining configuration element
-     */
-    public RegistryTriggerPoint(String id, IConfigurationElement element) {
-        this.id = id;
-        this.element = element;
-    }
+	/**
+	 * Create a new instance of this class.
+	 *
+	 * @param id      the id of the trigger point
+	 * @param element the defining configuration element
+	 */
+	public RegistryTriggerPoint(String id, IConfigurationElement element) {
+		this.id = id;
+		this.element = element;
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return id;
-    }
+		return id;
+	}
 
-    @Override
+	@Override
 	public String getStringHint(String key) {
-        return getHints().get(key);
-    }
+		return getHints().get(key);
+	}
 
-    @Override
+	@Override
 	public boolean getBooleanHint(String key) {
-        return Boolean.parseBoolean(getStringHint(key));
-    }
+		return Boolean.parseBoolean(getStringHint(key));
+	}
 
-    /**
-     * Lazily create the hints.
-     *
-     * @return the hint map
-     */
+	/**
+	 * Lazily create the hints.
+	 *
+	 * @return the hint map
+	 */
 	private Map<String, String> getHints() {
-        if (hints == null) {
+		if (hints == null) {
 			hints = new HashMap<>();
 
-            IConfigurationElement[] hintElements = element
-                    .getChildren(IWorkbenchRegistryConstants.TAG_HINT);
-            for (IConfigurationElement hintElement : hintElements) {
-                String id = hintElement
-                        .getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-                String value = hintElement
-                        .getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
+			IConfigurationElement[] hintElements = element.getChildren(IWorkbenchRegistryConstants.TAG_HINT);
+			for (IConfigurationElement hintElement : hintElements) {
+				String id = hintElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				String value = hintElement.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
 
-                if (id == null || value == null) {
+				if (id == null || value == null) {
 					Persistence.log(element, Persistence.ACTIVITY_TRIGGER_HINT_DESC, "hint must contain ID and value"); //$NON-NLS-1$
 					continue;
 				}
 				hints.put(id, value);
-            }
-        }
+			}
+		}
 
-        return hints;
-    }
+		return hints;
+	}
 }

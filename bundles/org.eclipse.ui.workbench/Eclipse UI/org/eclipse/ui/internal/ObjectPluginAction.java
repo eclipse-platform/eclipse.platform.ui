@@ -35,14 +35,14 @@ import org.eclipse.ui.part.MultiPageEditorPart;
  */
 public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 	/**
-	 * The configuration element attribute for the identifier of the action
-	 * which this action is intended to override (i.e., replace).
+	 * The configuration element attribute for the identifier of the action which
+	 * this action is intended to override (i.e., replace).
 	 */
 	public static final String ATT_OVERRIDE_ACTION_ID = "overrideActionId";//$NON-NLS-1$
 
-    private String overrideActionId;
+	private String overrideActionId;
 
-    private IWorkbenchPart activePart;
+	private IWorkbenchPart activePart;
 
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
@@ -97,35 +97,30 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 	public void partVisible(IWorkbenchPartReference partRef) {
 	}
 
-    /**
+	/**
 	 * Constructs a new ObjectPluginAction.
 	 *
-	 * @param actionElement
-	 *            The configuration element used to construct this action; must
-	 *            not be <code>null</code>.
-	 * @param id
-	 *            The identifier for this action; must not be <code>null</code>.
-	 * @param style
-	 *            The style bits
+	 * @param actionElement The configuration element used to construct this action;
+	 *                      must not be <code>null</code>.
+	 * @param id            The identifier for this action; must not be
+	 *                      <code>null</code>.
+	 * @param style         The style bits
 	 */
-    public ObjectPluginAction(IConfigurationElement actionElement, String id,
-            int style) {
-        super(actionElement, id, style);
-        overrideActionId = actionElement.getAttribute(ATT_OVERRIDE_ACTION_ID);
-    }
+	public ObjectPluginAction(IConfigurationElement actionElement, String id, int style) {
+		super(actionElement, id, style);
+		overrideActionId = actionElement.getAttribute(ATT_OVERRIDE_ACTION_ID);
+	}
 
-    @Override
+	@Override
 	protected void initDelegate() {
-        super.initDelegate();
+		super.initDelegate();
 		final IActionDelegate actionDelegate = getDelegate();
-		if (actionDelegate instanceof IObjectActionDelegate
-				&& activePart != null) {
+		if (actionDelegate instanceof IObjectActionDelegate && activePart != null) {
 			final IObjectActionDelegate objectActionDelegate = (IObjectActionDelegate) actionDelegate;
 			final ISafeRunnable runnable = new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
-					objectActionDelegate.setActivePart(ObjectPluginAction.this,
-							activePart);
+					objectActionDelegate.setActivePart(ObjectPluginAction.this, activePart);
 				}
 
 				@Override
@@ -137,18 +132,17 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 		}
 	}
 
-    /**
+	/**
 	 * Sets the active part for the delegate.
 	 * <p>
-	 * This method will be called every time the action appears in a popup menu.
-	 * The targetPart may change with each invocation.
+	 * This method will be called every time the action appears in a popup menu. The
+	 * targetPart may change with each invocation.
 	 * </p>
 	 *
-	 * @param targetPart
-	 *            the new part target
+	 * @param targetPart the new part target
 	 */
-    public void setActivePart(IWorkbenchPart targetPart) {
-    	if (activePart != targetPart) {
+	public void setActivePart(IWorkbenchPart targetPart) {
+		if (activePart != targetPart) {
 			if (activePart != null) {
 				stopPartListening();
 			}
@@ -156,15 +150,14 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 				targetPart.getSite().getPage().addPartListener(this);
 			}
 		}
-        activePart = targetPart;
-        IActionDelegate delegate = getDelegate();
-        if (delegate instanceof IObjectActionDelegate && activePart != null) {
+		activePart = targetPart;
+		IActionDelegate delegate = getDelegate();
+		if (delegate instanceof IObjectActionDelegate && activePart != null) {
 			final IObjectActionDelegate objectActionDelegate = (IObjectActionDelegate) delegate;
 			final ISafeRunnable runnable = new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
-					objectActionDelegate.setActivePart(ObjectPluginAction.this,
-							activePart);
+					objectActionDelegate.setActivePart(ObjectPluginAction.this, activePart);
 				}
 
 				@Override
@@ -176,24 +169,24 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 		}
 	}
 
-    /**
-     * Returns the action identifier this action overrides.
-     *
-     * @return the action identifier to override or <code>null</code>
-     */
-    @Override
+	/**
+	 * Returns the action identifier this action overrides.
+	 *
+	 * @return the action identifier to override or <code>null</code>
+	 */
+	@Override
 	public String getOverrideActionId() {
-        return overrideActionId;
-    }
+		return overrideActionId;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    	if (activePart!=null) {
+		if (activePart != null) {
 			stopPartListening();
-    		activePart = null;
-    	}
-    	super.dispose();
-    }
+			activePart = null;
+		}
+		super.dispose();
+	}
 
 	private void stopPartListening() {
 		if (activePart != null) {

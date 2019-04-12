@@ -35,14 +35,14 @@ package org.eclipse.ui.commands;
 @SuppressWarnings("all")
 public interface ICategoryListener {
 
-    /**
-     * Notifies that one or more attributes of an instance of
-     * <code>ICategory</code> have changed. Specific details are described in
-     * the <code>CategoryEvent</code>.
-     *
-     * @param categoryEvent
-     *            the category event. Guaranteed not to be <code>null</code>.
-     */
+	/**
+	 * Notifies that one or more attributes of an instance of <code>ICategory</code>
+	 * have changed. Specific details are described in the
+	 * <code>CategoryEvent</code>.
+	 *
+	 * @param categoryEvent the category event. Guaranteed not to be
+	 *                      <code>null</code>.
+	 */
 	@Deprecated
-    void categoryChanged(CategoryEvent categoryEvent);
+	void categoryChanged(CategoryEvent categoryEvent);
 }

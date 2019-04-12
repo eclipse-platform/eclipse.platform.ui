@@ -52,23 +52,22 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * The default default value for the active scheme id. This value can be
 	 * overridden using the "plugin_customization.ini" file. The
-	 * <code>BindingPersistence</code> code needs to know this value so it can
-	 * try to decide if someone overrode the default.
+	 * <code>BindingPersistence</code> code needs to know this value so it can try
+	 * to decide if someone overrode the default.
 	 */
 	String DEFAULT_DEFAULT_ACTIVE_SCHEME_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 
 	/**
 	 * <p>
-	 * Adds a listener to this binding service. The listener will be notified
-	 * when the set of defined schemes or bindings changes. This can be used to
-	 * track the global appearance and disappearance of bindings.
+	 * Adds a listener to this binding service. The listener will be notified when
+	 * the set of defined schemes or bindings changes. This can be used to track the
+	 * global appearance and disappearance of bindings.
 	 * </p>
 	 * <p>
 	 * This method completes in amortized constant time (<code>O(1)</code>).
 	 * </p>
 	 *
-	 * @param listener
-	 *            The listener to attach; must not be <code>null</code>.
+	 * @param listener The listener to attach; must not be <code>null</code>.
 	 *
 	 * @since 3.5
 	 */
@@ -82,8 +81,7 @@ public interface IBindingService extends IDisposable {
 	 * This method completes in amortized <code>O(1)</code>.
 	 * </p>
 	 *
-	 * @param listener
-	 *            The listener to be removed; must not be <code>null</code>.
+	 * @param listener The listener to be removed; must not be <code>null</code>.
 	 *
 	 * @since 3.5
 	 */
@@ -92,22 +90,20 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Gets the active bindings for a given parameterized command.
 	 *
-	 * @param parameterizedCommand
-	 *            The fully-parameterized command for which the active bindings
-	 *            should be found; must not be <code>null</code>.
+	 * @param parameterizedCommand The fully-parameterized command for which the
+	 *                             active bindings should be found; must not be
+	 *                             <code>null</code>.
 	 * @return The array of all active bindings for the given command. This
 	 *         collection may be empty, but it is never <code>null</code>.
 	 */
-	TriggerSequence[] getActiveBindingsFor(
-			ParameterizedCommand parameterizedCommand);
+	TriggerSequence[] getActiveBindingsFor(ParameterizedCommand parameterizedCommand);
 
 	/**
-	 * Gets the active bindings for a given command identifier. It is assumed
-	 * that the command has no parameters.
+	 * Gets the active bindings for a given command identifier. It is assumed that
+	 * the command has no parameters.
 	 *
-	 * @param commandId
-	 *            The id of the command for which the active bindings should be
-	 *            found; must not be <code>null</code>.
+	 * @param commandId The id of the command for which the active bindings should
+	 *                  be found; must not be <code>null</code>.
 	 * @return The array of all active bindings for the given command. This
 	 *         collection may be empty, but it is never <code>null</code>.
 	 */
@@ -122,61 +118,52 @@ public interface IBindingService extends IDisposable {
 	Scheme getActiveScheme();
 
 	/**
-	 * Gets the best active binding for a command. The best binding is the one
-	 * that would be most appropriate to show in a menu. Bindings which belong
-	 * to a child scheme are given preference over those in a parent scheme.
-	 * Bindings which belong to a particular locale or platform are given
-	 * preference over those that do not. The rest of the calculation is based
-	 * most on various concepts of "length", as well as giving some modifier
-	 * keys preference (e.g., <code>Alt</code> is less likely to appear than
-	 * <code>Ctrl</code>).
+	 * Gets the best active binding for a command. The best binding is the one that
+	 * would be most appropriate to show in a menu. Bindings which belong to a child
+	 * scheme are given preference over those in a parent scheme. Bindings which
+	 * belong to a particular locale or platform are given preference over those
+	 * that do not. The rest of the calculation is based most on various concepts of
+	 * "length", as well as giving some modifier keys preference (e.g.,
+	 * <code>Alt</code> is less likely to appear than <code>Ctrl</code>).
 	 *
-	 * @param command
-	 *            The command for which the best active binding should be
-	 *            retrieved; must not be <code>null</code>.
-	 * @return The trigger sequence for the best binding; may be
-	 *         <code>null</code> if no bindings are active for the given
-	 *         command.
+	 * @param command The command for which the best active binding should be
+	 *                retrieved; must not be <code>null</code>.
+	 * @return The trigger sequence for the best binding; may be <code>null</code>
+	 *         if no bindings are active for the given command.
 	 * @since 3.4
 	 */
 	TriggerSequence getBestActiveBindingFor(ParameterizedCommand command);
 
 	/**
-	 * Gets the best active binding for a command. The best binding is the one
-	 * that would be most appropriate to show in a menu. Bindings which belong
-	 * to a child scheme are given preference over those in a parent scheme.
-	 * Bindings which belong to a particular locale or platform are given
-	 * preference over those that do not. The rest of the calculaton is based
-	 * most on various concepts of "length", as well as giving some modifier
-	 * keys preference (e.g., <code>Alt</code> is less likely to appear than
-	 * <code>Ctrl</code>).
+	 * Gets the best active binding for a command. The best binding is the one that
+	 * would be most appropriate to show in a menu. Bindings which belong to a child
+	 * scheme are given preference over those in a parent scheme. Bindings which
+	 * belong to a particular locale or platform are given preference over those
+	 * that do not. The rest of the calculaton is based most on various concepts of
+	 * "length", as well as giving some modifier keys preference (e.g.,
+	 * <code>Alt</code> is less likely to appear than <code>Ctrl</code>).
 	 *
-	 * @param commandId
-	 *            The identifier of the command for which the best active
-	 *            binding should be retrieved; must not be <code>null</code>.
-	 * @return The trigger sequence for the best binding; may be
-	 *         <code>null</code> if no bindings are active for the given
-	 *         command.
+	 * @param commandId The identifier of the command for which the best active
+	 *                  binding should be retrieved; must not be <code>null</code>.
+	 * @return The trigger sequence for the best binding; may be <code>null</code>
+	 *         if no bindings are active for the given command.
 	 * @since 3.2
 	 * @see #getBestActiveBindingFor(ParameterizedCommand)
 	 */
 	TriggerSequence getBestActiveBindingFor(String commandId);
 
 	/**
-	 * Gets the formatted string representing the best active binding for a
-	 * command. The best binding is the one that would be most appropriate to
-	 * show in a menu. Bindings which belong to a child scheme are given
-	 * preference over those in a parent scheme. The rest of the calculaton is
-	 * based most on various concepts of "length", as well as giving some
-	 * modifier keys preference (e.g., <code>Alt</code> is less likely to
-	 * appear than <code>Ctrl</code>).
+	 * Gets the formatted string representing the best active binding for a command.
+	 * The best binding is the one that would be most appropriate to show in a menu.
+	 * Bindings which belong to a child scheme are given preference over those in a
+	 * parent scheme. The rest of the calculaton is based most on various concepts
+	 * of "length", as well as giving some modifier keys preference (e.g.,
+	 * <code>Alt</code> is less likely to appear than <code>Ctrl</code>).
 	 *
-	 * @param commandId
-	 *            The identifier of the command for which the best active
-	 *            binding should be retrieved; must not be <code>null</code>.
-	 * @return The formatted string for the best binding; may be
-	 *         <code>null</code> if no bindings are active for the given
-	 *         command.
+	 * @param commandId The identifier of the command for which the best active
+	 *                  binding should be retrieved; must not be <code>null</code>.
+	 * @return The formatted string for the best binding; may be <code>null</code>
+	 *         if no bindings are active for the given command.
 	 * @since 3.2
 	 * @see #getBestActiveBindingFor(ParameterizedCommand)
 	 */
@@ -190,35 +177,33 @@ public interface IBindingService extends IDisposable {
 	Binding[] getBindings();
 
 	/**
-	 * Returns the current state of the key binding buffer. This will contain
-	 * all of the keys currently awaiting processing. If the system is currently
-	 * executing a command (as a result of a key press), then this will contain
-	 * the trigger sequence used to execute the command. If the key binding
-	 * architecture has seen part of multi-key binding, then this will contain
-	 * the part that it has seen. Otherwise, this will return nothing.
+	 * Returns the current state of the key binding buffer. This will contain all of
+	 * the keys currently awaiting processing. If the system is currently executing
+	 * a command (as a result of a key press), then this will contain the trigger
+	 * sequence used to execute the command. If the key binding architecture has
+	 * seen part of multi-key binding, then this will contain the part that it has
+	 * seen. Otherwise, this will return nothing.
 	 *
-	 * @return The trigger sequence indicating the current state of the key
-	 *         binding buffer; never <code>null</code>, but may be empty if
-	 *         there is nothing in the buffer.
+	 * @return The trigger sequence indicating the current state of the key binding
+	 *         buffer; never <code>null</code>, but may be empty if there is nothing
+	 *         in the buffer.
 	 * @since 3.2
 	 */
 	TriggerSequence getBuffer();
 
 	/**
-	 * Returns the default scheme identifier for the currently running
-	 * application.
+	 * Returns the default scheme identifier for the currently running application.
 	 *
 	 * @return The default scheme identifier (<code>String</code>); never
-	 *         <code>null</code>, but may be empty or point to an undefined
-	 *         scheme.
+	 *         <code>null</code>, but may be empty or point to an undefined scheme.
 	 */
 	String getDefaultSchemeId();
 
 	/**
 	 * Returns the array of defined schemes in the workbench.
 	 *
-	 * @return The array of schemes (<code>Scheme</code>) that are defined;
-	 *         it may be <code>null</code>, and it may be empty.
+	 * @return The array of schemes (<code>Scheme</code>) that are defined; it may
+	 *         be <code>null</code>, and it may be empty.
 	 */
 	Scheme[] getDefinedSchemes();
 
@@ -230,22 +215,21 @@ public interface IBindingService extends IDisposable {
 	String getLocale();
 
 	/**
-	 * Returns all of the possible bindings that start with the given trigger
-	 * (but are not equal to the given trigger).
+	 * Returns all of the possible bindings that start with the given trigger (but
+	 * are not equal to the given trigger).
 	 *
-	 * @param trigger
-	 *            The prefix to look for; must not be <code>null</code>.
-	 * @return A map of triggers (<code>TriggerSequence</code>) to bindings (<code>Binding</code>).
-	 *         This map may be empty, but it is never <code>null</code>.
+	 * @param trigger The prefix to look for; must not be <code>null</code>.
+	 * @return A map of triggers (<code>TriggerSequence</code>) to bindings
+	 *         (<code>Binding</code>). This map may be empty, but it is never
+	 *         <code>null</code>.
 	 */
 	Map getPartialMatches(TriggerSequence trigger);
 
 	/**
-	 * Returns the command identifier for the active binding matching this
-	 * trigger, if any.
+	 * Returns the command identifier for the active binding matching this trigger,
+	 * if any.
 	 *
-	 * @param trigger
-	 *            The trigger to match; may be <code>null</code>.
+	 * @param trigger The trigger to match; may be <code>null</code>.
 	 * @return The binding that matches, if any; <code>null</code> otherwise.
 	 */
 	Binding getPerfectMatch(TriggerSequence trigger);
@@ -261,8 +245,7 @@ public interface IBindingService extends IDisposable {
 	 * Retrieves the scheme with the given identifier. If no such scheme exists,
 	 * then an undefined scheme with the given id is created.
 	 *
-	 * @param schemeId
-	 *            The identifier to find; must not be <code>null</code>.
+	 * @param schemeId The identifier to find; must not be <code>null</code>.
 	 * @return A scheme with the given identifier, either defined or undefined.
 	 */
 	Scheme getScheme(String schemeId);
@@ -270,84 +253,77 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Tests whether the global key binding architecture is currently active.
 	 *
-	 * @return <code>true</code> if the key bindings are active;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the key bindings are active; <code>false</code>
+	 *         otherwise.
 	 */
 	boolean isKeyFilterEnabled();
 
 	/**
-	 * Returns whether the given trigger sequence is a partial match for the
-	 * given sequence.
+	 * Returns whether the given trigger sequence is a partial match for the given
+	 * sequence.
 	 *
-	 * @param trigger
-	 *            The sequence which should be the prefix for some binding;
-	 *            should not be <code>null</code>.
-	 * @return <code>true</code> if the trigger can be found in the active
-	 *         bindings; <code>false</code> otherwise.
+	 * @param trigger The sequence which should be the prefix for some binding;
+	 *                should not be <code>null</code>.
+	 * @return <code>true</code> if the trigger can be found in the active bindings;
+	 *         <code>false</code> otherwise.
 	 */
 	boolean isPartialMatch(TriggerSequence trigger);
 
 	/**
-	 * Returns whether the given trigger sequence is a perfect match for the
-	 * given sequence.
+	 * Returns whether the given trigger sequence is a perfect match for the given
+	 * sequence.
 	 *
-	 * @param trigger
-	 *            The sequence which should match exactly; should not be
-	 *            <code>null</code>.
-	 * @return <code>true</code> if the trigger can be found in the active
-	 *         bindings; <code>false</code> otherwise.
+	 * @param trigger The sequence which should match exactly; should not be
+	 *                <code>null</code>.
+	 * @return <code>true</code> if the trigger can be found in the active bindings;
+	 *         <code>false</code> otherwise.
 	 */
 	boolean isPerfectMatch(TriggerSequence trigger);
 
 	/**
-	 * Opens the key assistant dialog positioned near the key binding entry in
-	 * the status bar.
+	 * Opens the key assistant dialog positioned near the key binding entry in the
+	 * status bar.
 	 */
 	void openKeyAssistDialog();
 
 	/**
 	 * <p>
 	 * Reads the binding information from the registry and the preferences. This
-	 * will overwrite any of the existing information in the binding service.
-	 * This method is intended to be called during start-up. When this method
-	 * completes, this binding service will reflect the current state of the
-	 * registry and preference store.
+	 * will overwrite any of the existing information in the binding service. This
+	 * method is intended to be called during start-up. When this method completes,
+	 * this binding service will reflect the current state of the registry and
+	 * preference store.
 	 * </p>
 	 *
-	 * @param commandService
-	 *            Ignored.
+	 * @param commandService Ignored.
 	 */
 	void readRegistryAndPreferences(ICommandService commandService);
 
 	/**
 	 * <p>
-	 * Writes the given active scheme and bindings to the preference store. Only
-	 * the bindings that are of the <code>Binding.USER</code> type will be
-	 * written; the others will be ignored. This should only be used by
-	 * applications trying to persist user preferences. If you are trying to
-	 * change the active scheme as an RCP application, then you should be using
-	 * the <code>plugin_customization.ini</code> file. If you are trying to
-	 * switch between groups of bindings dynamically, you should be using
-	 * contexts.
+	 * Writes the given active scheme and bindings to the preference store. Only the
+	 * bindings that are of the <code>Binding.USER</code> type will be written; the
+	 * others will be ignored. This should only be used by applications trying to
+	 * persist user preferences. If you are trying to change the active scheme as an
+	 * RCP application, then you should be using the
+	 * <code>plugin_customization.ini</code> file. If you are trying to switch
+	 * between groups of bindings dynamically, you should be using contexts.
 	 * </p>
 	 * <p>
 	 * This method also updates the active scheme and bindings in the system to
 	 * match those written to the preference store.
 	 * </p>
 	 *
-	 * @param activeScheme
-	 *            The scheme which should be persisted; may be <code>null</code>.
-	 * @param bindings
-	 *            The bindings which should be persisted; may be
-	 *            <code>null</code>.
-	 * @throws IOException
-	 *             If something goes wrong while writing to the preference
-	 *             store.
+	 * @param activeScheme The scheme which should be persisted; may be
+	 *                     <code>null</code>.
+	 * @param bindings     The bindings which should be persisted; may be
+	 *                     <code>null</code>.
+	 * @throws IOException If something goes wrong while writing to the preference
+	 *                     store.
 	 * @see org.eclipse.ui.IWorkbenchPreferenceConstants
 	 * @see org.eclipse.ui.contexts.IContextService
 	 */
-	void savePreferences(Scheme activeScheme, Binding[] bindings)
-			throws IOException;
+	void savePreferences(Scheme activeScheme, Binding[] bindings) throws IOException;
 
 	/**
 	 * <p>
@@ -355,19 +331,17 @@ public interface IBindingService extends IDisposable {
 	 * should be enabled by default.
 	 * </p>
 	 * <p>
-	 * When enabled, keyboard shortcuts are active, and that key events can
-	 * trigger commands. This also means that widgets may not see all key events
-	 * (as they might be trapped as a keyboard shortcut).
+	 * When enabled, keyboard shortcuts are active, and that key events can trigger
+	 * commands. This also means that widgets may not see all key events (as they
+	 * might be trapped as a keyboard shortcut).
 	 * </p>
 	 * <p>
-	 * When disabled, no key events will trapped as keyboard shortcuts, and that
-	 * no commands can be triggered by keyboard events. (Exception: it is
-	 * possible that someone listening for key events on a widget could trigger
-	 * a command.)
+	 * When disabled, no key events will trapped as keyboard shortcuts, and that no
+	 * commands can be triggered by keyboard events. (Exception: it is possible that
+	 * someone listening for key events on a widget could trigger a command.)
 	 * </p>
 	 *
-	 * @param enabled
-	 *            Whether the key filter should be enabled.
+	 * @param enabled Whether the key filter should be enabled.
 	 */
 	void setKeyFilterEnabled(boolean enabled);
 
@@ -377,8 +351,8 @@ public interface IBindingService extends IDisposable {
 	 *
 	 * @param sequence The sequence for which conflict info is required
 	 *
-	 * @return Collection of Bindings. If no conflicts,
-	 *         then returns a <code>null</code>
+	 * @return Collection of Bindings. If no conflicts, then returns a
+	 *         <code>null</code>
 	 * @since 3.5
 	 */
 	Collection getConflictsFor(TriggerSequence sequence);

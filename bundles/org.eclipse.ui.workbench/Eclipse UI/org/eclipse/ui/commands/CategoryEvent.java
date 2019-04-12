@@ -29,71 +29,67 @@ package org.eclipse.ui.commands;
 @Deprecated
 public final class CategoryEvent {
 
-    /**
-     * The category that has changed; this value is never <code>null</code>.
-     */
-    private final ICategory category;
+	/**
+	 * The category that has changed; this value is never <code>null</code>.
+	 */
+	private final ICategory category;
 
-    /**
-     * Whether the defined state of the category has changed.
-     */
-    private final boolean definedChanged;
+	/**
+	 * Whether the defined state of the category has changed.
+	 */
+	private final boolean definedChanged;
 
-    /**
-     * Whether the name of the category has changed.
-     */
-    private final boolean nameChanged;
+	/**
+	 * Whether the name of the category has changed.
+	 */
+	private final boolean nameChanged;
 
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param category
-     *            the instance of the interface that changed.
-     * @param definedChanged
-     *            true, iff the defined property changed.
-     * @param nameChanged
-     *            true, iff the name property changed.
-     */
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param category       the instance of the interface that changed.
+	 * @param definedChanged true, iff the defined property changed.
+	 * @param nameChanged    true, iff the name property changed.
+	 */
 	@Deprecated
-    public CategoryEvent(ICategory category, boolean definedChanged,
-            boolean nameChanged) {
-        if (category == null) {
+	public CategoryEvent(ICategory category, boolean definedChanged, boolean nameChanged) {
+		if (category == null) {
 			throw new NullPointerException();
 		}
 
-        this.category = category;
-        this.definedChanged = definedChanged;
-        this.nameChanged = nameChanged;
-    }
+		this.category = category;
+		this.definedChanged = definedChanged;
+		this.nameChanged = nameChanged;
+	}
 
-    /**
-     * Returns the instance of the interface that changed.
-     *
-     * @return the instance of the interface that changed. Guaranteed not to be
-     *         <code>null</code>.
-     */
+	/**
+	 * Returns the instance of the interface that changed.
+	 *
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
 	@Deprecated
-    public ICategory getCategory() {
-        return category;
-    }
+	public ICategory getCategory() {
+		return category;
+	}
 
-    /**
-     * Returns whether or not the defined property changed.
-     *
-     * @return true, iff the defined property changed.
-     */
+	/**
+	 * Returns whether or not the defined property changed.
+	 *
+	 * @return true, iff the defined property changed.
+	 */
 	@Deprecated
-    public boolean hasDefinedChanged() {
-        return definedChanged;
-    }
+	public boolean hasDefinedChanged() {
+		return definedChanged;
+	}
 
-    /**
-     * Returns whether or not the name property changed.
-     *
-     * @return true, iff the name property changed.
-     */
+	/**
+	 * Returns whether or not the name property changed.
+	 *
+	 * @return true, iff the name property changed.
+	 */
 	@Deprecated
-    public boolean hasNameChanged() {
-        return nameChanged;
-    }
+	public boolean hasNameChanged() {
+		return nameChanged;
+	}
 }

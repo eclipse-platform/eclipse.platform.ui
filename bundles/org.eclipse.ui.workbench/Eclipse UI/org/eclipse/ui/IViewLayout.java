@@ -14,7 +14,8 @@
 package org.eclipse.ui;
 
 /**
- * Represents the layout info for a view or placeholder in an {@link IPageLayout}.
+ * Represents the layout info for a view or placeholder in an
+ * {@link IPageLayout}.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -24,48 +25,48 @@ package org.eclipse.ui;
  */
 public interface IViewLayout {
 
-    /**
-     * Returns whether the view is closeable.
-     * The default is <code>true</code>.
-     *
-     * @return <code>true</code> if the view is closeable, <code>false</code> if not
-     */
-    boolean isCloseable();
+	/**
+	 * Returns whether the view is closeable. The default is <code>true</code>.
+	 *
+	 * @return <code>true</code> if the view is closeable, <code>false</code> if not
+	 */
+	boolean isCloseable();
 
-    /**
-     * Sets whether the view is closeable.
-     *
-     * @param closeable <code>true</code> if the view is closeable, <code>false</code> if not
-     */
-    void setCloseable(boolean closeable);
+	/**
+	 * Sets whether the view is closeable.
+	 *
+	 * @param closeable <code>true</code> if the view is closeable,
+	 *                  <code>false</code> if not
+	 */
+	void setCloseable(boolean closeable);
 
-    /**
-     * Returns whether the view is moveable.
-     * The default is <code>true</code>.
-     *
-     * @return <code>true</code> if the view is moveable, <code>false</code> if not
-     */
-    boolean isMoveable();
+	/**
+	 * Returns whether the view is moveable. The default is <code>true</code>.
+	 *
+	 * @return <code>true</code> if the view is moveable, <code>false</code> if not
+	 */
+	boolean isMoveable();
 
-    /**
-     * Sets whether the view is moveable.
-     *
-     * @param moveable <code>true</code> if the view is moveable, <code>false</code> if not
-     */
-    void setMoveable(boolean moveable);
+	/**
+	 * Sets whether the view is moveable.
+	 *
+	 * @param moveable <code>true</code> if the view is moveable, <code>false</code>
+	 *                 if not
+	 */
+	void setMoveable(boolean moveable);
 
-    /**
-     * Returns whether the view is a standalone view.
-     *
-     * @see IPageLayout#addStandaloneView
-     */
-    boolean isStandalone();
+	/**
+	 * Returns whether the view is a standalone view.
+	 *
+	 * @see IPageLayout#addStandaloneView
+	 */
+	boolean isStandalone();
 
-    /**
-     * Returns whether the view shows its title.
-     * This is only applicable to standalone views.
-     *
-     * @see IPageLayout#addStandaloneView
-     */
-    boolean getShowTitle();
+	/**
+	 * Returns whether the view shows its title. This is only applicable to
+	 * standalone views.
+	 *
+	 * @see IPageLayout#addStandaloneView
+	 */
+	boolean getShowTitle();
 }

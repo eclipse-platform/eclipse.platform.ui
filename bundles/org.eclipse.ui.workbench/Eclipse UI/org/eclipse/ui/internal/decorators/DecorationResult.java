@@ -42,8 +42,7 @@ public class DecorationResult {
 
 	private Font font;
 
-	DecorationResult(List prefixList, List suffixList,
-			ImageDescriptor[] imageDescriptors, Color resultForegroundColor,
+	DecorationResult(List prefixList, List suffixList, ImageDescriptor[] imageDescriptors, Color resultForegroundColor,
 			Color resultBackgroundColor, Font resultFont) {
 		prefixes = prefixList;
 		suffixes = suffixList;
@@ -93,9 +92,9 @@ public class DecorationResult {
 	}
 
 	/**
-	 * Decorate the String supplied with the prefixes and suffixes. This method
-	 * is public for use by the test suites and is not intended to be referenced
-	 * by other workbench internals.
+	 * Decorate the String supplied with the prefixes and suffixes. This method is
+	 * public for use by the test suites and is not intended to be referenced by
+	 * other workbench internals.
 	 *
 	 * @param text
 	 * @return String

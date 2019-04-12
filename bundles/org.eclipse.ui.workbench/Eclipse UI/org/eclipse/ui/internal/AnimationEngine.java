@@ -27,9 +27,10 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
- * This job creates an Animation Engine that uses an Animation Feedback to render
- * the animation. To begin the animation, instantiate this
- * object then call schedule().
+ * This job creates an Animation Engine that uses an Animation Feedback to
+ * render the animation. To begin the animation, instantiate this object then
+ * call schedule().
+ * 
  * @since 3.3
  *
  */
@@ -51,20 +52,20 @@ public class AnimationEngine extends Job {
 	private AnimationFeedbackBase feedbackRenderer;
 	private int duration;
 
-	public AnimationEngine(AnimationFeedbackBase animationFeedback,
-			int durationIn) {
+	public AnimationEngine(AnimationFeedbackBase animationFeedback, int durationIn) {
 		this(animationFeedback, durationIn, 0);
 	}
 
 	/**
 	 * Creates an Animation that will run for the given number of milliseconds.
 	 *
-	 * @param animationFeedback provides renderStep(), initialize() and jobInit() methods
-	 * @param durationIn number of milliseconds over which the animation will run
-	 * @param sleepAmountIn number of milliseconds to slow/delay the animation
+	 * @param animationFeedback provides renderStep(), initialize() and jobInit()
+	 *                          methods
+	 * @param durationIn        number of milliseconds over which the animation will
+	 *                          run
+	 * @param sleepAmountIn     number of milliseconds to slow/delay the animation
 	 */
-	public AnimationEngine(AnimationFeedbackBase animationFeedback,
-			int durationIn, long sleepAmountIn) {
+	public AnimationEngine(AnimationFeedbackBase animationFeedback, int durationIn, long sleepAmountIn) {
 		super(WorkbenchMessages.RectangleAnimation_Animating_Rectangle);
 		sleepAmount = sleepAmountIn;
 		feedbackRenderer = animationFeedback;
@@ -72,8 +73,7 @@ public class AnimationEngine extends Job {
 
 		// if animations aren't on this is a NO-OP
 		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-		enableAnimations = preferenceStore
-				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+		enableAnimations = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
 		if (!enableAnimations) {
 			return;
 		}
@@ -143,13 +143,13 @@ public class AnimationEngine extends Job {
 		}
 		double amount = 0.0;
 		switch (timingStyle) {
-			case TICK_TIMER:
-				amount = (double) (curTime - startTime) / (double) duration;
-				break;
+		case TICK_TIMER:
+			amount = (double) (curTime - startTime) / (double) duration;
+			break;
 
-			// For testing purposes
-			case FRAME_COUNT:
-				amount = (double) frameCount / (double) duration;
+		// For testing purposes
+		case FRAME_COUNT:
+			amount = (double) frameCount / (double) duration;
 		}
 
 		if (amount > 1.0)
@@ -160,7 +160,8 @@ public class AnimationEngine extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		// We use preference value to indicate that the animation should be skipped on this platform.
+		// We use preference value to indicate that the animation should be skipped on
+		// this platform.
 		if (!enableAnimations) {
 			return Status.OK_STATUS;
 		}
@@ -208,8 +209,7 @@ public class AnimationEngine extends Job {
 	}
 
 	public static void createTweakedAnimation(Shell shell, int duration, Rectangle start, Rectangle end) {
-		RectangleAnimationFeedbackBase feedback = ((Animations) Tweaklets
-				.get(Animations.KEY)).createFeedback(shell);
+		RectangleAnimationFeedbackBase feedback = ((Animations) Tweaklets.get(Animations.KEY)).createFeedback(shell);
 		feedback.addStartRect(start);
 		feedback.addEndRect(end);
 

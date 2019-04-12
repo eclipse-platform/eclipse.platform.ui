@@ -49,16 +49,12 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 	/**
 	 * Creates a DynamicToolBarContributionItem
 	 *
-	 * @param id
-	 *            - Id of the menu item
-	 * @param locator
-	 *            - The Service Locator
-	 * @param dynamicAddition
-	 *            - The Configuration Element defined in the plugin.xml
+	 * @param id              - Id of the menu item
+	 * @param locator         - The Service Locator
+	 * @param dynamicAddition - The Configuration Element defined in the plugin.xml
 	 *
 	 */
-	public DynamicToolBarContributionItem(String id, IServiceLocator locator,
-			IConfigurationElement dynamicAddition) {
+	public DynamicToolBarContributionItem(String id, IServiceLocator locator, IConfigurationElement dynamicAddition) {
 		super(id);
 
 		this.locator = locator;
@@ -144,10 +140,8 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	private void createContributionItem() {
 
-		loadedDynamicContribution = (WorkbenchWindowControlContribution) Util
-				.safeLoadExecutableExtension(dynamicAddition,
-						IWorkbenchRegistryConstants.ATT_CLASS,
-						WorkbenchWindowControlContribution.class);
+		loadedDynamicContribution = (WorkbenchWindowControlContribution) Util.safeLoadExecutableExtension(
+				dynamicAddition, IWorkbenchRegistryConstants.ATT_CLASS, WorkbenchWindowControlContribution.class);
 
 		if (loadedDynamicContribution == null) {
 			alreadyFailed = true;
@@ -159,8 +153,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 		loadedDynamicContribution.setWorkbenchWindow(getWorkbenchWindow());
 		loadedDynamicContribution.setCurSide(getCurSide());
 		if (loadedDynamicContribution instanceof IWorkbenchContribution) {
-			((IWorkbenchContribution) loadedDynamicContribution)
-					.initialize(locator);
+			((IWorkbenchContribution) loadedDynamicContribution).initialize(locator);
 		}
 	}
 
@@ -210,6 +203,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 			loadedDynamicContribution.setCurSide(curSide);
 		}
 	}
+
 	@Override
 	public Control createControl(Composite parent) {
 

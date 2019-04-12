@@ -23,8 +23,7 @@ import java.util.ResourceBundle;
  *
  */
 public class ThemeElementDefinition {
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Theme.class
-			.getName());
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Theme.class.getName());
 
 	public interface State {
 		int UNKNOWN = 0;
@@ -84,8 +83,8 @@ public class ThemeElementDefinition {
 	 * @return String or
 	 *
 	 *         <pre>
-	 * null
-	 * </pre>
+	 *         null
+	 *         </pre>
 	 *
 	 *         .
 	 */
@@ -150,6 +149,7 @@ public class ThemeElementDefinition {
 	public void removeState(int state) {
 		this.state &= ~state;
 	}
+
 	public boolean isOverridden() {
 		return (state & State.OVERRIDDEN) != 0;
 	}

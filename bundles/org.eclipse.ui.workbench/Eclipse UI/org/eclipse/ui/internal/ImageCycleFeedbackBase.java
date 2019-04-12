@@ -54,8 +54,7 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 	/**
 	 *
 	 * @param parentShell
-	 * @param images :
-	 *            an array of images
+	 * @param images      : an array of images
 	 */
 	public ImageCycleFeedbackBase(Shell parentShell, Image[] images) {
 		super(parentShell);
@@ -111,8 +110,7 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 			image = images[imageDataIndex];
 			imageData = image.getImageData();
 
-			offScreenImageGC.drawImage(image, 0, 0, imageData.width,
-					imageData.height, imageData.x, imageData.y,
+			offScreenImageGC.drawImage(image, 0, 0, imageData.width, imageData.height, imageData.x, imageData.y,
 					imageData.width, imageData.height);
 
 			final Image finalImage = image;
@@ -120,8 +118,8 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 			display.syncExec(() -> showImage(finalImage));
 
 			/*
-			 * Sleep for the specified delay time (adding commonly-used
-			 * slow-down fudge factors).
+			 * Sleep for the specified delay time (adding commonly-used slow-down fudge
+			 * factors).
 			 */
 			// try {
 			// Thread.sleep(30);
@@ -130,8 +128,7 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 			if (images == null)
 				return;
 		} catch (SWTException ex) {
-			IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
-					ex);
+			IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, ex);
 			StatusManager.getManager().handle(status);
 		}
 	}
@@ -142,8 +139,7 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 		image = images[imageDataIndex];
 		imageData = image.getImageData();
 		/*
-		 * Create an off-screen image to draw on, and fill it with the shell
-		 * background.
+		 * Create an off-screen image to draw on, and fill it with the shell background.
 		 */
 		offScreenImage = new Image(display, imageData.width, imageData.height);
 
@@ -155,9 +151,8 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 		 * Create the first image and draw it on the off-screen image.
 		 */
 
-		offScreenImageGC.drawImage(image, 0, 0, imageData.width,
-				imageData.height, imageData.x, imageData.y, imageData.width,
-				imageData.height);
+		offScreenImageGC.drawImage(image, 0, 0, imageData.width, imageData.height, imageData.x, imageData.y,
+				imageData.width, imageData.height);
 
 		return offScreenImage;
 	}

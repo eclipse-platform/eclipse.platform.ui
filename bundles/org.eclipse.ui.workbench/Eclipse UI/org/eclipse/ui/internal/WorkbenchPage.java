@@ -198,8 +198,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	private static final String ATT_AGGREGATE_WORKING_SET_ID = "aggregateWorkingSetId"; //$NON-NLS-1$
 
-	private static final int WINDOW_SCOPE = EModelService.OUTSIDE_PERSPECTIVE
-			| EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_SHARED_AREA;
+	private static final int WINDOW_SCOPE = EModelService.OUTSIDE_PERSPECTIVE | EModelService.IN_ANY_PERSPECTIVE
+			| EModelService.IN_SHARED_AREA;
 
 	class E4PartListener implements org.eclipse.e4.ui.workbench.modeling.IPartListener {
 
@@ -264,11 +264,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private List<String> mruShowInPartIds = new ArrayList<>();
 
 	/**
-	 * Deactivate the last editor's action bars if another type of editor has //
-	 * * been activated.
+	 * Deactivate the last editor's action bars if another type of editor has // *
+	 * been activated.
 	 *
-	 * @param part
-	 *            the part that is being activated
+	 * @param part the part that is being activated
 	 */
 	private void deactivateLastEditor(MPart part) {
 		Object client = part.getObject();
@@ -401,8 +400,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				return ((CompatibilityPart) clientObject).getPart();
 			} else if (clientObject != null) {
 				if (part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY) instanceof E4PartWrapper) {
-					return (IWorkbenchPart) part.getTransientData().get(
-							E4PartWrapper.E4_WRAPPER_KEY);
+					return (IWorkbenchPart) part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY);
 				}
 
 				ViewReference viewReference = getViewReference(part);
@@ -423,11 +421,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	private void updateActiveEditorSources(MPart part) {
 		IEditorPart editor = getEditor(part);
-		window.getContext().set(ISources.ACTIVE_EDITOR_ID_NAME,
-				editor == null ? null : editor.getSite().getId());
+		window.getContext().set(ISources.ACTIVE_EDITOR_ID_NAME, editor == null ? null : editor.getSite().getId());
 		window.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
-		window.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
-				editor == null ? null : editor.getEditorInput());
+		window.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME, editor == null ? null : editor.getEditorInput());
 
 		if (editor != null) {
 			navigationHistory.markEditor(editor);
@@ -551,28 +547,27 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	protected WorkbenchWindow legacyWindow;
 
-    private IAdaptable input;
+	private IAdaptable input;
 
-    private IWorkingSet workingSet;
+	private IWorkingSet workingSet;
 
-    private AggregateWorkingSet aggregateWorkingSet;
+	private AggregateWorkingSet aggregateWorkingSet;
 
-    private Composite composite;
+	private Composite composite;
 
 	private ListenerList<IPropertyChangeListener> propertyChangeListeners = new ListenerList<>();
 
-    private IActionBars actionBars;
+	private IActionBars actionBars;
 
-    private ActionSetManager actionSets;
+	private ActionSetManager actionSets;
 
-    private NavigationHistory navigationHistory = new NavigationHistory(this);
+	private NavigationHistory navigationHistory = new NavigationHistory(this);
 
-
-    /**
-     * If we're in the process of activating a part, this points to the new part.
-     * Otherwise, this is null.
-     */
-    private IWorkbenchPartReference partBeingActivated = null;
+	/**
+	 * If we're in the process of activating a part, this points to the new part.
+	 * Otherwise, this is null.
+	 */
+	private IWorkbenchPartReference partBeingActivated = null;
 
 	private IWorkingSet[] workingSets = new IWorkingSet[0];
 
@@ -595,9 +590,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	private IExtensionTracker tracker;
 
-    // Deferral count... delays disposing parts and sending certain events if nonzero
-    private int deferCount = 0;
-
+	// Deferral count... delays disposing parts and sending certain events if
+	// nonzero
+	private int deferCount = 0;
 
 	private String aggregateWorkingSetId;
 
@@ -618,8 +613,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		/**
 		 * Updates the contributions given the new part as the active part.
 		 *
-		 * @param newPart
-		 *            the new active part, may be <code>null</code>
+		 * @param newPart the new active part, may be <code>null</code>
 		 */
 		public void updateActivePart(IWorkbenchPart newPart) {
 			if (activePart == newPart) {
@@ -703,8 +697,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		/**
 		 * Updates the contributions given the new part as the topEditor.
 		 *
-		 * @param newEditor
-		 *            the new top editor, may be <code>null</code>
+		 * @param newEditor the new top editor, may be <code>null</code>
 		 */
 		public void updateTopEditor(IEditorPart newEditor) {
 			if (topEditor == newEditor) {
@@ -749,15 +742,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		/**
-		 * Activates the contributions of the given part. If <code>enable</code>
-		 * is <code>true</code> the contributions are visible and enabled,
-		 * otherwise they are disabled.
+		 * Activates the contributions of the given part. If <code>enable</code> is
+		 * <code>true</code> the contributions are visible and enabled, otherwise they
+		 * are disabled.
 		 *
-		 * @param part
-		 *            the part whose contributions are to be activated
-		 * @param enable
-		 *            <code>true</code> the contributions are to be enabled, not
-		 *            just visible.
+		 * @param part   the part whose contributions are to be activated
+		 * @param enable <code>true</code> the contributions are to be enabled, not just
+		 *               visible.
 		 */
 		private void activateContributions(IWorkbenchPart part, boolean enable) {
 			PartSite site = (PartSite) part.getSite();
@@ -765,15 +756,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		/**
-		 * Deactivates the contributions of the given part. If
-		 * <code>remove</code> is <code>true</code> the contributions are
-		 * removed, otherwise they are disabled.
+		 * Deactivates the contributions of the given part. If <code>remove</code> is
+		 * <code>true</code> the contributions are removed, otherwise they are disabled.
 		 *
-		 * @param part
-		 *            the part whose contributions are to be deactivated
-		 * @param remove
-		 *            <code>true</code> the contributions are to be removed, not
-		 *            just disabled.
+		 * @param part   the part whose contributions are to be deactivated
+		 * @param remove <code>true</code> the contributions are to be removed, not just
+		 *               disabled.
 		 */
 		private void deactivateContributions(IWorkbenchPart part, boolean remove) {
 			PartSite site = (PartSite) part.getSite();
@@ -785,26 +773,23 @@ public class WorkbenchPage implements IWorkbenchPage {
 		/**
 		 * Calculates the action sets to show for the given part and editor
 		 *
-		 * @param part
-		 *            the active part, may be <code>null</code>
-		 * @param editor
-		 *            the current editor, may be <code>null</code>, may be the
-		 *            active part
+		 * @param part   the active part, may be <code>null</code>
+		 * @param editor the current editor, may be <code>null</code>, may be the active
+		 *               part
 		 * @return the new action sets
 		 */
-		private List<IActionSetDescriptor> calculateActionSets(IWorkbenchPart part,
-				IEditorPart editor) {
+		private List<IActionSetDescriptor> calculateActionSets(IWorkbenchPart part, IEditorPart editor) {
 			List<IActionSetDescriptor> newActionSets = new ArrayList<>();
 			if (part != null) {
-				IActionSetDescriptor[] partActionSets = WorkbenchPlugin.getDefault()
-						.getActionSetRegistry().getActionSetsFor(part.getSite().getId());
+				IActionSetDescriptor[] partActionSets = WorkbenchPlugin.getDefault().getActionSetRegistry()
+						.getActionSetsFor(part.getSite().getId());
 				for (IActionSetDescriptor partActionSetDescriptor : partActionSets) {
 					newActionSets.add(partActionSetDescriptor);
 				}
 			}
 			if (editor != null && editor != part) {
-				IActionSetDescriptor[] editorActionSets = WorkbenchPlugin.getDefault()
-						.getActionSetRegistry().getActionSetsFor(editor.getSite().getId());
+				IActionSetDescriptor[] editorActionSets = WorkbenchPlugin.getDefault().getActionSetRegistry()
+						.getActionSetsFor(editor.getSite().getId());
 				for (IActionSetDescriptor editorActionSetDescriptor : editorActionSets) {
 					newActionSets.add(editorActionSetDescriptor);
 				}
@@ -813,11 +798,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		/**
-		 * Updates the actions we are showing for the active part and current
-		 * editor.
+		 * Updates the actions we are showing for the active part and current editor.
 		 *
-		 * @param newActionSets
-		 *            the action sets to show
+		 * @param newActionSets the action sets to show
 		 * @return <code>true</code> if the action sets changed
 		 */
 		private boolean updateActionSets(List<IActionSetDescriptor> newActionSets) {
@@ -825,8 +808,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				return false;
 			}
 
-			IContextService service = legacyWindow
-					.getService(IContextService.class);
+			IContextService service = legacyWindow.getService(IContextService.class);
 			try {
 				service.deferUpdates(true);
 
@@ -851,8 +833,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 
 			legacyWindow.updateActionSets(); // this calls updateActionBars
-			legacyWindow.firePerspectiveChanged(WorkbenchPage.this, getPerspective(),
-					CHANGE_ACTION_SET_SHOW);
+			legacyWindow.firePerspectiveChanged(WorkbenchPage.this, getPerspective(), CHANGE_ACTION_SET_SHOW);
 			return true;
 		}
 
@@ -871,8 +852,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private IEventBroker broker;
 
 	/**
-	 * An event handler that listens for an MArea's widget being set so that we
-	 * can install DND support into its control.
+	 * An event handler that listens for an MArea's widget being set so that we can
+	 * install DND support into its control.
 	 */
 	private EventHandler widgetHandler = event -> {
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -902,8 +883,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	@Inject
 	@Optional
-	private void handleMinimizedStacks(
-			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
+	private void handleMinimizedStacks(@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
 
 		if (!(changedObj instanceof MToolControl))
@@ -950,44 +930,42 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Boolean field to determine whether DND support has been added to the
-	 * shared area yet.
+	 * Boolean field to determine whether DND support has been added to the shared
+	 * area yet.
 	 *
 	 * @see #installAreaDropSupport(Control)
 	 */
 	private boolean dndSupportInstalled = false;
 
-    /**
-     * Constructs a page. <code>restoreState(IMemento)</code> should be
-     * called to restore this page from data stored in a persistance file.
-     *
-     * @param w
-     *            the parent window
-     * @param input
-     *            the page input
-     * @throws WorkbenchException
-     */
-    public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
-            throws WorkbenchException {
-        super();
-        init(w, null, input, false);
-    }
+	/**
+	 * Constructs a page. <code>restoreState(IMemento)</code> should be called to
+	 * restore this page from data stored in a persistance file.
+	 *
+	 * @param w     the parent window
+	 * @param input the page input
+	 * @throws WorkbenchException
+	 */
+	public WorkbenchPage(WorkbenchWindow w, IAdaptable input) throws WorkbenchException {
+		super();
+		init(w, null, input, false);
+	}
 
-    /**
-     * Allow access to the UI model that this page is managing
-     * @return the MWindow element for this page
-     */
-    public MWindow getWindowModel() {
-    	return window;
+	/**
+	 * Allow access to the UI model that this page is managing
+	 * 
+	 * @return the MWindow element for this page
+	 */
+	public MWindow getWindowModel() {
+		return window;
 
-    }
-    /**
-     * Activates a part. The part will be brought to the front and given focus.
-     *
-     * @param part
-     *            the part to activate
-     */
-    @Override
+	}
+
+	/**
+	 * Activates a part. The part will be brought to the front and given focus.
+	 *
+	 * @param part the part to activate
+	 */
+	@Override
 	public void activate(IWorkbenchPart part) {
 		if (part == null || !certifyPart(part) || legacyWindow.isClosing()) {
 			return;
@@ -999,75 +977,72 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-    /**
+	/**
 	 * Adds an IPartListener to the part service.
 	 */
-    @Override
+	@Override
 	public void addPartListener(IPartListener l) {
 		partListenerList.add(l);
-    }
+	}
 
 	/**
 	 * Adds an IPartListener to the part service.
 	 */
-    @Override
+	@Override
 	public void addPartListener(IPartListener2 l) {
 		partListener2List.add(l);
-    }
+	}
 
-    /**
-     * Implements IWorkbenchPage
-     *
-     * @see org.eclipse.ui.IWorkbenchPage#addPropertyChangeListener(IPropertyChangeListener)
-     * @since 2.0
-     * @deprecated individual views should store a working set if needed and
-     *             register a property change listener directly with the
-     *             working set manager to receive notification when the view
-     *             working set is removed.
-     */
-    @Deprecated
+	/**
+	 * Implements IWorkbenchPage
+	 *
+	 * @see org.eclipse.ui.IWorkbenchPage#addPropertyChangeListener(IPropertyChangeListener)
+	 * @since 2.0
+	 * @deprecated individual views should store a working set if needed and
+	 *             register a property change listener directly with the working set
+	 *             manager to receive notification when the view working set is
+	 *             removed.
+	 */
+	@Deprecated
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.add(listener);
-    }
+		propertyChangeListeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public void addSelectionListener(ISelectionListener listener) {
 		selectionService.addSelectionListener(listener);
-    }
+	}
 
-    @Override
+	@Override
 	public void addSelectionListener(String partId, ISelectionListener listener) {
 		selectionService.addSelectionListener(partId, listener);
-    }
+	}
 
-    @Override
+	@Override
 	public void addPostSelectionListener(ISelectionListener listener) {
 		selectionService.addPostSelectionListener(listener);
-    }
+	}
 
-    @Override
-	public void addPostSelectionListener(String partId,
-            ISelectionListener listener) {
+	@Override
+	public void addPostSelectionListener(String partId, ISelectionListener listener) {
 		selectionService.addPostSelectionListener(partId, listener);
-    }
+	}
 
-    /**
-     * Moves a part forward in the Z order of a perspective so it is visible.
-     * If the part is in the same stack as the active part, the new part is
-     * activated.
-     *
-     * @param part
-     *            the part to bring to move forward
-     */
-    @Override
+	/**
+	 * Moves a part forward in the Z order of a perspective so it is visible. If the
+	 * part is in the same stack as the active part, the new part is activated.
+	 *
+	 * @param part the part to bring to move forward
+	 */
+	@Override
 	public void bringToTop(IWorkbenchPart part) {
-        // Sanity check.
+		// Sanity check.
 		MPart mpart = findPart(part);
 		if (mpart != null) {
 			partService.bringToTop(mpart);
 		}
-    }
+	}
 
 	public MPart findPart(IWorkbenchPart part) {
 		if (part == null) {
@@ -1088,13 +1063,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return null;
 	}
 
-	public EditorReference createEditorReferenceForPart(final MPart part, IEditorInput input,
-			String editorId,
+	public EditorReference createEditorReferenceForPart(final MPart part, IEditorInput input, String editorId,
 			IMemento memento) {
 		IEditorRegistry registry = legacyWindow.getWorkbench().getEditorRegistry();
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
-		final EditorReference ref = new EditorReference(window.getContext(), this, part, input,
-				descriptor, memento);
+		final EditorReference ref = new EditorReference(window.getContext(), this, part, input, descriptor, memento);
 		addEditorReference(ref);
 		ref.subscribe();
 		return ref;
@@ -1141,8 +1114,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		MPerspective currentPerspective = getCurrentPerspective();
 		if (currentPerspective != null) {
 			int scope = allPerspectives ? WINDOW_SCOPE : EModelService.PRESENTATION;
-			List<MPart> placeholders = modelService.findElements(window,
-					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null, scope);
+			List<MPart> placeholders = modelService.findElements(window, CompatibilityEditor.MODEL_ELEMENT_ID,
+					MPart.class, null, scope);
 			List<EditorReference> visibleReferences = new ArrayList<>();
 			for (EditorReference reference : sortedReferences) {
 				for (MPart placeholder : placeholders) {
@@ -1216,24 +1189,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Searches the workbench window for a part with the given view id and
-	 * secondary id (if desired) given the specified search rules.
+	 * Searches the workbench window for a part with the given view id and secondary
+	 * id (if desired) given the specified search rules.
 	 *
-	 * @param viewId
-	 *            the id of the view
-	 * @param secondaryId
-	 *            the secondary id of the view, or <code>null</code> if the view
-	 *            to search for should be one without a secondary id defined
-	 * @param searchFlags
-	 *            the desired search locations
+	 * @param viewId      the id of the view
+	 * @param secondaryId the secondary id of the view, or <code>null</code> if the
+	 *                    view to search for should be one without a secondary id
+	 *                    defined
+	 * @param searchFlags the desired search locations
 	 * @return the part with the specified view id and secondary id, or
 	 *         <code>null</code> if it could not be found in this page's parent
 	 *         workbench window
 	 * @see EModelService#findElements(MUIElement, String, Class, List, int)
 	 */
 	private MPart findPart(String viewId, int searchFlags) {
-		List<MPart> parts = modelService.findElements(getWindowModel(), viewId, MPart.class, null,
-				searchFlags);
+		List<MPart> parts = modelService.findElements(getWindowModel(), viewId, MPart.class, null, searchFlags);
 		if (parts.size() > 0)
 			return parts.get(0);
 
@@ -1271,8 +1241,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (part == null) {
 			MPlaceholder ph = partService.createSharedPart(viewId, false);
 			if (ph == null) {
-				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,
-						viewId));
+				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate, viewId));
 			}
 
 			part = (MPart) ph.getRef();
@@ -1287,6 +1256,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		return (IViewPart) ref.getPart(true);
 	}
+
 	private MPart showPart(int mode, MPart part) {
 		switch (mode) {
 		case VIEW_ACTIVATE:
@@ -1307,8 +1277,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			} else {
 				part = ((PartServiceImpl) partService).addPart(part);
 				MPlaceholder activePlaceholder = activePart.getCurSharedRef();
-				MUIElement activePartParent = activePlaceholder == null ? activePart
-						.getParent() : activePlaceholder.getParent();
+				MUIElement activePartParent = activePlaceholder == null ? activePart.getParent()
+						: activePlaceholder.getParent();
 				partService.showPart(part, PartState.CREATE);
 				if (part.getCurSharedRef() == null || part.getCurSharedRef().getParent() != activePartParent) {
 					partService.bringToTop(part);
@@ -1339,53 +1309,53 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return part;
 	}
 
-    /**
-     * Returns whether a part exists in the current page.
-     */
-    private boolean certifyPart(IWorkbenchPart part) {
-        //Workaround for bug 22325
-        if (part != null && !(part.getSite() instanceof PartSite)) {
+	/**
+	 * Returns whether a part exists in the current page.
+	 */
+	private boolean certifyPart(IWorkbenchPart part) {
+		// Workaround for bug 22325
+		if (part != null && !(part.getSite() instanceof PartSite)) {
 			return false;
 		}
 		return true;
-    }
+	}
 
-    /**
+	/**
 	 * Closes this page.
-     */
-    @Override
+	 */
+	@Override
 	public boolean close() {
-        final boolean[] ret = new boolean[1];
+		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, () -> ret[0] = close(true, true));
-        return ret[0];
-    }
+		return ret[0];
+	}
 
-    public boolean closeAllSavedEditors() {
-        // get the Saved editors
-        IEditorReference editors[] = getEditorReferences();
-        IEditorReference savedEditors[] = new IEditorReference[editors.length];
-        int j = 0;
+	public boolean closeAllSavedEditors() {
+		// get the Saved editors
+		IEditorReference editors[] = getEditorReferences();
+		IEditorReference savedEditors[] = new IEditorReference[editors.length];
+		int j = 0;
 		for (IEditorReference editor : editors) {
-            if (!editor.isDirty()) {
-                savedEditors[j++] = editor;
-            }
-        }
-        //there are no unsaved editors
-        if (j == 0) {
+			if (!editor.isDirty()) {
+				savedEditors[j++] = editor;
+			}
+		}
+		// there are no unsaved editors
+		if (j == 0) {
 			return true;
 		}
-        IEditorReference[] newSaved = new IEditorReference[j];
-        System.arraycopy(savedEditors, 0, newSaved, 0, j);
-        return closeEditors(newSaved, false);
-    }
+		IEditorReference[] newSaved = new IEditorReference[j];
+		System.arraycopy(savedEditors, 0, newSaved, 0, j);
+		return closeEditors(newSaved, false);
+	}
 
-    /**
-     * See IWorkbenchPage
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage
+	 */
+	@Override
 	public boolean closeAllEditors(boolean save) {
-        return closeEditors(getEditorReferences(), save);
-    }
+		return closeEditors(getEditorReferences(), save);
+	}
 
 	/**
 	 * See IWorkbenchPage
@@ -1394,7 +1364,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public boolean closeEditors(IEditorReference[] refArray, boolean save) {
 		if (refArray.length == 0) {
 			return true;
-        }
+		}
 
 		// Check if we're being asked to close any parts that are already closed
 		// or cannot
@@ -1411,10 +1381,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			// opened the dialog is usually
 			// at fault.
 			if (reference == partBeingActivated) {
-				WorkbenchPlugin.log(new RuntimeException(
-						"WARNING: Blocked recursive attempt to close part " //$NON-NLS-1$
-								+ partBeingActivated.getId()
-								+ " while still in the middle of activating it")); //$NON-NLS-1$
+				WorkbenchPlugin.log(new RuntimeException("WARNING: Blocked recursive attempt to close part " //$NON-NLS-1$
+						+ partBeingActivated.getId() + " while still in the middle of activating it")); //$NON-NLS-1$
 				return false;
 			}
 
@@ -1426,11 +1394,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 				// skip it and proceed with closing the remaining parts.
 				if (ref.isDisposed()) {
 					continue;
-                }
-            }
+				}
+			}
 
 			editorRefs.add(reference);
-        }
+		}
 
 		// if active navigation position belongs to an editor being closed,
 		// update it
@@ -1444,7 +1412,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				continue;
 			if (navigationHistory.updateActive(oldPart))
 				break; // updated - skip the rest
-        }
+		}
 
 		// notify the model manager before the close
 		List<IWorkbenchPart> partsToClose = new ArrayList<>();
@@ -1452,22 +1420,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 			IEditorPart refPart = ref.getEditor(false);
 			if (refPart != null) {
 				partsToClose.add(refPart);
-            }
-        }
+			}
+		}
 
 		boolean confirm = true;
 		SaveablesList modelManager = null;
 		Object postCloseInfo = null;
 		if (partsToClose.size() > 0) {
-			modelManager = (SaveablesList) getWorkbenchWindow().getService(
-					ISaveablesLifecycleListener.class);
+			modelManager = (SaveablesList) getWorkbenchWindow().getService(ISaveablesLifecycleListener.class);
 			// this may prompt for saving and return null if the user canceled:
 			postCloseInfo = modelManager.preCloseParts(partsToClose, save, getWorkbenchWindow());
 			if (postCloseInfo == null) {
 				return false;
 			}
 			confirm = false;
-        }
+		}
 
 		// Fire pre-removal changes
 		for (IEditorReference ref : editorRefs) {
@@ -1476,7 +1443,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		}
 
-        deferUpdates(true);
+		deferUpdates(true);
 		try {
 			if (modelManager != null) {
 				modelManager.postClose(postCloseInfo);
@@ -1516,14 +1483,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		} finally {
 			deferUpdates(false);
-        }
+		}
 
 		// Notify interested listeners after the close
 		legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 
-        // Return true on success.
+		// Return true on success.
 		return true;
-    }
+	}
 
 	public boolean closeEditor(IEditorReference editor) {
 		if (getInternalEditorReferences().contains(editor)) {
@@ -1595,63 +1562,59 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return false;
 	}
 
-    /**
-     * Enables or disables listener notifications. This is used to delay listener notifications until the
-     * end of a public method.
-     *
-     * @param shouldDefer
-     */
-    private void deferUpdates(boolean shouldDefer) {
-        if (shouldDefer) {
-            if (deferCount == 0) {
-                startDeferring();
-            }
-            deferCount++;
-        } else {
-            deferCount--;
-            if (deferCount == 0) {
-                handleDeferredEvents();
-            }
-        }
-    }
+	/**
+	 * Enables or disables listener notifications. This is used to delay listener
+	 * notifications until the end of a public method.
+	 *
+	 * @param shouldDefer
+	 */
+	private void deferUpdates(boolean shouldDefer) {
+		if (shouldDefer) {
+			if (deferCount == 0) {
+				startDeferring();
+			}
+			deferCount++;
+		} else {
+			deferCount--;
+			if (deferCount == 0) {
+				handleDeferredEvents();
+			}
+		}
+	}
 
-    private void startDeferring() {
+	private void startDeferring() {
 		// TODO compat: do we defer events
-    }
+	}
 
-    private void handleDeferredEvents() {
+	private void handleDeferredEvents() {
 		// TODO compat: do we handler defered events
-    }
+	}
 
-    public boolean closeEditor(IEditorReference editorRef, boolean save) {
-        return closeEditors(new IEditorReference[] {editorRef}, save);
-    }
+	public boolean closeEditor(IEditorReference editorRef, boolean save) {
+		return closeEditors(new IEditorReference[] { editorRef }, save);
+	}
 
-    /**
-     * See IWorkbenchPage#closeEditor
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage#closeEditor
+	 */
+	@Override
 	public boolean closeEditor(IEditorPart editor, boolean save) {
-        IWorkbenchPartReference ref = getReference(editor);
-        if (ref instanceof IEditorReference) {
-        	return closeEditors(new IEditorReference[] {(IEditorReference) ref}, save);
-        }
-        return false;
-    }
+		IWorkbenchPartReference ref = getReference(editor);
+		if (ref instanceof IEditorReference) {
+			return closeEditors(new IEditorReference[] { (IEditorReference) ref }, save);
+		}
+		return false;
+	}
 
 	/**
 	 * Closes the specified perspective.
 	 *
-	 * @param desc
-	 *            the perspective to close
-	 * @param perspectiveId
-	 *            the id of the perspective being closed
-	 * @param saveParts
-	 *            <code>true</code> if dirty parts should be prompted for its
-	 *            contents to be saved, <code>false</code> otherwise
+	 * @param desc          the perspective to close
+	 * @param perspectiveId the id of the perspective being closed
+	 * @param saveParts     <code>true</code> if dirty parts should be prompted for
+	 *                      its contents to be saved, <code>false</code> otherwise
 	 */
-	private void closePerspective(IPerspectiveDescriptor desc, String perspectiveId,
-			boolean saveParts) {
+	private void closePerspective(IPerspectiveDescriptor desc, String perspectiveId, boolean saveParts) {
 		MPerspective persp = (MPerspective) modelService.find(perspectiveId, window);
 		// check to ensure this perspective actually exists in this window
 		if (persp != null) {
@@ -1706,11 +1669,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 			// Remove from caches
 			sortedPerspectives.remove(desc);
 			// check if we're closing the currently active perspective
-			if (getPerspectiveStack().getSelectedElement() == persp
-					&& !sortedPerspectives.isEmpty()) {
+			if (getPerspectiveStack().getSelectedElement() == persp && !sortedPerspectives.isEmpty()) {
 				// get the perspective that was last active and set it
-				IPerspectiveDescriptor lastActive = sortedPerspectives.get(sortedPerspectives
-						.size() - 1);
+				IPerspectiveDescriptor lastActive = sortedPerspectives.get(sortedPerspectives.size() - 1);
 				if (lastActive != null) {
 					setPerspective(lastActive);
 				}
@@ -1727,8 +1688,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		closePerspective(desc, desc.getId(), saveParts, closePage);
 	}
 
-	public void closePerspective(IPerspectiveDescriptor desc, String perspectiveId,
-			boolean saveParts, boolean closePage) {
+	public void closePerspective(IPerspectiveDescriptor desc, String perspectiveId, boolean saveParts,
+			boolean closePage) {
 		MPerspective persp = (MPerspective) modelService.find(perspectiveId, window);
 		// check to ensure this perspective actually exists in this window
 		if (persp != null) {
@@ -1755,14 +1716,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 			MPerspective curPersp = _perspectiveStack.getSelectedElement();
 			for (MPerspective persp : kids) {
 				if (persp != curPersp) {
-					closePerspective(getPerspectiveDesc(persp.getElementId()),
-							persp.getElementId(), false);
+					closePerspective(getPerspectiveDesc(persp.getElementId()), persp.getElementId(), false);
 				}
 			}
 			if (curPersp != null) {
-				closePerspective(getPerspectiveDesc(curPersp.getElementId()),
-						curPersp.getElementId(),
-						false);
+				closePerspective(getPerspectiveDesc(curPersp.getElementId()), curPersp.getElementId(), false);
 			}
 			if (closePage) {
 				close();
@@ -1873,11 +1831,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void unzoomAllPerspectives() {
 		// TODO compat: we have no min/max behaviour
-    }
+	}
 
-
-
-    /**
+	/**
 	 * Cleanup.
 	 */
 	public void dispose() {
@@ -1933,7 +1889,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		// public void run() {
 		// // WorkbenchPlugin.log(new Status(IStatus.WARNING,
 		// WorkbenchPlugin.PI_WORKBENCH,
-		////                                Status.OK, "WorkbenchPage leaked a refcount for view " + ref.getId(), null));  //$NON-NLS-1$//$NON-NLS-2$
+		//// Status.OK, "WorkbenchPage leaked a refcount for view " + ref.getId(),
+		// null)); //$NON-NLS-1$//$NON-NLS-2$
 		//
 		// ref.dispose();
 		// }
@@ -1968,27 +1925,24 @@ public class WorkbenchPage implements IWorkbenchPage {
 		// PlatformUI.getWorkbench().getWorkingSetManager().removeWorkingSet(aggregateWorkingSet);
 		// }
 		// }
-    }
+	}
 
-
-
-    /**
-     * @return NavigationHistory
-     */
-    @Override
+	/**
+	 * @return NavigationHistory
+	 */
+	@Override
 	public INavigationHistory getNavigationHistory() {
-        return navigationHistory;
-    }
+		return navigationHistory;
+	}
 
-    public boolean editActionSets() {
+	public boolean editActionSets() {
 		Perspective persp = getActivePerspective();
 		if (persp == null) {
 			return false;
 		}
 
 		// Create list dialog.
-		CustomizePerspectiveDialog dlg = legacyWindow.createCustomizePerspectiveDialog(persp,
-				window.getContext());
+		CustomizePerspectiveDialog dlg = legacyWindow.createCustomizePerspectiveDialog(persp, window.getContext());
 		// Open.
 		boolean ret = (dlg.open() == Window.OK);
 		if (ret) {
@@ -1997,22 +1951,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_RESET_COMPLETE);
 		}
 		return ret;
-    }
+	}
 
-
-    /**
-     * See IWorkbenchPage@findView.
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage@findView.
+	 */
+	@Override
 	public IViewPart findView(String id) {
-        IViewReference ref = findViewReference(id);
-        if (ref == null) {
+		IViewReference ref = findViewReference(id);
+		if (ref == null) {
 			return null;
 		}
-        return ref.getView(true);
-    }
+		return ref.getView(true);
+	}
 
-    @Override
+	@Override
 	public IViewReference findViewReference(String viewId) {
 		for (IViewReference reference : getViewReferences()) {
 			ViewReference ref = (ViewReference) reference;
@@ -2021,15 +1974,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 		return null;
-    }
+	}
 
-    @Override
+	@Override
 	public IViewReference findViewReference(String viewId, String secondaryId) {
 		String compoundId = viewId;
 		if (secondaryId != null && secondaryId.length() > 0)
 			compoundId += ":" + secondaryId; //$NON-NLS-1$
 		return findViewReference(compoundId);
-    }
+	}
 
 	public void createViewReferenceForPart(final MPart part, String viewId) {
 		// If the id contains a ':' use the part before it as the descriptor id
@@ -2037,8 +1990,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		String descId = colonIndex == -1 ? viewId : viewId.substring(0, colonIndex);
 
 		IViewDescriptor desc = getWorkbenchWindow().getWorkbench().getViewRegistry().find(descId);
-		final ViewReference ref = new ViewReference(window.getContext(), this, part,
-				(ViewDescriptor) desc);
+		final ViewReference ref = new ViewReference(window.getContext(), this, part, (ViewDescriptor) desc);
 		if (contains(ref)) {
 			return;
 		}
@@ -2052,38 +2004,33 @@ public class WorkbenchPage implements IWorkbenchPage {
 		addViewReference(ref);
 	}
 
-    /**
-     * Notify property change listeners about a property change.
-     *
-     * @param changeId
-     *            the change id
-     * @param oldValue
-     *            old property value
-     * @param newValue
-     *            new property value
-     */
-    private void firePropertyChange(String changeId, Object oldValue,
-            Object newValue) {
+	/**
+	 * Notify property change listeners about a property change.
+	 *
+	 * @param changeId the change id
+	 * @param oldValue old property value
+	 * @param newValue new property value
+	 */
+	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
 
-        UIListenerLogging.logPagePropertyChanged(this, changeId, oldValue, newValue);
+		UIListenerLogging.logPagePropertyChanged(this, changeId, oldValue, newValue);
 
-        PropertyChangeEvent event = new PropertyChangeEvent(this, changeId,
-                oldValue, newValue);
+		PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
 
 		for (IPropertyChangeListener listener : propertyChangeListeners) {
 			listener.propertyChange(event);
-        }
-    }
+		}
+	}
 
-    /*
-     * Returns the action bars.
-     */
-    public IActionBars getActionBars() {
-        if (actionBars == null) {
+	/*
+	 * Returns the action bars.
+	 */
+	public IActionBars getActionBars() {
+		if (actionBars == null) {
 			actionBars = new WWinActionBars(legacyWindow);
 		}
-        return actionBars;
-    }
+		return actionBars;
+	}
 
 	/**
 	 * Returns an array of the visible action sets.
@@ -2095,10 +2042,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return collection.toArray(new IActionSetDescriptor[collection.size()]);
 	}
 
-    /**
-     * @see IWorkbenchPage
-     */
-    @Override
+	/**
+	 * @see IWorkbenchPage
+	 */
+	@Override
 	public IEditorPart getActiveEditor() {
 		IWorkbenchPart activePart = getActivePart();
 		if (activePart instanceof IEditorPart) {
@@ -2137,8 +2084,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return null;
 		}
 
-		List<MPart> parts = modelService.findElements(perspective,
-				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
+		List<MPart> parts = modelService.findElements(perspective, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class,
+				null);
 		for (MPart part : parts) {
 			Object object = part.getObject();
 			if (object instanceof CompatibilityEditor) {
@@ -2156,12 +2103,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	/**
 	 * Searches and returns an editor from the activation list that is being
-	 * displayed in the current presentation. If an editor is in the
-	 * presentation but is behind another part it will not be returned.
+	 * displayed in the current presentation. If an editor is in the presentation
+	 * but is behind another part it will not be returned.
 	 *
 	 * @return an editor that is being shown in the current presentation and was
-	 *         previously activated, editors that are behind another part in a
-	 *         stack will not be returned
+	 *         previously activated, editors that are behind another part in a stack
+	 *         will not be returned
 	 */
 	private IEditorPart findActiveEditor() {
 		List<MPart> candidates = new ArrayList<>(activationList);
@@ -2171,8 +2118,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		if (area != null && area.isVisible() && area.isToBeRendered()) {
 			// we have a shared area, try iterating over its editors first
-			List<MPart> editors = modelService
-					.findElements(area, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class);
+			List<MPart> editors = modelService.findElements(area, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class);
 			for (Iterator<MPart> it = candidates.iterator(); it.hasNext();) {
 				MPart model = it.next();
 				if (!editors.contains(model)) {
@@ -2205,7 +2151,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 		return null;
-    }
+	}
 
 	private boolean isInArea(MUIElement area, MUIElement element) {
 		if (!element.isToBeRendered() || !element.isVisible()) {
@@ -2254,7 +2200,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return isValid(ancestor, parent);
 	}
 
-    @Override
+	@Override
 	public IWorkbenchPart getActivePart() {
 		if (partService == null) {
 			return null;
@@ -2311,8 +2257,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 			return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
 		default:
-			if ((matchFlags & IWorkbenchPage.MATCH_ID) != 0
-					&& (matchFlags & IWorkbenchPage.MATCH_INPUT) != 0) {
+			if ((matchFlags & IWorkbenchPage.MATCH_ID) != 0 && (matchFlags & IWorkbenchPage.MATCH_INPUT) != 0) {
 				editorRefs = new ArrayList<>();
 				for (EditorReference editorRef : filteredReferences) {
 					if (editorRef.getId().equals(editorId)) {
@@ -2325,8 +2270,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-	private void checkEditor(IEditorInput input, List<IEditorReference> editorRefs,
-			EditorReference editorRef) {
+	private void checkEditor(IEditorInput input, List<IEditorReference> editorRefs, EditorReference editorRef) {
 		EditorDescriptor descriptor = editorRef.getDescriptor();
 		if (descriptor != null) {
 			IEditorMatchingStrategy strategy = descriptor.getEditorMatchingStrategy();
@@ -2346,8 +2290,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				}
 
 				String id = persistable.getFactoryId();
-				if (id != null && id.equals(editorRef.getFactoryId())
-						&& name.equals(editorRef.getName())
+				if (id != null && id.equals(editorRef.getFactoryId()) && name.equals(editorRef.getName())
 						&& input.equals(editorRef.getEditorInput())) {
 					editorRefs.add(editorRef);
 				}
@@ -2388,20 +2331,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Returns a sorted array of references to editors and/or views from this
-	 * page.
+	 * Returns a sorted array of references to editors and/or views from this page.
 	 *
-	 * @param editors
-	 *            include editors
-	 * @param views
-	 *            include views
-	 * @param allPerspectives
-	 *            if {@code false}, does not include parts from inactive
-	 *            perspectives
+	 * @param editors         include editors
+	 * @param views           include views
+	 * @param allPerspectives if {@code false}, does not include parts from inactive
+	 *                        perspectives
 	 * @return a sorted array of references to editors and/or views
 	 */
-	private IWorkbenchPartReference[] getSortedParts(boolean editors, boolean views,
-			boolean allPerspectives) {
+	private IWorkbenchPartReference[] getSortedParts(boolean editors, boolean views, boolean allPerspectives) {
 		if (!editors && !views) {
 			return new IWorkbenchPartReference[0];
 		}
@@ -2449,23 +2387,23 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return sortedReferences.toArray(new IWorkbenchPartReference[sortedReferences.size()]);
 	}
 
-    /**
-     * @see IWorkbenchPage
-     */
-    @Override
+	/**
+	 * @see IWorkbenchPage
+	 */
+	@Override
 	public IAdaptable getInput() {
-        return input;
-    }
+		return input;
+	}
 
-    /**
-     * Returns the page label. This is a combination of the page input and
-     * active perspective.
-     */
-    @Override
+	/**
+	 * Returns the page label. This is a combination of the page input and active
+	 * perspective.
+	 */
+	@Override
 	public String getLabel() {
-        String label = WorkbenchMessages.WorkbenchPage_UnknownLabel;
-        IWorkbenchAdapter adapter = Adapters.adapt(input, IWorkbenchAdapter.class);
-        if (adapter != null) {
+		String label = WorkbenchMessages.WorkbenchPage_UnknownLabel;
+		IWorkbenchAdapter adapter = Adapters.adapt(input, IWorkbenchAdapter.class);
+		if (adapter != null) {
 			label = adapter.getLabel(input);
 		}
 		// Perspective persp = getActivePerspective();
@@ -2477,13 +2415,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 		// NLS.bind(WorkbenchMessages.WorkbenchPage_PerspectiveFormat,label,
 		// deferredActivePersp.getLabel());
 		// }
-        return label;
-    }
+		return label;
+	}
 
-    /**
-     * Returns the perspective.
-     */
-    @Override
+	/**
+	 * Returns the perspective.
+	 */
+	@Override
 	public IPerspectiveDescriptor getPerspective() {
 		MPerspectiveStack ps = getPerspectiveStack();
 		MPerspective curPersp = ps.getSelectedElement();
@@ -2498,40 +2436,37 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (perspectiveRegistry == null) {
 			return null;
 		}
-		IPerspectiveDescriptor desc = perspectiveRegistry
-				.findPerspectiveWithId(id);
+		IPerspectiveDescriptor desc = perspectiveRegistry.findPerspectiveWithId(id);
 		return desc;
 	}
 
-    @Override
+	@Override
 	public ISelection getSelection() {
 		return selectionService.getSelection();
-    }
+	}
 
-    @Override
+	@Override
 	public ISelection getSelection(String partId) {
 		return selectionService.getSelection(partId);
-    }
+	}
 
 	/**
-	 * Returns the ids of the parts to list in the Show In... prompter. This is
-	 * a List of Strings.
+	 * Returns the ids of the parts to list in the Show In... prompter. This is a
+	 * List of Strings.
 	 *
 	 * @return the ids of the parts that should be available in the 'Show In...'
 	 *         prompt
 	 */
 	public ArrayList<?> getShowInPartIds() {
 		MPerspective perspective = getPerspectiveStack().getSelectedElement();
-		return new ArrayList<>(ModeledPageLayout.getIds(perspective,
-				ModeledPageLayout.SHOW_IN_PART_TAG));
+		return new ArrayList<>(ModeledPageLayout.getIds(perspective, ModeledPageLayout.SHOW_IN_PART_TAG));
 	}
 
 	/**
-	 * The user successfully performed a Show In... action on the specified
-	 * part. Update the list of Show In items accordingly.
+	 * The user successfully performed a Show In... action on the specified part.
+	 * Update the list of Show In items accordingly.
 	 *
-	 * @param partId
-	 *            the id of the part that the action was performed on
+	 * @param partId the id of the part that the action was performed on
 	 */
 	public void performedShowIn(String partId) {
 		mruShowInPartIds.remove(partId);
@@ -2541,8 +2476,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	/**
 	 * Sorts the given collection of show in target part ids in MRU order.
 	 *
-	 * @param partIds
-	 *            the collection of part ids to rearrange
+	 * @param partIds the collection of part ids to rearrange
 	 */
 	public void sortShowInPartIds(ArrayList<?> partIds) {
 		Collections.sort(partIds, (ob1, ob2) -> {
@@ -2556,10 +2490,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 		});
 	}
 
-    /**
-     * See IWorkbenchPage.
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage.
+	 */
+	@Override
 	public IViewReference[] getViewReferences() {
 		return getViewReferences(false);
 	}
@@ -2614,7 +2548,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	/**
 	 * See IWorkbenchPage.
 	 */
-    @Override
+	@Override
 	public IViewPart[] getViews() {
 		IViewReference[] viewReferences = getViewReferences();
 		int length = viewReferences.length;
@@ -2625,33 +2559,31 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return views;
 	}
 
-
-
-    /**
+	/**
 	 * See IWorkbenchPage.
 	 */
-    @Override
+	@Override
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return legacyWindow;
-    }
+	}
 
-    /**
-     * Implements IWorkbenchPage
-     *
-     * @see org.eclipse.ui.IWorkbenchPage#getWorkingSet()
-     * @since 2.0
-     * @deprecated individual views should store a working set if needed
-     */
-    @Deprecated
+	/**
+	 * Implements IWorkbenchPage
+	 *
+	 * @see org.eclipse.ui.IWorkbenchPage#getWorkingSet()
+	 * @since 2.0
+	 * @deprecated individual views should store a working set if needed
+	 */
+	@Deprecated
 	@Override
 	public IWorkingSet getWorkingSet() {
-        return workingSet;
-    }
+		return workingSet;
+	}
 
-    /**
-     * @see IWorkbenchPage
-     */
-    @Override
+	/**
+	 * @see IWorkbenchPage
+	 */
+	@Override
 	public void hideActionSet(String actionSetID) {
 		MPerspective mpersp = getCurrentPerspective();
 		if (mpersp == null)
@@ -2670,17 +2602,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
 		addHiddenItems(tag);
-    }
+	}
 
 	@Override
 	public void hideView(IViewReference view) {
-    	if (view != null) {
-    		for (IViewReference reference : getViewReferences()) {
-    			if (reference == view) {
+		if (view != null) {
+			for (IViewReference reference : getViewReferences()) {
+				if (reference == view) {
 					hidePart(((ViewReference) view).getModel(), true, true, false);
 					break;
-    			}
-    		}
+				}
+			}
 		}
 	}
 
@@ -2694,23 +2626,19 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-    /**
-     * Initialize the page.
-     *
-     * @param w
-     *            the parent window
-     * @param layoutID
-     *            may be <code>null</code> if restoring from file
-     * @param input
-     *            the page input
-     * @param openExtras
-     *            whether to process the perspective extras preference
-     */
+	/**
+	 * Initialize the page.
+	 *
+	 * @param w          the parent window
+	 * @param layoutID   may be <code>null</code> if restoring from file
+	 * @param input      the page input
+	 * @param openExtras whether to process the perspective extras preference
+	 */
 	private void init(WorkbenchWindow w, String layoutID, IAdaptable input, boolean openExtras) {
 		// Save args.
 		this.legacyWindow = w;
-        this.input = input;
-        actionSets = new ActionSetManager(w);
+		this.input = input;
+		actionSets = new ActionSetManager(w);
 		initActionSetListener();
 		initMaxFileSize();
 	}
@@ -2722,8 +2650,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	@PostConstruct
-	public void setup(MApplication application, EModelService modelService, IEventBroker broker,
-			MWindow window, EPartService partService) {
+	public void setup(MApplication application, EModelService modelService, IEventBroker broker, MWindow window,
+			EPartService partService) {
 		this.application = application;
 		this.modelService = modelService;
 		this.broker = broker;
@@ -2734,18 +2662,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 		partService.addPartListener(e4PartListener);
 
 		// create editor references for all editors
-		List<MPart> editors = modelService.findElements(window,
-				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
-				EModelService.IN_ANY_PERSPECTIVE | EModelService.OUTSIDE_PERSPECTIVE
-						| EModelService.IN_SHARED_AREA);
+		List<MPart> editors = modelService.findElements(window, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
+				EModelService.IN_ANY_PERSPECTIVE | EModelService.OUTSIDE_PERSPECTIVE | EModelService.IN_SHARED_AREA);
 		for (MPart editor : editors) {
 			createEditorReferenceForPart(editor, null, editor.getElementId(), null);
 		}
 
 		// create view references for rendered view placeholders
-		List<MPlaceholder> placeholders = modelService.findElements(window, null,
-				MPlaceholder.class, null, EModelService.IN_ANY_PERSPECTIVE
-						| EModelService.OUTSIDE_PERSPECTIVE);
+		List<MPlaceholder> placeholders = modelService.findElements(window, null, MPlaceholder.class, null,
+				EModelService.IN_ANY_PERSPECTIVE | EModelService.OUTSIDE_PERSPECTIVE);
 		for (MPlaceholder placeholder : placeholders) {
 			if (placeholder.isToBeRendered()) {
 				MUIElement ref = placeholder.getRef();
@@ -2773,11 +2698,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 			extendPerspectives(perspectiveStack);
 		}
 
-		IPerspectiveRegistry registry = getWorkbenchWindow().getWorkbench()
-				.getPerspectiveRegistry();
+		IPerspectiveRegistry registry = getWorkbenchWindow().getWorkbench().getPerspectiveRegistry();
 		for (MPerspective perspective : perspectiveStack.getChildren()) {
-			IPerspectiveDescriptor desc = registry
-					.findPerspectiveWithId(perspective.getElementId());
+			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(perspective.getElementId());
 			if (desc != null) {
 				sortedPerspectives.add(desc);
 			}
@@ -2785,8 +2708,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		MPerspective selectedPerspective = perspectiveStack.getSelectedElement();
 		if (selectedPerspective != null) {
-			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(selectedPerspective
-					.getElementId());
+			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(selectedPerspective.getElementId());
 			if (desc != null) {
 				sortedPerspectives.remove(desc);
 				sortedPerspectives.add(desc);
@@ -2795,12 +2717,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 		restoreWorkingSets();
 		restoreShowInMruPartIdsList();
 		configureExistingWindows();
-    }
+	}
 
 	/*
-	 * Perform any configuration required for an existing MWindow. The
-	 * association of an MWindow to the WorkbenchWindow/WorkbenchPage can occur
-	 * at different times (see Bug 454056 for details).
+	 * Perform any configuration required for an existing MWindow. The association
+	 * of an MWindow to the WorkbenchWindow/WorkbenchPage can occur at different
+	 * times (see Bug 454056 for details).
 	 */
 	private void configureExistingWindows() {
 		List<MArea> elements = modelService.findElements(window, null, MArea.class);
@@ -2813,22 +2735,19 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	public void restoreWorkingSets() {
-		String workingSetName = getWindowModel().getPersistedState().get(
-				IWorkbenchConstants.TAG_WORKING_SET);
+		String workingSetName = getWindowModel().getPersistedState().get(IWorkbenchConstants.TAG_WORKING_SET);
 		if (workingSetName != null) {
 			AbstractWorkingSetManager workingSetManager = (AbstractWorkingSetManager) getWorkbenchWindow()
 					.getWorkbench().getWorkingSetManager();
 			setWorkingSet(workingSetManager.getWorkingSet(workingSetName));
 		}
 
-		String workingSetMemString = getWindowModel().getPersistedState().get(
-				IWorkbenchConstants.TAG_WORKING_SETS);
+		String workingSetMemString = getWindowModel().getPersistedState().get(IWorkbenchConstants.TAG_WORKING_SETS);
 		if (workingSetMemString != null) {
 			IMemento workingSetMem;
 			try {
 				workingSetMem = XMLMemento.createReadRoot(new StringReader(workingSetMemString));
-				IMemento[] workingSetChildren = workingSetMem
-						.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
+				IMemento[] workingSetChildren = workingSetMem.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
 				List<IWorkingSet> workingSetList = new ArrayList<>(workingSetChildren.length);
 				for (IMemento memento : workingSetChildren) {
 					IWorkingSet set = getWorkbenchWindow().getWorkbench().getWorkingSetManager()
@@ -2840,14 +2759,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 				workingSets = workingSetList.toArray(new IWorkingSet[workingSetList.size()]);
 			} catch (WorkbenchException e) {
-				StatusManager.getManager().handle(
-						new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
-								WorkbenchMessages.WorkbenchPage_problemRestoringTitle, e));
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+						WorkbenchMessages.WorkbenchPage_problemRestoringTitle, e));
 			}
 		}
 
-		aggregateWorkingSetId = getWindowModel().getPersistedState().get(
-				ATT_AGGREGATE_WORKING_SET_ID);
+		aggregateWorkingSetId = getWindowModel().getPersistedState().get(ATT_AGGREGATE_WORKING_SET_ID);
 	}
 
 	private void restoreShowInMruPartIdsList() {
@@ -2860,9 +2777,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 					mruShowInPartIds.add(child.getID());
 				}
 			} catch (WorkbenchException e) {
-				StatusManager.getManager().handle(
-						new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
-								WorkbenchMessages.WorkbenchPage_problemRestoringTitle, e));
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+						WorkbenchMessages.WorkbenchPage_problemRestoringTitle, e));
 			}
 		}
 	}
@@ -2871,8 +2787,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public void saveWorkingSets() {
 		// Save working set if set
 		if (workingSet != null) {
-			getWindowModel().getPersistedState().put(IWorkbenchConstants.TAG_WORKING_SET,
-					workingSet.getName());
+			getWindowModel().getPersistedState().put(IWorkbenchConstants.TAG_WORKING_SET, workingSet.getName());
 		} else {
 			getWindowModel().getPersistedState().remove(IWorkbenchConstants.TAG_WORKING_SET);
 		}
@@ -2883,8 +2798,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		saveMemento(IWorkbenchConstants.TAG_WORKING_SETS, IWorkbenchConstants.TAG_WORKING_SET, workingSetNames);
 
-		getWindowModel().getPersistedState().put(ATT_AGGREGATE_WORKING_SET_ID,
-				aggregateWorkingSetId);
+		getWindowModel().getPersistedState().put(ATT_AGGREGATE_WORKING_SET_ID, aggregateWorkingSetId);
 	}
 
 	@PreDestroy
@@ -2909,22 +2823,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Extends the perspectives within the given stack with action set
-	 * contributions from the <code>perspectiveExtensions</code> extension
-	 * point.
+	 * Extends the perspectives within the given stack with action set contributions
+	 * from the <code>perspectiveExtensions</code> extension point.
 	 *
-	 * @param perspectiveStack
-	 *            the stack that contain the perspectives to be extended
+	 * @param perspectiveStack the stack that contain the perspectives to be
+	 *                         extended
 	 */
 	private void extendPerspectives(MPerspectiveStack perspectiveStack) {
 		for (MPerspective perspective : perspectiveStack.getChildren()) {
 			String id = perspective.getElementId();
-			IPerspectiveDescriptor desc = getWorkbenchWindow().getWorkbench()
-					.getPerspectiveRegistry().findPerspectiveWithId(id);
+			IPerspectiveDescriptor desc = getWorkbenchWindow().getWorkbench().getPerspectiveRegistry()
+					.findPerspectiveWithId(id);
 			if (desc != null) {
 				MPerspective temporary = modelService.createModelElement(MPerspective.class);
-				ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
-						partService, temporary, desc, this, true);
+				ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService, temporary,
+						desc, this, true);
 
 				PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 				reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET });
@@ -2940,8 +2853,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 				.findPerspectiveWithId(id);
 		if (desc != null) {
 			MPerspective temporary = modelService.createModelElement(MPerspective.class);
-			ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
-					partService, temporary, desc, this, true);
+			ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService, temporary, desc,
+					this, true);
 
 			PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 			reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET });
@@ -2952,13 +2865,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Copies action set extensions from the temporary perspective to the other
-	 * one.
+	 * Copies action set extensions from the temporary perspective to the other one.
 	 *
-	 * @param perspective
-	 *            the perspective to copy action set contributions to
-	 * @param temporary
-	 *            the perspective to copy action set contributions from
+	 * @param perspective the perspective to copy action set contributions to
+	 * @param temporary   the perspective to copy action set contributions from
 	 */
 	private void addActionSet(MPerspective perspective, MPerspective temporary) {
 		List<String> tags = perspective.getTags();
@@ -2971,19 +2881,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Installs drop support into the shared area so that editors can be opened
-	 * by dragging and dropping files into it.
+	 * Installs drop support into the shared area so that editors can be opened by
+	 * dragging and dropping files into it.
 	 *
-	 * @param control
-	 *            the control to attach the drop support to
+	 * @param control the control to attach the drop support to
 	 */
 	private void installAreaDropSupport(Control control) {
 		if (!dndSupportInstalled) {
 			WorkbenchWindowConfigurer configurer = legacyWindow.getWindowConfigurer();
 			DropTargetListener dropTargetListener = configurer.getDropTargetListener();
 			if (dropTargetListener != null) {
-				DropTarget dropTarget = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY
-						| DND.DROP_LINK);
+				DropTarget dropTarget = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_LINK);
 				dropTarget.setTransfer(configurer.getTransfers());
 				dropTarget.addDropListener(dropTargetListener);
 			}
@@ -3076,37 +2984,35 @@ public class WorkbenchPage implements IWorkbenchPage {
 	};
 
 	/**
-     * See IWorkbenchPage.
-     */
-    @Override
+	 * See IWorkbenchPage.
+	 */
+	@Override
 	public boolean isPartVisible(IWorkbenchPart part) {
 		MPart mpart = findPart(part);
 		return mpart == null ? false : partService.isPartVisible(mpart);
-    }
+	}
 
 	public MUIElement findSharedArea() {
 		MPerspective perspective = getPerspectiveStack().getSelectedElement();
-		return perspective == null ? null : modelService.find(IPageLayout.ID_EDITOR_AREA,
-				perspective);
+		return perspective == null ? null : modelService.find(IPageLayout.ID_EDITOR_AREA, perspective);
 	}
 
-    /**
-     * See IWorkbenchPage.
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage.
+	 */
+	@Override
 	public boolean isEditorAreaVisible() {
 		MUIElement find = findSharedArea();
 		return find == null ? false : find.isVisible() && find.isToBeRendered();
-    }
+	}
 
-    @Override
+	@Override
 	public boolean isPageZoomed() {
 		List<String> maxTag = new ArrayList<>();
 		maxTag.add(IPresentationEngine.MAXIMIZED);
 		List<Object> maxElements = modelService.findElements(window, null, null, maxTag);
 		return maxElements.size() > 0;
-    }
-
+	}
 
 	// /**
 	// * This method is called when the page is activated.
@@ -3133,104 +3039,94 @@ public class WorkbenchPage implements IWorkbenchPage {
 	// composite.setVisible(false);
 	// }
 
-    /**
-     * See IWorkbenchPage.
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage.
+	 */
+	@Override
 	public void reuseEditor(IReusableEditor editor, IEditorInput input) {
 
-        // Rather than calling editor.setInput on the editor directly, we do it through the part reference.
-        // This case lets us detect badly behaved editors that are not firing a PROP_INPUT event in response
-        // to the input change... but if all editors obeyed their API contract, the "else" branch would be
-        // sufficient.
+		// Rather than calling editor.setInput on the editor directly, we do it through
+		// the part reference.
+		// This case lets us detect badly behaved editors that are not firing a
+		// PROP_INPUT event in response
+		// to the input change... but if all editors obeyed their API contract, the
+		// "else" branch would be
+		// sufficient.
 
 		// TODO compat: should we be talking to the editor reference here
 		editor.setInput(input);
-        navigationHistory.markEditor(editor);
-    }
+		navigationHistory.markEditor(editor);
+	}
 
-    /**
-     * See IWorkbenchPage.
-     */
-    @Override
-	public IEditorPart openEditor(IEditorInput input, String editorID)
-            throws PartInitException {
-        return openEditor(input, editorID, true, MATCH_INPUT);
-    }
+	/**
+	 * See IWorkbenchPage.
+	 */
+	@Override
+	public IEditorPart openEditor(IEditorInput input, String editorID) throws PartInitException {
+		return openEditor(input, editorID, true, MATCH_INPUT);
+	}
 
-    /**
-     * See IWorkbenchPage.
-     */
-    @Override
-	public IEditorPart openEditor(IEditorInput input, String editorID,
-			boolean activate) throws PartInitException {
+	/**
+	 * See IWorkbenchPage.
+	 */
+	@Override
+	public IEditorPart openEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
 		return openEditor(input, editorID, activate, MATCH_INPUT);
-    }
+	}
 
-    /**
-     * See IWorkbenchPage.
-     */
-    @Override
-	public IEditorPart openEditor(final IEditorInput input,
-            final String editorID, final boolean activate, final int matchFlags)
-            throws PartInitException {
-    	return openEditor(input, editorID, activate, matchFlags, null, true);
-    }
+	/**
+	 * See IWorkbenchPage.
+	 */
+	@Override
+	public IEditorPart openEditor(final IEditorInput input, final String editorID, final boolean activate,
+			final int matchFlags) throws PartInitException {
+		return openEditor(input, editorID, activate, matchFlags, null, true);
+	}
 
 	/**
 	 * This is not public API but for use internally. editorState can be
 	 * <code>null</code>.
 	 *
-	 * @param input
-	 *            the input to open the editor with
-	 * @param editorID
-	 *            the id of the editor to open
-	 * @param activate
-	 *            <tt>true</tt> if the editor should be activated,
-	 *            <tt>false</tt> otherwise
-	 * @param matchFlags
-	 *            a bit mask consisting of zero or more of the MATCH_* constants
-	 *            OR-ed together
-	 * @param editorState
-	 *            the previously saved state of the editor as a memento, this
-	 *            may be <tt>null</tt>
-	 * @param notify
-	 *            <tt>true</tt> if the perspective should fire off events about
-	 *            the editors being opened, <tt>false</tt> otherwise
+	 * @param input       the input to open the editor with
+	 * @param editorID    the id of the editor to open
+	 * @param activate    <tt>true</tt> if the editor should be activated,
+	 *                    <tt>false</tt> otherwise
+	 * @param matchFlags  a bit mask consisting of zero or more of the MATCH_*
+	 *                    constants OR-ed together
+	 * @param editorState the previously saved state of the editor as a memento,
+	 *                    this may be <tt>null</tt>
+	 * @param notify      <tt>true</tt> if the perspective should fire off events
+	 *                    about the editors being opened, <tt>false</tt> otherwise
 	 * @return the opened editor
-	 * @exception PartInitException
-	 *                if the editor could not be created or initialized
+	 * @exception PartInitException if the editor could not be created or
+	 *                              initialized
 	 */
-	public IEditorPart openEditor(final IEditorInput input, final String editorID,
-			final boolean activate, final int matchFlags, final IMemento editorState,
-			final boolean notify) throws PartInitException {
-        if (input == null || editorID == null) {
-            throw new IllegalArgumentException();
-        }
+	public IEditorPart openEditor(final IEditorInput input, final String editorID, final boolean activate,
+			final int matchFlags, final IMemento editorState, final boolean notify) throws PartInitException {
+		if (input == null || editorID == null) {
+			throw new IllegalArgumentException();
+		}
 
-        final IEditorPart result[] = new IEditorPart[1];
-        final PartInitException ex[] = new PartInitException[1];
-		BusyIndicator.showWhile(legacyWindow.getWorkbench().getDisplay(),
-				() -> {
-					try {
-						result[0] = busyOpenEditor(input, editorID, activate, matchFlags, editorState, notify);
-					} catch (PartInitException e) {
-						ex[0] = e;
-					}
-				});
-        if (ex[0] != null) {
+		final IEditorPart result[] = new IEditorPart[1];
+		final PartInitException ex[] = new PartInitException[1];
+		BusyIndicator.showWhile(legacyWindow.getWorkbench().getDisplay(), () -> {
+			try {
+				result[0] = busyOpenEditor(input, editorID, activate, matchFlags, editorState, notify);
+			} catch (PartInitException e) {
+				ex[0] = e;
+			}
+		});
+		if (ex[0] != null) {
 			throw ex[0];
 		}
-        return result[0];
-    }
+		return result[0];
+	}
 
-
-
-    /**
-     * @see #openEditor(IEditorInput, String, boolean, int)
+	/**
+	 * @see #openEditor(IEditorInput, String, boolean, int)
 	 */
-	private IEditorPart busyOpenEditor(IEditorInput input, String editorId, boolean activate,
-			int matchFlags, IMemento editorState, boolean notify) throws PartInitException {
+	private IEditorPart busyOpenEditor(IEditorInput input, String editorId, boolean activate, int matchFlags,
+			IMemento editorState, boolean notify) throws PartInitException {
 
 		if (input == null || editorId == null) {
 			throw new IllegalArgumentException();
@@ -3248,8 +3144,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return null;
 		}
 
-		IEditorDescriptor desc = getWorkbenchWindow().getWorkbench()
-				.getEditorRegistry().findEditor(editorId);
+		IEditorDescriptor desc = getWorkbenchWindow().getWorkbench().getEditorRegistry().findEditor(editorId);
 		if (desc != null && !desc.isOpenExternal() && isLargeDocument(input)) {
 			desc = getAlternateEditor();
 			if (desc == null) {
@@ -3258,8 +3153,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 		if (desc == null) {
-			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorId));
+			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorId));
 		}
 
 		setEditorAreaVisible(true);
@@ -3271,8 +3165,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				((IShowEditorInput) editor).showEditorInput(input);
 			}
 
-			partService.showPart(((EditorReference) editorReferences[0]).getModel(),
-					PartState.VISIBLE);
+			partService.showPart(((EditorReference) editorReferences[0]).getModel(), PartState.VISIBLE);
 
 			if (activate) {
 				activate(editor);
@@ -3282,12 +3175,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return editor;
 		} else if (desc.isInternal()) {
 			// look for an editor to reuse
-			EditorReference reusableEditorRef = (EditorReference) ((TabBehaviour) Tweaklets
-					.get(TabBehaviour.KEY)).findReusableEditor(this);
+			EditorReference reusableEditorRef = (EditorReference) ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
+					.findReusableEditor(this);
 			if (reusableEditorRef != null) {
 				IEditorPart reusableEditor = reusableEditorRef.getEditor(false);
-				if (editorId.equals(reusableEditorRef.getId())
-						&& reusableEditor instanceof IReusableEditor) {
+				if (editorId.equals(reusableEditorRef.getId()) && reusableEditor instanceof IReusableEditor) {
 					// reusable editors that share the same id are okay
 					recordEditor(input, desc);
 					reuseEditor((IReusableEditor) reusableEditor, input);
@@ -3334,7 +3226,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		recordEditor(input, desc);
 		return compatibilityEditor.getEditor();
-    }
+	}
 
 	private void recordEditor(IEditorInput input, IEditorDescriptor descriptor) {
 		EditorHistory history = ((Workbench) legacyWindow.getWorkbench()).getEditorHistory();
@@ -3376,78 +3268,72 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-    /**
-     * See IWorkbenchPage.
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage.
+	 */
+	@Override
 	public boolean isEditorPinned(IEditorPart editor) {
-    	WorkbenchPartReference ref = (WorkbenchPartReference)getReference(editor);
-        return ref != null && ref.isPinned();
-    }
+		WorkbenchPartReference ref = (WorkbenchPartReference) getReference(editor);
+		return ref != null && ref.isPinned();
+	}
 
-
-
-    /**
-     * Removes an IPartListener from the part service.
-     */
-    @Override
+	/**
+	 * Removes an IPartListener from the part service.
+	 */
+	@Override
 	public void removePartListener(IPartListener l) {
 		partListenerList.remove(l);
-    }
+	}
 
-    /**
-     * Removes an IPartListener from the part service.
-     */
-    @Override
+	/**
+	 * Removes an IPartListener from the part service.
+	 */
+	@Override
 	public void removePartListener(IPartListener2 l) {
 		partListener2List.remove(l);
-    }
+	}
 
-    /**
-     * Implements IWorkbenchPage
-     *
-     * @see org.eclipse.ui.IWorkbenchPage#removePropertyChangeListener(IPropertyChangeListener)
-     * @since 2.0
-     * @deprecated individual views should store a working set if needed and
-     *             register a property change listener directly with the
-     *             working set manager to receive notification when the view
-     *             working set is removed.
-     */
-    @Deprecated
+	/**
+	 * Implements IWorkbenchPage
+	 *
+	 * @see org.eclipse.ui.IWorkbenchPage#removePropertyChangeListener(IPropertyChangeListener)
+	 * @since 2.0
+	 * @deprecated individual views should store a working set if needed and
+	 *             register a property change listener directly with the working set
+	 *             manager to receive notification when the view working set is
+	 *             removed.
+	 */
+	@Deprecated
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.remove(listener);
-    }
+		propertyChangeListeners.remove(listener);
+	}
 
-    @Override
+	@Override
 	public void removeSelectionListener(ISelectionListener listener) {
 		selectionService.removeSelectionListener(listener);
-    }
+	}
 
-    @Override
-	public void removeSelectionListener(String partId,
-            ISelectionListener listener) {
+	@Override
+	public void removeSelectionListener(String partId, ISelectionListener listener) {
 		selectionService.removeSelectionListener(partId, listener);
-    }
+	}
 
-    @Override
+	@Override
 	public void removePostSelectionListener(ISelectionListener listener) {
 		selectionService.removePostSelectionListener(listener);
-    }
+	}
 
-    @Override
-	public void removePostSelectionListener(String partId,
-            ISelectionListener listener) {
+	@Override
+	public void removePostSelectionListener(String partId, ISelectionListener listener) {
 		selectionService.removePostSelectionListener(partId, listener);
-    }
+	}
 
-
-
-    /**
-     * Resets the layout for the perspective. The active part in the old layout
-     * is activated in the new layout for consistent user context.
-     */
-    @Override
+	/**
+	 * Resets the layout for the perspective. The active part in the old layout is
+	 * activated in the new layout for consistent user context.
+	 */
+	@Override
 	public void resetPerspective() {
 		MPerspectiveStack perspStack = getPerspectiveStack();
 		MPerspective persp = perspStack.getSelectedElement();
@@ -3469,8 +3355,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		MUIElement area = findSharedArea();
 		if (area != null) {
 			// remove all editors in the shared area from the list of parts
-			perspectiveParts.removeAll(modelService.findElements(area,
-					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null));
+			perspectiveParts.removeAll(
+					modelService.findElements(area, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null));
 		}
 
 		List<MPart> dirtyParts = new ArrayList<>();
@@ -3500,10 +3386,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		SaveablesList saveablesList = null;
 		Object postCloseInfo = null;
 		if (partsToSave.size() > 0) {
-			saveablesList = (SaveablesList) getWorkbenchWindow().getService(
-					ISaveablesLifecycleListener.class);
-			postCloseInfo = saveablesList.preCloseParts(partsToSave, true,
-					this.getWorkbenchWindow());
+			saveablesList = (SaveablesList) getWorkbenchWindow().getService(ISaveablesLifecycleListener.class);
+			postCloseInfo = saveablesList.preCloseParts(partsToSave, true, this.getWorkbenchWindow());
 			if (postCloseInfo == null) {
 				// cancel
 				// We're not going through with the reset, so it is
@@ -3522,14 +3406,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 		boolean revert = false;
 		if (desc instanceof PerspectiveDescriptor) {
 			PerspectiveDescriptor perspectiveDescriptor = (PerspectiveDescriptor) desc;
-			revert = perspectiveDescriptor.isPredefined()
-					&& !perspectiveDescriptor.hasCustomDefinition();
+			revert = perspectiveDescriptor.isPredefined() && !perspectiveDescriptor.hasCustomDefinition();
 		}
 
 		MPerspective dummyPerspective = null;
 		if (!revert) {
-			dummyPerspective = (MPerspective) modelService.cloneSnippet(application, desc.getId(),
-					window);
+			dummyPerspective = (MPerspective) modelService.cloneSnippet(application, desc.getId(), window);
 			if (dummyPerspective != null) {
 				handleNullRefPlaceHolders(dummyPerspective, window);
 			}
@@ -3541,8 +3423,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			dummyPerspective.setElementId(persp.getElementId());
 
 			IPerspectiveFactory factory = ((PerspectiveDescriptor) desc).createFactory();
-			ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
-					partService, dummyPerspective, desc, this, true);
+			ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService, dummyPerspective,
+					desc, this, true);
 			factory.createInitialLayout(modelLayout);
 
 			PerspectiveTagger.tagPerspective(dummyPerspective, modelService);
@@ -3582,7 +3464,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			persp.getWindows().add(detachedWindow);
 		}
 
-		// Remove original windows.  Can't remove them first or the MParts will be disposed
+		// Remove original windows. Can't remove them first or the MParts will be
+		// disposed
 		for (MWindow detachedWindow : existingDetachedWindows) {
 			detachedWindow.setToBeRendered(false);
 			persp.getWindows().remove(detachedWindow);
@@ -3608,8 +3491,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		tags.addAll(dummyPerspective.getTags());
 
 		// remove HIDDEN_EXPLICITLY tag from trim elements
-		List<MTrimElement> trimElements = modelService.findElements(window, null,
-				MTrimElement.class, null);
+		List<MTrimElement> trimElements = modelService.findElements(window, null, MTrimElement.class, null);
 		for (MTrimElement mTrimElement : trimElements) {
 			mTrimElement.getTags().remove(IPresentationEngine.HIDDEN_EXPLICITLY);
 		}
@@ -3644,17 +3526,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 		// });
 	}
 
-    /**
-     * See IWorkbenchPage
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage
+	 */
+	@Override
 	public boolean saveAllEditors(boolean confirm) {
-        return saveAllEditors(confirm, false, false);
-    }
+		return saveAllEditors(confirm, false, false);
+	}
 
 	/**
-	 * @return {@link ISaveablePart} objects derived from {@link IWorkbenchPart}
-	 *         's on this page
+	 * @return {@link ISaveablePart} objects derived from {@link IWorkbenchPart} 's
+	 *         on this page
 	 */
 	public ISaveablePart[] getDirtyParts() {
 		List<ISaveablePart> result = new ArrayList<>(3);
@@ -3673,8 +3555,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	/**
 	 * @return workbench parts which are dirty (implement or adapt to
-	 *         {@link ISaveablePart}). Only parts matching different saveables
-	 *         are returned.
+	 *         {@link ISaveablePart}). Only parts matching different saveables are
+	 *         returned.
 	 */
 	public IWorkbenchPart[] getDirtyWorkbenchParts() {
 		List<IWorkbenchPart> result = new ArrayList<>(3);
@@ -3728,8 +3610,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	public static boolean saveAll(List<IWorkbenchPart> dirtyParts, final boolean confirm, final boolean closing,
-			boolean addNonPartSources, final IRunnableContext runnableContext,
-			final IWorkbenchWindow workbenchWindow) {
+			boolean addNonPartSources, final IRunnableContext runnableContext, final IWorkbenchWindow workbenchWindow) {
 		// clone the input list
 		dirtyParts = new ArrayList<>(dirtyParts);
 
@@ -3739,24 +3620,22 @@ public class WorkbenchPage implements IWorkbenchPage {
 			removeSaveOnCloseNotNeededParts(dirtyParts);
 		}
 
-		SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench().getService(
-				ISaveablesLifecycleListener.class);
+		SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
+				.getService(ISaveablesLifecycleListener.class);
 		if (confirm) {
-			return processSaveable2(dirtyParts) ? false : saveablesList.preCloseParts(dirtyParts, true, true,
-					workbenchWindow, workbenchWindow) != null;
+			return processSaveable2(dirtyParts) ? false
+					: saveablesList.preCloseParts(dirtyParts, true, true, workbenchWindow, workbenchWindow) != null;
 		}
 		List<Saveable> modelsToSave = convertToSaveables(dirtyParts, closing, addNonPartSources);
-		return modelsToSave.isEmpty() ? true : !saveablesList.saveModels(modelsToSave, workbenchWindow,
-				runnableContext, closing);
+		return modelsToSave.isEmpty() ? true
+				: !saveablesList.saveModels(modelsToSave, workbenchWindow, runnableContext, closing);
 
 	}
 
 	/**
-	 * Removes from the provided list parts that don't need to be saved on
-	 * close.
+	 * Removes from the provided list parts that don't need to be saved on close.
 	 *
-	 * @param parts
-	 *            the list of the parts (ISaveablePart)
+	 * @param parts the list of the parts (ISaveablePart)
 	 */
 	private static void removeSaveOnCloseNotNeededParts(List<IWorkbenchPart> parts) {
 		for (Iterator<IWorkbenchPart> it = parts.iterator(); it.hasNext();) {
@@ -3769,11 +3648,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Processes all parts that implement ISaveablePart2 and removes them from
-	 * the list.
+	 * Processes all parts that implement ISaveablePart2 and removes them from the
+	 * list.
 	 *
-	 * @param dirtyParts
-	 *            the list of the parts
+	 * @param dirtyParts the list of the parts
 	 * @return true if cancelled
 	 */
 	private static boolean processSaveable2(List<IWorkbenchPart> dirtyParts) {
@@ -3796,10 +3674,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 				WorkbenchPage page = (WorkbenchPage) part.getSite().getPage();
 				if (!Util.equals(currentPage, page)) {
 					if (currentPage != null && currentPageOriginalPerspective != null) {
-						if (!currentPageOriginalPerspective.equals(currentPage
-								.getActivePerspective())) {
-							currentPage
-									.setPerspective(currentPageOriginalPerspective.getDesc());
+						if (!currentPageOriginalPerspective.equals(currentPage.getActivePerspective())) {
+							currentPage.setPerspective(currentPageOriginalPerspective.getDesc());
 						}
 					}
 					currentPage = page;
@@ -3848,18 +3724,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * For each part (view or editor) in the given list, attempts to convert it
-	 * to one or more saveable models. Duplicate models are removed. If closing
-	 * is true, then models that will remain open in parts other than the given
-	 * parts are removed.
+	 * For each part (view or editor) in the given list, attempts to convert it to
+	 * one or more saveable models. Duplicate models are removed. If closing is
+	 * true, then models that will remain open in parts other than the given parts
+	 * are removed.
 	 *
-	 * @param parts
-	 *            the parts (list of IViewPart or IEditorPart)
-	 * @param closing
-	 *            whether the parts are being closed
-	 * @param addNonPartSources
-	 *            whether non-part sources should be added (true for the Save
-	 *            All action, see bug 139004)
+	 * @param parts             the parts (list of IViewPart or IEditorPart)
+	 * @param closing           whether the parts are being closed
+	 * @param addNonPartSources whether non-part sources should be added (true for
+	 *                          the Save All action, see bug 139004)
 	 * @return the dirty models
 	 */
 	private static List<Saveable> convertToSaveables(List<IWorkbenchPart> parts, boolean closing,
@@ -3870,17 +3743,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 			for (Saveable saveable : getSaveables(part)) {
 				if (saveable.isDirty() && !seen.contains(saveable)) {
 					seen.add(saveable);
-					if (!closing
-							|| closingLastPartShowingModel(saveable, parts, part.getSite()
-									.getPage())) {
+					if (!closing || closingLastPartShowingModel(saveable, parts, part.getSite().getPage())) {
 						result.add(saveable);
 					}
 				}
 			}
 		}
 		if (addNonPartSources) {
-			SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench().getService(
-					ISaveablesLifecycleListener.class);
+			SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
+					.getService(ISaveablesLifecycleListener.class);
 			ISaveablesSource[] nonPartSources = saveablesList.getNonPartSources();
 			for (ISaveablesSource nonPartSource : nonPartSources) {
 				for (Saveable saveable : nonPartSource.getSaveables()) {
@@ -3895,12 +3766,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Returns the saveable models provided by the given part. If the part does
-	 * not provide any models, a default model is returned representing the
-	 * part.
+	 * Returns the saveable models provided by the given part. If the part does not
+	 * provide any models, a default model is returned representing the part.
 	 *
-	 * @param part
-	 *            the workbench part
+	 * @param part the workbench part
 	 * @return the saveable models
 	 */
 	private static Saveable[] getSaveables(IWorkbenchPart part) {
@@ -3912,15 +3781,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Returns true if, in the given page, no more parts will reference the
-	 * given model if the given parts are closed.
+	 * Returns true if, in the given page, no more parts will reference the given
+	 * model if the given parts are closed.
 	 *
-	 * @param model
-	 *            the model
-	 * @param closingParts
-	 *            the parts being closed (list of IViewPart or IEditorPart)
-	 * @param page
-	 *            the page
+	 * @param model        the model
+	 * @param closingParts the parts being closed (list of IViewPart or IEditorPart)
+	 * @param page         the page
 	 * @return <code>true</code> if no more parts in the page will reference the
 	 *         given model, <code>false</code> otherwise
 	 */
@@ -3951,44 +3817,39 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Saves the contents of the provided saveable and returns whether the
-	 * operation succeeded or not.
+	 * Saves the contents of the provided saveable and returns whether the operation
+	 * succeeded or not.
 	 *
-	 * @param saveable
-	 *            the saveable part to save
+	 * @param saveable the saveable part to save
 	 * @param part
-	 * @param confirm
-	 *            whether the user should be prompted for confirmation of the
-	 *            save request
-	 * @param closing
-	 *            whether the part will be closed after the save operation has
-	 *            completed, this may determine whether whether the save
-	 *            operation will actually be invoked or not
+	 * @param confirm  whether the user should be prompted for confirmation of the
+	 *                 save request
+	 * @param closing  whether the part will be closed after the save operation has
+	 *                 completed, this may determine whether whether the save
+	 *                 operation will actually be invoked or not
 	 * @return <code>true</code> if the saveable's contents has been persisted,
 	 *         <code>false</code> otherwise
 	 * @see ISaveablePart#isSaveOnCloseNeeded()
 	 */
-	public boolean saveSaveable(ISaveablePart saveable, IWorkbenchPart part, boolean confirm,
-			boolean closing) {
+	public boolean saveSaveable(ISaveablePart saveable, IWorkbenchPart part, boolean confirm, boolean closing) {
 		if (closing && !saveable.isSaveOnCloseNeeded()) {
 			return true;
 		}
 		return SaveableHelper.savePart(saveable, part, legacyWindow, confirm);
 	}
 
-    /**
-     * Saves an editors in the workbench. If <code>confirm</code> is <code>true</code>
-     * the user is prompted to confirm the command.
-     *
-     * @param confirm
-     *            if user confirmation should be sought
-     * @return <code>true</code> if the command succeeded, or <code>false</code>
-     *         if the user cancels the command
-     */
-    @Override
+	/**
+	 * Saves an editors in the workbench. If <code>confirm</code> is
+	 * <code>true</code> the user is prompted to confirm the command.
+	 *
+	 * @param confirm if user confirmation should be sought
+	 * @return <code>true</code> if the command succeeded, or <code>false</code> if
+	 *         the user cancels the command
+	 */
+	@Override
 	public boolean saveEditor(IEditorPart editor, boolean confirm) {
 		return saveSaveable(editor, editor, confirm, false);
-    }
+	}
 
 	@Override
 	public void savePerspective() {
@@ -4000,8 +3861,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		MPerspective visiblePerspective = getPerspectiveStack().getSelectedElement();
 		// get the original perspective
 		String originalPerspectiveId = visiblePerspective.getElementId();
-		IPerspectiveDescriptor originalPerspective = getWorkbenchWindow().getWorkbench()
-				.getPerspectiveRegistry().findPerspectiveWithId(originalPerspectiveId);
+		IPerspectiveDescriptor originalPerspective = getWorkbenchWindow().getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(originalPerspectiveId);
 		// remove it from our collection of previously opened perspectives
 		sortedPerspectives.remove(originalPerspective);
 		// append the saved perspective
@@ -4068,7 +3929,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		if (!modelToPerspectiveMapping.containsKey(mperspective)) {
 			boolean fixedPerspective = false;
-			PerspectiveDescriptor perspectiveDesc = (PerspectiveDescriptor) getPerspectiveDesc(mperspective.getElementId());
+			PerspectiveDescriptor perspectiveDesc = (PerspectiveDescriptor) getPerspectiveDesc(
+					mperspective.getElementId());
 			if (perspectiveDesc == null) {
 				fixedPerspective = true;
 				perspectiveDesc = fixOrphanPerspective(mperspective);
@@ -4085,9 +3947,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	/**
 	 * An 'orphan' perspective is one that was originally created through a
-	 * contribution but whose contributing bundle is no longer available. In
-	 * order to allow it to behave correctly within the environment (for Close,
-	 * Reset...) we turn it into a 'custom' perspective on its first activation.
+	 * contribution but whose contributing bundle is no longer available. In order
+	 * to allow it to behave correctly within the environment (for Close, Reset...)
+	 * we turn it into a 'custom' perspective on its first activation.
 	 *
 	 * @return
 	 */
@@ -4156,8 +4018,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 
-		MPerspective modelPerspective = (MPerspective) modelService.cloneSnippet(application,
-				perspective.getId(), window);
+		MPerspective modelPerspective = (MPerspective) modelService.cloneSnippet(application, perspective.getId(),
+				window);
 
 		if (modelPerspective == null) {
 			// couldn't find the perspective, create a new one
@@ -4255,8 +4117,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		// instantiate the perspective
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
-				partService, modelPerspective, perspective, this, true);
+		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService, modelPerspective,
+				perspective, this, true);
 		factory.createInitialLayout(modelLayout);
 		PerspectiveTagger.tagPerspective(modelPerspective, modelService);
 		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
@@ -4264,13 +4126,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return modelPerspective;
 	}
 
-	void perspectiveActionSetChanged(Perspective perspective, IActionSetDescriptor descriptor,
-			int changeType) {
+	void perspectiveActionSetChanged(Perspective perspective, IActionSetDescriptor descriptor, int changeType) {
 		if (perspective == getActivePerspective()) {
 			actionSets.change(descriptor, changeType);
 		}
 	}
-
 
 	/**
 	 * Retrieves the perspective stack of the window that's containing this
@@ -4298,8 +4158,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		MPartSashContainer stickySash = modelService.createModelElement(MPartSashContainer.class);
 		stickySash.setHorizontal(true);
 
-		MPerspectiveStack perspectiveStack = modelService
-				.createModelElement(MPerspectiveStack.class);
+		MPerspectiveStack perspectiveStack = modelService.createModelElement(MPerspectiveStack.class);
 		perspectiveStack.setElementId(IWorkbenchConstants.PERSPECTIVE_STACK_ID);
 		perspectiveStack.setContainerData("7500"); //$NON-NLS-1$
 
@@ -4308,12 +4167,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 		stickyFolder.setElementId("stickyFolderRight"); //$NON-NLS-1$
 		stickyFolder.setToBeRendered(false);
 
-		IStickyViewDescriptor[] stickyViews = getWorkbenchWindow().getWorkbench().getViewRegistry()
-				.getStickyViews();
+		IStickyViewDescriptor[] stickyViews = getWorkbenchWindow().getWorkbench().getViewRegistry().getStickyViews();
 		for (IStickyViewDescriptor stickyView : stickyViews) {
 			if (stickyView.getLocation() == IPageLayout.RIGHT) {
-				MStackElement viewModel = ModeledPageLayout.createViewModel(application,
-						stickyView.getId(), false, this, partService, true);
+				MStackElement viewModel = ModeledPageLayout.createViewModel(application, stickyView.getId(), false,
+						this, partService, true);
 				stickyFolder.getChildren().add(viewModel);
 			}
 		}
@@ -4328,75 +4186,69 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return perspectiveStack;
 	}
 
-    /**
-     * Sets the active working set for the workbench page. Notifies property
-     * change listener about the change.
-     *
-     * @param newWorkingSet
-     *            the active working set for the page. May be null.
-     * @since 2.0
-     * @deprecated individual views should store a working set if needed
-     */
-    @Deprecated
+	/**
+	 * Sets the active working set for the workbench page. Notifies property change
+	 * listener about the change.
+	 *
+	 * @param newWorkingSet the active working set for the page. May be null.
+	 * @since 2.0
+	 * @deprecated individual views should store a working set if needed
+	 */
+	@Deprecated
 	public void setWorkingSet(IWorkingSet newWorkingSet) {
-        IWorkingSet oldWorkingSet = workingSet;
+		IWorkingSet oldWorkingSet = workingSet;
 
-        workingSet = newWorkingSet;
-        if (oldWorkingSet != newWorkingSet) {
-            firePropertyChange(CHANGE_WORKING_SET_REPLACE, oldWorkingSet,
-                    newWorkingSet);
-        }
-        if (newWorkingSet != null) {
-            WorkbenchPlugin.getDefault().getWorkingSetManager()
-                    .addPropertyChangeListener(workingSetPropertyChangeListener);
-        } else {
-            WorkbenchPlugin.getDefault().getWorkingSetManager()
-                    .removePropertyChangeListener(workingSetPropertyChangeListener);
-        }
-    }
+		workingSet = newWorkingSet;
+		if (oldWorkingSet != newWorkingSet) {
+			firePropertyChange(CHANGE_WORKING_SET_REPLACE, oldWorkingSet, newWorkingSet);
+		}
+		if (newWorkingSet != null) {
+			WorkbenchPlugin.getDefault().getWorkingSetManager()
+					.addPropertyChangeListener(workingSetPropertyChangeListener);
+		} else {
+			WorkbenchPlugin.getDefault().getWorkingSetManager()
+					.removePropertyChangeListener(workingSetPropertyChangeListener);
+		}
+	}
 
-    /**
-     * @see IWorkbenchPage
-     */
-    @Override
+	/**
+	 * @see IWorkbenchPage
+	 */
+	@Override
 	public void showActionSet(String actionSetID) {
-    	 Perspective persp = getActivePerspective();
-         if (persp != null) {
-             ActionSetRegistry reg = WorkbenchPlugin.getDefault()
-                  .getActionSetRegistry();
+		Perspective persp = getActivePerspective();
+		if (persp != null) {
+			ActionSetRegistry reg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 
-             IActionSetDescriptor desc = reg.findActionSet(actionSetID);
-             if (desc != null) {
+			IActionSetDescriptor desc = reg.findActionSet(actionSetID);
+			if (desc != null) {
 				List<IActionSetDescriptor> offActionSets = persp.getAlwaysOffActionSets();
 				for (IActionSetDescriptor off : offActionSets) {
 					if (off.getId().equals(desc.getId())) {
 						return;
 					}
 				}
-                 persp.addActionSet(desc);
-                 legacyWindow.updateActionSets();
-                 legacyWindow.firePerspectiveChanged(this, getPerspective(),
-                         CHANGE_ACTION_SET_SHOW);
-             }
-         }
-    }
+				persp.addActionSet(desc);
+				legacyWindow.updateActionSets();
+				legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_SHOW);
+			}
+		}
+	}
 
-    /**
-     * See IWorkbenchPage.
-     */
-    @Override
+	/**
+	 * See IWorkbenchPage.
+	 */
+	@Override
 	public IViewPart showView(String viewID) throws PartInitException {
-        return showView(viewID, null, VIEW_ACTIVATE);
-    }
+		return showView(viewID, null, VIEW_ACTIVATE);
+	}
 
 	@Override
-	public IViewPart showView(final String viewID, final String secondaryID, final int mode)
-			throws PartInitException {
+	public IViewPart showView(final String viewID, final String secondaryID, final int mode) throws PartInitException {
 
 		if (secondaryID != null) {
 			if (secondaryID.length() == 0 || secondaryID.indexOf(':') != -1) {
-				throw new IllegalArgumentException(
-						WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
+				throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
 			}
 		}
 		if (!certifyMode(mode)) {
@@ -4422,21 +4274,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-    /**
-     * @param mode the mode to test
-     * @return whether the mode is recognized
-     * @since 3.0
-     */
-    private boolean certifyMode(int mode) {
-        switch (mode) {
-        case VIEW_ACTIVATE:
-        case VIEW_VISIBLE:
-        case VIEW_CREATE:
-            return true;
-        default:
-            return false;
-        }
-    }
+	/**
+	 * @param mode the mode to test
+	 * @return whether the mode is recognized
+	 * @since 3.0
+	 */
+	private boolean certifyMode(int mode) {
+		switch (mode) {
+		case VIEW_ACTIVATE:
+		case VIEW_VISIBLE:
+		case VIEW_CREATE:
+			return true;
+		default:
+			return false;
+		}
+	}
 
 	public MUIElement getActiveElement(IWorkbenchPartReference ref) {
 		MUIElement element = null;
@@ -4477,7 +4329,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		setPartState(element, state);
 	}
 
-    @Override
+	@Override
 	public int getPartState(IWorkbenchPartReference ref) {
 		int state = STATE_RESTORED;
 		MUIElement element = getActiveElement(ref);
@@ -4509,18 +4361,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-    /**
-     * updateActionBars method comment.
-     */
-    public void updateActionBars() {
+	/**
+	 * updateActionBars method comment.
+	 */
+	public void updateActionBars() {
 		legacyWindow.updateActionBars();
-    }
+	}
 
-
-    @Override
+	@Override
 	public void zoomOut() {
 		// TODO compat: what does the zoom do?
-    }
+	}
 
 	@Override
 	public void toggleZoom(IWorkbenchPartReference ref) {
@@ -4534,14 +4385,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	}
 
-
 	@Override
 	public IPerspectiveDescriptor[] getOpenPerspectives() {
 		MPerspectiveStack perspectiveStack = modelService.findElements(window, null, MPerspectiveStack.class).get(0);
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 
-		ArrayList<IPerspectiveDescriptor> tmp = new ArrayList<>(
-				perspectiveStack.getChildren().size());
+		ArrayList<IPerspectiveDescriptor> tmp = new ArrayList<>(perspectiveStack.getChildren().size());
 		for (MPerspective persp : perspectiveStack.getChildren()) {
 			String perspectiveId = persp.getElementId();
 			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(perspectiveId);
@@ -4560,16 +4409,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return sortedPerspectives.toArray(new IPerspectiveDescriptor[sortedPerspectives.size()]);
 	}
 
-
-
-    /**
-     * Returns the reference to the given part, or <code>null</code> if it has no reference
-     * (i.e. it is not a top-level part in this workbench page).
-     *
-     * @param part the part
-     * @return the part's reference or <code>null</code> if the given part does not belong
-     * to this workbench page
-     */
+	/**
+	 * Returns the reference to the given part, or <code>null</code> if it has no
+	 * reference (i.e. it is not a top-level part in this workbench page).
+	 *
+	 * @param part the part
+	 * @return the part's reference or <code>null</code> if the given part does not
+	 *         belong to this workbench page
+	 */
 	@Override
 	public IWorkbenchPartReference getReference(IWorkbenchPart part) {
 		if (part != null) {
@@ -4606,8 +4453,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 			if (parent instanceof MPartStack) {
 				MStackElement selectedElement = ((MPartStack) parent).getSelectedElement();
-				final MUIElement topPart = selectedElement instanceof MPlaceholder ? ((MPlaceholder) selectedElement)
-						.getRef() : null;
+				final MUIElement topPart = selectedElement instanceof MPlaceholder
+						? ((MPlaceholder) selectedElement).getRef()
+						: null;
 
 				List<CompatibilityView> stack = new ArrayList<>();
 				for (Object child : parent.getChildren()) {
@@ -4658,7 +4506,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return null;
 	}
 
-
 	@Override
 	public IExtensionTracker getExtensionTracker() {
 		if (tracker == null) {
@@ -4699,17 +4546,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return getArrayForTag(ModeledPageLayout.SHOW_VIEW_TAG);
 	}
 
+	public boolean isPartVisible(IWorkbenchPartReference reference) {
+		IWorkbenchPart part = reference.getPart(false);
+		// Can't be visible if it isn't created yet
+		if (part == null) {
+			return false;
+		}
 
-
-    public boolean isPartVisible(IWorkbenchPartReference reference) {
-        IWorkbenchPart part = reference.getPart(false);
-        // Can't be visible if it isn't created yet
-        if (part == null) {
-            return false;
-        }
-
-        return isPartVisible(part);
-    }
+		return isPartVisible(part);
+	}
 
 	@Override
 	public IWorkingSet[] getWorkingSets() {
@@ -4719,14 +4564,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Override
 	public void setWorkingSets(IWorkingSet[] newWorkingSets) {
 		if (newWorkingSets != null) {
-			WorkbenchPlugin
-					.getDefault()
-					.getWorkingSetManager()
+			WorkbenchPlugin.getDefault().getWorkingSetManager()
 					.addPropertyChangeListener(workingSetPropertyChangeListener);
 		} else {
 			WorkbenchPlugin.getDefault().getWorkingSetManager()
-					.removePropertyChangeListener(
-							workingSetPropertyChangeListener);
+					.removePropertyChangeListener(workingSetPropertyChangeListener);
 		}
 
 		if (newWorkingSets == null) {
@@ -4749,8 +4591,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		workingSets = newWorkingSets;
 		if (!Arrays.equals(oldWorkingSets, newWorkingSets)) {
-			firePropertyChange(CHANGE_WORKING_SETS_REPLACE, oldWorkingSets,
-					newWorkingSets);
+			firePropertyChange(CHANGE_WORKING_SETS_REPLACE, oldWorkingSets, newWorkingSets);
 			if (aggregateWorkingSet != null) {
 				aggregateWorkingSet.setComponents(workingSets);
 			}
@@ -4760,8 +4601,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Override
 	public IWorkingSet getAggregateWorkingSet() {
 		if (aggregateWorkingSet == null) {
-			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
-					.getWorkingSetManager();
+			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 
 			if (aggregateWorkingSetId == null) {
 				aggregateWorkingSetId = generateAggregateWorkingSetId();
@@ -4769,10 +4609,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 				aggregateWorkingSet = (AggregateWorkingSet) workingSetManager.getWorkingSet(aggregateWorkingSetId);
 			}
 			if (aggregateWorkingSet == null) {
-				aggregateWorkingSet = (AggregateWorkingSet) workingSetManager
-						.createAggregateWorkingSet(aggregateWorkingSetId,
-								WorkbenchMessages.WorkbenchPage_workingSet_default_label,
-								getWorkingSets());
+				aggregateWorkingSet = (AggregateWorkingSet) workingSetManager.createAggregateWorkingSet(
+						aggregateWorkingSetId, WorkbenchMessages.WorkbenchPage_workingSet_default_label,
+						getWorkingSets());
 				workingSetManager.addWorkingSet(aggregateWorkingSet);
 			}
 		}
@@ -4786,10 +4625,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Override
 	public void showEditor(IEditorReference ref) {
 		IWorkbenchPart wPart = ref.getPart(false);
-		MPart part = ((EditorReference)ref).getModel();
+		MPart part = ((EditorReference) ref).getModel();
 		part.setVisible(true);
 
-		//Workaround to get content visible. Otherwise the content sometimes is not rendered.
+		// Workaround to get content visible. Otherwise the content sometimes is not
+		// rendered.
 		MElementContainer<MUIElement> partStack = part.getParent();
 		partStack.setSelectedElement(null);
 		partStack.setSelectedElement(part);
@@ -4798,7 +4638,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	@Override
 	public void hideEditor(IEditorReference ref) {
-		MPart part = ((EditorReference)ref).getModel();
+		MPart part = ((EditorReference) ref).getModel();
 		part.setVisible(false);
 	}
 
@@ -4828,14 +4668,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	@Override
-	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, int matchFlags) throws MultiPartInitException {
+	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, int matchFlags)
+			throws MultiPartInitException {
 		return openEditors(inputs, editorIDs, null, matchFlags, 0);
 	}
 
 	@Override
-	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs,
-			IMemento[] mementos, int matchFlags, int activationIndex)
-			throws MultiPartInitException {
+	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, IMemento[] mementos,
+			int matchFlags, int activationIndex) throws MultiPartInitException {
 		// If we are only working with mementos create a placeholder array of
 		// nulls
 		if (inputs == null) {
@@ -4889,10 +4729,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 				outerMem.putString(IWorkbenchConstants.TAG_ID, curEditorID);
 				outerMem.copyChild(curMemento);
 
-				XMLMemento inputMem = (XMLMemento) outerMem
-						.createChild(IWorkbenchConstants.TAG_INPUT);
-				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, curInput.getPersistable()
-						.getFactoryId());
+				XMLMemento inputMem = (XMLMemento) outerMem.createChild(IWorkbenchConstants.TAG_INPUT);
+				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, curInput.getPersistable().getFactoryId());
 				inputMem.putString(IWorkbenchConstants.TAG_PATH, curInput.getName());
 			}
 
@@ -4900,22 +4738,20 @@ public class WorkbenchPage implements IWorkbenchPage {
 			// and the memento (if any)
 			if (reg.findEditor(curEditorID) == null) {
 				references[i] = null;
-				exceptions[i] = new PartInitException(NLS.bind(
-						WorkbenchMessages.EditorManager_unknownEditorIDMessage, curEditorID));
+				exceptions[i] = new PartInitException(
+						NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage, curEditorID));
 				hasFailures = true;
 			} else if (curInput == null) {
 				references[i] = null;
-				exceptions[i] = new PartInitException(NLS.bind(
-						WorkbenchMessages.EditorManager_no_persisted_state, curEditorID));
+				exceptions[i] = new PartInitException(
+						NLS.bind(WorkbenchMessages.EditorManager_no_persisted_state, curEditorID));
 				hasFailures = true;
 			} else {
 				// Is there an existing editor ?
-				IEditorReference[] existingEditors = findEditors(curInput, curEditorID,
-						matchFlags);
+				IEditorReference[] existingEditors = findEditors(curInput, curEditorID, matchFlags);
 				if (existingEditors.length == 0) {
 					MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
-					references[i] = createEditorReferenceForPart(editor, curInput, curEditorID,
-							null);
+					references[i] = createEditorReferenceForPart(editor, curInput, curEditorID, null);
 
 					if (i == activationIndex)
 						editorToActivate = editor;
@@ -4927,8 +4763,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 						StringWriter writer = new StringWriter();
 						try {
 							memento.save(writer);
-							editor.getPersistedState().put(WorkbenchPartReference.MEMENTO_KEY,
-									writer.toString());
+							editor.getPersistedState().put(WorkbenchPartReference.MEMENTO_KEY, writer.toString());
 						} catch (IOException e) {
 							WorkbenchPlugin.log(e);
 						}
@@ -4953,24 +4788,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 							StringWriter writer = new StringWriter();
 							try {
 								momento.save(writer);
-								ee.getModel().getPersistedState()
-										.put(WorkbenchPartReference.MEMENTO_KEY, writer.toString());
+								ee.getModel().getPersistedState().put(WorkbenchPartReference.MEMENTO_KEY,
+										writer.toString());
 							} catch (IOException e) {
 								WorkbenchPlugin.log(e);
 							}
 						}
 					} else {
 						// editor already rendered, try to update its state
-						if (curMemento != null
-								&& ee.getModel().getObject() instanceof CompatibilityEditor) {
-							CompatibilityEditor ce = (CompatibilityEditor) ee.getModel()
-									.getObject();
+						if (curMemento != null && ee.getModel().getObject() instanceof CompatibilityEditor) {
+							CompatibilityEditor ce = (CompatibilityEditor) ee.getModel().getObject();
 							if (ce.getEditor() instanceof IPersistableEditor) {
 								IPersistableEditor pe = (IPersistableEditor) ce.getEditor();
 
 								// Extract the 'editorState' from the memento
-								IMemento editorMem = curMemento
-										.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+								IMemento editorMem = curMemento.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
 								if (editorMem == null) {
 									// Must be an externally defined memento,
 									// take the second child
@@ -4995,8 +4827,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		for (IEditorReference reference : references) {
 			if (reference != null) {
 				hasSuccesses = true;
-				legacyWindow.firePerspectiveChanged(this, getPerspective(), reference,
-						CHANGE_EDITOR_OPEN);
+				legacyWindow.firePerspectiveChanged(this, getPerspective(), reference, CHANGE_EDITOR_OPEN);
 			}
 		}
 
@@ -5084,8 +4915,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 					}
 				});
 			}
-		}
-		else if (client != null) {
+		} else if (client != null) {
 			if (part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY) instanceof E4PartWrapper) {
 				IWorkbenchPart workbenchPart = (IWorkbenchPart) part.getTransientData()
 						.get(E4PartWrapper.E4_WRAPPER_KEY);
@@ -5170,8 +5000,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * @param comPart
-	 *            e4 wrapper around {@link IWorkbenchPart}
+	 * @param comPart e4 wrapper around {@link IWorkbenchPart}
 	 * @return can return null, in case {@link CompatibilityPart} was already
 	 *         disposed
 	 */
@@ -5216,8 +5045,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		if (compatibilityPart instanceof CompatibilityView) {
-			legacyWindow.firePerspectiveChanged(this, getPerspective(), partReference,
-					CHANGE_VIEW_SHOW);
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), partReference, CHANGE_VIEW_SHOW);
 			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_SHOW);
 		}
 	}
@@ -5292,8 +5120,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		if (compatibilityPart instanceof CompatibilityView) {
-			legacyWindow.firePerspectiveChanged(this, getPerspective(), partReference,
-					CHANGE_VIEW_HIDE);
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), partReference, CHANGE_VIEW_HIDE);
 			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 		}
 	}
@@ -5461,29 +5288,23 @@ public class WorkbenchPage implements IWorkbenchPage {
 	/**
 	 * Opens an editor represented by the descriptor with the given input.
 	 *
-	 * @param fileEditorInput
-	 *            the input that the editor should open
-	 * @param editorDescriptor
-	 *            the descriptor of the editor to open
-	 * @param activate
-	 *            <tt>true</tt> if the editor should be activated,
-	 *            <tt>false</tt> otherwise
-	 * @param editorState
-	 *            the previously saved state of the editor as a memento, this
-	 *            may be <tt>null</tt>
+	 * @param fileEditorInput  the input that the editor should open
+	 * @param editorDescriptor the descriptor of the editor to open
+	 * @param activate         <tt>true</tt> if the editor should be activated,
+	 *                         <tt>false</tt> otherwise
+	 * @param editorState      the previously saved state of the editor as a
+	 *                         memento, this may be <tt>null</tt>
 	 * @return the opened editor
-	 * @exception PartInitException
-	 *                if the editor could not be created or initialized
+	 * @exception PartInitException if the editor could not be created or
+	 *                              initialized
 	 */
-	public IEditorPart openEditorFromDescriptor(IEditorInput fileEditorInput,
-			IEditorDescriptor editorDescriptor, final boolean activate, final IMemento editorState)
-			throws PartInitException {
+	public IEditorPart openEditorFromDescriptor(IEditorInput fileEditorInput, IEditorDescriptor editorDescriptor,
+			final boolean activate, final IMemento editorState) throws PartInitException {
 		if (editorDescriptor.isOpenExternal()) {
 			openExternalEditor((EditorDescriptor) editorDescriptor, fileEditorInput);
 			return null;
 		}
-		return openEditor(fileEditorInput, editorDescriptor.getId(), activate, MATCH_INPUT,
-				editorState, true);
+		return openEditor(fileEditorInput, editorDescriptor.getId(), activate, MATCH_INPUT, editorState, true);
 	}
 
 	/**
@@ -5512,15 +5333,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 				}
 			});
 		} else {
-			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.EditorManager_errorOpeningExternalEditor, desc.getFileName(),
-					desc.getId()));
+			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_errorOpeningExternalEditor,
+					desc.getFileName(), desc.getId()));
 		}
 
 		if (ex[0] != null) {
-			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.EditorManager_errorOpeningExternalEditor, desc.getFileName(),
-					desc.getId()), ex[0]);
+			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_errorOpeningExternalEditor,
+					desc.getFileName(), desc.getId()), ex[0]);
 		}
 
 		recordEditor(input, desc);
@@ -5535,8 +5354,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Unzooms the shared area if there are no more rendered parts contained
-	 * within it.
+	 * Unzooms the shared area if there are no more rendered parts contained within
+	 * it.
 	 *
 	 * @see #unzoomSharedArea(MUIElement)
 	 */
@@ -5561,8 +5380,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	/**
 	 * Unzooms the shared area if the specified element is in the shared area.
 	 *
-	 * @param element
-	 *            the element to check if it is in the shared area
+	 * @param element the element to check if it is in the shared area
 	 * @see #unzoomSharedArea()
 	 */
 	private void unzoomSharedArea(MUIElement element) {
@@ -5572,8 +5390,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * An event handler for listening to parts and placeholders being
-	 * unrendered.
+	 * An event handler for listening to parts and placeholders being unrendered.
 	 */
 	private EventHandler referenceRemovalEventHandler = event -> {
 		if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
@@ -5663,8 +5480,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (newValue.length() == 0)
 				perspective.getPersistedState().remove(ModeledPageLayout.HIDDEN_ITEMS_KEY);
 			else
-				perspective.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY,
-						newValue);
+				perspective.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY, newValue);
 		}
 	}
 
@@ -5704,10 +5520,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Call {@link #firePartDeactivated(MPart)} if the passed part is the
-	 * currently active part according to the part service. This method should
-	 * only be called in the case of workbench shutdown, where E4 does not fire
-	 * deactivate listeners on the active part.
+	 * Call {@link #firePartDeactivated(MPart)} if the passed part is the currently
+	 * active part according to the part service. This method should only be called
+	 * in the case of workbench shutdown, where E4 does not fire deactivate
+	 * listeners on the active part.
 	 *
 	 * @param part
 	 */

@@ -33,46 +33,41 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = LegacyHandlerSubmissionExpression.class
-			.getName().hashCode();
+	private static final int HASH_INITIAL = LegacyHandlerSubmissionExpression.class.getName().hashCode();
 
 	/**
 	 * The identifier for the part that must be active for this expression to
-	 * evaluate to <code>true</code>. If this value is <code>null</code>,
-	 * then any part may be active.
+	 * evaluate to <code>true</code>. If this value is <code>null</code>, then any
+	 * part may be active.
 	 */
 	private final String activePartId;
 
 	/**
 	 * The shell that must be active for this expression to evaluate to
-	 * <code>true</code>. If this value is <code>null</code>, then any
-	 * shell may be active.
+	 * <code>true</code>. If this value is <code>null</code>, then any shell may be
+	 * active.
 	 */
 	private final Shell activeShell;
 
 	/**
 	 * The site that must be active for this expression to evaluate to
-	 * <code>true</code>. If this value is <code>null</code>, then any
-	 * site may be active.
+	 * <code>true</code>. If this value is <code>null</code>, then any site may be
+	 * active.
 	 */
 	private final IWorkbenchPartSite activeSite;
 
 	/**
-	 * Constructs a new instance of
-	 * <code>LegacyHandlerSubmissionExpression</code>
+	 * Constructs a new instance of <code>LegacyHandlerSubmissionExpression</code>
 	 *
-	 * @param activePartId
-	 *            The part identifier to match with the active part;
-	 *            <code>null</code> if it will match any active part.
-	 * @param activeShell
-	 *            The shell to match with the active shell; <code>null</code>
-	 *            if it will match any active shell.
-	 * @param activeSite
-	 *            The site to match with the active site; <code>null</code> if
-	 *            it will match any active site.
+	 * @param activePartId The part identifier to match with the active part;
+	 *                     <code>null</code> if it will match any active part.
+	 * @param activeShell  The shell to match with the active shell;
+	 *                     <code>null</code> if it will match any active shell.
+	 * @param activeSite   The site to match with the active site; <code>null</code>
+	 *                     if it will match any active site.
 	 */
-	public LegacyHandlerSubmissionExpression(final String activePartId,
-			final Shell activeShell, final IWorkbenchPartSite activeSite) {
+	public LegacyHandlerSubmissionExpression(final String activePartId, final Shell activeShell,
+			final IWorkbenchPartSite activeSite) {
 
 		this.activePartId = activePartId;
 		this.activeShell = activeShell;
@@ -80,9 +75,9 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	}
 
 	/**
-	 * Collect expression info for a legacy handler submission.  Namely
-	 * the active part id and name, active shell name, active workbench
-	 * window shell name and the active site name.
+	 * Collect expression info for a legacy handler submission. Namely the active
+	 * part id and name, active shell name, active workbench window shell name and
+	 * the active site name.
 	 *
 	 * @since 3.2
 	 */
@@ -93,8 +88,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 		}
 		if (activeShell != null) {
 			info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);
-			info
-					.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
+			info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
 		}
 		if (activeSite != null) {
 			info.addVariableNameAccess(ISources.ACTIVE_SITE_NAME);
@@ -113,8 +107,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	public boolean equals(final Object object) {
 		if (object instanceof LegacyHandlerSubmissionExpression) {
 			final LegacyHandlerSubmissionExpression that = (LegacyHandlerSubmissionExpression) object;
-			return equals(this.activePartId, that.activePartId)
-					&& equals(this.activeShell, that.activeShell)
+			return equals(this.activePartId, that.activePartId) && equals(this.activeShell, that.activeShell)
 					&& equals(this.activeSite, that.activeSite);
 		}
 
@@ -123,21 +116,19 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 
 	/**
 	 * Evaluates this expression. This tests the three conditions against the
-	 * current state of the application (as defined by <code>context</code>).
-	 * If a condition is <code>null</code>, then it matches any possible
-	 * value (i.e., it is not tested at all).
+	 * current state of the application (as defined by <code>context</code>). If a
+	 * condition is <code>null</code>, then it matches any possible value (i.e., it
+	 * is not tested at all).
 	 *
-	 * @param context
-	 *            The context providing the current workbench state; must not be
-	 *            <code>null</code>.
-	 * @return <code>EvaluationResult.TRUE</code> if the conditions all
-	 *         matches; <code>EvaluationResult.FALSE</code> otherwise.
+	 * @param context The context providing the current workbench state; must not be
+	 *                <code>null</code>.
+	 * @return <code>EvaluationResult.TRUE</code> if the conditions all matches;
+	 *         <code>EvaluationResult.FALSE</code> otherwise.
 	 */
 	@Override
 	public EvaluationResult evaluate(final IEvaluationContext context) {
 		if (activePartId != null) {
-			final Object value = context
-					.getVariable(ISources.ACTIVE_PART_ID_NAME);
+			final Object value = context.getVariable(ISources.ACTIVE_PART_ID_NAME);
 			if (!activePartId.equals(value)) {
 				return EvaluationResult.FALSE;
 			}
@@ -146,8 +137,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 		if (activeShell != null) {
 			Object value = context.getVariable(ISources.ACTIVE_SHELL_NAME);
 			if (!activeShell.equals(value)) {
-				value = context
-						.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
+				value = context.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
 				if (!activeShell.equals(value)) {
 					return EvaluationResult.FALSE;
 				}

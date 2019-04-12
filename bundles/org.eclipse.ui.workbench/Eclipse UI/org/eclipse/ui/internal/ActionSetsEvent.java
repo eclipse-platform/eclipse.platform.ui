@@ -49,8 +49,8 @@ public final class ActionSetsEvent {
 	/**
 	 * Constructs a new instance of {@link ActionSetsEvent}.
 	 *
-	 * @param newActionSets
-	 *            The action sets that are now active; may be <code>null</code>.
+	 * @param newActionSets The action sets that are now active; may be
+	 *                      <code>null</code>.
 	 */
 	ActionSetsEvent(final IActionSetDescriptor[] newActionSets) {
 		this.newActionSets = newActionSets;
@@ -65,4 +65,3 @@ public final class ActionSetsEvent {
 		return newActionSets;
 	}
 }
-

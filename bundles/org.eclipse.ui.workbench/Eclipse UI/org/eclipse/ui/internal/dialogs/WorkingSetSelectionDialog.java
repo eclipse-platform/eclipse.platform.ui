@@ -49,26 +49,26 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
- * A working set selection dialog displays a list of working
- * sets available in the workbench.
+ * A working set selection dialog displays a list of working sets available in
+ * the workbench.
  *
  * @see IWorkingSetSelectionDialog
  * @since 2.0
  */
 public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
-    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 200;
+	private static final int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 
-    private static final int SIZING_SELECTION_WIDGET_WIDTH = 50;
+	private static final int SIZING_SELECTION_WIDGET_WIDTH = 50;
 
-    private ILabelProvider labelProvider;
+	private ILabelProvider labelProvider;
 
-    private IStructuredContentProvider contentProvider;
+	private IStructuredContentProvider contentProvider;
 
-    private CheckboxTableViewer listViewer;
+	private CheckboxTableViewer listViewer;
 
-    private boolean multiSelect;
+	private boolean multiSelect;
 
-    private IWorkbenchWindow workbenchWindow;
+	private IWorkbenchWindow workbenchWindow;
 
 	private Button buttonWindowSet;
 
@@ -76,86 +76,86 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 	private Button buttonSelectedSets;
 
-    /**
-     * Creates a working set selection dialog.
-     *
-     * @param parentShell the parent shell
-     * @param multi decides how the results are returned with
-     *  <code>WorkingSetSelectionDialog#getSelection()</code> or
-     *  <code>WorkingSetSelectionDialog#getResult()</code>. true= working sets
-     *  chosen in the dialog are returned as an array of working set.false= returns
-     *  an array having a single aggregate working set of all working sets selected
-     *  in the dialog.
-     * @param workingSetIds a list of working set ids which are valid workings sets
-     *  to be selected, created, removed or edited, or <code>null</code> if all currently
-     *  available working set types are valid
-     */
-    public WorkingSetSelectionDialog(Shell parentShell, boolean multi, String[] workingSetIds) {
-        super(parentShell, workingSetIds, true);
-        initWorkbenchWindow();
+	/**
+	 * Creates a working set selection dialog.
+	 *
+	 * @param parentShell   the parent shell
+	 * @param multi         decides how the results are returned with
+	 *                      <code>WorkingSetSelectionDialog#getSelection()</code> or
+	 *                      <code>WorkingSetSelectionDialog#getResult()</code>.
+	 *                      true= working sets chosen in the dialog are returned as
+	 *                      an array of working set.false= returns an array having a
+	 *                      single aggregate working set of all working sets
+	 *                      selected in the dialog.
+	 * @param workingSetIds a list of working set ids which are valid workings sets
+	 *                      to be selected, created, removed or edited, or
+	 *                      <code>null</code> if all currently available working set
+	 *                      types are valid
+	 */
+	public WorkingSetSelectionDialog(Shell parentShell, boolean multi, String[] workingSetIds) {
+		super(parentShell, workingSetIds, true);
+		initWorkbenchWindow();
 
-        contentProvider = new ArrayContentProvider();
-        labelProvider = new WorkingSetLabelProvider();
-        multiSelect = multi;
-        if (multiSelect) {
-            setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title_multiSelect);
-            setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message_multiSelect);
-        } else {
-            setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title);
-            setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message);
-        }
+		contentProvider = new ArrayContentProvider();
+		labelProvider = new WorkingSetLabelProvider();
+		multiSelect = multi;
+		if (multiSelect) {
+			setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title_multiSelect);
+			setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message_multiSelect);
+		} else {
+			setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title);
+			setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message);
+		}
 
-    }
+	}
 
-    /**
+	/**
 	 * Determine what window this dialog is being opened on. This impacts the
 	 * returned working set in the case where the user chooses the window set.
 	 *
 	 * @since 3.2
 	 */
-    private void initWorkbenchWindow() {
+	private void initWorkbenchWindow() {
 		Shell shellToCheck = getShell();
 
 		workbenchWindow = Util.getWorkbenchWindowForShell(shellToCheck);
 	}
 
-    /**
-     * Overrides method from Dialog.
-     *
-     * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-     */
-    @Override
+	/**
+	 * Overrides method from Dialog.
+	 *
+	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
+	 */
+	@Override
 	protected void cancelPressed() {
-        restoreAddedWorkingSets();
-        restoreChangedWorkingSets();
-        restoreRemovedWorkingSets();
-        setSelection(null);
-        super.cancelPressed();
-    }
+		restoreAddedWorkingSets();
+		restoreChangedWorkingSets();
+		restoreRemovedWorkingSets();
+		setSelection(null);
+		super.cancelPressed();
+	}
 
-    /**
-     * Overrides method from Window.
-     *
-     * @see org.eclipse.jface.window.Window#configureShell(Shell)
-     */
-    @Override
+	/**
+	 * Overrides method from Window.
+	 *
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IWorkbenchHelpContextIds.WORKING_SET_SELECTION_DIALOG);
-    }
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IWorkbenchHelpContextIds.WORKING_SET_SELECTION_DIALOG);
+	}
 
-    /**
-     * Overrides method from Dialog.
-     * Create the dialog widgets.
-     *
-     * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
-     */
-    @Override
+	/**
+	 * Overrides method from Dialog. Create the dialog widgets.
+	 *
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
+	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
-    	initializeDialogUnits(parent);
+		initializeDialogUnits(parent);
 
-        Composite composite = (Composite) super.createDialogArea(parent);
+		Composite composite = (Composite) super.createDialogArea(parent);
 
 		createMessageArea(composite);
 
@@ -186,8 +186,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 			buttonSelectedSets.setSelection(true);
 			break;
 		}
-		buttonSelectedSets
-				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buttonSelectedSets.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite viewerComposite = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
@@ -198,46 +197,43 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
-		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH + 300;  // fudge?  I like fudge.
+		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH + 300; // fudge? I like fudge.
 		viewerComposite.setLayoutData(data);
 
-		listViewer = CheckboxTableViewer.newCheckList(viewerComposite,
-				SWT.BORDER | SWT.MULTI);
+		listViewer = CheckboxTableViewer.newCheckList(viewerComposite, SWT.BORDER | SWT.MULTI);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		listViewer.getTable().setLayoutData(data);
 
-        listViewer.setLabelProvider(labelProvider);
-        listViewer.setContentProvider(contentProvider);
-        listViewer.setComparator(new WorkbenchViewerComparator());
+		listViewer.setLabelProvider(labelProvider);
+		listViewer.setContentProvider(contentProvider);
+		listViewer.setComparator(new WorkbenchViewerComparator());
 
-        listViewer.addFilter(new WorkingSetFilter(getSupportedWorkingSetIds()));
+		listViewer.addFilter(new WorkingSetFilter(getSupportedWorkingSetIds()));
 
-        listViewer.addSelectionChangedListener(event -> handleSelectionChanged());
-        listViewer.addDoubleClickListener(event -> {
+		listViewer.addSelectionChangedListener(event -> handleSelectionChanged());
+		listViewer.addDoubleClickListener(event -> {
 			Object obj = listViewer.getStructuredSelection().getFirstElement();
-			listViewer.setCheckedElements(new Object[] {obj});
+			listViewer.setCheckedElements(new Object[] { obj });
 			buttonWindowSet.setSelection(false);
 			buttonNoSet.setSelection(false);
 			buttonSelectedSets.setSelection(true);
 			okPressed();
 		});
-        listViewer.addCheckStateListener(event -> {
+		listViewer.addCheckStateListener(event -> {
 			// implicitly select the third radio button
 			buttonWindowSet.setSelection(false);
 			buttonNoSet.setSelection(false);
 			buttonSelectedSets.setSelection(true);
 		});
 
-        addModifyButtons(viewerComposite);
+		addModifyButtons(viewerComposite);
 
-        addSelectionButtons(composite);
+		addSelectionButtons(composite);
 
-
-		listViewer.setInput(Arrays.asList(WorkbenchPlugin.getDefault()
-				.getWorkingSetManager().getWorkingSets()));
-        List initialElementSelections = getInitialElementSelections();
+		listViewer.setInput(Arrays.asList(WorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSets()));
+		List initialElementSelections = getInitialElementSelections();
 		if (multiSelect) {
 			listViewer.setCheckedElements(initialElementSelections.toArray());
 		} else if (!initialElementSelections.isEmpty()) {
@@ -245,8 +241,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 			if (set instanceof AggregateWorkingSet) {
 				AggregateWorkingSet aggregate = (AggregateWorkingSet) set;
 				listViewer.setCheckedElements(aggregate.getComponents());
-			}
-			else {
+			} else {
 				listViewer.setCheckedElements(initialElementSelections.toArray());
 			}
 		}
@@ -255,83 +250,77 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		Dialog.applyDialogFont(composite);
 
 		return composite;
-    }
+	}
 
-    private int getInitialRadioSelection() {
-    		IWorkingSet windowSet = workbenchWindow.getActivePage().getAggregateWorkingSet();
+	private int getInitialRadioSelection() {
+		IWorkingSet windowSet = workbenchWindow.getActivePage().getAggregateWorkingSet();
 
-    		int selectionIndex;
-    		if (getSelection() != null && getSelection().length > 0) {
-    			if (windowSet.equals(getSelection()[0])) {
-    				selectionIndex = 0;
-    			}
-    			else {
-    				selectionIndex = 2;
-    			}
-    		}
-    		else {
-    			selectionIndex = 1;
-    		}
+		int selectionIndex;
+		if (getSelection() != null && getSelection().length > 0) {
+			if (windowSet.equals(getSelection()[0])) {
+				selectionIndex = 0;
+			} else {
+				selectionIndex = 2;
+			}
+		} else {
+			selectionIndex = 1;
+		}
 
 		return selectionIndex;
 	}
 
 	/**
-     * Overrides method from Dialog.
-     * Sets the initial selection, if any.
-     *
-     * @see org.eclipse.jface.dialogs.Dialog#createContents(Composite)
-     */
-    @Override
+	 * Overrides method from Dialog. Sets the initial selection, if any.
+	 *
+	 * @see org.eclipse.jface.dialogs.Dialog#createContents(Composite)
+	 */
+	@Override
 	protected Control createContents(Composite parent) {
-        Control control = super.createContents(parent);
-        List selections = getInitialElementSelections();
-        if (!selections.isEmpty()) {
-            listViewer.setSelection(new StructuredSelection(selections), true);
-        }
-        updateButtonAvailability();
-        return control;
-    }
+		Control control = super.createContents(parent);
+		List selections = getInitialElementSelections();
+		if (!selections.isEmpty()) {
+			listViewer.setSelection(new StructuredSelection(selections), true);
+		}
+		updateButtonAvailability();
+		return control;
+	}
 
-    /**
-     * Returns the selected working sets.
-     *
-     * @return the selected working sets
-     */
-    @Override
+	/**
+	 * Returns the selected working sets.
+	 *
+	 * @return the selected working sets
+	 */
+	@Override
 	protected List getSelectedWorkingSets() {
 		return listViewer.getStructuredSelection().toList();
-    }
+	}
 
-    /**
-     * Called when the selection has changed.
-     */
-    void handleSelectionChanged() {
-        updateButtonAvailability();
-    }
+	/**
+	 * Called when the selection has changed.
+	 */
+	void handleSelectionChanged() {
+		updateButtonAvailability();
+	}
 
-    /**
-     * Sets the selected working sets as the dialog result.
-     * Overrides method from Dialog
-     *
-     * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-     */
-    @Override
+	/**
+	 * Sets the selected working sets as the dialog result. Overrides method from
+	 * Dialog
+	 *
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
+	@Override
 	protected void okPressed() {
-    		if (buttonWindowSet.getSelection()) {
-    			IWorkingSet [] windowSet = new IWorkingSet[] {workbenchWindow.getActivePage().getAggregateWorkingSet()};
-    			setSelection(windowSet);
-    			setResult(Arrays.asList(getSelection()));
-    		}
-    		else if (buttonNoSet.getSelection()) {
+		if (buttonWindowSet.getSelection()) {
+			IWorkingSet[] windowSet = new IWorkingSet[] { workbenchWindow.getActivePage().getAggregateWorkingSet() };
+			setSelection(windowSet);
+			setResult(Arrays.asList(getSelection()));
+		} else if (buttonNoSet.getSelection()) {
 			setSelection(new IWorkingSet[0]);
 			setResult(Arrays.asList(getSelection()));
-    		}
-    		else if (buttonSelectedSets.getSelection()) {
+		} else if (buttonSelectedSets.getSelection()) {
 			Object[] untypedResult = listViewer.getCheckedElements();
 			IWorkingSet[] typedResult = new IWorkingSet[untypedResult.length];
-			System.arraycopy(untypedResult, 0, typedResult, 0,
-					untypedResult.length);
+			System.arraycopy(untypedResult, 0, typedResult, 0, untypedResult.length);
 			// if multiselect is allowed or there was only one selected then dont create
 			// an aggregate
 			if (multiSelect || typedResult.length <= 1) {
@@ -339,8 +328,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 				setResult(Arrays.asList(typedResult));
 			} else {
 				String setId = getAggregateIdForSets(typedResult);
-				IWorkingSetManager workingSetManager = workbenchWindow.getWorkbench()
-						.getWorkingSetManager();
+				IWorkingSetManager workingSetManager = workbenchWindow.getWorkbench().getWorkingSetManager();
 				IWorkingSet aggregate = workingSetManager.getWorkingSet(setId);
 				if (aggregate != null) {
 					workingSetManager.removeWorkingSet(aggregate);
@@ -351,86 +339,84 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 				setSelection(new IWorkingSet[] { aggregate });
 				setResult(Collections.singletonList(aggregate));
 			}
-    		}
+		}
 
-        super.okPressed();
-    }
+		super.okPressed();
+	}
 
-    /**
-	 * Create a string that represents the name of the aggregate set composed of
-	 * the supplied working sets. It's very long and not printworthy.
+	/**
+	 * Create a string that represents the name of the aggregate set composed of the
+	 * supplied working sets. It's very long and not printworthy.
 	 *
 	 * @param typedResult the sets
 	 * @return the name
 	 */
-    private String getAggregateIdForSets(IWorkingSet[] typedResult) {
-    		StringBuilder buffer = new StringBuilder();
-    		buffer.append("Aggregate:"); //$NON-NLS-1$
-    		for (IWorkingSet element : typedResult) {
+	private String getAggregateIdForSets(IWorkingSet[] typedResult) {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("Aggregate:"); //$NON-NLS-1$
+		for (IWorkingSet element : typedResult) {
 			buffer.append(element.getName()).append(':');
 		}
 		return buffer.toString();
 	}
 
 	/**
-     * Removes newly created working sets from the working set manager.
-     */
-    private void restoreAddedWorkingSets() {
-        IWorkingSetManager manager = WorkbenchPlugin.getDefault()
-                .getWorkingSetManager();
-        Iterator iterator = getAddedWorkingSets().iterator();
+	 * Removes newly created working sets from the working set manager.
+	 */
+	private void restoreAddedWorkingSets() {
+		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+		Iterator iterator = getAddedWorkingSets().iterator();
 
-        while (iterator.hasNext()) {
-            manager.removeWorkingSet(((IWorkingSet) iterator.next()));
-        }
-    }
+		while (iterator.hasNext()) {
+			manager.removeWorkingSet(((IWorkingSet) iterator.next()));
+		}
+	}
 
-    /**
-     * Rolls back changes to working sets.
-     */
-    private void restoreChangedWorkingSets() {
-        Iterator iterator = getEditedWorkingSets().keySet().iterator();
+	/**
+	 * Rolls back changes to working sets.
+	 */
+	private void restoreChangedWorkingSets() {
+		Iterator iterator = getEditedWorkingSets().keySet().iterator();
 
-        while (iterator.hasNext()) {
-            IWorkingSet editedWorkingSet = (IWorkingSet) iterator.next();
+		while (iterator.hasNext()) {
+			IWorkingSet editedWorkingSet = (IWorkingSet) iterator.next();
 			IWorkingSet originalWorkingSet = getEditedWorkingSets().get(editedWorkingSet);
 
-            if (editedWorkingSet.getName().equals(originalWorkingSet.getName()) == false) {
-                editedWorkingSet.setName(originalWorkingSet.getName());
-            }
+			if (editedWorkingSet.getName().equals(originalWorkingSet.getName()) == false) {
+				editedWorkingSet.setName(originalWorkingSet.getName());
+			}
 			if (!Arrays.equals(editedWorkingSet.getElements(), originalWorkingSet.getElements())) {
-                editedWorkingSet.setElements(originalWorkingSet.getElements());
-            }
-        }
-    }
+				editedWorkingSet.setElements(originalWorkingSet.getElements());
+			}
+		}
+	}
 
-    /**
-     * Adds back removed working sets to the working set manager.
-     */
-    private void restoreRemovedWorkingSets() {
-        IWorkingSetManager manager = WorkbenchPlugin.getDefault()
-                .getWorkingSetManager();
-        Iterator iterator = getRemovedWorkingSets().iterator();
+	/**
+	 * Adds back removed working sets to the working set manager.
+	 */
+	private void restoreRemovedWorkingSets() {
+		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+		Iterator iterator = getRemovedWorkingSets().iterator();
 
-        while (iterator.hasNext()) {
-            manager.addWorkingSet(((IWorkingSet) iterator.next()));
-        }
-        iterator = getRemovedMRUWorkingSets().iterator();
-        while (iterator.hasNext()) {
-            manager.addRecentWorkingSet(((IWorkingSet) iterator.next()));
-        }
-    }
+		while (iterator.hasNext()) {
+			manager.addWorkingSet(((IWorkingSet) iterator.next()));
+		}
+		iterator = getRemovedMRUWorkingSets().iterator();
+		while (iterator.hasNext()) {
+			manager.addRecentWorkingSet(((IWorkingSet) iterator.next()));
+		}
+	}
 
-    /**
-     * Implements IWorkingSetSelectionDialog.
-     *
-     * @see org.eclipse.ui.dialogs.IWorkingSetSelectionDialog#setSelection(IWorkingSet[])
-     */
-    @Override
+	/**
+	 * Implements IWorkingSetSelectionDialog.
+	 *
+	 * @see org.eclipse.ui.dialogs.IWorkingSetSelectionDialog#setSelection(IWorkingSet[])
+	 */
+	@Override
 	public void setSelection(IWorkingSet[] workingSets) {
-        super.setSelection(workingSets);
-        setInitialSelections(workingSets == null ? new Object[0] : workingSets);
-    }
+		super.setSelection(workingSets);
+		setInitialSelections(workingSets == null ? new Object[0] : workingSets);
+	}
 
 	@Override
 	protected void availableWorkingSetsChanged() {

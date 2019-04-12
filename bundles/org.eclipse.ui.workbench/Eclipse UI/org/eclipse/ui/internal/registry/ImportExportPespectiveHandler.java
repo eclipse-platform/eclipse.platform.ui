@@ -73,7 +73,8 @@ public class ImportExportPespectiveHandler {
 	@Inject
 	private Logger logger;
 
-	@Inject @Preference(nodePath="org.eclipse.ui.workbench")
+	@Inject
+	@Preference(nodePath = "org.eclipse.ui.workbench")
 	private IEclipsePreferences preferences;
 
 	@Inject

@@ -44,12 +44,12 @@ import org.eclipse.core.runtime.IAdaptable;
 public interface ISecondarySaveableSource {
 
 	/**
-	 * Whether the dirty state changes should be supported by the framework if
-	 * the part directly implements {@link ISecondarySaveableSource}.
+	 * Whether the dirty state changes should be supported by the framework if the
+	 * part directly implements {@link ISecondarySaveableSource}.
 	 * <p>
 	 * If the part providing the adapter is not implementing
-	 * {@link ISecondarySaveableSource}, return value defines the default
-	 * behavior of "secondary" parts connected to this part.
+	 * {@link ISecondarySaveableSource}, return value defines the default behavior
+	 * of "secondary" parts connected to this part.
 	 *
 	 * @return default implementation returns {@code false}
 	 */

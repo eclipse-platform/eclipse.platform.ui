@@ -23,8 +23,8 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Creates an animation feedback that will morph the start rectangle to the end rectangle
- * for AnimationEngine.
+ * Creates an animation feedback that will morph the start rectangle to the end
+ * rectangle for AnimationEngine.
  *
  * @since 3.3
  *
@@ -34,8 +34,7 @@ public class LegacyAnimationFeedback extends RectangleAnimationFeedbackBase {
 
 	private Region shellRegion;
 
-	public LegacyAnimationFeedback(Shell parentShell, Rectangle start,
-			Rectangle end) {
+	public LegacyAnimationFeedback(Shell parentShell, Rectangle start, Rectangle end) {
 		super(parentShell, start, end);
 	}
 
@@ -83,8 +82,8 @@ public class LegacyAnimationFeedback extends RectangleAnimationFeedbackBase {
 	}
 
 	/**
-	 * Perform any initialization you want to have happen -before- the
-	 * amination starts
+	 * Perform any initialization you want to have happen -before- the amination
+	 * starts
 	 */
 	@Override
 	public boolean jobInit(AnimationEngine engine) {
@@ -92,8 +91,7 @@ public class LegacyAnimationFeedback extends RectangleAnimationFeedbackBase {
 			return false;
 
 		// Compute the shell's bounds
-		Rectangle shellBounds = Geometry.copy((Rectangle) getStartRects()
-				.get(0));
+		Rectangle shellBounds = Geometry.copy((Rectangle) getStartRects().get(0));
 		Iterator startIter = getStartRects().iterator();
 		Iterator endIter = getEndRects().iterator();
 		while (startIter.hasNext()) {
@@ -105,7 +103,7 @@ public class LegacyAnimationFeedback extends RectangleAnimationFeedbackBase {
 		// the timer once it is visible.
 		getAnimationShell().setVisible(true);
 
-		return true;  // OK to go...
+		return true; // OK to go...
 	}
 
 }

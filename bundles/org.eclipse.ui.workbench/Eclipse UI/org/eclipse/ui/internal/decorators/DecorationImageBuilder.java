@@ -42,8 +42,7 @@ class DecorationImageBuilder {
 			rgbs[i] = new RGB(i, i, i);
 		}
 		ALPHA_PALETTE = new PaletteData(rgbs);
-		BW_PALETTE = new PaletteData(new RGB[] { new RGB(0, 0, 0),
-				new RGB(255, 255, 255) });
+		BW_PALETTE = new PaletteData(new RGB[] { new RGB(0, 0, 0), new RGB(255, 255, 255) });
 	}
 
 	private static int getTransparencyDepth(ImageData data) {
@@ -60,8 +59,7 @@ class DecorationImageBuilder {
 		return 0;
 	}
 
-	private static ImageData getTransparency(ImageData data,
-			int transparencyDepth) {
+	private static ImageData getTransparency(ImageData data, int transparencyDepth) {
 		if (data == null)
 			return null;
 		if (transparencyDepth == 1)
@@ -69,8 +67,8 @@ class DecorationImageBuilder {
 		ImageData mask = null;
 		if (data.maskData != null && data.depth == 32) {
 			ImageData m = data.getTransparencyMask();
-			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE,
-					data.width, new byte[data.width * data.height]);
+			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE, data.width,
+					new byte[data.width * data.height]);
 			for (int y = 0; y < data.height; y++) {
 				for (int x = 0; x < data.width; x++) {
 					int alpha = data.getPixel(x, y) & 0xFF;
@@ -83,25 +81,24 @@ class DecorationImageBuilder {
 			}
 		} else if (data.maskData != null || data.transparentPixel != -1) {
 			ImageData m = data.getTransparencyMask();
-			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE,
-					data.width, new byte[data.width * data.height]);
+			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE, data.width,
+					new byte[data.width * data.height]);
 			for (int y = 0; y < mask.height; y++) {
 				for (int x = 0; x < mask.width; x++) {
 					mask.setPixel(x, y, m.getPixel(x, y) != 0 ? (byte) 255 : 0);
 				}
 			}
 		} else if (data.alpha != -1) {
-			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE,
-					data.width, new byte[data.width * data.height]);
+			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE, data.width,
+					new byte[data.width * data.height]);
 			for (int i = 0; i < mask.data.length; i++) {
 				mask.data[i] = (byte) data.alpha;
 			}
 		} else if (data.alphaData != null) {
-			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE,
-					data.width, data.alphaData);
+			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE, data.width, data.alphaData);
 		} else {
-			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE,
-					data.width, new byte[data.width * data.height]);
+			mask = new ImageData(data.width, data.height, 8, ALPHA_PALETTE, data.width,
+					new byte[data.width * data.height]);
 			for (int i = 0; i < mask.data.length; i++) {
 				mask.data[i] = (byte) 255;
 			}
@@ -109,13 +106,11 @@ class DecorationImageBuilder {
 		return mask;
 	}
 
-	private static void composite(ImageData dst, ImageData src, int xOffset,
-			int yOffset) {
+	private static void composite(ImageData dst, ImageData src, int xOffset, int yOffset) {
 		if (dst.depth == 1) {
 			for (int y = 0, dstY = y + yOffset; y < src.height; y++, dstY++) {
 				for (int x = 0, dstX = x + xOffset; x < src.width; x++, dstX++) {
-					if (0 <= dstX && dstX < dst.width && 0 <= dstY
-							&& dstY < dst.height) {
+					if (0 <= dstX && dstX < dst.width && 0 <= dstY && dstY < dst.height) {
 						if (src.getPixel(x, y) != 0) {
 							dst.setPixel(dstX, dstY, 1);
 						}
@@ -125,8 +120,7 @@ class DecorationImageBuilder {
 		} else if (dst.depth == 8) {
 			for (int y = 0, dstY = y + yOffset; y < src.height; y++, dstY++) {
 				for (int x = 0, dstX = x + xOffset; x < src.width; x++, dstX++) {
-					if (0 <= dstX && dstX < dst.width && 0 <= dstY
-							&& dstY < dst.height) {
+					if (0 <= dstX && dstX < dst.width && 0 <= dstY && dstY < dst.height) {
 						int srcAlpha = src.getPixel(x, y);
 						int dstAlpha = dst.getPixel(dstX, dstY);
 						dstAlpha += (srcAlpha - dstAlpha) * srcAlpha / 255;
@@ -139,22 +133,21 @@ class DecorationImageBuilder {
 
 	/**
 	 * Create a composite image by underlaying and overlaying the base image.
+	 * 
 	 * @param device
 	 * @param base
 	 * @param overlay
 	 * @return Image
 	 */
-	static Image compositeImage(Device device, ImageData base,
-			ImageData[] overlay) {
+	static Image compositeImage(Device device, ImageData base, ImageData[] overlay) {
 		if (base == null)
 			return null;
-		Image image = new Image(device, new ImageData(base.width, base.height,
-				24, new PaletteData(0xff, 0xff00, 0xff00000)));
+		Image image = new Image(device,
+				new ImageData(base.width, base.height, 24, new PaletteData(0xff, 0xff00, 0xff00000)));
 		GC gc = new GC(image);
 		ImageData src;
 		int maskDepth = 0, baseMaskDepth = 0;
-		ImageData underlay = src = overlay.length > UNDERLAY ? overlay[UNDERLAY]
-				: null;
+		ImageData underlay = src = overlay.length > UNDERLAY ? overlay[UNDERLAY] : null;
 		if (src != null) {
 			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
 			Image img = new Image(device, src);
@@ -203,13 +196,11 @@ class DecorationImageBuilder {
 			ImageData mask = null;
 			switch (maskDepth) {
 			case 1:
-				mask = new ImageData(base.width, base.height, maskDepth,
-						BW_PALETTE);
+				mask = new ImageData(base.width, base.height, maskDepth, BW_PALETTE);
 				break;
 			case 8:
-				mask = new ImageData(base.width, base.height, maskDepth,
-						ALPHA_PALETTE, base.width, new byte[base.width
-								* base.height]);
+				mask = new ImageData(base.width, base.height, maskDepth, ALPHA_PALETTE, base.width,
+						new byte[base.width * base.height]);
 				break;
 			}
 			src = getTransparency(underlay, maskDepth);
@@ -229,8 +220,7 @@ class DecorationImageBuilder {
 				composite(mask, src, 0, mask.height - src.height);
 			src = getTransparency(bottomRight, maskDepth);
 			if (src != null)
-				composite(mask, src, mask.width - src.width, mask.height
-						- src.height);
+				composite(mask, src, mask.width - src.width, mask.height - src.height);
 			switch (maskDepth) {
 			case 1:
 				newData.maskData = mask.data;

@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 public class LockToolBarHandler extends AbstractHandler {
 
 	private static final String TOOLBAR_SEPARATOR = "toolbarSeparator"; //$NON-NLS-1$
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 

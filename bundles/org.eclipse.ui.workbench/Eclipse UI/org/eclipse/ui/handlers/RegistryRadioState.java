@@ -32,12 +32,12 @@ import org.eclipse.jface.commands.RadioState;
  * <code>default</code>, which is the default value for this item;
  * <code>persisted</code>, which is whether the state should be persisted
  * between sessions; <code>id</code>, which is the identifier of the group to
- * which this radio handler belongs. The <code>default</code> parameter
- * defaults to <code>false</code>, and the <code>persisted</code> parameter
- * defaults to <code>true</code>. If only one parameter is passed (i.e.,
- * using the class name followed by a colon), then it is assumed to be the
- * <code>id</code> parameter. The <code>id</code> is required for this class
- * to function properly.
+ * which this radio handler belongs. The <code>default</code> parameter defaults
+ * to <code>false</code>, and the <code>persisted</code> parameter defaults to
+ * <code>true</code>. If only one parameter is passed (i.e., using the class
+ * name followed by a colon), then it is assumed to be the <code>id</code>
+ * parameter. The <code>id</code> is required for this class to function
+ * properly.
  * </p>
  * <p>
  * Clients may instantiate this class, but must not extend.
@@ -45,16 +45,13 @@ import org.eclipse.jface.commands.RadioState;
  *
  * @since 3.2
  */
-public final class RegistryRadioState extends RadioState implements
-		IExecutableExtension {
+public final class RegistryRadioState extends RadioState implements IExecutableExtension {
 
 	/**
-	 * Reads the <code>default</code> parameter from the given string. This
-	 * converts the string to a boolean, using <code>true</code> as the
-	 * default.
+	 * Reads the <code>default</code> parameter from the given string. This converts
+	 * the string to a boolean, using <code>true</code> as the default.
 	 *
-	 * @param defaultString
-	 *            The string to parse; may be <code>null</code>.
+	 * @param defaultString The string to parse; may be <code>null</code>.
 	 */
 	private void readDefault(final String defaultString) {
 		if ("true".equalsIgnoreCase(defaultString)) { //$NON-NLS-1$
@@ -64,11 +61,9 @@ public final class RegistryRadioState extends RadioState implements
 
 	/**
 	 * Reads the <code>persisted</code> parameter from the given string. This
-	 * converts the string to a boolean, using <code>true</code> as the
-	 * default.
+	 * converts the string to a boolean, using <code>true</code> as the default.
 	 *
-	 * @param persistedString
-	 *            The string to parse; may be <code>null</code>.
+	 * @param persistedString The string to parse; may be <code>null</code>.
 	 */
 	private void readPersisted(final String persistedString) {
 		if ("false".equalsIgnoreCase(persistedString)) { //$NON-NLS-1$
@@ -79,9 +74,8 @@ public final class RegistryRadioState extends RadioState implements
 	}
 
 	@Override
-	public void setInitializationData(
-			final IConfigurationElement configurationElement,
-			final String propertyName, final Object data) {
+	public void setInitializationData(final IConfigurationElement configurationElement, final String propertyName,
+			final Object data) {
 		if (data instanceof String) {
 			// This is the default value.
 			setRadioGroupIdentifier((String) data);

@@ -47,9 +47,8 @@ public class IntroRegistry implements IIntroRegistry {
 
 	@Override
 	public IIntroDescriptor[] getIntros() {
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchRegistryConstants.PL_INTRO);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_INTRO);
 		if (point == null) {
 			return new IIntroDescriptor[0];
 		}
@@ -59,33 +58,27 @@ public class IntroRegistry implements IIntroRegistry {
 
 		ArrayList list = new ArrayList(extensions.length);
 		for (IExtension extension : extensions) {
-			IConfigurationElement[] elements = extension
-					.getConfigurationElements();
+			IConfigurationElement[] elements = extension.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
 				if (element.getName().equals(TAG_INTRO)) {
 					try {
-						IIntroDescriptor descriptor = new IntroDescriptor(
-								element);
+						IIntroDescriptor descriptor = new IntroDescriptor(element);
 						list.add(descriptor);
 					} catch (CoreException e) {
 						// log an error since its not safe to open a dialog here
-						WorkbenchPlugin
-								.log(
-										IntroMessages.Intro_could_not_create_descriptor, e.getStatus());
+						WorkbenchPlugin.log(IntroMessages.Intro_could_not_create_descriptor, e.getStatus());
 					}
 				}
 			}
 		}
 
-		return (IIntroDescriptor[]) list.toArray(new IIntroDescriptor[list
-				.size()]);
+		return (IIntroDescriptor[]) list.toArray(new IIntroDescriptor[list.size()]);
 	}
 
 	@Override
 	public IIntroDescriptor getIntroForProduct(String targetProductId) {
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(PlatformUI.PLUGIN_ID,
-						IWorkbenchRegistryConstants.PL_INTRO);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_INTRO);
 		if (point == null) {
 			return null;
 		}
@@ -116,22 +109,17 @@ public class IntroRegistry implements IIntroRegistry {
 	 * @param extensions
 	 * @return
 	 */
-	private String getIntroForProduct(String targetProductId,
-			IExtension[] extensions) {
+	private String getIntroForProduct(String targetProductId, IExtension[] extensions) {
 		for (IExtension extension : extensions) {
-			IConfigurationElement[] elements = extension
-					.getConfigurationElements();
+			IConfigurationElement[] elements = extension.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
 				if (element.getName().equals(TAG_INTROPRODUCTBINDING)) {
 					String introId = element.getAttribute(ATT_INTROID);
 					String productId = element.getAttribute(ATT_PRODUCTID);
 
 					if (introId == null || productId == null) {
-						IStatus status = new Status(
-								IStatus.ERROR,
-								element.getDeclaringExtension()
-										.getContributor().getName(),
-								IStatus.ERROR,
+						IStatus status = new Status(IStatus.ERROR,
+								element.getDeclaringExtension().getContributor().getName(), IStatus.ERROR,
 								"introId and productId must be defined.", new IllegalArgumentException()); //$NON-NLS-1$
 						WorkbenchPlugin.log("Invalid intro binding", status); //$NON-NLS-1$
 						continue;

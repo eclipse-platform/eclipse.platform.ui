@@ -35,8 +35,8 @@ import org.eclipse.ui.views.IViewRegistry;
 public class ViewContentProvider implements ITreeContentProvider {
 
 	/**
-	 * Child cache. Map from Object->Object[]. Our hasChildren() method is
-	 * expensive so it's better to cache the results of getChildren().
+	 * Child cache. Map from Object->Object[]. Our hasChildren() method is expensive
+	 * so it's better to cache the results of getChildren().
 	 */
 	private Map<Object, Object[]> childMap = new HashMap<>();
 
@@ -155,7 +155,6 @@ public class ViewContentProvider implements ITreeContentProvider {
 		return combinedTopElements;
 	}
 
-
 	/**
 	 * Determines if the part is a view or and editor
 	 *
@@ -168,8 +167,8 @@ public class ViewContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * Remove Eclipse introview from this list, as it opened via the Help ->
-	 * Welcome menu
+	 * Remove Eclipse introview from this list, as it opened via the Help -> Welcome
+	 * menu
 	 */
 	private boolean isIntroView(String id) {
 		return (id.equals(IIntroConstants.INTRO_VIEW_ID));

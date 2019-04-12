@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.RGB;
  * There is an associate label provider and content provider for showing
  * elements with a registered workbench adapter in JFace structured viewers.
  * </p>
+ * 
  * @see IWorkbenchAdapter
  * @see WorkbenchLabelProvider
  * @see BaseWorkbenchContentProvider
@@ -30,31 +31,31 @@ import org.eclipse.swt.graphics.RGB;
  */
 public interface IWorkbenchAdapter2 {
 
-    /**
-     * Provides a foreground color for the given element.
-     *
-     * @param element the element
-     * @return	the foreground color for the element, or <code>null</code>
-     *   to use the default foreground color
-     */
-    RGB getForeground(Object element);
+	/**
+	 * Provides a foreground color for the given element.
+	 *
+	 * @param element the element
+	 * @return the foreground color for the element, or <code>null</code> to use the
+	 *         default foreground color
+	 */
+	RGB getForeground(Object element);
 
-    /**
-     * Provides a background color for the given element.
-     *
-     * @param element the element
-     * @return	the background color for the element, or <code>null</code>
-     *   to use the default background color
-     */
-    RGB getBackground(Object element);
+	/**
+	 * Provides a background color for the given element.
+	 *
+	 * @param element the element
+	 * @return the background color for the element, or <code>null</code> to use the
+	 *         default background color
+	 */
+	RGB getBackground(Object element);
 
-    /**
-     * Provides a font the given element.
-     *
-     * @param element the element
-     * @return	the font for the element, or <code>null</code>
-     *   to use the default font
-     */
-    FontData getFont(Object element);
+	/**
+	 * Provides a font the given element.
+	 *
+	 * @param element the element
+	 * @return the font for the element, or <code>null</code> to use the default
+	 *         font
+	 */
+	FontData getFont(Object element);
 
 }

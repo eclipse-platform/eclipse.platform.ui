@@ -51,9 +51,8 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * The WorkbenchSiteProgressService is the concrete implementation of the
  * WorkbenchSiteProgressService used by the workbench components.
  */
-public class WorkbenchSiteProgressService implements
-        IWorkbenchSiteProgressService, IJobBusyListener {
-    PartSite site;
+public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressService, IJobBusyListener {
+	PartSite site;
 
 	/**
 	 * Map from Job to Boolean (non-null). Interpretation of the value:
@@ -65,15 +64,15 @@ public class WorkbenchSiteProgressService implements
 	 */
 	private Map<Job, Boolean> busyJobs = new HashMap<>();
 
-    private Object busyLock = new Object();
+	private Object busyLock = new Object();
 
-    IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[0];
+	IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[0];
 
-    private int waitCursorJobCount;
+	private int waitCursorJobCount;
 
-    private Object waitCursorLock = new Object();
+	private Object waitCursorLock = new Object();
 
-    private SiteUpdateJob updateJob;
+	private SiteUpdateJob updateJob;
 
 	/**
 	 * Flag that keeps state from calls to {@link #incrementBusy()} and
@@ -81,109 +80,107 @@ public class WorkbenchSiteProgressService implements
 	 */
 	private int busyCount = 0;
 
-    public class SiteUpdateJob extends WorkbenchJob {
-        private boolean busy;
+	public class SiteUpdateJob extends WorkbenchJob {
+		private boolean busy;
 
-        Object lock = new Object();
+		Object lock = new Object();
 
-        /**
-         * Set whether we are updating with the wait or busy cursor.
-         *
-         * @param cursorState
-         */
-        void setBusy(boolean cursorState) {
-            synchronized (lock) {
-                busy = cursorState;
-            }
-        }
+		/**
+		 * Set whether we are updating with the wait or busy cursor.
+		 *
+		 * @param cursorState
+		 */
+		void setBusy(boolean cursorState) {
+			synchronized (lock) {
+				busy = cursorState;
+			}
+		}
 
-        private SiteUpdateJob() {
-            super(ProgressMessages.WorkbenchSiteProgressService_CursorJob);
-        }
+		private SiteUpdateJob() {
+			super(ProgressMessages.WorkbenchSiteProgressService_CursorJob);
+		}
 
-        @Override
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			Control control = (Control) site.getModel().getWidget();
-            if (control == null || control.isDisposed()) {
+			if (control == null || control.isDisposed()) {
 				return Status.CANCEL_STATUS;
 			}
-            synchronized (lock) {
-                //Update cursors if we are doing that
-                Cursor cursor = null;
-                if (waitCursorJobCount !=0) {
-                	// at least one job which is running has requested for wait cursor
+			synchronized (lock) {
+				// Update cursors if we are doing that
+				Cursor cursor = null;
+				if (waitCursorJobCount != 0) {
+					// at least one job which is running has requested for wait cursor
 					cursor = control.getDisplay().getSystemCursor(SWT.CURSOR_APPSTARTING);
 				}
-                control.setCursor(cursor);
+				control.setCursor(cursor);
 				showBusy(busy);
-                IWorkbenchPart part = site.getPart();
-                 if (part instanceof WorkbenchPart) {
+				IWorkbenchPart part = site.getPart();
+				if (part instanceof WorkbenchPart) {
 					((WorkbenchPart) part).showBusy(busy);
 				}
-            }
-            return Status.OK_STATUS;
-        }
+			}
+			return Status.OK_STATUS;
+		}
 
-    }
+	}
 
-    /**
-     * Create a new instance of the receiver with a site of partSite
-     *
-     * @param partSite
-     *            PartSite.
-     */
-    public WorkbenchSiteProgressService(final PartSite partSite) {
-        site = partSite;
-        updateJob = new SiteUpdateJob();
-        updateJob.setSystem(true);
-    }
+	/**
+	 * Create a new instance of the receiver with a site of partSite
+	 *
+	 * @param partSite PartSite.
+	 */
+	public WorkbenchSiteProgressService(final PartSite partSite) {
+		site = partSite;
+		updateJob = new SiteUpdateJob();
+		updateJob.setSystem(true);
+	}
 
-    /**
-     * Dispose the resources allocated by the receiver.
-     *
-     */
-    public void dispose() {
-        if (updateJob != null) {
+	/**
+	 * Dispose the resources allocated by the receiver.
+	 *
+	 */
+	public void dispose() {
+		if (updateJob != null) {
 			updateJob.cancel();
 		}
 
-        ProgressManager.getInstance().removeListener(this);
+		ProgressManager.getInstance().removeListener(this);
 		showBusy(false);
-    }
+	}
 
-    @Override
-	public void busyCursorWhile(IRunnableWithProgress runnable)
-            throws InvocationTargetException, InterruptedException {
-        getWorkbenchProgressService().busyCursorWhile(runnable);
-    }
+	@Override
+	public void busyCursorWhile(IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+		getWorkbenchProgressService().busyCursorWhile(runnable);
+	}
 
-    @Override
+	@Override
 	public void schedule(Job job, long delay, boolean useHalfBusyCursor) {
-        job.addJobChangeListener(getJobChangeListener(useHalfBusyCursor));
-        job.schedule(delay);
-    }
+		job.addJobChangeListener(getJobChangeListener(useHalfBusyCursor));
+		job.schedule(delay);
+	}
 
-    @Override
+	@Override
 	public void schedule(Job job, long delay) {
-        schedule(job, delay, false);
-    }
+		schedule(job, delay, false);
+	}
 
-    @Override
+	@Override
 	public void schedule(Job job) {
-        schedule(job, 0L, false);
-    }
+		schedule(job, 0L, false);
+	}
 
-    @Override
+	@Override
 	public void showBusyForFamily(Object family) {
-        ProgressManager.getInstance().addListenerToFamily(family, this);
-    }
+		ProgressManager.getInstance().addListenerToFamily(family, this);
+	}
 
-    /**
-     * Get the job change listener for this site.
-     *
-     * @param useHalfBusyCursor
-     * @return IJobChangeListener
-     */
+	/**
+	 * Get the job change listener for this site.
+	 *
+	 * @param useHalfBusyCursor
+	 * @return IJobChangeListener
+	 */
 	public IJobChangeListener getJobChangeListener(final boolean useHalfBusyCursor) {
 		return new JobChangeAdapter() {
 
@@ -201,10 +198,10 @@ public class WorkbenchSiteProgressService implements
 		};
 	}
 
-    @Override
+	@Override
 	public void decrementBusy(Job job) {
 		Object halfBusyCursorState;
-        synchronized (busyLock) {
+		synchronized (busyLock) {
 			halfBusyCursorState = busyJobs.remove(job);
 			if (halfBusyCursorState == null) {
 				return;
@@ -214,27 +211,27 @@ public class WorkbenchSiteProgressService implements
 			synchronized (waitCursorLock) {
 				waitCursorJobCount--;
 			}
-        }
-        try {
-        	decrementBusy();
-        } catch (Exception ex) {
-        	// protecting against assertion failures
-        	WorkbenchPlugin.log(ex);
-        }
-    }
+		}
+		try {
+			decrementBusy();
+		} catch (Exception ex) {
+			// protecting against assertion failures
+			WorkbenchPlugin.log(ex);
+		}
+	}
 
-    @Override
+	@Override
 	public void incrementBusy(Job job) {
 		incrementBusy(job, false);
 	}
 
 	private void incrementBusy(Job job, boolean useHalfBusyCursor) {
 		Object halfBusyCursorState;
-        synchronized (busyLock) {
+		synchronized (busyLock) {
 			halfBusyCursorState = busyJobs.get(job);
 			if (useHalfBusyCursor || halfBusyCursorState != Boolean.TRUE)
 				busyJobs.put(job, Boolean.valueOf(useHalfBusyCursor));
-        }
+		}
 		if (useHalfBusyCursor && halfBusyCursorState != Boolean.TRUE) {
 			// want to set busy cursor and it has not been set before
 			synchronized (waitCursorLock) {
@@ -256,61 +253,59 @@ public class WorkbenchSiteProgressService implements
 			}
 			return;
 		}
-        incrementBusy();
-    }
+		incrementBusy();
+	}
 
-    @Override
+	@Override
 	public void warnOfContentChange() {
 		MPart part = site.getModel();
 		if (!part.getTags().contains(CSSConstants.CSS_CONTENT_CHANGE_CLASS)) {
 			part.getTags().add(CSSConstants.CSS_CONTENT_CHANGE_CLASS);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void showInDialog(Shell shell, Job job) {
-        getWorkbenchProgressService().showInDialog(shell, job);
-    }
+		getWorkbenchProgressService().showInDialog(shell, job);
+	}
 
-    /**
-     * Get the progress service for the workbnech,
-     *
-     * @return IProgressService
-     */
-    private IProgressService getWorkbenchProgressService() {
-        return site.getWorkbenchWindow().getWorkbench().getProgressService();
-    }
+	/**
+	 * Get the progress service for the workbnech,
+	 *
+	 * @return IProgressService
+	 */
+	private IProgressService getWorkbenchProgressService() {
+		return site.getWorkbenchWindow().getWorkbench().getProgressService();
+	}
 
-    @Override
-	public void run(boolean fork, boolean cancelable,
-            IRunnableWithProgress runnable) throws InvocationTargetException,
-            InterruptedException {
-        getWorkbenchProgressService().run(fork, cancelable, runnable);
-    }
+	@Override
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+			throws InvocationTargetException, InterruptedException {
+		getWorkbenchProgressService().run(fork, cancelable, runnable);
+	}
 
-    @Override
-	public void runInUI(IRunnableContext context,
-            IRunnableWithProgress runnable, ISchedulingRule rule)
-            throws InvocationTargetException, InterruptedException {
-        getWorkbenchProgressService().runInUI(context, runnable, rule);
-    }
+	@Override
+	public void runInUI(IRunnableContext context, IRunnableWithProgress runnable, ISchedulingRule rule)
+			throws InvocationTargetException, InterruptedException {
+		getWorkbenchProgressService().runInUI(context, runnable, rule);
+	}
 
-    @Override
+	@Override
 	public int getLongOperationTime() {
-        return getWorkbenchProgressService().getLongOperationTime();
-    }
+		return getWorkbenchProgressService().getLongOperationTime();
+	}
 
-    @Override
+	@Override
 	public void registerIconForFamily(ImageDescriptor icon, Object family) {
-        getWorkbenchProgressService().registerIconForFamily(icon, family);
-    }
+		getWorkbenchProgressService().registerIconForFamily(icon, family);
+	}
 
-    @Override
+	@Override
 	public Image getIconFor(Job job) {
-        return getWorkbenchProgressService().getIconFor(job);
-    }
+		return getWorkbenchProgressService().getIconFor(job);
+	}
 
-    @Override
+	@Override
 	public void incrementBusy() {
 		synchronized (busyLock) {
 			this.busyCount++;
@@ -324,14 +319,13 @@ public class WorkbenchSiteProgressService implements
 		} else {
 			updateJob.cancel();
 		}
-    }
+	}
+
 	@Override
 	public void decrementBusy() {
 		synchronized (busyLock) {
-			Assert
-					.isTrue(
-							busyCount > 0,
-							"Ignoring unexpected call to IWorkbenchSiteProgressService.decrementBusy().  This might be due to an earlier call to this method."); //$NON-NLS-1$
+			Assert.isTrue(busyCount > 0,
+					"Ignoring unexpected call to IWorkbenchSiteProgressService.decrementBusy().  This might be due to an earlier call to this method."); //$NON-NLS-1$
 			this.busyCount--;
 			if (busyCount != 0) {
 				return;
@@ -346,8 +340,8 @@ public class WorkbenchSiteProgressService implements
 	}
 
 	/**
-	 * This method is made public only for the tests.
-	 * Clients should not be using this method
+	 * This method is made public only for the tests. Clients should not be using
+	 * this method
 	 *
 	 * @return the updateJob that updates the site
 	 */

@@ -31,8 +31,8 @@ public class ViewAction extends ActionSet {
 	private IConfigurationElement parent;
 	private boolean isMenu;
 
-	public ViewAction(MApplication application, IEclipseContext appContext,
-			IConfigurationElement parent, IConfigurationElement element, boolean isMenu) {
+	public ViewAction(MApplication application, IEclipseContext appContext, IConfigurationElement parent,
+			IConfigurationElement element, boolean isMenu) {
 		super(application, appContext, element);
 		this.parent = parent;
 		this.isMenu = isMenu;
@@ -40,23 +40,21 @@ public class ViewAction extends ActionSet {
 
 	@Override
 	public void addToModel(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions,
-			ArrayList<MTrimContribution> trimContributions) {
+			ArrayList<MToolBarContribution> toolBarContributions, ArrayList<MTrimContribution> trimContributions) {
 		String idContrib = MenuHelper.getId(configElement);
 		visibleWhen = createExpression(configElement);
 
 		EContextService contextService = application.getContext().get(EContextService.class);
 		Context actionSetContext = contextService.getContext(idContrib);
 		if (!actionSetContext.isDefined()) {
-			actionSetContext.define(MenuHelper.getLabel(configElement),
-					MenuHelper.getDescription(configElement), "org.eclipse.ui.contexts.actionSet"); //$NON-NLS-1$
+			actionSetContext.define(MenuHelper.getLabel(configElement), MenuHelper.getDescription(configElement),
+					"org.eclipse.ui.contexts.actionSet"); //$NON-NLS-1$
 		}
 
 		String parentId = parent.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
 		addContribution(idContrib, menuContributions, configElement, isMenu, parentId);
 		if (!isMenu) {
-			addToolBarContribution(idContrib, toolBarContributions, trimContributions,
-					configElement, parentId);
+			addToolBarContribution(idContrib, toolBarContributions, trimContributions, configElement, parentId);
 		}
 	}
 

@@ -36,13 +36,12 @@ public final class ColorUtil {
 	/**
 	 * Process the given string and return a corresponding RGB object.
 	 *
-	 * @param value
-	 *            the SWT constant <code>String</code>
-	 * @return the value of the SWT constant, or <code>SWT.COLOR_BLACK</code>
-	 *         if it could not be determined
+	 * @param value the SWT constant <code>String</code>
+	 * @return the value of the SWT constant, or <code>SWT.COLOR_BLACK</code> if it
+	 *         could not be determined
 	 */
 	private static RGB process(String value) {
-		Field [] fields = getFields();
+		Field[] fields = getFields();
 		try {
 			for (Field field : fields) {
 				if (field.getName().equals(value)) {
@@ -72,10 +71,8 @@ public final class ColorUtil {
 			ArrayList<Field> applicableFields = new ArrayList<>(allFields.length);
 
 			for (Field field : allFields) {
-				if (field.getType() == Integer.TYPE
-						&& Modifier.isStatic(field.getModifiers())
-						&& Modifier.isPublic(field.getModifiers())
-						&& Modifier.isFinal(field.getModifiers())
+				if (field.getType() == Integer.TYPE && Modifier.isStatic(field.getModifiers())
+						&& Modifier.isPublic(field.getModifiers()) && Modifier.isFinal(field.getModifiers())
 						&& field.getName().startsWith("COLOR")) { //$NON-NLS-1$
 
 					applicableFields.add(field);
@@ -89,12 +86,9 @@ public final class ColorUtil {
 	/**
 	 * Blends the two color values according to the provided ratio.
 	 *
-	 * @param c1
-	 *            first color
-	 * @param c2
-	 *            second color
-	 * @param ratio
-	 *            percentage of the first color in the blend (0-100)
+	 * @param c1    first color
+	 * @param c2    second color
+	 * @param ratio percentage of the first color in the blend (0-100)
 	 * @return the RGB value of the blended color
 	 *
 	 * @since 3.3
@@ -112,13 +106,10 @@ public final class ColorUtil {
 	}
 
 	/**
-	 * Blend the two color values returning a value that is halfway between
-	 * them.
+	 * Blend the two color values returning a value that is halfway between them.
 	 *
-	 * @param val1
-	 *            the first value
-	 * @param val2
-	 *            the second value
+	 * @param val1 the first value
+	 * @param val2 the second value
 	 * @return the blended color
 	 */
 	public static RGB blend(RGB val1, RGB val2) {
@@ -129,13 +120,10 @@ public final class ColorUtil {
 	}
 
 	/**
-	 * Blend the two color values returning a value that is halfway between
-	 * them.
+	 * Blend the two color values returning a value that is halfway between them.
 	 *
-	 * @param temp1
-	 *            the first value
-	 * @param temp2
-	 *            the second value
+	 * @param temp1 the first value
+	 * @param temp2 the second value
 	 * @return the blended int value
 	 */
 	private static int blend(int temp1, int temp2) {
@@ -145,8 +133,7 @@ public final class ColorUtil {
 	/**
 	 * Return the system color that matches the provided SWT constant value.
 	 *
-	 * @param colorId
-	 *            the system color identifier
+	 * @param colorId the system color identifier
 	 * @return the RGB value of the supplied system color
 	 */
 	private static RGB getSystemColor(int colorId) {
@@ -156,11 +143,10 @@ public final class ColorUtil {
 	/**
 	 * Get the RGB value for a given color.
 	 *
-	 * @param rawValue
-	 *            the raw value, either an RGB triple or an SWT constant name
+	 * @param rawValue the raw value, either an RGB triple or an SWT constant name
 	 * @return the RGB value
-	 * @throws DataFormatException
-	 *             thrown if the value cannot be interpreted as a color
+	 * @throws DataFormatException thrown if the value cannot be interpreted as a
+	 *                             color
 	 */
 	public static RGB getColorValue(String rawValue) throws DataFormatException {
 		if (rawValue == null) {
@@ -179,8 +165,7 @@ public final class ColorUtil {
 	/**
 	 * Get the RGB values for a given color array.
 	 *
-	 * @param rawValues
-	 *            the raw values, either RGB triple or an SWT constant
+	 * @param rawValues the raw values, either RGB triple or an SWT constant
 	 * @return the RGB values
 	 */
 	public static RGB[] getColorValues(String[] rawValues) {
@@ -192,11 +177,11 @@ public final class ColorUtil {
 	}
 
 	/**
-	 * Return whether the value returned by <code>getValue()</code> is already
-	 * in RGB form.
+	 * Return whether the value returned by <code>getValue()</code> is already in
+	 * RGB form.
 	 *
-	 * @return whether the value returned by <code>getValue()</code> is
-	 *         already in RGB form
+	 * @return whether the value returned by <code>getValue()</code> is already in
+	 *         RGB form
 	 */
 	private static boolean isDirectValue(String rawValue) {
 		return rawValue.indexOf(',') >= 0;

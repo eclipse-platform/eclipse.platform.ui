@@ -35,23 +35,21 @@ public class WorkbenchWindowExpression extends Expression {
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = WorkbenchWindowExpression.class
-			.getName().hashCode();
+	private static final int HASH_INITIAL = WorkbenchWindowExpression.class.getName().hashCode();
 
 	/**
-	 * The workbench window that must be active for this expression to evaluate
-	 * to <code>true</code>. If this value is <code>null</code>, then any
-	 * workbench window may be active.
+	 * The workbench window that must be active for this expression to evaluate to
+	 * <code>true</code>. If this value is <code>null</code>, then any workbench
+	 * window may be active.
 	 */
 	private final IWorkbenchWindow window;
 
 	/**
 	 * Constructs a new instance.
 	 *
-	 * @param window
-	 *            The workbench window which must be active for this expression
-	 *            to evaluate to <code>true</code>; may be <code>null</code>
-	 *            if this expression is always <code>true</code>.
+	 * @param window The workbench window which must be active for this expression
+	 *               to evaluate to <code>true</code>; may be <code>null</code> if
+	 *               this expression is always <code>true</code>.
 	 */
 	public WorkbenchWindowExpression(final IWorkbenchWindow window) {
 		this.window = window;
@@ -80,11 +78,9 @@ public class WorkbenchWindowExpression extends Expression {
 	}
 
 	@Override
-	public EvaluationResult evaluate(final IEvaluationContext context)
-			throws CoreException {
+	public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 		if (window != null) {
-			Object value = context
-					.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+			Object value = context.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
 			if (window.equals(value)) {
 				return EvaluationResult.TRUE;
 			}
@@ -112,4 +108,3 @@ public class WorkbenchWindowExpression extends Expression {
 		return buffer.toString();
 	}
 }
-

@@ -46,8 +46,7 @@ public class CloseAllHandler extends AbstractEvaluationHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
 			page.closeAllEditors(true);
@@ -61,8 +60,7 @@ public class CloseAllHandler extends AbstractEvaluationHandler {
 		if (enabledWhen == null) {
 			enabledWhen = new Expression() {
 				@Override
-				public EvaluationResult evaluate(IEvaluationContext context)
-						throws CoreException {
+				public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 					IWorkbenchPart part = InternalHandlerUtil.getActivePart(context);
 					Object perspective = InternalHandlerUtil.getVariable(context,
 							ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);

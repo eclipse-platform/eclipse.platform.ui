@@ -51,15 +51,15 @@ public class QuickAccessEntry {
 
 	/**
 	 * Provides a rough indicator of how good of a match this entry was to its
-	 * filter. Lower values indicate better match quality. A value of 0
-	 * indicates the filter string was an exact match to the label or that there
-	 * is no filter being applied.
+	 * filter. Lower values indicate better match quality. A value of 0 indicates
+	 * the filter string was an exact match to the label or that there is no filter
+	 * being applied.
 	 */
 	private int matchQuality;
 
 	/**
-	 * Indicates the filter string was a perfect match to the label or there is
-	 * no filter applied
+	 * Indicates the filter string was a perfect match to the label or there is no
+	 * filter applied
 	 *
 	 * @see #getMatchQuality()
 	 */
@@ -67,17 +67,17 @@ public class QuickAccessEntry {
 
 	/**
 	 * Indicates this entry is very relevant for the filter string. Recommended
-	 * value for when the filter was found at the start of the element's label
-	 * or a complete case sensitive camel case match.
+	 * value for when the filter was found at the start of the element's label or a
+	 * complete case sensitive camel case match.
 	 *
 	 * @see #getMatchQuality()
 	 */
 	public static final int MATCH_EXCELLENT = 5;
 
 	/**
-	 * Indicates this entry is relevant for the filter string. Recommended value
-	 * for when the complete filter was found somewhere inside the element's
-	 * label or provider.
+	 * Indicates this entry is relevant for the filter string. Recommended value for
+	 * when the complete filter was found somewhere inside the element's label or
+	 * provider.
 	 *
 	 * @see #getMatchQuality()
 	 */
@@ -91,29 +91,25 @@ public class QuickAccessEntry {
 	public static final int MATCH_PARTIAL = 15;
 
 	/**
-	 * Creates a new quick access entry from the given element and provider. If
-	 * no filter was used to match this entry the element/provider match regions
-	 * may be empty and the match quality should be {@link #MATCH_PERFECT}
+	 * Creates a new quick access entry from the given element and provider. If no
+	 * filter was used to match this entry the element/provider match regions may be
+	 * empty and the match quality should be {@link #MATCH_PERFECT}
 	 *
-	 * @param element
-	 *            the element this entry will represent
-	 * @param provider
-	 *            the provider that owns this entry
-	 * @param elementMatchRegions
-	 *            list of text regions the filter string matched in the element
-	 *            label, possibly empty
-	 * @param providerMatchRegions
-	 *            list of text regions the filter string matches in the provider
-	 *            label, possible empty
-	 * @param matchQuality
-	 *            a rough indication of how closely the filter matched, lower
-	 *            values indicate a better match. It is recommended to use the
-	 *            constants available on this class: {@link #MATCH_PERFECT},
-	 *            {@link #MATCH_EXCELLENT}, {@link #MATCH_GOOD},
-	 *            {@link #MATCH_PARTIAL}
+	 * @param element              the element this entry will represent
+	 * @param provider             the provider that owns this entry
+	 * @param elementMatchRegions  list of text regions the filter string matched in
+	 *                             the element label, possibly empty
+	 * @param providerMatchRegions list of text regions the filter string matches in
+	 *                             the provider label, possible empty
+	 * @param matchQuality         a rough indication of how closely the filter
+	 *                             matched, lower values indicate a better match. It
+	 *                             is recommended to use the constants available on
+	 *                             this class: {@link #MATCH_PERFECT},
+	 *                             {@link #MATCH_EXCELLENT}, {@link #MATCH_GOOD},
+	 *                             {@link #MATCH_PARTIAL}
 	 */
-	public QuickAccessEntry(QuickAccessElement element, QuickAccessProvider provider,
-			int[][] elementMatchRegions, int[][] providerMatchRegions, int matchQuality) {
+	public QuickAccessEntry(QuickAccessElement element, QuickAccessProvider provider, int[][] elementMatchRegions,
+			int[][] providerMatchRegions, int matchQuality) {
 		this.element = element;
 		this.provider = provider;
 		this.elementMatchRegions = elementMatchRegions;
@@ -122,17 +118,14 @@ public class QuickAccessEntry {
 	}
 
 	Image getImage(QuickAccessElement element, ResourceManager resourceManager) {
-		Image image = findOrCreateImage(element.getImageDescriptor(),
-				resourceManager);
+		Image image = findOrCreateImage(element.getImageDescriptor(), resourceManager);
 		if (image == null) {
-			image = WorkbenchImages
-					.getImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT);
+			image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT);
 		}
 		return image;
 	}
 
-	private Image findOrCreateImage(ImageDescriptor imageDescriptor,
-			ResourceManager resourceManager) {
+	private Image findOrCreateImage(ImageDescriptor imageDescriptor, ResourceManager resourceManager) {
 		if (imageDescriptor == null) {
 			return null;
 		}
@@ -147,8 +140,7 @@ public class QuickAccessEntry {
 		return image;
 	}
 
-	public void measure(Event event, TextLayout textLayout,
-			ResourceManager resourceManager, TextStyle boldStyle) {
+	public void measure(Event event, TextLayout textLayout, ResourceManager resourceManager, TextStyle boldStyle) {
 		Table table = ((TableItem) event.item).getParent();
 		textLayout.setFont(table.getFont());
 		event.width = 0;
@@ -194,8 +186,8 @@ public class QuickAccessEntry {
 		event.height = Math.max(event.height, rect.height + 2);
 	}
 
-	public void paint(Event event, TextLayout textLayout,
-			ResourceManager resourceManager, TextStyle boldStyle, Color grayColor) {
+	public void paint(Event event, TextLayout textLayout, ResourceManager resourceManager, TextStyle boldStyle,
+			Color grayColor) {
 		final Table table = ((TableItem) event.item).getParent();
 		textLayout.setFont(table.getFont());
 		switch (event.index) {
@@ -204,8 +196,7 @@ public class QuickAccessEntry {
 				textLayout.setText(provider.getName());
 				if (boldStyle != null) {
 					for (int[] matchRegion : providerMatchRegions) {
-						textLayout.setStyle(boldStyle, matchRegion[0],
-								matchRegion[1]);
+						textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);
 					}
 				}
 				if (grayColor != null && providerMatchRegions.length > 0 && !firstInCategory) {
@@ -213,8 +204,8 @@ public class QuickAccessEntry {
 				}
 				Rectangle availableBounds = ((TableItem) event.item).getTextBounds(event.index);
 				Rectangle requiredBounds = textLayout.getBounds();
-				textLayout.draw(event.gc, availableBounds.x + 1, availableBounds.y
-						+ (availableBounds.height - requiredBounds.height) / 2);
+				textLayout.draw(event.gc, availableBounds.x + 1,
+						availableBounds.y + (availableBounds.height - requiredBounds.height) / 2);
 			}
 			break;
 		case 1:
@@ -224,12 +215,10 @@ public class QuickAccessEntry {
 				String binding = commandElement.getBinding();
 				if (binding != null) {
 					StyledString styledString = StyledCellLabelProvider.styleDecoratedString(label,
-							StyledString.QUALIFIER_STYLER, new StyledString(commandElement
-									.getCommand()));
+							StyledString.QUALIFIER_STYLER, new StyledString(commandElement.getCommand()));
 					StyleRange[] styleRanges = styledString.getStyleRanges();
 					for (StyleRange styleRange : styleRanges) {
-						textLayout.setStyle(styleRange, styleRange.start,
-								styleRange.start + styleRange.length);
+						textLayout.setStyle(styleRange, styleRange.start, styleRange.start + styleRange.length);
 					}
 				}
 			}
@@ -247,9 +236,8 @@ public class QuickAccessEntry {
 			// category separator
 			int startX = (maxImageSize - destWidth) / 2;
 			int startY = (availableBounds.height - 1 - destHeight) / 2;
-			event.gc.drawImage(image, 0, 0, imageBounds.width, imageBounds.height,
-					availableBounds.x + startX, availableBounds.y + startY,
-					destWidth, destHeight);
+			event.gc.drawImage(image, 0, 0, imageBounds.width, imageBounds.height, availableBounds.x + startX,
+					availableBounds.y + startY, destWidth, destHeight);
 			textLayout.setText(label);
 			if (boldStyle != null) {
 				for (int[] matchRegion : elementMatchRegions) {
@@ -263,9 +251,9 @@ public class QuickAccessEntry {
 		if (lastInCategory) {
 			if (grayColor != null)
 				event.gc.setForeground(grayColor);
-			Rectangle bounds = ((TableItem)event.item).getBounds(event.index);
-			event.gc.drawLine(Math.max(0, bounds.x - 1), bounds.y + bounds.height - 1, bounds.x + bounds.width, bounds.y
-					+ bounds.height - 1);
+			Rectangle bounds = ((TableItem) event.item).getBounds(event.index);
+			event.gc.drawLine(Math.max(0, bounds.x - 1), bounds.y + bounds.height - 1, bounds.x + bounds.width,
+					bounds.y + bounds.height - 1);
 		}
 	}
 
@@ -280,8 +268,8 @@ public class QuickAccessEntry {
 	/**
 	 * Provides a rough indicator of how good of a match this entry was to its
 	 * filter. Lower values indicate better match quality. A value of
-	 * {@link #MATCH_PERFECT} indicates the filter string was an exact match to
-	 * the label or that there is no filter being applied.
+	 * {@link #MATCH_PERFECT} indicates the filter string was an exact match to the
+	 * label or that there is no filter being applied.
 	 *
 	 * @return Returns the match quality
 	 */

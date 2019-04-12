@@ -21,68 +21,68 @@ package org.eclipse.ui;
  */
 public abstract class NavigationLocation implements INavigationLocation {
 
-    private IWorkbenchPage page;
+	private IWorkbenchPage page;
 
-    private IEditorInput input;
+	private IEditorInput input;
 
-    /**
-     * Constructs a NavigationLocation with its editor part.
-     *
-     * @param editorPart
-     */
-    protected NavigationLocation(IEditorPart editorPart) {
-        this.page = editorPart.getSite().getPage();
-        this.input = editorPart.getEditorInput();
-    }
+	/**
+	 * Constructs a NavigationLocation with its editor part.
+	 *
+	 * @param editorPart
+	 */
+	protected NavigationLocation(IEditorPart editorPart) {
+		this.page = editorPart.getSite().getPage();
+		this.input = editorPart.getEditorInput();
+	}
 
-    /**
-     * Returns the part that the receiver holds the location for.
-     *
-     * @return IEditorPart
-     */
-    protected IEditorPart getEditorPart() {
-        if (input == null) {
+	/**
+	 * Returns the part that the receiver holds the location for.
+	 *
+	 * @return IEditorPart
+	 */
+	protected IEditorPart getEditorPart() {
+		if (input == null) {
 			return null;
 		}
-        return page.findEditor(input);
-    }
+		return page.findEditor(input);
+	}
 
-    @Override
+	@Override
 	public Object getInput() {
-        return input;
-    }
+		return input;
+	}
 
-    @Override
+	@Override
 	public String getText() {
-        IEditorPart part = getEditorPart();
-        if (part == null) {
+		IEditorPart part = getEditorPart();
+		if (part == null) {
 			return ""; //$NON-NLS-1$
 		}
-        return part.getTitle();
-    }
+		return part.getTitle();
+	}
 
-    @Override
+	@Override
 	public void setInput(Object input) {
-        this.input = (IEditorInput) input;
-    }
+		this.input = (IEditorInput) input;
+	}
 
-    /**
-     * May be extended by clients.
-     *
-     * @see org.eclipse.ui.INavigationLocation#dispose()
-     */
-    @Override
+	/**
+	 * May be extended by clients.
+	 *
+	 * @see org.eclipse.ui.INavigationLocation#dispose()
+	 */
+	@Override
 	public void dispose() {
-        releaseState();
-    }
+		releaseState();
+	}
 
-    /**
-     * May be extended by clients.
-     *
-     * @see org.eclipse.ui.INavigationLocation#releaseState()
-     */
-    @Override
+	/**
+	 * May be extended by clients.
+	 *
+	 * @see org.eclipse.ui.INavigationLocation#releaseState()
+	 */
+	@Override
 	public void releaseState() {
-        input = null;
-    }
+		input = null;
+	}
 }

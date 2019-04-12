@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.ui.quickaccess;
 
-
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**

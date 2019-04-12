@@ -69,9 +69,8 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * A contribution item which delegates to a command. It can be used in {@link
- * AbstractContributionFactory#createContributionItems(IServiceLocator,
- * IContributionRoot)}.
+ * A contribution item which delegates to a command. It can be used in
+ * {@link AbstractContributionFactory#createContributionItems(IServiceLocator, IContributionRoot)}.
  * <p>
  * It currently supports placement in menus and toolbars.
  * </p>
@@ -104,9 +103,9 @@ public class CommandContributionItem extends ContributionItem {
 	public static final int STYLE_PULLDOWN = SWT.DROP_DOWN;
 
 	/**
-	 * Mode bit: Show text on tool items or buttons, even if an image is
-	 * present. If this mode bit is not set, text is only shown on tool items if
-	 * there is no image present.
+	 * Mode bit: Show text on tool items or buttons, even if an image is present. If
+	 * this mode bit is not set, text is only shown on tool items if there is no
+	 * image present.
 	 *
 	 * @since 3.4
 	 */
@@ -180,12 +179,11 @@ public class CommandContributionItem extends ContributionItem {
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 *
-	 * @param contributionParameters
-	 * 		parameters necessary to render this contribution item.
+	 * @param contributionParameters parameters necessary to render this
+	 *                               contribution item.
 	 * @since 3.4
 	 */
-	public CommandContributionItem(
-			CommandContributionItemParameter contributionParameters) {
+	public CommandContributionItem(CommandContributionItemParameter contributionParameters) {
 		super(contributionParameters.id);
 
 		contributedLabel = contributionParameters.label;
@@ -194,7 +192,6 @@ public class CommandContributionItem extends ContributionItem {
 		contributedDisabledIcon = contributionParameters.disabledIcon;
 		contributedHoverIcon = contributionParameters.hoverIcon;
 		this.serviceLocator = contributionParameters.serviceLocator;
-
 
 		this.icon = contributionParameters.icon;
 		this.disabledIcon = contributionParameters.disabledIcon;
@@ -207,38 +204,32 @@ public class CommandContributionItem extends ContributionItem {
 		this.visibleEnabled = contributionParameters.visibleEnabled;
 		this.mode = contributionParameters.mode;
 
-		menuService = contributionParameters.serviceLocator
-				.getService(IMenuService.class);
-		commandService = contributionParameters.serviceLocator
-				.getService(ICommandService.class);
-		handlerService = contributionParameters.serviceLocator
-				.getService(IHandlerService.class);
-		bindingService = contributionParameters.serviceLocator
-				.getService(IBindingService.class);
-		IWorkbenchLocationService workbenchLocationService = contributionParameters.serviceLocator.getService(IWorkbenchLocationService.class);
+		menuService = contributionParameters.serviceLocator.getService(IMenuService.class);
+		commandService = contributionParameters.serviceLocator.getService(ICommandService.class);
+		handlerService = contributionParameters.serviceLocator.getService(IHandlerService.class);
+		bindingService = contributionParameters.serviceLocator.getService(IBindingService.class);
+		IWorkbenchLocationService workbenchLocationService = contributionParameters.serviceLocator
+				.getService(IWorkbenchLocationService.class);
 		display = workbenchLocationService.getWorkbench().getDisplay();
 
-		createCommand(contributionParameters.commandId,
-				contributionParameters.parameters);
+		createCommand(contributionParameters.commandId, contributionParameters.parameters);
 
 		if (command != null) {
-				setImages(contributionParameters.serviceLocator,
-						contributionParameters.iconStyle);
+			setImages(contributionParameters.serviceLocator, contributionParameters.iconStyle);
 
-				if (contributionParameters.helpContextId == null) {
-					try {
-						this.helpContextId = commandService
-								.getHelpContextId(contributionParameters.commandId);
-					} catch (NotDefinedException e) {
-						// it's OK to not have a helpContextId
-					}
+			if (contributionParameters.helpContextId == null) {
+				try {
+					this.helpContextId = commandService.getHelpContextId(contributionParameters.commandId);
+				} catch (NotDefinedException e) {
+					// it's OK to not have a helpContextId
 				}
-				IWorkbenchLocationService wls = contributionParameters.serviceLocator
-						.getService(IWorkbenchLocationService.class);
-				final IWorkbench workbench = wls.getWorkbench();
-				if (workbench != null && helpContextId != null) {
-					this.workbenchHelpSystem = workbench.getHelpSystem();
-				}
+			}
+			IWorkbenchLocationService wls = contributionParameters.serviceLocator
+					.getService(IWorkbenchLocationService.class);
+			final IWorkbench workbench = wls.getWorkbench();
+			if (workbench != null && helpContextId != null) {
+				this.workbenchHelpSystem = workbench.getHelpSystem();
+			}
 		}
 
 	}
@@ -246,57 +237,45 @@ public class CommandContributionItem extends ContributionItem {
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 *
-	 * @param serviceLocator
-	 * 		a service locator that is most appropriate for this contribution.
-	 * 		Typically the local {@link IWorkbenchWindow} or {@link
-	 * 		IWorkbenchPartSite} will be sufficient.
-	 * @param id
-	 * 		The id for this item. May be <code>null</code>. Items without an id
-	 * 		cannot be referenced later.
-	 * @param commandId
-	 * 		A command id for a defined command. Must not be <code>null</code>.
-	 * @param parameters
-	 * 		A map of strings to strings which represent parameter names to
-	 * 		values. The parameter names must match those in the command
-	 * 		definition.
-	 * @param icon
-	 * 		An icon for this item. May be <code>null</code>.
-	 * @param disabledIcon
-	 * 		A disabled icon for this item. May be <code>null</code>.
-	 * @param hoverIcon
-	 * 		A hover icon for this item. May be <code>null</code>.
-	 * @param label
-	 * 		A label for this item. May be <code>null</code>.
-	 * @param mnemonic
-	 * 		A mnemonic for this item to be applied to the label. May be
-	 * 		<code>null</code>.
-	 * @param tooltip
-	 * 		A tooltip for this item. May be <code>null</code>. Tooltips are
-	 * 		currently only valid for toolbar contributions.
-	 * @param style
-	 * 		The style of this menu contribution. See the STYLE_* contants.
+	 * @param serviceLocator a service locator that is most appropriate for this
+	 *                       contribution. Typically the local
+	 *                       {@link IWorkbenchWindow} or {@link IWorkbenchPartSite}
+	 *                       will be sufficient.
+	 * @param id             The id for this item. May be <code>null</code>. Items
+	 *                       without an id cannot be referenced later.
+	 * @param commandId      A command id for a defined command. Must not be
+	 *                       <code>null</code>.
+	 * @param parameters     A map of strings to strings which represent parameter
+	 *                       names to values. The parameter names must match those
+	 *                       in the command definition.
+	 * @param icon           An icon for this item. May be <code>null</code>.
+	 * @param disabledIcon   A disabled icon for this item. May be
+	 *                       <code>null</code>.
+	 * @param hoverIcon      A hover icon for this item. May be <code>null</code>.
+	 * @param label          A label for this item. May be <code>null</code>.
+	 * @param mnemonic       A mnemonic for this item to be applied to the label.
+	 *                       May be <code>null</code>.
+	 * @param tooltip        A tooltip for this item. May be <code>null</code>.
+	 *                       Tooltips are currently only valid for toolbar
+	 *                       contributions.
+	 * @param style          The style of this menu contribution. See the STYLE_*
+	 *                       contants.
 	 * @deprecated create the {@link CommandContributionItemParameter}
 	 */
 	@Deprecated
-	public CommandContributionItem(IServiceLocator serviceLocator, String id,
-			String commandId, Map parameters, ImageDescriptor icon,
-			ImageDescriptor disabledIcon, ImageDescriptor hoverIcon,
-			String label, String mnemonic, String tooltip, int style) {
-		this(new CommandContributionItemParameter(serviceLocator, id,
-				commandId, parameters, icon, disabledIcon, hoverIcon, label,
-				mnemonic, tooltip, style, null, false));
+	public CommandContributionItem(IServiceLocator serviceLocator, String id, String commandId, Map parameters,
+			ImageDescriptor icon, ImageDescriptor disabledIcon, ImageDescriptor hoverIcon, String label,
+			String mnemonic, String tooltip, int style) {
+		this(new CommandContributionItemParameter(serviceLocator, id, commandId, parameters, icon, disabledIcon,
+				hoverIcon, label, mnemonic, tooltip, style, null, false));
 	}
 
 	private void setImages(IServiceLocator locator, String iconStyle) {
 		if (icon == null) {
-			ICommandImageService service = locator
-					.getService(ICommandImageService.class);
-			icon = service.getImageDescriptor(command.getId(),
-					ICommandImageService.TYPE_DEFAULT, iconStyle);
-			disabledIcon = service.getImageDescriptor(command.getId(),
-					ICommandImageService.TYPE_DISABLED, iconStyle);
-			hoverIcon = service.getImageDescriptor(command.getId(),
-					ICommandImageService.TYPE_HOVER, iconStyle);
+			ICommandImageService service = locator.getService(ICommandImageService.class);
+			icon = service.getImageDescriptor(command.getId(), ICommandImageService.TYPE_DEFAULT, iconStyle);
+			disabledIcon = service.getImageDescriptor(command.getId(), ICommandImageService.TYPE_DISABLED, iconStyle);
+			hoverIcon = service.getImageDescriptor(command.getId(), ICommandImageService.TYPE_HOVER, iconStyle);
 
 			if (contributedIcon == null)
 				contributedIcon = icon;
@@ -310,8 +289,7 @@ public class CommandContributionItem extends ContributionItem {
 	private ICommandListener getCommandListener() {
 		if (commandListener == null) {
 			commandListener = commandEvent -> {
-				if (commandEvent.isHandledChanged()
-						|| commandEvent.isEnabledChanged()
+				if (commandEvent.isHandledChanged() || commandEvent.isEnabledChanged()
 						|| commandEvent.isDefinedChanged()) {
 					updateCommandProperties(commandEvent);
 				}
@@ -325,8 +303,7 @@ public class CommandContributionItem extends ContributionItem {
 			dropDownMenuOverride = null;
 		}
 		Runnable update = () -> {
-			if (commandEvent.isEnabledChanged()
-					|| commandEvent.isHandledChanged()) {
+			if (commandEvent.isEnabledChanged() || commandEvent.isHandledChanged()) {
 				if (visibleEnabled) {
 					IContributionManager parent = getParent();
 					if (parent != null) {
@@ -375,9 +352,8 @@ public class CommandContributionItem extends ContributionItem {
 	/**
 	 * Returns the ParameterizedCommand for this contribution.
 	 * <p>
-	 * <strong>NOTE:</strong> The returned object should be treated as
-	 * 'read-only', do <b>not</b> execute this instance or attempt to modify its
-	 * state.
+	 * <strong>NOTE:</strong> The returned object should be treated as 'read-only',
+	 * do <b>not</b> execute this instance or attempt to modify its state.
 	 * </p>
 	 *
 	 * @return The parameterized command for this contribution.
@@ -390,22 +366,16 @@ public class CommandContributionItem extends ContributionItem {
 
 	void createCommand(String commandId, Map parameters) {
 		if (commandId == null) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							"Unable to create menu item \"" + getId() //$NON-NLS-1$
-									+ "\", no command id", null)); //$NON-NLS-1$
+			StatusManager.getManager()
+					.handle(StatusUtil.newStatus(IStatus.ERROR, "Unable to create menu item \"" + getId() //$NON-NLS-1$
+							+ "\", no command id", null)); //$NON-NLS-1$
 			return;
 		}
 		Command cmd = commandService.getCommand(commandId);
 		if (!cmd.isDefined()) {
-			StatusManager
-					.getManager()
-					.handle(
-							StatusUtil
-									.newStatus(
-											IStatus.ERROR,
-											"Unable to create menu item \"" + getId() //$NON-NLS-1$
-													+ "\", command \"" + commandId + "\" not defined", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			StatusManager.getManager()
+					.handle(StatusUtil.newStatus(IStatus.ERROR, "Unable to create menu item \"" + getId() //$NON-NLS-1$
+							+ "\", command \"" + commandId + "\" not defined", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		command = ParameterizedCommand.generateCommand(cmd, parameters);
@@ -529,10 +499,8 @@ public class CommandContributionItem extends ContributionItem {
 				try {
 					text = command.getCommand().getName();
 				} catch (NotDefinedException e) {
-					StatusManager.getManager().handle(
-							StatusUtil.newStatus(IStatus.ERROR,
-									"Update item failed " //$NON-NLS-1$
-											+ getId(), e));
+					StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, "Update item failed " //$NON-NLS-1$
+							+ getId(), e));
 				}
 			}
 		}
@@ -540,8 +508,7 @@ public class CommandContributionItem extends ContributionItem {
 
 		String keyBindingText = null;
 		if (command != null) {
-			TriggerSequence binding = bindingService
-					.getBestActiveBindingFor(command);
+			TriggerSequence binding = bindingService.getBestActiveBindingFor(command);
 			if (binding != null) {
 				keyBindingText = binding.format();
 			}
@@ -581,16 +548,13 @@ public class CommandContributionItem extends ContributionItem {
 						tooltip = text;
 					}
 				} catch (NotDefinedException e) {
-					StatusManager.getManager().handle(
-							StatusUtil.newStatus(IStatus.ERROR,
-									"Update item failed " //$NON-NLS-1$
-											+ getId(), e));
+					StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, "Update item failed " //$NON-NLS-1$
+							+ getId(), e));
 				}
 			}
 		}
 
-		if ((icon == null || (mode & MODE_FORCE_TEXT) == MODE_FORCE_TEXT)
-				&& text != null) {
+		if ((icon == null || (mode & MODE_FORCE_TEXT) == MODE_FORCE_TEXT) && text != null) {
 			item.setText(text);
 		}
 
@@ -618,10 +582,8 @@ public class CommandContributionItem extends ContributionItem {
 				try {
 					text = command.getCommand().getName();
 				} catch (NotDefinedException e) {
-					StatusManager.getManager().handle(
-							StatusUtil.newStatus(IStatus.ERROR,
-									"Update item failed " //$NON-NLS-1$
-											+ getId(), e));
+					StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, "Update item failed " //$NON-NLS-1$
+							+ getId(), e));
 				}
 			}
 		}
@@ -653,14 +615,11 @@ public class CommandContributionItem extends ContributionItem {
 			else
 				tooltipText = ""; //$NON-NLS-1$
 
-		TriggerSequence activeBinding = bindingService
-				.getBestActiveBindingFor(command);
+		TriggerSequence activeBinding = bindingService.getBestActiveBindingFor(command);
 		if (activeBinding != null && !activeBinding.isEmpty()) {
 			String acceleratorText = activeBinding.format();
-			if (acceleratorText != null
-					&& acceleratorText.length() != 0) {
-				tooltipText = NLS.bind(CommandMessages.Tooltip_Accelerator,
-						tooltipText, acceleratorText);
+			if (acceleratorText != null && acceleratorText.length() != 0) {
+				tooltipText = NLS.bind(CommandMessages.Tooltip_Accelerator, tooltipText, acceleratorText);
 			}
 		}
 
@@ -738,8 +697,8 @@ public class CommandContributionItem extends ContributionItem {
 			try {
 				elementRef = commandService.registerElementForCommand(command, callback);
 			} catch (NotDefinedException e) {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(IStatus.ERROR, "Unable to register menu item \"" + getId() //$NON-NLS-1$
+				StatusManager.getManager()
+						.handle(StatusUtil.newStatus(IStatus.ERROR, "Unable to register menu item \"" + getId() //$NON-NLS-1$
 								+ "\", command \"" + command.getId() + "\" not defined", //$NON-NLS-1$ //$NON-NLS-2$
 								null));
 			}
@@ -823,34 +782,25 @@ public class CommandContributionItem extends ContributionItem {
 		try {
 			handlerService.executeCommand(command, event);
 		} catch (ExecutionException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							"Failed to execute item " //$NON-NLS-1$
-									+ getId(), e));
+			StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, "Failed to execute item " //$NON-NLS-1$
+					+ getId(), e));
 		} catch (NotDefinedException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							"Failed to execute item " //$NON-NLS-1$
-									+ getId(), e));
+			StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, "Failed to execute item " //$NON-NLS-1$
+					+ getId(), e));
 		} catch (NotEnabledException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							"Failed to execute item " //$NON-NLS-1$
-									+ getId(), e));
+			StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, "Failed to execute item " //$NON-NLS-1$
+					+ getId(), e));
 		} catch (NotHandledException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							"Failed to execute item " //$NON-NLS-1$
-									+ getId(), e));
+			StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, "Failed to execute item " //$NON-NLS-1$
+					+ getId(), e));
 		}
 	}
 
 	/**
-	 * Determines if the selection was on the dropdown affordance and, if so,
-	 * opens the drop down menu (populated using the same id as this item...
+	 * Determines if the selection was on the dropdown affordance and, if so, opens
+	 * the drop down menu (populated using the same id as this item...
 	 *
-	 * @param event
-	 * 		The <code>SWT.Selection</code> event to be tested
+	 * @param event The <code>SWT.Selection</code> event to be tested
 	 *
 	 * @return <code>true</code> iff a drop down menu was opened
 	 */
@@ -874,9 +824,9 @@ public class CommandContributionItem extends ContributionItem {
 							if (dropDownMenuOverride != null) {
 								id = dropDownMenuOverride;
 							}
-							menuService.populateContributionManager(
-									menuManager, "menu:" + id); //$NON-NLS-1$
+							menuService.populateContributionManager(menuManager, "menu:" + id); //$NON-NLS-1$
 						}
+
 						@Override
 						public void menuAboutToHide(IMenuManager manager) {
 							IMenuService menuService = CommandContributionItem.this.menuService;
@@ -890,8 +840,7 @@ public class CommandContributionItem extends ContributionItem {
 					});
 
 					// position the menu below the drop down item
-					Point point = ti.getParent().toDisplay(
-							new Point(event.x, event.y));
+					Point point = ti.getParent().toDisplay(new Point(event.x, event.y));
 					menu.setLocation(point.x, point.y); // waiting for SWT
 					// 0.42
 					menu.setVisible(true);
@@ -911,28 +860,23 @@ public class CommandContributionItem extends ContributionItem {
 	private void updateIcons() {
 		if (widget instanceof MenuItem) {
 			MenuItem item = (MenuItem) widget;
-			LocalResourceManager m = new LocalResourceManager(JFaceResources
-					.getResources());
+			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
 			try {
 				item.setImage(icon == null ? null : m.createImage(icon));
 			} catch (DeviceResourceException e) {
 				icon = ImageDescriptor.getMissingImageDescriptor();
 				item.setImage(m.createImage(icon));
 				// as we replaced the failed icon, log the message once.
-				StatusManager.getManager().handle(
-						new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-								"Failed to load image", e)); //$NON-NLS-1$
+				StatusManager.getManager()
+						.handle(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, "Failed to load image", e)); //$NON-NLS-1$
 			}
 			disposeOldImages();
 			localResourceManager = m;
 		} else if (widget instanceof ToolItem) {
 			ToolItem item = (ToolItem) widget;
-			LocalResourceManager m = new LocalResourceManager(JFaceResources
-					.getResources());
-			item.setDisabledImage(disabledIcon == null ? null : m
-					.createImage(disabledIcon));
-			item.setHotImage(hoverIcon == null ? null : m
-					.createImage(hoverIcon));
+			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
+			item.setDisabledImage(disabledIcon == null ? null : m.createImage(disabledIcon));
+			item.setHotImage(hoverIcon == null ? null : m.createImage(hoverIcon));
 			item.setImage(icon == null ? null : m.createImage(icon));
 			disposeOldImages();
 			localResourceManager = m;
@@ -994,8 +938,7 @@ public class CommandContributionItem extends ContributionItem {
 	}
 
 	private IBindingManagerListener bindingManagerListener = event -> {
-		if (event.isActiveBindingsChanged()
-				&& event.isActiveBindingsChangedFor(getCommand())) {
+		if (event.isActiveBindingsChanged() && event.isActiveBindingsChangedFor(getCommand())) {
 			update();
 		}
 
@@ -1012,8 +955,8 @@ public class CommandContributionItem extends ContributionItem {
 	 * @since 3.100
 	 */
 	public CommandContributionItemParameter getData() {
-		CommandContributionItemParameter data = new CommandContributionItemParameter(
-				serviceLocator, getId(), null, style);
+		CommandContributionItemParameter data = new CommandContributionItemParameter(serviceLocator, getId(), null,
+				style);
 		data.icon = contributedIcon;
 		data.disabledIcon = contributedDisabledIcon;
 		data.hoverIcon = contributedHoverIcon;

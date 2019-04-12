@@ -82,26 +82,22 @@ public final class HandlerPersistence extends RegistryPersistence {
 	/**
 	 * Constructs a new instance of <code>HandlerPersistence</code>.
 	 *
-	 * @param handlerService
-	 *            The handler service with which the handlers should be
-	 *            registered; must not be <code>null</code>.
-	 * @param evaluationService
-	 *            The evaluation service used by handler proxies with enabled
-	 *            when expressions
+	 * @param handlerService    The handler service with which the handlers should
+	 *                          be registered; must not be <code>null</code>.
+	 * @param evaluationService The evaluation service used by handler proxies with
+	 *                          enabled when expressions
 	 */
-	HandlerPersistence(final IHandlerService handlerService,
-			IEvaluationService evaluationService) {
+	HandlerPersistence(final IHandlerService handlerService, IEvaluationService evaluationService) {
 		this.handlerService = handlerService;
 		this.evaluationService = evaluationService;
 	}
 
 	/**
-	 * Deactivates all of the activations made by this class, and then clears
-	 * the collection. This should be called before every read.
+	 * Deactivates all of the activations made by this class, and then clears the
+	 * collection. This should be called before every read.
 	 *
-	 * @param handlerService
-	 *            The service handling the activations; must not be
-	 *            <code>null</code>.
+	 * @param handlerService The service handling the activations; must not be
+	 *                       <code>null</code>.
 	 */
 	private void clearActivations(final IHandlerService handlerService) {
 		handlerService.deactivateHandlers(handlerActivations);
@@ -136,21 +132,18 @@ public final class HandlerPersistence extends RegistryPersistence {
 
 	public boolean handlersNeedUpdating(final IRegistryChangeEvent event) {
 		/*
-		 * Handlers will need to be re-read (i.e., re-verified) if any of the
-		 * handler extensions change (i.e., handlers, commands), or if any of
-		 * the command extensions change (i.e., action definitions).
+		 * Handlers will need to be re-read (i.e., re-verified) if any of the handler
+		 * extensions change (i.e., handlers, commands), or if any of the command
+		 * extensions change (i.e., action definitions).
 		 */
-		final IExtensionDelta[] handlerDeltas = event.getExtensionDeltas(
-				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_HANDLERS);
+		final IExtensionDelta[] handlerDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_HANDLERS);
 		if (handlerDeltas.length == 0) {
-			final IExtensionDelta[] commandDeltas = event.getExtensionDeltas(
-					PlatformUI.PLUGIN_ID,
+			final IExtensionDelta[] commandDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
 					IWorkbenchRegistryConstants.PL_COMMANDS);
 			if (commandDeltas.length == 0) {
-				final IExtensionDelta[] actionDefinitionDeltas = event
-						.getExtensionDeltas(
-								PlatformUI.PLUGIN_ID,
-								IWorkbenchRegistryConstants.PL_ACTION_DEFINITIONS);
+				final IExtensionDelta[] actionDefinitionDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+						IWorkbenchRegistryConstants.PL_ACTION_DEFINITIONS);
 				if (actionDefinitionDeltas.length == 0) {
 					return false;
 				}
@@ -163,9 +156,9 @@ public final class HandlerPersistence extends RegistryPersistence {
 	/**
 	 * Reads all of the handlers from the registry
 	 *
-	 * @param handlerService
-	 *            The handler service which should be populated with the values
-	 *            from the registry; must not be <code>null</code>.
+	 * @param handlerService The handler service which should be populated with the
+	 *                       values from the registry; must not be
+	 *                       <code>null</code>.
 	 */
 	@Override
 	protected void read() {
@@ -182,70 +175,58 @@ public final class HandlerPersistence extends RegistryPersistence {
 		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
 
 		// Sort the commands extension point based on element name.
-		final IConfigurationElement[] commandsExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_COMMANDS);
+		final IConfigurationElement[] commandsExtensionPoint = registry.getConfigurationElementsFor(EXTENSION_COMMANDS);
 		for (final IConfigurationElement configurationElement : commandsExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a handler submission or a command definition.
 			if (TAG_HANDLER_SUBMISSION.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements,
-						INDEX_HANDLER_SUBMISSIONS, handlerSubmissionCount++);
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_HANDLER_SUBMISSIONS,
+						handlerSubmissionCount++);
 			} else if (TAG_COMMAND.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements,
-						INDEX_COMMAND_DEFINITIONS, commandDefinitionCount++);
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_COMMAND_DEFINITIONS,
+						commandDefinitionCount++);
 			}
 		}
 
 		// Sort the handler extension point based on element name.
-		final IConfigurationElement[] handlersExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_HANDLERS);
+		final IConfigurationElement[] handlersExtensionPoint = registry.getConfigurationElementsFor(EXTENSION_HANDLERS);
 		for (final IConfigurationElement configurationElement : handlersExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a handler submission or a command definition.
 			if (TAG_HANDLER.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements,
-						INDEX_HANDLER_DEFINITIONS, handlerDefinitionCount++);
+				addElementToIndexedArray(configurationElement, indexedConfigurationElements, INDEX_HANDLER_DEFINITIONS,
+						handlerDefinitionCount++);
 			}
 		}
 
 		clearActivations(handlerService);
-		readDefaultHandlersFromRegistry(
-				indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
+		readDefaultHandlersFromRegistry(indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
 				commandDefinitionCount);
-		readHandlerSubmissionsFromRegistry(
-				indexedConfigurationElements[INDEX_HANDLER_SUBMISSIONS],
+		readHandlerSubmissionsFromRegistry(indexedConfigurationElements[INDEX_HANDLER_SUBMISSIONS],
 				handlerSubmissionCount);
-		readHandlersFromRegistry(
-				indexedConfigurationElements[INDEX_HANDLER_DEFINITIONS],
-				handlerDefinitionCount);
+		readHandlersFromRegistry(indexedConfigurationElements[INDEX_HANDLER_DEFINITIONS], handlerDefinitionCount);
 	}
 
 	/**
 	 * Reads the default handlers from an array of command elements from the
 	 * commands extension point.
 	 *
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
+	 * @param configurationElements     The configuration elements in the commands
+	 *                                  extension point; must not be
+	 *                                  <code>null</code>, but may be empty.
+	 * @param configurationElementCount The number of configuration elements that
+	 *                                  are really in the array.
 	 */
-	private void readDefaultHandlersFromRegistry(
-			final IConfigurationElement[] configurationElements,
+	private void readDefaultHandlersFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			/*
 			 * Read out the command identifier. This was already checked by
-			 * <code>CommandPersistence</code>, so we'll just ignore any
-			 * problems here.
+			 * <code>CommandPersistence</code>, so we'll just ignore any problems here.
 			 */
 			final String commandId = readOptional(configurationElement, ATT_ID);
 			if (commandId == null) {
@@ -258,27 +239,24 @@ public final class HandlerPersistence extends RegistryPersistence {
 				continue;
 			}
 
-			handlerActivations.add(handlerService
-					.activateHandler(commandId, new HandlerProxy(commandId,
-							configurationElement, ATT_DEFAULT_HANDLER)));
+			handlerActivations.add(handlerService.activateHandler(commandId,
+					new HandlerProxy(commandId, configurationElement, ATT_DEFAULT_HANDLER)));
 		}
 	}
 
 	/**
 	 * Reads all of the handlers from the handlers extension point.
 	 *
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param handlerService
-	 *            The handler service to which the handlers should be added;
-	 *            must not be <code>null</code>.
+	 * @param configurationElements     The configuration elements in the commands
+	 *                                  extension point; must not be
+	 *                                  <code>null</code>, but may be empty.
+	 * @param configurationElementCount The number of configuration elements that
+	 *                                  are really in the array.
+	 * @param handlerService            The handler service to which the handlers
+	 *                                  should be added; must not be
+	 *                                  <code>null</code>.
 	 */
-	private void readHandlersFromRegistry(
-			final IConfigurationElement[] configurationElements,
+	private void readHandlersFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		final List warningsToLog = new ArrayList(1);
 
@@ -286,63 +264,55 @@ public final class HandlerPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(configurationElement,
-					ATT_COMMAND_ID, warningsToLog, "Handlers need a command id"); //$NON-NLS-1$
+			final String commandId = readRequired(configurationElement, ATT_COMMAND_ID, warningsToLog,
+					"Handlers need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
 			}
 
 			// Check to see if we have a handler class.
-			if (!checkClass(configurationElement, warningsToLog,
-					"Handlers need a class", commandId)) { //$NON-NLS-1$
+			if (!checkClass(configurationElement, warningsToLog, "Handlers need a class", commandId)) { //$NON-NLS-1$
 				continue;
 			}
 
 			// Get the activeWhen and enabledWhen expressions.
-			final Expression activeWhenExpression = readWhenElement(
-					configurationElement, TAG_ACTIVE_WHEN, commandId,
+			final Expression activeWhenExpression = readWhenElement(configurationElement, TAG_ACTIVE_WHEN, commandId,
 					warningsToLog);
 			if (activeWhenExpression == ERROR_EXPRESSION) {
 				continue;
 			}
-			final Expression enabledWhenExpression = readWhenElement(
-					configurationElement, TAG_ENABLED_WHEN, commandId,
+			final Expression enabledWhenExpression = readWhenElement(configurationElement, TAG_ENABLED_WHEN, commandId,
 					warningsToLog);
 			if (enabledWhenExpression == ERROR_EXPRESSION) {
 				continue;
 			}
 
-			final IHandler proxy = new HandlerProxy(commandId, configurationElement,
-					ATT_CLASS, enabledWhenExpression, evaluationService);
-			handlerActivations.add(handlerService.activateHandler(commandId,
-					proxy, activeWhenExpression));
+			final IHandler proxy = new HandlerProxy(commandId, configurationElement, ATT_CLASS, enabledWhenExpression,
+					evaluationService);
+			handlerActivations.add(handlerService.activateHandler(commandId, proxy, activeWhenExpression));
 
 			// Read out the help context identifier.
-			final String helpContextId = readOptional(configurationElement,
-					ATT_HELP_CONTEXT_ID);
+			final String helpContextId = readOptional(configurationElement, ATT_HELP_CONTEXT_ID);
 			handlerService.setHelpContextId(proxy, helpContextId);
 		}
 
-		logWarnings(
-				warningsToLog,
+		logWarnings(warningsToLog,
 				"Warnings while parsing the handlers from the 'org.eclipse.ui.handlers' extension point."); //$NON-NLS-1$
 	}
 
 	/**
 	 * Reads all of the handler submissions from the commands extension point.
 	 *
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param handlerService
-	 *            The handler service to which the handlers should be added;
-	 *            must not be <code>null</code>.
+	 * @param configurationElements     The configuration elements in the commands
+	 *                                  extension point; must not be
+	 *                                  <code>null</code>, but may be empty.
+	 * @param configurationElementCount The number of configuration elements that
+	 *                                  are really in the array.
+	 * @param handlerService            The handler service to which the handlers
+	 *                                  should be added; must not be
+	 *                                  <code>null</code>.
 	 */
-	private void readHandlerSubmissionsFromRegistry(
-			final IConfigurationElement[] configurationElements,
+	private void readHandlerSubmissionsFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		final List warningsToLog = new ArrayList(1);
 
@@ -350,20 +320,17 @@ public final class HandlerPersistence extends RegistryPersistence {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// Read out the command identifier.
-			final String commandId = readRequired(configurationElement,
-					ATT_COMMAND_ID, warningsToLog,
+			final String commandId = readRequired(configurationElement, ATT_COMMAND_ID, warningsToLog,
 					"Handler submissions need a command id"); //$NON-NLS-1$
 			if (commandId == null) {
 				continue;
 			}
 
 			handlerActivations.add(handlerService.activateHandler(commandId,
-					new LegacyHandlerWrapper(new LegacyHandlerProxy(
-							configurationElement))));
+					new LegacyHandlerWrapper(new LegacyHandlerProxy(configurationElement))));
 		}
 
-		logWarnings(
-				warningsToLog,
+		logWarnings(warningsToLog,
 				"Warnings while parsing the handler submissions from the 'org.eclipse.ui.commands' extension point."); //$NON-NLS-1$
 	}
 }

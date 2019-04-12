@@ -32,119 +32,102 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.osgi.framework.Bundle;
 
 public class ExternalEditor {
-    private IPath filePath;
+	private IPath filePath;
 
-    private EditorDescriptor descriptor;
+	private EditorDescriptor descriptor;
 
-    /**
-     * Create an external editor.
-     */
-    public ExternalEditor(IPath newFilePath, EditorDescriptor editorDescriptor) {
-        this.filePath = newFilePath;
-        this.descriptor = editorDescriptor;
-    }
+	/**
+	 * Create an external editor.
+	 */
+	public ExternalEditor(IPath newFilePath, EditorDescriptor editorDescriptor) {
+		this.filePath = newFilePath;
+		this.descriptor = editorDescriptor;
+	}
 
-    /**
-     * open the editor. If the descriptor has a program then use it - otherwise build its
-     * info from the descriptor.
-     * @exception	Throws a CoreException if the external editor could not be opened.
-     */
-    public void open() throws CoreException {
+	/**
+	 * open the editor. If the descriptor has a program then use it - otherwise
+	 * build its info from the descriptor.
+	 * 
+	 * @exception Throws a CoreException if the external editor could not be opened.
+	 */
+	public void open() throws CoreException {
 
-        Program program = this.descriptor.getProgram();
-        if (program == null) {
-            openWithUserDefinedProgram();
-        } else {
-            String path = ""; //$NON-NLS-1$
-            if (filePath != null) {
-                path = filePath.toOSString();
-                if (program.execute(path)) {
+		Program program = this.descriptor.getProgram();
+		if (program == null) {
+			openWithUserDefinedProgram();
+		} else {
+			String path = ""; //$NON-NLS-1$
+			if (filePath != null) {
+				path = filePath.toOSString();
+				if (program.execute(path)) {
 					return;
 				}
-            }
-            throw new CoreException(
-                    new Status(
-                            IStatus.ERROR,
-                            WorkbenchPlugin.PI_WORKBENCH,
-                            0,
-                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage, path),
-                            null));
-        }
-    }
+			}
+			throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0,
+					NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage, path), null));
+		}
+	}
 
-    /**
-     * open the editor.
-     * @exception	Throws a CoreException if the external editor could not be opened.
-     */
-    public void openWithUserDefinedProgram() throws CoreException {
-        // We need to determine if the command refers to a program in the plugin
-        // install directory. Otherwise we assume the program is on the path.
+	/**
+	 * open the editor.
+	 * 
+	 * @exception Throws a CoreException if the external editor could not be opened.
+	 */
+	public void openWithUserDefinedProgram() throws CoreException {
+		// We need to determine if the command refers to a program in the plugin
+		// install directory. Otherwise we assume the program is on the path.
 
-        String programFileName = null;
-        IConfigurationElement configurationElement = descriptor
-                .getConfigurationElement();
+		String programFileName = null;
+		IConfigurationElement configurationElement = descriptor.getConfigurationElement();
 
-        // Check if we have a config element (if we don't it is an
-        // external editor created on the resource associations page).
-        if (configurationElement != null) {
-            try {
-                Bundle bundle = Platform.getBundle(configurationElement
-						.getContributor().getName());
-                // See if the program file is in the plugin directory
-                URL entry = bundle.getEntry(descriptor.getFileName());
-                if (entry != null) {
-                    // this will bring the file local if the plugin is on a server
-                    URL localName = Platform.asLocalURL(entry);
-                    File file = new File(localName.getFile());
-                    //Check that it exists before we assert it is valid
-                    if (file.exists()) {
+		// Check if we have a config element (if we don't it is an
+		// external editor created on the resource associations page).
+		if (configurationElement != null) {
+			try {
+				Bundle bundle = Platform.getBundle(configurationElement.getContributor().getName());
+				// See if the program file is in the plugin directory
+				URL entry = bundle.getEntry(descriptor.getFileName());
+				if (entry != null) {
+					// this will bring the file local if the plugin is on a server
+					URL localName = Platform.asLocalURL(entry);
+					File file = new File(localName.getFile());
+					// Check that it exists before we assert it is valid
+					if (file.exists()) {
 						programFileName = file.getAbsolutePath();
 					}
-                }
-            } catch (IOException e) {
-                // Program file is not in the plugin directory
-            }
-        }
-
-        if (programFileName == null) {
-			// Program file is not in the plugin directory therefore
-            // assume it is on the path
-            programFileName = descriptor.getFileName();
+				}
+			} catch (IOException e) {
+				// Program file is not in the plugin directory
+			}
 		}
 
-        // Get the full path of the file to open
-        if (filePath == null) {
-            throw new CoreException(
-                    new Status(
-                            IStatus.ERROR,
-                            WorkbenchPlugin.PI_WORKBENCH,
-                            0,
-                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage,programFileName),
-                            null));
-        }
-        String path = filePath.toOSString();
+		if (programFileName == null) {
+			// Program file is not in the plugin directory therefore
+			// assume it is on the path
+			programFileName = descriptor.getFileName();
+		}
 
-        // Open the file
+		// Get the full path of the file to open
+		if (filePath == null) {
+			throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0,
+					NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage, programFileName), null));
+		}
+		String path = filePath.toOSString();
 
-        // ShellCommand was removed in response to PR 23888.  If an exception was
-        // thrown, it was not caught in time, and no feedback was given to user
+		// Open the file
 
-        try {
+		// ShellCommand was removed in response to PR 23888. If an exception was
+		// thrown, it was not caught in time, and no feedback was given to user
+
+		try {
 			if (Util.isMac()) {
-				Runtime.getRuntime().exec(
-						new String[] { "open", "-a", programFileName, path }); //$NON-NLS-1$ //$NON-NLS-2$
+				Runtime.getRuntime().exec(new String[] { "open", "-a", programFileName, path }); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				Runtime.getRuntime().exec(
-						new String[] { programFileName, path });
+				Runtime.getRuntime().exec(new String[] { programFileName, path });
 			}
-        } catch (Exception e) {
-            throw new CoreException(
-                    new Status(
-                            IStatus.ERROR,
-                            WorkbenchPlugin.PI_WORKBENCH,
-                            0,
-                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage,programFileName),
-                            e));
-        }
-    }
+		} catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0,
+					NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage, programFileName), e));
+		}
+	}
 }

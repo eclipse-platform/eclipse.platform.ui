@@ -175,8 +175,7 @@ public final class BindingService implements IBindingService {
 
 	@Override
 	public String getBestActiveBindingFormattedFor(String commandId) {
-		TriggerSequence sequence = bindingService.getBestSequenceFor(commandService.createCommand(
-				commandId, null));
+		TriggerSequence sequence = bindingService.getBestSequenceFor(commandService.createCommand(commandId, null));
 		return sequence == null ? null : sequence.format();
 	}
 
@@ -211,8 +210,7 @@ public final class BindingService implements IBindingService {
 	@Override
 	public Map getPartialMatches(TriggerSequence trigger) {
 		final Collection<Binding> partialMatches = bindingService.getPartialMatches(trigger);
-		final Map<TriggerSequence, Binding> result = new HashMap<>(
-				partialMatches.size());
+		final Map<TriggerSequence, Binding> result = new HashMap<>(partialMatches.size());
 
 		for (Binding binding : partialMatches) {
 			result.put(binding.getTriggerSequence(), binding);
@@ -300,8 +298,7 @@ public final class BindingService implements IBindingService {
 		HashMap<Binding, MKeyBinding> bindingToKey = new HashMap<>();
 		for (MBindingTable table : application.getBindingTables()) {
 			for (MKeyBinding modelBinding : table.getBindings()) {
-				final Object obj = modelBinding.getTransientData().get(
-						EBindingService.MODEL_TO_BINDING_KEY);
+				final Object obj = modelBinding.getTransientData().get(EBindingService.MODEL_TO_BINDING_KEY);
 				if (obj instanceof Binding) {
 					bindingToKey.put((Binding) obj, modelBinding);
 				}
@@ -398,8 +395,8 @@ public final class BindingService implements IBindingService {
 	}
 
 	/*
-	 * Copied from
-	 * org.eclipse.jface.bindings.BindingManager.compareSchemes(String, String)
+	 * Copied from org.eclipse.jface.bindings.BindingManager.compareSchemes(String,
+	 * String)
 	 *
 	 * Returns an in based on scheme 1 < scheme 2
 	 */
@@ -422,10 +419,8 @@ public final class BindingService implements IBindingService {
 	/**
 	 * Compare 2 bindings, taking into account Scheme and type.
 	 *
-	 * @param current
-	 *            the existing binding
-	 * @param addition
-	 *            the incoming binding
+	 * @param current  the existing binding
+	 * @param addition the incoming binding
 	 * @return an int indicating current > addition
 	 */
 	private int compareTo(Binding current, Binding addition) {
@@ -440,7 +435,6 @@ public final class BindingService implements IBindingService {
 		}
 		return current.getType() - addition.getType();
 	}
-
 
 	private void writeSchemeToModel(Scheme activeScheme) {
 		List<String> tags = application.getTags();
@@ -510,16 +504,15 @@ public final class BindingService implements IBindingService {
 	/**
 	 * TODO Promote this method to API.
 	 * <p>
-	 * Adds a single new binding to the existing array of bindings. If the array
-	 * is currently <code>null</code>, then a new array is created and this
-	 * binding is added to it. This method does not detect duplicates.
+	 * Adds a single new binding to the existing array of bindings. If the array is
+	 * currently <code>null</code>, then a new array is created and this binding is
+	 * added to it. This method does not detect duplicates.
 	 * </p>
 	 * <p>
 	 * This method completes in amortized <code>O(1)</code>.
 	 * </p>
 	 *
-	 * @param binding
-	 *            The binding to be added; must not be <code>null</code>.
+	 * @param binding The binding to be added; must not be <code>null</code>.
 	 */
 	public void addBinding(final Binding binding) {
 		MBindingTable table = getMTable(binding.getContextId());
@@ -589,8 +582,7 @@ public final class BindingService implements IBindingService {
 	// Add some sort of timestamp on the source files and update
 	// only when it changes
 	// TBD placement: this should be in the "3.x bridge" code
-	static public MKeyBinding createORupdateMKeyBinding(MApplication application,
-			MBindingTable table,
+	static public MKeyBinding createORupdateMKeyBinding(MApplication application, MBindingTable table,
 			Binding binding) {
 		boolean addToTable = false;
 
@@ -604,8 +596,7 @@ public final class BindingService implements IBindingService {
 
 		MKeyBinding keyBinding = null;
 		for (MKeyBinding existingBinding : table.getBindings()) {
-			Binding b = (Binding) existingBinding.getTransientData().get(
-					EBindingService.MODEL_TO_BINDING_KEY);
+			Binding b = (Binding) existingBinding.getTransientData().get(EBindingService.MODEL_TO_BINDING_KEY);
 			if (binding.equals(b)) {
 				keyBinding = existingBinding;
 				break;
@@ -683,8 +674,7 @@ public final class BindingService implements IBindingService {
 			String commandId = binding.getParameterizedCommand().getId();
 
 			for (MKeyBinding curr : mBindings) {
-				Binding transientBinding = (Binding) curr.getTransientData().get(
-						EBindingService.MODEL_TO_BINDING_KEY);
+				Binding transientBinding = (Binding) curr.getTransientData().get(EBindingService.MODEL_TO_BINDING_KEY);
 				if (transientBinding != null) {
 					if (binding.equals(transientBinding)) {
 						return curr;
@@ -692,8 +682,7 @@ public final class BindingService implements IBindingService {
 					continue;
 				}
 				// check equality
-				if (curr.getKeySequence().equals(binding.getTriggerSequence().toString())
-						&& curr.getCommand() != null
+				if (curr.getKeySequence().equals(binding.getTriggerSequence().toString()) && curr.getCommand() != null
 						&& curr.getCommand().getElementId().equals(commandId)) {
 
 					String schemeId = IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID;
@@ -717,11 +706,10 @@ public final class BindingService implements IBindingService {
 	}
 
 	/**
-	 * Remove the specific binding by identity. Does nothing if the binding is
-	 * not in the manager.
+	 * Remove the specific binding by identity. Does nothing if the binding is not
+	 * in the manager.
 	 *
-	 * @param binding
-	 *            The binding to be removed; must not be <code>null</code>.
+	 * @param binding The binding to be removed; must not be <code>null</code>.
 	 */
 	public void removeBinding(final Binding binding) {
 		MKeyBinding mKeyBinding;

@@ -26,11 +26,10 @@ import org.eclipse.jface.preference.IPreferencePage;
 public interface IWorkbenchPropertyPageMulti extends IPreferencePage {
 
 	/**
-	 * Sets the elements that own properties shown on this page. This method
-	 * will be called if the property page responds to multiple selection.
+	 * Sets the elements that own properties shown on this page. This method will be
+	 * called if the property page responds to multiple selection.
 	 *
-	 * @param elements
-	 *            objects that own the properties shown in this page
+	 * @param elements objects that own the properties shown in this page
 	 */
 	void setElements(IAdaptable[] elements);
 

@@ -112,8 +112,7 @@ public abstract class AbstractWizardRegistry implements IWizardRegistry {
 	/**
 	 * Set the primary wizards.
 	 *
-	 * @param primaryWizards
-	 *            the primary wizards
+	 * @param primaryWizards the primary wizards
 	 */
 	protected void setPrimaryWizards(WorkbenchWizardElement[] primaryWizards) {
 		this.primaryWizards = primaryWizards;
@@ -122,8 +121,7 @@ public abstract class AbstractWizardRegistry implements IWizardRegistry {
 	/**
 	 * Set the wizard elements.
 	 *
-	 * @param wizardElements
-	 *            the wizard elements
+	 * @param wizardElements the wizard elements
 	 */
 	protected void setWizardElements(WizardCollectionElement wizardElements) {
 		this.wizardElements = wizardElements;

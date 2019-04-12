@@ -19,8 +19,9 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
 /**
- * StatusAdapterHelper is a class for caching {@link StatusAdapter} instances to make sure
- * they are not created twice within the progress service.
+ * StatusAdapterHelper is a class for caching {@link StatusAdapter} instances to
+ * make sure they are not created twice within the progress service.
+ * 
  * @since 3.3
  */
 public class StatusAdapterHelper {
@@ -33,6 +34,7 @@ public class StatusAdapterHelper {
 
 	/**
 	 * Return the singleton.
+	 * 
 	 * @return StatusAdapterHelper
 	 */
 	public static StatusAdapterHelper getInstance() {
@@ -44,6 +46,7 @@ public class StatusAdapterHelper {
 
 	/**
 	 * Set the {@link StatusAdapter} for the {@link JobInfo}
+	 * 
 	 * @param info
 	 * @param statusAdapter
 	 */

@@ -24,110 +24,111 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class PropertyMapUnion implements IPropertyMap {
 
-    private Map values;
+	private Map values;
 
-    private static final class PropertyInfo {
-        Object value;
-        boolean commonAttribute;
+	private static final class PropertyInfo {
+		Object value;
+		boolean commonAttribute;
 
-        PropertyInfo(Object value, boolean commonAttribute) {
-            this.value = value;
-            this.commonAttribute = commonAttribute;
-        }
-    }
+		PropertyInfo(Object value, boolean commonAttribute) {
+			this.value = value;
+			this.commonAttribute = commonAttribute;
+		}
+	}
 
-    @Override
+	@Override
 	public Set keySet() {
-        return values.keySet();
-    }
+		return values.keySet();
+	}
 
-    @Override
+	@Override
 	public Object getValue(String propertyId, Class propertyType) {
-        PropertyInfo info = (PropertyInfo)values.get(propertyId);
+		PropertyInfo info = (PropertyInfo) values.get(propertyId);
 
-        if (info == null) {
-            return null;
-        }
+		if (info == null) {
+			return null;
+		}
 
-        Object value = info.value;
+		Object value = info.value;
 
-        if (propertyType.isInstance(value)) {
-            return value;
-        }
+		if (propertyType.isInstance(value)) {
+			return value;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean isCommonProperty(String propertyId) {
-        PropertyInfo info = (PropertyInfo)values.get(propertyId);
+		PropertyInfo info = (PropertyInfo) values.get(propertyId);
 
-        if (info == null) {
-            return false;
-        }
+		if (info == null) {
+			return false;
+		}
 
-        return info.commonAttribute;
-    }
+		return info.commonAttribute;
+	}
 
-    @Override
+	@Override
 	public boolean propertyExists(String propertyId) {
-        return values.get(propertyId) != null;
-    }
+		return values.get(propertyId) != null;
+	}
 
-    @Override
+	@Override
 	public void setValue(String propertyId, Object newValue) {
-        PropertyInfo info = new PropertyInfo(newValue, true);
+		PropertyInfo info = new PropertyInfo(newValue, true);
 
-        values.put(propertyId, info);
-    }
+		values.put(propertyId, info);
+	}
 
-    public void addMap(IPropertyMap toAdd) {
-        Set keySet = toAdd.keySet();
+	public void addMap(IPropertyMap toAdd) {
+		Set keySet = toAdd.keySet();
 
-        // Update any existing attributes
-        for (Iterator iter = keySet().iterator(); iter.hasNext();) {
-            String key = (String) iter.next();
+		// Update any existing attributes
+		for (Iterator iter = keySet().iterator(); iter.hasNext();) {
+			String key = (String) iter.next();
 
-            PropertyInfo localInfo = (PropertyInfo)values.get(key);
-            // Shouldn't be null, but just in case...
-            if (localInfo != null) {
-                // If the attribute exists in the new map
-                if (toAdd.propertyExists(key)) {
-                    // Determine if the value is common
-	                Object value = toAdd.getValue(key, Object.class);
+			PropertyInfo localInfo = (PropertyInfo) values.get(key);
+			// Shouldn't be null, but just in case...
+			if (localInfo != null) {
+				// If the attribute exists in the new map
+				if (toAdd.propertyExists(key)) {
+					// Determine if the value is common
+					Object value = toAdd.getValue(key, Object.class);
 
-	                if (!Util.equals(value, toAdd.getValue(key, Object.class))) {
-	                    // Set the value to null if not common
-	                    localInfo.value = null;
-	                }
+					if (!Util.equals(value, toAdd.getValue(key, Object.class))) {
+						// Set the value to null if not common
+						localInfo.value = null;
+					}
 
-	                // The attribute must be common in both the receiver and the new map to be common
-	                // everywhere
-	                localInfo.commonAttribute = localInfo.commonAttribute && toAdd.isCommonProperty(key);
-                } else {
-                    // If the attribute doesn't exist in the new map, it cannot be common
-                    localInfo.commonAttribute = false;
-                }
-            }
-        }
+					// The attribute must be common in both the receiver and the new map to be
+					// common
+					// everywhere
+					localInfo.commonAttribute = localInfo.commonAttribute && toAdd.isCommonProperty(key);
+				} else {
+					// If the attribute doesn't exist in the new map, it cannot be common
+					localInfo.commonAttribute = false;
+				}
+			}
+		}
 
-        // Add any new attributes that exist in the target
-        for (Iterator iter = keySet.iterator(); iter.hasNext();) {
-            String element = (String) iter.next();
+		// Add any new attributes that exist in the target
+		for (Iterator iter = keySet.iterator(); iter.hasNext();) {
+			String element = (String) iter.next();
 
-            PropertyInfo localInfo = (PropertyInfo)values.get(element);
-            if (localInfo == null) {
-                Object value = toAdd.getValue(element, Object.class);
+			PropertyInfo localInfo = (PropertyInfo) values.get(element);
+			if (localInfo == null) {
+				Object value = toAdd.getValue(element, Object.class);
 
-                boolean isCommon = toAdd.isCommonProperty(element);
+				boolean isCommon = toAdd.isCommonProperty(element);
 
-                localInfo = new PropertyInfo(value, isCommon);
-                values.put(element, localInfo);
-            }
-        }
-    }
+				localInfo = new PropertyInfo(value, isCommon);
+				values.put(element, localInfo);
+			}
+		}
+	}
 
-    public void removeValue(String propertyId) {
-        values.remove(propertyId);
-    }
+	public void removeValue(String propertyId) {
+		values.remove(propertyId);
+	}
 }

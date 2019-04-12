@@ -43,193 +43,176 @@ import org.eclipse.ui.themes.IThemeManager;
 
 class ExtensionEventHandler implements IRegistryChangeListener {
 
-    private Workbench workbench;
+	private Workbench workbench;
 
-    private List changeList = new ArrayList(10);
+	private List changeList = new ArrayList(10);
 
-    public ExtensionEventHandler(Workbench workbench) {
-        this.workbench = workbench;
-    }
+	public ExtensionEventHandler(Workbench workbench) {
+		this.workbench = workbench;
+	}
 
-    @Override
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
-        try {
-            IExtensionDelta delta[] = event
-                    .getExtensionDeltas(WorkbenchPlugin.PI_WORKBENCH);
-            IExtension ext;
-            IExtensionPoint extPt;
-            IWorkbenchWindow[] win = PlatformUI.getWorkbench()
-                    .getWorkbenchWindows();
-            if (win.length == 0) {
+		try {
+			IExtensionDelta delta[] = event.getExtensionDeltas(WorkbenchPlugin.PI_WORKBENCH);
+			IExtension ext;
+			IExtensionPoint extPt;
+			IWorkbenchWindow[] win = PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (win.length == 0) {
 				return;
 			}
-            Display display = win[0].getShell().getDisplay();
-            if (display == null) {
+			Display display = win[0].getShell().getDisplay();
+			if (display == null) {
 				return;
 			}
-            ArrayList appearList = new ArrayList(5);
-            ArrayList revokeList = new ArrayList(5);
-            String id = null;
-            int numPerspectives = 0;
-            int numActionSetPartAssoc = 0;
+			ArrayList appearList = new ArrayList(5);
+			ArrayList revokeList = new ArrayList(5);
+			String id = null;
+			int numPerspectives = 0;
+			int numActionSetPartAssoc = 0;
 
-            // push action sets and perspectives to the top because incoming
-            // actionSetPartAssociations and perspectiveExtensions may depend upon
-            // them for their bindings.
-            for (IExtensionDelta extensionDelta : delta) {
-                id = extensionDelta.getExtensionPoint().getSimpleIdentifier();
-                if (extensionDelta.getKind() == IExtensionDelta.ADDED) {
-                    if (id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS)) {
+			// push action sets and perspectives to the top because incoming
+			// actionSetPartAssociations and perspectiveExtensions may depend upon
+			// them for their bindings.
+			for (IExtensionDelta extensionDelta : delta) {
+				id = extensionDelta.getExtensionPoint().getSimpleIdentifier();
+				if (extensionDelta.getKind() == IExtensionDelta.ADDED) {
+					if (id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS)) {
 						appearList.add(0, extensionDelta);
 					} else if (!id.equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES)
-                            && !id.equals(IWorkbenchRegistryConstants.PL_VIEWS)
-                            && !id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS)) {
-						appearList.add(appearList.size() - numPerspectives,
-                                extensionDelta);
+							&& !id.equals(IWorkbenchRegistryConstants.PL_VIEWS)
+							&& !id.equals(IWorkbenchRegistryConstants.PL_ACTION_SETS)) {
+						appearList.add(appearList.size() - numPerspectives, extensionDelta);
 					}
-                } else {
-                    if (extensionDelta.getKind() == IExtensionDelta.REMOVED) {
-                        if (id
-                                .equals(IWorkbenchRegistryConstants.PL_ACTION_SET_PART_ASSOCIATIONS)) {
-                            revokeList.add(0, extensionDelta);
-                            numActionSetPartAssoc++;
-                        } else if (id
-                                .equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES)) {
+				} else {
+					if (extensionDelta.getKind() == IExtensionDelta.REMOVED) {
+						if (id.equals(IWorkbenchRegistryConstants.PL_ACTION_SET_PART_ASSOCIATIONS)) {
+							revokeList.add(0, extensionDelta);
+							numActionSetPartAssoc++;
+						} else if (id.equals(IWorkbenchRegistryConstants.PL_PERSPECTIVES)) {
 							revokeList.add(numActionSetPartAssoc, extensionDelta);
 						} else {
 							revokeList.add(extensionDelta);
 						}
-                    }
-                }
-            }
-            Iterator iter = appearList.iterator();
-            IExtensionDelta extDelta = null;
-            while (iter.hasNext()) {
-                extDelta = (IExtensionDelta) iter.next();
-                extPt = extDelta.getExtensionPoint();
-                ext = extDelta.getExtension();
-                asyncAppear(display, extPt, ext);
-            }
-            // Suspend support for removing a plug-in until this is more stable
-            //		iter = revokeList.iterator();
-            //		while(iter.hasNext()) {
-            //			extDelta = (IExtensionDelta) iter.next();
-            //			extPt = extDelta.getExtensionPoint();
-            //			ext = extDelta.getExtension();
-            //			asyncRevoke(display, extPt, ext);
-            //		}
+					}
+				}
+			}
+			Iterator iter = appearList.iterator();
+			IExtensionDelta extDelta = null;
+			while (iter.hasNext()) {
+				extDelta = (IExtensionDelta) iter.next();
+				extPt = extDelta.getExtensionPoint();
+				ext = extDelta.getExtension();
+				asyncAppear(display, extPt, ext);
+			}
+			// Suspend support for removing a plug-in until this is more stable
+			// iter = revokeList.iterator();
+			// while(iter.hasNext()) {
+			// extDelta = (IExtensionDelta) iter.next();
+			// extPt = extDelta.getExtensionPoint();
+			// ext = extDelta.getExtension();
+			// asyncRevoke(display, extPt, ext);
+			// }
 
-            resetCurrentPerspective(display);
-        } finally {
-            //ensure the list is cleared for the next pass through
-            changeList.clear();
-        }
+			resetCurrentPerspective(display);
+		} finally {
+			// ensure the list is cleared for the next pass through
+			changeList.clear();
+		}
 
-    }
+	}
 
-    private void asyncAppear(Display display, final IExtensionPoint extpt,
-            final IExtension ext) {
-        Runnable run = () -> appear(extpt, ext);
-        display.syncExec(run);
-    }
+	private void asyncAppear(Display display, final IExtensionPoint extpt, final IExtension ext) {
+		Runnable run = () -> appear(extpt, ext);
+		display.syncExec(run);
+	}
 
-    private void appear(IExtensionPoint extPt, IExtension ext) {
-        String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_FONT_DEFINITIONS)) {
-            loadFontDefinitions(ext);
-            return;
-        }
-        if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_THEMES)) {
-            loadThemes(ext);
-            return;
-        }
-    }
+	private void appear(IExtensionPoint extPt, IExtension ext) {
+		String name = extPt.getSimpleIdentifier();
+		if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_FONT_DEFINITIONS)) {
+			loadFontDefinitions(ext);
+			return;
+		}
+		if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_THEMES)) {
+			loadThemes(ext);
+			return;
+		}
+	}
 
-    /**
-     * @param ext
-     */
-    private void loadFontDefinitions(IExtension ext) {
-        ThemeRegistryReader reader = new ThemeRegistryReader();
-        reader.setRegistry((ThemeRegistry) WorkbenchPlugin.getDefault()
-                .getThemeRegistry());
+	/**
+	 * @param ext
+	 */
+	private void loadFontDefinitions(IExtension ext) {
+		ThemeRegistryReader reader = new ThemeRegistryReader();
+		reader.setRegistry((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry());
 		for (IConfigurationElement configElement : ext.getConfigurationElements()) {
 			reader.readElement(configElement);
 		}
 
-        Collection fonts = reader.getFontDefinitions();
-        FontDefinition[] fontDefs = (FontDefinition[]) fonts
-                .toArray(new FontDefinition[fonts.size()]);
-        ThemeElementHelper.populateRegistry(workbench.getThemeManager()
-				.getTheme(IThemeManager.DEFAULT_THEME), fontDefs, PrefUtil
-				.getInternalPreferenceStore());
-    }
+		Collection fonts = reader.getFontDefinitions();
+		FontDefinition[] fontDefs = (FontDefinition[]) fonts.toArray(new FontDefinition[fonts.size()]);
+		ThemeElementHelper.populateRegistry(workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), fontDefs,
+				PrefUtil.getInternalPreferenceStore());
+	}
 
-    //TODO: confirm
-    private void loadThemes(IExtension ext) {
-        ThemeRegistryReader reader = new ThemeRegistryReader();
-        ThemeRegistry registry = (ThemeRegistry) WorkbenchPlugin.getDefault()
-                .getThemeRegistry();
-        reader.setRegistry(registry);
+	// TODO: confirm
+	private void loadThemes(IExtension ext) {
+		ThemeRegistryReader reader = new ThemeRegistryReader();
+		ThemeRegistry registry = (ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry();
+		reader.setRegistry(registry);
 		for (IConfigurationElement configElement : ext.getConfigurationElements()) {
 			reader.readElement(configElement);
 		}
 
-        Collection colors = reader.getColorDefinitions();
-        ColorDefinition[] colorDefs = (ColorDefinition[]) colors
-                .toArray(new ColorDefinition[colors.size()]);
+		Collection colors = reader.getColorDefinitions();
+		ColorDefinition[] colorDefs = (ColorDefinition[]) colors.toArray(new ColorDefinition[colors.size()]);
 
-        ITheme theme = workbench.getThemeManager().getTheme(
-                IThemeManager.DEFAULT_THEME);
-        ThemeElementHelper.populateRegistry(theme, colorDefs, PrefUtil
-				.getInternalPreferenceStore());
+		ITheme theme = workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME);
+		ThemeElementHelper.populateRegistry(theme, colorDefs, PrefUtil.getInternalPreferenceStore());
 
-        Collection fonts = reader.getFontDefinitions();
-        FontDefinition[] fontDefs = (FontDefinition[]) fonts
-                .toArray(new FontDefinition[fonts.size()]);
-        ThemeElementHelper.populateRegistry(theme, fontDefs, PrefUtil
-				.getInternalPreferenceStore());
+		Collection fonts = reader.getFontDefinitions();
+		FontDefinition[] fontDefs = (FontDefinition[]) fonts.toArray(new FontDefinition[fonts.size()]);
+		ThemeElementHelper.populateRegistry(theme, fontDefs, PrefUtil.getInternalPreferenceStore());
 
-        Map data = reader.getData();
-        registry.addData(data);
-    }
+		Map data = reader.getData();
+		registry.addData(data);
+	}
 
-    private void resetCurrentPerspective(Display display) {
-        if (changeList.isEmpty()) {
+	private void resetCurrentPerspective(Display display) {
+		if (changeList.isEmpty()) {
 			return;
 		}
 
-        final StringBuilder message = new StringBuilder(
-                ExtensionEventHandlerMessages.ExtensionEventHandler_following_changes);
+		final StringBuilder message = new StringBuilder(
+				ExtensionEventHandlerMessages.ExtensionEventHandler_following_changes);
 
-        for (Iterator i = changeList.iterator(); i.hasNext();) {
-            message.append(i.next());
-        }
+		for (Iterator i = changeList.iterator(); i.hasNext();) {
+			message.append(i.next());
+		}
 
-        message.append(ExtensionEventHandlerMessages.ExtensionEventHandler_need_to_reset);
+		message.append(ExtensionEventHandlerMessages.ExtensionEventHandler_need_to_reset);
 
-        display.asyncExec(() -> {
-		    Shell parentShell = null;
-		    IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-		    if (window == null) {
-		        if (workbench.getWorkbenchWindowCount() == 0) {
+		display.asyncExec(() -> {
+			Shell parentShell = null;
+			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			if (window == null) {
+				if (workbench.getWorkbenchWindowCount() == 0) {
 					return;
 				}
-		        window = workbench.getWorkbenchWindows()[0];
-		    }
+				window = workbench.getWorkbenchWindows()[0];
+			}
 
-		    parentShell = window.getShell();
+			parentShell = window.getShell();
 
-		    if (MessageDialog
-		            .openQuestion(
-		                    parentShell,
-		                    ExtensionEventHandlerMessages.ExtensionEventHandler_reset_perspective, message.toString())) {
-		        IWorkbenchPage page = window.getActivePage();
-		        if (page == null) {
+			if (MessageDialog.openQuestion(parentShell,
+					ExtensionEventHandlerMessages.ExtensionEventHandler_reset_perspective, message.toString())) {
+				IWorkbenchPage page = window.getActivePage();
+				if (page == null) {
 					return;
 				}
-		        page.resetPerspective();
-		    }
+				page.resetPerspective();
+			}
 		});
 
-    }
+	}
 }

@@ -48,20 +48,17 @@ public class WizardProvider extends QuickAccessProvider {
 	@Override
 	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
-			IWizardCategory rootCategory = WorkbenchPlugin.getDefault()
-					.getNewWizardRegistry().getRootCategory();
+			IWizardCategory rootCategory = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
 			List<IWizardDescriptor> result = new ArrayList<>();
 			collectWizards(rootCategory, result);
-			IWizardDescriptor[] wizards = result
-					.toArray(new IWizardDescriptor[result.size()]);
+			IWizardDescriptor[] wizards = result.toArray(new IWizardDescriptor[result.size()]);
 			for (int i = 0; i < wizards.length; i++) {
 				if (!WorkbenchActivityHelper.filterItem(wizards[i])) {
 					WizardElement wizardElement = new WizardElement(wizards[i], this);
 					idToElement.put(wizardElement.getId(), wizardElement);
 				}
 			}
-			cachedElements = idToElement.values().toArray(
-					new QuickAccessElement[idToElement.size()]);
+			cachedElements = idToElement.values().toArray(new QuickAccessElement[idToElement.size()]);
 		}
 		return cachedElements;
 	}
@@ -80,8 +77,7 @@ public class WizardProvider extends QuickAccessProvider {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 	}
 
 	@Override

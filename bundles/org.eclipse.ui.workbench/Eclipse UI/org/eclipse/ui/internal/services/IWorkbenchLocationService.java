@@ -50,27 +50,27 @@ public interface IWorkbenchLocationService {
 	IWorkbench getWorkbench();
 
 	/**
-	 * @return the workbench window in this service locator hierarchy. May
-	 * 	return <code>null</code>.
+	 * @return the workbench window in this service locator hierarchy. May return
+	 *         <code>null</code>.
 	 */
 	IWorkbenchWindow getWorkbenchWindow();
 
 	/**
 	 * @return the part site in this service locator hierarchy. May return
-	 * 	<code>null</code>.
+	 *         <code>null</code>.
 	 */
 	IWorkbenchPartSite getPartSite();
 
 	/**
-	 * @return the inner editor site for a multi-page editor in this service
-	 * 	locator hierarchy. May return <code>null</code>.
+	 * @return the inner editor site for a multi-page editor in this service locator
+	 *         hierarchy. May return <code>null</code>.
 	 * @see MultiPageEditorSite
 	 */
 	IEditorSite getMultiPageEditorSite();
 
 	/**
 	 * @return the inner page site for a page based view in this service locator
-	 * 	hierarchy. May return <code>null</code>.
+	 *         hierarchy. May return <code>null</code>.
 	 * @see PageBookView
 	 */
 	IPageSite getPageSite();

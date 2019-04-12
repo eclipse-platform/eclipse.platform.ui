@@ -59,8 +59,7 @@ public class SchemeModel extends CommonModel {
 	}
 
 	/**
-	 * @param schemes
-	 *            The schemes to set.
+	 * @param schemes The schemes to set.
 	 */
 	public void setSchemes(List schemes) {
 		List old = this.schemes;

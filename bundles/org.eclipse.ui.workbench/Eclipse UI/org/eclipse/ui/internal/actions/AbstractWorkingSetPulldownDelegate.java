@@ -40,8 +40,8 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  *
  * @since 3.3
  */
-public abstract class AbstractWorkingSetPulldownDelegate implements
-		IWorkbenchWindowActionDelegate, IWorkbenchWindowPulldownDelegate2 {
+public abstract class AbstractWorkingSetPulldownDelegate
+		implements IWorkbenchWindowActionDelegate, IWorkbenchWindowPulldownDelegate2 {
 
 	private Menu menubarMenu;
 
@@ -120,17 +120,14 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 	 * @return an array of arrays
 	 */
 	protected IWorkingSet[][] splitSets() {
-		IWorkingSet[] allSets = getWindow().getWorkbench().getWorkingSetManager()
-				.getWorkingSets();
+		IWorkingSet[] allSets = getWindow().getWorkbench().getWorkingSetManager().getWorkingSets();
 
 		Map map = new HashMap();
-		WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
-				.getWorkingSetRegistry();
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 
 		for (IWorkingSet allSet : allSets) {
 			String setType = allSet.getId();
-			if (WorkbenchActivityHelper.filterItem(registry
-					.getWorkingSetDescriptor(setType))) {
+			if (WorkbenchActivityHelper.filterItem(registry.getWorkingSetDescriptor(setType))) {
 				continue;
 			}
 			List setsOfType = (List) map.get(setType);

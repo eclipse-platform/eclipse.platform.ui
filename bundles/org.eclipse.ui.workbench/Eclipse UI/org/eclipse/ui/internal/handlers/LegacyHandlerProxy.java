@@ -45,16 +45,16 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 	private static final String HANDLER_ATTRIBUTE_NAME = "handler"; //$NON-NLS-1$
 
 	/**
-	 * The configuration element from which the handler can be created. This
-	 * value will exist until the element is converted into a real class -- at
-	 * which point this value will be set to <code>null</code>.
+	 * The configuration element from which the handler can be created. This value
+	 * will exist until the element is converted into a real class -- at which point
+	 * this value will be set to <code>null</code>.
 	 */
 	private IConfigurationElement configurationElement;
 
 	/**
-	 * The real handler. This value is <code>null</code> until the proxy is
-	 * forced to load the real handler. At this point, the configuration element
-	 * is converted, nulled out, and this handler gains a reference.
+	 * The real handler. This value is <code>null</code> until the proxy is forced
+	 * to load the real handler. At this point, the configuration element is
+	 * converted, nulled out, and this handler gains a reference.
 	 */
 	private IHandler handler;
 
@@ -62,12 +62,10 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
 	 * information it needs to try to avoid loading until it is needed.
 	 *
-	 * @param newConfigurationElement
-	 *            The configuration element from which the real class can be
-	 *            loaded at run-time.
+	 * @param newConfigurationElement The configuration element from which the real
+	 *                                class can be loaded at run-time.
 	 */
-	public LegacyHandlerProxy(
-			final IConfigurationElement newConfigurationElement) {
+	public LegacyHandlerProxy(final IConfigurationElement newConfigurationElement) {
 		configurationElement = newConfigurationElement;
 		handler = null;
 	}
@@ -109,26 +107,24 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 	 * Loads the handler, if possible. If the handler is loaded, then the member
 	 * variables are updated accordingly.
 	 *
-	 * @return <code>true</code> if the handler is now non-null;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the handler is now non-null; <code>false</code>
+	 *         otherwise.
 	 */
 	private boolean loadHandler() {
 		if (handler == null) {
 			// Load the handler.
 			try {
-				handler = (IHandler) configurationElement
-						.createExecutableExtension(HANDLER_ATTRIBUTE_NAME);
+				handler = (IHandler) configurationElement.createExecutableExtension(HANDLER_ATTRIBUTE_NAME);
 				configurationElement = null;
 				return true;
 			} catch (final CoreException e) {
 				/*
-				 * TODO If it can't be instantiated, should future attempts to
-				 * instantiate be blocked?
+				 * TODO If it can't be instantiated, should future attempts to instantiate be
+				 * blocked?
 				 */
-				final String message = "The proxied handler for '" + configurationElement.getAttribute(HANDLER_ATTRIBUTE_NAME) //$NON-NLS-1$
-						+ "' could not be loaded"; //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				final String message = "The proxied handler for '" //$NON-NLS-1$
+						+ configurationElement.getAttribute(HANDLER_ATTRIBUTE_NAME) + "' could not be loaded"; //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				return false;
 			}
@@ -143,8 +139,7 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 
 		buffer.append("LegacyProxy("); //$NON-NLS-1$
 		if (handler == null) {
-			final String className = configurationElement
-					.getAttribute(HANDLER_ATTRIBUTE_NAME);
+			final String className = configurationElement.getAttribute(HANDLER_ATTRIBUTE_NAME);
 			buffer.append(className);
 		} else {
 			buffer.append(handler);

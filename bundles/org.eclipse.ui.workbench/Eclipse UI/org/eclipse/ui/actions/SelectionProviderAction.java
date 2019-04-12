@@ -40,112 +40,113 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * <li><code>selectionChanged(ISelection)</code></li>
  * </ul>
  */
-public abstract class SelectionProviderAction extends Action implements
-        ISelectionChangedListener {
+public abstract class SelectionProviderAction extends Action implements ISelectionChangedListener {
 
-    /**
-     * The selection provider that is the target of this action.
-     */
-    private ISelectionProvider provider;
+	/**
+	 * The selection provider that is the target of this action.
+	 */
+	private ISelectionProvider provider;
 
-    /**
-     * Creates a new action with the given text that monitors selection changes
-     * within the given selection provider.
-     * The resulting action is added as a listener on the selection provider.
-     *
-     * @param provider the selection provider that will provide selection notification
-     * @param text the string used as the text for the action,
-     *   or <code>null</code> if there is no text
-     */
-    protected SelectionProviderAction(ISelectionProvider provider, String text) {
-        super(text);
-        this.provider = provider;
-        provider.addSelectionChangedListener(this);
-    }
+	/**
+	 * Creates a new action with the given text that monitors selection changes
+	 * within the given selection provider. The resulting action is added as a
+	 * listener on the selection provider.
+	 *
+	 * @param provider the selection provider that will provide selection
+	 *                 notification
+	 * @param text     the string used as the text for the action, or
+	 *                 <code>null</code> if there is no text
+	 */
+	protected SelectionProviderAction(ISelectionProvider provider, String text) {
+		super(text);
+		this.provider = provider;
+		provider.addSelectionChangedListener(this);
+	}
 
-    /**
-     * Disposes this action by removing it as a listener from the selection provider.
-     * This must be called by the creator of the action when the action is no longer needed.
-     */
-    public void dispose() {
-        provider.removeSelectionChangedListener(this);
-    }
+	/**
+	 * Disposes this action by removing it as a listener from the selection
+	 * provider. This must be called by the creator of the action when the action is
+	 * no longer needed.
+	 */
+	public void dispose() {
+		provider.removeSelectionChangedListener(this);
+	}
 
-    /**
-     * Returns the current selection in the selection provider.
-     *
-     * @return the current selection in the selection provider
-     */
-    public ISelection getSelection() {
-        return provider.getSelection();
-    }
+	/**
+	 * Returns the current selection in the selection provider.
+	 *
+	 * @return the current selection in the selection provider
+	 */
+	public ISelection getSelection() {
+		return provider.getSelection();
+	}
 
-    /**
-     * Returns the selection provider that is the target of this action.
-     *
-     * @return the target selection provider of this action
-     */
-    public ISelectionProvider getSelectionProvider() {
-        return provider;
-    }
+	/**
+	 * Returns the selection provider that is the target of this action.
+	 *
+	 * @return the target selection provider of this action
+	 */
+	public ISelectionProvider getSelectionProvider() {
+		return provider;
+	}
 
-    /**
-     * Returns the current structured selection in the selection provider, or an
-     * empty selection if nothing is selected or if selection does not include
-     * objects (for example, raw text).
-     *
-     * @return the current structured selection in the selection provider
-     */
-    public IStructuredSelection getStructuredSelection() {
-        ISelection selection = provider.getSelection();
-        if (selection instanceof IStructuredSelection) {
+	/**
+	 * Returns the current structured selection in the selection provider, or an
+	 * empty selection if nothing is selected or if selection does not include
+	 * objects (for example, raw text).
+	 *
+	 * @return the current structured selection in the selection provider
+	 */
+	public IStructuredSelection getStructuredSelection() {
+		ISelection selection = provider.getSelection();
+		if (selection instanceof IStructuredSelection) {
 			return (IStructuredSelection) selection;
 		}
 		return new StructuredSelection();
-    }
+	}
 
-    /**
-     * Notifies this action that the given (non-structured) selection has changed
-     * in the selection provider.
-     * <p>
-     * The <code>SelectionProviderAction</code> implementation of this method
-     * does nothing. Subclasses may reimplement to react to this selection change.
-     * </p>
-     *
-     * @param selection the new selection
-     */
-    public void selectionChanged(ISelection selection) {
-    }
+	/**
+	 * Notifies this action that the given (non-structured) selection has changed in
+	 * the selection provider.
+	 * <p>
+	 * The <code>SelectionProviderAction</code> implementation of this method does
+	 * nothing. Subclasses may reimplement to react to this selection change.
+	 * </p>
+	 *
+	 * @param selection the new selection
+	 */
+	public void selectionChanged(ISelection selection) {
+	}
 
-    /**
-     * Notifies this action that the given structured selection has changed
-     * in the selection provider.
-     * <p>
-     * The <code>SelectionProviderAction</code> implementation of this method
-     * does nothing. Subclasses may reimplement to react to this selection change.
-     * </p>
-     *
-     * @param selection the new selection
-     */
-    public void selectionChanged(IStructuredSelection selection) {
-        // Hook in subclass.
-    }
+	/**
+	 * Notifies this action that the given structured selection has changed in the
+	 * selection provider.
+	 * <p>
+	 * The <code>SelectionProviderAction</code> implementation of this method does
+	 * nothing. Subclasses may reimplement to react to this selection change.
+	 * </p>
+	 *
+	 * @param selection the new selection
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		// Hook in subclass.
+	}
 
-    /**
-     * The <code>SelectionProviderAction</code> implementation of this
-     * <code>ISelectionChangedListener</code> method calls
-     * <code>selectionChanged(IStructuredSelection)</code> if the selection is
-     * a structured selection but <code>selectionChanged(ISelection)</code> if it is
-     * not. Subclasses should override either of those methods method to react to
-     * selection changes.
-     */
-    @Override
+	/**
+	 * The <code>SelectionProviderAction</code> implementation of this
+	 * <code>ISelectionChangedListener</code> method calls
+	 * <code>selectionChanged(IStructuredSelection)</code> if the selection is a
+	 * structured selection but <code>selectionChanged(ISelection)</code> if it is
+	 * not. Subclasses should override either of those methods method to react to
+	 * selection changes.
+	 */
+	@Override
 	public final void selectionChanged(SelectionChangedEvent event) {
-        ISelection selection = event.getSelection();
-        if (selection instanceof IStructuredSelection) {
+		ISelection selection = event.getSelection();
+		if (selection instanceof IStructuredSelection) {
 			selectionChanged((IStructuredSelection) selection);
 		} else {
 			selectionChanged(selection);
 		}
-    }
+	}
 }

@@ -43,14 +43,15 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 	int ROOT_DEPTH = 1;
 
 	/**
-	 * Clears the cached computation of the <code>isActive</code> method, if
-	 * any. This method is only intended for internal use. It provides a
-	 * mechanism by which <code>ISourceProvider</code> events can invalidate
-	 * state on a <code>IHandlerActivation</code> instance.
+	 * Clears the cached computation of the <code>isActive</code> method, if any.
+	 * This method is only intended for internal use. It provides a mechanism by
+	 * which <code>ISourceProvider</code> events can invalidate state on a
+	 * <code>IHandlerActivation</code> instance.
 	 *
 	 * @deprecated Use {@link IEvaluationResultCache#clearResult()} instead.
 	 */
-	@Deprecated void clearActive();
+	@Deprecated
+	void clearActive();
 
 	/**
 	 * Returns the identifier of the command whose handler is being activated.
@@ -60,10 +61,10 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 	String getCommandId();
 
 	/**
-	 * Returns the depth at which this activation was created within the
-	 * services hierarchy. The root of the hierarchy is at a depth of
-	 * <code>1</code>. This is used as the final tie-breaker in the event
-	 * that no other method can be used to determine a winner.
+	 * Returns the depth at which this activation was created within the services
+	 * hierarchy. The root of the hierarchy is at a depth of <code>1</code>. This is
+	 * used as the final tie-breaker in the event that no other method can be used
+	 * to determine a winner.
 	 *
 	 * @return The depth at which the handler was inserted into the services
 	 *         hierarchy; should be a positive integer.
@@ -79,9 +80,9 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 	IHandler getHandler();
 
 	/**
-	 * Returns the handler service from which this activation was requested.
-	 * This is used to ensure that an activation can only be retracted from the
-	 * same service which issued it.
+	 * Returns the handler service from which this activation was requested. This is
+	 * used to ensure that an activation can only be retracted from the same service
+	 * which issued it.
 	 *
 	 * @return The handler service; never <code>null</code>.
 	 */
@@ -89,17 +90,16 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 
 	/**
 	 * Returns whether this handler activation is currently active -- given the
-	 * current state of the workbench. This method should cache its computation.
-	 * The cache will be cleared by a call to <code>clearActive</code>.
+	 * current state of the workbench. This method should cache its computation. The
+	 * cache will be cleared by a call to <code>clearActive</code>.
 	 *
-	 * @param context
-	 *            The context in which this state should be evaluated; must not
-	 *            be <code>null</code>.
+	 * @param context The context in which this state should be evaluated; must not
+	 *                be <code>null</code>.
 	 * @return <code>true</code> if the activation is currently active;
 	 *         <code>false</code> otherwise.
-	 * @deprecated Use
-	 *             {@link IEvaluationResultCache#evaluate(IEvaluationContext)}
+	 * @deprecated Use {@link IEvaluationResultCache#evaluate(IEvaluationContext)}
 	 *             instead.
 	 */
-	@Deprecated boolean isActive(IEvaluationContext context);
+	@Deprecated
+	boolean isActive(IEvaluationContext context);
 }

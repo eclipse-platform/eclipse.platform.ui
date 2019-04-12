@@ -30,36 +30,30 @@ import org.eclipse.ui.internal.util.Util;
 public class ContextLegacyWrapper implements IContext {
 
 	/**
-	 * The context manager that maintains the set of active contexts; must not
-	 * be <code>null</code>.
+	 * The context manager that maintains the set of active contexts; must not be
+	 * <code>null</code>.
 	 */
 	private final ContextManager contextManager;
 
 	/**
-	 * The wrapped instance of context. This value will never be
-	 * <code>null</code>.
+	 * The wrapped instance of context. This value will never be <code>null</code>.
 	 */
 	private final Context wrappedContext;
 
 	/**
 	 * Constructs a new instance of <code>ContextWrapper</code>.
 	 *
-	 * @param context
-	 *            The context to wrapper; must not be <code>null</code>.
-	 * @param contextManager
-	 *            The context manager that maintains the set of active contexts;
-	 *            must not be <code>null</code>.
+	 * @param context        The context to wrapper; must not be <code>null</code>.
+	 * @param contextManager The context manager that maintains the set of active
+	 *                       contexts; must not be <code>null</code>.
 	 */
-	public ContextLegacyWrapper(final Context context,
-			final ContextManager contextManager) {
+	public ContextLegacyWrapper(final Context context, final ContextManager contextManager) {
 		if (context == null) {
-			throw new NullPointerException(
-					"A wrapper cannot be created on a null context"); //$NON-NLS-1$
+			throw new NullPointerException("A wrapper cannot be created on a null context"); //$NON-NLS-1$
 		}
 
 		if (contextManager == null) {
-			throw new NullPointerException(
-					"A wrapper cannot be created with a null manager"); //$NON-NLS-1$
+			throw new NullPointerException("A wrapper cannot be created with a null manager"); //$NON-NLS-1$
 		}
 
 		wrappedContext = context;
@@ -68,21 +62,20 @@ public class ContextLegacyWrapper implements IContext {
 
 	@Override
 	public void addContextListener(IContextListener contextListener) {
-		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(
-				contextListener, contextManager, this);
+		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(contextListener, contextManager,
+				this);
 		wrappedContext.addContextListener(wrapper);
 
 		/*
-		 * We need to add the listener to the context manager as well, as only
-		 * the manager advertises changes to the enabled state.
+		 * We need to add the listener to the context manager as well, as only the
+		 * manager advertises changes to the enabled state.
 		 */
 		contextManager.addContextManagerListener(wrapper);
 	}
 
 	@Override
 	public int compareTo(Object o) {
-		return Util
-				.compare(wrappedContext, ((ContextLegacyWrapper) o).wrappedContext);
+		return Util.compare(wrappedContext, ((ContextLegacyWrapper) o).wrappedContext);
 	}
 
 	@Override
@@ -115,14 +108,13 @@ public class ContextLegacyWrapper implements IContext {
 
 	@Override
 	public boolean isEnabled() {
-		return contextManager.getActiveContextIds().contains(
-				wrappedContext.getId());
+		return contextManager.getActiveContextIds().contains(wrappedContext.getId());
 	}
 
 	@Override
 	public void removeContextListener(IContextListener contextListener) {
-		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(
-				contextListener, contextManager, this);
+		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(contextListener, contextManager,
+				this);
 		wrappedContext.removeContextListener(wrapper);
 		contextManager.removeContextManagerListener(wrapper);
 	}

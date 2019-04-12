@@ -38,14 +38,12 @@ public class CommonModel extends ModelElement {
 	}
 
 	/**
-	 * @param selectedContext
-	 *            The selectedContext to set.
+	 * @param selectedContext The selectedContext to set.
 	 */
 	public void setSelectedElement(ModelElement selectedContext) {
 		ModelElement old = this.selectedElement;
 		this.selectedElement = selectedContext;
-		controller.firePropertyChange(this, PROP_SELECTED_ELEMENT, old,
-				selectedContext);
+		controller.firePropertyChange(this, PROP_SELECTED_ELEMENT, old, selectedContext);
 	}
 
 }

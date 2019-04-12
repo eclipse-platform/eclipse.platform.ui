@@ -27,33 +27,33 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class LayoutUtil {
 
-    /**
-     * Should be called whenever a control's contents have changed. Will
-     * trigger a layout parent controls if necessary.
-     *
-     * @param changedControl
-     */
-    public static void resize(Control changedControl) {
-        Composite parent = changedControl.getParent();
+	/**
+	 * Should be called whenever a control's contents have changed. Will trigger a
+	 * layout parent controls if necessary.
+	 *
+	 * @param changedControl
+	 */
+	public static void resize(Control changedControl) {
+		Composite parent = changedControl.getParent();
 
-        Layout parentLayout = parent.getLayout();
+		Layout parentLayout = parent.getLayout();
 
-        if (parentLayout instanceof ICachingLayout) {
-            ((ICachingLayout) parentLayout).flush(changedControl);
-        }
+		if (parentLayout instanceof ICachingLayout) {
+			((ICachingLayout) parentLayout).flush(changedControl);
+		}
 
-        if (parent instanceof Shell) {
-            parent.layout(true);
-        } else {
-            Rectangle currentBounds = parent.getBounds();
+		if (parent instanceof Shell) {
+			parent.layout(true);
+		} else {
+			Rectangle currentBounds = parent.getBounds();
 
-            resize(parent);
+			resize(parent);
 
-            // If the parent was resized, then it has already triggered a
-            // layout. Otherwise, we need to manually force it to layout again.
-            if (currentBounds.equals(parent.getBounds())) {
-                parent.layout(true);
-            }
-        }
-    }
+			// If the parent was resized, then it has already triggered a
+			// layout. Otherwise, we need to manually force it to layout again.
+			if (currentBounds.equals(parent.getBounds())) {
+				parent.layout(true);
+			}
+		}
+	}
 }

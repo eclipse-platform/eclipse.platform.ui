@@ -38,22 +38,19 @@ final class LegacyCommandListenerWrapper implements ICommandListener {
 	private final org.eclipse.ui.commands.ICommandListener listener;
 
 	/**
-	 * Constructs a new instance of <code>CommandListenerWrapper</code> around
-	 * a legacy listener.
+	 * Constructs a new instance of <code>CommandListenerWrapper</code> around a
+	 * legacy listener.
 	 *
-	 * @param listener
-	 *            The listener to be wrapped; must not be <code>null</code>.
+	 * @param listener The listener to be wrapped; must not be <code>null</code>.
 	 */
-	LegacyCommandListenerWrapper(
-			final org.eclipse.ui.commands.ICommandListener listener,
+	LegacyCommandListenerWrapper(final org.eclipse.ui.commands.ICommandListener listener,
 			final BindingManager bindingManager) {
 		if (listener == null) {
 			throw new NullPointerException("Cannot wrap a null listener."); //$NON-NLS-1$
 		}
 
 		if (bindingManager == null) {
-			throw new NullPointerException(
-					"Cannot create a listener wrapper without a binding manager"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot create a listener wrapper without a binding manager"); //$NON-NLS-1$
 		}
 
 		this.listener = listener;
@@ -62,16 +59,14 @@ final class LegacyCommandListenerWrapper implements ICommandListener {
 
 	@Override
 	public void commandChanged(final CommandEvent commandEvent) {
-		final ICommand command = new CommandLegacyWrapper(commandEvent.getCommand(),
-				bindingManager);
+		final ICommand command = new CommandLegacyWrapper(commandEvent.getCommand(), bindingManager);
 		final boolean definedChanged = commandEvent.isDefinedChanged();
 		final boolean descriptionChanged = commandEvent.isDescriptionChanged();
 		final boolean handledChanged = commandEvent.isHandledChanged();
 		final boolean nameChanged = commandEvent.isNameChanged();
 
-		listener.commandChanged(new org.eclipse.ui.commands.CommandEvent(
-				command, false, false, definedChanged, descriptionChanged,
-				handledChanged, false, nameChanged, null));
+		listener.commandChanged(new org.eclipse.ui.commands.CommandEvent(command, false, false, definedChanged,
+				descriptionChanged, handledChanged, false, nameChanged, null));
 
 	}
 

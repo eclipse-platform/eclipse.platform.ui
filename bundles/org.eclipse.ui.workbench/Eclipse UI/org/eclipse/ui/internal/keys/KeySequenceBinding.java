@@ -20,101 +20,100 @@ import org.eclipse.ui.keys.KeySequence;
 
 public final class KeySequenceBinding implements IKeySequenceBinding {
 
-    /**
-     * This is the identifier for the default context.  This is used wherever
-     * some default is needed.  For example, this is the context that is used
-     * for key bindings that specify no context.  This is also used to select a
-     * default context in the keys preference page.
-     */
-    public static final String DEFAULT_CONTEXT_ID = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
+	/**
+	 * This is the identifier for the default context. This is used wherever some
+	 * default is needed. For example, this is the context that is used for key
+	 * bindings that specify no context. This is also used to select a default
+	 * context in the keys preference page.
+	 */
+	public static final String DEFAULT_CONTEXT_ID = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
 
-    private static final int HASH_FACTOR = 89;
+	private static final int HASH_FACTOR = 89;
 
-    private static final int HASH_INITIAL = KeySequenceBinding.class.getName()
-            .hashCode();
+	private static final int HASH_INITIAL = KeySequenceBinding.class.getName().hashCode();
 
-    private transient int hashCode;
+	private transient int hashCode;
 
-    private transient boolean hashCodeComputed;
+	private transient boolean hashCodeComputed;
 
-    private KeySequence keySequence;
+	private KeySequence keySequence;
 
-    private int match;
+	private int match;
 
-    private transient String string;
+	private transient String string;
 
-    public KeySequenceBinding(KeySequence keySequence, int match) {
-        if (keySequence == null) {
+	public KeySequenceBinding(KeySequence keySequence, int match) {
+		if (keySequence == null) {
 			throw new NullPointerException();
 		}
 
-        if (match < 0) {
+		if (match < 0) {
 			throw new IllegalArgumentException();
 		}
 
-        this.keySequence = keySequence;
-        this.match = match;
-    }
+		this.keySequence = keySequence;
+		this.match = match;
+	}
 
-    @Override
+	@Override
 	public int compareTo(Object object) {
-        KeySequenceBinding castedObject = (KeySequenceBinding) object;
-        int compareTo = Util.compare(match, castedObject.match);
+		KeySequenceBinding castedObject = (KeySequenceBinding) object;
+		int compareTo = Util.compare(match, castedObject.match);
 
-        if (compareTo == 0) {
+		if (compareTo == 0) {
 			compareTo = Util.compare(keySequence, castedObject.keySequence);
 		}
 
-        return compareTo;
-    }
+		return compareTo;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (!(object instanceof KeySequenceBinding)) {
+		if (!(object instanceof KeySequenceBinding)) {
 			return false;
 		}
 
-        final KeySequenceBinding castedObject = (KeySequenceBinding) object;
-        if (!Util.equals(keySequence, castedObject.keySequence)) {
-            return false;
-        }
+		final KeySequenceBinding castedObject = (KeySequenceBinding) object;
+		if (!Util.equals(keySequence, castedObject.keySequence)) {
+			return false;
+		}
 
-        return Util.equals(match, castedObject.match);
-    }
+		return Util.equals(match, castedObject.match);
+	}
 
-    @Override
+	@Override
 	public KeySequence getKeySequence() {
-        return keySequence;
-    }
+		return keySequence;
+	}
 
-    public int getMatch() {
-        return match;
-    }
+	public int getMatch() {
+		return match;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(match);
-            hashCodeComputed = true;
-        }
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(match);
+			hashCodeComputed = true;
+		}
 
-        return hashCode;
-    }
+		return hashCode;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        if (string == null) {
-            final StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append('[');
-            stringBuffer.append(keySequence);
-            stringBuffer.append(',');
-            stringBuffer.append(match);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+		if (string == null) {
+			final StringBuilder stringBuffer = new StringBuilder();
+			stringBuffer.append('[');
+			stringBuffer.append(keySequence);
+			stringBuffer.append(',');
+			stringBuffer.append(match);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
 
-        return string;
-    }
+		return string;
+	}
 }

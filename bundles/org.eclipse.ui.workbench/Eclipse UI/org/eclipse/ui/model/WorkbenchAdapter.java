@@ -25,89 +25,87 @@ import org.eclipse.swt.graphics.RGB;
  *
  * @since 3.0
  */
-public abstract class WorkbenchAdapter implements IWorkbenchAdapter,
-        IWorkbenchAdapter2, IWorkbenchAdapter3 {
-    /**
-     * The empty list of children.
-     */
-    protected static final Object[] NO_CHILDREN = new Object[0];
+public abstract class WorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2, IWorkbenchAdapter3 {
+	/**
+	 * The empty list of children.
+	 */
+	protected static final Object[] NO_CHILDREN = new Object[0];
 
-    /**
-     * The default implementation of this <code>IWorkbenchAdapter</code> method
-     * returns the empty list. Subclasses may override.
-     */
-    @Override
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter</code> method
+	 * returns the empty list. Subclasses may override.
+	 */
+	@Override
 	public Object[] getChildren(Object object) {
-        return NO_CHILDREN;
-    }
+		return NO_CHILDREN;
+	}
 
-    /**
-     * The default implementation of this <code>IWorkbenchAdapter</code> method
-     * returns <code>null</code>. Subclasses may override.
-     */
-    @Override
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter</code> method
+	 * returns <code>null</code>. Subclasses may override.
+	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * The default implementation of this <code>IWorkbenchAdapter</code> method
-     * returns the empty string if the object is <code>null</code>, and
-     * the object's <code>toString</code> otherwise. Subclasses may override.
-     */
-    @Override
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter</code> method
+	 * returns the empty string if the object is <code>null</code>, and the object's
+	 * <code>toString</code> otherwise. Subclasses may override.
+	 */
+	@Override
 	public String getLabel(Object object) {
-        return object == null ? "" : object.toString(); //$NON-NLS-1$
-    }
+		return object == null ? "" : object.toString(); //$NON-NLS-1$
+	}
 
-    /**
-     * The default implementation of this <code>IWorkbenchAdapter</code> method
-     * returns <code>null</code>. Subclasses may override.
-     */
-    @Override
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter</code> method
+	 * returns <code>null</code>. Subclasses may override.
+	 */
+	@Override
 	public Object getParent(Object object) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * The default implementation of this <code>IWorkbenchAdapter2</code> method
-     * returns <code>null</code>. Subclasses may override.
-     */
-    @Override
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter2</code> method
+	 * returns <code>null</code>. Subclasses may override.
+	 */
+	@Override
 	public RGB getBackground(Object element) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * The default implementation of this <code>IWorkbenchAdapter2</code> method
-     * returns <code>null</code>. Subclasses may override.
-     */
-    @Override
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter2</code> method
+	 * returns <code>null</code>. Subclasses may override.
+	 */
+	@Override
 	public RGB getForeground(Object element) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * The default implementation of this <code>IWorkbenchAdapter2</code> method
-     * returns <code>null</code>. Subclasses may override.
-     */
-    @Override
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter2</code> method
+	 * returns <code>null</code>. Subclasses may override.
+	 */
+	@Override
 	public FontData getFont(Object element) {
-        return null;
-    }
+		return null;
+	}
 
 	/**
 	 * The default implementation of this <code>IWorkbenchAdapter3</code> method
 	 * returns the {@link StyledString} which wraps the label of the element.
 	 * Subclasses may override.
 	 *
-	 * @return Return the {@link StyledString} which wraps the label of the
-	 *         element.
+	 * @return Return the {@link StyledString} which wraps the label of the element.
 	 *
 	 * @since 3.7
 	 */
 	@Override
 	public StyledString getStyledText(Object object) {
 		return new StyledString(getLabel(object));
-    }
+	}
 }

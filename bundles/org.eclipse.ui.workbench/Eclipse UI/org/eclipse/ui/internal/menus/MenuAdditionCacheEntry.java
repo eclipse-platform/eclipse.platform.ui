@@ -81,9 +81,8 @@ public class MenuAdditionCacheEntry {
 	 */
 	static boolean isInWorkbenchTrim(MenuLocationURI location) {
 		final String path = location.getPath();
-		return MAIN_TOOLBAR.equals(path) || TRIM_COMMAND1.equals(path)
-				|| TRIM_COMMAND2.equals(path) || TRIM_VERTICAL1.equals(path)
-				|| TRIM_VERTICAL2.equals(path) || TRIM_STATUS.equals(path);
+		return MAIN_TOOLBAR.equals(path) || TRIM_COMMAND1.equals(path) || TRIM_COMMAND2.equals(path)
+				|| TRIM_VERTICAL1.equals(path) || TRIM_VERTICAL2.equals(path) || TRIM_STATUS.equals(path);
 	}
 
 	private MApplication application;
@@ -116,20 +115,16 @@ public class MenuAdditionCacheEntry {
 	 * @return <code>true</code> if this is a toolbar contribution
 	 */
 	public void mergeIntoModel(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions,
-			ArrayList<MTrimContribution> trimContributions) {
+			ArrayList<MToolBarContribution> toolBarContributions, ArrayList<MTrimContribution> trimContributions) {
 		boolean hasAdditions = false;
 		if ("menu:help?after=additions".equals(location.toString())) { //$NON-NLS-1$
-			IConfigurationElement[] menus = configElement
-					.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
-			if (menus.length == 1
-					&& "org.eclipse.update.ui.updateMenu".equals(MenuHelper.getId(menus[0]))) { //$NON-NLS-1$
+			IConfigurationElement[] menus = configElement.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
+			if (menus.length == 1 && "org.eclipse.update.ui.updateMenu".equals(MenuHelper.getId(menus[0]))) { //$NON-NLS-1$
 				return;
 			}
 		}
 		if (location.getPath() == null || location.getPath().length() == 0) {
-			WorkbenchPlugin
-					.log("MenuAdditionCacheEntry.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
+			WorkbenchPlugin.log("MenuAdditionCacheEntry.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
 			return;
 		}
 		if (inToolbar()) {
@@ -141,8 +136,7 @@ public class MenuAdditionCacheEntry {
 				if (query == null || query.length() == 0) {
 					query = AFTER_ADDITIONS;
 				}
-				processToolbarChildren(toolBarContributions, configElement, location.getPath(),
-						query, hasAdditions);
+				processToolbarChildren(toolBarContributions, configElement, location.getPath(), query, hasAdditions);
 			}
 			return;
 		}
@@ -182,8 +176,8 @@ public class MenuAdditionCacheEntry {
 	 * @param menuContributions
 	 * @param filter
 	 */
-	private void processMenuChildren(ArrayList<MMenuContribution> menuContributions,
-			IConfigurationElement element, String filter) {
+	private void processMenuChildren(ArrayList<MMenuContribution> menuContributions, IConfigurationElement element,
+			String filter) {
 		IConfigurationElement[] menus = element.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
 		if (menus.length == 0) {
 			return;
@@ -205,8 +199,8 @@ public class MenuAdditionCacheEntry {
 		}
 	}
 
-	private void addMenuChildren(final MElementContainer<MMenuElement> container,
-			IConfigurationElement parent, String filter) {
+	private void addMenuChildren(final MElementContainer<MMenuElement> container, IConfigurationElement parent,
+			String filter) {
 		for (final IConfigurationElement child : parent.getChildren()) {
 			String itemType = child.getName();
 			String id = MenuHelper.getId(child);
@@ -228,8 +222,8 @@ public class MenuAdditionCacheEntry {
 					public Object compute(IEclipseContext context, String contextKey) {
 						ServiceLocator sl = new ServiceLocator();
 						sl.setContext(context);
-						DynamicMenuContributionItem item = new DynamicMenuContributionItem(
-								MenuHelper.getId(child), sl, child);
+						DynamicMenuContributionItem item = new DynamicMenuContributionItem(MenuHelper.getId(child), sl,
+								child);
 						return item;
 					}
 				};
@@ -267,17 +261,15 @@ public class MenuAdditionCacheEntry {
 			parm.setValue(e.getValue().toString());
 			item.getParameters().add(parm);
 		}
-		String iconUrl = MenuHelper.getIconURI(commandAddition,
-				IWorkbenchRegistryConstants.ATT_ICON);
+		String iconUrl = MenuHelper.getIconURI(commandAddition, IWorkbenchRegistryConstants.ATT_ICON);
 
 		if (iconUrl == null) {
-			ICommandImageService commandImageService = application.getContext().get(
-					ICommandImageService.class);
-			ImageDescriptor descriptor = commandImageService == null ? null : commandImageService
-					.getImageDescriptor(commandId);
+			ICommandImageService commandImageService = application.getContext().get(ICommandImageService.class);
+			ImageDescriptor descriptor = commandImageService == null ? null
+					: commandImageService.getImageDescriptor(commandId);
 			if (descriptor == null) {
-				descriptor = commandImageService == null ? null : commandImageService
-						.getImageDescriptor(item.getElementId());
+				descriptor = commandImageService == null ? null
+						: commandImageService.getImageDescriptor(item.getElementId());
 			}
 			if (descriptor != null) {
 				item.setIconURI(MenuHelper.getImageUrl(descriptor));
@@ -373,8 +365,7 @@ public class MenuAdditionCacheEntry {
 
 	private void processTrimChildren(ArrayList<MTrimContribution> trimContributions,
 			ArrayList<MToolBarContribution> toolBarContributions, IConfigurationElement element) {
-		IConfigurationElement[] toolbars = element
-				.getChildren(IWorkbenchRegistryConstants.TAG_TOOLBAR);
+		IConfigurationElement[] toolbars = element.getChildren(IWorkbenchRegistryConstants.TAG_TOOLBAR);
 		if (toolbars.length == 0) {
 			return;
 		}
@@ -391,8 +382,7 @@ public class MenuAdditionCacheEntry {
 			MToolBar item = MenuFactoryImpl.eINSTANCE.createToolBar();
 			item.setElementId(MenuHelper.getId(toolbar));
 			item.getTransientData().put("Name", MenuHelper.getLabel(toolbar)); //$NON-NLS-1$
-			processToolbarChildren(toolBarContributions, toolbar, item.getElementId(),
-					AFTER_ADDITIONS, false);
+			processToolbarChildren(toolBarContributions, toolbar, item.getElementId(), AFTER_ADDITIONS, false);
 			trimContribution.getChildren().add(item);
 		}
 		if (hasAdditions) {
@@ -402,10 +392,9 @@ public class MenuAdditionCacheEntry {
 		}
 	}
 
-	private void processToolbarChildren(ArrayList<MToolBarContribution> contributions,
-			IConfigurationElement toolbar, String parentId, String position, boolean hasAdditions) {
-		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
-				.createToolBarContribution();
+	private void processToolbarChildren(ArrayList<MToolBarContribution> contributions, IConfigurationElement toolbar,
+			String parentId, String position, boolean hasAdditions) {
+		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
 		String idContrib = MenuHelper.getId(toolbar);
 		if (idContrib != null && idContrib.length() > 0) {
 			toolBarContribution.setElementId(idContrib);
@@ -505,17 +494,15 @@ public class MenuAdditionCacheEntry {
 			parm.setValue(e.getValue().toString());
 			item.getParameters().add(parm);
 		}
-		String iconUrl = MenuHelper.getIconURI(commandAddition,
-				IWorkbenchRegistryConstants.ATT_ICON);
+		String iconUrl = MenuHelper.getIconURI(commandAddition, IWorkbenchRegistryConstants.ATT_ICON);
 
 		if (iconUrl == null) {
-			ICommandImageService commandImageService = application.getContext().get(
-					ICommandImageService.class);
-			ImageDescriptor descriptor = commandImageService == null ? null : commandImageService
-					.getImageDescriptor(commandId, ICommandImageService.IMAGE_STYLE_TOOLBAR);
+			ICommandImageService commandImageService = application.getContext().get(ICommandImageService.class);
+			ImageDescriptor descriptor = commandImageService == null ? null
+					: commandImageService.getImageDescriptor(commandId, ICommandImageService.IMAGE_STYLE_TOOLBAR);
 			if (descriptor == null) {
-				descriptor = commandImageService == null ? null : commandImageService
-						.getImageDescriptor(item.getElementId(),
+				descriptor = commandImageService == null ? null
+						: commandImageService.getImageDescriptor(item.getElementId(),
 								ICommandImageService.IMAGE_STYLE_TOOLBAR);
 				if (descriptor == null) {
 					item.setLabel(MenuHelper.getLabel(commandAddition));
@@ -529,19 +516,15 @@ public class MenuAdditionCacheEntry {
 			item.setIconURI(iconUrl);
 		}
 
-		iconUrl = MenuHelper.getIconURI(commandAddition,
-				IWorkbenchRegistryConstants.ATT_DISABLEDICON);
+		iconUrl = MenuHelper.getIconURI(commandAddition, IWorkbenchRegistryConstants.ATT_DISABLEDICON);
 		if (iconUrl == null) {
-			ICommandImageService commandImageService = application.getContext().get(
-					ICommandImageService.class);
+			ICommandImageService commandImageService = application.getContext().get(ICommandImageService.class);
 			if (commandImageService != null) {
 				ImageDescriptor descriptor = commandImageService.getImageDescriptor(commandId,
-						ICommandImageService.TYPE_DISABLED,
-						ICommandImageService.IMAGE_STYLE_TOOLBAR);
+						ICommandImageService.TYPE_DISABLED, ICommandImageService.IMAGE_STYLE_TOOLBAR);
 				if (descriptor == null) {
 					descriptor = commandImageService.getImageDescriptor(item.getElementId(),
-							ICommandImageService.TYPE_DISABLED,
-							ICommandImageService.IMAGE_STYLE_TOOLBAR);
+							ICommandImageService.TYPE_DISABLED, ICommandImageService.IMAGE_STYLE_TOOLBAR);
 				}
 				if (descriptor != null) {
 					iconUrl = MenuHelper.getImageUrl(descriptor);

@@ -28,8 +28,7 @@ public class WorkbenchWindowPropertyTester extends PropertyTester {
 	private static final String PROPERTY_IS_PERSPECTIVEBAR_VISIBLE = "isPerspectiveBarVisible"; //$NON-NLS-1$
 
 	@Override
-	public boolean test(Object receiver, String property, Object[] args,
-			Object expectedValue) {
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 
 		if (args.length == 0 && receiver instanceof WorkbenchWindow) {
 			boolean defaultExpectedValue = true;

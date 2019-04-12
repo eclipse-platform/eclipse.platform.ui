@@ -68,106 +68,101 @@ import org.eclipse.ui.internal.util.Util;
  */
 public abstract class ViewPart extends WorkbenchPart implements IViewPart {
 
-    /**
-     * Listens to PROP_TITLE property changes in this object until the first call to
-     * setContentDescription. Used for compatibility with old parts that call setTitle
-     * or overload getTitle instead of using setContentDescription.
-     */
-    private IPropertyListener compatibilityTitleListener = (source, propId) -> {
-	    if (propId == IWorkbenchPartConstants.PROP_TITLE) {
-	        setDefaultContentDescription();
-	    }
+	/**
+	 * Listens to PROP_TITLE property changes in this object until the first call to
+	 * setContentDescription. Used for compatibility with old parts that call
+	 * setTitle or overload getTitle instead of using setContentDescription.
+	 */
+	private IPropertyListener compatibilityTitleListener = (source, propId) -> {
+		if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+			setDefaultContentDescription();
+		}
 	};
 
-    /**
-     * Creates a new view.
-     */
-    protected ViewPart() {
-        super();
+	/**
+	 * Creates a new view.
+	 */
+	protected ViewPart() {
+		super();
 
-        addPropertyListener(compatibilityTitleListener);
-    }
+		addPropertyListener(compatibilityTitleListener);
+	}
 
-    @Override
+	@Override
 	public IViewSite getViewSite() {
-        return (IViewSite) getSite();
-    }
+		return (IViewSite) getSite();
+	}
 
-
-    @Override
+	@Override
 	public void init(IViewSite site) throws PartInitException {
-        setSite(site);
+		setSite(site);
 
-        setDefaultContentDescription();
-    }
+		setDefaultContentDescription();
+	}
 
-    @Override
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-    	/*
-    	* Initializes this view with the given view site.  A memento is passed to
-        * the view which contains a snapshot of the views state from a previous
-        * session.  Where possible, the view should try to recreate that state
-        * within the part controls.
-        * <p>
-        * This implementation will ignore the memento and initialize the view in
-        * a fresh state.  Subclasses may override the implementation to perform any
-        * state restoration as needed.
-        */
-        init(site);
-    }
+		/*
+		 * Initializes this view with the given view site. A memento is passed to the
+		 * view which contains a snapshot of the views state from a previous session.
+		 * Where possible, the view should try to recreate that state within the part
+		 * controls. <p> This implementation will ignore the memento and initialize the
+		 * view in a fresh state. Subclasses may override the implementation to perform
+		 * any state restoration as needed.
+		 */
+		init(site);
+	}
 
-
-    @Override
+	@Override
 	public void saveState(IMemento memento) {
-        // do nothing
-    }
+		// do nothing
+	}
 
-    @Override
+	@Override
 	protected void setPartName(String partName) {
-        if (compatibilityTitleListener != null) {
-            removePropertyListener(compatibilityTitleListener);
-            compatibilityTitleListener = null;
-        }
+		if (compatibilityTitleListener != null) {
+			removePropertyListener(compatibilityTitleListener);
+			compatibilityTitleListener = null;
+		}
 
-        super.setPartName(partName);
-    }
+		super.setPartName(partName);
+	}
 
-    @Override
+	@Override
 	protected void setContentDescription(String description) {
-        if (compatibilityTitleListener != null) {
-            removePropertyListener(compatibilityTitleListener);
-            compatibilityTitleListener = null;
-        }
+		if (compatibilityTitleListener != null) {
+			removePropertyListener(compatibilityTitleListener);
+			compatibilityTitleListener = null;
+		}
 
-        super.setContentDescription(description);
-    }
+		super.setContentDescription(description);
+	}
 
-    @Override
-	public void setInitializationData(IConfigurationElement cfig,
-            String propertyName, Object data) {
-        super.setInitializationData(cfig, propertyName, data);
+	@Override
+	public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
+		super.setInitializationData(cfig, propertyName, data);
 
-        setDefaultContentDescription();
-    }
+		setDefaultContentDescription();
+	}
 
-    private void setDefaultContentDescription() {
-        if (compatibilityTitleListener == null) {
-            return;
-        }
+	private void setDefaultContentDescription() {
+		if (compatibilityTitleListener == null) {
+			return;
+		}
 
-        String partName = getPartName();
-        String title = getTitle();
+		String partName = getPartName();
+		String title = getTitle();
 
-        if (Util.equals(partName, title)) {
-            internalSetContentDescription(""); //$NON-NLS-1$
-        } else {
-            internalSetContentDescription(title);
-        }
-    }
+		if (Util.equals(partName, title)) {
+			internalSetContentDescription(""); //$NON-NLS-1$
+		} else {
+			internalSetContentDescription(title);
+		}
+	}
 
-    @Override
+	@Override
 	protected final void checkSite(IWorkbenchPartSite site) {
-        super.checkSite(site);
-        Assert.isTrue(site instanceof IViewSite, "The site for a view must be an IViewSite"); //$NON-NLS-1$
-    }
+		super.checkSite(site);
+		Assert.isTrue(site instanceof IViewSite, "The site for a view must be an IViewSite"); //$NON-NLS-1$
+	}
 }

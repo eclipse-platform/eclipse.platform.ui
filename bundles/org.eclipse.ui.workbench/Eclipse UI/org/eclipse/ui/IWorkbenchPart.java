@@ -98,24 +98,24 @@ import org.eclipse.swt.widgets.Composite;
  */
 public interface IWorkbenchPart extends IAdaptable {
 
-    /**
-     * The property id for <code>getTitle</code>, <code>getTitleImage</code>
-     * and <code>getTitleToolTip</code>.
-     */
-    int PROP_TITLE = IWorkbenchPartConstants.PROP_TITLE;
+	/**
+	 * The property id for <code>getTitle</code>, <code>getTitleImage</code> and
+	 * <code>getTitleToolTip</code>.
+	 */
+	int PROP_TITLE = IWorkbenchPartConstants.PROP_TITLE;
 
-    /**
-     * Adds a listener for changes to properties of this workbench part.
-     * Has no effect if an identical listener is already registered.
-     * <p>
-     * The property ids are defined in {@link IWorkbenchPartConstants}.
-     * </p>
-     *
-     * @param listener a property listener
-     */
-    void addPropertyListener(IPropertyListener listener);
+	/**
+	 * Adds a listener for changes to properties of this workbench part. Has no
+	 * effect if an identical listener is already registered.
+	 * <p>
+	 * The property ids are defined in {@link IWorkbenchPartConstants}.
+	 * </p>
+	 *
+	 * @param listener a property listener
+	 */
+	void addPropertyListener(IPropertyListener listener);
 
-    /**
+	/**
 	 * Creates the SWT controls for this workbench part.
 	 * <p>
 	 * Clients should not call this method (the workbench calls this method when it
@@ -136,98 +136,92 @@ public interface IWorkbenchPart extends IAdaptable {
 	 *
 	 * @param parent the parent control
 	 */
-    void createPartControl(Composite parent);
+	void createPartControl(Composite parent);
 
-    /**
-     * Disposes of this workbench part.
-     * <p>
-     * This is the last method called on the <code>IWorkbenchPart</code>.  At this
-     * point the part controls (if they were ever created) have been disposed as part
-     * of an SWT composite.  There is no guarantee that createPartControl() has been
-     * called, so the part controls may never have been created.
-     * </p>
-     * <p>
-     * Within this method a part may release any resources, fonts, images, etc.&nbsp;
-     * held by this part.  It is also very important to deregister all listeners
-     * from the workbench.
-     * </p>
-     * <p>
-     * Clients should not call this method (the workbench calls this method at
-     * appropriate times).
-     * </p>
-     */
-    void dispose();
-
-    /**
-     * Returns the site for this workbench part. The site can be
-     * <code>null</code> while the workbench part is being initialized. After
-     * the initialization is complete, this value must be non-<code>null</code>
-     * for the remainder of the part's life cycle.
-     *
-     * @return The part site; this value may be <code>null</code> if the part
-     *         has not yet been initialized
-     */
-    IWorkbenchPartSite getSite();
-
-    /**
-     * Returns the title of this workbench part. If this value changes
-     * the part must fire a property listener event with
-     * <code>PROP_TITLE</code>.
-     * <p>
-     * The title is used to populate the title bar of this part's visual
-     * container.
-     * </p>
-     *
-     * @return the workbench part title (not <code>null</code>)
-     */
-    String getTitle();
-
-    /**
-     * Returns the title image of this workbench part.  If this value changes
-     * the part must fire a property listener event with
-     * <code>PROP_TITLE</code>.
-     * <p>
-     * The title image is usually used to populate the title bar of this part's
-     * visual container. Since this image is managed by the part itself, callers
-     * must <b>not</b> dispose the returned image.
-     * </p>
-     *
-     * @return the title image
-     */
-    Image getTitleImage();
-
-    /**
-     * Returns the title tool tip text of this workbench part.
-     * An empty string result indicates no tool tip.
-     * If this value changes the part must fire a property listener event with
-     * <code>PROP_TITLE</code>.
-     * <p>
-     * The tool tip text is used to populate the title bar of this part's
-     * visual container.
-     * </p>
-     *
-     * @return the workbench part title tool tip (not <code>null</code>)
-     */
-    String getTitleToolTip();
-
-    /**
-	 * Removes the given property listener from this workbench part. Has no
-	 * effect if an identical listener is not registered.
-	 *
-	 * @param listener
-	 *            a property listener
+	/**
+	 * Disposes of this workbench part.
+	 * <p>
+	 * This is the last method called on the <code>IWorkbenchPart</code>. At this
+	 * point the part controls (if they were ever created) have been disposed as
+	 * part of an SWT composite. There is no guarantee that createPartControl() has
+	 * been called, so the part controls may never have been created.
+	 * </p>
+	 * <p>
+	 * Within this method a part may release any resources, fonts, images,
+	 * etc.&nbsp; held by this part. It is also very important to deregister all
+	 * listeners from the workbench.
+	 * </p>
+	 * <p>
+	 * Clients should not call this method (the workbench calls this method at
+	 * appropriate times).
+	 * </p>
 	 */
-    void removePropertyListener(IPropertyListener listener);
+	void dispose();
 
-    /**
-     * Asks this part to take focus within the workbench. Parts must
-     * assign focus to one of the controls contained in the part's
-     * parent composite.
-     * <p>
-     * Clients should not call this method (the workbench calls this method at
-     * appropriate times).  To have the workbench activate a part, use
-     * <code>IWorkbenchPage.activate(IWorkbenchPart) instead</code>.
-     * </p>
-     */
-    void setFocus();
+	/**
+	 * Returns the site for this workbench part. The site can be <code>null</code>
+	 * while the workbench part is being initialized. After the initialization is
+	 * complete, this value must be non-<code>null</code> for the remainder of the
+	 * part's life cycle.
+	 *
+	 * @return The part site; this value may be <code>null</code> if the part has
+	 *         not yet been initialized
+	 */
+	IWorkbenchPartSite getSite();
+
+	/**
+	 * Returns the title of this workbench part. If this value changes the part must
+	 * fire a property listener event with <code>PROP_TITLE</code>.
+	 * <p>
+	 * The title is used to populate the title bar of this part's visual container.
+	 * </p>
+	 *
+	 * @return the workbench part title (not <code>null</code>)
+	 */
+	String getTitle();
+
+	/**
+	 * Returns the title image of this workbench part. If this value changes the
+	 * part must fire a property listener event with <code>PROP_TITLE</code>.
+	 * <p>
+	 * The title image is usually used to populate the title bar of this part's
+	 * visual container. Since this image is managed by the part itself, callers
+	 * must <b>not</b> dispose the returned image.
+	 * </p>
+	 *
+	 * @return the title image
+	 */
+	Image getTitleImage();
+
+	/**
+	 * Returns the title tool tip text of this workbench part. An empty string
+	 * result indicates no tool tip. If this value changes the part must fire a
+	 * property listener event with <code>PROP_TITLE</code>.
+	 * <p>
+	 * The tool tip text is used to populate the title bar of this part's visual
+	 * container.
+	 * </p>
+	 *
+	 * @return the workbench part title tool tip (not <code>null</code>)
+	 */
+	String getTitleToolTip();
+
+	/**
+	 * Removes the given property listener from this workbench part. Has no effect
+	 * if an identical listener is not registered.
+	 *
+	 * @param listener a property listener
+	 */
+	void removePropertyListener(IPropertyListener listener);
+
+	/**
+	 * Asks this part to take focus within the workbench. Parts must assign focus to
+	 * one of the controls contained in the part's parent composite.
+	 * <p>
+	 * Clients should not call this method (the workbench calls this method at
+	 * appropriate times). To have the workbench activate a part, use
+	 * <code>IWorkbenchPage.activate(IWorkbenchPart) instead</code>.
+	 * </p>
+	 */
+	void setFocus();
 }

@@ -22,26 +22,24 @@ import org.eclipse.ui.activities.IActivityManagerListener;
 public abstract class AbstractActivityManager implements IActivityManager {
 	private ListenerList<IActivityManagerListener> activityManagerListeners;
 
-    protected AbstractActivityManager() {
-    }
+	protected AbstractActivityManager() {
+	}
 
-    @Override
-	public void addActivityManagerListener(
-            IActivityManagerListener activityManagerListener) {
-        if (activityManagerListener == null) {
+	@Override
+	public void addActivityManagerListener(IActivityManagerListener activityManagerListener) {
+		if (activityManagerListener == null) {
 			throw new NullPointerException();
 		}
 
-        if (activityManagerListeners == null) {
+		if (activityManagerListeners == null) {
 			activityManagerListeners = new ListenerList<>();
 		}
 
 		activityManagerListeners.add(activityManagerListener);
-    }
+	}
 
-    protected void fireActivityManagerChanged(
-            ActivityManagerEvent activityManagerEvent) {
-        if (activityManagerEvent == null) {
+	protected void fireActivityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+		if (activityManagerEvent == null) {
 			throw new NullPointerException();
 		}
 
@@ -50,17 +48,16 @@ public abstract class AbstractActivityManager implements IActivityManager {
 				listener.activityManagerChanged(activityManagerEvent);
 			}
 		}
-    }
+	}
 
-    @Override
-	public void removeActivityManagerListener(
-            IActivityManagerListener activityManagerListener) {
-        if (activityManagerListener == null) {
+	@Override
+	public void removeActivityManagerListener(IActivityManagerListener activityManagerListener) {
+		if (activityManagerListener == null) {
 			throw new NullPointerException();
 		}
 
-        if (activityManagerListeners != null) {
+		if (activityManagerListeners != null) {
 			activityManagerListeners.remove(activityManagerListener);
 		}
-    }
+	}
 }

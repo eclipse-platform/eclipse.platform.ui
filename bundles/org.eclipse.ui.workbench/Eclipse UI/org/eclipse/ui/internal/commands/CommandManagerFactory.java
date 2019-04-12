@@ -19,7 +19,8 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.BindingManager;
 
 /**
- * This class allows clients to broker instances of <code>ICommandManager</code>.
+ * This class allows clients to broker instances of
+ * <code>ICommandManager</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -31,26 +32,19 @@ public final class CommandManagerFactory {
 	/**
 	 * Creates a new instance of <code>IMutableCommandManager</code>.
 	 *
-	 * @param bindingManager
-	 *            The binding manager providing support for the command manager;
-	 *            must not be <code>null</code>.
-	 * @param commandManager
-	 *            The command manager providing support for this command
-	 *            manager; must not be <code>null</code>.
-	 * @param contextManager
-	 *            The context manager for this command manager; must not be
-	 *            <code>null</code>.
-	 * @return a new instance of <code>IMutableCommandManager</code>. Clients
-	 *         should not make assumptions about the concrete implementation
-	 *         outside the contract of the interface. Guaranteed not to be
-	 *         <code>null</code>.
+	 * @param bindingManager The binding manager providing support for the command
+	 *                       manager; must not be <code>null</code>.
+	 * @param commandManager The command manager providing support for this command
+	 *                       manager; must not be <code>null</code>.
+	 * @param contextManager The context manager for this command manager; must not
+	 *                       be <code>null</code>.
+	 * @return a new instance of <code>IMutableCommandManager</code>. Clients should
+	 *         not make assumptions about the concrete implementation outside the
+	 *         contract of the interface. Guaranteed not to be <code>null</code>.
 	 */
-	public static CommandManagerLegacyWrapper getCommandManagerWrapper(
-			final BindingManager bindingManager,
-			final CommandManager commandManager,
-			final ContextManager contextManager) {
-		return new CommandManagerLegacyWrapper(bindingManager, commandManager,
-				contextManager);
+	public static CommandManagerLegacyWrapper getCommandManagerWrapper(final BindingManager bindingManager,
+			final CommandManager commandManager, final ContextManager contextManager) {
+		return new CommandManagerLegacyWrapper(bindingManager, commandManager, contextManager);
 	}
 
 	private CommandManagerFactory() {

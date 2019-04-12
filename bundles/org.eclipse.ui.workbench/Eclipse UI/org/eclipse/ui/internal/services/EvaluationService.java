@@ -97,16 +97,14 @@ public final class EvaluationService implements IEvaluationService {
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				Object defaultVariable = context.getLocal(DEFAULT_VAR);
-				if (defaultVariable != null
-						&& defaultVariable != IEvaluationContext.UNDEFINED_VARIABLE) {
+				if (defaultVariable != null && defaultVariable != IEvaluationContext.UNDEFINED_VARIABLE) {
 					return defaultVariable;
 				}
 				defaultVariable = context.getActive(IServiceConstants.ACTIVE_SELECTION);
 				if (defaultVariable instanceof IStructuredSelection) {
 					final IStructuredSelection selection = (IStructuredSelection) defaultVariable;
 					return selection.toList();
-				} else if ((defaultVariable instanceof ISelection)
-						&& (!((ISelection) defaultVariable).isEmpty())) {
+				} else if ((defaultVariable instanceof ISelection) && (!((ISelection) defaultVariable).isEmpty())) {
 					return Collections.singleton(defaultVariable);
 				}
 				return null;
@@ -130,9 +128,8 @@ public final class EvaluationService implements IEvaluationService {
 		};
 		variableFilter.addAll(Arrays.asList(new String[] { ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
 				ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, ISources.ACTIVE_EDITOR_ID_NAME,
-				ISources.ACTIVE_EDITOR_INPUT_NAME, ISources.SHOW_IN_INPUT,
-				ISources.SHOW_IN_SELECTION, ISources.ACTIVE_PART_NAME,
-				ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_SITE_NAME,
+				ISources.ACTIVE_EDITOR_INPUT_NAME, ISources.SHOW_IN_INPUT, ISources.SHOW_IN_SELECTION,
+				ISources.ACTIVE_PART_NAME, ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_SITE_NAME,
 				ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_CURRENT_SELECTION_NAME }));
 		context.runAndTrack(ratUpdater);
 	}
@@ -152,6 +149,7 @@ public final class EvaluationService implements IEvaluationService {
 			legacyContext.addVariable(name, value);
 		}
 	}
+
 	@Override
 	public void addSourceProvider(ISourceProvider provider) {
 		sourceProviders.add(provider);
@@ -164,12 +162,10 @@ public final class EvaluationService implements IEvaluationService {
 			final Object variableValue = entry.getValue();
 
 			/*
-			 * Bug 84056. If we update the active workbench window, then we risk
-			 * falling back to that shell when the active shell has registered
-			 * as "none".
+			 * Bug 84056. If we update the active workbench window, then we risk falling
+			 * back to that shell when the active shell has registered as "none".
 			 */
-			if ((variableName != null)
-					&& (!ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME.equals(variableName))) {
+			if ((variableName != null) && (!ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME.equals(variableName))) {
 				changeVariable(variableName, variableValue);
 			}
 		}
@@ -211,10 +207,9 @@ public final class EvaluationService implements IEvaluationService {
 	}
 
 	@Override
-	public IEvaluationReference addEvaluationListener(Expression expression,
-			IPropertyChangeListener listener, String property) {
-		EvaluationReference ref = new EvaluationReference(ratContext, expression, listener,
-				property);
+	public IEvaluationReference addEvaluationListener(Expression expression, IPropertyChangeListener listener,
+			String property) {
+		EvaluationReference ref = new EvaluationReference(ratContext, expression, listener, property);
 		addEvaluationReference(ref);
 		return ref;
 	}
@@ -233,8 +228,7 @@ public final class EvaluationService implements IEvaluationService {
 				}
 			}
 
-			if (info.hasDefaultVariableAccess()
-					&& ratVariables.add(IServiceConstants.ACTIVE_SELECTION)) {
+			if (info.hasDefaultVariableAccess() && ratVariables.add(IServiceConstants.ACTIVE_SELECTION)) {
 				changed = true;
 			}
 		}
@@ -324,8 +318,7 @@ public final class EvaluationService implements IEvaluationService {
 		notifying--;
 	}
 
-	private void fireServiceChange(final String property, final Object oldValue,
-			final Object newValue) {
+	private void fireServiceChange(final String property, final Object oldValue, final Object newValue) {
 		for (final IPropertyChangeListener listener : serviceListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
@@ -335,8 +328,8 @@ public final class EvaluationService implements IEvaluationService {
 
 				@Override
 				public void run() throws Exception {
-					listener.propertyChange(new PropertyChangeEvent(EvaluationService.this,
-							property, oldValue, newValue));
+					listener.propertyChange(
+							new PropertyChangeEvent(EvaluationService.this, property, oldValue, newValue));
 				}
 			});
 		}

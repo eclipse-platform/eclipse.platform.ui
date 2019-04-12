@@ -35,12 +35,9 @@ public class ElementReference implements IElementReference {
 	/**
 	 * Construct the reference.
 	 *
-	 * @param id
-	 *            command id. Must not be <code>null</code>.
-	 * @param adapt
-	 *            the element. Must not be <code>null</code>.
-	 * @param parms.
-	 *            parameters used for filtering. Must not be <code>null</code>.
+	 * @param id     command id. Must not be <code>null</code>.
+	 * @param adapt  the element. Must not be <code>null</code>.
+	 * @param parms. parameters used for filtering. Must not be <code>null</code>.
 	 */
 	public ElementReference(String id, UIElement adapt, Map parms) {
 		commandId = id;

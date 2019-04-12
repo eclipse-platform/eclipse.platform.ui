@@ -71,19 +71,14 @@ public final class ContributedAction extends CommandAction {
 	/**
 	 * Create an action that can call a command.
 	 *
-	 * @param locator
-	 *            The appropriate service locator to use. If you use a part site
-	 *            as your locator, this action will be tied to your part.
-	 * @param element
-	 *            the contributed action element
+	 * @param locator The appropriate service locator to use. If you use a part site
+	 *                as your locator, this action will be tied to your part.
+	 * @param element the contributed action element
 	 */
-	public ContributedAction(IServiceLocator locator,
-			IConfigurationElement element) throws CommandNotMappedException {
+	public ContributedAction(IServiceLocator locator, IConfigurationElement element) throws CommandNotMappedException {
 
-		String actionId = element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-		String commandId = element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_DEFINITION_ID);
+		String actionId = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+		String commandId = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFINITION_ID);
 
 		// TODO throw some more exceptions here :-)
 
@@ -92,23 +87,19 @@ public final class ContributedAction extends CommandAction {
 
 			Object obj = element.getParent();
 			if (obj instanceof IConfigurationElement) {
-				contributionId = ((IConfigurationElement) obj)
-						.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				contributionId = ((IConfigurationElement) obj).getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 				if (contributionId == null) {
 					throw new CommandNotMappedException("Action " //$NON-NLS-1$
 							+ actionId + " configuration element invalid"); //$NON-NLS-1$
 				}
 			}
 			// legacy bridge part
-			IActionCommandMappingService mapping = locator
-					.getService(IActionCommandMappingService.class);
+			IActionCommandMappingService mapping = locator.getService(IActionCommandMappingService.class);
 			if (mapping == null) {
-				throw new CommandNotMappedException(
-						"No action mapping service available"); //$NON-NLS-1$
+				throw new CommandNotMappedException("No action mapping service available"); //$NON-NLS-1$
 			}
 
-			commandId = mapping.getCommandId(mapping.getGeneratedCommandId(
-					contributionId, actionId));
+			commandId = mapping.getCommandId(mapping.getGeneratedCommandId(contributionId, actionId));
 		}
 		// what, still no command?
 		if (commandId == null) {
@@ -120,58 +111,47 @@ public final class ContributedAction extends CommandAction {
 		init(locator, commandId, null);
 
 		if (locator instanceof IWorkbenchPartSite) {
-			updateSiteAssociations((IWorkbenchPartSite) locator, commandId,
-					actionId, element);
+			updateSiteAssociations((IWorkbenchPartSite) locator, commandId, actionId, element);
 		}
 
 		setId(actionId);
 	}
 
-	private void updateSiteAssociations(IWorkbenchPartSite site,
-			String commandId, String actionId, IConfigurationElement element) {
-		IWorkbenchLocationService wls = site
-				.getService(IWorkbenchLocationService.class);
+	private void updateSiteAssociations(IWorkbenchPartSite site, String commandId, String actionId,
+			IConfigurationElement element) {
+		IWorkbenchLocationService wls = site.getService(IWorkbenchLocationService.class);
 		IWorkbench workbench = wls.getWorkbench();
 		IWorkbenchWindow window = wls.getWorkbenchWindow();
-		IHandlerService serv = workbench
-				.getService(IHandlerService.class);
-		appContext = new EvaluationContext(serv.getCurrentState(),
-				Collections.EMPTY_LIST);
+		IHandlerService serv = workbench.getService(IHandlerService.class);
+		appContext = new EvaluationContext(serv.getCurrentState(), Collections.EMPTY_LIST);
 
 		// set up the appContext as we would want it.
-		appContext.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME,
-				StructuredSelection.EMPTY);
+		appContext.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME, StructuredSelection.EMPTY);
 		appContext.addVariable(ISources.ACTIVE_PART_NAME, site.getPart());
 		appContext.addVariable(ISources.ACTIVE_PART_ID_NAME, site.getId());
 		appContext.addVariable(ISources.ACTIVE_SITE_NAME, site);
 		if (site instanceof IEditorSite) {
 			appContext.addVariable(ISources.ACTIVE_EDITOR_NAME, site.getPart());
-			appContext
-					.addVariable(ISources.ACTIVE_EDITOR_ID_NAME, site.getId());
+			appContext.addVariable(ISources.ACTIVE_EDITOR_ID_NAME, site.getId());
 		}
 		appContext.addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, window);
-		appContext.addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
-				window.getShell());
+		appContext.addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, window.getShell());
 
 		partHandler = lookUpHandler(site, commandId);
 		if (partHandler == null) {
 			localHandler = true;
 			// if we can't find the handler, then at least we can
 			// call the action delegate run method
-			partHandler = new ActionDelegateHandlerProxy(element,
-					IWorkbenchRegistryConstants.ATT_CLASS, actionId,
-					getParameterizedCommand(), site.getWorkbenchWindow(), null,
-					null, null);
+			partHandler = new ActionDelegateHandlerProxy(element, IWorkbenchRegistryConstants.ATT_CLASS, actionId,
+					getParameterizedCommand(), site.getWorkbenchWindow(), null, null, null);
 		}
 		if (site instanceof MultiPageEditorSite) {
-			IHandlerService siteServ = site
-					.getService(IHandlerService.class);
+			IHandlerService siteServ = site.getService(IHandlerService.class);
 			siteServ.activateHandler(commandId, partHandler);
 		}
 
 		if (getParameterizedCommand() != null) {
-			getParameterizedCommand().getCommand().removeCommandListener(
-					getCommandListener());
+			getParameterizedCommand().getCommand().removeCommandListener(getCommandListener());
 		}
 		site.getPage().addPartListener(getPartListener());
 	}
@@ -189,8 +169,7 @@ public final class ContributedAction extends CommandAction {
 	@Override
 	public void runWithEvent(Event event) {
 		if (partHandler != null && getParameterizedCommand() != null) {
-			IHandler oldHandler = getParameterizedCommand().getCommand()
-					.getHandler();
+			IHandler oldHandler = getParameterizedCommand().getCommand().getHandler();
 			try {
 				getParameterizedCommand().getCommand().setHandler(partHandler);
 				getParameterizedCommand().executeWithChecks(event, appContext);
@@ -223,8 +202,7 @@ public final class ContributedAction extends CommandAction {
 
 	private IPartListener getPartListener() {
 		if (partListener == null) {
-			final IWorkbenchPartSite site = (IWorkbenchPartSite) appContext
-					.getVariable(ISources.ACTIVE_SITE_NAME);
+			final IWorkbenchPartSite site = (IWorkbenchPartSite) appContext.getVariable(ISources.ACTIVE_SITE_NAME);
 
 			final IWorkbenchPart currentPart;
 			if (site instanceof MultiPageEditorSite) {
@@ -268,8 +246,7 @@ public final class ContributedAction extends CommandAction {
 				partHandler.dispose();
 			}
 			if (partListener != null) {
-				IWorkbenchPartSite site = (IWorkbenchPartSite) appContext
-						.getVariable(ISources.ACTIVE_SITE_NAME);
+				IWorkbenchPartSite site = (IWorkbenchPartSite) appContext.getVariable(ISources.ACTIVE_SITE_NAME);
 				site.getPage().removePartListener(partListener);
 				partListener = null;
 			}

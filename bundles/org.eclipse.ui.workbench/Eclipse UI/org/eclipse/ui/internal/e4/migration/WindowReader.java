@@ -122,8 +122,7 @@ public class WindowReader extends MementoReader {
 		List<PerspectiveReader> perspectives = new ArrayList<>();
 		IMemento perspContainer = getPerspectiveContainer();
 		if (perspContainer != null) {
-			IMemento[] perspectiveMems = perspContainer
-					.getChildren(IWorkbenchConstants.TAG_PERSPECTIVE);
+			IMemento[] perspectiveMems = perspContainer.getChildren(IWorkbenchConstants.TAG_PERSPECTIVE);
 			for (IMemento perspectiveMem : perspectiveMems) {
 				PerspectiveReader perspective = new PerspectiveReader(perspectiveMem);
 				perspectives.add(perspective);

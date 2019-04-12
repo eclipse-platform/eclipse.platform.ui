@@ -46,16 +46,13 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
-
 /**
- * This class is responsible for displaying the support area on the right
- * side of the status dialog.
+ * This class is responsible for displaying the support area on the right side
+ * of the status dialog.
  */
-public class SupportTray extends DialogTray implements
-		ISelectionChangedListener {
+public class SupportTray extends DialogTray implements ISelectionChangedListener {
 
 	private Map dialogState;
-
 
 	/**
 	 * @param dialogState
@@ -90,8 +87,7 @@ public class SupportTray extends DialogTray implements
 		// nothing to display. Should never happen, cause button is disabled
 		// when nothing to display.
 
-		if (providesSupport(getCurrentStatusAdapter()) == null
-				&& getBooleanValue(IStatusDialogConstants.TRAY_OPENED)) {
+		if (providesSupport(getCurrentStatusAdapter()) == null && getBooleanValue(IStatusDialogConstants.TRAY_OPENED)) {
 
 		}
 
@@ -110,8 +106,7 @@ public class SupportTray extends DialogTray implements
 			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.grabExcessHorizontalSpace = true;
 			toolBarManager.getControl().setLayoutData(gd);
-			Label separator = new Label(container, SWT.SEPARATOR
-					| SWT.HORIZONTAL);
+			Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.heightHint = 1;
 			separator.setLayoutData(gd);
@@ -127,8 +122,7 @@ public class SupportTray extends DialogTray implements
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.verticalSpacing = 0;
 		supportArea.setLayout(layout);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		gd.horizontalSpan = 1;
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
@@ -138,12 +132,10 @@ public class SupportTray extends DialogTray implements
 			createSupportArea(supportArea, lastSelectedStatus);
 
 		Point shellSize = supportArea.getShell().getSize();
-		Point desiredSize = supportArea.getShell().computeSize(SWT.DEFAULT,
-				SWT.DEFAULT);
+		Point desiredSize = supportArea.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
-		if(desiredSize.y > shellSize.y){
-			supportArea.getShell().setSize(shellSize.x,
-					Math.min(desiredSize.y, 500));
+		if (desiredSize.y > shellSize.y) {
+			supportArea.getShell().setSize(shellSize.x, Math.min(desiredSize.y, 500));
 		}
 
 		return container;
@@ -154,22 +146,19 @@ public class SupportTray extends DialogTray implements
 	 */
 	private void createImages() {
 		Display display = Display.getCurrent();
-		int[] shape = new int[] { 3, 3, 5, 3, 7, 5, 8, 5, 10, 3, 12, 3, 12,
-				5, 10, 7, 10, 8, 12, 10, 12, 12, 10, 12, 8, 10, 7, 10, 5,
-				12, 3, 12, 3, 10, 5, 8, 5, 7, 3, 5 };
+		int[] shape = new int[] { 3, 3, 5, 3, 7, 5, 8, 5, 10, 3, 12, 3, 12, 5, 10, 7, 10, 8, 12, 10, 12, 12, 10, 12, 8,
+				10, 7, 10, 5, 12, 3, 12, 3, 10, 5, 8, 5, 7, 3, 5 };
 
 		/*
 		 * Use magenta as transparency color since it is used infrequently.
 		 */
 		Color border = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
-		Color background = display
-				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		Color background = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		Color backgroundHot = new Color(display, new RGB(252, 160, 160));
 		Color transparent = display.getSystemColor(SWT.COLOR_MAGENTA);
 
-		PaletteData palette = new PaletteData(new RGB[] {
-				transparent.getRGB(), border.getRGB(), background.getRGB(),
-				backgroundHot.getRGB() });
+		PaletteData palette = new PaletteData(
+				new RGB[] { transparent.getRGB(), border.getRGB(), background.getRGB(), backgroundHot.getRGB() });
 		ImageData data = new ImageData(16, 16, 8, palette);
 		data.transparentPixel = 0;
 
@@ -212,21 +201,20 @@ public class SupportTray extends DialogTray implements
 	}
 
 	private void destroyImages() {
-		if (normal != null) normal.dispose();
-		if (hover != null) hover.dispose();
+		if (normal != null)
+			normal.dispose();
+		if (hover != null)
+			hover.dispose();
 	}
 
 	/**
 	 * Create the area for extra error support information.
 	 *
-	 * @param parent
-	 *            A composite on which should be the support area created.
-	 * @param statusAdapter
-	 *            StatusAdapter for which should be the support area
-	 *            created.
+	 * @param parent        A composite on which should be the support area created.
+	 * @param statusAdapter StatusAdapter for which should be the support area
+	 *                      created.
 	 */
-	private void createSupportArea(Composite parent,
-			StatusAdapter statusAdapter) {
+	private void createSupportArea(Composite parent, StatusAdapter statusAdapter) {
 
 		ErrorSupportProvider provider = getSupportProvider();
 
@@ -250,23 +238,19 @@ public class SupportTray extends DialogTray implements
 		}
 
 		if (provider instanceof AbstractStatusAreaProvider) {
-			((AbstractStatusAreaProvider) provider).createSupportArea(
-					supportAreaContent, statusAdapter);
+			((AbstractStatusAreaProvider) provider).createSupportArea(supportAreaContent, statusAdapter);
 		} else {
-			provider.createSupportArea(supportAreaContent, statusAdapter
-					.getStatus());
+			provider.createSupportArea(supportAreaContent, statusAdapter.getStatus());
 		}
 	}
 
 	public ErrorSupportProvider getSupportProvider() {
 		ErrorSupportProvider provider = Policy.getErrorSupportProvider();
 
-		Object userSupportProvider = dialogState
-				.get(IStatusDialogConstants.CUSTOM_SUPPORT_PROVIDER);
+		Object userSupportProvider = dialogState.get(IStatusDialogConstants.CUSTOM_SUPPORT_PROVIDER);
 		if (userSupportProvider instanceof AbstractStatusAreaProvider) {
 			provider = (ErrorSupportProvider) userSupportProvider;
 		}
-
 
 		if (getBooleanValue(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA) && provider == null) {
 			provider = new StackTraceSupportArea();
@@ -274,8 +258,7 @@ public class SupportTray extends DialogTray implements
 		return provider;
 	}
 
-	private StatusAdapter getStatusAdapterFromEvent(
-			SelectionChangedEvent event) {
+	private StatusAdapter getStatusAdapterFromEvent(SelectionChangedEvent event) {
 
 		ISelection selection = event.getSelection();
 
@@ -292,8 +275,7 @@ public class SupportTray extends DialogTray implements
 	/**
 	 * Checks if the support dialog has any support areas.
 	 *
-	 * @param adapter
-	 *            - a parameter for which we area checking the status adapter
+	 * @param adapter - a parameter for which we area checking the status adapter
 	 * @return true if support dialog has any support areas to display, false
 	 *         otherwise
 	 */
@@ -336,7 +318,6 @@ public class SupportTray extends DialogTray implements
 	}
 
 	private StatusAdapter getCurrentStatusAdapter() {
-		return (StatusAdapter) dialogState
-				.get(IStatusDialogConstants.CURRENT_STATUS_ADAPTER);
+		return (StatusAdapter) dialogState.get(IStatusDialogConstants.CURRENT_STATUS_ADAPTER);
 	}
 }

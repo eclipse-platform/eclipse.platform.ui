@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * An instance of this interface provides support for managing
- * <code>IWorkbench</code> activities.  An instance of this interface may be
+ * <code>IWorkbench</code> activities. An instance of this interface may be
  * obtained via {@link org.eclipse.ui.IWorkbench#getActivitySupport()}.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -29,59 +29,59 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public interface IWorkbenchActivitySupport {
 
-    /**
-     * Returns the activity manager for the workbench.
-     *
-     * @return the activity manager for the workbench. Guaranteed not to be
-     *         <code>null</code>.
-     */
-    IActivityManager getActivityManager();
+	/**
+	 * Returns the activity manager for the workbench.
+	 *
+	 * @return the activity manager for the workbench. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
+	IActivityManager getActivityManager();
 
-    /**
-     * Sets the set of identifiers to enabled activities.
-     *
-     * @param enabledActivityIds
-     *            the set of identifiers to enabled activities. This set may be
-     *            empty, but it must not be <code>null</code>. If this set
-     *            is not empty, it must only contain instances of <code>String</code>.
-     */
+	/**
+	 * Sets the set of identifiers to enabled activities.
+	 *
+	 * @param enabledActivityIds the set of identifiers to enabled activities. This
+	 *                           set may be empty, but it must not be
+	 *                           <code>null</code>. If this set is not empty, it
+	 *                           must only contain instances of <code>String</code>.
+	 */
 	void setEnabledActivityIds(Set<String> enabledActivityIds);
 
-    /**
-     * Return the image associated with this activity.
-     *
-     * @param activity the activity
-     * @return the image associated with this activity.  Never <code>null</code>.
-     * @since 3.1
-     */
-    ImageDescriptor getImageDescriptor(IActivity activity);
+	/**
+	 * Return the image associated with this activity.
+	 *
+	 * @param activity the activity
+	 * @return the image associated with this activity. Never <code>null</code>.
+	 * @since 3.1
+	 */
+	ImageDescriptor getImageDescriptor(IActivity activity);
 
-    /**
-     * Return the image associated with this category.
-     *
-     * @param category the category
-     * @return the image associated with this category.  Never <code>null</code>.
-     * @since 3.1
-     */
-    ImageDescriptor getImageDescriptor(ICategory category);
+	/**
+	 * Return the image associated with this category.
+	 *
+	 * @param category the category
+	 * @return the image associated with this category. Never <code>null</code>.
+	 * @since 3.1
+	 */
+	ImageDescriptor getImageDescriptor(ICategory category);
 
 	/**
 	 * Return the trigger point manager for this instance.
 	 *
-	 * @return the trigger point manager.  Never <code>null</code>.
+	 * @return the trigger point manager. Never <code>null</code>.
 	 * @since 3.1
 	 */
 	ITriggerPointManager getTriggerPointManager();
 
-    /**
-     * Return a copy of the current activity set. This copy will contain all
-     * activity and category definitions that the workbench activity manager
-     * contains, and will have the same enabled state. It will not have the same
-     * listeners. This is useful for user interfaces that wish to modify the
-     * activity enablement state (such as preference pages).
-     *
-     * @return a copy of the current activity set
-     * @since 3.1
-     */
-    IMutableActivityManager createWorkingCopy();
+	/**
+	 * Return a copy of the current activity set. This copy will contain all
+	 * activity and category definitions that the workbench activity manager
+	 * contains, and will have the same enabled state. It will not have the same
+	 * listeners. This is useful for user interfaces that wish to modify the
+	 * activity enablement state (such as preference pages).
+	 *
+	 * @return a copy of the current activity set
+	 * @since 3.1
+	 */
+	IMutableActivityManager createWorkingCopy();
 }

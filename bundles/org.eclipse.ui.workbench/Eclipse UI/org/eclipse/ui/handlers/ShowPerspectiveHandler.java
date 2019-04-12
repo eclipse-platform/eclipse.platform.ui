@@ -43,17 +43,13 @@ import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
  */
 public final class ShowPerspectiveHandler extends AbstractHandler {
 
-
 	@Override
-	public Object execute(final ExecutionEvent event)
-			throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		// Get the view identifier, if any.
 		final Map parameters = event.getParameters();
-		final Object value = parameters
-				.get(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID);
+		final Object value = parameters.get(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID);
 		final String newWindow = (String) parameters
 				.get(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_NEWWINDOW);
 
@@ -73,35 +69,29 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 	/**
 	 * Opens the specified perspective in a new window.
 	 *
-	 * @param perspectiveId
-	 *            The perspective to open; must not be <code>null</code>
-	 * @throws ExecutionException
-	 *             If the perspective could not be opened.
+	 * @param perspectiveId The perspective to open; must not be <code>null</code>
+	 * @throws ExecutionException If the perspective could not be opened.
 	 */
-	private void openNewWindowPerspective(String perspectiveId,
-			IWorkbenchWindow activeWorkbenchWindow) throws ExecutionException {
+	private void openNewWindowPerspective(String perspectiveId, IWorkbenchWindow activeWorkbenchWindow)
+			throws ExecutionException {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		try {
 			IAdaptable input = ((Workbench) workbench).getDefaultPageInput();
 			workbench.openWorkbenchWindow(perspectiveId, input);
 		} catch (WorkbenchException e) {
 			ErrorDialog.openError(activeWorkbenchWindow.getShell(),
-					WorkbenchMessages.ChangeToPerspectiveMenu_errorTitle, e
-							.getMessage(), e.getStatus());
+					WorkbenchMessages.ChangeToPerspectiveMenu_errorTitle, e.getMessage(), e.getStatus());
 		}
 	}
 
 	/**
 	 * Opens a view selection dialog, allowing the user to chose a view.
 	 *
-	 * @throws ExecutionException
-	 *             If the perspective could not be opened.
+	 * @throws ExecutionException If the perspective could not be opened.
 	 */
-	private void openOther(final IWorkbenchWindow activeWorkbenchWindow)
-			throws ExecutionException {
-		final SelectPerspectiveDialog dialog = new SelectPerspectiveDialog(
-				activeWorkbenchWindow.getShell(), WorkbenchPlugin.getDefault()
-						.getPerspectiveRegistry());
+	private void openOther(final IWorkbenchWindow activeWorkbenchWindow) throws ExecutionException {
+		final SelectPerspectiveDialog dialog = new SelectPerspectiveDialog(activeWorkbenchWindow.getShell(),
+				WorkbenchPlugin.getDefault().getPerspectiveRegistry());
 		dialog.open();
 		if (dialog.getReturnCode() == Window.CANCEL) {
 			return;
@@ -127,19 +117,16 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 	/**
 	 * Opens the perspective with the given identifier.
 	 *
-	 * @param perspectiveId
-	 *            The perspective to open; must not be <code>null</code>
-	 * @throws ExecutionException
-	 *             If the perspective could not be opened.
+	 * @param perspectiveId The perspective to open; must not be <code>null</code>
+	 * @throws ExecutionException If the perspective could not be opened.
 	 */
-	private void openPerspective(final String perspectiveId,
-			final IWorkbenchWindow activeWorkbenchWindow)
+	private void openPerspective(final String perspectiveId, final IWorkbenchWindow activeWorkbenchWindow)
 			throws ExecutionException {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-		IPerspectiveDescriptor desc = activeWorkbenchWindow.getWorkbench()
-				.getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+		IPerspectiveDescriptor desc = activeWorkbenchWindow.getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(perspectiveId);
 		if (desc == null) {
 			throw new ExecutionException("Perspective " + perspectiveId //$NON-NLS-1$
 					+ " cannot be found."); //$NON-NLS-1$
@@ -149,8 +136,7 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 			if (activePage != null) {
 				activePage.setPerspective(desc);
 			} else {
-				IAdaptable input = ((Workbench) workbench)
-						.getDefaultPageInput();
+				IAdaptable input = ((Workbench) workbench).getDefaultPageInput();
 				activeWorkbenchWindow.openPage(perspectiveId, input);
 			}
 		} catch (WorkbenchException e) {

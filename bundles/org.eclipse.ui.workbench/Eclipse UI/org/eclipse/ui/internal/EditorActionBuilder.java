@@ -24,113 +24,106 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
- * This class reads the registry for extensions that plug into
- * 'editorActions' extension point.
+ * This class reads the registry for extensions that plug into 'editorActions'
+ * extension point.
  */
 public class EditorActionBuilder extends PluginActionBuilder {
-    private static final String TAG_CONTRIBUTION_TYPE = "editorContribution"; //$NON-NLS-1$
+	private static final String TAG_CONTRIBUTION_TYPE = "editorContribution"; //$NON-NLS-1$
 
-    /**
-     * The constructor.
-     */
-    public EditorActionBuilder() {
-    }
+	/**
+	 * The constructor.
+	 */
+	public EditorActionBuilder() {
+	}
 
-    @Override
-	protected ActionDescriptor createActionDescriptor(
-            IConfigurationElement element) {
-        return new ActionDescriptor(element, ActionDescriptor.T_EDITOR);
-    }
+	@Override
+	protected ActionDescriptor createActionDescriptor(IConfigurationElement element) {
+		return new ActionDescriptor(element, ActionDescriptor.T_EDITOR);
+	}
 
-    @Override
+	@Override
 	protected BasicContribution createContribution() {
-        return new EditorContribution();
-    }
+		return new EditorContribution();
+	}
 
-    /**
-     * Reads and apply all external contributions for this editor's ID
-     * registered in 'editorActions' extension point.
-     */
-    public IEditorActionBarContributor readActionExtensions(
-            IEditorDescriptor desc) {
-        ExternalContributor ext = null;
-        readContributions(desc.getId(), TAG_CONTRIBUTION_TYPE,
-                IWorkbenchRegistryConstants.PL_EDITOR_ACTIONS);
-        if (cache != null) {
-            ext = new ExternalContributor(cache);
-            cache = null;
-        }
-        return ext;
-    }
+	/**
+	 * Reads and apply all external contributions for this editor's ID registered in
+	 * 'editorActions' extension point.
+	 */
+	public IEditorActionBarContributor readActionExtensions(IEditorDescriptor desc) {
+		ExternalContributor ext = null;
+		readContributions(desc.getId(), TAG_CONTRIBUTION_TYPE, IWorkbenchRegistryConstants.PL_EDITOR_ACTIONS);
+		if (cache != null) {
+			ext = new ExternalContributor(cache);
+			cache = null;
+		}
+		return ext;
+	}
 
-    /**
-     * Helper class to collect the menus and actions defined within a
-     * contribution element.
-     */
-    private static class EditorContribution extends BasicContribution {
-        @Override
+	/**
+	 * Helper class to collect the menus and actions defined within a contribution
+	 * element.
+	 */
+	private static class EditorContribution extends BasicContribution {
+		@Override
 		public void dispose() {
 			disposeActions();
 			super.dispose();
-        }
+		}
 
-        public void editorChanged(IEditorPart editor) {
-            if (actions != null) {
-                for (int i = 0; i < actions.size(); i++) {
-                    ActionDescriptor ad = (ActionDescriptor) actions.get(i);
-                    EditorPluginAction action = (EditorPluginAction) ad
-                            .getAction();
-                    action.editorChanged(editor);
-                }
-            }
-        }
-    }
+		public void editorChanged(IEditorPart editor) {
+			if (actions != null) {
+				for (int i = 0; i < actions.size(); i++) {
+					ActionDescriptor ad = (ActionDescriptor) actions.get(i);
+					EditorPluginAction action = (EditorPluginAction) ad.getAction();
+					action.editorChanged(editor);
+				}
+			}
+		}
+	}
 
-    /**
-     * Helper class that will populate the menu and toobar with the external
-     * editor contributions.
-     */
-    public static class ExternalContributor implements
-            IEditorActionBarContributor {
-        private ArrayList cache;
+	/**
+	 * Helper class that will populate the menu and toobar with the external editor
+	 * contributions.
+	 */
+	public static class ExternalContributor implements IEditorActionBarContributor {
+		private ArrayList cache;
 
-        public ExternalContributor(ArrayList cache) {
-            this.cache = cache;
-        }
+		public ExternalContributor(ArrayList cache) {
+			this.cache = cache;
+		}
 
-        @Override
+		@Override
 		public void dispose() {
-            for (int i = 0; i < cache.size(); i++) {
-                ((EditorContribution) cache.get(i)).dispose();
-            }
-        }
+			for (int i = 0; i < cache.size(); i++) {
+				((EditorContribution) cache.get(i)).dispose();
+			}
+		}
 
-        public ActionDescriptor[] getExtendedActions() {
-            ArrayList results = new ArrayList();
-            for (int i = 0; i < cache.size(); i++) {
-                EditorContribution ec = (EditorContribution) cache.get(i);
-                if (ec.actions != null) {
+		public ActionDescriptor[] getExtendedActions() {
+			ArrayList results = new ArrayList();
+			for (int i = 0; i < cache.size(); i++) {
+				EditorContribution ec = (EditorContribution) cache.get(i);
+				if (ec.actions != null) {
 					results.addAll(ec.actions);
 				}
-            }
-            return (ActionDescriptor[]) results
-                    .toArray(new ActionDescriptor[results.size()]);
-        }
+			}
+			return (ActionDescriptor[]) results.toArray(new ActionDescriptor[results.size()]);
+		}
 
-        @Override
+		@Override
 		public void init(IActionBars bars, IWorkbenchPage page) {
-            for (int i = 0; i < cache.size(); i++) {
-                ((EditorContribution) cache.get(i)).contribute(bars
-                        .getMenuManager(), false, bars.getToolBarManager(),
-                        true);
-            }
-        }
+			for (int i = 0; i < cache.size(); i++) {
+				((EditorContribution) cache.get(i)).contribute(bars.getMenuManager(), false, bars.getToolBarManager(),
+						true);
+			}
+		}
 
-        @Override
+		@Override
 		public void setActiveEditor(IEditorPart editor) {
-            for (int i = 0; i < cache.size(); i++) {
-                ((EditorContribution) cache.get(i)).editorChanged(editor);
-            }
-        }
-    }
+			for (int i = 0; i < cache.size(); i++) {
+				((EditorContribution) cache.get(i)).editorChanged(editor);
+			}
+		}
+	}
 }

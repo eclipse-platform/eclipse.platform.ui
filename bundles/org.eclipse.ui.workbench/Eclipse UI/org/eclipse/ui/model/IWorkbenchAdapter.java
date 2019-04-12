@@ -16,55 +16,54 @@ package org.eclipse.ui.model;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * This adapter interface provides visual presentation and hierarchical structure
- * for workbench elements, allowing them to be displayed in the UI
+ * This adapter interface provides visual presentation and hierarchical
+ * structure for workbench elements, allowing them to be displayed in the UI
  * without having to know the concrete type of the element.
  * <p>
  * There is an associate label provider and content provider for showing
  * elements with a registered workbench adapter in JFace structured viewers.
  * </p>
+ * 
  * @see WorkbenchLabelProvider
  * @see BaseWorkbenchContentProvider
  */
 public interface IWorkbenchAdapter {
-    /**
-     * Returns the children of this object.  When this object
-     * is displayed in a tree, the returned objects will be this
-     * element's children.  Returns an empty array if this
-     * object has no children.
-     *
-     * @param o The object to get the children for.
-     * @return Object[]
-     */
-    Object[] getChildren(Object o);
+	/**
+	 * Returns the children of this object. When this object is displayed in a tree,
+	 * the returned objects will be this element's children. Returns an empty array
+	 * if this object has no children.
+	 *
+	 * @param o The object to get the children for.
+	 * @return Object[]
+	 */
+	Object[] getChildren(Object o);
 
-    /**
-     * Returns an image descriptor to be used for displaying an object in the workbench.
-     * Returns <code>null</code> if there is no appropriate image.
-     *
-     * @param object The object to get an image descriptor for.
-     * @return ImageDescriptor
-     */
-    ImageDescriptor getImageDescriptor(Object object);
+	/**
+	 * Returns an image descriptor to be used for displaying an object in the
+	 * workbench. Returns <code>null</code> if there is no appropriate image.
+	 *
+	 * @param object The object to get an image descriptor for.
+	 * @return ImageDescriptor
+	 */
+	ImageDescriptor getImageDescriptor(Object object);
 
-    /**
-     * Returns the label text for this element.  This is typically
-     * used to assign a label to this object when displayed
-     * in the UI.  Returns an empty string if there is no appropriate
-     * label text for this object.
-     *
-     * @param o The object to get a label for.
-     * @return String
-     */
-    String getLabel(Object o);
+	/**
+	 * Returns the label text for this element. This is typically used to assign a
+	 * label to this object when displayed in the UI. Returns an empty string if
+	 * there is no appropriate label text for this object.
+	 *
+	 * @param o The object to get a label for.
+	 * @return String
+	 */
+	String getLabel(Object o);
 
-    /**
-     * Returns the logical parent of the given object in its tree.
-     * Returns <code>null</code> if there is no parent, or if this object doesn't
-     * belong to a tree.
-     *
-     * @param o The object to get the parent for.
-     * @return Object
-     */
-    Object getParent(Object o);
+	/**
+	 * Returns the logical parent of the given object in its tree. Returns
+	 * <code>null</code> if there is no parent, or if this object doesn't belong to
+	 * a tree.
+	 *
+	 * @param o The object to get the parent for.
+	 * @return Object
+	 */
+	Object getParent(Object o);
 }

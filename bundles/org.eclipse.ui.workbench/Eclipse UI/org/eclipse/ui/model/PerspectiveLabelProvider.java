@@ -37,96 +37,93 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *
  * @since 3.0
  */
-public final class PerspectiveLabelProvider extends LabelProvider implements
-        ITableLabelProvider {
+public final class PerspectiveLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-    /**
-     * List of all Image objects this label provider is responsible for.
-     */
-    private HashMap imageCache = new HashMap(5);
+	/**
+	 * List of all Image objects this label provider is responsible for.
+	 */
+	private HashMap imageCache = new HashMap(5);
 
-    /**
-     * Indicates whether the default perspective is visually marked.
-     */
-    private boolean markDefault;
+	/**
+	 * Indicates whether the default perspective is visually marked.
+	 */
+	private boolean markDefault;
 
-    /**
-     * Creates a new label provider for perspectives.
-     * The default perspective is visually marked.
-     */
-    public PerspectiveLabelProvider() {
-        this(true);
-    }
+	/**
+	 * Creates a new label provider for perspectives. The default perspective is
+	 * visually marked.
+	 */
+	public PerspectiveLabelProvider() {
+		this(true);
+	}
 
-    /**
-     * Creates a new label provider for perspectives.
-     *
-     * @param markDefault <code>true</code> if the default perspective is to be
-     * visually marked, and <code>false</code> if the default perspective is
-     * not treated as anything special
-     */
-    public PerspectiveLabelProvider(boolean markDefault) {
-        super();
-        this.markDefault = markDefault;
-    }
+	/**
+	 * Creates a new label provider for perspectives.
+	 *
+	 * @param markDefault <code>true</code> if the default perspective is to be
+	 *                    visually marked, and <code>false</code> if the default
+	 *                    perspective is not treated as anything special
+	 */
+	public PerspectiveLabelProvider(boolean markDefault) {
+		super();
+		this.markDefault = markDefault;
+	}
 
-    @Override
+	@Override
 	public Image getImage(Object element) {
-        if (element instanceof IPerspectiveDescriptor) {
-            IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
-            ImageDescriptor imageDescriptor = desc.getImageDescriptor();
-            if (imageDescriptor == null) {
-                imageDescriptor = WorkbenchImages
-                        .getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
-            }
-            Image image = (Image) imageCache.get(imageDescriptor);
-            if (image == null) {
-                image = imageDescriptor.createImage();
-                imageCache.put(imageDescriptor, image);
-            }
-            return image;
-        }
-        return null;
-    }
+		if (element instanceof IPerspectiveDescriptor) {
+			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+			ImageDescriptor imageDescriptor = desc.getImageDescriptor();
+			if (imageDescriptor == null) {
+				imageDescriptor = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
+			}
+			Image image = (Image) imageCache.get(imageDescriptor);
+			if (image == null) {
+				image = imageDescriptor.createImage();
+				imageCache.put(imageDescriptor, image);
+			}
+			return image;
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        for (Iterator i = imageCache.values().iterator(); i.hasNext();) {
-            ((Image) i.next()).dispose();
-        }
-        imageCache.clear();
-    }
+		for (Iterator i = imageCache.values().iterator(); i.hasNext();) {
+			((Image) i.next()).dispose();
+		}
+		imageCache.clear();
+	}
 
-    @Override
+	@Override
 	public String getText(Object element) {
-        if (element instanceof IPerspectiveDescriptor) {
-            IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
-            String label = desc.getLabel();
-            if (markDefault) {
-                String def = PlatformUI.getWorkbench().getPerspectiveRegistry()
-                        .getDefaultPerspective();
-                if (desc.getId().equals(def)) {
-                    label = NLS.bind(WorkbenchMessages.PerspectivesPreference_defaultLabel, label );
-                }
-            }
-            return label;
-        }
-        return WorkbenchMessages.PerspectiveLabelProvider_unknown;
-    }
+		if (element instanceof IPerspectiveDescriptor) {
+			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+			String label = desc.getLabel();
+			if (markDefault) {
+				String def = PlatformUI.getWorkbench().getPerspectiveRegistry().getDefaultPerspective();
+				if (desc.getId().equals(def)) {
+					label = NLS.bind(WorkbenchMessages.PerspectivesPreference_defaultLabel, label);
+				}
+			}
+			return label;
+		}
+		return WorkbenchMessages.PerspectiveLabelProvider_unknown;
+	}
 
-    /**
-     * @see ITableLabelProvider#getColumnImage
-     */
-    @Override
+	/**
+	 * @see ITableLabelProvider#getColumnImage
+	 */
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
-        return getImage(element);
-    }
+		return getImage(element);
+	}
 
-    /**
-     * @see ITableLabelProvider#getColumnText
-     */
-    @Override
+	/**
+	 * @see ITableLabelProvider#getColumnText
+	 */
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
-        return getText(element);
-    }
+		return getText(element);
+	}
 }

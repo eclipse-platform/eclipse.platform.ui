@@ -22,7 +22,6 @@ import org.eclipse.osgi.util.NLS;
 public class ContributionInfoMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.testing.messages";//$NON-NLS-1$
 
-
 	public static String ContributionInfo_Editor;
 	public static String ContributionInfo_View;
 	public static String ContributionInfo_ActionSet;

@@ -24,54 +24,51 @@ import org.eclipse.ui.internal.progress.BlockedJobsDialog;
  * handler for the workbench.
  */
 public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
-    IProgressMonitor outerMonitor;
+	IProgressMonitor outerMonitor;
 
-    int nestingDepth = 0;
+	int nestingDepth = 0;
 
-    /**
-     * Create a new instance of the receiver.
-     */
-    public WorkbenchDialogBlockedHandler() {
-        //No default behavior
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 */
+	public WorkbenchDialogBlockedHandler() {
+		// No default behavior
+	}
 
-    @Override
+	@Override
 	public void clearBlocked() {
-        if (nestingDepth == 0) {
+		if (nestingDepth == 0) {
 			return;
 		}
 
-        nestingDepth--;
+		nestingDepth--;
 
-        if (nestingDepth <= 0) {
-            BlockedJobsDialog.clear(outerMonitor);
-            outerMonitor = null;
-            nestingDepth = 0;
-        }
+		if (nestingDepth <= 0) {
+			BlockedJobsDialog.clear(outerMonitor);
+			outerMonitor = null;
+			nestingDepth = 0;
+		}
 
-    }
+	}
 
-    @Override
-	public void showBlocked(Shell parentShell,
-            IProgressMonitor blockingMonitor, IStatus blockingStatus,
-            String blockedName) {
+	@Override
+	public void showBlocked(Shell parentShell, IProgressMonitor blockingMonitor, IStatus blockingStatus,
+			String blockedName) {
 
-        nestingDepth++;
-        if (outerMonitor == null) {
-            outerMonitor = blockingMonitor;
-            //Try to get a name as best as possible
-            if (blockedName == null && parentShell != null) {
+		nestingDepth++;
+		if (outerMonitor == null) {
+			outerMonitor = blockingMonitor;
+			// Try to get a name as best as possible
+			if (blockedName == null && parentShell != null) {
 				blockedName = parentShell.getText();
 			}
-            BlockedJobsDialog.createBlockedDialog(parentShell, blockingMonitor,
-                    blockingStatus, blockedName);
-        }
+			BlockedJobsDialog.createBlockedDialog(parentShell, blockingMonitor, blockingStatus, blockedName);
+		}
 
-    }
+	}
 
-    @Override
-	public void showBlocked(IProgressMonitor blocking, IStatus blockingStatus,
-            String blockedName) {
-        showBlocked(null, blocking, blockingStatus, blockedName);
-    }
+	@Override
+	public void showBlocked(IProgressMonitor blocking, IStatus blockingStatus, String blockedName) {
+		showBlocked(null, blocking, blockingStatus, blockedName);
+	}
 }

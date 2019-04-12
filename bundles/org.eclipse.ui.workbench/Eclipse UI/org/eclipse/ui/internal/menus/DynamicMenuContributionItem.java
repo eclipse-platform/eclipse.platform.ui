@@ -49,16 +49,12 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	/**
 	 * Creates a DynamicMenuContributionItem
 	 *
-	 * @param id
-	 *            - Id of the menu item
-	 * @param locator
-	 *            - The Service Locator
-	 * @param dynamicAddition
-	 *            - The Configuration Element defined in the plugin.xml
+	 * @param id              - Id of the menu item
+	 * @param locator         - The Service Locator
+	 * @param dynamicAddition - The Configuration Element defined in the plugin.xml
 	 *
 	 */
-	public DynamicMenuContributionItem(String id, IServiceLocator locator,
-			IConfigurationElement dynamicAddition) {
+	public DynamicMenuContributionItem(String id, IServiceLocator locator, IConfigurationElement dynamicAddition) {
 		super(id);
 
 		this.locator = locator;
@@ -165,10 +161,8 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	private void createContributionItem() {
 
-		loadedDynamicContribution = (ContributionItem) Util
-				.safeLoadExecutableExtension(dynamicAddition,
-						IWorkbenchRegistryConstants.ATT_CLASS,
-						ContributionItem.class);
+		loadedDynamicContribution = (ContributionItem) Util.safeLoadExecutableExtension(dynamicAddition,
+				IWorkbenchRegistryConstants.ATT_CLASS, ContributionItem.class);
 
 		if (loadedDynamicContribution == null) {
 			alreadyFailed = true;
@@ -178,8 +172,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 		loadedDynamicContribution.setId(getId());
 		loadedDynamicContribution.setParent(getParent());
 		if (loadedDynamicContribution instanceof IWorkbenchContribution) {
-			((IWorkbenchContribution) loadedDynamicContribution)
-					.initialize(locator);
+			((IWorkbenchContribution) loadedDynamicContribution).initialize(locator);
 		}
 	}
 

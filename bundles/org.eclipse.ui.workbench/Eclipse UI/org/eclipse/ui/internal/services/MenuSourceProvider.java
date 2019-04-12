@@ -42,25 +42,22 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 	/**
 	 * The names of the sources supported by this source provider.
 	 */
-	private static final String[] PROVIDED_SOURCE_NAMES = new String[] {
-			ISources.ACTIVE_MENU_NAME, ISources.ACTIVE_MENU_SELECTION_NAME,
-			ISources.ACTIVE_MENU_EDITOR_INPUT_NAME };
+	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { ISources.ACTIVE_MENU_NAME,
+			ISources.ACTIVE_MENU_SELECTION_NAME, ISources.ACTIVE_MENU_EDITOR_INPUT_NAME };
 
 	/**
-	 * The menu ids that are currently showing, as known by this source
-	 * provider. This value may be <code>null</code>.
+	 * The menu ids that are currently showing, as known by this source provider.
+	 * This value may be <code>null</code>.
 	 */
 	private Set menuIds = new HashSet();
 
 	/**
 	 * Adds all of the given menu identifiers as being shown.
 	 *
-	 * @param menuIds
-	 *            The ids of the menu that is now showing; must not be
-	 *            <code>null</code>.
+	 * @param menuIds The ids of the menu that is now showing; must not be
+	 *                <code>null</code>.
 	 */
-	public void addShowingMenus(final Set menuIds,
-			final ISelection localSelection, final ISelection localEditorInput) {
+	public void addShowingMenus(final Set menuIds, final ISelection localSelection, final ISelection localEditorInput) {
 		this.menuIds.addAll(menuIds);
 		if (DEBUG) {
 			logDebuggingInfo("Menu ids changed to " + this.menuIds); //$NON-NLS-1$
@@ -70,14 +67,12 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 		if (selection != localSelection) {
 			selection = localSelection;
 			m.put(ISources.ACTIVE_MENU_SELECTION_NAME,
-					selection == null ? IEvaluationContext.UNDEFINED_VARIABLE
-							: selection);
+					selection == null ? IEvaluationContext.UNDEFINED_VARIABLE : selection);
 		}
 		if (input != localEditorInput) {
 			input = localEditorInput;
 			m.put(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME,
-					input == null ? IEvaluationContext.UNDEFINED_VARIABLE
-							: input);
+					input == null ? IEvaluationContext.UNDEFINED_VARIABLE : input);
 		}
 
 		fireSourceChanged(ISources.ACTIVE_MENU, m);
@@ -95,8 +90,7 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 		final Map state = new HashMap();
 		state.put(ISources.ACTIVE_MENU_NAME, menuIds);
 		state.put(ISources.ACTIVE_MENU_SELECTION_NAME,
-				selection == null ? IEvaluationContext.UNDEFINED_VARIABLE
-						: selection);
+				selection == null ? IEvaluationContext.UNDEFINED_VARIABLE : selection);
 		state.put(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME,
 				input == null ? IEvaluationContext.UNDEFINED_VARIABLE : input);
 		return state;
@@ -110,12 +104,11 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 	/**
 	 * Removes all of the given menu identifiers as being shown.
 	 *
-	 * @param menuIds
-	 *            The ids of the menu that is no longer shown; must not be
-	 *            <code>null</code>.
+	 * @param menuIds The ids of the menu that is no longer shown; must not be
+	 *                <code>null</code>.
 	 */
-	public void removeShowingMenus(final Set menuIds,
-			final ISelection localSelection, final ISelection localEditorInput) {
+	public void removeShowingMenus(final Set menuIds, final ISelection localSelection,
+			final ISelection localEditorInput) {
 		this.menuIds.removeAll(menuIds);
 		if (DEBUG) {
 			logDebuggingInfo("Menu ids changed to " + this.menuIds); //$NON-NLS-1$
@@ -125,14 +118,12 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 		if (selection != localSelection) {
 			selection = localSelection;
 			m.put(ISources.ACTIVE_MENU_SELECTION_NAME,
-					selection == null ? IEvaluationContext.UNDEFINED_VARIABLE
-							: selection);
+					selection == null ? IEvaluationContext.UNDEFINED_VARIABLE : selection);
 		}
 		if (input != localEditorInput) {
 			input = localEditorInput;
 			m.put(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME,
-					input == null ? IEvaluationContext.UNDEFINED_VARIABLE
-							: input);
+					input == null ? IEvaluationContext.UNDEFINED_VARIABLE : input);
 		}
 		fireSourceChanged(ISources.ACTIVE_MENU, m);
 	}

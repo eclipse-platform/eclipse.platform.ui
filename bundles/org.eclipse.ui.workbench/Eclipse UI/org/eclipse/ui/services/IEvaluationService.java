@@ -81,68 +81,61 @@ public interface IEvaluationService extends IServiceWithSources {
 
 	/**
 	 * When a source change starts recalculating expressions the
-	 * {@link #PROP_NOTIFYING} property change is fired with the newValue=<code>Boolean.TRUE</code>.
-	 * This property is not fired for any source changes caused by the outer
-	 * recalculations.
+	 * {@link #PROP_NOTIFYING} property change is fired with the
+	 * newValue=<code>Boolean.TRUE</code>. This property is not fired for any source
+	 * changes caused by the outer recalculations.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
 	 *
-	 * @param listener
-	 *            The listener to be notified. Must not be <code>null</code>.
-	 *            Has no effect if the listener has already been added.
+	 * @param listener The listener to be notified. Must not be <code>null</code>.
+	 *                 Has no effect if the listener has already been added.
 	 */
 	void addServiceListener(IPropertyChangeListener listener);
 
 	/**
 	 * Remove the listener for {@link #PROP_NOTIFYING} property changes.
 	 *
-	 * @param listener
-	 *            The listener to remove. Must not be <code>null</code>. Has
-	 *            no effect if the listener is not currently registered.
+	 * @param listener The listener to remove. Must not be <code>null</code>. Has no
+	 *                 effect if the listener is not currently registered.
 	 */
 	void removeServiceListener(IPropertyChangeListener listener);
 
 	/**
-	 * Add a listener that can be notified when the workbench application
-	 * context causes the expression evaluation value to change.
+	 * Add a listener that can be notified when the workbench application context
+	 * causes the expression evaluation value to change.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
 	 *
-	 * @param expression
-	 *            the core expression to evaluate.
-	 * @param listener
-	 *            the listener to be notified.
-	 * @param property
-	 *            the property contained in the notification
+	 * @param expression the core expression to evaluate.
+	 * @param listener   the listener to be notified.
+	 * @param property   the property contained in the notification
 	 * @return a token that can be used to remove this listener.
-	 * {@link #removeEvaluationListener(IEvaluationReference)}
+	 *         {@link #removeEvaluationListener(IEvaluationReference)}
 	 */
-	IEvaluationReference addEvaluationListener(Expression expression,
-			IPropertyChangeListener listener, String property);
+	IEvaluationReference addEvaluationListener(Expression expression, IPropertyChangeListener listener,
+			String property);
 
 	/**
 	 * Re-add a property change listener that has already been removed by
 	 * {@link #removeEvaluationListener(IEvaluationReference)}.
 	 * <p>
-	 * It will only accept IEvaluationReferences returned from a previous call
-	 * to
+	 * It will only accept IEvaluationReferences returned from a previous call to
 	 * {@link #addEvaluationListener(Expression, IPropertyChangeListener, String)}
 	 * on this service.
 	 * </p>
 	 * <p>
-	 * <b>Note:</b> references should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> references should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
 	 *
-	 * @param ref
-	 *            The listener to re-add.
+	 * @param ref The listener to re-add.
 	 * @see #removeEvaluationListener(IEvaluationReference)
 	 */
 	void addEvaluationReference(IEvaluationReference ref);
@@ -150,15 +143,14 @@ public interface IEvaluationService extends IServiceWithSources {
 	/**
 	 * Remove the listener represented by the evaluation reference.
 	 *
-	 * @param ref
-	 *            the reference to be removed.
+	 * @param ref the reference to be removed.
 	 */
 	void removeEvaluationListener(IEvaluationReference ref);
 
 	/**
-	 * Get an IEvaluationContext that contains the current state of the
-	 * workbench application context. This context changes with the application
-	 * state, but becomes invalid when the global current selection changes.
+	 * Get an IEvaluationContext that contains the current state of the workbench
+	 * application context. This context changes with the application state, but
+	 * becomes invalid when the global current selection changes.
 	 * <p>
 	 * Note: This context should not be modified.
 	 * </p>

@@ -54,8 +54,7 @@ public class ActionProvider extends QuickAccessProvider {
 	public QuickAccessElement[] getElements() {
 		if (idToElement == null) {
 			idToElement = new HashMap();
-			IWorkbenchWindow window = PlatformUI
-					.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			if (window instanceof WorkbenchWindow) {
 				MenuManager menu = ((WorkbenchWindow) window).getMenuManager();
 				Set result = new HashSet();
@@ -68,8 +67,7 @@ public class ActionProvider extends QuickAccessProvider {
 				}
 			}
 		}
-		return (ActionElement[]) idToElement.values().toArray(
-				new ActionElement[idToElement.values().size()]);
+		return (ActionElement[]) idToElement.values().toArray(new ActionElement[idToElement.values().size()]);
 	}
 
 	private void collectContributions(MenuManager menu, Set result) {
@@ -79,8 +77,7 @@ public class ActionProvider extends QuickAccessProvider {
 			}
 			if (item instanceof MenuManager) {
 				collectContributions((MenuManager) item, result);
-			} else if (item instanceof ActionContributionItem
-					&& item.isEnabled()) {
+			} else if (item instanceof ActionContributionItem && item.isEnabled()) {
 				result.add(item);
 			}
 		}
@@ -88,8 +85,7 @@ public class ActionProvider extends QuickAccessProvider {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 	}
 
 	@Override

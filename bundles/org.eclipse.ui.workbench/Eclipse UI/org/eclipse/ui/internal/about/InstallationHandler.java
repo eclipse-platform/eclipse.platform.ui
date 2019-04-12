@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-public class InstallationHandler extends AbstractHandler{
+public class InstallationHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) {

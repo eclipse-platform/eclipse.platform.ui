@@ -31,14 +31,12 @@ public class WorkbenchErrorHandlerProxy extends AbstractStatusHandler {
 
 	@Override
 	public void handle(final StatusAdapter statusAdapter, int style) {
-		Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler().handle(
-				statusAdapter, style);
+		Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler().handle(statusAdapter, style);
 	}
 
 	@Override
 	public boolean supportsNotification(int type) {
-		return Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler()
-				.supportsNotification(type);
+		return Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler().supportsNotification(type);
 	}
 
 }

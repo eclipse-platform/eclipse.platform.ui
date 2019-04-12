@@ -37,48 +37,42 @@ import org.eclipse.ui.internal.services.EvaluationResultCache;
  *
  * @since 3.1
  */
-final class ContextActivation extends EvaluationResultCache implements
-		IContextActivation {
+final class ContextActivation extends EvaluationResultCache implements IContextActivation {
 
 	/**
-	 * The identifier for the context which should be active. This value is
-	 * never <code>null</code>.
+	 * The identifier for the context which should be active. This value is never
+	 * <code>null</code>.
 	 */
 	private final String contextId;
 
 	/**
-	 * The context service from which this context activation was requested.
-	 * This value is never <code>null</code>.
+	 * The context service from which this context activation was requested. This
+	 * value is never <code>null</code>.
 	 */
 	private final IContextService contextService;
 
 	/**
 	 * Constructs a new instance of <code>ContextActivation</code>.
 	 *
-	 * @param contextId
-	 *            The identifier for the context which should be activated. This
-	 *            value must not be <code>null</code>.
-	 * @param expression
-	 *            The expression that must evaluate to <code>true</code>
-	 *            before this handler is active. This value may be
-	 *            <code>null</code> if it is always active.
-	 * @param contextService
-	 *            The context service from which the handler activation was
-	 *            requested; must not be <code>null</code>.
+	 * @param contextId      The identifier for the context which should be
+	 *                       activated. This value must not be <code>null</code>.
+	 * @param expression     The expression that must evaluate to <code>true</code>
+	 *                       before this handler is active. This value may be
+	 *                       <code>null</code> if it is always active.
+	 * @param contextService The context service from which the handler activation
+	 *                       was requested; must not be <code>null</code>.
 	 * @see ISources
 	 */
-	public ContextActivation(final String contextId,
-			final Expression expression, final IContextService contextService) {
+	public ContextActivation(final String contextId, final Expression expression,
+			final IContextService contextService) {
 		super(expression);
 
 		if (contextId == null) {
-			throw new NullPointerException(
-					"The context identifier for a context activation cannot be null"); //$NON-NLS-1$
+			throw new NullPointerException("The context identifier for a context activation cannot be null"); //$NON-NLS-1$
 		}
 
 		if (contextService == null) {
-			throw new NullPointerException(
-					"The context service for an activation cannot be null"); //$NON-NLS-1$
+			throw new NullPointerException("The context service for an activation cannot be null"); //$NON-NLS-1$
 		}
 
 		this.contextId = contextId;

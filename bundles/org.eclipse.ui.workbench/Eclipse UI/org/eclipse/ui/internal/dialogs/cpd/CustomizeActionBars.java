@@ -65,10 +65,8 @@ public class CustomizeActionBars implements IActionBarConfigurer2, IActionBars2 
 	/**
 	 * Create a new instance of this class.
 	 *
-	 * @param configurer
-	 *            non null
-	 * @param context
-	 *            non null
+	 * @param configurer non null
+	 * @param context    non null
 	 */
 	public CustomizeActionBars(IWorkbenchWindowConfigurer configurer, IEclipseContext context) {
 		this.configurer = configurer;

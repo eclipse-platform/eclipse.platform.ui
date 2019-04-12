@@ -27,30 +27,29 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 2.1
  */
 public class ClearWorkingSetAction extends Action {
-    private WorkingSetFilterActionGroup actionGroup;
+	private WorkingSetFilterActionGroup actionGroup;
 
-    /**
-     * Creates a new instance of the receiver.
-     *
-     * @param actionGroup the action group this action is created in
-     */
-    public ClearWorkingSetAction(WorkingSetFilterActionGroup actionGroup) {
-        super(WorkbenchMessages.ClearWorkingSetAction_text);
-        Assert.isNotNull(actionGroup);
-        setToolTipText(WorkbenchMessages.ClearWorkingSetAction_toolTip);
-        setEnabled(actionGroup.getWorkingSet() != null);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IWorkbenchHelpContextIds.CLEAR_WORKING_SET_ACTION);
-        this.actionGroup = actionGroup;
-    }
+	/**
+	 * Creates a new instance of the receiver.
+	 *
+	 * @param actionGroup the action group this action is created in
+	 */
+	public ClearWorkingSetAction(WorkingSetFilterActionGroup actionGroup) {
+		super(WorkbenchMessages.ClearWorkingSetAction_text);
+		Assert.isNotNull(actionGroup);
+		setToolTipText(WorkbenchMessages.ClearWorkingSetAction_toolTip);
+		setEnabled(actionGroup.getWorkingSet() != null);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.CLEAR_WORKING_SET_ACTION);
+		this.actionGroup = actionGroup;
+	}
 
-    /**
-     * Overrides method from Action
-     *
-     * @see Action#run
-     */
-    @Override
+	/**
+	 * Overrides method from Action
+	 *
+	 * @see Action#run
+	 */
+	@Override
 	public void run() {
-        actionGroup.setWorkingSet(null);
-    }
+		actionGroup.setWorkingSet(null);
+	}
 }

@@ -38,8 +38,7 @@ public abstract class NaturalKey extends Key {
 	/**
 	 * Constructs an instance of <code>NaturalKey</code> given a name.
 	 *
-	 * @param key
-	 *            The key to be wrapped.
+	 * @param key The key to be wrapped.
 	 */
 	NaturalKey(final int key) {
 		super(key);

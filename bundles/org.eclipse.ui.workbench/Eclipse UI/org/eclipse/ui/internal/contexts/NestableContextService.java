@@ -34,8 +34,7 @@ import org.eclipse.ui.internal.services.INestable;
  *
  * @since 3.2
  */
-public class NestableContextService extends SlaveContextService implements
-		INestable {
+public class NestableContextService extends SlaveContextService implements INestable {
 	/**
 	 * Maintain the state of the context service.
 	 */
@@ -44,15 +43,13 @@ public class NestableContextService extends SlaveContextService implements
 	/**
 	 * Construct the new nested slave context.
 	 *
-	 * @param parentService
-	 *            the parent context service; must not be <code>null</code>.
-	 * @param defaultExpression
-	 *            A default expression to use to determine viability. It's
-	 *            mainly used for conflict resolution. It can be
-	 *            <code>null</code>.
+	 * @param parentService     the parent context service; must not be
+	 *                          <code>null</code>.
+	 * @param defaultExpression A default expression to use to determine viability.
+	 *                          It's mainly used for conflict resolution. It can be
+	 *                          <code>null</code>.
 	 */
-	public NestableContextService(IContextService parentService,
-			Expression defaultExpression) {
+	public NestableContextService(IContextService parentService, Expression defaultExpression) {
 		super(parentService, defaultExpression);
 		fActive = false;
 	}

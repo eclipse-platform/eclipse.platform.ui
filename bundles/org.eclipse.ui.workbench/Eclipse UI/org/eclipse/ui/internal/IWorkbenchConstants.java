@@ -22,50 +22,48 @@ import org.eclipse.ui.PlatformUI;
  */
 public interface IWorkbenchConstants {
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
 	String ACCELERATOR_CONFIGURATION_ID = "acceleratorConfigurationId"; //$NON-NLS-1$
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
 	String DEFAULT_ACCELERATOR_CONFIGURATION_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
 	String DEFAULT_ACCELERATOR_SCOPE_ID = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 
 	// ID of the MPerspectiveStack in the IDE e4 model
 	String PERSPECTIVE_STACK_ID = "org.eclipse.ui.ide.perspectivestack"; //$NON-NLS-1$
 
-    //mappings for type/extension to an editor - backward compatibility only.
+	// mappings for type/extension to an editor - backward compatibility only.
 	String EDITOR_FILE_NAME = "editors.xml"; //$NON-NLS-1$
 
 	String RESOURCE_TYPE_FILE_NAME = "resourcetypes.xml"; //$NON-NLS-1$
 
-    // Filename containing the workbench's preferences
+	// Filename containing the workbench's preferences
 	String PREFERENCE_BUNDLE_FILE_NAME = "workbench.ini"; //$NON-NLS-1$
 
-    // Identifier for visible view parts.
+	// Identifier for visible view parts.
 	String WORKBENCH_VISIBLE_VIEW_ID = "Workbench.visibleViewID"; //$NON-NLS-1$
 
-    // Identifier of workbench info properties page
-	String WORKBENCH_PROPERTIES_PAGE_INFO = PlatformUI.PLUGIN_ID
-            + ".propertypages.info.file"; //$NON-NLS-1$
+	// Identifier of workbench info properties page
+	String WORKBENCH_PROPERTIES_PAGE_INFO = PlatformUI.PLUGIN_ID + ".propertypages.info.file"; //$NON-NLS-1$
 
-    // Various editor.
-	String OLE_EDITOR_ID = PlatformUI.PLUGIN_ID
-            + ".OleEditor"; //$NON-NLS-1$
+	// Various editor.
+	String OLE_EDITOR_ID = PlatformUI.PLUGIN_ID + ".OleEditor"; //$NON-NLS-1$
 
-    // Default view category.
+	// Default view category.
 	String DEFAULT_CATEGORY_ID = PlatformUI.PLUGIN_ID;
 
-    // Persistance tags.
+	// Persistance tags.
 	String TRUE = "true"; //$NON-NLS-1$
 
 	String FALSE = "false"; //$NON-NLS-1$
@@ -228,10 +226,10 @@ public interface IWorkbenchConstants {
 
 	String TAG_PLUGIN = "plugin"; //$NON-NLS-1$
 
-    /** deprecated - use TAG_OPEN_MODE */
+	/** deprecated - use TAG_OPEN_MODE */
 	String TAG_INTERNAL = "internal"; //$NON-NLS-1$
 
-    /** deprecated - use TAG_OPEN_MODE */
+	/** deprecated - use TAG_OPEN_MODE */
 	String TAG_OPEN_IN_PLACE = "open_in_place"; //$NON-NLS-1$
 
 	String TAG_PROGRAM_NAME = "program_name"; //$NON-NLS-1$
@@ -352,10 +350,10 @@ public interface IWorkbenchConstants {
 
 	String TAG_TRIM_ITEM = "trimItem"; //$NON-NLS-1$
 
-    //Fonts
+	// Fonts
 	String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 
-    //Colors
+	// Colors
 	String COLOR_HIGHLIGHT = "org.eclipse.ui.highlight"; //$NON-NLS-1$
 
 }

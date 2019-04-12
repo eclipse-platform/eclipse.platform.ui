@@ -55,85 +55,82 @@ import org.w3c.dom.DOMException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMemento {
-    /**
-     * Special reserved key used to store the memento id
-     * (value <code>"IMemento.internal.id"</code>).
-     *
-     * @see #getID()
-     */
-    String TAG_ID = "IMemento.internal.id"; //$NON-NLS-1$
+	/**
+	 * Special reserved key used to store the memento id (value
+	 * <code>"IMemento.internal.id"</code>).
+	 *
+	 * @see #getID()
+	 */
+	String TAG_ID = "IMemento.internal.id"; //$NON-NLS-1$
 
-    /**
-     * Creates a new child of this memento with the given type.
-     * <p>
-     * The <code>getChild</code> and <code>getChildren</code> methods
-     * are used to retrieve children of a given type.
-     * </p>
-     *
-     * @param type the type
-     * @return a new child memento
-     * @see #getChild
-     * @see #getChildren
-     */
-    IMemento createChild(String type);
+	/**
+	 * Creates a new child of this memento with the given type.
+	 * <p>
+	 * The <code>getChild</code> and <code>getChildren</code> methods are used to
+	 * retrieve children of a given type.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @return a new child memento
+	 * @see #getChild
+	 * @see #getChildren
+	 */
+	IMemento createChild(String type);
 
-    /**
-     * Creates a new child of this memento with the given type and id.
-     * The id is stored in the child memento (using a special reserved
-     * key, <code>TAG_ID</code>) and can be retrieved using <code>getId</code>.
-     * <p>
-     * The <code>getChild</code> and <code>getChildren</code> methods
-     * are used to retrieve children of a given type.
-     * </p>
-     *
-     * @param type the type
-     * @param id the child id
-     * @return a new child memento with the given type and id
-     * @see #getID
-     */
-    IMemento createChild(String type, String id);
+	/**
+	 * Creates a new child of this memento with the given type and id. The id is
+	 * stored in the child memento (using a special reserved key,
+	 * <code>TAG_ID</code>) and can be retrieved using <code>getId</code>.
+	 * <p>
+	 * The <code>getChild</code> and <code>getChildren</code> methods are used to
+	 * retrieve children of a given type.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param id   the child id
+	 * @return a new child memento with the given type and id
+	 * @see #getID
+	 */
+	IMemento createChild(String type, String id);
 
-    /**
+	/**
 	 * Returns the first child with the given type id.
 	 *
-	 * @param type
-	 *            the type id
-	 * @return the first child with the given type. May return <code>null</code>
-	 *         .
+	 * @param type the type id
+	 * @return the first child with the given type. May return <code>null</code> .
 	 */
-    IMemento getChild(String type);
+	IMemento getChild(String type);
 
 	/**
 	 * Returns all children of this node.
 	 *
 	 * @return an array of children of this node. This will not be
-	 *         <code>null</code>. If there are no children, an array of length
-	 *         zero will be returned.
+	 *         <code>null</code>. If there are no children, an array of length zero
+	 *         will be returned.
 	 * @since 3.8
 	 */
 	IMemento[] getChildren();
 
-    /**
+	/**
 	 * Returns all children with the given type id.
 	 *
-	 * @param type
-	 *            the type id
+	 * @param type the type id
 	 * @return an array of children with the given type. This will not be
-	 *         <code>null</code>. If there are no keys, an array of length zero
-	 *         will be returned.
+	 *         <code>null</code>. If there are no keys, an array of length zero will
+	 *         be returned.
 	 */
-    IMemento[] getChildren(String type);
+	IMemento[] getChildren(String type);
 
-    /**
-     * Returns the floating point value of the given key.
-     *
-     * @param key the key
-     * @return the value, or <code>null</code> if the key was not found or was found
-     *   but was not a floating point number
-     */
-    Float getFloat(String key);
+	/**
+	 * Returns the floating point value of the given key.
+	 *
+	 * @param key the key
+	 * @return the value, or <code>null</code> if the key was not found or was found
+	 *         but was not a floating point number
+	 */
+	Float getFloat(String key);
 
-    /**
+	/**
 	 * Returns the type for this memento.
 	 *
 	 * @return the memento type
@@ -143,107 +140,107 @@ public interface IMemento {
 	 */
 	String getType();
 
-    /**
-     * Returns the id for this memento.
-     *
-     * @return the memento id, or <code>null</code> if none
-     * @see #createChild(java.lang.String,java.lang.String)
-     */
-    String getID();
+	/**
+	 * Returns the id for this memento.
+	 *
+	 * @return the memento id, or <code>null</code> if none
+	 * @see #createChild(java.lang.String,java.lang.String)
+	 */
+	String getID();
 
-    /**
-     * Returns the integer value of the given key.
-     *
-     * @param key the key
-     * @return the value, or <code>null</code> if the key was not found or was found
-     *   but was not an integer
-     */
-    Integer getInteger(String key);
+	/**
+	 * Returns the integer value of the given key.
+	 *
+	 * @param key the key
+	 * @return the value, or <code>null</code> if the key was not found or was found
+	 *         but was not an integer
+	 */
+	Integer getInteger(String key);
 
-    /**
-     * Returns the string value of the given key.
-     *
-     * @param key the key
-     * @return the value, or <code>null</code> if the key was not found
-     */
-    String getString(String key);
+	/**
+	 * Returns the string value of the given key.
+	 *
+	 * @param key the key
+	 * @return the value, or <code>null</code> if the key was not found
+	 */
+	String getString(String key);
 
-    /**
+	/**
 	 * Returns the boolean value of the given key.
 	 *
 	 * @param key the key
 	 * @return the value, or <code>null</code> if the key was not found
-     * @since 3.4
+	 * @since 3.4
 	 */
 	Boolean getBoolean(String key);
 
 	/**
-     * Returns the data of the Text node of the memento. Each memento is allowed
-     * only one Text node.
-     *
-     * @return the data of the Text node of the memento, or <code>null</code>
-     * if the memento has no Text node.
-     * @since 2.0
-     */
-    String getTextData();
+	 * Returns the data of the Text node of the memento. Each memento is allowed
+	 * only one Text node.
+	 *
+	 * @return the data of the Text node of the memento, or <code>null</code> if the
+	 *         memento has no Text node.
+	 * @since 2.0
+	 */
+	String getTextData();
 
-    /**
-     * Returns an array of all the attribute keys of the memento. This will not
-     * be <code>null</code>. If there are no keys, an array of length zero will
-     * be returned.
-     * @return an array with all the attribute keys of the memento
-     * @since 3.4
-     */
+	/**
+	 * Returns an array of all the attribute keys of the memento. This will not be
+	 * <code>null</code>. If there are no keys, an array of length zero will be
+	 * returned.
+	 * 
+	 * @return an array with all the attribute keys of the memento
+	 * @since 3.4
+	 */
 	String[] getAttributeKeys();
 
-    /**
-     * Sets the value of the given key to the given floating point number.
-     *
-     * @param key the key
-     * @param value the value
-     */
-    void putFloat(String key, float value);
+	/**
+	 * Sets the value of the given key to the given floating point number.
+	 *
+	 * @param key   the key
+	 * @param value the value
+	 */
+	void putFloat(String key, float value);
 
-    /**
-     * Sets the value of the given key to the given integer.
-     *
-     * @param key the key
-     * @param value the value
-     */
-    void putInteger(String key, int value);
+	/**
+	 * Sets the value of the given key to the given integer.
+	 *
+	 * @param key   the key
+	 * @param value the value
+	 */
+	void putInteger(String key, int value);
 
-    /**
-     * Copy the attributes and children from  <code>memento</code>
-     * to the receiver.
-     *
-     * @param memento the IMemento to be copied.
-     */
-    void putMemento(IMemento memento);
+	/**
+	 * Copy the attributes and children from <code>memento</code> to the receiver.
+	 *
+	 * @param memento the IMemento to be copied.
+	 */
+	void putMemento(IMemento memento);
 
-    /**
-     * Sets the value of the given key to the given string.
-     *
-     * @param key the key
-     * @param value the value
-     */
-    void putString(String key, String value);
+	/**
+	 * Sets the value of the given key to the given string.
+	 *
+	 * @param key   the key
+	 * @param value the value
+	 */
+	void putString(String key, String value);
 
-    /**
+	/**
 	 * Sets the value of the given key to the given boolean value.
 	 *
-	 * @param key the key
+	 * @param key   the key
 	 * @param value the value
-     * @since 3.4
+	 * @since 3.4
 	 */
 	void putBoolean(String key, boolean value);
 
-    /**
-     * Sets the memento's Text node to contain the given data. Creates the Text node if
-     * none exists. If a Text node does exist, it's current contents are replaced.
-     * Each memento is allowed only one text node.
-     *
-     * @param data the data to be placed on the Text node
-     * @since 2.0
-     */
-    void putTextData(String data);
+	/**
+	 * Sets the memento's Text node to contain the given data. Creates the Text node
+	 * if none exists. If a Text node does exist, it's current contents are
+	 * replaced. Each memento is allowed only one text node.
+	 *
+	 * @param data the data to be placed on the Text node
+	 * @since 2.0
+	 */
+	void putTextData(String data);
 }

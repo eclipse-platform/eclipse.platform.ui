@@ -60,108 +60,107 @@ import org.eclipse.swt.widgets.TabFolder;
  */
 @Deprecated
 public abstract class MultiPageEditor extends EditorPart {
-    private List syncVector;
+	private List syncVector;
 
-    private TabFolder tabFolder;
+	private TabFolder tabFolder;
 
-    /**
-     * Creates a new multi-page editor.
-     *
-     * @deprecated Use the class <code>MultiPageEditorPart</code> instead
-     */
-    @Deprecated
+	/**
+	 * Creates a new multi-page editor.
+	 *
+	 * @deprecated Use the class <code>MultiPageEditorPart</code> instead
+	 */
+	@Deprecated
 	public MultiPageEditor() {
-        super();
-    }
+		super();
+	}
 
-    /**
-     * Adds a synchronized pagebook to this editor.  Once added, the
-     * visible page of the pagebook and the visible page of the editor
-     * will be synchronized.
-     *
-     * @param pageBook the pagebook to add
-     */
-    protected void addSyncroPageBook(PageBook pageBook) {
-        // Add the page.
-        if (syncVector == null) {
+	/**
+	 * Adds a synchronized pagebook to this editor. Once added, the visible page of
+	 * the pagebook and the visible page of the editor will be synchronized.
+	 *
+	 * @param pageBook the pagebook to add
+	 */
+	protected void addSyncroPageBook(PageBook pageBook) {
+		// Add the page.
+		if (syncVector == null) {
 			syncVector = new ArrayList(1);
 		}
-        syncVector.add(pageBook);
+		syncVector.add(pageBook);
 
-        // Set the visible page.
-        syncPageBook(pageBook);
-    }
+		// Set the visible page.
+		syncPageBook(pageBook);
+	}
 
-    /**
-     * The <code>MultiPageEditor</code> implementation of this <code>IWorkbenchPart</code>
-     * method creates a <code>TabFolder</code> control.
-     */
-    @Override
+	/**
+	 * The <code>MultiPageEditor</code> implementation of this
+	 * <code>IWorkbenchPart</code> method creates a <code>TabFolder</code> control.
+	 */
+	@Override
 	public void createPartControl(Composite parent) {
-        tabFolder = new TabFolder(parent, SWT.NONE);
-        tabFolder.addSelectionListener(widgetSelectedAdapter(e -> sync()));
-    }
+		tabFolder = new TabFolder(parent, SWT.NONE);
+		tabFolder.addSelectionListener(widgetSelectedAdapter(e -> sync()));
+	}
 
-    /**
-     * Returns this editor's workbook.
-     *
-     * @return the editor workbook
-     */
-    protected TabFolder getFolder() {
-        return tabFolder;
-    }
+	/**
+	 * Returns this editor's workbook.
+	 *
+	 * @return the editor workbook
+	 */
+	protected TabFolder getFolder() {
+		return tabFolder;
+	}
 
-    /**
-     * Indicates that a page change has occurred.  Updates the sync vector.
-     */
-    protected void onPageChange() {
-        if (syncVector != null) {
-            Iterator itr = syncVector.iterator();
-            while (itr.hasNext()) {
-                PageBook pageBook = (PageBook) itr.next();
-                syncPageBook(pageBook);
-            }
-        }
-    }
+	/**
+	 * Indicates that a page change has occurred. Updates the sync vector.
+	 */
+	protected void onPageChange() {
+		if (syncVector != null) {
+			Iterator itr = syncVector.iterator();
+			while (itr.hasNext()) {
+				PageBook pageBook = (PageBook) itr.next();
+				syncPageBook(pageBook);
+			}
+		}
+	}
 
-    /**
-     * Removes a synchronized pagebook from this editor.
-     *
-     * @param pageBook the pagebook to remove
-     * @see #addSyncroPageBook(PageBook)
-     */
-    protected void removeSyncroPageBook(PageBook pageBook) {
-        if (syncVector != null) {
+	/**
+	 * Removes a synchronized pagebook from this editor.
+	 *
+	 * @param pageBook the pagebook to remove
+	 * @see #addSyncroPageBook(PageBook)
+	 */
+	protected void removeSyncroPageBook(PageBook pageBook) {
+		if (syncVector != null) {
 			syncVector.remove(pageBook);
 		}
-        pageBook.dispose();
-    }
+		pageBook.dispose();
+	}
 
-    /**
-     * Synchronizes each registered pagebook with the editor page.
-     */
-    protected void sync() {
-        if (syncVector != null) {
-            Iterator itr = syncVector.iterator();
-            while (itr.hasNext()) {
-                PageBook pageBook = (PageBook) itr.next();
-                syncPageBook(pageBook);
-            }
-        }
-    }
+	/**
+	 * Synchronizes each registered pagebook with the editor page.
+	 */
+	protected void sync() {
+		if (syncVector != null) {
+			Iterator itr = syncVector.iterator();
+			while (itr.hasNext()) {
+				PageBook pageBook = (PageBook) itr.next();
+				syncPageBook(pageBook);
+			}
+		}
+	}
 
-    /**
-     * Sets the visible page of the given pagebook to be the same as
-     * the visible page of this editor.
-     *
-     * @param pageBook a pagebook to synchronize
-     */
-    protected void syncPageBook(PageBook pageBook) {
-        int pos = tabFolder.getSelectionIndex();
-        Control children[] = pageBook.getChildren();
-        int size = children.length;
-        if (pos < size) {
+	/**
+	 * Sets the visible page of the given pagebook to be the same as the visible
+	 * page of this editor.
+	 *
+	 * @param pageBook a pagebook to synchronize
+	 */
+	protected void syncPageBook(PageBook pageBook) {
+		int pos = tabFolder.getSelectionIndex();
+		Control children[] = pageBook.getChildren();
+		int size = children.length;
+		if (pos < size) {
 			pageBook.showPage(children[pos]);
 		}
-    }
+	}
 }

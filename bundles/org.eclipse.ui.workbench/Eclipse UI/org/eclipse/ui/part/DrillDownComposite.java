@@ -36,61 +36,61 @@ import org.eclipse.swt.widgets.ToolBar;
  * </ol>
  */
 public class DrillDownComposite extends Composite {
-    private ToolBarManager toolBarMgr;
+	private ToolBarManager toolBarMgr;
 
-    private TreeViewer fChildTree;
+	private TreeViewer fChildTree;
 
-    private DrillDownAdapter adapter;
+	private DrillDownAdapter adapter;
 
-    /**
-     * Constructs a new DrillDownTreeViewer.
-     *
-     * @param parent the parent composite for this control
-     * @param style the SWT style for this control
-     */
-    public DrillDownComposite(Composite parent, int style) {
-        super(parent, style);
-        createNavigationButtons();
-    }
+	/**
+	 * Constructs a new DrillDownTreeViewer.
+	 *
+	 * @param parent the parent composite for this control
+	 * @param style  the SWT style for this control
+	 */
+	public DrillDownComposite(Composite parent, int style) {
+		super(parent, style);
+		createNavigationButtons();
+	}
 
-    /**
-     * Creates the navigation buttons for this viewer.
-     */
-    protected void createNavigationButtons() {
-        GridData gid;
-        GridLayout layout;
+	/**
+	 * Creates the navigation buttons for this viewer.
+	 */
+	protected void createNavigationButtons() {
+		GridData gid;
+		GridLayout layout;
 
-        // Define layout.
-        layout = new GridLayout();
-        layout.marginHeight = layout.marginWidth = layout.horizontalSpacing = layout.verticalSpacing = 0;
-        setLayout(layout);
+		// Define layout.
+		layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = layout.horizontalSpacing = layout.verticalSpacing = 0;
+		setLayout(layout);
 
-        // Create a toolbar.
-        toolBarMgr = new ToolBarManager(SWT.FLAT);
-        ToolBar toolBar = toolBarMgr.createControl(this);
-        gid = new GridData();
-        gid.horizontalAlignment = GridData.FILL;
-        gid.verticalAlignment = GridData.BEGINNING;
-        toolBar.setLayoutData(gid);
-    }
+		// Create a toolbar.
+		toolBarMgr = new ToolBarManager(SWT.FLAT);
+		ToolBar toolBar = toolBarMgr.createControl(this);
+		gid = new GridData();
+		gid.horizontalAlignment = GridData.FILL;
+		gid.verticalAlignment = GridData.BEGINNING;
+		toolBar.setLayoutData(gid);
+	}
 
-    /**
-     * Sets the child viewer.  This method should only be called once, after the
-     * viewer has been created.
-     *
-     * @param aViewer the new child viewer
-     */
-    public void setChildTree(TreeViewer aViewer) {
-        // Save viewer.
-        fChildTree = aViewer;
+	/**
+	 * Sets the child viewer. This method should only be called once, after the
+	 * viewer has been created.
+	 *
+	 * @param aViewer the new child viewer
+	 */
+	public void setChildTree(TreeViewer aViewer) {
+		// Save viewer.
+		fChildTree = aViewer;
 
-        // Create adapter.
-        adapter = new DrillDownAdapter(fChildTree);
-        adapter.addNavigationActions(toolBarMgr);
-        toolBarMgr.update(true);
+		// Create adapter.
+		adapter = new DrillDownAdapter(fChildTree);
+		adapter.addNavigationActions(toolBarMgr);
+		toolBarMgr.update(true);
 
-        // Set tree layout.
-        fChildTree.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        layout();
-    }
+		// Set tree layout.
+		fChildTree.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		layout();
+	}
 }

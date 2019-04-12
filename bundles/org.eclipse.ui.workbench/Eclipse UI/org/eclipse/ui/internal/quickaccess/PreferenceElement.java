@@ -37,7 +37,8 @@ public class PreferenceElement extends QuickAccessElement {
 
 	private String matchLabelCache;
 
-	/* package */PreferenceElement(IPreferenceNode preferenceNode, String prefix, PreferenceProvider preferenceProvider) {
+	/* package */ PreferenceElement(IPreferenceNode preferenceNode, String prefix,
+			PreferenceProvider preferenceProvider) {
 		super(preferenceProvider);
 		this.preferenceNode = preferenceNode;
 		this.prefix = prefix;
@@ -45,11 +46,10 @@ public class PreferenceElement extends QuickAccessElement {
 
 	@Override
 	public void execute() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
-			WorkbenchPreferenceDialog dialog = WorkbenchPreferenceDialog
-					.createDialogOn(window.getShell(), preferenceNode.getId());
+			WorkbenchPreferenceDialog dialog = WorkbenchPreferenceDialog.createDialogOn(window.getShell(),
+					preferenceNode.getId());
 			dialog.open();
 		}
 	}
@@ -72,8 +72,7 @@ public class PreferenceElement extends QuickAccessElement {
 	@Override
 	public String getLabel() {
 		if (prefix != null && prefix.length() > 0) {
-			return preferenceNode.getLabelText() + separator
-					+ prefix;
+			return preferenceNode.getLabelText() + separator + prefix;
 		}
 		return preferenceNode.getLabelText();
 	}
@@ -98,8 +97,7 @@ public class PreferenceElement extends QuickAccessElement {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((preferenceNode == null) ? 0 : preferenceNode.hashCode());
+		result = prime * result + ((preferenceNode == null) ? 0 : preferenceNode.hashCode());
 		return result;
 	}
 

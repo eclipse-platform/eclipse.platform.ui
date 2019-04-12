@@ -24,29 +24,29 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public class ActivityViewerFilter extends ViewerFilter {
 
-    private boolean hasEncounteredFilteredItem = false;
+	private boolean hasEncounteredFilteredItem = false;
 
-    @Override
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-        if (WorkbenchActivityHelper.filterItem(element)) {
-            setHasEncounteredFilteredItem(true);
-            return false;
-        }
-        return true;
-    }
+		if (WorkbenchActivityHelper.filterItem(element)) {
+			setHasEncounteredFilteredItem(true);
+			return false;
+		}
+		return true;
+	}
 
-    /**
-     * @return returns whether the filter has filtered an item
-     */
-    public boolean getHasEncounteredFilteredItem() {
-        return hasEncounteredFilteredItem;
-    }
+	/**
+	 * @return returns whether the filter has filtered an item
+	 */
+	public boolean getHasEncounteredFilteredItem() {
+		return hasEncounteredFilteredItem;
+	}
 
-    /**
+	/**
 	 * @param hasEncounteredFilteredItem sets whether the filter has filtered an
 	 *                                   item
 	 */
-    public void setHasEncounteredFilteredItem(boolean hasEncounteredFilteredItem) {
-        this.hasEncounteredFilteredItem = hasEncounteredFilteredItem;
-    }
+	public void setHasEncounteredFilteredItem(boolean hasEncounteredFilteredItem) {
+		this.hasEncounteredFilteredItem = hasEncounteredFilteredItem;
+	}
 }

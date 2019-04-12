@@ -30,16 +30,15 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class CommandContributionItemParameter {
 	/**
-	 * a service locator that is most appropriate for this contribution.
-	 * Typically the local {@link IWorkbenchWindow} or
-	 * {@link IWorkbenchPartSite} will be sufficient. Must not be
-	 * <code>null</code>.
+	 * a service locator that is most appropriate for this contribution. Typically
+	 * the local {@link IWorkbenchWindow} or {@link IWorkbenchPartSite} will be
+	 * sufficient. Must not be <code>null</code>.
 	 */
 	public IServiceLocator serviceLocator;
 
 	/**
-	 * The id for this item. May be <code>null</code>. Items without an id
-	 * cannot be referenced later.
+	 * The id for this item. May be <code>null</code>. Items without an id cannot be
+	 * referenced later.
 	 */
 	public String id;
 
@@ -49,8 +48,8 @@ public class CommandContributionItemParameter {
 	public String commandId;
 
 	/**
-	 * A map of strings to strings which represent parameter names to values.
-	 * The parameter names must match those in the command definition. May be
+	 * A map of strings to strings which represent parameter names to values. The
+	 * parameter names must match those in the command definition. May be
 	 * <code>null</code>
 	 */
 	public Map parameters;
@@ -82,14 +81,14 @@ public class CommandContributionItemParameter {
 	public String mnemonic;
 
 	/**
-	 * A tooltip for this item. May be <code>null</code>. Tooltips are
-	 * currently only valid for toolbar contributions.
+	 * A tooltip for this item. May be <code>null</code>. Tooltips are currently
+	 * only valid for toolbar contributions.
 	 */
 	public String tooltip;
 
 	/**
-	 * The style of this menu contribution. See the CommandContributionItem
-	 * STYLE_* contants.
+	 * The style of this menu contribution. See the CommandContributionItem STYLE_*
+	 * contants.
 	 */
 	public int style;
 
@@ -120,22 +119,18 @@ public class CommandContributionItemParameter {
 	/**
 	 * Create the parameter object. Nullable attributes can be set directly.
 	 *
-	 * @param serviceLocator
-	 *            a service locator that is most appropriate for this
-	 *            contribution. Typically the local {@link IWorkbenchWindow} or
-	 *            {@link IWorkbenchPartSite} will be sufficient. Must not be
-	 *            <code>null</code>.
-	 * @param id
-	 *            The id for this item. May be <code>null</code>. Items
-	 *            without an id cannot be referenced later.
-	 * @param commandId
-	 *            A command id for a defined command. Must not be
-	 *            <code>null</code>.
-	 * @param style
-	 *            The style of this menu contribution. See the STYLE_* contants.
+	 * @param serviceLocator a service locator that is most appropriate for this
+	 *                       contribution. Typically the local
+	 *                       {@link IWorkbenchWindow} or {@link IWorkbenchPartSite}
+	 *                       will be sufficient. Must not be <code>null</code>.
+	 * @param id             The id for this item. May be <code>null</code>. Items
+	 *                       without an id cannot be referenced later.
+	 * @param commandId      A command id for a defined command. Must not be
+	 *                       <code>null</code>.
+	 * @param style          The style of this menu contribution. See the STYLE_*
+	 *                       contants.
 	 */
-	public CommandContributionItemParameter(IServiceLocator serviceLocator,
-			String id, String commandId, int style) {
+	public CommandContributionItemParameter(IServiceLocator serviceLocator, String id, String commandId, int style) {
 		this.serviceLocator = serviceLocator;
 		this.id = id;
 		this.commandId = commandId;
@@ -148,49 +143,37 @@ public class CommandContributionItemParameter {
 	 * <b>Note:</b> This constructor should not be called outside the framework.
 	 * </p>
 	 *
-	 * @param serviceLocator
-	 *            a service locator that is most appropriate for this
-	 *            contribution. Typically the local {@link IWorkbenchWindow} or
-	 *            {@link IWorkbenchPartSite} will be sufficient. Must not be
-	 *            <code>null</code>.
-	 * @param id
-	 *            The id for this item. May be <code>null</code>. Items
-	 *            without an id cannot be referenced later.
-	 * @param commandId
-	 *            A command id for a defined command. Must not be
-	 *            <code>null</code>.
-	 * @param parameters
-	 *            A map of strings to strings which represent parameter names to
-	 *            values. The parameter names must match those in the command
-	 *            definition. May be <code>null</code>
-	 * @param icon
-	 *            An icon for this item. May be <code>null</code>.
-	 * @param disabledIcon
-	 *            A disabled icon for this item. May be <code>null</code>.
-	 * @param hoverIcon
-	 *            A hover icon for this item. May be <code>null</code>.
-	 * @param label
-	 *            A label for this item. May be <code>null</code>.
-	 * @param mnemonic
-	 *            A mnemonic for this item to be applied to the label. May be
-	 *            <code>null</code>.
-	 * @param tooltip
-	 *            A tooltip for this item. May be <code>null</code>. Tooltips
-	 *            are currently only valid for toolbar contributions.
-	 * @param style
-	 *            The style of this menu contribution. See the STYLE_* contants.
-	 * @param helpContextId
-	 *            the help context id to be applied to this contribution. May be
-	 *            <code>null</code>
-	 * @param visibleEnabled
-	 *            Visibility tracking for the menu contribution.
+	 * @param serviceLocator a service locator that is most appropriate for this
+	 *                       contribution. Typically the local
+	 *                       {@link IWorkbenchWindow} or {@link IWorkbenchPartSite}
+	 *                       will be sufficient. Must not be <code>null</code>.
+	 * @param id             The id for this item. May be <code>null</code>. Items
+	 *                       without an id cannot be referenced later.
+	 * @param commandId      A command id for a defined command. Must not be
+	 *                       <code>null</code>.
+	 * @param parameters     A map of strings to strings which represent parameter
+	 *                       names to values. The parameter names must match those
+	 *                       in the command definition. May be <code>null</code>
+	 * @param icon           An icon for this item. May be <code>null</code>.
+	 * @param disabledIcon   A disabled icon for this item. May be
+	 *                       <code>null</code>.
+	 * @param hoverIcon      A hover icon for this item. May be <code>null</code>.
+	 * @param label          A label for this item. May be <code>null</code>.
+	 * @param mnemonic       A mnemonic for this item to be applied to the label.
+	 *                       May be <code>null</code>.
+	 * @param tooltip        A tooltip for this item. May be <code>null</code>.
+	 *                       Tooltips are currently only valid for toolbar
+	 *                       contributions.
+	 * @param style          The style of this menu contribution. See the STYLE_*
+	 *                       contants.
+	 * @param helpContextId  the help context id to be applied to this contribution.
+	 *                       May be <code>null</code>
+	 * @param visibleEnabled Visibility tracking for the menu contribution.
 	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
-	public CommandContributionItemParameter(IServiceLocator serviceLocator,
-			String id, String commandId, Map parameters, ImageDescriptor icon,
-			ImageDescriptor disabledIcon, ImageDescriptor hoverIcon,
-			String label, String mnemonic, String tooltip, int style,
-			String helpContextId, boolean visibleEnabled) {
+	public CommandContributionItemParameter(IServiceLocator serviceLocator, String id, String commandId, Map parameters,
+			ImageDescriptor icon, ImageDescriptor disabledIcon, ImageDescriptor hoverIcon, String label,
+			String mnemonic, String tooltip, int style, String helpContextId, boolean visibleEnabled) {
 		this.serviceLocator = serviceLocator;
 		this.id = id;
 		this.commandId = commandId;

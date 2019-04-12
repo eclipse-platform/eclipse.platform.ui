@@ -22,9 +22,8 @@ import org.eclipse.ui.internal.dialogs.cpd.TreeManager.TreeItem;
 /**
  * Provides the check logic for the categories viewer in the shortcuts tab.
  * Categories have a dual concept of children - their proper children
- * (sub-Categories, as in the wizards), and the actual elements they
- * contribute to the menu system. The check state must take this into
- * account.
+ * (sub-Categories, as in the wizards), and the actual elements they contribute
+ * to the menu system. The check state must take this into account.
  *
  * @since 3.5
  */
@@ -33,8 +32,7 @@ class CategoryCheckProvider implements ICheckStateProvider {
 	public boolean isChecked(Object element) {
 		Category category = (Category) element;
 
-		if (category.getChildren().isEmpty()
-				&& category.getContributionItems().isEmpty()) {
+		if (category.getChildren().isEmpty() && category.getContributionItems().isEmpty()) {
 			return false;
 		}
 

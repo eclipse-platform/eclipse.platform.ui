@@ -26,8 +26,8 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
  * represent unicode characters.
  * </p>
  * <p>
- * <code>CharacterKey</code> objects are immutable. Clients are not permitted
- * to extend this class.
+ * <code>CharacterKey</code> objects are immutable. Clients are not permitted to
+ * extend this class.
  * </p>
  *
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
@@ -38,82 +38,80 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 public final class CharacterKey extends NaturalKey {
 
 	/**
-	 * An internal map used to lookup instances of <code>CharacterKey</code>
-	 * given the formal string representation of a character key.
+	 * An internal map used to lookup instances of <code>CharacterKey</code> given
+	 * the formal string representation of a character key.
 	 */
 	static SortedMap characterKeysByName = new TreeMap();
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the backspace key (U+0008).
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * backspace key (U+0008).
 	 */
 	public static final CharacterKey BS;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the carriage return (U+000D) key
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * carriage return (U+000D) key
 	 */
 	public static final CharacterKey CR;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the delete (U+007F) key.
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * delete (U+007F) key.
 	 */
 	public static final CharacterKey DEL;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the escape (U+001B) key.
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * escape (U+001B) key.
 	 */
 	public static final CharacterKey ESC;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the form feed (U+000C) key.
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * form feed (U+000C) key.
 	 */
 	public static final CharacterKey FF;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the line feed (U+000A) key.
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * line feed (U+000A) key.
 	 */
 	public static final CharacterKey LF;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the null (U+0000) key.
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * null (U+0000) key.
 	 */
 	public static final CharacterKey NUL;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the space (U+0020) key.
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * space (U+0020) key.
 	 */
 	public static final CharacterKey SPACE;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the tab (U+0009) key.
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * tab (U+0009) key.
 	 */
 	public static final CharacterKey TAB;
 
 	/**
-	 * The single static instance of <code>CharacterKey</code> which
-	 * represents the vertical tab (U+000B) key.
+	 * The single static instance of <code>CharacterKey</code> which represents the
+	 * vertical tab (U+000B) key.
 	 */
 	public static final CharacterKey VT;
 
 	/**
-	 * Creates an instance of <code>CharacterKey</code> given a unicode
-	 * character. This method determines the correct name for the key based on
-	 * character. Typically, this name is a string of one-character in length
-	 * equal to the character that this instance represents.
+	 * Creates an instance of <code>CharacterKey</code> given a unicode character.
+	 * This method determines the correct name for the key based on character.
+	 * Typically, this name is a string of one-character in length equal to the
+	 * character that this instance represents.
 	 *
-	 * @param character
-	 *            the character that the resultant <code>CharacterKey</code>
-	 *            instance is to represent.
-	 * @return an instance of <code>CharacterKey</code> representing the
-	 *         character.
+	 * @param character the character that the resultant <code>CharacterKey</code>
+	 *                  instance is to represent.
+	 * @return an instance of <code>CharacterKey</code> representing the character.
 	 */
 	public static CharacterKey getInstance(final char character) {
 		return new CharacterKey(character);
@@ -150,11 +148,10 @@ public final class CharacterKey extends NaturalKey {
 	}
 
 	/**
-	 * Constructs an instance of <code>CharacterKey</code> given a unicode
-	 * character and a name.
+	 * Constructs an instance of <code>CharacterKey</code> given a unicode character
+	 * and a name.
 	 *
-	 * @param key
-	 *            The key to be wrapped.
+	 * @param key The key to be wrapped.
 	 */
 	private CharacterKey(final int key) {
 		super(key);

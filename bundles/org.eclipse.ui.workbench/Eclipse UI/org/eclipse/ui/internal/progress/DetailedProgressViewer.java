@@ -50,7 +50,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class DetailedProgressViewer extends AbstractProgressViewer {
 
-	//Maximum number of entries to display so that the view does not flood the UI with events
+	// Maximum number of entries to display so that the view does not flood the UI
+	// with events
 	private int maxDisplayed;
 
 	Composite control;
@@ -68,8 +69,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 */
 	public DetailedProgressViewer(Composite parent, int style) {
 		scrolled = new ScrolledComposite(parent, SWT.V_SCROLL | style);
-		int height = JFaceResources.getDefaultFont().getFontData()[0]
-				.getHeight();
+		int height = JFaceResources.getDefaultFont().getFontData()[0].getHeight();
 		scrolled.getVerticalBar().setIncrement(height * 2);
 		scrolled.setExpandHorizontal(true);
 		scrolled.setExpandVertical(true);
@@ -79,8 +79,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		control.setLayout(layout);
-		control.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
+		control.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		control.addFocusListener(new FocusAdapter() {
 
@@ -111,26 +110,22 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			}
 		});
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
-				IWorkbenchHelpContextIds.RESPONSIVE_UI);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
 		scrolled.setContent(control);
 		hookControl(control);
 
 		noEntryArea = new Composite(scrolled, SWT.NONE);
 		noEntryArea.setLayout(new GridLayout());
-		noEntryArea.setBackground(noEntryArea.getDisplay()
-				.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		noEntryArea.setBackground(noEntryArea.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		Label noEntryLabel = new Label(noEntryArea, SWT.NONE);
 		noEntryLabel.setText(ProgressMessages.ProgressView_NoOperations);
-		noEntryLabel.setBackground(noEntryArea.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
+		noEntryLabel.setBackground(noEntryArea.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		GridData textData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		noEntryLabel.setLayoutData(textData);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(noEntryLabel,
-				IWorkbenchHelpContextIds.RESPONSIVE_UI);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(noEntryLabel, IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
 		IPreferenceStore prefs = WorkbenchPlugin.getDefault().getPreferenceStore();
 		updateMaxDisplayedValue(prefs);
@@ -144,7 +139,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			return;
 		}
 		updateMaxDisplayedValue(WorkbenchPlugin.getDefault().getPreferenceStore());
-    }
+	}
 
 	private void updateMaxDisplayedValue(IPreferenceStore prefs) {
 		int newValue = Math.max(1, prefs.getInt(IPreferenceConstants.MAX_PROGRESS_ENTRIES));
@@ -214,8 +209,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @return ProgressInfoItem
 	 */
 	private ProgressInfoItem createNewItem(JobTreeElement info) {
-		final ProgressInfoItem item = new ProgressInfoItem(control, SWT.NONE,
-				info);
+		final ProgressInfoItem item = new ProgressInfoItem(control, SWT.NONE, info);
 
 		item.addControlListener(new ControlListener() {
 			@Override
@@ -315,8 +309,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	@Override
 	protected Widget doFindItem(Object element) {
 		for (Control control : control.getChildren()) {
-			if (control.isDisposed()
-					|| control.getData() == null) {
+			if (control.isDisposed() || control.getData() == null) {
 				continue;
 			}
 			if (control.getData().equals(element)) {
@@ -432,7 +425,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	public void setFocus() {
 		Control[] children = control.getChildren();
 		if (children.length > 0) {
-			((ProgressInfoItem)children[0]).setButtonFocus();
+			((ProgressInfoItem) children[0]).setButtonFocus();
 		} else {
 			noEntryArea.setFocus();
 		}
@@ -461,8 +454,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	}
 
 	/**
-	 * Set the virtual items to be visible or not depending on the displayed
-	 * area.
+	 * Set the virtual items to be visible or not depending on the displayed area.
 	 */
 	private void updateVisibleItems() {
 		updateVisibleProgressItems(control.getChildren());
@@ -502,8 +494,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	}
 
 	/**
-	 * @param maxDisplayed
-	 *            The maximal number of displayed items.
+	 * @param maxDisplayed The maximal number of displayed items.
 	 */
 	public void setMaxDisplayed(int maxDisplayed) {
 		this.maxDisplayed = maxDisplayed;

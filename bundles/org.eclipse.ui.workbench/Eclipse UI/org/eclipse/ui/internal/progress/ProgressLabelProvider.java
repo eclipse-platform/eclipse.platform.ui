@@ -17,19 +17,19 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * The ProgressLabelProvider is a label provider used for viewers
- * that need anILabelprovider to show JobInfos.
+ * The ProgressLabelProvider is a label provider used for viewers that need
+ * anILabelprovider to show JobInfos.
  */
 public class ProgressLabelProvider extends LabelProvider {
 
-    @Override
+	@Override
 	public Image getImage(Object element) {
-        return ((JobTreeElement) element).getDisplayImage();
-    }
+		return ((JobTreeElement) element).getDisplayImage();
+	}
 
-    @Override
+	@Override
 	public String getText(Object element) {
-        return ((JobTreeElement) element).getDisplayString();
-    }
+		return ((JobTreeElement) element).getDisplayString();
+	}
 
 }

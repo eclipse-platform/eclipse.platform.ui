@@ -23,8 +23,8 @@ import org.eclipse.ui.IWorkbenchPropertyPageMulti;
  * <code>IWorkbenchPropertyPage</code>). The implementation is a JFace
  * preference page with an adaptable element.
  * <p>
- * Property pages that support multiple selected objects should
- * implement {@link IWorkbenchPropertyPageMulti} instead.
+ * Property pages that support multiple selected objects should implement
+ * {@link IWorkbenchPropertyPageMulti} instead.
  * <p>
  * Subclasses must implement the <code>createContents</code> framework method to
  * supply the property page's main control.
@@ -34,9 +34,10 @@ import org.eclipse.ui.IWorkbenchPropertyPageMulti;
  * compute the size of the page's control.
  * </p>
  * <p>
- * Subclasses may override the <code>performOk</code>, <code>performApply</code>,<code>performDefaults</code>, <code>performCancel</code>, and
- * <code>performHelp</code> framework methods to react to the standard button
- * events.
+ * Subclasses may override the <code>performOk</code>,
+ * <code>performApply</code>,<code>performDefaults</code>,
+ * <code>performCancel</code>, and <code>performHelp</code> framework methods to
+ * react to the standard button events.
  * </p>
  * <p>
  * Subclasses may call the <code>noDefaultAndApplyButton</code> framework method
@@ -48,30 +49,29 @@ import org.eclipse.ui.IWorkbenchPropertyPageMulti;
  * @see IWorkbenchPropertyPageMulti
  */
 public abstract class PropertyPage extends PreferencePage implements IWorkbenchPropertyPage {
-    /**
-     * The element.
-     */
-    private IAdaptable element;
+	/**
+	 * The element.
+	 */
+	private IAdaptable element;
 
-    /**
-     * Creates a new property page.
-     */
-    public PropertyPage() {
-    }
+	/**
+	 * Creates a new property page.
+	 */
+	public PropertyPage() {
+	}
 
-    @Override
+	@Override
 	public IAdaptable getElement() {
-        return element;
-    }
+		return element;
+	}
 
-    /**
-     * Sets the element that owns properties shown on this page.
-     *
-     * @param element
-     *            the element
-     */
-    @Override
+	/**
+	 * Sets the element that owns properties shown on this page.
+	 *
+	 * @param element the element
+	 */
+	@Override
 	public void setElement(IAdaptable element) {
-        this.element = element;
-    }
+		this.element = element;
+	}
 }

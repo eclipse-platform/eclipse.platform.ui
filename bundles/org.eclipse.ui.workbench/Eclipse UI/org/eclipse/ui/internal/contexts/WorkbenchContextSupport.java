@@ -37,21 +37,20 @@ import org.eclipse.ui.keys.IBindingService;
 public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
 	/**
-	 * The map of activations that have been given to the handler service (<code>IHandlerActivation</code>),
-	 * indexed by the submissions (<code>HandlerSubmission</code>). This map
-	 * should be <code>null</code> if there are no such activations.
+	 * The map of activations that have been given to the handler service
+	 * (<code>IHandlerActivation</code>), indexed by the submissions
+	 * (<code>HandlerSubmission</code>). This map should be <code>null</code> if
+	 * there are no such activations.
 	 */
 	private Map activationsBySubmission = null;
 
 	/**
-	 * The binding service for the workbench. This value is never
-	 * <code>null</code>.
+	 * The binding service for the workbench. This value is never <code>null</code>.
 	 */
 	private IBindingService bindingService;
 
 	/**
-	 * The context service for the workbench. This value is never
-	 * <code>null</code>.
+	 * The context service for the workbench. This value is never <code>null</code>.
 	 */
 	private IContextService contextService;
 
@@ -61,40 +60,32 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	private ContextManagerLegacyWrapper contextManagerWrapper;
 
 	/**
-	 * The workbench for which context support is being provided. This value
-	 * must not be <code>null</code>.
+	 * The workbench for which context support is being provided. This value must
+	 * not be <code>null</code>.
 	 */
 	private final Workbench workbench;
 
 	/**
-	 * Constructs a new instance of <code>WorkbenchCommandSupport</code>.
-	 * This attaches the key binding support, and adds a global shell activation
-	 * filter.
+	 * Constructs a new instance of <code>WorkbenchCommandSupport</code>. This
+	 * attaches the key binding support, and adds a global shell activation filter.
 	 *
-	 * @param workbenchToSupport
-	 *            The workbench that needs to be supported by this instance;
-	 *            must not be <code>null</code>.
-	 * @param contextManager
-	 *            The context manager to be wrappered; must not be
-	 *            <code>null</code>.
+	 * @param workbenchToSupport The workbench that needs to be supported by this
+	 *                           instance; must not be <code>null</code>.
+	 * @param contextManager     The context manager to be wrappered; must not be
+	 *                           <code>null</code>.
 	 */
-	public WorkbenchContextSupport(final Workbench workbenchToSupport,
-			final ContextManager contextManager) {
+	public WorkbenchContextSupport(final Workbench workbenchToSupport, final ContextManager contextManager) {
 		workbench = workbenchToSupport;
 		contextService = workbench.getService(IContextService.class);
 		bindingService = workbench.getService(IBindingService.class);
-		contextManagerWrapper = ContextManagerFactory
-				.getContextManagerWrapper(contextManager);
+		contextManagerWrapper = ContextManagerFactory.getContextManagerWrapper(contextManager);
 	}
 
 	@Override
-	public final void addEnabledSubmission(
-			final EnabledSubmission enabledSubmission) {
-		final IContextActivation activation = contextService.activateContext(
-				enabledSubmission.getContextId(),
-				new LegacyHandlerSubmissionExpression(enabledSubmission
-						.getActivePartId(), enabledSubmission.getActiveShell(),
-						enabledSubmission.getActiveWorkbenchPartSite()));
+	public final void addEnabledSubmission(final EnabledSubmission enabledSubmission) {
+		final IContextActivation activation = contextService.activateContext(enabledSubmission.getContextId(),
+				new LegacyHandlerSubmissionExpression(enabledSubmission.getActivePartId(),
+						enabledSubmission.getActiveShell(), enabledSubmission.getActiveWorkbenchPartSite()));
 		if (activationsBySubmission == null) {
 			activationsBySubmission = new HashMap();
 		}
@@ -135,8 +126,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	}
 
 	@Override
-	public final void removeEnabledSubmission(
-			final EnabledSubmission enabledSubmission) {
+	public final void removeEnabledSubmission(final EnabledSubmission enabledSubmission) {
 		if (activationsBySubmission == null) {
 			return;
 		}
@@ -149,8 +139,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	}
 
 	@Override
-	public final void removeEnabledSubmissions(
-			final Collection enabledSubmissions) {
+	public final void removeEnabledSubmissions(final Collection enabledSubmissions) {
 		final Iterator submissionItr = enabledSubmissions.iterator();
 		while (submissionItr.hasNext()) {
 			removeEnabledSubmission((EnabledSubmission) submissionItr.next());

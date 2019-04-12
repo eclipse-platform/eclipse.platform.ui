@@ -20,18 +20,16 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
- * The PreferenceNodeFilter is a filter that only matches
- * a set of ids.
+ * The PreferenceNodeFilter is a filter that only matches a set of ids.
  */
 public class PreferenceNodeFilter extends ViewerFilter {
 
 	Collection ids = new HashSet();
 
 	/**
-	 * Create a new instance of the receiver on a
-	 * list of filteredIds.
-	 * @param filteredIds The collection of ids that
-	 * will be shown.
+	 * Create a new instance of the receiver on a list of filteredIds.
+	 * 
+	 * @param filteredIds The collection of ids that will be shown.
 	 */
 	public PreferenceNodeFilter(String[] filteredIds) {
 		super();
@@ -46,19 +44,19 @@ public class PreferenceNodeFilter extends ViewerFilter {
 	}
 
 	/**
-	 * Check to see if the node or any of its children
-	 * have an id in the ids.
+	 * Check to see if the node or any of its children have an id in the ids.
+	 * 
 	 * @param node WorkbenchPreferenceNode
-	 * @return boolean <code>true</code> if node or oe of its children
-	 * has an id in the ids.
+	 * @return boolean <code>true</code> if node or oe of its children has an id in
+	 *         the ids.
 	 */
 	private boolean checkNodeAndChildren(IPreferenceNode node) {
-		if(ids.contains(node.getId())) {
+		if (ids.contains(node.getId())) {
 			return true;
 		}
 
 		for (IPreferenceNode subNode : node.getSubNodes()) {
-			if(checkNodeAndChildren(subNode)) {
+			if (checkNodeAndChildren(subNode)) {
 				return true;
 			}
 

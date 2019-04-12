@@ -56,7 +56,6 @@ public class ActionBars extends SubActionBars {
 		return menuManager;
 	}
 
-
 	@Override
 	public IToolBarManager getToolBarManager() {
 		if (toolbarManager == null) {
@@ -71,7 +70,8 @@ public class ActionBars extends SubActionBars {
 		getStatusLineManager().update(false);
 		getMenuManager().update(false);
 		if (toolbarManager != null) {
-			//			System.err.println("update toolbar manager for " + part.getElementId()); //$NON-NLS-1$
+			// System.err.println("update toolbar manager for " + part.getElementId());
+			// //$NON-NLS-1$
 			Control tbCtrl = toolbarManager.getControl();
 			if (tbCtrl == null || tbCtrl.isDisposed()) {
 				if (part.getContext() != null) {
@@ -94,8 +94,7 @@ public class ActionBars extends SubActionBars {
 				Object renderer = toolbar.getRenderer();
 				if (renderer instanceof ToolBarManagerRenderer) {
 					// update the mapping of opaque items
-					((ToolBarManagerRenderer) renderer).reconcileManagerToModel(toolbarManager,
-							toolbar);
+					((ToolBarManagerRenderer) renderer).reconcileManagerToModel(toolbarManager, toolbar);
 				}
 			}
 		}
@@ -161,8 +160,7 @@ public class ActionBars extends SubActionBars {
 			}
 
 			parent = placeholder.getParent();
-			return parent instanceof MGenericStack ? parent.getSelectedElement() == placeholder
-					: parent != null;
+			return parent instanceof MGenericStack ? parent.getSelectedElement() == placeholder : parent != null;
 		}
 		return !(parent instanceof MGenericStack) || parent.getSelectedElement() == part;
 	}

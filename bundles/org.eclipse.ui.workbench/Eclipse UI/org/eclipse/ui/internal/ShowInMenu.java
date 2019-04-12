@@ -69,8 +69,7 @@ import org.eclipse.ui.views.IViewRegistry;
  * actions. The items to show are determined from the active perspective and
  * active part.
  */
-public class ShowInMenu extends ContributionItem implements
-		IWorkbenchContribution {
+public class ShowInMenu extends ContributionItem implements IWorkbenchContribution {
 
 	private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoTargets;
 
@@ -94,10 +93,8 @@ public class ShowInMenu extends ContributionItem implements
 	/**
 	 * Creates a Show In menu.
 	 *
-	 * @param window
-	 *            the window containing the menu
-	 * @param id
-	 *            The ID for this contribution
+	 * @param window the window containing the menu
+	 * @param id     The ID for this contribution
 	 */
 	public ShowInMenu(IWorkbenchWindow window, String id) {
 		super(id);
@@ -127,7 +124,7 @@ public class ShowInMenu extends ContributionItem implements
 			return;
 		}
 
-		if (currentManager!=null && currentManager.getSize() > 0) {
+		if (currentManager != null && currentManager.getSize() > 0) {
 			// IMenuService service = (IMenuService) locator
 			// .getService(IMenuService.class);
 			// service.releaseContributions(currentManager);
@@ -180,9 +177,7 @@ public class ShowInMenu extends ContributionItem implements
 		if (context == null) {
 			return;
 		}
-		if (context.getInput() == null
-				&& (context.getSelection() == null || context.getSelection()
-						.isEmpty())) {
+		if (context.getInput() == null && (context.getSelection() == null || context.getSelection().isEmpty())) {
 			return;
 		}
 
@@ -194,10 +189,8 @@ public class ShowInMenu extends ContributionItem implements
 			}
 		}
 		if (sourcePart != null && innerMgr instanceof MenuManager) {
-			ISourceProviderService sps = locator
-					.getService(ISourceProviderService.class);
-			ISourceProvider sp = sps
-					.getSourceProvider(ISources.SHOW_IN_SELECTION);
+			ISourceProviderService sps = locator.getService(ISourceProviderService.class);
+			ISourceProvider sp = sps.getSourceProvider(ISources.SHOW_IN_SELECTION);
 			if (sp instanceof WorkbenchSourceProvider) {
 				((WorkbenchSourceProvider) sp).checkActivePart(true);
 			}
@@ -206,18 +199,15 @@ public class ShowInMenu extends ContributionItem implements
 			String location = MenuUtil.SHOW_IN_MENU_ID;
 			location = location.substring(location.indexOf(':') + 1);
 			WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWindow();
-			MApplication application = workbenchWindow.getModel().getContext()
-					.get(MApplication.class);
+			MApplication application = workbenchWindow.getModel().getContext().get(MApplication.class);
 
 			MMenu menuModel = MenuFactoryImpl.eINSTANCE.createMenu();
 			final ArrayList<MMenuContribution> toContribute = new ArrayList<>();
 			final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<>();
-			ExpressionContext eContext = new ExpressionContext(workbenchWindow.getModel()
-					.getContext());
-			ContributionsAnalyzer.gatherMenuContributions(menuModel,
-					application.getMenuContributions(), location, toContribute, eContext, true);
-			ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
-					menuContributionsToRemove);
+			ExpressionContext eContext = new ExpressionContext(workbenchWindow.getModel().getContext());
+			ContributionsAnalyzer.gatherMenuContributions(menuModel, application.getMenuContributions(), location,
+					toContribute, eContext, true);
+			ContributionsAnalyzer.addMenuContributions(menuModel, toContribute, menuContributionsToRemove);
 
 			ICommandImageService imgService = workbenchWindow.getService(ICommandImageService.class);
 
@@ -225,9 +215,8 @@ public class ShowInMenu extends ContributionItem implements
 				if (menuElement instanceof MHandledMenuItem) {
 					MCommand command = ((MHandledMenuItem) menuElement).getCommand();
 					String commandId = command.getElementId();
-					CommandContributionItemParameter ccip = new CommandContributionItemParameter(
-							workbenchWindow, commandId, commandId,
-							CommandContributionItem.STYLE_PUSH);
+					CommandContributionItemParameter ccip = new CommandContributionItemParameter(workbenchWindow,
+							commandId, commandId, CommandContributionItem.STYLE_PUSH);
 					String label = menuElement.getLabel();
 					if (label != null && label.length() > 0) {
 						ccip.label = label;
@@ -256,16 +245,15 @@ public class ShowInMenu extends ContributionItem implements
 
 	/**
 	 * Return the appropriate command contribution item for the parameter.
+	 * 
 	 * @param viewDescriptor
 	 * @return the show in command contribution item
 	 */
 	protected IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
-		CommandContributionItemParameter parm = new CommandContributionItemParameter(
-				locator, viewDescriptor.getId(), IWorkbenchCommandConstants.NAVIGATE_SHOW_IN,
-				CommandContributionItem.STYLE_PUSH);
+		CommandContributionItemParameter parm = new CommandContributionItemParameter(locator, viewDescriptor.getId(),
+				IWorkbenchCommandConstants.NAVIGATE_SHOW_IN, CommandContributionItem.STYLE_PUSH);
 		HashMap<String, String> targetId = new HashMap<>();
-		targetId.put(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET,
-				viewDescriptor.getId());
+		targetId.put(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET, viewDescriptor.getId());
 		parm.parameters = targetId;
 		parm.label = viewDescriptor.getLabel();
 		if (parm.label.length() > 0) {
@@ -276,8 +264,8 @@ public class ShowInMenu extends ContributionItem implements
 	}
 
 	/**
-	 * Returns the Show In... target part ids for the given source part. Merges
-	 * the contributions from the current perspective and the source part.
+	 * Returns the Show In... target part ids for the given source part. Merges the
+	 * contributions from the current perspective and the source part.
 	 */
 	private ArrayList<Object> getShowInPartIds(IWorkbenchPart sourcePart) {
 		ArrayList<Object> targetIds = new ArrayList<>();
@@ -312,8 +300,8 @@ public class ShowInMenu extends ContributionItem implements
 	 * Returns the source part, or <code>null</code> if there is no applicable
 	 * source part
 	 * <p>
-	 * This implementation returns the current part in the window. Subclasses
-	 * may extend or reimplement.
+	 * This implementation returns the current part in the window. Subclasses may
+	 * extend or reimplement.
 	 *
 	 * @return the source part or <code>null</code>
 	 */
@@ -328,13 +316,12 @@ public class ShowInMenu extends ContributionItem implements
 	}
 
 	/**
-	 * Returns the <code>ShowInContext</code> to show in the selected target,
-	 * or <code>null</code> if there is no valid context to show.
+	 * Returns the <code>ShowInContext</code> to show in the selected target, or
+	 * <code>null</code> if there is no valid context to show.
 	 * <p>
-	 * This implementation obtains the context from the
-	 * <code>IShowInSource</code> of the source part (if provided), or, if the
-	 * source part is an editor, it creates the context from the editor's input
-	 * and selection.
+	 * This implementation obtains the context from the <code>IShowInSource</code>
+	 * of the source part (if provided), or, if the source part is an editor, it
+	 * creates the context from the editor's input and selection.
 	 * <p>
 	 * Subclasses may extend or reimplement.
 	 *
@@ -372,8 +359,7 @@ public class ShowInMenu extends ContributionItem implements
 				descs.add(desc);
 			}
 		}
-		return descs.toArray(new IViewDescriptor[descs
-				.size()]);
+		return descs.toArray(new IViewDescriptor[descs.size()]);
 	}
 
 	@Override
@@ -385,8 +371,7 @@ public class ShowInMenu extends ContributionItem implements
 		if (locator == null)
 			return null;
 
-		IWorkbenchLocationService wls = locator
-				.getService(IWorkbenchLocationService.class);
+		IWorkbenchLocationService wls = locator.getService(IWorkbenchLocationService.class);
 
 		if (window == null) {
 			window = wls.getWorkbenchWindow();
@@ -414,7 +399,7 @@ public class ShowInMenu extends ContributionItem implements
 		if (getParent() instanceof MenuManager) {
 			((MenuManager) getParent()).removeMenuListener(menuListener);
 		}
-		window=null;
-		locator=null;
+		window = null;
+		locator = null;
 	}
 }

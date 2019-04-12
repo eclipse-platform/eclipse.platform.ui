@@ -24,34 +24,32 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * This class is used to read resource editor registry descriptors from
- * the platform registry.
+ * This class is used to read resource editor registry descriptors from the
+ * platform registry.
  */
 public class EditorRegistryReader extends RegistryReader {
 
-    private EditorRegistry editorRegistry;
+	private EditorRegistry editorRegistry;
 
-    /**
-     * Get the editors that are defined in the registry
-     * and add them to the ResourceEditorRegistry
-     *
-     * Warning:
-     * The registry must be passed in because this method is called during the
-     * process of setting up the registry and at this time it has not been
-     * safely setup with the plugin.
-     */
-    protected void addEditors(EditorRegistry registry) {
-        IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
-        this.editorRegistry = registry;
-        readRegistry(extensionRegistry, PlatformUI.PLUGIN_ID,
-                IWorkbenchRegistryConstants.PL_EDITOR);
-    }
+	/**
+	 * Get the editors that are defined in the registry and add them to the
+	 * ResourceEditorRegistry
+	 *
+	 * Warning: The registry must be passed in because this method is called during
+	 * the process of setting up the registry and at this time it has not been
+	 * safely setup with the plugin.
+	 */
+	protected void addEditors(EditorRegistry registry) {
+		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
+		this.editorRegistry = registry;
+		readRegistry(extensionRegistry, PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_EDITOR);
+	}
 
-    /**
-     * Implementation of the abstract method that
-     * processes one configuration element.
-     */
-    @Override
+	/**
+	 * Implementation of the abstract method that processes one configuration
+	 * element.
+	 */
+	@Override
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_EDITOR)) {
 			return readEditorElement(element);
@@ -60,7 +58,7 @@ public class EditorRegistryReader extends RegistryReader {
 			return readEditorContentTypeBinding(element);
 		}
 		return false;
-    }
+	}
 
 	/**
 	 * @param element
@@ -97,43 +95,41 @@ public class EditorRegistryReader extends RegistryReader {
 
 	private boolean readEditorElement(IConfigurationElement element) {
 		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-        if (id == null) {
-            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
-            return true;
-        }
+		if (id == null) {
+			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
+			return true;
+		}
 
-        EditorDescriptor editor = new EditorDescriptor(id, element);
+		EditorDescriptor editor = new EditorDescriptor(id, element);
 
-        List extensionsVector = new ArrayList();
-        List filenamesVector = new ArrayList();
+		List extensionsVector = new ArrayList();
+		List filenamesVector = new ArrayList();
 		List contentTypeVector = new ArrayList();
-        boolean defaultEditor = false;
+		boolean defaultEditor = false;
 
-        // Get editor name (required field).
-        if (element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null) {
-            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
-            return true;
-        }
+		// Get editor name (required field).
+		if (element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null) {
+			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
+			return true;
+		}
 
-        // Get target extensions (optional field)
-        String extensionsString = element.getAttribute(IWorkbenchRegistryConstants.ATT_EXTENSIONS);
-        if (extensionsString != null) {
-            StringTokenizer tokenizer = new StringTokenizer(extensionsString,
-                    ",");//$NON-NLS-1$
-            while (tokenizer.hasMoreTokens()) {
-                extensionsVector.add(tokenizer.nextToken().trim());
-            }
-        }
-        String filenamesString = element.getAttribute(IWorkbenchRegistryConstants.ATT_FILENAMES);
-        if (filenamesString != null) {
-            StringTokenizer tokenizer = new StringTokenizer(filenamesString,
-                    ",");//$NON-NLS-1$
-            while (tokenizer.hasMoreTokens()) {
-                filenamesVector.add(tokenizer.nextToken().trim());
-            }
-        }
+		// Get target extensions (optional field)
+		String extensionsString = element.getAttribute(IWorkbenchRegistryConstants.ATT_EXTENSIONS);
+		if (extensionsString != null) {
+			StringTokenizer tokenizer = new StringTokenizer(extensionsString, ",");//$NON-NLS-1$
+			while (tokenizer.hasMoreTokens()) {
+				extensionsVector.add(tokenizer.nextToken().trim());
+			}
+		}
+		String filenamesString = element.getAttribute(IWorkbenchRegistryConstants.ATT_FILENAMES);
+		if (filenamesString != null) {
+			StringTokenizer tokenizer = new StringTokenizer(filenamesString, ",");//$NON-NLS-1$
+			while (tokenizer.hasMoreTokens()) {
+				filenamesVector.add(tokenizer.nextToken().trim());
+			}
+		}
 
-		IConfigurationElement [] bindings = element.getChildren(IWorkbenchRegistryConstants.TAG_CONTENT_TYPE_BINDING);
+		IConfigurationElement[] bindings = element.getChildren(IWorkbenchRegistryConstants.TAG_CONTENT_TYPE_BINDING);
 		for (IConfigurationElement binding : bindings) {
 			String contentTypeId = binding.getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_TYPE_ID);
 			if (contentTypeId == null) {
@@ -142,26 +138,23 @@ public class EditorRegistryReader extends RegistryReader {
 			contentTypeVector.add(contentTypeId);
 		}
 
-        // Is this the default editor?
-        String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
-        if (def != null) {
+		// Is this the default editor?
+		String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
+		if (def != null) {
 			defaultEditor = Boolean.parseBoolean(def);
 		}
 
-        // Add the editor to the manager.
-        editorRegistry.addEditorFromPlugin(editor, extensionsVector,
-                filenamesVector, contentTypeVector, defaultEditor);
-        return true;
+		// Add the editor to the manager.
+		editorRegistry.addEditorFromPlugin(editor, extensionsVector, filenamesVector, contentTypeVector, defaultEditor);
+		return true;
 	}
 
-
-    /**
-     * @param editorRegistry
-     * @param element
-     */
-    public void readElement(EditorRegistry editorRegistry,
-            IConfigurationElement element) {
-        this.editorRegistry = editorRegistry;
-        readElement(element);
-    }
+	/**
+	 * @param editorRegistry
+	 * @param element
+	 */
+	public void readElement(EditorRegistry editorRegistry, IConfigurationElement element) {
+		this.editorRegistry = editorRegistry;
+		readElement(element);
+	}
 }

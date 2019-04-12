@@ -30,14 +30,14 @@ package org.eclipse.ui.commands;
 @SuppressWarnings("all")
 public interface IHandlerListener {
 
-    /**
-     * Notifies that one or more properties of an instance of
-     * <code>IHandler</code> have changed. Specific details are described in
-     * the <code>HandlerEvent</code>.
-     *
-     * @param handlerEvent
-     *            the handler event. Guaranteed not to be <code>null</code>.
-     */
+	/**
+	 * Notifies that one or more properties of an instance of <code>IHandler</code>
+	 * have changed. Specific details are described in the
+	 * <code>HandlerEvent</code>.
+	 *
+	 * @param handlerEvent the handler event. Guaranteed not to be
+	 *                     <code>null</code>.
+	 */
 	@Deprecated
-    void handlerChanged(HandlerEvent handlerEvent);
+	void handlerChanged(HandlerEvent handlerEvent);
 }

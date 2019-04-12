@@ -28,10 +28,10 @@ import org.eclipse.ui.services.IServiceLocator;
 public class ServiceLocatorCreator implements IServiceLocatorCreator {
 
 	@Override
-	public IServiceLocator createServiceLocator(IServiceLocator parent,
-			AbstractServiceFactory factory, IDisposable owner) {
+	public IServiceLocator createServiceLocator(IServiceLocator parent, AbstractServiceFactory factory,
+			IDisposable owner) {
 		ServiceLocator serviceLocator = new ServiceLocator(parent, factory, owner);
-		//System.err.println("parentLocator: " + parent); //$NON-NLS-1$
+		// System.err.println("parentLocator: " + parent); //$NON-NLS-1$
 		if (parent != null) {
 			IEclipseContext ctx = parent.getService(IEclipseContext.class);
 			if (ctx != null) {
@@ -42,8 +42,8 @@ public class ServiceLocatorCreator implements IServiceLocatorCreator {
 	}
 
 	@Override
-	public IServiceLocator createServiceLocator(IServiceLocator parent,
-			AbstractServiceFactory factory, IDisposable owner, IEclipseContext context) {
+	public IServiceLocator createServiceLocator(IServiceLocator parent, AbstractServiceFactory factory,
+			IDisposable owner, IEclipseContext context) {
 		ServiceLocator serviceLocator = new ServiceLocator(parent, factory, owner);
 		serviceLocator.setContext(context);
 		return serviceLocator;

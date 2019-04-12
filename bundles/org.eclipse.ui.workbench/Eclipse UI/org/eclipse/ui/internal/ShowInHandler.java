@@ -55,8 +55,7 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 			((WorkbenchPage) p).updateShowInSources(r.getModel());
 		}
 
-		String targetId = event
-				.getParameter(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);
+		String targetId = event.getParameter(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);
 		if (targetId == null) {
 			throw new ExecutionException("No targetId specified"); //$NON-NLS-1$
 		}
@@ -66,17 +65,16 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 		if (sps != null) {
 			ISourceProvider sp = sps.getSourceProvider(ISources.SHOW_IN_SELECTION);
 			if (sp instanceof WorkbenchSourceProvider) {
-				((WorkbenchSourceProvider)sp).checkActivePart(true);
+				((WorkbenchSourceProvider) sp).checkActivePart(true);
 			}
 		}
 
-		ShowInContext context = getContext(HandlerUtil
-				.getShowInSelection(event), HandlerUtil.getShowInInput(event));
+		ShowInContext context = getContext(HandlerUtil.getShowInSelection(event), HandlerUtil.getShowInInput(event));
 		if (context == null) {
 			return null;
 		}
 
-		IWorkbenchPage page= activeWorkbenchWindow.getActivePage();
+		IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
 
 		try {
 			IViewPart view = page.showView(targetId);
@@ -94,8 +92,8 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	}
 
 	/**
-	 * Returns the <code>ShowInContext</code> to show in the selected target,
-	 * or <code>null</code> if there is no valid context to show.
+	 * Returns the <code>ShowInContext</code> to show in the selected target, or
+	 * <code>null</code> if there is no valid context to show.
 	 * <p>
 	 * This implementation obtains the context from global variables provide.
 	 * showInSelection and showInInput should be available.
@@ -114,8 +112,7 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	 * Returns the <code>IShowInTarget</code> for the given part, or
 	 * <code>null</code> if it does not provide one.
 	 *
-	 * @param targetPart
-	 *            the target part
+	 * @param targetPart the target part
 	 * @return the <code>IShowInTarget</code> or <code>null</code>
 	 */
 	private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
@@ -124,8 +121,7 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
-		String targetId = (String) parameters
-				.get(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);
+		String targetId = (String) parameters.get(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);
 		if (targetId == null || targetId.length() == 0) {
 			return;
 		}

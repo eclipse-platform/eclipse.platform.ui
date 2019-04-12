@@ -30,19 +30,17 @@ public interface IInstallationPageContainer {
 	 * Register a button as belonging to a particular page in the container. The
 	 * container will manage the placement and visibility of the page's buttons.
 	 *
-	 * @param page
-	 *            the page that created the button
-	 * @param button
-	 *            the button to be managed
+	 * @param page   the page that created the button
+	 * @param button the button to be managed
 	 *
 	 */
 	void registerPageButton(InstallationPage page, Button button);
 
 	/**
-	 * Closes any modal containers that were used to launch this installation
-	 * page. This method should be used when a page is launching a long-running
-	 * task (such as a background job) that requires progress indication, in
-	 * order to allow platform progress indication to behave as expected.
+	 * Closes any modal containers that were used to launch this installation page.
+	 * This method should be used when a page is launching a long-running task (such
+	 * as a background job) that requires progress indication, in order to allow
+	 * platform progress indication to behave as expected.
 	 */
 	void closeModalContainers();
 

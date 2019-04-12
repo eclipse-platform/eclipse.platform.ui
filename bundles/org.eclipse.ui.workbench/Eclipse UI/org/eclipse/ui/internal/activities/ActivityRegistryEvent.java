@@ -15,17 +15,17 @@
 package org.eclipse.ui.internal.activities;
 
 final class ActivityRegistryEvent {
-    private IActivityRegistry activityRegistry;
+	private IActivityRegistry activityRegistry;
 
-    ActivityRegistryEvent(IActivityRegistry activityRegistry) {
-        if (activityRegistry == null) {
+	ActivityRegistryEvent(IActivityRegistry activityRegistry) {
+		if (activityRegistry == null) {
 			throw new NullPointerException();
 		}
 
-        this.activityRegistry = activityRegistry;
-    }
+		this.activityRegistry = activityRegistry;
+	}
 
-    IActivityRegistry getActivityRegistry() {
-        return activityRegistry;
-    }
+	IActivityRegistry getActivityRegistry() {
+		return activityRegistry;
+	}
 }

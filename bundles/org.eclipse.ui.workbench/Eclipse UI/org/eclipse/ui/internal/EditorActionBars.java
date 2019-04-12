@@ -62,9 +62,8 @@ public class EditorActionBars extends SubActionBars2 {
 
 		@Override
 		public Boolean getEnabled(IContributionItem item) {
-			if (((item instanceof ActionContributionItem) && (((ActionContributionItem) item)
-					.getAction() instanceof RetargetAction))
-					|| enabledAllowed) {
+			if (((item instanceof ActionContributionItem)
+					&& (((ActionContributionItem) item).getAction() instanceof RetargetAction)) || enabledAllowed) {
 				return null;
 			}
 			return Boolean.FALSE;
@@ -82,10 +81,10 @@ public class EditorActionBars extends SubActionBars2 {
 	}
 
 	/**
-	 * A switch controlling verbose debugging options surrounding the disposal
-	 * of tool bar contribution items. There have been problems in the past with
-	 * reusing disposed items, and leaking memory by failing to drop references
-	 * to disposed items.
+	 * A switch controlling verbose debugging options surrounding the disposal of
+	 * tool bar contribution items. There have been problems in the past with
+	 * reusing disposed items, and leaking memory by failing to drop references to
+	 * disposed items.
 	 */
 	private static final boolean DEBUG_TOOLBAR_DISPOSAL = Policy.DEBUG_TOOLBAR_DISPOSAL;
 
@@ -165,10 +164,10 @@ public class EditorActionBars extends SubActionBars2 {
 		}
 
 		/*
-		 * Dispose of the contribution item, but also make sure that no one else
-		 * is holding on to it. In this case, go through the SubCoolBarManager
-		 * to its parent (the real CoolBarManager), and replace the reference
-		 * with a placeholder.
+		 * Dispose of the contribution item, but also make sure that no one else is
+		 * holding on to it. In this case, go through the SubCoolBarManager to its
+		 * parent (the real CoolBarManager), and replace the reference with a
+		 * placeholder.
 		 */
 		if (toolBarContributionItem != null) {
 			// Create a placeholder and place it in the cool bar manager.
@@ -180,14 +179,13 @@ public class EditorActionBars extends SubActionBars2 {
 					CoolBarToTrimManager trimManager = (CoolBarToTrimManager) manager;
 					trimManager.remove(toolBarContributionItem);
 				} else if (manager instanceof ContributionManager) {
-					final IContributionItem replacementItem = new PlaceholderContributionItem(
-							toolBarContributionItem);
-					boolean succeeded = ((ContributionManager) manager).replaceItem(replacementItem
-							.getId(), replacementItem);
+					final IContributionItem replacementItem = new PlaceholderContributionItem(toolBarContributionItem);
+					boolean succeeded = ((ContributionManager) manager).replaceItem(replacementItem.getId(),
+							replacementItem);
 					if (!succeeded && DEBUG_TOOLBAR_DISPOSAL) {
 						System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
-						System.out
-								.println("Could not replace " + replacementItem.getId() + " in the contribution manager."); //$NON-NLS-1$ //$NON-NLS-2$
+						System.out.println(
+								"Could not replace " + replacementItem.getId() + " in the contribution manager."); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else if (DEBUG_TOOLBAR_DISPOSAL) {
 					System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
@@ -242,9 +240,9 @@ public class EditorActionBars extends SubActionBars2 {
 	}
 
 	/**
-	 * Returns the tool bar manager. If items are added or removed from the
-	 * manager be sure to call <code>updateActionBars</code>. Overridden to
-	 * support CoolBars.
+	 * Returns the tool bar manager. If items are added or removed from the manager
+	 * be sure to call <code>updateActionBars</code>. Overridden to support
+	 * CoolBars.
 	 *
 	 * @return the tool bar manager
 	 */
@@ -271,24 +269,20 @@ public class EditorActionBars extends SubActionBars2 {
 					coolItemToolBarMgr = new ToolBarManager2(SWT.FLAT);
 					toolBarContributionItem = new ToolBarContributionItem2(coolItemToolBarMgr, type);
 					// Add editor item to group
-					coolBarManager.prependToGroup(IWorkbenchActionConstants.GROUP_EDITOR,
-							toolBarContributionItem);
+					coolBarManager.prependToGroup(IWorkbenchActionConstants.GROUP_EDITOR, toolBarContributionItem);
 				}
 			} else {
 				coolItemToolBarMgr = new ToolBarManager2(SWT.FLAT);
 				if ((coolBarManager instanceof ContributionManager)
 						&& (foundItem instanceof PlaceholderContributionItem)) {
 					PlaceholderContributionItem placeholder = (PlaceholderContributionItem) foundItem;
-					toolBarContributionItem = createToolBarContributionItem(coolItemToolBarMgr,
-							placeholder);
+					toolBarContributionItem = createToolBarContributionItem(coolItemToolBarMgr, placeholder);
 					// Restore from a placeholder
-					((ContributionManager) coolBarManager).replaceItem(type,
-							toolBarContributionItem);
+					((ContributionManager) coolBarManager).replaceItem(type, toolBarContributionItem);
 				} else {
 					toolBarContributionItem = new ToolBarContributionItem2(coolItemToolBarMgr, type);
 					// Add editor item to group
-					coolBarManager.prependToGroup(IWorkbenchActionConstants.GROUP_EDITOR,
-							toolBarContributionItem);
+					coolBarManager.prependToGroup(IWorkbenchActionConstants.GROUP_EDITOR, toolBarContributionItem);
 				}
 			}
 			((ContributionManager) coolItemToolBarMgr).setOverrides(new Overrides());
@@ -300,13 +294,12 @@ public class EditorActionBars extends SubActionBars2 {
 	}
 
 	/*
-	 * Creates a new tool bar contribution item on the given manager -- using
-	 * the stored data to initialize some of its properties.
+	 * Creates a new tool bar contribution item on the given manager -- using the
+	 * stored data to initialize some of its properties.
 	 */
 	IToolBarContributionItem createToolBarContributionItem(final IToolBarManager manager,
 			PlaceholderContributionItem item) {
-		IToolBarContributionItem toolBarContributionItem = new ToolBarContributionItem2(manager,
-				item.getId());
+		IToolBarContributionItem toolBarContributionItem = new ToolBarContributionItem2(manager, item.getId());
 		toolBarContributionItem.setCurrentHeight(item.getHeight());
 		toolBarContributionItem.setCurrentWidth(item.getWidth());
 		toolBarContributionItem.setMinimumItemsToShow(item.getMinimumItemsToShow());
@@ -316,8 +309,8 @@ public class EditorActionBars extends SubActionBars2 {
 
 	/**
 	 * Returns whether the contribution list is visible. If the visibility is
-	 * <code>true</code> then each item within the manager appears within the
-	 * parent manager. Otherwise, the items are not visible.
+	 * <code>true</code> then each item within the manager appears within the parent
+	 * manager. Otherwise, the items are not visible.
 	 *
 	 * @return <code>true</code> if the manager is visible
 	 */
@@ -329,10 +322,9 @@ public class EditorActionBars extends SubActionBars2 {
 	}
 
 	/**
-	 * Sets the target part for the action bars. For views this is ignored
-	 * because each view has its own action vector. For editors this is
-	 * important because the action vector is shared by editors of the same
-	 * type.
+	 * Sets the target part for the action bars. For views this is ignored because
+	 * each view has its own action vector. For editors this is important because
+	 * the action vector is shared by editors of the same type.
 	 */
 	@Override
 	public void partChanged(IWorkbenchPart part) {
@@ -358,10 +350,9 @@ public class EditorActionBars extends SubActionBars2 {
 	/**
 	 * Activate / Deactivate the contributions.
 	 *
-	 * Workaround for flashing when editor contributes many menu/tool
-	 * contributions. In this case, the force visibility flag determines if the
-	 * contributions should be actually made visible/hidden or just change the
-	 * enablement state.
+	 * Workaround for flashing when editor contributes many menu/tool contributions.
+	 * In this case, the force visibility flag determines if the contributions
+	 * should be actually made visible/hidden or just change the enablement state.
 	 */
 	private void setActive(boolean set, boolean forceVisibility) {
 		basicSetActive(set);
@@ -386,8 +377,7 @@ public class EditorActionBars extends SubActionBars2 {
 	/**
 	 * Sets the enablement ability of all the items contributed by the editor.
 	 *
-	 * @param enabledAllowed
-	 *            <code>true</code> if the items may enable
+	 * @param enabledAllowed <code>true</code> if the items may enable
 	 * @since 2.0
 	 */
 	private void setEnabledAllowed(boolean enabledAllowed) {
@@ -412,12 +402,11 @@ public class EditorActionBars extends SubActionBars2 {
 	}
 
 	/**
-	 * Sets the visibility of the manager. If the visibility is
-	 * <code>true</code> then each item within the manager appears within the
-	 * parent manager. Otherwise, the items are not visible.
+	 * Sets the visibility of the manager. If the visibility is <code>true</code>
+	 * then each item within the manager appears within the parent manager.
+	 * Otherwise, the items are not visible.
 	 *
-	 * @param visible
-	 *            the new visibility
+	 * @param visible the new visibility
 	 */
 	private void setVisible(boolean visible) {
 		if (toolBarContributionItem != null) {
@@ -429,22 +418,20 @@ public class EditorActionBars extends SubActionBars2 {
 	}
 
 	/**
-	 * Sets the visibility of the manager. If the visibility is
-	 * <code>true</code> then each item within the manager appears within the
-	 * parent manager. Otherwise, the items are not visible if force visibility
-	 * is <code>true</code>, or grayed out if force visibility is
-	 * <code>false</code>
+	 * Sets the visibility of the manager. If the visibility is <code>true</code>
+	 * then each item within the manager appears within the parent manager.
+	 * Otherwise, the items are not visible if force visibility is
+	 * <code>true</code>, or grayed out if force visibility is <code>false</code>
 	 * <p>
-	 * This is a workaround for the layout flashing when editors contribute
-	 * large amounts of items.
+	 * This is a workaround for the layout flashing when editors contribute large
+	 * amounts of items.
 	 * </p>
 	 *
-	 * @param visible
-	 *            the new visibility
-	 * @param forceVisibility
-	 *            <code>true</code> to change the visibility or
-	 *            <code>false</code> to change just the enablement state. This
-	 *            parameter is ignored if visible is <code>true</code>.
+	 * @param visible         the new visibility
+	 * @param forceVisibility <code>true</code> to change the visibility or
+	 *                        <code>false</code> to change just the enablement
+	 *                        state. This parameter is ignored if visible is
+	 *                        <code>true</code>.
 	 */
 	private void setVisible(boolean visible, boolean forceVisibility) {
 		if (visible) {

@@ -37,7 +37,7 @@ public class PerspectiveElement extends QuickAccessElement {
 
 	private final IPerspectiveDescriptor descriptor;
 
-	/* package */PerspectiveElement(IPerspectiveDescriptor descriptor, PerspectiveProvider perspectiveProvider) {
+	/* package */ PerspectiveElement(IPerspectiveDescriptor descriptor, PerspectiveProvider perspectiveProvider) {
 		super(perspectiveProvider);
 		this.descriptor = descriptor;
 	}
@@ -45,21 +45,17 @@ public class PerspectiveElement extends QuickAccessElement {
 	@Override
 	public void execute() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchWindow window = workbench
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = window.getActivePage();
 		if (activePage != null) {
 			activePage.setPerspective(descriptor);
 		} else {
 			try {
-				window.openPage(descriptor.getId(), ((Workbench) workbench)
-						.getDefaultPageInput());
+				window.openPage(descriptor.getId(), ((Workbench) workbench).getDefaultPageInput());
 			} catch (WorkbenchException e) {
-				IStatus errorStatus = WorkbenchPlugin.newError(NLS.bind(
-						WorkbenchMessages.Workbench_showPerspectiveError,
-						descriptor.getLabel()), e);
-				StatusManager.getManager().handle(errorStatus,
-						StatusManager.SHOW);
+				IStatus errorStatus = WorkbenchPlugin
+						.newError(NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError, descriptor.getLabel()), e);
+				StatusManager.getManager().handle(errorStatus, StatusManager.SHOW);
 			}
 		}
 	}
@@ -83,8 +79,7 @@ public class PerspectiveElement extends QuickAccessElement {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((descriptor == null) ? 0 : descriptor.hashCode());
+		result = prime * result + ((descriptor == null) ? 0 : descriptor.hashCode());
 		return result;
 	}
 

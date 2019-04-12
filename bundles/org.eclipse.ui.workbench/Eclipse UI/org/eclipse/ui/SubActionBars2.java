@@ -30,8 +30,7 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	/**
 	 * Constucts a sub action bars object using an IActionBars2 parent.
 	 *
-	 * @param parent
-	 *            the action bars to virtualize; must not be <code>null</code>.
+	 * @param parent the action bars to virtualize; must not be <code>null</code>.
 	 */
 	public SubActionBars2(final IActionBars2 parent) {
 		this(parent, parent.getServiceLocator());
@@ -40,22 +39,20 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	/**
 	 * Constucts a sub action bars object using an IActionBars2 parent.
 	 *
-	 * @param parent
-	 *            the action bars to virtualize; must not be <code>null</code>.
-	 * @param serviceLocator
-	 *            The service locator for this action bar; must not be
-	 *            <code>null</code>.
+	 * @param parent         the action bars to virtualize; must not be
+	 *                       <code>null</code>.
+	 * @param serviceLocator The service locator for this action bar; must not be
+	 *                       <code>null</code>.
 	 *
 	 * @since 3.2
 	 */
-	public SubActionBars2(final IActionBars2 parent,
-			final IServiceLocator serviceLocator) {
+	public SubActionBars2(final IActionBars2 parent, final IServiceLocator serviceLocator) {
 		super(parent, serviceLocator);
 	}
 
 	/**
-	 * Returns the casted parent of the sub action bars. This method can return
-	 * an IActionBars2 since it can only accept IActionBars2 in the constructor.
+	 * Returns the casted parent of the sub action bars. This method can return an
+	 * IActionBars2 since it can only accept IActionBars2 in the constructor.
 	 *
 	 * @return the casted parent.
 	 */
@@ -66,8 +63,7 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	/**
 	 * Returns a new sub coolbar manager.
 	 *
-	 * @param parent
-	 *            the parent coolbar manager
+	 * @param parent the parent coolbar manager
 	 * @return the cool bar manager
 	 */
 	protected SubCoolBarManager createSubCoolBarManager(ICoolBarManager parent) {
@@ -77,8 +73,7 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	@Override
 	public ICoolBarManager getCoolBarManager() {
 		if (coolBarMgr == null) {
-			coolBarMgr = createSubCoolBarManager(getCastedParent()
-					.getCoolBarManager());
+			coolBarMgr = createSubCoolBarManager(getCastedParent().getCoolBarManager());
 			coolBarMgr.setVisible(getActive());
 		}
 		return coolBarMgr;

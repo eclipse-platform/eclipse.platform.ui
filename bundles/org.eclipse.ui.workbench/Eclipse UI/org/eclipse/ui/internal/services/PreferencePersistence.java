@@ -50,23 +50,18 @@ import org.eclipse.ui.internal.util.Util;
 public abstract class PreferencePersistence extends RegistryPersistence {
 
 	/**
-	 * Inserts the given element into the indexed two-dimensional array in the
-	 * array at the index. The array is grown as necessary.
+	 * Inserts the given element into the indexed two-dimensional array in the array
+	 * at the index. The array is grown as necessary.
 	 *
-	 * @param elementToAdd
-	 *            The element to add to the indexed array; may be
-	 *            <code>null</code>
-	 * @param indexedArray
-	 *            The two-dimensional array that is indexed by element type;
-	 *            must not be <code>null</code>.
-	 * @param index
-	 *            The index at which the element should be added; must be a
-	 *            valid index.
-	 * @param currentCount
-	 *            The current number of items in the array at the index.
+	 * @param elementToAdd The element to add to the indexed array; may be
+	 *                     <code>null</code>
+	 * @param indexedArray The two-dimensional array that is indexed by element
+	 *                     type; must not be <code>null</code>.
+	 * @param index        The index at which the element should be added; must be a
+	 *                     valid index.
+	 * @param currentCount The current number of items in the array at the index.
 	 */
-	protected static final void addElementToIndexedArray(
-			final IMemento elementToAdd, final IMemento[][] indexedArray,
+	protected static final void addElementToIndexedArray(final IMemento elementToAdd, final IMemento[][] indexedArray,
 			final int index, final int currentCount) {
 		final IMemento[] elements;
 		if (currentCount == 0) {
@@ -88,14 +83,11 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	/**
 	 * Adds a warning to be logged at some later point in time.
 	 *
-	 * @param warningsToLog
-	 *            The collection of warnings to be logged; must not be
-	 *            <code>null</code>.
-	 * @param message
-	 *            The mesaage to log; must not be <code>null</code>.
+	 * @param warningsToLog The collection of warnings to be logged; must not be
+	 *                      <code>null</code>.
+	 * @param message       The mesaage to log; must not be <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog,
-			final String message) {
+	protected static final void addWarning(final List warningsToLog, final String message) {
 		addWarning(warningsToLog, message, null, null, null);
 	}
 
@@ -103,17 +95,13 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 * Adds a warning to be logged at some later point in time. This logs the
 	 * identifier of the item.
 	 *
-	 * @param warningsToLog
-	 *            The collection of warnings to be logged; must not be
-	 *            <code>null</code>.
-	 * @param message
-	 *            The mesaage to log; must not be <code>null</code>.
-	 * @param id
-	 *            The identifier of the item for which a warning is being
-	 *            logged; may be <code>null</code>.
+	 * @param warningsToLog The collection of warnings to be logged; must not be
+	 *                      <code>null</code>.
+	 * @param message       The mesaage to log; must not be <code>null</code>.
+	 * @param id            The identifier of the item for which a warning is being
+	 *                      logged; may be <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog,
-			final String message, final String id) {
+	protected static final void addWarning(final List warningsToLog, final String message, final String id) {
 		addWarning(warningsToLog, message, id, null, null);
 	}
 
@@ -121,23 +109,17 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 * Adds a warning to be logged at some later point in time. This logs the
 	 * identifier of the item, as well as an extra attribute.
 	 *
-	 * @param warningsToLog
-	 *            The collection of warnings to be logged; must not be
-	 *            <code>null</code>.
-	 * @param message
-	 *            The mesaage to log; must not be <code>null</code>.
-	 * @param id
-	 *            The identifier of the item for which a warning is being
-	 *            logged; may be <code>null</code>.
-	 * @param extraAttributeName
-	 *            The name of extra attribute to be logged; may be
-	 *            <code>null</code>.
-	 * @param extraAttributeValue
-	 *            The value of the extra attribute to be logged; may be
-	 *            <code>null</code>.
+	 * @param warningsToLog       The collection of warnings to be logged; must not
+	 *                            be <code>null</code>.
+	 * @param message             The mesaage to log; must not be <code>null</code>.
+	 * @param id                  The identifier of the item for which a warning is
+	 *                            being logged; may be <code>null</code>.
+	 * @param extraAttributeName  The name of extra attribute to be logged; may be
+	 *                            <code>null</code>.
+	 * @param extraAttributeValue The value of the extra attribute to be logged; may
+	 *                            be <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog,
-			final String message, final String id,
+	protected static final void addWarning(final List warningsToLog, final String message, final String id,
 			final String extraAttributeName, final String extraAttributeValue) {
 		String statusMessage = message;
 		if (id != null) {
@@ -153,25 +135,21 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 					+ extraAttributeValue + '\'';
 		}
 
-		final IStatus status = new Status(IStatus.WARNING,
-				WorkbenchPlugin.PI_WORKBENCH, 0, statusMessage, null);
+		final IStatus status = new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH, 0, statusMessage, null);
 		warningsToLog.add(status);
 	}
 
 	/**
 	 * Reads a boolean attribute from a memnto.
 	 *
-	 * @param memento
-	 *            The memento from which to read the attribute; must not be
-	 *            <code>null</code>.
-	 * @param attribute
-	 *            The attribute to read; must not be <code>null</code>.
-	 * @param defaultValue
-	 *            The default boolean value.
+	 * @param memento      The memento from which to read the attribute; must not be
+	 *                     <code>null</code>.
+	 * @param attribute    The attribute to read; must not be <code>null</code>.
+	 * @param defaultValue The default boolean value.
 	 * @return The attribute's value; may be <code>null</code> if none.
 	 */
-	protected static final boolean readBoolean(final IMemento memento,
-			final String attribute, final boolean defaultValue) {
+	protected static final boolean readBoolean(final IMemento memento, final String attribute,
+			final boolean defaultValue) {
 		final String value = memento.getString(attribute);
 		if (value == null) {
 			return defaultValue;
@@ -185,18 +163,15 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	}
 
 	/**
-	 * Reads an optional attribute from a memento. This converts zero-length
-	 * strings into <code>null</code>.
+	 * Reads an optional attribute from a memento. This converts zero-length strings
+	 * into <code>null</code>.
 	 *
-	 * @param memento
-	 *            The memento from which to read the attribute; must not be
-	 *            <code>null</code>.
-	 * @param attribute
-	 *            The attribute to read; must not be <code>null</code>.
+	 * @param memento   The memento from which to read the attribute; must not be
+	 *                  <code>null</code>.
+	 * @param attribute The attribute to read; must not be <code>null</code>.
 	 * @return The attribute's value; may be <code>null</code> if none.
 	 */
-	protected static final String readOptional(final IMemento memento,
-			final String attribute) {
+	protected static final String readOptional(final IMemento memento, final String attribute) {
 		String value = memento.getString(attribute);
 		if ((value != null) && (value.length() == 0)) {
 			value = null;
@@ -206,69 +181,56 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	}
 
 	/**
-	 * Reads the parameterized command from a parent memento. This is used to
-	 * read the parameter sub-elements from a key element, as well as the
-	 * command id. Each parameter is guaranteed to be valid. If invalid
-	 * parameters are found, then a warning status will be appended to the
-	 * <code>warningsToLog</code> list. The command id is required, or a
-	 * warning will be logged.
+	 * Reads the parameterized command from a parent memento. This is used to read
+	 * the parameter sub-elements from a key element, as well as the command id.
+	 * Each parameter is guaranteed to be valid. If invalid parameters are found,
+	 * then a warning status will be appended to the <code>warningsToLog</code>
+	 * list. The command id is required, or a warning will be logged.
 	 *
-	 * @param memento
-	 *            The memento from which the parameters should be read; must not
-	 *            be <code>null</code>.
-	 * @param commandService
-	 *            The service providing commands for the workbench; must not be
-	 *            <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings found during parsing. Warnings found will
-	 *            parsing the parameters will be appended to this list. This
-	 *            value must not be <code>null</code>.
-	 * @param message
-	 *            The message to print if the command identifier is not present;
-	 *            must not be <code>null</code>.
+	 * @param memento        The memento from which the parameters should be read;
+	 *                       must not be <code>null</code>.
+	 * @param commandService The service providing commands for the workbench; must
+	 *                       not be <code>null</code>.
+	 * @param warningsToLog  The list of warnings found during parsing. Warnings
+	 *                       found will parsing the parameters will be appended to
+	 *                       this list. This value must not be <code>null</code>.
+	 * @param message        The message to print if the command identifier is not
+	 *                       present; must not be <code>null</code>.
 	 * @return The array of parameters found for this configuration element;
 	 *         <code>null</code> if none can be found.
 	 */
-	protected static final ParameterizedCommand readParameterizedCommand(
-			final IMemento memento, final ICommandService commandService,
-			final List warningsToLog, final String message, final String id) {
-		final String commandId = readRequired(memento, ATT_COMMAND_ID,
-				warningsToLog, message, id);
+	protected static final ParameterizedCommand readParameterizedCommand(final IMemento memento,
+			final ICommandService commandService, final List warningsToLog, final String message, final String id) {
+		final String commandId = readRequired(memento, ATT_COMMAND_ID, warningsToLog, message, id);
 		if (commandId == null) {
 			return null;
 		}
 
 		final Command command = commandService.getCommand(commandId);
-		final ParameterizedCommand parameterizedCommand = readParameters(
-				memento, warningsToLog, command);
+		final ParameterizedCommand parameterizedCommand = readParameters(memento, warningsToLog, command);
 
 		return parameterizedCommand;
 	}
 
 	/**
 	 * Reads the parameters from a parent memento. This is used to read the
-	 * parameter sub-elements from a key element. Each parameter is guaranteed
-	 * to be valid. If invalid parameters are found, then a warning status will
-	 * be appended to the <code>warningsToLog</code> list.
+	 * parameter sub-elements from a key element. Each parameter is guaranteed to be
+	 * valid. If invalid parameters are found, then a warning status will be
+	 * appended to the <code>warningsToLog</code> list.
 	 *
-	 * @param memento
-	 *            The memento from which the parameters should be read; must not
-	 *            be <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings found during parsing. Warnings found will
-	 *            parsing the parameters will be appended to this list. This
-	 *            value must not be <code>null</code>.
-	 * @param command
-	 *            The command around which the parameterization should be
-	 *            created; must not be <code>null</code>.
-	 * @return The array of parameters found for this memento; <code>null</code>
-	 *         if none can be found.
+	 * @param memento       The memento from which the parameters should be read;
+	 *                      must not be <code>null</code>.
+	 * @param warningsToLog The list of warnings found during parsing. Warnings
+	 *                      found will parsing the parameters will be appended to
+	 *                      this list. This value must not be <code>null</code>.
+	 * @param command       The command around which the parameterization should be
+	 *                      created; must not be <code>null</code>.
+	 * @return The array of parameters found for this memento; <code>null</code> if
+	 *         none can be found.
 	 */
-	protected static final ParameterizedCommand readParameters(
-			final IMemento memento, final List warningsToLog,
+	protected static final ParameterizedCommand readParameters(final IMemento memento, final List warningsToLog,
 			final Command command) {
-		final IMemento[] parameterMementos = memento
-				.getChildren(TAG_PARAMETER);
+		final IMemento[] parameterMementos = memento.getChildren(TAG_PARAMETER);
 		if ((parameterMementos == null) || (parameterMementos.length == 0)) {
 			return new ParameterizedCommand(command, null);
 		}
@@ -301,8 +263,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 			}
 			if (parameter == null) {
 				// The name should never be null. This is invalid.
-				addWarning(warningsToLog,
-						"Could not find a matching parameter", id); //$NON-NLS-1$
+				addWarning(warningsToLog, "Could not find a matching parameter", id); //$NON-NLS-1$
 				continue;
 			}
 
@@ -322,50 +283,40 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 		}
 
 		return new ParameterizedCommand(command,
-				(Parameterization[]) parameters
-						.toArray(new Parameterization[parameters.size()]));
+				(Parameterization[]) parameters.toArray(new Parameterization[parameters.size()]));
 	}
 
 	/**
 	 * Reads a required attribute from the memento.
 	 *
-	 * @param memento
-	 *            The memento from which to read; must not be <code>null</code>.
-	 * @param attribute
-	 *            The attribute to read; must not be <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings; must not be <code>null</code>.
-	 * @param message
-	 *            The warning message to use if the attribute is missing; must
-	 *            not be <code>null</code>.
+	 * @param memento       The memento from which to read; must not be
+	 *                      <code>null</code>.
+	 * @param attribute     The attribute to read; must not be <code>null</code>.
+	 * @param warningsToLog The list of warnings; must not be <code>null</code>.
+	 * @param message       The warning message to use if the attribute is missing;
+	 *                      must not be <code>null</code>.
 	 * @return The required attribute; may be <code>null</code> if missing.
 	 */
-	protected static final String readRequired(final IMemento memento,
-			final String attribute, final List warningsToLog,
+	protected static final String readRequired(final IMemento memento, final String attribute, final List warningsToLog,
 			final String message) {
 		return readRequired(memento, attribute, warningsToLog, message, null);
 	}
 
 	/**
-	 * Reads a required attribute from the memento. This logs the identifier of
-	 * the item if this required element cannot be found.
+	 * Reads a required attribute from the memento. This logs the identifier of the
+	 * item if this required element cannot be found.
 	 *
-	 * @param memento
-	 *            The memento from which to read; must not be <code>null</code>.
-	 * @param attribute
-	 *            The attribute to read; must not be <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings; must not be <code>null</code>.
-	 * @param message
-	 *            The warning message to use if the attribute is missing; must
-	 *            not be <code>null</code>.
-	 * @param id
-	 *            The identifier of the element for which this is a required
-	 *            attribute; may be <code>null</code>.
+	 * @param memento       The memento from which to read; must not be
+	 *                      <code>null</code>.
+	 * @param attribute     The attribute to read; must not be <code>null</code>.
+	 * @param warningsToLog The list of warnings; must not be <code>null</code>.
+	 * @param message       The warning message to use if the attribute is missing;
+	 *                      must not be <code>null</code>.
+	 * @param id            The identifier of the element for which this is a
+	 *                      required attribute; may be <code>null</code>.
 	 * @return The required attribute; may be <code>null</code> if missing.
 	 */
-	protected static final String readRequired(final IMemento memento,
-			final String attribute, final List warningsToLog,
+	protected static final String readRequired(final IMemento memento, final String attribute, final List warningsToLog,
 			final String message, final String id) {
 		final String value = memento.getString(attribute);
 		if ((value == null) || (value.length() == 0)) {
@@ -377,8 +328,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	}
 
 	/**
-	 * Whether the preference and registry change listeners have been attached
-	 * yet.
+	 * Whether the preference and registry change listeners have been attached yet.
 	 */
 	protected boolean preferenceListenerAttached = false;
 
@@ -394,33 +344,30 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	public final void dispose() {
 		super.dispose();
 
-		final IPreferenceStore store = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
+		final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.removePropertyChangeListener(preferenceChangeListener);
 	}
 
 	/**
 	 * Checks whether the preference change could affect this persistence class.
 	 *
-	 * @param event
-	 *            The event indicating the preference change; must not be
-	 *            <code>null</code>.
-	 * @return <code>true</code> if the persistence instance is affected by
-	 *         this change; <code>false</code> otherwise.
+	 * @param event The event indicating the preference change; must not be
+	 *              <code>null</code>.
+	 * @return <code>true</code> if the persistence instance is affected by this
+	 *         change; <code>false</code> otherwise.
 	 */
 	protected abstract boolean isChangeImportant(final PropertyChangeEvent event);
 
 	/**
-	 * Reads the various elements from the registry. Subclasses should extend,
-	 * but must not override.
+	 * Reads the various elements from the registry. Subclasses should extend, but
+	 * must not override.
 	 */
 	@Override
 	protected void read() {
 		super.read();
 
 		if (!preferenceListenerAttached) {
-			final IPreferenceStore store = WorkbenchPlugin.getDefault()
-					.getPreferenceStore();
+			final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 			store.addPropertyChangeListener(preferenceChangeListener);
 		}
 	}

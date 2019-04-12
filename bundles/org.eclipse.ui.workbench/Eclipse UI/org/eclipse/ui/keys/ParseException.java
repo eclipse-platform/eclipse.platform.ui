@@ -20,8 +20,8 @@ package org.eclipse.ui.keys;
  * of either <code>KeyStroke</code> or <code>KeySequence</code> objects.
  * </p>
  * <p>
- * <code>ParseException</code> objects are immutable. Clients are not
- * permitted to extend this class.
+ * <code>ParseException</code> objects are immutable. Clients are not permitted
+ * to extend this class.
  * </p>
  *
  * @deprecated Please use org.eclipse.jface.bindings.keys.ParseException
@@ -30,20 +30,19 @@ package org.eclipse.ui.keys;
 @Deprecated
 public final class ParseException extends Exception {
 
-    /**
-     * Generated serial version UID for this class.
-     * @since 3.1
-     */
-    private static final long serialVersionUID = 3257009864814376241L;
+	/**
+	 * Generated serial version UID for this class.
+	 * 
+	 * @since 3.1
+	 */
+	private static final long serialVersionUID = 3257009864814376241L;
 
-    /**
-     * Constructs a <code>ParseException</code> with the specified detail
-     * message.
-     *
-     * @param s
-     *            the detail message.
-     */
-    public ParseException(final String s) {
-        super(s);
-    }
+	/**
+	 * Constructs a <code>ParseException</code> with the specified detail message.
+	 *
+	 * @param s the detail message.
+	 */
+	public ParseException(final String s) {
+		super(s);
+	}
 }

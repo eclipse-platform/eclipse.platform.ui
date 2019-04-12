@@ -33,71 +33,69 @@ package org.eclipse.ui;
  */
 public interface IPartService {
 
-    /**
-     * Adds the given listener for part lifecycle events.
-     * Has no effect if an identical listener is already registered.
+	/**
+	 * Adds the given listener for part lifecycle events. Has no effect if an
+	 * identical listener is already registered.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
-     *
-     * @param listener a part listener
-     * @see #removePartListener(IPartListener)
-     */
-    void addPartListener(IPartListener listener);
+	 *
+	 * @param listener a part listener
+	 * @see #removePartListener(IPartListener)
+	 */
+	void addPartListener(IPartListener listener);
 
-    /**
-     * Adds the given listener for part lifecycle events.
-     * Has no effect if an identical listener is already registered.
-     * <p>
-     * As of 3.5, the IPartListener2 can also implement IPageChangedListener
-     * to be notified about any parts that implement IPageChangeProvider and
-     * post PageChangedEvents.
-     * </p>
+	/**
+	 * Adds the given listener for part lifecycle events. Has no effect if an
+	 * identical listener is already registered.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * As of 3.5, the IPartListener2 can also implement IPageChangedListener to be
+	 * notified about any parts that implement IPageChangeProvider and post
+	 * PageChangedEvents.
 	 * </p>
-     *
-     * @param listener a part listener
-     * @see #removePartListener(IPartListener2)
-     * @see org.eclipse.jface.dialogs.IPageChangeProvider
-     * @see org.eclipse.jface.dialogs.IPageChangedListener
-     */
-    void addPartListener(IPartListener2 listener);
-
-    /**
-     * Returns the active part.
-     *
-     * @return the active part, or <code>null</code> if no part is currently active
-     */
-    IWorkbenchPart getActivePart();
-
-    /**
-     * Returns the active part reference.
-     *
-     * @return the active part reference, or <code>null</code> if no part
-     * is currently active
-     */
-    IWorkbenchPartReference getActivePartReference();
-
-    /**
-	 * Removes the given part listener. Has no effect if an identical listener
-	 * is not registered.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
+	 * </p>
 	 *
-	 * @param listener
-	 *            a part listener
+	 * @param listener a part listener
+	 * @see #removePartListener(IPartListener2)
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider
+	 * @see org.eclipse.jface.dialogs.IPageChangedListener
 	 */
-    void removePartListener(IPartListener listener);
+	void addPartListener(IPartListener2 listener);
 
-    /**
-	 * Removes the given part listener. Has no effect if an identical listener
-	 * is not registered.
+	/**
+	 * Returns the active part.
 	 *
-	 * @param listener
-	 *            a part listener
+	 * @return the active part, or <code>null</code> if no part is currently active
 	 */
-    void removePartListener(IPartListener2 listener);
+	IWorkbenchPart getActivePart();
+
+	/**
+	 * Returns the active part reference.
+	 *
+	 * @return the active part reference, or <code>null</code> if no part is
+	 *         currently active
+	 */
+	IWorkbenchPartReference getActivePartReference();
+
+	/**
+	 * Removes the given part listener. Has no effect if an identical listener is
+	 * not registered.
+	 *
+	 * @param listener a part listener
+	 */
+	void removePartListener(IPartListener listener);
+
+	/**
+	 * Removes the given part listener. Has no effect if an identical listener is
+	 * not registered.
+	 *
+	 * @param listener a part listener
+	 */
+	void removePartListener(IPartListener2 listener);
 }

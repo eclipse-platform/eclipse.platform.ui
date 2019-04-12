@@ -38,8 +38,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	private ViewDescriptor descriptor;
 	private IMemento memento;
 
-	public ViewReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
-			ViewDescriptor descriptor) {
+	public ViewReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part, ViewDescriptor descriptor) {
 		super(windowContext, page, part);
 		this.descriptor = descriptor;
 
@@ -104,15 +103,15 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 			return descriptor.createView();
 		} catch (CoreException e) {
 			IStatus status = e.getStatus();
-			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					status.getCode(), status.getMessage(), e));
+			throw new PartInitException(
+					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, status.getCode(), status.getMessage(), e));
 		}
 	}
 
 	@Override
 	IWorkbenchPart createErrorPart() {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
-				WorkbenchMessages.ViewFactory_initException, getModel().getElementId()), new Exception());
+		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+				NLS.bind(WorkbenchMessages.ViewFactory_initException, getModel().getElementId()), new Exception());
 		return createErrorPart(status);
 	}
 
@@ -123,8 +122,8 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
-		ViewSite viewSite = new ViewSite(getModel(), part, this, descriptor == null ? null
-				: descriptor.getConfigurationElement());
+		ViewSite viewSite = new ViewSite(getModel(), part, this,
+				descriptor == null ? null : descriptor.getConfigurationElement());
 		IViewPart view = (IViewPart) part;
 		view.init(viewSite, memento);
 

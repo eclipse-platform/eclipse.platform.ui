@@ -43,19 +43,16 @@ public class EditorProvider extends QuickAccessProvider {
 	public QuickAccessElement[] getElements() {
 		if (idToElement == null) {
 			idToElement = new HashMap();
-			IWorkbenchPage activePage = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if (activePage == null) {
 				return new QuickAccessElement[0];
 			}
 			for (IEditorReference editor : activePage.getEditorReferences()) {
-				EditorElement editorElement = new EditorElement(editor,
-						this);
+				EditorElement editorElement = new EditorElement(editor, this);
 				idToElement.put(editorElement.getId(), editorElement);
 			}
 		}
-		return (QuickAccessElement[]) idToElement.values().toArray(
-				new QuickAccessElement[idToElement.values().size()]);
+		return (QuickAccessElement[]) idToElement.values().toArray(new QuickAccessElement[idToElement.values().size()]);
 	}
 
 	@Override
@@ -65,8 +62,7 @@ public class EditorProvider extends QuickAccessProvider {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
+		return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 	}
 
 	@Override

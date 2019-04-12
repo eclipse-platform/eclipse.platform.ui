@@ -47,24 +47,25 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public final class ShowViewHandler extends AbstractHandler {
 
+	/**
+	 * Creates a new ShowViewHandler that will open the view in its default
+	 * location.
+	 */
+	public ShowViewHandler() {
+	}
 
-    /**
-     * Creates a new ShowViewHandler that will open the view in its default location.
-     */
-    public ShowViewHandler() {
-    }
+	/**
+	 * Creates a new ShowViewHandler that will optionally force the view to become a
+	 * fast view.
+	 *
+	 * @param makeFast if true, the view will be moved to the fast view bar (even if
+	 *                 it already exists elsewhere). If false, the view will be
+	 *                 shown in its default location. Calling with false is
+	 *                 equivalent to using the default constructor.
+	 */
+	public ShowViewHandler(boolean makeFast) {
 
-    /**
-     * Creates a new ShowViewHandler that will optionally force the view to become
-     * a fast view.
-     *
-     * @param makeFast if true, the view will be moved to the fast view bar (even if it already
-     * exists elsewhere). If false, the view will be shown in its default location. Calling with
-     * false is equivalent to using the default constructor.
-     */
-    public ShowViewHandler(boolean makeFast) {
-
-    }
+	}
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
@@ -117,15 +118,14 @@ public final class ShowViewHandler extends AbstractHandler {
 	/**
 	 * Opens the view with the given descriptor.
 	 *
-	 * @param viewDescriptor
-	 *            The view to open; must not be <code>null</code>
+	 * @param viewDescriptor The view to open; must not be <code>null</code>
 	 */
 	private static void openView(IWorkbenchWindow window, final MPartDescriptor viewDescriptor,
 			EPartService partService) {
 		/*
 		 * TODO: see bug 483699: the code below duplicates the code in
-		 * org.eclipse.ui.internal.quickaccess.ViewElement#execute() and should
-		 * be refactored to some user friendly API
+		 * org.eclipse.ui.internal.quickaccess.ViewElement#execute() and should be
+		 * refactored to some user friendly API
 		 */
 		String viewId = viewDescriptor.getElementId();
 		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(viewDescriptor.getContributionURI())) {

@@ -38,17 +38,14 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public final class ShowPreferencePageHandler extends AbstractHandler {
 
-
 	public ShowPreferencePageHandler() {
 		super();
 	}
 
 	@Override
 	public Object execute(final ExecutionEvent event) {
-		final String preferencePageId = event
-				.getParameter(IWorkbenchCommandConstants.WINDOW_PREFERENCES_PARM_PAGEID);
-		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
-				.getActiveWorkbenchWindow(event);
+		final String preferencePageId = event.getParameter(IWorkbenchCommandConstants.WINDOW_PREFERENCES_PARM_PAGEID);
+		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 
 		final Shell shell;
 		if (activeWorkbenchWindow == null) {
@@ -57,8 +54,7 @@ public final class ShowPreferencePageHandler extends AbstractHandler {
 			shell = activeWorkbenchWindow.getShell();
 		}
 
-		final PreferenceDialog dialog = PreferencesUtil
-				.createPreferenceDialogOn(shell, preferencePageId, null, null);
+		final PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(shell, preferencePageId, null, null);
 		dialog.open();
 
 		return null;

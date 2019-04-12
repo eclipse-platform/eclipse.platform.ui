@@ -27,8 +27,8 @@ public class PerspectiveSwitcherCSSHandler extends AbstractCSSPropertySWTHandler
 	public static final ICSSPropertyHandler INSTANCE = new PerspectiveSwitcherCSSHandler();
 
 	@Override
-	protected void applyCSSProperty(Control control, String property, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception {
+	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
+			throws Exception {
 
 		Object obj = control.getData("modelElement"); //$NON-NLS-1$
 		if (obj instanceof ToolControlImpl) {
@@ -38,8 +38,7 @@ public class PerspectiveSwitcherCSSHandler extends AbstractCSSPropertySWTHandler
 				Color curveColor = null;
 				if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 					borderColor = (Color) engine.convert(value, Color.class, control.getDisplay());
-					borderColor = borderColor == null || borderColor.isDisposed() ? null
-							: borderColor;
+					borderColor = borderColor == null || borderColor.isDisposed() ? null : borderColor;
 
 					((PerspectiveSwitcher) bar).setKeylineColor(borderColor, borderColor);
 				} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
@@ -47,15 +46,11 @@ public class PerspectiveSwitcherCSSHandler extends AbstractCSSPropertySWTHandler
 					if (list.getLength() == 2) {
 						CSSValue border = list.item(0);
 						CSSValue curve = list.item(1);
-						borderColor = (Color) engine.convert(border, Color.class,
-								control.getDisplay());
-						borderColor = borderColor == null || borderColor.isDisposed() ? null
-								: borderColor;
+						borderColor = (Color) engine.convert(border, Color.class, control.getDisplay());
+						borderColor = borderColor == null || borderColor.isDisposed() ? null : borderColor;
 
-						curveColor = (Color) engine.convert(curve, Color.class,
-								control.getDisplay());
-						curveColor = curveColor == null || curveColor.isDisposed() ? null
-								: curveColor;
+						curveColor = (Color) engine.convert(curve, Color.class, control.getDisplay());
+						curveColor = curveColor == null || curveColor.isDisposed() ? null : curveColor;
 
 						((PerspectiveSwitcher) bar).setKeylineColor(borderColor, curveColor);
 					}
@@ -66,8 +61,8 @@ public class PerspectiveSwitcherCSSHandler extends AbstractCSSPropertySWTHandler
 	}
 
 	@Override
-	protected String retrieveCSSProperty(Control control, String property, String pseudo,
-			CSSEngine engine) throws Exception {
+	protected String retrieveCSSProperty(Control control, String property, String pseudo, CSSEngine engine)
+			throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

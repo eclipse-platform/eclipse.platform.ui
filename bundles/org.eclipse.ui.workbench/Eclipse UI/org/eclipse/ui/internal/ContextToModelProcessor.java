@@ -35,7 +35,6 @@ import org.eclipse.ui.internal.contexts.ContextPersistence;
 public class ContextToModelProcessor {
 	private Map<String, MBindingContext> contexts = new HashMap<>();
 
-
 	@Execute
 	void process(MApplication application, IEclipseContext context) {
 		gatherContexts(application.getRootContext());

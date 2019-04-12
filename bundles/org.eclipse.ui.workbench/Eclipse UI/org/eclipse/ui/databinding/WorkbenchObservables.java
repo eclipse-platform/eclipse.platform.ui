@@ -48,44 +48,37 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class WorkbenchObservables {
 	/**
-	 * Returns an observable with values of the given target type. If the
-	 * wrapped observable's value is of the target type, or can be adapted to
-	 * the target type, this is taken as the value of the returned observable,
-	 * otherwise <code>null</code>.
+	 * Returns an observable with values of the given target type. If the wrapped
+	 * observable's value is of the target type, or can be adapted to the target
+	 * type, this is taken as the value of the returned observable, otherwise
+	 * <code>null</code>.
 	 *
-	 * @param master
-	 *            the observable whose value should be adapted
-	 * @param adapter
-	 *            the target type
-	 * @return an observable with values of the given type, or <code>null</code>
-	 *         if the current value of the given observable does not adapt to
-	 *         the target type
+	 * @param master  the observable whose value should be adapted
+	 * @param adapter the target type
+	 * @return an observable with values of the given type, or <code>null</code> if
+	 *         the current value of the given observable does not adapt to the
+	 *         target type
 	 */
 	public static <T> IObservableValue<T> observeDetailAdaptedValue(IObservableValue<?> master, Class<T> adapter) {
-		return observeDetailAdaptedValue(master, adapter, Platform
-				.getAdapterManager());
+		return observeDetailAdaptedValue(master, adapter, Platform.getAdapterManager());
 	}
 
 	/**
-	 * Returns an observable with values of the given target type. If the
-	 * wrapped observable's value is of the target type, or can be adapted to
-	 * the target type, this is taken as the value of the returned observable,
-	 * otherwise <code>null</code>.
+	 * Returns an observable with values of the given target type. If the wrapped
+	 * observable's value is of the target type, or can be adapted to the target
+	 * type, this is taken as the value of the returned observable, otherwise
+	 * <code>null</code>.
 	 *
-	 * @param master
-	 *            the observable whose value should be adapted
-	 * @param adapter
-	 *            the target type
-	 * @param adapterManager
-	 *            the adapter manager used to adapt the master value
-	 * @return an observable with values of the given type, or <code>null</code>
-	 *         if the current value of the given observable does not adapt to
-	 *         the target type
+	 * @param master         the observable whose value should be adapted
+	 * @param adapter        the target type
+	 * @param adapterManager the adapter manager used to adapt the master value
+	 * @return an observable with values of the given type, or <code>null</code> if
+	 *         the current value of the given observable does not adapt to the
+	 *         target type
 	 */
 	static <T> IObservableValue<T> observeDetailAdaptedValue(IObservableValue<?> master, Class<T> adapter,
 			IAdapterManager adapterManager) {
-		return WorkbenchProperties.adaptedValue(adapter, adapterManager)
-				.observeDetail(master);
+		return WorkbenchProperties.adaptedValue(adapter, adapterManager).observeDetail(master);
 	}
 
 	/**
@@ -111,17 +104,15 @@ public class WorkbenchObservables {
 	public static <T> IObservableValue<T> observeAdaptedSingleSelection(IServiceLocator locator, Class<T> targetType) {
 		ISelectionService selectionService = locator.getService(ISelectionService.class);
 		Assert.isNotNull(selectionService);
-		return WorkbenchProperties.singleSelection(null, true).value(
-				WorkbenchProperties.adaptedValue(targetType)).observe(
-				selectionService);
+		return WorkbenchProperties.singleSelection(null, true).value(WorkbenchProperties.adaptedValue(targetType))
+				.observe(selectionService);
 	}
 
 	/**
-	 * Returns an observable value that tracks the active workbench window for
-	 * the given workbench.
+	 * Returns an observable value that tracks the active workbench window for the
+	 * given workbench.
 	 *
-	 * @param workbench
-	 *            the workbench to get the observable for
+	 * @param workbench the workbench to get the observable for
 	 * @return an observable value that tracks the active workbench window
 	 * @since 3.110
 	 */
@@ -171,8 +162,7 @@ public class WorkbenchObservables {
 	 * Returns an observable value that tracks the active workbench page for the
 	 * given workbench window.
 	 *
-	 * @param window
-	 *            the workbench window to get the observable for
+	 * @param window the workbench window to get the observable for
 	 * @return an observable value that tracks the active workbench page
 	 * @since 3.110
 	 */
@@ -218,9 +208,8 @@ public class WorkbenchObservables {
 	 * Returns an observable value that tracks the active workbench part for the
 	 * given part service.
 	 *
-	 * @param partService
-	 *            the part service to get the observable for, e.g. a workbench
-	 *            page
+	 * @param partService the part service to get the observable for, e.g. a
+	 *                    workbench page
 	 * @return an observable value that tracks the active workbench part
 	 * @since 3.110
 	 */
@@ -283,12 +272,11 @@ public class WorkbenchObservables {
 	}
 
 	/**
-	 * Returns an observable value that tracks the active editor for the given
-	 * part service.
+	 * Returns an observable value that tracks the active editor for the given part
+	 * service.
 	 *
-	 * @param partService
-	 *            the part service to get the observable for, e.g. a workbench
-	 *            page
+	 * @param partService the part service to get the observable for, e.g. a
+	 *                    workbench page
 	 * @return an observable value that tracks the active editor
 	 * @since 3.110
 	 */
@@ -304,8 +292,7 @@ public class WorkbenchObservables {
 	 * Returns an observable value that tracks the editor input for the given
 	 * editor.
 	 *
-	 * @param editor
-	 *            the editor to get the observable for
+	 * @param editor the editor to get the observable for
 	 * @return an observable value that tracks the editor input
 	 * @since 3.110
 	 */
@@ -357,12 +344,11 @@ public class WorkbenchObservables {
 		}
 
 		/**
-		 * Sets the value. Must be invoked in the {@link Realm} of the
-		 * observable. Subclasses must call this method instead of
-		 * {@link #setValue} or {@link #doSetValue}.
+		 * Sets the value. Must be invoked in the {@link Realm} of the observable.
+		 * Subclasses must call this method instead of {@link #setValue} or
+		 * {@link #doSetValue}.
 		 *
-		 * @param value
-		 *            the value to set
+		 * @param value the value to set
 		 */
 		protected final void protectedSetValue(T value) {
 			checkRealm();
@@ -430,9 +416,8 @@ public class WorkbenchObservables {
 		protected abstract void stopListening();
 
 		/**
-		 * Subclasses must override this method to provide the object's value
-		 * that will be used when the value is not set explicitly by
-		 * {@link #doSetValue(Object)}.
+		 * Subclasses must override this method to provide the object's value that will
+		 * be used when the value is not set explicitly by {@link #doSetValue(Object)}.
 		 *
 		 * @return the object's value
 		 */

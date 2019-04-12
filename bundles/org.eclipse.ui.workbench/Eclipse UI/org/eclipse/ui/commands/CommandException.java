@@ -33,48 +33,44 @@ public abstract class CommandException extends Exception {
 	 *
 	 * @since 3.4
 	 */
-	private static final long serialVersionUID= 1776879459633730964L;
-
+	private static final long serialVersionUID = 1776879459633730964L;
 
 	private Throwable cause;
 
-    /**
-     * Creates a new instance of this class with the specified detail message.
-     *
-     * @param message
-     *            the detail message.
-     */
+	/**
+	 * Creates a new instance of this class with the specified detail message.
+	 *
+	 * @param message the detail message.
+	 */
 	@Deprecated
-    public CommandException(String message) {
-        super(message);
-    }
+	public CommandException(String message) {
+		super(message);
+	}
 
-    /**
-     * Creates a new instance of this class with the specified detail message
-     * and cause.
-     *
-     * @param message
-     *            the detail message.
-     * @param cause
-     *            the cause.
-     */
+	/**
+	 * Creates a new instance of this class with the specified detail message and
+	 * cause.
+	 *
+	 * @param message the detail message.
+	 * @param cause   the cause.
+	 */
 	@Deprecated
-    public CommandException(String message, Throwable cause) {
-        super(message);
-        // don't pass the cause to super, to allow compilation against JCL Foundation
-        this.cause = cause;
-    }
+	public CommandException(String message, Throwable cause) {
+		super(message);
+		// don't pass the cause to super, to allow compilation against JCL Foundation
+		this.cause = cause;
+	}
 
-    /**
-     * Returns the cause of this throwable or <code>null</code> if the
-     * cause is nonexistent or unknown.
-     *
-     * @return the cause or <code>null</code>
-     * @since 3.1
-     */
+	/**
+	 * Returns the cause of this throwable or <code>null</code> if the cause is
+	 * nonexistent or unknown.
+	 *
+	 * @return the cause or <code>null</code>
+	 * @since 3.1
+	 */
 	@Override
 	@Deprecated
-    public Throwable getCause() {
-        return cause;
-    }
+	public Throwable getCause() {
+		return cause;
+	}
 }

@@ -116,15 +116,15 @@ public class StandardTrim {
 		if (wbw == null) {
 			// Create one assuming there's no defined perspective
 			Workbench wb = (Workbench) PlatformUI.getWorkbench();
-			wb.createWorkbenchWindow(wb.getDefaultPageInput(), null,
-					modelService.getTopLevelWindowFor(toolControl), false);
+			wb.createWorkbenchWindow(wb.getDefaultPageInput(), null, modelService.getTopLevelWindowFor(toolControl),
+					false);
 			wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);
 		}
 
 		if (wbw != null) {
 			Workbench wb = (Workbench) PlatformUI.getWorkbench();
-			wb.createWorkbenchWindow(wb.getDefaultPageInput(), null,
-					modelService.getTopLevelWindowFor(toolControl), false);
+			wb.createWorkbenchWindow(wb.getDefaultPageInput(), null, modelService.getTopLevelWindowFor(toolControl),
+					false);
 			wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);
 
 			manager = wbw.getStatusLineManager();

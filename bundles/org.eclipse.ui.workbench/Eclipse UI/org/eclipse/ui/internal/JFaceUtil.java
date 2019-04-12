@@ -49,8 +49,7 @@ final class JFaceUtil {
 		// Pass all errors and warnings to the status handling facility
 		// and the rest to the main runtime log
 		Policy.setLog(status -> {
-			if (status.getSeverity() == IStatus.WARNING
-					|| status.getSeverity() == IStatus.ERROR) {
+			if (status.getSeverity() == IStatus.WARNING || status.getSeverity() == IStatus.ERROR) {
 				StatusManager.getManager().handle(status);
 			} else {
 				WorkbenchPlugin.log(status);
@@ -68,18 +67,29 @@ final class JFaceUtil {
 
 		// Get all debug options from Platform
 		if ("true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			Policy.DEBUG_DIALOG_NO_PARENT = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/dialog/noparent")); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.DEBUG_DIALOG_NO_PARENT = "true" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/dialog/noparent")); //$NON-NLS-1$
 			Policy.TRACE_ACTIONS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/actions")); //$NON-NLS-1$ //$NON-NLS-2$
-			Policy.TRACE_TOOLBAR = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$
-			InternalPolicy.DEBUG_LOG_REENTRANT_VIEWER_CALLS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/viewers/reentrantViewerCalls")); //$NON-NLS-1$ //$NON-NLS-2$
-			InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/viewers/equalElements")); //$NON-NLS-1$ //$NON-NLS-2$
-			InternalPolicy.DEBUG_BIDI_UTILS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/bidiUtils")); //$NON-NLS-1$ //$NON-NLS-2$
-			InternalPolicy.DEBUG_TRACE_URL_IMAGE_DESCRIPTOR = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/trace/URLImageDescriptor")); //$NON-NLS-1$ //$NON-NLS-2$
-			InternalPolicy.DEBUG_LOG_URL_IMAGE_DESCRIPTOR_MISSING_2x = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/logURLImageDescriptorMissing2x")); //$NON-NLS-1$ //$NON-NLS-2$
-			InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/loadURLImageDescriptorDirectly")); //$NON-NLS-1$ //$NON-NLS-2$
-			// loadURLImageDescriptor2x is "true" by default and should stay "true" when absent in the debug options file:
-			InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x = !"false".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/loadURLImageDescriptor2x")); //$NON-NLS-1$ //$NON-NLS-2$
-			InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x_PNG_FOR_GIF = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/loadURLImageDescriptor2xPngForGif")); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.TRACE_TOOLBAR = "true" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/toolbarDisposal")); //$NON-NLS-1$
+			InternalPolicy.DEBUG_LOG_REENTRANT_VIEWER_CALLS = "true" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/viewers/reentrantViewerCalls")); //$NON-NLS-1$
+			InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS = "true" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/viewers/equalElements")); //$NON-NLS-1$
+			InternalPolicy.DEBUG_BIDI_UTILS = "true" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/bidiUtils")); //$NON-NLS-1$
+			InternalPolicy.DEBUG_TRACE_URL_IMAGE_DESCRIPTOR = "true" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/trace/URLImageDescriptor")); //$NON-NLS-1$
+			InternalPolicy.DEBUG_LOG_URL_IMAGE_DESCRIPTOR_MISSING_2x = "true" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/logURLImageDescriptorMissing2x")); //$NON-NLS-1$
+			InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY = "true" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/loadURLImageDescriptorDirectly")); //$NON-NLS-1$
+			// loadURLImageDescriptor2x is "true" by default and should stay "true" when
+			// absent in the debug options file:
+			InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x = !"false" //$NON-NLS-1$
+					.equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/loadURLImageDescriptor2x")); //$NON-NLS-1$
+			InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x_PNG_FOR_GIF = "true".equalsIgnoreCase( //$NON-NLS-1$
+					Platform.getDebugOption(Policy.JFACE + "/debug/loadURLImageDescriptor2xPngForGif")); //$NON-NLS-1$
 		}
 	}
 
@@ -88,7 +98,8 @@ final class JFaceUtil {
 	 * as soon as the workbench preference store becomes available.
 	 */
 	public static void initializeJFacePreferences() {
-		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE);
+		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService().getRootNode()
+				.node(InstanceScope.SCOPE);
 		final String workbenchName = WorkbenchPlugin.getDefault().getBundle().getSymbolicName();
 
 		rootNode.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
@@ -97,9 +108,11 @@ final class JFaceUtil {
 				if (!event.getChild().name().equals(workbenchName)) {
 					return;
 				}
-				((IEclipsePreferences) event.getChild()).addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+				((IEclipsePreferences) event.getChild())
+						.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
 
 			}
+
 			@Override
 			public void removed(NodeChangeEvent event) {
 				// Nothing to do here

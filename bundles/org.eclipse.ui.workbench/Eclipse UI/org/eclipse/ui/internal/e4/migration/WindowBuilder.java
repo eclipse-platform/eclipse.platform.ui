@@ -176,8 +176,7 @@ public class WindowBuilder {
 		if (activePerspectiveId != null) {
 			for (MPerspective persp : perspectiveStack.getChildren()) {
 				String id = persp.getElementId();
-				String originalId = (String) persp.getTransientData().get(
-						PerspectiveBuilder.ORIGINAL_ID);
+				String originalId = (String) persp.getTransientData().get(PerspectiveBuilder.ORIGINAL_ID);
 				if (originalId != null) {
 					id = originalId;
 				}
@@ -380,8 +379,7 @@ public class WindowBuilder {
 	}
 
 	private MPerspectiveStack createPerspectiveStack() {
-		MPerspectiveStack perspStack = modelService
-				.createModelElement(MPerspectiveStack.class);
+		MPerspectiveStack perspStack = modelService.createModelElement(MPerspectiveStack.class);
 		perspStack.setElementId("PerspectiveStack"); //$NON-NLS-1$
 		return perspStack;
 	}
@@ -403,15 +401,12 @@ public class WindowBuilder {
 			}
 		}
 		/*
-		 * if (part == null) { part =
-		 * modelService.createModelElement(MPart.class); part.setElementId(id);
+		 * if (part == null) { part = modelService.createModelElement(MPart.class);
+		 * part.setElementId(id);
 		 * part.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
-		 * part.getTags().add(ViewRegistry.VIEW_TAG); sharedElements.add(part);
-		 * }
+		 * part.getTags().add(ViewRegistry.VIEW_TAG); sharedElements.add(part); }
 		 */
 		return part;
 	}
-
-
 
 }

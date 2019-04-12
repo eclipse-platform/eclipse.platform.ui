@@ -45,16 +45,14 @@ public final class EvaluationResultCacheComparator implements Comparator {
 		int comparison;
 
 		/*
-		 * Note: all of the comparisons are flipped intentionally. This allows
-		 * those items with greater values to appear earlier when using an
-		 * iterator.
+		 * Note: all of the comparisons are flipped intentionally. This allows those
+		 * items with greater values to appear earlier when using an iterator.
 		 */
 		// if objects went to the trouble to implement Comparable
 		// we should use it ... this algorithm can accept a natural ordering
 		// that's not compatible with equals.
 		if (object1 instanceof Comparable && object2 instanceof Comparable) {
-			comparison = Util.compare((Comparable) object2,
-					(Comparable) object1);
+			comparison = Util.compare((Comparable) object2, (Comparable) object1);
 			if (comparison != 0) {
 				return comparison;
 			}
@@ -63,4 +61,3 @@ public final class EvaluationResultCacheComparator implements Comparator {
 		return Util.compareIdentity(cache2, cache1);
 	}
 }
-

@@ -121,8 +121,8 @@ public abstract class WorkbenchAdvisor {
 
 	/**
 	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
-	 * operation is not filling the action bars of an actual workbench window,
-	 * but rather a proxy (used for perspective customization).
+	 * operation is not filling the action bars of an actual workbench window, but
+	 * rather a proxy (used for perspective customization).
 	 *
 	 * @deprecated use {@link ActionBarAdvisor#FILL_PROXY instead}
 	 */
@@ -131,8 +131,7 @@ public abstract class WorkbenchAdvisor {
 
 	/**
 	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
-	 * operation is supposed to fill (or describe) the workbench window's menu
-	 * bar.
+	 * operation is supposed to fill (or describe) the workbench window's menu bar.
 	 *
 	 * @deprecated use {@link ActionBarAdvisor#FILL_MENU_BAR instead}
 	 */
@@ -141,8 +140,7 @@ public abstract class WorkbenchAdvisor {
 
 	/**
 	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
-	 * operation is supposed to fill (or describe) the workbench window's cool
-	 * bar.
+	 * operation is supposed to fill (or describe) the workbench window's cool bar.
 	 *
 	 * @deprecated use {@link ActionBarAdvisor#FILL_COOL_BAR instead}
 	 */
@@ -184,8 +182,7 @@ public abstract class WorkbenchAdvisor {
 	 * For internal use by the workbench only.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the workbench
+	 * @param configurer an object for configuring the workbench
 	 */
 	public final void internalBasicInitialize(IWorkbenchConfigurer configurer) {
 		if (workbenchConfigurer != null) {
@@ -198,27 +195,26 @@ public abstract class WorkbenchAdvisor {
 	/**
 	 * Performs arbitrary initialization before the workbench starts running.
 	 * <p>
-	 * This method is called during workbench initialization prior to any
-	 * windows being opened. Clients must not call this method directly
-	 * (although super calls are okay). The default implementation does nothing.
-	 * Subclasses may override. Typical clients will use the configurer passed
-	 * in to tweak the workbench. If further tweaking is required in the future,
-	 * the configurer may be obtained using <code>getWorkbenchConfigurer</code>.
+	 * This method is called during workbench initialization prior to any windows
+	 * being opened. Clients must not call this method directly (although super
+	 * calls are okay). The default implementation does nothing. Subclasses may
+	 * override. Typical clients will use the configurer passed in to tweak the
+	 * workbench. If further tweaking is required in the future, the configurer may
+	 * be obtained using <code>getWorkbenchConfigurer</code>.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the workbench
+	 * @param configurer an object for configuring the workbench
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
 		// do nothing
 	}
 
 	/**
-	 * Returns the workbench configurer for the advisor. Can be
-	 * <code>null</code> if the advisor is not initialized yet.
+	 * Returns the workbench configurer for the advisor. Can be <code>null</code> if
+	 * the advisor is not initialized yet.
 	 *
-	 * @return the workbench configurer, or <code>null</code> if the advisor
-	 *         is not initialized yet
+	 * @return the workbench configurer, or <code>null</code> if the advisor is not
+	 *         initialized yet
 	 */
 	protected IWorkbenchConfigurer getWorkbenchConfigurer() {
 		return workbenchConfigurer;
@@ -238,13 +234,13 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Performs arbitrary actions just before the first workbench window is
-	 * opened (or restored).
+	 * Performs arbitrary actions just before the first workbench window is opened
+	 * (or restored).
 	 * <p>
 	 * This method is called after the workbench has been initialized and just
 	 * before the first window is about to be opened. Clients must not call this
-	 * method directly (although super calls are okay). The default
-	 * implementation does nothing. Subclasses may override.
+	 * method directly (although super calls are okay). The default implementation
+	 * does nothing. Subclasses may override.
 	 * </p>
 	 */
 	public void preStartup() {
@@ -252,13 +248,13 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Performs arbitrary actions after the workbench windows have been opened
-	 * (or restored), but before the main event loop is run.
+	 * Performs arbitrary actions after the workbench windows have been opened (or
+	 * restored), but before the main event loop is run.
 	 * <p>
-	 * This method is called just after the windows have been opened. Clients
-	 * must not call this method directly (although super calls are okay). The
-	 * default implementation does nothing. Subclasses may override. It is okay
-	 * to call <code>IWorkbench.close()</code> from this method.
+	 * This method is called just after the windows have been opened. Clients must
+	 * not call this method directly (although super calls are okay). The default
+	 * implementation does nothing. Subclasses may override. It is okay to call
+	 * <code>IWorkbench.close()</code> from this method.
 	 * </p>
 	 */
 	public void postStartup() {
@@ -266,8 +262,7 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Performs arbitrary finalization before the workbench is about to shut
-	 * down.
+	 * Performs arbitrary finalization before the workbench is about to shut down.
 	 * <p>
 	 * This method is called immediately prior to workbench shutdown before any
 	 * windows have been closed. Clients must not call this method directly
@@ -276,12 +271,11 @@ public abstract class WorkbenchAdvisor {
 	 * </p>
 	 * <p>
 	 * The advisor may veto a regular shutdown by returning <code>false</code>,
-	 * although this will be ignored if the workbench is being forced to shut
-	 * down.
+	 * although this will be ignored if the workbench is being forced to shut down.
 	 * </p>
 	 *
-	 * @return <code>true</code> to allow the workbench to proceed with
-	 *         shutdown, <code>false</code> to veto a non-forced shutdown
+	 * @return <code>true</code> to allow the workbench to proceed with shutdown,
+	 *         <code>false</code> to veto a non-forced shutdown
 	 */
 	public boolean preShutdown() {
 		return true;
@@ -290,10 +284,9 @@ public abstract class WorkbenchAdvisor {
 	/**
 	 * Performs arbitrary finalization after the workbench stops running.
 	 * <p>
-	 * This method is called during workbench shutdown after all windows have
-	 * been closed. Clients must not call this method directly (although super
-	 * calls are okay). The default implementation does nothing. Subclasses may
-	 * override.
+	 * This method is called during workbench shutdown after all windows have been
+	 * closed. Clients must not call this method directly (although super calls are
+	 * okay). The default implementation does nothing. Subclasses may override.
 	 * </p>
 	 */
 	public void postShutdown() {
@@ -301,27 +294,26 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Performs arbitrary actions when the event loop crashes (the code that
-	 * handles a UI event throws an exception that is not caught).
+	 * Performs arbitrary actions when the event loop crashes (the code that handles
+	 * a UI event throws an exception that is not caught).
 	 * <p>
-	 * This method is called when the code handling a UI event throws an
-	 * exception. In a perfectly functioning application, this method would
-	 * never be called. In practice, it comes into play when there are bugs in
-	 * the code that trigger unchecked runtime exceptions. It is also activated
-	 * when the system runs short of memory, etc. Fatal errors (ThreadDeath) are
-	 * not passed on to this method, as there is nothing that could be done.
+	 * This method is called when the code handling a UI event throws an exception.
+	 * In a perfectly functioning application, this method would never be called. In
+	 * practice, it comes into play when there are bugs in the code that trigger
+	 * unchecked runtime exceptions. It is also activated when the system runs short
+	 * of memory, etc. Fatal errors (ThreadDeath) are not passed on to this method,
+	 * as there is nothing that could be done.
 	 * </p>
 	 * <p>
-	 * Clients must not call this method directly (although super calls are
-	 * okay). The default implementation logs the problem so that it does not go
-	 * unnoticed. Subclasses may override or extend this method. It is generally
-	 * a bad idea to override with an empty method, and you should be especially
-	 * careful when handling Errors.
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation logs the problem so that it does not go unnoticed.
+	 * Subclasses may override or extend this method. It is generally a bad idea to
+	 * override with an empty method, and you should be especially careful when
+	 * handling Errors.
 	 * </p>
 	 *
-	 * @param exception
-	 *            the uncaught exception that was thrown inside the UI event
-	 *            loop
+	 * @param exception the uncaught exception that was thrown inside the UI event
+	 *                  loop
 	 */
 	public void eventLoopException(Throwable exception) {
 		// Protection from client doing super(null) call
@@ -330,9 +322,8 @@ public abstract class WorkbenchAdvisor {
 		}
 
 		try {
-			StatusManager.getManager().handle(
-					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-							"Unhandled event loop exception", exception)); //$NON-NLS-1$
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+					"Unhandled event loop exception", exception)); //$NON-NLS-1$
 
 			if (WorkbenchPlugin.DEBUG) {
 				exception.printStackTrace();
@@ -349,22 +340,20 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Performs arbitrary work or yields when there are no events to be
-	 * processed.
+	 * Performs arbitrary work or yields when there are no events to be processed.
 	 * <p>
-	 * This method is called when there are currently no more events on the
-	 * queue to be processed at the moment.
+	 * This method is called when there are currently no more events on the queue to
+	 * be processed at the moment.
 	 * </p>
 	 * <p>
-	 * Clients must not call this method directly (although super calls are
-	 * okay). The default implementation yields until new events enter the
-	 * queue. Subclasses may override or extend this method. It is generally a
-	 * bad idea to override with an empty method. It is okay to call
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation yields until new events enter the queue.
+	 * Subclasses may override or extend this method. It is generally a bad idea to
+	 * override with an empty method. It is okay to call
 	 * <code>IWorkbench.close()</code> from this method.
 	 * </p>
 	 *
-	 * @param display
-	 *            the main display of the workbench UI
+	 * @param display the main display of the workbench UI
 	 */
 	public void eventLoopIdle(Display display) {
 		// default: yield cpu until new events enter the queue
@@ -372,42 +361,38 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Creates a new workbench window advisor for configuring a new workbench
-	 * window via the given workbench window configurer. Clients should override
-	 * to provide their own window configurer. This method replaces all the
-	 * other window and action bar lifecycle methods on the workbench advisor.
+	 * Creates a new workbench window advisor for configuring a new workbench window
+	 * via the given workbench window configurer. Clients should override to provide
+	 * their own window configurer. This method replaces all the other window and
+	 * action bar lifecycle methods on the workbench advisor.
 	 * <p>
-	 * The default implementation creates a window advisor that calls back to
-	 * the legacy window and action bar lifecycle methods on the workbench
-	 * advisor, for backwards compatibility with 3.0.
+	 * The default implementation creates a window advisor that calls back to the
+	 * legacy window and action bar lifecycle methods on the workbench advisor, for
+	 * backwards compatibility with 3.0.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            the workbench window configurer
+	 * @param configurer the workbench window configurer
 	 * @return a new workbench window advisor
 	 * @since 3.1
 	 */
-	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
-			IWorkbenchWindowConfigurer configurer) {
+	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 		return new CompatibilityWorkbenchWindowAdvisor(this, configurer);
 	}
 
 	/**
 	 * Performs arbitrary actions before the given workbench window is opened.
 	 * <p>
-	 * This method is called before the window's controls have been created.
-	 * Clients must not call this method directly (although super calls are
-	 * okay). The default implementation does nothing. Subclasses may override.
-	 * Typical clients will use the configurer passed in to tweak the workbench
-	 * window in an application-specific way; however, filling the window's menu
-	 * bar, tool bar, and status line must be done in
-	 * {@link #fillActionBars fillActionBars}, which is called immediately
-	 * after this method is called.
+	 * This method is called before the window's controls have been created. Clients
+	 * must not call this method directly (although super calls are okay). The
+	 * default implementation does nothing. Subclasses may override. Typical clients
+	 * will use the configurer passed in to tweak the workbench window in an
+	 * application-specific way; however, filling the window's menu bar, tool bar,
+	 * and status line must be done in {@link #fillActionBars fillActionBars}, which
+	 * is called immediately after this method is called.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the particular workbench window
-	 *            being opened
+	 * @param configurer an object for configuring the particular workbench window
+	 *                   being opened
 	 *
 	 * @deprecated since 3.1, override
 	 *             {@link WorkbenchWindowAdvisor#preWindowOpen()} instead
@@ -421,52 +406,47 @@ public abstract class WorkbenchAdvisor {
 	/**
 	 * Configures the action bars using the given action bar configurer. Under
 	 * normal circumstances, <code>flags</code> does not include
-	 * <code>FILL_PROXY</code>, meaning this is a request to fill the
-	 * actions\ bars of the given workbench window; the remaining flags indicate
-	 * which combination of the menu bar (<code>FILL_MENU_BAR</code>), the
-	 * tool bar (<code>FILL_COOL_BAR</code>), and the status line (<code>FILL_STATUS_LINE</code>)
-	 * are to be filled.
+	 * <code>FILL_PROXY</code>, meaning this is a request to fill the actions\ bars
+	 * of the given workbench window; the remaining flags indicate which combination
+	 * of the menu bar (<code>FILL_MENU_BAR</code>), the tool bar
+	 * (<code>FILL_COOL_BAR</code>), and the status line
+	 * (<code>FILL_STATUS_LINE</code>) are to be filled.
 	 * <p>
-	 * If <code>flags</code> does include <code>FILL_PROXY</code>, then
-	 * this is a request to describe the actions bars of the given workbench
-	 * window (which will already have been filled); again, the remaining flags
-	 * indicate which combination of the menu bar, the tool bar, and the status
-	 * line are to be described. The actions included in the proxy action bars
-	 * can be the same instances as in the actual window's action bars. Calling
-	 * <code>ActionFactory</code> to create new action instances is not
-	 * recommended, because these actions internally register listeners with the
-	 * window and there is no opportunity to dispose of these actions.
+	 * If <code>flags</code> does include <code>FILL_PROXY</code>, then this is a
+	 * request to describe the actions bars of the given workbench window (which
+	 * will already have been filled); again, the remaining flags indicate which
+	 * combination of the menu bar, the tool bar, and the status line are to be
+	 * described. The actions included in the proxy action bars can be the same
+	 * instances as in the actual window's action bars. Calling
+	 * <code>ActionFactory</code> to create new action instances is not recommended,
+	 * because these actions internally register listeners with the window and there
+	 * is no opportunity to dispose of these actions.
 	 * </p>
 	 * <p>
 	 * This method is called just after {@link #preWindowOpen preWindowOpen}.
-	 * Clients must not call this method directly (although super calls are
-	 * okay). The default implementation does nothing. Subclasses may override.
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation does nothing. Subclasses may override.
 	 * </p>
 	 *
-	 * @param window
-	 *            the workbench window
-	 * @param configurer
-	 *            the action bar configurer object
-	 * @param flags
-	 *            bit mask composed from the constants
-	 *            {@link #FILL_MENU_BAR FILL_MENU_BAR},
-	 *            {@link #FILL_COOL_BAR FILL_COOL_BAR},
-	 *            {@link #FILL_STATUS_LINE FILL_STATUS_LINE}, and
-	 *            {@link #FILL_PROXY FILL_PROXY} Note: should 1st param be
-	 *            IWorkbenchWindowConfigurer to be more consistent with other
-	 *            methods? Note: suggest adding ActionBuilder as API, to
-	 *            encapsulate the action building outside of the advisor, and to
-	 *            handle the common pattern of hanging onto the action builder
-	 *            in order to properly handle FILL_PROXY
+	 * @param window     the workbench window
+	 * @param configurer the action bar configurer object
+	 * @param flags      bit mask composed from the constants {@link #FILL_MENU_BAR
+	 *                   FILL_MENU_BAR}, {@link #FILL_COOL_BAR FILL_COOL_BAR},
+	 *                   {@link #FILL_STATUS_LINE FILL_STATUS_LINE}, and
+	 *                   {@link #FILL_PROXY FILL_PROXY} Note: should 1st param be
+	 *                   IWorkbenchWindowConfigurer to be more consistent with other
+	 *                   methods? Note: suggest adding ActionBuilder as API, to
+	 *                   encapsulate the action building outside of the advisor, and
+	 *                   to handle the common pattern of hanging onto the action
+	 *                   builder in order to properly handle FILL_PROXY
 	 *
-	 * @deprecated since 3.1, override
-	 *             {@link ActionBarAdvisor#fillActionBars(int)} instead
+	 * @deprecated since 3.1, override {@link ActionBarAdvisor#fillActionBars(int)}
+	 *             instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 * @see WorkbenchWindowAdvisor#createActionBarAdvisor(IActionBarConfigurer)
 	 */
 	@Deprecated
-	public void fillActionBars(IWorkbenchWindow window,
-			IActionBarConfigurer configurer, int flags) {
+	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer configurer, int flags) {
 		// do nothing by default
 	}
 
@@ -474,48 +454,45 @@ public abstract class WorkbenchAdvisor {
 	 * Performs arbitrary actions after the given workbench window has been
 	 * restored, but before it is opened.
 	 * <p>
-	 * This method is called after a previously-saved window have been
-	 * recreated. This method is not called when a new window is created from
-	 * scratch. This method is never called when a workbench is started for the
-	 * very first time, or when workbench state is not saved or restored.
-	 * Clients must not call this method directly (although super calls are
-	 * okay). The default implementation does nothing. Subclasses may override.
-	 * It is okay to call <code>IWorkbench.close()</code> from this method.
+	 * This method is called after a previously-saved window have been recreated.
+	 * This method is not called when a new window is created from scratch. This
+	 * method is never called when a workbench is started for the very first time,
+	 * or when workbench state is not saved or restored. Clients must not call this
+	 * method directly (although super calls are okay). The default implementation
+	 * does nothing. Subclasses may override. It is okay to call
+	 * <code>IWorkbench.close()</code> from this method.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the particular workbench window just
-	 *            restored
+	 * @param configurer an object for configuring the particular workbench window
+	 *                   just restored
 	 *
 	 * @deprecated since 3.1, override
 	 *             {@link WorkbenchWindowAdvisor#postWindowRestore()} instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
 	@Deprecated
-	public void postWindowRestore(IWorkbenchWindowConfigurer configurer)
-			throws WorkbenchException {
+	public void postWindowRestore(IWorkbenchWindowConfigurer configurer) throws WorkbenchException {
 		// do nothing
 	}
 
 	/**
 	 * Opens the introduction componenet.
 	 * <p>
-	 * Clients must not call this method directly (although super calls are
-	 * okay). The default implementation opens the intro in the first window
-	 * provided the preference IWorkbenchPreferences.SHOW_INTRO is
-	 * <code>true</code>. If an intro is shown then this preference will be
-	 * set to <code>false</code>. Subsequently, and intro will be shown only
-	 * if <code>WorkbenchConfigurer.getSaveAndRestore()</code> returns
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation opens the intro in the first window provided the
+	 * preference IWorkbenchPreferences.SHOW_INTRO is <code>true</code>. If an intro
+	 * is shown then this preference will be set to <code>false</code>.
+	 * Subsequently, and intro will be shown only if
+	 * <code>WorkbenchConfigurer.getSaveAndRestore()</code> returns
 	 * <code>true</code> and the introduction was visible on last shutdown.
 	 * Subclasses may override.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            configurer an object for configuring the particular workbench
-	 *            window just created
+	 * @param configurer configurer an object for configuring the particular
+	 *                   workbench window just created
 	 *
-	 * @deprecated since 3.1, override
-	 *             {@link WorkbenchWindowAdvisor#openIntro()} instead
+	 * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#openIntro()}
+	 *             instead
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
 	@Deprecated
@@ -526,38 +503,33 @@ public abstract class WorkbenchAdvisor {
 
 		introOpened = true;
 
-		boolean showIntro = PrefUtil.getAPIPreferenceStore().getBoolean(
-				IWorkbenchPreferenceConstants.SHOW_INTRO);
+		boolean showIntro = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_INTRO);
 
 		if (!showIntro) {
 			return;
 		}
 
-		if (getWorkbenchConfigurer().getWorkbench().getIntroManager()
-				.hasIntro()) {
-			PrefUtil.getAPIPreferenceStore().setValue(
-					IWorkbenchPreferenceConstants.SHOW_INTRO, false);
+		if (getWorkbenchConfigurer().getWorkbench().getIntroManager().hasIntro()) {
+			PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_INTRO, false);
 			PrefUtil.saveAPIPrefs();
 
-			getWorkbenchConfigurer().getWorkbench().getIntroManager()
-					.showIntro(configurer.getWindow(), false);
+			getWorkbenchConfigurer().getWorkbench().getIntroManager().showIntro(configurer.getWindow(), false);
 		}
 	}
 
 	/**
-	 * Performs arbitrary actions after the given workbench window has been
-	 * created (possibly after being restored), but has not yet been opened.
+	 * Performs arbitrary actions after the given workbench window has been created
+	 * (possibly after being restored), but has not yet been opened.
 	 * <p>
-	 * This method is called after a new window has been created from scratch,
-	 * or when a previously-saved window has been restored. In the latter case,
-	 * this method is called after <code>postWindowRestore</code>. Clients
-	 * must not call this method directly (although super calls are okay). The
-	 * default implementation does nothing. Subclasses may override.
+	 * This method is called after a new window has been created from scratch, or
+	 * when a previously-saved window has been restored. In the latter case, this
+	 * method is called after <code>postWindowRestore</code>. Clients must not call
+	 * this method directly (although super calls are okay). The default
+	 * implementation does nothing. Subclasses may override.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the particular workbench window just
-	 *            created
+	 * @param configurer an object for configuring the particular workbench window
+	 *                   just created
 	 *
 	 * @deprecated since 3.1, override
 	 *             {@link WorkbenchWindowAdvisor#postWindowCreate()} instead
@@ -569,19 +541,18 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Performs arbitrary actions after the given workbench window has been
-	 * opened (possibly after being restored).
+	 * Performs arbitrary actions after the given workbench window has been opened
+	 * (possibly after being restored).
 	 * <p>
-	 * This method is called after a window has been opened. This method is
-	 * called after a new window has been created from scratch, or when a
-	 * previously-saved window has been restored. Clients must not call this
-	 * method directly (although super calls are okay). The default
-	 * implementation does nothing. Subclasses may override.
+	 * This method is called after a window has been opened. This method is called
+	 * after a new window has been created from scratch, or when a previously-saved
+	 * window has been restored. Clients must not call this method directly
+	 * (although super calls are okay). The default implementation does nothing.
+	 * Subclasses may override.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the particular workbench window just
-	 *            opened
+	 * @param configurer an object for configuring the particular workbench window
+	 *                   just opened
 	 *
 	 * @deprecated since 3.1, override
 	 *             {@link WorkbenchWindowAdvisor#postWindowOpen()} instead
@@ -597,19 +568,18 @@ public abstract class WorkbenchAdvisor {
 	 * closed directly, and possibly veto the close.
 	 * <p>
 	 * This method is called from a ShellListener associated with the workbench
-	 * window. It is not called when the window is being closed for other
-	 * reasons. Clients must not call this method directly (although super calls
-	 * are okay). The default implementation does nothing. Subclasses may
-	 * override. Typical clients may use the configurer passed in to access the
-	 * workbench window being closed. If this method returns <code>false</code>,
-	 * then the user's request to close the shell is ignored. This gives the
-	 * workbench advisor an opportunity to query the user and/or veto the
-	 * closing of a window under some circumstances.
+	 * window. It is not called when the window is being closed for other reasons.
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation does nothing. Subclasses may override. Typical
+	 * clients may use the configurer passed in to access the workbench window being
+	 * closed. If this method returns <code>false</code>, then the user's request to
+	 * close the shell is ignored. This gives the workbench advisor an opportunity
+	 * to query the user and/or veto the closing of a window under some
+	 * circumstances.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the particular workbench window
-	 *            whose shell is being closed
+	 * @param configurer an object for configuring the particular workbench window
+	 *                   whose shell is being closed
 	 * @return <code>true</code> to allow the window to close, and
 	 *         <code>false</code> to prevent the window from closing
 	 * @see org.eclipse.ui.IWorkbenchWindow#close
@@ -627,16 +597,15 @@ public abstract class WorkbenchAdvisor {
 	/**
 	 * Performs arbitrary actions after the given workbench window is closed.
 	 * <p>
-	 * This method is called after the window's controls have been disposed.
-	 * Clients must not call this method directly (although super calls are
-	 * okay). The default implementation does nothing. Subclasses may override.
-	 * Typical clients will use the configurer passed in to tweak the workbench
-	 * window in an application-specific way.
+	 * This method is called after the window's controls have been disposed. Clients
+	 * must not call this method directly (although super calls are okay). The
+	 * default implementation does nothing. Subclasses may override. Typical clients
+	 * will use the configurer passed in to tweak the workbench window in an
+	 * application-specific way.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the particular workbench window
-	 *            being closed
+	 * @param configurer an object for configuring the particular workbench window
+	 *                   being closed
 	 *
 	 * @deprecated since 3.1, override
 	 *             {@link WorkbenchWindowAdvisor#postWindowClose()} instead
@@ -649,34 +618,31 @@ public abstract class WorkbenchAdvisor {
 
 	/**
 	 * Returns whether the menu with the given id is an application menu of the
-	 * given window. This is used during OLE "in place" editing. Application
-	 * menus should be preserved during menu merging. All other menus may be
-	 * removed from the window.
+	 * given window. This is used during OLE "in place" editing. Application menus
+	 * should be preserved during menu merging. All other menus may be removed from
+	 * the window.
 	 * <p>
 	 * The default implementation returns false. Subclasses may override.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            an object for configuring the workbench window
-	 * @param menuId
-	 *            the menu id
-	 * @return <code>true</code> for application menus, and <code>false</code>
-	 *         for part-specific menus
+	 * @param configurer an object for configuring the workbench window
+	 * @param menuId     the menu id
+	 * @return <code>true</code> for application menus, and <code>false</code> for
+	 *         part-specific menus
 	 *
 	 * @deprecated since 3.1, override
 	 *             {@link ActionBarAdvisor#isApplicationMenu(String)} instead
 	 * @see WorkbenchWindowAdvisor#createActionBarAdvisor(IActionBarConfigurer)
 	 */
 	@Deprecated
-	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer,
-			String menuId) {
+	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer, String menuId) {
 		// default: not an application menu
 		return false;
 	}
 
 	/**
-	 * Returns the default input for newly created workbench pages when the
-	 * input is not explicitly specified.
+	 * Returns the default input for newly created workbench pages when the input is
+	 * not explicitly specified.
 	 * <p>
 	 * The default implementation returns <code>null</code>. Subclasses may
 	 * override.
@@ -693,12 +659,12 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Returns the id of the perspective to use for the initial workbench
-	 * window, or <code>null</code> if no initial perspective should be shown
-	 * in the initial workbench window.
+	 * Returns the id of the perspective to use for the initial workbench window, or
+	 * <code>null</code> if no initial perspective should be shown in the initial
+	 * workbench window.
 	 * <p>
-	 * This method is called during startup when the workbench is creating the
-	 * first new window. Subclasses must implement.
+	 * This method is called during startup when the workbench is creating the first
+	 * new window. Subclasses must implement.
 	 * </p>
 	 * <p>
 	 * If the {@link IWorkbenchPreferenceConstants#DEFAULT_PERSPECTIVE_ID}
@@ -729,19 +695,17 @@ public abstract class WorkbenchAdvisor {
 	 * Creates the contents of the window.
 	 * <p>
 	 * The default implementation adds a menu bar, a cool bar, a status line, a
-	 * perspective bar, and a fast view bar. The visibility of these controls
-	 * can be configured using the <code>setShow*</code> methods on
+	 * perspective bar, and a fast view bar. The visibility of these controls can be
+	 * configured using the <code>setShow*</code> methods on
 	 * <code>IWorkbenchWindowConfigurer</code>.
 	 * </p>
 	 * <p>
-	 * Subclasses may override to define custom window contents and layout, but
-	 * must call <code>IWorkbenchWindowConfigurer.createPageComposite</code>.
+	 * Subclasses may override to define custom window contents and layout, but must
+	 * call <code>IWorkbenchWindowConfigurer.createPageComposite</code>.
 	 * </p>
 	 *
-	 * @param configurer
-	 *            the window configurer
-	 * @param shell
-	 *            the window's shell
+	 * @param configurer the window configurer
+	 * @param shell      the window's shell
 	 * @see IWorkbenchWindowConfigurer#createMenuBar
 	 * @see IWorkbenchWindowConfigurer#createCoolBarControl
 	 * @see IWorkbenchWindowConfigurer#createStatusLineControl
@@ -753,48 +717,49 @@ public abstract class WorkbenchAdvisor {
 	 * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
 	 */
 	@Deprecated
-	public void createWindowContents(IWorkbenchWindowConfigurer configurer,
-			Shell shell) {
+	public void createWindowContents(IWorkbenchWindowConfigurer configurer, Shell shell) {
 		((WorkbenchWindowConfigurer) configurer).createDefaultContents(shell);
 	}
 
 	private volatile boolean initDone = false;
 
 	/**
-	 * Opens the workbench windows on startup. The default implementation tries
-	 * to restore the previously saved workbench state using
-	 * <code>IWorkbenchConfigurer.restoreWorkbenchState()</code>. If there
-	 * was no previously saved state, or if the restore failed, then a
-	 * first-time window is opened using
-	 * <code>IWorkbenchConfigurer.openFirstTimeWindow</code>.
+	 * Opens the workbench windows on startup. The default implementation tries to
+	 * restore the previously saved workbench state using
+	 * <code>IWorkbenchConfigurer.restoreWorkbenchState()</code>. If there was no
+	 * previously saved state, or if the restore failed, then a first-time window is
+	 * opened using <code>IWorkbenchConfigurer.openFirstTimeWindow</code>.
 	 *
 	 * @return <code>true</code> to proceed with workbench startup, or
 	 *         <code>false</code> to exit
 	 */
 	public boolean openWindows() {
 		final Display display = PlatformUI.getWorkbench().getDisplay();
-		final boolean result [] = new boolean[1];
+		final boolean result[] = new boolean[1];
 
-		// spawn another init thread.  For API compatibility We guarantee this method is called from
+		// spawn another init thread. For API compatibility We guarantee this method is
+		// called from
 		// the UI thread but it could take enough time to disrupt progress reporting.
-		// spawn a new thread to do the grunt work of this initialization and spin the event loop
+		// spawn a new thread to do the grunt work of this initialization and spin the
+		// event loop
 		// ourselves just like it's done in Workbench.
 
-		final Throwable [] error = new Throwable[1];
+		final Throwable[] error = new Throwable[1];
 		Thread initThread = new Thread() {
 			@Override
 			public void run() {
 				try {
-					//declare us to be a startup thread so that our syncs will be executed
+					// declare us to be a startup thread so that our syncs will be executed
 					UISynchronizer.startupThread.set(Boolean.TRUE);
-					final IWorkbenchConfigurer [] myConfigurer = new IWorkbenchConfigurer[1];
+					final IWorkbenchConfigurer[] myConfigurer = new IWorkbenchConfigurer[1];
 					StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 						@Override
 						public void runWithException() throws Throwable {
 							myConfigurer[0] = getWorkbenchConfigurer();
 
-						}});
+						}
+					});
 
 					IStatus status = myConfigurer[0].restoreState();
 					if (!status.isOK()) {
@@ -809,8 +774,7 @@ public abstract class WorkbenchAdvisor {
 					result[0] = true;
 				} catch (Throwable e) {
 					error[0] = e;
-				}
-				finally {
+				} finally {
 					initDone = true;
 					yield();
 					try {
@@ -820,8 +784,9 @@ public abstract class WorkbenchAdvisor {
 					}
 					display.wake();
 				}
-			}};
-			initThread.start();
+			}
+		};
+		initThread.start();
 
 		while (true) {
 			if (!display.readAndDispatch()) {
@@ -832,25 +797,24 @@ public abstract class WorkbenchAdvisor {
 
 		}
 
-			// can only be a runtime or error
-			if (error[0] instanceof Error)
-				throw (Error)error[0];
-			else if (error[0] instanceof RuntimeException)
-				throw (RuntimeException)error[0];
+		// can only be a runtime or error
+		if (error[0] instanceof Error)
+			throw (Error) error[0];
+		else if (error[0] instanceof RuntimeException)
+			throw (RuntimeException) error[0];
 
-			return result[0];
+		return result[0];
 	}
 
 	/**
 	 * Saves arbitrary application-specific state information for this workbench
 	 * advisor.
 	 * <p>
-	 * The default implementation simply returns an OK status. Subclasses may
-	 * extend or override.
+	 * The default implementation simply returns an OK status. Subclasses may extend
+	 * or override.
 	 * </p>
 	 *
-	 * @param memento
-	 *            the memento in which to save the advisor's state
+	 * @param memento the memento in which to save the advisor's state
 	 * @return a status object indicating whether the save was successful
 	 * @since 3.1
 	 */
@@ -859,15 +823,14 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Restores arbitrary application-specific state information for this
-	 * workbench advisor.
+	 * Restores arbitrary application-specific state information for this workbench
+	 * advisor.
 	 * <p>
-	 * The default implementation simply returns an OK status. Subclasses may
-	 * extend or override.
+	 * The default implementation simply returns an OK status. Subclasses may extend
+	 * or override.
 	 * </p>
 	 *
-	 * @param memento
-	 *            the memento from which to restore the advisor's state
+	 * @param memento the memento from which to restore the advisor's state
 	 * @return a status object indicating whether the restore was successful
 	 * @since 3.1
 	 */
@@ -876,15 +839,14 @@ public abstract class WorkbenchAdvisor {
 	}
 
 	/**
-	 * Return the contribution comparator for the particular type of
-	 * contribution. The default implementation of this class returns a
-	 * comparator that sorts the items by label.
+	 * Return the contribution comparator for the particular type of contribution.
+	 * The default implementation of this class returns a comparator that sorts the
+	 * items by label.
 	 *
 	 * The contributionType may be one of the constants in
 	 * {@link IContributionService} or it can be a value defined by the user.
 	 *
-	 * @param contributionType
-	 *            the contribution type
+	 * @param contributionType the contribution type
 	 * @return the comparator, must not return <code>null</code>
 	 * @see IContributionService#getComparatorFor(String)
 	 * @since 3.4

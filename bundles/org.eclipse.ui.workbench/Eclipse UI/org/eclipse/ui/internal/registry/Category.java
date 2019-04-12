@@ -26,233 +26,228 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * Category provides for hierarchical grouping of elements
- * registered in the registry. One extension normally defines
- * a category, and other reference it via its ID.
+ * Category provides for hierarchical grouping of elements registered in the
+ * registry. One extension normally defines a category, and other reference it
+ * via its ID.
  * <p>
- * A category may specify its parent category in order to
- * achieve hierarchy.
+ * A category may specify its parent category in order to achieve hierarchy.
  * </p>
  */
 public class Category implements IWorkbenchAdapter, IPluginContribution, IAdaptable {
-    /**
-     * Name of the miscellaneous category
-     */
-    public static final String MISC_NAME = WorkbenchMessages.ICategory_other;
+	/**
+	 * Name of the miscellaneous category
+	 */
+	public static final String MISC_NAME = WorkbenchMessages.ICategory_other;
 
-    /**
-     * Identifier of the miscellaneous category
-     */
-    public static final String MISC_ID = "org.eclipse.ui.internal.otherCategory"; //$NON-NLS-1$
+	/**
+	 * Identifier of the miscellaneous category
+	 */
+	public static final String MISC_ID = "org.eclipse.ui.internal.otherCategory"; //$NON-NLS-1$
 
-    private String id;
+	private String id;
 
-    private String name;
+	private String name;
 
-    private String[] parentPath;
+	private String[] parentPath;
 
-    private ArrayList elements;
+	private ArrayList elements;
 
-    private IConfigurationElement configurationElement;
+	private IConfigurationElement configurationElement;
 
 	private String pluginId;
 
-    /**
-     * Creates an instance of <code>Category</code> as a
-     * miscellaneous category.
-     */
-    public Category() {
-        this.id = MISC_ID;
-        this.name = MISC_NAME;
-        this.pluginId = MISC_ID; // TODO: remove hack for bug 55172
-    }
+	/**
+	 * Creates an instance of <code>Category</code> as a miscellaneous category.
+	 */
+	public Category() {
+		this.id = MISC_ID;
+		this.name = MISC_NAME;
+		this.pluginId = MISC_ID; // TODO: remove hack for bug 55172
+	}
 
-    /**
-     * Creates an instance of <code>Category</code> with
-     * an ID and label.
-     *
-     * @param id the unique identifier for the category
-     * @param label the presentation label for this category
-     */
-    public Category(String id, String label) {
-        this.id = id;
-        this.name = label;
-    }
+	/**
+	 * Creates an instance of <code>Category</code> with an ID and label.
+	 *
+	 * @param id    the unique identifier for the category
+	 * @param label the presentation label for this category
+	 */
+	public Category(String id, String label) {
+		this.id = id;
+		this.name = label;
+	}
 
-    /**
-     * Creates an instance of <code>Category</code> using the
-     * information from the specified configuration element.
-     *
-     * @param configElement the <code>IConfigurationElement<code> containing
-     * 		the ID, label, and optional parent category path.
-     * @throws WorkbenchException if the ID or label is <code>null</code
-     */
-    public Category(IConfigurationElement configElement)
-            throws WorkbenchException {
-        id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+	/**
+	 * Creates an instance of <code>Category</code> using the information from the
+	 * specified configuration element.
+	 *
+	 * @param configElement the <code>IConfigurationElement<code> containing the ID,
+	 *                      label, and optional parent category path.
+	 * @throws WorkbenchException if the ID or label is <code>null</code
+	 */
+	public Category(IConfigurationElement configElement) throws WorkbenchException {
+		id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 
-        configurationElement = configElement;
-        if (id == null || getLabel() == null) {
+		configurationElement = configElement;
+		if (id == null || getLabel() == null) {
 			throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
 		}
-    }
+	}
 
-
-    /**
-     * Add an element to this category.
-     *
-     * @param element the element to add
-     */
-    public void addElement(Object element) {
-        if (elements == null) {
+	/**
+	 * Add an element to this category.
+	 *
+	 * @param element the element to add
+	 */
+	public void addElement(Object element) {
+		if (elements == null) {
 			elements = new ArrayList(5);
 		}
-        elements.add(element);
-    }
+		elements.add(element);
+	}
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter == IWorkbenchAdapter.class) {
+		if (adapter == IWorkbenchAdapter.class) {
 			return adapter.cast(this);
 		} else if (adapter == IConfigurationElement.class) {
 			return adapter.cast(configurationElement);
 		} else {
 			return null;
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object o) {
-        return getElements().toArray();
-    }
+		return getElements().toArray();
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
-    }
+		return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+	}
 
-    @Override
+	@Override
 	public String getLabel(Object o) {
-        return getLabel();
-    }
+		return getLabel();
+	}
 
-    /**
-     * Return the id for this category.
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
+	/**
+	 * Return the id for this category.
+	 * 
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * Return the label for this category.
-     *
-     * @return the label
-     */
-    public String getLabel() {
-        return configurationElement == null ? name : configurationElement
-				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-    }
+	/**
+	 * Return the label for this category.
+	 *
+	 * @return the label
+	 */
+	public String getLabel() {
+		return configurationElement == null ? name
+				: configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+	}
 
-    /**
-     * Return the parent path for this category.
-     *
-     * @return the parent path
-     */
-    public String[] getParentPath() {
-    	if (parentPath != null) {
+	/**
+	 * Return the parent path for this category.
+	 *
+	 * @return the parent path
+	 */
+	public String[] getParentPath() {
+		if (parentPath != null) {
 			return parentPath;
 		}
 
-    	String unparsedPath = getRawParentPath();
-        if (unparsedPath != null) {
-            StringTokenizer stok = new StringTokenizer(unparsedPath, "/"); //$NON-NLS-1$
-            parentPath = new String[stok.countTokens()];
-            for (int i = 0; stok.hasMoreTokens(); i++) {
-                parentPath[i] = stok.nextToken();
-            }
-        }
+		String unparsedPath = getRawParentPath();
+		if (unparsedPath != null) {
+			StringTokenizer stok = new StringTokenizer(unparsedPath, "/"); //$NON-NLS-1$
+			parentPath = new String[stok.countTokens()];
+			for (int i = 0; stok.hasMoreTokens(); i++) {
+				parentPath[i] = stok.nextToken();
+			}
+		}
 
-        return parentPath;
-    }
+		return parentPath;
+	}
 
-    /**
-     * Return the unparsed parent path.  May be <code>null</code>.
-     *
-     * @return the unparsed parent path or <code>null</code>
-     */
-    public String getRawParentPath() {
-        return configurationElement == null ? null
-                : configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_PARENT_CATEGORY);
-    }
+	/**
+	 * Return the unparsed parent path. May be <code>null</code>.
+	 *
+	 * @return the unparsed parent path or <code>null</code>
+	 */
+	public String getRawParentPath() {
+		return configurationElement == null ? null
+				: configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_PARENT_CATEGORY);
+	}
 
-    /**
-     * Return the root path for this category.
-     *
-     * @return the root path
-     */
-    public String getRootPath() {
-        String[] path = getParentPath();
-        if (path != null && path.length > 0) {
+	/**
+	 * Return the root path for this category.
+	 *
+	 * @return the root path
+	 */
+	public String getRootPath() {
+		String[] path = getParentPath();
+		if (path != null && path.length > 0) {
 			return path[0];
 		}
 
-        return id;
-    }
+		return id;
+	}
 
-    /**
-     * Return the elements contained in this category.
-     *
-     * @return the elements
-     */
-    public ArrayList getElements() {
-        return elements;
-    }
+	/**
+	 * Return the elements contained in this category.
+	 *
+	 * @return the elements
+	 */
+	public ArrayList getElements() {
+		return elements;
+	}
 
-    /**
-     * Return whether a given object exists in this category.
-     *
-     * @param o the object to search for
-     * @return whether the object is in this category
-     */
-    public boolean hasElement(Object o) {
-        if (elements == null) {
+	/**
+	 * Return whether a given object exists in this category.
+	 *
+	 * @param o the object to search for
+	 * @return whether the object is in this category
+	 */
+	public boolean hasElement(Object o) {
+		if (elements == null) {
 			return false;
 		}
-        if (elements.isEmpty()) {
+		if (elements.isEmpty()) {
 			return false;
 		}
-        return elements.contains(o);
-    }
+		return elements.contains(o);
+	}
 
-    /**
-     * Return whether this category has child elements.
-     *
-     * @return whether this category has child elements
-     */
-    public boolean hasElements() {
-        if (elements != null) {
+	/**
+	 * Return whether this category has child elements.
+	 *
+	 * @return whether this category has child elements
+	 */
+	public boolean hasElements() {
+		if (elements != null) {
 			return !elements.isEmpty();
 		}
 
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object o) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public String getLocalId() {
-        return id;
-    }
+		return id;
+	}
 
-    @Override
+	@Override
 	public String getPluginId() {
-		return configurationElement == null ? pluginId : configurationElement
-						.getContributor().getName();
-    }
+		return configurationElement == null ? pluginId : configurationElement.getContributor().getName();
+	}
 
 	/**
 	 * Clear all elements from this category.

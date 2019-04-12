@@ -19,38 +19,36 @@ import org.eclipse.ui.IMemento;
 
 public final class ConfigurationElementMemento implements IMemento {
 
-    private IConfigurationElement configurationElement;
+	private IConfigurationElement configurationElement;
 
-    public ConfigurationElementMemento(
-            IConfigurationElement configurationElement) {
-        if (configurationElement == null) {
+	public ConfigurationElementMemento(IConfigurationElement configurationElement) {
+		if (configurationElement == null) {
 			throw new NullPointerException();
 		}
 
-        this.configurationElement = configurationElement;
-    }
+		this.configurationElement = configurationElement;
+	}
 
-    @Override
+	@Override
 	public IMemento createChild(String type) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public IMemento createChild(String type, String id) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public IMemento getChild(String type) {
-        IConfigurationElement[] configurationElements = configurationElement
-                .getChildren(type);
+		IConfigurationElement[] configurationElements = configurationElement.getChildren(type);
 
-        if (configurationElements != null && configurationElements.length >= 1) {
+		if (configurationElements != null && configurationElements.length >= 1) {
 			return new ConfigurationElementMemento(configurationElements[0]);
 		}
 
-        return null;
-    }
+		return null;
+	}
 
 	@Override
 	public IMemento[] getChildren() {
@@ -59,120 +57,118 @@ public final class ConfigurationElementMemento implements IMemento {
 		return getMementoArray(configurationElements);
 	}
 
-    @Override
+	@Override
 	public IMemento[] getChildren(String type) {
-        IConfigurationElement[] configurationElements = configurationElement
-                .getChildren(type);
+		IConfigurationElement[] configurationElements = configurationElement.getChildren(type);
 
-        return getMementoArray(configurationElements);
-    }
+		return getMementoArray(configurationElements);
+	}
 
 	private IMemento[] getMementoArray(IConfigurationElement[] configurationElements) {
 		if (configurationElements != null && configurationElements.length > 0) {
-            IMemento mementos[] = new ConfigurationElementMemento[configurationElements.length];
+			IMemento mementos[] = new ConfigurationElementMemento[configurationElements.length];
 
-            for (int i = 0; i < configurationElements.length; i++) {
-				mementos[i] = new ConfigurationElementMemento(
-                        configurationElements[i]);
+			for (int i = 0; i < configurationElements.length; i++) {
+				mementos[i] = new ConfigurationElementMemento(configurationElements[i]);
 			}
 
-            return mementos;
-        }
+			return mementos;
+		}
 
-        return new IMemento[0];
+		return new IMemento[0];
 	}
 
-    @Override
+	@Override
 	public Float getFloat(String key) {
-        String string = configurationElement.getAttribute(key);
+		String string = configurationElement.getAttribute(key);
 
-        if (string != null) {
+		if (string != null) {
 			try {
 				return Float.valueOf(string);
-            } catch (NumberFormatException eNumberFormat) {
-            }
+			} catch (NumberFormatException eNumberFormat) {
+			}
 		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public String getType() {
-        return configurationElement.getName();
-    }
+		return configurationElement.getName();
+	}
 
-    @Override
+	@Override
 	public String getID() {
-        return configurationElement.getAttribute(TAG_ID);
-    }
+		return configurationElement.getAttribute(TAG_ID);
+	}
 
-    @Override
+	@Override
 	public Integer getInteger(String key) {
-        String string = configurationElement.getAttribute(key);
+		String string = configurationElement.getAttribute(key);
 
-        if (string != null) {
+		if (string != null) {
 			try {
 				return Integer.valueOf(string);
-            } catch (NumberFormatException eNumberFormat) {
-            }
+			} catch (NumberFormatException eNumberFormat) {
+			}
 		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public String getString(String key) {
-        return configurationElement.getAttribute(key);
-    }
+		return configurationElement.getAttribute(key);
+	}
 
-    @Override
+	@Override
 	public Boolean getBoolean(String key) {
-        String string = configurationElement.getAttribute(key);
-        if (string==null) {
-        	return null;
-        }
-        return Boolean.valueOf(string);
-    }
+		String string = configurationElement.getAttribute(key);
+		if (string == null) {
+			return null;
+		}
+		return Boolean.valueOf(string);
+	}
 
-    @Override
+	@Override
 	public String getTextData() {
-        return configurationElement.getValue();
-    }
+		return configurationElement.getValue();
+	}
 
-    @Override
+	@Override
 	public String[] getAttributeKeys() {
-    	return configurationElement.getAttributeNames();
-    }
+		return configurationElement.getAttributeNames();
+	}
 
-    @Override
+	@Override
 	public void putFloat(String key, float value) {
-    }
+	}
 
-    @Override
+	@Override
 	public void putInteger(String key, int value) {
-    }
+	}
 
-    @Override
+	@Override
 	public void putMemento(IMemento memento) {
-    }
+	}
 
-    @Override
+	@Override
 	public void putString(String key, String value) {
-    }
+	}
 
-    @Override
+	@Override
 	public void putBoolean(String key, boolean value) {
-    }
+	}
 
-    @Override
+	@Override
 	public void putTextData(String data) {
-    }
+	}
 
-    public String getContributorName() {
-    	return configurationElement.getContributor().getName();
-    }
+	public String getContributorName() {
+		return configurationElement.getContributor().getName();
+	}
 
-    public String getExtensionID() {
-    	return configurationElement.getDeclaringExtension().getUniqueIdentifier();
-    }
+	public String getExtensionID() {
+		return configurationElement.getDeclaringExtension().getUniqueIdentifier();
+	}
 }

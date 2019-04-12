@@ -79,16 +79,14 @@ public abstract class QuickMenuCreator {
 	/**
 	 * Create the contents of the context menu.
 	 *
-	 * @param menu
-	 *            the menu to fill
+	 * @param menu the menu to fill
 	 */
 	protected abstract void fillMenu(IMenuManager menu);
 
 	/**
 	 * Determine the optimal point for this menu to appear.
 	 *
-	 * @param focus
-	 *            the focus control
+	 * @param focus the focus control
 	 * @return the optimal placement
 	 * @since 3.5
 	 */
@@ -113,14 +111,11 @@ public abstract class QuickMenuCreator {
 			result = focus.toControl(cursorLocation);
 		}
 		if (clientArea != null && !clientArea.contains(result)) {
-			result = new Point(clientArea.x + clientArea.width / 2,
-					clientArea.y + clientArea.height / 2);
+			result = new Point(clientArea.x + clientArea.width / 2, clientArea.y + clientArea.height / 2);
 		}
 		Rectangle shellArea = focus.getShell().getClientArea();
-		if (!shellArea.contains(focus.getShell().toControl(
-				focus.toDisplay(result)))) {
-			result = new Point(shellArea.x + shellArea.width / 2, shellArea.y
-					+ shellArea.height / 2);
+		if (!shellArea.contains(focus.getShell().toControl(focus.toDisplay(result)))) {
+			result = new Point(shellArea.x + shellArea.width / 2, shellArea.y + shellArea.height / 2);
 		}
 		return focus.toDisplay(result);
 	}
@@ -129,12 +124,10 @@ public abstract class QuickMenuCreator {
 	 * Hook to compute the menu location if the focus widget is a styled text
 	 * widget.
 	 *
-	 * @param text
-	 *            the styled text widget that has the focus
+	 * @param text the styled text widget that has the focus
 	 *
-	 * @return a widget relative position of the menu to pop up or
-	 *         <code>null</code> if now position inside the widget can be
-	 *         computed
+	 * @return a widget relative position of the menu to pop up or <code>null</code>
+	 *         if now position inside the widget can be computed
 	 * @since 3.5
 	 */
 	protected Point computeMenuLocation(StyledText text) {
@@ -149,12 +142,10 @@ public abstract class QuickMenuCreator {
 	/**
 	 * Hook to compute the menu location if the focus widget is a tree widget.
 	 *
-	 * @param tree
-	 *            the tree widget that has the focus
+	 * @param tree the tree widget that has the focus
 	 *
-	 * @return a widget relative position of the menu to pop up or
-	 *         <code>null</code> if now position inside the widget can be
-	 *         computed
+	 * @return a widget relative position of the menu to pop up or <code>null</code>
+	 *         if now position inside the widget can be computed
 	 * @since 3.5
 	 */
 	protected Point computeMenuLocation(Tree tree) {
@@ -167,9 +158,8 @@ public abstract class QuickMenuCreator {
 			Rectangle bounds = items[0].getBounds();
 			Rectangle intersect = clientArea.intersection(bounds);
 			if (intersect != null && intersect.height == bounds.height) {
-				return new Point(Math.max(0, bounds.x
-						+ getAvarageCharWith(tree) * CHAR_INDENT), bounds.y
-						+ bounds.height);
+				return new Point(Math.max(0, bounds.x + getAvarageCharWith(tree) * CHAR_INDENT),
+						bounds.y + bounds.height);
 			}
 			return null;
 
@@ -179,8 +169,8 @@ public abstract class QuickMenuCreator {
 				rectangles[i] = items[i].getBounds();
 			}
 			Point cursorLocation = tree.getDisplay().getCursorLocation();
-			Point result = findBestLocation(getIncludedPositions(rectangles,
-					clientArea), tree.toControl(cursorLocation));
+			Point result = findBestLocation(getIncludedPositions(rectangles, clientArea),
+					tree.toControl(cursorLocation));
 			if (result != null) {
 				result.x = result.x + getAvarageCharWith(tree) * CHAR_INDENT;
 			}
@@ -191,12 +181,10 @@ public abstract class QuickMenuCreator {
 	/**
 	 * Hook to compute the menu location if the focus widget is a table widget.
 	 *
-	 * @param table
-	 *            the table widget that has the focus
+	 * @param table the table widget that has the focus
 	 *
-	 * @return a widget relative position of the menu to pop up or
-	 *         <code>null</code> if now position inside the widget can be
-	 *         computed
+	 * @return a widget relative position of the menu to pop up or <code>null</code>
+	 *         if now position inside the widget can be computed
 	 * @since 3.5
 	 */
 	protected Point computeMenuLocation(Table table) {
@@ -211,9 +199,8 @@ public abstract class QuickMenuCreator {
 			Rectangle iBounds = items[0].getImageBounds(0);
 			Rectangle intersect = clientArea.intersection(bounds);
 			if (intersect != null && intersect.height == bounds.height) {
-				return new Point(Math.max(0, bounds.x + iBounds.width
-						+ getAvarageCharWith(table) * CHAR_INDENT), bounds.y
-						+ bounds.height);
+				return new Point(Math.max(0, bounds.x + iBounds.width + getAvarageCharWith(table) * CHAR_INDENT),
+						bounds.y + bounds.height);
 			}
 			return null;
 
@@ -225,25 +212,22 @@ public abstract class QuickMenuCreator {
 			}
 			Rectangle iBounds = items[0].getImageBounds(0);
 			Point cursorLocation = table.getDisplay().getCursorLocation();
-			Point result = findBestLocation(getIncludedPositions(rectangles,
-					clientArea), table.toControl(cursorLocation));
+			Point result = findBestLocation(getIncludedPositions(rectangles, clientArea),
+					table.toControl(cursorLocation));
 			if (result != null) {
-				result.x = result.x + iBounds.width + getAvarageCharWith(table)
-						* CHAR_INDENT;
+				result.x = result.x + iBounds.width + getAvarageCharWith(table) * CHAR_INDENT;
 			}
 			return result;
 		}
 		}
 	}
 
-	private Point[] getIncludedPositions(Rectangle[] rectangles,
-			Rectangle widgetBounds) {
+	private Point[] getIncludedPositions(Rectangle[] rectangles, Rectangle widgetBounds) {
 		List result = new ArrayList();
 		for (Rectangle rectangle : rectangles) {
 			Rectangle intersect = widgetBounds.intersection(rectangle);
 			if (intersect != null && intersect.height == rectangle.height) {
-				result.add(new Point(intersect.x, intersect.y
-						+ intersect.height));
+				result.add(new Point(intersect.x, intersect.y + intersect.height));
 			}
 		}
 		return (Point[]) result.toArray(new Point[result.size()]);
@@ -287,12 +271,12 @@ public abstract class QuickMenuCreator {
 	}
 
 	/**
-	 * Dispose of this quick menu creator. Subclasses should ensure that they
-	 * call this method.
+	 * Dispose of this quick menu creator. Subclasses should ensure that they call
+	 * this method.
 	 *
 	 * @deprecated As of 3.5 this is not necessary as the SWT Menu created in
-	 *             {@link #createMenu()} will be disposed shortly after the
-	 *             SWT.Hide event.
+	 *             {@link #createMenu()} will be disposed shortly after the SWT.Hide
+	 *             event.
 	 */
 	@Deprecated
 	public void dispose() {

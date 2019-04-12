@@ -32,18 +32,16 @@ public interface ISelectionConversionService {
 
 	/**
 	 * Attempt to convert the elements in the passed selection into resources by
-	 * asking each for its IResource property (iff it isn't already a resource).
-	 * If all elements in the initial selection can be converted to resources
-	 * then answer a new selection containing these resources; otherwise answer
-	 * an empty selection.
+	 * asking each for its IResource property (iff it isn't already a resource). If
+	 * all elements in the initial selection can be converted to resources then
+	 * answer a new selection containing these resources; otherwise answer an empty
+	 * selection.
 	 *
-	 * @param originalSelection
-	 *            the original selection; must not be <code>null</code>.
+	 * @param originalSelection the original selection; must not be
+	 *                          <code>null</code>.
 	 * @return the converted selection or an empty selection; never
 	 *         <code>null</code>.
 	 */
-	IStructuredSelection convertToResources(
-			IStructuredSelection originalSelection);
+	IStructuredSelection convertToResources(IStructuredSelection originalSelection);
 
 }
-

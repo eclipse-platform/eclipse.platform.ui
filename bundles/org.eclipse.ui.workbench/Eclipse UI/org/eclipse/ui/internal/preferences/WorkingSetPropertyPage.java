@@ -68,7 +68,7 @@ public class WorkingSetPropertyPage extends WizardPropertyPage {
 		 */
 		@Override
 		public void createControl(Composite parent) {
-			Composite composite= new Composite(parent, SWT.NONE);
+			Composite composite = new Composite(parent, SWT.NONE);
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			composite.setLayout(new GridLayout(1, false));
 
@@ -96,7 +96,7 @@ public class WorkingSetPropertyPage extends WizardPropertyPage {
 	 */
 	@Override
 	protected void applyChanges() {
-		//Wizard does all the work
+		// Wizard does all the work
 	}
 
 	/**

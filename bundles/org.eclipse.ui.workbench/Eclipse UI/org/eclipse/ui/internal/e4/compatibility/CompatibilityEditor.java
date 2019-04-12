@@ -71,8 +71,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 		return part;
 	}
 
-	private void createMultiEditorChildren(IWorkbenchPart part, IEditorInput input)
-			throws PartInitException {
+	private void createMultiEditorChildren(IWorkbenchPart part, IEditorInput input) throws PartInitException {
 		IWorkbenchPage page = reference.getPage();
 		MPart model = getModel();
 		MWindow window = modelService.getTopLevelWindowFor(model);
@@ -84,12 +83,12 @@ public class CompatibilityEditor extends CompatibilityPart {
 		for (int i = 0; i < editorIds.length; i++) {
 			EditorDescriptor innerDesc = (EditorDescriptor) registry.findEditor(editorIds[i]);
 			if (innerDesc == null) {
-				throw new PartInitException(NLS.bind(
-						WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorIds[i]));
+				throw new PartInitException(
+						NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorIds[i]));
 			}
 
-			EditorReference innerReference = new EditorReference(window.getContext(), page, model,
-					inputs[i], innerDesc, null);
+			EditorReference innerReference = new EditorReference(window.getContext(), page, model, inputs[i], innerDesc,
+					null);
 			editors[i] = (IEditorPart) innerReference.createPart();
 			innerReference.initialize(editors[i]);
 		}
@@ -109,8 +108,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 		if (descriptor != null) {
 			IConfigurationElement element = descriptor.getConfigurationElement();
 			if (element != null) {
-				String iconURI = MenuHelper.getIconURI(element,
-						IWorkbenchRegistryConstants.ATT_ICON);
+				String iconURI = MenuHelper.getIconURI(element, IWorkbenchRegistryConstants.ATT_ICON);
 				part.setIconURI(iconURI);
 			}
 			if (descriptor.getPluginId() != null) {

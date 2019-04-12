@@ -29,10 +29,10 @@ import org.eclipse.ui.PartInitException;
 
 public interface IWebBrowser {
 	/**
-	 * Returns the unique identifier of this browser. If an id has been supplied
-	 * to the browser support when the instance was created, it will be used.
-	 * Otherwise, a generated id will be provided to the browser that is
-	 * guaranteed to be unique.
+	 * Returns the unique identifier of this browser. If an id has been supplied to
+	 * the browser support when the instance was created, it will be used.
+	 * Otherwise, a generated id will be provided to the browser that is guaranteed
+	 * to be unique.
 	 *
 	 * @return a unique identifier of this browser instance
 	 */
@@ -44,11 +44,9 @@ public interface IWebBrowser {
 	 * <b>NOTE</b> This method must be called from the current UI thread
 	 * </p>
 	 *
-	 * @param url
-	 *            the URL to display
-	 * @exception PartInitException
-	 *                if the browser fails to navigate to the provided url for
-	 *                any reason
+	 * @param url the URL to display
+	 * @exception PartInitException if the browser fails to navigate to the provided
+	 *                              url for any reason
 	 */
 	void openURL(URL url) throws PartInitException;
 
@@ -58,8 +56,8 @@ public interface IWebBrowser {
 	 * <b>NOTE</b> This method must be called from the current UI thread
 	 * </p>
 	 *
-	 * @return <code>true</code> if the browser was closed or <code>false</code>
-	 *         if the operation failed or is not supported.
+	 * @return <code>true</code> if the browser was closed or <code>false</code> if
+	 *         the operation failed or is not supported.
 	 */
 	boolean close();
 

@@ -106,8 +106,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 	/**
 	 * Adds the modify buttons to the dialog.
 	 *
-	 * @param composite
-	 *            Composite to add the buttons to
+	 * @param composite Composite to add the buttons to
 	 */
 	protected void addModifyButtons(Composite composite) {
 		Composite buttonComposite = new Composite(composite, SWT.RIGHT);
@@ -142,8 +141,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 	/**
 	 * Add the select/deselect buttons.
 	 *
-	 * @param composite
-	 *            Composite to add the buttons to
+	 * @param composite Composite to add the buttons to
 	 */
 	protected void addSelectionButtons(Composite composite) {
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
@@ -174,8 +172,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 	protected abstract void deselectAllSets();
 
 	/**
-	 * Opens a working set wizard for editing the currently selected working
-	 * set.
+	 * Opens a working set wizard for editing the currently selected working set.
 	 *
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
 	 */
@@ -238,13 +235,12 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 	protected abstract List<IWorkingSet> getSelectedWorkingSets();
 
 	/**
-	 * Notifies the dialog that there has been a change to the sets available
-	 * for use. In other words, the user has either added, deleted or renamed a
-	 * set.
+	 * Notifies the dialog that there has been a change to the sets available for
+	 * use. In other words, the user has either added, deleted or renamed a set.
 	 * <p>
 	 * Subclasses should override, but should call
-	 * <code>super.availableWorkingSetsChanged</code> to update the selection
-	 * button enablements.
+	 * <code>super.availableWorkingSetsChanged</code> to update the selection button
+	 * enablements.
 	 * </p>
 	 */
 	protected void availableWorkingSetsChanged() {
@@ -259,16 +255,15 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 
 	/**
 	 * Notifies the dialog that the given working set was added to the sets
-	 * available for use. In other words, the user has just added the given
-	 * working set.
+	 * available for use. In other words, the user has just added the given working
+	 * set.
 	 *
 	 * <p>
 	 * This implementation doesn't do anything. Subclasses can override it to
 	 * auto-select the added working set.
 	 * </p>
 	 *
-	 * @param addedSet
-	 *            the added working set.
+	 * @param addedSet the added working set.
 	 */
 	protected void workingSetAdded(IWorkingSet addedSet) {
 	}
@@ -313,8 +308,8 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 	}
 
 	/**
-	 * Return the list of working sets that were removed from the MRU list
-	 * during the life of this dialog.
+	 * Return the list of working sets that were removed from the MRU list during
+	 * the life of this dialog.
 	 *
 	 * @return the working sets
 	 */
@@ -369,11 +364,10 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 	}
 
 	/**
-	 * Remove the working sets contained in the provided selection from the
-	 * working set manager.
+	 * Remove the working sets contained in the provided selection from the working
+	 * set manager.
 	 *
-	 * @param selection
-	 *            the sets
+	 * @param selection the sets
 	 */
 	protected void removeSelectedWorkingSets(List<IWorkingSet> selection) {
 		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();

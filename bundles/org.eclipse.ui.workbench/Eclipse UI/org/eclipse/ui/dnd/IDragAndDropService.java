@@ -38,34 +38,30 @@ import org.eclipse.swt.widgets.Control;
 public interface IDragAndDropService {
 	/**
 	 * Causes a drop target to be added to the given control that respects the
-	 * existing site's drop behaviour in addition to the behaviour being
-	 * specified for the given control.
+	 * existing site's drop behaviour in addition to the behaviour being specified
+	 * for the given control.
 	 * <p>
 	 * If a transfer type specified for the control matches one used by the site
-	 * then the control's listener is called (the client is overriding the
-	 * existing site behaviour which will no longer work).
+	 * then the control's listener is called (the client is overriding the existing
+	 * site behaviour which will no longer work).
 	 * </p>
 	 * <p>
 	 * NOTE: Site authors <b>must</b> use this method to add drop behaviour;
-	 * directly adding drop targets using SWT onto a site will cause the
-	 * standard site behaviour (i.e. dragging files / markers into the
-	 * EditorSite...) to not work when that editor is active.
+	 * directly adding drop targets using SWT onto a site will cause the standard
+	 * site behaviour (i.e. dragging files / markers into the EditorSite...) to not
+	 * work when that editor is active.
 	 * </p>
 	 * <p>
-	 * Note that this method may be used more than once should the part author
-	 * wish to register different drop targets for internal controls (i.e. to
-	 * support internal DnD).
+	 * Note that this method may be used more than once should the part author wish
+	 * to register different drop targets for internal controls (i.e. to support
+	 * internal DnD).
 	 * </p>
 	 * <p>
 	 *
-	 * @param control
-	 *            The control to add the drop behaviour to
-	 * @param ops
-	 *            The Drop operations used by this target
-	 * @param transfers
-	 *            The TransferTypes used by this target
-	 * @param listener
-	 *            The listener controlling the target's behaviour
+	 * @param control   The control to add the drop behaviour to
+	 * @param ops       The Drop operations used by this target
+	 * @param transfers The TransferTypes used by this target
+	 * @param listener  The listener controlling the target's behaviour
 	 */
 	void addMergedDropTarget(Control control, int ops, Transfer[] transfers, DropTargetListener listener);
 

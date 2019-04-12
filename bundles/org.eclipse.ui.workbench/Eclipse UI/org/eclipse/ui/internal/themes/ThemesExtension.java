@@ -28,22 +28,20 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class ThemesExtension implements IThemesExtension {
 	public static final String DEFAULT_CATEGORY_ID = "org.eclipse.ui.themes.CssTheme"; //$NON-NLS-1$
 
-
 	private List<IThemeElementDefinitionOverridable<?>> definitions = new ArrayList<>();
 
 	@Override
 	public void addFontDefinition(String symbolicName) {
-		FontDefinition definition = new FontDefinition(formatDefaultName(FontDefinition.class,
-				symbolicName), symbolicName, null, null, DEFAULT_CATEGORY_ID, true, null);
+		FontDefinition definition = new FontDefinition(formatDefaultName(FontDefinition.class, symbolicName),
+				symbolicName, null, null, DEFAULT_CATEGORY_ID, true, null);
 		definition.appendState(ThemeElementDefinition.State.ADDED_BY_CSS);
 		definitions.add(definition);
 	}
 
 	@Override
 	public void addColorDefinition(String symbolicName) {
-		ColorDefinition definition = new ColorDefinition(formatDefaultName(ColorDefinition.class,
-				symbolicName), symbolicName, null, null, DEFAULT_CATEGORY_ID, true, null,
-				getPluginId());
+		ColorDefinition definition = new ColorDefinition(formatDefaultName(ColorDefinition.class, symbolicName),
+				symbolicName, null, null, DEFAULT_CATEGORY_ID, true, null, getPluginId());
 		definition.appendState(ThemeElementDefinition.State.ADDED_BY_CSS);
 		definitions.add(definition);
 	}

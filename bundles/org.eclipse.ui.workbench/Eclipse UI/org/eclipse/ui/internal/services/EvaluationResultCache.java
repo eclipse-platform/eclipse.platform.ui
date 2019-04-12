@@ -38,8 +38,8 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 	private EvaluationResult evaluationResult = null;
 
 	/**
-	 * The expression to evaluate. This value may be <code>null</code>, in
-	 * which case the evaluation result is always <code>true</code>.
+	 * The expression to evaluate. This value may be <code>null</code>, in which
+	 * case the evaluation result is always <code>true</code>.
 	 */
 	private final Expression expression;
 
@@ -51,16 +51,14 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 	/**
 	 * Constructs a new instance of <code>EvaluationResultCache</code>.
 	 *
-	 * @param expression
-	 *            The expression that must evaluate to <code>true</code>
-	 *            before this handler is active. This value may be
-	 *            <code>null</code> if it is always active.
+	 * @param expression The expression that must evaluate to <code>true</code>
+	 *                   before this handler is active. This value may be
+	 *                   <code>null</code> if it is always active.
 	 * @see ISources
 	 */
 	protected EvaluationResultCache(final Expression expression) {
 		this.expression = expression;
-		this.sourcePriority = SourcePriorityNameMapping
-				.computeSourcePriority(expression);
+		this.sourcePriority = SourcePriorityNameMapping.computeSourcePriority(expression);
 	}
 
 	@Override
@@ -79,17 +77,16 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 				evaluationResult = expression.evaluate(context);
 			} catch (final CoreException e) {
 				/*
-				 * Swallow the exception. It simply means the variable is not
-				 * valid it some (most frequently, that the value is null). This
-				 * kind of information is not really useful to us, so we can
-				 * just treat it as null.
+				 * Swallow the exception. It simply means the variable is not valid it some
+				 * (most frequently, that the value is null). This kind of information is not
+				 * really useful to us, so we can just treat it as null.
 				 */
 				evaluationResult = EvaluationResult.FALSE;
 				return false;
 			}
 		}
 
-		// return true if  the result is FALSE or NOT_LOADED
+		// return true if the result is FALSE or NOT_LOADED
 		return evaluationResult != EvaluationResult.FALSE;
 	}
 

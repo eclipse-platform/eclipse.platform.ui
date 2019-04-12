@@ -27,36 +27,36 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ResetPerspectiveAction extends PerspectiveAction {
 
-    /**
-     * This default constructor allows the the action to be called from the welcome page.
-     */
-    public ResetPerspectiveAction() {
-        this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-    }
+	/**
+	 * This default constructor allows the the action to be called from the welcome
+	 * page.
+	 */
+	public ResetPerspectiveAction() {
+		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+	}
 
-    /**
-     * Create an instance of this class
-     * @param window the window
-     */
-    public ResetPerspectiveAction(IWorkbenchWindow window) {
-        super(window);
-        setText(WorkbenchMessages.ResetPerspective_text);
-        setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_RESET_PERSPECTIVE);
-        // @issue missing action id
-        setToolTipText(WorkbenchMessages.ResetPerspective_toolTip);
-        window.getWorkbench().getHelpSystem().setHelp(this,
-				IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
-    }
+	/**
+	 * Create an instance of this class
+	 * 
+	 * @param window the window
+	 */
+	public ResetPerspectiveAction(IWorkbenchWindow window) {
+		super(window);
+		setText(WorkbenchMessages.ResetPerspective_text);
+		setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_RESET_PERSPECTIVE);
+		// @issue missing action id
+		setToolTipText(WorkbenchMessages.ResetPerspective_toolTip);
+		window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
+	}
 
-    @Override
+	@Override
 	protected void run(IWorkbenchPage page, IPerspectiveDescriptor persp) {
-        String message = NLS.bind(WorkbenchMessages.ResetPerspective_message, persp.getLabel() );
-        MessageDialog d = new MessageDialog(getWindow().getShell(),
-                WorkbenchMessages.ResetPerspective_title,
-				null, message, MessageDialog.QUESTION, 0, IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL);
-        if (d.open() == 0) {
+		String message = NLS.bind(WorkbenchMessages.ResetPerspective_message, persp.getLabel());
+		MessageDialog d = new MessageDialog(getWindow().getShell(), WorkbenchMessages.ResetPerspective_title, null,
+				message, MessageDialog.QUESTION, 0, IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL);
+		if (d.open() == 0) {
 			page.resetPerspective();
 		}
-    }
+	}
 
 }

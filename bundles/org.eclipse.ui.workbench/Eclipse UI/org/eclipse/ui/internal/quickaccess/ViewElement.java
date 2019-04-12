@@ -68,13 +68,12 @@ public class ViewElement extends QuickAccessElement {
 	public void execute() {
 		/*
 		 * TODO: see bug 483699: the code below duplicates the code in
-		 * org.eclipse.ui.handlers.ShowViewHandler#openView() and should be
-		 * refactored to some user friendly API
+		 * org.eclipse.ui.handlers.ShowViewHandler#openView() and should be refactored
+		 * to some user friendly API
 		 */
 		String id = viewDescriptor.getElementId();
 		if (id != null) {
-			if (CompatibilityPart.COMPATIBILITY_VIEW_URI
-					.equals(viewDescriptor.getContributionURI())) {
+			if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(viewDescriptor.getContributionURI())) {
 				IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
 				IWorkbenchPage page = workbenchWindow.getActivePage();
 				if (page != null) {
@@ -122,8 +121,7 @@ public class ViewElement extends QuickAccessElement {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((viewDescriptor == null) ? 0 : viewDescriptor.hashCode());
+		result = prime * result + ((viewDescriptor == null) ? 0 : viewDescriptor.hashCode());
 		return result;
 	}
 

@@ -22,9 +22,9 @@ package org.eclipse.ui.internal.commands;
  * Clients may instantiate, but must not extend.
  * </p>
  * <p>
- * <strong>PROVISIONAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
+ * <strong>PROVISIONAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is a guarantee neither that this API will work
+ * nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
  * <p>
@@ -38,11 +38,10 @@ public interface ICommandImageManagerListener {
 
 	/**
 	 * Notifies that one or more properties of an instance of
-	 * <code>CommandImageManager</code> have changed. Specific details are
-	 * described in the <code>CommandImageManagerEvent</code>.
+	 * <code>CommandImageManager</code> have changed. Specific details are described
+	 * in the <code>CommandImageManagerEvent</code>.
 	 *
-	 * @param event
-	 *            The event; never <code>null</code>.
+	 * @param event The event; never <code>null</code>.
 	 */
 	void commandImageManagerChanged(CommandImageManagerEvent event);
 

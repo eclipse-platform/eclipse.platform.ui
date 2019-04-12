@@ -47,8 +47,7 @@ public class ActivateEditorHandler extends AbstractEvaluationHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
 			IEditorPart part = HandlerUtil.getActiveEditor(event);
@@ -73,10 +72,8 @@ public class ActivateEditorHandler extends AbstractEvaluationHandler {
 		if (enabledWhen == null) {
 			enabledWhen = new Expression() {
 				@Override
-				public EvaluationResult evaluate(IEvaluationContext context)
-						throws CoreException {
-					IWorkbenchWindow window = InternalHandlerUtil
-							.getActiveWorkbenchWindow(context);
+				public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+					IWorkbenchWindow window = InternalHandlerUtil.getActiveWorkbenchWindow(context);
 					if (window != null) {
 						if (window.getActivePage() != null) {
 							return EvaluationResult.TRUE;
@@ -87,8 +84,7 @@ public class ActivateEditorHandler extends AbstractEvaluationHandler {
 
 				@Override
 				public void collectExpressionInfo(ExpressionInfo info) {
-					info
-							.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+					info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
 				}
 			};
 		}

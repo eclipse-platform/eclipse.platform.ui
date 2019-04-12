@@ -28,30 +28,30 @@ import org.eclipse.ui.keys.KeyStroke;
  */
 public class FormalKeyFormatter extends AbstractKeyFormatter {
 
-    /**
-     * A comparator that guarantees that modifier keys will be sorted the same
-     * across different platforms.
-     */
-    private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
+	/**
+	 * A comparator that guarantees that modifier keys will be sorted the same
+	 * across different platforms.
+	 */
+	private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
 
-    @Override
+	@Override
 	public String format(Key key) {
-        return key.toString();
-    }
+		return key.toString();
+	}
 
-    @Override
+	@Override
 	protected String getKeyDelimiter() {
-        return KeyStroke.KEY_DELIMITER;
-    }
+		return KeyStroke.KEY_DELIMITER;
+	}
 
-    @Override
+	@Override
 	protected String getKeyStrokeDelimiter() {
-        return KeySequence.KEY_STROKE_DELIMITER;
-    }
+		return KeySequence.KEY_STROKE_DELIMITER;
+	}
 
-    @Override
+	@Override
 	protected Comparator getModifierKeyComparator() {
-        return FORMAL_MODIFIER_KEY_COMPARATOR;
-    }
+		return FORMAL_MODIFIER_KEY_COMPARATOR;
+	}
 
 }

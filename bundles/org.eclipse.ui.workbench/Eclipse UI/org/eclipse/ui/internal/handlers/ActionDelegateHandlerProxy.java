@@ -71,13 +71,12 @@ import org.eclipse.ui.internal.util.BundleUtility;
  *
  * @since 3.2
  */
-public final class ActionDelegateHandlerProxy implements ISelectionListener,
-		ISelectionChangedListener, INullSelectionListener, IHandler2,
-		IObjectWithState, IPartListener2 {
+public final class ActionDelegateHandlerProxy implements ISelectionListener, ISelectionChangedListener,
+		INullSelectionListener, IHandler2, IObjectWithState, IPartListener2 {
 
 	/**
-	 * The fake action that proxies all of the command-based services. This
-	 * value is never <code>null</code>.
+	 * The fake action that proxies all of the command-based services. This value is
+	 * never <code>null</code>.
 	 */
 	private CommandLegacyActionWrapper action;
 
@@ -88,8 +87,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	private String actionId;
 
 	/**
-	 * The command that will back the dummy actions exposed to this delegate.
-	 * This value is never <code>null</code>.
+	 * The command that will back the dummy actions exposed to this delegate. This
+	 * value is never <code>null</code>.
 	 */
 	private ParameterizedCommand command;
 
@@ -121,98 +120,86 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	private String delegateAttributeName;
 
 	/**
-	 * The configuration element from which the handler can be created. This
-	 * value will exist until the element is converted into a real class -- at
-	 * which point this value will be set to <code>null</code>.
+	 * The configuration element from which the handler can be created. This value
+	 * will exist until the element is converted into a real class -- at which point
+	 * this value will be set to <code>null</code>.
 	 */
 	private IConfigurationElement element;
 
 	/**
 	 * The <code>enabledWhen</code> expression for the handler. Only if this
-	 * expression evaluates to <code>true</code> (or the value is
-	 * <code>null</code>) should we consult the handler.
+	 * expression evaluates to <code>true</code> (or the value is <code>null</code>)
+	 * should we consult the handler.
 	 */
 	private final Expression enabledWhenExpression;
 
 	/**
-	 * A collection of objects listening to changes to this manager. This
-	 * collection is <code>null</code> if there are no listeners.
+	 * A collection of objects listening to changes to this manager. This collection
+	 * is <code>null</code> if there are no listeners.
 	 */
 	private transient ListenerList<IHandlerListener> listenerList = null;
 
 	/**
 	 * The image style to use when selecting the images to display for this
-	 * delegate. This value may be <code>null</code>, if the default style
-	 * should be used.
+	 * delegate. This value may be <code>null</code>, if the default style should be
+	 * used.
 	 */
 	private final String style;
 
 	/**
-	 * The identifier of the view with which this delegate must be associated.
-	 * This value is not <code>null</code> iff the delegate is an
+	 * The identifier of the view with which this delegate must be associated. This
+	 * value is not <code>null</code> iff the delegate is an
 	 * {@link IViewActionDelegate}.
 	 */
 	private final String viewId;
 
 	/**
-	 * The workbench window in which this delegate is active. This value is
-	 * never <code>null</code>.
+	 * The workbench window in which this delegate is active. This value is never
+	 * <code>null</code>.
 	 */
 	private final IWorkbenchWindow window;
 
 	/**
-	 * Constructs a new instance of <code>ActionDelegateHandlerProxy</code>
-	 * with all the information it needs to try to avoid loading until it is
-	 * needed.
+	 * Constructs a new instance of <code>ActionDelegateHandlerProxy</code> with all
+	 * the information it needs to try to avoid loading until it is needed.
 	 *
-	 * @param element
-	 *            The configuration element from which the real class can be
-	 *            loaded at run-time; must not be <code>null</code>.
-	 * @param delegateAttributeName
-	 *            The name of the attibute or element containing the action
-	 *            delegate; must not be <code>null</code>.
-	 * @param actionId
-	 *            The identifier of the underlying action; may be
-	 *            <code>null</code>.
-	 * @param command
-	 *            The command with which the action delegate will be associated;
-	 *            must not be <code>null</code>.
-	 * @param window
-	 *            The workbench window in which this delegate will be active;
-	 *            must not be <code>null</code>.
-	 * @param style
-	 *            The image style with which the icons are associated; may be
-	 *            <code>null</code>.
-	 * @param enabledWhenExpression
-	 *            The name of the element containing the enabledWhen expression.
-	 *            This should be a child of the
-	 *            <code>configurationElement</code>. If this value is
-	 *            <code>null</code>, then there is no enablement expression
-	 *            (i.e., enablement will be delegated to the handler when
-	 *            possible).
-	 * @param viewId
-	 *            The identifier of the view to which this proxy is bound; may
-	 *            be <code>null</code> if this proxy is not for an
-	 *            {@link IViewActionDelegate}.
+	 * @param element               The configuration element from which the real
+	 *                              class can be loaded at run-time; must not be
+	 *                              <code>null</code>.
+	 * @param delegateAttributeName The name of the attibute or element containing
+	 *                              the action delegate; must not be
+	 *                              <code>null</code>.
+	 * @param actionId              The identifier of the underlying action; may be
+	 *                              <code>null</code>.
+	 * @param command               The command with which the action delegate will
+	 *                              be associated; must not be <code>null</code>.
+	 * @param window                The workbench window in which this delegate will
+	 *                              be active; must not be <code>null</code>.
+	 * @param style                 The image style with which the icons are
+	 *                              associated; may be <code>null</code>.
+	 * @param enabledWhenExpression The name of the element containing the
+	 *                              enabledWhen expression. This should be a child
+	 *                              of the <code>configurationElement</code>. If
+	 *                              this value is <code>null</code>, then there is
+	 *                              no enablement expression (i.e., enablement will
+	 *                              be delegated to the handler when possible).
+	 * @param viewId                The identifier of the view to which this proxy
+	 *                              is bound; may be <code>null</code> if this proxy
+	 *                              is not for an {@link IViewActionDelegate}.
 	 */
-	public ActionDelegateHandlerProxy(final IConfigurationElement element,
-			final String delegateAttributeName, final String actionId,
-			final ParameterizedCommand command, final IWorkbenchWindow window,
-			final String style, final Expression enabledWhenExpression,
-			final String viewId) {
+	public ActionDelegateHandlerProxy(final IConfigurationElement element, final String delegateAttributeName,
+			final String actionId, final ParameterizedCommand command, final IWorkbenchWindow window,
+			final String style, final Expression enabledWhenExpression, final String viewId) {
 		if (element == null) {
-			throw new NullPointerException(
-					"The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
+			throw new NullPointerException("The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
 		}
 
 		if (delegateAttributeName == null) {
-			throw new NullPointerException(
-					"The attribute containing the action delegate must be known"); //$NON-NLS-1$
+			throw new NullPointerException("The attribute containing the action delegate must be known"); //$NON-NLS-1$
 		}
 
 		if (window == null) {
-			throw new NullPointerException(
-					"The workbench window for a delegate must not be null"); //$NON-NLS-1$
+			throw new NullPointerException("The workbench window for a delegate must not be null"); //$NON-NLS-1$
 		}
 
 		this.element = element;
@@ -237,7 +224,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	@Override
 	public void addState(String id, State state) {
 	}
-
 
 	@Override
 	public void dispose() {
@@ -283,20 +269,17 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				updateDelegate(action, context);
 			}
 
-			if ((action.getStyle() == IAction.AS_CHECK_BOX)
-					|| (action.getStyle() == IAction.AS_RADIO_BUTTON)) {
+			if ((action.getStyle() == IAction.AS_CHECK_BOX) || (action.getStyle() == IAction.AS_RADIO_BUTTON)) {
 				action.setChecked(!action.isChecked());
 			}
 
 			// Decide what type of delegate we have.
-			if ((delegate instanceof IActionDelegate2)
-					&& (trigger instanceof Event)) {
+			if ((delegate instanceof IActionDelegate2) && (trigger instanceof Event)) {
 				// This supports Eclipse 2.1 to Eclipse 3.1.
 				final IActionDelegate2 delegate2 = (IActionDelegate2) delegate;
 				final Event triggeringEvent = (Event) trigger;
 				delegate2.runWithEvent(action, triggeringEvent);
-			} else if ((delegate instanceof IActionDelegateWithEvent)
-					&& (trigger instanceof Event)) {
+			} else if ((delegate instanceof IActionDelegateWithEvent) && (trigger instanceof Event)) {
 				// This supports Eclipse 2.0
 				final IActionDelegateWithEvent delegateWithEvent = (IActionDelegateWithEvent) delegate;
 				final Event triggeringEvent = (Event) trigger;
@@ -313,8 +296,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * @param action
 	 * @param context
 	 */
-	private void updateDelegate(final IAction action,
-			final IEvaluationContext context) {
+	private void updateDelegate(final IAction action, final IEvaluationContext context) {
 		if (action == null) {
 			return;
 		}
@@ -325,23 +307,18 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		}
 
 		if (editorDelegate != null) {
-			final Object activeEditor = context
-					.getVariable(ISources.ACTIVE_EDITOR_NAME);
+			final Object activeEditor = context.getVariable(ISources.ACTIVE_EDITOR_NAME);
 			if (activeEditor != IEvaluationContext.UNDEFINED_VARIABLE) {
-				editorDelegate.setActiveEditor(action,
-						(IEditorPart) activeEditor);
+				editorDelegate.setActiveEditor(action, (IEditorPart) activeEditor);
 			}
-			updateActivePart(activeEditor==IEvaluationContext.UNDEFINED_VARIABLE
-					?null:(IWorkbenchPart)activeEditor);
+			updateActivePart(
+					activeEditor == IEvaluationContext.UNDEFINED_VARIABLE ? null : (IWorkbenchPart) activeEditor);
 		} else if (objectDelegate != null) {
-			final Object activePart = context
-					.getVariable(ISources.ACTIVE_PART_NAME);
+			final Object activePart = context.getVariable(ISources.ACTIVE_PART_NAME);
 			if (activePart != IEvaluationContext.UNDEFINED_VARIABLE) {
-				objectDelegate.setActivePart(action,
-						(IWorkbenchPart) activePart);
+				objectDelegate.setActivePart(action, (IWorkbenchPart) activePart);
 			}
-			updateActivePart(activePart==IEvaluationContext.UNDEFINED_VARIABLE
-					?null:(IWorkbenchPart) activePart);
+			updateActivePart(activePart == IEvaluationContext.UNDEFINED_VARIABLE ? null : (IWorkbenchPart) activePart);
 		}
 
 		final Object selectionObject = getCurrentSelection(context);
@@ -368,7 +345,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		} else {
 			selectionChanged(StructuredSelection.EMPTY);
 			disposeDelegate();
-			if (action!=null) {
+			if (action != null) {
 				action.setEnabled(true);
 			}
 		}
@@ -389,29 +366,26 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * @return
 	 */
 	private Object getCurrentSelection(final IEvaluationContext context) {
-		Object obj = context
-				.getVariable(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
+		Object obj = context.getVariable(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
 		if (obj == null || obj == IEvaluationContext.UNDEFINED_VARIABLE) {
 			obj = context.getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
 			if (obj == null || obj == IEvaluationContext.UNDEFINED_VARIABLE) {
-				obj = context
-						.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+				obj = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 			}
 		}
 		return obj;
 	}
 
 	/**
-	 * Retrieves the action corresponding to the currently active workbench
-	 * window, if any.
+	 * Retrieves the action corresponding to the currently active workbench window,
+	 * if any.
 	 *
-	 * @return The current action; <code>null</code> if there is no currently
-	 *         active workbench window.
+	 * @return The current action; <code>null</code> if there is no currently active
+	 *         workbench window.
 	 */
 	public CommandLegacyActionWrapper getAction() {
 		if (action == null) {
-			action = new CommandLegacyActionWrapper(actionId, command, style,
-					window);
+			action = new CommandLegacyActionWrapper(actionId, command, style, window);
 			action.addPropertyChangeListener(event -> {
 				// TODO Update the state somehow.
 			});
@@ -490,8 +464,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				} else if (editorDelegate != null) {
 					editorDelegate.setActiveEditor(action, activeEditor);
 					updateActivePart(activeEditor);
-				} else if ((viewId != null) && (page != null)
-						&& (viewDelegate != null)) {
+				} else if ((viewId != null) && (page != null) && (viewDelegate != null)) {
 					final IViewPart viewPart = page.findView(viewId);
 					viewDelegate.init(viewPart);
 				} else if (windowDelegate != null) {
@@ -513,8 +486,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		final CommandLegacyActionWrapper action = getAction();
 		if (enabledWhenExpression != null) {
 			try {
-				final EvaluationResult result = enabledWhenExpression
-						.evaluate(context);
+				final EvaluationResult result = enabledWhenExpression.evaluate(context);
 				if (action != null) {
 					action.setEnabled(result != EvaluationResult.FALSE);
 				}
@@ -528,8 +500,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 					message.append(element.getAttribute(delegateAttributeName));
 				}
 				message.append("' could not be loaded"); //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
+				final IStatus status = new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
 				WorkbenchPlugin.log(message.toString(), status);
 				return;
 			}
@@ -548,11 +519,11 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	/**
-	 * Checks if the declaring plugin has been loaded. This means that there
-	 * will be no need to delay creating the delegate.
+	 * Checks if the declaring plugin has been loaded. This means that there will be
+	 * no need to delay creating the delegate.
 	 *
-	 * @return <code>true</code> if the bundle containing the delegate is
-	 *         already loaded -- making it safe to load the delegate.
+	 * @return <code>true</code> if the bundle containing the delegate is already
+	 *         loaded -- making it safe to load the delegate.
 	 */
 	private boolean isSafeToLoadDelegate() {
 		return false;
@@ -563,18 +534,18 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	/**
-	 * Loads the delegate, if possible. If the delegate is loaded, then the
-	 * member variables are updated accordingly.
+	 * Loads the delegate, if possible. If the delegate is loaded, then the member
+	 * variables are updated accordingly.
 	 *
-	 * @return <code>true</code> if the delegate is now non-null;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the delegate is now non-null; <code>false</code>
+	 *         otherwise.
 	 */
 	public boolean loadDelegate() {
 		// Try to load the delegate, if it hasn't been loaded already.
 		if (delegate == null) {
 			/*
-			 * If this is an IViewActionDelegate, then check to see if we have a
-			 * view ready yet. If not, then we'll have to wait.
+			 * If this is an IViewActionDelegate, then check to see if we have a view ready
+			 * yet. If not, then we'll have to wait.
 			 */
 			if (viewId != null) {
 				final IWorkbenchPage activePage = window.getActivePage();
@@ -590,10 +561,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 			// Load the delegate.
 			try {
-				delegate = (IActionDelegate) element
-						.createExecutableExtension(delegateAttributeName);
-				String name = element.getDeclaringExtension()
-						.getExtensionPointUniqueIdentifier();
+				delegate = (IActionDelegate) element.createExecutableExtension(delegateAttributeName);
+				String name = element.getDeclaringExtension().getExtensionPointUniqueIdentifier();
 				if ("org.eclipse.ui.actionSets".equals(name) //$NON-NLS-1$
 						&& delegate instanceof IWorkbenchWindowActionDelegate) {
 					windowDelegate = (IWorkbenchWindowActionDelegate) delegate;
@@ -604,16 +573,13 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 						&& delegate instanceof IViewActionDelegate) {
 					viewDelegate = (IViewActionDelegate) delegate;
 				} else if ("org.eclipse.ui.popupMenus".equals(name)) { //$NON-NLS-1$
-					IConfigurationElement parent = (IConfigurationElement) element
-							.getParent();
+					IConfigurationElement parent = (IConfigurationElement) element.getParent();
 					if ("objectContribution".equals(parent.getName()) //$NON-NLS-1$
 							&& delegate instanceof IObjectActionDelegate) {
 						objectDelegate = (IObjectActionDelegate) delegate;
-					} else if (viewId == null
-							&& delegate instanceof IEditorActionDelegate) {
+					} else if (viewId == null && delegate instanceof IEditorActionDelegate) {
 						editorDelegate = (IEditorActionDelegate) delegate;
-					} else if (viewId != null
-							&& delegate instanceof IViewActionDelegate) {
+					} else if (viewId != null && delegate instanceof IViewActionDelegate) {
 						viewDelegate = (IViewActionDelegate) delegate;
 					}
 				}
@@ -630,17 +596,14 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 			} catch (final ClassCastException e) {
 				final String message = "The proxied delegate was the wrong class"; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				return false;
 
 			} catch (final CoreException e) {
 				final String message = "The proxied delegate for '" //$NON-NLS-1$
-						+ element.getAttribute(delegateAttributeName)
-						+ "' could not be loaded"; //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+						+ element.getAttribute(delegateAttributeName) + "' could not be loaded"; //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				return false;
 			}
@@ -696,8 +659,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	@Override
-	public void selectionChanged(final IWorkbenchPart part,
-			final ISelection selection) {
+	public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
 		selectionChanged(selection);
 
 	}
@@ -716,8 +678,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		if (element != null) {
 			buffer.append(',');
 			try {
-				final String className = element
-						.getAttribute(delegateAttributeName);
+				final String className = element.getAttribute(delegateAttributeName);
 				buffer.append(className);
 				final String namespaceId = element.getNamespaceIdentifier();
 				buffer.append(" in ").append(namespaceId); //$NON-NLS-1$

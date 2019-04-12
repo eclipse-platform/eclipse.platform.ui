@@ -253,7 +253,8 @@ public class PerspectiveBuilder {
 
 	private void hideEmptyStacks() {
 		for (MPartStack stack : modelService.findElements(perspective, null, MPartStack.class)) {
-			if (ID_EDITOR_AREA.equals(stack.getElementId()) || ID_EDITOR_AREA.equals(stack.getParent().getElementId())) {
+			if (ID_EDITOR_AREA.equals(stack.getElementId())
+					|| ID_EDITOR_AREA.equals(stack.getParent().getElementId())) {
 				continue;
 			}
 			if (!hasRenderableContent(stack)) {
@@ -628,11 +629,11 @@ public class PerspectiveBuilder {
 	private static IExtension[] getPerspectiveExtensions() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
 				IWorkbenchRegistryConstants.PL_PERSPECTIVE_EXTENSIONS);
-        if (point == null) {
+		if (point == null) {
 			return null;
 		}
 		IExtension[] extensions = point.getExtensions();
-        extensions = RegistryReader.orderExtensions(extensions);
+		extensions = RegistryReader.orderExtensions(extensions);
 		return extensions;
 	}
 

@@ -24,9 +24,8 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * An expression that checks the active shell variable. The variable name is
  * <code>ISources.ACTIVE_SHELL_NAME</code> and falls back to
- * <code>ISources.ACTIVE_WORKBENCH_WINDOW</code>. That is, if the active
- * shell doesn't match, then it will be allowed to match the active workbench
- * window.
+ * <code>ISources.ACTIVE_WORKBENCH_WINDOW</code>. That is, if the active shell
+ * doesn't match, then it will be allowed to match the active workbench window.
  * </p>
  *
  * @since 3.1
@@ -36,36 +35,33 @@ public final class ActiveShellExpression extends Expression {
 	/**
 	 * The seed for the hash code for all schemes.
 	 */
-	private static final int HASH_INITIAL = ActiveShellExpression.class
-			.getName().hashCode();
+	private static final int HASH_INITIAL = ActiveShellExpression.class.getName().hashCode();
 
 	/**
 	 * The sources value to use with this expression.
 	 */
-	public static final int SOURCES = ISources.ACTIVE_SHELL
-			| ISources.ACTIVE_WORKBENCH_WINDOW;
+	public static final int SOURCES = ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW;
 
 	/**
 	 * The shell that must be active for this expression to evaluate to
-	 * <code>true</code>. If this value is <code>null</code>, then any
-	 * shell may be active.
+	 * <code>true</code>. If this value is <code>null</code>, then any shell may be
+	 * active.
 	 */
 	private final Shell activeShell;
 
 	/**
 	 * Constructs a new instance of <code>ActiveShellExpression</code>
 	 *
-	 * @param activeShell
-	 *            The shell to match with the active shell; <code>null</code>
-	 *            if it will match any active shell.
+	 * @param activeShell The shell to match with the active shell;
+	 *                    <code>null</code> if it will match any active shell.
 	 */
 	public ActiveShellExpression(final Shell activeShell) {
 		this.activeShell = activeShell;
 	}
 
 	/**
-	 * Expression information for this expression.  Namely active shell and
-	 * active workbench window name.
+	 * Expression information for this expression. Namely active shell and active
+	 * workbench window name.
 	 *
 	 * @since 3.2
 	 */
@@ -91,15 +87,14 @@ public final class ActiveShellExpression extends Expression {
 	}
 
 	/**
-	 * Evaluates this expression. If the active shell defined by the context
-	 * matches the shell from this expression, then this evaluates to
-	 * <code>EvaluationResult.TRUE</code>. Similarly, if the active workbench
-	 * window shell defined by the context matches the shell from this
-	 * expression, then this evaluates to <code>EvaluationResult.TRUE</code>.
+	 * Evaluates this expression. If the active shell defined by the context matches
+	 * the shell from this expression, then this evaluates to
+	 * <code>EvaluationResult.TRUE</code>. Similarly, if the active workbench window
+	 * shell defined by the context matches the shell from this expression, then
+	 * this evaluates to <code>EvaluationResult.TRUE</code>.
 	 *
-	 * @param context
-	 *            The context from which the current state is determined; must
-	 *            not be <code>null</code>.
+	 * @param context The context from which the current state is determined; must
+	 *                not be <code>null</code>.
 	 * @return <code>EvaluationResult.TRUE</code> if the shell is active;
 	 *         <code>EvaluationResult.FALSE</code> otherwise.
 	 */
@@ -108,8 +103,7 @@ public final class ActiveShellExpression extends Expression {
 		if (activeShell != null) {
 			Object value = context.getVariable(ISources.ACTIVE_SHELL_NAME);
 			if (!activeShell.equals(value)) {
-				value = context
-						.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
+				value = context.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
 				if (!activeShell.equals(value)) {
 					return EvaluationResult.FALSE;
 				}

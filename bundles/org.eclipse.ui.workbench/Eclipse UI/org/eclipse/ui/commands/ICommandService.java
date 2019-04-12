@@ -63,95 +63,84 @@ public interface ICommandService extends IDisposable {
 	 * Adds an execution listener to the command service. This listener will be
 	 * notified as commands are executed.
 	 * <p>
-	 * <b>Note:</b> listeners should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
 	 *
-	 * @param listener
-	 *            The listener to add; must not be <code>null</code>.
+	 * @param listener The listener to add; must not be <code>null</code>.
 	 * @see #removeExecutionListener(IExecutionListener)
 	 */
 	void addExecutionListener(IExecutionListener listener);
 
 	/**
 	 * Sets the name and description of the category for uncategorized commands.
-	 * This is the category that will be returned if
-	 * {@link #getCategory(String)} is called with <code>null</code>.
+	 * This is the category that will be returned if {@link #getCategory(String)} is
+	 * called with <code>null</code>.
 	 *
-	 * @param name
-	 *            The name of the category for uncategorized commands; must not
-	 *            be <code>null</code>.
-	 * @param description
-	 *            The description of the category for uncategorized commands;
-	 *            may be <code>null</code>.
+	 * @param name        The name of the category for uncategorized commands; must
+	 *                    not be <code>null</code>.
+	 * @param description The description of the category for uncategorized
+	 *                    commands; may be <code>null</code>.
 	 * @since 3.2
 	 */
 	void defineUncategorizedCategory(String name, String description);
 
 	/**
 	 * <p>
-	 * Returns a {@link ParameterizedCommand} with a command and
-	 * parameterizations as specified in the provided
-	 * <code>serializedParameterizedCommand</code> string. The
-	 * <code>serializedParameterizedCommand</code> must use the format
+	 * Returns a {@link ParameterizedCommand} with a command and parameterizations
+	 * as specified in the provided <code>serializedParameterizedCommand</code>
+	 * string. The <code>serializedParameterizedCommand</code> must use the format
 	 * returned by {@link ParameterizedCommand#serialize()} and described in the
 	 * Javadoc for that method.
 	 * </p>
 	 * <p>
-	 * If a parameter id encoded in the
-	 * <code>serializedParameterizedCommand</code> does not exist in the
-	 * encoded command, that parameter id and value are ignored. A given
-	 * parameter id should not be used more than once in
-	 * <code>serializedParameterizedCommand</code>. This will not result in
-	 * an exception, but the value of the parameter when the command is executed
-	 * cannot be specified here.
+	 * If a parameter id encoded in the <code>serializedParameterizedCommand</code>
+	 * does not exist in the encoded command, that parameter id and value are
+	 * ignored. A given parameter id should not be used more than once in
+	 * <code>serializedParameterizedCommand</code>. This will not result in an
+	 * exception, but the value of the parameter when the command is executed cannot
+	 * be specified here.
 	 * </p>
 	 * <p>
-	 * This method will never return <code>null</code>, however it may throw
-	 * an exception if there is a problem processing the serialization string or
-	 * the encoded command is undefined.
+	 * This method will never return <code>null</code>, however it may throw an
+	 * exception if there is a problem processing the serialization string or the
+	 * encoded command is undefined.
 	 * </p>
 	 *
-	 * @param serializedParameterizedCommand
-	 *            a <code>String</code> representing a command id and
-	 *            parameter ids and values
+	 * @param serializedParameterizedCommand a <code>String</code> representing a
+	 *                                       command id and parameter ids and values
 	 * @return a <code>ParameterizedCommand</code> with the command and
 	 *         parameterizations encoded in the
 	 *         <code>serializedParameterizedCommand</code>
-	 * @throws NotDefinedException
-	 *             if the command indicated in
-	 *             <code>serializedParameterizedCommand</code> is not defined
-	 * @throws SerializationException
-	 *             if there is an error deserializing
-	 *             <code>serializedParameterizedCommand</code>
+	 * @throws NotDefinedException    if the command indicated in
+	 *                                <code>serializedParameterizedCommand</code> is
+	 *                                not defined
+	 * @throws SerializationException if there is an error deserializing
+	 *                                <code>serializedParameterizedCommand</code>
 	 * @see ParameterizedCommand#serialize()
 	 * @see CommandManager#deserialize(String)
 	 * @since 3.2
 	 */
-	ParameterizedCommand deserialize(
-			String serializedParameterizedCommand) throws NotDefinedException,
-			SerializationException;
+	ParameterizedCommand deserialize(String serializedParameterizedCommand)
+			throws NotDefinedException, SerializationException;
 
 	/**
-	 * Retrieves the category with the given identifier. If no such category
-	 * exists, then an undefined category with the given id is created.
+	 * Retrieves the category with the given identifier. If no such category exists,
+	 * then an undefined category with the given id is created.
 	 *
-	 * @param categoryId
-	 *            The identifier to find. If the category is <code>null</code>,
-	 *            then a category suitable for uncategorized items is defined
-	 *            and returned.
-	 * @return A category with the given identifier, either defined or
-	 *         undefined.
+	 * @param categoryId The identifier to find. If the category is
+	 *                   <code>null</code>, then a category suitable for
+	 *                   uncategorized items is defined and returned.
+	 * @return A category with the given identifier, either defined or undefined.
 	 */
 	Category getCategory(String categoryId);
 
 	/**
-	 * Retrieves the command with the given identifier. If no such command
-	 * exists, then an undefined command with the given id is created.
+	 * Retrieves the command with the given identifier. If no such command exists,
+	 * then an undefined command with the given id is created.
 	 *
-	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
+	 * @param commandId The identifier to find; must not be <code>null</code>.
 	 * @return A command with the given identifier, either defined or undefined.
 	 */
 	Command getCommand(String commandId);
@@ -166,28 +155,28 @@ public interface ICommandService extends IDisposable {
 	Category[] getDefinedCategories();
 
 	/**
-	 * Returns the collection of the identifiers for all of the defined
-	 * categories in the workbench.
+	 * Returns the collection of the identifiers for all of the defined categories
+	 * in the workbench.
 	 *
-	 * @return The collection of category identifiers (<code>String</code>)
-	 *         that are defined; never <code>null</code>, but may be empty.
+	 * @return The collection of category identifiers (<code>String</code>) that are
+	 *         defined; never <code>null</code>, but may be empty.
 	 */
 	Collection getDefinedCategoryIds();
 
 	/**
-	 * Returns the collection of the identifiers for all of the defined commands
-	 * in the workbench.
+	 * Returns the collection of the identifiers for all of the defined commands in
+	 * the workbench.
 	 *
-	 * @return The collection of command identifiers (<code>String</code>)
-	 *         that are defined; never <code>null</code>, but may be empty.
+	 * @return The collection of command identifiers (<code>String</code>) that are
+	 *         defined; never <code>null</code>, but may be empty.
 	 */
 	Collection getDefinedCommandIds();
 
 	/**
 	 * Returns the collection of all of the defined commands in the workbench.
 	 *
-	 * @return The collection of commands (<code>Command</code>) that are
-	 *         defined; never <code>null</code>, but may be empty.
+	 * @return The collection of commands (<code>Command</code>) that are defined;
+	 *         never <code>null</code>, but may be empty.
 	 * @since 3.2
 	 */
 	Command[] getDefinedCommands();
@@ -196,67 +185,65 @@ public interface ICommandService extends IDisposable {
 	 * Returns the collection of the identifiers for all of the defined command
 	 * parameter types in the workbench.
 	 *
-	 * @return The collection of command parameter type identifiers (<code>String</code>)
-	 *         that are defined; never <code>null</code>, but may be empty.
+	 * @return The collection of command parameter type identifiers
+	 *         (<code>String</code>) that are defined; never <code>null</code>, but
+	 *         may be empty.
 	 * @since 3.2
 	 */
 	Collection getDefinedParameterTypeIds();
 
 	/**
-	 * Returns the collection of all of the defined command parameter types in
-	 * the workbench.
+	 * Returns the collection of all of the defined command parameter types in the
+	 * workbench.
 	 *
-	 * @return The collection of command parameter types (<code>ParameterType</code>)
-	 *         that are defined; never <code>null</code>, but may be empty.
+	 * @return The collection of command parameter types
+	 *         (<code>ParameterType</code>) that are defined; never
+	 *         <code>null</code>, but may be empty.
 	 * @since 3.2
 	 */
 	ParameterType[] getDefinedParameterTypes();
 
 	/**
 	 * Gets the help context identifier for a particular command. The command's
-	 * handler is first checked for a help context identifier. If the handler
-	 * does not have a help context identifier, then the help context identifier
-	 * for the command is returned. If neither has a help context identifier,
-	 * then <code>null</code> is returned.
+	 * handler is first checked for a help context identifier. If the handler does
+	 * not have a help context identifier, then the help context identifier for the
+	 * command is returned. If neither has a help context identifier, then
+	 * <code>null</code> is returned.
 	 *
-	 * @param command
-	 *            The command for which the help context should be retrieved;
-	 *            must not be <code>null</code>.
+	 * @param command The command for which the help context should be retrieved;
+	 *                must not be <code>null</code>.
 	 * @return The help context identifier to use for the given command; may be
 	 *         <code>null</code>.
-	 * @throws NotDefinedException
-	 *             If the given command is not defined.
+	 * @throws NotDefinedException If the given command is not defined.
 	 * @since 3.2
 	 */
 	String getHelpContextId(Command command) throws NotDefinedException;
 
 	/**
 	 * Gets the help context identifier for a particular command. The command's
-	 * handler is first checked for a help context identifier. If the handler
-	 * does not have a help context identifier, then the help context identifier
-	 * for the command is returned. If neither has a help context identifier,
-	 * then <code>null</code> is returned.
+	 * handler is first checked for a help context identifier. If the handler does
+	 * not have a help context identifier, then the help context identifier for the
+	 * command is returned. If neither has a help context identifier, then
+	 * <code>null</code> is returned.
 	 *
-	 * @param commandId
-	 *            The identifier of the command for which the help context
-	 *            should be retrieved; must not be <code>null</code>.
+	 * @param commandId The identifier of the command for which the help context
+	 *                  should be retrieved; must not be <code>null</code>.
 	 * @return The help context identifier to use for the given command; may be
 	 *         <code>null</code>.
-	 * @throws NotDefinedException
-	 *             If the command with the given identifier is not defined.
+	 * @throws NotDefinedException If the command with the given identifier is not
+	 *                             defined.
 	 * @since 3.2
 	 */
 	String getHelpContextId(String commandId) throws NotDefinedException;
 
 	/**
-	 * Retrieves the command parameter type with the given identifier. If no
-	 * such parameter type exists, then an undefined parameter type with the
-	 * given id is created.
+	 * Retrieves the command parameter type with the given identifier. If no such
+	 * parameter type exists, then an undefined parameter type with the given id is
+	 * created.
 	 *
-	 * @param parameterTypeId
-	 *            The identifier to find; must not be <code>null</code>.
-	 * @return A command parameter type with the given identifier, either
-	 *         defined or undefined.
+	 * @param parameterTypeId The identifier to find; must not be <code>null</code>.
+	 * @return A command parameter type with the given identifier, either defined or
+	 *         undefined.
 	 * @since 3.2
 	 */
 	ParameterType getParameterType(String parameterTypeId);
@@ -264,10 +251,10 @@ public interface ICommandService extends IDisposable {
 	/**
 	 * <p>
 	 * Reads the command information from the registry and the preferences. This
-	 * will overwrite any of the existing information in the command service.
-	 * This method is intended to be called during start-up. When this method
-	 * completes, this command service will reflect the current state of the
-	 * registry and preference store.
+	 * will overwrite any of the existing information in the command service. This
+	 * method is intended to be called during start-up. When this method completes,
+	 * this command service will reflect the current state of the registry and
+	 * preference store.
 	 * </p>
 	 */
 	void readRegistry();
@@ -275,78 +262,70 @@ public interface ICommandService extends IDisposable {
 	/**
 	 * Removes an execution listener from the command service.
 	 *
-	 * @param listener
-	 *            The listener to remove; must not be <code>null</code>.
+	 * @param listener The listener to remove; must not be <code>null</code>.
 	 */
 	void removeExecutionListener(IExecutionListener listener);
 
 	/**
 	 * Sets the help context identifier to associate with a particular handler.
 	 *
-	 * @param handler
-	 *            The handler with which to register a help context identifier;
-	 *            must not be <code>null</code>.
-	 * @param helpContextId
-	 *            The help context identifier to register; may be
-	 *            <code>null</code> if the help context identifier should be
-	 *            removed.
+	 * @param handler       The handler with which to register a help context
+	 *                      identifier; must not be <code>null</code>.
+	 * @param helpContextId The help context identifier to register; may be
+	 *                      <code>null</code> if the help context identifier should
+	 *                      be removed.
 	 * @since 3.2
 	 */
 	void setHelpContextId(IHandler handler, String helpContextId);
 
 	/**
-	 * Register that this element accepts callbacks for this parameterized
-	 * command.
+	 * Register that this element accepts callbacks for this parameterized command.
 	 * <p>
-	 * <b>Note:</b> elements should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> elements should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
 	 *
-	 * @param command
-	 *            The parameterized command that is already specialized. Must
-	 *            not be <code>null</code>.
-	 * @param element
-	 *            The callback to register for this specialized command
-	 *            instance. Must not be <code>null</code>.
-	 * @return A reference for the registered element that can be used to
-	 *         unregister it.
-	 * @throws NotDefinedException
-	 *             If the command included in the ParameterizedCommand is not
-	 *             defined, or the element is <code>null</code>.
+	 * @param command The parameterized command that is already specialized. Must
+	 *                not be <code>null</code>.
+	 * @param element The callback to register for this specialized command
+	 *                instance. Must not be <code>null</code>.
+	 * @return A reference for the registered element that can be used to unregister
+	 *         it.
+	 * @throws NotDefinedException If the command included in the
+	 *                             ParameterizedCommand is not defined, or the
+	 *                             element is <code>null</code>.
 	 * @since 3.3
 	 * @see #unregisterElement(IElementReference)
 	 */
-	IElementReference registerElementForCommand(
-			ParameterizedCommand command, UIElement element)
+	IElementReference registerElementForCommand(ParameterizedCommand command, UIElement element)
 			throws NotDefinedException;
 
 	/**
-	 * Re-register a callback element provided by the ICommandService. This
-	 * element reference must not currently be held by the ICommandService. i.e.
-	 * it must have been removed using
-	 * {@link #unregisterElement(IElementReference)}.
+	 * Re-register a callback element provided by the ICommandService. This element
+	 * reference must not currently be held by the ICommandService. i.e. it must
+	 * have been removed using {@link #unregisterElement(IElementReference)}.
 	 * <p>
-	 * <b>Note:</b> elements should be removed when no longer necessary. If
-	 * not, they will be removed when the IServiceLocator used to acquire this
-	 * service is disposed.
+	 * <b>Note:</b> elements should be removed when no longer necessary. If not,
+	 * they will be removed when the IServiceLocator used to acquire this service is
+	 * disposed.
 	 * </p>
 	 *
-	 * @param elementReference
-	 *            The reference to re-register. Must not be <code>null</code>.
+	 * @param elementReference The reference to re-register. Must not be
+	 *                         <code>null</code>.
 	 * @since 3.3
 	 * @see #unregisterElement(IElementReference)
 	 */
 	void registerElement(IElementReference elementReference);
 
 	/**
-	 * Unregister an element callback. It will be removed from the
-	 * ICommandService. The same service that is used to register an element for
-	 * a command <b>must</b> be used to unregister the element.
+	 * Unregister an element callback. It will be removed from the ICommandService.
+	 * The same service that is used to register an element for a command
+	 * <b>must</b> be used to unregister the element.
 	 *
-	 * @param elementReference
-	 *            The callback reference that was provided by the command
-	 *            service on registration. Must not be <code>null</code>.
+	 * @param elementReference The callback reference that was provided by the
+	 *                         command service on registration. Must not be
+	 *                         <code>null</code>.
 	 * @since 3.3
 	 */
 	void unregisterElement(IElementReference elementReference);

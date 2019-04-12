@@ -53,11 +53,9 @@ public class SettingsTransferRegistryReader extends RegistryReader {
 
 		settingsTransfers = new ArrayList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		readRegistry(registry, WorkbenchPlugin.PI_WORKBENCH,
-				IWorkbenchRegistryConstants.PL_PREFERENCE_TRANSFER);
+		readRegistry(registry, WorkbenchPlugin.PI_WORKBENCH, IWorkbenchRegistryConstants.PL_PREFERENCE_TRANSFER);
 
-		IConfigurationElement[] transfers = new IConfigurationElement[settingsTransfers
-				.size()];
+		IConfigurationElement[] transfers = new IConfigurationElement[settingsTransfers.size()];
 		settingsTransfers.toArray(transfers);
 		return transfers;
 
@@ -65,16 +63,14 @@ public class SettingsTransferRegistryReader extends RegistryReader {
 
 	@Override
 	protected boolean readElement(IConfigurationElement element) {
-		if (element.getName().equals(
-				IWorkbenchRegistryConstants.TAG_SETTINGS_TRANSFER)) {
+		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_SETTINGS_TRANSFER)) {
 
 			settingsTransfers.add(element);
 			return true;
 		}
 
-		//Ignore the preference transfers
-		return element.getName().equals(
-				IWorkbenchRegistryConstants.TAG_TRANSFER);
+		// Ignore the preference transfers
+		return element.getName().equals(IWorkbenchRegistryConstants.TAG_TRANSFER);
 	}
 
 }

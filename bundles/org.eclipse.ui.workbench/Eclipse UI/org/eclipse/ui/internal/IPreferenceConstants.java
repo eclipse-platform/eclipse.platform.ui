@@ -25,14 +25,14 @@ package org.eclipse.ui.internal;
  */
 public interface IPreferenceConstants {
 
-    //Boolean: true = single click opens editor; false = double click opens
-    // it.
+	// Boolean: true = single click opens editor; false = double click opens
+	// it.
 	String OPEN_ON_SINGLE_CLICK = "OPEN_ON_SINGLE_CLICK"; //$NON-NLS-1$
 
-    //Boolean: true = select on hover;
+	// Boolean: true = select on hover;
 	String SELECT_ON_HOVER = "SELECT_ON_HOVER"; //$NON-NLS-1$
 
-    //Boolean: true = open after delay
+	// Boolean: true = open after delay
 	String OPEN_AFTER_DELAY = "OPEN_AFTER_DELAY"; //$NON-NLS-1$
 
 	// Boolean: true = bidi support enabled; false = bidi support disabled
@@ -49,28 +49,28 @@ public interface IPreferenceConstants {
 	// String: Unicode locale extensions
 	String NL_EXTENSIONS = "NL_EXTENSIONS"; //$NON-NLS-1$
 
-    //Do we show color icons in toolbars?
+	// Do we show color icons in toolbars?
 	String COLOR_ICONS = "COLOR_ICONS"; //$NON-NLS-1$
 
-    //mappings for type/extension to an editor
+	// mappings for type/extension to an editor
 	String EDITORS = "editors"; //$NON-NLS-1$
 
 	String RESOURCES = "resourcetypes"; //$NON-NLS-1$
 
-    //saving perspective layouts
+	// saving perspective layouts
 	String PERSPECTIVES = "perspectives"; //$NON-NLS-1$
 
-    // (int) If > 0, an editor will be reused once 'N' editors are opened.
+	// (int) If > 0, an editor will be reused once 'N' editors are opened.
 	String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
 
-    //On/Off option for the two preceding options.
+	// On/Off option for the two preceding options.
 	String REUSE_EDITORS_BOOLEAN = "REUSE_OPEN_EDITORS_BOOLEAN"; //$NON-NLS-1$
 
-    // (int) N recently viewed files will be listed in the File->Open Recent
-    // menu.
+	// (int) N recently viewed files will be listed in the File->Open Recent
+	// menu.
 	String RECENT_FILES = "RECENT_FILES"; //$NON-NLS-1$
 
-    // (int) Mode for opening a new perspective
+	// (int) Mode for opening a new perspective
 	String OPEN_PERSP_MODE = "OPEN_PERSPECTIVE_MODE"; //$NON-NLS-1$
 
 	int OPM_ACTIVE_PAGE = 0;
@@ -78,33 +78,33 @@ public interface IPreferenceConstants {
 	// int OPM_NEW_PAGE = 1;
 	int OPM_NEW_WINDOW = 2;
 
-    //Identifier for enabled decorators
+	// Identifier for enabled decorators
 	String ENABLED_DECORATORS = "ENABLED_DECORATORS"; //$NON-NLS-1$
 
-    //Boolean: true = keep cycle part dialog open when keys released
+	// Boolean: true = keep cycle part dialog open when keys released
 	String STICKY_CYCLE = "STICKY_CYCLE"; //$NON-NLS-1$
 
-    //List of plugins but that extends "startup" extension point but are
-    // overriden by the user.
-    //String of plugin unique ids separated by ";"
+	// List of plugins but that extends "startup" extension point but are
+	// overriden by the user.
+	// String of plugin unique ids separated by ";"
 	String PLUGINS_NOT_ACTIVATED_ON_STARTUP = "PLUGINS_NOT_ACTIVATED_ON_STARTUP"; //$NON-NLS-1$
 
-    //Separator for PLUGINS_NOT_ACTIVATED_ON_STARTUP
+	// Separator for PLUGINS_NOT_ACTIVATED_ON_STARTUP
 	char SEPARATOR = ';';
 
-    //Preference key for default editors
+	// Preference key for default editors
 	String DEFAULT_EDITORS = "defaultEditors"; //$NON-NLS-1$
 
-    //Preference key for default editors
+	// Preference key for default editors
 	String DEFAULT_EDITORS_CACHE = "defaultEditorsCache"; //$NON-NLS-1$
 
-    //Tab width = tab height * scalar value
+	// Tab width = tab height * scalar value
 	String EDITOR_TAB_WIDTH = "EDITOR_TAB_WIDTH"; //$NON-NLS-1$
 
-    //Boolean: true = show Editors drop down button on CTabFolder
+	// Boolean: true = show Editors drop down button on CTabFolder
 	String EDITORLIST_PULLDOWN_ACTIVE = "EDITORLIST_PULLDOWN_ACTIVE"; //$NON-NLS-1$
 
-    // Selection scope for EditorList
+	// Selection scope for EditorList
 	String EDITORLIST_SELECTION_SCOPE = "EDITORLIST_SELECTION_SCOPE"; //$NON-NLS-1$
 
 	int EDITORLIST_SET_WINDOW_SCOPE = 0;
@@ -113,7 +113,7 @@ public interface IPreferenceConstants {
 
 	int EDITORLIST_SET_TAB_GROUP_SCOPE = 2;
 
-    // Sort criteria for EditorList
+	// Sort criteria for EditorList
 	String EDITORLIST_SORT_CRITERIA = "EDITORLIST_SORT_CRITERIA"; //$NON-NLS-1$
 
 	int EDITORLIST_NAME_SORT = 0;
@@ -123,95 +123,93 @@ public interface IPreferenceConstants {
 	// Max entries shown in the progress view (see DetailedProgressViewer)
 	String MAX_PROGRESS_ENTRIES = "MAX_PROGRESS_ENTRIES"; //$NON-NLS-1$
 
-    /**
-     * Boolean; true = EditorList displays full path
-     */
+	/**
+	 * Boolean; true = EditorList displays full path
+	 */
 	String EDITORLIST_DISPLAY_FULL_NAME = "EDITORLIST_DISPLAY_FULL_NAME"; //$NON-NLS-1$
 
-
-    /**
-     * Workbench preference id for determining whether the user has chosen to
-     * override some of the settings in the current presentation.
-     * <p>
-     * The default value for this preference is: <code>false</code> (prompt)
-     * </p>
-     *
-     * @since 3.2
-     */
+	/**
+	 * Workbench preference id for determining whether the user has chosen to
+	 * override some of the settings in the current presentation.
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (prompt)
+	 * </p>
+	 *
+	 * @since 3.2
+	 */
 	String OVERRIDE_PRESENTATION = "overridepresentation"; // $//$NON-NLS-1$
 
-    /**
-     * <p>
-     * The key for the preference indicating which tab is selected in the keys
-     * preference page when last okay was pressed. This value should never
-     * really be directly edited by a user.
-     * </p>
-     * <p>
-     * This preference is an <code>int</code> value. The default value is
-     * <code>0</code>.
-     * </p>
-     *
-     * @since 3.1
-     */
+	/**
+	 * <p>
+	 * The key for the preference indicating which tab is selected in the keys
+	 * preference page when last okay was pressed. This value should never really be
+	 * directly edited by a user.
+	 * </p>
+	 * <p>
+	 * This preference is an <code>int</code> value. The default value is
+	 * <code>0</code>.
+	 * </p>
+	 *
+	 * @since 3.1
+	 */
 	String KEYS_PREFERENCE_SELECTED_TAB = "KEYS_PREFERENCE_SELECTED_TAB"; //$NON-NLS-1$
 
-    /**
-     * <p>
-     * The key for the preference indicating whether multi-stroke key sequences
-     * should provide assistance to the user. This means that if the user pauses
-     * after pressing the first key, a window will open showing the possible
-     * completions.
-     * </p>
-     * <p>
-     * This preference is a <code>boolean</code> value. The default value is
-     * <code>false</code>.
-     * </p>
-     *
-     * @since 3.0
-     */
+	/**
+	 * <p>
+	 * The key for the preference indicating whether multi-stroke key sequences
+	 * should provide assistance to the user. This means that if the user pauses
+	 * after pressing the first key, a window will open showing the possible
+	 * completions.
+	 * </p>
+	 * <p>
+	 * This preference is a <code>boolean</code> value. The default value is
+	 * <code>false</code>.
+	 * </p>
+	 *
+	 * @since 3.0
+	 */
 	String MULTI_KEY_ASSIST = "MULTI_KEY_ASSIST"; //$NON-NLS-1$
 
-    /**
-     * <p>
-     * The key for the preference indicating how long the assist window should
-     * wait before opening. This is a value in milliseconds -- from the time the
-     * first key in a multi-key is received by the system, to the time the
-     * assist window should appear.
-     * </p>
-     * <p>
-     * This preference is an <code>int</code> value. The default value is
-     * <code>1000</code>.
-     * </p>
-     *
-     * @since 3.0
-     */
+	/**
+	 * <p>
+	 * The key for the preference indicating how long the assist window should wait
+	 * before opening. This is a value in milliseconds -- from the time the first
+	 * key in a multi-key is received by the system, to the time the assist window
+	 * should appear.
+	 * </p>
+	 * <p>
+	 * This preference is an <code>int</code> value. The default value is
+	 * <code>1000</code>.
+	 * </p>
+	 *
+	 * @since 3.0
+	 */
 	String MULTI_KEY_ASSIST_TIME = "MULTI_KEY_ASSIST_TIME"; //$NON-NLS-1$
 
-    /**
-     * Workbench preference to use the new IPersistableEditor interface
-     * throughout the workbench new editor/open editor calls.
-     *
-     * @since 3.3
-     */
+	/**
+	 * Workbench preference to use the new IPersistableEditor interface throughout
+	 * the workbench new editor/open editor calls.
+	 *
+	 * @since 3.3
+	 */
 	String USE_IPERSISTABLE_EDITORS = "USE_IPERSISTABLE_EDITORS"; //$NON-NLS-1$
 
-    /**
-     * Preference to show user jobs in a dialog.
-     */
+	/**
+	 * Preference to show user jobs in a dialog.
+	 */
 	String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND"; //$NON-NLS-1$
 
-    /**
-     * Workbench preference id for determining whether the user will be prompted
-     * for activity enablement. If this is false then activities are enabled
-     * automatically. If it is true, then the user is only prompted for
-     * activities that they have not already declared a disinterest in via the
-     * prompt dialog.
-     * <p>
-     * The default value for this preference is: <code>true</code> (prompt)
-     * </p>
-     *
-     * @since 3.0
-     */
+	/**
+	 * Workbench preference id for determining whether the user will be prompted for
+	 * activity enablement. If this is false then activities are enabled
+	 * automatically. If it is true, then the user is only prompted for activities
+	 * that they have not already declared a disinterest in via the prompt dialog.
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (prompt)
+	 * </p>
+	 *
+	 * @since 3.0
+	 */
 	String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
 
 	/**
@@ -228,14 +226,14 @@ public interface IPreferenceConstants {
 	 */
 	String PERSPECTIVEBAR_VISIBLE = "perspectiveBarVisible"; //$NON-NLS-1$
 
-    /**
-	 * Preference that restores the 3.2 startup threading behavior. This
-	 * essentially means that there will be no restrictions on what runnables
-	 * will be processed via the UI synchronizer.
+	/**
+	 * Preference that restores the 3.2 startup threading behavior. This essentially
+	 * means that there will be no restrictions on what runnables will be processed
+	 * via the UI synchronizer.
 	 *
 	 * <p>
-	 * This preference will likely disappear in 3.5 in favor of a proper
-	 * solution to bug 219913.
+	 * This preference will likely disappear in 3.5 in favor of a proper solution to
+	 * bug 219913.
 	 * </p>
 	 *
 	 * @since 3.4
@@ -244,8 +242,7 @@ public interface IPreferenceConstants {
 
 	/**
 	 * Preference value that specifies the time interval in minutes between
-	 * workbench auto-saves. If the value is zero it disables workbench
-	 * auto-save.
+	 * workbench auto-saves. If the value is zero it disables workbench auto-save.
 	 *
 	 * @since 3.105
 	 */
@@ -253,13 +250,13 @@ public interface IPreferenceConstants {
 
 	/**
 	 * This preference is the threshold value to determine whether a document is
-	 * large or not. When the user tries to open a file larger than the
-	 * threshold, then EditorSelectionDialog will be opened, suggesting the user
-	 * to open with an external editor.
+	 * large or not. When the user tries to open a file larger than the threshold,
+	 * then EditorSelectionDialog will be opened, suggesting the user to open with
+	 * an external editor.
 	 * <p>
-	 * This preference is a <code>long</code> value that represents the
-	 * threshold in bytes. The default value is <code>0</code> meaning no
-	 * prompting on editor opening.
+	 * This preference is a <code>long</code> value that represents the threshold in
+	 * bytes. The default value is <code>0</code> meaning no prompting on editor
+	 * opening.
 	 * </p>
 	 *
 	 * @since 3.7
@@ -277,8 +274,8 @@ public interface IPreferenceConstants {
 	String SAVE_AUTOMATICALLY = "SAVE_AUTOMATICALLY"; //$NON-NLS-1$
 
 	/**
-	 * Preference value that specifies the time interval in seconds between
-	 * editors auto-saves.
+	 * Preference value that specifies the time interval in seconds between editors
+	 * auto-saves.
 	 * <p>
 	 * The integer default value for this preference is: <code>60</code>.
 	 * </p>

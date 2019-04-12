@@ -57,8 +57,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @since 3.5
  *
  */
-public class InstallationDialog extends TrayDialog implements
-		IInstallationPageContainer {
+public class InstallationDialog extends TrayDialog implements IInstallationPageContainer {
 	class ButtonManager {
 
 		private Composite composite;
@@ -110,11 +109,9 @@ public class InstallationDialog extends TrayDialog implements
 			composite.layout(true);
 		}
 
-		protected void setButtonLayoutData(FontMetrics metrics, Control button,
-				boolean visible) {
+		protected void setButtonLayoutData(FontMetrics metrics, Control button, boolean visible) {
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-			int widthHint = Dialog.convertHorizontalDLUsToPixels(metrics,
-					IDialogConstants.BUTTON_WIDTH);
+			int widthHint = Dialog.convertHorizontalDLUsToPixels(metrics, IDialogConstants.BUTTON_WIDTH);
 			Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			data.widthHint = Math.max(widthHint, minSize.x);
 			data.exclude = !visible;
@@ -164,8 +161,7 @@ public class InstallationDialog extends TrayDialog implements
 		IProduct product = Platform.getProduct();
 		if (product != null && product.getName() != null)
 			productName = product.getName();
-		newShell.setText(NLS.bind(
-				WorkbenchMessages.InstallationDialog_ShellTitle, productName));
+		newShell.setText(NLS.bind(WorkbenchMessages.InstallationDialog_ShellTitle, productName));
 	}
 
 	@Override
@@ -191,15 +187,12 @@ public class InstallationDialog extends TrayDialog implements
 	}
 
 	protected void createFolderItems(CTabFolder folder) {
-		IConfigurationElement[] elements = ConfigurationInfo
-				.getSortedExtensions(loadElements());
+		IConfigurationElement[] elements = ConfigurationInfo.getSortedExtensions(loadElements());
 		for (IConfigurationElement element : elements) {
 			CTabItem item = new CTabItem(folder, SWT.NONE);
-			item.setText(element
-					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
+			item.setText(element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
 			item.setData(element);
-			item.setData(ID, element
-					.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
+			item.setData(ID, element.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 
 			Composite control = new Composite(folder, SWT.NONE);
 			control.setLayout(new GridLayout());
@@ -240,8 +233,7 @@ public class InstallationDialog extends TrayDialog implements
 	 */
 	private void tabSelected(CTabItem item) {
 		if (item.getData() instanceof IConfigurationElement) {
-			final IConfigurationElement element = (IConfigurationElement) item
-					.getData();
+			final IConfigurationElement element = (IConfigurationElement) item.getData();
 
 			Composite pageComposite = (Composite) item.getControl();
 			try {
@@ -255,8 +247,7 @@ public class InstallationDialog extends TrayDialog implements
 				// Must be done before creating the buttons because the control
 				// button creation methods
 				// use this map.
-				pageToId.put(page, element
-						.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
+				pageToId.put(page, element.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 				createButtons(page);
 				item.setData(page);
 				item.addDisposeListener(e -> page.dispose());
@@ -272,12 +263,12 @@ public class InstallationDialog extends TrayDialog implements
 		String id = (String) item.getData(ID);
 		rememberSelectedTab(id);
 		buttonManager.update(id);
-		Button button = createButton(buttonManager.getParent(),
-				IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
+		Button button = createButton(buttonManager.getParent(), IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL,
+				true);
 		GridData gd = (GridData) button.getLayoutData();
 		gd.horizontalAlignment = SWT.BEGINNING;
 		gd.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH) / 2;
-		// Layout the button bar's parent and all of its children.  We must
+		// Layout the button bar's parent and all of its children. We must
 		// cascade through all children because the buttons have changed and
 		// because tray dialog inserts an extra composite in the button bar
 		// hierarchy.
@@ -308,15 +299,14 @@ public class InstallationDialog extends TrayDialog implements
 	}
 
 	private IConfigurationElement[] loadElements() {
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint("org.eclipse.ui", "installationPages"); //$NON-NLS-1$ //$NON-NLS-2$
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.ui", //$NON-NLS-1$
+				"installationPages"); //$NON-NLS-1$
 		return point.getConfigurationElements();
 	}
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = WorkbenchPlugin.getDefault()
-				.getDialogSettings();
+		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
 		if (section == null) {
 			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
@@ -354,16 +344,15 @@ public class InstallationDialog extends TrayDialog implements
 	}
 
 	/**
-	 * Set the modal parent dialog that was used to launch this dialog. This
-	 * should be used by any launching dialog so that the {
-	 * {@link #closeModalContainers()} method can be properly implemented.
+	 * Set the modal parent dialog that was used to launch this dialog. This should
+	 * be used by any launching dialog so that the { {@link #closeModalContainers()}
+	 * method can be properly implemented.
 	 *
-	 * @param parent
-	 *            the modal parent dialog that launched this dialog, or
-	 *            <code>null</code> if there was no parent.
+	 * @param parent the modal parent dialog that launched this dialog, or
+	 *               <code>null</code> if there was no parent.
 	 *
-	 *            This is an internal method and should not be used outside of
-	 *            platform UI.
+	 *               This is an internal method and should not be used outside of
+	 *               platform UI.
 	 */
 	public void setModalParent(Dialog parent) {
 		this.modalParent = parent;

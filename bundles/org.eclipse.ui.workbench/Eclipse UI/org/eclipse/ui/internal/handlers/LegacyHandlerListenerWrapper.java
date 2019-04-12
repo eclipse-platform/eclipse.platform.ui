@@ -39,19 +39,16 @@ public final class LegacyHandlerListenerWrapper implements IHandlerListener {
 	/**
 	 * Constructs a new instance of <code>LegacyHandlerListenerWrapper</code>.
 	 *
-	 * @param listener
-	 *            The listener to wrap; must not be <code>null</code>.
+	 * @param listener The listener to wrap; must not be <code>null</code>.
 	 */
 	public LegacyHandlerListenerWrapper(final IHandler handler,
 			final org.eclipse.core.commands.IHandlerListener listener) {
 		if (handler == null) {
-			throw new NullPointerException(
-					"A listener wrapper cannot be created on a null handler"); //$NON-NLS-1$
+			throw new NullPointerException("A listener wrapper cannot be created on a null handler"); //$NON-NLS-1$
 		}
 
 		if (listener == null) {
-			throw new NullPointerException(
-					"A listener wrapper cannot be created on a null listener"); //$NON-NLS-1$
+			throw new NullPointerException("A listener wrapper cannot be created on a null listener"); //$NON-NLS-1$
 		}
 
 		this.handler = handler;
@@ -60,15 +57,10 @@ public final class LegacyHandlerListenerWrapper implements IHandlerListener {
 
 	@Override
 	public void handlerChanged(HandlerEvent event) {
-		final boolean enabledChanged = ((Boolean) event
-				.getPreviousAttributeValuesByName().get(
-						ILegacyAttributeNames.ENABLED)).booleanValue() != handler
-				.isEnabled();
-		final boolean handledChanged = ((Boolean) event
-				.getPreviousAttributeValuesByName().get(
-						ILegacyAttributeNames.HANDLED)).booleanValue() != handler
-				.isHandled();
-		listener.handlerChanged(new org.eclipse.core.commands.HandlerEvent(
-				handler, enabledChanged, handledChanged));
+		final boolean enabledChanged = ((Boolean) event.getPreviousAttributeValuesByName()
+				.get(ILegacyAttributeNames.ENABLED)).booleanValue() != handler.isEnabled();
+		final boolean handledChanged = ((Boolean) event.getPreviousAttributeValuesByName()
+				.get(ILegacyAttributeNames.HANDLED)).booleanValue() != handler.isHandled();
+		listener.handlerChanged(new org.eclipse.core.commands.HandlerEvent(handler, enabledChanged, handledChanged));
 	}
 }

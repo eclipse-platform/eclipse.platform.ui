@@ -49,10 +49,9 @@ public class SlaveEvaluationService implements IEvaluationService {
 	 *      org.eclipse.jface.util.IPropertyChangeListener, java.lang.String)
 	 */
 	@Override
-	public IEvaluationReference addEvaluationListener(Expression expression,
-			IPropertyChangeListener listener, String property) {
-		IEvaluationReference ref = parentService.addEvaluationListener(
-				expression, listener, property);
+	public IEvaluationReference addEvaluationListener(Expression expression, IPropertyChangeListener listener,
+			String property) {
+		IEvaluationReference ref = parentService.addEvaluationListener(expression, listener, property);
 		if (!evaluationReferences.contains(ref)) {
 			evaluationReferences.add(ref);
 		}

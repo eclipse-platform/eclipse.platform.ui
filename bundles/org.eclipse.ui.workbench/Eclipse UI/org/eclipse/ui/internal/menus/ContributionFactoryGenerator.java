@@ -54,8 +54,7 @@ public class ContributionFactoryGenerator extends ContextFunction {
 	private AbstractContributionFactory getFactory() {
 		if (factoryImpl == null && configElement != null) {
 			try {
-				factoryImpl = (AbstractContributionFactory) configElement
-						.createExecutableExtension("class"); //$NON-NLS-1$
+				factoryImpl = (AbstractContributionFactory) configElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				WorkbenchPlugin.log(e);
 				return null;
@@ -68,8 +67,7 @@ public class ContributionFactoryGenerator extends ContextFunction {
 	public Object compute(IEclipseContext context, String contextKey) {
 		AbstractContributionFactory factory = getFactory();
 		final IMenuService menuService = context.get(IMenuService.class);
-		final ContributionRoot root = new ContributionRoot(menuService, new HashSet<>(),
-				null, factory);
+		final ContributionRoot root = new ContributionRoot(menuService, new HashSet<>(), null, factory);
 		ServiceLocator sl = new ServiceLocator();
 		sl.setContext(context);
 		factory.createContributionItems(sl, root);

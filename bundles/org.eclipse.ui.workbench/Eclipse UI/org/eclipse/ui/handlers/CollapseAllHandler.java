@@ -54,8 +54,7 @@ public class CollapseAllHandler extends AbstractHandler {
 	/**
 	 * Create the handler for this tree viewer.
 	 *
-	 * @param viewer
-	 *            The viewer to collapse. Must not be <code>null</code>.
+	 * @param viewer The viewer to collapse. Must not be <code>null</code>.
 	 */
 	public CollapseAllHandler(AbstractTreeViewer viewer) {
 		Assert.isNotNull(viewer);

@@ -20,18 +20,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Creates an animation effect where the Shell's image is captured and
- * over-lain (in its own shell) on top of the real one. This image
- * masks the changes to the 'real' shell and then the covering image
- * fades to transparent, revealing the new state.
+ * Creates an animation effect where the Shell's image is captured and over-lain
+ * (in its own shell) on top of the real one. This image masks the changes to
+ * the 'real' shell and then the covering image fades to transparent, revealing
+ * the new state.
  *
- * This provides a nice cross-fade effect for operations like a
- * perspective change (where the overall effect on the shell is large.
+ * This provides a nice cross-fade effect for operations like a perspective
+ * change (where the overall effect on the shell is large.
  *
  * @since 3.3
  *
  */
-public class FaderAnimationFeedback extends	AnimationFeedbackBase {
+public class FaderAnimationFeedback extends AnimationFeedbackBase {
 	private Image backingStore;
 
 	public FaderAnimationFeedback(Shell parentShell) {
@@ -66,7 +66,7 @@ public class FaderAnimationFeedback extends	AnimationFeedbackBase {
 
 	@Override
 	public void renderStep(AnimationEngine engine) {
-		getAnimationShell().setAlpha((int) (255 - (engine.amount()*255)));
+		getAnimationShell().setAlpha((int) (255 - (engine.amount() * 255)));
 	}
 
 }

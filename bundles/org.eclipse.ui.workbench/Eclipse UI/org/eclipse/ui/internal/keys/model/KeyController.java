@@ -66,8 +66,7 @@ public class KeyController {
 	/**
 	 * The resource bundle from which translations can be retrieved.
 	 */
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(KeysPreferencePage.class.getName());
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeysPreferencePage.class.getName());
 	private ListenerList<IPropertyChangeListener> eventManager = null;
 	private BindingManager fBindingManager;
 	private ContextModel contextModel;
@@ -92,8 +91,7 @@ public class KeyController {
 		return notifying;
 	}
 
-	public void firePropertyChange(Object source, String propId, Object oldVal,
-			Object newVal) {
+	public void firePropertyChange(Object source, String propId, Object oldVal, Object newVal) {
 		if (!isNotifying()) {
 			return;
 		}
@@ -101,8 +99,7 @@ public class KeyController {
 			return;
 		}
 
-		PropertyChangeEvent event = new PropertyChangeEvent(source, propId,
-				oldVal, newVal);
+		PropertyChangeEvent event = new PropertyChangeEvent(source, propId, oldVal, newVal);
 		for (IPropertyChangeListener listener : getEventManager()) {
 			listener.propertyChange(event);
 		}
@@ -137,10 +134,8 @@ public class KeyController {
 	}
 
 	private static BindingManager loadModelBackend(IServiceLocator locator) {
-		IBindingService bindingService = locator
-				.getService(IBindingService.class);
-		BindingManager bindingManager = new BindingManager(
-				new ContextManager(), new CommandManager());
+		IBindingService bindingService = locator.getService(IBindingService.class);
+		BindingManager bindingManager = new BindingManager(new ContextManager(), new CommandManager());
 		final Scheme[] definedSchemes = bindingService.getDefinedSchemes();
 		try {
 			Scheme modelActiveScheme = null;
@@ -153,17 +148,15 @@ public class KeyController {
 			}
 			bindingManager.setActiveScheme(modelActiveScheme);
 		} catch (final NotDefinedException e) {
-			StatusManager.getManager().handle(
-					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Keys page found an undefined scheme", e)); //$NON-NLS-1$
+			StatusManager.getManager().handle(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+					"Keys page found an undefined scheme", e)); //$NON-NLS-1$
 		}
 
 		bindingManager.setLocale(bindingService.getLocale());
 		bindingManager.setPlatform(bindingService.getPlatform());
 
 		Set<Binding> bindings = new HashSet<>();
-		EBindingService eBindingService = locator
-				.getService(EBindingService.class);
+		EBindingService eBindingService = locator.getService(EBindingService.class);
 		bindings.addAll(eBindingService.getActiveBindings());
 		for (Binding binding : bindingService.getBindings()) {
 			bindings.add(binding);
@@ -192,9 +185,7 @@ public class KeyController {
 
 	private void addSetContextListener() {
 		addPropertyChangeListener(event -> {
-			if (event.getSource() == contextModel
-					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-							.getProperty())) {
+			if (event.getSource() == contextModel && CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
 				updateBindingContext((ContextElement) event.getNewValue());
 			}
 		});
@@ -202,11 +193,8 @@ public class KeyController {
 
 	private void addSetBindingListener() {
 		addPropertyChangeListener(event -> {
-			if (event.getSource() == bindingModel
-					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-							.getProperty())) {
-				BindingElement binding = (BindingElement) event
-						.getNewValue();
+			if (event.getSource() == bindingModel && CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
+				BindingElement binding = (BindingElement) event.getNewValue();
 				if (binding == null) {
 					conflictModel.setSelectedElement(null);
 					return;
@@ -222,12 +210,9 @@ public class KeyController {
 
 	private void addSetConflictListener() {
 		addPropertyChangeListener(event -> {
-			if (event.getSource() == conflictModel
-					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-							.getProperty())) {
+			if (event.getSource() == conflictModel && CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
 				if (event.getNewValue() != null) {
-					bindingModel.setSelectedElement((ModelElement) event
-							.getNewValue());
+					bindingModel.setSelectedElement((ModelElement) event.getNewValue());
 				}
 			}
 		});
@@ -236,8 +221,7 @@ public class KeyController {
 	private void addSetKeySequenceListener() {
 		addPropertyChangeListener(event -> {
 			if (BindingElement.PROP_TRIGGER.equals(event.getProperty())) {
-				updateTrigger((BindingElement) event.getSource(),
-						(KeySequence) event.getOldValue(),
+				updateTrigger((BindingElement) event.getSource(), (KeySequence) event.getOldValue(),
 						(KeySequence) event.getNewValue());
 			}
 		});
@@ -246,19 +230,14 @@ public class KeyController {
 	private void addSetModelObjectListener() {
 		addPropertyChangeListener(event -> {
 			if (event.getSource() instanceof BindingElement
-					&& ModelElement.PROP_MODEL_OBJECT.equals(event
-							.getProperty())) {
+					&& ModelElement.PROP_MODEL_OBJECT.equals(event.getProperty())) {
 				if (event.getNewValue() != null) {
-					BindingElement element = (BindingElement) event
-							.getSource();
+					BindingElement element = (BindingElement) event.getSource();
 					Object oldValue = event.getOldValue();
 					Object newValue = event.getNewValue();
-					if (oldValue instanceof Binding
-							&& newValue instanceof Binding) {
-						conflictModel.updateConflictsFor(element,
-								((Binding) oldValue).getTriggerSequence(),
-								((Binding) newValue).getTriggerSequence(),
-								false);
+					if (oldValue instanceof Binding && newValue instanceof Binding) {
+						conflictModel.updateConflictsFor(element, ((Binding) oldValue).getTriggerSequence(),
+								((Binding) newValue).getTriggerSequence(), false);
 					} else {
 						conflictModel.updateConflictsFor(element, false);
 					}
@@ -274,11 +253,8 @@ public class KeyController {
 
 	private void addSetSchemeListener() {
 		addPropertyChangeListener(event -> {
-			if (event.getSource() == fSchemeModel
-					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-							.getProperty())) {
-				changeScheme((SchemeElement) event.getOldValue(),
-						(SchemeElement) event.getNewValue());
+			if (event.getSource() == fSchemeModel && CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
+				changeScheme((SchemeElement) event.getOldValue(), (SchemeElement) event.getNewValue());
 			}
 		});
 	}
@@ -288,14 +264,11 @@ public class KeyController {
 	 * @param newScheme
 	 */
 	protected void changeScheme(SchemeElement oldScheme, SchemeElement newScheme) {
-		if (newScheme == null
-				|| newScheme.getModelObject() == fBindingManager
-						.getActiveScheme()) {
+		if (newScheme == null || newScheme.getModelObject() == fBindingManager.getActiveScheme()) {
 			return;
 		}
 		try {
-			fBindingManager
-					.setActiveScheme((Scheme) newScheme.getModelObject());
+			fBindingManager.setActiveScheme((Scheme) newScheme.getModelObject());
 			bindingModel.refresh(contextModel);
 			bindingModel.setSelectedElement(null);
 		} catch (NotDefinedException e) {
@@ -308,8 +281,7 @@ public class KeyController {
 		if (context == null) {
 			return;
 		}
-		BindingElement activeBinding = (BindingElement) bindingModel
-				.getSelectedElement();
+		BindingElement activeBinding = (BindingElement) bindingModel.getSelectedElement();
 		if (activeBinding == null) {
 			return;
 		}
@@ -318,20 +290,16 @@ public class KeyController {
 		if (obj instanceof KeyBinding) {
 			KeyBinding keyBinding = (KeyBinding) obj;
 			if (!keyBinding.getContextId().equals(context.getId())) {
-				final KeyBinding binding = new KeyBinding(keyBinding
-						.getKeySequence(),
-						keyBinding.getParameterizedCommand(), activeSchemeId,
-						context.getId(), null, null, null, Binding.USER);
+				final KeyBinding binding = new KeyBinding(keyBinding.getKeySequence(),
+						keyBinding.getParameterizedCommand(), activeSchemeId, context.getId(), null, null, null,
+						Binding.USER);
 				if (keyBinding.getType() == Binding.USER) {
 					fBindingManager.removeBinding(keyBinding);
 				} else {
-					fBindingManager.addBinding(new KeyBinding(keyBinding
-							.getKeySequence(), null, keyBinding.getSchemeId(),
-							keyBinding.getContextId(), null, null, null,
-							Binding.USER));
+					fBindingManager.addBinding(new KeyBinding(keyBinding.getKeySequence(), null,
+							keyBinding.getSchemeId(), keyBinding.getContextId(), null, null, null, Binding.USER));
 				}
-				bindingModel.getBindingToElement().remove(
-						activeBinding.getModelObject());
+				bindingModel.getBindingToElement().remove(activeBinding.getModelObject());
 
 				fBindingManager.addBinding(binding);
 				activeBinding.fill(binding, contextModel);
@@ -345,8 +313,7 @@ public class KeyController {
 	 * @param oldSequence
 	 * @param keySequence
 	 */
-	public void updateTrigger(BindingElement activeBinding,
-			KeySequence oldSequence, KeySequence keySequence) {
+	public void updateTrigger(BindingElement activeBinding, KeySequence oldSequence, KeySequence keySequence) {
 		if (activeBinding == null) {
 			return;
 		}
@@ -355,31 +322,24 @@ public class KeyController {
 			KeyBinding keyBinding = (KeyBinding) obj;
 			if (!keyBinding.getKeySequence().equals(keySequence)) {
 				if (keySequence != null && !keySequence.isEmpty()) {
-					String activeSchemeId = fSchemeModel.getSelectedElement()
-							.getId();
-					ModelElement selectedElement = contextModel
-							.getSelectedElement();
+					String activeSchemeId = fSchemeModel.getSelectedElement().getId();
+					ModelElement selectedElement = contextModel.getSelectedElement();
 					String activeContextId = selectedElement == null ? IContextService.CONTEXT_ID_WINDOW
 							: selectedElement.getId();
-					final KeyBinding binding = new KeyBinding(keySequence,
-							keyBinding.getParameterizedCommand(),
-							activeSchemeId, activeContextId, null, null, null,
-							Binding.USER);
+					final KeyBinding binding = new KeyBinding(keySequence, keyBinding.getParameterizedCommand(),
+							activeSchemeId, activeContextId, null, null, null, Binding.USER);
 					Map bindingToElement = bindingModel.getBindingToElement();
 					bindingToElement.remove(keyBinding);
 					if (keyBinding.getType() == Binding.USER) {
 						fBindingManager.removeBinding(keyBinding);
 					} else {
-						fBindingManager.addBinding(new KeyBinding(keyBinding
-								.getKeySequence(), null, keyBinding
-								.getSchemeId(), keyBinding.getContextId(),
-								null, null, null, Binding.USER));
+						fBindingManager.addBinding(new KeyBinding(keyBinding.getKeySequence(), null,
+								keyBinding.getSchemeId(), keyBinding.getContextId(), null, null, null, Binding.USER));
 					}
 
 					fBindingManager.addBinding(binding);
 					activeBinding.fill(binding, contextModel);
-					bindingModel.getBindingToElement().put(binding,
-							activeBinding);
+					bindingModel.getBindingToElement().put(binding, activeBinding);
 
 					// Remove binding for any system conflicts
 
@@ -389,10 +349,8 @@ public class KeyController {
 					if (keyBinding.getType() == Binding.USER) {
 						fBindingManager.removeBinding(keyBinding);
 					} else {
-						fBindingManager.addBinding(new KeyBinding(keyBinding
-								.getKeySequence(), null, keyBinding
-								.getSchemeId(), keyBinding.getContextId(),
-								null, null, null, Binding.USER));
+						fBindingManager.addBinding(new KeyBinding(keyBinding.getKeySequence(), null,
+								keyBinding.getSchemeId(), keyBinding.getContextId(), null, null, null, Binding.USER));
 					}
 					activeBinding.fill(keyBinding.getParameterizedCommand());
 				}
@@ -400,15 +358,12 @@ public class KeyController {
 		} else if (obj instanceof ParameterizedCommand) {
 			ParameterizedCommand cmd = (ParameterizedCommand) obj;
 			if (keySequence != null && !keySequence.isEmpty()) {
-				String activeSchemeId = fSchemeModel.getSelectedElement()
-						.getId();
-				ModelElement selectedElement = contextModel
-						.getSelectedElement();
+				String activeSchemeId = fSchemeModel.getSelectedElement().getId();
+				ModelElement selectedElement = contextModel.getSelectedElement();
 				String activeContextId = selectedElement == null ? IContextService.CONTEXT_ID_WINDOW
 						: selectedElement.getId();
-				final KeyBinding binding = new KeyBinding(keySequence, cmd,
-						activeSchemeId, activeContextId, null, null, null,
-						Binding.USER);
+				final KeyBinding binding = new KeyBinding(keySequence, cmd, activeSchemeId, activeContextId, null, null,
+						null, Binding.USER);
 				fBindingManager.addBinding(binding);
 				activeBinding.fill(binding, contextModel);
 				bindingModel.getBindingToElement().put(binding, activeBinding);
@@ -417,17 +372,15 @@ public class KeyController {
 	}
 
 	/**
-	 * Replaces all the current bindings with the bindings in the local copy of
-	 * the binding manager.
+	 * Replaces all the current bindings with the bindings in the local copy of the
+	 * binding manager.
 	 *
-	 * @param bindingService
-	 *            The binding service that saves the changes made to the local
-	 *            copy of the binding manager
+	 * @param bindingService The binding service that saves the changes made to the
+	 *                       local copy of the binding manager
 	 */
 	public void saveBindings(IBindingService bindingService) {
 		try {
-			bindingService.savePreferences(fBindingManager.getActiveScheme(),
-					fBindingManager.getBindings());
+			bindingService.savePreferences(fBindingManager.getActiveScheme(), fBindingManager.getBindings());
 		} catch (IOException e) {
 			logPreferenceStoreException(e);
 		}
@@ -438,8 +391,7 @@ public class KeyController {
 	 * went wrong. The exception is assumed to have something to do with the
 	 * preference store.
 	 *
-	 * @param exception
-	 *            The exception to be logged; must not be <code>null</code>.
+	 * @param exception The exception to be logged; must not be <code>null</code>.
 	 */
 	private final void logPreferenceStoreException(final Throwable exception) {
 		final String message = NewKeysPreferenceMessages.PreferenceStoreError_Message;
@@ -447,8 +399,7 @@ public class KeyController {
 		if (exceptionMessage == null) {
 			exceptionMessage = message;
 		}
-		final IStatus status = new Status(IStatus.ERROR,
-				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+		final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
 		WorkbenchPlugin.log(message, status);
 		StatusUtil.handleStatus(message, exception, StatusManager.SHOW);
 	}
@@ -456,10 +407,8 @@ public class KeyController {
 	/**
 	 * Filters contexts for the When Combo.
 	 *
-	 * @param actionSets
-	 *            <code>true</code> to filter action set contexts
-	 * @param internal
-	 *            <code>false</code> to filter internal contexts
+	 * @param actionSets <code>true</code> to filter action set contexts
+	 * @param internal   <code>false</code> to filter internal contexts
 	 *
 	 */
 	public void filterContexts(boolean actionSets, boolean internal) {
@@ -493,11 +442,9 @@ public class KeyController {
 	}
 
 	public void exportCSV(Shell shell) {
-		final FileDialog fileDialog = new FileDialog(shell, SWT.SAVE
-				| SWT.SHEET);
+		final FileDialog fileDialog = new FileDialog(shell, SWT.SAVE | SWT.SHEET);
 		fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
-		fileDialog.setFilterNames(new String[] { Util.translateString(
-				RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
+		fileDialog.setFilterNames(new String[] { Util.translateString(RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
 		fileDialog.setOverwrite(true);
 		final String filePath = fileDialog.open();
 		if (filePath == null) {
@@ -513,21 +460,15 @@ public class KeyController {
 					final Object[] bindingElements = bindingModel.getBindings().toArray();
 					for (Object bindingElement : bindingElements) {
 						final BindingElement be = (BindingElement) bindingElement;
-						if (be.getTrigger() == null
-								|| be.getTrigger().isEmpty()) {
+						if (be.getTrigger() == null || be.getTrigger().isEmpty()) {
 							continue;
 						}
 						StringBuilder buffer = new StringBuilder();
-						buffer.append(ESCAPED_QUOTE
-								+ Util.replaceAll(be.getCategory(),
-										ESCAPED_QUOTE, REPLACEMENT)
+						buffer.append(ESCAPED_QUOTE + Util.replaceAll(be.getCategory(), ESCAPED_QUOTE, REPLACEMENT)
 								+ ESCAPED_QUOTE + DELIMITER);
-						buffer.append(ESCAPED_QUOTE + be.getName()
-								+ ESCAPED_QUOTE + DELIMITER);
-						buffer.append(ESCAPED_QUOTE + be.getTrigger().format()
-								+ ESCAPED_QUOTE + DELIMITER);
-						buffer.append(ESCAPED_QUOTE + be.getContext().getName()
-								+ ESCAPED_QUOTE + DELIMITER);
+						buffer.append(ESCAPED_QUOTE + be.getName() + ESCAPED_QUOTE + DELIMITER);
+						buffer.append(ESCAPED_QUOTE + be.getTrigger().format() + ESCAPED_QUOTE + DELIMITER);
+						buffer.append(ESCAPED_QUOTE + be.getContext().getName() + ESCAPED_QUOTE + DELIMITER);
 						buffer.append(ESCAPED_QUOTE + be.getId() + ESCAPED_QUOTE);
 						buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
 						fileWriter.write(buffer.toString());

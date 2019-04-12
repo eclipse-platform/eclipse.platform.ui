@@ -41,8 +41,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	private String[] categoryPath;
 	private ImageDescriptor imageDescriptor;
 
-	public ViewDescriptor(MApplication application, MPartDescriptor descriptor,
-			IConfigurationElement element) {
+	public ViewDescriptor(MApplication application, MPartDescriptor descriptor, IConfigurationElement element) {
 		this.application = application;
 		this.descriptor = descriptor;
 		this.element = element;
@@ -84,8 +83,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 			if (iconURI == null) {
 				// If the icon attribute was omitted, use the default one
 				IWorkbench workbench = application.getContext().get(IWorkbench.class);
-				imageDescriptor = workbench.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_DEF_VIEW);
+				imageDescriptor = workbench.getSharedImages().getImageDescriptor(ISharedImages.IMG_DEF_VIEW);
 			} else {
 				ISWTResourceUtilities utility = (ISWTResourceUtilities) application.getContext()
 						.get(IResourceUtilities.class);
@@ -97,8 +95,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 
 	@Override
 	public String getLabel() {
-		return LocalizationHelper.getLocalized(descriptor.getLabel(), descriptor,
-				application.getContext());
+		return LocalizationHelper.getLocalized(descriptor.getLabel(), descriptor, application.getContext());
 	}
 
 	@Override

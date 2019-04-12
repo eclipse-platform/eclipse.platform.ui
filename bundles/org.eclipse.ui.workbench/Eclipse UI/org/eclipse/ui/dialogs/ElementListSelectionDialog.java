@@ -26,42 +26,44 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ElementListSelectionDialog extends AbstractElementListSelectionDialog {
 
-    private Object[] fElements;
+	private Object[] fElements;
 
-    /**
-     * Creates a list selection dialog.
-     * @param parent   the parent widget.
-     * @param renderer the label renderer.
-     */
-    public ElementListSelectionDialog(Shell parent, ILabelProvider renderer) {
-        super(parent, renderer);
-    }
+	/**
+	 * Creates a list selection dialog.
+	 * 
+	 * @param parent   the parent widget.
+	 * @param renderer the label renderer.
+	 */
+	public ElementListSelectionDialog(Shell parent, ILabelProvider renderer) {
+		super(parent, renderer);
+	}
 
-    /**
-     * Sets the elements of the list.
-     * @param elements the elements of the list.
-     */
-    public void setElements(Object[] elements) {
-        fElements = elements;
-    }
+	/**
+	 * Sets the elements of the list.
+	 * 
+	 * @param elements the elements of the list.
+	 */
+	public void setElements(Object[] elements) {
+		fElements = elements;
+	}
 
-    @Override
+	@Override
 	protected void computeResult() {
-        setResult(Arrays.asList(getSelectedElements()));
-    }
+		setResult(Arrays.asList(getSelectedElements()));
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        Composite contents = (Composite) super.createDialogArea(parent);
+		Composite contents = (Composite) super.createDialogArea(parent);
 
-        createMessageArea(contents);
-        createFilterText(contents);
-        createFilteredList(contents);
+		createMessageArea(contents);
+		createFilterText(contents);
+		createFilteredList(contents);
 
-        setListElements(fElements);
+		setListElements(fElements);
 
-        setSelection(getInitialElementSelections().toArray());
+		setSelection(getInitialElementSelections().toArray());
 
-        return contents;
-    }
+		return contents;
+	}
 }

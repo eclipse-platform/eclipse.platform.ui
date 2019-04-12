@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.dialogs.SimpleWorkingSetSelectionDialog;
  *
  * @since 3.2
  */
-public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate  {
+public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate {
 
 	private class ManageWorkingSetsAction extends Action {
 
@@ -63,15 +63,14 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 		@Override
 		public void runWithEvent(Event event) {
 
-			Set newList = new HashSet(Arrays.asList(getWindow().getActivePage()
-					.getWorkingSets()));
+			Set newList = new HashSet(Arrays.asList(getWindow().getActivePage().getWorkingSets()));
 
 			if (isChecked()) {
 				// if the primary modifier key is down then clear the list
 				// first. this makes the selection exclusive rather than
 				// additive.
-				boolean modified = (event.stateMask & KeyLookupFactory
-						.getDefault().formalModifierLookup(IKeyLookup.M1_NAME)) != 0;
+				boolean modified = (event.stateMask
+						& KeyLookupFactory.getDefault().formalModifierLookup(IKeyLookup.M1_NAME)) != 0;
 
 				if (modified)
 					newList.clear();
@@ -80,9 +79,8 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 				newList.remove(set);
 			}
 
-			getWindow().getActivePage().setWorkingSets(
-					(IWorkingSet[]) newList.toArray(new IWorkingSet[newList
-							.size()]));
+			getWindow().getActivePage()
+					.setWorkingSets((IWorkingSet[]) newList.toArray(new IWorkingSet[newList.size()]));
 		}
 	}
 
@@ -94,8 +92,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 			for (IWorkingSet set : sets) {
 				// only add visible sets
 				// if (set.isVisible()) {
-				ActionContributionItem item = new ActionContributionItem(
-						new ToggleWorkingSetAction(set));
+				ActionContributionItem item = new ActionContributionItem(new ToggleWorkingSetAction(set));
 				item.fill(menu, -1);
 				// }
 			}
@@ -103,8 +100,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 			separator.fill(menu, -1);
 		}
 
-		ActionContributionItem item = new ActionContributionItem(
-				new ManageWorkingSetsAction());
+		ActionContributionItem item = new ActionContributionItem(new ManageWorkingSetsAction());
 		item.fill(menu, -1);
 
 	}
@@ -125,8 +121,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 
 	@Override
 	public void run(IAction action) {
-		ConfigureWindowWorkingSetsDialog dialog = new ConfigureWindowWorkingSetsDialog(
-				getWindow());
+		ConfigureWindowWorkingSetsDialog dialog = new ConfigureWindowWorkingSetsDialog(getWindow());
 		if (dialog.open() == Window.OK) {
 
 		}

@@ -23,20 +23,20 @@ import java.util.List;
  * A string pattern matcher, supporting "*" and "?" wildcards.
  */
 public class StringMatcher {
-    protected String fPattern;
+	protected String fPattern;
 
-    protected int fLength; // pattern length
+	protected int fLength; // pattern length
 
-    protected boolean fIgnoreWildCards;
+	protected boolean fIgnoreWildCards;
 
-    protected boolean fIgnoreCase;
+	protected boolean fIgnoreCase;
 
 	protected String[] patternWords;
 
 	protected Word wholePatternWord;
 	protected Word[] splittedPatternWords;
 
-    protected static final char fSingleWildCard = '\u0000';
+	protected static final char fSingleWildCard = '\u0000';
 
 	class Word {
 		private boolean hasTrailingStar = false;
@@ -215,62 +215,61 @@ public class StringMatcher {
 			return false;
 		}
 
-    }
+	}
 
-    public static class Position {
-        int start; //inclusive
+	public static class Position {
+		int start; // inclusive
 
-        int end; //exclusive
+		int end; // exclusive
 
-        public Position(int start, int end) {
-            this.start = start;
-            this.end = end;
-        }
+		public Position(int start, int end) {
+			this.start = start;
+			this.end = end;
+		}
 
-        public int getStart() {
-            return start;
-        }
+		public int getStart() {
+			return start;
+		}
 
-        public int getEnd() {
-            return end;
-        }
-    }
+		public int getEnd() {
+			return end;
+		}
+	}
 
-    /**
-     * StringMatcher constructor takes in a String object that is a simple
-     * pattern which may contain '*' for 0 and many characters and
-     * '?' for exactly one character.
-     *
-     * Literal '*' and '?' characters must be escaped in the pattern
-     * e.g., "\*" means literal "*", etc.
-     *
-     * Escaping any other character (including the escape character itself),
-     * just results in that character in the pattern.
-     * e.g., "\a" means "a" and "\\" means "\"
-     *
-     * If invoking the StringMatcher with string literals in Java, don't forget
-     * escape characters are represented by "\\".
-     *
-     * @param pattern the pattern to match text against
-     * @param ignoreCase if true, case is ignored
-     * @param ignoreWildCards if true, wild cards and their escape sequences are ignored
-     * 		  (everything is taken literally).
-     */
-    public StringMatcher(String pattern, boolean ignoreCase,
-            boolean ignoreWildCards) {
-        if (pattern == null) {
+	/**
+	 * StringMatcher constructor takes in a String object that is a simple pattern
+	 * which may contain '*' for 0 and many characters and '?' for exactly one
+	 * character.
+	 *
+	 * Literal '*' and '?' characters must be escaped in the pattern e.g., "\*"
+	 * means literal "*", etc.
+	 *
+	 * Escaping any other character (including the escape character itself), just
+	 * results in that character in the pattern. e.g., "\a" means "a" and "\\" means
+	 * "\"
+	 *
+	 * If invoking the StringMatcher with string literals in Java, don't forget
+	 * escape characters are represented by "\\".
+	 *
+	 * @param pattern         the pattern to match text against
+	 * @param ignoreCase      if true, case is ignored
+	 * @param ignoreWildCards if true, wild cards and their escape sequences are
+	 *                        ignored (everything is taken literally).
+	 */
+	public StringMatcher(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
+		if (pattern == null) {
 			throw new IllegalArgumentException();
 		}
-        fIgnoreCase = ignoreCase;
-        fIgnoreWildCards = ignoreWildCards;
-        fPattern = pattern;
-        fLength = pattern.length();
+		fIgnoreCase = ignoreCase;
+		fIgnoreWildCards = ignoreWildCards;
+		fPattern = pattern;
+		fLength = pattern.length();
 
-        parsePatternIntoWords();
+		parsePatternIntoWords();
 
-        if (fIgnoreWildCards) {
-            parseNoWildCards();
-        } else {
+		if (fIgnoreWildCards) {
+			parseNoWildCards();
+		} else {
 			if (wholePatternWord != null) {
 				wholePatternWord.parseWildcards();
 			}
@@ -279,29 +278,30 @@ public class StringMatcher {
 					word.parseWildcards();
 				}
 			}
-        }
-    }
+		}
+	}
 
-
-    /**
-     * match the given <code>text</code> with the pattern
-     * @return true if matched otherwise false
-     * @param text a String object
-     */
-    public boolean match(String text) {
-    	if(text == null) {
+	/**
+	 * match the given <code>text</code> with the pattern
+	 * 
+	 * @return true if matched otherwise false
+	 * @param text a String object
+	 */
+	public boolean match(String text) {
+		if (text == null) {
 			return false;
 		}
-    	return match(text, 0, text.length());
-    }
+		return match(text, 0, text.length());
+	}
 
 	/**
 	 * Given the starting (inclusive) and the ending (exclusive) positions in the
 	 * <code>text</code>, determine if the given substring matches with aPattern
+	 * 
 	 * @return true if the specified portion of the text matches the pattern
-	 * @param text a String object that contains the substring to match
+	 * @param text  a String object that contains the substring to match
 	 * @param start marks the starting position (inclusive) of the substring
-	 * @param end marks the ending index (exclusive) of the substring
+	 * @param end   marks the ending index (exclusive) of the substring
 	 */
 	public boolean match(String text, int start, int end) {
 		if (null == text) {
@@ -353,133 +353,130 @@ public class StringMatcher {
 		}
 	}
 
-    /**
-     * This method parses the given pattern into segments seperated by wildcard '*' characters.
-     * Since wildcards are not being used in this case, the pattern consists of a single segment.
-     */
-    private void parseNoWildCards() {
+	/**
+	 * This method parses the given pattern into segments seperated by wildcard '*'
+	 * characters. Since wildcards are not being used in this case, the pattern
+	 * consists of a single segment.
+	 */
+	private void parseNoWildCards() {
 		this.wholePatternWord = new Word(fPattern, fLength, patternWords);
 		this.wholePatternWord.bound = fLength;
 		this.wholePatternWord.fragments = patternWords;
-    }
+	}
 
+	/**
+	 * @param text  a string which contains no wildcard
+	 * @param start the starting index in the text for search, inclusive
+	 * @param end   the stopping point of search, exclusive
+	 * @return the starting index in the text of the pattern , or -1 if not found
+	 */
+	protected int posIn(String text, int start, int end) {// no wild card in pattern
+		int max = end - fLength;
 
-    /**
-     * @param text a string which contains no wildcard
-     * @param start the starting index in the text for search, inclusive
-     * @param end the stopping point of search, exclusive
-     * @return the starting index in the text of the pattern , or -1 if not found
-     */
-    protected int posIn(String text, int start, int end) {//no wild card in pattern
-        int max = end - fLength;
-
-        if (!fIgnoreCase) {
-            int i = text.indexOf(fPattern, start);
-            if (i == -1 || i > max) {
+		if (!fIgnoreCase) {
+			int i = text.indexOf(fPattern, start);
+			if (i == -1 || i > max) {
 				return -1;
 			}
-            return i;
-        }
+			return i;
+		}
 
-        for (int i = start; i <= max; ++i) {
-            if (text.regionMatches(true, i, fPattern, 0, fLength)) {
+		for (int i = start; i <= max; ++i) {
+			if (text.regionMatches(true, i, fPattern, 0, fLength)) {
 				return i;
 			}
-        }
+		}
 
-        return -1;
-    }
+		return -1;
+	}
 
-    /**
-     * @param text a simple regular expression that may only contain '?'(s)
-     * @param start the starting index in the text for search, inclusive
-     * @param end the stopping point of search, exclusive
-     * @param p a simple regular expression that may contains '?'
-     * @return the starting index in the text of the pattern , or -1 if not found
-     */
-    protected int regExpPosIn(String text, int start, int end, String p) {
-        int plen = p.length();
+	/**
+	 * @param text  a simple regular expression that may only contain '?'(s)
+	 * @param start the starting index in the text for search, inclusive
+	 * @param end   the stopping point of search, exclusive
+	 * @param p     a simple regular expression that may contains '?'
+	 * @return the starting index in the text of the pattern , or -1 if not found
+	 */
+	protected int regExpPosIn(String text, int start, int end, String p) {
+		int plen = p.length();
 
-        int max = end - plen;
-        for (int i = start; i <= max; ++i) {
-            if (regExpRegionMatches(text, i, p, 0, plen)) {
+		int max = end - plen;
+		for (int i = start; i <= max; ++i) {
+			if (regExpRegionMatches(text, i, p, 0, plen)) {
 				return i;
 			}
-        }
-        return -1;
-    }
+		}
+		return -1;
+	}
 
-    /**
+	/**
 	 *
 	 * @return boolean
 	 * @param text       a String to match
 	 * @param start      int that indicates the starting index of match, inclusive
-	 * @param            end</code> int that indicates the ending index of match,
-	 *                   exclusive
+	 * @param end</code> int that indicates the ending index of match, exclusive
 	 * @param p          String, String, a simple regular expression that may
 	 *                   contain '?'
 	 * @param ignoreCase boolean indicating whether code>p</code> is case sensitive
 	 */
-    protected boolean regExpRegionMatches(String text, int tStart, String p,
-            int pStart, int plen) {
-        while (plen-- > 0) {
-            char tchar = text.charAt(tStart++);
-            char pchar = p.charAt(pStart++);
+	protected boolean regExpRegionMatches(String text, int tStart, String p, int pStart, int plen) {
+		while (plen-- > 0) {
+			char tchar = text.charAt(tStart++);
+			char pchar = p.charAt(pStart++);
 
-            /* process wild cards */
-            if (!fIgnoreWildCards) {
-                /* skip single wild cards */
-                if (pchar == fSingleWildCard) {
-                    continue;
-                }
-            }
-            if (pchar == tchar) {
-				continue;
-			}
-            if (fIgnoreCase) {
-                if (Character.toUpperCase(tchar) == Character
-                        .toUpperCase(pchar)) {
+			/* process wild cards */
+			if (!fIgnoreWildCards) {
+				/* skip single wild cards */
+				if (pchar == fSingleWildCard) {
 					continue;
 				}
-                // comparing after converting to upper case doesn't handle all cases;
-                // also compare after converting to lower case
+			}
+			if (pchar == tchar) {
+				continue;
+			}
+			if (fIgnoreCase) {
+				if (Character.toUpperCase(tchar) == Character.toUpperCase(pchar)) {
+					continue;
+				}
+				// comparing after converting to upper case doesn't handle all cases;
+				// also compare after converting to lower case
 				if (Character.toLowerCase(tchar) == Character.toLowerCase(pchar)) {
 					continue;
 				}
-            }
-            return false;
-        }
-        return true;
-    }
+			}
+			return false;
+		}
+		return true;
+	}
 
-    /**
-     * @param text the string to match
-     * @param start the starting index in the text for search, inclusive
-     * @param end the stopping point of search, exclusive
-     * @param p a pattern string that has no wildcard
-     * @return the starting index in the text of the pattern , or -1 if not found
-     */
-    protected int textPosIn(String text, int start, int end, String p) {
+	/**
+	 * @param text  the string to match
+	 * @param start the starting index in the text for search, inclusive
+	 * @param end   the stopping point of search, exclusive
+	 * @param p     a pattern string that has no wildcard
+	 * @return the starting index in the text of the pattern , or -1 if not found
+	 */
+	protected int textPosIn(String text, int start, int end, String p) {
 
-        int plen = p.length();
-        int max = end - plen;
+		int plen = p.length();
+		int max = end - plen;
 
-        if (!fIgnoreCase) {
-            int i = text.indexOf(p, start);
-            if (i == -1 || i > max) {
+		if (!fIgnoreCase) {
+			int i = text.indexOf(p, start);
+			if (i == -1 || i > max) {
 				return -1;
 			}
-            return i;
-        }
+			return i;
+		}
 
-        for (int i = start; i <= max; ++i) {
-            if (text.regionMatches(true, i, p, 0, plen)) {
+		for (int i = start; i <= max; ++i) {
+			if (text.regionMatches(true, i, p, 0, plen)) {
 				return i;
 			}
-        }
+		}
 
-        return -1;
-    }
+		return -1;
+	}
 
 	/**
 	 * Take the given filter text and break it down into words using a
@@ -517,4 +514,3 @@ public class StringMatcher {
 	}
 
 }
-

@@ -45,152 +45,148 @@ import org.eclipse.ui.internal.util.Util;
 @Deprecated
 public final class EnabledSubmission implements Comparable {
 
-    /**
-     * The identifier of the part in which this context should be enabled. If
-     * this value is <code>null</code>, this means it should be active in any
-     * part.
-     */
-    private final String activePartId;
+	/**
+	 * The identifier of the part in which this context should be enabled. If this
+	 * value is <code>null</code>, this means it should be active in any part.
+	 */
+	private final String activePartId;
 
-    /**
-     * The shell in which this context should be enabled. If this value is
-     * <code>null</code>, this means it should be active in any shell.
-     */
-    private final Shell activeShell;
+	/**
+	 * The shell in which this context should be enabled. If this value is
+	 * <code>null</code>, this means it should be active in any shell.
+	 */
+	private final Shell activeShell;
 
-    /**
-     * The part site in which this context should be enabled. If this value is
-     * <code>null</code>, this means it should be active in any part site.
-     */
-    private final IWorkbenchPartSite activeWorkbenchPartSite;
+	/**
+	 * The part site in which this context should be enabled. If this value is
+	 * <code>null</code>, this means it should be active in any part site.
+	 */
+	private final IWorkbenchPartSite activeWorkbenchPartSite;
 
-    /**
-     * The identifier for the context that should be enabled by this
-     * submissions. This value should never be <code>null</code>.
-     */
-    private final String contextId;
+	/**
+	 * The identifier for the context that should be enabled by this submissions.
+	 * This value should never be <code>null</code>.
+	 */
+	private final String contextId;
 
-    /**
-     * The cached string representation of this instance. This value is computed
-     * lazily on the first call to retrieve the string representation, and the
-     * cache is used for all future calls. If this value is <code>null</code>,
-     * then the value has not yet been computed.
-     */
-    private transient String string = null;
+	/**
+	 * The cached string representation of this instance. This value is computed
+	 * lazily on the first call to retrieve the string representation, and the cache
+	 * is used for all future calls. If this value is <code>null</code>, then the
+	 * value has not yet been computed.
+	 */
+	private transient String string = null;
 
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param activePartId
-     *            the identifier of the part that must be active for this
-     *            request to be considered. May be <code>null</code>.
-     * @param activeShell
-     *            the shell that must be active for this request to be
-     *            considered. May be <code>null</code>.
-     * @param activeWorkbenchPartSite
-     *            the workbench part site of the part that must be active for
-     *            this request to be considered. May be <code>null</code>.
-     * @param contextId
-     *            the identifier of the context to be enabled. Must not be
-     *            <code>null</code>.
-     */
-    public EnabledSubmission(String activePartId, Shell activeShell,
-            IWorkbenchPartSite activeWorkbenchPartSite, String contextId) {
-        if (contextId == null) {
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param activePartId            the identifier of the part that must be active
+	 *                                for this request to be considered. May be
+	 *                                <code>null</code>.
+	 * @param activeShell             the shell that must be active for this request
+	 *                                to be considered. May be <code>null</code>.
+	 * @param activeWorkbenchPartSite the workbench part site of the part that must
+	 *                                be active for this request to be considered.
+	 *                                May be <code>null</code>.
+	 * @param contextId               the identifier of the context to be enabled.
+	 *                                Must not be <code>null</code>.
+	 */
+	public EnabledSubmission(String activePartId, Shell activeShell, IWorkbenchPartSite activeWorkbenchPartSite,
+			String contextId) {
+		if (contextId == null) {
 			throw new NullPointerException();
 		}
 
-        this.activePartId = activePartId;
-        this.activeShell = activeShell;
-        this.activeWorkbenchPartSite = activeWorkbenchPartSite;
-        this.contextId = contextId;
-    }
+		this.activePartId = activePartId;
+		this.activeShell = activeShell;
+		this.activeWorkbenchPartSite = activeWorkbenchPartSite;
+		this.contextId = contextId;
+	}
 
-    /**
-     * @see Comparable#compareTo(java.lang.Object)
-     */
-    @Override
+	/**
+	 * @see Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
 	public int compareTo(Object object) {
-        EnabledSubmission castedObject = (EnabledSubmission) object;
-        int compareTo = Util.compare(activeWorkbenchPartSite,
-                castedObject.activeWorkbenchPartSite);
+		EnabledSubmission castedObject = (EnabledSubmission) object;
+		int compareTo = Util.compare(activeWorkbenchPartSite, castedObject.activeWorkbenchPartSite);
 
-        if (compareTo == 0) {
-            compareTo = Util.compare(activePartId, castedObject.activePartId);
+		if (compareTo == 0) {
+			compareTo = Util.compare(activePartId, castedObject.activePartId);
 
-            if (compareTo == 0) {
-                compareTo = Util.compare(activeShell, castedObject.activeShell);
+			if (compareTo == 0) {
+				compareTo = Util.compare(activeShell, castedObject.activeShell);
 
-                if (compareTo == 0) {
+				if (compareTo == 0) {
 					compareTo = Util.compare(contextId, castedObject.contextId);
 				}
-            }
-        }
+			}
+		}
 
-        return compareTo;
-    }
+		return compareTo;
+	}
 
-    /**
-     * Returns the identifier of the part that must be active for this request
-     * to be considered.
-     *
-     * @return the identifier of the part that must be active for this request
-     *         to be considered. May be <code>null</code>.
-     */
-    public String getActivePartId() {
-        return activePartId;
-    }
+	/**
+	 * Returns the identifier of the part that must be active for this request to be
+	 * considered.
+	 *
+	 * @return the identifier of the part that must be active for this request to be
+	 *         considered. May be <code>null</code>.
+	 */
+	public String getActivePartId() {
+		return activePartId;
+	}
 
-    /**
-     * Returns the shell that must be active for this request to be considered.
-     *
-     * @return the shell that must be active for this request to be considered.
-     *         May be <code>null</code>.
-     */
-    public Shell getActiveShell() {
-        return activeShell;
-    }
+	/**
+	 * Returns the shell that must be active for this request to be considered.
+	 *
+	 * @return the shell that must be active for this request to be considered. May
+	 *         be <code>null</code>.
+	 */
+	public Shell getActiveShell() {
+		return activeShell;
+	}
 
-    /**
-     * Returns the workbench part site of the part that must be active for this
-     * request to be considered.
-     *
-     * @return the workbench part site of the part that must be active for this
-     *         request to be considered. May be <code>null</code>.
-     */
-    public IWorkbenchPartSite getActiveWorkbenchPartSite() {
-        return activeWorkbenchPartSite;
-    }
+	/**
+	 * Returns the workbench part site of the part that must be active for this
+	 * request to be considered.
+	 *
+	 * @return the workbench part site of the part that must be active for this
+	 *         request to be considered. May be <code>null</code>.
+	 */
+	public IWorkbenchPartSite getActiveWorkbenchPartSite() {
+		return activeWorkbenchPartSite;
+	}
 
-    /**
-     * Returns the identifier of the context to be enabled.
-     *
-     * @return the identifier of the context to be enabled. Guaranteed not to be
-     *         <code>null</code>.
-     */
-    public String getContextId() {
-        return contextId;
-    }
+	/**
+	 * Returns the identifier of the context to be enabled.
+	 *
+	 * @return the identifier of the context to be enabled. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
+	public String getContextId() {
+		return contextId;
+	}
 
-    /**
-     * @see Object#toString()
-     */
-    @Override
+	/**
+	 * @see Object#toString()
+	 */
+	@Override
 	public String toString() {
-        if (string == null) {
-            final StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append("[activePartId="); //$NON-NLS-1$
-            stringBuffer.append(activePartId);
-            stringBuffer.append(",activeShell="); //$NON-NLS-1$
-            stringBuffer.append(activeShell);
-            stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
-            stringBuffer.append(activeWorkbenchPartSite);
-            stringBuffer.append(",contextId="); //$NON-NLS-1$
-            stringBuffer.append(contextId);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+		if (string == null) {
+			final StringBuilder stringBuffer = new StringBuilder();
+			stringBuffer.append("[activePartId="); //$NON-NLS-1$
+			stringBuffer.append(activePartId);
+			stringBuffer.append(",activeShell="); //$NON-NLS-1$
+			stringBuffer.append(activeShell);
+			stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
+			stringBuffer.append(activeWorkbenchPartSite);
+			stringBuffer.append(",contextId="); //$NON-NLS-1$
+			stringBuffer.append(contextId);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
 
-        return string;
-    }
+		return string;
+	}
 }

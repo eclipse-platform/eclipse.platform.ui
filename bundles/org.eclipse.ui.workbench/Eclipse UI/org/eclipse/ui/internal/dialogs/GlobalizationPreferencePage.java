@@ -63,8 +63,8 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 
 	@Override
 	protected Control createContents(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(parent, IWorkbenchHelpContextIds.GLOBALIZATION_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.GLOBALIZATION_PREFERENCE_PAGE);
 
 		Composite composite = createComposite(parent);
 		createNlsExtensionsGroup(composite);
@@ -77,11 +77,10 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 	}
 
 	/**
-	 * Creates the composite which will contain all the preference controls for
-	 * this page.
+	 * Creates the composite which will contain all the preference controls for this
+	 * page.
 	 *
-	 * @param parent
-	 *            the parent composite
+	 * @param parent the parent composite
 	 * @return the composite for this page
 	 */
 	private static Composite createComposite(Composite parent) {
@@ -90,8 +89,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
-				| GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		return composite;
 	}
 
@@ -106,8 +104,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 
 	private void createBidiPreferencesGroup(Composite composite) {
 
-		layoutDirectionCombo = addComboBox(composite,
-				WorkbenchMessages.GlobalizationPreference_layoutDirection, 0);
+		layoutDirectionCombo = addComboBox(composite, WorkbenchMessages.GlobalizationPreference_layoutDirection, 0);
 		layoutDirectionCombo.setItems(new String[] { DEFAULT_DIR, LTR_DIR, RTL_DIR });
 		layoutDirectionCombo.select(getLayoutDirectionIndex(layoutDirection));
 		layoutDirectionCombo.addSelectionListener(widgetSelectedAdapter(
@@ -119,15 +116,16 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 		bidiSupportClickButton.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 		bidiSupportClickButton.setText(WorkbenchMessages.GlobalizationPreference_bidiSupport);
 		bidiSupportClickButton.setSelection(bidiSupport);
-		bidiSupportClickButton.addSelectionListener(widgetSelectedAdapter(e -> selectClickMode(bidiSupportClickButton.getSelection())));
+		bidiSupportClickButton.addSelectionListener(
+				widgetSelectedAdapter(e -> selectClickMode(bidiSupportClickButton.getSelection())));
 
-		textDirectionCombo = addComboBox(composite,
-				WorkbenchMessages.GlobalizationPreference_textDirection,
+		textDirectionCombo = addComboBox(composite, WorkbenchMessages.GlobalizationPreference_textDirection,
 				LayoutConstants.getIndent());
 		textDirectionCombo.setItems(new String[] { DEFAULT_DIR, LTR_DIR, AUTO_DIR, RTL_DIR });
 		textDirectionCombo.setEnabled(bidiSupport);
 		textDirectionCombo.select(getTextDirectionIndex(textDirection));
-		textDirectionCombo.addSelectionListener(widgetSelectedAdapter(e -> textDirection = getTextDirectionString(textDirectionCombo.getSelectionIndex())));
+		textDirectionCombo.addSelectionListener(widgetSelectedAdapter(
+				e -> textDirection = getTextDirectionString(textDirectionCombo.getSelectionIndex())));
 
 		createSpace(composite);
 
@@ -208,7 +206,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 	private static void createSpace(Composite parent) {
 		Label vfiller = new Label(parent, SWT.LEFT);
 		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gridData.horizontalSpan= 2;
+		gridData.horizontalSpan = 2;
 
 		GC gc = new GC(parent);
 		gridData.heightHint = Dialog.convertHeightInCharsToPixels(gc.getFontMetrics(), 1) / 2;
@@ -239,8 +237,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 	@Override
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
-		nlExtensionsField
-				.setStringValue(store.getDefaultString(IPreferenceConstants.NL_EXTENSIONS));
+		nlExtensionsField.setStringValue(store.getDefaultString(IPreferenceConstants.NL_EXTENSIONS));
 		layoutDirection = store.getDefaultInt(IPreferenceConstants.LAYOUT_DIRECTION);
 		bidiSupport = store.getDefaultBoolean(IPreferenceConstants.BIDI_SUPPORT);
 		textDirection = store.getDefaultString(IPreferenceConstants.TEXT_DIRECTION);
@@ -272,4 +269,3 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 		return true;
 	}
 }
-

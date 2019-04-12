@@ -37,7 +37,7 @@ package org.eclipse.ui;
  * @see IEditorActionBarContributor
  */
 public interface IEditorActionBarContributor {
-    /**
+	/**
 	 * Initializes this contributor, which is expected to add contributions as
 	 * required to the given action bars and global action handlers.
 	 * <p>
@@ -59,21 +59,21 @@ public interface IEditorActionBarContributor {
 	 * @param page the workbench page for this contributor
 	 * @since 2.0
 	 */
-    void init(IActionBars bars, IWorkbenchPage page);
+	void init(IActionBars bars, IWorkbenchPage page);
 
-    /**
-     * Sets the active editor for the contributor.
-     * Implementors should disconnect from the old editor, connect to the
-     * new editor, and update the actions to reflect the new editor.
-     *
-     * @param targetEditor the new editor target
-     */
-    void setActiveEditor(IEditorPart targetEditor);
+	/**
+	 * Sets the active editor for the contributor. Implementors should disconnect
+	 * from the old editor, connect to the new editor, and update the actions to
+	 * reflect the new editor.
+	 *
+	 * @param targetEditor the new editor target
+	 */
+	void setActiveEditor(IEditorPart targetEditor);
 
-    /**
-     * Disposes this contributor.
-     *
-     * @since 2.0
-     */
-    void dispose();
+	/**
+	 * Disposes this contributor.
+	 *
+	 * @since 2.0
+	 */
+	void dispose();
 }

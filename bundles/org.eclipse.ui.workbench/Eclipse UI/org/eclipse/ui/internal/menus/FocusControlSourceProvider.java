@@ -31,14 +31,12 @@ import org.eclipse.ui.swt.IFocusService;
  * @since 3.3
  *
  */
-public class FocusControlSourceProvider extends AbstractSourceProvider
-		implements IFocusService {
+public class FocusControlSourceProvider extends AbstractSourceProvider implements IFocusService {
 
 	/**
 	 * The names of the sources supported by this source provider.
 	 */
-	private static final String[] PROVIDED_SOURCE_NAMES = new String[] {
-			ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
+	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
 			ISources.ACTIVE_FOCUS_CONTROL_NAME };
 
 	Map controlToId = new HashMap();
@@ -100,10 +98,8 @@ public class FocusControlSourceProvider extends AbstractSourceProvider
 			if (id == null) {
 				currentId = null;
 				currentControl = null;
-				m.put(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
-						IEvaluationContext.UNDEFINED_VARIABLE);
-				m.put(ISources.ACTIVE_FOCUS_CONTROL_NAME,
-						IEvaluationContext.UNDEFINED_VARIABLE);
+				m.put(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME, IEvaluationContext.UNDEFINED_VARIABLE);
+				m.put(ISources.ACTIVE_FOCUS_CONTROL_NAME, IEvaluationContext.UNDEFINED_VARIABLE);
 			} else {
 				currentId = id;
 				currentControl = (Control) widget;
@@ -148,10 +144,8 @@ public class FocusControlSourceProvider extends AbstractSourceProvider
 	public Map getCurrentState() {
 		Map m = new HashMap();
 		if (currentId == null) {
-			m.put(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
-					IEvaluationContext.UNDEFINED_VARIABLE);
-			m.put(ISources.ACTIVE_FOCUS_CONTROL_NAME,
-					IEvaluationContext.UNDEFINED_VARIABLE);
+			m.put(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME, IEvaluationContext.UNDEFINED_VARIABLE);
+			m.put(ISources.ACTIVE_FOCUS_CONTROL_NAME, IEvaluationContext.UNDEFINED_VARIABLE);
 
 		} else {
 			m.put(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME, currentId);

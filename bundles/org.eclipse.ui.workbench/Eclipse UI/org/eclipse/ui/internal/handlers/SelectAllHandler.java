@@ -42,18 +42,16 @@ public class SelectAllHandler extends WidgetMethodHandler {
 	private static final Class[] METHOD_PARAMETERS = { Point.class };
 
 	@Override
-	public final Object execute(final ExecutionEvent event)
-			throws ExecutionException {
+	public final Object execute(final ExecutionEvent event) throws ExecutionException {
 		final Method methodToExecute = getMethodToExecute();
 		if (methodToExecute != null) {
 			try {
-				final Control focusControl = Display.getCurrent()
-						.getFocusControl();
+				final Control focusControl = Display.getCurrent().getFocusControl();
 
 				final int numParams = methodToExecute.getParameterTypes().length;
 
 				if ((focusControl instanceof Composite)
-                        && ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
+						&& ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
 
 					// we only support selectAll for swing components
 					if (numParams != 0) {
@@ -61,17 +59,14 @@ public class SelectAllHandler extends WidgetMethodHandler {
 					}
 
 					/*
-					 * Okay. Have a seat. Relax a while. This is going to be a
-					 * bumpy ride. If it is an embedded widget, then it *might*
-					 * be a Swing widget. At the point where this handler is
-					 * executing, the key event is already bound to be
-					 * swallowed. If I don't do something, then the key will be
-					 * gone for good. So, I will try to forward the event to the
-					 * Swing widget. Unfortunately, we can't even count on the
-					 * Swing libraries existing, so I need to use reflection
-					 * everywhere. And, to top it off, I need to dispatch the
-					 * event on the Swing event queue, which means that it will
-					 * be carried out asynchronously to the SWT event queue.
+					 * Okay. Have a seat. Relax a while. This is going to be a bumpy ride. If it is
+					 * an embedded widget, then it *might* be a Swing widget. At the point where
+					 * this handler is executing, the key event is already bound to be swallowed. If
+					 * I don't do something, then the key will be gone for good. So, I will try to
+					 * forward the event to the Swing widget. Unfortunately, we can't even count on
+					 * the Swing libraries existing, so I need to use reflection everywhere. And, to
+					 * top it off, I need to dispatch the event on the Swing event queue, which
+					 * means that it will be carried out asynchronously to the SWT event queue.
 					 */
 					try {
 						final Object focusComponent = getFocusComponent();
@@ -80,37 +75,25 @@ public class SelectAllHandler extends WidgetMethodHandler {
 								try {
 									methodToExecute.invoke(focusComponent);
 									// and back to the UI thread :-)
-									focusControl.getDisplay().asyncExec(
-											() -> {
-												if (!focusControl
-														.isDisposed()) {
-													focusControl
-															.notifyListeners(
-																	SWT.Selection,
-																	null);
-												}
-											});
+									focusControl.getDisplay().asyncExec(() -> {
+										if (!focusControl.isDisposed()) {
+											focusControl.notifyListeners(SWT.Selection, null);
+										}
+									});
 								} catch (final IllegalAccessException e1) {
 									// The method is protected, so do
 									// nothing.
 								} catch (final InvocationTargetException e2) {
 									/*
-									 * I would like to log this exception --
-									 * and possibly show a dialog to the
-									 * user -- but I have to go back to the
-									 * SWT event loop to do this. So, back
-									 * we go....
+									 * I would like to log this exception -- and possibly show a dialog to the user
+									 * -- but I have to go back to the SWT event loop to do this. So, back we go....
 									 */
-									focusControl.getDisplay().asyncExec(
-											() -> ExceptionHandler
-													.getInstance()
-													.handleException(
-															new ExecutionException(
-																	"An exception occurred while executing " //$NON-NLS-1$
-																			+ methodToExecute
-																					.getName(),
-																	e2
-																			.getTargetException())));
+									focusControl.getDisplay()
+											.asyncExec(() -> ExceptionHandler.getInstance()
+													.handleException(new ExecutionException(
+															"An exception occurred while executing " //$NON-NLS-1$
+																	+ methodToExecute.getName(),
+															e2.getTargetException())));
 								}
 							};
 
@@ -130,12 +113,9 @@ public class SelectAllHandler extends WidgetMethodHandler {
 
 				} else if (numParams == 1) {
 					// This is a single-point selection method.
-					final Method textLimitAccessor = focusControl.getClass()
-							.getMethod("getTextLimit"); //$NON-NLS-1$
-					final Integer textLimit = (Integer) textLimitAccessor
-							.invoke(focusControl);
-					final Object[] parameters = { new Point(0, textLimit
-							.intValue()) };
+					final Method textLimitAccessor = focusControl.getClass().getMethod("getTextLimit"); //$NON-NLS-1$
+					final Integer textLimit = (Integer) textLimitAccessor.invoke(focusControl);
+					final Object[] parameters = { new Point(0, textLimit.intValue()) };
 					methodToExecute.invoke(focusControl, parameters);
 					if (!(focusControl instanceof Combo)) {
 						focusControl.notifyListeners(SWT.Selection, null);
@@ -143,11 +123,10 @@ public class SelectAllHandler extends WidgetMethodHandler {
 
 				} else {
 					/*
-					 * This means that getMethodToExecute() has been changed,
-					 * while this method hasn't.
+					 * This means that getMethodToExecute() has been changed, while this method
+					 * hasn't.
 					 */
-					throw new ExecutionException(
-							"Too many parameters on select all", new Exception()); //$NON-NLS-1$
+					throw new ExecutionException("Too many parameters on select all", new Exception()); //$NON-NLS-1$
 
 				}
 
@@ -155,9 +134,8 @@ public class SelectAllHandler extends WidgetMethodHandler {
 				// The method is protected, so do nothing.
 
 			} catch (InvocationTargetException e) {
-				throw new ExecutionException(
-						"An exception occurred while executing " //$NON-NLS-1$
-								+ getMethodToExecute(), e.getTargetException());
+				throw new ExecutionException("An exception occurred while executing " //$NON-NLS-1$
+						+ getMethodToExecute(), e.getTargetException());
 
 			} catch (NoSuchMethodException e) {
 				// I can't get the text limit. Do nothing.
@@ -198,8 +176,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 	 *      java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		// The name is always "selectAll".
 		methodName = "selectAll"; //$NON-NLS-1$
 	}

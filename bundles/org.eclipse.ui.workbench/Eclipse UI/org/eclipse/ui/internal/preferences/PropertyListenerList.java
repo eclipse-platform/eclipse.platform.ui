@@ -26,167 +26,167 @@ import java.util.Map;
  * @since 3.1
  */
 public final class PropertyListenerList {
-    private Map listeners;
-    private List globalListeners;
-    private static String[] singlePropertyDelta;
-    private static Object mutex = new Object();
+	private Map listeners;
+	private List globalListeners;
+	private static String[] singlePropertyDelta;
+	private static Object mutex = new Object();
 
-    public PropertyListenerList() {
-    }
+	public PropertyListenerList() {
+	}
 
-    public void firePropertyChange(String prefId) {
-        String[] delta;
+	public void firePropertyChange(String prefId) {
+		String[] delta;
 
-        // Optimization: as long as we're not being called recursively,
-        // we can reuse the same delta object to avoid repeated memory
-        // allocation.
-        synchronized(mutex) {
-	        if (singlePropertyDelta != null) {
-	            delta = singlePropertyDelta;
-	            singlePropertyDelta = null;
-	        } else {
-	            delta = new String[] {prefId};
-	        }
-        }
+		// Optimization: as long as we're not being called recursively,
+		// we can reuse the same delta object to avoid repeated memory
+		// allocation.
+		synchronized (mutex) {
+			if (singlePropertyDelta != null) {
+				delta = singlePropertyDelta;
+				singlePropertyDelta = null;
+			} else {
+				delta = new String[] { prefId };
+			}
+		}
 
-        delta[0] = prefId;
+		delta[0] = prefId;
 
-        firePropertyChange(delta);
+		firePropertyChange(delta);
 
-        // Optimization: allow this same delta object to be reused at a later
-        // time
-        if (singlePropertyDelta == null) {
-	        synchronized(mutex) {
-	            singlePropertyDelta = delta;
-	        }
-        }
-    }
+		// Optimization: allow this same delta object to be reused at a later
+		// time
+		if (singlePropertyDelta == null) {
+			synchronized (mutex) {
+				singlePropertyDelta = delta;
+			}
+		}
+	}
 
-    public void firePropertyChange(String[] propertyIds) {
-        if (globalListeners != null) {
-            for (Iterator iter = globalListeners.iterator(); iter.hasNext();) {
-                IPropertyMapListener next = (IPropertyMapListener) iter.next();
+	public void firePropertyChange(String[] propertyIds) {
+		if (globalListeners != null) {
+			for (Iterator iter = globalListeners.iterator(); iter.hasNext();) {
+				IPropertyMapListener next = (IPropertyMapListener) iter.next();
 
-                next.propertyChanged(propertyIds);
-            }
-        }
+				next.propertyChanged(propertyIds);
+			}
+		}
 
-        if (listeners != null) {
+		if (listeners != null) {
 
-            // To avoid temporary memory allocation, we try to simply move the
-            // result pointer around if possible. We only allocate a HashSet
-            // to compute which listeners we care about
-            Collection result = Collections.EMPTY_SET;
-            HashSet union = null;
+			// To avoid temporary memory allocation, we try to simply move the
+			// result pointer around if possible. We only allocate a HashSet
+			// to compute which listeners we care about
+			Collection result = Collections.EMPTY_SET;
+			HashSet union = null;
 
-            for (String property : propertyIds) {
-                List existingListeners = (List)listeners.get(property);
+			for (String property : propertyIds) {
+				List existingListeners = (List) listeners.get(property);
 
-    	        if (existingListeners != null) {
-    	            if (result == Collections.EMPTY_SET) {
-    	                result = existingListeners;
-    	            } else {
-    	                if (union == null) {
-    	                    union = new HashSet();
-    	                    union.addAll(result);
-    	                    result = union;
-    	                }
+				if (existingListeners != null) {
+					if (result == Collections.EMPTY_SET) {
+						result = existingListeners;
+					} else {
+						if (union == null) {
+							union = new HashSet();
+							union.addAll(result);
+							result = union;
+						}
 
-    	                union.addAll(existingListeners);
-    	            }
-    	        }
-            }
+						union.addAll(existingListeners);
+					}
+				}
+			}
 
-            for (Iterator iter = result.iterator(); iter.hasNext();) {
-                IPropertyMapListener next = (IPropertyMapListener) iter.next();
+			for (Iterator iter = result.iterator(); iter.hasNext();) {
+				IPropertyMapListener next = (IPropertyMapListener) iter.next();
 
-                next.propertyChanged(propertyIds);
-            }
-        }
-    }
+				next.propertyChanged(propertyIds);
+			}
+		}
+	}
 
-    public void add(IPropertyMapListener newListener) {
-        if (globalListeners == null) {
-            globalListeners = new ArrayList();
-        }
+	public void add(IPropertyMapListener newListener) {
+		if (globalListeners == null) {
+			globalListeners = new ArrayList();
+		}
 
-        globalListeners.add(newListener);
-        newListener.listenerAttached();
-    }
+		globalListeners.add(newListener);
+		newListener.listenerAttached();
+	}
 
-    /**
-     * Adds a listener which will be notified when the given property changes
-     *
-     * @param propertyId
-     * @param newListener
-     * @since 3.1
-     */
-    private void addInternal(String propertyId, IPropertyMapListener newListener) {
-        if (listeners == null) {
-            listeners = new HashMap();
-        }
+	/**
+	 * Adds a listener which will be notified when the given property changes
+	 *
+	 * @param propertyId
+	 * @param newListener
+	 * @since 3.1
+	 */
+	private void addInternal(String propertyId, IPropertyMapListener newListener) {
+		if (listeners == null) {
+			listeners = new HashMap();
+		}
 
-        List listenerList = (List)listeners.get(propertyId);
+		List listenerList = (List) listeners.get(propertyId);
 
-        if (listenerList == null) {
-            listenerList = new ArrayList(1);
-            listeners.put(propertyId, listenerList);
-        }
+		if (listenerList == null) {
+			listenerList = new ArrayList(1);
+			listeners.put(propertyId, listenerList);
+		}
 
-        if (!listenerList.contains(newListener)) {
-            listenerList.add(newListener);
-        }
-    }
+		if (!listenerList.contains(newListener)) {
+			listenerList.add(newListener);
+		}
+	}
 
-    public void add(String[] propertyIds, IPropertyMapListener newListener) {
-        for (String id : propertyIds) {
-            addInternal(id, newListener);
-        }
-        newListener.listenerAttached();
-    }
+	public void add(String[] propertyIds, IPropertyMapListener newListener) {
+		for (String id : propertyIds) {
+			addInternal(id, newListener);
+		}
+		newListener.listenerAttached();
+	}
 
-    public void remove(String propertyId, IPropertyMapListener toRemove) {
-        if (listeners == null) {
-            return;
-        }
-        List listenerList = (List)listeners.get(propertyId);
+	public void remove(String propertyId, IPropertyMapListener toRemove) {
+		if (listeners == null) {
+			return;
+		}
+		List listenerList = (List) listeners.get(propertyId);
 
-        if (listenerList != null) {
-            listenerList.remove(toRemove);
+		if (listenerList != null) {
+			listenerList.remove(toRemove);
 
-            if (listenerList.isEmpty()) {
-                listeners.remove(propertyId);
+			if (listenerList.isEmpty()) {
+				listeners.remove(propertyId);
 
-                if (listeners.isEmpty()) {
-                    listeners = null;
-                }
-            }
-        }
-    }
+				if (listeners.isEmpty()) {
+					listeners = null;
+				}
+			}
+		}
+	}
 
-    public void removeAll() {
-        globalListeners = null;
-        listeners = null;
-    }
+	public void removeAll() {
+		globalListeners = null;
+		listeners = null;
+	}
 
-    public void remove(IPropertyMapListener toRemove) {
-        if (globalListeners != null) {
-            globalListeners.remove(toRemove);
-            if (globalListeners.isEmpty()) {
-                globalListeners = null;
-            }
-        }
+	public void remove(IPropertyMapListener toRemove) {
+		if (globalListeners != null) {
+			globalListeners.remove(toRemove);
+			if (globalListeners.isEmpty()) {
+				globalListeners = null;
+			}
+		}
 
-        if (listeners != null) {
-            for (Iterator iter = listeners.keySet().iterator(); iter.hasNext();) {
-                String key = (String) iter.next();
+		if (listeners != null) {
+			for (Iterator iter = listeners.keySet().iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
 
-                remove(key, toRemove);
-            }
-        }
-    }
+				remove(key, toRemove);
+			}
+		}
+	}
 
-    public boolean isEmpty() {
-        return globalListeners == null && listeners == null;
-    }
+	public boolean isEmpty() {
+		return globalListeners == null && listeners == null;
+	}
 }

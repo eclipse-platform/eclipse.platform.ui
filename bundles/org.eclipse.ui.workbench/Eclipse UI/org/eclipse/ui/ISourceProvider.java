@@ -38,39 +38,38 @@ public interface ISourceProvider {
 	 * Adds a listener to this source provider. This listener will be notified
 	 * whenever the corresponding source changes.
 	 *
-	 * @param listener
-	 *            The listener to add; must not be <code>null</code>.
+	 * @param listener The listener to add; must not be <code>null</code>.
 	 */
 	void addSourceProviderListener(ISourceProviderListener listener);
 
 	/**
 	 * Allows the source provider an opportunity to clean up resources (e.g.,
-	 * listeners) before being released. This method should be called by the
-	 * creator after the source provider has been removed from all the services
-	 * with which it was registered.
+	 * listeners) before being released. This method should be called by the creator
+	 * after the source provider has been removed from all the services with which
+	 * it was registered.
 	 */
 	void dispose();
 
 	/**
-	 * Returns the current state of the sources tracked by this provider. This
-	 * is used to provide a view of the world if the event loop is busy and
-	 * things are some state has already changed.
+	 * Returns the current state of the sources tracked by this provider. This is
+	 * used to provide a view of the world if the event loop is busy and things are
+	 * some state has already changed.
 	 * <p>
 	 * For use with core expressions, this map should contain
-	 * IEvaluationContext#UNDEFINED_VARIABLE for properties which
-	 * are only sometimes available.
+	 * IEvaluationContext#UNDEFINED_VARIABLE for properties which are only sometimes
+	 * available.
 	 * </p>
 	 *
-	 * @return A map of variable names (<code>String</code>) to variable
-	 *         values (<code>Object</code>). This may be empty, and may be
+	 * @return A map of variable names (<code>String</code>) to variable values
+	 *         (<code>Object</code>). This may be empty, and may be
 	 *         <code>null</code>.
 	 */
 	Map getCurrentState();
 
 	/**
-	 * Returns the names of those sources provided by this class. This is used
-	 * by clients of source providers to determine which source providers they
-	 * actually need.
+	 * Returns the names of those sources provided by this class. This is used by
+	 * clients of source providers to determine which source providers they actually
+	 * need.
 	 *
 	 * @return An array of source names. This value should never be
 	 *         <code>null</code> or empty.
@@ -78,11 +77,10 @@ public interface ISourceProvider {
 	String[] getProvidedSourceNames();
 
 	/**
-	 * Removes a listener from this source provider. This listener will be
-	 * notified whenever the corresponding source changes.
+	 * Removes a listener from this source provider. This listener will be notified
+	 * whenever the corresponding source changes.
 	 *
-	 * @param listener
-	 *            The listener to remove; must not be <code>null</code>.
+	 * @param listener The listener to remove; must not be <code>null</code>.
 	 */
 	void removeSourceProviderListener(ISourceProviderListener listener);
 }

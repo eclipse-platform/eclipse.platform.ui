@@ -44,13 +44,13 @@ public class RGBBrightnessColorFactory implements IColorFactory, IExecutableExte
 	}
 
 	/**
-	 * This executable extension requires parameters to be explicitly declared
-	 * via the second method described in the <code>IExecutableExtension</code>
+	 * This executable extension requires parameters to be explicitly declared via
+	 * the second method described in the <code>IExecutableExtension</code>
 	 * documentation. This class expects that there will be two parameters,
 	 * <code>color</code> that describe the color to be blended (this values may
-	 * either be RGB triples or SWT constants) and <code>scaleFactor</code>
-	 * which is the brightness scale factor with 1.0 having the same brightness
-	 * as the original color.
+	 * either be RGB triples or SWT constants) and <code>scaleFactor</code> which is
+	 * the brightness scale factor with 1.0 having the same brightness as the
+	 * original color.
 	 *
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
 	 *      java.lang.String, java.lang.Object)

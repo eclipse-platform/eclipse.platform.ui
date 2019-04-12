@@ -32,13 +32,12 @@ public class ActivityPropertyTester extends PropertyTester {
 	private static final String PROPERTY_IS_CATEGORY_ENABLED = "isCategoryEnabled"; //$NON-NLS-1$
 
 	@Override
-	public boolean test(Object receiver, String property, Object[] args,
-			Object expectedValue) {
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (args.length == 1 && receiver instanceof IWorkbench && args[0] instanceof String) {
 			if (PROPERTY_IS_ACTIVITY_ENABLED.equals(property)) {
-				return isActivityEnabled((String) args[0], (IWorkbench)receiver);
+				return isActivityEnabled((String) args[0], (IWorkbench) receiver);
 			} else if (PROPERTY_IS_CATEGORY_ENABLED.equals(property)) {
-				return isCategoryEnabled((String) args[0], (IWorkbench)receiver);
+				return isCategoryEnabled((String) args[0], (IWorkbench) receiver);
 			}
 		}
 		return false;
@@ -46,10 +45,8 @@ public class ActivityPropertyTester extends PropertyTester {
 
 	private static boolean isActivityEnabled(String activityId, IWorkbench workbench) {
 		try {
-			IWorkbenchActivitySupport workbenchActivitySupport =
-					workbench.getActivitySupport();
-			IActivityManager activityManager = workbenchActivitySupport
-					.getActivityManager();
+			IWorkbenchActivitySupport workbenchActivitySupport = workbench.getActivitySupport();
+			IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
 			return activityManager.getActivity(activityId).isEnabled();
 		} catch (Exception e) {
 			// workbench not yet activated; nothing enabled yet
@@ -59,12 +56,9 @@ public class ActivityPropertyTester extends PropertyTester {
 
 	private static boolean isCategoryEnabled(String categoryId, IWorkbench workbench) {
 		try {
-			IWorkbenchActivitySupport workbenchActivitySupport =
-					workbench.getActivitySupport();
-			IActivityManager activityManager = workbenchActivitySupport
-					.getActivityManager();
-			return WorkbenchActivityHelper.isEnabled(activityManager,
-					categoryId);
+			IWorkbenchActivitySupport workbenchActivitySupport = workbench.getActivitySupport();
+			IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+			return WorkbenchActivityHelper.isEnabled(activityManager, categoryId);
 		} catch (Exception e) {
 			// workbench not yet activated; nothing enabled yet
 		}

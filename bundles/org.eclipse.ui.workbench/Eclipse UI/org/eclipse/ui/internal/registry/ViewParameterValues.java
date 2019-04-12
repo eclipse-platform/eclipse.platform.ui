@@ -32,8 +32,7 @@ public final class ViewParameterValues implements IParameterValues {
 	public Map getParameterValues() {
 		final Map values = new HashMap();
 
-		final IViewDescriptor[] views = PlatformUI.getWorkbench()
-				.getViewRegistry().getViews();
+		final IViewDescriptor[] views = PlatformUI.getWorkbench().getViewRegistry().getViews();
 		for (final IViewDescriptor view : views) {
 			values.put(view.getLabel(), view.getId());
 		}
