@@ -76,6 +76,10 @@ import org.eclipse.core.runtime.Status;
  * @since 3.1
  */
 public final class DefaultOperationHistory implements IOperationHistory {
+
+	private static final String FOR_OPERATION = "for operation "; //$NON-NLS-1$
+	private static final String OPERATIONHISTORY = "OPERATIONHISTORY"; //$NON-NLS-1$
+
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever notifications about
@@ -311,7 +315,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// used again.
 		if (flushContext) {
 			if (DEBUG_OPERATION_HISTORY_DISPOSE) {
-				Tracing.printTrace("OPERATIONHISTORY", "Flushing context " + context); //$NON-NLS-1$//$NON-NLS-2$
+				Tracing.printTrace(OPERATIONHISTORY, "Flushing context " + context); //$NON-NLS-1$
 			}
 			flushUndo(context);
 			flushRedo(context);
@@ -346,14 +350,14 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			} catch (ExecutionException e) {
 				notifyNotOK(operation);
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+					Tracing.printTrace(OPERATIONHISTORY,
 							"ExecutionException while redoing " + operation); //$NON-NLS-1$
 				}
 				throw e;
 			} catch (Exception e) {
 				notifyNotOK(operation);
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+					Tracing.printTrace(OPERATIONHISTORY,
 							"Exception while redoing " + operation); //$NON-NLS-1$
 				}
 				throw new ExecutionException("While redoing the operation, an exception occurred", e); //$NON-NLS-1$
@@ -405,14 +409,14 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			} catch (ExecutionException e) {
 				notifyNotOK(operation);
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+					Tracing.printTrace(OPERATIONHISTORY,
 							"ExecutionException while undoing " + operation); //$NON-NLS-1$
 				}
 				throw e;
 			} catch (Exception e) {
 				notifyNotOK(operation);
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+					Tracing.printTrace(OPERATIONHISTORY,
 							"Exception while undoing " + operation); //$NON-NLS-1$
 				}
 				throw new ExecutionException(
@@ -548,7 +552,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void flushRedo(IUndoContext context) {
 		if (DEBUG_OPERATION_HISTORY_DISPOSE) {
-			Tracing.printTrace("OPERATIONHISTORY", "Flushing redo history for " + context); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "Flushing redo history for " + context); //$NON-NLS-1$
 		}
 
 		synchronized (undoRedoHistoryLock) {
@@ -586,7 +590,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void flushUndo(IUndoContext context) {
 		if (DEBUG_OPERATION_HISTORY_DISPOSE) {
-			Tracing.printTrace("OPERATIONHISTORY", "Flushing undo history for " + context); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "Flushing undo history for " + context); //$NON-NLS-1$
 		}
 
 		synchronized (undoRedoHistoryLock) {
@@ -729,9 +733,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			IStatus approval = approver.proceedRedoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
-					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+					Tracing.printTrace(OPERATIONHISTORY,
 							"Redo not approved by " + approver //$NON-NLS-1$
-									+ "for operation " + operation //$NON-NLS-1$
+									+ FOR_OPERATION + operation
 									+ " approved by " + approval); //$NON-NLS-1$
 				}
 				return approval;
@@ -770,9 +774,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			IStatus approval = approver.proceedUndoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
-					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+					Tracing.printTrace(OPERATIONHISTORY,
 							"Undo not approved by " + approver //$NON-NLS-1$
-									+ "for operation " + operation //$NON-NLS-1$
+									+ FOR_OPERATION + operation
 									+ " with status " + approval); //$NON-NLS-1$
 				}
 				return approval;
@@ -815,9 +819,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				IStatus approval = approver.proceedExecuting(operation, this, info);
 				if (!approval.isOK()) {
 					if (DEBUG_OPERATION_HISTORY_APPROVAL) {
-						Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+						Tracing.printTrace(OPERATIONHISTORY,
 								"Execute not approved by " + approver //$NON-NLS-1$
-										+ "for operation " + operation //$NON-NLS-1$
+										+ FOR_OPERATION + operation
 										+ " with status " + approval); //$NON-NLS-1$
 					}
 					return approval;
@@ -845,7 +849,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				@Override
 				public void handleException(Throwable exception) {
 					if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-						Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+						Tracing.printTrace(OPERATIONHISTORY,
 								"Exception during notification callback " + exception); //$NON-NLS-1$
 					}
 				}
@@ -861,7 +865,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				@Override
 				public void handleException(Throwable exception) {
 					if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-						Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+						Tracing.printTrace(OPERATIONHISTORY,
 								"Exception during notification callback " + exception); //$NON-NLS-1$
 					}
 				}
@@ -876,7 +880,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	private void notifyAboutToExecute(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "ABOUT_TO_EXECUTE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "ABOUT_TO_EXECUTE " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.ABOUT_TO_EXECUTE, this, operation));
@@ -887,7 +891,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyAboutToRedo(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "ABOUT_TO_REDO " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "ABOUT_TO_REDO " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.ABOUT_TO_REDO, this, operation));
@@ -898,7 +902,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyAboutToUndo(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "ABOUT_TO_UNDO " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "ABOUT_TO_UNDO " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.ABOUT_TO_UNDO, this, operation));
@@ -909,7 +913,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyAdd(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_ADDED " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "OPERATION_ADDED " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.OPERATION_ADDED, this, operation));
@@ -920,7 +924,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyDone(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "DONE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "DONE " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.DONE, this, operation));
@@ -943,7 +947,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyNotOK(IUndoableOperation operation, IStatus status) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_NOT_OK " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "OPERATION_NOT_OK " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.OPERATION_NOT_OK, this, operation, status));
@@ -954,7 +958,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyRedone(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "REDONE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "REDONE " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.REDONE, this, operation));
@@ -965,7 +969,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyRemoved(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_REMOVED " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "OPERATION_REMOVED " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.OPERATION_REMOVED, this, operation));
@@ -976,7 +980,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyUndone(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "UNDONE " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "UNDONE " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.UNDONE, this, operation));
@@ -987,7 +991,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private void notifyChanged(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_CHANGED " + operation); //$NON-NLS-1$//$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "OPERATION_CHANGED " + operation); //$NON-NLS-1$
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.OPERATION_CHANGED, this, operation));
@@ -1006,7 +1010,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// error if operation is invalid
 		if (!operation.canRedo()) {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				Tracing.printTrace("OPERATIONHISTORY", "Redo operation not valid - " + operation); //$NON-NLS-1$//$NON-NLS-2$
+				Tracing.printTrace(OPERATIONHISTORY, "Redo operation not valid - " + operation); //$NON-NLS-1$
 			}
 
 			return IOperationHistory.OPERATION_INVALID_STATUS;
@@ -1024,7 +1028,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			status = doRedo(monitor, info, operation);
 		} else {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				Tracing.printTrace("OPERATIONHISTORY", "Redo operation not valid - " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+				Tracing.printTrace(OPERATIONHISTORY, "Redo operation not valid - " + operation); //$NON-NLS-1$
 			}
 			status = IOperationHistory.OPERATION_INVALID_STATUS;
 		}
@@ -1142,7 +1146,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// error if operation is invalid
 		if (!operation.canUndo()) {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				Tracing.printTrace("OPERATIONHISTORY", "Undo operation not valid - " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+				Tracing.printTrace(OPERATIONHISTORY, "Undo operation not valid - " + operation); //$NON-NLS-1$
 			}
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
@@ -1159,7 +1163,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			status = doUndo(monitor, info, operation);
 		} else {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				Tracing.printTrace("OPERATIONHISTORY", "Undo operation not valid - " + operation); //$NON-NLS-1$//$NON-NLS-2$
+				Tracing.printTrace(OPERATIONHISTORY, "Undo operation not valid - " + operation); //$NON-NLS-1$
 			}
 			status = IOperationHistory.OPERATION_INVALID_STATUS;
 		}
@@ -1172,7 +1176,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			if (openComposite != null && openComposite != operation) {
 				// unexpected nesting of operations.
 				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-					Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
+					Tracing.printTrace(OPERATIONHISTORY,
 							"Open operation called while another operation is open.  old: " //$NON-NLS-1$
 									+ openComposite + "; new:  " + operation); //$NON-NLS-1$
 				}
@@ -1183,7 +1187,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			openComposite = operation;
 		}
 		if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
-			Tracing.printTrace("OPERATIONHISTORY", "Opening operation " + openComposite); //$NON-NLS-1$ //$NON-NLS-2$
+			Tracing.printTrace(OPERATIONHISTORY, "Opening operation " + openComposite); //$NON-NLS-1$
 		}
 
 		if (mode == EXECUTE) {
@@ -1198,14 +1202,14 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		synchronized (openCompositeLock) {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
 				if (openComposite == null) {
-					Tracing.printTrace("OPERATIONHISTORY", "Attempted to close operation when none was open"); //$NON-NLS-1$//$NON-NLS-2$
+					Tracing.printTrace(OPERATIONHISTORY, "Attempted to close operation when none was open"); //$NON-NLS-1$
 					return;
 				}
 			}
 			// notifications will occur outside the synchonized block
 			if (openComposite != null) {
 				if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
-					Tracing.printTrace("OPERATIONHISTORY", "Closing operation " + openComposite); //$NON-NLS-1$ //$NON-NLS-2$
+					Tracing.printTrace(OPERATIONHISTORY, "Closing operation " + openComposite); //$NON-NLS-1$
 				}
 				endedComposite = openComposite;
 				openComposite = null;
