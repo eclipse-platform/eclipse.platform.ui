@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2975,7 +2975,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				private long fMouseUpDelta= 0;
 
 				private void triggerAction(String actionID, MouseEvent e) {
-					IAction action= getAction(actionID);
+					// ActionId can be prefixed with modifiers
+					StringBuffer newActionId = new StringBuffer(""); //$NON-NLS-1$
+					if ((e.stateMask & SWT.MOD1) > 0) {
+						newActionId.append("M1+"); //$NON-NLS-1$
+					}
+					if ((e.stateMask & SWT.MOD2) > 0) {
+						newActionId.append("M2+"); //$NON-NLS-1$
+					}
+					if ((e.stateMask & SWT.MOD3) > 0) {
+						newActionId.append("M3+"); //$NON-NLS-1$
+					}
+					newActionId.append(actionID);
+					IAction action = getAction(newActionId.toString());
+					// If action does not exist with specified
+					// modifiers+actionId, try to retrieve action with only
+					// actionId
+					if (action == null) {
+						action = getAction(actionID);
+					}
 					if (action != null) {
 						if (action instanceof IUpdate)
 							((IUpdate) action).update();
