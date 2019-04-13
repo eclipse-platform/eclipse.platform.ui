@@ -45,6 +45,6 @@ public class NumberToBigIntegerConverter extends NumberToNumberConverter<BigInte
 			return (BigDecimal) number;
 		}
 
-		return new BigDecimal(number.doubleValue());
+		return BigDecimal.valueOf(number.doubleValue());
 	}
 }

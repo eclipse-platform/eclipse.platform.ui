@@ -40,8 +40,8 @@ public class StringToDoubleValidatorTest extends
 
 	@Override
 	protected Number getOutOfRangeNumber() {
-		BigDecimal decimal = new BigDecimal(Double.MAX_VALUE);
-		return decimal.add(new BigDecimal(Double.MAX_VALUE));
+		BigDecimal decimal = BigDecimal.valueOf(Double.MAX_VALUE);
+		return decimal.add(BigDecimal.valueOf(Double.MAX_VALUE));
 	}
 
 	@Override

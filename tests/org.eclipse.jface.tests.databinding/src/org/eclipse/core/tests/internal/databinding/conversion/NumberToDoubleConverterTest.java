@@ -27,7 +27,7 @@ import com.ibm.icu.text.NumberFormat;
 public class NumberToDoubleConverterTest extends NumberToNumberTestHarness {
 	@Override
 	protected Number doGetOutOfRangeNumber() {
-		return new BigDecimal(Double.MAX_VALUE).add(new BigDecimal(Double.MAX_VALUE));
+		return BigDecimal.valueOf(Double.MAX_VALUE).add(BigDecimal.valueOf(Double.MAX_VALUE));
 	}
 
 	@Override

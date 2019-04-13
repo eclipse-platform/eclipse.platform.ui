@@ -29,15 +29,11 @@ import com.ibm.icu.text.NumberFormat;
  * @since 1.0
  */
 public class StringToNumberParser {
-	private static final BigDecimal FLOAT_MAX_BIG_DECIMAL = new BigDecimal(
-			Float.MAX_VALUE);
-	private static final BigDecimal FLOAT_MIN_BIG_DECIMAL = new BigDecimal(
-			-Float.MAX_VALUE);
+	private static final BigDecimal FLOAT_MAX_BIG_DECIMAL = BigDecimal.valueOf(Float.MAX_VALUE);
+	private static final BigDecimal FLOAT_MIN_BIG_DECIMAL = BigDecimal.valueOf(-Float.MAX_VALUE);
 
-	private static final BigDecimal DOUBLE_MAX_BIG_DECIMAL = new BigDecimal(
-			Double.MAX_VALUE);
-	private static final BigDecimal DOUBLE_MIN_BIG_DECIMAL = new BigDecimal(
-			-Double.MAX_VALUE);
+	private static final BigDecimal DOUBLE_MAX_BIG_DECIMAL = BigDecimal.valueOf(Double.MAX_VALUE);
+	private static final BigDecimal DOUBLE_MIN_BIG_DECIMAL = BigDecimal.valueOf(-Double.MAX_VALUE);
 
 	/**
 	 * @param value
@@ -181,7 +177,7 @@ public class StringToNumberParser {
 		} else if (number instanceof Float || number instanceof Double) {
 			double doubleValue = number.doubleValue();
 			if (!Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue)) {
-				bigInteger = new BigDecimal(doubleValue).toBigInteger();
+				bigInteger = BigDecimal.valueOf(doubleValue).toBigInteger();
 			} else {
 				return false;
 			}
@@ -196,7 +192,7 @@ public class StringToNumberParser {
 			 * that this will work we fall back on the double value of the
 			 * number.
 			 */
-			bigInteger = new BigDecimal(number.doubleValue()).toBigInteger();
+			bigInteger = BigDecimal.valueOf(number.doubleValue()).toBigInteger();
 		}
 
 		if (bigInteger != null) {
@@ -238,12 +234,12 @@ public class StringToNumberParser {
 			BigDecimal max) {
 		BigDecimal bigDecimal = null;
 		if (number instanceof Integer || number instanceof Long) {
-			bigDecimal = new BigDecimal(number.doubleValue());
+			bigDecimal = BigDecimal.valueOf(number.doubleValue());
 		} else if (number instanceof Float || number instanceof Double) {
 			double doubleValue = number.doubleValue();
 
 			if (!Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue)) {
-				bigDecimal = new BigDecimal(doubleValue);
+				bigDecimal = BigDecimal.valueOf(doubleValue);
 			} else {
 				return false;
 			}
@@ -265,7 +261,7 @@ public class StringToNumberParser {
 			double doubleValue = number.doubleValue();
 
 			if (!Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue)) {
-				bigDecimal = new BigDecimal(doubleValue);
+				bigDecimal = BigDecimal.valueOf(doubleValue);
 			} else {
 				return false;
 			}

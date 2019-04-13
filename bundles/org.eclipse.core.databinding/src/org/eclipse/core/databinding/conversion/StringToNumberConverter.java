@@ -202,7 +202,7 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 			else if(n instanceof BigDecimal)
 				return (T) ((BigDecimal) n).toBigInteger();
 			else
-				return (T) new BigDecimal(n.doubleValue()).toBigInteger();
+				return (T) BigDecimal.valueOf(n.doubleValue()).toBigInteger();
 		} else if (BigDecimal.class.equals(boxedType)) {
 			Number n = result.getNumber();
 			if(n instanceof Long)
@@ -223,7 +223,7 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 					throw new IllegalArgumentException("Error (InvocationTargetException) converting BigDecimal using ICU"); //$NON-NLS-1$
 				}
 			} else if(n instanceof Double) {
-				BigDecimal bd = new BigDecimal(n.doubleValue());
+				BigDecimal bd = BigDecimal.valueOf(n.doubleValue());
 				if (bd.scale() == 0)
 					return (T) bd;
 				throw new IllegalArgumentException("Non-integral Double value returned from NumberFormat " + //$NON-NLS-1$

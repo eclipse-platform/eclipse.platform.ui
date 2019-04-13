@@ -118,7 +118,7 @@ public class StringToNumberConverterTest {
 		assertEquals("Non-integer BigDecimal", input, result);
 
 		// Test 2: Long
-		input = new BigDecimal(Integer.MAX_VALUE + 100L);
+		input = BigDecimal.valueOf(Integer.MAX_VALUE + 100L);
 		result = converter.convert(formatBigDecimal(input));
 		assertEquals("Integral BigDecimal in long range", input, result);
 

@@ -143,16 +143,16 @@ public abstract class StringToNumberParserTestHarness {
 
 		// test BigIntegers
 		assertTrue("valid BigInteger", assertValid(BigInteger.valueOf(1)));
-		BigDecimal bigDecimalMin = new BigDecimal(min.doubleValue());
-		bigDecimalMin = bigDecimalMin.subtract(new BigDecimal(1));
+		BigDecimal bigDecimalMin = BigDecimal.valueOf(min.doubleValue());
+		bigDecimalMin = bigDecimalMin.subtract(BigDecimal.valueOf(1));
 		assertFalse("invalid BigInteger min", assertValid(bigDecimalMin.toBigInteger()));
 
-		BigDecimal bigDecimalMax = new BigDecimal(max.doubleValue());
-		bigDecimalMax = bigDecimalMax.add(new BigDecimal(1));
+		BigDecimal bigDecimalMax = BigDecimal.valueOf(max.doubleValue());
+		bigDecimalMax = bigDecimalMax.add(BigDecimal.valueOf(1));
 		assertFalse("invalid BigInteger max", assertValid(bigDecimalMax.toBigInteger()));
 
 		// test BigDecimals
-		assertTrue("valid BigDecimal", assertValid(new BigDecimal(1)));
+		assertTrue("valid BigDecimal", assertValid(BigDecimal.valueOf(1)));
 		assertFalse("invalid BigDecimal min", assertValid(bigDecimalMin));
 		assertFalse("invalid BigDecimal max", assertValid(bigDecimalMax));
 
