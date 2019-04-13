@@ -328,6 +328,7 @@ The following attribute formats are supported:
 &lt;ul&gt;
 &lt;li&gt;&quot;RulerClick&quot;: the contributed action which is invoked upon single-click in the (left) vertical ruler&lt;/li&gt;
 &lt;li&gt;&quot;RulerDoubleClick&quot;: the contributed action which is invoked upon single-click in the (left) vertical ruler&lt;/li&gt;
+These special IDs can be prefixed with modifires to support contributions by multiple actions using modifiers e.g. M1+M3+RulerClick. This action will different than M1+M2+RulerClick or RulerClick and action will be triggered accordingly.
 &lt;/ul&gt;
 &lt;p&gt;
 If multiple extensions contribute ruler actions to the same text editor, the extension whose plug-in is at the top of the prerequisite tree wins. If there are multiple such plug-ins, the first wins.
@@ -496,7 +497,7 @@ In the example above, the specified action will appear as a menu item in the sub
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2019 IBM Corporation and others.&lt;br&gt;
 
 This program and the accompanying materials are made
 available under the terms of the Eclipse Public License 2.0 which accompanies
