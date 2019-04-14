@@ -44,6 +44,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -52,13 +54,16 @@ import org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.test.Screenshots;
 import org.junit.After;
@@ -450,6 +455,51 @@ public class PartRenderingEngineTests {
 		stack.setSelectedElement(partB);
 		assertEquals(1, tabFolder.getSelectionIndex());
 		assertEquals(partB, stack.getSelectedElement());
+	}
+
+	@Test
+	public void testPartStack_ViewMenuHidenWhenPartsClosed_Bug377228() throws Exception {
+		MApplication application = ems.createModelElement(MApplication.class);
+		application.setContext(appContext);
+		appContext.set(MApplication.class, application);
+
+		MWindow window = ems.createModelElement(MWindow.class);
+		application.getChildren().add(window);
+
+		MPartStack stack = ems.createModelElement(MPartStack.class);
+		window.getChildren().add(stack);
+
+		MPart part = ems.createModelElement(MPart.class);
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		stack.getChildren().add(part);
+
+		MMenu menu = ems.createModelElement(MMenu.class);
+		menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
+		part.getMenus().add(menu);
+
+		MDirectMenuItem item = ems.createModelElement(MDirectMenuItem.class);
+		menu.getChildren().add(item);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		CTabFolder folder = (CTabFolder) stack.getWidget();
+		Composite compA = (Composite) folder.getTopRight();
+		ToolBar toolbar = null;
+		for (Control child : compA.getChildren()) {
+			if (child.getData().equals(StackRenderer.TAG_VIEW_MENU)) {
+				toolbar = (ToolBar) child;
+			}
+		}
+		assertTrue(toolbar != null);
+
+		assertTrue(toolbar.getVisible());
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.hidePart(part, true);
+		spinEventLoop();
+
+		assertFalse(toolbar.getVisible());
 	}
 
 	@Test
