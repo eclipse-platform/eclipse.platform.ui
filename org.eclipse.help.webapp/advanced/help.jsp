@@ -118,7 +118,7 @@ if (data.isIE()) {
 <%
 }
 %> 
-    id="helpFrameset" cols="<%=isRTL?"70.5%,29.5%":"29.5%,70.5%"%>" framespacing="3" border="6"  frameborder="1"   scrolling="no">
+    id="helpFrameset" cols="<%=isRTL?"70.5%,29.5%":"29.5%,70.5%"%>" framespacing="1" border="1"  frameborder="1"   scrolling="no">
 <%
 if (isRTL) {
 %>

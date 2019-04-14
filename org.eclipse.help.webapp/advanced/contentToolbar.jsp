@@ -63,12 +63,6 @@
 	<jsp:param name="param"    value="<%=homeURL%>"/>
 	<jsp:param name="state"    value='off'/>
 	
-	<jsp:param name="name"     value=""/>
-	<jsp:param name="tooltip"  value=""/>
-	<jsp:param name="image"    value=""/>
-	<jsp:param name="action"   value=""/>
-	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="synch"/>
 	<jsp:param name="tooltip"  value='Synch'/>

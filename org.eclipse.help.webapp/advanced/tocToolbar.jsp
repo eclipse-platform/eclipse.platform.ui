@@ -46,13 +46,6 @@
 	<jsp:param name="action"   value="menu"/>
 	<jsp:param name="param"    value="<%=menuData%>"/>
 	<jsp:param name="state"    value='off'/>
-
-	<jsp:param name="name"     value=""/>
-	<jsp:param name="tooltip"  value=""/>
-	<jsp:param name="image"    value=""/>
-	<jsp:param name="action"   value=""/>
-	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="quick_search"/>
 	<jsp:param name="tooltip"  value='QuickSearchMulti'/>
