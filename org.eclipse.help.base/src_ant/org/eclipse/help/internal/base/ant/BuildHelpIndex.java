@@ -64,9 +64,9 @@ public class BuildHelpIndex extends Task {
 		try {
 			builder.execute(monitor);
 		} catch (CoreException e) {
+			printStatus(e);
 			if (e.getStatus().getSeverity()==IStatus.ERROR)
 				throw new BuildException(e.getMessage(), e.getCause());
-			printStatus(e);
 		}
 	}
 
