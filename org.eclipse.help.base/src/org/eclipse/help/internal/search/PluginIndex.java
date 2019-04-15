@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -155,7 +155,7 @@ public class PluginIndex {
 					.getProperty(SearchIndex.DEPENDENCIES_KEY_ANALYZER);
 			if (!targetIndex.isLuceneCompatible(lucene) || !targetIndex.isAnalyzerCompatible(analyzer)) {
 				String message = "Unable to consume Lucene index from bundle '" + bundle.toString() //$NON-NLS-1$
-						+ "'. The index should be rebuilt with Lucene 7.0.0"; //$NON-NLS-1$
+						+ "'. The index should be rebuilt with Lucene 8.0.0"; //$NON-NLS-1$
 				Status warningStatus = new Status(IStatus.WARNING, HelpBasePlugin.PLUGIN_ID, IStatus.OK, message, null);
 				HelpBasePlugin.logStatus(warningStatus);
 				return false;
