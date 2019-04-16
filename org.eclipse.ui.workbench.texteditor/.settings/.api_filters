@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.workbench.texteditor" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Filter for bug 515570 - [api] org.eclipse.ui.editorActions should allow modifiers" id="926941240">
+            <message_arguments>
+                <message_argument value="3.12.0"/>
+                <message_argument value="3.11.300"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/texteditor/ITextEditorActionConstants.java" type="org.eclipse.ui.texteditor.ITextEditorActionConstants">
         <filter id="571473929">
             <message_arguments>
