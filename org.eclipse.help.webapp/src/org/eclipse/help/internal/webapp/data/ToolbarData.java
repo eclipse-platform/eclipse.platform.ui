@@ -101,7 +101,7 @@ public class ToolbarData extends RequestData {
 				|| (isSafari() && "120".compareTo(getSafariVersion()) <= 0)) { //$NON-NLS-1$
 			buttonList.add(new ToolbarButton("maximize_restore", //$NON-NLS-1$
 					getMaximizeTooltip(), preferences.getImagesDirectory()
-							+ "/" + "maximize.gif", //$NON-NLS-1$ //$NON-NLS-2$
+							+ "/" + "maximize.svg", //$NON-NLS-1$ //$NON-NLS-2$
 					"restore_maximize", null, "off")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		buttons = buttonList
@@ -175,10 +175,10 @@ public class ToolbarData extends RequestData {
 		return request.getParameter("script"); //$NON-NLS-1$
 	}
 	public String getMaximizeImage() {
-		return preferences.getImagesDirectory() + "/e_maximize.gif"; //$NON-NLS-1$
+		return preferences.getImagesDirectory() + "/e_maximize.svg"; //$NON-NLS-1$
 	}
 	public String getRestoreImage() {
-		return preferences.getImagesDirectory() + "/e_restore.gif"; //$NON-NLS-1$
+		return preferences.getImagesDirectory() + "/e_restore.svg"; //$NON-NLS-1$
 	}
 	public String getMaximizeTooltip() {
 		return ServletResources.getString("maximize", request); //$NON-NLS-1$

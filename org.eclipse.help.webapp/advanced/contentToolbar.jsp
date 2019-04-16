@@ -18,13 +18,13 @@
 	WebappPreferences prefs = data.getPrefs();
 	String forwardImage, backImage, homeImage;
 	if(isRTL) {
-		forwardImage = "back.gif";
-		backImage = "forward.gif";
+		forwardImage = "back.svg";
+		backImage = "forward.svg";
 	} else {
-		forwardImage = "forward.gif";
-		backImage = "back.gif";
+		forwardImage = "forward.svg";
+		backImage = "back.svg";
 	}
-	homeImage = "home.gif";
+	homeImage = "home.svg";
 	String homeURL = UrlUtil.getHelpURL(prefs.getHelpHome());
 	boolean isBookmarkAction = prefs.isBookmarksView() 
 		|| prefs.isBookmarksAction() && data.isIE() && !data.isOpera(); // for infocenter, add to favorites supported on IE
@@ -37,7 +37,7 @@
 		
 	<jsp:param name="name"     value="toggle_highlight"/>
 	<jsp:param name="tooltip"  value='highlight_tip'/>
-	<jsp:param name="image"    value="highlight.gif"/>
+	<jsp:param name="image"    value="highlight.svg"/>
 	<jsp:param name="action"   value="toggleHighlight"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='hidden'/>	
@@ -72,21 +72,21 @@
 	
 	<jsp:param name="name"     value="synch"/>
 	<jsp:param name="tooltip"  value='Synch'/>
-	<jsp:param name="image"    value="synch_toc_nav.gif"/>
+	<jsp:param name="image"    value="synch_toc_nav.svg"/>
 	<jsp:param name="action"   value="resynch"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="add_bkmrk"/>
 	<jsp:param name="tooltip"  value='BookmarkPage'/>
-	<jsp:param name="image"    value="add_bkmrk.gif"/>
+	<jsp:param name="image"    value="add_bkmrk.svg"/>
 	<jsp:param name="action"   value="<%=bookmarkAction%>"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='<%=bookmarkButtonState%>'/>
 
 	<jsp:param name="name"     value="print"/>
 	<jsp:param name="tooltip"  value='Print'/>
-	<jsp:param name="image"    value="print_topic.gif"/>
+	<jsp:param name="image"    value="print_topic.svg"/>
 	<jsp:param name="action"   value="printContent"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='off'/>

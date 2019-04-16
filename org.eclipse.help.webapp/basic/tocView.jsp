@@ -38,8 +38,8 @@
 		//	continue;
 		//}
 		String icon = isSelected ?
-						prefs.getImagesDirectory()+"/toc_open.gif" :
-						prefs.getImagesDirectory()+"/toc_closed.gif";
+						prefs.getImagesDirectory()+"/toc_open.svg" :
+						prefs.getImagesDirectory()+"/toc_closed.svg";
 		String alt = isSelected ?
 						ServletResources.getString("bookOpen", request) :
 						ServletResources.getString("bookClosed", request) ;

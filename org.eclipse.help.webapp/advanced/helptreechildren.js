@@ -112,7 +112,7 @@ function mergeChildren(treeItem, nodes, level) {
                         openImage = node.getAttribute("image");
                         if (openImage) {
                             imageAltText = getAltText(openImage);
-                            openImage = imagesDirectory + "/" + openImage + ".gif";
+                            openImage = imagesDirectory + "/" + openImage + ".svg";
                         }
                     }              
                     if (node.getAttribute("closedImage")) {

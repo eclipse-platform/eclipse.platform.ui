@@ -35,14 +35,14 @@
 
     <jsp:param name="name"     value="show_all"/>
 	<jsp:param name="tooltip"  value='show_all'/>
-	<jsp:param name="image"    value="show_all.gif"/>
+	<jsp:param name="image"    value="show_all.svg"/>
 	<jsp:param name="action"   value="toggleShowAll"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value="<%=(new ActivitiesData(application, request, response)).getButtonState()%>"/>
     
 	<jsp:param name="name"     value="print_toc"/>
 	<jsp:param name="tooltip"  value='PrintMulti'/>
-	<jsp:param name="image"    value="print_toc.gif"/>
+	<jsp:param name="image"    value="print_toc.svg"/>
 	<jsp:param name="action"   value="menu"/>
 	<jsp:param name="param"    value="<%=menuData%>"/>
 	<jsp:param name="state"    value='off'/>
@@ -56,21 +56,21 @@
 	
 	<jsp:param name="name"     value="quick_search"/>
 	<jsp:param name="tooltip"  value='QuickSearchMulti'/>
-	<jsp:param name="image"    value="quick_search_multi.gif"/>
+	<jsp:param name="image"    value="quick_search_multi.svg"/>
 	<jsp:param name="action"   value="menu"/>
 	<jsp:param name="param"    value="<%=quickSearchMenuData%>"/>
 	<jsp:param name="state"    value='off'/> 
 
 	<jsp:param name="name"     value="collapseall"/>
 	<jsp:param name="tooltip"  value='CollapseAll'/>
-	<jsp:param name="image"    value="collapseall.gif"/>
+	<jsp:param name="image"    value="collapseall.svg"/>
 	<jsp:param name="action"   value="collapseAll"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='off'/>
 
 	<jsp:param name="name"     value="synchnav"/>
 	<jsp:param name="tooltip"  value='SynchNav'/>
-	<jsp:param name="image"    value="auto_synch_toc.gif"/>
+	<jsp:param name="image"    value="auto_synch_toc.svg"/>
 	<jsp:param name="action"   value="toggleAutosynch"/>
 	<jsp:param name="param"    value=""/>	
 	<jsp:param name="state"    value="<%=((new CookiesData(application, request, response)).isSynchToc() ? ON : OFF)%>"/>

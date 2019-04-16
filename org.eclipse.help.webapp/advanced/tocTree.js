@@ -130,7 +130,7 @@ function setShowAll(isShowAll, href) {
 }
 
 function setImage(imageNode, image) {
-    var imageFile = imagesDirectory + "/" + image + ".gif";
+    var imageFile = imagesDirectory + "/" + image + ".svg";
     imageNode.src = imageFile;
     imageNode.alt = getAltText(image);
 }
@@ -160,13 +160,13 @@ function updateImage(imageNode, isExpanded) {
     if (isExpanded) {  
         if (imageNode.openImage) { 
             imageNode.src = imageNode.openImage;
-        } else if (src.match( /toc_closed.gif$/)) {
+        } else if (src.match( /toc_closed.svg$/)) {
             setImage(imageNode, "toc_open");
         }
     } else {       
         if (imageNode.closedImage) {    
             imageNode.src = imageNode.closedImage;
-        } else if (src.match( /toc_open.gif$/)) {           
+        } else if (src.match( /toc_open.svg$/)) {           
             setImage(imageNode, "toc_closed");
         }
     } 

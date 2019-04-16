@@ -42,19 +42,19 @@
 // Preload images
 var imagesDirectory = "<%=prefs.getImagesDirectory()%>";
 minus = new Image();
-minus.src = imagesDirectory + "/minus.gif";
+minus.src = imagesDirectory + "/minus.svg";
 plus = new Image();
-plus.src = imagesDirectory + "/plus.gif";
+plus.src = imagesDirectory + "/plus.svg";
 toc_open_img = new Image();
-toc_open_img.src = imagesDirectory + "/toc_open.gif";
+toc_open_img.src = imagesDirectory + "/toc_open.svg";
 toc_closed_img = new Image();
-toc_closed_img.src = imagesDirectory + "/toc_closed.gif";
+toc_closed_img.src = imagesDirectory + "/toc_closed.svg";
 folder_img = new Image();
-folder_img.src = imagesDirectory + "/container_obj.gif";
+folder_img.src = imagesDirectory + "/container_obj.svg";
 folder_topic = new Image();
-folder_topic.src = imagesDirectory + "/container_topic.gif";
+folder_topic.src = imagesDirectory + "/container_topic.svg";
 topic_img = new Image();
-topic_img.src = imagesDirectory + "/topic.gif";
+topic_img.src = imagesDirectory + "/topic.svg";
 
 var altTopic = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("altTopic", request))%>";
 var altContainer = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("altContainer", request))%>";

@@ -88,7 +88,7 @@ function onloadHandler() {
 }
 
 function setImage(imageNode, image) {
-    var imageFile = imagesDirectory + "/" + image + ".gif";
+    var imageFile = imagesDirectory + "/" + image + ".svg";
     imageNode.src = imageFile;
     if (image == "plus") {
         imageNode.alt = altPlus;       
@@ -112,11 +112,11 @@ function setImage(imageNode, image) {
 function updateImage(imageNode, isExpanded) {
     var src = imageNode.src;
     if (isExpanded) {   
-        if (src.match( /toc_closed.gif$/)) {
+        if (src.match( /toc_closed.svg$/)) {
             setImage(imageNode, "toc_open");
         }
     } else {
-        if (src.match( /toc_open.gif$/)) {           
+        if (src.match( /toc_open.svg$/)) {           
             setImage(imageNode, "toc_closed");
         }
     }

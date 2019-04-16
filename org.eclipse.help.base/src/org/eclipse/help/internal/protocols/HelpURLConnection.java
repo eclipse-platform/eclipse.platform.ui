@@ -225,6 +225,8 @@ public class HelpURLConnection extends URLConnection {
 			return "text/css"; //$NON-NLS-1$
 		else if (file.endsWith(".gif")) //$NON-NLS-1$
 			return "image/gif"; //$NON-NLS-1$
+		else if (file.endsWith(".svg")) //$NON-NLS-1$
+			return "image/svg+xml"; //$NON-NLS-1$
 		else if (file.endsWith(".jpg")) //$NON-NLS-1$
 			return "image/jpeg"; //$NON-NLS-1$
 		else if (file.endsWith(".pdf")) //$NON-NLS-1$

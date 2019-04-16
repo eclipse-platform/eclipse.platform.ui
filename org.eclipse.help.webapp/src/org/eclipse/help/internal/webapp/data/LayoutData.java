@@ -144,21 +144,21 @@ public class LayoutData extends RequestData {
 
 		View tocview = new View("toc", //$NON-NLS-1$
 				"", //$NON-NLS-1$
-				preferences.getImagesDirectory() + "/contents_view.gif", 'C', !HelpPlugin.getTocManager().isTocLoaded(getLocale())); //$NON-NLS-1$
+				preferences.getImagesDirectory() + "/contents_view.svg", 'C', !HelpPlugin.getTocManager().isTocLoaded(getLocale())); //$NON-NLS-1$
 		View indexview = null;
 		View searchview = new View("search", //$NON-NLS-1$
 				"", //$NON-NLS-1$
-				preferences.getImagesDirectory() + "/search_results_view.gif", 'R', false); //$NON-NLS-1$
+				preferences.getImagesDirectory() + "/search_results_view.svg", 'R', false); //$NON-NLS-1$
 		View bookmarksview = null;
 
 		if (preferences.isIndexView())
 			indexview = new View("index", //$NON-NLS-1$
 					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/index_view.gif", 'I', false); //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/index_view.svg", 'I', false); //$NON-NLS-1$
 		if (preferences.isBookmarksView())
 			bookmarksview = new View("bookmarks", //$NON-NLS-1$
 					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/bookmarks_view.gif", (char)0, false); //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/bookmarks_view.svg", (char)0, false); //$NON-NLS-1$
 
 		ArrayList<AbstractView> viewList = new ArrayList<>();
 		viewList.add(tocview);

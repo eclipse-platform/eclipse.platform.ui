@@ -66,7 +66,7 @@ public class IndexData extends ActivitiesData {
 		imagesDirectory = preferences.getImagesDirectory();
 		usePlusMinus = preferences.isIndexPlusMinus();
 		expandAll = preferences.isIndexExpandAll();
-		plusMinusImage = expandAll ? "/minus.gif" : "/plus.gif"; //$NON-NLS-1$ //$NON-NLS-2$
+		plusMinusImage = expandAll ? "/minus.svg" : "/plus.svg"; //$NON-NLS-1$ //$NON-NLS-2$
 		expandedCollapsed = expandAll ? "expanded" : "collapsed"; //$NON-NLS-1$ //$NON-NLS-2$
 		isRTL = UrlUtil.isRTL(request, response);
 		index = HelpPlugin.getIndexManager().getIndex(getLocale());
@@ -220,7 +220,7 @@ public class IndexData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	/*
-	 * <img scr="images/plus.gif" class={ "collapsed" | "expanded" | "h" } alt="...">
+	 * <img scr="images/plus.svg" class={ "collapsed" | "expanded" | "h" } alt="...">
 	 */
 	private void generatePlusImage(boolean multipleTopics) throws IOException {
 		out.write("<img src=\""); //$NON-NLS-1$
@@ -288,12 +288,12 @@ public class IndexData extends ActivitiesData {
 	/*
 	 * For advanced UI:
 	 *   <ul class={"collapsed" | "expanded"}>
-	 *   <li><img class="h" src="images/plus.gif" alt=""><a href="..."><img src="images/topic.gif" alt="">...</a></li>
+	 *   <li><img class="h" src="images/plus.svg" alt=""><a href="..."><img src="images/topic.svg" alt="">...</a></li>
 	 *   <li>...
 	 *   </ul>
 	 *
 	 * For basic UI:
-	 *   <li><a href="..."><img src="images/topic.gif" border=0 alt="">...</a></li>
+	 *   <li><a href="..."><img src="images/topic.svg" border=0 alt="">...</a></li>
 	 *   <li>...
 	 */
 	private void generateTopicList(IIndexEntry entry) throws IOException {
@@ -316,7 +316,7 @@ public class IndexData extends ActivitiesData {
 			out.write(UrlUtil.getHelpURL(topic.getHref()));
 			out.write("\"><img src=\""); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/topic.gif\" "); //$NON-NLS-1$
+			out.write("/topic.svg\" "); //$NON-NLS-1$
 			if (!advancedUI) {
 				out.write("border=0 "); //$NON-NLS-1$
 			}

@@ -173,9 +173,9 @@ input[type="checkbox"] {
 
 // Preload images
 var minus = new Image();
-minus.src = "<%=prefs.getImagesDirectory()%>"+"/minus.gif";
+minus.src = "<%=prefs.getImagesDirectory()%>"+"/minus.svg";
 var plus = new Image();
-plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
+plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.svg";
 
 var oldName = '<%=data.isEditMode()?UrlUtil.JavaScriptEncode(data.getWorkingSetName()):""%>';
 var altBookClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookClosed", request))%>";
@@ -524,7 +524,7 @@ function enableOK() {
 	                 String className = state == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
                %>
 				    <div class="book" id='<%="id"+i%>' >
-					   <img id='<%="img"+i%>' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
+					   <img id='<%="img"+i%>' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.svg" onclick="collapseOrExpand('<%=i%>')">
 					   <input 	class='<%=className%>' 
 							    type="checkbox" 
 							    id='<%=UrlUtil.htmlEncode(data.getTocHref(i))%>' 
@@ -584,7 +584,7 @@ function enableOK() {
 		                 String criterionDisplayName = data.getCriterionDisplayName(criterionId);
                    %>
 				    <div class="criterion" id='<%="id_criterion"+i%>' >
-					   <img id='<%="img_criterion"+i%>' alt="<%=ServletResources.getString("criterionClosed", request)%>" title="<%=ServletResources.getString("criterionClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('_criterion'+'<%=i%>')">
+					   <img id='<%="img_criterion"+i%>' alt="<%=ServletResources.getString("criterionClosed", request)%>" title="<%=ServletResources.getString("criterionClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.svg" onclick="collapseOrExpand('_criterion'+'<%=i%>')">
 					   <input 	class='<%=inputClassName%>' 
 							    type="checkbox" 
 							    id='<%=UrlUtil.htmlEncode(criterionId)%>' 

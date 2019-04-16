@@ -124,7 +124,7 @@ public class InjectionFilter implements IFilter {
 		buff.append("<img src=\""); //$NON-NLS-1$
 		buff.append(relativePath);
 		buff.append("content/org.eclipse.help.webapp/"); //$NON-NLS-1$
-		buff.append("advanced/images/e_show_all.gif\" border=\"0\" align=\"bottom\">&nbsp;"); //$NON-NLS-1$
+		buff.append("advanced/images/e_show_all.svg\" border=\"0\" align=\"bottom\">&nbsp;"); //$NON-NLS-1$
 		buff.append(message);
 		buff.append("<br><hr></div>"); //$NON-NLS-1$
 	}

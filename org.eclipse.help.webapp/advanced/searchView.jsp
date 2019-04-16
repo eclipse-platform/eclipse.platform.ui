@@ -192,14 +192,14 @@ setTimeout('refresh()', 2000);
 %>
 
 
-	<img src="<%=prefs.getImagesDirectory()%>/d_topic.gif" alt=""/>
+	<img src="<%=prefs.getImagesDirectory()%>/d_topic.svg" alt=""/>
 
 <%
 		}
 		else {
 %>
 
-	<img src="<%=prefs.getImagesDirectory()%>/topic.gif" alt=""/>
+	<img src="<%=prefs.getImagesDirectory()%>/topic.svg" alt=""/>
 
 <%
 		}
