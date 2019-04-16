@@ -26,6 +26,8 @@ import org.w3c.dom.stylesheets.StyleSheet;
 
 public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet {
 
+	private static final String NOT_YET_IMPLEMENTED = "NOT YET IMPLEMENTED"; //$NON-NLS-1$
+
 	private CSSRuleList rules = null;
 
 	public CSSStyleSheetImpl() {
@@ -50,14 +52,12 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet 
 
 	@Override
 	public CSSRule getOwnerRule() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public int insertRule(String arg0, int arg1) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 
@@ -65,50 +65,42 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet 
 
 	@Override
 	public boolean getDisabled() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public String getHref() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public MediaList getMedia() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public Node getOwnerNode() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public StyleSheet getParentStyleSheet() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public void setDisabled(boolean disabled) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	// Additional

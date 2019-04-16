@@ -19,22 +19,21 @@ import org.w3c.dom.css.Counter;
 
 public class CounterImpl implements Counter {
 
+	private static final String NOT_YET_IMPLEMENTED = "NOT YET IMPLEMENTED"; //$NON-NLS-1$
+
 	@Override
 	public String getIdentifier() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public String getListStyle() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public String getSeparator() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 }

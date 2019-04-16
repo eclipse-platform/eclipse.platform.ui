@@ -36,6 +36,8 @@ import org.w3c.css.sac.PositionalCondition;
  */
 public class CSSConditionFactoryImpl implements ConditionFactory {
 
+	private static final String NOT_IMPLEMENTED_IN_CSS2 = "Not implemented in CSS2"; //$NON-NLS-1$
+
 	/**
 	 * The class attribute namespace URI.
 	 */
@@ -84,7 +86,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	@Override
 	public CombinatorCondition createOrCondition(Condition first,
 			Condition second) throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -94,7 +96,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	@Override
 	public NegativeCondition createNegativeCondition(Condition condition)
 			throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -104,7 +106,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	@Override
 	public PositionalCondition createPositionalCondition(int position,
 			boolean typeNode, boolean type) throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -187,7 +189,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 */
 	@Override
 	public Condition createOnlyChildCondition() throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -196,7 +198,7 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	 */
 	@Override
 	public Condition createOnlyTypeCondition() throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -206,6 +208,6 @@ public class CSSConditionFactoryImpl implements ConditionFactory {
 	@Override
 	public ContentCondition createContentCondition(String data)
 			throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 }

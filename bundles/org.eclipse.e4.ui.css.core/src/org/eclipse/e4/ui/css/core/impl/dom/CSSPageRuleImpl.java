@@ -23,10 +23,11 @@ import org.w3c.dom.css.CSSStyleSheet;
 
 public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule {
 
+	private static final String NOT_YET_IMPLEMENTED = "NOT YET IMPLEMENTED"; //$NON-NLS-1$
+
 	public CSSPageRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			String name, String pseudo_page) {
 		super(parentStyleSheet, parentRule);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -38,26 +39,22 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule {
 
 	@Override
 	public String getSelectorText() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public CSSStyleDeclaration getStyle() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public void setSelectorText(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	// Additional methods
 
 	public void setStyle(CSSStyleDeclaration decl) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 }

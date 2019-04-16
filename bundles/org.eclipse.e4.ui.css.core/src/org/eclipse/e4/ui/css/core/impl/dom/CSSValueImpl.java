@@ -25,12 +25,13 @@ import org.w3c.dom.css.Rect;
 
 public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimitiveValue, CSSValue {
 
+	private static final String NOT_YET_IMPLEMENTED = "NOT YET IMPLEMENTED"; //$NON-NLS-1$
+
 	// W3C CSSValue API methods
 
 	@Override
 	public String getCssText() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
@@ -40,16 +41,14 @@ public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimiti
 
 	@Override
 	public void setCssText(String cssText) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	// W3C CSSPrimitiveValue API methods
 
 	@Override
 	public short getPrimitiveType() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
@@ -69,28 +68,24 @@ public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimiti
 
 	@Override
 	public String getStringValue() throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public void setFloatValue(short arg0, float arg1) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public void setStringValue(short arg0, String arg1) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	// Additional methods
 
 	@Override
 	public float getFloatValue(short valueType) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 

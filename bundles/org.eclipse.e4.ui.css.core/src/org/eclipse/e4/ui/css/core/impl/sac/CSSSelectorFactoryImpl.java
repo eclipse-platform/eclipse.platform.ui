@@ -38,6 +38,8 @@ import org.w3c.css.sac.SimpleSelector;
  */
 public class CSSSelectorFactoryImpl implements SelectorFactory {
 
+	private static final String NOT_IMPLEMENTED_IN_CSS2 = "Not implemented in CSS2"; //$NON-NLS-1$
+
 	/**
 	 * The instance of this class.
 	 */
@@ -65,7 +67,7 @@ public class CSSSelectorFactoryImpl implements SelectorFactory {
 	 */
 	@Override
 	public SimpleSelector createAnyNodeSelector() throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -74,7 +76,7 @@ public class CSSSelectorFactoryImpl implements SelectorFactory {
 	 */
 	@Override
 	public SimpleSelector createRootNodeSelector() throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class CSSSelectorFactoryImpl implements SelectorFactory {
 	@Override
 	public NegativeSelector createNegativeSelector(SimpleSelector selector)
 			throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -104,7 +106,7 @@ public class CSSSelectorFactoryImpl implements SelectorFactory {
 	@Override
 	public CharacterDataSelector createTextNodeSelector(String data)
 			throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -114,7 +116,7 @@ public class CSSSelectorFactoryImpl implements SelectorFactory {
 	@Override
 	public CharacterDataSelector createCDataSectionSelector(String data)
 			throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -124,7 +126,7 @@ public class CSSSelectorFactoryImpl implements SelectorFactory {
 	@Override
 	public ProcessingInstructionSelector createProcessingInstructionSelector(
 			String target, String data) throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**
@@ -134,7 +136,7 @@ public class CSSSelectorFactoryImpl implements SelectorFactory {
 	@Override
 	public CharacterDataSelector createCommentSelector(String data)
 			throws CSSException {
-		throw new CSSException("Not implemented in CSS2");
+		throw new CSSException(NOT_IMPLEMENTED_IN_CSS2);
 	}
 
 	/**

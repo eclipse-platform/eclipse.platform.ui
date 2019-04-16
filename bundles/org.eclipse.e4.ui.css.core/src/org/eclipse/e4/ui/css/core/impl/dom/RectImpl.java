@@ -20,28 +20,26 @@ import org.w3c.dom.css.Rect;
 
 public class RectImpl implements Rect {
 
+	private static final String NOT_YET_IMPLEMENTED = "NOT YET IMPLEMENTED"; //$NON-NLS-1$
+
 	@Override
 	public CSSPrimitiveValue getBottom() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public CSSPrimitiveValue getLeft() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public CSSPrimitiveValue getRight() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public CSSPrimitiveValue getTop() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 }

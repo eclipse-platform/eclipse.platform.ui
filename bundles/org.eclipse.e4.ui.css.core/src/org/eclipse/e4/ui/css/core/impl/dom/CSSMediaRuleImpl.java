@@ -24,10 +24,11 @@ import org.w3c.dom.stylesheets.MediaList;
 
 public class CSSMediaRuleImpl extends CSSRuleImpl implements CSSMediaRule {
 
+	private static final String NOT_YET_IMPLEMENTED = "NOT YET IMPLEMENTED"; //$NON-NLS-1$
+
 	public CSSMediaRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			MediaListImpl mediaListImpl) {
 		super(parentStyleSheet, parentRule);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -39,35 +40,29 @@ public class CSSMediaRuleImpl extends CSSRuleImpl implements CSSMediaRule {
 
 	@Override
 	public void deleteRule(int index) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public CSSRuleList getCssRules() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public MediaList getMedia() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public int insertRule(String rule, int index) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 
 	// Additional methods
 
 	public void setRuleList(CSSRuleList rules) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
-
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
 
 }
