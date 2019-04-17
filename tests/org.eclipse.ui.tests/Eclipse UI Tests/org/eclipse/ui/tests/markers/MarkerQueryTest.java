@@ -14,38 +14,35 @@
 
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.internal.ide.registry.MarkerQuery;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestCase;
 
 /**
  * The test class for {@link MarkerQuery}.
  */
-public class MarkerQueryTest extends TestCase {
+public class MarkerQueryTest {
 
 	private IMarker marker;
 	private IMarker child_marker;
 
-	public MarkerQueryTest() {
-		super("MarkerQueryTest");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		marker = wsRoot.createMarker("org.eclipse.ui.tests.testmarker");
 		child_marker = wsRoot.createMarker("org.eclipse.ui.tests.testmarker_child");
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		marker.delete();
 		child_marker.delete();
 	}

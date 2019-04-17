@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474957
+ *     Paul Pazderski <paul-eclipse@ppazderski.de> - Bug 546537: improve compatibility with BlockJUnit4ClassRunner
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
@@ -37,6 +38,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 import junit.framework.TestCase;
 
@@ -93,6 +101,27 @@ public abstract class UITestCase extends TestCase {
     private List<IWorkbenchWindow> testWindows;
 
     private TestWindowListener windowListener;
+
+	/**
+	 * Required to preserve the existing logging output when running tests with
+	 * {@link BlockJUnit4ClassRunner}.
+	 */
+	@Rule
+	public TestWatcher testWatcher = new TestWatcher() {
+		@Override
+		protected void starting(Description description) {
+			runningTest = description.getMethodName();
+		}
+		@Override
+		protected void finished(Description description) {
+			runningTest = null;
+		}
+	};
+	/**
+	 * Name of the currently executed test method. Only valid if test is executed
+	 * with {@link BlockJUnit4ClassRunner}.
+	 */
+	private String runningTest = null;
 
     public UITestCase(String testName) {
         super(testName);
@@ -179,16 +208,22 @@ public abstract class UITestCase extends TestCase {
     }
 
     /**
-     * Simple implementation of setUp. Subclasses are prevented
-     * from overriding this method to maintain logging consistency.
-     * doSetUp() should be overriden instead.
-     */
+	 * Simple implementation of setUp. Subclasses are prevented from overriding this
+	 * method to maintain logging consistency. doSetUp() should be overridden
+	 * instead.
+	 * <p>
+	 * This method is public and annotated with {@literal @}{@link Before} to setup
+	 * tests which are configured to {@link RunWith} JUnit4 runner.
+	 * </p>
+	 */
+	@Before
     @Override
-	protected final void setUp() throws Exception {
+	public final void setUp() throws Exception {
     	super.setUp();
 		fWorkbench = PlatformUI.getWorkbench();
-    	trace("----- " + this.getName()); //$NON-NLS-1$
-        trace(this.getName() + ": setUp..."); //$NON-NLS-1$
+		String name = runningTest != null ? runningTest : this.getName();
+		trace("----- " + name); //$NON-NLS-1$
+		trace(name + ": setUp..."); //$NON-NLS-1$
         addWindowListener();
         doSetUp();
 
@@ -205,13 +240,19 @@ public abstract class UITestCase extends TestCase {
     }
 
     /**
-     * Simple implementation of tearDown.  Subclasses are prevented
-     * from overriding this method to maintain logging consistency.
-     * doTearDown() should be overriden instead.
-     */
+	 * Simple implementation of tearDown. Subclasses are prevented from overriding
+	 * this method to maintain logging consistency. doTearDown() should be
+	 * overridden instead.
+	 * <p>
+	 * This method is public and annotated with {@literal @}{@link After} to setup
+	 * tests which are configured to {@link RunWith} JUnit4 runner.
+	 * </p>
+	 */
+	@After
     @Override
-	protected final void tearDown() throws Exception {
-        trace(this.getName() + ": tearDown...\n"); //$NON-NLS-1$
+	public final void tearDown() throws Exception {
+		String name = runningTest != null ? runningTest : this.getName();
+		trace(name + ": tearDown...\n"); //$NON-NLS-1$
         removeWindowListener();
         doTearDown();
     	fWorkbench = null;

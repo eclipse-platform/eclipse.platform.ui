@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 Alena Laskavaia and others.
+ * Copyright (c) 2015, 2019 Alena Laskavaia and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,15 +18,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.junit.Test;
 
-import junit.framework.TestCase;
-
 /**
  * @since 3.5
  */
-public class ShellClosingTest extends TestCase {
-	public ShellClosingTest() {
-		super(ShellClosingTest.class.getName());
-	}
+public class ShellClosingTest {
 
 	/**
 	 * Bug 433746: dispose SearchField shell

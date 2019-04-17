@@ -24,16 +24,10 @@ import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
 import org.eclipse.ui.internal.ide.registry.MarkerQuery;
 import org.junit.Test;
 
-import junit.framework.TestCase;
-
 /**
  * The test class for {@link MarkerHelpRegistryReader}.
  */
-public class MarkerHelpRegistryReaderTest extends TestCase {
-
-	public MarkerHelpRegistryReaderTest() {
-		super("MarkerHelpRegistryReaderTest");
-	}
+public class MarkerHelpRegistryReaderTest {
 
 	/**
 	 * Tests if the matchChildren flag of the contributions to the markerHelp

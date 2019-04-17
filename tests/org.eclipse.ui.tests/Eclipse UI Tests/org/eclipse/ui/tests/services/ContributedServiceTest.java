@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 546537: migrate class to JUnit4 so that the containing suite can be converted to JUnit4
  *******************************************************************************/
 
 package org.eclipse.ui.tests.services;
@@ -27,33 +28,23 @@ import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-
-import junit.framework.TestSuite;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @since 3.4
  *
  */
+@RunWith(BlockJUnit4ClassRunner.class)
 public class ContributedServiceTest extends UITestCase {
 
-	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
-		ts.addTest(new ContributedServiceTest("testGlobalService"));
-		// TODO ts.addTest(new ContributedServiceTest("testWindowService"));
-		// TODO ts.addTest(new
-		// ContributedServiceTest("testLocalServiceCreated"));
-		// TODO ts.addTest(new
-		// ContributedServiceTest("testLocalDialogService"));
-		ts.addTest(new ContributedServiceTest("testWorkbenchServiceFactory"));
-		return ts;
-	}
-	/**
-	 * @param testName
-	 */
-	public ContributedServiceTest(String testName) {
-		super(testName);
+	public ContributedServiceTest() {
+		super(ContributedServiceTest.class.getName());
 	}
 
+	@Test
 	public void testGlobalService() throws Exception {
 		IWorkbenchLocationService wls = getWorkbench()
 				.getService(IWorkbenchLocationService.class);
@@ -72,6 +63,8 @@ public class ContributedServiceTest extends UITestCase {
 		assertEquals(1, LevelServiceFactory.instancesCreated);
 	}
 
+	@Test
+	@Ignore // TODO
 	public void testWindowService() throws Exception {
 		IServiceLocator locator = getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchLocationService wls = locator
@@ -116,6 +109,8 @@ public class ContributedServiceTest extends UITestCase {
 		}
 	}
 
+	@Test
+	@Ignore // TODO
 	public void testLocalServiceCreated() throws Exception {
 		IServiceLocator parent = getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchLocationService wls = parent
@@ -172,6 +167,8 @@ public class ContributedServiceTest extends UITestCase {
 		}
 	}
 
+	@Test
+	@Ignore // TODO
 	public void testLocalDialogService() throws Exception {
 		IServiceLocator parent = getWorkbench();
 		IServiceLocatorCreator lc = parent
@@ -206,6 +203,7 @@ public class ContributedServiceTest extends UITestCase {
 		assertEquals(IServiceScopes.DIALOG_SCOPE, wls.getServiceScope());
 	}
 
+	@Test
 	public void testWorkbenchServiceFactory() throws Exception {
 		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
 		IProgressService progress = window

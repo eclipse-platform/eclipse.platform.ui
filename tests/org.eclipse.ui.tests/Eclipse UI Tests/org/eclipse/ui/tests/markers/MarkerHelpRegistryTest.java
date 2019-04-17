@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +25,14 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestCase;
 
 /**
  * The test class for {@link MarkerHelpRegistry}.
  */
-public class MarkerHelpRegistryTest extends TestCase {
+public class MarkerHelpRegistryTest {
 
 	static final String ATT_HELP_CONTEXT = "helpContext";
 	static final String ATT_HAS_HELP = "hasHelp";
@@ -40,13 +43,8 @@ public class MarkerHelpRegistryTest extends TestCase {
 	private IMarker markerNoHelp;
 	private IMarker markerWhichMayHaveHelp;
 
-	public MarkerHelpRegistryTest() {
-		super("MarkerHelpRegistryTest");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		markerWithHelp = wsRoot.createMarker(TEST_MARKER_TYPE);
@@ -65,12 +63,11 @@ public class MarkerHelpRegistryTest extends TestCase {
 		TestMarkerHelpContextProvider.init();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		markerWithHelp.delete();
 		markerNoHelp.delete();
 		markerWhichMayHaveHelp.delete();
-		super.tearDown();
 	}
 
 	/**
