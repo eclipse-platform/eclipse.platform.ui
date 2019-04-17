@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,7 @@ package org.eclipse.ui.tests.progress;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.progress.FinishedJobs;
 import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.internal.progress.JobTreeElement;
@@ -72,7 +72,11 @@ public class ProgressViewTests extends ProgressTestCase {
 	public void testNoUpdatesIfHidden() throws Exception {
 		// test for
 		openProgressView();
-		openView(IPageLayout.ID_TASK_LIST);
+		// minimize progress view to reliably hide it
+		IWorkbenchPage activePage = window.getActivePage();
+		activePage.setPartState(activePage.getActivePartReference(), IWorkbenchPage.STATE_MINIMIZED);
+		processEvents();
+		assertFalse("Progress view still visible.", activePage.isPartVisible(progressView));
 
 		// run the jobs, view is hidden
 		Job job1 = runDummyJob();
