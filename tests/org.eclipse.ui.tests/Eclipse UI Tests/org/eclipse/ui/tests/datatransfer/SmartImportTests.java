@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016-2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2019 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,16 +18,20 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -86,14 +90,26 @@ public class SmartImportTests extends UITestCase {
 		}
 	}
 
-	private void clearAll() throws CoreException {
+	private void clearAll() throws CoreException, IOException {
 		processEvents();
 		boolean closed = true;
 		if (dialog != null && !dialog.getShell().isDisposed()) {
 			closed = dialog.close();
 		}
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			IFile projectDescription = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+			IPath projectDescriptionLocation = projectDescription != null ? projectDescription.getRawLocation() : null;
+
 			project.delete(false, false, new NullProgressMonitor());
+
+			// Bug 535940: The project description which may be created from the test run
+			// must be removed or further test runs may fail.
+			if (projectDescriptionLocation != null) {
+				Path projectDescriptionFile = projectDescriptionLocation.toFile().toPath();
+				if (Files.exists(projectDescriptionFile)) {
+					Files.delete(projectDescriptionFile);
+				}
+			}
 		}
 		waitForJobs(100, 300);
 		if (!closed) {
@@ -117,11 +133,9 @@ public class SmartImportTests extends UITestCase {
 			assertNotNull(okButton);
 			processEventsUntil(() -> okButton.isEnabled(), -1);
 			wizard.performFinish();
-			waitForJobs(100, 1000); // give the job framework time to schedule the
-			// job
+			waitForJobs(100, 1000); // give the job framework time to schedule the job
 			wizard.getImportJob().join();
-			waitForJobs(100, 5000); // give some time for asynchronous workspace
-			// jobs to complete
+			waitForJobs(100, 5000); // give some time for asynchronous workspace jobs to complete
 		} finally {
 			if (!dialog.getShell().isDisposed()) {
 				dialog.close();
@@ -244,8 +258,6 @@ public class SmartImportTests extends UITestCase {
 		assertFalse("Root project shouldn't have been configured",
 				ImportMeProjectConfigurator.configuredProjects.contains(rootProject));
 
-		// Bug 535940: ImportMeProjectConfigurator.configuredProjects is always empty if
-		// running terst locally
 		assertEquals("Should have one project configured", 1, ImportMeProjectConfigurator.configuredProjects.size());
 		Set<IProject> modules = new HashSet<>(Arrays.asList(projects));
 		modules.remove(rootProject);
@@ -352,12 +364,9 @@ public class SmartImportTests extends UITestCase {
 			processEvents();
 			processEventsUntil(() -> okButton.isEnabled(), -1);
 			wizard.performFinish();
-			waitForJobs(100, 1000); // give the job framework time to schedule
-									// the
-									// job
+			waitForJobs(100, 1000); // give the job framework time to schedule the job
 			wizard.getImportJob().join();
-			waitForJobs(100, 5000); // give some time for asynchronous workspace
-									// jobs to complete
+			waitForJobs(100, 5000); // give some time for asynchronous workspace jobs to complete
 			assertEquals("WorkingSet2 should be selected", Collections.singleton(workingSet2),
 					page.getSelectedWorkingSets());
 			assertEquals("Projects were not added to working set", 1, workingSet2.getElements().length);
