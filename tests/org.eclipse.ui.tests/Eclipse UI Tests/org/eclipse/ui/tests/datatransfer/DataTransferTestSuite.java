@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,36 +11,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474132
+ *     Paul Pazderski - Bug 546546: migrate to JUnit4 suite
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
 import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-@RunWith(org.junit.runners.AllTests.class)
-public class DataTransferTestSuite extends TestSuite {
-
-    /**
-     * Returns the suite.  This is required to
-     * use the JUnit Launcher.
-     */
-    public static Test suite() {
-        return new DataTransferTestSuite();
-    }
-
-    /**
-     * Construct the test suite.
-     */
-    public DataTransferTestSuite() {
-        addTest(new TestSuite(ImportOperationTest.class));
-        addTest(new TestSuite(ImportArchiveOperationTest.class));
-        addTest(new TestSuite(ExportFileSystemOperationTest.class));
-        addTest(new TestSuite(ExportArchiveFileOperationTest.class));
-        addTest(ImportExistingProjectsWizardTest.suite());
-        addTest(new TestSuite(ImportExportWizardsCategoryTests.class));
-		addTest(new TestSuite(SmartImportTests.class));
-		addTest(new TestSuite(ZipSlipTests.class));
-    }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    ImportOperationTest.class,
+    ImportArchiveOperationTest.class,
+    ExportFileSystemOperationTest.class,
+    ExportArchiveFileOperationTest.class,
+	ImportExistingProjectsWizardTest.class,
+    ImportExportWizardsCategoryTests.class,
+	SmartImportTests.class,
+	ZipSlipTests.class,
+})
+public class DataTransferTestSuite {
 }

@@ -32,18 +32,18 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @since 3.5
  *
  */
+@RunWith(BlockJUnit4ClassRunner.class)
 public class Bug417762Test extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public Bug417762Test(String testName) {
-		super(testName);
+	public Bug417762Test() {
+		super(Bug417762Test.class.getName());
 	}
 
 	@Test

@@ -53,20 +53,20 @@ import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
 import org.eclipse.ui.tests.datatransfer.contributions.ImportMeProjectConfigurator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @since 3.12
  *
  */
+@RunWith(BlockJUnit4ClassRunner.class)
 public class SmartImportTests extends UITestCase {
 
 	private WizardDialog dialog;
 
-	/**
-	 * @param testName
-	 */
-	public SmartImportTests(String testName) {
-		super(testName);
+	public SmartImportTests() {
+		super(SmartImportTests.class.getName());
 	}
 
 	@Override

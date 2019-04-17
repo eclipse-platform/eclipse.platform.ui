@@ -23,6 +23,8 @@ import org.eclipse.jface.operation.ProgressMonitorUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * Test the accumulating progress monitor wrapper api, which fires received
@@ -33,12 +35,11 @@ import org.junit.Test;
  * @since 3.5
  *
  */
+@RunWith(BlockJUnit4ClassRunner.class)
 public class AccumulatingProgressMonitorTest extends UITestCase {
-	/**
-	 * @param testName
-	 */
-	public AccumulatingProgressMonitorTest(String testName) {
-		super(testName);
+
+	public AccumulatingProgressMonitorTest() {
+		super(AccumulatingProgressMonitorTest.class.getName());
 	}
 
 	/*

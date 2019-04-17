@@ -27,10 +27,13 @@ import org.eclipse.ui.ISecondarySaveableSource;
 import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @since 3.5
  */
+@RunWith(BlockJUnit4ClassRunner.class)
 public class DirtyStatePropertySheetTest extends AbstractPropertySheetTest {
 
     private AdaptingSaveableView saveableView;
@@ -61,8 +64,8 @@ public class DirtyStatePropertySheetTest extends AbstractPropertySheetTest {
         }
     }
 
-    public DirtyStatePropertySheetTest(String testName) {
-        super(testName);
+	public DirtyStatePropertySheetTest() {
+		super(DirtyStatePropertySheetTest.class.getName());
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 546546: migrate to JUnit4 test
  ******************************************************************************/
 
 package org.eclipse.ui.tests.commands;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
@@ -29,28 +28,26 @@ import org.eclipse.ui.handlers.RegistryToggleState;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.MethodSorters;
 
 /**
  * @since 3.5
  * @author Prakash G.R.
  *
  */
+@RunWith(BlockJUnit4ClassRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ToggleStateTest extends UITestCase {
 
 	private ICommandService commandService;
 	private IHandlerService handlerService;
 
-
-	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
-		ts.addTest(new ToggleStateTest("testDefaultValues"));
-		ts.addTest(new ToggleStateTest("testExceptionThrown"));
-		ts.addTest(new ToggleStateTest("testMultipleContributions"));
-		return ts;
-	}
-
-	public ToggleStateTest(String testName) {
-		super(testName);
+	public ToggleStateTest() {
+		super(ToggleStateTest.class.getName());
 	}
 
 
@@ -61,7 +58,14 @@ public class ToggleStateTest extends UITestCase {
 		handlerService = fWorkbench.getService(IHandlerService.class);
 	}
 
-	public void testDefaultValues() throws Exception {
+	// Note: this and all other tests are numbered because they must run in a
+	// specific order.
+	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=369660
+	// The old junit3 implementation used a custom suite(). Because junit4 provides
+	// less options on test run order the tests are now numbered and run in method
+	// name order.
+	@Test
+	public void test01DefaultValues() throws Exception {
 
 		Command command1 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand1");
 		Command command2 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand2");
@@ -79,7 +83,8 @@ public class ToggleStateTest extends UITestCase {
 
 	}
 
-	public void testExceptionThrown() throws Exception {
+	@Test
+	public void test02ExceptionThrown() throws Exception {
 
 		Command command3 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand3");
 		try {
@@ -121,7 +126,8 @@ public class ToggleStateTest extends UITestCase {
 
 	}
 
-	public void testMultipleContributions() throws Exception{
+	@Test
+	public void test03MultipleContributions() throws Exception {
 
 		Command command1 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand1");
 		ParameterizedCommand parameterizedCommand = new ParameterizedCommand(command1, new Parameterization[0]);

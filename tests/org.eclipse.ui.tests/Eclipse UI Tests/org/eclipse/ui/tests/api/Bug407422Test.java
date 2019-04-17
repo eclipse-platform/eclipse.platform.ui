@@ -31,18 +31,18 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @since 3.5
  *
  */
+@RunWith(BlockJUnit4ClassRunner.class)
 public class Bug407422Test extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public Bug407422Test(String testName) {
-		super(testName);
+	public Bug407422Test() {
+		super(Bug407422Test.class.getName());
 	}
 
 	@Test
