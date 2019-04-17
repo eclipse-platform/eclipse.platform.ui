@@ -27,37 +27,37 @@ public interface IHelpUIConstants {
 	public static final String PREF_PAGE_CUSTOM_BROWSER_PATH = HELP_UI_PLUGIN_ID
 			+ "prefPageCustomBrowserPath"; //$NON-NLS-1$
 
-	public static final String IMAGE_FILE_F1TOPIC = "obj16/topic_small.gif"; //$NON-NLS-1$
-	public static final String IMAGE_COMMAND_F1TOPIC = "obj16/command_small.gif"; //$NON-NLS-1$
+	public static final String IMAGE_FILE_F1TOPIC = "obj16/topic_small.png"; //$NON-NLS-1$
+	public static final String IMAGE_COMMAND_F1TOPIC = "obj16/command_small.png"; //$NON-NLS-1$
 
 	// Help view images
-	public static final String IMAGE_CONTAINER = "obj16/container_obj.gif"; //$NON-NLS-1$
-	public static final String IMAGE_TOC_CLOSED= "obj16/toc_closed.gif"; //$NON-NLS-1$
-	public static final String IMAGE_TOC_OPEN = "obj16/toc_open.gif"; //$NON-NLS-1$
-	public static final String IMAGE_BOOKMARKS = "obj16/bookmarks_view.gif"; //$NON-NLS-1$
-	public static final String IMAGE_BOOKMARK = "obj16/bookmark_obj.gif"; //$NON-NLS-1$
-	public static final String IMAGE_HELP_SEARCH = "etool16/helpsearch_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_HELP_PRINT = "etool16/print_topic.gif"; //$NON-NLS-1$
-	public static final String IMAGE_RELATED_TOPICS = "etool16/reltopics_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_ALL_TOPICS = "etool16/alltopics_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_INDEX = "etool16/index_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_HELP = "etool16/help.gif"; //$NON-NLS-1$
-	public static final String IMAGE_DHELP = "view16/help_view.gif"; //$NON-NLS-1$
-	public static final String IMAGE_NW = "elcl16/openseparate_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_SHOW_CATEGORIES = "elcl16/showcat_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_SHOW_DESC = "elcl16/showdesc_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_ADD_BOOKMARK = "elcl16/addbkmrk_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_HIGHLIGHT = "elcl16/highlight.gif"; //$NON-NLS-1$
-	public static final String IMAGE_MAGNIFY = "elcl16/magnify_font.gif"; //$NON-NLS-1$
-	public static final String IMAGE_REDUCE = "elcl16/reduce_font.gif"; //$NON-NLS-1$
-	public static final String IMAGE_D_MAGNIFY = "dlcl16/magnify_font.gif"; //$NON-NLS-1$
-	public static final String IMAGE_D_REDUCE = "dlcl16/reduce_font.gif"; //$NON-NLS-1$
-	public static final String IMAGE_COLLAPSE_ALL = "elcl16/collapseall.gif"; //$NON-NLS-1$
-	public static final String IMAGE_SYNC_TOC = "elcl16/synch_toc_nav.gif"; //$NON-NLS-1$
-	public static final String IMAGE_SHOW_ALL = "elcl16/show_all.gif"; //$NON-NLS-1$
-	public static final String IMAGE_DOC_OVR = "ovr16/doc_co.gif"; //$NON-NLS-1$
-	public static final String IMAGE_SCOPE_SET = "obj16/scopeset_obj.gif"; //$NON-NLS-1$
-	public static final String IMAGE_SEARCH_WIZ = "wizban/newsearch_wiz.gif"; //$NON-NLS-1$
+	public static final String IMAGE_CONTAINER = "obj16/container_obj.png"; //$NON-NLS-1$
+	public static final String IMAGE_TOC_CLOSED = "obj16/toc_closed.png"; //$NON-NLS-1$
+	public static final String IMAGE_TOC_OPEN = "obj16/toc_open.png"; //$NON-NLS-1$
+	public static final String IMAGE_BOOKMARKS = "obj16/bookmarks_view.png"; //$NON-NLS-1$
+	public static final String IMAGE_BOOKMARK = "obj16/bookmark_obj.png"; //$NON-NLS-1$
+	public static final String IMAGE_HELP_SEARCH = "etool16/helpsearch_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_HELP_PRINT = "etool16/print_topic.png"; //$NON-NLS-1$
+	public static final String IMAGE_RELATED_TOPICS = "etool16/reltopics_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_ALL_TOPICS = "etool16/alltopics_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_INDEX = "etool16/index_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_HELP = "etool16/help.png"; //$NON-NLS-1$
+	public static final String IMAGE_DHELP = "view16/help_view.png"; //$NON-NLS-1$
+	public static final String IMAGE_NW = "elcl16/openseparate_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_SHOW_CATEGORIES = "elcl16/showcat_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_SHOW_DESC = "elcl16/showdesc_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_ADD_BOOKMARK = "elcl16/addbkmrk_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_HIGHLIGHT = "elcl16/highlight.png"; //$NON-NLS-1$
+	public static final String IMAGE_MAGNIFY = "elcl16/magnify_font.png"; //$NON-NLS-1$
+	public static final String IMAGE_REDUCE = "elcl16/reduce_font.png"; //$NON-NLS-1$
+	public static final String IMAGE_D_MAGNIFY = "dlcl16/magnify_font.png"; //$NON-NLS-1$
+	public static final String IMAGE_D_REDUCE = "dlcl16/reduce_font.png"; //$NON-NLS-1$
+	public static final String IMAGE_COLLAPSE_ALL = "elcl16/collapseall.png"; //$NON-NLS-1$
+	public static final String IMAGE_SYNC_TOC = "elcl16/synch_toc_nav.png"; //$NON-NLS-1$
+	public static final String IMAGE_SHOW_ALL = "elcl16/show_all.png"; //$NON-NLS-1$
+	public static final String IMAGE_DOC_OVR = "ovr16/doc_co.png"; //$NON-NLS-1$
+	public static final String IMAGE_SCOPE_SET = "obj16/scopeset_obj.png"; //$NON-NLS-1$
+	public static final String IMAGE_SEARCH_WIZ = "wizban/newsearch_wiz.png"; //$NON-NLS-1$
 	// Help view constants
 	public static final String HV_SEARCH = "search"; //$NON-NLS-1$
 	public static final String HV_FSEARCH = "fsearch"; //$NON-NLS-1$
