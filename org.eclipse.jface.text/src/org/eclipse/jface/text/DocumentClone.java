@@ -71,7 +71,19 @@ class DocumentClone extends AbstractDocument {
 	public DocumentClone(String content, String[] lineDelimiters) {
 		super();
 		setTextStore(new StringTextStore(content));
-		ConfigurableLineTracker tracker= new ConfigurableLineTracker(lineDelimiters);
+
+		boolean hasDefaultDelims= lineDelimiters == null;
+		if (!hasDefaultDelims && DefaultLineTracker.DELIMITERS.length == lineDelimiters.length) {
+			hasDefaultDelims= true;
+			for (int i= 0; i < lineDelimiters.length; i++) {
+				if (DefaultLineTracker.DELIMITERS[i] != lineDelimiters[i]) {
+					hasDefaultDelims= false;
+					break;
+				}
+			}
+		}
+
+		ILineTracker tracker= hasDefaultDelims ? new DefaultLineTracker() : new ConfigurableLineTracker(lineDelimiters);
 		setLineTracker(tracker);
 		getTracker().set(content);
 		completeInitialization();
