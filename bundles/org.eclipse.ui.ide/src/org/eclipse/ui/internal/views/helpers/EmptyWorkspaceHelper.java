@@ -214,6 +214,9 @@ public final class EmptyWorkspaceHelper {
 
 		// re-read the project wizards and re-create the empty area
 		createEmptyArea(displayArea);
+		if (control != null && !control.isDisposed()) {
+			emptyArea.setBackground(control.getBackground());
+		}
 	}
 
 	private void disposeEmptyArea() {
