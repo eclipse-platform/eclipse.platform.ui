@@ -151,7 +151,12 @@ public class RunToLineAction extends Action implements IUpdate {
 	public void dispose() {
 		IDebugContextManager manager = DebugUITools.getDebugContextManager();
 		if (fActivePart != null) {
-			manager.getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
+			IWorkbenchWindow ww = fActivePart.getSite().getWorkbenchWindow();
+			if (ww != null) {
+				manager.getContextService(ww).removeDebugContextListener(fContextListener);
+			} else {
+				manager.removeDebugContextListener(fContextListener);
+			}
 		}
 		fActivePart = null;
 		fTargetElement = null;
