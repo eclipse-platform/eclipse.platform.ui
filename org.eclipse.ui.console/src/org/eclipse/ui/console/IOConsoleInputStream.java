@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,6 +54,11 @@ public class IOConsoleInputStream extends InputStream {
 	private int size = 0;
 
 	/**
+	 * Flag to indicate that EOF has been sent already.
+	 */
+	private boolean eofSent = false;
+
+	/**
 	 * Flag to indicate that the stream has been closed.
 	 */
 	private boolean closed = false;
@@ -86,7 +91,7 @@ public class IOConsoleInputStream extends InputStream {
 	@Override
 	public synchronized int read(byte[] b, int off, int len) throws IOException {
 		waitForData();
-		if (available() == 0) {
+		if (available() == -1) {
 			return -1;
 		}
 
@@ -113,7 +118,7 @@ public class IOConsoleInputStream extends InputStream {
 	@Override
 	public synchronized int read() throws IOException {
 		waitForData();
-		if (available() == 0) {
+		if (available() == -1) {
 			return -1;
 		}
 
@@ -247,6 +252,14 @@ public class IOConsoleInputStream extends InputStream {
 
 	@Override
 	public int available() throws IOException {
+		if (closed && eofSent) {
+			throw new IOException("Input Stream Closed"); //$NON-NLS-1$
+		} else if (size == 0) {
+			if (!eofSent) {
+				eofSent = true;
+				return -1;
+			}
+		}
 		return size;
 	}
 
