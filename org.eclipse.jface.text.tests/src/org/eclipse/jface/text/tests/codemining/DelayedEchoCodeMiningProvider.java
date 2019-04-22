@@ -24,10 +24,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
-import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 
-public class DelayedEchoCodeMiningProvider extends AbstractCodeMiningProvider implements ICodeMiningProvider {
+public class DelayedEchoCodeMiningProvider extends AbstractCodeMiningProvider {
 
 	public static int DELAY = 0;
 
