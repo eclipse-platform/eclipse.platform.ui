@@ -64,7 +64,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 		public void fill(ToolBar parent, int index) {
 			super.fill(parent, index);
 
-			ToolItem item = new ToolItem(parent, index);
+			ToolItem item = new ToolItem(parent, SWT.NONE, index);
 
 			item.addDisposeListener(disposeListener);
 			item.setImage(WorkbenchImages.getImage(ISharedImages.IMG_DEF_VIEW));

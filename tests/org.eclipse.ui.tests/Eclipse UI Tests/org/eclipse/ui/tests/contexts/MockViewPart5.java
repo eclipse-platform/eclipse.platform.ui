@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.contexts;
 
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.ToolBar;
@@ -52,7 +53,7 @@ public class MockViewPart5 extends MockWorkbenchPart implements IViewPart {
 		public void fill(ToolBar parent, int index) {
 			super.fill(parent, index);
 
-			ToolItem item = new ToolItem(parent, index);
+			ToolItem item = new ToolItem(parent, SWT.NONE, index);
 
 			item.addDisposeListener(disposeListener);
 			item.setImage(WorkbenchImages.getImage(ISharedImages.IMG_DEF_VIEW));
