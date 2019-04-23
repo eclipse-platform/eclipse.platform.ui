@@ -19,6 +19,7 @@ import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
 import org.eclipse.debug.tests.console.ConsoleDocumentAdapterTests;
 import org.eclipse.debug.tests.console.ConsoleManagerTests;
 import org.eclipse.debug.tests.console.ConsoleTests;
+import org.eclipse.debug.tests.console.ProcessConsoleTests;
 import org.eclipse.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipse.debug.tests.launching.ArgumentParsingTests;
 import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
@@ -111,6 +112,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ConsoleDocumentAdapterTests.class));
 		addTest(new TestSuite(ConsoleManagerTests.class));
 		addTest(new TestSuite(ConsoleTests.class));
+		addTest(new TestSuite(ProcessConsoleTests.class));
 
 		// Launch Groups
 		addTest(new TestSuite(LaunchGroupTests.class));

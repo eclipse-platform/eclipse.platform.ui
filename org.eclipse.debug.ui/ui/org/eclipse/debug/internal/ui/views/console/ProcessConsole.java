@@ -707,10 +707,31 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
         private IStreamsProxy streamsProxy;
 
+		/**
+		 * The {@link InputStream} this job is currently reading from or maybe blocking
+		 * on. May be <code>null</code>.
+		 */
+		private InputStream readingStream;
+
         InputReadJob(IStreamsProxy streamsProxy) {
             super("Process Console Input Job"); //$NON-NLS-1$
             this.streamsProxy = streamsProxy;
         }
+
+		@Override
+		protected void canceling() {
+			super.canceling();
+			if (readingStream != null) {
+				// Close stream or job may not be able to cancel.
+				// This is primary for IOConsoleInputStream because there is no guarantee an
+				// arbitrary InputStream will release a blocked read() on close.
+				try {
+					readingStream.close();
+				} catch (IOException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
+		}
 
         @Override
 		public boolean belongsTo(Object family) {
@@ -723,12 +744,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             try {
                 byte[] b = new byte[1024];
                 int read = 0;
-				while (read >= 0) {
-					InputStream input = fInput;
-					if (input == null) {
+				while (read >= 0 && !monitor.isCanceled()) {
+					readingStream = fInput;
+					if (readingStream == null) {
 						break;
 					}
-					read = input.read(b);
+					read = readingStream.read(b);
                     if (read > 0) {
                         String s;
                         if (encoding != null) {
@@ -742,7 +763,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             } catch (IOException e) {
                 DebugUIPlugin.log(e);
             }
-            return Status.OK_STATUS;
+			readingStream = null;
+			return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
         }
     }
 
