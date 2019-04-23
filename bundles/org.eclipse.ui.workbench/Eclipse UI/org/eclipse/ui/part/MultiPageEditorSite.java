@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2016, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -34,6 +34,7 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -127,12 +128,12 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		this.multiPageEditor = multiPageEditor;
 		this.editor = editor;
 
-		PartSite site = (PartSite) multiPageEditor.getSite();
+		PartSite site = (PartSite) getNestedEditorSite();
 
 		IServiceLocatorCreator slc = site.getService(IServiceLocatorCreator.class);
 		String name = "MultiPageEditorSite (" + editor.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		context = site.getModel().getContext().createChild(name);
-		serviceLocator = (ServiceLocator) slc.createServiceLocator(multiPageEditor.getSite(), null,
+		serviceLocator = (ServiceLocator) slc.createServiceLocator(getNestedEditorSite(), null,
 				() -> getMultiPageEditor().close(), context);
 
 		initializeDefaultServices();
@@ -144,7 +145,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	private void initializeDefaultServices() {
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.MPESITE_SCOPE, getWorkbenchWindow().getWorkbench(),
-						getWorkbenchWindow(), getMultiPageEditor().getSite(), this, null, 3));
+						getWorkbenchWindow(), getNestedEditorSite(), this, null, 3));
 		serviceLocator.registerService(IMultiPageEditorSiteHolder.class,
 				(IMultiPageEditorSiteHolder) () -> MultiPageEditorSite.this);
 
@@ -345,7 +346,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	@Override
 	public IWorkbenchPage getPage() {
-		return getMultiPageEditor().getSite().getPage();
+		return getNestedEditorSite().getPage();
 	}
 
 	@Override
@@ -434,7 +435,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	@Override
 	public Shell getShell() {
-		return getMultiPageEditor().getSite().getShell();
+		return getNestedEditorSite().getShell();
 	}
 
 	/**
@@ -446,7 +447,15 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	@Override
 	public IWorkbenchWindow getWorkbenchWindow() {
-		return getMultiPageEditor().getSite().getWorkbenchWindow();
+		return getNestedEditorSite().getWorkbenchWindow();
+	}
+
+	/**
+	 * @return <code>IWorkbenchPartSite<code> of the nested multi-page editor.
+	 * @since 3.114
+	 */
+	protected IWorkbenchPartSite getNestedEditorSite() {
+		return getMultiPageEditor().getSite();
 	}
 
 	/**
@@ -459,7 +468,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @since 3.2
 	 */
 	protected void handlePostSelectionChanged(SelectionChangedEvent event) {
-		ISelectionProvider parentProvider = getMultiPageEditor().getSite().getSelectionProvider();
+		ISelectionProvider parentProvider = getNestedEditorSite().getSelectionProvider();
 		if (parentProvider instanceof MultiPageSelectionProvider) {
 			SelectionChangedEvent newEvent = new SelectionChangedEvent(parentProvider, event.getSelection());
 			MultiPageSelectionProvider prov = (MultiPageSelectionProvider) parentProvider;
@@ -479,7 +488,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @param event the event
 	 */
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
-		ISelectionProvider parentProvider = getMultiPageEditor().getSite().getSelectionProvider();
+		ISelectionProvider parentProvider = getNestedEditorSite().getSelectionProvider();
 		if (parentProvider instanceof MultiPageSelectionProvider) {
 			SelectionChangedEvent newEvent = new SelectionChangedEvent(parentProvider, event.getSelection());
 			MultiPageSelectionProvider prov = (MultiPageSelectionProvider) parentProvider;
@@ -502,7 +511,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	@Override
 	public void registerContextMenu(MenuManager menuManager, ISelectionProvider selProvider) {
-		getMultiPageEditor().getSite().registerContextMenu(menuManager, selProvider);
+		getNestedEditorSite().registerContextMenu(menuManager, selProvider);
 	}
 
 	@Override
