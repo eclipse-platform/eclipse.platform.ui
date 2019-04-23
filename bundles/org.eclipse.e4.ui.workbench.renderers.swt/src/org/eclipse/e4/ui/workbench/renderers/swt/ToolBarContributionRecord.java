@@ -247,7 +247,7 @@ public class ToolBarContributionRecord {
 	private List<MToolBarElement> mergeFactoryIntoModel() {
 		Object obj = toolbarContribution.getTransientData().get(FACTORY);
 		if (!(obj instanceof IContextFunction)) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		IEclipseContext staticContext = getStaticContext();
 		staticContext.remove(List.class);

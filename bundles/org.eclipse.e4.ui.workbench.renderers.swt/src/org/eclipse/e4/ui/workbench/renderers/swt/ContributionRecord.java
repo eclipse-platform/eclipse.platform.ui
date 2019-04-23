@@ -265,7 +265,7 @@ public class ContributionRecord {
 	private List<MMenuElement> mergeFactoryIntoModel() {
 		Object obj = menuContribution.getTransientData().get(FACTORY);
 		if (!(obj instanceof IContextFunction)) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		IEclipseContext staticContext = getStaticContext();
 		staticContext.remove(List.class);

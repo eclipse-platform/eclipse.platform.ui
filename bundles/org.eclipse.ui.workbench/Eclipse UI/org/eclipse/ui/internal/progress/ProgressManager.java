@@ -911,11 +911,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	private Collection<IJobBusyListener> busyListenersForJob(Job job) {
 		if (job.isSystem()) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		synchronized (familyListeners) {
 			if (familyListeners.isEmpty()) {
-				return Collections.EMPTY_LIST;
+				return Collections.emptyList();
 			}
 
 			Collection<IJobBusyListener> returnValue = new LinkedHashSet<>();

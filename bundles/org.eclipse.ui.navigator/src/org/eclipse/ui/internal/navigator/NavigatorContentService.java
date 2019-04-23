@@ -1116,7 +1116,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private Set<NavigatorContentExtension> extractDescriptorInstances(Set<INavigatorContentDescriptor> theDescriptors,
 			boolean toLoadAllIfNecessary) {
 		if (theDescriptors.isEmpty()) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		Set<NavigatorContentExtension> resultInstances = new TreeSet<NavigatorContentExtension>(ExtensionSequenceNumberComparator.INSTANCE);
 		for (INavigatorContentDescriptor iNavigatorContentDescriptor : theDescriptors) {

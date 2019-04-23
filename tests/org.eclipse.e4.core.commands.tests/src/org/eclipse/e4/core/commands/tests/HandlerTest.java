@@ -325,7 +325,7 @@ public class HandlerTest {
 
 					@Override
 					public Map<?, ?> getParameterValues() {
-						return Collections.EMPTY_MAP;
+						return Collections.emptyMap();
 					}
 				};
 			}

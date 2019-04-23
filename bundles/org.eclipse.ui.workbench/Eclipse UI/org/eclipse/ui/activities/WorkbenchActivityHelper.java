@@ -290,11 +290,11 @@ public final class WorkbenchActivityHelper {
 		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 		IActivity activity = manager.getActivity(activityId);
 		if (!activity.isDefined()) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		Set<?> requirementBindings = activity.getActivityRequirementBindings();
 		if (requirementBindings.isEmpty()) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 
 		Set<String> requiredActivities = new HashSet<>(3);

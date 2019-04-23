@@ -97,7 +97,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor, IExec
 			// if we have no disabled expression activities just return the
 			// empty set. This will allow the use of the given object but will
 			// not result in any activity activation.
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 
 		if (!PrefUtil.getInternalPreferenceStore().getBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT)) {
