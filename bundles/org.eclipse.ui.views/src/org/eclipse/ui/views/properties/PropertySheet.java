@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,10 @@ package org.eclipse.ui.views.properties;
 
 import java.util.HashSet;
 
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -28,6 +32,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryEventListener;
 import org.eclipse.core.runtime.RegistryFactory;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -35,8 +40,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart;
@@ -151,6 +155,9 @@ public class PropertySheet extends PageBookView
 
 	private final SaveablesTracker saveablesTracker;
 
+	private boolean needsUpdate = false;
+
+
 	/**
 	 * Propagates state changes of the saveable part tracked by this properties
 	 * view, to properly update the dirty status. See bug 495567 comment 18.
@@ -226,6 +233,9 @@ public class PropertySheet extends PageBookView
 			public void propertyChange(PropertyChangeEvent event) {
 				if (IAction.CHECKED.equals(event.getProperty())) {
 					updateContentDescription();
+					if (!isPinned()) {
+						selectionChanged(currentPart, currentSelection);
+					}
 				}
 			}
 		});
@@ -469,14 +479,22 @@ public class PropertySheet extends PageBookView
 			return;
 		}
 
+		if (isPinned()) {
+			currentPart = part;
+			currentSelection = sel;
+			needsUpdate = true;
+			return;
+		}
+
 		// we ignore null selection, or if we are pinned, or our own selection
 		// or same selection
-		if (sel == null || !isImportant(part) || sel.equals(currentSelection)) {
+		if (sel == null || !isImportant(part) || (!needsUpdate && sel.equals(currentSelection))) {
 			return;
 		}
 
         currentPart = part;
         currentSelection = sel;
+		needsUpdate = false;
 
 		boolean visible = getSite() != null && getSite().getPage().isPartVisible(this);
 		if (!visible) {
