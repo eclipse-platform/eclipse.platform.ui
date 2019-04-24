@@ -162,7 +162,9 @@ public abstract class TopologicalSort<T, ID> {
 				// requires.get(bundleId) is empty unless there's a cycle;
 				// we process all nodes within the cycle now
 				for (ID reqId : requires.get(bundleId)) {
-					cycleToBeDone.add(reqId);
+					if (!cycleToBeDone.contains(reqId)) {
+						cycleToBeDone.add(reqId);
+					}
 					sortedByOutdegree.remove(reqId);
 					depends.get(reqId).remove(bundleId);
 				}
