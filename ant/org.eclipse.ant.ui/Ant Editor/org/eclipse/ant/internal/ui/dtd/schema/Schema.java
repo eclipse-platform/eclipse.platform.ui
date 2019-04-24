@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 Object Factory Inc.
+ * Copyright (c) 2002, 2019 Object Factory Inc.
  *
  * This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,7 +41,7 @@ public class Schema implements ISchema {
 	 */
 	@Override
 	public IElement[] getElements() {
-		return fElementMap.entrySet().toArray(new IElement[fElementMap.entrySet().size()]);
+		return fElementMap.values().toArray(new IElement[fElementMap.values().size()]);
 	}
 
 	/**
