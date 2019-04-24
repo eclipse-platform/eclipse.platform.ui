@@ -40,7 +40,9 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  * @see org.eclipse.ui.commands.IWorkbenchCommandSupport
  * @deprecated Please use <code>IHandlerService.activateHandler</code> instead.
+ *             This API is scheduled for deletion, see Bug 431177 for details
  * @see org.eclipse.ui.handlers.IHandlerService
+ * @noreference This class is scheduled for deletion.
  */
 @Deprecated
 @SuppressWarnings("all")

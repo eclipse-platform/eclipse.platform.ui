@@ -23,8 +23,10 @@ package org.eclipse.ui.commands;
  *
  * @since 3.0
  * @see org.eclipse.ui.commands.ICategoryListener#categoryChanged(CategoryEvent)
- * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead. This
+ *             API is scheduled for deletion, see Bug 431177 for details
  * @see org.eclipse.core.commands.CategoryEvent
+ * @noreference This class is scheduled for deletion.
  */
 @Deprecated
 public final class CategoryEvent {

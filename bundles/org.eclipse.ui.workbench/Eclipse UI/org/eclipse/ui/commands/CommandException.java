@@ -20,9 +20,11 @@ package org.eclipse.ui.commands;
  * </p>
  *
  * @since 3.0
- * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead. This
+ *             API is scheduled for deletion, see Bug 431177 for details
  * @see org.eclipse.core.commands.common.CommandException
  * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This class is scheduled for deletion.
  */
 @Deprecated
 @SuppressWarnings("all")

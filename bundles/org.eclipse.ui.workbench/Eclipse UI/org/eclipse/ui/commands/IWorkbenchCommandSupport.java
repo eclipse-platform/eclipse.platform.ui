@@ -25,10 +25,13 @@ import java.util.Collection;
  *
  * @since 3.0
  * @deprecated Please use <code>ICommandService</code> and
- *             <code>IHandlerService</code> instead.
+ *             <code>IHandlerService</code> instead. This API is scheduled for
+ *             deletion, see Bug 431177 for details
  * @see org.eclipse.ui.commands.ICommandService
  * @see org.eclipse.ui.handlers.IHandlerService
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is scheduled for deletion.
+ * @noextend This interface is not intended to be extended by clients.
  */
 @Deprecated
 @SuppressWarnings("all")

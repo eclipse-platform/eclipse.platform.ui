@@ -43,8 +43,11 @@ package org.eclipse.ui.commands;
  * @see ICommandManager
  * @see org.eclipse.jface.bindings.Scheme
  * @deprecated Please use the bindings support in the "org.eclipse.jface"
- *             plug-in instead.
+ *             plug-in instead. This API is scheduled for deletion, see Bug
+ *             431177 for details
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is scheduled for deletion.
+ * @noextend This interface is not intended to be extended by clients.
  */
 @Deprecated
 @SuppressWarnings("all")

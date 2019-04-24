@@ -26,7 +26,9 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  * @see ICommandManagerListener#commandManagerChanged(CommandManagerEvent)
  * @see org.eclipse.core.commands.CommandManagerEvent
- * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead. This
+ *             API is scheduled for deletion, see Bug 431177 for details
+ * @noreference This class is scheduled for deletion.
  */
 @Deprecated
 @SuppressWarnings("all")

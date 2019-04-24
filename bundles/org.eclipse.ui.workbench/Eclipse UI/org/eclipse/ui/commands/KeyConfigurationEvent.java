@@ -24,8 +24,10 @@ package org.eclipse.ui.commands;
  * @since 3.0
  * @see IKeyConfigurationListener#keyConfigurationChanged(KeyConfigurationEvent)
  * @deprecated Please use the bindings support in the "org.eclipse.jface"
- *             plug-in instead.
+ *             plug-in instead. This API is scheduled for deletion, see Bug
+ *             431177 for details
  * @see org.eclipse.jface.bindings.SchemeEvent
+ * @noreference This class is scheduled for deletion.
  */
 @Deprecated
 @SuppressWarnings("all")

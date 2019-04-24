@@ -24,7 +24,11 @@ package org.eclipse.ui.commands;
  * @see ICommand#addCommandListener(ICommandListener)
  * @see ICommand#removeCommandListener(ICommandListener)
  * @see org.eclipse.core.commands.ICommandListener
- * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead. This
+ *             API is scheduled for deletion, see Bug 431177 for details
+ * @noreference This interface is scheduled for deletion.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 @Deprecated
 @SuppressWarnings("all")

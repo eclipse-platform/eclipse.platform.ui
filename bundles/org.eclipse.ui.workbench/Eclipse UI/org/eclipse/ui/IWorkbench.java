@@ -480,8 +480,10 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *         not to be <code>null</code>.
 	 * @since 3.0
 	 * @deprecated Please use {@link IServiceLocator#getService(Class)} instead.
+	 *             This API is scheduled for deletion, see Bug 431177 for details
 	 * @see ICommandService
 	 * @see IHandlerService
+	 * @noreference IWorkbenchCommandSupport is scheduled for deletion.
 	 */
 	@Deprecated
 	IWorkbenchCommandSupport getCommandSupport();

@@ -41,7 +41,9 @@ import org.eclipse.ui.internal.util.Util;
  * @see org.eclipse.ui.handlers.IHandlerService#activateHandler(String,
  *      org.eclipse.core.commands.IHandler, Expression)
  * @deprecated This concept is now captured in the <code>ISources</code> integer
- *             constants.
+ *             constants. This API is scheduled for deletion, see Bug 431177 for
+ *             details
+ * @noreference This class is scheduled for deletion.
  *
  */
 @Deprecated
