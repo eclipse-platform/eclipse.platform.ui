@@ -112,8 +112,8 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			searchPattern = null;
 		} else {
 			SearchPattern patternMatcher = new SearchPattern();
-			if (pattern.indexOf("*") != 0 && pattern.indexOf("?") != 0 && pattern.indexOf(".") != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				pattern = "*" + pattern; //$NON-NLS-1$
+			if (pattern.indexOf('*') != 0 && pattern.indexOf('?') != 0 && pattern.indexOf('.') != 0) {
+				pattern = '*' + pattern;
 			}
 			patternMatcher.setPattern(pattern);
 			searchPattern = patternMatcher;

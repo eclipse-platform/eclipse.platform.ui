@@ -509,7 +509,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 			return true;
 		}
 
-        int separatorIndex = resourceName.lastIndexOf("."); //$NON-NLS-1$
+        int separatorIndex = resourceName.lastIndexOf('.');
         if (separatorIndex == -1) {
 			return false;
 		}
