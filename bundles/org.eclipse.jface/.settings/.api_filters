@@ -32,4 +32,20 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/jface/viewers/StructuredViewer.java" type="org.eclipse.jface.viewers.StructuredViewer$ColorAndFontCollector">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.StructuredViewer.ColorAndFontCollector"/>
+                <message_argument value="applyFontsAndColors(TableTreeItem)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/viewers/StructuredViewer.java" type="org.eclipse.jface.viewers.StructuredViewer$ColorAndFontCollectorWithProviders">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.StructuredViewer.ColorAndFontCollectorWithProviders"/>
+                <message_argument value="applyFontsAndColors(TableTreeItem)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

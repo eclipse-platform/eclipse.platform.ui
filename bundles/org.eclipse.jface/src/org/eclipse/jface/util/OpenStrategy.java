@@ -15,8 +15,6 @@ package org.eclipse.jface.util;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableTree;
-import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -35,7 +33,7 @@ import org.eclipse.swt.widgets.Widget;
  * <p>
  * Usage:
  * </p>
- * 
+ *
  * <pre>
  *	OpenStrategy handler = new OpenStrategy(control);
  *	handler.addOpenListener(new IOpenEventListener() {
@@ -470,14 +468,7 @@ public class OpenStrategy {
 						table.setSelection(new TableItem[] { item });
 					}
                     selEvent.item = item;
-                } else if (w instanceof TableTree) {
-                    TableTree table = (TableTree) w;
-                    TableTreeItem item = table.getItem(new Point(e.x, e.y));
-                    if (item != null) {
-						table.setSelection(new TableTreeItem[] { item });
-					}
-                    selEvent.item = item;
-                } else {
+				} else {
                     return;
                 }
                 if (selEvent.item == null) {
