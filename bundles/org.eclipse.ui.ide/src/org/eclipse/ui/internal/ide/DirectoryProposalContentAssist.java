@@ -292,7 +292,7 @@ public class DirectoryProposalContentAssist {
 
 	private List<String> retrieveDirectoriesIn(Path dir) {
 		try (Stream<Path> files = Files.list(dir)) {
-			return filterPaths(files).sorted().collect(toList());
+			return filterPaths(files.sorted()).collect(toList());
 		} catch (IOException ex) {
 			return new ArrayList<>();
 		}
