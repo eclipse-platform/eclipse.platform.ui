@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.ant.core.AntCorePlugin;
@@ -594,8 +595,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 				refresher.startBackgroundRefresh();
 			}
 		} else {
-			final boolean[] terminated = new boolean[1];
-			terminated[0] = launch.isTerminated();
+			final AtomicBoolean terminated = new AtomicBoolean(false);
 			IDebugEventSetListener listener = new IDebugEventSetListener() {
 				@Override
 				public void handleDebugEvents(DebugEvent[] events) {
@@ -603,7 +603,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 						DebugEvent event = events[i];
 						for (int j = 0, numProcesses = processes.length; j < numProcesses; j++) {
 							if (event.getSource() == processes[j] && event.getKind() == DebugEvent.TERMINATE) {
-								terminated[0] = true;
+								terminated.set(true);
 								break;
 							}
 						}
@@ -611,8 +611,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 				}
 			};
 			DebugPlugin.getDefault().addDebugEventListener(listener);
+			terminated.compareAndSet(false, launch.isTerminated());
 			monitor.subTask(AntLaunchConfigurationMessages.AntLaunchDelegate_28);
-			while (!monitor.isCanceled() && !terminated[0]) {
+			while (!monitor.isCanceled() && !terminated.get()) {
 				try {
 					Thread.sleep(50);
 				}
