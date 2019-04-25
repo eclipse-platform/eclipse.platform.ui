@@ -24,9 +24,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -44,6 +47,8 @@ import org.osgi.framework.FrameworkUtil;
  */
 
 public class PluginActivationTests {
+	@Rule
+	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
 	private static String[] NOT_ACTIVE_BUNDLES = new String[] {
 			"org.apache.xerces",

@@ -19,9 +19,14 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 public class FontRegistryTest {
+	@Rule
+	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
 	@Test
 	public void testBug544026() {

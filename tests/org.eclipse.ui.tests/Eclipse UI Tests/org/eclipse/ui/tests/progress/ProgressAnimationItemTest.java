@@ -35,11 +35,17 @@ import org.eclipse.ui.internal.progress.ProgressAnimationItem;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 public class ProgressAnimationItemTest {
+	@Rule
+	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
+
 	private Shell shell;
 	private ProgressAnimationItem animationItem;
 

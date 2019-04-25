@@ -20,14 +20,19 @@ import java.util.Map;
 
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISourceProviderListener;
+import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 /**
  * @since 3.5
  *
  */
 public class Bug397302Tests {
+	@Rule
+	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
 	/**
 	 * @since 3.5

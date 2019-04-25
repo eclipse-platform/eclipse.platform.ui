@@ -35,19 +35,24 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 /**
  * @since 3.11
  *
  */
 public class ZoomAndPreferencesFontTest {
+	@Rule
+	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
 	private static IProject project;
 	private static IFile file;

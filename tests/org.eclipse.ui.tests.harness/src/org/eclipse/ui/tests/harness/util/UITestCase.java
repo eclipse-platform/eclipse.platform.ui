@@ -222,8 +222,7 @@ public abstract class UITestCase extends TestCase {
     	super.setUp();
 		fWorkbench = PlatformUI.getWorkbench();
 		String name = runningTest != null ? runningTest : this.getName();
-		trace("----- " + name); //$NON-NLS-1$
-		trace(name + ": setUp..."); //$NON-NLS-1$
+		trace(TestRunLogUtil.formatTestStartMessage(name));
         addWindowListener();
         doSetUp();
 
@@ -252,7 +251,7 @@ public abstract class UITestCase extends TestCase {
     @Override
 	public final void tearDown() throws Exception {
 		String name = runningTest != null ? runningTest : this.getName();
-		trace(name + ": tearDown...\n"); //$NON-NLS-1$
+		trace(TestRunLogUtil.formatTestFinishedMessage(name));
         removeWindowListener();
         doTearDown();
     	fWorkbench = null;
