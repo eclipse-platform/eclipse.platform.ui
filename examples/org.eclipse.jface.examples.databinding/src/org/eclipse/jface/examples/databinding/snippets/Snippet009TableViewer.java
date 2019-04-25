@@ -20,7 +20,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
@@ -117,7 +117,7 @@ public class Snippet009TableViewer {
 	// ro retrieve, this ViewModel just instantiates a model object to edit.
 	static class ViewModel {
 		// The model to bind
-		private List people = new LinkedList();
+		private List<Person> people = new LinkedList<>();
 		{
 			people.add(new Person("Steve Northover"));
 			people.add(new Person("Grant Gayed"));
@@ -128,7 +128,7 @@ public class Snippet009TableViewer {
 			people.add(new Person("Silenio Quarti"));
 		}
 
-		public List getPeople() {
+		public List<Person> getPeople() {
 			return people;
 		}
 	}
@@ -153,9 +153,8 @@ public class Snippet009TableViewer {
 
 			// Set up data binding.
 			TableViewer peopleViewer = new TableViewer(committers);
-			ViewerSupport.bind(peopleViewer, new WritableList(viewModel
-					.getPeople(), Person.class), BeanProperties.value(
-					Person.class, "name"));
+			ViewerSupport.bind(peopleViewer, new WritableList<>(viewModel.getPeople(), Person.class),
+					BeanProperties.value(Person.class, "name"));
 
 			column.pack();
 

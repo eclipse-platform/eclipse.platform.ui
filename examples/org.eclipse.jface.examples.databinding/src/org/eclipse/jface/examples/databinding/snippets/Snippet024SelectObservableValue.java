@@ -18,11 +18,11 @@ package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.SelectObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -84,14 +84,13 @@ public class Snippet024SelectObservableValue {
 		Color[] colors = Color.values();
 
 		listViewer.setInput(colors);
-		IViewerObservableValue listViewerSelection = ViewersObservables
-				.observeSingleSelection(listViewer);
+		IObservableValue<Color> listViewerSelection = ViewerProperties.singleSelection(Color.class).observe(listViewer);
 
-		SelectObservableValue radioGroup = new SelectObservableValue();
+		SelectObservableValue<Color> radioGroup = new SelectObservableValue<>();
 		for (int i = 0; i < colors.length; i++) {
 			Button button = new Button(group, SWT.RADIO);
 			button.setText(colors[i].toString());
-			radioGroup.addOption(colors[i], WidgetProperties.selection().observe(button));
+			radioGroup.addOption(colors[i], WidgetProperties.buttonSelection().observe(button));
 		}
 
 		DataBindingContext dbc = new DataBindingContext();

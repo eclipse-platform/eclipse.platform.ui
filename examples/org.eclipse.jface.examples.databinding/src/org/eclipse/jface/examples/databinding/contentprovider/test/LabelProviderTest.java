@@ -23,7 +23,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.ListeningLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -89,10 +89,9 @@ public class LabelProviderTest {
 			setOfRenamables = new WritableSet<>();
 
 			list = new ListViewer(shell);
-			ObservableSetContentProvider contentProvider = new ObservableSetContentProvider();
+			ObservableSetContentProvider<RenamableItem> contentProvider = new ObservableSetContentProvider<>();
 			list.setContentProvider(contentProvider);
-			list.setLabelProvider(new ListeningLabelProvider(contentProvider
-					.getKnownElements()) {
+			list.setLabelProvider(new ListeningLabelProvider<RenamableItem>(contentProvider.getKnownElements()) {
 				RenamableItem.Listener listener = item -> fireChangeEvent(Collections.singleton(item));
 
 				@Override
@@ -105,22 +104,18 @@ public class LabelProviderTest {
 				}
 
 				@Override
-				protected void addListenerTo(Object next) {
-					RenamableItem item = (RenamableItem) next;
-
-					item.addListener(listener);
+				protected void addListenerTo(RenamableItem next) {
+					next.addListener(listener);
 				}
 
 				@Override
-				protected void removeListenerFrom(Object next) {
-					RenamableItem item = (RenamableItem) next;
-
-					item.removeListener(listener);
+				protected void removeListenerFrom(RenamableItem next) {
+					next.removeListener(listener);
 				}
 			});
 			list.setInput(setOfRenamables);
 
-			selectedRenamable = ViewersObservables.observeSingleSelection(list);
+			selectedRenamable = ViewerProperties.singleSelection(RenamableItem.class).observe(list);
 
 			Composite buttonBar = new Composite(shell, SWT.NONE);
 			{ // Initialize buttonBar

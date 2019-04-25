@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -61,7 +61,7 @@ public class Snippet019TreeViewerWithListFactory {
 	private DataBindingContext m_bindingContext;
 
 	private Bean input = createBean("input");
-	private IObservableValue clipboard;
+	private IObservableValue<Bean> clipboard;
 
 	/**
 	 * Launch the application
@@ -121,7 +121,7 @@ public class Snippet019TreeViewerWithListFactory {
 		addRootButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				List list = input.getList();
+				List<Bean> list = input.getList();
 				Bean root = createBean("root");
 				list.add(root);
 				input.setList(list);
@@ -138,7 +138,7 @@ public class Snippet019TreeViewerWithListFactory {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				Bean parent = getSelectedBean();
-				List list = new ArrayList(parent.getList());
+				List<Bean> list = new ArrayList<>(parent.getList());
 				Bean child = createBean("child");
 				list.add(child);
 				parent.setList(list);
@@ -166,7 +166,7 @@ public class Snippet019TreeViewerWithListFactory {
 					index = parentItem.indexOf(selectedItem);
 				}
 
-				List list = new ArrayList(parent.getList());
+				List<Bean> list = new ArrayList<>(parent.getList());
 				list.remove(index);
 				parent.setList(list);
 			}
@@ -186,14 +186,14 @@ public class Snippet019TreeViewerWithListFactory {
 		pasteButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				Bean copy = (Bean) clipboard.getValue();
+				Bean copy = clipboard.getValue();
 				if (copy == null)
 					return;
 				Bean parent = getSelectedBean();
 				if (parent == null)
 					parent = input;
 
-				List list = new ArrayList(parent.getList());
+				List<Bean> list = new ArrayList<>(parent.getList());
 				list.add(copy);
 				parent.setList(list);
 
@@ -235,17 +235,15 @@ public class Snippet019TreeViewerWithListFactory {
 	}
 
 	protected DataBindingContext initDataBindings() {
-		IObservableValue treeViewerSelectionObserveSelection = ViewersObservables
-				.observeSingleSelection(beanViewer);
-		IObservableValue textTextObserveWidget = WidgetProperties.text(SWT.Modify).observe(beanText);
-		IObservableValue treeViewerValueObserveDetailValue = BeanProperties.value(
-				(Class) treeViewerSelectionObserveSelection.getValueType(), "text", String.class).observeDetail(
-				treeViewerSelectionObserveSelection);
+		IObservableValue<Bean> treeViewerSelectionObserveSelection = ViewerProperties.singleSelection(Bean.class)
+				.observe(beanViewer);
+		IObservableValue<String> textTextObserveWidget = WidgetProperties.text(SWT.Modify).observe(beanText);
+		IObservableValue<String> treeViewerValueObserveDetailValue = BeanProperties
+				.value(Bean.class, "text", String.class).observeDetail(treeViewerSelectionObserveSelection);
 
 		DataBindingContext bindingContext = new DataBindingContext();
 
-		bindingContext.bindValue(textTextObserveWidget,
-				treeViewerValueObserveDetailValue);
+		bindingContext.bindValue(textTextObserveWidget, treeViewerValueObserveDetailValue);
 
 		return bindingContext;
 	}
@@ -258,42 +256,30 @@ public class Snippet019TreeViewerWithListFactory {
 	}
 
 	private void initExtraBindings(DataBindingContext dbc) {
-		final IObservableValue beanViewerSelection = ViewersObservables
-				.observeSingleSelection(beanViewer);
-		IObservableValue beanSelected = new ComputedValue(Boolean.TYPE) {
-			@Override
-			protected Object calculate() {
-				return Boolean.valueOf(beanViewerSelection.getValue() != null);
-			}
-		};
-		dbc.bindValue(WidgetProperties.enabled().observe(addChildBeanButton),
-				beanSelected);
-		dbc.bindValue(WidgetProperties.enabled().observe(removeBeanButton),
-				beanSelected);
+		final IObservableValue<Bean> beanViewerSelection = ViewerProperties.singleSelection(Bean.class)
+				.observe(beanViewer);
+		IObservableValue<Boolean> beanSelected = ComputedValue.create(() -> beanViewerSelection.getValue() != null);
+		dbc.bindValue(WidgetProperties.enabled().observe(addChildBeanButton), beanSelected);
+		dbc.bindValue(WidgetProperties.enabled().observe(removeBeanButton), beanSelected);
 
-		clipboard = new WritableValue();
+		clipboard = new WritableValue<>();
 		dbc.bindValue(WidgetProperties.enabled().observe(copyButton), beanSelected);
 		dbc.bindValue(WidgetProperties.enabled().observe(pasteButton),
-				new ComputedValue(Boolean.TYPE) {
-					@Override
-					protected Object calculate() {
-						return Boolean.valueOf(clipboard.getValue() != null);
-					}
-				});
+				ComputedValue.create(() -> clipboard.getValue() != null));
 
-		ViewerSupport.bind(beanViewer, input, BeanProperties.list("list",
-				Bean.class), BeanProperties.value(Bean.class, "text"));
+		ViewerSupport.bind(beanViewer, input, BeanProperties.list("list", Bean.class),
+				BeanProperties.value(Bean.class, "text"));
 	}
 
 	static class Bean {
 		/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(
 				this);
 		private String text;
-		private List list;
+		private List<Bean> list;
 
 		public Bean(String text) {
 			this.text = text;
-			list = new ArrayList();
+			list = new ArrayList<>();
 		}
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -309,21 +295,19 @@ public class Snippet019TreeViewerWithListFactory {
 		}
 
 		public void setText(String value) {
-			changeSupport.firePropertyChange("text", this.text,
-					this.text = value);
+			changeSupport.firePropertyChange("text", this.text, this.text = value);
 		}
 
-		public List getList() {
+		public List<Bean> getList() {
 			if (list == null)
 				return null;
-			return new ArrayList(list);
+			return new ArrayList<>(list);
 		}
 
-		public void setList(List list) {
+		public void setList(List<Bean> list) {
 			if (list != null)
-				list = new ArrayList(list);
-			changeSupport.firePropertyChange("list", this.list,
-					this.list = list);
+				list = new ArrayList<>(list);
+			changeSupport.firePropertyChange("list", this.list, this.list = list);
 		}
 
 		public boolean hasListeners(String propertyName) {

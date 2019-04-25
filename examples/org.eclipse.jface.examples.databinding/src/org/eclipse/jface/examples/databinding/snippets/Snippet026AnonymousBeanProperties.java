@@ -19,12 +19,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
@@ -37,8 +36,8 @@ import org.eclipse.core.databinding.property.set.DelegatingSetProperty;
 import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -112,10 +111,9 @@ public class Snippet026AnonymousBeanProperties {
 		}
 	}
 
-	public static class ContactGroup extends AbstractModelObject implements
-			Comparable {
+	public static class ContactGroup extends AbstractModelObject implements Comparable<ContactGroup> {
 		private String name;
-		private Set contacts = new TreeSet();
+		private Set<Contact> contacts = new TreeSet<>();
 
 		ContactGroup(String name) {
 			this.name = checkNull(name);
@@ -135,33 +133,31 @@ public class Snippet026AnonymousBeanProperties {
 			firePropertyChange("name", this.name, this.name = checkNull(name));
 		}
 
-		public Set getContacts() {
-			return new TreeSet(contacts);
+		public Set<Contact> getContacts() {
+			return new TreeSet<>(contacts);
 		}
 
 		public void addContact(Contact contact) {
-			Set oldValue = getContacts();
+			Set<Contact> oldValue = getContacts();
 			contacts.add(contact);
-			Set newValue = getContacts();
+			Set<Contact> newValue = getContacts();
 			firePropertyChange("contacts", oldValue, newValue);
 		}
 
 		public void removeContact(Contact contact) {
-			Set oldValue = getContacts();
+			Set<Contact> oldValue = getContacts();
 			contacts.remove(contact);
-			Set newValue = getContacts();
+			Set<Contact> newValue = getContacts();
 			firePropertyChange("contacts", oldValue, newValue);
 		}
 
 		@Override
-		public int compareTo(Object o) {
-			ContactGroup that = (ContactGroup) o;
+		public int compareTo(ContactGroup that) {
 			return this.name.compareTo(that.name);
 		}
 	}
 
-	public static class Contact extends AbstractModelObject implements
-			Comparable {
+	public static class Contact extends AbstractModelObject implements Comparable<Contact> {
 		private String name;
 		private String status;
 
@@ -194,8 +190,7 @@ public class Snippet026AnonymousBeanProperties {
 		}
 
 		@Override
-		public int compareTo(Object o) {
-			Contact that = (Contact) o;
+		public int compareTo(Contact that) {
 			int result = this.name.compareTo(that.name);
 			if (result == 0)
 				result = this.status.compareTo(that.status);
@@ -204,16 +199,16 @@ public class Snippet026AnonymousBeanProperties {
 	}
 
 	public static class ApplicationModel extends AbstractModelObject {
-		private Set groups = new TreeSet();
+		private Set<ContactGroup> groups = new TreeSet<>();
 
-		public Set getGroups() {
-			return new TreeSet(groups);
+		public Set<ContactGroup> getGroups() {
+			return new TreeSet<>(groups);
 		}
 
-		public void setGroups(Set groups) {
-			Set oldValue = getGroups();
-			this.groups = new TreeSet(groups);
-			Set newValue = getGroups();
+		public void setGroups(Set<ContactGroup> groups) {
+			Set<ContactGroup> oldValue = getGroups();
+			this.groups = new TreeSet<>(groups);
+			Set<ContactGroup> newValue = getGroups();
 			firePropertyChange("groups", oldValue, newValue);
 		}
 	}
@@ -224,64 +219,59 @@ public class Snippet026AnonymousBeanProperties {
 	 * own property to apply set changes incrementally through the addContact
 	 * and removeContact methods.
 	 */
-	public static class ContactGroupContactsProperty extends SimpleSetProperty {
+	public static class ContactGroupContactsProperty extends SimpleSetProperty<ContactGroup, Contact> {
 		@Override
 		public Object getElementType() {
 			return Contact.class;
 		}
 
 		@Override
-		protected Set doGetSet(Object source) {
+		protected Set<Contact> doGetSet(ContactGroup source) {
 			if (source == null)
-				return Collections.EMPTY_SET;
-			return ((ContactGroup) source).getContacts();
+				return Collections.emptySet();
+			return source.getContacts();
 		}
 
 		@Override
-		protected void doSetSet(Object source, Set set, SetDiff diff) {
+		protected void doSetSet(ContactGroup source, Set<Contact> set, SetDiff<Contact> diff) {
 			doUpdateSet(source, diff);
 		}
 
 		@Override
-		protected void doUpdateSet(Object source, SetDiff diff) {
-			ContactGroup group = (ContactGroup) source;
-			for (Iterator it = diff.getRemovals().iterator(); it.hasNext();) {
-				Contact contact = (Contact) it.next();
+		protected void doUpdateSet(ContactGroup group, SetDiff<Contact> diff) {
+			for (Contact contact : diff.getRemovals()) {
 				group.removeContact(contact);
 			}
-			for (Iterator it = diff.getAdditions().iterator(); it.hasNext();) {
-				Contact contact = (Contact) it.next();
+			for (Contact contact : diff.getAdditions()) {
 				group.addContact(contact);
 			}
 		}
 
 		@Override
-		public INativePropertyListener adaptListener(
-				final ISimplePropertyListener listener) {
+		public INativePropertyListener<ContactGroup> adaptListener(
+				final ISimplePropertyListener<ContactGroup, SetDiff<Contact>> listener) {
 			return new Listener(this, listener);
 		}
 
-		private class Listener extends NativePropertyListener implements
-				PropertyChangeListener {
-			Listener(IProperty property, ISimplePropertyListener listener) {
+		private class Listener extends NativePropertyListener<ContactGroup, SetDiff<Contact>>
+				implements PropertyChangeListener {
+			Listener(IProperty property, ISimplePropertyListener<ContactGroup, SetDiff<Contact>> listener) {
 				super(property, listener);
 			}
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				fireChange(evt.getSource(), null);
+				fireChange((ContactGroup) evt.getSource(), null);
 			}
 
 			@Override
-			protected void doAddTo(Object source) {
-				((ContactGroup) source).addPropertyChangeListener("contacts",
-						this);
+			protected void doAddTo(ContactGroup source) {
+				source.addPropertyChangeListener("contacts", this);
 			}
 
 			@Override
-			protected void doRemoveFrom(Object source) {
-				((ContactGroup) source).removePropertyChangeListener(
-						"contacts", this);
+			protected void doRemoveFrom(ContactGroup source) {
+				source.removePropertyChangeListener("contacts", this);
 			}
 		}
 	}
@@ -320,7 +310,7 @@ public class Snippet026AnonymousBeanProperties {
 		jdbGroup.addContact(new Contact("Boris Bokowski", "Online"));
 		jdbGroup.addContact(new Contact("Matthew Hall", "Idle"));
 
-		Set groups = new TreeSet();
+		Set<ContactGroup> groups = new TreeSet<>();
 		groups.add(swtGroup);
 		groups.add(jdbGroup);
 		ApplicationModel model = new ApplicationModel();
@@ -371,29 +361,28 @@ public class Snippet026AnonymousBeanProperties {
 	}
 
 	private void bindUI() {
-		ISetProperty treeChildrenProperty = new DelegatingSetProperty() {
-			ISetProperty modelGroups = BeanProperties.set(
-					ApplicationModel.class, "groups");
-			ISetProperty groupContacts = BeanProperties.set(ContactGroup.class,
-					"contacts");
+		ISetProperty<Object, Object> treeChildrenProperty = new DelegatingSetProperty<Object, Object>() {
+			ISetProperty<ApplicationModel, ContactGroup> modelGroups = BeanProperties.set(
+					ApplicationModel.class, "groups", ContactGroup.class);
+			ISetProperty<ContactGroup, Contact> groupContacts = BeanProperties.set(ContactGroup.class,
+					"contacts", Contact.class);
 
+			@SuppressWarnings("unchecked")
 			@Override
-			protected ISetProperty doGetDelegate(Object source) {
+			protected ISetProperty<Object, Object> doGetDelegate(Object source) {
 				if (source instanceof ApplicationModel)
-					return modelGroups;
+					return (ISetProperty<Object, Object>) (Object) modelGroups;
 				if (source instanceof ContactGroup)
-					return groupContacts;
+					return (ISetProperty<Object, Object>) (Object) groupContacts;
 				return null;
 			}
 		};
 
-		ViewerSupport.bind(contactViewer, model, treeChildrenProperty,
-				BeanProperties.values(new String[] { "name", "status" }));
+		ViewerSupport.bind(contactViewer, model, treeChildrenProperty, BeanProperties.values("name", "status"));
 
 		contactViewer.expandAll();
 
-		final IObservableValue selection = ViewerProperties.singleSelection()
-				.observe(contactViewer);
+		final IObservableValue<Object> selection = ViewerProperties.singleSelection().observe(contactViewer);
 
 		DataBindingContext dbc = new DataBindingContext();
 
@@ -406,12 +395,7 @@ public class Snippet026AnonymousBeanProperties {
 		dbc.bindValue(ViewerProperties.singleSelection().observe(statusViewer),
 				BeanProperties.value("status").observeDetail(selection));
 
-		dbc.bindValue(WidgetProperties.enabled().observe(
-				statusViewer.getControl()), new ComputedValue() {
-			@Override
-			protected Object calculate() {
-				return Boolean.valueOf(selection.getValue() instanceof Contact);
-			}
-		});
+		dbc.bindValue(WidgetProperties.enabled().observe(statusViewer.getControl()),
+				ComputedValue.create(() -> selection.getValue() instanceof Contact));
 	}
 }

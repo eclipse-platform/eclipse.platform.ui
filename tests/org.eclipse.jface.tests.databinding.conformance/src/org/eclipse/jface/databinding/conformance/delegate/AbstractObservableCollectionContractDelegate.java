@@ -24,9 +24,8 @@ import org.eclipse.core.databinding.observable.Realm;
  *
  * @since 3.2
  */
-public abstract class AbstractObservableCollectionContractDelegate extends
-		AbstractObservableContractDelegate implements
-		IObservableCollectionContractDelegate {
+public abstract class AbstractObservableCollectionContractDelegate<E> extends AbstractObservableContractDelegate
+		implements IObservableCollectionContractDelegate<E> {
 
 	/**
 	 * Invokes
@@ -42,13 +41,13 @@ public abstract class AbstractObservableCollectionContractDelegate extends
 	}
 
 	@Override
-	public Object createElement(IObservableCollection collection) {
+	public E createElement(IObservableCollection<E> collection) {
 		// no op
 		return null;
 	}
 
 	@Override
-	public Object getElementType(IObservableCollection collection) {
+	public Object getElementType(IObservableCollection<E> collection) {
 		// no op
 		return null;
 	}

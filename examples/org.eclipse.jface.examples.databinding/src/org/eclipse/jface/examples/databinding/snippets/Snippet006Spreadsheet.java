@@ -68,21 +68,23 @@ public class Snippet006Spreadsheet {
 	 */
 	private static boolean FUNKY_FORMULAS = true;
 
-	static WritableValue[][] cellFormulas = new WritableValue[NUM_ROWS][NUM_COLUMNS];
+	@SuppressWarnings("unchecked")
+	static WritableValue<String>[][] cellFormulas = new WritableValue[NUM_ROWS][NUM_COLUMNS];
 
-	static ComputedValue[][] cellValues = new ComputedValue[NUM_ROWS][NUM_COLUMNS];
+	@SuppressWarnings("unchecked")
+	static ComputedValue<String>[][] cellValues = new ComputedValue[NUM_ROWS][NUM_COLUMNS];
 
-	static class ComputedCellValue extends ComputedValue {
-		private final IObservableValue cellFormula;
+	static class ComputedCellValue extends ComputedValue<String> {
+		private final IObservableValue<String> cellFormula;
 
 		private boolean calculating;
 
-		ComputedCellValue(IObservableValue cellFormula) {
+		ComputedCellValue(IObservableValue<String> cellFormula) {
 			this.cellFormula = cellFormula;
 		}
 
 		@Override
-		protected Object calculate() {
+		protected String calculate() {
 			if (calculating) {
 				return "#cycle";
 			}
@@ -94,7 +96,7 @@ public class Snippet006Spreadsheet {
 			}
 		}
 
-		private Object evaluate(Object value) {
+		private String evaluate(String value) {
 			if (DEBUG_LEVEL >= 2) {
 				System.out.println("evaluating " + this + " ...");
 			}
@@ -102,11 +104,10 @@ public class Snippet006Spreadsheet {
 				return "";
 			}
 			try {
-				String s = (String) value;
-				if (!s.startsWith("=")) {
-					return s;
+				if (!value.startsWith("=")) {
+					return value;
 				}
-				String addition = s.substring(1);
+				String addition = value.substring(1);
 				int indexOfPlus = addition.indexOf('+');
 				String operand1 = addition.substring(0, indexOfPlus);
 				double value1 = eval(operand1);
@@ -135,8 +136,7 @@ public class Snippet006Spreadsheet {
 				int rowIndex = 0;
 				rowIndex = NumberFormat.getNumberInstance().parse(
 						s.substring(1)).intValue() - 1;
-				String value = (String) cellValues[rowIndex][columnIndex]
-						.getValue();
+				String value = cellValues[rowIndex][columnIndex].getValue();
 				return value.length() == 0 ? 0 : NumberFormat
 						.getNumberInstance().parse(value).doubleValue();
 			}
@@ -162,11 +162,11 @@ public class Snippet006Spreadsheet {
 				tableColumn.setText(Character.toString((char) ('A' + i1)));
 				tableColumn.setWidth(60);
 			}
-			WritableList list = new WritableList();
+			WritableList<Object> list = new WritableList<>();
 			for (int i2 = 0; i2 < NUM_ROWS; i2++) {
 				list.add(new Object());
 				for (int j = 0; j < NUM_COLUMNS; j++) {
-					cellFormulas[i2][j] = new WritableValue();
+					cellFormulas[i2][j] = new WritableValue<>();
 					cellValues[i2][j] = new ComputedCellValue(cellFormulas[i2][j]);
 					if (!FUNKY_FORMULAS || i2 == 0 || j == 0) {
 						cellFormulas[i2][j].setValue("");
@@ -176,14 +176,14 @@ public class Snippet006Spreadsheet {
 				}
 			}
 
-			new TableUpdater(table, list) {
+			new TableUpdater<Object>(table, list) {
 				@Override
 				protected void updateItem(int rowIndex, TableItem item, Object element) {
 					if (DEBUG_LEVEL >= 1) {
 						System.out.println("updating row " + rowIndex);
 					}
 					for (int j = 0; j < NUM_COLUMNS; j++) {
-						item.setText(j, (String) cellValues[rowIndex][j].getValue());
+						item.setText(j, cellValues[rowIndex][j].getValue());
 					}
 				}
 			};
@@ -227,7 +227,7 @@ public class Snippet006Spreadsheet {
 					TableItem row = cursor.getRow();
 					int rowIndex = table.indexOf(row);
 					int columnIndex = cursor.getColumn();
-					text.setText((String) cellFormulas[rowIndex][columnIndex].getValue());
+					text.setText(cellFormulas[rowIndex][columnIndex].getValue());
 					text.addKeyListener(new KeyAdapter() {
 						@Override
 						public void keyPressed(KeyEvent e) {

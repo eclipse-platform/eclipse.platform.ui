@@ -21,13 +21,12 @@ import static org.junit.Assert.assertEquals;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -84,18 +83,18 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	}
 
 	private static final String PROP_CHOICES = "choices";
-	private List choices = new ArrayList();
+	private List<String> choices = new ArrayList<>();
 	 {
 		choices.add("Banana");
 		choices.add("Apple");
 		choices.add("Mango");
 	}
 
-	public List getChoices() {
+	public List<String> getChoices() {
 		return choices;
 	}
 
-	public void setChoices(List choices) {
+	public void setChoices(List<String> choices) {
 		this.choices = choices;
 		firePropertyChange(PROP_CHOICES, null, null);
 	}
@@ -114,7 +113,8 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	private static final String NEXT = "Next";
 	@Test
 	public void testBindText() throws Exception {
-        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, "text"));
+		getDbc().bindValue(WidgetProperties.text().observe(comboEditable),
+				BeanProperties.value(ComboUpdatingTest.class, PROP_TEXT).observe(this));
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
 		comboEditable.setText(NEXT);
@@ -127,18 +127,18 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	public void testBindItems_listHasSameItems_editable() throws Exception {
 		text = "Apple";
 
-        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT));
+		getDbc().bindValue(WidgetProperties.text().observe(comboEditable),
+				BeanProperties.value(ComboUpdatingTest.class, "text").observe(this));
 
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
 
-        IObservableList list = new WritableList(getChoices(), null);
-        getDbc().bindList(SWTObservables.observeItems(comboEditable), list);
+		IObservableList<String> list = new WritableList<>(getChoices(), null);
+		getDbc().bindList(WidgetProperties.items().observe(comboEditable), list);
 
 		spinEventLoop(0);
 		int position = 0;
-		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {
-			String element = (String) choicesIter.next();
+		for (String element : choices) {
 			assertEquals(element, comboEditable.getItem(position));
 			++position;
 		}
@@ -178,19 +178,19 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	@Ignore
 	public void testBindItems_listHasDifferentItems_editable() throws Exception {
 
-        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT));
+		getDbc().bindValue(WidgetProperties.text().observe(comboEditable),
+				BeanProperties.value(ComboUpdatingTest.class, "text").observe(this));
 
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
 
-        IObservableList list = new WritableList(new ArrayList(), String.class);
+		IObservableList<String> list = new WritableList<>(new ArrayList<>(), String.class);
         list.addAll(getChoices());
-        getDbc().bindList(SWTObservables.observeItems(comboEditable), list);
+		getDbc().bindList(WidgetProperties.items().observe(comboEditable), list);
 
 		spinEventLoop(0);
 		int position = 0;
-		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {
-			String element = (String) choicesIter.next();
+		for (String element : choices) {
 			assertEquals(element, comboEditable.getItem(position));
 			++position;
 		}

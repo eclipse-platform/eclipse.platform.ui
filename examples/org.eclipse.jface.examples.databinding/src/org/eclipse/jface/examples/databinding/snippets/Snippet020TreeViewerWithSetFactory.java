@@ -21,15 +21,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -62,7 +62,7 @@ public class Snippet020TreeViewerWithSetFactory {
 	private DataBindingContext m_bindingContext;
 
 	private Bean input = createBean("input");
-	private IObservableValue clipboard;
+	private IObservableValue<Bean> clipboard;
 	static int counter = 0;
 
 	/**
@@ -123,7 +123,7 @@ public class Snippet020TreeViewerWithSetFactory {
 		addRootButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				Set set = input.getSet();
+				Set<Bean> set = input.getSet();
 				Bean root = createBean("root");
 				set.add(root);
 				input.setSet(set);
@@ -140,7 +140,7 @@ public class Snippet020TreeViewerWithSetFactory {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				Bean parent = getSelectedBean();
-				Set set = new HashSet(parent.getSet());
+				Set<Bean> set = new HashSet<>(parent.getSet());
 				Bean child = createBean("child" + (counter++));
 				set.add(child);
 				parent.setSet(set);
@@ -165,7 +165,7 @@ public class Snippet020TreeViewerWithSetFactory {
 				else
 					parent = (Bean) parentItem.getData();
 
-				Set set = new HashSet(parent.getSet());
+				Set<Bean> set = new HashSet<>(parent.getSet());
 				set.remove(bean);
 				parent.setSet(set);
 			}
@@ -185,14 +185,14 @@ public class Snippet020TreeViewerWithSetFactory {
 		pasteButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				Bean copy = (Bean) clipboard.getValue();
+				Bean copy = clipboard.getValue();
 				if (copy == null)
 					return;
 				Bean parent = getSelectedBean();
 				if (parent == null)
 					parent = input;
 
-				Set set = new HashSet(parent.getSet());
+				Set<Bean> set = new HashSet<>(parent.getSet());
 				set.add(copy);
 				parent.setSet(set);
 
@@ -235,17 +235,16 @@ public class Snippet020TreeViewerWithSetFactory {
 	}
 
 	protected DataBindingContext initDataBindings() {
-		IObservableValue treeViewerSelectionObserveSelection = ViewersObservables
-				.observeSingleSelection(beanViewer);
-		IObservableValue textTextObserveWidget = WidgetProperties.text(SWT.Modify).observe(beanText);
-		IObservableValue treeViewerValueObserveDetailValue = BeanProperties.value(
-				(Class) treeViewerSelectionObserveSelection.getValueType(), "text", String.class)
+		IObservableValue<Bean> treeViewerSelectionObserveSelection = ViewerProperties.singleSelection(Bean.class)
+				.observe(beanViewer);
+		IObservableValue<String> textTextObserveWidget = WidgetProperties.text(SWT.Modify).observe(beanText);
+		IObservableValue<String> treeViewerValueObserveDetailValue = BeanProperties
+				.value(Bean.class, "text", String.class)
 				.observeDetail(treeViewerSelectionObserveSelection);
 
 		DataBindingContext bindingContext = new DataBindingContext();
 
-		bindingContext.bindValue(textTextObserveWidget,
-				treeViewerValueObserveDetailValue);
+		bindingContext.bindValue(textTextObserveWidget, treeViewerValueObserveDetailValue);
 
 		return bindingContext;
 	}
@@ -258,42 +257,31 @@ public class Snippet020TreeViewerWithSetFactory {
 	}
 
 	private void initExtraBindings(DataBindingContext dbc) {
-		final IObservableValue beanViewerSelection = ViewersObservables
-				.observeSingleSelection(beanViewer);
-		IObservableValue beanSelected = new ComputedValue(Boolean.TYPE) {
-			@Override
-			protected Object calculate() {
-				return Boolean.valueOf(beanViewerSelection.getValue() != null);
-			}
-		};
+		final IObservableValue<Bean> beanViewerSelection = ViewerProperties.singleSelection(Bean.class)
+				.observe(beanViewer);
+		IObservableValue<Boolean> beanSelected = ComputedValue.create(() -> beanViewerSelection.getValue() != null);
 		dbc.bindValue(WidgetProperties.enabled().observe(addChildBeanButton),
 				beanSelected);
 		dbc.bindValue(WidgetProperties.enabled().observe(removeBeanButton),
 				beanSelected);
 
-		clipboard = new WritableValue();
+		clipboard = new WritableValue<>();
 		dbc.bindValue(WidgetProperties.enabled().observe(copyButton), beanSelected);
 		dbc.bindValue(WidgetProperties.enabled().observe(pasteButton),
-				new ComputedValue(Boolean.TYPE) {
-					@Override
-					protected Object calculate() {
-						return Boolean.valueOf(clipboard.getValue() != null);
-					}
-				});
+				ComputedValue.create(() -> clipboard.getValue() != null));
 
 		ViewerSupport.bind(beanViewer, input, BeanProperties.set("set",
 				Bean.class), BeanProperties.value(Bean.class, "text"));
 	}
 
 	static class Bean {
-		/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(
-				this);
+		/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 		private String text;
-		private Set set;
+		private Set<Bean> set;
 
 		public Bean(String text) {
 			this.text = text;
-			set = new HashSet();
+			set = new HashSet<>();
 		}
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -313,15 +301,15 @@ public class Snippet020TreeViewerWithSetFactory {
 					this.text = value);
 		}
 
-		public Set getSet() {
+		public Set<Bean> getSet() {
 			if (set == null)
 				return null;
-			return new HashSet(set);
+			return new HashSet<>(set);
 		}
 
-		public void setSet(Set set) {
+		public void setSet(Set<Bean> set) {
 			if (set != null)
-				set = new HashSet(set);
+				set = new HashSet<>(set);
 			changeSupport.firePropertyChange("set", this.set, this.set = set);
 		}
 

@@ -23,7 +23,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.internal.databinding.swt.ComboSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ComboTextProperty;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;

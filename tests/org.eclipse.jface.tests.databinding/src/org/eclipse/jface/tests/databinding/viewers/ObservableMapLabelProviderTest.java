@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.HashSet;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.examples.databinding.ModelObject;
@@ -34,23 +34,25 @@ public class ObservableMapLabelProviderTest extends AbstractDefaultRealmTestCase
 
     @Test
 	public void testGetColumnText() throws Exception {
-        WritableSet set = new WritableSet(new HashSet(), Item.class);
+        WritableSet<Item> set = new WritableSet<>(new HashSet<>(), Item.class);
         Item item = new Item();
         String value = "value";
         item.setValue(value);
         set.add(item);
 
-        ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(BeansObservables.observeMap(set, Item.class, "value"));
+        ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(
+				BeanProperties.value(Item.class, "value").observeDetail(set));
         assertEquals(item.getValue(), labelProvider.getColumnText(item, 0));
     }
 
     @Test
 	public void testGetColumnTextNullValue() throws Exception {
-        WritableSet set = new WritableSet(new HashSet(), Item.class);
+		WritableSet<Item> set = new WritableSet<>(new HashSet<>(), Item.class);
         Item item = new Item();
         set.add(item);
 
-        ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(BeansObservables.observeMap(set, Item.class, "value"));
+		ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(
+				BeanProperties.value(Item.class, "value").observeDetail(set));
         assertNull(item.getValue());
         assertEquals("", labelProvider.getColumnText(item, 0));
     }

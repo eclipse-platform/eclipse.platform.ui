@@ -49,14 +49,13 @@ public class Snippet016TableUpdater {
 	}
 
 	static class Stuff {
-		private WritableValue counter = new WritableValue(Integer.valueOf(1), Integer.class);
+		private WritableValue<Integer> counter = new WritableValue<>(1, Integer.class);
 
 		public Stuff(final Display display) {
 			display.timerExec(1000, new Runnable() {
 				@Override
 				public void run() {
-					counter.setValue(Integer.valueOf(1 + ((Integer) counter
-							.getValue()).intValue()));
+					counter.setValue(1 + counter.getValue());
 					display.timerExec(1000, this);
 				}
 			});
@@ -74,11 +73,10 @@ public class Snippet016TableUpdater {
 		t.setHeaderVisible(true);
 		createColumn(t, "Values");
 		t.setLinesVisible(true);
-		final WritableList list = new WritableList();
-		new TableUpdater(t, list) {
-
+		final WritableList<Stuff> list = new WritableList<>();
+		new TableUpdater<Stuff>(t, list) {
 			@Override
-			protected void updateItem(int index, TableItem item, Object element) {
+			protected void updateItem(int index, TableItem item, Stuff element) {
 				item.setText(element.toString());
 			}
 		};

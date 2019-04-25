@@ -14,6 +14,7 @@
 package org.eclipse.jface.snippets.viewers;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -48,17 +49,20 @@ public class Snippet064TreeViewerReplacingElements {
 		l.setText(
 				"The elements are ordered lexicografically, i.e. 11 comes before 2,\nPress q, to rename one root element.\nPress w, to rename one child element.");
 		final TreeViewer v = new TreeViewer(c);
-		Object[] rootElements = new Object[] { "root 1", "root 2", "root 3" };
+
+		// Every observable in this example gets typed as Object, since the
+		// input element is an Object
+		List<Object> rootElements = Arrays.asList("root 1", "root 2", "root 3");
 		Object input = new Object();
-		AtomicReference<IObservableList<String>> recentlyCreatedChildList = new AtomicReference<>();
-		final IObservableList<String> rootElementList = new WritableList(DisplayRealm.getRealm(shell.getDisplay()),
+		AtomicReference<IObservableList<Object>> recentlyCreatedChildList = new AtomicReference<>();
+		final IObservableList<Object> rootElementList = new WritableList<>(DisplayRealm.getRealm(shell.getDisplay()),
 				Arrays.asList(rootElements), String.class);
-		ITreeContentProvider contentProvider = new ObservableListTreeContentProvider(target -> {
+		ITreeContentProvider contentProvider = new ObservableListTreeContentProvider<>(target -> {
 			if (target == input)
 				return rootElementList;
 			if (target.toString().startsWith("root")) {
 				recentlyCreatedChildList.set(new WritableList<>(DisplayRealm.getRealm(shell.getDisplay()),
-						Arrays.asList(new String[] { "child 1", "child 2" }), String.class));
+						Arrays.asList("child 1", "child 2"), String.class));
 				return recentlyCreatedChildList.get();
 			}
 			return null;
@@ -75,7 +79,7 @@ public class Snippet064TreeViewerReplacingElements {
 					rootElementList.set(0, "root " + random.nextInt());
 				}
 				if (e.character == 'w') {
-					IObservableList<String> childElementsList = recentlyCreatedChildList.get();
+					IObservableList<Object> childElementsList = recentlyCreatedChildList.get();
 					if (childElementsList != null) {
 						childElementsList.set(0, "child " + random.nextInt());
 					} else {

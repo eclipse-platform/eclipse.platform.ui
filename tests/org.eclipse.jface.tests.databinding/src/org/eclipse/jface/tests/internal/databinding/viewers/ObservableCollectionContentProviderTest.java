@@ -40,8 +40,9 @@ public class ObservableCollectionContentProviderTest extends
 		AbstractDefaultRealmTestCase {
 	private Shell shell;
 	private TableViewer viewer;
-	ObservableListContentProvider contentProvider;
+	ObservableListContentProvider<String> contentProvider;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -49,6 +50,7 @@ public class ObservableCollectionContentProviderTest extends
 		viewer = new TableViewer(shell);
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		shell.dispose();
@@ -59,12 +61,11 @@ public class ObservableCollectionContentProviderTest extends
 
 	@Test
 	public void testGetKnownElements_DisposedWithoutModificationOnContentProviderDispose() {
-		final IObservableList input = new WritableList(Collections
-				.singletonList("element"), null);
-		contentProvider = new ObservableListContentProvider();
+		final IObservableList<String> input = new WritableList<>(Collections.singletonList("element"), null);
+		contentProvider = new ObservableListContentProvider<>();
 		contentProvider.inputChanged(viewer, null, input);
 
-		IObservableSet knownElements = contentProvider.getKnownElements();
+		IObservableSet<String> knownElements = contentProvider.getKnownElements();
 
 		// ensure there is an element in knownElements so we're sure that
 		// "no modification" is not due to the set being already empty.
@@ -85,11 +86,11 @@ public class ObservableCollectionContentProviderTest extends
 
 	@Test
 	public void testKnownElementsAreFilledOnSettingAFilledCollectionAsInput() {
-		final IObservableList input = new WritableList(Collections.singletonList("element"), null);
-		contentProvider = new ObservableListContentProvider();
+		final IObservableList<String> input = new WritableList<>(Collections.singletonList("element"), null);
+		contentProvider = new ObservableListContentProvider<>();
 		contentProvider.inputChanged(viewer, null, input);
 
-		IObservableSet knownElements = contentProvider.getKnownElements();
+		IObservableSet<String> knownElements = contentProvider.getKnownElements();
 		assertEquals(1, knownElements.size());
 		assertTrue(knownElements.containsAll(input));
 	}

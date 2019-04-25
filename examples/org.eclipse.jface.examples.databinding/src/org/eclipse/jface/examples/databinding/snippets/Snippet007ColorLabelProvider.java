@@ -21,7 +21,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -55,8 +55,9 @@ public class Snippet007ColorLabelProvider {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
-		final List persons = new ArrayList();
+		final List<Person> persons = new ArrayList<>();
 		persons.add(new Person("Fiona Apple", Person.FEMALE));
 		persons.add(new Person("Elliot Smith", Person.MALE));
 		persons.add(new Person("Diana Krall", Person.FEMALE));
@@ -81,14 +82,14 @@ public class Snippet007ColorLabelProvider {
 			column.setWidth(100);
 			final TableViewer viewer = new TableViewer(table);
 
-			IObservableList observableList = Observables.staticObservableList(persons);
-			ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+			IObservableList<Person> observableList = Observables.staticObservableList(persons);
+			ObservableListContentProvider<Person> contentProvider = new ObservableListContentProvider<>();
 
 			viewer.setContentProvider(contentProvider);
 
 			// this does not have to correspond to the columns in the table,
 			// we just list all attributes that affect the table content.
-			IObservableMap[] attributes = new IObservableMap[2];
+			IObservableMap<Person, ?>[] attributes = new IObservableMap[2];
 			attributes[0] = BeanProperties.value(Person.class, "name")
 					.observeDetail(contentProvider.getKnownElements());
 			attributes[1] = BeanProperties.value(Person.class, "gender")
@@ -99,7 +100,7 @@ public class Snippet007ColorLabelProvider {
 
 				Color female = new Color(display, 255, 192, 203);
 
-				ColorLabelProvider(IObservableMap[] attributes) {
+				ColorLabelProvider(IObservableMap<?, ?>[] attributes) {
 					super(attributes);
 				}
 

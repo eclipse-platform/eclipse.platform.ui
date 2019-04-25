@@ -46,7 +46,7 @@ public abstract class AbstractObservableValueContractDelegate extends
 	 * @return value type
 	 */
 	@Override
-	public Object getValueType(IObservableValue observable) {
+	public Object getValueType(IObservableValue<?> observable) {
 		// no op
 		return null;
 	}
@@ -58,7 +58,7 @@ public abstract class AbstractObservableValueContractDelegate extends
 	 * @return value
 	 */
 	@Override
-	public Object createValue(IObservableValue observable) {
+	public Object createValue(IObservableValue<?> observable) {
 		// no op
 		return null;
 	}

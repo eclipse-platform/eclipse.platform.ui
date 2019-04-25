@@ -39,19 +39,19 @@ public class AnnoyingBean extends Bean {
 	}
 
 	@Override
-	public void setList(List list) {
+	public void setList(List<Object> list) {
 		this.list = list;
 		changeSupport.firePropertyChange("list", null, null);
 	}
 
 	@Override
-	public void setSet(Set set) {
+	public void setSet(Set<Object> set) {
 		this.set = set;
 		changeSupport.firePropertyChange("set", null, null);
 	}
 
 	@Override
-	public void setMap(Map map) {
+	public void setMap(Map<Object, Object> map) {
 		this.map = map;
 		changeSupport.firePropertyChange("map", null, null);
 	}

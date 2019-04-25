@@ -22,14 +22,13 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -65,7 +64,7 @@ public class Snippet004DataBindingContextErrorLabel {
 			DataBindingContext dbc = new DataBindingContext();
 
 			// Bind the text to the value.
-			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(text), value,
+			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), value,
 					new UpdateValueStrategy<String, String>().setAfterConvertValidator(new FiveValidator()), null);
 
 			// Bind the error label to the validation error on the dbc.

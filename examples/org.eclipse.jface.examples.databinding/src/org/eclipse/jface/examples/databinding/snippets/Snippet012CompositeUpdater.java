@@ -44,7 +44,7 @@ public class Snippet012CompositeUpdater {
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			Shell shell = new Shell(display);
 
-			final WritableList list = new WritableList();
+			final WritableList<Counter> list = new WritableList<>();
 
 			Button button = new Button(shell, SWT.PUSH);
 			button.setText("add");
@@ -57,7 +57,8 @@ public class Snippet012CompositeUpdater {
 
 			final Composite composite = new Composite(shell, SWT.None);
 
-			new CompositeUpdater(composite, list) {
+			// TODO: This class is marked as "NON-API", why is it used in a snippet?
+			new CompositeUpdater<Counter>(composite, list) {
 				@Override
 				protected Widget createWidget(int index) {
 					Label label = new Label(composite, SWT.BORDER);
@@ -66,8 +67,8 @@ public class Snippet012CompositeUpdater {
 				}
 
 				@Override
-				protected void updateWidget(Widget widget, Object element) {
-					((Label) widget).setText(((Counter) element).getValue() + "");
+				protected void updateWidget(Widget widget, Counter element) {
+					((Label) widget).setText(element.getValue() + "");
 					requestLayout((Label) widget);
 				}
 			};
@@ -88,9 +89,9 @@ public class Snippet012CompositeUpdater {
 
 	static Timer timer = new Timer(true);
 
-	static class Counter extends WritableValue {
+	static class Counter extends WritableValue<Integer> {
 		Counter() {
-			super(Integer.valueOf(0), Integer.class);
+			super(0, Integer.class);
 			scheduleIncrementTask();
 		}
 
@@ -100,10 +101,7 @@ public class Snippet012CompositeUpdater {
 				public void run() {
 					// we have to get onto the realm (UI thread) to perform the
 					// increment
-					getRealm().asyncExec(() -> {
-						Integer currentVal = (Integer) getValue();
-						setValue(Integer.valueOf(currentVal.intValue() + 1));
-					});
+					getRealm().asyncExec(() -> setValue(getValue() + 1));
 					scheduleIncrementTask();
 				}
 			}, 1000);

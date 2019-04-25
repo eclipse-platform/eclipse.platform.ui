@@ -29,7 +29,7 @@ import org.eclipse.core.databinding.observable.Realm;
  *
  * @since 1.1
  */
-public interface IObservableCollectionContractDelegate extends
+public interface IObservableCollectionContractDelegate<E> extends
 		IObservableContractDelegate {
 	/**
 	 * Creates a new observable collection with the provided
@@ -41,7 +41,7 @@ public interface IObservableCollectionContractDelegate extends
 	 *
 	 * @return new observable collection
 	 */
-	public IObservableCollection createObservableCollection(Realm realm, int elementCount);
+	public IObservableCollection<E> createObservableCollection(Realm realm, int elementCount);
 
 	/**
 	 * Creates a new element of the appropriate type for the provided
@@ -51,7 +51,7 @@ public interface IObservableCollectionContractDelegate extends
 	 * @param collection
 	 * @return valid element for the collection
 	 */
-	public Object createElement(IObservableCollection collection);
+	public E createElement(IObservableCollection<E> collection);
 
 	/**
 	 * Returns the expected type of the elements in the collection.
@@ -59,5 +59,5 @@ public interface IObservableCollectionContractDelegate extends
 	 * @param collection
 	 * @return element type
 	 */
-	public Object getElementType(IObservableCollection collection);
+	public Object getElementType(IObservableCollection<E> collection);
 }

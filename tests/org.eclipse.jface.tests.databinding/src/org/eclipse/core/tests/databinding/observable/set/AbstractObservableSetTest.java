@@ -37,26 +37,27 @@ public class AbstractObservableSetTest {
 	}
 
 	private static class Delegate extends
-			AbstractObservableCollectionContractDelegate {
+			AbstractObservableCollectionContractDelegate<String> {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void change(IObservable observable) {
-			((AbstractObservableSetStub) observable).fireSetChange(Diffs.createSetDiff(new HashSet(), new HashSet()));
+			((AbstractObservableSetStub<String>) observable)
+					.fireSetChange(Diffs.createSetDiff(new HashSet<>(), new HashSet<>()));
 		}
 
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public String createElement(IObservableCollection<String> collection) {
 			return Integer.toString(collection.size());
 		}
 
 		@Override
-		public Object getElementType(IObservableCollection collection) {
+		public Object getElementType(IObservableCollection<String> collection) {
 			return String.class;
 		}
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
-				int elementCount) {
-			AbstractObservableSetStub set = new AbstractObservableSetStub(realm, String.class);
+		public IObservableCollection<String> createObservableCollection(Realm realm, int elementCount) {
+			AbstractObservableSetStub<String> set = new AbstractObservableSetStub<>(realm, String.class);
 
 			for (int i = 0; i < elementCount; i++) {
 				set.getWrappedSet().add(Integer.toString(i));
@@ -66,18 +67,18 @@ public class AbstractObservableSetTest {
 		}
 	}
 
-	private static class AbstractObservableSetStub extends AbstractObservableSet {
+	private static class AbstractObservableSetStub<E> extends AbstractObservableSet<E> {
 		private Object type;
-		private HashSet set;
+		private HashSet<E> set;
 
 		private AbstractObservableSetStub(Realm realm, Object type) {
 			super (realm);
-			set = new HashSet();
+			set = new HashSet<>();
 			this.type = type;
 		}
 
 		@Override
-		protected Set getWrappedSet() {
+		protected Set<E> getWrappedSet() {
 			return set;
 		}
 
@@ -87,7 +88,7 @@ public class AbstractObservableSetTest {
 		}
 
 		@Override
-		protected void fireSetChange(SetDiff diff) {
+		protected void fireSetChange(SetDiff<E> diff) {
 			super.fireSetChange(diff);
 		}
 	}

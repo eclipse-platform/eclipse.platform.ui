@@ -15,7 +15,6 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -35,7 +34,7 @@ public class Snippet005MenuUpdater {
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			Shell shell = new Shell(display);
 
-			final WritableList menuItemStrings = new WritableList();
+			final WritableList<String> menuItemStrings = new WritableList<>();
 			display.asyncExec(new Runnable() {
 				@Override
 				public void run() {
@@ -57,15 +56,14 @@ public class Snippet005MenuUpdater {
 					System.out.println("updating menu");
 					MenuItem[] items = submenu.getItems();
 					int itemIndex = 0;
-					for (Iterator it = menuItemStrings.iterator(); it.hasNext();) {
+					for (String s : menuItemStrings) {
 						MenuItem item;
 						if (itemIndex < items.length) {
 							item = items[itemIndex++];
 						} else {
 							item = new MenuItem(submenu, SWT.NONE);
 						}
-						String string = (String) it.next();
-						item.setText(string);
+						item.setText(s);
 					}
 					while (itemIndex < items.length) {
 						items[itemIndex++].dispose();

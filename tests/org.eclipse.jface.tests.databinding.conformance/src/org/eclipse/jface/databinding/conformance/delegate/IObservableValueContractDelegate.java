@@ -39,7 +39,7 @@ public interface IObservableValueContractDelegate extends
 	 *            realm of the observable
 	 * @return observable value
 	 */
-	public IObservableValue createObservableValue(Realm realm);
+	public IObservableValue<?> createObservableValue(Realm realm);
 
 	/**
 	 * Returns the expected type of the observable.
@@ -47,7 +47,7 @@ public interface IObservableValueContractDelegate extends
 	 * @param observable
 	 * @return type
 	 */
-	public Object getValueType(IObservableValue observable);
+	public Object getValueType(IObservableValue<?> observable);
 
 	/**
 	 * Returns a valid value that is not the current value of the observable.
@@ -55,5 +55,5 @@ public interface IObservableValueContractDelegate extends
 	 * @param observable
 	 * @return value
 	 */
-	public Object createValue(IObservableValue observable);
+	public Object createValue(IObservableValue<?> observable);
 }

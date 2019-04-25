@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationUpdater;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -102,10 +102,8 @@ public class Snippet033CrossValidationControlDecoration {
 	}
 
 	private void bindUI() {
-		IObservableValue startDateObservable = WidgetProperties.selection()
-				.observe(startDate);
-		IObservableValue endDateObservable = WidgetProperties.selection()
-				.observe(endDate);
+		IObservableValue<Date> startDateObservable = WidgetProperties.dateTimeSelection().observe(startDate);
+		IObservableValue<Date> endDateObservable = WidgetProperties.dateTimeSelection().observe(endDate);
 
 		ControlDecorationSupport.create(new DateRangeValidator(
 				startDateObservable, endDateObservable,
@@ -132,12 +130,11 @@ public class Snippet033CrossValidationControlDecoration {
 	}
 
 	private static class DateRangeValidator extends MultiValidator {
-		private final IObservableValue start;
-		private final IObservableValue end;
+		private final IObservableValue<Date> start;
+		private final IObservableValue<Date> end;
 		private final String errorMessage;
 
-		public DateRangeValidator(IObservableValue start, IObservableValue end,
-				String errorMessage) {
+		public DateRangeValidator(IObservableValue<Date> start, IObservableValue<Date> end, String errorMessage) {
 			this.start = start;
 			this.end = end;
 			this.errorMessage = errorMessage;
@@ -145,9 +142,7 @@ public class Snippet033CrossValidationControlDecoration {
 
 		@Override
 		protected IStatus validate() {
-			Date startDate = (Date) start.getValue();
-			Date endDate = (Date) end.getValue();
-			if (startDate.compareTo(endDate) > 0)
+			if (start.getValue().compareTo(end.getValue()) > 0)
 				return ValidationStatus.error(errorMessage);
 			return ValidationStatus.ok();
 		}

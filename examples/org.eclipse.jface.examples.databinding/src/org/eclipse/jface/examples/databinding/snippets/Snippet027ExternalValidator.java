@@ -20,7 +20,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.MultiValidator;
@@ -28,7 +28,7 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
@@ -196,20 +196,20 @@ public class Snippet027ExternalValidator extends WizardPage {
 	private void bindUI() {
 		DataBindingContext dbc = new DataBindingContext();
 
-		final IObservableValue name = BeanProperties.value(contact.getClass(), "name").observe(contact);
+		final IObservableValue<String> name = BeanProperties.value(Contact.class, "name", String.class)
+				.observe(contact);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameValue), name,
-				null, null);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameValue), name, null, null);
 
-		final IObservableValue email = BeanProperties.value(contact.getClass(), "email").observe(contact);
+		final IObservableValue<String> email = BeanProperties.value(Contact.class, "email", String.class)
+				.observe(contact);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(emailValue),
-				email, null, null);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(emailValue), email, null, null);
 
-		final IObservableValue phone = BeanProperties.value(contact.getClass(), "phoneNumber").observe(contact);
+		final IObservableValue<String> phone = BeanProperties.value(Contact.class, "phoneNumber", String.class)
+				.observe(contact);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(phoneNumberValue),
-				phone, null, null);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(phoneNumberValue), phone, null, null);
 
 		MultiValidator validator = new MultiValidator() {
 			@Override

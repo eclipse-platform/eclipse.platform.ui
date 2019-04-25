@@ -32,12 +32,12 @@ public class ObservableViewerElementSetTest {
 	}
 
 	private static class Delegate extends
-			AbstractObservableCollectionContractDelegate {
+			AbstractObservableCollectionContractDelegate<Object> {
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<Object> createObservableCollection(Realm realm,
 				int elementCount) {
-			ObservableViewerElementSet set = new ObservableViewerElementSet(realm,
+			ObservableViewerElementSet<Object> set = new ObservableViewerElementSet<>(realm,
 					Object.class, new IdentityElementComparer());
 			for (int i = 0; i < elementCount; i++)
 				set.add(createElement(set));
@@ -45,18 +45,19 @@ public class ObservableViewerElementSetTest {
 		}
 
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public Object createElement(IObservableCollection<Object> collection) {
 			return new Object();
 		}
 
 		@Override
 		public void change(IObservable observable) {
-			IObservableSet set = (IObservableSet) observable;
+			@SuppressWarnings("unchecked")
+			IObservableSet<Object> set = (IObservableSet<Object>) observable;
 			set.add(createElement(set));
 		}
 
 		@Override
-		public Object getElementType(IObservableCollection collection) {
+		public Object getElementType(IObservableCollection<Object> collection) {
 			return Object.class;
 		}
 	}

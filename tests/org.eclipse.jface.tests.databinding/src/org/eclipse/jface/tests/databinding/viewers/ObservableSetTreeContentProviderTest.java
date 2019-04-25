@@ -44,7 +44,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 	private Shell shell;
 	private TreeViewer viewer;
 	private Tree tree;
-	private ObservableSetTreeContentProvider contentProvider;
+	private ObservableSetTreeContentProvider<Object> contentProvider;
 	private Object input;
 
 	@Override
@@ -67,8 +67,8 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		super.tearDown();
 	}
 
-	private void initContentProvider(IObservableFactory listFactory) {
-		contentProvider = new ObservableSetTreeContentProvider(listFactory, null);
+	private void initContentProvider(IObservableFactory<Object, IObservableSet<Object>> listFactory) {
+		contentProvider = new ObservableSetTreeContentProvider<Object>(listFactory, null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(input);
 	}
@@ -84,7 +84,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 
 	@Test
 	public void testGetElements_ChangesFollowObservedList() {
-		final IObservableSet elements = new WritableSet();
+		final IObservableSet<Object> elements = new WritableSet<>();
 		final Object input = new Object();
 		initContentProvider(target -> target == input ? elements : null);
 
@@ -118,7 +118,8 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		};
 		viewer.setComparer(comparer);
 
-		final IObservableSet children = ObservableViewerElementSet.withComparer(Realm.getDefault(), null, comparer);
+		final IObservableSet<Object> children = ObservableViewerElementSet.withComparer(Realm.getDefault(), null,
+				comparer);
 		initContentProvider(target -> target == input ? children : null);
 
 		Mutable element = new Mutable();
@@ -135,8 +136,8 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		input = new Object();
 		final Object input2 = new Object();
 
-		final IObservableSet children = new WritableSet();
-		final IObservableSet children2 = new WritableSet();
+		final IObservableSet<Object> children = new WritableSet<>();
+		final IObservableSet<Object> children2 = new WritableSet<>();
 		initContentProvider(target -> {
 			if (target == input)
 				return children;
@@ -148,7 +149,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		Object element = new Object();
 		children.add(element);
 
-		IObservableSet knownElements = contentProvider.getKnownElements();
+		IObservableSet<Object> knownElements = contentProvider.getKnownElements();
 		assertEquals(Collections.singleton(element), knownElements);
 		viewer.setInput(input2);
 		assertEquals(Collections.EMPTY_SET, knownElements);
@@ -159,8 +160,8 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		input = new Object();
 		final Object input2 = new Object();
 
-		final IObservableSet children = new WritableSet();
-		final IObservableSet children2 = new WritableSet();
+		final IObservableSet<Object> children = new WritableSet<>();
+		final IObservableSet<Object> children2 = new WritableSet<>();
 		initContentProvider(target -> {
 			if (target == input)
 				return children;
@@ -171,7 +172,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 
 		// Realized elements must be allocated before adding the element
 		// otherwise we'd have to spin the event loop to see the new element
-		IObservableSet realizedElements = contentProvider.getRealizedElements();
+		IObservableSet<Object> realizedElements = contentProvider.getRealizedElements();
 
 		Object element = new Object();
 		children.add(element);

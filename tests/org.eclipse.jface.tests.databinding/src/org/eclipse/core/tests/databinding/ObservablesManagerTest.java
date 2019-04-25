@@ -36,6 +36,7 @@ import org.junit.Test;
 public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 	private DataBindingContext dbc;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -43,6 +44,7 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 		dbc = new DataBindingContext();
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		if (dbc != null) {
@@ -53,8 +55,8 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testOnlyModelIsDisposed() throws Exception {
-		IObservableValue targetOv = new WritableValue();
-		IObservableValue modelOv = new WritableValue();
+		IObservableValue<?> targetOv = new WritableValue<>();
+		IObservableValue<?> modelOv = new WritableValue<>();
 		dbc.bindValue(targetOv, modelOv);
 
 		ObservablesManager observablesManager = new ObservablesManager();
@@ -68,8 +70,8 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testOnlyTargetIsDisposed() throws Exception {
-		IObservableValue targetOv = new WritableValue();
-		IObservableValue modelOv = new WritableValue();
+		IObservableValue<?> targetOv = new WritableValue<>();
+		IObservableValue<?> modelOv = new WritableValue<>();
 		dbc.bindValue(targetOv, modelOv);
 
 		ObservablesManager observablesManager = new ObservablesManager();
@@ -83,8 +85,8 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testTargetAndModelIsDisposed() throws Exception {
-		IObservableValue targetOv = new WritableValue();
-		IObservableValue modelOv = new WritableValue();
+		IObservableValue<?> targetOv = new WritableValue<>();
+		IObservableValue<?> modelOv = new WritableValue<>();
 		dbc.bindValue(targetOv, modelOv);
 
 		ObservablesManager observablesManager = new ObservablesManager();
@@ -102,7 +104,7 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 		// NPE only occurs when explicitly managing (i.e. not through a
 		// DataBindingContext) observables where hashCode() is a tracked getter
-		IObservable observable = new WritableList();
+		IObservable observable = new WritableList<>();
 		manager.addObservable(observable);
 		observable.dispose();
 

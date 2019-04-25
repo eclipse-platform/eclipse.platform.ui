@@ -18,12 +18,11 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Lodging;
@@ -50,6 +49,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
 
 	private ComboViewer comboViewer;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -59,6 +59,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
 		catalog = SampleData.CATALOG_2005; // Lodging source
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		combo.dispose();
@@ -70,8 +71,9 @@ public class ComboViewerScenario extends ScenariosTestCase {
 	@Test
 	public void testScenario01() {
 		// Bind the catalog's lodgings to the combo
-		IObservableList lodgings = BeansObservables.observeList(realm, catalog,
-				"lodgings");
+		IObservableList<Lodging> lodgings = BeanProperties.list(Catalog.class, "lodgings", Lodging.class).observe(realm,
+				catalog);
+
 		ViewerSupport.bind(comboViewer, lodgings, BeanProperties.value(
 				Lodging.class, "name"));
 
@@ -93,10 +95,8 @@ public class ComboViewerScenario extends ScenariosTestCase {
 		// Now bind the selection of the combo to the "defaultLodging" property
 		// of an adventure
 		final Adventure adventure = SampleData.WINTER_HOLIDAY;
-		IObservableValue selection = ViewersObservables
-				.observeSingleSelection(comboViewer);
-		getDbc().bindValue(selection,
-				BeansObservables.observeValue(adventure, "defaultLodging"));
+		IObservableValue<Lodging> selection = ViewerProperties.singleSelection(Lodging.class).observe(comboViewer);
+		getDbc().bindValue(selection, BeanProperties.value("defaultLodging").observe(adventure));
 
 		// Verify that the combo selection is the default lodging
 		assertEquals(comboViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());

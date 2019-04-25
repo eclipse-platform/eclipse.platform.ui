@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class RelaxedDuckType extends DuckType implements InvocationHandler {
 
-	public static Object implement(Class interfaceToImplement, Object object) {
+	public static Object implement(Class<?> interfaceToImplement, Object object) {
 		return Proxy.newProxyInstance(interfaceToImplement.getClassLoader(),
 				new Class[] {interfaceToImplement}, new RelaxedDuckType(object));
 	}

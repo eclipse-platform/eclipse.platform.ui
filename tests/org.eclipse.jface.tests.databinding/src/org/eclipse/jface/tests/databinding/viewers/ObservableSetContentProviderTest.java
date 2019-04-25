@@ -45,22 +45,24 @@ import org.junit.Test;
 public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 	private Shell shell;
 	private TableViewer viewer;
-	private ObservableSetContentProvider contentProvider;
-	private IObservableSet input;
+	private ObservableSetContentProvider<Object> contentProvider;
+	private IObservableSet<Object> input;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
 		viewer = new TableViewer(shell, SWT.NONE);
 
-		contentProvider = new ObservableSetContentProvider();
+		contentProvider = new ObservableSetContentProvider<>();
 		viewer.setContentProvider(contentProvider);
 
-		input = new WritableSet();
+		input = new WritableSet<>();
 		viewer.setInput(input);
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		shell.dispose();
@@ -85,7 +87,7 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 	public void testKnownElementsAfterSetInput() {
 		assertEquals(0, contentProvider.getKnownElements().size());
 		Set<String> newElements = new HashSet<String>(Arrays.asList(new String[] { "one", "two", "three" }));
-		WritableSet newInput = new WritableSet();
+		WritableSet<Object> newInput = new WritableSet<>();
 		newInput.addAll(newElements);
 		viewer.setInput(newInput);
 		assertEquals(newElements, contentProvider.getKnownElements());
@@ -109,7 +111,7 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 		Object element = new Object();
 		input.add(element);
 
-		IObservableSet knownElements = contentProvider.getKnownElements();
+		IObservableSet<Object> knownElements = contentProvider.getKnownElements();
 		assertEquals(Collections.singleton(element), knownElements);
 		viewer.setInput(Observables.emptyObservableSet());
 		assertEquals(Collections.EMPTY_SET, knownElements);
@@ -119,7 +121,7 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 	public void testInputChanged_ClearsRealizedElements() {
 		// Realized elements must be allocated before adding the element
 		// otherwise we'd have to spin the event loop to see the new element
-		IObservableSet realizedElements = contentProvider.getRealizedElements();
+		IObservableSet<Object> realizedElements = contentProvider.getRealizedElements();
 
 		Object element = new Object();
 		input.add(element);

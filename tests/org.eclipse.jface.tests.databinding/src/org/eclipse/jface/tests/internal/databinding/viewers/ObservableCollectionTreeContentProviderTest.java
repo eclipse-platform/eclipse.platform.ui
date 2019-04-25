@@ -43,7 +43,7 @@ import org.junit.Test;
 public class ObservableCollectionTreeContentProviderTest extends AbstractDefaultRealmTestCase {
 	private Shell shell;
 	private TreeViewer viewer;
-	ObservableListTreeContentProvider contentProvider;
+	ObservableListTreeContentProvider<String> contentProvider;
 
 	@Override
 	@Before
@@ -65,9 +65,12 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 	@Test
 	public void testGetKnownElements_ExcludesInput() {
 		final Object input = new Object();
-		Object[] rootElements = new Object[] { "one", "two", "three" };
-		final IObservableList rootElementList = new WritableList(Arrays.asList(rootElements), null);
-		contentProvider = new ObservableListTreeContentProvider(target -> {
+		String[] rootElements = new String[] { "one", "two", "three" };
+		final IObservableList<String> rootElementList = new WritableList<>(Arrays.asList(rootElements), null);
+
+		// Note that the factory argument must be given type Object, otherwise it will
+		// be inferred to be String, which leads to a ClassCastException
+		contentProvider = new ObservableListTreeContentProvider<>((Object target) -> {
 			if (target == input)
 				return rootElementList;
 			return null;
@@ -75,7 +78,7 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(input);
 
-		IObservableSet knownElements = contentProvider.getKnownElements();
+		IObservableSet<String> knownElements = contentProvider.getKnownElements();
 		assertFalse(knownElements.contains(input));
 		assertEquals(new HashSet<Object>(Arrays.asList(rootElements)), knownElements);
 	}
@@ -83,15 +86,17 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 	@Test
 	public void testGetKnownElements_DisposedWithoutModificationOnContentProviderDispose() {
 		final Object input = new Object();
-		final IObservableList rootElementList = new WritableList(Collections.singletonList("element"), null);
-		contentProvider = new ObservableListTreeContentProvider(target -> {
+		final IObservableList<String> rootElementList = new WritableList<>(Collections.singletonList("element"), null);
+		// Note that the factory argument must be given type Object, otherwise it will
+		// be inferred to be String, which leads to a ClassCastException
+		contentProvider = new ObservableListTreeContentProvider<>((Object target) -> {
 			if (target == input)
 				return rootElementList;
 			return null;
 		}, null);
 		contentProvider.inputChanged(viewer, null, input);
 
-		IObservableSet knownElements = contentProvider.getKnownElements();
+		IObservableSet<String> knownElements = contentProvider.getKnownElements();
 
 		// ensure there is an element in knownElements so we're sure that
 		// "no modification" is not due to the set being already empty.

@@ -19,14 +19,14 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.DuplexingObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -238,7 +238,7 @@ public class Snippet028DuplexingObservableValue {
 	}
 
 	private void bindUI() {
-		IObservableList movies = new WritableList();
+		IObservableList<MovieInfo> movies = new WritableList<>();
 		movies.add(new MovieInfo("007: Quantum of Solace", "October 31, 2008",
 				"Marc Forster", "Robert Wade"));
 		movies.add(new MovieInfo("Batman Begins", "June 15, 2005",
@@ -276,8 +276,7 @@ public class Snippet028DuplexingObservableValue {
 
 		DataBindingContext dbc = new DataBindingContext();
 
-		IObservableList selections = ViewerProperties.multipleSelection()
-				.observe(viewer);
+		IObservableList<MovieInfo> selections = ViewerProperties.multipleSelection(MovieInfo.class).observe(viewer);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(title),
 				DuplexingObservableValue.withDefaults(BeanProperties.value(
 						"title").observeDetail(selections), "",

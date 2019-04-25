@@ -31,15 +31,15 @@ public interface IBean {
 
 	public void setArray(Object[] array);
 
-	public List getList();
+	public List<Object> getList();
 
-	public void setList(List list);
+	public void setList(List<Object> list);
 
-	public Set getSet();
+	public Set<Object> getSet();
 
-	public void setSet(Set set);
+	public void setSet(Set<Object> set);
 
-	public Map getMap();
+	public Map<Object, Object> getMap();
 
-	public void setMap(Map map);
+	public void setMap(Map<Object, Object> map);
 }

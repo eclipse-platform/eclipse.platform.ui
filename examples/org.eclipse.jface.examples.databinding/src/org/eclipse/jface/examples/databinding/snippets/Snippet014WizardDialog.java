@@ -27,7 +27,7 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -76,7 +76,7 @@ public class Snippet014WizardDialog {
 			label.setText("Enter a number between 0 and 9:");
 			Text text = new Text(composite, SWT.BORDER);
 
-			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(text),
+			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
 					((SampleWizard) getWizard()).getModel().intValue,
 					new UpdateValueStrategy<String, Integer>()
 						.setAfterConvertValidator(new SingleDigitValidator()), null);

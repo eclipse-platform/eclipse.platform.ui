@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.observable.value.DateAndTimeObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -113,18 +113,17 @@ public class Snippet030DateAndTimeObservableValue {
 	private void bindUI() {
 		DataBindingContext dbc = new DataBindingContext();
 
-		IObservableValue model = WritableValue.withValueType(Date.class);
+		IObservableValue<Date> model = WritableValue.withValueType(Date.class);
 		model.setValue(new Date());
 
 		dbc.bindValue(WidgetProperties.text().observe(modelText), model);
 
-		final IObservableValue timeSelection = WidgetProperties.selection()
-				.observe(time);
+		final IObservableValue<Date> timeSelection = WidgetProperties.dateTimeSelection().observe(time);
 
-		dbc.bindValue(new DateAndTimeObservableValue(WidgetProperties
-				.selection().observe(date), timeSelection), model);
-		dbc.bindValue(new DateAndTimeObservableValue(WidgetProperties
-				.selection().observe(calendar), timeSelection), model);
+		dbc.bindValue(new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(date),
+				timeSelection), model);
+		dbc.bindValue(new DateAndTimeObservableValue(
+				WidgetProperties.dateTimeSelection().observe(calendar), timeSelection), model);
 
 		syncTime.addListener(SWT.Selection, new Listener() {
 			Runnable runnable = new Runnable() {

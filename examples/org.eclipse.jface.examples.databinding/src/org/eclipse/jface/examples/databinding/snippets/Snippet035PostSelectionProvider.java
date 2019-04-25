@@ -18,9 +18,9 @@ package org.eclipse.jface.examples.databinding.snippets;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -101,17 +101,15 @@ public class Snippet035PostSelectionProvider {
 
 		// normal selection
 		Label selectionLabel = createLabelField(section, "Selection:");
-		IViewerObservableValue selectionObservable = ViewerProperties
-				.singleSelection().observe(listViewer);
-		dbc.bindValue(WidgetProperties.text().observe(selectionLabel),
-				selectionObservable);
+		IViewerObservableValue<String> selectionObservable = ViewerProperties.singleSelection(String.class)
+				.observe(listViewer);
+		dbc.bindValue(WidgetProperties.text().observe(selectionLabel), selectionObservable);
 
 		// post selection
 		Label postSelectionLabel = createLabelField(section, "Post selection:");
-		IViewerObservableValue postSelectionObservable = ViewerProperties
-				.singlePostSelection().observe(listViewer);
-		dbc.bindValue(WidgetProperties.text().observe(postSelectionLabel),
-				postSelectionObservable);
+		IViewerObservableValue<String> postSelectionObservable = ViewerProperties.singlePostSelection(String.class)
+				.observe(listViewer);
+		dbc.bindValue(WidgetProperties.text().observe(postSelectionLabel), postSelectionObservable);
 	}
 
 	private Group createSectionGroup(Composite parent, int numColumns) {
@@ -125,12 +123,10 @@ public class Snippet035PostSelectionProvider {
 	private static Label createLabelField(Composite parent, String labelText) {
 		Label nameLabel = new Label(parent, SWT.LEFT);
 		nameLabel.setText(labelText);
-		GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).applyTo(
-				nameLabel);
+		GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).applyTo(nameLabel);
 
 		Label contentLabel = new Label(parent, SWT.LEFT);
-		GridDataFactory.fillDefaults().grab(true, false).hint(150, SWT.DEFAULT)
-				.applyTo(contentLabel);
+		GridDataFactory.fillDefaults().grab(true, false).hint(150, SWT.DEFAULT).applyTo(contentLabel);
 
 		return contentLabel;
 	}

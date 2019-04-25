@@ -27,7 +27,7 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValu
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -49,12 +49,10 @@ public class StyledTextObservableValueFocusOutTest extends AbstractSWTTestCase {
 		StyledText text = new StyledText(getShell(), SWT.NONE);
 		text.setText("0");
 
-		IObservableValue observable = WidgetProperties.text(SWT.FocusOut)
-				.observe(text);
+		IObservableValue<String> observable = WidgetProperties.text(SWT.FocusOut).observe(text);
 
 		StaleEventTracker staleTracker = StaleEventTracker.observe(observable);
-		ChangeEventTracker changeTracker = ChangeEventTracker
-				.observe(observable);
+		ChangeEventTracker changeTracker = ChangeEventTracker.observe(observable);
 
 		assertFalse(observable.isStale());
 		assertEquals(0, staleTracker.count);
@@ -74,8 +72,7 @@ public class StyledTextObservableValueFocusOutTest extends AbstractSWTTestCase {
 		assertEquals(1, changeTracker.count);
 	}
 
-	/* package */static class Delegate extends
-			AbstractObservableValueContractDelegate {
+	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {
 		private Shell shell;
 
 		private StyledText text;
@@ -92,12 +89,12 @@ public class StyledTextObservableValueFocusOutTest extends AbstractSWTTestCase {
 		}
 
 		@Override
-		public IObservableValue createObservableValue(Realm realm) {
+		public IObservableValue<String> createObservableValue(Realm realm) {
 			return WidgetProperties.text(SWT.FocusOut).observe(realm, text);
 		}
 
 		@Override
-		public Object getValueType(IObservableValue observable) {
+		public Object getValueType(IObservableValue<?> observable) {
 			return String.class;
 		}
 
@@ -105,14 +102,14 @@ public class StyledTextObservableValueFocusOutTest extends AbstractSWTTestCase {
 		public void change(IObservable observable) {
 			text.setFocus();
 
-			IObservableValue observableValue = (IObservableValue) observable;
+			IObservableValue<?> observableValue = (IObservableValue<?>) observable;
 			text.setText((String) createValue(observableValue));
 
 			text.notifyListeners(SWT.FocusOut, null);
 		}
 
 		@Override
-		public Object createValue(IObservableValue observable) {
+		public Object createValue(IObservableValue<?> observable) {
 			String value = (String) observable.getValue();
 			return value + "a";
 		}

@@ -19,13 +19,12 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
@@ -103,11 +102,11 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 	@Test
 	public void testBindList_Twice() {
 		StructuredViewer viewer = getStructuredViewer();
-		IObservableList input0 = WritableList.withElementType(Bean.class);
-		IObservableList input1 = WritableList.withElementType(Bean.class);
+		IObservableList<Bean> input0 = WritableList.withElementType(Bean.class);
+		IObservableList<Bean> input1 = WritableList.withElementType(Bean.class);
 		input0.add(new Bean("element0"));
 		input1.add(new Bean("element1"));
-		IValueProperty labelProp = BeanProperties.value(Bean.class, "value");
+		IValueProperty<Bean, String> labelProp = BeanProperties.value(Bean.class, "value");
 		ViewerSupport.bind(viewer, input0, labelProp);
 		ViewerSupport.bind(viewer, input1, labelProp);
 	}
@@ -115,11 +114,11 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 	@Test
 	public void testBindSet_Twice() {
 		StructuredViewer viewer = getStructuredViewer();
-		IObservableSet input0 = WritableSet.withElementType(Bean.class);
-		IObservableSet input1 = WritableSet.withElementType(Bean.class);
+		IObservableSet<Bean> input0 = WritableSet.withElementType(Bean.class);
+		IObservableSet<Bean> input1 = WritableSet.withElementType(Bean.class);
 		input0.add(new Bean("element0"));
 		input1.add(new Bean("element1"));
-		IValueProperty labelProp = BeanProperties.value(Bean.class, "value");
+		IValueProperty<Bean, String> labelProp = BeanProperties.value(Bean.class, "value");
 		ViewerSupport.bind(viewer, input0, labelProp);
 		ViewerSupport.bind(viewer, input1, labelProp);
 	}
@@ -127,10 +126,17 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 	@Test
 	public void testBindListTree_Twice() {
 		AbstractTreeViewer viewer = getTreeViewer();
-		Bean input0 = new Bean(Arrays.asList(new Bean[] { new Bean("elem0"), new Bean("elem1"), new Bean("elem2") }));
-		Bean input1 = new Bean(Arrays.asList(new Bean[] { new Bean("elem3"), new Bean("elem4"), new Bean("elem5") }));
-		IValueProperty labelProp = BeanProperties.value(Bean.class, "value");
-		IListProperty childrenProp = BeanProperties.list(Bean.class, "list");
+		Bean input0 = new Bean(Arrays.asList(new Bean("elem0"), new Bean("elem1"), new Bean("elem2")));
+		Bean input1 = new Bean(Arrays.asList(new Bean("elem3"), new Bean("elem4"), new Bean("elem5")));
+
+		// TODO j: It is weird to be forced to cast the values like this
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		IValueProperty<Object, String> labelProp = BeanProperties.value((Class) Bean.class, "value");
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		IListProperty<Object, Object> childrenProp = BeanProperties.list((Class) Bean.class, "list");
+		// TODO j: We could add cast methods to the
+//		IValueProperty<Object, Object> labelProp = BeanProperties.value(Bean.class, "value").castSource(Object.class);
+//		IListProperty<Object, Object> childrenProp = BeanProperties.list(Bean.class, "list").castSource(Object.class);
 		ViewerSupport.bind(viewer, input0, childrenProp, labelProp);
 		ViewerSupport.bind(viewer, input1, childrenProp, labelProp);
 	}
@@ -138,12 +144,17 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 	@Test
 	public void testBindSetTree_Twice() {
 		AbstractTreeViewer viewer = getTreeViewer();
-		Bean input0 = new Bean(new HashSet<Bean>(Arrays.asList(new Bean[] { new Bean("elem0"), new Bean("elem1"),
-				new Bean("elem2") })));
-		Bean input1 = new Bean(new HashSet<Bean>(Arrays.asList(new Bean[] { new Bean("elem3"), new Bean("elem4"),
-				new Bean("elem5") })));
-		IValueProperty labelProp = BeanProperties.value(Bean.class, "value");
-		ISetProperty childrenProp = BeanProperties.set(Bean.class, "set");
+		Bean input0 = new Bean(new HashSet<>(Arrays.asList(new Bean("elem0"), new Bean("elem1"), new Bean("elem2"))));
+		Bean input1 = new Bean(new HashSet<>(Arrays.asList(new Bean("elem3"), new Bean("elem4"), new Bean("elem5"))));
+		// TODO j: It is weird to be forced to cast the values like this
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		IValueProperty<Object, String> labelProp = BeanProperties.value((Class) Bean.class, "value");
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		IListProperty<Object, Object> childrenProp = BeanProperties.list((Class) Bean.class, "list");
+		// TODO j: We could add cast methods to the
+//		IValueProperty<Object, Object> labelProp = BeanProperties.value(Bean.class, "value").castSource(Object.class);
+//		IListProperty<Object, Object> childrenProp = BeanProperties.list(Bean.class, "list").castSource(Object.class);
+
 		ViewerSupport.bind(viewer, input0, childrenProp, labelProp);
 		ViewerSupport.bind(viewer, input1, childrenProp, labelProp);
 	}

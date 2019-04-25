@@ -25,15 +25,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -44,6 +44,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -105,7 +106,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 	}
 
 	private static void setFriends(Person person, Person[] friends) {
-		person.setFriends(new HashSet(Arrays.asList(friends)));
+		person.setFriends(new HashSet<>(Arrays.asList(friends)));
 	}
 
 	// Minimal JavaBeans support
@@ -143,7 +144,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 	// The data model class.
 	static class Person extends AbstractModelObject {
 		private String name;
-		private Set friends = new HashSet();
+		private Set<Person> friends = new HashSet<>();
 
 		public String getName() {
 			return name;
@@ -153,13 +154,13 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			firePropertyChange("name", this.name, this.name = name);
 		}
 
-		public Set getFriends() {
-			return new HashSet(friends);
+		public Set<Person> getFriends() {
+			return new HashSet<>(friends);
 		}
 
-		public void setFriends(Set friends) {
+		public void setFriends(Set<Person> friends) {
 			firePropertyChange("friends", this.friends,
-					this.friends = new HashSet(friends));
+					this.friends = new HashSet<>(friends));
 		}
 
 		@Override
@@ -176,15 +177,15 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 	// data access tier. Since this snippet doesn't have any persistent objects
 	// to retrieve, this ViewModel just instantiates a model object to edit.
 	static class ViewModel extends AbstractModelObject {
-		private List people = new ArrayList();
+		private List<Person> people = new ArrayList<>();
 
-		public List getPeople() {
-			return new ArrayList(people);
+		public List<Person> getPeople() {
+			return new ArrayList<>(people);
 		}
 
-		public void setPeople(List people) {
+		public void setPeople(List<Person> people) {
 			firePropertyChange("people", this.people,
-					this.people = new ArrayList(people));
+					this.people = new ArrayList<>(people));
 		}
 	}
 
@@ -294,7 +295,8 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		private void bindUI() {
 			DataBindingContext dbc = new DataBindingContext();
 
-			final IObservableList people = BeanProperties.list(viewModel.getClass(), "people").observe(viewModel);
+			final IObservableList<Person> people = BeanProperties.list(ViewModel.class, "people", Person.class)
+					.observe(viewModel);
 
 			addPersonButton.addListener(SWT.Selection, event -> {
 				InputDialog dlg = new InputDialog(shell, "Add Person", "Enter name:", "<Name>", newText -> {
@@ -319,34 +321,22 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 					people.remove(person);
 			});
 
-			ViewerSupport.bind(peopleViewer, people, BeanProperties.values(
-					Person.class, new String[] { "name", "friends" }));
+			ViewerSupport.bind(peopleViewer, people, BeanProperties.values(Person.class, "name", "friends"));
 
-			final IObservableValue selectedPerson = ViewersObservables
-					.observeSingleSelection(peopleViewer);
+			final IObservableValue<Person> selectedPerson = ViewerProperties.singleSelection(Person.class)
+					.observe(peopleViewer);
 
-			IObservableValue personSelected = new ComputedValue(Boolean.TYPE) {
-				@Override
-				protected Object calculate() {
-					return Boolean.valueOf(selectedPerson.getValue() != null);
-				}
-			};
-			dbc.bindValue(WidgetProperties.enabled().observe(removePersonButton),
-					personSelected);
-			dbc.bindValue(WidgetProperties.enabled().observe(friendsViewer
-					.getTable()), personSelected);
+			IObservableValue<Boolean> personSelected =  ComputedValue.create(() -> selectedPerson.getValue() != null);
+			dbc.bindValue(WidgetProperties.enabled().observe(removePersonButton), personSelected);
+			dbc.bindValue(WidgetProperties.enabled().observe(friendsViewer.getTable()), personSelected);
 
-			dbc.bindValue(
-					WidgetProperties.text(SWT.Modify).observe(personName),
-					BeanProperties.value((Class) selectedPerson.getValueType(), "name", String.class)
-					.observeDetail(selectedPerson));
+			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(personName),
+					BeanProperties.value(Person.class, "name", String.class).observeDetail(selectedPerson));
 
-			ViewerSupport.bind(friendsViewer, people, BeanProperties.value(
-					Person.class, "name"));
+			ViewerSupport.bind(friendsViewer, people, BeanProperties.value(Person.class, "name"));
 
-			dbc.bindSet(ViewersObservables.observeCheckedElements(
-					friendsViewer, Person.class),BeanProperties.set((Class) selectedPerson.getValueType(), "friends", Person.class)
-					.observeDetail(selectedPerson));
+			dbc.bindSet(ViewerProperties.checkedElements(Person.class).observe((Viewer) friendsViewer),
+					BeanProperties.set(Person.class, "friends", Person.class).observeDetail(selectedPerson));
 		}
 	}
 }

@@ -40,7 +40,8 @@ public class ButtonControlScenario extends ScenariosTestCase {
 
     private Button button;
 
-    @Before
+    @Override
+	@Before
 	public void setUp() throws Exception {
         super.setUp();
         // do any setup work here
@@ -48,13 +49,15 @@ public class ButtonControlScenario extends ScenariosTestCase {
         adventure = SampleData.WINTER_HOLIDAY;
     }
 
-    @After
+    @Override
+	@After
 	public void tearDown() throws Exception {
         button.dispose();
         super.tearDown();
     }
 
-    @Test
+	@SuppressWarnings("unchecked")
+	@Test
 	public void testScenario01() {
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.observeSelection(button),
@@ -80,7 +83,8 @@ public class ButtonControlScenario extends ScenariosTestCase {
 
     }
 
-    @Test
+	@SuppressWarnings("unchecked")
+	@Test
 	public void testScenario02() {
         // Test with an SWT.Toggle button
         button.dispose();
@@ -103,7 +107,8 @@ public class ButtonControlScenario extends ScenariosTestCase {
         assertEquals(newBoolean, adventure.isPetsAllowed());
     }
 
-    @Test
+	@SuppressWarnings("unchecked")
+	@Test
 	public void testScenario03() {
         // Test with an SWT.Radio button
         button.dispose();

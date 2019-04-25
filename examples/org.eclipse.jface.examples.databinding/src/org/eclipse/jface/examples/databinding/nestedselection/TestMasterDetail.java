@@ -20,7 +20,7 @@ package org.eclipse.jface.examples.databinding.nestedselection;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.Realm;
@@ -32,9 +32,9 @@ import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.SimpleModel;
 import org.eclipse.jface.examples.databinding.model.SimpleOrder;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
@@ -220,12 +220,11 @@ public class TestMasterDetail {
 		Realm realm = DisplayRealm.getRealm(parent.getDisplay());
 
 		TableViewer peopleViewer = new TableViewer(personsTable);
-		ViewerSupport.bind(peopleViewer, new WritableList(realm, model
-				.getPersonList(), SimpleModel.class), BeanProperties.values(
-				SimplePerson.class, new String[] { "name", "state" }));
+		ViewerSupport.bind(peopleViewer, new WritableList<>(realm, model.getPersonList(), SimpleModel.class),
+				BeanProperties.values(SimplePerson.class, "name", "state"));
 
-		IObservableValue selectedPerson = ViewersObservables
-				.observeSingleSelection(peopleViewer);
+		IObservableValue<SimplePerson> selectedPerson = ViewerProperties.singleSelection(SimplePerson.class)
+				.observe(peopleViewer);
 
 		DataBindingContext dbc = new DataBindingContext(realm) {
 			@Override
@@ -260,10 +259,10 @@ public class TestMasterDetail {
 			}
 		};
 		Binding b = dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
-				BeanProperties.value((Class<?>) selectedPerson.getValueType(), "name", String.class)
-						.observeDetail(selectedPerson),
+				BeanProperties.value(SimplePerson.class, "name", String.class).observeDetail(selectedPerson),
 				new CustomUpdateValueStrategy<String, String>().setConverter(upperCaseConverter)
-						.setAfterGetValidator(vowelValidator), null);
+						.setAfterGetValidator(vowelValidator),
+				null);
 
 		// AggregateValidationStatus status = new AggregateValidationStatus(dbc
 		// .getBindings(), AggregateValidationStatus.MAX_SEVERITY);
@@ -271,24 +270,17 @@ public class TestMasterDetail {
 				new UpdateValueStrategy<Object, String>().setConverter(new ObjectToStringConverter()));
 
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(address),
-				BeanProperties.value((Class) selectedPerson.getValueType(), "address", String.class).observeDetail(
-						selectedPerson));
+				BeanProperties.value(SimplePerson.class, "address", String.class).observeDetail(selectedPerson));
 
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(city),
-				BeanProperties.value((Class) selectedPerson.getValueType(), "city", String.class).observeDetail(
-						selectedPerson));
+				BeanProperties.value(SimplePerson.class, "city", String.class).observeDetail(selectedPerson));
 
-		dbc.bindValue(
-				WidgetProperties.text(SWT.Modify).observe(state),
-				BeanProperties.value((Class) selectedPerson.getValueType(), "state", String.class).observeDetail(
-				selectedPerson));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(state),
+				BeanProperties.value(SimplePerson.class, "state", String.class).observeDetail(selectedPerson));
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
-		ViewerSupport.bind(ordersViewer, BeanProperties
-				.list((Class) selectedPerson.getValueType(),
-						"orders", SimpleOrder.class).observeDetail(selectedPerson),
-				BeanProperties
-				.values(SimpleOrder.class,
-						new String[] { "orderNumber", "date" }));
+		ViewerSupport.bind(ordersViewer,
+				BeanProperties.list(SimplePerson.class, "orders", SimpleOrder.class).observeDetail(selectedPerson),
+				BeanProperties.values(SimpleOrder.class, "orderNumber", "date"));
 	}
 }

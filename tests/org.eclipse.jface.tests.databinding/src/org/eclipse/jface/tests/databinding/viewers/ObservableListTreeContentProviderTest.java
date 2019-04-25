@@ -42,7 +42,7 @@ public class ObservableListTreeContentProviderTest extends
 	private Shell shell;
 	private TreeViewer viewer;
 	private Tree tree;
-	private ObservableListTreeContentProvider contentProvider;
+	private ObservableListTreeContentProvider<Object> contentProvider;
 	private Object input;
 
 	@Override
@@ -65,8 +65,8 @@ public class ObservableListTreeContentProviderTest extends
 		super.tearDown();
 	}
 
-	private void initContentProvider(IObservableFactory listFactory) {
-		contentProvider = new ObservableListTreeContentProvider(listFactory, null);
+	private void initContentProvider(IObservableFactory<Object, IObservableList<Object>> listFactory) {
+		contentProvider = new ObservableListTreeContentProvider<>(listFactory, null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(input);
 	}
@@ -82,7 +82,7 @@ public class ObservableListTreeContentProviderTest extends
 
 	@Test
 	public void testGetElements_ChangesFollowObservedList() {
-		final IObservableList elements = new WritableList();
+		final IObservableList<Object> elements = new WritableList<>();
 		final Object input = new Object();
 		initContentProvider(target -> target == input ? elements : null);
 
@@ -104,7 +104,7 @@ public class ObservableListTreeContentProviderTest extends
 
 	@Test
 	public void testViewerUpdate_RemoveElementAfterMutation() {
-		final IObservableList children = new WritableList();
+		final IObservableList<Object> children = new WritableList<>();
 		initContentProvider(target -> target == input ? children : null);
 
 		Mutable element = new Mutable();
@@ -121,8 +121,8 @@ public class ObservableListTreeContentProviderTest extends
 		input = new Object();
 		final Object input2 = new Object();
 
-		final IObservableList children = new WritableList();
-		final IObservableList children2 = new WritableList();
+		final IObservableList<Object> children = new WritableList<>();
+		final IObservableList<Object> children2 = new WritableList<>();
 		initContentProvider(target -> {
 			if (target == input)
 				return children;
@@ -134,7 +134,7 @@ public class ObservableListTreeContentProviderTest extends
 		Object element = new Object();
 		children.add(element);
 
-		IObservableSet knownElements = contentProvider.getKnownElements();
+		IObservableSet<Object> knownElements = contentProvider.getKnownElements();
 		assertEquals(Collections.singleton(element), knownElements);
 		viewer.setInput(input2);
 		assertEquals(Collections.EMPTY_SET, knownElements);
@@ -145,8 +145,8 @@ public class ObservableListTreeContentProviderTest extends
 		input = new Object();
 		final Object input2 = new Object();
 
-		final IObservableList children = new WritableList();
-		final IObservableList children2 = new WritableList();
+		final IObservableList<Object> children = new WritableList<>();
+		final IObservableList<Object> children2 = new WritableList<>();
 		initContentProvider(target -> {
 			if (target == input)
 				return children;
@@ -157,7 +157,7 @@ public class ObservableListTreeContentProviderTest extends
 
 		// Realized elements must be allocated before adding the element
 		// otherwise we'd have to spin the event loop to see the new element
-		IObservableSet realizedElements = contentProvider.getRealizedElements();
+		IObservableSet<Object> realizedElements = contentProvider.getRealizedElements();
 
 		Object element = new Object();
 		children.add(element);

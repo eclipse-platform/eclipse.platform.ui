@@ -15,7 +15,7 @@ package org.eclipse.core.tests.databinding.beans;
 
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;

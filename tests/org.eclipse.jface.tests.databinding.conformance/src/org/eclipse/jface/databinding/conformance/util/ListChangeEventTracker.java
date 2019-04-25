@@ -24,10 +24,10 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 /**
  * Listener for tracking the firing of ListChangeEvents.
  */
-public class ListChangeEventTracker implements IListChangeListener {
+public class ListChangeEventTracker<E> implements IListChangeListener<E> {
 	public int count;
 
-	public ListChangeEvent event;
+	public ListChangeEvent<? extends E> event;
 
 	/**
 	 * Queue that the listener will add itself too when it is notified of an
@@ -44,7 +44,7 @@ public class ListChangeEventTracker implements IListChangeListener {
 	}
 
 	@Override
-	public void handleListChange(ListChangeEvent event) {
+	public void handleListChange(ListChangeEvent<? extends E> event) {
 		count++;
 		this.event = event;
 		if (listenerQueue != null) {
@@ -58,8 +58,8 @@ public class ListChangeEventTracker implements IListChangeListener {
 	 * @param observable
 	 * @return tracker
 	 */
-	public static ListChangeEventTracker observe(IObservableList observable) {
-		ListChangeEventTracker tracker = new ListChangeEventTracker();
+	public static <E> ListChangeEventTracker<E> observe(IObservableList<E> observable) {
+		ListChangeEventTracker<E> tracker = new ListChangeEventTracker<>();
 		observable.addListChangeListener(tracker);
 		return tracker;
 	}

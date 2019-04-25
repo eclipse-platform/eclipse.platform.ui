@@ -100,7 +100,7 @@ public class AsynchronousTestSet extends ObservableSet<Object> {
 		removed.retainAll(wrappedSet);
 
 		wrappedSet.removeAll(removed);
-		fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removed));
+		fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removed));
 	}
 
 	@Override

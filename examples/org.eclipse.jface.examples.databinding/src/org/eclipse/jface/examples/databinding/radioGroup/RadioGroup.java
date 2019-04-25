@@ -14,7 +14,6 @@
 package org.eclipse.jface.examples.databinding.radioGroup;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -151,11 +150,10 @@ public class RadioGroup {
       }
    };
 
-   private List widgetChangeListeners = new LinkedList();
+	private List<VetoableSelectionListener> widgetChangeListeners = new LinkedList<>();
 
    protected boolean fireWidgetChangeSelectionEvent(SelectionEvent e) {
-      for (Iterator listenersIter = widgetChangeListeners.iterator(); listenersIter.hasNext();) {
-         VetoableSelectionListener listener = (VetoableSelectionListener) listenersIter.next();
+      for (VetoableSelectionListener listener : widgetChangeListeners) {
          listener.canWidgetChangeSelection(e);
          if (!e.doit) {
             rollbackSelection();
@@ -224,11 +222,10 @@ public class RadioGroup {
    }
 
 
-   private List widgetSelectedListeners = new ArrayList();
+   private List<SelectionListener> widgetSelectedListeners = new ArrayList<>();
 
    protected void fireWidgetSelectedEvent(SelectionEvent e) {
-      for (Iterator listenersIter = widgetSelectedListeners.iterator(); listenersIter.hasNext();) {
-         SelectionListener listener = (SelectionListener) listenersIter.next();
+      for (SelectionListener listener : widgetSelectedListeners) {
          listener.widgetSelected(e);
       }
    }
@@ -390,12 +387,12 @@ public class RadioGroup {
     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
     * </ul>
     */
-   public String [] getItems () {
-      List itemStrings = new ArrayList();
-      for (int i = 0; i < buttons.length; i++) {
-         itemStrings.add(buttons[i].getText());
+   public String[] getItems () {
+      List<String> itemStrings = new ArrayList<>();
+      for (IRadioButton button : buttons) {
+         itemStrings.add(button.getText());
       }
-      return (String[]) itemStrings.toArray(new String[itemStrings.size()]);
+      return itemStrings.toArray(new String[itemStrings.size()]);
    }
 
    public Object[] getButtons() {

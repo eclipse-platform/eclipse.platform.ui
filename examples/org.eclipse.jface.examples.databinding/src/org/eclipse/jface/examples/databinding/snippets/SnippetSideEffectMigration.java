@@ -20,7 +20,7 @@ import java.beans.PropertyChangeSupport;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.ValidationStatusProvider;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.swt.WidgetSideEffects;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -166,7 +166,7 @@ public class SnippetSideEffectMigration {
 			DataBindingContext dbc = new DataBindingContext();
 
 			IObservableValue<String> personFirstNameObservable = BeanProperties
-					.value(ObservableBeanPerson.PROPERTY_FIRST_NAME)
+					.value(ObservableBeanPerson.PROPERTY_FIRST_NAME, String.class)
 					.observe(person);
 			IObservableValue<String> personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personFirstNameText);
@@ -180,7 +180,7 @@ public class SnippetSideEffectMigration {
 					}), null);
 
 			IObservableValue<String> personLastNameObservable = BeanProperties
-					.value(ObservableBeanPerson.PROPERTY_LAST_NAME).observe(person);
+					.value(ObservableBeanPerson.PROPERTY_LAST_NAME, String.class).observe(person);
 			IObservableValue<String> personLastNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personLastNameText);
 
@@ -276,9 +276,9 @@ public class SnippetSideEffectMigration {
 
 		private void bindData() {
 			// create the observables, which should be bound by the SideEffect
-			ISWTObservableValue personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
+			ISWTObservableValue<String> personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personFirstNameText);
-			ISWTObservableValue personLastNameTextObservable = WidgetProperties.text(SWT.Modify)
+			ISWTObservableValue<String> personLastNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personLastNameText);
 
 			ISideEffectFactory sideEffectFactory = WidgetSideEffects.createFactory(personFirstNameText);
@@ -286,7 +286,7 @@ public class SnippetSideEffectMigration {
 
 			WritableValue<IStatus> firstNameValidation = new WritableValue<>();
 			sideEffectFactory.create(() -> {
-				String firstName = (String) personFirstNameTextObservable.getValue();
+				String firstName = personFirstNameTextObservable.getValue();
 				if (firstName != null && firstName.isEmpty()) {
 					firstNameValidation.setValue(ValidationStatus.error("First Name may not be empty"));
 					return;
@@ -301,7 +301,7 @@ public class SnippetSideEffectMigration {
 
 			WritableValue<IStatus> lastNameValidation = new WritableValue<>();
 			sideEffectFactory.create(() -> {
-				String lastName = (String) personLastNameTextObservable.getValue();
+				String lastName = personLastNameTextObservable.getValue();
 				if (lastName != null && lastName.isEmpty()) {
 					lastNameValidation.setValue(ValidationStatus.error("Last Name may not be empty"));
 					return;

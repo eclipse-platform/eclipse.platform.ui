@@ -19,6 +19,7 @@ package org.eclipse.jface.tests.internal.databinding.viewers;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
@@ -47,6 +48,7 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 
 	private static String[] model = new String[] { "0", "1" };
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		Shell shell = new Shell();
@@ -56,6 +58,7 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 		selectionProvider = viewer;
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		Shell shell = viewer.getTable().getShell();
@@ -74,11 +77,9 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 
 	@Test
 	public void testSetValue() {
-		IObservableValue observable = ViewersObservables
-				.observeSingleSelection(selectionProvider);
+		IObservableValue<String> observable = ViewerProperties.singleSelection(String.class).observe(selectionProvider);
 
-		ValueChangeEventTracker listener = ValueChangeEventTracker
-				.observe(observable);
+		ValueChangeEventTracker<String> listener = ValueChangeEventTracker.observe(observable);
 		assertNull(observable.getValue());
 		assertEquals(0, listener.count);
 

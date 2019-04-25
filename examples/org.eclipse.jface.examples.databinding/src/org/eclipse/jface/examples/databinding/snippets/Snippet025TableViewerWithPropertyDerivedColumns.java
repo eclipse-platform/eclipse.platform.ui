@@ -19,14 +19,14 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -147,7 +147,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 	// ro retrieve, this ViewModel just instantiates a model object to edit.
 	static class ViewModel {
 		// The model to bind
-		private IObservableList people = new WritableList();
+		private IObservableList<Person> people = new WritableList<>();
 		{
 			Person fergus = new Person("Fergus McDuck", UNKNOWN, UNKNOWN);
 			Person downy = new Person("Downy O'Drake", UNKNOWN, UNKNOWN);
@@ -166,7 +166,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			people.add(donald);
 		}
 
-		public IObservableList getPeople() {
+		public IObservableList<Person> getPeople() {
 			return people;
 		}
 	}
@@ -203,8 +203,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 
 			new Label(shell, SWT.NONE).setText("Name:");
 			nameText = new Text(shell, SWT.BORDER);
-			GridDataFactory.defaultsFor(nameText).grab(true, false).applyTo(
-					nameText);
+			GridDataFactory.defaultsFor(nameText).grab(true, false).applyTo(nameText);
 
 			new Label(shell, SWT.NONE).setText("Mother:");
 			motherCombo = new Combo(shell, SWT.READ_ONLY);
@@ -247,20 +246,18 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 							"mother.father.name", "father.mother.name",
 							"father.father.name" }));
 
-			IObservableValue masterSelection = ViewerProperties
-					.singleSelection().observe(peopleViewer);
+			IObservableValue<Person> masterSelection = ViewerProperties.singleSelection(Person.class)
+					.observe(peopleViewer);
 
 			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
-					BeanProperties.value(Person.class, "name").observeDetail(
-							masterSelection));
+					BeanProperties.value(Person.class, "name").observeDetail(masterSelection));
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
 			ViewerSupport.bind(mothercomboViewer, viewModel.getPeople(),
 					BeanProperties.value(Person.class, "name"));
 
-			dbc.bindValue(ViewerProperties.singleSelection().observe(
-					mothercomboViewer), BeanProperties.value(Person.class,
-					"mother").observeDetail(masterSelection));
+			dbc.bindValue(ViewerProperties.singleSelection().observe(mothercomboViewer),
+					BeanProperties.value(Person.class, "mother").observeDetail(masterSelection));
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
 			ViewerSupport.bind(fatherComboViewer, viewModel.getPeople(),

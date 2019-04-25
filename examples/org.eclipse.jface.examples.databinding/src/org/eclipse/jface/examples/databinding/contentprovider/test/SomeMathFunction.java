@@ -76,7 +76,7 @@ public class SomeMathFunction<K> extends ComputedObservableMap<K, Double> {
 
 			@Override
 			public Set<K> getAddedKeys() {
-				return Collections.EMPTY_SET;
+				return Collections.emptySet();
 			}
 
 			@Override
@@ -96,7 +96,7 @@ public class SomeMathFunction<K> extends ComputedObservableMap<K, Double> {
 
 			@Override
 			public Set<K> getRemovedKeys() {
-				return Collections.EMPTY_SET;
+				return Collections.emptySet();
 			}
 		});
 	}

@@ -31,9 +31,9 @@ public class Bean implements IBean {
 			this);
 	protected String value;
 	protected Object[] array;
-	protected List list;
-	protected Set set;
-	protected Map map;
+	protected List<Object> list;
+	protected Set<Object> set;
+	protected Map<Object, Object> map;
 	protected Bean bean;
 
 	public Bean() {
@@ -47,15 +47,15 @@ public class Bean implements IBean {
 		this.array = array;
 	}
 
-	public Bean(List list) {
+	public Bean(List<Object> list) {
 		this.list = list;
 	}
 
-	public Bean(Set set) {
+	public Bean(Set<Object> set) {
 		this.set = set;
 	}
 
-	public Bean(Map map) {
+	public Bean(Map<Object, Object> map) {
 		this.map = map;
 	}
 
@@ -94,32 +94,32 @@ public class Bean implements IBean {
 	}
 
 	@Override
-	public List getList() {
+	public List<Object> getList() {
 		return list;
 	}
 
 	@Override
-	public void setList(List list) {
+	public void setList(List<Object> list) {
 		changeSupport.firePropertyChange("list", this.list, this.list = list);
 	}
 
 	@Override
-	public Set getSet() {
+	public Set<Object> getSet() {
 		return set;
 	}
 
 	@Override
-	public void setSet(Set set) {
+	public void setSet(Set<Object> set) {
 		changeSupport.firePropertyChange("set", this.set, this.set = set);
 	}
 
 	@Override
-	public Map getMap() {
+	public Map<Object, Object> getMap() {
 		return map;
 	}
 
 	@Override
-	public void setMap(Map map) {
+	public void setMap(Map<Object, Object> map) {
 		changeSupport.firePropertyChange("map", this.map, this.map = map);
 	}
 

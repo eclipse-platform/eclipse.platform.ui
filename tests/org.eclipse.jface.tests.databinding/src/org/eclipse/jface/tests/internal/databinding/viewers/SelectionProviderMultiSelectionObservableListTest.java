@@ -27,6 +27,7 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
@@ -98,23 +99,20 @@ public class SelectionProviderMultiSelectionObservableListTest {
 	 *            <code>false</code> for observing the normal selection.
 	 */
 	private void doTestAddRemove(boolean postSelection) {
-		IObservableList observable;
+		IObservableList<String> observable;
 		if (postSelection) {
-			observable = ViewersObservables
-					.observeMultiPostSelection(selectionProvider);
+			observable = ViewerProperties.multiplePostSelection(String.class).observe(selectionProvider);
 		} else {
-			observable = ViewersObservables
-					.observeMultiSelection(selectionProvider);
+			observable = ViewerProperties.multipleSelection(String.class).observe(selectionProvider);
 		}
 
-		ListChangeEventTracker listener = ListChangeEventTracker
+		ListChangeEventTracker<String> listener = ListChangeEventTracker
 				.observe(observable);
 		assertEquals(0, observable.size());
 
 		selectionProvider.setSelection(new StructuredSelection(model[0]));
 		assertEquals(1, listener.count);
-		assertDiff(listener.event.diff, Collections.EMPTY_LIST, Collections
-				.singletonList(model[0]));
+		assertDiff(listener.event.diff, Collections.emptyList(), Collections.singletonList(model[0]));
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(1, observable.size());
 		assertEquals(model[0], observable.get(0));
@@ -142,15 +140,14 @@ public class SelectionProviderMultiSelectionObservableListTest {
 		selectionProvider.setSelection(StructuredSelection.EMPTY);
 		assertEquals(4, listener.count);
 		assertEquals(2, listener.event.diff.getDifferences().length);
-		assertDiff(listener.event.diff, Arrays.asList(new Object[] { model[2],
-				model[3] }), Collections.EMPTY_LIST);
+		assertDiff(listener.event.diff, Arrays.asList(model[2], model[3]), Collections.emptyList());
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(0, observable.size());
 
 		observable.add(model[1]);
 		assertEquals(5, listener.count);
 		assertEquals(1, listener.event.diff.getDifferences().length);
-		assertDiff(listener.event.diff, Collections.EMPTY_LIST, Collections
+		assertDiff(listener.event.diff, Collections.emptyList(), Collections
 				.singletonList(model[1]));
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(1, viewer.getStructuredSelection().size());
@@ -163,22 +160,21 @@ public class SelectionProviderMultiSelectionObservableListTest {
 		// underlying selection provider's notion of which element is at which
 		// index.
 		assertDiff(listener.event.diff, Collections.singletonList(model[1]),
-				Arrays.asList(new Object[] { model[1], model[2] }));
+				Arrays.asList(model[1], model[2]));
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(2, viewer.getStructuredSelection().size());
 
 		observable.clear();
 		assertEquals(7, listener.count);
 		assertEquals(2, listener.event.diff.getDifferences().length);
-		assertDiff(listener.event.diff, Arrays.asList(new Object[] { model[1],
-				model[2] }), Collections.EMPTY_LIST);
+		assertDiff(listener.event.diff, Arrays.asList(model[1], model[2]), Collections.emptyList());
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(0, viewer.getStructuredSelection().size());
 	}
 
-	private void assertDiff(ListDiff diff, List oldList, List newList) {
+	private <T> void assertDiff(ListDiff<? extends T> diff, List<T> oldList, List<T> newList) {
 		// defensive copy in case arg is unmodifiable
-		oldList = new ArrayList(oldList);
+		oldList = new ArrayList<>(oldList);
 		diff.applyTo(oldList);
 		assertEquals("applying diff to list did not produce expected result",
 				newList, oldList);

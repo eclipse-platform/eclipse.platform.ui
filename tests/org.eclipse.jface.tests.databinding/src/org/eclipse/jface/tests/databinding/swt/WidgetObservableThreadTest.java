@@ -18,11 +18,11 @@ package org.eclipse.jface.tests.databinding.swt;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;

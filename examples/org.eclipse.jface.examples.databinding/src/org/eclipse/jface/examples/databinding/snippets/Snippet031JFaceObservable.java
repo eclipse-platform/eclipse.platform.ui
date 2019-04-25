@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.util.JFaceProperties;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -125,8 +125,7 @@ public class Snippet031JFaceObservable {
 			DataBindingContext bindingContext = new DataBindingContext();
 			Person person = viewModel.getPerson();
 
-			IValueProperty nameProperty = JFaceProperties.value(Person.class,
-					"name", NAME_PROPERTY);
+			IValueProperty<Person, String> nameProperty = JFaceProperties.value(Person.class, "name", NAME_PROPERTY);
 
 			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(name), nameProperty.observe(person));
 

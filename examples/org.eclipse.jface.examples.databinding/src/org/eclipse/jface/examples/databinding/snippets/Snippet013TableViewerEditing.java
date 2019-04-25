@@ -24,15 +24,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -119,7 +119,7 @@ public class Snippet013TableViewerEditing {
 	// ro retrieve, this ViewModel just instantiates a model object to edit.
 	static class ViewModel {
 		// The model to bind
-		private List people = new LinkedList();
+		private List<Person> people = new LinkedList<>();
 		{
 			people.add(new Person("Steve Northover"));
 			people.add(new Person("Grant Gayed"));
@@ -136,7 +136,7 @@ public class Snippet013TableViewerEditing {
 			people.add(new Person("Stefan Xenos"));
 		}
 
-		public List getPeople() {
+		public List<Person> getPeople() {
 			return people;
 		}
 	}
@@ -148,7 +148,7 @@ public class Snippet013TableViewerEditing {
 	 *
 	 * @since 3.3
 	 */
-	private static class InlineEditingSupport extends ObservableValueEditingSupport {
+	private static class InlineEditingSupport extends ObservableValueEditingSupport<Person, String, String> {
 
 		private CellEditor cellEditor;
 
@@ -167,13 +167,13 @@ public class Snippet013TableViewerEditing {
 		}
 
 		@Override
-		protected IObservableValue doCreateCellEditorObservable(CellEditor cellEditor) {
+		protected IObservableValue<String> doCreateCellEditorObservable(CellEditor cellEditor) {
 			return WidgetProperties.text(SWT.Modify).observe(cellEditor.getControl());
 		}
 
 		@Override
-		protected IObservableValue doCreateElementObservable(Object element, ViewerCell cell) {
-			return BeanProperties.value(element.getClass(), "name").observe(element);
+		protected IObservableValue<String> doCreateElementObservable(Person element, ViewerCell cell) {
+			return BeanProperties.value(Person.class, "name", String.class).observe(element);
 		}
 	}
 
@@ -218,13 +218,13 @@ public class Snippet013TableViewerEditing {
 			column.getColumn().setWidth(100);
 
 			// Bind viewer to model
-			ViewerSupport.bind(peopleViewer, new WritableList(viewModel.getPeople(), Person.class),
+			ViewerSupport.bind(peopleViewer, new WritableList<>(viewModel.getPeople(), Person.class),
 					BeanProperties.value(Person.class, "name"));
 
 			// bind selectedCommitter label to the name of the current selection
-			IObservableValue selection = ViewersObservables.observeSingleSelection(peopleViewer);
+			IObservableValue<Person> selection = ViewerProperties.singleSelection(Person.class).observe(peopleViewer);
 			bindingContext.bindValue(WidgetProperties.text().observe(selectedCommitter),
-					BeanProperties.value((Class) selection.getValueType(), "name", String.class)
+					BeanProperties.value(Person.class, "name", String.class)
 					.observeDetail(selection));
 		}
 	}

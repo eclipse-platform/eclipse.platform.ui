@@ -17,14 +17,13 @@ package org.eclipse.jface.tests.internal.databinding.viewers;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckable;
 import org.junit.Test;
 
-public class CheckableCheckedElementsObservableSetTest extends
-		AbstractDefaultRealmTestCase {
+public class CheckableCheckedElementsObservableSetTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testClear() {
 		// init
@@ -51,11 +50,8 @@ public class CheckableCheckedElementsObservableSetTest extends
 
 		};
 
-		// CheckableCheckedElementsObservableSet set = new
-		// CheckableCheckedElementsObservableSet(Realm.getDefault(),
-		// checkable, String.class);
-		IObservableSet set = ViewersObservables.observeCheckedElements(
-				checkable, String.class);
+		IObservableSet<String> set = ViewerProperties.checkedElements(String.class).observe(checkable);
+
 		set.add("Test1");
 		set.add("Test2");
 		assertEquals(2, set.size());

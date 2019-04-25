@@ -22,10 +22,11 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.internal.databinding.viewers.ViewerInputProperty;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -42,6 +43,7 @@ public class ViewersObservablesTest extends AbstractDefaultRealmTestCase {
 	TableViewer viewer;
 	Realm realm;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -50,6 +52,7 @@ public class ViewersObservablesTest extends AbstractDefaultRealmTestCase {
 		viewer = new TableViewer(shell, SWT.NONE);
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		Shell shell = viewer.getTable().getShell();
@@ -62,10 +65,10 @@ public class ViewersObservablesTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testObserveInput_InstanceOfViewerInputObservableValue() {
-		IViewerObservableValue observable = (IViewerObservableValue) ViewersObservables
-				.observeInput(viewer);
+		// TODO j: It is very weird to be forced to cast to an unrelated viewer here
+		IViewerObservableValue<Object> observable = ViewerProperties.<TreeViewer, Object>input().observe(viewer);
 		assertTrue(observable.getViewer() == viewer);
-		IPropertyObservable propertyObservable = (IPropertyObservable) ((IDecoratingObservable) observable)
+		IPropertyObservable<?> propertyObservable = (IPropertyObservable<?>) ((IDecoratingObservable) observable)
 				.getDecorated();
 		assertTrue(propertyObservable.getProperty() instanceof ViewerInputProperty);
 	}

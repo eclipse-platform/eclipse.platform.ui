@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Test;
@@ -36,15 +36,12 @@ public class SetOnlyJavaBeanTest extends AbstractDefaultRealmTestCase {
 
 		Target target = new Target();
 
-		IObservableValue modelObservable =
-				PojoProperties.value("string").observe(model);
-		IObservableValue targetObservable =
-				PojoProperties.value("string").observe(target);
+		IObservableValue<String> modelObservable = PojoProperties.value("string", String.class).observe(model);
+		IObservableValue<String> targetObservable = PojoProperties.value("string", String.class).observe(target);
 
 		DataBindingContext context = new DataBindingContext();
 		context.bindValue(targetObservable, modelObservable,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy());
+				new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_NEVER), new UpdateValueStrategy<>());
 
 		assertEquals("abc", target.string);
 

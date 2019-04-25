@@ -25,7 +25,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.IViewerObservableList;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.TableViewer;
@@ -63,7 +63,7 @@ public class SnippetComputedValueViewerSelection {
 
 			tableViewer = new TableViewer(shell);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(tableViewer.getControl());
-			tableViewer.setContentProvider(new ObservableListContentProvider());
+			tableViewer.setContentProvider(new ObservableListContentProvider<>());
 
 			IObservableList<String> input = new WritableList<>();
 			input.add("Stefan Xenos");
@@ -84,7 +84,8 @@ public class SnippetComputedValueViewerSelection {
 					// ObservableListContentProvider is used the input list can
 					// simply be modified and automatically gets reflected in
 					// the viewer.
-					List list = tableViewer.getStructuredSelection().toList();
+					@SuppressWarnings("unchecked")
+					List<String> list = tableViewer.getStructuredSelection().toList();
 					input.removeAll(list);
 				}
 			});
@@ -100,7 +101,8 @@ public class SnippetComputedValueViewerSelection {
 		private void bindData() {
 
 			// observe the selection list of a viewer
-			IViewerObservableList viewerSelectionObservable = ViewerProperties.multipleSelection().observe(tableViewer);
+			IViewerObservableList<String> viewerSelectionObservable = ViewerProperties.multipleSelection(String.class)
+					.observe(tableViewer);
 			// track whether the selection list is empty or not
 			// (viewerSelectionObservable.isEmpty() is a tracked getter!)
 			IObservableValue<Boolean> hasSelectionObservable = ComputedValue

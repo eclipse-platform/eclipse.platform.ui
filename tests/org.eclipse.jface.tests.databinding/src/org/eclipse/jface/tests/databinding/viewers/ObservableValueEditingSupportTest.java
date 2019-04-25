@@ -21,12 +21,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
@@ -55,6 +54,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 
 	private Bean bean;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -68,14 +68,13 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		editingSupport = new ObservableValueEditingSupportStub(viewer, dbc);
 		column.setEditingSupport(editingSupport);
 
-		WritableList input = WritableList.withElementType(String.class);
+		WritableList<Bean> input = WritableList.withElementType(String.class);
 		bean = new Bean();
 		bean.setValue("value");
 		input.add(bean);
 
 		// Bind viewer to input
-		ViewerSupport.bind(viewer, input, BeanProperties.value(Bean.class,
-				"value"));
+		ViewerSupport.bind(viewer, input, BeanProperties.value(Bean.class, "value"));
 	}
 
 	@Test
@@ -165,8 +164,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		assertTrue(editingSupport.canEdit(bean));
 	}
 
-	private static class ObservableValueEditingSupportStub extends
-			ObservableValueEditingSupport {
+	private static class ObservableValueEditingSupportStub extends ObservableValueEditingSupport<Bean, String, String> {
 		StringBuilder events = new StringBuilder();
 
 		Text text;
@@ -175,9 +173,9 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 
 		Binding binding;
 
-		IObservableValue target;
+		IObservableValue<String> target;
 
-		IObservableValue model;
+		IObservableValue<String> model;
 
 		/**
 		 * @param viewer
@@ -203,25 +201,22 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		}
 
 		@Override
-		protected IObservableValue doCreateCellEditorObservable(
+		protected IObservableValue<String> doCreateCellEditorObservable(
 				CellEditor cellEditor) {
 			event("createCellEditorObservable");
 
 			text = (Text) cellEditor.getControl();
-			return target = SWTObservables.observeText(cellEditor.getControl(),
-					SWT.NONE);
+			return target = WidgetProperties.text(SWT.NONE).observe(text);
 		}
 
 		@Override
-		protected IObservableValue doCreateElementObservable(Object element,
-				ViewerCell cell) {
+		protected IObservableValue<String> doCreateElementObservable(Bean element, ViewerCell cell) {
 			event("createElementObservable");
-			return model = BeansObservables.observeValue(element, "value");
+			return model = BeanProperties.value("value", String.class).observe(element);
 		}
 
 		@Override
-		protected Binding createBinding(IObservableValue target,
-				IObservableValue model) {
+		protected Binding createBinding(IObservableValue<String> target, IObservableValue<String> model) {
 			event("createBinding");
 
 			return binding = super.createBinding(target, model);

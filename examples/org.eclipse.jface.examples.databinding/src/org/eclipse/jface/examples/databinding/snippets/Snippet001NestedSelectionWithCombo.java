@@ -23,15 +23,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -143,7 +143,7 @@ public class Snippet001NestedSelectionWithCombo {
 	// This ViewModel also implements JavaBean bound properties.
 	static class ViewModel extends AbstractModelObject {
 		// The model to bind
-		private ArrayList people = new ArrayList();
+		private ArrayList<Person> people = new ArrayList<>();
 		{
 			people.add(new Person("Wile E. Coyote", "Tucson"));
 			people.add(new Person("Road Runner", "Lost Horse"));
@@ -151,7 +151,7 @@ public class Snippet001NestedSelectionWithCombo {
 		}
 
 		// Choice of cities for the Combo
-		private ArrayList cities = new ArrayList();
+		private ArrayList<String> cities = new ArrayList<>();
 		{
 			cities.add("Tucson");
 			cities.add("AcmeTown");
@@ -160,11 +160,11 @@ public class Snippet001NestedSelectionWithCombo {
 			cities.add("Lost Mine");
 		}
 
-		public ArrayList getPeople() {
+		public ArrayList<Person> getPeople() {
 			return people;
 		}
 
-		public ArrayList getCities() {
+		public ArrayList<String> getCities() {
 			return cities;
 		}
 	}
@@ -192,34 +192,26 @@ public class Snippet001NestedSelectionWithCombo {
 			city.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
 
 			ListViewer peopleListViewer = new ListViewer(peopleList);
-			IObservableMap attributeMap = BeanProperties.value(Person.class, "name").observeDetail(
-					Observables.staticObservableSet(realm, new HashSet(
-							viewModel.getPeople())));
-			peopleListViewer.setLabelProvider(new ObservableMapLabelProvider(
-					attributeMap));
+			IObservableMap<Person, String> attributeMap = BeanProperties.value(Person.class, "name", String.class)
+					.observeDetail(Observables.staticObservableSet(realm, new HashSet<>(viewModel.getPeople())));
+			peopleListViewer.setLabelProvider(new ObservableMapLabelProvider(attributeMap));
 			peopleListViewer.setContentProvider(new ArrayContentProvider());
 			peopleListViewer.setInput(viewModel.getPeople());
 
 			DataBindingContext dbc = new DataBindingContext(realm);
-			IObservableValue selectedPerson = ViewersObservables
-					.observeSingleSelection(peopleListViewer);
-			Class selectedPersonValueType = null;
-			if (selectedPerson.getValueType() instanceof Class<?>) {
-				selectedPersonValueType = (Class) selectedPerson.getValueType();
-			}
+			IObservableValue<Person> selectedPerson = ViewerProperties.singleSelection(Person.class)
+					.observe(peopleListViewer);
 			dbc.bindValue(
 					WidgetProperties.text(SWT.Modify).observe(name),
-					BeanProperties.value(selectedPersonValueType, "name", String.class)
-					.observeDetail(selectedPerson));
+					BeanProperties.value(Person.class, "name", String.class).observeDetail(selectedPerson));
 
 			ComboViewer cityViewer = new ComboViewer(city);
 			cityViewer.setContentProvider(new ArrayContentProvider());
 			cityViewer.setInput(viewModel.getCities());
 
-			IObservableValue citySelection = ViewersObservables
-					.observeSingleSelection(cityViewer);
-			dbc.bindValue(citySelection, BeanProperties.value(selectedPersonValueType, "city", String.class)
-					.observeDetail(selectedPerson));
+			IObservableValue<String> citySelection = ViewerProperties.singleSelection(String.class).observe(cityViewer);
+			dbc.bindValue(citySelection,
+					BeanProperties.value(Person.class, "city", String.class).observeDetail(selectedPerson));
 
 			GridLayoutFactory.swtDefaults().applyTo(shell);
 

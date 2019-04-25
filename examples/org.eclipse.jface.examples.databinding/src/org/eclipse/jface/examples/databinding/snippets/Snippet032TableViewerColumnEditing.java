@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.beans.IBeanValueProperty;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -33,12 +33,13 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.CellEditorProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapCellLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -131,7 +132,7 @@ public class Snippet032TableViewerColumnEditing {
 	// ro retrieve, this ViewModel just instantiates a model object to edit.
 	static class ViewModel {
 		// The model to bind
-		private List people = new LinkedList();
+		private List<Person> people = new LinkedList<>();
 		{
 			people.add(new Person("Dave", "Orme"));
 			people.add(new Person("Gili", "Mendel"));
@@ -144,7 +145,7 @@ public class Snippet032TableViewerColumnEditing {
 			people.add(new Person("Stefan", "Xenos"));
 		}
 
-		public List getPeople() {
+		public List<Person> getPeople() {
 			return people;
 		}
 	}
@@ -202,44 +203,41 @@ public class Snippet032TableViewerColumnEditing {
 			columnFirstName.getColumn().setWidth(100);
 
 			// Bind viewer to model
-			IBeanValueProperty propName = BeanProperties.value(Person.class, "name");
-			IBeanValueProperty propFirstname = BeanProperties.value(Person.class, "firstName");
+			IBeanValueProperty<Person, String> propName = BeanProperties.value(Person.class, "name", String.class);
+			IBeanValueProperty<Person, String> propFirstname = BeanProperties.value(Person.class, "firstName",
+					String.class);
 
-			IValueProperty cellEditorControlText = CellEditorProperties.control()
+			IValueProperty<CellEditor, String> cellEditorControlText = CellEditorProperties.control()
 					.value(WidgetProperties.text(SWT.Modify));
 
 			columnName.setEditingSupport(ObservableValueEditingSupport.create(
-					peopleViewer, bindingContext,
-					new TextCellEditor(committers), cellEditorControlText,
-					propName));
-			columnFirstName.setEditingSupport(ObservableValueEditingSupport
-					.create(peopleViewer, bindingContext, new TextCellEditor(
-							committers), cellEditorControlText, propFirstname));
+					peopleViewer, bindingContext, new TextCellEditor(committers), cellEditorControlText, propName));
 
-			ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+			columnFirstName.setEditingSupport(ObservableValueEditingSupport
+					.create(peopleViewer, bindingContext, new TextCellEditor(committers), cellEditorControlText,
+							propFirstname));
+
+			ObservableListContentProvider<Person> contentProvider = new ObservableListContentProvider<>();
 			peopleViewer.setContentProvider(contentProvider);
 
 			// Bind the LabelProviders to the model and columns
-			IObservableMap[] result = Properties.observeEach(contentProvider.getKnownElements(),
-					new IBeanValueProperty[] { propName,
-					propFirstname });
+			IObservableMap<Person, ? extends String>[] result = Properties
+					.observeEach(contentProvider.getKnownElements(), propName, propFirstname);
 
 			columnName.setLabelProvider(new ObservableMapCellLabelProvider(result[0]));
 			columnFirstName.setLabelProvider(new ObservableMapCellLabelProvider(result[1]));
 
-			peopleViewer.setInput(new WritableList(viewModel.getPeople(), Person.class));
+			peopleViewer.setInput(new WritableList<>(viewModel.getPeople(), Person.class));
 
 			// bind selectedCommitter labels to the name and firstname of the
 			// current selection
-			IObservableValue selection = ViewersObservables.observeSingleSelection(peopleViewer);
+			IObservableValue<Person> selection = ViewerProperties.singleSelection(Person.class).observe(peopleViewer);
 			bindingContext.bindValue(
 					WidgetProperties.text().observe(selectedCommitterName),
-					BeanProperties.value((Class) selection.getValueType(), "name", String.class)
-					.observeDetail(selection));
+					BeanProperties.value(Person.class, "name", String.class).observeDetail(selection));
 			bindingContext.bindValue(
 					WidgetProperties.text().observe(selectedCommitterFirstName),
-					BeanProperties.value((Class) selection.getValueType(), "firstName", String.class)
-					.observeDetail(selection));
+					BeanProperties.value(Person.class, "firstName", String.class).observeDetail(selection));
 		}
 	}
 }

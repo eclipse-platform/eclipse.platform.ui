@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
@@ -31,10 +32,10 @@ import junit.framework.TestSuite;
  * @since 1.1
  */
 public class SuiteBuilder {
-	private LinkedHashSet content;
+	private LinkedHashSet<Object> content;
 
 	public SuiteBuilder() {
-		content = new LinkedHashSet();
+		content = new LinkedHashSet<>();
 	}
 
 	/**
@@ -44,7 +45,7 @@ public class SuiteBuilder {
 	 * @param testCase
 	 * @return builder
 	 */
-	public SuiteBuilder addTests(Class testCase) {
+	public SuiteBuilder addTests(Class<?> testCase) {
 		content.add(testCase);
 		return this;
 	}
@@ -60,10 +61,10 @@ public class SuiteBuilder {
 	 * @param parameters
 	 * @return builder
 	 */
-	public SuiteBuilder addParameterizedTests(Class testCase,
+	public SuiteBuilder addParameterizedTests(Class<?> testCase,
 			Object[] parameters) {
 
-		Constructor constructor = findConstructor(testCase, parameters);
+		Constructor<?> constructor = findConstructor(testCase, parameters);
 		if (constructor == null) {
 			throw new IllegalArgumentException(
 					"The parameters provided don't match a constructor found in ["
@@ -83,9 +84,7 @@ public class SuiteBuilder {
 	 * @param delegate
 	 * @return builder
 	 */
-	public SuiteBuilder addObservableContractTest(Class testCase,
-			IObservableContractDelegate delegate) {
-
+	public SuiteBuilder addObservableContractTest(Class<?> testCase, IObservableContractDelegate delegate) {
 		addParameterizedTests(testCase, new Object[] {delegate});
 		return this;
 	}
@@ -95,13 +94,14 @@ public class SuiteBuilder {
 	 *
 	 * @return suite
 	 */
+	@SuppressWarnings("unchecked")
 	public TestSuite build() {
 		TestSuite suite = new TestSuite();
 
-		for (Iterator it = content.iterator(); it.hasNext();) {
+		for (Iterator<?> it = content.iterator(); it.hasNext();) {
 			Object o = it.next();
 			if (o instanceof Class) {
-				suite.addTestSuite((Class) o);
+				suite.addTestSuite((Class<? extends TestCase>) o);
 			} else if (o instanceof ParameterizedTest) {
 				ParameterizedTest test = (ParameterizedTest) o;
 
@@ -150,13 +150,14 @@ public class SuiteBuilder {
 	 * @param parameters
 	 * @return constructor
 	 */
-	private static Constructor findConstructor(Class clazz, Object[] parameters) {
-		Constructor[] constructors = clazz.getConstructors();
+	@SuppressWarnings("unchecked")
+	private static <T> Constructor<T> findConstructor(Class<T> clazz, Object[] parameters) {
+		Constructor<?>[] constructors = clazz.getConstructors();
 		int expectedParametersLength = parameters.length + 1;
 
 		for (int i = 0; i < constructors.length; i++) {
-			Constructor constructor = constructors[i];
-			Class[] types = constructor.getParameterTypes();
+			Constructor<?> constructor = constructors[i];
+			Class<?>[] types = constructor.getParameterTypes();
 
 			if (types.length != expectedParametersLength
 					|| !String.class.equals(types[0])) {
@@ -165,7 +166,7 @@ public class SuiteBuilder {
 
 			boolean skip = false;
 			for (int j = 1; j < types.length; j++) {
-				Class type = types[j];
+				Class<?> type = types[j];
 				if (!type.isInstance(parameters[j - 1])) {
 					skip = true;
 					break;
@@ -173,7 +174,7 @@ public class SuiteBuilder {
 			}
 
 			if (!skip) {
-				return constructor;
+				return (Constructor<T>) constructor;
 			}
 		}
 
@@ -181,13 +182,13 @@ public class SuiteBuilder {
 	}
 
 	/* package */static class ParameterizedTest {
-		final Constructor constructor;
+		final Constructor<?> constructor;
 
 		final Object[] parameters;
 
-		private Class testClass;
+		private Class<?> testClass;
 
-		ParameterizedTest(Class testClass, Constructor constructor,
+		ParameterizedTest(Class<?> testClass, Constructor<?> constructor,
 				Object[] parameterss) {
 			this.testClass = testClass;
 			this.constructor = constructor;

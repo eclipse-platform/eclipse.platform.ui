@@ -13,20 +13,18 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.MappedSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
@@ -84,19 +82,19 @@ public class StructuredContentProviderTest {
 	 * inputSet stores a set of Doubles. The user is allowed to add and remove
 	 * Doubles from this set.
 	 */
-	private WritableSet inputSet;
+	private WritableSet<Double> inputSet;
 
 	/**
 	 * currentFunction is an Integer, set to one of the SomeMathFunction.OP_*
 	 * constants. It identifies which function will be applied to inputSet.
 	 */
-	private WritableValue currentFunction;
+	private WritableValue<Integer> currentFunction;
 
 	/**
 	 * mathFunction is the transformation. It can multiply by 2, round down to
 	 * the nearest integer, or do nothing (identity)
 	 */
-	private SomeMathFunction mathFunction;
+	private SomeMathFunction<Double> mathFunction;
 
 	/**
 	 * Set of Doubles. Holds the result of applying mathFunction to the
@@ -107,7 +105,7 @@ public class StructuredContentProviderTest {
 	/**
 	 * A Double. Stores the sum of the Doubles in outputSet
 	 */
-	private IObservableValue sumOfOutputSet;
+	private IObservableValue<Double> sumOfOutputSet;
 
 	/**
 	 * Creates the test dialog as a top-level shell.
@@ -138,12 +136,12 @@ public class StructuredContentProviderTest {
 				operation.setText("Select transformation"); //$NON-NLS-1$
 
 				createRadioButton(operation, currentFunction, "f(x) = x", //$NON-NLS-1$
-						Integer.valueOf(SomeMathFunction.OP_IDENTITY));
+						SomeMathFunction.OP_IDENTITY);
 				createRadioButton(operation, currentFunction, "f(x) = 2 * x", //$NON-NLS-1$
-						Integer.valueOf(SomeMathFunction.OP_MULTIPLY));
+						SomeMathFunction.OP_MULTIPLY);
 				createRadioButton(operation, currentFunction,
-						"f(x) = floor(x)", Integer.valueOf( //$NON-NLS-1$
-								SomeMathFunction.OP_ROUND));
+						"f(x) = floor(x)", //$NON-NLS-1$
+						SomeMathFunction.OP_ROUND);
 
 				GridLayout layout = new GridLayout();
 				layout.numColumns = 1;
@@ -165,8 +163,7 @@ public class StructuredContentProviderTest {
 			new ControlUpdater(sumLabel) {
 				@Override
 				protected void updateControl() {
-					double sum = ((Double) sumOfOutputSet.getValue())
-							.doubleValue();
+					double sum = sumOfOutputSet.getValue();
 					int size = outputSet.size();
 
 					sumLabel.setText("The sum of the above " + size //$NON-NLS-1$
@@ -194,27 +191,18 @@ public class StructuredContentProviderTest {
 		// inputSet will be a writable set of doubles. The user will add and
 		// remove entries from this set
 		// through the UI.
-		inputSet = new WritableSet(realm);
+		inputSet = new WritableSet<>(realm);
 
 		// currentFunction holds the ID currently selected function to apply to
 		// elements in the inputSet.
 		// We will allow the user to change the current function through a set
 		// of radio buttons
-		currentFunction = new WritableValue(realm, Integer.valueOf(
-				SomeMathFunction.OP_MULTIPLY), null);
+		currentFunction = new WritableValue<>(realm, SomeMathFunction.OP_MULTIPLY, null);
 
 		// mathFunction implements the selected function
-		mathFunction = new SomeMathFunction(inputSet);
-		currentFunction.addValueChangeListener(new IValueChangeListener() {
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				mathFunction
-						.setOperation(((Integer) currentFunction.getValue())
-								.intValue());
-			}
-		});
-		mathFunction.setOperation(((Integer) currentFunction.getValue())
-				.intValue());
+		mathFunction = new SomeMathFunction<>(inputSet);
+		currentFunction.addValueChangeListener(event -> mathFunction.setOperation(currentFunction.getValue()));
+		mathFunction.setOperation(currentFunction.getValue());
 
 		// outputSet holds the result. It displays the result of applying the
 		// currently-selected
@@ -223,16 +211,16 @@ public class StructuredContentProviderTest {
 
 		// sumOfOutputSet stores the current sum of the the Doubles in the
 		// output set
-		sumOfOutputSet = new ComputedValue(realm) {
+		sumOfOutputSet = new ComputedValue<Double>(realm) {
 			@Override
-			protected Object calculate() {
+			protected Double calculate() {
 				double sum = 0.0;
-				for (Iterator iter = outputSet.iterator(); iter.hasNext();) {
-					Double next = (Double) iter.next();
-
-					sum += next.doubleValue();
+				@SuppressWarnings("unchecked")
+				Set<Double> elems = outputSet;
+				for (double elem : elems) {
+					sum += elem;
 				}
-				return new Double(sum);
+				return sum;
 			}
 		};
 	}
@@ -252,8 +240,8 @@ public class StructuredContentProviderTest {
 	 *            value of this radio button (SettableValue will hold this value
 	 *            when the radio button is selected)
 	 */
-	private void createRadioButton(Composite parent, final WritableValue model,
-			String string, final Object value) {
+	private void createRadioButton(Composite parent, final WritableValue<Integer> model, String string,
+			final int value) {
 		final Button button = new Button(parent, SWT.RADIO);
 		button.setText(string);
 		button.addSelectionListener(new SelectionAdapter() {
@@ -277,7 +265,7 @@ public class StructuredContentProviderTest {
 		ListViewer listOfInts = new ListViewer(parent, SWT.BORDER
 				| SWT.V_SCROLL | SWT.H_SCROLL);
 
-		listOfInts.setContentProvider(new ObservableSetContentProvider());
+		listOfInts.setContentProvider(new ObservableSetContentProvider<>());
 		listOfInts.setLabelProvider(new ViewerLabelProvider());
 		listOfInts.setInput(outputSet);
 		return listOfInts.getControl();
@@ -295,17 +283,18 @@ public class StructuredContentProviderTest {
 	 *         set and allows the user to add and remove entries
 	 */
 	private Control createInputControl(Composite parent,
-			final WritableSet inputSet) {
+			final WritableSet<Double> inputSet) {
 		Composite addRemoveComposite = new Composite(parent, SWT.NONE);
 		{ // Initialize addRemoveComposite
 			ListViewer listOfInts = new ListViewer(addRemoveComposite,
 					SWT.BORDER);
 
-			listOfInts.setContentProvider(new ObservableSetContentProvider());
+			listOfInts.setContentProvider(new ObservableSetContentProvider<>());
 			listOfInts.setLabelProvider(new ViewerLabelProvider());
 			listOfInts.setInput(inputSet);
 
-			final IObservableValue selectedInt = ViewersObservables.observeSingleSelection(listOfInts);
+			final IObservableValue<Double> selectedInt = ViewerProperties.singleSelection(Double.class)
+					.observe(listOfInts);
 
 			GridData listData = new GridData(GridData.FILL_BOTH);
 			listData.minimumHeight = 1;
@@ -322,7 +311,7 @@ public class StructuredContentProviderTest {
 				add.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						inputSet.add(new Double(random.nextDouble() * 100.0));
+						inputSet.add(random.nextDouble() * 100.0);
 						super.widgetSelected(e);
 					}
 				});

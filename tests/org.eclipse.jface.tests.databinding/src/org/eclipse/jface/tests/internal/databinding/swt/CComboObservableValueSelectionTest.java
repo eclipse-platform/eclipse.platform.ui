@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*************************************************************************a******
  * Copyright (c) 2007, 2009 IBM Corporation and others.
  *
  * This program and the accompanying materials
@@ -25,7 +25,7 @@ import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueCo
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Display;
@@ -58,11 +58,11 @@ public class CComboObservableValueSelectionTest {
 
 	@Test
 	public void testSelection_NotifiesObservable() throws Exception {
-		IObservableValue observable = (IObservableValue) delegate
+		@SuppressWarnings("unchecked")
+		IObservableValue<Object> observable = (IObservableValue<Object>) delegate
 				.createObservable(DisplayRealm.getRealm(Display.getDefault()));
 
-		ValueChangeEventTracker listener = ValueChangeEventTracker
-				.observe(observable);
+		ValueChangeEventTracker<Object> listener = ValueChangeEventTracker.observe(observable);
 		combo.select(0);
 
 		assertEquals("Observable was not notified.", 1, listener.count);
@@ -92,23 +92,24 @@ public class CComboObservableValueSelectionTest {
 		}
 
 		@Override
-		public IObservableValue createObservableValue(Realm realm) {
+		public IObservableValue<Object> createObservableValue(Realm realm) {
 			return WidgetProperties.selection().observe(realm, combo);
 		}
 
 		@Override
 		public void change(IObservable observable) {
-			IObservableValue ov = (IObservableValue) observable;
+			@SuppressWarnings("unchecked")
+			IObservableValue<Object> ov = (IObservableValue<Object>) observable;
 			ov.setValue(createValue(ov));
 		}
 
 		@Override
-		public Object getValueType(IObservableValue observable) {
+		public Object getValueType(IObservableValue<?> observable) {
 			return String.class;
 		}
 
 		@Override
-		public Object createValue(IObservableValue observable) {
+		public Object createValue(IObservableValue<?> observable) {
 			CCombo combo = ((CCombo) ((ISWTObservable) observable).getWidget());
 			switch (combo.getSelectionIndex()) {
 			case -1:

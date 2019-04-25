@@ -16,9 +16,9 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -96,17 +96,17 @@ public class Snippet023ConditionalVisibility {
 
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 
-		final ISWTObservableValue rangeSelected = WidgetProperties.selection().observe(rangeButton);
-		final ISWTObservableValue textSelected = WidgetProperties.selection().observe(textButton);
+		final IObservableValue<Boolean> rangeSelected = WidgetProperties.buttonSelection().observe(rangeButton);
+		final IObservableValue<Boolean> textSelected = WidgetProperties.buttonSelection().observe(textButton);
 
 		// Note that ControlUpdater is not API.
 		new ControlUpdater(oneOfTwo) {
 			@Override
 			protected void updateControl() {
-				if (((Boolean) rangeSelected.getValue()).booleanValue()) {
+				if (rangeSelected.getValue()) {
 					stackLayout.topControl = rangeGroup;
 					oneOfTwo.layout();
-				} else if (((Boolean) textSelected.getValue()).booleanValue()) {
+				} else if (textSelected.getValue()) {
 					stackLayout.topControl = textGroup;
 					oneOfTwo.layout();
 				}

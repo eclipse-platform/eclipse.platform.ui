@@ -27,8 +27,7 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValu
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -43,8 +42,8 @@ import junit.framework.TestSuite;
  */
 public class ButtonObservableValueTest extends AbstractSWTTestCase {
 	private Button button;
-	private ISWTObservableValue observableValue;
-	private ValueChangeEventTracker listener;
+	private ISWTObservableValue<Object> observableValue;
+	private ValueChangeEventTracker<Object> listener;
 
 	@Override
 	@Before
@@ -53,8 +52,8 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 
 		Shell shell = getShell();
 		button = new Button(shell, SWT.CHECK);
-		observableValue = SWTObservables.observeSelection(button);
-		listener = new ValueChangeEventTracker();
+		observableValue = WidgetProperties.selection().observe(button);
+		listener = new ValueChangeEventTracker<>();
 	}
 
 	@Test
@@ -96,7 +95,7 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 
 	@Test
 	public void testDispose() throws Exception {
-		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
+		ValueChangeEventTracker<Object> testCounterValueChangeListener = new ValueChangeEventTracker<>();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
 
 		assertEquals(Boolean.FALSE, observableValue.getValue());
@@ -143,23 +142,23 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 		}
 
 		@Override
-		public IObservableValue createObservableValue(Realm realm) {
+		public IObservableValue<Object> createObservableValue(Realm realm) {
 			return WidgetProperties.selection().observe(realm, button);
 		}
 
 		@Override
-		public Object getValueType(IObservableValue observable) {
+		public Object getValueType(IObservableValue<?> observable) {
 			return Boolean.TYPE;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void change(IObservable observable) {
-			((IObservableValue) observable).setValue(Boolean
-					.valueOf(changeValue(button)));
+			((IObservableValue<Object>) observable).setValue(Boolean.valueOf(changeValue(button)));
 		}
 
 		@Override
-		public Object createValue(IObservableValue observable) {
+		public Object createValue(IObservableValue<?> observable) {
 			return Boolean.valueOf(changeValue(button));
 		}
 

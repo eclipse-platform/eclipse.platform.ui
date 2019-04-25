@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.beans.PojoObservables;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -41,6 +41,7 @@ import org.junit.Test;
 /**
  * @since 3.2
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 	private Bean pojo;
 	private String propertyName;

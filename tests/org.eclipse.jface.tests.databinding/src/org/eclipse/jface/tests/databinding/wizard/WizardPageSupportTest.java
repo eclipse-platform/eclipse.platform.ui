@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
@@ -60,8 +61,7 @@ public class WizardPageSupportTest extends AbstractSWTTestCase {
 			public void createControl(Composite parent) {
 				setControl(parent);
 
-				IObservableValue validation = new WritableValue(
-						ValidationStatus.ok(), IStatus.class);
+				IObservableValue<IStatus> validation = new WritableValue<>(ValidationStatus.ok(), IStatus.class);
 
 				DataBindingContext dbc = new DataBindingContext();
 				ValidationProvider validationProvider = new ValidationProvider(
@@ -196,9 +196,9 @@ public class WizardPageSupportTest extends AbstractSWTTestCase {
 		dialog.create();
 	}
 
-	private static class ValidationObservable extends AbstractObservableValue {
+	private static class ValidationObservable extends AbstractObservableValue<IStatus> {
 
-		private Object value = ValidationStatus.ok();
+		private IStatus value = ValidationStatus.ok();
 
 		private boolean stale = false;
 
@@ -207,13 +207,13 @@ public class WizardPageSupportTest extends AbstractSWTTestCase {
 		}
 
 		@Override
-		protected Object doGetValue() {
+		protected IStatus doGetValue() {
 			return value;
 		}
 
 		@Override
-		protected void doSetValue(Object value) {
-			Object oldValue = this.value;
+		protected void doSetValue(IStatus value) {
+			IStatus oldValue = this.value;
 			this.value = value;
 			if (!Util.equals(oldValue, value)) {
 				fireValueChange(Diffs.createValueDiff(oldValue, value));
@@ -245,26 +245,26 @@ public class WizardPageSupportTest extends AbstractSWTTestCase {
 
 	private static class ValidationProvider extends ValidationStatusProvider {
 
-		private final IObservableValue validation;
+		private final IObservableValue<IStatus> validation;
 
-		public ValidationProvider(IObservableValue validation) {
+		public ValidationProvider(IObservableValue<IStatus> validation) {
 			this.validation = validation;
 		}
 
 		@Override
-		public IObservableValue getValidationStatus() {
+		public IObservableValue<IStatus> getValidationStatus() {
 			return validation;
 		}
 
 		@Override
-		public IObservableList getTargets() {
-			WritableList targets = new WritableList();
+		public IObservableList<IObservable> getTargets() {
+			WritableList<IObservable> targets = new WritableList<>();
 			targets.add(validation);
 			return targets;
 		}
 
 		@Override
-		public IObservableList getModels() {
+		public IObservableList<IObservable> getModels() {
 			return Observables.emptyObservableList();
 		}
 	}

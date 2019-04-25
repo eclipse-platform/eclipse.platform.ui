@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -156,7 +156,8 @@ public class SnippetSideEffectConditionalBinding {
 
 		private void bindData() {
 
-			IObservableValue<Boolean> showDescription = WidgetProperties.selection().observe(showDescriptionButton);
+			IObservableValue<Boolean> showDescription = WidgetProperties.buttonSelection()
+					.observe(showDescriptionButton);
 
 			// create a conditional ISideEffect
 			ISideEffect personNameSideEffect = ISideEffect.create(() -> {

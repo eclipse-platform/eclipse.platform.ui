@@ -14,7 +14,9 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import org.eclipse.core.databinding.observable.IObservable;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
@@ -67,7 +69,7 @@ public class TreeContentProviderTest {
 		set3 = new AsynchronousTestSet();
 
 		// A union of the above sets
-		union = new UnionSet<>(new IObservableSet[] { set1, set2, set3 });
+		union = new UnionSet<>(new LinkedHashSet<>(Arrays.asList(set1, set2, set3)));
 
 		// Create shell
 		shell = new Shell(Display.getCurrent());
@@ -114,13 +116,13 @@ public class TreeContentProviderTest {
 		// SimpleNodes as top-level nodes, and sets of randomly generated
 		// Doubles below each
 		// SimpleNode.
-		IObservableFactory<SimpleNode, IObservable> childrenFactory = element -> {
+		IObservableFactory<Object, ? extends IObservableSet<Object>> childrenFactory = element -> {
 			// If the parent is the root node, return the union of some
 			// randomly-generated
 			// nodes and some hardcoded nodes
 			if (element == tree.getInput()) {
 				// Set of hardcoded nodes
-				WritableSet<SimpleNode> topElements = new WritableSet<>();
+				WritableSet<Object> topElements = new WritableSet<>();
 				topElements.add(new SimpleNode("Random Set 1", set1));
 				topElements.add(new SimpleNode("Random Set 2", set2));
 				topElements.add(new SimpleNode("Random Set 3", set3));
@@ -131,7 +133,7 @@ public class TreeContentProviderTest {
 			// We return a new DelegatingObservableSet in order to
 			// prevent the
 			// original from being disposed.
-			return Observables.proxyObservableSet(element.getChildren());
+			return Observables.proxyObservableSet(((SimpleNode) element).getChildren());
 		};
 
 		// Label provider for the tree
@@ -157,7 +159,7 @@ public class TreeContentProviderTest {
 
 		// UpdatableTreeContentProvider converts an ITreeProvider into a
 		// standard JFace content provider
-		ObservableSetTreeContentProvider contentProvider = new ObservableSetTreeContentProvider(
+		ObservableSetTreeContentProvider<Object> contentProvider = new ObservableSetTreeContentProvider<>(
 				childrenFactory, null);
 
 		tree.setContentProvider(contentProvider);

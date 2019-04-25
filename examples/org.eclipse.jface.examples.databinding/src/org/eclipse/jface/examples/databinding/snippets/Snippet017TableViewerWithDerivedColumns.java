@@ -20,15 +20,15 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -155,7 +155,7 @@ public class Snippet017TableViewerWithDerivedColumns {
 	// ro retrieve, this ViewModel just instantiates a model object to edit.
 	static class ViewModel {
 		// The model to bind
-		private IObservableList people = new WritableList();
+		private IObservableList<Person> people = new WritableList<>();
 		{
 			Person fergus = new Person("Fergus McDuck", UNKNOWN, UNKNOWN);
 			Person downy = new Person("Downy O'Drake", UNKNOWN, UNKNOWN);
@@ -182,7 +182,7 @@ public class Snippet017TableViewerWithDerivedColumns {
 			people.add(donald);
 		}
 
-		public IObservableList getPeople() {
+		public IObservableList<Person> getPeople() {
 			return people;
 		}
 	}
@@ -245,39 +245,29 @@ public class Snippet017TableViewerWithDerivedColumns {
 			TableViewer peopleViewer = new TableViewer(duckFamily);
 			peopleViewer.addFilter(new ViewerFilter() {
 				@Override
-				public boolean select(Viewer viewer, Object parentElement,
-						Object element) {
+				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					return element != UNKNOWN;
 				}
 			});
 
 			// Bind viewers to model
 			ViewerSupport.bind(peopleViewer, viewModel.getPeople(),
-					BeanProperties.values(new String[] { "name", "mother.name",
-							"father.name", "mother.mother.name" }));
+					BeanProperties.values("name", "mother.name", "father.name", "mother.mother.name"));
 
 			// Bind viewer selection to detail fields
-			IObservableValue selection = ViewersObservables
-					.observeSingleSelection(peopleViewer);
+			IObservableValue<Person> selection = ViewerProperties.singleSelection(Person.class).observe(peopleViewer);
 			bindingContext.bindValue(WidgetProperties.text().observe(nameText),
-					BeanProperties.value((Class) selection.getValueType(), "name", String.class).observeDetail(
-							selection));
+					BeanProperties.value(Person.class, "name", String.class).observeDetail(selection));
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
-			ViewerSupport.bind(mothercomboViewer, viewModel.getPeople(),
-					BeanProperties.value("name"));
-			bindingContext.bindValue(ViewersObservables
-					.observeSingleSelection(mothercomboViewer), BeanProperties
-					.value((Class) selection.getValueType(), "mother", Person.class)
-					.observeDetail(selection));
+			ViewerSupport.bind(mothercomboViewer, viewModel.getPeople(), BeanProperties.value("name"));
+			bindingContext.bindValue(ViewerProperties.singleSelection(Person.class).observe(mothercomboViewer),
+					BeanProperties.value(Person.class, "mother", Person.class).observeDetail(selection));
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
-			ViewerSupport.bind(fatherComboViewer, viewModel.getPeople(),
-					BeanProperties.value("name"));
-			bindingContext.bindValue(ViewersObservables
-					.observeSingleSelection(fatherComboViewer),
-					BeanProperties.value((Class) selection.getValueType(), "father", Person.class)
-					.observeDetail(selection));
+			ViewerSupport.bind(fatherComboViewer, viewModel.getPeople(), BeanProperties.value("name"));
+			bindingContext.bindValue(ViewerProperties.singleSelection(Person.class).observe(fatherComboViewer),
+					BeanProperties.value(Person.class, "father", Person.class).observeDetail(selection));
 		}
 	}
 

@@ -17,7 +17,6 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
@@ -29,7 +28,7 @@ import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -240,13 +239,12 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	}
 
 	private void bindSumAndAddendsGroup(DataBindingContext dbc) {
-		IObservableValue targetSum = WidgetProperties.text(SWT.Modify).observe(sumTarget);
-		final IObservableValue middleSum = new WritableValue(Integer.valueOf(0), Integer.TYPE);
+		IObservableValue<String> targetSum = WidgetProperties.text(SWT.Modify).observe(sumTarget);
+		final IObservableValue<Integer> middleSum = new WritableValue<>(0, Integer.TYPE);
 		dbc.bindValue(targetSum, middleSum);
 
-		final IObservableList targetAddends = new WritableList(new ArrayList(),
-				Integer.TYPE);
-		addendsTarget.setContentProvider(new ObservableListContentProvider());
+		final IObservableList<Integer> targetAddends = new WritableList<>(new ArrayList<>(), Integer.TYPE);
+		addendsTarget.setContentProvider(new ObservableListContentProvider<>());
 		addendsTarget.setInput(targetAddends);
 
 		addAddendButton.addSelectionListener(new SelectionAdapter() {
@@ -277,24 +275,20 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 			}
 		});
 
-		IObservableValue modelSum = new WritableValue(Integer.valueOf(5),
-				Integer.TYPE);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(sumModelValue),
-				modelSum);
+		IObservableValue<Integer> modelSum = new WritableValue<>(Integer.valueOf(5), Integer.TYPE);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(sumModelValue), modelSum);
 
-		IObservableList modelAddends = new WritableList(new ArrayList(),
-				Integer.TYPE);
+		IObservableList<Integer> modelAddends = new WritableList<>(new ArrayList<>(), Integer.TYPE);
 
 		MultiValidator validator = new MultiValidator() {
 			@Override
 			protected IStatus validate() {
-				Integer sum = (Integer) middleSum.getValue();
+				int sum = middleSum.getValue();
 				int actualSum = 0;
-				for (Iterator iterator = targetAddends.iterator(); iterator
-						.hasNext();) {
-					actualSum += ((Integer) iterator.next()).intValue();
+				for (int i : targetAddends) {
+					actualSum += i;
 				}
-				if (sum.intValue() != actualSum)
+				if (sum != actualSum)
 					return ValidationStatus.error("Sum of addends is "
 							+ actualSum + ", expecting " + sum);
 				return ValidationStatus.ok();
@@ -302,13 +296,11 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		};
 		dbc.addValidationStatusProvider(validator);
 
-		addendsModelValue
-				.setContentProvider(new ObservableListContentProvider());
+		addendsModelValue.setContentProvider(new ObservableListContentProvider<>());
 		addendsModelValue.setInput(modelAddends);
 
 		dbc.bindValue(validator.observeValidatedValue(middleSum), modelSum);
-		dbc.bindList(validator.observeValidatedList(targetAddends),
-				modelAddends);
+		dbc.bindList(validator.observeValidatedList(targetAddends), modelAddends);
 	}
 
 	static class MultiFieldValidationWizard extends Wizard {
