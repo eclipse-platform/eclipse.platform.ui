@@ -20,10 +20,12 @@ package org.eclipse.jface.databinding.viewers;
  * {@link ObservableSetTreeContentProvider}. This class is intended to be
  * subclassed by clients.
  *
+ * @param <E> type of the elements in the tree
+ *
  * @since 1.2
  *
  */
-public abstract class TreeStructureAdvisor {
+public abstract class TreeStructureAdvisor<E> {
 
 	/**
 	 * Returns the parent for the given element, or <code>null</code> indicating
@@ -36,7 +38,7 @@ public abstract class TreeStructureAdvisor {
 	 * @return the parent element, or <code>null</code> if it has none or if the
 	 *         parent cannot be computed
 	 */
-	public Object getParent(Object element) {
+	public E getParent(E element) {
 		return null;
 	}
 
@@ -57,7 +59,7 @@ public abstract class TreeStructureAdvisor {
 	 *         <strong>never</strong> has children, or <code>null</code> if the
 	 *         children collection should be consulted.
 	 */
-	public Boolean hasChildren(Object element) {
+	public Boolean hasChildren(E element) {
 		return null;
 	}
 

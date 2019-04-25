@@ -15,7 +15,6 @@
 
 package org.eclipse.jface.databinding.viewers;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -39,17 +38,19 @@ import org.eclipse.jface.viewers.Viewer;
  * {@link IObservableList} created by the factory, and will insert and remove
  * viewer elements to reflect the observed changes.
  *
+ * @param <E> type of the values that are provided by this object
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 1.2
  */
-public class ObservableListTreeContentProvider implements ITreeContentProvider {
-	private final ObservableCollectionTreeContentProvider impl;
+public class ObservableListTreeContentProvider<E> implements ITreeContentProvider {
+	private final ObservableCollectionTreeContentProvider<E> impl;
 
-	private static class Impl extends ObservableCollectionTreeContentProvider {
+	private static class Impl<E> extends ObservableCollectionTreeContentProvider<E> {
 		private Viewer viewer;
 
-		public Impl(IObservableFactory listFactory,
-				TreeStructureAdvisor structureAdvisor) {
+		public Impl(IObservableFactory<? super E, ? extends IObservableList<E>> listFactory,
+				TreeStructureAdvisor<? super E> structureAdvisor) {
 			super(listFactory, structureAdvisor);
 		}
 
@@ -59,58 +60,52 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 			super.inputChanged(viewer, oldInput, newInput);
 		}
 
-		private class ListChangeListener implements IListChangeListener {
-			final Object parentElement;
+		private class ListChangeListener implements IListChangeListener<E> {
+			final E parentElement;
 
-			public ListChangeListener(Object parentElement) {
+			public ListChangeListener(E parentElement) {
 				this.parentElement = parentElement;
 			}
 
 			@Override
-			public void handleListChange(ListChangeEvent event) {
+			public void handleListChange(ListChangeEvent<? extends E> event) {
 				if (isViewerDisposed())
 					return;
 
 				// Determine which elements are being added and removed
-				final Set localKnownElementAdditions = ViewerElementSet
-						.withComparer(comparer);
-				final Set localKnownElementRemovals = ViewerElementSet
-						.withComparer(comparer);
+				final Set<E> localKnownElementAdditions = ViewerElementSet.withComparer(comparer);
+				final Set<E> localKnownElementRemovals = ViewerElementSet.withComparer(comparer);
 				final boolean[] suspendRedraw = new boolean[] { false };
-				event.diff.accept(new ListDiffVisitor() {
+				event.diff.accept(new ListDiffVisitor<E>() {
 					@Override
-					public void handleAdd(int index, Object element) {
+					public void handleAdd(int index, E element) {
 						localKnownElementAdditions.add(element);
 					}
 
 					@Override
-					public void handleRemove(int index, Object element) {
+					public void handleRemove(int index, E element) {
 						localKnownElementRemovals.add(element);
 					}
 
 					@Override
-					public void handleMove(int oldIndex, int newIndex,
-							Object element) {
+					public void handleMove(int oldIndex, int newIndex, E element) {
 						suspendRedraw[0] = true;
 						// does not affect known elements
 					}
 
 					@Override
-					public void handleReplace(int index, Object oldElement,
-							Object newElement) {
+					public void handleReplace(int index, E oldElement, E newElement) {
 						suspendRedraw[0] = true;
 						super.handleReplace(index, oldElement, newElement);
 					}
 				});
 				localKnownElementRemovals.removeAll(event.getObservableList());
 
-				Set knownElementAdditions = ViewerElementSet
-						.withComparer(comparer);
+				Set<E> knownElementAdditions = ViewerElementSet.withComparer(comparer);
 				knownElementAdditions.addAll(localKnownElementAdditions);
 				knownElementAdditions.removeAll(knownElements);
 
-				Set knownElementRemovals = findPendingRemovals(parentElement,
-						localKnownElementRemovals);
+				Set<E> knownElementRemovals = findPendingRemovals(parentElement, localKnownElementRemovals);
 				knownElementRemovals.retainAll(knownElements);
 
 				knownElements.addAll(knownElementAdditions);
@@ -118,15 +113,14 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 					realizedElements.removeAll(knownElementRemovals);
 				}
 
-				for (Iterator it = localKnownElementAdditions.iterator(); it
-						.hasNext();) {
-					getOrCreateNode(it.next()).addParent(parentElement);
+				for (E element : localKnownElementAdditions) {
+					getOrCreateNode(element).addParent(parentElement);
 				}
 
 				if (suspendRedraw[0])
 					viewer.getControl().setRedraw(false);
 				try {
-					event.diff.accept(new ListDiffVisitor() {
+					event.diff.accept(new ListDiffVisitor<Object>() {
 						@Override
 						public void handleAdd(int index, Object child) {
 							viewerUpdater.insert(parentElement, child, index);
@@ -156,9 +150,8 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 						viewer.getControl().setRedraw(true);
 				}
 
-				for (Iterator it = localKnownElementRemovals.iterator(); it
-						.hasNext();) {
-					TreeNode node = getExistingNode(it.next());
+				for (E element : localKnownElementRemovals) {
+					TreeNode node = getExistingNode(element);
 					if (node != null) {
 						node.removeParent(parentElement);
 					}
@@ -172,24 +165,24 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 		}
 
 		@Override
-		protected IObservablesListener createCollectionChangeListener(
-				Object parentElement) {
+		protected IObservablesListener createCollectionChangeListener(E parentElement) {
 			return new ListChangeListener(parentElement);
 		}
 
 		@Override
-		protected void addCollectionChangeListener(
-				IObservableCollection collection, IObservablesListener listener) {
-			IObservableList list = (IObservableList) collection;
-			IListChangeListener listListener = (IListChangeListener) listener;
+		protected void addCollectionChangeListener(IObservableCollection<E> collection, IObservablesListener listener) {
+			IObservableList<E> list = (IObservableList<E>) collection;
+			@SuppressWarnings("unchecked")
+			IListChangeListener<E> listListener = (IListChangeListener<E>) listener;
 			list.addListChangeListener(listListener);
 		}
 
 		@Override
-		protected void removeCollectionChangeListener(
-				IObservableCollection collection, IObservablesListener listener) {
-			IObservableList list = (IObservableList) collection;
-			IListChangeListener listListener = (IListChangeListener) listener;
+		protected void removeCollectionChangeListener(IObservableCollection<E> collection,
+				IObservablesListener listener) {
+			IObservableList<E> list = (IObservableList<E>) collection;
+			@SuppressWarnings("unchecked")
+			IListChangeListener<E> listListener = (IListChangeListener<E>) listener;
 			list.removeListChangeListener(listListener);
 		}
 	}
@@ -210,9 +203,9 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	 *            non-null advisor if they can provide additional structural
 	 *            information about the tree.
 	 */
-	public ObservableListTreeContentProvider(IObservableFactory listFactory,
-			TreeStructureAdvisor structureAdvisor) {
-		impl = new Impl(listFactory, structureAdvisor);
+	public ObservableListTreeContentProvider(IObservableFactory<? super E, ? extends IObservableList<E>> listFactory,
+			TreeStructureAdvisor<? super E> structureAdvisor) {
+		impl = new Impl<>(listFactory, structureAdvisor);
 	}
 
 	@Override
@@ -266,7 +259,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	 *
 	 * @return readableSet of items that will need labels
 	 */
-	public IObservableSet getKnownElements() {
+	public IObservableSet<E> getKnownElements() {
 		return impl.getKnownElements();
 	}
 
@@ -278,7 +271,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	 * @return the set of known elements which have been realized in the viewer.
 	 * @since 1.3
 	 */
-	public IObservableSet getRealizedElements() {
+	public IObservableSet<E> getRealizedElements() {
 		return impl.getRealizedElements();
 	}
 }

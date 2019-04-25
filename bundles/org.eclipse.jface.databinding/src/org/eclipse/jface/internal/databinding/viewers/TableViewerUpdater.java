@@ -21,9 +21,11 @@ import org.eclipse.jface.viewers.AbstractTableViewer;
  * NON-API - A {@link ViewerUpdater} that updates {@link AbstractTableViewer}
  * instances.
  *
+ * @param <E> type of the elements in the updated viewer
+ *
  * @since 1.2
  */
-class TableViewerUpdater extends ViewerUpdater {
+class TableViewerUpdater<E> extends ViewerUpdater<E> {
 	private AbstractTableViewer viewer;
 
 	TableViewerUpdater(AbstractTableViewer viewer) {
@@ -32,17 +34,17 @@ class TableViewerUpdater extends ViewerUpdater {
 	}
 
 	@Override
-	public void insert(Object element, int position) {
+	public void insert(E element, int position) {
 		viewer.insert(element, position);
 	}
 
 	@Override
-	public void remove(Object element, int position) {
+	public void remove(E element, int position) {
 		viewer.remove(element);
 	}
 
 	@Override
-	public void replace(Object oldElement, Object newElement, int position) {
+	public void replace(E oldElement, E newElement, int position) {
 		if (isElementOrderPreserved())
 			viewer.replace(newElement, position);
 		else {

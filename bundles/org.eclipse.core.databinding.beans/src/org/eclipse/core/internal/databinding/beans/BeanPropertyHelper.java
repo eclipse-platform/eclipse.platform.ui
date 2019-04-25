@@ -202,8 +202,8 @@ public class BeanPropertyHelper {
 	 * @param propertyName
 	 * @return property descriptor or <code>null</code>
 	 */
-	/* package */public static PropertyDescriptor getValueTypePropertyDescriptor(
-			IObservableValue observable, String propertyName) {
+	/* package */public static PropertyDescriptor getValueTypePropertyDescriptor(IObservableValue<?> observable,
+			String propertyName) {
 		if (observable.getValueType() != null)
 			return getPropertyDescriptor((Class<?>) observable.getValueType(),
 					propertyName);

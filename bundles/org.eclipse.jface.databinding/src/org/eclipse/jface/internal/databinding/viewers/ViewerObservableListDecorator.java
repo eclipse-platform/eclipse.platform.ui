@@ -20,19 +20,19 @@ import org.eclipse.jface.databinding.viewers.IViewerObservableList;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * @since 3.3
+ * @param <E>
+ *            the list element type
  *
+ * @since 3.3
  */
-public class ViewerObservableListDecorator extends DecoratingObservableList
-		implements IViewerObservableList {
+public class ViewerObservableListDecorator<E> extends DecoratingObservableList<E> implements IViewerObservableList<E> {
 	private final Viewer viewer;
 
 	/**
 	 * @param decorated
 	 * @param viewer
 	 */
-	public ViewerObservableListDecorator(IObservableList decorated,
-			Viewer viewer) {
+	public ViewerObservableListDecorator(IObservableList<E> decorated, Viewer viewer) {
 		super(decorated, true);
 		this.viewer = viewer;
 	}

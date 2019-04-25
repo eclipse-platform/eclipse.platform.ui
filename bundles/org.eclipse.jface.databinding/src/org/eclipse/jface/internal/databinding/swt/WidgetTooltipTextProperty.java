@@ -22,19 +22,22 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.Widget;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public class WidgetTooltipTextProperty extends WidgetDelegatingValueProperty {
-	private IValueProperty cTabItem;
-	private IValueProperty control;
-	private IValueProperty tabItem;
-	private IValueProperty tableColumn;
-	private IValueProperty toolItem;
-	private IValueProperty trayItem;
-	private IValueProperty treeColumn;
+public class WidgetTooltipTextProperty<S extends Widget> extends WidgetDelegatingValueProperty<S, String> {
+	private IValueProperty<S, String> cTabItem;
+	private IValueProperty<S, String> control;
+	private IValueProperty<S, String> tabItem;
+	private IValueProperty<S, String> tableColumn;
+	private IValueProperty<S, String> toolItem;
+	private IValueProperty<S, String> trayItem;
+	private IValueProperty<S, String> treeColumn;
 
 	/**
 	 *
@@ -43,41 +46,42 @@ public class WidgetTooltipTextProperty extends WidgetDelegatingValueProperty {
 		super(String.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IValueProperty doGetDelegate(Object source) {
+	protected IValueProperty<S, String> doGetDelegate(S source) {
 		if (source instanceof CTabItem) {
 			if (cTabItem == null)
-				cTabItem = new CTabItemTooltipTextProperty();
+				cTabItem = (IValueProperty<S, String>) new CTabItemTooltipTextProperty();
 			return cTabItem;
 		}
 		if (source instanceof Control) {
 			if (control == null)
-				control = new ControlTooltipTextProperty();
+				control = (IValueProperty<S, String>) new ControlTooltipTextProperty();
 			return control;
 		}
 		if (source instanceof TabItem) {
 			if (tabItem == null)
-				tabItem = new TabItemTooltipTextProperty();
+				tabItem = (IValueProperty<S, String>) new TabItemTooltipTextProperty();
 			return tabItem;
 		}
 		if (source instanceof TableColumn) {
 			if (tableColumn == null)
-				tableColumn = new TableColumnTooltipTextProperty();
+				tableColumn = (IValueProperty<S, String>) new TableColumnTooltipTextProperty();
 			return tableColumn;
 		}
 		if (source instanceof ToolItem) {
 			if (toolItem == null)
-				toolItem = new ToolItemTooltipTextProperty();
+				toolItem = (IValueProperty<S, String>) new ToolItemTooltipTextProperty();
 			return toolItem;
 		}
 		if (source instanceof TrayItem) {
 			if (trayItem == null)
-				trayItem = new TrayItemTooltipTextProperty();
+				trayItem = (IValueProperty<S, String>) new TrayItemTooltipTextProperty();
 			return trayItem;
 		}
 		if (source instanceof TreeColumn) {
 			if (treeColumn == null)
-				treeColumn = new TreeColumnTooltipTextProperty();
+				treeColumn = (IValueProperty<S, String>) new TreeColumnTooltipTextProperty();
 			return treeColumn;
 		}
 		throw notSupported(source);

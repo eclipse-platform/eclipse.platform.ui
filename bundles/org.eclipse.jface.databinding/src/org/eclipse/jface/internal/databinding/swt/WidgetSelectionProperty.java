@@ -25,68 +25,72 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Widget;
 
 /**
+ * @param <S> type of the source object
+ * @param <T> type of the value of the property
+ *
  * @since 3.3
  *
  */
-public final class WidgetSelectionProperty extends
-		WidgetDelegatingValueProperty {
-	private IValueProperty button;
-	private IValueProperty cCombo;
-	private IValueProperty combo;
-	private IValueProperty dateTime;
-	private IValueProperty list;
-	private IValueProperty menuItem;
-	private IValueProperty scale;
-	private IValueProperty slider;
-	private IValueProperty spinner;
+public final class WidgetSelectionProperty<S extends Widget, T> extends WidgetDelegatingValueProperty<S, T> {
+	private IValueProperty<S, T> button;
+	private IValueProperty<S, T> cCombo;
+	private IValueProperty<S, T> combo;
+	private IValueProperty<S, T> dateTime;
+	private IValueProperty<S, T> list;
+	private IValueProperty<S, T> menuItem;
+	private IValueProperty<S, T> scale;
+	private IValueProperty<S, T> slider;
+	private IValueProperty<S, T> spinner;
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IValueProperty doGetDelegate(Object source) {
+	protected IValueProperty<S, T> doGetDelegate(S source) {
 		if (source instanceof Button) {
 			if (button == null)
-				button = new ButtonSelectionProperty();
+				button = (IValueProperty<S, T>) new ButtonSelectionProperty();
 			return button;
 		}
 		if (source instanceof CCombo) {
 			if (cCombo == null)
-				cCombo = new CComboSelectionProperty();
+				cCombo = (IValueProperty<S, T>) new CComboSelectionProperty();
 			return cCombo;
 		}
 		if (source instanceof Combo) {
 			if (combo == null)
-				combo = new ComboSelectionProperty();
+				combo = (IValueProperty<S, T>) new ComboSelectionProperty();
 			return combo;
 		}
 		if (source instanceof DateTime) {
 			if (dateTime == null)
-				dateTime = new DateTimeSelectionProperty();
+				dateTime = (IValueProperty<S, T>) new DateTimeSelectionProperty();
 			return dateTime;
 		}
 		if (source instanceof List) {
 			if (list == null)
-				list = new ListSelectionProperty();
+				list = (IValueProperty<S, T>) new ListSelectionProperty();
 			return list;
 		}
 		if (source instanceof MenuItem) {
 			if (menuItem == null)
-				menuItem = new MenuItemSelectionProperty();
+				menuItem = (IValueProperty<S, T>) new MenuItemSelectionProperty();
 			return menuItem;
 		}
 		if (source instanceof Scale) {
 			if (scale == null)
-				scale = new ScaleSelectionProperty();
+				scale = (IValueProperty<S, T>) new ScaleSelectionProperty();
 			return scale;
 		}
 		if (source instanceof Slider) {
 			if (slider == null)
-				slider = new SliderSelectionProperty();
+				slider = (IValueProperty<S, T>) new SliderSelectionProperty();
 			return slider;
 		}
 		if (source instanceof Spinner) {
 			if (spinner == null)
-				spinner = new SpinnerSelectionProperty();
+				spinner = (IValueProperty<S, T>) new SpinnerSelectionProperty();
 			return spinner;
 		}
 		throw notSupported(source);

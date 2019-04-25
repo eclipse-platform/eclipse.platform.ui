@@ -21,7 +21,7 @@ import org.eclipse.swt.custom.CCombo;
  * @since 3.3
  *
  */
-public class CComboSelectionProperty extends WidgetStringValueProperty {
+public class CComboSelectionProperty extends WidgetStringValueProperty<CCombo> {
 	/**
 	 *
 	 */
@@ -30,17 +30,16 @@ public class CComboSelectionProperty extends WidgetStringValueProperty {
 	}
 
 	@Override
-	String doGetStringValue(Object source) {
-		return ((CCombo) source).getText();
+	String doGetStringValue(CCombo source) {
+		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		CCombo ccombo = (CCombo) source;
-		String items[] = ccombo.getItems();
+	void doSetStringValue(CCombo source, String value) {
+		String items[] = source.getItems();
 		int index = -1;
 		if (value == null) {
-			ccombo.select(-1);
+			source.select(-1);
 		} else if (items != null) {
 			for (int i = 0; i < items.length; i++) {
 				if (value.equals(items[i])) {
@@ -49,9 +48,9 @@ public class CComboSelectionProperty extends WidgetStringValueProperty {
 				}
 			}
 			if (index == -1) {
-				ccombo.setText(value);
+				source.setText(value);
 			} else {
-				ccombo.select(index); // -1 will not "unselect"
+				source.select(index); // -1 will not "unselect"
 			}
 		}
 	}

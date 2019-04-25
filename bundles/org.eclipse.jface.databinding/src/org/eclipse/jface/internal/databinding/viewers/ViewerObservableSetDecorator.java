@@ -20,18 +20,19 @@ import org.eclipse.jface.databinding.viewers.IViewerObservableSet;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * @since 3.3
+ * @param <E>
+ *            the type of the elements in this set
  *
+ * @since 3.3
  */
-public class ViewerObservableSetDecorator extends DecoratingObservableSet
-		implements IViewerObservableSet {
+public class ViewerObservableSetDecorator<E> extends DecoratingObservableSet<E> implements IViewerObservableSet<E> {
 	private final Viewer viewer;
 
 	/**
 	 * @param decorated
 	 * @param viewer
 	 */
-	public ViewerObservableSetDecorator(IObservableSet decorated, Viewer viewer) {
+	public ViewerObservableSetDecorator(IObservableSet<E> decorated, Viewer viewer) {
 		super(decorated, true);
 		this.viewer = viewer;
 	}

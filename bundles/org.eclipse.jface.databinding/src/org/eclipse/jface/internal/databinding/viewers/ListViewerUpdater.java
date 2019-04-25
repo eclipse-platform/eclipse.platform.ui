@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.AbstractListViewer;
  *
  * @since 1.2
  */
-class ListViewerUpdater extends ViewerUpdater {
+class ListViewerUpdater<E> extends ViewerUpdater<E> {
 	private AbstractListViewer viewer;
 
 	ListViewerUpdater(AbstractListViewer viewer) {
@@ -32,22 +32,22 @@ class ListViewerUpdater extends ViewerUpdater {
 	}
 
 	@Override
-	public void insert(Object element, int position) {
+	public void insert(E element, int position) {
 		viewer.insert(element, position);
 	}
 
 	@Override
-	public void remove(Object element, int position) {
+	public void remove(E element, int position) {
 		viewer.remove(element);
 	}
 
 	@Override
-	public void add(Object[] elements) {
+	public void add(E[] elements) {
 		viewer.add(elements);
 	}
 
 	@Override
-	public void remove(Object[] elements) {
+	public void remove(E[] elements) {
 		viewer.remove(elements);
 	}
 }

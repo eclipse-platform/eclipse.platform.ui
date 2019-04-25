@@ -21,7 +21,7 @@ import java.util.Set;
 import org.eclipse.core.databinding.beans.IBeanMapProperty;
 import org.eclipse.core.databinding.beans.IBeanSetProperty;
 import org.eclipse.core.databinding.beans.IBeanValueProperty;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
@@ -30,19 +30,21 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.set.SetProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the set
+ *
  * @since 3.3
  *
  */
-public class PojoSetPropertyDecorator extends SetProperty implements
-		IBeanSetProperty {
-	private final ISetProperty delegate;
+public class PojoSetPropertyDecorator<S, E> extends SetProperty<S, E> implements IBeanSetProperty<S, E> {
+	private final ISetProperty<S, E> delegate;
 	private final PropertyDescriptor propertyDescriptor;
 
 	/**
 	 * @param delegate
 	 * @param propertyDescriptor
 	 */
-	public PojoSetPropertyDecorator(ISetProperty delegate,
+	public PojoSetPropertyDecorator(ISetProperty<S, E> delegate,
 			PropertyDescriptor propertyDescriptor) {
 		this.delegate = delegate;
 		this.propertyDescriptor = propertyDescriptor;
@@ -54,17 +56,17 @@ public class PojoSetPropertyDecorator extends SetProperty implements
 	}
 
 	@Override
-	protected Set doGetSet(Object source) {
+	protected Set<E> doGetSet(S source) {
 		return delegate.getSet(source);
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set) {
+	protected void doSetSet(S source, Set<E> set) {
 		delegate.setSet(source, set);
 	}
 
 	@Override
-	protected void doUpdateSet(Object source, SetDiff diff) {
+	protected void doUpdateSet(S source, SetDiff<E> diff) {
 		delegate.updateSet(source, diff);
 	}
 
@@ -74,38 +76,35 @@ public class PojoSetPropertyDecorator extends SetProperty implements
 	}
 
 	@Override
-	public IBeanMapProperty values(String propertyName) {
+	public IBeanMapProperty<S, E, Object> values(String propertyName) {
 		return values(propertyName, null);
 	}
 
 	@Override
-	public IBeanMapProperty values(String propertyName, Class valueType) {
-		Class beanClass = (Class) delegate.getElementType();
+	public <V> IBeanMapProperty<S, E, V> values(String propertyName, Class<V> valueType) {
+		@SuppressWarnings("unchecked")
+		Class<E> beanClass = (Class<E>) delegate.getElementType();
 		return values(PojoProperties.value(beanClass, propertyName, valueType));
 	}
 
 	@Override
-	public IBeanMapProperty values(IBeanValueProperty property) {
-		return new BeanMapPropertyDecorator(super.values(property),
-				property.getPropertyDescriptor());
+	public <V> IBeanMapProperty<S, E, V> values(IBeanValueProperty<? super E, V> property) {
+		return new BeanMapPropertyDecorator<>(super.values(property), property.getPropertyDescriptor());
 	}
 
 	@Override
-	public IObservableSet observe(Object source) {
-		return new BeanObservableSetDecorator(delegate.observe(source),
-				propertyDescriptor);
+	public IObservableSet<E> observe(S source) {
+		return new BeanObservableSetDecorator<>(delegate.observe(source), propertyDescriptor);
 	}
 
 	@Override
-	public IObservableSet observe(Realm realm, Object source) {
-		return new BeanObservableSetDecorator(delegate.observe(realm, source),
-				propertyDescriptor);
+	public IObservableSet<E> observe(Realm realm, S source) {
+		return new BeanObservableSetDecorator<>(delegate.observe(realm, source), propertyDescriptor);
 	}
 
 	@Override
-	public IObservableSet observeDetail(IObservableValue master) {
-		return new BeanObservableSetDecorator(delegate.observeDetail(master),
-				propertyDescriptor);
+	public <U extends S> IObservableSet<E> observeDetail(IObservableValue<U> master) {
+		return new BeanObservableSetDecorator<>(delegate.observeDetail(master), propertyDescriptor);
 	}
 
 	@Override

@@ -16,17 +16,21 @@
 package org.eclipse.jface.internal.databinding.viewers;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckable;
 
 /**
- * @since 3.3
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the set
  *
+ * @since 3.3
  */
-public class CheckboxTableViewerCheckedElementsProperty extends
-		CheckboxViewerCheckedElementsProperty {
+public class CheckboxTableViewerCheckedElementsProperty<S extends ICheckable, E>
+		extends CheckboxViewerCheckedElementsProperty<S, E> {
 	/**
 	 * @param elementType
 	 */
@@ -34,21 +38,22 @@ public class CheckboxTableViewerCheckedElementsProperty extends
 		super(elementType);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected Set doGetSet(Object source) {
+	protected Set<E> doGetSet(S source) {
 		CheckboxTableViewer viewer = (CheckboxTableViewer) source;
-		Set set = createElementSet(viewer);
-		set.addAll(Arrays.asList(viewer.getCheckedElements()));
+		Set<E> set = createElementSet(viewer);
+		set.addAll((List<E>) Arrays.asList(viewer.getCheckedElements()));
 		return set;
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set, SetDiff diff) {
+	protected void doSetSet(S source, Set<E> set, SetDiff<E> diff) {
 		doSetSet(source, set);
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set) {
+	protected void doSetSet(S source, Set<E> set) {
 		CheckboxTableViewer viewer = (CheckboxTableViewer) source;
 		viewer.setCheckedElements(set.toArray());
 	}

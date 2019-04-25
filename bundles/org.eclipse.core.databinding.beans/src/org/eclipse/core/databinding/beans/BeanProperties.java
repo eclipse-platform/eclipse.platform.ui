@@ -39,12 +39,19 @@ import org.eclipse.core.internal.databinding.beans.BeanValueProperty;
 import org.eclipse.core.internal.databinding.beans.BeanValuePropertyDecorator;
 
 /**
- * A factory for creating properties for Java objects that conform to the <a
- * href="http://java.sun.com/products/javabeans/docs/spec.html">JavaBean
+ * A factory for creating properties for Java objects that conform to the
+ * <a href="http://java.sun.com/products/javabeans/docs/spec.html">JavaBean
  * specification</a> for bound properties.
+ *
+ * @deprecated This class has replaced by the class
+ *             {@link org.eclipse.core.databinding.beans.typed.BeanProperties}.
+ *             That class creates typed property objects, while this class
+ *             creates raw property objects. This class has been preserved for
+ *             backwards compatibility reasons.
  *
  * @since 1.2
  */
+@Deprecated
 public class BeanProperties {
 	/**
 	 * Returns a value property for the given property name of an arbitrary bean

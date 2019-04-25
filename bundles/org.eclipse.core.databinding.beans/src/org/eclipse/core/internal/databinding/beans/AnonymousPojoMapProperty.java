@@ -18,41 +18,45 @@ package org.eclipse.core.internal.databinding.beans;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.property.map.DelegatingMapProperty;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <K> type of the keys to the map
+ * @param <V> type of the values in the map
+ *
  * @since 3.3
  *
  */
-public class AnonymousPojoMapProperty extends DelegatingMapProperty {
+public class AnonymousPojoMapProperty<S, K, V> extends DelegatingMapProperty<S, K, V> {
 	private final String propertyName;
 
-	private Map delegates;
+	private Map<Class<S>, IMapProperty<S, K, V>> delegates;
 
 	/**
 	 * @param propertyName
 	 * @param keyType
 	 * @param valueType
 	 */
-	public AnonymousPojoMapProperty(String propertyName, Class keyType,
-			Class valueType) {
+	public AnonymousPojoMapProperty(String propertyName, Class<K> keyType, Class<V> valueType) {
 		super(keyType, valueType);
 		this.propertyName = propertyName;
-		this.delegates = new HashMap();
+		this.delegates = new HashMap<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IMapProperty doGetDelegate(Object source) {
-		Class beanClass = source.getClass();
+	protected IMapProperty<S, K, V> doGetDelegate(S source) {
+		Class<S> beanClass = (Class<S>) source.getClass();
 		if (delegates.containsKey(beanClass))
-			return (IMapProperty) delegates.get(beanClass);
+			return delegates.get(beanClass);
 
-		IMapProperty delegate;
+		IMapProperty<S, K, V> delegate;
 		try {
 			delegate = PojoProperties.map(beanClass, propertyName,
-					(Class) getKeyType(), (Class) getValueType());
+					(Class<K>) getKeyType(), (Class<V>) getValueType());
 		} catch (IllegalArgumentException noSuchProperty) {
 			delegate = null;
 		}
@@ -63,8 +67,8 @@ public class AnonymousPojoMapProperty extends DelegatingMapProperty {
 	@Override
 	public String toString() {
 		String s = "?." + propertyName + "{:}"; //$NON-NLS-1$ //$NON-NLS-2$
-		Class keyType = (Class) getKeyType();
-		Class valueType = (Class) getValueType();
+		Class<?> keyType = (Class<?>) getKeyType();
+		Class<?> valueType = (Class<?>) getValueType();
 		if (keyType != null || valueType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(keyType) + ", " //$NON-NLS-1$//$NON-NLS-2$
 					+ BeanPropertyHelper.shortClassName(valueType) + ">"; //$NON-NLS-1$

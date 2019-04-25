@@ -15,7 +15,6 @@
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
@@ -36,20 +35,22 @@ import org.eclipse.swt.widgets.Widget;
  * NON-API - This class can be used to update a composite with automatic
  * dependency tracking.
  *
+ * @param <E> type of the elements in the model list
+ *
  * @since 1.1
  *
  */
-public abstract class CompositeUpdater {
+public abstract class CompositeUpdater<E> {
 
 	private class UpdateRunnable implements Runnable, IChangeListener {
 		private Widget widget;
-		Object element;
+		E element;
 
 		private boolean dirty = true;
 
 		private IObservable[] dependencies = new IObservable[0];
 
-		UpdateRunnable(Widget widget, Object element) {
+		UpdateRunnable(Widget widget, E element) {
 			this.widget = widget;
 			this.element = element;
 		}
@@ -99,7 +100,7 @@ public abstract class CompositeUpdater {
 
 	private class LayoutRunnable implements Runnable {
 		private boolean posted = false;
-		private Set controlsToLayout = new HashSet();
+		private Set<Control> controlsToLayout = new HashSet<>();
 
 		void add(Control toLayout) {
 			controlsToLayout.add(toLayout);
@@ -112,9 +113,7 @@ public abstract class CompositeUpdater {
 		@Override
 		public void run() {
 			posted = false;
-			theComposite.getShell().layout(
-					(Control[]) controlsToLayout
-							.toArray(new Control[controlsToLayout.size()]));
+			theComposite.getShell().layout(controlsToLayout.toArray(new Control[controlsToLayout.size()]));
 			controlsToLayout.clear();
 		}
 	}
@@ -123,8 +122,8 @@ public abstract class CompositeUpdater {
 
 	/**
 	 * To be called from {@link #updateWidget(Widget, Object)} or
-	 * {@link #createWidget(int)} if this updater's composite's layout may need
-	 * to be updated.
+	 * {@link #createWidget(int)} if this updater's composite's layout may need to
+	 * be updated.
 	 *
 	 * @param control
 	 * @since 1.2
@@ -133,9 +132,7 @@ public abstract class CompositeUpdater {
 		layoutRunnable.add(control);
 	}
 
-	private class PrivateInterface implements DisposeListener,
-			IListChangeListener {
-
+	private class PrivateInterface implements DisposeListener, IListChangeListener<E> {
 		// DisposeListener implementation
 		@Override
 		public void widgetDisposed(DisposeEvent e) {
@@ -143,12 +140,11 @@ public abstract class CompositeUpdater {
 		}
 
 		@Override
-		public void handleListChange(ListChangeEvent event) {
-			ListDiffEntry[] diffs = event.diff.getDifferences();
-			for (ListDiffEntry listDiffEntry : diffs) {
+		public void handleListChange(ListChangeEvent<? extends E> event) {
+			ListDiffEntry<? extends E>[] diffs = event.diff.getDifferences();
+			for (ListDiffEntry<? extends E> listDiffEntry : diffs) {
 				if (listDiffEntry.isAddition()) {
-					createChild(listDiffEntry.getElement(), listDiffEntry
-							.getPosition());
+					createChild(listDiffEntry.getElement(), listDiffEntry.getPosition());
 				} else {
 					disposeWidget(listDiffEntry.getPosition());
 				}
@@ -162,7 +158,7 @@ public abstract class CompositeUpdater {
 
 	private Composite theComposite;
 
-	private IObservableList model;
+	private IObservableList<? extends E> model;
 
 	/**
 	 * Creates an updater for the given control and list. For each element of
@@ -174,7 +170,7 @@ public abstract class CompositeUpdater {
 	 * @param model
 	 *            an observable list to track
 	 */
-	public CompositeUpdater(Composite toUpdate, IObservableList model) {
+	public CompositeUpdater(Composite toUpdate, IObservableList<? extends E> model) {
 		this.theComposite = toUpdate;
 		this.model = model;
 
@@ -183,9 +179,7 @@ public abstract class CompositeUpdater {
 		ObservableTracker.setIgnore(true);
 		try {
 			int index = 0;
-			for (Iterator it = CompositeUpdater.this.model.iterator(); it
-					.hasNext();) {
-				Object element = it.next();
+			for (E element : CompositeUpdater.this.model) {
 				createChild(element, index++);
 			}
 		} finally {
@@ -216,15 +210,14 @@ public abstract class CompositeUpdater {
 	 * Creates a new child widget for the target composite at the given index.
 	 *
 	 * <p>
-	 * Subclasses should implement this method to provide the code that creates
-	 * a child widget at a specific index. Note that
+	 * Subclasses should implement this method to provide the code that creates a
+	 * child widget at a specific index. Note that
 	 * {@link #updateWidget(Widget, Object)} will be called after this method
 	 * returns. Only those properties of the widget that don't change over time
 	 * should be set in this method.
 	 * </p>
 	 *
-	 * @param index
-	 *            the at which to create the widget
+	 * @param index the at which to create the widget
 	 * @return the widget
 	 */
 	protected abstract Widget createWidget(int index);
@@ -244,12 +237,11 @@ public abstract class CompositeUpdater {
 	 * @param element
 	 *            the element associated with the widget
 	 */
-	protected abstract void updateWidget(Widget widget, Object element);
+	protected abstract void updateWidget(Widget widget, E element);
 
-	void createChild(Object element, int index) {
+	void createChild(E element, int index) {
 		Widget newChild = createWidget(index);
-		final UpdateRunnable updateRunnable = new UpdateRunnable(newChild,
-				element);
+		final UpdateRunnable updateRunnable = new UpdateRunnable(newChild, element);
 		newChild.setData(updateRunnable);
 		updateRunnable.updateIfNecessary();
 	}

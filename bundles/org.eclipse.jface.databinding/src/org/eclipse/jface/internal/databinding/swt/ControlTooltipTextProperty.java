@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.3
  *
  */
-public class ControlTooltipTextProperty extends WidgetStringValueProperty {
+public class ControlTooltipTextProperty extends WidgetStringValueProperty<Control> {
 	@Override
-	String doGetStringValue(Object source) {
-		return ((Control) source).getToolTipText();
+	String doGetStringValue(Control source) {
+		return source.getToolTipText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((Control) source).setToolTipText(value);
+	void doSetStringValue(Control source, String value) {
+		source.setToolTipText(value);
 	}
 
 	@Override

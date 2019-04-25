@@ -26,18 +26,19 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableMap}.
  *
+ * @param <K> type of the keys in the map
+ * @param <V> type of the values in the map
+ *
  * @since 3.3
  */
-public class BeanObservableMapDecorator extends DecoratingObservableMap
-		implements IBeanObservable {
+public class BeanObservableMapDecorator<K, V> extends DecoratingObservableMap<K, V> implements IBeanObservable {
 	private PropertyDescriptor propertyDescriptor;
 
 	/**
 	 * @param decorated
 	 * @param propertyDescriptor
 	 */
-	public BeanObservableMapDecorator(IObservableMap decorated,
-			PropertyDescriptor propertyDescriptor) {
+	public BeanObservableMapDecorator(IObservableMap<K, V> decorated, PropertyDescriptor propertyDescriptor) {
 		super(decorated, true);
 		this.propertyDescriptor = propertyDescriptor;
 	}

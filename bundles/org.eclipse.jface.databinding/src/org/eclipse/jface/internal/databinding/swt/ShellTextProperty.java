@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.3
  *
  */
-public class ShellTextProperty extends WidgetStringValueProperty {
+public class ShellTextProperty extends WidgetStringValueProperty<Shell> {
 	@Override
-	String doGetStringValue(Object source) {
-		return ((Shell) source).getText();
+	String doGetStringValue(Shell source) {
+		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((Shell) source).setText(value == null ? "" : value); //$NON-NLS-1$
+	void doSetStringValue(Shell source, String value) {
+		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	@Override

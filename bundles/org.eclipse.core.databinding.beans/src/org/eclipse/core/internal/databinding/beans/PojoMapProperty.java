@@ -25,21 +25,24 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <K> type of the keys to the map
+ * @param <V> type of the values in the map
+ *
  * @since 3.3
  *
  */
-public class PojoMapProperty extends SimpleMapProperty {
+public class PojoMapProperty<S, K, V> extends SimpleMapProperty<S, K, V> {
 	private final PropertyDescriptor propertyDescriptor;
-	private final Class keyType;
-	private final Class valueType;
+	private final Class<K> keyType;
+	private final Class<V> valueType;
 
 	/**
 	 * @param propertyDescriptor
 	 * @param keyType
 	 * @param valueType
 	 */
-	public PojoMapProperty(PropertyDescriptor propertyDescriptor,
-			Class keyType, Class valueType) {
+	public PojoMapProperty(PropertyDescriptor propertyDescriptor, Class<K> keyType, Class<V> valueType) {
 		this.propertyDescriptor = propertyDescriptor;
 		this.keyType = keyType;
 		this.valueType = valueType;
@@ -56,30 +59,29 @@ public class PojoMapProperty extends SimpleMapProperty {
 	}
 
 	@Override
-	protected Map doGetMap(Object source) {
-		return asMap(BeanPropertyHelper
-				.readProperty(source, propertyDescriptor));
+	protected Map<K, V> doGetMap(S source) {
+		return asMap(BeanPropertyHelper.readProperty(source, propertyDescriptor));
 	}
 
-	private Map asMap(Object propertyValue) {
+	@SuppressWarnings("unchecked")
+	private Map<K, V> asMap(Object propertyValue) {
 		if (propertyValue == null)
-			return new HashMap();
-		return (Map) propertyValue;
+			return new HashMap<>();
+		return (Map<K, V>) propertyValue;
 	}
 
 	@Override
-	protected void doSetMap(Object source, Map map, MapDiff diff) {
+	protected void doSetMap(S source, Map<K, V> map, MapDiff<K, V> diff) {
 		doSetMap(source, map);
 	}
 
 	@Override
-	protected void doSetMap(Object source, Map map) {
+	protected void doSetMap(S source, Map<K, V> map) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, MapDiff<K, V>> listener) {
 		return null;
 	}
 

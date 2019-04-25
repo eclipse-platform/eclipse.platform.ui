@@ -36,10 +36,13 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * use with {@link StructuredViewer} which uses {@link IElementComparer} for
  * element comparisons.
  *
+ * @param <E>
+ *            the type of elements maintained by this set
+ *
  * @since 1.2
  */
-public class ViewerElementSet implements Set {
-	private final Set wrappedSet;
+public class ViewerElementSet<E> implements Set<E> {
+	private final Set<ViewerElementWrapper<E>> wrappedSet;
 	private final IElementComparer comparer;
 
 	/**
@@ -50,7 +53,7 @@ public class ViewerElementSet implements Set {
 	 */
 	public ViewerElementSet(IElementComparer comparer) {
 		Assert.isNotNull(comparer);
-		this.wrappedSet = new HashSet();
+		this.wrappedSet = new HashSet<>();
 		this.comparer = comparer;
 	}
 
@@ -63,21 +66,21 @@ public class ViewerElementSet implements Set {
 	 * @param comparer
 	 *            the {@link IElementComparer} used for comparing elements.
 	 */
-	public ViewerElementSet(Collection collection, IElementComparer comparer) {
+	public ViewerElementSet(Collection<? extends E> collection, IElementComparer comparer) {
 		this(comparer);
 		addAll(collection);
 	}
 
 	@Override
-	public boolean add(Object o) {
-		return wrappedSet.add(new ViewerElementWrapper(o, comparer));
+	public boolean add(E o) {
+		return wrappedSet.add(new ViewerElementWrapper<>(o, comparer));
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		boolean changed = false;
-		for (Iterator iterator = c.iterator(); iterator.hasNext();)
-			changed |= wrappedSet.add(new ViewerElementWrapper(iterator.next(),
+		for (Iterator<? extends E> iterator = c.iterator(); iterator.hasNext();)
+			changed |= wrappedSet.add(new ViewerElementWrapper<>(iterator.next(),
 					comparer));
 		return changed;
 	}
@@ -87,16 +90,17 @@ public class ViewerElementSet implements Set {
 		wrappedSet.clear();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean contains(Object o) {
-		return wrappedSet.contains(new ViewerElementWrapper(o, comparer));
+		return wrappedSet.contains(new ViewerElementWrapper<>((E) o, comparer));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean containsAll(Collection c) {
-		for (Iterator iterator = c.iterator(); iterator.hasNext();)
-			if (!wrappedSet.contains(new ViewerElementWrapper(iterator.next(),
-					comparer)))
+	public boolean containsAll(Collection<?> c) {
+		for (Iterator<?> iterator = c.iterator(); iterator.hasNext();)
+			if (!wrappedSet.contains(new ViewerElementWrapper<>((E) iterator.next(), comparer)))
 				return false;
 		return true;
 	}
@@ -107,17 +111,17 @@ public class ViewerElementSet implements Set {
 	}
 
 	@Override
-	public Iterator iterator() {
-		final Iterator wrappedIterator = wrappedSet.iterator();
-		return new Iterator() {
+	public Iterator<E> iterator() {
+		final Iterator<ViewerElementWrapper<E>> wrappedIterator = wrappedSet.iterator();
+		return new Iterator<E>() {
 			@Override
 			public boolean hasNext() {
 				return wrappedIterator.hasNext();
 			}
 
 			@Override
-			public Object next() {
-				return ((ViewerElementWrapper) wrappedIterator.next()).unwrap();
+			public E next() {
+				return wrappedIterator.next().unwrap();
 			}
 
 			@Override
@@ -127,28 +131,31 @@ public class ViewerElementSet implements Set {
 		};
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
-		return wrappedSet.remove(new ViewerElementWrapper(o, comparer));
+		return wrappedSet.remove(new ViewerElementWrapper<>((E) o, comparer));
 	}
 
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		boolean changed = false;
-		for (Iterator iterator = c.iterator(); iterator.hasNext();)
+		for (Iterator<?> iterator = c.iterator(); iterator.hasNext();)
 			changed |= remove(iterator.next());
 		return changed;
 	}
 
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		// Have to do this the slow way to ensure correct comparisons. i.e.
 		// cannot delegate to c.contains(it) since we can't be sure will
 		// compare elements the way we want.
 		boolean changed = false;
-		Object[] retainAll = c.toArray();
-		outer: for (Iterator iterator = iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
+		@SuppressWarnings("unchecked")
+		E[] retainAll = (E[]) c.toArray();
+		outer: for (Iterator<?> iterator = iterator(); iterator.hasNext();) {
+			@SuppressWarnings("unchecked")
+			E element = (E) iterator.next();
 			for (int i = 0; i < retainAll.length; i++) {
 				if (comparer.equals(element, retainAll[i])) {
 					continue outer;
@@ -170,14 +177,15 @@ public class ViewerElementSet implements Set {
 		return toArray(new Object[wrappedSet.size()]);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object[] toArray(Object[] a) {
+	public <T> T[] toArray(T[] a) {
 		int size = wrappedSet.size();
-		ViewerElementWrapper[] wrappedArray = (ViewerElementWrapper[]) wrappedSet
+		ViewerElementWrapper<T>[] wrappedArray = wrappedSet
 				.toArray(new ViewerElementWrapper[size]);
-		Object[] result = a;
+		T[] result = a;
 		if (a.length < size) {
-			result = (Object[]) Array.newInstance(a.getClass()
+			result = (T[]) Array.newInstance(a.getClass()
 					.getComponentType(), size);
 		}
 		for (int i = 0; i < size; i++)
@@ -191,14 +199,14 @@ public class ViewerElementSet implements Set {
 			return true;
 		if (!(obj instanceof Set))
 			return false;
-		Set that = (Set) obj;
+		Set<?> that = (Set<?>) obj;
 		return size() == that.size() && containsAll(that);
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 0;
-		for (Iterator iterator = iterator(); iterator.hasNext();) {
+		for (Iterator<?> iterator = iterator(); iterator.hasNext();) {
 			Object element = iterator.next();
 			hash += element == null ? 0 : element.hashCode();
 		}
@@ -216,9 +224,9 @@ public class ViewerElementSet implements Set {
 	 * @return a Set for holding viewer elements, using the given
 	 *         {@link IElementComparer} for comparisons.
 	 */
-	public static Set withComparer(IElementComparer comparer) {
+	public static <E> Set<E> withComparer(IElementComparer comparer) {
 		if (comparer == null)
-			return new HashSet();
-		return new ViewerElementSet(comparer);
+			return new HashSet<>();
+		return new ViewerElementSet<>(comparer);
 	}
 }

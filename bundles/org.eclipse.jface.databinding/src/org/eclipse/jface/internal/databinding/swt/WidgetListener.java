@@ -16,6 +16,7 @@
 
 package org.eclipse.jface.internal.databinding.swt;
 
+import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.NativePropertyListener;
@@ -25,9 +26,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
+ * @param <S>
+ *            type of the source object
+ * @param <D>
+ *            type of the diff handled by this listener
  * @since 3.3
  */
-public class WidgetListener extends NativePropertyListener implements Listener {
+public class WidgetListener<S, D extends IDiff> extends NativePropertyListener<S, D>
+		implements Listener {
 	private final int[] changeEvents;
 	private final int[] staleEvents;
 
@@ -37,65 +43,62 @@ public class WidgetListener extends NativePropertyListener implements Listener {
 	 * @param changeEvents
 	 * @param staleEvents
 	 */
-	public WidgetListener(IProperty property, ISimplePropertyListener listener,
-			int[] changeEvents, int[] staleEvents) {
+	public WidgetListener(IProperty property, ISimplePropertyListener<S, D> listener, int[] changeEvents,
+			int[] staleEvents) {
 		super(property, listener);
 		this.changeEvents = changeEvents;
 		this.staleEvents = staleEvents;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void handleEvent(Event event) {
 		if (staleEvents != null)
 			for (int staleEvent : staleEvents)
 				if (event.type == staleEvent) {
-					fireStale(event.widget);
+					fireStale((S) event.widget);
 					break;
 				}
 
 		if (changeEvents != null)
 			for (int changeEvent : changeEvents)
 				if (event.type == changeEvent) {
-					fireChange(event.widget, null);
+					fireChange((S) event.widget, null);
 					break;
 				}
 	}
 
 	@Override
-	protected void doAddTo(Object source) {
-		Widget widget = (Widget) source;
+	protected void doAddTo(S source) {
 		if (changeEvents != null) {
 			for (int event : changeEvents) {
 				if (event != SWT.None) {
-					WidgetListenerUtil.asyncAddListener(widget, event, this);
+					WidgetListenerUtil.asyncAddListener((Widget) source, event, this);
 				}
 			}
 		}
 		if (staleEvents != null) {
 			for (int event : staleEvents) {
 				if (event != SWT.None) {
-					WidgetListenerUtil.asyncAddListener(widget, event, this);
+					WidgetListenerUtil.asyncAddListener((Widget) source, event, this);
 				}
 			}
 		}
 	}
 
 	@Override
-	protected void doRemoveFrom(Object source) {
-		Widget widget = (Widget) source;
-		if (!widget.isDisposed()) {
+	protected void doRemoveFrom(S source) {
+		if (!((Widget) source).isDisposed()) {
 			if (changeEvents != null) {
 				for (int event : changeEvents) {
 					if (event != SWT.None)
-						WidgetListenerUtil.asyncRemoveListener(widget, event,
-								this);
+						WidgetListenerUtil.asyncRemoveListener((Widget) source, event, this);
 				}
 			}
 			if (staleEvents != null) {
 				for (int event : staleEvents) {
 					if (event != SWT.None) {
-						WidgetListenerUtil.asyncRemoveListener(widget, event,
-								this);
+						WidgetListenerUtil.asyncRemoveListener((Widget) source, event, this);
 					}
 				}
 			}

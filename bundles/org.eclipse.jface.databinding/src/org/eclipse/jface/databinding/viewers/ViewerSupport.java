@@ -46,8 +46,11 @@ public class ViewerSupport {
 	 * @param labelProperty
 	 *            the property to use for labels
 	 */
-	public static void bind(StructuredViewer viewer, IObservableList input, IValueProperty labelProperty) {
-		bind(viewer, input, new IValueProperty[] { labelProperty });
+	public static <E> void bind(StructuredViewer viewer, IObservableList<E> input,
+			IValueProperty<? super E, ?> labelProperty) {
+		@SuppressWarnings("unchecked")
+		IValueProperty<? super E, ?>[] labelPropertyArray = new IValueProperty[] { labelProperty };
+		bind(viewer, input, labelPropertyArray);
 	}
 
 	/**
@@ -62,14 +65,18 @@ public class ViewerSupport {
 	 *            the respective properties to use for labels in each of the
 	 *            viewer's columns
 	 */
-	public static void bind(StructuredViewer viewer, IObservableList input, IValueProperty... labelProperties) {
-		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+	@SafeVarargs
+	public static <E> void bind(StructuredViewer viewer, IObservableList<E> input,
+			IValueProperty<? super E, ?>... labelProperties) {
+		ObservableListContentProvider<E> contentProvider = new ObservableListContentProvider<>();
 		if (viewer.getInput() != null)
 			viewer.setInput(null);
 		viewer.setContentProvider(contentProvider);
-		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
-				.observeEach(contentProvider.getKnownElements(),
-						labelProperties)));
+
+		// Use <?, ?> in parameter type but cast to object to avoid
+		// being too inconvenient to callers
+		viewer.setLabelProvider(new ObservableMapLabelProvider(
+				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
 		if (input != null)
 			viewer.setInput(input);
 	}
@@ -85,9 +92,11 @@ public class ViewerSupport {
 	 * @param labelProperty
 	 *            the property to use for labels
 	 */
-	public static void bind(StructuredViewer viewer, IObservableSet input,
-			IValueProperty labelProperty) {
-		bind(viewer, input, new IValueProperty[] { labelProperty });
+	public static <E> void bind(StructuredViewer viewer, IObservableSet<E> input,
+			IValueProperty<? super E, ?> labelProperty) {
+		@SuppressWarnings("unchecked")
+		IValueProperty<? super E, ?>[] labelPropertyArray = new IValueProperty[] { labelProperty };
+		bind(viewer, input, labelPropertyArray);
 	}
 
 	/**
@@ -102,14 +111,16 @@ public class ViewerSupport {
 	 *            the respective properties to use for labels in each of the
 	 *            viewer's columns
 	 */
-	public static void bind(StructuredViewer viewer, IObservableSet input, IValueProperty... labelProperties) {
-		ObservableSetContentProvider contentProvider = new ObservableSetContentProvider();
+	@SafeVarargs
+	public static <E> void bind(StructuredViewer viewer, IObservableSet<E> input,
+			IValueProperty<? super E, ?>... labelProperties) {
+		ObservableSetContentProvider<E> contentProvider = new ObservableSetContentProvider<>();
 		if (viewer.getInput() != null)
 			viewer.setInput(null);
 		viewer.setContentProvider(contentProvider);
-		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
-				.observeEach(contentProvider.getKnownElements(),
-						labelProperties)));
+
+		viewer.setLabelProvider(new ObservableMapLabelProvider(
+				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
 		if (input != null)
 			viewer.setInput(input);
 	}
@@ -128,10 +139,11 @@ public class ViewerSupport {
 	 * @param labelProperty
 	 *            the property to use for labels
 	 */
-	public static void bind(AbstractTreeViewer viewer, Object input,
-			IListProperty childrenProperty, IValueProperty labelProperty) {
-		bind(viewer, input, childrenProperty,
-				new IValueProperty[] { labelProperty });
+	public static <E> void bind(AbstractTreeViewer viewer, E input,
+			IListProperty<? super E, ? extends E> childrenProperty, IValueProperty<? super E, ?> labelProperty) {
+		@SuppressWarnings("unchecked")
+		IValueProperty<? super E, ?>[] labelPropertyArray = new IValueProperty[] { labelProperty };
+		bind(viewer, input, childrenProperty, labelPropertyArray);
 	}
 
 	/**
@@ -149,17 +161,18 @@ public class ViewerSupport {
 	 *            the respective properties to use for labels in each of the
 	 *            viewer's columns
 	 */
-	public static void bind(AbstractTreeViewer viewer, Object input, IListProperty childrenProperty,
-			IValueProperty... labelProperties) {
+	@SafeVarargs
+	public static <E> void bind(AbstractTreeViewer viewer, E input,
+			IListProperty<? super E, ? extends E> childrenProperty, IValueProperty<? super E, ?>... labelProperties) {
 		Realm realm = DisplayRealm.getRealm(viewer.getControl().getDisplay());
-		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
+
+		ObservableListTreeContentProvider<? extends E> contentProvider = new ObservableListTreeContentProvider<>(
 				childrenProperty.listFactory(realm), null);
 		if (viewer.getInput() != null)
 			viewer.setInput(null);
 		viewer.setContentProvider(contentProvider);
-		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
-				.observeEach(contentProvider.getKnownElements(),
-						labelProperties)));
+		viewer.setLabelProvider(new ObservableMapLabelProvider(
+				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
 		if (input != null)
 			viewer.setInput(input);
 	}
@@ -178,10 +191,12 @@ public class ViewerSupport {
 	 * @param labelProperty
 	 *            the property to use for labels
 	 */
-	public static void bind(AbstractTreeViewer viewer, Object input,
-			ISetProperty childrenProperty, IValueProperty labelProperty) {
-		bind(viewer, input, childrenProperty,
-				new IValueProperty[] { labelProperty });
+	public static <E> void bind(AbstractTreeViewer viewer, E input,
+			ISetProperty<? super E, ? extends E> childrenProperty,
+			IValueProperty<? super E, ?> labelProperty) {
+		@SuppressWarnings("unchecked")
+		IValueProperty<? super E, ?>[] labelPropertyArray = new IValueProperty[] { labelProperty };
+		bind(viewer, input, childrenProperty, labelPropertyArray);
 	}
 
 	/**
@@ -199,17 +214,20 @@ public class ViewerSupport {
 	 *            the respective properties to use for labels in each of the
 	 *            viewer's columns
 	 */
-	public static void bind(AbstractTreeViewer viewer, Object input, ISetProperty childrenProperty,
-			IValueProperty... labelProperties) {
+	@SafeVarargs
+	public static <E> void bind(AbstractTreeViewer viewer, E input,
+			ISetProperty<? super E, ? extends E> childrenProperty, IValueProperty<? super E, ?>... labelProperties) {
 		Realm realm = DisplayRealm.getRealm(viewer.getControl().getDisplay());
-		ObservableSetTreeContentProvider contentProvider = new ObservableSetTreeContentProvider(
+
+		ObservableSetTreeContentProvider<? extends E> contentProvider = new ObservableSetTreeContentProvider<>(
 				childrenProperty.setFactory(realm), null);
 		if (viewer.getInput() != null)
 			viewer.setInput(null);
 		viewer.setContentProvider(contentProvider);
-		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
-				.observeEach(contentProvider.getKnownElements(),
-						labelProperties)));
+
+
+		viewer.setLabelProvider(new ObservableMapLabelProvider(
+				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
 		if (input != null)
 			viewer.setInput(input);
 	}

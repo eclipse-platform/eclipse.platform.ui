@@ -28,22 +28,25 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the list
+ *
  * @since 3.3
  *
  */
-public class PojoListProperty extends SimpleListProperty {
+public class PojoListProperty<S, E> extends SimpleListProperty<S, E> {
 	private final PropertyDescriptor propertyDescriptor;
-	private final Class elementType;
+	private final Class<E> elementType;
 
 	/**
 	 * @param propertyDescriptor
 	 * @param elementType
 	 */
-	public PojoListProperty(PropertyDescriptor propertyDescriptor,
-			Class elementType) {
+	@SuppressWarnings("unchecked")
+	public PojoListProperty(PropertyDescriptor propertyDescriptor, Class<E> elementType) {
 		this.propertyDescriptor = propertyDescriptor;
-		this.elementType = elementType == null ? BeanPropertyHelper
-				.getCollectionPropertyElementType(propertyDescriptor)
+		this.elementType = elementType == null
+				? (Class<E>) BeanPropertyHelper.getCollectionPropertyElementType(propertyDescriptor)
 				: elementType;
 	}
 
@@ -53,37 +56,34 @@ public class PojoListProperty extends SimpleListProperty {
 	}
 
 	@Override
-	protected List doGetList(Object source) {
-		return asList(BeanPropertyHelper.readProperty(source,
-				propertyDescriptor));
+	protected List<E> doGetList(S source) {
+		return asList(BeanPropertyHelper.readProperty(source, propertyDescriptor));
 	}
 
-	private List asList(Object propertyValue) {
+	@SuppressWarnings("unchecked")
+	private List<E> asList(Object propertyValue) {
 		if (propertyValue == null)
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		if (propertyDescriptor.getPropertyType().isArray())
-			return Arrays.asList((Object[]) propertyValue);
-		return (List) propertyValue;
+			return Arrays.asList((E[]) propertyValue);
+		return (List<E>) propertyValue;
 	}
 
 	@Override
-	protected void doSetList(Object source, List list, ListDiff diff) {
+	protected void doSetList(S source, List<E> list, ListDiff<E> diff) {
 		doSetList(source, list);
 	}
 
 	@Override
-	protected void doSetList(Object source, List list) {
-		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
-				convertListToBeanPropertyType(list));
+	protected void doSetList(S source, List<E> list) {
+		BeanPropertyHelper.writeProperty(source, propertyDescriptor, convertListToBeanPropertyType(list));
 	}
 
-	private Object convertListToBeanPropertyType(List list) {
+	private Object convertListToBeanPropertyType(List<E> list) {
 		Object propertyValue = list;
 		if (propertyDescriptor.getPropertyType().isArray()) {
-			Class componentType = propertyDescriptor.getPropertyType()
-					.getComponentType();
-			Object[] array = (Object[]) Array.newInstance(componentType, list
-					.size());
+			Class<?> componentType = propertyDescriptor.getPropertyType().getComponentType();
+			Object[] array = (Object[]) Array.newInstance(componentType, list.size());
 			list.toArray(array);
 			propertyValue = array;
 		}
@@ -91,8 +91,7 @@ public class PojoListProperty extends SimpleListProperty {
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, ListDiff<E>> listener) {
 		return null;
 	}
 

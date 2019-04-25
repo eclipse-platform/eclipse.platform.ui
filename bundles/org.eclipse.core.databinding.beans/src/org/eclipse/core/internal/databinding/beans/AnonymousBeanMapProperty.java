@@ -18,41 +18,44 @@ package org.eclipse.core.internal.databinding.beans;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.property.map.DelegatingMapProperty;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <K> type of the keys to the map
+ * @param <V> type of the values in the map
+ *
  * @since 3.3
  *
  */
-public class AnonymousBeanMapProperty extends DelegatingMapProperty {
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class AnonymousBeanMapProperty<S, K, V> extends DelegatingMapProperty<S, K, V> {
 	private final String propertyName;
 
-	private Map delegates;
+	private Map<Class<S>, IMapProperty<S, K, V>> delegates;
 
 	/**
 	 * @param propertyName
 	 * @param keyType
 	 * @param valueType
 	 */
-	public AnonymousBeanMapProperty(String propertyName, Class keyType,
-			Class valueType) {
+	public AnonymousBeanMapProperty(String propertyName, Class<?> keyType, Class<?> valueType) {
 		super(keyType, valueType);
 		this.propertyName = propertyName;
 		this.delegates = new HashMap();
 	}
 
 	@Override
-	protected IMapProperty doGetDelegate(Object source) {
-		Class beanClass = source.getClass();
+	protected IMapProperty<S, K, V> doGetDelegate(S source) {
+		Class<S> beanClass = (Class<S>) source.getClass();
 		if (delegates.containsKey(beanClass))
-			return (IMapProperty) delegates.get(beanClass);
+			return delegates.get(beanClass);
 
-		IMapProperty delegate;
+		IMapProperty<S, K, V> delegate;
 		try {
-			delegate = BeanProperties.map(beanClass, propertyName,
-					(Class) getKeyType(), (Class) getValueType());
+			delegate = BeanProperties.map(beanClass, propertyName, (Class<K>) getKeyType(), (Class<V>) getValueType());
 		} catch (IllegalArgumentException noSuchProperty) {
 			delegate = null;
 		}

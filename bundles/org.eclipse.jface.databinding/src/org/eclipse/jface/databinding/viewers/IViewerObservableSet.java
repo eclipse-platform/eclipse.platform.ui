@@ -19,8 +19,10 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 /**
  * {@link IObservableSet} observing a JFace Viewer.
  *
- * @since 1.2
+ * @param <E>
+ *            the type of the elements in this set
  *
+ * @since 1.2
  */
-public interface IViewerObservableSet extends IObservableSet, IViewerObservable {
+public interface IViewerObservableSet<E> extends IObservableSet<E>, IViewerObservable {
 }

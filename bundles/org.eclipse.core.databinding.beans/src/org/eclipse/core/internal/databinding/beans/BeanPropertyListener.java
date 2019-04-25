@@ -24,47 +24,48 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.NativePropertyListener;
 
 /**
+ * @param <S> type of the source object
+ * @param <T> type of the property value that is being listened to
+ * @param <D> type of the diff handled by this listener
  * @since 3.3
  *
  */
-public abstract class BeanPropertyListener extends NativePropertyListener
+public abstract class BeanPropertyListener<S, T, D extends IDiff> extends NativePropertyListener<S, D>
 		implements PropertyChangeListener {
 	private final PropertyDescriptor propertyDescriptor;
 
-	protected BeanPropertyListener(IProperty property,
-			PropertyDescriptor propertyDescriptor,
-			ISimplePropertyListener listener) {
+	protected BeanPropertyListener(IProperty property, PropertyDescriptor propertyDescriptor,
+			ISimplePropertyListener<S, D> listener) {
 		super(property, listener);
 		this.propertyDescriptor = propertyDescriptor;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(java.beans.PropertyChangeEvent evt) {
 		if (evt.getPropertyName() == null
 				|| propertyDescriptor.getName().equals(evt.getPropertyName())) {
 			Object oldValue = evt.getOldValue();
 			Object newValue = evt.getNewValue();
-			IDiff diff;
-			if (evt.getPropertyName() == null || oldValue == null
-					|| newValue == null)
+			D diff;
+			if (evt.getPropertyName() == null || oldValue == null || newValue == null) {
 				diff = null;
-			else
-				diff = computeDiff(oldValue, newValue);
-			fireChange(evt.getSource(), diff);
+			} else {
+				diff = computeDiff((T) oldValue, (T) newValue);
+			}
+			fireChange((S) evt.getSource(), diff);
 		}
 	}
 
-	protected abstract IDiff computeDiff(Object oldValue, Object newValue);
+	protected abstract D computeDiff(T oldValue, T newValue);
 
 	@Override
 	protected void doAddTo(Object source) {
-		BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
-				.getName(), this);
+		BeanPropertyListenerSupport.hookListener(source, propertyDescriptor.getName(), this);
 	}
 
 	@Override
 	protected void doRemoveFrom(Object source) {
-		BeanPropertyListenerSupport.unhookListener(source, propertyDescriptor
-				.getName(), this);
+		BeanPropertyListenerSupport.unhookListener(source, propertyDescriptor.getName(), this);
 	}
 }

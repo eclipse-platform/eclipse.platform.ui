@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Scale;
  * @since 3.3
  *
  */
-public class ScaleMaximumProperty extends WidgetIntValueProperty {
+public class ScaleMaximumProperty extends WidgetIntValueProperty<Scale> {
 	@Override
-	int doGetIntValue(Object source) {
-		return ((Scale) source).getMaximum();
+	int doGetIntValue(Scale source) {
+		return source.getMaximum();
 	}
 
 	@Override
-	void doSetIntValue(Object source, int value) {
-		((Scale) source).setMaximum(value);
+	void doSetIntValue(Scale source, int value) {
+		source.setMaximum(value);
 	}
 
 	@Override

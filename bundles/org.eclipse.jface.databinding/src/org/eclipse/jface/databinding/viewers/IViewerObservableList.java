@@ -19,9 +19,10 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 /**
  * {@link IObservableList} observing a JFace Viewer.
  *
- * @since 1.2
+ * @param <E>
+ *            the type of elements in this collection
  *
+ * @since 1.2
  */
-public interface IViewerObservableList extends IObservableList,
-		IViewerObservable {
+public interface IViewerObservableList<E> extends IObservableList<E>, IViewerObservable {
 }

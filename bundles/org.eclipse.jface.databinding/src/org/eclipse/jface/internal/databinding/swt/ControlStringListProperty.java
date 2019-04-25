@@ -25,38 +25,38 @@ import org.eclipse.jface.databinding.swt.WidgetListProperty;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * @since 3.3
+ * @param <S> type of the source object
  *
+ * @since 3.3
  */
-public abstract class ControlStringListProperty extends WidgetListProperty {
+public abstract class ControlStringListProperty<S extends Control> extends WidgetListProperty<S, String> {
 	@Override
 	public Object getElementType() {
 		return String.class;
 	}
 
 	@Override
-	protected void doSetList(Object source, List list, ListDiff diff) {
+	protected void doSetList(S source, List<String> list, ListDiff<String> diff) {
 		doUpdateList(source, diff);
 	}
 
 	@Override
-	protected void doUpdateList(Object source, ListDiff diff) {
-		doUpdateStringList((Control) source, diff);
+	protected void doUpdateList(S source, ListDiff<String> diff) {
+		doUpdateStringList(source, diff);
 	}
 
-	abstract void doUpdateStringList(Control control, ListDiff diff);
+	abstract void doUpdateStringList(S control, ListDiff<String> diff);
 
 	@Override
-	protected List doGetList(Object source) {
-		String[] list = doGetStringList((Control) source);
+	protected List<String> doGetList(S source) {
+		String[] list = doGetStringList(source);
 		return Arrays.asList(list);
 	}
 
-	abstract String[] doGetStringList(Control control);
+	abstract String[] doGetStringList(S control);
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, ListDiff<String>> listener) {
 		return null;
 	}
 }

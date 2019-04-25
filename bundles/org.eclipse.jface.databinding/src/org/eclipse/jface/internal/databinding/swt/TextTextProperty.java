@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.3
  *
  */
-public class TextTextProperty extends WidgetStringValueProperty {
+public class TextTextProperty extends WidgetStringValueProperty<Text> {
 	/**
 	 *
 	 */
@@ -63,13 +63,13 @@ public class TextTextProperty extends WidgetStringValueProperty {
 	}
 
 	@Override
-	String doGetStringValue(Object source) {
-		return ((Text) source).getText();
+	String doGetStringValue(Text source) {
+		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((Text) source).setText(value == null ? "" : value); //$NON-NLS-1$
+	void doSetStringValue(Text source, String value) {
+		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	@Override
@@ -78,8 +78,7 @@ public class TextTextProperty extends WidgetStringValueProperty {
 	}
 
 	@Override
-	protected ISWTObservableValue wrapObservable(IObservableValue observable,
-			Widget widget) {
+	protected ISWTObservableValue<String> wrapObservable(IObservableValue<String> observable, Widget widget) {
 		return new SWTVetoableValueDecorator(widget, this, observable);
 	}
 }

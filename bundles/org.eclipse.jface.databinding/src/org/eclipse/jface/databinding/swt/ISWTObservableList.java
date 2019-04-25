@@ -20,7 +20,11 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
  * {@link IObservableList} observing an SWT widget.
  *
  * @since 1.3
+ *
+ * @param <E>
+ *            the type of elements in this collection
+ *
  */
-public interface ISWTObservableList extends ISWTObservable, IObservableList {
+public interface ISWTObservableList<E> extends ISWTObservable, IObservableList<E> {
 
 }

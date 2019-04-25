@@ -18,25 +18,22 @@ package org.eclipse.jface.internal.databinding.swt;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
  *
  */
-public class ComboItemsProperty extends ControlStringListProperty {
+public class ComboItemsProperty extends ControlStringListProperty<Combo> {
 	@Override
-	protected void doUpdateStringList(final Control control, ListDiff diff) {
-		diff.accept(new ListDiffVisitor() {
-			Combo combo = (Combo) control;
-
+	protected void doUpdateStringList(final Combo combo, ListDiff<String> diff) {
+		diff.accept(new ListDiffVisitor<String>() {
 			@Override
-			public void handleAdd(int index, Object element) {
-				combo.add((String) element, index);
+			public void handleAdd(int index, String element) {
+				combo.add(element, index);
 			}
 
 			@Override
-			public void handleRemove(int index, Object element) {
+			public void handleRemove(int index, String element) {
 				combo.remove(index);
 			}
 
@@ -59,16 +56,15 @@ public class ComboItemsProperty extends ControlStringListProperty {
 			// }
 
 			@Override
-			public void handleReplace(int index, Object oldElement,
-					Object newElement) {
-				combo.setItem(index, (String) newElement);
+			public void handleReplace(int index, String oldElement, String newElement) {
+				combo.setItem(index, newElement);
 			}
 		});
 	}
 
 	@Override
-	public String[] doGetStringList(Control control) {
-		return ((Combo) control).getItems();
+	public String[] doGetStringList(Combo control) {
+		return control.getItems();
 	}
 
 	@Override

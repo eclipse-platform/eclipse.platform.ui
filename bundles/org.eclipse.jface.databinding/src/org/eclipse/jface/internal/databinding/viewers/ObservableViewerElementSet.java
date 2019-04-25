@@ -30,8 +30,8 @@ import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.StructuredViewer;
 
 /**
- * An {@link IObservableSet} of elements in a {@link StructuredViewer}.
- * Elements of the set are compared using an {@link IElementComparer} instead of
+ * An {@link IObservableSet} of elements in a {@link StructuredViewer}. Elements
+ * of the set are compared using an {@link IElementComparer} instead of
  * {@link #equals(Object)}.
  * <p>
  * This class is <i>not</i> a strict implementation the {@link IObservableSet}
@@ -40,11 +40,13 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * designed for use with {@link StructuredViewer} which uses
  * {@link IElementComparer} for element comparisons.
  *
+ * @param <E>
+ *            the type of the elements in this set
  *
  * @since 1.2
  */
-public class ObservableViewerElementSet extends AbstractObservableSet {
-	private Set wrappedSet;
+public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
+	private Set<E> wrappedSet;
 	private Object elementType;
 	private IElementComparer comparer;
 
@@ -64,13 +66,13 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		super(realm);
 
 		Assert.isNotNull(comparer);
-		this.wrappedSet = new ViewerElementSet(comparer);
+		this.wrappedSet = new ViewerElementSet<>(comparer);
 		this.elementType = elementType;
 		this.comparer = comparer;
 	}
 
 	@Override
-	protected Set getWrappedSet() {
+	protected Set<E> getWrappedSet() {
 		return wrappedSet;
 	}
 
@@ -80,11 +82,11 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<E> iterator() {
 		getterCalled();
-		final Iterator wrappedIterator = wrappedSet.iterator();
-		return new Iterator() {
-			Object last;
+		final Iterator<E> wrappedIterator = wrappedSet.iterator();
+		return new Iterator<E>() {
+			E last;
 
 			@Override
 			public boolean hasNext() {
@@ -93,7 +95,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 			}
 
 			@Override
-			public Object next() {
+			public E next() {
 				getterCalled();
 				return last = wrappedIterator.next();
 			}
@@ -102,70 +104,69 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 			public void remove() {
 				getterCalled();
 				wrappedIterator.remove();
-				fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
-						Collections.singleton(last)));
+				fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton(last)));
 			}
 		};
 	}
 
 	@Override
-	public boolean add(Object o) {
+	public boolean add(E o) {
 		getterCalled();
 		boolean changed = wrappedSet.add(o);
 		if (changed)
-			fireSetChange(Diffs.createSetDiff(Collections.singleton(o),
-					Collections.EMPTY_SET));
+			fireSetChange(Diffs.createSetDiff(Collections.singleton(o), Collections.emptySet()));
 		return changed;
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		getterCalled();
-		Set additions = new ViewerElementSet(comparer);
-		for (Iterator iterator = c.iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
+		Set<E> additions = new ViewerElementSet<>(comparer);
+		for (E element : c) {
 			if (wrappedSet.add(element))
 				additions.add(element);
 		}
 		boolean changed = !additions.isEmpty();
 		if (changed)
-			fireSetChange(Diffs.createSetDiff(additions, Collections.EMPTY_SET));
+			fireSetChange(Diffs.createSetDiff(additions, Collections.emptySet()));
 		return changed;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
 		getterCalled();
 		boolean changed = wrappedSet.remove(o);
 		if (changed)
-			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
-					Collections.singleton(o)));
+			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton((E) o)));
 		return changed;
 	}
 
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		getterCalled();
-		Set removals = new ViewerElementSet(comparer);
-		for (Iterator iterator = c.iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
+		Set<E> removals = new ViewerElementSet<>(comparer);
+		for (Object e : c) {
+			@SuppressWarnings("unchecked")
+			E element = (E) e;
 			if (wrappedSet.remove(element))
 				removals.add(element);
 		}
 		boolean changed = !removals.isEmpty();
 		if (changed)
-			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removals));
+			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
 		return changed;
 	}
 
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		getterCalled();
-		Set removals = new ViewerElementSet(comparer);
-		Object[] toRetain = c.toArray();
-		outer: for (Iterator iterator = wrappedSet.iterator(); iterator
-				.hasNext();) {
-			Object element = iterator.next();
+		Set<E> removals = new ViewerElementSet<E>(comparer);
+		@SuppressWarnings("unchecked")
+		E[] toRetain = (E[]) c.toArray();
+		outer: for (Iterator<?> iterator = wrappedSet.iterator(); iterator.hasNext();) {
+			@SuppressWarnings("unchecked")
+			E element = (E) iterator.next();
 			// Cannot rely on c.contains(element) because we must compare
 			// elements using IElementComparer.
 			for (int i = 0; i < toRetain.length; i++) {
@@ -177,7 +178,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 		}
 		boolean changed = !removals.isEmpty();
 		if (changed)
-			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removals));
+			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
 		return changed;
 	}
 
@@ -185,9 +186,9 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 	public void clear() {
 		getterCalled();
 		if (!wrappedSet.isEmpty()) {
-			Set removals = wrappedSet;
-			wrappedSet = new ViewerElementSet(comparer);
-			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removals));
+			Set<E> removals = wrappedSet;
+			wrappedSet = new ViewerElementSet<>(comparer);
+			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
 		}
 	}
 
@@ -207,10 +208,9 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 	 * @return a Set for holding viewer elements, using the given
 	 *         {@link IElementComparer} for comparisons.
 	 */
-	public static IObservableSet withComparer(Realm realm, Object elementType,
-			IElementComparer comparer) {
+	public static <E> IObservableSet<E> withComparer(Realm realm, Object elementType, IElementComparer comparer) {
 		if (comparer == null)
-			return new WritableSet(realm, Collections.EMPTY_SET, elementType);
-		return new ObservableViewerElementSet(realm, elementType, comparer);
+			return new WritableSet<>(realm, Collections.emptySet(), elementType);
+		return new ObservableViewerElementSet<>(realm, elementType, comparer);
 	}
 }

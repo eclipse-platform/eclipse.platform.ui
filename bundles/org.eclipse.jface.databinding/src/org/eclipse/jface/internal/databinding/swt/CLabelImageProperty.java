@@ -21,15 +21,15 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.3
  *
  */
-public class CLabelImageProperty extends WidgetImageValueProperty {
+public class CLabelImageProperty extends WidgetImageValueProperty<CLabel> {
 	@Override
-	Image doGetImageValue(Object source) {
-		return ((CLabel) source).getImage();
+	Image doGetImageValue(CLabel source) {
+		return source.getImage();
 	}
 
 	@Override
-	void doSetImageValue(Object source, Image value) {
-		((CLabel) source).setImage(value);
+	void doSetImageValue(CLabel source, Image value) {
+		source.setImage(value);
 	}
 
 	@Override

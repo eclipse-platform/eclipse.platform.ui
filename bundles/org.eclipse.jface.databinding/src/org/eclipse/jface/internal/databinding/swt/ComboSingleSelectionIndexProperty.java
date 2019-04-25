@@ -21,8 +21,7 @@ import org.eclipse.swt.widgets.Combo;
  * @since 3.3
  *
  */
-public class ComboSingleSelectionIndexProperty extends
-		SingleSelectionIndexProperty {
+public class ComboSingleSelectionIndexProperty extends SingleSelectionIndexProperty<Combo> {
 	/**
 	 *
 	 */
@@ -31,16 +30,16 @@ public class ComboSingleSelectionIndexProperty extends
 	}
 
 	@Override
-	int doGetIntValue(Object source) {
-		return ((Combo) source).getSelectionIndex();
+	int doGetIntValue(Combo source) {
+		return source.getSelectionIndex();
 	}
 
 	@Override
-	void doSetIntValue(Object source, int value) {
+	void doSetIntValue(Combo source, int value) {
 		if (value == -1)
-			((Combo) source).deselectAll();
+			source.deselectAll();
 		else
-			((Combo) source).select(value);
+			source.select(value);
 	}
 
 	@Override

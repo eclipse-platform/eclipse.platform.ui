@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Text;
  * @since 3.3
  *
  */
-public class TextEditableProperty extends WidgetBooleanValueProperty {
+public class TextEditableProperty extends WidgetBooleanValueProperty<Text> {
 	@Override
-	boolean doGetBooleanValue(Object source) {
-		return ((Text) source).getEditable();
+	boolean doGetBooleanValue(Text source) {
+		return source.getEditable();
 	}
 
 	@Override
-	void doSetBooleanValue(Object source, boolean value) {
-		((Text) source).setEditable(value);
+	void doSetBooleanValue(Text source, boolean value) {
+		source.setEditable(value);
 	}
 
 	@Override

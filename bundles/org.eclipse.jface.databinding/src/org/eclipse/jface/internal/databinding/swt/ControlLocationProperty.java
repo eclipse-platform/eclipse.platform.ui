@@ -22,10 +22,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public class ControlLocationProperty extends WidgetValueProperty {
+public class ControlLocationProperty<S extends Control> extends WidgetValueProperty<S, Point> {
 	/**
 	 *
 	 */
@@ -39,13 +41,13 @@ public class ControlLocationProperty extends WidgetValueProperty {
 	}
 
 	@Override
-	protected Object doGetValue(Object source) {
-		return ((Control) source).getLocation();
+	protected Point doGetValue(S source) {
+		return source.getLocation();
 	}
 
 	@Override
-	protected void doSetValue(Object source, Object value) {
-		((Control) source).setLocation((Point) value);
+	protected void doSetValue(S source, Point value) {
+		source.setLocation(value);
 	}
 
 	@Override

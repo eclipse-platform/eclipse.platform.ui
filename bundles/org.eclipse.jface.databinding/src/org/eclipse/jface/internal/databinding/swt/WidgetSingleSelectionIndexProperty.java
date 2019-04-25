@@ -19,17 +19,20 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Widget;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public final class WidgetSingleSelectionIndexProperty extends
-		WidgetDelegatingValueProperty {
-	private IValueProperty cCombo;
-	private IValueProperty combo;
-	private IValueProperty list;
-	private IValueProperty table;
+public final class WidgetSingleSelectionIndexProperty<S extends Widget>
+		extends WidgetDelegatingValueProperty<S, Integer> {
+	private IValueProperty<S, Integer> cCombo;
+	private IValueProperty<S, Integer> combo;
+	private IValueProperty<S, Integer> list;
+	private IValueProperty<S, Integer> table;
 
 	/**
 	 *
@@ -38,26 +41,27 @@ public final class WidgetSingleSelectionIndexProperty extends
 		super(Integer.TYPE);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IValueProperty doGetDelegate(Object source) {
+	protected IValueProperty<S, Integer> doGetDelegate(S source) {
 		if (source instanceof CCombo) {
 			if (cCombo == null)
-				cCombo = new CComboSingleSelectionIndexProperty();
+				cCombo = (IValueProperty<S, Integer>) new CComboSingleSelectionIndexProperty();
 			return cCombo;
 		}
 		if (source instanceof Combo) {
 			if (combo == null)
-				combo = new ComboSingleSelectionIndexProperty();
+				combo = (IValueProperty<S, Integer>) new ComboSingleSelectionIndexProperty();
 			return combo;
 		}
 		if (source instanceof List) {
 			if (list == null)
-				list = new ListSingleSelectionIndexProperty();
+				list = (IValueProperty<S, Integer>) new ListSingleSelectionIndexProperty();
 			return list;
 		}
 		if (source instanceof Table) {
 			if (table == null)
-				table = new TableSingleSelectionIndexProperty();
+				table = (IValueProperty<S, Integer>) new TableSingleSelectionIndexProperty();
 			return table;
 		}
 		throw notSupported(source);

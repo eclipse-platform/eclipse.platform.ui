@@ -20,23 +20,25 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public class ControlFontProperty extends WidgetValueProperty {
+public class ControlFontProperty<S extends Control> extends WidgetValueProperty<S, Font> {
 	@Override
 	public Object getValueType() {
 		return Font.class;
 	}
 
 	@Override
-	protected Object doGetValue(Object source) {
-		return ((Control) source).getFont();
+	protected Font doGetValue(S source) {
+		return source.getFont();
 	}
 
 	@Override
-	protected void doSetValue(Object source, Object value) {
-		((Control) source).setFont((Font) value);
+	protected void doSetValue(S source, Font value) {
+		source.setFont(value);
 	}
 
 	@Override

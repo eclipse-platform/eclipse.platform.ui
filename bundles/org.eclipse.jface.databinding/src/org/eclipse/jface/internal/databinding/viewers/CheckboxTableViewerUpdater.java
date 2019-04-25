@@ -17,10 +17,12 @@ package org.eclipse.jface.internal.databinding.viewers;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 
 /**
+ * @param <E> type of the elements in the updated viewer
+ *
  * @since 3.3
  *
  */
-public class CheckboxTableViewerUpdater extends TableViewerUpdater {
+public class CheckboxTableViewerUpdater<E> extends TableViewerUpdater<E> {
 	private final CheckboxTableViewer checkboxViewer;
 
 	CheckboxTableViewerUpdater(CheckboxTableViewer viewer) {
@@ -29,7 +31,7 @@ public class CheckboxTableViewerUpdater extends TableViewerUpdater {
 	}
 
 	@Override
-	public void move(Object element, int oldPosition, int newPosition) {
+	public void move(E element, int oldPosition, int newPosition) {
 		if (isElementOrderPreserved()) {
 			boolean wasChecked = checkboxViewer.getChecked(element);
 			boolean wasGrayed = checkboxViewer.getGrayed(element);

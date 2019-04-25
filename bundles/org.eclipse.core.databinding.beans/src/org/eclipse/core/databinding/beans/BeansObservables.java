@@ -20,6 +20,7 @@ package org.eclipse.core.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -48,6 +49,7 @@ import org.eclipse.core.runtime.Status;
  * @deprecated use <code>BeanProperties</code> instead
  */
 @Deprecated
+@SuppressWarnings({ "rawtypes", "unchecked" })
 final public class BeansObservables {
 
 	/**
@@ -91,8 +93,7 @@ final public class BeansObservables {
 	@Deprecated
 	public static IObservableValue observeValue(Realm realm, Object bean,
 			String propertyName) {
-		return BeanProperties.value(bean.getClass(), propertyName).observe(
-				realm, bean);
+		return BeanProperties.value((Class<Object>) bean.getClass(), propertyName).observe(realm, bean);
 	}
 
 	/**

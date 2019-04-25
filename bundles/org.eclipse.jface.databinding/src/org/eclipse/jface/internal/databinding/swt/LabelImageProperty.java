@@ -21,15 +21,15 @@ import org.eclipse.swt.widgets.Label;
  * @since 3.3
  *
  */
-public class LabelImageProperty extends WidgetImageValueProperty {
+public class LabelImageProperty extends WidgetImageValueProperty<Label> {
 	@Override
-	Image doGetImageValue(Object source) {
-		return ((Label) source).getImage();
+	Image doGetImageValue(Label source) {
+		return source.getImage();
 	}
 
 	@Override
-	void doSetImageValue(Object source, Image value) {
-		((Label) source).setImage(value);
+	void doSetImageValue(Label source, Image value) {
+		source.setImage(value);
 	}
 
 	@Override

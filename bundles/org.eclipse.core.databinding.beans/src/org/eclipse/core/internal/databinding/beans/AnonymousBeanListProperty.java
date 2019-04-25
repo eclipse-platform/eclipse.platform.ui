@@ -18,39 +18,41 @@ package org.eclipse.core.internal.databinding.beans;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.property.list.DelegatingListProperty;
 import org.eclipse.core.databinding.property.list.IListProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the list
  * @since 3.3
  *
  */
-public class AnonymousBeanListProperty extends DelegatingListProperty {
+public class AnonymousBeanListProperty<S, E> extends DelegatingListProperty<S, E> {
 	private final String propertyName;
 
-	private Map delegates;
+	private Map<Class<S>, IListProperty<S, E>> delegates;
 
 	/**
 	 * @param propertyName
 	 * @param elementType
 	 */
-	public AnonymousBeanListProperty(String propertyName, Class elementType) {
+	public AnonymousBeanListProperty(String propertyName, Class<E> elementType) {
 		super(elementType);
 		this.propertyName = propertyName;
-		this.delegates = new HashMap();
+		this.delegates = new HashMap<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IListProperty doGetDelegate(Object source) {
-		Class beanClass = source.getClass();
+	protected IListProperty<S, E> doGetDelegate(S source) {
+		Class<S> beanClass = (Class<S>) source.getClass();
 		if (delegates.containsKey(beanClass))
-			return (IListProperty) delegates.get(beanClass);
+			return delegates.get(beanClass);
 
-		IListProperty delegate;
+		IListProperty<S, E> delegate;
 		try {
-			delegate = BeanProperties.list(beanClass, propertyName,
-					(Class) getElementType());
+			delegate = BeanProperties.list(beanClass, propertyName, (Class<E>) getElementType());
 		} catch (IllegalArgumentException noSuchProperty) {
 			delegate = null;
 		}
@@ -61,7 +63,7 @@ public class AnonymousBeanListProperty extends DelegatingListProperty {
 	@Override
 	public String toString() {
 		String s = "?." + propertyName + "[]"; //$NON-NLS-1$ //$NON-NLS-2$
-		Class elementType = (Class) getElementType();
+		Class<?> elementType = (Class<?>) getElementType();
 		if (elementType != null)
 			s += "<" + BeanPropertyHelper.shortClassName(elementType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;

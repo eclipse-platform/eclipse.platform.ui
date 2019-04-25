@@ -20,15 +20,15 @@ import org.eclipse.swt.custom.CCombo;
  * @since 3.3
  *
  */
-public class CComboEditableProperty extends WidgetBooleanValueProperty {
+public class CComboEditableProperty extends WidgetBooleanValueProperty<CCombo> {
 	@Override
-	boolean doGetBooleanValue(Object source) {
-		return ((CCombo) source).getEditable();
+	boolean doGetBooleanValue(CCombo source) {
+		return source.getEditable();
 	}
 
 	@Override
-	void doSetBooleanValue(Object source, boolean value) {
-		((CCombo) source).setEditable(value);
+	void doSetBooleanValue(CCombo source, boolean value) {
+		source.setEditable(value);
 	}
 
 	@Override

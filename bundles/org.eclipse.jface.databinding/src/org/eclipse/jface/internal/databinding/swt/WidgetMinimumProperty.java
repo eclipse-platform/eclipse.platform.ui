@@ -15,18 +15,21 @@
 package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Spinner;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public class WidgetMinimumProperty extends WidgetDelegatingValueProperty {
-	private IValueProperty scale;
-	private IValueProperty slider;
-	private IValueProperty spinner;
+public class WidgetMinimumProperty<S extends Control> extends WidgetDelegatingValueProperty<S, Integer> {
+	private IValueProperty<Scale, Integer> scale;
+	private IValueProperty<Slider, Integer> slider;
+	private IValueProperty<Spinner, Integer> spinner;
 
 	/**
 	 *
@@ -35,23 +38,24 @@ public class WidgetMinimumProperty extends WidgetDelegatingValueProperty {
 		super(Integer.TYPE);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IValueProperty doGetDelegate(Object source) {
+	protected IValueProperty<S, Integer> doGetDelegate(S source) {
 		if (source instanceof Scale) {
 			if (scale == null)
 				scale = new ScaleMinimumProperty();
-			return scale;
+			return (IValueProperty<S, Integer>) scale;
 		}
 		if (source instanceof Slider) {
 			if (slider == null) {
 				slider = new SliderMinimumProperty();
 			}
-			return slider;
+			return (IValueProperty<S, Integer>) slider;
 		}
 		if (source instanceof Spinner) {
 			if (spinner == null)
 				spinner = new SpinnerMinimumProperty();
-			return spinner;
+			return (IValueProperty<S, Integer>) spinner;
 		}
 		throw notSupported(source);
 	}

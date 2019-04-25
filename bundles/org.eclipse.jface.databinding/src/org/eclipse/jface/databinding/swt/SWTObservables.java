@@ -30,6 +30,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IVetoableValue;
 import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.internal.databinding.swt.SWTDelayedObservableValueDecorator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Widget;
  * @deprecated
  */
 @Deprecated
+@SuppressWarnings("rawtypes")
 public class SWTObservables {
 
 	/**
@@ -89,9 +91,9 @@ public class SWTObservables {
 	 * @since 1.2
 	 * @deprecated use <code>WidgetProperties</code> instead
 	 */
+	@SuppressWarnings("unchecked")
 	@Deprecated
-	public static ISWTObservableValue observeDelayedValue(int delay,
-			ISWTObservableValue observable) {
+	public static ISWTObservableValue observeDelayedValue(int delay, ISWTObservableValue observable) {
 		return new SWTDelayedObservableValueDecorator(
 				Observables.observeDelayedValue(delay, observable),
 				observable.getWidget());
@@ -457,8 +459,7 @@ public class SWTObservables {
 	 * @deprecated use <code>WidgetProperties</code> instead
 	 */
 	@Deprecated
-	public static ISWTObservableValue observeSingleSelectionIndex(
-			Control control) {
+	public static ISWTObservableValue observeSingleSelectionIndex(Control control) {
 		return WidgetProperties.singleSelectionIndex().observe(control);
 	}
 

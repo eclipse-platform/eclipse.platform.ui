@@ -44,8 +44,15 @@ import org.eclipse.core.internal.databinding.beans.PojoValuePropertyDecorator;
  * {@link PropertyChangeEvent property change events} on change. This factory is
  * identical to {@link BeanProperties} except for this fact.
  *
+ * @deprecated This class has replaced by the class
+ *             {@link org.eclipse.core.databinding.beans.typed.PojoProperties}.
+ *             That class creates typed property objects, while this class
+ *             creates raw property objects. This class has been preserved for
+ *             backwards compatibility reasons.
+ *
  * @since 1.2
  */
+@Deprecated
 public class PojoProperties {
 	/**
 	 * Returns a value property for the given property name of an arbitrary bean

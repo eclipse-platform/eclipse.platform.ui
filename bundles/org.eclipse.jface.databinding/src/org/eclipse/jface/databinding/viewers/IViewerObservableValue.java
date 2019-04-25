@@ -19,9 +19,10 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 /**
  * {@link IObservableValue} observing a JFace Viewer.
  *
- * @since 1.2
+ * @param <T>
+ *            type of the value of the observable
  *
+ * @since 1.2
  */
-public interface IViewerObservableValue extends IObservableValue,
-		IViewerObservable {
+public interface IViewerObservableValue<T> extends IObservableValue<T>, IViewerObservable {
 }

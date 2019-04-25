@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
@@ -34,6 +33,8 @@ import org.eclipse.swt.widgets.TableItem;
  * NON-API - This class can be used to update a table with automatic dependency
  * tracking.
  *
+ * @param <E> type of the elements in the model list
+ *
  * @since 1.1
  *
  * @noextend This class is not intended to be subclassed by clients. (We do
@@ -41,19 +42,18 @@ import org.eclipse.swt.widgets.TableItem;
  *           interested in feedback though.)
  *
  */
-public abstract class TableUpdater {
+public abstract class TableUpdater<E> {
 
-	private class UpdateRunnable implements Runnable, IChangeListener,
-			DisposeListener {
+	private class UpdateRunnable implements Runnable, IChangeListener, DisposeListener {
 		private TableItem item;
 
 		private boolean dirty = false;
 
 		private IObservable[] dependencies = new IObservable[0];
 
-		private final Object element;
+		private final E element;
 
-		UpdateRunnable(TableItem item, Object element) {
+		UpdateRunnable(TableItem item, E element) {
 			this.item = item;
 			this.element = element;
 			item.addDisposeListener(this);
@@ -126,6 +126,7 @@ public abstract class TableUpdater {
 		@Override
 		public void handleEvent(Event e) {
 			if (e.type == SWT.SetData) {
+				@SuppressWarnings("unchecked")
 				UpdateRunnable runnable = (UpdateRunnable) e.item.getData();
 				if (runnable == null) {
 					runnable = new UpdateRunnable((TableItem) e.item, list.get(e.index));
@@ -149,25 +150,21 @@ public abstract class TableUpdater {
 
 	private Table table;
 
-	private IListChangeListener listChangeListener = new IListChangeListener() {
-		@Override
-		public void handleListChange(ListChangeEvent event) {
-			ListDiffEntry[] differences = event.diff.getDifferences();
-			for (ListDiffEntry entry : differences) {
-				if (entry.isAddition()) {
-					TableItem item = new TableItem(table, SWT.NONE, entry
-							.getPosition());
-					UpdateRunnable updateRunnable = new UpdateRunnable(item, entry.getElement());
-					item.setData(updateRunnable);
-					updateRunnable.makeDirty();
-				} else {
-					table.getItem(entry.getPosition()).dispose();
-				}
+	private IListChangeListener<E> listChangeListener = event -> {
+		ListDiffEntry<? extends E>[] differences = event.diff.getDifferences();
+		for (ListDiffEntry<? extends E> entry : differences) {
+			if (entry.isAddition()) {
+				TableItem item = new TableItem(table, SWT.NONE, entry.getPosition());
+				UpdateRunnable updateRunnable = new UpdateRunnable(item, entry.getElement());
+				item.setData(updateRunnable);
+				updateRunnable.makeDirty();
+			} else {
+				table.getItem(entry.getPosition()).dispose();
 			}
 		}
 	};
 
-	private IObservableList list;
+	private IObservableList<E> list;
 
 	/**
 	 * Creates an updator for the given control.
@@ -177,7 +174,7 @@ public abstract class TableUpdater {
 	 * @param list
 	 * @since 1.2
 	 */
-	public TableUpdater(Table table, IObservableList list) {
+	public TableUpdater(Table table, IObservableList<E> list) {
 		this.table = table;
 		this.list = list;
 		Assert.isLegal((table.getStyle() & SWT.VIRTUAL) != 0,
@@ -220,6 +217,6 @@ public abstract class TableUpdater {
 	 * @param element
 	 * @since 1.2
 	 */
-	protected abstract void updateItem(int index, TableItem item, Object element);
+	protected abstract void updateItem(int index, TableItem item, E element);
 
 }

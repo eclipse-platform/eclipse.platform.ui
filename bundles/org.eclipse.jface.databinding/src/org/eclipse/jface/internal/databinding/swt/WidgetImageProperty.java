@@ -20,16 +20,19 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Widget;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public class WidgetImageProperty extends WidgetDelegatingValueProperty {
-	private IValueProperty button;
-	private IValueProperty cLabel;
-	private IValueProperty item;
-	private IValueProperty label;
+public class WidgetImageProperty<S extends Widget> extends WidgetDelegatingValueProperty<S, Image> {
+	private IValueProperty<S, Image> button;
+	private IValueProperty<S, Image> cLabel;
+	private IValueProperty<S, Image> item;
+	private IValueProperty<S, Image> label;
 
 	/**
 	 *
@@ -38,26 +41,27 @@ public class WidgetImageProperty extends WidgetDelegatingValueProperty {
 		super(Image.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IValueProperty doGetDelegate(Object source) {
+	protected IValueProperty<S, Image> doGetDelegate(S source) {
 		if (source instanceof Button) {
 			if (button == null)
-				button = new ButtonImageProperty();
+				button = (IValueProperty<S, Image>) new ButtonImageProperty();
 			return button;
 		}
 		if (source instanceof CLabel) {
 			if (cLabel == null)
-				cLabel = new CLabelImageProperty();
+				cLabel = (IValueProperty<S, Image>) new CLabelImageProperty();
 			return cLabel;
 		}
 		if (source instanceof Item) {
 			if (item == null)
-				item = new ItemImageProperty();
+				item = (IValueProperty<S, Image>) new ItemImageProperty();
 			return item;
 		}
 		if (source instanceof Label) {
 			if (label == null)
-				label = new LabelImageProperty();
+				label = (IValueProperty<S, Image>) new LabelImageProperty();
 			return label;
 		}
 		throw notSupported(source);

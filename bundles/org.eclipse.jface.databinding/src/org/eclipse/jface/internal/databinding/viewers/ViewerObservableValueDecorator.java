@@ -24,19 +24,20 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
- * @since 3.3
+ * @param <T>
+ *            the type of value being observed
  *
+ * @since 3.3
  */
-public class ViewerObservableValueDecorator extends DecoratingObservableValue
-		implements IViewerObservableValue, Listener {
+public class ViewerObservableValueDecorator<T> extends DecoratingObservableValue<T>
+		implements IViewerObservableValue<T>, Listener {
 	private Viewer viewer;
 
 	/**
 	 * @param decorated
 	 * @param viewer
 	 */
-	public ViewerObservableValueDecorator(IObservableValue decorated,
-			Viewer viewer) {
+	public ViewerObservableValueDecorator(IObservableValue<T> decorated, Viewer viewer) {
 		super(decorated, true);
 		this.viewer = viewer;
 		viewer.getControl().addListener(SWT.Dispose, this);

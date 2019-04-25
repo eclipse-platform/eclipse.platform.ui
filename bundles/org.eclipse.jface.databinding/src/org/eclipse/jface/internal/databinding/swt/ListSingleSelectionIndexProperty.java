@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.List;
  *
  */
 public class ListSingleSelectionIndexProperty extends
-		SingleSelectionIndexProperty {
+		SingleSelectionIndexProperty<List> {
 	/**
 	 *
 	 */
@@ -31,16 +31,16 @@ public class ListSingleSelectionIndexProperty extends
 	}
 
 	@Override
-	int doGetIntValue(Object source) {
-		return ((List) source).getSelectionIndex();
+	int doGetIntValue(List source) {
+		return source.getSelectionIndex();
 	}
 
 	@Override
-	void doSetIntValue(Object source, int value) {
+	void doSetIntValue(List source, int value) {
 		if (value == -1)
-			((List) source).deselectAll();
+			source.deselectAll();
 		else
-			((List) source).setSelection(value);
+			source.setSelection(value);
 	}
 
 	@Override

@@ -19,15 +19,15 @@ import org.eclipse.swt.widgets.Menu;
 /**
  *
  */
-public class MenuEnabledProperty extends WidgetBooleanValueProperty {
+public class MenuEnabledProperty extends WidgetBooleanValueProperty<Menu> {
 	@Override
-	public boolean doGetBooleanValue(Object source) {
-		return ((Menu) source).getEnabled();
+	public boolean doGetBooleanValue(Menu source) {
+		return source.getEnabled();
 	}
 
 	@Override
-	void doSetBooleanValue(Object source, boolean value) {
-		((Menu) source).setEnabled(value);
+	void doSetBooleanValue(Menu source, boolean value) {
+		source.setEnabled(value);
 	}
 
 	@Override

@@ -21,15 +21,15 @@ import org.eclipse.swt.widgets.Item;
  * @since 3.3
  *
  */
-public class ItemImageProperty extends WidgetImageValueProperty {
+public class ItemImageProperty extends WidgetImageValueProperty<Item> {
 	@Override
-	Image doGetImageValue(Object source) {
-		return ((Item) source).getImage();
+	Image doGetImageValue(Item source) {
+		return source.getImage();
 	}
 
 	@Override
-	void doSetImageValue(Object source, Image value) {
-		((Item) source).setImage(value);
+	void doSetImageValue(Item source, Image value) {
+		source.setImage(value);
 	}
 
 	@Override

@@ -48,7 +48,8 @@ public class MultiListProperty<S, E> extends ListProperty<S, E> {
 	 * @param properties
 	 *            the list properties
 	 */
-	public MultiListProperty(IListProperty<S, E>[] properties) {
+	@SafeVarargs
+	public MultiListProperty(IListProperty<S, E>... properties) {
 		this(properties, null);
 	}
 

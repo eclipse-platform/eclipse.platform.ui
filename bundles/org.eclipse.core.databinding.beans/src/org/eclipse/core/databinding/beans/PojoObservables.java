@@ -18,6 +18,7 @@ package org.eclipse.core.databinding.beans;
 
 import java.beans.PropertyChangeEvent;
 
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -41,6 +42,7 @@ import org.eclipse.core.internal.databinding.beans.BeanPropertyHelper;
  *
  * @deprecated use <code>PojoProperties</code> instead
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 final public class PojoObservables {
 
 	/**
@@ -74,10 +76,8 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
-	public static IObservableValue observeValue(Realm realm, Object pojo,
-			String propertyName) {
-		return PojoProperties.value(pojo.getClass(), propertyName).observe(
-				realm, pojo);
+	public static IObservableValue observeValue(Realm realm, Object pojo, String propertyName) {
+		return PojoProperties.value((Class<Object>) pojo.getClass(), propertyName).observe(realm, pojo);
 	}
 
 	/**

@@ -30,13 +30,13 @@ import org.eclipse.jface.viewers.ICheckable;
 import org.eclipse.jface.viewers.IElementComparer;
 
 /**
+ * @param <E> the type of the elements in this set
  *
  * @since 1.2
  */
-public class CheckableCheckedElementsObservableSet extends
-		AbstractObservableSet {
+public class CheckableCheckedElementsObservableSet<E> extends AbstractObservableSet<E> {
 	private ICheckable checkable;
-	private Set wrappedSet;
+	private Set<E> wrappedSet;
 	private Object elementType;
 	private IElementComparer elementComparer;
 	private ICheckStateListener listener;
@@ -55,8 +55,7 @@ public class CheckableCheckedElementsObservableSet extends
 	 * @param checkable
 	 *            the ICheckable to track
 	 */
-	public CheckableCheckedElementsObservableSet(Realm realm,
-			final Set wrappedSet, Object elementType,
+	public CheckableCheckedElementsObservableSet(Realm realm, final Set<E> wrappedSet, Object elementType,
 			IElementComparer elementComparer, ICheckable checkable) {
 		super(realm);
 		Assert.isNotNull(checkable, "Checkable cannot be null"); //$NON-NLS-1$
@@ -69,16 +68,14 @@ public class CheckableCheckedElementsObservableSet extends
 		listener = new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object element = event.getElement();
+				@SuppressWarnings("unchecked")
+				E element = (E) event.getElement();
 				if (event.getChecked()) {
 					if (wrappedSet.add(element))
-						fireSetChange(Diffs.createSetDiff(Collections
-								.singleton(element), Collections.EMPTY_SET));
+						fireSetChange(Diffs.createSetDiff(Collections.singleton(element), Collections.emptySet()));
 				} else {
 					if (wrappedSet.remove(element))
-						fireSetChange(Diffs.createSetDiff(
-								Collections.EMPTY_SET, Collections
-										.singleton(element)));
+						fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton(element)));
 				}
 			}
 		};
@@ -86,11 +83,11 @@ public class CheckableCheckedElementsObservableSet extends
 	}
 
 	@Override
-	protected Set getWrappedSet() {
+	protected Set<E> getWrappedSet() {
 		return wrappedSet;
 	}
 
-	Set createDiffSet() {
+	Set<E> createDiffSet() {
 		return ViewerElementSet.withComparer(elementComparer);
 	}
 
@@ -100,35 +97,33 @@ public class CheckableCheckedElementsObservableSet extends
 	}
 
 	@Override
-	public boolean add(Object o) {
+	public boolean add(E o) {
 		getterCalled();
 		boolean added = wrappedSet.add(o);
 		if (added) {
 			checkable.setChecked(o, true);
-			fireSetChange(Diffs.createSetDiff(Collections.singleton(o),
-					Collections.EMPTY_SET));
+			fireSetChange(Diffs.createSetDiff(Collections.singleton(o), Collections.emptySet()));
 		}
 		return added;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
 		getterCalled();
 		boolean removed = wrappedSet.remove(o);
 		if (removed) {
 			checkable.setChecked(o, false);
-			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
-					Collections.singleton(o)));
+			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton((E) o)));
 		}
 		return removed;
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		getterCalled();
-		Set additions = createDiffSet();
-		for (Iterator iterator = c.iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
+		Set<E> additions = createDiffSet();
+		for (E element : c) {
 			if (wrappedSet.add(element)) {
 				checkable.setChecked(element, true);
 				additions.add(element);
@@ -136,38 +131,39 @@ public class CheckableCheckedElementsObservableSet extends
 		}
 		boolean changed = !additions.isEmpty();
 		if (changed)
-			fireSetChange(Diffs.createSetDiff(additions, Collections.EMPTY_SET));
+			fireSetChange(Diffs.createSetDiff(additions, Collections.emptySet()));
 		return changed;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		getterCalled();
-		Set removals = createDiffSet();
-		for (Iterator iterator = c.iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
+		Set<E> removals = createDiffSet();
+		for (Object element : c) {
 			if (wrappedSet.remove(element)) {
 				checkable.setChecked(element, false);
-				removals.add(element);
+				removals.add((E) element);
 			}
 		}
 		boolean changed = !removals.isEmpty();
 		if (changed)
-			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removals));
+			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
 		return changed;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		getterCalled();
 
 		// To ensure that elements are compared correctly, e.g. ViewerElementSet
-		Set toRetain = createDiffSet();
-		toRetain.addAll(c);
+		Set<E> toRetain = createDiffSet();
+		toRetain.addAll((Collection<E>) c);
 
-		Set removals = createDiffSet();
-		for (Iterator iterator = wrappedSet.iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
+		Set<E> removals = createDiffSet();
+		for (Iterator<E> iterator = wrappedSet.iterator(); iterator.hasNext();) {
+			E element = iterator.next();
 			if (!toRetain.contains(element)) {
 				iterator.remove();
 				checkable.setChecked(element, false);
@@ -176,24 +172,24 @@ public class CheckableCheckedElementsObservableSet extends
 		}
 		boolean changed = !removals.isEmpty();
 		if (changed)
-			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removals));
+			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
 		return changed;
 	}
 
 	@Override
 	public void clear() {
 		getterCalled();
-		Set removals = createDiffSet();
+		Set<E> removals = createDiffSet();
 		removals.addAll(wrappedSet);
 		removeAll(removals);
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<E> iterator() {
 		getterCalled();
-		final Iterator wrappedIterator = wrappedSet.iterator();
-		return new Iterator() {
-			private Object last = null;
+		final Iterator<E> wrappedIterator = wrappedSet.iterator();
+		return new Iterator<E>() {
+			private E last = null;
 
 			@Override
 			public boolean hasNext() {
@@ -202,7 +198,7 @@ public class CheckableCheckedElementsObservableSet extends
 			}
 
 			@Override
-			public Object next() {
+			public E next() {
 				getterCalled();
 				return last = wrappedIterator.next();
 			}
@@ -212,8 +208,7 @@ public class CheckableCheckedElementsObservableSet extends
 				getterCalled();
 				wrappedIterator.remove();
 				checkable.setChecked(last, false);
-				fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
-						Collections.singleton(last)));
+				fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton(last)));
 			}
 		};
 	}

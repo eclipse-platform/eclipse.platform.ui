@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Label;
  * @since 3.3
  *
  */
-public class LabelTextProperty extends WidgetStringValueProperty {
+public class LabelTextProperty extends WidgetStringValueProperty<Label> {
 	@Override
-	String doGetStringValue(Object source) {
-		return ((Label) source).getText();
+	String doGetStringValue(Label source) {
+		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((Label) source).setText(value == null ? "" : value); //$NON-NLS-1$
+	void doSetStringValue(Label source, String value) {
+		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	@Override

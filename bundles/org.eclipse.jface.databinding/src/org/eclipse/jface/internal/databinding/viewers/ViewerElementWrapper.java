@@ -21,10 +21,13 @@ import org.eclipse.jface.viewers.IElementComparer;
  * for computing {@link Object#equals(Object) equality} and
  * {@link Object#hashCode() hashes}.
  *
+ * @param <T>
+ *            the type of the wrapped object
+ *
  * @since 1.2
  */
-public class ViewerElementWrapper {
-	private final Object element;
+public class ViewerElementWrapper<T> {
+	private final T element;
 	private final IElementComparer comparer;
 
 	/**
@@ -35,19 +38,20 @@ public class ViewerElementWrapper {
 	 * @param comparer
 	 *            the comparer to use for computing equality and hash codes.
 	 */
-	public ViewerElementWrapper(Object element, IElementComparer comparer) {
+	public ViewerElementWrapper(T element, IElementComparer comparer) {
 		if (comparer == null)
 			throw new NullPointerException();
 		this.element = element;
 		this.comparer = comparer;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ViewerElementWrapper)) {
 			return false;
 		}
-		return comparer.equals(element, ((ViewerElementWrapper) obj).element);
+		return comparer.equals(element, ((ViewerElementWrapper<T>) obj).element);
 	}
 
 	@Override
@@ -55,7 +59,7 @@ public class ViewerElementWrapper {
 		return comparer.hashCode(element);
 	}
 
-	Object unwrap() {
+	T unwrap() {
 		return element;
 	}
 }

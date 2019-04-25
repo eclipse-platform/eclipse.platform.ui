@@ -21,7 +21,7 @@
   </parent>
   <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.databinding.observable</artifactId>
-  <version>1.6.400-SNAPSHOT</version>
+  <version>1.7.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
 </project>

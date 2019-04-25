@@ -26,18 +26,18 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableList}.
  *
+ * @param <E> the type of elements in this collection
+ *
  * @since 3.3
  */
-public class BeanObservableListDecorator extends DecoratingObservableList
-		implements IBeanObservable {
+public class BeanObservableListDecorator<E> extends DecoratingObservableList<E> implements IBeanObservable {
 	private PropertyDescriptor propertyDescriptor;
 
 	/**
 	 * @param decorated
 	 * @param propertyDescriptor
 	 */
-	public BeanObservableListDecorator(IObservableList decorated,
-			PropertyDescriptor propertyDescriptor) {
+	public BeanObservableListDecorator(IObservableList<E> decorated, PropertyDescriptor propertyDescriptor) {
 		super(decorated, true);
 		this.propertyDescriptor = propertyDescriptor;
 	}

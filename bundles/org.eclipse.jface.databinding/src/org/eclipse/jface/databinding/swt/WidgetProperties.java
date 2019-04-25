@@ -71,8 +71,15 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * A factory for creating properties of SWT {@link Widget widgets}.
  *
+ * @deprecated This class has replaced by the class
+ *             {@link org.eclipse.jface.databinding.swt.typed.WidgetProperties}.
+ *             That class creates typed property objects, while this class
+ *             creates raw property objects. This class has been preserved for
+ *             backwards compatibility reasons.
+ *
  * @since 1.3
  */
+@Deprecated
 public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the background color of a

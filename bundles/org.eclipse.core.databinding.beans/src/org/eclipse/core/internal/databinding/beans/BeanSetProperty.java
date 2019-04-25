@@ -23,29 +23,31 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the set
+ *
  * @since 3.3
  *
  */
-public class BeanSetProperty extends SimpleSetProperty {
+public class BeanSetProperty<S, E> extends SimpleSetProperty<S, E> {
 	private final PropertyDescriptor propertyDescriptor;
-	private final Class elementType;
+	private final Class<E> elementType;
 
 	/**
 	 * @param propertyDescriptor
 	 * @param elementType
 	 */
-	public BeanSetProperty(PropertyDescriptor propertyDescriptor,
-			Class elementType) {
+	@SuppressWarnings("unchecked")
+	public BeanSetProperty(PropertyDescriptor propertyDescriptor, Class<E> elementType) {
 		this.propertyDescriptor = propertyDescriptor;
-		this.elementType = elementType == null ? BeanPropertyHelper
-				.getCollectionPropertyElementType(propertyDescriptor)
+		this.elementType = elementType == null
+				? (Class<E>) BeanPropertyHelper.getCollectionPropertyElementType(propertyDescriptor)
 				: elementType;
 	}
 
@@ -55,48 +57,44 @@ public class BeanSetProperty extends SimpleSetProperty {
 	}
 
 	@Override
-	protected Set doGetSet(Object source) {
-		return asSet(BeanPropertyHelper
-				.readProperty(source, propertyDescriptor));
+	protected Set<E> doGetSet(Object source) {
+		return asSet(BeanPropertyHelper.readProperty(source, propertyDescriptor));
 	}
 
-	private Set asSet(Object propertyValue) {
+	@SuppressWarnings("unchecked")
+	private Set<E> asSet(Object propertyValue) {
 		if (propertyValue == null)
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		if (propertyDescriptor.getPropertyType().isArray())
-			return new HashSet(Arrays.asList((Object[]) propertyValue));
-		return (Set) propertyValue;
+			return new HashSet<>(Arrays.asList((E[]) propertyValue));
+		return (Set<E>) propertyValue;
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set, SetDiff diff) {
+	protected void doSetSet(S source, Set<E> set, SetDiff<E> diff) {
 		doSetSet(source, set);
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set) {
-		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
-				convertSetToBeanPropertyType(set));
+	protected void doSetSet(S source, Set<E> set) {
+		BeanPropertyHelper.writeProperty(source, propertyDescriptor, convertSetToBeanPropertyType(set));
 	}
 
-	private Object convertSetToBeanPropertyType(Set set) {
+	private Object convertSetToBeanPropertyType(Set<E> set) {
 		Object propertyValue = set;
 		if (propertyDescriptor.getPropertyType().isArray()) {
-			Class componentType = propertyDescriptor.getPropertyType()
-					.getComponentType();
-			Object[] array = (Object[]) Array.newInstance(componentType, set
-					.size());
+			Class<?> componentType = propertyDescriptor.getPropertyType().getComponentType();
+			Object[] array = (Object[]) Array.newInstance(componentType, set.size());
 			propertyValue = set.toArray(array);
 		}
 		return propertyValue;
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			final ISimplePropertyListener listener) {
-		return new BeanPropertyListener(this, propertyDescriptor, listener) {
+	public INativePropertyListener<S> adaptListener(final ISimplePropertyListener<S, SetDiff<E>> listener) {
+		return new BeanPropertyListener<S, E, SetDiff<E>>(this, propertyDescriptor, listener) {
 			@Override
-			protected IDiff computeDiff(Object oldValue, Object newValue) {
+			protected SetDiff<E> computeDiff(Object oldValue, Object newValue) {
 				return Diffs.computeSetDiff(asSet(oldValue), asSet(newValue));
 			}
 		};

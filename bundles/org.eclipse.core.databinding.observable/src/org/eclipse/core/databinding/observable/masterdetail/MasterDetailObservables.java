@@ -119,7 +119,7 @@ public class MasterDetailObservables {
 	 */
 	public static <M, E> IObservableSet<E> detailSet(
 			IObservableValue<M> master,
-			IObservableFactory<? super M, IObservableSet<E>> detailFactory,
+			IObservableFactory<? super M, ? extends IObservableSet<E>> detailFactory,
 			Object detailElementType) {
 		return new DetailObservableSet<>(detailFactory, master,
 				detailElementType);

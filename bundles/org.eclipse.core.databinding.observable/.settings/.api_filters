@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.databinding.observable" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Inc version to 1.7.0 after adding wildcards to parameters. Bug 531748." id="926941240">
+            <message_arguments>
+                <message_argument value="1.7.0"/>
+                <message_argument value="1.6.300"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

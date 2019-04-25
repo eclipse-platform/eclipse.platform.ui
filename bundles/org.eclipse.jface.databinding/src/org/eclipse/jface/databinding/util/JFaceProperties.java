@@ -43,9 +43,8 @@ public class JFaceProperties {
 	 *
 	 * @return an observable value
 	 */
-	public static IValueProperty value(Class<?> clazz, String fieldName,
-			String propertyName) {
-		return new JFaceProperty(fieldName, propertyName, clazz);
+	public static <S, T> IValueProperty<S, T> value(Class<S> clazz, String fieldName, String propertyName) {
+		return new JFaceProperty<>(fieldName, propertyName, clazz);
 	}
 
 }

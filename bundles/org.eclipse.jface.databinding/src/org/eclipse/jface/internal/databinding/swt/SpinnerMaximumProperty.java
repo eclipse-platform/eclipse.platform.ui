@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Spinner;
  * @since 3.3
  *
  */
-public class SpinnerMaximumProperty extends WidgetIntValueProperty {
+public class SpinnerMaximumProperty extends WidgetIntValueProperty<Spinner> {
 	@Override
-	int doGetIntValue(Object source) {
-		return ((Spinner) source).getMaximum();
+	int doGetIntValue(Spinner source) {
+		return source.getMaximum();
 	}
 
 	@Override
-	void doSetIntValue(Object source, int value) {
-		((Spinner) source).setMaximum(value);
+	void doSetIntValue(Spinner source, int value) {
+		source.setMaximum(value);
 	}
 
 	@Override

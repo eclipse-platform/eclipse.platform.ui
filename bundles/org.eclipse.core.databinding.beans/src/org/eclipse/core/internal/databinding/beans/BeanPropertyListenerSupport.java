@@ -18,7 +18,6 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -124,8 +123,9 @@ public class BeanPropertyListenerSupport {
 	/**
 	 * Logs a message to the Data Binding logger.
 	 */
+	@SuppressWarnings("deprecation")
 	private static void log(int severity, String message, Throwable throwable) {
-		if (BeansObservables.DEBUG) {
+		if (org.eclipse.core.databinding.beans.BeansObservables.DEBUG) {
 			Policy.getLog().log(
 					new Status(severity, Policy.JFACE_DATABINDING, IStatus.OK,
 							message, throwable));

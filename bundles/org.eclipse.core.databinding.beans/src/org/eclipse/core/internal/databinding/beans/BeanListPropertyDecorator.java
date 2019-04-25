@@ -18,9 +18,9 @@ package org.eclipse.core.internal.databinding.beans;
 import java.beans.PropertyDescriptor;
 import java.util.List;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.IBeanListProperty;
 import org.eclipse.core.databinding.beans.IBeanValueProperty;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
@@ -29,20 +29,21 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.list.ListProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the list
+ *
  * @since 3.3
  *
  */
-public class BeanListPropertyDecorator extends ListProperty implements
-		IBeanListProperty {
-	private final IListProperty delegate;
+public class BeanListPropertyDecorator<S, E> extends ListProperty<S, E> implements IBeanListProperty<S, E> {
+	private final IListProperty<S, E> delegate;
 	private final PropertyDescriptor propertyDescriptor;
 
 	/**
 	 * @param delegate
 	 * @param propertyDescriptor
 	 */
-	public BeanListPropertyDecorator(IListProperty delegate,
-			PropertyDescriptor propertyDescriptor) {
+	public BeanListPropertyDecorator(IListProperty<S, E> delegate, PropertyDescriptor propertyDescriptor) {
 		this.delegate = delegate;
 		this.propertyDescriptor = propertyDescriptor;
 	}
@@ -53,35 +54,35 @@ public class BeanListPropertyDecorator extends ListProperty implements
 	}
 
 	@Override
-	protected List doGetList(Object source) {
+	protected List<E> doGetList(S source) {
 		return delegate.getList(source);
 	}
 
 	@Override
-	protected void doSetList(Object source, List list) {
+	protected void doSetList(S source, List<E> list) {
 		delegate.setList(source, list);
 	}
 
 	@Override
-	protected void doUpdateList(Object source, ListDiff diff) {
+	protected void doUpdateList(S source, ListDiff<E> diff) {
 		delegate.updateList(source, diff);
 	}
 
 	@Override
-	public IBeanListProperty values(String propertyName) {
+	public IBeanListProperty<S, Object> values(String propertyName) {
 		return values(propertyName, null);
 	}
 
 	@Override
-	public IBeanListProperty values(String propertyName, Class valueType) {
-		Class beanClass = (Class) delegate.getElementType();
+	public <E2> IBeanListProperty<S, E2> values(String propertyName, Class<E2> valueType) {
+		@SuppressWarnings("unchecked")
+		Class<E> beanClass = (Class<E>) delegate.getElementType();
 		return values(BeanProperties.value(beanClass, propertyName, valueType));
 	}
 
 	@Override
-	public IBeanListProperty values(IBeanValueProperty property) {
-		return new BeanListPropertyDecorator(super.values(property),
-				property.getPropertyDescriptor());
+	public <E2> IBeanListProperty<S, E2> values(IBeanValueProperty<? super E, E2> property) {
+		return new BeanListPropertyDecorator<>(super.values(property), property.getPropertyDescriptor());
 	}
 
 	@Override
@@ -90,21 +91,18 @@ public class BeanListPropertyDecorator extends ListProperty implements
 	}
 
 	@Override
-	public IObservableList observe(Object source) {
-		return new BeanObservableListDecorator(delegate.observe(source),
-				propertyDescriptor);
+	public IObservableList<E> observe(S source) {
+		return new BeanObservableListDecorator<>(delegate.observe(source), propertyDescriptor);
 	}
 
 	@Override
-	public IObservableList observe(Realm realm, Object source) {
-		return new BeanObservableListDecorator(delegate.observe(realm, source),
-				propertyDescriptor);
+	public IObservableList<E> observe(Realm realm, S source) {
+		return new BeanObservableListDecorator<>(delegate.observe(realm, source), propertyDescriptor);
 	}
 
 	@Override
-	public IObservableList observeDetail(IObservableValue master) {
-		return new BeanObservableListDecorator(delegate.observeDetail(master),
-				propertyDescriptor);
+	public <U extends S> IObservableList<E> observeDetail(IObservableValue<U> master) {
+		return new BeanObservableListDecorator<>(delegate.observeDetail(master), propertyDescriptor);
 	}
 
 	@Override

@@ -20,8 +20,6 @@
 
 package org.eclipse.jface.databinding.dialog;
 
-import java.util.Iterator;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.ChangeEvent;
@@ -31,19 +29,14 @@ import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 
 /**
  * Connects the validation result from the given data binding context to the
@@ -73,7 +66,7 @@ public class TitleAreaDialogSupport {
 	private TitleAreaDialog dialog;
 	private DataBindingContext dbc;
 	private IValidationMessageProvider messageProvider = new ValidationMessageProvider();
-	private IObservableValue aggregateStatusProvider;
+	private IObservableValue<ValidationStatusProvider> aggregateStatusProvider;
 	private boolean uiChanged = false;
 	private IChangeListener uiChangeListener = new IChangeListener() {
 		@Override
@@ -81,42 +74,33 @@ public class TitleAreaDialogSupport {
 			handleUIChanged();
 		}
 	};
-	private IListChangeListener validationStatusProvidersListener = new IListChangeListener() {
+	private IListChangeListener<ValidationStatusProvider> validationStatusProvidersListener = new IListChangeListener<ValidationStatusProvider>() {
 		@Override
-		public void handleListChange(ListChangeEvent event) {
-			ListDiff diff = event.diff;
-			for (ListDiffEntry listDiffEntry : diff.getDifferences()) {
-				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) listDiffEntry
-						.getElement();
-				IObservableList targets = validationStatusProvider.getTargets();
+		public void handleListChange(ListChangeEvent<? extends ValidationStatusProvider> event) {
+			for (ListDiffEntry<? extends ValidationStatusProvider> listDiffEntry : event.diff.getDifferences()) {
+				IObservableList<IObservable> targets = listDiffEntry.getElement().getTargets();
 				if (listDiffEntry.isAddition()) {
-					targets
-							.addListChangeListener(validationStatusProviderTargetsListener);
-					for (Iterator it = targets.iterator(); it.hasNext();) {
-						((IObservable) it.next())
-								.addChangeListener(uiChangeListener);
+					targets.addListChangeListener(validationStatusProviderTargetsListener);
+					for (IObservable observable : targets) {
+						observable.addChangeListener(uiChangeListener);
 					}
 				} else {
-					targets
-							.removeListChangeListener(validationStatusProviderTargetsListener);
-					for (Iterator it = targets.iterator(); it.hasNext();) {
-						((IObservable) it.next())
-								.removeChangeListener(uiChangeListener);
+					targets.removeListChangeListener(validationStatusProviderTargetsListener);
+					for (IObservable observable : targets) {
+						observable.removeChangeListener(uiChangeListener);
 					}
 				}
 			}
 		}
 	};
-	private IListChangeListener validationStatusProviderTargetsListener = new IListChangeListener() {
+	private IListChangeListener<IObservable> validationStatusProviderTargetsListener = new IListChangeListener<IObservable>() {
 		@Override
-		public void handleListChange(ListChangeEvent event) {
-			ListDiff diff = event.diff;
-			for (ListDiffEntry listDiffEntry : diff.getDifferences()) {
-				IObservable target = (IObservable) listDiffEntry.getElement();
+		public void handleListChange(ListChangeEvent<? extends IObservable> event) {
+			for (ListDiffEntry<? extends IObservable> listDiffEntry : event.diff.getDifferences()) {
 				if (listDiffEntry.isAddition()) {
-					target.addChangeListener(uiChangeListener);
+					listDiffEntry.getElement().addChangeListener(uiChangeListener);
 				} else {
-					target.removeChangeListener(uiChangeListener);
+					listDiffEntry.getElement().removeChangeListener(uiChangeListener);
 				}
 			}
 		}
@@ -151,44 +135,26 @@ public class TitleAreaDialogSupport {
 	private void init() {
 		ObservableTracker.setIgnore(true);
 		try {
-			aggregateStatusProvider = new MaxSeverityValidationStatusProvider(
-					dbc);
+			aggregateStatusProvider = new MaxSeverityValidationStatusProvider(dbc);
 		} finally {
 			ObservableTracker.setIgnore(false);
 		}
 
-		aggregateStatusProvider
-				.addValueChangeListener(new IValueChangeListener() {
-					@Override
-					public void handleValueChange(ValueChangeEvent event) {
-						statusProviderChanged();
-					}
-				});
-		dialog.getShell().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});
+		aggregateStatusProvider.addValueChangeListener(event -> statusProviderChanged());
+		dialog.getShell().addDisposeListener(e -> dispose());
 		statusProviderChanged();
-		dbc.getValidationStatusProviders().addListChangeListener(
-				validationStatusProvidersListener);
-		for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
-				.hasNext();) {
-			ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
-					.next();
-			IObservableList targets = validationStatusProvider.getTargets();
-			targets
-					.addListChangeListener(validationStatusProviderTargetsListener);
-			for (Iterator iter = targets.iterator(); iter.hasNext();) {
-				((IObservable) iter.next()).addChangeListener(uiChangeListener);
+		dbc.getValidationStatusProviders().addListChangeListener(validationStatusProvidersListener);
+		for (ValidationStatusProvider provider : dbc.getValidationStatusProviders()) {
+			IObservableList<IObservable> targets = provider.getTargets();
+			targets.addListChangeListener(validationStatusProviderTargetsListener);
+			for (IObservable observable : targets) {
+				observable.addChangeListener(uiChangeListener);
 			}
 		}
 	}
 
 	private void statusProviderChanged() {
-		currentStatusProvider = (ValidationStatusProvider) aggregateStatusProvider
-				.getValue();
+		currentStatusProvider = aggregateStatusProvider.getValue();
 		if (currentStatusProvider != null) {
 			currentStatus = currentStatusProvider
 					.getValidationStatus().getValue();
@@ -203,18 +169,12 @@ public class TitleAreaDialogSupport {
 		if (currentStatus != null) {
 			handleStatusChanged();
 		}
-		dbc.getValidationStatusProviders().removeListChangeListener(
-				validationStatusProvidersListener);
-		for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
-				.hasNext();) {
-			ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
-					.next();
-			IObservableList targets = validationStatusProvider.getTargets();
-			targets
-					.removeListChangeListener(validationStatusProviderTargetsListener);
-			for (Iterator iter = targets.iterator(); iter.hasNext();) {
-				((IObservable) iter.next())
-						.removeChangeListener(uiChangeListener);
+		dbc.getValidationStatusProviders().removeListChangeListener(validationStatusProvidersListener);
+		for (ValidationStatusProvider provider : dbc.getValidationStatusProviders()) {
+			IObservableList<IObservable> targets = provider.getTargets();
+			targets.removeListChangeListener(validationStatusProviderTargetsListener);
+			for (IObservable observable : targets) {
+				observable.removeChangeListener(uiChangeListener);
 			}
 		}
 	}
@@ -292,20 +252,14 @@ public class TitleAreaDialogSupport {
 		if (aggregateStatusProvider != null)
 			aggregateStatusProvider.dispose();
 		if (dbc != null && !uiChanged) {
-			for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
-					.hasNext();) {
-				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
-						.next();
-				IObservableList targets = validationStatusProvider.getTargets();
-				targets
-						.removeListChangeListener(validationStatusProviderTargetsListener);
-				for (Iterator iter = targets.iterator(); iter.hasNext();) {
-					((IObservable) iter.next())
-							.removeChangeListener(uiChangeListener);
+			for (ValidationStatusProvider provider : dbc.getValidationStatusProviders()) {
+				IObservableList<IObservable> targets = provider.getTargets();
+				targets.removeListChangeListener(validationStatusProviderTargetsListener);
+				for (IObservable observable : targets) {
+					observable.removeChangeListener(uiChangeListener);
 				}
 			}
-			dbc.getValidationStatusProviders().removeListChangeListener(
-					validationStatusProvidersListener);
+			dbc.getValidationStatusProviders().removeListChangeListener(validationStatusProvidersListener);
 		}
 		aggregateStatusProvider = null;
 		dbc = null;

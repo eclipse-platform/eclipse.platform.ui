@@ -32,8 +32,15 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * A factory for creating properties of JFace {@link Viewer viewers}.
  *
+ * @deprecated This class has replaced by the class
+ *             {@link org.eclipse.jface.databinding.viewers.typed.ViewerProperties}.
+ *             That class creates typed property objects, while this class
+ *             creates raw property objects. This class has been preserved for
+ *             backwards compatibility reasons.
+ *
  * @since 1.3
  */
+@Deprecated
 public class ViewerProperties {
 	/**
 	 * Returns a set property for observing the checked elements of a

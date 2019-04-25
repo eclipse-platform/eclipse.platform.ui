@@ -27,18 +27,20 @@ import org.eclipse.jface.viewers.Viewer;
  * class implements some basic behavior that viewer properties are generally
  * expected to have, namely:
  * <ul>
- * <li>Calling {@link #observe(Object)} should create the observable on the
- * display realm of the viewer's control, rather than the current default realm
+ * <li>Calling {@link #observe} should create the observable on the display
+ * realm of the viewer's control, rather than the current default realm
  * <li>All <code>observe()</code> methods should return an
  * {@link IViewerObservableList}
  * </ul>
  *
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the list
+ *
  * @since 1.3
  */
-public abstract class ViewerListProperty extends SimpleListProperty implements
-		IViewerListProperty {
+public abstract class ViewerListProperty<S, E> extends SimpleListProperty<S, E> implements IViewerListProperty<S, E> {
 	@Override
-	public IObservableList observe(Object source) {
+	public IObservableList<E> observe(S source) {
 		if (source instanceof Viewer) {
 			return observe((Viewer) source);
 		}
@@ -46,17 +48,18 @@ public abstract class ViewerListProperty extends SimpleListProperty implements
 	}
 
 	@Override
-	public IObservableList observe(Realm realm, Object source) {
-		IObservableList observable = super.observe(realm, source);
-		if (source instanceof Viewer)
-			observable = new ViewerObservableListDecorator(observable,
-					(Viewer) source);
+	public IObservableList<E> observe(Realm realm, S source) {
+		IObservableList<E> observable = super.observe(realm, source);
+		if (source instanceof Viewer) {
+			observable = new ViewerObservableListDecorator<>(observable, (Viewer) source);
+		}
 		return observable;
 	}
 
 	@Override
-	public IViewerObservableList observe(Viewer viewer) {
-		return (IViewerObservableList) observe(DisplayRealm.getRealm(viewer
-				.getControl().getDisplay()), viewer);
+	@SuppressWarnings("unchecked")
+	public IViewerObservableList<E> observe(Viewer viewer) {
+		return (IViewerObservableList<E>) observe(DisplayRealm.getRealm(viewer.getControl().getDisplay()), (S) viewer);
 	}
+
 }

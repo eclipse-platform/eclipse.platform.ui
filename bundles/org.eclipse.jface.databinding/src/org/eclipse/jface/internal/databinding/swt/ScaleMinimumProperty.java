@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Scale;
  * @since 3.3
  *
  */
-public class ScaleMinimumProperty extends WidgetIntValueProperty {
+public class ScaleMinimumProperty extends WidgetIntValueProperty<Scale> {
 	@Override
-	int doGetIntValue(Object source) {
-		return ((Scale) source).getMinimum();
+	int doGetIntValue(Scale source) {
+		return source.getMinimum();
 	}
 
 	@Override
-	void doSetIntValue(Object source, int value) {
-		((Scale) source).setMinimum(value);
+	void doSetIntValue(Scale source, int value) {
+		source.setMinimum(value);
 	}
 
 	@Override

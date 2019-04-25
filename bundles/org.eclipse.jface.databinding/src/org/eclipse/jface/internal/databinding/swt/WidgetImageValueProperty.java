@@ -17,28 +17,31 @@ package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.jface.databinding.swt.WidgetValueProperty;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Widget;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public abstract class WidgetImageValueProperty extends WidgetValueProperty {
+public abstract class WidgetImageValueProperty<S extends Widget> extends WidgetValueProperty<S, Image> {
 	@Override
 	public Object getValueType() {
 		return Image.class;
 	}
 
 	@Override
-	protected Object doGetValue(Object source) {
+	protected Image doGetValue(S source) {
 		return doGetImageValue(source);
 	}
 
 	@Override
-	protected void doSetValue(Object source, Object value) {
-		doSetImageValue(source, (Image) value);
+	protected void doSetValue(S source, Image value) {
+		doSetImageValue(source, value);
 	}
 
-	abstract Image doGetImageValue(Object source);
+	abstract Image doGetImageValue(S source);
 
-	abstract void doSetImageValue(Object source, Image value);
+	abstract void doSetImageValue(S source, Image value);
 }

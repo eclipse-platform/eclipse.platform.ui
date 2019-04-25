@@ -27,18 +27,23 @@ import org.eclipse.jface.viewers.Viewer;
  * class implements some basic behavior that viewer properties are generally
  * expected to have, namely:
  * <ul>
- * <li>Calling {@link #observe(Object)} should create the observable on the
- * display realm of the viewer's control, rather than the current default realm
+ * <li>Calling {@link #observe} should create the observable on the display
+ * realm of the viewer's control, rather than the current default realm
  * <li>All <code>observe()</code> methods should return an
  * {@link IViewerObservableSet}
  * </ul>
  *
+ * @param <S>
+ *            type of the source object
+ * @param <E>
+ *            type of the elements in the set
+ *
  * @since 1.3
  */
-public abstract class ViewerSetProperty extends SimpleSetProperty implements
-		IViewerSetProperty {
+public abstract class ViewerSetProperty<S, E> extends SimpleSetProperty<S, E> implements IViewerSetProperty<S, E> {
+
 	@Override
-	public IObservableSet observe(Object source) {
+	public IObservableSet<E> observe(S source) {
 		if (source instanceof Viewer) {
 			return observe((Viewer) source);
 		}
@@ -46,16 +51,18 @@ public abstract class ViewerSetProperty extends SimpleSetProperty implements
 	}
 
 	@Override
-	public IObservableSet observe(Realm realm, Object source) {
-		IObservableSet observable = super.observe(realm, source);
-		if (source instanceof Viewer)
-			return new ViewerObservableSetDecorator(observable, (Viewer) source);
+	public IObservableSet<E> observe(Realm realm, S source) {
+		IObservableSet<E> observable = super.observe(realm, source);
+		if (source instanceof Viewer) {
+			return new ViewerObservableSetDecorator<>(observable, (Viewer) source);
+		}
 		return observable;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public IViewerObservableSet observe(Viewer viewer) {
-		return (IViewerObservableSet) observe(DisplayRealm.getRealm(viewer
-				.getControl().getDisplay()), viewer);
+	public IViewerObservableSet<E> observe(Viewer viewer) {
+		return (IViewerObservableSet<E>) observe(DisplayRealm.getRealm(viewer.getControl().getDisplay()), (S) viewer);
 	}
+
 }

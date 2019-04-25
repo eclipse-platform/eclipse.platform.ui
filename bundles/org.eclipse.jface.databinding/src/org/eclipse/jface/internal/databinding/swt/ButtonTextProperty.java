@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Button;
  * @since 3.3
  *
  */
-public class ButtonTextProperty extends WidgetStringValueProperty {
+public class ButtonTextProperty extends WidgetStringValueProperty<Button> {
 	@Override
-	String doGetStringValue(Object source) {
-		return ((Button) source).getText();
+	String doGetStringValue(Button source) {
+		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((Button) source).setText(value == null ? "" : value); //$NON-NLS-1$
+	void doSetStringValue(Button source, String value) {
+		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	@Override

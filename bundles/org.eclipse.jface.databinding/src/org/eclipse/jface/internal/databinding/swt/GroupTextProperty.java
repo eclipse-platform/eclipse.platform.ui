@@ -21,16 +21,16 @@ import org.eclipse.swt.widgets.Group;
  *
  * @author Eugen Neufeld
  */
-public class GroupTextProperty extends WidgetStringValueProperty {
+public class GroupTextProperty extends WidgetStringValueProperty<Group> {
 
 	@Override
-	String doGetStringValue(Object source) {
-		return ((Group) source).getText();
+	String doGetStringValue(Group source) {
+		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((Group) source).setText(value == null ? "" : value); //$NON-NLS-1$
+	void doSetStringValue(Group source, String value) {
+		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	@Override

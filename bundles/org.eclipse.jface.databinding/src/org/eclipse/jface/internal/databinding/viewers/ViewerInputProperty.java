@@ -15,42 +15,61 @@
 
 package org.eclipse.jface.internal.databinding.viewers;
 
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.jface.databinding.viewers.ViewerValueProperty;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
+ * @param <S> type of the source object
+ * @param <T> type of the value of the property
+ *
  * @since 3.3
  *
  */
-public class ViewerInputProperty extends ViewerValueProperty {
+public class ViewerInputProperty<S, T> extends ViewerValueProperty<S, T> {
+	private final Object valueType;
+
+	/**
+	 * @param valueType The value type of the property
+	 */
+	public ViewerInputProperty(Object valueType) {
+		this.valueType = valueType;
+	}
+
+	/**
+	 * Creates a property with a null value type.
+	 */
+	public ViewerInputProperty() {
+		this(null);
+	}
+
 	@Override
 	public Object getValueType() {
-		return null;
+		return valueType;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected T doGetValue(S source) {
+		return (T) ((Viewer) source).getInput();
 	}
 
 	@Override
-	protected Object doGetValue(Object source) {
-		return ((Viewer) source).getInput();
-	}
-
-	@Override
-	protected void doSetValue(Object source, Object value) {
+	protected void doSetValue(S source, T value) {
 		((Viewer) source).setInput(value);
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, ValueDiff<? extends T>> listener) {
 		return null;
 	}
 
-	protected void doAddListener(Object source, INativePropertyListener listener) {
+	protected void doAddListener(Viewer source, INativePropertyListener<Viewer> listener) {
 	}
 
-	protected void doRemoveListener(Object source,
-			INativePropertyListener listener) {
+	protected void doRemoveListener(Viewer source, INativePropertyListener<Viewer> listener) {
 	}
 
 	@Override

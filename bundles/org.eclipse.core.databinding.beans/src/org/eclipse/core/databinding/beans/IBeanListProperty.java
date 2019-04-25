@@ -20,9 +20,12 @@ import org.eclipse.core.databinding.property.list.IListProperty;
  * An {@link IListProperty} extension interface with convenience methods for
  * creating nested bean properties.
  *
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the list
+ *
  * @since 1.2
  */
-public interface IBeanListProperty extends IBeanProperty, IListProperty {
+public interface IBeanListProperty<S, E> extends IBeanProperty, IListProperty<S, E> {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * value property.
@@ -34,7 +37,7 @@ public interface IBeanListProperty extends IBeanProperty, IListProperty {
 	 *         property.
 	 * @see #values(IBeanValueProperty)
 	 */
-	public IBeanListProperty values(String propertyName);
+	public <E2> IBeanListProperty<S, E2> values(String propertyName);
 
 	/**
 	 * Returns a master-detail combination of this property and the specified
@@ -49,7 +52,7 @@ public interface IBeanListProperty extends IBeanProperty, IListProperty {
 	 *         value property.
 	 * @see #values(IBeanValueProperty)
 	 */
-	public IBeanListProperty values(String propertyName, Class valueType);
+	public <E2> IBeanListProperty<S, E2> values(String propertyName, Class<E2> valueType);
 
 	/**
 	 * Returns a master-detail combination of this property and the specified
@@ -74,5 +77,5 @@ public interface IBeanListProperty extends IBeanProperty, IListProperty {
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
 	 */
-	public IBeanListProperty values(IBeanValueProperty property);
+	public <E2> IBeanListProperty<S, E2> values(IBeanValueProperty<? super E, E2> property);
 }

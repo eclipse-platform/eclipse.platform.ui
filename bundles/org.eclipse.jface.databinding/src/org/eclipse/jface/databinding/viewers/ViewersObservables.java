@@ -21,6 +21,7 @@ import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.internal.databinding.viewers.ViewerObservableValueDecorator;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -36,6 +37,7 @@ import org.eclipse.jface.viewers.Viewer;
  *
  * @since 1.1
  */
+@SuppressWarnings("rawtypes")
 public class ViewersObservables {
 	private static void checkNull(Object obj) {
 		if (obj == null)
@@ -63,10 +65,9 @@ public class ViewersObservables {
 	 *
 	 * @since 1.3
 	 */
-	public static IViewerObservableValue observeDelayedValue(int delay,
-			IViewerObservableValue observable) {
-		return new ViewerObservableValueDecorator(Observables
-				.observeDelayedValue(delay, observable), observable.getViewer());
+	public static <T> IViewerObservableValue<T> observeDelayedValue(int delay, IViewerObservableValue<T> observable) {
+		return new ViewerObservableValueDecorator<>(Observables.observeDelayedValue(delay, observable),
+				observable.getViewer());
 	}
 
 	/**
@@ -283,7 +284,7 @@ public class ViewersObservables {
 	@Deprecated
 	public static IObservableValue observeInput(Viewer viewer) {
 		checkNull(viewer);
-		return ViewerProperties.input().observe(viewer);
+		return ViewerProperties.<StructuredViewer, Object>input().observe(viewer);
 	}
 
 	/**
@@ -323,10 +324,9 @@ public class ViewersObservables {
 	 * @deprecated use <code>ViewerProperties</code> instead
 	 */
 	@Deprecated
-	public static IViewerObservableSet observeCheckedElements(
-			CheckboxTableViewer viewer, Object elementType) {
+	public static IViewerObservableSet observeCheckedElements(CheckboxTableViewer viewer, Object elementType) {
 		checkNull(viewer);
-		return ViewerProperties.checkedElements(elementType).observe(viewer);
+		return ViewerProperties.checkedElements(elementType).observe((Viewer) viewer);
 	}
 
 	/**
@@ -345,10 +345,9 @@ public class ViewersObservables {
 	 * @deprecated use <code>ViewerProperties</code> instead
 	 */
 	@Deprecated
-	public static IViewerObservableSet observeCheckedElements(
-			CheckboxTreeViewer viewer, Object elementType) {
+	public static IViewerObservableSet observeCheckedElements(CheckboxTreeViewer viewer, Object elementType) {
 		checkNull(viewer);
-		return ViewerProperties.checkedElements(elementType).observe(viewer);
+		return ViewerProperties.checkedElements(elementType).observe((Viewer) viewer);
 	}
 
 	/**
@@ -373,6 +372,6 @@ public class ViewersObservables {
 	@Deprecated
 	public static IViewerObservableSet observeFilters(StructuredViewer viewer) {
 		checkNull(viewer);
-		return ViewerProperties.filters().observe(viewer);
+		return ViewerProperties.filters().observe((Viewer) viewer);
 	}
 }

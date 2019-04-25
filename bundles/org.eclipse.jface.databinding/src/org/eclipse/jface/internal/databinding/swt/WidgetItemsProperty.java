@@ -17,16 +17,19 @@ package org.eclipse.jface.internal.databinding.swt;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public class WidgetItemsProperty extends WidgetDelegatingListProperty {
-	private IListProperty cCombo;
-	private IListProperty combo;
-	private IListProperty list;
+public class WidgetItemsProperty<S extends Control> extends WidgetDelegatingListProperty<S, String> {
+	private IListProperty<S, String> cCombo;
+	private IListProperty<S, String> combo;
+	private IListProperty<S, String> list;
 
 	/**
 	 *
@@ -35,21 +38,22 @@ public class WidgetItemsProperty extends WidgetDelegatingListProperty {
 		super(String.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IListProperty doGetDelegate(Object source) {
+	protected IListProperty<S, String> doGetDelegate(S source) {
 		if (source instanceof CCombo) {
 			if (cCombo == null)
-				cCombo = new CComboItemsProperty();
+				cCombo = (IListProperty<S, String>) new CComboItemsProperty();
 			return cCombo;
 		}
 		if (source instanceof Combo) {
 			if (combo == null)
-				combo = new ComboItemsProperty();
+				combo = (IListProperty<S, String>) new ComboItemsProperty();
 			return combo;
 		}
 		if (source instanceof List) {
 			if (list == null)
-				list = new ListItemsProperty();
+				list = (IListProperty<S, String>) new ListItemsProperty();
 			return list;
 		}
 		throw notSupported(source);

@@ -29,54 +29,67 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the list
+ *
  * @since 3.3
  *
  */
-public class SelectionProviderMultipleSelectionProperty extends
-		ViewerListProperty {
+public class SelectionProviderMultipleSelectionProperty<S extends ISelectionProvider, E>
+		extends ViewerListProperty<S, E> {
 
 	private final boolean isPostSelection;
+	private final Object elementType;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param isPostSelection
-	 *            Whether the post selection or the normal selection is to be
-	 *            observed.
+	 * @param isPostSelection Whether the post selection or the normal selection is
+	 *                        to be observed.
+	 * @param elementType     Element type of the property.
+	 */
+	public SelectionProviderMultipleSelectionProperty(boolean isPostSelection, Object elementType) {
+		this.isPostSelection = isPostSelection;
+		this.elementType = elementType;
+	}
+
+	/**
+	 * Creates a property with a null value type.
+	 *
+	 * @param isPostSelection Whether the post selection or the normal selection is
+	 *                        to be observed.
 	 */
 	public SelectionProviderMultipleSelectionProperty(boolean isPostSelection) {
-		this.isPostSelection = isPostSelection;
+		this(isPostSelection, null);
 	}
 
 	@Override
 	public Object getElementType() {
-		return Object.class;
+		return elementType;
 	}
 
 	@Override
-	protected List doGetList(Object source) {
-		ISelection selection = ((ISelectionProvider) source).getSelection();
+	protected List<E> doGetList(ISelectionProvider source) {
+		ISelection selection = source.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			return ((IStructuredSelection) selection).toList();
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	@Override
-	protected void doSetList(Object source, List list, ListDiff diff) {
+	protected void doSetList(S source, List<E> list, ListDiff<E> diff) {
 		doSetList(source, list);
 	}
 
 	@Override
-	protected void doSetList(Object source, List list) {
-		((ISelectionProvider) source)
-				.setSelection(new StructuredSelection(list));
+	protected void doSetList(S source, List<E> list) {
+		source.setSelection(new StructuredSelection(list));
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
-		return new SelectionChangedListener(this, listener, isPostSelection);
+	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, ListDiff<E>> listener) {
+		return new SelectionChangedListener<>(this, listener, isPostSelection);
 	}
 
 	@Override

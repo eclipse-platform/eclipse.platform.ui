@@ -18,8 +18,6 @@ package org.eclipse.jface.databinding.viewers;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.runtime.Assert;
@@ -34,10 +32,18 @@ import org.eclipse.jface.viewers.ViewerCell;
 /**
  * {@link EditingSupport} using the JFace Data Binding concepts to handle the
  * updating of an element from a {@link CellEditor}.
+ * <p>
+ * If {@code M} and {@code T} are different then they must be converted to each
+ * other.
+ *
+ * @param <E> type of the model element with a property that is being edited
+ * @param <M> type of the value in the model that is being edited, the value of
+ *            the property on the model element
+ * @param <T> type of the target value that actually is being edited by the user
  *
  * @since 1.2
  */
-public abstract class ObservableValueEditingSupport extends EditingSupport {
+public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupport {
 	/**
 	 * Returns an ObservableValueEditingSupport instance which binds the given
 	 * cell editor property to the given element property.
@@ -57,20 +63,18 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 *         arguments.
 	 * @since 1.3
 	 */
-	public static EditingSupport create(ColumnViewer viewer,
+	public static <E, M, T> EditingSupport create(ColumnViewer viewer,
 			DataBindingContext dbc, final CellEditor cellEditor,
-			final IValueProperty cellEditorProperty,
-			final IValueProperty elementProperty) {
-		return new ObservableValueEditingSupport(viewer, dbc) {
+			final IValueProperty<? super CellEditor, T> cellEditorProperty,
+			final IValueProperty<E, M> elementProperty) {
+		return new ObservableValueEditingSupport<E, M, T>(viewer, dbc) {
 			@Override
-			protected IObservableValue doCreateCellEditorObservable(
-					CellEditor cellEditor) {
+			protected IObservableValue<T> doCreateCellEditorObservable(CellEditor cellEditor) {
 				return cellEditorProperty.observe(cellEditor);
 			}
 
 			@Override
-			protected IObservableValue doCreateElementObservable(
-					Object element, ViewerCell cell) {
+			protected IObservableValue<M> doCreateElementObservable(E element, ViewerCell cell) {
 				return elementProperty.observe(element);
 			}
 
@@ -85,7 +89,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * Maintains references to the instances currently imployed while editing.
 	 * Will be <code>null</code> when not editing.
 	 */
-	private EditingState editingState;
+	private EditingState<T, M> editingState;
 
 	private final ColumnViewerEditorActivationListenerHelper activationListener = new ColumnViewerEditorActivationListenerHelper();
 
@@ -102,8 +106,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * @param dbc
 	 *            dbc to create <code>Bindings</code>
 	 */
-	public ObservableValueEditingSupport(ColumnViewer viewer,
-			DataBindingContext dbc) {
+	public ObservableValueEditingSupport(ColumnViewer viewer, DataBindingContext dbc) {
 		super(viewer);
 
 		if (dbc == null) {
@@ -155,34 +158,25 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * {@link #createBinding(IObservableValue, IObservableValue)}.
 	 */
 	@Override
-	final protected void initializeCellEditorValue(CellEditor cellEditor,
-			ViewerCell cell) {
-		IObservableValue target = doCreateCellEditorObservable(cellEditor);
-		Assert.isNotNull(target,
-				"doCreateCellEditorObservable(...) did not return an observable"); //$NON-NLS-1$
+	final protected void initializeCellEditorValue(CellEditor cellEditor, ViewerCell cell) {
+		IObservableValue<T> target = doCreateCellEditorObservable(cellEditor);
+		Assert.isNotNull(target, "doCreateCellEditorObservable(...) did not return an observable"); //$NON-NLS-1$
 
-		IObservableValue model = doCreateElementObservable(cell.getElement(),
-				cell);
-		Assert.isNotNull(model,
-				"doCreateElementObservable(...) did not return an observable"); //$NON-NLS-1$
+		@SuppressWarnings("unchecked")
+		IObservableValue<M> model = doCreateElementObservable((E) cell.getElement(), cell);
+		Assert.isNotNull(model, "doCreateElementObservable(...) did not return an observable"); //$NON-NLS-1$
 
 		dirty = false;
 
 		Binding binding = createBinding(target, model);
 
-		target.addChangeListener(new IChangeListener() {
-			@Override
-			public void handleChange(ChangeEvent event) {
-				dirty = true;
-			}
-		});
+		target.addChangeListener(_event -> dirty = true);
 
 		Assert.isNotNull(binding, "createBinding(...) did not return a binding"); //$NON-NLS-1$
 
-		editingState = new EditingState(binding, target, model);
+		editingState = new EditingState<>(binding, target, model);
 
-		getViewer().getColumnViewerEditor().addEditorActivationListener(
-				activationListener);
+		getViewer().getColumnViewerEditor().addEditorActivationListener(activationListener);
 	}
 
 	/**
@@ -191,8 +185,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * @param cellEditor
 	 * @return observable value
 	 */
-	protected abstract IObservableValue doCreateCellEditorObservable(
-			CellEditor cellEditor);
+	protected abstract IObservableValue<T> doCreateCellEditorObservable(CellEditor cellEditor);
 
 	/**
 	 * Creates the observable value for the element.
@@ -201,8 +194,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * @param cell
 	 * @return observable value
 	 */
-	protected abstract IObservableValue doCreateElementObservable(
-			Object element, ViewerCell cell);
+	protected abstract IObservableValue<M> doCreateElementObservable(E element, ViewerCell cell);
 
 	/**
 	 * Creates a new binding for the provided <code>target</code> and
@@ -214,10 +206,9 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * @param model
 	 * @return binding
 	 */
-	protected Binding createBinding(IObservableValue target,
-			IObservableValue model) {
-		return dbc.bindValue(target, model, new UpdateValueStrategy(
-				UpdateValueStrategy.POLICY_CONVERT), null);
+	// TODO j: These values are converted, do not need to be the same
+	protected Binding createBinding(IObservableValue<T> target, IObservableValue<M> model) {
+		return dbc.bindValue(target, model, new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_CONVERT), null);
 	}
 
 	boolean dirty = false;
@@ -226,16 +217,14 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * Updates the model from the target.
 	 */
 	@Override
-	final protected void saveCellEditorValue(CellEditor cellEditor,
-			ViewerCell cell) {
+	final protected void saveCellEditorValue(CellEditor cellEditor, ViewerCell cell) {
 		if (dirty) {
 			editingState.binding.updateTargetToModel();
 			dirty = false;
 		}
 	}
 
-	private class ColumnViewerEditorActivationListenerHelper extends
-			ColumnViewerEditorActivationListener {
+	private class ColumnViewerEditorActivationListenerHelper extends ColumnViewerEditorActivationListener {
 
 		@Override
 		public void afterEditorActivated(ColumnViewerEditorActivationEvent event) {
@@ -252,14 +241,12 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 		}
 
 		@Override
-		public void beforeEditorActivated(
-				ColumnViewerEditorActivationEvent event) {
+		public void beforeEditorActivated(ColumnViewerEditorActivationEvent event) {
 			// do nothing
 		}
 
 		@Override
-		public void beforeEditorDeactivated(
-				ColumnViewerEditorDeactivationEvent event) {
+		public void beforeEditorDeactivated(ColumnViewerEditorDeactivationEvent event) {
 			// do nothing
 		}
 	}
@@ -268,15 +255,12 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * Maintains references to objects that only live for the length of the edit
 	 * cycle.
 	 */
-	private static class EditingState {
-		IObservableValue target;
-
-		IObservableValue model;
-
+	private static class EditingState<T, M> {
+		IObservableValue<T> target;
+		IObservableValue<M> model;
 		Binding binding;
 
-		EditingState(Binding binding, IObservableValue target,
-				IObservableValue model) {
+		EditingState(Binding binding, IObservableValue<T> target, IObservableValue<M> model) {
 			this.binding = binding;
 			this.target = target;
 			this.model = model;

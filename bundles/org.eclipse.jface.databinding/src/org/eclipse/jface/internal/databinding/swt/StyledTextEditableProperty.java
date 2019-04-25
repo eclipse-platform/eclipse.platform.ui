@@ -20,15 +20,15 @@ import org.eclipse.swt.custom.StyledText;
  * @since 3.3
  *
  */
-public class StyledTextEditableProperty extends WidgetBooleanValueProperty {
+public class StyledTextEditableProperty extends WidgetBooleanValueProperty<StyledText> {
 	@Override
-	boolean doGetBooleanValue(Object source) {
-		return ((StyledText) source).getEditable();
+	boolean doGetBooleanValue(StyledText source) {
+		return source.getEditable();
 	}
 
 	@Override
-	void doSetBooleanValue(Object source, boolean value) {
-		((StyledText) source).setEditable(value);
+	void doSetBooleanValue(StyledText source, boolean value) {
+		source.setEditable(value);
 	}
 
 	@Override

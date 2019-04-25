@@ -18,39 +18,42 @@ package org.eclipse.core.internal.databinding.beans;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.property.set.DelegatingSetProperty;
 import org.eclipse.core.databinding.property.set.ISetProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the set
+ *
  * @since 3.3
  *
  */
-public class AnonymousPojoSetProperty extends DelegatingSetProperty {
+public class AnonymousPojoSetProperty<S, E> extends DelegatingSetProperty<S, E> {
 	private final String propertyName;
 
-	private Map delegates;
+	private Map<Class<S>, ISetProperty<S, E>> delegates;
 
 	/**
 	 * @param propertyName
 	 * @param elementType
 	 */
-	public AnonymousPojoSetProperty(String propertyName, Class elementType) {
+	public AnonymousPojoSetProperty(String propertyName, Class<E> elementType) {
 		super(elementType);
 		this.propertyName = propertyName;
-		this.delegates = new HashMap();
+		this.delegates = new HashMap<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected ISetProperty doGetDelegate(Object source) {
-		Class beanClass = source.getClass();
+	protected ISetProperty<S, E> doGetDelegate(S source) {
+		Class<S> beanClass = (Class<S>) source.getClass();
 		if (delegates.containsKey(beanClass))
-			return (ISetProperty) delegates.get(beanClass);
+			return delegates.get(beanClass);
 
-		ISetProperty delegate;
+		ISetProperty<S, E> delegate;
 		try {
-			delegate = PojoProperties.set(beanClass, propertyName,
-					(Class) getElementType());
+			delegate = PojoProperties.set(beanClass, propertyName, (Class<E>) getElementType());
 		} catch (IllegalArgumentException noSuchProperty) {
 			delegate = null;
 		}
@@ -61,7 +64,7 @@ public class AnonymousPojoSetProperty extends DelegatingSetProperty {
 	@Override
 	public String toString() {
 		String s = "?." + propertyName + "{}"; //$NON-NLS-1$ //$NON-NLS-2$
-		Class elementType = (Class) getElementType();
+		Class<?> elementType = (Class<?>) getElementType();
 		if (elementType != null)
 			s += "<" + BeanPropertyHelper.shortClassName(elementType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;

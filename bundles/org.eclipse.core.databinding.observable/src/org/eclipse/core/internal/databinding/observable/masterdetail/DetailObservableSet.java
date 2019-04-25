@@ -60,7 +60,7 @@ public class DetailObservableSet<M, E> extends ObservableSet<E>implements IObser
 
 	private IObservableValue<M> outerObservableValue;
 
-	private IObservableFactory<? super M, IObservableSet<E>> factory;
+	private IObservableFactory<? super M, ? extends IObservableSet<E>> factory;
 
 	/**
 	 * @param factory
@@ -68,7 +68,7 @@ public class DetailObservableSet<M, E> extends ObservableSet<E>implements IObser
 	 * @param detailType
 	 */
 	public DetailObservableSet(
-			IObservableFactory<? super M, IObservableSet<E>> factory,
+			IObservableFactory<? super M, ? extends IObservableSet<E>> factory,
 			IObservableValue<M> outerObservableValue, Object detailType) {
 		super(outerObservableValue.getRealm(), Collections.<E> emptySet(),
 				detailType);

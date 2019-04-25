@@ -16,7 +16,6 @@
 package org.eclipse.jface.internal.databinding.viewers;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -32,11 +31,13 @@ import org.eclipse.jface.viewers.ICheckable;
 import org.eclipse.jface.viewers.StructuredViewer;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the set
+ *
  * @since 3.3
  *
  */
-public abstract class CheckboxViewerCheckedElementsProperty extends
-		ViewerSetProperty {
+public abstract class CheckboxViewerCheckedElementsProperty<S extends ICheckable, E> extends ViewerSetProperty<S, E> {
 	private final Object elementType;
 
 	/**
@@ -51,53 +52,49 @@ public abstract class CheckboxViewerCheckedElementsProperty extends
 		return elementType;
 	}
 
-	protected final Set createElementSet(StructuredViewer viewer) {
+	protected final Set<E> createElementSet(StructuredViewer viewer) {
 		return ViewerElementSet.withComparer(viewer.getComparer());
 	}
 
 	@Override
-	protected void doUpdateSet(Object source, SetDiff diff) {
-		ICheckable checkable = (ICheckable) source;
-		for (Iterator it = diff.getAdditions().iterator(); it.hasNext();)
-			checkable.setChecked(it.next(), true);
-		for (Iterator it = diff.getRemovals().iterator(); it.hasNext();)
-			checkable.setChecked(it.next(), false);
+	protected void doUpdateSet(S source, SetDiff<E> diff) {
+		for (E e : diff.getAdditions())
+			source.setChecked(e, true);
+		for (E e : diff.getRemovals())
+			source.setChecked(e, false);
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, SetDiff<E>> listener) {
 		return new CheckStateListener(this, listener);
 	}
 
-	private class CheckStateListener extends NativePropertyListener implements
-			ICheckStateListener {
-		private CheckStateListener(IProperty property,
-				ISimplePropertyListener listener) {
+	private class CheckStateListener extends NativePropertyListener<S, SetDiff<E>> implements ICheckStateListener {
+		private CheckStateListener(IProperty property, ISimplePropertyListener<S, SetDiff<E>> listener) {
 			super(property, listener);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			Object element = event.getElement();
+			E element = (E) event.getElement();
 			boolean checked = event.getChecked();
-			Set elementSet = createElementSet((StructuredViewer) event
-					.getCheckable());
+			Set<E> elementSet = createElementSet((StructuredViewer) event.getCheckable());
 			elementSet.add(element);
-			Set additions = checked ? elementSet : Collections.EMPTY_SET;
-			Set removals = checked ? Collections.EMPTY_SET : elementSet;
-			SetDiff diff = Diffs.createSetDiff(additions, removals);
-			fireChange(event.getSource(), diff);
+			Set<E> additions = checked ? elementSet : Collections.emptySet();
+			Set<E> removals = checked ? Collections.emptySet() : elementSet;
+			SetDiff<E> diff = Diffs.createSetDiff(additions, removals);
+			fireChange((S) event.getSource(), diff);
 		}
 
 		@Override
-		public void doAddTo(Object source) {
-			((ICheckable) source).addCheckStateListener(this);
+		public void doAddTo(S source) {
+			source.addCheckStateListener(this);
 		}
 
 		@Override
-		public void doRemoveFrom(Object source) {
-			((ICheckable) source).removeCheckStateListener(this);
+		public void doRemoveFrom(S source) {
+			source.removeCheckStateListener(this);
 		}
 	}
 

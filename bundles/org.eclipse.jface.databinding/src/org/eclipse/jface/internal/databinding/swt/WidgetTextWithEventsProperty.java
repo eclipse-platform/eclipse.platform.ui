@@ -18,16 +18,19 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 
 /**
+ * @param <S> type of the source object
+ *
  * @since 3.3
  *
  */
-public class WidgetTextWithEventsProperty extends WidgetDelegatingValueProperty {
+public class WidgetTextWithEventsProperty<S extends Widget> extends WidgetDelegatingValueProperty<S, String> {
 	private final int[] events;
 
-	private IValueProperty styledText;
-	private IValueProperty text;
+	private IValueProperty<S, String> styledText;
+	private IValueProperty<S, String> text;
 
 	/**
 	 * @param events
@@ -50,16 +53,17 @@ public class WidgetTextWithEventsProperty extends WidgetDelegatingValueProperty 
 					+ event + "] is not supported."); //$NON-NLS-1$
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IValueProperty doGetDelegate(Object source) {
+	protected IValueProperty<S, String> doGetDelegate(S source) {
 		if (source instanceof StyledText) {
 			if (styledText == null)
-				styledText = new StyledTextTextProperty(events);
+				styledText = (IValueProperty<S, String>) new StyledTextTextProperty(events);
 			return styledText;
 		}
 		if (source instanceof Text) {
 			if (text == null)
-				text = new TextTextProperty(events);
+				text = (IValueProperty<S, String>) new TextTextProperty(events);
 			return text;
 		}
 		throw notSupported(source);

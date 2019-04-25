@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Combo;
  * @since 3.3
  *
  */
-public class ComboSelectionProperty extends WidgetStringValueProperty {
+public class ComboSelectionProperty extends WidgetStringValueProperty<Combo> {
 	/**
 	 *
 	 */
@@ -30,14 +30,13 @@ public class ComboSelectionProperty extends WidgetStringValueProperty {
 	}
 
 	@Override
-	String doGetStringValue(Object source) {
-		return ((Combo) source).getText();
+	String doGetStringValue(Combo source) {
+		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		Combo combo = (Combo) source;
-		String items[] = combo.getItems();
+	void doSetStringValue(Combo source, String value) {
+		String items[] = source.getItems();
 		int index = -1;
 		if (items != null && value != null) {
 			for (int i = 0; i < items.length; i++) {
@@ -47,9 +46,9 @@ public class ComboSelectionProperty extends WidgetStringValueProperty {
 				}
 			}
 			if (index == -1) {
-				combo.setText(value);
+				source.setText(value);
 			} else {
-				combo.select(index); // -1 will not "unselect"
+				source.select(index); // -1 will not "unselect"
 			}
 		}
 	}

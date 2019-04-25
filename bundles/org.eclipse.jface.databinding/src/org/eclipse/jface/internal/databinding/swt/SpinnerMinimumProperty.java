@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Spinner;
  * @since 3.3
  *
  */
-public class SpinnerMinimumProperty extends WidgetIntValueProperty {
+public class SpinnerMinimumProperty extends WidgetIntValueProperty<Spinner> {
 	@Override
-	int doGetIntValue(Object source) {
-		return ((Spinner) source).getMinimum();
+	int doGetIntValue(Spinner source) {
+		return source.getMinimum();
 	}
 
 	@Override
-	void doSetIntValue(Object source, int value) {
-		((Spinner) source).setMinimum(value);
+	void doSetIntValue(Spinner source, int value) {
+		source.setMinimum(value);
 	}
 
 	@Override

@@ -17,27 +17,30 @@ package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
+ * @param <S> type of the source object
+ * @param <T> type of the value of the property
+ *
  * @since 3.3
  *
  */
-public class PojoValueProperty extends SimpleValueProperty {
+public class PojoValueProperty<S, T> extends SimpleValueProperty<S, T> {
 	private final PropertyDescriptor propertyDescriptor;
-	private final Class valueType;
+	private final Class<T> valueType;
 
 	/**
 	 * @param propertyDescriptor
 	 * @param valueType
 	 */
-	public PojoValueProperty(PropertyDescriptor propertyDescriptor,
-			Class valueType) {
+	@SuppressWarnings("unchecked")
+	public PojoValueProperty(PropertyDescriptor propertyDescriptor, Class<T> valueType) {
 		this.propertyDescriptor = propertyDescriptor;
-		this.valueType = valueType == null ? propertyDescriptor
-				.getPropertyType() : valueType;
+		this.valueType = valueType == null ? (Class<T>) propertyDescriptor.getPropertyType() : valueType;
 	}
 
 	@Override
@@ -45,11 +48,12 @@ public class PojoValueProperty extends SimpleValueProperty {
 		return valueType;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected Object doGetValue(Object source) {
+	protected T doGetValue(S source) {
 		if (source == null)
 			return null;
-		return BeanPropertyHelper.readProperty(source, propertyDescriptor);
+		return (T) BeanPropertyHelper.readProperty(source, propertyDescriptor);
 	}
 
 	@Override
@@ -58,8 +62,7 @@ public class PojoValueProperty extends SimpleValueProperty {
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, ValueDiff<? extends T>> listener) {
 		return null;
 	}
 

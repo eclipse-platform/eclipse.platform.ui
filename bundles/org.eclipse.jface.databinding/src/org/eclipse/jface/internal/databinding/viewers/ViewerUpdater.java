@@ -30,9 +30,11 @@ import org.eclipse.jface.viewers.StructuredViewer;
 /**
  * NON-API - An interface for updating a viewer's elements.
  *
+ * @param <E> type of the elements in the updated viewer
+ *
  * @since 1.2
  */
-public abstract class ViewerUpdater implements IViewerUpdater {
+public abstract class ViewerUpdater<E> implements IViewerUpdater<E> {
 	private final StructuredViewer viewer;
 
 	/**
@@ -46,14 +48,15 @@ public abstract class ViewerUpdater implements IViewerUpdater {
 	}
 
 	@Override
-	public abstract void insert(Object element, int position);
+	public abstract void insert(E element, int position);
 
 	@Override
-	public abstract void remove(Object element, int position);
+	public abstract void remove(E element, int position);
 
 	@Override
-	public void replace(final Object oldElement, final Object newElement, final int position) {
-		final List<Object> selectedElements = new ArrayList<>(viewer.getStructuredSelection().toList());
+	public void replace(final E oldElement, final E newElement, final int position) {
+		@SuppressWarnings("unchecked")
+		final List<E> selectedElements = new ArrayList<>(viewer.getStructuredSelection().toList());
 
 		remove(oldElement, position);
 		insert(newElement, position);
@@ -67,7 +70,7 @@ public abstract class ViewerUpdater implements IViewerUpdater {
 	}
 
 	@Override
-	public void move(Object element, int oldPosition, int newPosition) {
+	public void move(E element, int oldPosition, int newPosition) {
 		if (isElementOrderPreserved()) {
 			IStructuredSelection selection = viewer.getStructuredSelection();
 
@@ -99,8 +102,8 @@ public abstract class ViewerUpdater implements IViewerUpdater {
 	}
 
 	@Override
-	public abstract void add(Object[] elements);
+	public abstract void add(E[] elements);
 
 	@Override
-	public abstract void remove(Object[] elements);
+	public abstract void remove(E[] elements);
 }

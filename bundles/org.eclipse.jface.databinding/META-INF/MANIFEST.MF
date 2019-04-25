@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface.databinding
-Bundle-Version: 1.8.600.qualifier
+Bundle-Version: 1.9.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -10,8 +10,10 @@ Export-Package: org.eclipse.jface.databinding.dialog,
  org.eclipse.jface.databinding.fieldassist,
  org.eclipse.jface.databinding.preference,
  org.eclipse.jface.databinding.swt,
+ org.eclipse.jface.databinding.swt.typed,
  org.eclipse.jface.databinding.util,
  org.eclipse.jface.databinding.viewers,
+ org.eclipse.jface.databinding.viewers.typed,
  org.eclipse.jface.databinding.wizard,
  org.eclipse.jface.internal.databinding.provisional.swt;x-internal:=true,
  org.eclipse.jface.internal.databinding.provisional.viewers;x-internal:=true,

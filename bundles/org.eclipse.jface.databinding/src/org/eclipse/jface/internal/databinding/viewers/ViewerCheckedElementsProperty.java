@@ -24,29 +24,31 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the set
+ *
  * @since 3.3
  *
  */
-public class ViewerCheckedElementsProperty extends DelegatingSetProperty
-		implements IViewerSetProperty {
-	ISetProperty checkable;
-	ISetProperty checkboxTableViewer;
-	ISetProperty checkboxTreeViewer;
+public class ViewerCheckedElementsProperty<S, E> extends DelegatingSetProperty<S, E>
+		implements IViewerSetProperty<S, E> {
+	ISetProperty<S, E> checkable;
+	ISetProperty<S, E> checkboxTableViewer;
+	ISetProperty<S, E> checkboxTreeViewer;
 
 	/**
 	 * @param elementType
 	 */
+	@SuppressWarnings("unchecked")
 	public ViewerCheckedElementsProperty(Object elementType) {
 		super(elementType);
-		checkable = new CheckableCheckedElementsProperty(elementType);
-		checkboxTableViewer = new CheckboxTableViewerCheckedElementsProperty(
-				elementType);
-		checkboxTreeViewer = new CheckboxTreeViewerCheckedElementsProperty(
-				elementType);
+		checkable = (ISetProperty<S, E>) new CheckableCheckedElementsProperty<>(elementType);
+		checkboxTableViewer = (ISetProperty<S, E>) new CheckboxTableViewerCheckedElementsProperty<>(elementType);
+		checkboxTreeViewer = (ISetProperty<S, E>) new CheckboxTreeViewerCheckedElementsProperty<>(elementType);
 	}
 
 	@Override
-	protected ISetProperty doGetDelegate(Object source) {
+	protected ISetProperty<S, E> doGetDelegate(S source) {
 		if (source instanceof CheckboxTableViewer)
 			return checkboxTableViewer;
 		if (source instanceof CheckboxTreeViewer)
@@ -54,9 +56,10 @@ public class ViewerCheckedElementsProperty extends DelegatingSetProperty
 		return checkable;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public IViewerObservableSet observe(Viewer viewer) {
-		return (IViewerObservableSet) observe(DisplayRealm.getRealm(viewer
-				.getControl().getDisplay()), viewer);
+	public IViewerObservableSet<E> observe(Viewer viewer) {
+		return (IViewerObservableSet<E>) observe(DisplayRealm.getRealm(viewer.getControl().getDisplay()),
+				(S) viewer);
 	}
 }

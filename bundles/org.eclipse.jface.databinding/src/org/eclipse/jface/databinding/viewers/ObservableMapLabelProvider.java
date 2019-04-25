@@ -45,40 +45,38 @@ public class ObservableMapLabelProvider extends LabelProvider implements ITableL
 	 *
 	 * @since 1.4
 	 */
-	protected IObservableMap[] attributeMaps;
+	protected IObservableMap<Object, Object>[] attributeMaps;
 
-	private IMapChangeListener mapChangeListener = new IMapChangeListener() {
-		@Override
-		public void handleMapChange(MapChangeEvent event) {
-			Set affectedElements = event.diff.getChangedKeys();
-			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(
-					ObservableMapLabelProvider.this, affectedElements.toArray());
-			fireLabelProviderChanged(newEvent);
-		}
+	private IMapChangeListener<Object, Object> mapChangeListener = (MapChangeEvent<?, ?> event) -> {
+		Set<?> affectedElements = event.diff.getChangedKeys();
+		LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(ObservableMapLabelProvider.this,
+				affectedElements.toArray());
+		fireLabelProviderChanged(newEvent);
 	};
 
 	/**
 	 * @param attributeMap
 	 */
-	public ObservableMapLabelProvider(IObservableMap attributeMap) {
+	public ObservableMapLabelProvider(IObservableMap<?, ?> attributeMap) {
 		this(new IObservableMap[] { attributeMap });
 	}
 
 	/**
 	 * @param attributeMaps
 	 */
-	public ObservableMapLabelProvider(IObservableMap[] attributeMaps) {
+	@SuppressWarnings("unchecked")
+	public ObservableMapLabelProvider(IObservableMap<?, ?>[] attributeMaps) {
 		System.arraycopy(attributeMaps, 0,
 				this.attributeMaps = new IObservableMap[attributeMaps.length],
 				0, attributeMaps.length);
-		for (IObservableMap attributeMap : attributeMaps) {
+		for (IObservableMap<?, ?> attributeMap : attributeMaps) {
 			attributeMap.addMapChangeListener(mapChangeListener);
 		}
 	}
 
 	@Override
 	public void dispose() {
-		for (IObservableMap attributeMap : attributeMaps) {
+		for (IObservableMap<?, ?> attributeMap : attributeMaps) {
 			attributeMap.removeMapChangeListener(mapChangeListener);
 		}
 		super.dispose();

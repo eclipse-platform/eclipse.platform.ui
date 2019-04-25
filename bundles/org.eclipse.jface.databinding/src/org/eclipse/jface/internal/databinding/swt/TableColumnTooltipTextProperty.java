@@ -21,15 +21,15 @@ import org.eclipse.swt.widgets.TableColumn;
  * @since 3.3
  *
  */
-public class TableColumnTooltipTextProperty extends WidgetStringValueProperty {
+public class TableColumnTooltipTextProperty extends WidgetStringValueProperty<TableColumn> {
 	@Override
-	String doGetStringValue(Object source) {
-		return ((TableColumn) source).getToolTipText();
+	String doGetStringValue(TableColumn source) {
+		return source.getToolTipText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((TableColumn) source).setToolTipText(value);
+	void doSetStringValue(TableColumn source, String value) {
+		source.setToolTipText(value);
 	}
 
 	@Override

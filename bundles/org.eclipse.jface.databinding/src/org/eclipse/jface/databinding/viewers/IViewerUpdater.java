@@ -22,11 +22,13 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * elements, few of which are defined in common ancestor classes. This interface
  * serves as a universal adapter for updating the elements in a viewer
  *
+ * @param <E> type of the elements in the updated viewer
+ *
  * @since 1.3
  * @see ObservableListContentProvider#ObservableListContentProvider(IViewerUpdater)
  * @see ObservableSetContentProvider#ObservableSetContentProvider(IViewerUpdater)
  */
-public interface IViewerUpdater {
+public interface IViewerUpdater<E> {
 	/**
 	 * Insert the element into the viewer at the specified position.
 	 *
@@ -35,7 +37,7 @@ public interface IViewerUpdater {
 	 * @param position
 	 *            the position of the element
 	 */
-	public void insert(Object element, int position);
+	public void insert(E element, int position);
 
 	/**
 	 * Remove the element from the viewer
@@ -45,7 +47,7 @@ public interface IViewerUpdater {
 	 * @param position
 	 *            the position of the element
 	 */
-	public void remove(Object element, int position);
+	public void remove(E element, int position);
 
 	/**
 	 * Replace the specified element at the given position with the new element.
@@ -57,7 +59,7 @@ public interface IViewerUpdater {
 	 * @param position
 	 *            the position of the element being replaced.
 	 */
-	public void replace(Object oldElement, Object newElement, int position);
+	public void replace(E oldElement, E newElement, int position);
 
 	/**
 	 * Moves the specified element from the specified old position to the
@@ -71,7 +73,7 @@ public interface IViewerUpdater {
 	 * @param newPosition
 	 *            the position of the element after it is moved
 	 */
-	public void move(Object element, int oldPosition, int newPosition);
+	public void move(E element, int oldPosition, int newPosition);
 
 	/**
 	 * Adds the elements to the viewer.
@@ -79,7 +81,7 @@ public interface IViewerUpdater {
 	 * @param elements
 	 *            the elements to add
 	 */
-	public void add(Object[] elements);
+	public void add(E[] elements);
 
 	/**
 	 * Removes the elements from the viewer
@@ -87,5 +89,5 @@ public interface IViewerUpdater {
 	 * @param elements
 	 *            the elements to remove
 	 */
-	public void remove(Object[] elements);
+	public void remove(E[] elements);
 }

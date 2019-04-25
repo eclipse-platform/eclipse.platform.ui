@@ -35,15 +35,16 @@ import org.eclipse.jface.viewers.Viewer;
  * of this class listen for changes to the observable set, and will insert and
  * remove viewer elements to reflect observed changes.
  *
+ * @param <E> type of the values that are provided by this object
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 1.1
  */
-public class ObservableSetContentProvider implements IStructuredContentProvider {
-	private ObservableCollectionContentProvider impl;
+public class ObservableSetContentProvider<E> implements IStructuredContentProvider {
+	private ObservableCollectionContentProvider<E> impl;
 
-	private static class Impl extends ObservableCollectionContentProvider
-			implements ISetChangeListener {
-		protected Impl(IViewerUpdater explicitViewerUpdater) {
+	private static class Impl<E> extends ObservableCollectionContentProvider<E> implements ISetChangeListener<E> {
+		protected Impl(IViewerUpdater<E> explicitViewerUpdater) {
 			super(explicitViewerUpdater);
 		}
 
@@ -54,31 +55,30 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 		}
 
 		@Override
-		protected void addCollectionChangeListener(
-				IObservableCollection collection) {
-			((IObservableSet) collection).addSetChangeListener(this);
+		protected void addCollectionChangeListener(IObservableCollection<E> collection) {
+			((IObservableSet<E>) collection).addSetChangeListener(this);
 		}
 
 		@Override
-		protected void removeCollectionChangeListener(
-				IObservableCollection collection) {
-			((IObservableSet) collection).removeSetChangeListener(this);
+		protected void removeCollectionChangeListener(IObservableCollection<E> collection) {
+			((IObservableSet<E>) collection).removeSetChangeListener(this);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public void handleSetChange(SetChangeEvent event) {
+		public void handleSetChange(SetChangeEvent<? extends E> event) {
 			if (isViewerDisposed())
 				return;
 
-			Set removals = event.diff.getRemovals();
-			Set additions = event.diff.getAdditions();
+			Set<? extends E> removals = event.diff.getRemovals();
+			Set<? extends E> additions = event.diff.getAdditions();
 
 			knownElements.addAll(additions);
 			if (realizedElements != null)
 				realizedElements.removeAll(removals);
 
-			viewerUpdater.remove(removals.toArray());
-			viewerUpdater.add(additions.toArray());
+			viewerUpdater.remove((E[]) removals.toArray());
+			viewerUpdater.add((E[]) additions.toArray());
 
 			if (realizedElements != null)
 				realizedElements.addAll(additions);
@@ -103,8 +103,8 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 	 *            from the input observable set.
 	 * @since 1.3
 	 */
-	public ObservableSetContentProvider(IViewerUpdater viewerUpdater) {
-		impl = new Impl(viewerUpdater);
+	public ObservableSetContentProvider(IViewerUpdater<E> viewerUpdater) {
+		impl = new Impl<>(viewerUpdater);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 	 *
 	 * @return unmodifiable set of items that will need labels
 	 */
-	public IObservableSet getKnownElements() {
+	public IObservableSet<E> getKnownElements() {
 		return impl.getKnownElements();
 	}
 
@@ -155,7 +155,7 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 	 * @return the set of known elements which have been realized in the viewer.
 	 * @since 1.3
 	 */
-	public IObservableSet getRealizedElements() {
+	public IObservableSet<E> getRealizedElements() {
 		return impl.getRealizedElements();
 	}
 }

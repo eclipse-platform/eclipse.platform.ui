@@ -21,15 +21,15 @@ import org.eclipse.swt.widgets.ToolItem;
  * @since 3.3
  *
  */
-public class ToolItemTooltipTextProperty extends WidgetStringValueProperty {
+public class ToolItemTooltipTextProperty extends WidgetStringValueProperty<ToolItem> {
 	@Override
-	String doGetStringValue(Object source) {
-		return ((ToolItem) source).getToolTipText();
+	String doGetStringValue(ToolItem source) {
+		return source.getToolTipText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((ToolItem) source).setToolTipText(value);
+	void doSetStringValue(ToolItem source, String value) {
+		source.setToolTipText(value);
 	}
 
 	@Override

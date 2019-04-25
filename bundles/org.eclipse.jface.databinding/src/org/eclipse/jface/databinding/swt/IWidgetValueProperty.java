@@ -20,10 +20,13 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * {@link IValueProperty} for observing an SWT Widget
  *
+ * @param <S> type of the source widget
+ * @param <T> type of the value of the property
+ *
  * @since 1.3
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IWidgetValueProperty extends IValueProperty {
+public interface IWidgetValueProperty<S extends Widget, T> extends IValueProperty<S, T> {
 	/**
 	 * Returns an {@link ISWTObservableValue} observing this value property on
 	 * the given widget
@@ -33,7 +36,8 @@ public interface IWidgetValueProperty extends IValueProperty {
 	 * @return an observable value observing this value property on the given
 	 *         widget
 	 */
-	public ISWTObservableValue observe(Widget widget);
+	@Override
+	public ISWTObservableValue<T> observe(S widget);
 
 	/**
 	 * Returns an {@link ISWTObservableValue} observing this value property on
@@ -53,5 +57,5 @@ public interface IWidgetValueProperty extends IValueProperty {
 	 *         widget, and which delays change notifications for
 	 *         <code>delay</code> milliseconds.
 	 */
-	public ISWTObservableValue observeDelayed(int delay, Widget widget);
+	public ISWTObservableValue<T> observeDelayed(int delay, S widget);
 }

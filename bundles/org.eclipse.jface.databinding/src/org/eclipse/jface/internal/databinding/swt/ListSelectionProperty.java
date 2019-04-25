@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.List;
  * @since 3.3
  *
  */
-public class ListSelectionProperty extends WidgetStringValueProperty {
+public class ListSelectionProperty extends WidgetStringValueProperty<List> {
 	/**
 	 *
 	 */
@@ -30,18 +30,16 @@ public class ListSelectionProperty extends WidgetStringValueProperty {
 	}
 
 	@Override
-	String doGetStringValue(Object source) {
-		List list = (List) source;
-		int index = list.getSelectionIndex();
+	String doGetStringValue(List source) {
+		int index = source.getSelectionIndex();
 		if (index >= 0)
-			return list.getItem(index);
+			return source.getItem(index);
 		return null;
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		List list = (List) source;
-		String items[] = list.getItems();
+	void doSetStringValue(List source, String value) {
+		String items[] = source.getItems();
 		int index = -1;
 		if (items != null && value != null) {
 			for (int i = 0; i < items.length; i++) {
@@ -50,7 +48,7 @@ public class ListSelectionProperty extends WidgetStringValueProperty {
 					break;
 				}
 			}
-			list.select(index);
+			source.select(index);
 		}
 	}
 

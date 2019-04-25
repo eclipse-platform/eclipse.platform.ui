@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Link;
  * @since 3.3
  *
  */
-public class LinkTextProperty extends WidgetStringValueProperty {
+public class LinkTextProperty extends WidgetStringValueProperty<Link> {
 	@Override
-	String doGetStringValue(Object source) {
-		return ((Link) source).getText();
+	String doGetStringValue(Link source) {
+		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Object source, String value) {
-		((Link) source).setText(value == null ? "" : value); //$NON-NLS-1$
+	void doSetStringValue(Link source, String value) {
+		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	@Override
