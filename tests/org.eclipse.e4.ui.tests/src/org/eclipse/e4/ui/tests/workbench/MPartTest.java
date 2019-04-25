@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
@@ -19,55 +20,41 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.internal.workbench.E4Workbench;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
-import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
-import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class MPartTest {
-	protected IEclipseContext appContext;
-	protected E4Workbench wb;
+
+	@Rule
+	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+
+	@Inject
+	private IEclipseContext appContext;
+
+	@Inject
 	private EModelService ems;
 
-	@Before
-	public void setUp() throws Exception {
-		appContext = E4Application.createDefaultContext();
-		appContext.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
-		ems = appContext.get(EModelService.class);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		if (wb != null) {
-			wb.close();
-		}
-		appContext.dispose();
-	}
+	@Inject
+	private MApplication application;
 
 	@Test
 	public void testSetName() {
 		final MWindow window = createWindowWithOneView("Part Name");
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
@@ -85,13 +72,8 @@ public class MPartTest {
 	public void testCTabItem_GetImage() {
 		final MWindow window = createWindowWithOneView("Part Name");
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
@@ -104,13 +86,8 @@ public class MPartTest {
 	private void testDeclaredName(String declared, String expected) {
 		final MWindow window = createWindowWithOneView(declared);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
@@ -137,13 +114,8 @@ public class MPartTest {
 	private void testDeclaredTooltip(String partToolTip, String expectedToolTip) {
 		final MWindow window = createWindowWithOneView("Part Name", partToolTip);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
@@ -171,13 +143,8 @@ public class MPartTest {
 	private void testMPart_setTooltip(String partToolTip, String expectedToolTip) {
 		final MWindow window = createWindowWithOneView("Part Name");
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
@@ -210,13 +177,8 @@ public class MPartTest {
 	public void testMPart_getContext() {
 		final MWindow window = createWindowWithOneView("Part Name");
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
@@ -231,13 +193,8 @@ public class MPartTest {
 	public void testMPartBug369866() {
 		final MWindow window = createWindowWithOneView("Part");
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2017 IBM Corporation and others.
+ * Copyright (c) 2013, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -23,11 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
-import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -35,29 +34,34 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.internal.events.EventBroker;
-import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.widgets.Display;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class StackRendererTest {
+
+	@Rule
+	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+
+	@Inject
 	private IEclipseContext context;
-	private E4Workbench wb;
+
+	@Inject
+	private EModelService ems;
+
+	@Inject
+	private MApplication application;
+
 	private MPart part;
 	private CTabItemStylingMethodsListener executedMethodsListener;
 	private MPartStack partStack;
-	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
-		context = E4Application.createDefaultContext();
-		context.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
-		ems = context.get(EModelService.class);
-		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		partStack = ems.createModelElement(MPartStack.class);
 		part = ems.createModelElement(MPart.class);
@@ -69,30 +73,12 @@ public class StackRendererTest {
 		window.getChildren().add(partStack);
 		partStack.getChildren().add(part);
 
-		application.setContext(context);
-		context.set(MApplication.class, application);
-
 		executedMethodsListener = new CTabItemStylingMethodsListener(part);
 
-		wb = new E4Workbench(application, context);
-		wb.getContext().set(
-				IStylingEngine.class,
-				(IStylingEngine) Proxy.newProxyInstance(getClass()
-						.getClassLoader(),
-						new Class<?>[] { IStylingEngine.class },
-						executedMethodsListener));
+		context.set(IStylingEngine.class, (IStylingEngine) Proxy.newProxyInstance(getClass().getClassLoader(),
+				new Class<?>[] { IStylingEngine.class }, executedMethodsListener));
 
-		wb.createAndRunUI(window);
-		while (Display.getDefault().readAndDispatch()) {
-		}
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		if (wb != null) {
-			wb.close();
-		}
-		context.dispose();
+		contextRule.createAndRunWorkbench(window);
 	}
 
 	@Test

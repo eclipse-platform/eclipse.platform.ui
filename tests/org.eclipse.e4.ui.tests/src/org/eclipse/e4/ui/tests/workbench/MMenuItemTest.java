@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
@@ -20,18 +21,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.bindings.BindingServiceAddon;
-import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon;
 import org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
-import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
@@ -49,7 +48,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
-import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
@@ -61,31 +60,29 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class MMenuItemTest {
-	protected IEclipseContext appContext;
-	protected E4Workbench wb;
+
+	@Rule
+	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+
+	@Inject
 	private EModelService ems;
+
+	@Inject
+	private IEclipseContext appContext;
+
+	@Inject
+	private MApplication application;
 
 	@Before
 	public void setUp() {
-		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
 		ContextInjectionFactory.make(BindingServiceAddon.class, appContext);
-		appContext.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
-		ems = appContext.get(EModelService.class);
-	}
-
-	@After
-	public void tearDown() {
-		if (wb != null) {
-			wb.close();
-		}
-		appContext.dispose();
 	}
 
 	private void testMMenuItem_Text(String before, String beforeExpected, String after, String afterExpected) {
@@ -98,13 +95,8 @@ public class MMenuItemTest {
 		window.setMainMenu(menu);
 		menu.getChildren().add(menuItem);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
 
@@ -185,13 +177,8 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem2);
 		window.setMainMenu(menu);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
 
@@ -242,13 +229,8 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
 
@@ -276,13 +258,8 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManager barManager = (MenuManager) ((Menu) menu.getWidget()).getData();
 		barManager.updateAll(true);
@@ -313,13 +290,8 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManager barManager = (MenuManager) ((Menu) menu.getWidget()).getData();
 		barManager.updateAll(true);
@@ -358,13 +330,8 @@ public class MMenuItemTest {
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 		MenuManager manager = renderer.getManager(mainMenu);
@@ -406,13 +373,8 @@ public class MMenuItemTest {
 		fileMenu.getChildren().add(item2);
 		item2.setToBeRendered(false);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 		MenuManager manager = renderer.getManager(mainMenu);
@@ -454,13 +416,8 @@ public class MMenuItemTest {
 		fileMenu.getChildren().add(item2);
 		item2.setVisible(false);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 		MenuManager manager = renderer.getManager(mainMenu);
@@ -503,14 +460,9 @@ public class MMenuItemTest {
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
 		application.getMenuContributions().add(createContribution(false));
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 
@@ -548,14 +500,9 @@ public class MMenuItemTest {
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
 		application.getMenuContributions().add(createContribution(true));
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 
@@ -633,14 +580,9 @@ public class MMenuItemTest {
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
 		createMenuContributionWithCoreExpression(application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 		MenuManager manager = renderer.getManager(mainMenu);
@@ -703,14 +645,9 @@ public class MMenuItemTest {
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
 		createMenuContributionWithImperativeExpression(application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 		MenuManager manager = renderer.getManager(mainMenu);
@@ -783,13 +720,8 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		// force the part activation to ensure they have a context
 		EPartService eps = window.getContext().get(EPartService.class);
@@ -855,18 +787,14 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getCommands().add(command);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
 		// The handler processing addon cannot run until the context
 		// contains the MApplication
 		ContextInjectionFactory.make(CommandProcessingAddon.class, appContext);
 		ContextInjectionFactory.make(HandlerProcessingAddon.class, appContext);
 
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		// force the part activation to ensure they have a context
 		EPartService eps = window.getContext().get(EPartService.class);

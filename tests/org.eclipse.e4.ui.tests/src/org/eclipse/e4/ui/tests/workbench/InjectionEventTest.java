@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.workbench;
 
@@ -20,7 +21,6 @@ import static org.junit.Assert.assertNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -29,9 +29,10 @@ import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.internal.extensions.util.EventUtils;
+import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
+import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
-import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Before;
 import org.junit.Test;
@@ -135,9 +136,7 @@ public class InjectionEventTest {
 		IEclipseContext context = EclipseContextFactory.create();
 		final Display d = Display.getDefault();
 
-		context.set(Realm.class, DisplayRealm.getRealm(d));
 		context.set(UISynchronize.class, new UISynchronize() {
-
 			@Override
 			public void syncExec(Runnable runnable) {
 				d.syncExec(runnable);
@@ -149,6 +148,11 @@ public class InjectionEventTest {
 			}
 		});
 		ContextInjectionFactory.setDefault(context);
+
+		// Workaround, enforce injection on UIEventTopic provider with current context
+		ExtendedObjectSupplier supplier = ProviderHelper.findProvider(UIEventTopic.class.getName(), null);
+		ContextInjectionFactory.inject(supplier, context);
+
 		InjectTarget target = ContextInjectionFactory.make(InjectTarget.class,
 				context);
 
@@ -204,6 +208,11 @@ public class InjectionEventTest {
 		assertEquals(2, target.counter3);
 		assertEquals("event3data", target.string3);
 		assertNotNull(target.myBinding);
+
+		ContextInjectionFactory.setDefault(null);
+		// Workaround, enforce uninjection on the UIEventTopic provider from context
+		ContextInjectionFactory.uninject(supplier, context);
+		context.dispose();
 	}
 
 	// NOTE: this test relies on GC being actually done on the test object.
@@ -228,9 +237,7 @@ public class InjectionEventTest {
 		IEclipseContext context = EclipseContextFactory.create();
 		final Display d = Display.getDefault();
 
-		context.set(Realm.class, DisplayRealm.getRealm(d));
 		context.set(UISynchronize.class, new UISynchronize() {
-
 			@Override
 			public void syncExec(Runnable runnable) {
 				d.syncExec(runnable);
@@ -241,6 +248,9 @@ public class InjectionEventTest {
 				d.asyncExec(runnable);
 			}
 		});
+		// Workaround, enforce injection on UIEventTopic provider with current context
+		ExtendedObjectSupplier supplier = ProviderHelper.findProvider(UIEventTopic.class.getName(), null);
+		ContextInjectionFactory.inject(supplier, context);
 
 		InjectStarEvent target = ContextInjectionFactory.make(
 				InjectStarEvent.class, context);
@@ -254,6 +264,10 @@ public class InjectionEventTest {
 
 		assertEquals(1, target.counter1);
 		assertEquals("sample", target.data);
+
+		// Workaround, enforce uninjection on the UIEventTopic provider from context
+		ContextInjectionFactory.uninject(supplier, context);
+		context.dispose();
 	}
 
 	private void wrapSetup() {

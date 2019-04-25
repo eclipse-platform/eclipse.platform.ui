@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
@@ -19,10 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.internal.workbench.E4Workbench;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
-import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
+import javax.inject.Inject;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
@@ -30,35 +28,24 @@ import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
-import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolItem;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class MToolItemTest {
-	protected IEclipseContext appContext;
-	protected E4Workbench wb;
+
+	@Rule
+	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+
+	@Inject
 	private EModelService ems;
 
-	@Before
-	public void setUp() throws Exception {
-		appContext = E4Application.createDefaultContext();
-		appContext.set(IWorkbench.PRESENTATION_URI_ARG,
-				PartRenderingEngine.engineURI);
-		ems = appContext.get(EModelService.class);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		if (wb != null) {
-			wb.close();
-		}
-		appContext.dispose();
-	}
+	@Inject
+	private MApplication application;
 
 	private void testMToolItem_Text(String before, String beforeExpected,
 			String after, String afterExpected) {
@@ -73,13 +60,8 @@ public class MToolItemTest {
 		trimBar.getChildren().add(toolBar);
 		toolBar.getChildren().add(toolItem);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		Object widget = toolItem.getWidget();
 		assertNotNull(widget);
@@ -157,13 +139,8 @@ public class MToolItemTest {
 		trimBar.getChildren().add(toolBar);
 		toolBar.getChildren().add(toolItem);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		Object widget = toolItem.getWidget();
 		assertNotNull(widget);
@@ -244,13 +221,8 @@ public class MToolItemTest {
 		toolBar.getChildren().add(toolItem1);
 		toolBar.getChildren().add(toolItem2);
 
-		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(window, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		Object widget1 = toolItem1.getWidget();
 		assertNotNull(widget1);

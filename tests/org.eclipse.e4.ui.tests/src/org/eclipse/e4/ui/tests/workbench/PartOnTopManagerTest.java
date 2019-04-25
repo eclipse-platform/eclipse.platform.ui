@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2016 vogella GmbH and others.
+ * Copyright (c) 2016, 2019 vogella GmbH and others.
  *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which accompanies this distribution, and is
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * 	   Simon Scholz <simon.scholz@vogella.com> - initial API and implementation
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
@@ -16,13 +18,8 @@ package org.eclipse.e4.ui.tests.workbench;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.di.UISynchronize;
-import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import javax.inject.Inject;
 import org.eclipse.e4.ui.internal.workbench.PartOnTopManager;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
-import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -32,18 +29,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.swt.widgets.Display;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.osgi.service.log.LogEntry;
-import org.osgi.service.log.LogListener;
-import org.osgi.service.log.LogReaderService;
-import org.osgi.service.log.LogService;
 
 /**
  * This test class is used to validate the correctness of the
@@ -51,55 +42,14 @@ import org.osgi.service.log.LogService;
  */
 public class PartOnTopManagerTest {
 
-	protected IEclipseContext appContext;
-	protected E4Workbench wb;
+	@Rule
+	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
+
+	@Inject
 	private EModelService ems;
 
-	private boolean logged = false;
-
-	private LogListener listener = new LogListener() {
-		@Override
-		public void logged(LogEntry entry) {
-			if (!logged) {
-				logged = entry.getLevel() == LogService.LOG_ERROR;
-			}
-		}
-	};
-
-	@Before
-	public void setUp() {
-		logged = false;
-		appContext = E4Application.createDefaultContext();
-		appContext.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
-
-		final Display d = Display.getDefault();
-		appContext.set(Realm.class, DisplayRealm.getRealm(d));
-		appContext.set(UISynchronize.class, new UISynchronize() {
-			@Override
-			public void syncExec(Runnable runnable) {
-				d.syncExec(runnable);
-			}
-
-			@Override
-			public void asyncExec(Runnable runnable) {
-				d.asyncExec(runnable);
-			}
-		});
-
-		LogReaderService logReaderService = appContext.get(LogReaderService.class);
-		logReaderService.addLogListener(listener);
-		ems = appContext.get(EModelService.class);
-	}
-
-	@After
-	public void tearDown() {
-		LogReaderService logReaderService = appContext.get(LogReaderService.class);
-		logReaderService.removeLogListener(listener);
-		if (wb != null) {
-			wb.close();
-		}
-		appContext.dispose();
-	}
+	@Inject
+	private MApplication application;
 
 	private boolean isPartOnTop(MContext context) {
 		if (context.getContext() != null) {
@@ -112,7 +62,6 @@ public class PartOnTopManagerTest {
 
 	@Test
 	public void test_PartOnTop() {
-		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -122,18 +71,13 @@ public class PartOnTopManagerTest {
 		window.getChildren().add(part);
 		window.setSelectedElement(part);
 
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		assertTrue(isPartOnTop(part));
 	}
 
 	@Test
 	public void test_PlaceholderOnTop() {
-		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -155,18 +99,13 @@ public class PartOnTopManagerTest {
 		perspective.getChildren().add(placeholder);
 		perspective.setSelectedElement(placeholder);
 
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		assertTrue(isPartOnTop(part));
 	}
 
 	@Test
 	public void test_PartOnTopStackSwitch() {
-		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -184,11 +123,7 @@ public class PartOnTopManagerTest {
 				"bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(secondPart);
 
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		assertTrue(isPartOnTop(part));
 		assertFalse(isPartOnTop(secondPart));
@@ -201,7 +136,6 @@ public class PartOnTopManagerTest {
 
 	@Test
 	public void test_PlaceholderOnTopStackSwitch() {
-		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -231,11 +165,7 @@ public class PartOnTopManagerTest {
 				"bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(secondPart);
 
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		assertTrue(isPartOnTop(part));
 		assertFalse(isPartOnTop(secondPart));
@@ -254,7 +184,6 @@ public class PartOnTopManagerTest {
 
 	@Test
 	public void test_PartOnTopPerspectiveSwitch() {
-		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -287,11 +216,7 @@ public class PartOnTopManagerTest {
 				"bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		secondPerspective.getChildren().add(secondPerspectivePart);
 
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		assertTrue(isPartOnTop(part));
 		assertFalse(isPartOnTop(secondPart));
@@ -307,7 +232,6 @@ public class PartOnTopManagerTest {
 
 	@Test
 	public void test_PlaceholderOnTopPerspectiveSwitch() {
-		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -361,11 +285,7 @@ public class PartOnTopManagerTest {
 				"bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		secondPerspectiveSash.getChildren().add(secondPerspectiveOnTopPart);
 
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
+		contextRule.createAndRunWorkbench(window);
 
 		assertTrue(isPartOnTop(sharedPart));
 		assertFalse(isPartOnTop(secondPart));

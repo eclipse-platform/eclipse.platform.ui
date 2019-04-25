@@ -56,8 +56,6 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-		// Hack: bug 422676, run InjectionEventTest first
-		InjectionEventTest.class,
 		StartupTestSuite.class,
 		UIEventTypesTest.class,
 		Bug299755Test.class,
@@ -79,6 +77,7 @@ import org.junit.runners.Suite;
 		Bug308317Test.class,
 		ModelRobustnessTest.class,
 		ResourceHandlerTest.class,
+		InjectionEventTest.class,
 		// Commented out due the bug 505678
 		// PartFocusTest.class,
 		ModelElementTest.class,

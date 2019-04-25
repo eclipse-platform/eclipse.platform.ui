@@ -78,6 +78,7 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 	}
 
 	@Inject
+	@Optional
 	protected UISynchronize uiSync;
 
 	@Inject @Optional
