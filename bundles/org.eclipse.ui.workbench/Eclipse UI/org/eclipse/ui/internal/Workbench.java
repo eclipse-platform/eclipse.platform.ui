@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -110,6 +111,8 @@ import org.eclipse.e4.ui.workbench.IModelResourceHandler;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -190,6 +193,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
+import org.eclipse.ui.internal.WorkbenchWindow.WWinPartServiceSaveHandler;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
@@ -1066,7 +1070,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		}
 
 		// save any open editors if they are dirty
-		isClosing = saveAllEditors(!force, true);
+		isClosing = saveAllParts(!force, true);
 		if (!force && !isClosing) {
 			return false;
 		}
@@ -1352,6 +1356,65 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			activeWindow = windows[0];
 		}
 		return WorkbenchPage.saveAll(new ArrayList<>(dirtyParts), confirm, closing, true, activeWindow, activeWindow);
+	}
+
+	private boolean saveAllParts(boolean confirm, boolean closing) {
+		// Code to handle dirtied Editors and E4 parts too.
+		EPartService partService = e4Context.get(EPartService.class);
+		if (partService != null) {
+			Collection<MPart> parts = getDirtyMParts();
+			if (parts != null && parts.size() > 0) {
+				MPart selected = null;
+				for (MPart part : parts) {
+					selected = part;
+					break;
+				}
+				EModelService modelService = e4Context.get(EModelService.class);
+				if (modelService != null) {
+					IEclipseContext context = modelService.getContainingContext(selected);
+					if (context != null) {
+						ISaveHandler saveHandler = context.get(ISaveHandler.class);
+						if (saveHandler != null) {
+							if (saveHandler instanceof WWinPartServiceSaveHandler) {
+								try {
+									return ((WWinPartServiceSaveHandler) saveHandler).saveParts(parts, confirm, true, true);
+								} catch (UnsupportedOperationException e) {
+									// do nothing
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		// The below code will be called, if handlers are not available to handle saving
+		// of E4 parts too.
+		return saveAllEditors(confirm, closing);
+	}
+
+	private Collection<MPart> getDirtyMParts() {
+		Set<MPart> dirtyParts = new HashSet<>();
+		for (MWindow window : application.getChildren()) {
+			IEclipseContext context = window.getContext();
+			if (context != null) {
+				IWorkbenchWindow wwindow = context.get(IWorkbenchWindow.class);
+				if (wwindow != null) {
+					EPartService partService = context.get(EPartService.class);
+					if (partService != null) {
+						Collection<MPart> parts = null;
+						try {
+							parts = partService.getDirtyParts();
+							dirtyParts.addAll(parts);
+						} catch (IllegalStateException e) {
+							// This is to handle the case if the partService is instance of
+							// ApplicationPartServiceImpl and does not have an active window
+							// do nothing
+						}
+					}
+				}
+			}
+		}
+		return dirtyParts;
 	}
 
 	@Override

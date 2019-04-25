@@ -106,7 +106,7 @@ public class SaveablesListTest extends UITestCase {
 				}
 			}
 		}
-		assertEquals((saveablesList.preCloseParts(parts, true, fWin, map) != null), true);
+		assertEquals((saveablesList.preCloseParts(parts, false, true, fWin, map) != null), true);
 		for (int i = 0; i < total; i++) {
 			assertEquals(callTraces[i].contains("isDirty"), true);
 			assertEquals(callTraces[i].contains("doSave"), true);
@@ -148,7 +148,7 @@ public class SaveablesListTest extends UITestCase {
 				}
 			}
 		}
-		assertEquals((saveablesList.preCloseParts(parts, true, fWin, map) != null), true);
+		assertEquals((saveablesList.preCloseParts(parts, false, true, fWin, map) != null), true);
 		for (int i = 0; i < total; i++) {
 			assertEquals(callTraces[i].contains("isDirty"), true);
 			assertEquals(callTraces[i].contains("doSave"), false);
@@ -196,7 +196,7 @@ public class SaveablesListTest extends UITestCase {
 			}
 			j++;
 		}
-		assertEquals((saveablesList.preCloseParts(parts, true, fWin, map) != null), true);
+		assertEquals((saveablesList.preCloseParts(parts, false, true, fWin, map) != null), true);
 		for (int i = 0; i < total; i++) {
 			if (i % 2 == 0) {
 				assertEquals(callTraces[i].contains("isDirty"), true);

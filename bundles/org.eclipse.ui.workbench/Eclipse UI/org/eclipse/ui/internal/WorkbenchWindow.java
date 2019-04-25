@@ -148,6 +148,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
@@ -534,7 +535,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			});
 
 			final ISaveHandler defaultSaveHandler = windowContext.get(ISaveHandler.class);
-			final PartServiceSaveHandler localSaveHandler = new PartServiceSaveHandler() {
+			final PartServiceSaveHandler localSaveHandler = new WWinPartServiceSaveHandler() {
 				@Override
 				public Save promptToSave(MPart dirtyPart) {
 					Object object = dirtyPart.getObject();
@@ -630,7 +631,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				}
 
 				private boolean saveMixedParts(ArrayList<MPart> nonCompParts, ArrayList<IWorkbenchPart> compParts,
-						boolean confirm) {
+						boolean confirm, boolean addNonPartSources) {
 					SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
 							.getService(ISaveablesLifecycleListener.class);
 					if (!confirm) {
@@ -659,6 +660,16 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							saveablesSet.addAll(list);
 						}
 					}
+					if (addNonPartSources) {
+						for (ISaveablesSource nonPartSource : saveablesList.getNonPartSources()) {
+							Saveable[] saveables = nonPartSource.getSaveables();
+							for (Saveable saveable : saveables) {
+								if (saveable.isDirty()) {
+									saveablesSet.add(saveable);
+								}
+							}
+						}
+					}
 					listParts.addAll(saveablesSet);
 					ListSelectionDialog dialog = new ListSelectionDialog(getShell(), listParts,
 							ArrayContentProvider.getInstance(), labelProvider,
@@ -671,7 +682,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 					Object[] toSave = dialog.getResult();
 					Save[] nonCompatSaves = new Save[nonCompParts.size()];
-					Save[] compatSaves = new Save[compParts.size()];
+					Save[] compatSaves = new Save[saveablesSet.size()];
 					Arrays.fill(nonCompatSaves, Save.NO);
 					Arrays.fill(compatSaves, Save.NO);
 					for (int i = 0; i < nonCompatSaves.length; i++) {
@@ -701,13 +712,23 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					if (!saved) {
 						return saved;
 					}
-					Object saveResult = saveablesList.preCloseParts(compParts, true, WorkbenchWindow.this,
+					Object saveResult = saveablesList.preCloseParts(compParts, false, true, WorkbenchWindow.this,
 							saveOptionMap);
 					return ((saveResult != null) && saved);
 				}
 
+				private void removeSaveOnCloseNotNeededParts(List<IWorkbenchPart> parts) {
+					for (Iterator<IWorkbenchPart> it = parts.iterator(); it.hasNext();) {
+						IWorkbenchPart part = it.next();
+						ISaveablePart saveable = SaveableHelper.getSaveable(part);
+						if (saveable == null || !saveable.isSaveOnCloseNeeded()) {
+							it.remove();
+						}
+					}
+				}
+
 				@Override
-				public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm) {
+				public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm, boolean closing, boolean addNonPartSources) {
 					ArrayList<IWorkbenchPart> saveableParts = new ArrayList<>();
 					ArrayList<MPart> nonCompatibilityParts = new ArrayList<>();
 					for (MPart part : dirtyParts) {
@@ -721,16 +742,25 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							nonCompatibilityParts.add(part);
 						}
 					}
+					if (!saveableParts.isEmpty() && closing) {
+						removeSaveOnCloseNotNeededParts(saveableParts);
+					}
 					if (saveableParts.isEmpty()) {
 						return super.saveParts(dirtyParts, confirm);
 					} else if (!nonCompatibilityParts.isEmpty()) {
-						return saveMixedParts(nonCompatibilityParts, saveableParts, confirm);
+						return saveMixedParts(nonCompatibilityParts, saveableParts, confirm, addNonPartSources);
 					}
 
 					SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
 							.getService(ISaveablesLifecycleListener.class);
-					Object saveResult = saveablesList.preCloseParts(saveableParts, true, WorkbenchWindow.this);
+					Object saveResult = saveablesList.preCloseParts(saveableParts, addNonPartSources, true,
+							WorkbenchWindow.this, WorkbenchWindow.this);
 					return (saveResult != null);
+				}
+
+				@Override
+				public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm) {
+					return saveParts(dirtyParts, confirm, false, false);
 				}
 			};
 			localSaveHandler.logger = logger;
@@ -2144,6 +2174,44 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * Called when this window is about to be closed.
 	 */
 	private boolean okToClose() {
+		if (!getWorkbenchImpl().isClosing()) {
+			return saveAllParts(true, true, true);
+		}
+		return true;
+	}
+
+	private boolean saveAllParts(boolean confirm, boolean closing, boolean addNonPartSources) {
+		if (modelService != null) {
+			Set<MPart> dirtyParts = new HashSet<>();
+			final IEclipseContext context = model.getContext();
+			if (context != null) {
+				EPartService partService = context.get(EPartService.class);
+				if (partService != null) {
+					Collection<MPart> parts = null;
+					try {
+						parts = partService.getDirtyParts();
+						dirtyParts.addAll(parts);
+					} catch (IllegalStateException e) {
+						// This is to handle the case if the partService is instance of
+						// ApplicationPartServiceImpl and does not have an active window
+						// do nothing
+					}
+				}
+				if (dirtyParts != null && dirtyParts.size() > 0) {
+					ISaveHandler saveHandler = context.get(ISaveHandler.class);
+					if (saveHandler != null) {
+						if (saveHandler instanceof WWinPartServiceSaveHandler) {
+							try {
+								return ((WWinPartServiceSaveHandler) saveHandler).saveParts(dirtyParts, confirm,
+										closing, addNonPartSources);
+							} catch (UnsupportedOperationException e) {
+								// do nothing
+							}
+						}
+					}
+				}
+			}
+		}
 		// Save all of the editors.
 		if (!getWorkbenchImpl().isClosing()) {
 			IWorkbenchPage page = getActivePage();
@@ -3110,5 +3178,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			selectionService.notifyListeners(part);
 		}
 
+	}
+
+	class WWinPartServiceSaveHandler extends PartServiceSaveHandler {
+
+		public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm, boolean closing, boolean addNonPartSources) {
+			if (addNonPartSources || closing) {
+				throw new UnsupportedOperationException();
+			}
+			return saveParts(dirtyParts, confirm);
+		}
 	}
 }

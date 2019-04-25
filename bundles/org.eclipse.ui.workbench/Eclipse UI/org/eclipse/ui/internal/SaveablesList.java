@@ -373,7 +373,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 	/**
 	 * Updates the set of non-part saveables sources.
-	 * 
+	 *
 	 * @param source
 	 */
 	private void updateNonPartSource(ISaveablesSource source) {
@@ -458,13 +458,14 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 	/**
 	 * @param partsToClose
+	 * @param addNonPartSources
 	 * @param save
 	 * @param window
 	 * @param saveOptions
 	 * @return the post close info to be passed to postClose
 	 */
-	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean save, final IWorkbenchWindow window,
-			Map<Saveable, Save> saveOptions) {
+	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean addNonPartSources, boolean save,
+			final IWorkbenchWindow window, Map<Saveable, Save> saveOptions) {
 		if (saveOptions == null || saveOptions.isEmpty()) {
 			preCloseParts(partsToClose, save, window);
 		}
@@ -474,7 +475,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				return false;
 			}
 		}
-		return preCloseParts(partsToClose, false, save, window, window, saveOptions);
+		return preCloseParts(partsToClose, addNonPartSources, save, window, window, saveOptions);
 	}
 
 	/**
@@ -654,7 +655,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 	/**
 	 * Prompt the user to save the given saveables.
-	 * 
+	 *
 	 * @param modelsToSave       the saveables to be saved
 	 * @param shellProvider      the provider used to obtain a shell in prompting is
 	 *                           required. Clients can use a workbench window for
@@ -807,7 +808,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 	/**
 	 * Save the given models.
-	 * 
+	 *
 	 * @param finalModels     the list of models to be saved
 	 * @param shellProvider   the provider used to obtain a shell in prompting is
 	 *                        required. Clients can use a workbench window for this.

@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.events.ShellListener;
@@ -1358,6 +1359,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			// don't leave the view showing, or the UI will block on window
 			// close
 		} finally {
+			view.setDirty(false);
 			APITestUtils.saveableHelperSetAutomatedResponse(-1); // restore default
 			// (prompt)
 		}
@@ -1424,9 +1426,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testSaveEffectsSharedModel() throws Throwable {
 		String viewId = UserSaveableSharedViewPart.ID;
 		UserSaveableSharedViewPart view = null;
-
 		UserSaveableSharedViewPart view2 = null;
-
 		assertEquals(fActivePage.findView(UserSaveableSharedViewPart.ID), null);
 
 		try {
@@ -1434,12 +1434,13 @@ public class IWorkbenchPageTest extends UITestCase {
 			UserSaveableSharedViewPart.SharedModel model = new UserSaveableSharedViewPart.SharedModel();
 			view = (UserSaveableSharedViewPart) fActivePage.showView(viewId);
 			view.setSharedModel(model);
-
+			MPart part = ((WorkbenchPage) fActivePage).findPart(view);
 			view2 = (UserSaveableSharedViewPart) fActivePage.showView(viewId,
 					"2", IWorkbenchPage.VIEW_ACTIVATE);
 			assertNotNull(view2);
 			view2.setSharedModel(model);
 
+			MPart part2 = ((WorkbenchPage) fActivePage).findPart(view2);
 			fActivePage.saveAllEditors(true);
 
 			assertFalse(view.isDirty());
@@ -1457,8 +1458,19 @@ public class IWorkbenchPageTest extends UITestCase {
 					.contains("doSave")
 					&& call2.contains("doSave"));
 
+			// The MPart pertaining to the view needs to be set to not dirty as only the
+			// view is set as not dirty and the MPart associated is still dirty
+			// and the UI will block on window close
+			if (part.isDirty()) {
+				part.setDirty(false);
+			}
+			if (part2.isDirty()) {
+				part2.setDirty(false);
+			}
+
 			// don't leave the view showing, or the UI will block on window
 			// close
+
 		} finally {
 			APITestUtils.saveableHelperSetAutomatedResponse(-1); // restore
 			// default
