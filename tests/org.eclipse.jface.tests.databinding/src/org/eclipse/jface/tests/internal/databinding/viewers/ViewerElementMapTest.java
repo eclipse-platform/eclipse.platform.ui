@@ -331,7 +331,7 @@ public class ViewerElementMapTest {
 	@Test
 	public void testEntrySet_Add() {
 		try {
-			map.entrySet().add(key);
+			map.entrySet().add(new MapEntryStub(key, value));
 			fail("Expected UnsupportedOperationException");
 		} catch (UnsupportedOperationException expected) {
 		}
