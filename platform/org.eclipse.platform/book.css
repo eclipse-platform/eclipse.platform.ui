@@ -106,3 +106,8 @@ var	     { font-style: italic}
 div.revision { border-left-style: solid; border-left-width: thin; 
 				   border-left-color: #7B68EE; padding-left:5 }
 th	     { font-weight: bold }
+
+
+.related {
+	color: #747474;
+}
