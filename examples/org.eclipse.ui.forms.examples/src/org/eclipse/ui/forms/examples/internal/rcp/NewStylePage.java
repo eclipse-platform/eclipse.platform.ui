@@ -120,6 +120,11 @@ public class NewStylePage extends FormPage {
 		gd.horizontalIndent = 10;
 		lbutton.setLayoutData(gd);
 		lbutton.setEnabled(false);
+		final Button titleTextSelectableButton = toolkit.createButton(client, "Make title text selectable", SWT.CHECK);
+		gd = new GridData();
+		gd.horizontalIndent = 10;
+		titleTextSelectableButton.setLayoutData(gd);
+		titleTextSelectableButton.setEnabled(false);
 		tbutton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -127,6 +132,7 @@ public class NewStylePage extends FormPage {
 						.getSelection());
 				sbutton.setEnabled(tbutton.getSelection());
 				lbutton.setEnabled(tbutton.getSelection());
+				titleTextSelectableButton.setEnabled(tbutton.getSelection());
 			}
 		});
 		sbutton.addSelectionListener(new SelectionAdapter() {
@@ -141,6 +147,12 @@ public class NewStylePage extends FormPage {
 			public void widgetSelected(SelectionEvent e) {
 				updateTitle(form, tbutton.getSelection(), sbutton
 						.getSelection());
+			}
+		});
+		titleTextSelectableButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				form.getForm().setTitleTextSelectable(titleTextSelectableButton.getSelection());
 			}
 		});
 		final Button ibutton = toolkit.createButton(client, "Add image",
