@@ -16,6 +16,8 @@
 
 package org.eclipse.core.databinding;
 
+import java.util.Objects;
+
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.runtime.IStatus;
@@ -214,5 +216,19 @@ public class UpdateSetStrategy<S, D> extends UpdateStrategy<S, D> {
 			return logErrorWhileSettingValue(ex);
 		}
 		return Status.OK_STATUS;
+	}
+
+
+	/**
+	 * Convenience method that creates an {@link UpdateValueStrategy} with the given
+	 * converter. It uses {@link #POLICY_UPDATE}.
+	 *
+	 * @param converter the converter
+	 * @return the update strategy
+	 * @since 1.8
+	 */
+	public static <S, D> UpdateSetStrategy<S, D> create(IConverter<S, D> converter) {
+		Objects.requireNonNull(converter);
+		return new UpdateSetStrategy<S, D>().setConverter(converter);
 	}
 }

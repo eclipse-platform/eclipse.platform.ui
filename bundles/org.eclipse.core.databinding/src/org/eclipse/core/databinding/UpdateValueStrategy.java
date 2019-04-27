@@ -20,6 +20,7 @@ package org.eclipse.core.databinding;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -556,14 +557,15 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	}
 
 	/**
-	 * Create an {@link UpdateValueStrategy} with a converter
+	 * Convenience method that creates an {@link UpdateValueStrategy} with the given
+	 * converter. It uses {@link #POLICY_UPDATE}.
 	 *
-	 * @param converter
-	 *            the converter
-	 * @return the update value strategy
+	 * @param converter the converter
+	 * @return the update strategy
 	 * @since 1.6
 	 */
 	public static <S, D> UpdateValueStrategy<S, D> create(IConverter<S, D> converter) {
+		Objects.requireNonNull(converter);
 		return new UpdateValueStrategy<S, D>().setConverter(converter);
 	}
 }

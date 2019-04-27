@@ -244,7 +244,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
 		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
 				BeansObservables.observeValue(adventure, "name"),
-				new UpdateValueStrategy().setConverter(converter2), new UpdateValueStrategy().setConverter(converter1));
+				UpdateValueStrategy.create(converter2), UpdateValueStrategy.create(converter1));
 
 		// spinEventLoop(1);
 		assertEquals("Uppercase", text.getText());

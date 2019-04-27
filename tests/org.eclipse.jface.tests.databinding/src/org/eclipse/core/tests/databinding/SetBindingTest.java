@@ -105,8 +105,8 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testErrorDuringConversion() {
-		UpdateSetStrategy<String, String> modelToTarget = new UpdateSetStrategy<>();
-		modelToTarget.setConverter(IConverter.create(String.class, String.class, fromObject -> {
+		UpdateSetStrategy<String, String> modelToTarget = UpdateSetStrategy
+				.create(IConverter.create(String.class, String.class, fromObject -> {
 			throw new IllegalArgumentException();
 		}));
 

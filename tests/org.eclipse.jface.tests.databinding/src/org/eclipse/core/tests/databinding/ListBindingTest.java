@@ -365,10 +365,8 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testConversion() {
-		UpdateListStrategy<String, String> modelToTarget = new UpdateListStrategy<>();
-		modelToTarget
-				.setConverter(IConverter.create(String.class, String.class, fromObject -> fromObject + "converted"));
-		dbc.bindList(target, model, new UpdateListStrategy<>(), modelToTarget);
+		dbc.bindList(target, model, new UpdateListStrategy<>(), UpdateListStrategy
+				.create(IConverter.create(String.class, String.class, fromObject -> fromObject + "converted")));
 
 		model.add("1");
 		assertEquals("1converted", target.get(0));
