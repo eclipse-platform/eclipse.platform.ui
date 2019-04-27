@@ -53,6 +53,7 @@ import org.eclipse.core.internal.databinding.beans.PojoValuePropertyDecorator;
  * @since 1.2
  */
 @Deprecated
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PojoProperties {
 	/**
 	 * Returns a value property for the given property name of an arbitrary bean

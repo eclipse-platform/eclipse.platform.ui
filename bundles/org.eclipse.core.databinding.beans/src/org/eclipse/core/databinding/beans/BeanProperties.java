@@ -52,6 +52,7 @@ import org.eclipse.core.internal.databinding.beans.BeanValuePropertyDecorator;
  * @since 1.2
  */
 @Deprecated
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class BeanProperties {
 	/**
 	 * Returns a value property for the given property name of an arbitrary bean

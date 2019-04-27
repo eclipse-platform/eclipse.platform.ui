@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.Viewer;
  * @since 1.3
  */
 @Deprecated
+@SuppressWarnings({ "rawtypes" })
 public class ViewerProperties {
 	/**
 	 * Returns a set property for observing the checked elements of a

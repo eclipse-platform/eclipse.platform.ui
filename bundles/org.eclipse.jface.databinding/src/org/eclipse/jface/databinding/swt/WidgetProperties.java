@@ -80,6 +80,7 @@ import org.eclipse.swt.widgets.Widget;
  * @since 1.3
  */
 @Deprecated
+@SuppressWarnings({ "rawtypes" })
 public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the background color of a
