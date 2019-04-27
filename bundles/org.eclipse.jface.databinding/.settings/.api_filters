@@ -1,10 +1,130 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.databinding" version="2">
+    <resource path="src/org/eclipse/jface/databinding/swt/ISWTObservableList.java" type="org.eclipse.jface.databinding.swt.ISWTObservableList">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IObservableList&lt;E&gt;"/>
+                <message_argument value="ISWTObservableList&lt;E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/ISWTObservableValue.java" type="org.eclipse.jface.databinding.swt.ISWTObservableValue">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IObservableValue&lt;T&gt;"/>
+                <message_argument value="ISWTObservableValue&lt;T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/IWidgetListProperty.java" type="org.eclipse.jface.databinding.swt.IWidgetListProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IListProperty&lt;S, E&gt;"/>
+                <message_argument value="IWidgetListProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/IWidgetValueProperty.java" type="org.eclipse.jface.databinding.swt.IWidgetValueProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IValueProperty&lt;S, T&gt;"/>
+                <message_argument value="IWidgetValueProperty&lt;S, T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/WidgetListProperty.java" type="org.eclipse.jface.databinding.swt.WidgetListProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="IWidgetListProperty&lt;S, E&gt;"/>
+                <message_argument value="WidgetListProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/WidgetValueProperty.java" type="org.eclipse.jface.databinding.swt.WidgetValueProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="IWidgetValueProperty&lt;S, T&gt;"/>
+                <message_argument value="WidgetValueProperty&lt;S, T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerListProperty.java" type="org.eclipse.jface.databinding.viewers.IViewerListProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IListProperty&lt;S, E&gt;"/>
+                <message_argument value="IViewerListProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerObservableList.java" type="org.eclipse.jface.databinding.viewers.IViewerObservableList">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IObservableList&lt;E&gt;"/>
+                <message_argument value="IViewerObservableList&lt;E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerObservableSet.java" type="org.eclipse.jface.databinding.viewers.IViewerObservableSet">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IObservableSet&lt;E&gt;"/>
+                <message_argument value="IViewerObservableSet&lt;E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerObservableValue.java" type="org.eclipse.jface.databinding.viewers.IViewerObservableValue">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IObservableValue&lt;T&gt;"/>
+                <message_argument value="IViewerObservableValue&lt;T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerSetProperty.java" type="org.eclipse.jface.databinding.viewers.IViewerSetProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="ISetProperty&lt;S, E&gt;"/>
+                <message_argument value="IViewerSetProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerValueProperty.java" type="org.eclipse.jface.databinding.viewers.IViewerValueProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+            <message_arguments>
+                <message_argument value="IValueProperty&lt;S, T&gt;"/>
+                <message_argument value="IViewerValueProperty&lt;S, T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/databinding/viewers/ListeningLabelProvider.java" type="org.eclipse.jface.databinding.viewers.ListeningLabelProvider">
-        <filter id="576720909">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576720909">
             <message_arguments>
                 <message_argument value="ViewerLabelProvider"/>
-                <message_argument value="ListeningLabelProvider"/>
+                <message_argument value="ListeningLabelProvider&lt;E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/ViewerListProperty.java" type="org.eclipse.jface.databinding.viewers.ViewerListProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="IViewerListProperty&lt;S, E&gt;"/>
+                <message_argument value="ViewerListProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/ViewerSetProperty.java" type="org.eclipse.jface.databinding.viewers.ViewerSetProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="IViewerSetProperty&lt;S, E&gt;"/>
+                <message_argument value="ViewerSetProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/ViewerValueProperty.java" type="org.eclipse.jface.databinding.viewers.ViewerValueProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="IViewerValueProperty&lt;S, T&gt;"/>
+                <message_argument value="ViewerValueProperty&lt;S, T&gt;"/>
             </message_arguments>
         </filter>
     </resource>

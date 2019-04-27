@@ -8,4 +8,36 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/core/databinding/property/list/ListProperty.java" type="org.eclipse.core.databinding.property.list.ListProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="IListProperty&lt;S, E&gt;"/>
+                <message_argument value="ListProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/property/map/MapProperty.java" type="org.eclipse.core.databinding.property.map.MapProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="IMapProperty&lt;S, K, V&gt;"/>
+                <message_argument value="MapProperty&lt;S, K, V&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/property/set/SetProperty.java" type="org.eclipse.core.databinding.property.set.SetProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="ISetProperty&lt;S, E&gt;"/>
+                <message_argument value="SetProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/property/value/ValueProperty.java" type="org.eclipse.core.databinding.property.value.ValueProperty">
+        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+            <message_arguments>
+                <message_argument value="IValueProperty&lt;S, T&gt;"/>
+                <message_argument value="ValueProperty&lt;S, T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
