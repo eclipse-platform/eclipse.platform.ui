@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -61,7 +61,7 @@ public class ConsoleManager implements IConsoleManager {
 	/**
 	 * Console listeners
 	 */
-	private ListenerList<IConsoleListener> fListeners = null;
+	private ListenerList<IConsoleListener> fListeners = new ListenerList<>();
 
 	/**
 	 * List of registered consoles
@@ -168,9 +168,6 @@ public class ConsoleManager implements IConsoleManager {
 		 * @param update the type of change
 		 */
 		public void notify(IConsole[] consoles, int update) {
-			if (fListeners == null) {
-				return;
-			}
 			fChanged = consoles;
 			fType = update;
 			for (IConsoleListener iConsoleListener : fListeners) {
@@ -195,17 +192,12 @@ public class ConsoleManager implements IConsoleManager {
 
 	@Override
 	public void addConsoleListener(IConsoleListener listener) {
-		if (fListeners == null) {
-			fListeners = new ListenerList<>();
-		}
 		fListeners.add(listener);
 	}
 
 	@Override
 	public void removeConsoleListener(IConsoleListener listener) {
-		if (fListeners != null) {
-			fListeners.remove(listener);
-		}
+		fListeners.remove(listener);
 	}
 
 	@Override
