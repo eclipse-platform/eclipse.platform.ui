@@ -19,9 +19,6 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
@@ -80,7 +77,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	public void testInputReadJobCancel() throws Exception {
 		final MockProcess mockProcess = new MockProcess(MockProcess.RUN_FOREVER);
 		try {
-			final IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), mockProcess, "testInputReadJobCancel");
+			final IProcess process = mockProcess.toRuntimeProcess("testInputReadJobCancel");
 			@SuppressWarnings("restriction")
 			final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider());
 			try {

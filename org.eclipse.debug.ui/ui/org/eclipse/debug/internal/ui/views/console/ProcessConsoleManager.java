@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,7 +51,7 @@ import com.ibm.icu.text.MessageFormat;
 public class ProcessConsoleManager implements ILaunchListener {
 
 	/**
-	 * Crates console for given process
+	 * Creates console for given process
 	 */
 	private final class ConsoleCreation extends Job {
 		private final ILaunch launch;
@@ -77,6 +77,14 @@ public class ProcessConsoleManager implements ILaunchListener {
 
 			// add new console to console manager.
 			ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { pc });
+
+			// If a launch is removed the associated console is removed too. It can happen
+			// that the launch is removed even before the console could be created.
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=546710#c13
+			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+			if (!launchManager.isRegistered(launch)) {
+				removeLaunch(launch);
+			}
 			return Status.OK_STATUS;
 		}
 

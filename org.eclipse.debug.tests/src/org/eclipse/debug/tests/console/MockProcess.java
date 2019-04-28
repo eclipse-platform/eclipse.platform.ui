@@ -19,6 +19,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.RuntimeProcess;
+
 /**
  * A mockup process which can either simulate generation of output or wait for
  * input to read.
@@ -193,5 +198,32 @@ public class MockProcess extends Process {
 	 */
 	private boolean isTerminated() {
 		return endTime != RUN_FOREVER && System.currentTimeMillis() > endTime;
+	}
+
+	/**
+	 * Create a {@link RuntimeProcess} which wraps this {@link MockProcess}.
+	 * <p>
+	 * Note: the process will only be connected to a minimal dummy launch
+	 * object.
+	 * </p>
+	 *
+	 * @return the created {@link RuntimeProcess}
+	 */
+	public RuntimeProcess toRuntimeProcess() {
+		return toRuntimeProcess("MockProcess");
+	}
+
+	/**
+	 * Create a {@link RuntimeProcess} which wraps this {@link MockProcess}.
+	 * <p>
+	 * Note: the process will only be connected to a minimal dummy launch
+	 * object.
+	 * </p>
+	 *
+	 * @param name a custom name for the process
+	 * @return the created {@link RuntimeProcess}
+	 */
+	public RuntimeProcess toRuntimeProcess(String name) {
+		return (RuntimeProcess) DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), this, name);
 	}
 }
