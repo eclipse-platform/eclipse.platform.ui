@@ -486,6 +486,16 @@
         disabledIcon="$nl$/icons/full/dtool16/block_selection_mode.png"
         icon="$nl$/icons/full/etool16/block_selection_mode.png">
   </image>
+  <image
+        commandId="org.eclipse.ui.edit.text.upperCase"
+        disabledIcon="icons/full/dtool16/toUpper.png"
+        icon="icons/full/etool16/toUpper.png">
+  </image>
+  <image
+        commandId="org.eclipse.ui.edit.text.lowerCase"
+        disabledIcon="icons/full/dtool16/toLower.png"
+        icon="icons/full/etool16/toLower.png">
+  </image>
 	</extension>
    
 	<extension
