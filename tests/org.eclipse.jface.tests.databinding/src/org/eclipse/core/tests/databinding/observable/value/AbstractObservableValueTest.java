@@ -82,7 +82,7 @@ public class AbstractObservableValueTest {
 		});
 	}
 
-	private static class ObservableValueStub extends AbstractObservableValue {
+	private static class ObservableValueStub extends AbstractObservableValue<Object> {
 		ObservableValueStub() {
 			super(Realm.getDefault());
 		}
@@ -102,7 +102,7 @@ public class AbstractObservableValueTest {
 		}
 
 		@Override
-		protected void fireValueChange(ValueDiff diff) {
+		protected void fireValueChange(ValueDiff<Object> diff) {
 			super.fireValueChange(diff);
 		}
 	}

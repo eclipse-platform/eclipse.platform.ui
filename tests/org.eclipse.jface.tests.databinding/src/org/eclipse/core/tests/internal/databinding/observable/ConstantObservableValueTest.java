@@ -36,7 +36,7 @@ public class ConstantObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test(expected = RuntimeException.class)
 	public void testConstructor_NullRealm() {
-		new ConstantObservableValue(null, null, null);
+		new ConstantObservableValue<>(null, null, null);
 	}
 
 	public static void addConformanceTest(TestSuite suite) {
@@ -47,13 +47,12 @@ public class ConstantObservableValueTest extends AbstractDefaultRealmTestCase {
 	private static class Delegate extends
 			AbstractObservableValueContractDelegate {
 		@Override
-		public IObservableValue createObservableValue(Realm realm) {
-			return new ConstantObservableValue(realm, new Object(),
-					Object.class);
+		public IObservableValue<Object> createObservableValue(Realm realm) {
+			return new ConstantObservableValue<>(realm, new Object(), Object.class);
 		}
 
 		@Override
-		public Object getValueType(IObservableValue observable) {
+		public Object getValueType(IObservableValue<?> observable) {
 			return Object.class;
 		}
 	}

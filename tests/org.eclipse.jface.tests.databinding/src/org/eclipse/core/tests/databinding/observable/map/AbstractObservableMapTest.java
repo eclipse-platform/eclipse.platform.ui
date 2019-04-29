@@ -29,12 +29,12 @@ import org.junit.Test;
  * @since 3.2
  */
 public class AbstractObservableMapTest {
-	private AbstractObservableMapStub map;
+	private AbstractObservableMapStub<?, ?> map;
 
 	@Before
 	public void setUp() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
-		map = new AbstractObservableMapStub();
+		map = new AbstractObservableMapStub<>();
 	}
 
 	@After
@@ -137,9 +137,9 @@ public class AbstractObservableMapTest {
 		map.hasListeners();
 	}
 
-	static class AbstractObservableMapStub extends AbstractObservableMap {
+	static class AbstractObservableMapStub<K, V> extends AbstractObservableMap<K, V> {
 		@Override
-		public Set entrySet() {
+		public Set<Entry<K, V>> entrySet() {
 			return null;
 		}
 
@@ -149,7 +149,7 @@ public class AbstractObservableMapTest {
 		}
 
 		@Override
-		protected void fireMapChange(MapDiff diff) {
+		protected void fireMapChange(MapDiff<K, V> diff) {
 			super.fireMapChange(diff);
 		}
 

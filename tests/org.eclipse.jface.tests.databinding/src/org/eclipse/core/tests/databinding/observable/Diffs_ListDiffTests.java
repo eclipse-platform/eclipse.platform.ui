@@ -35,7 +35,7 @@ import org.junit.Test;
 public class Diffs_ListDiffTests {
 	@Test
 	public void testListDiffEntryToStringDoesNotThrowNPEForNullListDiffEntry() {
-		ListDiffEntry entry = new ListDiffEntry() {
+		ListDiffEntry<?> entry = new ListDiffEntry<Object>() {
 			@Override
 			public Object getElement() {
 				return null;
@@ -62,9 +62,9 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testListDiffToStringDoesNotThrowNPEForNullListDiff() {
-		ListDiff diff = new ListDiff() {
+		ListDiff<?> diff = new ListDiff<Object>() {
 			@Override
-			public ListDiffEntry[] getDifferences() {
+			public ListDiffEntry<Object>[] getDifferences() {
 				return null;
 			}
 		};
@@ -79,9 +79,10 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testListDiffToStringDoesNotThrowNPEForNullListDiffEntry() {
-		ListDiff diff = new ListDiff() {
+		ListDiff<?> diff = new ListDiff<Object>() {
+			@SuppressWarnings("unchecked")
 			@Override
-			public ListDiffEntry[] getDifferences() {
+			public ListDiffEntry<Object>[] getDifferences() {
 				return new ListDiffEntry[1];
 			}
 		};
@@ -96,11 +97,11 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario1() throws Exception {
-		ListDiff diff = diff(null, null);
+		ListDiff<?> diff = diff(null, null);
 		assertEquals(0, diff.getDifferences().length);
 	}
 
-	private ListDiff diff(String[] oldArray, String[] newArray) {
+	private ListDiff<?> diff(String[] oldArray, String[] newArray) {
 		List<String> a = Arrays.asList((oldArray != null) ? oldArray : new String[] {});
 		List<String> b = Arrays.asList((newArray != null) ? newArray : new String[] {});
 
@@ -109,27 +110,27 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario2() throws Exception {
-		ListDiff diff = diff(new String[] { "a" }, null);
+		ListDiff<?> diff = diff(new String[] { "a" }, null);
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 0, "a");
 	}
 
 	@Test
 	public void testDiffScenario3() throws Exception {
-		ListDiff diff = diff(null, new String[] { "a" });
+		ListDiff<?> diff = diff(null, new String[] { "a" });
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "a");
 	}
 
 	@Test
 	public void testDiffScenario4() throws Exception {
-		ListDiff diff = diff(new String[] { "a" }, new String[] { "a" });
+		ListDiff<?> diff = diff(new String[] { "a" }, new String[] { "a" });
 		assertEquals(0, diff.getDifferences().length);
 	}
 
 	@Test
 	public void testDiffScenario5() throws Exception {
-		ListDiff diff = diff(new String[] { "a" }, new String[] { "b" });
+		ListDiff<?> diff = diff(new String[] { "a" }, new String[] { "b" });
 		assertEquals(2, diff.getDifferences().length);
 
 		assertEntry(diff.getDifferences()[0], true, 0, "b");
@@ -138,7 +139,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario6() throws Exception {
-		ListDiff diff = diff(new String[] { "a" }, new String[] { "a", "b" });
+		ListDiff<?> diff = diff(new String[] { "a" }, new String[] { "a", "b" });
 
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 1, "b");
@@ -146,7 +147,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario7() throws Exception {
-		ListDiff diff = diff(new String[] { "a" }, new String[] { "b", "a" });
+		ListDiff<?> diff = diff(new String[] { "a" }, new String[] { "b", "a" });
 
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "b");
@@ -154,7 +155,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario8() throws Exception {
-		ListDiff diff = diff(new String[] { "a" }, new String[] { "b", "b" });
+		ListDiff<?> diff = diff(new String[] { "a" }, new String[] { "b", "b" });
 
 		assertEquals(3, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "b");
@@ -164,7 +165,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario9() throws Exception {
-		ListDiff diff = diff(new String[] { "a" }, new String[] { "a", "b", "c" });
+		ListDiff<?> diff = diff(new String[] { "a" }, new String[] { "a", "b", "c" });
 
 		assertEquals(2, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 1, "b");
@@ -173,7 +174,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario10() throws Exception {
-		ListDiff diff = diff(new String[] { "b" }, new String[] { "a", "b", "c" });
+		ListDiff<?> diff = diff(new String[] { "b" }, new String[] { "a", "b", "c" });
 
 		assertEquals(2, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "a");
@@ -182,7 +183,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario11() throws Exception {
-		ListDiff diff = diff(new String[] { "c" }, new String[] { "a", "b", "c" });
+		ListDiff<?> diff = diff(new String[] { "c" }, new String[] { "a", "b", "c" });
 
 		assertEquals(2, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "a");
@@ -191,14 +192,14 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenario12() throws Exception {
-		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "b", "c" });
+		ListDiff<?> diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "b", "c" });
 
 		assertEquals(0, diff.getDifferences().length);
 	}
 
 	@Test
 	public void testDiffScenario13() throws Exception {
-		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "b", "c" });
+		ListDiff<?> diff = diff(new String[] { "a", "b", "c" }, new String[] { "b", "c" });
 
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 0, "a");
@@ -206,7 +207,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenarios14() throws Exception {
-		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "c" });
+		ListDiff<?> diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "c" });
 
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 1, "b");
@@ -214,7 +215,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenarios15() throws Exception {
-		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "b" });
+		ListDiff<?> diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "b" });
 
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 2, "c");
@@ -222,7 +223,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenarios16() throws Exception {
-		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "c", "b", "a" });
+		ListDiff<?> diff = diff(new String[] { "a", "b", "c" }, new String[] { "c", "b", "a" });
 
 		assertEquals(4, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 2, "c");
@@ -233,7 +234,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testDiffScenarios17() throws Exception {
-		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "c", "b" });
+		ListDiff<?> diff = diff(new String[] { "a", "b", "c" }, new String[] { "c", "b" });
 
 		assertEquals(3, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 0, "a");
@@ -241,7 +242,7 @@ public class Diffs_ListDiffTests {
 		assertEntry(diff.getDifferences()[2], true, 0, "c");
 	}
 
-	private static void assertEntry(ListDiffEntry entry, boolean addition, int position, String element) {
+	private static void assertEntry(ListDiffEntry<?> entry, boolean addition, int position, String element) {
 		assertEquals("addition", addition, entry.isAddition());
 		assertEquals("position", position, entry.getPosition());
 		assertEquals("element", element, entry.getElement());
@@ -287,10 +288,10 @@ public class Diffs_ListDiffTests {
 	}
 
 	private static void checkComputedListDiff(List<Object> oldList, List<Object> newList) {
-		ListDiff diff = Diffs.computeListDiff(oldList, newList);
+		ListDiff<?> diff = Diffs.computeListDiff(oldList, newList);
 
 		final List<Object> list = new ArrayList<>(oldList);
-		diff.accept(new ListDiffVisitor() {
+		diff.accept(new ListDiffVisitor<Object>() {
 			@Override
 			public void handleAdd(int index, Object element) {
 				list.add(index, element);

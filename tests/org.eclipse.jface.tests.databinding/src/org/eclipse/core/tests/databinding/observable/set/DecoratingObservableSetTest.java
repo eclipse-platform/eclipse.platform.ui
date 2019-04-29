@@ -39,26 +39,25 @@ public class DecoratingObservableSetTest {
 		suite.addTest(MutableObservableCollectionContractTest.suite(new Delegate()));
 	}
 
-	static class Delegate extends AbstractObservableCollectionContractDelegate {
+	static class Delegate extends AbstractObservableCollectionContractDelegate<Object> {
 		private Object elementType = Object.class;
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<Object> createObservableCollection(Realm realm,
 				int elementCount) {
-			IObservableSet wrappedSet = new WritableSet(realm,
-					Collections.EMPTY_SET, elementType);
+			IObservableSet<Object> wrappedSet = new WritableSet<>(realm, Collections.emptySet(), elementType);
 			for (int i = 0; i < elementCount; i++)
 				wrappedSet.add(createElement(wrappedSet));
 			return new DecoratingObservableSetStub(wrappedSet);
 		}
 
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public Object createElement(IObservableCollection<Object> collection) {
 			return new Object();
 		}
 
 		@Override
-		public Object getElementType(IObservableCollection collection) {
+		public Object getElementType(IObservableCollection<Object> collection) {
 			return elementType;
 		}
 
@@ -69,10 +68,10 @@ public class DecoratingObservableSetTest {
 		}
 	}
 
-	static class DecoratingObservableSetStub extends DecoratingObservableSet {
-		IObservableSet wrappedSet;
+	static class DecoratingObservableSetStub extends DecoratingObservableSet<Object> {
+		IObservableSet<Object> wrappedSet;
 
-		DecoratingObservableSetStub(IObservableSet wrappedSet) {
+		DecoratingObservableSetStub(IObservableSet<Object> wrappedSet) {
 			super(wrappedSet, true);
 			this.wrappedSet = wrappedSet;
 		}

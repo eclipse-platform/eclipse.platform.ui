@@ -49,7 +49,7 @@ public class ListDiffVisitorTest {
 				"remove(2,oldElement), add(2,newElement)", visitor.log);
 	}
 
-	static class ListDiffVisitorStub extends ListDiffVisitor {
+	static class ListDiffVisitorStub extends ListDiffVisitor<Object> {
 		String log = "";
 
 		private void log(String message) {

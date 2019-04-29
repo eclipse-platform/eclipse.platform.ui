@@ -34,9 +34,9 @@ import org.junit.Test;
  */
 public class DateAndTimeObservableValueTest extends
 		AbstractDefaultRealmTestCase {
-	private IObservableValue date;
-	private IObservableValue time;
-	private IObservableValue dateAndTime;
+	private IObservableValue<Date> date;
+	private IObservableValue<Date> time;
+	private IObservableValue<Date> dateAndTime;
 
 	@Before
 	@Override

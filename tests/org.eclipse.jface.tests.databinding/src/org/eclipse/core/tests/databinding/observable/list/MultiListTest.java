@@ -44,8 +44,8 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		WritableList[] lists = new WritableList[] { new WritableList(),
-				new WritableList() };
+		@SuppressWarnings("unchecked")
+		WritableList<Object>[] lists = new WritableList[] { new WritableList<Object>(), new WritableList<Object>() };
 		multiList = new MultiListStub(Realm.getDefault(), lists);
 	}
 
@@ -60,7 +60,7 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testDependency_FiresListChange() {
-		List expectedList = new ArrayList();
+		List<Object> expectedList = new ArrayList<>();
 		assertEquals(expectedList, multiList);
 
 		Object element = new Object();
@@ -78,9 +78,8 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testModifySubList_FiresListChangeEventFromMultiList() {
-		ListChangeEventTracker tracker = ListChangeEventTracker
-				.observe(multiList);
-		ListDiffEntry[] differences;
+		ListChangeEventTracker<Object> tracker = ListChangeEventTracker.observe(multiList);
+		ListDiffEntry<?>[] differences;
 
 		//
 
@@ -123,17 +122,17 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 	 * @param addition
 	 * @param element
 	 */
-	private void assertEntry(ListDiffEntry entry, int position,
+	private void assertEntry(ListDiffEntry<?> entry, int position,
 			boolean addition, Object element) {
 		assertEquals(element, entry.getElement());
 		assertEquals(addition, entry.isAddition());
 		assertEquals(position, entry.getPosition());
 	}
 
-	private static class MultiListStub extends MultiList {
-		WritableList[] subLists;
+	private static class MultiListStub extends MultiList<Object> {
+		WritableList<Object>[] subLists;
 
-		MultiListStub(Realm realm, WritableList[] lists) {
+		MultiListStub(Realm realm, WritableList<Object>[] lists) {
 			super(realm, lists);
 			this.subLists = lists;
 		}
@@ -143,12 +142,13 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 		suite.addTest(ObservableListContractTest.suite(new Delegate()));
 	}
 
-	static class Delegate extends AbstractObservableCollectionContractDelegate {
+	static class Delegate extends AbstractObservableCollectionContractDelegate<Object> {
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<Object> createObservableCollection(Realm realm,
 				int elementCount) {
-			WritableList[] subLists = new WritableList[] {
-					new WritableList(realm), new WritableList(realm) };
+			@SuppressWarnings("unchecked")
+			WritableList<Object>[] subLists = new WritableList[] { new WritableList<Object>(realm),
+					new WritableList<Object>(realm) };
 			final MultiListStub list = new MultiListStub(realm, subLists);
 			for (int i = 0; i < elementCount; i++)
 				list.subLists[0].add(createElement(list));

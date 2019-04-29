@@ -37,7 +37,7 @@ import org.junit.Test;
  *
  */
 public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
-	private IObservableSet keySet;
+	private IObservableSet<Bean> keySet;
 	private ComputedObservableMapStub map;
 	private String propertyName;
 	private Bean bean;
@@ -46,7 +46,7 @@ public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		keySet = new WritableSet();
+		keySet = new WritableSet<>();
 		map = new ComputedObservableMapStub(keySet);
 		propertyName = "value";
 		bean = new Bean("a");
@@ -136,34 +136,34 @@ public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertFalse(bean.hasListeners(propertyName));
 	}
 
-	static class ComputedObservableMapStub extends ComputedObservableMap {
-		private PropertyChangeListener listener = evt -> fireSingleChange(evt.getSource(), evt.getOldValue(),
-				evt.getNewValue());
+	static class ComputedObservableMapStub extends ComputedObservableMap<Bean, String> {
+		private PropertyChangeListener listener = evt -> fireSingleChange((Bean) evt.getSource(),
+				(String) evt.getOldValue(), (String) evt.getNewValue());
 
-		ComputedObservableMapStub(IObservableSet keySet) {
+		ComputedObservableMapStub(IObservableSet<Bean> keySet) {
 			super(keySet);
 		}
 
 		@Override
-		protected Object doGet(Object key) {
-			return ((Bean) key).getValue();
+		protected String doGet(Bean key) {
+			return key.getValue();
 		}
 
 		@Override
-		protected Object doPut(Object key, Object value) {
-			Object result = doGet(key);
-			((Bean) key).setValue((String) value);
+		protected String doPut(Bean key, String value) {
+			String result = doGet(key);
+			key.setValue(value);
 			return result;
 		}
 
 		@Override
-		protected void hookListener(Object addedKey) {
-			((Bean) addedKey).addPropertyChangeListener(listener);
+		protected void hookListener(Bean addedKey) {
+			addedKey.addPropertyChangeListener(listener);
 		}
 
 		@Override
-		protected void unhookListener(Object removedKey) {
-			((Bean) removedKey).removePropertyChangeListener(listener);
+		protected void unhookListener(Bean removedKey) {
+			removedKey.removePropertyChangeListener(listener);
 		}
 	}
 }

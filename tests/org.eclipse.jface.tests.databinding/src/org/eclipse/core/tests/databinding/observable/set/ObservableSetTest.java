@@ -38,29 +38,29 @@ public class ObservableSetTest {
 		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
 	}
 
-	private static class Delegate extends AbstractObservableCollectionContractDelegate {
+	private static class Delegate extends AbstractObservableCollectionContractDelegate<String> {
 		private Delegate() {
 		}
 
 		@Override
 		public void change(IObservable observable) {
-			((ObservableSetStub) observable).fireSetChange(Diffs.createSetDiff(new HashSet(), new HashSet()));
+			((ObservableSetStub) observable).fireSetChange(Diffs.createSetDiff(new HashSet<>(), new HashSet<>()));
 		}
 
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public String createElement(IObservableCollection<String> collection) {
 			return Integer.toString(collection.size());
 		}
 
 		@Override
-		public Object getElementType(IObservableCollection collection) {
+		public Object getElementType(IObservableCollection<String> collection) {
 			return String.class;
 		}
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<String> createObservableCollection(Realm realm,
 				int elementCount) {
-			IObservableSet set = new ObservableSetStub(realm, new HashSet(), String.class);
+			IObservableSet<String> set = new ObservableSetStub(realm, new HashSet<>(), String.class);
 
 			for (int i = 0; i < elementCount; i++) {
 				set.add(Integer.toString(i));
@@ -70,17 +70,17 @@ public class ObservableSetTest {
 		}
 	}
 
-	private static class ObservableSetStub extends ObservableSet {
+	private static class ObservableSetStub extends ObservableSet<String> {
 		/**
 		 * @param wrappedSet
 		 * @param elementType
 		 */
-		protected ObservableSetStub(Realm realm, Set wrappedSet, Object elementType) {
+		protected ObservableSetStub(Realm realm, Set<String> wrappedSet, Object elementType) {
 			super(realm, wrappedSet, elementType);
 		}
 
 		@Override
-		public void fireSetChange(SetDiff diff) {
+		public void fireSetChange(SetDiff<String> diff) {
 			super.fireSetChange(diff);
 		}
 	}

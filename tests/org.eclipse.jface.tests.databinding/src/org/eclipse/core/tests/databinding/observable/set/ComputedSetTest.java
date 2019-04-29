@@ -96,8 +96,8 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 				2, tracker.count);
 	}
 
-	static class ComputedSetStub extends ComputedSet {
-		Set nextComputation = new HashSet();
+	static class ComputedSetStub extends ComputedSet<Object> {
+		Set<Object> nextComputation = new HashSet<>();
 		ObservableStub dependency;
 
 		ComputedSetStub() {
@@ -110,9 +110,9 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 		}
 
 		@Override
-		protected Set calculate() {
+		protected Set<Object> calculate() {
 			ObservableTracker.getterCalled(dependency);
-			return new HashSet(nextComputation);
+			return new HashSet<>(nextComputation);
 		}
 	}
 
@@ -144,9 +144,9 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
 	}
 
-	static class Delegate extends AbstractObservableCollectionContractDelegate {
+	static class Delegate extends AbstractObservableCollectionContractDelegate<Object> {
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<Object> createObservableCollection(Realm realm,
 				int elementCount) {
 			final ComputedSetStub set = new ComputedSetStub(realm);
 			for (int i = 0; i < elementCount; i++)
@@ -163,7 +163,7 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 		}
 
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public Object createElement(IObservableCollection<Object> collection) {
 			return new Object();
 		}
 

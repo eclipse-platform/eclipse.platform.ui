@@ -37,14 +37,14 @@ public class DecoratingObservableValueTest {
 		private Object valueType = Object.class;
 
 		@Override
-		public IObservableValue createObservableValue(Realm realm) {
-			IObservableValue decorated = new WritableValue(realm, new Object(),
+		public IObservableValue<?> createObservableValue(Realm realm) {
+			IObservableValue<Object> decorated = new WritableValue<>(realm, new Object(),
 					valueType);
 			return new DecoratingObservableValueStub(decorated);
 		}
 
 		@Override
-		public Object getValueType(IObservableValue observable) {
+		public Object getValueType(IObservableValue<?> observable) {
 			return valueType;
 		}
 
@@ -56,10 +56,10 @@ public class DecoratingObservableValueTest {
 	}
 
 	static class DecoratingObservableValueStub extends
-			DecoratingObservableValue {
-		IObservableValue decorated;
+			DecoratingObservableValue<Object> {
+		IObservableValue<Object> decorated;
 
-		DecoratingObservableValueStub(IObservableValue decorated) {
+		DecoratingObservableValueStub(IObservableValue<Object> decorated) {
 			super(decorated, true);
 			this.decorated = decorated;
 		}

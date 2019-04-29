@@ -93,7 +93,7 @@ public class ListDiffTest {
 
 	@Test
 	public void testAccept_AllPatterns() {
-		createListDiff(new ListDiffEntry[] {
+		createListDiff(
 		// Replace (remove before add)
 				remove(0, "element0"), add(0, "element1"),
 				// Replace (add before remove)
@@ -114,7 +114,7 @@ public class ListDiffTest {
 				remove(11, "element8"), add(11, "element8"),
 				// Add then remove in place (special case) -- treat as separate
 				// add and remove
-				add(12, "element9"), remove(12, "element9") }).accept(visitor);
+				add(12, "element9"), remove(12, "element9")).accept(visitor);
 		assertEquals(
 				"replace(0,element0,element1), replace(0,element2,element3), "
 						+ "remove(1,element4), " + "add(2,element5), "
@@ -135,27 +135,20 @@ public class ListDiffTest {
 		assertEquals("move(0,1,element)", visitor.log);
 	}
 
-	private ListDiffEntry add(int index, Object element) {
+	private <E> ListDiffEntry<E> add(int index, E element) {
 		return Diffs.createListDiffEntry(index, true, element);
 	}
 
-	private ListDiffEntry remove(int index, Object element) {
+	private <E> ListDiffEntry<E> remove(int index, E element) {
 		return Diffs.createListDiffEntry(index, false, element);
 	}
 
-	private ListDiff createListDiff(ListDiffEntry difference) {
-		return createListDiff(new ListDiffEntry[] { difference });
-	}
-
-	private ListDiff createListDiff(ListDiffEntry first, ListDiffEntry second) {
-		return createListDiff(new ListDiffEntry[] { first, second });
-	}
-
-	private ListDiff createListDiff(ListDiffEntry[] differences) {
+	@SafeVarargs
+	private final <E> ListDiff<E> createListDiff(ListDiffEntry<E>... differences) {
 		return Diffs.createListDiff(differences);
 	}
 
-	class ListDiffVisitorStub extends ListDiffVisitor {
+	class ListDiffVisitorStub extends ListDiffVisitor<Object> {
 		String log = "";
 
 		@Override

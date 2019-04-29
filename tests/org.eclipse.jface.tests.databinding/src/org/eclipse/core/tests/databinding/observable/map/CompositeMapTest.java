@@ -21,11 +21,10 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Method;
 import java.util.Collections;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.map.CompositeMap;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
 import org.eclipse.jface.examples.databinding.model.SimpleCart;
@@ -40,9 +39,9 @@ import org.junit.Test;
  */
 public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 
-	private WritableSet persons;
-	private CompositeMap composedMap;
-	private IObservableMap first;
+	private WritableSet<SimplePerson> persons;
+	private CompositeMap<SimplePerson, SimpleCart, Integer> composedMap;
+	private IObservableMap<SimplePerson, SimpleCart> first;
 
 	boolean hasListeners(AbstractObservable o) {
 		try {
@@ -58,16 +57,15 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		persons = new WritableSet();
-		first = BeansObservables.observeMap(persons,
-				SimplePerson.class, "cart");
-		composedMap = new CompositeMap(first,
-				target -> BeansObservables.observeMap((IObservableSet) target, SimpleCart.class, "numItems"));
+		persons = new WritableSet<>();
+		first = BeanProperties.value(SimplePerson.class, "cart", SimpleCart.class).observeDetail(persons);
+		composedMap = new CompositeMap<>(first,
+				target -> BeanProperties.value(SimpleCart.class, "numItems", Integer.class).observeDetail(target));
 	}
 
 	@Test
 	public void testAddToFirstMap() {
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+		MapChangeEventTracker<Object, Object> tracker = new MapChangeEventTracker<>();
 		composedMap.addMapChangeListener(tracker);
 		assertEquals(0, tracker.count);
 		SimplePerson newPerson = new SimplePerson("p1", "a1", "c1", "s1");
@@ -87,7 +85,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		SimplePerson person1 = new SimplePerson("p1", "a1", "c1", "s1");
 		person1.getCart().setNumItems(42);
 		persons.add(person1);
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+		MapChangeEventTracker<Object, Object> tracker = new MapChangeEventTracker<>();
 		composedMap.addMapChangeListener(tracker);
 		assertEquals(0, tracker.count);
 		SimplePerson person2 = new SimplePerson("p1", "a1", "c1", "s1");
@@ -105,7 +103,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testRemoveFromFirstMap() {
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+		MapChangeEventTracker<Object, Object> tracker = new MapChangeEventTracker<>();
 		SimplePerson newPerson = new SimplePerson("p1", "a1", "c1", "s1");
 		newPerson.getCart().setNumItems(42);
 		persons.add(newPerson);
@@ -131,7 +129,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		person2.setCart(person1.getCart());
 		persons.add(person2);
 		assertTrue("person2 should be added", composedMap.containsKey(person2));
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+		MapChangeEventTracker<Object, Object> tracker = new MapChangeEventTracker<>();
 		composedMap.addMapChangeListener(tracker);
 		assertEquals(0, tracker.count);
 		persons.remove(person2);
@@ -150,7 +148,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		SimplePerson person1 = new SimplePerson("p1", "a1", "c1", "s1");
 		person1.getCart().setNumItems(42);
 		persons.add(person1);
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+		MapChangeEventTracker<Object, Object> tracker = new MapChangeEventTracker<>();
 		composedMap.addMapChangeListener(tracker);
 		assertEquals(0, tracker.count);
 		person1.setCart(new SimpleCart());
@@ -172,7 +170,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		SimplePerson person1 = new SimplePerson("p1", "a1", "c1", "s1");
 		person1.getCart().setNumItems(42);
 		persons.add(person1);
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+		MapChangeEventTracker<Object, Object> tracker = new MapChangeEventTracker<>();
 		composedMap.addMapChangeListener(tracker);
 		assertEquals(0, tracker.count);
 		person1.setCart(person0.getCart());
@@ -194,7 +192,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		SimplePerson person1 = new SimplePerson("p1", "a1", "c1", "s1");
 		person1.setCart(person0.getCart());
 		persons.add(person1);
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+		MapChangeEventTracker<Object, Object> tracker = new MapChangeEventTracker<>();
 		composedMap.addMapChangeListener(tracker);
 		assertEquals(0, tracker.count);
 		person1.setCart(new SimpleCart());
@@ -213,7 +211,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		SimplePerson person0 = new SimplePerson("p0", "a0", "c0", "s0");
 		person0.getCart().setNumItems(13);
 		persons.add(person0);
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+		MapChangeEventTracker<Object, Object> tracker = new MapChangeEventTracker<>();
 		composedMap.addMapChangeListener(tracker);
 		assertEquals(0, tracker.count);
 		person0.getCart().setNumItems(42);

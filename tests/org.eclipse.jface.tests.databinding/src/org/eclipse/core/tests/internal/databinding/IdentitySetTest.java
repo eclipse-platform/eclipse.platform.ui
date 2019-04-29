@@ -47,7 +47,7 @@ public class IdentitySetTest {
 	@Test
 	public void testConstructor_NullComparer() {
 		try {
-			new ViewerElementSet(null);
+			new ViewerElementSet<>(null);
 			fail("Constructor should throw exception when null comparer passed in");
 		} catch (RuntimeException expected) {
 		}
@@ -56,7 +56,7 @@ public class IdentitySetTest {
 	@Test
 	public void testConstructorWithCollection_NullCollection() {
 		try {
-			new ViewerElementSet(null);
+			new ViewerElementSet<>(null);
 			fail("Constructor should throw exception when null collection passed in");
 		} catch (RuntimeException expected) {
 		}

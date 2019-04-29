@@ -24,10 +24,10 @@ import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 /**
  * Listener for tracking the firing of ChangeEvents.
  */
-public class MapChangeEventTracker implements IMapChangeListener {
+public class MapChangeEventTracker<K, V> implements IMapChangeListener<K, V> {
 	public int count;
 
-	public MapChangeEvent event;
+	public MapChangeEvent<? extends K, ? extends V> event;
 
 	public List<IObservablesListener> queue;
 
@@ -40,7 +40,7 @@ public class MapChangeEventTracker implements IMapChangeListener {
 	}
 
 	@Override
-	public void handleMapChange(MapChangeEvent event) {
+	public void handleMapChange(MapChangeEvent<? extends K, ? extends V> event) {
 		count++;
 		this.event = event;
 
@@ -55,8 +55,8 @@ public class MapChangeEventTracker implements IMapChangeListener {
 	 * @param observable
 	 * @return tracker
 	 */
-	public static MapChangeEventTracker observe(IObservableMap observable) {
-		MapChangeEventTracker tracker = new MapChangeEventTracker();
+	public static <K, V> MapChangeEventTracker<K, V> observe(IObservableMap<K, V> observable) {
+		MapChangeEventTracker<K, V> tracker = new MapChangeEventTracker<>();
 		observable.addMapChangeListener(tracker);
 		return tracker;
 	}

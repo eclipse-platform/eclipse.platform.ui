@@ -33,21 +33,21 @@ import org.junit.Test;
  *
  */
 public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
-	private IObservableList list;
-	private DuplexingObservableValue observable;
+	private IObservableList<String> list;
+	private DuplexingObservableValue<String> observable;
 
 	@Before
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		list = new WritableList(new ArrayList(), String.class);
+		list = new WritableList<>(new ArrayList<>(), String.class);
 	}
 
 	@Test
 	public void testValueType_InheritFromTargetList() throws Exception {
-		observable = new DuplexingObservableValue(list) {
+		observable = new DuplexingObservableValue<String>(list) {
 			@Override
-			protected Object coalesceElements(Collection elements) {
+			protected String coalesceElements(Collection<String> elements) {
 				return null;
 			}
 		};
@@ -58,9 +58,9 @@ public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testValueType_ProvidedInConstructor() throws Exception {
-		observable = new DuplexingObservableValue(list, Object.class) {
+		observable = new DuplexingObservableValue<String>(list, Object.class) {
 			@Override
-			protected Object coalesceElements(Collection elements) {
+			protected String coalesceElements(Collection<String> elements) {
 				return null;
 			}
 		};

@@ -38,17 +38,17 @@ import org.junit.Test;
 public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testValueType() throws Exception {
-		ComputedValue cv = new ComputedValue(Integer.TYPE) {
+		ComputedValue<Integer> cv = new ComputedValue<Integer>(Integer.TYPE) {
 			@Override
-			protected Object calculate() {
+			protected Integer calculate() {
 				return Integer.valueOf(42);
 			}
 		};
 		assertEquals("value type should be the type that was set", Integer.TYPE, cv.getValueType());
 
-		cv = new ComputedValue() {
+		cv = new ComputedValue<Integer>() {
 			@Override
-			protected Object calculate() {
+			protected Integer calculate() {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -59,9 +59,9 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void test_getValue() throws Exception {
-		ComputedValue cv = new ComputedValue() {
+		ComputedValue<Integer> cv = new ComputedValue<Integer>() {
 			@Override
-			protected Object calculate() {
+			protected Integer calculate() {
 				return Integer.valueOf(42);
 			}
 		};
@@ -70,11 +70,11 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testDependencyValueChange() throws Exception {
-		final WritableValue value = new WritableValue(Integer.valueOf(42), Integer.TYPE);
+		final WritableValue<Integer> value = new WritableValue<>(Integer.valueOf(42), Integer.TYPE);
 
-		ComputedValue cv = new ComputedValue() {
+		ComputedValue<Integer> cv = new ComputedValue<Integer>() {
 			@Override
-			protected Object calculate() {
+			protected Integer calculate() {
 				return value.getValue();
 			}
 		};
@@ -86,8 +86,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals("calculated value should have been that of the writable value", value.getValue(), cv.getValue());
 	}
 
-	private static class WritableValueExt extends WritableValue {
-		public WritableValueExt(Object valueType, Object initialValue) {
+	private static class WritableValueExt<E> extends WritableValue<E> {
+		public WritableValueExt(Object valueType, E initialValue) {
 			super(initialValue, valueType);
 		}
 
@@ -99,15 +99,15 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testHookAndUnhookDependantObservables() throws Exception {
-		final List values = new ArrayList();
+		final List<WritableValue<Integer>> values = new ArrayList<>();
 
-		ComputedValue cv = new ComputedValue() {
+		ComputedValue<Integer> cv = new ComputedValue<Integer>() {
 			@Override
-			protected Object calculate() {
+			protected Integer calculate() {
 				int sum = 0;
-				for (Iterator it = values.iterator(); it.hasNext();) {
-					WritableValue value = (WritableValue) it.next();
-					sum += ((Integer) value.getValue()).intValue();
+				for (Iterator<WritableValue<Integer>> it = values.iterator(); it.hasNext();) {
+					WritableValue<Integer> value = it.next();
+					sum += value.getValue().intValue();
 
 				}
 
@@ -115,8 +115,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 			}
 		};
 
-		WritableValueExt value1 = new WritableValueExt(Integer.TYPE, Integer.valueOf(1));
-		WritableValueExt value2 = new WritableValueExt(Integer.TYPE, Integer.valueOf(1));
+		WritableValueExt<Integer> value1 = new WritableValueExt<>(Integer.TYPE, Integer.valueOf(1));
+		WritableValueExt<Integer> value2 = new WritableValueExt<>(Integer.TYPE, Integer.valueOf(1));
 		values.add(value1);
 		values.add(value2);
 
@@ -140,7 +140,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testSetValueUnsupportedOperationException() throws Exception {
-		ComputedValue cv = new ComputedValue() {
+		ComputedValue<Object> cv = new ComputedValue<Object>() {
 			@Override
 			protected Object calculate() {
 				return null;

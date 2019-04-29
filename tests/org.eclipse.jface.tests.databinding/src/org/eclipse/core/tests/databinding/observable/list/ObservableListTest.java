@@ -43,13 +43,13 @@ import junit.framework.TestSuite;
  * @since 3.2
  */
 public class ObservableListTest {
-	private ObservableListStub list;
+	private ObservableListStub<Object> list;
 
 	@Before
 	public void setUp() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
 
-		list = new ObservableListStub(new ArrayList(0), Object.class);
+		list = new ObservableListStub<>(new ArrayList<>(0), Object.class);
 	}
 
 	@After
@@ -69,24 +69,24 @@ public class ObservableListTest {
 
 	@Test
 	public void testMove_FiresListChanges() throws Exception {
-		list = new MutableObservableListStub();
+		list = new MutableObservableListStub<>();
 		final Object element = new Object();
 		list.add(0, element);
 		list.add(1, new Object());
 
-		final List diffEntries = new ArrayList();
+		final List<ListDiffEntry<?>> diffEntries = new ArrayList<>();
 		list.addListChangeListener(event -> diffEntries.addAll(Arrays.asList(event.diff.getDifferences())));
 
 		list.move(0, 1);
 
 		assertEquals(2, diffEntries.size());
 
-		ListDiffEntry entry = (ListDiffEntry) diffEntries.get(0);
+		ListDiffEntry<?> entry = diffEntries.get(0);
 		assertEquals(element, entry.getElement());
 		assertEquals(false, entry.isAddition());
 		assertEquals(0, entry.getPosition());
 
-		entry = (ListDiffEntry) diffEntries.get(1);
+		entry = diffEntries.get(1);
 		assertEquals(element, entry.getElement());
 		assertEquals(true, entry.isAddition());
 		assertEquals(1, entry.getPosition());
@@ -94,7 +94,7 @@ public class ObservableListTest {
 
 	@Test
 	public void testMove_MovesElement() throws Exception {
-		list = new MutableObservableListStub();
+		list = new MutableObservableListStub<>();
 		final Object element0 = new Object();
 		final Object element1 = new Object();
 		list.add(0, element0);
@@ -110,62 +110,64 @@ public class ObservableListTest {
 		suite.addTest(ObservableListContractTest.suite(new Delegate()));
 	}
 
-	/* package */ static class Delegate extends AbstractObservableCollectionContractDelegate {
+	/* package */ static class Delegate extends AbstractObservableCollectionContractDelegate<String> {
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm, final int elementCount) {
-			List wrappedList = new ArrayList();
+		public IObservableCollection<String> createObservableCollection(Realm realm, final int elementCount) {
+			List<String> wrappedList = new ArrayList<>();
 			for (int i = 0; i < elementCount; i++) {
 				wrappedList.add(String.valueOf(i));
 			}
 
-			return new MutableObservableListStub(realm, wrappedList, String.class);
+			return new MutableObservableListStub<>(realm, wrappedList, String.class);
 		}
 
 		@Override
 		public void change(IObservable observable) {
-			ObservableListStub list = (ObservableListStub) observable;
-			Object element = "element";
+			@SuppressWarnings("unchecked")
+			ObservableListStub<String> list = (ObservableListStub<String>) observable;
+			String element = "element";
 			list.wrappedList.add(element);
 			list.fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(list.size(), true, element)));
 		}
 
 		@Override
-		public Object getElementType(IObservableCollection collection) {
+		public Object getElementType(IObservableCollection<String> collection) {
 			return String.class;
 		}
 	}
 
-	/* package */static class ObservableListStub extends ObservableList {
-		List wrappedList;
-		ObservableListStub(Realm realm, List wrappedList, Object elementType) {
+	/* package */static class ObservableListStub<E> extends ObservableList<E> {
+		@SuppressWarnings("hiding")
+		List<E> wrappedList;
+
+		ObservableListStub(Realm realm, List<E> wrappedList, Object elementType) {
 			super(realm, wrappedList, elementType);
 			this.wrappedList = wrappedList;
 		}
 
-		ObservableListStub(List wrappedList, Object elementType) {
+		ObservableListStub(List<E> wrappedList, Object elementType) {
 			super(wrappedList, elementType);
 			this.wrappedList = wrappedList;
 		}
 
 		@Override
-		protected void fireListChange(ListDiff diff) {
+		protected void fireListChange(ListDiff<E> diff) {
 			super.fireListChange(diff);
 		}
 	}
 
-	/* package */static class MutableObservableListStub extends
-			ObservableListStub {
+	/* package */static class MutableObservableListStub<E> extends ObservableListStub<E> {
 		MutableObservableListStub() {
-			this(Realm.getDefault(), new ArrayList(), null);
+			this(Realm.getDefault(), new ArrayList<>(), null);
 		}
 
-		MutableObservableListStub(Realm realm, List wrappedList,
+		MutableObservableListStub(Realm realm, List<E> wrappedList,
 				Object elementType) {
 			super(realm, wrappedList, elementType);
 		}
 
 		@Override
-		public void add(int index, Object element) {
+		public void add(int index, E element) {
 			checkRealm();
 			wrappedList.add(index, element);
 			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
@@ -173,9 +175,9 @@ public class ObservableListTest {
 		}
 
 		@Override
-		public Object remove(int index) {
+		public E remove(int index) {
 			checkRealm();
-			Object element = wrappedList.remove(index);
+			E element = wrappedList.remove(index);
 			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
 					index, false, element)));
 			return element;

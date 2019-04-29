@@ -44,7 +44,7 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testConstructor() throws Exception {
-		WritableValue value = new WritableValue(DisplayRealm.getRealm(Display
+		WritableValue<Object> value = new WritableValue<>(DisplayRealm.getRealm(Display
 				.getDefault()));
 		assertNull(value.getValue());
 		assertNull(value.getValueType());
@@ -53,7 +53,7 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testWithValueType() throws Exception {
 		Object elementType = String.class;
-		WritableValue value = WritableValue.withValueType(elementType);
+		WritableValue<String> value = WritableValue.withValueType(elementType);
 		assertNotNull(value);
 		assertEquals(Realm.getDefault(), value.getRealm());
 		assertEquals(elementType, value.getValueType());
@@ -66,23 +66,24 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	/* package */static class Delegate extends
 			AbstractObservableValueContractDelegate {
 		@Override
-		public IObservableValue createObservableValue(Realm realm) {
-			return new WritableValue(realm, "", String.class);
+		public IObservableValue<?> createObservableValue(Realm realm) {
+			return new WritableValue<>(realm, "", String.class);
 		}
 
 		@Override
 		public void change(IObservable observable) {
-			IObservableValue observableValue = (IObservableValue) observable;
+			@SuppressWarnings("unchecked")
+			IObservableValue<String> observableValue = (IObservableValue<String>) observable;
 			observableValue.setValue(createValue(observableValue));
 		}
 
 		@Override
-		public Object getValueType(IObservableValue observable) {
+		public Object getValueType(IObservableValue<?> observable) {
 			return String.class;
 		}
 
 		@Override
-		public Object createValue(IObservableValue observable) {
+		public String createValue(IObservableValue<?> observable) {
 			return observable.getValue() + "a";
 		}
 	}

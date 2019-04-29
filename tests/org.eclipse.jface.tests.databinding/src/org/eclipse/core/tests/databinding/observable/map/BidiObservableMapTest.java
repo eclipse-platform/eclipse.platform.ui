@@ -37,8 +37,8 @@ import org.junit.Test;
  *
  */
 public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
-	private IObservableMap wrappedMap;
-	private BidiObservableMap bidiMap;
+	private IObservableMap<Object, Object> wrappedMap;
+	private BidiObservableMap<Object, Object> bidiMap;
 	private Object key1;
 	private Object key2;
 	private Object value1;
@@ -48,8 +48,8 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		wrappedMap = new WritableMap();
-		bidiMap = new BidiObservableMap(wrappedMap);
+		wrappedMap = new WritableMap<>();
+		bidiMap = new BidiObservableMap<>(wrappedMap);
 		key1 = new Object();
 		key2 = new Object();
 		value1 = new Object();
@@ -59,7 +59,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testConstructor_NullArgument() {
 		try {
-			new BidirectionalMap(null);
+			new BidirectionalMap<>(null);
 			fail("Expected NullPointerException");
 		} catch (NullPointerException expected) {
 		}
@@ -128,7 +128,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 			wrappedMap.put(key1, value1);
 			wrappedMap.put(key2, value1);
 
-			Set expected = new HashSet();
+			Set<Object> expected = new HashSet<>();
 			expected.add(key1);
 			expected.add(key2);
 			assertEquals(expected, bidiMap.getKeys(value1));

@@ -39,40 +39,39 @@ public class DecoratingObservableListTest {
 		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
 	}
 
-	static class Delegate extends AbstractObservableCollectionContractDelegate {
+	static class Delegate extends AbstractObservableCollectionContractDelegate<Object> {
 		private Object elementType = Object.class;
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<Object> createObservableCollection(Realm realm,
 				int elementCount) {
-			IObservableList wrappedList = new WritableList(realm,
-					new ArrayList(), elementType);
+			IObservableList<Object> wrappedList = new WritableList<>(realm, new ArrayList<>(), elementType);
 			for (int i = 0; i < elementCount; i++)
 				wrappedList.add(new Object());
-			return new DecoratingObservableListStub(wrappedList);
+			return new DecoratingObservableListStub<>(wrappedList);
 		}
 
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public Object createElement(IObservableCollection<Object> collection) {
 			return new Object();
 		}
 
 		@Override
-		public Object getElementType(IObservableCollection collection) {
+		public Object getElementType(IObservableCollection<Object> collection) {
 			return elementType;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void change(IObservable observable) {
-			((DecoratingObservableListStub) observable).decorated
-					.add(new Object());
+			((DecoratingObservableListStub<Object>) observable).decorated.add(new Object());
 		}
 	}
 
-	static class DecoratingObservableListStub extends DecoratingObservableList {
-		IObservableList decorated;
+	static class DecoratingObservableListStub<E> extends DecoratingObservableList<E> {
+		IObservableList<E> decorated;
 
-		DecoratingObservableListStub(IObservableList decorated) {
+		DecoratingObservableListStub(IObservableList<E> decorated) {
 			super(decorated, true);
 			this.decorated = decorated;
 		}

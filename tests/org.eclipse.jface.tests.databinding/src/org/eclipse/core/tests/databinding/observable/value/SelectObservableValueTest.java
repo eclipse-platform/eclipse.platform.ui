@@ -37,26 +37,29 @@ public class SelectObservableValueTest extends AbstractDefaultRealmTestCase {
 	/* package */static class Delegate extends
 			AbstractObservableValueContractDelegate {
 		@Override
-		public IObservableValue createObservableValue(Realm realm) {
-			return new SelectObservableValue(realm, Object.class);
+		public IObservableValue<?> createObservableValue(Realm realm) {
+			return new SelectObservableValue<>(realm, Object.class);
 		}
 
 		@Override
 		public void change(IObservable observable) {
-			IObservableValue observableValue = (IObservableValue) observable;
+			@SuppressWarnings("unchecked")
+			IObservableValue<Object> observableValue = (IObservableValue<Object>) observable;
 			observableValue.setValue(createValue(observableValue));
 		}
 
 		@Override
-		public Object getValueType(IObservableValue observable) {
+		public Object getValueType(IObservableValue<?> observable) {
 			return Object.class;
 		}
 
 		@Override
-		public Object createValue(IObservableValue observable) {
-			SelectObservableValue select = (SelectObservableValue) observable;
+		public Object createValue(IObservableValue<?> observable) {
+			@SuppressWarnings("unchecked")
+			SelectObservableValue<Object> select = (SelectObservableValue<Object>) observable;
 			Object value = new Object();
-			IObservableValue optionObservable = new WritableValue(select
+			IObservableValue<Boolean> optionObservable = new WritableValue<>(
+					select
 					.getRealm(), Boolean.FALSE, Boolean.TYPE);
 			select.addOption(value, optionObservable);
 			return value;

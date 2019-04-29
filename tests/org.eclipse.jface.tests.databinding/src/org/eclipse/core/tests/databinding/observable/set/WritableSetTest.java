@@ -37,7 +37,7 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testWithElementType() throws Exception {
 		Object elementType = String.class;
-		WritableSet set = WritableSet.withElementType(elementType);
+		WritableSet<String> set = WritableSet.withElementType(elementType);
 		assertNotNull(set);
 		assertEquals(Realm.getDefault(), set.getRealm());
 		assertEquals(elementType, set.getElementType());
@@ -48,31 +48,32 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 	}
 
 	private static class Delegate extends
-			AbstractObservableCollectionContractDelegate {
+			AbstractObservableCollectionContractDelegate<Object> {
 		private Delegate() {
 			super();
 		}
 
 		@Override
 		public void change(IObservable observable) {
-			IObservableSet set = (IObservableSet) observable;
+			@SuppressWarnings("unchecked")
+			IObservableSet<Object> set = (IObservableSet<Object>) observable;
 			set.add(createElement(set));
 		}
 
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public Object createElement(IObservableCollection<Object> collection) {
 			return new Object();
 		}
 
 		@Override
-		public Object getElementType(IObservableCollection collection) {
+		public Object getElementType(IObservableCollection<Object> collection) {
 			return String.class;
 		}
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<Object> createObservableCollection(Realm realm,
 				int elementCount) {
-			IObservableSet set = new WritableSet(realm, Collections.EMPTY_SET,
+			IObservableSet<Object> set = new WritableSet<>(realm, Collections.emptySet(),
 					String.class);
 			for (int i = 0; i < elementCount; i++) {
 				set.add(createElement(set));

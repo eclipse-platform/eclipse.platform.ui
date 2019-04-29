@@ -60,7 +60,7 @@ public class WritableListTest {
 	@Test
 	public void testSetRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
-			WritableList list = new WritableList();
+			WritableList<String> list = new WritableList<>();
 			list.add("");
 			list.set(0, "");
 		});
@@ -69,7 +69,7 @@ public class WritableListTest {
 	@Test
 	public void testAddRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
-			WritableList list = new WritableList();
+			WritableList<String> list = new WritableList<>();
 			list.add("");
 		});
 	}
@@ -77,7 +77,7 @@ public class WritableListTest {
 	@Test
 	public void testAddByIndexRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
-			WritableList list = new WritableList();
+			WritableList<String> list = new WritableList<>();
 			list.add(0, "");
 		});
 	}
@@ -85,23 +85,23 @@ public class WritableListTest {
 	@Test
 	public void testAddAllRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
-			WritableList list = new WritableList();
-			list.addAll(Collections.EMPTY_LIST);
+			WritableList<String> list = new WritableList<>();
+			list.addAll(Collections.emptyList());
 		});
 	}
 
 	@Test
 	public void testAddAllByIndexRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
-			WritableList list = new WritableList();
-			list.addAll(0, Collections.EMPTY_LIST);
+			WritableList<String> list = new WritableList<>();
+			list.addAll(0, Collections.emptyList());
 		});
 	}
 
 	@Test
 	public void testRemoveRealmChecks() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
-		final WritableList list = new WritableList();
+		final WritableList<String> list = new WritableList<>();
 		list.add("");
 		list.add("");
 
@@ -112,7 +112,7 @@ public class WritableListTest {
 	@Test
 	public void testRemoveByIndexRealmChecks() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
-		final WritableList list = new WritableList();
+		final WritableList<String> list = new WritableList<>();
 		list.add("");
 		list.add("");
 
@@ -124,23 +124,23 @@ public class WritableListTest {
 	@Test
 	public void testRemoveAllRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
-			WritableList list = new WritableList();
-			list.removeAll(Collections.EMPTY_LIST);
+			WritableList<String> list = new WritableList<>();
+			list.removeAll(Collections.emptyList());
 		});
 	}
 
 	@Test
 	public void testRetainAllRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
-			WritableList list = new WritableList();
-			list.retainAll(Collections.EMPTY_LIST);
+			WritableList<String> list = new WritableList<>();
+			list.retainAll(Collections.emptyList());
 		});
 	}
 
 	@Test
 	public void testClearRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
-			WritableList list = new WritableList();
+			WritableList<String> list = new WritableList<>();
 			list.clear();
 		});
 	}
@@ -148,10 +148,10 @@ public class WritableListTest {
 	@Test
 	public void testNullElementType() throws Exception {
 		RealmTester.setDefault(DisplayRealm.getRealm(Display.getDefault()));
-		WritableList writableList = new WritableList();
+		WritableList<String> writableList = new WritableList<>();
 		assertNull(writableList.getElementType());
 
-		writableList = new WritableList(Realm.getDefault());
+		writableList = new WritableList<>(Realm.getDefault());
 		assertNull(writableList.getElementType());
 	}
 
@@ -160,7 +160,7 @@ public class WritableListTest {
 		RealmTester.setDefault(DisplayRealm.getRealm(Display.getDefault()));
 
 		Object elementType = String.class;
-		WritableList list = WritableList.withElementType(elementType);
+		WritableList<String> list = WritableList.withElementType(elementType);
 		assertNotNull(list);
 		assertEquals(Realm.getDefault(), list.getRealm());
 		assertEquals(elementType, list.getElementType());
@@ -169,8 +169,8 @@ public class WritableListTest {
 	@Test
 	public void testListConstructorsDoNotCopy_1() {
 		RealmTester.setDefault(new CurrentRealm(true));
-		List list = new ArrayList(Arrays.asList(new Object[] { "a", "b", "c" }));
-		WritableList wlist = new WritableList(list, Object.class);
+		List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
+		WritableList<String> wlist = new WritableList<>(list, Object.class);
 		wlist.remove(1);
 		assertEquals(2, list.size());
 		list.add("d");
@@ -179,9 +179,8 @@ public class WritableListTest {
 
 	@Test
 	public void testListConstructorsDoNotCopy_2() {
-		List list = new ArrayList(Arrays.asList(new Object[] { "a", "b", "c" }));
-		WritableList wlist = new WritableList(new CurrentRealm(true), list,
-				Object.class);
+		List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
+		WritableList<String> wlist = new WritableList<>(new CurrentRealm(true), list, Object.class);
 		wlist.remove(1);
 		assertEquals(2, list.size());
 		list.add("d");
@@ -191,8 +190,8 @@ public class WritableListTest {
 	@Test
 	public void testCollectionConstructorsCopy_1() {
 		RealmTester.setDefault(new CurrentRealm(true));
-		List list = new ArrayList(Arrays.asList(new Object[] { "a", "b", "c" }));
-		WritableList wlist = new WritableList((Collection) list, Object.class);
+		List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
+		WritableList<String> wlist = new WritableList<>((Collection<String>) list, Object.class);
 		wlist.remove(1);
 		assertEquals(3, list.size());
 		list.add("d");
@@ -201,9 +200,9 @@ public class WritableListTest {
 
 	@Test
 	public void testCollectionConstructorsCopy_2() {
-		List list = new ArrayList(Arrays.asList(new Object[] { "a", "b", "c" }));
-		WritableList wlist = new WritableList(new CurrentRealm(true),
-				(Collection) list, Object.class);
+		List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
+		WritableList<String> wlist = new WritableList<String>(new CurrentRealm(true), (Collection<String>) list,
+				Object.class);
 		wlist.remove(1);
 		assertEquals(3, list.size());
 		list.add("d");
@@ -215,22 +214,21 @@ public class WritableListTest {
 	}
 
 	/* package */static class Delegate extends
-			AbstractObservableCollectionContractDelegate {
+			AbstractObservableCollectionContractDelegate<String> {
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public String createElement(IObservableCollection<String> collection) {
 			return String.valueOf(collection.size() + 1);
 		}
 
 		@Override
-		public Object getElementType(IObservableCollection collection) {
+		public Object getElementType(IObservableCollection<String> collection) {
 			return String.class;
 		}
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<String> createObservableCollection(Realm realm,
 				final int itemCount) {
-			WritableList observable = new WritableList(realm, new ArrayList(),
-					String.class);
+			WritableList<String> observable = new WritableList<>(realm, new ArrayList<>(), String.class);
 
 			for (int i = 0; i < itemCount; i++) {
 				observable.add(String.valueOf(i));
@@ -239,9 +237,10 @@ public class WritableListTest {
 			return observable;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void change(IObservable observable) {
-			((WritableList) observable).add("");
+			((WritableList<String>) observable).add("");
 		}
 	}
 }

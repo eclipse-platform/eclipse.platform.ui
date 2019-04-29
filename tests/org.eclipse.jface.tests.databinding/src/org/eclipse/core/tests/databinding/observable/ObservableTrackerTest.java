@@ -120,7 +120,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 	public void testSetIgnore_Nested_RunAndCollect() throws Exception {
 		final List<ObservableStub> list = new ArrayList<>();
 
-		Set collected = new IdentitySet(Arrays.asList(ObservableTracker.runAndCollect(() -> {
+		Set<IObservable> collected = new IdentitySet<>(Arrays.asList(ObservableTracker.runAndCollect(() -> {
 			list.add(new ObservableStub()); // list[0] collected
 			ObservableTracker.setIgnore(true);
 			list.add(new ObservableStub()); // list[1] ignored
@@ -134,7 +134,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 
 		// Have to compare result in identity set because ObservableTracker may
 		// not return them in the same order they were collected
-		Set<ObservableStub> expected = new IdentitySet();
+		Set<IObservable> expected = new IdentitySet<>();
 		expected.add(list.get(0));
 		expected.add(list.get(4));
 		assertEquals(expected, collected);
@@ -145,7 +145,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		final IObservable[] observables = { new ObservableStub(), new ObservableStub(), new ObservableStub(),
 				new ObservableStub(), new ObservableStub() };
 
-		Set result = new IdentitySet(Arrays.asList(ObservableTracker.runAndMonitor(() -> {
+		Set<IObservable> result = new IdentitySet<>(Arrays.asList(ObservableTracker.runAndMonitor(() -> {
 			ObservableTracker.getterCalled(observables[0]); // monitored
 			ObservableTracker.setIgnore(true);
 			ObservableTracker.getterCalled(observables[1]); // ignored
@@ -159,7 +159,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 
 		// Have to compare result in identity set because ObservableTracker may
 		// not return them in the same order they were monitored
-		Set<IObservable> expected = new IdentitySet();
+		Set<IObservable> expected = new IdentitySet<>();
 		expected.add(observables[0]);
 		expected.add(observables[4]);
 		assertEquals(expected, result);

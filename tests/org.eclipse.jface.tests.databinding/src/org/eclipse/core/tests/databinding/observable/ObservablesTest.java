@@ -39,12 +39,12 @@ public class ObservablesTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testUnmodifiableObservableList() throws Exception {
-		IObservableList unmodifiable = Observables.unmodifiableObservableList(new ObservableListStub(
+		IObservableList<?> unmodifiable = Observables.unmodifiableObservableList(new ObservableListStub(
 				new ArrayList<>(0), String.class));
 		assertTrue(unmodifiable instanceof UnmodifiableObservableList);
 	}
 
-	private static class ObservableListStub extends ObservableList {
+	private static class ObservableListStub extends ObservableList<Object> {
 		/**
 		 * @param wrappedList
 		 * @param elementType

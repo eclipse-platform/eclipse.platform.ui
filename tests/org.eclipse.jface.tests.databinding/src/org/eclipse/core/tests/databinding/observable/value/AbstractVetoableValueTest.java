@@ -76,7 +76,7 @@ public class AbstractVetoableValueTest {
 		});
 	}
 
-	private static class VetoableValueStub extends AbstractVetoableValue {
+	private static class VetoableValueStub extends AbstractVetoableValue<Object> {
 		VetoableValueStub() {
 			this(Realm.getDefault());
 		}
@@ -101,7 +101,7 @@ public class AbstractVetoableValueTest {
 		}
 
 		@Override
-		protected boolean fireValueChanging(ValueDiff diff) {
+		protected boolean fireValueChanging(ValueDiff<Object> diff) {
 			return super.fireValueChanging(diff);
 		}
 	}

@@ -39,13 +39,13 @@ import org.junit.Test;
 import junit.framework.TestSuite;
 
 public class ComputedListTest extends AbstractDefaultRealmTestCase {
-	ComputedListStub list;
+	ComputedListStub<Object> list;
 
 	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		list = new ComputedListStub();
+		list = new ComputedListStub<>();
 		list.size(); // Force list to compute
 	}
 
@@ -65,7 +65,7 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 
 		list.dependency.fireChange();
 
-		List expectedList = new ArrayList();
+		List<Object> expectedList = new ArrayList<>();
 		expectedList.add(element);
 		assertEquals(expectedList, list);
 	}
@@ -79,7 +79,7 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testDependency_ListChangeEventFiresOnlyWhenNotDirty() {
-		ListChangeEventTracker tracker = ListChangeEventTracker.observe(list);
+		ListChangeEventTracker<Object> tracker = ListChangeEventTracker.observe(list);
 
 		list.dependency.fireChange();
 		assertEquals(
@@ -98,8 +98,8 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 				2, tracker.count);
 	}
 
-	static class ComputedListStub extends ComputedList {
-		List nextComputation = new ArrayList();
+	static class ComputedListStub<E> extends ComputedList<E> {
+		List<E> nextComputation = new ArrayList<E>();
 		ObservableStub dependency;
 
 		ComputedListStub() {
@@ -112,9 +112,9 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 		}
 
 		@Override
-		protected List calculate() {
+		protected List<E> calculate() {
 			ObservableTracker.getterCalled(dependency);
-			return new ArrayList(nextComputation);
+			return new ArrayList<E>(nextComputation);
 		}
 	}
 
@@ -146,11 +146,11 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 		suite.addTest(ObservableListContractTest.suite(new Delegate()));
 	}
 
-	static class Delegate extends AbstractObservableCollectionContractDelegate {
+	static class Delegate extends AbstractObservableCollectionContractDelegate<Object> {
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<Object> createObservableCollection(Realm realm,
 				int elementCount) {
-			final ComputedListStub list = new ComputedListStub(realm);
+			final ComputedListStub<Object> list = new ComputedListStub<>(realm);
 			for (int i = 0; i < elementCount; i++)
 				list.nextComputation.add(createElement(list));
 			list.size(); // force list to compute
@@ -159,17 +159,19 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 
 		@Override
 		public void change(IObservable observable) {
-			ComputedListStub list = (ComputedListStub) observable;
+			@SuppressWarnings("unchecked")
+			ComputedListStub<Object> list = (ComputedListStub<Object>) observable;
 			list.nextComputation.add(new Object());
 			list.dependency.fireChange();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void setStale(IObservable observable, boolean stale) {
 			if (stale)
-				((ComputedListStub) observable).dependency.fireStale();
+				((ComputedListStub<Object>) observable).dependency.fireStale();
 			else {
-				ComputedListStub computedList = (ComputedListStub) observable;
+				ComputedListStub<Object> computedList = (ComputedListStub<Object>) observable;
 				computedList.dependency.stale = false;
 				computedList.dependency.fireChange();
 			}

@@ -37,12 +37,12 @@ import org.junit.Test;
  *
  */
 public class ObservableMapTest {
-	ObservableMapStub map;
+	ObservableMapStub<Object, Object> map;
 
 	@Before
 	public void setUp() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
-		map = new ObservableMapStub(new HashMap());
+		map = new ObservableMapStub<>(new HashMap<>());
 	}
 
 	@After
@@ -52,7 +52,7 @@ public class ObservableMapTest {
 
 	@Test
 	public void testDisposeMapChangeListeners() throws Exception {
-		MapChangeEventTracker listener = MapChangeEventTracker.observe(map);
+		MapChangeEventTracker<?, ?> listener = MapChangeEventTracker.observe(map);
 
 		assertEquals(0, listener.count);
 		map.fireMapChange(null);
@@ -86,19 +86,19 @@ public class ObservableMapTest {
 
 	@Test
 	public void testEquals() {
-		assertTrue(map.equals(Collections.EMPTY_MAP));
+		assertTrue(map.equals(Collections.emptyMap()));
 	}
 
-	static class ObservableMapStub extends ObservableMap {
+	static class ObservableMapStub<K, V> extends ObservableMap<K, V> {
 		/**
 		 * @param wrappedMap
 		 */
-		public ObservableMapStub(Map wrappedMap) {
+		public ObservableMapStub(Map<K, V> wrappedMap) {
 			super(wrappedMap);
 		}
 
 		@Override
-		protected void fireMapChange(MapDiff diff) {
+		protected void fireMapChange(MapDiff<K, V> diff) {
 			super.fireMapChange(diff);
 		}
 	}

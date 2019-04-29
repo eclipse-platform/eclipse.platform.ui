@@ -34,8 +34,8 @@ public class UnionSetTest {
 	}
 
 	private static class Delegate extends
-			AbstractObservableCollectionContractDelegate {
-		private IObservableSet[] sets;
+			AbstractObservableCollectionContractDelegate<String> {
+		private IObservableSet<String>[] sets;
 
 		private Delegate() {
 		}
@@ -59,16 +59,19 @@ public class UnionSetTest {
 		}
 
 		@Override
-		public Object createElement(IObservableCollection collection) {
+		public String createElement(IObservableCollection<String> collection) {
 			return Integer.toString(collection.size());
 		}
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
+		public IObservableCollection<String> createObservableCollection(Realm realm,
 				int elementCount) {
-			sets = new IObservableSet[]{new WritableSet(realm), new WritableSet(realm)};
+			@SuppressWarnings("unchecked")
+			IObservableSet<String>[] newSets = new IObservableSet[] { new WritableSet<>(realm),
+					new WritableSet<>(realm) };
+			sets = newSets;
 
-			IObservableSet set = new UnionSet(sets);
+			IObservableSet<String> set = new UnionSet<>(sets);
 
 			for (int i = 0; i < elementCount; i++) {
 				sets[0].add(Integer.toString(i));

@@ -34,14 +34,14 @@ public class DiffsTest {
 	 */
 	@Test
 	public void test_SetDiff() {
-		SetDiff diff = new SetDiff() {
+		SetDiff<?> diff = new SetDiff<Object>() {
 			@Override
-			public Set<?> getAdditions() {
+			public Set<Object> getAdditions() {
 				return null;
 			}
 
 			@Override
-			public Set<?> getRemovals() {
+			public Set<Object> getRemovals() {
 				return null;
 			}
 		};
@@ -61,7 +61,7 @@ public class DiffsTest {
 	 */
 	@Test
 	public void test_ValueDiff() {
-		ValueDiff diff = new ValueDiff() {
+		ValueDiff<?> diff = new ValueDiff<Object>() {
 			@Override
 			public Object getNewValue() {
 				return null;
