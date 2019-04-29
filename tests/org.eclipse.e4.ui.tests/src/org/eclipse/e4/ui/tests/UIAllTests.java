@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.tests.application.StartupTestSuite;
 import org.eclipse.e4.ui.tests.application.UIEventTypesTest;
 import org.eclipse.e4.ui.tests.workbench.Bug308317Test;
 import org.eclipse.e4.ui.tests.workbench.ContextTest;
+import org.eclipse.e4.ui.tests.workbench.ContributionsAnalyzerTest;
 import org.eclipse.e4.ui.tests.workbench.ExtensionsSortTests;
 import org.eclipse.e4.ui.tests.workbench.HandlerActivationTest;
 import org.eclipse.e4.ui.tests.workbench.HandlerTest;
@@ -66,6 +67,7 @@ import org.junit.runners.Suite;
 		SashRendererTest.class,
 		MApplicationCommandAccessTest.class,
 		MMenuItemTest.class,
+		ContributionsAnalyzerTest.class,
 		MPartTest.class,
 		MPartSashContainerTest.class,
 		MSaveablePartTest.class,

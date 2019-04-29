@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *      Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 435949
  *      Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
- *      Simon Scholz <simon.scholz@vogella.com> - Bug 484398
+ *      Simon Scholz <simon.scholz@vogella.com> - Bug 484398, 546815
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -30,6 +30,7 @@ import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.internal.expressions.ReferenceExpression;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.InjectorFactory;
@@ -311,11 +312,18 @@ public final class ContributionsAnalyzer {
 
 		Object result = null;
 
-		if (exp.isTracking()) {
-			result = invoke(imperativeExpressionObject, Evaluate.class, eContext.eclipseContext, null, missingEvaluate);
-		} else {
-			result = ContextInjectionFactory.invoke(imperativeExpressionObject, Evaluate.class, eContext.eclipseContext,
-					null, missingEvaluate);
+		IEclipseContext staticContext = EclipseContextFactory.create("Evaluation-Static");//$NON-NLS-1$
+		staticContext.set(MImperativeExpression.class, exp);
+		try {
+			if (exp.isTracking()) {
+				result = invoke(imperativeExpressionObject, Evaluate.class, eContext.eclipseContext, staticContext,
+						missingEvaluate);
+			} else {
+				result = ContextInjectionFactory.invoke(imperativeExpressionObject, Evaluate.class,
+						eContext.eclipseContext, staticContext, missingEvaluate);
+			}
+		} finally {
+			staticContext.dispose();
 		}
 
 		if (result == missingEvaluate) {
