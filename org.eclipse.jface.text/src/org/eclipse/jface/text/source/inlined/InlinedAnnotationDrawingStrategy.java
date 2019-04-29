@@ -32,16 +32,15 @@ import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
 	@Override
-	public void draw(Annotation annotation, GC gc, StyledText textWidget, int widgetoffset, int length, Color color) {
+	public void draw(Annotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
 		if (!(annotation instanceof AbstractInlinedAnnotation)) {
 			return;
 		}
-		if (!((AbstractInlinedAnnotation) annotation).isInVisibleLines()) {
-			// The annotation is not in visible lines, don't draw it.
-			return;
+		AbstractInlinedAnnotation inlinedAnnotation= (AbstractInlinedAnnotation) annotation;
+		if (inlinedAnnotation.isInVisibleLines() && inlinedAnnotation.isFirstVisibleOffset(widgetOffset)) {
+			draw((AbstractInlinedAnnotation) annotation, gc, textWidget, widgetOffset, length,
+					color);
 		}
-		draw((AbstractInlinedAnnotation) annotation, gc, textWidget, widgetoffset, length,
-				color);
 	}
 
 	/**

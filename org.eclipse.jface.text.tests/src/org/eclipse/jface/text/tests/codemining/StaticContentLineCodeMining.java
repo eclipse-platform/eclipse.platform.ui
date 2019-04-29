@@ -19,6 +19,11 @@ import org.eclipse.jface.text.codemining.LineContentCodeMining;
 
 public class StaticContentLineCodeMining extends LineContentCodeMining {
 
+	public StaticContentLineCodeMining(Position position, String message, ICodeMiningProvider provider) {
+		super(position, provider);
+		setLabel(message);
+	}
+
 	public StaticContentLineCodeMining(int i, char c, ICodeMiningProvider repeatLettersCodeMiningProvider) {
 		super(new Position(i, 1), repeatLettersCodeMiningProvider);
 		setLabel(Character.toString(c));

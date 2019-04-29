@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.codemining;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
@@ -24,9 +27,15 @@ import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.util.Util;
 
@@ -34,6 +43,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
@@ -49,6 +61,7 @@ public class CodeMiningTest {
 
 	private SourceViewer fViewer;
 	private Shell fShell;
+	private int defaultCharWidth;
 
 	@Rule public ScreenshotOnFailureRule rule = new ScreenshotOnFailureRule();
 
@@ -59,6 +72,9 @@ public class CodeMiningTest {
 		fShell.setLayout(new FillLayout());
 		fViewer= new SourceViewer(fShell, null, SWT.NONE);
 		final StyledText textWidget= fViewer.getTextWidget();
+		textWidget.setText("a");
+		defaultCharWidth = textWidget.getTextBounds(0, 0).width;
+		textWidget.setText("");
 		MonoReconciler reconciler = new MonoReconciler(new IReconcilingStrategy() {
 			@Override
 			public void setDocument(IDocument document) {
@@ -180,4 +196,54 @@ public class CodeMiningTest {
 		}.waitForCondition(fViewer.getControl().getDisplay(), 3000));
 	}
 
+	@Test
+	public void testCodeMiningMultiLine() throws BadLocationException {
+		fViewer.getDocument().set("a\nbc");
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
+			@Override
+			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+				return CompletableFuture.completedFuture(Collections.singletonList(new StaticContentLineCodeMining(new Position(0, 3), "long enough code mining to be wider than actual text", this)));
+			}
+
+			@Override
+			public void dispose() {
+			}
+		} });
+		StyledText widget = fViewer.getTextWidget();
+		Assert.assertFalse("Code mining is visible on 2nd line", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				try {
+					return widget.getStyleRangeAtOffset(0) != null && widget.getStyleRangeAtOffset(0).metrics != null
+							&& hasCodeMiningPrintedAfterTextOnLine(fViewer, 1);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return true;
+				}
+			}
+		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 1000));
+	}
+
+	private static boolean hasCodeMiningPrintedAfterTextOnLine(ITextViewer viewer, int line) throws BadLocationException {
+		StyledText widget = viewer.getTextWidget();
+		IDocument document= viewer.getDocument();
+		Rectangle secondLineBounds = widget.getTextBounds(document.getLineOffset(1), document.getLineOffset(line) + document.getLineLength(line) - 1);
+		Image image = new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
+		GC gc = new GC(widget);
+		gc.copyArea(image, 0, 0);
+		gc.dispose();
+		ImageData imageData = image.getImageData();
+		secondLineBounds.x += secondLineBounds.width; // look only area after text
+		for (int x = secondLineBounds.x + 1; x < image.getBounds().width && x < imageData.width; x++) {
+			for (int y = secondLineBounds.y; y < secondLineBounds.y + secondLineBounds.height && y < imageData.height; y++) {
+				if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
+					// code mining printed
+					image.dispose();
+					return true;
+				}
+			}
+		}
+		image.dispose();
+		return false;
+	}
 }

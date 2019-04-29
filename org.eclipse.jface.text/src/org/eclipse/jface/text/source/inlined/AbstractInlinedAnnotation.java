@@ -28,6 +28,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 
 /**
  * Abstract class for inlined annotation.
@@ -186,6 +187,15 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 */
 	protected boolean isInVisibleLines() {
 		return support.isInVisibleLines(getPosition().getOffset());
+	}
+
+	boolean isFirstVisibleOffset(int widgetOffset) {
+		if (fViewer instanceof ProjectionViewer) {
+			IRegion widgetRange= ((ProjectionViewer) fViewer).modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
+			return widgetOffset == widgetRange.getOffset();
+		} else {
+			return position.getOffset() == widgetOffset;
+		}
 	}
 
 	/**
