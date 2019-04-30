@@ -37,7 +37,6 @@ class DnDInfo {
 
 	MUIElement curElement;
 	MUIElement itemElement;
-	int itemIndex;
 	Rectangle itemRect;
 
 	Shell dragHost = null;
@@ -121,7 +120,6 @@ class DnDInfo {
 		curItem = null;
 		curElement = null;
 		itemElement = null;
-		itemIndex = -1;
 		itemRect = null;
 	}
 
@@ -140,7 +138,6 @@ class DnDInfo {
 			if (curItem != null) {
 				itemElement = (MUIElement) curItem.getData(AbstractPartRenderer.OWNING_ME);
 				if (itemElement != null) {
-					itemIndex = ctf.indexOf((CTabItem) curItem);
 					itemRect = display.map(ctf, ctf.getShell(), ((CTabItem) curItem).getBounds());
 				}
 			}
@@ -151,7 +148,6 @@ class DnDInfo {
 			if (curItem != null) {
 				itemElement = (MUIElement) curItem.getData(AbstractPartRenderer.OWNING_ME);
 				if (itemElement != null) {
-					itemIndex = tb.indexOf(curItem);
 					itemRect = display.map(tb, tb.getShell(), curItem.getBounds());
 				}
 			}
