@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Vincent Lorenzo <vincent.lorenzo@cea.fr> - Bug 546847
  *******************************************************************************/
 package org.eclipse.ui.part;
 
@@ -258,8 +259,10 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @param parent The composite in which the container tab folder should be
 	 *               created; must not be <code>null</code>.
 	 * @return a new container
+	 *
+	 * @since 3.114
 	 */
-	private CTabFolder createContainer(Composite parent) {
+	protected CTabFolder createContainer(Composite parent) {
 		// use SWT.FLAT style so that an extra 1 pixel border is not reserved
 		// inside the folder
 		parent.setLayout(new FillLayout());
@@ -297,8 +300,10 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @param index   the index at which to add the control
 	 * @param control is the control to be placed in an item
 	 * @return a new item
+	 *
+	 * @since 3.114
 	 */
-	private CTabItem createItem(int index, Control control) {
+	protected CTabItem createItem(int index, Control control) {
 		CTabItem item = new CTabItem(getTabFolder(), SWT.NONE, index);
 		item.setControl(control);
 		return item;
@@ -323,7 +328,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 *               <code>null</code>.
 	 */
 	@Override
-	public final void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent) {
 		Composite pageContainer = createPageContainer(parent);
 		this.container = createContainer(pageContainer);
 		createPages();
