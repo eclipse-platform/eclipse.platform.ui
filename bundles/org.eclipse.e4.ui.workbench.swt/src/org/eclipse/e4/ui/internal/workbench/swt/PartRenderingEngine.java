@@ -346,8 +346,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (removed.getWidget() instanceof Control) {
 					Control ctrl = (Control) removed.getWidget();
 					ctrl.setLayoutData(null);
-					// bug 487621
-					ctrl.getParent().layout(new Control[] { ctrl }, SWT.CHANGED | SWT.DEFER);
+					ctrl.requestLayout();
 				}
 
 				// Ensure that the element about to be removed is not the
