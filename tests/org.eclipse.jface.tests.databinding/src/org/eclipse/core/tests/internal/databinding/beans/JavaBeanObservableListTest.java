@@ -30,11 +30,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -117,7 +117,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		list.addListChangeListener(listener);
 
 		assertEquals(0, listener.count);
-		bean.setList(Arrays.asList(new String[] { "value" }));
+		bean.setList(Arrays.asList("value"));
 		assertEquals(1, listener.count);
 	}
 
