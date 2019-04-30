@@ -16,7 +16,6 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DragDetectEvent;
@@ -48,13 +47,10 @@ class DnDInfo {
 	MWindow topLevelWindow;
 	Display display;
 
-	EModelService modelService;
-
 	public DnDInfo(MWindow topWin) {
 		topLevelWindow = topWin;
 		display = ((Control) (topWin.getWidget())).getDisplay();
 
-		modelService = topWin.getContext().get(EModelService.class);
 		update();
 	}
 
