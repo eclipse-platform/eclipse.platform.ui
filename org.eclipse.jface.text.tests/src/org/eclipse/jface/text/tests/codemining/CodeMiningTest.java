@@ -61,7 +61,6 @@ public class CodeMiningTest {
 
 	private SourceViewer fViewer;
 	private Shell fShell;
-	private int defaultCharWidth;
 
 	@Rule public ScreenshotOnFailureRule rule = new ScreenshotOnFailureRule();
 
@@ -73,7 +72,6 @@ public class CodeMiningTest {
 		fViewer= new SourceViewer(fShell, null, SWT.NONE);
 		final StyledText textWidget= fViewer.getTextWidget();
 		textWidget.setText("a");
-		defaultCharWidth = textWidget.getTextBounds(0, 0).width;
 		textWidget.setText("");
 		MonoReconciler reconciler = new MonoReconciler(new IReconcilingStrategy() {
 			@Override
