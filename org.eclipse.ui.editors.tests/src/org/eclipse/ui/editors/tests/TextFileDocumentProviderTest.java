@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
+import static org.eclipse.ui.editors.tests.FileDocumentProviderTest.closeIntro;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -30,25 +31,13 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.internal.resources.Workspace;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
 
 import org.eclipse.core.filebuffers.tests.ResourceHelper;
 
@@ -57,29 +46,24 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.intro.IIntroPart;
 
-import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
 /**
- * Test checking UI deadlock on modifying the FileDocumentProvider's underlined
- * file.
- *
- * @since 3.10
+ * Test checking UI deadlock on modifying the TextFileDocumentProvider's
+ * underlined file.
  */
-public class FileDocumentProviderTest {
+public class TextFileDocumentProviderTest {
 
 	private File file;
 	private AtomicBoolean stoppedByTest;
 	private AtomicBoolean stopLockingFlag;
 	private LockJob lockJob;
 	private LockJob2 lockJob2;
-	private FileDocumentProviderMock fileProvider;
+	private TextFileDocumentProvider fileProvider;
 	private FileSystemResourceManager fsManager;
 	private IEditorPart editor;
 	private IWorkbenchPage page;
@@ -94,7 +78,7 @@ public class FileDocumentProviderTest {
 		assertTrue(fsManager.fastIsSynchronized(file));
 		stopLockingFlag = new AtomicBoolean(false);
 		stoppedByTest = new AtomicBoolean(false);
-		fileProvider = new FileDocumentProviderMock();
+		fileProvider = new TextFileDocumentProvider();
 		lockJob = new LockJob("Locking workspace", file, stopLockingFlag, stoppedByTest);
 		lockJob2 = new LockJob2("Locking workspace", file, stopLockingFlag, stoppedByTest);
 
@@ -143,9 +127,10 @@ public class FileDocumentProviderTest {
 	}
 
 	@Test
-	public void testRefreshFileWhileWorkspaceIsLocked1() throws Exception {
+	public void testSynchronizeInputWhileWorkspaceIsLocked1() throws Exception {
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=482354
 		assertNotNull("Test must run in UI thread", Display.getCurrent());
+		fileProvider.connect(editor.getEditorInput());
 
 		// Start workspace job which will lock workspace operations on file via
 		// rule
@@ -167,7 +152,7 @@ public class FileDocumentProviderTest {
 
 		// Original code will lock UI thread here because it will try to acquire
 		// resource lock and no one will process UI events anymore
-		fileProvider.refreshFile(file);
+		fileProvider.synchronize(editor.getEditorInput());
 
 		System.out.println("Busy wait terminated, UI thread is operable again!");
 		assertFalse("Test deadlocked while waiting on resource lock", stoppedByTest.get());
@@ -175,9 +160,11 @@ public class FileDocumentProviderTest {
 	}
 
 	@Test
-	public void testRefreshFileWhileWorkspaceIsLocked2() throws Exception {
+	public void testSynchronizeInputWhileWorkspaceIsLocked2() throws Exception {
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=482354
 		assertNotNull("Test must run in UI thread", Display.getCurrent());
+
+		fileProvider.connect(editor.getEditorInput());
 
 		// Start workspace job which will lock workspace operations on file via
 		// rule
@@ -199,10 +186,9 @@ public class FileDocumentProviderTest {
 
 		// Original code will lock UI thread here because it will try to acquire
 		// resource lock and no one will process UI events anymore
-		fileProvider.refreshFile(file, fileProvider.getProgressMonitor());
+		fileProvider.synchronize(editor.getEditorInput());
 
 		System.out.println("Busy wait terminated, UI thread is operable again!");
-
 		assertFalse("Test deadlocked while waiting on resource lock", stoppedByTest.get());
 		assertTrue(stopLockingFlag.get());
 	}
@@ -210,6 +196,8 @@ public class FileDocumentProviderTest {
 	@Test
 	public void testValidateStateForFileWhileWorkspaceIsLocked() throws Exception {
 		assertNotNull("Test must run in UI thread", Display.getCurrent());
+
+		fileProvider.connect(editor.getEditorInput());
 
 		// Start workspace job which will lock workspace operations on file
 		lockJob2.schedule();
@@ -258,192 +246,6 @@ public class FileDocumentProviderTest {
 		assertFalse(fsManager.fastIsSynchronized(file));
 	}
 
-	static void logError(String message, Exception ex) {
-		String PLUGIN_ID = "org.eclipse.jface.text"; //$NON-NLS-1$
-		ILog log = Platform.getLog(Platform.getBundle(PLUGIN_ID));
-		log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex));
-	}
-
-	static void closeIntro(final IWorkbench wb) {
-		IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
-		if (window != null) {
-			IIntroManager im = wb.getIntroManager();
-			IIntroPart intro = im.getIntro();
-			if (intro != null) {
-				im.closeIntro(intro);
-			}
-		}
-	}
 }
 
-class FileDocumentProviderMock extends FileDocumentProvider {
 
-	/**
-	 * Overridden to make public accessible for the test
-	 */
-	@Override
-	public void refreshFile(IFile file) throws CoreException {
-		System.out.println("Will try to refresh file now: " + file);
-		super.refreshFile(file);
-	}
-
-	/**
-	 * Overridden to make public accessible for the test
-	 */
-	@Override
-	public void refreshFile(IFile file, IProgressMonitor m) throws CoreException {
-		System.out.println("Will try to refresh file (with monitor: " + m + " ) now: " + file);
-		super.refreshFile(file, m);
-	}
-}
-
-/** Emulates what SVN plugin jobs are doing */
-class LockJob extends WorkspaceJob {
-
-	final IResource resource;
-	AtomicBoolean stopFlag;
-	AtomicBoolean stoppedByTest;
-
-	public LockJob(String name, IResource resource, AtomicBoolean stopFlag, AtomicBoolean stoppedByTest) {
-		super(name);
-		this.stopFlag = stopFlag;
-		this.stoppedByTest = stoppedByTest;
-		setUser(true);
-		setSystem(true);
-		this.resource = resource;
-	}
-
-	public IStatus run2() {
-		long startTime = System.currentTimeMillis();
-		// Wait maximum 5 minutes
-		int maxWaitTime = 5 * 60 * 1000;
-		long stopTime = startTime + maxWaitTime;
-
-		System.out.println("Starting the busy wait while holding lock on: " + resource.getFullPath());
-		try {
-			while (!stopFlag.get()) {
-				try {
-					if (System.currentTimeMillis() > stopTime) {
-						FileDocumentProviderTest.logError("Tiemout occured while waiting on test to finish",
-								new IllegalStateException());
-						stoppedByTest.set(true);
-						return Status.CANCEL_STATUS;
-					}
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					stoppedByTest.set(true);
-					FileDocumentProviderTest.logError("Lock job was interrupted while waiting on test to finish", e);
-					e.printStackTrace();
-					return Status.CANCEL_STATUS;
-				}
-			}
-		} finally {
-			System.out.println("Lock task terminated");
-		}
-		return Status.OK_STATUS;
-	}
-
-	@Override
-	public boolean belongsTo(Object family) {
-		return super.belongsTo(family) || LockJob.class == family;
-	}
-
-	@Override
-	public String toString() {
-		return super.toString() + " on " + resource;
-	}
-
-	@Override
-	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor pm) throws CoreException {
-				try {
-					run2();
-				} catch (Exception e) {
-					// Re-throw as OperationCanceledException, which will be
-					// caught and re-thrown as InterruptedException below.
-					throw new OperationCanceledException(e.getMessage());
-				}
-				// CoreException and OperationCanceledException are propagated
-			}
-		};
-		ResourcesPlugin.getWorkspace().run(workspaceRunnable,
-				resource, IResource.NONE, monitor);
-
-		return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
-	}
-
-}
-
-/** Emulates what AutoBuildJob is doing */
-class LockJob2 extends Job {
-
-	final IResource resource;
-	AtomicBoolean stopFlag;
-	AtomicBoolean stoppedByTest;
-
-	public LockJob2(String name, IResource resource, AtomicBoolean stopFlag, AtomicBoolean stoppedByTest) {
-		super(name);
-		this.stopFlag = stopFlag;
-		this.stoppedByTest = stoppedByTest;
-		setUser(true);
-		setSystem(true);
-		this.resource = resource;
-		setRule(ResourcesPlugin.getWorkspace().getRoot());
-	}
-
-	@Override
-	public boolean belongsTo(Object family) {
-		return super.belongsTo(family) || LockJob2.class == family;
-	}
-
-	@Override
-	public IStatus run(IProgressMonitor monitor) {
-		Workspace workspace = (Workspace) ResourcesPlugin.getWorkspace();
-		try {
-			workspace.prepareOperation(getRule(), monitor);
-			workspace.beginOperation(true);
-			run2();
-		} catch (CoreException e) {
-			FileDocumentProviderTest.logError(e.getMessage(), e);
-		} finally {
-			try {
-				workspace.endOperation(getRule(), false);
-			} catch (CoreException e) {
-				FileDocumentProviderTest.logError(e.getMessage(), e);
-			}
-		}
-		return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
-	}
-
-	public IStatus run2() {
-		long startTime = System.currentTimeMillis();
-		// Wait maximum 5 minutes
-		int maxWaitTime = 5 * 60 * 1000;
-		long stopTime = startTime + maxWaitTime;
-
-		System.out.println("Starting the busy wait while holding lock on: " + resource.getFullPath());
-		try {
-			while (!stopFlag.get()) {
-				try {
-					if (System.currentTimeMillis() > stopTime) {
-						FileDocumentProviderTest.logError("Tiemout occured while waiting on test to finish",
-								new IllegalStateException());
-						stoppedByTest.set(true);
-						return Status.CANCEL_STATUS;
-					}
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					stoppedByTest.set(true);
-					FileDocumentProviderTest.logError("Lock job was interrupted while waiting on test to finish", e);
-					e.printStackTrace();
-					return Status.CANCEL_STATUS;
-				}
-			}
-		} finally {
-			System.out.println("Lock task terminated");
-		}
-		return Status.OK_STATUS;
-	}
-}

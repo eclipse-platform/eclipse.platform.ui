@@ -33,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		MarkerAnnotationOrderTest.class,
 		ZoomTest.class,
 		FileDocumentProviderTest.class,
+		TextFileDocumentProviderTest.class,
 		StatusEditorTest.class
 })
 public class EditorsTestSuite {

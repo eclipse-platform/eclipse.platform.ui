@@ -1128,7 +1128,19 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected ISchedulingRule getValidateStateRule(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
-			return fResourceRuleFactory.validateEditRule(new IResource[] { input.getFile() });
+			IFile file= input.getFile();
+			ISchedulingRule validateEditRule= fResourceRuleFactory.validateEditRule(new IResource[] { file });
+			if (validateEditRule == null) {
+				// Note that factory decides to provide a null rule for modifiable files (not read-only).
+				// Null rule means, that org.eclipse.core.internal.resources.WorkManager.checkIn(ISchedulingRule, IProgressMonitor)
+				// will run jobManager.beginRule(null, monitor); which will NOT show any progress dialog
+				// and will *immediately* lock UI thread via lock.acquire(); while the workspace is locked
+				// Providing here a file we enforce the progress dialog, where this operation can be cancelled by user,
+				// so that an occasional "Modify" or "Save" of the editor will NOT block UI forever.
+				return file;
+			} else {
+				return validateEditRule;
+			}
 		}
 		return null;
 	}
