@@ -42,8 +42,7 @@ class DragHost {
 
 	public DragHost(Shell shell) {
 		dragWindow = (MWindow) shell.getData(AbstractPartRenderer.OWNING_ME);
-		baseWindow = (MWindow) shell.getParent().getData(
-				AbstractPartRenderer.OWNING_ME);
+		baseWindow = (MWindow) shell.getParent().getData(AbstractPartRenderer.OWNING_ME);
 		dragElement = dragWindow.getChildren().get(0);
 	}
 
@@ -91,8 +90,7 @@ class DragHost {
 		dragWindow.getTags().add(DragHostId);
 
 		// define the initial location and size for the window
-		Point cp = ((Shell) baseWindow.getWidget()).getDisplay()
-				.getCursorLocation();
+		Point cp = ((Shell) baseWindow.getWidget()).getDisplay().getCursorLocation();
 		Point size = new Point(200, 200);
 		if (dragElement.getWidget() instanceof Control) {
 			Control ctrl = (Control) dragElement.getWidget();
@@ -130,8 +128,7 @@ class DragHost {
 			ToolItem ti = (ToolItem) dragElement.getWidget();
 			ToolBar tb = ti.getParent();
 			tb.layout(true);
-			tb.getParent()
-					.layout(new Control[] { tb }, SWT.CHANGED | SWT.DEFER);
+			tb.getParent().layout(new Control[] { tb }, SWT.CHANGED | SWT.DEFER);
 		}
 
 		baseWindow.getWindows().remove(dragWindow);
@@ -151,11 +148,4 @@ class DragHost {
 		return dragElement;
 	}
 
-	/**
-	 *
-	 */
-	public void dispose() {
-		// TODO Auto-generated method stub
-
-	}
 }
