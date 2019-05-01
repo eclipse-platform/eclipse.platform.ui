@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.EditorReference;
 public class NullEditorInput implements IEditorInput {
 
 	private EditorReference editorReference;
+	private String name;
 
 	/**
 	 * Creates a <code>NullEditorInput</code>.
@@ -40,6 +41,7 @@ public class NullEditorInput implements IEditorInput {
 	 */
 	public NullEditorInput(EditorReference editorReference) {
 		Assert.isLegal(editorReference != null);
+		this.name = editorReference.getName();
 		this.editorReference = editorReference;
 
 	}
@@ -56,12 +58,8 @@ public class NullEditorInput implements IEditorInput {
 
 	@Override
 	public String getName() {
-		String result = null;
-		if (editorReference != null) {
-			result = editorReference.getName();
-		}
-		if (result != null) {
-			return result;
+		if (name != null) {
+			return name;
 		}
 		return ""; //$NON-NLS-1$
 	}
