@@ -673,10 +673,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 			IFileEditorInput input= (IFileEditorInput) element;
 
-			try {
-				refreshFile(input.getFile());
-			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.FileDocumentProvider_createElementInfo);
+			// Note that file.isSynchronized does not require a scheduling rule and thus helps to identify a no-op attempt
+			// to refresh the file. The no-op will otherwise be blocked by a running build or cancel a running build
+			IFile file= input.getFile();
+			if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
+				try {
+					refreshFile(file);
+				} catch (CoreException x) {
+					handleCoreException(x, TextEditorMessages.FileDocumentProvider_createElementInfo);
+				}
 			}
 
 			IDocument d= null;
