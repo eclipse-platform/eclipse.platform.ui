@@ -153,8 +153,8 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			return;
 		}
 		if (gc != null) {
-			String s= textWidget.getText(widgetOffset, widgetOffset);
-			boolean isEndOfLine= ("\r".equals(s) || "\n".equals(s)); //$NON-NLS-1$ //$NON-NLS-2$
+			String hostCharacter= textWidget.getText(widgetOffset, widgetOffset);
+			boolean isEndOfLine= ("\r".equals(hostCharacter) || "\n".equals(hostCharacter)); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Compute the location of the annotation
 			Rectangle bounds= textWidget.getTextBounds(widgetOffset, widgetOffset);
@@ -177,7 +177,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					}
 				} else {
 					// Get size of the character where GlyphMetrics width is added
-					Point charBounds= gc.stringExtent(s);
+					Point charBounds= gc.stringExtent(hostCharacter);
 					int charWidth= charBounds.x;
 
 					// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
@@ -198,21 +198,28 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					// GlyphMetrics
 					// Here we need to redraw this first character because GlyphMetrics clip this
 					// character.
-					int charX= x + bounds.width - charWidth;
-					int charY= y;
+					int redrawnHostCharX= x + bounds.width - charWidth;
+					int redrawnHostCharY= y;
+					gc.setForeground(textWidget.getForeground());
+					gc.setBackground(textWidget.getBackground());
+					gc.setFont(textWidget.getFont());
 					if (style != null) {
 						if (style.background != null) {
 							gc.setBackground(style.background);
-							gc.fillRectangle(charX, charY, charWidth + 1, bounds.height);
+							gc.fillRectangle(redrawnHostCharX, redrawnHostCharY, charWidth + 1, bounds.height);
 						}
 						if (style.foreground != null) {
 							gc.setForeground(style.foreground);
-						} else {
-							gc.setForeground(textWidget.getForeground());
 						}
-						gc.setFont(annotation.getFont(style.fontStyle));
+						if (style.font != null) {
+							gc.setFont(style.font);
+						}
 					}
-					gc.drawString(s, charX, charY, true);
+					if (textWidget.getSelection().x <= widgetOffset && textWidget.getSelection().y > widgetOffset) {
+						gc.setForeground(textWidget.getSelectionForeground());
+						gc.setBackground(textWidget.getSelectionBackground());
+					}
+					gc.drawString(hostCharacter, redrawnHostCharX, redrawnHostCharY, true);
 				}
 				// END TO REMOVE
 			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
@@ -225,10 +232,10 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 	}
 
-	protected static void drawAsRightOfPreviousCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
+	protected static void drawAsRightOfPreviousCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
 		StyleRange style= null;
 		try {
-			style= textWidget.getStyleRangeAtOffset(offset - 1);
+			style= textWidget.getStyleRangeAtOffset(widgetOffset - 1);
 		} catch (Exception e) {
 			return;
 		}
@@ -241,22 +248,22 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			return;
 		}
 		if (gc != null) {
-			String s= textWidget.getText(offset - 1, offset - 1);
-			int charWidth= gc.stringExtent(s).x;
-			Rectangle charBounds= textWidget.getTextBounds(offset - 1, offset - 1);
-			Rectangle annotationBounds= new Rectangle(charBounds.x + charWidth, charBounds.y, annotation.getWidth(), charBounds.height);
+			String hostCharacter= textWidget.getText(widgetOffset - 1, widgetOffset - 1);
+			int redrawnCharacterWidth= gc.stringExtent(hostCharacter).x;
+			Rectangle charBounds= textWidget.getTextBounds(widgetOffset - 1, widgetOffset - 1);
+			Rectangle annotationBounds= new Rectangle(charBounds.x + redrawnCharacterWidth, charBounds.y, annotation.getWidth(), charBounds.height);
 
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
 			annotationBounds.y+= charBounds.height - textWidget.getLineHeight();
 
 			// Draw the line content annotation
 			annotation.setLocation(annotationBounds.x, annotationBounds.y);
-			annotation.draw(gc, textWidget, offset, length, color, annotationBounds.x, annotationBounds.y);
+			annotation.draw(gc, textWidget, widgetOffset, length, color, annotationBounds.x, annotationBounds.y);
 			int width= annotation.getWidth();
 			if (width != 0) {
 				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
 				// START TO REMOVE
-				annotation.setRedrawnCharacterWidth(charWidth);
+				annotation.setRedrawnCharacterWidth(redrawnCharacterWidth);
 				// END TO REMOVE
 
 				// Annotation takes place, add GlyphMetrics width to the style
@@ -272,19 +279,27 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				// GlyphMetrics
 				// Here we need to redraw this first character because GlyphMetrics clip this
 				// character.
+				gc.setForeground(textWidget.getForeground());
+				gc.setBackground(textWidget.getBackground());
+				gc.setFont(textWidget.getFont());
 				if (style != null) {
 					if (style.background != null) {
 						gc.setBackground(style.background);
-						gc.fillRectangle(charBounds.x, charBounds.y, charWidth, charBounds.height);
+						gc.fillRectangle(charBounds.x, annotationBounds.y, redrawnCharacterWidth, charBounds.height);
 					}
 					if (style.foreground != null) {
 						gc.setForeground(style.foreground);
-					} else {
-						gc.setForeground(textWidget.getForeground());
 					}
-					gc.setFont(annotation.getFont(style.fontStyle));
+					if (style.font != null) {
+						gc.setFont(style.font);
+					}
 				}
-				gc.drawString(s, charBounds.x, charBounds.y, true);
+				int toRedrawCharOffset= widgetOffset - 1;
+				if (textWidget.getSelection().x <= toRedrawCharOffset && textWidget.getSelection().y > toRedrawCharOffset) {
+					gc.setForeground(textWidget.getSelectionForeground());
+					gc.setBackground(textWidget.getSelectionBackground());
+				}
+				gc.drawString(hostCharacter, charBounds.x, charBounds.y, true);
 				// END TO REMOVE
 			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
 				// line content annotation had an , reset it
@@ -292,7 +307,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				textWidget.setStyleRange(style);
 			}
 		} else {
-			textWidget.redrawRange(offset, length, true);
+			textWidget.redrawRange(widgetOffset, length, true);
 		}
 	}
 
