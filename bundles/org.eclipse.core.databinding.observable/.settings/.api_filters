@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding.observable" version="2">
     <resource path="src/org/eclipse/core/databinding/observable/AbstractObservable.java" type="org.eclipse.core.databinding.observable.AbstractObservable">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservable"/>
                 <message_argument value="AbstractObservable"/>
@@ -9,7 +9,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/DecoratingObservable.java" type="org.eclipse.core.databinding.observable.DecoratingObservable">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IDecoratingObservable"/>
                 <message_argument value="DecoratingObservable"/>
@@ -17,7 +17,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/DecoratingObservableCollection.java" type="org.eclipse.core.databinding.observable.DecoratingObservableCollection">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableCollection&lt;E&gt;"/>
                 <message_argument value="DecoratingObservableCollection&lt;E&gt;"/>
@@ -25,7 +25,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/IChangeListener.java" type="org.eclipse.core.databinding.observable.IChangeListener">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576782386">
+        <filter comment="Authorised internal implementor." id="576782386">
             <message_arguments>
                 <message_argument value="IObservablesListener"/>
                 <message_argument value="IChangeListener"/>
@@ -33,7 +33,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/IDisposeListener.java" type="org.eclipse.core.databinding.observable.IDisposeListener">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576782386">
+        <filter comment="Authorised internal implementor." id="576782386">
             <message_arguments>
                 <message_argument value="IObservablesListener"/>
                 <message_argument value="IDisposeListener"/>
@@ -41,7 +41,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/IStaleListener.java" type="org.eclipse.core.databinding.observable.IStaleListener">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576782386">
+        <filter comment="Authorised internal implementor." id="576782386">
             <message_arguments>
                 <message_argument value="IObservablesListener"/>
                 <message_argument value="IStaleListener"/>
@@ -49,7 +49,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/list/AbstractObservableList.java" type="org.eclipse.core.databinding.observable.list.AbstractObservableList">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableList&lt;E&gt;"/>
                 <message_argument value="AbstractObservableList&lt;E&gt;"/>
@@ -57,7 +57,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/list/DecoratingObservableList.java" type="org.eclipse.core.databinding.observable.list.DecoratingObservableList">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableList&lt;E&gt;"/>
                 <message_argument value="DecoratingObservableList&lt;E&gt;"/>
@@ -65,7 +65,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/list/ObservableList.java" type="org.eclipse.core.databinding.observable.list.ObservableList">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableList&lt;E&gt;"/>
                 <message_argument value="ObservableList&lt;E&gt;"/>
@@ -73,7 +73,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/map/AbstractObservableMap.java" type="org.eclipse.core.databinding.observable.map.AbstractObservableMap">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableMap&lt;K, V&gt;"/>
                 <message_argument value="AbstractObservableMap&lt;K, V&gt;"/>
@@ -81,7 +81,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/map/DecoratingObservableMap.java" type="org.eclipse.core.databinding.observable.map.DecoratingObservableMap">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableMap&lt;K, V&gt;"/>
                 <message_argument value="DecoratingObservableMap&lt;K, V&gt;"/>
@@ -89,7 +89,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/map/ObservableMap.java" type="org.eclipse.core.databinding.observable.map.ObservableMap">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableMap&lt;K, V&gt;"/>
                 <message_argument value="ObservableMap&lt;K, V&gt;"/>
@@ -97,7 +97,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/set/AbstractObservableSet.java" type="org.eclipse.core.databinding.observable.set.AbstractObservableSet">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableSet&lt;E&gt;"/>
                 <message_argument value="AbstractObservableSet&lt;E&gt;"/>
@@ -105,7 +105,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/set/DecoratingObservableSet.java" type="org.eclipse.core.databinding.observable.set.DecoratingObservableSet">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableSet&lt;E&gt;"/>
                 <message_argument value="DecoratingObservableSet&lt;E&gt;"/>
@@ -113,7 +113,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/set/ObservableSet.java" type="org.eclipse.core.databinding.observable.set.ObservableSet">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableSet&lt;E&gt;"/>
                 <message_argument value="ObservableSet&lt;E&gt;"/>
@@ -121,7 +121,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/sideeffect/CompositeSideEffect.java" type="org.eclipse.core.databinding.observable.sideeffect.CompositeSideEffect">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="ISideEffect"/>
                 <message_argument value="CompositeSideEffect"/>
@@ -129,7 +129,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/value/AbstractObservableValue.java" type="org.eclipse.core.databinding.observable.value.AbstractObservableValue">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableValue&lt;T&gt;"/>
                 <message_argument value="AbstractObservableValue&lt;T&gt;"/>
@@ -137,7 +137,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/value/AbstractVetoableValue.java" type="org.eclipse.core.databinding.observable.value.AbstractVetoableValue">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IVetoableValue&lt;T&gt;"/>
                 <message_argument value="AbstractVetoableValue&lt;T&gt;"/>
@@ -145,7 +145,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/value/DecoratingObservableValue.java" type="org.eclipse.core.databinding.observable.value.DecoratingObservableValue">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IObservableValue&lt;T&gt;"/>
                 <message_argument value="DecoratingObservableValue&lt;T&gt;"/>
@@ -153,7 +153,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/observable/value/DecoratingVetoableValue.java" type="org.eclipse.core.databinding.observable.value.DecoratingVetoableValue">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Authorised internal implementor." id="576725006">
             <message_arguments>
                 <message_argument value="IVetoableValue&lt;T&gt;"/>
                 <message_argument value="DecoratingVetoableValue&lt;T&gt;"/>

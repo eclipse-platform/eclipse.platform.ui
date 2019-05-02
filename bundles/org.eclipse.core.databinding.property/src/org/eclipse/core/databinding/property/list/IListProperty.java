@@ -29,16 +29,21 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 /**
  * Interface for list-typed properties.
  *
- * @param <S>
- *            type of the source object
- * @param <E>
- *            type of the elements in the list
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the list
  * @since 1.2
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
- *              implement this interface. Note that direct implementers of this
- *              interface outside of the framework will be broken in future
- *              releases when methods are added to this interface.
+ *              implement this interface.
+ *              <p>
+ *              Authors of extensions to the databinding framework may extend
+ *              this interface and indirectly implement it, but if doing so must
+ *              also extend one of the framework classes. (Use an API problem
+ *              filter to suppress the resulting warning.)
+ *              <p>
+ *              Direct implementers of this interface outside of the framework
+ *              will be broken in future releases when methods are added to this
+ *              interface.
  * @see ListProperty
  * @see SimpleListProperty
  */

@@ -22,7 +22,8 @@ import java.util.Objects;
  * An observable which decorates another observable
  *
  * @since 1.2
- *
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public class DecoratingObservable extends AbstractObservable implements
 		IDecoratingObservable {

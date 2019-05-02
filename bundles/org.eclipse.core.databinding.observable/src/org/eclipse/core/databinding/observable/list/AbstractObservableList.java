@@ -48,7 +48,8 @@ import org.eclipse.core.runtime.AssertionFailedException;
  *            the list element type
  *
  * @since 1.0
- *
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public abstract class AbstractObservableList<E> extends AbstractList<E>
 		implements IObservableList<E> {

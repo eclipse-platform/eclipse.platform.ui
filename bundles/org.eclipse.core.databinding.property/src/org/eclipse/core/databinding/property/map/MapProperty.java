@@ -34,13 +34,12 @@ import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap
 /**
  * Abstract implementation of IMapProperty
  *
- * @param <S>
- *            type of the source object
- * @param <K>
- *            type of the keys to the map
- * @param <V>
- *            type of the values in the map
+ * @param <S> type of the source object
+ * @param <K> type of the keys to the map
+ * @param <V> type of the values in the map
  * @since 1.2
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public abstract class MapProperty<S, K, V> implements IMapProperty<S, K, V> {
 

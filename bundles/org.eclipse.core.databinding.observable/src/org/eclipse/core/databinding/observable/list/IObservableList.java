@@ -31,10 +31,17 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
  *            the type of elements in this collection
  *
  * @noimplement This interface is not intended to be implemented by clients.
- *              Clients should instead subclass one of the framework classes
- *              that implement this interface. Note that direct implementers of
- *              this interface outside of the framework will be broken in future
- *              releases when methods are added to this interface.
+ *              Clients should instead subclass one of the classes that
+ *              implement this interface.
+ *              <p>
+ *              Authors of extensions to the databinding framework may extend
+ *              this interface and indirectly implement it, but if doing so must
+ *              also extend one of the framework classes. (Use an API problem
+ *              filter to suppress the resulting warning.)
+ *              <p>
+ *              Direct implementers of this interface outside of the framework
+ *              will be broken in future releases when methods are added to this
+ *              interface.
  *
  * @see AbstractObservableList
  * @see ObservableList

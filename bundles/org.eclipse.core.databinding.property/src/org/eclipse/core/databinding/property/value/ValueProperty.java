@@ -35,11 +35,12 @@ import org.eclipse.core.internal.databinding.property.ValuePropertyDetailValue;
 /**
  * Abstract implementation of IValueProperty
  *
- * @param <S>
- *            type of the source object
- * @param <T>
- *            type of the value of the property
+ * @param <S> type of the source object
+ * @param <T> type of the value of the property
+ *
  * @since 1.2
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public abstract class ValueProperty<S, T> implements IValueProperty<S, T> {
 

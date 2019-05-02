@@ -27,6 +27,8 @@ import org.eclipse.core.databinding.observable.Diffs;
  *            the type of value being observed
  *
  * @since 1.2
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public class DecoratingObservableValue<T> extends DecoratingObservable
 		implements IObservableValue<T> {

@@ -34,6 +34,8 @@ import org.eclipse.core.databinding.observable.Diffs;
  *            type of the values in the map
  *
  * @since 1.2
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public class DecoratingObservableMap<K, V> extends DecoratingObservable
 		implements IObservableMap<K, V> {

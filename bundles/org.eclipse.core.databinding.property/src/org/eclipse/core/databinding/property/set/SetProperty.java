@@ -35,11 +35,11 @@ import org.eclipse.core.internal.databinding.property.SetPropertyDetailValuesMap
 /**
  * Abstract implementation of ISetProperty
  *
- * @param <S>
- *            type of the source object
- * @param <E>
- *            type of the elements in the set
+ * @param <S> type of the source object
+ * @param <E> type of the elements in the set
  * @since 1.2
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public abstract class SetProperty<S, E> implements ISetProperty<S, E> {
 

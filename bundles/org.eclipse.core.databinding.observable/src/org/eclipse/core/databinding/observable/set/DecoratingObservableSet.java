@@ -27,6 +27,8 @@ import org.eclipse.core.databinding.observable.Diffs;
  *            the type of the elements in this set
  *
  * @since 1.2
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public class DecoratingObservableSet<E> extends
 		DecoratingObservableCollection<E> implements IObservableSet<E> {

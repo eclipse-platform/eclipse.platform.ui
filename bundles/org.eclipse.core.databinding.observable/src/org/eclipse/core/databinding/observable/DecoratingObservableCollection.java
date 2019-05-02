@@ -24,6 +24,8 @@ import java.util.Iterator;
  * @param <E> type of the elements in the collection
  *
  * @since 1.2
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public class DecoratingObservableCollection<E> extends DecoratingObservable implements IObservableCollection<E> {
 	private IObservableCollection<E> decorated;

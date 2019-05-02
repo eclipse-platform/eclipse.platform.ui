@@ -3,26 +3,26 @@
     <resource path="META-INF/MANIFEST.MF">
         <filter comment="Bug 549659 - API change was not detected by tooling" id="926941240">
             <message_arguments>
-                <message_argument value="1.6.0"/>
+                <message_argument value="1.6.100"/>
                 <message_argument value="1.5.100"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/beans/IBeanListProperty.java" type="org.eclipse.core.databinding.beans.IBeanListProperty">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+        <filter comment="Extending interface in accordance with the API specification." id="574619656">
             <message_arguments>
                 <message_argument value="IListProperty&lt;S, E&gt;"/>
                 <message_argument value="IBeanListProperty&lt;S, E&gt;"/>
             </message_arguments>
         </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574668824">
+        <filter comment="Extending interface in accordance with the API specification." id="574668824">
             <message_arguments>
                 <message_argument value="IBeanProperty"/>
                 <message_argument value="IBeanListProperty&lt;S, E&gt;"/>
                 <message_argument value="IProperty"/>
             </message_arguments>
         </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
+        <filter comment="Extending interface in accordance with the API specification." id="576725006">
             <message_arguments>
                 <message_argument value="IBeanProperty"/>
                 <message_argument value="IBeanListProperty&lt;S, E&gt;"/>
@@ -30,13 +30,13 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/beans/IBeanMapProperty.java" type="org.eclipse.core.databinding.beans.IBeanMapProperty">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+        <filter comment="Extending interface in accordance with the API specification." id="574619656">
             <message_arguments>
                 <message_argument value="IMapProperty&lt;S, K, V&gt;"/>
                 <message_argument value="IBeanMapProperty&lt;S, K, V&gt;"/>
             </message_arguments>
         </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574668824">
+        <filter comment="Extending interface in accordance with the API specification." id="574668824">
             <message_arguments>
                 <message_argument value="IBeanProperty"/>
                 <message_argument value="IBeanMapProperty&lt;S, K, V&gt;"/>
@@ -45,13 +45,13 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/beans/IBeanSetProperty.java" type="org.eclipse.core.databinding.beans.IBeanSetProperty">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+        <filter comment="Extending interface in accordance with the API specification." id="574619656">
             <message_arguments>
                 <message_argument value="ISetProperty&lt;S, E&gt;"/>
                 <message_argument value="IBeanSetProperty&lt;S, E&gt;"/>
             </message_arguments>
         </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574668824">
+        <filter comment="Extending interface in accordance with the API specification." id="574668824">
             <message_arguments>
                 <message_argument value="IBeanProperty"/>
                 <message_argument value="IBeanSetProperty&lt;S, E&gt;"/>
@@ -60,13 +60,13 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/beans/IBeanValueProperty.java" type="org.eclipse.core.databinding.beans.IBeanValueProperty">
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
+        <filter comment="Extending interface in accordance with the API specification." id="574619656">
             <message_arguments>
                 <message_argument value="IValueProperty&lt;S, T&gt;"/>
                 <message_argument value="IBeanValueProperty&lt;S, T&gt;"/>
             </message_arguments>
         </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574668824">
+        <filter comment="Extending interface in accordance with the API specification." id="574668824">
             <message_arguments>
                 <message_argument value="IBeanProperty"/>
                 <message_argument value="IBeanValueProperty&lt;S, T&gt;"/>

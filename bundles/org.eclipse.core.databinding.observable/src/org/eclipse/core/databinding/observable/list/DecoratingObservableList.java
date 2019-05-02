@@ -31,6 +31,8 @@ import org.eclipse.core.databinding.observable.Diffs;
  *            the list element type
  *
  * @since 1.2
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public class DecoratingObservableList<E> extends
 		DecoratingObservableCollection<E> implements IObservableList<E> {

@@ -46,6 +46,8 @@ import org.eclipse.core.runtime.AssertionFailedException;
  * @param <V>
  *            type of the values in the map
  * @since 1.0
+ * @implNote If methods are added to the interface which this class implements
+ *           then implementations of those methods must be added to this class.
  */
 public abstract class AbstractObservableMap<K, V> extends AbstractMap<K, V>
 		implements IObservableMap<K, V> {
