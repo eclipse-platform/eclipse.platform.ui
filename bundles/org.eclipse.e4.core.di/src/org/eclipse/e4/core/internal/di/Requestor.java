@@ -18,6 +18,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.annotations.GroupUpdates;
@@ -201,11 +202,11 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (location == null ? 0 : location.hashCode());
-		result = prime * result + (groupUpdates ? 1231 : 1237);
-		result = prime * result + ((injector == null) ? 0 : injector.hashCode());
-		result = prime * result + (isOptional ? 1231 : 1237);
-		result = prime * result + ((primarySupplier == null) ? 0 : primarySupplier.hashCode());
+		result = prime * result + Objects.hashCode(location);
+		result = prime * result + Boolean.hashCode(groupUpdates);
+		result = prime * result + Objects.hashCode(injector);
+		result = prime * result + Boolean.hashCode(isOptional);
+		result = prime * result + Objects.hashCode(primarySupplier);
 		result = prime * result + objectHashcode;
 		return result;
 	}
@@ -219,22 +220,10 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 		if (getClass() != obj.getClass())
 			return false;
 		Requestor<?> other = (Requestor<?>) obj;
-		if (location == null) {
-			if (other.location != null)
-				return false;
-		} else if (!location.equals(other.location))
-			return false;
-		if (groupUpdates != other.groupUpdates)
-			return false;
-		if (injector != other.injector)
-			return false;
-		if (isOptional != other.isOptional)
-			return false;
-		if (primarySupplier != other.primarySupplier)
-			return false;
-		if (getRequestingObject() != other.getRequestingObject())
-			return false;
-		return true;
+		return Objects.equals(this.location, other.location) && this.groupUpdates == other.groupUpdates
+				&& Objects.equals(this.injector, other.injector) && this.isOptional == other.isOptional
+				&& Objects.equals(this.primarySupplier, other.primarySupplier)
+				&& Objects.equals(this.getRequestingObject(), other.getRequestingObject());
 	}
 
 }

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -81,9 +82,9 @@ public class ValueComputation extends Computation {
 	protected int calcHashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((function == null) ? 0 : function.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((originatingContext == null) ? 0 : originatingContext.hashCode());
+		result = prime * result + Objects.hashCode(function);
+		result = prime * result + Objects.hashCode(name);
+		result = prime * result + Objects.hashCode(originatingContext);
 		return result;
 	}
 
@@ -96,22 +97,8 @@ public class ValueComputation extends Computation {
 		if (getClass() != obj.getClass())
 			return false;
 		ValueComputation other = (ValueComputation) obj;
-		if (function == null) {
-			if (other.function != null)
-				return false;
-		} else if (!function.equals(other.function))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (originatingContext == null) {
-			if (other.originatingContext != null)
-				return false;
-		} else if (!originatingContext.equals(other.originatingContext))
-			return false;
-		return true;
+		return Objects.equals(this.function, other.function) && Objects.equals(this.name, other.name)
+				&& Objects.equals(this.originatingContext, other.originatingContext);
 	}
 
 	@Override

@@ -42,6 +42,9 @@ public class DeepSize {
 
 		@Override
 		public boolean equals(Object o) {
+			if (o == null) {
+				return false;
+			}
 			if (o.getClass() != ObjectWrapper.class)
 				return false;
 			return object == ((ObjectWrapper) o).object;
@@ -49,7 +52,7 @@ public class DeepSize {
 
 		@Override
 		public int hashCode() {
-			return object == null ? 1 : object.hashCode();
+			return Objects.hashCode(object);
 		}
 
 		@Override

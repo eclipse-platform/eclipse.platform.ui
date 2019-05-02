@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import java.util.Objects;
+
 public class Semaphore {
 	protected long notifications;
 	protected Runnable runnable;
@@ -58,12 +60,18 @@ public class Semaphore {
 
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Semaphore)) {
+			return false;
+		}
 		return (runnable == ((Semaphore) obj).runnable);
 	}
 
 	@Override
 	public int hashCode() {
-		return runnable == null ? 0 : runnable.hashCode();
+		return Objects.hashCode(runnable);
 	}
 
 	public synchronized void release() {

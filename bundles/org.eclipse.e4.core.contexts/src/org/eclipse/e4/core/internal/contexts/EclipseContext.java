@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import org.eclipse.e4.core.contexts.IContextFunction;
@@ -83,9 +84,7 @@ public class EclipseContext implements IEclipseContext {
 			if (getClass() != obj.getClass())
 				return false;
 			Scheduled other = (Scheduled) obj;
-			if (!event.equals(other.event))
-				return false;
-			return runnable.equals(other.runnable);
+			return Objects.equals(this.event, other.event) && Objects.equals(this.runnable, other.runnable);
 		}
 	}
 

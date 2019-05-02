@@ -386,11 +386,8 @@ public class PerformanceStats {
 		if (!(obj instanceof PerformanceStats))
 			return false;
 		PerformanceStats that = (PerformanceStats) obj;
-		if (!this.event.equals(that.event))
-			return false;
-		if (!this.getBlameString().equals(that.getBlameString()))
-			return false;
-		return this.context == null ? that.context == null : this.context.equals(that.context);
+		return this.event.equals(that.event) && this.getBlameString().equals(that.getBlameString())
+				&& Objects.equals(this.context, that.context);
 	}
 
 	/**

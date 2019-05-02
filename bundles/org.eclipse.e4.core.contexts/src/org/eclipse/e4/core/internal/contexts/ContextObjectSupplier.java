@@ -17,6 +17,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Objects;
 import java.util.Stack;
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.Active;
@@ -104,8 +105,8 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		public int hashCode() {
 			final int prime = 31;
 			int hashRresult = 1;
-			hashRresult = prime * hashRresult + ((context == null) ? 0 : context.hashCode());
-			hashRresult = prime * hashRresult + ((requestor == null) ? 0 : requestor.hashCode());
+			hashRresult = prime * hashRresult + Objects.hashCode(context == null);
+			hashRresult = prime * hashRresult + Objects.hashCode(requestor == null);
 			return hashRresult;
 		}
 
@@ -118,17 +119,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			if (getClass() != obj.getClass())
 				return false;
 			ContextInjectionListener other = (ContextInjectionListener) obj;
-			if (context == null) {
-				if (other.context != null)
-					return false;
-			} else if (!context.equals(other.context))
-				return false;
-			if (requestor == null) {
-				if (other.requestor != null)
-					return false;
-			} else if (!requestor.equals(other.requestor))
-				return false;
-			return true;
+			return Objects.equals(this.context, other.context) && Objects.equals(this.requestor, other.requestor);
 		}
 
 		@Override

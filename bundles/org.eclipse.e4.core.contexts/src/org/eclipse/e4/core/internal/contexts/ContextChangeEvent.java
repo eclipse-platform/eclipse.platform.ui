@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
+import java.util.Objects;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 
@@ -148,7 +149,7 @@ public final class ContextChangeEvent {
 		// if ((eventType == DISPOSE) || (eventType == UNINJECTED))
 		// result = prime * result + ((context == null) ? 0 : context.hashCode());
 		result = prime * result + eventType;
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + Objects.hashCode(key);
 		return result;
 	}
 
@@ -169,15 +170,7 @@ public final class ContextChangeEvent {
 		// } else if (!context.equals(other.context))
 		// return false;
 		// }
-
-		if (eventType != other.eventType)
-			return false;
-		if (key == null) {
-			if (other.key != null)
-				return false;
-		} else if (!key.equals(other.key))
-			return false;
-		return true;
+		return this.eventType == other.eventType && Objects.equals(this.key, other.key);
 	}
 
 }

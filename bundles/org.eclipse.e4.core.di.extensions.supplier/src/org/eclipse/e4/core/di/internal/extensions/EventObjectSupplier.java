@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import javax.annotation.PreDestroy;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IInjector;
@@ -107,8 +108,8 @@ public class EventObjectSupplier extends ExtendedObjectSupplier implements Event
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((requestor == null) ? 0 : requestor.hashCode());
-			result = prime * result + ((topic == null) ? 0 : topic.hashCode());
+			result = prime * result + Objects.hashCode(requestor);
+			result = prime * result + Objects.hashCode(topic);
 			return result;
 		}
 
@@ -125,17 +126,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier implements Event
 			if (getClass() != obj.getClass())
 				return false;
 			Subscriber other = (Subscriber) obj;
-			if (requestor == null) {
-				if (other.requestor != null)
-					return false;
-			} else if (!requestor.equals(other.requestor))
-				return false;
-			if (topic == null) {
-				if (other.topic != null)
-					return false;
-			} else if (!topic.equals(other.topic))
-				return false;
-			return true;
+			return Objects.equals(this.requestor, other.requestor) && Objects.equals(this.topic, other.topic);
 		}
 
 	}

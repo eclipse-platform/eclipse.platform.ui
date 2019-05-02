@@ -14,6 +14,7 @@
 package org.eclipse.e4.core.internal.contexts;
 
 import java.lang.ref.Reference;
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -41,8 +42,8 @@ public class TrackableComputationExt extends Computation {
 	protected int calcHashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((originatingContext == null) ? 0 : originatingContext.hashCode());
-		result = prime * result + ((runnable == null) ? 0 : runnable.hashCode());
+		result = prime * result + Objects.hashCode(originatingContext);
+		result = prime * result + Objects.hashCode(runnable);
 		return result;
 	}
 
@@ -55,17 +56,8 @@ public class TrackableComputationExt extends Computation {
 		if (getClass() != obj.getClass())
 			return false;
 		TrackableComputationExt other = (TrackableComputationExt) obj;
-		if (originatingContext == null) {
-			if (other.originatingContext != null)
-				return false;
-		} else if (!originatingContext.equals(other.originatingContext))
-			return false;
-		if (runnable == null) {
-			if (other.runnable != null)
-				return false;
-		} else if (!runnable.equals(other.runnable))
-			return false;
-		return true;
+		return Objects.equals(this.originatingContext, other.originatingContext)
+				&& Objects.equals(this.runnable, other.runnable);
 	}
 
 	@Override
