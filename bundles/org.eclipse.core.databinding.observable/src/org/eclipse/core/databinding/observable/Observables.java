@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 Cerner Corporation and others.
+ * Copyright (c) 2006, 2019 Cerner Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *         226289
  *     Marko Topolnik - bug 184830
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Christian W. Damus - bug 512630
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -173,7 +174,7 @@ public class Observables {
 	 * @since 1.1
 	 */
 	public static <T> IObservableValue<T> constantObservableValue(T value,
-			T valueType) {
+			Object valueType) {
 		return constantObservableValue(Realm.getDefault(), value, valueType);
 	}
 
