@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 
 import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 import org.eclipse.core.internal.databinding.conversion.StringToNumberParser.ParseResult;
@@ -115,28 +116,26 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 		}
 		catch(ClassNotFoundException | NoSuchMethodException e) {}
 	}
+
 	/**
-	 * @param numberFormat
-	 * @param toType
-	 * @param min
-	 *            minimum possible value for the type, can be <code>null</code>
-	 *            as BigInteger doesn't have bounds
-	 * @param max
-	 *            maximum possible value for the type, can be <code>null</code>
-	 *            as BigInteger doesn't have bounds
-	 * @param boxedType
-	 *            a convenience that allows for the checking against one type
-	 *            rather than boxed and unboxed types
+	 * @param numberFormat used to parse the strings numbers.
+	 * @param toType       target number type.
+	 * @param min          minimum possible value for the type, can be
+	 *                     <code>null</code> as BigInteger doesn't have bounds
+	 * @param max          maximum possible value for the type, can be
+	 *                     <code>null</code> as BigInteger doesn't have bounds
+	 * @param boxedType    a convenience that allows for the checking against one
+	 *                     type rather than boxed and unboxed types
 	 */
 	private StringToNumberConverter(NumberFormat numberFormat, Class<T> toType, Number min, Number max,
 			Class<T> boxedType) {
 		super(String.class, toType, numberFormat);
 
-		this.toType = toType;
-		this.numberFormat = numberFormat;
+		this.toType = Objects.requireNonNull(toType);
+		this.numberFormat = Objects.requireNonNull(numberFormat);
 		this.min = min;
 		this.max = max;
-		this.boxedType = boxedType;
+		this.boxedType = Objects.requireNonNull(boxedType);
 	}
 
 	/**

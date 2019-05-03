@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 
 import com.ibm.icu.text.DecimalFormat;
 import com.ibm.icu.text.NumberFormat;
@@ -69,14 +70,14 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	 * Private to restrict public instantiation.
 	 * </p>
 	 *
-	 * @param numberFormat
-	 * @param fromType
+	 * @param numberFormat used to format the numbers into strings. Non-null.
+	 * @param fromType     type of the source numbers. Non-null.
 	 */
 	private NumberToStringConverter(NumberFormat numberFormat, Class<?> fromType) {
 		super(fromType, String.class);
 
-		this.numberFormat = numberFormat;
-		this.fromType = fromType;
+		this.numberFormat = Objects.requireNonNull(numberFormat);
+		this.fromType = Objects.requireNonNull(fromType);
 
 		if (Integer.class.equals(fromType) || Integer.TYPE.equals(fromType)
 				|| Long.class.equals(fromType) || Long.TYPE.equals(fromType)
