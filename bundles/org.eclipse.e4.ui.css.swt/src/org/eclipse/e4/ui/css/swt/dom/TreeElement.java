@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
+import java.util.function.Supplier;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -363,4 +364,12 @@ implements ISelectionBackgroundCustomizationElement, IHeaderCustomizationElement
 		getTree().setHeaderBackground(color);
 	}
 
+	@Override
+	protected Supplier<String> internalGetAttribute(String attr) {
+		if ("swt-lines-visible".equals(attr)) {
+			Tree tree = getTree();
+			return () -> String.valueOf(tree.getLinesVisible());
+		}
+		return super.internalGetAttribute(attr);
+	}
 }

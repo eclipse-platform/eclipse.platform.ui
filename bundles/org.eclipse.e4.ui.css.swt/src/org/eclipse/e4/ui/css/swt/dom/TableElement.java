@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
+import java.util.function.Supplier;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.internal.css.swt.dom.AbstractControlSelectionEraseListener;
 import org.eclipse.e4.ui.internal.css.swt.dom.ControlSelectedColorCustomization;
@@ -133,4 +134,12 @@ implements ISelectionBackgroundCustomizationElement, IHeaderCustomizationElement
 		return (Table) getNativeWidget();
 	}
 
+	@Override
+	protected Supplier<String> internalGetAttribute(String attr) {
+		if ("swt-lines-visible".equals(attr)) {
+			Table table = getTable();
+			return () -> String.valueOf(table.getLinesVisible());
+		}
+		return super.internalGetAttribute(attr);
+	}
 }
