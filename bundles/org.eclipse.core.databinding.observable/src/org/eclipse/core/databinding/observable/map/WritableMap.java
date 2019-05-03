@@ -21,11 +21,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  *
@@ -118,7 +118,7 @@ public class WritableMap<K, V> extends ObservableMap<K, V> {
 		boolean containedKeyAfter = wrappedMap.containsKey(key);
 
 		if (containedKeyBefore != containedKeyAfter
-				|| !Util.equals(result, value)) {
+				|| !Objects.equals(result, value)) {
 			MapDiff<K, V> diff;
 			if (containedKeyBefore) {
 				if (containedKeyAfter) {

@@ -18,6 +18,7 @@
 package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -29,7 +30,6 @@ import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.internal.databinding.identity.IdentityMap;
 import org.eclipse.core.internal.databinding.identity.IdentitySet;
-import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @param <S>
@@ -142,7 +142,7 @@ public class SetSimpleValueObservableMap<S, K extends S, V> extends ComputedObse
 		if (cachedValues != null) {
 			V oldValue = cachedValues.get(key);
 			V newValue = detailProperty.getValue(key);
-			if (!Util.equals(oldValue, newValue) || staleKeys.contains(key)) {
+			if (!Objects.equals(oldValue, newValue) || staleKeys.contains(key)) {
 				cachedValues.put(key, newValue);
 				staleKeys.remove(key);
 				fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,

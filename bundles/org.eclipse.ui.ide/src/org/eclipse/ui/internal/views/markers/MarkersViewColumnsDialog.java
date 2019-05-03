@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -230,10 +231,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((field == null) ? 0 : field.hashCode());
-			return result;
+			return Objects.hashCode(field);
 		}
 
 		@Override
@@ -248,14 +246,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 				return false;
 			}
 			FieldEntry other = (FieldEntry) obj;
-			if (field == null) {
-				if (other.field != null) {
-					return false;
-				}
-			} else if (!field.equals(other.field)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(field, other.field);
 		}
 
 	}

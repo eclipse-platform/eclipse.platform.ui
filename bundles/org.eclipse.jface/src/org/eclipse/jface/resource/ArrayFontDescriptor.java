@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -89,17 +91,8 @@ final class ArrayFontDescriptor extends FontDescriptor {
                 return true;
             }
 
-            if (data.length != descr.data.length) {
+            if (!Arrays.equals(data, descr.data)) {
                 return false;
-            }
-
-            for (int i = 0; i < data.length; i++) {
-                FontData fd = data[i];
-                FontData fd2 = descr.data[i];
-
-                if (!fd.equals(fd2)) {
-                    return false;
-                }
             }
 
             return true;
@@ -113,13 +106,7 @@ final class ArrayFontDescriptor extends FontDescriptor {
         if (originalFont != null) {
             return originalFont.hashCode();
         }
-
-        int code = 0;
-
-        for (FontData fd : data) {
-            code += fd.hashCode();
-        }
-        return code;
+		return Arrays.hashCode(data);
     }
 
     @Override

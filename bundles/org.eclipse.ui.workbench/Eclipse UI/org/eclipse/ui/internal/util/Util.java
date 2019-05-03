@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedMap;
@@ -205,7 +206,7 @@ public final class Util {
 
 			if (!right.containsKey(key)) {
 				leftOnly.add(key);
-			} else if (!Util.equals(leftEntry.getValue(), right.get(key))) {
+			} else if (!Objects.equals(leftEntry.getValue(), right.get(key))) {
 				different.add(key);
 			}
 		}
@@ -255,7 +256,7 @@ public final class Util {
 		}
 
 		for (int i = 0; i < r; i++) {
-			if (!equals(left.get(l - i - 1), right.get(r - i - 1))) {
+			if (!Objects.equals(left.get(l - i - 1), right.get(r - i - 1))) {
 				return false;
 			}
 		}
@@ -275,74 +276,12 @@ public final class Util {
 		}
 
 		for (int i = 0; i < r; i++) {
-			if (!equals(left[l - i - 1], right[r - i - 1])) {
+			if (!Objects.equals(left[l - i - 1], right[r - i - 1])) {
 				return false;
 			}
 		}
 
 		return true;
-	}
-
-	public static boolean equals(boolean left, boolean right) {
-		return left == right;
-	}
-
-	public static boolean equals(int left, int right) {
-		return left == right;
-	}
-
-	public static boolean equals(Object left, Object right) {
-		return left == null ? right == null : ((right != null) && left.equals(right));
-	}
-
-	/**
-	 * Tests whether two arrays of objects are equal to each other. The arrays must
-	 * not be <code>null</code>, but their elements may be <code>null</code>.
-	 *
-	 * @param leftArray  The left array to compare; may be <code>null</code>, and
-	 *                   may be empty and may contain <code>null</code> elements.
-	 * @param rightArray The right array to compare; may be <code>null</code>, and
-	 *                   may be empty and may contain <code>null</code> elements.
-	 * @return <code>true</code> if the arrays are equal length and the elements at
-	 *         the same position are equal; <code>false</code> otherwise.
-	 */
-	public static boolean equals(final Object[] leftArray, final Object[] rightArray) {
-		if (leftArray == rightArray) {
-			return true;
-		}
-
-		if (leftArray == null) {
-			return (rightArray == null);
-		} else if (rightArray == null) {
-			return false;
-		}
-
-		if (leftArray.length != rightArray.length) {
-			return false;
-		}
-
-		for (int i = 0; i < leftArray.length; i++) {
-			final Object left = leftArray[i];
-			final Object right = rightArray[i];
-			final boolean equal = (left == null) ? (right == null) : (left.equals(right));
-			if (!equal) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	public static int hashCode(boolean b) {
-		return b ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode();
-	}
-
-	public static int hashCode(int i) {
-		return i;
-	}
-
-	public static int hashCode(Object object) {
-		return object != null ? object.hashCode() : 0;
 	}
 
 	public static Collection safeCopy(Collection collection, Class c) {
@@ -477,7 +416,7 @@ public final class Util {
 			}
 
 			for (int i = 0; i < r; i++) {
-				if (!equals(left.get(i), right.get(i))) {
+				if (!Objects.equals(left.get(i), right.get(i))) {
 					return false;
 				}
 			}
@@ -498,7 +437,7 @@ public final class Util {
 			}
 
 			for (int i = 0; i < r; i++) {
-				if (!equals(left[i], right[i])) {
+				if (!Objects.equals(left[i], right[i])) {
 					return false;
 				}
 			}
@@ -566,7 +505,7 @@ public final class Util {
 
 	/**
 	 * Returns an interned representation of the given string
-	 * 
+	 *
 	 * @param string The string to intern
 	 * @return The interned string
 	 */
@@ -592,7 +531,7 @@ public final class Util {
 	 * Creates a {@link String} representing the elements in <code>items</code> as a
 	 * list. This method uses the {@link Object#toString()} method on the objects to
 	 * create them as a String.
-	 * 
+	 *
 	 * @param items the List to make into a String
 	 * @return a string which presents <code>items</code> in String form.
 	 */
@@ -614,7 +553,7 @@ public final class Util {
 	 * Creates a {@link String} representing the elements in <code>items</code> as a
 	 * list. This method uses the {@link Object#toString()} method on the objects to
 	 * create them as a String.
-	 * 
+	 *
 	 * @param items the array to make into a String
 	 * @return a string which presents <code>items</code> in String form.
 	 */

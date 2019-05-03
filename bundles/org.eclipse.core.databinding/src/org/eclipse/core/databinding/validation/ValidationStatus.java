@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.core.databinding.validation;
 
+import java.util.Objects;
+
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -118,10 +120,9 @@ public class ValidationStatus extends Status {
 		int severity = getSeverity();
 		Throwable throwable = getException();
 
-		result = prime * result + ((message == null) ? 0 : message.hashCode());
+		result = prime * result + Objects.hashCode(message);
 		result = prime * result + severity;
-		result = prime * result
-				+ ((throwable == null) ? 0 : throwable.hashCode());
+		result = prime * result + Objects.hashCode(throwable);
 		return result;
 	}
 
@@ -139,18 +140,7 @@ public class ValidationStatus extends Status {
 			return false;
 		final ValidationStatus other = (ValidationStatus) obj;
 
-		if (getSeverity() != other.getSeverity())
-			return false;
-		if (getMessage() == null) {
-			if (other.getMessage() != null)
-				return false;
-		} else if (!getMessage().equals(other.getMessage()))
-			return false;
-		if (getException() == null) {
-			if (other.getException() != null)
-				return false;
-		} else if (!getException().equals(other.getException()))
-			return false;
-		return true;
+		return getSeverity() == other.getSeverity() && Objects.equals(getMessage(), other.getMessage())
+				&& Objects.equals(getException(), other.getException());
 	}
 }

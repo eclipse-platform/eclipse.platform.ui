@@ -18,6 +18,7 @@ import com.ibm.icu.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -278,7 +279,7 @@ public abstract class WorkbenchPart extends EventManager
 		title = Util.safeString(title);
 
 		// Do not send changes if they are the same
-		if (Util.equals(this.title, title)) {
+		if (Objects.equals(this.title, title)) {
 			return;
 		}
 		this.title = title;
@@ -313,7 +314,7 @@ public abstract class WorkbenchPart extends EventManager
 	protected void setTitleToolTip(String toolTip) {
 		toolTip = Util.safeString(toolTip);
 		// Do not send changes if they are the same
-		if (Util.equals(this.toolTip, toolTip)) {
+		if (Objects.equals(this.toolTip, toolTip)) {
 			return;
 		}
 		this.toolTip = toolTip;
@@ -322,7 +323,7 @@ public abstract class WorkbenchPart extends EventManager
 
 	/**
 	 * Show that this part is busy due to a Job running that it is listening to.
-	 * 
+	 *
 	 * @param busy boolean to indicate that the busy state has started or ended.
 	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusyForFamily(Object)
 	 * @since 3.0
@@ -369,7 +370,7 @@ public abstract class WorkbenchPart extends EventManager
 		String name = getPartName();
 		String newTitle = name;
 
-		if (!Util.equals(description, "")) { //$NON-NLS-1$
+		if (!Objects.equals(description, "")) { //$NON-NLS-1$
 			newTitle = MessageFormat.format(WorkbenchMessages.WorkbenchPart_AutoTitleFormat, name, description);
 		}
 
@@ -417,7 +418,7 @@ public abstract class WorkbenchPart extends EventManager
 		Assert.isNotNull(description);
 
 		// Do not send changes if they are the same
-		if (Util.equals(contentDescription, description)) {
+		if (Objects.equals(contentDescription, description)) {
 			return;
 		}
 		this.contentDescription = description;
@@ -435,7 +436,7 @@ public abstract class WorkbenchPart extends EventManager
 		Assert.isNotNull(partName);
 
 		// Do not send changes if they are the same
-		if (Util.equals(this.partName, partName)) {
+		if (Objects.equals(this.partName, partName)) {
 			return;
 		}
 		this.partName = partName;

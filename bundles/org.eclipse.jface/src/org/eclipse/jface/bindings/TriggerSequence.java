@@ -163,7 +163,7 @@ public abstract class TriggerSequence {
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(triggers);
+			hashCode = hashCode * HASH_FACTOR + Arrays.hashCode(triggers);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}

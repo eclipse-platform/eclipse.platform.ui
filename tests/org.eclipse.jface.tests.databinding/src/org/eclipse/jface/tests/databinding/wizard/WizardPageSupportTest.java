@@ -20,6 +20,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Objects;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -33,7 +35,6 @@ import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.internal.commands.util.Util;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.dialog.ValidationMessageProvider;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
@@ -215,7 +216,7 @@ public class WizardPageSupportTest extends AbstractSWTTestCase {
 		protected void doSetValue(IStatus value) {
 			IStatus oldValue = this.value;
 			this.value = value;
-			if (!Util.equals(oldValue, value)) {
+			if (!Objects.equals(oldValue, value)) {
 				fireValueChange(Diffs.createValueDiff(oldValue, value));
 			}
 		}

@@ -16,6 +16,8 @@
 
 package org.eclipse.core.internal.databinding.property.value;
 
+import java.util.Objects;
+
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
@@ -25,7 +27,6 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @param <S>
@@ -114,7 +115,7 @@ public class SimplePropertyObservableValue<S, T> extends AbstractObservableValue
 			T newValue = cachedValue = property.getValue(source);
 			if (diff == null)
 				diff = Diffs.createValueDiff(oldValue, newValue);
-			if (!Util.equals(oldValue, newValue) || stale) {
+			if (!Objects.equals(oldValue, newValue) || stale) {
 				stale = false;
 				fireValueChange(Diffs.unmodifiableDiff(diff));
 			}

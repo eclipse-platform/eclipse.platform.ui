@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Random;
 
 import org.eclipse.core.runtime.IStatus;
@@ -746,7 +747,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((key == null) ? 0 : key.hashCode());
+			result = prime * result + Objects.hashCode(key);
 			result = prime * result + keyIndex;
 			return result;
 		}
@@ -760,17 +761,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 				return false;
 			}
 			TestData other = (TestData) obj;
-			if (key == null) {
-				if (other.key != null) {
-					return false;
-				}
-			} else if (!key.equals(other.key)) {
-				return false;
-			}
-			if (keyIndex != other.keyIndex) {
-				return false;
-			}
-			return true;
+			return Objects.equals(key, other.key) && keyIndex == other.keyIndex;
 		}
 
 		@Override

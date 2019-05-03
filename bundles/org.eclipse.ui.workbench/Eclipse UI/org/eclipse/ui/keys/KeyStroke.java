@@ -17,6 +17,7 @@ package org.eclipse.ui.keys;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
@@ -269,7 +270,7 @@ public final class KeyStroke implements Comparable {
 		if (!modifierKeys.equals(castedObject.modifierKeys)) {
 			return false;
 		}
-		return Util.equals(naturalKey, castedObject.naturalKey);
+		return Objects.equals(naturalKey, castedObject.naturalKey);
 	}
 
 	/**
@@ -307,7 +308,7 @@ public final class KeyStroke implements Comparable {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + modifierKeys.hashCode();
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(naturalKey);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(naturalKey);
 			hashCodeComputed = true;
 		}
 

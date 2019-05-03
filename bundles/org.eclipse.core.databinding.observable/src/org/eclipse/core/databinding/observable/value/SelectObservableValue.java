@@ -17,10 +17,10 @@ package org.eclipse.core.databinding.observable.value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * An observable value which behaves similarly to the &lt;select&gt; and
@@ -199,7 +199,7 @@ public class SelectObservableValue<T> extends AbstractObservableValue<T> {
 
 	private int indexOfValue(Object value) {
 		for (int i = 0; i < options.size(); i++)
-			if (Util.equals(options.get(i).value, value))
+			if (Objects.equals(options.get(i).value, value))
 				return i;
 		return -1;
 	}

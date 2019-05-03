@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
@@ -85,16 +86,7 @@ class FileImageDescriptor extends ImageDescriptor {
 			return false;
 		}
 		FileImageDescriptor other = (FileImageDescriptor) o;
-		if (location != null) {
-			if (!location.equals(other.location)) {
-				return false;
-			}
-		} else {
-			if (other.location != null) {
-				return false;
-			}
-		}
-		return name.equals(other.name);
+		return Objects.equals(location, other.location) && Objects.equals(name, other.name);
 	}
 
 	/**

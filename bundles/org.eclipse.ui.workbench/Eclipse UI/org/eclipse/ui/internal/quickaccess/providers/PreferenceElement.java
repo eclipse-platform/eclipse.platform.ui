@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.quickaccess.providers;
 
+import java.util.Objects;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -93,10 +94,7 @@ public class PreferenceElement extends QuickAccessElement {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((preferenceNode == null) ? 0 : preferenceNode.hashCode());
-		return result;
+		return Objects.hashCode(preferenceNode);
 	}
 
 	@Override
@@ -108,11 +106,6 @@ public class PreferenceElement extends QuickAccessElement {
 		if (getClass() != obj.getClass())
 			return false;
 		final PreferenceElement other = (PreferenceElement) obj;
-		if (preferenceNode == null) {
-			if (other.preferenceNode != null)
-				return false;
-		} else if (!preferenceNode.equals(other.preferenceNode))
-			return false;
-		return true;
+		return Objects.equals(preferenceNode, other.preferenceNode);
 	}
 }

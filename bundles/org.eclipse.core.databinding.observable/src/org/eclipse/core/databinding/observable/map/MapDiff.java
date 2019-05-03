@@ -23,10 +23,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.IDiff;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * @param <K>
@@ -237,19 +237,14 @@ public abstract class MapDiff<K, V> implements IDiff {
 			if (!(obj instanceof Map.Entry))
 				return false;
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) obj;
-			return Util.equals(this.getKey(), that.getKey()) && Util.equals(this.getValue(), that.getValue());
+			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}
 
 		@Override
 		public int hashCode() {
-			Object key = getKey();
-			Object value = getValue();
-			return hash(key) ^ hash(value);
+			return Objects.hashCode(getKey()) ^ Objects.hashCode(getValue());
 		}
 
-		private int hash(Object key) {
-			return key == null ? 0 : key.hashCode();
-		}
 	}
 
 	private static class MapEntryWrapper<K, V> extends AbstractMapEntry<K, V> {

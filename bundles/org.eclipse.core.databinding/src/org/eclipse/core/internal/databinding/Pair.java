@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.databinding;
 
+import java.util.Objects;
+
 /**
  * Class Pair.  Represents a mathematical pair of objects (a, b).
  * @since 1.0
@@ -44,8 +46,8 @@ public class Pair {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((a == null) ? 0 : a.hashCode());
-		result = prime * result + ((b == null) ? 0 : b.hashCode());
+		result = prime * result + Objects.hashCode(a);
+		result = prime * result + Objects.hashCode(b);
 		return result;
 	}
 
@@ -58,17 +60,7 @@ public class Pair {
 		if (getClass() != obj.getClass())
 			return false;
 		Pair other = (Pair) obj;
-		if (a == null) {
-			if (other.a != null)
-				return false;
-		} else if (!a.equals(other.a))
-			return false;
-		if (b == null) {
-			if (other.b != null)
-				return false;
-		} else if (!b.equals(other.b))
-			return false;
-		return true;
+		return Objects.equals(this.a, other.a) && Objects.equals(this.b, other.b);
 	}
 
 }

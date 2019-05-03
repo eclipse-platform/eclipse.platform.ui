@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -33,7 +34,6 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
-import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @param <S>
@@ -124,16 +124,13 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 			if (!(o instanceof Map.Entry))
 				return false;
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
-			return Util.equals(this.getKey(), that.getKey())
-					&& Util.equals(this.getValue(), that.getValue());
+			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}
 
 		@Override
 		public int hashCode() {
 			getterCalled();
-			Object value = getValue();
-			return (key == null ? 0 : key.hashCode())
-					^ (value == null ? 0 : value.hashCode());
+			return Objects.hashCode(key) ^ Objects.hashCode(getValue());
 		}
 	}
 

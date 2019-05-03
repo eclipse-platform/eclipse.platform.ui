@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.Objects;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -81,7 +82,7 @@ final class PreferenceHistoryEntry {
 		if (obj instanceof PreferenceHistoryEntry) {
 			PreferenceHistoryEntry other = (PreferenceHistoryEntry) obj;
 			return id.equals(other.id)
-					&& (argument == null && other.argument == null || argument.equals(other.argument));
+					&& Objects.equals(argument, other.argument);
 		}
 		return super.equals(obj);
 	}

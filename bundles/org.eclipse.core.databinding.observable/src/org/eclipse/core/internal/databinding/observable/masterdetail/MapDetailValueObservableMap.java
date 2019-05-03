@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -35,7 +36,6 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.identity.IdentityMap;
 import org.eclipse.core.internal.databinding.identity.IdentitySet;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * @param <K>
@@ -399,16 +399,13 @@ public class MapDetailValueObservableMap<K, M, E> extends
 			if (!(o instanceof Map.Entry))
 				return false;
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
-			return Util.equals(this.getKey(), that.getKey())
-					&& Util.equals(this.getValue(), that.getValue());
+			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}
 
 		@Override
 		public int hashCode() {
 			MapDetailValueObservableMap.this.getterCalled();
-			Object value = getValue();
-			return (getKey() == null ? 0 : getKey().hashCode())
-					^ (value == null ? 0 : value.hashCode());
+			return Objects.hashCode(getKey()) ^ Objects.hashCode(getValue());
 		}
 	}
 }

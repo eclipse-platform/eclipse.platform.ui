@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.activities;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.internal.util.Util;
@@ -101,15 +102,9 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 		}
 
 		final ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
-		if (!Util.equals(activityId, castedObject.activityId)) {
-			return false;
-		}
-
-		if (!Util.equals(isEqualityPattern, castedObject.isEqualityPattern)) {
-			return false;
-		}
-
-		return Util.equals(getPattern(), castedObject.getPattern());
+		return Objects.equals(activityId, castedObject.activityId)
+				&& isEqualityPattern == castedObject.isEqualityPattern
+				&& Objects.equals(getPattern(), castedObject.getPattern());
 	}
 
 	@Override
@@ -141,13 +136,12 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(pattern);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}
 		}
-
 		return hashCode;
 	}
 

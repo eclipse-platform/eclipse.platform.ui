@@ -14,16 +14,17 @@
 
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
+import java.util.Objects;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.internal.databinding.observable.Util;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /* package */class DetailObservableHelper {
 	/* package */static void warnIfDifferentRealms(Realm detailRealm,
 			Realm innerObservableRealm) {
-		if (!Util.equals(detailRealm, innerObservableRealm)) {
+		if (!Objects.equals(detailRealm, innerObservableRealm)) {
 			Throwable throwable = new Throwable();
 			throwable.fillInStackTrace();
 			String message = "Inner observable realm (" + innerObservableRealm //$NON-NLS-1$

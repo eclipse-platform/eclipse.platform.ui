@@ -16,6 +16,8 @@
 
 package org.eclipse.jface.viewers;
 
+import java.util.Objects;
+
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -381,7 +383,7 @@ public class ViewerCell {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + columnIndex;
-		result = prime * result + ((row == null) ? 0 : row.hashCode());
+		result = prime * result + Objects.hashCode(row);
 		return result;
 	}
 
@@ -394,14 +396,7 @@ public class ViewerCell {
 		if (getClass() != obj.getClass())
 			return false;
 		final ViewerCell other = (ViewerCell) obj;
-		if (columnIndex != other.columnIndex)
-			return false;
-		if (row == null) {
-			if (other.row != null)
-				return false;
-		} else if (!row.equals(other.row))
-			return false;
-		return true;
+		return columnIndex == other.columnIndex && Objects.equals(row, other.row);
 	}
 
 	private boolean isVisible() {

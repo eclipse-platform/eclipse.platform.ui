@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.internal.commands.util.Util;
@@ -430,11 +431,11 @@ public final class ParameterizedCommand implements Comparable {
 		}
 
 		final ParameterizedCommand command = (ParameterizedCommand) object;
-		if (!Util.equals(this.command, command.command)) {
+		if (!Objects.equals(this.command, command.command)) {
 			return false;
 		}
 
-		return Util.equals(this.parameterizations, command.parameterizations);
+		return Objects.equals(this.parameterizations, command.parameterizations);
 	}
 
 	/**
@@ -607,11 +608,11 @@ public final class ParameterizedCommand implements Comparable {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
-			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(command);
+			hashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(command);
 			hashCode = hashCode * HASH_FACTOR;
 			if (parameterizations != null) {
 				for (Parameterization parameterization : parameterizations) {
-					hashCode += Util.hashCode(parameterization);
+					hashCode += Objects.hashCode(parameterization);
 				}
 			}
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {

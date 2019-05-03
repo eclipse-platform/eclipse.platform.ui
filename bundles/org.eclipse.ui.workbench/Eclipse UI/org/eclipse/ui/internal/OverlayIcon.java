@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.Objects;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * An OverlayIcon consists of a main icon and an overlay icon
@@ -78,7 +78,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 
 	@Override
 	public int hashCode() {
-		return Util.hashCode(fBase) * 17 + Util.hashCode(fOverlay);
+		return Objects.hashCode(fBase) * 17 + Objects.hashCode(fOverlay);
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 			return false;
 		}
 		OverlayIcon overlayIcon = (OverlayIcon) obj;
-		return Util.equals(this.fBase, overlayIcon.fBase) && Util.equals(this.fOverlay, overlayIcon.fOverlay)
-				&& Util.equals(this.fSize, overlayIcon.fSize);
+		return Objects.equals(this.fBase, overlayIcon.fBase) && Objects.equals(this.fOverlay, overlayIcon.fOverlay)
+				&& Objects.equals(this.fSize, overlayIcon.fSize);
 	}
 }

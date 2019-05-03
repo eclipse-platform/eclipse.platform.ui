@@ -21,6 +21,7 @@ import java.util.AbstractSet;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -41,7 +42,6 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.internal.databinding.identity.IdentityMap;
 import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
 import org.eclipse.core.internal.databinding.identity.IdentitySet;
-import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @param <S>
@@ -110,7 +110,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 				V oldValue = detailProperty.getValue(oldSource);
 				V newValue = detailProperty.getValue(newSource);
 
-				if (Util.equals(oldValue, newValue)) {
+				if (Objects.equals(oldValue, newValue)) {
 					it.remove();
 				} else {
 					oldValues.put(key, oldValue);
@@ -304,14 +304,13 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 			if (!(o instanceof Map.Entry))
 				return false;
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
-			return Util.equals(this.getKey(), that.getKey()) && Util.equals(this.getValue(), that.getValue());
+			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}
 
 		@Override
 		public int hashCode() {
 			getterCalled();
-			Object value = getValue();
-			return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+			return Objects.hashCode(key) ^ Objects.hashCode(getValue());
 		}
 	}
 
@@ -359,7 +358,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 			final V oldValue = cachedValues.get(masterValue);
 			final V newValue = detailProperty.getValue(masterValue);
 
-			if (!Util.equals(oldValue, newValue) || staleMasterValues.contains(masterValue)) {
+			if (!Objects.equals(oldValue, newValue) || staleMasterValues.contains(masterValue)) {
 				cachedValues.put(masterValue, newValue);
 				staleMasterValues.remove(masterValue);
 				fireMapChange(new MapDiff<K, V>() {

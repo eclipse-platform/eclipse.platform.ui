@@ -15,7 +15,7 @@
 package org.eclipse.ui.internal.services;
 
 import java.util.Comparator;
-
+import java.util.Objects;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -36,7 +36,7 @@ public final class EvaluationResultCacheComparator implements Comparator {
 
 	@Override
 	public int compare(final Object object1, final Object object2) {
-		if (Util.equals(object2, object1)) {
+		if (Objects.equals(object2, object1)) {
 			return 0;
 		}
 

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -73,7 +74,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -268,7 +268,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 			List elements = new ArrayList();
 			IContentType baseType = (IContentType) parentElement;
 			for (IContentType contentType : manager.getAllContentTypes()) {
-				if (Util.equals(contentType.getBaseType(), baseType)) {
+				if (Objects.equals(contentType.getBaseType(), baseType)) {
 					elements.add(contentType);
 				}
 			}

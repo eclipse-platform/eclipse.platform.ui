@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import org.eclipse.core.commands.Category;
@@ -1937,8 +1938,8 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		int selection = -1;
 		for (int i = 0; i < items.length; i++) {
 			final Binding binding = (Binding) items[i].getData(ITEM_DATA_KEY);
-			if ((Util.equals(contextId, binding.getContextId()))
-					&& (Util.equals(triggerSequence, binding.getTriggerSequence()))) {
+			if ((Objects.equals(contextId, binding.getContextId()))
+					&& (Objects.equals(triggerSequence, binding.getTriggerSequence()))) {
 				selection = i;
 				break;
 			}
@@ -1965,7 +1966,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		final Iterator bindingItr = bindings.iterator();
 		while (bindingItr.hasNext()) {
 			final Binding binding = (Binding) bindingItr.next();
-			if (!Util.equals(parameterizedCommand, binding.getParameterizedCommand())) {
+			if (!Objects.equals(parameterizedCommand, binding.getParameterizedCommand())) {
 				continue; // binding does not match
 			}
 

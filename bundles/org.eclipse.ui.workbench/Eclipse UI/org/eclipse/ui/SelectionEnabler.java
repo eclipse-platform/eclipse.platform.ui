@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -28,7 +29,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.SimpleWildcardTester;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.osgi.framework.Bundle;
 
@@ -204,9 +204,9 @@ public final class SelectionEnabler {
 	public boolean equals(final Object object) {
 		if (object instanceof SelectionEnabler) {
 			final SelectionEnabler that = (SelectionEnabler) object;
-			return Util.equals(this.classes, that.classes)
-					&& Util.equals(this.enablementExpression, that.enablementExpression)
-					&& Util.equals(this.mode, that.mode);
+			return Objects.equals(this.classes, that.classes)
+					&& Objects.equals(this.enablementExpression, that.enablementExpression)
+					&& this.mode == that.mode;
 		}
 
 		return false;
@@ -220,9 +220,9 @@ public final class SelectionEnabler {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
-			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(classes);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enablementExpression);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(mode);
+			hashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(classes);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(enablementExpression);
+			hashCode = hashCode * HASH_FACTOR + Integer.hashCode(mode);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}

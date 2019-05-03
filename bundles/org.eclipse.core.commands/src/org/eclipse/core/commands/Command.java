@@ -17,6 +17,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.internal.util.Tracing;
@@ -356,25 +357,25 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		final boolean definedChanged = !this.defined;
 		this.defined = true;
 
-		final boolean nameChanged = !Util.equals(this.name, name);
+		final boolean nameChanged = !Objects.equals(this.name, name);
 		this.name = name;
 
-		final boolean descriptionChanged = !Util.equals(this.description,
+		final boolean descriptionChanged = !Objects.equals(this.description,
 				description);
 		this.description = description;
 
-		final boolean categoryChanged = !Util.equals(this.category, category);
+		final boolean categoryChanged = !Objects.equals(this.category, category);
 		this.category = category;
 
-		final boolean parametersChanged = !Util.equals(this.parameters,
+		final boolean parametersChanged = !Objects.equals(this.parameters,
 				parameters);
 		this.parameters = parameters;
 
-		final boolean returnTypeChanged = !Util.equals(this.returnType,
+		final boolean returnTypeChanged = !Objects.equals(this.returnType,
 				returnType);
 		this.returnType = returnType;
 
-		final boolean helpContextIdChanged = !Util.equals(this.helpContextId,
+		final boolean helpContextIdChanged = !Objects.equals(this.helpContextId,
 				helpContextId);
 		this.helpContextId = helpContextId;
 
@@ -948,7 +949,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *         otherwise.
 	 */
 	public boolean setHandler(final IHandler handler) {
-		if (Util.equals(handler, this.handler)) {
+		if (Objects.equals(handler, this.handler)) {
 			return false;
 		}
 

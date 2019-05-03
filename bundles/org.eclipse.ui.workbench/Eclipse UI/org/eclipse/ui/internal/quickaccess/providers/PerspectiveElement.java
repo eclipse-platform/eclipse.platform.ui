@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.quickaccess.providers;
 
+import java.util.Objects;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
@@ -81,10 +82,7 @@ public class PerspectiveElement extends QuickAccessElement {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((descriptor == null) ? 0 : descriptor.hashCode());
-		return result;
+		return Objects.hashCode(descriptor);
 	}
 
 	@Override
@@ -96,11 +94,6 @@ public class PerspectiveElement extends QuickAccessElement {
 		if (getClass() != obj.getClass())
 			return false;
 		final PerspectiveElement other = (PerspectiveElement) obj;
-		if (descriptor == null) {
-			if (other.descriptor != null)
-				return false;
-		} else if (!descriptor.equals(other.descriptor))
-			return false;
-		return true;
+		return Objects.equals(descriptor, other.descriptor);
 	}
 }

@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.activities;
 
+import java.util.Objects;
 import org.eclipse.ui.activities.IActivityRequirementBinding;
 import org.eclipse.ui.internal.util.Util;
 
@@ -58,11 +59,8 @@ public final class ActivityRequirementBinding implements IActivityRequirementBin
 		}
 
 		final ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
-		if (!Util.equals(requiredActivityId, castedObject.requiredActivityId)) {
-			return false;
-		}
-
-		return Util.equals(activityId, castedObject.activityId);
+		return Objects.equals(requiredActivityId, castedObject.requiredActivityId)
+				&& Objects.equals(activityId, castedObject.activityId);
 	}
 
 	@Override
@@ -78,8 +76,8 @@ public final class ActivityRequirementBinding implements IActivityRequirementBin
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(requiredActivityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(requiredActivityId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityId);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}

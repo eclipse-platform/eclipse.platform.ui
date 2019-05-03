@@ -17,6 +17,7 @@ package org.eclipse.core.commands;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.eclipse.core.internal.commands.util.Util;
 
@@ -94,11 +95,11 @@ public final class Parameterization {
 		}
 
 		final Parameterization parameterization = (Parameterization) object;
-		if (!(Util.equals(this.parameter.getId(), parameterization.parameter.getId()))) {
+		if (!(Objects.equals(this.parameter.getId(), parameterization.parameter.getId()))) {
 			return false;
 		}
 
-		return Util.equals(this.value, parameterization.value);
+		return Objects.equals(this.value, parameterization.value);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public final class Parameterization {
 		while (parameterValueItr.hasNext()) {
 			final Entry<?, ?> entry = (Entry<?, ?>) parameterValueItr.next();
 			final String currentValue = (String) entry.getValue();
-			if (Util.equals(value, currentValue)) {
+			if (Objects.equals(value, currentValue)) {
 				returnValue = (String) entry.getKey();
 				break;
 			}
@@ -151,8 +152,8 @@ public final class Parameterization {
 	@Override
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
-			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(parameter);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
+			hashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(parameter);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(value);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}

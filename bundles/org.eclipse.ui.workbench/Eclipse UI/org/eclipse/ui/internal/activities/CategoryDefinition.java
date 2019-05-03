@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CategoryDefinition implements Comparable<CategoryDefinition> {
@@ -116,15 +117,8 @@ public final class CategoryDefinition implements Comparable<CategoryDefinition> 
 		}
 
 		final CategoryDefinition castedObject = (CategoryDefinition) object;
-		if (!Util.equals(id, castedObject.id)) {
-			return false;
-		}
-
-		if (!Util.equals(name, castedObject.name)) {
-			return false;
-		}
-
-		return Util.equals(sourceId, castedObject.sourceId);
+		return Objects.equals(id, castedObject.id) && Objects.equals(name, castedObject.name)
+				&& Objects.equals(sourceId, castedObject.sourceId);
 	}
 
 	public String getId() {
@@ -142,9 +136,9 @@ public final class CategoryDefinition implements Comparable<CategoryDefinition> 
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(id);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(name);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(sourceId);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}

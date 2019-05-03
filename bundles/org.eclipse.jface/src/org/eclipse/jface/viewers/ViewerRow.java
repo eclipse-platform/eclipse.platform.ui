@@ -16,6 +16,8 @@
 
 package org.eclipse.jface.viewers;
 
+import java.util.Objects;
+
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -251,11 +253,7 @@ public abstract class ViewerRow implements Cloneable {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((getItem() == null) ? 0 : getItem().hashCode());
-		return result;
+		return Objects.hashCode(getItem());
 	}
 
 	@Override
@@ -267,12 +265,7 @@ public abstract class ViewerRow implements Cloneable {
 		if (getClass() != obj.getClass())
 			return false;
 		final ViewerRow other = (ViewerRow) obj;
-		if (getItem() == null) {
-			if (other.getItem() != null)
-				return false;
-		} else if (!getItem().equals(other.getItem()))
-			return false;
-		return true;
+		return Objects.equals(getItem(), other.getItem());
 	}
 
 	/**

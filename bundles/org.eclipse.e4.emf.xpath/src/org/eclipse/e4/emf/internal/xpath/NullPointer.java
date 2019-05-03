@@ -30,6 +30,7 @@
 package org.eclipse.e4.emf.internal.xpath;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.ri.QName;
@@ -141,7 +142,7 @@ public class NullPointer extends EStructuralFeatureOwnerPointer {
 
     @Override
 	public int hashCode() {
-        return name == null ? 0 : name.hashCode();
+        return Objects.hashCode(name);
     }
 
     @Override
@@ -155,7 +156,7 @@ public class NullPointer extends EStructuralFeatureOwnerPointer {
         }
 
         NullPointer other = (NullPointer) object;
-        return name == other.name || name != null && name.equals(other.name);
+        return Objects.equals(name, other.name);
     }
 
     @Override

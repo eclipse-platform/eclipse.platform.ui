@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -33,7 +34,6 @@ import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
-import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @param <S>
@@ -131,14 +131,13 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 			if (!(o instanceof Map.Entry))
 				return false;
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
-			return Util.equals(this.getKey(), that.getKey()) && Util.equals(this.getValue(), that.getValue());
+			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}
 
 		@Override
 		public int hashCode() {
 			getterCalled();
-			Object value = getValue();
-			return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+			return Objects.hashCode(key) ^ Objects.hashCode(getValue());
 		}
 	}
 
@@ -186,7 +185,7 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 				V oldValue = cache.get(oldMasterValue);
 				V newValue = cache.get(newMasterValue);
 
-				if (Util.equals(oldValue, newValue)) {
+				if (Objects.equals(oldValue, newValue)) {
 					it.remove();
 				} else {
 					oldValues.put(key, oldValue);

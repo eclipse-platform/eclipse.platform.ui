@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -1012,57 +1013,36 @@ public final class URI
               String device, boolean absolutePath, String[] segments,
               String query, String fragment)
   {
-    int hashCode = 0;
-    //boolean iri = false;
-
+    int tmpHashCode = 0;
     if (scheme != null)
     {
-      hashCode ^= scheme.toLowerCase().hashCode();
+      tmpHashCode ^= scheme.toLowerCase().hashCode();
     }
-    if (authority != null)
-    {
-      hashCode ^= authority.hashCode();
-      //iri = iri || containsNonASCII(authority);
-    }
-    if (device != null)
-    {
-      hashCode ^= device.hashCode();
-      //iri = iri || containsNonASCII(device);
-    }
-    if (query != null)
-    {
-      hashCode ^= query.hashCode();
-      //iri = iri || containsNonASCII(query);
-    }
-    if (fragment != null)
-    {
-      hashCode ^= fragment.hashCode();
-      //iri = iri || containsNonASCII(fragment);
-    }
-
+    tmpHashCode ^= Objects.hashCode(authority);
+    tmpHashCode ^= Objects.hashCode(device);
+    tmpHashCode ^= Objects.hashCode(query);
+    tmpHashCode ^= Objects.hashCode(fragment);
     for (String segment : segments) {
-      hashCode ^= segment.hashCode();
-      //iri = iri || containsNonASCII(segments[i]);
+      tmpHashCode ^= segment.hashCode();
     }
 
     if (hierarchical)
     {
-      hashCode |= HIERARICHICAL_FLAG;
+      tmpHashCode |= HIERARICHICAL_FLAG;
     }
     else
     {
-      hashCode &= ~HIERARICHICAL_FLAG;
+      tmpHashCode &= ~HIERARICHICAL_FLAG;
     }
     if (absolutePath)
     {
-      hashCode |= ABSOLUTE_PATH_FLAG;
+      tmpHashCode |= ABSOLUTE_PATH_FLAG;
     }
     else
     {
-      hashCode &= ~ABSOLUTE_PATH_FLAG;
+      tmpHashCode &= ~ABSOLUTE_PATH_FLAG;
     }
-    this.hashCode = hashCode;
-    //this.iri = iri;
+    this.hashCode = tmpHashCode;
     this.scheme = scheme == null ? null : scheme.intern();
     this.authority = authority;
     this.device = device;

@@ -78,7 +78,7 @@ public class CSSAttributeConditionImpl extends AbstractAttributeCondition {
 	@Override
 	public int hashCode() {
 		return namespaceURI.hashCode() ^ localName.hashCode()
-				^ (specified ? -1 : 0);
+				^ Boolean.hashCode(specified);
 	}
 
 	/**

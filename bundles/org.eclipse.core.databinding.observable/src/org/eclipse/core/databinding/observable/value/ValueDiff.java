@@ -16,7 +16,8 @@
 
 package org.eclipse.core.databinding.observable.value;
 
-import org.eclipse.core.databinding.observable.Diffs;
+import java.util.Objects;
+
 import org.eclipse.core.databinding.observable.IDiff;
 
 /**
@@ -47,8 +48,7 @@ public abstract class ValueDiff<T> implements IDiff {
 		if (obj instanceof ValueDiff) {
 			ValueDiff<?> val = (ValueDiff<?>) obj;
 
-			return Diffs.equals(val.getNewValue(), getNewValue())
-					&& Diffs.equals(val.getOldValue(), getOldValue());
+			return Objects.equals(val.getNewValue(), getNewValue()) && Objects.equals(val.getOldValue(), getOldValue());
 
 		}
 		return false;
@@ -58,10 +58,8 @@ public abstract class ValueDiff<T> implements IDiff {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		Object nv = getNewValue();
-		Object ov = getOldValue();
-		result = prime * result + ((nv == null) ? 0 : nv.hashCode());
-		result = prime * result + ((ov == null) ? 0 : ov.hashCode());
+		result = prime * result + Objects.hashCode(getNewValue());
+		result = prime * result + Objects.hashCode(getOldValue());
 		return result;
 	}
 

@@ -16,11 +16,11 @@ package org.eclipse.core.commands.contexts;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.HandleObjectManager;
 import org.eclipse.core.commands.internal.util.Tracing;
-import org.eclipse.core.internal.commands.util.Util;
 
 /**
  * <p>
@@ -272,7 +272,7 @@ public final class ContextManager extends HandleObjectManager implements IContex
 	 */
 	@SuppressWarnings("unchecked")
 	public final void setActiveContextIds(@SuppressWarnings("rawtypes") final Set activeContextIds) {
-		if (Util.equals(this.activeContextIds, activeContextIds)) {
+		if (Objects.equals(this.activeContextIds, activeContextIds)) {
 			return;
 		}
 

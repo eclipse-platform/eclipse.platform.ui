@@ -298,23 +298,24 @@ public final class Util {
 	/**
 	 * Provides a hash code based on the given integer value.
 	 *
-	 * @param i
-	 *            The integer value
+	 * @param i The integer value
 	 * @return <code>i</code>
+	 * @deprecated return directly value, or use {@link Integer#hashCode(int)}
 	 */
+	@Deprecated
 	public static int hashCode(final int i) {
 		return i;
 	}
 
 	/**
-	 * Provides a hash code for the object -- defending against
-	 * <code>null</code>.
+	 * Provides a hash code for the object -- defending against <code>null</code>.
 	 *
-	 * @param object
-	 *            The object for which a hash code is required.
-	 * @return <code>object.hashCode</code> or <code>0</code> if
-	 *         <code>object</code> if <code>null</code>.
+	 * @param object The object for which a hash code is required.
+	 * @return <code>object.hashCode</code> or <code>0</code> if <code>object</code>
+	 *         if <code>null</code>.
+	 * @deprecated use {@link Objects#hashCode(Object)}
 	 */
+	@Deprecated
 	public static int hashCode(final Object object) {
 		return object != null ? object.hashCode() : 0;
 	}
@@ -323,12 +324,13 @@ public final class Util {
 	 * Computes the hash code for an array of objects, but with defense against
 	 * <code>null</code>.
 	 *
-	 * @param objects
-	 *            The array of objects for which a hash code is needed; may be
-	 *            <code>null</code>.
+	 * @param objects The array of objects for which a hash code is needed; may be
+	 *                <code>null</code>.
 	 * @return The hash code for <code>objects</code>; or <code>0</code> if
 	 *         <code>objects</code> is <code>null</code>.
+	 * @deprecated use {@link Arrays#hashCode(Object[])}
 	 */
+	@Deprecated
 	public static int hashCode(final Object[] objects) {
 		if (objects == null) {
 			return 0;

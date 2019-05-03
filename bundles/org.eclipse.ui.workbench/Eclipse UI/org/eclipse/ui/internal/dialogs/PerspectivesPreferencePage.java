@@ -23,6 +23,7 @@ import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -61,7 +62,6 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.util.Descriptors;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * The Workbench / Perspectives preference page.
@@ -421,7 +421,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	@Override
 	public boolean performOk() {
 		// Set the default perspective
-		if (!Util.equals(defaultPerspectiveId, perspectiveRegistry.getDefaultPerspective())) {
+		if (!Objects.equals(defaultPerspectiveId, perspectiveRegistry.getDefaultPerspective())) {
 			perspectiveRegistry.setDefaultPerspective(defaultPerspectiveId);
 		}
 

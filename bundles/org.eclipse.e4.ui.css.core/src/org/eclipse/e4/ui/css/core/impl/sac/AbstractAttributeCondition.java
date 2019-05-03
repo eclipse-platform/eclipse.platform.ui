@@ -20,6 +20,7 @@
 
 package org.eclipse.e4.ui.css.core.impl.sac;
 
+import java.util.Objects;
 import org.w3c.css.sac.AttributeCondition;
 
 /**
@@ -63,7 +64,7 @@ public abstract class AbstractAttributeCondition implements AttributeCondition,
 	 */
 	@Override
 	public int hashCode() {
-		return value == null ? -1 : value.hashCode();
+		return Objects.hashCode(value);
 	}
 
 	/**

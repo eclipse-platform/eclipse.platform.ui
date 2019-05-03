@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.activities.ActivityEvent;
@@ -125,28 +126,10 @@ final class Activity implements IActivity {
 		}
 
 		final Activity castedObject = (Activity) object;
-
-		if (!Util.equals(activityRequirementBindings, castedObject.activityRequirementBindings)) {
-			return false;
-		}
-
-		if (!Util.equals(activityPatternBindings, castedObject.activityPatternBindings)) {
-			return false;
-		}
-
-		if (!Util.equals(defined, castedObject.defined)) {
-			return false;
-		}
-
-		if (!Util.equals(enabled, castedObject.enabled)) {
-			return false;
-		}
-
-		if (!Util.equals(id, castedObject.id)) {
-			return false;
-		}
-
-		return Util.equals(name, castedObject.name);
+		return Objects.equals(activityRequirementBindings, castedObject.activityRequirementBindings)
+				&& Objects.equals(activityPatternBindings, castedObject.activityPatternBindings)
+				&& defined == castedObject.defined && enabled == castedObject.enabled
+				&& Objects.equals(id, castedObject.id) && Objects.equals(name, castedObject.name);
 	}
 
 	void fireActivityChanged(ActivityEvent activityEvent) {
@@ -193,12 +176,12 @@ final class Activity implements IActivity {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityRequirementBindings);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityPatternBindings);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityRequirementBindings);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityPatternBindings);
+			hashCode = hashCode * HASH_FACTOR + Boolean.hashCode(defined);
+			hashCode = hashCode * HASH_FACTOR + Boolean.hashCode(enabled);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(id);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(name);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}
@@ -249,7 +232,7 @@ final class Activity implements IActivity {
 	boolean setActivityRequirementBindings(Set<IActivityRequirementBinding> activityRequirementBindings) {
 		activityRequirementBindings = Util.safeCopy(activityRequirementBindings, IActivityRequirementBinding.class);
 
-		if (!Util.equals(activityRequirementBindings, this.activityRequirementBindings)) {
+		if (!Objects.equals(activityRequirementBindings, this.activityRequirementBindings)) {
 			this.activityRequirementBindings = activityRequirementBindings;
 			this.activityRequirementBindingsAsArray = this.activityRequirementBindings
 					.toArray(new IActivityRequirementBinding[this.activityRequirementBindings.size()]);
@@ -264,7 +247,7 @@ final class Activity implements IActivity {
 	boolean setActivityPatternBindings(Set<IActivityPatternBinding> activityPatternBindings) {
 		activityPatternBindings = Util.safeCopy(activityPatternBindings, IActivityPatternBinding.class);
 
-		if (!Util.equals(activityPatternBindings, this.activityPatternBindings)) {
+		if (!Objects.equals(activityPatternBindings, this.activityPatternBindings)) {
 			this.activityPatternBindings = activityPatternBindings;
 			this.activityPatternBindingsAsArray = this.activityPatternBindings
 					.toArray(new IActivityPatternBinding[this.activityPatternBindings.size()]);
@@ -299,7 +282,7 @@ final class Activity implements IActivity {
 	}
 
 	boolean setName(String name) {
-		if (!Util.equals(name, this.name)) {
+		if (!Objects.equals(name, this.name)) {
 			this.name = name;
 			hashCode = HASH_INITIAL;
 			string = null;
@@ -314,7 +297,7 @@ final class Activity implements IActivity {
 	}
 
 	boolean setDescription(String description) {
-		if (!Util.equals(description, this.description)) {
+		if (!Objects.equals(description, this.description)) {
 			this.description = description;
 			hashCode = HASH_INITIAL;
 			string = null;
@@ -362,7 +345,7 @@ final class Activity implements IActivity {
 	}
 
 	boolean setDefaultEnabled(boolean defaultEnabled) {
-		if (!Util.equals(defaultEnabled, this.defaultEnabled)) {
+		if (defaultEnabled != this.defaultEnabled) {
 			this.defaultEnabled = defaultEnabled;
 			hashCode = HASH_INITIAL;
 			string = null;

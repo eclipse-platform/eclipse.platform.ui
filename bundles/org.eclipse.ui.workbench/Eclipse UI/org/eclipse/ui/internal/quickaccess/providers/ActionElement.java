@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.quickaccess.providers;
 
+import java.util.Objects;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.LegacyActionTools;
@@ -58,10 +59,7 @@ public class ActionElement extends QuickAccessElement {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((item == null) ? 0 : item.hashCode());
-		return result;
+		return Objects.hashCode(item);
 	}
 
 	@Override
@@ -73,11 +71,6 @@ public class ActionElement extends QuickAccessElement {
 		if (getClass() != obj.getClass())
 			return false;
 		final ActionElement other = (ActionElement) obj;
-		if (item == null) {
-			if (other.item != null)
-				return false;
-		} else if (!item.equals(other.item))
-			return false;
-		return true;
+		return Objects.equals(item, other.item);
 	}
 }

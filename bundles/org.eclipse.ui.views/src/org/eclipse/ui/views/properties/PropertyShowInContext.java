@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.views.properties;
 
+import java.util.Objects;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ShowInContext;
@@ -64,9 +66,9 @@ public class PropertyShowInContext extends ShowInContext {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((part == null) ? 0 : part.hashCode())
-				+ ((getSelection() == null) ? 0 : getSelection().hashCode())
-				+ ((getInput() == null) ? 0 : getInput().hashCode());
+		result = prime * result + Objects.hashCode(part)
+				+ Objects.hashCode(getSelection())
+				+ Objects.hashCode(getInput());
 		return result;
 	}
 
@@ -79,24 +81,15 @@ public class PropertyShowInContext extends ShowInContext {
 		if (getClass() != obj.getClass())
 			return false;
 		PropertyShowInContext other = (PropertyShowInContext) obj;
-		// part needs to be equal
-		if (part == null) {
-			if (other.part != null)
-				return false;
-		} else if (!part.equals(other.part))
-			return false;
-		// selection needs to be equal
-		if (getSelection() == null) {
-			if (other.getSelection() != null)
-				return false;
-		} else if (!getSelection().equals(other.getSelection()))
-			return false;
-		// input needs to be equal, but only if both are really set.
-		// E.g. the property sheet doesn't have an input set if not created by ShowIn > ...
-		if (getInput() == null || other.getInput() == null) {
+		if (Objects.equals(part, other.part) && Objects.equals(getSelection(), other.getSelection())) {
+			// input needs to be equal, but only if both are really set.
+			// E.g. the property sheet doesn't have an input set if not created by ShowIn >
+			// ...
+			if (getInput() == null || other.getInput() == null) {
 				return true;
-		} else if (!getInput().equals(other.getInput()))
-			return false;
-		return true;
+			}
+			return getInput().equals(other.getInput());
+		}
+		return false;
 	}
 }

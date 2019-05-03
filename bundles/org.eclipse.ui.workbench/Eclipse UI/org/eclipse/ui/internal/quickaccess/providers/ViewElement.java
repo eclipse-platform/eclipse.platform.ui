@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -123,10 +124,7 @@ public class ViewElement extends QuickAccessElement {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((viewDescriptor == null) ? 0 : viewDescriptor.hashCode());
-		return result;
+		return Objects.hashCode(viewDescriptor);
 	}
 
 	@Override
@@ -138,11 +136,6 @@ public class ViewElement extends QuickAccessElement {
 		if (getClass() != obj.getClass())
 			return false;
 		final ViewElement other = (ViewElement) obj;
-		if (viewDescriptor == null) {
-			if (other.viewDescriptor != null)
-				return false;
-		} else if (!viewDescriptor.equals(other.viewDescriptor))
-			return false;
-		return true;
+		return Objects.equals(viewDescriptor, other.viewDescriptor);
 	}
 }

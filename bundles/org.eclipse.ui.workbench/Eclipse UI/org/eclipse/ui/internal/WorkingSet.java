@@ -16,6 +16,7 @@ package org.eclipse.ui.internal;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
@@ -30,7 +31,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * A working set holds a number of IAdaptable elements. A working set is
@@ -92,9 +92,9 @@ public class WorkingSet extends AbstractWorkingSet {
 		}
 		if (object instanceof WorkingSet) {
 			WorkingSet workingSet = (WorkingSet) object;
-			return Util.equals(workingSet.getName(), getName())
-					&& Util.equals(workingSet.getElementsArray(), getElementsArray())
-					&& Util.equals(workingSet.getId(), getId());
+			return Objects.equals(workingSet.getName(), getName())
+					&& Objects.equals(workingSet.getElementsArray(), getElementsArray())
+					&& Objects.equals(workingSet.getId(), getId());
 		}
 		return false;
 	}

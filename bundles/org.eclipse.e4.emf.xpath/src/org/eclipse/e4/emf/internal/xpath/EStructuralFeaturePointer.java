@@ -29,6 +29,8 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.internal.xpath;
 
+import java.util.Objects;
+
 import org.apache.commons.jxpath.AbstractFactory;
 import org.apache.commons.jxpath.JXPathAbstractFactoryException;
 import org.apache.commons.jxpath.JXPathContext;
@@ -261,7 +263,7 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
         }
 
         EStructuralFeaturePointer other = (EStructuralFeaturePointer) object;
-        if (parent != other.parent && (parent == null || !parent.equals(other.parent))) {
+        if (!Objects.equals(parent, other.parent)) {
             return false;
         }
 

@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * An
@@ -191,7 +191,7 @@ public class BidiObservableMap<K, V> extends DecoratingObservableMap<K, V> {
 	private Set<K> findKeys(Object value) {
 		Set<K> keys = new HashSet<>();
 		for (Entry<K, V> entry : entrySet()) {
-			if (Util.equals(entry.getValue(), value))
+			if (Objects.equals(entry.getValue(), value))
 				keys.add(entry.getKey());
 		}
 		return keys;

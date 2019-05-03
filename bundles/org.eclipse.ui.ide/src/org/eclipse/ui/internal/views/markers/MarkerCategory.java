@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.util.Objects;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.views.markers.MarkerItem;
@@ -167,8 +169,8 @@ class MarkerCategory extends MarkerSupportItem {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((markers == null) ? 0 : markers.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+				+ Objects.hashCode(markers);
+		result = prime * result + Objects.hashCode(name);
 		return result;
 	}
 
@@ -181,17 +183,7 @@ class MarkerCategory extends MarkerSupportItem {
 		if (getClass() != obj.getClass())
 			return false;
 		MarkerCategory other = (MarkerCategory) obj;
-		if (markers == null) {
-			if (other.markers != null)
-				return false;
-		} else if (!markers.equals(other.markers))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
+		return Objects.equals(markers, other.markers) && Objects.equals(name, other.name);
 	}
 
 	@Override

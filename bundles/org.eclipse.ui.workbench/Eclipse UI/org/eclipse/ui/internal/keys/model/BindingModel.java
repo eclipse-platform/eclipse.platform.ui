@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -31,7 +32,6 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -48,16 +48,16 @@ public class BindingModel extends CommonModel {
 
 	static final boolean deletes(final Binding del, final Binding binding) {
 		boolean deletes = true;
-		deletes &= Util.equals(del.getContextId(), binding.getContextId());
-		deletes &= Util.equals(del.getTriggerSequence(), binding.getTriggerSequence());
+		deletes &= Objects.equals(del.getContextId(), binding.getContextId());
+		deletes &= Objects.equals(del.getTriggerSequence(), binding.getTriggerSequence());
 		if (del.getLocale() != null) {
-			deletes &= Util.equals(del.getLocale(), binding.getLocale());
+			deletes &= Objects.equals(del.getLocale(), binding.getLocale());
 		}
 		if (del.getPlatform() != null) {
-			deletes &= Util.equals(del.getPlatform(), binding.getPlatform());
+			deletes &= Objects.equals(del.getPlatform(), binding.getPlatform());
 		}
 		deletes &= (binding.getType() == Binding.SYSTEM);
-		deletes &= Util.equals(del.getParameterizedCommand(), null);
+		deletes &= Objects.equals(del.getParameterizedCommand(), null);
 
 		return deletes;
 	}

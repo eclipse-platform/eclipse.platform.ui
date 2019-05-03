@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.keys;
 
+import java.util.Objects;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -74,11 +75,7 @@ public final class KeySequenceBinding implements IKeySequenceBinding {
 		}
 
 		final KeySequenceBinding castedObject = (KeySequenceBinding) object;
-		if (!Util.equals(keySequence, castedObject.keySequence)) {
-			return false;
-		}
-
-		return Util.equals(match, castedObject.match);
+		return Objects.equals(keySequence, castedObject.keySequence) && match == castedObject.match;
 	}
 
 	@Override
@@ -94,8 +91,8 @@ public final class KeySequenceBinding implements IKeySequenceBinding {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(match);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(keySequence);
+			hashCode = hashCode * HASH_FACTOR + Integer.hashCode(match);
 			hashCodeComputed = true;
 		}
 

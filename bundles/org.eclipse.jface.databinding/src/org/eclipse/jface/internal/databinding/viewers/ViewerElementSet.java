@@ -19,6 +19,7 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -207,8 +208,7 @@ public class ViewerElementSet<E> implements Set<E> {
 	public int hashCode() {
 		int hash = 0;
 		for (Iterator<?> iterator = iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
-			hash += element == null ? 0 : element.hashCode();
+			hash += Objects.hashCode(iterator.next());
 		}
 		return hash;
 	}

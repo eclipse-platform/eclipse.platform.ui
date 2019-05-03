@@ -39,6 +39,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -78,7 +79,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * Provides access to the collection of defined editors for resource types.
@@ -1703,9 +1703,9 @@ class MockMapping implements IFileEditorMapping {
 			return false;
 		}
 
-		if (!Util.equals(this.getEditors(), mapping.getEditors())) {
+		if (!Objects.equals(this.getEditors(), mapping.getEditors())) {
 			return false;
 		}
-		return Util.equals(this.getDeletedEditors(), mapping.getDeletedEditors());
+		return Objects.equals(this.getDeletedEditors(), mapping.getDeletedEditors());
 	}
 }

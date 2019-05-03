@@ -30,6 +30,7 @@
 package org.eclipse.e4.emf.internal.xpath;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.jxpath.JXPathIntrospector;
 import org.apache.commons.jxpath.ri.QName;
@@ -122,7 +123,7 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
 
     @Override
 	public int hashCode() {
-        return name == null ? 0 : name.hashCode();
+		return Objects.hashCode(name);
     }
 
     @Override
@@ -136,12 +137,11 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
         }
 
         EObjectPointer other = (EObjectPointer) object;
-        if (parent != other.parent && (parent == null || !parent.equals(other.parent))) {
+        if (!Objects.equals(parent, other.parent)) {
             return false;
         }
 
-        if ((name == null && other.name != null)
-                || (name != null && !name.equals(other.name))) {
+        if (!Objects.equals(name, other.name)) {
             return false;
         }
 

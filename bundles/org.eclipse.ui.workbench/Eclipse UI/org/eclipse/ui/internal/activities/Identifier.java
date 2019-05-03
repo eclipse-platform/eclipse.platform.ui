@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.activities;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.ui.activities.IIdentifier;
@@ -90,15 +91,8 @@ final class Identifier implements IIdentifier {
 		}
 
 		final Identifier castedObject = (Identifier) object;
-		if (!Util.equals(activityIds, castedObject.activityIds)) {
-			return false;
-		}
-
-		if (!Util.equals(enabled, castedObject.enabled)) {
-			return false;
-		}
-
-		return Util.equals(id, castedObject.id);
+		return Objects.equals(activityIds, castedObject.activityIds) && enabled == castedObject.enabled
+				&& Objects.equals(id, castedObject.id);
 	}
 
 	void fireIdentifierChanged(IdentifierEvent identifierEvent) {
@@ -126,14 +120,13 @@ final class Identifier implements IIdentifier {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityIds);
+			hashCode = hashCode * HASH_FACTOR + Boolean.hashCode(enabled);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(id);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}
 		}
-
 		return hashCode;
 	}
 
@@ -159,7 +152,7 @@ final class Identifier implements IIdentifier {
 	boolean setActivityIds(Set<String> activityIds) {
 		activityIds = Util.safeCopy(activityIds, String.class);
 
-		if (!Util.equals(activityIds, this.activityIds)) {
+		if (!Objects.equals(activityIds, this.activityIds)) {
 			this.activityIds = activityIds;
 			this.activityIdsAsArray = this.activityIds.toArray(new String[this.activityIds.size()]);
 			hashCode = HASH_INITIAL;

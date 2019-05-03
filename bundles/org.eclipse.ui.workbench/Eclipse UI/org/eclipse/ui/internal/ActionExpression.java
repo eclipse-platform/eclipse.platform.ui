@@ -18,13 +18,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.ui.internal.util.Util;
 import org.osgi.framework.Bundle;
 
 /**
@@ -111,7 +111,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof AndExpression) {
 				final AndExpression that = (AndExpression) object;
-				return Util.equals(this.list, that.list);
+				return Objects.equals(this.list, that.list);
 			}
 
 			return false;
@@ -197,7 +197,7 @@ public class ActionExpression {
 		@Override
 		public final int hashCode() {
 			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
-				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(list);
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(list);
 				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
 					expressionHashCode++;
 				}
@@ -322,7 +322,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof ObjectClassExpression) {
 				final ObjectClassExpression that = (ObjectClassExpression) object;
-				return Util.equals(this.className, that.className) && Util.equals(this.extracted, that.extracted);
+				return Objects.equals(this.className, that.className) && Objects.equals(this.extracted, that.extracted);
 			}
 
 			return false;
@@ -342,8 +342,8 @@ public class ActionExpression {
 		@Override
 		public final int hashCode() {
 			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
-				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(className);
-				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(extracted);
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(className);
+				expressionHashCode = expressionHashCode * HASH_FACTOR + Objects.hashCode(extracted);
 				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
 					expressionHashCode++;
 				}
@@ -419,7 +419,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof ObjectStateExpression) {
 				final ObjectStateExpression that = (ObjectStateExpression) object;
-				return Util.equals(this.name, that.name) && Util.equals(this.value, that.value);
+				return Objects.equals(this.name, that.name) && Objects.equals(this.value, that.value);
 			}
 
 			return false;
@@ -437,8 +437,8 @@ public class ActionExpression {
 		@Override
 		public final int hashCode() {
 			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
-				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(name);
-				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(value);
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(name);
+				expressionHashCode = expressionHashCode * HASH_FACTOR + Objects.hashCode(value);
 				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
 					expressionHashCode++;
 				}
@@ -518,7 +518,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof OrExpression) {
 				final OrExpression that = (OrExpression) object;
-				return Util.equals(this.list, that.list);
+				return Objects.equals(this.list, that.list);
 			}
 
 			return false;
@@ -565,7 +565,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof PluginStateExpression) {
 				final PluginStateExpression that = (PluginStateExpression) object;
-				return Util.equals(this.id, that.id) && Util.equals(this.value, that.value);
+				return Objects.equals(this.id, that.id) && Objects.equals(this.value, that.value);
 			}
 
 			return false;
@@ -579,8 +579,8 @@ public class ActionExpression {
 		@Override
 		public final int hashCode() {
 			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
-				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
-				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(value);
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(id);
+				expressionHashCode = expressionHashCode * HASH_FACTOR + Objects.hashCode(value);
 				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
 					expressionHashCode++;
 				}
@@ -647,7 +647,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof SingleExpression) {
 				final SingleExpression that = (SingleExpression) object;
-				return Util.equals(this.child, that.child);
+				return Objects.equals(this.child, that.child);
 			}
 
 			return false;
@@ -666,7 +666,7 @@ public class ActionExpression {
 		@Override
 		public final int hashCode() {
 			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
-				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(child);
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(child);
 				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
 					expressionHashCode++;
 				}
@@ -728,7 +728,7 @@ public class ActionExpression {
 		public final boolean equals(final Object object) {
 			if (object instanceof SystemPropertyExpression) {
 				final SystemPropertyExpression that = (SystemPropertyExpression) object;
-				return Util.equals(this.name, that.name) && Util.equals(this.value, that.value);
+				return Objects.equals(this.name, that.name) && Objects.equals(this.value, that.value);
 			}
 
 			return false;
@@ -742,8 +742,8 @@ public class ActionExpression {
 		@Override
 		public final int hashCode() {
 			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
-				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(name);
-				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(value);
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(name);
+				expressionHashCode = expressionHashCode * HASH_FACTOR + Objects.hashCode(value);
 				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
 					expressionHashCode++;
 				}
@@ -899,7 +899,7 @@ public class ActionExpression {
 	public final boolean equals(final Object object) {
 		if (object instanceof ActionExpression) {
 			final ActionExpression that = (ActionExpression) object;
-			return Util.equals(this.root, that.root);
+			return Objects.equals(this.root, that.root);
 		}
 
 		return false;
@@ -926,7 +926,7 @@ public class ActionExpression {
 	@Override
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
-			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(root);
+			hashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(root);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}

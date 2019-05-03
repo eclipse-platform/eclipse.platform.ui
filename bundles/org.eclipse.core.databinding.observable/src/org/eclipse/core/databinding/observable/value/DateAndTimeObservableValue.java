@@ -18,6 +18,7 @@ package org.eclipse.core.databinding.observable.value;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -27,7 +28,6 @@ import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.core.internal.databinding.observable.Util;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -183,7 +183,7 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 		if (hasListeners()) {
 			Date oldValue = cachedValue;
 			Date newValue = cachedValue = doGetValue();
-			if (!Util.equals(oldValue, newValue))
+			if (!Objects.equals(oldValue, newValue))
 				fireValueChange(Diffs.createValueDiff(oldValue, newValue));
 		}
 	}

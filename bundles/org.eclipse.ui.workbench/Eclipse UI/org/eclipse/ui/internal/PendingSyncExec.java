@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -97,7 +98,7 @@ public final class PendingSyncExec {
 
 	@Override
 	public int hashCode() {
-		return runnable == null ? 0 : runnable.hashCode();
+		return Objects.hashCode(runnable);
 	}
 
 	public void setOperationThread(Thread operation) {

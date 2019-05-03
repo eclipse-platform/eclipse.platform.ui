@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CategoryActivityBindingDefinition {
@@ -92,15 +93,9 @@ public final class CategoryActivityBindingDefinition {
 		}
 
 		final CategoryActivityBindingDefinition castedObject = (CategoryActivityBindingDefinition) object;
-		if (!Util.equals(activityId, castedObject.activityId)) {
-			return false;
-		}
-
-		if (!Util.equals(categoryId, castedObject.categoryId)) {
-			return false;
-		}
-
-		return Util.equals(sourceId, castedObject.sourceId);
+		return Objects.equals(activityId, castedObject.activityId)
+				&& Objects.equals(categoryId, castedObject.categoryId)
+				&& Objects.equals(sourceId, castedObject.sourceId);
 	}
 
 	public String getActivityId() {
@@ -118,9 +113,9 @@ public final class CategoryActivityBindingDefinition {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(categoryId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(sourceId);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}

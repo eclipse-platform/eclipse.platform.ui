@@ -74,22 +74,11 @@ public class BindingStatus extends MultiStatus {
 		return new BindingStatus(Policy.JFACE_DATABINDING, 0, "", null); //$NON-NLS-1$
 	}
 
-	private static int hashCode(Object[] array) {
-		final int prime = 31;
-		if (array == null)
-			return 0;
-		int result = 1;
-		for (Object element : array) {
-			result = prime * result + (element == null ? 0 : element.hashCode());
-		}
-		return result;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + BindingStatus.hashCode(getChildren());
+		result = prime * result + Arrays.hashCode(getChildren());
 		return result;
 	}
 
@@ -102,8 +91,6 @@ public class BindingStatus extends MultiStatus {
 		if (getClass() != obj.getClass())
 			return false;
 		final BindingStatus other = (BindingStatus) obj;
-		if (!Arrays.equals(getChildren(), other.getChildren()))
-			return false;
-		return true;
+		return Arrays.equals(getChildren(), other.getChildren());
 	}
 }

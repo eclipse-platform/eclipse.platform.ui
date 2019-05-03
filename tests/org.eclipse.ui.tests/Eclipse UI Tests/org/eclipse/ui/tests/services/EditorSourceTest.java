@@ -15,6 +15,8 @@
 
 package org.eclipse.ui.tests.services;
 
+import java.util.Objects;
+
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
@@ -30,7 +32,6 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.api.MockReusableEditorPart;
@@ -73,7 +74,7 @@ public class EditorSourceTest extends UITestCase {
 		@Override
 		public EvaluationResult evaluate(IEvaluationContext context) {
 			stateInput = context.getVariable(ISources.ACTIVE_EDITOR_INPUT_NAME);
-			return EvaluationResult.valueOf(Util
+			return EvaluationResult.valueOf(Objects
 					.equals(stateInput, editorInput));
 		}
 

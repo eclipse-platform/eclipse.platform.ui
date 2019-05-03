@@ -14,8 +14,9 @@
 
 package org.eclipse.core.commands;
 
+import java.util.Objects;
+
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.internal.commands.util.Util;
 
 /**
  * <p>
@@ -129,7 +130,7 @@ public class State extends EventManager {
 	 *            The value to set; may be anything.
 	 */
 	public void setValue(final Object value) {
-		if (!Util.equals(this.value, value)) {
+		if (!Objects.equals(this.value, value)) {
 			final Object oldValue = this.value;
 			this.value = value;
 			fireStateChanged(oldValue);

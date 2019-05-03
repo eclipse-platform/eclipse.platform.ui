@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.eclipse.jface.resource.DeviceResourceException;
@@ -53,22 +54,14 @@ public class FormFonts {
 		public boolean equals(Object obj) {
 			if (obj instanceof BoldFontDescriptor) {
 				BoldFontDescriptor desc = (BoldFontDescriptor)obj;
-				if (desc.fFontData.length != fFontData.length)
-					return false;
-				for (int i = 0; i < fFontData.length; i++)
-					if (!fFontData[i].equals(desc.fFontData[i]))
-						return false;
-				return true;
+				return Arrays.equals(fFontData, desc.fFontData);
 			}
 			return false;
 		}
 
 		@Override
 		public int hashCode() {
-			int hash = 0;
-			for (FontData element : fFontData)
-				hash = hash * 7 + element.hashCode();
-			return hash;
+			return Arrays.hashCode(fFontData);
 		}
 
 		@Override

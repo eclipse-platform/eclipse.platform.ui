@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.quickaccess.providers;
 
+import java.util.Objects;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -59,10 +60,7 @@ public class WizardElement extends QuickAccessElement {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((wizardDescriptor == null) ? 0 : wizardDescriptor.hashCode());
-		return result;
+		return Objects.hashCode(wizardDescriptor);
 	}
 
 	@Override
@@ -74,11 +72,6 @@ public class WizardElement extends QuickAccessElement {
 		if (getClass() != obj.getClass())
 			return false;
 		final WizardElement other = (WizardElement) obj;
-		if (wizardDescriptor == null) {
-			if (other.wizardDescriptor != null)
-				return false;
-		} else if (!wizardDescriptor.equals(other.wizardDescriptor))
-			return false;
-		return true;
+		return Objects.equals(wizardDescriptor, other.wizardDescriptor);
 	}
 }

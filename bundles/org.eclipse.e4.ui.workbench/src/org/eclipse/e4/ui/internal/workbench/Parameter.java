@@ -212,7 +212,7 @@ public final class Parameter implements IParameter, ITypedParameter {
 	@Override
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
-			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
+			hashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(id);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}

@@ -17,9 +17,9 @@
 package org.eclipse.core.databinding.property;
 
 import java.util.EventObject;
+import java.util.Objects;
 
 import org.eclipse.core.databinding.observable.IDiff;
-import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * Event object events in the properties API
@@ -93,9 +93,8 @@ public final class SimplePropertyEvent<S, D extends IDiff> extends EventObject {
 			return false;
 
 		SimplePropertyEvent<?, ?> that = (SimplePropertyEvent<?, ?>) obj;
-		return Util.equals(getSource(), that.getSource())
-				&& Util.equals(this.property, that.property)
-				&& Util.equals(this.diff, that.diff);
+		return Objects.equals(getSource(), that.getSource()) && Objects.equals(this.property, that.property)
+				&& Objects.equals(this.diff, that.diff);
 	}
 
 	@Override
@@ -103,7 +102,7 @@ public final class SimplePropertyEvent<S, D extends IDiff> extends EventObject {
 		int hash = 17;
 		hash = hash * 37 + getSource().hashCode();
 		hash = hash * 37 + property.hashCode();
-		hash = hash * 37 + (diff == null ? 0 : diff.hashCode());
+		hash = hash * 37 + Objects.hashCode(diff);
 		return hash;
 	}
 }

@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.keys;
 
+import java.util.Objects;
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.ui.internal.util.Util;
@@ -81,7 +82,7 @@ public abstract class Key implements Comparable {
 
 	@Override
 	public final int hashCode() {
-		return Util.hashCode(key);
+		return Objects.hashCode(key);
 	}
 
 	/**

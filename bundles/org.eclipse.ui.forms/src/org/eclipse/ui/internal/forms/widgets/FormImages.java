@@ -19,6 +19,7 @@ package org.eclipse.ui.internal.forms.widgets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -62,13 +63,7 @@ public class FormImages {
 		public boolean equals(Object obj) {
 			if (obj instanceof AbstractImageDescriptor) {
 				AbstractImageDescriptor id = (AbstractImageDescriptor)obj;
-				if (id.fRGBs.length == fRGBs.length) {
-					boolean result = id.fLength == fLength;
-					for (int i = 0; i < fRGBs.length && result; i++) {
-						result = result && id.fRGBs[i].equals(fRGBs[i]);
-					}
-					return result;
-				}
+				return fLength == id.fLength && Arrays.equals(fRGBs, id.fRGBs);
 			}
 			return false;
 		}
@@ -156,9 +151,9 @@ public class FormImages {
 				ComplexImageDescriptor id = (ComplexImageDescriptor) obj;
 				if (super.equals(obj)  &&
 						id.fVertical == fVertical && Arrays.equals(id.fPercents, fPercents)) {
-					if ((id.fBgRGB == null && fBgRGB == null) ||
-							(id.fBgRGB != null && id.fBgRGB.equals(fBgRGB)))
+					if (Objects.equals(fBgRGB, id.fBgRGB)) {
 						return true;
+					}
 					// if the only thing that isn't the same is the background color
 					// still return true if it does not matter (percents add up to 100)
 					int sum = 0;
@@ -174,9 +169,10 @@ public class FormImages {
 		@Override
 		public int hashCode() {
 			int hash = super.hashCode();
-			hash = hash * 7 + Boolean.valueOf(fVertical).hashCode();
-			for (int fPercent : fPercents)
-				hash = hash * 7 + Integer.valueOf(fPercent).hashCode();
+			hash = hash * 7 + Boolean.hashCode(fVertical);
+			for (int fPercent : fPercents) {
+				hash = hash * 7 + Integer.hashCode(fPercent);
+			}
 			return hash;
 		}
 
@@ -276,8 +272,8 @@ public class FormImages {
 		@Override
 		public int hashCode() {
 			int hash = super.hashCode();
-			hash = hash * 7 + Integer.valueOf(fTheight).hashCode();
-			hash = hash * 7 + Integer.valueOf(fMarginHeight).hashCode();
+			hash = hash * 7 + Integer.hashCode(fTheight);
+			hash = hash * 7 + Integer.hashCode(fMarginHeight);
 			return hash;
 		}
 

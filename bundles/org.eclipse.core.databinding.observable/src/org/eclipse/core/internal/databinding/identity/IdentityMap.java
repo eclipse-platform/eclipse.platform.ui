@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.eclipse.core.internal.databinding.observable.Util;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -155,11 +155,11 @@ public class IdentityMap<K, V> implements Map<K, V> {
 							public boolean equals(Object obj) {
 								if (obj == this)
 									return true;
-								if (obj == null || !(obj instanceof Map.Entry))
+								if (!(obj instanceof Map.Entry))
 									return false;
 								Map.Entry<?, ?> that = (Map.Entry<?, ?>) obj;
 								return this.getKey() == that.getKey()
-										&& Util.equals(this.getValue(),
+										&& Objects.equals(this.getValue(),
 												that.getValue());
 							}
 
@@ -206,15 +206,13 @@ public class IdentityMap<K, V> implements Map<K, V> {
 						if (obj == null || !(obj instanceof Map.Entry))
 							return false;
 						Map.Entry<?, ?> that = (Map.Entry<?, ?>) obj;
-						return Util.equals(wrappedKey, that.getKey())
-								&& Util.equals(this.getValue(), that.getValue());
+						return Objects.equals(wrappedKey, that.getKey())
+								&& Objects.equals(this.getValue(), that.getValue());
 					}
 
 					@Override
 					public int hashCode() {
-						return wrappedKey.hashCode()
-								^ (getValue() == null ? 0 : getValue()
-										.hashCode());
+						return wrappedKey.hashCode() ^ Objects.hashCode(getValue());
 					}
 				};
 				return wrappedEntrySet.remove(wrappedEntry);

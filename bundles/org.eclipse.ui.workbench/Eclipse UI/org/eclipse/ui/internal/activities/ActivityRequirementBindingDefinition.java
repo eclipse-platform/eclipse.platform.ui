@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityRequirementBindingDefinition {
@@ -95,15 +96,9 @@ public final class ActivityRequirementBindingDefinition {
 		}
 
 		final ActivityRequirementBindingDefinition castedObject = (ActivityRequirementBindingDefinition) object;
-		if (!Util.equals(requiredActivityId, castedObject.requiredActivityId)) {
-			return false;
-		}
-
-		if (!Util.equals(activityId, castedObject.activityId)) {
-			return false;
-		}
-
-		return Util.equals(sourceId, castedObject.sourceId);
+		return Objects.equals(requiredActivityId, castedObject.requiredActivityId)
+				&& Objects.equals(activityId, castedObject.activityId)
+				&& Objects.equals(sourceId, castedObject.sourceId);
 	}
 
 	public String getRequiredActivityId() {
@@ -121,9 +116,9 @@ public final class ActivityRequirementBindingDefinition {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(requiredActivityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(requiredActivityId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(sourceId);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}

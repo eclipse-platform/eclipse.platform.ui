@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IMarker;
@@ -409,10 +410,7 @@ class Markers {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((builder == null) ? 0 : builder.hashCode());
-		return result;
+		return Objects.hashCode(builder);
 	}
 
 	@Override
@@ -424,13 +422,6 @@ class Markers {
 			return false;
 		}
 		Markers other = (Markers) obj;
-		if (builder == null) {
-			if (other.builder != null) {
-				return false;
-			}
-		} else if (!builder.equals(other.builder)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(builder, other.builder);
 	}
 }

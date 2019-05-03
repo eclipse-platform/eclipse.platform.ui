@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.services;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -44,7 +45,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.services.IServiceLocator;
@@ -136,7 +136,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 	@Override
 	public final void selectionChanged(final IWorkbenchPart part, final ISelection newSelection) {
 
-		if (Util.equals(selection, newSelection))
+		if (Objects.equals(selection, newSelection))
 			return; // we have already handled the change
 
 		selection = newSelection;
@@ -285,7 +285,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 
 		// Figure out what was changed.
 		final Object newActivePart = currentState.get(ISources.ACTIVE_PART_NAME);
-		if (!Util.equals(newActivePart, lastActivePart)) {
+		if (!Objects.equals(newActivePart, lastActivePart)) {
 			sources |= ISources.ACTIVE_PART;
 			if (newActivePart != IEvaluationContext.UNDEFINED_VARIABLE) {
 				lastActivePart = (IWorkbenchPart) newActivePart;
@@ -294,7 +294,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 			}
 		}
 		final Object newActivePartId = currentState.get(ISources.ACTIVE_PART_ID_NAME);
-		if (!Util.equals(newActivePartId, lastActivePartId)) {
+		if (!Objects.equals(newActivePartId, lastActivePartId)) {
 			sources |= ISources.ACTIVE_PART_ID;
 			if (newActivePartId != IEvaluationContext.UNDEFINED_VARIABLE) {
 				lastActivePartId = (String) newActivePartId;
@@ -303,7 +303,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 			}
 		}
 		final Object newActivePartSite = currentState.get(ISources.ACTIVE_SITE_NAME);
-		if (!Util.equals(newActivePartSite, lastActivePartSite)) {
+		if (!Objects.equals(newActivePartSite, lastActivePartSite)) {
 			sources |= ISources.ACTIVE_SITE;
 			if (newActivePartSite != IEvaluationContext.UNDEFINED_VARIABLE) {
 				lastActivePartSite = (IWorkbenchPartSite) newActivePartSite;
@@ -312,13 +312,13 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 			}
 		}
 		final Object newShowInInput = currentState.get(ISources.SHOW_IN_INPUT);
-		if (!Util.equals(newShowInInput, lastShowInInput)) {
+		if (!Objects.equals(newShowInInput, lastShowInInput)) {
 			sources |= ISources.ACTIVE_SITE;
 			lastShowInInput = newShowInInput;
 		}
 		if (updateShowInSelection) {
 			final Object newShowInSelection = currentState.get(ISources.SHOW_IN_SELECTION);
-			if (!Util.equals(newShowInSelection, lastShowInSelection)) {
+			if (!Objects.equals(newShowInSelection, lastShowInSelection)) {
 				sources |= ISources.ACTIVE_SITE;
 				if (newShowInSelection != IEvaluationContext.UNDEFINED_VARIABLE) {
 					lastShowInSelection = (ISelection) newShowInSelection;
@@ -328,14 +328,14 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 			}
 		}
 		Object newActiveEditor = currentState.get(ISources.ACTIVE_EDITOR_NAME);
-		if (!Util.equals(newActiveEditor, lastActiveEditor)) {
+		if (!Objects.equals(newActiveEditor, lastActiveEditor)) {
 			sources |= ISources.ACTIVE_EDITOR;
 			newActiveEditor = (newActiveEditor == IEvaluationContext.UNDEFINED_VARIABLE ? null : newActiveEditor);
 			hookListener(lastActiveEditor, (IEditorPart) newActiveEditor);
 			lastActiveEditor = (IEditorPart) newActiveEditor;
 		}
 		Object newEditorInput = currentState.get(ISources.ACTIVE_EDITOR_INPUT_NAME);
-		if (!Util.equals(newEditorInput, lastEditorInput)) {
+		if (!Objects.equals(newEditorInput, lastEditorInput)) {
 			sources |= ISources.ACTIVE_EDITOR;
 			if (newEditorInput != IEvaluationContext.UNDEFINED_VARIABLE) {
 				lastEditorInput = (IEditorInput) newEditorInput;
@@ -344,7 +344,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 			}
 		}
 		final Object newActiveEditorId = currentState.get(ISources.ACTIVE_EDITOR_ID_NAME);
-		if (!Util.equals(newActiveEditorId, lastActiveEditorId)) {
+		if (!Objects.equals(newActiveEditorId, lastActiveEditorId)) {
 			sources |= ISources.ACTIVE_EDITOR_ID;
 			if (newActiveEditorId != IEvaluationContext.UNDEFINED_VARIABLE) {
 				lastActiveEditorId = (String) newActiveEditorId;
@@ -573,7 +573,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			String id = perspective == null ? null : perspective.getId();
-			if (Util.equals(lastPerspectiveId, id)) {
+			if (Objects.equals(lastPerspectiveId, id)) {
 				return;
 			}
 
@@ -645,7 +645,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 		final boolean statusLineChanged = newStatusLineVis != lastStatusLineVisibility;
 
 		final boolean perspectiveBarChanged = newPerspectiveBarVisibility != lastPerspectiveBarVisibility;
-		final boolean perspectiveIdChanged = !Util.equals(lastPerspectiveId, perspectiveId);
+		final boolean perspectiveIdChanged = !Objects.equals(lastPerspectiveId, perspectiveId);
 		// Fire an event for those sources that have changed.
 		if (shellChanged && windowChanged) {
 			final Map sourceValuesByName1 = new HashMap(5);
@@ -758,7 +758,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 
 	protected void handleInputChanged(IEditorPart editor) {
 		IEditorInput newInput = editor.getEditorInput();
-		if (!Util.equals(newInput, lastEditorInput)) {
+		if (!Objects.equals(newInput, lastEditorInput)) {
 			fireSourceChanged(ISources.ACTIVE_EDITOR, ISources.ACTIVE_EDITOR_INPUT_NAME,
 					newInput == null ? IEvaluationContext.UNDEFINED_VARIABLE : newInput);
 			lastEditorInput = newInput;

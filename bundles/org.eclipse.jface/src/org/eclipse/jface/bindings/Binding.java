@@ -19,7 +19,6 @@ import java.io.StringWriter;
 import java.util.Objects;
 
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.jface.util.Util;
 
 /**
  * <p>
@@ -62,7 +61,7 @@ import org.eclipse.jface.util.Util;
  * a null command on the gtk platform. We then create a new binding that maps
  * the command to the "Esc Ctrl+F" key sequence.
  * </p>
- * 
+ *
  * <pre>
  * <code>
  *     KeyBinding("Ctrl+Shift+F",null,scheme,context,null,gtk,null,SYSTEM)
@@ -367,14 +366,14 @@ public abstract class Binding {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR
-					+ Util.hashCode(getParameterizedCommand());
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getContextId());
+					+ Objects.hashCode(getParameterizedCommand());
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(getContextId());
 			hashCode = hashCode * HASH_FACTOR
-					+ Util.hashCode(getTriggerSequence());
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getLocale());
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getPlatform());
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getSchemeId());
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getType());
+					+ Objects.hashCode(getTriggerSequence());
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(getLocale());
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(getPlatform());
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(getSchemeId());
+			hashCode = hashCode * HASH_FACTOR + Integer.hashCode(getType());
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}

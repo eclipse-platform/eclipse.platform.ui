@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.tweaklets;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -42,10 +43,7 @@ public class Tweaklets {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((tweakClass == null) ? 0 : tweakClass.hashCode());
-			return result;
+			return Objects.hashCode(tweakClass);
 		}
 
 		@Override
@@ -57,12 +55,7 @@ public class Tweaklets {
 			if (getClass() != obj.getClass())
 				return false;
 			final TweakKey other = (TweakKey) obj;
-			if (tweakClass == null) {
-				if (other.tweakClass != null)
-					return false;
-			} else if (!tweakClass.equals(other.tweakClass))
-				return false;
-			return true;
+			return Objects.equals(tweakClass, other.tweakClass);
 		}
 	}
 

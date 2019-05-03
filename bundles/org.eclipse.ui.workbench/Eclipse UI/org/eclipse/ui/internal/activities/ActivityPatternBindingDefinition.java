@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityPatternBindingDefinition {
@@ -107,19 +108,9 @@ public final class ActivityPatternBindingDefinition {
 		}
 
 		final ActivityPatternBindingDefinition castedObject = (ActivityPatternBindingDefinition) object;
-		if (!Util.equals(activityId, castedObject.activityId)) {
-			return false;
-		}
-
-		if (!Util.equals(pattern, castedObject.pattern)) {
-			return false;
-		}
-
-		if (!Util.equals(isEqualityPattern, castedObject.isEqualityPattern)) {
-			return false;
-		}
-
-		return Util.equals(sourceId, castedObject.sourceId);
+		return Objects.equals(activityId, castedObject.activityId) && Objects.equals(pattern, castedObject.pattern)
+				&& isEqualityPattern == castedObject.isEqualityPattern
+				&& Objects.equals(sourceId, castedObject.sourceId);
 	}
 
 	public String getActivityId() {
@@ -141,9 +132,9 @@ public final class ActivityPatternBindingDefinition {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(pattern);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(sourceId);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}

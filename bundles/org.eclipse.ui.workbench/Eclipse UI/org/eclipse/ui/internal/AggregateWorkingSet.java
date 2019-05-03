@@ -16,6 +16,7 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -268,8 +269,8 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 		if (object instanceof AggregateWorkingSet) {
 			AggregateWorkingSet workingSet = (AggregateWorkingSet) object;
 
-			return Util.equals(workingSet.getName(), getName())
-					&& Util.equals(workingSet.getComponentsInternal(), getComponentsInternal());
+			return Objects.equals(workingSet.getName(), getName())
+					&& Objects.equals(workingSet.getComponentsInternal(), getComponentsInternal());
 		}
 		return false;
 	}

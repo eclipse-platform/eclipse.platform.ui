@@ -18,6 +18,8 @@
 
 package org.eclipse.core.internal.databinding.observable;
 
+import java.util.Objects;
+
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
@@ -151,7 +153,7 @@ public class DelayedObservableValue<T> extends AbstractObservableValue<T>
 			// passed to setValue(). Make sure we cache whatever is set.
 			cachedValue = observable.getValue();
 
-			if (!Util.equals(oldValue, cachedValue))
+			if (!Objects.equals(oldValue, cachedValue))
 				fireValueChange(Diffs.createValueDiff(oldValue, cachedValue));
 		} finally {
 			updating = false;

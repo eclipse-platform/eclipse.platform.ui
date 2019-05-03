@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -549,10 +550,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((id == null) ? 0 : id.hashCode());
-			return result;
+			return Objects.hashCode(id);
 		}
 
 		@Override
@@ -564,12 +562,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			if (getClass() != obj.getClass())
 				return false;
 			ColorsAndFontsTheme other = (ColorsAndFontsTheme) obj;
-			if (id == null) {
-				if (other.id != null)
-					return false;
-			} else if (!id.equals(other.id))
-				return false;
-			return true;
+			return Objects.equals(id, other.id);
 		}
 
 	}

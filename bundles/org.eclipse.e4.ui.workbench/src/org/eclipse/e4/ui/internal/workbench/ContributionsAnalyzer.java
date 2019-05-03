@@ -541,11 +541,11 @@ public final class ContributionsAnalyzer {
 		public int hashCode() {
 			if (hc == -1) {
 				Object exp1 = vexp == null ? null : vexp.getCoreExpression();
-				hc = Util.hashCode(parentId);
-				hc = hc * 87 + Util.hashCode(position);
+				hc = Objects.hashCode(parentId);
+				hc = hc * 87 + Objects.hashCode(position);
 				hc = hc * 87 + getSchemeTag();
-				hc = hc * 87 + Util.hashCode(exp1);
-				hc = hc * 87 + Util.hashCode(factory);
+				hc = hc * 87 + Objects.hashCode(exp1);
+				hc = hc * 87 + Objects.hashCode(factory);
 			}
 			return hc;
 		}

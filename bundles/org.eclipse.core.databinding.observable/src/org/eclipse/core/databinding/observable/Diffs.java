@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.list.ListDiff;
@@ -31,7 +32,6 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * @since 1.0
@@ -362,31 +362,27 @@ public class Diffs {
 	 * Checks whether the two objects are <code>null</code> -- allowing for
 	 * <code>null</code>.
 	 *
-	 * @param left
-	 *            The left object to compare; may be <code>null</code>.
-	 * @param right
-	 *            The right object to compare; may be <code>null</code>.
+	 * @param left  The left object to compare; may be <code>null</code>.
+	 * @param right The right object to compare; may be <code>null</code>.
 	 * @return <code>true</code> if the two objects are equivalent;
 	 *         <code>false</code> otherwise.
+	 * @deprecated Use {@link Objects#equals(Object, Object)} instead
 	 */
+	@Deprecated
 	public static final boolean equals(final Object left, final Object right) {
-		return left == null ? right == null : ((right != null) && left
-				.equals(right));
+		return Objects.equals(left, right);
 	}
 
 	/**
-	 * Returns a {@link SetDiff} describing the change between the specified old
-	 * and new set states.
+	 * Returns a {@link SetDiff} describing the change between the specified old and
+	 * new set states.
 	 *
-	 * @param <E>
-	 *            the set element type
+	 * @param <E>    the set element type
 	 *
-	 * @param oldSet
-	 *            the old set state
-	 * @param newSet
-	 *            the new set state
-	 * @return a {@link SetDiff} describing the change between the specified old
-	 *         and new set states.
+	 * @param oldSet the old set state
+	 * @param newSet the new set state
+	 * @return a {@link SetDiff} describing the change between the specified old and
+	 *         new set states.
 	 */
 	public static <E> SetDiff<E> computeSetDiff(Set<? extends E> oldSet, Set<? extends E> newSet) {
 		Set<E> additions = new HashSet<E>(newSet);
@@ -466,7 +462,7 @@ public class Diffs {
 				// potentially changed key since it is in oldMap and newMap
 				V oldValue = oldEntry.getValue();
 				V newValue = newMap.get(oldKey);
-				if (!Util.equals(oldValue, newValue)) {
+				if (!Objects.equals(oldValue, newValue)) {
 					changedKeys.add(oldKey);
 					oldValues.put(oldKey, oldValue);
 					newValues.put(oldKey, newValue);

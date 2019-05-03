@@ -19,9 +19,9 @@ package org.eclipse.core.databinding.observable.list;
 import java.util.AbstractList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.databinding.observable.IDiff;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * Object describing a diff between two lists.
@@ -138,7 +138,7 @@ public abstract class ListDiff<E> implements IDiff {
 						continue;
 					}
 
-					if (Util.equals(removeElem, addElem)) {
+					if (Objects.equals(removeElem, addElem)) {
 						visitor.handleMove(removePos, addPos, elem);
 						i++;
 						continue;

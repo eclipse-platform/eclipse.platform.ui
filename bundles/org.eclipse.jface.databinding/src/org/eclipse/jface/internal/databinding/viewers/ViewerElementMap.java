@@ -216,7 +216,7 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 
 					@Override
 					public int hashCode() {
-						return wrappedKey.hashCode() ^ (getValue() == null ? 0 : getValue().hashCode());
+						return wrappedKey.hashCode() ^ Objects.hashCode(getValue());
 					}
 				};
 				return wrappedEntrySet.remove(wrappedEntry);
@@ -455,7 +455,7 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		if (obj == null || !(obj instanceof Map))
+		if (!(obj instanceof Map))
 			return false;
 		Map<?, ?> that = (Map<?, ?>) obj;
 		return this.entrySet().equals(that.entrySet());

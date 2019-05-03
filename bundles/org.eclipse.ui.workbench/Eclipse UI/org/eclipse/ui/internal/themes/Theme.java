@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import org.eclipse.core.commands.common.EventManager;
@@ -31,7 +32,6 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -110,7 +110,7 @@ public class Theme extends EventManager implements ITheme {
 					try {
 						String thisTheme = getId();
 
-						if (Util.equals(thisTheme, theme)) {
+						if (Objects.equals(thisTheme, theme)) {
 							if (getFontRegistry().hasValueFor(key)) {
 								FontData[] data = event.getNewValue() instanceof String
 										? PreferenceConverter.basicGetFontData((String) event.getNewValue())

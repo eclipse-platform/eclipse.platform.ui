@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.activities;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.eclipse.ui.activities.CategoryEvent;
 import org.eclipse.ui.activities.ICategory;
@@ -102,19 +103,9 @@ final class Category implements ICategory {
 		}
 
 		final Category castedObject = (Category) object;
-		if (!Util.equals(categoryActivityBindings, castedObject.categoryActivityBindings)) {
-			return false;
-		}
-
-		if (!Util.equals(defined, castedObject.defined)) {
-			return false;
-		}
-
-		if (!Util.equals(id, castedObject.id)) {
-			return false;
-		}
-
-		return Util.equals(name, castedObject.name);
+		return Objects.equals(categoryActivityBindings, castedObject.categoryActivityBindings)
+				&& defined == castedObject.defined && Objects.equals(id, castedObject.id)
+				&& Objects.equals(name, castedObject.name);
 	}
 
 	void fireCategoryChanged(CategoryEvent categoryEvent) {
@@ -151,10 +142,10 @@ final class Category implements ICategory {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryActivityBindings);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(categoryActivityBindings);
+			hashCode = hashCode * HASH_FACTOR + Boolean.hashCode(defined);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(id);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(name);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}
@@ -186,7 +177,7 @@ final class Category implements ICategory {
 	boolean setCategoryActivityBindings(Set<ICategoryActivityBinding> categoryActivityBindings) {
 		categoryActivityBindings = Util.safeCopy(categoryActivityBindings, ICategoryActivityBinding.class);
 
-		if (!Util.equals(categoryActivityBindings, this.categoryActivityBindings)) {
+		if (!Objects.equals(categoryActivityBindings, this.categoryActivityBindings)) {
 			this.categoryActivityBindings = categoryActivityBindings;
 			this.categoryActivityBindingsAsArray = this.categoryActivityBindings
 					.toArray(new ICategoryActivityBinding[this.categoryActivityBindings.size()]);
@@ -210,7 +201,7 @@ final class Category implements ICategory {
 	}
 
 	boolean setName(String name) {
-		if (!Util.equals(name, this.name)) {
+		if (!Objects.equals(name, this.name)) {
 			this.name = name;
 			hashCode = HASH_INITIAL;
 			string = null;
@@ -249,7 +240,7 @@ final class Category implements ICategory {
 	}
 
 	public boolean setDescription(String description) {
-		if (!Util.equals(description, this.description)) {
+		if (!Objects.equals(description, this.description)) {
 			this.description = description;
 			hashCode = HASH_INITIAL;
 			string = null;

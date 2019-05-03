@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import org.eclipse.core.commands.CommandManager;
@@ -95,7 +96,7 @@ public class KeyController {
 		if (!isNotifying()) {
 			return;
 		}
-		if (Util.equals(oldVal, newVal)) {
+		if (Objects.equals(oldVal, newVal)) {
 			return;
 		}
 

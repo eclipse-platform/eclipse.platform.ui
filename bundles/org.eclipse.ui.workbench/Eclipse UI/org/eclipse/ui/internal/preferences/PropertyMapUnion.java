@@ -15,9 +15,8 @@ package org.eclipse.ui.internal.preferences;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * @since 3.1
@@ -96,7 +95,7 @@ public class PropertyMapUnion implements IPropertyMap {
 					// Determine if the value is common
 					Object value = toAdd.getValue(key, Object.class);
 
-					if (!Util.equals(value, toAdd.getValue(key, Object.class))) {
+					if (!Objects.equals(value, toAdd.getValue(key, Object.class))) {
 						// Set the value to null if not common
 						localInfo.value = null;
 					}

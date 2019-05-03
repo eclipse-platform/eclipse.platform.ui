@@ -16,6 +16,7 @@ package org.eclipse.core.commands.contexts;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.NamedHandleObject;
@@ -143,14 +144,14 @@ public final class Context extends NamedHandleObject implements Comparable {
         final boolean definedChanged = !this.defined;
         this.defined = true;
 
-        final boolean nameChanged = !Util.equals(this.name, name);
+		final boolean nameChanged = !Objects.equals(this.name, name);
         this.name = name;
 
-        final boolean descriptionChanged = !Util.equals(this.description,
+		final boolean descriptionChanged = !Objects.equals(this.description,
                 description);
         this.description = description;
 
-        final boolean parentIdChanged = !Util.equals(this.parentId, parentId);
+		final boolean parentIdChanged = !Objects.equals(this.parentId, parentId);
         this.parentId = parentId;
 
 		fireContextChanged(new ContextEvent(this, definedChanged, nameChanged, descriptionChanged, parentIdChanged));

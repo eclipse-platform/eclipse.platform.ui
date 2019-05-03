@@ -16,6 +16,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -24,7 +25,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * Abstract baseclass for IWorkingSet implementations.
@@ -68,7 +68,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		this.name = name;
 		this.label = label;
-		labelBoundToName = Util.equals(name, label);
+		labelBoundToName = Objects.equals(name, label);
 		uniqueId = Long.toString(System.currentTimeMillis()) + "_" + counter++; //$NON-NLS-1$
 	}
 
@@ -191,7 +191,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 		AbstractWorkingSet oldWorkingSet = clone();
 
 		this.label = label == null ? getName() : label;
-		labelBoundToName = Util.equals(label, name); // rebind the label to the name
+		labelBoundToName = Objects.equals(label, name); // rebind the label to the name
 
 		fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, oldWorkingSet);
 	}

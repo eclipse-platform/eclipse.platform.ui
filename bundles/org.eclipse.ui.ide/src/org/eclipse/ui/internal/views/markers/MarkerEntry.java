@@ -18,6 +18,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -414,10 +415,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((marker == null) ? 0 : marker.hashCode());
-		return result;
+		return Objects.hashCode(marker);
 	}
 
 	@Override
@@ -429,13 +427,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 			return false;
 		}
 		MarkerEntry other = (MarkerEntry) obj;
-		if (marker == null) {
-			if (other.marker != null) {
-				return false;
-			}
-		} else if (!marker.equals(other.marker)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(marker, other.marker);
 	}
 }

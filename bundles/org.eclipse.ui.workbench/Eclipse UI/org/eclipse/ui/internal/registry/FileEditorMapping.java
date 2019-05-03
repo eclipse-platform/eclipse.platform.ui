@@ -17,8 +17,8 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.TextProcessor;
@@ -116,51 +116,21 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 			return false;
 		}
 		FileEditorMapping mapping = (FileEditorMapping) obj;
-		if (!this.name.equals(mapping.name)) {
-			return false;
-		}
-		if (!this.extension.equals(mapping.extension)) {
-			return false;
-		}
-
-		if (!compareList(this.editors, mapping.editors)) {
-			return false;
-		}
-		if (!compareList(this.declaredDefaultEditors, mapping.declaredDefaultEditors)) {
-			return false;
-		}
-		return compareList(this.deletedEditors, mapping.deletedEditors);
-	}
-
-	/**
-	 * Compare the editor ids from both lists and return true if they are equals.
-	 */
-	private boolean compareList(List<IEditorDescriptor> l1, List<IEditorDescriptor> l2) {
-		if (l1.size() != l2.size()) {
-			return false;
-		}
-
-		Iterator<IEditorDescriptor> i1 = l1.iterator();
-		Iterator<IEditorDescriptor> i2 = l2.iterator();
-		while (i1.hasNext() && i2.hasNext()) {
-			Object o1 = i1.next();
-			Object o2 = i2.next();
-			if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-				return false;
-			}
-		}
-		return true;
+		return Objects.equals(name, mapping.name) && Objects.equals(extension, mapping.extension)
+				&& Objects.equals(editors, mapping.editors)
+				&& Objects.equals(declaredDefaultEditors, mapping.declaredDefaultEditors)
+				&& Objects.equals(deletedEditors, mapping.deletedEditors);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((declaredDefaultEditors == null) ? 0 : declaredDefaultEditors.hashCode());
-		result = prime * result + ((deletedEditors == null) ? 0 : deletedEditors.hashCode());
-		result = prime * result + ((editors == null) ? 0 : editors.hashCode());
-		result = prime * result + ((extension == null) ? 0 : extension.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + Objects.hashCode(declaredDefaultEditors);
+		result = prime * result + Objects.hashCode(deletedEditors);
+		result = prime * result + Objects.hashCode(editors);
+		result = prime * result + Objects.hashCode(extension);
+		result = prime * result + Objects.hashCode(name);
 		return result;
 	}
 

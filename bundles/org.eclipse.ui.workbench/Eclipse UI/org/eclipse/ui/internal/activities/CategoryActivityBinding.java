@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.activities;
 
+import java.util.Objects;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.internal.util.Util;
 
@@ -58,11 +59,8 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
 		}
 
 		final CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
-		if (!Util.equals(activityId, castedObject.activityId)) {
-			return false;
-		}
-
-		return Util.equals(categoryId, castedObject.categoryId);
+		return Objects.equals(activityId, castedObject.activityId)
+				&& Objects.equals(categoryId, castedObject.categoryId);
 	}
 
 	@Override
@@ -78,8 +76,8 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_INITIAL) {
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Objects.hashCode(categoryId);
 			if (hashCode == HASH_INITIAL) {
 				hashCode++;
 			}

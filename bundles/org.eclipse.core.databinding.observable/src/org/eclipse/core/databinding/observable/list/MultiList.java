@@ -332,11 +332,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	@Override
 	public int hashCode() {
 		getterCalled();
-		int result = 1;
-		for (IObservableList<E> list : lists) {
-			result = result * 31 + list.hashCode();
-		}
-		return result;
+		return lists.hashCode();
 	}
 
 	@Override

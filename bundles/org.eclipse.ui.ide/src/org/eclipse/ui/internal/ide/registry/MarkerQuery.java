@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.registry;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.ide.Policy;
@@ -145,25 +148,8 @@ public class MarkerQuery {
 		}
 
         MarkerQuery mq = (MarkerQuery) o;
-        if (!(type == null ? mq.type == null : type.equals(mq.type))) {
-			return false;
-		}
-
-        if (matchTypeChildren != mq.matchTypeChildren) {
-			return false;
-        }
-
-        if (attributes.length != mq.attributes.length) {
-			return false;
-		}
-
-        for (int i = 0; i < attributes.length; i++) {
-            if (!(attributes[i].equals(mq.attributes[i]))) {
-				return false;
-			}
-        }
-
-        return true;
+		return Objects.equals(type, mq.type) && Objects.equals(matchTypeChildren, mq.matchTypeChildren)
+				&& Arrays.equals(attributes, mq.attributes);
     }
 
     @Override

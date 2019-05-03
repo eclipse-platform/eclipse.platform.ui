@@ -17,7 +17,7 @@ package org.eclipse.ui.internal.services;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+import java.util.Objects;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.Parameterization;
@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IDisposable;
 
 /**
@@ -357,7 +356,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 				final IParameter[] commandParameters = command.getParameters();
 				if (parameters != null) {
 					for (final IParameter currentParameter : commandParameters) {
-						if (Util.equals(currentParameter.getId(), id)) {
+						if (Objects.equals(currentParameter.getId(), id)) {
 							parameter = currentParameter;
 							break;
 						}

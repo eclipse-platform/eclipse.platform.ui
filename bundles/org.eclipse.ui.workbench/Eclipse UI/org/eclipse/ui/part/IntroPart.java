@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import java.util.Objects;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,7 +32,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -289,7 +289,7 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 	 */
 	protected void setTitle(String titleLabel) {
 		Assert.isNotNull(titleLabel);
-		if (Util.equals(this.titleLabel, titleLabel))
+		if (Objects.equals(this.titleLabel, titleLabel))
 			return;
 		this.titleLabel = titleLabel;
 		firePropertyChange(IIntroPart.PROP_TITLE);

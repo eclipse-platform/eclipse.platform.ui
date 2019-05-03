@@ -16,9 +16,10 @@
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
+import java.util.Objects;
+
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  *
@@ -60,7 +61,7 @@ public abstract class AbstractVetoableValue<T> extends
 		}
 		doSetApprovedValue(value);
 
-		if (!Util.equals(diff.getOldValue(), diff.getNewValue())) {
+		if (!Objects.equals(diff.getOldValue(), diff.getNewValue())) {
 			fireValueChange(diff);
 		}
 	}

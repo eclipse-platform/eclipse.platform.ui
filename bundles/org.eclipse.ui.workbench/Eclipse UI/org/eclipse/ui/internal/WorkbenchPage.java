@@ -41,6 +41,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 import javax.annotation.PostConstruct;
@@ -181,7 +182,6 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -3672,7 +3672,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			ISaveablePart2 saveable2 = SaveableHelper.getSaveable2(part);
 			if (saveable2 != null) {
 				WorkbenchPage page = (WorkbenchPage) part.getSite().getPage();
-				if (!Util.equals(currentPage, page)) {
+				if (!Objects.equals(currentPage, page)) {
 					if (currentPage != null && currentPageOriginalPerspective != null) {
 						if (!currentPageOriginalPerspective.equals(currentPage.getActivePerspective())) {
 							currentPage.setPerspective(currentPageOriginalPerspective.getDesc());

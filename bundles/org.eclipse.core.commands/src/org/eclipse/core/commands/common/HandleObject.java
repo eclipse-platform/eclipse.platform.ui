@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.commands.common;
 
-import org.eclipse.core.internal.commands.util.Util;
+import java.util.Objects;
 
 /**
  * <p>
@@ -124,7 +124,7 @@ public abstract class HandleObject extends EventManager implements
 
 		// Check each property in turn.
 		final HandleObject handle= (HandleObject) object;
-		return Util.equals(id, handle.id)
+		return Objects.equals(id, handle.id)
 				&& (this.getClass() == handle.getClass());
 	}
 
@@ -141,7 +141,7 @@ public abstract class HandleObject extends EventManager implements
     @Override
 	public final int hashCode() {
         if (hashCode == HASH_CODE_NOT_COMPUTED) {
-			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
+			hashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(id);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}

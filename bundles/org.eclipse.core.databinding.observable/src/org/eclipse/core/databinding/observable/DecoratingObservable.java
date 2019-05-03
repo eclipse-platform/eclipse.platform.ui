@@ -16,7 +16,7 @@
 
 package org.eclipse.core.databinding.observable;
 
-import org.eclipse.core.internal.databinding.observable.Util;
+import java.util.Objects;
 
 /**
  * An observable which decorates another observable
@@ -102,9 +102,9 @@ public class DecoratingObservable extends AbstractObservable implements
 			return false;
 		if (getClass() == obj.getClass()) {
 			DecoratingObservable other = (DecoratingObservable) obj;
-			return Util.equals(this.decorated, other.decorated);
+			return Objects.equals(this.decorated, other.decorated);
 		}
-		return Util.equals(decorated, obj);
+		return Objects.equals(decorated, obj);
 	}
 
 	@Override

@@ -18,13 +18,13 @@ package org.eclipse.core.databinding.observable.value;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * @param <T>
@@ -59,7 +59,7 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 				Iterator<T> it = elements.iterator();
 				T first = it.next();
 				while (it.hasNext())
-					if (!Util.equals(first, it.next()))
+					if (!Objects.equals(first, it.next()))
 						return multiValue;
 				return first;
 			}

@@ -17,7 +17,7 @@ package org.eclipse.ui.internal.services;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+import java.util.Objects;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.Parameterization;
@@ -31,7 +31,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -251,7 +250,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 				final IParameter[] commandParameters = command.getParameters();
 				if (commandParameters != null) {
 					for (final IParameter currentParameter : commandParameters) {
-						if (Util.equals(currentParameter.getId(), id)) {
+						if (Objects.equals(currentParameter.getId(), id)) {
 							parameter = currentParameter;
 							break;
 						}

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -44,7 +45,6 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.internal.databinding.identity.IdentityMap;
 import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
 import org.eclipse.core.internal.databinding.identity.IdentitySet;
-import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @param <S>
@@ -223,7 +223,7 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 		getterCalled();
 
 		for (M m : masterList) {
-			if (Util.equals(detailProperty.getValue(m), o))
+			if (Objects.equals(detailProperty.getValue(m), o))
 				return true;
 		}
 		return false;
@@ -415,7 +415,7 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 		if (cachedValues != null) {
 			T oldValue = cachedValues.get(masterElement);
 			T newValue = detailProperty.getValue(masterElement);
-			if (!Util.equals(oldValue, newValue) || staleElements.contains(masterElement)) {
+			if (!Objects.equals(oldValue, newValue) || staleElements.contains(masterElement)) {
 				cachedValues.put(masterElement, newValue);
 				staleElements.remove(masterElement);
 				fireListChange(indicesOf(masterElement), oldValue, newValue);

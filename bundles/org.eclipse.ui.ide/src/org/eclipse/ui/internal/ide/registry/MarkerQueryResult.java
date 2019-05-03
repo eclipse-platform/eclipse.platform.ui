@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.registry;
 
+import java.util.Arrays;
+
 /**
  * Instances of this class represent the result of a specific marker
  * query. Specifically they contain an ordered collection of marker
@@ -57,17 +59,7 @@ public class MarkerQueryResult {
 		}
 
         MarkerQueryResult mqr = (MarkerQueryResult) o;
-        if (values.length != mqr.values.length) {
-			return false;
-		}
-
-        for (int i = 0; i < values.length; i++) {
-            if (!(values[i].equals(mqr.values[i]))) {
-				return false;
-			}
-        }
-
-        return true;
+		return Arrays.equals(values, mqr.values);
     }
 
     @Override
@@ -79,10 +71,6 @@ public class MarkerQueryResult {
      * Computes the hash code for this instance.
      */
     public void computeHashCode() {
-        hashCode = 19;
-
-        for (String value : values) {
-            hashCode = hashCode * 37 + value.hashCode();
-        }
+		hashCode = Arrays.hashCode(values);
     }
 }
