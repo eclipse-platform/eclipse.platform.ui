@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.util.Objects;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -73,25 +74,15 @@ public class BuildConfiguration extends PlatformObject implements IBuildConfigur
 		if (getClass() != obj.getClass())
 			return false;
 		BuildConfiguration other = (BuildConfiguration) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (project == null) {
-			if (other.project != null)
-				return false;
-		} else if (!project.equals(other.project))
-			return false;
-		return true;
+		return Objects.equals(this.name, other.name) && Objects.equals(this.project, other.project);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((project == null) ? 0 : project.hashCode());
+		result = prime * result + Objects.hashCode(name);
+		result = prime * result + Objects.hashCode(project);
 		return result;
 	}
 
