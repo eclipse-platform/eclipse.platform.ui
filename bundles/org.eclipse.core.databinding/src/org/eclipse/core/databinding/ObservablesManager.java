@@ -69,17 +69,19 @@ public class ObservablesManager {
 	}
 
 	/**
-	 * Adds the given data binding context's target and/or model observables to
-	 * this manager.
+	 * Adds the given data binding context's target and/or model observables to this
+	 * manager.
+	 * <p>
+	 * Note: The {@code context} argument must NOT be disposed before this object
+	 * itself is disposed. If it is then its contents will not be disposed by this
+	 * object.
+	 * </p>
 	 *
-	 * @param context
-	 *            the data binding context
-	 * @param trackTargets
-	 *            <code>true</code> if the target observables of the context
-	 *            should be managed
-	 * @param trackModels
-	 *            <code>true</code> if the model observables of the context
-	 *            should be managed
+	 * @param context      the data binding context
+	 * @param trackTargets <code>true</code> if the target observables of the
+	 *                     context should be managed
+	 * @param trackModels  <code>true</code> if the model observables of the context
+	 *                     should be managed
 	 */
 	public void addObservablesFromContext(DataBindingContext context,
 			boolean trackTargets, boolean trackModels) {
@@ -110,6 +112,11 @@ public class ObservablesManager {
 
 	/**
 	 * Disposes of this manager and all observables that it manages.
+	 * <p>
+	 * Note: If {@link #addObservablesFromContext} is used then its {@code context}
+	 * argument must NOT be disposed before this object itself is disposed. If it is
+	 * then its contents will not be disposed by this object.
+	 * </p>
 	 */
 	public void dispose() {
 		Set<IObservable> observables = new IdentitySet<>();
