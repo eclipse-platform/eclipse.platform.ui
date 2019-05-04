@@ -95,7 +95,7 @@ public class ComboObservableValueSelectionTest {
 
 		@Override
 		public IObservableValue createObservableValue(Realm realm) {
-			return WidgetProperties.selection().observe(realm, combo);
+			return WidgetProperties.comboSelection().observe(realm, combo);
 		}
 
 		@Override

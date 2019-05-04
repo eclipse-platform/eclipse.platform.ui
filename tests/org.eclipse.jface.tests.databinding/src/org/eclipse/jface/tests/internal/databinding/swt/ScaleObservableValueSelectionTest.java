@@ -104,7 +104,7 @@ public class ScaleObservableValueSelectionTest extends ObservableDelegateTest {
 
 		@Override
 		public IObservableValue createObservableValue(Realm realm) {
-			return WidgetProperties.selection().observe(realm, scale);
+			return WidgetProperties.scaleSelection().observe(realm, scale);
 		}
 
 		@Override

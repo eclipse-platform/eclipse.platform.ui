@@ -44,7 +44,7 @@ public class DateTimeTimeObservableValueTest extends AbstractSWTTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		dateTime = new DateTime(getShell(), SWT.TIME);
-		dateObservable = WidgetProperties.selection().observe(dateTime);
+		dateObservable = WidgetProperties.dateTimeSelection().observe(dateTime);
 	}
 
 	@Test

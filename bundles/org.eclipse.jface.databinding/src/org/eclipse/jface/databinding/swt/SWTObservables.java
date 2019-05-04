@@ -212,7 +212,7 @@ public class SWTObservables {
 	 */
 	@Deprecated
 	public static ISWTObservableValue observeSelection(Widget widget) {
-		return WidgetProperties.selection().observe(widget);
+		return WidgetProperties.widgetSelection().observe(widget);
 	}
 
 	/**

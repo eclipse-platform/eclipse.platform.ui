@@ -271,8 +271,8 @@ public class WidgetPropertiesTest extends AbstractSWTTestCase {
 	public void testSelection_ObserveMenuItem() {
 		Menu menu = new Menu(shell, SWT.BAR);
 		MenuItem item = new MenuItem(menu, SWT.CHECK);
-		IWidgetValueProperty<MenuItem, Object> prop = WidgetProperties.selection();
-		IObservableValue<Object> observable = prop.observe(item);
+		IWidgetValueProperty<MenuItem, Boolean> prop = WidgetProperties.menuItemSelection();
+		IObservableValue<Boolean> observable = prop.observe(item);
 
 		assertEquals(boolean.class, observable.getValueType());
 

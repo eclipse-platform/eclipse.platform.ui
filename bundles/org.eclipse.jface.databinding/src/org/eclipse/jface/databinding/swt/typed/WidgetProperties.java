@@ -248,7 +248,7 @@ public class WidgetProperties {
 	 *         {@link List}, {@link MenuItem}, {@link Scale}, {@link Slider} or
 	 *         {@link Spinner}.
 	 */
-	public static <S extends Widget, T> IWidgetValueProperty<S, T> selection() {
+	public static <S extends Widget, T> IWidgetValueProperty<S, T> widgetSelection() {
 		return new WidgetSelectionProperty<>();
 	}
 

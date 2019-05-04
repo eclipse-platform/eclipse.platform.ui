@@ -65,7 +65,7 @@ public class CComboObservableValueTest extends AbstractSWTTestCase {
 	@Test
 	public void testSetValueWithNull() {
 		testSetValueWithNull(WidgetProperties.text());
-		testSetValueWithNull(WidgetProperties.selection());
+		testSetValueWithNull(WidgetProperties.widgetSelection());
 	}
 
 	protected void testSetValueWithNull(IValueProperty property) {

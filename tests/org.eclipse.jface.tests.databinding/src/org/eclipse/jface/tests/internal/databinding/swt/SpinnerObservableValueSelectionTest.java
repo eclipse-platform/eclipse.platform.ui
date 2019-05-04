@@ -104,7 +104,7 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 
 		@Override
 		public IObservableValue createObservableValue(Realm realm) {
-			return WidgetProperties.selection().observe(realm, spinner);
+			return WidgetProperties.spinnerSelection().observe(realm, spinner);
 		}
 
 		@Override

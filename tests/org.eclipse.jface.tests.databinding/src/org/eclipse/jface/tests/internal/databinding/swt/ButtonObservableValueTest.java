@@ -42,7 +42,7 @@ import junit.framework.TestSuite;
  */
 public class ButtonObservableValueTest extends AbstractSWTTestCase {
 	private Button button;
-	private ISWTObservableValue<Object> observableValue;
+	private ISWTObservableValue<Boolean> observableValue;
 	private ValueChangeEventTracker<Object> listener;
 
 	@Override
@@ -52,7 +52,7 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 
 		Shell shell = getShell();
 		button = new Button(shell, SWT.CHECK);
-		observableValue = WidgetProperties.selection().observe(button);
+		observableValue = WidgetProperties.buttonSelection().observe(button);
 		listener = new ValueChangeEventTracker<>();
 	}
 
@@ -143,7 +143,7 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 
 		@Override
 		public IObservableValue<Object> createObservableValue(Realm realm) {
-			return WidgetProperties.selection().observe(realm, button);
+			return WidgetProperties.widgetSelection().observe(realm, button);
 		}
 
 		@Override
