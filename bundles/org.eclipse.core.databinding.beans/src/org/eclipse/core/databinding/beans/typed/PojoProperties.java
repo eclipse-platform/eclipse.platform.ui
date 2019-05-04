@@ -163,7 +163,7 @@ public class PojoProperties {
 	 *         bean class.
 	 */
 	public static <S, T> IBeanValueProperty<S, T>[] values(Class<S> beanClass,
-			String[] propertyNames) {
+			String... propertyNames) {
 		@SuppressWarnings("unchecked")
 		IBeanValueProperty<S, T>[] properties = (IBeanValueProperty<S, T>[]) new IBeanValueProperty<?, ?>[propertyNames.length];
 		for (int i = 0; i < properties.length; i++)

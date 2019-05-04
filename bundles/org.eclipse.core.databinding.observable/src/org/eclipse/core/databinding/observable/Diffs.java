@@ -645,7 +645,8 @@ public class Diffs {
 	 * @param differences
 	 * @return a list diff with the given entries
 	 */
-	public static <E> ListDiff<E> createListDiff(final ListDiffEntry<E>[] differences) {
+	@SafeVarargs
+	public static <E> ListDiff<E> createListDiff(final ListDiffEntry<E>... differences) {
 		return new ListDiff<E>() {
 			@Override
 			public ListDiffEntry<E>[] getDifferences() {
