@@ -130,10 +130,10 @@ public class ObservablesManager {
 					.booleanValue();
 			for (Binding binding : context.getBindings()) {
 				if (disposeTargets) {
-					observables.add(binding.getTarget());
+					observables.addAll(binding.getTargets());
 				}
 				if (disposeModels) {
-					observables.add(binding.getModel());
+					observables.addAll(binding.getModels());
 				}
 			}
 		}
