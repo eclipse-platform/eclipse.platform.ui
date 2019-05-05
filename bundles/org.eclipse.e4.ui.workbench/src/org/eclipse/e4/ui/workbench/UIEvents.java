@@ -168,8 +168,16 @@ public class UIEvents {
 	}
 
 	/**
-	 * @param event
-	 *            An OSGI event representing a UIEvent
+	 * @param event An OSGI event representing a UIEvent
+	 * @return true if it is a move event, false otherwise.
+	 * @since 1.9
+	 */
+	public static boolean isMOVE(Event event) {
+		return UIEvents.EventTypes.MOVE.equals(event.getProperty(UIEvents.EventTags.TYPE));
+	}
+
+	/**
+	 * @param event An OSGI event representing a UIEvent
 	 * @return true if it is a set event, false otherwise.
 	 */
 	public static boolean isSET(Event event) {
