@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
-import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
-
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -24,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
@@ -615,11 +614,10 @@ public abstract class Dialog extends Window {
 	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		// increment the number of columns in the button bar
 		((GridLayout) parent.getLayout()).numColumns++;
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText(label);
-		button.setFont(JFaceResources.getDialogFont());
-		button.setData(Integer.valueOf(id));
-		button.addSelectionListener(widgetSelectedAdapter(event -> buttonPressed(((Integer) event.widget.getData()).intValue())));
+		Button button = WidgetFactory.button(SWT.PUSH).text(label).font(JFaceResources.getDialogFont())
+				.data(Integer.valueOf(id))
+				.onSelect(event -> buttonPressed(((Integer) event.widget.getData()).intValue())).
+				create(parent);
 		if (defaultButton) {
 			Shell shell = parent.getShell();
 			if (shell != null) {
@@ -648,7 +646,6 @@ public abstract class Dialog extends Window {
 	 * @return the button bar control
 	 */
 	protected Control createButtonBar(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
 		// create a layout with spacing and margins appropriate for the font
 		// size.
 		GridLayout layout = new GridLayout();
@@ -658,11 +655,11 @@ public abstract class Dialog extends Window {
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		composite.setLayout(layout);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
 				| GridData.VERTICAL_ALIGN_CENTER);
-		composite.setLayoutData(data);
-		composite.setFont(parent.getFont());
+
+		Composite composite = WidgetFactory.composite(SWT.NONE).layout(layout).layoutData(data).font(parent.getFont())
+				.create(parent);
 
 		// Add the buttons to the button bar.
 		createButtonsForButtonBar(composite);
@@ -757,13 +754,12 @@ public abstract class Dialog extends Window {
 	@Override
 	protected Control createContents(Composite parent) {
 		// create the top level composite for the dialog
-		Composite composite = new Composite(parent, 0);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.verticalSpacing = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite composite = WidgetFactory.composite(0).layout(layout).layoutData(new GridData(GridData.FILL_BOTH))
+				.create(parent);
 		applyDialogFont(composite);
 		// initialize the dialog units
 		initializeDialogUnits(composite);
@@ -804,14 +800,13 @@ public abstract class Dialog extends Window {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		// create a composite with standard margins and spacing
-		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite composite = WidgetFactory.composite(SWT.NONE).layout(layout)
+				.layoutData(new GridData(GridData.FILL_BOTH)).create(parent);
 		applyDialogFont(composite);
 		return composite;
 	}
