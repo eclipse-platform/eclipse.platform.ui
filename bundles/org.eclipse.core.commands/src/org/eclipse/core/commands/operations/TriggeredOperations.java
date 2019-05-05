@@ -288,9 +288,9 @@ public final class TriggeredOperations extends AbstractOperation implements
 		}
 		for (int i = 0; i < children.size(); i++) {
 			IUndoContext[] contexts = children.get(i).getContexts();
-			for (int j = 0; j < contexts.length; j++) {
-				if (!allContexts.contains(contexts[j])) {
-					allContexts.add(contexts[j]);
+			for (IUndoContext context : contexts) {
+				if (!allContexts.contains(context)) {
+					allContexts.add(context);
 				}
 			}
 		}
