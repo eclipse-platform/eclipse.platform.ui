@@ -121,4 +121,15 @@ public final class ButtonFactory extends AbstractControlFactory<ButtonFactory, B
 		addProperty(c -> c.addSelectionListener(SelectionListener.widgetSelectedAdapter(consumer)));
 		return this;
 	}
+
+	/**
+	 * Sets the data for the button.
+	 *
+	 * @param data
+	 * @return this
+	 */
+	public ButtonFactory data(Object data) {
+		addProperty(b -> b.setData(data));
+		return this;
+	}
 }
