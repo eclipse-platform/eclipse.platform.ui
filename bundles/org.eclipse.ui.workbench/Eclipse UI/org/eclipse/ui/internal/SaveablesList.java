@@ -465,7 +465,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 */
 	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean save, final IWorkbenchWindow window,
 			Map<Saveable, Save> saveOptions) {
-		if (saveOptions == null || saveOptions.size() == 0) {
+		if (saveOptions == null || saveOptions.isEmpty()) {
 			preCloseParts(partsToClose, save, window);
 		}
 		Collection<Save> saveValues = saveOptions.values();
@@ -638,7 +638,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			IRunnableContext runnableContext, final boolean canCancel, boolean stillOpenElsewhere,
 			Map<Saveable, Save> saveOptionMap) {
 		List<Saveable> tobeSaved = new ArrayList<>();
-		if (saveOptionMap == null || saveOptionMap.size() == 0) {
+		if (saveOptionMap == null || saveOptionMap.isEmpty()) {
 			return promptForSaving(modelsToSave, shellProvider, runnableContext, canCancel, stillOpenElsewhere);
 		}
 		if (modelsToSave.size() > 0) {

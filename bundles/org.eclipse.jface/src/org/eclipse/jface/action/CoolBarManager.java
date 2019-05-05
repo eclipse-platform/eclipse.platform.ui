@@ -117,7 +117,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	private ArrayList<IContributionItem> adjustContributionList(ArrayList<IContributionItem> contributionList) {
 		IContributionItem item;
 		// Fist remove a separator if it is the first element of the list
-		if (contributionList.size() != 0) {
+		if (!contributionList.isEmpty()) {
 			item = contributionList.get(0);
 			if (item.isSeparator()) {
 				contributionList.remove(0);
@@ -139,7 +139,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 
 				}
 			}
-			if (contributionList.size() != 0) {
+			if (!contributionList.isEmpty()) {
 				// Now check last element to see if there is a separator
 				item = contributionList.get(contributionList.size() - 1);
 				if (item.isSeparator()) {
@@ -621,7 +621,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 		}
 
 		contributionList = adjustContributionList(contributionList);
-		if (contributionList.size() != 0) {
+		if (!contributionList.isEmpty()) {
 			IContributionItem[] array = new IContributionItem[contributionList.size() - 1];
 			array = contributionList.toArray(array);
 			internalSetItems(array);

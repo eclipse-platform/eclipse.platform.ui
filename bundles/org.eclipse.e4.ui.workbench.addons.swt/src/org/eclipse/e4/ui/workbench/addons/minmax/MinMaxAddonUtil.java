@@ -265,7 +265,7 @@ public class MinMaxAddonUtil {
 			for (MUIElement elementMUI : elementsToMinimize) {
 				List<Object> findElements = modelService.findElements(elementMUI, element.getElementId(),
 						null, null);
-				if (findElements != null && findElements.size() != 0) {
+				if (findElements != null && !findElements.isEmpty()) {
 					elementsToRemove.add(elementMUI);
 				}
 			}

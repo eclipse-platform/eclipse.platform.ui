@@ -120,7 +120,7 @@ public class StaticTest extends UITestCase {
         // Check activity pattern bindings
 		Set<?> activityPatternBindings = first_activity
                 .getActivityPatternBindings();
-        assertTrue(activityPatternBindings.size() != 0);
+        assertTrue(!activityPatternBindings.isEmpty());
         IActivityPatternBinding activityPatternBinding = (IActivityPatternBinding) activityPatternBindings
                 .toArray()[0];
         assertTrue(activityPatternBinding.getActivityId().equals(
