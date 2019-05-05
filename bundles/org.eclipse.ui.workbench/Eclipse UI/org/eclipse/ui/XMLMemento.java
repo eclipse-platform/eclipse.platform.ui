@@ -570,11 +570,8 @@ public final class XMLMemento implements IMemento {
 	 *                     stream.
 	 */
 	public void save(Writer writer) throws IOException {
-		DOMWriter out = new DOMWriter(writer);
-		try {
+		try (DOMWriter out = new DOMWriter(writer)) {
 			out.print(element);
-		} finally {
-			out.close();
 		}
 	}
 

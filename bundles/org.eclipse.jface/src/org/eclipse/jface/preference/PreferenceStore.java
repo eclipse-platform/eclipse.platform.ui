@@ -364,9 +364,9 @@ public class PreferenceStore extends EventManager implements
 		if (filename == null) {
 			throw new IOException("File name not specified");//$NON-NLS-1$
 		}
-		FileInputStream in = new FileInputStream(filename);
-		load(in);
-		in.close();
+		try (FileInputStream in = new FileInputStream(filename)) {
+			load(in);
+		}
 	}
 
 	/**
@@ -425,14 +425,8 @@ public class PreferenceStore extends EventManager implements
 		if (filename == null) {
 			throw new IOException("File name not specified");//$NON-NLS-1$
 		}
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(filename);
+		try (FileOutputStream out = new FileOutputStream(filename)) {
 			save(out, null);
-		} finally {
-			if (out != null) {
-				out.close();
-			}
 		}
 	}
 

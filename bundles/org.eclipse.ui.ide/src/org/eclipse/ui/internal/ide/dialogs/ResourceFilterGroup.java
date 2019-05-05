@@ -1278,12 +1278,13 @@ public class ResourceFilterGroup {
 				FilterCopy[] myTypes = (FilterCopy[]) object;
 				try {
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					DataOutputStream writeOut = new DataOutputStream(out);
-					writeOut.writeInt(myTypes.length);
-					for (FilterCopy myType : myTypes)
-						writeOut.writeInt(myType.getSerialNumber());
-					byte[] buffer = out.toByteArray();
-					writeOut.close();
+					byte[] buffer;
+					try (DataOutputStream writeOut = new DataOutputStream(out)) {
+						writeOut.writeInt(myTypes.length);
+						for (FilterCopy myType : myTypes)
+							writeOut.writeInt(myType.getSerialNumber());
+						buffer = out.toByteArray();
+					}
 					super.javaToNative(buffer, transferData);
 				} catch (IOException e) {
 				}
@@ -1299,20 +1300,20 @@ public class ResourceFilterGroup {
 				FilterCopy[] myData;
 				try {
 					ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-					DataInputStream readIn = new DataInputStream(in);
+				    try (DataInputStream readIn = new DataInputStream(in)) {
 					int size = readIn.readInt();
 
 					LinkedList<FilterCopy> droppedFilters = new LinkedList<>();
 					for (int i = 0; i < size; i++) {
-						int serialNumber = readIn.readInt();
-						FilterCopy tmp = filters
-								.findBySerialNumber(serialNumber);
-						if (tmp != null)
-							droppedFilters.add(tmp);
+					    int serialNumber = readIn.readInt();
+					    FilterCopy tmp = filters
+						    .findBySerialNumber(serialNumber);
+					    if (tmp != null)
+						droppedFilters.add(tmp);
 					}
 					myData = droppedFilters
-							.toArray(new FilterCopy[0]);
-					readIn.close();
+						.toArray(new FilterCopy[0]);
+				    }
 				} catch (IOException ex) {
 					return null;
 				}

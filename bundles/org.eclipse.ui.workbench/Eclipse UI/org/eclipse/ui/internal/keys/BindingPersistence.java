@@ -968,12 +968,9 @@ public class BindingPersistence extends PreferencePersistence {
 
 		// Write the XML block to the workbench preference store.
 		final IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
-		final Writer writer = new StringWriter();
-		try {
+		try (Writer writer = new StringWriter()) {
 			xmlMemento.save(writer);
 			preferenceStore.setValue(EXTENSION_COMMANDS, writer.toString());
-		} finally {
-			writer.close();
 		}
 	}
 

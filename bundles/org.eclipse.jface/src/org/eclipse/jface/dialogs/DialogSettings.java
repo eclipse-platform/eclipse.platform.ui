@@ -282,12 +282,12 @@ public class DialogSettings implements IDialogSettings {
     }
 
     @Override
-	public void load(String fileName) throws IOException {
-        FileInputStream stream = new FileInputStream(fileName);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-				stream, StandardCharsets.UTF_8));
-        load(reader);
-        reader.close();
+    public void load(String fileName) throws IOException {
+    	FileInputStream stream = new FileInputStream(fileName);
+    	try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+    			stream, StandardCharsets.UTF_8))) {
+    		load(reader);
+    	}
     }
 
     private void load(Document document, Element root) {

@@ -760,9 +760,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	ImageData[] getImageData(URL fileSystemPath, ImageLoader loader) {
 		try {
-			InputStream stream = fileSystemPath.openStream();
-			ImageData[] result = loader.load(stream);
-			stream.close();
+		    ImageData[] result;
+		    try (InputStream stream = fileSystemPath.openStream()) {
+		    	result = loader.load(stream);
+		    }
 			return result;
 		} catch (IOException exception) {
 			ProgressManagerUtil.logException(exception);

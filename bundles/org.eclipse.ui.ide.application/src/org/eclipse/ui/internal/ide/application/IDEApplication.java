@@ -531,11 +531,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
             // file, it happens to follow the same format currently, so using
             // Properties to read it is convenient.
             Properties props = new Properties();
-            FileInputStream is = new FileInputStream(versionFile);
-            try {
+            try (FileInputStream is = new FileInputStream(versionFile)) {
                 props.load(is);
-            } finally {
-                is.close();
             }
 
             String versionString = props.getProperty(WORKSPACE_CHECK_REFERENCE_BUNDLE_NAME);

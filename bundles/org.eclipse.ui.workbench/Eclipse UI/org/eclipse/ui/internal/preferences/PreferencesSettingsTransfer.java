@@ -64,18 +64,14 @@ public class PreferencesSettingsTransfer extends WorkbenchSettingsTransfer {
 	}
 
 	private void copyFiles(File src, File dest) throws IOException {
-		FileInputStream fis = new FileInputStream(src);
-		FileOutputStream fos = new FileOutputStream(dest);
 
-		byte[] buffer = new byte[1024];
-
-		int length;
-		while ((length = fis.read(buffer)) > 0) {
-			fos.write(buffer, 0, length);
-		}
-
-		fis.close();
-		fos.close();
+		try (FileOutputStream fos = new FileOutputStream(dest); FileInputStream fis = new FileInputStream(src)) {
+	    	byte[] buffer = new byte[1024];
+	    	int length;
+	    	while ((length = fis.read(buffer)) > 0) {
+	    		fos.write(buffer, 0, length);
+	    	}
+	    }
 	}
 
 	@Override

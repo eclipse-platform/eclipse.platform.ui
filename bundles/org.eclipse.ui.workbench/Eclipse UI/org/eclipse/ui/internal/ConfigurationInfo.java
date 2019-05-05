@@ -67,12 +67,12 @@ public final class ConfigurationInfo {
 	 */
 	public static String getSystemSummary() {
 		StringWriter out = new StringWriter();
-		PrintWriter writer = new PrintWriter(out);
-		writer.println(NLS.bind(WorkbenchMessages.SystemSummary_timeStamp,
-				DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new Date())));
+		try (PrintWriter writer = new PrintWriter(out)) {
+			writer.println(NLS.bind(WorkbenchMessages.SystemSummary_timeStamp,
+					DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new Date())));
 
-		ConfigurationInfo.appendExtensions(writer);
-		writer.close();
+			ConfigurationInfo.appendExtensions(writer);
+		}
 		return out.toString();
 	}
 

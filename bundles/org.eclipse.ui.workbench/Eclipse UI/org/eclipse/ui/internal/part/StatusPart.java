@@ -174,10 +174,10 @@ public class StatusPart {
 
 	private String getStackTrace(Throwable throwable) {
 		StringWriter swriter = new StringWriter();
-		PrintWriter pwriter = new PrintWriter(swriter);
-		throwable.printStackTrace(pwriter);
-		pwriter.flush();
-		pwriter.close();
+		try (PrintWriter pwriter = new PrintWriter(swriter)) {
+			throwable.printStackTrace(pwriter);
+			pwriter.flush();
+		}
 		return swriter.toString();
 	}
 

@@ -783,9 +783,9 @@ public abstract class AbstractWorkingSetManager extends EventManager
 		saveMruList(memento);
 
 		FileOutputStream stream = new FileOutputStream(stateFile);
-		OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
+	    try (OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
 		memento.save(writer);
-		writer.close();
+	    }
 
 	}
 

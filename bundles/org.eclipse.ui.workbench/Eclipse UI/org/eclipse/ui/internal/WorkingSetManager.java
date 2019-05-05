@@ -98,14 +98,13 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements IWor
 		if (stateFile != null && stateFile.exists()) {
 			try {
 				restoreInProgress = true;
-
-				FileInputStream input = new FileInputStream(stateFile);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
-
-				IMemento memento = XMLMemento.createReadRoot(reader);
-				restoreWorkingSetState(memento);
-				restoreMruList(memento);
-				reader.close();
+				try (FileInputStream input = new FileInputStream(stateFile);
+						BufferedReader reader = new BufferedReader(
+								new InputStreamReader(input, StandardCharsets.UTF_8))) {
+					IMemento memento = XMLMemento.createReadRoot(reader);
+					restoreWorkingSetState(memento);
+					restoreMruList(memento);
+				}
 			} catch (IOException | WorkbenchException e) {
 				handleInternalError(e, WorkbenchMessages.ProblemRestoringWorkingSetState_title,
 						WorkbenchMessages.ProblemRestoringWorkingSetState_message);
