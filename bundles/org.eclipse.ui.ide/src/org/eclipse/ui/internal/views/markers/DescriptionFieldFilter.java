@@ -89,8 +89,8 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 
 		String value = getField().getValue(item);
 		if (containsModifier.equals(MarkerSupportConstants.CONTAINS_KEY))
-			return value.indexOf(containsText) >= 0;
-		return value.indexOf(containsText) < 0;
+			return value.contains(containsText);
+		return !value.contains(containsText);
 
 	}
 

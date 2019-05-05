@@ -483,10 +483,10 @@ public class MultiEditorTest extends UITestCase {
 				String[] msgs = fErrorListener.messages
 						.toArray(new String[fErrorListener.messages.size()]);
 				for (String msg : msgs) {
-					if (msg.indexOf("The proxied handler for") == -1
-							&& msg.indexOf("Conflict for \'") == -1
-							&& msg.indexOf("Keybinding conflicts occurred")==-1
-							&& msg.indexOf("A handler conflict occurred")==-1) {
+					if (!msg.contains("The proxied handler for")
+							&& !msg.contains("Conflict for \'")
+							&& !msg.contains("Keybinding conflicts occurred")
+							&& !msg.contains("A handler conflict occurred")) {
 						fail("Failed with: " + msg);
 					}
 				}

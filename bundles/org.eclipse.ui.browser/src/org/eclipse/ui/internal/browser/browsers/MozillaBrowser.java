@@ -146,20 +146,16 @@ public class MozillaBrowser extends AbstractWebBrowser {
 			try {
 				outputs.join(1000);
 				if (outputs.getLastLine() != null
-						&& (outputs.getLastLine().indexOf(
-								"No running window found") //$NON-NLS-1$
-						>= 0 || outputs.getLastLine().indexOf(
-								"not running on display") //$NON-NLS-1$
-						>= 0)) {
+						&& (outputs.getLastLine().contains("No running window found") //$NON-NLS-1$
+				 || outputs.getLastLine().contains("not running on display") //$NON-NLS-1$
+				)) {
 					return true;
 				}
 				errors.join(1000);
 				if (errors.getLastLine() != null
-						&& (errors.getLastLine().indexOf(
-								"No running window found") //$NON-NLS-1$
-						>= 0 || errors.getLastLine().indexOf(
-								"not running on display") //$NON-NLS-1$
-						>= 0)) {
+						&& (errors.getLastLine().contains("No running window found") //$NON-NLS-1$
+				 || errors.getLastLine().contains("not running on display") //$NON-NLS-1$
+				)) {
 					return true;
 				}
 			} catch (InterruptedException ie) {

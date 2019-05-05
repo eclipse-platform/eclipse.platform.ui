@@ -59,7 +59,7 @@ public class WebBrowserUtil {
 	 */
 	public static boolean isWindows() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		if (os != null && os.toLowerCase().indexOf("win") >= 0) //$NON-NLS-1$
+		if (os != null && os.toLowerCase().contains("win")) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -71,7 +71,7 @@ public class WebBrowserUtil {
 	 */
 	public static boolean isLinux() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		if (os != null && os.toLowerCase().indexOf("lin") >= 0) //$NON-NLS-1$
+		if (os != null && os.toLowerCase().contains("lin")) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -185,7 +185,7 @@ public class WebBrowserUtil {
 			IBrowserExt browserExt = browsers[i];
 			String[] locations = browserExt.getDefaultLocations();
 			if (locations != null
-					&& browserExt.getOS().toLowerCase().indexOf(os) >= 0) {
+					&& browserExt.getOS().toLowerCase().contains(os)) {
 				int size2 = locations.length;
 				for (int j = 0; j < size2; j++) {
 					String location = locations[j];

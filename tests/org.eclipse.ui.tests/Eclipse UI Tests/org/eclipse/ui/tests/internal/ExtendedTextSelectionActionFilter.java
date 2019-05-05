@@ -46,11 +46,11 @@ public class ExtendedTextSelectionActionFilter implements IActionFilter {
             return (sel.getLength() == 0);
         } else if (name.equals(TEXT)) {
             String text = sel.getText();
-            return (text.indexOf(value) >= 0);
+            return (text.contains(value));
         } else if (name.equals(CASE_INSENSITIVE_TEXT)) {
             String text = sel.getText().toLowerCase();
             value = value.toLowerCase();
-            return (text.indexOf(value) >= 0);
+            return (text.contains(value));
         }
         return false;
     }

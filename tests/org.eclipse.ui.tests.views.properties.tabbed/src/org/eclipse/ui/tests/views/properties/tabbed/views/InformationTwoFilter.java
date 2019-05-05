@@ -32,7 +32,7 @@ public class InformationTwoFilter
             Element element = (Element) ((TreeNode) object).getValue();
             if (element instanceof Information) {
                 Information information = (Information) element;
-                if (information.getName().indexOf("Two") > -1) {//$NON-NLS-1$
+                if (information.getName().contains("Two")) {//$NON-NLS-1$
                     return true;
                 }
             }

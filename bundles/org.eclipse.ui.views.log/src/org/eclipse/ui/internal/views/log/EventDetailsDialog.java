@@ -783,7 +783,7 @@ public class EventDetailsDialog extends TrayDialog {
 			boolean filtered = false;
 			int i = 0;
 			while ((!filtered) && (i < stackFilterPatterns.length)) {
-				filtered = stackElement.indexOf(stackFilterPatterns[i]) >= 0;
+				filtered = stackElement.contains(stackFilterPatterns[i]);
 				i++;
 			}
 

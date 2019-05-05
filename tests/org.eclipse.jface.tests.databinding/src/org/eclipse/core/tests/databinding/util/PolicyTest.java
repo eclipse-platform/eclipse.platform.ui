@@ -54,13 +54,10 @@ public class PolicyTest {
 			ps.flush();
 			String message = new String(os.toByteArray());
 			System.out.println("testDummyLog message: " + message);
-			assertTrue("expecting severity", message.indexOf("CANCEL") != -1);
-			assertTrue("expecting plugin id",
-					message.indexOf("somePluginId") != -1);
-			assertTrue("expecting message",
-					message.indexOf("someMessage") != -1);
-			assertTrue("expecting RuntimeException", message
-					.indexOf("RuntimeException") != -1);
+			assertTrue("expecting severity", message.contains("CANCEL"));
+			assertTrue("expecting plugin id", message.contains("somePluginId"));
+			assertTrue("expecting message", message.contains("someMessage"));
+			assertTrue("expecting RuntimeException", message.contains("RuntimeException"));
 		} finally {
 			Policy.setLog(oldLog);
 			System.setErr(oldErr);

@@ -126,7 +126,7 @@ public class ContextModel extends CommonModel {
 				}
 			}
 
-			if (internal == true && contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
+			if (internal == true && contextElement.getId().contains(CONTEXT_ID_INTERNAL)) {
 				removeContext = true;
 			}
 
@@ -158,7 +158,7 @@ public class ContextModel extends CommonModel {
 			} catch (NotDefinedException e) {
 				// No parentId to check
 			}
-			if (internal == false && contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
+			if (internal == false && contextElement.getId().contains(CONTEXT_ID_INTERNAL)) {
 				restoreContext = true;
 			}
 

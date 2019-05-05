@@ -94,7 +94,7 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 		String os = Platform.getOS();
 		int size = browsers2.length;
 		for (int i = 0; i < size; i++) {
-			if (browsers2[i].getOS().toLowerCase().indexOf(os) != -1) {
+			if (browsers2[i].getOS().toLowerCase().contains(os)) {
 				if (browsers2[i].isAvailable()) {
 					String executable2 = browsers2[i].getExecutable();
 					if (executable.startsWith(executable2))

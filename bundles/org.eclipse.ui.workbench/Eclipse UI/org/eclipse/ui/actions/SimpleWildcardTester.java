@@ -34,7 +34,7 @@ public final class SimpleWildcardTester {
 				if (pattern.length() == 2) {
 					return true;
 				}
-				return str.indexOf(pattern.substring(1, pattern.length() - 1)) >= 0;
+				return str.contains(pattern.substring(1, pattern.length() - 1));
 			}
 			return str.endsWith(pattern.substring(1));
 		} else if (pattern.endsWith("*")) {//$NON-NLS-1$
