@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -28,8 +26,9 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.widgets.ButtonFactory;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -159,21 +158,15 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 		createMessageArea(composite);
 
-		SelectionListener listener = widgetSelectedAdapter(e -> updateButtonAvailability());
+		ButtonFactory buttonFactory = WidgetFactory.button(SWT.RADIO).onSelect(e -> updateButtonAvailability());
 
-		buttonWindowSet = new Button(composite, SWT.RADIO);
-		buttonWindowSet.setText(WorkbenchMessages.WindowWorkingSets);
-		buttonWindowSet.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		buttonWindowSet.addSelectionListener(listener);
+		buttonWindowSet = buttonFactory.text(WorkbenchMessages.WindowWorkingSets).
+				layoutData(new GridData(GridData.FILL_HORIZONTAL)).create(composite);
 
-		buttonNoSet = new Button(composite, SWT.RADIO);
-		buttonNoSet.setText(WorkbenchMessages.NoWorkingSet);
-		buttonNoSet.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		buttonNoSet.addSelectionListener(listener);
+		buttonNoSet = buttonFactory.text(WorkbenchMessages.NoWorkingSet)
+				.layoutData(new GridData(GridData.FILL_HORIZONTAL)).create(composite);
 
-		buttonSelectedSets = new Button(composite, SWT.RADIO);
-		buttonSelectedSets.setText(WorkbenchMessages.SelectedWorkingSets);
-		buttonSelectedSets.addSelectionListener(listener);
+		buttonSelectedSets = buttonFactory.text(WorkbenchMessages.SelectedWorkingSets).create(composite);
 
 		switch (getInitialRadioSelection()) {
 		case 0:
@@ -188,17 +181,15 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		}
 		buttonSelectedSets.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Composite viewerComposite = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		viewerComposite.setLayout(layout);
 
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH + 300; // fudge? I like fudge.
-		viewerComposite.setLayoutData(data);
+		Composite viewerComposite = WidgetFactory.composite(SWT.NONE).layout(layout).layoutData(data).create(composite);
 
 		listViewer = CheckboxTableViewer.newCheckList(viewerComposite, SWT.BORDER | SWT.MULTI);
 		data = new GridData(GridData.FILL_BOTH);

@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -108,13 +109,13 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 		Composite composite = (Composite) super.createDialogArea(parent);
 
-		Composite viewerComposite = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		viewerComposite.setLayout(layout);
-		viewerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		Composite viewerComposite = WidgetFactory.composite(SWT.NONE).layout(layout)
+				.layoutData(new GridData(GridData.FILL_BOTH)).create(composite);
 
 		viewer = CheckboxTableViewer.newCheckList(viewerComposite, SWT.BORDER);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
