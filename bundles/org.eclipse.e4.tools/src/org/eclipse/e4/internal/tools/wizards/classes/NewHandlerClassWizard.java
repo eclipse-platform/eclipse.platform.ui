@@ -99,7 +99,7 @@ public class NewHandlerClassWizard extends AbstractNewClassWizard {
 
 					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-						WidgetProperties.selection().observe(b),
+						WidgetProperties.buttonSelection().observe(b),
 						BeanProperties.value(USE_CAN_EXECUTE).observe(
 							getClazz()));
 				}

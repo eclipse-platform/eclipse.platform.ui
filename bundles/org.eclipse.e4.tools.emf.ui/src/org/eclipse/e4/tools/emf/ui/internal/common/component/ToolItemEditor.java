@@ -185,7 +185,7 @@ public abstract class ToolItemEditor<M extends MToolItem> extends AbstractCompon
 	protected void createFormSubTypeForm(Composite parent, CTabFolder folder, EMFDataBindingContext context,
 			final WritableValue<M> master) {
 		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
-		final IWidgetValueProperty<Button, Boolean> checkProp = WidgetProperties.selection();
+		final IWidgetValueProperty<Button, Boolean> checkProp = WidgetProperties.buttonSelection();
 		final IWidgetValueProperty<Button, Boolean> enabled = WidgetProperties.enabled();
 
 		// ------------------------------------------------------------
@@ -331,9 +331,9 @@ public abstract class ToolItemEditor<M extends MToolItem> extends AbstractCompon
 		createSubTypeFormElements(parent, context, master);
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-				WidgetProperties.selection(), E4Properties.toBeRendered(getEditingDomain()));
+				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-				WidgetProperties.selection(), E4Properties.visible(getEditingDomain()));
+				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
 
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);

@@ -93,7 +93,7 @@ public class NewToolControlClassWizard extends AbstractNewClassWizard {
 
 					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-						WidgetProperties.selection().observe(b),
+						WidgetProperties.buttonSelection().observe(b),
 						BeanProperties.value(CREATE_DEFAULT_CONSTRUCTOR).observe(
 							getClazz()));
 				}

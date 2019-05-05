@@ -82,7 +82,7 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 
 					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-						WidgetProperties.selection().observe(b),
+						WidgetProperties.buttonSelection().observe(b),
 						BeanProperties.value(USE_POST_CONSTRUCT).observe(
 							getClazz()));
 				}
@@ -103,7 +103,7 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 
 					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-						WidgetProperties.selection().observe(b),
+						WidgetProperties.buttonSelection().observe(b),
 						BeanProperties.value(USE_PREDESTROY).observe(
 							getClazz()));
 				}
@@ -124,7 +124,7 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 
 					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-						WidgetProperties.selection().observe(b),
+						WidgetProperties.buttonSelection().observe(b),
 						BeanProperties.value(USE_FOCUS).observe(
 							getClazz()));
 				}
@@ -145,7 +145,7 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 
 					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-						WidgetProperties.selection().observe(b),
+						WidgetProperties.buttonSelection().observe(b),
 						BeanProperties.value(USE_PERSIST).observe(
 							getClazz()));
 				}

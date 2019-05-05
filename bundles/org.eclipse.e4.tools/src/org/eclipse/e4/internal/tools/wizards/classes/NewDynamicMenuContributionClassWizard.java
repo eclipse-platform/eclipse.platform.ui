@@ -95,7 +95,7 @@ AbstractNewClassWizard {
 
 					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-						WidgetProperties.selection().observe(b),
+						WidgetProperties.buttonSelection().observe(b),
 						BeanProperties.value(USE_ABOUT_TO_HIDE).observe(
 							getClazz()));
 				}
