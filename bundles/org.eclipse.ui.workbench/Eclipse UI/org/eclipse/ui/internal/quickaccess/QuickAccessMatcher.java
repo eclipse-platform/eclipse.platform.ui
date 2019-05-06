@@ -12,13 +12,12 @@
  * - Mickael Istria (Red Hat Inc.) - extract from QuickAccessElement
  *******************************************************************************/
 
-package org.eclipse.ui.quickaccess;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.eclipse.ui.internal.quickaccess.CamelUtil;
-import org.eclipse.ui.internal.quickaccess.QuickAccessEntry;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
  * QuickAccessMatch contains the logic to check whether a given

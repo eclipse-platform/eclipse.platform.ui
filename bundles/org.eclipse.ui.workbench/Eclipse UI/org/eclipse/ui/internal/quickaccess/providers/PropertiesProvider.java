@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +28,9 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3
@@ -59,7 +60,7 @@ public class PropertiesProvider extends QuickAccessProvider {
 					List list = pageManager.getElements(PreferenceManager.PRE_ORDER);
 					IPreferenceNode[] properties = (IPreferenceNode[]) list.toArray(new IPreferenceNode[list.size()]);
 					for (IPreferenceNode property : properties) {
-						PropertiesElement propertiesElement = new PropertiesElement(element, property, this);
+						PropertiesElement propertiesElement = new PropertiesElement(element, property);
 						idToElement.put(propertiesElement.getId(), propertiesElement);
 					}
 				}

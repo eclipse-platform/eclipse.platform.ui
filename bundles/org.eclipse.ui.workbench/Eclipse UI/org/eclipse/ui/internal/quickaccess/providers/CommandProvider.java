@@ -14,7 +14,7 @@
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 476045
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,8 +35,9 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3
@@ -46,7 +47,7 @@ public class CommandProvider extends QuickAccessProvider {
 
 	private IEvaluationContext currentSnapshot;
 
-	void setSnapshot(IEvaluationContext c) {
+	public void setSnapshot(IEvaluationContext c) {
 		reset();
 		currentSnapshot = c;
 	}
@@ -172,7 +173,7 @@ public class CommandProvider extends QuickAccessProvider {
 		return commandImageService;
 	}
 
-	IEvaluationContext getContextSnapshot() {
+	public IEvaluationContext getContextSnapshot() {
 		return currentSnapshot;
 	}
 

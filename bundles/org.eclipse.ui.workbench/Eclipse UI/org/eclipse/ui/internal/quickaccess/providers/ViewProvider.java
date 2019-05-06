@@ -13,7 +13,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +29,9 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -77,7 +78,7 @@ public class ViewProvider extends QuickAccessProvider {
 				if (uri != null) {
 					String id = descriptor.getElementId();
 					if (id != null && !id.equals(CompatibilityEditor.MODEL_ELEMENT_ID)) {
-						ViewElement element = new ViewElement(this, window, descriptor);
+						ViewElement element = new ViewElement(window, descriptor);
 						if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
 							IViewDescriptor viewDescriptor = viewRegistry.find(element.getId());
 							// Ignore if restricted

@@ -13,31 +13,35 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
-import org.eclipse.ui.wizards.IWizardCategory;
-import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * @since 3.3
  *
  */
-public class WizardProvider extends QuickAccessProvider {
+public class PreferenceProvider extends QuickAccessProvider {
 
 	private QuickAccessElement[] cachedElements;
-	private Map<String, WizardElement> idToElement = new HashMap<>();
+	private Map<String, PreferenceElement> idToElement = new HashMap<>();
+
+	@Override
+	public String getId() {
+		return "org.eclipse.ui.preferences"; //$NON-NLS-1$
+	}
 
 	@Override
 	public QuickAccessElement getElementForId(String id) {
@@ -48,31 +52,28 @@ public class WizardProvider extends QuickAccessProvider {
 	@Override
 	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
-			IWizardCategory rootCategory = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
-			List<IWizardDescriptor> result = new ArrayList<>();
-			collectWizards(rootCategory, result);
-			IWizardDescriptor[] wizards = result.toArray(new IWizardDescriptor[result.size()]);
-			for (int i = 0; i < wizards.length; i++) {
-				if (!WorkbenchActivityHelper.filterItem(wizards[i])) {
-					WizardElement wizardElement = new WizardElement(wizards[i], this);
-					idToElement.put(wizardElement.getId(), wizardElement);
-				}
+			List<PreferenceElement> list = new ArrayList<>();
+			collectElements("", PlatformUI.getWorkbench().getPreferenceManager().getRootSubNodes(), list); //$NON-NLS-1$
+			cachedElements = new PreferenceElement[list.size()];
+			for (int i = 0; i < list.size(); i++) {
+				PreferenceElement preferenceElement = list.get(i);
+				cachedElements[i] = preferenceElement;
+				idToElement.put(preferenceElement.getId(), preferenceElement);
 			}
-			cachedElements = idToElement.values().toArray(new QuickAccessElement[idToElement.size()]);
 		}
 		return cachedElements;
 	}
 
-	private void collectWizards(IWizardCategory category, List<IWizardDescriptor> result) {
-		result.addAll(Arrays.asList(category.getWizards()));
-		for (IWizardCategory childCategory : category.getCategories()) {
-			collectWizards(childCategory, result);
+	private void collectElements(String prefix, IPreferenceNode[] subNodes, List<PreferenceElement> result) {
+		for (int i = 0; i < subNodes.length; i++) {
+			if (!WorkbenchActivityHelper.filterItem(subNodes[i])) {
+				PreferenceElement preferenceElement = new PreferenceElement(subNodes[i], prefix);
+				result.add(preferenceElement);
+				String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText()
+						: (prefix + "/" + subNodes[i].getLabelText()); //$NON-NLS-1$
+				collectElements(nestedPrefix, subNodes[i].getSubNodes(), result);
+			}
 		}
-	}
-
-	@Override
-	public String getId() {
-		return "org.eclipse.ui.wizards"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class WizardProvider extends QuickAccessProvider {
 
 	@Override
 	public String getName() {
-		return QuickAccessMessages.QuickAccess_New;
+		return QuickAccessMessages.QuickAccess_Preferences;
 	}
 
 	@Override

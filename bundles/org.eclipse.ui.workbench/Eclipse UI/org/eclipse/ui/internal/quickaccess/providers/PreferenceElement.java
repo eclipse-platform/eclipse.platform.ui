@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -37,9 +37,7 @@ public class PreferenceElement extends QuickAccessElement {
 
 	private String matchLabelCache;
 
-	/* package */ PreferenceElement(IPreferenceNode preferenceNode, String prefix,
-			PreferenceProvider preferenceProvider) {
-		super(preferenceProvider);
+	/* package */ PreferenceElement(IPreferenceNode preferenceNode, String prefix) {
 		this.preferenceNode = preferenceNode;
 		this.prefix = prefix;
 	}

@@ -13,7 +13,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +23,9 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3
@@ -54,7 +55,7 @@ public class PerspectiveProvider extends QuickAccessProvider {
 			cachedElements = new QuickAccessElement[perspectives.length];
 			for (int i = 0; i < perspectives.length; i++) {
 				if (!WorkbenchActivityHelper.filterItem(perspectives[i])) {
-					PerspectiveElement perspectiveElement = new PerspectiveElement(perspectives[i], this);
+					PerspectiveElement perspectiveElement = new PerspectiveElement(perspectives[i]);
 					idToElement.put(perspectiveElement.getId(), perspectiveElement);
 				}
 			}

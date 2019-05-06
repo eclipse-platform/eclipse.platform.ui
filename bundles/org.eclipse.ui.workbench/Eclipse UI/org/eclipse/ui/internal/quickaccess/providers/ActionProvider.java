@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,8 +28,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3
@@ -62,7 +63,7 @@ public class ActionProvider extends QuickAccessProvider {
 				ActionContributionItem[] actions = (ActionContributionItem[]) result
 						.toArray(new ActionContributionItem[result.size()]);
 				for (ActionContributionItem action : actions) {
-					ActionElement actionElement = new ActionElement(action, this);
+					ActionElement actionElement = new ActionElement(action);
 					idToElement.put(actionElement.getId(), actionElement);
 				}
 			}

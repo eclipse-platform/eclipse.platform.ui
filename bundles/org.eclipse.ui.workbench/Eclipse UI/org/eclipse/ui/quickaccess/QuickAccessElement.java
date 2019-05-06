@@ -20,23 +20,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * A QuickAccessElement describes one of the possible actions to show in Quick
  * Access.
  *
- * @since 3.114
+ * @since 3.115
  */
 public abstract class QuickAccessElement {
 
 	protected static final String separator = " - "; //$NON-NLS-1$
-
-	private QuickAccessProvider provider;
-	private QuickAccessMatcher matcher;
-
-	/**
-	 * @param provider
-	 */
-	public QuickAccessElement(QuickAccessProvider provider) {
-		super();
-		this.provider = provider;
-		this.matcher = new QuickAccessMatcher(this);
-	}
 
 	/**
 	 * Returns the label to be displayed to the user.
@@ -86,21 +74,5 @@ public abstract class QuickAccessElement {
 	 */
 	public String getMatchLabel() {
 		return getLabel();
-	}
-
-	/**
-	 * @return Returns the provider.
-	 */
-	public final QuickAccessProvider getProvider() {
-		return provider;
-	}
-
-	/**
-	 *
-	 * @return the matcher
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public final QuickAccessMatcher getMatcher() {
-		return matcher;
 	}
 }

@@ -53,9 +53,16 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
+import org.eclipse.ui.internal.quickaccess.providers.ActionProvider;
+import org.eclipse.ui.internal.quickaccess.providers.CommandProvider;
+import org.eclipse.ui.internal.quickaccess.providers.EditorProvider;
+import org.eclipse.ui.internal.quickaccess.providers.PerspectiveProvider;
+import org.eclipse.ui.internal.quickaccess.providers.PreferenceProvider;
+import org.eclipse.ui.internal.quickaccess.providers.PropertiesProvider;
+import org.eclipse.ui.internal.quickaccess.providers.ViewProvider;
+import org.eclipse.ui.internal.quickaccess.providers.WizardProvider;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * This is the quick access popup dialog used in 3.x. The new quick access is
@@ -354,7 +361,7 @@ public class QuickAccessDialog extends PopupDialog {
 			ArrayList<String> elementText = textMap.get(quickAccessElement);
 			Assert.isNotNull(elementText);
 			orderedElements[i] = quickAccessElement.getId();
-			orderedProviders[i] = quickAccessElement.getProvider().getId();
+			orderedProviders[i] = contents.getProviderFor(quickAccessElement).getId();
 			arrayList.addAll(elementText);
 			textEntries[i] = elementText.size() + ""; //$NON-NLS-1$
 		}
@@ -383,6 +390,7 @@ public class QuickAccessDialog extends PopupDialog {
 					if (quickAccessProvider != null) {
 						QuickAccessElement quickAccessElement = quickAccessProvider.getElementForId(orderedElements[i]);
 						if (quickAccessElement != null) {
+							contents.registerProviderFor(quickAccessElement, quickAccessProvider);
 							ArrayList<String> arrayList = new ArrayList<>();
 							for (int j = arrayIndex; j < arrayIndex + numTexts; j++) {
 								String text = textArray[j];

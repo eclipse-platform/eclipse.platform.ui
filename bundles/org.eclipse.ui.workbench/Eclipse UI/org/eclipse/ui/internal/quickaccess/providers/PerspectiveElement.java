@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -37,8 +37,7 @@ public class PerspectiveElement extends QuickAccessElement {
 
 	private final IPerspectiveDescriptor descriptor;
 
-	/* package */ PerspectiveElement(IPerspectiveDescriptor descriptor, PerspectiveProvider perspectiveProvider) {
-		super(perspectiveProvider);
+	/* package */ PerspectiveElement(IPerspectiveDescriptor descriptor) {
 		this.descriptor = descriptor;
 	}
 

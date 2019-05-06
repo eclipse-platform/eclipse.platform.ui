@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -34,8 +34,7 @@ public class EditorElement extends QuickAccessElement {
 
 	private IEditorReference editorReference;
 
-	/* package */ EditorElement(IEditorReference editorReference, EditorProvider editorProvider) {
-		super(editorProvider);
+	/* package */ EditorElement(IEditorReference editorReference) {
 		this.editorReference = editorReference;
 	}
 

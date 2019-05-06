@@ -15,7 +15,7 @@
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 476045
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -44,17 +44,17 @@ public class CommandElement extends QuickAccessElement {
 
 	private String id;
 
+	private CommandProvider provider;
+
 	/* package */ CommandElement(ParameterizedCommand command, String id, CommandProvider commandProvider) {
-		super(commandProvider);
+		this.provider = commandProvider;
 		this.id = id;
 		this.command = command;
 	}
 
 	@Override
 	public void execute() {
-		Object o = getProvider();
-		if (o instanceof CommandProvider) {
-			CommandProvider provider = (CommandProvider) o;
+		if (provider != null) {
 			if (provider.getHandlerService() != null && provider.getContextSnapshot() != null) {
 				try {
 					provider.getHandlerService().executeCommandInContext(command, null, provider.getContextSnapshot());
@@ -84,7 +84,7 @@ public class CommandElement extends QuickAccessElement {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		ICommandImageService imgService = ((CommandProvider) getProvider()).getCommandImageService();
+		ICommandImageService imgService = provider.getCommandImageService();
 		return (imgService == null) ? null : imgService.getImageDescriptor(getId());
 	}
 

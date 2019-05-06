@@ -96,11 +96,18 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.quickaccess.providers.ActionProvider;
+import org.eclipse.ui.internal.quickaccess.providers.CommandProvider;
+import org.eclipse.ui.internal.quickaccess.providers.EditorProvider;
+import org.eclipse.ui.internal.quickaccess.providers.PerspectiveProvider;
+import org.eclipse.ui.internal.quickaccess.providers.PreferenceProvider;
+import org.eclipse.ui.internal.quickaccess.providers.PropertiesProvider;
+import org.eclipse.ui.internal.quickaccess.providers.ViewProvider;
+import org.eclipse.ui.internal.quickaccess.providers.WizardProvider;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.swt.IFocusService;
 
 public class SearchField {
@@ -684,6 +691,7 @@ public class SearchField {
 					QuickAccessElement quickAccessElement = quickAccessProvider.getElementForId(orderedElements[i]);
 
 					if (quickAccessElement != null) {
+						quickAccessContents.registerProviderFor(quickAccessElement, quickAccessProvider);
 						ArrayList<String> arrayList = new ArrayList<>();
 						for (int j = arrayIndex; j < arrayIndex + numTexts; j++) {
 							String text = textArray[j];
@@ -729,7 +737,7 @@ public class SearchField {
 			ArrayList<String> elementText = textMap.get(quickAccessElement);
 			Assert.isNotNull(elementText);
 			orderedElements[i] = quickAccessElement.getId();
-			orderedProviders[i] = quickAccessElement.getProvider().getId();
+			orderedProviders[i] = quickAccessContents.getProviderFor(quickAccessElement).getId();
 			arrayList.addAll(elementText);
 			textEntries[i] = elementText.size() + ""; //$NON-NLS-1$
 		}

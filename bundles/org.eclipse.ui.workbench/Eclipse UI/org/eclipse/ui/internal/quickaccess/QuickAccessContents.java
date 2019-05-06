@@ -74,7 +74,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.themes.ColorUtil;
 
 /**
@@ -98,6 +97,8 @@ public abstract class QuickAccessContents {
 
 	private QuickAccessProvider[] providers;
 	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
+	private Map<QuickAccessElement, QuickAccessProvider> elementsToProviders = new HashMap<>();
+	private Map<QuickAccessElement, QuickAccessMatcher> elementsToMatchers = new HashMap<>();
 
 	protected Table table;
 	protected Label infoLabel;
@@ -184,7 +185,7 @@ public abstract class QuickAccessContents {
 	private QuickAccessEntry makeHelpSearchEntry(String text) {
 		if (searchHelpEntry == null) {
 			searchHelpProvider = new QuickAccessHelpSearchProvider();
-			searchHelpElement = new QuickAccessHelpSearchElement(searchHelpProvider);
+			searchHelpElement = new QuickAccessHelpSearchElement();
 			searchHelpEntry = new QuickAccessEntry(searchHelpElement, searchHelpProvider, new int[][] {},
 					new int[][] {}, QuickAccessEntry.MATCH_PERFECT);
 			searchHelpEntry.firstInCategory = true;
@@ -203,11 +204,7 @@ public abstract class QuickAccessContents {
 
 		String searchText;
 
-		/**
-		 * @param provider
-		 */
-		public QuickAccessHelpSearchElement(QuickAccessProvider provider) {
-			super(provider);
+		public QuickAccessHelpSearchElement() {
 		}
 
 		@Override
@@ -475,6 +472,11 @@ public abstract class QuickAccessContents {
 				}
 				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
 					QuickAccessElement[] sortedElements = provider.getElementsSorted();
+					if (!(provider instanceof PreviousPicksProvider)) {
+						for (QuickAccessElement element : sortedElements) {
+							elementsToProviders.put(element, provider);
+						}
+					}
 
 					// count previous picks and store ids
 					if (isPreviousPickProvider) {
@@ -503,7 +505,7 @@ public abstract class QuickAccessContents {
 								entry = null;
 							}
 						} else {
-							QuickAccessEntry possibleMatch = element.getMatcher().match(filter, provider);
+							QuickAccessEntry possibleMatch = getMatcherFor(element).match(filter, provider);
 							if (possibleMatch != null) {
 								entry = possibleMatch;
 							}
@@ -536,7 +538,7 @@ public abstract class QuickAccessContents {
 		} while ((showAllMatches || countTotal < maxCount) && !done);
 
 		if (!perfectMatchAdded) {
-			QuickAccessEntry entry = perfectMatch.getMatcher().match(filter, providers[0]);
+			QuickAccessEntry entry = getMatcherFor(perfectMatch).match(filter, providers[0]);
 			if (entryEnabled(providers[0], entry)) {
 				if (entries[0] == null) {
 					entries[0] = new ArrayList<>();
@@ -590,7 +592,7 @@ public abstract class QuickAccessContents {
 		// also provide the element
 		if (provider instanceof PreviousPicksProvider) {
 			QuickAccessElement element = entry.element;
-			final QuickAccessProvider originalProvider = element.getProvider();
+			final QuickAccessProvider originalProvider = getProviderFor(element);
 			QuickAccessElement match = originalProvider.getElementForId(element.getId());
 			return match != null;
 		}
@@ -658,7 +660,7 @@ public abstract class QuickAccessContents {
 	/**
 	 * Allows the dialog contents to interact correctly with the text box used to
 	 * open it
-	 * 
+	 *
 	 * @param filterText text box to hook up
 	 */
 	public void hookFilterText(Text filterText) {
@@ -925,6 +927,24 @@ public abstract class QuickAccessContents {
 					.collect(Collectors.toMap(QuickAccessProvider::getId, Function.identity()));
 		}
 		return providerMap.get(providerId);
+	}
+
+	QuickAccessProvider getProviderFor(QuickAccessElement quickAccessElement) {
+		return elementsToProviders.get(quickAccessElement);
+	}
+
+	private QuickAccessMatcher getMatcherFor(QuickAccessElement element) {
+		if (!elementsToMatchers.containsKey(element)) {
+			elementsToMatchers.put(element, new QuickAccessMatcher(element));
+		}
+		return elementsToMatchers.get(element);
+	}
+
+	void registerProviderFor(QuickAccessElement quickAccessElement, QuickAccessProvider quickAccessProvider) {
+		if (quickAccessElement == null || quickAccessProvider == null) {
+			return;
+		}
+		elementsToProviders.put(quickAccessElement, quickAccessProvider);
 	}
 
 }

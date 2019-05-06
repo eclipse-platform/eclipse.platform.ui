@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="provider" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="computer" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,7 +47,7 @@
       </complexType>
    </element>
 
-   <element name="provider">
+   <element name="computer">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -55,8 +55,25 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.quickaccess.QuickAccessProvider:"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.quickaccess.IQuickAccessComputer"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="requiresUIAccess" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -67,7 +84,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         3.113
+         3.115
       </documentation>
    </annotation>
 
@@ -76,10 +93,10 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-            &lt;extension
+         &lt;extension
          point=&quot;org.eclipse.ui.quickAccess&quot;&gt;
-      &lt;provider class=&quot;org.eclipse.debug.internal.ui.quickaccess.RunQuickAccessProvider&quot;/&gt;
-      &lt;provider class=&quot;org.eclipse.debug.internal.ui.quickaccess.DebugQuickAccessProvider&quot;/&gt;
+      &lt;computer class=&quot;org.eclipse.debug.internal.ui.quickaccess.RunQuickAccessProvider&quot;/&gt;
+      &lt;computer class=&quot;org.eclipse.debug.internal.ui.quickaccess.DebugQuickAccessProvider&quot;/&gt;
    &lt;/extension&gt;
       </documentation>
    </annotation>

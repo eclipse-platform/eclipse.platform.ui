@@ -11,15 +11,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.quickaccess;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.Arrays;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
  * Returns {@link QuickAccessElement}s. It implements a cache by default.
  *
  * @since 3.114
+ * @noreference This class is not intended to be referenced by clients.
  */
 public abstract class QuickAccessProvider {
 

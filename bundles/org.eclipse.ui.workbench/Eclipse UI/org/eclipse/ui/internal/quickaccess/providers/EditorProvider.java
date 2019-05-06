@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +22,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
+import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3
@@ -48,7 +49,7 @@ public class EditorProvider extends QuickAccessProvider {
 				return new QuickAccessElement[0];
 			}
 			for (IEditorReference editor : activePage.getEditorReferences()) {
-				EditorElement editorElement = new EditorElement(editor, this);
+				EditorElement editorElement = new EditorElement(editor);
 				idToElement.put(editorElement.getId(), editorElement);
 			}
 		}

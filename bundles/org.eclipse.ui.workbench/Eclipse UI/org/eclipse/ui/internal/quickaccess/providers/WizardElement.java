@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -27,12 +27,9 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  */
 public class WizardElement extends QuickAccessElement {
 
-	private static final String separator = " - "; //$NON-NLS-1$
-
 	private IWizardDescriptor wizardDescriptor;
 
-	/* package */ WizardElement(IWizardDescriptor wizardDescriptor, WizardProvider wizardProvider) {
-		super(wizardProvider);
+	/* package */ WizardElement(IWizardDescriptor wizardDescriptor) {
 		this.wizardDescriptor = wizardDescriptor;
 	}
 

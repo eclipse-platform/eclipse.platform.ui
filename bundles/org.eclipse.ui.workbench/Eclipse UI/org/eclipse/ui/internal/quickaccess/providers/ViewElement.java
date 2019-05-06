@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,8 +30,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
-import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3
@@ -43,8 +43,7 @@ public class ViewElement extends QuickAccessElement {
 	private MPartDescriptor viewDescriptor;
 	private ImageDescriptor imageDescriptor;
 
-	public ViewElement(QuickAccessProvider provider, MWindow window, MPartDescriptor descriptor) {
-		super(provider);
+	public ViewElement(MWindow window, MPartDescriptor descriptor) {
 		this.window = window;
 		this.viewDescriptor = descriptor;
 

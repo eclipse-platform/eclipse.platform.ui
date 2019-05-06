@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -26,12 +26,9 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class ActionElement extends QuickAccessElement {
 
-	private static final String separator = " - "; //$NON-NLS-1$
-
 	private ActionContributionItem item;
 
-	/* package */ ActionElement(ActionContributionItem item, ActionProvider actionProvider) {
-		super(actionProvider);
+	/* package */ ActionElement(ActionContributionItem item) {
 		this.item = item;
 	}
 

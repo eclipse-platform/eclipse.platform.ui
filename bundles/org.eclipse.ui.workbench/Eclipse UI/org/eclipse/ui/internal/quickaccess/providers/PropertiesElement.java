@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.internal.quickaccess.providers;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -31,9 +31,7 @@ public class PropertiesElement extends QuickAccessElement {
 	private Object selectedElement;
 	private IPreferenceNode preferenceNode;
 
-	/* package */ PropertiesElement(Object selectedElement, IPreferenceNode preferenceNode,
-			PropertiesProvider propertiesProvider) {
-		super(propertiesProvider);
+	/* package */ PropertiesElement(Object selectedElement, IPreferenceNode preferenceNode) {
 		this.selectedElement = selectedElement;
 		this.preferenceNode = preferenceNode;
 	}
