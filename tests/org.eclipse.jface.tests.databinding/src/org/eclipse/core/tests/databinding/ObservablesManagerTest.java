@@ -23,6 +23,7 @@ import java.util.Arrays;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ObservablesManager;
+import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -88,6 +89,62 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 		assertTrue(targetOv.isDisposed());
 		assertFalse(modelOv.isDisposed());
+	}
+
+	/**
+	 * Tests that {@link ObservablesManager#addContext} disposes the argument
+	 * {@link DataBindingContext}.
+	 */
+	@Test
+	public void testContextIsDisposed() {
+		IObservableValue<?> targetOv = new WritableValue<>();
+		IObservableValue<?> modelOv = new WritableValue<>();
+
+		dbc.bindValue(targetOv, modelOv);
+
+		ValidationStatusProvider dummyProvider = createDummyBinding(Observables.emptyObservableList(),
+				Observables.emptyObservableList());
+
+		dbc.addValidationStatusProvider(dummyProvider);
+
+		ObservablesManager observablesManager = new ObservablesManager();
+
+		observablesManager.addContext(dbc, true, false);
+
+		observablesManager.dispose();
+
+		// Validation status providers are only disposed when the databinding context
+		// itself is disposed
+		assertTrue(dummyProvider.isDisposed());
+		assertTrue(targetOv.isDisposed());
+		assertFalse(modelOv.isDisposed());
+	}
+
+	/**
+	 * Tests that {@link ObservablesManager#addObservablesFromContext} does not
+	 * dispose the argument {@link DataBindingContext}.
+	 */
+	@Test
+	public void testContextIsNotDisposed() {
+		IObservableValue<?> targetOv = new WritableValue<>();
+		IObservableValue<?> modelOv = new WritableValue<>();
+
+		dbc.bindValue(targetOv, modelOv);
+
+		ValidationStatusProvider dummyProvider = createDummyBinding(Observables.emptyObservableList(),
+				Observables.emptyObservableList());
+
+		dbc.addValidationStatusProvider(dummyProvider);
+
+		ObservablesManager observablesManager = new ObservablesManager();
+
+		observablesManager.addObservablesFromContext(dbc, true, true);
+
+		observablesManager.dispose();
+
+		// Validation status providers are only disposed when the databinding context
+		// itself is disposed
+		assertFalse(dummyProvider.isDisposed());
 	}
 
 	@Test

@@ -24,7 +24,6 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.internal.databinding.IdentitySet;
-import org.eclipse.core.internal.databinding.Pair;
 
 /**
  * An observables manager can be used for lifecycle management of
@@ -39,7 +38,7 @@ public class ObservablesManager {
 
 	private Set<IObservable> managedObservables = new IdentitySet<>();
 	private Set<IObservable> excludedObservables = new IdentitySet<>();
-	private Map<DataBindingContext, Pair> contexts = new HashMap<>();
+	private Map<DataBindingContext, ManagerEntry> contexts = new HashMap<>();
 
 	/**
 	 * Create a new observables manager.
@@ -67,12 +66,16 @@ public class ObservablesManager {
 	}
 
 	/**
-	 * Adds the given data binding context's target and/or model observables to this
-	 * manager.
+	 * Adds the given data binding context's target and/or model observables to be
+	 * disposed by this manager.
 	 * <p>
-	 * Note: The {@code context} argument must NOT be disposed before this object
+	 * Prefer the {@link #addContext} method if the {@code context} argument should
+	 * also be disposed.
+	 * </p>
+	 * <p>
+	 * Note: The {@code context} argument must NOT be disposed before this manager
 	 * itself is disposed. If it is then its contents will not be disposed by this
-	 * object.
+	 * manager.
 	 * </p>
 	 *
 	 * @param context      the data binding context
@@ -83,8 +86,29 @@ public class ObservablesManager {
 	 */
 	public void addObservablesFromContext(DataBindingContext context, boolean trackTargets, boolean trackModels) {
 		if (trackTargets || trackModels) {
-			contexts.put(context, new Pair(trackTargets, trackModels));
+			contexts.put(context, new ManagerEntry(false, trackTargets, trackModels));
 		}
+	}
+
+	/**
+	 * Adds the databinding context to be disposed by this manager. Identical to
+	 * {@link #addObservablesFromContext} except that the binding context itself is
+	 * also disposed.
+	 * <p>
+	 * Note: The {@code context} argument must NOT be disposed before this manager
+	 * itself is disposed. (There is no reason to dispose {@code context} manually
+	 * when using this method.)
+	 * </p>
+	 *
+	 * @param context      the data binding context to add
+	 * @param trackTargets <code>true</code> if the target observables of the
+	 *                     context should be managed
+	 * @param trackModels  <code>true</code> if the model observables of the context
+	 *                     should be managed
+	 * @since 1.10
+	 */
+	public void addContext(DataBindingContext context, boolean trackTargets, boolean trackModels) {
+		contexts.put(context, new ManagerEntry(true, trackTargets, trackModels));
 	}
 
 	/**
@@ -118,23 +142,39 @@ public class ObservablesManager {
 	public void dispose() {
 		Set<IObservable> observables = new IdentitySet<>();
 		observables.addAll(managedObservables);
-		for (Entry<DataBindingContext, Pair> entry : contexts.entrySet()) {
-			DataBindingContext context = entry.getKey();
-			Pair trackModelsOrTargets = entry.getValue();
-			boolean disposeTargets = (Boolean) trackModelsOrTargets.a;
-			boolean disposeModels = (Boolean) trackModelsOrTargets.b;
+
+		for (Entry<DataBindingContext, ManagerEntry> e : contexts.entrySet()) {
+			DataBindingContext context = e.getKey();
+			ManagerEntry entry = e.getValue();
+
 			for (Binding binding : context.getBindings()) {
-				if (disposeTargets) {
+				if (entry.disposeTargets) {
 					observables.addAll(binding.getTargets());
 				}
-				if (disposeModels) {
+				if (entry.disposeModels) {
 					observables.addAll(binding.getModels());
 				}
+			}
+
+			if (entry.disposeContext) {
+				context.dispose();
 			}
 		}
 		observables.removeAll(excludedObservables);
 		for (IObservable observable : observables) {
 			observable.dispose();
+		}
+	}
+
+	private static class ManagerEntry {
+		public final boolean disposeContext;
+		public final boolean disposeTargets;
+		public final boolean disposeModels;
+
+		public ManagerEntry(boolean disposeContext, boolean disposeTargets, boolean disposeModels) {
+			this.disposeContext = disposeContext;
+			this.disposeTargets = disposeTargets;
+			this.disposeModels = disposeModels;
 		}
 	}
 }
