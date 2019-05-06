@@ -50,8 +50,7 @@ public class ObservablesManager {
 	/**
 	 * Adds the given observable to this manager.
 	 *
-	 * @param observable
-	 *            the observable
+	 * @param observable the observable
 	 */
 	public void addObservable(IObservable observable) {
 		managedObservables.add(observable);
@@ -61,8 +60,7 @@ public class ObservablesManager {
 	 * Adds the given observable to this manager's exclusion list. The given
 	 * observable will not be disposed of by this manager.
 	 *
-	 * @param observable
-	 *            the observable
+	 * @param observable the observable
 	 */
 	public void excludeObservable(IObservable observable) {
 		excludedObservables.add(observable);
@@ -83,11 +81,9 @@ public class ObservablesManager {
 	 * @param trackModels  <code>true</code> if the model observables of the context
 	 *                     should be managed
 	 */
-	public void addObservablesFromContext(DataBindingContext context,
-			boolean trackTargets, boolean trackModels) {
+	public void addObservablesFromContext(DataBindingContext context, boolean trackTargets, boolean trackModels) {
 		if (trackTargets || trackModels) {
-			contexts.put(context, new Pair(Boolean.valueOf(trackTargets),
-					Boolean.valueOf(trackModels)));
+			contexts.put(context, new Pair(trackTargets, trackModels));
 		}
 	}
 
@@ -95,19 +91,20 @@ public class ObservablesManager {
 	 * Executes the specified runnable and adds to this manager all observables
 	 * created while executing the runnable.
 	 * <p>
-	 * <em>NOTE: As of 1.2 (Eclipse 3.5), there are unresolved problems with this API, see
-	 * <a href="https://bugs.eclipse.org/278550">bug 278550</a>. If we cannot
-	 * find a way to make this API work, it will be deprecated as of 3.6.</em>
+	 * <em>NOTE: As of 1.2 (Eclipse 3.5), there are unresolved problems with this
+	 * API, see <a href="https://bugs.eclipse.org/278550">bug 278550</a>. If we
+	 * cannot find a way to make this API work, it will be deprecated as of
+	 * 3.6.</em>
 	 * </p>
 	 *
-	 * @param runnable
-	 *            the runnable to execute
+	 * @param runnable the runnable to execute
 	 * @since 1.2
 	 */
 	public void runAndCollect(Runnable runnable) {
 		IObservable[] collected = ObservableTracker.runAndCollect(runnable);
-		for (IObservable observable : collected)
+		for (IObservable observable : collected) {
 			addObservable(observable);
+		}
 	}
 
 	/**
@@ -124,10 +121,8 @@ public class ObservablesManager {
 		for (Entry<DataBindingContext, Pair> entry : contexts.entrySet()) {
 			DataBindingContext context = entry.getKey();
 			Pair trackModelsOrTargets = entry.getValue();
-			boolean disposeTargets = ((Boolean) trackModelsOrTargets.a)
-					.booleanValue();
-			boolean disposeModels = ((Boolean) trackModelsOrTargets.b)
-					.booleanValue();
+			boolean disposeTargets = (Boolean) trackModelsOrTargets.a;
+			boolean disposeModels = (Boolean) trackModelsOrTargets.b;
 			for (Binding binding : context.getBindings()) {
 				if (disposeTargets) {
 					observables.addAll(binding.getTargets());
