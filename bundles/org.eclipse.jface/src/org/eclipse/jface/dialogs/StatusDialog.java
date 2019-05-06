@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,17 +11,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Rüdiger Herrmann - 395426: [JFace] StatusDialog should escape ampersand in status message
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 546991
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -51,77 +49,6 @@ public abstract class StatusDialog extends TrayDialog {
 	private Image fImage;
 
 	private boolean fStatusLineAboveButtons = true;
-
-	/**
-	 * A message line displaying a status.
-	 */
-	private static class MessageLine extends CLabel {
-
-		/**
-		 * Creates a new message line as a child of the given parent.
-		 *
-		 * @param parent
-		 */
-		public MessageLine(Composite parent) {
-			this(parent, SWT.LEFT);
-		}
-
-		/**
-		 * Creates a new message line as a child of the parent and with the
-		 * given SWT stylebits.
-		 *
-		 * @param parent
-		 * @param style
-		 */
-		public MessageLine(Composite parent, int style) {
-			super(parent, style);
-		}
-
-		/**
-		 * Find an image assocated with the status.
-		 *
-		 * @param status
-		 * @return Image
-		 */
-		private Image findImage(IStatus status) {
-			if (status.isOK()) {
-				return null;
-			} else if (status.matches(IStatus.ERROR)) {
-				return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
-			} else if (status.matches(IStatus.WARNING)) {
-				return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
-			} else if (status.matches(IStatus.INFO)) {
-				return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
-			}
-			return null;
-		}
-
-		/**
-		 * Sets the message and image to the given status.
-		 *
-		 * @param status
-		 *            IStatus or <code>null</code>. <code>null</code> will
-		 *            set the empty text and no image.
-		 */
-		public void setErrorStatus(IStatus status) {
-			if (status != null && !status.isOK()) {
-				String message = status.getMessage();
-				if (message != null && message.length() > 0) {
-					setText(LegacyActionTools.escapeMnemonics(message));
-					// unqualified call of setImage is too ambiguous for
-					// Foundation 1.0 compiler
-					// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
-					MessageLine.this.setImage(findImage(status));
-					return;
-				}
-			}
-			setText(""); //$NON-NLS-1$
-			// unqualified call of setImage is too ambiguous for Foundation 1.0
-			// compiler
-			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
-			MessageLine.this.setImage(null);
-		}
-	}
 
 	/**
 	 * Creates an instance of a status dialog.
