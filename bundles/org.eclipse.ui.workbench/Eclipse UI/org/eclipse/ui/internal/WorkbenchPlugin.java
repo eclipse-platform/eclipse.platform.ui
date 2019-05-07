@@ -185,7 +185,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Information describing the product (formerly called "primary plugin"); lazily
 	 * initialized.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private ProductInfo productInfo = null;
@@ -217,7 +217,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Unload all members. This can be used to run a second instance of a workbench.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	void reset() {
@@ -445,7 +445,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Return the default instance of the receiver. This represents the runtime
 	 * plugin.
-	 * 
+	 *
 	 * @return WorkbenchPlugin
 	 * @see AbstractUIPlugin for the typical implementation pattern for plugin
 	 *      classes.
@@ -457,7 +457,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Answer the manager that maps resource types to a the description of the
 	 * editor to use
-	 * 
+	 *
 	 * @return IEditorRegistry the editor registry used by this plug-in.
 	 */
 
@@ -467,7 +467,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Answer the element factory for an id, or <code>null</code. if not found.
-	 * 
+	 *
 	 * @param targetID
 	 * @return IElementFactory
 	 */
@@ -514,7 +514,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Return the perspective registry.
-	 * 
+	 *
 	 * @return IPerspectiveRegistry. The registry for the receiver.
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
@@ -569,7 +569,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Get the preference manager.
-	 * 
+	 *
 	 * @return PreferenceManager the preference manager for the receiver.
 	 */
 	public PreferenceManager getPreferenceManager() {
@@ -602,7 +602,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Answer the view registry.
-	 * 
+	 *
 	 * @return IViewRegistry the view registry for the receiver.
 	 */
 	public IViewRegistry getViewRegistry() {
@@ -611,7 +611,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Answer the workbench.
-	 * 
+	 *
 	 * @deprecated Use <code>PlatformUI.getWorkbench()</code> instead.
 	 */
 	@Deprecated
@@ -649,7 +649,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Log the throwable.
-	 * 
+	 *
 	 * @param t
 	 */
 	public static void log(Throwable t) {
@@ -658,7 +658,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Return the status from throwable
-	 * 
+	 *
 	 * @param t throwable
 	 * @return IStatus
 	 */
@@ -670,7 +670,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Create a new error from the message and the throwable.
-	 * 
+	 *
 	 * @param message
 	 * @param t
 	 * @return IStatus
@@ -748,7 +748,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Log the status to the default log.
-	 * 
+	 *
 	 * @param status
 	 */
 	public static void log(IStatus status) {
@@ -757,7 +757,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Get the decorator manager for the receiver
-	 * 
+	 *
 	 * @return DecoratorManager the decorator manager for the receiver.
 	 */
 	public DecoratorManager getDecoratorManager() {
@@ -911,7 +911,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * Locale is determined differently by different JDKs and may not be consistent
 	 * with the users expectations.
 	 *
-	 * 
+	 *
 	 * @return int
 	 * @see SWT#NONE
 	 * @see SWT#RIGHT_TO_LEFT
@@ -940,7 +940,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Check to see if the orientation was set in the system properties. If there is
 	 * no orientation specified return SWT#NONE.
-	 * 
+	 *
 	 * @return int
 	 * @see SWT#NONE
 	 * @see SWT#RIGHT_TO_LEFT
@@ -960,7 +960,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Find the orientation in the commandLineArgs. If there is no orientation
 	 * specified return SWT#NONE.
-	 * 
+	 *
 	 * @param commandLineArgs
 	 * @return int
 	 * @see SWT#NONE
@@ -1046,7 +1046,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns an instance that describes this plugin's product (formerly "primary
 	 * plugin").
-	 * 
+	 *
 	 * @return ProductInfo the product info for the receiver
 	 */
 	private ProductInfo getProductInfo() {
@@ -1251,7 +1251,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Initialized the workbench plug-in with the e4 context
-	 * 
+	 *
 	 * @param context the e4 context
 	 */
 	public void initializeContext(IEclipseContext context) {
@@ -1437,7 +1437,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * {@link Workbench#getWorkbenchTestable()} to avoid the tests having a
 	 * dependency on the Workbench.
 	 * </p>
-	 * 
+	 *
 	 * @see PlatformUI#getTestableObject()
 	 * @return TestableObject provided via service or <code>null</code>
 	 */
