@@ -77,8 +77,7 @@ public class CSS2ColorHelper {
 	 * @param config
 	 * @return
 	 */
-	public static String getColorStringValue(RGBColor rgbColor,
-			ICSSValueConverterConfig config) {
+	public static String getColorStringValue(RGBColor rgbColor, ICSSValueConverterConfig config) {
 		if (config instanceof ICSSValueConverterColorConfig) {
 			ICSSValueConverterColorConfig colorConfig = (ICSSValueConverterColorConfig) config;
 			switch (colorConfig.getFormat()) {
@@ -110,16 +109,13 @@ public class CSS2ColorHelper {
 	 */
 	public static String getRGBColorStringValue(RGBColor rgbColor) {
 		String result = "rgb(";
-		int red = (int) rgbColor.getRed().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER);
+		int red = (int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		result += red;
 		result += ",";
-		int green = (int) rgbColor.getGreen().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER);
+		int green = (int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		result += green;
 		result += ",";
-		int blue = (int) rgbColor.getBlue().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER);
+		int blue = (int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		result += blue;
 		result += ")";
 		return result;
@@ -134,20 +130,17 @@ public class CSS2ColorHelper {
 	 */
 	public static String getHexaColorStringValue(RGBColor rgbColor) {
 		String result = "#";
-		int red = (int) rgbColor.getRed().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER);
+		int red = (int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		if (red < 16) {
 			result += "0";
 		}
 		result += Integer.toHexString(red);
-		int green = (int) rgbColor.getGreen().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER);
+		int green = (int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		if (green < 16) {
 			result += "0";
 		}
 		result += Integer.toHexString(green);
-		int blue = (int) rgbColor.getBlue().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER);
+		int blue = (int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		if (blue < 16) {
 			result += "0";
 		}

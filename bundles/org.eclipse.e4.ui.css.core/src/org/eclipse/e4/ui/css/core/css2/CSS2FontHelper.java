@@ -25,8 +25,7 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 public class CSS2FontHelper {
 
 	/**
-	 * Return CSS2 font-family. Escape font <code>family</code> with " if
-	 * need.
+	 * Return CSS2 font-family. Escape font <code>family</code> with " if need.
 	 *
 	 * @param family
 	 * @return
@@ -86,8 +85,7 @@ public class CSS2FontHelper {
 		case CSSPrimitiveValue.CSS_STRING:
 		case CSSPrimitiveValue.CSS_IDENT:
 			String s = value.getStringValue();
-			if (/* "normal".equals(s) || */"italic".equals(s)
-					|| "oblique".equals(s)) {
+			if (/* "normal".equals(s) || */"italic".equals(s) || "oblique".equals(s)) {
 				return "font-style";
 			}
 			if ("normal".equals(s) || "bold".equals(s) || "bolder".equals(s)) {
