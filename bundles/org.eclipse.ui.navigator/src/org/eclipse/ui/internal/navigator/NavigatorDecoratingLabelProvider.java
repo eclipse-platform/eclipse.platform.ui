@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2018, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     rob.stryker@jboss.com - bug 243824 [CommonNavigator] lacks table / tree-table support
+ *     Stefan Winkler <stefan@winklerweb.net> - bug 178019 - CNF Tooltip support
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.swt.graphics.Color;
@@ -47,7 +49,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelProvider implements IPropertyChangeListener, ILabelProvider, ITableLabelProvider {
 
-	private static class StyledLabelProviderAdapter implements IStyledLabelProvider, ITableLabelProvider, IColorProvider, IFontProvider {
+	private static class StyledLabelProviderAdapter
+			implements IStyledLabelProvider, ITableLabelProvider, IColorProvider, IFontProvider, IToolTipProvider {
 
 		private final ILabelProvider provider;
 
@@ -130,6 +133,14 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 			}
 			return null;
 		}
+
+		@Override
+		public String getToolTipText(Object element) {
+			if (provider instanceof IToolTipProvider) {
+				return ((IToolTipProvider) provider).getToolTipText(element);
+			}
+			return null;
+		}
 	}
 
 	/**
@@ -198,5 +209,12 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		return ((StyledLabelProviderAdapter)getStyledStringProvider()).getColumnText(element, columnIndex);
+	}
+
+	@Override
+	public boolean useNativeToolTip(Object object) {
+		// default from superclass is false.
+		// To support simple tooltips in CNF label providers, we use native tooltips.
+		return true;
 	}
 }

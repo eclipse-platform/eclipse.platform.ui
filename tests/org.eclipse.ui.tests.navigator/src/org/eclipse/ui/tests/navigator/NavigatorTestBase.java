@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2015, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
+ *     Stefan Winkler <stefan@winklerweb.net> - bug 178019 - CNF Tooltip support
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
@@ -89,6 +90,7 @@ public class NavigatorTestBase {
 	public static final String TEST_CONTENT_WITH = "org.eclipse.ui.tests.navigator.testContentWith";
 	public static final String TEST_CONTENT_NO_CHILDREN = "org.eclipse.ui.tests.navigator.testContentNoChildren";
 	public static final String TEST_CONTENT_EMPTY = "org.eclipse.ui.tests.navigator.testContentEmpty";
+	public static final String TEST_CONTENT_TOOLTIPS = "org.eclipse.ui.tests.navigator.testContentTooltips";
 
 	public static final String TEST_CONTENT_RESOURCE_UNSORTED = "org.eclipse.ui.tests.navigator.resourceContent.unsorted";
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2017 IBM Corporation and others.
+ * Copyright (c) 2003, 2017, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     anton.leherbauer@windriver.com - bug 220599 make CommonNavigator a ShowInSource
  *     rob.stryker@jboss.com - bug 250198 Slight changes for easier subclassing
+ *     Stefan Winkler <stefan@winklerweb.net> - bug 178019 - CNF Tooltip support
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -257,6 +259,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		if (helpContext == null)
 			helpContext = HELP_CONTEXT;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(commonViewer.getControl(), helpContext);
+
+		boolean enableToolTipSupport = commonViewer.getNavigatorContentService().getViewerDescriptor()
+				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_ENABLE_TOOLTIP_SUPPORT);
+		if (enableToolTipSupport) {
+			ColumnViewerToolTipSupport.enableFor(commonViewer);
+		}
 
 		stats.endRun();
 	}

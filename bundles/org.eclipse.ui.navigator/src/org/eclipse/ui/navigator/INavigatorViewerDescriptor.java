@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2016, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 501590
+ *     Stefan Winkler <stefan@winklerweb.net> - bug 178019 - CNF Tooltip support
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
@@ -63,6 +64,16 @@ public interface INavigatorViewerDescriptor {
 	 * @since 3.5
 	 */
 	String PROP_CUSTOMIZE_VIEW_DIALOG_HELP_CONTEXT = "org.eclipse.ui.navigator.customizeViewDialogHelpContext"; //$NON-NLS-1$
+
+	/**
+	 * {@value} (boolean): True indicates that tooltip support shall be installed
+	 * for the viewer. (Note: this only enables the general support to display
+	 * tooltips. The actual tooltip text needs to be contributed by the contributed
+	 * label providers.) (defaults to <b>false</b>).
+	 *
+	 * @since 3.8
+	 */
+	String PROP_ENABLE_TOOLTIP_SUPPORT = "org.eclipse.ui.navigator.enableTooltipSupport"; //$NON-NLS-1$
 
 	/**
 	 * Returns the id of the viewer targeted by this extension.

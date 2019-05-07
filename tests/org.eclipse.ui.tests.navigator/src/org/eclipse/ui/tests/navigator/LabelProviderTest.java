@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2015, 2019 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *.....IBM Corporation - fixed dead code warning
  *     Fair Issac Corp - bug 287103 - NCSLabelProvider does not properly handle overrides
  *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
+ *     Stefan Winkler <stefan@winklerweb.net> - bug 178019 - CNF Tooltip support
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
@@ -22,6 +23,8 @@ import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -445,4 +448,24 @@ public class LabelProviderTest extends NavigatorTestBase {
 		// Have to look at the log to see a bunch of stuff thrown
 	}
 
+	@Test
+	public void testLabelProviderSupportsTooltip() throws Exception {
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_TOOLTIPS, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+		_contentService.getActivationService()
+				.activateExtensions(new String[] { TEST_CONTENT_TOOLTIPS, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+
+		refreshViewer();
+
+		assertTrue(_viewer.getLabelProvider() instanceof IToolTipProvider);
+		IToolTipProvider tooltipProvider = (IToolTipProvider) _viewer.getLabelProvider();
+
+		assertTrue(_viewer.getContentProvider() instanceof ITreeContentProvider);
+		ITreeContentProvider contentProvider = (ITreeContentProvider) _viewer.getContentProvider();
+
+		Object[] rootElements = contentProvider.getElements(_viewer.getInput());
+
+		for (Object element : rootElements) {
+			assertTrue(tooltipProvider.getToolTipText(element).startsWith("ToolTip"));
+		}
+	}
 }

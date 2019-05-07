@@ -172,6 +172,8 @@ are associated with this navigatorContent extension for the purposes of determin
 Clients may also implement &lt;code&gt;org.eclipse.ui.navigator.IDescriptionProvider&lt;/code&gt; in order to add text to the status bar at the bottom of the Eclipse workbench based on the selection in the viewer.
 &lt;br&gt;&lt;br&gt;
 Since 3.4, clients may also implement &lt;code&gt;org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider&lt;/code&gt; to provide styled text labels. Note that the empty styled string signals that the label provider does not wish to render the label.
+&lt;br&gt;&lt;br&gt;
+Since 3.8, clients may also implement &lt;code&gt;org.eclipse.jface.viewers.IToolTipProvider&lt;/code&gt; and set the viewer option &lt;code&gt;org.eclipse.ui.navigator.enableTooltipSupport&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt; to enable support for, and provide tooltips.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelProvider"/>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2015, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  * 	   Anton Leherbauer, Wind River - bug 146788
  *     rob.stryker@jboss.com - bug 243824 [CommonNavigator] lacks table / tree-table support
- *
+ *     Stefan Winkler <stefan@winklerweb.net> - bug 178019 - CNF Tooltip support
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.ITreePathLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreePath;
@@ -37,7 +38,8 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 /**
  * @since 3.2
  */
-public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, ITableLabelProvider, IStyledLabelProvider {
+public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider,
+		ITreePathLabelProvider, ITableLabelProvider, IStyledLabelProvider, IToolTipProvider {
 
 	private final ILabelProvider delegateLabelProvider;
 
@@ -216,6 +218,14 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	public Font getFont(Object element) {
 		if(delegateLabelProvider instanceof IFontProvider) {
 			return ((IFontProvider)delegateLabelProvider).getFont(element);
+		}
+		return null;
+	}
+
+	@Override
+	public String getToolTipText(Object element) {
+		if (delegateLabelProvider instanceof IToolTipProvider) {
+			return ((IToolTipProvider) delegateLabelProvider).getToolTipText(element);
 		}
 		return null;
 	}
