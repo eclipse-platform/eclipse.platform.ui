@@ -170,7 +170,7 @@ public class UIEvents {
 	/**
 	 * @param event An OSGI event representing a UIEvent
 	 * @return true if it is a move event, false otherwise.
-	 * @since 1.9
+	 * @since 1.10
 	 */
 	public static boolean isMOVE(Event event) {
 		return UIEvents.EventTypes.MOVE.equals(event.getProperty(UIEvents.EventTags.TYPE));
