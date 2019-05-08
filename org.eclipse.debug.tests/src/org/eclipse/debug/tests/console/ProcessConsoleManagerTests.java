@@ -97,9 +97,8 @@ public class ProcessConsoleManagerTests extends AbstractDebugTest {
 		final IProcess process1 = mockProcess1.toRuntimeProcess("FirstMockProcess");
 		final MockProcess mockProcess2 = new MockProcess(0);
 		final IProcess process2 = mockProcess2.toRuntimeProcess("SecondMockProcess");
-		final boolean prefRemoveOldLaunches = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES);
 		try {
-			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, true);
+			setPreference(DebugUIPlugin.getDefault().getPreferenceStore(), IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, true);
 			// Stop the JobManager to reliable trigger the tested race
 			// condition.
 			Job.getJobManager().suspend();
@@ -107,7 +106,6 @@ public class ProcessConsoleManagerTests extends AbstractDebugTest {
 			launchManager.addLaunch(process2.getLaunch());
 		} finally {
 			Job.getJobManager().resume();
-			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, prefRemoveOldLaunches);
 		}
 
 		ProcessConsoleManager processConsoleManager = DebugUIPlugin.getDefault().getProcessConsoleManager();

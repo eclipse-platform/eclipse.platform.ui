@@ -63,7 +63,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	 * @param value the new maximum size for launch histories
 	 */
 	private void setMaxHistorySize(int value) {
-		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, value);
+		setPreference(DebugUIPlugin.getDefault().getPreferenceStore(), IDebugUIConstants.PREF_MAX_HISTORY_SIZE, value);
 	}
 
 	/**
@@ -182,7 +182,6 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	public void testLaunchHistorySize() throws CoreException {
 		LaunchHistory runhistory = getRunLaunchHistory();
 		assertNotNull("The run launch history should not be null", runhistory); //$NON-NLS-1$
-		int oldsize = getMaxHistorySize();
 		setMaxHistorySize(2);
 		assertTrue("the maximum history size should be 2", getMaxHistorySize() == 2); //$NON-NLS-1$
 		ILaunchConfiguration config = getLaunchConfiguration("LaunchHistoryTest"); //$NON-NLS-1$
@@ -193,8 +192,5 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 		config.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 		assertTrue("there should only be two items in the history", runhistory.getHistory().length == getMaxHistorySize()); //$NON-NLS-1$
 		assertTrue("the complete launch history should be greater than or equal to the history size", runhistory.getCompleteLaunchHistory().length >= runhistory.getHistory().length); //$NON-NLS-1$
-
-		//reset the history size
-		setMaxHistorySize(oldsize);
 	}
 }
