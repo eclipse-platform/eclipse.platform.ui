@@ -452,7 +452,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 
 	/**
 	 * @return <code>IWorkbenchPartSite<code> of the nested multi-page editor.
-	 * @since 3.114
+	 * @since 3.115
 	 */
 	protected IWorkbenchPartSite getNestedEditorSite() {
 		return getMultiPageEditor().getSite();

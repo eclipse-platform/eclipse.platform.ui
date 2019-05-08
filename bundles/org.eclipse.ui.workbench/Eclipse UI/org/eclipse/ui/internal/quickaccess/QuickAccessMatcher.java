@@ -23,7 +23,6 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  * QuickAccessMatch contains the logic to check whether a given
  * {@link QuickAccessElement} matches a input user request.
  *
- * @since 3.114
  * @noreference This class is not intended to be referenced by clients.
  */
 public final class QuickAccessMatcher {

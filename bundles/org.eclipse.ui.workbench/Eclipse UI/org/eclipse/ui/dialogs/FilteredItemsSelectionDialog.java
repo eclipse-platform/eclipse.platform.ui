@@ -2999,7 +2999,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	/**
 	 * @return Returns the styledStringHighlighter.
-	 * @since 3.114
+	 * @since 3.115
 	 */
 	public IStyledStringHighlighter getStyledStringHighlighter() {
 		if (styledStringHighlighter == null) {
@@ -3011,7 +3011,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	/**
 	 * @param styledStringHighlighter The styledStringHighlighter to set.
-	 * @since 3.114
+	 * @since 3.115
 	 */
 	public void setStyledStringHighlighter(IStyledStringHighlighter styledStringHighlighter) {
 		this.styledStringHighlighter = styledStringHighlighter;

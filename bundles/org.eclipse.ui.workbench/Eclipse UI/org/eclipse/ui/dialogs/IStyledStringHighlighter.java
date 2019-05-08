@@ -7,7 +7,7 @@ import org.eclipse.jface.viewers.StyledString.Styler;
  * Used in {@link FilteredItemsSelectionDialog} to highlight matches in the list
  * of matching items
  *
- * @since 3.114
+ * @since 3.115
  */
 public interface IStyledStringHighlighter {
 

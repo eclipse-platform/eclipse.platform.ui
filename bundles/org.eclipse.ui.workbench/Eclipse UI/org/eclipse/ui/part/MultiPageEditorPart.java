@@ -260,7 +260,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 *               created; must not be <code>null</code>.
 	 * @return a new container
 	 *
-	 * @since 3.114
+	 * @since 3.115
 	 */
 	protected CTabFolder createContainer(Composite parent) {
 		// use SWT.FLAT style so that an extra 1 pixel border is not reserved
@@ -301,7 +301,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @param control is the control to be placed in an item
 	 * @return a new item
 	 *
-	 * @since 3.114
+	 * @since 3.115
 	 */
 	protected CTabItem createItem(int index, Control control) {
 		CTabItem item = new CTabItem(getTabFolder(), SWT.NONE, index);
@@ -403,7 +403,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		service.activateHandler(COMMAND_NEXT_SUB_TAB, new AbstractHandler() {
 			/**
 			 * {@inheritDoc}
-			 * 
+			 *
 			 * @throws ExecutionException if an exception occurred during execution
 			 */
 			@Override
@@ -423,7 +423,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		service.activateHandler(COMMAND_PREVIOUS_SUB_TAB, new AbstractHandler() {
 			/**
 			 * {@inheritDoc}
-			 * 
+			 *
 			 * @throws ExecutionException if an exception occurred during execution
 			 */
 			@Override
@@ -1129,7 +1129,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	/**
 	 * Find the editors contained in this multi-page editor whose editor input match
 	 * the provided input.
-	 * 
+	 *
 	 * @param input the editor input
 	 * @return the editors contained in this multi-page editor whose editor input
 	 *         match the provided input
@@ -1151,7 +1151,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Set the active page of this multi-page editor to the page that contains the
 	 * given editor part. This method has no effect of the given editor part is not
 	 * contained in this multi-page editor.
-	 * 
+	 *
 	 * @param editorPart the editor part
 	 * @since 3.3
 	 */

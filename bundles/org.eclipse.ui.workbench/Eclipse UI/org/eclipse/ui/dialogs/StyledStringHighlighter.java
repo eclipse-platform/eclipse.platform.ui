@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.StyledString.Styler;
  * Highlights all matching groups of filter regular expression using
  * <code>*</code> and <code>?</code> as placeholder in bold.
  *
- * @since 3.114
+ * @since 3.115
  */
 public class StyledStringHighlighter implements IStyledStringHighlighter {
 

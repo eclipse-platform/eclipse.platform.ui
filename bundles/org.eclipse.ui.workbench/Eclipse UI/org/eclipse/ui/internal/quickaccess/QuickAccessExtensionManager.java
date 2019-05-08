@@ -28,7 +28,6 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 import org.osgi.framework.Bundle;
 
 /**
- * @since 3.114
  *
  */
 public class QuickAccessExtensionManager {
