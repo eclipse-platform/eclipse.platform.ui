@@ -191,10 +191,10 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 *
 	 * @return amount of pixels from top/bottom of element that trigger before/after
 	 *         behavior.
-	 * @since 3.15
+	 * @since 3.16
 	 */
 	protected int getThreshold() {
-		// fixed default threshold provided up to v3.15
+		// fixed default threshold provided up to v3.16
 		return 5;
 	}
 
