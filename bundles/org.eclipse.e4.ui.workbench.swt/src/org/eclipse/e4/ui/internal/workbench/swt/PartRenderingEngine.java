@@ -437,24 +437,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				} else {
 					elementCtrl.moveAbove(null);
 				}
+				elementCtrl.requestLayout();
 				break;
 			} else if (kid.getWidget() instanceof Control && kid.isVisible()) {
 				prevCtrl = (Control) kid.getWidget();
-			}
-		}
-
-		Object widget = parent.getWidget();
-		if (widget instanceof Composite) {
-			Composite composite = (Composite) widget;
-			if (composite.getShell() == elementCtrl.getShell()) {
-				Composite temp = elementCtrl.getParent();
-				while (temp != composite) {
-					if (temp == null) {
-						return;
-					}
-					temp = temp.getParent();
-				}
-				composite.layout(true, true);
 			}
 		}
 	}
