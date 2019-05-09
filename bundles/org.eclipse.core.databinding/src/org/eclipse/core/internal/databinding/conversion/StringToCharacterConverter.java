@@ -39,7 +39,7 @@ public class StringToCharacterConverter implements IConverter<Object, Character>
 					"String2Character: Expected type String, got type [" + source.getClass().getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String s = (String) source;
-		if (source == null || s.equals("")) { //$NON-NLS-1$
+		if (source == null || s.isEmpty()) {
 			if (primitiveTarget)
 				throw new IllegalArgumentException(
 						"String2Character: cannot convert null/empty string to character primitive"); //$NON-NLS-1$

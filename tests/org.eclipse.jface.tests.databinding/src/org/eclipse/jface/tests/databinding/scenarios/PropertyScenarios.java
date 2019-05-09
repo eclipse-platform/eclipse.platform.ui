@@ -217,7 +217,7 @@ public class PropertyScenarios extends ScenariosTestCase {
             @Override
 			public Object convert(Object toObject) {
                 String modelValue = (String) toObject;
-                if (modelValue == null || modelValue.equals("")) {
+                if (modelValue == null || modelValue.isEmpty()) {
                     return modelValue;
                 }
                 String firstChar = modelValue.substring(0, 1);
