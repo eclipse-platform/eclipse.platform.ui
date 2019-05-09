@@ -97,7 +97,7 @@ public class NavigationHistoryEntry {
 			// be saved. Doing so handles cases where getText() value
 			// may be dynamic.
 			String text = location.getText();
-			if ((text == null) || text.equals("")) { //$NON-NLS-1$
+			if ((text == null) || text.isEmpty()) {
 				text = historyText;
 			} else {
 				historyText = text;

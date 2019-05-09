@@ -486,7 +486,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			firstCheck = false;
 			return;
 		}
-		if (newText.equals("")) { //$NON-NLS-1$
+		if (newText.isEmpty()) {
 			errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameMustNotBeEmpty;
 		}
 		if (errorMessage == null && (workingSet == null || newText.equals(workingSet.getName()) == false)) {

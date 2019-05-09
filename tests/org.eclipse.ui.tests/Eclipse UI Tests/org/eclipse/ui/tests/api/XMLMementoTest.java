@@ -443,7 +443,7 @@ public class XMLMementoTest extends TestCase {
 				@Override
 				public void checkAfterDeserialization(
 						XMLMemento deserializedMemento) {
-					if (data.equals("")) {
+					if (data.isEmpty()) {
 						// this comes back as null...
 						assertEquals(null, deserializedMemento.getTextData());
 					} else {

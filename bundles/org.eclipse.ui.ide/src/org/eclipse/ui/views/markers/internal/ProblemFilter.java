@@ -122,7 +122,7 @@ public class ProblemFilter extends MarkerFilter {
 	}
 
 	private boolean selectByDescription(ConcreteMarker item) {
-		if (description == null || description.equals("")) { //$NON-NLS-1$
+		if (description == null || description.isEmpty()) {
 			return true;
 		}
 

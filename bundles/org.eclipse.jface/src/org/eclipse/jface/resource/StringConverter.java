@@ -306,14 +306,14 @@ public class StringConverter {
 	 * @param prop the initial comma-separated string
 	 */
 	private static String[] getArrayFromList(String prop, String separator) {
-		if (prop == null || prop.trim().equals("")) { //$NON-NLS-1$
+		if (prop == null || prop.trim().isEmpty()) {
 			return new String[0];
 		}
 		ArrayList<String> list = new ArrayList<>();
 		StringTokenizer tokens = new StringTokenizer(prop, separator);
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken().trim();
-			if (!token.equals("")) { //$NON-NLS-1$
+			if (!token.isEmpty()) {
 				list.add(token);
 			}
 		}

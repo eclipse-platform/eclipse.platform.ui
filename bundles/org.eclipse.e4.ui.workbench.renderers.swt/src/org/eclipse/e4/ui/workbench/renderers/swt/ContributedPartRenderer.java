@@ -151,7 +151,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 			if (description == null)
 				description = ""; //$NON-NLS-1$
 			// hide the label if there is no text to show
-			boolean hasText = !description.equals(""); //$NON-NLS-1$
+			boolean hasText = !description.isEmpty();
 			label.setVisible(hasText);
 			label.setText(description);
 			label.setToolTipText(description);

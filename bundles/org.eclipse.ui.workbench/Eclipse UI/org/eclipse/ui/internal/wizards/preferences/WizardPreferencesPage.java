@@ -196,7 +196,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 
 	/**
 	 * Validate the destination group.
-	 * 
+	 *
 	 * @return <code>true</code> if the group is valid. If not set the error message
 	 *         and return <code>false</code>.
 	 */
@@ -211,7 +211,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 
 	/**
 	 * Return the message that indicates an invalid destination.
-	 * 
+	 *
 	 * @return String
 	 */
 	abstract protected String getInvalidDestinationMessage();
@@ -508,7 +508,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 			directoryNames = addToHistory(directoryNames, getDestinationValue());
 			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
 			String current = getDestinationValue();
-			if (current != null && !current.equals("")) { //$NON-NLS-1$
+			if (current != null && !current.isEmpty()) {
 				settings.put(STORE_DESTINATION_ID, current);
 			}
 			// options

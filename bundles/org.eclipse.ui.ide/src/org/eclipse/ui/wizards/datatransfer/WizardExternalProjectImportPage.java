@@ -308,7 +308,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 		String locationFieldContents = getProjectLocationFieldValue();
 
-		if (locationFieldContents.equals("")) { //$NON-NLS-1$
+		if (locationFieldContents.isEmpty()) {
 			setErrorMessage(null);
 			setMessage(DataTransferMessages.WizardExternalProjectImportPage_projectLocationEmpty);
 			return false;

@@ -337,12 +337,12 @@ public class ConfigureColumns {
 			String result = ""; //$NON-NLS-1$
 			if (item instanceof TableColumn) {
 				result = ((TableColumn) item).getText();
-				if (result.trim().equals("")) { //$NON-NLS-1$
+				if (result.trim().isEmpty()) {
 					result = ((TableColumn) item).getToolTipText();
 				}
 			} else if (item instanceof TreeColumn) {
 				result = ((TreeColumn) item).getText();
-				if (result.trim().equals("")) { //$NON-NLS-1$
+				if (result.trim().isEmpty()) {
 					result = ((TreeColumn) item).getToolTipText();
 				}
 			}

@@ -921,7 +921,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 
 		IWorkingSet workingSet = null;
 
-		if (workingSetName != null && workingSetName.equals("") == false) { //$NON-NLS-1$
+		if (workingSetName != null && workingSetName.isEmpty() == false) {
 			IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
 			workingSet = workingSetManager.getWorkingSet(workingSetName);
 		} else if (PlatformUI.getPreferenceStore()

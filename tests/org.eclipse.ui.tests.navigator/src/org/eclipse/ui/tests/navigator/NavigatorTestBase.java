@@ -370,7 +370,7 @@ public class NavigatorTestBase {
 	protected void checkItems(TreeItem[] rootItems, TestLabelProvider tlp, boolean all, boolean text) {
 		for (int i = 0; i < rootItems.length; i++) {
 			// Skip the dummy items (for the + placeholder)
-			if (rootItems[i].getText() == null || rootItems[i].getText().equals(""))
+			if (rootItems[i].getText() == null || rootItems[i].getText().isEmpty())
 				continue;
 			if (text && !rootItems[i].getText().startsWith(tlp.getColorName()))
 				fail("Wrong text: " + rootItems[i].getText());

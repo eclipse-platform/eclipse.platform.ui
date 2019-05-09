@@ -103,7 +103,7 @@ public class MarkerTypesModel {
 			for (IExtension ext : point.getExtensions()) {
 				String id = ext.getUniqueIdentifier();
 				String label = ext.getLabel();
-				if (label.equals("")) {//$NON-NLS-1$
+				if (label.isEmpty()) {
 					label = getWellKnownLabel(id);
 				}
 				ArrayList<String> supersList = new ArrayList<>();

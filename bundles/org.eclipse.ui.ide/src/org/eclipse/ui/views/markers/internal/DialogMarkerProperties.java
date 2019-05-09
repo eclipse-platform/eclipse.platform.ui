@@ -420,7 +420,7 @@ public class DialogMarkerProperties extends TrayDialog {
 		}
         if (locationText != null) {
             String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
-            if (line.equals("")) { //$NON-NLS-1$
+			if (line.isEmpty()) {
 				locationText.setText(""); //$NON-NLS-1$
 			} else {
 				locationText.setText(NLS.bind(MarkerMessages.label_lineNumber, line));

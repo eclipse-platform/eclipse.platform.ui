@@ -166,7 +166,7 @@ public class PatternFilter extends ViewerFilter {
 			return;
 		}
 		clearCaches();
-		if (patternString == null || patternString.equals("")) { //$NON-NLS-1$
+		if (patternString == null || patternString.isEmpty()) {
 			matcher = null;
 		} else {
 			String pattern = patternString + "*"; //$NON-NLS-1$

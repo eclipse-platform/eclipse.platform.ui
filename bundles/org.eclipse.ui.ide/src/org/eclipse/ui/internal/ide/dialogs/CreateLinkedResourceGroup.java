@@ -286,7 +286,7 @@ public class CreateLinkedResourceGroup {
 			if (updatableResourceName != null) {
 				String value = updatableResourceName.getValue();
 				if (value == null
-						|| value.equals("") || value.equals(lastUpdatedValue)) { //$NON-NLS-1$
+						|| value.isEmpty() || value.equals(lastUpdatedValue)) {
 					IPath linkTargetPath = new Path(linkTarget);
 					String lastSegment = linkTargetPath.lastSegment();
 					if (lastSegment != null) {
@@ -720,7 +720,7 @@ public class CreateLinkedResourceGroup {
 		}
 		IStatus locationStatus = workspace.validateLinkLocationURI(linkHandle,
 				locationURI);
-		if (locationStatus.getSeverity() == IStatus.ERROR || linkTarget.trim().equals("")) { //$NON-NLS-1$
+		if (locationStatus.getSeverity() == IStatus.ERROR || linkTarget.trim().isEmpty()) {
 			return locationStatus;
 		}
 

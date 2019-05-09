@@ -450,7 +450,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
 		while (tokenizer.hasMoreTokens()) {
 			String currentExtension = tokenizer.nextToken().trim();
-			if (!currentExtension.equals("")) { //$NON-NLS-1$
+			if (!currentExtension.isEmpty()) {
 				result.add(currentExtension);
 			}
 		}
@@ -929,7 +929,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 		}
 
 		String sourceString = resourceNameField.getText();
-		if (sourceString.equals("")) {//$NON-NLS-1$
+		if (sourceString.isEmpty()) {
 			setErrorMessage(null);
 			return false;
 		}

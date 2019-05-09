@@ -370,7 +370,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 			// the < character indicates an exact match search
 			return text.substring(0, text.length() - 1);
 		}
-		if (!text.equals("") && !text.endsWith("*")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (!text.isEmpty() && !text.endsWith("*")) { //$NON-NLS-1$
 			return text + "*"; //$NON-NLS-1$
 		}
 		return text;
@@ -530,7 +530,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 		stringMatcher = new StringMatcher(patternString, true, false);
 		UpdateFilterThread oldThread = updateFilterThread;
 		updateFilterThread = new UpdateFilterThread();
-		if (patternString.equals("")) { //$NON-NLS-1$
+		if (patternString.isEmpty()) {
 			updateFilterThread.firstMatch = 0;
 			updateFilterThread.lastMatch = -1;
 			updateFilterThread.start();
@@ -600,7 +600,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 		updateGatherThread.stop = true;
 		updateGatherThread = new UpdateGatherThread();
 
-		if (patternString.equals("")) { //$NON-NLS-1$
+		if (patternString.isEmpty()) {
 			updateGatherThread.start();
 			return;
 		}
@@ -812,7 +812,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	 * @return true if the label matches the chosen pattern. false otherwise.
 	 */
 	private boolean match(String label) {
-		if ((patternString == null) || (patternString.equals("")) || (patternString.equals("*"))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ((patternString == null) || (patternString.isEmpty()) || (patternString.equals("*"))) { //$NON-NLS-1$
 			return true;
 		}
 		return stringMatcher.match(label);

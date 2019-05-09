@@ -407,7 +407,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
 			String contributingId = bars.getActionSetId();
 
-			if (toolBarId == null || toolBarId.equals("")) { //$NON-NLS-1$
+			if (toolBarId == null || toolBarId.isEmpty()) {
 				// the item is being added to the coolitem for its action set
 				toolBarId = contributingId;
 			}

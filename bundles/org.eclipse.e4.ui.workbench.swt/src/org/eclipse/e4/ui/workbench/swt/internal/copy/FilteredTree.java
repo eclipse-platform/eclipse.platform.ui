@@ -1035,7 +1035,7 @@ public class FilteredTree extends Composite {
 
 		// Do nothing if it's empty string
 		String initialText = tree.getInitialText();
-		if (!filterText.equals("") && !filterText.equals(initialText)) {//$NON-NLS-1$
+		if (!filterText.isEmpty() && !filterText.equals(initialText)) {
 			if (tree.getPatternFilter() != filter) {
 				boolean initial = initialText != null
 						&& initialText.equals(filterText);

@@ -526,7 +526,7 @@ public abstract class CellEditor {
 		}
 
 		errorMessage = validator.isValid(value);
-		return (errorMessage == null || errorMessage.equals(""));//$NON-NLS-1$
+		return (errorMessage == null || errorMessage.isEmpty());
 	}
 
 	/**

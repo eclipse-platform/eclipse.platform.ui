@@ -450,7 +450,7 @@ public class RenameResourceAction extends WorkspaceAction {
 				return;
 			}
 			String newName = queryNewResourceName(currentResource);
-			if (newName == null || newName.equals("")) { //$NON-NLS-1$
+			if (newName == null || newName.isEmpty()) {
 				return;
 			}
 			newPath = currentResource.getFullPath().removeLastSegments(1)

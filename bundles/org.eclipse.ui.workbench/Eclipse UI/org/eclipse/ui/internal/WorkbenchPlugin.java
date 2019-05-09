@@ -317,7 +317,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		if (element.getAttribute(extensionName) != null)
 			return true;
 		String elementText = element.getValue();
-		if (elementText != null && !elementText.equals("")) //$NON-NLS-1$
+		if (elementText != null && !elementText.isEmpty())
 			return true;
 		IConfigurationElement[] children = element.getChildren(extensionName);
 		if (children.length == 1) {
@@ -385,7 +385,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			prop = element.getValue();
 			if (prop != null) {
 				prop = prop.trim();
-				if (prop.equals("")) //$NON-NLS-1$
+				if (prop.isEmpty())
 					prop = null;
 			}
 		}

@@ -601,7 +601,7 @@ public class FilteredTree extends Composite {
 
 			/**
 			 * Return the number of filtered items
-			 * 
+			 *
 			 * @return int
 			 */
 			private int getFilteredItemsCount() {
@@ -616,7 +616,7 @@ public class FilteredTree extends Composite {
 
 			/**
 			 * Return the count of treeItem and it's children to infinite depth.
-			 * 
+			 *
 			 * @param treeItem
 			 * @return int
 			 */
@@ -1077,7 +1077,7 @@ public class FilteredTree extends Composite {
 
 		// Do nothing if it's empty string
 		String initialText = tree.getInitialText();
-		if (!filterText.equals("") && !filterText.equals(initialText)) {//$NON-NLS-1$
+		if (!filterText.isEmpty() && !filterText.equals(initialText)) {
 			if (tree.getPatternFilter() != filter) {
 				boolean initial = initialText != null && initialText.equals(filterText);
 				if (initial) {

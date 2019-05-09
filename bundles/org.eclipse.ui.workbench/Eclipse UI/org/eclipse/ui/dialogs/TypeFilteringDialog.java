@@ -74,7 +74,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	/**
 	 * Creates a type filtering dialog using the supplied entries. Set the initial
 	 * selections to those whose extensions match the preselections.
-	 * 
+	 *
 	 * @param parentShell   The shell to parent the dialog from.
 	 * @param preselections of String - a Collection of String to define the
 	 *                      preselected types
@@ -127,7 +127,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 
 	/**
 	 * Add the currently-specified extensions to result.
-	 * 
+	 *
 	 * @param result
 	 */
 	private void addUserDefinedEntries(List result) {
@@ -135,7 +135,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 		// Allow the *. and . prefix and strip out the extension
 		while (tokenizer.hasMoreTokens()) {
 			String currentExtension = tokenizer.nextToken().trim();
-			if (!currentExtension.equals("")) { //$NON-NLS-1$
+			if (!currentExtension.isEmpty()) {
 				if (currentExtension.startsWith("*.")) { //$NON-NLS-1$
 					result.add(currentExtension.substring(2));
 				} else {
@@ -239,7 +239,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 
 	/**
 	 * Return the input to the dialog.
-	 * 
+	 *
 	 * @return IFileEditorMapping[]
 	 */
 	private IFileEditorMapping[] getInput() {

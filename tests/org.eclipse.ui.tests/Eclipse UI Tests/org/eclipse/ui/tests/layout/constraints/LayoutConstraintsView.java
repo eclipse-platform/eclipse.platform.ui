@@ -239,7 +239,7 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
 	 * @return
 	 */
 	private int getInt(Text text) {
-		if (text.getText().equals("")) {
+		if (text.getText().isEmpty()) {
 			return ISizeProvider.INFINITE;
 		}
 

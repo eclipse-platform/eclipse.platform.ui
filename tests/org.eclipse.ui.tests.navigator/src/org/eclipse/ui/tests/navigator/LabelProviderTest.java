@@ -106,11 +106,11 @@ public class LabelProviderTest extends NavigatorTestBase {
 		String lpText = lp.getText(rootItems[0].getData());
 
 		if (nce == BOTH) {
-			if (!rootItems[0].getText().equals(""))
+			if (!rootItems[0].getText().isEmpty())
 				fail("Wrong text: " + rootItems[0].getText());
 
 			if (blank) {
-				if (!lpText.equals(""))
+				if (!lpText.isEmpty())
 					fail("Wrong text from ILabelProvider: " + lpText);
 			} else {
 				if (lpText != null)

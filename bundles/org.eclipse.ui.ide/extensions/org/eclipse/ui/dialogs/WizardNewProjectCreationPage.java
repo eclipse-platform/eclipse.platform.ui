@@ -321,7 +321,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 
 		String projectFieldContents = getProjectNameFieldValue();
-		if (projectFieldContents.equals("")) { //$NON-NLS-1$
+		if (projectFieldContents.isEmpty()) {
 			setErrorMessage(null);
 			setMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectNameEmpty);
 			return false;

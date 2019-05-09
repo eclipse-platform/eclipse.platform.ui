@@ -147,7 +147,7 @@ public class FilteredTree extends Composite {
 	 */
 	static {
 		Bundle bundle = FrameworkUtil.getBundle(FilteredTree.class);
-		IPath enabledPath = new Path("$nl$/icons/full/etool16/clear_co.png");
+		IPath enabledPath = new Path("$nl$/icons/full/etool16/clear_co.png"); //$NON-NLS-1$
 		URL enabledURL = FileLocator.find(bundle, enabledPath, null);
 		ImageDescriptor enabledDesc = ImageDescriptor.createFromURL(enabledURL);
 		if (enabledDesc != null) {
@@ -156,7 +156,7 @@ public class FilteredTree extends Composite {
 					ImageDescriptor.createWithFlags(enabledDesc, SWT.IMAGE_GRAY));
 		}
 
-		IPath disabledPath = new Path("$nl$/icons/full/dtool16/clear_co.png");
+		IPath disabledPath = new Path("$nl$/icons/full/dtool16/clear_co.png"); //$NON-NLS-1$
 		URL disabledURL = FileLocator.find(bundle, disabledPath, null);
 		ImageDescriptor disabledDesc = ImageDescriptor.createFromURL(disabledURL);
 		if (disabledDesc != null) {
@@ -922,7 +922,7 @@ public class FilteredTree extends Composite {
 
 		// Do nothing if it's empty string
 		String initialText = tree.getInitialText();
-		if (!filterText.equals("") && !filterText.equals(initialText)) {//$NON-NLS-1$
+		if (!filterText.isEmpty() && !filterText.equals(initialText)) {
 			if (tree.getPatternFilter() != filter) {
 				boolean initial = initialText != null && initialText.equals(filterText);
 				if (initial) {
