@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.IJobManager;
@@ -1014,18 +1014,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
 
-		monitor.beginTask(IInternalDebugCoreConstants.EMPTY_STRING, 1);
-		try
-		{
-			return configuration.launch(
-					mode,
-					new SubProgressMonitor(monitor, 1),
-					buildBeforeLaunch);
-		}
-		finally
-		{
-			monitor.done();
-		}
+		return configuration.launch(mode, SubMonitor.convert(monitor, 1), buildBeforeLaunch);
 	}
 
 	/**
@@ -1074,19 +1063,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 				 * Setup progress monitor - Waiting for jobs to finish (2) -
 				 * Build & launch (98)
 				 */
-				monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {
-						configuration.getName() }), 100);
-
+				final SubMonitor subMonitor = SubMonitor.convert(monitor, MessageFormat
+						.format(DebugUIMessages.DebugUIPlugin_25, new Object[] { configuration.getName() }), 100);
 				try {
-					jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new SubProgressMonitor(monitor, 1));
-					jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, new SubProgressMonitor(monitor, 1));
+					jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, subMonitor.split(1));
+					jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, subMonitor.split(1));
 				} catch (InterruptedException e1) {
-					/* continue */}
+					/* continue */
+				}
 				if (!monitor.isCanceled()) {
 					try {
-						buildAndLaunch(configuration, mode, new SubProgressMonitor(monitor, 98));
-					}
-					catch (CoreException e2) {
+						buildAndLaunch(configuration, mode, subMonitor.split(98));
+					} catch (CoreException e2) {
 						throw new InvocationTargetException(e2);
 					}
 				}
@@ -1103,10 +1091,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 				/*
 				 * Setup progress monitor - Build & launch (1)
 				 */
-				monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {
-						configuration.getName() }), 1);
+				final SubMonitor subMonitor = SubMonitor.convert(monitor, MessageFormat
+						.format(DebugUIMessages.DebugUIPlugin_25, new Object[] { configuration.getName() }), 1);
 				try {
-					buildAndLaunch(configuration, mode, new SubProgressMonitor(monitor, 1));
+					buildAndLaunch(configuration, mode, subMonitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}
@@ -1190,7 +1178,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 				/* Setup progress monitor
 				 * - Waiting for jobs to finish (2)
 				 * - Build & launch (98) */
-				monitor.beginTask(DebugUIMessages.DebugUITools_3, 100);
+				final SubMonitor subMonitor = SubMonitor.convert(monitor, DebugUIMessages.DebugUITools_3, 100);
 				try {
 					if(waitInJob) {
 						StringBuilder buffer = new StringBuilder(configuration.getName());
@@ -1221,17 +1209,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 						};
 						addJobChangeListener(listener);
 						try {
-							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new SubProgressMonitor(monitor, 1));
-							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, new SubProgressMonitor(monitor, 1));
+							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, subMonitor.split(1));
+							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, subMonitor.split(1));
 						}
 						catch (InterruptedException e) {/*just continue.*/}
 						DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
 					}
-					else {
-						monitor.worked(2); /* don't wait for jobs to finish */
-					}
+					subMonitor.setWorkRemaining(98);
 					if (!monitor.isCanceled()) {
-						buildAndLaunch(configuration, mode, new SubProgressMonitor(monitor, 98));
+						buildAndLaunch(configuration, mode, subMonitor.split(98));
 					}
 				} catch (CoreException e) {
 					final IStatus status = e.getStatus();

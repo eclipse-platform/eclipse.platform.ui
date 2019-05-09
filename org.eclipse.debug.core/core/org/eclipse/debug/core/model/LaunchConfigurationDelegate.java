@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2018 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
@@ -117,21 +116,12 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		if (monitor != null) {
-			monitor.beginTask("", 1); //$NON-NLS-1$
+		IProject[] projects = getBuildOrder(configuration, mode);
+		if (projects == null) {
+			return true;
 		}
-		try {
-			IProject[] projects = getBuildOrder(configuration, mode);
-			if (projects == null) {
-				return true;
-			}
-			buildProjects(projects, new SubProgressMonitor(monitor, 1));
-			return false;
-		} finally {
-			if (monitor != null) {
-				monitor.done();
-			}
-		}
+		buildProjects(projects, SubMonitor.convert(monitor, 1));
+		return false;
 	}
 
 	/**

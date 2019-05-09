@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,7 +48,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -730,7 +729,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		 * - Final launch validation (1)
 		 * - Initialize source locator (1)
 		 * - Launch delegate (10) */
-		SubMonitor lmonitor = SubMonitor.convert(monitor, DebugCoreMessages.LaunchConfiguration_9, build ? 23 : 13);
+		SubMonitor lmonitor = SubMonitor.convert(monitor, DebugCoreMessages.LaunchConfiguration_9, 23);
 		try {
 			// bug 28245 - force the delegate to load in case it is interested in launch notifications
 			Set<String> modes = getModes();
@@ -821,42 +820,34 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_8);
 
 			if (delegate2 != null) {
-				if (!(delegate2.preLaunchCheck(this, mode, new SubProgressMonitor(lmonitor, 1)))) {
+				if (!(delegate2.preLaunchCheck(this, mode, lmonitor.split(1)))) {
 					getLaunchManager().removeLaunch(launch);
 					return launch;
 				}
 			}
-			else {
-				lmonitor.worked(1); /* No pre-launch-check */
-			}
+			lmonitor.setWorkRemaining(22);
 		// perform pre-launch build
 			if (build) {
-				IProgressMonitor buildMonitor = new SubProgressMonitor(lmonitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-				buildMonitor.beginTask(DebugCoreMessages.LaunchConfiguration_7, 10);
-				buildMonitor.subTask(DebugCoreMessages.LaunchConfiguration_6);
+				lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_7 + DebugCoreMessages.LaunchConfiguration_6);
 				boolean tempbuild = build;
 				if (delegate2 != null) {
-					tempbuild = delegate2.buildForLaunch(this, mode, new SubProgressMonitor(buildMonitor, 7));
+					tempbuild = delegate2.buildForLaunch(this, mode, lmonitor.split(7));
 				}
 				if (tempbuild) {
-					buildMonitor.subTask(DebugCoreMessages.LaunchConfiguration_5);
-					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(buildMonitor, 3));
-				}
-				else {
-					buildMonitor.worked(3); /* No incremental build required */
+					lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_7 + DebugCoreMessages.LaunchConfiguration_5);
+					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, lmonitor.split(3));
 				}
 			}
+			lmonitor.setWorkRemaining(12);
 		// final validation
 			lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_4);
 			if (delegate2 != null) {
-				if (!(delegate2.finalLaunchCheck(this, mode, new SubProgressMonitor(lmonitor, 1)))) {
+				if (!(delegate2.finalLaunchCheck(this, mode, lmonitor.split(1)))) {
 					getLaunchManager().removeLaunch(launch);
 					return launch;
 				}
 			}
-			else {
-				lmonitor.worked(1); /* No validation */
-			}
+			lmonitor.setWorkRemaining(11);
 
 			try {
 				//initialize the source locator
@@ -866,7 +857,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 
 				/* Launch the delegate */
 				lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_2);
-				delegate.launch(this, mode, launch, new SubProgressMonitor(lmonitor, 10));
+				delegate.launch(this, mode, launch, lmonitor.split(10));
 			} catch (CoreException e) {
 				// if there was an exception, and the launch is empty, remove it
 				if (!launch.hasChildren()) {
