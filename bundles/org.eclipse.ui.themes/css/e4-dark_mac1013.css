@@ -82,6 +82,8 @@ CTabItem.busy {
 .MToolControl.TrimStack {
     /*frame-image:  url(./gtkTSFrame.png);*/
     handle-image:  url(./dragHandle.png);
+    /*frame-image-rotated:  url(./gtkTSFrame-rotated.png);*/
+    handle-image-rotated:  url(./dragHandle-rotated.png);
     frame-cuts: 5px 1px 5px 16px;
 }
 

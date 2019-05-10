@@ -50,7 +50,11 @@ public class CSSRenderingUtils {
 
 	private static final String FRAME_IMAGE_PROP = "frame-image";
 
+	private static final String FRAME_IMAGE_ROTATE_PROP = "frame-image-rotated";
+
 	private static final String HANDLE_IMAGE_PROP = "handle-image";
+
+	private static final String HANDLE_IMAGE_ROTATE_PROP = "handle-image-rotated";
 
 	// NOTE: The CSS engine 'owns' the image it returns (it caches it)
 	// so we have to cache any rotated versions to match
@@ -61,9 +65,23 @@ public class CSSRenderingUtils {
 		Integer[] frameInts = new Integer[4];
 		Image frameImage = createImage(toFrame, classId, FRAME_IMAGE_PROP,
 				frameInts);
-		if (vertical && frameImage != null)
-			frameImage = rotateImage(toFrame.getDisplay(), frameImage,
-					frameInts);
+		if (vertical && frameImage != null) {
+			Image frameImageRotated = createImage(toFrame, classId, FRAME_IMAGE_ROTATE_PROP, frameInts);
+			if (frameImageRotated != null) {
+				frameImage = frameImageRotated;
+				if (frameInts != null) {
+					int tmp;
+					tmp = frameInts[0];
+					frameInts[0] = frameInts[2];
+					frameInts[2] = tmp;
+					tmp = frameInts[1];
+					frameInts[1] = frameInts[3];
+					frameInts[3] = tmp;
+				}
+			} else {
+				frameImage = rotateImage(toFrame.getDisplay(), frameImage, frameInts);
+			}
+		}
 
 		Image handleImage = createImage(toFrame, classId, HANDLE_IMAGE_PROP,
 				null);
@@ -78,9 +96,14 @@ public class CSSRenderingUtils {
 
 		}
 
-		if (vertical && handleImage != null)
-			handleImage = rotateImage(toFrame.getDisplay(), handleImage, null);
-
+		if (vertical && handleImage != null) {
+			Image handleImageRotated = createImage(toFrame, classId, HANDLE_IMAGE_ROTATE_PROP, null);
+			if (handleImageRotated != null) {
+				handleImage = handleImageRotated;
+			} else {
+				handleImage = rotateImage(toFrame.getDisplay(), handleImage, null);
+			}
+		}
 		if (frameImage != null) {
 			ImageBasedFrame frame = new ImageBasedFrame(toFrame.getParent(),
 					toFrame, vertical, draggable);
@@ -268,8 +291,12 @@ public class CSSRenderingUtils {
 			Image handleImage = createImage(toFrame, classId,
 					HANDLE_IMAGE_PROP, null);
 			if (vertical && handleImage != null) {
-				handleImage = rotateImage(toFrame.getDisplay(),
-						handleImage, null);
+				Image handleImageRotated = createImage(toFrame, classId, HANDLE_IMAGE_ROTATE_PROP, null);
+				if (handleImageRotated != null) {
+					handleImage = handleImageRotated;
+				} else {
+					handleImage = rotateImage(toFrame.getDisplay(), handleImage, null);
+				}
 			}
 			if (handleImage != null) {
 				frame.setImages(null, null, handleImage);
@@ -297,15 +324,33 @@ public class CSSRenderingUtils {
 			Image frameImage = createImage(toFrame, classId,
 					FRAME_IMAGE_PROP, frameInts);
 			if (vertical && frameImage != null) {
-				frameImage = rotateImage(toFrame.getDisplay(), frameImage,
+				Image frameImageRotated = createImage(toFrame, classId, FRAME_IMAGE_ROTATE_PROP,
 						frameInts);
+				if (frameImageRotated != null) {
+					frameImage = frameImageRotated;
+					if (frameInts != null) {
+						int tmp;
+						tmp = frameInts[0];
+						frameInts[0] = frameInts[2];
+						frameInts[2] = tmp;
+						tmp = frameInts[1];
+						frameInts[1] = frameInts[3];
+						frameInts[3] = tmp;
+					}
+				} else {
+					frameImage = rotateImage(toFrame.getDisplay(), frameImage, frameInts);
+				}
 			}
 
 			Image handleImage = createImage(toFrame, classId,
 					HANDLE_IMAGE_PROP, null);
 			if (vertical && handleImage != null) {
-				handleImage = rotateImage(toFrame.getDisplay(),
-						handleImage, null);
+				Image handleImageRotated = createImage(toFrame, classId, HANDLE_IMAGE_ROTATE_PROP, null);
+				if (handleImageRotated != null) {
+					handleImage = handleImageRotated;
+				} else {
+					handleImage = rotateImage(toFrame.getDisplay(), handleImage, null);
+				}
 			}
 			if (frameImage != null) {
 				frame.setImages(frameImage, frameInts, handleImage);
