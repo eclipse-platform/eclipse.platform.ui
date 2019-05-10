@@ -32,12 +32,22 @@ public class ViewComparator extends ViewerComparator {
 	 */
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
+		if (e1 == e2) {
+			return 0;
+		}
 		// place "General" category first
-		if (WorkbenchMessages.ICategory_other.equals(e1)) {
+		if (WorkbenchMessages.ICategory_general.equals(e1)) {
 			return -1;
 		}
 		if (WorkbenchMessages.ICategory_general.equals(e2)) {
 			return 1;
+		}
+		// place "Other" category last
+		if (WorkbenchMessages.ICategory_other.equals(e1)) {
+			return 1;
+		}
+		if (WorkbenchMessages.ICategory_other.equals(e2)) {
+			return -1;
 		}
 
 		String str1;
