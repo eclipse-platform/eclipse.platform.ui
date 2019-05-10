@@ -952,7 +952,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	/**
 	 * Allow access to the UI model that this page is managing
-	 * 
+	 *
 	 * @return the MWindow element for this page
 	 */
 	public MWindow getWindowModel() {
@@ -3133,7 +3133,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		// Special handling for external editors (they have no tabs...)
-		if ("org.eclipse.ui.systemExternalEditor".equals(editorId)) { //$NON-NLS-1$
+		if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals(editorId)) {
 			IPathEditorInput fileInput = getPathEditorInput(input);
 			if (fileInput == null) {
 				throw new PartInitException(WorkbenchMessages.EditorManager_systemEditorError);
