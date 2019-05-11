@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 473184
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 506306
  *     Axel Richard <axel.richard@oebo.fr> - Bug 354538
- *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 378495
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -176,7 +175,11 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			if (itemModel.isToBeRendered()) {
 				if (parent != null) {
 					modelProcessSwitch(parent, itemModel);
-					updateWidget(parent);
+					parent.update(true);
+					ToolBar toolbar = parent.getControl();
+					if (toolbar != null && !toolbar.isDisposed()) {
+						toolbar.requestLayout();
+					}
 				}
 			} else {
 				IContributionItem ici = modelToContribution.remove(itemModel);
@@ -219,7 +222,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				}
 			}
 
-			updateWidget(parent);
+			parent.markDirty();
+			parent.update(true);
+			ToolBar toolbar = parent.getControl();
+			if (toolbar != null && !toolbar.isDisposed()) {
+				toolbar.requestLayout();
+			}
 		}
 	}
 
@@ -253,43 +261,18 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Inject
 	@Optional
-	private void subscribeTopicUpdateChildren(@UIEventTopic(ElementContainer.TOPIC_CHILDREN) Event event) {
+	private void subscribeTopicChildAdded(@UIEventTopic(ElementContainer.TOPIC_CHILDREN) Event event) {
 		// Ensure that this event is for a MToolBar
 		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBar)) {
 			return;
 		}
-
 		MToolBar toolbarModel = (MToolBar) event.getProperty(UIEvents.EventTags.ELEMENT);
-		ToolBarManager parentManager = getManager(toolbarModel);
-		if (parentManager == null) {
-			return;
-		}
-
 		if (UIEvents.isADD(event)) {
-			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
-				MToolBarElement added = (MToolBarElement) o;
-				modelProcessSwitch(parentManager, added);
-			}
-
-			updateWidget(parentManager);
-		} else if (UIEvents.isREMOVE(event)) {
-			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
-				MToolBarElement removed = (MToolBarElement) o;
-				disposeToolBarElement(parentManager, removed);
-			}
-
-			updateWidget(parentManager);
-		} else if (UIEvents.isMOVE(event)) {
-			Object oldPos = event.getProperty(UIEvents.EventTags.OLD_VALUE);
-			Object newPos = event.getProperty(UIEvents.EventTags.POSITION);
-
-			IContributionItem ici = parentManager.getItems()[(Integer) oldPos];
-			parentManager.remove(ici);
-			parentManager.insert((Integer) newPos, ici);
-
-			updateWidget(parentManager);
+			Object obj = toolbarModel;
+			processContents((MElementContainer<MUIElement>) obj);
 		}
 	}
 
@@ -641,16 +624,30 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				modelProcessSwitch(parentManager, (MToolBarElement) childME);
 			}
 		}
+		parentManager.update(true);
 
-		updateWidget(parentManager);
-	}
-
-	private void updateWidget(ToolBarManager manager) {
-		manager.update(true);
-		ToolBar toolbar = manager.getControl();
-		if (toolbar != null && !toolbar.isDisposed()) {
+		ToolBar toolbar = getToolbarFrom(container.getWidget());
+		if (toolbar != null) {
 			toolbar.requestLayout();
 		}
+	}
+
+	private ToolBar getToolbarFrom(Object widget) {
+		if (widget instanceof ToolBar) {
+			return (ToolBar) widget;
+		}
+		if (widget instanceof Composite) {
+			Composite intermediate = (Composite) widget;
+			if (!intermediate.isDisposed()) {
+				Control[] children = intermediate.getChildren();
+				for (Control control : children) {
+					if (control.getData() instanceof ToolBarManager) {
+						return (ToolBar) control;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	boolean hasOnlySeparators(ToolBar toolbar) {
@@ -836,16 +833,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				parentManager.insert(index, ci);
 			}
 		}
-	}
-
-	private void disposeToolBarElement(ToolBarManager parentManager, MToolBarElement toolBarElement) {
-		IContributionItem ici = getContribution(toolBarElement);
-		if (ici == null) {
-			return;
-		}
-		parentManager.remove(ici);
-		clearModelToContribution(toolBarElement, ici);
-		ici.dispose();
 	}
 
 	/**

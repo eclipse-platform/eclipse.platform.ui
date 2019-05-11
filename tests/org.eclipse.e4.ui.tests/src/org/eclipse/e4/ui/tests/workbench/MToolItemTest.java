@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632, 378495
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
@@ -18,11 +18,8 @@ package org.eclipse.e4.ui.tests.workbench;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -33,13 +30,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolItem;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -54,27 +47,17 @@ public class MToolItemTest {
 	@Inject
 	private MApplication application;
 
-	private MToolBar toolBar;
-	private MTrimmedWindow window;
-
-	@Before
-	public void setUp() throws Exception {
-		window = ems.createModelElement(MTrimmedWindow.class);
-		application.getChildren().add(window);
-
-		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
-		window.getTrimBars().add(trimBar);
-
-		toolBar = ems.createModelElement(MToolBar.class);
-		trimBar.getChildren().add(toolBar);
-	}
-
 	private void testMToolItem_Text(String before, String beforeExpected,
 			String after, String afterExpected) {
+		MTrimmedWindow window = ems.createModelElement(MTrimmedWindow.class);
+		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		MToolItem toolItem = ems.createModelElement(MDirectToolItem.class);
 
 		toolItem.setLabel(before);
 
+		window.getTrimBars().add(trimBar);
+		trimBar.getChildren().add(toolBar);
 		toolBar.getChildren().add(toolItem);
 
 		application.getChildren().add(window);
@@ -145,10 +128,15 @@ public class MToolItemTest {
 
 	private void testMToolItem_Tooltip(String before, String beforeExpected,
 			String after, String afterExpected) {
+		MTrimmedWindow window = ems.createModelElement(MTrimmedWindow.class);
+		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		MToolItem toolItem = ems.createModelElement(MDirectToolItem.class);
 
 		toolItem.setTooltip(before);
 
+		window.getTrimBars().add(trimBar);
+		trimBar.getChildren().add(toolBar);
 		toolBar.getChildren().add(toolItem);
 
 		application.getChildren().add(window);
@@ -219,12 +207,17 @@ public class MToolItemTest {
 
 	@Test
 	public void testMToolItem_RadioItems() {
+		MTrimmedWindow window = ems.createModelElement(MTrimmedWindow.class);
+		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
 		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
 
 		toolItem1.setType(ItemType.RADIO);
 		toolItem2.setType(ItemType.RADIO);
 
+		window.getTrimBars().add(trimBar);
+		trimBar.getChildren().add(toolBar);
 		toolBar.getChildren().add(toolItem1);
 		toolBar.getChildren().add(toolItem2);
 
@@ -265,148 +258,4 @@ public class MToolItemTest {
 		toolItem2.setSelected(true);
 		assertTrue(toolItemWidget2.getSelection());
 	}
-
-	@Test
-	public void testDynamicItem_AddOne() {
-		contextRule.createAndRunWorkbench(window);
-		ToolBarManager tbm = getToolBarManager();
-
-		assertEquals(0, tbm.getSize());
-
-		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
-		toolBar.getChildren().add(toolItem1);
-
-		assertEquals(1, tbm.getSize());
-	}
-
-	@Test
-	public void testDynamicItem_AddOneBefore() {
-		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
-		toolBar.getChildren().add(toolItem1);
-
-		contextRule.createAndRunWorkbench(window);
-		ToolBarManager tbm = getToolBarManager();
-
-		assertEquals(tbm.getSize(), 1);
-
-		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
-		toolItem2.setElementId("Item2");
-		toolBar.getChildren().add(0, toolItem2);
-
-		assertEquals(2, tbm.getSize());
-		assertEquals("Item2", tbm.getItems()[0].getId());
-	}
-
-	@Test
-	public void testDynamicItem_AddMany() {
-		contextRule.createAndRunWorkbench(window);
-		ToolBarManager tbm = getToolBarManager();
-
-		assertEquals(0, tbm.getSize());
-
-		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
-		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
-
-		List<MToolItem> itemList = Arrays.asList(toolItem1, toolItem2);
-		toolBar.getChildren().addAll(itemList);
-
-		assertEquals(2, tbm.getSize());
-	}
-
-	@Test
-	public void testDynamicItem_RemoveOne() {
-		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
-		toolBar.getChildren().add(toolItem1);
-
-		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
-		toolItem2.setElementId("Item2");
-		toolBar.getChildren().add(toolItem2);
-
-		contextRule.createAndRunWorkbench(window);
-		ToolBarManager tbm = getToolBarManager();
-
-		assertEquals(2, tbm.getSize());
-		assertNotNull(toolItem1.getWidget());
-
-		toolBar.getChildren().remove(0);
-
-		assertEquals(1, tbm.getSize(), 1);
-		assertEquals("Item2", tbm.getItems()[0].getId());
-
-		// Ensure that the removed item is disposed
-		assertNull(toolItem1.getWidget());
-	}
-
-	@Test
-	public void testDynamicItem_RemoveMany() {
-		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
-		toolBar.getChildren().add(toolItem1);
-
-		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
-		toolItem2.setElementId("Item2");
-		toolBar.getChildren().add(toolItem2);
-
-		MToolItem toolItem3 = ems.createModelElement(MDirectToolItem.class);
-		toolBar.getChildren().add(toolItem3);
-
-		contextRule.createAndRunWorkbench(window);
-		ToolBarManager tbm = getToolBarManager();
-
-		assertEquals(3, tbm.getSize());
-
-		List<MToolItem> itemList = Arrays.asList(toolItem1, toolItem3);
-		toolBar.getChildren().removeAll(itemList);
-
-		assertEquals(1, tbm.getSize());
-		assertEquals("Item2", tbm.getItems()[0].getId());
-	}
-
-	@Test
-	public void testDynamicItem_RemoveAll() {
-		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
-		toolBar.getChildren().add(toolItem1);
-
-		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
-		toolBar.getChildren().add(toolItem2);
-
-		contextRule.createAndRunWorkbench(window);
-		ToolBarManager tbm = getToolBarManager();
-
-		assertEquals(2, tbm.getSize());
-
-		toolBar.getChildren().clear();
-
-		assertEquals(0, tbm.getSize());
-	}
-
-	@Test
-	public void testDynamicItem_Move() {
-		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
-		toolItem1.setElementId("Item1");
-		toolBar.getChildren().add(toolItem1);
-
-		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
-		toolItem2.setElementId("Item2");
-		toolBar.getChildren().add(toolItem2);
-
-		contextRule.createAndRunWorkbench(window);
-		ToolBarManager tbm = getToolBarManager();
-
-		assertEquals(2, tbm.getSize(), 2);
-		assertEquals("Item1", tbm.getItems()[0].getId());
-		assertEquals("Item2", tbm.getItems()[1].getId());
-
-		ECollections.move(toolBar.getChildren(), 0, 1);
-
-		assertEquals(2, tbm.getSize(), 2);
-		assertEquals("Item2", tbm.getItems()[0].getId());
-		assertEquals("Item1", tbm.getItems()[1].getId());
-	}
-
-	private ToolBarManager getToolBarManager() {
-		Object renderer = toolBar.getRenderer();
-		assertEquals(ToolBarManagerRenderer.class, renderer.getClass());
-		return ((ToolBarManagerRenderer) renderer).getManager(toolBar);
-	}
-
 }
