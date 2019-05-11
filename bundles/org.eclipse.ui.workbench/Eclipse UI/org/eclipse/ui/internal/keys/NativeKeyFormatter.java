@@ -43,13 +43,13 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 	/**
 	 * A look-up table for the string representations of various carbon keys.
 	 */
-	private static final HashMap CARBON_KEY_LOOK_UP = new HashMap();
+	private static final HashMap<String, String> CARBON_KEY_LOOK_UP = new HashMap<>();
 
 	/**
 	 * A comparator to sort modifier keys in the order that they would be displayed
 	 * to a user. This comparator is platform-specific.
 	 */
-	private static final Comparator MODIFIER_KEY_COMPARATOR = new NativeModifierKeyComparator();
+	private static final Comparator<ModifierKey> MODIFIER_KEY_COMPARATOR = new NativeModifierKeyComparator();
 
 	/**
 	 * The resource bundle used by <code>format()</code> to translate formal string
@@ -99,7 +99,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 
 		// TODO consider platform-specific resource bundles
 		if (org.eclipse.jface.util.Util.isMac()) {
-			String formattedName = (String) CARBON_KEY_LOOK_UP.get(name);
+			String formattedName = CARBON_KEY_LOOK_UP.get(name);
 			if (formattedName != null) {
 				return formattedName;
 			}
@@ -130,7 +130,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 	}
 
 	@Override
-	protected Comparator getModifierKeyComparator() {
+	protected Comparator<ModifierKey> getModifierKeyComparator() {
 		return MODIFIER_KEY_COMPARATOR;
 	}
 }

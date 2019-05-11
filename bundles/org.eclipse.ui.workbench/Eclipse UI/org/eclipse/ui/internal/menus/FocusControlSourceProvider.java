@@ -39,7 +39,7 @@ public class FocusControlSourceProvider extends AbstractSourceProvider implement
 	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
 			ISources.ACTIVE_FOCUS_CONTROL_NAME };
 
-	Map controlToId = new HashMap();
+	Map<Control, String> controlToId = new HashMap<>();
 	private FocusListener focusListener;
 
 	private String currentId;
@@ -92,9 +92,9 @@ public class FocusControlSourceProvider extends AbstractSourceProvider implement
 	 * @param widget
 	 */
 	private void focusIn(Widget widget) {
-		String id = (String) controlToId.get(widget);
+		String id = controlToId.get(widget);
 		if (currentId != id) {
-			Map m = new HashMap();
+			Map<String, Object> m = new HashMap<>();
 			if (id == null) {
 				currentId = null;
 				currentControl = null;
@@ -126,9 +126,9 @@ public class FocusControlSourceProvider extends AbstractSourceProvider implement
 
 	@Override
 	public void dispose() {
-		Iterator i = controlToId.keySet().iterator();
+		Iterator<Control> i = controlToId.keySet().iterator();
 		while (i.hasNext()) {
-			Control c = (Control) i.next();
+			Control c = i.next();
 			if (!c.isDisposed()) {
 				c.removeFocusListener(getFocusListener());
 				c.removeDisposeListener(getDisposeListener());
@@ -142,7 +142,7 @@ public class FocusControlSourceProvider extends AbstractSourceProvider implement
 
 	@Override
 	public Map getCurrentState() {
-		Map m = new HashMap();
+		Map<String, Object> m = new HashMap<>();
 		if (currentId == null) {
 			m.put(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME, IEvaluationContext.UNDEFINED_VARIABLE);
 			m.put(ISources.ACTIVE_FOCUS_CONTROL_NAME, IEvaluationContext.UNDEFINED_VARIABLE);

@@ -57,35 +57,35 @@ public class SlaveContextService implements IContextService {
 	/**
 	 * Our contexts that are currently active with the parent context service.
 	 */
-	protected Set fParentActivations;
+	protected Set<IContextActivation> fParentActivations;
 
 	/**
 	 * A map of the local activation to the parent activations. If this service is
 	 * inactive, then all parent activations are <code>null</code>. Otherwise, they
 	 * point to the corresponding activation in the parent service.
 	 */
-	protected Map fLocalActivations;
+	protected Map<IContextActivation, IContextActivation> fLocalActivations;
 
 	/**
 	 * A collection of context manager listeners. The listeners are not
 	 * activated/deactivated, but they will be removed when this service is
 	 * disposed.
 	 */
-	private Collection fContextManagerListeners;
+	private Collection<IContextManagerListener> fContextManagerListeners;
 
 	/**
 	 * A collection of source providers. The listeners are not
 	 * activated/deactivated, but they will be removed when this service is
 	 * disposed.
 	 */
-	private Collection fSourceProviders;
+	private Collection<ISourceProvider> fSourceProviders;
 
 	/**
 	 * A collection of shells registered through this service. The listeners are not
 	 * activated/deactivated, but they will be removed when this service is
 	 * disposed.
 	 */
-	private Collection fRegisteredShells;
+	private Collection<Shell> fRegisteredShells;
 
 	/**
 	 * Construct the new slave.
@@ -102,11 +102,11 @@ public class SlaveContextService implements IContextService {
 		}
 		fParentService = parentService;
 		fDefaultExpression = defaultExpression;
-		fParentActivations = new HashSet();
-		fLocalActivations = new HashMap();
-		fContextManagerListeners = new ArrayList();
-		fSourceProviders = new ArrayList();
-		fRegisteredShells = new ArrayList();
+		fParentActivations = new HashSet<>();
+		fLocalActivations = new HashMap<>();
+		fContextManagerListeners = new ArrayList<>();
+		fSourceProviders = new ArrayList<>();
+		fRegisteredShells = new ArrayList<>();
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public class SlaveContextService implements IContextService {
 	public void deactivateContext(IContextActivation activation) {
 		IContextActivation parentActivation = null;
 		if (fLocalActivations.containsKey(activation)) {
-			parentActivation = (IContextActivation) fLocalActivations.remove(activation);
+			parentActivation = fLocalActivations.remove(activation);
 		} else {
 			parentActivation = activation;
 		}
@@ -201,8 +201,8 @@ public class SlaveContextService implements IContextService {
 		// Remove any "resource", like listeners, that were associated
 		// with this service.
 		if (!fContextManagerListeners.isEmpty()) {
-			for (Object element : fContextManagerListeners.toArray()) {
-				removeContextManagerListener((IContextManagerListener) element);
+			for (IContextManagerListener element : fContextManagerListeners.toArray(new IContextManagerListener[0])) {
+				removeContextManagerListener(element);
 			}
 			fContextManagerListeners.clear();
 		}

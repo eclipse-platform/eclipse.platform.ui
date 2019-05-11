@@ -90,9 +90,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 
 	protected IWorkbench workbench;
 
-	protected List imagesToDispose;
+	protected List<Image> imagesToDispose;
 
-	protected Map editorsToImages;
+	protected Map<IEditorDescriptor, Image> editorsToImages;
 
 	/**
 	 * Add a new resource type to the collection shown in the top of the page. This
@@ -153,8 +153,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
-		imagesToDispose = new ArrayList();
-		editorsToImages = new HashMap(50);
+		imagesToDispose = new ArrayList<>();
+		editorsToImages = new HashMap<>(50);
 
 		// define container & its gridding
 		Composite pageComponent = new Composite(parent, SWT.NULL);
@@ -286,14 +286,14 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 	public void dispose() {
 		super.dispose();
 		if (imagesToDispose != null) {
-			for (Iterator e = imagesToDispose.iterator(); e.hasNext();) {
-				((Image) e.next()).dispose();
+			for (Iterator<Image> e = imagesToDispose.iterator(); e.hasNext();) {
+				e.next().dispose();
 			}
 			imagesToDispose = null;
 		}
 		if (editorsToImages != null) {
-			for (Iterator e = editorsToImages.values().iterator(); e.hasNext();) {
-				((Image) e.next()).dispose();
+			for (Iterator<Image> e = editorsToImages.values().iterator(); e.hasNext();) {
+				e.next().dispose();
 			}
 			editorsToImages = null;
 		}
@@ -388,7 +388,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 	 * Returns the image associated with the given editor.
 	 */
 	protected Image getImage(IEditorDescriptor editor) {
-		Image image = (Image) editorsToImages.get(editor);
+		Image image = editorsToImages.get(editor);
 		if (image == null) {
 			image = editor.getImageDescriptor().createImage();
 			editorsToImages.put(editor, image);
@@ -409,12 +409,12 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 			return null;
 		}
 		if (editorTable.getItemCount() > 0) {
-			ArrayList editorList = new ArrayList();
+			ArrayList<IEditorDescriptor> editorList = new ArrayList<>();
 			for (int i = 0; i < editorTable.getItemCount(); i++) {
-				editorList.add(editorTable.getItem(i).getData(DATA_EDITOR));
+				editorList.add((IEditorDescriptor) editorTable.getItem(i).getData(DATA_EDITOR));
 			}
 
-			return (IEditorDescriptor[]) editorList.toArray(new IEditorDescriptor[editorList.size()]);
+			return editorList.toArray(new IEditorDescriptor[editorList.size()]);
 		}
 		return null;
 	}

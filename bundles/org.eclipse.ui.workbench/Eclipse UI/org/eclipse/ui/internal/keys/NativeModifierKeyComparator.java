@@ -25,7 +25,7 @@ import org.eclipse.ui.keys.ModifierKey;
  *
  * @since 3.0
  */
-class NativeModifierKeyComparator implements Comparator {
+class NativeModifierKeyComparator implements Comparator<ModifierKey> {
 
 	/**
 	 * The sort order value to use when the modifier key is not recognized.
@@ -33,9 +33,9 @@ class NativeModifierKeyComparator implements Comparator {
 	private static final int UNKNOWN_KEY = Integer.MAX_VALUE;
 
 	@Override
-	public int compare(Object left, Object right) {
-		ModifierKey modifierKeyLeft = (ModifierKey) left;
-		ModifierKey modifierKeyRight = (ModifierKey) right;
+	public int compare(ModifierKey left, ModifierKey right) {
+		ModifierKey modifierKeyLeft = left;
+		ModifierKey modifierKeyRight = right;
 		int modifierKeyLeftRank = rank(modifierKeyLeft);
 		int modifierKeyRightRank = rank(modifierKeyRight);
 

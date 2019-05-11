@@ -329,13 +329,13 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 * A map of all the category identifiers indexed by the names that appear in the
 	 * user interface. This look-up table is built during initialization.
 	 */
-	private Map categoryIdsByUniqueName;
+	private Map<String, String> categoryIdsByUniqueName;
 
 	/**
 	 * A map of all the category names in the user interface indexed by their
 	 * identifiers. This look-up table is built during initialization.
 	 */
-	private Map categoryUniqueNamesById;
+	private Map<String, String> categoryUniqueNamesById;
 
 	/**
 	 * The combo box containing the list of all categories for commands.
@@ -362,7 +362,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 * A map of all the command identifiers indexed by the categories to which they
 	 * belong. This look-up table is built during initialization.
 	 */
-	private Map commandIdsByCategoryId;
+	private Map<String, Set<String>> commandIdsByCategoryId;
 
 	/**
 	 * The parameterized commands corresponding to the current contents of
@@ -382,7 +382,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 * A map of all the context identifiers indexed by the names that appear in the
 	 * user interface. This look-up table is built during initialization.
 	 */
-	private Map contextIdsByUniqueName;
+	private Map<String, String> contextIdsByUniqueName;
 
 	/**
 	 * The workbench's context service. This context service is used to access the
@@ -394,7 +394,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 * A map of all the category names in the user interface indexed by their
 	 * identifiers. This look-up table is built during initialization.
 	 */
-	private Map contextUniqueNamesById;
+	private Map<String, String> contextUniqueNamesById;
 
 	/**
 	 * The workbench's help system. This is used to register the page with the help
@@ -445,13 +445,13 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 * A map of all the scheme identifiers indexed by the names that appear in the
 	 * user interface. This look-up table is built during initialization.
 	 */
-	private Map schemeIdsByUniqueName;
+	private Map<String, String> schemeIdsByUniqueName;
 
 	/**
 	 * A map of all the scheme names in the user interface indexed by their
 	 * identifiers. This look-up table is built during initialization.
 	 */
-	private Map schemeUniqueNamesById;
+	private Map<String, String> schemeUniqueNamesById;
 
 	/**
 	 * The sort order to be used on the view tab to display all of the key bindings.
@@ -696,21 +696,21 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 
 		// Arrow buttons aren't normally added to the tab list. Let's fix that.
 		final Control[] tabStops = groupKeySequence.getTabList();
-		final ArrayList newTabStops = new ArrayList();
+		final ArrayList<Control> newTabStops = new ArrayList<>();
 		for (Control tabStop : tabStops) {
 			newTabStops.add(tabStop);
 			if (textTriggerSequence.equals(tabStop)) {
 				newTabStops.add(buttonAddKey);
 			}
 		}
-		final Control[] newTabStopArray = (Control[]) newTabStops.toArray(new Control[newTabStops.size()]);
+		final Control[] newTabStopArray = newTabStops.toArray(new Control[newTabStops.size()]);
 		groupKeySequence.setTabList(newTabStopArray);
 
 		// Construct the menu to attach to the above button.
 		final Menu menuButtonAddKey = new Menu(buttonAddKey);
-		final Iterator trappedKeyItr = KeySequenceText.TRAPPED_KEYS.iterator();
+		final Iterator<KeyStroke> trappedKeyItr = KeySequenceText.TRAPPED_KEYS.iterator();
 		while (trappedKeyItr.hasNext()) {
-			final KeyStroke trappedKey = (KeyStroke) trappedKeyItr.next();
+			final KeyStroke trappedKey = trappedKeyItr.next();
 			final MenuItem menuItem = new MenuItem(menuButtonAddKey, SWT.PUSH);
 			menuItem.setText(trappedKey.format());
 			menuItem.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -1137,14 +1137,14 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			// Fix the bindings in the local changes.
 			final Binding[] currentBindings = localChangeManager.getBindings();
 			final int currentBindingsLength = currentBindings.length;
-			final Set trimmedBindings = new HashSet();
+			final Set<Binding> trimmedBindings = new HashSet<>();
 			for (int i = 0; i < currentBindingsLength; i++) {
 				final Binding binding = currentBindings[i];
 				if (binding.getType() != Binding.USER) {
 					trimmedBindings.add(binding);
 				}
 			}
-			final Binding[] trimmedBindingArray = (Binding[]) trimmedBindings
+			final Binding[] trimmedBindingArray = trimmedBindings
 					.toArray(new Binding[trimmedBindings.size()]);
 			localChangeManager.setBindings(trimmedBindingArray);
 
@@ -1359,9 +1359,9 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		comboContext.deselectAll();
 
 		// Figure out which name to look for.
-		String contextName = (String) contextUniqueNamesById.get(contextId);
+		String contextName = contextUniqueNamesById.get(contextId);
 		if (contextName == null) {
-			contextName = (String) contextUniqueNamesById.get(IContextIds.CONTEXT_ID_WINDOW);
+			contextName = contextUniqueNamesById.get(IContextIds.CONTEXT_ID_WINDOW);
 		}
 		if (contextName == null) {
 			contextName = Util.ZERO_LENGTH_STRING;
@@ -1425,7 +1425,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	private void setScheme(final Scheme scheme) {
 		comboScheme.clearSelection();
 		comboScheme.deselectAll();
-		final String schemeUniqueName = (String) schemeUniqueNamesById.get(scheme.getId());
+		final String schemeUniqueName = schemeUniqueNamesById.get(scheme.getId());
 
 		if (schemeUniqueName != null) {
 			final String items[] = comboScheme.getItems();
@@ -1446,16 +1446,16 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	@Override
 	public void setVisible(final boolean visible) {
 		if (visible == true) {
-			Map contextsByName = new HashMap();
+			Map<String, Set<Context>> contextsByName = new HashMap<>();
 
-			for (Iterator iterator = contextService.getDefinedContextIds().iterator(); iterator.hasNext();) {
-				Context context = contextService.getContext((String) iterator.next());
+			for (Iterator<String> iterator = contextService.getDefinedContextIds().iterator(); iterator.hasNext();) {
+				Context context = contextService.getContext(iterator.next());
 				try {
 					String name = context.getName();
-					Collection contexts = (Collection) contextsByName.get(name);
+					Set<Context> contexts = contextsByName.get(name);
 
 					if (contexts == null) {
-						contexts = new HashSet();
+						contexts = new HashSet<>();
 						contextsByName.put(name, contexts);
 					}
 
@@ -1465,20 +1465,20 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 
-			Map commandsByName = new HashMap();
+			Map<String, Collection<Command>> commandsByName = new HashMap<>();
 
-			for (Iterator iterator = commandService.getDefinedCommandIds().iterator(); iterator.hasNext();) {
-				Command command = commandService.getCommand((String) iterator.next());
+			for (Iterator<String> iterator = commandService.getDefinedCommandIds().iterator(); iterator.hasNext();) {
+				Command command = commandService.getCommand(iterator.next());
 				if (!isActive(command)) {
 					continue;
 				}
 
 				try {
 					String name = command.getName();
-					Collection commands = (Collection) commandsByName.get(name);
+					Collection<Command> commands = commandsByName.get(name);
 
 					if (commands == null) {
-						commands = new HashSet();
+						commands = new HashSet<>();
 						commandsByName.put(name, commands);
 					}
 
@@ -1489,20 +1489,20 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			}
 
 			// moved here to allow us to remove any empty categories
-			commandIdsByCategoryId = new HashMap();
+			commandIdsByCategoryId = new HashMap<>();
 
-			for (Iterator iterator = commandService.getDefinedCommandIds().iterator(); iterator.hasNext();) {
-				final Command command = commandService.getCommand((String) iterator.next());
+			for (Iterator<String> iterator = commandService.getDefinedCommandIds().iterator(); iterator.hasNext();) {
+				final Command command = commandService.getCommand(iterator.next());
 				if (!isActive(command)) {
 					continue;
 				}
 
 				try {
 					String categoryId = command.getCategory().getId();
-					Collection commandIds = (Collection) commandIdsByCategoryId.get(categoryId);
+					Set<String> commandIds = commandIdsByCategoryId.get(categoryId);
 
 					if (commandIds == null) {
-						commandIds = new HashSet();
+						commandIds = new HashSet<>();
 						commandIdsByCategoryId.put(categoryId, commandIds);
 					}
 
@@ -1512,18 +1512,18 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 
-			Map categoriesByName = new HashMap();
+			Map<String, Set<Category>> categoriesByName = new HashMap<>();
 
-			for (Iterator iterator = commandService.getDefinedCategoryIds().iterator(); iterator.hasNext();) {
-				Category category = commandService.getCategory((String) iterator.next());
+			for (Iterator<String> iterator = commandService.getDefinedCategoryIds().iterator(); iterator.hasNext();) {
+				Category category = commandService.getCategory(iterator.next());
 
 				try {
 					if (commandIdsByCategoryId.containsKey(category.getId())) {
 						String name = category.getName();
-						Collection categories = (Collection) categoriesByName.get(name);
+						Set<Category> categories = categoriesByName.get(name);
 
 						if (categories == null) {
-							categories = new HashSet();
+							categories = new HashSet<>();
 							categoriesByName.put(name, categories);
 						}
 
@@ -1534,16 +1534,16 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 
-			Map schemesByName = new HashMap();
+			Map<String, Set<Scheme>> schemesByName = new HashMap<>();
 
 			final Scheme[] definedSchemes = bindingService.getDefinedSchemes();
 			for (final Scheme scheme : definedSchemes) {
 				try {
 					String name = scheme.getName();
-					Collection schemes = (Collection) schemesByName.get(name);
+					Set<Scheme> schemes = schemesByName.get(name);
 
 					if (schemes == null) {
-						schemes = new HashSet();
+						schemes = new HashSet<>();
 						schemesByName.put(name, schemes);
 					}
 
@@ -1553,22 +1553,22 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 
-			contextIdsByUniqueName = new HashMap();
-			contextUniqueNamesById = new HashMap();
+			contextIdsByUniqueName = new HashMap<>();
+			contextUniqueNamesById = new HashMap<>();
 
-			for (Iterator iterator = contextsByName.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String name = (String) entry.getKey();
-				Set contexts = (Set) entry.getValue();
-				Iterator iterator2 = contexts.iterator();
+			for (Iterator<Map.Entry<String, Set<Context>>> iterator = contextsByName.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry<String, Set<Context>> entry = iterator.next();
+				String name = entry.getKey();
+				Set<Context> contexts = entry.getValue();
+				Iterator<Context> iterator2 = contexts.iterator();
 
 				if (contexts.size() == 1) {
-					Context context = (Context) iterator2.next();
+					Context context = iterator2.next();
 					contextIdsByUniqueName.put(name, context.getId());
 					contextUniqueNamesById.put(context.getId(), name);
 				} else {
 					while (iterator2.hasNext()) {
-						Context context = (Context) iterator2.next();
+						Context context = iterator2.next();
 						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
 								name, context.getId());
 						contextIdsByUniqueName.put(uniqueName, context.getId());
@@ -1577,22 +1577,23 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 
-			categoryIdsByUniqueName = new HashMap();
-			categoryUniqueNamesById = new HashMap();
+			categoryIdsByUniqueName = new HashMap<>();
+			categoryUniqueNamesById = new HashMap<>();
 
-			for (Iterator iterator = categoriesByName.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String name = (String) entry.getKey();
-				Set categories = (Set) entry.getValue();
-				Iterator iterator2 = categories.iterator();
+			for (Iterator<Map.Entry<String, Set<Category>>> iterator = categoriesByName.entrySet().iterator(); iterator
+					.hasNext();) {
+				Map.Entry<String, Set<Category>> entry = iterator.next();
+				String name = entry.getKey();
+				Set<Category> categories = entry.getValue();
+				Iterator<Category> iterator2 = categories.iterator();
 
 				if (categories.size() == 1) {
-					Category category = (Category) iterator2.next();
+					Category category = iterator2.next();
 					categoryIdsByUniqueName.put(name, category.getId());
 					categoryUniqueNamesById.put(category.getId(), name);
 				} else {
 					while (iterator2.hasNext()) {
-						Category category = (Category) iterator2.next();
+						Category category = iterator2.next();
 						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
 								new Object[] { name, category.getId() });
 						categoryIdsByUniqueName.put(uniqueName, category.getId());
@@ -1601,22 +1602,22 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 
-			schemeIdsByUniqueName = new HashMap();
-			schemeUniqueNamesById = new HashMap();
+			schemeIdsByUniqueName = new HashMap<>();
+			schemeUniqueNamesById = new HashMap<>();
 
-			for (Iterator iterator = schemesByName.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String name = (String) entry.getKey();
-				Set keyConfigurations = (Set) entry.getValue();
-				Iterator iterator2 = keyConfigurations.iterator();
+			for (Iterator<Map.Entry<String, Set<Scheme>>> iterator = schemesByName.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry<String, Set<Scheme>> entry = iterator.next();
+				String name = entry.getKey();
+				Set<Scheme> keyConfigurations = entry.getValue();
+				Iterator<Scheme> iterator2 = keyConfigurations.iterator();
 
 				if (keyConfigurations.size() == 1) {
-					Scheme scheme = (Scheme) iterator2.next();
+					Scheme scheme = iterator2.next();
 					schemeIdsByUniqueName.put(name, scheme.getId());
 					schemeUniqueNamesById.put(scheme.getId(), name);
 				} else {
 					while (iterator2.hasNext()) {
-						Scheme scheme = (Scheme) iterator2.next();
+						Scheme scheme = iterator2.next();
 						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
 								new Object[] { name, scheme.getId() });
 						schemeIdsByUniqueName.put(uniqueName, scheme.getId());
@@ -1642,12 +1643,12 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			localChangeManager.setBindings(bindingService.getBindings());
 
 			// Populate the category combo box.
-			List categoryNames = new ArrayList(categoryIdsByUniqueName.keySet());
+			List<String> categoryNames = new ArrayList<>(categoryIdsByUniqueName.keySet());
 			Collections.sort(categoryNames, Collator.getInstance());
 			if (commandIdsByCategoryId.containsKey(null)) {
 				categoryNames.add(0, Util.translateString(RESOURCE_BUNDLE, "other")); //$NON-NLS-1$
 			}
-			comboCategory.setItems((String[]) categoryNames.toArray(new String[categoryNames.size()]));
+			comboCategory.setItems(categoryNames.toArray(new String[categoryNames.size()]));
 			comboCategory.clearSelection();
 			comboCategory.deselectAll();
 			if (commandIdsByCategoryId.containsKey(null) || !categoryNames.isEmpty()) {
@@ -1655,9 +1656,9 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			}
 
 			// Populate the scheme combo box.
-			List schemeNames = new ArrayList(schemeIdsByUniqueName.keySet());
+			List<String> schemeNames = new ArrayList<>(schemeIdsByUniqueName.keySet());
 			Collections.sort(schemeNames, Collator.getInstance());
-			comboScheme.setItems((String[]) schemeNames.toArray(new String[schemeNames.size()]));
+			comboScheme.setItems(schemeNames.toArray(new String[schemeNames.size()]));
 			setScheme(activeScheme);
 
 			// Update the entire page.
@@ -1715,7 +1716,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 
 		// Figure out where command identifiers apply to the selected category.
 		final String categoryId = getCategoryId();
-		Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+		Set<String> commandIds = commandIdsByCategoryId.get(categoryId);
 		if (commandIds == null) {
 			commandIds = Collections.EMPTY_SET;
 		}
@@ -1724,10 +1725,10 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		 * Generate an array of parameterized commands based on these identifiers. The
 		 * parameterized commands will be sorted based on their names.
 		 */
-		List commands = new ArrayList();
-		final Iterator commandIdItr = commandIds.iterator();
+		List<ParameterizedCommand> commands = new ArrayList<>();
+		final Iterator<String> commandIdItr = commandIds.iterator();
 		while (commandIdItr.hasNext()) {
-			final String currentCommandId = (String) commandIdItr.next();
+			final String currentCommandId = commandIdItr.next();
 			final Command currentCommand = commandService.getCommand(currentCommandId);
 			try {
 				commands.addAll(ParameterizedCommand.generateCombinations(currentCommand));
@@ -1741,7 +1742,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		commands = sortParameterizedCommands(commands);
 
 		final int commandCount = commands.size();
-		this.commands = (ParameterizedCommand[]) commands.toArray(new ParameterizedCommand[commandCount]);
+		this.commands = commands.toArray(new ParameterizedCommand[commandCount]);
 
 		/*
 		 * Generate an array of command names based on this array of parameterized
@@ -1780,25 +1781,25 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Sort the commands using the correct language.
-	 * 
+	 *
 	 * @param commands the List of ParameterizedCommands
 	 * @return The sorted List
 	 */
-	private List sortParameterizedCommands(List commands) {
+	private List<ParameterizedCommand> sortParameterizedCommands(List<ParameterizedCommand> commands) {
 		final Collator collator = Collator.getInstance();
 
 		// this comparator is based on the ParameterizedCommands#compareTo(*)
 		// method, but uses the collator.
-		Comparator comparator = (o1, o2) -> {
+		Comparator<ParameterizedCommand> comparator = (o1, o2) -> {
 			String name1 = null;
 			String name2 = null;
 			try {
-				name1 = ((ParameterizedCommand) o1).getName();
+				name1 = o1.getName();
 			} catch (NotDefinedException e1) {
 				return -1;
 			}
 			try {
-				name2 = ((ParameterizedCommand) o2).getName();
+				name2 = o2.getName();
 			} catch (NotDefinedException e2) {
 				return 1;
 			}
@@ -1807,8 +1808,8 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				return rc;
 			}
 
-			String id1 = ((ParameterizedCommand) o1).getId();
-			String id2 = ((ParameterizedCommand) o2).getId();
+			String id1 = o1.getId();
+			String id2 = o2.getId();
 			return collator.compare(id1, id2);
 		};
 		Collections.sort(commands, comparator);
@@ -1820,12 +1821,12 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 */
 	private void updateComboContext() {
 		final String contextId = getContextId();
-		final Map contextIdsByName = new HashMap(contextIdsByUniqueName);
+		final Map<String, String> contextIdsByName = new HashMap<>(contextIdsByUniqueName);
 
-		final List contextNames = new ArrayList(contextIdsByName.keySet());
+		final List<String> contextNames = new ArrayList<>(contextIdsByName.keySet());
 		Collections.sort(contextNames, Collator.getInstance());
 
-		comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
+		comboContext.setItems(contextNames.toArray(new String[contextNames.size()]));
 		setContextId(contextId);
 
 		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty()) {
@@ -1874,7 +1875,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				try {
 					final String parentId = context.getParentId();
 					if (parentId != null) {
-						final String name = (String) contextUniqueNamesById.get(parentId);
+						final String name = contextUniqueNamesById.get(parentId);
 						if (name != null) {
 							labelContextExtends
 									.setText(MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "extends"), //$NON-NLS-1$
@@ -1902,7 +1903,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		if (schemeId != null) {
 			final Scheme scheme = bindingService.getScheme(schemeId);
 			try {
-				final String name = (String) schemeUniqueNamesById.get(scheme.getParentId());
+				final String name = schemeUniqueNamesById.get(scheme.getParentId());
 				if (name != null) {
 					labelSchemeExtends.setText(MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "extends"), //$NON-NLS-1$
 							name));
@@ -1962,10 +1963,10 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		tableBindingsForCommand.removeAll();
 
 		// Add each of the bindings, if the command identifier matches.
-		final Collection bindings = localChangeManager.getActiveBindingsDisregardingContextFlat();
-		final Iterator bindingItr = bindings.iterator();
+		final Collection<Binding> bindings = localChangeManager.getActiveBindingsDisregardingContextFlat();
+		final Iterator<Binding> bindingItr = bindings.iterator();
 		while (bindingItr.hasNext()) {
-			final Binding binding = (Binding) bindingItr.next();
+			final Binding binding = bindingItr.next();
 			if (!Objects.equals(parameterizedCommand, binding.getParameterizedCommand())) {
 				continue; // binding does not match
 			}
@@ -1985,7 +1986,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 				tableItem.setImage(0, IMAGE_CHANGE);
 			}
 
-			String contextName = (String) contextUniqueNamesById.get(binding.getContextId());
+			String contextName = contextUniqueNamesById.get(binding.getContextId());
 			if (contextName == null) {
 				contextName = Util.ZERO_LENGTH_STRING;
 			}
@@ -2006,16 +2007,16 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		tableBindingsForTriggerSequence.removeAll();
 
 		// Get the collection of bindings for the current command.
-		final Map activeBindings = localChangeManager.getActiveBindingsDisregardingContext();
-		final Collection bindings = (Collection) activeBindings.get(triggerSequence);
+		final Map<TriggerSequence, Collection<Binding>> activeBindings = localChangeManager.getActiveBindingsDisregardingContext();
+		final Collection<Binding> bindings = activeBindings.get(triggerSequence);
 		if (bindings == null) {
 			return;
 		}
 
 		// Add each of the bindings.
-		final Iterator bindingItr = bindings.iterator();
+		final Iterator<Binding> bindingItr = bindings.iterator();
 		while (bindingItr.hasNext()) {
-			final Binding binding = (Binding) bindingItr.next();
+			final Binding binding = bindingItr.next();
 			final Context context = contextService.getContext(binding.getContextId());
 			final ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
 			final Command command = parameterizedCommand.getCommand();
@@ -2060,8 +2061,8 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		tableBindings.removeAll();
 
 		// Get a sorted list of key binding contents.
-		final List bindings = new ArrayList(localChangeManager.getActiveBindingsDisregardingContextFlat());
-		Collections.sort(bindings, new Comparator() {
+		final List<Binding> bindings = new ArrayList<>(localChangeManager.getActiveBindingsDisregardingContextFlat());
+		Collections.sort(bindings, new Comparator<Binding>() {
 			/**
 			 * Compares two instances of <code>Binding</code> based on the current sort
 			 * order.
@@ -2075,9 +2076,9 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			 * @since 3.1
 			 */
 			@Override
-			public int compare(final Object object1, final Object object2) {
-				final Binding binding1 = (Binding) object1;
-				final Binding binding2 = (Binding) object2;
+			public int compare(final Binding object1, final Binding object2) {
+				final Binding binding1 = object1;
+				final Binding binding2 = object2;
 
 				/*
 				 * Get the category name, command name, formatted key sequence and context name
@@ -2176,9 +2177,9 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		});
 
 		// Add a table item for each item in the list.
-		final Iterator keyBindingItr = bindings.iterator();
+		final Iterator<Binding> keyBindingItr = bindings.iterator();
 		while (keyBindingItr.hasNext()) {
-			final Binding binding = (Binding) keyBindingItr.next();
+			final Binding binding = keyBindingItr.next();
 
 			// Get the command and category name.
 			final ParameterizedCommand command = binding.getParameterizedCommand();

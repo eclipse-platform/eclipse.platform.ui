@@ -136,13 +136,13 @@ public class CellLayout extends Layout {
 	 * List of IColumnInfo. The nth object is used to compute the width of the nth
 	 * column, or null indicating that the default column should be used.
 	 */
-	private List cols;
+	private List<Row> cols;
 
 	/**
 	 * List of RowInfo. The nth object is used to compute the height of the nth row,
 	 * or null indicating that the default row should be used.
 	 */
-	private List rows = new ArrayList(16);
+	private List<Row> rows = new ArrayList<>(16);
 
 	// Cached information
 	private GridInfo gridInfo = new GridInfo();
@@ -168,14 +168,14 @@ public class CellLayout extends Layout {
 	public CellLayout(int numCols) {
 		super();
 		this.numCols = numCols;
-		cols = new ArrayList(numCols == 0 ? 3 : numCols);
+		cols = new ArrayList<>(numCols == 0 ? 3 : numCols);
 	}
 
 	/**
 	 * Sets the amount empty space between cells
 	 *
-	 * @param newSpacing a point (x,y) corresponding to the number of pixels of
-	 *                   empty space between adjacent columns and rows respectively
+	 * @param horizontalSpacing the number of pixels of empty space between adjacent columns
+	 * @param verticalSpacing the number of pixels of empty space between adjacent rows
 	 */
 	public CellLayout setSpacing(int horizontalSpacing, int verticalSpacing) {
 		this.horizontalSpacing = horizontalSpacing;
@@ -246,7 +246,7 @@ public class CellLayout extends Layout {
 	 * they have been explicitly assigned custom settings by setColumn.
 	 *
 	 * @param info the properties of all default columns
-	 * @see setColumn
+	 * @see #setColumn(int, Row)
 	 */
 	public CellLayout setDefaultColumn(Row info) {
 		defaultColSettings = info;
@@ -319,7 +319,7 @@ public class CellLayout extends Layout {
 				return defaultRowSettings;
 			}
 
-			Row result = (Row) rows.get(rowNum);
+			Row result = rows.get(rowNum);
 
 			if (result == null) {
 				result = defaultRowSettings;
@@ -331,7 +331,7 @@ public class CellLayout extends Layout {
 			return defaultColSettings;
 		}
 
-		Row result = (Row) cols.get(rowNum);
+		Row result = cols.get(rowNum);
 
 		if (result == null) {
 			result = defaultColSettings;

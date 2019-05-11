@@ -101,8 +101,8 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public Map getAttributeValuesByName() {
-		final Map attributeValues = new HashMap();
+	public Map<String, Boolean> getAttributeValuesByName() {
+		final Map<String, Boolean> attributeValues = new HashMap<>();
 		// avoid using Boolean.valueOf to allow compilation against JCL
 		// Foundation (bug 80053)
 		attributeValues.put(ILegacyAttributeNames.ENABLED, command.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
@@ -134,8 +134,8 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public List getKeySequenceBindings() {
-		final List legacyBindings = new ArrayList();
+	public List<KeySequenceBinding> getKeySequenceBindings() {
+		final List<KeySequenceBinding> legacyBindings = new ArrayList<>();
 		if (parameterizedCommand == null) {
 			parameterizedCommand = new ParameterizedCommand(command, null);
 		}

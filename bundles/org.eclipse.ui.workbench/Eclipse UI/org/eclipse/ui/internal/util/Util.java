@@ -45,9 +45,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class Util {
 
-	public static final SortedMap EMPTY_SORTED_MAP = Collections.unmodifiableSortedMap(new TreeMap());
+	public static final SortedMap<?, ?> EMPTY_SORTED_MAP = Collections.unmodifiableSortedMap(new TreeMap<>());
 
-	public static final SortedSet EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet());
+	public static final SortedSet<?> EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet<>());
 
 	public static final String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
@@ -71,11 +71,11 @@ public final class Util {
 		return ZERO_LENGTH_STRING;
 	}
 
-	public static void assertInstance(Object object, Class c) {
+	public static void assertInstance(Object object, Class<?> c) {
 		assertInstance(object, c, false);
 	}
 
-	public static void assertInstance(Object object, Class c, boolean allowNull) {
+	public static void assertInstance(Object object, Class<?> c, boolean allowNull) {
 		if (object == null && allowNull) {
 			return;
 		}

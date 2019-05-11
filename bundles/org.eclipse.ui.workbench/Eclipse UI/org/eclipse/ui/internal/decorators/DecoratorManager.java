@@ -82,11 +82,11 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 
 	private LightweightDecoratorManager lightweightManager;
 
-	// Hold onto the list of listeners to be told if a change has occured
+	// Hold onto the list of listeners to be told if a change has occurred
 	private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 
 	// The full definitions read from the registry.
-	// Initalize to an empty collection as this is rarely used now.
+	// Initialize to an empty collection as this is rarely used now.
 	private FullDecoratorDefinition[] fullDefinitions;
 
 	private FullTextDecoratorRunnable fullTextRunnable = new FullTextDecoratorRunnable();
@@ -108,7 +108,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	/**
 	 * ManagedWorkbenchLabelDecorator is the internal LabelDecorator passed as
 	 * result of calls to {@link IDecoratorManager#getLabelDecorator()}
-	 * 
+	 *
 	 * @since 3.4
 	 *
 	 */
@@ -120,7 +120,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 
 		/**
 		 * Create a new instance of the receiver that supports decoratorManager
-		 * 
+		 *
 		 * @param decoratorManager
 		 */
 		public ManagedWorkbenchLabelDecorator(DecoratorManager decoratorManager) {
@@ -130,7 +130,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 
 		/**
 		 * Return a resource manager local to the receiver.
-		 * 
+		 *
 		 * @return {@link LocalResourceManager}
 		 */
 		private LocalResourceManager getResourceManager() {
@@ -224,18 +224,18 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	}
 
 	/**
-	 * Initalize the decorator definitions.
+	 * Initialize the decorator definitions.
 	 */
 	private void initializeDecoratorDefinitions() {
 		DecoratorRegistryReader reader = new DecoratorRegistryReader();
-		Collection values = reader.readRegistry(Platform.getExtensionRegistry());
+		Collection<DecoratorDefinition> values = reader.readRegistry(Platform.getExtensionRegistry());
 
-		ArrayList full = new ArrayList();
-		ArrayList lightweight = new ArrayList();
-		Iterator allDefinitions = values.iterator();
+		ArrayList<DecoratorDefinition> full = new ArrayList<>();
+		ArrayList<DecoratorDefinition> lightweight = new ArrayList<>();
+		Iterator<DecoratorDefinition> allDefinitions = values.iterator();
 		IExtensionTracker configurationElementTracker = PlatformUI.getWorkbench().getExtensionTracker();
 		while (allDefinitions.hasNext()) {
-			DecoratorDefinition nextDefinition = (DecoratorDefinition) allDefinitions.next();
+			DecoratorDefinition nextDefinition = allDefinitions.next();
 			if (nextDefinition.isFull()) {
 				full.add(nextDefinition);
 			} else {
@@ -293,9 +293,9 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 * @param enabledDefinitions The definitions currently defined for this
 	 *                           decorator.
 	 */
-	static Collection getDecoratorsFor(Object element, DecoratorDefinition[] enabledDefinitions) {
+	static Collection<DecoratorDefinition> getDecoratorsFor(Object element, DecoratorDefinition[] enabledDefinitions) {
 
-		ArrayList decorators = new ArrayList();
+		ArrayList<DecoratorDefinition> decorators = new ArrayList<>();
 
 		for (DecoratorDefinition enabledDefinition : enabledDefinitions) {
 			if (enabledDefinition.isEnabledFor(element)) {
@@ -406,7 +406,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 
 	/**
 	 * Decorate the text in the receiver using the context.
-	 * 
+	 *
 	 * @param text
 	 * @param element
 	 * @param context
@@ -463,7 +463,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	/**
 	 * Decorate the image within the context. Allocate any new images in
 	 * localResourceManager
-	 * 
+	 *
 	 * @param image
 	 * @param element
 	 * @param context
@@ -610,7 +610,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 		if (fullDefinitions.length == 0) {
 			return fullDefinitions;
 		}
-		ArrayList result = new ArrayList();
+		ArrayList<FullDecoratorDefinition> result = new ArrayList<>();
 		for (FullDecoratorDefinition element : fullDefinitions) {
 			if (element.isEnabled()) {
 				result.add(element);
@@ -722,8 +722,8 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 				.getString(IPreferenceConstants.ENABLED_DECORATORS);
 
 		StringTokenizer tokenizer = new StringTokenizer(preferenceValue, PREFERENCE_SEPARATOR);
-		Set enabledIds = new HashSet();
-		Set disabledIds = new HashSet();
+		Set<String> enabledIds = new HashSet<>();
+		Set<String> disabledIds = new HashSet<>();
 		while (tokenizer.hasMoreTokens()) {
 			String nextValuePair = tokenizer.nextToken();
 
@@ -929,7 +929,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 			return EMPTY_FULL_DEF;
 		}
 
-		Collection decorators = getDecoratorsFor(element, enabledFullDefinitions());
+		Collection<DecoratorDefinition> decorators = getDecoratorsFor(element, enabledFullDefinitions());
 		FullDecoratorDefinition[] decoratorArray = EMPTY_FULL_DEF;
 		if (decorators.size() > 0) {
 			decoratorArray = new FullDecoratorDefinition[decorators.size()];
@@ -1025,8 +1025,8 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 		for (IConfigurationElement addedElement : addedExtension.getConfigurationElements()) {
 			DecoratorRegistryReader reader = new DecoratorRegistryReader();
 			reader.readElement(addedElement);
-			for (Iterator j = reader.getValues().iterator(); j.hasNext();) {
-				addDecorator((DecoratorDefinition) j.next());
+			for (Iterator<DecoratorDefinition> j = reader.getValues().iterator(); j.hasNext();) {
+				addDecorator(j.next());
 			}
 		}
 	}

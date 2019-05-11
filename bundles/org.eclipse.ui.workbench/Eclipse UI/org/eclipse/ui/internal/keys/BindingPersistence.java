@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
@@ -113,7 +114,7 @@ public class BindingPersistence extends PreferencePersistence {
 	 * A look-up map for 2.1.x style <code>string</code> keys on a
 	 * <code>keyBinding</code> element.
 	 */
-	private static final Map r2_1KeysByName = new HashMap();
+	private static final Map<String, Integer> r2_1KeysByName = new HashMap<>();
 
 	static {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
@@ -238,7 +239,7 @@ public class BindingPersistence extends PreferencePersistence {
 		int value = 0;
 		if (size % 2 == 1) {
 			String token = tokens[size - 1];
-			final Integer integer = (Integer) r2_1KeysByName.get(token.toUpperCase(Locale.ENGLISH));
+			final Integer integer = r2_1KeysByName.get(token.toUpperCase(Locale.ENGLISH));
 
 			if (integer != null) {
 				value = integer.intValue();
@@ -412,7 +413,7 @@ public class BindingPersistence extends PreferencePersistence {
 	 */
 	private static final void readBindingsFromPreferences(final IMemento preferences,
 			final BindingManager bindingManager, final CommandManager commandService) {
-		List warningsToLog = new ArrayList(1);
+		List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		if (preferences != null) {
 			final IMemento[] preferenceMementos = preferences.getChildren(TAG_KEY_BINDING);
@@ -521,10 +522,10 @@ public class BindingPersistence extends PreferencePersistence {
 	private static final void readBindingsFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final BindingManager bindingManager,
 			final CommandManager commandService) {
-		final Collection bindings = new ArrayList(configurationElementCount);
-		final List warningsToLog = new ArrayList(1);
+		final Collection<KeyBinding> bindings = new ArrayList<>(configurationElementCount);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
-		HashSet cocoaTempList = new HashSet();
+		HashSet<KeyBinding> cocoaTempList = new HashSet<>();
 		// IViewRegistry viewRegistry =
 		// PlatformUI.getWorkbench().getViewRegistry();
 
@@ -594,10 +595,10 @@ public class BindingPersistence extends PreferencePersistence {
 			ParameterizedCommand parameterizedCommand = readParameterizedCommand(warningsToLog, configurationElement,
 					viewParameter, command);
 
-			List modifiedBindings = applyModifiers(keySequence, keySequenceText, platform, sequenceModifiers,
-					parameterizedCommand, schemeId, contextId, locale, warningsToLog);
+			List<KeyBinding> modifiedBindings = applyModifiers(keySequence, keySequenceText, platform,
+					sequenceModifiers, parameterizedCommand, schemeId, contextId, locale, warningsToLog);
 
-			KeyBinding binding = (KeyBinding) modifiedBindings.get(0);
+			KeyBinding binding = modifiedBindings.get(0);
 			if (modifiedBindings.size() > 1) {
 				for (int j = 1; j < modifiedBindings.size(); j++) {
 					bindings.add(modifiedBindings.get(j));
@@ -620,18 +621,18 @@ public class BindingPersistence extends PreferencePersistence {
 			bindings.addAll(cocoaTempList);
 		}
 
-		final Binding[] bindingArray = (Binding[]) bindings.toArray(new Binding[bindings.size()]);
+		final Binding[] bindingArray = bindings.toArray(new Binding[bindings.size()]);
 		bindingManager.setBindings(bindingArray);
 
 		logWarnings(warningsToLog,
 				"Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' and 'org.eclipse.ui.bindings' extension point"); //$NON-NLS-1$
 	}
 
-	private static List applyModifiers(KeySequence keySequence, String keySequenceText, String platform,
+	private static List<KeyBinding> applyModifiers(KeySequence keySequence, String keySequenceText, String platform,
 			IConfigurationElement[] sequenceModifiers, ParameterizedCommand parameterizedCommand, String schemeId,
-			String contextId, String locale, List warningsToLog) {
+			String contextId, String locale, List<IStatus> warningsToLog) {
 
-		List bindings = new ArrayList();
+		List<KeyBinding> bindings = new ArrayList<>();
 
 		for (IConfigurationElement sequenceModifier : sequenceModifiers) {
 
@@ -674,8 +675,8 @@ public class BindingPersistence extends PreferencePersistence {
 	}
 
 	private static void getBindingForPlatform(KeySequence keySequence, String platform,
-			ParameterizedCommand parameterizedCommand, String schemeId, String contextId, String locale, List bindings,
-			String modifiedSequence, String[] platforms) throws ParseException {
+			ParameterizedCommand parameterizedCommand, String schemeId, String contextId, String locale,
+			List<KeyBinding> bindings, String modifiedSequence, String[] platforms) throws ParseException {
 
 		int j = 0;
 		for (; j < platforms.length; j++) {
@@ -695,7 +696,7 @@ public class BindingPersistence extends PreferencePersistence {
 	}
 
 	private static void addGenericBindings(KeySequence keySequence, ParameterizedCommand parameterizedCommand,
-			String schemeId, String contextId, String locale, List bindings, String modifiedSequence,
+			String schemeId, String contextId, String locale, List<KeyBinding> bindings, String modifiedSequence,
 			String[] platforms) throws ParseException {
 
 		KeyBinding originalBinding = new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale,
@@ -727,12 +728,12 @@ public class BindingPersistence extends PreferencePersistence {
 	private static IConfigurationElement[] getSequenceModifierElements(IConfigurationElement configurationElement) {
 
 		IExtension extension = configurationElement.getDeclaringExtension();
-		List modifierElements = new ArrayList();
+		List<IConfigurationElement> modifierElements = new ArrayList<>();
 		for (final IConfigurationElement configElement : extension.getConfigurationElements()) {
 			if (TAG_SEQUENCE_MODIFIER.equals(configElement.getName()))
 				modifierElements.add(configElement);
 		}
-		return (IConfigurationElement[]) modifierElements.toArray(new IConfigurationElement[modifierElements.size()]);
+		return modifierElements.toArray(new IConfigurationElement[modifierElements.size()]);
 	}
 
 	public static String[] parseCommaSeparatedString(String commaSeparatedString) {
@@ -758,7 +759,7 @@ public class BindingPersistence extends PreferencePersistence {
 
 	}
 
-	private static KeySequence readKeySequence(IConfigurationElement configurationElement, List warningsToLog,
+	private static KeySequence readKeySequence(IConfigurationElement configurationElement, List<IStatus> warningsToLog,
 			String commandId, String keySequenceText) {
 
 		KeySequence keySequence = null;
@@ -793,13 +794,13 @@ public class BindingPersistence extends PreferencePersistence {
 		return keySequence;
 	}
 
-	private static ParameterizedCommand readParameterizedCommand(final List warningsToLog,
+	private static ParameterizedCommand readParameterizedCommand(final List<IStatus> warningsToLog,
 			final IConfigurationElement configurationElement, String viewParameter, final Command command) {
 		final ParameterizedCommand parameterizedCommand;
 		if (command == null) {
 			parameterizedCommand = null;
 		} else if (viewParameter != null) {
-			HashMap parms = new HashMap();
+			HashMap<String, String> parms = new HashMap<>();
 			parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
 			parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 		} else {
@@ -839,7 +840,7 @@ public class BindingPersistence extends PreferencePersistence {
 		return contextId;
 	}
 
-	private static String readSchemeId(IConfigurationElement configurationElement, List warningsToLog,
+	private static String readSchemeId(IConfigurationElement configurationElement, List<IStatus> warningsToLog,
 			String commandId) {
 
 		String schemeId = configurationElement.getAttribute(ATT_SCHEME_ID);
@@ -894,7 +895,7 @@ public class BindingPersistence extends PreferencePersistence {
 			}
 		}
 
-		final List warningsToLog = new ArrayList(1);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
@@ -1031,12 +1032,12 @@ public class BindingPersistence extends PreferencePersistence {
 		element.putString(ATT_LOCALE, binding.getLocale());
 		element.putString(ATT_PLATFORM, binding.getPlatform());
 		if (parameterizedCommand != null) {
-			final Map parameterizations = parameterizedCommand.getParameterMap();
-			final Iterator parameterizationItr = parameterizations.entrySet().iterator();
+			final Map<String, String> parameterizations = parameterizedCommand.getParameterMap();
+			final Iterator<Map.Entry<String, String>> parameterizationItr = parameterizations.entrySet().iterator();
 			while (parameterizationItr.hasNext()) {
-				final Map.Entry entry = (Map.Entry) parameterizationItr.next();
-				final String id = (String) entry.getKey();
-				final String value = (String) entry.getValue();
+				final Map.Entry<String, String> entry = parameterizationItr.next();
+				final String id = entry.getKey();
+				final String value = entry.getValue();
 				final IMemento parameterElement = element.createChild(TAG_PARAMETER);
 				parameterElement.putString(ATT_ID, id);
 				parameterElement.putString(ATT_VALUE, value);

@@ -103,16 +103,16 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	public static final void registerContextMenu(final String menuId, final MenuManager menuManager,
 			final ISelectionProvider selectionProvider, final boolean includeEditorInput, final IWorkbenchPart part,
-			IEclipseContext context, final Collection menuExtenders) {
+			IEclipseContext context, final Collection<PopupMenuExtender> menuExtenders) {
 		/*
 		 * Check to see if the same menu manager and selection provider have already
 		 * been used. If they have, then we can just add another menu identifier to the
 		 * existing PopupMenuExtender.
 		 */
-		final Iterator extenderItr = menuExtenders.iterator();
+		final Iterator<PopupMenuExtender> extenderItr = menuExtenders.iterator();
 		boolean foundMatch = false;
 		while (extenderItr.hasNext()) {
-			final PopupMenuExtender existingExtender = (PopupMenuExtender) extenderItr.next();
+			final PopupMenuExtender existingExtender = extenderItr.next();
 			if (existingExtender.matches(menuManager, selectionProvider, part)) {
 				existingExtender.addMenuId(menuId);
 				foundMatch = true;
@@ -146,7 +146,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	private SlaveMenuService menuService;
 
-	protected ArrayList menuExtenders;
+	protected ArrayList<PopupMenuExtender> menuExtenders;
 
 	private WorkbenchSiteProgressService progressService;
 
@@ -302,15 +302,15 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	public void dispose() {
 		if (menuExtenders != null) {
-			HashSet managers = new HashSet(menuExtenders.size());
+			HashSet<MenuManager> managers = new HashSet<>(menuExtenders.size());
 			for (int i = 0; i < menuExtenders.size(); i++) {
-				PopupMenuExtender ext = (PopupMenuExtender) menuExtenders.get(i);
+				PopupMenuExtender ext = menuExtenders.get(i);
 				managers.add(ext.getManager());
 				ext.dispose();
 			}
 			if (managers.size() > 0) {
-				for (Iterator iterator = managers.iterator(); iterator.hasNext();) {
-					MenuManager mgr = (MenuManager) iterator.next();
+				for (Iterator<MenuManager> iterator = managers.iterator(); iterator.hasNext();) {
+					MenuManager mgr = iterator.next();
 					mgr.dispose();
 				}
 			}
@@ -492,7 +492,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	@Override
 	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
 		if (menuExtenders == null) {
-			menuExtenders = new ArrayList(1);
+			menuExtenders = new ArrayList<>(1);
 		}
 
 		registerContextMenu(menuID, menuMgr, selProvider, true, getPart(), e4Context, menuExtenders);
@@ -514,12 +514,12 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		if (menuExtenders == null) {
 			return new String[0];
 		}
-		ArrayList menuIds = new ArrayList(menuExtenders.size());
-		for (Iterator iter = menuExtenders.iterator(); iter.hasNext();) {
-			final PopupMenuExtender extender = (PopupMenuExtender) iter.next();
+		ArrayList<String> menuIds = new ArrayList<>(menuExtenders.size());
+		for (Iterator<PopupMenuExtender> iter = menuExtenders.iterator(); iter.hasNext();) {
+			final PopupMenuExtender extender = iter.next();
 			menuIds.addAll(extender.getMenuIds());
 		}
-		return (String[]) menuIds.toArray(new String[menuIds.size()]);
+		return menuIds.toArray(new String[menuIds.size()]);
 	}
 
 	/**

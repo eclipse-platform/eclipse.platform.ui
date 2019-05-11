@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ModifierKey;
@@ -39,13 +38,13 @@ public class CompactKeyFormatter extends NativeKeyFormatter {
 	public String format(KeySequence keySequence) {
 		StringBuilder stringBuffer = new StringBuilder();
 
-		List keyStrokes = keySequence.getKeyStrokes();
-		KeyStroke[] keyStrokeArray = (KeyStroke[]) keyStrokes.toArray(new KeyStroke[keyStrokes.size()]);
-		Set previousModifierKeys = Collections.EMPTY_SET;
-		List naturalKeys = new ArrayList();
+		List<KeyStroke> keyStrokes = keySequence.getKeyStrokes();
+		KeyStroke[] keyStrokeArray = keyStrokes.toArray(new KeyStroke[keyStrokes.size()]);
+		Set<ModifierKey> previousModifierKeys = Collections.emptySet();
+		List<NaturalKey> naturalKeys = new ArrayList<>();
 		for (int i = 0; i < keyStrokeArray.length; i++) {
 			KeyStroke keyStroke = keyStrokeArray[i];
-			Set currentModifierKeys = keyStroke.getModifierKeys();
+			Set<ModifierKey> currentModifierKeys = keyStroke.getModifierKeys();
 
 			if (!previousModifierKeys.equals(currentModifierKeys)) {
 				// End the old sequence fragment.
@@ -68,21 +67,21 @@ public class CompactKeyFormatter extends NativeKeyFormatter {
 		return stringBuffer.toString();
 	}
 
-	public String formatKeyStrokes(Set modifierKeys, List naturalKeys) {
+	public String formatKeyStrokes(Set<ModifierKey> modifierKeys, List<?> naturalKeys) {
 		StringBuilder stringBuffer = new StringBuilder();
 		String keyDelimiter = getKeyDelimiter();
 
 		// Format the modifier keys, in sorted order.
-		SortedSet sortedModifierKeys = new TreeSet(getModifierKeyComparator());
+		SortedSet<ModifierKey> sortedModifierKeys = new TreeSet<>(getModifierKeyComparator());
 		sortedModifierKeys.addAll(modifierKeys);
-		Iterator sortedModifierKeyItr = sortedModifierKeys.iterator();
+		Iterator<ModifierKey> sortedModifierKeyItr = sortedModifierKeys.iterator();
 		while (sortedModifierKeyItr.hasNext()) {
-			stringBuffer.append(format((ModifierKey) sortedModifierKeyItr.next()));
+			stringBuffer.append(format(sortedModifierKeyItr.next()));
 			stringBuffer.append(keyDelimiter);
 		}
 
 		// Format the natural key, if any.
-		Iterator naturalKeyItr = naturalKeys.iterator();
+		Iterator<?> naturalKeyItr = naturalKeys.iterator();
 		while (naturalKeyItr.hasNext()) {
 			Object naturalKey = naturalKeyItr.next();
 			if (naturalKey instanceof NaturalKey) {

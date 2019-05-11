@@ -80,14 +80,14 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 	private boolean handleOkStatuses;
 
-	private Map dialogState;
+	private Map<Object, Object> dialogState;
 
 	private MenuItem copyAction;
 
 	/**
 	 * @param dialogState
 	 */
-	public DefaultDetailsArea(Map dialogState) {
+	public DefaultDetailsArea(Map<Object, Object> dialogState) {
 		this.dialogState = dialogState;
 		handleOkStatuses = ((Boolean) dialogState.get(IStatusDialogConstants.HANDLE_OK_STATUSES)).booleanValue();
 		mask = ((Integer) dialogState.get(IStatusDialogConstants.MASK)).intValue();
@@ -119,7 +119,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		final TriggerSequence ts[] = binding.getActiveBindingsFor(ActionFactory.COPY.getCommandId());
 		text.addKeyListener(new KeyListener() {
 
-			ArrayList keyList = new ArrayList();
+			ArrayList<KeyStroke> keyList = new ArrayList<>();
 
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -333,6 +333,6 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	 * @return true if the dialog has one more than one status.
 	 */
 	private boolean isMulti() {
-		return ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() != 1;
+		return ((Collection<?>) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() != 1;
 	}
 }

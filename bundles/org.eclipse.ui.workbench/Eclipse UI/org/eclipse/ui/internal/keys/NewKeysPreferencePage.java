@@ -665,9 +665,9 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 		// Construct the menu to attach to the above button.
 		final Menu addKeyMenu = new Menu(addKeyButton);
-		final Iterator trappedKeyItr = KeySequenceText.TRAPPED_KEYS.iterator();
+		final Iterator<KeyStroke> trappedKeyItr = KeySequenceText.TRAPPED_KEYS.iterator();
 		while (trappedKeyItr.hasNext()) {
-			final KeyStroke trappedKey = (KeyStroke) trappedKeyItr.next();
+			final KeyStroke trappedKey = trappedKeyItr.next();
 			final MenuItem menuItem = new MenuItem(addKeyMenu, SWT.PUSH);
 			menuItem.setText(trappedKey.format());
 			menuItem.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -751,8 +751,8 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		tableLayout.addColumnData(new ColumnWeightData(40));
 		table.setLayout(tableLayout);
 		conflictViewer.setContentProvider((IStructuredContentProvider) inputElement -> {
-			if (inputElement instanceof Collection) {
-				return ((Collection) inputElement).toArray();
+			if (inputElement instanceof Collection<?>) {
+				return ((Collection<?>) inputElement).toArray(new Object[0]);
 			}
 			return new Object[0];
 		});
@@ -1060,9 +1060,9 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 			fFilteredTree.getViewer().setSelection(new StructuredSelection(be), true);
 		}
 		if (data instanceof ParameterizedCommand) {
-			Map commandToElement = keyController.getBindingModel().getCommandToElement();
+			Map<ParameterizedCommand, BindingElement> commandToElement = keyController.getBindingModel().getCommandToElement();
 
-			BindingElement be = (BindingElement) commandToElement.get(data);
+			BindingElement be = commandToElement.get(data);
 			if (be != null) {
 				fFilteredTree.getViewer().setSelection(new StructuredSelection(be), true);
 			}

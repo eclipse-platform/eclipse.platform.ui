@@ -50,7 +50,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
 
 	private String[] parentPath;
 
-	private ArrayList elements;
+	private ArrayList<Object> elements;
 
 	private IConfigurationElement configurationElement;
 
@@ -100,7 +100,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
 	 */
 	public void addElement(Object element) {
 		if (elements == null) {
-			elements = new ArrayList(5);
+			elements = new ArrayList<>(5);
 		}
 		elements.add(element);
 	}
@@ -201,7 +201,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
 	 *
 	 * @return the elements
 	 */
-	public ArrayList getElements() {
+	public ArrayList<Object> getElements() {
 		return elements;
 	}
 

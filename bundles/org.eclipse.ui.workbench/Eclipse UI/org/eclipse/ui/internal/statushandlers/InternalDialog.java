@@ -142,13 +142,13 @@ public class InternalDialog extends TrayDialog {
 
 	private DetailsAreaManager detailsManager;
 
-	private Map dialogState;
+	private Map<Object, Object> dialogState;
 
 	/**
 	 * @param dialogState
 	 * @param modal
 	 */
-	public InternalDialog(final Map dialogState, boolean modal) {
+	public InternalDialog(final Map<Object, Object> dialogState, boolean modal) {
 		super(ProgressManagerUtil.getDefaultParent());
 		this.dialogState = dialogState;
 		supportTray = new SupportTray(dialogState, event -> {
@@ -725,7 +725,7 @@ public class InternalDialog extends TrayDialog {
 		}
 		/* check handling hint and display link if it is expected */
 		boolean shouldDisplay = false;
-		Iterator it = ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).iterator();
+		Iterator<?> it = ((Collection<?>) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).iterator();
 		while (it.hasNext()) {
 			StatusAdapter adapter = (StatusAdapter) it.next();
 			Integer hint = (Integer) adapter.getProperty(WorkbenchStatusDialogManagerImpl.HINT);
@@ -794,7 +794,7 @@ public class InternalDialog extends TrayDialog {
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				return ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).toArray();
+				return ((Collection<?>) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).toArray();
 			}
 
 			@Override
@@ -974,6 +974,6 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	private boolean isMulti() {
-		return ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() > 1;
+		return ((Collection<?>) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() > 1;
 	}
 }

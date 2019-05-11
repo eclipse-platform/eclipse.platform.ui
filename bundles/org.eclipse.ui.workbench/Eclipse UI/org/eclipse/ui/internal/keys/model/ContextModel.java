@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.ui.contexts.IContextService;
@@ -36,9 +35,9 @@ public class ContextModel extends CommonModel {
 
 	public static final String PROP_CONTEXTS = "contexts"; //$NON-NLS-1$
 	public static final String PROP_CONTEXT_MAP = "contextIdElementMap"; //$NON-NLS-1$
-	private List contexts;
-	private Map contextIdToFilteredContexts;
-	private Map contextIdToElement;
+	private List<ContextElement> contexts;
+	private Map<String, ContextElement> contextIdToFilteredContexts;
+	private Map<String, ContextElement> contextIdToElement;
 	private IContextService contextService;
 
 	public ContextModel(KeyController kc) {
@@ -50,9 +49,9 @@ public class ContextModel extends CommonModel {
 	 */
 	public void init(IServiceLocator locator) {
 		contextService = locator.getService(IContextService.class);
-		contexts = new ArrayList();
-		contextIdToFilteredContexts = new HashMap();
-		contextIdToElement = new HashMap();
+		contexts = new ArrayList<>();
+		contextIdToFilteredContexts = new HashMap<>();
+		contextIdToElement = new HashMap<>();
 
 		Context[] definedContexts = contextService.getDefinedContexts();
 		for (Context definedContext : definedContexts) {
@@ -67,15 +66,15 @@ public class ContextModel extends CommonModel {
 	/**
 	 * @return Returns the contexts.
 	 */
-	public List getContexts() {
+	public List<ContextElement> getContexts() {
 		return contexts;
 	}
 
 	/**
 	 * @param contexts The contexts to set.
 	 */
-	public void setContexts(List contexts) {
-		List old = this.contexts;
+	public void setContexts(List<ContextElement> contexts) {
+		List<ContextElement> old = this.contexts;
 		this.contexts = contexts;
 		controller.firePropertyChange(this, PROP_CONTEXTS, old, contexts);
 	}
@@ -83,15 +82,15 @@ public class ContextModel extends CommonModel {
 	/**
 	 * @return Returns the contextToElement.
 	 */
-	public Map getContextIdToElement() {
+	public Map<String, ContextElement> getContextIdToElement() {
 		return contextIdToElement;
 	}
 
 	/**
 	 * @param contextToElement The contextToElement to set.
 	 */
-	public void setContextIdToElement(Map contextToElement) {
-		Map old = this.contextIdToElement;
+	public void setContextIdToElement(Map<String, ContextElement> contextToElement) {
+		Map<String, ContextElement> old = this.contextIdToElement;
 		this.contextIdToElement = contextToElement;
 		controller.firePropertyChange(this, PROP_CONTEXT_MAP, old, contextToElement);
 	}
@@ -107,7 +106,7 @@ public class ContextModel extends CommonModel {
 		// Remove undesired contexts
 		for (int i = 0; i < contexts.size(); i++) {
 			boolean removeContext = false;
-			ContextElement contextElement = (ContextElement) contexts.get(i);
+			ContextElement contextElement = contexts.get(i);
 
 			if (actionSets == true && contextElement.getId().equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
 				removeContext = true;
@@ -138,11 +137,11 @@ public class ContextModel extends CommonModel {
 
 		contexts.removeAll(contextIdToFilteredContexts.values());
 
-		Iterator iterator = contextIdToFilteredContexts.keySet().iterator();
+		Iterator<String> iterator = contextIdToFilteredContexts.keySet().iterator();
 		// Restore desired contexts
 		while (iterator.hasNext()) {
 			boolean restoreContext = false;
-			ContextElement contextElement = (ContextElement) contextIdToFilteredContexts.get(iterator.next());
+			ContextElement contextElement = contextIdToFilteredContexts.get(iterator.next());
 
 			try {
 				if (actionSets == false) {

@@ -36,7 +36,7 @@ public class EditorHistory {
 	/**
 	 * The list of editor entries, in FIFO order.
 	 */
-	private ArrayList fifoList = new ArrayList(MAX_SIZE);
+	private ArrayList<EditorHistoryItem> fifoList = new ArrayList<>(MAX_SIZE);
 
 	/**
 	 * Constructs a new history.
@@ -89,9 +89,9 @@ public class EditorHistory {
 	 * considered.
 	 */
 	public void refresh() {
-		Iterator iter = fifoList.iterator();
+		Iterator<EditorHistoryItem> iter = fifoList.iterator();
 		while (iter.hasNext()) {
-			EditorHistoryItem item = (EditorHistoryItem) iter.next();
+			EditorHistoryItem item = iter.next();
 			if (item.isRestored()) {
 				IEditorInput input = item.getInput();
 				if (input != null && !input.exists()) {
@@ -115,9 +115,9 @@ public class EditorHistory {
 		if (input == null) {
 			return;
 		}
-		Iterator iter = fifoList.iterator();
+		Iterator<EditorHistoryItem> iter = fifoList.iterator();
 		while (iter.hasNext()) {
-			EditorHistoryItem item = (EditorHistoryItem) iter.next();
+			EditorHistoryItem item = iter.next();
 			if (item.matches(input)) {
 				iter.remove();
 			}

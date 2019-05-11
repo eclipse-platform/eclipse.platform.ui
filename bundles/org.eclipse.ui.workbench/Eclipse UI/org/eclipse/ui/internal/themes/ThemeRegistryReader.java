@@ -40,17 +40,17 @@ public class ThemeRegistryReader extends RegistryReader {
 	 */
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(ThemeRegistryReader.class.getName());
 
-	private Collection categoryDefinitions = new HashSet();
+	private Collection<ThemeElementCategory> categoryDefinitions = new HashSet<>();
 
-	private Collection colorDefinitions = new HashSet();
+	private Collection<ColorDefinition> colorDefinitions = new HashSet<>();
 
-	private Collection fontDefinitions = new HashSet();
+	private Collection<FontDefinition> fontDefinitions = new HashSet<>();
 
 	private ThemeDescriptor themeDescriptor = null;
 
 	private ThemeRegistry themeRegistry;
 
-	private Map dataMap = new HashMap();
+	private Map<String, String> dataMap = new HashMap<>();
 
 	/**
 	 * ThemeRegistryReader constructor comment.
@@ -64,7 +64,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	 *
 	 * @return the category definitions
 	 */
-	public Collection getCategoryDefinitions() {
+	public Collection<ThemeElementCategory> getCategoryDefinitions() {
 		return categoryDefinitions;
 	}
 
@@ -73,7 +73,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	 *
 	 * @return the color definitions
 	 */
-	public Collection getColorDefinitions() {
+	public Collection<ColorDefinition> getColorDefinitions() {
 		return colorDefinitions;
 	}
 
@@ -82,7 +82,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	 *
 	 * @return the data map
 	 */
-	public Map getData() {
+	public Map<String, String> getData() {
 		return dataMap;
 	}
 
@@ -91,7 +91,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	 *
 	 * @return the font definitions
 	 */
-	public Collection getFontDefinitions() {
+	public Collection<FontDefinition> getFontDefinitions() {
 		return fontDefinitions;
 	}
 

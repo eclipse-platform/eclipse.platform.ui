@@ -16,7 +16,6 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
@@ -33,11 +32,11 @@ public class CloseAllSavedAction extends PageEventAction implements IPropertyLis
 	 * List of parts (element type: <code>IWorkbenchPart</code>) against which this
 	 * class has outstanding property listeners registered.
 	 */
-	private List partsWithListeners = new ArrayList(1);
+	private List<IWorkbenchPart> partsWithListeners = new ArrayList<>(1);
 
 	/**
 	 * Create an instance of this class.
-	 * 
+	 *
 	 * @param window the window
 	 */
 	public CloseAllSavedAction(IWorkbenchWindow window) {
@@ -125,8 +124,8 @@ public class CloseAllSavedAction extends PageEventAction implements IPropertyLis
 	@Override
 	public void dispose() {
 		super.dispose();
-		for (Iterator it = partsWithListeners.iterator(); it.hasNext();) {
-			IWorkbenchPart part = (IWorkbenchPart) it.next();
+		for (Iterator<IWorkbenchPart> it = partsWithListeners.iterator(); it.hasNext();) {
+			IWorkbenchPart part = it.next();
 			part.removePropertyListener(this);
 		}
 		partsWithListeners.clear();

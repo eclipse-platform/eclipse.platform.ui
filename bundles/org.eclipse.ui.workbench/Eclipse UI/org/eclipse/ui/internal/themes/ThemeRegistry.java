@@ -31,31 +31,25 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public class ThemeRegistry implements IThemeRegistry {
 
-	private List themes;
+	private List<IThemeDescriptor> themes;
 
-	private List colors;
+	private List<ColorDefinition> colors;
 
-	private List fonts;
+	private List<FontDefinition> fonts;
 
-	private List categories;
+	private List<ThemeElementCategory> categories;
 
-	private Map dataMap;
-
-	/**
-	 * Map from String (categoryId) -> Set (presentationIds)
-	 */
-	private Map categoryBindingMap;
+	private Map<Object, Object> dataMap;
 
 	/**
 	 * Create a new ThemeRegistry.
 	 */
 	public ThemeRegistry() {
-		themes = new ArrayList();
-		colors = new ArrayList();
-		fonts = new ArrayList();
-		categories = new ArrayList();
-		dataMap = new HashMap();
-		categoryBindingMap = new HashMap();
+		themes = new ArrayList<>();
+		colors = new ArrayList<>();
+		fonts = new ArrayList<>();
+		categories = new ArrayList<>();
+		dataMap = new HashMap<>();
 	}
 
 	/**
@@ -108,10 +102,10 @@ public class ThemeRegistry implements IThemeRegistry {
 	 * replace it. Return the existing element in the case of replacing, null in the
 	 * case of adding.
 	 */
-	private IThemeElementDefinition addOrReplaceDescriptor(List descriptors, IThemeElementDefinition newElement) {
+	private <T extends IThemeElementDefinition> T addOrReplaceDescriptor(List<T> descriptors, T newElement) {
 		String id = newElement.getId();
 		for (int i = 0; i < descriptors.size(); i++) {
-			IThemeElementDefinition existingElement = (IThemeElementDefinition) descriptors.get(i);
+			T existingElement = descriptors.get(i);
 			if (existingElement.getId().equals(id)) {
 				descriptors.remove(i);
 				descriptors.add(newElement);
@@ -257,7 +251,7 @@ public class ThemeRegistry implements IThemeRegistry {
 	}
 
 	@Override
-	public Map getData() {
+	public Map<Object, Object> getData() {
 		return Collections.unmodifiableMap(dataMap);
 	}
 
@@ -277,7 +271,7 @@ public class ThemeRegistry implements IThemeRegistry {
 	}
 
 	@Override
-	public Set getPresentationsBindingsFor(ThemeElementCategory category) {
-		return (Set) categoryBindingMap.get(category.getId());
+	public Set<?> getPresentationsBindingsFor(ThemeElementCategory category) {
+		return null;
 	}
 }

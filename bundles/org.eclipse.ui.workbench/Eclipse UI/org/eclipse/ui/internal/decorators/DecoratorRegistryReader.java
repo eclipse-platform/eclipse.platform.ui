@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.decorators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
@@ -30,9 +29,9 @@ import org.eclipse.ui.internal.registry.RegistryReader;
 public class DecoratorRegistryReader extends RegistryReader {
 
 	// The registry values are the ones read from the registry
-	private Collection values = new ArrayList();
+	private Collection<DecoratorDefinition> values = new ArrayList<>();
 
-	private Collection ids = new HashSet();
+	private Collection<String> ids = new HashSet<>();
 
 	/**
 	 * Constructor for DecoratorRegistryReader.
@@ -62,7 +61,7 @@ public class DecoratorRegistryReader extends RegistryReader {
 	/**
 	 * Return the DecoratorDefinition defined by element or <code>null</code> if it
 	 * cannot be determined.
-	 * 
+	 *
 	 * @param element
 	 * @return DecoratorDefinition
 	 */
@@ -98,7 +97,7 @@ public class DecoratorRegistryReader extends RegistryReader {
 	 * Read the decorator extensions within a registry and set up the registry
 	 * values.
 	 */
-	Collection readRegistry(IExtensionRegistry in) {
+	Collection<DecoratorDefinition> readRegistry(IExtensionRegistry in) {
 		values.clear();
 		ids.clear();
 		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_DECORATORS);
@@ -110,7 +109,7 @@ public class DecoratorRegistryReader extends RegistryReader {
 	 *
 	 * @return the values
 	 */
-	public Collection getValues() {
+	public Collection<DecoratorDefinition> getValues() {
 		return values;
 	}
 

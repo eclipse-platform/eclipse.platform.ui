@@ -48,14 +48,14 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	 * Value "<code>selectionFilter</code>". Is an enum allowing propertyPages to
 	 * support multiple selection when enum value is
 	 * <code>ATT_SELECTION_FILTER_MULTI</code>
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static final String ATT_SELECTION_FILTER = "selectionFilter";//$NON-NLS-1$
 
 	/**
 	 * Selection filter attribute value indicating support for multiple selection.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static final String ATT_SELECTION_FILTER_MULTI = "multi";//$NON-NLS-1$
@@ -84,7 +84,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$ ;
 
-	private Collection pages = new ArrayList();
+	private Collection<RegistryPageContributor> pages = new ArrayList<>();
 
 	private PropertyPageContributorManager manager;
 
@@ -150,7 +150,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 			pages.add(contributor);
 			manager.registerContributor(contributor, Object.class.getName());
 		} else {
-			List objectClassNames = new ArrayList();
+			List<String> objectClassNames = new ArrayList<>();
 			objectClassNames.add(element.getAttribute(ATT_OBJECTCLASS));
 			registerContributors(contributor, objectClassNames);
 		}
@@ -162,11 +162,11 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	 * @param contributor
 	 * @param objectClassNames
 	 */
-	private void registerContributors(RegistryPageContributor contributor, List objectClassNames) {
+	private void registerContributors(RegistryPageContributor contributor, List<String> objectClassNames) {
 
 		pages.add(contributor);
-		for (Iterator iter = objectClassNames.iterator(); iter.hasNext();) {
-			manager.registerContributor(contributor, (String) iter.next());
+		for (Iterator<String> iter = objectClassNames.iterator(); iter.hasNext();) {
+			manager.registerContributor(contributor, iter.next());
 		}
 
 	}
@@ -226,9 +226,9 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 	@Override
 	Object findNode(String id) {
-		Iterator iterator = pages.iterator();
+		Iterator<RegistryPageContributor> iterator = pages.iterator();
 		while (iterator.hasNext()) {
-			RegistryPageContributor next = (RegistryPageContributor) iterator.next();
+			RegistryPageContributor next = iterator.next();
 			if (next.getPageId().equals(id))
 				return next;
 		}
@@ -248,7 +248,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	}
 
 	@Override
-	Collection getNodes() {
+	Collection<?> getNodes() {
 		return pages;
 	}
 }

@@ -83,7 +83,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	/**
 	 * This variable holds the real state of the dialog.
 	 */
-	private Map dialogState = new HashMap();
+	private Map<Object, Object> dialogState = new HashMap<>();
 
 	/**
 	 * Returns whether the given StatusAdapter object should be displayed.
@@ -138,7 +138,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 * @param dialogTitle - the dialog title.
 	 * @return populated dialogState
 	 */
-	public Map initDialogState(Map dialogState, int displayMask, String dialogTitle) {
+	public Map<Object, Object> initDialogState(Map<Object, Object> dialogState, int displayMask, String dialogTitle) {
 		dialogState.put(IStatusDialogConstants.MASK, Integer.valueOf(displayMask));
 		dialogState.put(IStatusDialogConstants.TITLE,
 				dialogTitle == null ? JFaceResources.getString("Problem_Occurred") : //$NON-NLS-1$
@@ -150,8 +150,8 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 		dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.FALSE);
 		dialogState.put(IStatusDialogConstants.TRAY_OPENED, Boolean.FALSE);
 		dialogState.put(IStatusDialogConstants.HIDE_SUPPORT_BUTTON, Boolean.FALSE);
-		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, Collections.synchronizedSet(new LinkedHashSet()));
-		dialogState.put(IStatusDialogConstants.STATUS_MODALS, new HashMap());
+		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, Collections.synchronizedSet(new LinkedHashSet<>()));
+		dialogState.put(IStatusDialogConstants.STATUS_MODALS, new HashMap<>());
 		dialogState.put(IStatusDialogConstants.LABEL_PROVIDER, new LabelProviderWrapper(dialogState));
 		dialogState.put(IStatusDialogConstants.MODALITY_SWITCH, Boolean.FALSE);
 		dialogState.put(IStatusDialogConstants.ANIMATION, Boolean.TRUE);
@@ -496,8 +496,8 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 *
 	 * @return Collection of StatusAdapter modal flag.
 	 */
-	private Map getModals() {
-		return (Map) dialogState.get(IStatusDialogConstants.STATUS_MODALS);
+	private Map<Object, Object> getModals() {
+		return (Map<Object, Object>) dialogState.get(IStatusDialogConstants.STATUS_MODALS);
 	}
 
 	@Override

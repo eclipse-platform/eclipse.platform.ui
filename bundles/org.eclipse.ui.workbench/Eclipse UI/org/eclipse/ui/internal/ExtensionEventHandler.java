@@ -45,7 +45,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
 	private Workbench workbench;
 
-	private List changeList = new ArrayList(10);
+	private List<?> changeList = new ArrayList<>(10);
 
 	public ExtensionEventHandler(Workbench workbench) {
 		this.workbench = workbench;
@@ -65,8 +65,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 			if (display == null) {
 				return;
 			}
-			ArrayList appearList = new ArrayList(5);
-			ArrayList revokeList = new ArrayList(5);
+			ArrayList<IExtensionDelta> appearList = new ArrayList<>(5);
+			ArrayList<IExtensionDelta> revokeList = new ArrayList<>(5);
 			String id = null;
 			int numPerspectives = 0;
 			int numActionSetPartAssoc = 0;
@@ -97,10 +97,10 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 					}
 				}
 			}
-			Iterator iter = appearList.iterator();
+			Iterator<IExtensionDelta> iter = appearList.iterator();
 			IExtensionDelta extDelta = null;
 			while (iter.hasNext()) {
-				extDelta = (IExtensionDelta) iter.next();
+				extDelta = iter.next();
 				extPt = extDelta.getExtensionPoint();
 				ext = extDelta.getExtension();
 				asyncAppear(display, extPt, ext);
@@ -149,8 +149,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 			reader.readElement(configElement);
 		}
 
-		Collection fonts = reader.getFontDefinitions();
-		FontDefinition[] fontDefs = (FontDefinition[]) fonts.toArray(new FontDefinition[fonts.size()]);
+		Collection<FontDefinition> fonts = reader.getFontDefinitions();
+		FontDefinition[] fontDefs = fonts.toArray(new FontDefinition[fonts.size()]);
 		ThemeElementHelper.populateRegistry(workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), fontDefs,
 				PrefUtil.getInternalPreferenceStore());
 	}
@@ -164,17 +164,17 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 			reader.readElement(configElement);
 		}
 
-		Collection colors = reader.getColorDefinitions();
-		ColorDefinition[] colorDefs = (ColorDefinition[]) colors.toArray(new ColorDefinition[colors.size()]);
+		Collection<ColorDefinition> colors = reader.getColorDefinitions();
+		ColorDefinition[] colorDefs = colors.toArray(new ColorDefinition[colors.size()]);
 
 		ITheme theme = workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME);
 		ThemeElementHelper.populateRegistry(theme, colorDefs, PrefUtil.getInternalPreferenceStore());
 
-		Collection fonts = reader.getFontDefinitions();
-		FontDefinition[] fontDefs = (FontDefinition[]) fonts.toArray(new FontDefinition[fonts.size()]);
+		Collection<FontDefinition> fonts = reader.getFontDefinitions();
+		FontDefinition[] fontDefs = fonts.toArray(new FontDefinition[fonts.size()]);
 		ThemeElementHelper.populateRegistry(theme, fontDefs, PrefUtil.getInternalPreferenceStore());
 
-		Map data = reader.getData();
+		Map<String, String> data = reader.getData();
 		registry.addData(data);
 	}
 

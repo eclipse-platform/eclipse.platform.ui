@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -78,7 +79,7 @@ public final class CommandImagePersistence extends RegistryPersistence {
 		// Undefine all the previous images.
 		commandImageManager.clear();
 
-		final List warningsToLog = new ArrayList(1);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];

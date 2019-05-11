@@ -151,7 +151,7 @@ public class EditorSite extends PartSite implements IEditorSite {
 	public final void registerContextMenu(final String menuId, final MenuManager menuManager,
 			final ISelectionProvider selectionProvider, final boolean includeEditorInput) {
 		if (menuExtenders == null) {
-			menuExtenders = new ArrayList(1);
+			menuExtenders = new ArrayList<>(1);
 		}
 
 		PartSite.registerContextMenu(menuId, menuManager, selectionProvider, includeEditorInput, getPart(),

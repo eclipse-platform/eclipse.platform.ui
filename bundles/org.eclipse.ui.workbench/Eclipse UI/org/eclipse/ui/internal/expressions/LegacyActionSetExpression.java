@@ -95,7 +95,7 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 
 		Object obj = context.getVariable(ISources.ACTIVE_CONTEXT_NAME);
 		if (obj instanceof Collection<?>) {
-			return EvaluationResult.valueOf(((Collection) obj).contains(actionSetId));
+			return EvaluationResult.valueOf(((Collection<?>) obj).contains(actionSetId));
 		}
 		return EvaluationResult.FALSE;
 	}

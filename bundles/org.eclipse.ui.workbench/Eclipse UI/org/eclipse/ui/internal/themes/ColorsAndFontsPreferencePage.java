@@ -139,7 +139,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof ThemeElementCategory) {
 				String categoryId = ((ThemeElementCategory) parentElement).getId();
-				Object[] defintions = (Object[]) categoryMap.get(categoryId);
+				Object[] defintions = categoryMap.get(categoryId);
 				if (defintions == null) {
 					defintions = getCategoryChildren(categoryId);
 					categoryMap.put(categoryId, defintions);
@@ -147,7 +147,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 				return defintions;
 			}
 
-			ArrayList list = new ArrayList();
+			ArrayList<IHierarchalThemeElementDefinition> list = new ArrayList<>();
 			IHierarchalThemeElementDefinition def = (IHierarchalThemeElementDefinition) parentElement;
 			String id = def.getId();
 			IHierarchalThemeElementDefinition[] defs;
@@ -168,12 +168,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		}
 
 		private Object[] getCategoryChildren(String categoryId) {
-			ArrayList list = new ArrayList();
+			ArrayList<IThemeElementDefinition> list = new ArrayList<>();
 
 			if (categoryId != null) {
 				for (ThemeElementCategory category : registry.getCategories()) {
 					if (categoryId.equals(category.getParentId())) {
-						Set bindings = themeRegistry.getPresentationsBindingsFor(category);
+						Set<?> bindings = themeRegistry.getPresentationsBindingsFor(category);
 						if (bindings == null) {
 							list.add(category);
 						}
@@ -295,12 +295,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			ArrayList list = new ArrayList();
+			ArrayList<Object> list = new ArrayList<>();
 			Object[] uncatChildren = getCategoryChildren(null);
 			list.addAll(Arrays.asList(uncatChildren));
 			for (ThemeElementCategory category : ((IThemeRegistry) inputElement).getCategories()) {
 				if (category.getParentId() == null) {
-					Set bindings = themeRegistry.getPresentationsBindingsFor(category);
+					Set<?> bindings = themeRegistry.getPresentationsBindingsFor(category);
 					if (bindings == null) {
 						Object[] children = getChildren(category);
 						if (children != null && children.length > 0) {
@@ -327,9 +327,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	private class PresentationLabelProvider extends LabelProvider implements IFontProvider, IColorProvider {
 
-		private HashMap fonts = new HashMap();
+		private HashMap<Font, Font> fonts = new HashMap<>();
 
-		private HashMap images = new HashMap();
+		private HashMap<Color, Image> images = new HashMap<>();
 
 		private int imageSize = -1;
 
@@ -364,8 +364,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			super.dispose();
 			colorRegistry.removeListener(listener);
 			fontRegistry.removeListener(listener);
-			for (Iterator i = images.values().iterator(); i.hasNext();) {
-				((Image) i.next()).dispose();
+			for (Iterator<Image> i = images.values().iterator(); i.hasNext();) {
+				i.next().dispose();
 			}
 			images.clear();
 
@@ -382,8 +382,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		 * Clears and disposes all fonts.
 		 */
 		public void clearFontCache() {
-			for (Iterator i = fonts.values().iterator(); i.hasNext();) {
-				((Font) i.next()).dispose();
+			for (Iterator<Font> i = fonts.values().iterator(); i.hasNext();) {
+				i.next().dispose();
 			}
 			fonts.clear();
 		}
@@ -402,7 +402,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			if (element instanceof FontDefinition) {
 				int parentHeight = tree.getViewer().getControl().getFont().getFontData()[0].getHeight();
 				Font baseFont = fontRegistry.get(((FontDefinition) element).getId());
-				Font font = (Font) fonts.get(baseFont);
+				Font font = fonts.get(baseFont);
 				if (font == null) {
 					FontData[] data = baseFont.getFontData();
 					for (FontData fontData : data) {
@@ -427,7 +427,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 					c = display.getSystemColor(SWT.COLOR_WHITE);
 					foregroundColor = display.getSystemColor(DEFINITION_NOT_AVAIL_COLOR);
 				}
-				Image image = (Image) images.get(c);
+				Image image = images.get(c);
 				if (image == null) {
 					ensureImageSize();
 					image = new Image(display, imageSize, imageSize);
@@ -545,7 +545,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	/**
 	 * Map to precalculate category color lists.
 	 */
-	private Map categoryMap = new HashMap(7);
+	private Map<String, Object[]> categoryMap = new HashMap<>(7);
 
 	private Font appliedDialogFont;
 
@@ -561,7 +561,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * Map of definition id->RGB capturing the temporary changes caused by a
 	 * 'defaultsTo' color change.
 	 */
-	private Map colorValuesToSet = new HashMap(7);
+	private Map<String, RGB> colorValuesToSet = new HashMap<>(7);
 
 	/**
 	 * The default color preview composite.
@@ -600,7 +600,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	private String fontSampleText;
 
-	private List dialogFontWidgets = new ArrayList();
+	private List<Control> dialogFontWidgets = new ArrayList<>();
 
 	private Button fontChangeButton;
 
@@ -646,7 +646,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 *             ThemeAPI and listeners
 	 */
 	@Deprecated
-	private Map fontValuesToSet = new HashMap(7);
+	private Map<String, FontData[]> fontValuesToSet = new HashMap<>(7);
 
 	/**
 	 * The composite that is parent to all previews.
@@ -656,12 +656,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	/**
 	 * A mapping from PresentationCategory->Composite for the created previews.
 	 */
-	private Map previewMap = new HashMap(7);
+	private Map<ThemeElementCategory, Composite> previewMap = new HashMap<>(7);
 
 	/**
 	 * Set containing all IPresentationPreviews created.
 	 */
-	private Set previewSet = new HashSet(7);
+	private Set<IThemePreview> previewSet = new HashSet<>(7);
 
 	/**
 	 * The layout for the previewComposite.
@@ -800,7 +800,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Create a button for the preference page.
-	 * 
+	 *
 	 * @param parent
 	 * @param label
 	 */
@@ -1035,8 +1035,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (cascadingTheme != null)
 			cascadingTheme.dispose();
 
-		for (Iterator i = previewSet.iterator(); i.hasNext();) {
-			IThemePreview preview = (IThemePreview) i.next();
+		for (Iterator<IThemePreview> i = previewSet.iterator(); i.hasNext();) {
+			IThemePreview preview = i.next();
 			try {
 				preview.dispose();
 			} catch (RuntimeException e) {
@@ -1085,7 +1085,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		String id = definition.getId();
 		RGB updatedRGB = colorPreferencesToSet.get(definition);
 		if (updatedRGB == null) {
-			updatedRGB = (RGB) colorValuesToSet.get(id);
+			updatedRGB = colorValuesToSet.get(id);
 			if (updatedRGB == null)
 				updatedRGB = currentTheme.getColorRegistry().getRGB(id);
 		}
@@ -1100,7 +1100,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 *         defaultsTo attribute.
 	 */
 	private ColorDefinition[] getDescendantColors(ColorDefinition definition) {
-		List list = new ArrayList(5);
+		List<ColorDefinition> list = new ArrayList<>(5);
 		String id = definition.getId();
 
 		ColorDefinition[] colors = themeRegistry.getColors();
@@ -1113,11 +1113,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			if (id.equals(colorDefinition.getDefaultsTo()))
 				list.add(colorDefinition);
 		}
-		return (ColorDefinition[]) list.toArray(new ColorDefinition[list.size()]);
+		return list.toArray(new ColorDefinition[list.size()]);
 	}
 
 	private FontDefinition[] getDescendantFonts(FontDefinition definition) {
-		List list = new ArrayList(5);
+		List<FontDefinition> list = new ArrayList<>(5);
 		String id = definition.getId();
 
 		FontDefinition[] fonts = themeRegistry.getFonts();
@@ -1130,7 +1130,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			if (id.equals(fontDefinition.getDefaultsTo()))
 				list.add(fontDefinition);
 		}
-		return (FontDefinition[]) list.toArray(new FontDefinition[list.size()]);
+		return list.toArray(new FontDefinition[list.size()]);
 	}
 
 	private FontDefinition getFontAncestor(FontDefinition definition) {
@@ -1152,7 +1152,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		String id = definition.getId();
 		FontData[] updatedFD = fontPreferencesToSet.get(definition);
 		if (updatedFD == null) {
-			updatedFD = (FontData[]) fontValuesToSet.get(id);
+			updatedFD = fontValuesToSet.get(id);
 			if (updatedFD == null)
 				updatedFD = currentTheme.getFontRegistry().getFontData(id);
 		}
@@ -1368,11 +1368,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 		} else if (fontValuesToSet.containsKey(id)) {
 			if (definition.getValue() != null) { // value-based font
-				if (Arrays.equals((FontData[]) fontValuesToSet.get(id), definition.getValue()))
+				if (Arrays.equals(fontValuesToSet.get(id), definition.getValue()))
 					return true;
 			} else {
 				FontData[] ancestor = getFontAncestorValue(definition);
-				if (Arrays.equals((FontData[]) fontValuesToSet.get(id), ancestor))
+				if (Arrays.equals(fontValuesToSet.get(id), ancestor))
 					return true;
 			}
 
@@ -1395,7 +1395,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	/**
 	 * Apply the dialog font to the control and store it for later so that it can be
 	 * used for a later update.
-	 * 
+	 *
 	 * @param control
 	 */
 	private void myApplyDialogFont(Control control) {
@@ -1618,7 +1618,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Updates the working registry.
-	 * 
+	 *
 	 * @param definition
 	 * @param newRGB
 	 */
@@ -1632,7 +1632,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Returns the preview for the category.
-	 * 
+	 *
 	 * @param category the category
 	 * @return the preview for the category, or its ancestors preview if it does not
 	 *         have one.
@@ -1660,13 +1660,13 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Update for a change in the dialog font.
-	 * 
+	 *
 	 * @param newFont
 	 */
 	private void updateForDialogFontChange(Font newFont) {
-		Iterator iterator = dialogFontWidgets.iterator();
+		Iterator<Control> iterator = dialogFontWidgets.iterator();
 		while (iterator.hasNext()) {
-			((Control) iterator.next()).setFont(newFont);
+			iterator.next().setFont(newFont);
 		}
 
 		// recalculate the fonts for the tree
@@ -1687,7 +1687,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		}
 		Composite previewControl = null;
 		if (category != null) { // check if there is a preview for it
-			previewControl = (Composite) previewMap.get(category);
+			previewControl = previewMap.get(category);
 			if (previewControl == null) {
 				try {
 					IThemePreview preview = getThemePreview(category);
@@ -1727,7 +1727,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Restore the selection state of the tree.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void restoreTreeSelection() {
@@ -1742,7 +1742,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Save the selection state of the tree.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void saveTreeSelection() {
@@ -1757,7 +1757,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Restore the expansion state of the tree.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void restoreTreeExpansion() {
@@ -1768,7 +1768,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (expandedElementIDs.length == 0)
 			return;
 
-		List elements = new ArrayList(expandedElementIDs.length);
+		List<IThemeElementDefinition> elements = new ArrayList<>(expandedElementIDs.length);
 		for (String expandedElementID : expandedElementIDs) {
 			IThemeElementDefinition def = findElementFromMarker(expandedElementID);
 			if (def != null)
@@ -1809,12 +1809,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Saves the expansion state of the tree.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void saveTreeExpansion() {
 		Object[] elements = tree.getViewer().getExpandedElements();
-		List elementIds = new ArrayList(elements.length);
+		List<String> elementIds = new ArrayList<>(elements.length);
 
 		StringBuilder buffer = new StringBuilder();
 		for (Object object : elements) {
@@ -1827,8 +1827,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			buffer.setLength(0);
 		}
 
-		for (Iterator i = elementIds.iterator(); i.hasNext();) {
-			String id = (String) i.next();
+		for (Iterator<String> i = elementIds.iterator(); i.hasNext();) {
+			String id = i.next();
 			buffer.append(id);
 			if (i.hasNext()) {
 				buffer.append(EXPANDED_ELEMENTS_TOKEN);

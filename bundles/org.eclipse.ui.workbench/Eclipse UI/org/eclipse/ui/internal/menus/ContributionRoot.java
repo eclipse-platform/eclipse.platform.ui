@@ -35,13 +35,13 @@ import org.eclipse.ui.menus.IMenuService;
  */
 final class ContributionRoot implements IContributionRoot {
 
-	private List topLevelItems = new ArrayList();
+	private List<IContributionItem> topLevelItems = new ArrayList<>();
 	private Map<IContributionItem, Expression> itemsToExpressions = new HashMap<>();
-	Set restriction;
+	Set<?> restriction;
 	private ContributionManager mgr;
 	private AbstractContributionFactory factory;
 
-	public ContributionRoot(IMenuService menuService, Set restriction, ContributionManager mgr,
+	public ContributionRoot(IMenuService menuService, Set<?> restriction, ContributionManager mgr,
 			AbstractContributionFactory factory) {
 		this.restriction = restriction;
 		this.mgr = mgr;
@@ -77,7 +77,7 @@ final class ContributionRoot implements IContributionRoot {
 		return identifierID;
 	}
 
-	public List getItems() {
+	public List<IContributionItem> getItems() {
 		return topLevelItems;
 	}
 

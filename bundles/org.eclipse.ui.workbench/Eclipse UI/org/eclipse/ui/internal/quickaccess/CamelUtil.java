@@ -57,7 +57,7 @@ public class CamelUtil {
 	 * @return an array of length start
 	 */
 	public static int[][] getCamelCaseIndices(String s, int start, int length) {
-		List result = new ArrayList();
+		List<int[]> result = new ArrayList<>();
 		int index = 0;
 		while (start > 0) {
 			index = getNextCamelIndex(s, index + 1);
@@ -68,7 +68,7 @@ public class CamelUtil {
 			index = getNextCamelIndex(s, index + 1);
 			length--;
 		}
-		return (int[][]) result.toArray(new int[result.size()][]);
+		return result.toArray(new int[result.size()][]);
 	}
 
 	/**

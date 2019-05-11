@@ -56,7 +56,7 @@ public class BindingElement extends ModelElement {
 	public void init(Binding b, ContextModel model) {
 		setCommandInfo(b.getParameterizedCommand());
 		setTrigger(b.getTriggerSequence());
-		setContext((ContextElement) model.getContextIdToElement().get(b.getContextId()));
+		setContext(model.getContextIdToElement().get(b.getContextId()));
 		setUserDelta(Integer.valueOf(b.getType()));
 		setModelObject(b);
 	}
@@ -86,7 +86,6 @@ public class BindingElement extends ModelElement {
 
 	/**
 	 * @param cmd
-	 * @param type The binding type. Check {@link Binding} constants.
 	 */
 	public void init(ParameterizedCommand cmd) {
 		setCommandInfo(cmd);
@@ -200,7 +199,7 @@ public class BindingElement extends ModelElement {
 	public void fill(KeyBinding binding, ContextModel contextModel) {
 		setCommandInfo(binding.getParameterizedCommand());
 		setTrigger(binding.getTriggerSequence());
-		setContext((ContextElement) contextModel.getContextIdToElement().get(binding.getContextId()));
+		setContext(contextModel.getContextIdToElement().get(binding.getContextId()));
 		setUserDelta(Integer.valueOf(binding.getType()));
 		setModelObject(binding);
 	}

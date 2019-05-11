@@ -31,7 +31,7 @@ public class Model {
 	/**
 	 * Set of objects that will be notified about state changes
 	 */
-	private List views = new ArrayList(1);
+	private List<IChangeListener> views = new ArrayList<>(1);
 
 	/**
 	 * Creates a new model with the given initial state.
@@ -65,9 +65,9 @@ public class Model {
 
 		state = newState;
 
-		Iterator iter = views.iterator();
+		Iterator<IChangeListener> iter = views.iterator();
 		while (iter.hasNext()) {
-			IChangeListener next = (IChangeListener) iter.next();
+			IChangeListener next = iter.next();
 
 			if (next != toOmit) {
 				next.update(true);

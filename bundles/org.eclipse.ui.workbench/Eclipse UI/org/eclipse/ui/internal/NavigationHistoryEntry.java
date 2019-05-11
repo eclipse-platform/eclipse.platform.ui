@@ -126,7 +126,7 @@ public class NavigationHistoryEntry {
 	/**
 	 * Saves the state of this entry and its location.
 	 */
-	void saveState(IMemento mem, ArrayList entries) {
+	void saveState(IMemento mem, ArrayList<NavigationHistoryEntry> entries) {
 		mem.putString(IWorkbenchConstants.TAG_HISTORY_LABEL, getHistoryText());
 		if (locationMemento != null) {
 			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_POSITION);

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;
@@ -83,7 +82,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * no activations are defined for a particular priority level, then the array at
 	 * that index will only contain <code>null</code>.
 	 */
-	private final Set[] activationsBySourcePriority = new Set[33];
+	private final Set<IContextActivation>[] activationsBySourcePriority = new Set[33];
 
 	/**
 	 * This is a map of context activations (<code>Collection</code> of
@@ -93,7 +92,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * <code>IContextActivation</code>. If there is no activation, the entry should
 	 * be removed entirely.
 	 */
-	private final Map contextActivationsByContextId = new HashMap();
+	private final Map<String, Object> contextActivationsByContextId = new HashMap<>();
 
 	/**
 	 * The context manager that should be updated when the contexts are changing.
@@ -116,7 +115,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * that have not been registered but have a parent (i.e., default dialog
 	 * service).
 	 */
-	private final Map registeredWindows = new WeakHashMap();
+	private final Map<Shell, Collection<IContextActivation>> registeredWindows = new WeakHashMap<>();
 
 	/**
 	 * Constructs a new instance of <code>ContextAuthority</code>.
@@ -150,16 +149,16 @@ public final class ContextAuthority extends ExpressionAuthority {
 		// First we update the contextActivationsByContextId map.
 		final String contextId = activation.getContextId();
 		final Object value = contextActivationsByContextId.get(contextId);
-		if (value instanceof Collection) {
-			final Collection contextActivations = (Collection) value;
+		if (value instanceof Collection<?>) {
+			final Collection<IContextActivation> contextActivations = (Collection<IContextActivation>) value;
 			if (!contextActivations.contains(activation)) {
 				contextActivations.add(activation);
 				updateContext(contextId, containsActive(contextActivations));
 			}
 		} else if (value instanceof IContextActivation) {
 			if (value != activation) {
-				final Collection contextActivations = new ArrayList(2);
-				contextActivations.add(value);
+				final Collection<IContextActivation> contextActivations = new ArrayList<>(2);
+				contextActivations.add((IContextActivation) value);
 				contextActivations.add(activation);
 				contextActivationsByContextId.put(contextId, contextActivations);
 				updateContext(contextId, containsActive(contextActivations));
@@ -173,9 +172,9 @@ public final class ContextAuthority extends ExpressionAuthority {
 		final int sourcePriority = activation.getSourcePriority();
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
-				Set activations = activationsBySourcePriority[i];
+				Set<IContextActivation> activations = activationsBySourcePriority[i];
 				if (activations == null) {
-					activations = new HashSet(1);
+					activations = new HashSet<>(1);
 					activationsBySourcePriority[i] = activations;
 				}
 				activations.add(activation);
@@ -199,17 +198,17 @@ public final class ContextAuthority extends ExpressionAuthority {
 		 * If the previous active shell was recognized as a dialog by default, then
 		 * remove its submissions.
 		 */
-		Collection oldActivations = (Collection) registeredWindows.get(oldShell);
+		Collection<IContextActivation> oldActivations = registeredWindows.get(oldShell);
 		if (oldActivations == null) {
 			/*
 			 * The old shell wasn't registered. So, we need to check if it was considered a
 			 * dialog by default.
 			 */
-			oldActivations = (Collection) registeredWindows.get(null);
+			oldActivations = registeredWindows.get(null);
 			if (oldActivations != null) {
-				final Iterator oldActivationItr = oldActivations.iterator();
+				final Iterator<IContextActivation> oldActivationItr = oldActivations.iterator();
 				while (oldActivationItr.hasNext()) {
-					final IContextActivation activation = (IContextActivation) oldActivationItr.next();
+					final IContextActivation activation = oldActivationItr.next();
 					deactivateContext(activation);
 				}
 			}
@@ -220,11 +219,11 @@ public final class ContextAuthority extends ExpressionAuthority {
 		 * some submissions, remember them, and submit them for processing.
 		 */
 		if ((newShell != null) && (!newShell.isDisposed())) {
-			final Collection newActivations;
+			final Collection<IContextActivation> newActivations;
 
 			if ((newShell.getParent() != null) && (registeredWindows.get(newShell) == null)) {
 				// This is a dialog by default.
-				newActivations = new ArrayList();
+				newActivations = new ArrayList<>();
 				final Expression expression = new ActiveShellExpression(newShell);
 				final IContextActivation dialogWindowActivation = new ContextActivation(
 						IContextService.CONTEXT_ID_DIALOG_AND_WINDOW, expression, contextService);
@@ -256,9 +255,9 @@ public final class ContextAuthority extends ExpressionAuthority {
 						 * now, then we will update the activeShell before checkWindowType is called.
 						 * This means that dialogs won't be recognized as dialogs.
 						 */
-						final Iterator newActivationItr = newActivations.iterator();
+						final Iterator<IContextActivation> newActivationItr = newActivations.iterator();
 						while (newActivationItr.hasNext()) {
-							deactivateContext((IContextActivation) newActivationItr.next());
+							deactivateContext(newActivationItr.next());
 						}
 					}
 				});
@@ -280,10 +279,10 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * @return <code>true</code> if there is at least one active context;
 	 *         <code>false</code> otherwise.
 	 */
-	private boolean containsActive(final Collection activations) {
-		final Iterator activationItr = activations.iterator();
+	private boolean containsActive(final Collection<IContextActivation> activations) {
+		final Iterator<IContextActivation> activationItr = activations.iterator();
 		while (activationItr.hasNext()) {
-			final IContextActivation activation = (IContextActivation) activationItr.next();
+			final IContextActivation activation = activationItr.next();
 			if (evaluate(activation)) {
 				return true;
 			}
@@ -302,8 +301,8 @@ public final class ContextAuthority extends ExpressionAuthority {
 		// First we update the handlerActivationsByCommandId map.
 		final String contextId = activation.getContextId();
 		final Object value = contextActivationsByContextId.get(contextId);
-		if (value instanceof Collection) {
-			final Collection contextActivations = (Collection) value;
+		if (value instanceof Collection<?>) {
+			final Collection<IContextActivation> contextActivations = (Collection<IContextActivation>) value;
 			if (contextActivations.contains(activation)) {
 				contextActivations.remove(activation);
 				if (contextActivations.isEmpty()) {
@@ -311,7 +310,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 					updateContext(contextId, false);
 
 				} else if (contextActivations.size() == 1) {
-					final IContextActivation remainingActivation = (IContextActivation) contextActivations.iterator()
+					final IContextActivation remainingActivation = contextActivations.iterator()
 							.next();
 					contextActivationsByContextId.put(contextId, remainingActivation);
 					updateContext(contextId, evaluate(remainingActivation));
@@ -331,7 +330,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 		final int sourcePriority = activation.getSourcePriority();
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
-				final Set activations = activationsBySourcePriority[i];
+				final Set<IContextActivation> activations = activationsBySourcePriority[i];
 				if (activations == null) {
 					continue;
 				}
@@ -368,7 +367,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 			return IContextService.TYPE_NONE;
 		}
 
-		final Collection activations = (Collection) registeredWindows.get(shell);
+		final Collection<IContextActivation> activations = registeredWindows.get(shell);
 		if (activations != null) {
 			// The shell is registered, so check what type it was registered as.
 			if (activations.isEmpty()) {
@@ -377,9 +376,9 @@ public final class ContextAuthority extends ExpressionAuthority {
 			}
 
 			// Look for the right type of context id.
-			final Iterator activationItr = activations.iterator();
+			final Iterator<IContextActivation> activationItr = activations.iterator();
 			while (activationItr.hasNext()) {
-				final IContextActivation activation = (IContextActivation) activationItr.next();
+				final IContextActivation activation = activationItr.next();
 				final String contextId = activation.getContextId();
 				if (contextId == IContextService.CONTEXT_ID_DIALOG) {
 					return IContextService.TYPE_DIALOG;
@@ -465,7 +464,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 		}
 
 		// Build the list of submissions.
-		final List activations = new ArrayList();
+		final List<IContextActivation> activations = new ArrayList<>();
 		Expression expression;
 		IContextActivation dialogWindowActivation;
 		switch (type) {
@@ -500,12 +499,12 @@ public final class ContextAuthority extends ExpressionAuthority {
 
 		// Check to see if the activations are already present.
 		boolean returnValue = false;
-		final Collection previousActivations = (Collection) registeredWindows.get(shell);
+		final Collection<IContextActivation> previousActivations = registeredWindows.get(shell);
 		if (previousActivations != null) {
 			returnValue = true;
-			final Iterator previousActivationItr = previousActivations.iterator();
+			final Iterator<IContextActivation> previousActivationItr = previousActivations.iterator();
 			while (previousActivationItr.hasNext()) {
-				final IContextActivation activation = (IContextActivation) previousActivationItr.next();
+				final IContextActivation activation = previousActivationItr.next();
 				deactivateContext(activation);
 			}
 		}
@@ -532,9 +531,9 @@ public final class ContextAuthority extends ExpressionAuthority {
 				 * now, then we will update the activeShell before checkWindowType is called.
 				 * This means that dialogs won't be recognized as dialogs.
 				 */
-				final Iterator activationItr = activations.iterator();
+				final Iterator<IContextActivation> activationItr = activations.iterator();
 				while (activationItr.hasNext()) {
-					deactivateContext((IContextActivation) activationItr.next());
+					deactivateContext(activationItr.next());
 				}
 			}
 		};
@@ -568,12 +567,12 @@ public final class ContextAuthority extends ExpressionAuthority {
 		 * processing. We add it to a set so that we avoid handling any individual
 		 * activation more than once.
 		 */
-		final Set activationsToRecompute = new HashSet(ACTIVATIONS_TO_RECOMPUTE_SIZE);
+		final Set<IContextActivation> activationsToRecompute = new HashSet<>(ACTIVATIONS_TO_RECOMPUTE_SIZE);
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
-				final Collection activations = activationsBySourcePriority[i];
+				final Collection<IContextActivation> activations = activationsBySourcePriority[i];
 				if (activations != null) {
-					final Iterator activationItr = activations.iterator();
+					final Iterator<IContextActivation> activationItr = activations.iterator();
 					while (activationItr.hasNext()) {
 						activationsToRecompute.add(activationItr.next());
 					}
@@ -586,10 +585,10 @@ public final class ContextAuthority extends ExpressionAuthority {
 		 * changed. If it has changed, then we take note of the context identifier so we
 		 * can update the context later.
 		 */
-		final Collection changedContextIds = new ArrayList(activationsToRecompute.size());
-		final Iterator activationItr = activationsToRecompute.iterator();
+		final Collection<String> changedContextIds = new ArrayList<>(activationsToRecompute.size());
+		final Iterator<IContextActivation> activationItr = activationsToRecompute.iterator();
 		while (activationItr.hasNext()) {
-			final IContextActivation activation = (IContextActivation) activationItr.next();
+			final IContextActivation activation = activationItr.next();
 			final boolean currentActive = evaluate(activation);
 			activation.clearResult();
 			final boolean newActive = evaluate(activation);
@@ -604,15 +603,15 @@ public final class ContextAuthority extends ExpressionAuthority {
 			 * For every context identifier with a changed activation, we resolve conflicts
 			 * and trigger an update.
 			 */
-			final Iterator changedContextIdItr = changedContextIds.iterator();
+			final Iterator<String> changedContextIdItr = changedContextIds.iterator();
 			while (changedContextIdItr.hasNext()) {
-				final String contextId = (String) changedContextIdItr.next();
+				final String contextId = changedContextIdItr.next();
 				final Object value = contextActivationsByContextId.get(contextId);
 				if (value instanceof IContextActivation) {
 					final IContextActivation activation = (IContextActivation) value;
 					updateContext(contextId, evaluate(activation));
-				} else if (value instanceof Collection) {
-					updateContext(contextId, containsActive((Collection) value));
+				} else if (value instanceof Collection<?>) {
+					updateContext(contextId, containsActive((Collection<IContextActivation>) value));
 				} else {
 					updateContext(contextId, false);
 				}
@@ -666,13 +665,13 @@ public final class ContextAuthority extends ExpressionAuthority {
 			}
 		}
 
-		Collection previousActivations = (Collection) registeredWindows.get(shell);
+		Collection<IContextActivation> previousActivations = registeredWindows.get(shell);
 		if (previousActivations != null) {
 			registeredWindows.remove(shell);
 
-			final Iterator previousActivationItr = previousActivations.iterator();
+			final Iterator<IContextActivation> previousActivationItr = previousActivations.iterator();
 			while (previousActivationItr.hasNext()) {
-				final IContextActivation activation = (IContextActivation) previousActivationItr.next();
+				final IContextActivation activation = previousActivationItr.next();
 				deactivateContext(activation);
 			}
 			return true;

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
@@ -75,7 +76,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 		if (keySequence == null) {
 			return false;
 		}
-		List keyStrokes = keySequence.getKeyStrokes();
+		List<KeySequence> keyStrokes = keySequence.getKeyStrokes();
 		int size = keyStrokes.size();
 		if (size == 0 || size > 4 || !keySequence.isComplete()) {
 			return false;
@@ -99,7 +100,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	 */
 	private final CommandManager commandManager;
 
-	private List commandManagerListeners;
+	private List<ICommandManagerListener> commandManagerListeners;
 
 	/**
 	 * The context manager that provides functionality for this workbench command
@@ -139,7 +140,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 		}
 
 		if (commandManagerListeners == null) {
-			commandManagerListeners = new ArrayList();
+			commandManagerListeners = new ArrayList<>();
 			this.commandManager.addCommandManagerListener(this);
 			this.bindingManager.addBindingManagerListener(this);
 			this.contextManager.addContextManagerListener(this);
@@ -153,9 +154,9 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	@Override
 	public void bindingManagerChanged(final BindingManagerEvent event) {
 		final boolean schemeDefinitionsChanged = event.getScheme() != null;
-		final Set previousSchemes;
+		final Set<String> previousSchemes;
 		if (schemeDefinitionsChanged) {
-			previousSchemes = new HashSet();
+			previousSchemes = new HashSet<>();
 			final Scheme scheme = event.getScheme();
 			final Scheme[] definedSchemes = event.getManager().getDefinedSchemes();
 			final int definedSchemesCount = definedSchemes.length;
@@ -182,9 +183,9 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	public void commandManagerChanged(final org.eclipse.core.commands.CommandManagerEvent event) {
 		// Figure out the set of previous category identifiers.
 		final boolean categoryIdsChanged = event.isCategoryChanged();
-		final Set previousCategoryIds;
+		final Set<String> previousCategoryIds;
 		if (categoryIdsChanged) {
-			previousCategoryIds = new HashSet(commandManager.getDefinedCategoryIds());
+			previousCategoryIds = new HashSet<String>(commandManager.getDefinedCategoryIds());
 			final String categoryId = event.getCategoryId();
 			if (event.isCategoryDefined()) {
 				previousCategoryIds.remove(categoryId);
@@ -197,9 +198,9 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 
 		// Figure out the set of previous command identifiers.
 		final boolean commandIdsChanged = event.isCommandChanged();
-		final Set previousCommandIds;
+		final Set<String> previousCommandIds;
 		if (commandIdsChanged) {
-			previousCommandIds = new HashSet(commandManager.getDefinedCommandIds());
+			previousCommandIds = new HashSet<String>(commandManager.getDefinedCommandIds());
 			final String commandId = event.getCommandId();
 			if (event.isCommandDefined()) {
 				previousCommandIds.remove(commandId);
@@ -226,7 +227,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 		}
 		if (commandManagerListeners != null) {
 			for (int i = 0; i < commandManagerListeners.size(); i++) {
-				((ICommandManagerListener) commandManagerListeners.get(i)).commandManagerChanged(commandManagerEvent);
+				commandManagerListeners.get(i).commandManagerChanged(commandManagerEvent);
 			}
 		}
 	}
@@ -287,8 +288,8 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	}
 
 	@Override
-	public Set getDefinedKeyConfigurationIds() {
-		final Set definedIds = new HashSet();
+	public Set<String> getDefinedKeyConfigurationIds() {
+		final Set<String> definedIds = new HashSet<>();
 		final Scheme[] schemes = bindingManager.getDefinedSchemes();
 		for (Scheme scheme : schemes) {
 			definedIds.add(scheme.getId());
@@ -303,16 +304,16 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	}
 
 	@Override
-	public Map getPartialMatches(KeySequence keySequence) {
+	public Map<KeySequence, Binding> getPartialMatches(KeySequence keySequence) {
 		try {
 			final org.eclipse.jface.bindings.keys.KeySequence sequence = org.eclipse.jface.bindings.keys.KeySequence
 					.getInstance(keySequence.toString());
-			final Map partialMatches = bindingManager.getPartialMatches(sequence);
-			final Map returnValue = new HashMap();
-			final Iterator matchItr = partialMatches.entrySet().iterator();
+			final Map<TriggerSequence, Binding> partialMatches = bindingManager.getPartialMatches(sequence);
+			final Map<KeySequence, Binding> returnValue = new HashMap<>();
+			final Iterator<Map.Entry<TriggerSequence, Binding>> matchItr = partialMatches.entrySet().iterator();
 			while (matchItr.hasNext()) {
-				final Map.Entry entry = (Map.Entry) matchItr.next();
-				final TriggerSequence trigger = (TriggerSequence) entry.getKey();
+				final Map.Entry<TriggerSequence, Binding> entry = matchItr.next();
+				final TriggerSequence trigger = entry.getKey();
 				if (trigger instanceof org.eclipse.jface.bindings.keys.KeySequence) {
 					final org.eclipse.jface.bindings.keys.KeySequence triggerKey = (org.eclipse.jface.bindings.keys.KeySequence) trigger;
 					returnValue.put(KeySequence.getInstance(triggerKey.toString()), entry.getValue());
@@ -320,9 +321,9 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 			}
 			return returnValue;
 		} catch (final ParseException e) {
-			return new HashMap();
+			return new HashMap<>();
 		} catch (final org.eclipse.ui.keys.ParseException e) {
-			return new HashMap();
+			return new HashMap<>();
 		}
 	}
 
@@ -389,14 +390,14 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	 *                            (<code>String</code>) to handler
 	 *                            (<code>IHandler</code>).
 	 */
-	public void setHandlersByCommandId(final Map handlersByCommandId) {
+	public void setHandlersByCommandId(final Map<String, IHandler> handlersByCommandId) {
 		// Wrap legacy handlers so they can be passed to the new API.
-		final Iterator entryItr = handlersByCommandId.entrySet().iterator();
+		final Iterator<Map.Entry<String, IHandler>> entryItr = handlersByCommandId.entrySet().iterator();
 		while (entryItr.hasNext()) {
-			final Map.Entry entry = (Map.Entry) entryItr.next();
+			final Map.Entry<String, IHandler> entry = entryItr.next();
 			final Object handler = entry.getValue();
 			if (handler instanceof org.eclipse.ui.commands.IHandler) {
-				final String commandId = (String) entry.getKey();
+				final String commandId = entry.getKey();
 				handlersByCommandId.put(commandId,
 						new LegacyHandlerWrapper((org.eclipse.ui.commands.IHandler) handler));
 			}

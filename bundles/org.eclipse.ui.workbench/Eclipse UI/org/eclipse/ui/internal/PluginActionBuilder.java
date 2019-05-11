@@ -43,7 +43,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 
 	protected BasicContribution currentContribution;
 
-	protected ArrayList cache;
+	protected ArrayList<Object> cache;
 
 	/**
 	 * The default constructor.
@@ -141,7 +141,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 			currentContribution = createContribution();
 			readElementChildren(element);
 			if (cache == null) {
-				cache = new ArrayList(4);
+				cache = new ArrayList<>(4);
 			}
 			cache.add(currentContribution);
 			currentContribution = null;
@@ -168,9 +168,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
 	 * element.
 	 */
 	protected static class BasicContribution {
-		protected ArrayList menus;
+		protected ArrayList<IConfigurationElement> menus;
 
-		protected ArrayList actions;
+		protected ArrayList<ActionDescriptor> actions;
 
 		/**
 		 * Add a menu.
@@ -179,7 +179,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 		 */
 		public void addMenu(IConfigurationElement element) {
 			if (menus == null) {
-				menus = new ArrayList(1);
+				menus = new ArrayList<>(1);
 			}
 			menus.add(element);
 		}
@@ -191,7 +191,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 		 */
 		public void addAction(ActionDescriptor desc) {
 			if (actions == null) {
-				actions = new ArrayList(3);
+				actions = new ArrayList<>(3);
 			}
 			actions.add(desc);
 		}
@@ -201,7 +201,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 		 * managers.
 		 *
 		 * The elements added are filtered based on activity enablement.
-		 * 
+		 *
 		 * @param menu                the menu to contribute to
 		 * @param menuAppendIfMissing whether to append missing groups to menus
 		 * @param toolbar             the toolbar to contribute to
@@ -211,14 +211,14 @@ public abstract class PluginActionBuilder extends RegistryReader {
 				boolean toolAppendIfMissing) {
 			if (menus != null && menu != null) {
 				for (int i = 0; i < menus.size(); i++) {
-					IConfigurationElement menuElement = (IConfigurationElement) menus.get(i);
+					IConfigurationElement menuElement = menus.get(i);
 					contributeMenu(menuElement, menu, menuAppendIfMissing);
 				}
 			}
 
 			if (actions != null) {
 				for (int i = 0; i < actions.size(); i++) {
-					ActionDescriptor ad = (ActionDescriptor) actions.get(i);
+					ActionDescriptor ad = actions.get(i);
 					if (menu != null) {
 						contributeMenuAction(ad, menu, menuAppendIfMissing);
 					}
@@ -495,7 +495,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 		protected void disposeActions() {
 			if (actions != null) {
 				for (int i = 0; i < actions.size(); i++) {
-					PluginAction proxy = ((ActionDescriptor) actions.get(i)).getAction();
+					PluginAction proxy = actions.get(i).getAction();
 					proxy.dispose();
 				}
 				actions = null;

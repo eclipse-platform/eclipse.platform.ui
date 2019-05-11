@@ -65,11 +65,11 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 		// According to the dictionary, a selection is "one that
 		// is selected", or "a collection of selected things".
 		// In reflection of this, we deal with one or a collection.
-		List elements = null;
+		List<ISelection> elements = null;
 		if (selection instanceof IStructuredSelection) {
 			elements = ((IStructuredSelection) selection).toList();
 		} else {
-			elements = new ArrayList(1);
+			elements = new ArrayList<>(1);
 			elements.add(selection);
 		}
 
@@ -83,7 +83,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 		// First pass, add the menus and collect the overrides. Prune from the
 		// list any non-applicable contributions.
 		boolean actualContributions = false;
-		ArrayList overrides = new ArrayList(4);
+		ArrayList<?> overrides = new ArrayList<>(4);
 		for (Iterator<IObjectActionContributor> it = contributors.iterator(); it.hasNext();) {
 			IObjectActionContributor contributor = it.next();
 			if (!isApplicableTo(elements, contributor)) {
@@ -110,7 +110,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 
 	/**
 	 * Returns the shared instance of this manager.
-	 * 
+	 *
 	 * @return the shared instance of this manager
 	 */
 	public static ObjectActionContributorManager getManager() {

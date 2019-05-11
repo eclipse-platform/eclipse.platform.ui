@@ -27,13 +27,13 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
  */
 public class DetailsAreaManager {
 
-	private Map dialogState;
+	private Map<Object, Object> dialogState;
 	private Control control = null;
 
 	/**
 	 * @param dialogState
 	 */
-	public DetailsAreaManager(Map dialogState) {
+	public DetailsAreaManager(Map<Object, Object> dialogState) {
 		this.dialogState = dialogState;
 	}
 

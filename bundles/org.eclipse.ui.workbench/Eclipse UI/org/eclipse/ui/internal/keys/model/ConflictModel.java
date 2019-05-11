@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -37,7 +36,7 @@ public class ConflictModel extends CommonModel {
 	/**
 	 * The set of conflicts for the currently selected element.
 	 */
-	private Collection conflicts;
+	private Collection<?> conflicts;
 
 	private BindingManager bindingManager;
 
@@ -46,7 +45,7 @@ public class ConflictModel extends CommonModel {
 	/**
 	 * A mapping of binding element to known conflicts.
 	 */
-	private Map conflictsMap;
+	private Map<BindingElement, Collection<BindingElement>> conflictsMap;
 
 	/**
 	 * @param kc
@@ -58,7 +57,7 @@ public class ConflictModel extends CommonModel {
 	/**
 	 * @return Returns the conflicts.
 	 */
-	public Collection getConflicts() {
+	public Collection<?> getConflicts() {
 		return conflicts;
 	}
 
@@ -68,13 +67,13 @@ public class ConflictModel extends CommonModel {
 	 *
 	 * @param conflicts The conflicts to set.
 	 */
-	public void setConflicts(Collection conflicts) {
+	public void setConflicts(Collection<?> conflicts) {
 		Object old = this.conflicts;
 		this.conflicts = conflicts;
 
 		if (this.conflicts != null) {
-			Iterator i = this.conflicts.iterator();
-			Map bindingToElement = bindingModel.getBindingToElement();
+			Iterator<?> i = this.conflicts.iterator();
+			Map<Binding, BindingElement> bindingToElement = bindingModel.getBindingToElement();
 			while (i.hasNext()) {
 				Object next = i.next();
 				if (!bindingToElement.containsValue(next) && !next.equals(getSelectedElement())) {
@@ -105,7 +104,7 @@ public class ConflictModel extends CommonModel {
 
 	public void updateConflictsFor(BindingElement newValue, TriggerSequence oldTrigger, TriggerSequence newTrigger,
 			boolean removal) {
-		Collection matches = (Collection) conflictsMap.get(newValue);
+		Collection<?> matches = conflictsMap.get(newValue);
 		if (matches != null) {
 			if (newTrigger == null || removal) {
 				// we need to clear this match
@@ -150,16 +149,16 @@ public class ConflictModel extends CommonModel {
 		Binding binding = (Binding) newValue.getModelObject();
 		TriggerSequence trigger = binding.getTriggerSequence();
 
-		matches = (Collection) bindingManager.getActiveBindingsDisregardingContext().get(trigger);
-		ArrayList localConflicts = new ArrayList();
+		matches = (Collection<?>) bindingManager.getActiveBindingsDisregardingContext().get(trigger);
+		ArrayList<BindingElement> localConflicts = new ArrayList<>();
 		if (matches != null) {
 			localConflicts.add(newValue);
-			Iterator i = matches.iterator();
+			Iterator<?> i = matches.iterator();
 			while (i.hasNext()) {
 				Binding b = (Binding) i.next();
 				if (binding != b && b.getContextId().equals(binding.getContextId())
 						&& b.getSchemeId().equals(binding.getSchemeId())) {
-					Object element = bindingModel.getBindingToElement().get(b);
+					BindingElement element = (BindingElement) bindingModel.getBindingToElement().get(b);
 					if (element != null) {
 						localConflicts.add(element);
 					}
@@ -169,11 +168,11 @@ public class ConflictModel extends CommonModel {
 
 		if (localConflicts.size() > 1) {
 			// first find if it is already a conflict collection
-			Collection knownConflicts = null;
-			Iterator i = localConflicts.iterator();
+			Collection<BindingElement> knownConflicts = null;
+			Iterator<BindingElement> i = localConflicts.iterator();
 			while (i.hasNext() && knownConflicts == null) {
-				BindingElement tbe = (BindingElement) i.next();
-				knownConflicts = (Collection) conflictsMap.get(tbe);
+				BindingElement tbe = i.next();
+				knownConflicts = conflictsMap.get(tbe);
 			}
 			if (knownConflicts != null) {
 				knownConflicts.add(newValue);
@@ -189,7 +188,7 @@ public class ConflictModel extends CommonModel {
 			boolean isSelected = false;
 			i = localConflicts.iterator();
 			while (i.hasNext()) {
-				BindingElement tbe = (BindingElement) i.next();
+				BindingElement tbe = i.next();
 				if (tbe != null) {
 					conflictsMap.put(tbe, localConflicts);
 					tbe.setConflict(Boolean.TRUE);
@@ -207,10 +206,10 @@ public class ConflictModel extends CommonModel {
 	public void init(BindingManager manager, BindingModel model) {
 		bindingManager = manager;
 		bindingModel = model;
-		conflictsMap = new HashMap();
-		Iterator i = bindingModel.getBindings().iterator();
+		conflictsMap = new HashMap<>();
+		Iterator<BindingElement> i = bindingModel.getBindings().iterator();
 		while (i.hasNext()) {
-			BindingElement be = (BindingElement) i.next();
+			BindingElement be = i.next();
 			if (be.getModelObject() instanceof Binding) {
 				updateConflictsFor(be);
 			}
@@ -220,7 +219,7 @@ public class ConflictModel extends CommonModel {
 					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
 				if (event.getNewValue() != null) {
 					updateConflictsFor((BindingElement) event.getOldValue(), (BindingElement) event.getNewValue());
-					setConflicts((Collection) conflictsMap.get(event.getNewValue()));
+					setConflicts(conflictsMap.get(event.getNewValue()));
 				} else {
 					setConflicts(null);
 				}

@@ -265,14 +265,14 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			List elements = new ArrayList();
+			List<IContentType> elements = new ArrayList<>();
 			IContentType baseType = (IContentType) parentElement;
 			for (IContentType contentType : manager.getAllContentTypes()) {
 				if (Objects.equals(contentType.getBaseType(), baseType)) {
 					elements.add(contentType);
 				}
 			}
-			return elements.toArray();
+			return elements.toArray(new IContentType[0]);
 		}
 
 		@Override
@@ -507,9 +507,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 				return;
 			}
 			boolean enabled = true;
-			List elements = selection.toList();
-			for (Iterator i = elements.iterator(); i.hasNext();) {
-				Spec spec = (Spec) i.next();
+			List<Spec> elements = selection.toList();
+			for (Iterator<Spec> i = elements.iterator(); i.hasNext();) {
+				Spec spec = i.next();
 				if (spec.isPredefined) {
 					enabled = false;
 				}

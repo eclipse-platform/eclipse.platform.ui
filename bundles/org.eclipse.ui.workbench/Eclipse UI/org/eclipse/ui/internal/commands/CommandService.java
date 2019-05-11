@@ -227,7 +227,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 * This is a map of commandIds to a list containing currently registered
 	 * callbacks, in the form of ICallbackReferences.
 	 */
-	private Map commandCallbacks = new HashMap();
+	private Map<String, List<IElementReference>> commandCallbacks = new HashMap<>();
 
 	@Override
 	public void refreshElements(String commandId, Map filter) {
@@ -242,14 +242,14 @@ public final class CommandService implements ICommandService, IUpdateService {
 			return;
 		}
 
-		List callbackRefs = (List) commandCallbacks.get(commandId);
+		List<IElementReference> callbackRefs = commandCallbacks.get(commandId);
 		if (callbackRefs == null) {
 			return;
 		}
 
-		for (Iterator i = callbackRefs.iterator(); i.hasNext();) {
-			final IElementReference callbackRef = (IElementReference) i.next();
-			final Map parms = Collections.unmodifiableMap(callbackRef.getParameters());
+		for (Iterator<IElementReference> i = callbackRefs.iterator(); i.hasNext();) {
+			final IElementReference callbackRef = i.next();
+			final Map<?, ?> parms = Collections.unmodifiableMap((Map<?, ?>) callbackRef.getParameters());
 			ISafeRunnable run = new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {
@@ -266,8 +266,8 @@ public final class CommandService implements ICommandService, IUpdateService {
 				SafeRunner.run(run);
 			} else {
 				boolean match = true;
-				for (Iterator j = filter.entrySet().iterator(); j.hasNext() && match;) {
-					Map.Entry parmEntry = (Map.Entry) j.next();
+				for (Iterator<Map.Entry<?, ?>> j = filter.entrySet().iterator(); j.hasNext() && match;) {
+					Map.Entry<?, ?> parmEntry = j.next();
 					Object value = parms.get(parmEntry.getKey());
 					if (!parmEntry.getValue().equals(value)) {
 						match = false;
@@ -299,9 +299,9 @@ public final class CommandService implements ICommandService, IUpdateService {
 
 	@Override
 	public void registerElement(IElementReference elementReference) {
-		List parameterizedCommands = (List) commandCallbacks.get(elementReference.getCommandId());
+		List<IElementReference> parameterizedCommands = commandCallbacks.get(elementReference.getCommandId());
 		if (parameterizedCommands == null) {
-			parameterizedCommands = new ArrayList();
+			parameterizedCommands = new ArrayList<>();
 			commandCallbacks.put(elementReference.getCommandId(), parameterizedCommands);
 		}
 		parameterizedCommands.add(elementReference);
@@ -321,7 +321,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	public void unregisterElement(IElementReference elementReference) {
 		if (commandCallbacks == null)
 			return;
-		List parameterizedCommands = (List) commandCallbacks.get(elementReference.getCommandId());
+		List<IElementReference> parameterizedCommands = commandCallbacks.get(elementReference.getCommandId());
 		if (parameterizedCommands != null) {
 			parameterizedCommands.remove(elementReference);
 			if (parameterizedCommands.isEmpty()) {

@@ -172,7 +172,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 		public void selectionChanged(SelectionChangedEvent event) {
 			if (actions != null) {
 				for (int i = 0; i < actions.size(); i++) {
-					PluginAction proxy = ((ActionDescriptor) actions.get(i)).getAction();
+					PluginAction proxy = actions.get(i).getAction();
 					proxy.selectionChanged(event);
 				}
 			}

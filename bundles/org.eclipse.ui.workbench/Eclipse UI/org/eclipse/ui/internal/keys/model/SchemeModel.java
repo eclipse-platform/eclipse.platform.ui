@@ -26,7 +26,7 @@ import org.eclipse.jface.bindings.Scheme;
 public class SchemeModel extends CommonModel {
 
 	public static final String PROP_SCHEMES = "schemes"; //$NON-NLS-1$
-	private List schemes;
+	private List<SchemeElement> schemes;
 
 	/**
 	 * @param kc
@@ -39,7 +39,7 @@ public class SchemeModel extends CommonModel {
 	 * @param bindingManager
 	 */
 	public void init(BindingManager bindingManager) {
-		schemes = new ArrayList();
+		schemes = new ArrayList<>();
 		for (Scheme definedScheme : bindingManager.getDefinedSchemes()) {
 			SchemeElement se = new SchemeElement(controller);
 			se.init(definedScheme);
@@ -54,15 +54,15 @@ public class SchemeModel extends CommonModel {
 	/**
 	 * @return Returns the schemes.
 	 */
-	public List getSchemes() {
+	public List<SchemeElement> getSchemes() {
 		return schemes;
 	}
 
 	/**
 	 * @param schemes The schemes to set.
 	 */
-	public void setSchemes(List schemes) {
-		List old = this.schemes;
+	public void setSchemes(List<SchemeElement> schemes) {
+		List<SchemeElement> old = this.schemes;
 		this.schemes = schemes;
 		controller.firePropertyChange(this, PROP_SCHEMES, old, schemes);
 	}

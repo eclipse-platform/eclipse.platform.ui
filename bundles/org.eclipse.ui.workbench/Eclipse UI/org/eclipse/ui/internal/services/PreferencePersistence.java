@@ -84,9 +84,9 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 *
 	 * @param warningsToLog The collection of warnings to be logged; must not be
 	 *                      <code>null</code>.
-	 * @param message       The mesaage to log; must not be <code>null</code>.
+	 * @param message       The message to log; must not be <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog, final String message) {
+	protected static final void addWarning(final List<IStatus> warningsToLog, final String message) {
 		addWarning(warningsToLog, message, null, null, null);
 	}
 
@@ -96,11 +96,11 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 *
 	 * @param warningsToLog The collection of warnings to be logged; must not be
 	 *                      <code>null</code>.
-	 * @param message       The mesaage to log; must not be <code>null</code>.
+	 * @param message       The message to log; must not be <code>null</code>.
 	 * @param id            The identifier of the item for which a warning is being
 	 *                      logged; may be <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog, final String message, final String id) {
+	protected static final void addWarning(final List<IStatus> warningsToLog, final String message, final String id) {
 		addWarning(warningsToLog, message, id, null, null);
 	}
 
@@ -110,7 +110,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 *
 	 * @param warningsToLog       The collection of warnings to be logged; must not
 	 *                            be <code>null</code>.
-	 * @param message             The mesaage to log; must not be <code>null</code>.
+	 * @param message             The message to log; must not be <code>null</code>.
 	 * @param id                  The identifier of the item for which a warning is
 	 *                            being logged; may be <code>null</code>.
 	 * @param extraAttributeName  The name of extra attribute to be logged; may be
@@ -118,7 +118,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 * @param extraAttributeValue The value of the extra attribute to be logged; may
 	 *                            be <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog, final String message, final String id,
+	protected static final void addWarning(final List<IStatus> warningsToLog, final String message, final String id,
 			final String extraAttributeName, final String extraAttributeValue) {
 		String statusMessage = message;
 		if (id != null) {
@@ -199,7 +199,8 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 *         <code>null</code> if none can be found.
 	 */
 	protected static final ParameterizedCommand readParameterizedCommand(final IMemento memento,
-			final ICommandService commandService, final List warningsToLog, final String message, final String id) {
+			final ICommandService commandService, final List<IStatus> warningsToLog, final String message,
+			final String id) {
 		final String commandId = readRequired(memento, ATT_COMMAND_ID, warningsToLog, message, id);
 		if (commandId == null) {
 			return null;
@@ -227,14 +228,14 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 * @return The array of parameters found for this memento; <code>null</code> if
 	 *         none can be found.
 	 */
-	protected static final ParameterizedCommand readParameters(final IMemento memento, final List warningsToLog,
-			final Command command) {
+	protected static final ParameterizedCommand readParameters(final IMemento memento,
+			final List<IStatus> warningsToLog, final Command command) {
 		final IMemento[] parameterMementos = memento.getChildren(TAG_PARAMETER);
 		if ((parameterMementos == null) || (parameterMementos.length == 0)) {
 			return new ParameterizedCommand(command, null);
 		}
 
-		final Collection parameters = new ArrayList();
+		final Collection<Parameterization> parameters = new ArrayList<>();
 		for (final IMemento parameterMemento : parameterMementos) {
 			// Read out the id.
 			final String id = parameterMemento.getString(ATT_ID);
@@ -281,8 +282,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 			return new ParameterizedCommand(command, null);
 		}
 
-		return new ParameterizedCommand(command,
-				(Parameterization[]) parameters.toArray(new Parameterization[parameters.size()]));
+		return new ParameterizedCommand(command, parameters.toArray(new Parameterization[parameters.size()]));
 	}
 
 	/**
@@ -296,8 +296,8 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 *                      must not be <code>null</code>.
 	 * @return The required attribute; may be <code>null</code> if missing.
 	 */
-	protected static final String readRequired(final IMemento memento, final String attribute, final List warningsToLog,
-			final String message) {
+	protected static final String readRequired(final IMemento memento, final String attribute,
+			final List<IStatus> warningsToLog, final String message) {
 		return readRequired(memento, attribute, warningsToLog, message, null);
 	}
 
@@ -315,8 +315,8 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 *                      required attribute; may be <code>null</code>.
 	 * @return The required attribute; may be <code>null</code> if missing.
 	 */
-	protected static final String readRequired(final IMemento memento, final String attribute, final List warningsToLog,
-			final String message, final String id) {
+	protected static final String readRequired(final IMemento memento, final String attribute,
+			final List<IStatus> warningsToLog, final String message, final String id) {
 		final String value = memento.getString(attribute);
 		if ((value == null) || (value.length() == 0)) {
 			addWarning(warningsToLog, message, id);

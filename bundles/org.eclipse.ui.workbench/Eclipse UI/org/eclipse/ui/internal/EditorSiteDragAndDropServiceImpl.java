@@ -166,7 +166,7 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	}
 
 	// Cache any listeners for cleanup
-	List addedListeners = new ArrayList();
+	List<Object> addedListeners = new ArrayList<>();
 
 	@Override
 	public void addMergedDropTarget(Control control, int ops, Transfer[] transfers, DropTargetListener listener) {

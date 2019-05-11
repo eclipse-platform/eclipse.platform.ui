@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -74,7 +73,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
 		public void editorChanged(IEditorPart editor) {
 			if (actions != null) {
 				for (int i = 0; i < actions.size(); i++) {
-					ActionDescriptor ad = (ActionDescriptor) actions.get(i);
+					ActionDescriptor ad = actions.get(i);
 					EditorPluginAction action = (EditorPluginAction) ad.getAction();
 					action.editorChanged(editor);
 				}
@@ -83,13 +82,13 @@ public class EditorActionBuilder extends PluginActionBuilder {
 	}
 
 	/**
-	 * Helper class that will populate the menu and toobar with the external editor
+	 * Helper class that will populate the menu and toolbar with the external editor
 	 * contributions.
 	 */
 	public static class ExternalContributor implements IEditorActionBarContributor {
-		private ArrayList cache;
+		private ArrayList<Object> cache;
 
-		public ExternalContributor(ArrayList cache) {
+		public ExternalContributor(ArrayList<Object> cache) {
 			this.cache = cache;
 		}
 
@@ -101,14 +100,14 @@ public class EditorActionBuilder extends PluginActionBuilder {
 		}
 
 		public ActionDescriptor[] getExtendedActions() {
-			ArrayList results = new ArrayList();
+			ArrayList<ActionDescriptor> results = new ArrayList<>();
 			for (int i = 0; i < cache.size(); i++) {
 				EditorContribution ec = (EditorContribution) cache.get(i);
 				if (ec.actions != null) {
 					results.addAll(ec.actions);
 				}
 			}
-			return (ActionDescriptor[]) results.toArray(new ActionDescriptor[results.size()]);
+			return results.toArray(new ActionDescriptor[results.size()]);
 		}
 
 		@Override

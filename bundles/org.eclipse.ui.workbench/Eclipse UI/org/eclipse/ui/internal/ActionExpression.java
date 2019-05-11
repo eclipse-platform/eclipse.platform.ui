@@ -88,7 +88,7 @@ public class ActionExpression {
 		 *         <code>null</code> if this is not possible in the receiver or any of
 		 *         it's children
 		 */
-		public Collection valuesForExpression(String expressionType) {
+		public Collection<String> valuesForExpression(String expressionType) {
 			return null;
 		}
 	}
@@ -120,9 +120,9 @@ public class ActionExpression {
 
 		@Override
 		public boolean isEnabledFor(Object object) {
-			Iterator iter = list.iterator();
+			Iterator<AbstractExpression> iter = list.iterator();
 			while (iter.hasNext()) {
-				AbstractExpression expr = (AbstractExpression) iter.next();
+				AbstractExpression expr = iter.next();
 				if (!expr.isEnabledFor(object)) {
 					return false;
 				}
@@ -135,7 +135,7 @@ public class ActionExpression {
 		/**
 		 *
 		 */
-		protected ArrayList list;
+		protected ArrayList<AbstractExpression> list;
 
 		/**
 		 * Creates and populates the expression from the attributes and sub- elements of
@@ -153,7 +153,7 @@ public class ActionExpression {
 				throw new IllegalStateException("Composite expression cannot be empty"); //$NON-NLS-1$
 			}
 
-			list = new ArrayList(children.length);
+			list = new ArrayList<>(children.length);
 			for (IConfigurationElement configElement : children) {
 				String tag = configElement.getName();
 				AbstractExpression expr = createExpression(configElement);
@@ -167,14 +167,14 @@ public class ActionExpression {
 
 		@Override
 		public String[] extractObjectClasses() {
-			Iterator iterator = list.iterator();
-			List classNames = null;
+			Iterator<AbstractExpression> iterator = list.iterator();
+			List<String> classNames = null;
 			while (iterator.hasNext()) {
-				AbstractExpression next = (AbstractExpression) iterator.next();
+				AbstractExpression next = iterator.next();
 				String[] objectClasses = next.extractObjectClasses();
 				if (objectClasses != null) {
 					if (classNames == null) {
-						classNames = new ArrayList();
+						classNames = new ArrayList<>();
 					}
 					classNames.addAll(Arrays.asList(objectClasses));
 				}
@@ -206,9 +206,9 @@ public class ActionExpression {
 
 		@Override
 		public boolean isEnabledForExpression(Object object, String expressionType) {
-			Iterator iterator = list.iterator();
+			Iterator<AbstractExpression> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				AbstractExpression next = (AbstractExpression) iterator.next();
+				AbstractExpression next = iterator.next();
 				if (next.isEnabledForExpression(object, expressionType)) {
 					return true;
 				}
@@ -217,12 +217,12 @@ public class ActionExpression {
 		}
 
 		@Override
-		public Collection valuesForExpression(String expressionType) {
-			Iterator iterator = list.iterator();
-			Collection allValues = null;
+		public Collection<String> valuesForExpression(String expressionType) {
+			Iterator<AbstractExpression> iterator = list.iterator();
+			Collection<String> allValues = null;
 			while (iterator.hasNext()) {
-				AbstractExpression next = (AbstractExpression) iterator.next();
-				Collection values = next.valuesForExpression(expressionType);
+				AbstractExpression next = iterator.next();
+				Collection<String> values = next.valuesForExpression(expressionType);
 				if (values != null) {
 					if (allValues == null) {
 						allValues = values;
@@ -304,12 +304,12 @@ public class ActionExpression {
 		 * @return <code>true</code> if one of the interfaces in the hierarchy matches
 		 *         className, <code>false</code> otherwise.
 		 */
-		private boolean checkInterfaceHierarchy(Class interfaceToCheck) {
+		private boolean checkInterfaceHierarchy(Class<?> interfaceToCheck) {
 			if (interfaceToCheck.getName().equals(className)) {
 				return true;
 			}
-			Class[] superInterfaces = interfaceToCheck.getInterfaces();
-			for (Class superInterface : superInterfaces) {
+			Class<?>[] superInterfaces = interfaceToCheck.getInterfaces();
+			for (Class<?> superInterface : superInterfaces) {
 				if (checkInterfaceHierarchy(superInterface)) {
 					return true;
 				}
@@ -359,7 +359,7 @@ public class ActionExpression {
 				return true;
 			}
 
-			Class clazz = object.getClass();
+			Class<?> clazz = object.getClass();
 			while (clazz != null) {
 				// test the class itself
 				if (clazz.getName().equals(className)) {
@@ -367,8 +367,8 @@ public class ActionExpression {
 				}
 
 				// test all the interfaces the class implements
-				Class[] interfaces = clazz.getInterfaces();
-				for (Class currentInterface : interfaces) {
+				Class<?>[] interfaces = clazz.getInterfaces();
+				for (Class<?> currentInterface : interfaces) {
 					if (checkInterfaceHierarchy(currentInterface)) {
 						return true;
 					}
@@ -457,7 +457,7 @@ public class ActionExpression {
 			}
 
 			// Try out the underlying resource.
-			Class resourceClass = LegacyResourceSupport.getResourceClass();
+			Class<?> resourceClass = LegacyResourceSupport.getResourceClass();
 			if (resourceClass == null) {
 				return false;
 			}
@@ -487,9 +487,9 @@ public class ActionExpression {
 		}
 
 		@Override
-		public Collection valuesForExpression(String expressionType) {
+		public Collection<String> valuesForExpression(String expressionType) {
 			if (expressionType.equals(name)) {
-				Collection returnValue = new HashSet();
+				Collection<String> returnValue = new HashSet<>();
 				returnValue.add(value);
 				return returnValue;
 			}
@@ -525,9 +525,9 @@ public class ActionExpression {
 
 		@Override
 		public boolean isEnabledFor(Object object) {
-			Iterator iter = list.iterator();
+			Iterator<AbstractExpression> iter = list.iterator();
 			while (iter.hasNext()) {
-				AbstractExpression expr = (AbstractExpression) iter.next();
+				AbstractExpression expr = iter.next();
 				if (expr.isEnabledFor(object)) {
 					return true;
 				}
@@ -684,7 +684,7 @@ public class ActionExpression {
 		}
 
 		@Override
-		public Collection valuesForExpression(String expressionType) {
+		public Collection<String> valuesForExpression(String expressionType) {
 			return child.valuesForExpression(expressionType);
 		}
 
@@ -949,7 +949,7 @@ public class ActionExpression {
 			return root.isEnabledFor(null);
 		}
 
-		Iterator elements = selection.iterator();
+		Iterator<?> elements = selection.iterator();
 		while (elements.hasNext()) {
 			if (!isEnabledFor(elements.next())) {
 				return false;
@@ -998,7 +998,7 @@ public class ActionExpression {
 	 *         <code>null</code> if this is not possible in the receiver or any of
 	 *         it's children
 	 */
-	public Collection valuesForExpression(String expressionType) {
+	public Collection<String> valuesForExpression(String expressionType) {
 		return root.valuesForExpression(expressionType);
 	}
 }

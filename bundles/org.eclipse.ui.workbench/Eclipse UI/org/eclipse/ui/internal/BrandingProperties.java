@@ -84,12 +84,12 @@ public abstract class BrandingProperties {
 		}
 
 		StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
-		ArrayList array = new ArrayList(10);
+		ArrayList<URL> array = new ArrayList<>(10);
 		while (tokens.hasMoreTokens()) {
 			array.add(getUrl(tokens.nextToken().trim(), definingBundle));
 		}
 
-		return (URL[]) array.toArray(new URL[array.size()]);
+		return array.toArray(new URL[array.size()]);
 	}
 
 	/**

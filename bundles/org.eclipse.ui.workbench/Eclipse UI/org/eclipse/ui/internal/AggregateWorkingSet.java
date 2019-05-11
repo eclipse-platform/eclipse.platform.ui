@@ -248,7 +248,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 			throw new IllegalStateException();
 		}
 		IMemento[] workingSetReferences = workingSetMemento.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
-		ArrayList list = new ArrayList(workingSetReferences.length);
+		ArrayList<IWorkingSet> list = new ArrayList<>(workingSetReferences.length);
 
 		for (IMemento memento : workingSetReferences) {
 			String setId = memento.getID();
@@ -257,7 +257,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 				list.add(set);
 			}
 		}
-		internalSetComponents((IWorkingSet[]) list.toArray(new IWorkingSet[list.size()]));
+		internalSetComponents(list.toArray(new IWorkingSet[list.size()]));
 		constructElements(false);
 	}
 

@@ -52,18 +52,18 @@ public class DecorationScheduler {
 
 	// When decorations are computed they are added to this cache via
 	// decorated() method
-	Map resultCache = new HashMap();
+	Map<IDecorationContext, Map<Object, DecorationResult>> resultCache = new HashMap<>();
 
 	// Objects that need an icon and text computed for display to the user
-	List awaitingDecoration = new ArrayList();
+	List<Object> awaitingDecoration = new ArrayList<>();
 
 	// Objects that are awaiting a label update.
-	Set pendingUpdate = new HashSet();
+	Set<Object> pendingUpdate = new HashSet<>();
 
 	// Key to lock write access to the pending update set
 	Object pendingKey = new Object();
 
-	Map awaitingDecorationValues = new HashMap();
+	Map<Object, DecorationReference> awaitingDecorationValues = new HashMap<>();
 
 	DecoratorManager decoratorManager;
 
@@ -73,7 +73,7 @@ public class DecorationScheduler {
 
 	UIJob updateJob;
 
-	private Collection removedListeners = Collections.synchronizedSet(new HashSet());
+	private Collection<ILabelProviderListener> removedListeners = Collections.synchronizedSet(new HashSet<>());
 
 	private Job clearJob;
 
@@ -132,7 +132,7 @@ public class DecorationScheduler {
 			String undecoratedText, IDecorationContext context) {
 
 		Assert.isNotNull(context);
-		DecorationReference reference = (DecorationReference) awaitingDecorationValues.get(element);
+		DecorationReference reference = awaitingDecorationValues.get(element);
 		if (reference != null) {
 			if (forceUpdate) {// Make sure we don't loose a force
 				reference.setForceUpdate(forceUpdate);
@@ -202,17 +202,17 @@ public class DecorationScheduler {
 	}
 
 	private DecorationResult internalGetResult(Object element, IDecorationContext context) {
-		Map results = (Map) resultCache.get(context);
+		Map<Object, DecorationResult> results = resultCache.get(context);
 		if (results != null) {
-			return (DecorationResult) results.get(element);
+			return results.get(element);
 		}
 		return null;
 	}
 
 	protected void internalPutResult(Object element, IDecorationContext context, DecorationResult result) {
-		Map results = (Map) resultCache.get(context);
+		Map<Object, DecorationResult> results = resultCache.get(context);
 		if (results == null) {
-			results = new HashMap();
+			results = new HashMap<>();
 			resultCache.put(context, results);
 		}
 		results.put(element, result);
@@ -256,7 +256,7 @@ public class DecorationScheduler {
 		}
 		Object element = awaitingDecoration.remove(0);
 
-		return (DecorationReference) awaitingDecorationValues.remove(element);
+		return awaitingDecorationValues.remove(element);
 	}
 
 	/**

@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.contexts;
 
 import java.util.Iterator;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
@@ -69,9 +68,9 @@ public class NestableContextService extends SlaveContextService implements INest
 			return;
 		}
 
-		Iterator c = fLocalActivations.keySet().iterator();
+		Iterator<IContextActivation> c = fLocalActivations.keySet().iterator();
 		while (c.hasNext()) {
-			IContextActivation activation = (IContextActivation) c.next();
+			IContextActivation activation = c.next();
 			super.doActivateContext(activation);
 		}
 		fActive = true;
@@ -85,7 +84,7 @@ public class NestableContextService extends SlaveContextService implements INest
 		deactivateContexts(fParentActivations);
 		fParentActivations.clear();
 
-		Iterator c = fLocalActivations.keySet().iterator();
+		Iterator<IContextActivation> c = fLocalActivations.keySet().iterator();
 		while (c.hasNext()) {
 			fLocalActivations.put(c.next(), null);
 		}

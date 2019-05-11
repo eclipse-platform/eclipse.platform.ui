@@ -31,7 +31,7 @@ public interface IThemeRegistry {
 	 *
 	 * @since 3.0
 	 */
-	public static class HierarchyComparator implements Comparator {
+	public static class HierarchyComparator implements Comparator<IHierarchalThemeElementDefinition> {
 
 		private IHierarchalThemeElementDefinition[] definitions;
 
@@ -45,9 +45,9 @@ public interface IThemeRegistry {
 		}
 
 		@Override
-		public int compare(Object arg0, Object arg1) {
-			String def0 = arg0 == null ? null : ((IHierarchalThemeElementDefinition) arg0).getDefaultsTo();
-			String def1 = arg1 == null ? null : ((IHierarchalThemeElementDefinition) arg1).getDefaultsTo();
+		public int compare(IHierarchalThemeElementDefinition arg0, IHierarchalThemeElementDefinition arg1) {
+			String def0 = arg0 == null ? null : arg0.getDefaultsTo();
+			String def1 = arg1 == null ? null : arg1.getDefaultsTo();
 
 			if (def0 == null && def1 == null) {
 				return 0;
@@ -85,7 +85,7 @@ public interface IThemeRegistry {
 	 *
 	 * @since 3.0
 	 */
-	Comparator ID_COMPARATOR = new Comparator() {
+	Comparator<Object> ID_COMPARATOR = new Comparator<Object>() {
 
 		@Override
 		public int compare(Object arg0, Object arg1) {
@@ -195,7 +195,7 @@ public interface IThemeRegistry {
 	 *
 	 * @return the data map
 	 */
-	Map getData();
+	Map<Object, Object> getData();
 
 	/**
 	 * Return the set of category presentation bindings.
@@ -204,5 +204,5 @@ public interface IThemeRegistry {
 	 * @return the set of bindings or <code>null</code> if this category has no
 	 *         bindings
 	 */
-	Set getPresentationsBindingsFor(ThemeElementCategory category);
+	Set<?> getPresentationsBindingsFor(ThemeElementCategory category);
 }

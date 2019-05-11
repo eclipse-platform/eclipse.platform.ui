@@ -124,7 +124,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 			viewer.setLabelProvider(new WorkbenchLabelProvider());
 			viewer.setComparator(DataTransferWizardCollectionComparator.INSTANCE);
 
-			ArrayList inputArray = new ArrayList();
+			ArrayList<IWizardCategory> inputArray = new ArrayList<>();
 			boolean expandTop = false;
 
 			if (wizardCategories != null) {
@@ -219,7 +219,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 	/**
 	 * Method to call when an item in one of the lists is double-clicked. Shows the
 	 * first page of the selected wizard or expands a collapsed tree.
-	 * 
+	 *
 	 * @param event
 	 */
 	protected void treeDoubleClicked(DoubleClickEvent event) {
@@ -324,7 +324,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 			return;
 		}
 
-		List categoriesToExpand = new ArrayList(expandedCategoryPaths.length);
+		List<IWizardCategory> categoriesToExpand = new ArrayList<>(expandedCategoryPaths.length);
 
 		if (wizardCategories != null) {
 			for (String expandedCategoryPath : expandedCategoryPaths) {
@@ -377,14 +377,14 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 	 */
 	protected void storeExpandedCategories(String setting, TreeViewer viewer) {
 		Object[] expandedElements = viewer.getExpandedElements();
-		List expandedElementPaths = new ArrayList(expandedElements.length);
+		List<String> expandedElementPaths = new ArrayList<>(expandedElements.length);
 		for (Object expandedElement : expandedElements) {
 			if (expandedElement instanceof IWizardCategory) {
 				expandedElementPaths.add(((IWizardCategory) expandedElement).getPath().toString());
 			}
 		}
 		getDialogSettings().put(setting,
-				(String[]) expandedElementPaths.toArray(new String[expandedElementPaths.size()]));
+				expandedElementPaths.toArray(new String[expandedElementPaths.size()]));
 	}
 
 	/**

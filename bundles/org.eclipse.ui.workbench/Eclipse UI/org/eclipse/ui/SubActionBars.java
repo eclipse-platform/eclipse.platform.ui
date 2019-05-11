@@ -73,7 +73,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 */
 	public static final String P_ACTION_HANDLERS = "org.eclipse.ui.internal.actionHandlers"; //$NON-NLS-1$
 
-	private Map actionHandlers;
+	private Map<String, IAction> actionHandlers;
 
 	private boolean actionHandlersChanged;
 
@@ -82,7 +82,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 * ({@link String}) indexed by service locator ({@link IServiceLocator}). This
 	 * value is <code>null</code> if there are no activations.
 	 */
-	private Map activationsByActionIdByServiceLocator;
+	private Map<IServiceLocator, Map<String, IHandlerActivation>> activationsByActionIdByServiceLocator;
 
 	private boolean active = false;
 
@@ -100,7 +100,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	private SubToolBarManager toolBarMgr;
 
-	private Map actionIdByCommandId = new HashMap();
+	private Map<String, String> actionIdByCommandId = new HashMap<>();
 
 	/**
 	 * Construct a new <code>SubActionBars</code> object. The service locator will
@@ -180,13 +180,14 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 		if (activationsByActionIdByServiceLocator != null) {
 			// Clean up the activations.
-			final Iterator activationItr = activationsByActionIdByServiceLocator.entrySet().iterator();
+			final Iterator<Map.Entry<IServiceLocator, Map<String, IHandlerActivation>>> activationItr = activationsByActionIdByServiceLocator
+					.entrySet().iterator();
 			while (activationItr.hasNext()) {
-				final Map.Entry value = (Map.Entry) activationItr.next();
-				final IServiceLocator locator = (IServiceLocator) value.getKey();
+				final Map.Entry<IServiceLocator, Map<String, IHandlerActivation>> value = activationItr.next();
+				final IServiceLocator locator = value.getKey();
 				final IHandlerService service = locator.getService(IHandlerService.class);
-				final Map activationsByActionId = (Map) value.getValue();
-				Collection activations = activationsByActionId.values();
+				final Map<String, IHandlerActivation> activationsByActionId = value.getValue();
+				Collection<IHandlerActivation> activations = activationsByActionId.values();
 				if (service != null) {
 					service.deactivateHandlers(activations);
 				}
@@ -304,7 +305,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 		if (actionHandlers == null) {
 			return null;
 		}
-		return (IAction) actionHandlers.get(actionID);
+		return actionHandlers.get(actionID);
 	}
 
 	/**
@@ -474,7 +475,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 		if (handler != null) {
 			// Update the action handlers.
 			if (actionHandlers == null) {
-				actionHandlers = new HashMap(11);
+				actionHandlers = new HashMap<>(11);
 			}
 			actionHandlers.put(actionID, handler);
 
@@ -492,15 +493,15 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 				// Update the handler activations.
 				final IHandlerService service = serviceLocator.getService(IHandlerService.class);
-				Map activationsByActionId = null;
+				Map<String, IHandlerActivation> activationsByActionId = null;
 				if (activationsByActionIdByServiceLocator == null) {
-					activationsByActionIdByServiceLocator = new WeakHashMap();
-					activationsByActionId = new HashMap();
+					activationsByActionIdByServiceLocator = new WeakHashMap<>();
+					activationsByActionId = new HashMap<>();
 					activationsByActionIdByServiceLocator.put(serviceLocator, activationsByActionId);
 				} else {
-					activationsByActionId = (Map) activationsByActionIdByServiceLocator.get(serviceLocator);
+					activationsByActionId = activationsByActionIdByServiceLocator.get(serviceLocator);
 					if (activationsByActionId == null) {
-						activationsByActionId = new HashMap();
+						activationsByActionId = new HashMap<>();
 						activationsByActionIdByServiceLocator.put(serviceLocator, activationsByActionId);
 					} else if (activationsByActionId.containsKey(actionID)) {
 						final Object value = activationsByActionId.remove(actionID);
@@ -552,7 +553,8 @@ public class SubActionBars extends EventManager implements IActionBars {
 			if (serviceLocator != null) {
 				final IHandlerService service = serviceLocator.getService(IHandlerService.class);
 				if (activationsByActionIdByServiceLocator != null) {
-					final Map activationsByActionId = (Map) activationsByActionIdByServiceLocator.get(serviceLocator);
+					final Map<String, IHandlerActivation> activationsByActionId = activationsByActionIdByServiceLocator
+							.get(serviceLocator);
 					if ((activationsByActionId != null) && (activationsByActionId.containsKey(actionID))) {
 						final Object value = activationsByActionId.remove(actionID);
 						if (value instanceof IHandlerActivation) {

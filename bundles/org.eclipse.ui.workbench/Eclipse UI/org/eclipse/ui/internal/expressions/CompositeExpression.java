@@ -30,11 +30,11 @@ public abstract class CompositeExpression extends Expression {
 
 	private static final Expression[] EMPTY_ARRAY = new Expression[0];
 
-	protected List fExpressions;
+	protected List<Expression> fExpressions;
 
 	public void add(Expression expression) {
 		if (fExpressions == null) {
-			fExpressions = new ArrayList(2);
+			fExpressions = new ArrayList<>(2);
 		}
 		fExpressions.add(expression);
 	}
@@ -43,7 +43,7 @@ public abstract class CompositeExpression extends Expression {
 		if (fExpressions == null) {
 			return EMPTY_ARRAY;
 		}
-		return (Expression[]) fExpressions.toArray(new Expression[fExpressions.size()]);
+		return fExpressions.toArray(new Expression[fExpressions.size()]);
 	}
 
 	protected EvaluationResult evaluateAnd(IEvaluationContext scope) throws CoreException {
@@ -51,8 +51,8 @@ public abstract class CompositeExpression extends Expression {
 			return EvaluationResult.TRUE;
 		}
 		EvaluationResult result = EvaluationResult.TRUE;
-		for (Iterator iter = fExpressions.iterator(); iter.hasNext();) {
-			Expression expression = (Expression) iter.next();
+		for (Iterator<Expression> iter = fExpressions.iterator(); iter.hasNext();) {
+			Expression expression = iter.next();
 			result = result.and(expression.evaluate(scope));
 			// keep iterating even if we have a not loaded found. It can be
 			// that we find a false which will result in a better result.
@@ -68,8 +68,8 @@ public abstract class CompositeExpression extends Expression {
 			return EvaluationResult.TRUE;
 		}
 		EvaluationResult result = EvaluationResult.FALSE;
-		for (Iterator iter = fExpressions.iterator(); iter.hasNext();) {
-			Expression expression = (Expression) iter.next();
+		for (Iterator<Expression> iter = fExpressions.iterator(); iter.hasNext();) {
+			Expression expression = iter.next();
 			result = result.or(expression.evaluate(scope));
 			if (result == EvaluationResult.TRUE) {
 				return result;
@@ -83,8 +83,8 @@ public abstract class CompositeExpression extends Expression {
 		if (fExpressions == null) {
 			return;
 		}
-		for (Iterator iter = fExpressions.iterator(); iter.hasNext();) {
-			Expression expression = (Expression) iter.next();
+		for (Iterator<Expression> iter = fExpressions.iterator(); iter.hasNext();) {
+			Expression expression = iter.next();
 			expression.collectExpressionInfo(info);
 		}
 	}

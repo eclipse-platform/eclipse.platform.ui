@@ -67,7 +67,7 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 
 	private Type[] preferredTypes = new Type[0];
 
-	private ServiceTracker packageTracker;
+	private ServiceTracker<?, ?> packageTracker;
 
 	/**
 	 * When invoked this method will iterate over all classes specified as
@@ -128,8 +128,8 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 	 */
 	private IAdaptable adapt(Type type, IAdaptable adaptable) {
 		IAdapterManager adapterManager = Platform.getAdapterManager();
-		Class[] directClasses = adapterManager.computeClassOrder(adaptable.getClass());
-		for (Class clazz : directClasses) {
+		Class<?>[] directClasses = adapterManager.computeClassOrder(adaptable.getClass());
+		for (Class<?> clazz : directClasses) {
 			if (clazz.getName().equals(type.className))
 				return adaptable;
 		}
@@ -224,7 +224,7 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 	 */
 	private PackageAdmin getPackageAdmin() {
 		if (packageTracker == null) {
-			packageTracker = new ServiceTracker(WorkbenchPlugin.getDefault().getBundleContext(),
+			packageTracker = new ServiceTracker<>(WorkbenchPlugin.getDefault().getBundleContext(),
 					PackageAdmin.class.getName(), null);
 			packageTracker.open();
 		}

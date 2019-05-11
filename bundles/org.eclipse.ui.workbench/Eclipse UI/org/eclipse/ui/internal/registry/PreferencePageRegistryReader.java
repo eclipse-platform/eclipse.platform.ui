@@ -34,7 +34,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	private static final String TAG_PAGE = "page"; //$NON-NLS-1$
 
-	private List nodes;
+	private List<WorkbenchPreferenceNode> nodes;
 
 	private IWorkbench workbench;
 
@@ -44,7 +44,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 		/**
 		 * Create a new instance of the receiver.
-		 * 
+		 *
 		 * @param reader
 		 * @param nodeToCategorize
 		 */
@@ -81,7 +81,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	@Override
 	Object findNode(String id) {
 		for (int i = 0; i < nodes.size(); i++) {
-			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodes.get(i);
+			WorkbenchPreferenceNode node = nodes.get(i);
 			if (node.getId().equals(id)) {
 				return node;
 			}
@@ -124,12 +124,12 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	}
 
 	@Override
-	Collection getNodes() {
+	Collection<?> getNodes() {
 		return nodes;
 	}
 
 	/**
-	 * Load the preference page contirbutions from the registry and organize
+	 * Load the preference page contributions from the registry and organize
 	 * preference node contributions by category into hierarchies If there is no
 	 * page for a given node in the hierarchy then a blank page will be created. If
 	 * no category has been specified or category information is incorrect, page
@@ -139,7 +139,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * @param registry the extension registry
 	 */
 	public void loadFromRegistry(IExtensionRegistry registry) {
-		nodes = new ArrayList();
+		nodes = new ArrayList<>();
 
 		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_PREFERENCES);
 
@@ -168,7 +168,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	/**
 	 * Create a workbench preference node.
-	 * 
+	 *
 	 * @param element
 	 * @return WorkbenchPreferenceNode
 	 */
@@ -198,10 +198,10 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	/**
 	 * Return the top level IPreferenceNodes, minus the one which fail the
 	 * Expression check.
-	 * 
+	 *
 	 * @return Collection of IPreferenceNode.
 	 */
-	public Collection getTopLevelNodes() {
-		return WorkbenchActivityHelper.restrictCollection(topLevelNodes, new ArrayList());
+	public Collection<?> getTopLevelNodes() {
+		return WorkbenchActivityHelper.restrictCollection(topLevelNodes, new ArrayList<>());
 	}
 }

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -47,15 +46,15 @@ public final class ContextManagerLegacyWrapper
 	 *
 	 * @since 3.0
 	 */
-	private class ContextIdDepthComparator implements Comparator {
+	private class ContextIdDepthComparator implements Comparator<String> {
 
 		/**
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public final int compare(final Object object1, final Object object2) {
-			final String contextId1 = (String) object1;
-			final String contextId2 = (String) object2;
+		public final int compare(final String object1, final String object2) {
+			final String contextId1 = object1;
+			final String contextId2 = object2;
 			Context context;
 			String parentId;
 
@@ -104,7 +103,7 @@ public final class ContextManagerLegacyWrapper
 	 *
 	 * @since 3.0
 	 */
-	private class DepthSortedContextIdSet extends TreeSet {
+	private class DepthSortedContextIdSet extends TreeSet<String> {
 
 		/**
 		 * Generated serial version UID for this class.
@@ -121,7 +120,7 @@ public final class ContextManagerLegacyWrapper
 		 *                   <code>null</code> values. The set may not be
 		 *                   <code>null</code>, but may be empty.
 		 */
-		private DepthSortedContextIdSet(final Set contextIds) {
+		private DepthSortedContextIdSet(final Set<String> contextIds) {
 			super(new ContextIdDepthComparator());
 			addAll(contextIds);
 		}
@@ -129,7 +128,7 @@ public final class ContextManagerLegacyWrapper
 
 	private final ContextManager contextManager;
 
-	private List contextManagerListeners;
+	private List<IContextManagerListener> contextManagerListeners;
 
 	/**
 	 * Constructs a new instance of <code>MutableContextManager</code>. The registry
@@ -155,7 +154,7 @@ public final class ContextManagerLegacyWrapper
 		}
 
 		if (contextManagerListeners == null) {
-			contextManagerListeners = new ArrayList();
+			contextManagerListeners = new ArrayList<>();
 		}
 
 		if (!contextManagerListeners.contains(contextManagerListener)) {
@@ -167,13 +166,13 @@ public final class ContextManagerLegacyWrapper
 	public void contextManagerChanged(org.eclipse.core.commands.contexts.ContextManagerEvent contextManagerEvent) {
 		final String contextId = contextManagerEvent.getContextId();
 		final boolean definedContextsChanged;
-		final Set previouslyDefinedContextIds;
+		final Set<String> previouslyDefinedContextIds;
 		if (contextId == null) {
 			definedContextsChanged = false;
 			previouslyDefinedContextIds = null;
 		} else {
 			definedContextsChanged = true;
-			previouslyDefinedContextIds = new HashSet();
+			previouslyDefinedContextIds = new HashSet<>();
 			previouslyDefinedContextIds.addAll(contextManager.getDefinedContextIds());
 			if (contextManagerEvent.isContextDefined()) {
 				previouslyDefinedContextIds.remove(contextId);
@@ -195,7 +194,7 @@ public final class ContextManagerLegacyWrapper
 
 		if (contextManagerListeners != null) {
 			for (int i = 0; i < contextManagerListeners.size(); i++) {
-				((IContextManagerListener) contextManagerListeners.get(i)).contextManagerChanged(contextManagerEvent);
+				contextManagerListeners.get(i).contextManagerChanged(contextManagerEvent);
 			}
 		}
 	}

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -57,7 +58,7 @@ public final class ContextPersistence extends RegistryPersistence {
 	 */
 	private static void readContextsFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final ContextManager contextManager) {
-		final List warningsToLog = new ArrayList(1);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];

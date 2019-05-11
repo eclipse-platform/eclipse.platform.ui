@@ -28,6 +28,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.LegacyActionTools;
@@ -98,14 +99,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * flush the activations when the registry is re-read. This value is never
 	 * <code>null</code>
 	 */
-	private final Collection handlerActivations = new ArrayList();
+	private final Collection<IHandlerActivation> handlerActivations = new ArrayList<>();
 
 	/**
 	 * The menu contributions that have come from the registry. This is used to
 	 * flush the contributions when the registry is re-read. This value is never
 	 * <code>null</code>
 	 */
-	private final Collection menuContributions = new ArrayList();
+	private final Collection<?> menuContributions = new ArrayList<>();
 
 	/**
 	 * The service locator from which services can be retrieved in the future; must
@@ -120,7 +121,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *               not be <code>null</code>.
 	 */
 	public LegacyActionPersistence(final IWorkbenchWindow window) {
-		// TODO Blind casts are bad.
 		this.commandService = window.getService(ICommandService.class);
 		this.window = window;
 	}
@@ -136,9 +136,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			return;
 		}
 		service.deactivateHandlers(handlerActivations);
-		final Iterator activationItr = handlerActivations.iterator();
+		final Iterator<IHandlerActivation> activationItr = handlerActivations.iterator();
 		while (activationItr.hasNext()) {
-			final IHandlerActivation activation = (IHandlerActivation) activationItr.next();
+			final IHandlerActivation activation = activationItr.next();
 			final IHandler handler = activation.getHandler();
 			if (handler != null) {
 				handler.dispose();
@@ -183,7 +183,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *         occurred.
 	 */
 	private ParameterizedCommand convertActionToCommand(final IConfigurationElement element, final String primaryId,
-			final String secondaryId, final List warningsToLog) {
+			final String secondaryId, final List<IStatus> warningsToLog) {
 		String commandId = readOptional(element, ATT_DEFINITION_ID);
 		Command command = null;
 		if (commandId != null) {
@@ -269,7 +269,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private void convertActionToHandler(final IConfigurationElement element, final String actionId,
 			final ParameterizedCommand command, final Expression activeWhenExpression, final String viewId,
-			final List warningsToLog) {
+			final List<IStatus> warningsToLog) {
 		// Check to see if this is a retargettable action.
 		final boolean retarget = readBoolean(element, ATT_RETARGET, false);
 
@@ -450,8 +450,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *                              This value is required if this is a view action;
 	 *                              otherwise it can be <code>null</code>.
 	 */
-	private void readActions(final String primaryId, final IConfigurationElement[] elements, final List warningsToLog,
-			final Expression visibleWhenExpression, final String viewId) {
+	private void readActions(final String primaryId, final IConfigurationElement[] elements,
+			final List<IStatus> warningsToLog, final Expression visibleWhenExpression, final String viewId) {
 		for (final IConfigurationElement configElement : elements) {
 			/*
 			 * We might need the identifier to generate the command, so we'll read it out
@@ -493,8 +493,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *                              This value is required if this is a view action;
 	 *                              otherwise it can be <code>null</code>.
 	 */
-	private void readActionsAndMenus(final IConfigurationElement element, final String id, final List warningsToLog,
-			final Expression visibleWhenExpression, final String viewId) {
+	private void readActionsAndMenus(final IConfigurationElement element, final String id,
+			final List<IStatus> warningsToLog, final Expression visibleWhenExpression, final String viewId) {
 
 		// Read its child elements.
 		final IConfigurationElement[] actionElements = element.getChildren(TAG_ACTION);
@@ -524,7 +524,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		// }
 		// stupid navigate group
 
-		final List warningsToLog = new ArrayList(1);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement element = configurationElements[i];
@@ -566,7 +566,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private void readEditorContributions(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
-		final List warningsToLog = new ArrayList(1);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement element = configurationElements[i];
@@ -608,7 +608,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private void readViewContributions(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
-		final List warningsToLog = new ArrayList(1);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement element = configurationElements[i];

@@ -83,7 +83,7 @@ public final class SelectionEnabler {
 	 * Cached value of <code>org.eclipse.jface.text.ITextSelection.class</code>;
 	 * <code>null</code> if not initialized or not present.
 	 */
-	private static Class iTextSelectionClass = null;
+	private static Class<?> iTextSelectionClass = null;
 
 	/**
 	 * Hard-wired id of the JFace text plug-in (not on pre-req chain).
@@ -120,7 +120,7 @@ public final class SelectionEnabler {
 	 *         available
 	 * @since 3.0
 	 */
-	private static Class getTextSelectionClass() {
+	private static Class<?> getTextSelectionClass() {
 		if (iTextSelectionClass != null) {
 			// tried before and succeeded
 			return iTextSelectionClass;
@@ -151,7 +151,7 @@ public final class SelectionEnabler {
 		}
 
 		try {
-			Class c = bundle.loadClass(TEXT_SELECTION_CLASS);
+			Class<?> c = bundle.loadClass(TEXT_SELECTION_CLASS);
 			// remember for next time
 			iTextSelectionClass = c;
 			return iTextSelectionClass;
@@ -175,7 +175,7 @@ public final class SelectionEnabler {
 		return SimpleWildcardTester.testWildcardIgnoreCase(filter, name);
 	}
 
-	private List classes = new ArrayList();
+	private List<SelectionClass> classes = new ArrayList<>();
 
 	private ActionExpression enablementExpression;
 
@@ -282,7 +282,7 @@ public final class SelectionEnabler {
 			return true;
 		}
 		for (int i = 0; i < classes.size(); i++) {
-			SelectionClass sc = (SelectionClass) classes.get(i);
+			SelectionClass sc = classes.get(i);
 			if (verifyClass(sel, sc.className)) {
 				return true;
 			}
@@ -310,7 +310,7 @@ public final class SelectionEnabler {
 		if (classes.isEmpty()) {
 			return true;
 		}
-		for (Iterator elements = ssel.iterator(); elements.hasNext();) {
+		for (Iterator<?> elements = ssel.iterator(); elements.hasNext();) {
 			Object obj = elements.next();
 			if (obj instanceof IAdaptable) {
 				IAdaptable element = (IAdaptable) obj;
@@ -360,7 +360,7 @@ public final class SelectionEnabler {
 		// }
 		// use Java reflection to avoid dependence of org.eclipse.jface.text
 		// which is in an optional part of the generic workbench
-		Class tselClass = getTextSelectionClass();
+		Class<?> tselClass = getTextSelectionClass();
 		if (tselClass != null && tselClass.isInstance(selection)) {
 			try {
 				Method m = tselClass.getDeclaredMethod("getLength"); //$NON-NLS-1$
@@ -422,7 +422,7 @@ public final class SelectionEnabler {
 		// Get selection block.
 		children = config.getChildren(IWorkbenchRegistryConstants.TAG_SELECTION);
 		if (children.length > 0) {
-			classes = new ArrayList();
+			classes = new ArrayList<>();
 			for (IConfigurationElement sel : children) {
 				String cname = sel.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 				String name = sel.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
@@ -440,8 +440,8 @@ public final class SelectionEnabler {
 	 * all superclasses and their interfaces.
 	 */
 	private boolean verifyClass(Object element, String className) {
-		Class eclass = element.getClass();
-		Class clazz = eclass;
+		Class<?> eclass = element.getClass();
+		Class<?> clazz = eclass;
 		boolean match = false;
 		while (clazz != null) {
 			// test the class itself
@@ -450,8 +450,8 @@ public final class SelectionEnabler {
 				break;
 			}
 			// test all the interfaces it implements
-			Class[] interfaces = clazz.getInterfaces();
-			for (Class currentInterface : interfaces) {
+			Class<?>[] interfaces = clazz.getInterfaces();
+			for (Class<?> currentInterface : interfaces) {
 				if (currentInterface.getName().equals(className)) {
 					match = true;
 					break;
@@ -475,7 +475,7 @@ public final class SelectionEnabler {
 			return true;
 		}
 		for (int i = 0; i < classes.size(); i++) {
-			SelectionClass sc = (SelectionClass) classes.get(i);
+			SelectionClass sc = classes.get(i);
 			if (verifyClass(element, sc.className) == false) {
 				continue;
 			}
