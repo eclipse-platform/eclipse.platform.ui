@@ -228,14 +228,14 @@ public class CSSRenderingUtils {
 			return null;
 		}
 		if (classId != null)
-			ControlElement.setCSSClass(styleControl, classId); //$NON-NLS-1$
+			ControlElement.setCSSClass(styleControl, classId);
 
 		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
 				.getComputedStyle(tempEment, "");
 		if (styleDeclarations == null)
 			return null;
 
-		CSSValue imagePath = styleDeclarations.getPropertyCSSValue(attName); //$NON-NLS-1$
+		CSSValue imagePath = styleDeclarations.getPropertyCSSValue(attName);
 		if (imagePath == null)
 			return null;
 
