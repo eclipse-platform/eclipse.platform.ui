@@ -14,6 +14,7 @@
  *     Eugene Ostroukhov <eugeneo@symbian.org> - Bug 287887 [Wizards] [api] Cancel button has two distinct roles
  *     Paul Adams <padams@ittvis.com> - Bug 202534 - [Dialogs] SWT error in Wizard dialog when help is displayed and "Finish" is pressed
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 475879
+ *     Willem Sietse Jongman <wim.jongman@remainsoftware.com> - Give Wizards a modality flag
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
@@ -305,12 +306,69 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 */
 	public WizardDialog(Shell parentShell, IWizard newWizard) {
 		super(parentShell);
-		setShellStyle(SWT.CLOSE | SWT.MAX | SWT.TITLE | SWT.BORDER
-				| SWT.APPLICATION_MODAL | SWT.RESIZE | getDefaultOrientation());
+		boolean modal = !"true".equals(System.getProperty("jface.allWizardsNonModal", "false")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		setShellStyle(SWT.CLOSE | SWT.MAX | SWT.TITLE | SWT.BORDER | SWT.ON_TOP | SWT.RESIZE | getShellModality(modal)
+				| getDefaultOrientation());
 		setWizard(newWizard);
 		// since VAJava can't initialize an instance var with an anonymous
 		// class outside a constructor we do it here:
 		cancelListener = widgetSelectedAdapter(e -> cancelPressed());
+	}
+
+	/**
+	 * Sets the shell style of the wizard dialog.
+	 * <p>
+	 * Examples:<br>
+	 * To use the default style without the SWT.APPLICATION_MODAL bit:<br/>
+	 * <code>setShellStyle(getDefaultShellStyle() & ~SWT.APPLICATION_MODAL</code>
+	 * <p>
+	 * To use the default style without the SWT.RESIZE bit:<br/>
+	 * <code>setShellStyle(getDefaultShellStyle() & ~SWT.RESIZE)</code>
+	 *
+	 * <p>
+	 * {@inheritDoc}
+	 *
+	 * @see #setModal(boolean)
+	 *
+	 */
+	@Override
+	public void setShellStyle(int newShellStyle) {
+		super.setShellStyle(newShellStyle);
+	}
+
+	@Override
+	public int getShellStyle() {
+		return super.getShellStyle();
+	}
+
+	private static int getShellModality(boolean modal) {
+		return modal ? SWT.APPLICATION_MODAL : SWT.NONE;
+	}
+
+	/**
+	 * Option to set the modality of the WizardDialog. This method must be called
+	 * before the dialog's shell is created, e.g. before you call {@link #open()}
+	 * for the first time.
+	 *
+	 * @param modal true (default) if the WizardDialog should block the underlying
+	 *              window.
+	 * @return this WizardDialog
+	 * @since 3.16
+	 */
+	public WizardDialog setModal(boolean modal) {
+		setShellStyle(getShellStyle() & ~SWT.APPLICATION_MODAL | getShellModality(modal));
+		return this;
+	}
+
+	/**
+	 * @return <code>false</code> if the user interface blocks the underlying window
+	 *         (modal) or <code>true</code> if the underlying window is not blocked.
+	 * @since 3.16
+	 * @see #setModal(boolean)
+	 * @see #setShellStyle(int)
+	 */
+	public boolean isModal() {
+		return (getShellStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL;
 	}
 
 	/**
