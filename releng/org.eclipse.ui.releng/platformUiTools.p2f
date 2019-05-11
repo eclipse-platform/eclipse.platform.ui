@@ -2,6 +2,11 @@
 <?p2f version='1.0.0'?>
 <p2f  version='1.0.0'>
   <ius size='41'>
+    <iu id='org.jsoup' name='org.jsoup' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/latest/'/>
+      </repositories>
+    </iu>
     <iu id='org.json' name='org.json' version='0.0.0'>
       <repositories size='1'>
         <repository location='http://download.eclipse.org/releases/latest/'/>
