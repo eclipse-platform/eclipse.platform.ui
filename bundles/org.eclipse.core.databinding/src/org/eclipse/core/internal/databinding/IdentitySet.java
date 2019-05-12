@@ -139,8 +139,8 @@ public class IdentitySet<E> implements Set<E> {
 		Object[] retainAll = c.toArray();
 		outer: for (Iterator<E> iterator = iterator(); iterator.hasNext();) {
 			E element = iterator.next();
-			for (int i = 0; i < retainAll.length; i++) {
-				if (element == retainAll[i]) {
+			for (Object retain : retainAll) {
+				if (element == retain) {
 					continue outer;
 				}
 			}

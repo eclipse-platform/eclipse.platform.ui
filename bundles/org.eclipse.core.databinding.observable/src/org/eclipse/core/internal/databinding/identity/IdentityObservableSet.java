@@ -162,14 +162,15 @@ public class IdentityObservableSet<E> extends AbstractObservableSet<E> {
 	public boolean retainAll(Collection<?> c) {
 		getterCalled();
 		Set<E> removals = new IdentitySet<>();
-		Object[] toRetain = c.toArray();
+		Object[] toRetains = c.toArray();
 		outer: for (Iterator<E> iterator = wrappedSet.iterator(); iterator.hasNext();) {
 			E element = iterator.next();
 			// Cannot rely on c.contains(element) because we must compare
 			// elements using IElementComparer.
-			for (int i = 0; i < toRetain.length; i++) {
-				if (element == toRetain[i])
+			for (Object toRetain : toRetains) {
+				if (element == toRetain) {
 					continue outer;
+				}
 			}
 			iterator.remove();
 			removals.add(element);
