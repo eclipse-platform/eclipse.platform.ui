@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.wizards.datatransfer.expressions;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -84,12 +83,7 @@ public class HasFileRecursivelyExpression extends Expression {
 				if (new File(currentDirectory, this.filename).exists()) {
 					return EvaluationResult.TRUE;
 				}
-				File[] files = currentDirectory.listFiles(new FileFilter() {
-					@Override
-					public boolean accept(File child) {
-						return child.isDirectory();
-					}
-				});
+				File[] files = currentDirectory.listFiles(File::isDirectory);
 				if (files != null) {
 					directoriesToVisit.addAll(Arrays.asList(files));
 				}

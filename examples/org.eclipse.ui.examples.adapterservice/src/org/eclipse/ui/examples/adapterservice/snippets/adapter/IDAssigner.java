@@ -35,12 +35,7 @@ public class IDAssigner implements IAdapterFactory {
 				currentId++;
 				assignedIds.put(adaptableObject, id);
 			}
-			return new ThingWithId() {
-				@Override
-				public String getUniqueId() {
-					return assignedIds.get(adaptableObject);
-				}
-			};
+			return (ThingWithId) () -> assignedIds.get(adaptableObject);
 		}
 		return null;
 	}

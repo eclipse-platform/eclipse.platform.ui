@@ -99,13 +99,7 @@ public class ContributedServiceTest extends UITestCase {
 		@Override
 		public Object create(Class serviceInterface,
 				IServiceLocator parentLocator, IServiceLocator locator) {
-			return new ILevelService() {
-
-				@Override
-				public int getLevel() {
-					return level;
-				}
-			};
+			return (ILevelService) () -> level;
 		}
 	}
 

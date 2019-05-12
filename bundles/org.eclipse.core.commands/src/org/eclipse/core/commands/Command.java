@@ -1006,15 +1006,12 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 */
 	private IHandlerListener getHandlerListener() {
 		if (handlerListener == null) {
-			handlerListener = new IHandlerListener() {
-				@Override
-				public void handlerChanged(HandlerEvent handlerEvent) {
-					boolean enabledChanged = handlerEvent.isEnabledChanged();
-					boolean handledChanged = handlerEvent.isHandledChanged();
-					fireCommandChanged(new CommandEvent(Command.this, false,
-							false, false, handledChanged, false, false, false,
-							false, enabledChanged));
-				}
+			handlerListener = (HandlerEvent handlerEvent) -> {
+				boolean enabledChanged = handlerEvent.isEnabledChanged();
+				boolean handledChanged = handlerEvent.isHandledChanged();
+				fireCommandChanged(new CommandEvent(Command.this, false,
+						false, false, handledChanged, false, false, false,
+						false, enabledChanged));
 			};
 		}
 		return handlerListener;

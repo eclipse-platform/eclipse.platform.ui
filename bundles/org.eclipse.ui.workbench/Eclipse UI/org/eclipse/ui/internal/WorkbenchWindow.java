@@ -201,7 +201,6 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
-import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -507,13 +506,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 
 			IServiceLocatorCreator slc = workbench.getService(IServiceLocatorCreator.class);
-			this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null, new IDisposable() {
-				@Override
-				public void dispose() {
-					final Shell shell = getShell();
-					if (shell != null && !shell.isDisposed()) {
-						close();
-					}
+			this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null, () -> {
+				final Shell shell = getShell();
+				if (shell != null && !shell.isDisposed()) {
+					close();
 				}
 			}, windowContext);
 

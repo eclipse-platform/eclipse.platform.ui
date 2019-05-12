@@ -299,12 +299,9 @@ public class WorkbenchObservables {
 	public static IObservableValue<IEditorInput> observeEditorInput(IEditorPart editor) {
 		Assert.isNotNull(editor);
 		return new ListeningValue<IEditorInput>() {
-			private final IPropertyListener listener = new IPropertyListener() {
-				@Override
-				public void propertyChanged(Object source, int propId) {
-					if (propId == IWorkbenchPartConstants.PROP_INPUT) {
-						protectedSetValue(editor.getEditorInput());
-					}
+			private final IPropertyListener listener = (Object source, int propId) -> {
+				if (propId == IWorkbenchPartConstants.PROP_INPUT) {
+					protectedSetValue(editor.getEditorInput());
 				}
 			};
 

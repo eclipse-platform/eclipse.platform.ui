@@ -173,14 +173,11 @@ public class EventLoopMonitorThreadManualTests {
 
 		final double[] tWork = {0};
 		final long[] workOutput = {0};
-		final Runnable doFixedAmountOfWork = new Runnable() {
-			@Override
-			public void run() {
-				long start = System.nanoTime();
-				long result = doWork(start, numIterations);
-				tWork[0] = System.nanoTime() - start;
-				workOutput[0] ^= result;
-			}
+		final Runnable doFixedAmountOfWork = () -> {
+			long start = System.nanoTime();
+			long result = doWork(start, numIterations);
+			tWork[0] = System.nanoTime() - start;
+			workOutput[0] ^= result;
 		};
 
 		// Fetch the total number of threads.
@@ -448,53 +445,47 @@ public class EventLoopMonitorThreadManualTests {
 	}
 
 	protected Queue<Thread> startBackgroundThreads(final CountDownLatch backgroundJobsDone) {
-		final Runnable backgroundTaskRunnable = new Runnable() {
-			@Override
-			public void run() {
-				final double dutyCycle = 0.10;
+		final Runnable backgroundTaskRunnable = () -> {
+			final double dutyCycle = 0.10;
 
-				final double min = 100; // ns
-				final double max = 1e9; // ns
-				final double skew = 0.1; // the degree to which the values cluster around the mode
-				final double bias = -1e5; // bias the mode to approach the min (< 0) vs max (> 0)
+			final double min = 100; // ns
+			final double max = 1e9; // ns
+			final double skew = 0.1; // the degree to which the values cluster around the mode
+			final double bias = -1e5; // bias the mode to approach the min (< 0) vs max (> 0)
 
-				double range = max - min;
-				double mid = min + range / 2.0;
-				double biasFactor = Math.exp(bias);
-				Random rng = new Random();
+			double range = max - min;
+			double mid = min + range / 2.0;
+			double biasFactor = Math.exp(bias);
+			Random rng = new Random();
 
-				while (true) {
-					double rv = rng.nextGaussian();
-					double runFor = mid + (range * (biasFactor / (biasFactor + Math.exp(-rv / skew)) - 0.5));
+			while (true) {
+				double rv = rng.nextGaussian();
+				double runFor = mid + (range * (biasFactor / (biasFactor + Math.exp(-rv / skew)) - 0.5));
 
-					long endTime = System.nanoTime() + (long) runFor;
-					do {
-						doWork(rng.nextInt(), (int) runFor);
-					} while (endTime - System.nanoTime() > 0);
+				long endTime = System.nanoTime() + (long) runFor;
+				do {
+					doWork(rng.nextInt(), (int) runFor);
+				} while (endTime - System.nanoTime() > 0);
 
-					double sleepScale = Math.abs(rng.nextGaussian() / dutyCycle);
-					try {
-						if (backgroundJobsDone.await((int) Math.round(runFor * sleepScale),
-								TimeUnit.NANOSECONDS)) {
-							return;
-						}
-					} catch (InterruptedException e) {
-						// Wake up.
+				double sleepScale = Math.abs(rng.nextGaussian() / dutyCycle);
+				try {
+					if (backgroundJobsDone.await((int) Math.round(runFor * sleepScale),
+							TimeUnit.NANOSECONDS)) {
+						return;
 					}
+				} catch (InterruptedException e) {
+					// Wake up.
 				}
 			}
 		};
 
-		final Runnable backgroundIdle = new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					try {
-						backgroundJobsDone.await();
-						return;
-					} catch (InterruptedException e) {
-						// Wake up.
-					}
+		final Runnable backgroundIdle = () -> {
+			while (true) {
+				try {
+					backgroundJobsDone.await();
+					return;
+				} catch (InterruptedException e) {
+					// Wake up.
 				}
 			}
 		};

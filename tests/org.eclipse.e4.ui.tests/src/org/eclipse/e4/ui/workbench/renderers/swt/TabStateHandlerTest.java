@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
@@ -274,16 +273,11 @@ public class TabStateHandlerTest {
 
 	private MPlaceholder placeHolder(final MPart part) {
 		return (MPlaceholder) Proxy.newProxyInstance(getClass()
-				.getClassLoader(), new Class<?>[] { MPlaceholder.class },
-				new InvocationHandler() {
-					@Override
-					public Object invoke(Object arg0, Method method,
-							Object[] arg2) throws Throwable {
-						if ("getRef".equals(method.getName())) {
-							return part;
-						}
-						return null;
+				.getClassLoader(), new Class<?>[] { MPlaceholder.class }, (Object arg0, Method method, Object[] arg2) -> {
+					if ("getRef".equals(method.getName())) {
+						return part;
 					}
+					return null;
 				});
 	}
 
