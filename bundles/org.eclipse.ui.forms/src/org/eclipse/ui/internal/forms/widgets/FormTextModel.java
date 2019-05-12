@@ -375,20 +375,27 @@ public class FormTextModel {
 		else {
 			for (int j = 0; j < value.length(); j++) {
 				char c = value.charAt(j);
-				if (c == ' ' || c == '\t') {
+				switch (c) {
+				case ' ':
+				case '\t':
 					// space
 					if (++spaceCounter[0] == 1) {
 						buf.append(c);
 					}
-				} else if (c == '\n' || c == '\r' || c == '\f') {
+					break;
+				case '\n':
+				case '\r':
+				case '\f':
 					// new line
 					if (++spaceCounter[0] == 1) {
 						buf.append(' ');
 					}
-				} else {
+					break;
+				default:
 					// other characters
 					spaceCounter[0] = 0;
 					buf.append(c);
+					break;
 				}
 			}
 		}

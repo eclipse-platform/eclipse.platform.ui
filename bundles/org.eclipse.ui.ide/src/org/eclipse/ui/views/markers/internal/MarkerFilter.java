@@ -309,17 +309,17 @@ public class MarkerFilter implements Cloneable {
 		}
 
 		IResource resource = marker.getResource();
-		if (onResource == ON_WORKING_SET) {
+		switch (onResource) {
+		case ON_WORKING_SET:
 			if (resource != null) {
 				return isEnclosed(resource);
 			}
-
-		} else if (onResource == ON_ANY_IN_SAME_CONTAINER) {
+			break;
+		case ON_ANY_IN_SAME_CONTAINER:
 			IProject project = resource.getProject();
 			if (project == null) {
 				return false;
 			}
-
 			for (IResource focusResource : focusResources) {
 				IProject selectedProject = focusResource.getProject();
 				if (selectedProject == null) {
@@ -330,13 +330,15 @@ public class MarkerFilter implements Cloneable {
 					return true;
 				}
 			}
-		} else if (onResource == ON_SELECTED_ONLY) {
+			break;
+		case ON_SELECTED_ONLY:
 			for (IResource focusResource : focusResources) {
 				if (resource.equals(focusResource)) {
 					return true;
 				}
 			}
-		} else if (onResource == ON_SELECTED_AND_CHILDREN) {
+			break;
+		case ON_SELECTED_AND_CHILDREN:
 			for (IResource focusResource : focusResources) {
 				IResource parentResource = resource;
 				while (parentResource != null) {
@@ -346,6 +348,9 @@ public class MarkerFilter implements Cloneable {
 					parentResource = parentResource.getParent();
 				}
 			}
+			break;
+		default:
+			break;
 		}
 		return false;
 	}

@@ -124,11 +124,12 @@ public class TableViewerRow extends ViewerRow {
 
 	@Override
 	public ViewerRow getNeighbor(int direction, boolean sameLevel) {
-		if( direction == ViewerRow.ABOVE ) {
+		switch (direction) {
+		case ViewerRow.ABOVE:
 			return getRowAbove();
-		} else if( direction == ViewerRow.BELOW ) {
+		case ViewerRow.BELOW:
 			return getRowBelow();
-		} else {
+		default:
 			throw new IllegalArgumentException("Illegal value of direction argument."); //$NON-NLS-1$
 		}
 	}

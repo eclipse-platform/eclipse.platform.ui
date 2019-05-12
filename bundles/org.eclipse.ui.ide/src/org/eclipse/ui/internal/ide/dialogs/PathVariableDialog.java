@@ -198,12 +198,17 @@ public class PathVariableDialog extends TitleAreaDialog {
 		this.pathVariableManager = pathVariableManager;
 		this.namesInUse = namesInUse;
 
-		if (operationMode == NEW_VARIABLE)
+		switch (operationMode) {
+		case NEW_VARIABLE:
 			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_newVariable;
-		else if (operationMode == EXISTING_VARIABLE)
+			break;
+		case EXISTING_VARIABLE:
 			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_existingVariable;
-		else
+			break;
+		default:
 			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_editLocation;
+			break;
+		}
 	}
 
 	/**
@@ -214,12 +219,17 @@ public class PathVariableDialog extends TitleAreaDialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		if (operationMode == NEW_VARIABLE)
+		switch (operationMode) {
+		case NEW_VARIABLE:
 			shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_newVariable);
-		else if (operationMode == EXISTING_VARIABLE)
+			break;
+		case EXISTING_VARIABLE:
 			shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_existingVariable);
-		else
+			break;
+		default:
 			shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_editLocation);
+			break;
+		}
 	}
 
 	/**
@@ -264,12 +274,17 @@ public class PathVariableDialog extends TitleAreaDialog {
 		contents.setLayout(new GridLayout(3, false));
 		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		if (operationMode == NEW_VARIABLE)
+		switch (operationMode) {
+		case NEW_VARIABLE:
 			setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_newVariable);
-		else if (operationMode == EXISTING_VARIABLE)
+			break;
+		case EXISTING_VARIABLE:
 			setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_existingVariable);
-		else
+			break;
+		default:
 			setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_editLinkLocation);
+			break;
+		}
 		setMessage(standardMessage);
 		return contents;
 	}

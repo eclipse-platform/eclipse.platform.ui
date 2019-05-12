@@ -129,18 +129,25 @@ public class LazySortedCollection {
 		 * @since 3.1
 		 */
 		private void setTarget(int newNode) {
-			if (direction == DIR_LEFT) {
+			switch (direction) {
+			case DIR_LEFT:
 				leftSubTree[startNode] = newNode;
-			} else if (direction == DIR_RIGHT) {
+				break;
+			case DIR_RIGHT:
 				rightSubTree[startNode] = newNode;
-			} else if (direction == DIR_UNSORTED) {
+				break;
+			case DIR_UNSORTED:
 				nextUnsorted[startNode] = newNode;
-			} else if (direction == DIR_ROOT) {
+				break;
+			case DIR_ROOT:
 				root = newNode;
-			} else if (direction == DIR_UNUSED) {
+				break;
+			case DIR_UNUSED:
 				firstUnusedNode = newNode;
+				break;
+			default:
+				break;
 			}
-
 			if (newNode != -1) {
 				parentTree[newNode] = startNode;
 			}

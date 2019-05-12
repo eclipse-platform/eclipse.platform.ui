@@ -93,11 +93,13 @@ class LogReader {
 					writer = null;
 				}
 
-				if (state == STACK_STATE) {
+				switch (state) {
+				case STACK_STATE:
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
 					writerState = STACK_STATE;
-				} else if (state == SESSION_STATE) {
+					break;
+				case SESSION_STATE:
 					session = new LogSession();
 					session.processLogLine(line);
 					swriter = new StringWriter();
@@ -107,7 +109,8 @@ class LogReader {
 					// if current session is most recent and not showing all sessions
 					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
 						entries.clear();
-				} else if (state == ENTRY_STATE) {
+					break;
+				case ENTRY_STATE:
 					if (currentSession == null) { // create fake session if there was no any
 						currentSession = new LogSession();
 					}
@@ -121,7 +124,8 @@ class LogReader {
 					} catch (ParseException pe) {
 						//do nothing, just toss the entry
 					}
-				} else if (state == SUBENTRY_STATE) {
+					break;
+				case SUBENTRY_STATE:
 					if (parents.size() > 0) {
 						try {
 							LogEntry entry = new LogEntry();
@@ -135,7 +139,8 @@ class LogReader {
 							//do nothing, just toss the bad entry
 						}
 					}
-				} else if (state == MESSAGE_STATE) {
+					break;
+				case MESSAGE_STATE:
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
 					String message = ""; //$NON-NLS-1$
@@ -144,6 +149,9 @@ class LogReader {
 					if (current != null)
 						current.setMessage(message);
 					writerState = MESSAGE_STATE;
+					break;
+				default:
+					break;
 				}
 			}
 

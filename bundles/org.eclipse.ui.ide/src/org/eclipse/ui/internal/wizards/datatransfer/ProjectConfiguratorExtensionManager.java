@@ -90,10 +90,12 @@ public class ProjectConfiguratorExtensionManager {
 			} else {
 				// Else, only load class and activate bundle if necessary (checked by activeWhen)
 				IConfigurationElement[] activeWhenElements = extension.getChildren("activeWhen"); //$NON-NLS-1$
-				if (activeWhenElements.length == 0) {
+				switch (activeWhenElements.length) {
+				case 0:
 					// by default, if no activeWhen, enable extension
 					addIt = true;
-				} else if (activeWhenElements.length == 1) {
+					break;
+				case 1:
 					IConfigurationElement activeWhen = activeWhenElements[0];
 					IConfigurationElement[] activeWhenChildren = activeWhen.getChildren();
 					if (activeWhenChildren.length == 1) {
@@ -107,13 +109,15 @@ public class ProjectConfiguratorExtensionManager {
 						}
 					} else {
 						IDEWorkbenchPlugin
-								.log("Could not evaluate xpression for " + extension.getContributor().getName() //$NON-NLS-1$
-										+ ": there must be exactly one child of 'activeWhen'"); //$NON-NLS-1$
+						.log("Could not evaluate xpression for " + extension.getContributor().getName() //$NON-NLS-1$
+								+ ": there must be exactly one child of 'activeWhen'"); //$NON-NLS-1$
 					}
-				} else {
+					break;
+				default:
 					IDEWorkbenchPlugin.log("Only one 'activeWhen' is authorized on extension point " //$NON-NLS-1$
 							+ EXTENSION_POINT_ID + ", for extension contributed by " + //$NON-NLS-1$
 							extension.getContributor().getName());
+					break;
 				}
 			}
 			if (addIt) {

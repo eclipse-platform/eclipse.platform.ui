@@ -246,12 +246,18 @@ public class ActionContributionItem extends ContributionItem {
 			int flags = SWT.PUSH;
 			if (action != null) {
 				int style = action.getStyle();
-				if (style == IAction.AS_CHECK_BOX) {
+				switch (style) {
+				case IAction.AS_CHECK_BOX:
 					flags = SWT.CHECK;
-				} else if (style == IAction.AS_RADIO_BUTTON) {
+					break;
+				case IAction.AS_RADIO_BUTTON:
 					flags = SWT.RADIO;
-				} else if (style == IAction.AS_DROP_DOWN_MENU) {
+					break;
+				case IAction.AS_DROP_DOWN_MENU:
 					flags = SWT.CASCADE;
+					break;
+				default:
+					break;
 				}
 			}
 
@@ -310,12 +316,18 @@ public class ActionContributionItem extends ContributionItem {
 			int flags = SWT.PUSH;
 			if (action != null) {
 				int style = action.getStyle();
-				if (style == IAction.AS_CHECK_BOX) {
+				switch (style) {
+				case IAction.AS_CHECK_BOX:
 					flags = SWT.CHECK;
-				} else if (style == IAction.AS_RADIO_BUTTON) {
+					break;
+				case IAction.AS_RADIO_BUTTON:
 					flags = SWT.RADIO;
-				} else if (style == IAction.AS_DROP_DOWN_MENU) {
+					break;
+				case IAction.AS_DROP_DOWN_MENU:
 					flags = SWT.DROP_DOWN;
+					break;
+				default:
+					break;
 				}
 			}
 

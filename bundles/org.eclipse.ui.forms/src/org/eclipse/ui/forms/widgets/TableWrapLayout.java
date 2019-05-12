@@ -425,12 +425,18 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			xloc = x + colWidth - width;
 		}
 		// align vertically
-		if (td.valign == TableWrapData.MIDDLE) {
+		switch (td.valign) {
+		case TableWrapData.MIDDLE:
 			yloc = y + (slotHeight - height) / 2;
-		} else if (td.valign == TableWrapData.BOTTOM) {
+			break;
+		case TableWrapData.BOTTOM:
 			yloc = y + slotHeight - height;
-		} else if (td.valign == TableWrapData.FILL) {
+			break;
+		case TableWrapData.FILL:
 			height = slotHeight;
+			break;
+		default:
+			break;
 		}
 		control.setBounds(xloc, yloc, width, height);
 	}
