@@ -973,8 +973,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			for (IPreferenceNode preferenceNode : nodes) {
 				IPreferenceNode selectedNode = preferenceNode;
 				// See if it passes all filters
-				for (int j = 0; j < filters.length; j++) {
-					if (!filters[j].select(this.treeViewer, preferenceManager.getRoot(), selectedNode)) {
+				for (ViewerFilter filter : filters) {
+					if (!filter.select(this.treeViewer, preferenceManager.getRoot(), selectedNode)) {
 						selectedNode = null;
 						break;
 					}

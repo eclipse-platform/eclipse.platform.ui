@@ -373,8 +373,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		// Count of elements we have added. See bug 205700 for why this is needed.
 		int newItems = 0;
 
-		elementloop: for (int i = 0; i < elements.length; i++) {
-			Object element = elements[i];
+		elementloop: for (Object element : elements) {
 			// update the index relative to the original item array
 			indexInItems = insertionPosition(items, comparator,
 					indexInItems, element, parentPath);
@@ -989,9 +988,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 		// Go through the items of the current collection
 		// If there is a mismatch return false
-		for (int i = 0; i < current.length; i++) {
-			if (current[i].getData() == null
-					|| !itemSet.containsKey(current[i].getData())) {
+		for (Item c : current) {
+			if (c.getData() == null || !itemSet.containsKey(c.getData())) {
 				return false;
 			}
 		}

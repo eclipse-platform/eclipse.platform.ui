@@ -560,8 +560,8 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 		// visible separators).
 		IContributionItem[] childItems = getItems();
 		boolean visibleChildren = false;
-		for (int j = 0; j < childItems.length; j++) {
-			if (isChildVisible(childItems[j]) && !childItems[j].isSeparator()) {
+		for (IContributionItem childItem : childItems) {
+			if (isChildVisible(childItem) && !childItem.isSeparator()) {
 				visibleChildren = true;
 				break;
 			}

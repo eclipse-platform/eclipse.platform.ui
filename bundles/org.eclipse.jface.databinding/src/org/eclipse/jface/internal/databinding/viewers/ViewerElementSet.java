@@ -207,8 +207,8 @@ public class ViewerElementSet<E> implements Set<E> {
 	@Override
 	public int hashCode() {
 		int hash = 0;
-		for (Iterator<?> iterator = iterator(); iterator.hasNext();) {
-			hash += Objects.hashCode(iterator.next());
+		for (Object element : this) {
+			hash += Objects.hashCode(element);
 		}
 		return hash;
 	}

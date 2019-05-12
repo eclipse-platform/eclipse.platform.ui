@@ -45,9 +45,8 @@ public class RenamableItem {
 	public void setName(String newName) {
 		this.name = newName;
 
-		Listener[] l = listeners.toArray(new Listener[listeners.size()]);
-		for (int i = 0; i < l.length; i++) {
-			l[i].handleChanged(this);
+		for (Listener listener : listeners) {
+			listener.handleChanged(this);
 		}
 	}
 

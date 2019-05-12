@@ -309,10 +309,11 @@ public class RadioGroup {
     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
     * </ul>
     */
-   public void deselectAll () {
-      for (int i = 0; i < buttons.length; i++)
-         buttons[i].setSelection(false);
-   }
+	public void deselectAll() {
+		for (IRadioButton button : buttons) {
+			button.setSelection(false);
+		}
+	}
 
    /**
     * Returns the zero-relative index of the item which currently

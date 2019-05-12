@@ -16,14 +16,14 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+
+import junit.framework.TestCase;
 
 /**
  * TestCase that provides the standard behavior expected for delegating test
@@ -132,8 +132,8 @@ public class ObservableDelegateTest extends TestCase {
 				null, null);
 
 		int count = 0;
-		for (int i = 0; i < observables.length; i++) {
-			if (observables[i] == observable) {
+		for (IObservable o : observables) {
+			if (o == observable) {
 				count++;
 			}
 		}

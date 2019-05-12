@@ -169,9 +169,10 @@ public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 			E element = (E) iterator.next();
 			// Cannot rely on c.contains(element) because we must compare
 			// elements using IElementComparer.
-			for (int i = 0; i < toRetain.length; i++) {
-				if (comparer.equals(element, toRetain[i]))
+			for (E toRet : toRetain) {
+				if (comparer.equals(element, toRet)) {
 					continue outer;
+				}
 			}
 			iterator.remove();
 			removals.add(element);

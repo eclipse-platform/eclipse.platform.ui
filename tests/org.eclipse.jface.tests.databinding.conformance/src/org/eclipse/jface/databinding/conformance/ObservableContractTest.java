@@ -69,9 +69,10 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				.runAndCollect(() -> created[0] = delegate.createObservable(new CurrentRealm(true)));
 		assertTrue(collected.length > 0);
 		boolean wasCollected = false;
-		for (int i = 0; i < collected.length; i++) {
-			if (collected[i] == created[0])
+		for (IObservable c : collected) {
+			if (c == created[0]) {
 				wasCollected = true;
+			}
 		}
 		assertTrue(wasCollected);
 	}

@@ -87,10 +87,10 @@ public class Snippet024SelectObservableValue {
 		IObservableValue<Color> listViewerSelection = ViewerProperties.singleSelection(Color.class).observe(listViewer);
 
 		SelectObservableValue<Color> radioGroup = new SelectObservableValue<>();
-		for (int i = 0; i < colors.length; i++) {
+		for (Color color : colors) {
 			Button button = new Button(group, SWT.RADIO);
-			button.setText(colors[i].toString());
-			radioGroup.addOption(colors[i], WidgetProperties.buttonSelection().observe(button));
+			button.setText(color.toString());
+			radioGroup.addOption(color, WidgetProperties.buttonSelection().observe(button));
 		}
 
 		DataBindingContext dbc = new DataBindingContext();

@@ -30,8 +30,8 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
@@ -131,8 +131,8 @@ public class ComboScenarios extends ScenariosTestCase {
 		try {
 			Method getter = list[0].getClass().getMethod(getterName);
 			try {
-				for (int i = 0; i < list.length; i++) {
-					result.add(getter.invoke(list[i]));
+				for (Object l : list) {
+					result.add(getter.invoke(l));
 				}
 			} catch (IllegalArgumentException e) {
 			} catch (IllegalAccessException e) {

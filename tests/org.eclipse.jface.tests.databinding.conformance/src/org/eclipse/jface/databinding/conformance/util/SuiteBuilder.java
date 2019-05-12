@@ -17,7 +17,6 @@ package org.eclipse.jface.databinding.conformance.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
@@ -98,36 +97,30 @@ public class SuiteBuilder {
 	public TestSuite build() {
 		TestSuite suite = new TestSuite();
 
-		for (Iterator<?> it = content.iterator(); it.hasNext();) {
-			Object o = it.next();
+		for (Object o : content) {
 			if (o instanceof Class) {
 				suite.addTestSuite((Class<? extends TestCase>) o);
 			} else if (o instanceof ParameterizedTest) {
 				ParameterizedTest test = (ParameterizedTest) o;
-
 				// Outer test named for parameterized test class
 				TestSuite testClassSuite = new TestSuite();
 				testClassSuite.setName(test.testClass.getName());
-
 				// Inner test named for parameter
 				TestSuite parameterSuite = new TestSuite();
 				parameterSuite.setName(test.parameters[0].getClass().getName());
 				testClassSuite.addTest(parameterSuite);
-
 				Method[] methods = test.testClass.getMethods();
-				for (int i = 0; i < methods.length; i++) {
-					String name = methods[i].getName();
+				for (Method method : methods) {
+					String name = method.getName();
 					if (name.startsWith("test")) {
 						try {
-							parameterSuite.addTest((Test) test.constructor
-									.newInstance(toParamArray(name,
-											test.parameters)));
+							parameterSuite
+							.addTest((Test) test.constructor.newInstance(toParamArray(name, test.parameters)));
 						} catch (Exception e) {
 							throw new RuntimeException(e);
 						}
 					}
 				}
-
 				if (testClassSuite.countTestCases() > 0)
 					suite.addTest(testClassSuite);
 			}
@@ -155,12 +148,10 @@ public class SuiteBuilder {
 		Constructor<?>[] constructors = clazz.getConstructors();
 		int expectedParametersLength = parameters.length + 1;
 
-		for (int i = 0; i < constructors.length; i++) {
-			Constructor<?> constructor = constructors[i];
+		for (Constructor<?> constructor : constructors) {
 			Class<?>[] types = constructor.getParameterTypes();
 
-			if (types.length != expectedParametersLength
-					|| !String.class.equals(types[0])) {
+			if (types.length != expectedParametersLength || !String.class.equals(types[0])) {
 				continue;
 			}
 

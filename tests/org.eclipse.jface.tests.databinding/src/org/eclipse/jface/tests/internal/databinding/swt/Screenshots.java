@@ -78,8 +78,7 @@ public class Screenshots {
 		Shell[] shells = display.getShells();
 		if (shells.length > 0) {
 			out.println("Shells: ");
-			for (int i = 0; i < shells.length; i++) {
-				Shell shell = shells[i];
+			for (Shell shell : shells) {
 				out.print(display.getActiveShell() == shell ? "  active, " : "  inactive, ");
 				out.print((shell.isVisible() ? "visible: " : "invisible: ") + shell);
 				out.println(" @ " + shell.getBounds().toString());

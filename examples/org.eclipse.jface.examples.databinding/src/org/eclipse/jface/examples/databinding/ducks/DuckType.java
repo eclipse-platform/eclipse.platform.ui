@@ -72,18 +72,17 @@ public class DuckType implements InvocationHandler {
      * @return true if every method in intrface is present on object.  false otherwise
      */
 	public static boolean instanceOf(Class<?> intrface, Object object) {
-        final Method[] methods = intrface.getMethods();
+		final Method[] methods = intrface.getMethods();
 		Class<?> candclass = object.getClass();
-        for (int methodidx = 0; methodidx < methods.length; methodidx++) {
-            Method method=methods[methodidx];
-            try {
-                candclass.getMethod(method.getName(), method.getParameterTypes());
-            } catch (NoSuchMethodException e) {
-                return false;
-            }
-        }
-        return true;
-    }
+		for (Method method : methods) {
+			try {
+				candclass.getMethod(method.getName(), method.getParameterTypes());
+			} catch (NoSuchMethodException e) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	protected DuckType(Object object) {
 		this.object = object;

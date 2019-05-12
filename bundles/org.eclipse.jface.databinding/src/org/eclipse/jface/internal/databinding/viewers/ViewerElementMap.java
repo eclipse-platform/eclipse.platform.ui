@@ -233,12 +233,14 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 			@Override
 			public boolean retainAll(Collection<?> c) {
 				boolean changed = false;
-				Object[] toRetain = c.toArray();
+				Object[] toRetains = c.toArray();
 				outer: for (Iterator<?> iterator = iterator(); iterator.hasNext();) {
 					Object entry = iterator.next();
-					for (int i = 0; i < toRetain.length; i++)
-						if (entry.equals(toRetain[i]))
+					for (Object toRetain : toRetains) {
+						if (entry.equals(toRetain)) {
 							continue outer;
+						}
+					}
 					iterator.remove();
 					changed = true;
 				}
@@ -371,11 +373,13 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 			@Override
 			public boolean retainAll(Collection<?> c) {
 				boolean changed = false;
-				Object[] toRetain = c.toArray();
+				Object[] toRetains = c.toArray();
 				outer: for (Object element : this) {
-					for (int i = 0; i < toRetain.length; i++)
-						if (comparer.equals(element, toRetain[i]))
+					for (Object toRetain : toRetains) {
+						if (comparer.equals(element, toRetain)) {
 							continue outer;
+						}
+					}
 					// element not contained in collection, remove.
 					remove(element);
 					changed = true;

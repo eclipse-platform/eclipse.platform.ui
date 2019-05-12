@@ -49,8 +49,8 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 			String delimiter) {
 		this.observableValues = observableValues;
 		this.delimiter = delimiter;
-		for (int i = 0; i < observableValues.length; i++) {
-			observableValues[i].addValueChangeListener(listener);
+		for (IObservableValue observableValue : observableValues) {
+			observableValue.addValueChangeListener(listener);
 		}
 		doGetValue();
 	}
@@ -62,11 +62,11 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 				delimiter);
 		try {
 			updating = true;
-			for (int i = 0; i < observableValues.length; i++) {
+			for (IObservableValue observableValue : observableValues) {
 				if (tokenizer.hasMoreElements()) {
-					observableValues[i].setValue(tokenizer.nextElement());
+					observableValue.setValue(tokenizer.nextElement());
 				} else {
-					observableValues[i].setValue(null);
+					observableValue.setValue(null);
 				}
 			}
 		} finally {
@@ -96,8 +96,8 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 
 	@Override
 	public synchronized void dispose() {
-		for (int i = 0; i < observableValues.length; i++) {
-			observableValues[i].removeValueChangeListener(listener);
+		for (IObservableValue observableValue : observableValues) {
+			observableValue.removeValueChangeListener(listener);
 		}
 		super.dispose();
 	}
