@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,8 @@ package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -60,7 +62,7 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) {
-				ArrayList<IBreakpoint> breakpointsToDelete = new ArrayList<>();
+				Set<IBreakpoint> breakpointsToDelete = new LinkedHashSet<>();
 				ArrayList<IWorkingSet> groupsToDelete = new ArrayList<>();
 				boolean deleteAll = false;
 				boolean deleteContainer = false;
