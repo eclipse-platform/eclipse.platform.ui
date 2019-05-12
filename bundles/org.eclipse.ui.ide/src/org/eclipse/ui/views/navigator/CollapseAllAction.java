@@ -19,30 +19,30 @@ import org.eclipse.ui.handlers.CollapseAllHandler;
 
 /**
  * Collapse all project nodes.
+ *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated
 public class CollapseAllAction extends ResourceNavigatorAction {
 
-    /**
-     * Creates the action.
-     *
-     * @param navigator the resource navigator
-     * @param label the label for the action
-     */
-    public CollapseAllAction(IResourceNavigator navigator, String label) {
-        super(navigator, label);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                INavigatorHelpContextIds.COLLAPSE_ALL_ACTION);
-        setEnabled(true);
-        setActionDefinitionId(CollapseAllHandler.COMMAND_ID);
-    }
+	/**
+	 * Creates the action.
+	 *
+	 * @param navigator the resource navigator
+	 * @param label     the label for the action
+	 */
+	public CollapseAllAction(IResourceNavigator navigator, String label) {
+		super(navigator, label);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, INavigatorHelpContextIds.COLLAPSE_ALL_ACTION);
+		setEnabled(true);
+		setActionDefinitionId(CollapseAllHandler.COMMAND_ID);
+	}
 
-    /*
-     * Implementation of method defined on <code>IAction</code>.
-     */
-    @Override
+	/*
+	 * Implementation of method defined on <code>IAction</code>.
+	 */
+	@Override
 	public void run() {
-        getNavigator().getViewer().collapseAll();
-    }
+		getNavigator().getViewer().collapseAll();
+	}
 }

@@ -23,58 +23,56 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 /**
  * The FilterSelectionAction opens the filters dialog.
+ *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated
 public class FilterSelectionAction extends ResourceNavigatorAction {
-    private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.FilterSelection_toolTip;
+	private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.FilterSelection_toolTip;
 
-    private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.FilterSelection_message;
+	private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.FilterSelection_message;
 
-    private static final String FILTER_TITLE_MESSAGE = ResourceNavigatorMessages.FilterSelection_title;
+	private static final String FILTER_TITLE_MESSAGE = ResourceNavigatorMessages.FilterSelection_title;
 
-    /**
-     * Creates the action.
-     *
-     * @param navigator the resource navigator
-     * @param label the label for the action
-     */
-    public FilterSelectionAction(IResourceNavigator navigator, String label) {
-        super(navigator, label);
-        setToolTipText(FILTER_TOOL_TIP);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                INavigatorHelpContextIds.FILTER_SELECTION_ACTION);
-        setEnabled(true);
-    }
+	/**
+	 * Creates the action.
+	 *
+	 * @param navigator the resource navigator
+	 * @param label     the label for the action
+	 */
+	public FilterSelectionAction(IResourceNavigator navigator, String label) {
+		super(navigator, label);
+		setToolTipText(FILTER_TOOL_TIP);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, INavigatorHelpContextIds.FILTER_SELECTION_ACTION);
+		setEnabled(true);
+	}
 
-    /*
-     * Implementation of method defined on <code>IAction</code>.
-     */
-    @Override
+	/*
+	 * Implementation of method defined on <code>IAction</code>.
+	 */
+	@Override
 	public void run() {
-        IResourceNavigator navigator = getNavigator();
-        ResourcePatternFilter filter = navigator.getPatternFilter();
-        FiltersContentProvider contentProvider = new FiltersContentProvider(
-                filter);
+		IResourceNavigator navigator = getNavigator();
+		ResourcePatternFilter filter = navigator.getPatternFilter();
+		FiltersContentProvider contentProvider = new FiltersContentProvider(filter);
 
-        ListSelectionDialog dialog = new ListSelectionDialog(getShell(),
-                getViewer(), contentProvider, new LabelProvider(),
-                FILTER_SELECTION_MESSAGE);
+		ListSelectionDialog dialog = new ListSelectionDialog(getShell(), getViewer(), contentProvider,
+				new LabelProvider(), FILTER_SELECTION_MESSAGE);
 
-        dialog.setTitle(FILTER_TITLE_MESSAGE);
-        dialog.setInitialSelections((Object[]) contentProvider.getInitialSelections());
-        dialog.open();
-        if (dialog.getReturnCode() == Window.OK) {
-            Object[] results = dialog.getResult();
-            String[] selectedPatterns = new String[results.length];
-            System.arraycopy(results, 0, selectedPatterns, 0, results.length);
-            filter.setPatterns(selectedPatterns);
-            navigator.setFiltersPreference(selectedPatterns);
-            Viewer viewer = getViewer();
-            viewer.getControl().setRedraw(false);
-            viewer.refresh();
-            viewer.getControl().setRedraw(true);
-        }
-    }
+		dialog.setTitle(FILTER_TITLE_MESSAGE);
+		dialog.setInitialSelections((Object[]) contentProvider.getInitialSelections());
+		dialog.open();
+		if (dialog.getReturnCode() == Window.OK) {
+			Object[] results = dialog.getResult();
+			String[] selectedPatterns = new String[results.length];
+			System.arraycopy(results, 0, selectedPatterns, 0, results.length);
+			filter.setPatterns(selectedPatterns);
+			navigator.setFiltersPreference(selectedPatterns);
+			Viewer viewer = getViewer();
+			viewer.getControl().setRedraw(false);
+			viewer.refresh();
+			viewer.getControl().setRedraw(true);
+		}
+	}
 
 }

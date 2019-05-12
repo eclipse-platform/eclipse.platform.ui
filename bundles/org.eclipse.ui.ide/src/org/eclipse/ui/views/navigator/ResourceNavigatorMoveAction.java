@@ -30,65 +30,64 @@ import org.eclipse.ui.actions.MoveProjectAction;
 import org.eclipse.ui.actions.MoveResourceAction;
 
 /**
- * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
- * to show the result of the move.
- * It also delegates to MoveProjectAction as needed.
+ * The ResourceNavigatorMoveAction is a resource move that aso updates the
+ * navigator to show the result of the move. It also delegates to
+ * MoveProjectAction as needed.
  *
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated
 public class ResourceNavigatorMoveAction extends MoveResourceAction {
-    private StructuredViewer viewer;
+	private StructuredViewer viewer;
 
-    private MoveProjectAction moveProjectAction;
+	private MoveProjectAction moveProjectAction;
 
-    /**
-     * Create a ResourceNavigatorMoveAction and use the supplied viewer to update the UI.
-     * @param shell Shell
-     * @param structureViewer StructuredViewer
-     */
-    public ResourceNavigatorMoveAction(Shell shell,
-            StructuredViewer structureViewer) {
-        super(shell);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                INavigatorHelpContextIds.RESOURCE_NAVIGATOR_MOVE_ACTION);
-        this.viewer = structureViewer;
-        this.moveProjectAction = new MoveProjectAction(shell);
-    }
+	/**
+	 * Create a ResourceNavigatorMoveAction and use the supplied viewer to update
+	 * the UI.
+	 *
+	 * @param shell           Shell
+	 * @param structureViewer StructuredViewer
+	 */
+	public ResourceNavigatorMoveAction(Shell shell, StructuredViewer structureViewer) {
+		super(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				INavigatorHelpContextIds.RESOURCE_NAVIGATOR_MOVE_ACTION);
+		this.viewer = structureViewer;
+		this.moveProjectAction = new MoveProjectAction(shell);
+	}
 
-    @Override
+	@Override
 	public void run() {
-        if (moveProjectAction.isEnabled()) {
-            moveProjectAction.run();
-            return;
-        }
+		if (moveProjectAction.isEnabled()) {
+			moveProjectAction.run();
+			return;
+		}
 
-        super.run();
-        List destinations = getDestinations();
-        if (destinations != null && destinations.isEmpty() == false) {
-            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            List resources = new ArrayList();
-            Iterator iterator = destinations.iterator();
+		super.run();
+		List destinations = getDestinations();
+		if (destinations != null && destinations.isEmpty() == false) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			List resources = new ArrayList();
+			Iterator iterator = destinations.iterator();
 
-            while (iterator.hasNext()) {
-                IResource newResource = root
-                        .findMember((IPath) iterator.next());
-                if (newResource != null) {
+			while (iterator.hasNext()) {
+				IResource newResource = root.findMember((IPath) iterator.next());
+				if (newResource != null) {
 					resources.add(newResource);
 				}
-            }
+			}
 
-            this.viewer.setSelection(new StructuredSelection(resources), true);
-        }
+			this.viewer.setSelection(new StructuredSelection(resources), true);
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-        moveProjectAction.selectionChanged(selection);
-        return super.updateSelection(selection)
-                || moveProjectAction.isEnabled();
-    }
+		moveProjectAction.selectionChanged(selection);
+		return super.updateSelection(selection) || moveProjectAction.isEnabled();
+	}
 
 }

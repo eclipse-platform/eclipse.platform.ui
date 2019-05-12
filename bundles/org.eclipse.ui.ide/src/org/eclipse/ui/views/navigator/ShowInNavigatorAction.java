@@ -35,77 +35,78 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
 /**
- * An action which shows the current selection in the Navigator view.
- * For each element in the selection, if it is an <code>IResource</code>
- * it uses it directly, otherwise if it is an <code>IMarker</code> it uses the marker's resource,
- * otherwise if it is an <code>IAdaptable</code>, it tries to get the <code>IResource.class</code> adapter.
+ * An action which shows the current selection in the Navigator view. For each
+ * element in the selection, if it is an <code>IResource</code> it uses it
+ * directly, otherwise if it is an <code>IMarker</code> it uses the marker's
+ * resource, otherwise if it is an <code>IAdaptable</code>, it tries to get the
+ * <code>IResource.class</code> adapter.
+ *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated
 public class ShowInNavigatorAction extends SelectionProviderAction {
-    private IWorkbenchPage page;
+	private IWorkbenchPage page;
 
-    /**
-     * Create a new instance of this class.
-     *
-     * @param page the page
-     * @param viewer the viewer
-     */
-    public ShowInNavigatorAction(IWorkbenchPage page, ISelectionProvider viewer) {
-        super(viewer, ResourceNavigatorMessages.ShowInNavigator_text);
-        Assert.isNotNull(page);
-        this.page = page;
-        setDescription(ResourceNavigatorMessages.ShowInNavigator_toolTip);
-        page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Create a new instance of this class.
+	 *
+	 * @param page   the page
+	 * @param viewer the viewer
+	 */
+	public ShowInNavigatorAction(IWorkbenchPage page, ISelectionProvider viewer) {
+		super(viewer, ResourceNavigatorMessages.ShowInNavigator_text);
+		Assert.isNotNull(page);
+		this.page = page;
+		setDescription(ResourceNavigatorMessages.ShowInNavigator_toolTip);
+		page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 				INavigatorHelpContextIds.SHOW_IN_NAVIGATOR_ACTION);
-    }
+	}
 
-    /**
-     * Returns the resources in the given selection.
-     *
-     * @return a list of <code>IResource</code>
-     */
+	/**
+	 * Returns the resources in the given selection.
+	 *
+	 * @return a list of <code>IResource</code>
+	 */
 	List<IResource> getResources(IStructuredSelection selection) {
 		List<IResource> v = new ArrayList<>();
 		for (Iterator<?> i = selection.iterator(); i.hasNext();) {
-            Object o = i.next();
+			Object o = i.next();
 
 			IResource resource = Adapters.adapt(o, IResource.class);
 			if (resource != null) {
 				v.add(resource);
-            } else if (o instanceof IMarker) {
+			} else if (o instanceof IMarker) {
 				resource = ((IMarker) o).getResource();
 				v.add(resource);
-            }
-        }
-        return v;
-    }
+			}
+		}
+		return v;
+	}
 
-    /**
-     * Shows the Navigator view and sets its selection to the resources
-     * selected in this action's selection provider.
-     */
-    @Override
+	/**
+	 * Shows the Navigator view and sets its selection to the resources selected in
+	 * this action's selection provider.
+	 */
+	@Override
 	public void run() {
 		List<IResource> v = getResources(getStructuredSelection());
-        if (v.isEmpty()) {
+		if (v.isEmpty()) {
 			return;
 		}
-        try {
-            IViewPart view = page.showView(IPageLayout.ID_RES_NAV);
-            if (view instanceof ISetSelectionTarget) {
-                ISelection selection = new StructuredSelection(v);
-                ((ISetSelectionTarget) view).selectReveal(selection);
-            }
-        } catch (PartInitException e) {
-            ErrorDialog.openError(page.getWorkbenchWindow().getShell(),
-                    ResourceNavigatorMessages.ShowInNavigator_errorMessage,
-                    e.getMessage(), e.getStatus());
-        }
-    }
+		try {
+			IViewPart view = page.showView(IPageLayout.ID_RES_NAV);
+			if (view instanceof ISetSelectionTarget) {
+				ISelection selection = new StructuredSelection(v);
+				((ISetSelectionTarget) view).selectReveal(selection);
+			}
+		} catch (PartInitException e) {
+			ErrorDialog.openError(page.getWorkbenchWindow().getShell(),
+					ResourceNavigatorMessages.ShowInNavigator_errorMessage, e.getMessage(), e.getStatus());
+		}
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(!getResources(selection).isEmpty());
-    }
+		setEnabled(!getResources(selection).isEmpty());
+	}
 }

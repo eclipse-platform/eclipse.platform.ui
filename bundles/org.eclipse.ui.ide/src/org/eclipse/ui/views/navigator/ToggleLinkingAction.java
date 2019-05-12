@@ -26,25 +26,24 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 @Deprecated
 public class ToggleLinkingAction extends ResourceNavigatorAction {
 
-
 	/**
 	 * Constructs a new action.
 	 *
 	 * @param navigator the resource navigator
-	 * @param label the label
+	 * @param label     the label
 	 */
-    public ToggleLinkingAction(IResourceNavigator navigator, String label) {
-        super(navigator, label);
+	public ToggleLinkingAction(IResourceNavigator navigator, String label) {
+		super(navigator, label);
 		setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR);
-        setChecked(navigator.isLinkingEnabled());
-    }
+		setChecked(navigator.isLinkingEnabled());
+	}
 
-    /**
-     * Runs the action.
-     */
-    @Override
+	/**
+	 * Runs the action.
+	 */
+	@Override
 	public void run() {
-        getNavigator().setLinkingEnabled(isChecked());
-    }
+		getNavigator().setLinkingEnabled(isChecked());
+	}
 
 }

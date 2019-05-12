@@ -26,20 +26,19 @@ import org.eclipse.swt.dnd.TransferData;
  *
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
- * @deprecated as of 3.5, use {@link org.eclipse.jface.util.LocalSelectionTransfer} instead
+ * @deprecated as of 3.5, use
+ *             {@link org.eclipse.jface.util.LocalSelectionTransfer} instead
  */
 @Deprecated
-public class LocalSelectionTransfer extends
-		org.eclipse.jface.util.LocalSelectionTransfer {
+public class LocalSelectionTransfer extends org.eclipse.jface.util.LocalSelectionTransfer {
 
 	private static final LocalSelectionTransfer INSTANCE = new LocalSelectionTransfer();
 
 	/**
-	 * The get/set methods delegate to JFace's LocalSelectionTransfer to allow
-	 * data to be exchanged freely whether the client uses this
-	 * LocalSelectionTransfer or JFace's LocalSelectionTransfer. Protected
-	 * methods such as getTypeIds() are handled via inheritance, not delegation
-	 * due to visibility constraints.
+	 * The get/set methods delegate to JFace's LocalSelectionTransfer to allow data
+	 * to be exchanged freely whether the client uses this LocalSelectionTransfer or
+	 * JFace's LocalSelectionTransfer. Protected methods such as getTypeIds() are
+	 * handled via inheritance, not delegation due to visibility constraints.
 	 */
 	private org.eclipse.jface.util.LocalSelectionTransfer jfaceTransfer = org.eclipse.jface.util.LocalSelectionTransfer
 			.getTransfer();

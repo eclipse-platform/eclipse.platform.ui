@@ -50,10 +50,9 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
 
-
 /**
- * Implements drop behaviour for drag and drop operations
- * that land on the resource navigator.
+ * Implements drop behaviour for drag and drop operations that land on the
+ * resource navigator.
  *
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
@@ -61,246 +60,235 @@ import org.eclipse.ui.part.ResourceTransfer;
 @Deprecated
 public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 
-    /**
-     * A flag indicating that overwrites should always occur.
-     */
-    private boolean alwaysOverwrite = false;
+	/**
+	 * A flag indicating that overwrites should always occur.
+	 */
+	private boolean alwaysOverwrite = false;
 
-    /**
-     * The last valid operation.
-     */
-    private int lastValidOperation = DND.DROP_NONE;
+	/**
+	 * The last valid operation.
+	 */
+	private int lastValidOperation = DND.DROP_NONE;
 
-    /**
-     * Constructs a new drop adapter.
-     *
-     * @param viewer the navigator's viewer
-     */
-    public NavigatorDropAdapter(StructuredViewer viewer) {
-        super(viewer);
-    }
+	/**
+	 * Constructs a new drop adapter.
+	 *
+	 * @param viewer the navigator's viewer
+	 */
+	public NavigatorDropAdapter(StructuredViewer viewer) {
+		super(viewer);
+	}
 
-    /*
-     * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
-     */
-    @Override
+	/*
+	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.
+	 * DropTargetEvent)
+	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
-        if (FileTransfer.getInstance().isSupportedType(event.currentDataType)
-                && event.detail == DND.DROP_DEFAULT) {
-            // default to copy when dragging from outside Eclipse. Fixes bug 16308.
-       		event.detail = DND.DROP_COPY;
-          }
-        super.dragEnter(event);
-    }
-
+		if (FileTransfer.getInstance().isSupportedType(event.currentDataType) && event.detail == DND.DROP_DEFAULT) {
+			// default to copy when dragging from outside Eclipse. Fixes bug 16308.
+			event.detail = DND.DROP_COPY;
+		}
+		super.dragEnter(event);
+	}
 
 	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		super.dragOperationChanged(event);
 	}
 
-    /**
-     * Returns an error status with the given info.
-     */
-    private IStatus error(String message) {
-        return error(message, null);
-    }
+	/**
+	 * Returns an error status with the given info.
+	 */
+	private IStatus error(String message) {
+		return error(message, null);
+	}
 
-    /**
-     * Returns an error status with the given info.
-     */
-    private IStatus error(String message, Throwable exception) {
-        return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message,
-                exception);
-    }
+	/**
+	 * Returns an error status with the given info.
+	 */
+	private IStatus error(String message, Throwable exception) {
+		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception);
+	}
 
-    /**
-     * Returns the actual target of the drop, given the resource
-     * under the mouse.  If the mouse target is a file, then the drop actually
-     * occurs in its parent.  If the drop location is before or after the
-     * mouse target and feedback is enabled, the target is also the parent.
-     */
-    private IContainer getActualTarget(IResource mouseTarget) {
-        /* if cursor is before or after mouseTarget, set target to parent */
-        if (getFeedbackEnabled()) {
-            if (getCurrentLocation() == LOCATION_BEFORE
-                    || getCurrentLocation() == LOCATION_AFTER) {
-                return mouseTarget.getParent();
-            }
-        }
-        /* if cursor is on a file, return the parent */
-        if (mouseTarget.getType() == IResource.FILE) {
-            return mouseTarget.getParent();
-        }
-        /* otherwise the mouseTarget is the real target */
-        return (IContainer) mouseTarget;
-    }
+	/**
+	 * Returns the actual target of the drop, given the resource under the mouse. If
+	 * the mouse target is a file, then the drop actually occurs in its parent. If
+	 * the drop location is before or after the mouse target and feedback is
+	 * enabled, the target is also the parent.
+	 */
+	private IContainer getActualTarget(IResource mouseTarget) {
+		/* if cursor is before or after mouseTarget, set target to parent */
+		if (getFeedbackEnabled()) {
+			if (getCurrentLocation() == LOCATION_BEFORE || getCurrentLocation() == LOCATION_AFTER) {
+				return mouseTarget.getParent();
+			}
+		}
+		/* if cursor is on a file, return the parent */
+		if (mouseTarget.getType() == IResource.FILE) {
+			return mouseTarget.getParent();
+		}
+		/* otherwise the mouseTarget is the real target */
+		return (IContainer) mouseTarget;
+	}
 
-    /**
-     * Returns the display
-     */
-    private Display getDisplay() {
-        return getViewer().getControl().getDisplay();
-    }
+	/**
+	 * Returns the display
+	 */
+	private Display getDisplay() {
+		return getViewer().getControl().getDisplay();
+	}
 
-    /**
-     * Returns the resource selection from the LocalSelectionTransfer.
-     *
-     * @return the resource selection from the LocalSelectionTransfer
-     */
-    private IResource[] getSelectedResources() {
+	/**
+	 * Returns the resource selection from the LocalSelectionTransfer.
+	 *
+	 * @return the resource selection from the LocalSelectionTransfer
+	 */
+	private IResource[] getSelectedResources() {
 		ArrayList<IResource> selectedResources = new ArrayList<>();
 
-        ISelection selection = LocalSelectionTransfer.getInstance()
-                .getSelection();
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection ssel = (IStructuredSelection) selection;
+		ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) selection;
 			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
-                Object o = i.next();
+				Object o = i.next();
 
 				IResource r = Adapters.adapt(o, IResource.class);
 				if (r != null) {
 					selectedResources.add(r);
-                }
-            }
-        }
-        return selectedResources.toArray(new IResource[selectedResources.size()]);
-    }
+				}
+			}
+		}
+		return selectedResources.toArray(new IResource[selectedResources.size()]);
+	}
 
-    /**
-     * Returns the shell
-     */
-    private Shell getShell() {
-        return getViewer().getControl().getShell();
-    }
+	/**
+	 * Returns the shell
+	 */
+	private Shell getShell() {
+		return getViewer().getControl().getShell();
+	}
 
-    /**
-     * Returns an error status with the given info.
-     */
-    private IStatus info(String message) {
-        return new Status(IStatus.INFO, PlatformUI.PLUGIN_ID, 0, message, null);
-    }
+	/**
+	 * Returns an error status with the given info.
+	 */
+	private IStatus info(String message) {
+		return new Status(IStatus.INFO, PlatformUI.PLUGIN_ID, 0, message, null);
+	}
 
-    /**
-     * Adds the given status to the list of problems.  Discards
-     * OK statuses.  If the status is a multi-status, only its children
-     * are added.
-     */
-    private void mergeStatus(MultiStatus status, IStatus toMerge) {
-        if (!toMerge.isOK()) {
-            status.merge(toMerge);
-        }
-    }
+	/**
+	 * Adds the given status to the list of problems. Discards OK statuses. If the
+	 * status is a multi-status, only its children are added.
+	 */
+	private void mergeStatus(MultiStatus status, IStatus toMerge) {
+		if (!toMerge.isOK()) {
+			status.merge(toMerge);
+		}
+	}
 
-    /**
-     * Returns an status indicating success.
-     */
-    private IStatus ok() {
-        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0,
-                ResourceNavigatorMessages.DropAdapter_ok, null);
-    }
+	/**
+	 * Returns an status indicating success.
+	 */
+	private IStatus ok() {
+		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, ResourceNavigatorMessages.DropAdapter_ok, null);
+	}
 
-    /**
-     * Opens an error dialog if necessary.  Takes care of
-     * complex rules necessary for making the error dialog look nice.
-     */
-    private void openError(IStatus status) {
-        if (status == null) {
+	/**
+	 * Opens an error dialog if necessary. Takes care of complex rules necessary for
+	 * making the error dialog look nice.
+	 */
+	private void openError(IStatus status) {
+		if (status == null) {
 			return;
 		}
 
-        String genericTitle = ResourceNavigatorMessages.DropAdapter_title;
-        int codes = IStatus.ERROR | IStatus.WARNING;
+		String genericTitle = ResourceNavigatorMessages.DropAdapter_title;
+		int codes = IStatus.ERROR | IStatus.WARNING;
 
-        //simple case: one error, not a multistatus
-        if (!status.isMultiStatus()) {
-            ErrorDialog
-                    .openError(getShell(), genericTitle, null, status, codes);
-            return;
-        }
+		// simple case: one error, not a multistatus
+		if (!status.isMultiStatus()) {
+			ErrorDialog.openError(getShell(), genericTitle, null, status, codes);
+			return;
+		}
 
-        //one error, single child of multistatus
-        IStatus[] children = status.getChildren();
-        if (children.length == 1) {
-            ErrorDialog.openError(getShell(), status.getMessage(), null,
-                    children[0], codes);
-            return;
-        }
-        //several problems
-        ErrorDialog.openError(getShell(), genericTitle, null, status, codes);
-    }
+		// one error, single child of multistatus
+		IStatus[] children = status.getChildren();
+		if (children.length == 1) {
+			ErrorDialog.openError(getShell(), status.getMessage(), null, children[0], codes);
+			return;
+		}
+		// several problems
+		ErrorDialog.openError(getShell(), genericTitle, null, status, codes);
+	}
 
-    /**
-     * Perform the drop.
-     * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
-     */
-    @Override
+	/**
+	 * Perform the drop.
+	 *
+	 * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
+	 */
+	@Override
 	public boolean performDrop(final Object data) {
-        alwaysOverwrite = false;
-        if (getCurrentTarget() == null || data == null) {
-            return false;
-        }
-        boolean result = false;
-        IStatus status = null;
-        IResource[] resources = null;
-        TransferData currentTransfer = getCurrentTransfer();
-        if (LocalSelectionTransfer.getInstance().isSupportedType(
-                currentTransfer)) {
-            resources = getSelectedResources();
-        } else if (ResourceTransfer.getInstance().isSupportedType(
-                currentTransfer)) {
-            resources = (IResource[]) data;
-        } else if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
-            status = performFileDrop(data);
-            result = status.isOK();
-        } else {
-            result = NavigatorDropAdapter.super.performDrop(data);
-        }
-        if (resources != null && resources.length > 0) {
-            if (getCurrentOperation() == DND.DROP_COPY) {
+		alwaysOverwrite = false;
+		if (getCurrentTarget() == null || data == null) {
+			return false;
+		}
+		boolean result = false;
+		IStatus status = null;
+		IResource[] resources = null;
+		TransferData currentTransfer = getCurrentTransfer();
+		if (LocalSelectionTransfer.getInstance().isSupportedType(currentTransfer)) {
+			resources = getSelectedResources();
+		} else if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
+			resources = (IResource[]) data;
+		} else if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
+			status = performFileDrop(data);
+			result = status.isOK();
+		} else {
+			result = NavigatorDropAdapter.super.performDrop(data);
+		}
+		if (resources != null && resources.length > 0) {
+			if (getCurrentOperation() == DND.DROP_COPY) {
 				status = performResourceCopy(getShell(), resources);
 			} else {
 				status = performResourceMove(resources);
 			}
-        }
-        openError(status);
-        return result;
-    }
-
-    /**
-     * Performs a drop using the FileTransfer transfer type.
-     */
-    private IStatus performFileDrop(Object data) {
-        MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0,
-                ResourceNavigatorMessages.DropAdapter_problemImporting, null);
-        mergeStatus(problems, validateTarget(getCurrentTarget(),
-                getCurrentTransfer()));
-
-		final int currentOperation= getCurrentOperation();
-        final IContainer target = getActualTarget((IResource) getCurrentTarget());
-        final String[] names = (String[]) data;
-        // Run the import operation asynchronously.
-        // Otherwise the drag source (e.g., Windows Explorer) will be blocked
-        // while the operation executes. Fixes bug 16478.
-        Display.getCurrent().asyncExec(() -> {
-		    getShell().forceActive();
-			new CopyFilesAndFoldersOperation(getShell()).copyOrLinkFiles(names, target, currentOperation);
-		});
-        return problems;
-    }
+		}
+		openError(status);
+		return result;
+	}
 
 	/**
-     * Performs a resource copy
-     */
-    private IStatus performResourceCopy(Shell shell, IResource[] sources) {
-        MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1,
-                ResourceNavigatorMessages.DropAdapter_problemsMoving, null);
-        mergeStatus(problems, validateTarget(getCurrentTarget(),
-                getCurrentTransfer()));
+	 * Performs a drop using the FileTransfer transfer type.
+	 */
+	private IStatus performFileDrop(Object data) {
+		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0,
+				ResourceNavigatorMessages.DropAdapter_problemImporting, null);
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
-        IContainer target = getActualTarget((IResource) getCurrentTarget());
+		final int currentOperation = getCurrentOperation();
+		final IContainer target = getActualTarget((IResource) getCurrentTarget());
+		final String[] names = (String[]) data;
+		// Run the import operation asynchronously.
+		// Otherwise the drag source (e.g., Windows Explorer) will be blocked
+		// while the operation executes. Fixes bug 16478.
+		Display.getCurrent().asyncExec(() -> {
+			getShell().forceActive();
+			new CopyFilesAndFoldersOperation(getShell()).copyOrLinkFiles(names, target, currentOperation);
+		});
+		return problems;
+	}
 
-        boolean shouldLinkAutomatically = false;
+	/**
+	 * Performs a resource copy
+	 */
+	private IStatus performResourceCopy(Shell shell, IResource[] sources) {
+		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1,
+				ResourceNavigatorMessages.DropAdapter_problemsMoving, null);
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
+
+		IContainer target = getActualTarget((IResource) getCurrentTarget());
+
+		boolean shouldLinkAutomatically = false;
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
 			for (IResource source : sources) {
@@ -311,15 +299,14 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 			}
 		}
 
-		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
-                shell);
+		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
 
-		// if the target is a group and all sources are files, then automatically create links
+		// if the target is a group and all sources are files, then automatically create
+		// links
 		if (shouldLinkAutomatically) {
 			operation.setCreateLinks(true);
 			operation.copyResources(sources, target);
-		}
-		else {
+		} else {
 			boolean allSourceAreLinksOrGroups = true;
 			for (int i = 0; i < sources.length; i++) {
 				if (!sources[0].isVirtual() && !sources[0].isLinked()) {
@@ -327,10 +314,13 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 					break;
 				}
 			}
-			// if all sources are either links or groups, copy then normally, don't show the dialog
+			// if all sources are either links or groups, copy then normally, don't show the
+			// dialog
 			if (!allSourceAreLinksOrGroups) {
-				IPreferenceStore store= IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-				String dndPreference= store.getString(target.isVirtual() ? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE : IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE);
+				IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+				String dndPreference = store.getString(
+						target.isVirtual() ? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE
+								: IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE);
 
 				if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT)) {
 					ImportTypeDialog dialog = new ImportTypeDialog(getShell(), getCurrentOperation(), sources, target);
@@ -343,32 +333,28 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 						if (dialog.getVariable() != null)
 							operation.setRelativeVariable(dialog.getVariable());
 						operation.copyResources(sources, target);
-					}
-					else
+					} else
 						return problems;
-				}
-				else
+				} else
 					operation.copyResources(sources, target);
-			}
-			else
+			} else
 				operation.copyResources(sources, target);
 		}
 
-        return problems;
-    }
+		return problems;
+	}
 
-    /**
-     * Performs a resource move
-     */
-    private IStatus performResourceMove(IResource[] sources) {
-        MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1,
-                ResourceNavigatorMessages.DropAdapter_problemsMoving, null);
-        mergeStatus(problems, validateTarget(getCurrentTarget(),
-                getCurrentTransfer()));
+	/**
+	 * Performs a resource move
+	 */
+	private IStatus performResourceMove(IResource[] sources) {
+		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1,
+				ResourceNavigatorMessages.DropAdapter_problemsMoving, null);
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
-        IContainer target = getActualTarget((IResource) getCurrentTarget());
+		IContainer target = getActualTarget((IResource) getCurrentTarget());
 
-        boolean shouldLinkAutomatically = false;
+		boolean shouldLinkAutomatically = false;
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
 			for (IResource source : sources) {
@@ -380,132 +366,122 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 		}
 
 		if (shouldLinkAutomatically) {
-			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
-	                getShell());
+			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
 			operation.setCreateLinks(true);
-	        operation.copyResources(sources, target);
-		}
-		else {
-			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
-	                getShell(),
-	                ResourceNavigatorMessages.MoveResourceAction_title,
-	                ResourceNavigatorMessages.MoveResourceAction_checkMoveMessage);
-	        sources = checker.checkReadOnlyResources(sources);
-	        MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(
-	                getShell());
-	        operation.copyResources(sources, target);
+			operation.copyResources(sources, target);
+		} else {
+			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(),
+					ResourceNavigatorMessages.MoveResourceAction_title,
+					ResourceNavigatorMessages.MoveResourceAction_checkMoveMessage);
+			sources = checker.checkReadOnlyResources(sources);
+			MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
+			operation.copyResources(sources, target);
 		}
 
-        return problems;
-    }
+		return problems;
+	}
 
-    /*
-     * @see org.eclipse.ui.dialogs.IOverwriteQuery#queryOverwrite(java.lang.String)
-     */
-    @Override
+	/*
+	 * @see org.eclipse.ui.dialogs.IOverwriteQuery#queryOverwrite(java.lang.String)
+	 */
+	@Override
 	public String queryOverwrite(String pathString) {
-        if (alwaysOverwrite) {
+		if (alwaysOverwrite) {
 			return ALL;
 		}
 
-        final String returnCode[] = { CANCEL };
-        final String msg = NLS.bind(ResourceNavigatorMessages.DropAdapter_overwriteQuery, pathString);
-        final String[] options = { IDialogConstants.YES_LABEL,
-                IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL,
-                IDialogConstants.CANCEL_LABEL };
-        getDisplay().syncExec(() -> {
-		    MessageDialog dialog = new MessageDialog(
-		            getShell(),
-					ResourceNavigatorMessages.DropAdapter_question, null, msg, MessageDialog.QUESTION, 0, options);
-		    dialog.open();
-		    int returnVal = dialog.getReturnCode();
-		    String[] returnCodes = { YES, ALL, NO, CANCEL };
-		    returnCode[0] = returnVal < 0 ? CANCEL : returnCodes[returnVal];
+		final String returnCode[] = { CANCEL };
+		final String msg = NLS.bind(ResourceNavigatorMessages.DropAdapter_overwriteQuery, pathString);
+		final String[] options = { IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL,
+				IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
+		getDisplay().syncExec(() -> {
+			MessageDialog dialog = new MessageDialog(getShell(), ResourceNavigatorMessages.DropAdapter_question, null,
+					msg, MessageDialog.QUESTION, 0, options);
+			dialog.open();
+			int returnVal = dialog.getReturnCode();
+			String[] returnCodes = { YES, ALL, NO, CANCEL };
+			returnCode[0] = returnVal < 0 ? CANCEL : returnCodes[returnVal];
 		});
-        if (returnCode[0] == ALL) {
+		if (returnCode[0] == ALL) {
 			alwaysOverwrite = true;
 		}
-        return returnCode[0];
-    }
+		return returnCode[0];
+	}
 
-    /**
-     * This method is used to notify the action that some aspect of
-     * the drop operation has changed.
-     */
-    @Override
-	public boolean validateDrop(Object target, int dragOperation,
-            TransferData transferType) {
+	/**
+	 * This method is used to notify the action that some aspect of the drop
+	 * operation has changed.
+	 */
+	@Override
+	public boolean validateDrop(Object target, int dragOperation, TransferData transferType) {
 
-        if (dragOperation != DND.DROP_NONE) {
-            lastValidOperation = dragOperation;
-        }
-        if (FileTransfer.getInstance().isSupportedType(transferType)
-                && (lastValidOperation != DND.DROP_COPY)) {
-            return false;
-        }
-        if (super.validateDrop(target, dragOperation, transferType)) {
-            return true;
-        }
-        return validateTarget(target, transferType).isOK();
-    }
+		if (dragOperation != DND.DROP_NONE) {
+			lastValidOperation = dragOperation;
+		}
+		if (FileTransfer.getInstance().isSupportedType(transferType) && (lastValidOperation != DND.DROP_COPY)) {
+			return false;
+		}
+		if (super.validateDrop(target, dragOperation, transferType)) {
+			return true;
+		}
+		return validateTarget(target, transferType).isOK();
+	}
 
-    /**
-     * Ensures that the drop target meets certain criteria
-     */
-    private IStatus validateTarget(Object target, TransferData transferType) {
-        if (!(target instanceof IResource)) {
-            return info(ResourceNavigatorMessages.DropAdapter_targetMustBeResource);
-        }
-        IResource resource = (IResource) target;
-        if (!resource.isAccessible()) {
-            return error(ResourceNavigatorMessages.DropAdapter_canNotDropIntoClosedProject);
-        }
-        IContainer destination = getActualTarget(resource);
-        if (destination.getType() == IResource.ROOT) {
-            return error(ResourceNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings);
-        }
-        String message = null;
-        // drag within Eclipse?
-        if (LocalSelectionTransfer.getInstance().isSupportedType(transferType)) {
-            IResource[] selectedResources = getSelectedResources();
+	/**
+	 * Ensures that the drop target meets certain criteria
+	 */
+	private IStatus validateTarget(Object target, TransferData transferType) {
+		if (!(target instanceof IResource)) {
+			return info(ResourceNavigatorMessages.DropAdapter_targetMustBeResource);
+		}
+		IResource resource = (IResource) target;
+		if (!resource.isAccessible()) {
+			return error(ResourceNavigatorMessages.DropAdapter_canNotDropIntoClosedProject);
+		}
+		IContainer destination = getActualTarget(resource);
+		if (destination.getType() == IResource.ROOT) {
+			return error(ResourceNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings);
+		}
+		String message = null;
+		// drag within Eclipse?
+		if (LocalSelectionTransfer.getInstance().isSupportedType(transferType)) {
+			IResource[] selectedResources = getSelectedResources();
 
-            if (selectedResources.length == 0) {
+			if (selectedResources.length == 0) {
 				message = ResourceNavigatorMessages.DropAdapter_dropOperationErrorOther;
 			} else {
-                CopyFilesAndFoldersOperation operation;
-                if (lastValidOperation == DND.DROP_COPY) {
-                    operation = new CopyFilesAndFoldersOperation(getShell());
+				CopyFilesAndFoldersOperation operation;
+				if (lastValidOperation == DND.DROP_COPY) {
+					operation = new CopyFilesAndFoldersOperation(getShell());
 					if (operation.validateDestination(destination, selectedResources) != null) {
 						operation.setVirtualFolders(true);
 						message = operation.validateDestination(destination, selectedResources);
 					}
-                } else {
-                    operation = new MoveFilesAndFoldersOperation(getShell());
-                	if (operation.validateDestination(destination, selectedResources) != null) {
+				} else {
+					operation = new MoveFilesAndFoldersOperation(getShell());
+					if (operation.validateDestination(destination, selectedResources) != null) {
 						operation.setVirtualFolders(true);
 						message = operation.validateDestination(destination, selectedResources);
 						if (message == null)
 							lastValidOperation = DND.DROP_COPY;
 					}
-                }
-            }
-        } // file import?
-        else if (FileTransfer.getInstance().isSupportedType(transferType)) {
-            String[] sourceNames = (String[]) FileTransfer.getInstance()
-                    .nativeToJava(transferType);
-            if (sourceNames == null) {
-                // source names will be null on Linux. Use empty names to do destination validation.
-                // Fixes bug 29778
-                sourceNames = new String[0];
-            }
-            CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(
-                    getShell());
-            message = copyOperation.validateImportDestination(destination,
-                    sourceNames);
-        }
-        if (message != null) {
-            return error(message);
-        }
-        return ok();
-    }
+				}
+			}
+		} // file import?
+		else if (FileTransfer.getInstance().isSupportedType(transferType)) {
+			String[] sourceNames = (String[]) FileTransfer.getInstance().nativeToJava(transferType);
+			if (sourceNames == null) {
+				// source names will be null on Linux. Use empty names to do destination
+				// validation.
+				// Fixes bug 29778
+				sourceNames = new String[0];
+			}
+			CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
+			message = copyOperation.validateImportDestination(destination, sourceNames);
+		}
+		if (message != null) {
+			return error(message);
+		}
+		return ok();
+	}
 }

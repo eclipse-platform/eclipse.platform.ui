@@ -32,100 +32,91 @@ import org.eclipse.ui.views.framelist.UpAction;
 
 /**
  * This is the action group for the goto actions.
+ *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated
 public class GotoActionGroup extends ResourceNavigatorActionGroup {
 
-    private BackAction backAction;
+	private BackAction backAction;
 
-    private ForwardAction forwardAction;
+	private ForwardAction forwardAction;
 
-    private GoIntoAction goIntoAction;
+	private GoIntoAction goIntoAction;
 
-    private UpAction upAction;
+	private UpAction upAction;
 
-    private GotoResourceAction goToResourceAction;
+	private GotoResourceAction goToResourceAction;
 
-    public GotoActionGroup(IResourceNavigator navigator) {
-        super(navigator);
-    }
+	public GotoActionGroup(IResourceNavigator navigator) {
+		super(navigator);
+	}
 
-    @Override
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
-        IStructuredSelection selection = (IStructuredSelection) getContext()
-                .getSelection();
-        if (selection.size() == 1) {
-            if (ResourceSelectionUtil.allResourcesAreOfType(selection,
-                    IResource.FOLDER)) {
-                menu.add(goIntoAction);
-            } else {
-                IStructuredSelection resourceSelection = ResourceSelectionUtil
-                        .allResources(selection, IResource.PROJECT);
-                if (resourceSelection != null && !resourceSelection.isEmpty()) {
-                    IProject project = (IProject) resourceSelection
-                            .getFirstElement();
-                    if (project.isOpen()) {
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+		if (selection.size() == 1) {
+			if (ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.FOLDER)) {
+				menu.add(goIntoAction);
+			} else {
+				IStructuredSelection resourceSelection = ResourceSelectionUtil.allResources(selection,
+						IResource.PROJECT);
+				if (resourceSelection != null && !resourceSelection.isEmpty()) {
+					IProject project = (IProject) resourceSelection.getFirstElement();
+					if (project.isOpen()) {
 						menu.add(goIntoAction);
 					}
-                }
-            }
-        }
-    }
+				}
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
-        actionBars.setGlobalActionHandler(IWorkbenchActionConstants.GO_INTO,
-                goIntoAction);
-        actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
-                backAction);
-        actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(),
-                forwardAction);
-        actionBars.setGlobalActionHandler(IWorkbenchActionConstants.UP,
-                upAction);
-        actionBars.setGlobalActionHandler(
-                IWorkbenchActionConstants.GO_TO_RESOURCE, goToResourceAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.GO_INTO, goIntoAction);
+		actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(), backAction);
+		actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(), forwardAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.UP, upAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.GO_TO_RESOURCE, goToResourceAction);
 
-        IToolBarManager toolBar = actionBars.getToolBarManager();
-        toolBar.add(backAction);
-        toolBar.add(forwardAction);
-        toolBar.add(upAction);
-    }
+		IToolBarManager toolBar = actionBars.getToolBarManager();
+		toolBar.add(backAction);
+		toolBar.add(forwardAction);
+		toolBar.add(upAction);
+	}
 
-    @Override
+	@Override
 	protected void makeActions() {
-        FrameList frameList = navigator.getFrameList();
-        goIntoAction = new GoIntoAction(frameList);
-        backAction = new BackAction(frameList);
-        forwardAction = new ForwardAction(frameList);
-        upAction = new UpAction(frameList);
-        goToResourceAction = new GotoResourceAction(navigator,
-                ResourceNavigatorMessages.GoToResource_label);
-    }
+		FrameList frameList = navigator.getFrameList();
+		goIntoAction = new GoIntoAction(frameList);
+		backAction = new BackAction(frameList);
+		forwardAction = new ForwardAction(frameList);
+		upAction = new UpAction(frameList);
+		goToResourceAction = new GotoResourceAction(navigator, ResourceNavigatorMessages.GoToResource_label);
+	}
 
-    @Override
+	@Override
 	public void updateActionBars() {
-        ActionContext context = getContext();
-        boolean enable = false;
+		ActionContext context = getContext();
+		boolean enable = false;
 
-        // Fix for bug 26126. Resource change listener could call
-        // updateActionBars without a context being set.
-        // This should never happen because resource navigator sets
-        // context immediately after this group is created.
-        if (context != null) {
-            IStructuredSelection selection = (IStructuredSelection) context
-                    .getSelection();
+		// Fix for bug 26126. Resource change listener could call
+		// updateActionBars without a context being set.
+		// This should never happen because resource navigator sets
+		// context immediately after this group is created.
+		if (context != null) {
+			IStructuredSelection selection = (IStructuredSelection) context.getSelection();
 
-            if (selection.size() == 1) {
-                Object object = selection.getFirstElement();
-                if (object instanceof IProject) {
-                    enable = ((IProject) object).isOpen();
-                } else if (object instanceof IFolder) {
-                    enable = true;
-                }
-            }
-        }
-        goIntoAction.setEnabled(enable);
-        // the rest of the actions update by listening to frame list changes
-    }
+			if (selection.size() == 1) {
+				Object object = selection.getFirstElement();
+				if (object instanceof IProject) {
+					enable = ((IProject) object).isOpen();
+				} else if (object instanceof IFolder) {
+					enable = true;
+				}
+			}
+		}
+		goIntoAction.setEnabled(enable);
+		// the rest of the actions update by listening to frame list changes
+	}
 }

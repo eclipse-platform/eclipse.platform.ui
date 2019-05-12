@@ -31,11 +31,9 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 	/**
 	 * Creates a new instance of the class.
 	 */
-	protected GotoResourceDialog(Shell parentShell, IContainer container,
-			int typesMask) {
+	protected GotoResourceDialog(Shell parentShell, IContainer container, int typesMask) {
 		super(parentShell, false, container, typesMask);
 		setTitle(ResourceNavigatorMessages.Goto_title);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell,
-				INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell, INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
 	}
 }

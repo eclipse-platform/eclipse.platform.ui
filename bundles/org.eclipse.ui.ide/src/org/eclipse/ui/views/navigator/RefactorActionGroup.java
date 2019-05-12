@@ -30,8 +30,8 @@ import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
 
 /**
- * This is the action group for refactor actions,
- * including global action handlers for copy, paste and delete.
+ * This is the action group for refactor actions, including global action
+ * handlers for copy, paste and delete.
  *
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
@@ -39,133 +39,122 @@ import org.eclipse.ui.actions.TextActionHandler;
 @Deprecated
 public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 
-    private Clipboard clipboard;
+	private Clipboard clipboard;
 
-    private CopyAction copyAction;
+	private CopyAction copyAction;
 
-    private DeleteResourceAction deleteAction;
+	private DeleteResourceAction deleteAction;
 
-    private PasteAction pasteAction;
+	private PasteAction pasteAction;
 
-    private ResourceNavigatorRenameAction renameAction;
+	private ResourceNavigatorRenameAction renameAction;
 
-    private ResourceNavigatorMoveAction moveAction;
+	private ResourceNavigatorMoveAction moveAction;
 
-    private TextActionHandler textActionHandler;
+	private TextActionHandler textActionHandler;
 
-    public RefactorActionGroup(IResourceNavigator navigator) {
-        super(navigator);
-    }
+	public RefactorActionGroup(IResourceNavigator navigator) {
+		super(navigator);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        if (clipboard != null) {
-            clipboard.dispose();
-            clipboard = null;
-        }
-        super.dispose();
-    }
+		if (clipboard != null) {
+			clipboard.dispose();
+			clipboard = null;
+		}
+		super.dispose();
+	}
 
-    @Override
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
-        IStructuredSelection selection = (IStructuredSelection) getContext()
-                .getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
-        boolean anyResourceSelected = !selection.isEmpty()
-                && ResourceSelectionUtil.allResourcesAreOfType(selection,
-                        IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+		boolean anyResourceSelected = !selection.isEmpty() && ResourceSelectionUtil.allResourcesAreOfType(selection,
+				IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 
-        copyAction.selectionChanged(selection);
-        menu.add(copyAction);
-        pasteAction.selectionChanged(selection);
-        menu.add(pasteAction);
+		copyAction.selectionChanged(selection);
+		menu.add(copyAction);
+		pasteAction.selectionChanged(selection);
+		menu.add(pasteAction);
 
-        if (anyResourceSelected) {
-            deleteAction.selectionChanged(selection);
-            menu.add(deleteAction);
-            moveAction.selectionChanged(selection);
-            menu.add(moveAction);
-            renameAction.selectionChanged(selection);
-            menu.add(renameAction);
-        }
-    }
+		if (anyResourceSelected) {
+			deleteAction.selectionChanged(selection);
+			menu.add(deleteAction);
+			moveAction.selectionChanged(selection);
+			menu.add(moveAction);
+			renameAction.selectionChanged(selection);
+			menu.add(renameAction);
+		}
+	}
 
-    @Override
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
-        textActionHandler = new TextActionHandler(actionBars); // hooks handlers
-        textActionHandler.setCopyAction(copyAction);
-        textActionHandler.setPasteAction(pasteAction);
-        textActionHandler.setDeleteAction(deleteAction);
-        renameAction.setTextActionHandler(textActionHandler);
+		textActionHandler = new TextActionHandler(actionBars); // hooks handlers
+		textActionHandler.setCopyAction(copyAction);
+		textActionHandler.setPasteAction(pasteAction);
+		textActionHandler.setDeleteAction(deleteAction);
+		renameAction.setTextActionHandler(textActionHandler);
 
-        actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(),
-                moveAction);
-        actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(),
-                renameAction);
-    }
+		actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(), moveAction);
+		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
+	}
 
-    /**
-     * Handles a key pressed event by invoking the appropriate action.
-     */
-    @Override
+	/**
+	 * Handles a key pressed event by invoking the appropriate action.
+	 */
+	@Override
 	public void handleKeyPressed(KeyEvent event) {
-        if (event.character == SWT.DEL && event.stateMask == 0) {
-            if (deleteAction.isEnabled()) {
-                deleteAction.run();
-            }
+		if (event.character == SWT.DEL && event.stateMask == 0) {
+			if (deleteAction.isEnabled()) {
+				deleteAction.run();
+			}
 
-            // Swallow the event.
-            event.doit = false;
+			// Swallow the event.
+			event.doit = false;
 
-        } else if (event.keyCode == SWT.F2 && event.stateMask == 0) {
-            if (renameAction.isEnabled()) {
-                renameAction.run();
-            }
+		} else if (event.keyCode == SWT.F2 && event.stateMask == 0) {
+			if (renameAction.isEnabled()) {
+				renameAction.run();
+			}
 
-            // Swallow the event.
-            event.doit = false;
-        }
-    }
+			// Swallow the event.
+			event.doit = false;
+		}
+	}
 
-    @Override
+	@Override
 	protected void makeActions() {
-        TreeViewer treeViewer = navigator.getViewer();
-        IShellProvider provider = navigator.getSite();
-        clipboard = new Clipboard(provider.getShell().getDisplay());
+		TreeViewer treeViewer = navigator.getViewer();
+		IShellProvider provider = navigator.getSite();
+		clipboard = new Clipboard(provider.getShell().getDisplay());
 
-        pasteAction = new PasteAction(provider.getShell(), clipboard);
-        ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-        pasteAction.setDisabledImageDescriptor(images
-                .getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
-        pasteAction.setImageDescriptor(images
-                .getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		pasteAction = new PasteAction(provider.getShell(), clipboard);
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+		pasteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 
-        copyAction = new CopyAction(provider.getShell(), clipboard, pasteAction);
-        copyAction.setDisabledImageDescriptor(images
-                .getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
-        copyAction.setImageDescriptor(images
-                .getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction = new CopyAction(provider.getShell(), clipboard, pasteAction);
+		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 
-        moveAction = new ResourceNavigatorMoveAction(provider.getShell(), treeViewer);
-        renameAction = new ResourceNavigatorRenameAction(provider.getShell(), treeViewer);
+		moveAction = new ResourceNavigatorMoveAction(provider.getShell(), treeViewer);
+		renameAction = new ResourceNavigatorRenameAction(provider.getShell(), treeViewer);
 
-        deleteAction = new DeleteResourceAction(provider);
-        deleteAction.setDisabledImageDescriptor(images
-                .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-        deleteAction.setImageDescriptor(images
-                .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-    }
+		deleteAction = new DeleteResourceAction(provider);
+		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+	}
 
-    @Override
+	@Override
 	public void updateActionBars() {
-        IStructuredSelection selection = (IStructuredSelection) getContext()
-                .getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
-        copyAction.selectionChanged(selection);
-        pasteAction.selectionChanged(selection);
-        deleteAction.selectionChanged(selection);
-        moveAction.selectionChanged(selection);
-        renameAction.selectionChanged(selection);
-    }
+		copyAction.selectionChanged(selection);
+		pasteAction.selectionChanged(selection);
+		deleteAction.selectionChanged(selection);
+		moveAction.selectionChanged(selection);
+		renameAction.selectionChanged(selection);
+	}
 
 }

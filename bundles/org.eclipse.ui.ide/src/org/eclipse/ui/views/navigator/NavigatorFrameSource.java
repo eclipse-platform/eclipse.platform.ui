@@ -23,54 +23,53 @@ import org.eclipse.ui.views.framelist.TreeViewerFrameSource;
 
 /**
  * Frame source for the resource navigator.
+ *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated
 public class NavigatorFrameSource extends TreeViewerFrameSource {
 
-    private ResourceNavigator navigator;
+	private ResourceNavigator navigator;
 
-    /**
-     * Constructs a new frame source for the specified resource navigator.
-     *
-     * @param navigator the resource navigator
-     */
-    public NavigatorFrameSource(ResourceNavigator navigator) {
-        super(navigator.getTreeViewer());
-        this.navigator = navigator;
-    }
+	/**
+	 * Constructs a new frame source for the specified resource navigator.
+	 *
+	 * @param navigator the resource navigator
+	 */
+	public NavigatorFrameSource(ResourceNavigator navigator) {
+		super(navigator.getTreeViewer());
+		this.navigator = navigator;
+	}
 
-    /**
-     * Returns a new frame.  This implementation extends the super implementation
-     * by setting the frame's tool tip text to show the full path for the input
-     * element.
-     */
-    @Override
+	/**
+	 * Returns a new frame. This implementation extends the super implementation by
+	 * setting the frame's tool tip text to show the full path for the input
+	 * element.
+	 */
+	@Override
 	protected TreeFrame createFrame(Object input) {
-        TreeFrame frame = super.createFrame(input);
-        frame.setName(navigator.getFrameName(input));
-        frame.setToolTipText(navigator.getFrameToolTipText(input));
-        return frame;
-    }
+		TreeFrame frame = super.createFrame(input);
+		frame.setName(navigator.getFrameName(input));
+		frame.setToolTipText(navigator.getFrameToolTipText(input));
+		return frame;
+	}
 
-    /**
-     * Also updates the navigator's title.
-     */
-    @Override
+	/**
+	 * Also updates the navigator's title.
+	 */
+	@Override
 	protected void frameChanged(TreeFrame frame) {
-        IResource resource = (IResource) frame.getInput();
-        IProject project = resource.getProject();
+		IResource resource = (IResource) frame.getInput();
+		IProject project = resource.getProject();
 
-        if (project != null && project.isOpen() == false) {
-            MessageDialog
-                    .openInformation(
-                            navigator.getViewSite().getShell(),
-                            ResourceNavigatorMessages.NavigatorFrameSource_closedProject_title,
-                            NLS.bind(ResourceNavigatorMessages.NavigatorFrameSource_closedProject_message, project.getName()));
-            navigator.getFrameList().back();
-        } else {
-            super.frameChanged(frame);
-            navigator.updateTitle();
-        }
-    }
+		if (project != null && project.isOpen() == false) {
+			MessageDialog.openInformation(navigator.getViewSite().getShell(),
+					ResourceNavigatorMessages.NavigatorFrameSource_closedProject_title,
+					NLS.bind(ResourceNavigatorMessages.NavigatorFrameSource_closedProject_message, project.getName()));
+			navigator.getFrameList().back();
+		} else {
+			super.frameChanged(frame);
+			navigator.updateTitle();
+		}
+	}
 }

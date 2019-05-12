@@ -27,83 +27,82 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * The FiltersContentProvider provides the elements for use by the list dialog
  * for selecting the patterns to apply.
+ *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated
-/* package */class FiltersContentProvider implements
-        IStructuredContentProvider {
+/* package */class FiltersContentProvider implements IStructuredContentProvider {
 
 	private static List<String> definedFilters;
 
 	private static List<String> defaultFilters;
 
-    private ResourcePatternFilter resourceFilter;
+	private ResourcePatternFilter resourceFilter;
 
-    /**
-     * Create a FiltersContentProvider using the selections from the supplied
-     * resource filter.
-     *
-     * @param filter the resource pattern filter
-     */
-    public FiltersContentProvider(ResourcePatternFilter filter) {
-        this.resourceFilter = filter;
-    }
+	/**
+	 * Create a FiltersContentProvider using the selections from the supplied
+	 * resource filter.
+	 *
+	 * @param filter the resource pattern filter
+	 */
+	public FiltersContentProvider(ResourcePatternFilter filter) {
+		this.resourceFilter = filter;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    }
+	}
 
-    /**
-     * Returns the filters which are enabled by default.
-     *
-     * @return a list of strings
-     */
+	/**
+	 * Returns the filters which are enabled by default.
+	 *
+	 * @return a list of strings
+	 */
 	public static List<String> getDefaultFilters() {
-        if (defaultFilters == null) {
-            readFilters();
-        }
-        return defaultFilters;
-    }
+		if (defaultFilters == null) {
+			readFilters();
+		}
+		return defaultFilters;
+	}
 
-    /**
-     * Returns the filters currently defined for the navigator.
-     *
-     * @return a list of strings
-     */
+	/**
+	 * Returns the filters currently defined for the navigator.
+	 *
+	 * @return a list of strings
+	 */
 	public static List<String> getDefinedFilters() {
-        if (definedFilters == null) {
-            readFilters();
-        }
-        return definedFilters;
-    }
+		if (definedFilters == null) {
+			readFilters();
+		}
+		return definedFilters;
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object inputElement) {
-        return getDefinedFilters().toArray();
-    }
+		return getDefinedFilters().toArray();
+	}
 
-    /**
-     * Return the initially selected elements.
-     *
-     * @return an array with the initial selections
-     */
-    public String[] getInitialSelections() {
-        return this.resourceFilter.getPatterns();
-    }
+	/**
+	 * Return the initially selected elements.
+	 *
+	 * @return an array with the initial selections
+	 */
+	public String[] getInitialSelections() {
+		return this.resourceFilter.getPatterns();
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    }
+	}
 
-    /**
-     * Reads the filters currently defined for the workbench.
-     */
-    private static void readFilters() {
+	/**
+	 * Reads the filters currently defined for the workbench.
+	 */
+	private static void readFilters() {
 		definedFilters = new ArrayList<>();
 		defaultFilters = new ArrayList<>();
 		IExtensionPoint extension = Platform.getExtensionRegistry()
-				.getExtensionPoint(IDEWorkbenchPlugin.IDE_WORKBENCH + '.'
-						+ ResourcePatternFilter.FILTERS_TAG);
+				.getExtensionPoint(IDEWorkbenchPlugin.IDE_WORKBENCH + '.' + ResourcePatternFilter.FILTERS_TAG);
 		if (extension != null) {
 			for (IExtension currentExtension : extension.getExtensions()) {
 				IConfigurationElement[] configElements = currentExtension.getConfigurationElements();
