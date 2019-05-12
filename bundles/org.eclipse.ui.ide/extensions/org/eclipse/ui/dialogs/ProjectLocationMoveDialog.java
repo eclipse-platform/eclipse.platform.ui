@@ -45,12 +45,11 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 
 	private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages.ProjectLocationSelectionDialog_selectionTitle;
 
-
 	private ProjectContentsLocationArea locationArea;
 
 	/**
-	 * Create a ProjectLocationMoveDialog on the supplied project parented by
-	 * the parentShell.
+	 * Create a ProjectLocationMoveDialog on the supplied project parented by the
+	 * parentShell.
 	 *
 	 * @param parentShell
 	 * @param existingProject
@@ -70,8 +69,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 				statusMessageLabel.setToolTipText("");//$NON-NLS-1$
 				getOkButton().setEnabled(true);
 			} else {
-				statusMessageLabel.setForeground(JFaceColors
-						.getErrorText(statusMessageLabel.getDisplay()));
+				statusMessageLabel.setForeground(JFaceColors.getErrorText(statusMessageLabel.getDisplay()));
 				statusMessageLabel.setText(message);
 				statusMessageLabel.setToolTipText(message);
 				getOkButton().setEnabled(false);
@@ -82,8 +80,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
 	}
 
 	@Override
@@ -101,8 +98,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		locationArea = new ProjectContentsLocationArea(getErrorReporter(), composite,
-				this.project);
+		locationArea = new ProjectContentsLocationArea(getErrorReporter(), composite, this.project);
 
 		// Scale the button based on the rest of the dialog
 		setButtonLayoutData(locationArea.getBrowseButton());
@@ -118,9 +114,9 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		return composite;
 	}
 
-
 	/**
 	 * Get an error reporter for the receiver.
+	 *
 	 * @return IErrorMessageReporter
 	 */
 	private IErrorMessageReporter getErrorReporter() {
@@ -136,8 +132,8 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 
 	/**
 	 * The <code>ProjectLocationMoveDialog</code> implementation of this
-	 * <code>Dialog</code> method builds a two element list - the first
-	 * element is the project name and the second one is the location.
+	 * <code>Dialog</code> method builds a two element list - the first element is
+	 * the project name and the second one is the location.
 	 */
 	@Override
 	protected void okPressed() {

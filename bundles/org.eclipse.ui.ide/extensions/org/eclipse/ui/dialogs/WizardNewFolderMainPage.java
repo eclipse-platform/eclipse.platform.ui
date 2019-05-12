@@ -121,8 +121,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private UIResourceFilterDescription[] filterList = null;
 
 	/**
-	 * Height of the "advanced" linked resource group. Set when the advanced
-	 * group is first made visible.
+	 * Height of the "advanced" linked resource group. Set when the advanced group
+	 * is first made visible.
 	 */
 	private int linkedResourceGroupHeight = -1;
 
@@ -132,17 +132,14 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private boolean firstLinkCheck = true;
 
 	/**
-	 * Creates a new folder creation wizard page. If the initial resource
-	 * selection contains exactly one container resource then it will be used as
-	 * the default container resource.
+	 * Creates a new folder creation wizard page. If the initial resource selection
+	 * contains exactly one container resource then it will be used as the default
+	 * container resource.
 	 *
-	 * @param pageName
-	 *            the name of the page
-	 * @param selection
-	 *            the current resource selection
+	 * @param pageName  the name of the page
+	 * @param selection the current resource selection
 	 */
-	public WizardNewFolderMainPage(String pageName,
-			IStructuredSelection selection) {
+	public WizardNewFolderMainPage(String pageName, IStructuredSelection selection) {
 		super("newFolderPage1");//$NON-NLS-1$
 		setTitle(pageName);
 		setDescription(IDEWorkbenchMessages.WizardNewFolderMainPage_description);
@@ -152,23 +149,19 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	/**
 	 * Creates the widget for advanced options.
 	 *
-	 * @param parent
-	 *            the parent composite
+	 * @param parent the parent composite
 	 */
 	protected void createAdvancedControls(Composite parent) {
-		Preferences preferences = ResourcesPlugin.getPlugin()
-				.getPluginPreferences();
+		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 
 		if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false) {
 			advancedComposite = new Composite(parent, SWT.NONE);
 			advancedComposite.setFont(parent.getFont());
-			advancedComposite.setLayoutData(new GridData(
-					GridData.FILL_HORIZONTAL));
+			advancedComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = 0;
 			layout.marginWidth = 0;
 			advancedComposite.setLayout(layout);
-
 
 			advancedButton = new Button(advancedComposite, SWT.PUSH);
 			advancedButton.setFont(advancedComposite.getFont());
@@ -183,47 +176,46 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				}
 			});
 		}
-		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FOLDER,
-				e -> {
-					setPageComplete(validatePage());
-					firstLinkCheck = false;
-				}, new CreateLinkedResourceGroup.IStringValue() {
-					@Override
-					public String getValue() {
-						return resourceGroup.getResource();
-					}
+		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FOLDER, e -> {
+			setPageComplete(validatePage());
+			firstLinkCheck = false;
+		}, new CreateLinkedResourceGroup.IStringValue() {
+			@Override
+			public String getValue() {
+				return resourceGroup.getResource();
+			}
 
-					@Override
-					public void setValue(String string) {
-						resourceGroup.setResource(string);
-					}
-					@Override
-					public IResource getResource() {
-						IPath path = resourceGroup.getContainerFullPath();
-						if (path != null) {
-							IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-									.getRoot();
-							IResource resource = root.findMember(path);
-							if (resource != null && resource instanceof IContainer) {
-								String resourceName = resourceGroup.getResource();
-								if (resourceName.length() > 0) {
-									try {
-										return ((IContainer) resource).getFolder(Path
-												.fromOSString(resourceName));
-									} catch (IllegalArgumentException e) {
-										// continue below.
-									}
-								}
-								return resource;
+			@Override
+			public void setValue(String string) {
+				resourceGroup.setResource(string);
+			}
+
+			@Override
+			public IResource getResource() {
+				IPath path = resourceGroup.getContainerFullPath();
+				if (path != null) {
+					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+					IResource resource = root.findMember(path);
+					if (resource != null && resource instanceof IContainer) {
+						String resourceName = resourceGroup.getResource();
+						if (resourceName.length() > 0) {
+							try {
+								return ((IContainer) resource).getFolder(Path.fromOSString(resourceName));
+							} catch (IllegalArgumentException e) {
+								// continue below.
 							}
-							return resource;
 						}
-						return null;
+						return resource;
 					}
-				});
+					return resource;
+				}
+				return null;
+			}
+		});
 	}
 
 	boolean setupLinkedResourceTargetRecursiveFlag = false;
+
 	private void setupLinkedResourceTarget() {
 		if (!setupLinkedResourceTargetRecursiveFlag) {
 			setupLinkedResourceTargetRecursiveFlag = true;
@@ -244,15 +236,15 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 						IPath newFilePath = containerPath.append(resourceGroup.getResource());
 						IFolder newFolderHandle = createFolderHandle(newFilePath);
 						try {
-							URI uri= newFolderHandle.getPathVariableManager().convertToRelative(newFolderHandle.getLocationURI(), false, null);
+							URI uri = newFolderHandle.getPathVariableManager()
+									.convertToRelative(newFolderHandle.getLocationURI(), false, null);
 							linkedResourceGroup.setLinkTarget(URIUtil.toPath(uri).toPortableString());
 						} catch (CoreException e) {
 							// nothing
 						}
 					}
 				}
-			}
-			finally {
+			} finally {
 				setupLinkedResourceTargetRecursiveFlag = false;
 			}
 		}
@@ -265,16 +257,13 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
-				| GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
-				IIDEHelpContextIds.NEW_FOLDER_WIZARD_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IIDEHelpContextIds.NEW_FOLDER_WIZARD_PAGE);
 
 		resourceGroup = new ResourceAndContainerGroup(composite, this,
 				IDEWorkbenchMessages.WizardNewFolderMainPage_folderName,
-				IDEWorkbenchMessages.WizardNewFolderMainPage_folderLabel,
-				false, SIZING_CONTAINER_GROUP_HEIGHT);
+				IDEWorkbenchMessages.WizardNewFolderMainPage_folderLabel, false, SIZING_CONTAINER_GROUP_HEIGHT);
 		resourceGroup.setAllowExistingResources(false);
 		createAdvancedControls(composite);
 		initializePage();
@@ -288,21 +277,16 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	/**
 	 * Creates a folder resource given the folder handle.
 	 *
-	 * @param folderHandle
-	 *            the folder handle to create a folder resource for
-	 * @param monitor
-	 *            the progress monitor to show visual progress with
-	 * @exception CoreException
-	 *                if the operation fails
-	 * @exception OperationCanceledException
-	 *                if the operation is canceled
+	 * @param folderHandle the folder handle to create a folder resource for
+	 * @param monitor      the progress monitor to show visual progress with
+	 * @exception CoreException              if the operation fails
+	 * @exception OperationCanceledException if the operation is canceled
 	 *
-	 * @deprecated As of 3.3, use {@link #createNewFolder()} which uses the
-	 *   undoable operation support.
+	 * @deprecated As of 3.3, use {@link #createNewFolder()} which uses the undoable
+	 *             operation support.
 	 */
 	@Deprecated
-	protected void createFolder(IFolder folderHandle, IProgressMonitor monitor)
-			throws CoreException {
+	protected void createFolder(IFolder folderHandle, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 
 		try {
@@ -314,20 +298,16 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 					folderHandle.createLink(linkTargetPath, IResource.ALLOW_MISSING_LOCAL, subMonitor.split(100));
 				} else {
 					IPath path = folderHandle.getFullPath();
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-							.getRoot();
+					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 					int numSegments = path.segmentCount();
-					if (numSegments > 2
-							&& !root.getFolder(path.removeLastSegments(1))
-									.exists()) {
+					if (numSegments > 2 && !root.getFolder(path.removeLastSegments(1)).exists()) {
 
 						SubMonitor loopProgress = subMonitor.split(90).setWorkRemaining(numSegments - 3);
 						// If the direct parent of the path doesn't exist, try
 						// to create the
 						// necessary directories.
 						for (int i = numSegments - 2; i > 0; i--) {
-							IFolder folder = root.getFolder(path
-									.removeLastSegments(i));
+							IFolder folder = root.getFolder(path.removeLastSegments(i));
 							if (!folder.exists()) {
 								folder.create(false, true, loopProgress.split(1));
 							}
@@ -353,31 +333,28 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	 * path. This method does not create the folder resource; this is the
 	 * responsibility of <code>createFolder</code>.
 	 *
-	 * @param folderPath
-	 *            the path of the folder resource to create a handle for
+	 * @param folderPath the path of the folder resource to create a handle for
 	 * @return the new folder resource handle
 	 * @see #createFolder
 	 */
 	protected IFolder createFolderHandle(IPath folderPath) {
-		return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFolder(
-				folderPath);
+		return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFolder(folderPath);
 	}
 
 	/**
-	 * Creates a container resource handle for the container with the given workspace path. This
-	 * method does not create the resource.
+	 * Creates a container resource handle for the container with the given
+	 * workspace path. This method does not create the resource.
 	 *
-	 * @param containerPath the path of the container resource to create a handle for
+	 * @param containerPath the path of the container resource to create a handle
+	 *                      for
 	 * @return the new container resource handle
 	 * @see #createFolder
 	 * @since 3.6
 	 */
 	protected IContainer createContainerHandle(IPath containerPath) {
 		if (containerPath.segmentCount() == 1)
-			return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProject(
-					containerPath.segment(0));
-		return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFolder(
-				containerPath);
+			return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProject(containerPath.segment(0));
+		return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFolder(containerPath);
 	}
 
 	/**
@@ -388,26 +365,26 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	}
 
 	/**
-	 * Creates a new folder resource in the selected container and with the
-	 * selected name. Creates any missing resource containers along the path;
-	 * does nothing if the container resources already exist.
+	 * Creates a new folder resource in the selected container and with the selected
+	 * name. Creates any missing resource containers along the path; does nothing if
+	 * the container resources already exist.
 	 * <p>
-	 * In normal usage, this method is invoked after the user has pressed Finish
-	 * on the wizard; the enablement of the Finish button implies that all
-	 * controls on this page currently contain valid values.
+	 * In normal usage, this method is invoked after the user has pressed Finish on
+	 * the wizard; the enablement of the Finish button implies that all controls on
+	 * this page currently contain valid values.
 	 * </p>
 	 * <p>
 	 * Note that this page caches the new folder once it has been successfully
-	 * created; subsequent invocations of this method will answer the same
-	 * folder resource without attempting to create it again.
+	 * created; subsequent invocations of this method will answer the same folder
+	 * resource without attempting to create it again.
 	 * </p>
 	 * <p>
 	 * This method should be called within a workspace modify operation since it
 	 * creates resources.
 	 * </p>
 	 *
-	 * @return the created folder resource, or <code>null</code> if the folder
-	 *         was not created
+	 * @return the created folder resource, or <code>null</code> if the folder was
+	 *         not created
 	 */
 	public IFolder createNewFolder() {
 		if (newFolder != null) {
@@ -427,15 +404,11 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				IFileStore store = EFS.getStore(resolvedPath);
 				if (!store.fetchInfo().exists()) {
 					MessageDialog dlg = new MessageDialog(getContainer().getShell(),
-							IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationTitle,
-							null,
-							NLS.bind(
-									IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationQuestion, linkTargetPath),
-							MessageDialog.QUESTION_WITH_CANCEL,
-							0,
-							IDialogConstants.YES_LABEL,
-							IDialogConstants.NO_LABEL,
-							IDialogConstants.CANCEL_LABEL);
+							IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationTitle, null,
+							NLS.bind(IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationQuestion,
+									linkTargetPath),
+							MessageDialog.QUESTION_WITH_CANCEL, 0, IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL);
 					int result = dlg.open();
 					if (result == Window.OK) {
 						store.mkdir(0, new NullProgressMonitor());
@@ -444,61 +417,37 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 						return null;
 				}
 			} catch (CoreException e) {
-				MessageDialog
-						.open(MessageDialog.ERROR,
-								getContainer().getShell(),
-								IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
-								NLS
-										.bind(
-												IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
-												e.getMessage()), SWT.SHEET);
+				MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
+						IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
+						NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage, e.getMessage()),
+						SWT.SHEET);
 
 				return null;
 			}
 		}
 		IRunnableWithProgress op = monitor -> {
 			AbstractOperation op1;
-			op1 = new CreateFolderOperation(
-				newFolderHandle, linkTargetPath, createVirtualFolder, filterList,
-				IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
+			op1 = new CreateFolderOperation(newFolderHandle, linkTargetPath, createVirtualFolder, filterList,
+					IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
 			try {
 				// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
 				// directly execute the operation so that the undo state is
-				// not preserved.  Making this undoable can result in accidental
+				// not preserved. Making this undoable can result in accidental
 				// folder (and file) deletions.
-				op1.execute(monitor, WorkspaceUndoUtil
-					.getUIInfoAdapter(getShell()));
+				op1.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
 			} catch (final ExecutionException e) {
-				getContainer().getShell().getDisplay().syncExec(
-						() -> {
-							if (e.getCause() instanceof CoreException) {
-								ErrorDialog
-										.openError(
-												getContainer()
-														.getShell(), // Was Utilities.getFocusShell()
-												IDEWorkbenchMessages.WizardNewFolderCreationPage_errorTitle,
-												null, // no special message
-												((CoreException) e
-														.getCause())
-														.getStatus());
-							} else {
-								IDEWorkbenchPlugin
-										.log(
-												getClass(),
-												"createNewFolder()", e.getCause()); //$NON-NLS-1$
-								MessageDialog
-										.openError(
-												getContainer()
-														.getShell(),
-												IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle,
-												NLS
-														.bind(
-																IDEWorkbenchMessages.WizardNewFolder_internalError,
-																e
-																		.getCause()
-																		.getMessage()));
-							}
-						});
+				getContainer().getShell().getDisplay().syncExec(() -> {
+					if (e.getCause() instanceof CoreException) {
+						ErrorDialog.openError(getContainer().getShell(), // Was Utilities.getFocusShell()
+								IDEWorkbenchMessages.WizardNewFolderCreationPage_errorTitle, null, // no special message
+								((CoreException) e.getCause()).getStatus());
+					} else {
+						IDEWorkbenchPlugin.log(getClass(), "createNewFolder()", e.getCause()); //$NON-NLS-1$
+						MessageDialog.openError(getContainer().getShell(),
+								IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle, NLS.bind(
+										IDEWorkbenchMessages.WizardNewFolder_internalError, e.getCause().getMessage()));
+					}
+				});
 			}
 		};
 
@@ -509,16 +458,11 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		} catch (InvocationTargetException e) {
 			// ExecutionExceptions are handled above, but unexpected runtime
 			// exceptions and errors may still occur.
-			IDEWorkbenchPlugin.log(getClass(),
-					"createNewFolder()", e.getTargetException()); //$NON-NLS-1$
-			MessageDialog
-					.open(MessageDialog.ERROR,
-							getContainer().getShell(),
-							IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle,
-							NLS
-									.bind(
-											IDEWorkbenchMessages.WizardNewFolder_internalError,
-											e.getTargetException().getMessage()), SWT.SHEET);
+			IDEWorkbenchPlugin.log(getClass(), "createNewFolder()", e.getTargetException()); //$NON-NLS-1$
+			MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
+					IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle,
+					NLS.bind(IDEWorkbenchMessages.WizardNewFolder_internalError, e.getTargetException().getMessage()),
+					SWT.SHEET);
 			return null;
 		}
 
@@ -554,22 +498,22 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		} else {
 			Point oldCompositeSize = advancedComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
-			ImageDescriptor folderDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-	                ISharedImages.IMG_OBJ_FOLDER);
+			ImageDescriptor folderDescriptor = PlatformUI.getWorkbench().getSharedImages()
+					.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 
 			ImageDescriptor[][] linkedResourceOverlayMap = new ImageDescriptor[4][1];
-			linkedResourceOverlayMap[1]= new ImageDescriptor[] {AbstractUIPlugin.imageDescriptorFromPlugin(
-					IDEWorkbenchPlugin.IDE_WORKBENCH,
-			"$nl$/icons/full/ovr16/link_ovr.png")}; //$NON-NLS-1$
+			linkedResourceOverlayMap[1] = new ImageDescriptor[] { AbstractUIPlugin.imageDescriptorFromPlugin(
+					IDEWorkbenchPlugin.IDE_WORKBENCH, "$nl$/icons/full/ovr16/link_ovr.png") }; //$NON-NLS-1$
 
-			CompositeImageDescriptor linkedFolderDescriptor = new OverlayIcon(folderDescriptor, linkedResourceOverlayMap, new Point(16, 16));
+			CompositeImageDescriptor linkedFolderDescriptor = new OverlayIcon(folderDescriptor,
+					linkedResourceOverlayMap, new Point(16, 16));
 
 			ImageDescriptor[][] virtualFolderOverlayMap = new ImageDescriptor[4][1];
-			virtualFolderOverlayMap[1]= new ImageDescriptor[] {AbstractUIPlugin.imageDescriptorFromPlugin(
-					IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/ovr16/virt_ovr.png")}; //$NON-NLS-1$
+			virtualFolderOverlayMap[1] = new ImageDescriptor[] { AbstractUIPlugin.imageDescriptorFromPlugin(
+					IDEWorkbenchPlugin.IDE_WORKBENCH, "$nl$/icons/full/ovr16/virt_ovr.png") }; //$NON-NLS-1$
 
-			CompositeImageDescriptor virtualFolderDescriptor = new OverlayIcon(folderDescriptor, virtualFolderOverlayMap, new Point(16, 16));
+			CompositeImageDescriptor virtualFolderDescriptor = new OverlayIcon(folderDescriptor,
+					virtualFolderOverlayMap, new Point(16, 16));
 
 			Image folderImage = folderDescriptor.createImage();
 			useDefaultLocation = new Button(advancedComposite, SWT.RADIO);
@@ -630,11 +574,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			layout.marginWidth = 0;
 			linkedGroupComposite.setLayout(layout);
 
-			linkedResourceComposite = linkedResourceGroup
-					.createTextOnlyContents(linkedGroupComposite);
+			linkedResourceComposite = linkedResourceGroup.createTextOnlyContents(linkedGroupComposite);
 			if (linkedResourceGroupHeight == -1) {
-				Point groupSize = linkedResourceComposite.computeSize(
-						SWT.DEFAULT, SWT.DEFAULT, true);
+				Point groupSize = linkedResourceComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 				linkedResourceGroupHeight = groupSize.y;
 			}
 			linkedResourceGroup.setEnabled(false);
@@ -679,8 +621,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 	/**
 	 * The <code>WizardNewFolderCreationPage</code> implementation of this
-	 * <code>Listener</code> method handles all events and enablements for
-	 * controls on this page. Subclasses may extend.
+	 * <code>Listener</code> method handles all events and enablements for controls
+	 * on this page. Subclasses may extend.
 	 */
 	@Override
 	public void handleEvent(Event ev) {
@@ -700,8 +642,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 					selectedResource = selectedResource.getParent();
 				}
 				if (selectedResource.isAccessible()) {
-					resourceGroup.setContainerFullPath(selectedResource
-							.getFullPath());
+					resourceGroup.setContainerFullPath(selectedResource.getFullPath());
 				}
 			}
 		}
@@ -721,8 +662,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	}
 
 	/**
-	 * Checks whether the linked resource target is valid. Sets the error
-	 * message accordingly and returns the status.
+	 * Checks whether the linked resource target is valid. Sets the error message
+	 * accordingly and returns the status.
 	 *
 	 * @return IStatus validation result from the CreateLinkedResourceGroup
 	 */
@@ -730,8 +671,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		IPath containerPath = resourceGroup.getContainerFullPath();
 		IPath newFolderPath = containerPath.append(resourceGroup.getResource());
 		IFolder newFolderHandle = createFolderHandle(newFolderPath);
-		IStatus status = linkedResourceGroup
-				.validateLinkLocation(newFolderHandle);
+		IStatus status = linkedResourceGroup.validateLinkLocation(newFolderHandle);
 
 		if (status.getSeverity() == IStatus.ERROR) {
 			if (firstLinkCheck) {
@@ -749,8 +689,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	/**
 	 * Returns whether this page's controls currently all contain valid values.
 	 *
-	 * @return <code>true</code> if all controls are valid, and
-	 *         <code>false</code> if at least one is invalid
+	 * @return <code>true</code> if all controls are valid, and <code>false</code>
+	 *         if at least one is invalid
 	 */
 	protected boolean validatePage() {
 		boolean valid = true;
@@ -762,8 +702,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 		if (valid && (useDefaultLocation == null || useDefaultLocation.getSelection())) {
 			IPath containerPath = resourceGroup.getContainerFullPath();
-			if (containerPath != null &&
-					createContainerHandle(containerPath).isVirtual()) {
+			if (containerPath != null && createContainerHandle(containerPath).isVirtual()) {
 				valid = false;
 				setErrorMessage(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkRequiredUnderAGroup);
 			}
@@ -777,14 +716,14 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			}
 		}
 		// validateLinkedResource sets messages itself
-		if (valid
-				&& (linkedResourceStatus == null || linkedResourceStatus.isOK())) {
+		if (valid && (linkedResourceStatus == null || linkedResourceStatus.isOK())) {
 			setMessage(null);
 			setErrorMessage(null);
 		}
 
 		if (isFilteredByParent()) {
-			setMessage(IDEWorkbenchMessages.WizardNewFolderCreationPage_resourceWillBeFilteredWarning, IMessageProvider.ERROR);
+			setMessage(IDEWorkbenchMessages.WizardNewFolderCreationPage_resourceWillBeFilteredWarning,
+					IMessageProvider.ERROR);
 			setupLinkedResourceTarget();
 			valid = false;
 		}

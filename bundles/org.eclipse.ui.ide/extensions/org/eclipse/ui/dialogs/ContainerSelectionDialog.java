@@ -43,140 +43,138 @@ import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), initialSelection, allowNewContainerName(),
  * 		msg);
  * dialog.open();
  * Object[] result = dialog.getResult();
  * </pre>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContainerSelectionDialog extends SelectionDialog {
-    /**
+	/**
 	 *
 	 */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	// the widget group;
-    ContainerSelectionGroup group;
+	ContainerSelectionGroup group;
 
-    // the root resource to populate the viewer with
-    private IContainer initialSelection;
+	// the root resource to populate the viewer with
+	private IContainer initialSelection;
 
-    // allow the user to type in a new container name
-    private boolean allowNewContainerName = true;
+	// allow the user to type in a new container name
+	private boolean allowNewContainerName = true;
 
-    // the validation message
-    Label statusMessage;
+	// the validation message
+	Label statusMessage;
 
-    //for validating the selection
-    ISelectionValidator validator;
+	// for validating the selection
+	ISelectionValidator validator;
 
-    // show closed projects by default
-    private boolean showClosedProjects = true;
+	// show closed projects by default
+	private boolean showClosedProjects = true;
 
-    /**
-     * Creates a resource container selection dialog rooted at the given resource.
-     * All selections are considered valid.
-     *
-     * @param parentShell the parent shell
-     * @param initialRoot the initial selection in the tree
-     * @param allowNewContainerName <code>true</code> to enable the user to type in
-     *  a new container name, and <code>false</code> to restrict the user to just
-     *  selecting from existing ones
-     * @param message the message to be displayed at the top of this dialog, or
-     *    <code>null</code> to display a default message
-     */
-    public ContainerSelectionDialog(Shell parentShell, IContainer initialRoot,
-            boolean allowNewContainerName, String message) {
-        super(parentShell);
-        setTitle(IDEWorkbenchMessages.ContainerSelectionDialog_title);
-        this.initialSelection = initialRoot;
-        this.allowNewContainerName = allowNewContainerName;
-        if (message != null) {
+	/**
+	 * Creates a resource container selection dialog rooted at the given resource.
+	 * All selections are considered valid.
+	 *
+	 * @param parentShell           the parent shell
+	 * @param initialRoot           the initial selection in the tree
+	 * @param allowNewContainerName <code>true</code> to enable the user to type in
+	 *                              a new container name, and <code>false</code> to
+	 *                              restrict the user to just selecting from
+	 *                              existing ones
+	 * @param message               the message to be displayed at the top of this
+	 *                              dialog, or <code>null</code> to display a
+	 *                              default message
+	 */
+	public ContainerSelectionDialog(Shell parentShell, IContainer initialRoot, boolean allowNewContainerName,
+			String message) {
+		super(parentShell);
+		setTitle(IDEWorkbenchMessages.ContainerSelectionDialog_title);
+		this.initialSelection = initialRoot;
+		this.allowNewContainerName = allowNewContainerName;
+		if (message != null) {
 			setMessage(message);
 		} else {
 			setMessage(IDEWorkbenchMessages.ContainerSelectionDialog_message);
 		}
-        setShellStyle(getShellStyle() | SWT.SHEET);
-    }
+		setShellStyle(getShellStyle() | SWT.SHEET);
+	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        PlatformUI.getWorkbench().getHelpSystem()
-                .setHelp(shell, IIDEHelpContextIds.CONTAINER_SELECTION_DIALOG);
-    }
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IIDEHelpContextIds.CONTAINER_SELECTION_DIALOG);
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        // create composite
-        Composite area = (Composite) super.createDialogArea(parent);
+		// create composite
+		Composite area = (Composite) super.createDialogArea(parent);
 
-        Listener listener = event -> {
-		    if (statusMessage != null && validator != null) {
-		        String errorMsg = validator.isValid(group
-		                .getContainerFullPath());
-		        if (errorMsg == null || errorMsg.equals(EMPTY_STRING)) {
-		            statusMessage.setText(EMPTY_STRING);
-		            getOkButton().setEnabled(true);
-		        } else {
-		            statusMessage.setText(errorMsg);
-		            getOkButton().setEnabled(false);
-		        }
-		    }
+		Listener listener = event -> {
+			if (statusMessage != null && validator != null) {
+				String errorMsg = validator.isValid(group.getContainerFullPath());
+				if (errorMsg == null || errorMsg.equals(EMPTY_STRING)) {
+					statusMessage.setText(EMPTY_STRING);
+					getOkButton().setEnabled(true);
+				} else {
+					statusMessage.setText(errorMsg);
+					getOkButton().setEnabled(false);
+				}
+			}
 		};
 
-        // container selection group
-        group = new ContainerSelectionGroup(area, listener,
-                allowNewContainerName, getMessage(), showClosedProjects);
-        if (initialSelection != null) {
-            group.setSelectedContainer(initialSelection);
-        }
+		// container selection group
+		group = new ContainerSelectionGroup(area, listener, allowNewContainerName, getMessage(), showClosedProjects);
+		if (initialSelection != null) {
+			group.setSelectedContainer(initialSelection);
+		}
 
-        statusMessage = new Label(area, SWT.WRAP);
-        statusMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        statusMessage.setText(" \n "); //$NON-NLS-1$
-        statusMessage.setFont(parent.getFont());
+		statusMessage = new Label(area, SWT.WRAP);
+		statusMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		statusMessage.setText(" \n "); //$NON-NLS-1$
+		statusMessage.setFont(parent.getFont());
 
-        return dialogArea;
-    }
+		return dialogArea;
+	}
 
-    /**
-     * The <code>ContainerSelectionDialog</code> implementation of this
-     * <code>Dialog</code> method builds a list of the selected resource containers
-     * for later retrieval by the client and closes this dialog.
-     */
-    @Override
+	/**
+	 * The <code>ContainerSelectionDialog</code> implementation of this
+	 * <code>Dialog</code> method builds a list of the selected resource containers
+	 * for later retrieval by the client and closes this dialog.
+	 */
+	@Override
 	protected void okPressed() {
 
-        List chosenContainerPathList = new ArrayList();
-        IPath returnValue = group.getContainerFullPath();
-        if (returnValue != null) {
+		List chosenContainerPathList = new ArrayList();
+		IPath returnValue = group.getContainerFullPath();
+		if (returnValue != null) {
 			chosenContainerPathList.add(returnValue);
 		}
-        setResult(chosenContainerPathList);
-        super.okPressed();
-    }
+		setResult(chosenContainerPathList);
+		super.okPressed();
+	}
 
-    /**
-     * Sets the validator to use.
-     *
-     * @param validator A selection validator
-     */
-    public void setValidator(ISelectionValidator validator) {
-        this.validator = validator;
-    }
+	/**
+	 * Sets the validator to use.
+	 *
+	 * @param validator A selection validator
+	 */
+	public void setValidator(ISelectionValidator validator) {
+		this.validator = validator;
+	}
 
-    /**
-     * Set whether or not closed projects should be shown
-     * in the selection dialog.
-     *
-     * @param show Whether or not to show closed projects.
-     */
-    public void showClosedProjects(boolean show) {
-        this.showClosedProjects = show;
-    }
+	/**
+	 * Set whether or not closed projects should be shown in the selection dialog.
+	 *
+	 * @param show Whether or not to show closed projects.
+	 */
+	public void showClosedProjects(boolean show) {
+		this.showClosedProjects = show;
+	}
 }

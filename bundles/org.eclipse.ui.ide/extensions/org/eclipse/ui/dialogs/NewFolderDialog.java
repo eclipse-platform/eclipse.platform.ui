@@ -60,11 +60,12 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 
 /**
- * The NewFolderDialog is used to create a new folder.
- * The folder can optionally be linked to a file system folder.
+ * The NewFolderDialog is used to create a new folder. The folder can optionally
+ * be linked to a file system folder.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class NewFolderDialog extends SelectionStatusDialog {
@@ -80,8 +81,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	private boolean firstLinkCheck = true;
 
 	/**
-	 * Parent composite of the advanced widget group for creating
-	 * linked resources.
+	 * Parent composite of the advanced widget group for creating linked resources.
 	 */
 	private Composite linkedResourceParent;
 
@@ -91,8 +91,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	private Composite linkedResourceComposite;
 
 	/**
-	 * Height of the dialog without the "advanced" linked resource group.
-	 * Set when the advanced group is first made visible.
+	 * Height of the dialog without the "advanced" linked resource group. Set when
+	 * the advanced group is first made visible.
 	 */
 	private int basicShellHeight = -1;
 
@@ -100,7 +100,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	 * Creates a NewFolderDialog
 	 *
 	 * @param parentShell parent of the new dialog
-	 * @param container parent of the new folder
+	 * @param container   parent of the new folder
 	 */
 	public NewFolderDialog(Shell parentShell, IContainer container) {
 		super(parentShell);
@@ -110,21 +110,19 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Creates the folder using the name and link target entered
-	 * by the user.
-	 * Sets the dialog result to the created folder.
+	 * Creates the folder using the name and link target entered by the user. Sets
+	 * the dialog result to the created folder.
 	 */
 	@Override
 	protected void computeResult() {
-		//Do nothing here as we
-		//need to know the result
+		// Do nothing here as we
+		// need to know the result
 	}
 
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IIDEHelpContextIds.NEW_FOLDER_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IIDEHelpContextIds.NEW_FOLDER_DIALOG);
 	}
 
 	/**
@@ -144,15 +142,12 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	 * @param parent the parent composite
 	 */
 	protected void createAdvancedControls(Composite parent) {
-		Preferences preferences = ResourcesPlugin.getPlugin()
-				.getPluginPreferences();
+		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 
-		if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false
-				&& isValidContainer()) {
+		if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false && isValidContainer()) {
 			linkedResourceParent = new Composite(parent, SWT.NONE);
 			linkedResourceParent.setFont(parent.getFont());
-			linkedResourceParent.setLayoutData(new GridData(
-					GridData.FILL_HORIZONTAL));
+			linkedResourceParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = 0;
 			layout.marginWidth = 0;
@@ -172,26 +167,25 @@ public class NewFolderDialog extends SelectionStatusDialog {
 				}
 			});
 		}
-		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FOLDER,
-				e -> {
-					validateLinkedResource();
-					firstLinkCheck = false;
-				}, new CreateLinkedResourceGroup.IStringValue() {
-					@Override
-					public void setValue(String string) {
-						folderNameField.setText(string);
-					}
+		linkedResourceGroup = new CreateLinkedResourceGroup(IResource.FOLDER, e -> {
+			validateLinkedResource();
+			firstLinkCheck = false;
+		}, new CreateLinkedResourceGroup.IStringValue() {
+			@Override
+			public void setValue(String string) {
+				folderNameField.setText(string);
+			}
 
-					@Override
-					public String getValue() {
-						return folderNameField.getText();
-					}
+			@Override
+			public String getValue() {
+				return folderNameField.getText();
+			}
 
-					@Override
-					public IResource getResource() {
-						return container;
-					}
-				});
+			@Override
+			public IResource getResource() {
+				return container;
+			}
+		});
 	}
 
 	@Override
@@ -234,9 +228,9 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Creates a folder resource handle for the folder with the given name.
-	 * The folder handle is created relative to the container specified during
-	 * object creation.
+	 * Creates a folder resource handle for the folder with the given name. The
+	 * folder handle is created relative to the container specified during object
+	 * creation.
 	 *
 	 * @param folderName the name of the folder resource to create a handle for
 	 * @return the new folder resource handle
@@ -250,8 +244,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Creates a new folder with the given name and optionally linking to
-	 * the specified link target.
+	 * Creates a new folder with the given name and optionally linking to the
+	 * specified link target.
 	 *
 	 * @param folderName name of the new folder
 	 * @param linkTarget name of the link target folder. may be null.
@@ -272,29 +266,21 @@ public class NewFolderDialog extends SelectionStatusDialog {
 			}
 		};
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-					operation);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(operation);
 		} catch (InterruptedException exception) {
 			return null;
 		} catch (InvocationTargetException exception) {
 			if (exception.getTargetException() instanceof CoreException) {
-				ErrorDialog.openError(getShell(),
-						IDEWorkbenchMessages.NewFolderDialog_errorTitle, null, // no special message
-						((CoreException) exception.getTargetException())
-								.getStatus());
+				ErrorDialog.openError(getShell(), IDEWorkbenchMessages.NewFolderDialog_errorTitle, null, // no special
+																											// message
+						((CoreException) exception.getTargetException()).getStatus());
 			} else {
-				// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-				IDEWorkbenchPlugin.log(getClass(),
-						"createNewFolder", exception.getTargetException()); //$NON-NLS-1$
-				MessageDialog
-						.openError(
-								getShell(),
-								IDEWorkbenchMessages.NewFolderDialog_errorTitle,
-								NLS
-										.bind(
-												IDEWorkbenchMessages.NewFolderDialog_internalError,
-												exception.getTargetException()
-														.getMessage()));
+				// CoreExceptions are handled above, but unexpected runtime exceptions and
+				// errors may still occur.
+				IDEWorkbenchPlugin.log(getClass(), "createNewFolder", exception.getTargetException()); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), IDEWorkbenchMessages.NewFolderDialog_errorTitle,
+						NLS.bind(IDEWorkbenchMessages.NewFolderDialog_internalError,
+								exception.getTargetException().getMessage()));
 			}
 			return null;
 		}
@@ -317,11 +303,9 @@ public class NewFolderDialog extends SelectionStatusDialog {
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
 		} else {
 			if (basicShellHeight == -1) {
-				basicShellHeight = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-						true).y;
+				basicShellHeight = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
 			}
-			linkedResourceComposite = linkedResourceGroup
-					.createContents(linkedResourceParent);
+			linkedResourceComposite = linkedResourceGroup.createContents(linkedResourceParent);
 			shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			shell.setSize(shellSize);
 			composite.layout();
@@ -330,17 +314,16 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Returns whether the container specified in the constructor is
-	 * a valid parent for creating linked resources.
+	 * Returns whether the container specified in the constructor is a valid parent
+	 * for creating linked resources.
 	 *
-	 * @return boolean <code>true</code> if the container specified in
-	 * 	the constructor is a valid parent for creating linked resources.
-	 * 	<code>false</code> if no linked resources may be created with the
-	 * 	specified container as a parent.
+	 * @return boolean <code>true</code> if the container specified in the
+	 *         constructor is a valid parent for creating linked resources.
+	 *         <code>false</code> if no linked resources may be created with the
+	 *         specified container as a parent.
 	 */
 	private boolean isValidContainer() {
-		if (container.getType() != IResource.PROJECT
-				&& container.getType() != IResource.FOLDER) {
+		if (container.getType() != IResource.PROJECT && container.getType() != IResource.FOLDER) {
 			return false;
 		}
 
@@ -350,10 +333,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
 			String[] natureIds = project.getDescription().getNatureIds();
 
 			for (String natureId : natureIds) {
-				IProjectNatureDescriptor descriptor = workspace
-						.getNatureDescriptor(natureId);
-				if (descriptor != null
-						&& descriptor.isLinkingAllowed() == false) {
+				IProjectNatureDescriptor descriptor = workspace.getNatureDescriptor(natureId);
+				if (descriptor != null && descriptor.isLinkingAllowed() == false) {
 					return false;
 				}
 			}
@@ -365,17 +346,16 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Update the dialog's status line to reflect the given status. It is safe to call
-	 * this method before the dialog has been opened.
+	 * Update the dialog's status line to reflect the given status. It is safe to
+	 * call this method before the dialog has been opened.
 	 */
 	@Override
 	protected void updateStatus(IStatus status) {
 		if (firstLinkCheck && status != null) {
 			// don't show the first validation result as an error.
 			// fixes bug 29659
-			Status newStatus = new Status(IStatus.OK, status.getPlugin(),
-					status.getCode(), status.getMessage(), status
-							.getException());
+			Status newStatus = new Status(IStatus.OK, status.getPlugin(), status.getCode(), status.getMessage(),
+					status.getException());
 			super.updateStatus(newStatus);
 		} else {
 			super.updateStatus(status);
@@ -383,28 +363,27 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Update the dialog's status line to reflect the given status. It is safe to call
-	 * this method before the dialog has been opened.
+	 * Update the dialog's status line to reflect the given status. It is safe to
+	 * call this method before the dialog has been opened.
+	 *
 	 * @param severity
 	 * @param message
 	 */
 	private void updateStatus(int severity, String message) {
-		updateStatus(new Status(severity, IDEWorkbenchPlugin.IDE_WORKBENCH,
-				severity, message, null));
+		updateStatus(new Status(severity, IDEWorkbenchPlugin.IDE_WORKBENCH, severity, message, null));
 	}
 
 	/**
-	 * Checks whether the folder name and link location are valid.
-	 * Disable the OK button if the folder name and link location are valid.
-	 * a message that indicates the problem otherwise.
+	 * Checks whether the folder name and link location are valid. Disable the OK
+	 * button if the folder name and link location are valid. a message that
+	 * indicates the problem otherwise.
 	 */
 	private void validateLinkedResource() {
 		boolean valid = validateFolderName();
 
 		if (valid) {
 			IFolder linkHandle = createFolderHandle(folderNameField.getText());
-			IStatus status = linkedResourceGroup
-					.validateLinkLocation(linkHandle);
+			IStatus status = linkedResourceGroup.validateLinkLocation(linkHandle);
 
 			if (status.getSeverity() != IStatus.ERROR) {
 				getOkButton().setEnabled(true);
@@ -423,8 +402,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/**
 	 * Checks if the folder name is valid.
 	 *
-	 * @return null if the new folder name is valid.
-	 * 	a message that indicates the problem otherwise.
+	 * @return null if the new folder name is valid. a message that indicates the
+	 *         problem otherwise.
 	 */
 	private boolean validateFolderName() {
 		String name = folderNameField.getText();
@@ -432,8 +411,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		IStatus nameStatus = workspace.validateName(name, IResource.FOLDER);
 
 		if ("".equals(name)) { //$NON-NLS-1$
-			updateStatus(IStatus.ERROR,
-					IDEWorkbenchMessages.NewFolderDialog_folderNameEmpty);
+			updateStatus(IStatus.ERROR, IDEWorkbenchMessages.NewFolderDialog_folderNameEmpty);
 			return false;
 		}
 		if (nameStatus.isOK() == false) {
@@ -441,10 +419,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
 			return false;
 		}
 		IPath path = new Path(name);
-		if (container.getFolder(path).exists()
-				|| container.getFile(path).exists()) {
-			updateStatus(IStatus.ERROR, NLS.bind(
-					IDEWorkbenchMessages.NewFolderDialog_alreadyExists, name));
+		if (container.getFolder(path).exists() || container.getFile(path).exists()) {
+			updateStatus(IStatus.ERROR, NLS.bind(IDEWorkbenchMessages.NewFolderDialog_alreadyExists, name));
 			return false;
 		}
 		updateStatus(IStatus.OK, ""); //$NON-NLS-1$

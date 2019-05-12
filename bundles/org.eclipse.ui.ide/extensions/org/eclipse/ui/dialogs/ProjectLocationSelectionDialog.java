@@ -70,14 +70,13 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
 	/**
-	 * Create a ProjectLocationSelectionDialog on the supplied project parented
-	 * by the parentShell.
+	 * Create a ProjectLocationSelectionDialog on the supplied project parented by
+	 * the parentShell.
 	 *
 	 * @param parentShell
 	 * @param existingProject
 	 */
-	public ProjectLocationSelectionDialog(Shell parentShell,
-			IProject existingProject) {
+	public ProjectLocationSelectionDialog(Shell parentShell, IProject existingProject) {
 		super(parentShell);
 		setTitle(PROJECT_LOCATION_SELECTION_TITLE);
 		setStatusLineAboveButtons(true);
@@ -97,11 +96,10 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Check the message. If it is null then continue otherwise inform the user
-	 * via the status value and disable the OK.
+	 * Check the message. If it is null then continue otherwise inform the user via
+	 * the status value and disable the OK.
 	 *
-	 * @param errorMsg
-	 *            the error message to show if it is not <code>null</code>
+	 * @param errorMsg the error message to show if it is not <code>null</code>
 	 */
 	private void applyValidationResult(String errorMsg, boolean infoOnly) {
 		int code;
@@ -117,15 +115,14 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 			code = IStatus.ERROR;
 		}
 
-		updateStatus(new Status(code, IDEWorkbenchPlugin.IDE_WORKBENCH, code,
-				errorMsg, null));
+		updateStatus(new Status(code, IDEWorkbenchPlugin.IDE_WORKBENCH, code, errorMsg, null));
 		if (getOkButton() != null)
 			getOkButton().setEnabled(allowFinish);
 	}
 
 	/**
-	 * Check whether the entries are valid. If so return null. Otherwise return
-	 * a string that indicates the problem.
+	 * Check whether the entries are valid. If so return null. Otherwise return a
+	 * string that indicates the problem.
 	 */
 	private String checkValid() {
 		String valid = checkValidName();
@@ -149,8 +146,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		}
 		IProject newProject = workspace.getRoot().getProject(name);
 		if (newProject.exists()) {
-			return NLS.bind(
-					IDEWorkbenchMessages.CopyProjectAction_alreadyExists, name);
+			return NLS.bind(IDEWorkbenchMessages.CopyProjectAction_alreadyExists, name);
 		}
 
 		return null;
@@ -158,8 +154,8 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * The <code>ProjectLocationSelectionDialog</code> implementation of this
-	 * <code>SelectionStatusDialog</code> method builds a two element list -
-	 * the first element is the project name and the second one is the location.
+	 * <code>SelectionStatusDialog</code> method builds a two element list - the
+	 * first element is the project name and the second one is the location.
 	 */
 	@Override
 	protected void computeResult() {
@@ -173,8 +169,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
 	}
 
 	@Override
@@ -186,8 +181,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		createProjectNameGroup(composite);
-		locationArea = new ProjectContentsLocationArea(getErrorReporter(),
-				composite);
+		locationArea = new ProjectContentsLocationArea(getErrorReporter(), composite);
 		locationArea.updateProjectName(projectNameField.getText());
 		return composite;
 	}
@@ -208,8 +202,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	/**
 	 * Creates the project name specification controls.
 	 *
-	 * @param parent
-	 *            the parent composite
+	 * @param parent the parent composite
 	 */
 	private void createProjectNameGroup(Composite parent) {
 		Font font = parent.getFont();

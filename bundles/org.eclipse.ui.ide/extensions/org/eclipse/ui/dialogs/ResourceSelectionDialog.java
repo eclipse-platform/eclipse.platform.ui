@@ -46,194 +46,188 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * ResourceSelectionDialog dialog = new ResourceSelectionDialog(getShell(), rootResource, msg);
  * dialog.setInitialSelections(selectedResources);
  * dialog.open();
  * return dialog.getResult();
  * </pre>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ResourceSelectionDialog extends SelectionDialog {
-    // the root element to populate the viewer with
-    private IAdaptable root;
+	// the root element to populate the viewer with
+	private IAdaptable root;
 
-    // the visual selection widget group
-    private CheckboxTreeAndListGroup selectionGroup;
+	// the visual selection widget group
+	private CheckboxTreeAndListGroup selectionGroup;
 
-    // constants
-    private static final int SIZING_SELECTION_WIDGET_WIDTH = 400;
+	// constants
+	private static final int SIZING_SELECTION_WIDGET_WIDTH = 400;
 
-    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 300;
+	private static final int SIZING_SELECTION_WIDGET_HEIGHT = 300;
 
-    /**
-     * Creates a resource selection dialog rooted at the given element.
-     *
-     * @param parentShell the parent shell
-     * @param rootElement the root element to populate this dialog with
-     * @param message the message to be displayed at the top of this dialog, or
-     *    <code>null</code> to display a default message
-     */
-    public ResourceSelectionDialog(Shell parentShell, IAdaptable rootElement,
-            String message) {
-        super(parentShell);
-        setTitle(IDEWorkbenchMessages.ResourceSelectionDialog_title);
-        root = rootElement;
-        if (message != null) {
+	/**
+	 * Creates a resource selection dialog rooted at the given element.
+	 *
+	 * @param parentShell the parent shell
+	 * @param rootElement the root element to populate this dialog with
+	 * @param message     the message to be displayed at the top of this dialog, or
+	 *                    <code>null</code> to display a default message
+	 */
+	public ResourceSelectionDialog(Shell parentShell, IAdaptable rootElement, String message) {
+		super(parentShell);
+		setTitle(IDEWorkbenchMessages.ResourceSelectionDialog_title);
+		root = rootElement;
+		if (message != null) {
 			setMessage(message);
 		} else {
 			setMessage(IDEWorkbenchMessages.ResourceSelectionDialog_message);
 		}
-        setShellStyle(getShellStyle() | SWT.SHEET);
-    }
+		setShellStyle(getShellStyle() | SWT.SHEET);
+	}
 
-    /**
-     * Visually checks the previously-specified elements in the container (left)
-     * portion of this dialog's resource selection viewer.
-     */
-    private void checkInitialSelections() {
-        Iterator itemsToCheck = getInitialElementSelections().iterator();
+	/**
+	 * Visually checks the previously-specified elements in the container (left)
+	 * portion of this dialog's resource selection viewer.
+	 */
+	private void checkInitialSelections() {
+		Iterator itemsToCheck = getInitialElementSelections().iterator();
 
-        while (itemsToCheck.hasNext()) {
-            IResource currentElement = (IResource) itemsToCheck.next();
+		while (itemsToCheck.hasNext()) {
+			IResource currentElement = (IResource) itemsToCheck.next();
 
-            if (currentElement.getType() == IResource.FILE) {
+			if (currentElement.getType() == IResource.FILE) {
 				selectionGroup.initialCheckListItem(currentElement);
 			} else {
 				selectionGroup.initialCheckTreeItem(currentElement);
 			}
-        }
-    }
+		}
+	}
 
+	/**
+	 * @param event the event
+	 */
+	public void checkStateChanged(CheckStateChangedEvent event) {
+		getOkButton().setEnabled(selectionGroup.getCheckedElementCount() > 0);
+	}
 
-    /**
-     * @param event the event
-     */
-    public void checkStateChanged(CheckStateChangedEvent event) {
-        getOkButton().setEnabled(selectionGroup.getCheckedElementCount() > 0);
-    }
-
-    @Override
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IIDEHelpContextIds.RESOURCE_SELECTION_DIALOG);
-    }
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IIDEHelpContextIds.RESOURCE_SELECTION_DIALOG);
+	}
 
-    @Override
+	@Override
 	public void create() {
-        super.create();
-        initializeDialog();
-    }
+		super.create();
+		initializeDialog();
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        // page group
-        Composite composite = (Composite) super.createDialogArea(parent);
+		// page group
+		Composite composite = (Composite) super.createDialogArea(parent);
 
-        //create the input element, which has the root resource
-        //as its only child
-        ArrayList input = new ArrayList();
-        input.add(root);
+		// create the input element, which has the root resource
+		// as its only child
+		ArrayList input = new ArrayList();
+		input.add(root);
 
-        createMessageArea(composite);
-        selectionGroup = new CheckboxTreeAndListGroup(composite, input,
-                getResourceProvider(IResource.FOLDER | IResource.PROJECT
-                        | IResource.ROOT), WorkbenchLabelProvider
-                        .getDecoratingWorkbenchLabelProvider(),
-                        new ResourceComparator(ResourceComparator.NAME),
-                getResourceProvider(IResource.FILE), WorkbenchLabelProvider
-                        .getDecoratingWorkbenchLabelProvider(),
-                        new ResourceComparator(ResourceComparator.NAME),SWT.NONE,
-                // since this page has no other significantly-sized
-                // widgets we need to hardcode the combined widget's
-                // size, otherwise it will open too small
-                SIZING_SELECTION_WIDGET_WIDTH, SIZING_SELECTION_WIDGET_HEIGHT);
+		createMessageArea(composite);
+		selectionGroup = new CheckboxTreeAndListGroup(composite, input,
+				getResourceProvider(IResource.FOLDER | IResource.PROJECT | IResource.ROOT),
+				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
+				new ResourceComparator(ResourceComparator.NAME), getResourceProvider(IResource.FILE),
+				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
+				new ResourceComparator(ResourceComparator.NAME), SWT.NONE,
+				// since this page has no other significantly-sized
+				// widgets we need to hardcode the combined widget's
+				// size, otherwise it will open too small
+				SIZING_SELECTION_WIDGET_WIDTH, SIZING_SELECTION_WIDGET_HEIGHT);
 
-        composite.addControlListener(new ControlListener() {
-            @Override
+		composite.addControlListener(new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent e) {
-            }
+			}
 
-            @Override
+			@Override
 			public void controlResized(ControlEvent e) {
-                //Also try and reset the size of the columns as appropriate
-                TableColumn[] columns = selectionGroup.getListTable()
-                        .getColumns();
-                for (TableColumn column : columns) {
-                    column.pack();
-                }
-            }
-        });
+				// Also try and reset the size of the columns as appropriate
+				TableColumn[] columns = selectionGroup.getListTable().getColumns();
+				for (TableColumn column : columns) {
+					column.pack();
+				}
+			}
+		});
 
-        return composite;
-    }
+		return composite;
+	}
 
-    /**
-     * Returns a content provider for <code>IResource</code>s that returns
-     * only children of the given resource type.
-     */
-    private ITreeContentProvider getResourceProvider(final int resourceType) {
-        return new WorkbenchContentProvider() {
-            @Override
+	/**
+	 * Returns a content provider for <code>IResource</code>s that returns only
+	 * children of the given resource type.
+	 */
+	private ITreeContentProvider getResourceProvider(final int resourceType) {
+		return new WorkbenchContentProvider() {
+			@Override
 			public Object[] getChildren(Object o) {
-                if (o instanceof IContainer) {
-                    IResource[] members = null;
-                    try {
-                        members = ((IContainer) o).members();
-                    } catch (CoreException e) {
-                        //just return an empty set of children
-                        return new Object[0];
-                    }
+				if (o instanceof IContainer) {
+					IResource[] members = null;
+					try {
+						members = ((IContainer) o).members();
+					} catch (CoreException e) {
+						// just return an empty set of children
+						return new Object[0];
+					}
 
-                    //filter out the desired resource types
-                    ArrayList results = new ArrayList();
-                    for (IResource member : members) {
-                        //And the test bits with the resource types to see if they are what we want
-                        if ((member.getType() & resourceType) > 0) {
-                            results.add(member);
-                        }
-                    }
-                    return results.toArray();
-                }
-                //input element case
-                if (o instanceof ArrayList) {
-                    return ((ArrayList) o).toArray();
-                }
-                return new Object[0];
-            }
-        };
-    }
+					// filter out the desired resource types
+					ArrayList results = new ArrayList();
+					for (IResource member : members) {
+						// And the test bits with the resource types to see if they are what we want
+						if ((member.getType() & resourceType) > 0) {
+							results.add(member);
+						}
+					}
+					return results.toArray();
+				}
+				// input element case
+				if (o instanceof ArrayList) {
+					return ((ArrayList) o).toArray();
+				}
+				return new Object[0];
+			}
+		};
+	}
 
-    /**
-     * Initializes this dialog's controls.
-     */
-    private void initializeDialog() {
-        selectionGroup.addCheckStateListener(event -> getOkButton().setEnabled(
-		        selectionGroup.getCheckedElementCount() > 0));
+	/**
+	 * Initializes this dialog's controls.
+	 */
+	private void initializeDialog() {
+		selectionGroup
+				.addCheckStateListener(event -> getOkButton().setEnabled(selectionGroup.getCheckedElementCount() > 0));
 
-        if (getInitialElementSelections().isEmpty()) {
+		if (getInitialElementSelections().isEmpty()) {
 			getOkButton().setEnabled(false);
 		} else {
 			checkInitialSelections();
 		}
-    }
+	}
 
-    /**
-     * The <code>ResourceSelectionDialog</code> implementation of this
-     * <code>Dialog</code> method builds a list of the selected resources for later
-     * retrieval by the client and closes this dialog.
-     */
-    @Override
+	/**
+	 * The <code>ResourceSelectionDialog</code> implementation of this
+	 * <code>Dialog</code> method builds a list of the selected resources for later
+	 * retrieval by the client and closes this dialog.
+	 */
+	@Override
 	protected void okPressed() {
-        Iterator resultEnum = selectionGroup.getAllCheckedListItems();
-        ArrayList list = new ArrayList();
-        while (resultEnum.hasNext()) {
+		Iterator resultEnum = selectionGroup.getAllCheckedListItems();
+		ArrayList list = new ArrayList();
+		while (resultEnum.hasNext()) {
 			list.add(resultEnum.next());
 		}
-        setResult(list);
-        super.okPressed();
-    }
+		setResult(list);
+		super.okPressed();
+	}
 }
