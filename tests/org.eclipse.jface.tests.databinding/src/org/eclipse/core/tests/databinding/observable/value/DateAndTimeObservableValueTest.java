@@ -39,6 +39,7 @@ public class DateAndTimeObservableValueTest extends
 	private IObservableValue dateAndTime;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 

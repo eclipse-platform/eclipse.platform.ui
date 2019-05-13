@@ -51,6 +51,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 	private TableColumn fancyColumn;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		getComposite().setLayout(new FillLayout());
@@ -76,6 +77,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 	}
 
 	@After
+	@Override
 	public void tearDown() throws Exception {
 		// do any teardown work here
 		super.tearDown();

@@ -137,6 +137,7 @@ public class SizePropertySource
 		firePropertyChanged();
 	}
 
+	@Override
 	public String toString() {
 		return point.toString();
 	}

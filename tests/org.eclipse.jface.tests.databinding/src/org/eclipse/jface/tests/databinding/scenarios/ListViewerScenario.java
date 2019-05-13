@@ -51,6 +51,7 @@ public class ListViewerScenario extends ScenariosTestCase {
 	private ListViewer listViewer;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		// do any setup work here
@@ -60,6 +61,7 @@ public class ListViewerScenario extends ScenariosTestCase {
 	}
 
 	@After
+	@Override
 	public void tearDown() throws Exception {
 		list.dispose();
 		list = null;

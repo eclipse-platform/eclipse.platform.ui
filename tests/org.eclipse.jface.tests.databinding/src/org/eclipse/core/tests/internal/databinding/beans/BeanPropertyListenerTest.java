@@ -42,6 +42,7 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 	private BeanPropertyListenerStub listener;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		property = new PropertyStub();

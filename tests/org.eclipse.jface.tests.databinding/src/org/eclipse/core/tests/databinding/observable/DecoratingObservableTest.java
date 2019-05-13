@@ -36,6 +36,7 @@ public class DecoratingObservableTest extends AbstractDefaultRealmTestCase {
 	private DecoratingObservable decorator;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		decorated = new ObservableStub(Realm.getDefault());

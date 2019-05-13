@@ -1463,6 +1463,7 @@ public class PartServiceImpl implements EPartService {
 	 *      509868</a>
 	 */
 	@Deprecated
+	@Override
 	public Collection<MInputPart> getInputParts(String inputUri) {
 		Assert.isNotNull(inputUri, "Input uri must not be null"); //$NON-NLS-1$
 

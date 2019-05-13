@@ -27,6 +27,7 @@ public class BeanPropertiesTest extends AbstractDefaultRealmTestCase {
 	private Bean bean;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 

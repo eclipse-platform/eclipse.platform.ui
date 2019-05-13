@@ -41,6 +41,7 @@ public class LabelControlScenario extends ScenariosTestCase {
 	private Label label;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		// do any setup work here
@@ -49,6 +50,7 @@ public class LabelControlScenario extends ScenariosTestCase {
 	}
 
 	@After
+	@Override
 	public void tearDown() throws Exception {
 		// do any teardown work here
 		super.tearDown();

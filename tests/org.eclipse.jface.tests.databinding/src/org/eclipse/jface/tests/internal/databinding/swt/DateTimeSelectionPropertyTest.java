@@ -33,6 +33,7 @@ public class DateTimeSelectionPropertyTest extends AbstractSWTTestCase {
 	DateTimeSelectionProperty property;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		dateTime = new DateTime(getShell(), SWT.DATE);

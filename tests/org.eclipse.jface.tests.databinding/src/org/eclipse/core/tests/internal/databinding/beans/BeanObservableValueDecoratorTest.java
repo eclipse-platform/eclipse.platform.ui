@@ -38,6 +38,7 @@ public class BeanObservableValueDecoratorTest extends AbstractDefaultRealmTestCa
 	private PropertyDescriptor propertyDescriptor;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 

@@ -39,6 +39,7 @@ public class BeanPropertyListenerSupportTest extends
 	private String propertyName;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 

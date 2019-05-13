@@ -41,12 +41,14 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 	private Adventure skiTrip;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		skiTrip = SampleData.WINTER_HOLIDAY;
 	}
 
 	@After
+	@Override
 	public void tearDown() throws Exception {
 		// do any teardown work here
 		super.tearDown();

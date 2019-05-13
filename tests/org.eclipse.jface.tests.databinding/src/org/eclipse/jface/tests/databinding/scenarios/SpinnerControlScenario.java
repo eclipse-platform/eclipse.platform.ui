@@ -39,6 +39,7 @@ public class SpinnerControlScenario extends ScenariosTestCase {
 	private Adventure adventure;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		// do any setup work here
@@ -46,6 +47,7 @@ public class SpinnerControlScenario extends ScenariosTestCase {
 	}
 
 	@After
+	@Override
 	public void tearDown() throws Exception {
 		// do any teardown work here
 		super.tearDown();

@@ -37,6 +37,7 @@ public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 	private DuplexingObservableValue observable;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		list = new WritableList(new ArrayList(), String.class);

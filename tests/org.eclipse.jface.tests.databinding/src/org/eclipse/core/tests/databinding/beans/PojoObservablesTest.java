@@ -47,6 +47,7 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 	private String propertyName;
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 

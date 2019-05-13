@@ -39,12 +39,14 @@ import org.junit.Test;
 public class CustomScenarios extends ScenariosTestCase {
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		// do any setup work here
 	}
 
 	@After
+	@Override
 	public void tearDown() throws Exception {
 		// do any teardown work here
 		super.tearDown();
