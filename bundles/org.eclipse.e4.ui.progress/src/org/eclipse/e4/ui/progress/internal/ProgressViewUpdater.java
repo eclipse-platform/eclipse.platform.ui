@@ -39,16 +39,16 @@ import org.eclipse.e4.ui.progress.internal.legacy.PlatformUI;
 @Singleton
 public class ProgressViewUpdater implements IJobProgressManagerListener {
 
-    private IProgressUpdateCollector[] collectors;
+	private IProgressUpdateCollector[] collectors;
 
-    Job updateJob;
+	Job updateJob;
 
-    UpdatesInfo currentInfo = new UpdatesInfo();
+	UpdatesInfo currentInfo = new UpdatesInfo();
 
-    Object updateLock = new Object();
+	Object updateLock = new Object();
 
-    @Inject
-    ProgressManager progressManager;
+	@Inject
+	ProgressManager progressManager;
 
 	static class MutableBoolean {
 		boolean value;
@@ -60,176 +60,171 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	MutableBoolean updateScheduled = new MutableBoolean();
 
+	/**
+	 * The UpdatesInfo is a private class for keeping track of the updates required.
+	 */
+	static class UpdatesInfo {
 
-    /**
-     * The UpdatesInfo is a private class for keeping track of the updates
-     * required.
-     */
-    static class UpdatesInfo {
+		Collection<JobTreeElement> additions = new HashSet<>();
 
-        Collection<JobTreeElement> additions = new HashSet<>();
+		Collection<JobTreeElement> deletions = new HashSet<>();
 
-        Collection<JobTreeElement> deletions = new HashSet<>();
+		Collection<JobTreeElement> refreshes = new HashSet<>();
 
-        Collection<JobTreeElement> refreshes = new HashSet<>();
+		boolean updateAll = false;
 
-        boolean updateAll = false;
+		private UpdatesInfo() {
+			// Create a new instance of the info
+		}
 
-        private UpdatesInfo() {
-            //Create a new instance of the info
-        }
+		/**
+		 * Add an add update
+		 *
+		 * @param addition
+		 */
+		void add(JobTreeElement addition) {
+			additions.add(addition);
+		}
 
-        /**
-         * Add an add update
-         *
-         * @param addition
-         */
-        void add(JobTreeElement addition) {
-            additions.add(addition);
-        }
+		/**
+		 * Add a remove update
+		 *
+		 * @param removal
+		 */
+		void remove(JobTreeElement removal) {
+			deletions.add(removal);
+		}
 
-        /**
-         * Add a remove update
-         *
-         * @param removal
-         */
-        void remove(JobTreeElement removal) {
-            deletions.add(removal);
-        }
+		/**
+		 * Add a refresh update
+		 *
+		 * @param refresh
+		 */
+		void refresh(JobTreeElement refresh) {
+			refreshes.add(refresh);
+		}
 
-        /**
-         * Add a refresh update
-         *
-         * @param refresh
-         */
-        void refresh(JobTreeElement refresh) {
-            refreshes.add(refresh);
-        }
+		/**
+		 * Reset the caches after completion of an update.
+		 */
+		void reset() {
+			additions.clear();
+			deletions.clear();
+			refreshes.clear();
+			updateAll = false;
+		}
 
-        /**
-         * Reset the caches after completion of an update.
-         */
-        void reset() {
-            additions.clear();
-            deletions.clear();
-            refreshes.clear();
-            updateAll = false;
-        }
+		void processForUpdate() {
+			HashSet<JobTreeElement> staleAdditions = new HashSet<>();
 
-        void processForUpdate() {
-            HashSet<JobTreeElement> staleAdditions = new HashSet<>();
-
-            Iterator<JobTreeElement> additionsIterator = additions.iterator();
-            while (additionsIterator.hasNext()) {
+			Iterator<JobTreeElement> additionsIterator = additions.iterator();
+			while (additionsIterator.hasNext()) {
 				JobTreeElement treeElement = additionsIterator.next();
-                if (!treeElement.isActive()) {
-                    if (deletions.contains(treeElement)) {
+				if (!treeElement.isActive()) {
+					if (deletions.contains(treeElement)) {
 						staleAdditions.add(treeElement);
 					}
-                }
-            }
+				}
+			}
 
-            additions.removeAll(staleAdditions);
+			additions.removeAll(staleAdditions);
 
-            HashSet<JobTreeElement> obsoleteRefresh = new HashSet<>();
-            Iterator<JobTreeElement> refreshIterator = refreshes.iterator();
-            while (refreshIterator.hasNext()) {
+			HashSet<JobTreeElement> obsoleteRefresh = new HashSet<>();
+			Iterator<JobTreeElement> refreshIterator = refreshes.iterator();
+			while (refreshIterator.hasNext()) {
 				JobTreeElement treeElement = refreshIterator.next();
-                if (deletions.contains(treeElement)
-                        || additions.contains(treeElement)) {
+				if (deletions.contains(treeElement) || additions.contains(treeElement)) {
 					obsoleteRefresh.add(treeElement);
 				}
 
-                //Also check for groups that are being added
-               Object parent = treeElement.getParent();
-               if(parent != null && (deletions.contains(parent)
-                       || additions.contains(parent))){
-            	   obsoleteRefresh.add(treeElement);
-               }
+				// Also check for groups that are being added
+				Object parent = treeElement.getParent();
+				if (parent != null && (deletions.contains(parent) || additions.contains(parent))) {
+					obsoleteRefresh.add(treeElement);
+				}
 
-                if (!treeElement.isActive()) {
-                    //If it is done then delete it
-                    obsoleteRefresh.add(treeElement);
-                    deletions.add(treeElement);
-                }
-            }
+				if (!treeElement.isActive()) {
+					// If it is done then delete it
+					obsoleteRefresh.add(treeElement);
+					deletions.add(treeElement);
+				}
+			}
 
-            refreshes.removeAll(obsoleteRefresh);
+			refreshes.removeAll(obsoleteRefresh);
 
-        }
-    }
+		}
+	}
 
-    /**
-     * Create a new instance of the receiver.
-     */
-    ProgressViewUpdater() {
-        createUpdateJob();
-        collectors = new IProgressUpdateCollector[0];
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 */
+	ProgressViewUpdater() {
+		createUpdateJob();
+		collectors = new IProgressUpdateCollector[0];
+	}
 
-    @PostConstruct
-    void init(MApplication application) {
-    	progressManager.addListener(this);
-    	application.getContext().set(ProgressViewUpdater.class, this);
-    }
+	@PostConstruct
+	void init(MApplication application) {
+		progressManager.addListener(this);
+		application.getContext().set(ProgressViewUpdater.class, this);
+	}
 
-    /**
-     * Add the new collector to the list of collectors.
-     *
-     * @param newCollector
-     */
-    void addCollector(IProgressUpdateCollector newCollector) {
-        IProgressUpdateCollector[] newCollectors = new IProgressUpdateCollector[collectors.length + 1];
-        System.arraycopy(collectors, 0, newCollectors, 0, collectors.length);
-        newCollectors[collectors.length] = newCollector;
-        collectors = newCollectors;
-    }
+	/**
+	 * Add the new collector to the list of collectors.
+	 *
+	 * @param newCollector
+	 */
+	void addCollector(IProgressUpdateCollector newCollector) {
+		IProgressUpdateCollector[] newCollectors = new IProgressUpdateCollector[collectors.length + 1];
+		System.arraycopy(collectors, 0, newCollectors, 0, collectors.length);
+		newCollectors[collectors.length] = newCollector;
+		collectors = newCollectors;
+	}
 
-    /**
-     * Remove the collector from the list of collectors.
-     *
-     * @param provider
-     */
-    void removeCollector(IProgressUpdateCollector provider) {
-        HashSet<IProgressUpdateCollector> newCollectors = new HashSet<>();
-        for (int i = 0; i < collectors.length; i++) {
-            if (!collectors[i].equals(provider)) {
+	/**
+	 * Remove the collector from the list of collectors.
+	 *
+	 * @param provider
+	 */
+	void removeCollector(IProgressUpdateCollector provider) {
+		HashSet<IProgressUpdateCollector> newCollectors = new HashSet<>();
+		for (int i = 0; i < collectors.length; i++) {
+			if (!collectors[i].equals(provider)) {
 				newCollectors.add(collectors[i]);
 			}
-        }
-        IProgressUpdateCollector[] newArray = new IProgressUpdateCollector[newCollectors
-                .size()];
-        newCollectors.toArray(newArray);
-        collectors = newArray;
-        //Remove ourselves if there is nothing to update
-        if (collectors.length == 0) {
-        	progressManager.removeListener(this);
 		}
-    }
+		IProgressUpdateCollector[] newArray = new IProgressUpdateCollector[newCollectors.size()];
+		newCollectors.toArray(newArray);
+		collectors = newArray;
+		// Remove ourselves if there is nothing to update
+		if (collectors.length == 0) {
+			progressManager.removeListener(this);
+		}
+	}
 
-    /**
-     * Schedule an update.
-     */
-    void scheduleUpdate() {
-        if (PlatformUI.isWorkbenchRunning()) {
-            // make sure we don't schedule too often
+	/**
+	 * Schedule an update.
+	 */
+	void scheduleUpdate() {
+		if (PlatformUI.isWorkbenchRunning()) {
+			// make sure we don't schedule too often
 			boolean scheduleUpdate = false;
 			synchronized (updateScheduled) {
 				if (!updateScheduled.value || updateJob.getState() == Job.NONE) {
 					updateScheduled.value = scheduleUpdate = true;
 				}
-        	}
+			}
 			if (scheduleUpdate)
 				updateJob.schedule(100);
-        }
-    }
+		}
+	}
 
-    /**
-     * Create the update job that handles the updatesInfo.
-     */
-    private void createUpdateJob() {
-        updateJob = new UIJob(ProgressMessages.ProgressContentProvider_UpdateProgressJob) {
-            @Override
+	/**
+	 * Create the update job that handles the updatesInfo.
+	 */
+	private void createUpdateJob() {
+		updateJob = new UIJob(ProgressMessages.ProgressContentProvider_UpdateProgressJob) {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				synchronized (updateScheduled) {
 					// updates requested while we are running should cause it to
@@ -285,153 +280,153 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 				synchronized (updateScheduled) {
 					updateScheduled.value = false;
 				}
-            }
-        };
-        updateJob.setSystem(true);
-        updateJob.setPriority(Job.DECORATE);
-        updateJob.setProperty(ProgressManagerUtil.INFRASTRUCTURE_PROPERTY, new Object());
+			}
+		};
+		updateJob.setSystem(true);
+		updateJob.setPriority(Job.DECORATE);
+		updateJob.setProperty(ProgressManagerUtil.INFRASTRUCTURE_PROPERTY, new Object());
 
-    }
+	}
 
-    /**
-     * Get the updates info that we are using in the receiver.
-     *
-     * @return Returns the currentInfo.
-     */
-    UpdatesInfo getCurrentInfo() {
-        return currentInfo;
-    }
+	/**
+	 * Get the updates info that we are using in the receiver.
+	 *
+	 * @return Returns the currentInfo.
+	 */
+	UpdatesInfo getCurrentInfo() {
+		return currentInfo;
+	}
 
-    /**
-     * Refresh the supplied JobInfo.
-     * @param info
-     */
-    public void refresh(JobInfo info) {
+	/**
+	 * Refresh the supplied JobInfo.
+	 * 
+	 * @param info
+	 */
+	public void refresh(JobInfo info) {
 
-        if (isUpdateJob(info.getJob())) {
+		if (isUpdateJob(info.getJob())) {
 			return;
 		}
 
-        synchronized (updateLock) {
-            currentInfo.refresh(info);
-            GroupInfo group = info.getGroupInfo();
-            if (group != null) {
+		synchronized (updateLock) {
+			currentInfo.refresh(info);
+			GroupInfo group = info.getGroupInfo();
+			if (group != null) {
 				currentInfo.refresh(group);
 			}
-        }
-        //Add in a 100ms delay so as to keep priority low
-        scheduleUpdate();
+		}
+		// Add in a 100ms delay so as to keep priority low
+		scheduleUpdate();
 
-    }
+	}
 
-    @Override
+	@Override
 	public void refreshJobInfo(JobInfo info) {
 
-        if (isUpdateJob(info.getJob())) {
+		if (isUpdateJob(info.getJob())) {
 			return;
 		}
 
-        synchronized (updateLock) {
-            currentInfo.refresh(info);
-        }
-        //Add in a 100ms delay so as to keep priority low
-        scheduleUpdate();
+		synchronized (updateLock) {
+			currentInfo.refresh(info);
+		}
+		// Add in a 100ms delay so as to keep priority low
+		scheduleUpdate();
 
-    }
+	}
 
-    @Override
+	@Override
 	public void refreshGroup(GroupInfo info) {
-        synchronized (updateLock) {
-            currentInfo.refresh(info);
-        }
-        //Add in a 100ms delay so as to keep priority low
-        scheduleUpdate();
+		synchronized (updateLock) {
+			currentInfo.refresh(info);
+		}
+		// Add in a 100ms delay so as to keep priority low
+		scheduleUpdate();
 
-    }
+	}
 
-    @Override
+	@Override
 	public void addGroup(GroupInfo info) {
 
-        synchronized (updateLock) {
-            currentInfo.add(info);
-        }
-        scheduleUpdate();
+		synchronized (updateLock) {
+			currentInfo.add(info);
+		}
+		scheduleUpdate();
 
-    }
+	}
 
-    @Override
+	@Override
 	public void refreshAll() {
 
-        synchronized (updateLock) {
-            currentInfo.updateAll = true;
-        }
+		synchronized (updateLock) {
+			currentInfo.updateAll = true;
+		}
 
-        //Add in a 100ms delay so as to keep priority low
-        scheduleUpdate();
+		// Add in a 100ms delay so as to keep priority low
+		scheduleUpdate();
 
-    }
+	}
 
-    @Override
+	@Override
 	public void addJob(JobInfo info) {
 
-        if (isUpdateJob(info.getJob())) {
+		if (isUpdateJob(info.getJob())) {
 			return;
 		}
 
-        synchronized (updateLock) {
-            GroupInfo group = info.getGroupInfo();
+		synchronized (updateLock) {
+			GroupInfo group = info.getGroupInfo();
 
-            if (group == null) {
+			if (group == null) {
 				currentInfo.add(info);
 			} else {
-                currentInfo.refresh(group);
-            }
-        }
-        scheduleUpdate();
+				currentInfo.refresh(group);
+			}
+		}
+		scheduleUpdate();
 
-    }
+	}
 
-    @Override
+	@Override
 	public void removeJob(JobInfo info) {
 
-        if (isUpdateJob(info.getJob())) {
+		if (isUpdateJob(info.getJob())) {
 			return;
 		}
 
-        synchronized (updateLock) {
-            GroupInfo group = info.getGroupInfo();
-            if (group == null) {
+		synchronized (updateLock) {
+			GroupInfo group = info.getGroupInfo();
+			if (group == null) {
 				currentInfo.remove(info);
 			} else {
-                currentInfo.refresh(group);
-            }
-        }
-        scheduleUpdate();
-    }
+				currentInfo.refresh(group);
+			}
+		}
+		scheduleUpdate();
+	}
 
-    @Override
+	@Override
 	public void removeGroup(GroupInfo group) {
-        synchronized (updateLock) {
-            currentInfo.remove(group);
-        }
-        scheduleUpdate();
+		synchronized (updateLock) {
+			currentInfo.remove(group);
+		}
+		scheduleUpdate();
 
-    }
+	}
 
-    @Override
+	@Override
 	public boolean showsDebug() {
-    	return Preferences.getBoolean(IProgressConstants.SHOW_SYSTEM_JOBS);
-    }
+		return Preferences.getBoolean(IProgressConstants.SHOW_SYSTEM_JOBS);
+	}
 
-    /**
-     * Return whether or not this is the update job. This is used to determine
-     * if a final refresh is required.
-     *
-     * @param job
-     * @return boolean <code>true</true> if this is the
-     * update job
-     */
-    boolean isUpdateJob(Job job) {
-        return job.equals(updateJob);
-    }
+	/**
+	 * Return whether or not this is the update job. This is used to determine if a
+	 * final refresh is required.
+	 *
+	 * @param job
+	 * @return boolean <code>true</true> if this is the update job
+	 */
+	boolean isUpdateJob(Job job) {
+		return job.equals(updateJob);
+	}
 }
