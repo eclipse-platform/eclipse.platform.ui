@@ -38,47 +38,47 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  *
  */
 public class EObjectAttributeIterator extends EStructuralFeatureIterator {
-    private NodePointer parent;
-    private int position = 0;
-    private boolean includeXmlLang;
+	private NodePointer parent;
+	private int position = 0;
+	private boolean includeXmlLang;
 
-    /**
-     * Create a new BeanAttributeIterator.
-     * @param parent parent pointer
-     * @param name name of this bean
-     */
-    public EObjectAttributeIterator(EStructuralFeatureOwnerPointer parent, QName name) {
-        super(
-            parent,
-            (name.getPrefix() == null
-                && (name.getName() == null || name.getName().equals("*")))
-                ? null
-                : name.toString(),
-            false,
-            null);
-        this.parent = parent;
-        includeXmlLang =
-            (name.getPrefix() != null && name.getPrefix().equals("xml"))
-                && (name.getName().equals("lang")
-                || name.getName().equals("*"));
-    }
+	/**
+	 * Create a new BeanAttributeIterator.
+	 * @param parent parent pointer
+	 * @param name name of this bean
+	 */
+	public EObjectAttributeIterator(EStructuralFeatureOwnerPointer parent, QName name) {
+		super(
+			parent,
+			(name.getPrefix() == null
+				&& (name.getName() == null || name.getName().equals("*")))
+				? null
+				: name.toString(),
+			false,
+			null);
+		this.parent = parent;
+		includeXmlLang =
+			(name.getPrefix() != null && name.getPrefix().equals("xml"))
+				&& (name.getName().equals("lang")
+				|| name.getName().equals("*"));
+	}
 
-    @Override
+	@Override
 	public NodePointer getNodePointer() {
-        return includeXmlLang && position == 1 ? new LangAttributePointer(parent) : super.getNodePointer();
-    }
+		return includeXmlLang && position == 1 ? new LangAttributePointer(parent) : super.getNodePointer();
+	}
 
-    @Override
+	@Override
 	public int getPosition() {
-        return position;
-    }
+		return position;
+	}
 
-    @Override
+	@Override
 	public boolean setPosition(int position) {
-        this.position = position;
-        if (includeXmlLang) {
-            return position == 1 || super.setPosition(position - 1);
-        }
-        return super.setPosition(position);
-    }
+		this.position = position;
+		if (includeXmlLang) {
+			return position == 1 || super.setPosition(position - 1);
+		}
+		return super.setPosition(position);
+	}
 }

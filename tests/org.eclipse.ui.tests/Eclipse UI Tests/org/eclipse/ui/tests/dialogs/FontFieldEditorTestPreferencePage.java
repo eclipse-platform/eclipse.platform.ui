@@ -24,41 +24,41 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * editors with and without previewers.
  */
 public class FontFieldEditorTestPreferencePage extends
-        FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+		FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-    /**
-     * Create the preference page.
-     */
-    public FontFieldEditorTestPreferencePage() {
-        super(GRID);
-    }
+	/**
+	 * Create the preference page.
+	 */
+	public FontFieldEditorTestPreferencePage() {
+		super(GRID);
+	}
 
-    /**
-     * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 */
+	@Override
 	protected void createFieldEditors() {
 
-        Composite feParent = getFieldEditorParent();
+		Composite feParent = getFieldEditorParent();
 
-        for (int i = 0; i < 3; i++) {
-            //Create one with a preview
-            addField(new FontFieldEditor("FontValue" + String.valueOf(i),
-                    "Font Test" + String.valueOf(i), "Preview", feParent));
+		for (int i = 0; i < 3; i++) {
+			//Create one with a preview
+			addField(new FontFieldEditor("FontValue" + String.valueOf(i),
+					"Font Test" + String.valueOf(i), "Preview", feParent));
 
-            //Create one without
-            addField(new FontFieldEditor(
-                    "FontValueDefault" + String.valueOf(i), "Font Test Default"
-                            + String.valueOf(i), feParent));
-        }
+			//Create one without
+			addField(new FontFieldEditor(
+					"FontValueDefault" + String.valueOf(i), "Font Test Default"
+							+ String.valueOf(i), feParent));
+		}
 
-    }
+	}
 
-    /**
-     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
+	@Override
 	public void init(IWorkbench workbench) {
-    }
+	}
 
 }

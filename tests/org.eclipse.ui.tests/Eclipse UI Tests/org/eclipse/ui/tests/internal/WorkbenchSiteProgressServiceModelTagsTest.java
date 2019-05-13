@@ -34,63 +34,63 @@ import org.osgi.service.event.EventHandler;
  *
  */
 public class WorkbenchSiteProgressServiceModelTagsTest extends UITestCase {
-    private IWorkbenchWindow window;
+	private IWorkbenchWindow window;
 
-    private IWorkbenchPage page;
+	private IWorkbenchPage page;
 
-    private EmptyView view;
+	private EmptyView view;
 
-    private Event receivedEvent;
+	private Event receivedEvent;
 
-    private EventHandler eventHandler;
+	private EventHandler eventHandler;
 
-    private IEventBroker eventBroker;
+	private IEventBroker eventBroker;
 
-    private PartSite site;
+	private PartSite site;
 
-    private WorkbenchSiteProgressServiceTestable progressService;
+	private WorkbenchSiteProgressServiceTestable progressService;
 
-    public WorkbenchSiteProgressServiceModelTagsTest(String testName) {
-        super(testName);
-    }
+	public WorkbenchSiteProgressServiceModelTagsTest(String testName) {
+		super(testName);
+	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
-        super.doSetUp();
-        window = openTestWindow();
-        page = window.getActivePage();
+		super.doSetUp();
+		window = openTestWindow();
+		page = window.getActivePage();
 		view = (EmptyView) page.showView(EmptyView.ID);
 
-        assertTrue(page.getActivePart().getSite() instanceof PartSite);
-        site = (PartSite) page.getActivePart().getSite();
+		assertTrue(page.getActivePart().getSite() instanceof PartSite);
+		site = (PartSite) page.getActivePart().getSite();
 
-        progressService = new WorkbenchSiteProgressServiceTestable(site);
+		progressService = new WorkbenchSiteProgressServiceTestable(site);
 
-    	IEclipseContext context = ModelUtils.getContainingContext(site.getModel());
-    	assertNotNull(context);
+		IEclipseContext context = ModelUtils.getContainingContext(site.getModel());
+		assertNotNull(context);
 
-    	eventHandler = new EventHandler() {
-        	@Override
+		eventHandler = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
-        		receivedEvent = event;
+				receivedEvent = event;
 
-    		}
-        };
+			}
+		};
 
-        eventBroker = context.get(IEventBroker.class);
-        eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, eventHandler);
-    }
+		eventBroker = context.get(IEventBroker.class);
+		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, eventHandler);
+	}
 
 
-    @Override
+	@Override
 	protected void doTearDown() throws Exception {
-    	eventBroker.unsubscribe(eventHandler);
-    	eventBroker = null;
-        page.hideView(view);
-        super.doTearDown();
-    }
+		eventBroker.unsubscribe(eventHandler);
+		eventBroker = null;
+		page.hideView(view);
+		super.doTearDown();
+	}
 
-    public void testShowBusyWhenCurrentlyIdle() throws Exception {
+	public void testShowBusyWhenCurrentlyIdle() throws Exception {
 		site.getModel().getTags().remove(CSSConstants.CSS_BUSY_CLASS); /* state idle */
 
 		progressService.showBusy(true);
@@ -115,41 +115,41 @@ public class WorkbenchSiteProgressServiceModelTagsTest extends UITestCase {
 	}
 
 	//helper functions
-    private static class WorkbenchSiteProgressServiceTestable extends WorkbenchSiteProgressService {
+	private static class WorkbenchSiteProgressServiceTestable extends WorkbenchSiteProgressService {
 		public WorkbenchSiteProgressServiceTestable(PartSite partSite) {
 			super(partSite);
 		}
 
 		@Override
-    	public void showBusy(boolean busy) {
-    		super.showBusy(busy);
-    	}
-    }
+		public void showBusy(boolean busy) {
+			super.showBusy(busy);
+		}
+	}
 
-    private void assertModelTagChangedEvent(Event event) {
-    	assertNotNull(event);
-    	assertTrue(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MPart);
-    	assertEquals(UIEvents.ApplicationElement.TAGS, event.getProperty(UIEvents.EventTags.ATTNAME));
-    }
+	private void assertModelTagChangedEvent(Event event) {
+		assertNotNull(event);
+		assertTrue(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MPart);
+		assertEquals(UIEvents.ApplicationElement.TAGS, event.getProperty(UIEvents.EventTags.ATTNAME));
+	}
 
-    private void assertAddBusyTagEvent(Event event) {
-    	assertModelTagChangedEvent(event);
-    	assertNull(event.getProperty(UIEvents.EventTags.OLD_VALUE));
-    	assertEquals(CSSConstants.CSS_BUSY_CLASS, event.getProperty(UIEvents.EventTags.NEW_VALUE));
-    }
+	private void assertAddBusyTagEvent(Event event) {
+		assertModelTagChangedEvent(event);
+		assertNull(event.getProperty(UIEvents.EventTags.OLD_VALUE));
+		assertEquals(CSSConstants.CSS_BUSY_CLASS, event.getProperty(UIEvents.EventTags.NEW_VALUE));
+	}
 
-    private void assertRemoveBusyTagEvent(Event event) {
-    	assertModelTagChangedEvent(event);
-    	assertEquals(CSSConstants.CSS_BUSY_CLASS, event.getProperty(UIEvents.EventTags.OLD_VALUE));
-    	assertNull(event.getProperty(UIEvents.EventTags.NEW_VALUE));
-    }
+	private void assertRemoveBusyTagEvent(Event event) {
+		assertModelTagChangedEvent(event);
+		assertEquals(CSSConstants.CSS_BUSY_CLASS, event.getProperty(UIEvents.EventTags.OLD_VALUE));
+		assertNull(event.getProperty(UIEvents.EventTags.NEW_VALUE));
+	}
 
-    private void assertContentChangeTagEvent(Event event) {
-    	assertModelTagChangedEvent(event);
+	private void assertContentChangeTagEvent(Event event) {
+		assertModelTagChangedEvent(event);
 
-    	// we check if any event for the CSS_CONTENT_CHANGE_CLASS tag was propagated.
-    	// It happens when the warmOfContentChange method was executed
-    	assertTrue(CSSConstants.CSS_CONTENT_CHANGE_CLASS.equals(event.getProperty(UIEvents.EventTags.OLD_VALUE)) ||
-    			CSSConstants.CSS_CONTENT_CHANGE_CLASS.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE)));
-    }
+		// we check if any event for the CSS_CONTENT_CHANGE_CLASS tag was propagated.
+		// It happens when the warmOfContentChange method was executed
+		assertTrue(CSSConstants.CSS_CONTENT_CHANGE_CLASS.equals(event.getProperty(UIEvents.EventTags.OLD_VALUE)) ||
+				CSSConstants.CSS_CONTENT_CHANGE_CLASS.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE)));
+	}
 }

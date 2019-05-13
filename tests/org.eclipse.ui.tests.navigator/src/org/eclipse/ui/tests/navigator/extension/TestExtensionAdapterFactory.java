@@ -27,11 +27,11 @@ public class TestExtensionAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		 if(IRESOURCE_TYPE == adapterType || IFILE_TYPE == adapterType) {
-			 TestExtensionTreeData data = (TestExtensionTreeData) adaptableObject;
+		if(IRESOURCE_TYPE == adapterType || IFILE_TYPE == adapterType) {
+			TestExtensionTreeData data = (TestExtensionTreeData) adaptableObject;
 			return adapterType.cast(data.getFile());
-		 }
-		 return null;
+		}
+		return null;
 	}
 
 	@Override

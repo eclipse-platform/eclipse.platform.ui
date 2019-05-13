@@ -135,16 +135,16 @@ public class BooleanCellEditor extends CellEditor {
 		row.setImage(index, null);
 		row.setText(index, ""); //$NON-NLS-1$
 
-    	if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL && changeOnActivation) {
-    		button.setSelection(!button.getSelection());
-    	}
+		if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL && changeOnActivation) {
+			button.setSelection(!button.getSelection());
+		}
 
 //TODO Add a way to enable key traversal when CheckBoxes don't get focus
-//    	if( Util.isMac() ) {
-//    		button.getParent().addKeyListener(macSelectionListener);
-//    	}
+//		if( Util.isMac() ) {
+//			button.getParent().addKeyListener(macSelectionListener);
+//		}
 
-    	super.activate(activationEvent);
+		super.activate(activationEvent);
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class BooleanCellEditor extends CellEditor {
 		return 0;
 	}
 
-    public void setChangeOnActivation(boolean changeOnActivation) {
-    	this.changeOnActivation = changeOnActivation;
-    }
+	public void setChangeOnActivation(boolean changeOnActivation) {
+		this.changeOnActivation = changeOnActivation;
+	}
 }

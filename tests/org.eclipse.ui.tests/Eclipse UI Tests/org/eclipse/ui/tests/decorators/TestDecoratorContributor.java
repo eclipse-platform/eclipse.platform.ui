@@ -26,61 +26,61 @@ import org.eclipse.swt.graphics.Image;
 
 public class TestDecoratorContributor implements ILabelDecorator {
 
-    public static TestDecoratorContributor contributor;
+	public static TestDecoratorContributor contributor;
 
 	private Set<ILabelProviderListener> listeners = new HashSet<>();
 
-    public static String DECORATOR_SUFFIX = "_SUFFIX";
+	public static String DECORATOR_SUFFIX = "_SUFFIX";
 
-    public TestDecoratorContributor() {
-        contributor = this;
-    }
+	public TestDecoratorContributor() {
+		contributor = this;
+	}
 
-    @Override
+	@Override
 	public String decorateText(String text, Object element) {
-        //Check that the element is adapted to IResource
-        Assert.isTrue(element instanceof IResource);
-        return text + DECORATOR_SUFFIX;
-    }
+		//Check that the element is adapted to IResource
+		Assert.isTrue(element instanceof IResource);
+		return text + DECORATOR_SUFFIX;
+	}
 
-    @Override
+	@Override
 	public Image decorateImage(Image image, Object element) {
-        Assert.isTrue(element instanceof IResource);
-        return image;
-    }
+		Assert.isTrue(element instanceof IResource);
+		return image;
+	}
 
-    @Override
+	@Override
 	public void addListener(ILabelProviderListener listener) {
-        listeners.add(listener);
-    }
+		listeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        contributor = null;
+		contributor = null;
 		listeners = new HashSet<>();
-    }
+	}
 
-    @Override
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
-        listeners.remove(listener);
-    }
+		listeners.remove(listener);
+	}
 
-    /**
-     * Refresh the listeners to update the decorators for
-     * element.
-     */
+	/**
+	 * Refresh the listeners to update the decorators for
+	 * element.
+	 */
 
-    public void refreshListeners(Object element) {
+	public void refreshListeners(Object element) {
 		Iterator<ILabelProviderListener> iterator = listeners.iterator();
 		while (iterator.hasNext()) {
 			LabelProviderChangedEvent event = new LabelProviderChangedEvent(this, element);
 			iterator.next().labelProviderChanged(event);
 		}
-    }
+	}
 
 }

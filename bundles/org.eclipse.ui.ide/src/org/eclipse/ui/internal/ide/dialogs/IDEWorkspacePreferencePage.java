@@ -102,7 +102,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	private LineDelimiterEditor lineSeparatorEditor;
 
-    //A boolean to indicate if the user settings were cleared.
+	//A boolean to indicate if the user settings were cleared.
 	private boolean clearUserSettings = false;
 
 	private ComboFieldEditor openReferencesEditor;
@@ -113,13 +113,13 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	private boolean showLocationIsSetOnCommandLine;
 
-    @Override
+	@Override
 	protected Control createContents(Composite parent) {
 
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IIDEHelpContextIds.WORKSPACE_PREFERENCE_PAGE);
 
-        Composite composite = createComposite(parent);
+		Composite composite = createComposite(parent);
 
 		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.NONE,
 				"org.eclipse.ui.preferencePages.Startup", IDEWorkbenchMessages.IDEWorkspacePreference_relatedLink,//$NON-NLS-1$
@@ -154,14 +154,14 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		lower.setLayout(lowerLayout);
 
 		lower.setLayoutData(new GridData(
-                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 		createEncodingEditorControls(lower);
 		createLineSeparatorEditorControls(lower);
 		applyDialogFont(composite);
 
-        return composite;
-    }
+		return composite;
+	}
 
 	/**
 	 * ComboFieldEditor does create a parent. As we want alignment, we have to
@@ -208,7 +208,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	private void createOpenPrefControls(Composite parent) {
 		String name = IDEInternalPreferences.OPEN_REQUIRED_PROJECTS;
 		String label = IDEWorkbenchMessages.IDEWorkspacePreference_openReferencedProjects;
-        String[][] namesAndValues = {
+		String[][] namesAndValues = {
 				{ Action.removeMnemonics(IDEWorkbenchMessages.Always), IDEInternalPreferences.PSPM_ALWAYS },
 				{ Action.removeMnemonics(IDEWorkbenchMessages.Never), IDEInternalPreferences.PSPM_NEVER },
 				{ Action.removeMnemonics(IDEWorkbenchMessages.Prompt), IDEInternalPreferences.PSPM_PROMPT } };
@@ -219,7 +219,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	}
 
 	/**
-     * Creates controls for the preference to close unrelated projects.
+	 * Creates controls for the preference to close unrelated projects.
 	 * @param parent The parent control
 	 */
 	private void createCloseUnrelatedProjPrefControls(Composite parent) {
@@ -307,45 +307,45 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		}
 	}
 
-    /**
-     * Create a composite that contains entry fields specifying save interval
-     * preference.
-     *
-     * @param composite the Composite the group is created in.
-     */
-    private void createSaveIntervalGroup(Composite composite) {
-        Composite groupComposite = new Composite(composite, SWT.LEFT);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        groupComposite.setLayout(layout);
-        GridData gd = new GridData();
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        groupComposite.setLayoutData(gd);
+	/**
+	 * Create a composite that contains entry fields specifying save interval
+	 * preference.
+	 *
+	 * @param composite the Composite the group is created in.
+	 */
+	private void createSaveIntervalGroup(Composite composite) {
+		Composite groupComposite = new Composite(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		groupComposite.setLayout(layout);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		groupComposite.setLayoutData(gd);
 
 		saveInterval = new IntegerFieldEditor(IDEInternalPreferences.SAVE_INTERVAL,
 				IDEWorkbenchMessages.WorkbenchPreference_saveInterval, groupComposite);
 
-        // @issue we should drop our preference constant and let clients use
-        // core's pref. ours is not up-to-date anyway if someone changes this
-        // interval directly thru core api.
-        saveInterval.setPreferenceStore(getIDEPreferenceStore());
-        saveInterval.setPage(this);
-        saveInterval.setTextLimit(Integer.toString(
-                IDEInternalPreferences.MAX_SAVE_INTERVAL).length());
+		// @issue we should drop our preference constant and let clients use
+		// core's pref. ours is not up-to-date anyway if someone changes this
+		// interval directly thru core api.
+		saveInterval.setPreferenceStore(getIDEPreferenceStore());
+		saveInterval.setPage(this);
+		saveInterval.setTextLimit(Integer.toString(
+				IDEInternalPreferences.MAX_SAVE_INTERVAL).length());
 		saveInterval.setErrorMessage(NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_saveIntervalError,
 				Integer.valueOf(IDEInternalPreferences.MAX_SAVE_INTERVAL)));
-        saveInterval
-                .setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-        saveInterval.setValidRange(1, IDEInternalPreferences.MAX_SAVE_INTERVAL);
+		saveInterval
+				.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		saveInterval.setValidRange(1, IDEInternalPreferences.MAX_SAVE_INTERVAL);
 
-        IWorkspaceDescription description = ResourcesPlugin.getWorkspace()
-                .getDescription();
-        long interval = description.getSnapshotInterval() / 60000;
-        saveInterval.setStringValue(Long.toString(interval));
+		IWorkspaceDescription description = ResourcesPlugin.getWorkspace()
+				.getDescription();
+		long interval = description.getSnapshotInterval() / 60000;
+		saveInterval.setStringValue(Long.toString(interval));
 
-        saveInterval.setPropertyChangeListener(event -> {
-		    if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+		saveInterval.setPropertyChangeListener(event -> {
+			if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 				setValid(saveInterval.isValid());
 			}
 		});
@@ -357,35 +357,35 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	 *
 	 * @param parent
 	 */
-    private void createAutoRefreshControls(Composite parent) {
+	private void createAutoRefreshControls(Composite parent) {
 
-        this.autoRefreshButton = new Button(parent, SWT.CHECK);
-        this.autoRefreshButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshButtonText);
-        this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshButtonToolTip);
+		this.autoRefreshButton = new Button(parent, SWT.CHECK);
+		this.autoRefreshButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshButtonText);
+		this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshButtonToolTip);
 
-        this.lightweightRefreshButton = new Button(parent, SWT.CHECK);
-        this.lightweightRefreshButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshLightweightButtonText);
-        this.lightweightRefreshButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshLightweightButtonToolTip);
+		this.lightweightRefreshButton = new Button(parent, SWT.CHECK);
+		this.lightweightRefreshButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshLightweightButtonText);
+		this.lightweightRefreshButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshLightweightButtonToolTip);
 
 		boolean lightweightRefresh = Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES,
 				ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
 		boolean autoRefresh = Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES,
 				ResourcesPlugin.PREF_AUTO_REFRESH, false, null);
 
-        this.autoRefreshButton.setSelection(autoRefresh);
-        this.lightweightRefreshButton.setSelection(lightweightRefresh);
-    }
+		this.autoRefreshButton.setSelection(autoRefresh);
+		this.lightweightRefreshButton.setSelection(lightweightRefresh);
+	}
 
-    /**
+	/**
 	 * Create a composite that contains the encoding controls
 	 *
 	 * @param parent
 	 */
-    private void createEncodingEditorControls(Composite parent){
+	private void createEncodingEditorControls(Composite parent){
 		Composite encodingComposite = new Composite(parent,SWT.NONE);
 		encodingComposite.setLayout(new GridLayout());
 		encodingComposite.setLayoutData(new GridData(
-                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages.WorkbenchPreference_encoding, encodingComposite, ResourcesPlugin
 				.getWorkspace().getRoot());
@@ -398,26 +398,26 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 			}
 
 		});
-    }
+	}
 
-    /**
-     * Create a composite that contains the line delimiter controls
-     *
-     * @param parent
-     */
-    private void createLineSeparatorEditorControls(Composite parent){
-    	Composite lineComposite = new Composite(parent,SWT.NONE);
+	/**
+	 * Create a composite that contains the line delimiter controls
+	 *
+	 * @param parent
+	 */
+	private void createLineSeparatorEditorControls(Composite parent){
+		Composite lineComposite = new Composite(parent,SWT.NONE);
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		lineComposite.setLayout(gridLayout);
 
 		lineComposite.setLayoutData(new GridData(
-                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 		lineSeparatorEditor = new LineDelimiterEditor(lineComposite);
 		lineSeparatorEditor.doLoad();
-    }
+	}
 
 	/**
 	 * Create the widget for the system explorer command.
@@ -453,59 +453,59 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		});
 	}
 
-    /**
-     * Returns the IDE preference store.
-     * @return the preference store.
-     */
-    protected IPreferenceStore getIDEPreferenceStore() {
-        return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-    }
+	/**
+	 * Returns the IDE preference store.
+	 * @return the preference store.
+	 */
+	protected IPreferenceStore getIDEPreferenceStore() {
+		return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+	}
 
 	/**
-     * Creates a tab of one horizontal spans.
-     *
-     * @param parent
-     *            the parent in which the tab should be created
-     */
-    protected static void createSpace(Composite parent) {
-        Label vfiller = new Label(parent, SWT.LEFT);
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.BEGINNING;
-        gridData.grabExcessHorizontalSpace = false;
-        gridData.verticalAlignment = GridData.CENTER;
-        gridData.grabExcessVerticalSpace = false;
-        vfiller.setLayoutData(gridData);
-    }
+	 * Creates a tab of one horizontal spans.
+	 *
+	 * @param parent
+	 *            the parent in which the tab should be created
+	 */
+	protected static void createSpace(Composite parent) {
+		Label vfiller = new Label(parent, SWT.LEFT);
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.BEGINNING;
+		gridData.grabExcessHorizontalSpace = false;
+		gridData.verticalAlignment = GridData.CENTER;
+		gridData.grabExcessVerticalSpace = false;
+		vfiller.setLayoutData(gridData);
+	}
 
 	/**
-     * Creates the composite which will contain all the preference controls for
-     * this page.
-     *
-     * @param parent
-     *            the parent composite
-     * @return the composite for this page
-     */
-    protected Composite createComposite(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
-                | GridData.HORIZONTAL_ALIGN_FILL));
-        return composite;
-    }
+	 * Creates the composite which will contain all the preference controls for
+	 * this page.
+	 *
+	 * @param parent
+	 *            the parent composite
+	 * @return the composite for this page
+	 */
+	protected Composite createComposite(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
+				| GridData.HORIZONTAL_ALIGN_FILL));
+		return composite;
+	}
 
 	@Override
 	public void init(org.eclipse.ui.IWorkbench workbench) {
 		e4Context = workbench.getService(IEclipseContext.class);
 		showLocationIsSetOnCommandLine = e4Context.containsKey(E4Workbench.FORCED_SHOW_LOCATION);
-    }
+	}
 
-    /**
-     * The default button has been pressed.
-     */
-    @Override
+	/**
+	 * The default button has been pressed.
+	 */
+	@Override
 	protected void performDefaults() {
 
 		IPreferenceStore store = getIDEPreferenceStore();
@@ -525,59 +525,59 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		showProductNameInTitle.setSelection(showProductName);
 		workspaceName.loadDefault();
 
-        boolean closeUnrelatedProj = store.getDefaultBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS);
-        closeUnrelatedProjectButton.setSelection(closeUnrelatedProj);
+		boolean closeUnrelatedProj = store.getDefaultBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS);
+		closeUnrelatedProjectButton.setSelection(closeUnrelatedProj);
 
-        boolean lightweightRefresh = ResourcesPlugin.getPlugin()
-                .getPluginPreferences().getDefaultBoolean(
-                		ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
-        boolean autoRefresh = ResourcesPlugin.getPlugin()
-		        .getPluginPreferences().getDefaultBoolean(
-		                ResourcesPlugin.PREF_AUTO_REFRESH);
-        autoRefreshButton.setSelection(autoRefresh);
-        lightweightRefreshButton.setSelection(lightweightRefresh);
+		boolean lightweightRefresh = ResourcesPlugin.getPlugin()
+				.getPluginPreferences().getDefaultBoolean(
+						ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
+		boolean autoRefresh = ResourcesPlugin.getPlugin()
+				.getPluginPreferences().getDefaultBoolean(
+						ResourcesPlugin.PREF_AUTO_REFRESH);
+		autoRefreshButton.setSelection(autoRefresh);
+		lightweightRefreshButton.setSelection(lightweightRefresh);
 
-        clearUserSettings = true;
+		clearUserSettings = true;
 
 		List<String> encodings = WorkbenchEncoding.getDefinedEncodings();
 		Collections.sort(encodings);
-        encodingEditor.loadDefault();
+		encodingEditor.loadDefault();
 		lineSeparatorEditor.loadDefault();
 		openReferencesEditor.loadDefault();
 		missingNatureSeverityCombo.loadDefault();
 
 		systemExplorer.loadDefault();
 
-        super.performDefaults();
-    }
+		super.performDefaults();
+	}
 
-    /**
-     * The user has pressed Ok. Store/apply this page's values appropriately.
-     */
-    @Override
+	/**
+	 * The user has pressed Ok. Store/apply this page's values appropriately.
+	 */
+	@Override
 	public boolean performOk() {
-        IWorkspaceDescription description = ResourcesPlugin.getWorkspace()
-                .getDescription();
-        IPreferenceStore store = getIDEPreferenceStore();
+		IWorkspaceDescription description = ResourcesPlugin.getWorkspace()
+				.getDescription();
+		IPreferenceStore store = getIDEPreferenceStore();
 
-        // store the workspace save interval
-        // @issue we should drop our preference constant and let clients use
-        // core's pref. ours is not up-to-date anyway if someone changes this
-        // interval directly thru core api.
-        long oldSaveInterval = description.getSnapshotInterval() / 60000;
-        long newSaveInterval = Long.parseLong(saveInterval.getStringValue());
-        if (oldSaveInterval != newSaveInterval) {
-            try {
-                description.setSnapshotInterval(newSaveInterval * 60000);
-                ResourcesPlugin.getWorkspace().setDescription(description);
-                store.firePropertyChangeEvent(IDEInternalPreferences.SAVE_INTERVAL, (int) oldSaveInterval,
-                    (int) newSaveInterval);
-            } catch (CoreException e) {
-                IDEWorkbenchPlugin.log(
-                        "Error changing save interval preference", e //$NON-NLS-1$
-                                .getStatus());
-            }
-        }
+		// store the workspace save interval
+		// @issue we should drop our preference constant and let clients use
+		// core's pref. ours is not up-to-date anyway if someone changes this
+		// interval directly thru core api.
+		long oldSaveInterval = description.getSnapshotInterval() / 60000;
+		long newSaveInterval = Long.parseLong(saveInterval.getStringValue());
+		if (oldSaveInterval != newSaveInterval) {
+			try {
+				description.setSnapshotInterval(newSaveInterval * 60000);
+				ResourcesPlugin.getWorkspace().setDescription(description);
+				store.firePropertyChangeEvent(IDEInternalPreferences.SAVE_INTERVAL, (int) oldSaveInterval,
+					(int) newSaveInterval);
+			} catch (CoreException e) {
+				IDEWorkbenchPlugin.log(
+						"Error changing save interval preference", e //$NON-NLS-1$
+								.getStatus());
+			}
+		}
 
 		if (!showLocationIsSetOnCommandLine) {
 			store.setValue(IDEInternalPreferences.SHOW_LOCATION, showLocationPathInTitle.getSelection());
@@ -586,31 +586,31 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		store.setValue(IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE, showPerspectiveNameInTitle.getSelection());
 		store.setValue(IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE, showProductNameInTitle.getSelection());
 
-        workspaceName.store();
+		workspaceName.store();
 
 		systemExplorer.store();
 
-        Preferences preferences = ResourcesPlugin.getPlugin()
-                .getPluginPreferences();
+		Preferences preferences = ResourcesPlugin.getPlugin()
+				.getPluginPreferences();
 
-        boolean autoRefresh = autoRefreshButton.getSelection();
-        preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
-        boolean lightweightRefresh = lightweightRefreshButton.getSelection();
-        preferences.setValue(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, lightweightRefresh);
+		boolean autoRefresh = autoRefreshButton.getSelection();
+		preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
+		boolean lightweightRefresh = lightweightRefreshButton.getSelection();
+		preferences.setValue(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, lightweightRefresh);
 
-        boolean closeUnrelatedProj = closeUnrelatedProjectButton.getSelection();
-        getIDEPreferenceStore().setValue(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, closeUnrelatedProj);
+		boolean closeUnrelatedProj = closeUnrelatedProjectButton.getSelection();
+		getIDEPreferenceStore().setValue(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, closeUnrelatedProj);
 
 
-        if (clearUserSettings) {
+		if (clearUserSettings) {
 			IDEEncoding.clearUserEncodings();
 		}
-        encodingEditor.store();
+		encodingEditor.store();
 		lineSeparatorEditor.store();
 		openReferencesEditor.store();
 		missingNatureSeverityCombo.store();
 
 		return super.performOk();
-    }
+	}
 
 }

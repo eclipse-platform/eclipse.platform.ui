@@ -77,16 +77,16 @@ public class Snippet015CustomTooltipsForTree {
 	public static void main(String[] args) {
 		final Display display = new Display ();
 		Shell shell = new Shell (display);
-	    shell.setLayout(new FillLayout());
+		shell.setLayout(new FillLayout());
 
-	    TreeViewer v = new TreeViewer(shell,SWT.FULL_SELECTION);
-	    v.getTree().setLinesVisible(true);
-	    v.getTree().setHeaderVisible(true);
-	    ColumnViewerToolTipSupport.enableFor(v);
+		TreeViewer v = new TreeViewer(shell,SWT.FULL_SELECTION);
+		v.getTree().setLinesVisible(true);
+		v.getTree().setHeaderVisible(true);
+		ColumnViewerToolTipSupport.enableFor(v);
 
-	    v.setContentProvider(new MyContentProvider());
+		v.setContentProvider(new MyContentProvider());
 
-	    CellLabelProvider labelProvider = new CellLabelProvider() {
+		CellLabelProvider labelProvider = new CellLabelProvider() {
 
 			@Override
 			public String getToolTipText(Object element) {
@@ -113,22 +113,22 @@ public class Snippet015CustomTooltipsForTree {
 				cell.setText(cell.getElement().toString());
 
 			}
-	    };
+		};
 
 
-	    v.setLabelProvider(labelProvider);
-	    v.setInput("");
+		v.setLabelProvider(labelProvider);
+		v.setInput("");
 
-	    shell.setSize(200,200);
-	    shell.open ();
+		shell.setSize(200,200);
+		shell.open ();
 
-	    while (!shell.isDisposed()) {
-	        if (!display.readAndDispatch ()) {
-	        	display.sleep ();
-	        }
-	    }
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch ()) {
+				display.sleep ();
+			}
+		}
 
-	    display.dispose ();
+		display.dispose ();
 	}
 
 }

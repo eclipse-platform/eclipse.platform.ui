@@ -80,13 +80,13 @@ public class ProgressManager extends ProgressProvider {
 	private static ProgressManager singleton;
 
 	final private Map<Job, JobInfo> jobs = Collections
-	        .synchronizedMap(new HashMap<Job, JobInfo>());
+			.synchronizedMap(new HashMap<Job, JobInfo>());
 
 	final Map<Job, JobMonitor> runnableMonitors = Collections
-	        .synchronizedMap(new HashMap<Job, JobMonitor>());
+			.synchronizedMap(new HashMap<Job, JobMonitor>());
 
 	final private Map<Object, Collection<IJobBusyListener>> familyListeners = Collections
-	        .synchronizedMap(new HashMap<Object, Collection<IJobBusyListener>>());
+			.synchronizedMap(new HashMap<Object, Collection<IJobBusyListener>>());
 
 	//	list of IJobProgressManagerListener
 	private ListenerList<IJobProgressManagerListener> listeners = new ListenerList<>();
@@ -162,11 +162,11 @@ public class ProgressManager extends ProgressProvider {
 		ImageTools imageTools = ImageTools.getInstance();
 
 		imageTools.putIntoRegistry(SLEEPING_JOB_KEY, PROGRESS_FOLDER
-		        + SLEEPING_JOB);
+				+ SLEEPING_JOB);
 		imageTools.putIntoRegistry(WAITING_JOB_KEY, PROGRESS_FOLDER
-		        + WAITING_JOB);
+				+ WAITING_JOB);
 		imageTools.putIntoRegistry(BLOCKED_JOB_KEY, PROGRESS_FOLDER
-		        + BLOCKED_JOB);
+				+ BLOCKED_JOB);
 		imageTools.putIntoRegistry(ERROR_JOB_KEY, PROGRESS_FOLDER + ERROR_JOB);
 	}
 
@@ -851,7 +851,7 @@ public class ProgressManager extends ProgressProvider {
 	 * @return Collection of IJobBusyListener
 	 */
 	@SuppressWarnings("unchecked")
-    private Collection<IJobBusyListener> busyListenersForJob(Job job) {
+	private Collection<IJobBusyListener> busyListenersForJob(Job job) {
 		if (job.isSystem()) {
 			return Collections.emptyList();
 		}

@@ -205,10 +205,10 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 	private ListenerList<IPageChangedListener> pageChangedListeners = new ListenerList<>();
 
-    /**
-     *  Composite with a FormLayout to contain the title area
-     */
-    Composite formTitleComposite;
+	/**
+	 *  Composite with a FormLayout to contain the title area
+	 */
+	Composite formTitleComposite;
 
 	private ScrolledComposite scrolled;
 
@@ -399,10 +399,10 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		titleComposite.setLayout(layout);
 
 		FormData titleFormData = new FormData();
-	   	titleFormData.top = new FormAttachment(0,0);
-    	titleFormData.left = new FormAttachment(0,0);
-    	titleFormData.right = new FormAttachment(100,0);
-    	titleFormData.bottom = new FormAttachment(100,0);
+		titleFormData.top = new FormAttachment(0,0);
+		titleFormData.left = new FormAttachment(0,0);
+		titleFormData.right = new FormAttachment(100,0);
+		titleFormData.bottom = new FormAttachment(100,0);
 
 		titleComposite.setLayoutData(titleFormData);
 		createTitleArea(titleComposite);
@@ -706,12 +706,12 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			private void openDialogHelp() {
 				if (pageContainer == null)
 					return;
-		    	for(Control currentControl = pageContainer; currentControl != null; currentControl = currentControl.getParent()) {
-		    		if (currentControl.isListening(SWT.Help)) {
-		    			currentControl.notifyListeners(SWT.Help, new Event());
-		    			break;
-		    		}
-		    	}
+				for(Control currentControl = pageContainer; currentControl != null; currentControl = currentControl.getParent()) {
+					if (currentControl.isListening(SWT.Help)) {
+						currentControl.notifyListeners(SWT.Help, new Event());
+						break;
+					}
+				}
 			}
 		});
 	}
@@ -816,9 +816,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 					} catch (IOException e) {
 						String message = JFaceResources.format("PreferenceDialog.saveErrorMessage", page.getTitle(), //$NON-NLS-1$
 								e.getMessage());
-			            Policy.getStatusHandler().show(
-			                    new Status(IStatus.ERROR, Policy.JFACE, message, e),
-			                    JFaceResources.getString("PreferenceDialog.saveErrorTitle")); //$NON-NLS-1$
+						Policy.getStatusHandler().show(
+								new Status(IStatus.ERROR, Policy.JFACE, message, e),
+								JFaceResources.getString("PreferenceDialog.saveErrorTitle")); //$NON-NLS-1$
 
 					}
 				}
@@ -920,7 +920,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 					if (!errorOccurred) {
 						//Give subclasses the choice to save the state of the
-					    //preference pages.
+						//preference pages.
 						handleSave();
 					}
 					setReturnCode(OK);
@@ -937,9 +937,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				clearSelectedNode();
 				String message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
 
-                Policy.getStatusHandler().show(
-                        new Status(IStatus.ERROR, Policy.JFACE, message, e),
-                        JFaceResources.getString("Error")); //$NON-NLS-1$
+				Policy.getStatusHandler().show(
+						new Status(IStatus.ERROR, Policy.JFACE, message, e),
+						JFaceResources.getString("Error")); //$NON-NLS-1$
 
 			}
 		});
@@ -1459,29 +1459,29 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	}
 
 	/**
-     * Notifies any selection changed listeners that the selected page
-     * has changed.
-     * Only listeners registered at the time this method is called are notified.
-     *
-     * @param event a selection changed event
-     *
-     * @see IPageChangedListener#pageChanged
-     *
-     * @since 3.1
-     */
-    protected void firePageChanged(final PageChangedEvent event) {
+	 * Notifies any selection changed listeners that the selected page
+	 * has changed.
+	 * Only listeners registered at the time this method is called are notified.
+	 *
+	 * @param event a selection changed event
+	 *
+	 * @see IPageChangedListener#pageChanged
+	 *
+	 * @since 3.1
+	 */
+	protected void firePageChanged(final PageChangedEvent event) {
 		for (IPageChangedListener l : pageChangedListeners) {
-            SafeRunnable.run(new SafeRunnable() {
-                @Override
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() {
-                    l.pageChanged(event);
-                }
-            });
-        }
-    }
+					l.pageChanged(event);
+				}
+			});
+		}
+	}
 
-    @Override
+	@Override
 	protected boolean isResizable() {
-    	return true;
-    }
+		return true;
+	}
 }

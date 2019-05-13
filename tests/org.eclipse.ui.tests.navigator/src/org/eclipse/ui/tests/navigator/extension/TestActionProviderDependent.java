@@ -28,7 +28,7 @@ public class TestActionProviderDependent extends CommonActionProvider {
 
 	@Override
 	public void init(ICommonActionExtensionSite aConfig) {
-		 action = new TestActionDependent(aConfig.getViewSite().getShell(), aConfig.getExtensionId());
+		action = new TestActionDependent(aConfig.getViewSite().getShell(), aConfig.getExtensionId());
 	}
 
 	@Override

@@ -26,24 +26,24 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * Tests the IPageService class.
  */
 public class IPageServiceTest extends UITestCase implements IPageListener,
-        org.eclipse.ui.IPerspectiveListener {
-    private IWorkbenchWindow fWindow;
+		org.eclipse.ui.IPerspectiveListener {
+	private IWorkbenchWindow fWindow;
 
-    private boolean pageEventReceived;
+	private boolean pageEventReceived;
 
-    private boolean perspEventReceived;
+	private boolean perspEventReceived;
 
-    public IPageServiceTest(String testName) {
-        super(testName);
-    }
+	public IPageServiceTest(String testName) {
+		super(testName);
+	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
-        super.doSetUp();
-        fWindow = openTestWindow();
-    }
+		super.doSetUp();
+		fWindow = openTestWindow();
+	}
 
-    public void testLocalPageService() throws Throwable {
+	public void testLocalPageService() throws Throwable {
 		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 				getPageInput());
 
@@ -69,175 +69,175 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 		assertFalse(perspEventReceived);
 	}
 
-    /**
+	/**
 	 * Tests the addPageListener method.
 	 */
-    public void testAddPageListener() throws Throwable {
-        /*
-         * Commented out because until test case can be updated to work
-         * with new window/page/perspective implementation
-         *
-         // From Javadoc: "Adds the given listener for page lifecycle events.
-         // Has no effect if an identical listener is already registered."
+	public void testAddPageListener() throws Throwable {
+		/*
+		 * Commented out because until test case can be updated to work
+		 * with new window/page/perspective implementation
+		 *
+		 // From Javadoc: "Adds the given listener for page lifecycle events.
+		 // Has no effect if an identical listener is already registered."
 
-         // Add listener.
-         fWindow.addPageListener(this);
+		 // Add listener.
+		 fWindow.addPageListener(this);
 
-         // Open and close page.
-         // Verify events are received.
-         pageEventReceived = false;
-         IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
-         fWorkspace);
-         page.close();
-         assertTrue(pageEventReceived);
+		 // Open and close page.
+		 // Verify events are received.
+		 pageEventReceived = false;
+		 IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
+		 fWorkspace);
+		 page.close();
+		 assertTrue(pageEventReceived);
 
-         // Remove listener.
-         fWindow.removePageListener(this);
-         */
-    }
+		 // Remove listener.
+		 fWindow.removePageListener(this);
+		 */
+	}
 
-    /**
-     * Tests the removePageListener method.
-     */
-    public void XXXtestRemovePageListener() throws Throwable {
-        // From Javadoc: "Removes the given page listener.
-        // Has no affect if an identical listener is not registered."
+	/**
+	 * Tests the removePageListener method.
+	 */
+	public void XXXtestRemovePageListener() throws Throwable {
+		// From Javadoc: "Removes the given page listener.
+		// Has no affect if an identical listener is not registered."
 
-        // Add and remove listener.
-        fWindow.addPageListener(this);
-        fWindow.removePageListener(this);
+		// Add and remove listener.
+		fWindow.addPageListener(this);
+		fWindow.removePageListener(this);
 
-        // Open and close page.
-        // Verify no events are received.
-        pageEventReceived = false;
-        IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID, getPageInput());
-        page.close();
-        assertTrue(!pageEventReceived);
-    }
+		// Open and close page.
+		// Verify no events are received.
+		pageEventReceived = false;
+		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID, getPageInput());
+		page.close();
+		assertTrue(!pageEventReceived);
+	}
 
-    /**
-     * Tests getActivePage.
-     */
-    public void testGetActivePage() throws Throwable {
-        /*
-         * Commented out because until test case can be updated to work
-         * with new window/page/perspective implementation
-         *
-         // From Javadoc: "return the active page, or null if no page
-         // is currently active"
+	/**
+	 * Tests getActivePage.
+	 */
+	public void testGetActivePage() throws Throwable {
+		/*
+		 * Commented out because until test case can be updated to work
+		 * with new window/page/perspective implementation
+		 *
+		 // From Javadoc: "return the active page, or null if no page
+		 // is currently active"
 
-         // Add page.
-         IWorkbenchPage page1 = fWindow.openPage(EmptyPerspective.PERSP_ID,
-         fWorkspace);
-         assertEquals(fWindow.getActivePage(), page1);
+		 // Add page.
+		 IWorkbenchPage page1 = fWindow.openPage(EmptyPerspective.PERSP_ID,
+		 fWorkspace);
+		 assertEquals(fWindow.getActivePage(), page1);
 
-         // Add second page.
-         IWorkbenchPage page2 = fWindow.openPage(EmptyPerspective.PERSP_ID,
-         fWorkspace);
-         assertEquals(fWindow.getActivePage(), page2);
+		 // Add second page.
+		 IWorkbenchPage page2 = fWindow.openPage(EmptyPerspective.PERSP_ID,
+		 fWorkspace);
+		 assertEquals(fWindow.getActivePage(), page2);
 
-         // Set active page.
-         fWindow.setActivePage(page1);
-         assertEquals(fWindow.getActivePage(), page1);
-         fWindow.setActivePage(page2);
-         assertEquals(fWindow.getActivePage(), page2);
+		 // Set active page.
+		 fWindow.setActivePage(page1);
+		 assertEquals(fWindow.getActivePage(), page1);
+		 fWindow.setActivePage(page2);
+		 assertEquals(fWindow.getActivePage(), page2);
 
-         // Cleanup.
-         page1.close();
-         page2.close();
-         */
-    }
+		 // Cleanup.
+		 page1.close();
+		 page2.close();
+		 */
+	}
 
-    /**
-     * Tests the addPerspectiveListener method.
-     */
-    public void testAddPerspectiveListener() throws Throwable {
-        /*
-         * Commented out because until test case can be updated to work
-         * with new window/page/perspective implementation
-         *
-         // From Javadoc: "Adds the given listener for a page's perspective lifecycle events.
-         // Has no effect if an identical listener is already registered."
+	/**
+	 * Tests the addPerspectiveListener method.
+	 */
+	public void testAddPerspectiveListener() throws Throwable {
+		/*
+		 * Commented out because until test case can be updated to work
+		 * with new window/page/perspective implementation
+		 *
+		 // From Javadoc: "Adds the given listener for a page's perspective lifecycle events.
+		 // Has no effect if an identical listener is already registered."
 
-         // Add listener.
-         fWindow.addPerspectiveListener(this);
+		 // Add listener.
+		 fWindow.addPerspectiveListener(this);
 
-         // Open page and change persp feature.
-         // Verify events are received.
-         perspEventReceived = false;
-         IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
-         fWorkspace);
-         page.setEditorAreaVisible(false);
-         page.setEditorAreaVisible(true);
-         page.close();
-         assertTrue(perspEventReceived);
+		 // Open page and change persp feature.
+		 // Verify events are received.
+		 perspEventReceived = false;
+		 IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		 fWorkspace);
+		 page.setEditorAreaVisible(false);
+		 page.setEditorAreaVisible(true);
+		 page.close();
+		 assertTrue(perspEventReceived);
 
-         // Remove listener.
-         fWindow.removePerspectiveListener(this);
-         */
-    }
+		 // Remove listener.
+		 fWindow.removePerspectiveListener(this);
+		 */
+	}
 
-    /**
-     * Tests the removePerspectiveListener method.
-     */
-    public void XXXtestRemovePerspectiveListener() throws Throwable {
-        // From Javadoc: "Removes the given page's perspective listener.
-        // Has no affect if an identical listener is not registered."
+	/**
+	 * Tests the removePerspectiveListener method.
+	 */
+	public void XXXtestRemovePerspectiveListener() throws Throwable {
+		// From Javadoc: "Removes the given page's perspective listener.
+		// Has no affect if an identical listener is not registered."
 
-        // Add and remove listener.
-        fWindow.addPerspectiveListener(this);
-        fWindow.removePerspectiveListener(this);
+		// Add and remove listener.
+		fWindow.addPerspectiveListener(this);
+		fWindow.removePerspectiveListener(this);
 
-        // Open page and change persp feature.
-        // Verify no events are received.
-        perspEventReceived = false;
-        IWorkbenchPage page = fWindow.openPage(IDE.RESOURCE_PERSPECTIVE_ID, getPageInput());
-        page.setEditorAreaVisible(false);
-        page.setEditorAreaVisible(true);
-        page.close();
-        assertTrue(!perspEventReceived);
-    }
+		// Open page and change persp feature.
+		// Verify no events are received.
+		perspEventReceived = false;
+		IWorkbenchPage page = fWindow.openPage(IDE.RESOURCE_PERSPECTIVE_ID, getPageInput());
+		page.setEditorAreaVisible(false);
+		page.setEditorAreaVisible(true);
+		page.close();
+		assertTrue(!perspEventReceived);
+	}
 
-    /**
-     * @see IPageListener#pageActivated(IWorkbenchPage)
-     */
-    @Override
+	/**
+	 * @see IPageListener#pageActivated(IWorkbenchPage)
+	 */
+	@Override
 	public void pageActivated(IWorkbenchPage page) {
-        pageEventReceived = true;
-    }
+		pageEventReceived = true;
+	}
 
-    /**
-     * @see IPageListener#pageClosed(IWorkbenchPage)
-     */
-    @Override
+	/**
+	 * @see IPageListener#pageClosed(IWorkbenchPage)
+	 */
+	@Override
 	public void pageClosed(IWorkbenchPage page) {
-        pageEventReceived = true;
-    }
+		pageEventReceived = true;
+	}
 
-    /**
-     * @see IPageListener#pageOpened(IWorkbenchPage)
-     */
-    @Override
+	/**
+	 * @see IPageListener#pageOpened(IWorkbenchPage)
+	 */
+	@Override
 	public void pageOpened(IWorkbenchPage page) {
-        pageEventReceived = true;
-    }
+		pageEventReceived = true;
+	}
 
-    /**
-     * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
-     */
-    @Override
+	/**
+	 * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
+	 */
+	@Override
 	public void perspectiveActivated(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective) {
-        perspEventReceived = true;
-    }
+			IPerspectiveDescriptor perspective) {
+		perspEventReceived = true;
+	}
 
-    /**
-     * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
-     */
-    @Override
+	/**
+	 * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
+	 */
+	@Override
 	public void perspectiveChanged(IWorkbenchPage page,
-            IPerspectiveDescriptor perspective, String changeId) {
-        perspEventReceived = true;
-    }
+			IPerspectiveDescriptor perspective, String changeId) {
+		perspEventReceived = true;
+	}
 
 }

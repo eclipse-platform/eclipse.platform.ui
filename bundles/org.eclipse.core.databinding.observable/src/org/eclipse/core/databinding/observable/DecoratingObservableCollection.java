@@ -39,7 +39,7 @@ public class DecoratingObservableCollection<E> extends DecoratingObservable impl
 	}
 
 	@Override
-        public boolean add(E o) {
+		public boolean add(E o) {
 		getterCalled();
 		return decorated.add(o);
 	}

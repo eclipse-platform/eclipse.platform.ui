@@ -31,133 +31,133 @@ import org.eclipse.ui.ide.IGotoMarker;
 public class MockReusableEditorPart extends MockWorkbenchPart
 		implements IGotoMarker, IShowEditorInput, IReusableEditor {
 
-    private static final String BASE = "org.eclipse.ui.tests.api.MockReusableEditorPart";
+	private static final String BASE = "org.eclipse.ui.tests.api.MockReusableEditorPart";
 
-    public static final String ID1 = BASE + "1";
+	public static final String ID1 = BASE + "1";
 
-    public static final String ID2 = BASE + "2";
+	public static final String ID2 = BASE + "2";
 
-    public static final String NAME = "Mock Reusable Editor 1";
+	public static final String NAME = "Mock Reusable Editor 1";
 
-    private IEditorInput input;
+	private IEditorInput input;
 
-    private boolean dirty = false;
+	private boolean dirty = false;
 
-    private boolean saveNeeded = true;
+	private boolean saveNeeded = true;
 
-    private boolean saveAsAllowed = false;
+	private boolean saveAsAllowed = false;
 
-    public MockReusableEditorPart() {
-        super();
-    }
+	public MockReusableEditorPart() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        super.createPartControl(parent);
+		super.createPartControl(parent);
 
-        final Button dirtyToggle = new Button(parent, SWT.CHECK);
-        dirtyToggle.setText("Dirty");
-        dirtyToggle.addSelectionListener(new SelectionAdapter() {
-            @Override
+		final Button dirtyToggle = new Button(parent, SWT.CHECK);
+		dirtyToggle.setText("Dirty");
+		dirtyToggle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                setDirty(dirtyToggle.getSelection());
-            }
-        });
-        dirtyToggle.setSelection(isDirty());
+				setDirty(dirtyToggle.getSelection());
+			}
+		});
+		dirtyToggle.setSelection(isDirty());
 
-        final Button saveNeededToggle = new Button(parent, SWT.CHECK);
-        saveNeededToggle.setText("Save on close");
-        saveNeededToggle.addSelectionListener(new SelectionAdapter() {
-            @Override
+		final Button saveNeededToggle = new Button(parent, SWT.CHECK);
+		saveNeededToggle.setText("Save on close");
+		saveNeededToggle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                setSaveNeeded(saveNeededToggle.getSelection());
-            }
-        });
-        saveNeededToggle.setSelection(saveNeeded);
+				setSaveNeeded(saveNeededToggle.getSelection());
+			}
+		});
+		saveNeededToggle.setSelection(saveNeeded);
 
-        final Button saveAsToggle = new Button(parent, SWT.CHECK);
-        saveAsToggle.setText("Save as allowed");
-        saveAsToggle.addSelectionListener(new SelectionAdapter() {
-            @Override
+		final Button saveAsToggle = new Button(parent, SWT.CHECK);
+		saveAsToggle.setText("Save as allowed");
+		saveAsToggle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                setSaveAsAllowed(saveAsToggle.getSelection());
-            }
-        });
-        saveAsToggle.setSelection(saveAsAllowed);
-    }
-    @Override
+				setSaveAsAllowed(saveAsToggle.getSelection());
+			}
+		});
+		saveAsToggle.setSelection(saveAsAllowed);
+	}
+	@Override
 	public void doSave(IProgressMonitor monitor) {
-        setDirty(false);
-        callTrace.add("doSave");
-    }
+		setDirty(false);
+		callTrace.add("doSave");
+	}
 
-    @Override
+	@Override
 	public void doSaveAs() {
-    }
+	}
 
-    @Override
+	@Override
 	public IEditorInput getEditorInput() {
-        return input;
-    }
+		return input;
+	}
 
-    @Override
+	@Override
 	public IEditorSite getEditorSite() {
-        return (IEditorSite) getSite();
-    }
+		return (IEditorSite) getSite();
+	}
 
-    @Override
+	@Override
 	public void gotoMarker(IMarker marker) {
-        callTrace.add("gotoMarker");
-    }
+		callTrace.add("gotoMarker");
+	}
 
-    @Override
+	@Override
 	public void init(IEditorSite site, IEditorInput input) {
-        this.input = input;
-        setSite(site);
-        callTrace.add("init");
-        setSiteInitialized();
-    }
+		this.input = input;
+		setSite(site);
+		callTrace.add("init");
+		setSiteInitialized();
+	}
 
-    @Override
+	@Override
 	public boolean isDirty() {
-        callTrace.add("isDirty");
-        return dirty;
-    }
+		callTrace.add("isDirty");
+		return dirty;
+	}
 
-    public void setDirty(boolean value) {
-        dirty = value;
-        firePropertyChange(PROP_DIRTY);
-    }
+	public void setDirty(boolean value) {
+		dirty = value;
+		firePropertyChange(PROP_DIRTY);
+	}
 
-    @Override
+	@Override
 	public boolean isSaveAsAllowed() {
-        callTrace.add("isSaveAsAllowed");
-        return saveAsAllowed;
-    }
+		callTrace.add("isSaveAsAllowed");
+		return saveAsAllowed;
+	}
 
-    @Override
+	@Override
 	public boolean isSaveOnCloseNeeded() {
-        callTrace.add("isSaveOnCloseNeeded");
-        return saveNeeded;
-    }
+		callTrace.add("isSaveOnCloseNeeded");
+		return saveNeeded;
+	}
 
-    public void setSaveAsAllowed(boolean isSaveAsAllowed) {
-        this.saveAsAllowed = isSaveAsAllowed;
-    }
+	public void setSaveAsAllowed(boolean isSaveAsAllowed) {
+		this.saveAsAllowed = isSaveAsAllowed;
+	}
 
-    public void setSaveNeeded(boolean value) {
-        saveNeeded = value;
-    }
+	public void setSaveNeeded(boolean value) {
+		saveNeeded = value;
+	}
 
-    @Override
+	@Override
 	protected IActionBars getActionBars() {
-        return getEditorSite().getActionBars();
-    }
+		return getEditorSite().getActionBars();
+	}
 
-    @Override
+	@Override
 	public void showEditorInput(IEditorInput editorInput) {
-        callTrace.add("showEditorInput");
-    }
+		callTrace.add("showEditorInput");
+	}
 
 	@Override
 	public void setInput(IEditorInput input) {

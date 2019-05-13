@@ -18,5 +18,5 @@ package org.eclipse.jface.viewers;
  * a selection.
  */
 public interface IInputSelectionProvider extends IInputProvider,
-        ISelectionProvider {
+		ISelectionProvider {
 }

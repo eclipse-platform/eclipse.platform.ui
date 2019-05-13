@@ -49,216 +49,216 @@ import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
  */
 @Deprecated
 public class QuickStartAction extends Action implements
-        ActionFactory.IWorkbenchAction {
+		ActionFactory.IWorkbenchAction {
 
-    private static final String EDITOR_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"; //$NON-NLS-1$
+	private static final String EDITOR_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"; //$NON-NLS-1$
 
-    /**
-     * The workbench window; or <code>null</code> if this
-     * action has been <code>dispose</code>d.
-     */
-    private IWorkbenchWindow workbenchWindow;
+	/**
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
+	 */
+	private IWorkbenchWindow workbenchWindow;
 
-    /**
-     * Create an instance of this class.
-     * <p>
-     * This consructor added to support calling the action from the welcome
-     * page.
-     * </p>
-     */
-    public QuickStartAction() {
-        this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-    }
+	/**
+	 * Create an instance of this class.
+	 * <p>
+	 * This consructor added to support calling the action from the welcome
+	 * page.
+	 * </p>
+	 */
+	public QuickStartAction() {
+		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+	}
 
-    /**
-     * Creates an instance of this action, for use in the given window.
-     * @param window the window
-     */
-    public QuickStartAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.QuickStart_text);
-        if (window == null) {
-            throw new IllegalArgumentException();
-        }
-        this.workbenchWindow = window;
-        setToolTipText(IDEWorkbenchMessages.QuickStart_toolTip);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Creates an instance of this action, for use in the given window.
+	 * @param window the window
+	 */
+	public QuickStartAction(IWorkbenchWindow window) {
+		super(IDEWorkbenchMessages.QuickStart_text);
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		setToolTipText(IDEWorkbenchMessages.QuickStart_toolTip);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.QUICK_START_ACTION);
 		setActionDefinitionId(IWorkbenchCommandConstants.HELP_WELCOME);
-    }
+	}
 
-    /**
-     * The user has invoked this action.  Prompts for a feature with a welcome page,
-     * then opens the corresponding welcome page.
-     */
-    @Override
+	/**
+	 * The user has invoked this action.  Prompts for a feature with a welcome page,
+	 * then opens the corresponding welcome page.
+	 */
+	@Override
 	public void run() {
-        if (workbenchWindow == null) {
-            // action has been disposed
-            return;
-        }
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
 		AboutInfo feature = promptForFeature();
 		if (feature != null) {
 			openWelcomePage(feature);
 		}
-    }
+	}
 
-    /**
-     * Prompts the user for a feature that has a welcome page.
-     *
-     * @return the chosen feature, or <code>null</code> if none was chosen
-     */
+	/**
+	 * Prompts the user for a feature that has a welcome page.
+	 *
+	 * @return the chosen feature, or <code>null</code> if none was chosen
+	 */
 	private AboutInfo promptForFeature() {
-        // Ask the user to select a feature
+		// Ask the user to select a feature
 		ArrayList<AboutInfo> welcomeFeatures = new ArrayList<>();
 
-        URL productUrl = null;
-        IProduct product = Platform.getProduct();
-        if (product != null) {
-            productUrl = ProductProperties.getWelcomePageUrl(product);
-            welcomeFeatures.add(new AboutInfo(product));
-        }
+		URL productUrl = null;
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			productUrl = ProductProperties.getWelcomePageUrl(product);
+			welcomeFeatures.add(new AboutInfo(product));
+		}
 
-        AboutInfo[] features = IDEWorkbenchPlugin.getDefault()
-                .getFeatureInfos();
-        for (AboutInfo feature : features) {
-            URL url = feature.getWelcomePageURL();
-            if (url != null && (productUrl == null || !url.toString().equals(productUrl.toString()))) {
+		AboutInfo[] features = IDEWorkbenchPlugin.getDefault()
+				.getFeatureInfos();
+		for (AboutInfo feature : features) {
+			URL url = feature.getWelcomePageURL();
+			if (url != null && (productUrl == null || !url.toString().equals(productUrl.toString()))) {
 				welcomeFeatures.add(feature);
 			}
-        }
+		}
 
-        Shell shell = workbenchWindow.getShell();
+		Shell shell = workbenchWindow.getShell();
 
-        if (welcomeFeatures.isEmpty()) {
-            MessageDialog.openInformation(shell, IDEWorkbenchMessages.QuickStartMessageDialog_title,
-                    IDEWorkbenchMessages.QuickStartMessageDialog_message);
-            return null;
-        }
+		if (welcomeFeatures.isEmpty()) {
+			MessageDialog.openInformation(shell, IDEWorkbenchMessages.QuickStartMessageDialog_title,
+					IDEWorkbenchMessages.QuickStartMessageDialog_message);
+			return null;
+		}
 
-        features = new AboutInfo[welcomeFeatures.size()];
-        welcomeFeatures.toArray(features);
+		features = new AboutInfo[welcomeFeatures.size()];
+		welcomeFeatures.toArray(features);
 
-        FeatureSelectionDialog d = new FeatureSelectionDialog(shell, features,
-                product == null ? null : product.getId(), IDEWorkbenchMessages.WelcomePageSelectionDialog_title,
-                IDEWorkbenchMessages.WelcomePageSelectionDialog_message,
-                IIDEHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
-        if (d.open() != Window.OK || d.getResult().size() != 1) {
+		FeatureSelectionDialog d = new FeatureSelectionDialog(shell, features,
+				product == null ? null : product.getId(), IDEWorkbenchMessages.WelcomePageSelectionDialog_title,
+				IDEWorkbenchMessages.WelcomePageSelectionDialog_message,
+				IIDEHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
+		if (d.open() != Window.OK || d.getResult().size() != 1) {
 			return null;
 		}
 		return d.getFirstResult().orElse(null);
-    }
+	}
 
-    /**
-     * Opens the welcome page for the given feature.
-     *
-     * @param featureId the about info for the feature
-     * @return <code>true</code> if successful, <code>false</code> otherwise
-     * @throws WorkbenchException
-     */
-    public boolean openWelcomePage(String featureId) throws WorkbenchException {
-        AboutInfo feature = findFeature(featureId);
-        if (feature == null || feature.getWelcomePageURL() == null) {
-            return false;
-        }
-        return openWelcomePage(feature);
-    }
+	/**
+	 * Opens the welcome page for the given feature.
+	 *
+	 * @param featureId the about info for the feature
+	 * @return <code>true</code> if successful, <code>false</code> otherwise
+	 * @throws WorkbenchException
+	 */
+	public boolean openWelcomePage(String featureId) throws WorkbenchException {
+		AboutInfo feature = findFeature(featureId);
+		if (feature == null || feature.getWelcomePageURL() == null) {
+			return false;
+		}
+		return openWelcomePage(feature);
+	}
 
-    /**
-     * Returns the about info for the feature with the given id, or <code>null</code>
-     * if there is no such feature.
-     *
-     * @return the about info for the feature with the given id, or <code>null</code>
-     *   if there is no such feature.
-     */
+	/**
+	 * Returns the about info for the feature with the given id, or <code>null</code>
+	 * if there is no such feature.
+	 *
+	 * @return the about info for the feature with the given id, or <code>null</code>
+	 *   if there is no such feature.
+	 */
 	private AboutInfo findFeature(String featureId) {
-        AboutInfo[] features = IDEWorkbenchPlugin.getDefault()
-                .getFeatureInfos();
-        for (AboutInfo info : features) {
-            if (info.getFeatureId().equals(featureId)) {
-                return info;
-            }
-        }
-        return null;
-    }
+		AboutInfo[] features = IDEWorkbenchPlugin.getDefault()
+				.getFeatureInfos();
+		for (AboutInfo info : features) {
+			if (info.getFeatureId().equals(featureId)) {
+				return info;
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Opens the welcome page for a feature.
-     *
-     * @param feature the about info for the feature
-     * @return <code>true</code> if successful, <code>false</code> otherwise
-     */
-    private boolean openWelcomePage(AboutInfo feature) {
-        IWorkbenchPage page = null;
+	/**
+	 * Opens the welcome page for a feature.
+	 *
+	 * @param feature the about info for the feature
+	 * @return <code>true</code> if successful, <code>false</code> otherwise
+	 */
+	private boolean openWelcomePage(AboutInfo feature) {
+		IWorkbenchPage page = null;
 
-        // See if the feature wants a specific perspective
-        String perspectiveId = feature.getWelcomePerspectiveId();
+		// See if the feature wants a specific perspective
+		String perspectiveId = feature.getWelcomePerspectiveId();
 
-        if (perspectiveId == null) {
-            // Just use the current perspective unless one is not open
-            // in which case use the default
-            page = workbenchWindow.getActivePage();
+		if (perspectiveId == null) {
+			// Just use the current perspective unless one is not open
+			// in which case use the default
+			page = workbenchWindow.getActivePage();
 
-            if (page == null || page.getPerspective() == null) {
-                perspectiveId = PlatformUI.getWorkbench()
-                        .getPerspectiveRegistry().getDefaultPerspective();
-            }
-        }
+			if (page == null || page.getPerspective() == null) {
+				perspectiveId = PlatformUI.getWorkbench()
+						.getPerspectiveRegistry().getDefaultPerspective();
+			}
+		}
 
-        if (perspectiveId != null) {
-            try {
-                page = PlatformUI.getWorkbench().showPerspective(perspectiveId,
-                        workbenchWindow);
-            } catch (WorkbenchException e) {
-                IDEWorkbenchPlugin
+		if (perspectiveId != null) {
+			try {
+				page = PlatformUI.getWorkbench().showPerspective(perspectiveId,
+						workbenchWindow);
+			} catch (WorkbenchException e) {
+				IDEWorkbenchPlugin
 						.log("Error opening perspective: " + perspectiveId, e.getStatus()); //$NON-NLS-1$
-                return false;
-            }
-        }
+				return false;
+			}
+		}
 
-        if (page == null) {
-        	return false;
-        }
+		if (page == null) {
+			return false;
+		}
 
-        page.setEditorAreaVisible(true);
+		page.setEditorAreaVisible(true);
 
-        // create input
-        WelcomeEditorInput input = new WelcomeEditorInput(feature);
+		// create input
+		WelcomeEditorInput input = new WelcomeEditorInput(feature);
 
-        // see if we already have a welcome editorz
-        IEditorPart editor = page.findEditor(input);
-        if (editor != null) {
-            page.activate(editor);
-            return true;
-        }
+		// see if we already have a welcome editorz
+		IEditorPart editor = page.findEditor(input);
+		if (editor != null) {
+			page.activate(editor);
+			return true;
+		}
 
-        try {
-            page.openEditor(input, EDITOR_ID);
-        } catch (PartInitException e) {
-            IDEWorkbenchPlugin
-                    .log("Error opening welcome editor for feature: " + feature.getFeatureId(), e); //$NON-NLS-1$
-            IStatus status = new Status(
-                    IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH,
-                    1,
-                    IDEWorkbenchMessages.QuickStartAction_openEditorException, e);
-            ErrorDialog
-                    .openError(
-                            workbenchWindow.getShell(),
-                            IDEWorkbenchMessages.Workbench_openEditorErrorDialogTitle,
-                            IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage,
-                            status);
-            return false;
-        }
-        return true;
-    }
+		try {
+			page.openEditor(input, EDITOR_ID);
+		} catch (PartInitException e) {
+			IDEWorkbenchPlugin
+					.log("Error opening welcome editor for feature: " + feature.getFeatureId(), e); //$NON-NLS-1$
+			IStatus status = new Status(
+					IStatus.ERROR,
+					IDEWorkbenchPlugin.IDE_WORKBENCH,
+					1,
+					IDEWorkbenchMessages.QuickStartAction_openEditorException, e);
+			ErrorDialog
+					.openError(
+							workbenchWindow.getShell(),
+							IDEWorkbenchMessages.Workbench_openEditorErrorDialogTitle,
+							IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage,
+							status);
+			return false;
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        if (workbenchWindow == null) {
-            // action has already been disposed
-            return;
-        }
-        workbenchWindow = null;
-    }
+		if (workbenchWindow == null) {
+			// action has already been disposed
+			return;
+		}
+		workbenchWindow = null;
+	}
 
 }

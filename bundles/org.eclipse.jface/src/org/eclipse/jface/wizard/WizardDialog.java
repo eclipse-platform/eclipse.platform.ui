@@ -500,8 +500,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 		cancelButton = createCancelButton(parent);
 
 		if (parent.getDisplay().getDismissalAlignment() == SWT.RIGHT) {
-            // Make the default button the right-most button.
-            // See also special code in org.eclipse.jface.dialogs.Dialog#initializeBounds()
+			// Make the default button the right-most button.
+			// See also special code in org.eclipse.jface.dialogs.Dialog#initializeBounds()
 			finishButton.moveBelow(null);
 		}
 	}

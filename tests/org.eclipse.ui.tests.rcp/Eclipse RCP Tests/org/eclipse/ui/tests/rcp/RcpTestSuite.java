@@ -30,6 +30,6 @@ public class RcpTestSuite {
 
 
 
-    public RcpTestSuite() {
-    }
+	public RcpTestSuite() {
+	}
 }

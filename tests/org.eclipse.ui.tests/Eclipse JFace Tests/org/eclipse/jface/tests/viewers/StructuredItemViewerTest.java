@@ -18,32 +18,32 @@ import org.eclipse.jface.viewers.ICheckable;
 
 public abstract class StructuredItemViewerTest extends StructuredViewerTest {
 
-    public StructuredItemViewerTest(String name) {
-        super(name);
-    }
+	public StructuredItemViewerTest(String name) {
+		super(name);
+	}
 
-    public void testCheckElement() {
+	public void testCheckElement() {
 
-        if (fViewer instanceof ICheckable) {
-            TestElement first = fRootElement.getFirstChild();
-            TestElement firstfirst = first.getFirstChild();
+		if (fViewer instanceof ICheckable) {
+			TestElement first = fRootElement.getFirstChild();
+			TestElement firstfirst = first.getFirstChild();
 
-            ICheckable ctv = (ICheckable) fViewer;
-            ctv.setChecked(first, true);
-            assertTrue(ctv.getChecked(first));
+			ICheckable ctv = (ICheckable) fViewer;
+			ctv.setChecked(first, true);
+			assertTrue(ctv.getChecked(first));
 
-            // checking an invisible element
-            if (fViewer instanceof AbstractTreeViewer) {
-                // The first child of the first child can only be resolved in a tree
-                assertTrue(ctv.setChecked(firstfirst, true));
-                assertTrue(ctv.getChecked(firstfirst));
-            } else {
-                assertTrue(!ctv.setChecked(firstfirst, true));
-                assertTrue(!ctv.getChecked(firstfirst));
-            }
+			// checking an invisible element
+			if (fViewer instanceof AbstractTreeViewer) {
+				// The first child of the first child can only be resolved in a tree
+				assertTrue(ctv.setChecked(firstfirst, true));
+				assertTrue(ctv.getChecked(firstfirst));
+			} else {
+				assertTrue(!ctv.setChecked(firstfirst, true));
+				assertTrue(!ctv.getChecked(firstfirst));
+			}
 
-            ctv.setChecked(first, false);
-            assertTrue(!ctv.getChecked(first));
-        }
-    }
+			ctv.setChecked(first, false);
+			assertTrue(!ctv.getChecked(first));
+		}
+	}
 }

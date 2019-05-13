@@ -66,7 +66,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @param style
 	 */
 	public DetailedProgressViewer(Composite parent, int style,
-	        IProgressService progressService, FinishedJobs finishedJobs) {
+			IProgressService progressService, FinishedJobs finishedJobs) {
 		this.progressService = progressService;
 		this.finishedJobs = finishedJobs;
 

@@ -23,17 +23,17 @@ package org.eclipse.jface.viewers;
  */
 public abstract class ColumnLayoutData {
 
-    /**
-     * Indicates whether the column is resizable.
-     */
-    public boolean resizable;
+	/**
+	 * Indicates whether the column is resizable.
+	 */
+	public boolean resizable;
 
-    /**
-     * Creates a new column layout data object.
-     *
-     * @param resizable <code>true</code> if the column is resizable, and <code>false</code> if not
-     */
-    protected ColumnLayoutData(boolean resizable) {
-        this.resizable = resizable;
-    }
+	/**
+	 * Creates a new column layout data object.
+	 *
+	 * @param resizable <code>true</code> if the column is resizable, and <code>false</code> if not
+	 */
+	protected ColumnLayoutData(boolean resizable) {
+		this.resizable = resizable;
+	}
 }

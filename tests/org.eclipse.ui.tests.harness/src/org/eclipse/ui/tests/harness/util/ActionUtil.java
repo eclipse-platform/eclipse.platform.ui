@@ -31,110 +31,110 @@ import junit.framework.TestCase;
  */
 public class ActionUtil {
 
-    /**
-     * Runs an action contribution.
-     *
-     * @param test the current test case
-     * @param item an action contribution item
-     */
-    public static void runAction(TestCase test, IContributionItem item) {
-        Assert.assertTrue(item instanceof ActionContributionItem);
-        ((ActionContributionItem) item).getAction().run();
-    }
+	/**
+	 * Runs an action contribution.
+	 *
+	 * @param test the current test case
+	 * @param item an action contribution item
+	 */
+	public static void runAction(TestCase test, IContributionItem item) {
+		Assert.assertTrue(item instanceof ActionContributionItem);
+		((ActionContributionItem) item).getAction().run();
+	}
 
-    /**
-     * Runs the first action found in a menu manager with a
-     * particular label.
-     *
-     * @param test the current test case
-     * @param mgr the containing menu manager
-     * @param label the action label
-     */
-    public static void runActionWithLabel(TestCase test, IMenuManager mgr,
-            String label) {
-        IContributionItem[] items = mgr.getItems();
+	/**
+	 * Runs the first action found in a menu manager with a
+	 * particular label.
+	 *
+	 * @param test the current test case
+	 * @param mgr the containing menu manager
+	 * @param label the action label
+	 */
+	public static void runActionWithLabel(TestCase test, IMenuManager mgr,
+			String label) {
+		IContributionItem[] items = mgr.getItems();
 		for (IContributionItem item : items) {
-            if (item instanceof SubContributionItem)
-                item = ((SubContributionItem) item).getInnerItem();
-            if (item instanceof ActionContributionItem) {
-                IAction action = ((ActionContributionItem) item).getAction();
-                if (label.equals(action.getText())) {
-                    action.run();
-                    return;
-                }
-            }
-        }
-        Assert.fail("Unable to find action: " + label);
-    }
+			if (item instanceof SubContributionItem)
+				item = ((SubContributionItem) item).getInnerItem();
+			if (item instanceof ActionContributionItem) {
+				IAction action = ((ActionContributionItem) item).getAction();
+				if (label.equals(action.getText())) {
+					action.run();
+					return;
+				}
+			}
+		}
+		Assert.fail("Unable to find action: " + label);
+	}
 
-    /**
-     * Runs the first action found in a window with a
-     * particular label.
-     *
-     * @param test the current test case
-     * @param win the containing window
-     * @param label the action label
-     */
-    public static void runActionWithLabel(TestCase test, IWorkbenchWindow win,
-            String label) {
-        WorkbenchWindow realWin = (WorkbenchWindow) win;
-        IMenuManager mgr = realWin.getMenuBarManager();
-        runActionWithLabel(test, mgr, label);
-    }
+	/**
+	 * Runs the first action found in a window with a
+	 * particular label.
+	 *
+	 * @param test the current test case
+	 * @param win the containing window
+	 * @param label the action label
+	 */
+	public static void runActionWithLabel(TestCase test, IWorkbenchWindow win,
+			String label) {
+		WorkbenchWindow realWin = (WorkbenchWindow) win;
+		IMenuManager mgr = realWin.getMenuBarManager();
+		runActionWithLabel(test, mgr, label);
+	}
 
-    /**
-     * Runs an action identified by an id path in a
-     * menu manager.
-     *
-     * @param test the current test case
-     * @param mgr the containing menu manager
-     * @param label the action label
-     */
-    public static void runActionUsingPath(TestCase test, IMenuManager mgr,
-            String idPath) {
-        IContributionItem item = mgr.findUsingPath(idPath);
-        Assert.assertNotNull(item);
-        runAction(test, item);
-    }
+	/**
+	 * Runs an action identified by an id path in a
+	 * menu manager.
+	 *
+	 * @param test the current test case
+	 * @param mgr the containing menu manager
+	 * @param label the action label
+	 */
+	public static void runActionUsingPath(TestCase test, IMenuManager mgr,
+			String idPath) {
+		IContributionItem item = mgr.findUsingPath(idPath);
+		Assert.assertNotNull(item);
+		runAction(test, item);
+	}
 
-    /**
-     * Runs an action identified by an id path in a
-     * window.
-     *
-     * @param test the current test case
-     * @param win the containing window
-     * @param label the action label
-     */
-    public static void runActionUsingPath(TestCase test, IWorkbenchWindow win,
-            String idPath) {
-    	WorkbenchWindow realWin = (WorkbenchWindow) win;
-        IMenuManager mgr = realWin.getMenuBarManager();
-        runActionUsingPath(test, mgr, idPath);
-    }
+	/**
+	 * Runs an action identified by an id path in a
+	 * window.
+	 *
+	 * @param test the current test case
+	 * @param win the containing window
+	 * @param label the action label
+	 */
+	public static void runActionUsingPath(TestCase test, IWorkbenchWindow win,
+			String idPath) {
+		WorkbenchWindow realWin = (WorkbenchWindow) win;
+		IMenuManager mgr = realWin.getMenuBarManager();
+		runActionUsingPath(test, mgr, idPath);
+	}
 
-    /**
-     * Returns the first action found in a menu manager with a
-     * particular label.
-     *
-     * @param mgr the containing menu manager
-     * @param label the action label
-     * @return the first action with the label, or <code>null</code>
-     * 		if it is not found.
-     */
-    public static IAction getActionWithLabel(IMenuManager mgr, String label) {
-        IContributionItem[] items = mgr.getItems();
+	/**
+	 * Returns the first action found in a menu manager with a
+	 * particular label.
+	 *
+	 * @param mgr the containing menu manager
+	 * @param label the action label
+	 * @return the first action with the label, or <code>null</code>
+	 * 		if it is not found.
+	 */
+	public static IAction getActionWithLabel(IMenuManager mgr, String label) {
+		IContributionItem[] items = mgr.getItems();
 		for (IContributionItem item : items) {
-            if (item instanceof SubContributionItem)
-                item = ((SubContributionItem) item).getInnerItem();
-            if (item instanceof ActionContributionItem) {
-                IAction action = ((ActionContributionItem) item).getAction();
-                if (label.equals(action.getText())) {
-                    return action;
-                }
-            }
-        }
-        return null;
-    }
+			if (item instanceof SubContributionItem)
+				item = ((SubContributionItem) item).getInnerItem();
+			if (item instanceof ActionContributionItem) {
+				IAction action = ((ActionContributionItem) item).getAction();
+				if (label.equals(action.getText())) {
+					return action;
+				}
+			}
+		}
+		return null;
+	}
 
 }
 

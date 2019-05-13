@@ -151,31 +151,31 @@ public abstract class Window implements IShellProvider {
 	 */
 	private static int orientation = SWT.NONE;
 
-    /**
-     * Object used to locate the default parent for modal shells
-     */
-    private static IShellProvider defaultModalParent = () -> {
-	    Display d = Display.getCurrent();
+	/**
+	 * Object used to locate the default parent for modal shells
+	 */
+	private static IShellProvider defaultModalParent = () -> {
+		Display d = Display.getCurrent();
 
-	    if (d == null) {
-	        return null;
-	    }
+		if (d == null) {
+			return null;
+		}
 
-	    Shell parent = d.getActiveShell();
+		Shell parent = d.getActiveShell();
 
-	    // Make sure we don't pick a parent that has a modal child (this can lock the app)
-	    if (parent == null) {
-	        // If this is a top-level window, then there must not be any open modal windows.
-	        parent = getModalChild(Display.getCurrent().getShells());
-	    } else {
-	        // If we picked a parent with a modal child, use the modal child instead
-	        Shell modalChild = getModalChild(parent.getShells());
-	        if (modalChild != null) {
-	            parent = modalChild;
-	        }
-	    }
+		// Make sure we don't pick a parent that has a modal child (this can lock the app)
+		if (parent == null) {
+			// If this is a top-level window, then there must not be any open modal windows.
+			parent = getModalChild(Display.getCurrent().getShells());
+		} else {
+			// If we picked a parent with a modal child, use the modal child instead
+			Shell modalChild = getModalChild(parent.getShells());
+			if (modalChild != null) {
+				parent = modalChild;
+			}
+		}
 
-	    return parent;
+		return parent;
 	};
 
 	/**
@@ -255,30 +255,30 @@ public abstract class Window implements IShellProvider {
 	 * @param parentShell
 	 *            the parent shell, or <code>null</code> to create a top-level
 	 *            shell. Try passing "(Shell)null" to this method instead of "null"
-     *            if your compiler complains about an ambiguity error.
+	 *            if your compiler complains about an ambiguity error.
 	 * @see #setBlockOnOpen
 	 * @see #getDefaultOrientation()
 	 */
 	protected Window(Shell parentShell) {
-        this(new SameShellProvider(parentShell));
+		this(new SameShellProvider(parentShell));
 
-        if(parentShell == null) {
+		if(parentShell == null) {
 			setShellStyle(getShellStyle() | getDefaultOrientation());
 		}
 	}
 
-    /**
-     * Creates a new window which will create its shell as a child of whatever
-     * the given shellProvider returns.
-     *
-     * @param shellProvider object that will return the current parent shell. Not null.
-     *
-     * @since 3.1
-     */
-    protected Window(IShellProvider shellProvider) {
-        Assert.isNotNull(shellProvider);
-        this.parentShell = shellProvider;
-    }
+	/**
+	 * Creates a new window which will create its shell as a child of whatever
+	 * the given shellProvider returns.
+	 *
+	 * @param shellProvider object that will return the current parent shell. Not null.
+	 *
+	 * @since 3.1
+	 */
+	protected Window(IShellProvider shellProvider) {
+		Assert.isNotNull(shellProvider);
+		this.parentShell = shellProvider;
+	}
 
 	/**
 	 * Determines if the window should handle the close event or do nothing.
@@ -590,35 +590,35 @@ public abstract class Window implements IShellProvider {
 		return shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	}
 
-    /**
-     * Returns the most specific modal child from the given list of Shells.
-     *
-     * @param toSearch shells to search for modal children
-     * @return the most specific modal child, or null if none
-     *
-     * @since 3.1
-     */
-    private static Shell getModalChild(Shell[] toSearch) {
-        int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
+	/**
+	 * Returns the most specific modal child from the given list of Shells.
+	 *
+	 * @param toSearch shells to search for modal children
+	 * @return the most specific modal child, or null if none
+	 *
+	 * @since 3.1
+	 */
+	private static Shell getModalChild(Shell[] toSearch) {
+		int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
 
-        for (int i = toSearch.length - 1; i >= 0; i--) {
-            Shell shell = toSearch[i];
+		for (int i = toSearch.length - 1; i >= 0; i--) {
+			Shell shell = toSearch[i];
 
-            // Check if this shell has a modal child
-            Shell[] children = shell.getShells();
-            Shell modalChild = getModalChild(children);
-            if (modalChild != null) {
-                return modalChild;
-            }
+			// Check if this shell has a modal child
+			Shell[] children = shell.getShells();
+			Shell modalChild = getModalChild(children);
+			if (modalChild != null) {
+				return modalChild;
+			}
 
-            // If not, check if this shell is modal itself
-            if (shell.isVisible() && (shell.getStyle() & modal) != 0) {
-                return shell;
-            }
-        }
+			// If not, check if this shell is modal itself
+			if (shell.isVisible() && (shell.getStyle() & modal) != 0) {
+				return shell;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
 	/**
 	 * Returns parent shell, under which this window's shell is created.
@@ -627,18 +627,18 @@ public abstract class Window implements IShellProvider {
 	 *         shell
 	 */
 	protected Shell getParentShell() {
-        Shell parent = parentShell.getShell();
+		Shell parent = parentShell.getShell();
 
-        int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
+		int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
 
-        if ((getShellStyle() & modal) != 0) {
-            // If this is a modal shell with no parent, pick a shell using defaultModalParent.
-            if (parent == null) {
-                parent = defaultModalParent.getShell();
-            }
-        }
+		if ((getShellStyle() & modal) != 0) {
+			// If this is a modal shell with no parent, pick a shell using defaultModalParent.
+			if (parent == null) {
+				parent = defaultModalParent.getShell();
+			}
+		}
 
-        return parent;
+		return parent;
 	}
 
 	/**
@@ -783,7 +783,7 @@ public abstract class Window implements IShellProvider {
 	public int open() {
 
 		if (shell == null || shell.isDisposed()) {
-            shell = null;
+			shell = null;
 			// create the window
 			create();
 		}
@@ -873,19 +873,19 @@ public abstract class Window implements IShellProvider {
 	}
 
 	/**
-     * Changes the parent shell. This is only safe to use when the shell is not
-     * yet realized (i.e., created). Once the shell is created, it must be
-     * disposed (i.e., closed) before this method can be called.
-     *
-     * @param newParentShell
-     *            The new parent shell; this value may be <code>null</code> if
-     *            there is to be no parent.
-     * @since 3.1
-     */
-    protected void setParentShell(final Shell newParentShell) {
-        Assert.isTrue((shell == null), "There must not be an existing shell."); //$NON-NLS-1$
-        parentShell = new SameShellProvider(newParentShell);
-    }
+	 * Changes the parent shell. This is only safe to use when the shell is not
+	 * yet realized (i.e., created). Once the shell is created, it must be
+	 * disposed (i.e., closed) before this method can be called.
+	 *
+	 * @param newParentShell
+	 *            The new parent shell; this value may be <code>null</code> if
+	 *            there is to be no parent.
+	 * @since 3.1
+	 */
+	protected void setParentShell(final Shell newParentShell) {
+		Assert.isTrue((shell == null), "There must not be an existing shell."); //$NON-NLS-1$
+		parentShell = new SameShellProvider(newParentShell);
+	}
 
 	/**
 	 * Sets this window's return code. The return code is automatically returned
@@ -997,17 +997,17 @@ public abstract class Window implements IShellProvider {
 		}
 	}
 
-    /**
-     * Sets the default parent for modal Windows. This will be used to locate
-     * the parent for any modal Window constructed with a null parent.
-     *
-     * @param provider shell provider that will be used to locate the parent shell
-     * whenever a Window is created with a null parent
-     * @since 3.1
-     */
-    public static void setDefaultModalParent(IShellProvider provider) {
-        defaultModalParent = provider;
-    }
+	/**
+	 * Sets the default parent for modal Windows. This will be used to locate
+	 * the parent for any modal Window constructed with a null parent.
+	 *
+	 * @param provider shell provider that will be used to locate the parent shell
+	 * whenever a Window is created with a null parent
+	 * @since 3.1
+	 */
+	public static void setDefaultModalParent(IShellProvider provider) {
+		defaultModalParent = provider;
+	}
 
 	/**
 	 * Gets the default orientation for windows. If it is not

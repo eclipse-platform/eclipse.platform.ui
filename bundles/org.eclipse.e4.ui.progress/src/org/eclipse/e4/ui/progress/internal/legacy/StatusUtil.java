@@ -27,20 +27,20 @@ import org.eclipse.e4.ui.progress.internal.ProgressMessages;
  */
 public class StatusUtil {
 
-    public static Throwable getCause(Throwable exception) {
-        // Figure out which exception should actually be logged -- if the given exception is
-        // a wrapper, unwrap it
-        Throwable cause = null;
-        if (exception != null) {
+	public static Throwable getCause(Throwable exception) {
+		// Figure out which exception should actually be logged -- if the given exception is
+		// a wrapper, unwrap it
+		Throwable cause = null;
+		if (exception != null) {
 			cause = exception.getCause();
 
-            if (cause == null) {
-                cause = exception;
-            }
-        }
+			if (cause == null) {
+				cause = exception;
+			}
+		}
 
-        return cause;
-    }
+		return cause;
+	}
 
 	/**
 	 * This method must not be called outside the workbench.
@@ -52,44 +52,44 @@ public class StatusUtil {
 	 * @return {@link IStatus}
 	 */
 	public static IStatus newStatus(int severity, String message,
-            Throwable exception) {
+			Throwable exception) {
 
-        String statusMessage = message;
-        if (message == null || message.trim().length() == 0) {
-            if (exception.getMessage() == null) {
+		String statusMessage = message;
+		if (message == null || message.trim().length() == 0) {
+			if (exception.getMessage() == null) {
 				statusMessage = exception.toString();
 			} else {
 				statusMessage = exception.getMessage();
 			}
-        }
+		}
 
-        return new Status(severity, IProgressConstants.PLUGIN_ID, severity,
-                statusMessage, getCause(exception));
-    }
+		return new Status(severity, IProgressConstants.PLUGIN_ID, severity,
+				statusMessage, getCause(exception));
+	}
 
-    /**
-     * Returns a localized message describing the given exception. If the given exception does not
-     * have a localized message, this returns the string "An error occurred".
-     *
-     * @param exception
-     * @return
-     */
-    public static String getLocalizedMessage(Throwable exception) {
-        String message = exception.getLocalizedMessage();
+	/**
+	 * Returns a localized message describing the given exception. If the given exception does not
+	 * have a localized message, this returns the string "An error occurred".
+	 *
+	 * @param exception
+	 * @return
+	 */
+	public static String getLocalizedMessage(Throwable exception) {
+		String message = exception.getLocalizedMessage();
 
-        if (message != null) {
-            return message;
-        }
+		if (message != null) {
+			return message;
+		}
 
-        // Workaround for the fact that CoreException does not implement a getLocalizedMessage() method.
-        // Remove this branch when and if CoreException implements getLocalizedMessage()
-        if (exception instanceof CoreException) {
-            CoreException ce = (CoreException)exception;
-            return ce.getStatus().getMessage();
-        }
+		// Workaround for the fact that CoreException does not implement a getLocalizedMessage() method.
+		// Remove this branch when and if CoreException implements getLocalizedMessage()
+		if (exception instanceof CoreException) {
+			CoreException ce = (CoreException)exception;
+			return ce.getStatus().getMessage();
+		}
 
-        return ProgressMessages.StatusUtil_errorOccurred;
-    }
+		return ProgressMessages.StatusUtil_errorOccurred;
+	}
 
 
 

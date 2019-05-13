@@ -26,30 +26,30 @@ public interface IConcurrentModelListener {
 	 *
 	 * @param added elements added to the model
 	 */
-    public void add(Object[] added);
+	public void add(Object[] added);
 
-    /**
-     * Called when elements are removed from the model
-     *
-     * @param removed elements removed from the model
-     */
-    public void remove(Object[] removed);
+	/**
+	 * Called when elements are removed from the model
+	 *
+	 * @param removed elements removed from the model
+	 */
+	public void remove(Object[] removed);
 
-    /**
-     * Called when elements in the model have changed
-     *
-     * @param changed elements that have changed
-     */
-    public void update(Object[] changed);
+	/**
+	 * Called when elements in the model have changed
+	 *
+	 * @param changed elements that have changed
+	 */
+	public void update(Object[] changed);
 
-    /**
-     * Notifies the receiver about the complete set
-     * of elements in the model. Most models will
-     * not call this method unless the listener explicitly
-     * requests it by calling
-     * <code>IConcurrentModel.requestUpdate</code>
-     *
-     * @param newContents contents of the model
-     */
-    public void setContents(Object[] newContents);
+	/**
+	 * Notifies the receiver about the complete set
+	 * of elements in the model. Most models will
+	 * not call this method unless the listener explicitly
+	 * requests it by calling
+	 * <code>IConcurrentModel.requestUpdate</code>
+	 *
+	 * @param newContents contents of the model
+	 */
+	public void setContents(Object[] newContents);
 }

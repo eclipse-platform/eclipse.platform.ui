@@ -51,8 +51,8 @@ public class ComboFieldEditor extends FieldEditor {
 	/**
 	 * Create the combo box field editor.
 	 *
-     * @param name the name of the preference this field editor works on
-     * @param labelText the label text of the field editor
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
 	 * @param entryNamesAndValues the names (labels) and underlying values to populate the combo widget.  These should be
 	 * arranged as: { {name1, value1}, {name2, value2}, ...}
 	 * @param parent the parent composite

@@ -64,331 +64,331 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  */
 public abstract class Wizard implements IWizard, IShellProvider {
-    /**
-     * Image registry key of the default image for wizard pages (value
-     * <code>"org.eclipse.jface.wizard.Wizard.pageImage"</code>).
-     */
-    public static final String DEFAULT_IMAGE = "org.eclipse.jface.wizard.Wizard.pageImage";//$NON-NLS-1$
-
-    /**
-     * The wizard container this wizard belongs to; <code>null</code> if none.
-     */
-    private IWizardContainer container = null;
-
-    /**
-     * This wizard's list of pages (element type: <code>IWizardPage</code>).
-     */
-    private List<IWizardPage> pages = new ArrayList<>();
-
-    /**
-     * Indicates whether this wizard needs a progress monitor.
-     */
-    private boolean needsProgressMonitor = false;
-
-    /**
-     * Indicates whether this wizard needs previous and next buttons even if the
-     * wizard has only one page.
-     */
-    private boolean forcePreviousAndNextButtons = false;
-
-    /**
-     * Indicates whether this wizard supports help.
-     */
-    private boolean isHelpAvailable = false;
-
-    /**
-     * The default page image for pages without one of their one;
-     * <code>null</code> if none.
-     */
-    private Image defaultImage = null;
-
-    /**
-     * The default page image descriptor, used for creating a default page image
-     * if required; <code>null</code> if none.
-     */
-    private ImageDescriptor defaultImageDescriptor = JFaceResources.getImageRegistry().getDescriptor(DEFAULT_IMAGE);
-
-    /**
-     * The color of the wizard title bar; <code>null</code> if none.
-     */
-    private RGB titleBarColor = null;
-
-    /**
-     * The window title string for this wizard; <code>null</code> if none.
-     */
-    private String windowTitle = null;
-
-    /**
-     * The dialog settings for this wizard; <code>null</code> if none.
-     */
-    private IDialogSettings dialogSettings = null;
-
-    /**
-     * Creates a new empty wizard.
-     */
-    protected Wizard() {
-        super();
-    }
-
-    /**
-     * Adds a new page to this wizard. The page is inserted at the end of the
-     * page list.
-     *
-     * @param page
-     *            the new page
-     */
-    public void addPage(IWizardPage page) {
-        pages.add(page);
-        page.setWizard(this);
-    }
+	/**
+	 * Image registry key of the default image for wizard pages (value
+	 * <code>"org.eclipse.jface.wizard.Wizard.pageImage"</code>).
+	 */
+	public static final String DEFAULT_IMAGE = "org.eclipse.jface.wizard.Wizard.pageImage";//$NON-NLS-1$
 
 	/**
-     * The <code>Wizard</code> implementation of this <code>IWizard</code>
-     * method does nothing. Subclasses should extend if extra pages need to be
-     * added before the wizard opens. New pages should be added by calling
-     * <code>addPage</code>.
-     */
-    @Override
-	public void addPages() {
-    }
+	 * The wizard container this wizard belongs to; <code>null</code> if none.
+	 */
+	private IWizardContainer container = null;
 
-    @Override
+	/**
+	 * This wizard's list of pages (element type: <code>IWizardPage</code>).
+	 */
+	private List<IWizardPage> pages = new ArrayList<>();
+
+	/**
+	 * Indicates whether this wizard needs a progress monitor.
+	 */
+	private boolean needsProgressMonitor = false;
+
+	/**
+	 * Indicates whether this wizard needs previous and next buttons even if the
+	 * wizard has only one page.
+	 */
+	private boolean forcePreviousAndNextButtons = false;
+
+	/**
+	 * Indicates whether this wizard supports help.
+	 */
+	private boolean isHelpAvailable = false;
+
+	/**
+	 * The default page image for pages without one of their one;
+	 * <code>null</code> if none.
+	 */
+	private Image defaultImage = null;
+
+	/**
+	 * The default page image descriptor, used for creating a default page image
+	 * if required; <code>null</code> if none.
+	 */
+	private ImageDescriptor defaultImageDescriptor = JFaceResources.getImageRegistry().getDescriptor(DEFAULT_IMAGE);
+
+	/**
+	 * The color of the wizard title bar; <code>null</code> if none.
+	 */
+	private RGB titleBarColor = null;
+
+	/**
+	 * The window title string for this wizard; <code>null</code> if none.
+	 */
+	private String windowTitle = null;
+
+	/**
+	 * The dialog settings for this wizard; <code>null</code> if none.
+	 */
+	private IDialogSettings dialogSettings = null;
+
+	/**
+	 * Creates a new empty wizard.
+	 */
+	protected Wizard() {
+		super();
+	}
+
+	/**
+	 * Adds a new page to this wizard. The page is inserted at the end of the
+	 * page list.
+	 *
+	 * @param page
+	 *            the new page
+	 */
+	public void addPage(IWizardPage page) {
+		pages.add(page);
+		page.setWizard(this);
+	}
+
+	/**
+	 * The <code>Wizard</code> implementation of this <code>IWizard</code>
+	 * method does nothing. Subclasses should extend if extra pages need to be
+	 * added before the wizard opens. New pages should be added by calling
+	 * <code>addPage</code>.
+	 */
+	@Override
+	public void addPages() {
+	}
+
+	@Override
 	public boolean canFinish() {
-        // Default implementation is to check if all pages are complete.
-        for (int i = 0; i < pages.size(); i++) {
-            if (!pages.get(i).isPageComplete()) {
+		// Default implementation is to check if all pages are complete.
+		for (int i = 0; i < pages.size(); i++) {
+			if (!pages.get(i).isPageComplete()) {
 				return false;
 			}
-        }
-        return true;
-    }
+		}
+		return true;
+	}
 
-    /**
-     * The <code>Wizard</code> implementation of this <code>IWizard</code>
-     * method creates all the pages controls using
-     * <code>IDialogPage.createControl</code>. Subclasses should reimplement
-     * this method if they want to delay creating one or more of the pages
-     * lazily. The framework ensures that the contents of a page will be created
-     * before attempting to show it.
-     */
-    @Override
+	/**
+	 * The <code>Wizard</code> implementation of this <code>IWizard</code>
+	 * method creates all the pages controls using
+	 * <code>IDialogPage.createControl</code>. Subclasses should reimplement
+	 * this method if they want to delay creating one or more of the pages
+	 * lazily. The framework ensures that the contents of a page will be created
+	 * before attempting to show it.
+	 */
+	@Override
 	public void createPageControls(Composite pageContainer) {
-        // the default behavior is to create all the pages controls
-        for (int i = 0; i < pages.size(); i++) {
-            IWizardPage page = pages.get(i);
-            page.createControl(pageContainer);
+		// the default behavior is to create all the pages controls
+		for (int i = 0; i < pages.size(); i++) {
+			IWizardPage page = pages.get(i);
+			page.createControl(pageContainer);
 			// page is responsible for ensuring the created control is
 			// accessible
-            // via getControl.
+			// via getControl.
 			Assert.isNotNull(
 					page.getControl(),
 					"getControl() of wizard page returns null. Did you call setControl() in your wizard page?"); //$NON-NLS-1$
-        }
-    }
+		}
+	}
 
-    /**
-     * The <code>Wizard</code> implementation of this <code>IWizard</code>
-     * method disposes all the pages controls using
-     * <code>DialogPage.dispose</code>. Subclasses should extend this method
-     * if the wizard instance maintains addition SWT resource that need to be
-     * disposed.
-     */
-    @Override
+	/**
+	 * The <code>Wizard</code> implementation of this <code>IWizard</code>
+	 * method disposes all the pages controls using
+	 * <code>DialogPage.dispose</code>. Subclasses should extend this method
+	 * if the wizard instance maintains addition SWT resource that need to be
+	 * disposed.
+	 */
+	@Override
 	public void dispose() {
-        // notify pages
-        for (int i = 0; i < pages.size(); i++) {
+		// notify pages
+		for (int i = 0; i < pages.size(); i++) {
 			try {
-	            pages.get(i).dispose();
+				pages.get(i).dispose();
 			} catch (Exception e) {
 				Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.ERROR, e.getMessage(), e);
 				Policy.getLog().log(status);
 			}
-        }
-        // dispose of image
-        if (defaultImage != null) {
-            JFaceResources.getResources().destroyImage(defaultImageDescriptor);
-            defaultImage = null;
-        }
-    }
-
-    @Override
-	public IWizardContainer getContainer() {
-        return container;
-    }
-
-    @Override
-	public Image getDefaultPageImage() {
-        if (defaultImage == null) {
-            defaultImage = JFaceResources.getResources().createImageWithDefault(defaultImageDescriptor);
-        }
-        return defaultImage;
-    }
-
-    @Override
-	public IDialogSettings getDialogSettings() {
-        return dialogSettings;
-    }
-
-    @Override
-	public IWizardPage getNextPage(IWizardPage page) {
-        int index = pages.indexOf(page);
-        if (index == pages.size() - 1 || index == -1) {
-			// last page or page not found
-            return null;
 		}
-        return pages.get(index + 1);
-    }
+		// dispose of image
+		if (defaultImage != null) {
+			JFaceResources.getResources().destroyImage(defaultImageDescriptor);
+			defaultImage = null;
+		}
+	}
 
-    @Override
+	@Override
+	public IWizardContainer getContainer() {
+		return container;
+	}
+
+	@Override
+	public Image getDefaultPageImage() {
+		if (defaultImage == null) {
+			defaultImage = JFaceResources.getResources().createImageWithDefault(defaultImageDescriptor);
+		}
+		return defaultImage;
+	}
+
+	@Override
+	public IDialogSettings getDialogSettings() {
+		return dialogSettings;
+	}
+
+	@Override
+	public IWizardPage getNextPage(IWizardPage page) {
+		int index = pages.indexOf(page);
+		if (index == pages.size() - 1 || index == -1) {
+			// last page or page not found
+			return null;
+		}
+		return pages.get(index + 1);
+	}
+
+	@Override
 	public IWizardPage getPage(String name) {
-        for (int i = 0; i < pages.size(); i++) {
-            IWizardPage page = pages.get(i);
-            String pageName = page.getName();
-            if (pageName.equals(name)) {
+		for (int i = 0; i < pages.size(); i++) {
+			IWizardPage page = pages.get(i);
+			String pageName = page.getName();
+			if (pageName.equals(name)) {
 				return page;
 			}
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public int getPageCount() {
-        return pages.size();
-    }
+		return pages.size();
+	}
 
-    @Override
+	@Override
 	public IWizardPage[] getPages() {
-        return pages.toArray(new IWizardPage[pages.size()]);
-    }
+		return pages.toArray(new IWizardPage[pages.size()]);
+	}
 
-    @Override
+	@Override
 	public IWizardPage getPreviousPage(IWizardPage page) {
-        int index = pages.indexOf(page);
-        if (index == 0 || index == -1) {
+		int index = pages.indexOf(page);
+		if (index == 0 || index == -1) {
 			// first page or page not found
-            return null;
+			return null;
 		}
 		return pages.get(index - 1);
-    }
+	}
 
-    /**
-     * Returns the wizard's shell if the wizard is visible. Otherwise
-     * <code>null</code> is returned.
-     *
-     * @return Shell
-     */
-    @Override
+	/**
+	 * Returns the wizard's shell if the wizard is visible. Otherwise
+	 * <code>null</code> is returned.
+	 *
+	 * @return Shell
+	 */
+	@Override
 	public Shell getShell() {
-        if (container == null) {
+		if (container == null) {
 			return null;
 		}
-        return container.getShell();
-    }
+		return container.getShell();
+	}
 
-    @Override
+	@Override
 	public IWizardPage getStartingPage() {
-        if (pages.isEmpty()) {
+		if (pages.isEmpty()) {
 			return null;
 		}
-        return pages.get(0);
-    }
+		return pages.get(0);
+	}
 
-    @Override
+	@Override
 	public RGB getTitleBarColor() {
-        return titleBarColor;
-    }
+		return titleBarColor;
+	}
 
-    @Override
+	@Override
 	public String getWindowTitle() {
-        return windowTitle;
-    }
+		return windowTitle;
+	}
 
-    @Override
+	@Override
 	public boolean isHelpAvailable() {
-        return isHelpAvailable;
-    }
+		return isHelpAvailable;
+	}
 
-    @Override
+	@Override
 	public boolean needsPreviousAndNextButtons() {
-        return forcePreviousAndNextButtons || pages.size() > 1;
-    }
+		return forcePreviousAndNextButtons || pages.size() > 1;
+	}
 
-    @Override
+	@Override
 	public boolean needsProgressMonitor() {
-        return needsProgressMonitor;
-    }
+		return needsProgressMonitor;
+	}
 
-    /**
-     * The <code>Wizard</code> implementation of this <code>IWizard</code>
-     * method does nothing and returns <code>true</code>. Subclasses should
-     * reimplement this method if they need to perform any special cancel
-     * processing for their wizard.
-     */
-    @Override
+	/**
+	 * The <code>Wizard</code> implementation of this <code>IWizard</code>
+	 * method does nothing and returns <code>true</code>. Subclasses should
+	 * reimplement this method if they need to perform any special cancel
+	 * processing for their wizard.
+	 */
+	@Override
 	public boolean performCancel() {
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Subclasses must implement this <code>IWizard</code> method to perform
-     * any special finish processing for their wizard.
-     */
-    @Override
+	/**
+	 * Subclasses must implement this <code>IWizard</code> method to perform
+	 * any special finish processing for their wizard.
+	 */
+	@Override
 	public abstract boolean performFinish();
 
-    @Override
+	@Override
 	public void setContainer(IWizardContainer wizardContainer) {
-        container = wizardContainer;
-    }
+		container = wizardContainer;
+	}
 
-    /**
-     * Sets the default page image descriptor for this wizard.
-     * <p>
-     * This image descriptor will be used to generate an image for a page with
-     * no image of its own; the image will be computed once and cached.
-     * </p>
-     *
-     * @param imageDescriptor
-     *            the default page image descriptor
-     */
-    public void setDefaultPageImageDescriptor(ImageDescriptor imageDescriptor) {
-        defaultImageDescriptor = imageDescriptor;
-    }
+	/**
+	 * Sets the default page image descriptor for this wizard.
+	 * <p>
+	 * This image descriptor will be used to generate an image for a page with
+	 * no image of its own; the image will be computed once and cached.
+	 * </p>
+	 *
+	 * @param imageDescriptor
+	 *            the default page image descriptor
+	 */
+	public void setDefaultPageImageDescriptor(ImageDescriptor imageDescriptor) {
+		defaultImageDescriptor = imageDescriptor;
+	}
 
-    /**
-     * Sets the dialog settings for this wizard.
-     * <p>
-     * The dialog settings is used to record state between wizard invocations
-     * (for example, radio button selection, last import directory, etc.)
-     * </p>
-     *
-     * @param settings
-     *            the dialog settings, or <code>null</code> if none
-     * @see #getDialogSettings
-     *
-     */
-    public void setDialogSettings(IDialogSettings settings) {
-        dialogSettings = settings;
-    }
+	/**
+	 * Sets the dialog settings for this wizard.
+	 * <p>
+	 * The dialog settings is used to record state between wizard invocations
+	 * (for example, radio button selection, last import directory, etc.)
+	 * </p>
+	 *
+	 * @param settings
+	 *            the dialog settings, or <code>null</code> if none
+	 * @see #getDialogSettings
+	 *
+	 */
+	public void setDialogSettings(IDialogSettings settings) {
+		dialogSettings = settings;
+	}
 
-    /**
-     * Controls whether the wizard needs Previous and Next buttons even if it
-     * currently contains only one page.
-     * <p>
-     * This flag should be set on wizards where the first wizard page adds
-     * follow-on wizard pages based on user input.
-     * </p>
-     *
-     * @param b
-     *            <code>true</code> to always show Next and Previous buttons,
-     *            and <code>false</code> to suppress Next and Previous buttons
-     *            for single page wizards
-     */
-    public void setForcePreviousAndNextButtons(boolean b) {
-        forcePreviousAndNextButtons = b;
-    }
+	/**
+	 * Controls whether the wizard needs Previous and Next buttons even if it
+	 * currently contains only one page.
+	 * <p>
+	 * This flag should be set on wizards where the first wizard page adds
+	 * follow-on wizard pages based on user input.
+	 * </p>
+	 *
+	 * @param b
+	 *            <code>true</code> to always show Next and Previous buttons,
+	 *            and <code>false</code> to suppress Next and Previous buttons
+	 *            for single page wizards
+	 */
+	public void setForcePreviousAndNextButtons(boolean b) {
+		forcePreviousAndNextButtons = b;
+	}
 
-    /**
+	/**
 	 * Sets whether help is available for this wizard.
 	 * <p>
 	 * The result of this method is typically used by the container to show or hide the button
@@ -408,43 +408,43 @@ public abstract class Wizard implements IWizard, IShellProvider {
 	 * @see TrayDialog#isHelpAvailable()
 	 * @see TrayDialog#setHelpAvailable(boolean)
 	 */
-    public void setHelpAvailable(boolean b) {
-        isHelpAvailable = b;
-    }
+	public void setHelpAvailable(boolean b) {
+		isHelpAvailable = b;
+	}
 
-    /**
-     * Sets whether this wizard needs a progress monitor.
-     *
-     * @param b
-     *            <code>true</code> if a progress monitor is required, and
-     *            <code>false</code> if none is needed
-     * @see #needsProgressMonitor()
-     */
-    public void setNeedsProgressMonitor(boolean b) {
-        needsProgressMonitor = b;
-    }
+	/**
+	 * Sets whether this wizard needs a progress monitor.
+	 *
+	 * @param b
+	 *            <code>true</code> if a progress monitor is required, and
+	 *            <code>false</code> if none is needed
+	 * @see #needsProgressMonitor()
+	 */
+	public void setNeedsProgressMonitor(boolean b) {
+		needsProgressMonitor = b;
+	}
 
-    /**
-     * Sets the title bar color for this wizard.
-     *
-     * @param color
-     *            the title bar color
-     */
-    public void setTitleBarColor(RGB color) {
-        titleBarColor = color;
-    }
+	/**
+	 * Sets the title bar color for this wizard.
+	 *
+	 * @param color
+	 *            the title bar color
+	 */
+	public void setTitleBarColor(RGB color) {
+		titleBarColor = color;
+	}
 
-    /**
-     * Sets the window title for the container that hosts this page to the given
-     * string.
-     *
-     * @param newTitle
-     *            the window title for the container
-     */
-    public void setWindowTitle(String newTitle) {
-        windowTitle = newTitle;
-        if (container != null) {
+	/**
+	 * Sets the window title for the container that hosts this page to the given
+	 * string.
+	 *
+	 * @param newTitle
+	 *            the window title for the container
+	 */
+	public void setWindowTitle(String newTitle) {
+		windowTitle = newTitle;
+		if (container != null) {
 			container.updateWindowTitle();
 		}
-    }
+	}
 }

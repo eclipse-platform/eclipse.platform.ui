@@ -26,92 +26,92 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  */
 public class TreeViewerFrameSource implements IFrameSource {
 
-    private AbstractTreeViewer viewer;
+	private AbstractTreeViewer viewer;
 
-    /**
-     * Constructs a new tree viewer frame source for the specified tree viewer.
-     *
-     * @param viewer the tree viewer
-     */
-    public TreeViewerFrameSource(AbstractTreeViewer viewer) {
-        this.viewer = viewer;
-    }
+	/**
+	 * Constructs a new tree viewer frame source for the specified tree viewer.
+	 *
+	 * @param viewer the tree viewer
+	 */
+	public TreeViewerFrameSource(AbstractTreeViewer viewer) {
+		this.viewer = viewer;
+	}
 
-    /**
-     * Connects this source as a listener on the frame list,
-     * so that when the current frame changes, the viewer is updated.
-     */
-    public void connectTo(FrameList frameList) {
-        frameList.addPropertyChangeListener(event -> TreeViewerFrameSource.this.handlePropertyChange(event));
-    }
+	/**
+	 * Connects this source as a listener on the frame list,
+	 * so that when the current frame changes, the viewer is updated.
+	 */
+	public void connectTo(FrameList frameList) {
+		frameList.addPropertyChangeListener(event -> TreeViewerFrameSource.this.handlePropertyChange(event));
+	}
 
-    /**
-     * Returns a new tree frame capturing the specified input element.
-     *
-     * @param input the input element
-     * @return the tree frame
-     */
-    protected TreeFrame createFrame(Object input) {
-        return new TreeFrame(viewer, input);
-    }
+	/**
+	 * Returns a new tree frame capturing the specified input element.
+	 *
+	 * @param input the input element
+	 * @return the tree frame
+	 */
+	protected TreeFrame createFrame(Object input) {
+		return new TreeFrame(viewer, input);
+	}
 
-    /**
-     * Updates the viewer in response to the current frame changing.
-     *
-     * @param frame the new value for the current frame
-     */
-    protected void frameChanged(TreeFrame frame) {
-        viewer.getControl().setRedraw(false);
-        viewer.setInput(frame.getInput());
-        viewer.setExpandedElements(frame.getExpandedElements());
-        viewer.setSelection(frame.getSelection(), true);
-        viewer.getControl().setRedraw(true);
-    }
+	/**
+	 * Updates the viewer in response to the current frame changing.
+	 *
+	 * @param frame the new value for the current frame
+	 */
+	protected void frameChanged(TreeFrame frame) {
+		viewer.getControl().setRedraw(false);
+		viewer.setInput(frame.getInput());
+		viewer.setExpandedElements(frame.getExpandedElements());
+		viewer.setSelection(frame.getSelection(), true);
+		viewer.getControl().setRedraw(true);
+	}
 
-    /**
-     * Returns the current frame.
-     *
-     * @param flags a bit-wise OR of the frame source flag constants
-     * @return the current frame
-     */
-    protected Frame getCurrentFrame(int flags) {
-        Object input = viewer.getInput();
-        TreeFrame frame = createFrame(input);
-        if ((flags & IFrameSource.FULL_CONTEXT) != 0) {
-            frame.setSelection(viewer.getSelection());
-            frame.setExpandedElements(viewer.getExpandedElements());
-        }
-        return frame;
-    }
+	/**
+	 * Returns the current frame.
+	 *
+	 * @param flags a bit-wise OR of the frame source flag constants
+	 * @return the current frame
+	 */
+	protected Frame getCurrentFrame(int flags) {
+		Object input = viewer.getInput();
+		TreeFrame frame = createFrame(input);
+		if ((flags & IFrameSource.FULL_CONTEXT) != 0) {
+			frame.setSelection(viewer.getSelection());
+			frame.setExpandedElements(viewer.getExpandedElements());
+		}
+		return frame;
+	}
 
-    @Override
+	@Override
 	public Frame getFrame(int whichFrame, int flags) {
-        switch (whichFrame) {
-        case IFrameSource.CURRENT_FRAME:
-            return getCurrentFrame(flags);
-        case IFrameSource.PARENT_FRAME:
-            return getParentFrame(flags);
-        case IFrameSource.SELECTION_FRAME:
-            return getSelectionFrame(flags);
-        default:
-            return null;
-        }
-    }
+		switch (whichFrame) {
+		case IFrameSource.CURRENT_FRAME:
+			return getCurrentFrame(flags);
+		case IFrameSource.PARENT_FRAME:
+			return getParentFrame(flags);
+		case IFrameSource.SELECTION_FRAME:
+			return getSelectionFrame(flags);
+		default:
+			return null;
+		}
+	}
 
-    /**
-     * Returns the parent frame, or <code>null</code> if there is no parent frame.
-     *
-     * @param flags a bit-wise OR of the frame source flag constants
-     * @return the parent frame, or <code>null</code>
-     */
-    protected Frame getParentFrame(int flags) {
-        Object input = viewer.getInput();
-        ITreeContentProvider provider = (ITreeContentProvider) viewer
-                .getContentProvider();
-        Object parent = provider.getParent(input);
-        if (parent == null) {
-            return null;
-        }
+	/**
+	 * Returns the parent frame, or <code>null</code> if there is no parent frame.
+	 *
+	 * @param flags a bit-wise OR of the frame source flag constants
+	 * @return the parent frame, or <code>null</code>
+	 */
+	protected Frame getParentFrame(int flags) {
+		Object input = viewer.getInput();
+		ITreeContentProvider provider = (ITreeContentProvider) viewer
+				.getContentProvider();
+		Object parent = provider.getParent(input);
+		if (parent == null) {
+			return null;
+		}
 		TreeFrame frame = createFrame(parent);
 		if ((flags & IFrameSource.FULL_CONTEXT) != 0) {
 			frame.setSelection(viewer.getSelection());
@@ -123,47 +123,47 @@ public class TreeViewerFrameSource implements IFrameSource {
 			frame.setExpandedElements(newExpanded);
 		}
 		return frame;
-    }
+	}
 
-    /**
-     * Returns the frame for the selection, or <code>null</code> if there is no
-     * frame for the selection.
-     *
-     * @param flags a bit-wise OR of the frame source flag constants
-     * @return the selection frame, or <code>null</code>
-     */
-    protected Frame getSelectionFrame(int flags) {
+	/**
+	 * Returns the frame for the selection, or <code>null</code> if there is no
+	 * frame for the selection.
+	 *
+	 * @param flags a bit-wise OR of the frame source flag constants
+	 * @return the selection frame, or <code>null</code>
+	 */
+	protected Frame getSelectionFrame(int flags) {
 		IStructuredSelection sel = viewer.getStructuredSelection();
-        if (sel.size() == 1) {
-            Object o = sel.getFirstElement();
-            if (viewer.isExpandable(o)) {
-                TreeFrame frame = createFrame(o);
-                if ((flags & IFrameSource.FULL_CONTEXT) != 0) {
-                    frame.setSelection(viewer.getSelection());
-                    frame.setExpandedElements(viewer.getExpandedElements());
-                }
-                return frame;
-            }
-        }
-        return null;
-    }
+		if (sel.size() == 1) {
+			Object o = sel.getFirstElement();
+			if (viewer.isExpandable(o)) {
+				TreeFrame frame = createFrame(o);
+				if ((flags & IFrameSource.FULL_CONTEXT) != 0) {
+					frame.setSelection(viewer.getSelection());
+					frame.setExpandedElements(viewer.getExpandedElements());
+				}
+				return frame;
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Returns the tree viewer.
-     *
-     * @return the tree viewer
-     */
-    public AbstractTreeViewer getViewer() {
-        return viewer;
-    }
+	/**
+	 * Returns the tree viewer.
+	 *
+	 * @return the tree viewer
+	 */
+	public AbstractTreeViewer getViewer() {
+		return viewer;
+	}
 
-    /**
-     * Handles a property change event from the frame list.
-     * Calls <code>frameChanged</code> when the current frame changes.
-     */
-    protected void handlePropertyChange(PropertyChangeEvent event) {
-        if (FrameList.P_CURRENT_FRAME.equals(event.getProperty())) {
-            frameChanged((TreeFrame) event.getNewValue());
-        }
-    }
+	/**
+	 * Handles a property change event from the frame list.
+	 * Calls <code>frameChanged</code> when the current frame changes.
+	 */
+	protected void handlePropertyChange(PropertyChangeEvent event) {
+		if (FrameList.P_CURRENT_FRAME.equals(event.getProperty())) {
+			frameChanged((TreeFrame) event.getNewValue());
+		}
+	}
 }

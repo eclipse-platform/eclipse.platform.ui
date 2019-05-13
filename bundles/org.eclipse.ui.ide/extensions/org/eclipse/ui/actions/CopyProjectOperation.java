@@ -194,31 +194,31 @@ public class CopyProjectOperation {
 		return true;
 	}
 
-    /**
-     * Records the core exception to be displayed to the user
-     * once the action is finished.
-     *
-     * @param error a <code>CoreException</code>
-     */
-    private void recordError(CoreException error) {
+	/**
+	 * Records the core exception to be displayed to the user
+	 * once the action is finished.
+	 *
+	 * @param error a <code>CoreException</code>
+	 */
+	private void recordError(CoreException error) {
 
-        if (errorStatus == null) {
+		if (errorStatus == null) {
 			errorStatus = new MultiStatus(
-                    PlatformUI.PLUGIN_ID,
-                    IStatus.ERROR,
-                    IDEWorkbenchMessages.CopyProjectOperation_copyFailedMessage,
-                    error);
+					PlatformUI.PLUGIN_ID,
+					IStatus.ERROR,
+					IDEWorkbenchMessages.CopyProjectOperation_copyFailedMessage,
+					error);
 		}
 
-        errorStatus.merge(error.getStatus());
-    }
+		errorStatus.merge(error.getStatus());
+	}
 
-    /**
-     * Returns the model provider ids that are known to the client
-     * that instantiated this operation.
-     *
-     * @return the model provider ids that are known to the client
-     * that instantiated this operation.
+	/**
+	 * Returns the model provider ids that are known to the client
+	 * that instantiated this operation.
+	 *
+	 * @return the model provider ids that are known to the client
+	 * that instantiated this operation.
 	 * @since 3.2
 	 */
 	public String[] getModelProviderIds() {

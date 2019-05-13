@@ -44,19 +44,19 @@ public class ProgressView {
 
 	@PostConstruct
 	public void createPartControl(Composite parent, ProgressManager progressManager,
-	        IProgressService progressService, FinishedJobs finishedJobs,
-	        ProgressViewUpdater viewUpdater) {
+			IProgressService progressService, FinishedJobs finishedJobs,
+			ProgressViewUpdater viewUpdater) {
 		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL,
-		        progressService, finishedJobs);
+				progressService, finishedJobs);
 		viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
 
 		viewer.getControl().setLayoutData(
-		        new GridData(SWT.FILL, SWT.FILL, true, true));
+				new GridData(SWT.FILL, SWT.FILL, true, true));
 
 //		helpSystem.setHelp(parent, IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
 		ProgressViewerContentProvider provider = new ProgressViewerContentProvider(
-		        viewer, finishedJobs, viewUpdater, progressManager,  true, true);
+				viewer, finishedJobs, viewUpdater, progressManager,  true, true);
 		viewer.setContentProvider(provider);
 		viewer.setInput(progressManager);
 

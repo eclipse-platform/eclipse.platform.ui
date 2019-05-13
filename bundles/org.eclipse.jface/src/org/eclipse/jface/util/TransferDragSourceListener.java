@@ -35,10 +35,10 @@ import org.eclipse.swt.dnd.Transfer;
  * @since 3.0
  */
 public interface TransferDragSourceListener extends DragSourceListener {
-    /**
-     * Returns the <code>Transfer</code> type that this listener can provide data for.
-     *
-     * @return the <code>Transfer</code> associated with this listener
-     */
-    Transfer getTransfer();
+	/**
+	 * Returns the <code>Transfer</code> type that this listener can provide data for.
+	 *
+	 * @return the <code>Transfer</code> associated with this listener
+	 */
+	Transfer getTransfer();
 }

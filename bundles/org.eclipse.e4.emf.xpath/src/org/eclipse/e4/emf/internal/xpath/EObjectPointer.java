@@ -45,148 +45,148 @@ import org.eclipse.e4.emf.internal.xpath.helper.JXPathEObjectInfo;
  *
  */
 public class EObjectPointer extends EStructuralFeatureOwnerPointer {
-    private QName name;
-    private Object bean;
-    private JXPathEObjectInfo beanInfo;
+	private QName name;
+	private Object bean;
+	private JXPathEObjectInfo beanInfo;
 
-    private static final long serialVersionUID = -8227317938284982440L;
+	private static final long serialVersionUID = -8227317938284982440L;
 
-    /**
-     * Create a new BeanPointer.
-     * @param name is the name given to the first node
-     * @param bean pointed
-     * @param beanInfo JXPathBeanInfo
-     * @param locale Locale
-     */
-    public EObjectPointer(QName name, Object bean, JXPathEObjectInfo beanInfo,
-            Locale locale) {
-        super(null, locale);
-        this.name = name;
-        this.bean = bean;
-        this.beanInfo = beanInfo;
-    }
+	/**
+	 * Create a new BeanPointer.
+	 * @param name is the name given to the first node
+	 * @param bean pointed
+	 * @param beanInfo JXPathBeanInfo
+	 * @param locale Locale
+	 */
+	public EObjectPointer(QName name, Object bean, JXPathEObjectInfo beanInfo,
+			Locale locale) {
+		super(null, locale);
+		this.name = name;
+		this.bean = bean;
+		this.beanInfo = beanInfo;
+	}
 
-    /**
-     * Create a new BeanPointer.
-     * @param parent pointer
-     * @param name is the name given to the first node
-     * @param bean pointed
-     * @param beanInfo JXPathBeanInfo
-     */
-    public EObjectPointer(NodePointer parent, QName name, Object bean,
-    		JXPathEObjectInfo beanInfo) {
-        super(parent);
-        this.name = name;
-        this.bean = bean;
-        this.beanInfo = beanInfo;
-    }
+	/**
+	 * Create a new BeanPointer.
+	 * @param parent pointer
+	 * @param name is the name given to the first node
+	 * @param bean pointed
+	 * @param beanInfo JXPathBeanInfo
+	 */
+	public EObjectPointer(NodePointer parent, QName name, Object bean,
+			JXPathEObjectInfo beanInfo) {
+		super(parent);
+		this.name = name;
+		this.bean = bean;
+		this.beanInfo = beanInfo;
+	}
 
-    @Override
+	@Override
 	public EStructuralFeaturePointer getPropertyPointer() {
-        return new EObjectPropertyPointer(this, beanInfo);
-    }
+		return new EObjectPropertyPointer(this, beanInfo);
+	}
 
-    @Override
+	@Override
 	public QName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public Object getBaseValue() {
-        return bean;
-    }
+		return bean;
+	}
 
-    /**
-     * {@inheritDoc}
-     * @return false
-     */
-    @Override
+	/**
+	 * {@inheritDoc}
+	 * @return false
+	 */
+	@Override
 	public boolean isCollection() {
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * {@inheritDoc}
-     * @return 1
-     */
-    @Override
+	/**
+	 * {@inheritDoc}
+	 * @return 1
+	 */
+	@Override
 	public int getLength() {
-        return 1;
-    }
+		return 1;
+	}
 
-    @Override
+	@Override
 	public boolean isLeaf() {
-        Object value = getNode();
-        return value == null
-            || JXPathIntrospector.getBeanInfo(value.getClass()).isAtomic();
-    }
+		Object value = getNode();
+		return value == null
+			|| JXPathIntrospector.getBeanInfo(value.getClass()).isAtomic();
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
 		return Objects.hashCode(name);
-    }
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
+		if (object == this) {
+			return true;
+		}
 
-        if (!(object instanceof EObjectPointer)) {
-            return false;
-        }
+		if (!(object instanceof EObjectPointer)) {
+			return false;
+		}
 
-        EObjectPointer other = (EObjectPointer) object;
-        if (!Objects.equals(parent, other.parent)) {
-            return false;
-        }
+		EObjectPointer other = (EObjectPointer) object;
+		if (!Objects.equals(parent, other.parent)) {
+			return false;
+		}
 
-        if (!Objects.equals(name, other.name)) {
-            return false;
-        }
+		if (!Objects.equals(name, other.name)) {
+			return false;
+		}
 
-        int iThis = (index == WHOLE_COLLECTION ? 0 : index);
-        int iOther = (other.index == WHOLE_COLLECTION ? 0 : other.index);
-        if (iThis != iOther) {
-            return false;
-        }
+		int iThis = (index == WHOLE_COLLECTION ? 0 : index);
+		int iOther = (other.index == WHOLE_COLLECTION ? 0 : other.index);
+		if (iThis != iOther) {
+			return false;
+		}
 
-        if (bean instanceof Number
-                || bean instanceof String
-                || bean instanceof Boolean) {
-            return bean.equals(other.bean);
-        }
-        return bean == other.bean;
-    }
+		if (bean instanceof Number
+				|| bean instanceof String
+				|| bean instanceof Boolean) {
+			return bean.equals(other.bean);
+		}
+		return bean == other.bean;
+	}
 
-    /**
-     * {@inheritDoc}
-     * If the pointer has a parent, then parent's path.
-     * If the bean is null, "null()".
-     * If the bean is a primitive value, the value itself.
-     * Otherwise - an empty string.
-     */
-    @Override
+	/**
+	 * {@inheritDoc}
+	 * If the pointer has a parent, then parent's path.
+	 * If the bean is null, "null()".
+	 * If the bean is a primitive value, the value itself.
+	 * Otherwise - an empty string.
+	 */
+	@Override
 	public String asPath() {
-        if (parent != null) {
-            return super.asPath();
-        }
-        if (bean == null) {
-            return "null()";
-        }
-        if (bean instanceof Number) {
-            String string = bean.toString();
-            if (string.endsWith(".0")) {
-                string = string.substring(0, string.length() - 2);
-            }
-            return string;
-        }
-        if (bean instanceof Boolean) {
-            return ((Boolean) bean).booleanValue() ? "true()" : "false()";
-        }
-        if (bean instanceof String) {
-            return "'" + bean + "'";
-        }
-        return "/";
-    }
+		if (parent != null) {
+			return super.asPath();
+		}
+		if (bean == null) {
+			return "null()";
+		}
+		if (bean instanceof Number) {
+			String string = bean.toString();
+			if (string.endsWith(".0")) {
+				string = string.substring(0, string.length() - 2);
+			}
+			return string;
+		}
+		if (bean instanceof Boolean) {
+			return ((Boolean) bean).booleanValue() ? "true()" : "false()";
+		}
+		if (bean instanceof String) {
+			return "'" + bean + "'";
+		}
+		return "/";
+	}
 }

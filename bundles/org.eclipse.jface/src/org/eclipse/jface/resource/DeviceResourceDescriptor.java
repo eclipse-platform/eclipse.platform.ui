@@ -30,25 +30,25 @@ import org.eclipse.swt.graphics.Device;
  * @since 3.1
  */
 public abstract class DeviceResourceDescriptor {
-    /**
-     * Creates the resource described by this descriptor
-     *
-     * @since 3.1
-     *
-     * @param device the Device on which to allocate the resource
-     * @return the newly allocated resource (not null)
-     * @throws DeviceResourceException if unable to allocate the resource
-     */
-    public abstract Object createResource(Device device);
+	/**
+	 * Creates the resource described by this descriptor
+	 *
+	 * @since 3.1
+	 *
+	 * @param device the Device on which to allocate the resource
+	 * @return the newly allocated resource (not null)
+	 * @throws DeviceResourceException if unable to allocate the resource
+	 */
+	public abstract Object createResource(Device device);
 
-    /**
-     * Undoes everything that was done by a previous call to create(...), given
-     * the object that was returned by create(...).
-     *
-     * @since 3.1
-     *
-     * @param previouslyCreatedObject an object that was returned by an equal
-     * descriptor in a previous call to createResource(...).
-     */
-    public abstract void destroyResource(Object previouslyCreatedObject);
+	/**
+	 * Undoes everything that was done by a previous call to create(...), given
+	 * the object that was returned by create(...).
+	 *
+	 * @since 3.1
+	 *
+	 * @param previouslyCreatedObject an object that was returned by an equal
+	 * descriptor in a previous call to createResource(...).
+	 */
+	public abstract void destroyResource(Object previouslyCreatedObject);
 }

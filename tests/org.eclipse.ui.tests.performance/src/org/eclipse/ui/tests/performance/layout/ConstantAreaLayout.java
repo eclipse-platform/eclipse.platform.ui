@@ -29,40 +29,40 @@ import org.eclipse.swt.widgets.Layout;
  */
 public class ConstantAreaLayout extends Layout {
 
-    private int area;
-    private int preferredWidth;
+	private int area;
+	private int preferredWidth;
 
-    public ConstantAreaLayout(int area, int preferredWidth) {
-        this.area = area;
-        this.preferredWidth = preferredWidth;
-    }
+	public ConstantAreaLayout(int area, int preferredWidth) {
+		this.area = area;
+		this.preferredWidth = preferredWidth;
+	}
 
-    @Override
+	@Override
 	protected Point computeSize(Composite composite, int wHint, int hHint,
-            boolean flushCache) {
+			boolean flushCache) {
 
-        if (wHint == 0 || hHint == 0) {
-            return new Point(1,1);
-        }
+		if (wHint == 0 || hHint == 0) {
+			return new Point(1,1);
+		}
 
-        if (wHint == SWT.DEFAULT) {
-            if (hHint == SWT.DEFAULT) {
-                wHint = preferredWidth;
-            } else {
-                wHint = area / hHint;
-            }
-        }
+		if (wHint == SWT.DEFAULT) {
+			if (hHint == SWT.DEFAULT) {
+				wHint = preferredWidth;
+			} else {
+				wHint = area / hHint;
+			}
+		}
 
-        if (hHint == SWT.DEFAULT) {
-            hHint = area / wHint;
-        }
+		if (hHint == SWT.DEFAULT) {
+			hHint = area / wHint;
+		}
 
-        return new Point(wHint, hHint);
-    }
+		return new Point(wHint, hHint);
+	}
 
-    @Override
+	@Override
 	protected void layout(Composite composite, boolean flushCache) {
 
-    }
+	}
 
 }

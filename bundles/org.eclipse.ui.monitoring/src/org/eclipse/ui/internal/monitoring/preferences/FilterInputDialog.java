@@ -52,11 +52,11 @@ public class FilterInputDialog extends TitleAreaDialog {
 		setTitle(Messages.FilterInputDialog_header);
 	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
+		super.configureShell(shell);
 		shell.setText(Messages.FilterInputDialog_title);
-    }
+	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {

@@ -33,27 +33,27 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implements IWorkbenchPreferencePage {
 
-    @Override
+	@Override
 	protected Control createContents(Composite parent) {
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
-        Composite composite = createComposite(parent);
+		Composite composite = createComposite(parent);
 
-        createSettings(composite);
-        createOpenModeGroup(composite);
+		createSettings(composite);
+		createOpenModeGroup(composite);
 
-        applyDialogFont(composite);
+		applyDialogFont(composite);
 
-        return composite;
-    }
+		return composite;
+	}
 
-     /**
-     * Returns the IDE preference store.
-     * @return the preference store.
-     */
-    protected IPreferenceStore getIDEPreferenceStore() {
-        return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-    }
+	 /**
+	 * Returns the IDE preference store.
+	 * @return the preference store.
+	 */
+	protected IPreferenceStore getIDEPreferenceStore() {
+		return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+	}
 
 }

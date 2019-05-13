@@ -131,147 +131,147 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * @since 3.0
  */
 public class DragTest extends UITestCaseWithResult {
-    TestDragSource dragSource;
+	TestDragSource dragSource;
 
-    TestDropLocation dropTarget;
+	TestDropLocation dropTarget;
 
-    String intendedResult;
+	String intendedResult;
 
-    //
-    static IProject project;
+	//
+	static IProject project;
 
-    static IFile file1, file2;
+	static IFile file1, file2;
 
-    IEditorPart editor1, editor2;
+	IEditorPart editor1, editor2;
 
-    static IFile file3;
+	static IFile file3;
 
-    IEditorPart editor3;
+	IEditorPart editor3;
 
-    static WorkbenchWindow window;
+	static WorkbenchWindow window;
 
-    static WorkbenchPage page;
+	static WorkbenchPage page;
 
-    public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log, String suffix) {
-        super("drag " + dragSource.toString() + " to " + dropTarget.toString() + suffix, log);
-        this.dragSource = dragSource;
-        this.dropTarget = dropTarget;
-    }
+	public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log, String suffix) {
+		super("drag " + dragSource.toString() + " to " + dropTarget.toString() + suffix, log);
+		this.dragSource = dragSource;
+		this.dropTarget = dropTarget;
+	}
 
-    public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log) {
-    	this(dragSource, dropTarget, log, "");
-    }
+	public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log) {
+		this(dragSource, dropTarget, log, "");
+	}
 
-    @Override
+	@Override
 	public void doSetUp() throws Exception {
-        // don't allow UITestCase to manage the deactivation of our window
-        manageWindows(false);
-        //window = (WorkbenchWindow)openTestWindow();
+		// don't allow UITestCase to manage the deactivation of our window
+		manageWindows(false);
+		//window = (WorkbenchWindow)openTestWindow();
 
-        //initialize the window
-        if (window == null) {
-            window = (WorkbenchWindow) fWorkbench.openWorkbenchWindow(
-            	"org.eclipse.ui.tests.dnd.dragdrop", getPageInput());
+		//initialize the window
+		if (window == null) {
+			window = (WorkbenchWindow) fWorkbench.openWorkbenchWindow(
+				"org.eclipse.ui.tests.dnd.dragdrop", getPageInput());
 
-            page = (WorkbenchPage) window.getActivePage();
+			page = (WorkbenchPage) window.getActivePage();
 
-            project = FileUtil.createProject("DragTest"); //$NON-NLS-1$
-            file1 = FileUtil.createFile("DragTest1.txt", project); //$NON-NLS-1$
-            file2 = FileUtil.createFile("DragTest2.txt", project); //$NON-NLS-1$
-            file3 = FileUtil.createFile("DragTest3.txt", project); //$NON-NLS-1$
+			project = FileUtil.createProject("DragTest"); //$NON-NLS-1$
+			file1 = FileUtil.createFile("DragTest1.txt", project); //$NON-NLS-1$
+			file2 = FileUtil.createFile("DragTest2.txt", project); //$NON-NLS-1$
+			file3 = FileUtil.createFile("DragTest3.txt", project); //$NON-NLS-1$
 
-            // Disable animations since they occur concurrently and can interferre
-            // with locating drop targets
-            IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-            apiStore.setValue(
-                    IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
-                    false);
-        }
+			// Disable animations since they occur concurrently and can interferre
+			// with locating drop targets
+			IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+			apiStore.setValue(
+					IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
+					false);
+		}
 
-        page.resetPerspective();
-        page.closeAllEditors(false);
+		page.resetPerspective();
+		page.closeAllEditors(false);
 
-        //ensure that contentoutline is the focus part (and at the top of its stack)
-        page.showView("org.eclipse.ui.views.ContentOutline");
-        page.hideView(page.findView("org.eclipse.ui.internal.introview"));
-        editor1 = page.openEditor(new FileEditorInput(file1),
-                MockEditorPart.ID1);
-        editor2 = page.openEditor(new FileEditorInput(file2),
-                MockEditorPart.ID2);
-        editor3 = page.openEditor(new FileEditorInput(file3),
-                MockEditorPart.ID2);
+		//ensure that contentoutline is the focus part (and at the top of its stack)
+		page.showView("org.eclipse.ui.views.ContentOutline");
+		page.hideView(page.findView("org.eclipse.ui.internal.introview"));
+		editor1 = page.openEditor(new FileEditorInput(file1),
+				MockEditorPart.ID1);
+		editor2 = page.openEditor(new FileEditorInput(file2),
+				MockEditorPart.ID2);
+		editor3 = page.openEditor(new FileEditorInput(file3),
+				MockEditorPart.ID2);
 
-        window.getShell().setActive();
-        DragOperations
-                .drag(editor2, new EditorDropTarget(new ExistingWindowProvider(window), 0, SWT.CENTER), false);
-        DragOperations
-                .drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
-    }
+		window.getShell().setActive();
+		DragOperations
+				.drag(editor2, new EditorDropTarget(new ExistingWindowProvider(window), 0, SWT.CENTER), false);
+		DragOperations
+				.drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
+	}
 
-    /**
-     * This method is useful in order to 'freeze' the test environment after a particular test in order to
-     * manipulate the environment to figure out what's going on. It essentially opens a new shell and enters
-     * a modal loop on it, preventing the tests from continuing until the 'stall' shell is closed. Note that
-     * using a dialog would prevent us from manipulating the shell that the drag and drop tests are being performed in
-     */
-    public void stallTest() {
-    	// Add the explicit test names that you want to stall on here...
-    	// (It's probably easiest to cut them directly from the exected results file)
-    	String[] testNames = {
-    	};
+	/**
+	 * This method is useful in order to 'freeze' the test environment after a particular test in order to
+	 * manipulate the environment to figure out what's going on. It essentially opens a new shell and enters
+	 * a modal loop on it, preventing the tests from continuing until the 'stall' shell is closed. Note that
+	 * using a dialog would prevent us from manipulating the shell that the drag and drop tests are being performed in
+	 */
+	public void stallTest() {
+		// Add the explicit test names that you want to stall on here...
+		// (It's probably easiest to cut them directly from the exected results file)
+		String[] testNames = {
+		};
 
-    	// Does the name match any of the explicit test names??
-    	boolean testNameMatches = false;
-    	for (String testName : testNames) {
-    		if (testName.equals(this.getName())) {
-    			testNameMatches = true;
-    			break;
-    		}
-    	}
+		// Does the name match any of the explicit test names??
+		boolean testNameMatches = false;
+		for (String testName : testNames) {
+			if (testName.equals(this.getName())) {
+				testNameMatches = true;
+				break;
+			}
+		}
 
-    	// Stall always if no explicit names are supplied. Otherwise only stall when there's a
-    	// match.
-    	if (testNames.length == 0 || testNameMatches) {
-	    	Display display = Display.getCurrent();
-	    	Shell loopShell = new Shell(display, SWT.SHELL_TRIM);
-	    	loopShell.setBounds(0,0,200,100);
-	    	loopShell.setText("Test Stall Shell");
-	    	loopShell.setVisible(true);
+		// Stall always if no explicit names are supplied. Otherwise only stall when there's a
+		// match.
+		if (testNames.length == 0 || testNameMatches) {
+			Display display = Display.getCurrent();
+			Shell loopShell = new Shell(display, SWT.SHELL_TRIM);
+			loopShell.setBounds(0,0,200,100);
+			loopShell.setText("Test Stall Shell");
+			loopShell.setVisible(true);
 
-	    	while (loopShell != null && !loopShell.isDisposed()) {
-	    		if (!display.readAndDispatch()) {
+			while (loopShell != null && !loopShell.isDisposed()) {
+				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
-	    	}
-    	}
-    }
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public String performTest() throws Throwable {
-        // Uncomment the following line to 'stall' the tests here...
-        //stallTest();
+		// Uncomment the following line to 'stall' the tests here...
+		//stallTest();
 
-    	// KLUDGE!! revert to the old min/max when dragging maximized views
-    	// see bug 180242. This code should disappear before release...
-        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-        boolean curMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (getName().indexOf("drag maximized") >= 0) {
+		// KLUDGE!! revert to the old min/max when dragging maximized views
+		// see bug 180242. This code should disappear before release...
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		boolean curMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+		if (getName().indexOf("drag maximized") >= 0) {
 			apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 		}
 
-    	dragSource.setPage(page);
+		dragSource.setPage(page);
 
-        dragSource.drag(dropTarget);
+		dragSource.drag(dropTarget);
 
-        // Ensure that the model is sane
-        // page.testInvariants();
+		// Ensure that the model is sane
+		// page.testInvariants();
 
-        // Uncomment the following line to 'stall' the tests here...
-        //stallTest();
+		// Uncomment the following line to 'stall' the tests here...
+		//stallTest();
 
-        // KLUDGE!! Restore the min/max pref
+		// KLUDGE!! Restore the min/max pref
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, curMinMaxState);
 
-        return DragOperations.getLayoutDescription(page);
-    }
+		return DragOperations.getLayoutDescription(page);
+	}
 }

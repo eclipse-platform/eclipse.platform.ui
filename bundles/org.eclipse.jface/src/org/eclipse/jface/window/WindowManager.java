@@ -38,127 +38,127 @@ import org.eclipse.core.runtime.Assert;
  */
 public class WindowManager {
 
-    /**
-     * List of windows managed by this window manager
-     * (element type: <code>Window</code>).
-     */
-    private ArrayList<Window> windows = new ArrayList<>();
+	/**
+	 * List of windows managed by this window manager
+	 * (element type: <code>Window</code>).
+	 */
+	private ArrayList<Window> windows = new ArrayList<>();
 
-    /**
-     * List of window managers who have this window manager
-     * as their parent (element type: <code>WindowManager</code>).
-     */
-    private List<WindowManager> subManagers;
+	/**
+	 * List of window managers who have this window manager
+	 * as their parent (element type: <code>WindowManager</code>).
+	 */
+	private List<WindowManager> subManagers;
 
-    /**
-     * Creates an empty window manager without a parent window
-     * manager (that is, a root window manager).
-     */
-    public WindowManager() {
-    }
+	/**
+	 * Creates an empty window manager without a parent window
+	 * manager (that is, a root window manager).
+	 */
+	public WindowManager() {
+	}
 
-    /**
-     * Creates an empty window manager with the given
-     * window manager as parent.
-     *
-     * @param parent the parent window manager
-     */
-    public WindowManager(WindowManager parent) {
-        Assert.isNotNull(parent);
-        parent.addWindowManager(this);
-    }
+	/**
+	 * Creates an empty window manager with the given
+	 * window manager as parent.
+	 *
+	 * @param parent the parent window manager
+	 */
+	public WindowManager(WindowManager parent) {
+		Assert.isNotNull(parent);
+		parent.addWindowManager(this);
+	}
 
-    /**
-     * Adds the given window to the set of windows managed by
-     * this window manager. Does nothing is this window is
-     * already managed by this window manager.
-     *
-     * @param window the window
-     */
-    public void add(Window window) {
-        if (!windows.contains(window)) {
-            windows.add(window);
-            window.setWindowManager(this);
-        }
-    }
+	/**
+	 * Adds the given window to the set of windows managed by
+	 * this window manager. Does nothing is this window is
+	 * already managed by this window manager.
+	 *
+	 * @param window the window
+	 */
+	public void add(Window window) {
+		if (!windows.contains(window)) {
+			windows.add(window);
+			window.setWindowManager(this);
+		}
+	}
 
-    /**
-     * Adds the given window manager to the list of
-     * window managers that have this one as a parent.
-     * </p>
-     * @param wm the child window manager
-     */
-    private void addWindowManager(WindowManager wm) {
-        if (subManagers == null) {
+	/**
+	 * Adds the given window manager to the list of
+	 * window managers that have this one as a parent.
+	 * </p>
+	 * @param wm the child window manager
+	 */
+	private void addWindowManager(WindowManager wm) {
+		if (subManagers == null) {
 			subManagers = new ArrayList<>();
 		}
-        if (!subManagers.contains(wm)) {
-            subManagers.add(wm);
-        }
-    }
+		if (!subManagers.contains(wm)) {
+			subManagers.add(wm);
+		}
+	}
 
-    /**
-     * Attempts to close all windows managed by this window manager,
-     * as well as windows managed by any descendent window managers.
-     *
-     * @return <code>true</code> if all windows were sucessfully closed,
-     * and <code>false</code> if any window refused to close
-     */
-    public boolean close() {
-        List<Window> t = new ArrayList<>(windows); // make iteration robust
-        Iterator<Window> e = t.iterator();
-        while (e.hasNext()) {
-            Window window = e.next();
-            boolean closed = window.close();
-            if (!closed) {
+	/**
+	 * Attempts to close all windows managed by this window manager,
+	 * as well as windows managed by any descendent window managers.
+	 *
+	 * @return <code>true</code> if all windows were sucessfully closed,
+	 * and <code>false</code> if any window refused to close
+	 */
+	public boolean close() {
+		List<Window> t = new ArrayList<>(windows); // make iteration robust
+		Iterator<Window> e = t.iterator();
+		while (e.hasNext()) {
+			Window window = e.next();
+			boolean closed = window.close();
+			if (!closed) {
 				return false;
 			}
-        }
-        if (subManagers != null) {
-            Iterator<WindowManager> i = subManagers.iterator();
-            while (i.hasNext()) {
-                WindowManager wm = i.next();
-                boolean closed = wm.close();
-                if (!closed) {
+		}
+		if (subManagers != null) {
+			Iterator<WindowManager> i = subManagers.iterator();
+			while (i.hasNext()) {
+				WindowManager wm = i.next();
+				boolean closed = wm.close();
+				if (!closed) {
 					return false;
 				}
-            }
-        }
-        return true;
-    }
+			}
+		}
+		return true;
+	}
 
-    /**
-     * Returns this window manager's number of windows
-     *
-     * @return the number of windows
-     * @since 3.0
-     */
-    public int getWindowCount() {
-        return windows.size();
-    }
+	/**
+	 * Returns this window manager's number of windows
+	 *
+	 * @return the number of windows
+	 * @since 3.0
+	 */
+	public int getWindowCount() {
+		return windows.size();
+	}
 
-    /**
-     * Returns this window manager's set of windows.
-     *
-     * @return a possibly empty list of window
-     */
-    public Window[] getWindows() {
-        Window bs[] = new Window[windows.size()];
-        windows.toArray(bs);
-        return bs;
-    }
+	/**
+	 * Returns this window manager's set of windows.
+	 *
+	 * @return a possibly empty list of window
+	 */
+	public Window[] getWindows() {
+		Window bs[] = new Window[windows.size()];
+		windows.toArray(bs);
+		return bs;
+	}
 
-    /**
-     * Removes the given window from the set of windows managed by
-     * this window manager. Does nothing is this window is
-     * not managed by this window manager.
-     *
-     * @param window the window
-     */
-    public final void remove(Window window) {
-        if (windows.contains(window)) {
-            windows.remove(window);
-            window.setWindowManager(null);
-        }
-    }
+	/**
+	 * Removes the given window from the set of windows managed by
+	 * this window manager. Does nothing is this window is
+	 * not managed by this window manager.
+	 *
+	 * @param window the window
+	 */
+	public final void remove(Window window) {
+		if (windows.contains(window)) {
+			windows.remove(window);
+			window.setWindowManager(null);
+		}
+	}
 }

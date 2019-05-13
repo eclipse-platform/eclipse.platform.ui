@@ -340,26 +340,26 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	}
 
 	/**
-     * Fires a label provider changed event to all registered listeners
-     * Only listeners registered at the time this method is called are notified.
-     *
-     * @param event a label provider changed event
-     *
-     * @see ILabelProviderListener#labelProviderChanged
-     */
-    protected void fireLabelProviderChanged(
-            final LabelProviderChangedEvent event) {
+	 * Fires a label provider changed event to all registered listeners
+	 * Only listeners registered at the time this method is called are notified.
+	 *
+	 * @param event a label provider changed event
+	 *
+	 * @see ILabelProviderListener#labelProviderChanged
+	 */
+	protected void fireLabelProviderChanged(
+			final LabelProviderChangedEvent event) {
 		for (Object listener : getListeners()) {
 			final ILabelProviderListener labelProviderListener = (ILabelProviderListener) listener;
-            SafeRunner.run(new SafeRunnable() {
-                @Override
+			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() {
 					labelProviderListener.labelProviderChanged(event);
-                }
-            });
+				}
+			});
 
-        }
-    }
+		}
+	}
 
 	@Override
 	public void updateLabel(ViewerLabel label, TreePath elementPath) {

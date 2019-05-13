@@ -49,11 +49,11 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 	private static final String FRAME_ACTION_SEPARATOR_ID= "FRAME_ACTION_SEPARATOR_ID"; //$NON-NLS-1$
 	private static final String FRAME_ACTION_GROUP_ID= "FRAME_ACTION_GROUP_ID"; //$NON-NLS-1$
 
-    private BackAction backAction;
+	private BackAction backAction;
 
-    private ForwardAction forwardAction;
+	private ForwardAction forwardAction;
 
-    private UpAction upAction;
+	private UpAction upAction;
 
 	private LinkEditorAction toggleLinkingAction;
 
@@ -69,7 +69,7 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 
 	private CollapseAllHandler collapseAllHandler;
 
-    private boolean frameActionsShown;
+	private boolean frameActionsShown;
 
 
 
@@ -102,10 +102,10 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 	 *
 	 */
 	private void makeActions() {
-        FrameList frameList = commonViewer.getFrameList();
-        backAction = new BackAction(frameList);
-        forwardAction = new ForwardAction(frameList);
-        upAction = new UpAction(frameList);
+		FrameList frameList = commonViewer.getFrameList();
+		backAction = new BackAction(frameList);
+		forwardAction = new ForwardAction(frameList);
+		upAction = new UpAction(frameList);
 
 		frameList.addPropertyChangeListener(new IPropertyChangeListener() {
 			@Override
@@ -124,7 +124,7 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 			}
 		});
 
-        IHandlerService service = commonNavigator.getSite()
+		IHandlerService service = commonNavigator.getSite()
 				.getService(IHandlerService.class);
 
 		INavigatorViewerDescriptor viewerDescriptor = commonViewer
@@ -158,12 +158,12 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
 
-        actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
-                backAction);
-        actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(),
-                forwardAction);
-        actionBars.setGlobalActionHandler(IWorkbenchActionConstants.UP,
-                upAction);
+		actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
+				backAction);
+		actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(),
+				forwardAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.UP,
+				upAction);
 
 		filterGroup.fillActionBars(actionBars);
 		fillToolBar(actionBars.getToolBarManager());
@@ -223,9 +223,9 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 	@Override
 	public void dispose() {
 		super.dispose();
-        backAction.dispose();
-        forwardAction.dispose();
-        upAction.dispose();
+		backAction.dispose();
+		forwardAction.dispose();
+		upAction.dispose();
 
 		if (toggleLinkingAction != null) {
 			toggleLinkingAction.dispose();

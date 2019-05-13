@@ -30,56 +30,56 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkspaceModifyDelegatingOperation extends
-        WorkspaceModifyOperation {
+		WorkspaceModifyOperation {
 
-    /**
-     * The runnable to delegate work to at execution time.
-     */
-    private IRunnableWithProgress content;
+	/**
+	 * The runnable to delegate work to at execution time.
+	 */
+	private IRunnableWithProgress content;
 
-    /**
-     * Creates a new operation which will delegate its work to the given
-     * runnable using the provided scheduling rule.
-     *
-     * @param content
-     *            the runnable to delegate to when this operation is executed
-     * @param rule
-     *            The ISchedulingRule to use or <code>null</code>.
-     */
-    public WorkspaceModifyDelegatingOperation(IRunnableWithProgress content,
-            ISchedulingRule rule) {
-        super(rule);
-        this.content = content;
-    }
+	/**
+	 * Creates a new operation which will delegate its work to the given
+	 * runnable using the provided scheduling rule.
+	 *
+	 * @param content
+	 *            the runnable to delegate to when this operation is executed
+	 * @param rule
+	 *            The ISchedulingRule to use or <code>null</code>.
+	 */
+	public WorkspaceModifyDelegatingOperation(IRunnableWithProgress content,
+			ISchedulingRule rule) {
+		super(rule);
+		this.content = content;
+	}
 
-    /**
-     * Creates a new operation which will delegate its work to the given
-     * runnable. Schedule using the supplied s
-     *
-     * @param content
-     *            the runnable to delegate to when this operation is executed
-     */
-    public WorkspaceModifyDelegatingOperation(IRunnableWithProgress content) {
-        super();
-        this.content = content;
-    }
+	/**
+	 * Creates a new operation which will delegate its work to the given
+	 * runnable. Schedule using the supplied s
+	 *
+	 * @param content
+	 *            the runnable to delegate to when this operation is executed
+	 */
+	public WorkspaceModifyDelegatingOperation(IRunnableWithProgress content) {
+		super();
+		this.content = content;
+	}
 
-    @Override
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException,
-            InterruptedException {
-        try {
-            content.run(monitor);
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof CoreException) {
+			InterruptedException {
+		try {
+			content.run(monitor);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof CoreException) {
 				throw (CoreException) e.getTargetException();
 			}
-            if (e.getTargetException() instanceof RuntimeException) {
+			if (e.getTargetException() instanceof RuntimeException) {
 				throw (RuntimeException) e.getTargetException();
 			}
-            if (e.getTargetException() instanceof Error) {
+			if (e.getTargetException() instanceof Error) {
 				throw (Error) e.getTargetException();
 			}
 			IDEWorkbenchPlugin.log(e.getTargetException().getMessage(), e.getTargetException());
-        }
-    }
+		}
+	}
 }

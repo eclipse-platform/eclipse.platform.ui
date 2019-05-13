@@ -26,80 +26,80 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 public class TestsView
-    extends ViewPart
-    implements ITabbedPropertySheetPageContributor {
+	extends ViewPart
+	implements ITabbedPropertySheetPageContributor {
 
-    private TreeViewer viewer;
+	private TreeViewer viewer;
 
-    protected TabbedPropertySheetPage tabbedPropertySheetPage;
+	protected TabbedPropertySheetPage tabbedPropertySheetPage;
 
-    public static final String TESTS_VIEW_ID = "org.eclipse.ui.tests.views.properties.tabbed.views.TestsView"; //$NON-NLS-1$
+	public static final String TESTS_VIEW_ID = "org.eclipse.ui.tests.views.properties.tabbed.views.TestsView"; //$NON-NLS-1$
 
-    class ViewLabelProvider
-        extends LabelProvider {
+	class ViewLabelProvider
+		extends LabelProvider {
 
-        @Override
+		@Override
 		public String getText(Object obj) {
-            Element element = (Element) ((TreeNode) obj).getValue();
-            return element.getName();
-        }
+			Element element = (Element) ((TreeNode) obj).getValue();
+			return element.getName();
+		}
 
-        @Override
+		@Override
 		public Image getImage(Object obj) {
-            Element element = (Element) ((TreeNode) obj).getValue();
-            return element.getImage();
-        }
-    }
+			Element element = (Element) ((TreeNode) obj).getValue();
+			return element.getImage();
+		}
+	}
 
-    /**
-     * The constructor.
-     */
-    public TestsView() {
-        //
-    }
+	/**
+	 * The constructor.
+	 */
+	public TestsView() {
+		//
+	}
 
-    /**
-     * This is a callback that will allow us to create the viewer and initialize
-     * it.
-     */
-    @Override
+	/**
+	 * This is a callback that will allow us to create the viewer and initialize
+	 * it.
+	 */
+	@Override
 	public void createPartControl(Composite parent) {
-        viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        viewer.setContentProvider(new TestsViewContentProvider(this));
-        viewer.setLabelProvider(new ViewLabelProvider());
-        viewer.setInput(getViewSite());
-        getSite().setSelectionProvider(viewer);
-    }
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.setContentProvider(new TestsViewContentProvider(this));
+		viewer.setLabelProvider(new ViewLabelProvider());
+		viewer.setInput(getViewSite());
+		getSite().setSelectionProvider(viewer);
+	}
 
-    /**
-     * Passing the focus request to the viewer's control.
-     */
-    @Override
+	/**
+	 * Passing the focus request to the viewer's control.
+	 */
+	@Override
 	public void setFocus() {
-        viewer.getControl().setFocus();
-    }
+		viewer.getControl().setFocus();
+	}
 
-    @Override
+	@Override
 	public Object getAdapter(Class adapter) {
-        if (adapter == IPropertySheetPage.class) {
-            if (tabbedPropertySheetPage == null) {
-                tabbedPropertySheetPage = new TabbedPropertySheetPage(this);
-            }
-            return tabbedPropertySheetPage;
-        }
-        return super.getAdapter(adapter);
-    }
+		if (adapter == IPropertySheetPage.class) {
+			if (tabbedPropertySheetPage == null) {
+				tabbedPropertySheetPage = new TabbedPropertySheetPage(this);
+			}
+			return tabbedPropertySheetPage;
+		}
+		return super.getAdapter(adapter);
+	}
 
-    @Override
+	@Override
 	public String getContributorId() {
-        return TESTS_VIEW_ID;
-    }
+		return TESTS_VIEW_ID;
+	}
 
-    public TreeViewer getViewer() {
-        return viewer;
-    }
+	public TreeViewer getViewer() {
+		return viewer;
+	}
 
-    public TabbedPropertySheetPage getTabbedPropertySheetPage() {
-        return tabbedPropertySheetPage;
-    }
+	public TabbedPropertySheetPage getTabbedPropertySheetPage() {
+		return tabbedPropertySheetPage;
+	}
 }

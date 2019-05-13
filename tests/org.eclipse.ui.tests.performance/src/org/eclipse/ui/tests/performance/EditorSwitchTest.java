@@ -57,20 +57,20 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 		IDE.openEditor(activePage, file1, true);
 		IDE.openEditor(activePage, file2, true);
 		processEvents();
-        EditorTestHelper.calmDown(500, 30000, 500);
-        waitForBackgroundJobs();
+		EditorTestHelper.calmDown(500, 30000, 500);
+		waitForBackgroundJobs();
 
 		for (int j = 0; j < 100; j++) {
 
 			startMeasuring();
 			for (int i = 0; i < 12; i++) {
-                IDE.openEditor(activePage, file1, true);
-                processEvents();
-                IDE.openEditor(activePage, file2, true);
-                processEvents();
+				IDE.openEditor(activePage, file1, true);
+				processEvents();
+				IDE.openEditor(activePage, file2, true);
+				processEvents();
 			}
 			stopMeasuring();
-            EditorTestHelper.calmDown(500, 30000, 100);
+			EditorTestHelper.calmDown(500, 30000, 100);
 		}
 
 		commitMeasurements();

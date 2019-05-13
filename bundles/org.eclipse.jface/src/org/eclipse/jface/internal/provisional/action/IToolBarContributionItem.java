@@ -33,95 +33,95 @@ import org.eclipse.jface.action.IToolBarManager;
  */
 public interface IToolBarContributionItem extends IContributionItem {
 
-    /**
-     * Returns the current height of the corresponding cool item.
-     *
-     * @return the current height
-     */
-    public int getCurrentHeight();
+	/**
+	 * Returns the current height of the corresponding cool item.
+	 *
+	 * @return the current height
+	 */
+	public int getCurrentHeight();
 
-    /**
-     * Returns the current width of the corresponding cool item.
-     *
-     * @return the current size
-     */
-    public int getCurrentWidth();
+	/**
+	 * Returns the current width of the corresponding cool item.
+	 *
+	 * @return the current size
+	 */
+	public int getCurrentWidth();
 
-    /**
-     * Returns the minimum number of tool items to show in the cool item.
-     *
-     * @return the minimum number of tool items to show, or <code>SHOW_ALL_ITEMS</code>
-     *         if a value was not set
-     * @see #setMinimumItemsToShow(int)
-     */
-    public int getMinimumItemsToShow();
+	/**
+	 * Returns the minimum number of tool items to show in the cool item.
+	 *
+	 * @return the minimum number of tool items to show, or <code>SHOW_ALL_ITEMS</code>
+	 *         if a value was not set
+	 * @see #setMinimumItemsToShow(int)
+	 */
+	public int getMinimumItemsToShow();
 
-    /**
-     * Returns whether chevron support is enabled.
-     *
-     * @return <code>true</code> if chevron support is enabled, <code>false</code>
-     *         otherwise
-     */
-    public boolean getUseChevron();
+	/**
+	 * Returns whether chevron support is enabled.
+	 *
+	 * @return <code>true</code> if chevron support is enabled, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean getUseChevron();
 
-    /**
-     * Sets the current height of the cool item. Update(SIZE) should be called
-     * to adjust the widget.
-     *
-     * @param currentHeight
-     *            the current height to set
-     */
-    public void setCurrentHeight(int currentHeight);
+	/**
+	 * Sets the current height of the cool item. Update(SIZE) should be called
+	 * to adjust the widget.
+	 *
+	 * @param currentHeight
+	 *            the current height to set
+	 */
+	public void setCurrentHeight(int currentHeight);
 
-    /**
-     * Sets the current width of the cool item. Update(SIZE) should be called
-     * to adjust the widget.
-     *
-     * @param currentWidth
-     *            the current width to set
-     */
-    public void setCurrentWidth(int currentWidth);
+	/**
+	 * Sets the current width of the cool item. Update(SIZE) should be called
+	 * to adjust the widget.
+	 *
+	 * @param currentWidth
+	 *            the current width to set
+	 */
+	public void setCurrentWidth(int currentWidth);
 
-    /**
-     * Sets the minimum number of tool items to show in the cool item. If this
-     * number is less than the total tool items, a chevron will appear and the
-     * hidden tool items appear in a drop down menu. By default, all the tool
-     * items are shown in the cool item.
-     *
-     * @param minimumItemsToShow
-     *            the minimum number of tool items to show.
-     * @see #getMinimumItemsToShow()
-     * @see #setUseChevron(boolean)
-     */
-    public void setMinimumItemsToShow(int minimumItemsToShow);
+	/**
+	 * Sets the minimum number of tool items to show in the cool item. If this
+	 * number is less than the total tool items, a chevron will appear and the
+	 * hidden tool items appear in a drop down menu. By default, all the tool
+	 * items are shown in the cool item.
+	 *
+	 * @param minimumItemsToShow
+	 *            the minimum number of tool items to show.
+	 * @see #getMinimumItemsToShow()
+	 * @see #setUseChevron(boolean)
+	 */
+	public void setMinimumItemsToShow(int minimumItemsToShow);
 
-    /**
-     * Enables or disables chevron support for the cool item. By default,
-     * chevron support is enabled.
-     *
-     * @param value
-     *            <code>true</code> to enable chevron support, <code>false</code>
-     *            otherwise.
-     */
-    public void setUseChevron(boolean value);
+	/**
+	 * Enables or disables chevron support for the cool item. By default,
+	 * chevron support is enabled.
+	 *
+	 * @param value
+	 *            <code>true</code> to enable chevron support, <code>false</code>
+	 *            otherwise.
+	 */
+	public void setUseChevron(boolean value);
 
-    /**
-     * Returns the internal tool bar manager of the contribution item.
-     *
-     * @return the tool bar manager, or <code>null</code> if one is not
-     *         defined.
-     * @see IToolBarManager
-     */
-    public IToolBarManager getToolBarManager();
+	/**
+	 * Returns the internal tool bar manager of the contribution item.
+	 *
+	 * @return the tool bar manager, or <code>null</code> if one is not
+	 *         defined.
+	 * @see IToolBarManager
+	 */
+	public IToolBarManager getToolBarManager();
 
-    /**
-     * Returns the parent contribution manager, or <code>null</code> if this
-     * contribution item is not currently added to a contribution manager.
-     *
-     * @return the parent contribution manager, or <code>null</code>
-     *
-     * TODO may not need this, getToolBarManager may be enough.
-     */
-    public IContributionManager getParent();
+	/**
+	 * Returns the parent contribution manager, or <code>null</code> if this
+	 * contribution item is not currently added to a contribution manager.
+	 *
+	 * @return the parent contribution manager, or <code>null</code>
+	 *
+	 * TODO may not need this, getToolBarManager may be enough.
+	 */
+	public IContributionManager getParent();
 
 }

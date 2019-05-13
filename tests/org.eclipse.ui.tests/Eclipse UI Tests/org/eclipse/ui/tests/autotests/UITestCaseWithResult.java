@@ -19,25 +19,25 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @since 3.1
  */
 public abstract class UITestCaseWithResult extends UITestCase implements AutoTest {
-    private AbstractTestLogger resultLog;
+	private AbstractTestLogger resultLog;
 
-    public UITestCaseWithResult(String testName, AbstractTestLogger log) {
-        super(testName);
-        this.resultLog = log;
-    }
+	public UITestCaseWithResult(String testName, AbstractTestLogger log) {
+		super(testName);
+		this.resultLog = log;
+	}
 
-    @Override
+	@Override
 	protected final void runTest() throws Throwable {
-        String testName = getName();
+		String testName = getName();
 
-        TestResult result;
-        try {
-            result = new TestResult(performTest());
-        } catch (Throwable t) {
-            result = new TestResult(t);
-        }
+		TestResult result;
+		try {
+			result = new TestResult(performTest());
+		} catch (Throwable t) {
+			result = new TestResult(t);
+		}
 
-        resultLog.reportResult(testName, result);
-    }
+		resultLog.reportResult(testName, result);
+	}
 
 }

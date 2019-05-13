@@ -33,54 +33,54 @@ import org.eclipse.swt.widgets.Control;
  */
 public final class LocalResourceManager extends AbstractResourceManager {
 
-    private ResourceManager parentRegistry;
+	private ResourceManager parentRegistry;
 
-    /**
-     * Creates a local registry that delegates to the given global registry
-     * for all resource allocation and deallocation.
-     *
-     * @param parentRegistry global registry
-     */
-    public LocalResourceManager(ResourceManager parentRegistry) {
-        this.parentRegistry = parentRegistry;
-    }
+	/**
+	 * Creates a local registry that delegates to the given global registry
+	 * for all resource allocation and deallocation.
+	 *
+	 * @param parentRegistry global registry
+	 */
+	public LocalResourceManager(ResourceManager parentRegistry) {
+		this.parentRegistry = parentRegistry;
+	}
 
-    /**
-     * Creates a local registry that wraps the given global registry. Anything
-     * allocated by this registry will be automatically cleaned up with the given
-     * control is disposed. Note that registries created in this way should not
-     * be used to allocate any resource that must outlive the given control.
-     *
-     * @param parentRegistry global registry that handles resource allocation
-     * @param owner control whose disposal will trigger cleanup of everything
-     * in the registry.
-     */
-    public LocalResourceManager(ResourceManager parentRegistry, Control owner) {
-        this(parentRegistry);
+	/**
+	 * Creates a local registry that wraps the given global registry. Anything
+	 * allocated by this registry will be automatically cleaned up with the given
+	 * control is disposed. Note that registries created in this way should not
+	 * be used to allocate any resource that must outlive the given control.
+	 *
+	 * @param parentRegistry global registry that handles resource allocation
+	 * @param owner control whose disposal will trigger cleanup of everything
+	 * in the registry.
+	 */
+	public LocalResourceManager(ResourceManager parentRegistry, Control owner) {
+		this(parentRegistry);
 
-        owner.addDisposeListener(e -> LocalResourceManager.this.dispose());
-    }
+		owner.addDisposeListener(e -> LocalResourceManager.this.dispose());
+	}
 
-    @Override
+	@Override
 	public Device getDevice() {
-        return parentRegistry.getDevice();
-    }
+		return parentRegistry.getDevice();
+	}
 
-    @Override
+	@Override
 	protected Object allocate(DeviceResourceDescriptor descriptor)
-            throws DeviceResourceException {
-        return parentRegistry.create(descriptor);
-    }
+			throws DeviceResourceException {
+		return parentRegistry.create(descriptor);
+	}
 
-    @Override
+	@Override
 	protected void deallocate(Object resource,
-            DeviceResourceDescriptor descriptor) {
+			DeviceResourceDescriptor descriptor) {
 
-        parentRegistry.destroy(descriptor);
-    }
+		parentRegistry.destroy(descriptor);
+	}
 
-    @Override
+	@Override
 	protected Image getDefaultImage() {
-        return parentRegistry.getDefaultImage();
-    }
+		return parentRegistry.getDefaultImage();
+	}
 }

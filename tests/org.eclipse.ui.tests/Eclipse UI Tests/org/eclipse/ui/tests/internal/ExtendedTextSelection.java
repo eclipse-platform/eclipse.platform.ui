@@ -19,35 +19,35 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.ui.IActionFilter;
 
 public class ExtendedTextSelection extends TextSelection implements IAdaptable {
-    static private ExtendedTextSelectionActionFilter filter = new ExtendedTextSelectionActionFilter();
+	static private ExtendedTextSelectionActionFilter filter = new ExtendedTextSelectionActionFilter();
 
-    /**
-     * Constructor for ExtendedTextSelection.
-     * @param offset
-     * @param length
-     */
-    public ExtendedTextSelection(int offset, int length) {
-        super(offset, length);
-    }
+	/**
+	 * Constructor for ExtendedTextSelection.
+	 * @param offset
+	 * @param length
+	 */
+	public ExtendedTextSelection(int offset, int length) {
+		super(offset, length);
+	}
 
-    /**
-     * Constructor for ExtendedTextSelection.
-     * @param document
-     * @param offset
-     * @param length
-     */
-    public ExtendedTextSelection(IDocument document, int offset, int length) {
-        super(document, offset, length);
-    }
+	/**
+	 * Constructor for ExtendedTextSelection.
+	 * @param document
+	 * @param offset
+	 * @param length
+	 */
+	public ExtendedTextSelection(IDocument document, int offset, int length) {
+		super(document, offset, length);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter == IActionFilter.class) {
+		if (adapter == IActionFilter.class) {
 			return (T) filter;
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
 }
 

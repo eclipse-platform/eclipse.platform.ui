@@ -71,31 +71,31 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 
 		@Override
 		public boolean hasChildren(Object element) {
-	        if (element instanceof Team) {
-	            if (getChildren(element).length > 0) {
+			if (element instanceof Team) {
+				if (getChildren(element).length > 0) {
 					return true;
 				}
-	        }
-	        return false;
+			}
+			return false;
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			List<Team> oldElement = (List<Team>) oldInput;
-	        if (oldElement != null) {
+			if (oldElement != null) {
 				Iterator<Team> iter = oldElement.iterator();
-	        	while (iter.hasNext()){
+				while (iter.hasNext()){
 					iter.next().removeListener(this);
-	        	}
-	        }
+				}
+			}
 			List<Team> newElement = (List<Team>) newInput;
-	        if (newElement != null) {
+			if (newElement != null) {
 				Iterator<Team> iter = newElement.iterator();
-	        	while (iter.hasNext()){
-	        		iter.next().addListener(this);
-	        	}
-	        }
+				while (iter.hasNext()){
+					iter.next().addListener(this);
+				}
+			}
 		}
 	}
 
@@ -173,7 +173,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		Tree tree = new Tree(fShell, SWT.SINGLE | SWT.H_SCROLL
-                | SWT.V_SCROLL | SWT.BORDER);
+				| SWT.V_SCROLL | SWT.BORDER);
 		TreeViewer viewer = new TreeViewer(tree);
 		viewer.setContentProvider(new TeamModelTreeContentProvider());
 		viewer.setLabelProvider(new TeamModelLabelProvider());

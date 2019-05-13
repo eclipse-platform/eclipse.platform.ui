@@ -18,22 +18,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccessibilityTestPass implements IDialogTestPass {
-    private static final int CHECKLIST_SIZE = 5;
+	private static final int CHECKLIST_SIZE = 5;
 
-    @Override
+	@Override
 	public String title() {
-        return "Test Pass: Accessibility";
-    }
+		return "Test Pass: Accessibility";
+	}
 
-    @Override
+	@Override
 	public String description() {
-        return "Verify the accessibility of the dialogs.";
-    }
+		return "Verify the accessibility of the dialogs.";
+	}
 
-    @Override
+	@Override
 	public String label() {
-        return "&Accessibility";
-    }
+		return "&Accessibility";
+	}
 
 	@Override
 	public List<String> checkListTexts() {
@@ -46,24 +46,24 @@ public class AccessibilityTestPass implements IDialogTestPass {
 		return list;
 	}
 
-    @Override
+	@Override
 	public String[] failureTexts() {
-        String[] failureText = new String[CHECKLIST_SIZE];
-        failureText[0] = "Some widgets aren't accessible by tabbing.";
-        failureText[1] = "Tabbing order is illogical.";
-        failureText[2] = "Missing or inappropriate mnemonics.";
-        failureText[3] = "Duplicate mnemonics.";
-        failureText[4] = "Some widgets cannot be selected using the spacebar.";
-        return failureText;
-    }
+		String[] failureText = new String[CHECKLIST_SIZE];
+		failureText[0] = "Some widgets aren't accessible by tabbing.";
+		failureText[1] = "Tabbing order is illogical.";
+		failureText[2] = "Missing or inappropriate mnemonics.";
+		failureText[3] = "Duplicate mnemonics.";
+		failureText[4] = "Some widgets cannot be selected using the spacebar.";
+		return failureText;
+	}
 
-    @Override
+	@Override
 	public String queryText() {
-        return "Is the accessibility of the dialog acceptable?";
-    }
+		return "Is the accessibility of the dialog acceptable?";
+	}
 
-    @Override
+	@Override
 	public int getID() {
-        return VerifyDialog.TEST_ACCESS;
-    }
+		return VerifyDialog.TEST_ACCESS;
+	}
 }

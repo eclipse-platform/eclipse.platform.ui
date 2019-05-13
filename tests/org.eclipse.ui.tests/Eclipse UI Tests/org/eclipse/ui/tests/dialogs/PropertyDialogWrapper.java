@@ -21,14 +21,14 @@ import org.eclipse.ui.internal.dialogs.PropertyDialog;
 
 public class PropertyDialogWrapper extends PropertyDialog {
 
-    public PropertyDialogWrapper(Shell parentShell, PreferenceManager manager,
-            ISelection selection) {
-        super(parentShell, manager, selection);
-    }
+	public PropertyDialogWrapper(Shell parentShell, PreferenceManager manager,
+			ISelection selection) {
+		super(parentShell, manager, selection);
+	}
 
-    @Override
+	@Override
 	protected boolean showPage(IPreferenceNode node) {
-        return super.showPage(node);
-    }
+		return super.showPage(node);
+	}
 }
 

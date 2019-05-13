@@ -29,83 +29,83 @@ import org.eclipse.ui.tests.internal.ForcedException;
  * @since 3.0
  */
 public final class BrokenWorkbenchWindowPulldownDelegate implements
-        IWorkbenchWindowPulldownDelegate2 {
-    //whether we should throw on getMenu(Menu)
-    static boolean throwMenu = true;
+		IWorkbenchWindowPulldownDelegate2 {
+	//whether we should throw on getMenu(Menu)
+	static boolean throwMenu = true;
 
-    //whether we should throw on getMenu(Control)
-    static boolean throwControl = true;
+	//whether we should throw on getMenu(Control)
+	static boolean throwControl = true;
 
-    //keep references to the menus for disposal
-    Menu menuMenu;
+	//keep references to the menus for disposal
+	Menu menuMenu;
 
-    Menu menuControl;
+	Menu menuControl;
 
-    /**
-     * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	@Override
 	public Menu getMenu(Menu parent) {
-        if (throwMenu) {
-            throwMenu = false;
-            throw new ForcedException(
+		if (throwMenu) {
+			throwMenu = false;
+			throw new ForcedException(
 					"The workbench should handle hostile pulldown delegates.");
-        }
-        menuMenu = new Menu(parent);
-        return menuMenu;
-    }
+		}
+		menuMenu = new Menu(parent);
+		return menuMenu;
+	}
 
-    /**
-     * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
+	 */
+	@Override
 	public Menu getMenu(Control parent) {
-        if (throwControl) {
-            throwControl = false;
-            throw new ForcedException(
+		if (throwControl) {
+			throwControl = false;
+			throw new ForcedException(
 					"The workbench should handle hostile pulldown delegates.");
-        }
-        menuControl = new Menu(parent);
-        return menuControl;
-    }
+		}
+		menuControl = new Menu(parent);
+		return menuControl;
+	}
 
-    /**
-     * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 */
+	@Override
 	public void dispose() {
-        if (menuControl != null) {
+		if (menuControl != null) {
 			menuControl.dispose();
 		}
 
-        if (menuMenu != null) {
+		if (menuMenu != null) {
 			menuMenu.dispose();
 		}
-    }
+	}
 
-    /**
-     * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
-        // Do nothing.
-    }
+		// Do nothing.
+	}
 
-    /**
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	@Override
 	public void run(IAction action) {
-        // Do nothing.
-    }
+		// Do nothing.
+	}
 
-    /**
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-     *      org.eclipse.jface.viewers.ISelection)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.jface.viewers.ISelection)
+	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        // Do nothing.
-    }
+		// Do nothing.
+	}
 
 }

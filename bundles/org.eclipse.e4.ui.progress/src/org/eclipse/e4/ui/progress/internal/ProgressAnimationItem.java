@@ -77,7 +77,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 	 *            flags to use for creation of the progress bar
 	 */
 	ProgressAnimationItem(ProgressRegion region, int flags,
-	        AnimationManager animationManager, FinishedJobs finishedJobs) {
+			AnimationManager animationManager, FinishedJobs finishedJobs) {
 		super(animationManager);
 		this.flags = flags;
 		this.finishedJobs = finishedJobs;
@@ -106,7 +106,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 //						if (statusAdapter == null)
 //							statusAdapter = new StatusAdapter(status);
 						getStatusReporter().report(status,
-						        StatusReporter.SHOW, new Object[0]);
+								StatusReporter.SHOW, new Object[0]);
 						removeTopElement(ji);
 					}
 
@@ -226,15 +226,15 @@ public class ProgressAnimationItem extends AnimationItem implements
 	private void initButton(Image im, final String tt) {
 		toolButton.setImage(im);
 		toolButton.setToolTipText(tt);
-    	toolbar.setVisible(true);
+		toolbar.setVisible(true);
 		toolbar.getParent().requestLayout(); // must layout
 
-    	toolbar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-        	@Override
+		toolbar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
-        		e.result = tt;
-        	}
-        });
+				e.result = tt;
+			}
+		});
 	}
 
 	@Override
@@ -361,8 +361,8 @@ public class ProgressAnimationItem extends AnimationItem implements
 	}
 
 	protected StatusReporter getStatusReporter() {
-	    return Services.getInstance().getStatusReporter();
-    }
+		return Services.getInstance().getStatusReporter();
+	}
 
 	protected EHandlerService getEHandlerService() {
 		return Services.getInstance().getEHandlerService();

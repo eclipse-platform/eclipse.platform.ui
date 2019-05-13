@@ -40,341 +40,341 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  *  @since 3.1
  */
 public class ArchiveFileExportOperation implements IRunnableWithProgress {
-    private IFileExporter exporter;
+	private IFileExporter exporter;
 
-    private String destinationFilename;
+	private String destinationFilename;
 
-    private IProgressMonitor monitor;
+	private IProgressMonitor monitor;
 
 	private List<? extends IResource> resourcesToExport;
 
-    private IResource resource;
+	private IResource resource;
 
 	private List<IStatus> errorTable = new ArrayList<>(1); // IStatus
 
-    private boolean useCompression = true;
+	private boolean useCompression = true;
 
 	private boolean resolveLinks = false;
 
-    private boolean useTarFormat = false;
+	private boolean useTarFormat = false;
 
-    private boolean createLeadupStructure = true;
+	private boolean createLeadupStructure = true;
 
-    /**
-     *	Create an instance of this class.  Use this constructor if you wish to
-     *	export specific resources without a common parent resource
-     *
-     *	@param resources java.util.Vector
-     *	@param filename java.lang.String
-     */
+	/**
+	 *	Create an instance of this class.  Use this constructor if you wish to
+	 *	export specific resources without a common parent resource
+	 *
+	 *	@param resources java.util.Vector
+	 *	@param filename java.lang.String
+	 */
 	public ArchiveFileExportOperation(List<? extends IResource> resources, String filename) {
-        super();
+		super();
 
-        // Eliminate redundancies in list of resources being exported
+		// Eliminate redundancies in list of resources being exported
 		Iterator<? extends IResource> elementsEnum = resources.iterator();
-        while (elementsEnum.hasNext()) {
-            IResource currentResource = elementsEnum.next();
-            if (isDescendent(resources, currentResource)) {
+		while (elementsEnum.hasNext()) {
+			IResource currentResource = elementsEnum.next();
+			if (isDescendent(resources, currentResource)) {
 				elementsEnum.remove(); //Removes currentResource;
 			}
-        }
+		}
 
-        resourcesToExport = resources;
-        destinationFilename = filename;
-    }
+		resourcesToExport = resources;
+		destinationFilename = filename;
+	}
 
-    /**
-     *  Create an instance of this class.  Use this constructor if you wish
-     *  to recursively export a single resource.
-     *
-     *  @param res org.eclipse.core.resources.IResource;
-     *  @param filename java.lang.String
-     */
-    public ArchiveFileExportOperation(IResource res, String filename) {
-        super();
-        resource = res;
-        destinationFilename = filename;
-    }
+	/**
+	 *  Create an instance of this class.  Use this constructor if you wish
+	 *  to recursively export a single resource.
+	 *
+	 *  @param res org.eclipse.core.resources.IResource;
+	 *  @param filename java.lang.String
+	 */
+	public ArchiveFileExportOperation(IResource res, String filename) {
+		super();
+		resource = res;
+		destinationFilename = filename;
+	}
 
-    /**
-     *  Create an instance of this class.  Use this constructor if you wish to
-     *  export specific resources with a common parent resource (affects container
-     *  directory creation)
-     *
-     *  @param res org.eclipse.core.resources.IResource
-     *  @param resources java.util.Vector
-     *  @param filename java.lang.String
-     */
+	/**
+	 *  Create an instance of this class.  Use this constructor if you wish to
+	 *  export specific resources with a common parent resource (affects container
+	 *  directory creation)
+	 *
+	 *  @param res org.eclipse.core.resources.IResource
+	 *  @param resources java.util.Vector
+	 *  @param filename java.lang.String
+	 */
 	public ArchiveFileExportOperation(IResource res, List<IResource> resources, String filename) {
-        this(res, filename);
-        resourcesToExport = resources;
-    }
+		this(res, filename);
+		resourcesToExport = resources;
+	}
 
-    /**
-     * Add a new entry to the error table with the passed information
-     */
-    protected void addError(String message, Throwable e) {
-        errorTable.add(new Status(IStatus.ERROR,
-                IDEWorkbenchPlugin.IDE_WORKBENCH, 0, message, e));
-    }
+	/**
+	 * Add a new entry to the error table with the passed information
+	 */
+	protected void addError(String message, Throwable e) {
+		errorTable.add(new Status(IStatus.ERROR,
+				IDEWorkbenchPlugin.IDE_WORKBENCH, 0, message, e));
+	}
 
-    /**
-     *  Answer the total number of file resources that exist at or below self
-     *  in the resources hierarchy.
-     *
-     *  @return int
-     *  @param checkResource org.eclipse.core.resources.IResource
-     */
-    protected int countChildrenOf(IResource checkResource) throws CoreException {
-        if (checkResource.getType() == IResource.FILE) {
+	/**
+	 *  Answer the total number of file resources that exist at or below self
+	 *  in the resources hierarchy.
+	 *
+	 *  @return int
+	 *  @param checkResource org.eclipse.core.resources.IResource
+	 */
+	protected int countChildrenOf(IResource checkResource) throws CoreException {
+		if (checkResource.getType() == IResource.FILE) {
 			return 1;
 		}
 
-        int count = 0;
-        if (checkResource.isAccessible()) {
+		int count = 0;
+		if (checkResource.isAccessible()) {
 			for (IResource child : ((IContainer) checkResource).members()) {
 				count += countChildrenOf(child);
 			}
-        }
+		}
 
-        return count;
-    }
+		return count;
+	}
 
-    /**
-     *	Answer a boolean indicating the number of file resources that were
-     *	specified for export
-     *
-     *	@return int
-     */
-    protected int countSelectedResources() throws CoreException {
-        int result = 0;
+	/**
+	 *	Answer a boolean indicating the number of file resources that were
+	 *	specified for export
+	 *
+	 *	@return int
+	 */
+	protected int countSelectedResources() throws CoreException {
+		int result = 0;
 		Iterator<? extends IResource> resources = resourcesToExport.iterator();
-        while (resources.hasNext()) {
+		while (resources.hasNext()) {
 			result += countChildrenOf(resources.next());
 		}
 
-        return result;
-    }
+		return result;
+	}
 
-    /**
-     *  Export the passed resource to the destination .zip. Export with
-     * no path leadup
-     *
-     *  @param exportResource org.eclipse.core.resources.IResource
-     */
-    protected void exportResource(IResource exportResource)
-            throws InterruptedException {
-        exportResource(exportResource, 1);
-    }
+	/**
+	 *  Export the passed resource to the destination .zip. Export with
+	 * no path leadup
+	 *
+	 *  @param exportResource org.eclipse.core.resources.IResource
+	 */
+	protected void exportResource(IResource exportResource)
+			throws InterruptedException {
+		exportResource(exportResource, 1);
+	}
 
-    /**
-     * Creates and returns the string that should be used as the name of the entry in the archive.
-     * @param exportResource the resource to export
-     * @param leadupDepth the number of resource levels to be included in the path including the resourse itself.
-     */
-    private String createDestinationName(int leadupDepth, IResource exportResource) {
-        IPath fullPath = exportResource.getFullPath();
-        if (createLeadupStructure) {
-        	return fullPath.makeRelative().toString();
-        }
+	/**
+	 * Creates and returns the string that should be used as the name of the entry in the archive.
+	 * @param exportResource the resource to export
+	 * @param leadupDepth the number of resource levels to be included in the path including the resourse itself.
+	 */
+	private String createDestinationName(int leadupDepth, IResource exportResource) {
+		IPath fullPath = exportResource.getFullPath();
+		if (createLeadupStructure) {
+			return fullPath.makeRelative().toString();
+		}
 		return fullPath.removeFirstSegments(fullPath.segmentCount() - leadupDepth).makeRelative().toString();
-    }
+	}
 
-    /**
-     *  Export the passed resource to the destination .zip
-     *
-     *  @param exportResource org.eclipse.core.resources.IResource
-     *  @param leadupDepth the number of resource levels to be included in
-     *                     the path including the resourse itself.
-     */
-    protected void exportResource(IResource exportResource, int leadupDepth)
-            throws InterruptedException {
+	/**
+	 *  Export the passed resource to the destination .zip
+	 *
+	 *  @param exportResource org.eclipse.core.resources.IResource
+	 *  @param leadupDepth the number of resource levels to be included in
+	 *                     the path including the resourse itself.
+	 */
+	protected void exportResource(IResource exportResource, int leadupDepth)
+			throws InterruptedException {
 		if (!exportResource.isAccessible() || (!resolveLinks && exportResource.isLinked())) {
 			return;
 		}
 
-        if (exportResource.getType() == IResource.FILE) {
-        	String destinationName = createDestinationName(leadupDepth, exportResource);
-            monitor.subTask(destinationName);
+		if (exportResource.getType() == IResource.FILE) {
+			String destinationName = createDestinationName(leadupDepth, exportResource);
+			monitor.subTask(destinationName);
 
-            try {
-                exporter.write((IFile) exportResource, destinationName);
-            } catch (IOException e) {
-                addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
-            } catch (CoreException e) {
-                addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
-            }
+			try {
+				exporter.write((IFile) exportResource, destinationName);
+			} catch (IOException e) {
+				addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
+			} catch (CoreException e) {
+				addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
+			}
 
-            monitor.worked(1);
-            ModalContext.checkCanceled(monitor);
-        } else {
-            IResource[] children = null;
+			monitor.worked(1);
+			ModalContext.checkCanceled(monitor);
+		} else {
+			IResource[] children = null;
 
-            try {
-                children = ((IContainer) exportResource).members();
-            } catch (CoreException e) {
-                // this should never happen because an #isAccessible check is done before #members is invoked
-                addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath()), e);
-            }
+			try {
+				children = ((IContainer) exportResource).members();
+			} catch (CoreException e) {
+				// this should never happen because an #isAccessible check is done before #members is invoked
+				addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath()), e);
+			}
 
-            if (children.length == 0) { // create an entry for empty containers, see bug 278402
-            	String destinationName = createDestinationName(leadupDepth, exportResource);
-                try {
-            		exporter.write((IContainer) exportResource, destinationName + IPath.SEPARATOR);
-                } catch (IOException e) {
-                    addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
-                }
-            }
+			if (children.length == 0) { // create an entry for empty containers, see bug 278402
+				String destinationName = createDestinationName(leadupDepth, exportResource);
+				try {
+					exporter.write((IContainer) exportResource, destinationName + IPath.SEPARATOR);
+				} catch (IOException e) {
+					addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
+				}
+			}
 
-            for (IResource child : children) {
+			for (IResource child : children) {
 				exportResource(child, leadupDepth + 1);
 			}
 
-        }
-    }
+		}
+	}
 
-    /**
-     *	Export the resources contained in the previously-defined
-     *	resourcesToExport collection
-     */
-    protected void exportSpecifiedResources() throws InterruptedException {
+	/**
+	 *	Export the resources contained in the previously-defined
+	 *	resourcesToExport collection
+	 */
+	protected void exportSpecifiedResources() throws InterruptedException {
 		Iterator<? extends IResource> resources = resourcesToExport.iterator();
 
-        while (resources.hasNext()) {
-            IResource currentResource = resources.next();
-            exportResource(currentResource);
-        }
-    }
+		while (resources.hasNext()) {
+			IResource currentResource = resources.next();
+			exportResource(currentResource);
+		}
+	}
 
-    /**
-     * Returns the status of the operation.
-     * If there were any errors, the result is a status object containing
-     * individual status objects for each error.
-     * If there were no errors, the result is a status object with error code <code>OK</code>.
-     *
-     * @return the status
-     */
-    public IStatus getStatus() {
-        IStatus[] errors = new IStatus[errorTable.size()];
-        errorTable.toArray(errors);
-        return new MultiStatus(
-                IDEWorkbenchPlugin.IDE_WORKBENCH,
-                IStatus.OK,
-                errors,
-                DataTransferMessages.FileSystemExportOperation_problemsExporting,
-                null);
-    }
+	/**
+	 * Returns the status of the operation.
+	 * If there were any errors, the result is a status object containing
+	 * individual status objects for each error.
+	 * If there were no errors, the result is a status object with error code <code>OK</code>.
+	 *
+	 * @return the status
+	 */
+	public IStatus getStatus() {
+		IStatus[] errors = new IStatus[errorTable.size()];
+		errorTable.toArray(errors);
+		return new MultiStatus(
+				IDEWorkbenchPlugin.IDE_WORKBENCH,
+				IStatus.OK,
+				errors,
+				DataTransferMessages.FileSystemExportOperation_problemsExporting,
+				null);
+	}
 
-    /**
-     *	Initialize this operation
-     *
-     *	@exception java.io.IOException
-     */
-    protected void initialize() throws IOException {
-    	if(useTarFormat) {
-    		exporter = new TarFileExporter(destinationFilename, useCompression, resolveLinks);
-    	} else {
-        	exporter = new ZipFileExporter(destinationFilename, useCompression, resolveLinks);
-    	}
-    }
+	/**
+	 *	Initialize this operation
+	 *
+	 *	@exception java.io.IOException
+	 */
+	protected void initialize() throws IOException {
+		if(useTarFormat) {
+			exporter = new TarFileExporter(destinationFilename, useCompression, resolveLinks);
+		} else {
+			exporter = new ZipFileExporter(destinationFilename, useCompression, resolveLinks);
+		}
+	}
 
-    /**
-     *  Answer a boolean indicating whether the passed child is a descendent
-     *  of one or more members of the passed resources collection
-     *
-     *  @return boolean
-     *  @param resources java.util.Vector
-     *  @param child org.eclipse.core.resources.IResource
-     */
+	/**
+	 *  Answer a boolean indicating whether the passed child is a descendent
+	 *  of one or more members of the passed resources collection
+	 *
+	 *  @return boolean
+	 *  @param resources java.util.Vector
+	 *  @param child org.eclipse.core.resources.IResource
+	 */
 	protected boolean isDescendent(List<? extends IResource> resources, IResource child) {
-        if (child.getType() == IResource.PROJECT) {
+		if (child.getType() == IResource.PROJECT) {
 			return false;
 		}
 
-        IResource parent = child.getParent();
-        if (resources.contains(parent)) {
+		IResource parent = child.getParent();
+		if (resources.contains(parent)) {
 			return true;
 		}
 
-        return isDescendent(resources, parent);
-    }
+		return isDescendent(resources, parent);
+	}
 
-    /**
-     *	Export the resources that were previously specified for export
-     *	(or if a single resource was specified then export it recursively)
-     */
-    @Override
+	/**
+	 *	Export the resources that were previously specified for export
+	 *	(or if a single resource was specified then export it recursively)
+	 */
+	@Override
 	public void run(IProgressMonitor progressMonitor)
-            throws InvocationTargetException, InterruptedException {
-        this.monitor = progressMonitor;
+			throws InvocationTargetException, InterruptedException {
+		this.monitor = progressMonitor;
 
-        try {
-            initialize();
-        } catch (IOException e) {
-            throw new InvocationTargetException(e, NLS.bind(DataTransferMessages.ZipExport_cannotOpen, e.getMessage()));
-        }
+		try {
+			initialize();
+		} catch (IOException e) {
+			throw new InvocationTargetException(e, NLS.bind(DataTransferMessages.ZipExport_cannotOpen, e.getMessage()));
+		}
 
-        try {
-            // ie.- a single resource for recursive export was specified
-            int totalWork = IProgressMonitor.UNKNOWN;
-            try {
-                if (resourcesToExport == null) {
+		try {
+			// ie.- a single resource for recursive export was specified
+			int totalWork = IProgressMonitor.UNKNOWN;
+			try {
+				if (resourcesToExport == null) {
 					totalWork = countChildrenOf(resource);
 				} else {
 					totalWork = countSelectedResources();
 				}
-            } catch (CoreException e) {
-                // Should not happen
-            }
-            monitor.beginTask(DataTransferMessages.DataTransfer_exportingTitle, totalWork);
-            if (resourcesToExport == null) {
-                exportResource(resource);
-            } else {
-                // ie.- a list of specific resources to export was specified
-                exportSpecifiedResources();
-            }
+			} catch (CoreException e) {
+				// Should not happen
+			}
+			monitor.beginTask(DataTransferMessages.DataTransfer_exportingTitle, totalWork);
+			if (resourcesToExport == null) {
+				exportResource(resource);
+			} else {
+				// ie.- a list of specific resources to export was specified
+				exportSpecifiedResources();
+			}
 
-            try {
-                exporter.finished();
-            } catch (IOException e) {
-                throw new InvocationTargetException(
-                        e,
-                        NLS.bind(DataTransferMessages.ZipExport_cannotClose, e.getMessage()));
-            }
-        } finally {
-            monitor.done();
-        }
-    }
+			try {
+				exporter.finished();
+			} catch (IOException e) {
+				throw new InvocationTargetException(
+						e,
+						NLS.bind(DataTransferMessages.ZipExport_cannotClose, e.getMessage()));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
 
-    /**
-     *	Set this boolean indicating whether each exported resource's path should
-     *	include containment hierarchies as dictated by its parents
-     *
-     *	@param value boolean
-     */
-    public void setCreateLeadupStructure(boolean value) {
-        createLeadupStructure = value;
-    }
+	/**
+	 *	Set this boolean indicating whether each exported resource's path should
+	 *	include containment hierarchies as dictated by its parents
+	 *
+	 *	@param value boolean
+	 */
+	public void setCreateLeadupStructure(boolean value) {
+		createLeadupStructure = value;
+	}
 
-    /**
-     *	Set this boolean indicating whether exported resources should
-     *	be compressed (as opposed to simply being stored)
-     *
-     *	@param value boolean
-     */
-    public void setUseCompression(boolean value) {
-        useCompression = value;
-    }
+	/**
+	 *	Set this boolean indicating whether exported resources should
+	 *	be compressed (as opposed to simply being stored)
+	 *
+	 *	@param value boolean
+	 */
+	public void setUseCompression(boolean value) {
+		useCompression = value;
+	}
 
-    /**
-     * Set this boolean indicating whether the file should be output
-     * in tar.gz format rather than .zip format.
-     *
-     * @param value boolean
-     */
-    public void setUseTarFormat(boolean value) {
-    	useTarFormat = value;
-    }
+	/**
+	 * Set this boolean indicating whether the file should be output
+	 * in tar.gz format rather than .zip format.
+	 *
+	 * @param value boolean
+	 */
+	public void setUseTarFormat(boolean value) {
+		useTarFormat = value;
+	}
 
 	/**
 	 * Set this boolean indicating whether linked resources should be resolved

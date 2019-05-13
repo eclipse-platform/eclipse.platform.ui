@@ -114,8 +114,8 @@ public class ProgressManagerUtil {
 	 */
 	static void logException(Throwable exception) {
 		Services.getInstance().getLogService().log(LogService.LOG_ERROR,
-		        exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
-		        exception);
+				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
+				exception);
 	}
 
 	// /**
@@ -144,7 +144,7 @@ public class ProgressManagerUtil {
 	public static void openProgressView() {
 		Services services = Services.getInstance();
 		MPart progressView = (MPart) services.getModelService().find(
-		        ProgressManager.PROGRESS_VIEW_NAME, services.getMWindow());
+				ProgressManager.PROGRESS_VIEW_NAME, services.getMWindow());
 		EPartService partService = services.getPartService();
 		if (progressView == null) {
 			progressView = partService.createPart(ProgressManager.PROGRESS_VIEW_NAME);
@@ -257,7 +257,7 @@ public class ProgressManagerUtil {
 	 * @return boolean. true if the job was rescheduled due to modal dialogs.
 	 */
 	public static boolean rescheduleIfModalShellOpen(Job openJob,
-	        IProgressService progressService) {
+			IProgressService progressService) {
 		Shell modal = getModalShellExcluding(null);
 		if (modal == null) {
 			return false;
@@ -306,7 +306,7 @@ public class ProgressManagerUtil {
 		// If shell is null or disposed, then look through all shells
 		if (shell == null || shell.isDisposed()) {
 			return getModalChildExcluding(Services.getInstance().getShell()
-			        .getShells(), shell);
+					.getShells(), shell);
 		}
 
 		// Start with the shell to exclude and check it's shells

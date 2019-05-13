@@ -35,11 +35,11 @@ import org.eclipse.swt.widgets.Control;
  * progress line and the animation item are shown.
  */
 public class ProgressRegion {
-    ProgressCanvasViewer viewer;
+	ProgressCanvasViewer viewer;
 
-    ProgressAnimationItem animationItem;
+	ProgressAnimationItem animationItem;
 
-    Composite region;
+	Composite region;
 
 	private int fWidthHint = SWT.DEFAULT;
 
@@ -52,44 +52,44 @@ public class ProgressRegion {
 
 	private boolean forceHorizontal;
 
-    /**
-     * Create a new instance of the receiver.
-     */
-    public ProgressRegion() {
-        //No default behavior.
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 */
+	public ProgressRegion() {
+		//No default behavior.
+	}
 
-    @Inject
-    AnimationManager animationManager;
+	@Inject
+	AnimationManager animationManager;
 
-    @Inject
-    ContentProviderFactory contentProviderfactory;
+	@Inject
+	ContentProviderFactory contentProviderfactory;
 
-    @Inject
-    FinishedJobs finishedJobs;
+	@Inject
+	FinishedJobs finishedJobs;
 
-    /**
-     * Create the contents of the receiver in the parent. Use the window for the
-     * animation item.
-     *
-     * @param parent
-     *            The parent widget of the composite.
-     * @param window
-     *            The WorkbenchWindow this is in.
-     * @return Control
-     */
-    @PostConstruct
-    public Control createContents(Composite parent) {
-    	// Test whether or not 'advanced' graphics are available
-        // If not then we'll 'force' the ProgressBar to always be
-        // HORIZONTAL...
-        //TODO: This should likely be at some 'global' level state
-        GC gc = new GC(parent);
-        gc.setAdvanced(true);
-        forceHorizontal = !gc.getAdvanced();
-        gc.dispose();
+	/**
+	 * Create the contents of the receiver in the parent. Use the window for the
+	 * animation item.
+	 *
+	 * @param parent
+	 *            The parent widget of the composite.
+	 * @param window
+	 *            The WorkbenchWindow this is in.
+	 * @return Control
+	 */
+	@PostConstruct
+	public Control createContents(Composite parent) {
+		// Test whether or not 'advanced' graphics are available
+		// If not then we'll 'force' the ProgressBar to always be
+		// HORIZONTAL...
+		//TODO: This should likely be at some 'global' level state
+		GC gc = new GC(parent);
+		gc.setAdvanced(true);
+		forceHorizontal = !gc.getAdvanced();
+		gc.dispose();
 
-        region = new Composite(parent, SWT.NONE) {
+		region = new Composite(parent, SWT.NONE) {
 			@Override
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				Point size = super.computeSize(wHint, hHint, changed);
@@ -102,109 +102,109 @@ public class ProgressRegion {
 			}
 		};
 
-        GridLayout gl = new GridLayout();
-        gl.marginHeight = 0;
-        gl.marginWidth = 0;
-        if (isHorizontal(side))
-        	gl.numColumns = 3;
-        region.setLayout(gl);
+		GridLayout gl = new GridLayout();
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		if (isHorizontal(side))
+			gl.numColumns = 3;
+		region.setLayout(gl);
 
-        viewer = new ProgressCanvasViewer(region, SWT.NO_FOCUS, 1, 36, isHorizontal(side) ? SWT.HORIZONTAL : SWT.VERTICAL);
-        viewer.setUseHashlookup(true);
-        Control viewerControl = viewer.getControl();
-        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-        Point viewerSizeHints = viewer.getSizeHints();
-        if (isHorizontal(side)) {
-        	gd.widthHint = viewerSizeHints.x;
-        	gd.heightHint = viewerSizeHints.y;
-        } else {
-        	gd.widthHint = viewerSizeHints.y;
-        	gd.heightHint = viewerSizeHints.x;
-        }
-        viewerControl.setLayoutData(gd);
+		viewer = new ProgressCanvasViewer(region, SWT.NO_FOCUS, 1, 36, isHorizontal(side) ? SWT.HORIZONTAL : SWT.VERTICAL);
+		viewer.setUseHashlookup(true);
+		Control viewerControl = viewer.getControl();
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		Point viewerSizeHints = viewer.getSizeHints();
+		if (isHorizontal(side)) {
+			gd.widthHint = viewerSizeHints.x;
+			gd.heightHint = viewerSizeHints.y;
+		} else {
+			gd.widthHint = viewerSizeHints.y;
+			gd.heightHint = viewerSizeHints.x;
+		}
+		viewerControl.setLayoutData(gd);
 
 		int widthPreference = animationManager.getPreferredWidth() + 25;
 		animationItem = new ProgressAnimationItem(this,
-		        isHorizontal(side) ? SWT.HORIZONTAL : SWT.VERTICAL,
-		        animationManager, finishedJobs);
-        animationItem.createControl(region);
+				isHorizontal(side) ? SWT.HORIZONTAL : SWT.VERTICAL,
+				animationManager, finishedJobs);
+		animationItem.createControl(region);
 
-        animationItem.setAnimationContainer(new AnimationItem.IAnimationContainer() {
-            @Override
+		animationItem.setAnimationContainer(new AnimationItem.IAnimationContainer() {
+			@Override
 			public void animationDone() {
-                //Add an extra refresh to the viewer in case
-                //of stale input if the controls are not disposed
-                if (viewer.getControl().isDisposed()) {
+				//Add an extra refresh to the viewer in case
+				//of stale input if the controls are not disposed
+				if (viewer.getControl().isDisposed()) {
 					return;
 				}
-                viewer.refresh();
-            }
+				viewer.refresh();
+			}
 
-            @Override
+			@Override
 			public void animationStart() {
-                // Nothing by default here.
+				// Nothing by default here.
 
-            }
-        });
-        if (isHorizontal(side)) {
-        	gd = new GridData(GridData.FILL_VERTICAL);
-            gd.widthHint = widthPreference;
-        } else {
-        	gd = new GridData(GridData.FILL_HORIZONTAL);
-            gd.heightHint = widthPreference;
-        }
+			}
+		});
+		if (isHorizontal(side)) {
+			gd = new GridData(GridData.FILL_VERTICAL);
+			gd.widthHint = widthPreference;
+		} else {
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = widthPreference;
+		}
 
-        animationItem.getControl().setLayoutData(gd);
+		animationItem.getControl().setLayoutData(gd);
 
 		viewerControl.addMouseListener(MouseListener.mouseDoubleClickAdapter(e -> processDoubleClick()));
 
-        //Never show debug info
-        IContentProvider provider = contentProviderfactory.getProgressViewerContentProvider(viewer,
-                false,false);
-        viewer.setContentProvider(provider);
-        viewer.setInput(provider);
-        viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));
-        viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
-        viewer.addFilter(new ViewerFilter() {
-            @Override
+		//Never show debug info
+		IContentProvider provider = contentProviderfactory.getProgressViewerContentProvider(viewer,
+				false,false);
+		viewer.setContentProvider(provider);
+		viewer.setInput(provider);
+		viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));
+		viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
+		viewer.addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-                if (element instanceof JobInfo) {
-                    JobInfo info= (JobInfo)element;
-                    if (info.isBlocked() || info.getJob().getState() == Job.WAITING) {
-                    	return false;
-                    }
-                }
-                return true;
-            }
+				if (element instanceof JobInfo) {
+					JobInfo info= (JobInfo)element;
+					if (info.isBlocked() || info.getJob().getState() == Job.WAITING) {
+						return false;
+					}
+				}
+				return true;
+			}
 
 		});
-        return region;
-    }
+		return region;
+	}
 
-    /**
-     * Return the animationItem for the receiver.
-     *
-     * @return AnimationItem
-     */
-    public AnimationItem getAnimationItem() {
-        return animationItem;
-    }
+	/**
+	 * Return the animationItem for the receiver.
+	 *
+	 * @return AnimationItem
+	 */
+	public AnimationItem getAnimationItem() {
+		return animationItem;
+	}
 
-    /**
-     * Return the control for the receiver.
-     *
-     * @return Control
-     */
-    public Control getControl() {
-        return region;
-    }
+	/**
+	 * Return the control for the receiver.
+	 *
+	 * @return Control
+	 */
+	public Control getControl() {
+		return region;
+	}
 
-    /**
-     * Process the double click event.
-     */
-    public void processDoubleClick() {
-        ProgressManagerUtil.openProgressView();
-    }
+	/**
+	 * Process the double click event.
+	 */
+	public void processDoubleClick() {
+		ProgressManagerUtil.openProgressView();
+	}
 
 	public void dock(int dropSide) {
 		int oldSide = side;
@@ -247,7 +247,7 @@ public class ProgressRegion {
 		if (region != null && !region.isDisposed()) {
 			Composite parent = region.getParent();
 			boolean animating = animationItem.animationRunning();
-	        animationManager.removeItem(animationItem);
+			animationManager.removeItem(animationItem);
 			region.dispose();
 			createContents(parent);
 			if (animating)

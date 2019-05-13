@@ -34,152 +34,152 @@ import org.eclipse.swt.widgets.Control;
  * Provides content for the bookmark navigator
  */
 class BookmarkContentProvider implements IStructuredContentProvider,
-        IResourceChangeListener, IBasicPropertyConstants {
+		IResourceChangeListener, IBasicPropertyConstants {
 
-    private IResource input;
+	private IResource input;
 
-    private Viewer viewer;
+	private Viewer viewer;
 
-    /**
-     * The constructor.
-     */
-    public BookmarkContentProvider(BookmarkNavigator bookmarksView) {
-        super();
-    }
+	/**
+	 * The constructor.
+	 */
+	public BookmarkContentProvider(BookmarkNavigator bookmarksView) {
+		super();
+	}
 
-    /**
-     * The visual part that is using this content provider is about
-     * to be disposed. Deallocate all allocated SWT resources.
-     */
-    @Override
+	/**
+	 * The visual part that is using this content provider is about
+	 * to be disposed. Deallocate all allocated SWT resources.
+	 */
+	@Override
 	public void dispose() {
-        IResource resource = (IResource) viewer.getInput();
-        if (resource != null) {
-            resource.getWorkspace().removeResourceChangeListener(this);
-        }
-    }
+		IResource resource = (IResource) viewer.getInput();
+		if (resource != null) {
+			resource.getWorkspace().removeResourceChangeListener(this);
+		}
+	}
 
-    /**
-     * Returns all the bookmarks that should be shown for
-     * the current settings.
-     */
-    Object[] getBookmarks(IResource resource) {
-        try {
-            return resource.findMarkers(IMarker.BOOKMARK, true,
-                    IResource.DEPTH_INFINITE);
-        } catch (CoreException e) {
-            return new Object[0];
-        }
-    }
+	/**
+	 * Returns all the bookmarks that should be shown for
+	 * the current settings.
+	 */
+	Object[] getBookmarks(IResource resource) {
+		try {
+			return resource.findMarkers(IMarker.BOOKMARK, true,
+					IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			return new Object[0];
+		}
+	}
 
-    public Object[] getChildren(Object element) {
-        // If the input element is a workbench return a list
-        // of the existing bookmarks.  Otherwise, return an empty list.
-        if (element instanceof IResource) {
+	public Object[] getChildren(Object element) {
+		// If the input element is a workbench return a list
+		// of the existing bookmarks.  Otherwise, return an empty list.
+		if (element instanceof IResource) {
 			return getBookmarks((IResource) element);
 		}
 		return new Object[0];
-    }
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object element) {
-        return getChildren(element);
-    }
+		return getChildren(element);
+	}
 
-    /**
-     * Recursively walks over the resource delta and gathers all marker deltas.  Marker
-     * deltas are placed into one of the three given vectors depending on
-     * the type of delta (add, remove, or change).
-     */
+	/**
+	 * Recursively walks over the resource delta and gathers all marker deltas.  Marker
+	 * deltas are placed into one of the three given vectors depending on
+	 * the type of delta (add, remove, or change).
+	 */
 	void getMarkerDeltas(IResourceDelta delta, List<IMarker> additions, List<IMarker> removals, List<IMarker> changes) {
 		for (IMarkerDelta markerDelta : delta.getMarkerDeltas()) {
-            IMarker marker = markerDelta.getMarker();
-            switch (markerDelta.getKind()) {
-            case IResourceDelta.ADDED:
-                if (markerDelta.isSubtypeOf(IMarker.BOOKMARK)) {
-                    additions.add(marker);
-                }
-                break;
-            case IResourceDelta.REMOVED:
-                if (markerDelta.isSubtypeOf(IMarker.BOOKMARK)) {
-                    removals.add(marker);
-                }
-                break;
-            case IResourceDelta.CHANGED:
-                if (markerDelta.isSubtypeOf(IMarker.BOOKMARK)) {
-                    changes.add(marker);
-                }
-                break;
-            }
-        }
+			IMarker marker = markerDelta.getMarker();
+			switch (markerDelta.getKind()) {
+			case IResourceDelta.ADDED:
+				if (markerDelta.isSubtypeOf(IMarker.BOOKMARK)) {
+					additions.add(marker);
+				}
+				break;
+			case IResourceDelta.REMOVED:
+				if (markerDelta.isSubtypeOf(IMarker.BOOKMARK)) {
+					removals.add(marker);
+				}
+				break;
+			case IResourceDelta.CHANGED:
+				if (markerDelta.isSubtypeOf(IMarker.BOOKMARK)) {
+					changes.add(marker);
+				}
+				break;
+			}
+		}
 
-        //recurse on child deltas
+		//recurse on child deltas
 		for (IResourceDelta child : delta.getAffectedChildren()) {
 			getMarkerDeltas(child, additions, removals, changes);
-        }
-    }
+		}
+	}
 
 	/*
 	 * Method declared on ITreeContentProvider,
 	 */
-    public Object getParent(Object element) {
-        return input;
-    }
+	public Object getParent(Object element) {
+		return input;
+	}
 
-    /**
-     * hasChildren method comment.
-     */
-    public boolean hasChildren(Object element) {
-        if (element instanceof IWorkspace) {
+	/**
+	 * hasChildren method comment.
+	 */
+	public boolean hasChildren(Object element) {
+		if (element instanceof IWorkspace) {
 			return true;
 		}
 		return false;
-    }
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer newViewer, Object oldInput, Object newInput) {
-        if (oldInput == null) {
-            IResource resource = (IResource) newInput;
-            resource.getWorkspace().addResourceChangeListener(this);
-        }
-        this.viewer = newViewer;
-        this.input = (IResource) newInput;
-    }
+		if (oldInput == null) {
+			IResource resource = (IResource) newInput;
+			resource.getWorkspace().addResourceChangeListener(this);
+		}
+		this.viewer = newViewer;
+		this.input = (IResource) newInput;
+	}
 
-    /**
-     * The workbench has changed.  Process the delta and provide updates to the viewer,
-     * inside the UI thread.
-     *
-     * @see IResourceChangeListener#resourceChanged
-     */
-    @Override
+	/**
+	 * The workbench has changed.  Process the delta and provide updates to the viewer,
+	 * inside the UI thread.
+	 *
+	 * @see IResourceChangeListener#resourceChanged
+	 */
+	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
 
-        // gather all marker changes from the delta.
-        // be sure to do this in the calling thread,
-        // as the delta is destroyed when this method returns
+		// gather all marker changes from the delta.
+		// be sure to do this in the calling thread,
+		// as the delta is destroyed when this method returns
 		final List<IMarker> additions = new ArrayList<>();
 		final List<IMarker> removals = new ArrayList<>();
 		final List<IMarker> changes = new ArrayList<>();
 
-        IResourceDelta delta = event.getDelta();
-        if (delta == null) {
+		IResourceDelta delta = event.getDelta();
+		if (delta == null) {
 			return;
 		}
-        getMarkerDeltas(delta, additions, removals, changes);
+		getMarkerDeltas(delta, additions, removals, changes);
 
-        // update the viewer based on the marker changes, in the UI thread
-        if (additions.size() + removals.size() + changes.size() > 0) {
-            viewer.getControl().getDisplay().asyncExec(() -> {
-			    // This method runs inside an asyncExec.  The widget may have been destroyed
-			    // by the time this is run.  Check for this and do nothing if so.
-			    Control ctrl = viewer.getControl();
-			    if (ctrl == null || ctrl.isDisposed()) {
+		// update the viewer based on the marker changes, in the UI thread
+		if (additions.size() + removals.size() + changes.size() > 0) {
+			viewer.getControl().getDisplay().asyncExec(() -> {
+				// This method runs inside an asyncExec.  The widget may have been destroyed
+				// by the time this is run.  Check for this and do nothing if so.
+				Control ctrl = viewer.getControl();
+				if (ctrl == null || ctrl.isDisposed()) {
 					return;
 				}
 
-			    viewer.refresh();
+				viewer.refresh();
 			});
-        }
-    }
+		}
+	}
 }

@@ -26,23 +26,23 @@ package org.eclipse.jface.action;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class GroupMarker extends AbstractGroupMarker {
-    /**
-     * Create a new group marker with the given name.
-     * The group name must not be <code>null</code> or the empty string.
-     * The group name is also used as the item id.
-     *
-     * @param groupName the name of the group
-     */
-    public GroupMarker(String groupName) {
-        super(groupName);
-    }
+	/**
+	 * Create a new group marker with the given name.
+	 * The group name must not be <code>null</code> or the empty string.
+	 * The group name is also used as the item id.
+	 *
+	 * @param groupName the name of the group
+	 */
+	public GroupMarker(String groupName) {
+		super(groupName);
+	}
 
-    /**
-     * The <code>GroupMarker</code> implementation of this method
-     * returns <code>false</code> since group markers are always invisible.
-     */
-    @Override
+	/**
+	 * The <code>GroupMarker</code> implementation of this method
+	 * returns <code>false</code> since group markers are always invisible.
+	 */
+	@Override
 	public boolean isVisible() {
-        return false;
-    }
+		return false;
+	}
 }

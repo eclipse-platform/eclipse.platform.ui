@@ -25,10 +25,10 @@ import org.eclipse.core.runtime.Assert;
  */
 public class ColumnPixelData extends ColumnLayoutData {
 
-   /**
-     * The column's width in pixels.
-     */
-    public int width;
+	/**
+	 * The column's width in pixels.
+	 */
+	public int width;
 
 	/**
 	 * Whether to allocate extra width to the column to account for
@@ -42,27 +42,27 @@ public class ColumnPixelData extends ColumnLayoutData {
 	 */
 	public boolean addTrim = false;
 
-    /**
-     * Creates a resizable column width of the given number of pixels.
-     *
-     * @param widthInPixels the width of column in pixels
-     */
-    public ColumnPixelData(int widthInPixels) {
-        this(widthInPixels, true, false);
-    }
+	/**
+	 * Creates a resizable column width of the given number of pixels.
+	 *
+	 * @param widthInPixels the width of column in pixels
+	 */
+	public ColumnPixelData(int widthInPixels) {
+		this(widthInPixels, true, false);
+	}
 
-    /**
-     * Creates a column width of the given number of pixels.
-     *
-     * @param widthInPixels the width of column in pixels
-     * @param resizable <code>true</code> if the column is resizable,
-     *   and <code>false</code> if size of the column is fixed
-     */
-    public ColumnPixelData(int widthInPixels, boolean resizable) {
+	/**
+	 * Creates a column width of the given number of pixels.
+	 *
+	 * @param widthInPixels the width of column in pixels
+	 * @param resizable <code>true</code> if the column is resizable,
+	 *   and <code>false</code> if size of the column is fixed
+	 */
+	public ColumnPixelData(int widthInPixels, boolean resizable) {
 		this(widthInPixels, resizable, false);
-    }
+	}
 
-    /**
+	/**
 	 * Creates a column width of the given number of pixels.
 	 *
 	 * @param widthInPixels
@@ -76,10 +76,10 @@ public class ColumnPixelData extends ColumnLayoutData {
 	 *            <code>false</code> to use the given width exactly
 	 * @since 3.1
 	 */
-    public ColumnPixelData(int widthInPixels, boolean resizable, boolean addTrim) {
-        super(resizable);
-        Assert.isTrue(widthInPixels >= 0);
-        this.width = widthInPixels;
+	public ColumnPixelData(int widthInPixels, boolean resizable, boolean addTrim) {
+		super(resizable);
+		Assert.isTrue(widthInPixels >= 0);
+		this.width = widthInPixels;
 		this.addTrim = addTrim;
-    }
+	}
 }

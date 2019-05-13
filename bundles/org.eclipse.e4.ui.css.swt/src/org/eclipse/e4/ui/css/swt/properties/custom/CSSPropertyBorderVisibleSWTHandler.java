@@ -24,7 +24,7 @@ public class CSSPropertyBorderVisibleSWTHandler extends AbstractCSSPropertySWTHa
 
 	@Override
 	public void applyCSSProperty(Control control, String property,
-		    CSSValue value, String pseudo, CSSEngine engine) throws Exception {
+			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		boolean isBorderVisible = (Boolean)engine.convert(value, Boolean.class, null);
 		if (control instanceof CTabFolder) {
 			CTabFolder folder = (CTabFolder) control;

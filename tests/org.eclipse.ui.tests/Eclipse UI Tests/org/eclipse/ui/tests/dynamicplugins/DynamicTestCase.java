@@ -89,7 +89,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 			while (!hasAddedEventPropagated() && !timeToFail) {
 				processEvents();
 				timeToFail = System.currentTimeMillis() > potentialEndTime;
-     			Thread.yield();
+				Thread.yield();
 			}
 			assertTrue("Expected ADDED event did not arrive in time", hasAddedEventPropagated());
 			try {

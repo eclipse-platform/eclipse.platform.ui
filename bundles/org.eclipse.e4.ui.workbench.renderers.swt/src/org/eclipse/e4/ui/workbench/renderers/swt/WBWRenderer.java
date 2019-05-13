@@ -732,7 +732,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 		});
 
-		 try {
+		try {
 			// Apply the correct shell state
 			if (shellME.getTags().contains(ShellMaximizedTag)) {
 				shell.setMaximized(true);
@@ -742,13 +742,13 @@ public class WBWRenderer extends SWTPartRenderer {
 
 			shell.layout(true);
 			forceLayout(shell);
-		 } finally {
+		} finally {
 			if (shellME.isVisible()) {
 				shell.open();
 			} else {
 				shell.setVisible(false);
 			}
-		 }
+		}
 	}
 
 	private Object[] promptForSave(Shell parentShell,

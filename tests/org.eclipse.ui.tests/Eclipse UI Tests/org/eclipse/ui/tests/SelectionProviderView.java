@@ -32,75 +32,75 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class SelectionProviderView extends ViewPart implements
-        ISelectionProvider {
-    public static final String ID = "org.eclipse.ui.tests.SelectionProviderView";
+		ISelectionProvider {
+	public static final String ID = "org.eclipse.ui.tests.SelectionProviderView";
 
-    public static final String ID_2 = "org.eclipse.ui.tests.SelectionProviderView2";
+	public static final String ID_2 = "org.eclipse.ui.tests.SelectionProviderView2";
 
 	private ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
 
-    private ISelection lastSelection = StructuredSelection.EMPTY;
+	private ISelection lastSelection = StructuredSelection.EMPTY;
 
-    private Text text;
+	private Text text;
 
-    public SelectionProviderView() {
-        super();
-    }
+	public SelectionProviderView() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
-        text.setFocus();
-    }
+		text.setFocus();
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
 		text = new Text(parent, SWT.WRAP);
-        text.setLayoutData(new GridData(GridData.FILL_BOTH));
-    }
+		text.setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
 
-    @Override
+	@Override
 	public void init(IViewSite site) throws PartInitException {
-        site.setSelectionProvider(this);
-        super.init(site);
-    }
+		site.setSelectionProvider(this);
+		super.init(site);
+	}
 
-    @Override
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-        selectionChangedListeners.add(listener);
-    }
+		selectionChangedListeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public ISelection getSelection() {
-        return lastSelection;
-    }
+		return lastSelection;
+	}
 
-    @Override
+	@Override
 	public void removeSelectionChangedListener(
-            ISelectionChangedListener listener) {
-        selectionChangedListeners.remove(listener);
-    }
+			ISelectionChangedListener listener) {
+		selectionChangedListeners.remove(listener);
+	}
 
-    /**
-     * Sets the selection to a particular object.
-     */
-    public void setSelection(Object obj) {
-        setSelection(new StructuredSelection(obj));
-    }
+	/**
+	 * Sets the selection to a particular object.
+	 */
+	public void setSelection(Object obj) {
+		setSelection(new StructuredSelection(obj));
+	}
 
-    @Override
+	@Override
 	public void setSelection(ISelection selection) {
-        lastSelection = selection;
+		lastSelection = selection;
 
-        // create an event
-        SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
+		// create an event
+		SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
 
-        // write text
-        text.setText(selection.toString());
+		// write text
+		text.setText(selection.toString());
 
-        // fire the event
-        Object[] listeners = selectionChangedListeners.getListeners();
-        for (Object listener : listeners) {
-            ((ISelectionChangedListener) listener).selectionChanged(event);
-        }
-    }
+		// fire the event
+		Object[] listeners = selectionChangedListeners.getListeners();
+		for (Object listener : listeners) {
+			((ISelectionChangedListener) listener).selectionChanged(event);
+		}
+	}
 }

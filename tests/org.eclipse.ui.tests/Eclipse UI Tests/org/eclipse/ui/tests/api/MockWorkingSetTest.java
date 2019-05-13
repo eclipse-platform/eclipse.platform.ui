@@ -23,49 +23,49 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  * Tests the WorkingSetDescriptor and WorkingSetRegistry.
  */
 public class MockWorkingSetTest extends TestCase {
-    static final String WORKING_SET_ID = "org.eclipse.ui.tests.api.MockWorkingSet";
+	static final String WORKING_SET_ID = "org.eclipse.ui.tests.api.MockWorkingSet";
 
-    static final String WORKING_SET_NAME = "Mock Working Set";
+	static final String WORKING_SET_NAME = "Mock Working Set";
 
-    static final String WORKING_SET_PAGE_CLASS_NAME = "org.eclipse.ui.tests.api.MockWorkingSetPage";
+	static final String WORKING_SET_PAGE_CLASS_NAME = "org.eclipse.ui.tests.api.MockWorkingSetPage";
 
-    WorkingSetRegistry fRegistry;
+	WorkingSetRegistry fRegistry;
 
-    public MockWorkingSetTest(String name) {
-        super(name);
-    }
+	public MockWorkingSetTest(String name) {
+		super(name);
+	}
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    @Override
+	/**
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	@Override
 	protected void setUp() throws Exception {
-        super.setUp();
-        fRegistry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-    }
+		super.setUp();
+		fRegistry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+	}
 
-    public void testWorkingSetDescriptor() throws Throwable {
-        WorkingSetDescriptor workingSetDescriptor = fRegistry
-                .getWorkingSetDescriptor(WORKING_SET_ID);
+	public void testWorkingSetDescriptor() throws Throwable {
+		WorkingSetDescriptor workingSetDescriptor = fRegistry
+				.getWorkingSetDescriptor(WORKING_SET_ID);
 
-        assertNotNull(workingSetDescriptor.getIcon());
-        assertEquals(WORKING_SET_ID, workingSetDescriptor.getId());
-        assertEquals(WORKING_SET_NAME, workingSetDescriptor.getName());
-        assertEquals(WORKING_SET_PAGE_CLASS_NAME, workingSetDescriptor
-                .getPageClassName());
-    }
+		assertNotNull(workingSetDescriptor.getIcon());
+		assertEquals(WORKING_SET_ID, workingSetDescriptor.getId());
+		assertEquals(WORKING_SET_NAME, workingSetDescriptor.getName());
+		assertEquals(WORKING_SET_PAGE_CLASS_NAME, workingSetDescriptor
+				.getPageClassName());
+	}
 
-    public void testWorkingSetRegistry() throws Throwable {
-        WorkingSetDescriptor[] workingSetDescriptors = fRegistry
-                .getWorkingSetDescriptors();
-        /*
-         * Should have at least resourceWorkingSetPage and MockWorkingSet
-         */
-        assertTrue(workingSetDescriptors.length >= 2);
+	public void testWorkingSetRegistry() throws Throwable {
+		WorkingSetDescriptor[] workingSetDescriptors = fRegistry
+				.getWorkingSetDescriptors();
+		/*
+		 * Should have at least resourceWorkingSetPage and MockWorkingSet
+		 */
+		assertTrue(workingSetDescriptors.length >= 2);
 
-        assertEquals(Class.forName(WORKING_SET_PAGE_CLASS_NAME), fRegistry
-                .getWorkingSetPage(WORKING_SET_ID).getClass());
-    }
+		assertEquals(Class.forName(WORKING_SET_PAGE_CLASS_NAME), fRegistry
+				.getWorkingSetPage(WORKING_SET_ID).getClass());
+	}
 
 }
 

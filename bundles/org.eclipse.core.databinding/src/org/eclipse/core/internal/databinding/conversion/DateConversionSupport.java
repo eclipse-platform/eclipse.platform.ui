@@ -50,8 +50,8 @@ public abstract class DateConversionSupport {
 			DateFormat.getDateTimeInstance(DATE_FORMAT, DateFormat.SHORT),
 			DateFormat.getDateInstance(DATE_FORMAT),
 			DateFormat.getTimeInstance(DateFormat.SHORT),
-            DateFormat.getDateTimeInstance(DATE_FORMAT,DateFormat.MEDIUM),
-            DateFormat.getTimeInstance(DateFormat.MEDIUM)
+			DateFormat.getDateTimeInstance(DATE_FORMAT,DateFormat.MEDIUM),
+			DateFormat.getTimeInstance(DateFormat.MEDIUM)
 	};
 
 	/**

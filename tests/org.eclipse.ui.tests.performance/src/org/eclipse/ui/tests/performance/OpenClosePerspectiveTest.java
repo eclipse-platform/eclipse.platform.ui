@@ -39,76 +39,76 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 
-    private String id;
+	private String id;
 
-    /**
-     * @param tagging
-     * @param testName
-     */
-    public OpenClosePerspectiveTest(String id, int tagging) {
-        super("testOpenClosePerspectives:" + id, tagging);
-        this.id = id;
-    }
+	/**
+	 * @param tagging
+	 * @param testName
+	 */
+	public OpenClosePerspectiveTest(String id, int tagging) {
+		super("testOpenClosePerspectives:" + id, tagging);
+		this.id = id;
+	}
 
-    @Override
+	@Override
 	protected void runTest() throws Throwable {
-        // Get the two perspectives to switch between.
-        final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
-                .getPerspectiveRegistry();
-        final IPerspectiveDescriptor perspective1 = registry
-                .findPerspectiveWithId(id);
+		// Get the two perspectives to switch between.
+		final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry();
+		final IPerspectiveDescriptor perspective1 = registry
+				.findPerspectiveWithId(id);
 
-        // Don't fail if we reference an unknown perspective ID. This can be
-        // a normal occurrance since the test suites reference JDT perspectives, which
-        // might not exist.
-        if (perspective1 == null) {
-            System.out.println("Unknown perspective id: " + id);
-            return;
-        }
+		// Don't fail if we reference an unknown perspective ID. This can be
+		// a normal occurrance since the test suites reference JDT perspectives, which
+		// might not exist.
+		if (perspective1 == null) {
+			System.out.println("Unknown perspective id: " + id);
+			return;
+		}
 
-        // create a nice clean window.
-        IWorkbenchWindow window = openTestWindow();
-        final IWorkbenchPage activePage = window.getActivePage();
+		// create a nice clean window.
+		IWorkbenchWindow window = openTestWindow();
+		final IWorkbenchPage activePage = window.getActivePage();
 
-        //causes creation of all views
-        activePage.setPerspective(perspective1);
-        IViewReference [] refs = activePage.getViewReferences();
-        //get the IDs now - after we close hte perspective the view refs will be partiall disposed and their IDs will be null
-        String [] ids = new String[refs.length];
-        for (int i = 0; i < refs.length; i++) {
-            ids[i] = refs[i].getId();
-        }
-        closePerspective(activePage);
-        //populate the empty perspective with all view that will be shown in the test view
-        for (int i = 0; i < ids.length; i++) {
-            activePage.showView(ids[i]);
-        }
+		//causes creation of all views
+		activePage.setPerspective(perspective1);
+		IViewReference [] refs = activePage.getViewReferences();
+		//get the IDs now - after we close hte perspective the view refs will be partiall disposed and their IDs will be null
+		String [] ids = new String[refs.length];
+		for (int i = 0; i < refs.length; i++) {
+			ids[i] = refs[i].getId();
+		}
+		closePerspective(activePage);
+		//populate the empty perspective with all view that will be shown in the test view
+		for (int i = 0; i < ids.length; i++) {
+			activePage.showView(ids[i]);
+		}
 
-        tagIfNecessary("UI - Open/Close " + perspective1.getLabel() + " Perspective", Dimension.ELAPSED_PROCESS);
+		tagIfNecessary("UI - Open/Close " + perspective1.getLabel() + " Perspective", Dimension.ELAPSED_PROCESS);
 
-        exercise(new TestRunnable() {
-            @Override
+		exercise(new TestRunnable() {
+			@Override
 			public void run() throws Exception {
-                processEvents();
-                EditorTestHelper.calmDown(500, 30000, 500);
+				processEvents();
+				EditorTestHelper.calmDown(500, 30000, 500);
 
-                startMeasuring();
-                activePage.setPerspective(perspective1);
-                processEvents();
-                closePerspective(activePage);
-                processEvents();
-                stopMeasuring();
-            }
-        });
+				startMeasuring();
+				activePage.setPerspective(perspective1);
+				processEvents();
+				closePerspective(activePage);
+				processEvents();
+				stopMeasuring();
+			}
+		});
 
-        commitMeasurements();
-        assertPerformance();
-    }
+		commitMeasurements();
+		assertPerformance();
+	}
 
-    /**
-     * @param activePage
-     */
-    private void closePerspective(IWorkbenchPage activePage) {
+	/**
+	 * @param activePage
+	 */
+	private void closePerspective(IWorkbenchPage activePage) {
 		IPerspectiveDescriptor persp = activePage.getPerspective();
 
 		ICommandService commandService = fWorkbench

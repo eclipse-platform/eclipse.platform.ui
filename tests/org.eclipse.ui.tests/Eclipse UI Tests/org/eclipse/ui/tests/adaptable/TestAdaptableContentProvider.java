@@ -31,172 +31,172 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * adapter registered.
  */
 public class TestAdaptableContentProvider implements ITreeContentProvider,
-        IResourceChangeListener {
-    protected Viewer viewer;
+		IResourceChangeListener {
+	protected Viewer viewer;
 
-    @Override
+	@Override
 	public void dispose() {
-        if (viewer != null) {
-            Object obj = viewer.getInput();
-            if (obj instanceof IWorkspace) {
-                IWorkspace workspace = (IWorkspace) obj;
-                workspace.removeResourceChangeListener(this);
-            } else if (obj instanceof IContainer) {
-                IWorkspace workspace = ((IContainer) obj).getWorkspace();
-                workspace.removeResourceChangeListener(this);
-            }
-        }
-    }
+		if (viewer != null) {
+			Object obj = viewer.getInput();
+			if (obj instanceof IWorkspace) {
+				IWorkspace workspace = (IWorkspace) obj;
+				workspace.removeResourceChangeListener(this);
+			} else if (obj instanceof IContainer) {
+				IWorkspace workspace = ((IContainer) obj).getWorkspace();
+				workspace.removeResourceChangeListener(this);
+			}
+		}
+	}
 
-    /**
-     * Returns the implementation of IWorkbenchAdapter for the given
-     * object.  Returns null if the adapter is not defined or the
-     * object is not adaptable.
-     */
-    protected IWorkbenchAdapter getAdapter(Object o) {
-        return TestAdaptableWorkbenchAdapter.getInstance();
-    }
+	/**
+	 * Returns the implementation of IWorkbenchAdapter for the given
+	 * object.  Returns null if the adapter is not defined or the
+	 * object is not adaptable.
+	 */
+	protected IWorkbenchAdapter getAdapter(Object o) {
+		return TestAdaptableWorkbenchAdapter.getInstance();
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object element) {
-        IWorkbenchAdapter adapter = getAdapter(element);
-        if (adapter != null) {
-            return adapter.getChildren(element);
-        }
-        return new Object[0];
-    }
+		IWorkbenchAdapter adapter = getAdapter(element);
+		if (adapter != null) {
+			return adapter.getChildren(element);
+		}
+		return new Object[0];
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object element) {
-        return getChildren(element);
-    }
+		return getChildren(element);
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {
-        IWorkbenchAdapter adapter = getAdapter(element);
-        if (adapter != null) {
-            return adapter.getParent(element);
-        }
-        return null;
-    }
+		IWorkbenchAdapter adapter = getAdapter(element);
+		if (adapter != null) {
+			return adapter.getParent(element);
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        return getChildren(element).length > 0;
-    }
+		return getChildren(element).length > 0;
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        this.viewer = viewer;
-        IWorkspace oldWorkspace = null;
-        IWorkspace newWorkspace = null;
-        if (oldInput instanceof IWorkspace) {
-            oldWorkspace = (IWorkspace) oldInput;
-        } else if (oldInput instanceof IContainer) {
-            oldWorkspace = ((IContainer) oldInput).getWorkspace();
-        }
-        if (newInput instanceof IWorkspace) {
-            newWorkspace = (IWorkspace) newInput;
-        } else if (newInput instanceof IContainer) {
-            newWorkspace = ((IContainer) newInput).getWorkspace();
-        }
-        if (oldWorkspace != newWorkspace) {
-            if (oldWorkspace != null) {
-                oldWorkspace.removeResourceChangeListener(this);
-            }
-            if (newWorkspace != null) {
-                newWorkspace.addResourceChangeListener(this,
-                        IResourceChangeEvent.POST_CHANGE);
-            }
-        }
-    }
+		this.viewer = viewer;
+		IWorkspace oldWorkspace = null;
+		IWorkspace newWorkspace = null;
+		if (oldInput instanceof IWorkspace) {
+			oldWorkspace = (IWorkspace) oldInput;
+		} else if (oldInput instanceof IContainer) {
+			oldWorkspace = ((IContainer) oldInput).getWorkspace();
+		}
+		if (newInput instanceof IWorkspace) {
+			newWorkspace = (IWorkspace) newInput;
+		} else if (newInput instanceof IContainer) {
+			newWorkspace = ((IContainer) newInput).getWorkspace();
+		}
+		if (oldWorkspace != newWorkspace) {
+			if (oldWorkspace != null) {
+				oldWorkspace.removeResourceChangeListener(this);
+			}
+			if (newWorkspace != null) {
+				newWorkspace.addResourceChangeListener(this,
+						IResourceChangeEvent.POST_CHANGE);
+			}
+		}
+	}
 
-    /**
-     * Process a resource delta.
-     */
-    protected void processDelta(IResourceDelta delta) {
-        // This method runs inside a syncExec.  The widget may have been destroyed
-        // by the time this is run.  Check for this and do nothing if so.
-        Control ctrl = viewer.getControl();
-        if (ctrl == null || ctrl.isDisposed()) {
+	/**
+	 * Process a resource delta.
+	 */
+	protected void processDelta(IResourceDelta delta) {
+		// This method runs inside a syncExec.  The widget may have been destroyed
+		// by the time this is run.  Check for this and do nothing if so.
+		Control ctrl = viewer.getControl();
+		if (ctrl == null || ctrl.isDisposed()) {
 			return;
 		}
 
-        // Get the affected resource
-        IResource resource = delta.getResource();
+		// Get the affected resource
+		IResource resource = delta.getResource();
 
-        // If any children have changed type, just do a full refresh of this parent,
-        // since a simple update on such children won't work,
-        // and trying to map the change to a remove and add is too dicey.
-        // The case is: folder A renamed to existing file B, answering yes to overwrite B.
-        IResourceDelta[] affectedChildren = delta
-                .getAffectedChildren(IResourceDelta.CHANGED);
-        for (IResourceDelta element : affectedChildren) {
-            if ((element.getFlags() & IResourceDelta.TYPE) != 0) {
-                ((StructuredViewer) viewer).refresh(resource);
-                return;
-            }
-        }
+		// If any children have changed type, just do a full refresh of this parent,
+		// since a simple update on such children won't work,
+		// and trying to map the change to a remove and add is too dicey.
+		// The case is: folder A renamed to existing file B, answering yes to overwrite B.
+		IResourceDelta[] affectedChildren = delta
+				.getAffectedChildren(IResourceDelta.CHANGED);
+		for (IResourceDelta element : affectedChildren) {
+			if ((element.getFlags() & IResourceDelta.TYPE) != 0) {
+				((StructuredViewer) viewer).refresh(resource);
+				return;
+			}
+		}
 
-        // Check the flags for changes the Navigator cares about.
-        // See ResourceLabelProvider for the aspects it cares about.
-        // Notice we don't care about F_CONTENT or F_MARKERS currently.
-        int changeFlags = delta.getFlags();
-        if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC)) != 0) {
-            ((StructuredViewer) viewer).update(resource, null);
-        }
+		// Check the flags for changes the Navigator cares about.
+		// See ResourceLabelProvider for the aspects it cares about.
+		// Notice we don't care about F_CONTENT or F_MARKERS currently.
+		int changeFlags = delta.getFlags();
+		if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC)) != 0) {
+			((StructuredViewer) viewer).update(resource, null);
+		}
 
-        // Handle changed children .
-        for (IResourceDelta element : affectedChildren) {
-            processDelta(element);
-        }
+		// Handle changed children .
+		for (IResourceDelta element : affectedChildren) {
+			processDelta(element);
+		}
 
-        // Process removals before additions, to avoid multiple equal elements in the viewer.
+		// Process removals before additions, to avoid multiple equal elements in the viewer.
 
-        // Handle removed children. Issue one update for all removals.
-        affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
-        if (affectedChildren.length > 0) {
-            Object[] affected = new Object[affectedChildren.length];
-            for (int i = 0; i < affectedChildren.length; i++) {
+		// Handle removed children. Issue one update for all removals.
+		affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
+		if (affectedChildren.length > 0) {
+			Object[] affected = new Object[affectedChildren.length];
+			for (int i = 0; i < affectedChildren.length; i++) {
 				affected[i] = affectedChildren[i].getResource();
 			}
-            if (viewer instanceof AbstractTreeViewer) {
-                ((AbstractTreeViewer) viewer).remove(affected);
-            } else {
-                ((StructuredViewer) viewer).refresh(resource);
-            }
-        }
+			if (viewer instanceof AbstractTreeViewer) {
+				((AbstractTreeViewer) viewer).remove(affected);
+			} else {
+				((StructuredViewer) viewer).refresh(resource);
+			}
+		}
 
-        // Handle added children. Issue one update for all insertions.
-        affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
-        if (affectedChildren.length > 0) {
-            Object[] affected = new Object[affectedChildren.length];
-            for (int i = 0; i < affectedChildren.length; i++) {
+		// Handle added children. Issue one update for all insertions.
+		affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
+		if (affectedChildren.length > 0) {
+			Object[] affected = new Object[affectedChildren.length];
+			for (int i = 0; i < affectedChildren.length; i++) {
 				affected[i] = affectedChildren[i].getResource();
 			}
-            if (viewer instanceof AbstractTreeViewer) {
-                ((AbstractTreeViewer) viewer).add(resource, affected);
-            } else {
-                ((StructuredViewer) viewer).refresh(resource);
-            }
-        }
-    }
+			if (viewer instanceof AbstractTreeViewer) {
+				((AbstractTreeViewer) viewer).add(resource, affected);
+			} else {
+				((StructuredViewer) viewer).refresh(resource);
+			}
+		}
+	}
 
-    /**
-     * The workbench has changed.  Process the delta and issue updates to the viewer,
-     * inside the UI thread.
-     *
-     * @see IResourceChangeListener#resourceChanged
-     */
-    @Override
+	/**
+	 * The workbench has changed.  Process the delta and issue updates to the viewer,
+	 * inside the UI thread.
+	 *
+	 * @see IResourceChangeListener#resourceChanged
+	 */
+	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
-        final IResourceDelta delta = event.getDelta();
-        Control ctrl = viewer.getControl();
-        if (ctrl != null && !ctrl.isDisposed()) {
-            // Do a sync exec, not an async exec, since the resource delta
-            // must be traversed in this method.  It is destroyed
-            // when this method returns.
+		final IResourceDelta delta = event.getDelta();
+		Control ctrl = viewer.getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			// Do a sync exec, not an async exec, since the resource delta
+			// must be traversed in this method.  It is destroyed
+			// when this method returns.
 			ctrl.getDisplay().syncExec(() -> processDelta(delta));
-        }
-    }
+		}
+	}
 }

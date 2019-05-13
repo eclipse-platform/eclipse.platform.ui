@@ -40,35 +40,35 @@ public class AbstractVetoableValueTest {
 		RealmTester.setDefault(null);
 	}
 
-    @Test
+	@Test
 	public void testSetValueInvokesDoSetApprovedValue() throws Exception {
-        class VetoableValue extends VetoableValueStub {
-            int count;
-            Object value;
+		class VetoableValue extends VetoableValueStub {
+			int count;
+			Object value;
 
-            VetoableValue(Realm realm) {
-                super(realm);
-            }
+			VetoableValue(Realm realm) {
+				super(realm);
+			}
 
-            @Override
+			@Override
 			protected void doSetApprovedValue(Object value) {
-                count++;
-                this.value = value;
-            }
-        }
+				count++;
+				this.value = value;
+			}
+		}
 
-        Realm realm = new CurrentRealm(true);
-        VetoableValue vetoableValue = new VetoableValue(realm);
-        assertEquals(0, vetoableValue.count);
-        assertEquals(null, vetoableValue.value);
+		Realm realm = new CurrentRealm(true);
+		VetoableValue vetoableValue = new VetoableValue(realm);
+		assertEquals(0, vetoableValue.count);
+		assertEquals(null, vetoableValue.value);
 
-        Object value = new Object();
-        vetoableValue.setValue(value);
-        assertEquals(1, vetoableValue.count);
-        assertEquals(value, vetoableValue.value);
-    }
+		Object value = new Object();
+		vetoableValue.setValue(value);
+		assertEquals(1, vetoableValue.count);
+		assertEquals(value, vetoableValue.value);
+	}
 
-    @Test
+	@Test
 	public void testFireValueChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> {
 			VetoableValueStub observable = new VetoableValueStub();
@@ -76,14 +76,14 @@ public class AbstractVetoableValueTest {
 		});
 	}
 
-    private static class VetoableValueStub extends AbstractVetoableValue {
-    	VetoableValueStub() {
-    		this(Realm.getDefault());
-    	}
+	private static class VetoableValueStub extends AbstractVetoableValue {
+		VetoableValueStub() {
+			this(Realm.getDefault());
+		}
 
-    	VetoableValueStub(Realm realm) {
-    		super(realm);
-    	}
+		VetoableValueStub(Realm realm) {
+			super(realm);
+		}
 
 		@Override
 		protected void doSetApprovedValue(Object value) {
@@ -104,5 +104,5 @@ public class AbstractVetoableValueTest {
 		protected boolean fireValueChanging(ValueDiff diff) {
 			return super.fireValueChanging(diff);
 		}
-    }
+	}
 }

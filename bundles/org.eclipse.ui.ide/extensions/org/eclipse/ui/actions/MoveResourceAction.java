@@ -35,88 +35,88 @@ import org.eclipse.ui.internal.ide.actions.LTKLauncher;
  */
 public class MoveResourceAction extends CopyResourceAction {
 
-    /**
-     * The id of this action.
-     */
-    public static final String ID = PlatformUI.PLUGIN_ID
-            + ".MoveResourceAction"; //$NON-NLS-1$
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = PlatformUI.PLUGIN_ID
+			+ ".MoveResourceAction"; //$NON-NLS-1$
 
-    /**
-     * Keep a list of destinations so that any required update can be done after the
-     * move.
-     */
-    protected List destinations;
+	/**
+	 * Keep a list of destinations so that any required update can be done after the
+	 * move.
+	 */
+	protected List destinations;
 
-    /**
-     * Creates a new action.
-     *
-     * @param shell the shell for any dialogs
-     *
-     * @deprecated {@link #MoveResourceAction(IShellProvider)}
-     */
-    @Deprecated
+	/**
+	 * Creates a new action.
+	 *
+	 * @param shell the shell for any dialogs
+	 *
+	 * @deprecated {@link #MoveResourceAction(IShellProvider)}
+	 */
+	@Deprecated
 	public MoveResourceAction(Shell shell) {
-        super(shell, IDEWorkbenchMessages.MoveResourceAction_text);
-        initAction();
-    }
+		super(shell, IDEWorkbenchMessages.MoveResourceAction_text);
+		initAction();
+	}
 
-    /**
-     * Creates a new action.
-     *
-     * @param provider the shell for any dialogs.
-     * @since 3.4
-     */
-    public MoveResourceAction(IShellProvider provider){
-    	super(provider, IDEWorkbenchMessages.MoveResourceAction_text);
-    	initAction();
-    }
+	/**
+	 * Creates a new action.
+	 *
+	 * @param provider the shell for any dialogs.
+	 * @since 3.4
+	 */
+	public MoveResourceAction(IShellProvider provider){
+		super(provider, IDEWorkbenchMessages.MoveResourceAction_text);
+		initAction();
+	}
 
-    /**
-     * Initializes the workbench
-     */
-    private void initAction(){
-    	setToolTipText(IDEWorkbenchMessages.MoveResourceAction_toolTip);
-        setId(MoveResourceAction.ID);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Initializes the workbench
+	 */
+	private void initAction(){
+		setToolTipText(IDEWorkbenchMessages.MoveResourceAction_toolTip);
+		setId(MoveResourceAction.ID);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.MOVE_RESOURCE_ACTION);
-    }
+	}
 
-    @Override
+	@Override
 	protected CopyFilesAndFoldersOperation createOperation() {
-        return new MoveFilesAndFoldersOperation(getShell());
-    }
+		return new MoveFilesAndFoldersOperation(getShell());
+	}
 
-    /**
-     * Returns the destination resources for the resources that have been moved so far.
-     *
-     * @return list of destination <code>IResource</code>s
-     */
-    protected List getDestinations() {
-        return destinations;
-    }
+	/**
+	 * Returns the destination resources for the resources that have been moved so far.
+	 *
+	 * @return list of destination <code>IResource</code>s
+	 */
+	protected List getDestinations() {
+		return destinations;
+	}
 
-    @Override
+	@Override
 	protected IResource[] getResources(List resourceList) {
-        ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(),
-                IDEWorkbenchMessages.MoveResourceAction_title,
-                IDEWorkbenchMessages.MoveResourceAction_checkMoveMessage);
-        return checker.checkReadOnlyResources(super.getResources(resourceList));
-    }
+		ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(),
+				IDEWorkbenchMessages.MoveResourceAction_title,
+				IDEWorkbenchMessages.MoveResourceAction_checkMoveMessage);
+		return checker.checkReadOnlyResources(super.getResources(resourceList));
+	}
 
-    @Override
+	@Override
 	protected void runOperation(IResource[] resources, IContainer destination) {
-        //Initialize the destinations
-        destinations = new ArrayList();
-        IResource[] copiedResources = operation.copyResources(resources,
-                destination);
+		//Initialize the destinations
+		destinations = new ArrayList();
+		IResource[] copiedResources = operation.copyResources(resources,
+				destination);
 
-        for (IResource copiedResource : copiedResources) {
-            destinations.add(destination.getFullPath().append(
-                    copiedResource.getName()));
-        }
-    }
+		for (IResource copiedResource : copiedResources) {
+			destinations.add(destination.getFullPath().append(
+					copiedResource.getName()));
+		}
+	}
 
-    @Override
+	@Override
 	public void run() {
 		if (LTKLauncher.openMoveWizard(getStructuredSelection())) {
 			return;

@@ -25,24 +25,24 @@ import junit.framework.TestSuite;
  */
 public class PerformanceTestRunner extends TestSuite {
 
-    /**
-     * Returns the suite. This is required to use the JUnit Launcher.
-     */
-    public static Test suite() {
-        return new UIPerformanceTestSetup(new PerformanceTestRunner());
-    }
+	/**
+	 * Returns the suite. This is required to use the JUnit Launcher.
+	 */
+	public static Test suite() {
+		return new UIPerformanceTestSetup(new PerformanceTestRunner());
+	}
 
-    public PerformanceTestRunner() {
-        String className = System.getProperty("org.eclipse.ui.performance.test");
-        try {
+	public PerformanceTestRunner() {
+		String className = System.getProperty("org.eclipse.ui.performance.test");
+		try {
 			@SuppressWarnings("unchecked")
 			Class<? extends TestCase> clazz = (Class<? extends TestCase>) Class.forName(className);
-            if (TestSuite.class.isAssignableFrom(clazz))
+			if (TestSuite.class.isAssignableFrom(clazz))
 				addTest(clazz.newInstance());
-            else
-                addTestSuite(clazz);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+			else
+				addTestSuite(clazz);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

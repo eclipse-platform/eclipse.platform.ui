@@ -49,7 +49,7 @@ public class FormsPerformanceTest extends PerformanceTestCase {
 	@Test
 	public void test_createForm() {
 		tagAsSummary("Create Form", Dimension.ELAPSED_PROCESS);
-	    Performance.getDefault();
+		Performance.getDefault();
 
 		// Warm up.
 
@@ -66,9 +66,9 @@ public class FormsPerformanceTest extends PerformanceTestCase {
 			for (int i = 0; i < 5; i++) {
 				Composite c = new Composite(shell, SWT.H_SCROLL + SWT.V_SCROLL);
 				c.setLayout(new FillLayout());
-                createPartControl(c, toolkit);
-                shell.layout(true);
-                while(display.readAndDispatch()){/*empty*/}
+				createPartControl(c, toolkit);
+				shell.layout(true);
+				while(display.readAndDispatch()){/*empty*/}
 				c.dispose();
 			}
 			shell.dispose();
@@ -84,9 +84,9 @@ public class FormsPerformanceTest extends PerformanceTestCase {
 			for (int i = 0; i < 3; i++) {
 				Composite c = new Composite(shell, SWT.H_SCROLL + SWT.V_SCROLL);
 				c.setLayout(new FillLayout());
-                createPartControl(c, toolkit);
-                shell.layout(true);
-                while(display.readAndDispatch()){/*empty*/}
+				createPartControl(c, toolkit);
+				shell.layout(true);
+				while(display.readAndDispatch()){/*empty*/}
 				c.dispose();
 			}
 			stopMeasuring();

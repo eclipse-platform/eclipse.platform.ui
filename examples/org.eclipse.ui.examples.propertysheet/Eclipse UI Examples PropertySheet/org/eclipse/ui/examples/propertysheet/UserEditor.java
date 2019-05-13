@@ -25,50 +25,50 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  * This class implements the User editor.
  */
 public class UserEditor extends TextEditor {
-    private ContentOutlinePage userContentOutline;
+	private ContentOutlinePage userContentOutline;
 
-    /**
-     * UserEditor default Constructor
-     */
-    public UserEditor() {
-        super();
-    }
+	/**
+	 * UserEditor default Constructor
+	 */
+	public UserEditor() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        super.createPartControl(parent);
-        getSourceViewer().setDocument(
-                new Document(MessageUtil.getString("Editor_instructions"))); //$NON-NLS-1$
-    }
+		super.createPartControl(parent);
+		getSourceViewer().setDocument(
+				new Document(MessageUtil.getString("Editor_instructions"))); //$NON-NLS-1$
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
+	@SuppressWarnings("unchecked")
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter.equals(IContentOutlinePage.class)) {
-            return (T) getContentOutline();
-        }
-        if (adapter.equals(IPropertySheetPage.class)) {
-            return (T) getPropertySheet();
-        }
-        return super.getAdapter(adapter);
-    }
+		if (adapter.equals(IContentOutlinePage.class)) {
+			return (T) getContentOutline();
+		}
+		if (adapter.equals(IPropertySheetPage.class)) {
+			return (T) getPropertySheet();
+		}
+		return super.getAdapter(adapter);
+	}
 
-    /**
-     * Returns the content outline.
-     */
-    protected ContentOutlinePage getContentOutline() {
-        if (userContentOutline == null) {
-            //Create a property outline page using the parsed result of passing in the document provider.
-            userContentOutline = new PropertySheetContentOutlinePage(
-                    new UserFileParser().parse(getDocumentProvider()));
-        }
-        return userContentOutline;
-    }
+	/**
+	 * Returns the content outline.
+	 */
+	protected ContentOutlinePage getContentOutline() {
+		if (userContentOutline == null) {
+			//Create a property outline page using the parsed result of passing in the document provider.
+			userContentOutline = new PropertySheetContentOutlinePage(
+					new UserFileParser().parse(getDocumentProvider()));
+		}
+		return userContentOutline;
+	}
 
-    /**
-     * Returns the property sheet.
-     */
-    protected IPropertySheetPage getPropertySheet() {
-        return new PropertySheetPage();
-    }
+	/**
+	 * Returns the property sheet.
+	 */
+	protected IPropertySheetPage getPropertySheet() {
+		return new PropertySheetPage();
+	}
 }

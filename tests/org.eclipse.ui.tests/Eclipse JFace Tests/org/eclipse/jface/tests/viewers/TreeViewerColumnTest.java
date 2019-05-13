@@ -29,82 +29,82 @@ import org.eclipse.swt.widgets.TreeItem;
 
 public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 
-    public static class TableTreeTestLabelProvider extends TestLabelProvider
-            implements ITableLabelProvider {
-        public boolean fExtended = false;
+	public static class TableTreeTestLabelProvider extends TestLabelProvider
+			implements ITableLabelProvider {
+		public boolean fExtended = false;
 
-        @Override
+		@Override
 		public String getText(Object element) {
-            if (fExtended) {
+			if (fExtended) {
 				return providedString((String) element);
 			}
 
-            return element.toString();
-        }
+			return element.toString();
+		}
 
-        @Override
+		@Override
 		public String getColumnText(Object element, int index) {
-            if (fExtended) {
+			if (fExtended) {
 				return providedString((TestElement) element);
 			}
-            return element.toString();
-        }
+			return element.toString();
+		}
 
-        @Override
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-            return null;
-        }
-    }
+			return null;
+		}
+	}
 
-    public TreeViewerColumnTest(String name) {
-        super(name);
-    }
+	public TreeViewerColumnTest(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-        TreeViewer viewer = new TreeViewer(parent);
-        viewer.setContentProvider(new TestModelContentProvider());
-        viewer.setLabelProvider(new TableTreeTestLabelProvider());
-        viewer.getTree().setLinesVisible(true);
+		TreeViewer viewer = new TreeViewer(parent);
+		viewer.setContentProvider(new TestModelContentProvider());
+		viewer.setLabelProvider(new TableTreeTestLabelProvider());
+		viewer.getTree().setLinesVisible(true);
 
-        viewer.getTree().setHeaderVisible(true);
-        String headers[] = { "column 1 header", "column 2 header" };
+		viewer.getTree().setHeaderVisible(true);
+		String headers[] = { "column 1 header", "column 2 header" };
 
-        final TreeColumn columns[] = new TreeColumn[headers.length];
+		final TreeColumn columns[] = new TreeColumn[headers.length];
 
-        for (int i = 0; i < headers.length; i++) {
-             TreeColumn tc = new TreeColumn(viewer.getTree(),
-                    SWT.NONE, i);
-            tc.setResizable(true);
-            tc.setText(headers[i]);
-            tc.setWidth(25);
-            columns[i] = tc;
-        }
-        fTreeViewer = viewer;
-        return viewer;
-    }
+		for (int i = 0; i < headers.length; i++) {
+			TreeColumn tc = new TreeColumn(viewer.getTree(),
+					SWT.NONE, i);
+			tc.setResizable(true);
+			tc.setText(headers[i]);
+			tc.setWidth(25);
+			columns[i] = tc;
+		}
+		fTreeViewer = viewer;
+		return viewer;
+	}
 
-    @Override
+	@Override
 	protected int getItemCount() {
-        TestElement first = fRootElement.getFirstChild();
-        TreeItem ti = (TreeItem) fViewer.testFindItem(first);
-         return ti.getParent().getItemCount();
-    }
+		TestElement first = fRootElement.getFirstChild();
+		TreeItem ti = (TreeItem) fViewer.testFindItem(first);
+		return ti.getParent().getItemCount();
+	}
 
-    @Override
+	@Override
 	protected int getItemCount(TestElement element) {
-        TreeItem ti = (TreeItem) fViewer.testFindItem(element);
-        return ti.getItemCount();
-    }
+		TreeItem ti = (TreeItem) fViewer.testFindItem(element);
+		return ti.getItemCount();
+	}
 
-    @Override
+	@Override
 	protected String getItemText(int at) {
-        return ((Tree) fViewer.getControl()).getItems()[at].getText();
-    }
+		return ((Tree) fViewer.getControl()).getItems()[at].getText();
+	}
 
-    public static void main(String args[]) {
-        junit.textui.TestRunner.run(TreeViewerColumnTest.class);
-    }
+	public static void main(String args[]) {
+		junit.textui.TestRunner.run(TreeViewerColumnTest.class);
+	}
 
 	private ViewerColumn getViewerColumn(ColumnViewer viewer, int index) {
 		Method method;
@@ -117,43 +117,43 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 		}
 	}
 
-    public void testViewerColumn() {
-    	assertNull(getViewerColumn((TreeViewer) fViewer, -1));
+	public void testViewerColumn() {
+		assertNull(getViewerColumn((TreeViewer) fViewer, -1));
 		assertNotNull(getViewerColumn((TreeViewer) fViewer, 0));
 		assertNotNull(getViewerColumn((TreeViewer) fViewer, 1));
 		assertNull(getViewerColumn((TreeViewer) fViewer, 2));
-    }
+	}
 
-    @Override
+	@Override
 	public void testLabelProvider() {
-        TreeViewer viewer = (TreeViewer) fViewer;
-        TableTreeTestLabelProvider provider = (TableTreeTestLabelProvider) viewer
-                .getLabelProvider();
-        provider.fExtended = true;
-        // BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
-        fViewer.refresh();
-        TestElement first = fRootElement.getFirstChild();
-        String newLabel = providedString(first);
-        assertEquals("rendered label", newLabel, getItemText(0));
-        provider.fExtended = false;
-        // BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
-        fViewer.refresh();
-    }
+		TreeViewer viewer = (TreeViewer) fViewer;
+		TableTreeTestLabelProvider provider = (TableTreeTestLabelProvider) viewer
+				.getLabelProvider();
+		provider.fExtended = true;
+		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
+		fViewer.refresh();
+		TestElement first = fRootElement.getFirstChild();
+		String newLabel = providedString(first);
+		assertEquals("rendered label", newLabel, getItemText(0));
+		provider.fExtended = false;
+		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
+		fViewer.refresh();
+	}
 
-    @Override
+	@Override
 	public void testLabelProviderStateChange() {
-        TreeViewer viewer = (TreeViewer) fViewer;
-        TableTreeTestLabelProvider provider = (TableTreeTestLabelProvider) viewer
-                .getLabelProvider();
-        provider.fExtended = true;
-        provider.setSuffix("added suffix");
-        // BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
-        fViewer.refresh();
-        TestElement first = fRootElement.getFirstChild();
-        String newLabel = providedString(first);
-        assertEquals("rendered label", newLabel, getItemText(0));
-        provider.fExtended = false;
-        // BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
-        fViewer.refresh();
-    }
+		TreeViewer viewer = (TreeViewer) fViewer;
+		TableTreeTestLabelProvider provider = (TableTreeTestLabelProvider) viewer
+				.getLabelProvider();
+		provider.fExtended = true;
+		provider.setSuffix("added suffix");
+		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
+		fViewer.refresh();
+		TestElement first = fRootElement.getFirstChild();
+		String newLabel = providedString(first);
+		assertEquals("rendered label", newLabel, getItemText(0));
+		provider.fExtended = false;
+		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
+		fViewer.refresh();
+	}
 }

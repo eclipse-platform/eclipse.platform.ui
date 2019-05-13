@@ -38,65 +38,65 @@ import org.junit.Test;
 
 public class CustomScenarios extends ScenariosTestCase {
 
-    @Before
+	@Before
 	public void setUp() throws Exception {
-        super.setUp();
-        // do any setup work here
-    }
+		super.setUp();
+		// do any setup work here
+	}
 
-    @After
+	@After
 	public void tearDown() throws Exception {
-        // do any teardown work here
-        super.tearDown();
-    }
+		// do any teardown work here
+		super.tearDown();
+	}
 
-    @Test
+	@Test
 	public void testScenario01() {
 
-        // Binding the name property of an Adventure object to the contents of
-        // Text controls, no conversion, no validation.
+		// Binding the name property of an Adventure object to the contents of
+		// Text controls, no conversion, no validation.
 
-        Adventure adventure = SampleData.WINTER_HOLIDAY;
-        Text text = new Text(getComposite(), SWT.BORDER);
+		Adventure adventure = SampleData.WINTER_HOLIDAY;
+		Text text = new Text(getComposite(), SWT.BORDER);
 
-        IObservableValue descriptionObservable = BeansObservables.observeValue(adventure, "description");
-        IObservableValue nameObservable = BeansObservables.observeValue(adventure, "name");
-        AggregateObservableValue customObservable_comma = new AggregateObservableValue(new IObservableValue[] {
-                descriptionObservable, nameObservable }, ",");
+		IObservableValue descriptionObservable = BeansObservables.observeValue(adventure, "description");
+		IObservableValue nameObservable = BeansObservables.observeValue(adventure, "name");
+		AggregateObservableValue customObservable_comma = new AggregateObservableValue(new IObservableValue[] {
+				descriptionObservable, nameObservable }, ",");
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), customObservable_comma);
-        // spinEventLoop(1);
-        // Make sure that the description on the model match the widget
-        assertEquals(adventure.getDescription() + "," + adventure.getName(), text.getText());
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), customObservable_comma);
+		// spinEventLoop(1);
+		// Make sure that the description on the model match the widget
+		assertEquals(adventure.getDescription() + "," + adventure.getName(), text.getText());
 
-        // Change the widget to newDescription,newName and ensure the model is
-        // updated
-        text.setText("newDescription,newName");
-        assertEquals("newDescription", adventure.getDescription());
-        assertEquals("newName", adventure.getName());
+		// Change the widget to newDescription,newName and ensure the model is
+		// updated
+		text.setText("newDescription,newName");
+		assertEquals("newDescription", adventure.getDescription());
+		assertEquals("newName", adventure.getName());
 
-        // Change the model to newDescription_0 and newName_0 and ensure the GUI
-        // is updated
-        adventure.setDescription("newDescription_0");
-        adventure.setName("newName_0");
-        assertEquals("newDescription_0,newName_0", text.getText());
+		// Change the model to newDescription_0 and newName_0 and ensure the GUI
+		// is updated
+		adventure.setDescription("newDescription_0");
+		adventure.setName("newName_0");
+		assertEquals("newDescription_0,newName_0", text.getText());
 
-        // Change text to newDescription_1 with no comma and ensure the model is
-        // updated correctly with no name
-        text.setText("newDescription_1");
-        assertEquals("newDescription_1", adventure.getDescription());
-        assertEquals(null, adventure.getName());
+		// Change text to newDescription_1 with no comma and ensure the model is
+		// updated correctly with no name
+		text.setText("newDescription_1");
+		assertEquals("newDescription_1", adventure.getDescription());
+		assertEquals(null, adventure.getName());
 
-        // Change text to newName with a preceeding comma and ensure the model
-        // is updated correctly with no description
-        // TODO - Get this test working + Add the one where we have two
-        // aggregates and update one and
-        // check that the other is updated - currently this fails on the GUI -
-        // JRW
-        // text.setText(",newName_1");
-        // assertEquals(null, adventure.getDescription());
-        // assertEquals("newName_1", adventure.getName());
+		// Change text to newName with a preceeding comma and ensure the model
+		// is updated correctly with no description
+		// TODO - Get this test working + Add the one where we have two
+		// aggregates and update one and
+		// check that the other is updated - currently this fails on the GUI -
+		// JRW
+		// text.setText(",newName_1");
+		// assertEquals(null, adventure.getDescription());
+		// assertEquals("newName_1", adventure.getName());
 
-    }
+	}
 
 }

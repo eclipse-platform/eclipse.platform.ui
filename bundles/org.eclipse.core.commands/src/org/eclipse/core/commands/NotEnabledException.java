@@ -25,20 +25,20 @@ import org.eclipse.core.commands.common.CommandException;
  */
 public final class NotEnabledException extends CommandException {
 
-    /**
-     * Generated serial version UID for this class.
-     *
-     * @since 3.1
-     */
-    private static final long serialVersionUID = 3257572788998124596L;
+	/**
+	 * Generated serial version UID for this class.
+	 *
+	 * @since 3.1
+	 */
+	private static final long serialVersionUID = 3257572788998124596L;
 
-    /**
-     * Creates a new instance of this class with the specified detail message.
-     *
-     * @param s
-     *            the detail message; may be <code>null</code>.
-     */
-    public NotEnabledException(final String s) {
-        super(s);
-    }
+	/**
+	 * Creates a new instance of this class with the specified detail message.
+	 *
+	 * @param s
+	 *            the detail message; may be <code>null</code>.
+	 */
+	public NotEnabledException(final String s) {
+		super(s);
+	}
 }

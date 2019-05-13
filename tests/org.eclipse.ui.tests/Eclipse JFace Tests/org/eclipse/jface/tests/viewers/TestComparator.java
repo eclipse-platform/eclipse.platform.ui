@@ -20,12 +20,12 @@ import java.util.Comparator;
  */
 public class TestComparator implements Comparator<Object> {
 
-    public volatile int comparisons = 0;
+	public volatile int comparisons = 0;
 
-    @Override
+	@Override
 	public int compare(Object arg0, Object arg1) {
-        comparisons++;
+		comparisons++;
 
-        return (arg0.toString()).compareTo(arg1.toString());
-    }
+		return (arg0.toString()).compareTo(arg1.toString());
+	}
 }

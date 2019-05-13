@@ -24,38 +24,38 @@ import org.eclipse.ui.tests.api.MockPart;
  */
 public class MockIntroPart extends MockPart implements IIntroPart {
 
-    private IIntroSite site;
+	private IIntroSite site;
 
-    public MockIntroPart() {
-        super();
-    }
+	public MockIntroPart() {
+		super();
+	}
 
-    @Override
+	@Override
 	public IIntroSite getIntroSite() {
-        return site;
-    }
+		return site;
+	}
 
-    @Override
+	@Override
 	public void init(IIntroSite site, IMemento memento) {
-        setSite(site);
-        callTrace.add("init");
-    }
+		setSite(site);
+		callTrace.add("init");
+	}
 
-    /**
-     * @param site
-     */
-    private void setSite(IIntroSite site) {
-        this.site = site;
-    }
+	/**
+	 * @param site
+	 */
+	private void setSite(IIntroSite site) {
+		this.site = site;
+	}
 
 	@Override
 	public void saveState(IMemento memento) {
-    }
+	}
 
 	@Override
 	public void standbyStateChanged(boolean standby) {
-        callTrace.add("standbyStateChanged");
-    }
+		callTrace.add("standbyStateChanged");
+	}
 
 	@Override
 	public String getTitle() {

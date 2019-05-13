@@ -51,166 +51,166 @@ import org.eclipse.ui.progress.IProgressService;
  * of projects referenced by a given project.
  */
 public class ProjectReferencePage extends PropertyPage {
-    private IProject project;
+	private IProject project;
 
-    private boolean modified = false;
+	private boolean modified = false;
 
-    //widgets
-    private CheckboxTableViewer listViewer;
+	//widgets
+	private CheckboxTableViewer listViewer;
 
-    /*
-     * @see PreferencePage#createContents
-     */
-    @Override
+	/*
+	 * @see PreferencePage#createContents
+	 */
+	@Override
 	protected Control createContents(Composite parent) {
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-                IIDEHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				IIDEHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
 
-        Composite composite = new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 
-        initialize();
+		initialize();
 
-        createDescriptionLabel(composite);
+		createDescriptionLabel(composite);
 
-        listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP
-                | SWT.BORDER);
+		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP
+				| SWT.BORDER);
 
-        if(!project.isOpen())
-        	listViewer.getControl().setEnabled(false);
+		if(!project.isOpen())
+			listViewer.getControl().setEnabled(false);
 
-        listViewer.setLabelProvider(WorkbenchLabelProvider
-                .getDecoratingWorkbenchLabelProvider());
-        listViewer.setContentProvider(getContentProvider(project));
-        listViewer.setComparator(new ViewerComparator());
-        listViewer.setInput(project.getWorkspace());
-        try {
-            listViewer.setCheckedElements(project.getDescription()
-                    .getReferencedProjects());
-        } catch (CoreException e) {
-            //don't initial-check anything
-        }
+		listViewer.setLabelProvider(WorkbenchLabelProvider
+				.getDecoratingWorkbenchLabelProvider());
+		listViewer.setContentProvider(getContentProvider(project));
+		listViewer.setComparator(new ViewerComparator());
+		listViewer.setInput(project.getWorkspace());
+		try {
+			listViewer.setCheckedElements(project.getDescription()
+					.getReferencedProjects());
+		} catch (CoreException e) {
+			//don't initial-check anything
+		}
 
-        //check for initial modification to avoid work if no changes are made
-        listViewer.addCheckStateListener(event -> modified = true);
+		//check for initial modification to avoid work if no changes are made
+		listViewer.addCheckStateListener(event -> modified = true);
 
-        applyDialogFont(composite);
+		applyDialogFont(composite);
 
-        GridLayoutFactory.fillDefaults().generateLayout(composite);
+		GridLayoutFactory.fillDefaults().generateLayout(composite);
 
-        return composite;
-    }
+		return composite;
+	}
 
-    /**
-     * Returns a content provider for the list dialog. It
-     * will return all projects in the workspace except
-     * the given project, plus any projects referenced
-     * by the given project which do no exist in the
-     * workspace.
-     * @param project the project to provide content for
-     * @return the content provider that shows the project content
-     */
-    protected IStructuredContentProvider getContentProvider(
-            final IProject project) {
-        return new WorkbenchContentProvider() {
-            @Override
+	/**
+	 * Returns a content provider for the list dialog. It
+	 * will return all projects in the workspace except
+	 * the given project, plus any projects referenced
+	 * by the given project which do no exist in the
+	 * workspace.
+	 * @param project the project to provide content for
+	 * @return the content provider that shows the project content
+	 */
+	protected IStructuredContentProvider getContentProvider(
+			final IProject project) {
+		return new WorkbenchContentProvider() {
+			@Override
 			public Object[] getChildren(Object o) {
-                if (!(o instanceof IWorkspace)) {
-                    return new Object[0];
-                }
+				if (!(o instanceof IWorkspace)) {
+					return new Object[0];
+				}
 
-                // Collect all the projects in the workspace except the given project
-                IProject[] projects = ((IWorkspace) o).getRoot().getProjects();
-                ArrayList referenced = new ArrayList(projects.length);
-                boolean found = false;
-                for (IProject currentProject : projects) {
-                    if (!found && currentProject.equals(project)) {
-                        found = true;
-                        continue;
-                    }
-                    referenced.add(currentProject);
-                }
+				// Collect all the projects in the workspace except the given project
+				IProject[] projects = ((IWorkspace) o).getRoot().getProjects();
+				ArrayList referenced = new ArrayList(projects.length);
+				boolean found = false;
+				for (IProject currentProject : projects) {
+					if (!found && currentProject.equals(project)) {
+						found = true;
+						continue;
+					}
+					referenced.add(currentProject);
+				}
 
-                // Add any referenced that do not exist in the workspace currently
-                try {
-                    projects = project.getDescription().getReferencedProjects();
-                    for (int i = 0; i < projects.length; i++) {
-                        if (!referenced.contains(projects[i])) {
+				// Add any referenced that do not exist in the workspace currently
+				try {
+					projects = project.getDescription().getReferencedProjects();
+					for (int i = 0; i < projects.length; i++) {
+						if (!referenced.contains(projects[i])) {
 							referenced.add(projects[i]);
 						}
-                    }
-                } catch (CoreException e) {
-                    //Ignore core exceptions
-                }
+					}
+				} catch (CoreException e) {
+					//Ignore core exceptions
+				}
 
-                return referenced.toArray();
-            }
-        };
-    }
+				return referenced.toArray();
+			}
+		};
+	}
 
-    /**
-     * Handle the exception thrown when saving.
-     * @param e the exception
-     */
-    protected void handle(InvocationTargetException e) {
-        IStatus error;
-        Throwable target = e.getTargetException();
-        if (target instanceof CoreException) {
-            error = ((CoreException) target).getStatus();
-        } else {
-            String msg = target.getMessage();
-            if (msg == null) {
+	/**
+	 * Handle the exception thrown when saving.
+	 * @param e the exception
+	 */
+	protected void handle(InvocationTargetException e) {
+		IStatus error;
+		Throwable target = e.getTargetException();
+		if (target instanceof CoreException) {
+			error = ((CoreException) target).getStatus();
+		} else {
+			String msg = target.getMessage();
+			if (msg == null) {
 				msg = IDEWorkbenchMessages.Internal_error;
 			}
-            error = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-                    1, msg, target);
-        }
-        ErrorDialog.openError(getControl().getShell(), null, null, error);
-    }
+			error = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+					1, msg, target);
+		}
+		ErrorDialog.openError(getControl().getShell(), null, null, error);
+	}
 
-    /**
-     * Initializes a ProjectReferencePage.
-     */
-    private void initialize() {
+	/**
+	 * Initializes a ProjectReferencePage.
+	 */
+	private void initialize() {
 		project = Adapters.adapt(getElement(), IProject.class);
 		if (project == null) {
 			IResource resource = Adapters.adapt(getElement(), IResource.class);
 			Assert.isNotNull(resource, "unable to adapt element to a project"); //$NON-NLS-1$
 			project = resource.getProject();
 		}
-        noDefaultAndApplyButton();
-        setDescription(NLS.bind(IDEWorkbenchMessages.ProjectReferencesPage_label, project.getName()));
-    }
+		noDefaultAndApplyButton();
+		setDescription(NLS.bind(IDEWorkbenchMessages.ProjectReferencesPage_label, project.getName()));
+	}
 
-    /**
-     * @see PreferencePage#performOk
-     */
-    @Override
+	/**
+	 * @see PreferencePage#performOk
+	 */
+	@Override
 	public boolean performOk() {
-        if (!modified) {
+		if (!modified) {
 			return true;
 		}
-        Object[] checked = listViewer.getCheckedElements();
-        final IProject[] refs = new IProject[checked.length];
-        System.arraycopy(checked, 0, refs, 0, checked.length);
-        IRunnableWithProgress runnable = monitor -> {
+		Object[] checked = listViewer.getCheckedElements();
+		final IProject[] refs = new IProject[checked.length];
+		System.arraycopy(checked, 0, refs, 0, checked.length);
+		IRunnableWithProgress runnable = monitor -> {
 
-            try {
+			try {
 		IProjectDescription description = project.getDescription();
 		description.setReferencedProjects(refs);
 		project.setDescription(description, monitor);
-            } catch (CoreException e) {
+			} catch (CoreException e) {
 		throw new InvocationTargetException(e);
-            }
-         };
-        IProgressService service = PlatformUI.getWorkbench().getProgressService();
-        try {
-            service.run(false, false, runnable);
-        } catch (InterruptedException e) {
-            //Ignore interrupted exceptions
-        } catch (InvocationTargetException e) {
-            handle(e);
-            return false;
-        }
-        return true;
-    }
+			}
+		};
+		IProgressService service = PlatformUI.getWorkbench().getProgressService();
+		try {
+			service.run(false, false, runnable);
+		} catch (InterruptedException e) {
+			//Ignore interrupted exceptions
+		} catch (InvocationTargetException e) {
+			handle(e);
+			return false;
+		}
+		return true;
+	}
 }

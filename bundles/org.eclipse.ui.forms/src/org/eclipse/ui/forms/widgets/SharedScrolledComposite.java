@@ -175,7 +175,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		if (clientArea.width == getSize().x) {
 			ScrollBar bar = getVerticalBar();
 			if (bar != null) {
-			    clientArea.width -= bar.getSize().x;
+				clientArea.width -= bar.getSize().x;
 			}
 		}
 

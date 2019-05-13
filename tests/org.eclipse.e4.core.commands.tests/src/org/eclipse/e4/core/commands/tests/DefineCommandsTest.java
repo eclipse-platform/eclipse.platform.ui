@@ -84,7 +84,7 @@ public class DefineCommandsTest {
 	public void testParamizedCommandsSimple() {
 		ECommandService cs = workbenchContext.get(ECommandService.class);
 		IParameter[] parms = new IParameter[1];
-		 parms[0] = new IParameter() {
+		parms[0] = new IParameter() {
 			@Override
 			public String getId() {
 				return "viewId";

@@ -30,6 +30,6 @@ public class FormToolkitTest {
 		FormToolkit toolkit = new FormToolkit(display);
 		toolkit.dispose();
 		toolkit.dispose();
-    }
+	}
 
 }

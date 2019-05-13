@@ -28,129 +28,129 @@ import org.eclipse.swt.widgets.ToolBar;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class SubContributionItem implements IContributionItem {
-    /**
-     * The visibility of the item.
-     */
-    private boolean visible;
+	/**
+	 * The visibility of the item.
+	 */
+	private boolean visible;
 
-    /**
-     * The inner item for this contribution.
-     */
-    private IContributionItem innerItem;
+	/**
+	 * The inner item for this contribution.
+	 */
+	private IContributionItem innerItem;
 
-    /**
-     * Creates a new <code>SubContributionItem</code>.
-     * @param item the contribution item to be wrapped
-     */
-    public SubContributionItem(IContributionItem item) {
-        innerItem = item;
-    }
+	/**
+	 * Creates a new <code>SubContributionItem</code>.
+	 * @param item the contribution item to be wrapped
+	 */
+	public SubContributionItem(IContributionItem item) {
+		innerItem = item;
+	}
 
-    /**
-     * The default implementation of this <code>IContributionItem</code>
-     * delegates to the inner item. Subclasses may override.
-     */
-    @Override
+	/**
+	 * The default implementation of this <code>IContributionItem</code>
+	 * delegates to the inner item. Subclasses may override.
+	 */
+	@Override
 	public void dispose() {
-        innerItem.dispose();
-    }
+		innerItem.dispose();
+	}
 
-    @Override
+	@Override
 	public void fill(Composite parent) {
-        if (visible) {
+		if (visible) {
 			innerItem.fill(parent);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void fill(Menu parent, int index) {
-        if (visible) {
+		if (visible) {
 			innerItem.fill(parent, index);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void fill(ToolBar parent, int index) {
-        if (visible) {
+		if (visible) {
 			innerItem.fill(parent, index);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return innerItem.getId();
-    }
+		return innerItem.getId();
+	}
 
-    /**
-     * Returns the inner contribution item.
-     *
-     * @return the inner contribution item
-     */
-    public IContributionItem getInnerItem() {
-        return innerItem;
-    }
+	/**
+	 * Returns the inner contribution item.
+	 *
+	 * @return the inner contribution item
+	 */
+	public IContributionItem getInnerItem() {
+		return innerItem;
+	}
 
-    @Override
+	@Override
 	public boolean isEnabled() {
-        return innerItem.isEnabled();
-    }
+		return innerItem.isEnabled();
+	}
 
-    @Override
+	@Override
 	public boolean isDirty() {
-        return innerItem.isDirty();
-    }
+		return innerItem.isDirty();
+	}
 
-    @Override
+	@Override
 	public boolean isDynamic() {
-        return innerItem.isDynamic();
-    }
+		return innerItem.isDynamic();
+	}
 
-    @Override
+	@Override
 	public boolean isGroupMarker() {
-        return innerItem.isGroupMarker();
-    }
+		return innerItem.isGroupMarker();
+	}
 
-    @Override
+	@Override
 	public boolean isSeparator() {
-        return innerItem.isSeparator();
-    }
+		return innerItem.isSeparator();
+	}
 
-    @Override
+	@Override
 	public boolean isVisible() {
-        return visible && innerItem.isVisible();
-    }
+		return visible && innerItem.isVisible();
+	}
 
-    @Override
+	@Override
 	public void setParent(IContributionManager parent) {
-        // do nothing, the parent of our inner item
-        // is its SubContributionManager
-    }
+		// do nothing, the parent of our inner item
+		// is its SubContributionManager
+	}
 
-    @Override
+	@Override
 	public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
+		this.visible = visible;
+	}
 
-    @Override
+	@Override
 	public void update() {
-        innerItem.update();
-    }
+		innerItem.update();
+	}
 
-    @Override
+	@Override
 	public void update(String id) {
-        innerItem.update(id);
-    }
+		innerItem.update(id);
+	}
 
-    @Override
+	@Override
 	public void fill(CoolBar parent, int index) {
-        if (visible) {
+		if (visible) {
 			innerItem.fill(parent, index);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void saveWidgetState() {
-    }
+	}
 
 	@Override
 	public String toString() {

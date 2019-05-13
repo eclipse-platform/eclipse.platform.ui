@@ -21,11 +21,11 @@ import org.eclipse.ui.themes.IColorFactory;
  */
 public class TestColorFactory implements IColorFactory {
 
-    public static final RGB RGB = new RGB(91, 92, 93);
+	public static final RGB RGB = new RGB(91, 92, 93);
 
-    @Override
+	@Override
 	public RGB createColor() {
-        return RGB;
-    }
+		return RGB;
+	}
 
 }

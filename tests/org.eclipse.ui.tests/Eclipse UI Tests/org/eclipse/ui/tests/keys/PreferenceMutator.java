@@ -36,50 +36,50 @@ import org.eclipse.core.runtime.Preferences;
  * @since 3.0
  */
 public abstract class PreferenceMutator {
-    /**
-     * Sets a key binding in the currently running Eclipse application. It
-     * accomplishes this by writing out an exported preferences file by hand,
-     * and then importing it back into the application.
-     *
-     * @param commandId
-     *           The command identifier to which the key binding should be
-     *           associated; should not be <code>null</code>.
-     * @param keySequenceText
-     *           The text of the key sequence for this key binding; must not be
-     *           <code>null</code>.
-     * @throws CoreException
-     *            If the exported preferences file is invalid for some reason.
-     * @throws FileNotFoundException
-     *            If the temporary file is removed before it can be read in.
-     *            (Wow)
-     * @throws IOException
-     *            If the creation of or the writing to the temporary file fails
-     *            for some reason.
-     */
-    static final void setKeyBinding(String commandId, String keySequenceText)
-            throws CoreException, FileNotFoundException, IOException {
-        // Set up the preferences.
-        Properties preferences = new Properties();
-        String key = "org.eclipse.ui.workbench/org.eclipse.ui.commands"; //$NON-NLS-1$
-        String value = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<org.eclipse.ui.commands><activeKeyConfiguration/><keyBinding commandId=\"" + commandId + "\" keySequence=\"" + keySequenceText + "\"/></org.eclipse.ui.commands>"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-        preferences.put(key, value);
+	/**
+	 * Sets a key binding in the currently running Eclipse application. It
+	 * accomplishes this by writing out an exported preferences file by hand,
+	 * and then importing it back into the application.
+	 *
+	 * @param commandId
+	 *           The command identifier to which the key binding should be
+	 *           associated; should not be <code>null</code>.
+	 * @param keySequenceText
+	 *           The text of the key sequence for this key binding; must not be
+	 *           <code>null</code>.
+	 * @throws CoreException
+	 *            If the exported preferences file is invalid for some reason.
+	 * @throws FileNotFoundException
+	 *            If the temporary file is removed before it can be read in.
+	 *            (Wow)
+	 * @throws IOException
+	 *            If the creation of or the writing to the temporary file fails
+	 *            for some reason.
+	 */
+	static final void setKeyBinding(String commandId, String keySequenceText)
+			throws CoreException, FileNotFoundException, IOException {
+		// Set up the preferences.
+		Properties preferences = new Properties();
+		String key = "org.eclipse.ui.workbench/org.eclipse.ui.commands"; //$NON-NLS-1$
+		String value = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<org.eclipse.ui.commands><activeKeyConfiguration/><keyBinding commandId=\"" + commandId + "\" keySequence=\"" + keySequenceText + "\"/></org.eclipse.ui.commands>"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		preferences.put(key, value);
 
-        String[] pluginIds = Platform.getExtensionRegistry().getNamespaces();
+		String[] pluginIds = Platform.getExtensionRegistry().getNamespaces();
 		for (String pluginId : pluginIds) {
 			preferences.put(pluginId, new PluginVersionIdentifier(
 					Platform.getBundle(pluginId).getHeaders().get(
 							org.osgi.framework.Constants.BUNDLE_VERSION)));
 		}
 
-        // Export the preferences.
-        File file = File.createTempFile("preferences", ".txt"); //$NON-NLS-1$//$NON-NLS-2$
-        file.deleteOnExit();
+		// Export the preferences.
+		File file = File.createTempFile("preferences", ".txt"); //$NON-NLS-1$//$NON-NLS-2$
+		file.deleteOnExit();
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))) {
 			preferences.store(bos, null);
 		}
 
-        // Attempt to import the key binding.
-        Preferences.importPreferences(new Path(file.getAbsolutePath()));
-    }
+		// Attempt to import the key binding.
+		Preferences.importPreferences(new Path(file.getAbsolutePath()));
+	}
 
 }

@@ -46,9 +46,9 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	private FinishedJobs finishedJobs;
 
 	public GroupInfo(ProgressManager progressManager, FinishedJobs finishedJobs) {
-	    this.progressManager = progressManager;
-	    this.finishedJobs = finishedJobs;
-    }
+		this.progressManager = progressManager;
+		this.finishedJobs = finishedJobs;
+	}
 
 	@Override
 	boolean hasChildren() {

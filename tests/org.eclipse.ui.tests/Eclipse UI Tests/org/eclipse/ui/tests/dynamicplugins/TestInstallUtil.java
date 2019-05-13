@@ -26,51 +26,51 @@ import org.osgi.framework.wiring.FrameworkWiring;
 import junit.framework.TestCase;
 
 public class TestInstallUtil extends TestCase {
-    static BundleContext context;
+	static BundleContext context;
 
-    public static void setContext(BundleContext newContext) {
-        context = newContext;
-    }
+	public static void setContext(BundleContext newContext) {
+		context = newContext;
+	}
 
-    public static Bundle installBundle(String pluginLocation)
-            throws BundleException, IllegalStateException {
-        Bundle target = context.installBundle(pluginLocation);
-        int state = target.getState();
-        if (state != Bundle.INSTALLED) {
-            throw new IllegalStateException("Bundle " + target
-                    + " is in a wrong state: " + state);
-        }
-        refreshPackages(new Bundle[] { target });
-        return target;
-    }
+	public static Bundle installBundle(String pluginLocation)
+			throws BundleException, IllegalStateException {
+		Bundle target = context.installBundle(pluginLocation);
+		int state = target.getState();
+		if (state != Bundle.INSTALLED) {
+			throw new IllegalStateException("Bundle " + target
+					+ " is in a wrong state: " + state);
+		}
+		refreshPackages(new Bundle[] { target });
+		return target;
+	}
 
-    public static void uninstallBundle(Bundle target) throws BundleException {
-        target.uninstall();
-        refreshPackages(null);
-    }
+	public static void uninstallBundle(Bundle target) throws BundleException {
+		target.uninstall();
+		refreshPackages(null);
+	}
 
-    public static void refreshPackages(Bundle[] bundles) {
-        FrameworkWiring wiring = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).adapt(FrameworkWiring.class);
+	public static void refreshPackages(Bundle[] bundles) {
+		FrameworkWiring wiring = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).adapt(FrameworkWiring.class);
 
-        final boolean[] flag = new boolean[] { false };
-        FrameworkListener listener = event -> {
-            if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
-                synchronized (flag) {
-                    flag[0] = true;
-                    flag.notifyAll();
-                }
-            }
-        };
+		final boolean[] flag = new boolean[] { false };
+		FrameworkListener listener = event -> {
+			if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
+				synchronized (flag) {
+					flag[0] = true;
+					flag.notifyAll();
+				}
+			}
+		};
 
-        wiring.refreshBundles(asList(bundles), listener);
+		wiring.refreshBundles(asList(bundles), listener);
 
-        synchronized (flag) {
-            while (!flag[0]) {
-                try {
-                    flag.wait();
-                } catch (InterruptedException e) {
-                }
-            }
-        }
-    }
+		synchronized (flag) {
+			while (!flag[0]) {
+				try {
+					flag.wait();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+	}
 }

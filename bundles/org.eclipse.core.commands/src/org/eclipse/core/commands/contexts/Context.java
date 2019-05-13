@@ -54,226 +54,226 @@ import org.eclipse.core.internal.commands.util.Util;
 @SuppressWarnings("rawtypes")
 public final class Context extends NamedHandleObject implements Comparable {
 
-    /**
-     * The collection of all objects listening to changes on this context. This
-     * value is <code>null</code> if there are no listeners.
-     */
-    private Set<IContextListener> listeners;
+	/**
+	 * The collection of all objects listening to changes on this context. This
+	 * value is <code>null</code> if there are no listeners.
+	 */
+	private Set<IContextListener> listeners;
 
-    /**
-     * The parent identifier for this context. The meaning of a parent is
-     * dependent on the system using contexts. This value can be
-     * <code>null</code> if the context has no parent.
-     */
-    private String parentId;
+	/**
+	 * The parent identifier for this context. The meaning of a parent is
+	 * dependent on the system using contexts. This value can be
+	 * <code>null</code> if the context has no parent.
+	 */
+	private String parentId;
 
-    /**
-     * Constructs a new instance of <code>Context</code>.
-     *
-     * @param id
-     *            The id for this context; must not be <code>null</code>.
-     */
-    Context(final String id) {
-        super(id);
-    }
+	/**
+	 * Constructs a new instance of <code>Context</code>.
+	 *
+	 * @param id
+	 *            The id for this context; must not be <code>null</code>.
+	 */
+	Context(final String id) {
+		super(id);
+	}
 
-    /**
-     * Registers an instance of <code>IContextListener</code> to listen for
-     * changes to properties of this instance.
-     *
-     * @param listener
-     *            the instance to register. Must not be <code>null</code>. If
-     *            an attempt is made to register an instance which is already
-     *            registered with this instance, no operation is performed.
-     */
-    public final void addContextListener(final IContextListener listener) {
-        if (listener == null) {
-            throw new NullPointerException();
-        }
+	/**
+	 * Registers an instance of <code>IContextListener</code> to listen for
+	 * changes to properties of this instance.
+	 *
+	 * @param listener
+	 *            the instance to register. Must not be <code>null</code>. If
+	 *            an attempt is made to register an instance which is already
+	 *            registered with this instance, no operation is performed.
+	 */
+	public final void addContextListener(final IContextListener listener) {
+		if (listener == null) {
+			throw new NullPointerException();
+		}
 
-        if (listeners == null) {
-            listeners = new HashSet<>();
-        }
+		if (listeners == null) {
+			listeners = new HashSet<>();
+		}
 
-        listeners.add(listener);
-    }
+		listeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public final int compareTo(final Object object) {
-        final Context scheme = (Context) object;
-        int compareTo = Util.compare(this.id, scheme.id);
-        if (compareTo == 0) {
-            compareTo = Util.compare(this.name, scheme.name);
-            if (compareTo == 0) {
-                compareTo = Util.compare(this.parentId, scheme.parentId);
-                if (compareTo == 0) {
+		final Context scheme = (Context) object;
+		int compareTo = Util.compare(this.id, scheme.id);
+		if (compareTo == 0) {
+			compareTo = Util.compare(this.name, scheme.name);
+			if (compareTo == 0) {
+				compareTo = Util.compare(this.parentId, scheme.parentId);
+				if (compareTo == 0) {
 					compareTo = Util.compare(this.description, scheme.description);
-                    if (compareTo == 0) {
-                        compareTo = Util.compare(this.defined, scheme.defined);
-                    }
-                }
-            }
-        }
+					if (compareTo == 0) {
+						compareTo = Util.compare(this.defined, scheme.defined);
+					}
+				}
+			}
+		}
 
-        return compareTo;
-    }
+		return compareTo;
+	}
 
-    /**
-     * <p>
-     * Defines this context by giving it a name, and possibly a description and
-     * a parent identifier as well. The defined property automatically becomes
-     * <code>true</code>.
-     * </p>
-     * <p>
-     * Notification is sent to all listeners that something has changed.
-     * </p>
-     *
-     * @param name
-     *            The name of this context; must not be <code>null</code>.
-     * @param description
-     *            The description for this context; may be <code>null</code>.
-     * @param parentId
-     *            The parent identifier for this context; may be
-     *            <code>null</code>.
-     */
+	/**
+	 * <p>
+	 * Defines this context by giving it a name, and possibly a description and
+	 * a parent identifier as well. The defined property automatically becomes
+	 * <code>true</code>.
+	 * </p>
+	 * <p>
+	 * Notification is sent to all listeners that something has changed.
+	 * </p>
+	 *
+	 * @param name
+	 *            The name of this context; must not be <code>null</code>.
+	 * @param description
+	 *            The description for this context; may be <code>null</code>.
+	 * @param parentId
+	 *            The parent identifier for this context; may be
+	 *            <code>null</code>.
+	 */
 	public final void define(final String name, final String description, final String parentId) {
-        if (name == null) {
+		if (name == null) {
 			throw new NullPointerException("The name of a context cannot be null"); //$NON-NLS-1$
-        }
+		}
 
-        final boolean definedChanged = !this.defined;
-        this.defined = true;
+		final boolean definedChanged = !this.defined;
+		this.defined = true;
 
 		final boolean nameChanged = !Objects.equals(this.name, name);
-        this.name = name;
+		this.name = name;
 
 		final boolean descriptionChanged = !Objects.equals(this.description,
-                description);
-        this.description = description;
+				description);
+		this.description = description;
 
 		final boolean parentIdChanged = !Objects.equals(this.parentId, parentId);
-        this.parentId = parentId;
+		this.parentId = parentId;
 
 		fireContextChanged(new ContextEvent(this, definedChanged, nameChanged, descriptionChanged, parentIdChanged));
-    }
+	}
 
-    /**
-     * Notifies all listeners that this context has changed. This sends the
-     * given event to all of the listeners, if any.
-     *
-     * @param event
-     *            The event to send to the listeners; must not be
-     *            <code>null</code>.
-     */
-    private final void fireContextChanged(final ContextEvent event) {
-        if (event == null) {
+	/**
+	 * Notifies all listeners that this context has changed. This sends the
+	 * given event to all of the listeners, if any.
+	 *
+	 * @param event
+	 *            The event to send to the listeners; must not be
+	 *            <code>null</code>.
+	 */
+	private final void fireContextChanged(final ContextEvent event) {
+		if (event == null) {
 			throw new NullPointerException("Cannot send a null event to listeners."); //$NON-NLS-1$
-        }
+		}
 
-        if (listeners == null) {
-            return;
-        }
+		if (listeners == null) {
+			return;
+		}
 
-        final Iterator<IContextListener> listenerItr = listeners.iterator();
-        while (listenerItr.hasNext()) {
+		final Iterator<IContextListener> listenerItr = listeners.iterator();
+		while (listenerItr.hasNext()) {
 			final IContextListener listener = listenerItr.next();
-            listener.contextChanged(event);
-        }
-    }
+			listener.contextChanged(event);
+		}
+	}
 
-    /**
-     * Returns the identifier of the parent of this instance.
-     * <p>
-     * Notification is sent to all registered listeners if this property
-     * changes.
-     * </p>
-     *
-     * @return the identifier of the parent of this instance. May be
-     *         <code>null</code>.
-     * @throws NotDefinedException
-     *             if this instance is not defined.
-     */
-    public final String getParentId() throws NotDefinedException {
-        if (!defined) {
+	/**
+	 * Returns the identifier of the parent of this instance.
+	 * <p>
+	 * Notification is sent to all registered listeners if this property
+	 * changes.
+	 * </p>
+	 *
+	 * @return the identifier of the parent of this instance. May be
+	 *         <code>null</code>.
+	 * @throws NotDefinedException
+	 *             if this instance is not defined.
+	 */
+	public final String getParentId() throws NotDefinedException {
+		if (!defined) {
 			throw new NotDefinedException("Cannot get the parent identifier from an undefined context. " //$NON-NLS-1$
 					+ id);
-        }
+		}
 
-        return parentId;
-    }
+		return parentId;
+	}
 
-    /**
-     * Unregisters an instance of <code>IContextListener</code> listening for
-     * changes to properties of this instance.
-     *
-     * @param contextListener
-     *            the instance to unregister. Must not be <code>null</code>.
-     *            If an attempt is made to unregister an instance which is not
-     *            already registered with this instance, no operation is
-     *            performed.
-     */
+	/**
+	 * Unregisters an instance of <code>IContextListener</code> listening for
+	 * changes to properties of this instance.
+	 *
+	 * @param contextListener
+	 *            the instance to unregister. Must not be <code>null</code>.
+	 *            If an attempt is made to unregister an instance which is not
+	 *            already registered with this instance, no operation is
+	 *            performed.
+	 */
 	public final void removeContextListener(final IContextListener contextListener) {
-        if (contextListener == null) {
-            throw new NullPointerException("Cannot remove a null listener."); //$NON-NLS-1$
-        }
+		if (contextListener == null) {
+			throw new NullPointerException("Cannot remove a null listener."); //$NON-NLS-1$
+		}
 
-        if (listeners == null) {
-            return;
-        }
+		if (listeners == null) {
+			return;
+		}
 
-        listeners.remove(contextListener);
+		listeners.remove(contextListener);
 
-        if (listeners.isEmpty()) {
-            listeners = null;
-        }
-    }
+		if (listeners.isEmpty()) {
+			listeners = null;
+		}
+	}
 
-    /**
-     * The string representation of this context -- for debugging purposes only.
-     * This string should not be shown to an end user.
-     *
-     * @return The string representation; never <code>null</code>.
-     */
-    @Override
+	/**
+	 * The string representation of this context -- for debugging purposes only.
+	 * This string should not be shown to an end user.
+	 *
+	 * @return The string representation; never <code>null</code>.
+	 */
+	@Override
 	public final String toString() {
-        if (string == null) {
+		if (string == null) {
 			final StringBuilder stringBuffer = new StringBuilder("Context("); //$NON-NLS-1$
-            stringBuffer.append(id);
-            stringBuffer.append(',');
-            stringBuffer.append(name);
-            stringBuffer.append(',');
-            stringBuffer.append(description);
-            stringBuffer.append(',');
-            stringBuffer.append(parentId);
-            stringBuffer.append(',');
-            stringBuffer.append(defined);
-            stringBuffer.append(')');
-            string = stringBuffer.toString();
-        }
-        return string;
-    }
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(parentId);
+			stringBuffer.append(',');
+			stringBuffer.append(defined);
+			stringBuffer.append(')');
+			string = stringBuffer.toString();
+		}
+		return string;
+	}
 
-    /**
-     * Makes this context become undefined. This has the side effect of changing
-     * the name, description and parent identifier to <code>null</code>.
-     * Notification is sent to all listeners.
-     */
-    @Override
+	/**
+	 * Makes this context become undefined. This has the side effect of changing
+	 * the name, description and parent identifier to <code>null</code>.
+	 * Notification is sent to all listeners.
+	 */
+	@Override
 	public final void undefine() {
-        string = null;
+		string = null;
 
-        final boolean definedChanged = defined;
-        defined = false;
+		final boolean definedChanged = defined;
+		defined = false;
 
-        final boolean nameChanged = name != null;
-        name = null;
+		final boolean nameChanged = name != null;
+		name = null;
 
-        final boolean descriptionChanged = description != null;
-        description = null;
+		final boolean descriptionChanged = description != null;
+		description = null;
 
-        final boolean parentIdChanged = parentId != null;
-        parentId = null;
+		final boolean parentIdChanged = parentId != null;
+		parentId = null;
 
 		fireContextChanged(new ContextEvent(this, definedChanged, nameChanged, descriptionChanged, parentIdChanged));
-    }
+	}
 }

@@ -28,103 +28,103 @@ import org.eclipse.e4.ui.progress.internal.legacy.PlatformUI;
  */
 class ProgressAnimationProcessor implements IAnimationProcessor {
 
-    AnimationManager manager;
+	AnimationManager manager;
 
-    /**
-     * Create a new instance of the receiver and listen to the animation
-     * manager.
-     *
-     * @param animationManager
-     */
-    ProgressAnimationProcessor(AnimationManager animationManager) {
-        manager = animationManager;
-    }
+	/**
+	 * Create a new instance of the receiver and listen to the animation
+	 * manager.
+	 *
+	 * @param animationManager
+	 */
+	ProgressAnimationProcessor(AnimationManager animationManager) {
+		manager = animationManager;
+	}
 
-    List<AnimationItem> items = Collections.synchronizedList(new ArrayList<AnimationItem>());
+	List<AnimationItem> items = Collections.synchronizedList(new ArrayList<AnimationItem>());
 
-    public void startAnimationLoop(IProgressMonitor monitor) {
+	public void startAnimationLoop(IProgressMonitor monitor) {
 
-        // Create an off-screen image to draw on, and a GC to draw with.
-        // Both are disposed after the animation.
-        if (items.isEmpty()) {
+		// Create an off-screen image to draw on, and a GC to draw with.
+		// Both are disposed after the animation.
+		if (items.isEmpty()) {
 			return;
 		}
-        if (!PlatformUI.isWorkbenchRunning()) {
+		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
 
-        while (manager.isAnimated() && !monitor.isCanceled()) {
-            //Do nothing while animation is happening
-        }
+		while (manager.isAnimated() && !monitor.isCanceled()) {
+			//Do nothing while animation is happening
+		}
 
-        ProgressAnimationItem[] animationItems = getAnimationItems();
-        for (ProgressAnimationItem animationItem : animationItems) {
-            animationItem.animationDone();
-        }
+		ProgressAnimationItem[] animationItems = getAnimationItems();
+		for (ProgressAnimationItem animationItem : animationItems) {
+			animationItem.animationDone();
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	public void addItem(AnimationItem item) {
-        Assert.isTrue(item instanceof ProgressAnimationItem);
-        items.add(item);
-    }
+		Assert.isTrue(item instanceof ProgressAnimationItem);
+		items.add(item);
+	}
 
-    @Override
+	@Override
 	public void removeItem(AnimationItem item) {
-        Assert.isTrue(item instanceof ProgressAnimationItem);
-        items.remove(item);
-    }
+		Assert.isTrue(item instanceof ProgressAnimationItem);
+		items.remove(item);
+	}
 
-    @Override
+	@Override
 	public boolean hasItems() {
-        return items.size() > 0;
-    }
+		return items.size() > 0;
+	}
 
-    public void itemsInactiveRedraw() {
-        //Nothing to do here as SWT handles redraw
+	public void itemsInactiveRedraw() {
+		//Nothing to do here as SWT handles redraw
 
-    }
+	}
 
-    @Override
+	@Override
 	public void animationStarted() {
-        AnimationItem[] animationItems = getAnimationItems();
-        for (AnimationItem animationItem : animationItems) {
-            animationItem.animationStart();
-        }
+		AnimationItem[] animationItems = getAnimationItems();
+		for (AnimationItem animationItem : animationItems) {
+			animationItem.animationStart();
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	public int getPreferredWidth() {
-        return 30;
-    }
+		return 30;
+	}
 
-    /**
-     * Get the animation items currently registered for the receiver.
-     *
-     * @return ProgressAnimationItem[]
-     */
-    private ProgressAnimationItem[] getAnimationItems() {
-        ProgressAnimationItem[] animationItems = new ProgressAnimationItem[items
-                .size()];
-        items.toArray(animationItems);
-        return animationItems;
-    }
+	/**
+	 * Get the animation items currently registered for the receiver.
+	 *
+	 * @return ProgressAnimationItem[]
+	 */
+	private ProgressAnimationItem[] getAnimationItems() {
+		ProgressAnimationItem[] animationItems = new ProgressAnimationItem[items
+				.size()];
+		items.toArray(animationItems);
+		return animationItems;
+	}
 
-    @Override
+	@Override
 	public void animationFinished() {
-        AnimationItem[] animationItems = getAnimationItems();
-        for (AnimationItem animationItem : animationItems) {
-            animationItem.animationDone();
-        }
+		AnimationItem[] animationItems = getAnimationItems();
+		for (AnimationItem animationItem : animationItems) {
+			animationItem.animationDone();
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	public boolean isProcessorJob(Job job) {
-        // We have no jobs
-        return false;
-    }
+		// We have no jobs
+		return false;
+	}
 
 }

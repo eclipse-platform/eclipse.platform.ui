@@ -19,10 +19,10 @@ package org.eclipse.jface.viewers;
  */
 @FunctionalInterface
 public interface IOpenListener {
-    /**
-     * Notifies of an open event.
-     *
-     * @param event event object describing the open event
-     */
-    public void open(OpenEvent event);
+	/**
+	 * Notifies of an open event.
+	 *
+	 * @param event event object describing the open event
+	 */
+	public void open(OpenEvent event);
 }

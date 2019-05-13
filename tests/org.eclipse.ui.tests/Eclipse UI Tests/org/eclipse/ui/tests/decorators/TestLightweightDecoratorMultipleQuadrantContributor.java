@@ -34,68 +34,68 @@ import org.osgi.framework.FrameworkUtil;
  */
 
 public class TestLightweightDecoratorMultipleQuadrantContributor implements
-        ILightweightLabelDecorator {
+		ILightweightLabelDecorator {
 
 	private Set<ILabelProviderListener> listeners = new HashSet<>();
 
-    private ImageDescriptor descriptor;
+	private ImageDescriptor descriptor;
 
-    public TestLightweightDecoratorMultipleQuadrantContributor() {
-    }
+	public TestLightweightDecoratorMultipleQuadrantContributor() {
+	}
 
-    @Override
+	@Override
 	public void addListener(ILabelProviderListener listener) {
-        listeners.add(listener);
-    }
+		listeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
 		listeners = new HashSet<>();
-    }
+	}
 
-    @Override
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
-        listeners.remove(listener);
-    }
+		listeners.remove(listener);
+	}
 
-    /**
-     * Refresh the listeners to update the decorators for
-     * element.
-     */
+	/**
+	 * Refresh the listeners to update the decorators for
+	 * element.
+	 */
 
-    public void refreshListeners(Object element) {
+	public void refreshListeners(Object element) {
 		Iterator<ILabelProviderListener> iterator = listeners.iterator();
-        while (iterator.hasNext()) {
-            LabelProviderChangedEvent event = new LabelProviderChangedEvent(
-                    this, element);
-            iterator.next()
-                    .labelProviderChanged(event);
-        }
-    }
+		while (iterator.hasNext()) {
+			LabelProviderChangedEvent event = new LabelProviderChangedEvent(
+					this, element);
+			iterator.next()
+					.labelProviderChanged(event);
+		}
+	}
 
-    public ImageDescriptor getOverlay(Object element) {
-        Assert.isTrue(element instanceof IResource);
-        if (descriptor == null) {
+	public ImageDescriptor getOverlay(Object element) {
+		Assert.isTrue(element instanceof IResource);
+		if (descriptor == null) {
 			Bundle bundle = FrameworkUtil.getBundle(BadIndexDecorator.class);
 			URL entry = bundle.getEntry("icons/binary_co.gif");
 			descriptor = ImageDescriptor.createFromURL(entry);
-        }
-        return descriptor;
+		}
+		return descriptor;
 
-    }
+	}
 
-    @Override
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
-        decoration.addOverlay(getOverlay(element), IDecoration.BOTTOM_LEFT);
-        decoration.addOverlay(getOverlay(element), IDecoration.BOTTOM_RIGHT);
-        decoration.addOverlay(getOverlay(element), IDecoration.TOP_LEFT);
-        decoration.addOverlay(getOverlay(element), IDecoration.TOP_RIGHT);
-        decoration.addOverlay(getOverlay(element), IDecoration.UNDERLAY);
-    }
+		decoration.addOverlay(getOverlay(element), IDecoration.BOTTOM_LEFT);
+		decoration.addOverlay(getOverlay(element), IDecoration.BOTTOM_RIGHT);
+		decoration.addOverlay(getOverlay(element), IDecoration.TOP_LEFT);
+		decoration.addOverlay(getOverlay(element), IDecoration.TOP_RIGHT);
+		decoration.addOverlay(getOverlay(element), IDecoration.UNDERLAY);
+	}
 
 }

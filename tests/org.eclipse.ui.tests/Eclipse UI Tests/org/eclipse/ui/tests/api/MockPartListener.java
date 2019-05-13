@@ -18,53 +18,53 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 
 public class MockPartListener implements IPartListener {
-    private CallHistory callTrace;
+	private CallHistory callTrace;
 
-    public MockPartListener() {
-        callTrace = new CallHistory(this);
-    }
+	public MockPartListener() {
+		callTrace = new CallHistory(this);
+	}
 
-    public CallHistory getCallHistory() {
-        return callTrace;
-    }
+	public CallHistory getCallHistory() {
+		return callTrace;
+	}
 
-    /**
-     * @see IPartListener#partActivated(IWorkbenchPart)
-     */
-    @Override
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	@Override
 	public void partActivated(IWorkbenchPart part) {
-        callTrace.add("partActivated");
-    }
+		callTrace.add("partActivated");
+	}
 
-    /**
-     * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-     */
-    @Override
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
-        callTrace.add("partBroughtToTop");
-    }
+		callTrace.add("partBroughtToTop");
+	}
 
-    /**
-     * @see IPartListener#partClosed(IWorkbenchPart)
-     */
-    @Override
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	@Override
 	public void partClosed(IWorkbenchPart part) {
-        callTrace.add("partClosed");
-    }
+		callTrace.add("partClosed");
+	}
 
-    /**
-     * @see IPartListener#partDeactivated(IWorkbenchPart)
-     */
-    @Override
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
-        callTrace.add("partDeactivated");
-    }
+		callTrace.add("partDeactivated");
+	}
 
-    /**
-     * @see IPartListener#partOpened(IWorkbenchPart)
-     */
-    @Override
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	@Override
 	public void partOpened(IWorkbenchPart part) {
-        callTrace.add("partOpened");
-    }
+		callTrace.add("partOpened");
+	}
 }

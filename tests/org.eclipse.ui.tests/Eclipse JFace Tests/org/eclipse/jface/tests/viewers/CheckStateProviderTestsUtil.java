@@ -108,12 +108,12 @@ public class CheckStateProviderTestsUtil {
 			return (constructNumber((TestElement)element) % (NUMBER_OF_STATES * 2 - 1)) == (NUMBER_OF_STATES - 1);
 		}
 	}
-    /**
-     * @param te
-     * @return	a number between 0 and 3 based on <code>te</code>.
-     * 	Given the same TestElement, this function always returns the
-     * 	same value.
-     */
+	/**
+	 * @param te
+	 * @return	a number between 0 and 3 based on <code>te</code>.
+	 * 	Given the same TestElement, this function always returns the
+	 * 	same value.
+	 */
 	public static int constructNumber(TestElement te) {
 		String id = te.getID();
 		int number = Integer.parseInt(id.substring(id.lastIndexOf('-') + 1)) + id.length();

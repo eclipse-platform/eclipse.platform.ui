@@ -53,7 +53,7 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 			}
 		}.start();
 
-        threadRealm.waitUntilBlocking();
+		threadRealm.waitUntilBlocking();
 	}
 
 	@Override

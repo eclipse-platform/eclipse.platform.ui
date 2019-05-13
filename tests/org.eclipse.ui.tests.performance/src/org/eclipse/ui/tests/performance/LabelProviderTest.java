@@ -162,7 +162,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		this.colors = colors;
 	}
 
-    @Override
+	@Override
 	protected void runTest() throws Throwable {
 		if (styled)
 			fViewer.setLabelProvider(getDecoratingStyledCellLabelProvider(colors));

@@ -22,55 +22,55 @@ import java.util.Arrays;
  */
 
 public class MarkerQueryResult {
-    /**
-     * An ordered collection of marker attribute values.
-     */
-    private String[] values;
+	/**
+	 * An ordered collection of marker attribute values.
+	 */
+	private String[] values;
 
-    /**
-     * Cached hash code value
-     */
-    private int hashCode;
+	/**
+	 * Cached hash code value
+	 */
+	private int hashCode;
 
-    /**
-     * Creates a new marker query result with the given values.
-     * <p>
-     * The values may not be empty.
-     * </p>
-     *
-     * @param markerAttributeValues the target marker's attribute values
-     */
-    public MarkerQueryResult(String[] markerAttributeValues) {
-        if (markerAttributeValues == null) {
-            throw new IllegalArgumentException();
-        }
-        values = markerAttributeValues;
-        computeHashCode();
-    }
+	/**
+	 * Creates a new marker query result with the given values.
+	 * <p>
+	 * The values may not be empty.
+	 * </p>
+	 *
+	 * @param markerAttributeValues the target marker's attribute values
+	 */
+	public MarkerQueryResult(String[] markerAttributeValues) {
+		if (markerAttributeValues == null) {
+			throw new IllegalArgumentException();
+		}
+		values = markerAttributeValues;
+		computeHashCode();
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object o) {
-        if (!(o instanceof MarkerQueryResult)) {
+		if (!(o instanceof MarkerQueryResult)) {
 			return false;
 		}
 
-        if (o == this) {
+		if (o == this) {
 			return true;
 		}
 
-        MarkerQueryResult mqr = (MarkerQueryResult) o;
+		MarkerQueryResult mqr = (MarkerQueryResult) o;
 		return Arrays.equals(values, mqr.values);
-    }
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return hashCode;
-    }
+		return hashCode;
+	}
 
-    /**
-     * Computes the hash code for this instance.
-     */
-    public void computeHashCode() {
+	/**
+	 * Computes the hash code for this instance.
+	 */
+	public void computeHashCode() {
 		hashCode = Arrays.hashCode(values);
-    }
+	}
 }

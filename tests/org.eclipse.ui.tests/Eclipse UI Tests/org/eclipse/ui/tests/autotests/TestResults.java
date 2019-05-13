@@ -24,52 +24,52 @@ import org.eclipse.ui.IMemento;
  */
 public class TestResults {
 	private Map<String, TestResultFilter> results = new HashMap<>();
-    private static final String ATT_NAME = "name";
-    private static final String ATT_TEST = "test";
+	private static final String ATT_NAME = "name";
+	private static final String ATT_TEST = "test";
 
-    public TestResults() {
-    }
+	public TestResults() {
+	}
 
-    public TestResults(IMemento toLoad) {
-        IMemento[] tests = toLoad.getChildren(ATT_TEST);
+	public TestResults(IMemento toLoad) {
+		IMemento[] tests = toLoad.getChildren(ATT_TEST);
 
-        for (IMemento memento : tests) {
-            String name = memento.getString(ATT_NAME);
-            if (name == null) {
-                continue;
-            }
+		for (IMemento memento : tests) {
+			String name = memento.getString(ATT_NAME);
+			if (name == null) {
+				continue;
+			}
 
-            results.put(name, new TestResultFilter(memento));
-        }
-    }
+			results.put(name, new TestResultFilter(memento));
+		}
+	}
 
-    public String[] getTestNames() {
+	public String[] getTestNames() {
 		Collection<String> ids = results.keySet();
 
-        return ids.toArray(new String[ids.size()]);
-    }
+		return ids.toArray(new String[ids.size()]);
+	}
 
-    public TestResultFilter get(String testName) {
-        return results.get(testName);
-    }
+	public TestResultFilter get(String testName) {
+		return results.get(testName);
+	}
 
-    public void put(String testName, TestResultFilter filter) {
-        results.put(testName, filter);
-    }
+	public void put(String testName, TestResultFilter filter) {
+		results.put(testName, filter);
+	}
 
-    public boolean isEmpty() {
-        return results.isEmpty();
-    }
+	public boolean isEmpty() {
+		return results.isEmpty();
+	}
 
-    public void saveState(IMemento memento) {
-        for (Object element : results.keySet()) {
-            String testName = (String) element;
+	public void saveState(IMemento memento) {
+		for (Object element : results.keySet()) {
+			String testName = (String) element;
 
-            TestResultFilter next = get(testName);
+			TestResultFilter next = get(testName);
 
-            IMemento child = memento.createChild(ATT_TEST);
-            child.putString(ATT_NAME, testName);
-            next.saveState(child);
-        }
-    }
+			IMemento child = memento.createChild(ATT_TEST);
+			child.putString(ATT_NAME, testName);
+			next.saveState(child);
+		}
+	}
 }

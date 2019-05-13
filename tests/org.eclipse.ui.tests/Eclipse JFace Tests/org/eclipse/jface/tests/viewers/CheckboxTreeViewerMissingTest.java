@@ -21,46 +21,46 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 public class CheckboxTreeViewerMissingTest extends CheckboxTreeViewerTest {
-    private static Image testImage;
+	private static Image testImage;
 
-    public static Image getMissingImage() {
-        if (testImage == null) {
+	public static Image getMissingImage() {
+		if (testImage == null) {
 			testImage = ImageDescriptor.createFromFile(TestLabelProvider.class,
-                    "images/missing.gif").createImage();
+					"images/missing.gif").createImage();
 		}
-        return testImage;
-    }
+		return testImage;
+	}
 
-    public static class CheckboxMissingTableTestLabelProvider extends
+	public static class CheckboxMissingTableTestLabelProvider extends
 			CheckboxTreeViewerTest.CheckboxTableTestLabelProvider {
-        @Override
+		@Override
 		public Image getImage(Object element) {
-            return getMissingImage();
-        }
+			return getMissingImage();
+		}
 
-    }
+	}
 
-    public CheckboxTreeViewerMissingTest(String name) {
-        super(name);
-    }
+	public CheckboxTreeViewerMissingTest(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	public IBaseLabelProvider getTestLabelProvider() {
-        return new CheckboxMissingTableTestLabelProvider();
-    }
+		return new CheckboxMissingTableTestLabelProvider();
+	}
 
-    @Override
+	@Override
 	public void tearDown() {
-        super.tearDown();
-        if (testImage != null) {
-            testImage.dispose();
-            testImage = null;
-        }
-    }
+		super.tearDown();
+		if (testImage != null) {
+			testImage.dispose();
+			testImage = null;
+		}
+	}
 
-    @Override
+	@Override
 	public void testLabelProvider() {
-        super.testLabelProvider();
-    }
+		super.testLabelProvider();
+	}
 
 }

@@ -43,28 +43,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class EObjectPointerFactory implements NodePointerFactory {
 
-    /** factory order constant */
-    public static final int BEAN_POINTER_FACTORY_ORDER = 900;
+	/** factory order constant */
+	public static final int BEAN_POINTER_FACTORY_ORDER = 900;
 
-    @Override
+	@Override
 	public int getOrder() {
-        return BEAN_POINTER_FACTORY_ORDER;
-    }
+		return BEAN_POINTER_FACTORY_ORDER;
+	}
 
-    @Override
+	@Override
 	public NodePointer createNodePointer(QName name, Object bean, Locale locale) {
-        JXPathEObjectInfo bi = new JXPathEObjectInfo(((EObject)bean).eClass());
-        return new EObjectPointer(name, bean, bi, locale);
-    }
+		JXPathEObjectInfo bi = new JXPathEObjectInfo(((EObject)bean).eClass());
+		return new EObjectPointer(name, bean, bi, locale);
+	}
 
-    @Override
+	@Override
 	public NodePointer createNodePointer(NodePointer parent, QName name,
-            Object bean) {
-        if (bean == null) {
-            return new NullPointer(parent, name);
-        }
+			Object bean) {
+		if (bean == null) {
+			return new NullPointer(parent, name);
+		}
 
-        JXPathEObjectInfo bi = new JXPathEObjectInfo(((EObject)bean).eClass());
-        return new EObjectPointer(parent, name, bean, bi);
-    }
+		JXPathEObjectInfo bi = new JXPathEObjectInfo(((EObject)bean).eClass());
+		return new EObjectPointer(parent, name, bean, bi);
+	}
 }

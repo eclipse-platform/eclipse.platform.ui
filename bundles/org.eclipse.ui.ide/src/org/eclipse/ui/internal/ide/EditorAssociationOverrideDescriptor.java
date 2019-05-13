@@ -89,7 +89,7 @@ public final class EditorAssociationOverrideDescriptor {
 			 */
 			@Override
 			public void run() throws Exception {
-//		 		String pluginId = fElement.getContributor().getName();
+//				String pluginId = fElement.getContributor().getName();
 				result[0]= (IEditorAssociationOverride)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 			}
 			/*

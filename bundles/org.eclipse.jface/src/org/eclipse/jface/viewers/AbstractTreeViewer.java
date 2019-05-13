@@ -1561,15 +1561,15 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 		preservingSelection(() -> {
-		    Control tree = getControl();
-		    tree.setRedraw(false);
-		    try {
-		        removeAll(tree);
-		        tree.setData(getRoot());
-		        internalInitializeTree(tree);
-		    } finally {
-		        tree.setRedraw(true);
-		    }
+			Control tree = getControl();
+			tree.setRedraw(false);
+			try {
+				removeAll(tree);
+				tree.setData(getRoot());
+				internalInitializeTree(tree);
+			} finally {
+				tree.setRedraw(true);
+			}
 		});
 	}
 

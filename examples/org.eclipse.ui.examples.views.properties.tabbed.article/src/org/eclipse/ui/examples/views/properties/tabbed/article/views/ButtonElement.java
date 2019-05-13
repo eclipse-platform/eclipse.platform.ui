@@ -30,71 +30,71 @@ import org.eclipse.ui.views.properties.IPropertySource;
  * display for that viewer.
  */
 public class ButtonElement
-    implements IWorkbenchAdapter, IAdaptable {
+	implements IWorkbenchAdapter, IAdaptable {
 
-    private String headingName;
+	private String headingName;
 
-    private Button ctl;
+	private Button ctl;
 
-    /**
-     * Creates a new ButtonElement.
-     * 
-     * @param initBtn
-     *            the control of this element
-     * @param heading
-     *            text corresponding to the heading
-     */
-    public ButtonElement(Button initBtn, String heading) {
-        this.headingName = heading;
-        this.ctl = initBtn;
-    }
+	/**
+	 * Creates a new ButtonElement.
+	 * 
+	 * @param initBtn
+	 *            the control of this element
+	 * @param heading
+	 *            text corresponding to the heading
+	 */
+	public ButtonElement(Button initBtn, String heading) {
+		this.headingName = heading;
+		this.ctl = initBtn;
+	}
 
-    /*
-     * (non-Javadoc) Method declared on IAdaptable
-     */
-    public Object getAdapter(Class adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return this;
-        if (adapter == IPropertySource.class)
-            return new ButtonElementProperties(this);
-        return null;
-    }
+	/*
+	 * (non-Javadoc) Method declared on IAdaptable
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class)
+			return this;
+		if (adapter == IPropertySource.class)
+			return new ButtonElementProperties(this);
+		return null;
+	}
 
-    /*
-     * (non-Javadoc) Method declared on IWorkbenchAdapter
-     */
-    public ImageDescriptor getImageDescriptor(Object object) {
-        return null;
-    }
+	/*
+	 * (non-Javadoc) Method declared on IWorkbenchAdapter
+	 */
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return null;
+	}
 
-    /*
-     * (non-Javadoc) Method declared on IWorkbenchAdapter
-     */
-    public String getLabel(Object o) {
-        return headingName;
-    }
+	/*
+	 * (non-Javadoc) Method declared on IWorkbenchAdapter
+	 */
+	public String getLabel(Object o) {
+		return headingName;
+	}
 
-    /*
-     * (non-Javadoc) Method declared on IWorkbenchAdapter
-     */
-    public Object getParent(Object o) {
-        return null;
-    }
+	/*
+	 * (non-Javadoc) Method declared on IWorkbenchAdapter
+	 */
+	public Object getParent(Object o) {
+		return null;
+	}
 
-    /**
-     * Retrieve the control for this element.
-     * 
-     * @return the control for this element.
-     */
-    public Button getControl() {
-        return ctl;
-    }
+	/**
+	 * Retrieve the control for this element.
+	 * 
+	 * @return the control for this element.
+	 */
+	public Button getControl() {
+		return ctl;
+	}
 
-    /**
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(Object)
-     */
-    public Object[] getChildren(Object o) {
-        return null;
-    }
+	/**
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(Object)
+	 */
+	public Object[] getChildren(Object o) {
+		return null;
+	}
 
 }

@@ -49,67 +49,67 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
  */
 
 public class ExternalProjectImportWizard extends Wizard implements
-        IImportWizard {
-    private static final String EXTERNAL_PROJECT_SECTION = "ExternalProjectImportWizard";//$NON-NLS-1$
+		IImportWizard {
+	private static final String EXTERNAL_PROJECT_SECTION = "ExternalProjectImportWizard";//$NON-NLS-1$
 	private WizardProjectsImportPage mainPage;
 	private IStructuredSelection currentSelection = null;
 	private String initialPath = null;
 
-    /**
-     * Constructor for ExternalProjectImportWizard.
-     */
-    public ExternalProjectImportWizard() {
-    	this(null);
-    }
+	/**
+	 * Constructor for ExternalProjectImportWizard.
+	 */
+	public ExternalProjectImportWizard() {
+		this(null);
+	}
 
-    /**
-     * Constructor for ExternalProjectImportWizard.
-     *
-     * @param initialPath Default path for wizard to import
-     * @since 3.5
-     */
-    public ExternalProjectImportWizard(String initialPath)
-    {
-        super();
-        this.initialPath = initialPath;
-        setNeedsProgressMonitor(true);
-        IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
-        		.getDialogSettings();
+	/**
+	 * Constructor for ExternalProjectImportWizard.
+	 *
+	 * @param initialPath Default path for wizard to import
+	 * @since 3.5
+	 */
+	public ExternalProjectImportWizard(String initialPath)
+	{
+		super();
+		this.initialPath = initialPath;
+		setNeedsProgressMonitor(true);
+		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
+				.getDialogSettings();
 
 		IDialogSettings wizardSettings = workbenchSettings
-		        .getSection(EXTERNAL_PROJECT_SECTION);
+				.getSection(EXTERNAL_PROJECT_SECTION);
 		if (wizardSettings == null) {
 			wizardSettings = workbenchSettings
-		            .addNewSection(EXTERNAL_PROJECT_SECTION);
+					.addNewSection(EXTERNAL_PROJECT_SECTION);
 		}
 		setDialogSettings(wizardSettings);
-    }
+	}
 
-    @Override
+	@Override
 	public void addPages() {
-        super.addPages();
+		super.addPages();
 		mainPage = new WizardProjectsImportPage(
 				"wizardExternalProjectsPage", initialPath, currentSelection); //$NON-NLS-1$
-        addPage(mainPage);
-    }
+		addPage(mainPage);
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
-        setDefaultPageImageDescriptor(
+		setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
+		setDefaultPageImageDescriptor(
 				IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importproj_wiz.png")); //$NON-NLS-1$
-        this.currentSelection = currentSelection;
-    }
+		this.currentSelection = currentSelection;
+	}
 
-    @Override
+	@Override
 	public boolean performCancel() {
-    	mainPage.performCancel();
-        return true;
-    }
+		mainPage.performCancel();
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean performFinish() {
-        return mainPage.createProjects();
-    }
+		return mainPage.createProjects();
+	}
 
 }

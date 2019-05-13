@@ -32,64 +32,64 @@ import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class ListViewerTest extends StructuredViewerTest {
 
-    public ListViewerTest(String name) {
-        super(name);
-    }
+	public ListViewerTest(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-        ListViewer viewer = new ListViewer(parent);
-        viewer.setContentProvider(new TestModelContentProvider());
-        return viewer;
-    }
+		ListViewer viewer = new ListViewer(parent);
+		viewer.setContentProvider(new TestModelContentProvider());
+		return viewer;
+	}
 
-    @Override
+	@Override
 	protected int getItemCount() {
-        TestElement first = fRootElement.getFirstChild();
-        List list = (List) fViewer.testFindItem(first);
-        return list.getItemCount();
-    }
+		TestElement first = fRootElement.getFirstChild();
+		List list = (List) fViewer.testFindItem(first);
+		return list.getItemCount();
+	}
 
-    @Override
+	@Override
 	protected String getItemText(int at) {
-        List list = (List) fViewer.getControl();
-        return list.getItem(at);
-    }
+		List list = (List) fViewer.getControl();
+		return list.getItem(at);
+	}
 
-    public static void main(String args[]) {
-        junit.textui.TestRunner.run(ListViewerTest.class);
-    }
+	public static void main(String args[]) {
+		junit.textui.TestRunner.run(ListViewerTest.class);
+	}
 
-    public void testInsert() {
-    	ListViewer v = ((ListViewer)fViewer);
-    	TestElement element = new TestElement(fModel, fRootElement);
-    	v.insert(element, 1);
-    	assertSame("test insert", element, v.getElementAt(1));
-    	assertEquals("test insert", element.toString(), v.getList().getItem(1));
+	public void testInsert() {
+		ListViewer v = ((ListViewer)fViewer);
+		TestElement element = new TestElement(fModel, fRootElement);
+		v.insert(element, 1);
+		assertSame("test insert", element, v.getElementAt(1));
+		assertEquals("test insert", element.toString(), v.getList().getItem(1));
 
-    	v.addFilter(new ViewerFilter() {
+		v.addFilter(new ViewerFilter() {
 
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return true;
 			}
-    	});
+		});
 
-    	TestElement element1 = new TestElement(fModel, fRootElement);
-    	v.insert(element1, 1);
-    	assertNotSame("test insert", element1, v.getElementAt(1));
+		TestElement element1 = new TestElement(fModel, fRootElement);
+		v.insert(element1, 1);
+		assertNotSame("test insert", element1, v.getElementAt(1));
 
 		v.setFilters();
-    	v.remove(element);
-    	v.remove(element1);
-    }
+		v.remove(element);
+		v.remove(element1);
+	}
 
-    public void testRevealBug69076() {
-    	// TODO remove the Mac OS check when SWT has fixed the bug in List.java
-    	// see bug 116105
+	public void testRevealBug69076() {
+		// TODO remove the Mac OS check when SWT has fixed the bug in List.java
+		// see bug 116105
 		if (Util.isLinux()) {
-    		return;
-    	}
+			return;
+		}
 		fViewer = null;
 		if (fShell != null) {
 			fShell.dispose();
@@ -118,13 +118,13 @@ public class ListViewerTest extends StructuredViewerTest {
 		}
 	}
 
-    /**
-     * Asserts the ability to refresh a List that contains no selection without losing vertically scrolled state.
-     *
-     * @throws Exception
-     */
-    public void testRefreshBug141435() throws Exception {
-    	fViewer = null;
+	/**
+	 * Asserts the ability to refresh a List that contains no selection without losing vertically scrolled state.
+	 *
+	 * @throws Exception
+	 */
+	public void testRefreshBug141435() throws Exception {
+		fViewer = null;
 		if (fShell != null) {
 			fShell.dispose();
 			fShell = null;
@@ -158,11 +158,11 @@ public class ListViewerTest extends StructuredViewerTest {
 		}
 	}
 
-    public void testSelectionRevealBug177619() throws Exception {
-    	TestElement model = TestElement.createModel(1, 100);
+	public void testSelectionRevealBug177619() throws Exception {
+		TestElement model = TestElement.createModel(1, 100);
 		fViewer.setInput(model);
 
-    	fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),true);
+		fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),true);
 		List list = ((ListViewer) fViewer).getList();
 		new DisplayHelper() {
 			@Override

@@ -17,14 +17,14 @@ import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.ui.views.properties.tabbed.AbstractTypeMapper;
 
 public class TypeMapper
-    extends AbstractTypeMapper {
+	extends AbstractTypeMapper {
 
-    @Override
+	@Override
 	public Class mapType(Object object) {
-        if (object instanceof TreeNode) {
-            return ((TreeNode) object).getValue().getClass();
-        }
-        return super.mapType(object);
-    }
+		if (object instanceof TreeNode) {
+			return ((TreeNode) object).getValue().getClass();
+		}
+		return super.mapType(object);
+	}
 
 }

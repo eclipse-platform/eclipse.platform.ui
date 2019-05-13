@@ -55,45 +55,45 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceExp
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ZipFileExportWizard extends Wizard implements IExportWizard {
-    private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-    private WizardArchiveFileResourceExportPage1 mainPage;
+	private WizardArchiveFileResourceExportPage1 mainPage;
 
-    /**
-     * Creates a wizard for exporting workspace resources to a zip file.
-     */
-    public ZipFileExportWizard() {
-        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = workbenchSettings
-                .getSection("ZipFileExportWizard");//$NON-NLS-1$
-        if (section == null) {
+	/**
+	 * Creates a wizard for exporting workspace resources to a zip file.
+	 */
+	public ZipFileExportWizard() {
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = workbenchSettings
+				.getSection("ZipFileExportWizard");//$NON-NLS-1$
+		if (section == null) {
 			section = workbenchSettings.addNewSection("ZipFileExportWizard");//$NON-NLS-1$
 		}
-        setDialogSettings(section);
-    }
+		setDialogSettings(section);
+	}
 
-    @Override
+	@Override
 	public void addPages() {
-        super.addPages();
-        mainPage = new WizardArchiveFileResourceExportPage1(selection);
-        addPage(mainPage);
-    }
+		super.addPages();
+		mainPage = new WizardArchiveFileResourceExportPage1(selection);
+		addPage(mainPage);
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        this.selection = currentSelection;
+		this.selection = currentSelection;
 		List<IResource> selectedResources = IDE.computeSelectedResources(currentSelection);
-        if (!selectedResources.isEmpty()) {
-            this.selection = new StructuredSelection(selectedResources);
-        }
+		if (!selectedResources.isEmpty()) {
+			this.selection = new StructuredSelection(selectedResources);
+		}
 
-        setWindowTitle(DataTransferMessages.DataTransfer_export);
-        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportzip_wiz.png"));//$NON-NLS-1$
-        setNeedsProgressMonitor(true);
-    }
+		setWindowTitle(DataTransferMessages.DataTransfer_export);
+		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportzip_wiz.png"));//$NON-NLS-1$
+		setNeedsProgressMonitor(true);
+	}
 
-    @Override
+	@Override
 	public boolean performFinish() {
-        return mainPage.finish();
-    }
+		return mainPage.finish();
+	}
 }

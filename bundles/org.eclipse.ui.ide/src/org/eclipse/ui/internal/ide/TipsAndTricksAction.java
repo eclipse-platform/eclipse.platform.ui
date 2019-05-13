@@ -38,109 +38,109 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * Launch the tips and tricks action.
  */
 public class TipsAndTricksAction extends PartEventAction implements
-        ActionFactory.IWorkbenchAction {
+		ActionFactory.IWorkbenchAction {
 
-    /**
-     * The workbench window this action is registered with.
-     */
-    private IWorkbenchWindow workbenchWindow;
+	/**
+	 * The workbench window this action is registered with.
+	 */
+	private IWorkbenchWindow workbenchWindow;
 
-    /**
-     * Create an instance of this class.
-     *
-     * @param window the window
-     */
-    public TipsAndTricksAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.TipsAndTricks_text);
-        if (window == null) {
-            throw new IllegalArgumentException();
-        }
-        this.workbenchWindow = window;
-        setToolTipText(IDEWorkbenchMessages.TipsAndTricks_toolTip);
-        window.getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Create an instance of this class.
+	 *
+	 * @param window the window
+	 */
+	public TipsAndTricksAction(IWorkbenchWindow window) {
+		super(IDEWorkbenchMessages.TipsAndTricks_text);
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		setToolTipText(IDEWorkbenchMessages.TipsAndTricks_toolTip);
+		window.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.TIPS_AND_TRICKS_ACTION);
-        setActionDefinitionId(IWorkbenchCommandConstants.HELP_TIPS_AND_TRICKS);
+		setActionDefinitionId(IWorkbenchCommandConstants.HELP_TIPS_AND_TRICKS);
 		setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_TIPS_AND_TRICKS));
-        workbenchWindow.getPartService().addPartListener(this);
-    }
+		workbenchWindow.getPartService().addPartListener(this);
+	}
 
-    /**
-     *	The user has invoked this action
-     */
-    @Override
+	/**
+	 *	The user has invoked this action
+	 */
+	@Override
 	public void run() {
-        if (workbenchWindow == null) {
-            // action has been disposed
-            return;
-        }
-        // Ask the user to select a feature
-        AboutInfo[] featureInfos = IDEWorkbenchPlugin.getDefault()
-                .getFeatureInfos();
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
+		// Ask the user to select a feature
+		AboutInfo[] featureInfos = IDEWorkbenchPlugin.getDefault()
+				.getFeatureInfos();
 		ArrayList<AboutInfo> tipsAndTricksFeatures = new ArrayList<>(featureInfos.length);
-        for (AboutInfo featureInfo : featureInfos) {
-            if (featureInfo.getTipsAndTricksHref() != null) {
+		for (AboutInfo featureInfo : featureInfos) {
+			if (featureInfo.getTipsAndTricksHref() != null) {
 				tipsAndTricksFeatures.add(featureInfo);
 			}
-        }
+		}
 
-        Shell shell = workbenchWindow.getShell();
+		Shell shell = workbenchWindow.getShell();
 
-        if (tipsAndTricksFeatures.isEmpty()) {
-            MessageDialog.openInformation(shell, IDEWorkbenchMessages.TipsAndTricksMessageDialog_title,
-                    IDEWorkbenchMessages.TipsAndTricksMessageDialog_message);
-            return;
-        }
+		if (tipsAndTricksFeatures.isEmpty()) {
+			MessageDialog.openInformation(shell, IDEWorkbenchMessages.TipsAndTricksMessageDialog_title,
+					IDEWorkbenchMessages.TipsAndTricksMessageDialog_message);
+			return;
+		}
 
-        AboutInfo[] features = new AboutInfo[tipsAndTricksFeatures.size()];
-        tipsAndTricksFeatures.toArray(features);
+		AboutInfo[] features = new AboutInfo[tipsAndTricksFeatures.size()];
+		tipsAndTricksFeatures.toArray(features);
 
-        IProduct product = Platform.getProduct();
-        FeatureSelectionDialog d = new FeatureSelectionDialog(shell, features,
-                product == null ? null : product.getId(), IDEWorkbenchMessages.TipsAndTricksPageSelectionDialog_title,
-                IDEWorkbenchMessages.TipsAndTricksPageSelectionDialog_message,
-                IIDEHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
-        d.create();
+		IProduct product = Platform.getProduct();
+		FeatureSelectionDialog d = new FeatureSelectionDialog(shell, features,
+				product == null ? null : product.getId(), IDEWorkbenchMessages.TipsAndTricksPageSelectionDialog_title,
+				IDEWorkbenchMessages.TipsAndTricksPageSelectionDialog_message,
+				IIDEHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
+		d.create();
 
-        if (d.open() != Window.OK || d.getResult().size() != 1) {
+		if (d.open() != Window.OK || d.getResult().size() != 1) {
 			return;
 		}
 
 		AboutInfo feature = d.getFirstResult().orElse(null);
 
-        /**
-         * Open the tips and trick help topic
-         */
-        if (feature != null) {
-            final String href = feature.getTipsAndTricksHref();
-            if (href != null) {
-                BusyIndicator.showWhile(shell.getDisplay(), () -> workbenchWindow.getWorkbench().getHelpSystem()
+		/**
+		 * Open the tips and trick help topic
+		 */
+		if (feature != null) {
+			final String href = feature.getTipsAndTricksHref();
+			if (href != null) {
+				BusyIndicator.showWhile(shell.getDisplay(), () -> workbenchWindow.getWorkbench().getHelpSystem()
 						.displayHelpResource(href));
-            } else {
-                IStatus status = new Status(
-                        IStatus.ERROR,
-                        IDEWorkbenchPlugin.IDE_WORKBENCH,
-                        IStatus.INFO,
-                        IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
-                ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
-                        IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref,
-                        status);
-            }
-        } else {
-            IStatus status = new Status(IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.INFO, IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
-            ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
-                    IDEWorkbenchMessages.TipsAndTricksErrorDialog_noFeatures,
-                    status);
-        }
-    }
+			} else {
+				IStatus status = new Status(
+						IStatus.ERROR,
+						IDEWorkbenchPlugin.IDE_WORKBENCH,
+						IStatus.INFO,
+						IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
+				ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
+						IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref,
+						status);
+			}
+		} else {
+			IStatus status = new Status(IStatus.ERROR,
+					IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.INFO, IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
+			ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
+					IDEWorkbenchMessages.TipsAndTricksErrorDialog_noFeatures,
+					status);
+		}
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        if (workbenchWindow == null) {
-            // action has already been disposed
-            return;
-        }
-        workbenchWindow.getPartService().removePartListener(this);
-        workbenchWindow = null;
-    }
+		if (workbenchWindow == null) {
+			// action has already been disposed
+			return;
+		}
+		workbenchWindow.getPartService().removePartListener(this);
+		workbenchWindow = null;
+	}
 }

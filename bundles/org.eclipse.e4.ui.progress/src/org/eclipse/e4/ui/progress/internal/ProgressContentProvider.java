@@ -21,68 +21,68 @@ import org.eclipse.jface.viewers.Viewer;
  * listen to the progress changes.
  */
 public abstract class ProgressContentProvider implements
-        IProgressUpdateCollector, IStructuredContentProvider {
+		IProgressUpdateCollector, IStructuredContentProvider {
 
 	/**
 	 * Return whether or not we check the preferences or overide.
 	 */
-    private boolean canShowDebug = false;
+	private boolean canShowDebug = false;
 
-    protected ProgressViewUpdater progressViewUpdater;
+	protected ProgressViewUpdater progressViewUpdater;
 
-    private ProgressManager progressManager;
+	private ProgressManager progressManager;
 
-    /**
-     * Create a new instance of the receiver with all of the
-     * default values.
-     */
+	/**
+	 * Create a new instance of the receiver with all of the
+	 * default values.
+	 */
 	public ProgressContentProvider(ProgressViewUpdater progressViewUpdater,
-	        ProgressManager progressManager) {
-    	this.progressViewUpdater = progressViewUpdater;
-    	this.progressManager= progressManager;
-    	progressViewUpdater.addCollector(this);
-    }
+			ProgressManager progressManager) {
+		this.progressViewUpdater = progressViewUpdater;
+		this.progressManager= progressManager;
+		progressViewUpdater.addCollector(this);
+	}
 
-    /**
-     * Create a new instance of the receiver with a flag to
-     * indicate if there will be debug info shown or not.
-     * @param debug If true debug information will be shown
-     * if the debug flag in the ProgressManager is true.
-     */
+	/**
+	 * Create a new instance of the receiver with a flag to
+	 * indicate if there will be debug info shown or not.
+	 * @param debug If true debug information will be shown
+	 * if the debug flag in the ProgressManager is true.
+	 */
 	public ProgressContentProvider(ProgressViewUpdater progressViewUpdater,
-	        ProgressManager progressManager, boolean debug) {
-    	this(progressViewUpdater, progressManager);
-    	canShowDebug = debug;
-    }
+			ProgressManager progressManager, boolean debug) {
+		this(progressViewUpdater, progressManager);
+		canShowDebug = debug;
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object inputElement) {
 
-        return progressManager.getRootElements(debug());
-    }
+		return progressManager.getRootElements(debug());
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        progressViewUpdater.removeCollector(this);
-    }
+		progressViewUpdater.removeCollector(this);
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        //No change when input changes
-    }
+		//No change when input changes
+	}
 
-    /**
-     * Return whether or not we are debugging. Check the
-     * system settings unless we are overiding them.
-     * @return boolean <code>true</code> if debug
-     * (system) jobs are being shown.
-     */
-    public boolean debug(){
-    	if(!canShowDebug) {
+	/**
+	 * Return whether or not we are debugging. Check the
+	 * system settings unless we are overiding them.
+	 * @return boolean <code>true</code> if debug
+	 * (system) jobs are being shown.
+	 */
+	public boolean debug(){
+		if(!canShowDebug) {
 			return false;
 		}
-    	return progressViewUpdater.showsDebug();
+		return progressViewUpdater.showsDebug();
 
-    }
+	}
 
 }

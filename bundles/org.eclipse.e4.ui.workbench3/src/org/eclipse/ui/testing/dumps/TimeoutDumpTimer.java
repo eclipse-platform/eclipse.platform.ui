@@ -60,30 +60,30 @@ public class TimeoutDumpTimer extends TimerTask {
 
 	private static final String PLUGIN_ID = "org.eclipse.e4.ui.workbench3";
 
-    /**
-     * SECONDS_BEFORE_TIMEOUT_BUFFER is the time we allow ourselves to take stack traces delay
-     * "SECONDS_BETWEEN_DUMPS", then do it again. On current build machine, it takes about 30
-     * seconds to do all that, so 2 minutes should be sufficient time allowed for most machines.
-     * Though, should increase, say, if we increase the "time between dumps" to a minute or more.
-     */
-    private static final int SECONDS_BEFORE_TIMEOUT_BUFFER = 120;
+	/**
+	 * SECONDS_BEFORE_TIMEOUT_BUFFER is the time we allow ourselves to take stack traces delay
+	 * "SECONDS_BETWEEN_DUMPS", then do it again. On current build machine, it takes about 30
+	 * seconds to do all that, so 2 minutes should be sufficient time allowed for most machines.
+	 * Though, should increase, say, if we increase the "time between dumps" to a minute or more.
+	 */
+	private static final int SECONDS_BEFORE_TIMEOUT_BUFFER = 120;
 
-    /**
-     * SECONDS_BETWEEN_DUMPS is the time we wait from first to second dump of stack trace. In most
-     * cases, this should suffice to determine if still busy doing something, or, hung, or waiting
-     * for user input.
-     */
-    private static final int SECONDS_BETWEEN_DUMPS = 5;
+	/**
+	 * SECONDS_BETWEEN_DUMPS is the time we wait from first to second dump of stack trace. In most
+	 * cases, this should suffice to determine if still busy doing something, or, hung, or waiting
+	 * for user input.
+	 */
+	private static final int SECONDS_BETWEEN_DUMPS = 5;
 
 	private volatile boolean assumeUiThreadIsResponsive;
 
-    private final String timeoutArg;
+	private final String timeoutArg;
 	private final File outputDirectory;
 
 	private TimeoutDumpTimer(String timeoutArg, File outputDirectory) {
-        this.timeoutArg = timeoutArg;
+		this.timeoutArg = timeoutArg;
 		this.outputDirectory = outputDirectory;
-    }
+	}
 
 	/**
 	 * Starts a timer that dumps interesting debugging information shortly before
@@ -105,38 +105,38 @@ public class TimeoutDumpTimer extends TimerTask {
 	 * @param outputDirectory where the test results end up
 	 */
 	public static void startTimeoutDumpTimer(String timeoutArg, File outputDirectory) {
-        try {
-            /*
-             * The delay (in ms) is the sum of - the expected time it took for launching the current
-             * VM and reaching this method - the time it will take to run the garbage collection and
-             * dump all the infos (twice)
-             */
-            int delay = SECONDS_BEFORE_TIMEOUT_BUFFER * 1000;
+		try {
+			/*
+			 * The delay (in ms) is the sum of - the expected time it took for launching the current
+			 * VM and reaching this method - the time it will take to run the garbage collection and
+			 * dump all the infos (twice)
+			 */
+			int delay = SECONDS_BEFORE_TIMEOUT_BUFFER * 1000;
 
-            int timeout = Integer.parseInt(timeoutArg) - delay;
-            String time0 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.US).format(new Date());
-            logInfo("starting DumpStackTracesTimer with timeout=" + timeout + " at " + time0);
-            if (timeout > 0) {
-                new Timer("DumpStackTracesTimer", true).schedule(new TimeoutDumpTimer(timeoutArg, outputDirectory), timeout);
-            } else {
-                logWarning("DumpStackTracesTimer argument error: '-timeout " + timeoutArg
-                        + "' was too short to accommodate time delay required (" + delay + ").");
-            }
-        } catch (NumberFormatException e) {
-            logError("Error parsing timeout argument: " + timeoutArg, e);
-        }
-    }
+			int timeout = Integer.parseInt(timeoutArg) - delay;
+			String time0 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.US).format(new Date());
+			logInfo("starting DumpStackTracesTimer with timeout=" + timeout + " at " + time0);
+			if (timeout > 0) {
+				new Timer("DumpStackTracesTimer", true).schedule(new TimeoutDumpTimer(timeoutArg, outputDirectory), timeout);
+			} else {
+				logWarning("DumpStackTracesTimer argument error: '-timeout " + timeoutArg
+						+ "' was too short to accommodate time delay required (" + delay + ").");
+			}
+		} catch (NumberFormatException e) {
+			logError("Error parsing timeout argument: " + timeoutArg, e);
+		}
+	}
 
-    @Override
-    public void run() {
-        dump(0);
-        try {
-            Thread.sleep(SECONDS_BETWEEN_DUMPS * 1000);
-        } catch (InterruptedException e) {
-            // continue
-        }
-        dump(SECONDS_BETWEEN_DUMPS);
-    }
+	@Override
+	public void run() {
+		dump(0);
+		try {
+			Thread.sleep(SECONDS_BETWEEN_DUMPS * 1000);
+		} catch (InterruptedException e) {
+			// continue
+		}
+		dump(SECONDS_BETWEEN_DUMPS);
+	}
 
 	/**
 	 *
@@ -148,11 +148,11 @@ public class TimeoutDumpTimer extends TimerTask {
 	 *            under "results", such as
 	 *            .../results/linux.gtk.x86_64/timeoutScreens/
 	 */
-    private void dump(final int num) {
-        // Time elapsed time to do each dump, so we'll
-        // know if/when we get too close to the 2
-        // minutes we allow
-        long start = System.currentTimeMillis();
+	private void dump(final int num) {
+		// Time elapsed time to do each dump, so we'll
+		// know if/when we get too close to the 2
+		// minutes we allow
+		long start = System.currentTimeMillis();
 
 		// Dump all stacks:
 		dumpStackTraces(num, System.err);
@@ -167,13 +167,13 @@ public class TimeoutDumpTimer extends TimerTask {
 			}
 		}
 
-        // Elapsed time in milliseconds
-        long elapsedTimeMillis = System.currentTimeMillis() - start;
+		// Elapsed time in milliseconds
+		long elapsedTimeMillis = System.currentTimeMillis() - start;
 
-        // Print in seconds
-        float elapsedTimeSec = elapsedTimeMillis / 1000F;
-        logInfo("Seconds to do dump " + num + ": " + elapsedTimeSec);
-    }
+		// Print in seconds
+		float elapsedTimeSec = elapsedTimeMillis / 1000F;
+		logInfo("Seconds to do dump " + num + ": " + elapsedTimeSec);
+	}
 
 	private static void dumpAwtScreenshot(String screenshotFile) {
 		try {
@@ -219,32 +219,32 @@ public class TimeoutDumpTimer extends TimerTask {
 		}
 	}
 
-    private void logStackTraces(int num) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        dumpStackTraces(num, new PrintStream(outputStream));
-        logWarning(outputStream.toString());
-    }
+	private void logStackTraces(int num) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		dumpStackTraces(num, new PrintStream(outputStream));
+		logWarning(outputStream.toString());
+	}
 
-    private void dumpStackTraces(int num, PrintStream out) {
-        out.println("DumpStackTracesTimer almost reached timeout '" + timeoutArg + "'.");
-        out.println("totalMemory:            " + Runtime.getRuntime().totalMemory());
-        out.println("freeMemory (before GC): " + Runtime.getRuntime().freeMemory());
-        out.flush(); // https://bugs.eclipse.org/bugs/show_bug.cgi?id=420258: flush aggressively, we could be low on memory
-        System.gc();
-        out.println("freeMemory (after GC):  " + Runtime.getRuntime().freeMemory());
-        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.US).format(new Date());
-        out.println("Thread dump " + num + " at " + time + ":");
-        out.flush();
-        Map<Thread, StackTraceElement[]> stackTraces = Thread.getAllStackTraces();
-        for (Entry<Thread, StackTraceElement[]> entry : stackTraces.entrySet()) {
-            String name = entry.getKey().getName();
-            StackTraceElement[] stack = entry.getValue();
-            Exception exception = new Exception("ThreadDump for thread \"" + name + "\"");
-            exception.setStackTrace(stack);
-            exception.printStackTrace(out);
-        }
-        out.flush();
-    }
+	private void dumpStackTraces(int num, PrintStream out) {
+		out.println("DumpStackTracesTimer almost reached timeout '" + timeoutArg + "'.");
+		out.println("totalMemory:            " + Runtime.getRuntime().totalMemory());
+		out.println("freeMemory (before GC): " + Runtime.getRuntime().freeMemory());
+		out.flush(); // https://bugs.eclipse.org/bugs/show_bug.cgi?id=420258: flush aggressively, we could be low on memory
+		System.gc();
+		out.println("freeMemory (after GC):  " + Runtime.getRuntime().freeMemory());
+		String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.US).format(new Date());
+		out.println("Thread dump " + num + " at " + time + ":");
+		out.flush();
+		Map<Thread, StackTraceElement[]> stackTraces = Thread.getAllStackTraces();
+		for (Entry<Thread, StackTraceElement[]> entry : stackTraces.entrySet()) {
+			String name = entry.getKey().getName();
+			StackTraceElement[] stack = entry.getValue();
+			Exception exception = new Exception("ThreadDump for thread \"" + name + "\"");
+			exception.setStackTrace(stack);
+			exception.printStackTrace(out);
+		}
+		out.flush();
+	}
 
 	private boolean dumpSwtDisplay(final int num) {
 		try {

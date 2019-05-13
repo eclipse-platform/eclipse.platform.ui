@@ -84,18 +84,18 @@ public class ListPopulationTest extends BasicPerformanceTest {
 		openBrowser();
 		final String [] items = getItems(count);
 
-        exercise(new TestRunnable() {
-            @Override
+		exercise(new TestRunnable() {
+			@Override
 			public void run() {
-    			list.removeAll();
-    			startMeasuring();
-    			for (int j = 0; j < items.length; j++) {
-    				list.add(items[j]);
-    			}
-    			processEvents();
-    			stopMeasuring();
-    		}
-        });
+				list.removeAll();
+				startMeasuring();
+				for (int j = 0; j < items.length; j++) {
+					list.add(items[j]);
+				}
+				processEvents();
+				stopMeasuring();
+			}
+		});
 
 		commitMeasurements();
 		assertPerformance();
@@ -108,16 +108,16 @@ public class ListPopulationTest extends BasicPerformanceTest {
 	public void setItemsBench(int count) throws Throwable {
 		openBrowser();
 		final String [] items = getItems(count);
-        exercise(new TestRunnable() {
-            @Override
+		exercise(new TestRunnable() {
+			@Override
 			public void run() {
-    			list.removeAll();
-    			startMeasuring();
-    			list.setItems(items);
-    			processEvents();
-    			stopMeasuring();
-            }
-        });
+				list.removeAll();
+				startMeasuring();
+				list.setItems(items);
+				processEvents();
+				stopMeasuring();
+			}
+		});
 
 		commitMeasurements();
 		assertPerformance();

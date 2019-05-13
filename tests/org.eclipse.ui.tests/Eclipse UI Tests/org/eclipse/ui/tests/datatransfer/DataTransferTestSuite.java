@@ -20,12 +20,12 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    ImportOperationTest.class,
-    ImportArchiveOperationTest.class,
-    ExportFileSystemOperationTest.class,
-    ExportArchiveFileOperationTest.class,
+	ImportOperationTest.class,
+	ImportArchiveOperationTest.class,
+	ExportFileSystemOperationTest.class,
+	ExportArchiveFileOperationTest.class,
 	ImportExistingProjectsWizardTest.class,
-    ImportExportWizardsCategoryTests.class,
+	ImportExportWizardsCategoryTests.class,
 	SmartImportTests.class,
 	ZipSlipTests.class,
 })

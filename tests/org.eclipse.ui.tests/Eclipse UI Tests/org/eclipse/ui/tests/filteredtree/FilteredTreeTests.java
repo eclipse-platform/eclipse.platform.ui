@@ -156,25 +156,25 @@ public class FilteredTreeTests extends UITestCase {
 	}
 
 	private FilteredTree createFilteredTree(Composite parent, int style){
-	      Composite c = new Composite(parent, SWT.NONE);
-	      c.setLayout(new GridLayout());
-	      FilteredTree fTree = new FilteredTree(c, style, new PatternFilter());
+		Composite c = new Composite(parent, SWT.NONE);
+		c.setLayout(new GridLayout());
+		FilteredTree fTree = new FilteredTree(c, style, new PatternFilter());
 
-	      GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		  gd.widthHint = 400;
-		  gd.heightHint = 500;
-		  fTree.setLayoutData(gd);
-		  fTree.getViewer().setContentProvider(new TestModelContentProvider());
-		  fTree.getViewer().setLabelProvider(new LabelProvider());
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.widthHint = 400;
+		gd.heightHint = 500;
+		fTree.setLayoutData(gd);
+		fTree.getViewer().setContentProvider(new TestModelContentProvider());
+		fTree.getViewer().setLabelProvider(new LabelProvider());
 
-	      return fTree;
+		return fTree;
 	}
 
 	private FilteredTree createMyFilteredTree(Composite parent, int style){
 		Composite c = new Composite(parent, SWT.NONE);
-	    c.setLayout(new GridLayout());
-	    FilteredTree fTree = new MyFilteredTree(c, style);
-	    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		c.setLayout(new GridLayout());
+		FilteredTree fTree = new MyFilteredTree(c, style);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = 400;
 		gd.heightHint = 500;
 		fTree.setLayoutData(gd);

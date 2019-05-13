@@ -27,43 +27,43 @@ import org.w3c.dom.Element;
  */
 public class CSSPseudoElementSelectorImpl extends AbstractElementSelector {
 
-    /**
-     * Creates a new CSSPseudoElementSelector object.
-     */
-    public CSSPseudoElementSelectorImpl(String uri, String name) {
-        super(uri, name);
-    }
+	/**
+	 * Creates a new CSSPseudoElementSelector object.
+	 */
+	public CSSPseudoElementSelectorImpl(String uri, String name) {
+		super(uri, name);
+	}
 
-    /**
-     * <b>SAC</b>: Implements {@link
-     * org.w3c.css.sac.Selector#getSelectorType()}.
-     */
-    @Override
+	/**
+	 * <b>SAC</b>: Implements {@link
+	 * org.w3c.css.sac.Selector#getSelectorType()}.
+	 */
+	@Override
 	public short getSelectorType() {
-        return SAC_PSEUDO_ELEMENT_SELECTOR;
-    }
+		return SAC_PSEUDO_ELEMENT_SELECTOR;
+	}
 
-    /**
-     * Tests whether this selector matches the given element.
-     */
-    @Override
+	/**
+	 * Tests whether this selector matches the given element.
+	 */
+	@Override
 	public boolean match(Element e, String pseudoE) {
-        return getLocalName().equalsIgnoreCase(pseudoE);
-    }
+		return getLocalName().equalsIgnoreCase(pseudoE);
+	}
 
-    /**
-     * Returns the specificity of this selector.
-     */
-    @Override
+	/**
+	 * Returns the specificity of this selector.
+	 */
+	@Override
 	public int getSpecificity() {
-        return 0;
-    }
+		return 0;
+	}
 
-    /**
-     * Returns a representation of the selector.
-     */
-    @Override
+	/**
+	 * Returns a representation of the selector.
+	 */
+	@Override
 	public String toString() {
-        return ":" + getLocalName();
-    }
+		return ":" + getLocalName();
+	}
 }

@@ -40,135 +40,135 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  * Pointer whose value is <code>null</code>.
  */
 public class NullPointer extends EStructuralFeatureOwnerPointer {
-    private QName name;
-    private String id;
+	private QName name;
+	private String id;
 
-    private static final long serialVersionUID = 2193425983220679887L;
+	private static final long serialVersionUID = 2193425983220679887L;
 
-    /**
-     * Create a new NullPointer.
-     * @param name node name
-     * @param locale Locale
-     */
-    public NullPointer(QName name, Locale locale) {
-        super(null, locale);
-        this.name = name;
-    }
+	/**
+	 * Create a new NullPointer.
+	 * @param name node name
+	 * @param locale Locale
+	 */
+	public NullPointer(QName name, Locale locale) {
+		super(null, locale);
+		this.name = name;
+	}
 
-    /**
-     * Used for the root node.
-     * @param parent parent pointer
-     * @param name node name
-     */
-    public NullPointer(NodePointer parent, QName name) {
-        super(parent);
-        this.name = name;
-    }
+	/**
+	 * Used for the root node.
+	 * @param parent parent pointer
+	 * @param name node name
+	 */
+	public NullPointer(NodePointer parent, QName name) {
+		super(parent);
+		this.name = name;
+	}
 
-    /**
-     * Create a new NullPointer.
-     * @param locale Locale
-     * @param id String
-     */
-    public NullPointer(Locale locale, String id) {
-        super(null, locale);
-        this.id = id;
-    }
+	/**
+	 * Create a new NullPointer.
+	 * @param locale Locale
+	 * @param id String
+	 */
+	public NullPointer(Locale locale, String id) {
+		super(null, locale);
+		this.id = id;
+	}
 
-    @Override
+	@Override
 	public QName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public Object getBaseValue() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean isCollection() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isLeaf() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean isActual() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public EStructuralFeaturePointer getPropertyPointer() {
-        return new NullEStructuralFeaturePointer(this);
-    }
+		return new NullEStructuralFeaturePointer(this);
+	}
 
-    @Override
+	@Override
 	public NodePointer createPath(JXPathContext context, Object value) {
-        if (parent != null) {
-            return parent.createPath(context, value).getValuePointer();
-        }
-        throw new UnsupportedOperationException(
-            "Cannot create the root object: " + asPath());
-    }
+		if (parent != null) {
+			return parent.createPath(context, value).getValuePointer();
+		}
+		throw new UnsupportedOperationException(
+			"Cannot create the root object: " + asPath());
+	}
 
-    @Override
+	@Override
 	public NodePointer createPath(JXPathContext context) {
-        if (parent != null) {
-            return parent.createPath(context).getValuePointer();
-        }
-        throw new UnsupportedOperationException(
-            "Cannot create the root object: " + asPath());
-    }
+		if (parent != null) {
+			return parent.createPath(context).getValuePointer();
+		}
+		throw new UnsupportedOperationException(
+			"Cannot create the root object: " + asPath());
+	}
 
-    @Override
+	@Override
 	public NodePointer createChild(
-        JXPathContext context,
-        QName name,
-        int index) {
-        return createPath(context).createChild(context, name, index);
-    }
+		JXPathContext context,
+		QName name,
+		int index) {
+		return createPath(context).createChild(context, name, index);
+	}
 
-    @Override
+	@Override
 	public NodePointer createChild(
-        JXPathContext context,
-        QName name,
-        int index,
-        Object value) {
-        return createPath(context).createChild(context, name, index, value);
-    }
+		JXPathContext context,
+		QName name,
+		int index,
+		Object value) {
+		return createPath(context).createChild(context, name, index, value);
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return Objects.hashCode(name);
-    }
+		return Objects.hashCode(name);
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
+		if (object == this) {
+			return true;
+		}
 
-        if (!(object instanceof NullPointer)) {
-            return false;
-        }
+		if (!(object instanceof NullPointer)) {
+			return false;
+		}
 
-        NullPointer other = (NullPointer) object;
-        return Objects.equals(name, other.name);
-    }
+		NullPointer other = (NullPointer) object;
+		return Objects.equals(name, other.name);
+	}
 
-    @Override
+	@Override
 	public String asPath() {
-        if (id != null) {
-            return "id(" + id + ")";
-        }
-        return parent == null ? "null()" : super.asPath();
-    }
+		if (id != null) {
+			return "id(" + id + ")";
+		}
+		return parent == null ? "null()" : super.asPath();
+	}
 
-    @Override
+	@Override
 	public int getLength() {
-        return 0;
-    }
+		return 0;
+	}
 }

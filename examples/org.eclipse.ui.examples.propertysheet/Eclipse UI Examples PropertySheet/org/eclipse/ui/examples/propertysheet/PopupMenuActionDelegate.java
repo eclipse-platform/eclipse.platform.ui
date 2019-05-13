@@ -24,22 +24,22 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class PopupMenuActionDelegate implements IObjectActionDelegate {
 
-    private IWorkbenchPart part;
+	private IWorkbenchPart part;
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        MessageDialog.openInformation(this.part.getSite().getShell(),
-                MessageUtil.getString("Property_Sheet_Example"), //$NON-NLS-1$
-                MessageUtil.getString("Popup_Menu_Action_executed")); //$NON-NLS-1$
-    }
+		MessageDialog.openInformation(this.part.getSite().getShell(),
+				MessageUtil.getString("Property_Sheet_Example"), //$NON-NLS-1$
+				MessageUtil.getString("Popup_Menu_Action_executed")); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        //Ignored for this example
-    }
+		//Ignored for this example
+	}
 
-    @Override
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-        this.part = targetPart;
-    }
+		this.part = targetPart;
+	}
 }

@@ -244,6 +244,6 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 
 	@Override
 	public String getPluginId() {
-        return (configElement != null) ? configElement.getNamespaceIdentifier() : null;
+		return (configElement != null) ? configElement.getNamespaceIdentifier() : null;
 	}
 }

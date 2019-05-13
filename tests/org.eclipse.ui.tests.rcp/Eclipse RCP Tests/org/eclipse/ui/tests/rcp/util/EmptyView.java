@@ -23,18 +23,18 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class EmptyView extends ViewPart {
 
-    public static final String ID = "org.eclipse.ui.tests.rcp.util.EmptyView"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.ui.tests.rcp.util.EmptyView"; //$NON-NLS-1$
 
-    private Label label;
+	private Label label;
 
 	public EmptyView() {
-	    // do nothing
+		// do nothing
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
-	    label = new Label(parent, SWT.NONE);
-	    label.setText("Empty view");
+		label = new Label(parent, SWT.NONE);
+		label.setText("Empty view");
 	}
 
 	@Override

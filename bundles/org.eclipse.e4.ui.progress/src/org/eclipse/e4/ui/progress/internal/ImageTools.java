@@ -42,11 +42,11 @@ public class ImageTools {
 	}
 
 	public ImageDescriptor getImageDescriptor(
-	        String relativePath) {
+			String relativePath) {
 		//TODO E4 - the only place that requires org.eclipse.core.runtime
 		URL url = FileLocator.find(Platform
-		        .getBundle(IProgressConstants.PLUGIN_ID), new Path(
-		        ICONS_LOCATION + relativePath), null);
+				.getBundle(IProgressConstants.PLUGIN_ID), new Path(
+				ICONS_LOCATION + relativePath), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 

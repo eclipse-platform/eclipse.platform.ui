@@ -29,70 +29,70 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class PersistanceTest extends UITestCase {
 
-    /**
-     * @param testName
-     */
-    public PersistanceTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * @param testName
+	 */
+	public PersistanceTest(String testName) {
+		super(testName);
+	}
 
-    public void testCategoryPermutations() {
-        try {
-	        IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
-	        ICategory category = manager.getCategory("org.eclipse.ui.PT.C1"); // should not be defined - missing name
-	        assertFalse(category.isDefined());
+	public void testCategoryPermutations() {
+		try {
+			IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
+			ICategory category = manager.getCategory("org.eclipse.ui.PT.C1"); // should not be defined - missing name
+			assertFalse(category.isDefined());
 
-	        category = manager.getCategory("org.eclipse.ui.PT.C2"); // should be defined - missing desc
-	        assertTrue(category.isDefined());
-	        assertNotNull(category.getDescription());
+			category = manager.getCategory("org.eclipse.ui.PT.C2"); // should be defined - missing desc
+			assertTrue(category.isDefined());
+			assertNotNull(category.getDescription());
 
 			for (Iterator<String> i = manager.getDefinedCategoryIds().iterator(); i.hasNext();) {
-	            if (manager.getCategory(i.next()).getName().equals("org.eclipse.ui.PT.C3")) {
+				if (manager.getCategory(i.next()).getName().equals("org.eclipse.ui.PT.C3")) {
 					fail("Found category that should not be.");
 				}
-	        }
-        }
-        catch (NotDefinedException e) {
-            fail(e.getMessage());
-        }
-    }
+			}
+		}
+		catch (NotDefinedException e) {
+			fail(e.getMessage());
+		}
+	}
 
-    public void testActivityRequirementBindings() {
-        IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
-        IActivity activity  = manager.getActivity("org.eclipse.ui.PT.A2");
-        assertTrue(activity.getActivityRequirementBindings().isEmpty());
-    }
+	public void testActivityRequirementBindings() {
+		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
+		IActivity activity  = manager.getActivity("org.eclipse.ui.PT.A2");
+		assertTrue(activity.getActivityRequirementBindings().isEmpty());
+	}
 
-    public void testActivityPatternBindings() {
-        IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
-        IActivity activity  = manager.getActivity("org.eclipse.ui.PT.A2");
-        assertTrue(activity.getActivityPatternBindings().isEmpty());
-    }
+	public void testActivityPatternBindings() {
+		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
+		IActivity activity  = manager.getActivity("org.eclipse.ui.PT.A2");
+		assertTrue(activity.getActivityPatternBindings().isEmpty());
+	}
 
-    public void testCategoryActivityBindings() {
-        IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
-        ICategory category  = manager.getCategory("org.eclipse.ui.PT.C2");
-        assertTrue(category.getCategoryActivityBindings().isEmpty());
-    }
+	public void testCategoryActivityBindings() {
+		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
+		ICategory category  = manager.getCategory("org.eclipse.ui.PT.C2");
+		assertTrue(category.getCategoryActivityBindings().isEmpty());
+	}
 
-    public void testActivityPermutations() {
-        try {
-	        IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
-	        IActivity activity = manager.getActivity("org.eclipse.ui.PT.A1"); // should not be defined - missing name
-	        assertFalse(activity.isDefined());
+	public void testActivityPermutations() {
+		try {
+			IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
+			IActivity activity = manager.getActivity("org.eclipse.ui.PT.A1"); // should not be defined - missing name
+			assertFalse(activity.isDefined());
 
-	        activity = manager.getActivity("org.eclipse.ui.PT.A2"); // should be defined - missing desc
-	        assertTrue(activity.isDefined());
-	        assertNotNull(activity.getDescription());
+			activity = manager.getActivity("org.eclipse.ui.PT.A2"); // should be defined - missing desc
+			assertTrue(activity.isDefined());
+			assertNotNull(activity.getDescription());
 
 			for (Iterator<String> i = manager.getDefinedActivityIds().iterator(); i.hasNext();) {
-	            if (manager.getActivity(i.next()).getName().equals("org.eclipse.ui.PT.A3")) {
+				if (manager.getActivity(i.next()).getName().equals("org.eclipse.ui.PT.A3")) {
 					fail("Found activity that should not be.");
 				}
-	        }
-        }
-        catch (NotDefinedException e) {
-            fail(e.getMessage());
-        }
-    }
+			}
+		}
+		catch (NotDefinedException e) {
+			fail(e.getMessage());
+		}
+	}
 }

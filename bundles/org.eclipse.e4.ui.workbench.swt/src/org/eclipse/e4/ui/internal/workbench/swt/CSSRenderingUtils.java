@@ -355,7 +355,7 @@ public class CSSRenderingUtils {
 			if (frameImage != null) {
 				frame.setImages(frameImage, frameInts, handleImage);
 			}
-		 };
+		};
 
 		toFrame.getDisplay().addListener(SWT.Skin, listener);
 

@@ -32,75 +32,75 @@ import org.eclipse.swt.widgets.CoolBar;
  */
 public interface ICoolBarManager extends IContributionManager {
 
-    /**
-     * Property name of a cool item's size (value <code>"size"</code>).
-     * <p>
-     * The cool bar manager uses this property to tell its cool items to update
-     * their size.
-     * </p>
-     *
-     * @see IContributionItem#update(String) @issue consider declaring this
-     *      constant elsewhere
-     */
-    public static final String SIZE = "size"; //$NON-NLS-1$
+	/**
+	 * Property name of a cool item's size (value <code>"size"</code>).
+	 * <p>
+	 * The cool bar manager uses this property to tell its cool items to update
+	 * their size.
+	 * </p>
+	 *
+	 * @see IContributionItem#update(String) @issue consider declaring this
+	 *      constant elsewhere
+	 */
+	public static final String SIZE = "size"; //$NON-NLS-1$
 
-    /**
-     * A convenience method to add a tool bar as a contribution item to this
-     * cool bar manager. Equivalent to <code>add(new ToolBarContributionManager(toolBarManager))</code>.
-     *
-     * @param toolBarManager
-     *            the tool bar manager to be added
-     * @see ToolBarContributionItem
-     */
-    public void add(IToolBarManager toolBarManager);
+	/**
+	 * A convenience method to add a tool bar as a contribution item to this
+	 * cool bar manager. Equivalent to <code>add(new ToolBarContributionManager(toolBarManager))</code>.
+	 *
+	 * @param toolBarManager
+	 *            the tool bar manager to be added
+	 * @see ToolBarContributionItem
+	 */
+	public void add(IToolBarManager toolBarManager);
 
-    /**
-     * Returns the context menu manager used by this cool bar manager. This
-     * context menu manager is used by the cool bar manager except for cool
-     * items that provide their own.
-     *
-     * @return the context menu manager, or <code>null</code> if none
-     * @see #setContextMenuManager
-     */
-    public IMenuManager getContextMenuManager();
+	/**
+	 * Returns the context menu manager used by this cool bar manager. This
+	 * context menu manager is used by the cool bar manager except for cool
+	 * items that provide their own.
+	 *
+	 * @return the context menu manager, or <code>null</code> if none
+	 * @see #setContextMenuManager
+	 */
+	public IMenuManager getContextMenuManager();
 
-    /**
-     * Returns whether the layout of the underlying cool bar widget is locked.
-     *
-     * @return <code>true</code> if cool bar layout is locked, <code>false</code>
-     *         otherwise
-     */
-    public boolean getLockLayout();
+	/**
+	 * Returns whether the layout of the underlying cool bar widget is locked.
+	 *
+	 * @return <code>true</code> if cool bar layout is locked, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean getLockLayout();
 
-    /**
-     * Returns the style of the underlying cool bar widget.
-     *
-     * @return the style of the cool bar
-     */
-    public int getStyle();
+	/**
+	 * Returns the style of the underlying cool bar widget.
+	 *
+	 * @return the style of the cool bar
+	 */
+	public int getStyle();
 
-    /**
-     * Sets the context menu of this cool bar manager to the given menu
-     * manager.
-     *
-     * @param menuManager
-     *            the context menu manager, or <code>null</code> if none
-     * @see #getContextMenuManager
-     */
-    public void setContextMenuManager(IMenuManager menuManager);
+	/**
+	 * Sets the context menu of this cool bar manager to the given menu
+	 * manager.
+	 *
+	 * @param menuManager
+	 *            the context menu manager, or <code>null</code> if none
+	 * @see #getContextMenuManager
+	 */
+	public void setContextMenuManager(IMenuManager menuManager);
 
-    /**
-     * Locks or unlocks the layout of the underlying cool bar widget. Once the
-     * cool bar is locked, cool items cannot be repositioned by the user.
-     * <p>
-     * Note that items can be added or removed programmatically even while the
-     * cool bar is locked.
-     * </p>
-     *
-     * @param value
-     *            <code>true</code> to lock the cool bar, <code>false</code>
-     *            to unlock
-     */
-    public void setLockLayout(boolean value);
+	/**
+	 * Locks or unlocks the layout of the underlying cool bar widget. Once the
+	 * cool bar is locked, cool items cannot be repositioned by the user.
+	 * <p>
+	 * Note that items can be added or removed programmatically even while the
+	 * cool bar is locked.
+	 * </p>
+	 *
+	 * @param value
+	 *            <code>true</code> to lock the cool bar, <code>false</code>
+	 *            to unlock
+	 */
+	public void setLockLayout(boolean value);
 
 }

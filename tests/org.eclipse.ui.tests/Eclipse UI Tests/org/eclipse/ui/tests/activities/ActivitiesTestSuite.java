@@ -24,12 +24,12 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	ImagesTest.class,
 	UtilTest.class,
-    StaticTest.class,
-    DynamicTest.class,
-    PersistanceTest.class,
-    ActivityPreferenceTest.class,
-    MenusTest.class,
-    PatternUtilTest.class
+	StaticTest.class,
+	DynamicTest.class,
+	PersistanceTest.class,
+	ActivityPreferenceTest.class,
+	MenusTest.class,
+	PatternUtilTest.class
 })
 public class ActivitiesTestSuite {
 

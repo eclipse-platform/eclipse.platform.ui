@@ -47,163 +47,163 @@ import org.eclipse.e4.emf.internal.xpath.helper.ValueUtils;
  *
  */
 public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
-    /**
+	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
 	private static final Object UNINITIALIZED = new Object();
 
-    private Object value = UNINITIALIZED;
+	private Object value = UNINITIALIZED;
 
-    @Override
+	@Override
 	public NodeIterator childIterator(NodeTest test, boolean reverse,
-            NodePointer startWith) {
-        if (test == null) {
-            return createNodeIterator(null, reverse, startWith);
-        }
-        if (test instanceof NodeNameTest) {
-            NodeNameTest nodeNameTest = (NodeNameTest) test;
-            QName testName = nodeNameTest.getNodeName();
-            if (isValidProperty(testName)) {
-                return createNodeIterator(nodeNameTest.isWildcard() ? null
-                        : testName.toString(), reverse, startWith);
-            }
-            return null;
-        }
-        return test instanceof NodeTypeTest && ((NodeTypeTest) test).getNodeType() == Compiler.NODE_TYPE_NODE
-                ? createNodeIterator(null, reverse, startWith) : null;
-    }
+			NodePointer startWith) {
+		if (test == null) {
+			return createNodeIterator(null, reverse, startWith);
+		}
+		if (test instanceof NodeNameTest) {
+			NodeNameTest nodeNameTest = (NodeNameTest) test;
+			QName testName = nodeNameTest.getNodeName();
+			if (isValidProperty(testName)) {
+				return createNodeIterator(nodeNameTest.isWildcard() ? null
+						: testName.toString(), reverse, startWith);
+			}
+			return null;
+		}
+		return test instanceof NodeTypeTest && ((NodeTypeTest) test).getNodeType() == Compiler.NODE_TYPE_NODE
+				? createNodeIterator(null, reverse, startWith) : null;
+	}
 
-    /**
-     * Create a NodeIterator.
-     * @param property property name
-     * @param reverse whether to iterate in reverse
-     * @param startWith first pointer to return
-     * @return NodeIterator
-     */
-    public NodeIterator createNodeIterator(String property, boolean reverse,
-            NodePointer startWith) {
-        return new EStructuralFeatureIterator(this, property, reverse, startWith);
-    }
+	/**
+	 * Create a NodeIterator.
+	 * @param property property name
+	 * @param reverse whether to iterate in reverse
+	 * @param startWith first pointer to return
+	 * @return NodeIterator
+	 */
+	public NodeIterator createNodeIterator(String property, boolean reverse,
+			NodePointer startWith) {
+		return new EStructuralFeatureIterator(this, property, reverse, startWith);
+	}
 
-    @Override
+	@Override
 	public NodeIterator attributeIterator(QName name) {
-        return new EObjectAttributeIterator(this, name);
-    }
+		return new EObjectAttributeIterator(this, name);
+	}
 
-    /**
-     * Create a new PropertyOwnerPointer.
-     * @param parent parent pointer
-     * @param locale Locale
-     */
-    protected EStructuralFeatureOwnerPointer(NodePointer parent, Locale locale) {
-        super(parent, locale);
-    }
+	/**
+	 * Create a new PropertyOwnerPointer.
+	 * @param parent parent pointer
+	 * @param locale Locale
+	 */
+	protected EStructuralFeatureOwnerPointer(NodePointer parent, Locale locale) {
+		super(parent, locale);
+	}
 
-    /**
-     * Create a new PropertyOwnerPointer.
-     * @param parent pointer
-     */
-    protected EStructuralFeatureOwnerPointer(NodePointer parent) {
-        super(parent);
-    }
+	/**
+	 * Create a new PropertyOwnerPointer.
+	 * @param parent pointer
+	 */
+	protected EStructuralFeatureOwnerPointer(NodePointer parent) {
+		super(parent);
+	}
 
-    @Override
+	@Override
 	public void setIndex(int index) {
-        if (this.index != index) {
-            super.setIndex(index);
-            value = UNINITIALIZED;
-        }
-    }
+		if (this.index != index) {
+			super.setIndex(index);
+			value = UNINITIALIZED;
+		}
+	}
 
-    @Override
+	@Override
 	public Object getImmediateNode() {
-        if (value == UNINITIALIZED) {
-            value = index == WHOLE_COLLECTION ? ValueUtils.getValue(getBaseValue())
-                    : ValueUtils.getValue(getBaseValue(), index);
-        }
-        return value;
-    }
+		if (value == UNINITIALIZED) {
+			value = index == WHOLE_COLLECTION ? ValueUtils.getValue(getBaseValue())
+					: ValueUtils.getValue(getBaseValue(), index);
+		}
+		return value;
+	}
 
-    @Override
+	@Override
 	public abstract QName getName();
 
-    /**
-     * Learn whether <code>name</code> is a valid child name for this PropertyOwnerPointer.
-     * @param name the QName to test
-     * @return <code>true</code> if <code>QName</code> is a valid property name.
-     * @since JXPath 1.3
-     */
-    public boolean isValidProperty(QName name) {
-        return isDefaultNamespace(name.getPrefix());
-    }
+	/**
+	 * Learn whether <code>name</code> is a valid child name for this PropertyOwnerPointer.
+	 * @param name the QName to test
+	 * @return <code>true</code> if <code>QName</code> is a valid property name.
+	 * @since JXPath 1.3
+	 */
+	public boolean isValidProperty(QName name) {
+		return isDefaultNamespace(name.getPrefix());
+	}
 
-    /**
-     * Throws an exception if you try to change the root element, otherwise
-     * forwards the call to the parent pointer.
-     * @param value to set
-     */
-    @Override
+	/**
+	 * Throws an exception if you try to change the root element, otherwise
+	 * forwards the call to the parent pointer.
+	 * @param value to set
+	 */
+	@Override
 	public void setValue(Object value) {
-        this.value = value;
-        if (parent != null) {
-            if (parent.isContainer()) {
-                parent.setValue(value);
-            }
-            else {
-                if (index == WHOLE_COLLECTION) {
-                    throw new UnsupportedOperationException(
-                        "Cannot setValue of an object that is not "
-                            + "some other object's property");
-                }
-                throw new JXPathInvalidAccessException(
-                    "The specified collection element does not exist: " + this);
-            }
-        }
-        else {
-            throw new UnsupportedOperationException(
-                "Cannot replace the root object");
-        }
-    }
+		this.value = value;
+		if (parent != null) {
+			if (parent.isContainer()) {
+				parent.setValue(value);
+			}
+			else {
+				if (index == WHOLE_COLLECTION) {
+					throw new UnsupportedOperationException(
+						"Cannot setValue of an object that is not "
+							+ "some other object's property");
+				}
+				throw new JXPathInvalidAccessException(
+					"The specified collection element does not exist: " + this);
+			}
+		}
+		else {
+			throw new UnsupportedOperationException(
+				"Cannot replace the root object");
+		}
+	}
 
-    /**
-     * If this is a root node pointer, throws an exception; otherwise
-     * forwards the call to the parent node.
-     */
-    @Override
+	/**
+	 * If this is a root node pointer, throws an exception; otherwise
+	 * forwards the call to the parent node.
+	 */
+	@Override
 	public void remove() {
-        this.value = null;
-        if (parent != null) {
-            parent.remove();
-        }
-        else {
-            throw new UnsupportedOperationException(
-                "Cannot remove an object that is not "
-                    + "some other object's property or a collection element");
-        }
-    }
+		this.value = null;
+		if (parent != null) {
+			parent.remove();
+		}
+		else {
+			throw new UnsupportedOperationException(
+				"Cannot remove an object that is not "
+					+ "some other object's property or a collection element");
+		}
+	}
 
-    /**
-     * Get a PropertyPointer for this PropertyOwnerPointer.
-     * @return PropertyPointer
-     */
-    public abstract EStructuralFeaturePointer getPropertyPointer();
+	/**
+	 * Get a PropertyPointer for this PropertyOwnerPointer.
+	 * @return PropertyPointer
+	 */
+	public abstract EStructuralFeaturePointer getPropertyPointer();
 
-    /**
-     * Learn whether dynamic property declaration is supported.
-     * @return true if the property owner can set a property "does not exist".
-     *         A good example is a Map. You can always assign a value to any
-     *         key even if it has never been "declared".
-     */
-    public boolean isDynamicPropertyDeclarationSupported() {
-        return false;
-    }
+	/**
+	 * Learn whether dynamic property declaration is supported.
+	 * @return true if the property owner can set a property "does not exist".
+	 *         A good example is a Map. You can always assign a value to any
+	 *         key even if it has never been "declared".
+	 */
+	public boolean isDynamicPropertyDeclarationSupported() {
+		return false;
+	}
 
-    @Override
+	@Override
 	public int compareChildNodePointers(NodePointer pointer1,
-            NodePointer pointer2) {
-        int r = pointer1.getName().toString().compareTo(pointer2.getName().toString());
-        return r == 0 ? pointer1.getIndex() - pointer2.getIndex() : r;
-    }
+			NodePointer pointer2) {
+		int r = pointer1.getName().toString().compareTo(pointer2.getName().toString());
+		return r == 0 ? pointer1.getIndex() - pointer2.getIndex() : r;
+	}
 }

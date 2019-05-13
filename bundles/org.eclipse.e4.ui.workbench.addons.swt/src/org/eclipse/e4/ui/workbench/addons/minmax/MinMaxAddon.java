@@ -741,7 +741,7 @@ public class MinMaxAddon {
 			}
 			if (perspStack != null) {
 				if (perspStack.getElementId() == null || perspStack.getElementId().length() == 0)
-				 {
+				{
 					perspStack.setElementId("PerspectiveStack"); //$NON-NLS-1$
 				}
 

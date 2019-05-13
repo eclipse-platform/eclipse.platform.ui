@@ -32,106 +32,106 @@ import org.osgi.framework.BundleContext;
  * The main plugin class to be used in the desktop.
  */
 public class TestPlugin extends AbstractUIPlugin implements IStartup {
-    //The shared instance.
-    private static TestPlugin plugin;
+	//The shared instance.
+	private static TestPlugin plugin;
 
-    //Resource bundle.
-    private ResourceBundle resourceBundle;
+	//Resource bundle.
+	private ResourceBundle resourceBundle;
 
-    // This boolean should only be true if the earlyStartup() method
-    // has been called.
-    private static boolean earlyStartupCalled = false;
+	// This boolean should only be true if the earlyStartup() method
+	// has been called.
+	private static boolean earlyStartupCalled = false;
 
-    public static final String PLUGIN_ID = "org.eclipse.ui.tests";
+	public static final String PLUGIN_ID = "org.eclipse.ui.tests";
 
-    /**
-     * The constructor.
-     */
-    public TestPlugin() {
-        plugin = this;
-        try {
-            resourceBundle = ResourceBundle
-                    .getBundle("org.eclipse.ui.tests.TestPluginResources");
-        } catch (MissingResourceException x) {
-            resourceBundle = null;
-        }
-    }
+	/**
+	 * The constructor.
+	 */
+	public TestPlugin() {
+		plugin = this;
+		try {
+			resourceBundle = ResourceBundle
+					.getBundle("org.eclipse.ui.tests.TestPluginResources");
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
+	}
 
-    /**
-     * Returns the shared instance.
-     */
-    public static TestPlugin getDefault() {
-        return plugin;
-    }
+	/**
+	 * Returns the shared instance.
+	 */
+	public static TestPlugin getDefault() {
+		return plugin;
+	}
 
-    /**
-     * Returns the workspace instance.
-     */
-    public static IWorkspace getWorkspace() {
-        return ResourcesPlugin.getWorkspace();
-    }
+	/**
+	 * Returns the workspace instance.
+	 */
+	public static IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
 
-    /**
-     * Returns the string from the plugin's resource bundle,
-     * or 'key' if not found.
-     */
-    public static String getResourceString(String key) {
-        ResourceBundle bundle = TestPlugin.getDefault().getResourceBundle();
-        try {
-            return bundle.getString(key);
-        } catch (MissingResourceException e) {
-            return key;
-        }
-    }
+	/**
+	 * Returns the string from the plugin's resource bundle,
+	 * or 'key' if not found.
+	 */
+	public static String getResourceString(String key) {
+		ResourceBundle bundle = TestPlugin.getDefault().getResourceBundle();
+		try {
+			return bundle.getString(key);
+		} catch (MissingResourceException e) {
+			return key;
+		}
+	}
 
-    /**
-     * Returns the plugin's resource bundle,
-     */
-    public ResourceBundle getResourceBundle() {
-        return resourceBundle;
-    }
+	/**
+	 * Returns the plugin's resource bundle,
+	 */
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
 
-    /**
-     * Returns the image descriptor with the given relative path.
-     */
-    public ImageDescriptor getImageDescriptor(String relativePath) {
-        String iconPath = "icons/";
-        try {
+	/**
+	 * Returns the image descriptor with the given relative path.
+	 */
+	public ImageDescriptor getImageDescriptor(String relativePath) {
+		String iconPath = "icons/";
+		try {
 			URL installURL = getBundle().getEntry("/");
-            URL url = new URL(installURL, iconPath + relativePath);
-            return ImageDescriptor.createFromURL(url);
-        } catch (MalformedURLException e) {
-            // should not happen
-            return ImageDescriptor.getMissingImageDescriptor();
-        }
-    }
+			URL url = new URL(installURL, iconPath + relativePath);
+			return ImageDescriptor.createFromURL(url);
+		} catch (MalformedURLException e) {
+			// should not happen
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
+	}
 
-    @Override
+	@Override
 	public void earlyStartup() {
-        earlyStartupCalled = true;
-    }
+		earlyStartupCalled = true;
+	}
 
-    public static boolean getEarlyStartupCalled() {
-        return earlyStartupCalled;
-    }
+	public static boolean getEarlyStartupCalled() {
+		return earlyStartupCalled;
+	}
 
-    public static void clearEarlyStartup() {
-        earlyStartupCalled = false;
-    }
+	public static void clearEarlyStartup() {
+		earlyStartupCalled = false;
+	}
 
-    @Override
+	@Override
 	public void start(BundleContext context) throws Exception {
-        TestInstallUtil.setContext(context);
-        super.start(context);
-        earlyStartup();
-        MenuBuilder.addMenuContribution();
-    }
+		TestInstallUtil.setContext(context);
+		super.start(context);
+		earlyStartup();
+		MenuBuilder.addMenuContribution();
+	}
 
-    @Override
+	@Override
 	public void stop(BundleContext context) throws Exception {
-    	MenuBuilder.removeMenuContribution();
-        TestInstallUtil.setContext(null);
-        super.stop(context);
-        BackgroundColorDecorator.color = null;
-    }
+		MenuBuilder.removeMenuContribution();
+		TestInstallUtil.setContext(null);
+		super.stop(context);
+		BackgroundColorDecorator.color = null;
+	}
 }

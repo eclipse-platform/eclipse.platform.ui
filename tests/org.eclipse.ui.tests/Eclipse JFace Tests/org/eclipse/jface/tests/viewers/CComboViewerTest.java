@@ -23,40 +23,40 @@ import org.eclipse.swt.widgets.Composite;
  * @since 3.0
  */
 public class CComboViewerTest extends StructuredViewerTest {
-    public CComboViewerTest(String name) {
-        super(name);
-    }
+	public CComboViewerTest(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-    	CCombo cCombo = new CCombo(parent, SWT.READ_ONLY | SWT.BORDER);
-        ComboViewer viewer = new ComboViewer(cCombo);
-        viewer.setContentProvider(new TestModelContentProvider());
-        return viewer;
-    }
+		CCombo cCombo = new CCombo(parent, SWT.READ_ONLY | SWT.BORDER);
+		ComboViewer viewer = new ComboViewer(cCombo);
+		viewer.setContentProvider(new TestModelContentProvider());
+		return viewer;
+	}
 
-    @Override
+	@Override
 	protected int getItemCount() {
-        TestElement first = fRootElement.getFirstChild();
-        CCombo list = (CCombo) fViewer.testFindItem(first);
-        return list.getItemCount();
-    }
+		TestElement first = fRootElement.getFirstChild();
+		CCombo list = (CCombo) fViewer.testFindItem(first);
+		return list.getItemCount();
+	}
 
-    @Override
+	@Override
 	protected String getItemText(int at) {
-        CCombo list = (CCombo) fViewer.getControl();
-        return list.getItem(at);
-    }
+		CCombo list = (CCombo) fViewer.getControl();
+		return list.getItem(at);
+	}
 
-    public static void main(String args[]) {
-        junit.textui.TestRunner.run(CComboViewerTest.class);
-    }
+	public static void main(String args[]) {
+		junit.textui.TestRunner.run(CComboViewerTest.class);
+	}
 
-    /**
-     * TODO: Determine if this test is applicable to ComboViewer
-     */
-    @Override
+	/**
+	 * TODO: Determine if this test is applicable to ComboViewer
+	 */
+	@Override
 	public void testInsertChild() {
 
-    }
+	}
 }

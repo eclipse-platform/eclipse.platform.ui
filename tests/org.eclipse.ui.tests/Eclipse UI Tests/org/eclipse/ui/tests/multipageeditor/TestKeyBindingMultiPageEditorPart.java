@@ -35,72 +35,72 @@ import org.eclipse.ui.part.EditorPart;
  */
 public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
 
-    /**
-     * The page number for this part.
-     *
-     */
-    private final int number;
+	/**
+	 * The page number for this part.
+	 *
+	 */
+	private final int number;
 
-    /**
+	/**
 	 * Constructs a new instance of
 	 * <code>TestKeyBindingMultiPageEditorPart</code> with the page number of
 	 * this page.
-     *
-     * @param number
-     *            The page number for this part.
-     */
-    public TestKeyBindingMultiPageEditorPart(int number) {
-        super();
-        this.number = number;
-    }
+	 *
+	 * @param number
+	 *            The page number for this part.
+	 */
+	public TestKeyBindingMultiPageEditorPart(int number) {
+		super();
+		this.number = number;
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new RowLayout());
-        Text text1 = new Text(composite, SWT.NONE);
-        text1.setText("Blue"); //$NON-NLS-1$
-        Text text2 = new Text(composite, SWT.NONE);
-        text2.setText("Red"); //$NON-NLS-1$
-    }
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new RowLayout());
+		Text text1 = new Text(composite, SWT.NONE);
+		text1.setText("Blue"); //$NON-NLS-1$
+		Text text2 = new Text(composite, SWT.NONE);
+		text2.setText("Red"); //$NON-NLS-1$
+	}
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-        // Do nothing.
-    }
+		// Do nothing.
+	}
 
-    @Override
+	@Override
 	public void doSaveAs() {
-        throw new UnsupportedOperationException("Not implemented in this test."); //$NON-NLS-1$
+		throw new UnsupportedOperationException("Not implemented in this test."); //$NON-NLS-1$
 
-    }
+	}
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input) {
-        setInput(input);
-        setSite(site);
-        setPartName("Editor"); //$NON-NLS-1$
-        setTitleImage(input.getImageDescriptor().createImage());
-        setTitleToolTip("Moooooo"); //$NON-NLS-1$
-    }
+		setInput(input);
+		setSite(site);
+		setPartName("Editor"); //$NON-NLS-1$
+		setTitleImage(input.getImageDescriptor().createImage());
+		setTitleToolTip("Moooooo"); //$NON-NLS-1$
+	}
 
 	@Override
 	public boolean isDirty() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public boolean isSaveAsAllowed() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public void setFocus() {
-        final boolean odds = (number % 2) > 0;
-        final String scope1 = "org.eclipse.ui.tests.scope1"; //$NON-NLS-1$
-        final String scope2 = "org.eclipse.ui.tests.scope2"; //$NON-NLS-1$
-        IKeyBindingService keyBindingService = getEditorSite()
-                .getKeyBindingService();
-        keyBindingService.setScopes(new String[] { (odds) ? scope1 : scope2 });
-    }
+		final boolean odds = (number % 2) > 0;
+		final String scope1 = "org.eclipse.ui.tests.scope1"; //$NON-NLS-1$
+		final String scope2 = "org.eclipse.ui.tests.scope2"; //$NON-NLS-1$
+		IKeyBindingService keyBindingService = getEditorSite()
+				.getKeyBindingService();
+		keyBindingService.setScopes(new String[] { (odds) ? scope1 : scope2 });
+	}
 }

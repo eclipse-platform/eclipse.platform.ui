@@ -22,33 +22,33 @@ import org.eclipse.ui.IEditorPart;
  */
 public class EditorDropTarget extends WorkbenchWindowDropTarget {
 
-    int editorIdx;
+	int editorIdx;
 
-    int side;
+	int side;
 
-    public EditorDropTarget(IWorkbenchWindowProvider provider, int editorIdx, int side) {
-        super(provider);
-        this.editorIdx = editorIdx;
-        this.side = side;
-    }
+	public EditorDropTarget(IWorkbenchWindowProvider provider, int editorIdx, int side) {
+		super(provider);
+		this.editorIdx = editorIdx;
+		this.side = side;
+	}
 
-    IEditorPart getPart() {
-        return getPage().getEditors()[editorIdx];
-    }
+	IEditorPart getPart() {
+		return getPage().getEditors()[editorIdx];
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        return DragOperations.nameForConstant(side) + " of editor " + editorIdx;
-    }
+		return DragOperations.nameForConstant(side) + " of editor " + editorIdx;
+	}
 
-    @Override
+	@Override
 	public Point getLocation() {
-        return DragOperations.getLocation(DragOperations.getPane(getPart()),
-                side);
-    }
+		return DragOperations.getLocation(DragOperations.getPane(getPart()),
+				side);
+	}
 
-    @Override
+	@Override
 	public Shell getShell() {
-    	return getPart().getSite().getShell();
-    }
+		return getPart().getSite().getShell();
+	}
 }

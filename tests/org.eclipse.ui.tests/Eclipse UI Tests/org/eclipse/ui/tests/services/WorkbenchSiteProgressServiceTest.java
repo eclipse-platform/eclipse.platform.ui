@@ -44,7 +44,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		super(testName);
 	}
 
-    private IWorkbenchPart activePart;
+	private IWorkbenchPart activePart;
 	private IWorkbenchWindow window;
 	private SiteUpdateJob updateJob;
 	private WorkbenchSiteProgressService progressService;
@@ -93,7 +93,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 			logTime("after process2:   ");
 
 			Cursor cursor = ((Control) ((PartSite) site).getModel().getWidget())
-			        .getCursor();
+					.getCursor();
 			logTime("after getCursor:  ");
 			assertNotNull(cursor);
 		} finally {
@@ -116,7 +116,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 			logTime("after process5:   ");
 		}
 		Cursor cursor = ((Control) ((PartSite) site).getModel().getWidget())
-		        .getCursor();
+				.getCursor();
 		logTime("after getCursor2: ");
 		assertNull(cursor); // no jobs, no cursor
 	}
@@ -152,7 +152,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 			logTime("after process2:   ");
 
 			Cursor cursor = ((Control) ((PartSite) site).getModel().getWidget())
-			        .getCursor();
+					.getCursor();
 			logTime("after getCursor:  ");
 			assertNull(cursor); // jobWithoutCursor is scheduled to run first -
 								// no cursor now
@@ -167,14 +167,14 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 
 			// both jobs should be running
 			assertTrue(jobWithCursor.getState() == Job.RUNNING
-			        && jobWithoutCursor.getState() == Job.RUNNING);
+					&& jobWithoutCursor.getState() == Job.RUNNING);
 
 			forceUpdate();
 			logTime("after update2:    ");
 			processEvents();
 			logTime("after process4:   ");
 			cursor = ((Control) ((PartSite) site).getModel().getWidget())
-			        .getCursor();
+					.getCursor();
 			logTime("after getCursor2: ");
 			assertNotNull(cursor); // both running now - cursor should be set
 		} finally {
@@ -187,7 +187,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 
 			// wait till the jobs are done
 			while (jobWithCursor.getState() == Job.RUNNING
-			        || jobWithoutCursor.getState() == Job.RUNNING) {
+					|| jobWithoutCursor.getState() == Job.RUNNING) {
 				Thread.sleep(100);
 			}
 			logTime("after done:       ");
@@ -200,7 +200,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 			logTime("after process7:   ");
 		}
 		Cursor cursor = ((Control) ((PartSite) site).getModel().getWidget())
-		        .getCursor();
+				.getCursor();
 		logTime("after getCursor3: ");
 		assertNull(cursor); // no jobs, no cursor
 	}

@@ -61,60 +61,60 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
 	 */
 	public static final String WIZARD_ID = "org.eclipse.ui.wizards.new.file"; //$NON-NLS-1$
 
-    private WizardNewFileCreationPage mainPage;
+	private WizardNewFileCreationPage mainPage;
 
-    /**
-     * Creates a wizard for creating a new file resource in the workspace.
-     */
-    public BasicNewFileResourceWizard() {
-        super();
-    }
+	/**
+	 * Creates a wizard for creating a new file resource in the workspace.
+	 */
+	public BasicNewFileResourceWizard() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void addPages() {
-        super.addPages();
-        mainPage = new WizardNewFileCreationPage("newFilePage1", getSelection());//$NON-NLS-1$
-        mainPage.setTitle(ResourceMessages.FileResource_pageTitle);
-        mainPage.setDescription(ResourceMessages.FileResource_description);
-        addPage(mainPage);
-    }
+		super.addPages();
+		mainPage = new WizardNewFileCreationPage("newFilePage1", getSelection());//$NON-NLS-1$
+		mainPage.setTitle(ResourceMessages.FileResource_pageTitle);
+		mainPage.setDescription(ResourceMessages.FileResource_description);
+		addPage(mainPage);
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        super.init(workbench, currentSelection);
-        setWindowTitle(ResourceMessages.FileResource_shellTitle);
-        setNeedsProgressMonitor(true);
-    }
+		super.init(workbench, currentSelection);
+		setWindowTitle(ResourceMessages.FileResource_shellTitle);
+		setNeedsProgressMonitor(true);
+	}
 
-    @Override
+	@Override
 	protected void initializeDefaultPageImageDescriptor() {
-       ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfile_wiz.png");//$NON-NLS-1$
-	   setDefaultPageImageDescriptor(desc);
-    }
+		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfile_wiz.png");//$NON-NLS-1$
+		setDefaultPageImageDescriptor(desc);
+	}
 
-    @Override
+	@Override
 	public boolean performFinish() {
-        IFile file = mainPage.createNewFile();
-        if (file == null) {
+		IFile file = mainPage.createNewFile();
+		if (file == null) {
 			return false;
 		}
 
-        selectAndReveal(file);
+		selectAndReveal(file);
 
-        // Open editor on new file.
-        IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
-        try {
-            if (dw != null) {
-                IWorkbenchPage page = dw.getActivePage();
-                if (page != null) {
-                    IDE.openEditor(page, file, true);
-                }
-            }
-        } catch (PartInitException e) {
-            DialogUtil.openError(dw.getShell(), ResourceMessages.FileResource_errorMessage,
-                    e.getMessage(), e);
-        }
+		// Open editor on new file.
+		IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
+		try {
+			if (dw != null) {
+				IWorkbenchPage page = dw.getActivePage();
+				if (page != null) {
+					IDE.openEditor(page, file, true);
+				}
+			}
+		} catch (PartInitException e) {
+			DialogUtil.openError(dw.getShell(), ResourceMessages.FileResource_errorMessage,
+					e.getMessage(), e);
+		}
 
-        return true;
-    }
+		return true;
+	}
 }

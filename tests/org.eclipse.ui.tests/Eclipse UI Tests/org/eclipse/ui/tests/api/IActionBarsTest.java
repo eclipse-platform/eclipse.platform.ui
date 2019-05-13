@@ -35,175 +35,175 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class IActionBarsTest extends UITestCase {
 
-    protected IWorkbenchWindow fWindow;
+	protected IWorkbenchWindow fWindow;
 
-    protected IWorkbenchPage fPage;
+	protected IWorkbenchPage fPage;
 
-    private class MockAction extends Action {
-        public boolean hasRun = false;
+	private class MockAction extends Action {
+		public boolean hasRun = false;
 
-        public MockAction() {
-            super();
-        }
+		public MockAction() {
+			super();
+		}
 
-        @Override
+		@Override
 		public void run() {
-            hasRun = true;
-        }
-    }
+			hasRun = true;
+		}
+	}
 
-    /**
-     * Constructor for IActionDelegateTest
-     */
-    public IActionBarsTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * Constructor for IActionDelegateTest
+	 */
+	public IActionBarsTest(String testName) {
+		super(testName);
+	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
-        super.doSetUp();
-        fWindow = openTestWindow();
-        fPage = fWindow.getActivePage();
-    }
+		super.doSetUp();
+		fWindow = openTestWindow();
+		fPage = fWindow.getActivePage();
+	}
 
-    public void testGetMenuManager() throws Throwable {
-        // From Javadoc: "Returns the menu manager."
+	public void testGetMenuManager() throws Throwable {
+		// From Javadoc: "Returns the menu manager."
 
-        IViewPart part = fPage.showView(MockViewPart.ID);
-        IActionBars bars = part.getViewSite().getActionBars();
-        assertNotNull(bars);
-        IMenuManager mgr = bars.getMenuManager();
-        assertNotNull(mgr);
-    }
+		IViewPart part = fPage.showView(MockViewPart.ID);
+		IActionBars bars = part.getViewSite().getActionBars();
+		assertNotNull(bars);
+		IMenuManager mgr = bars.getMenuManager();
+		assertNotNull(mgr);
+	}
 
-    public void testGetStatusLineManager() throws Throwable {
-        // From Javadoc: "Returns the status line manager."
+	public void testGetStatusLineManager() throws Throwable {
+		// From Javadoc: "Returns the status line manager."
 
-        IViewPart part = fPage.showView(MockViewPart.ID);
-        IActionBars bars = part.getViewSite().getActionBars();
-        assertNotNull(bars);
-        IStatusLineManager mgr = bars.getStatusLineManager();
-        assertNotNull(mgr);
-    }
+		IViewPart part = fPage.showView(MockViewPart.ID);
+		IActionBars bars = part.getViewSite().getActionBars();
+		assertNotNull(bars);
+		IStatusLineManager mgr = bars.getStatusLineManager();
+		assertNotNull(mgr);
+	}
 
-    public void testGetToolBarManager() throws Throwable {
-        // From Javadoc: "Returns the tool bar manager."
+	public void testGetToolBarManager() throws Throwable {
+		// From Javadoc: "Returns the tool bar manager."
 
-        IViewPart part = fPage.showView(MockViewPart.ID);
-        IActionBars bars = part.getViewSite().getActionBars();
-        assertNotNull(bars);
-        IToolBarManager mgr = bars.getToolBarManager();
-        assertNotNull(mgr);
-    }
+		IViewPart part = fPage.showView(MockViewPart.ID);
+		IActionBars bars = part.getViewSite().getActionBars();
+		assertNotNull(bars);
+		IToolBarManager mgr = bars.getToolBarManager();
+		assertNotNull(mgr);
+	}
 
-    public void testGetGlobalActionHandler() throws Throwable {
-        // From Javadoc: "Returns the global action handler for
-        // the action with the given id.
+	public void testGetGlobalActionHandler() throws Throwable {
+		// From Javadoc: "Returns the global action handler for
+		// the action with the given id.
 
-        IViewPart part = fPage.showView(MockViewPart.ID);
-        IActionBars bars = part.getViewSite().getActionBars();
-        assertNotNull(bars);
+		IViewPart part = fPage.showView(MockViewPart.ID);
+		IActionBars bars = part.getViewSite().getActionBars();
+		assertNotNull(bars);
 
-        // Get actions.  They should all be null.
-        assertNull(bars.getGlobalActionHandler(IWorkbenchActionConstants.CUT));
-        assertNull(bars.getGlobalActionHandler(IWorkbenchActionConstants.COPY));
-        assertNull(bars.getGlobalActionHandler(IWorkbenchActionConstants.UNDO));
+		// Get actions.  They should all be null.
+		assertNull(bars.getGlobalActionHandler(IWorkbenchActionConstants.CUT));
+		assertNull(bars.getGlobalActionHandler(IWorkbenchActionConstants.COPY));
+		assertNull(bars.getGlobalActionHandler(IWorkbenchActionConstants.UNDO));
 
-        // Create actions.
-        MockAction cut = new MockAction();
-        MockAction copy = new MockAction();
-        MockAction undo = new MockAction();
+		// Create actions.
+		MockAction cut = new MockAction();
+		MockAction copy = new MockAction();
+		MockAction undo = new MockAction();
 
-        // Set actions.
-        bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, cut);
-        bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copy);
-        bars.setGlobalActionHandler(IWorkbenchActionConstants.UNDO, undo);
-        bars.updateActionBars();
+		// Set actions.
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, cut);
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copy);
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.UNDO, undo);
+		bars.updateActionBars();
 
-        // Get actions.  They should not be null.
-        assertEquals(cut, bars
-                .getGlobalActionHandler(IWorkbenchActionConstants.CUT));
-        assertEquals(copy, bars
-                .getGlobalActionHandler(IWorkbenchActionConstants.COPY));
-        assertEquals(undo, bars
-                .getGlobalActionHandler(IWorkbenchActionConstants.UNDO));
-    }
+		// Get actions.  They should not be null.
+		assertEquals(cut, bars
+				.getGlobalActionHandler(IWorkbenchActionConstants.CUT));
+		assertEquals(copy, bars
+				.getGlobalActionHandler(IWorkbenchActionConstants.COPY));
+		assertEquals(undo, bars
+				.getGlobalActionHandler(IWorkbenchActionConstants.UNDO));
+	}
 
-        public void testSetGlobalActionHandler() throws Throwable {
-	        // From Javadoc: "Returns the global action handler for
-	        // the action with the given id.
+		public void testSetGlobalActionHandler() throws Throwable {
+			// From Javadoc: "Returns the global action handler for
+			// the action with the given id.
 
-	        IViewPart part = fPage.showView(MockViewPart.ID);
-	        IActionBars bars = part.getViewSite().getActionBars();
-	        assertNotNull(bars);
+			IViewPart part = fPage.showView(MockViewPart.ID);
+			IActionBars bars = part.getViewSite().getActionBars();
+			assertNotNull(bars);
 
-	        // Create actions.
-	        MockAction cut = new MockAction();
-	        MockAction copy = new MockAction();
-	        MockAction undo = new MockAction();
+			// Create actions.
+			MockAction cut = new MockAction();
+			MockAction copy = new MockAction();
+			MockAction undo = new MockAction();
 
-	        // Set actions.
-	        bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, cut);
-	        bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copy);
-	        bars.setGlobalActionHandler(IWorkbenchActionConstants.UNDO, undo);
-	        bars.updateActionBars();
+			// Set actions.
+			bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, cut);
+			bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copy);
+			bars.setGlobalActionHandler(IWorkbenchActionConstants.UNDO, undo);
+			bars.updateActionBars();
 
-	        // Run the real workbench actions.
-	        // Verify the actions are invoked.
-	        cut.hasRun = copy.hasRun = undo.hasRun = false;
+			// Run the real workbench actions.
+			// Verify the actions are invoked.
+			cut.hasRun = copy.hasRun = undo.hasRun = false;
 
-	        // anything that has been converted from a RetargetAction in
-	        // WorkbenchActionBuilder must be run as a command
-	        runMatchingCommand(fWindow, ActionFactory.CUT.getId());
+			// anything that has been converted from a RetargetAction in
+			// WorkbenchActionBuilder must be run as a command
+			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
 
-	        ActionUtil.runActionUsingPath(this, fWindow,
-	                IWorkbenchActionConstants.M_EDIT + '/'
-	                        + IWorkbenchActionConstants.UNDO);
-	        assertTrue(cut.hasRun);
-	        assertTrue(!copy.hasRun);
-	        assertTrue(undo.hasRun);
+			ActionUtil.runActionUsingPath(this, fWindow,
+					IWorkbenchActionConstants.M_EDIT + '/'
+							+ IWorkbenchActionConstants.UNDO);
+			assertTrue(cut.hasRun);
+			assertTrue(!copy.hasRun);
+			assertTrue(undo.hasRun);
 
-	        // Now create a second view and run the actions again.
-	        // Our global actions should not be invoked.
-	        fPage.showView(MockViewPart.ID2);
-	        cut.hasRun = copy.hasRun = undo.hasRun = false;
-	        runMatchingCommand(fWindow, ActionFactory.CUT.getId());
-	        ActionUtil.runActionUsingPath(this, fWindow,
-	                IWorkbenchActionConstants.M_EDIT + '/'
-	                        + IWorkbenchActionConstants.UNDO);
-	        assertTrue(!cut.hasRun);
-	        assertTrue(!copy.hasRun);
-	        assertTrue(!undo.hasRun);
+			// Now create a second view and run the actions again.
+			// Our global actions should not be invoked.
+			fPage.showView(MockViewPart.ID2);
+			cut.hasRun = copy.hasRun = undo.hasRun = false;
+			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
+			ActionUtil.runActionUsingPath(this, fWindow,
+					IWorkbenchActionConstants.M_EDIT + '/'
+							+ IWorkbenchActionConstants.UNDO);
+			assertTrue(!cut.hasRun);
+			assertTrue(!copy.hasRun);
+			assertTrue(!undo.hasRun);
 
-	        // Reactivate test view and run actions again.
-	        // This time our global actions should be invoked.
-	        fPage.activate(part);
-	        cut.hasRun = copy.hasRun = undo.hasRun = false;
-	        runMatchingCommand(fWindow, ActionFactory.CUT.getId());
-	        ActionUtil.runActionUsingPath(this, fWindow,
-	                IWorkbenchActionConstants.M_EDIT + '/'
-	                        + IWorkbenchActionConstants.UNDO);
-	        assertTrue(cut.hasRun);
-	        assertTrue(!copy.hasRun);
-	        assertTrue(undo.hasRun);
-	    }
+			// Reactivate test view and run actions again.
+			// This time our global actions should be invoked.
+			fPage.activate(part);
+			cut.hasRun = copy.hasRun = undo.hasRun = false;
+			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
+			ActionUtil.runActionUsingPath(this, fWindow,
+					IWorkbenchActionConstants.M_EDIT + '/'
+							+ IWorkbenchActionConstants.UNDO);
+			assertTrue(cut.hasRun);
+			assertTrue(!copy.hasRun);
+			assertTrue(undo.hasRun);
+		}
 
-    private void runMatchingCommand(IWorkbenchWindow window, String actionId) {
-    	IHandlerService hs = window.getService(IHandlerService.class);
-    	IActionCommandMappingService ms = window.getService(IActionCommandMappingService.class);
-    	String commandId = ms.getCommandId(actionId);
-    	assertNotNull(commandId);
-    	try {
+	private void runMatchingCommand(IWorkbenchWindow window, String actionId) {
+		IHandlerService hs = window.getService(IHandlerService.class);
+		IActionCommandMappingService ms = window.getService(IActionCommandMappingService.class);
+		String commandId = ms.getCommandId(actionId);
+		assertNotNull(commandId);
+		try {
 			hs.executeCommand(commandId, null);
-    	} catch (NotHandledException e) {
-    		// this is not a failure, just a condition to be checked by
-    		// the test
-    	} catch (NotEnabledException e) {
-    		// this is not a failure, just a condition to be checked by
-    		// the test
+		} catch (NotHandledException e) {
+			// this is not a failure, just a condition to be checked by
+			// the test
+		} catch (NotEnabledException e) {
+			// this is not a failure, just a condition to be checked by
+			// the test
 		} catch (Exception e) {
 			fail("Failed to run " + commandId, e);
 		}
-    }
+	}
 }
 

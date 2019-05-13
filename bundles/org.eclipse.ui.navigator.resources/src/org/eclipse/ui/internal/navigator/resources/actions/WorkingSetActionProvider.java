@@ -301,12 +301,12 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		this.workingSet = workingSet;
 		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet() && workingSet.isEmpty();
 
-        ignoreFilterChangeEvents = true;
-        try {
-        	workingSetActionGroup.setWorkingSet(workingSet);
-        } finally {
-        	ignoreFilterChangeEvents = false;
-       	}
+		ignoreFilterChangeEvents = true;
+		try {
+			workingSetActionGroup.setWorkingSet(workingSet);
+		} finally {
+			ignoreFilterChangeEvents = false;
+		}
 
 		if (viewer != null) {
 			setWorkingSetFilter(workingSet);

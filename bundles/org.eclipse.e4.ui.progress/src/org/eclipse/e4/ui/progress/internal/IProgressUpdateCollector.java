@@ -20,27 +20,27 @@ package org.eclipse.e4.ui.progress.internal;
  */
 public interface IProgressUpdateCollector {
 
-    /**
-     * Refresh the viewer.
-     */
-    void refresh();
+	/**
+	 * Refresh the viewer.
+	 */
+	void refresh();
 
-    /**
-     * Refresh the elements.
-     * @param elements
-     */
-    void refresh(Object[] elements);
+	/**
+	 * Refresh the elements.
+	 * @param elements
+	 */
+	void refresh(Object[] elements);
 
-    /**
-     * Add the elements.
-     * @param elements Array of JobTreeElement
-     */
-    void add(Object[] elements);
+	/**
+	 * Add the elements.
+	 * @param elements Array of JobTreeElement
+	 */
+	void add(Object[] elements);
 
-    /**
-     * Remove the elements.
-     * @param elements Array of JobTreeElement
-     */
-    void remove(Object[] elements);
+	/**
+	 * Remove the elements.
+	 * @param elements Array of JobTreeElement
+	 */
+	void remove(Object[] elements);
 
 }

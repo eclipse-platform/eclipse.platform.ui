@@ -20,43 +20,43 @@ import org.junit.Assert;
 
 public class StartupClass implements IStartup {
 
-    /**
-     * This boolean should only be true if the earlyStartup() method
-     * has been called.
-     */
-    private static boolean earlyStartupCalled = false;
+	/**
+	 * This boolean should only be true if the earlyStartup() method
+	 * has been called.
+	 */
+	private static boolean earlyStartupCalled = false;
 
-    /**
-     * This boolean should only be true if the earlyStartup() method
-     * has completed.
-     */
-    private static boolean earlyStartupCompleted = false;
+	/**
+	 * This boolean should only be true if the earlyStartup() method
+	 * has completed.
+	 */
+	private static boolean earlyStartupCompleted = false;
 
-    @Override
+	@Override
 	public void earlyStartup() {
-        earlyStartupCalled = true;
-        Assert.assertNull("IStartup should run in non-UI thread", Display.getCurrent());
-        try {
+		earlyStartupCalled = true;
+		Assert.assertNull("IStartup should run in non-UI thread", Display.getCurrent());
+		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// ignore
 		}
 		earlyStartupCompleted = true;
-    }
+	}
 
-    public static boolean getEarlyStartupCalled() {
-        return earlyStartupCalled;
-    }
+	public static boolean getEarlyStartupCalled() {
+		return earlyStartupCalled;
+	}
 
-    public static boolean getEarlyStartupCompleted() {
-        return earlyStartupCompleted;
-    }
+	public static boolean getEarlyStartupCompleted() {
+		return earlyStartupCompleted;
+	}
 
-    /**
-     * Reset the flags.
-     */
-    public static void reset() {
-        earlyStartupCalled = false;
-        earlyStartupCompleted = false;
-    }
+	/**
+	 * Reset the flags.
+	 */
+	public static void reset() {
+		earlyStartupCalled = false;
+		earlyStartupCompleted = false;
+	}
 }

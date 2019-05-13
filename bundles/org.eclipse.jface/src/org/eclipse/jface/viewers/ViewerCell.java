@@ -290,7 +290,7 @@ public class ViewerCell {
 			} else {
 				return row.getCellAtVisualIndex(columnIndex);
 			}
-                          
+
 			columnIndex += modifier;
 
 			if (columnIndex >= 0 && columnIndex < row.getColumnCount()) {

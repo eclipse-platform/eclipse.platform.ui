@@ -84,7 +84,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 
 	private static final String PROP_CHOICES = "choices";
 	private List<String> choices = new ArrayList<>();
-	 {
+	{
 		choices.add("Banana");
 		choices.add("Apple");
 		choices.add("Mango");
@@ -185,7 +185,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		assertEquals("Should find value of text", text, comboEditable.getText());
 
 		IObservableList<String> list = new WritableList<>(new ArrayList<>(), String.class);
-        list.addAll(getChoices());
+		list.addAll(getChoices());
 		getDbc().bindList(WidgetProperties.items().observe(comboEditable), list);
 
 		spinEventLoop(0);

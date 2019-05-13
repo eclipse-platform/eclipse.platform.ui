@@ -142,15 +142,15 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @return BlockedJobsDialog
 	 */
 	public static BlockedJobsDialog createBlockedDialog(Shell parentShell,
-	        IProgressMonitor blockedMonitor, IStatus reason, String taskName,
-	        IProgressService progressService, FinishedJobs finishedJobs,
-	        ProgressViewUpdater viewUpdater, ProgressManager progressManager) {
+			IProgressMonitor blockedMonitor, IStatus reason, String taskName,
+			IProgressService progressService, FinishedJobs finishedJobs,
+			ProgressViewUpdater viewUpdater, ProgressManager progressManager) {
 		// use an existing dialog if available
 		if (singleton != null) {
 			return singleton;
 		}
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason,
-		        progressService, finishedJobs, viewUpdater, progressManager);
+				progressService, finishedJobs, viewUpdater, progressManager);
 
 		if (taskName == null || taskName.length() == 0)
 			singleton
@@ -172,7 +172,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 						return Status.CANCEL_STATUS;
 					}
 					if (ProgressManagerUtil.rescheduleIfModalShellOpen(this,
-					        Services.getInstance().getProgressService())) {
+							Services.getInstance().getProgressService())) {
 						return Status.CANCEL_STATUS;
 					}
 					singleton.open();
@@ -218,9 +218,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *            A status describing why the monitor is blocked
 	 */
 	private BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking,
-	        IStatus blockingStatus, IProgressService progressService,
-	        FinishedJobs finishedJobs, ProgressViewUpdater viewUpdater,
-	        ProgressManager progressManager) {
+			IStatus blockingStatus, IProgressService progressService,
+			FinishedJobs finishedJobs, ProgressViewUpdater viewUpdater,
+			ProgressManager progressManager) {
 		super(parentShell == null ? ProgressManagerUtil.getDefaultParent()
 				: parentShell);
 		blockingMonitor = blocking;
@@ -264,7 +264,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		viewer.setComparator(new ViewerComparator() {
 			@Override
 			@SuppressWarnings("unchecked")
-            public int compare(Viewer testViewer, Object e1, Object e2) {
+			public int compare(Viewer testViewer, Object e1, Object e2) {
 				return ((Comparable<Object>) e1).compareTo(e2);
 			}
 		});
@@ -287,7 +287,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	private ProgressViewerContentProvider getContentProvider() {
 		return new ProgressViewerContentProvider(viewer, finishedJobs,
-		        progressViewUpdater, progressManager, true, false) {
+				progressViewUpdater, progressManager, true, false) {
 
 			@Override
 			public Object[] getElements(Object inputElement) {

@@ -38,70 +38,70 @@ import org.junit.Test;
 
 public class CustomConverterScenarios extends ScenariosTestCase {
 
-    private Adventure skiTrip;
+	private Adventure skiTrip;
 
-    @Before
+	@Before
 	public void setUp() throws Exception {
-        super.setUp();
-        skiTrip = SampleData.WINTER_HOLIDAY;
-    }
+		super.setUp();
+		skiTrip = SampleData.WINTER_HOLIDAY;
+	}
 
-    @After
+	@After
 	public void tearDown() throws Exception {
-        // do any teardown work here
-        super.tearDown();
-    }
+		// do any teardown work here
+		super.tearDown();
+	}
 
-    @Test
+	@Test
 	public void testScenario01() {
-        DataBindingContext dbc = getDbc();
-        Spinner spinner_dollars = new Spinner(getComposite(), SWT.NONE);
-        spinner_dollars.setMaximum(10000);
-        Spinner spinner_cents = new Spinner(getComposite(), SWT.NONE);
+		DataBindingContext dbc = getDbc();
+		Spinner spinner_dollars = new Spinner(getComposite(), SWT.NONE);
+		spinner_dollars.setMaximum(10000);
+		Spinner spinner_cents = new Spinner(getComposite(), SWT.NONE);
 
-        // The price object is a double which contains both the dollars and
-        // cents
-        // To allow this to be worked on with two separate spinner controls
-        // (which get and set int values)
-        // an intermediate object is used
-        PriceModelObject priceModel = new PriceModelObject();
+		// The price object is a double which contains both the dollars and
+		// cents
+		// To allow this to be worked on with two separate spinner controls
+		// (which get and set int values)
+		// an intermediate object is used
+		PriceModelObject priceModel = new PriceModelObject();
 
-        dbc.bindValue(BeansObservables.observeValue(priceModel, "price"), BeansObservables.observeValue(skiTrip,
-                "price"));
+		dbc.bindValue(BeansObservables.observeValue(priceModel, "price"), BeansObservables.observeValue(skiTrip,
+				"price"));
 
-        dbc.bindValue(SWTObservables.observeSelection(spinner_dollars),
-                BeansObservables.observeValue(priceModel, "dollars"));
+		dbc.bindValue(SWTObservables.observeSelection(spinner_dollars),
+				BeansObservables.observeValue(priceModel, "dollars"));
 
-        dbc.bindValue(SWTObservables.observeSelection(spinner_cents),
-                BeansObservables.observeValue(priceModel, "cents"));
+		dbc.bindValue(SWTObservables.observeSelection(spinner_cents),
+				BeansObservables.observeValue(priceModel, "cents"));
 
-        // spinEventLoop(1);
-        // Make sure that the selection on the spinner_dollars matches the
-        // dollars of the price
-        assertEquals(spinner_dollars.getSelection(), new Double(skiTrip.getPrice()).intValue());
-        // Make sure that the selection on the spinner_cents matches the dollars
-        // of the price
-        Double doublePrice = new Double(skiTrip.getPrice());
-        double cents = 100 * doublePrice.doubleValue() - 100 * doublePrice.intValue();
-        assertEquals(spinner_cents.getSelection(), (int) cents);
+		// spinEventLoop(1);
+		// Make sure that the selection on the spinner_dollars matches the
+		// dollars of the price
+		assertEquals(spinner_dollars.getSelection(), new Double(skiTrip.getPrice()).intValue());
+		// Make sure that the selection on the spinner_cents matches the dollars
+		// of the price
+		Double doublePrice = new Double(skiTrip.getPrice());
+		double cents = 100 * doublePrice.doubleValue() - 100 * doublePrice.intValue();
+		assertEquals(spinner_cents.getSelection(), (int) cents);
 
-        // Change the selection on the spinner_dollars to be $50 and make sure
-        // the model is updated with the cents included
-        spinner_dollars.setSelection(50);
-        double expectedPrice = 50 + cents / 100;
-        assertEquals(expectedPrice, skiTrip.getPrice(), 0.01);
+		// Change the selection on the spinner_dollars to be $50 and make sure
+		// the model is updated with the cents included
+		spinner_dollars.setSelection(50);
+		double expectedPrice = 50 + cents / 100;
+		assertEquals(expectedPrice, skiTrip.getPrice(), 0.01);
 
-        // Change the selection on the spinner_cents to be 27 and make sure the
-        // model is updated with the dollars included
-        spinner_cents.setSelection(27);
-        assertEquals(50.27, skiTrip.getPrice(), 0.01);
+		// Change the selection on the spinner_cents to be 27 and make sure the
+		// model is updated with the dollars included
+		spinner_cents.setSelection(27);
+		assertEquals(50.27, skiTrip.getPrice(), 0.01);
 
-        // Change the model to be $60.99 dollars and make sure the
-        // spinner_dollars is 60 and spinner_cents is 99
-        skiTrip.setPrice(60.99);
-        assertEquals(60, spinner_dollars.getSelection());
-        assertEquals(99, spinner_cents.getSelection());
+		// Change the model to be $60.99 dollars and make sure the
+		// spinner_dollars is 60 and spinner_cents is 99
+		skiTrip.setPrice(60.99);
+		assertEquals(60, spinner_dollars.getSelection());
+		assertEquals(99, spinner_cents.getSelection());
 
-    }
+	}
 
 }

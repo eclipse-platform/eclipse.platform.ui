@@ -445,7 +445,7 @@ public class FormHeading extends Canvas {
 				if (oldControl != null && oldControl.getVisible())
 					oldControl.setVisible(false);
 				if (oldType != newType)
-			        updateForeground();
+					updateForeground();
 				return;
 			}
 			ensureControlExists();

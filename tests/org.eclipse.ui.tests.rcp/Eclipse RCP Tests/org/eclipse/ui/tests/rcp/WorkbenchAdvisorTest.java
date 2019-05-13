@@ -42,250 +42,250 @@ import org.junit.Test;
 public class WorkbenchAdvisorTest {
 
 
-    private Display display = null;
+	private Display display = null;
 
 	@Before
 	public void setUp() {
 
-        assertNull(display);
-        display = PlatformUI.createDisplay();
-        assertNotNull(display);
-    }
+		assertNull(display);
+		display = PlatformUI.createDisplay();
+		assertNotNull(display);
+	}
 
 	@After
 	public void tearDown() {
-        assertNotNull(display);
-        display.dispose();
-        assertTrue(display.isDisposed());
+		assertNotNull(display);
+		display.dispose();
+		assertTrue(display.isDisposed());
 
-    }
+	}
 
-    /**
-     * The workbench should be created before any of the advisor's life cycle
-     * methods are called. #initialize is the first one called, so check that
-     * the workbench has been been created by then.
-     */
+	/**
+	 * The workbench should be created before any of the advisor's life cycle
+	 * methods are called. #initialize is the first one called, so check that
+	 * the workbench has been been created by then.
+	 */
 	@Test
 	public void testEarlyGetWorkbench() {
-        WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
-            @Override
+			@Override
 			public void initialize(IWorkbenchConfigurer configurer) {
-                super.initialize(configurer);
-                assertNotNull(PlatformUI.getWorkbench());
-            }
-        };
+				super.initialize(configurer);
+				assertNotNull(PlatformUI.getWorkbench());
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
-    }
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
+	}
 
 	@Test
 	public void testTwoDisplays() {
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1);
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1);
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
-        assertFalse(display.isDisposed());
-        display.dispose();
-        assertTrue(display.isDisposed());
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
+		assertFalse(display.isDisposed());
+		display.dispose();
+		assertTrue(display.isDisposed());
 
-        display = PlatformUI.createDisplay();
-        assertNotNull(display);
+		display = PlatformUI.createDisplay();
+		assertNotNull(display);
 
-        WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1);
+		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1);
 
-        int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
-        assertEquals(PlatformUI.RETURN_OK, code2);
-    }
+		int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
+		assertEquals(PlatformUI.RETURN_OK, code2);
+	}
 
 	@Test
 	public void testTrivialOpenClose() {
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
-            private boolean windowOpenCalled = false;
+			private boolean windowOpenCalled = false;
 
-            private boolean windowCloseCalled = false;
+			private boolean windowCloseCalled = false;
 
-            @Override
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.getWorkbench().addWindowListener(new IWindowListener() {
+				super.initialize(c);
+				c.getWorkbench().addWindowListener(new IWindowListener() {
 
-                    @Override
+					@Override
 					public void windowActivated(IWorkbenchWindow window) {
-                        // do nothing
-                    }
+						// do nothing
+					}
 
-                    @Override
+					@Override
 					public void windowDeactivated(IWorkbenchWindow window) {
-                        // do nothing
-                    }
+						// do nothing
+					}
 
-                    @Override
+					@Override
 					public void windowClosed(IWorkbenchWindow window) {
-                        windowCloseCalled = true;
-                    }
+						windowCloseCalled = true;
+					}
 
-                    @Override
+					@Override
 					public void windowOpened(IWorkbenchWindow window) {
-                        windowOpenCalled = true;
-                    }
-                });
-            }
+						windowOpenCalled = true;
+					}
+				});
+			}
 
-            @Override
+			@Override
 			public void preWindowOpen(IWorkbenchWindowConfigurer c) {
-                assertFalse(windowOpenCalled);
-                super.preWindowOpen(c);
-            }
+				assertFalse(windowOpenCalled);
+				super.preWindowOpen(c);
+			}
 
-            @Override
+			@Override
 			public void postWindowOpen(IWorkbenchWindowConfigurer c) {
-                assertTrue(windowOpenCalled);
-                super.postWindowOpen(c);
-            }
+				assertTrue(windowOpenCalled);
+				super.postWindowOpen(c);
+			}
 
-            @Override
+			@Override
 			public boolean preWindowShellClose(IWorkbenchWindowConfigurer c) {
-                assertFalse(windowCloseCalled);
-                return super.preWindowShellClose(c);
-            }
+				assertFalse(windowCloseCalled);
+				return super.preWindowShellClose(c);
+			}
 
 			@Override
 			@SuppressWarnings("deprecation")
 			public void postWindowClose(IWorkbenchWindowConfigurer c) {
 				// Commented out since postWindowClose seems to be called before IWindowListener.windowClosed(IWorkbenchWindow)
 				// assertTrue(windowCloseCalled);
-                super.postWindowClose(c);
-            }
-        };
+				super.postWindowClose(c);
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
 
-        wa.resetOperationIterator();
-        wa.assertNextOperation(WorkbenchAdvisorObserver.INITIALIZE);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
-        wa.assertAllOperationsExamined();
-    }
+		wa.resetOperationIterator();
+		wa.assertNextOperation(WorkbenchAdvisorObserver.INITIALIZE);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
+		wa.assertAllOperationsExamined();
+	}
 
 	@Test
 	public void testTrivialRestoreClose() {
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
-            @Override
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.setSaveAndRestore(true);
-            }
+				super.initialize(c);
+				c.setSaveAndRestore(true);
+			}
 
-            @Override
+			@Override
 			public void eventLoopIdle(Display d) {
-                workbenchConfig.getWorkbench().restart();
-            }
-        };
+				workbenchConfig.getWorkbench().restart();
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_RESTART, code);
-        assertFalse(display.isDisposed());
-        display.dispose();
-        assertTrue(display.isDisposed());
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_RESTART, code);
+		assertFalse(display.isDisposed());
+		display.dispose();
+		assertTrue(display.isDisposed());
 
-        display = PlatformUI.createDisplay();
-        WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
+		display = PlatformUI.createDisplay();
+		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
-            @Override
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.setSaveAndRestore(true);
-            }
-        };
+				super.initialize(c);
+				c.setSaveAndRestore(true);
+			}
+		};
 
-        int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
-        assertEquals(PlatformUI.RETURN_OK, code2);
+		int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
+		assertEquals(PlatformUI.RETURN_OK, code2);
 
-        wa2.resetOperationIterator();
-        wa2.assertNextOperation(WorkbenchAdvisorObserver.INITIALIZE);
-        wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
-        wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
-        wa2.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa2.resetOperationIterator();
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.INITIALIZE);
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
 		// wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
-        wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
-        wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
-        wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
-        wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
-        wa2.assertAllOperationsExamined();
-    }
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
+		wa2.assertAllOperationsExamined();
+	}
 
-    /**
-     * The WorkbenchAdvisor comment for #postStartup says it is ok to close
-     * things from in there.
-     */
+	/**
+	 * The WorkbenchAdvisor comment for #postStartup says it is ok to close
+	 * things from in there.
+	 */
 	@Test
 	public void testCloseFromPostStartup() {
 
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-            @Override
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+			@Override
 			public void postStartup() {
-                super.postStartup();
-                assertTrue(PlatformUI.getWorkbench().close());
-            }
-        };
+				super.postStartup();
+				assertTrue(PlatformUI.getWorkbench().close());
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
 
-        wa.resetOperationIterator();
-        wa.assertNextOperation(WorkbenchAdvisorObserver.INITIALIZE);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
-        wa.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
-        wa.assertAllOperationsExamined();
-    }
+		wa.resetOperationIterator();
+		wa.assertNextOperation(WorkbenchAdvisorObserver.INITIALIZE);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
+		wa.assertAllOperationsExamined();
+	}
 
 	@Test
 	public void testEventLoopCrash() {
-        WorkbenchAdvisorExceptionObserver wa = new WorkbenchAdvisorExceptionObserver();
+		WorkbenchAdvisorExceptionObserver wa = new WorkbenchAdvisorExceptionObserver();
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
-        assertTrue(wa.exceptionCaught);
-    }
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
+		assertTrue(wa.exceptionCaught);
+	}
 
 	@Test
 	public void testFillAllActionBar() {
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
-            @Override
+			@Override
 			public void fillActionBars(IWorkbenchWindow window,
-                    IActionBarConfigurer configurer, int flags) {
-                super.fillActionBars(window, configurer, flags);
+					IActionBarConfigurer configurer, int flags) {
+				super.fillActionBars(window, configurer, flags);
 
 				assertEquals(ActionBarAdvisor.FILL_COOL_BAR, flags & ActionBarAdvisor.FILL_COOL_BAR);
 				assertEquals(ActionBarAdvisor.FILL_MENU_BAR, flags & ActionBarAdvisor.FILL_MENU_BAR);
 				assertEquals(ActionBarAdvisor.FILL_STATUS_LINE, flags & ActionBarAdvisor.FILL_STATUS_LINE);
 				assertEquals(0, flags & ActionBarAdvisor.FILL_PROXY);
-            }
-        };
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
-    }
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
+	}
 
 	@Test
 	public void testEmptyProgressRegion() {
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 			@Override
 			public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 				super.preWindowOpen(configurer);
@@ -303,11 +303,11 @@ public class WorkbenchAdvisorTest {
 				}
 			}
 
-        };
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
-    }
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
+	}
 
 //  testShellClose() is commented out because it was failing with the shells having already been disposed.
 //      It's unclear what this was really trying to test anyway.
@@ -349,35 +349,35 @@ public class WorkbenchAdvisorTest {
 
 class WorkbenchAdvisorExceptionObserver extends WorkbenchAdvisorObserver {
 
-    public boolean exceptionCaught = false;
+	public boolean exceptionCaught = false;
 
-    private RuntimeException runtimeException;
+	private RuntimeException runtimeException;
 
-    public WorkbenchAdvisorExceptionObserver() {
-        super(2);
-    }
+	public WorkbenchAdvisorExceptionObserver() {
+		super(2);
+	}
 
-    // this is used to indicate when the event loop has started
-    @Override
+	// this is used to indicate when the event loop has started
+	@Override
 	public void eventLoopIdle(Display disp) {
-        super.eventLoopIdle(disp);
+		super.eventLoopIdle(disp);
 
-        // only crash the loop one time
-        if (runtimeException != null) {
+		// only crash the loop one time
+		if (runtimeException != null) {
 			return;
 		}
 
-        runtimeException = new RuntimeException();
-        throw runtimeException;
-    }
+		runtimeException = new RuntimeException();
+		throw runtimeException;
+	}
 
-    @Override
+	@Override
 	public void eventLoopException(Throwable exception) {
-        // *** Don't let the parent log the exception since it makes for
-        // confusing
-        //     test results.
+		// *** Don't let the parent log the exception since it makes for
+		// confusing
+		//     test results.
 
-        exceptionCaught = true;
+		exceptionCaught = true;
 		assertEquals(runtimeException, exception);
-    }
+	}
 }

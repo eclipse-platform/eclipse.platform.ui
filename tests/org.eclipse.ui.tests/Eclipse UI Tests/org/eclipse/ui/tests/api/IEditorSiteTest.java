@@ -24,50 +24,50 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
 
 public class IEditorSiteTest extends IWorkbenchPartSiteTest {
 
-    /**
-     * Constructor for IEditorSiteTest
-     */
-    public IEditorSiteTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * Constructor for IEditorSiteTest
+	 */
+	public IEditorSiteTest(String testName) {
+		super(testName);
+	}
 
-    /**
-     * @see IWorkbenchPartSiteTest#getTestPartName()
-     */
-    @Override
+	/**
+	 * @see IWorkbenchPartSiteTest#getTestPartName()
+	 */
+	@Override
 	protected String getTestPartName() throws Throwable {
-        return MockEditorPart.NAME;
-    }
+		return MockEditorPart.NAME;
+	}
 
-    /**
-     * @see IWorkbenchPartSiteTest#getTestPartId()
-     */
-    @Override
+	/**
+	 * @see IWorkbenchPartSiteTest#getTestPartId()
+	 */
+	@Override
 	protected String getTestPartId() throws Throwable {
-        return MockEditorPart.ID1;
-    }
+		return MockEditorPart.ID1;
+	}
 
-    /**
-     * @see IWorkbenchPartSiteTest#createTestPart(IWorkbenchPage)
-     */
-    @Override
+	/**
+	 * @see IWorkbenchPartSiteTest#createTestPart(IWorkbenchPage)
+	 */
+	@Override
 	protected IWorkbenchPart createTestPart(IWorkbenchPage page)
-            throws Throwable {
-        IProject proj = FileUtil.createProject("createTestPart");
-        IFile file = FileUtil.createFile("test1.mock1", proj);
-        return IDE.openEditor(page, file, true);
-    }
+			throws Throwable {
+		IProject proj = FileUtil.createProject("createTestPart");
+		IFile file = FileUtil.createFile("test1.mock1", proj);
+		return IDE.openEditor(page, file, true);
+	}
 
-    public void testGetActionBarContributor() throws Throwable {
-        // From Javadoc: "Returns the editor action bar contributor for
-        // this editor.
+	public void testGetActionBarContributor() throws Throwable {
+		// From Javadoc: "Returns the editor action bar contributor for
+		// this editor.
 
-        IEditorPart editor = (IEditorPart) createTestPart(fPage);
-        IEditorSite site = editor.getEditorSite();
-        assertNull(site.getActionBarContributor());
+		IEditorPart editor = (IEditorPart) createTestPart(fPage);
+		IEditorSite site = editor.getEditorSite();
+		assertNull(site.getActionBarContributor());
 
-        // TBD: Flesh this out with a real contributor.
-    }
+		// TBD: Flesh this out with a real contributor.
+	}
 
 }
 

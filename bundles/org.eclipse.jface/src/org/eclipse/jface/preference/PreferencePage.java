@@ -56,26 +56,26 @@ import org.eclipse.swt.widgets.Label;
  * </p>
  */
 public abstract class PreferencePage extends DialogPage implements
-        IPreferencePage {
+		IPreferencePage {
 
-    /**
-     * Preference store, or <code>null</code>.
-     */
-    private IPreferenceStore preferenceStore;
+	/**
+	 * Preference store, or <code>null</code>.
+	 */
+	private IPreferenceStore preferenceStore;
 
-    /**
-     * Valid state for this page; <code>true</code> by default.
-     *
-     * @see #isValid
-     */
-    private boolean isValid = true;
+	/**
+	 * Valid state for this page; <code>true</code> by default.
+	 *
+	 * @see #isValid
+	 */
+	private boolean isValid = true;
 
-    /**
-     * Body of page.
-     */
-    private Control body;
+	/**
+	 * Body of page.
+	 */
+	private Control body;
 
-    /**
+	/**
 	 * Whether this page has the standard Apply button; <code>true</code> by
 	 * default.
 	 *
@@ -91,91 +91,91 @@ public abstract class PreferencePage extends DialogPage implements
 	 */
 	private boolean createDefaultButton = true;
 
-    /**
-     * Standard Defaults button, or <code>null</code> if none.
-     * This button has id <code>DEFAULTS_ID</code>.
-     */
-    private Button defaultsButton = null;
+	/**
+	 * Standard Defaults button, or <code>null</code> if none.
+	 * This button has id <code>DEFAULTS_ID</code>.
+	 */
+	private Button defaultsButton = null;
 
-    /**
-     * The container this preference page belongs to; <code>null</code>
-     * if none.
-     */
-    private IPreferencePageContainer container = null;
+	/**
+	 * The container this preference page belongs to; <code>null</code>
+	 * if none.
+	 */
+	private IPreferencePageContainer container = null;
 
-    /**
-     * Standard Apply button, or <code>null</code> if none.
-     * This button has id <code>APPLY_ID</code>.
-     */
-    private Button applyButton = null;
+	/**
+	 * Standard Apply button, or <code>null</code> if none.
+	 * This button has id <code>APPLY_ID</code>.
+	 */
+	private Button applyButton = null;
 
-    /**
-     * Description label.
-     *
-     * @see #createDescriptionLabel(Composite)
-     */
-    private Label descriptionLabel;
+	/**
+	 * Description label.
+	 *
+	 * @see #createDescriptionLabel(Composite)
+	 */
+	private Label descriptionLabel;
 
-    /**
-     * Caches size of page.
-     */
-    private Point size = null;
+	/**
+	 * Caches size of page.
+	 */
+	private Point size = null;
 
 
-    /**
-     * Creates a new preference page with an empty title and no image.
-     */
-    protected PreferencePage() {
-        this(""); //$NON-NLS-1$
-    }
+	/**
+	 * Creates a new preference page with an empty title and no image.
+	 */
+	protected PreferencePage() {
+		this(""); //$NON-NLS-1$
+	}
 
-    /**
-     * Creates a new preference page with the given title and no image.
-     *
-     * @param title the title of this preference page
-     */
-    protected PreferencePage(String title) {
-        super(title);
-    }
+	/**
+	 * Creates a new preference page with the given title and no image.
+	 *
+	 * @param title the title of this preference page
+	 */
+	protected PreferencePage(String title) {
+		super(title);
+	}
 
-    /**
-     * Creates a new abstract preference page with the given title and image.
-     *
-     * @param title the title of this preference page
-     * @param image the image for this preference page,
-     *  or <code>null</code> if none
-     */
-    protected PreferencePage(String title, ImageDescriptor image) {
-        super(title, image);
-    }
+	/**
+	 * Creates a new abstract preference page with the given title and image.
+	 *
+	 * @param title the title of this preference page
+	 * @param image the image for this preference page,
+	 *  or <code>null</code> if none
+	 */
+	protected PreferencePage(String title, ImageDescriptor image) {
+		super(title, image);
+	}
 
-    /**
-     * Computes the size for this page's UI control.
-     * <p>
-     * The default implementation of this <code>IPreferencePage</code>
-     * method returns the size set by <code>setSize</code>; if no size
-     * has been set, but the page has a UI control, the framework
-     * method <code>doComputeSize</code> is called to compute the size.
-     * </p>
-     *
-     * @return the size of the preference page encoded as
-     *   <code>new Point(width,height)</code>, or
-     *   <code>(0,0)</code> if the page doesn't currently have any UI component
-     */
-    @Override
+	/**
+	 * Computes the size for this page's UI control.
+	 * <p>
+	 * The default implementation of this <code>IPreferencePage</code>
+	 * method returns the size set by <code>setSize</code>; if no size
+	 * has been set, but the page has a UI control, the framework
+	 * method <code>doComputeSize</code> is called to compute the size.
+	 * </p>
+	 *
+	 * @return the size of the preference page encoded as
+	 *   <code>new Point(width,height)</code>, or
+	 *   <code>(0,0)</code> if the page doesn't currently have any UI component
+	 */
+	@Override
 	public Point computeSize() {
-        if (size != null) {
+		if (size != null) {
 			return size;
 		}
-        Control control = getControl();
-        if (control != null) {
-            size = doComputeSize();
-            return size;
-        }
-        return new Point(0, 0);
-    }
+		Control control = getControl();
+		if (control != null) {
+			size = doComputeSize();
+			return size;
+		}
+		return new Point(0, 0);
+	}
 
-    /**
+	/**
 	 * Contributes additional buttons to the given composite.
 	 * <p>
 	 * The default implementation of this framework hook method does nothing.
@@ -190,76 +190,76 @@ public abstract class PreferencePage extends DialogPage implements
 	 *
 	 * @param parent the button bar
 	 */
-    protected void contributeButtons(Composite parent) {
-    }
+	protected void contributeButtons(Composite parent) {
+	}
 
-    /**
-     * Creates and returns the SWT control for the customized body
-     * of this preference page under the given parent composite.
-     * <p>
-     * This framework method must be implemented by concrete subclasses. Any
-     * subclass returning a <code>Composite</code> object whose <code>Layout</code>
-     * has default margins (for example, a <code>GridLayout</code>) is expected to
-     * set the margins of this <code>Layout</code> to 0 pixels.
-     * </p>
-     *
-     * @param parent the parent composite
-     * @return the new control
-     */
-    protected abstract Control createContents(Composite parent);
+	/**
+	 * Creates and returns the SWT control for the customized body
+	 * of this preference page under the given parent composite.
+	 * <p>
+	 * This framework method must be implemented by concrete subclasses. Any
+	 * subclass returning a <code>Composite</code> object whose <code>Layout</code>
+	 * has default margins (for example, a <code>GridLayout</code>) is expected to
+	 * set the margins of this <code>Layout</code> to 0 pixels.
+	 * </p>
+	 *
+	 * @param parent the parent composite
+	 * @return the new control
+	 */
+	protected abstract Control createContents(Composite parent);
 
-    /**
-     * The <code>PreferencePage</code> implementation of this
-     * <code>IDialogPage</code> method creates a description label
-     * and button bar for the page. It calls <code>createContents</code>
-     * to create the custom contents of the page.
-     * <p>
-     * If a subclass that overrides this method creates a <code>Composite</code>
-     * that has a layout with default margins (for example, a <code>GridLayout</code>)
-     * it is expected to set the margins of this <code>Layout</code> to 0 pixels.
-     * @see IDialogPage#createControl(Composite)
-     */
-    @Override
+	/**
+	 * The <code>PreferencePage</code> implementation of this
+	 * <code>IDialogPage</code> method creates a description label
+	 * and button bar for the page. It calls <code>createContents</code>
+	 * to create the custom contents of the page.
+	 * <p>
+	 * If a subclass that overrides this method creates a <code>Composite</code>
+	 * that has a layout with default margins (for example, a <code>GridLayout</code>)
+	 * it is expected to set the margins of this <code>Layout</code> to 0 pixels.
+	 * @see IDialogPage#createControl(Composite)
+	 */
+	@Override
 	public void createControl(Composite parent){
 
-        GridData gd;
-        Composite content = new Composite(parent, SWT.NONE);
-        setControl(content);
-        GridLayout layout = new GridLayout();
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        content.setLayout(layout);
-        //Apply the font on creation for backward compatibility
-        applyDialogFont(content);
+		GridData gd;
+		Composite content = new Composite(parent, SWT.NONE);
+		setControl(content);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		content.setLayout(layout);
+		//Apply the font on creation for backward compatibility
+		applyDialogFont(content);
 
-        // initialize the dialog units
-        initializeDialogUnits(content);
+		// initialize the dialog units
+		initializeDialogUnits(content);
 
-        descriptionLabel = createDescriptionLabel(content);
-        if (descriptionLabel != null) {
-            descriptionLabel.setLayoutData(new GridData(
-                    GridData.FILL_HORIZONTAL));
-        }
-
-        body = createContents(content);
-        if (body != null) {
-			// null is not a valid return value but support graceful failure
-            body.setLayoutData(new GridData(GridData.FILL_BOTH));
+		descriptionLabel = createDescriptionLabel(content);
+		if (descriptionLabel != null) {
+			descriptionLabel.setLayoutData(new GridData(
+					GridData.FILL_HORIZONTAL));
 		}
 
-        Composite buttonBar = new Composite(content, SWT.NONE);
-        layout = new GridLayout();
-        layout.numColumns = 0;
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        layout.makeColumnsEqualWidth = false;
-        buttonBar.setLayout(layout);
+		body = createContents(content);
+		if (body != null) {
+			// null is not a valid return value but support graceful failure
+			body.setLayoutData(new GridData(GridData.FILL_BOTH));
+		}
 
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		Composite buttonBar = new Composite(content, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.makeColumnsEqualWidth = false;
+		buttonBar.setLayout(layout);
 
-        buttonBar.setLayoutData(gd);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 
-        contributeButtons(buttonBar);
+		buttonBar.setLayoutData(gd);
+
+		contributeButtons(buttonBar);
 
 		if (createApplyButton || createDefaultButton) {
 			layout.numColumns += 1 + (createApplyButton && createDefaultButton ? 1 : 0);
@@ -291,132 +291,132 @@ public abstract class PreferencePage extends DialogPage implements
 			}
 			applyDialogFont(buttonBar);
 		} else {
-            /* Check if there are any other buttons on the button bar.
-             * If not, throw away the button bar composite.  Otherwise
-             * there is an unusually large button bar.
-             */
-            if (buttonBar.getChildren().length < 1) {
+			/* Check if there are any other buttons on the button bar.
+			 * If not, throw away the button bar composite.  Otherwise
+			 * there is an unusually large button bar.
+			 */
+			if (buttonBar.getChildren().length < 1) {
 				buttonBar.dispose();
 			}
-        }
-    }
+		}
+	}
 
 
 
 	/**
-     * Apply the dialog font to the composite and it's children
-     * if it is set. Subclasses may override if they wish to
-     * set the font themselves.
-     * @param composite
-     */
-    protected void applyDialogFont(Composite composite) {
-        Dialog.applyDialogFont(composite);
-    }
+	 * Apply the dialog font to the composite and it's children
+	 * if it is set. Subclasses may override if they wish to
+	 * set the font themselves.
+	 * @param composite
+	 */
+	protected void applyDialogFont(Composite composite) {
+		Dialog.applyDialogFont(composite);
+	}
 
-    /**
-     * Creates and returns an SWT label under the given composite.
-     *
-     * @param parent the parent composite
-     * @return the new label
-     */
-    protected Label createDescriptionLabel(Composite parent) {
-        Label result = null;
-        String description = getDescription();
-        if (description != null) {
-            result = new Label(parent, SWT.WRAP);
-            result.setFont(parent.getFont());
-            result.setText(description);
-        }
-        return result;
-    }
+	/**
+	 * Creates and returns an SWT label under the given composite.
+	 *
+	 * @param parent the parent composite
+	 * @return the new label
+	 */
+	protected Label createDescriptionLabel(Composite parent) {
+		Label result = null;
+		String description = getDescription();
+		if (description != null) {
+			result = new Label(parent, SWT.WRAP);
+			result.setFont(parent.getFont());
+			result.setText(description);
+		}
+		return result;
+	}
 
-    /**
-     * Computes the size needed by this page's UI control.
-     * <p>
-     * All pages should override this method and set the appropriate sizes
-     * of their widgets, and then call <code>super.doComputeSize</code>.
-     * </p>
-     *
-     * @return the size of the preference page encoded as
-     *   <code>new Point(width,height)</code>
-     */
-    protected Point doComputeSize() {
-        if (descriptionLabel != null && body != null) {
-            Point bodySize = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-            GridData gd = (GridData) descriptionLabel.getLayoutData();
-            gd.widthHint = bodySize.x;
-        }
-        return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-    }
+	/**
+	 * Computes the size needed by this page's UI control.
+	 * <p>
+	 * All pages should override this method and set the appropriate sizes
+	 * of their widgets, and then call <code>super.doComputeSize</code>.
+	 * </p>
+	 *
+	 * @return the size of the preference page encoded as
+	 *   <code>new Point(width,height)</code>
+	 */
+	protected Point doComputeSize() {
+		if (descriptionLabel != null && body != null) {
+			Point bodySize = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			GridData gd = (GridData) descriptionLabel.getLayoutData();
+			gd.widthHint = bodySize.x;
+		}
+		return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+	}
 
-    /**
-     * Returns the preference store of this preference page.
-     * <p>
-     * This is a framework hook method for subclasses to return a
-     * page-specific preference store. The default implementation
-     * returns <code>null</code>.
-     * </p>
-     *
-     * @return the preference store, or <code>null</code> if none
-     */
-    protected IPreferenceStore doGetPreferenceStore() {
-        return null;
-    }
+	/**
+	 * Returns the preference store of this preference page.
+	 * <p>
+	 * This is a framework hook method for subclasses to return a
+	 * page-specific preference store. The default implementation
+	 * returns <code>null</code>.
+	 * </p>
+	 *
+	 * @return the preference store, or <code>null</code> if none
+	 */
+	protected IPreferenceStore doGetPreferenceStore() {
+		return null;
+	}
 
-    /**
-     * Returns the container of this page.
-     *
-     * @return the preference page container, or <code>null</code> if this
-     *   page has yet to be added to a container
-     */
-    public IPreferencePageContainer getContainer() {
-        return container;
-    }
+	/**
+	 * Returns the container of this page.
+	 *
+	 * @return the preference page container, or <code>null</code> if this
+	 *   page has yet to be added to a container
+	 */
+	public IPreferencePageContainer getContainer() {
+		return container;
+	}
 
-    /**
-     * Returns the preference store of this preference page.
-     *
-     * @return the preference store , or <code>null</code> if none
-     */
-    public IPreferenceStore getPreferenceStore() {
-        if (preferenceStore == null) {
+	/**
+	 * Returns the preference store of this preference page.
+	 *
+	 * @return the preference store , or <code>null</code> if none
+	 */
+	public IPreferenceStore getPreferenceStore() {
+		if (preferenceStore == null) {
 			preferenceStore = doGetPreferenceStore();
 		}
-        if (preferenceStore != null) {
+		if (preferenceStore != null) {
 			return preferenceStore;
 		} else if (container != null) {
 			return container.getPreferenceStore();
 		}
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * The preference page implementation of an <code>IPreferencePage</code>
-     * method returns whether this preference page is valid. Preference
-     * pages are considered valid by default; call <code>setValid(false)</code>
-     * to make a page invalid.
-     * @see IPreferencePage#isValid()
-     */
-    @Override
+	/**
+	 * The preference page implementation of an <code>IPreferencePage</code>
+	 * method returns whether this preference page is valid. Preference
+	 * pages are considered valid by default; call <code>setValid(false)</code>
+	 * to make a page invalid.
+	 * @see IPreferencePage#isValid()
+	 */
+	@Override
 	public boolean isValid() {
-        return isValid;
-    }
+		return isValid;
+	}
 
-    /**
-     * Suppresses creation of the standard Default and Apply buttons
-     * for this page.
-     * <p>
-     * Subclasses wishing a preference page without these buttons
-     * should call this framework method before the page's control
-     * has been created.
-     * </p>
-     */
-    protected void noDefaultAndApplyButton() {
+	/**
+	 * Suppresses creation of the standard Default and Apply buttons
+	 * for this page.
+	 * <p>
+	 * Subclasses wishing a preference page without these buttons
+	 * should call this framework method before the page's control
+	 * has been created.
+	 * </p>
+	 */
+	protected void noDefaultAndApplyButton() {
 		createApplyButton = false;
 		createDefaultButton = false;
-    }
+	}
 
-    /**
+	/**
 	 * Suppress creation of the standard Default button for this page.
 	 * <p>
 	 * Subclasses wishing a preference page with this button should call this
@@ -436,28 +436,28 @@ public abstract class PreferencePage extends DialogPage implements
 	 *
 	 * @see IPreferencePage#okToLeave()
 	 */
-    @Override
+	@Override
 	public boolean okToLeave() {
-        return isValid();
-    }
+		return isValid();
+	}
 
-    /**
-     * Performs special processing when this page's Apply button has been pressed.
-     * <p>
-     * This is a framework hook method for subclasses to do special things when
-     * the Apply button has been pressed.
-     * The default implementation of this framework method simply calls
-     * <code>performOk</code> to simulate the pressing of the page's OK button.
-     * </p>
-     *
-     * @see #performOk()
-     * @see #performCancel()
-     */
-    protected void performApply() {
-        performOk();
-    }
+	/**
+	 * Performs special processing when this page's Apply button has been pressed.
+	 * <p>
+	 * This is a framework hook method for subclasses to do special things when
+	 * the Apply button has been pressed.
+	 * The default implementation of this framework method simply calls
+	 * <code>performOk</code> to simulate the pressing of the page's OK button.
+	 * </p>
+	 *
+	 * @see #performOk()
+	 * @see #performCancel()
+	 */
+	protected void performApply() {
+		performOk();
+	}
 
-    /**
+	/**
 	 * The preference page implementation of an <code>IPreferencePage</code> method
 	 * performs special processing when this page's Cancel button has been pressed.
 	 * <p>
@@ -480,168 +480,168 @@ public abstract class PreferencePage extends DialogPage implements
 	 *
 	 * @see IPreferencePage#performCancel()
 	 */
-    @Override
+	@Override
 	public boolean performCancel() {
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Performs special processing when this page's Defaults button has been pressed.
-     * <p>
-     * This is a framework hook method for subclasses to do special things when
-     * the Defaults button has been pressed.
-     * Subclasses may override, but should call <code>super.performDefaults</code>.
-     * </p>
-     */
-    protected void performDefaults() {
-        updateApplyButton();
-    }
+	/**
+	 * Performs special processing when this page's Defaults button has been pressed.
+	 * <p>
+	 * This is a framework hook method for subclasses to do special things when
+	 * the Defaults button has been pressed.
+	 * Subclasses may override, but should call <code>super.performDefaults</code>.
+	 * </p>
+	 */
+	protected void performDefaults() {
+		updateApplyButton();
+	}
 
 
-    @Override
+	@Override
 	public boolean performOk() {
-        return true;
-    }
+		return true;
+	}
 
 
-    @Override
+	@Override
 	public void setContainer(IPreferencePageContainer container) {
-        this.container = container;
-    }
+		this.container = container;
+	}
 
-    /**
-     * Sets the preference store for this preference page.
-     * <p>
-     * If preferenceStore is set to null, getPreferenceStore
-     * will invoke doGetPreferenceStore the next time it is called.
-     * </p>
-     *
-     * @param store the preference store, or <code>null</code>
-     * @see #getPreferenceStore
-     */
-    public void setPreferenceStore(IPreferenceStore store) {
-        preferenceStore = store;
-    }
+	/**
+	 * Sets the preference store for this preference page.
+	 * <p>
+	 * If preferenceStore is set to null, getPreferenceStore
+	 * will invoke doGetPreferenceStore the next time it is called.
+	 * </p>
+	 *
+	 * @param store the preference store, or <code>null</code>
+	 * @see #getPreferenceStore
+	 */
+	public void setPreferenceStore(IPreferenceStore store) {
+		preferenceStore = store;
+	}
 
 
-    @Override
+	@Override
 	public void setSize(Point uiSize) {
-        Control control = getControl();
-        if (control != null) {
-            control.setSize(uiSize);
-            size = uiSize;
-        }
-    }
+		Control control = getControl();
+		if (control != null) {
+			control.setSize(uiSize);
+			size = uiSize;
+		}
+	}
 
-    /**
-     * The <code>PreferencePage</code> implementation of this <code>IDialogPage</code>
-     * method extends the <code>DialogPage</code> implementation to update
-     * the preference page container title. Subclasses may extend.
-     * @see IDialogPage#setTitle(String)
-     */
-    @Override
+	/**
+	 * The <code>PreferencePage</code> implementation of this <code>IDialogPage</code>
+	 * method extends the <code>DialogPage</code> implementation to update
+	 * the preference page container title. Subclasses may extend.
+	 * @see IDialogPage#setTitle(String)
+	 */
+	@Override
 	public void setTitle(String title) {
-        super.setTitle(title);
-        if (getContainer() != null) {
+		super.setTitle(title);
+		if (getContainer() != null) {
 			getContainer().updateTitle();
 		}
-    }
+	}
 
-    /**
-     * Sets whether this page is valid.
-     * The enable state of the container buttons and the
-     * apply button is updated when a page's valid state
-     * changes.
-     * <p>
-     *
-     * @param b the new valid state
-     */
-    public void setValid(boolean b) {
-        boolean oldValue = isValid;
-        isValid = b;
-        if (oldValue != isValid) {
-            // update container state
-            if (getContainer() != null) {
+	/**
+	 * Sets whether this page is valid.
+	 * The enable state of the container buttons and the
+	 * apply button is updated when a page's valid state
+	 * changes.
+	 * <p>
+	 *
+	 * @param b the new valid state
+	 */
+	public void setValid(boolean b) {
+		boolean oldValue = isValid;
+		isValid = b;
+		if (oldValue != isValid) {
+			// update container state
+			if (getContainer() != null) {
 				getContainer().updateButtons();
 			}
-            // update page state
-            updateApplyButton();
-        }
-    }
+			// update page state
+			updateApplyButton();
+		}
+	}
 
 
-    @Override
+	@Override
 	public String toString() {
-        return getTitle();
-    }
+		return getTitle();
+	}
 
-    /**
-     * Updates the enabled state of the Apply button to reflect whether
-     * this page is valid.
-     */
-    protected void updateApplyButton() {
-        if (applyButton != null) {
+	/**
+	 * Updates the enabled state of the Apply button to reflect whether
+	 * this page is valid.
+	 */
+	protected void updateApplyButton() {
+		if (applyButton != null) {
 			applyButton.setEnabled(isValid());
 		}
-    }
+	}
 
-    /**
-     * Creates a composite with a highlighted Note entry and a message text.
-     * This is designed to take up the full width of the page.
-     *
-     * @param font the font to use
-     * @param composite the parent composite
-     * @param title the title of the note
-     * @param message the message for the note
-     * @return the composite for the note
-     */
-    protected Composite createNoteComposite(Font font, Composite composite,
-            String title, String message) {
-        Composite messageComposite = new Composite(composite, SWT.NONE);
-        GridLayout messageLayout = new GridLayout();
-        messageLayout.numColumns = 2;
-        messageLayout.marginWidth = 0;
-        messageLayout.marginHeight = 0;
-        messageComposite.setLayout(messageLayout);
-        messageComposite.setLayoutData(new GridData(
-                GridData.HORIZONTAL_ALIGN_FILL));
-        messageComposite.setFont(font);
+	/**
+	 * Creates a composite with a highlighted Note entry and a message text.
+	 * This is designed to take up the full width of the page.
+	 *
+	 * @param font the font to use
+	 * @param composite the parent composite
+	 * @param title the title of the note
+	 * @param message the message for the note
+	 * @return the composite for the note
+	 */
+	protected Composite createNoteComposite(Font font, Composite composite,
+			String title, String message) {
+		Composite messageComposite = new Composite(composite, SWT.NONE);
+		GridLayout messageLayout = new GridLayout();
+		messageLayout.numColumns = 2;
+		messageLayout.marginWidth = 0;
+		messageLayout.marginHeight = 0;
+		messageComposite.setLayout(messageLayout);
+		messageComposite.setLayoutData(new GridData(
+				GridData.HORIZONTAL_ALIGN_FILL));
+		messageComposite.setFont(font);
 
-        final Label noteLabel = new Label(messageComposite, SWT.BOLD);
-        noteLabel.setText(title);
-        noteLabel.setFont(JFaceResources.getFontRegistry().getBold(
+		final Label noteLabel = new Label(messageComposite, SWT.BOLD);
+		noteLabel.setText(title);
+		noteLabel.setFont(JFaceResources.getFontRegistry().getBold(
 				JFaceResources.DIALOG_FONT));
-        noteLabel
-                .setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		noteLabel
+				.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-        Label messageLabel = new Label(messageComposite, SWT.WRAP);
-        messageLabel.setText(message);
-        messageLabel.setFont(font);
-        return messageComposite;
-    }
+		Label messageLabel = new Label(messageComposite, SWT.WRAP);
+		messageLabel.setText(message);
+		messageLabel.setFont(font);
+		return messageComposite;
+	}
 
-    /**
-     * Returns the Apply button.
-     *
-     * @return the Apply button
-     */
-    protected Button getApplyButton() {
-        return applyButton;
-    }
+	/**
+	 * Returns the Apply button.
+	 *
+	 * @return the Apply button
+	 */
+	protected Button getApplyButton() {
+		return applyButton;
+	}
 
-    /**
-     * Returns the Restore Defaults button.
-     *
-     * @return the Restore Defaults button
-     */
-    protected Button getDefaultsButton() {
-        return defaultsButton;
-    }
+	/**
+	 * Returns the Restore Defaults button.
+	 *
+	 * @return the Restore Defaults button
+	 */
+	protected Button getDefaultsButton() {
+		return defaultsButton;
+	}
 
-    @Override
+	@Override
 	public void performHelp() {
-        getControl().notifyListeners(SWT.Help, new Event());
-    }
+		getControl().notifyListeners(SWT.Help, new Event());
+	}
 
 	/**
 	 * Applies the given data to this page.

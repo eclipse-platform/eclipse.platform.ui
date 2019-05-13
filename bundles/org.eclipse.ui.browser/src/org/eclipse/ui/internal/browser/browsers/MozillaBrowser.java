@@ -54,7 +54,7 @@ public class MozillaBrowser extends AbstractWebBrowser {
 		if (parameters == null) {
 			this.parameters = ""; //$NON-NLS-1$
 		} else {
-		    this.parameters = parameters;
+			this.parameters = parameters;
 		}
 	}
 

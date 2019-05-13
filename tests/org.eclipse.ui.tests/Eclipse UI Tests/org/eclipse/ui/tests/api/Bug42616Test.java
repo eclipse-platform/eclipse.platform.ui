@@ -26,22 +26,22 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class Bug42616Test extends UITestCase {
 
-    /**
-     * @param testName
-     */
-    public Bug42616Test(String testName) {
-        super(testName);
-    }
+	/**
+	 * @param testName
+	 */
+	public Bug42616Test(String testName) {
+		super(testName);
+	}
 
-    public void testErrorCondition() {
-        try {
-            WorkbenchPlugin.createExtension(null, null);
-            fail("createExtension with nulls succeeded");
-        } catch (CoreException e) {
-            // ensure that exception has a root cause.
-            assertNotNull("Cause is null", e.getStatus().getException());
-        } catch (Throwable t) {
-            fail("Throwable not wrapped in core exception.");
-        }
-    }
+	public void testErrorCondition() {
+		try {
+			WorkbenchPlugin.createExtension(null, null);
+			fail("createExtension with nulls succeeded");
+		} catch (CoreException e) {
+			// ensure that exception has a root cause.
+			assertNotNull("Cause is null", e.getStatus().getException());
+		} catch (Throwable t) {
+			fail("Throwable not wrapped in core exception.");
+		}
+	}
 }

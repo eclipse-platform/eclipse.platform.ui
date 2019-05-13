@@ -204,11 +204,11 @@ public class Snippet066TableViewerWithLabelDecorator {
 	private void createLastNameColumn(TableViewer v, final String title, final int bound) {
 		TableViewerColumn column = createTableViewerColumn(v, title, bound);
 		column.setLabelProvider(new StyledCellLabelProvider() {
-            @Override
-            public void update(final ViewerCell cell) {
-                final Person person = (Person) cell.getElement();
+			@Override
+			public void update(final ViewerCell cell) {
+				final Person person = (Person) cell.getElement();
 				final String cellText = person.getLastName();
-                cell.setText(cellText);
+				cell.setText(cellText);
 			}
 		});
 	}

@@ -37,7 +37,7 @@ public class BuildAllProjectsHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-    	if (isEnabled()) {
+		if (isEnabled()) {
 			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 			if (window != null) {
 				GlobalBuildAction globalBuildAction = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
@@ -47,7 +47,7 @@ public class BuildAllProjectsHandler extends AbstractHandler {
 					globalBuildAction.dispose();
 				}
 			}
-    	}
+		}
 		return null;
 	}
 
@@ -56,9 +56,9 @@ public class BuildAllProjectsHandler extends AbstractHandler {
 	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
-    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
-    	boolean enabled = BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		boolean enabled = BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		setBaseEnabled(enabled);
 	}
 }

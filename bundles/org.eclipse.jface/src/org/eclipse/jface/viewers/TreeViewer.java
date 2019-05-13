@@ -868,7 +868,7 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	@Override
 	protected void handleTreeExpand(TreeEvent event) {
-	    // Fix for Bug 271744 because windows expanding doesn't fire a focus lost
+		// Fix for Bug 271744 because windows expanding doesn't fire a focus lost
 		if( isCellEditorActive() ) {
 			applyEditorValue();
 		}
@@ -954,8 +954,8 @@ public class TreeViewer extends AbstractTreeViewer {
 						}
 						item.clear(0, true);
 					} else {
-		                virtualLazyUpdateChildCount(item, item.getItemCount());
-		            }
+						virtualLazyUpdateChildCount(item, item.getItemCount());
+					}
 				}
 			}
 		});

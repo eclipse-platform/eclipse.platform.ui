@@ -41,210 +41,210 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  */
 public class NullEStructuralFeaturePointer extends EStructuralFeaturePointer {
 
-    private String propertyName = "*";
-    private boolean byNameAttribute = false;
+	private String propertyName = "*";
+	private boolean byNameAttribute = false;
 
-    private static final long serialVersionUID = 5296593071854982754L;
+	private static final long serialVersionUID = 5296593071854982754L;
 
-    /**
-     * Create a new NullPropertyPointer.
-     * @param parent pointer
-     */
-    public NullEStructuralFeaturePointer(NodePointer parent) {
-        super(parent);
-    }
+	/**
+	 * Create a new NullPropertyPointer.
+	 * @param parent pointer
+	 */
+	public NullEStructuralFeaturePointer(NodePointer parent) {
+		super(parent);
+	}
 
-    @Override
+	@Override
 	public QName getName() {
-        return new QName(propertyName);
-    }
+		return new QName(propertyName);
+	}
 
-    @Override
+	@Override
 	public void setPropertyIndex(int index) {
-    }
+	}
 
-    @Override
+	@Override
 	public int getLength() {
-        return 0;
-    }
+		return 0;
+	}
 
-    @Override
+	@Override
 	public Object getBaseValue() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public Object getImmediateNode() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean isLeaf() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public NodePointer getValuePointer() {
-        return new NullPointer(this,  new QName(getPropertyName()));
-    }
+		return new NullPointer(this,  new QName(getPropertyName()));
+	}
 
-    @Override
+	@Override
 	protected boolean isActualProperty() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isActual() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isContainer() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void setValue(Object value) {
-        if (parent == null || parent.isContainer()) {
-            throw new JXPathInvalidAccessException(
-                "Cannot set property "
-                    + asPath()
-                    + ", the target object is null");
-        }
-        if (parent instanceof EStructuralFeatureOwnerPointer
-                && ((EStructuralFeatureOwnerPointer) parent)
-                        .isDynamicPropertyDeclarationSupported()) {
-            // If the parent property owner can create
-            // a property automatically - let it do so
-            EStructuralFeaturePointer propertyPointer =
-                ((EStructuralFeatureOwnerPointer) parent).getPropertyPointer();
-            propertyPointer.setPropertyName(propertyName);
-            propertyPointer.setValue(value);
-        }
-        else {
-            throw new JXPathInvalidAccessException(
-                "Cannot set property "
-                    + asPath()
-                    + ", path does not match a changeable location");
-        }
-    }
+		if (parent == null || parent.isContainer()) {
+			throw new JXPathInvalidAccessException(
+				"Cannot set property "
+					+ asPath()
+					+ ", the target object is null");
+		}
+		if (parent instanceof EStructuralFeatureOwnerPointer
+				&& ((EStructuralFeatureOwnerPointer) parent)
+						.isDynamicPropertyDeclarationSupported()) {
+			// If the parent property owner can create
+			// a property automatically - let it do so
+			EStructuralFeaturePointer propertyPointer =
+				((EStructuralFeatureOwnerPointer) parent).getPropertyPointer();
+			propertyPointer.setPropertyName(propertyName);
+			propertyPointer.setValue(value);
+		}
+		else {
+			throw new JXPathInvalidAccessException(
+				"Cannot set property "
+					+ asPath()
+					+ ", path does not match a changeable location");
+		}
+	}
 
-    @Override
+	@Override
 	public NodePointer createPath(JXPathContext context) {
-        NodePointer newParent = parent.createPath(context);
-        if (isAttribute()) {
-            return newParent.createAttribute(context, getName());
-        }
-        if (parent instanceof NullPointer && parent.equals(newParent)) {
-            throw createBadFactoryException(context.getFactory());
-        }
-        // Consider these two use cases:
-        // 1. The parent pointer of NullPropertyPointer is
-        //    a PropertyOwnerPointer other than NullPointer. When we call
-        //    createPath on it, it most likely returns itself. We then
-        //    take a PropertyPointer from it and get the PropertyPointer
-        //    to expand the collection for the corresponding property.
-        //
-        // 2. The parent pointer of NullPropertyPointer is a NullPointer.
-        //    When we call createPath, it may return a PropertyOwnerPointer
-        //    or it may return anything else, like a DOMNodePointer.
-        //    In the former case we need to do exactly what we did in use
-        //    case 1.  In the latter case, we simply request that the
-        //    non-property pointer expand the collection by itself.
-        if (newParent instanceof EStructuralFeatureOwnerPointer) {
-            EStructuralFeatureOwnerPointer pop = (EStructuralFeatureOwnerPointer) newParent;
-            newParent = pop.getPropertyPointer();
-        }
-        return newParent.createChild(context, getName(), getIndex());
-    }
+		NodePointer newParent = parent.createPath(context);
+		if (isAttribute()) {
+			return newParent.createAttribute(context, getName());
+		}
+		if (parent instanceof NullPointer && parent.equals(newParent)) {
+			throw createBadFactoryException(context.getFactory());
+		}
+		// Consider these two use cases:
+		// 1. The parent pointer of NullPropertyPointer is
+		//    a PropertyOwnerPointer other than NullPointer. When we call
+		//    createPath on it, it most likely returns itself. We then
+		//    take a PropertyPointer from it and get the PropertyPointer
+		//    to expand the collection for the corresponding property.
+		//
+		// 2. The parent pointer of NullPropertyPointer is a NullPointer.
+		//    When we call createPath, it may return a PropertyOwnerPointer
+		//    or it may return anything else, like a DOMNodePointer.
+		//    In the former case we need to do exactly what we did in use
+		//    case 1.  In the latter case, we simply request that the
+		//    non-property pointer expand the collection by itself.
+		if (newParent instanceof EStructuralFeatureOwnerPointer) {
+			EStructuralFeatureOwnerPointer pop = (EStructuralFeatureOwnerPointer) newParent;
+			newParent = pop.getPropertyPointer();
+		}
+		return newParent.createChild(context, getName(), getIndex());
+	}
 
-    @Override
+	@Override
 	public NodePointer createPath(JXPathContext context, Object value) {
-        NodePointer newParent = parent.createPath(context);
-        if (isAttribute()) {
-            NodePointer pointer = newParent.createAttribute(context, getName());
-            pointer.setValue(value);
-            return pointer;
-        }
-        if (parent instanceof NullPointer && parent.equals(newParent)) {
-            throw createBadFactoryException(context.getFactory());
-        }
-        if (newParent instanceof EStructuralFeatureOwnerPointer) {
-            EStructuralFeatureOwnerPointer pop = (EStructuralFeatureOwnerPointer) newParent;
-            newParent = pop.getPropertyPointer();
-        }
-        return newParent.createChild(context, getName(), index, value);
-    }
+		NodePointer newParent = parent.createPath(context);
+		if (isAttribute()) {
+			NodePointer pointer = newParent.createAttribute(context, getName());
+			pointer.setValue(value);
+			return pointer;
+		}
+		if (parent instanceof NullPointer && parent.equals(newParent)) {
+			throw createBadFactoryException(context.getFactory());
+		}
+		if (newParent instanceof EStructuralFeatureOwnerPointer) {
+			EStructuralFeatureOwnerPointer pop = (EStructuralFeatureOwnerPointer) newParent;
+			newParent = pop.getPropertyPointer();
+		}
+		return newParent.createChild(context, getName(), index, value);
+	}
 
-    @Override
+	@Override
 	public NodePointer createChild(JXPathContext context, QName name, int index) {
-        return createPath(context).createChild(context, name, index);
-    }
+		return createPath(context).createChild(context, name, index);
+	}
 
-    @Override
+	@Override
 	public NodePointer createChild(JXPathContext context, QName name,
-            int index, Object value) {
-        return createPath(context).createChild(context, name, index, value);
-    }
+			int index, Object value) {
+		return createPath(context).createChild(context, name, index, value);
+	}
 
-    @Override
+	@Override
 	public String getPropertyName() {
-        return propertyName;
-    }
+		return propertyName;
+	}
 
-    @Override
+	@Override
 	public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
+		this.propertyName = propertyName;
+	}
 
-    /**
-     * Set the name attribute.
-     * @param attributeValue value to set
-     */
-    public void setNameAttributeValue(String attributeValue) {
-        this.propertyName = attributeValue;
-        byNameAttribute = true;
-    }
+	/**
+	 * Set the name attribute.
+	 * @param attributeValue value to set
+	 */
+	public void setNameAttributeValue(String attributeValue) {
+		this.propertyName = attributeValue;
+		byNameAttribute = true;
+	}
 
-    @Override
+	@Override
 	public boolean isCollection() {
-        return getIndex() != WHOLE_COLLECTION;
-    }
+		return getIndex() != WHOLE_COLLECTION;
+	}
 
-    @Override
+	@Override
 	public int getPropertyCount() {
-        return 0;
-    }
+		return 0;
+	}
 
-    @Override
+	@Override
 	public String[] getPropertyNames() {
-        return new String[0];
-    }
+		return new String[0];
+	}
 
-    @Override
+	@Override
 	public String asPath() {
-        if (!byNameAttribute) {
-            return super.asPath();
-        }
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(getImmediateParentPointer().asPath());
-        buffer.append("[@name='");
-        buffer.append(escape(getPropertyName()));
-        buffer.append("']");
-        if (index != WHOLE_COLLECTION) {
-            buffer.append('[').append(index + 1).append(']');
-        }
-        return buffer.toString();
-    }
+		if (!byNameAttribute) {
+			return super.asPath();
+		}
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(getImmediateParentPointer().asPath());
+		buffer.append("[@name='");
+		buffer.append(escape(getPropertyName()));
+		buffer.append("']");
+		if (index != WHOLE_COLLECTION) {
+			buffer.append('[').append(index + 1).append(']');
+		}
+		return buffer.toString();
+	}
 
-    /**
-     * Create a "bad factory" JXPathAbstractFactoryException for the specified AbstractFactory.
-     * @param factory AbstractFactory
-     * @return JXPathAbstractFactoryException
-     */
-    private JXPathAbstractFactoryException createBadFactoryException(AbstractFactory factory) {
-        return new JXPathAbstractFactoryException("Factory " + factory
-                + " reported success creating object for path: " + asPath()
-                + " but object was null.  Terminating to avoid stack recursion.");
-    }
+	/**
+	 * Create a "bad factory" JXPathAbstractFactoryException for the specified AbstractFactory.
+	 * @param factory AbstractFactory
+	 * @return JXPathAbstractFactoryException
+	 */
+	private JXPathAbstractFactoryException createBadFactoryException(AbstractFactory factory) {
+		return new JXPathAbstractFactoryException("Factory " + factory
+				+ " reported success creating object for path: " + asPath()
+				+ " but object was null.  Terminating to avoid stack recursion.");
+	}
 }

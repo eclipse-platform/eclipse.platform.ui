@@ -102,7 +102,7 @@ public class ResourceDragAndDropEditor {
 			return store.getString(preferenceKey);
 		}
 
-		 /**
+		/**
 		 * @return the current selection
 		 */
 		private String getSelection() {
@@ -207,8 +207,8 @@ public class ResourceDragAndDropEditor {
 	}
 
 	/**
-     * Sets the enabled state of the group's widgets.
-     * Does nothing if called prior to calling <code>createContents</code>.
+	 * Sets the enabled state of the group's widgets.
+	 * Does nothing if called prior to calling <code>createContents</code>.
 
 	 * @param enableLinking
 	 */

@@ -21,50 +21,50 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class AdaptableResourceWrapper implements IAdaptable {
 
-    IResource resource;
+	IResource resource;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter == IResource.class) {
+		if (adapter == IResource.class) {
 			return (T) resource;
 		}
-        if (adapter == IWorkbenchAdapter.class) {
+		if (adapter == IWorkbenchAdapter.class) {
 			return (T) TestAdaptableWorkbenchAdapter.getInstance();
 		}
-        return null;
-    }
+		return null;
+	}
 
-    public AdaptableResourceWrapper(IResource wrapped) {
-        resource = wrapped;
-    }
+	public AdaptableResourceWrapper(IResource wrapped) {
+		resource = wrapped;
+	}
 
-    public String getLabel() {
-        return resource.getName() + " Adapted";
-    }
+	public String getLabel() {
+		return resource.getName() + " Adapted";
+	}
 
-    public AdaptableResourceWrapper getParent() {
-        if (resource.getParent() != null) {
+	public AdaptableResourceWrapper getParent() {
+		if (resource.getParent() != null) {
 			return new AdaptableResourceWrapper(resource.getParent());
 		}
-        return null;
-    }
+		return null;
+	}
 
-    public AdaptableResourceWrapper[] getChildren() {
-        AdaptableResourceWrapper[] wrappers = new AdaptableResourceWrapper[0];
+	public AdaptableResourceWrapper[] getChildren() {
+		AdaptableResourceWrapper[] wrappers = new AdaptableResourceWrapper[0];
 
-        if (resource instanceof IContainer) {
-            IResource[] children;
-            try {
-                children = ((IContainer) resource).members();
-            } catch (CoreException exception) {
-                return wrappers;
-            }
-            wrappers = new AdaptableResourceWrapper[children.length];
-            for (int i = 0; i < children.length; i++) {
-                wrappers[i] = new AdaptableResourceWrapper(children[i]);
-            }
-        }
-        return wrappers;
-    }
+		if (resource instanceof IContainer) {
+			IResource[] children;
+			try {
+				children = ((IContainer) resource).members();
+			} catch (CoreException exception) {
+				return wrappers;
+			}
+			wrappers = new AdaptableResourceWrapper[children.length];
+			for (int i = 0; i < children.length; i++) {
+				wrappers[i] = new AdaptableResourceWrapper(children[i]);
+			}
+		}
+		return wrappers;
+	}
 }

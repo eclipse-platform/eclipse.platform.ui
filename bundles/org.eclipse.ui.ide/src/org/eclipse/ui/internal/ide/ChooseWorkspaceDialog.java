@@ -71,97 +71,97 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	private ChooseWorkspaceData launchData;
 
-    private Combo text;
+	private Combo text;
 
-    private boolean suppressAskAgain = false;
+	private boolean suppressAskAgain = false;
 
-    private boolean centerOnMonitor = false;
+	private boolean centerOnMonitor = false;
 
 	private Map<String, Link> recentWorkspacesLinks;
 
 	private Form recentWorkspacesForm;
 
-    /**
-     * Create a modal dialog on the arugment shell, using and updating the
-     * argument data object.
-     * @param parentShell the parent shell for this dialog
-     * @param launchData the launch data from past launches
-     *
-     * @param suppressAskAgain
-     *            true means the dialog will not have a "don't ask again" button
-     * @param centerOnMonitor indicates whether the dialog should be centered on
-     * the monitor or according to it's parent if there is one
-     */
-    public ChooseWorkspaceDialog(Shell parentShell,
-            ChooseWorkspaceData launchData, boolean suppressAskAgain, boolean centerOnMonitor) {
-        super(parentShell);
-        this.launchData = launchData;
-        this.suppressAskAgain = suppressAskAgain;
-        this.centerOnMonitor = centerOnMonitor;
-    }
+	/**
+	 * Create a modal dialog on the arugment shell, using and updating the
+	 * argument data object.
+	 * @param parentShell the parent shell for this dialog
+	 * @param launchData the launch data from past launches
+	 *
+	 * @param suppressAskAgain
+	 *            true means the dialog will not have a "don't ask again" button
+	 * @param centerOnMonitor indicates whether the dialog should be centered on
+	 * the monitor or according to it's parent if there is one
+	 */
+	public ChooseWorkspaceDialog(Shell parentShell,
+			ChooseWorkspaceData launchData, boolean suppressAskAgain, boolean centerOnMonitor) {
+		super(parentShell);
+		this.launchData = launchData;
+		this.suppressAskAgain = suppressAskAgain;
+		this.centerOnMonitor = centerOnMonitor;
+	}
 
-    /**
-     * Show the dialog to the user (if needed). When this method finishes,
-     * #getSelection will return the workspace that should be used (whether it
-     * was just selected by the user or some previous default has been used.
-     * The parameter can be used to override the users preference.  For example,
-     * this is important in cases where the default selection is already in use
-     * and the user is forced to choose a different one.
-     *
-     * @param force
-     *            true if the dialog should be opened regardless of the value of
-     *            the show dialog checkbox
-     */
-    public void prompt(boolean force) {
-        if (force || launchData.getShowDialog()) {
-            open();
+	/**
+	 * Show the dialog to the user (if needed). When this method finishes,
+	 * #getSelection will return the workspace that should be used (whether it
+	 * was just selected by the user or some previous default has been used.
+	 * The parameter can be used to override the users preference.  For example,
+	 * this is important in cases where the default selection is already in use
+	 * and the user is forced to choose a different one.
+	 *
+	 * @param force
+	 *            true if the dialog should be opened regardless of the value of
+	 *            the show dialog checkbox
+	 */
+	public void prompt(boolean force) {
+		if (force || launchData.getShowDialog()) {
+			open();
 
 			// Bug 70576: Dialog gets dismissed via ESC and via the window's
 			// close box. Make sure the launch doesn't continue with the default
 			// workspace.
-            if (getReturnCode() == CANCEL) {
+			if (getReturnCode() == CANCEL) {
 				launchData.workspaceSelected(null);
 			}
 
-            return;
-        }
+			return;
+		}
 
-        String[] recent = launchData.getRecentWorkspaces();
+		String[] recent = launchData.getRecentWorkspaces();
 
-        // If the selection dialog was not used then the workspace to use is either the
-        // most recent selection or the initialDefault (if there is no history).
-        String workspace = null;
-        if (recent != null && recent.length > 0) {
+		// If the selection dialog was not used then the workspace to use is either the
+		// most recent selection or the initialDefault (if there is no history).
+		String workspace = null;
+		if (recent != null && recent.length > 0) {
 			workspace = recent[0];
 		}
-        if (workspace == null || workspace.length() == 0) {
+		if (workspace == null || workspace.length() == 0) {
 			workspace = launchData.getInitialDefault();
 		}
-        launchData.workspaceSelected(TextProcessor.deprocess(workspace));
-    }
+		launchData.workspaceSelected(TextProcessor.deprocess(workspace));
+	}
 
-    /**
-     * Creates and returns the contents of the upper part of this dialog (above
-     * the button bar).
-     * <p>
-     * The <code>Dialog</code> implementation of this framework method creates
-     * and returns a new <code>Composite</code> with no margins and spacing.
-     * </p>
-     *
-     * @param parent the parent composite to contain the dialog area
-     * @return the dialog area control
-     */
-    @Override
+	/**
+	 * Creates and returns the contents of the upper part of this dialog (above
+	 * the button bar).
+	 * <p>
+	 * The <code>Dialog</code> implementation of this framework method creates
+	 * and returns a new <code>Composite</code> with no margins and spacing.
+	 * </p>
+	 *
+	 * @param parent the parent composite to contain the dialog area
+	 * @return the dialog area control
+	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        String productName = getWindowTitle();
+		String productName = getWindowTitle();
 
-        Composite composite = (Composite) super.createDialogArea(parent);
-        setTitle(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogTitle);
-        setMessage(NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogMessage, productName));
+		Composite composite = (Composite) super.createDialogArea(parent);
+		setTitle(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogTitle);
+		setMessage(NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogMessage, productName));
 
-        // bug 59934: load title image for sizing, but set it non-visible so the
-        //            white background is displayed
-        if (getTitleImageLabel() != null) {
+		// bug 59934: load title image for sizing, but set it non-visible so the
+		//            white background is displayed
+		if (getTitleImageLabel() != null) {
 			getTitleImageLabel().setVisible(false);
 		}
 
@@ -171,17 +171,17 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		if (launchData.getRecentWorkspaces()[0] != null) {
 			createRecentWorkspacesComposite = true;
 		}
-        createWorkspaceBrowseRow(composite);
-        if (!suppressAskAgain) {
+		createWorkspaceBrowseRow(composite);
+		if (!suppressAskAgain) {
 			createShowDialogButton(composite);
 		}
 		if (createRecentWorkspacesComposite) {
 			createRecentWorkspacesComposite(composite);
 		}
 
-        Dialog.applyDialogFont(composite);
-        return composite;
-    }
+		Dialog.applyDialogFont(composite);
+		return composite;
+	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -208,10 +208,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		return productName;
 	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        shell.setText(NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogName, getWindowTitle()));
+		super.configureShell(shell);
+		shell.setText(NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogName, getWindowTitle()));
 		shell.addTraverseListener(e -> {
 			// Bug 462707: [WorkbenchLauncher] dialog not closed on ESC.
 			// The dialog doesn't always have a parent, so
@@ -221,20 +221,20 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				cancelPressed();
 			}
 		});
-    }
+	}
 
-    /**
-     * Notifies that the ok button of this dialog has been pressed.
-     * <p>
-     * The <code>Dialog</code> implementation of this framework method sets
-     * this dialog's return code to <code>Window.OK</code>
-     * and closes the dialog. Subclasses may override.
-     * </p>
-     */
-    @Override
+	/**
+	 * Notifies that the ok button of this dialog has been pressed.
+	 * <p>
+	 * The <code>Dialog</code> implementation of this framework method sets
+	 * this dialog's return code to <code>Window.OK</code>
+	 * and closes the dialog. Subclasses may override.
+	 * </p>
+	 */
+	@Override
 	protected void okPressed() {
 		workspaceSelected(getWorkspaceLocation());
-    }
+	}
 
 	/**
 	 * Set the selected workspace to the given String and close the dialog
@@ -281,11 +281,11 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		return text.getText();
 	}
 
-    @Override
+	@Override
 	protected void cancelPressed() {
-        launchData.workspaceSelected(null);
-        super.cancelPressed();
-    }
+		launchData.workspaceSelected(null);
+		super.cancelPressed();
+	}
 
 	/**
 	 * The Recent Workspaces area of the dialog is only shown if Recent
@@ -404,32 +404,32 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		return uniqueWorkspaceNameMap;
 	}
 
-    /**
-     * The main area of the dialog is just a row with the current selection
-     * information and a drop-down of the most recently used workspaces.
-     */
-    private void createWorkspaceBrowseRow(Composite parent) {
-        Composite panel = new Composite(parent, SWT.NONE);
+	/**
+	 * The main area of the dialog is just a row with the current selection
+	 * information and a drop-down of the most recently used workspaces.
+	 */
+	private void createWorkspaceBrowseRow(Composite parent) {
+		Composite panel = new Composite(parent, SWT.NONE);
 
-        GridLayout layout = new GridLayout(3, false);
-        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-        panel.setLayout(layout);
-        panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        panel.setFont(parent.getFont());
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		panel.setLayout(layout);
+		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		panel.setFont(parent.getFont());
 
 		CLabel label = new CLabel(panel, SWT.NONE);
-        label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_workspaceEntryLabel);
+		label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_workspaceEntryLabel);
 		label.setMargins(0, 0, 2, 0);
 
 		text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
 		new DirectoryProposalContentAssist().apply(text);
 		text.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
-        text.setFocus();
-        text.setLayoutData(new GridData(400, SWT.DEFAULT));
-        text.addModifyListener(e -> {
+		text.setFocus();
+		text.setLayoutData(new GridData(400, SWT.DEFAULT));
+		text.addModifyListener(e -> {
 			Button okButton = getButton(Window.OK);
 			if(okButton != null && !okButton.isDisposed()) {
 				boolean nonWhitespaceFound = false;
@@ -443,47 +443,47 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				okButton.setEnabled(nonWhitespaceFound);
 			}
 		});
-        setInitialTextValues(text);
+		setInitialTextValues(text);
 
-        Button browseButton = new Button(panel, SWT.PUSH);
-        browseButton.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseLabel);
-        setButtonLayoutData(browseButton);
-        GridData data = (GridData) browseButton.getLayoutData();
-        data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
-        browseButton.setLayoutData(data);
-        browseButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+		Button browseButton = new Button(panel, SWT.PUSH);
+		browseButton.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseLabel);
+		setButtonLayoutData(browseButton);
+		GridData data = (GridData) browseButton.getLayoutData();
+		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
+		browseButton.setLayoutData(data);
+		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
-                dialog.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserTitle);
-                dialog.setMessage(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserMessage);
-                dialog.setFilterPath(getInitialBrowsePath());
-                String dir = dialog.open();
-                if (dir != null) {
+				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
+				dialog.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserTitle);
+				dialog.setMessage(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserMessage);
+				dialog.setFilterPath(getInitialBrowsePath());
+				String dir = dialog.open();
+				if (dir != null) {
 					text.setText(TextProcessor.process(dir));
 				}
-            }
-        });
-    }
+			}
+		});
+	}
 
-    /**
-     * Return a string containing the path that is closest to the current
-     * selection in the text widget. This starts with the current value and
-     * works toward the root until there is a directory for which File.exists
-     * returns true. Return the current working dir if the text box does not
-     * contain a valid path.
-     *
-     * @return closest parent that exists or an empty string
-     */
-    private String getInitialBrowsePath() {
-        File dir = new File(getWorkspaceLocation());
-        while (dir != null && !dir.exists()) {
+	/**
+	 * Return a string containing the path that is closest to the current
+	 * selection in the text widget. This starts with the current value and
+	 * works toward the root until there is a directory for which File.exists
+	 * returns true. Return the current working dir if the text box does not
+	 * contain a valid path.
+	 *
+	 * @return closest parent that exists or an empty string
+	 */
+	private String getInitialBrowsePath() {
+		File dir = new File(getWorkspaceLocation());
+		while (dir != null && !dir.exists()) {
 			dir = dir.getParentFile();
 		}
 
-        return dir != null ? dir.getAbsolutePath() : System
-                .getProperty("user.dir"); //$NON-NLS-1$
-    }
+		return dir != null ? dir.getAbsolutePath() : System
+				.getProperty("user.dir"); //$NON-NLS-1$
+	}
 
 	/*
 	 * see org.eclipse.jface.Window.getInitialLocation()
@@ -506,42 +506,42 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 						+ monitorBounds.height - initialSize.y)));
 	}
 
-    /**
-     * The show dialog button allows the user to choose to neven be nagged again.
-     */
-    private void createShowDialogButton(Composite parent) {
-        Composite panel = new Composite(parent, SWT.NONE);
-        panel.setFont(parent.getFont());
+	/**
+	 * The show dialog button allows the user to choose to neven be nagged again.
+	 */
+	private void createShowDialogButton(Composite parent) {
+		Composite panel = new Composite(parent, SWT.NONE);
+		panel.setFont(parent.getFont());
 
-        GridLayout layout = new GridLayout(1, false);
-        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-        panel.setLayout(layout);
+		GridLayout layout = new GridLayout(1, false);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		panel.setLayout(layout);
 
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.verticalAlignment = GridData.END;
-        panel.setLayoutData(data);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.verticalAlignment = GridData.END;
+		panel.setLayoutData(data);
 
-        Button button = new Button(panel, SWT.CHECK);
-        button.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_useDefaultMessage);
-        button.setSelection(!launchData.getShowDialog());
-        button.addSelectionListener(new SelectionAdapter() {
-            @Override
+		Button button = new Button(panel, SWT.CHECK);
+		button.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_useDefaultMessage);
+		button.setSelection(!launchData.getShowDialog());
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                launchData.toggleShowDialog();
-            }
-        });
-    }
+				launchData.toggleShowDialog();
+			}
+		});
+	}
 
-    private void setInitialTextValues(Combo text) {
+	private void setInitialTextValues(Combo text) {
 		for (String recentWorkspace : launchData.getRecentWorkspaces()) {
 			if (recentWorkspace != null) {
 				text.add(recentWorkspace);
 			}
 		}
 
-        text.setText(TextProcessor.process((text.getItemCount() > 0 ? text
+		text.setText(TextProcessor.process((text.getItemCount() > 0 ? text
 				.getItem(0) : launchData.getInitialDefault())));
-    }
+	}
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
@@ -552,12 +552,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			return null;
 		}
 
-        IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-        if (section == null) {
-            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-        }
-        return section;
+		IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null) {
+			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+		}
+		return section;
 	}
 
 	public Combo getCombo() {

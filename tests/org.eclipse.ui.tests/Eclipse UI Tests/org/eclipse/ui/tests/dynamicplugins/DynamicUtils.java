@@ -23,22 +23,22 @@ import org.osgi.framework.BundleException;
 
 public class DynamicUtils {
 
-    public static final Bundle installPlugin(String pluginName)
-            throws IOException, BundleException {
-        // Programmatically install a new plugin
-        TestPlugin plugin = TestPlugin.getDefault();
-        if (plugin == null) {
+	public static final Bundle installPlugin(String pluginName)
+			throws IOException, BundleException {
+		// Programmatically install a new plugin
+		TestPlugin plugin = TestPlugin.getDefault();
+		if (plugin == null) {
 			throw new IllegalStateException(
-                    "TestPlugin default reference is null");
+					"TestPlugin default reference is null");
 		}
-        String pluginLocation = null;
-        URL dataURL = Platform.resolve(plugin.getBundle().getEntry(pluginName));
-        pluginLocation = "reference:" + dataURL.toExternalForm();
-        return TestInstallUtil.installBundle(pluginLocation);
-    }
+		String pluginLocation = null;
+		URL dataURL = Platform.resolve(plugin.getBundle().getEntry(pluginName));
+		pluginLocation = "reference:" + dataURL.toExternalForm();
+		return TestInstallUtil.installBundle(pluginLocation);
+	}
 
-    public static void uninstallPlugin(Bundle bundle) throws BundleException {
-        TestInstallUtil.uninstallBundle(bundle);
-    }
+	public static void uninstallPlugin(Bundle bundle) throws BundleException {
+		TestInstallUtil.uninstallBundle(bundle);
+	}
 
 }

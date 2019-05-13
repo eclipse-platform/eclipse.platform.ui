@@ -186,7 +186,7 @@ public class ModalContext {
 						// so be generous about how many may fail consecutively before we
 						// give up.
 						if (exceptionCount > 50 || display.isDisposed()) {
-			                if (t instanceof RuntimeException) {
+							if (t instanceof RuntimeException) {
 								throw (RuntimeException) t;
 							} else if (t instanceof Error) {
 								throw (Error) t;

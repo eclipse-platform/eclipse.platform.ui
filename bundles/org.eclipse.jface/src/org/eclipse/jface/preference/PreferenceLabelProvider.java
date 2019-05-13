@@ -23,21 +23,21 @@ import org.eclipse.swt.graphics.Image;
  */
 public class PreferenceLabelProvider extends LabelProvider {
 
-    /**
-     * @param element must be an instance of <code>IPreferenceNode</code>.
-     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-     */
-    @Override
+	/**
+	 * @param element must be an instance of <code>IPreferenceNode</code>.
+	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+	 */
+	@Override
 	public String getText(Object element) {
-        return ((IPreferenceNode) element).getLabelText();
-    }
+		return ((IPreferenceNode) element).getLabelText();
+	}
 
-    /**
-     * @param element must be an instance of <code>IPreferenceNode</code>.
-     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-     */
-    @Override
+	/**
+	 * @param element must be an instance of <code>IPreferenceNode</code>.
+	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+	 */
+	@Override
 	public Image getImage(Object element) {
-        return ((IPreferenceNode) element).getLabelImage();
-    }
+		return ((IPreferenceNode) element).getLabelImage();
+	}
 }

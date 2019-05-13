@@ -40,11 +40,11 @@ public class WorkbenchFile extends WorkbenchResource {
 	public static QualifiedName IMAGE_CACHE_KEY = new QualifiedName(WorkbenchPlugin.PI_WORKBENCH, "WorkbenchFileImage"); //$NON-NLS-1$
 
 	/**
-     *	Answer the appropriate base image to use for the passed resource, optionally
-     *	considering the passed open status as well iff appropriate for the type of
-     *	passed resource
-     */
-    @Override
+	 *	Answer the appropriate base image to use for the passed resource, optionally
+	 *	considering the passed open status as well iff appropriate for the type of
+	 *	passed resource
+	 */
+	@Override
 	protected ImageDescriptor getBaseImage(IResource resource) {
 		IContentType contentType = null;
 		// do we need to worry about checking here?
@@ -62,13 +62,13 @@ public class WorkbenchFile extends WorkbenchResource {
 			}
 			contentType = IDE.guessContentType(file);
 		}
-        // @issue move IDE specific images
-        ImageDescriptor image = PlatformUI.getWorkbench().getEditorRegistry()
-                .getImageDescriptor(resource.getName(), contentType);
-        if (image == null) {
+		// @issue move IDE specific images
+		ImageDescriptor image = PlatformUI.getWorkbench().getEditorRegistry()
+				.getImageDescriptor(resource.getName(), contentType);
+		if (image == null) {
 			image = PlatformUI.getWorkbench().getSharedImages()
-                    .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+					.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
 		}
-        return image;
-    }
+		return image;
+	}
 }

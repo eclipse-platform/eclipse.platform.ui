@@ -24,157 +24,157 @@ package org.eclipse.ui.internal.ide;
 public interface IIDEHelpContextIds {
 	String PREFIX = IDEWorkbenchPlugin.IDE_WORKBENCH + "."; //$NON-NLS-1$
 
-    // Actions
+	// Actions
 	String ADD_BOOKMARK_ACTION = PREFIX
-            + "add_bookmark_action_context"; //$NON-NLS-1$
+			+ "add_bookmark_action_context"; //$NON-NLS-1$
 
 	String ADD_TASK_ACTION = PREFIX
-            + "add_task_action_context"; //$NON-NLS-1$
+			+ "add_task_action_context"; //$NON-NLS-1$
 
 	String INCREMENTAL_BUILD_ACTION = PREFIX
-            + "incremental_build_action_context"; //$NON-NLS-1$
+			+ "incremental_build_action_context"; //$NON-NLS-1$
 
 	String FULL_BUILD_ACTION = PREFIX
-            + "full_build_action_context"; //$NON-NLS-1$
+			+ "full_build_action_context"; //$NON-NLS-1$
 
 	String CLOSE_RESOURCE_ACTION = PREFIX
-            + "close_resource_action_context"; //$NON-NLS-1$
+			+ "close_resource_action_context"; //$NON-NLS-1$
 
 	String CLOSE_UNRELATED_PROJECTS_ACTION = PREFIX
-    + "close_unrelated_projects_action_context"; //$NON-NLS-1$
+	+ "close_unrelated_projects_action_context"; //$NON-NLS-1$
 
 	String OPEN_RESOURCE_ACTION = PREFIX
-            + "open_resource_action_context"; //$NON-NLS-1$
+			+ "open_resource_action_context"; //$NON-NLS-1$
 
 	String OPEN_FILE_ACTION = PREFIX
-            + "open_file_action_context"; //$NON-NLS-1$
+			+ "open_file_action_context"; //$NON-NLS-1$
 
 	String OPEN_LOCAL_FILE_ACTION = PREFIX
-    + "open_local_file_action_context"; //$NON-NLS-1$
+	+ "open_local_file_action_context"; //$NON-NLS-1$
 
 	String OPEN_SYSTEM_EDITOR_ACTION = PREFIX
-            + "open_system_editor_action_context"; //$NON-NLS-1$
+			+ "open_system_editor_action_context"; //$NON-NLS-1$
 
 	String REFRESH_ACTION = PREFIX
-            + "refresh_action_context"; //$NON-NLS-1$
+			+ "refresh_action_context"; //$NON-NLS-1$
 
 	String MOVE_RESOURCE_ACTION = PREFIX
-            + "move_resource_action_context"; //$NON-NLS-1$
+			+ "move_resource_action_context"; //$NON-NLS-1$
 
 	String COPY_RESOURCE_ACTION = PREFIX
-            + "copy_resource_action_context"; //$NON-NLS-1$
+			+ "copy_resource_action_context"; //$NON-NLS-1$
 
 	String MOVE_PROJECT_ACTION = PREFIX
-            + "move_project_action_context"; //$NON-NLS-1$
+			+ "move_project_action_context"; //$NON-NLS-1$
 
 	String COPY_PROJECT_ACTION = PREFIX
-            + "copy_project_action_context"; //$NON-NLS-1$
+			+ "copy_project_action_context"; //$NON-NLS-1$
 
 	String RENAME_RESOURCE_ACTION = PREFIX
-            + "rename_resource_action_context"; //$NON-NLS-1$
+			+ "rename_resource_action_context"; //$NON-NLS-1$
 
 	String DELETE_RESOURCE_ACTION = PREFIX
-            + "delete_resource_action_context"; //$NON-NLS-1$
+			+ "delete_resource_action_context"; //$NON-NLS-1$
 
 	String PROJECT_PROPERTY_DIALOG_ACTION = PREFIX
-            + "project_property_dialog_action_context"; //$NON-NLS-1$
+			+ "project_property_dialog_action_context"; //$NON-NLS-1$
 
 	String CREATE_FOLDER_ACTION = PREFIX
-            + "create_folder_action_context"; //$NON-NLS-1$
+			+ "create_folder_action_context"; //$NON-NLS-1$
 
 	String CREATE_FILE_ACTION = PREFIX
-            + "create_file_action_context"; //$NON-NLS-1$
+			+ "create_file_action_context"; //$NON-NLS-1$
 
 	String SCRUB_LOCAL_ACTION = PREFIX
-            + "scrub_local_action_context"; //$NON-NLS-1$
+			+ "scrub_local_action_context"; //$NON-NLS-1$
 
 	String GLOBAL_INCREMENTAL_BUILD_ACTION = PREFIX
-            + "global_incremental_build_action_context"; //$NON-NLS-1$
+			+ "global_incremental_build_action_context"; //$NON-NLS-1$
 
 	String GLOBAL_FULL_BUILD_ACTION = PREFIX
-            + "global_full_build_action_context"; //$NON-NLS-1$
+			+ "global_full_build_action_context"; //$NON-NLS-1$
 
 	String QUICK_START_ACTION = PREFIX
-            + "quick_start_action_context"; //$NON-NLS-1$
+			+ "quick_start_action_context"; //$NON-NLS-1$
 
 	String TIPS_AND_TRICKS_ACTION = PREFIX
-            + "tips_and_tricks_action_context"; //$NON-NLS-1$
+			+ "tips_and_tricks_action_context"; //$NON-NLS-1$
 
 	String TEXT_CUT_ACTION = PREFIX
-            + "text_cut_action_context"; //$NON-NLS-1$
+			+ "text_cut_action_context"; //$NON-NLS-1$
 
 	String TEXT_COPY_ACTION = PREFIX
-            + "text_copy_action_context"; //$NON-NLS-1$
+			+ "text_copy_action_context"; //$NON-NLS-1$
 
 	String TEXT_PASTE_ACTION = PREFIX
-            + "text_paste_action_context"; //$NON-NLS-1$
+			+ "text_paste_action_context"; //$NON-NLS-1$
 
 	String TEXT_DELETE_ACTION = PREFIX
-            + "text_delete_action_context"; //$NON-NLS-1$
+			+ "text_delete_action_context"; //$NON-NLS-1$
 
 	String TEXT_SELECT_ALL_ACTION = PREFIX
-            + "text_select_all_action_context"; //$NON-NLS-1$
+			+ "text_select_all_action_context"; //$NON-NLS-1$
 
 	String OPEN_WORKSPACE_FILE_ACTION = PREFIX
-            + "open_workspace_file_action_context"; //$NON-NLS-1$
+			+ "open_workspace_file_action_context"; //$NON-NLS-1$
 
-    // Dialogs
+	// Dialogs
 	String PROJECT_LOCATION_SELECTION_DIALOG = PREFIX
-            + "project_location_selection_dialog_context"; //$NON-NLS-1$
+			+ "project_location_selection_dialog_context"; //$NON-NLS-1$
 
 	String CONTAINER_SELECTION_DIALOG = PREFIX
-            + "container_selection_dialog_context"; //$NON-NLS-1$
+			+ "container_selection_dialog_context"; //$NON-NLS-1$
 
 	String FILE_SELECTION_DIALOG = PREFIX
-            + "file_selection_dialog_context"; //$NON-NLS-1$
+			+ "file_selection_dialog_context"; //$NON-NLS-1$
 
 	String RESOURCE_SELECTION_DIALOG = PREFIX
-            + "resource_selection_dialog_context"; //$NON-NLS-1$
+			+ "resource_selection_dialog_context"; //$NON-NLS-1$
 
 	String DELETE_PROJECT_DIALOG = PREFIX
-            + "delete_project_dialog_context"; //$NON-NLS-1$
+			+ "delete_project_dialog_context"; //$NON-NLS-1$
 
 	String MARKER_RESOLUTION_SELECTION_DIALOG = PREFIX
-            + "marker_resolution_selection_dialog_context"; //$NON-NLS-1$
+			+ "marker_resolution_selection_dialog_context"; //$NON-NLS-1$
 
 	String WELCOME_PAGE_SELECTION_DIALOG = PREFIX
-            + "welcome_page_selection_dialog"; //$NON-NLS-1$
+			+ "welcome_page_selection_dialog"; //$NON-NLS-1$
 
 	String TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG = PREFIX
-            + "tips_and_tricks_page_selection_dialog"; //$NON-NLS-1$
+			+ "tips_and_tricks_page_selection_dialog"; //$NON-NLS-1$
 
 	String OPEN_RESOURCE_DIALOG = PREFIX
-            + "open_resource_dialog"; //$NON-NLS-1$
+			+ "open_resource_dialog"; //$NON-NLS-1$
 
 	String NEW_FOLDER_DIALOG = PREFIX + "new_folder_dialog"; //$NON-NLS-1$
 
 	String PATH_VARIABLE_SELECTION_DIALOG = PREFIX
-            + "path_variable_selection_dialog"; //$NON-NLS-1$
+			+ "path_variable_selection_dialog"; //$NON-NLS-1$
 
 	String IMPORT_TYPE_DIALOG = PREFIX
-    + "import_type_dialog"; //$NON-NLS-1$
+	+ "import_type_dialog"; //$NON-NLS-1$
 
 	String SAVE_AS_DIALOG = PREFIX
-    + "save_as_dialog_context"; //$NON-NLS-1$
+	+ "save_as_dialog_context"; //$NON-NLS-1$
 
 
-    // Editors
+	// Editors
 	String WELCOME_EDITOR = PREFIX
-            + "welcome_editor_context"; //$NON-NLS-1$
+			+ "welcome_editor_context"; //$NON-NLS-1$
 
-    // Preference pages
+	// Preference pages
 	String BUILD_ORDER_PREFERENCE_PAGE = PREFIX
-            + "build_order_preference_page_context"; //$NON-NLS-1$
+			+ "build_order_preference_page_context"; //$NON-NLS-1$
 
 	String FILE_STATES_PREFERENCE_PAGE = PREFIX
-            + "file_states_preference_page_context"; //$NON-NLS-1$
+			+ "file_states_preference_page_context"; //$NON-NLS-1$
 
 	String LINKED_RESOURCE_PREFERENCE_PAGE = PREFIX
-            + "linked_resource_preference_page_context"; //$NON-NLS-1$
+			+ "linked_resource_preference_page_context"; //$NON-NLS-1$
 
-    // Property pages
+	// Property pages
 	String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX
-            + "project_reference_property_page_context"; //$NON-NLS-1$
+			+ "project_reference_property_page_context"; //$NON-NLS-1$
 
 	String PROJECT_NATURES_PROPERTY_PAGE = PREFIX
 			+ "project_natures_property_page_context"; //$NON-NLS-1$
@@ -189,46 +189,46 @@ public interface IIDEHelpContextIds {
 			+ "edit_resource_filter_dialog_context"; //$NON-NLS-1$
 
 	String RESOURCE_INFO_PROPERTY_PAGE = PREFIX
-            + "resource_info_property_page_context"; //$NON-NLS-1$
+			+ "resource_info_property_page_context"; //$NON-NLS-1$
 
 	String NEW_FILE_WIZARD_PAGE = PREFIX
-    		+ "new_file_wizard_page_context"; //$NON-NLS-1$
+			+ "new_file_wizard_page_context"; //$NON-NLS-1$
 
-    // Wizard pages
+	// Wizard pages
 	String NEW_PROJECT_WIZARD_PAGE = PREFIX
-            + "new_project_wizard_page_context"; //$NON-NLS-1$
+			+ "new_project_wizard_page_context"; //$NON-NLS-1$
 
 	String NEW_PROJECT_REFERENCE_WIZARD_PAGE = PREFIX
-            + "new_project_reference_wizard_page_context"; //$NON-NLS-1$
+			+ "new_project_reference_wizard_page_context"; //$NON-NLS-1$
 
 	String NEW_FOLDER_WIZARD_PAGE = PREFIX
-            + "new_folder_wizard_page_context"; //$NON-NLS-1$
+			+ "new_folder_wizard_page_context"; //$NON-NLS-1$
 
 	String LINKED_RESOURCE_PAGE = PREFIX
-    		+ "linked_resource_page_context"; //$NON-NLS-1$
+			+ "linked_resource_page_context"; //$NON-NLS-1$
 
 	String NEW_GROUP_WIZARD_PAGE = PREFIX
-    		+ "new_group_wizard_page_context"; //$NON-NLS-1$
+			+ "new_group_wizard_page_context"; //$NON-NLS-1$
 
 	String NEW_LINK_WIZARD_PAGE = PREFIX
-            + "new_link_wizard_page_context"; //$NON-NLS-1$
+			+ "new_link_wizard_page_context"; //$NON-NLS-1$
 
 	String WORKING_SET_RESOURCE_PAGE = PREFIX
-   			+ "working_set_resource_page"; //$NON-NLS-1$
+			+ "working_set_resource_page"; //$NON-NLS-1$
 
 	String WORKSPACE_PREFERENCE_PAGE = PREFIX
-   			+ "workspace_preference_page_context"; //$NON-NLS-1$
+			+ "workspace_preference_page_context"; //$NON-NLS-1$
 
-    // Wizards
+	// Wizards
 
 	String NEW_FILE_WIZARD = PREFIX
-   + "new_file_wizard_context"; //$NON-NLS-1$
+			+ "new_file_wizard_context"; //$NON-NLS-1$
 
 	String NEW_FOLDER_WIZARD = PREFIX
-   	+ "new_folder_wizard_context"; //$NON-NLS-1$
+			+ "new_folder_wizard_context"; //$NON-NLS-1$
 
 	String NEW_PROJECT_WIZARD = PREFIX
-   	+ "new_project_wizard_context"; //$NON-NLS-1$
+			+ "new_project_wizard_context"; //$NON-NLS-1$
 
 	String SWITCH_WORKSPACE_ACTION = PREFIX
 	+ "switch_workspace_dialog_context"; //$NON-NLS-1$

@@ -190,7 +190,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 	private void customize() {
 		ColorRegistry reg = JFaceResources.getColorRegistry();
 		Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
-		  c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
+		c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
 		customizationsTabFolder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
 		customizationsTabFolder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
 		customizationsTabFolder.setSimple(true);

@@ -134,20 +134,20 @@ public class EditMask {
 		oldValidRawText = editMaskParser.getRawResult();
 	}
 
-    /**
-     * @param string Sets the text string in the receiver
-     */
-    public void setText(String string) {
-    	String oldValue = text.getText();
-    	if (editMaskParser != null) {
+	/**
+	 * @param string Sets the text string in the receiver
+	 */
+	public void setText(String string) {
+		String oldValue = text.getText();
+		if (editMaskParser != null) {
 			editMaskParser.setInput(string);
 			String formattedResult = editMaskParser.getFormattedResult();
 			text.setText(formattedResult);
 			firePropertyChange(FIELD_TEXT, oldValue, formattedResult);
-    	} else {
-    		text.setText(string);
+		} else {
+			text.setText(string);
 			firePropertyChange(FIELD_TEXT, oldValue, string);
-    	}
+		}
 		oldValidText = text.getText();
 		oldValidRawText = editMaskParser.getRawResult();
 	}
@@ -178,8 +178,8 @@ public class EditMask {
 			text.setText(editMaskParser.getFormattedResult());
 			firePropertyChange(FIELD_RAW_TEXT, oldValue, string);
 		} else {
-	    	String oldValue = text.getText();
-    		text.setText(string);
+			String oldValue = text.getText();
+			text.setText(string);
 			firePropertyChange(FIELD_RAW_TEXT, oldValue, string);
 		}
 		oldValidText = text.getText();
@@ -329,36 +329,36 @@ public class EditMask {
 	protected int oldSelection = 0;
 	protected int selection = 0;
 	protected String oldRawText = "";
-   protected boolean replacedSelectedText = false;
+	protected boolean replacedSelectedText = false;
 
 	private VerifyListener verifyListener = new VerifyListener() {
 		@Override
 		public void verifyText(VerifyEvent e) {
-         // If the edit mask is already full, don't let the user type
-         // any new characters
-         if (editMaskParser.isComplete() && // should eventually be .isFull() to account for optional characters
-               e.start == e.end &&
-               e.text.length() > 0)
-         {
-            e.doit=false;
-            return;
-         }
+			// If the edit mask is already full, don't let the user type
+			// any new characters
+			if (editMaskParser.isComplete() && // should eventually be .isFull() to account for optional characters
+				e.start == e.end &&
+				e.text.length() > 0)
+			{
+				e.doit=false;
+				return;
+			}
 
 			oldSelection = selection;
 			Point selectionRange = text.getSelection();
-         selection = selectionRange.x;
+			selection = selectionRange.x;
 
 			if (!updating) {
-   			replacedSelectedText = false;
-   			if (selectionRange.y - selectionRange.x > 0 && e.text.length() > 0) {
-   			   replacedSelectedText = true;
-   			}
-            // If the machine is loaded down (ie: spyware, malware), we might
-            // get another keystroke before asyncExec can process, so we use
-            // greedyExec instead.
-            SWTUtil.greedyExec(Display.getCurrent(), updateTextField);
+				replacedSelectedText = false;
+				if (selectionRange.y - selectionRange.x > 0 && e.text.length() > 0) {
+					replacedSelectedText = true;
+				}
+				// If the machine is loaded down (ie: spyware, malware), we might
+				// get another keystroke before asyncExec can process, so we use
+				// greedyExec instead.
+				SWTUtil.greedyExec(Display.getCurrent(), updateTextField);
 //				Display.getCurrent().asyncExec(updateTextField);
-         }
+			}
 		}
 	};
 
@@ -384,23 +384,23 @@ public class EditMask {
 
 		private void updateSelectionPosition(String newRawText) {
 
-         // Adjust the selection
-         if (isInsertingNewCharacter(newRawText) || replacedSelectedText) {
-            // Find the position after where the new character was actually inserted
-            int selectionDelta =
-               editMaskParser.getNextInputPosition(oldSelection)
-               - oldSelection;
-            if (selectionDelta == 0) {
-               selectionDelta = editMaskParser.getNextInputPosition(selection)
-               - selection;
-            }
-            selection += selectionDelta;
-         }
+			// Adjust the selection
+			if (isInsertingNewCharacter(newRawText) || replacedSelectedText) {
+				// Find the position after where the new character was actually inserted
+				int selectionDelta =
+					editMaskParser.getNextInputPosition(oldSelection)
+					- oldSelection;
+				if (selectionDelta == 0) {
+					selectionDelta = editMaskParser.getNextInputPosition(selection)
+					- selection;
+				}
+				selection += selectionDelta;
+			}
 
 			// Did we just type something that was accepted by the mask?
 			if (!newRawText.equals(oldRawText)) { // yep
 
-            // If the user hits <end>, bounce them back to the end of their actual input
+			// If the user hits <end>, bounce them back to the end of their actual input
 				int firstIncompletePosition = editMaskParser.getFirstIncompleteInputPosition();
 				if (firstIncompletePosition > 0 && selection > firstIncompletePosition)
 					selection = firstIncompletePosition;

@@ -35,53 +35,53 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 @Deprecated
 public class ScrubLocalAction extends WorkspaceAction {
 
-    /**
-     * The id of this action.
-     */
-    public static final String ID = "org.eclipse.ui.ScrubLocalAction";//$NON-NLS-1$
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = "org.eclipse.ui.ScrubLocalAction";//$NON-NLS-1$
 
-    /**
-     * Creates a new action.
-     *
-     * @param shell the shell for any dialogs
-     */
-    public ScrubLocalAction(Shell shell) {
-        super(shell, IDEWorkbenchMessages.ScrubLocalAction_text);
-        setToolTipText(IDEWorkbenchMessages.ScrubLocalAction_toolTip);
-        setId(ID);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Creates a new action.
+	 *
+	 * @param shell the shell for any dialogs
+	 */
+	public ScrubLocalAction(Shell shell) {
+		super(shell, IDEWorkbenchMessages.ScrubLocalAction_text);
+		setToolTipText(IDEWorkbenchMessages.ScrubLocalAction_toolTip);
+		setId(ID);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.SCRUB_LOCAL_ACTION);
-    }
+	}
 
-    @Override
+	@Override
 	protected String getOperationMessage() {
-        return IDEWorkbenchMessages.ScrubLocalAction_progress;
-    }
+		return IDEWorkbenchMessages.ScrubLocalAction_progress;
+	}
 
-    @Override
+	@Override
 	protected String getProblemsMessage() {
-        return IDEWorkbenchMessages.ScrubLocalAction_problemsMessage;
-    }
+		return IDEWorkbenchMessages.ScrubLocalAction_problemsMessage;
+	}
 
-    @Override
+	@Override
 	protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.ScrubLocalAction_problemsTitle;
-    }
+		return IDEWorkbenchMessages.ScrubLocalAction_problemsTitle;
+	}
 
-    @Override
+	@Override
 	protected void invokeOperation(IResource resource, IProgressMonitor monitor)
-            throws CoreException {
-        resource.setLocal(false, IResource.DEPTH_INFINITE, monitor);
-    }
+			throws CoreException {
+		resource.setLocal(false, IResource.DEPTH_INFINITE, monitor);
+	}
 
-    /**
-     * The <code>ScrubLocalAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method ensures that this action is
-     * disabled if any of the selections are not resources.
-     */
-    @Override
+	/**
+	 * The <code>ScrubLocalAction</code> implementation of this
+	 * <code>SelectionListenerAction</code> method ensures that this action is
+	 * disabled if any of the selections are not resources.
+	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
-        return super.updateSelection(s)
-                && getSelectedNonResources().isEmpty();
-    }
+		return super.updateSelection(s)
+				&& getSelectedNonResources().isEmpty();
+	}
 }

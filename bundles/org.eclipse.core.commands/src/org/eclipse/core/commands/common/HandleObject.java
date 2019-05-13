@@ -48,68 +48,68 @@ public abstract class HandleObject extends EventManager implements
 	 */
 	private static final int HASH_CODE_NOT_COMPUTED = -1;
 
-    /**
-     * A factor for computing the hash code for all schemes.
-     */
-    private static final int HASH_FACTOR = 89;
+	/**
+	 * A factor for computing the hash code for all schemes.
+	 */
+	private static final int HASH_FACTOR = 89;
 
-    /**
-     * The seed for the hash code for all schemes.
-     */
-    private static final int HASH_INITIAL = HandleObject.class.getName()
-            .hashCode();
+	/**
+	 * The seed for the hash code for all schemes.
+	 */
+	private static final int HASH_INITIAL = HandleObject.class.getName()
+			.hashCode();
 
-    /**
-     * Whether this object is defined. A defined object is one that has been
-     * fully initialized. By default, all objects start as undefined.
-     */
-    protected transient boolean defined = false;
+	/**
+	 * Whether this object is defined. A defined object is one that has been
+	 * fully initialized. By default, all objects start as undefined.
+	 */
+	protected transient boolean defined = false;
 
-    /**
-     * The hash code for this object. This value is computed lazily, and marked
-     * as invalid when one of the values on which it is based changes.
-     */
-    private transient int hashCode = HASH_CODE_NOT_COMPUTED;
+	/**
+	 * The hash code for this object. This value is computed lazily, and marked
+	 * as invalid when one of the values on which it is based changes.
+	 */
+	private transient int hashCode = HASH_CODE_NOT_COMPUTED;
 
-    /**
-     * The identifier for this object. This identifier should be unique across
-     * all objects of the same type and should never change. This value will
-     * never be <code>null</code>.
-     */
-    protected final String id;
+	/**
+	 * The identifier for this object. This identifier should be unique across
+	 * all objects of the same type and should never change. This value will
+	 * never be <code>null</code>.
+	 */
+	protected final String id;
 
-    /**
-     * The string representation of this object. This string is for debugging
-     * purposes only, and is not meant to be displayed to the user. This value
-     * is computed lazily, and is cleared if one of its dependent values
-     * changes.
-     */
-    protected transient String string = null;
+	/**
+	 * The string representation of this object. This string is for debugging
+	 * purposes only, and is not meant to be displayed to the user. This value
+	 * is computed lazily, and is cleared if one of its dependent values
+	 * changes.
+	 */
+	protected transient String string = null;
 
-    /**
-     * Constructs a new instance of <code>HandleObject</code>.
-     *
-     * @param id
-     *            The id of this handle; must not be <code>null</code>.
-     */
-    protected HandleObject(final String id) {
-        if (id == null) {
-            throw new NullPointerException(
-                    "Cannot create a handle with a null id"); //$NON-NLS-1$
-        }
+	/**
+	 * Constructs a new instance of <code>HandleObject</code>.
+	 *
+	 * @param id
+	 *            The id of this handle; must not be <code>null</code>.
+	 */
+	protected HandleObject(final String id) {
+		if (id == null) {
+			throw new NullPointerException(
+					"Cannot create a handle with a null id"); //$NON-NLS-1$
+		}
 
-        this.id = id;
-    }
+		this.id = id;
+	}
 
-    /**
-     * Tests whether this object is equal to another object. A handle object is
-     * only equal to another handle object with the same id and the same class.
-     *
-     * @param object
-     *            The object with which to compare; may be <code>null</code>.
-     * @return <code>true</code> if the objects are equal; <code>false</code>
-     *         otherwise.
-     */
+	/**
+	 * Tests whether this object is equal to another object. A handle object is
+	 * only equal to another handle object with the same id and the same class.
+	 *
+	 * @param object
+	 *            The object with which to compare; may be <code>null</code>.
+	 * @return <code>true</code> if the objects are equal; <code>false</code>
+	 *         otherwise.
+	 */
 	@Override
 	public boolean equals(final Object object) {
 		// Check if they're the same.
@@ -128,52 +128,52 @@ public abstract class HandleObject extends EventManager implements
 				&& (this.getClass() == handle.getClass());
 	}
 
-    @Override
+	@Override
 	public final String getId() {
-        return id;
-    }
+		return id;
+	}
 
-    /**
-     * Computes the hash code for this object based on the id.
-     *
-     * @return The hash code for this object.
-     */
-    @Override
+	/**
+	 * Computes the hash code for this object based on the id.
+	 *
+	 * @return The hash code for this object.
+	 */
+	@Override
 	public final int hashCode() {
-        if (hashCode == HASH_CODE_NOT_COMPUTED) {
+		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Objects.hashCode(id);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}
 		}
 		return hashCode;
-    }
+	}
 
-    /**
-     * Whether this instance is defined. A defined instance is one that has been
-     * fully initialized. This allows objects to effectively disappear even
-     * though other objects may still have references to them.
-     *
-     * @return <code>true</code> if this object is defined; <code>false</code>
-     *         otherwise.
-     */
-    public final boolean isDefined() {
-        return defined;
-    }
+	/**
+	 * Whether this instance is defined. A defined instance is one that has been
+	 * fully initialized. This allows objects to effectively disappear even
+	 * though other objects may still have references to them.
+	 *
+	 * @return <code>true</code> if this object is defined; <code>false</code>
+	 *         otherwise.
+	 */
+	public final boolean isDefined() {
+		return defined;
+	}
 
-    /**
-     * The string representation of this object -- for debugging purposes only.
-     * This string should not be shown to an end user.
-     *
-     * @return The string representation; never <code>null</code>.
-     */
-    @Override
+	/**
+	 * The string representation of this object -- for debugging purposes only.
+	 * This string should not be shown to an end user.
+	 *
+	 * @return The string representation; never <code>null</code>.
+	 */
+	@Override
 	public abstract String toString();
 
-    /**
-     * Makes this object becomes undefined. This method should make any defined
-     * properties <code>null</code>. It should also send notification to any
-     * listeners that these properties have changed.
-     */
-    public abstract void undefine();
+	/**
+	 * Makes this object becomes undefined. This method should make any defined
+	 * properties <code>null</code>. It should also send notification to any
+	 * listeners that these properties have changed.
+	 */
+	public abstract void undefine();
 }

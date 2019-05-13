@@ -56,7 +56,7 @@ public class ImagesTest extends UITestCase {
 		image1 = desc1.createImage();
 
 		assertNotSame(defaultImageDesc, desc1);
-	    ImageTests.assertNotEquals(defaultImage, image1);
+		ImageTests.assertNotEquals(defaultImage, image1);
 
 		ImageDescriptor desc2 = support.getImageDescriptor(activity2);
 		image2 = desc2.createImage();
@@ -82,7 +82,7 @@ public class ImagesTest extends UITestCase {
 		image1 = desc1.createImage();
 
 		assertNotSame(defaultImageDesc, desc1);
-	    ImageTests.assertNotEquals(defaultImage, image1);
+		ImageTests.assertNotEquals(defaultImage, image1);
 
 		ImageDescriptor desc2 = support.getImageDescriptor(category2);
 		image2 = desc2.createImage();

@@ -35,71 +35,71 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public final class Bug74982Test extends UITestCase {
 
-    /**
-     * Whether the selection event has been fired.
-     */
-    private boolean selectionEventFired = false;
+	/**
+	 * Whether the selection event has been fired.
+	 */
+	private boolean selectionEventFired = false;
 
-    /**
-     * Constructs a new instance of <code>Bug74982Test</code>.
-     *
-     * @param name
-     *            The name of the test
-     */
-    public Bug74982Test(final String name) {
-        super(name);
-    }
+	/**
+	 * Constructs a new instance of <code>Bug74982Test</code>.
+	 *
+	 * @param name
+	 *            The name of the test
+	 */
+	public Bug74982Test(final String name) {
+		super(name);
+	}
 
-    /**
-     * Tests that the <code>SelectAllHandler</code> triggers a selection
-     * event. Creates a dialog with a text widget, gives the text widget focus,
-     * and then calls the select all command. This should then call the
-     * <code>SelectAllHandler</code> and trigger a selection event.
-     *
-     * @throws ExecutionException
-     *             If the <code>SelectAllHandler</code> is broken in some way.
-     * @throws NotHandledException
-     *             If the dialog does not have focus, or if the
-     *             <code>WorkbenchCommandSupport</code> class is broken in
-     *             some way.
-     */
-    public final void testSelectAllHandlerSendsSelectionEvent()
-            throws ExecutionException, NotHandledException {
-        // Create a dialog with a text widget.
-        final Shell dialog = new Shell(fWorkbench.getActiveWorkbenchWindow()
-                .getShell());
-        dialog.setLayout(new GridLayout());
-        final Text text = new Text(dialog, SWT.SINGLE);
-        text.setText("Mooooooooooooooooooooooooooooo");
-        text.setLayoutData(new GridData());
-        text.addSelectionListener(new SelectionAdapter() {
-            @Override
+	/**
+	 * Tests that the <code>SelectAllHandler</code> triggers a selection
+	 * event. Creates a dialog with a text widget, gives the text widget focus,
+	 * and then calls the select all command. This should then call the
+	 * <code>SelectAllHandler</code> and trigger a selection event.
+	 *
+	 * @throws ExecutionException
+	 *             If the <code>SelectAllHandler</code> is broken in some way.
+	 * @throws NotHandledException
+	 *             If the dialog does not have focus, or if the
+	 *             <code>WorkbenchCommandSupport</code> class is broken in
+	 *             some way.
+	 */
+	public final void testSelectAllHandlerSendsSelectionEvent()
+			throws ExecutionException, NotHandledException {
+		// Create a dialog with a text widget.
+		final Shell dialog = new Shell(fWorkbench.getActiveWorkbenchWindow()
+				.getShell());
+		dialog.setLayout(new GridLayout());
+		final Text text = new Text(dialog, SWT.SINGLE);
+		text.setText("Mooooooooooooooooooooooooooooo");
+		text.setLayoutData(new GridData());
+		text.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                selectionEventFired = true;
-            }
-        });
+				selectionEventFired = true;
+			}
+		});
 
-        // Open the dialog and give the text widget focus.
-        dialog.pack();
-        dialog.open();
-        text.setFocus();
+		// Open the dialog and give the text widget focus.
+		dialog.pack();
+		dialog.open();
+		text.setFocus();
 
-        // Spin the event loop to make sure focus is set-up properly.
-        final Display display = fWorkbench.getDisplay();
-        while (display.readAndDispatch()) {
-        	((Workbench)fWorkbench).getContext().processWaiting();
-        }
+		// Spin the event loop to make sure focus is set-up properly.
+		final Display display = fWorkbench.getDisplay();
+		while (display.readAndDispatch()) {
+			((Workbench)fWorkbench).getContext().processWaiting();
+		}
 
-        // Get the select all command and execute it.
-        final IWorkbenchCommandSupport commandSupport = fWorkbench
-                .getCommandSupport();
-        final ICommand selectAllCommand = commandSupport.getCommandManager()
-                .getCommand("org.eclipse.ui.edit.selectAll");
-        selectAllCommand.execute(null);
+		// Get the select all command and execute it.
+		final IWorkbenchCommandSupport commandSupport = fWorkbench
+				.getCommandSupport();
+		final ICommand selectAllCommand = commandSupport.getCommandManager()
+				.getCommand("org.eclipse.ui.edit.selectAll");
+		selectAllCommand.execute(null);
 
-        // Check to see if the selection event has been fired.
-        assertTrue(
-                "The selection event was not fired when the SelectAllHandler was used.",
-                selectionEventFired);
-    }
+		// Check to see if the selection event has been fired.
+		assertTrue(
+				"The selection event was not fired when the SelectAllHandler was used.",
+				selectionEventFired);
+	}
 }

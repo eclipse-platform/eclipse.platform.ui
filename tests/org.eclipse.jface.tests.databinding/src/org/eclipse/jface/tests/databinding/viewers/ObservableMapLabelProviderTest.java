@@ -32,42 +32,42 @@ import org.junit.Test;
  */
 public class ObservableMapLabelProviderTest extends AbstractDefaultRealmTestCase {
 
-    @Test
+	@Test
 	public void testGetColumnText() throws Exception {
-        WritableSet<Item> set = new WritableSet<>(new HashSet<>(), Item.class);
-        Item item = new Item();
-        String value = "value";
-        item.setValue(value);
-        set.add(item);
-
-        ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(
-				BeanProperties.value(Item.class, "value").observeDetail(set));
-        assertEquals(item.getValue(), labelProvider.getColumnText(item, 0));
-    }
-
-    @Test
-	public void testGetColumnTextNullValue() throws Exception {
 		WritableSet<Item> set = new WritableSet<>(new HashSet<>(), Item.class);
-        Item item = new Item();
-        set.add(item);
+		Item item = new Item();
+		String value = "value";
+		item.setValue(value);
+		set.add(item);
 
 		ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(
 				BeanProperties.value(Item.class, "value").observeDetail(set));
-        assertNull(item.getValue());
-        assertEquals("", labelProvider.getColumnText(item, 0));
-    }
+		assertEquals(item.getValue(), labelProvider.getColumnText(item, 0));
+	}
 
-    private static class Item extends ModelObject {
-        private String value;
+	@Test
+	public void testGetColumnTextNullValue() throws Exception {
+		WritableSet<Item> set = new WritableSet<>(new HashSet<>(), Item.class);
+		Item item = new Item();
+		set.add(item);
 
-        public String getValue() {
-            return value;
-        }
+		ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(
+				BeanProperties.value(Item.class, "value").observeDetail(set));
+		assertNull(item.getValue());
+		assertEquals("", labelProvider.getColumnText(item, 0));
+	}
 
-        public void setValue(String value) {
-            String old = this.value;
+	private static class Item extends ModelObject {
+		private String value;
 
-            firePropertyChange("value", old, this.value = value);
-        }
-    }
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			String old = this.value;
+
+			firePropertyChange("value", old, this.value = value);
+		}
+	}
 }

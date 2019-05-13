@@ -68,8 +68,8 @@ public class EditorTests extends DynamicTestCase {
 		ReferenceQueue<IEditorPart> queue = new ReferenceQueue<>();
 		IEditorPart part = IDE.openEditor(window.getActivePage(), file, EDITOR_ID);
 		WeakReference<IEditorPart> ref = new WeakReference<>(part, queue);
-        assertNotNull(part);
-        part = null; //null the reference
+		assertNotNull(part);
+		part = null; //null the reference
 
 		removeBundle();
 		try {
@@ -78,7 +78,7 @@ public class EditorTests extends DynamicTestCase {
 			fail(e.getMessage());
 		}
 
-        assertEquals(0, window.getActivePage().getEditors().length);
+		assertEquals(0, window.getActivePage().getEditors().length);
 	}
 
 	public void testEditorProperties() throws Exception {
@@ -125,14 +125,14 @@ public class EditorTests extends DynamicTestCase {
 	 *
 	 */
 	private IFile getFile(String fileName) throws CoreException {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IProject testProject = workspace.getRoot().getProject(getName());
-        testProject.create(null);
-        testProject.open(null);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject testProject = workspace.getRoot().getProject(getName());
+		testProject.create(null);
+		testProject.open(null);
 
-        IFile iFile = testProject.getFile(fileName);
-        iFile.create(new ByteArrayInputStream(new byte[] { '\n' }), true, null);
-        return iFile;
+		IFile iFile = testProject.getFile(fileName);
+		iFile.create(new ByteArrayInputStream(new byte[] { '\n' }), true, null);
+		return iFile;
 	}
 
 

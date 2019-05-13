@@ -34,58 +34,58 @@ import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
  */
 class OpenBookmarkAction extends BookmarkAction {
 
-    /**
-     * Create a new instance of this class.
-     *
-     * @param view the view
-     */
-    public OpenBookmarkAction(BookmarkNavigator view) {
-        super(view, BookmarkMessages.OpenBookmark_text);
-        setToolTipText(BookmarkMessages.OpenBookmark_toolTip);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                IBookmarkHelpContextIds.OPEN_BOOKMARK_ACTION);
-        setEnabled(false);
-    }
+	/**
+	 * Create a new instance of this class.
+	 *
+	 * @param view the view
+	 */
+	public OpenBookmarkAction(BookmarkNavigator view) {
+		super(view, BookmarkMessages.OpenBookmark_text);
+		setToolTipText(BookmarkMessages.OpenBookmark_toolTip);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IBookmarkHelpContextIds.OPEN_BOOKMARK_ACTION);
+		setEnabled(false);
+	}
 
-    @Override
+	@Override
 	public void run() {
-        IWorkbenchPage page = getView().getSite().getPage();
-        for (Iterator i = getStructuredSelection().iterator(); i.hasNext();) {
-            IMarker marker = (IMarker) i.next();
-            try {
-                IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
-            } catch (PartInitException e) {
-                // Open an error style dialog for PartInitException by
-                // including any extra information from the nested
-                // CoreException if present.
+		IWorkbenchPage page = getView().getSite().getPage();
+		for (Iterator i = getStructuredSelection().iterator(); i.hasNext();) {
+			IMarker marker = (IMarker) i.next();
+			try {
+				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
+			} catch (PartInitException e) {
+				// Open an error style dialog for PartInitException by
+				// including any extra information from the nested
+				// CoreException if present.
 
-                // Check for a nested CoreException
-                CoreException nestedException = null;
-                IStatus status = e.getStatus();
-                if (status != null
-                        && status.getException() instanceof CoreException) {
+				// Check for a nested CoreException
+				CoreException nestedException = null;
+				IStatus status = e.getStatus();
+				if (status != null
+						&& status.getException() instanceof CoreException) {
 					nestedException = (CoreException) status.getException();
 				}
 
-                if (nestedException != null) {
-                    // Open an error dialog and include the extra
-                    // status information from the nested CoreException
-                    ErrorDialog.openError(getView().getShell(),
-                            BookmarkMessages.OpenBookmark_errorTitle,
-                            e.getMessage(), nestedException.getStatus());
-                } else {
-                    // Open a regular error dialog since there is no
-                    // extra information to display
-                    MessageDialog.openError(getView().getShell(),
-                            BookmarkMessages.OpenBookmark_errorTitle,
-                            e.getMessage());
-                }
-            }
-        }
-    }
+				if (nestedException != null) {
+					// Open an error dialog and include the extra
+					// status information from the nested CoreException
+					ErrorDialog.openError(getView().getShell(),
+							BookmarkMessages.OpenBookmark_errorTitle,
+							e.getMessage(), nestedException.getStatus());
+				} else {
+					// Open a regular error dialog since there is no
+					// extra information to display
+					MessageDialog.openError(getView().getShell(),
+							BookmarkMessages.OpenBookmark_errorTitle,
+							e.getMessage());
+				}
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IStructuredSelection sel) {
-        setEnabled(!sel.isEmpty());
-    }
+		setEnabled(!sel.isEmpty());
+	}
 }

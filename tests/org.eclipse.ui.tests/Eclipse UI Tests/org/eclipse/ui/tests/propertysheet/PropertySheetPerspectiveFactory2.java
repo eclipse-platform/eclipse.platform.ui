@@ -32,28 +32,28 @@ import org.eclipse.ui.tests.session.NonRestorableView;
  */
 public class PropertySheetPerspectiveFactory2 implements IPerspectiveFactory {
 
-    @Override
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
-        String editorArea = layout.getEditorArea();
+		String editorArea = layout.getEditorArea();
 
-        // Bottom right.
-        IFolderLayout bottomRight = layout.createFolder(
-                "bottomRight", IPageLayout.BOTTOM, (float) 0.55,
-                editorArea);
+		// Bottom right.
+		IFolderLayout bottomRight = layout.createFolder(
+				"bottomRight", IPageLayout.BOTTOM, (float) 0.55,
+				editorArea);
 
-        bottomRight.addPlaceholder(IPageLayout.ID_PROP_SHEET);
-        bottomRight.addPlaceholder(SelectionProviderView.ID);
-        bottomRight.addPlaceholder(NonRestorableView.ID);
-        bottomRight.addPlaceholder(SaveableMockViewPart.ID);
-        bottomRight.addPlaceholder(IPageLayout.ID_PROJECT_EXPLORER);
-        bottomRight.addPlaceholder(IPageLayout.ID_RES_NAV);
-    }
+		bottomRight.addPlaceholder(IPageLayout.ID_PROP_SHEET);
+		bottomRight.addPlaceholder(SelectionProviderView.ID);
+		bottomRight.addPlaceholder(NonRestorableView.ID);
+		bottomRight.addPlaceholder(SaveableMockViewPart.ID);
+		bottomRight.addPlaceholder(IPageLayout.ID_PROJECT_EXPLORER);
+		bottomRight.addPlaceholder(IPageLayout.ID_RES_NAV);
+	}
 
-    public static void applyPerspective(IWorkbenchPage activePage){
-        IPerspectiveDescriptor desc = activePage.getWorkbenchWindow().getWorkbench()
-            .getPerspectiveRegistry().findPerspectiveWithId(PropertySheetPerspectiveFactory2.class.getName());
-        activePage.setPerspective(desc);
-        while (Display.getCurrent().readAndDispatch()) {
+	public static void applyPerspective(IWorkbenchPage activePage){
+		IPerspectiveDescriptor desc = activePage.getWorkbenchWindow().getWorkbench()
+			.getPerspectiveRegistry().findPerspectiveWithId(PropertySheetPerspectiveFactory2.class.getName());
+		activePage.setPerspective(desc);
+		while (Display.getCurrent().readAndDispatch()) {
 		}
-    }
+	}
 }

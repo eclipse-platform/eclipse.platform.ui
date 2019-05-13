@@ -26,20 +26,20 @@ package org.eclipse.jface.viewers;
  */
 public interface IElementComparer {
 
-    /**
-     * Compares two elements for equality
-     *
-     * @param a the first element
-     * @param b the second element
-     * @return whether a is equal to b
-     */
-    boolean equals(Object a, Object b);
+	/**
+	 * Compares two elements for equality
+	 *
+	 * @param a the first element
+	 * @param b the second element
+	 * @return whether a is equal to b
+	 */
+	boolean equals(Object a, Object b);
 
-    /**
-     * Returns the hash code for the given element.
-     * @param element the element the hash code is calculated for
-     *
-     * @return the hash code for the given element
-     */
-    int hashCode(Object element);
+	/**
+	 * Returns the hash code for the given element.
+	 * @param element the element the hash code is calculated for
+	 *
+	 * @return the hash code for the given element
+	 */
+	int hashCode(Object element);
 }

@@ -81,14 +81,14 @@ public class SessionEditorPart extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-	       fMainPanel = new Composite(parent, SWT.NONE);
-	       fMainPanel.setLayout(new RowLayout(SWT.VERTICAL));
+		fMainPanel = new Composite(parent, SWT.NONE);
+		fMainPanel.setLayout(new RowLayout(SWT.VERTICAL));
 
-	       Label l = new Label(fMainPanel, SWT.NONE);
-	       l.setText("Editor Title:");
+		Label l = new Label(fMainPanel, SWT.NONE);
+		l.setText("Editor Title:");
 
-	       l = new Label(fMainPanel, SWT.BORDER);
-	       l.setText(getEditorInput().getName());
+		l = new Label(fMainPanel, SWT.BORDER);
+		l.setText(getEditorInput().getName());
 	}
 
 	@Override

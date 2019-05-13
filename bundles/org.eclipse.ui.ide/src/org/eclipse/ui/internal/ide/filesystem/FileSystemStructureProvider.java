@@ -36,28 +36,28 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
 
 	private Set visitedDirs;
 
-    @Override
+	@Override
 	public List getChildren(Object element) {
-        File folder = (File) element;
-        String[] children = folder.list();
-        int childrenLength = children == null ? 0 : children.length;
-        List result = new ArrayList(childrenLength);
+		File folder = (File) element;
+		String[] children = folder.list();
+		int childrenLength = children == null ? 0 : children.length;
+		List result = new ArrayList(childrenLength);
 
-        for (int i = 0; i < childrenLength; i++) {
-        	File file = new File(folder, children[i]);
-        	if(isRecursiveLink(file))
-        		continue;
-        	result.add(file);
+		for (int i = 0; i < childrenLength; i++) {
+			File file = new File(folder, children[i]);
+			if(isRecursiveLink(file))
+				continue;
+			result.add(file);
 		}
 
-        return result;
-    }
+		return result;
+	}
 
-    private void initVisitedDirs(){
-    	if(visitedDirs == null){
-    		visitedDirs = new HashSet();
-    	}
-    }
+	private void initVisitedDirs(){
+		if(visitedDirs == null){
+			visitedDirs = new HashSet();
+		}
+	}
 
 	private boolean isRecursiveLink(File childFile) {
 
@@ -73,43 +73,43 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
 		return false;
 	}
 
-    @Override
+	@Override
 	public InputStream getContents(Object element) {
-        try {
-            return new FileInputStream((File) element);
-        } catch (FileNotFoundException e) {
-        	IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
-            return null;
-        }
-    }
+		try {
+			return new FileInputStream((File) element);
+		} catch (FileNotFoundException e) {
+			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
+			return null;
+		}
+	}
 
-    @Override
+	@Override
 	public String getFullPath(Object element) {
-        return ((File) element).getPath();
-    }
+		return ((File) element).getPath();
+	}
 
-    @Override
+	@Override
 	public String getLabel(Object element) {
 
-        //Get the name - if it is empty then return the path as it is a file root
-        File file = (File) element;
-        String name = file.getName();
-        if (name.length() == 0) {
+		//Get the name - if it is empty then return the path as it is a file root
+		File file = (File) element;
+		String name = file.getName();
+		if (name.length() == 0) {
 			return file.getPath();
 		}
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public boolean isFolder(Object element) {
-        return ((File) element).isDirectory();
-    }
+		return ((File) element).isDirectory();
+	}
 
-    /**
-     * Clears the visited dir information
-     */
-    public void clearVisitedDirs() {
-    	if(visitedDirs!=null)
-    		visitedDirs.clear();
-    }
+	/**
+	 * Clears the visited dir information
+	 */
+	public void clearVisitedDirs() {
+		if(visitedDirs!=null)
+			visitedDirs.clear();
+	}
 }

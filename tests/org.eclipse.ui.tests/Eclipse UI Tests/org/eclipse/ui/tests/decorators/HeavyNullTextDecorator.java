@@ -23,63 +23,63 @@ import org.eclipse.ui.tests.internal.ForcedException;
  */
 public class HeavyNullTextDecorator implements ILabelDecorator {
 
-    /**
-     * Whether we should fail with an exception
-     */
-    public static boolean fail = false;
+	/**
+	 * Whether we should fail with an exception
+	 */
+	public static boolean fail = false;
 
-    /**
-     *
-     */
-    public HeavyNullTextDecorator() {
-    }
+	/**
+	 *
+	 */
+	public HeavyNullTextDecorator() {
+	}
 
-    /**
-     * @see ILabelDecorator#addListener
-     */
-    @Override
+	/**
+	 * @see ILabelDecorator#addListener
+	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
-    }
+	}
 
-    /**
-     * @see ILabelDecorator#dispose
-     */
-    @Override
+	/**
+	 * @see ILabelDecorator#dispose
+	 */
+	@Override
 	public void dispose() {
-    }
+	}
 
-    /**
-     * @see ILabelDecorator#isLabelProperty
-     */
-    @Override
+	/**
+	 * @see ILabelDecorator#isLabelProperty
+	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * @see ILabelDecorator#removeListener
-     */
-    @Override
+	/**
+	 * @see ILabelDecorator#removeListener
+	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
-    }
+	}
 
-    /**
-     * @see ILabelDecorator#decorateImage
-     */
-    @Override
+	/**
+	 * @see ILabelDecorator#decorateImage
+	 */
+	@Override
 	public Image decorateImage(Image image, Object element) {
-        return image;
-    }
+		return image;
+	}
 
-    /**
-     * @see ILabelDecorator#decorateText
-     */
-    @Override
+	/**
+	 * @see ILabelDecorator#decorateText
+	 */
+	@Override
 	public String decorateText(String text, Object element) {
-        if (fail) {
-            fail = false;
-            throw new ForcedException("Heavy text decorator boom");
-        }
-        return null;
-    }
+		if (fail) {
+			fail = false;
+			throw new ForcedException("Heavy text decorator boom");
+		}
+		return null;
+	}
 }

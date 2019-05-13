@@ -21,22 +21,22 @@ import org.eclipse.ui.part.ViewPart;
 
 public class ViewWithDisposeException extends ViewPart {
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        parent.setLayout(new FillLayout());
+		parent.setLayout(new FillLayout());
 
-        Label testLabel = new Label(parent, SWT.NONE);
+		Label testLabel = new Label(parent, SWT.NONE);
 
-        testLabel.setText("This view is supposed to throw an exception when closed");
-    }
+		testLabel.setText("This view is supposed to throw an exception when closed");
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
 
-    }
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        throw new RuntimeException("This exception was thrown intentionally as part of an error handling test");
-    }
+		throw new RuntimeException("This exception was thrown intentionally as part of an error handling test");
+	}
 }

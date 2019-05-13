@@ -23,43 +23,43 @@ import java.util.EventObject;
  */
 public class TreeExpansionEvent extends EventObject {
 
-    /**
-     * Generated serial version UID for this class.
-     * @since 3.1
-     */
-    private static final long serialVersionUID = 3618414930227835185L;
+	/**
+	 * Generated serial version UID for this class.
+	 * @since 3.1
+	 */
+	private static final long serialVersionUID = 3618414930227835185L;
 
-    /**
-     * The element that was expanded or collapsed.
-     */
-    private Object element;
+	/**
+	 * The element that was expanded or collapsed.
+	 */
+	private Object element;
 
-    /**
-     * Creates a new event for the given source and element.
-     *
-     * @param source the tree viewer
-     * @param element the element
-     */
-    public TreeExpansionEvent(AbstractTreeViewer source, Object element) {
-        super(source);
-        this.element = element;
-    }
+	/**
+	 * Creates a new event for the given source and element.
+	 *
+	 * @param source the tree viewer
+	 * @param element the element
+	 */
+	public TreeExpansionEvent(AbstractTreeViewer source, Object element) {
+		super(source);
+		this.element = element;
+	}
 
-    /**
-     * Returns the element that got expanded or collapsed.
-     *
-     * @return the element
-     */
-    public Object getElement() {
-        return element;
-    }
+	/**
+	 * Returns the element that got expanded or collapsed.
+	 *
+	 * @return the element
+	 */
+	public Object getElement() {
+		return element;
+	}
 
-    /**
-     * Returns the originator of the event.
-     *
-     * @return the originating tree viewer
-     */
-    public AbstractTreeViewer getTreeViewer() {
-        return (AbstractTreeViewer) source;
-    }
+	/**
+	 * Returns the originator of the event.
+	 *
+	 * @return the originating tree viewer
+	 */
+	public AbstractTreeViewer getTreeViewer() {
+		return (AbstractTreeViewer) source;
+	}
 }

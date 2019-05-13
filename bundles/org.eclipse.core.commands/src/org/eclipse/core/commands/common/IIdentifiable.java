@@ -25,11 +25,11 @@ package org.eclipse.core.commands.common;
  */
 public interface IIdentifiable {
 
-    /**
-     * Returns the identifier for this object.
-     *
-     * @return The identifier; never <code>null</code>.
-     */
+	/**
+	 * Returns the identifier for this object.
+	 *
+	 * @return The identifier; never <code>null</code>.
+	 */
 	String getId();
 }
 

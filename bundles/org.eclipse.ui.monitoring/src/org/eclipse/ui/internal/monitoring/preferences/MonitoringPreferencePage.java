@@ -52,8 +52,8 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 
 	private class IntegerEditor extends IntegerFieldEditor {
 		public IntegerEditor(String name, String labelText, Composite parent, int min, int max) {
-	    	super(name, labelText, parent);
-	    	setValidRange(min, max);
+			super(name, labelText, parent);
+			setValidRange(min, max);
 		}
 
 		@Override
@@ -88,15 +88,15 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 		}
 
 		private boolean checkValue() {
-	        boolean oldState = isValid();
-	        refreshValidState();
+			boolean oldState = isValid();
+			refreshValidState();
 
-	        boolean isValid = isValid();
-	        if (isValid != oldState) {
+			boolean isValid = isValid();
+			if (isValid != oldState) {
 				fireStateChanged(IS_VALID, oldState, isValid);
 			}
-	        return isValid;
-	    }
+			return isValid;
+		}
 	}
 
 	public MonitoringPreferencePage() {
@@ -107,7 +107,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 	@Override
 	public void createFieldEditors() {
 		Composite parent = getFieldEditorParent();
-    	PixelConverter pixelConverter = new PixelConverter(parent);
+		PixelConverter pixelConverter = new PixelConverter(parent);
 
 		Composite container = new Composite(parent, SWT.NONE);
 
@@ -196,16 +196,16 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-        if (event.getProperty().equals(FieldEditor.VALUE)) {
-    		Object source = event.getSource();
-    		if (source instanceof FieldEditor) {
-    			String preferenceName = ((FieldEditor) source).getPreferenceName();
+		if (event.getProperty().equals(FieldEditor.VALUE)) {
+			Object source = event.getSource();
+			if (source instanceof FieldEditor) {
+				String preferenceName = ((FieldEditor) source).getPreferenceName();
 				if (preferenceName.equals(PreferenceConstants.MONITORING_ENABLED)) {
-    				boolean enabled = Boolean.TRUE.equals(event.getNewValue());
-	    			enableDependentFields(enabled);
-    			}
-    		}
-        }
+					boolean enabled = Boolean.TRUE.equals(event.getNewValue());
+					enableDependentFields(enabled);
+				}
+			}
+		}
 		super.propertyChange(event);
 	}
 

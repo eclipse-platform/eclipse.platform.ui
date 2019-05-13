@@ -22,14 +22,14 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ProgressLabelProvider extends LabelProvider {
 
-    @Override
+	@Override
 	public Image getImage(Object element) {
-        return ((JobTreeElement) element).getDisplayImage();
-    }
+		return ((JobTreeElement) element).getDisplayImage();
+	}
 
-    @Override
+	@Override
 	public String getText(Object element) {
-        return ((JobTreeElement) element).getDisplayString();
-    }
+		return ((JobTreeElement) element).getDisplayString();
+	}
 
 }

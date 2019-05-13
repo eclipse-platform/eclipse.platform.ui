@@ -23,58 +23,58 @@ import org.eclipse.ui.internal.views.framelist.FrameListMessages;
  */
 public class BackAction extends FrameAction {
 
-    /**
-     * Constructs a new action for the specified frame list.
-     *
-     * @param frameList the frame list
-     */
-    public BackAction(FrameList frameList) {
-        super(frameList);
-        setText(FrameListMessages.Back_text);
-        ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-        setImageDescriptor(images
-                .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-        setDisabledImageDescriptor(images
-                .getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Constructs a new action for the specified frame list.
+	 *
+	 * @param frameList the frame list
+	 */
+	public BackAction(FrameList frameList) {
+		super(frameList);
+		setText(FrameListMessages.Back_text);
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+		setImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+		setDisabledImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IFrameListHelpContextIds.BACK_ACTION);
-        update();
-    }
+		update();
+	}
 
-    private Frame getPreviousFrame() {
-        FrameList list = getFrameList();
-        return list.getFrame(list.getCurrentIndex() - 1);
-    }
+	private Frame getPreviousFrame() {
+		FrameList list = getFrameList();
+		return list.getFrame(list.getCurrentIndex() - 1);
+	}
 
-    private String getToolTipText(Frame previousFrame) {
-        if (previousFrame != null) {
-            String text = previousFrame.getToolTipText();
-            if (text != null && text.length() > 0) {
-                return NLS.bind(FrameListMessages.Back_toolTipOneArg, text);
-            }
-        }
-        return FrameListMessages.Back_toolTip;
-    }
+	private String getToolTipText(Frame previousFrame) {
+		if (previousFrame != null) {
+			String text = previousFrame.getToolTipText();
+			if (text != null && text.length() > 0) {
+				return NLS.bind(FrameListMessages.Back_toolTipOneArg, text);
+			}
+		}
+		return FrameListMessages.Back_toolTip;
+	}
 
-    /**
-     * Calls <code>back()</code> on the frame list.
-     */
-    @Override
+	/**
+	 * Calls <code>back()</code> on the frame list.
+	 */
+	@Override
 	public void run() {
-        getFrameList().back();
-    }
+		getFrameList().back();
+	}
 
-    /**
-     * Updates this action's enabled state and tool tip text.
-     * This action is enabled only when there is a previous frame in the frame list.
-     * The tool tip text is "Back to " plus the tool tip text for the previous frame.
-     */
-    @Override
+	/**
+	 * Updates this action's enabled state and tool tip text.
+	 * This action is enabled only when there is a previous frame in the frame list.
+	 * The tool tip text is "Back to " plus the tool tip text for the previous frame.
+	 */
+	@Override
 	public void update() {
-        super.update();
-        Frame previousFrame = getPreviousFrame();
-        setEnabled(previousFrame != null);
-        setToolTipText(getToolTipText(previousFrame));
-    }
+		super.update();
+		Frame previousFrame = getPreviousFrame();
+		setEnabled(previousFrame != null);
+		setToolTipText(getToolTipText(previousFrame));
+	}
 
 }

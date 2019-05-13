@@ -55,23 +55,23 @@ public class WorkbenchSaveRestoreStateTest {
 	private static final String ACTIONBAR_ADVISOR_STATE_KEY = "actionBarAdvisorStateKey";
 
 
-    private Display display = null;
+	private Display display = null;
 
 	@Before
 	public void setUp() throws Exception {
 
-        assertNull(display);
+		assertNull(display);
 		display = PlatformUI.createDisplay();
-        assertNotNull(display);
-    }
+		assertNotNull(display);
+	}
 
 	@After
 	public void tearDown() throws Exception {
-        assertNotNull(display);
-        display.dispose();
-        assertTrue(display.isDisposed());
+		assertNotNull(display);
+		display.dispose();
+		assertTrue(display.isDisposed());
 
-    }
+	}
 
 	/**
 	 * Test save/restore state lifecycle API for WorkbenchAdvisor
@@ -81,7 +81,7 @@ public class WorkbenchSaveRestoreStateTest {
 		final String advisorStateData = Long.toString(System.currentTimeMillis());
 
 		// launch workbench and save some state data
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
 			@Override
 			public IStatus saveState (IMemento memento) {
@@ -92,24 +92,24 @@ public class WorkbenchSaveRestoreStateTest {
 
 			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.setSaveAndRestore(true);
-            }
+				super.initialize(c);
+				c.setSaveAndRestore(true);
+			}
 
-            @Override
+			@Override
 			public void eventLoopIdle(Display d) {
-                workbenchConfig.getWorkbench().restart();
-            }
-        };
+				workbenchConfig.getWorkbench().restart();
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_RESTART, code);
-        assertFalse(display.isDisposed());
-        display.dispose();
-        assertTrue(display.isDisposed());
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_RESTART, code);
+		assertFalse(display.isDisposed());
+		display.dispose();
+		assertTrue(display.isDisposed());
 
 		// restore the workbench and check for state data
-        display = PlatformUI.createDisplay();
+		display = PlatformUI.createDisplay();
 		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
 			@Override
@@ -123,13 +123,13 @@ public class WorkbenchSaveRestoreStateTest {
 
 			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.setSaveAndRestore(true);
-            }
-        };
+				super.initialize(c);
+				c.setSaveAndRestore(true);
+			}
+		};
 
-        int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
-        assertEquals(PlatformUI.RETURN_OK, code2);
+		int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
+		assertEquals(PlatformUI.RETURN_OK, code2);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class WorkbenchSaveRestoreStateTest {
 		final String advisorStateData = Long.toString(System.currentTimeMillis());
 
 		// launch workbench and save some state data
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
 			@Override
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
@@ -156,24 +156,24 @@ public class WorkbenchSaveRestoreStateTest {
 
 			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.setSaveAndRestore(true);
-            }
+				super.initialize(c);
+				c.setSaveAndRestore(true);
+			}
 
-            @Override
+			@Override
 			public void eventLoopIdle(Display d) {
-                workbenchConfig.getWorkbench().restart();
-            }
-        };
+				workbenchConfig.getWorkbench().restart();
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_RESTART, code);
-        assertFalse(display.isDisposed());
-        display.dispose();
-        assertTrue(display.isDisposed());
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_RESTART, code);
+		assertFalse(display.isDisposed());
+		display.dispose();
+		assertTrue(display.isDisposed());
 
 		// restore the workbench and check for state data
-        display = PlatformUI.createDisplay();
+		display = PlatformUI.createDisplay();
 		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
 			@Override
@@ -192,13 +192,13 @@ public class WorkbenchSaveRestoreStateTest {
 
 			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.setSaveAndRestore(true);
-            }
-        };
+				super.initialize(c);
+				c.setSaveAndRestore(true);
+			}
+		};
 
-        int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
-        assertEquals(PlatformUI.RETURN_OK, code2);
+		int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
+		assertEquals(PlatformUI.RETURN_OK, code2);
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class WorkbenchSaveRestoreStateTest {
 		final String advisorStateData = Long.toString(System.currentTimeMillis());
 
 		// launch workbench and save some state data
-        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
 			@Override
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
@@ -230,24 +230,24 @@ public class WorkbenchSaveRestoreStateTest {
 
 			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.setSaveAndRestore(true);
-            }
+				super.initialize(c);
+				c.setSaveAndRestore(true);
+			}
 
-            @Override
+			@Override
 			public void eventLoopIdle(Display d) {
-                workbenchConfig.getWorkbench().restart();
-            }
-        };
+				workbenchConfig.getWorkbench().restart();
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_RESTART, code);
-        assertFalse(display.isDisposed());
-        display.dispose();
-        assertTrue(display.isDisposed());
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_RESTART, code);
+		assertFalse(display.isDisposed());
+		display.dispose();
+		assertTrue(display.isDisposed());
 
 		// restore the workbench and check for state data
-        display = PlatformUI.createDisplay();
+		display = PlatformUI.createDisplay();
 		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
 			@Override
@@ -271,13 +271,13 @@ public class WorkbenchSaveRestoreStateTest {
 
 			@Override
 			public void initialize(IWorkbenchConfigurer c) {
-                super.initialize(c);
-                c.setSaveAndRestore(true);
-            }
-        };
+				super.initialize(c);
+				c.setSaveAndRestore(true);
+			}
+		};
 
-        int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
-        assertEquals(PlatformUI.RETURN_OK, code2);
+		int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
+		assertEquals(PlatformUI.RETURN_OK, code2);
 	}
 
 	/**

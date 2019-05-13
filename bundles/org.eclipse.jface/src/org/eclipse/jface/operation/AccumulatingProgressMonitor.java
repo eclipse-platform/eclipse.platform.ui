@@ -44,26 +44,26 @@ import org.eclipse.swt.widgets.Display;
  */
 /* package */class AccumulatingProgressMonitor extends ProgressMonitorWrapper {
 
-    /**
-     * The display.
-     */
-    private Display display;
+	/**
+	 * The display.
+	 */
+	private Display display;
 
-    /**
-     * The collector, or <code>null</code> if none.
-     */
-    private Collector collector;
+	/**
+	 * The collector, or <code>null</code> if none.
+	 */
+	private Collector collector;
 
-    private String currentTask = ""; //$NON-NLS-1$
+	private String currentTask = ""; //$NON-NLS-1$
 
-    private class Collector implements Runnable {
+	private class Collector implements Runnable {
 		private String taskName;
 
-        private String subTask;
+		private String subTask;
 
-        private double worked;
+		private double worked;
 
-        private IProgressMonitor monitor;
+		private IProgressMonitor monitor;
 
 		/**
 		 * Create a new collector.
@@ -90,64 +90,64 @@ import org.eclipse.swt.widgets.Display;
 			this.taskName = name;
 		}
 
-        /**
-         * Add worked to the work.
-         * @param workedIncrement
-         */
-        public void worked(double workedIncrement) {
-            this.worked = this.worked + workedIncrement;
-        }
+		/**
+		 * Add worked to the work.
+		 * @param workedIncrement
+		 */
+		public void worked(double workedIncrement) {
+			this.worked = this.worked + workedIncrement;
+		}
 
-        /**
-         * Set the subTask name.
-         * @param subTaskName
-         */
-        public void subTask(String subTaskName) {
-            this.subTask = subTaskName;
-        }
+		/**
+		 * Set the subTask name.
+		 * @param subTaskName
+		 */
+		public void subTask(String subTaskName) {
+			this.subTask = subTaskName;
+		}
 
-        /**
-         * Run the collector.
-         */
-        @Override
+		/**
+		 * Run the collector.
+		 */
+		@Override
 		public void run() {
-            clearCollector(this);
+			clearCollector(this);
 			if (taskName != null) {
 				monitor.setTaskName(taskName);
 			}
-            if (subTask != null) {
+			if (subTask != null) {
 				monitor.subTask(subTask);
 			}
-            if (worked > 0) {
+			if (worked > 0) {
 				monitor.internalWorked(worked);
 			}
-        }
-    }
+		}
+	}
 
-    /**
-     * Creates an accumulating progress monitor wrapping the given one
-     * that uses the given display.
-     *
-     * @param monitor the actual progress monitor to be wrapped
-     * @param display the SWT display used to forward the calls
-     *  to the wrapped progress monitor
-     */
-    public AccumulatingProgressMonitor(IProgressMonitor monitor, Display display) {
-        super(monitor);
-        Assert.isNotNull(display);
-        this.display = display;
-    }
+	/**
+	 * Creates an accumulating progress monitor wrapping the given one
+	 * that uses the given display.
+	 *
+	 * @param monitor the actual progress monitor to be wrapped
+	 * @param display the SWT display used to forward the calls
+	 *  to the wrapped progress monitor
+	 */
+	public AccumulatingProgressMonitor(IProgressMonitor monitor, Display display) {
+		super(monitor);
+		Assert.isNotNull(display);
+		this.display = display;
+	}
 
-    @Override
+	@Override
 	public void beginTask(final String name, final int totalWork) {
-        synchronized (this) {
-            collector = null;
-        }
-        display.asyncExec(() -> {
-		    currentTask = name;
-		    getWrappedProgressMonitor().beginTask(name, totalWork);
+		synchronized (this) {
+			collector = null;
+		}
+		display.asyncExec(() -> {
+			currentTask = name;
+			getWrappedProgressMonitor().beginTask(name, totalWork);
 		});
-    }
+	}
 
 	/**
 	 * Clears the collector object used to accumulate work and subtask calls if
@@ -175,13 +175,13 @@ import org.eclipse.swt.widgets.Display;
 		display.asyncExec(collector);
 	}
 
-    @Override
+	@Override
 	public void done() {
-        synchronized (this) {
-            collector = null;
-        }
-        display.asyncExec(() -> getWrappedProgressMonitor().done());
-    }
+		synchronized (this) {
+			collector = null;
+		}
+		display.asyncExec(() -> getWrappedProgressMonitor().done());
+	}
 
 	@Override
 	public synchronized void internalWorked(final double work) {
@@ -211,42 +211,42 @@ import org.eclipse.swt.widgets.Display;
 		}
 	}
 
-    @Override
+	@Override
 	public synchronized void worked(int work) {
-        internalWorked(work);
-    }
+		internalWorked(work);
+	}
 
-    @Override
+	@Override
 	public void clearBlocked() {
 
-        //If this is a monitor that can report blocking do so.
-        //Don't bother with a collector as this should only ever
-        //happen once and prevent any more progress.
-        final IProgressMonitor pm = getWrappedProgressMonitor();
-        if (!(pm instanceof IProgressMonitorWithBlocking)) {
+		//If this is a monitor that can report blocking do so.
+		//Don't bother with a collector as this should only ever
+		//happen once and prevent any more progress.
+		final IProgressMonitor pm = getWrappedProgressMonitor();
+		if (!(pm instanceof IProgressMonitorWithBlocking)) {
 			return;
 		}
 
-        display.asyncExec(() -> {
-		    ((IProgressMonitorWithBlocking) pm).clearBlocked();
-		    Dialog.getBlockedHandler().clearBlocked();
+		display.asyncExec(() -> {
+			((IProgressMonitorWithBlocking) pm).clearBlocked();
+			Dialog.getBlockedHandler().clearBlocked();
 		});
-    }
+	}
 
-    @Override
+	@Override
 	public void setBlocked(final IStatus reason) {
-        //If this is a monitor that can report blocking do so.
-        //Don't bother with a collector as this should only ever
-        //happen once and prevent any more progress.
-        final IProgressMonitor pm = getWrappedProgressMonitor();
-        if (!(pm instanceof IProgressMonitorWithBlocking)) {
+		//If this is a monitor that can report blocking do so.
+		//Don't bother with a collector as this should only ever
+		//happen once and prevent any more progress.
+		final IProgressMonitor pm = getWrappedProgressMonitor();
+		if (!(pm instanceof IProgressMonitorWithBlocking)) {
 			return;
 		}
 
-        display.asyncExec(() -> {
-		    ((IProgressMonitorWithBlocking) pm).setBlocked(reason);
-		    //Do not give a shell as we want it to block until it opens.
-		    Dialog.getBlockedHandler().showBlocked(pm, reason, currentTask);
+		display.asyncExec(() -> {
+			((IProgressMonitorWithBlocking) pm).setBlocked(reason);
+			//Do not give a shell as we want it to block until it opens.
+			Dialog.getBlockedHandler().showBlocked(pm, reason, currentTask);
 		});
-    }
+	}
 }

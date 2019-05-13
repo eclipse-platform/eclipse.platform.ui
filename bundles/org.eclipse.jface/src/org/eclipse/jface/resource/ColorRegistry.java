@@ -53,157 +53,157 @@ public class ColorRegistry extends ResourceRegistry {
 	 * Default color value.  This is cyan (very unappetizing).
 	 * @since 3.4
 	 */
-    private static final ColorDescriptor DEFAULT_COLOR = new RGBColorDescriptor(new RGB(0, 255, 255));
+	private static final ColorDescriptor DEFAULT_COLOR = new RGBColorDescriptor(new RGB(0, 255, 255));
 
 	/**
-     * This registries <code>Display</code>. All colors will be allocated using
-     * it.
-     */
-    protected Display display;
+	 * This registries <code>Display</code>. All colors will be allocated using
+	 * it.
+	 */
+	protected Display display;
 
-    /**
-     * Collection of <code>Color</code> that are now stale to be disposed when
-     * it is safe to do so (i.e. on shutdown).
-     */
-    private List<Color> staleColors = new ArrayList<>();
+	/**
+	 * Collection of <code>Color</code> that are now stale to be disposed when
+	 * it is safe to do so (i.e. on shutdown).
+	 */
+	private List<Color> staleColors = new ArrayList<>();
 
-    /**
-     * Table of known colors, keyed by symbolic color name (key type: <code>String</code>,
-     * value type: <code>org.eclipse.swt.graphics.Color</code>.
-     */
-    private Map<String, Color> stringToColor = new HashMap<>(7);
+	/**
+	 * Table of known colors, keyed by symbolic color name (key type: <code>String</code>,
+	 * value type: <code>org.eclipse.swt.graphics.Color</code>.
+	 */
+	private Map<String, Color> stringToColor = new HashMap<>(7);
 
-    /**
-     * Table of known color data, keyed by symbolic color name (key type:
-     * <code>String</code>, value type: <code>org.eclipse.swt.graphics.RGB</code>).
-     */
-    private Map<String, RGB> stringToRGB = new HashMap<>(7);
+	/**
+	 * Table of known color data, keyed by symbolic color name (key type:
+	 * <code>String</code>, value type: <code>org.eclipse.swt.graphics.RGB</code>).
+	 */
+	private Map<String, RGB> stringToRGB = new HashMap<>(7);
 
-    /**
-     * Runnable that cleans up the manager on disposal of the display.
-     */
-    protected Runnable displayRunnable = this::clearCaches;
+	/**
+	 * Runnable that cleans up the manager on disposal of the display.
+	 */
+	protected Runnable displayRunnable = this::clearCaches;
 
 	private final boolean cleanOnDisplayDisposal;
 
-    /**
-     * Create a new instance of the receiver that is hooked to the current
-     * display.
-     *
-     * @see org.eclipse.swt.widgets.Display#getCurrent()
-     */
-    public ColorRegistry() {
-        this(Display.getCurrent(), true);
-    }
+	/**
+	 * Create a new instance of the receiver that is hooked to the current
+	 * display.
+	 *
+	 * @see org.eclipse.swt.widgets.Display#getCurrent()
+	 */
+	public ColorRegistry() {
+		this(Display.getCurrent(), true);
+	}
 
-    /**
-     * Create a new instance of the receiver.
-     *
-     * @param display the <code>Display</code> to hook into.
-     */
-    public ColorRegistry(Display display) {
-    	this (display, true);
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 *
+	 * @param display the <code>Display</code> to hook into.
+	 */
+	public ColorRegistry(Display display) {
+		this (display, true);
+	}
 
-    /**
-     * Create a new instance of the receiver.
-     *
-     * @param display the <code>Display</code> to hook into
-     * @param cleanOnDisplayDisposal
+	/**
+	 * Create a new instance of the receiver.
+	 *
+	 * @param display the <code>Display</code> to hook into
+	 * @param cleanOnDisplayDisposal
 	 *            whether all fonts allocated by this <code>ColorRegistry</code>
 	 *            should be disposed when the display is disposed
-     * @since 3.1
-     */
-    public ColorRegistry(Display display, boolean cleanOnDisplayDisposal) {
+	 * @since 3.1
+	 */
+	public ColorRegistry(Display display, boolean cleanOnDisplayDisposal) {
 		Assert.isNotNull(display);
-        this.display = display;
-        this.cleanOnDisplayDisposal = cleanOnDisplayDisposal;
-        if (cleanOnDisplayDisposal) {
+		this.display = display;
+		this.cleanOnDisplayDisposal = cleanOnDisplayDisposal;
+		if (cleanOnDisplayDisposal) {
 			hookDisplayDispose();
 		}
-    }
+	}
 
-    /**
-     * Create a new <code>Color</code> on the receivers <code>Display</code>.
-     *
-     * @param rgb the <code>RGB</code> data for the color.
-     * @return the new <code>Color</code> object.
-     *
-     * @since 3.1
-     */
-    private Color createColor(RGB rgb) {
-    	if (this.display == null) {
-    		Display display = Display.getCurrent();
-    		if (display == null) {
-    			throw new IllegalStateException();
-    		}
-    		this.display = display;
-    		if (cleanOnDisplayDisposal) {
-    			hookDisplayDispose();
-    		}
-    	}
-        return new Color(display, rgb);
-    }
+	/**
+	 * Create a new <code>Color</code> on the receivers <code>Display</code>.
+	 *
+	 * @param rgb the <code>RGB</code> data for the color.
+	 * @return the new <code>Color</code> object.
+	 *
+	 * @since 3.1
+	 */
+	private Color createColor(RGB rgb) {
+		if (this.display == null) {
+			Display display = Display.getCurrent();
+			if (display == null) {
+				throw new IllegalStateException();
+			}
+			this.display = display;
+			if (cleanOnDisplayDisposal) {
+				hookDisplayDispose();
+			}
+		}
+		return new Color(display, rgb);
+	}
 
-    /**
-     * Dispose of all of the <code>Color</code>s in this iterator.
-     *
-     * @param iterator over <code>Collection</code> of <code>Color</code>
-     */
-    private void disposeColors(Iterator<Color> iterator) {
-        while (iterator.hasNext()) {
-            Object next = iterator.next();
-            ((Color) next).dispose();
-        }
-    }
+	/**
+	 * Dispose of all of the <code>Color</code>s in this iterator.
+	 *
+	 * @param iterator over <code>Collection</code> of <code>Color</code>
+	 */
+	private void disposeColors(Iterator<Color> iterator) {
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			((Color) next).dispose();
+		}
+	}
 
-    /**
-     * Returns the <code>color</code> associated with the given symbolic color
-     * name, or <code>null</code> if no such definition exists.
-     *
-     * @param symbolicName symbolic color name
-     * @return the <code>Color</code> or <code>null</code>
-     */
-    public Color get(String symbolicName) {
+	/**
+	 * Returns the <code>color</code> associated with the given symbolic color
+	 * name, or <code>null</code> if no such definition exists.
+	 *
+	 * @param symbolicName symbolic color name
+	 * @return the <code>Color</code> or <code>null</code>
+	 */
+	public Color get(String symbolicName) {
 
-        Assert.isNotNull(symbolicName);
-        Object result = stringToColor.get(symbolicName);
-        if (result != null) {
+		Assert.isNotNull(symbolicName);
+		Object result = stringToColor.get(symbolicName);
+		if (result != null) {
 			return (Color) result;
 		}
 
-        Color color = null;
+		Color color = null;
 
-        result = stringToRGB.get(symbolicName);
-        if (result == null) {
+		result = stringToRGB.get(symbolicName);
+		if (result == null) {
 			return null;
 		}
 
-        color = createColor((RGB) result);
+		color = createColor((RGB) result);
 
-        stringToColor.put(symbolicName, color);
+		stringToColor.put(symbolicName, color);
 
-        return color;
-    }
+		return color;
+	}
 
-    @Override
+	@Override
 	public Set<String> getKeySet() {
-        return Collections.unmodifiableSet(stringToRGB.keySet());
-    }
+		return Collections.unmodifiableSet(stringToRGB.keySet());
+	}
 
-    /**
-     * Returns the color data associated with the given symbolic color name.
-     *
-     * @param symbolicName symbolic color name.
-     * @return the <code>RGB</code> data, or <code>null</code> if the symbolic name
-     * is not valid.
-     */
-    public RGB getRGB(String symbolicName) {
-        Assert.isNotNull(symbolicName);
-        return stringToRGB.get(symbolicName);
-    }
+	/**
+	 * Returns the color data associated with the given symbolic color name.
+	 *
+	 * @param symbolicName symbolic color name.
+	 * @return the <code>RGB</code> data, or <code>null</code> if the symbolic name
+	 * is not valid.
+	 */
+	public RGB getRGB(String symbolicName) {
+		Assert.isNotNull(symbolicName);
+		return stringToRGB.get(symbolicName);
+	}
 
-    /**
+	/**
 	 * Returns the color descriptor associated with the given symbolic color
 	 * name. As of 3.4 if this color is not defined then an unspecified color
 	 * is returned. Users that wish to ensure a reasonable default value should
@@ -219,7 +219,7 @@ public class ColorRegistry extends ResourceRegistry {
 		return getColorDescriptor(symbolicName, DEFAULT_COLOR);
 	}
 
-    /**
+	/**
 	 * Returns the color descriptor associated with the given symbolic color
 	 * name. If this name does not exist within the registry the supplied
 	 * default value will be used.
@@ -238,76 +238,76 @@ public class ColorRegistry extends ResourceRegistry {
 		return ColorDescriptor.createFrom(rgb);
 	}
 
-    @Override
+	@Override
 	protected void clearCaches() {
-        disposeColors(stringToColor.values().iterator());
-        disposeColors(staleColors.iterator());
-        stringToColor.clear();
-        staleColors.clear();
-        display = null;
-    }
+		disposeColors(stringToColor.values().iterator());
+		disposeColors(staleColors.iterator());
+		stringToColor.clear();
+		staleColors.clear();
+		display = null;
+	}
 
-    @Override
+	@Override
 	public boolean hasValueFor(String colorKey) {
-        return stringToRGB.containsKey(colorKey);
-    }
+		return stringToRGB.containsKey(colorKey);
+	}
 
-    /**
-     * Hook a dispose listener on the SWT display.
-     */
-    private void hookDisplayDispose() {
-        display.disposeExec(displayRunnable);
-    }
+	/**
+	 * Hook a dispose listener on the SWT display.
+	 */
+	private void hookDisplayDispose() {
+		display.disposeExec(displayRunnable);
+	}
 
-    /**
-     * Adds (or replaces) a color to this color registry under the given
-     * symbolic name.
-     * <p>
-     * A property change event is reported whenever the mapping from a symbolic
-     * name to a color changes. The source of the event is this registry; the
-     * property name is the symbolic color name.
-     * </p>
-     *
-     * @param symbolicName the symbolic color name
-     * @param colorData an <code>RGB</code> object
-     */
-    public void put(String symbolicName, RGB colorData) {
-        put(symbolicName, colorData, true);
-    }
+	/**
+	 * Adds (or replaces) a color to this color registry under the given
+	 * symbolic name.
+	 * <p>
+	 * A property change event is reported whenever the mapping from a symbolic
+	 * name to a color changes. The source of the event is this registry; the
+	 * property name is the symbolic color name.
+	 * </p>
+	 *
+	 * @param symbolicName the symbolic color name
+	 * @param colorData an <code>RGB</code> object
+	 */
+	public void put(String symbolicName, RGB colorData) {
+		put(symbolicName, colorData, true);
+	}
 
-    /**
-     * Adds (or replaces) a color to this color registry under the given
-     * symbolic name.
-     * <p>
-     * A property change event is reported whenever the mapping from a symbolic
-     * name to a color changes. The source of the event is this registry; the
-     * property name is the symbolic color name.
-     * </p>
-     *
-     * @param symbolicName the symbolic color name
-     * @param colorData an <code>RGB</code> object
-     * @param update - fire a color mapping changed if true. False if this
-     *            method is called from the get method as no setting has
-     *            changed.
-     */
-    private void put(String symbolicName, RGB colorData, boolean update) {
+	/**
+	 * Adds (or replaces) a color to this color registry under the given
+	 * symbolic name.
+	 * <p>
+	 * A property change event is reported whenever the mapping from a symbolic
+	 * name to a color changes. The source of the event is this registry; the
+	 * property name is the symbolic color name.
+	 * </p>
+	 *
+	 * @param symbolicName the symbolic color name
+	 * @param colorData an <code>RGB</code> object
+	 * @param update - fire a color mapping changed if true. False if this
+	 *            method is called from the get method as no setting has
+	 *            changed.
+	 */
+	private void put(String symbolicName, RGB colorData, boolean update) {
 
-        Assert.isNotNull(symbolicName);
-        Assert.isNotNull(colorData);
+		Assert.isNotNull(symbolicName);
+		Assert.isNotNull(colorData);
 
-        RGB existing = stringToRGB.get(symbolicName);
-        if (colorData.equals(existing)) {
+		RGB existing = stringToRGB.get(symbolicName);
+		if (colorData.equals(existing)) {
 			return;
 		}
 
-        Color oldColor = stringToColor.remove(symbolicName);
-        stringToRGB.put(symbolicName, colorData);
-        if (update) {
+		Color oldColor = stringToColor.remove(symbolicName);
+		stringToRGB.put(symbolicName, colorData);
+		if (update) {
 			fireMappingChanged(symbolicName, existing, colorData);
 		}
 
-        if (oldColor != null) {
+		if (oldColor != null) {
 			staleColors.add(oldColor);
 		}
-    }
+	}
 }

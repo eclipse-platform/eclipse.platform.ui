@@ -25,48 +25,48 @@ import org.eclipse.ui.PlatformUI;
  *
  */
 interface IBookmarkHelpContextIds {
-    String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
+	String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
-    // Actions
-    String COPY_BOOKMARK_ACTION = PREFIX
-            + "copy_bookmark_action_context"; //$NON-NLS-1$
+	// Actions
+	String COPY_BOOKMARK_ACTION = PREFIX
+			+ "copy_bookmark_action_context"; //$NON-NLS-1$
 
-    String PASTE_BOOKMARK_ACTION = PREFIX
-            + "paste_bookmark_action_context"; //$NON-NLS-1$
+	String PASTE_BOOKMARK_ACTION = PREFIX
+			+ "paste_bookmark_action_context"; //$NON-NLS-1$
 
-    String REMOVE_BOOKMARK_ACTION = PREFIX
-            + "remove_bookmark_action_context"; //$NON-NLS-1$
+	String REMOVE_BOOKMARK_ACTION = PREFIX
+			+ "remove_bookmark_action_context"; //$NON-NLS-1$
 
-    String OPEN_BOOKMARK_ACTION = PREFIX
-            + "open_bookmark_action_context"; //$NON-NLS-1$
+	String OPEN_BOOKMARK_ACTION = PREFIX
+			+ "open_bookmark_action_context"; //$NON-NLS-1$
 
-    String SELECT_ALL_BOOKMARK_ACTION = PREFIX
-            + "select_all_bookmark_action_context"; //$NON-NLS-1$
+	String SELECT_ALL_BOOKMARK_ACTION = PREFIX
+			+ "select_all_bookmark_action_context"; //$NON-NLS-1$
 
-    String BOOKMARK_PROPERTIES_ACTION = PREFIX
-            + "bookmark_properties_action_context"; //$NON-NLS-1$
+	String BOOKMARK_PROPERTIES_ACTION = PREFIX
+			+ "bookmark_properties_action_context"; //$NON-NLS-1$
 
-    String SORT_ASCENDING_ACTION = PREFIX
-            + "bookmark_sort_ascending_action_context"; //$NON-NLS-1$
+	String SORT_ASCENDING_ACTION = PREFIX
+			+ "bookmark_sort_ascending_action_context"; //$NON-NLS-1$
 
-    String SORT_DESCENDING_ACTION = PREFIX
-            + "bookmark_sort_descending_action_context"; //$NON-NLS-1$
+	String SORT_DESCENDING_ACTION = PREFIX
+			+ "bookmark_sort_descending_action_context"; //$NON-NLS-1$
 
-    String SORT_DESCRIPTION_ACTION = PREFIX
-            + "bookmark_sort_description_action_context"; //$NON-NLS-1$
+	String SORT_DESCRIPTION_ACTION = PREFIX
+			+ "bookmark_sort_description_action_context"; //$NON-NLS-1$
 
-    String SORT_RESOURCE_ACTION = PREFIX
-            + "bookmark_sort_resource_action_context"; //$NON-NLS-1$
+	String SORT_RESOURCE_ACTION = PREFIX
+			+ "bookmark_sort_resource_action_context"; //$NON-NLS-1$
 
-    String SORT_FOLDER_ACTION = PREFIX
-            + "bookmark_sort_folder_action_context"; //$NON-NLS-1$
+	String SORT_FOLDER_ACTION = PREFIX
+			+ "bookmark_sort_folder_action_context"; //$NON-NLS-1$
 
-    String SORT_LOCATION_ACTION = PREFIX
-            + "bookmark_sort_location_action_context"; //$NON-NLS-1$
+	String SORT_LOCATION_ACTION = PREFIX
+			+ "bookmark_sort_location_action_context"; //$NON-NLS-1$
 
-    String SORT_CREATION_TIME_ACTION = PREFIX
-            + "bookmark_sort_creation_time_action_context"; //$NON-NLS-1$
+	String SORT_CREATION_TIME_ACTION = PREFIX
+			+ "bookmark_sort_creation_time_action_context"; //$NON-NLS-1$
 
-    // Views
-    String BOOKMARK_VIEW = PREFIX + "bookmark_view_context"; //$NON-NLS-1$
+	// Views
+	String BOOKMARK_VIEW = PREFIX + "bookmark_view_context"; //$NON-NLS-1$
 }

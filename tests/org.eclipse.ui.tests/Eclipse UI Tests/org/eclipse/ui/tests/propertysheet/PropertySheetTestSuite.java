@@ -22,13 +22,13 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    PropertyShowInContextTest.class,
-    MultiInstancePropertySheetTest.class,
-    ShowInPropertySheetTest.class,
-    NewPropertySheetHandlerTest.class,
-    PropertySheetAuto.class,
-    ComboBoxPropertyDescriptorTest.class,
-    DirtyStatePropertySheetTest.class,
+	PropertyShowInContextTest.class,
+	MultiInstancePropertySheetTest.class,
+	ShowInPropertySheetTest.class,
+	NewPropertySheetHandlerTest.class,
+	PropertySheetAuto.class,
+	ComboBoxPropertyDescriptorTest.class,
+	DirtyStatePropertySheetTest.class,
 })
 public class PropertySheetTestSuite {
 }

@@ -21,20 +21,20 @@ import org.eclipse.ui.IPerspectiveFactory;
  */
 public class SessionPerspective implements IPerspectiveFactory {
 
-    public static String ID = "org.eclipse.ui.tests.api.SessionPerspective";
+	public static String ID = "org.eclipse.ui.tests.api.SessionPerspective";
 
-    /**
-     * @see IPerspectiveFactory#createInitialLayout(IPageLayout)
-     */
-    @Override
+	/**
+	 * @see IPerspectiveFactory#createInitialLayout(IPageLayout)
+	 */
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
-        String editorArea = layout.getEditorArea();
-        layout
-                .addView(SessionView.VIEW_ID, IPageLayout.LEFT, 0.33f,
-                        editorArea);
-        layout.addPlaceholder(MockViewPart.ID4, IPageLayout.RIGHT, .033f,
-                editorArea);
-    }
+		String editorArea = layout.getEditorArea();
+		layout
+				.addView(SessionView.VIEW_ID, IPageLayout.LEFT, 0.33f,
+						editorArea);
+		layout.addPlaceholder(MockViewPart.ID4, IPageLayout.RIGHT, .033f,
+				editorArea);
+	}
 
 }
 

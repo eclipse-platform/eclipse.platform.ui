@@ -37,57 +37,57 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
  * @author Anthony Hunter
  */
 public class LabelSection
-    extends AbstractPropertySection {
+	extends AbstractPropertySection {
 
-    private Text labelText;
+	private Text labelText;
 
-    private ButtonElement buttonElement;
+	private ButtonElement buttonElement;
 
-    private ModifyListener listener = new ModifyListener() {
+	private ModifyListener listener = new ModifyListener() {
 
-        public void modifyText(ModifyEvent arg0) {
+		public void modifyText(ModifyEvent arg0) {
 			ButtonElementProperties properties = (ButtonElementProperties) Adapters.adapt(buttonElement, IPropertySource.class);
 			properties.setPropertyValue(ButtonElementProperties.PROPERTY_TEXT, labelText.getText());
-        }
-    };
+		}
+	};
 
-    public void setInput(IWorkbenchPart part, ISelection selection) {
-        super.setInput(part, selection);
-        Assert.isTrue(selection instanceof IStructuredSelection);
-        Object input = ((IStructuredSelection) selection).getFirstElement();
-        Assert.isTrue(input instanceof ButtonElement);
-        this.buttonElement = (ButtonElement) input;
-    }
+	public void setInput(IWorkbenchPart part, ISelection selection) {
+		super.setInput(part, selection);
+		Assert.isTrue(selection instanceof IStructuredSelection);
+		Object input = ((IStructuredSelection) selection).getFirstElement();
+		Assert.isTrue(input instanceof ButtonElement);
+		this.buttonElement = (ButtonElement) input;
+	}
 
-    public void createControls(Composite parent,
-            TabbedPropertySheetPage aTabbedPropertySheetPage) {
-        super.createControls(parent, aTabbedPropertySheetPage);
-        Composite composite = getWidgetFactory()
-            .createFlatFormComposite(parent);
-        FormData data;
+	public void createControls(Composite parent,
+			TabbedPropertySheetPage aTabbedPropertySheetPage) {
+		super.createControls(parent, aTabbedPropertySheetPage);
+		Composite composite = getWidgetFactory()
+			.createFlatFormComposite(parent);
+		FormData data;
 
-        labelText = getWidgetFactory().createText(composite, ""); //$NON-NLS-1$
-        data = new FormData();
-        data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
-        data.right = new FormAttachment(100, 0);
-        data.top = new FormAttachment(0, ITabbedPropertyConstants.VSPACE);
-        labelText.setLayoutData(data);
-        labelText.addModifyListener(listener);
+		labelText = getWidgetFactory().createText(composite, ""); //$NON-NLS-1$
+		data = new FormData();
+		data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
+		data.right = new FormAttachment(100, 0);
+		data.top = new FormAttachment(0, ITabbedPropertyConstants.VSPACE);
+		labelText.setLayoutData(data);
+		labelText.addModifyListener(listener);
 
-        CLabel labelLabel = getWidgetFactory()
-            .createCLabel(composite, "Label:"); //$NON-NLS-1$
-        data = new FormData();
-        data.left = new FormAttachment(0, 0);
-        data.right = new FormAttachment(labelText,
-            -ITabbedPropertyConstants.HSPACE);
-        data.top = new FormAttachment(labelText, 0, SWT.CENTER);
-        labelLabel.setLayoutData(data);
-    }
+		CLabel labelLabel = getWidgetFactory()
+			.createCLabel(composite, "Label:"); //$NON-NLS-1$
+		data = new FormData();
+		data.left = new FormAttachment(0, 0);
+		data.right = new FormAttachment(labelText,
+			-ITabbedPropertyConstants.HSPACE);
+		data.top = new FormAttachment(labelText, 0, SWT.CENTER);
+		labelLabel.setLayoutData(data);
+	}
 
-    public void refresh() {
+	public void refresh() {
 		labelText.removeModifyListener(listener);
 		ButtonElementProperties properties = (ButtonElementProperties) Adapters.adapt(buttonElement, IPropertySource.class);
-        labelText.setText(properties.strText);
-        labelText.addModifyListener(listener);
-    }
+		labelText.setText(properties.strText);
+		labelText.addModifyListener(listener);
+	}
 }

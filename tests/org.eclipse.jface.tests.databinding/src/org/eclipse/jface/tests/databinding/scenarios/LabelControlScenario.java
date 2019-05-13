@@ -36,38 +36,38 @@ import org.junit.Test;
 
 public class LabelControlScenario extends ScenariosTestCase {
 
-    private Adventure adventure;
+	private Adventure adventure;
 
-    private Label label;
+	private Label label;
 
-    @Before
+	@Before
 	public void setUp() throws Exception {
-        super.setUp();
-        // do any setup work here
-        label = new Label(getComposite(), SWT.NONE);
-        adventure = SampleData.WINTER_HOLIDAY;
-    }
+		super.setUp();
+		// do any setup work here
+		label = new Label(getComposite(), SWT.NONE);
+		adventure = SampleData.WINTER_HOLIDAY;
+	}
 
-    @After
+	@After
 	public void tearDown() throws Exception {
-        // do any teardown work here
-        super.tearDown();
-        label.dispose();
-        label = null;
-    }
+		// do any teardown work here
+		super.tearDown();
+		label.dispose();
+		label = null;
+	}
 
-    @Test
+	@Test
 	public void testScenario01() {
-        // Bind the adventure "name" property to a label control
-        // Change the UI and verify the model and UI are the same value
-        // Change the model and verify the UI changes
-        getDbc().bindValue(SWTObservables.observeText(label), BeansObservables.observeValue(adventure, "name"));
+		// Bind the adventure "name" property to a label control
+		// Change the UI and verify the model and UI are the same value
+		// Change the model and verify the UI changes
+		getDbc().bindValue(SWTObservables.observeText(label), BeansObservables.observeValue(adventure, "name"));
 
-        assertEquals(adventure.getName(), label.getText());
-        adventure.setName("France");
-        assertEquals("France", label.getText());
-        adventure.setName("Climb Everest");
-        spinEventLoop(0);
-        assertEquals("Climb Everest", label.getText());
-    }
+		assertEquals(adventure.getName(), label.getText());
+		adventure.setName("France");
+		assertEquals("France", label.getText());
+		adventure.setName("Climb Everest");
+		spinEventLoop(0);
+		assertEquals("Climb Everest", label.getText());
+	}
 }

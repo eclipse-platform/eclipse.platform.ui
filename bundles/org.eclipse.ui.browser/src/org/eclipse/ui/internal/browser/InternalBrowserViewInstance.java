@@ -28,17 +28,17 @@ public class InternalBrowserViewInstance extends InternalBrowserInstance {
 
 	@Override
 	public void openURL(URL url) throws PartInitException {
-        IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
-        final IWorkbenchPage page = workbenchWindow.getActivePage();
-        WebBrowserView view = (WebBrowserView)part;
+		IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
+		final IWorkbenchPage page = workbenchWindow.getActivePage();
+		WebBrowserView view = (WebBrowserView)part;
 		if (view == null) {
-            try {
+			try {
 				view = (WebBrowserView)page.showView(WebBrowserView.WEB_BROWSER_VIEW_ID, getId(), IWorkbenchPage.VIEW_CREATE);
 				if (tooltip != null && tooltip.length() > 0) {
-				    view.setBrowserViewTooltip(tooltip);
+					view.setBrowserViewTooltip(tooltip);
 				}
 				if (name != null && name.length() > 0) {
-				    view.setBrowserViewName(name);
+					view.setBrowserViewName(name);
 				}
 				hookPart(page, view);
 
@@ -46,14 +46,14 @@ public class InternalBrowserViewInstance extends InternalBrowserInstance {
 				Trace.trace(Trace.SEVERE, "Error opening Web browser", e); //$NON-NLS-1$
 			}
 		}
-        if (view!=null) {
-            page.bringToTop(view);
-            view.setURL(url.toExternalForm());
-        }
+		if (view!=null) {
+			page.bringToTop(view);
+			view.setURL(url.toExternalForm());
+		}
 	}
 
 	@Override
 	public boolean close() {
-        return ((WebBrowserView)part).close();
+		return ((WebBrowserView)part).close();
 	}
 }

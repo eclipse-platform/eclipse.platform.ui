@@ -26,91 +26,91 @@ import org.eclipse.swt.widgets.DirectoryDialog;
  * dialog appears when the user presses the change button.
  */
 public class DirectoryFieldEditor extends StringButtonFieldEditor {
-    /**
-     * Initial path for the Browse dialog.
-     */
-    private File filterPath = null;
+	/**
+	 * Initial path for the Browse dialog.
+	 */
+	private File filterPath = null;
 
-    /**
-     * Creates a new directory field editor
-     */
-    protected DirectoryFieldEditor() {
-    }
+	/**
+	 * Creates a new directory field editor
+	 */
+	protected DirectoryFieldEditor() {
+	}
 
-    /**
-     * Creates a directory field editor.
-     *
-     * @param name the name of the preference this field editor works on
-     * @param labelText the label text of the field editor
-     * @param parent the parent of the field editor's control
-     */
-    public DirectoryFieldEditor(String name, String labelText, Composite parent) {
-        init(name, labelText);
-        setErrorMessage(JFaceResources
-                .getString("DirectoryFieldEditor.errorMessage"));//$NON-NLS-1$
-        setChangeButtonText(JFaceResources.getString("openBrowse"));//$NON-NLS-1$
-        setValidateStrategy(VALIDATE_ON_FOCUS_LOST);
-        createControl(parent);
-    }
+	/**
+	 * Creates a directory field editor.
+	 *
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param parent the parent of the field editor's control
+	 */
+	public DirectoryFieldEditor(String name, String labelText, Composite parent) {
+		init(name, labelText);
+		setErrorMessage(JFaceResources
+				.getString("DirectoryFieldEditor.errorMessage"));//$NON-NLS-1$
+		setChangeButtonText(JFaceResources.getString("openBrowse"));//$NON-NLS-1$
+		setValidateStrategy(VALIDATE_ON_FOCUS_LOST);
+		createControl(parent);
+	}
 
-    @Override
+	@Override
 	protected String changePressed() {
-        File f = new File(getTextControl().getText());
-        if (!f.exists()) {
+		File f = new File(getTextControl().getText());
+		if (!f.exists()) {
 			f = null;
 		}
-        File d = getDirectory(f);
-        if (d == null) {
+		File d = getDirectory(f);
+		if (d == null) {
 			return null;
 		}
 
-        return d.getAbsolutePath();
-    }
+		return d.getAbsolutePath();
+	}
 
-    @Override
+	@Override
 	protected boolean doCheckState() {
-        String fileName = getTextControl().getText();
-        fileName = fileName.trim();
-        if (fileName.length() == 0 && isEmptyStringAllowed()) {
+		String fileName = getTextControl().getText();
+		fileName = fileName.trim();
+		if (fileName.length() == 0 && isEmptyStringAllowed()) {
 			return true;
 		}
-        File file = new File(fileName);
-        return file.isDirectory();
-    }
+		File file = new File(fileName);
+		return file.isDirectory();
+	}
 
-    /**
-     * Helper that opens the directory chooser dialog.
-     * @param startingDirectory The directory the dialog will open in.
-     * @return File File or <code>null</code>.
-     *
-     */
-    private File getDirectory(File startingDirectory) {
+	/**
+	 * Helper that opens the directory chooser dialog.
+	 * @param startingDirectory The directory the dialog will open in.
+	 * @return File File or <code>null</code>.
+	 *
+	 */
+	private File getDirectory(File startingDirectory) {
 
-        DirectoryDialog fileDialog = new DirectoryDialog(getShell(), SWT.OPEN | SWT.SHEET);
-        if (startingDirectory != null) {
+		DirectoryDialog fileDialog = new DirectoryDialog(getShell(), SWT.OPEN | SWT.SHEET);
+		if (startingDirectory != null) {
 			fileDialog.setFilterPath(startingDirectory.getPath());
 		}
-        else if (filterPath != null) {
-        	fileDialog.setFilterPath(filterPath.getPath());
-        }
-        String dir = fileDialog.open();
-        if (dir != null) {
-            dir = dir.trim();
-            if (dir.length() > 0) {
+		else if (filterPath != null) {
+			fileDialog.setFilterPath(filterPath.getPath());
+		}
+		String dir = fileDialog.open();
+		if (dir != null) {
+			dir = dir.trim();
+			if (dir.length() > 0) {
 				return new File(dir);
 			}
-        }
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Sets the initial path for the Browse dialog.
-     * @param path initial path for the Browse dialog
-     * @since 3.6
-     */
-    public void setFilterPath(File path) {
-    	filterPath = path;
-    }
+	/**
+	 * Sets the initial path for the Browse dialog.
+	 * @param path initial path for the Browse dialog
+	 * @since 3.6
+	 */
+	public void setFilterPath(File path) {
+		filterPath = path;
+	}
 
 }

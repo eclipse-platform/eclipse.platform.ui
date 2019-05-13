@@ -36,39 +36,39 @@ import org.junit.Test;
 
 public class SpinnerControlScenario extends ScenariosTestCase {
 
-    private Adventure adventure;
+	private Adventure adventure;
 
-    @Before
+	@Before
 	public void setUp() throws Exception {
-        super.setUp();
-        // do any setup work here
-        adventure = SampleData.WINTER_HOLIDAY;
-    }
+		super.setUp();
+		// do any setup work here
+		adventure = SampleData.WINTER_HOLIDAY;
+	}
 
-    @After
+	@After
 	public void tearDown() throws Exception {
-        // do any teardown work here
-        super.tearDown();
-    }
+		// do any teardown work here
+		super.tearDown();
+	}
 
-    @Test
+	@Test
 	public void testScenario01() {
-        // Bind the adventure "maxNumberOfPeople" property to a spinner
-        // Change the UI and verify the model changes
-        // Change the model and verify the UI changes
-        Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
-        getDbc().bindValue(SWTObservables.observeSelection(spinner),
-                BeansObservables.observeValue(adventure, "maxNumberOfPeople"));
+		// Bind the adventure "maxNumberOfPeople" property to a spinner
+		// Change the UI and verify the model changes
+		// Change the model and verify the UI changes
+		Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
+		getDbc().bindValue(SWTObservables.observeSelection(spinner),
+				BeansObservables.observeValue(adventure, "maxNumberOfPeople"));
 
-        assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());
-        // Verify the model is updated when the GUI is changed
-        spinner.setSelection(5);
-        assertEquals(5, adventure.getMaxNumberOfPeople());
-        // Verify the GUI is updated when the model changes
-        adventure.setMaxNumberOfPeople(7);
-        assertEquals(7, spinner.getSelection());
-        adventure.setMaxNumberOfPeople(11);
-        spinEventLoop(0);
-        assertEquals(11, spinner.getSelection());
-    }
+		assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());
+		// Verify the model is updated when the GUI is changed
+		spinner.setSelection(5);
+		assertEquals(5, adventure.getMaxNumberOfPeople());
+		// Verify the GUI is updated when the model changes
+		adventure.setMaxNumberOfPeople(7);
+		assertEquals(7, spinner.getSelection());
+		adventure.setMaxNumberOfPeople(11);
+		spinEventLoop(0);
+		assertEquals(11, spinner.getSelection());
+	}
 }

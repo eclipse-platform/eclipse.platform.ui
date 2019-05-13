@@ -63,42 +63,42 @@ import com.ibm.icu.text.MessageFormat;
  * @since 3.0
  */
 public class IDEWorkbenchPlugin extends AbstractUIPlugin {
-    // Default instance of the receiver
-    private static IDEWorkbenchPlugin inst;
+	// Default instance of the receiver
+	private static IDEWorkbenchPlugin inst;
 
-    /**
-     * The IDE workbench plugin ID.
-     */
-    public static final String IDE_WORKBENCH = "org.eclipse.ui.ide"; //$NON-NLS-1$
+	/**
+	 * The IDE workbench plugin ID.
+	 */
+	public static final String IDE_WORKBENCH = "org.eclipse.ui.ide"; //$NON-NLS-1$
 
-    /**
-     * The ID of the default text editor.
-     * This must correspond to EditorsUI.DEFAULT_TEXT_EDITOR_ID.
-     */
-    public static final String DEFAULT_TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+	/**
+	 * The ID of the default text editor.
+	 * This must correspond to EditorsUI.DEFAULT_TEXT_EDITOR_ID.
+	 */
+	public static final String DEFAULT_TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 
-    // IDE workbench extension point names
-    public static final String PL_MARKER_IMAGE_PROVIDER = "markerImageProviders"; //$NON-NLS-1$
+	// IDE workbench extension point names
+	public static final String PL_MARKER_IMAGE_PROVIDER = "markerImageProviders"; //$NON-NLS-1$
 
-    public static final String PL_MARKER_HELP = "markerHelp"; //$NON-NLS-1$
+	public static final String PL_MARKER_HELP = "markerHelp"; //$NON-NLS-1$
 
-    public static final String PL_MARKER_RESOLUTION = "markerResolution"; //$NON-NLS-1$
+	public static final String PL_MARKER_RESOLUTION = "markerResolution"; //$NON-NLS-1$
 
-    public static final String PL_PROJECT_NATURE_IMAGES = "projectNatureImages"; //$NON-NLS-1$
+	public static final String PL_PROJECT_NATURE_IMAGES = "projectNatureImages"; //$NON-NLS-1$
 
 	private static final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
 	private static final int PROBLEMS_VIEW_CREATION_DELAY= 6000;
 
-    /**
-     * Project image registry; lazily initialized.
-     */
-    private ProjectImageRegistry projectImageRegistry = null;
+	/**
+	 * Project image registry; lazily initialized.
+	 */
+	private ProjectImageRegistry projectImageRegistry = null;
 
-    /**
-     * Marker image registry; lazily initialized.
-     */
-    private MarkerImageProviderRegistry markerImageProviderRegistry = null;
+	/**
+	 * Marker image registry; lazily initialized.
+	 */
+	private MarkerImageProviderRegistry markerImageProviderRegistry = null;
 
 	/**
 	 * Unassociated file/editor strategy registry; lazily initialized
@@ -114,17 +114,17 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		super();
 		inst = this;
 	}
-    /**
-     * Creates an extension.  If the extension plugin has not
-     * been loaded a busy cursor will be activated during the duration of
-     * the load.
-     *
-     * @param element the config element defining the extension
-     * @param classAttribute the name of the attribute carrying the class
-     * @return Object the extension object
-     * @throws CoreException
-     */
-    public static Object createExtension(final IConfigurationElement element,
+	/**
+	 * Creates an extension.  If the extension plugin has not
+	 * been loaded a busy cursor will be activated during the duration of
+	 * the load.
+	 *
+	 * @param element the config element defining the extension
+	 * @param classAttribute the name of the attribute carrying the class
+	 * @return Object the extension object
+	 * @throws CoreException
+	 */
+	public static Object createExtension(final IConfigurationElement element,
 			final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
@@ -145,135 +145,135 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 			throw exc[0];
 		}
 		return ret[0];
-    }
+	}
 
-    /* Return the default instance of the receiver. This represents the runtime plugin.
-     *
-     * @see AbstractPlugin for the typical implementation pattern for plugin classes.
-     */
-    public static IDEWorkbenchPlugin getDefault() {
-        return inst;
-    }
+	/* Return the default instance of the receiver. This represents the runtime plugin.
+	 *
+	 * @see AbstractPlugin for the typical implementation pattern for plugin classes.
+	 */
+	public static IDEWorkbenchPlugin getDefault() {
+		return inst;
+	}
 
-    /**
-     * Return the workspace used by the workbench
-     *
-     * This method is internal to the workbench and must not be called
-     * by any plugins.
-     */
-    public static IWorkspace getPluginWorkspace() {
-        return ResourcesPlugin.getWorkspace();
-    }
+	/**
+	 * Return the workspace used by the workbench
+	 *
+	 * This method is internal to the workbench and must not be called
+	 * by any plugins.
+	 */
+	public static IWorkspace getPluginWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
 
-    /**
-     * Logs the given message to the platform log.
-     *
-     * If you have an exception in hand, call log(String, Throwable) instead.
-     *
-     * If you have a status object in hand call log(String, IStatus) instead.
-     *
-     * This convenience method is for internal use by the IDE Workbench only and
-     * must not be called outside the IDE Workbench.
-     *
-     * @param message
-     *            A high level UI message describing when the problem happened.
-     */
-    public static void log(String message) {
-        getDefault().getLog().log(
-                StatusUtil.newStatus(IStatus.ERROR, message, null));
-    }
+	/**
+	 * Logs the given message to the platform log.
+	 *
+	 * If you have an exception in hand, call log(String, Throwable) instead.
+	 *
+	 * If you have a status object in hand call log(String, IStatus) instead.
+	 *
+	 * This convenience method is for internal use by the IDE Workbench only and
+	 * must not be called outside the IDE Workbench.
+	 *
+	 * @param message
+	 *            A high level UI message describing when the problem happened.
+	 */
+	public static void log(String message) {
+		getDefault().getLog().log(
+				StatusUtil.newStatus(IStatus.ERROR, message, null));
+	}
 
-    /**
-     * Logs the given message and throwable to the platform log.
-     *
-     * If you have a status object in hand call log(String, IStatus) instead.
-     *
-     * This convenience method is for internal use by the IDE Workbench only and
-     * must not be called outside the IDE Workbench.
-     *
-     * @param message
-     *            A high level UI message describing when the problem happened.
-     * @param t
-     *            The throwable from where the problem actually occurred.
-     */
-    public static void log(String message, Throwable t) {
-        IStatus status = StatusUtil.newStatus(IStatus.ERROR, message, t);
-        log(message, status);
-    }
+	/**
+	 * Logs the given message and throwable to the platform log.
+	 *
+	 * If you have a status object in hand call log(String, IStatus) instead.
+	 *
+	 * This convenience method is for internal use by the IDE Workbench only and
+	 * must not be called outside the IDE Workbench.
+	 *
+	 * @param message
+	 *            A high level UI message describing when the problem happened.
+	 * @param t
+	 *            The throwable from where the problem actually occurred.
+	 */
+	public static void log(String message, Throwable t) {
+		IStatus status = StatusUtil.newStatus(IStatus.ERROR, message, t);
+		log(message, status);
+	}
 
-    /**
-     * Logs the given throwable to the platform log, indicating the class and
-     * method from where it is being logged (this is not necessarily where it
-     * occurred).
-     *
-     * This convenience method is for internal use by the IDE Workbench only and
-     * must not be called outside the IDE Workbench.
-     *
-     * @param clazz
-     *            The calling class.
-     * @param methodName
-     *            The calling method name.
-     * @param t
-     *            The throwable from where the problem actually occurred.
-     */
+	/**
+	 * Logs the given throwable to the platform log, indicating the class and
+	 * method from where it is being logged (this is not necessarily where it
+	 * occurred).
+	 *
+	 * This convenience method is for internal use by the IDE Workbench only and
+	 * must not be called outside the IDE Workbench.
+	 *
+	 * @param clazz
+	 *            The calling class.
+	 * @param methodName
+	 *            The calling method name.
+	 * @param t
+	 *            The throwable from where the problem actually occurred.
+	 */
 	public static void log(Class<?> clazz, String methodName, Throwable t) {
-        String msg = MessageFormat.format("Exception in {0}.{1}: {2}", //$NON-NLS-1$
+		String msg = MessageFormat.format("Exception in {0}.{1}: {2}", //$NON-NLS-1$
 				clazz.getName(), methodName, t);
-        log(msg, t);
-    }
+		log(msg, t);
+	}
 
-    /**
-     * Logs the given message and status to the platform log.
-     *
-     * This convenience method is for internal use by the IDE Workbench only and
-     * must not be called outside the IDE Workbench.
-     *
-     * @param message
-     *            A high level UI message describing when the problem happened.
-     *            May be <code>null</code>.
-     * @param status
-     *            The status describing the problem. Must not be null.
-     */
-    public static void log(String message, IStatus status) {
+	/**
+	 * Logs the given message and status to the platform log.
+	 *
+	 * This convenience method is for internal use by the IDE Workbench only and
+	 * must not be called outside the IDE Workbench.
+	 *
+	 * @param message
+	 *            A high level UI message describing when the problem happened.
+	 *            May be <code>null</code>.
+	 * @param status
+	 *            The status describing the problem. Must not be null.
+	 */
+	public static void log(String message, IStatus status) {
 
-        //1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
+		//1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
 
-        if (message != null) {
-            getDefault().getLog().log(
-                    StatusUtil.newStatus(IStatus.ERROR, message, null));
-        }
+		if (message != null) {
+			getDefault().getLog().log(
+					StatusUtil.newStatus(IStatus.ERROR, message, null));
+		}
 
-        getDefault().getLog().log(status);
-    }
+		getDefault().getLog().log(status);
+	}
 
-    @Override
+	@Override
 	protected void refreshPluginActions() {
-        // do nothing
-    }
+		// do nothing
+	}
 
 
-    /**
-     * Return the manager that maps project nature ids to images.
-     */
-    public ProjectImageRegistry getProjectImageRegistry() {
-        if (projectImageRegistry == null) {
-            projectImageRegistry = new ProjectImageRegistry();
-            projectImageRegistry.load();
-        }
-        return projectImageRegistry;
-    }
+	/**
+	 * Return the manager that maps project nature ids to images.
+	 */
+	public ProjectImageRegistry getProjectImageRegistry() {
+		if (projectImageRegistry == null) {
+			projectImageRegistry = new ProjectImageRegistry();
+			projectImageRegistry.load();
+		}
+		return projectImageRegistry;
+	}
 
-    /**
-     * Returns the marker image provider registry for the workbench.
-     *
-     * @return the marker image provider registry
-     */
-    public MarkerImageProviderRegistry getMarkerImageProviderRegistry() {
-        if (markerImageProviderRegistry == null) {
-            markerImageProviderRegistry = new MarkerImageProviderRegistry();
-        }
-        return markerImageProviderRegistry;
-    }
+	/**
+	 * Returns the marker image provider registry for the workbench.
+	 *
+	 * @return the marker image provider registry
+	 */
+	public MarkerImageProviderRegistry getMarkerImageProviderRegistry() {
+		if (markerImageProviderRegistry == null) {
+			markerImageProviderRegistry = new MarkerImageProviderRegistry();
+		}
+		return markerImageProviderRegistry;
+	}
 
 	/**
 	 * Returns the unassociated file/editor strategy registry for the workbench.
@@ -287,28 +287,28 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		return unassociatedEditorStrategyRegistry;
 	}
 
-    /**
-     * Returns the about information of all known features,
-     * omitting any features which are missing this information.
-     *
-     * @return a possibly empty list of about infos
-     */
-    public AboutInfo[] getFeatureInfos() {
-        // cannot be cached since bundle groups come and go
+	/**
+	 * Returns the about information of all known features,
+	 * omitting any features which are missing this information.
+	 *
+	 * @return a possibly empty list of about infos
+	 */
+	public AboutInfo[] getFeatureInfos() {
+		// cannot be cached since bundle groups come and go
 		List<AboutInfo> infos = new ArrayList<>();
 
-        // add an entry for each bundle group
-        IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-        if (providers != null) {
+		// add an entry for each bundle group
+		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+		if (providers != null) {
 			for (IBundleGroupProvider provider : providers) {
 				for (IBundleGroup bundleGroup : provider.getBundleGroups()) {
 					infos.add(new AboutInfo(bundleGroup));
 				}
-            }
+			}
 		}
 
-        return infos.toArray(new AboutInfo[infos.size()]);
-    }
+		return infos.toArray(new AboutInfo[infos.size()]);
+	}
 	/**
 	 * Get the workbench image with the given path relative to
 	 * ICON_PATH.

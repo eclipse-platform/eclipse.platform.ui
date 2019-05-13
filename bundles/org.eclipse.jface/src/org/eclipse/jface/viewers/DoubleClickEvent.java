@@ -25,44 +25,44 @@ import org.eclipse.core.runtime.Assert;
  */
 public class DoubleClickEvent extends EventObject {
 
-    /**
-     * Generated serial version UID for this class.
-     * @since 3.1
-     */
-    private static final long serialVersionUID = 3258408443605038133L;
+	/**
+	 * Generated serial version UID for this class.
+	 * @since 3.1
+	 */
+	private static final long serialVersionUID = 3258408443605038133L;
 
-    /**
-     * The selection.
-     */
-    protected ISelection selection;
+	/**
+	 * The selection.
+	 */
+	protected ISelection selection;
 
-    /**
-     * Creates a new event for the given source and selection.
-     *
-     * @param source the viewer
-     * @param selection the selection
-     */
-    public DoubleClickEvent(Viewer source, ISelection selection) {
-        super(source);
-        Assert.isNotNull(selection);
-        this.selection = selection;
-    }
+	/**
+	 * Creates a new event for the given source and selection.
+	 *
+	 * @param source the viewer
+	 * @param selection the selection
+	 */
+	public DoubleClickEvent(Viewer source, ISelection selection) {
+		super(source);
+		Assert.isNotNull(selection);
+		this.selection = selection;
+	}
 
-    /**
-     * Returns the selection.
-     *
-     * @return the selection
-     */
-    public ISelection getSelection() {
-        return selection;
-    }
+	/**
+	 * Returns the selection.
+	 *
+	 * @return the selection
+	 */
+	public ISelection getSelection() {
+		return selection;
+	}
 
-    /**
-     * Returns the viewer that is the source of this event.
-     *
-     * @return the originating viewer
-     */
-    public Viewer getViewer() {
-        return (Viewer) getSource();
-    }
+	/**
+	 * Returns the viewer that is the source of this event.
+	 *
+	 * @return the originating viewer
+	 */
+	public Viewer getViewer() {
+		return (Viewer) getSource();
+	}
 }

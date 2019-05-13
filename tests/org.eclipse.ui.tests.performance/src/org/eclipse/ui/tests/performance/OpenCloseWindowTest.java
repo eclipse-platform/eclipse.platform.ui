@@ -22,37 +22,37 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class OpenCloseWindowTest extends BasicPerformanceTest {
 
-    private String id;
+	private String id;
 
-    /**
-     * @param tagging
-     * @param testName
-     */
-    public OpenCloseWindowTest(String id, int tagging) {
-        super("testOpenCloseWindows:" + id, tagging);
-        this.id = id;
-    }
+	/**
+	 * @param tagging
+	 * @param testName
+	 */
+	public OpenCloseWindowTest(String id, int tagging) {
+		super("testOpenCloseWindows:" + id, tagging);
+		this.id = id;
+	}
 
-    @Override
+	@Override
 	protected void runTest() throws Throwable {
-    	tagIfNecessary("UI - Open/Close Window", Dimension.ELAPSED_PROCESS);
+		tagIfNecessary("UI - Open/Close Window", Dimension.ELAPSED_PROCESS);
 
-    	exercise(new TestRunnable() {
-            @Override
+		exercise(new TestRunnable() {
+			@Override
 			public void run() throws Exception {
-                processEvents();
-                EditorTestHelper.calmDown(500, 30000, 500);
+				processEvents();
+				EditorTestHelper.calmDown(500, 30000, 500);
 
-                startMeasuring();
-                IWorkbenchWindow window = openTestWindow(id);
-                processEvents();
-                window.close();
-                processEvents();
-                stopMeasuring();
-            }
-        });
+				startMeasuring();
+				IWorkbenchWindow window = openTestWindow(id);
+				processEvents();
+				window.close();
+				processEvents();
+				stopMeasuring();
+			}
+		});
 
-        commitMeasurements();
-        assertPerformance();
-    }
+		commitMeasurements();
+		assertPerformance();
+	}
 }

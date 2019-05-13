@@ -38,110 +38,110 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class FontPreferenceTestCase extends UITestCase {
 
-    public String BAD_FONT_DEFINITION = "BadFont-regular-10";
+	public String BAD_FONT_DEFINITION = "BadFont-regular-10";
 
-    public String TEST_FONT_ID = "org.eclipse.jface.tests.preference.testfont";
+	public String TEST_FONT_ID = "org.eclipse.jface.tests.preference.testfont";
 
-    public String MISSING_FONT_ID = "org.eclipse.jface.tests.preference.missingfont";
+	public String MISSING_FONT_ID = "org.eclipse.jface.tests.preference.missingfont";
 
-    private IPreferenceStore preferenceStore;
+	private IPreferenceStore preferenceStore;
 
-    /**
-     * Constructor for FontPreferenceTestCase.
-     * @param testName
-     */
-    public FontPreferenceTestCase(String testName) {
-        super(testName);
-    }
+	/**
+	 * Constructor for FontPreferenceTestCase.
+	 * @param testName
+	 */
+	public FontPreferenceTestCase(String testName) {
+		super(testName);
+	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
-        super.doSetUp();
+		super.doSetUp();
 		AbstractUIPlugin plugin = WorkbenchPlugin.getDefault();
-        preferenceStore = plugin.getPreferenceStore();
+		preferenceStore = plugin.getPreferenceStore();
 
-        //Set up the bogus entry for the bad first test
-        FontData bogusData = new FontData();
-        bogusData.setName("BadData");
-        bogusData.setHeight(11);
-        FontData[] storedValue = new FontData[2];
+		//Set up the bogus entry for the bad first test
+		FontData bogusData = new FontData();
+		bogusData.setName("BadData");
+		bogusData.setHeight(11);
+		FontData[] storedValue = new FontData[2];
 
-        //We assume here that the text font is OK
-        storedValue[0] = bogusData;
-        storedValue[1] = (PreferenceConverter.getDefaultFontDataArray(
-                preferenceStore, JFaceResources.TEXT_FONT))[0];
-        PreferenceConverter
-                .setValue(preferenceStore, TEST_FONT_ID, storedValue);
-        PreferenceConverter.setDefault(preferenceStore, TEST_FONT_ID,
-                storedValue);
+		//We assume here that the text font is OK
+		storedValue[0] = bogusData;
+		storedValue[1] = (PreferenceConverter.getDefaultFontDataArray(
+				preferenceStore, JFaceResources.TEXT_FONT))[0];
+		PreferenceConverter
+				.setValue(preferenceStore, TEST_FONT_ID, storedValue);
+		PreferenceConverter.setDefault(preferenceStore, TEST_FONT_ID,
+				storedValue);
 
-    }
+	}
 
-    /**
-     * Test for a valid font like the test font. The first good one
-     * we should find should be the first one in the list.
-     */
+	/**
+	 * Test for a valid font like the test font. The first good one
+	 * we should find should be the first one in the list.
+	 */
 
-    public void testGoodFontDefinition() {
+	public void testGoodFontDefinition() {
 
-        FontRegistry fontRegistry = JFaceResources.getFontRegistry();
-        FontData[] currentTextFonts = PreferenceConverter.getFontDataArray(
-                preferenceStore, JFaceResources.TEXT_FONT);
-        FontData[] bestFont = fontRegistry.bestDataArray(currentTextFonts,
-                Display.getCurrent());
+		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
+		FontData[] currentTextFonts = PreferenceConverter.getFontDataArray(
+				preferenceStore, JFaceResources.TEXT_FONT);
+		FontData[] bestFont = fontRegistry.bestDataArray(currentTextFonts,
+				Display.getCurrent());
 
-        //Assert that it is the first font that we get as the
-        //valid one
-        assertEquals(bestFont[0].getName(), currentTextFonts[0].getName());
-        assertEquals(bestFont[0].getHeight(), currentTextFonts[0].getHeight());
-    }
+		//Assert that it is the first font that we get as the
+		//valid one
+		assertEquals(bestFont[0].getName(), currentTextFonts[0].getName());
+		assertEquals(bestFont[0].getHeight(), currentTextFonts[0].getHeight());
+	}
 
-    /**
-     * Test that if the first font in the list is bad that the
-     * second one comes back as valid.
-     */
+	/**
+	 * Test that if the first font in the list is bad that the
+	 * second one comes back as valid.
+	 */
 
-    public void testBadFirstFontDefinition() {
+	public void testBadFirstFontDefinition() {
 
-        FontRegistry fontRegistry = JFaceResources.getFontRegistry();
-        FontData[] currentTestFonts = PreferenceConverter.getFontDataArray(
-                preferenceStore, TEST_FONT_ID);
-        FontData[] bestFont = fontRegistry.filterData(currentTestFonts,
-                Display.getCurrent());
+		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
+		FontData[] currentTestFonts = PreferenceConverter.getFontDataArray(
+				preferenceStore, TEST_FONT_ID);
+		FontData[] bestFont = fontRegistry.filterData(currentTestFonts,
+				Display.getCurrent());
 
-        //Assert that it is the second font that we get as the
-        //valid one
-        assertEquals(bestFont[0].getName(), currentTestFonts[1].getName());
-        assertEquals(bestFont[0].getHeight(), currentTestFonts[1].getHeight());
-    }
+		//Assert that it is the second font that we get as the
+		//valid one
+		assertEquals(bestFont[0].getName(), currentTestFonts[1].getName());
+		assertEquals(bestFont[0].getHeight(), currentTestFonts[1].getHeight());
+	}
 
-    /**
-     * Test that the no valid font is returned when the entry
-     * is missing.
-     */
+	/**
+	 * Test that the no valid font is returned when the entry
+	 * is missing.
+	 */
 
-    public void testNoFontDefinition() {
+	public void testNoFontDefinition() {
 
-        FontRegistry fontRegistry = JFaceResources.getFontRegistry();
-        FontData[] currentTestFonts = PreferenceConverter.getFontDataArray(
-                preferenceStore, MISSING_FONT_ID);
-        FontData[] bestFont = fontRegistry.filterData(currentTestFonts,
-                Display.getCurrent());
+		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
+		FontData[] currentTestFonts = PreferenceConverter.getFontDataArray(
+				preferenceStore, MISSING_FONT_ID);
+		FontData[] bestFont = fontRegistry.filterData(currentTestFonts,
+				Display.getCurrent());
 
-        FontData[] systemFontData = Display.getCurrent().getSystemFont()
-                .getFontData();
+		FontData[] systemFontData = Display.getCurrent().getSystemFont()
+				.getFontData();
 
-        //Assert that the first font is the system font
-        assertEquals(bestFont[0].getName(), systemFontData[0].getName());
-        assertEquals(bestFont[0].getHeight(), systemFontData[0].getHeight());
-    }
+		//Assert that the first font is the system font
+		assertEquals(bestFont[0].getName(), systemFontData[0].getName());
+		assertEquals(bestFont[0].getHeight(), systemFontData[0].getHeight());
+	}
 
-    /**
-     * The test added to assess results of accessing FontRegistry from a non-UI
-     * thread. See bug 230360.
-     */
-    public void testNonUIThreadFontAccess() {
-    	// create a separate font registry to avoid contaminating other tests
+	/**
+	 * The test added to assess results of accessing FontRegistry from a non-UI
+	 * thread. See bug 230360.
+	 */
+	public void testNonUIThreadFontAccess() {
+		// create a separate font registry to avoid contaminating other tests
 		final FontRegistry fontRegistry = new FontRegistry("org.eclipse.jface.resource.jfacefonts"); //$NON-NLS-1$
 		// pre-calculate the default font; calling it in worker thread will only cause SWTException
 		Font defaultFont = fontRegistry.defaultFont();
@@ -160,7 +160,7 @@ public class FontPreferenceTestCase extends UITestCase {
 				}} );
 
 
-	    	Job job = new Job("Non-UI thread FontRegistry Access Test") {
+			Job job = new Job("Non-UI thread FontRegistry Access Test") {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					// this should produce no exception, but should log a error
@@ -168,7 +168,7 @@ public class FontPreferenceTestCase extends UITestCase {
 					assertFalse(created);
 					return Status.OK_STATUS;
 				}
-	    	};
+			};
 			job.schedule();
 			job.join();
 			assertTrue(errorLogged[0]);
@@ -181,7 +181,7 @@ public class FontPreferenceTestCase extends UITestCase {
 		// now let's try to create the same font in the UI thread and check that the correct
 		boolean created = checkFont(fontRegistry);
 		assertTrue(created);
-    }
+	}
 
 	public boolean checkFont(final FontRegistry fontRegistry) {
 		// Create a font description that will use default font with height increased by 20

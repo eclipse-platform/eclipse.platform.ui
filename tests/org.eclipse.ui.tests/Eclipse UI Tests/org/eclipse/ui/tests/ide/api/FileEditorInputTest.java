@@ -34,96 +34,96 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class FileEditorInputTest extends UITestCase {
 
-    /**
-     * @param testName
-     */
-    public FileEditorInputTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * @param testName
+	 */
+	public FileEditorInputTest(String testName) {
+		super(testName);
+	}
 
-    /**
-     * Regression test for bug 72337 - [IDE] FileEditorInput .equals() not implemented against interface
-     */
+	/**
+	 * Regression test for bug 72337 - [IDE] FileEditorInput .equals() not implemented against interface
+	 */
 	@SuppressWarnings("unlikely-arg-type")
 	public void testBug72337() {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IPath path = new Path("/foo/bar.txt");
-        IFile fileA = workspace.getRoot().getFile(path);
-        FileEditorInput inputA1 = new FileEditorInput(fileA);
-        OtherFileEditorInput inputA2 = new OtherFileEditorInput(fileA);
-        assertTrue(inputA1.equals(inputA2));
-        assertTrue(inputA2.equals(inputA1));
-    }
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IPath path = new Path("/foo/bar.txt");
+		IFile fileA = workspace.getRoot().getFile(path);
+		FileEditorInput inputA1 = new FileEditorInput(fileA);
+		OtherFileEditorInput inputA2 = new OtherFileEditorInput(fileA);
+		assertTrue(inputA1.equals(inputA2));
+		assertTrue(inputA2.equals(inputA1));
+	}
 
-    class OtherFileEditorInput implements IFileEditorInput {
-        private IFile file;
+	class OtherFileEditorInput implements IFileEditorInput {
+		private IFile file;
 
-        public OtherFileEditorInput(IFile file) {
-            this.file = file;
-        }
+		public OtherFileEditorInput(IFile file) {
+			this.file = file;
+		}
 
-        @Override
+		@Override
 		public IFile getFile() {
-            return file;
-        }
+			return file;
+		}
 
-        /**
+		/**
 		 * @throws CoreException if this method fails
 		 */
-        @Override
+		@Override
 		public IStorage getStorage() throws CoreException {
-            return file;
-        }
+			return file;
+		}
 
-        @Override
+		@Override
 		public boolean exists() {
-            return file.exists();
-        }
+			return file.exists();
+		}
 
-        @Override
+		@Override
 		public ImageDescriptor getImageDescriptor() {
-            return null;
-        }
+			return null;
+		}
 
-        @Override
+		@Override
 		public String getName() {
-            return file.getName();
-        }
+			return file.getName();
+		}
 
-        @Override
+		@Override
 		public IPersistableElement getPersistable() {
-            return null;
-        }
+			return null;
+		}
 
-        @Override
+		@Override
 		public String getToolTipText() {
-            return file.getFullPath().toString();
-        }
+			return file.getFullPath().toString();
+		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T getAdapter(Class<T> adapter) {
-            if (adapter == IResource.class) {
+			if (adapter == IResource.class) {
 				return (T) file;
 			}
-            if (adapter == IFile.class) {
+			if (adapter == IFile.class) {
 				return (T) file;
 			}
-            return null;
-        }
+			return null;
+		}
 
-        @Override
+		@Override
 		public boolean equals(Object obj) {
-            if (!(obj instanceof IFileEditorInput)) {
+			if (!(obj instanceof IFileEditorInput)) {
 				return false;
 			}
-            IFileEditorInput other = (IFileEditorInput) obj;
-            return file.equals(other.getFile());
-        }
+			IFileEditorInput other = (IFileEditorInput) obj;
+			return file.equals(other.getFile());
+		}
 
-        @Override
+		@Override
 		public int hashCode() {
-            return file.hashCode();
-        }
-    }
+			return file.hashCode();
+		}
+	}
 }

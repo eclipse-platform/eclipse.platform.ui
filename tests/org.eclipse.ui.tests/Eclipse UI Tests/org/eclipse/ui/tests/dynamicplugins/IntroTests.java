@@ -46,23 +46,23 @@ public class IntroTests extends DynamicTestCase {
 	public void testIntroClosure() {
 		getBundle();
 		Workbench workbench = Workbench.getInstance();
-        IntroDescriptor testDesc = (IntroDescriptor) WorkbenchPlugin
-        .getDefault().getIntroRegistry().getIntro(
-        		INTRO_ID);
-        workbench.setIntroDescriptor(testDesc);
+		IntroDescriptor testDesc = (IntroDescriptor) WorkbenchPlugin
+		.getDefault().getIntroRegistry().getIntro(
+				INTRO_ID);
+		workbench.setIntroDescriptor(testDesc);
 
 		ReferenceQueue<IIntroPart> queue = new ReferenceQueue<>();
 		IIntroPart intro = workbench.getIntroManager().showIntro(window, false);
 		WeakReference<IIntroPart> ref = new WeakReference<>(intro, queue);
-        assertNotNull(intro);
-        intro = null; //null the reference
-        removeBundle();
-        try {
+		assertNotNull(intro);
+		intro = null; //null the reference
+		removeBundle();
+		try {
 			LeakTests.checkRef(queue, ref);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
-        assertNull(workbench.getIntroManager().getIntro());
+		assertNull(workbench.getIntroManager().getIntro());
 	}
 
 	public void testIntroProperties() {
@@ -123,18 +123,18 @@ public class IntroTests extends DynamicTestCase {
 		return "data/org.eclipse.newIntro1";
 	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
-        super.doSetUp();
-        oldDesc = Workbench.getInstance().getIntroDescriptor();
-        window = openTestWindow();
-    }
+		super.doSetUp();
+		oldDesc = Workbench.getInstance().getIntroDescriptor();
+		window = openTestWindow();
+	}
 
-    @Override
+	@Override
 	protected void doTearDown() throws Exception {
-        super.doTearDown();
-        Workbench.getInstance().setIntroDescriptor(oldDesc);
-    }
+		super.doTearDown();
+		Workbench.getInstance().setIntroDescriptor(oldDesc);
+	}
 
 	@Override
 	protected String getMarkerClass() {

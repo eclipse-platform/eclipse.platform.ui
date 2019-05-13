@@ -45,127 +45,127 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  */
 public class NullElementPointer extends CollectionPointer {
 
-    private static final long serialVersionUID = 8714236818791036721L;
+	private static final long serialVersionUID = 8714236818791036721L;
 
-    /**
-     * Create a new NullElementPointer.
-     * @param parent parent pointer
-     * @param index int
-     */
-    public NullElementPointer(NodePointer parent, int index) {
-        super(parent, (Object) null);
-        this.index = index;
-    }
+	/**
+	 * Create a new NullElementPointer.
+	 * @param parent parent pointer
+	 * @param index int
+	 */
+	public NullElementPointer(NodePointer parent, int index) {
+		super(parent, (Object) null);
+		this.index = index;
+	}
 
-    @Override
+	@Override
 	public QName getName() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public Object getBaseValue() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public Object getImmediateNode() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean isLeaf() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean isCollection() {
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Get the property pointer for this.
-     * @return PropertyPointer
-     */
-    public EStructuralFeaturePointer getPropertyPointer() {
-        return new NullEStructuralFeaturePointer(this);
-    }
+	/**
+	 * Get the property pointer for this.
+	 * @return PropertyPointer
+	 */
+	public EStructuralFeaturePointer getPropertyPointer() {
+		return new NullEStructuralFeaturePointer(this);
+	}
 
-    @Override
+	@Override
 	public NodePointer getValuePointer() {
-        return new NullPointer(this, getName());
-    }
+		return new NullPointer(this, getName());
+	}
 
-    @Override
+	@Override
 	public void setValue(Object value) {
-        throw new UnsupportedOperationException(
-            "Collection element does not exist: " + this);
-    }
+		throw new UnsupportedOperationException(
+			"Collection element does not exist: " + this);
+	}
 
-    @Override
+	@Override
 	public boolean isActual() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isContainer() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public NodePointer createPath(JXPathContext context) {
-        return parent.createChild(context, null, index);
-    }
+		return parent.createChild(context, null, index);
+	}
 
-    @Override
+	@Override
 	public NodePointer createPath(JXPathContext context, Object value) {
-        return parent.createChild(context, null, index, value);
-    }
+		return parent.createChild(context, null, index, value);
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return getImmediateParentPointer().hashCode() + index;
-    }
+		return getImmediateParentPointer().hashCode() + index;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
+		if (object == this) {
+			return true;
+		}
 
-        if (!(object instanceof NullElementPointer)) {
-            return false;
-        }
+		if (!(object instanceof NullElementPointer)) {
+			return false;
+		}
 
-        NullElementPointer other = (NullElementPointer) object;
-        return getImmediateParentPointer() == other.getImmediateParentPointer()
-                && index == other.index;
-    }
+		NullElementPointer other = (NullElementPointer) object;
+		return getImmediateParentPointer() == other.getImmediateParentPointer()
+				&& index == other.index;
+	}
 
-    @Override
+	@Override
 	public int getLength() {
-        return 0;
-    }
+		return 0;
+	}
 
-    @Override
+	@Override
 	public String asPath() {
-        StringBuilder buffer = new StringBuilder();
-        NodePointer parent = getImmediateParentPointer();
-        if (parent != null) {
-            buffer.append(parent.asPath());
-        }
-        if (index != WHOLE_COLLECTION) {
-            // Address the list[1][2] case
-            if (parent != null && parent.getIndex() != WHOLE_COLLECTION) {
-                buffer.append("/.");
-            }
-            else if (parent != null
-                    && parent.getImmediateParentPointer() != null
-                    && parent.getImmediateParentPointer().getIndex() != WHOLE_COLLECTION) {
-                buffer.append("/.");
-            }
-            buffer.append("[").append(index + 1).append(']');
-        }
+		StringBuilder buffer = new StringBuilder();
+		NodePointer parent = getImmediateParentPointer();
+		if (parent != null) {
+			buffer.append(parent.asPath());
+		}
+		if (index != WHOLE_COLLECTION) {
+			// Address the list[1][2] case
+			if (parent != null && parent.getIndex() != WHOLE_COLLECTION) {
+				buffer.append("/.");
+			}
+			else if (parent != null
+					&& parent.getImmediateParentPointer() != null
+					&& parent.getImmediateParentPointer().getIndex() != WHOLE_COLLECTION) {
+				buffer.append("/.");
+			}
+			buffer.append("[").append(index + 1).append(']');
+		}
 
-        return buffer.toString();
-    }
+		return buffer.toString();
+	}
 }

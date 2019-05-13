@@ -24,14 +24,14 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
  */
 public final class ViewUtils {
 
-    public static boolean findInStack(IViewPart[] stack, IViewPart target) {
-        for (IViewPart element : stack) {
-            if (element == target) {
+	public static boolean findInStack(IViewPart[] stack, IViewPart target) {
+		for (IViewPart element : stack) {
+			if (element == target) {
 				return true;
 			}
-        }
-        return false;
-    }
+		}
+		return false;
+	}
 
 	/**
 	 * @param part the view part
@@ -39,9 +39,9 @@ public final class ViewUtils {
 	public static boolean isCloseable(IViewPart part) {
 //        IWorkbenchPartSite viewSite = part.getSite();
 //        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
-        // FIXME: Facade claimed closeable perspectives where not supported
-        return false;
-    }
+		// FIXME: Facade claimed closeable perspectives where not supported
+		return false;
+	}
 
 	/**
 	 * @param part the view part
@@ -49,26 +49,26 @@ public final class ViewUtils {
 	public static boolean isMoveable(IViewPart part) {
 //    	IWorkbenchPartSite viewSite = part.getSite();
 //        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
-        // FIXME: Facade claimed moveable perspectives where not supported
-        return false;
-    }
+		// FIXME: Facade claimed moveable perspectives where not supported
+		return false;
+	}
 
-    public static boolean isSticky(IViewPart part) {
-        String id = part.getSite().getId();
-        IStickyViewDescriptor[] descs = PlatformUI.getWorkbench()
-                .getViewRegistry().getStickyViews();
-        for (IStickyViewDescriptor desc : descs) {
-            if (desc.getId().equals(id)) {
+	public static boolean isSticky(IViewPart part) {
+		String id = part.getSite().getId();
+		IStickyViewDescriptor[] descs = PlatformUI.getWorkbench()
+				.getViewRegistry().getStickyViews();
+		for (IStickyViewDescriptor desc : descs) {
+			if (desc.getId().equals(id)) {
 				return true;
 			}
-        }
-        return false;
-    }
+		}
+		return false;
+	}
 
-    /**
-     *
-     */
-    protected ViewUtils() {
-        //no-op
-    }
+	/**
+	 *
+	 */
+	protected ViewUtils() {
+		//no-op
+	}
 }

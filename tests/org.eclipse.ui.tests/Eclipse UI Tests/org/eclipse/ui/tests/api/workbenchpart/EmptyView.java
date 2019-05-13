@@ -23,35 +23,35 @@ public class EmptyView extends ViewPart {
 
 	public static String ID = "org.eclipse.ui.tests.workbenchpart.EmptyView";
 
-    /**
-     *
-     */
-    public EmptyView() {
-        super();
-    }
+	/**
+	 *
+	 */
+	public EmptyView() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
 
-    }
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
 
-    }
+	}
 
-    @Override
+	@Override
 	public void setContentDescription(String description) {
-        super.setContentDescription(description);
-    }
+		super.setContentDescription(description);
+	}
 
-    @Override
+	@Override
 	public void setPartName(String partName) {
-        super.setPartName(partName);
-    }
+		super.setPartName(partName);
+	}
 
-    @Override
+	@Override
 	public void setTitle(String title) {
-        super.setTitle(title);
-    }
+		super.setTitle(title);
+	}
 }

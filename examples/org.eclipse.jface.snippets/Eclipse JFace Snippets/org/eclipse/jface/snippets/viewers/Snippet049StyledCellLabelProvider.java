@@ -112,8 +112,8 @@ public class Snippet049StyledCellLabelProvider {
 			FontData base = originalData[i];
 			styleData[i] = new FontData(base.getName(), base.getHeight(), base.getStyle() | additionalStyle);
 		}
-       	return styleData;
-    }
+		return styleData;
+	}
 
 	private static class ExampleLabelProvider extends StyledCellLabelProvider {
 

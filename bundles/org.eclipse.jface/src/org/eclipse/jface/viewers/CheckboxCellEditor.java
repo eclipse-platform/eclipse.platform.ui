@@ -34,105 +34,105 @@ import org.eclipse.swt.widgets.Control;
  */
 public class CheckboxCellEditor extends CellEditor {
 
-    /**
-     * The checkbox value.
-     */
-    /* package */
-    boolean value = false;
+	/**
+	 * The checkbox value.
+	 */
+	/* package */
+	boolean value = false;
 
-    /**
-     * Default CheckboxCellEditor style
-     */
-    private static final int defaultStyle = SWT.NONE;
+	/**
+	 * Default CheckboxCellEditor style
+	 */
+	private static final int defaultStyle = SWT.NONE;
 
-    /**
-     * Creates a new checkbox cell editor with no control
-     * @since 2.1
-     */
-    public CheckboxCellEditor() {
-        setStyle(defaultStyle);
-    }
+	/**
+	 * Creates a new checkbox cell editor with no control
+	 * @since 2.1
+	 */
+	public CheckboxCellEditor() {
+		setStyle(defaultStyle);
+	}
 
-    /**
-     * Creates a new checkbox cell editor parented under the given control.
-     * The cell editor value is a boolean value, which is initially <code>false</code>.
-     * Initially, the cell editor has no cell validator.
-     *
-     * @param parent the parent control
-     */
-    public CheckboxCellEditor(Composite parent) {
-        this(parent, defaultStyle);
-    }
+	/**
+	 * Creates a new checkbox cell editor parented under the given control.
+	 * The cell editor value is a boolean value, which is initially <code>false</code>.
+	 * Initially, the cell editor has no cell validator.
+	 *
+	 * @param parent the parent control
+	 */
+	public CheckboxCellEditor(Composite parent) {
+		this(parent, defaultStyle);
+	}
 
-    /**
-     * Creates a new checkbox cell editor parented under the given control.
-     * The cell editor value is a boolean value, which is initially <code>false</code>.
-     * Initially, the cell editor has no cell validator.
-     *
-     * @param parent the parent control
-     * @param style the style bits
-     * @since 2.1
-     */
-    public CheckboxCellEditor(Composite parent, int style) {
-        super(parent, style);
-    }
+	/**
+	 * Creates a new checkbox cell editor parented under the given control.
+	 * The cell editor value is a boolean value, which is initially <code>false</code>.
+	 * Initially, the cell editor has no cell validator.
+	 *
+	 * @param parent the parent control
+	 * @param style the style bits
+	 * @since 2.1
+	 */
+	public CheckboxCellEditor(Composite parent, int style) {
+		super(parent, style);
+	}
 
-    /**
-     * The <code>CheckboxCellEditor</code> implementation of
-     * this <code>CellEditor</code> framework method simulates
-     * the toggling of the checkbox control and notifies
-     * listeners with <code>ICellEditorListener.applyEditorValue</code>.
-     */
-    @Override
+	/**
+	 * The <code>CheckboxCellEditor</code> implementation of
+	 * this <code>CellEditor</code> framework method simulates
+	 * the toggling of the checkbox control and notifies
+	 * listeners with <code>ICellEditorListener.applyEditorValue</code>.
+	 */
+	@Override
 	public void activate() {
-        value = !value;
-        fireApplyEditorValue();
-    }
+		value = !value;
+		fireApplyEditorValue();
+	}
 
-    /**
-     * The <code>CheckboxCellEditor</code> implementation of
-     * this <code>CellEditor</code> framework method does
-     * nothing and returns <code>null</code>.
-     */
-    @Override
+	/**
+	 * The <code>CheckboxCellEditor</code> implementation of
+	 * this <code>CellEditor</code> framework method does
+	 * nothing and returns <code>null</code>.
+	 */
+	@Override
 	protected Control createControl(Composite parent) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * The <code>CheckboxCellEditor</code> implementation of
-     * this <code>CellEditor</code> framework method returns
-     * the checkbox setting wrapped as a <code>Boolean</code>.
-     *
-     * @return the Boolean checkbox value
-     */
-    @Override
+	/**
+	 * The <code>CheckboxCellEditor</code> implementation of
+	 * this <code>CellEditor</code> framework method returns
+	 * the checkbox setting wrapped as a <code>Boolean</code>.
+	 *
+	 * @return the Boolean checkbox value
+	 */
+	@Override
 	protected Object doGetValue() {
-        return value ? Boolean.TRUE : Boolean.FALSE;
-    }
+		return value ? Boolean.TRUE : Boolean.FALSE;
+	}
 
-    @Override
+	@Override
 	protected void doSetFocus() {
-        // Ignore
-    }
+		// Ignore
+	}
 
-    /**
-     * The <code>CheckboxCellEditor</code> implementation of
-     * this <code>CellEditor</code> framework method accepts
-     * a value wrapped as a <code>Boolean</code>.
-     *
-     * @param value a Boolean value
-     */
-    @Override
+	/**
+	 * The <code>CheckboxCellEditor</code> implementation of
+	 * this <code>CellEditor</code> framework method accepts
+	 * a value wrapped as a <code>Boolean</code>.
+	 *
+	 * @param value a Boolean value
+	 */
+	@Override
 	protected void doSetValue(Object value) {
-        Assert.isTrue(value instanceof Boolean);
-        this.value = ((Boolean) value).booleanValue();
-    }
+		Assert.isTrue(value instanceof Boolean);
+		this.value = ((Boolean) value).booleanValue();
+	}
 
-    @Override
+	@Override
 	public void activate(ColumnViewerEditorActivationEvent activationEvent) {
-    	if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL) {
-    		super.activate(activationEvent);
-    	}
-    }
+		if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL) {
+			super.activate(activationEvent);
+		}
+	}
 }

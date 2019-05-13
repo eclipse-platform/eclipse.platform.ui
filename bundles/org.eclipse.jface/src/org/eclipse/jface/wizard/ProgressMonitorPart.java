@@ -52,41 +52,41 @@ import org.eclipse.swt.widgets.ToolItem;
  * <code>IProgressMonitor</code>.
  */
 public class ProgressMonitorPart extends Composite implements
-        IProgressMonitorWithBlocking {
+		IProgressMonitorWithBlocking {
 
 	/** the label */
-    protected Label fLabel;
+	protected Label fLabel;
 
-    /** the current task name */
-    protected String fTaskName;
+	/** the current task name */
+	protected String fTaskName;
 
-    /** the current sub task name */
-    protected String fSubTaskName;
+	/** the current sub task name */
+	protected String fSubTaskName;
 
-    /** the progress indicator */
-    protected ProgressIndicator fProgressIndicator;
+	/** the progress indicator */
+	protected ProgressIndicator fProgressIndicator;
 
-    /** the cancel component */
-    protected Control fCancelComponent;
+	/** the cancel component */
+	protected Control fCancelComponent;
 
-    /** true if canceled */
-    protected volatile boolean fIsCanceled;
+	/** true if canceled */
+	protected volatile boolean fIsCanceled;
 
-    /** current blocked status */
-    protected IStatus blockedStatus;
+	/** current blocked status */
+	protected IStatus blockedStatus;
 
-    /** the cancel lister attached to the cancel component */
-    protected Listener fCancelListener = e -> {
-	    setCanceled(true);
-	    if (fCancelComponent != null) {
+	/** the cancel lister attached to the cancel component */
+	protected Listener fCancelListener = e -> {
+		setCanceled(true);
+		if (fCancelComponent != null) {
 			fCancelComponent.setEnabled(false);
 		}
 	};
 
-    /** toolbar for managing stop button **/
-    private ToolBar fToolBar;
+	/** toolbar for managing stop button **/
+	private ToolBar fToolBar;
 
-    /** default tool item for canceling tasks **/
+	/** default tool item for canceling tasks **/
 	private ToolItem fStopButton;
 
 	/** <code>true</code> if this monitor part should show stop button **/
@@ -159,10 +159,10 @@ public class ProgressMonitorPart extends Composite implements
 		}
 	}
 
-    @Override
+	@Override
 	public void beginTask(String name, int totalWork) {
-        fTaskName = name;
-        fSubTaskName = ""; //$NON-NLS-1$
+		fTaskName = name;
+		fSubTaskName = ""; //$NON-NLS-1$
 		queueUpdateLabel();
 		if (!fProgressIndicator.isDisposed()) {
 			if (totalWork == IProgressMonitor.UNKNOWN || totalWork == 0) {
@@ -170,28 +170,28 @@ public class ProgressMonitorPart extends Composite implements
 			} else {
 				fProgressIndicator.beginTask(totalWork);
 			}
-        }
-        if (fToolBar != null && !fToolBar.isDisposed()) {
-        	fToolBar.setVisible(true);
-        	fToolBar.setFocus();
-        }
-    }
+		}
+		if (fToolBar != null && !fToolBar.isDisposed()) {
+			fToolBar.setVisible(true);
+			fToolBar.setFocus();
+		}
+	}
 
-    @Override
+	@Override
 	public void done() {
 		if (!fLabel.isDisposed()) {
 			fLabel.setText("");//$NON-NLS-1$
 		}
-        fSubTaskName = ""; //$NON-NLS-1$
+		fSubTaskName = ""; //$NON-NLS-1$
 		if (!fProgressIndicator.isDisposed()) {
 			fProgressIndicator.sendRemainingWork();
 			fProgressIndicator.done();
 		}
-        if (fToolBar != null && !fToolBar.isDisposed())
-        	fToolBar.setVisible(false);
-    }
+		if (fToolBar != null && !fToolBar.isDisposed())
+			fToolBar.setVisible(false);
+	}
 
-    /**
+	/**
 	 * Escapes any occurrence of '&amp;' in the given String so that it is not
 	 * considered as a mnemonic character in SWT ToolItems, MenuItems, Button and
 	 * Labels.
@@ -199,106 +199,106 @@ public class ProgressMonitorPart extends Composite implements
 	 * @param in the original String
 	 * @return The converted String
 	 */
-    protected static String escapeMetaCharacters(String in) {
-        if (in == null || in.indexOf('&') < 0) {
+	protected static String escapeMetaCharacters(String in) {
+		if (in == null || in.indexOf('&') < 0) {
 			return in;
 		}
-        int length = in.length();
-        StringBuilder out = new StringBuilder(length + 1);
-        for (int i = 0; i < length; i++) {
-            char c = in.charAt(i);
-            if (c == '&') {
+		int length = in.length();
+		StringBuilder out = new StringBuilder(length + 1);
+		for (int i = 0; i < length; i++) {
+			char c = in.charAt(i);
+			if (c == '&') {
 				out.append("&&");//$NON-NLS-1$
 			} else {
 				out.append(c);
 			}
-        }
-        return out.toString();
-    }
+		}
+		return out.toString();
+	}
 
-    /**
-     * Creates the progress monitor's UI parts and layouts them
-     * according to the given layout. If the layout is <code>null</code>
-     * the part's default layout is used.
-     * @param layout The layout for the receiver.
-     * @param progressIndicatorHeight The suggested height of the indicator
-     */
-    protected void initialize(Layout layout, int progressIndicatorHeight) {
-        if (layout == null) {
-            GridLayout l = new GridLayout();
-            l.marginWidth = 0;
-            l.marginHeight = 0;
-            layout = l;
-        }
-        int numColumns = 1;
-        if (fHasStopButton)
-        	numColumns++;
-        setLayout(layout);
+	/**
+	 * Creates the progress monitor's UI parts and layouts them
+	 * according to the given layout. If the layout is <code>null</code>
+	 * the part's default layout is used.
+	 * @param layout The layout for the receiver.
+	 * @param progressIndicatorHeight The suggested height of the indicator
+	 */
+	protected void initialize(Layout layout, int progressIndicatorHeight) {
+		if (layout == null) {
+			GridLayout l = new GridLayout();
+			l.marginWidth = 0;
+			l.marginHeight = 0;
+			layout = l;
+		}
+		int numColumns = 1;
+		if (fHasStopButton)
+			numColumns++;
+		setLayout(layout);
 
-        if (layout instanceof GridLayout)
-        	((GridLayout)layout).numColumns = numColumns;
+		if (layout instanceof GridLayout)
+			((GridLayout)layout).numColumns = numColumns;
 
-        fLabel = new Label(this, SWT.LEFT);
-        fLabel.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, numColumns, 1));
+		fLabel = new Label(this, SWT.LEFT);
+		fLabel.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, numColumns, 1));
 
-        if (progressIndicatorHeight == SWT.DEFAULT) {
-            GC gc = new GC(fLabel);
-            FontMetrics fm = gc.getFontMetrics();
-            gc.dispose();
-            progressIndicatorHeight = fm.getHeight();
-        }
+		if (progressIndicatorHeight == SWT.DEFAULT) {
+			GC gc = new GC(fLabel);
+			FontMetrics fm = gc.getFontMetrics();
+			gc.dispose();
+			progressIndicatorHeight = fm.getHeight();
+		}
 
-        fProgressIndicator = new ProgressIndicator(this);
-        GridData gd = new GridData();
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        gd.grabExcessVerticalSpace = false;
-    	gd.verticalAlignment = GridData.CENTER;
-    	gd.heightHint = progressIndicatorHeight;
-        fProgressIndicator.setLayoutData(gd);
+		fProgressIndicator = new ProgressIndicator(this);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		gd.grabExcessVerticalSpace = false;
+		gd.verticalAlignment = GridData.CENTER;
+		gd.heightHint = progressIndicatorHeight;
+		fProgressIndicator.setLayoutData(gd);
 
-        if (fHasStopButton) {
-        	fToolBar = new ToolBar(this, SWT.FLAT);
+		if (fHasStopButton) {
+			fToolBar = new ToolBar(this, SWT.FLAT);
 
-        	gd = new GridData();
-            gd.grabExcessHorizontalSpace = false;
-            gd.grabExcessVerticalSpace = false;
-        	gd.verticalAlignment = GridData.CENTER;
-        	fToolBar.setLayoutData(gd);
-        	fStopButton = new ToolItem(fToolBar, SWT.PUSH);
-        	// It would have been nice to use the fCancelListener, but that
-        	// listener operates on the fCancelComponent which must be a control.
-        	fStopButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			gd = new GridData();
+			gd.grabExcessHorizontalSpace = false;
+			gd.grabExcessVerticalSpace = false;
+			gd.verticalAlignment = GridData.CENTER;
+			fToolBar.setLayoutData(gd);
+			fStopButton = new ToolItem(fToolBar, SWT.PUSH);
+			// It would have been nice to use the fCancelListener, but that
+			// listener operates on the fCancelComponent which must be a control.
+			fStopButton.addSelectionListener(widgetSelectedAdapter(e -> {
 				setCanceled(true);
 				if (fStopButton != null) {
 					fStopButton.setEnabled(false);
 				}
 			}));
-        	final Image stopImage = ImageDescriptor.createFromFile(
-        			ProgressMonitorPart.class, "images/stop.png").createImage(getDisplay()); //$NON-NLS-1$
+			final Image stopImage = ImageDescriptor.createFromFile(
+					ProgressMonitorPart.class, "images/stop.png").createImage(getDisplay()); //$NON-NLS-1$
 			fToolBar.setCursor(this.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
-        	fStopButton.setImage(stopImage);
-        	fStopButton.addDisposeListener(e -> {
+			fStopButton.setImage(stopImage);
+			fStopButton.addDisposeListener(e -> {
 				stopImage.dispose();
 			});
-        	fStopButton.setEnabled(false);
+			fStopButton.setEnabled(false);
 			fStopButton.setToolTipText(JFaceResources.getString("ProgressMonitorPart.cancelToolTip")); //$NON-NLS-1$
-        }
+		}
 
 		throttledUpdate = new Throttler(fLabel.getDisplay(), Duration.ofMillis(100), this::updateLabel);
-    }
+	}
 
-    @Override
+	@Override
 	public void internalWorked(double work) {
 		if (!fProgressIndicator.isDisposed()) {
 			fProgressIndicator.worked(work);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean isCanceled() {
-        return fIsCanceled;
-    }
+		return fIsCanceled;
+	}
 
 	/**
 	 * Detach the progress monitor part from the given cancel component.
@@ -318,29 +318,29 @@ public class ProgressMonitorPart extends Composite implements
 		}
 	}
 
-    @Override
+	@Override
 	public void setCanceled(boolean b) {
-        fIsCanceled = b;
-    }
+		fIsCanceled = b;
+	}
 
-    @Override
+	@Override
 	public void setFont(Font font) {
-        super.setFont(font);
-        fLabel.setFont(font);
-        fProgressIndicator.setFont(font);
-    }
+		super.setFont(font);
+		fLabel.setFont(font);
+		fProgressIndicator.setFont(font);
+	}
 
-    @Override
+	@Override
 	public void setTaskName(String name) {
-        fTaskName = name;
+		fTaskName = name;
 		queueUpdateLabel();
-    }
+	}
 
-    @Override
+	@Override
 	public void subTask(String name) {
-        fSubTaskName = name;
+		fSubTaskName = name;
 		queueUpdateLabel();
-    }
+	}
 
 	/**
 	 * Enqueues a label update for asynchronous execution. The update is performed
@@ -352,10 +352,10 @@ public class ProgressMonitorPart extends Composite implements
 		throttledUpdate.throttledExec();
 	}
 
-    /**
-     * Updates the label with the current task and subtask names.
-     */
-    protected void updateLabel() {
+	/**
+	 * Updates the label with the current task and subtask names.
+	 */
+	protected void updateLabel() {
 		if (fLabel.isDisposed() || fLabel.isAutoDirection()) {
 			return;
 		}
@@ -370,49 +370,49 @@ public class ProgressMonitorPart extends Composite implements
 		fLabel.update();
 	}
 
-    /**
-     * Return the label for showing tasks
-     * @return String
-     */
-    private String taskLabel() {
-    	boolean hasTask= fTaskName != null && fTaskName.length() > 0;
-    	boolean hasSubtask= fSubTaskName != null && fSubTaskName.length() > 0;
+	/**
+	 * Return the label for showing tasks
+	 * @return String
+	 */
+	private String taskLabel() {
+		boolean hasTask= fTaskName != null && fTaskName.length() > 0;
+		boolean hasSubtask= fSubTaskName != null && fSubTaskName.length() > 0;
 
 		if (hasTask) {
 			if (hasSubtask)
 				return escapeMetaCharacters(JFaceResources.format("Set_SubTask", fTaskName, fSubTaskName));//$NON-NLS-1$
-   			return escapeMetaCharacters(fTaskName);
+				return escapeMetaCharacters(fTaskName);
 
-    	} else if (hasSubtask) {
-    		return escapeMetaCharacters(fSubTaskName);
+		} else if (hasSubtask) {
+			return escapeMetaCharacters(fSubTaskName);
 
-    	} else {
-    		return ""; //$NON-NLS-1$
-    	}
-    }
+		} else {
+			return ""; //$NON-NLS-1$
+		}
+	}
 
-    @Override
+	@Override
 	public void worked(int work) {
-        internalWorked(work);
-    }
+		internalWorked(work);
+	}
 
-    @Override
+	@Override
 	public void clearBlocked() {
-        blockedStatus = null;
+		blockedStatus = null;
 		queueUpdateLabel();
-    }
+	}
 
-    @Override
+	@Override
 	public void setBlocked(IStatus reason) {
-        blockedStatus = reason;
+		blockedStatus = reason;
 		queueUpdateLabel();
-    }
+	}
 
-   private void setCancelEnabled(boolean enabled) {
-    	if (fStopButton != null && !fStopButton.isDisposed()) {
-    		fStopButton.setEnabled(enabled);
-    		if (enabled)
-    			fToolBar.setFocus();
-    	}
-    }
+	private void setCancelEnabled(boolean enabled) {
+		if (fStopButton != null && !fStopButton.isDisposed()) {
+			fStopButton.setEnabled(enabled);
+			if (enabled)
+				fToolBar.setFocus();
+		}
+	}
 }

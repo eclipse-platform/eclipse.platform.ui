@@ -60,274 +60,274 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class WizardPage extends DialogPage implements IWizardPage {
 
-    /**
-     * This page's name.
-     */
-    private String name;
+	/**
+	 * This page's name.
+	 */
+	private String name;
 
-    /**
-     * The wizard to which this page belongs; <code>null</code>
-     * if this page has yet to be added to a wizard.
-     */
-    private IWizard wizard = null;
+	/**
+	 * The wizard to which this page belongs; <code>null</code>
+	 * if this page has yet to be added to a wizard.
+	 */
+	private IWizard wizard = null;
 
-    /**
-     * Indicates whether this page is complete.
-     */
-    private boolean isPageComplete = true;
+	/**
+	 * Indicates whether this page is complete.
+	 */
+	private boolean isPageComplete = true;
 
-    /**
-     * The page that was shown right before this page became visible;
-     * <code>null</code> if none.
-     */
-    private IWizardPage previousPage = null;
+	/**
+	 * The page that was shown right before this page became visible;
+	 * <code>null</code> if none.
+	 */
+	private IWizardPage previousPage = null;
 
-    /**
-     * Creates a new wizard page with the given name, and
-     * with no title or image.
-     *
-     * @param pageName the name of the page
-     */
-    protected WizardPage(String pageName) {
-        this(pageName, null, (ImageDescriptor) null);
-    }
+	/**
+	 * Creates a new wizard page with the given name, and
+	 * with no title or image.
+	 *
+	 * @param pageName the name of the page
+	 */
+	protected WizardPage(String pageName) {
+		this(pageName, null, (ImageDescriptor) null);
+	}
 
-    /**
-     * Creates a new wizard page with the given name, title, and image.
-     *
-     * @param pageName the name of the page
-     * @param title the title for this wizard page,
-     *   or <code>null</code> if none
-     * @param titleImage the image descriptor for the title of this wizard page,
-     *   or <code>null</code> if none
-     */
-    protected WizardPage(String pageName, String title,
-            ImageDescriptor titleImage) {
-        super(title, titleImage);
-        Assert.isNotNull(pageName); // page name must not be null
-        name = pageName;
-    }
+	/**
+	 * Creates a new wizard page with the given name, title, and image.
+	 *
+	 * @param pageName the name of the page
+	 * @param title the title for this wizard page,
+	 *   or <code>null</code> if none
+	 * @param titleImage the image descriptor for the title of this wizard page,
+	 *   or <code>null</code> if none
+	 */
+	protected WizardPage(String pageName, String title,
+			ImageDescriptor titleImage) {
+		super(title, titleImage);
+		Assert.isNotNull(pageName); // page name must not be null
+		name = pageName;
+	}
 
-    /**
-     * The <code>WizardPage</code> implementation of this <code>IWizardPage</code>
-     * method returns <code>true</code> if this page is complete (<code>isPageComplete</code>)
-     * and there is a next page to flip to. Subclasses may override (extend or reimplement).
-     *
-     * @see #getNextPage
-     * @see #isPageComplete()
-     */
-    @Override
+	/**
+	 * The <code>WizardPage</code> implementation of this <code>IWizardPage</code>
+	 * method returns <code>true</code> if this page is complete (<code>isPageComplete</code>)
+	 * and there is a next page to flip to. Subclasses may override (extend or reimplement).
+	 *
+	 * @see #getNextPage
+	 * @see #isPageComplete()
+	 */
+	@Override
 	public boolean canFlipToNextPage() {
-        return isPageComplete() && getNextPage() != null;
-    }
+		return isPageComplete() && getNextPage() != null;
+	}
 
-    /**
-     * Returns the wizard container for this wizard page.
-     *
-     * @return the wizard container, or <code>null</code> if this
-     *   wizard page has yet to be added to a wizard, or the
-     *   wizard has yet to be added to a container
-     */
-    protected IWizardContainer getContainer() {
-        if (wizard == null) {
+	/**
+	 * Returns the wizard container for this wizard page.
+	 *
+	 * @return the wizard container, or <code>null</code> if this
+	 *   wizard page has yet to be added to a wizard, or the
+	 *   wizard has yet to be added to a container
+	 */
+	protected IWizardContainer getContainer() {
+		if (wizard == null) {
 			return null;
 		}
-        return wizard.getContainer();
-    }
+		return wizard.getContainer();
+	}
 
-    /**
-     * Returns the dialog settings for this wizard page.
-     *
-     * @return the dialog settings, or <code>null</code> if none
-     */
-    protected IDialogSettings getDialogSettings() {
-        if (wizard == null) {
+	/**
+	 * Returns the dialog settings for this wizard page.
+	 *
+	 * @return the dialog settings, or <code>null</code> if none
+	 */
+	protected IDialogSettings getDialogSettings() {
+		if (wizard == null) {
 			return null;
 		}
-        return wizard.getDialogSettings();
-    }
+		return wizard.getDialogSettings();
+	}
 
-    @Override
+	@Override
 	public Image getImage() {
-        Image result = super.getImage();
+		Image result = super.getImage();
 
-        if (result == null && wizard != null) {
+		if (result == null && wizard != null) {
 			return wizard.getDefaultPageImage();
 		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IWizardPage getNextPage() {
-        if (wizard == null) {
+		if (wizard == null) {
 			return null;
 		}
-        return wizard.getNextPage(this);
-    }
+		return wizard.getNextPage(this);
+	}
 
-    @Override
+	@Override
 	public IWizardPage getPreviousPage() {
-        if (previousPage != null) {
+		if (previousPage != null) {
 			return previousPage;
 		}
 
-        if (wizard == null) {
+		if (wizard == null) {
 			return null;
 		}
 
-        return wizard.getPreviousPage(this);
-    }
+		return wizard.getPreviousPage(this);
+	}
 
-    /**
-     * The <code>WizardPage</code> implementation of this method declared on
-     * <code>DialogPage</code> returns the shell of the container.
-     * The advantage of this implementation is that the shell is accessable
-     * once the container is created even though this page's control may not
-     * yet be created.
-     */
-    @Override
+	/**
+	 * The <code>WizardPage</code> implementation of this method declared on
+	 * <code>DialogPage</code> returns the shell of the container.
+	 * The advantage of this implementation is that the shell is accessable
+	 * once the container is created even though this page's control may not
+	 * yet be created.
+	 */
+	@Override
 	public Shell getShell() {
 
-        IWizardContainer container = getContainer();
-        if (container == null) {
+		IWizardContainer container = getContainer();
+		if (container == null) {
 			return null;
 		}
 
-        // Ask the wizard since our contents may not have been created.
-        return container.getShell();
-    }
+		// Ask the wizard since our contents may not have been created.
+		return container.getShell();
+	}
 
-    @Override
+	@Override
 	public IWizard getWizard() {
-        return wizard;
-    }
+		return wizard;
+	}
 
-    /**
-     * Returns whether this page is the current one in the wizard's container.
-     *
-     * @return <code>true</code> if the page is active,
-     *  and <code>false</code> otherwise
-     */
-    protected boolean isCurrentPage() {
-        return (getContainer() != null && this == getContainer()
-                .getCurrentPage());
-    }
+	/**
+	 * Returns whether this page is the current one in the wizard's container.
+	 *
+	 * @return <code>true</code> if the page is active,
+	 *  and <code>false</code> otherwise
+	 */
+	protected boolean isCurrentPage() {
+		return (getContainer() != null && this == getContainer()
+				.getCurrentPage());
+	}
 
-    /**
-     * The <code>WizardPage</code> implementation of this <code>IWizard</code> method
-     * returns the value of an internal state variable set by
-     * <code>setPageComplete</code>. Subclasses may extend.
-     */
-    @Override
+	/**
+	 * The <code>WizardPage</code> implementation of this <code>IWizard</code> method
+	 * returns the value of an internal state variable set by
+	 * <code>setPageComplete</code>. Subclasses may extend.
+	 */
+	@Override
 	public boolean isPageComplete() {
-        return isPageComplete;
-    }
+		return isPageComplete;
+	}
 
-    /**
-     * The <code>WizardPage</code> implementation of this <code>IDialogPage</code>
-     * method extends the <code>DialogPage</code> implementation to update
-     * the wizard container title bar. Subclasses may extend.
-     */
-    @Override
+	/**
+	 * The <code>WizardPage</code> implementation of this <code>IDialogPage</code>
+	 * method extends the <code>DialogPage</code> implementation to update
+	 * the wizard container title bar. Subclasses may extend.
+	 */
+	@Override
 	public void setDescription(String description) {
-        super.setDescription(description);
-        if (isCurrentPage()) {
+		super.setDescription(description);
+		if (isCurrentPage()) {
 			getContainer().updateTitleBar();
 		}
-    }
+	}
 
-    /**
-     * The <code>WizardPage</code> implementation of this method
-     * declared on <code>DialogPage</code> updates the container
-     * if this is the current page.
-     */
-    @Override
+	/**
+	 * The <code>WizardPage</code> implementation of this method
+	 * declared on <code>DialogPage</code> updates the container
+	 * if this is the current page.
+	 */
+	@Override
 	public void setErrorMessage(String newMessage) {
-        super.setErrorMessage(newMessage);
-        if (isCurrentPage()) {
-            getContainer().updateMessage();
-        }
-    }
-
-    /**
-     * The <code>WizardPage</code> implementation of this method
-     * declared on <code>DialogPage</code> updates the container
-     * if this page is the current page.
-     */
-    @Override
-	public void setImageDescriptor(ImageDescriptor image) {
-        super.setImageDescriptor(image);
-        if (isCurrentPage()) {
-			getContainer().updateTitleBar();
-		}
-    }
-
-    /**
-     * The <code>WizardPage</code> implementation of this method
-     * declared on <code>DialogPage</code> updates the container
-     * if this is the current page.
-     */
-    @Override
-	public void setMessage(String newMessage, int newType) {
-        super.setMessage(newMessage, newType);
-        if (isCurrentPage()) {
+		super.setErrorMessage(newMessage);
+		if (isCurrentPage()) {
 			getContainer().updateMessage();
 		}
-    }
+	}
 
-    /**
-     * Sets whether this page is complete.
-     * <p>
-     * This information is typically used by the wizard to decide
-     * when it is okay to move on to the next page or finish up.
-     * </p>
-     *
-     * @param complete <code>true</code> if this page is complete, and
-     *   and <code>false</code> otherwise
-     * @see #isPageComplete()
-     */
-    public void setPageComplete(boolean complete) {
-        isPageComplete = complete;
-        if (isCurrentPage()) {
+	/**
+	 * The <code>WizardPage</code> implementation of this method
+	 * declared on <code>DialogPage</code> updates the container
+	 * if this page is the current page.
+	 */
+	@Override
+	public void setImageDescriptor(ImageDescriptor image) {
+		super.setImageDescriptor(image);
+		if (isCurrentPage()) {
+			getContainer().updateTitleBar();
+		}
+	}
+
+	/**
+	 * The <code>WizardPage</code> implementation of this method
+	 * declared on <code>DialogPage</code> updates the container
+	 * if this is the current page.
+	 */
+	@Override
+	public void setMessage(String newMessage, int newType) {
+		super.setMessage(newMessage, newType);
+		if (isCurrentPage()) {
+			getContainer().updateMessage();
+		}
+	}
+
+	/**
+	 * Sets whether this page is complete.
+	 * <p>
+	 * This information is typically used by the wizard to decide
+	 * when it is okay to move on to the next page or finish up.
+	 * </p>
+	 *
+	 * @param complete <code>true</code> if this page is complete, and
+	 *   and <code>false</code> otherwise
+	 * @see #isPageComplete()
+	 */
+	public void setPageComplete(boolean complete) {
+		isPageComplete = complete;
+		if (isCurrentPage()) {
 			getContainer().updateButtons();
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void setPreviousPage(IWizardPage page) {
-        previousPage = page;
-    }
+		previousPage = page;
+	}
 
-    /**
-     * The <code>WizardPage</code> implementation of this <code>IDialogPage</code>
-     * method extends the <code>DialogPage</code> implementation to update
-     * the wizard container title bar. Subclasses may extend.
-     */
-    @Override
+	/**
+	 * The <code>WizardPage</code> implementation of this <code>IDialogPage</code>
+	 * method extends the <code>DialogPage</code> implementation to update
+	 * the wizard container title bar. Subclasses may extend.
+	 */
+	@Override
 	public void setTitle(String title) {
-        super.setTitle(title);
-        if (isCurrentPage()) {
-            getContainer().updateTitleBar();
-        }
-    }
+		super.setTitle(title);
+		if (isCurrentPage()) {
+			getContainer().updateTitleBar();
+		}
+	}
 
-    @Override
+	@Override
 	public void setWizard(IWizard newWizard) {
-        wizard = newWizard;
-    }
+		wizard = newWizard;
+	}
 
-    /**
-     * Returns a printable representation of this wizard page suitable
-     * only for debug purposes.
-     */
-    @Override
+	/**
+	 * Returns a printable representation of this wizard page suitable
+	 * only for debug purposes.
+	 */
+	@Override
 	public String toString() {
-        return name;
-    }
+		return name;
+	}
 }

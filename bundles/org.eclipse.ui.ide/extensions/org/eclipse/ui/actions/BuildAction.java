@@ -60,47 +60,47 @@ import org.eclipse.ui.progress.IProgressConstants2;
  */
 public class BuildAction extends WorkspaceAction {
 
-    /**
-     * The id of an incremental build action.
-     */
-    public static final String ID_BUILD = PlatformUI.PLUGIN_ID + ".BuildAction";//$NON-NLS-1$
+	/**
+	 * The id of an incremental build action.
+	 */
+	public static final String ID_BUILD = PlatformUI.PLUGIN_ID + ".BuildAction";//$NON-NLS-1$
 
-    /**
-     * The id of a rebuild all action.
-     */
+	/**
+	 * The id of a rebuild all action.
+	 */
 	public static final String ID_REBUILD_ALL = PlatformUI.PLUGIN_ID + ".RebuildAllAction";//$NON-NLS-1$
 
-    private int buildType;
+	private int buildType;
 
-    /**
-     * The list of IProjects to build (computed lazily). This is computed from the
-     * list of project build configurations that are to be built.
-     */
+	/**
+	 * The list of IProjects to build (computed lazily). This is computed from the
+	 * list of project build configurations that are to be built.
+	 */
 	private List<IProject> projectsToBuild;
 
-    /**
-     * The list of {@link IBuildConfiguration} to build (computed lazily).
-     */
+	/**
+	 * The list of {@link IBuildConfiguration} to build (computed lazily).
+	 */
 	private List<IBuildConfiguration> projectConfigsToBuild;
 
-    /**
-     * Creates a new action of the appropriate type. The action id is
-     * <code>ID_BUILD</code> for incremental builds and <code>ID_REBUILD_ALL</code>
-     * for full builds.
-     *
-     * @param shell the shell for any dialogs
-     * @param type the type of build; one of
-     *  <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or
-     *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
-     * @deprecated See {@link #BuildAction(IShellProvider, int)}
-     */
-    @Deprecated
+	/**
+	 * Creates a new action of the appropriate type. The action id is
+	 * <code>ID_BUILD</code> for incremental builds and <code>ID_REBUILD_ALL</code>
+	 * for full builds.
+	 *
+	 * @param shell the shell for any dialogs
+	 * @param type the type of build; one of
+	 *  <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or
+	 *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
+	 * @deprecated See {@link #BuildAction(IShellProvider, int)}
+	 */
+	@Deprecated
 	public BuildAction(Shell shell, int type) {
-        super(shell, "");//$NON-NLS-1$
-        initAction(type);
-    }
+		super(shell, "");//$NON-NLS-1$
+		initAction(type);
+	}
 
-    /**
+	/**
 	 * Creates a new action of the appropriate type. The action id is
 	 * <code>ID_BUILD</code> for incremental builds and
 	 * <code>ID_REBUILD_ALL</code> for full builds.
@@ -113,18 +113,18 @@ public class BuildAction extends WorkspaceAction {
 	 *            <code>IncrementalProjectBuilder.FULL_BUILD</code>
 	 * @since 3.4
 	 */
-    public BuildAction(IShellProvider provider, int type) {
-    	super(provider, ""); //$NON-NLS-1$
-    	initAction(type);
-    }
+	public BuildAction(IShellProvider provider, int type) {
+		super(provider, ""); //$NON-NLS-1$
+		initAction(type);
+	}
 
 	/**
 	 * @param type
 	 */
 	private void initAction(int type) {
 		if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
-            setText(IDEWorkbenchMessages.BuildAction_text);
-            setToolTipText(IDEWorkbenchMessages.BuildAction_toolTip);
+			setText(IDEWorkbenchMessages.BuildAction_text);
+			setToolTipText(IDEWorkbenchMessages.BuildAction_toolTip);
 			setId(ID_BUILD);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.INCREMENTAL_BUILD_ACTION);
 		} else {
@@ -132,32 +132,32 @@ public class BuildAction extends WorkspaceAction {
 			setToolTipText(IDEWorkbenchMessages.RebuildAction_tooltip);
 			setId(ID_REBUILD_ALL);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.FULL_BUILD_ACTION);
-        }
+		}
 
-        this.buildType = type;
+		this.buildType = type;
 	}
 
-    @Override
+	@Override
 	protected List<? extends IResource> getActionResources() {
-        return getProjectsToBuild();
-    }
+		return getProjectsToBuild();
+	}
 
-    @Override
+	@Override
 	protected String getOperationMessage() {
 		if (getProjectsToBuild().size() > 1)
 			return IDEWorkbenchMessages.BuildAction_operationMessage_plural;
-        return IDEWorkbenchMessages.BuildAction_operationMessage;
-    }
+		return IDEWorkbenchMessages.BuildAction_operationMessage;
+	}
 
-    @Override
+	@Override
 	protected String getProblemsMessage() {
-        return IDEWorkbenchMessages.BuildAction_problemMessage;
-    }
+		return IDEWorkbenchMessages.BuildAction_problemMessage;
+	}
 
-    @Override
+	@Override
 	protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.BuildAction_problemTitle;
-    }
+		return IDEWorkbenchMessages.BuildAction_problemTitle;
+	}
 
 	/**
 	 * Returns the projects to build.
@@ -200,32 +200,32 @@ public class BuildAction extends WorkspaceAction {
 		return projectConfigsToBuild;
 	}
 
-    /**
-     * Returns whether there are builders configured on the given project.
-     *
-     * @return <code>true</code> if it has builders,
-     *   <code>false</code> if not, or if this couldn't be determined
-     */
-    boolean hasBuilder(IProject project) {
-    	if (!project.isAccessible())
-    		return false;
-        try {
-            ICommand[] commands = project.getDescription().getBuildSpec();
-            if (commands.length > 0) {
-                return true;
-            }
-        } catch (CoreException e) {
-            // this method is called when selection changes, so
-            // just fall through if it fails.
-            // this shouldn't happen anyway, since the list of selected resources
-            // has already been checked for accessibility before this is called
-        }
-        return false;
-    }
+	/**
+	 * Returns whether there are builders configured on the given project.
+	 *
+	 * @return <code>true</code> if it has builders,
+	 *   <code>false</code> if not, or if this couldn't be determined
+	 */
+	boolean hasBuilder(IProject project) {
+		if (!project.isAccessible())
+			return false;
+		try {
+			ICommand[] commands = project.getDescription().getBuildSpec();
+			if (commands.length > 0) {
+				return true;
+			}
+		} catch (CoreException e) {
+			// this method is called when selection changes, so
+			// just fall through if it fails.
+			// this shouldn't happen anyway, since the list of selected resources
+			// has already been checked for accessibility before this is called
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isEnabled() {
-    	//update enablement based on active window and part
+		//update enablement based on active window and part
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			selectionChanged(new StructuredSelection(BuildUtilities.findSelectedProjects(window)));
@@ -233,37 +233,37 @@ public class BuildAction extends WorkspaceAction {
 		return super.isEnabled();
 	}
 
-    /**
-     * Returns whether the user's preference is set to automatically save modified
-     * resources before a manual build is done.
-     *
-     * @return <code>true</code> if Save All Before Build is enabled
-     */
-    public static boolean isSaveAllSet() {
+	/**
+	 * Returns whether the user's preference is set to automatically save modified
+	 * resources before a manual build is done.
+	 *
+	 * @return <code>true</code> if Save All Before Build is enabled
+	 */
+	public static boolean isSaveAllSet() {
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-        return store.getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD);
-    }
+		return store.getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD);
+	}
 
 	/*
 	 * This override allows the user to save the contents of selected open
 	 * editors so that the updated contents will be used for building. The build
 	 * is run as a background job.
 	 */
-    @Override
+	@Override
 	public void run() {
 		final List<?> buildConfigurations = getBuildConfigurationsToBuild();
 		if (buildConfigurations == null || buildConfigurations.isEmpty()) {
 			return;
 		}
 
-	    // Save all resources prior to doing build
-        BuildUtilities.saveEditors(getProjectsToBuild());
-        runInBackground(null, ResourcesPlugin.FAMILY_MANUAL_BUILD);
-    }
+		// Save all resources prior to doing build
+		BuildUtilities.saveEditors(getProjectsToBuild());
+		runInBackground(null, ResourcesPlugin.FAMILY_MANUAL_BUILD);
+	}
 
-    @Override
+	@Override
 	public void runInBackground(ISchedulingRule rule, Object[] jobFamilies) {
-        // Get immutable copies of the build settings
+		// Get immutable copies of the build settings
 		final int kind = buildType;
 		List<? extends IBuildConfiguration> buildConfigurations = getBuildConfigurationsToBuild();
 		if (buildConfigurations == null || buildConfigurations.isEmpty()) {
@@ -299,22 +299,22 @@ public class BuildAction extends WorkspaceAction {
 		job.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
 		job.setUser(true);
 		job.schedule();
-    }
+	}
 
-    @Override
+	@Override
 	protected boolean shouldPerformResourcePruning() {
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * The <code>BuildAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method ensures that this action is
-     * enabled only if all of the selected resources have buildable projects.
-     */
-    @Override
+	/**
+	 * The <code>BuildAction</code> implementation of this
+	 * <code>SelectionListenerAction</code> method ensures that this action is
+	 * enabled only if all of the selected resources have buildable projects.
+	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
-        projectConfigsToBuild = null;
-        projectsToBuild = null;
+		projectConfigsToBuild = null;
+		projectsToBuild = null;
 		IProject[] projects = getProjectsToBuild().toArray(new IProject[0]);
 		if (projects.length > 1) {
 			if (IDEWorkbenchMessages.BuildAction_text.equals(getText())) {
@@ -325,6 +325,6 @@ public class BuildAction extends WorkspaceAction {
 				setText(IDEWorkbenchMessages.BuildAction_text);
 			}
 		}
-        return BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-    }
+		return BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+	}
 }

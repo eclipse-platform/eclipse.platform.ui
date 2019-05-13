@@ -62,7 +62,7 @@ public class Snippet065TableViewerReplacingElements {
 				if (e.character == 'q') {
 					input.set(0, "root " + random.nextInt());
 				}
-		    }
+			}
 		});
 	}
 

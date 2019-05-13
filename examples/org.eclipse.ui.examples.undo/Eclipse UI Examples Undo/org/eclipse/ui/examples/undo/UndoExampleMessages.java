@@ -49,7 +49,7 @@ public class UndoExampleMessages extends NLS {
 	public static String BoxView_Undo;
 	public static String BoxView_Redo;
 
-    static {
+	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, UndoExampleMessages.class);
 	}

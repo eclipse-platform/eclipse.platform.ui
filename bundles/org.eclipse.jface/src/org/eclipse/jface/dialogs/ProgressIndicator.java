@@ -27,124 +27,124 @@ import org.eclipse.swt.widgets.ProgressBar;
  * advance and no <code>worked</code> method needs to be called.
  */
 public class ProgressIndicator extends Composite {
-    private static final int PROGRESS_MAX = 1000; // value to use for max in
+	private static final int PROGRESS_MAX = 1000; // value to use for max in
 
-    // progress bar
-    private boolean animated = true;
+	// progress bar
+	private boolean animated = true;
 
-    private StackLayout layout;
+	private StackLayout layout;
 
-    private ProgressBar determinateProgressBar;
+	private ProgressBar determinateProgressBar;
 
-    private ProgressBar indeterminateProgressBar;
+	private ProgressBar indeterminateProgressBar;
 
-    private double totalWork;
+	private double totalWork;
 
-    private double sumWorked;
+	private double sumWorked;
 
-    /**
-     * Create a ProgressIndicator as a child under the given parent.
-     *
-     * @param parent
-     *            The widgets parent
-     */
-    public ProgressIndicator(Composite parent) {
-        this(parent, SWT.NONE);
-    }
+	/**
+	 * Create a ProgressIndicator as a child under the given parent.
+	 *
+	 * @param parent
+	 *            The widgets parent
+	 */
+	public ProgressIndicator(Composite parent) {
+		this(parent, SWT.NONE);
+	}
 
-    /**
-     * Create a ProgressIndicator as a child under the given parent.
-     *
-     * @param parent
-     *            The widgets parent
-     * @param style the SWT style constants for progress monitors created
-     * 	by the receiver.
-     * @since 3.4
-     */
-    public ProgressIndicator(Composite parent, int style) {
+	/**
+	 * Create a ProgressIndicator as a child under the given parent.
+	 *
+	 * @param parent
+	 *            The widgets parent
+	 * @param style the SWT style constants for progress monitors created
+	 * 	by the receiver.
+	 * @since 3.4
+	 */
+	public ProgressIndicator(Composite parent, int style) {
 		super(parent, SWT.NONE);
 
-    	 // Enforce horizontal only if vertical isn't set
-        if ((style & SWT.VERTICAL) == 0)
-            style |= SWT.HORIZONTAL;
+		// Enforce horizontal only if vertical isn't set
+		if ((style & SWT.VERTICAL) == 0)
+			style |= SWT.HORIZONTAL;
 
-        determinateProgressBar = new ProgressBar(this, style);
-        indeterminateProgressBar = new ProgressBar(this, style
-                | SWT.INDETERMINATE);
-        layout = new StackLayout();
-        setLayout(layout);
-    }
+		determinateProgressBar = new ProgressBar(this, style);
+		indeterminateProgressBar = new ProgressBar(this, style
+				| SWT.INDETERMINATE);
+		layout = new StackLayout();
+		setLayout(layout);
+	}
 
-    /**
-     * Initialize the progress bar to be animated.
-     */
-    public void beginAnimatedTask() {
-        done();
-        layout.topControl = indeterminateProgressBar;
-        requestLayout();
-        animated = true;
-    }
+	/**
+	 * Initialize the progress bar to be animated.
+	 */
+	public void beginAnimatedTask() {
+		done();
+		layout.topControl = indeterminateProgressBar;
+		requestLayout();
+		animated = true;
+	}
 
-    /**
-     * Initialize the progress bar.
-     *
-     * @param max
-     *            The maximum value.
-     */
-    public void beginTask(int max) {
-        done();
-        this.totalWork = max;
-        this.sumWorked = 0;
-        determinateProgressBar.setMinimum(0);
-        determinateProgressBar.setMaximum(PROGRESS_MAX);
-        determinateProgressBar.setSelection(0);
-        layout.topControl = determinateProgressBar;
-        requestLayout();
-        animated = false;
-    }
+	/**
+	 * Initialize the progress bar.
+	 *
+	 * @param max
+	 *            The maximum value.
+	 */
+	public void beginTask(int max) {
+		done();
+		this.totalWork = max;
+		this.sumWorked = 0;
+		determinateProgressBar.setMinimum(0);
+		determinateProgressBar.setMaximum(PROGRESS_MAX);
+		determinateProgressBar.setSelection(0);
+		layout.topControl = determinateProgressBar;
+		requestLayout();
+		animated = false;
+	}
 
-    /**
-     * Progress is done.
-     */
-    public void done() {
-        if (!animated) {
-            determinateProgressBar.setMinimum(0);
-            determinateProgressBar.setMaximum(0);
-            determinateProgressBar.setSelection(0);
-        }
-        layout.topControl = null;
-        requestLayout();
-    }
+	/**
+	 * Progress is done.
+	 */
+	public void done() {
+		if (!animated) {
+			determinateProgressBar.setMinimum(0);
+			determinateProgressBar.setMaximum(0);
+			determinateProgressBar.setSelection(0);
+		}
+		layout.topControl = null;
+		requestLayout();
+	}
 
-    /**
-     * Moves the progress indicator to the end.
-     */
-    public void sendRemainingWork() {
-        worked(totalWork - sumWorked);
-    }
+	/**
+	 * Moves the progress indicator to the end.
+	 */
+	public void sendRemainingWork() {
+		worked(totalWork - sumWorked);
+	}
 
-    /**
-     * Moves the progress indicator by the given amount of work units
-     * @param work the amount of work to increment by.
-     */
-    public void worked(double work) {
-        if (work == 0 || animated) {
-            return;
-        }
-        sumWorked += work;
-        if (sumWorked > totalWork) {
-            sumWorked = totalWork;
-        }
-        if (sumWorked < 0) {
-            sumWorked = 0;
-        }
-        int value = (int) (sumWorked / totalWork * PROGRESS_MAX);
-        if (determinateProgressBar.getSelection() < value) {
-            determinateProgressBar.setSelection(value);
-        }
-    }
+	/**
+	 * Moves the progress indicator by the given amount of work units
+	 * @param work the amount of work to increment by.
+	 */
+	public void worked(double work) {
+		if (work == 0 || animated) {
+			return;
+		}
+		sumWorked += work;
+		if (sumWorked > totalWork) {
+			sumWorked = totalWork;
+		}
+		if (sumWorked < 0) {
+			sumWorked = 0;
+		}
+		int value = (int) (sumWorked / totalWork * PROGRESS_MAX);
+		if (determinateProgressBar.getSelection() < value) {
+			determinateProgressBar.setSelection(value);
+		}
+	}
 
-    /**
+	/**
 	 * Show the receiver as showing an error.
 	 * @since 3.4
 	 */

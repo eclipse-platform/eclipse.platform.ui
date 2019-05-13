@@ -36,132 +36,132 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class StringButtonFieldEditor extends StringFieldEditor {
 
-    /**
-     * The change button, or <code>null</code> if none
-     * (before creation and after disposal).
-     */
-    private Button changeButton;
+	/**
+	 * The change button, or <code>null</code> if none
+	 * (before creation and after disposal).
+	 */
+	private Button changeButton;
 
-    /**
-     * The text for the change button, or <code>null</code> if missing.
-     */
-    private String changeButtonText;
+	/**
+	 * The text for the change button, or <code>null</code> if missing.
+	 */
+	private String changeButtonText;
 
-    /**
-     * Creates a new string button field editor
-     */
-    protected StringButtonFieldEditor() {
-    }
+	/**
+	 * Creates a new string button field editor
+	 */
+	protected StringButtonFieldEditor() {
+	}
 
-    /**
-     * Creates a string button field editor.
-     *
-     * @param name the name of the preference this field editor works on
-     * @param labelText the label text of the field editor
-     * @param parent the parent of the field editor's control
-     */
-    protected StringButtonFieldEditor(String name, String labelText,
-            Composite parent) {
-        init(name, labelText);
-        createControl(parent);
-    }
+	/**
+	 * Creates a string button field editor.
+	 *
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param parent the parent of the field editor's control
+	 */
+	protected StringButtonFieldEditor(String name, String labelText,
+			Composite parent) {
+		init(name, labelText);
+		createControl(parent);
+	}
 
-    @Override
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
-        ((GridData) getTextControl().getLayoutData()).horizontalSpan = numColumns - 2;
-    }
+		((GridData) getTextControl().getLayoutData()).horizontalSpan = numColumns - 2;
+	}
 
-    /**
-     * Notifies that this field editor's change button has been pressed.
-     * <p>
-     * Subclasses must implement this method to provide a corresponding
-     * new string for the text field. If the returned value is <code>null</code>,
-     * the currently displayed value remains.
-     * </p>
-     *
-     * @return the new string to display, or <code>null</code> to leave the
-     *  old string showing
-     */
-    protected abstract String changePressed();
+	/**
+	 * Notifies that this field editor's change button has been pressed.
+	 * <p>
+	 * Subclasses must implement this method to provide a corresponding
+	 * new string for the text field. If the returned value is <code>null</code>,
+	 * the currently displayed value remains.
+	 * </p>
+	 *
+	 * @return the new string to display, or <code>null</code> to leave the
+	 *  old string showing
+	 */
+	protected abstract String changePressed();
 
-    @Override
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
-        super.doFillIntoGrid(parent, numColumns - 1);
-        changeButton = getChangeControl(parent);
-        GridData gd = new GridData();
-        gd.horizontalAlignment = GridData.FILL;
-        int widthHint = convertHorizontalDLUsToPixels(changeButton,
-                IDialogConstants.BUTTON_WIDTH);
-        gd.widthHint = Math.max(widthHint, changeButton.computeSize(
-                SWT.DEFAULT, SWT.DEFAULT, true).x);
-        changeButton.setLayoutData(gd);
-    }
+		super.doFillIntoGrid(parent, numColumns - 1);
+		changeButton = getChangeControl(parent);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.FILL;
+		int widthHint = convertHorizontalDLUsToPixels(changeButton,
+				IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint = Math.max(widthHint, changeButton.computeSize(
+				SWT.DEFAULT, SWT.DEFAULT, true).x);
+		changeButton.setLayoutData(gd);
+	}
 
-    /**
-     * Get the change control. Create it in parent if required.
-     * @param parent
-     * @return Button
-     */
-    protected Button getChangeControl(Composite parent) {
-        if (changeButton == null) {
-            changeButton = new Button(parent, SWT.PUSH);
-            if (changeButtonText == null) {
+	/**
+	 * Get the change control. Create it in parent if required.
+	 * @param parent
+	 * @return Button
+	 */
+	protected Button getChangeControl(Composite parent) {
+		if (changeButton == null) {
+			changeButton = new Button(parent, SWT.PUSH);
+			if (changeButtonText == null) {
 				changeButtonText = JFaceResources.getString("openChange"); //$NON-NLS-1$
 			}
-            changeButton.setText(changeButtonText);
-            changeButton.setFont(parent.getFont());
-            changeButton.addSelectionListener(widgetSelectedAdapter(evt -> {
-			    String newValue = changePressed();
-			    if (newValue != null) {
-			        setStringValue(newValue);
-			    }
+			changeButton.setText(changeButtonText);
+			changeButton.setFont(parent.getFont());
+			changeButton.addSelectionListener(widgetSelectedAdapter(evt -> {
+				String newValue = changePressed();
+				if (newValue != null) {
+					setStringValue(newValue);
+				}
 			}));
-            changeButton.addDisposeListener(event -> changeButton = null);
-        } else {
-            checkParent(changeButton, parent);
-        }
-        return changeButton;
-    }
+			changeButton.addDisposeListener(event -> changeButton = null);
+		} else {
+			checkParent(changeButton, parent);
+		}
+		return changeButton;
+	}
 
-    @Override
+	@Override
 	public int getNumberOfControls() {
-        return 3;
-    }
+		return 3;
+	}
 
-    /**
-     * Returns this field editor's shell.
-     *
-     * @return the shell
-     */
-    protected Shell getShell() {
-        if (changeButton == null) {
+	/**
+	 * Returns this field editor's shell.
+	 *
+	 * @return the shell
+	 */
+	protected Shell getShell() {
+		if (changeButton == null) {
 			return null;
 		}
-        return changeButton.getShell();
-    }
+		return changeButton.getShell();
+	}
 
-    /**
-     * Sets the text of the change button.
-     *
-     * @param text the new text
-     */
-    public void setChangeButtonText(String text) {
-        Assert.isNotNull(text);
-        changeButtonText = text;
-        if (changeButton != null) {
+	/**
+	 * Sets the text of the change button.
+	 *
+	 * @param text the new text
+	 */
+	public void setChangeButtonText(String text) {
+		Assert.isNotNull(text);
+		changeButtonText = text;
+		if (changeButton != null) {
 			changeButton.setText(text);
 			Point prefSize = changeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			GridData data = (GridData)changeButton.getLayoutData();
 			data.widthHint = Math.max(SWT.DEFAULT, prefSize.x);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
-        super.setEnabled(enabled, parent);
-        if (changeButton != null) {
-            changeButton.setEnabled(enabled);
-        }
-    }
+		super.setEnabled(enabled, parent);
+		if (changeButton != null) {
+			changeButton.setEnabled(enabled);
+		}
+	}
 
 }

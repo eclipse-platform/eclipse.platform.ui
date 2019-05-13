@@ -41,288 +41,288 @@ import org.eclipse.swt.widgets.Shell;
  * or accessibility.
  */
 public class VerifyDialog extends TitleAreaDialog {
-    private int SIZING_WIDTH = 400;
+	private int SIZING_WIDTH = 400;
 
-    private static int TEST_TYPE;
+	private static int TEST_TYPE;
 
-    public static final int TEST_SIZING = 0;
+	public static final int TEST_SIZING = 0;
 
-    public static final int TEST_FOCUS = 1;
+	public static final int TEST_FOCUS = 1;
 
-    public static final int TEST_ACCESS = 2;
+	public static final int TEST_ACCESS = 2;
 
-    private IDialogTestPass _dialogTests[] = new IDialogTestPass[3];
+	private IDialogTestPass _dialogTests[] = new IDialogTestPass[3];
 
-    private Dialog _testDialog; //the dialog to test
+	private Dialog _testDialog; //the dialog to test
 
-    private Point _testDialogSize;
+	private Point _testDialogSize;
 
-    private Label _queryLabel;
+	private Label _queryLabel;
 
-    private Button _yesButton;
+	private Button _yesButton;
 
-    private Button _checkList[];
+	private Button _checkList[];
 
-    private String _failureText;
+	private String _failureText;
 
-    /*
-     * Create an instance of the verification dialog.
-     */
-    public VerifyDialog(Shell parent) {
-        super(parent);
-        if (!(TEST_TYPE <= 2) && !(TEST_TYPE >= 0)) {
-            TEST_TYPE = TEST_SIZING;
-        }
-        _failureText = "";
-        _dialogTests[0] = new SizingTestPass();
-        _dialogTests[1] = new FocusTestPass();
-        _dialogTests[2] = new AccessibilityTestPass();
-    }
+	/*
+	 * Create an instance of the verification dialog.
+	 */
+	public VerifyDialog(Shell parent) {
+		super(parent);
+		if (!(TEST_TYPE <= 2) && !(TEST_TYPE >= 0)) {
+			TEST_TYPE = TEST_SIZING;
+		}
+		_failureText = "";
+		_dialogTests[0] = new SizingTestPass();
+		_dialogTests[1] = new FocusTestPass();
+		_dialogTests[2] = new AccessibilityTestPass();
+	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText("Dialog Verification");
-        setShellStyle(SWT.NONE);
-    }
+		super.configureShell(newShell);
+		newShell.setText("Dialog Verification");
+		setShellStyle(SWT.NONE);
+	}
 
-    @Override
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-        _yesButton = createButton(parent, IDialogConstants.YES_ID,
-                IDialogConstants.YES_LABEL, true);
-        createButton(parent, IDialogConstants.NO_ID,
-                IDialogConstants.NO_LABEL, false);
-    }
+		_yesButton = createButton(parent, IDialogConstants.YES_ID,
+				IDialogConstants.YES_LABEL, true);
+		createButton(parent, IDialogConstants.NO_ID,
+				IDialogConstants.NO_LABEL, false);
+	}
 
-    @Override
+	@Override
 	public void buttonPressed(int buttonId) {
-        if (IDialogConstants.YES_ID == buttonId) {
-            setReturnCode(IDialogConstants.YES_ID);
+		if (IDialogConstants.YES_ID == buttonId) {
+			setReturnCode(IDialogConstants.YES_ID);
 			if (_testDialog != null && _testDialog.getShell() != null) {
-                _testDialog.close();
-            }
-            close();
-        } else if (IDialogConstants.NO_ID == buttonId) {
-            handleFailure();
-        }
-    }
+				_testDialog.close();
+			}
+			close();
+		} else if (IDialogConstants.NO_ID == buttonId) {
+			handleFailure();
+		}
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        // top level composite
-        Composite parentComposite = (Composite) super.createDialogArea(parent);
+		// top level composite
+		Composite parentComposite = (Composite) super.createDialogArea(parent);
 
-        // create a composite with standard margins and spacing
-        Composite composite = new Composite(parentComposite, SWT.NONE);
-        composite.setSize(SIZING_WIDTH, SWT.DEFAULT);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		// create a composite with standard margins and spacing
+		Composite composite = new Composite(parentComposite, SWT.NONE);
+		composite.setSize(SIZING_WIDTH, SWT.DEFAULT);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        createTestSelectionGroup(composite);
-        createCheckListGroup(composite);
+		createTestSelectionGroup(composite);
+		createCheckListGroup(composite);
 
-        _queryLabel = new Label(composite, SWT.NONE);
-        _queryLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		_queryLabel = new Label(composite, SWT.NONE);
+		_queryLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        initializeTest();
-        return composite;
-    }
+		initializeTest();
+		return composite;
+	}
 
-    /*
-     * Group for selecting type of test.
-     */
-    private void createTestSelectionGroup(Composite parent) {
-        Group group = new Group(parent, SWT.SHADOW_NONE);
-        group.setText("Testing:");
-        group.setLayout(new GridLayout());
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        group.setLayoutData(data);
+	/*
+	 * Group for selecting type of test.
+	 */
+	private void createTestSelectionGroup(Composite parent) {
+		Group group = new Group(parent, SWT.SHADOW_NONE);
+		group.setText("Testing:");
+		group.setLayout(new GridLayout());
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(data);
 
 		for (IDialogTestPass dialogTest : _dialogTests) {
-            Button radio = new Button(group, SWT.RADIO);
+			Button radio = new Button(group, SWT.RADIO);
 			radio.setText(dialogTest.label());
 			final int testID = dialogTest.getID();
-            radio.addSelectionListener(new SelectionAdapter() {
-                @Override
+			radio.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
-                    TEST_TYPE = testID;
-                    initializeTest();
-                    _yesButton.setEnabled(true);
-                }
-            });
+					TEST_TYPE = testID;
+					initializeTest();
+					_yesButton.setEnabled(true);
+				}
+			});
 			if (TEST_TYPE == dialogTest.getID()) {
-                radio.setSelection(true);
-            }
-        }
-    }
+				radio.setSelection(true);
+			}
+		}
+	}
 
-    /*
-     * Initializes the checklist with empty checks.
-     */
-    private void createCheckListGroup(Composite parent) {
-        Group group = new Group(parent, SWT.SHADOW_NONE);
-        group.setText("Verify that:");
-        group.setLayout(new GridLayout());
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        group.setLayoutData(data);
+	/*
+	 * Initializes the checklist with empty checks.
+	 */
+	private void createCheckListGroup(Composite parent) {
+		Group group = new Group(parent, SWT.SHADOW_NONE);
+		group.setText("Verify that:");
+		group.setLayout(new GridLayout());
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(data);
 
-        int checkListSize = 0;
-        for (int i = 0; i < _dialogTests.length; i++) {
-            int size = _dialogTests[i].checkListTexts().size();
-            if (size > checkListSize) {
-                checkListSize = size;
-            }
-        }
-        _checkList = new Button[checkListSize];
-        SelectionAdapter selectionAdapter = new SelectionAdapter() {
-            @Override
+		int checkListSize = 0;
+		for (int i = 0; i < _dialogTests.length; i++) {
+			int size = _dialogTests[i].checkListTexts().size();
+			if (size > checkListSize) {
+				checkListSize = size;
+			}
+		}
+		_checkList = new Button[checkListSize];
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                checkYesEnable();
-            }
-        };
-        for (int i = 0; i < checkListSize; i++) {
-            _checkList[i] = new Button(group, SWT.CHECK);
-            _checkList[i].addSelectionListener(selectionAdapter);
-            data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-            data.grabExcessHorizontalSpace = true;
-            _checkList[i].setLayoutData(data);
-        }
-    }
+				checkYesEnable();
+			}
+		};
+		for (int i = 0; i < checkListSize; i++) {
+			_checkList[i] = new Button(group, SWT.CHECK);
+			_checkList[i].addSelectionListener(selectionAdapter);
+			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			data.grabExcessHorizontalSpace = true;
+			_checkList[i].setLayoutData(data);
+		}
+	}
 
-    /*
-     * Disables the yes button if any of the items in the checklist
-     * are unchecked.  Enables the yes button otherwise.
-     */
-    private void checkYesEnable() {
-        boolean enable = true;
+	/*
+	 * Disables the yes button if any of the items in the checklist
+	 * are unchecked.  Enables the yes button otherwise.
+	 */
+	private void checkYesEnable() {
+		boolean enable = true;
 		for (Button checkButton : _checkList) {
 			if (!checkButton.getSelection()) {
-                enable = false;
-            }
-        }
-        _yesButton.setEnabled(enable);
-    }
+				enable = false;
+			}
+		}
+		_yesButton.setEnabled(enable);
+	}
 
-    /*
-     * Initializes the checklist, banner texts, and query label
-     */
-    private void initializeTest() {
-        IDialogTestPass test = _dialogTests[TEST_TYPE];
-        setTitle(test.title());
-        setMessage(test.description());
+	/*
+	 * Initializes the checklist, banner texts, and query label
+	 */
+	private void initializeTest() {
+		IDialogTestPass test = _dialogTests[TEST_TYPE];
+		setTitle(test.title());
+		setMessage(test.description());
 		Iterator<?> iterator = test.checkListTexts().iterator();
 		for (Button checkButton : _checkList) {
-            if (iterator.hasNext()) {
+			if (iterator.hasNext()) {
 				checkButton.setText(iterator.next().toString());
 				checkButton.setVisible(true);
 				checkButton.update();
-            } else {
+			} else {
 				checkButton.setVisible(false);
 				checkButton.update();
-            }
+			}
 			checkButton.setSelection(true);
-        }
-        _queryLabel.setText(test.queryText());
-    }
+		}
+		_queryLabel.setText(test.queryText());
+	}
 
-    public String getFailureText() {
-        return _failureText;
-    }
+	public String getFailureText() {
+		return _failureText;
+	}
 
-    /*
-     * Can't open the verification dialog without a specified
-     * test dialog, this simply returns a failure and prevents
-     * opening.  Should use open(Dialog) instead.
-     *
-     */
-    @Override
+	/*
+	 * Can't open the verification dialog without a specified
+	 * test dialog, this simply returns a failure and prevents
+	 * opening.  Should use open(Dialog) instead.
+	 *
+	 */
+	@Override
 	public int open() {
-        _failureText = "Testing dialog is required, use VerifyDialog::open(Dialog)";
-        return IDialogConstants.NO_ID;
-    }
+		_failureText = "Testing dialog is required, use VerifyDialog::open(Dialog)";
+		return IDialogConstants.NO_ID;
+	}
 
-    /*
-     * Opens the verification dialog to test the specified dialog.
-     */
-    public int open(Dialog testDialog) {
-        if (getShell() == null) {
-            create();
-        }
-        getShell().setLocation(0, 0);
-        getShell().setSize(Math.max(SIZING_WIDTH, getShell().getSize().x),
-                getShell().getSize().y);
-        _testDialog = testDialog;
-        if (_testDialog.getShell() == null) {
-            _testDialog.create();
-        }
-        _testDialogSize = _testDialog.getShell().getSize();
-        openNewTestDialog();
+	/*
+	 * Opens the verification dialog to test the specified dialog.
+	 */
+	public int open(Dialog testDialog) {
+		if (getShell() == null) {
+			create();
+		}
+		getShell().setLocation(0, 0);
+		getShell().setSize(Math.max(SIZING_WIDTH, getShell().getSize().x),
+				getShell().getSize().y);
+		_testDialog = testDialog;
+		if (_testDialog.getShell() == null) {
+			_testDialog.create();
+		}
+		_testDialogSize = _testDialog.getShell().getSize();
+		openNewTestDialog();
 
-        return super.open();
-    }
+		return super.open();
+	}
 
-    /*
-     * Opens the dialog to be verified.
-     */
-    private void openNewTestDialog() {
-        if (_testDialog.getShell() == null) {
-            _testDialog.create();
-        }
-        _testDialog.setBlockOnOpen(false);
-        _testDialog.getShell().setLocation(getShell().getSize().x + 1, 0);
-        _testDialog.getShell().setSize(_testDialogSize);
-        _testDialog.getShell().addShellListener(new ShellAdapter() {
-            @Override
+	/*
+	 * Opens the dialog to be verified.
+	 */
+	private void openNewTestDialog() {
+		if (_testDialog.getShell() == null) {
+			_testDialog.create();
+		}
+		_testDialog.setBlockOnOpen(false);
+		_testDialog.getShell().setLocation(getShell().getSize().x + 1, 0);
+		_testDialog.getShell().setSize(_testDialogSize);
+		_testDialog.getShell().addShellListener(new ShellAdapter() {
+			@Override
 			public void shellClosed(ShellEvent e) {
-                e.doit = false;
-            }
+				e.doit = false;
+			}
 
-        });
-        _testDialog.open();
-    }
+		});
+		_testDialog.open();
+	}
 
-    /*
-     * The test dialog failed, open the failure dialog.
-     */
-    private void handleFailure() {
-        IDialogTestPass test = _dialogTests[TEST_TYPE];
-        StringBuilder text = new StringBuilder();
-        String label = test.label();
+	/*
+	 * The test dialog failed, open the failure dialog.
+	 */
+	private void handleFailure() {
+		IDialogTestPass test = _dialogTests[TEST_TYPE];
+		StringBuilder text = new StringBuilder();
+		String label = test.label();
 		label = label.substring(0, label.indexOf('&')) + label.substring(label.indexOf('&') + 1);
-        text.append(label).append(" failed on the ").append(Util.getWS())
-                .append(" platform:\n");
+		text.append(label).append(" failed on the ").append(Util.getWS())
+				.append(" platform:\n");
 
-        String failureMessages[] = test.failureTexts();
-        for (int i = 0; i < test.checkListTexts().size(); i++) {
-            if (!_checkList[i].getSelection()) {
-                text.append("- ").append(failureMessages[i]).append("\n");
-            }
-        }
-        FailureDialog dialog = new FailureDialog(getShell());
-        dialog.create();
-        dialog.setText(text.toString());
-        if (dialog.open() == IDialogConstants.OK_ID) {
-            _failureText = dialog.toString();
-            setReturnCode(IDialogConstants.NO_ID);
-            if (_testDialog.getShell() != null) {
-                _testDialog.close();
-            }
-            close();
-        }
-    }
+		String failureMessages[] = test.failureTexts();
+		for (int i = 0; i < test.checkListTexts().size(); i++) {
+			if (!_checkList[i].getSelection()) {
+				text.append("- ").append(failureMessages[i]).append("\n");
+			}
+		}
+		FailureDialog dialog = new FailureDialog(getShell());
+		dialog.create();
+		dialog.setText(text.toString());
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			_failureText = dialog.toString();
+			setReturnCode(IDialogConstants.NO_ID);
+			if (_testDialog.getShell() != null) {
+				_testDialog.close();
+			}
+			close();
+		}
+	}
 
-    /*
-     * In case the shell was closed by a means other than
-     * the NO button.
-     */
-    @Override
+	/*
+	 * In case the shell was closed by a means other than
+	 * the NO button.
+	 */
+	@Override
 	protected void handleShellCloseEvent() {
-        handleFailure();
-    }
+		handleFailure();
+	}
 }
 

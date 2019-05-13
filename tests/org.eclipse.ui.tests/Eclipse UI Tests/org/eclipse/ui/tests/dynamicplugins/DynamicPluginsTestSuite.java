@@ -20,13 +20,13 @@ import junit.framework.TestSuite;
  * Test suite for dynamic plug-in support.
  */
 public class DynamicPluginsTestSuite extends TestSuite {
-    /**
-     * Returns the suite.  This is required to
-     * use the JUnit Launcher.
-     */
-    public static Test suite() {
-        return new DynamicPluginsTestSuite();
-    }
+	/**
+	 * Returns the suite.  This is required to
+	 * use the JUnit Launcher.
+	 */
+	public static Test suite() {
+		return new DynamicPluginsTestSuite();
+	}
 
 	/**
 	 * Construct the test suite.
@@ -37,7 +37,7 @@ public class DynamicPluginsTestSuite extends TestSuite {
 				AcceleratorConfigurationsExtensionDynamicTest.class));
 		addTest(new TestSuite(AcceleratorScopesExtensionDynamicTest.class));
 		addTest(new TestSuite(ActionDefinitionsExtensionDynamicTest.class));
-	    addTest(new TestSuite(ActionSetTests.class));
+		addTest(new TestSuite(ActionSetTests.class));
 		addTest(new TestSuite(ActivitySupportTests.class));
 		addTest(new TestSuite(BindingsExtensionDynamicTest.class));
 		addTest(new TestSuite(BrowserTests.class));

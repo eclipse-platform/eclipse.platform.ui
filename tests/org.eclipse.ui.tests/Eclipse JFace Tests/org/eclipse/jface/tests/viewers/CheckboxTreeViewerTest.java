@@ -29,137 +29,137 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 
 public class CheckboxTreeViewerTest extends TreeViewerTest {
-    public static class CheckboxTableTestLabelProvider extends
-            TestLabelProvider implements ITableLabelProvider {
+	public static class CheckboxTableTestLabelProvider extends
+			TestLabelProvider implements ITableLabelProvider {
 
-        public boolean fExtended = false;
+		public boolean fExtended = false;
 
-        @Override
+		@Override
 		public String getText(Object element) {
-            if (fExtended) {
+			if (fExtended) {
 				return providedString((String) element);
 			}
-            return element.toString();
-        }
+			return element.toString();
+		}
 
-        @Override
+		@Override
 		public String getColumnText(Object element, int index) {
-            if (fExtended) {
+			if (fExtended) {
 				return providedString((TestElement) element);
 			}
-            return element.toString();
-        }
+			return element.toString();
+		}
 
-        @Override
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-            return null;
-        }
-    }
+			return null;
+		}
+	}
 
-    public CheckboxTreeViewerTest(String name) {
-        super(name);
-    }
+	public CheckboxTreeViewerTest(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-        fTreeViewer = new CheckboxTreeViewer(parent);
-        fTreeViewer.setContentProvider(new TestModelContentProvider());
-        return fTreeViewer;
-    }
+		fTreeViewer = new CheckboxTreeViewer(parent);
+		fTreeViewer.setContentProvider(new TestModelContentProvider());
+		return fTreeViewer;
+	}
 
-    public static void main(String args[]) {
-        junit.textui.TestRunner.run(CheckboxTreeViewerTest.class);
-    }
+	public static void main(String args[]) {
+		junit.textui.TestRunner.run(CheckboxTreeViewerTest.class);
+	}
 
-    public void testCheckSubtree() {
-        CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
-        TestElement first = fRootElement.getFirstChild();
-        TestElement firstfirst = first.getFirstChild();
-        TestElement firstfirstfirst = firstfirst.getFirstChild();
-        fTreeViewer.expandToLevel(firstfirst, 0);
+	public void testCheckSubtree() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+		TestElement first = fRootElement.getFirstChild();
+		TestElement firstfirst = first.getFirstChild();
+		TestElement firstfirstfirst = firstfirst.getFirstChild();
+		fTreeViewer.expandToLevel(firstfirst, 0);
 
-        ctv.setSubtreeChecked(first, true);
-        assertTrue(ctv.getChecked(firstfirst));
-        ctv.setSubtreeChecked(first, false);
-        assertTrue(!ctv.getChecked(firstfirst));
+		ctv.setSubtreeChecked(first, true);
+		assertTrue(ctv.getChecked(firstfirst));
+		ctv.setSubtreeChecked(first, false);
+		assertTrue(!ctv.getChecked(firstfirst));
 
-        // uncheck invisible subtree
-        assertTrue(ctv.setSubtreeChecked(firstfirstfirst, false));
-        assertTrue(!ctv.getChecked(firstfirstfirst));
-    }
+		// uncheck invisible subtree
+		assertTrue(ctv.setSubtreeChecked(firstfirstfirst, false));
+		assertTrue(!ctv.getChecked(firstfirstfirst));
+	}
 
-    public void testGrayed() {
-        CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
-        TestElement element = fRootElement.getFirstChild();
+	public void testGrayed() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+		TestElement element = fRootElement.getFirstChild();
 
-        assertTrue(ctv.getGrayedElements().length == 0);
-        assertTrue(!ctv.getGrayed(element));
+		assertTrue(ctv.getGrayedElements().length == 0);
+		assertTrue(!ctv.getGrayed(element));
 
-        ctv.setGrayed(element, true);
-        assertTrue(ctv.getGrayedElements().length == 1);
-        assertTrue(ctv.getGrayed(element));
+		ctv.setGrayed(element, true);
+		assertTrue(ctv.getGrayedElements().length == 1);
+		assertTrue(ctv.getGrayed(element));
 
-        ctv.setGrayed(element, false);
-        assertTrue(ctv.getGrayedElements().length == 0);
-        assertTrue(!ctv.getGrayed(element));
-    }
+		ctv.setGrayed(element, false);
+		assertTrue(ctv.getGrayedElements().length == 0);
+		assertTrue(!ctv.getGrayed(element));
+	}
 
-    public void testParentGrayed() {
-        CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
-        TestElement first = fRootElement.getFirstChild();
-        TestElement firstfirst = first.getFirstChild();
-        TestElement firstfirstfirst = firstfirst.getFirstChild();
-        ctv.expandToLevel(firstfirstfirst, 0);
+	public void testParentGrayed() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+		TestElement first = fRootElement.getFirstChild();
+		TestElement firstfirst = first.getFirstChild();
+		TestElement firstfirstfirst = firstfirst.getFirstChild();
+		ctv.expandToLevel(firstfirstfirst, 0);
 
-        ctv.setParentsGrayed(firstfirstfirst, true);
-        Object[] elements = ctv.getGrayedElements();
-        assertTrue(elements.length == 3);
-        for (Object element : elements) {
-            assertTrue(ctv.getGrayed(element));
-        }
+		ctv.setParentsGrayed(firstfirstfirst, true);
+		Object[] elements = ctv.getGrayedElements();
+		assertTrue(elements.length == 3);
+		for (Object element : elements) {
+			assertTrue(ctv.getGrayed(element));
+		}
 
-        assertTrue(elements[0] == first);
-        assertTrue(elements[1] == firstfirst);
-        assertTrue(elements[2] == firstfirstfirst);
-        ctv.setParentsGrayed(firstfirstfirst, false);
-    }
+		assertTrue(elements[0] == first);
+		assertTrue(elements[1] == firstfirst);
+		assertTrue(elements[2] == firstfirstfirst);
+		ctv.setParentsGrayed(firstfirstfirst, false);
+	}
 
-    public void testWithoutCheckProvider() {
-    	//Check that without a provider, no exceptions are thrown
-    	CheckboxTreeViewer ctv = (CheckboxTreeViewer)fViewer;
-    	ctv.expandAll();
-    	ctv.refresh();
-    }
+	public void testWithoutCheckProvider() {
+		//Check that without a provider, no exceptions are thrown
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer)fViewer;
+		ctv.expandAll();
+		ctv.refresh();
+	}
 
-    public void testCheckProviderInvoked() {
-    	//Check that a refresh successfully causes the provider's
-    	//setChecked and setGrayed methods to be invoked.
-    	CheckboxTreeViewer ctv = (CheckboxTreeViewer)fViewer;
+	public void testCheckProviderInvoked() {
+		//Check that a refresh successfully causes the provider's
+		//setChecked and setGrayed methods to be invoked.
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer)fViewer;
 
-    	TestMethodsInvokedCheckStateProvider provider = new TestMethodsInvokedCheckStateProvider();
+		TestMethodsInvokedCheckStateProvider provider = new TestMethodsInvokedCheckStateProvider();
 
-    	ctv.setCheckStateProvider(provider);
-    	assertTrue("isChecked should be invoked on a refresh", (!provider.isCheckedInvokedOn.isEmpty()));
-    	assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
+		ctv.setCheckStateProvider(provider);
+		assertTrue("isChecked should be invoked on a refresh", (!provider.isCheckedInvokedOn.isEmpty()));
+		assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
 
-    	provider.reset();
-    	ctv.refresh();
-    	assertTrue("isChecked should be invoked on a refresh", (!provider.isCheckedInvokedOn.isEmpty()));
-    	assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
+		provider.reset();
+		ctv.refresh();
+		assertTrue("isChecked should be invoked on a refresh", (!provider.isCheckedInvokedOn.isEmpty()));
+		assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
 
-    }
+	}
 
-    public void testCheckProviderLazilyInvoked() {
-    	//Check that a refresh successfully causes the provider's
-    	//setChecked and setGrayed methods to be invoked.
-    	CheckboxTreeViewer ctv = (CheckboxTreeViewer)fViewer;
+	public void testCheckProviderLazilyInvoked() {
+		//Check that a refresh successfully causes the provider's
+		//setChecked and setGrayed methods to be invoked.
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer)fViewer;
 
-    	TestMethodsInvokedCheckStateProvider provider = new TestMethodsInvokedCheckStateProvider();
+		TestMethodsInvokedCheckStateProvider provider = new TestMethodsInvokedCheckStateProvider();
 
-    	ctv.setCheckStateProvider(provider);
-    	ctv.refresh();
+		ctv.setCheckStateProvider(provider);
+		ctv.refresh();
 
-    	TestElement[] expected = fRootElement.getChildren();
+		TestElement[] expected = fRootElement.getChildren();
 
 		for (TestElement testElement : provider.isCheckedInvokedOn) {
 			TestElement element = testElement;
@@ -178,93 +178,93 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 			}
 			assertTrue("The check provider should only be invoked with visible elements", firstLevelElement);
 		}
-    }
+	}
 
-    public void testCheckedFalseGrayedFalse() {
-    	testSpecificState(false, false);
-    }
+	public void testCheckedFalseGrayedFalse() {
+		testSpecificState(false, false);
+	}
 
-    public void testCheckedFalseGrayedTrue() {
-    	testSpecificState(false, true);
-    }
+	public void testCheckedFalseGrayedTrue() {
+		testSpecificState(false, true);
+	}
 
-    public void testCheckedTrueGrayedFalse() {
-    	testSpecificState(true, false);
-    }
+	public void testCheckedTrueGrayedFalse() {
+		testSpecificState(true, false);
+	}
 
-    public void testCheckedTrueGrayedTrue() {
-    	testSpecificState(true, true);
-    }
+	public void testCheckedTrueGrayedTrue() {
+		testSpecificState(true, true);
+	}
 
-    private void testSpecificState(final boolean isChecked, final boolean isGrayed) {
-    	CheckboxTreeViewer ctv = (CheckboxTreeViewer)fViewer;
+	private void testSpecificState(final boolean isChecked, final boolean isGrayed) {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer)fViewer;
 
-    	ctv.setCheckStateProvider(new ICheckStateProvider() {
+		ctv.setCheckStateProvider(new ICheckStateProvider() {
 			@Override
 			public boolean isChecked(Object element)	{	return isChecked;	}
 			@Override
 			public boolean isGrayed(Object element) 	{	return isGrayed;	}
-    	});
+		});
 
-    	TreeItem item = ctv.getTree().getItem(0);
+		TreeItem item = ctv.getTree().getItem(0);
 
-    	assertEquals(item.getChecked(), isChecked);
-    	assertEquals(item.getGrayed(), isGrayed);
-    }
+		assertEquals(item.getChecked(), isChecked);
+		assertEquals(item.getGrayed(), isGrayed);
+	}
 
-    public void testSetCheckProviderRefreshesItems() {
-    	CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+	public void testSetCheckProviderRefreshesItems() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
-    	//First provider
-    	//Should cause visible items' check state adhere to provider
-    	ctv.setCheckStateProvider(new TestCheckStateProvider(0));
+		//First provider
+		//Should cause visible items' check state adhere to provider
+		ctv.setCheckStateProvider(new TestCheckStateProvider(0));
 
-    	ctv.expandAll();
+		ctv.expandAll();
 
-    	//Check that all states are properly set
-    	checkAllStates("Testing checkbox state after refresh", ctv, 0);
+		//Check that all states are properly set
+		checkAllStates("Testing checkbox state after refresh", ctv, 0);
 
-    	//Remove the check state provider
-    	ctv.setCheckStateProvider(null);
+		//Remove the check state provider
+		ctv.setCheckStateProvider(null);
 
-    	//Test that an update doesn't fail
-    	TestElement update = fRootElement.getFirstChild().getChildAt(5);
-    	ctv.update(update, null);
+		//Test that an update doesn't fail
+		TestElement update = fRootElement.getFirstChild().getChildAt(5);
+		ctv.update(update, null);
 
-    	//Test that a refresh doesn't fail
-    	ctv.refresh();
-    }
+		//Test that a refresh doesn't fail
+		ctv.refresh();
+	}
 
-    public void testCheckProviderWithSorter() {
-    	CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+	public void testCheckProviderWithSorter() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
-    	ctv.setSorter(new CheckStateProviderTestsUtil.Sorter());
+		ctv.setSorter(new CheckStateProviderTestsUtil.Sorter());
 
-    	//First provider
-    	//Should cause visible items' check state adhere to provider
-    	ctv.setCheckStateProvider(new TestCheckStateProvider(0));
-    	ctv.expandAll();
+		//First provider
+		//Should cause visible items' check state adhere to provider
+		ctv.setCheckStateProvider(new TestCheckStateProvider(0));
+		ctv.expandAll();
 
-    	//Check that all states are properly set
-    	checkAllStates("Testing checkbox state with a sorter", ctv, 0);
-    }
+		//Check that all states are properly set
+		checkAllStates("Testing checkbox state with a sorter", ctv, 0);
+	}
 
-    public void testCheckProviderWithFilter() {
-    	CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+	public void testCheckProviderWithFilter() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
-    	final CheckStateProviderTestsUtil.Filter filter = new CheckStateProviderTestsUtil.Filter();
+		final CheckStateProviderTestsUtil.Filter filter = new CheckStateProviderTestsUtil.Filter();
 		ctv.addFilter(filter);
 
-    	//First provider
+		//First provider
 		//Should cause visible items' check state adhere to provider
-    	final TestCheckStateProvider checkStateProvider = new TestCheckStateProvider(0);
+		final TestCheckStateProvider checkStateProvider = new TestCheckStateProvider(0);
 		ctv.setCheckStateProvider(checkStateProvider);
-    	ctv.expandAll();
+		ctv.expandAll();
 
-    	//Check that all states are properly set
-    	checkAllStates("Testing checkbox state with a sorter", ctv, 0);
+		//Check that all states are properly set
+		checkAllStates("Testing checkbox state with a sorter", ctv, 0);
 
-    	//Check that the provider is only invoked on elements which pass the filter
+		//Check that the provider is only invoked on elements which pass the filter
 		for (TestElement element : checkStateProvider.isCheckedInvokedOn) {
 			assertTrue("The check provider should not be invoked on elements which did not get through the filter", filter.select(ctv, null, element));
 		}
@@ -272,50 +272,50 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		for (TestElement element : checkStateProvider.isGrayedInvokedOn) {
 			assertTrue("The check provider should not be invoked on elements which did not get through the filter", filter.select(ctv, null, element));
 		}
-    }
+	}
 
-    public void testSetNewCheckProvider() {
-    	CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+	public void testSetNewCheckProvider() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
-    	//First provider
-    	//Should cause visible items' check state to adhere to provider
-    	ctv.setCheckStateProvider(new TestCheckStateProvider(0));
-    	ctv.expandAll();
+		//First provider
+		//Should cause visible items' check state to adhere to provider
+		ctv.setCheckStateProvider(new TestCheckStateProvider(0));
+		ctv.expandAll();
 
-    	checkAllStates("Testing checkbox state after first refresh", ctv, 0);
+		checkAllStates("Testing checkbox state after first refresh", ctv, 0);
 
-    	//Put in a new check state provider
-    	ctv.setCheckStateProvider(new TestCheckStateProvider(1));
+		//Put in a new check state provider
+		ctv.setCheckStateProvider(new TestCheckStateProvider(1));
 
-    	//Check that setting a new check provider caused a refresh,
-    	//and thus all the items have their new appropriate check
-    	//states.
-    	checkAllStates("Testing checkbox state after setting new check provider", ctv, 1);
-    }
+		//Check that setting a new check provider caused a refresh,
+		//and thus all the items have their new appropriate check
+		//states.
+		checkAllStates("Testing checkbox state after setting new check provider", ctv, 1);
+	}
 
 	private void collectElementsInBranch(TreeItem item, Collection<TreeItem> treeItems, Collection testElements) {
-    	treeItems.add(item);
-    	testElements.add(item.getData());
-    	TreeItem[] children = item.getItems();
-    	for (TreeItem element : children) {
-    		collectElementsInBranch(element, treeItems, testElements);
-    	}
-    }
+		treeItems.add(item);
+		testElements.add(item.getData());
+		TreeItem[] children = item.getItems();
+		for (TreeItem element : children) {
+			collectElementsInBranch(element, treeItems, testElements);
+		}
+	}
 
-    private void checkAllStates(String comment, CheckboxTreeViewer ctv, int shift) {
+	private void checkAllStates(String comment, CheckboxTreeViewer ctv, int shift) {
 		List<TreeItem> items = new ArrayList<>();
 		List<TestElement> elements = new ArrayList<>();
-    	collectElementsInBranch(ctv.getTree().getItem(0), items, elements);
+		collectElementsInBranch(ctv.getTree().getItem(0), items, elements);
 
-    	//Check that actual states were set properly
+		//Check that actual states were set properly
 		for (Iterator i = items.iterator(), j = elements.iterator(); i.hasNext();) {
-    		TreeItem item = (TreeItem)i.next();
-    		TestElement element = (TestElement)j.next();
+			TreeItem item = (TreeItem)i.next();
+			TestElement element = (TestElement)j.next();
 
-    		checkState(comment, element, item, shift);	//check in Tree
-    		checkState(comment, element, ctv, shift);	//check in Viewer
-    	}
-    }
+			checkState(comment, element, item, shift);	//check in Tree
+			checkState(comment, element, ctv, shift);	//check in Viewer
+		}
+	}
 
 	/**
 	 * Invokes the appropriate asserts to verify the state

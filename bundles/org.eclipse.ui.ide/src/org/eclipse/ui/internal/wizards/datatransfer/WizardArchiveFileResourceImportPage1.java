@@ -47,344 +47,344 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  *	@since 3.1
  */
 public class WizardArchiveFileResourceImportPage1 extends
-        WizardFileSystemResourceImportPage1 implements Listener {
+		WizardFileSystemResourceImportPage1 implements Listener {
 
-    ILeveledImportStructureProvider structureProvider;
+	ILeveledImportStructureProvider structureProvider;
 
-    // constants
-    private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
+	// constants
+	private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-    // dialog store id constants
-    private static final String STORE_SOURCE_NAMES_ID = "WizardZipFileResourceImportPage1.STORE_SOURCE_NAMES_ID"; //$NON-NLS-1$
+	// dialog store id constants
+	private static final String STORE_SOURCE_NAMES_ID = "WizardZipFileResourceImportPage1.STORE_SOURCE_NAMES_ID"; //$NON-NLS-1$
 
-    private static final String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardZipFileResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"; //$NON-NLS-1$
+	private static final String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardZipFileResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"; //$NON-NLS-1$
 
 	private final String[] fileImportMask;
 
-    /**
-     *	Creates an instance of this class
-     * @param aWorkbench IWorkbench
-     * @param selection IStructuredSelection
-     */
-    public WizardArchiveFileResourceImportPage1(IWorkbench aWorkbench,
-            IStructuredSelection selection) {
-        this(aWorkbench, selection, null);
-    }
+	/**
+	 *	Creates an instance of this class
+	 * @param aWorkbench IWorkbench
+	 * @param selection IStructuredSelection
+	 */
+	public WizardArchiveFileResourceImportPage1(IWorkbench aWorkbench,
+			IStructuredSelection selection) {
+		this(aWorkbench, selection, null);
+	}
 
 	/**
-     *	Creates an instance of this class
-     * @param aWorkbench IWorkbench
-     * @param selection IStructuredSelection
+	 *	Creates an instance of this class
+	 * @param aWorkbench IWorkbench
+	 * @param selection IStructuredSelection
 	 * @param fileImportMask != null: override default mask
-     */
-    public WizardArchiveFileResourceImportPage1(IWorkbench aWorkbench,
-            IStructuredSelection selection, String[] fileImportMask) {
-        super("zipFileImportPage1", aWorkbench, selection); //$NON-NLS-1$
+	 */
+	public WizardArchiveFileResourceImportPage1(IWorkbench aWorkbench,
+			IStructuredSelection selection, String[] fileImportMask) {
+		super("zipFileImportPage1", aWorkbench, selection); //$NON-NLS-1$
 
-        setTitle(DataTransferMessages.ArchiveExport_exportTitle);
-        setDescription(DataTransferMessages.ArchiveImport_description);
+		setTitle(DataTransferMessages.ArchiveExport_exportTitle);
+		setDescription(DataTransferMessages.ArchiveImport_description);
 
 		if (fileImportMask == null) {
 			this.fileImportMask = FILE_IMPORT_MASK;
 		} else {
 			this.fileImportMask = fileImportMask;
 		}
-    }
+	}
 
-    /**
-     * Called when the user presses the Cancel button. Return a boolean
-     * indicating permission to close the wizard.
-     *
-     * @return boolean
-     */
-    public boolean cancel() {
-        disposeStructureProvider();
-        return true;
-    }
+	/**
+	 * Called when the user presses the Cancel button. Return a boolean
+	 * indicating permission to close the wizard.
+	 *
+	 * @return boolean
+	 */
+	public boolean cancel() {
+		disposeStructureProvider();
+		return true;
+	}
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
-        super.createControl(parent);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-                IDataTransferHelpContextIds.ZIP_FILE_IMPORT_WIZARD_PAGE);
-    }
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				IDataTransferHelpContextIds.ZIP_FILE_IMPORT_WIZARD_PAGE);
+	}
 
-    /**
-     *	Create the options specification widgets. There is only one
-     * in this case so create no group.
-     *
-     *	@param parent org.eclipse.swt.widgets.Composite
-     */
-    @Override
+	/**
+	 *	Create the options specification widgets. There is only one
+	 * in this case so create no group.
+	 *
+	 *	@param parent org.eclipse.swt.widgets.Composite
+	 */
+	@Override
 	protected void createOptionsGroup(Composite parent) {
 
-        // overwrite... checkbox
-        overwriteExistingResourcesCheckbox = new Button(parent, SWT.CHECK);
-        overwriteExistingResourcesCheckbox.setText(DataTransferMessages.FileImport_overwriteExisting);
-        overwriteExistingResourcesCheckbox.setFont(parent.getFont());
-    }
+		// overwrite... checkbox
+		overwriteExistingResourcesCheckbox = new Button(parent, SWT.CHECK);
+		overwriteExistingResourcesCheckbox.setText(DataTransferMessages.FileImport_overwriteExisting);
+		overwriteExistingResourcesCheckbox.setFont(parent.getFont());
+	}
 
-    private boolean validateSourceFile(String fileName) {
-    	if(ArchiveFileManipulations.isTarFile(fileName)) {
-    		TarFile tarFile = getSpecifiedTarSourceFile(fileName);
+	private boolean validateSourceFile(String fileName) {
+		if(ArchiveFileManipulations.isTarFile(fileName)) {
+			TarFile tarFile = getSpecifiedTarSourceFile(fileName);
 			if (tarFile != null) {
 				ArchiveFileManipulations.closeTarFile(tarFile, getShell());
 				return true;
 			}
 			return false;
-    	}
-    	ZipFile zipFile = getSpecifiedZipSourceFile(fileName);
-    	if(zipFile != null) {
-    		ArchiveFileManipulations.closeZipFile(zipFile, getShell());
-    		return true;
-    	}
-    	return false;
-    }
+		}
+		ZipFile zipFile = getSpecifiedZipSourceFile(fileName);
+		if(zipFile != null) {
+			ArchiveFileManipulations.closeZipFile(zipFile, getShell());
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     *	Answer a boolean indicating whether the specified source currently exists
-     *	and is valid (ie.- proper format)
-     */
-    private boolean ensureZipSourceIsValid() {
-        ZipFile specifiedFile = getSpecifiedZipSourceFile();
-        if (specifiedFile == null) {
+	/**
+	 *	Answer a boolean indicating whether the specified source currently exists
+	 *	and is valid (ie.- proper format)
+	 */
+	private boolean ensureZipSourceIsValid() {
+		ZipFile specifiedFile = getSpecifiedZipSourceFile();
+		if (specifiedFile == null) {
 			setErrorMessage(DataTransferMessages.ZipImport_badFormat);
-            return false;
-        }
-        return ArchiveFileManipulations.closeZipFile(specifiedFile, getShell());
-    }
+			return false;
+		}
+		return ArchiveFileManipulations.closeZipFile(specifiedFile, getShell());
+	}
 
-    private boolean ensureTarSourceIsValid() {
-    	TarFile specifiedFile = getSpecifiedTarSourceFile();
-    	if( specifiedFile == null ) {
+	private boolean ensureTarSourceIsValid() {
+		TarFile specifiedFile = getSpecifiedTarSourceFile();
+		if( specifiedFile == null ) {
 			setErrorMessage(DataTransferMessages.TarImport_badFormat);
-    		return false;
-    	}
-    	return ArchiveFileManipulations.closeTarFile(specifiedFile, getShell());
-    }
+			return false;
+		}
+		return ArchiveFileManipulations.closeTarFile(specifiedFile, getShell());
+	}
 
-    /**
-     *	Answer a boolean indicating whether the specified source currently exists
-     *	and is valid (ie.- proper format)
-     */
-    @Override
+	/**
+	 *	Answer a boolean indicating whether the specified source currently exists
+	 *	and is valid (ie.- proper format)
+	 */
+	@Override
 	protected boolean ensureSourceIsValid() {
-    	if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
-    		return ensureTarSourceIsValid();
-    	}
-    	return ensureZipSourceIsValid();
-    }
+		if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
+			return ensureTarSourceIsValid();
+		}
+		return ensureZipSourceIsValid();
+	}
 
-    /**
-     * The Finish button was pressed.  Try to do the required work now and answer
-     * a boolean indicating success.  If <code>false</code> is returned then the
-     * wizard will not close.
-     *
-     * @return boolean
-     */
-    @Override
+	/**
+	 * The Finish button was pressed.  Try to do the required work now and answer
+	 * a boolean indicating success.  If <code>false</code> is returned then the
+	 * wizard will not close.
+	 *
+	 * @return boolean
+	 */
+	@Override
 	public boolean finish() {
-        if (!super.finish()) {
+		if (!super.finish()) {
 			return false;
 		}
 
-        disposeStructureProvider();
+		disposeStructureProvider();
 		return true;
 	}
 
-    /**
-     * Closes the structure provider and sets
-     * the field to <code>null</code>.
-     *
-     * @since 3.4
-     */
+	/**
+	 * Closes the structure provider and sets
+	 * the field to <code>null</code>.
+	 *
+	 * @since 3.4
+	 */
 	private void disposeStructureProvider() {
 		ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
 		structureProvider= null;
 	}
 
-    /**
-     * Returns a content provider for <code>FileSystemElement</code>s that returns
-     * only files as children.
-     */
-    @Override
+	/**
+	 * Returns a content provider for <code>FileSystemElement</code>s that returns
+	 * only files as children.
+	 */
+	@Override
 	protected ITreeContentProvider getFileProvider() {
-        return new WorkbenchContentProvider() {
-            @Override
+		return new WorkbenchContentProvider() {
+			@Override
 			public Object[] getChildren(Object o) {
-                if (o instanceof MinimizedFileSystemElement) {
-                    MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-                    AdaptableList l = element.getFiles(structureProvider);
-                    return l.getChildren(element);
-                }
-                return new Object[0];
-            }
-        };
-    }
+				if (o instanceof MinimizedFileSystemElement) {
+					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+					AdaptableList l = element.getFiles(structureProvider);
+					return l.getChildren(element);
+				}
+				return new Object[0];
+			}
+		};
+	}
 
-    /**
-     *	Answer the root FileSystemElement that represents the contents of the
-     *	currently-specified .zip file.  If this FileSystemElement is not
-     *	currently defined then create and return it.
-     */
-    @Override
+	/**
+	 *	Answer the root FileSystemElement that represents the contents of the
+	 *	currently-specified .zip file.  If this FileSystemElement is not
+	 *	currently defined then create and return it.
+	 */
+	@Override
 	protected MinimizedFileSystemElement getFileSystemTree() {
 		disposeStructureProvider();
 
-    	if(ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
-        	TarFile sourceTarFile = getSpecifiedTarSourceFile();
-        	if (sourceTarFile == null) {
+		if(ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
+			TarFile sourceTarFile = getSpecifiedTarSourceFile();
+			if (sourceTarFile == null) {
 				return null;
-        	}
-        	structureProvider= new TarLeveledStructureProvider(sourceTarFile);
+			}
+			structureProvider= new TarLeveledStructureProvider(sourceTarFile);
 			return selectFiles(structureProvider.getRoot(), structureProvider);
-    	}
+		}
 
-        ZipFile sourceFile = getSpecifiedZipSourceFile();
-        if (sourceFile == null) {
-            return null;
-        }
+		ZipFile sourceFile = getSpecifiedZipSourceFile();
+		if (sourceFile == null) {
+			return null;
+		}
 
-        structureProvider = new ZipLeveledStructureProvider(sourceFile);
+		structureProvider = new ZipLeveledStructureProvider(sourceFile);
 		return selectFiles(structureProvider.getRoot(), structureProvider);
-    }
+	}
 
-    /**
-     * Returns a content provider for <code>FileSystemElement</code>s that returns
-     * only folders as children.
-     */
-    @Override
+	/**
+	 * Returns a content provider for <code>FileSystemElement</code>s that returns
+	 * only folders as children.
+	 */
+	@Override
 	protected ITreeContentProvider getFolderProvider() {
-        return new WorkbenchContentProvider() {
-            @Override
+		return new WorkbenchContentProvider() {
+			@Override
 			public Object[] getChildren(Object o) {
-                if (o instanceof MinimizedFileSystemElement) {
-                    MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-                    AdaptableList l = element.getFolders(structureProvider);
-                    return l.getChildren(element);
-                }
-                return new Object[0];
-            }
+				if (o instanceof MinimizedFileSystemElement) {
+					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+					AdaptableList l = element.getFolders(structureProvider);
+					return l.getChildren(element);
+				}
+				return new Object[0];
+			}
 
-            @Override
+			@Override
 			public boolean hasChildren(Object o) {
-                if (o instanceof MinimizedFileSystemElement) {
-                    MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-                    if (element.isPopulated()) {
+				if (o instanceof MinimizedFileSystemElement) {
+					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+					if (element.isPopulated()) {
 						return getChildren(element).length > 0;
 					}
 
-                    //If we have not populated then wait until asked
-                    return true;
-                }
-                return false;
-            }
-        };
-    }
+					//If we have not populated then wait until asked
+					return true;
+				}
+				return false;
+			}
+		};
+	}
 
-    /**
-     *	Answer the string to display as the label for the source specification field
-     */
-    @Override
+	/**
+	 *	Answer the string to display as the label for the source specification field
+	 */
+	@Override
 	protected String getSourceLabel() {
-        return DataTransferMessages.ArchiveImport_fromFile;
-    }
+		return DataTransferMessages.ArchiveImport_fromFile;
+	}
 
-    /**
-     *	Answer a handle to the zip file currently specified as being the source.
-     *	Return null if this file does not exist or is not of valid format.
-     */
-    protected ZipFile getSpecifiedZipSourceFile() {
-        return getSpecifiedZipSourceFile(sourceNameField.getText());
-    }
+	/**
+	 *	Answer a handle to the zip file currently specified as being the source.
+	 *	Return null if this file does not exist or is not of valid format.
+	 */
+	protected ZipFile getSpecifiedZipSourceFile() {
+		return getSpecifiedZipSourceFile(sourceNameField.getText());
+	}
 
-    /**
-     *	Answer a handle to the zip file currently specified as being the source.
-     *	Return null if this file does not exist or is not of valid format.
-     */
-    private ZipFile getSpecifiedZipSourceFile(String fileName) {
-        if (fileName.length() == 0) {
+	/**
+	 *	Answer a handle to the zip file currently specified as being the source.
+	 *	Return null if this file does not exist or is not of valid format.
+	 */
+	private ZipFile getSpecifiedZipSourceFile(String fileName) {
+		if (fileName.length() == 0) {
 			return null;
 		}
 
-        try {
-            return new ZipFile(fileName);
-        } catch (ZipException e) {
+		try {
+			return new ZipFile(fileName);
+		} catch (ZipException e) {
 			// ignore
-        } catch (IOException e) {
+		} catch (IOException e) {
 			// ignore
-        }
+		}
 
-        sourceNameField.setFocus();
-        return null;
-    }
+		sourceNameField.setFocus();
+		return null;
+	}
 
-    /**
-     *	Answer a handle to the zip file currently specified as being the source.
-     *	Return null if this file does not exist or is not of valid format.
-     */
-    protected TarFile getSpecifiedTarSourceFile() {
-        return getSpecifiedTarSourceFile(sourceNameField.getText());
-    }
+	/**
+	 *	Answer a handle to the zip file currently specified as being the source.
+	 *	Return null if this file does not exist or is not of valid format.
+	 */
+	protected TarFile getSpecifiedTarSourceFile() {
+		return getSpecifiedTarSourceFile(sourceNameField.getText());
+	}
 
-    /**
-     *	Answer a handle to the zip file currently specified as being the source.
-     *	Return null if this file does not exist or is not of valid format.
-     */
-    private TarFile getSpecifiedTarSourceFile(String fileName) {
-        if (fileName.length() == 0) {
+	/**
+	 *	Answer a handle to the zip file currently specified as being the source.
+	 *	Return null if this file does not exist or is not of valid format.
+	 */
+	private TarFile getSpecifiedTarSourceFile(String fileName) {
+		if (fileName.length() == 0) {
 			return null;
 		}
 
-        try {
-            return new TarFile(fileName);
-        } catch (TarException e) {
+		try {
+			return new TarFile(fileName);
+		} catch (TarException e) {
 			// ignore
-        } catch (IOException e) {
+		} catch (IOException e) {
 			// ignore
-        }
+		}
 
-        sourceNameField.setFocus();
-        return null;
-    }
+		sourceNameField.setFocus();
+		return null;
+	}
 
-    /**
-     *	Open a FileDialog so that the user can specify the source
-     *	file to import from
-     */
-    @Override
+	/**
+	 *	Open a FileDialog so that the user can specify the source
+	 *	file to import from
+	 */
+	@Override
 	protected void handleSourceBrowseButtonPressed() {
-        String selectedFile = queryZipFileToImport();
+		String selectedFile = queryZipFileToImport();
 
-        if (selectedFile != null) {
-            //Be sure it is valid before we go setting any names
-            if (!selectedFile.equals(sourceNameField.getText())
+		if (selectedFile != null) {
+			//Be sure it is valid before we go setting any names
+			if (!selectedFile.equals(sourceNameField.getText())
 					&& validateSourceFile(selectedFile)) {
-                setSourceName(selectedFile);
-                selectionGroup.setFocus();
-            }
-        }
-    }
+				setSourceName(selectedFile);
+				selectionGroup.setFocus();
+			}
+		}
+	}
 
-    /**
-     *  Import the resources with extensions as specified by the user
-     */
-    @Override
+	/**
+	 *  Import the resources with extensions as specified by the user
+	 */
+	@Override
 	protected boolean importResources(List fileSystemObjects) {
-    	ILeveledImportStructureProvider importStructureProvider = null;
+		ILeveledImportStructureProvider importStructureProvider = null;
 		if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
-    		if( ensureTarSourceIsValid()) {
-	    		TarFile tarFile = getSpecifiedTarSourceFile();
-	    		importStructureProvider = new TarLeveledStructureProvider(tarFile);
-    		}
-    	} else if(ensureZipSourceIsValid()) {
-    		ZipFile zipFile = getSpecifiedZipSourceFile();
-    		importStructureProvider = new ZipLeveledStructureProvider(zipFile);
-    	}
+			if( ensureTarSourceIsValid()) {
+				TarFile tarFile = getSpecifiedTarSourceFile();
+				importStructureProvider = new TarLeveledStructureProvider(tarFile);
+			}
+		} else if(ensureZipSourceIsValid()) {
+			ZipFile zipFile = getSpecifiedZipSourceFile();
+			importStructureProvider = new ZipLeveledStructureProvider(zipFile);
+		}
 
-    	if (importStructureProvider == null) {
-    		return false;
-    	}
+		if (importStructureProvider == null) {
+			return false;
+		}
 
 		ImportOperation operation = new ImportOperation(getContainerFullPath(),
 				importStructureProvider.getRoot(), importStructureProvider, this,
@@ -397,117 +397,117 @@ public class WizardArchiveFileResourceImportPage1 extends
 
 		ArchiveFileManipulations.closeStructureProvider(importStructureProvider, getShell());
 		return true;
-    }
+	}
 
-    /**
-     * Initializes the specified operation appropriately.
-     */
-    @Override
+	/**
+	 * Initializes the specified operation appropriately.
+	 */
+	@Override
 	protected void initializeOperation(ImportOperation op) {
-        op.setOverwriteResources(overwriteExistingResourcesCheckbox
-                .getSelection());
-    }
+		op.setOverwriteResources(overwriteExistingResourcesCheckbox
+				.getSelection());
+	}
 
-    /**
-     * Opens a file selection dialog and returns a string representing the
-     * selected file, or <code>null</code> if the dialog was canceled.
-     */
-    protected String queryZipFileToImport() {
-        FileDialog dialog = new FileDialog(sourceNameField.getShell(), SWT.OPEN | SWT.SHEET);
-        dialog.setFilterExtensions(this.fileImportMask);
-        dialog.setText(DataTransferMessages.ArchiveImportSource_title);
+	/**
+	 * Opens a file selection dialog and returns a string representing the
+	 * selected file, or <code>null</code> if the dialog was canceled.
+	 */
+	protected String queryZipFileToImport() {
+		FileDialog dialog = new FileDialog(sourceNameField.getShell(), SWT.OPEN | SWT.SHEET);
+		dialog.setFilterExtensions(this.fileImportMask);
+		dialog.setText(DataTransferMessages.ArchiveImportSource_title);
 
-        String currentSourceString = sourceNameField.getText();
-        int lastSeparatorIndex = currentSourceString
-                .lastIndexOf(File.separator);
-        if (lastSeparatorIndex != -1) {
+		String currentSourceString = sourceNameField.getText();
+		int lastSeparatorIndex = currentSourceString
+				.lastIndexOf(File.separator);
+		if (lastSeparatorIndex != -1) {
 			dialog.setFilterPath(currentSourceString.substring(0,
-                    lastSeparatorIndex));
+					lastSeparatorIndex));
 		}
 
-        return dialog.open();
-    }
+		return dialog.open();
+	}
 
-    /**
-     *	Repopulate the view based on the currently entered directory.
-     */
-    @Override
+	/**
+	 *	Repopulate the view based on the currently entered directory.
+	 */
+	@Override
 	protected void resetSelection() {
 
-        super.resetSelection();
-        setAllSelections(true);
-    }
+		super.resetSelection();
+		setAllSelections(true);
+	}
 
-    /**
-     *	Use the dialog store to restore widget values to the values that they held
-     *	last time this wizard was used to completion
-     */
-    @Override
+	/**
+	 *	Use the dialog store to restore widget values to the values that they held
+	 *	last time this wizard was used to completion
+	 */
+	@Override
 	protected void restoreWidgetValues() {
-        IDialogSettings settings = getDialogSettings();
-        if (settings != null) {
-            String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
-            if (sourceNames == null) {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
+			if (sourceNames == null) {
 				return; // ie.- no settings stored
 			}
 
-            // set filenames history
-            for (String sourceName : sourceNames) {
+			// set filenames history
+			for (String sourceName : sourceNames) {
 				sourceNameField.add(sourceName);
 			}
 
-            // radio buttons and checkboxes
-            overwriteExistingResourcesCheckbox.setSelection(settings
-                    .getBoolean(STORE_OVERWRITE_EXISTING_RESOURCES_ID));
-        }
-    }
+			// radio buttons and checkboxes
+			overwriteExistingResourcesCheckbox.setSelection(settings
+					.getBoolean(STORE_OVERWRITE_EXISTING_RESOURCES_ID));
+		}
+	}
 
-    /**
-     * 	Since Finish was pressed, write widget values to the dialog store so that they
-     *	will persist into the next invocation of this wizard page.
-     *
-     *	Note that this method is identical to the one that appears in the superclass.
-     *	This is necessary because proper overriding of instance variables is not occurring.
-     */
-    @Override
+	/**
+	 * 	Since Finish was pressed, write widget values to the dialog store so that they
+	 *	will persist into the next invocation of this wizard page.
+	 *
+	 *	Note that this method is identical to the one that appears in the superclass.
+	 *	This is necessary because proper overriding of instance variables is not occurring.
+	 */
+	@Override
 	protected void saveWidgetValues() {
-        IDialogSettings settings = getDialogSettings();
-        if (settings != null) {
-            // update source names history
-            String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
-            if (sourceNames == null) {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			// update source names history
+			String[] sourceNames = settings.getArray(STORE_SOURCE_NAMES_ID);
+			if (sourceNames == null) {
 				sourceNames = new String[0];
 			}
 
-            sourceNames = addToHistory(sourceNames, sourceNameField.getText());
-            settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
-            settings.put(STORE_OVERWRITE_EXISTING_RESOURCES_ID,
-                    overwriteExistingResourcesCheckbox.getSelection());
-        }
-    }
+			sourceNames = addToHistory(sourceNames, sourceNameField.getText());
+			settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
+			settings.put(STORE_OVERWRITE_EXISTING_RESOURCES_ID,
+					overwriteExistingResourcesCheckbox.getSelection());
+		}
+	}
 
-    /**
-     *	Answer a boolean indicating whether self's source specification
-     *	widgets currently all contain valid values.
-     */
-    @Override
+	/**
+	 *	Answer a boolean indicating whether self's source specification
+	 *	widgets currently all contain valid values.
+	 */
+	@Override
 	protected boolean validateSourceGroup() {
 
-        //If there is nothing being provided to the input then there is a problem
+		//If there is nothing being provided to the input then there is a problem
 		if (structureProvider == null) {
-            setMessage(SOURCE_EMPTY_MESSAGE);
-            enableButtonGroup(false);
-            return false;
-        }
+			setMessage(SOURCE_EMPTY_MESSAGE);
+			enableButtonGroup(false);
+			return false;
+		}
 
-        List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
-        if (resourcesToExport.isEmpty()){
-        	setErrorMessage(DataTransferMessages.FileImport_noneSelected);
-        	return false;
-        }
+		List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
+		if (resourcesToExport.isEmpty()){
+			setErrorMessage(DataTransferMessages.FileImport_noneSelected);
+			return false;
+		}
 
-        enableButtonGroup(true);
-        setErrorMessage(null);
-        return true;
-    }
+		enableButtonGroup(true);
+		setErrorMessage(null);
+		return true;
+	}
 }

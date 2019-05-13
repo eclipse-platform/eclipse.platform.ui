@@ -34,12 +34,12 @@ import org.eclipse.core.runtime.CoreException;
  * @since 3.1
  */
 public class TarFileExporter implements IFileExporter {
-    private TarOutputStream outputStream;
-    private GZIPOutputStream gzipOutputStream;
+	private TarOutputStream outputStream;
+	private GZIPOutputStream gzipOutputStream;
 	private boolean resolveLinks;
 
 
-    /**
+	/**
 	 * Create an instance of this class.
 	 *
 	 * @param filename
@@ -53,105 +53,105 @@ public class TarFileExporter implements IFileExporter {
 	public TarFileExporter(String filename, boolean compress, boolean resolveLinks) throws IOException {
 		this.resolveLinks = resolveLinks;
 		if (compress) {
-    		gzipOutputStream = new GZIPOutputStream(new FileOutputStream(filename));
-    		outputStream = new TarOutputStream(new BufferedOutputStream(gzipOutputStream));
-    	} else {
-    		outputStream = new TarOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
-    	}
-    }
+			gzipOutputStream = new GZIPOutputStream(new FileOutputStream(filename));
+			outputStream = new TarOutputStream(new BufferedOutputStream(gzipOutputStream));
+		} else {
+			outputStream = new TarOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
+		}
+	}
 
-    /**
-     *	Do all required cleanup now that we're finished with the
-     *	currently-open .tar.gz
-     *
-     *	@exception java.io.IOException
-     */
-    @Override
+	/**
+	 *	Do all required cleanup now that we're finished with the
+	 *	currently-open .tar.gz
+	 *
+	 *	@exception java.io.IOException
+	 */
+	@Override
 	public void finished() throws IOException {
-        outputStream.close();
-        if(gzipOutputStream != null) {
-        	gzipOutputStream.close();
-        }
-    }
+		outputStream.close();
+		if(gzipOutputStream != null) {
+			gzipOutputStream.close();
+		}
+	}
 
-    /**
-     *	Write the contents of the file to the tar archive.
-     *
-     *	@param entry
-     *	@param contents
-     *  @exception java.io.IOException
-     *  @exception org.eclipse.core.runtime.CoreException
-     */
-    private void write(TarEntry entry, IFile contents) throws IOException, CoreException {
+	/**
+	 *	Write the contents of the file to the tar archive.
+	 *
+	 *	@param entry
+	 *	@param contents
+	 *  @exception java.io.IOException
+	 *  @exception org.eclipse.core.runtime.CoreException
+	 */
+	private void write(TarEntry entry, IFile contents) throws IOException, CoreException {
 		final URI location = contents.getLocationURI();
 		if (location == null) {
 			throw new FileNotFoundException(contents.getFullPath().toOSString());
 		}
 
-    	InputStream contentStream = contents.getContents(false);
-    	entry.setSize(EFS.getStore(location).fetchInfo().getLength());
-    	outputStream.putNextEntry(entry);
-        try {
-            int n;
-            byte[] readBuffer = new byte[4096];
-            while ((n = contentStream.read(readBuffer)) > 0) {
-                outputStream.write(readBuffer, 0, n);
-            }
-        } finally {
-            if (contentStream != null) {
+		InputStream contentStream = contents.getContents(false);
+		entry.setSize(EFS.getStore(location).fetchInfo().getLength());
+		outputStream.putNextEntry(entry);
+		try {
+			int n;
+			byte[] readBuffer = new byte[4096];
+			while ((n = contentStream.read(readBuffer)) > 0) {
+				outputStream.write(readBuffer, 0, n);
+			}
+		} finally {
+			if (contentStream != null) {
 				contentStream.close();
 			}
-        }
+		}
 
-    	outputStream.closeEntry();
-    }
+		outputStream.closeEntry();
+	}
 
-    @Override
+	@Override
 	public void write(IContainer container, String destinationPath)
-            throws IOException {
+			throws IOException {
 		if (!resolveLinks && container.isLinked(IResource.DEPTH_INFINITE)) {
 			return;
 		}
-        TarEntry newEntry = new TarEntry(destinationPath);
-        if(container.getLocalTimeStamp() != IResource.NULL_STAMP) {
-        	newEntry.setTime(container.getLocalTimeStamp() / 1000);
-        }
-        ResourceAttributes attributes = container.getResourceAttributes();
-        if (attributes != null && attributes.isExecutable()) {
-        	newEntry.setMode(newEntry.getMode() | 0111);
-        }
-        if (attributes != null && attributes.isReadOnly()) {
-        	newEntry.setMode(newEntry.getMode() & ~0222);
-        }
-        newEntry.setFileType(TarEntry.DIRECTORY);
-        outputStream.putNextEntry(newEntry);
-    }
+		TarEntry newEntry = new TarEntry(destinationPath);
+		if(container.getLocalTimeStamp() != IResource.NULL_STAMP) {
+			newEntry.setTime(container.getLocalTimeStamp() / 1000);
+		}
+		ResourceAttributes attributes = container.getResourceAttributes();
+		if (attributes != null && attributes.isExecutable()) {
+			newEntry.setMode(newEntry.getMode() | 0111);
+		}
+		if (attributes != null && attributes.isReadOnly()) {
+			newEntry.setMode(newEntry.getMode() & ~0222);
+		}
+		newEntry.setFileType(TarEntry.DIRECTORY);
+		outputStream.putNextEntry(newEntry);
+	}
 
-    /**
-     *  Write the passed resource to the current archive.
-     *
-     *  @param resource org.eclipse.core.resources.IFile
-     *  @param destinationPath java.lang.String
-     *  @exception java.io.IOException
-     *  @exception org.eclipse.core.runtime.CoreException
-     */
-    @Override
+	/**
+	 *  Write the passed resource to the current archive.
+	 *
+	 *  @param resource org.eclipse.core.resources.IFile
+	 *  @param destinationPath java.lang.String
+	 *  @exception java.io.IOException
+	 *  @exception org.eclipse.core.runtime.CoreException
+	 */
+	@Override
 	public void write(IFile resource, String destinationPath)
-            throws IOException, CoreException {
+			throws IOException, CoreException {
 		if (!resolveLinks && resource.isLinked(IResource.DEPTH_INFINITE)) {
 			return;
 		}
-        TarEntry newEntry = new TarEntry(destinationPath);
-        if(resource.getLocalTimeStamp() != IResource.NULL_STAMP) {
-        	newEntry.setTime(resource.getLocalTimeStamp() / 1000);
-        }
-        ResourceAttributes attributes = resource.getResourceAttributes();
-        if (attributes != null && attributes.isExecutable()) {
-        	newEntry.setMode(newEntry.getMode() | 0111);
-        }
-        if (attributes != null && attributes.isReadOnly()) {
-        	newEntry.setMode(newEntry.getMode() & ~0222);
-        }
-        write(newEntry, resource);
-    }
+		TarEntry newEntry = new TarEntry(destinationPath);
+		if(resource.getLocalTimeStamp() != IResource.NULL_STAMP) {
+			newEntry.setTime(resource.getLocalTimeStamp() / 1000);
+		}
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		if (attributes != null && attributes.isExecutable()) {
+			newEntry.setMode(newEntry.getMode() | 0111);
+		}
+		if (attributes != null && attributes.isReadOnly()) {
+			newEntry.setMode(newEntry.getMode() & ~0222);
+		}
+		write(newEntry, resource);
+	}
 }

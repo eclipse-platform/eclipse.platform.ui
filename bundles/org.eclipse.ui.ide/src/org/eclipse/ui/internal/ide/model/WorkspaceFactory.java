@@ -29,35 +29,35 @@ import org.eclipse.ui.IPersistableElement;
  * @see IElementFactory
  */
 public class WorkspaceFactory implements IElementFactory, IPersistableElement {
-    private static final String FACTORY_ID = "org.eclipse.ui.internal.model.WorkspaceFactory";//$NON-NLS-1$
+	private static final String FACTORY_ID = "org.eclipse.ui.internal.model.WorkspaceFactory";//$NON-NLS-1$
 
-    /**
-     * Create a ResourceFactory.  This constructor is typically used
-     * for our IElementFactory side.
-     */
-    public WorkspaceFactory() {
-    }
+	/**
+	 * Create a ResourceFactory.  This constructor is typically used
+	 * for our IElementFactory side.
+	 */
+	public WorkspaceFactory() {
+	}
 
-    /**
-     * @see IElementFactory
-     */
-    @Override
+	/**
+	 * @see IElementFactory
+	 */
+	@Override
 	public IAdaptable createElement(IMemento memento) {
-        return ResourcesPlugin.getWorkspace();
-    }
+		return ResourcesPlugin.getWorkspace();
+	}
 
-    /**
-     * @see IPersistableElement
-     */
-    @Override
+	/**
+	 * @see IPersistableElement
+	 */
+	@Override
 	public String getFactoryId() {
-        return FACTORY_ID;
-    }
+		return FACTORY_ID;
+	}
 
-    /**
-     * @see IPersistableElement
-     */
-    @Override
+	/**
+	 * @see IPersistableElement
+	 */
+	@Override
 	public void saveState(IMemento memento) {
-    }
+	}
 }

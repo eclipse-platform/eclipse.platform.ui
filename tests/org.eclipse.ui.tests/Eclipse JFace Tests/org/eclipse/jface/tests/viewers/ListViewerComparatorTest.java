@@ -35,10 +35,10 @@ public class ListViewerComparatorTest extends ViewerComparatorTest {
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-        ListViewer viewer = new ListViewer(parent);
-        viewer.setContentProvider(new TeamModelContentProvider());
-        viewer.setLabelProvider(new TeamModelLabelProvider());
-        return viewer;
+		ListViewer viewer = new ListViewer(parent);
+		viewer.setContentProvider(new TeamModelContentProvider());
+		viewer.setLabelProvider(new TeamModelLabelProvider());
+		return viewer;
 	}
 
 	public void testViewerSorter(){

@@ -730,9 +730,9 @@ public class TitleAreaDialog extends TrayDialog {
 	 * @since 3.6
 	 */
 
-    public String getMessage() {
-    	return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
 	/**
 	 * Returns the current error message being shown in the dialog, or
@@ -746,7 +746,7 @@ public class TitleAreaDialog extends TrayDialog {
 	 * @since 3.6
 	 */
 
-    public String getErrorMessage() {
-    	return errorMessage;
-    }
+	public String getErrorMessage() {
+		return errorMessage;
+	}
 }

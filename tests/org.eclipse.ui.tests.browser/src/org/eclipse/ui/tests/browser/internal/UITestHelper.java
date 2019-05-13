@@ -74,7 +74,7 @@ public class UITestHelper {
 
 			for (Iterator<IPreferenceNode> iterator = manager.getElements(PreferenceManager.PRE_ORDER)
 					.iterator();
-			     iterator.hasNext();)
+				 iterator.hasNext();)
 			{
 				IPreferenceNode node = iterator.next();
 				if ( node.getId().equals(id) ) {

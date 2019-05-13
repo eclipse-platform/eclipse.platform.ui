@@ -26,52 +26,52 @@ import org.eclipse.ui.part.EditorPart;
 
 public class EditorWithDisposeException extends EditorPart {
 
-    @Override
+	@Override
 	public void doSave(IProgressMonitor monitor) {
-    }
+	}
 
-    @Override
+	@Override
 	public void doSaveAs() {
-    }
+	}
 
-    @Override
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
-            throws PartInitException {
+			throws PartInitException {
 
-        if (!(input instanceof IFileEditorInput)) {
+		if (!(input instanceof IFileEditorInput)) {
 			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
 		}
-        setSite(site);
-        setInput(input);
-    }
+		setSite(site);
+		setInput(input);
+	}
 
-    @Override
+	@Override
 	public boolean isDirty() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isSaveAsAllowed() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        parent.setLayout(new FillLayout());
+		parent.setLayout(new FillLayout());
 
-        Label testLabel = new Label(parent, SWT.NONE);
+		Label testLabel = new Label(parent, SWT.NONE);
 
-        testLabel.setText("This editor is supposed to throw an exception when closed");
-    }
+		testLabel.setText("This editor is supposed to throw an exception when closed");
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
 
-    }
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        throw new RuntimeException("This exception was thrown intentionally as part of an error handling test");
-    }
+		throw new RuntimeException("This exception was thrown intentionally as part of an error handling test");
+	}
 
 }

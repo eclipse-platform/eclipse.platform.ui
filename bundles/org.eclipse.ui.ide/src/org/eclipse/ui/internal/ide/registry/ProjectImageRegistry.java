@@ -26,26 +26,26 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class ProjectImageRegistry {
 	private Map<String, ImageDescriptor> map = new HashMap<>(10);
 
-    /**
-     * Returns the image for the given nature id or
-     * <code>null</code> if no image is registered for the given id
-     */
-    public ImageDescriptor getNatureImage(String natureId) {
-        return map.get(natureId);
-    }
+	/**
+	 * Returns the image for the given nature id or
+	 * <code>null</code> if no image is registered for the given id
+	 */
+	public ImageDescriptor getNatureImage(String natureId) {
+		return map.get(natureId);
+	}
 
-    /**
-     * Reads from the plugin registry.
-     */
-    public void load() {
-        ProjectImageRegistryReader reader = new ProjectImageRegistryReader();
-        reader.readProjectNatureImages(Platform.getExtensionRegistry(), this);
-    }
+	/**
+	 * Reads from the plugin registry.
+	 */
+	public void load() {
+		ProjectImageRegistryReader reader = new ProjectImageRegistryReader();
+		reader.readProjectNatureImages(Platform.getExtensionRegistry(), this);
+	}
 
-    /**
-     * Sets the image for the given nature id
-     */
-    public void setNatureImage(String natureId, ImageDescriptor image) {
-        map.put(natureId, image);
-    }
+	/**
+	 * Sets the image for the given nature id
+	 */
+	public void setNatureImage(String natureId, ImageDescriptor image) {
+		map.put(natureId, image);
+	}
 }

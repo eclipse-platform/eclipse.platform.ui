@@ -21,56 +21,56 @@ import org.eclipse.ui.tests.harness.util.ActionUtil;
  */
 public class IViewActionDelegateTest extends IActionDelegateTest {
 
-    public static String TEST_VIEW_ID = "org.eclipse.ui.tests.api.IViewActionDelegateTest";
+	public static String TEST_VIEW_ID = "org.eclipse.ui.tests.api.IViewActionDelegateTest";
 
-    /**
-     * Constructor for IWorkbenchWindowActionDelegateTest
-     */
-    public IViewActionDelegateTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * Constructor for IWorkbenchWindowActionDelegateTest
+	 */
+	public IViewActionDelegateTest(String testName) {
+		super(testName);
+	}
 
-    public void testInit() throws Throwable {
-        // When an action delegate is run the
-        // init, selectionChanged, and run methods should
-        // be called, in that order.
+	public void testInit() throws Throwable {
+		// When an action delegate is run the
+		// init, selectionChanged, and run methods should
+		// be called, in that order.
 
-        // Run the action.
-        testRun();
+		// Run the action.
+		testRun();
 
-        // Verify lifecycle.
-        MockActionDelegate delegate = getDelegate();
-        assertNotNull(delegate);
-        assertTrue(delegate.callHistory.verifyOrder(new String[] { "init",
-                "selectionChanged", "run" }));
-    }
+		// Verify lifecycle.
+		MockActionDelegate delegate = getDelegate();
+		assertNotNull(delegate);
+		assertTrue(delegate.callHistory.verifyOrder(new String[] { "init",
+				"selectionChanged", "run" }));
+	}
 
-    /**
-     * @see IActionDelegateTest#createActionWidget()
-     */
-    @Override
+	/**
+	 * @see IActionDelegateTest#createActionWidget()
+	 */
+	@Override
 	protected Object createActionWidget() throws Throwable {
-        MockViewPart view = (MockViewPart) fPage.showView(TEST_VIEW_ID);
-        return view;
-    }
+		MockViewPart view = (MockViewPart) fPage.showView(TEST_VIEW_ID);
+		return view;
+	}
 
-    /**
-     * @see IActionDelegateTest#runAction()
-     */
-    @Override
+	/**
+	 * @see IActionDelegateTest#runAction()
+	 */
+	@Override
 	protected void runAction(Object widget) throws Throwable {
-        MockViewPart view = (MockViewPart) widget;
-        IMenuManager mgr = view.getViewSite().getActionBars().getMenuManager();
-        ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
-    }
+		MockViewPart view = (MockViewPart) widget;
+		IMenuManager mgr = view.getViewSite().getActionBars().getMenuManager();
+		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
+	}
 
-    /**
-     * @see IActionDelegateTest#fireSelection()
-     */
-    @Override
+	/**
+	 * @see IActionDelegateTest#fireSelection()
+	 */
+	@Override
 	protected void fireSelection(Object widget) throws Throwable {
-        MockViewPart view = (MockViewPart) widget;
-        view.fireSelection();
-    }
+		MockViewPart view = (MockViewPart) widget;
+		view.fireSelection();
+	}
 }
 

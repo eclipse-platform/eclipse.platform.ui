@@ -32,11 +32,11 @@ public final class CommandManagerEvent {
 	private static final int CHANGED_CATEGORY_DEFINED = 1;
 
 	/**
-     * The bit used to represent whether the given command has become defined.
-     * If this bit is not set and there is no command id, then no command has
-     * become defined nor undefined. If this bit is not set and there is a
-     * command id, then the command has become undefined.
-     */
+	 * The bit used to represent whether the given command has become defined.
+	 * If this bit is not set and there is no command id, then no command has
+	 * become defined nor undefined. If this bit is not set and there is a
+	 * command id, then the command has become undefined.
+	 */
 	private static final int CHANGED_COMMAND_DEFINED = 1 << 1;
 
 	/**

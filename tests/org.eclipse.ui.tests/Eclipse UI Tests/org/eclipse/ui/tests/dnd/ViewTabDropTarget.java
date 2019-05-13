@@ -32,36 +32,36 @@ import org.eclipse.ui.views.IViewDescriptor;
  */
 public class ViewTabDropTarget extends WorkbenchWindowDropTarget {
 
-    String targetPart;
+	String targetPart;
 
-    public ViewTabDropTarget(IWorkbenchWindowProvider provider, String part) {
-        super(provider);
-        targetPart = part;
-    }
+	public ViewTabDropTarget(IWorkbenchWindowProvider provider, String part) {
+		super(provider);
+		targetPart = part;
+	}
 
-    IViewPart getPart() {
-        return getPage().findView(targetPart);
-    }
+	IViewPart getPart() {
+		return getPage().findView(targetPart);
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
-                .find(targetPart);
-        String title = desc.getLabel();
+		IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
+				.find(targetPart);
+		String title = desc.getLabel();
 
-        return title + " view tab area";
-    }
+		return title + " view tab area";
+	}
 
-    @Override
+	@Override
 	public Point getLocation() {
-        Rectangle bounds = DragOperations.getDisplayBounds(DragOperations
-                .getPane(getPart()));
+		Rectangle bounds = DragOperations.getDisplayBounds(DragOperations
+				.getPane(getPart()));
 
-        return new Point(bounds.x + 8, bounds.y + 8);
-    }
+		return new Point(bounds.x + 8, bounds.y + 8);
+	}
 
-    @Override
+	@Override
 	public Shell getShell() {
-    	return getPart().getSite().getShell();
-    }
+		return getPart().getSite().getShell();
+	}
 }

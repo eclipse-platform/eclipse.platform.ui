@@ -42,113 +42,113 @@ import java.util.List;
 public class CallHistory {
 	private List<String> methodList;
 
-    private Class<? extends Object> classType;
+	private Class<? extends Object> classType;
 
-    /**
-     * Creates a new call history for an object.
-     *
-     * @param target the call history target.
-     */
-    public CallHistory(Object target) {
-        methodList = new ArrayList<>();
-        classType = target.getClass();
-    }
+	/**
+	 * Creates a new call history for an object.
+	 *
+	 * @param target the call history target.
+	 */
+	public CallHistory(Object target) {
+		methodList = new ArrayList<>();
+		classType = target.getClass();
+	}
 
-    /**
-     * Throws an exception if the method name is invalid
-     * for the given target class.
-     */
-    private void testMethodName(String methodName) {
-        Method[] methods = classType.getMethods();
+	/**
+	 * Throws an exception if the method name is invalid
+	 * for the given target class.
+	 */
+	private void testMethodName(String methodName) {
+		Method[] methods = classType.getMethods();
 		for (Method method : methods)
 			if (method.getName().equals(methodName))
-                return;
-        throw new IllegalArgumentException("Target class ("
-                + classType.getName() + ") does not contain method: "
-                + methodName);
-    }
+				return;
+		throw new IllegalArgumentException("Target class ("
+				+ classType.getName() + ") does not contain method: "
+				+ methodName);
+	}
 
-    /**
-     * Adds a method name to the call history.
-     *
-     * @param methodName the name of a method
-     */
-    public void add(String methodName) {
-        testMethodName(methodName);
-        methodList.add(methodName);
-    }
+	/**
+	 * Adds a method name to the call history.
+	 *
+	 * @param methodName the name of a method
+	 */
+	public void add(String methodName) {
+		testMethodName(methodName);
+		methodList.add(methodName);
+	}
 
-    /**
-     * Clears the call history.
-     */
-    public void clear() {
-        methodList.clear();
-    }
+	/**
+	 * Clears the call history.
+	 */
+	public void clear() {
+		methodList.clear();
+	}
 
-    /**
-     * Returns whether a list of methods have been called in
-     * order.
-     *
-     * @param testNames an array of the method names in the order they are expected
-     * @return <code>true</code> if the methods were called in order
-     */
-    public boolean verifyOrder(String[] testNames)
-            throws IllegalArgumentException {
-        int testIndex = 0;
-        int testLength = testNames.length;
-        if (testLength == 0)
-            return true;
+	/**
+	 * Returns whether a list of methods have been called in
+	 * order.
+	 *
+	 * @param testNames an array of the method names in the order they are expected
+	 * @return <code>true</code> if the methods were called in order
+	 */
+	public boolean verifyOrder(String[] testNames)
+			throws IllegalArgumentException {
+		int testIndex = 0;
+		int testLength = testNames.length;
+		if (testLength == 0)
+			return true;
 		for (String methodName : methodList) {
-            String testName = testNames[testIndex];
-            testMethodName(testName);
-            if (testName.equals(methodName))
-                ++testIndex;
-            if (testIndex >= testLength)
-                return true;
-        }
-        return false;
-    }
+			String testName = testNames[testIndex];
+			testMethodName(testName);
+			if (testName.equals(methodName))
+				++testIndex;
+			if (testIndex >= testLength)
+				return true;
+		}
+		return false;
+	}
 
-    /**
-     * Returns whether a method has been called.
-     *
-     * @param methodName a method name
-     * @return <code>true</code> if the method was called
-     */
-    public boolean contains(String methodName) {
-        testMethodName(methodName);
-        return methodList.contains(methodName);
-    }
+	/**
+	 * Returns whether a method has been called.
+	 *
+	 * @param methodName a method name
+	 * @return <code>true</code> if the method was called
+	 */
+	public boolean contains(String methodName) {
+		testMethodName(methodName);
+		return methodList.contains(methodName);
+	}
 
-    /**
-     * Returns whether a list of methods were called.
-     *
-     * @param methodNames a list of methods
-     * @return <code>true</code> if the methods were called
-     */
-    public boolean contains(String[] methodNames) {
+	/**
+	 * Returns whether a list of methods were called.
+	 *
+	 * @param methodNames a list of methods
+	 * @return <code>true</code> if the methods were called
+	 */
+	public boolean contains(String[] methodNames) {
 		for (String methodName : methodNames) {
 			testMethodName(methodName);
 			if (!methodList.contains(methodName))
-                return false;
-        }
-        return true;
-    }
+				return false;
+		}
+		return true;
+	}
 
-    /**
-     * Returns whether the list of methods called is empty.
-     *
-     * @return <code>true</code> iff the list of methods is empty
-     */
-    public boolean isEmpty() {
-        return methodList.isEmpty();
-    }
+	/**
+	 * Returns whether the list of methods called is empty.
+	 *
+	 * @return <code>true</code> iff the list of methods is empty
+	 */
+	public boolean isEmpty() {
+		return methodList.isEmpty();
+	}
 
-    /**
-     * Prints the call history to the console.
-     */
-    public void printToConsole() {
+	/**
+	 * Prints the call history to the console.
+	 */
+	public void printToConsole() {
 		for (String methodName : methodList)
 			System.out.println(methodName);
-    }
+	}
 }

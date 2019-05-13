@@ -30,42 +30,42 @@ package org.eclipse.jface.action;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMenuManager extends IContributionManager, IContributionItem {
-    /**
-     * Adds a menu listener to this menu.
-     * Has no effect if an identical listener is already registered.
-     *
-     * @param listener a menu listener
-     */
-    public void addMenuListener(IMenuListener listener);
+	/**
+	 * Adds a menu listener to this menu.
+	 * Has no effect if an identical listener is already registered.
+	 *
+	 * @param listener a menu listener
+	 */
+	public void addMenuListener(IMenuListener listener);
 
-    /**
-     * Finds the manager for the menu at the given path. A path
-     * consists of contribution item ids separated by the separator
-     * character.  The path separator character is <code>'/'</code>.
-     * <p>
-     * Convenience for <code>findUsingPath(path)</code> which
-     * extracts an <code>IMenuManager</code> if possible.
-     * </p>
-     *
-     * @param path the path string
-     * @return the menu contribution item, or <code>null</code>
-     *   if there is no such contribution item or if the item does
-     *   not have an associated menu manager
-     */
-    public IMenuManager findMenuUsingPath(String path);
+	/**
+	 * Finds the manager for the menu at the given path. A path
+	 * consists of contribution item ids separated by the separator
+	 * character.  The path separator character is <code>'/'</code>.
+	 * <p>
+	 * Convenience for <code>findUsingPath(path)</code> which
+	 * extracts an <code>IMenuManager</code> if possible.
+	 * </p>
+	 *
+	 * @param path the path string
+	 * @return the menu contribution item, or <code>null</code>
+	 *   if there is no such contribution item or if the item does
+	 *   not have an associated menu manager
+	 */
+	public IMenuManager findMenuUsingPath(String path);
 
-    /**
-     * Finds the contribution item at the given path. A path
-     * consists of contribution item ids separated by the separator
-     * character. The path separator character is <code>'/'</code>.
-     *
-     * @param path the path string
-     * @return the contribution item, or <code>null</code> if there is no
-     *   such contribution item
-     */
-    public IContributionItem findUsingPath(String path);
+	/**
+	 * Finds the contribution item at the given path. A path
+	 * consists of contribution item ids separated by the separator
+	 * character. The path separator character is <code>'/'</code>.
+	 *
+	 * @param path the path string
+	 * @return the contribution item, or <code>null</code> if there is no
+	 *   such contribution item
+	 */
+	public IContributionItem findUsingPath(String path);
 
-    /**
+	/**
 	 * Returns whether all items should be removed when the menu is about to
 	 * show, but before notifying menu listeners. The default is
 	 * <code>false</code>.
@@ -73,26 +73,26 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
 	 * @return <code>true</code> if all items should be removed when shown,
 	 *         <code>false</code> if not
 	 */
-    public boolean getRemoveAllWhenShown();
+	public boolean getRemoveAllWhenShown();
 
-    /**
-     * Returns whether this menu should be enabled or not.
-     *
-     * @return <code>true</code> if enabled, and
-     *   <code>false</code> if disabled
-     */
-    @Override
+	/**
+	 * Returns whether this menu should be enabled or not.
+	 *
+	 * @return <code>true</code> if enabled, and
+	 *   <code>false</code> if disabled
+	 */
+	@Override
 	public boolean isEnabled();
 
-    /**
-     * Removes the given menu listener from this menu.
-     * Has no effect if an identical listener is not registered.
-     *
-     * @param listener the menu listener
-     */
-    public void removeMenuListener(IMenuListener listener);
+	/**
+	 * Removes the given menu listener from this menu.
+	 * Has no effect if an identical listener is not registered.
+	 *
+	 * @param listener the menu listener
+	 */
+	public void removeMenuListener(IMenuListener listener);
 
-    /**
+	/**
 	 * Sets whether all items should be removed when the menu is about to show,
 	 * but before notifying menu listeners.
 	 *
@@ -100,14 +100,14 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
 	 *            <code>true</code> if all items should be removed when shown,
 	 *            <code>false</code> if not
 	 */
-    public void setRemoveAllWhenShown(boolean removeAll);
+	public void setRemoveAllWhenShown(boolean removeAll);
 
-    /**
-     * Incrementally builds the menu from the contribution items, and
-     * does so recursively for all submenus.
-     *
-     * @param force <code>true</code> means update even if not dirty,
-     *   and <code>false</code> for normal incremental updating
-     */
-    public void updateAll(boolean force);
+	/**
+	 * Incrementally builds the menu from the contribution items, and
+	 * does so recursively for all submenus.
+	 *
+	 * @param force <code>true</code> means update even if not dirty,
+	 *   and <code>false</code> for normal incremental updating
+	 */
+	public void updateAll(boolean force);
 }

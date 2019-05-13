@@ -59,37 +59,37 @@ import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
  * @since 3.1
  */
 public final class PathVariableSelectionDialog extends SelectionDialog {
-    private static final int EXTEND_ID = IDialogConstants.CLIENT_ID + 1;
+	private static final int EXTEND_ID = IDialogConstants.CLIENT_ID + 1;
 
-    private PathVariablesGroup pathVariablesGroup;
+	private PathVariablesGroup pathVariablesGroup;
 
 	private IResource currentResource = null;
 
-    private int variableType;
+	private int variableType;
 
-    /**
-     * Creates a path variable selection dialog.
-     *
-     * @param parentShell the parent shell
-     * @param variableType the type of variables that are displayed in
-     * 	this dialog. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
-     * 	logically ORed together.
-     */
-    public PathVariableSelectionDialog(Shell parentShell, int variableType) {
-        super(parentShell);
-        setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_title);
-        this.variableType = variableType;
-        pathVariablesGroup = new PathVariablesGroup(false, variableType,
-                event -> updateExtendButtonState());
-        pathVariablesGroup.setSaveVariablesOnChange(true);
-        setShellStyle(getShellStyle() | SWT.SHEET);
-    }
+	/**
+	 * Creates a path variable selection dialog.
+	 *
+	 * @param parentShell the parent shell
+	 * @param variableType the type of variables that are displayed in
+	 * 	this dialog. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
+	 * 	logically ORed together.
+	 */
+	public PathVariableSelectionDialog(Shell parentShell, int variableType) {
+		super(parentShell);
+		setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_title);
+		this.variableType = variableType;
+		pathVariablesGroup = new PathVariablesGroup(false, variableType,
+				event -> updateExtendButtonState());
+		pathVariablesGroup.setSaveVariablesOnChange(true);
+		setShellStyle(getShellStyle() | SWT.SHEET);
+	}
 
-    @Override
+	@Override
 	protected void buttonPressed(int buttonId) {
-        if (buttonId == EXTEND_ID) {
-            PathVariablesGroup.PathVariableElement selection = pathVariablesGroup
-                    .getSelection()[0];
+		if (buttonId == EXTEND_ID) {
+			PathVariablesGroup.PathVariableElement selection = pathVariablesGroup
+					.getSelection()[0];
 			FileFolderSelectionDialog dialog = new FileFolderSelectionDialog(
 					getShell(), false, variableType);
 			dialog
@@ -105,107 +105,107 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 			if (currentResource != null)
 				selectionPath = URIUtil.toPath(currentResource.getPathVariableManager()
 						.resolveURI(URIUtil.toURI(selectionPath)));
-            try {
+			try {
 					dialog.setInput(EFS.getStore(URIUtil.toURI(selectionPath)));
 			} catch (CoreException e) {
 				ErrorDialog.openError(getShell(), null, null, e.getStatus());
 			}
-            if (dialog.open() == Window.OK
-                    && pathVariablesGroup.performOk()) {
-                setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
-                super.okPressed();
-            }
-        } else {
+			if (dialog.open() == Window.OK
+					&& pathVariablesGroup.performOk()) {
+				setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
+				super.okPressed();
+			}
+		} else {
 			super.buttonPressed(buttonId);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-                IIDEHelpContextIds.PATH_VARIABLE_SELECTION_DIALOG);
-    }
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IIDEHelpContextIds.PATH_VARIABLE_SELECTION_DIALOG);
+	}
 
-    @Override
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-                true);
-        createButton(parent, EXTEND_ID, IDEWorkbenchMessages.PathVariableSelectionDialog_extendButton, false);
-        createButton(parent, IDialogConstants.CANCEL_ID,
-                IDialogConstants.CANCEL_LABEL, false);
-        updateExtendButtonState();
-    }
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
+				true);
+		createButton(parent, EXTEND_ID, IDEWorkbenchMessages.PathVariableSelectionDialog_extendButton, false);
+		createButton(parent, IDialogConstants.CANCEL_ID,
+				IDialogConstants.CANCEL_LABEL, false);
+		updateExtendButtonState();
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        // create composite
-        Composite dialogArea = (Composite) super.createDialogArea(parent);
+		// create composite
+		Composite dialogArea = (Composite) super.createDialogArea(parent);
 
-        pathVariablesGroup.createContents(dialogArea);
-        return dialogArea;
-    }
+		pathVariablesGroup.createContents(dialogArea);
+		return dialogArea;
+	}
 
 
-    @Override
+	@Override
 	public boolean close() {
-        pathVariablesGroup.dispose();
-        return super.close();
-    }
+		pathVariablesGroup.dispose();
+		return super.close();
+	}
 
 
-    @Override
+	@Override
 	protected void okPressed() {
 		//Sets the dialog result to the selected path variable name(s).
-        if (pathVariablesGroup.performOk()) {
-            PathVariablesGroup.PathVariableElement[] selection = pathVariablesGroup
-                    .getSelection();
-            String[] variableNames = new String[selection.length];
+		if (pathVariablesGroup.performOk()) {
+			PathVariablesGroup.PathVariableElement[] selection = pathVariablesGroup
+					.getSelection();
+			String[] variableNames = new String[selection.length];
 
-            for (int i = 0; i < selection.length; i++) {
+			for (int i = 0; i < selection.length; i++) {
 				variableNames[i] = selection[i].name;
 			}
-            setSelectionResult(variableNames);
-        } else {
-            setSelectionResult(null);
-        }
-        super.okPressed();
-    }
+			setSelectionResult(variableNames);
+		} else {
+			setSelectionResult(null);
+		}
+		super.okPressed();
+	}
 
-    /**
-     * Sets the dialog result to the concatenated variable name and extension.
-     *
-     * @param variable variable selected in the variables list and extended
-     * 	by <code>extensionFile</code>
-     * @param extensionFile file selected to extend the variable.
-     */
-    private void setExtensionResult(
-            PathVariablesGroup.PathVariableElement variable, IFileStore extensionFile) {
-        IPath extensionPath = new Path(extensionFile.toString());
+	/**
+	 * Sets the dialog result to the concatenated variable name and extension.
+	 *
+	 * @param variable variable selected in the variables list and extended
+	 * 	by <code>extensionFile</code>
+	 * @param extensionFile file selected to extend the variable.
+	 */
+	private void setExtensionResult(
+			PathVariablesGroup.PathVariableElement variable, IFileStore extensionFile) {
+		IPath extensionPath = new Path(extensionFile.toString());
 		IPath selectionPath = variable.path;
 		if (currentResource != null)
 			selectionPath = URIUtil.toPath(currentResource.getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath)));
 		int matchCount = extensionPath.matchingFirstSegments(selectionPath);
-        IPath resultPath = new Path(variable.name);
+		IPath resultPath = new Path(variable.name);
 
-        extensionPath = extensionPath.removeFirstSegments(matchCount);
-        resultPath = resultPath.append(extensionPath);
+		extensionPath = extensionPath.removeFirstSegments(matchCount);
+		resultPath = resultPath.append(extensionPath);
 		setSelectionResult(new String[] { resultPath.toPortableString() });
-    }
+	}
 
-    /**
-     * Updates the enabled state of the Extend button based on the
-     * current variable selection.
-     */
-    private void updateExtendButtonState() {
-        PathVariablesGroup.PathVariableElement[] selection = pathVariablesGroup
-                .getSelection();
-        Button extendButton = getButton(EXTEND_ID);
+	/**
+	 * Updates the enabled state of the Extend button based on the
+	 * current variable selection.
+	 */
+	private void updateExtendButtonState() {
+		PathVariablesGroup.PathVariableElement[] selection = pathVariablesGroup
+				.getSelection();
+		Button extendButton = getButton(EXTEND_ID);
 
-        if (extendButton == null) {
+		if (extendButton == null) {
 			return;
 		}
-        if (selection.length == 1) {
+		if (selection.length == 1) {
 			IPath selectionPath = selection[0].path;
 			if (currentResource != null)
 				selectionPath = URIUtil.toPath(currentResource.getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath)));
@@ -220,10 +220,10 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 				extendButton.setEnabled(false);
 			}
 
-        } else {
+		} else {
 			extendButton.setEnabled(false);
 		}
-    }
+	}
 
 	/**
 	 * Sets the resource for which the path variable is being edited.

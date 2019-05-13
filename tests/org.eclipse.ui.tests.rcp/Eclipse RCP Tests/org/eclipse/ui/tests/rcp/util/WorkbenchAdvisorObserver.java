@@ -42,126 +42,126 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 
 	private Iterator<String> iterator;
 
-    public static final String INITIALIZE = "initialize"; //$NON-NLS-1$
+	public static final String INITIALIZE = "initialize"; //$NON-NLS-1$
 
-    public static final String PRE_STARTUP = "preStartup"; //$NON-NLS-1$
+	public static final String PRE_STARTUP = "preStartup"; //$NON-NLS-1$
 
-    public static final String POST_STARTUP = "postStartup"; //$NON-NLS-1$
+	public static final String POST_STARTUP = "postStartup"; //$NON-NLS-1$
 
-    public static final String PRE_WINDOW_OPEN = "preWindowOpen"; //$NON-NLS-1$
+	public static final String PRE_WINDOW_OPEN = "preWindowOpen"; //$NON-NLS-1$
 
-    public static final String FILL_ACTION_BARS = "fillActionBars"; //$NON-NLS-1$
+	public static final String FILL_ACTION_BARS = "fillActionBars"; //$NON-NLS-1$
 
-    public static final String POST_WINDOW_RESTORE = "postWindowRestore"; //$NON-NLS-1$
+	public static final String POST_WINDOW_RESTORE = "postWindowRestore"; //$NON-NLS-1$
 
-    public static final String POST_WINDOW_OPEN = "postWindowOpen"; //$NON-NLS-1$
+	public static final String POST_WINDOW_OPEN = "postWindowOpen"; //$NON-NLS-1$
 
-    public static final String PRE_WINDOW_SHELL_CLOSE = "preWindowShellClose"; //$NON-NLS-1$
+	public static final String PRE_WINDOW_SHELL_CLOSE = "preWindowShellClose"; //$NON-NLS-1$
 
-    public static final String EVENT_LOOP_EXCEPTION = "eventLoopException"; //$NON-NLS-1$
+	public static final String EVENT_LOOP_EXCEPTION = "eventLoopException"; //$NON-NLS-1$
 
-    public static final String PRE_SHUTDOWN = "preShutdown"; //$NON-NLS-1$
+	public static final String PRE_SHUTDOWN = "preShutdown"; //$NON-NLS-1$
 
-    public static final String POST_SHUTDOWN = "postShutdown"; //$NON-NLS-1$
+	public static final String POST_SHUTDOWN = "postShutdown"; //$NON-NLS-1$
 
-    public IWorkbenchConfigurer workbenchConfig;
+	public IWorkbenchConfigurer workbenchConfig;
 
-    public WorkbenchAdvisorObserver() {
-        super();
-    }
+	public WorkbenchAdvisorObserver() {
+		super();
+	}
 
-    public WorkbenchAdvisorObserver(int idleBeforeExit) {
-        super(idleBeforeExit);
-    }
+	public WorkbenchAdvisorObserver(int idleBeforeExit) {
+		super(idleBeforeExit);
+	}
 
-    public void resetOperationIterator() {
-        iterator = operations.iterator();
-    }
+	public void resetOperationIterator() {
+		iterator = operations.iterator();
+	}
 
-    public void assertNextOperation(String expected) {
-        Assert.assertTrue(iterator.hasNext());
-        Assert.assertEquals(expected, iterator.next());
-    }
+	public void assertNextOperation(String expected) {
+		Assert.assertTrue(iterator.hasNext());
+		Assert.assertEquals(expected, iterator.next());
+	}
 
-    public void assertAllOperationsExamined() {
-        Assert.assertNotNull(iterator);
-        Assert.assertFalse(iterator.hasNext());
-    }
+	public void assertAllOperationsExamined() {
+		Assert.assertNotNull(iterator);
+		Assert.assertFalse(iterator.hasNext());
+	}
 
-    private void addOperation(String operation) {
-        operations.add(operation);
-    }
+	private void addOperation(String operation) {
+		operations.add(operation);
+	}
 
-    @Override
+	@Override
 	public void initialize(IWorkbenchConfigurer configurer) {
-        super.initialize(configurer);
-        workbenchConfig = configurer;
-        addOperation(INITIALIZE);
-    }
+		super.initialize(configurer);
+		workbenchConfig = configurer;
+		addOperation(INITIALIZE);
+	}
 
-    @Override
+	@Override
 	public void preStartup() {
-        super.preStartup();
-        addOperation(PRE_STARTUP);
-    }
+		super.preStartup();
+		addOperation(PRE_STARTUP);
+	}
 
-    @Override
+	@Override
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
-        super.preWindowOpen(configurer);
-        addOperation(PRE_WINDOW_OPEN);
-    }
+		super.preWindowOpen(configurer);
+		addOperation(PRE_WINDOW_OPEN);
+	}
 
-    @Override
+	@Override
 	public void fillActionBars(IWorkbenchWindow window,
-            IActionBarConfigurer configurer, int flags) {
-        super.fillActionBars(window, configurer, flags);
-        addOperation(FILL_ACTION_BARS);
-    }
+			IActionBarConfigurer configurer, int flags) {
+		super.fillActionBars(window, configurer, flags);
+		addOperation(FILL_ACTION_BARS);
+	}
 
-    @Override
+	@Override
 	public void postWindowRestore(IWorkbenchWindowConfigurer configurer)
-            throws WorkbenchException {
-        super.postWindowRestore(configurer);
-        addOperation(POST_WINDOW_RESTORE);
-    }
+			throws WorkbenchException {
+		super.postWindowRestore(configurer);
+		addOperation(POST_WINDOW_RESTORE);
+	}
 
-    @Override
+	@Override
 	public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-        super.postWindowOpen(configurer);
-        addOperation(POST_WINDOW_OPEN);
-    }
+		super.postWindowOpen(configurer);
+		addOperation(POST_WINDOW_OPEN);
+	}
 
-    @Override
+	@Override
 	public void postStartup() {
-        super.postStartup();
-        addOperation(POST_STARTUP);
-    }
+		super.postStartup();
+		addOperation(POST_STARTUP);
+	}
 
-    @Override
+	@Override
 	public boolean preWindowShellClose(IWorkbenchWindowConfigurer configurer) {
-        if (!super.preWindowShellClose(configurer)) {
+		if (!super.preWindowShellClose(configurer)) {
 			return false;
 		}
-        addOperation(PRE_WINDOW_SHELL_CLOSE);
-        return true;
-    }
+		addOperation(PRE_WINDOW_SHELL_CLOSE);
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean preShutdown() {
-        boolean result = super.preShutdown();
-        addOperation(PRE_SHUTDOWN);
-        return result;
-    }
+		boolean result = super.preShutdown();
+		addOperation(PRE_SHUTDOWN);
+		return result;
+	}
 
-    @Override
+	@Override
 	public void postShutdown() {
-        super.postShutdown();
-        addOperation(POST_SHUTDOWN);
-    }
+		super.postShutdown();
+		addOperation(POST_SHUTDOWN);
+	}
 
-    @Override
+	@Override
 	public void eventLoopException(Throwable exception) {
-        super.eventLoopException(exception);
-        addOperation(EVENT_LOOP_EXCEPTION);
-    }
+		super.eventLoopException(exception);
+		addOperation(EVENT_LOOP_EXCEPTION);
+	}
 }

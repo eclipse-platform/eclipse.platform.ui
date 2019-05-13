@@ -152,7 +152,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertOneShellUp();
 		ControlDecoration decoration = new ControlDecoration(getFieldAssistWindow().getFieldAssistControl(), SWT.RIGHT);
 		decoration.setImage(FieldDecorationRegistry.getDefault()
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("");
 		decoration.showHoverText("");
 		assertOneShellUp();
@@ -167,7 +167,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertOneShellUp();
 		ControlDecoration decoration = new ControlDecoration(getFieldAssistWindow().getFieldAssistControl(), SWT.RIGHT);
 		decoration.setImage(FieldDecorationRegistry.getDefault()
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("foo");
 		spinEventLoop();
 		assertTrue("1.0", decoration.isVisible());

@@ -88,8 +88,8 @@ public class ProgressServiceImpl implements IProgressService {
 
 	@Override
 	public void runInUI(IRunnableContext context,
-	        IRunnableWithProgress runnable, ISchedulingRule rule)
-	        throws InvocationTargetException, InterruptedException {
+			IRunnableWithProgress runnable, ISchedulingRule rule)
+			throws InvocationTargetException, InterruptedException {
 		final RunnableWithStatus runnableWithStatus = new RunnableWithStatus(
 				context,
 				runnable, rule);
@@ -123,8 +123,8 @@ public class ProgressServiceImpl implements IProgressService {
 	public void busyCursorWhile(final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
 		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
-		        ProgressManagerUtil.getDefaultParent(), this, progressManager,
-		        contentProviderFactory, finishedJobs);
+				ProgressManagerUtil.getDefaultParent(), this, progressManager,
+				contentProviderFactory, finishedJobs);
 		dialog.setOpenOnRun(false);
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];
@@ -158,8 +158,8 @@ public class ProgressServiceImpl implements IProgressService {
 		if (fork == false || cancelable == false) {
 			// backward compatible code
 			final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
-			        null, this, progressManager, contentProviderFactory,
-			        finishedJobs);
+					null, this, progressManager, contentProviderFactory,
+					finishedJobs);
 			dialog.run(fork, cancelable, runnable);
 			return;
 		}
@@ -175,8 +175,8 @@ public class ProgressServiceImpl implements IProgressService {
 		}
 
 		final ProgressMonitorFocusJobDialog dialog = new ProgressMonitorFocusJobDialog(
-		        shell, this, progressManager, contentProviderFactory,
-		        finishedJobs);
+				shell, this, progressManager, contentProviderFactory,
+				finishedJobs);
 		dialog.show(job, shell);
 	}
 

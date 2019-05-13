@@ -37,54 +37,54 @@ import org.eclipse.ui.tests.leaks.LeakTests;
 
 public class ActionSetTests extends DynamicTestCase {
 
-    /**
-     *
-     */
-    private static final String ACTION_SET_ID = "org.eclipse.newActionSet1.newActionSet1";
-    private static final String PART_ID = "org.eclipse.ui.tests.part1";
+	/**
+	 *
+	 */
+	private static final String ACTION_SET_ID = "org.eclipse.newActionSet1.newActionSet1";
+	private static final String PART_ID = "org.eclipse.ui.tests.part1";
 
-    public ActionSetTests(String testName) {
-        super(testName);
-    }
+	public ActionSetTests(String testName) {
+		super(testName);
+	}
 
-    public void testActionSets() throws Exception {
-        WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
-        boolean [] found = new boolean[] {false};
-        WWinPluginAction [] action = new WWinPluginAction[1];
+	public void testActionSets() throws Exception {
+		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
+		boolean [] found = new boolean[] {false};
+		WWinPluginAction [] action = new WWinPluginAction[1];
 
-        assertNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
-        assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
-        findInPresentation(window, action, found);
-        assertFalse("Action set found", found[0]);
-        assertNull("Action found", action[0]);
+		assertNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
+		assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
+		findInPresentation(window, action, found);
+		assertFalse("Action set found", found[0]);
+		assertNull("Action found", action[0]);
 
-        action[0] = null;
-        found[0] = false;
-        getBundle();
+		action[0] = null;
+		found[0] = false;
+		getBundle();
 
-        assertNotNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
-        assertNotNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
-        findInPresentation(window, action, found);
-        assertTrue("Action set not found", found[0]);
-        assertNotNull("Action not found", action[0]);
+		assertNotNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
+		assertNotNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
+		findInPresentation(window, action, found);
+		assertTrue("Action set not found", found[0]);
+		assertNotNull("Action not found", action[0]);
 
 		ReferenceQueue<WWinPluginAction> queue = new ReferenceQueue<>();
 		WeakReference<WWinPluginAction> ref = new WeakReference<>(action[0], queue);
 
-        action[0] = null;
-        found[0] = false;
-        removeBundle();
+		action[0] = null;
+		found[0] = false;
+		removeBundle();
 
-        assertNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
-        assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
-        LeakTests.checkRef(queue, ref);
-        findInPresentation(window, action, found);
-        assertFalse("Action set found", found[0]);
-        assertNull("Action found", action[0]);
+		assertNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
+		assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
+		LeakTests.checkRef(queue, ref);
+		findInPresentation(window, action, found);
+		assertFalse("Action set found", found[0]);
+		assertNull("Action found", action[0]);
 
-    }
+	}
 
-    private void findInPresentation(WorkbenchWindow window,
+	private void findInPresentation(WorkbenchWindow window,
 			WWinPluginAction[] action, boolean[] found) {
 		IRendererFactory factory = window.getService(IRendererFactory.class);
 		MWindow mwindow = window.getModel();
@@ -123,33 +123,33 @@ public class ActionSetTests extends DynamicTestCase {
 //		}
 	}
 
-    /**
-     * @return
-     */
-    private ActionSetRegistry getActionSetRegistry() {
-        return WorkbenchPlugin.getDefault().getActionSetRegistry();
-    }
+	/**
+	 * @return
+	 */
+	private ActionSetRegistry getActionSetRegistry() {
+		return WorkbenchPlugin.getDefault().getActionSetRegistry();
+	}
 
-    public void testActionSetPartAssociations() {
-        assertEquals(0, getActionSetRegistry().getActionSetsFor(PART_ID).length);
-        getBundle();
-        assertEquals(1, getActionSetRegistry().getActionSetsFor(PART_ID).length);
-        removeBundle();
-        assertEquals(0, getActionSetRegistry().getActionSetsFor(PART_ID).length);
-    }
+	public void testActionSetPartAssociations() {
+		assertEquals(0, getActionSetRegistry().getActionSetsFor(PART_ID).length);
+		getBundle();
+		assertEquals(1, getActionSetRegistry().getActionSetsFor(PART_ID).length);
+		removeBundle();
+		assertEquals(0, getActionSetRegistry().getActionSetsFor(PART_ID).length);
+	}
 
-    @Override
+	@Override
 	protected String getExtensionId() {
-        return "newActionSet1.testDynamicActionSetAddition";
-    }
+		return "newActionSet1.testDynamicActionSetAddition";
+	}
 
-    @Override
+	@Override
 	protected String getExtensionPoint() {
-        return IWorkbenchRegistryConstants.PL_ACTION_SETS;
-    }
+		return IWorkbenchRegistryConstants.PL_ACTION_SETS;
+	}
 
-    @Override
+	@Override
 	protected String getInstallLocation() {
-        return "data/org.eclipse.newActionSet1";
-    }
+		return "data/org.eclipse.newActionSet1";
+	}
 }

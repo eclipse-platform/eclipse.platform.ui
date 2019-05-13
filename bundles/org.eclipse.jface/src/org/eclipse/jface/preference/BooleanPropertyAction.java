@@ -23,43 +23,43 @@ import org.eclipse.jface.action.Action;
 
 public class BooleanPropertyAction extends Action {
 
-    private IPreferenceStore preferenceStore;
+	private IPreferenceStore preferenceStore;
 
-    private String property;
+	private String property;
 
-    /**
-     * Create a new instance of the receiver.
-     * @param title The displayable name of the action.
-     * @param preferenceStore The preference store to propogate changes to
-     * @param property The property that is being updated
-     * @throws IllegalArgumentException Thrown if preferenceStore or
-     * property are <code>null</code>.
-     */
-    public BooleanPropertyAction(String title,
-            IPreferenceStore preferenceStore, String property)
-            throws IllegalArgumentException {
-        super(title, AS_CHECK_BOX);
+	/**
+	 * Create a new instance of the receiver.
+	 * @param title The displayable name of the action.
+	 * @param preferenceStore The preference store to propogate changes to
+	 * @param property The property that is being updated
+	 * @throws IllegalArgumentException Thrown if preferenceStore or
+	 * property are <code>null</code>.
+	 */
+	public BooleanPropertyAction(String title,
+			IPreferenceStore preferenceStore, String property)
+			throws IllegalArgumentException {
+		super(title, AS_CHECK_BOX);
 
-        if (preferenceStore == null || property == null) {
+		if (preferenceStore == null || property == null) {
 			throw new IllegalArgumentException();
 		}
 
-        this.preferenceStore = preferenceStore;
-        this.property = property;
-        final String finalProprety = property;
+		this.preferenceStore = preferenceStore;
+		this.property = property;
+		final String finalProprety = property;
 
-        preferenceStore
-                .addPropertyChangeListener(event -> {
-				    if (finalProprety.equals(event.getProperty())) {
+		preferenceStore
+				.addPropertyChangeListener(event -> {
+					if (finalProprety.equals(event.getProperty())) {
 						setChecked(Boolean.TRUE.equals(event.getNewValue()));
 					}
 				});
 
-        setChecked(preferenceStore.getBoolean(property));
-    }
+		setChecked(preferenceStore.getBoolean(property));
+	}
 
-    @Override
+	@Override
 	public void run() {
-        preferenceStore.setValue(property, isChecked());
-    }
+		preferenceStore.setValue(property, isChecked());
+	}
 }

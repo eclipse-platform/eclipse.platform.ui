@@ -1188,7 +1188,7 @@ public class FormText extends Canvas {
 			@Override
 			public void getDefaultAction (AccessibleControlEvent e) {
 				if (model.getHyperlinkCount() > 0) {
-				    e.result = SWT.getMessage ("SWT_Press"); //$NON-NLS-1$
+					e.result = SWT.getMessage ("SWT_Press"); //$NON-NLS-1$
 				}
 			}
 
@@ -1204,7 +1204,7 @@ public class FormText extends Canvas {
 				int linkCount = model.getHyperlinkCount();
 				if (childID == ACC.CHILDID_SELF) {
 					if (linkCount > 0) {
-					    role = ACC.ROLE_LINK;
+						role = ACC.ROLE_LINK;
 					} else {
 						role = ACC.ROLE_TEXT;
 					}
@@ -1311,7 +1311,7 @@ public class FormText extends Canvas {
 		notifyListeners(SWT.Selection, event);
 		// A listener could have caused the widget to be disposed
 		if (!isDisposed()) {
-		    getAccessible().selectionChanged();
+			getAccessible().selectionChanged();
 		}
 	}
 

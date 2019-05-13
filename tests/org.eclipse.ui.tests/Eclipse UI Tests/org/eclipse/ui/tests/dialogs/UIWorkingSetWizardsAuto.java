@@ -46,140 +46,140 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * Abstract test class for the working set wizard tests.
  */
 public abstract class UIWorkingSetWizardsAuto extends UITestCase {
-    protected static final int SIZING_WIZARD_WIDTH = 470;
+	protected static final int SIZING_WIZARD_WIDTH = 470;
 
-    protected static final int SIZING_WIZARD_HEIGHT = 550;
+	protected static final int SIZING_WIZARD_HEIGHT = 550;
 
-    protected static final int SIZING_WIZARD_WIDTH_2 = 500;
+	protected static final int SIZING_WIZARD_WIDTH_2 = 500;
 
-    protected static final int SIZING_WIZARD_HEIGHT_2 = 500;
+	protected static final int SIZING_WIZARD_HEIGHT_2 = 500;
 
-    protected static final String WORKING_SET_NAME_1 = "ws1";
+	protected static final String WORKING_SET_NAME_1 = "ws1";
 
-    protected static final String WORKING_SET_NAME_2 = "ws2";
+	protected static final String WORKING_SET_NAME_2 = "ws2";
 
-    protected WizardDialog fWizardDialog;
+	protected WizardDialog fWizardDialog;
 
-    protected IWizard fWizard;
+	protected IWizard fWizard;
 
-    protected IProject p1;
+	protected IProject p1;
 
-    protected IProject p2;
+	protected IProject p2;
 
-    protected IFile f1;
+	protected IFile f1;
 
-    protected IFile f2;
+	protected IFile f2;
 
-    public UIWorkingSetWizardsAuto(String name) {
-        super(name);
-    }
+	public UIWorkingSetWizardsAuto(String name) {
+		super(name);
+	}
 
-    protected void checkTreeItems() {
+	protected void checkTreeItems() {
 		List<Widget> widgets = getWidgets((Composite) fWizardDialog.getCurrentPage()
-                .getControl(), Tree.class);
-        Tree tree = (Tree) widgets.get(0);
-        TreeItem[] treeItems = tree.getItems();
-        for (TreeItem treeItem : treeItems) {
-            treeItem.setChecked(true);
-            Event event = new Event();
-            event.detail = SWT.CHECK;
-            event.item = treeItem;
-            tree.notifyListeners(SWT.Selection, event);
-        }
-    }
+				.getControl(), Tree.class);
+		Tree tree = (Tree) widgets.get(0);
+		TreeItem[] treeItems = tree.getItems();
+		for (TreeItem treeItem : treeItems) {
+			treeItem.setChecked(true);
+			Event event = new Event();
+			event.detail = SWT.CHECK;
+			event.item = treeItem;
+			tree.notifyListeners(SWT.Selection, event);
+		}
+	}
 
-    private void deleteResources() throws CoreException {
-        try {
-            if (p1 != null) {
-                FileUtil.deleteProject(p1);
-            }
-            if (p2 != null) {
-                FileUtil.deleteProject(p2);
-            }
+	private void deleteResources() throws CoreException {
+		try {
+			if (p1 != null) {
+				FileUtil.deleteProject(p1);
+			}
+			if (p2 != null) {
+				FileUtil.deleteProject(p2);
+			}
 
-        } catch (CoreException e) {
-            TestPlugin.getDefault().getLog().log(e.getStatus());
-            fail();
-            throw (e);
+		} catch (CoreException e) {
+			TestPlugin.getDefault().getLog().log(e.getStatus());
+			fail();
+			throw (e);
 
-        }
+		}
 
-    }
+	}
 
-    private Shell getShell() {
-        return DialogCheck.getShell();
-    }
+	private Shell getShell() {
+		return DialogCheck.getShell();
+	}
 
 	protected List<Widget> getWidgets(Composite composite, Class<?> clazz) {
-        Widget[] children = composite.getChildren();
+		Widget[] children = composite.getChildren();
 		List<Widget> selectedChildren = new ArrayList<>();
 
-        for (Widget child : children) {
-            if (child.getClass() == clazz) {
-                selectedChildren.add(child);
-            }
-            if (child instanceof Composite) {
-                selectedChildren.addAll(getWidgets((Composite) child, clazz));
-            }
-        }
-        return selectedChildren;
-    }
+		for (Widget child : children) {
+			if (child.getClass() == clazz) {
+				selectedChildren.add(child);
+			}
+			if (child instanceof Composite) {
+				selectedChildren.addAll(getWidgets((Composite) child, clazz));
+			}
+		}
+		return selectedChildren;
+	}
 
-    /**
-     * <code>fWizard</code> must be initialized by subclasses prior to
-     * calling this.
-     */
-    @Override
+	/**
+	 * <code>fWizard</code> must be initialized by subclasses prior to
+	 * calling this.
+	 */
+	@Override
 	protected void doSetUp() throws Exception {
-        super.doSetUp();
+		super.doSetUp();
 
-        fWizardDialog = new WizardDialog(getShell(), fWizard);
-        fWizardDialog.create();
-        Shell dialogShell = fWizardDialog.getShell();
-        dialogShell.setSize(Math.max(SIZING_WIZARD_WIDTH_2, dialogShell
-                .getSize().x), SIZING_WIZARD_HEIGHT_2);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(fWizardDialog.getShell(),
-                IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
+		fWizardDialog = new WizardDialog(getShell(), fWizard);
+		fWizardDialog.create();
+		Shell dialogShell = fWizardDialog.getShell();
+		dialogShell.setSize(Math.max(SIZING_WIZARD_WIDTH_2, dialogShell
+				.getSize().x), SIZING_WIZARD_HEIGHT_2);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fWizardDialog.getShell(),
+				IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
 
-        IWorkingSetManager workingSetManager = fWorkbench
-                .getWorkingSetManager();
-        IWorkingSet[] workingSets = workingSetManager.getWorkingSets();
-        for (IWorkingSet workingSet : workingSets) {
-            workingSetManager.removeWorkingSet(workingSet);
-        }
-        setupResources();
-    }
+		IWorkingSetManager workingSetManager = fWorkbench
+				.getWorkingSetManager();
+		IWorkingSet[] workingSets = workingSetManager.getWorkingSets();
+		for (IWorkingSet workingSet : workingSets) {
+			workingSetManager.removeWorkingSet(workingSet);
+		}
+		setupResources();
+	}
 
-    private void setupResources() throws CoreException {
-        p1 = FileUtil.createProject("TP1");
-        p2 = FileUtil.createProject("TP2");
-        f1 = FileUtil.createFile("f1.txt", p1);
-        f2 = FileUtil.createFile("f2.txt", p2);
-    }
+	private void setupResources() throws CoreException {
+		p1 = FileUtil.createProject("TP1");
+		p2 = FileUtil.createProject("TP2");
+		f1 = FileUtil.createFile("f1.txt", p1);
+		f2 = FileUtil.createFile("f2.txt", p2);
+	}
 
-    protected void setTextWidgetText(String text, IWizardPage page) {
+	protected void setTextWidgetText(String text, IWizardPage page) {
 		List<Widget> widgets = getWidgets((Composite) page.getControl(), Text.class);
-        Text textWidget = (Text) widgets.get(0);
-        textWidget.setText(text);
-        textWidget.notifyListeners(SWT.Modify, new Event());
-    }
+		Text textWidget = (Text) widgets.get(0);
+		textWidget.setText(text);
+		textWidget.notifyListeners(SWT.Modify, new Event());
+	}
 
-    @Override
+	@Override
 	protected void doTearDown() throws Exception {
-        deleteResources();
-        super.doTearDown();
-    }
+		deleteResources();
+		super.doTearDown();
+	}
 
-    protected WorkingSetDescriptor[] getEditableWorkingSetDescriptors() {
-        WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-        WorkingSetDescriptor[] all = registry.getWorkingSetDescriptors();
+	protected WorkingSetDescriptor[] getEditableWorkingSetDescriptors() {
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		WorkingSetDescriptor[] all = registry.getWorkingSetDescriptors();
 		ArrayList<WorkingSetDescriptor> editable = new ArrayList<>(all.length);
-        for (WorkingSetDescriptor descriptor : all) {
-            if (descriptor.isEditable()) {
-                editable.add(descriptor);
-            }
-        }
-        return editable.toArray(new WorkingSetDescriptor[editable.size()]);
-    }
+		for (WorkingSetDescriptor descriptor : all) {
+			if (descriptor.isEditable()) {
+				editable.add(descriptor);
+			}
+		}
+		return editable.toArray(new WorkingSetDescriptor[editable.size()]);
+	}
 
 }

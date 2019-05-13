@@ -108,7 +108,7 @@ public class Snippet031TableViewerCustomTooltipsMultiSelection {
 	public Snippet031TableViewerCustomTooltipsMultiSelection(Shell shell) {
 		final Table table = new Table(shell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
-        table.setLinesVisible(true);
+		table.setLinesVisible(true);
 
 		final TableViewer v = new TableViewer(table);
 		TableColumn tableColumn1 = new TableColumn(table, SWT.NONE);
@@ -116,85 +116,85 @@ public class Snippet031TableViewerCustomTooltipsMultiSelection {
 
 		String column1 = "Column 1", column2 = "Column 2";
 		/* Setup the table  columns */
-        tableColumn1.setText(column1);
-        tableColumn2.setText(column2);
-        tableColumn1.pack();
-        tableColumn2.pack();
+		tableColumn1.setText(column1);
+		tableColumn2.setText(column2);
+		tableColumn1.pack();
+		tableColumn2.pack();
 
-        v.setColumnProperties(new String[] { column1, column2 });
+		v.setColumnProperties(new String[] { column1, column2 });
 		v.setLabelProvider(new MyLableProvider());
 		v.setContentProvider(new ArrayContentProvider());
 		v.setInput(createModel());
 
 		/**
-	     * The listener that gets added to the table.  This listener is responsible for creating the tooltips
-	     * when hovering over a cell item. This listener will listen for the following events:
-	     *  <li>SWT.KeyDown		- to remove the tooltip</li>
-	     *  <li>SWT.Dispose		- to remove the tooltip</li>
-	     *  <li>SWT.MouseMove	- to remove the tooltip</li>
-	     *  <li>SWT.MouseHover	- to set the tooltip</li>
-	     */
-	    Listener tableListener = new Listener () {
-	    	Shell tooltip = null;
-	    	Label label = null;
+		 * The listener that gets added to the table.  This listener is responsible for creating the tooltips
+		 * when hovering over a cell item. This listener will listen for the following events:
+		 *  <li>SWT.KeyDown		- to remove the tooltip</li>
+		 *  <li>SWT.Dispose		- to remove the tooltip</li>
+		 *  <li>SWT.MouseMove	- to remove the tooltip</li>
+		 *  <li>SWT.MouseHover	- to set the tooltip</li>
+		 */
+		Listener tableListener = new Listener () {
+			Shell tooltip = null;
+			Label label = null;
 
-	    	@Override
+			@Override
 			public void handleEvent (Event event) {
-			   switch (event.type) {
-				   	case SWT.KeyDown:
-				   	case SWT.Dispose:
-				   	case SWT.MouseMove: {
-				   		if (tooltip == null) break;
-				   		tooltip.dispose ();
-				   		tooltip = null;
-				   		label = null;
-				   		break;
-				   	}
-				   	case SWT.MouseHover: {
-				   		Point coords = new Point(event.x, event.y);
-						TableItem item = table.getItem(coords);
-				   		if (item != null) {
-				   			int columnCount = table.getColumnCount();
-							for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-				   				if (item.getBounds(columnIndex).contains(coords)) {
-				   					/* Dispose of the old tooltip (if one exists */
-				   					if (tooltip != null  && !tooltip.isDisposed ()) tooltip.dispose ();
+				switch (event.type) {
+				case SWT.KeyDown:
+				case SWT.Dispose:
+				case SWT.MouseMove: {
+					if (tooltip == null) break;
+					tooltip.dispose ();
+					tooltip = null;
+					label = null;
+					break;
+				}
+				case SWT.MouseHover: {
+					Point coords = new Point(event.x, event.y);
+					TableItem item = table.getItem(coords);
+					if (item != null) {
+						int columnCount = table.getColumnCount();
+						for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+							if (item.getBounds(columnIndex).contains(coords)) {
+								/* Dispose of the old tooltip (if one exists */
+								if (tooltip != null  && !tooltip.isDisposed ()) tooltip.dispose ();
 
-				   					/* Create a new Tooltip */
-				   					tooltip = new Shell (table.getShell(), SWT.ON_TOP | SWT.NO_FOCUS | SWT.TOOL);
-				   					tooltip.setBackground (table.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
-				   					FillLayout layout = new FillLayout ();
-				   					layout.marginWidth = 2;
-				   					tooltip.setLayout (layout);
-				   					label = new Label (tooltip, SWT.NONE);
-				   					label.setForeground (table.getDisplay().getSystemColor (SWT.COLOR_INFO_FOREGROUND));
-				   					label.setBackground (table.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
+								/* Create a new Tooltip */
+								tooltip = new Shell (table.getShell(), SWT.ON_TOP | SWT.NO_FOCUS | SWT.TOOL);
+								tooltip.setBackground (table.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
+								FillLayout layout = new FillLayout ();
+								layout.marginWidth = 2;
+								tooltip.setLayout (layout);
+								label = new Label (tooltip, SWT.NONE);
+								label.setForeground (table.getDisplay().getSystemColor (SWT.COLOR_INFO_FOREGROUND));
+								label.setBackground (table.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
 
-				   					/* Store the TableItem with the label so we can pass the mouse event later */
-				   					label.setData ("_TableItem_", item);
+								/* Store the TableItem with the label so we can pass the mouse event later */
+								label.setData ("_TableItem_", item);
 
-				   					/* Set the tooltip text */
-			   						label.setText("Tooltip: " + item.getData() + " : " + columnIndex);
+								/* Set the tooltip text */
+								label.setText("Tooltip: " + item.getData() + " : " + columnIndex);
 
-			   						/* Setup Listeners to remove the tooltip and transfer the received mouse events */
-				   					label.addListener (SWT.MouseExit, tooltipLabelListener);
-				   					label.addListener (SWT.MouseDown, tooltipLabelListener);
+								/* Setup Listeners to remove the tooltip and transfer the received mouse events */
+								label.addListener (SWT.MouseExit, tooltipLabelListener);
+								label.addListener (SWT.MouseDown, tooltipLabelListener);
 
-				   					/* Set the size and position of the tooltip */
-				   					Point size = tooltip.computeSize (SWT.DEFAULT, SWT.DEFAULT);
-				   					Rectangle rect = item.getBounds (columnIndex);
-				   					Point pt = table.toDisplay (rect.x, rect.y);
-				   					tooltip.setBounds (pt.x, pt.y, size.x, size.y);
+								/* Set the size and position of the tooltip */
+								Point size = tooltip.computeSize (SWT.DEFAULT, SWT.DEFAULT);
+								Rectangle rect = item.getBounds (columnIndex);
+								Point pt = table.toDisplay (rect.x, rect.y);
+								tooltip.setBounds (pt.x, pt.y, size.x, size.y);
 
-				   					/* Show it */
-				   					tooltip.setVisible (true);
-				   					break;
-				   				}
-				   			}
-				   		}
-				   	}
-			   }
-	    	}
+								/* Show it */
+								tooltip.setVisible (true);
+								break;
+							}
+						}
+					}
+				}
+				}
+			}
 		};
 
 		table.addListener (SWT.Dispose, tableListener);
@@ -203,72 +203,72 @@ public class Snippet031TableViewerCustomTooltipsMultiSelection {
 		table.addListener (SWT.MouseHover, tableListener);
 	}
 
-	   /**
-	    * This listener is added to the tooltip so that it can either dispose itself if the mouse
-	    * exits the tooltip or so it can pass the selection event through to the table.
-	    */
-	    final TooltipLabelListener tooltipLabelListener = new TooltipLabelListener();
-	    final class TooltipLabelListener implements Listener {
-	        private boolean isCTRLDown(Event e) {
-	        	return (e.stateMask & SWT.CTRL) != 0;
-	        }
+	/**
+		* This listener is added to the tooltip so that it can either dispose itself if the mouse
+		* exits the tooltip or so it can pass the selection event through to the table.
+	 */
+	final TooltipLabelListener tooltipLabelListener = new TooltipLabelListener();
+	final class TooltipLabelListener implements Listener {
+		private boolean isCTRLDown(Event e) {
+			return (e.stateMask & SWT.CTRL) != 0;
+		}
 
 		@Override
 		public void handleEvent (Event event) {
-			   Label label = (Label)event.widget;
-			   Shell shell = label.getShell ();
-			   switch (event.type) {
-				   	case SWT.MouseDown:	/* Handle a user Click */
-				   		/* Extract our Data */
-				   		Event e = new Event ();
-				   		e.item = (TableItem) label.getData ("_TableItem_");
-				   		Table table = ((TableItem) e.item).getParent();
+			Label label = (Label)event.widget;
+			Shell shell = label.getShell ();
+			switch (event.type) {
+			case SWT.MouseDown: /* Handle a user Click */
+				/* Extract our Data */
+				Event e = new Event ();
+				e.item = (TableItem) label.getData ("_TableItem_");
+				Table table = ((TableItem) e.item).getParent();
 
-				   		/* Construct the new Selection[] to show */
-				   		TableItem [] newSelection = null;
-				   		if (isCTRLDown(event)) {
-				   			/* We have 2 scenario's.
-				   			 * 	1) We are selecting an already selected element - so remove it from the selected indices
-				   			 *  2) We are selecting a non-selected element - so add it to the selected indices
-				   			 */
-				   			TableItem[] sel = table.getSelection();
-				   			for (int i = 0; i < sel.length; ++i) {
-				   				if (e.item.equals(sel[i])) {
-				   					// We are de-selecting this element
-				   					newSelection = new TableItem[sel.length - 1];
-				   					System.arraycopy(sel, 0, newSelection, 0, i);
-				   					System.arraycopy(sel, i+1, newSelection, i, sel.length - i - 1);
-				   					break;
-				   				}
-		   					}
+				/* Construct the new Selection[] to show */
+				TableItem [] newSelection = null;
+				if (isCTRLDown(event)) {
+					/* We have 2 scenario's.
+					 * 	1) We are selecting an already selected element - so remove it from the selected indices
+					 *  2) We are selecting a non-selected element - so add it to the selected indices
+					 */
+					TableItem[] sel = table.getSelection();
+					for (int i = 0; i < sel.length; ++i) {
+						if (e.item.equals(sel[i])) {
+							// We are de-selecting this element
+							newSelection = new TableItem[sel.length - 1];
+							System.arraycopy(sel, 0, newSelection, 0, i);
+							System.arraycopy(sel, i+1, newSelection, i, sel.length - i - 1);
+							break;
+						}
+					}
 
-				   			/*
-				   			 * If we haven't created the newSelection[] yet, than we are adding the newly selected element
-				   			 * into the list of selected indicies
-				   			 */
-				   			if (newSelection == null) {
-				   				newSelection = new TableItem[sel.length + 1];
-				   				System.arraycopy(sel, 0, newSelection, 0, sel.length);
-				   				newSelection[sel.length] = (TableItem) e.item;
-				   			}
+					/*
+					 * If we haven't created the newSelection[] yet, than we are adding the newly selected element
+					 *  into the list of selected indicies
+					 */
+					if (newSelection == null) {
+						newSelection = new TableItem[sel.length + 1];
+						System.arraycopy(sel, 0, newSelection, 0, sel.length);
+						newSelection[sel.length] = (TableItem) e.item;
+					}
 
-				   		} else {
-				   			/* CTRL is not down, so we simply select the single element */
-				   			newSelection = new TableItem[] { (TableItem) e.item };
-				   		}
-				   		/* Set the new selection of the table and notify the listeners */
-				   		table.setSelection (newSelection);
-				   		table.notifyListeners (SWT.Selection, e);
+				} else {
+					/* CTRL is not down, so we simply select the single element */
+					newSelection = new TableItem[] { (TableItem) e.item };
+				}
+				/* Set the new selection of the table and notify the listeners */
+				table.setSelection (newSelection);
+				table.notifyListeners (SWT.Selection, e);
 
-				   		/* Remove the Tooltip */
-				   		shell.dispose ();
-				   		table.setFocus();
-				   		break;
-				   	case SWT.MouseExit:
-				   		shell.dispose ();
-				   		break;
-			   }
-	    }};
+				/* Remove the Tooltip */
+				shell.dispose ();
+				table.setFocus();
+				break;
+			case SWT.MouseExit:
+				shell.dispose ();
+				break;
+			}
+		}};
 
 
 

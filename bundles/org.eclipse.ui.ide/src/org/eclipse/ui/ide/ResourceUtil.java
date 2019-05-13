@@ -43,21 +43,21 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public final class ResourceUtil {
 
-    private ResourceUtil() {
-        // prevent instantiation
-    }
+	private ResourceUtil() {
+		// prevent instantiation
+	}
 
-    /**
-     * Returns the file corresponding to the given editor input, or <code>null</code>
-     * if there is no applicable file.
-     * Returns <code>null</code> if the given editor input is <code>null</code>.
-     *
-     * @param editorInput the editor input, or <code>null</code>
-     * @return the file corresponding to the editor input, or <code>null</code>
-     */
-    public static IFile getFile(IEditorInput editorInput) {
-        // Note: do not treat IFileEditorInput as a special case.  Use the adapter mechanism instead.
-        // See Bug 87288 [IDE] [EditorMgmt] Should avoid explicit checks for [I]FileEditorInput
+	/**
+	 * Returns the file corresponding to the given editor input, or <code>null</code>
+	 * if there is no applicable file.
+	 * Returns <code>null</code> if the given editor input is <code>null</code>.
+	 *
+	 * @param editorInput the editor input, or <code>null</code>
+	 * @return the file corresponding to the editor input, or <code>null</code>
+	 */
+	public static IFile getFile(IEditorInput editorInput) {
+		// Note: do not treat IFileEditorInput as a special case.  Use the adapter mechanism instead.
+		// See Bug 87288 [IDE] [EditorMgmt] Should avoid explicit checks for [I]FileEditorInput
 		IFile file = Adapters.adapt(editorInput, IFile.class);
 		if (file != null) {
 			return file;
@@ -77,79 +77,79 @@ public final class ResourceUtil {
 			}
 		}
 		return file;
-    }
+	}
 
-    /**
-     * Returns the resource corresponding to the given editor input, or <code>null</code>
-     * if there is no applicable resource.
-     * Returns <code>null</code> if the given editor input is <code>null</code>.
-     *
-     * @param editorInput the editor input
-     * @return the file corresponding to the editor input, or <code>null</code>
-     */
-    public static IResource getResource(IEditorInput editorInput) {
+	/**
+	 * Returns the resource corresponding to the given editor input, or <code>null</code>
+	 * if there is no applicable resource.
+	 * Returns <code>null</code> if the given editor input is <code>null</code>.
+	 *
+	 * @param editorInput the editor input
+	 * @return the file corresponding to the editor input, or <code>null</code>
+	 */
+	public static IResource getResource(IEditorInput editorInput) {
 		if (editorInput == null) {
 			return null;
 		}
-        // Note: do not treat IFileEditorInput as a special case.  Use the adapter mechanism instead.
-        // See Bug 87288 [IDE] [EditorMgmt] Should avoid explicit checks for [I]FileEditorInput
+		// Note: do not treat IFileEditorInput as a special case.  Use the adapter mechanism instead.
+		// See Bug 87288 [IDE] [EditorMgmt] Should avoid explicit checks for [I]FileEditorInput
 		IResource resource = Adapters.adapt(editorInput, IResource.class);
 		if (resource != null) {
 			return resource;
 		}
-        // the input may adapt to IFile but not IResource
+		// the input may adapt to IFile but not IResource
 		return Adapters.adapt(editorInput, IFile.class);
-    }
+	}
 
-    /**
-     * Returns the editor in the given page whose input represents the given file,
-     * or <code>null</code> if there is no such editor.
-     *
-     * @param page the workbench page
-     * @param file the file
-     * @return the matching editor, or <code>null</code>
-     */
-    public static IEditorPart findEditor(IWorkbenchPage page, IFile file) {
-        // handle the common case where the editor input is a FileEditorInput
-        IEditorPart editor = page.findEditor(new FileEditorInput(file));
-        if (editor != null) {
-            return editor;
-        }
-        // check for editors that have their own kind of input that adapts to IFile,
-        // being careful not to force loading of the editor
+	/**
+	 * Returns the editor in the given page whose input represents the given file,
+	 * or <code>null</code> if there is no such editor.
+	 *
+	 * @param page the workbench page
+	 * @param file the file
+	 * @return the matching editor, or <code>null</code>
+	 */
+	public static IEditorPart findEditor(IWorkbenchPage page, IFile file) {
+		// handle the common case where the editor input is a FileEditorInput
+		IEditorPart editor = page.findEditor(new FileEditorInput(file));
+		if (editor != null) {
+			return editor;
+		}
+		// check for editors that have their own kind of input that adapts to IFile,
+		// being careful not to force loading of the editor
 		for (IEditorReference ref : page.getEditorReferences()) {
-            IEditorPart part = ref.getEditor(false);
-            if (part != null) {
-                IFile editorFile = getFile(part.getEditorInput());
-                if (editorFile != null && file.equals(editorFile)) {
-                    return part;
-                }
-            }
-        }
-        return null;
-    }
+			IEditorPart part = ref.getEditor(false);
+			if (part != null) {
+				IFile editorFile = getFile(part.getEditorInput());
+				if (editorFile != null && file.equals(editorFile)) {
+					return part;
+				}
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Returns the resource corresponding to the given model element, or <code>null</code>
-     * if there is no applicable resource.
-     *
-     * @param element the model element, or <code>null</code>
-     * @return the resource corresponding to the model element, or <code>null</code>
-     * @since 3.2
-     */
-    public static IResource getResource(Object element) {
+	/**
+	 * Returns the resource corresponding to the given model element, or <code>null</code>
+	 * if there is no applicable resource.
+	 *
+	 * @param element the model element, or <code>null</code>
+	 * @return the resource corresponding to the model element, or <code>null</code>
+	 * @since 3.2
+	 */
+	public static IResource getResource(Object element) {
 		return Adapters.adapt(element, IResource.class);
-    }
+	}
 
-    /**
-     * Returns the file corresponding to the given model element, or <code>null</code>
-     * if there is no applicable file.
-     *
-     * @param element the model element, or <code>null</code>
-     * @return the resource corresponding to the model element, or <code>null</code>
-     * @since 3.2
-     */
-    public static IFile getFile(Object element) {
+	/**
+	 * Returns the file corresponding to the given model element, or <code>null</code>
+	 * if there is no applicable file.
+	 *
+	 * @param element the model element, or <code>null</code>
+	 * @return the resource corresponding to the model element, or <code>null</code>
+	 * @since 3.2
+	 */
+	public static IFile getFile(Object element) {
 		if (element == null) {
 			return null;
 		}
@@ -177,57 +177,57 @@ public final class ResourceUtil {
 			return (IFile) resource;
 		}
 		return null;
-    }
+	}
 
 	/**
-     * Returns the resource mapping corresponding to the given model element, or <code>null</code>
-     * if there is no applicable resource mapping.
-     *
-     * @param element the model element, or <code>null</code>
-     * @return the resource mapping corresponding to the model element, or <code>null</code>
-     * @since 3.2
-     */
-    public static ResourceMapping getResourceMapping(Object element) {
+	 * Returns the resource mapping corresponding to the given model element, or <code>null</code>
+	 * if there is no applicable resource mapping.
+	 *
+	 * @param element the model element, or <code>null</code>
+	 * @return the resource mapping corresponding to the model element, or <code>null</code>
+	 * @since 3.2
+	 */
+	public static ResourceMapping getResourceMapping(Object element) {
 		return Adapters.adapt(element, ResourceMapping.class);
 	}
 
-    /**
-     * Tries to extra a single file from the given resource mapping.
-     * Returns the file if the mapping maps to a single file, or <code>null</code>
-     * if it maps to zero or multiple files.
-     *
-     * @param mapping the resource mapping
-     * @return the file, or <code>null</code>
-     */
-    private static IFile getFileFromResourceMapping(ResourceMapping mapping) {
-    	IResource resource = getResourceFromResourceMapping(mapping);
-    	if (resource instanceof IFile) {
-    		return (IFile) resource;
-    	}
-    	return null;
-    }
+	/**
+	 * Tries to extra a single file from the given resource mapping.
+	 * Returns the file if the mapping maps to a single file, or <code>null</code>
+	 * if it maps to zero or multiple files.
+	 *
+	 * @param mapping the resource mapping
+	 * @return the file, or <code>null</code>
+	 */
+	private static IFile getFileFromResourceMapping(ResourceMapping mapping) {
+		IResource resource = getResourceFromResourceMapping(mapping);
+		if (resource instanceof IFile) {
+			return (IFile) resource;
+		}
+		return null;
+	}
 
-    /**
-     * Tries to extra a single resource from the given resource mapping.
-     * Returns the resource if the mapping maps to a single resource, or <code>null</code>
-     * if it maps to zero or multiple resources.
-     *
-     * @param mapping the resource mapping
-     * @return the resource, or <code>null</code>
-     */
-    private static IResource getResourceFromResourceMapping(ResourceMapping mapping) {
+	/**
+	 * Tries to extra a single resource from the given resource mapping.
+	 * Returns the resource if the mapping maps to a single resource, or <code>null</code>
+	 * if it maps to zero or multiple resources.
+	 *
+	 * @param mapping the resource mapping
+	 * @return the resource, or <code>null</code>
+	 */
+	private static IResource getResourceFromResourceMapping(ResourceMapping mapping) {
 		try {
 			ResourceTraversal[] traversals = mapping.getTraversals(null, null);
-	    	if (traversals.length != 1) {
-	    		return null;
-	    	}
-	    	ResourceTraversal traversal = traversals[0];
+			if (traversals.length != 1) {
+				return null;
+			}
+			ResourceTraversal traversal = traversals[0];
 			// TODO: need to honor traversal flags
-	    	IResource[] resources = traversal.getResources();
-	    	if (resources.length != 1) {
-	    		return null;
-	    	}
-	    	return resources[0];
+			IResource[] resources = traversal.getResources();
+			if (resources.length != 1) {
+				return null;
+			}
+			return resources[0];
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
 			return null;

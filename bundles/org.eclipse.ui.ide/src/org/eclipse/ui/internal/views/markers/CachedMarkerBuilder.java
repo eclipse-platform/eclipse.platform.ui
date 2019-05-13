@@ -429,7 +429,7 @@ public class CachedMarkerBuilder {
 	 *
 	 * schedules marker update job
 	 */
-	 MarkerUpdateJob scheduleUpdateJob(long delay, boolean clean) {
+	MarkerUpdateJob scheduleUpdateJob(long delay, boolean clean) {
 		return scheduleUpdateJob(delay, clean, new boolean[] { true, false, false });
 	}
 
@@ -589,10 +589,10 @@ public class CachedMarkerBuilder {
 	 * @see CachedMarkerBuilder#getClonedMarkers()
 	 * and {@link #getMarkers()}
 	 */
-	 Markers createMarkersClone() {
-		 if(markers.isInChange()){
-			 return null;
-		 }
+	Markers createMarkersClone() {
+		if(markers.isInChange()){
+			return null;
+		}
 		markersClone =markers.getClone();
 		return markersClone;
 	}

@@ -35,58 +35,58 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
  */
 public class ViewWidgetFactory extends TestWidgetFactory {
 
-    private String viewId;
-    private Control ctrl;
-    private IWorkbenchWindow window;
+	private String viewId;
+	private Control ctrl;
+	private IWorkbenchWindow window;
 
-    public ViewWidgetFactory(String viewId) {
-        this.viewId = viewId;
-        Assert.assertNotNull(viewId);
-    }
+	public ViewWidgetFactory(String viewId) {
+		this.viewId = viewId;
+		Assert.assertNotNull(viewId);
+	}
 
-    @Override
+	@Override
 	public Point getMaxSize() {
-        return new Point(1024, 768);
-    }
+		return new Point(1024, 768);
+	}
 
-    public static Composite getControl(IViewPart part) {
+	public static Composite getControl(IViewPart part) {
 		ViewSite site = (ViewSite)part.getSite();
 		MPart modelPart = site.getModel();
 		return (Composite) modelPart.getWidget();
-    }
+	}
 
-    @Override
+	@Override
 	public void init() throws CoreException, WorkbenchException {
-    	// open the view in a new window
-        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
+		// open the view in a new window
+		window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
 		IWorkbenchPage page = window.getActivePage();
-        Assert.assertNotNull(page);
+		Assert.assertNotNull(page);
 
 		IViewPart part = page.showView(viewId, null, IWorkbenchPage.VIEW_ACTIVATE);
 
-        BasicPerformanceTest.waitForBackgroundJobs();
+		BasicPerformanceTest.waitForBackgroundJobs();
 
 		ctrl = getControl(part);
 
-        Point size = getMaxSize();
-        ctrl.setBounds(0,0,size.x, size.y);
-        window.getShell().setSize(size);
-    }
+		Point size = getMaxSize();
+		ctrl.setBounds(0,0,size.x, size.y);
+		window.getShell().setSize(size);
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return "View " + viewId;
-    }
+		return "View " + viewId;
+	}
 
-    @Override
+	@Override
 	public Composite getControl() throws CoreException, WorkbenchException {
-        return (Composite)ctrl;
-    }
+		return (Composite)ctrl;
+	}
 
-    @Override
+	@Override
 	public void done() throws CoreException, WorkbenchException {
-    	window.close();
-    	super.done();
-    }
+		window.close();
+		super.done();
+	}
 
 }

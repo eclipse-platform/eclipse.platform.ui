@@ -49,8 +49,8 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	 *            should be shown.
 	 */
 	public ProgressViewerContentProvider(AbstractProgressViewer structured,
-	        FinishedJobs finishedJobs, ProgressViewUpdater viewUpdater,
-	        ProgressManager progressManager, boolean debug, boolean showFinished) {
+			FinishedJobs finishedJobs, ProgressViewUpdater viewUpdater,
+			ProgressManager progressManager, boolean debug, boolean showFinished) {
 		super(viewUpdater, progressManager, debug);
 		progressViewer = structured;
 		this.finishedJobs = finishedJobs;

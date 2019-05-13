@@ -37,49 +37,49 @@ public abstract class QuickMenuAction extends Action {
 		}
 	};
 
-    /**
-     * Creates a new quick menu action with the given command id.
-     *
-     * @param commandId the command id of the short cut used to open
-     *  the sub menu
-     */
-    public QuickMenuAction(String commandId) {
-        setId(commandId);
-        setActionDefinitionId(commandId);
-    }
+	/**
+	 * Creates a new quick menu action with the given command id.
+	 *
+	 * @param commandId the command id of the short cut used to open
+	 *  the sub menu
+	 */
+	public QuickMenuAction(String commandId) {
+		setId(commandId);
+		setActionDefinitionId(commandId);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void run() {
-    	creator.createMenu();
-    }
+		creator.createMenu();
+	}
 
-    /**
-     * Dispose of this menu action.
-     */
-    public void dispose() {
-        if (creator != null) {
-            creator.dispose();
-            creator = null;
-        }
-    }
+	/**
+	 * Dispose of this menu action.
+	 */
+	public void dispose() {
+		if (creator != null) {
+			creator.dispose();
+			creator = null;
+		}
+	}
 
-    /**
-     * Hook to fill a menu manager with the items of the sub menu.
-     *
-     * @param menu the sub menu to fill
-     */
-    protected abstract void fillMenu(IMenuManager menu);
+	/**
+	 * Hook to fill a menu manager with the items of the sub menu.
+	 *
+	 * @param menu the sub menu to fill
+	 */
+	protected abstract void fillMenu(IMenuManager menu);
 
-    /**
-     * Returns the short cut assigned to the sub menu or <code>null</code> if
-     * no short cut is assigned.
-     *
-     * @return the short cut as a human readable string or <code>null</code>
-     */
-    public String getShortCutString() {
+	/**
+	 * Returns the short cut assigned to the sub menu or <code>null</code> if
+	 * no short cut is assigned.
+	 *
+	 * @return the short cut as a human readable string or <code>null</code>
+	 */
+	public String getShortCutString() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final IBindingService bindingService = Adapters.adapt(workbench, IBindingService.class);
 		final TriggerSequence[] activeBindings = bindingService
@@ -89,5 +89,5 @@ public abstract class QuickMenuAction extends Action {
 		}
 
 		return null;
-    }
+	}
 }

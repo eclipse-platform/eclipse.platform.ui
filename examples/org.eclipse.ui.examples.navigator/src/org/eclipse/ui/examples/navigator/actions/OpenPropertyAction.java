@@ -62,7 +62,7 @@ public class OpenPropertyAction extends Action {
 		if(!selection.isEmpty()) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
 			if(sSelection.size() == 1 &&
-			   sSelection.getFirstElement() instanceof PropertiesTreeData)
+				sSelection.getFirstElement() instanceof PropertiesTreeData)
 			{
 				data = ((PropertiesTreeData)sSelection.getFirstElement());
 				return true;
@@ -105,8 +105,8 @@ public class OpenPropertyAction extends Action {
 					} catch (BadLocationException e) {
 						Activator.logError(0, "Could not open property!", e); //$NON-NLS-1$
 						MessageDialog.openError(Display.getDefault().getActiveShell(),
-				 				"Error Opening Property",  //$NON-NLS-1$
-				 				"Could not open property!");   //$NON-NLS-1$
+								"Error Opening Property",  //$NON-NLS-1$
+								"Could not open property!");   //$NON-NLS-1$
 					}
 					return;
 				}
@@ -114,8 +114,8 @@ public class OpenPropertyAction extends Action {
 		} catch (PartInitException e) {
 			Activator.logError(0, "Could not open property!", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
-	 				"Error Opening Property",  //$NON-NLS-1$
-	 				"Could not open property!");   //$NON-NLS-1$
+					"Error Opening Property",  //$NON-NLS-1$
+					"Could not open property!");   //$NON-NLS-1$
 		}
 	}
 }

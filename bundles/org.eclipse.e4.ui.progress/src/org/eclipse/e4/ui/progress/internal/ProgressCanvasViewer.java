@@ -38,100 +38,100 @@ import org.eclipse.swt.widgets.Widget;
  * on the canvas.
  */
 public class ProgressCanvasViewer extends AbstractProgressViewer {
-    Canvas canvas;
+	Canvas canvas;
 
-    Object[] displayedItems = new Object[0];
+	Object[] displayedItems = new Object[0];
 
-    /**
-     * Font metrics to use for determining pixel sizes.
-     */
-    private FontMetrics fontMetrics;
+	/**
+	 * Font metrics to use for determining pixel sizes.
+	 */
+	private FontMetrics fontMetrics;
 
-    private int numShowItems = 1;
+	private int numShowItems = 1;
 
-    private int maxCharacterWidth;
+	private int maxCharacterWidth;
 
 	private int orientation = SWT.HORIZONTAL;
 
-    /**
-     * Create a new instance of the receiver with the supplied
-     * parent and style bits.
-     * @param parent The composite the Canvas is created in
-     * @param style style bits for the canvas
-     * @param itemsToShow the number of items this will show
-     * @param numChars The number of characters for the width hint.
-     * @param side the side to display text, this helps determine horizontal vs vertical
-     */
-    ProgressCanvasViewer(Composite parent, int style, int itemsToShow, int numChars, int orientation) {
-        super();
-        this.orientation = orientation;
-        numShowItems = itemsToShow;
-        maxCharacterWidth = numChars;
-        canvas = new Canvas(parent, style);
-        hookControl(canvas);
-        // Compute and store a font metric
-        GC gc = new GC(canvas);
-        gc.setFont(JFaceResources.getDefaultFont());
-        fontMetrics = gc.getFontMetrics();
-        gc.dispose();
-        initializeListeners();
-    }
+	/**
+	 * Create a new instance of the receiver with the supplied
+	 * parent and style bits.
+	 * @param parent The composite the Canvas is created in
+	 * @param style style bits for the canvas
+	 * @param itemsToShow the number of items this will show
+	 * @param numChars The number of characters for the width hint.
+	 * @param side the side to display text, this helps determine horizontal vs vertical
+	 */
+	ProgressCanvasViewer(Composite parent, int style, int itemsToShow, int numChars, int orientation) {
+		super();
+		this.orientation = orientation;
+		numShowItems = itemsToShow;
+		maxCharacterWidth = numChars;
+		canvas = new Canvas(parent, style);
+		hookControl(canvas);
+		// Compute and store a font metric
+		GC gc = new GC(canvas);
+		gc.setFont(JFaceResources.getDefaultFont());
+		fontMetrics = gc.getFontMetrics();
+		gc.dispose();
+		initializeListeners();
+	}
 
-    /**
-     * NE: Copied from ContentViewer.  We don't want the OpenStrategy hooked
-     * in StructuredViewer.hookControl otherwise the canvas will take focus
-     * since it has a key listener.  We don't want this included in the window's
-     * tab traversal order.  Defeating it here is more self-contained then
-     * setting the tab list on the shell or other parent composite.
-     */
-    @Override
+	/**
+	 * NE: Copied from ContentViewer.  We don't want the OpenStrategy hooked
+	 * in StructuredViewer.hookControl otherwise the canvas will take focus
+	 * since it has a key listener.  We don't want this included in the window's
+	 * tab traversal order.  Defeating it here is more self-contained then
+	 * setting the tab list on the shell or other parent composite.
+	 */
+	@Override
 	protected void hookControl(Control control) {
 		control.addDisposeListener(event -> handleDispose(event));
-    }
+	}
 
-    @Override
+	@Override
 	protected Widget doFindInputItem(Object element) {
-        return null; // No widgets associated with items
-    }
+		return null; // No widgets associated with items
+	}
 
-    @Override
+	@Override
 	protected Widget doFindItem(Object element) {
-        return null; // No widgets associated with items
-    }
+		return null; // No widgets associated with items
+	}
 
-    @Override
+	@Override
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
-        canvas.redraw();
-    }
+		canvas.redraw();
+	}
 
-    @Override
+	@Override
 	protected List<Object> getSelectionFromWidget() {
-        //No selection on a Canvas
+		//No selection on a Canvas
 		return Collections.emptyList();
-    }
+	}
 
-    @Override
+	@Override
 	protected void internalRefresh(Object element) {
-        displayedItems = getSortedChildren(getRoot());
-        canvas.redraw();
-    }
+		displayedItems = getSortedChildren(getRoot());
+		canvas.redraw();
+	}
 
-    @Override
+	@Override
 	public void reveal(Object element) {
-        //Nothing to do here as we do not scroll
-    }
+		//Nothing to do here as we do not scroll
+	}
 
-    @Override
+	@Override
 	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List l, boolean reveal) {
-        //Do nothing as there is no selection
-    }
+		//Do nothing as there is no selection
+	}
 
-    @Override
+	@Override
 	public Control getControl() {
-        return canvas;
-    }
+		return canvas;
+	}
 
-    private void initializeListeners() {
+	private void initializeListeners() {
 		canvas.addPaintListener(event -> {
 
 			GC gc = event.gc;
@@ -175,40 +175,40 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 			if (transform != null)
 				transform.dispose();
 		});
-    }
+	}
 
-    @Override
+	@Override
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
-        Assert.isTrue(labelProvider instanceof ILabelProvider);
-        super.setLabelProvider(labelProvider);
-    }
+		Assert.isTrue(labelProvider instanceof ILabelProvider);
+		super.setLabelProvider(labelProvider);
+	}
 
-    /**
-     * Get the size hints for the receiver. These are used for
-     * layout data.
-     * @return Point - the preferred x and y coordinates
-     */
-    public Point getSizeHints() {
+	/**
+	 * Get the size hints for the receiver. These are used for
+	 * layout data.
+	 * @return Point - the preferred x and y coordinates
+	 */
+	public Point getSizeHints() {
 
-        Display display = canvas.getDisplay();
+		Display display = canvas.getDisplay();
 
-        GC gc = new GC(canvas);
-        FontMetrics fm = gc.getFontMetrics();
+		GC gc = new GC(canvas);
+		FontMetrics fm = gc.getFontMetrics();
 		int charWidth = (int) fm.getAverageCharacterWidth();
-        int charHeight = fm.getHeight();
-        int maxWidth = display.getBounds().width / 2;
-        int maxHeight = display.getBounds().height / 6;
+		int charHeight = fm.getHeight();
+		int maxWidth = display.getBounds().width / 2;
+		int maxHeight = display.getBounds().height / 6;
 		int fontWidth = charWidth * maxCharacterWidth;
-        int fontHeight = charHeight * numShowItems;
-        if (maxWidth < fontWidth) {
+		int fontHeight = charHeight * numShowItems;
+		if (maxWidth < fontWidth) {
 			fontWidth = maxWidth;
 		}
-        if (maxHeight < fontHeight) {
+		if (maxHeight < fontHeight) {
 			fontHeight = maxHeight;
 		}
-        gc.dispose();
-        return new Point(fontWidth, fontHeight);
-    }
+		gc.dispose();
+		return new Point(fontWidth, fontHeight);
+	}
 
 	@Override
 	public void add(Object[] elements) {

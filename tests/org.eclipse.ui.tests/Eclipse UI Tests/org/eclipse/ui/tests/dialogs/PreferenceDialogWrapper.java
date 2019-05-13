@@ -25,32 +25,32 @@ import org.eclipse.ui.preferences.WorkingCopyManager;
 
 public class PreferenceDialogWrapper extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 
-    public PreferenceDialogWrapper(Shell parentShell, PreferenceManager manager) {
-        super(parentShell, manager);
-    }
+	public PreferenceDialogWrapper(Shell parentShell, PreferenceManager manager) {
+		super(parentShell, manager);
+	}
 
-    @Override
+	@Override
 	public boolean showPage(IPreferenceNode node) {
-        return super.showPage(node);
-    }
+		return super.showPage(node);
+	}
 
-    @Override
+	@Override
 	public IPreferencePage getPage(IPreferenceNode node) {
-        if (node == null) {
+		if (node == null) {
 			return null;
 		}
 
-        // Create the page if nessessary
-        if (node.getPage() == null) {
+		// Create the page if nessessary
+		if (node.getPage() == null) {
 			node.createPage();
 		}
 
-        if (node.getPage() == null) {
+		if (node.getPage() == null) {
 			return null;
 		}
 
-        return node.getPage();
-    }
+		return node.getPage();
+	}
 
 	@Override
 	public IWorkingCopyManager getWorkingCopyManager() {

@@ -66,7 +66,7 @@ public class Bug203657TableViewerTest extends ViewerTestCase {
 
 		});
 
-	    new TableColumn(tableViewer.getTable(), SWT.NONE).setWidth(200);
+		new TableColumn(tableViewer.getTable(), SWT.NONE).setWidth(200);
 
 		return tableViewer;
 	}

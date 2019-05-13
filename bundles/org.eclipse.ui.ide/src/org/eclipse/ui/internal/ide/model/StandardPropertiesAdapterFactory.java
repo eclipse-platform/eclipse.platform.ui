@@ -26,31 +26,31 @@ import org.eclipse.ui.views.properties.ResourcePropertySource;
  */
 public class StandardPropertiesAdapterFactory implements IAdapterFactory {
 
-    @Override
+	@Override
 	public <T> T getAdapter(Object o, Class<T> adapterType) {
-        if (adapterType.isInstance(o)) {
+		if (adapterType.isInstance(o)) {
 			return adapterType.cast(o);
-        }
-        if (adapterType == IPropertySource.class) {
-            if (o instanceof IResource) {
-                IResource resource = (IResource) o;
-                if (resource.getType() == IResource.FILE) {
+		}
+		if (adapterType == IPropertySource.class) {
+			if (o instanceof IResource) {
+				IResource resource = (IResource) o;
+				if (resource.getType() == IResource.FILE) {
 					return adapterType.cast(new FilePropertySource((IFile) o));
 				}
 				return adapterType.cast(new ResourcePropertySource((IResource) o));
-            }
-        }
-        return null;
-    }
+			}
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public Class<?>[] getAdapterList() {
-        // org.eclipe.ui.views is an optional dependency
-        try {
-            Class.forName("org.eclipse.ui.views.properties.IPropertySource"); //$NON-NLS-1$
-        } catch(ClassNotFoundException e) {
-            return new Class[0];
-        }
-        return new Class[] { IPropertySource.class };
-    }
+		// org.eclipe.ui.views is an optional dependency
+		try {
+			Class.forName("org.eclipse.ui.views.properties.IPropertySource"); //$NON-NLS-1$
+		} catch(ClassNotFoundException e) {
+			return new Class[0];
+		}
+		return new Class[] { IPropertySource.class };
+	}
 }

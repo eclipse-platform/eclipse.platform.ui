@@ -25,26 +25,26 @@ import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
  */
 public class OpenWorkbenchIntervalMonitor extends RCPTestWorkbenchAdvisor {
 
-    private PerformanceMeter startupMeter;
-    private PerformanceMeter shutdownMeter;
+	private PerformanceMeter startupMeter;
+	private PerformanceMeter shutdownMeter;
 
-    public OpenWorkbenchIntervalMonitor(PerformanceMeter startupMeter, PerformanceMeter shutdownMeter) {
-        super(2);
-        this.startupMeter = startupMeter;
-        this.shutdownMeter = shutdownMeter;
-    }
+	public OpenWorkbenchIntervalMonitor(PerformanceMeter startupMeter, PerformanceMeter shutdownMeter) {
+		super(2);
+		this.startupMeter = startupMeter;
+		this.shutdownMeter = shutdownMeter;
+	}
 
-    @Override
+	@Override
 	public void postStartup() {
-    	startupMeter.stop();
-        // no reason to track performance between when startup completes and shutdown starts
-        // since that is just testing overhead
-        super.postStartup();
-    }
+		startupMeter.stop();
+		// no reason to track performance between when startup completes and shutdown starts
+		// since that is just testing overhead
+		super.postStartup();
+	}
 
-    @Override
+	@Override
 	public boolean preShutdown() {
-    	shutdownMeter.start();
-        return super.preShutdown();
-    }
+		shutdownMeter.start();
+		return super.preShutdown();
+	}
 }

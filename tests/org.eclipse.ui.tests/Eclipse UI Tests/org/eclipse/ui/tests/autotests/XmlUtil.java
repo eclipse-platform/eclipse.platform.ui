@@ -34,54 +34,54 @@ import org.eclipse.ui.tests.TestPlugin;
  * @since 3.1
  */
 public class XmlUtil {
-    public static IMemento read(InputStream toRead) throws WorkbenchException {
-        InputStreamReader reader = new InputStreamReader(toRead);
+	public static IMemento read(InputStream toRead) throws WorkbenchException {
+		InputStreamReader reader = new InputStreamReader(toRead);
 
-        return XMLMemento.createReadRoot(reader);
-    }
+		return XMLMemento.createReadRoot(reader);
+	}
 
-    public static IMemento read(URL toRead) throws WorkbenchException {
-        try {
-            return read(toRead.openStream());
-        } catch (IOException e) {
-            throw new WorkbenchException(new Status(IStatus.ERROR,
-                    TestPlugin.getDefault().getBundle().getSymbolicName(),
-                    IStatus.OK, null, e));
-        }
-    }
+	public static IMemento read(URL toRead) throws WorkbenchException {
+		try {
+			return read(toRead.openStream());
+		} catch (IOException e) {
+			throw new WorkbenchException(new Status(IStatus.ERROR,
+					TestPlugin.getDefault().getBundle().getSymbolicName(),
+					IStatus.OK, null, e));
+		}
+	}
 
-    public static IMemento read(File toRead) throws WorkbenchException {
-        FileInputStream input;
-        try {
-            input = new FileInputStream(toRead);
-            return read(input);
-        } catch (FileNotFoundException e) {
-            throw new WorkbenchException(new Status(IStatus.ERROR,
-                    TestPlugin.getDefault().getBundle().getSymbolicName(),
-                    IStatus.OK, null, e));
-        }
-    }
+	public static IMemento read(File toRead) throws WorkbenchException {
+		FileInputStream input;
+		try {
+			input = new FileInputStream(toRead);
+			return read(input);
+		} catch (FileNotFoundException e) {
+			throw new WorkbenchException(new Status(IStatus.ERROR,
+					TestPlugin.getDefault().getBundle().getSymbolicName(),
+					IStatus.OK, null, e));
+		}
+	}
 
-    public static void write(File file, XMLMemento data) throws WorkbenchException {
+	public static void write(File file, XMLMemento data) throws WorkbenchException {
 
-        FileOutputStream output;
-        try {
-            file.getParentFile().mkdirs();
-            file.delete();
-            file.createNewFile();
+		FileOutputStream output;
+		try {
+			file.getParentFile().mkdirs();
+			file.delete();
+			file.createNewFile();
 
-            output = new FileOutputStream(file);
+			output = new FileOutputStream(file);
 			try (OutputStreamWriter writer = new OutputStreamWriter(output)) {
 				data.save(writer);
 			}
-        } catch (FileNotFoundException e) {
-            throw new WorkbenchException(new Status(IStatus.ERROR,
-                    TestPlugin.getDefault().getBundle().getSymbolicName(),
-                    IStatus.OK, e.toString(), e));
-        } catch (IOException e) {
-            throw new WorkbenchException(new Status(IStatus.ERROR,
-                    TestPlugin.getDefault().getBundle().getSymbolicName(),
-                    IStatus.OK, e.toString(), e));
-        }
-    }
+		} catch (FileNotFoundException e) {
+			throw new WorkbenchException(new Status(IStatus.ERROR,
+					TestPlugin.getDefault().getBundle().getSymbolicName(),
+					IStatus.OK, e.toString(), e));
+		} catch (IOException e) {
+			throw new WorkbenchException(new Status(IStatus.ERROR,
+					TestPlugin.getDefault().getBundle().getSymbolicName(),
+					IStatus.OK, e.toString(), e));
+		}
+	}
 }

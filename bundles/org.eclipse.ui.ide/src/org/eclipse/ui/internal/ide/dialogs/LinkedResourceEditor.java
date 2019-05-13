@@ -90,13 +90,13 @@ public class LinkedResourceEditor {
 	private static int PATH_COLUMN = -1;
 	private static int LOCATION_COLUMN = 1;
 
-    // sizing constants
-    private static final int SIZING_SELECTION_PANE_WIDTH = 400;
+	// sizing constants
+	private static final int SIZING_SELECTION_PANE_WIDTH = 400;
 
-    // used to compute layout sizes
-    private FontMetrics fontMetrics;
+	// used to compute layout sizes
+	private FontMetrics fontMetrics;
 
-    /**
+	/**
 	 *
 	 */
 	public LinkedResourceEditor() {
@@ -120,17 +120,17 @@ public class LinkedResourceEditor {
 	}
 
 	protected void createButtons(Composite parent) {
-        Font font = parent.getFont();
-        Composite groupComponent = new Composite(parent, SWT.NULL);
-        GridLayout groupLayout = new GridLayout();
-        groupLayout.marginWidth = 0;
-        groupLayout.marginHeight = 0;
-        groupComponent.setLayout(groupLayout);
-        GridData data = new GridData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        groupComponent.setLayoutData(data);
-        groupComponent.setFont(font);
+		Font font = parent.getFont();
+		Composite groupComponent = new Composite(parent, SWT.NULL);
+		GridLayout groupLayout = new GridLayout();
+		groupLayout.marginWidth = 0;
+		groupLayout.marginHeight = 0;
+		groupComponent.setLayout(groupLayout);
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		groupComponent.setLayoutData(data);
+		groupComponent.setFont(font);
 
 		fEditResourceButton = createButton(groupComponent,
 				IDEWorkbenchMessages.LinkedResourceEditor_editLinkedLocation);
@@ -170,12 +170,12 @@ public class LinkedResourceEditor {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(text);
 		button.setFont(parent.getFont());
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics,
-                IDialogConstants.BUTTON_WIDTH);
-        data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
-                SWT.DEFAULT, true).x);
-        button.setLayoutData(data);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics,
+				IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT, true).x);
+		button.setLayoutData(data);
 		return button;
 	}
 
@@ -188,33 +188,33 @@ public class LinkedResourceEditor {
 	 * @return container of the widgets
 	 */
 	public Control createContents(Composite parent) {
-        Font font = parent.getFont();
+		Font font = parent.getFont();
 
-        initializeDialogUnits(parent);
+		initializeDialogUnits(parent);
 
-        // define container & its layout
-        Composite pageComponent = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        pageComponent.setLayout(layout);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = SIZING_SELECTION_PANE_WIDTH;
-        pageComponent.setLayoutData(data);
-        pageComponent.setFont(font);
+		// define container & its layout
+		Composite pageComponent = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		pageComponent.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+		pageComponent.setLayoutData(data);
+		pageComponent.setFont(font);
 
-        // layout the table & its buttons
-        Label variableLabel = new Label(pageComponent, SWT.LEFT);
-        variableLabel.setText(NLS
+		// layout the table & its buttons
+		Label variableLabel = new Label(pageComponent, SWT.LEFT);
+		variableLabel.setText(NLS
 				.bind(IDEWorkbenchMessages.LinkedResourceEditor_descriptionBlock,
 				fProject != null ? fProject.getName() : "")); //$NON-NLS-1$
 
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.horizontalSpan = 2;
-        variableLabel.setLayoutData(data);
-        variableLabel.setFont(font);
+		data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalSpan = 2;
+		variableLabel.setLayoutData(data);
+		variableLabel.setFont(font);
 
 		Composite treeComposite = new Composite(pageComponent, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -259,10 +259,10 @@ public class LinkedResourceEditor {
 		fTree.getTree().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-		        if (getSelectedResource().length == 1)
-		        	editLocation();
+				if (getSelectedResource().length == 1)
+					editLocation();
 			}
-        });
+		});
 		fTree.getTree().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -274,20 +274,20 @@ public class LinkedResourceEditor {
 			}
 		});
 
-        return pageComponent;
+		return pageComponent;
 	}
 
-    private void initializeDialogUnits(Control control) {
-        // Compute and store a font metric
-        GC gc = new GC(control);
-        gc.setFont(control.getFont());
-        fontMetrics = gc.getFontMetrics();
-        gc.dispose();
-    }
+	private void initializeDialogUnits(Control control) {
+		// Compute and store a font metric
+		GC gc = new GC(control);
+		gc.setFont(control.getFont());
+		fontMetrics = gc.getFontMetrics();
+		gc.dispose();
+	}
 
-    /**
-     *
-    */
+	/**
+	 *
+	*/
 	public void dispose() {
 		fixedImg.dispose();
 		brokenImg.dispose();
@@ -314,7 +314,7 @@ public class LinkedResourceEditor {
 				else {
 					IPath rawLocation = resource.getRawLocation();
 					if (rawLocation != null)
-				    	return resource.getPathVariableManager().convertToUserEditableFormat(rawLocation.toOSString(), true);
+						return resource.getPathVariableManager().convertToUserEditableFormat(rawLocation.toOSString(), true);
 				}
 			} else if ((obj instanceof String) && index == 0)
 				return (String) obj;

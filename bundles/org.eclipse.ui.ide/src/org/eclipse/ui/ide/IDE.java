@@ -1341,12 +1341,12 @@ public final class IDE {
 		return editor;
 	}
 
-    /**
+	/**
 	 * Opens an editor on the given IFileStore object.
 	 * <p>
-     * Unlike the other <code>openEditor</code> methods, this one
-     * can be used to open files that reside outside the workspace
-     * resource set.
+	 * Unlike the other <code>openEditor</code> methods, this one
+	 * can be used to open files that reside outside the workspace
+	 * resource set.
 	 * </p>
 	 * <p>
 	 * If the page already has an editor open on the target object then that
@@ -1365,12 +1365,12 @@ public final class IDE {
 	 * @since 3.3
 	 */
 	public static IEditorPart openEditorOnFileStore(IWorkbenchPage page, IFileStore fileStore) throws PartInitException {
-        //sanity checks
-        if (page == null) {
+		//sanity checks
+		if (page == null) {
 			throw new IllegalArgumentException();
 		}
 
-        IEditorInput input = getEditorInput(fileStore);
+		IEditorInput input = getEditorInput(fileStore);
 		String editorId;
 		try {
 			editorId = getEditorId(fileStore, true);
@@ -1378,9 +1378,9 @@ public final class IDE {
 			return null;
 		}
 
-        // open the editor on the file
-        return page.openEditor(input, editorId);
-    }
+		// open the editor on the file
+		return page.openEditor(input, editorId);
+	}
 
 	/**
 	 * Opens an internal editor on the given IFileStore object.
@@ -1791,23 +1791,23 @@ public final class IDE {
 	 * @since 3.5
 	 */
 	public static void registerAdapters() {
-        IAdapterManager manager = Platform.getAdapterManager();
-        IAdapterFactory factory = new WorkbenchAdapterFactory();
-        manager.registerAdapters(factory, IWorkspace.class);
-        manager.registerAdapters(factory, IWorkspaceRoot.class);
-        manager.registerAdapters(factory, IProject.class);
-        manager.registerAdapters(factory, IFolder.class);
-        manager.registerAdapters(factory, IFile.class);
-        manager.registerAdapters(factory, IMarker.class);
+		IAdapterManager manager = Platform.getAdapterManager();
+		IAdapterFactory factory = new WorkbenchAdapterFactory();
+		manager.registerAdapters(factory, IWorkspace.class);
+		manager.registerAdapters(factory, IWorkspaceRoot.class);
+		manager.registerAdapters(factory, IProject.class);
+		manager.registerAdapters(factory, IFolder.class);
+		manager.registerAdapters(factory, IFile.class);
+		manager.registerAdapters(factory, IMarker.class);
 
-        // properties adapters
-        IAdapterFactory paFactory = new StandardPropertiesAdapterFactory();
-        manager.registerAdapters(paFactory, IWorkspace.class);
-        manager.registerAdapters(paFactory, IWorkspaceRoot.class);
-        manager.registerAdapters(paFactory, IProject.class);
-        manager.registerAdapters(paFactory, IFolder.class);
-        manager.registerAdapters(paFactory, IFile.class);
-        manager.registerAdapters(paFactory, IMarker.class);
+		// properties adapters
+		IAdapterFactory paFactory = new StandardPropertiesAdapterFactory();
+		manager.registerAdapters(paFactory, IWorkspace.class);
+		manager.registerAdapters(paFactory, IWorkspaceRoot.class);
+		manager.registerAdapters(paFactory, IProject.class);
+		manager.registerAdapters(paFactory, IFolder.class);
+		manager.registerAdapters(paFactory, IFile.class);
+		manager.registerAdapters(paFactory, IMarker.class);
 	}
 
 	private static boolean isIgnoredStatus(IStatus status,

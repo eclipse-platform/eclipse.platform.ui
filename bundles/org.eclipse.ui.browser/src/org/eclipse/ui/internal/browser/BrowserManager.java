@@ -61,9 +61,9 @@ public class BrowserManager extends Observable {
 		};
 
 
-	    IScopeContext instanceScope = InstanceScope.INSTANCE;
-	    IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
-	    prefs.addPreferenceChangeListener(pcl);
+		IScopeContext instanceScope = InstanceScope.INSTANCE;
+		IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
+		prefs.addPreferenceChangeListener(pcl);
 	}
 
 	protected static void safeDispose() {
@@ -73,7 +73,7 @@ public class BrowserManager extends Observable {
 	}
 
 	protected void dispose() {
-	    IScopeContext instanceScope = InstanceScope.INSTANCE;
+		IScopeContext instanceScope = InstanceScope.INSTANCE;
 		IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 		prefs.removePreferenceChangeListener(pcl);
 	}
@@ -92,7 +92,7 @@ public class BrowserManager extends Observable {
 		Trace.trace(Trace.FINEST, "Loading web browsers"); //$NON-NLS-1$
 
 		String xmlString = Platform.getPreferencesService().getString
-		    (WebBrowserUIPlugin.PLUGIN_ID,  "browsers", null, null); //$NON-NLS-1$
+			(WebBrowserUIPlugin.PLUGIN_ID,  "browsers", null, null); //$NON-NLS-1$
 		if (xmlString != null && xmlString.length() > 0) {
 			browsers = new ArrayList<>();
 
@@ -161,7 +161,7 @@ public class BrowserManager extends Observable {
 			memento.save(writer);
 			String xmlString = writer.getBuffer().toString();
 			IScopeContext instanceScope = InstanceScope.INSTANCE;
-		    IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
+			IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 			prefs.put("browsers", xmlString); //$NON-NLS-1$
 			prefs.flush();
 		} catch (Exception e) {

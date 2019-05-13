@@ -20,29 +20,29 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 public class MockWorkbenchWindowActionDelegate extends MockActionDelegate
 		implements IActionDelegate2 {
-    public static MockWorkbenchWindowActionDelegate lastDelegate;
+	public static MockWorkbenchWindowActionDelegate lastDelegate;
 
-    public static String SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
+	public static String SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
 
-    public static String ID = "org.eclipse.ui.tests.api.MockWindowAction";
+	public static String ID = "org.eclipse.ui.tests.api.MockWindowAction";
 
-    /**
-     * Constructor for MockWorkbenchWindowActionDelegate
-     */
-    public MockWorkbenchWindowActionDelegate() {
-        super();
-        lastDelegate = this;
-    }
+	/**
+	 * Constructor for MockWorkbenchWindowActionDelegate
+	 */
+	public MockWorkbenchWindowActionDelegate() {
+		super();
+		lastDelegate = this;
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbenchWindow window) {
-        callHistory.add("init");
-    }
+		callHistory.add("init");
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        callHistory.add("dispose");
-    }
+		callHistory.add("dispose");
+	}
 
 	@Override
 	public void init(IAction action) {

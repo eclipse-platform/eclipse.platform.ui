@@ -23,70 +23,70 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class PreferenceContentProvider implements ITreeContentProvider {
 
-    private PreferenceManager manager;
+	private PreferenceManager manager;
 
-    @Override
+	@Override
 	public void dispose() {
-        manager = null;
-    }
+		manager = null;
+	}
 
-    /**
-     * Find the parent of the provided node.  Will search recursivly through the
-     * preference tree.
-     *
-     * @param parent the possible parent node.
-     * @param target the target child node.
-     * @return the parent node of the child node.
-     */
-    private IPreferenceNode findParent(IPreferenceNode parent,
-            IPreferenceNode target) {
-        if (parent.getId().equals(target.getId())) {
+	/**
+	 * Find the parent of the provided node.  Will search recursivly through the
+	 * preference tree.
+	 *
+	 * @param parent the possible parent node.
+	 * @param target the target child node.
+	 * @return the parent node of the child node.
+	 */
+	private IPreferenceNode findParent(IPreferenceNode parent,
+			IPreferenceNode target) {
+		if (parent.getId().equals(target.getId())) {
 			return null;
 		}
 
-        IPreferenceNode found = parent.findSubNode(target.getId());
-        if (found != null) {
+		IPreferenceNode found = parent.findSubNode(target.getId());
+		if (found != null) {
 			return parent;
 		}
 
-        IPreferenceNode[] children = parent.getSubNodes();
+		IPreferenceNode[] children = parent.getSubNodes();
 
-        for (IPreferenceNode element : children) {
-            found = findParent(element, target);
-            if (found != null) {
+		for (IPreferenceNode element : children) {
+			found = findParent(element, target);
+			if (found != null) {
 				return found;
 			}
-        }
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object parentElement) {//must be an instance of <code>IPreferenceNode</code>.
-        return ((IPreferenceNode) parentElement).getSubNodes();
-    }
+		return ((IPreferenceNode) parentElement).getSubNodes();
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object inputElement) {// must be an instance of <code>PreferenceManager</code>.
-        return getChildren(((PreferenceManager) inputElement).getRoot());
-    }
+		return getChildren(((PreferenceManager) inputElement).getRoot());
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {//must be an instance of <code>IPreferenceNode</code>.
-        IPreferenceNode targetNode = (IPreferenceNode) element;
-        IPreferenceNode root = manager.getRoot();
-        return findParent(root, targetNode);
-    }
+		IPreferenceNode targetNode = (IPreferenceNode) element;
+		IPreferenceNode root = manager.getRoot();
+		return findParent(root, targetNode);
+	}
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        return getChildren(element).length > 0;
-    }
+		return getChildren(element).length > 0;
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        manager = (PreferenceManager) newInput;
-    }
+		manager = (PreferenceManager) newInput;
+	}
 	/**
 	 * Set the manager for the preferences.
 	 * @param manager The manager to set.

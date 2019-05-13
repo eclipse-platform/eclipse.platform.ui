@@ -30,97 +30,97 @@ import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
  * Provides labels for the bookmark navigator table
  */
 class BookmarkLabelProvider extends LabelProvider implements
-        ITableLabelProvider {
+		ITableLabelProvider {
 
-    private Image image;
-    private ImageDescriptor desc;
+	private Image image;
+	private ImageDescriptor desc;
 
-    static final int COLUMN_ICON = 0;
+	static final int COLUMN_ICON = 0;
 
-    static final int COLUMN_DESCRIPTION = 1;
+	static final int COLUMN_DESCRIPTION = 1;
 
-    static final int COLUMN_RESOURCE = 2;
+	static final int COLUMN_RESOURCE = 2;
 
-    static final int COLUMN_FOLDER = 3;
+	static final int COLUMN_FOLDER = 3;
 
-    static final int COLUMN_LOCATION = 4;
+	static final int COLUMN_LOCATION = 4;
 
-    public BookmarkLabelProvider(BookmarkNavigator view) {
-        desc = IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/bkmrk_tsk.png"); //$NON-NLS-1$
-        image = JFaceResources.getResources().createImageWithDefault(desc);
-    }
+	public BookmarkLabelProvider(BookmarkNavigator view) {
+		desc = IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/bkmrk_tsk.png"); //$NON-NLS-1$
+		image = JFaceResources.getResources().createImageWithDefault(desc);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        if (image != null) {
-            JFaceResources.getResources().destroyImage(desc);
-            image = null;
-        }
-    }
+		if (image != null) {
+			JFaceResources.getResources().destroyImage(desc);
+			image = null;
+		}
+	}
 
-    @Override
+	@Override
 	public Image getImage(Object element) {
-        return image;
-    }
+		return image;
+	}
 
-    @Override
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
-        if (!(element instanceof IMarker)) {
+		if (!(element instanceof IMarker)) {
 			return ""; //$NON-NLS-1$
 		}
-        IMarker marker = (IMarker) element;
+		IMarker marker = (IMarker) element;
 
-        switch (columnIndex) {
-        case COLUMN_DESCRIPTION:
-            return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
-        case COLUMN_RESOURCE:
-            return marker.getResource().getName();
-        case COLUMN_FOLDER:
-            return getContainerName(marker);
-        case COLUMN_LOCATION: {
-            int line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
-            if (line == -1) {
+		switch (columnIndex) {
+		case COLUMN_DESCRIPTION:
+			return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+		case COLUMN_RESOURCE:
+			return marker.getResource().getName();
+		case COLUMN_FOLDER:
+			return getContainerName(marker);
+		case COLUMN_LOCATION: {
+			int line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+			if (line == -1) {
 				return ""; //$NON-NLS-1$
 			}
-            return NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line));
-        }
-        }
-        return ""; //$NON-NLS-1$
-    }
+			return NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line));
+		}
+		}
+		return ""; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public Image getColumnImage(Object element, int index) {
-        if (index == COLUMN_ICON) {
+		if (index == COLUMN_ICON) {
 			return image;
 		}
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Returns the container name if it is defined, or empty string if not.
-     */
-    public static String getContainerName(IMarker marker) {
-        IPath path = marker.getResource().getFullPath();
-        int n = path.segmentCount() - 1;
-        // n is the number of segments in container, not path
-        if (n <= 0) {
+	/**
+	 * Returns the container name if it is defined, or empty string if not.
+	 */
+	public static String getContainerName(IMarker marker) {
+		IPath path = marker.getResource().getFullPath();
+		int n = path.segmentCount() - 1;
+		// n is the number of segments in container, not path
+		if (n <= 0) {
 			return ""; //$NON-NLS-1$
 		}
-        int len = 0;
-        for (int i = 0; i < n; ++i) {
+		int len = 0;
+		for (int i = 0; i < n; ++i) {
 			len += path.segment(i).length();
 		}
-        // account for /'s
-        if (n > 1) {
+		// account for /'s
+		if (n > 1) {
 			len += n - 1;
 		}
-        StringBuilder sb = new StringBuilder(len);
-        for (int i = 0; i < n; ++i) {
-            if (i != 0) {
+		StringBuilder sb = new StringBuilder(len);
+		for (int i = 0; i < n; ++i) {
+			if (i != 0) {
 				sb.append('/');
 			}
-            sb.append(path.segment(i));
-        }
-        return sb.toString();
-    }
+			sb.append(path.segment(i));
+		}
+		return sb.toString();
+	}
 }

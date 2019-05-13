@@ -37,40 +37,40 @@ public abstract class CommandException extends Exception {
 	 */
 	private Throwable cause;
 
-    /**
-     * Creates a new instance of this class with the specified detail message.
-     *
-     * @param message
-     *            the detail message; may be <code>null</code>.
-     */
-    public CommandException(final String message) {
-        super(message);
-    }
+	/**
+	 * Creates a new instance of this class with the specified detail message.
+	 *
+	 * @param message
+	 *            the detail message; may be <code>null</code>.
+	 */
+	public CommandException(final String message) {
+		super(message);
+	}
 
-    /**
-     * Creates a new instance of this class with the specified detail message
-     * and cause.
-     *
-     * @param message
-     *            the detail message; may be <code>null</code>.
-     * @param cause
-     *            the cause; may be <code>null</code>.
-     */
-    public CommandException(final String message, final Throwable cause) {
-        super(message);
-        // don't pass the cause to super, to allow compilation against JCL Foundation
-        this.cause = cause;
-    }
+	/**
+	 * Creates a new instance of this class with the specified detail message
+	 * and cause.
+	 *
+	 * @param message
+	 *            the detail message; may be <code>null</code>.
+	 * @param cause
+	 *            the cause; may be <code>null</code>.
+	 */
+	public CommandException(final String message, final Throwable cause) {
+		super(message);
+		// don't pass the cause to super, to allow compilation against JCL Foundation
+		this.cause = cause;
+	}
 
-    /**
-     * Returns the cause of this throwable or <code>null</code> if the
-     * cause is nonexistent or unknown.
-     *
-     * @return the cause or <code>null</code>
-     */
-    @Override
+	/**
+	 * Returns the cause of this throwable or <code>null</code> if the
+	 * cause is nonexistent or unknown.
+	 *
+	 * @return the cause or <code>null</code>
+	 */
+	@Override
 	public Throwable getCause() {
-        return cause;
-    }
+		return cause;
+	}
 
 }

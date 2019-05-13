@@ -20,11 +20,11 @@ package org.eclipse.jface.action;
  * @since 3.2
  */
 public interface IMenuListener2 extends IMenuListener {
-    /**
-     * Notifies this listener that the menu is about to be hidden by
-     * the given menu manager.
-     *
-     * @param manager the menu manager
-     */
-    public void menuAboutToHide(IMenuManager manager);
+	/**
+	 * Notifies this listener that the menu is about to be hidden by
+	 * the given menu manager.
+	 *
+	 * @param manager the menu manager
+	 */
+	public void menuAboutToHide(IMenuManager manager);
 }

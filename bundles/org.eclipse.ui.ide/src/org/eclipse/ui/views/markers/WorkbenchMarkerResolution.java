@@ -36,10 +36,10 @@ public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 	 * */
 	public abstract IMarker[] findOtherMarkers(IMarker[] markers);
 
-    /**
-     * Runs this resolution. Resolve all <code>markers</code>.
-     * <code>markers</code> must be a subset of the markers returned
-     * by <code>findOtherMarkers(IMarker[])</code>.
+	/**
+	 * Runs this resolution. Resolve all <code>markers</code>.
+	 * <code>markers</code> must be a subset of the markers returned
+	 * by <code>findOtherMarkers(IMarker[])</code>.
 	 *
 	 * @param markers The markers to resolve, not null
 	 * @param monitor The monitor to report progress

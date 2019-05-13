@@ -33,47 +33,47 @@ import org.eclipse.swt.graphics.Image;
  */
 public final class DeviceResourceManager extends AbstractResourceManager {
 
-    private Device device;
-    private Image missingImage;
+	private Device device;
+	private Image missingImage;
 
-    @Override
+	@Override
 	public Device getDevice() {
-        return device;
-    }
+		return device;
+	}
 
-    /**
-     * Creates a new registry for the given device.
-     *
-     * @param device device to manage
-     */
-    public DeviceResourceManager(Device device) {
-        this.device = device;
-    }
+	/**
+	 * Creates a new registry for the given device.
+	 *
+	 * @param device device to manage
+	 */
+	public DeviceResourceManager(Device device) {
+		this.device = device;
+	}
 
-    @Override
+	@Override
 	protected Object allocate(DeviceResourceDescriptor descriptor) throws DeviceResourceException {
-        return descriptor.createResource(device);
-    }
+		return descriptor.createResource(device);
+	}
 
-    @Override
+	@Override
 	protected void deallocate(Object resource, DeviceResourceDescriptor descriptor) {
-        descriptor.destroyResource(resource);
-    }
+		descriptor.destroyResource(resource);
+	}
 
-    @Override
+	@Override
 	protected Image getDefaultImage() {
-        if (missingImage == null) {
-            missingImage = ImageDescriptor.getMissingImageDescriptor().createImage();
-        }
-        return missingImage;
-    }
+		if (missingImage == null) {
+			missingImage = ImageDescriptor.getMissingImageDescriptor().createImage();
+		}
+		return missingImage;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        super.dispose();
-        if (missingImage != null) {
-            missingImage.dispose();
-            missingImage = null;
-        }
-    }
+		super.dispose();
+		if (missingImage != null) {
+			missingImage.dispose();
+			missingImage = null;
+		}
+	}
 }

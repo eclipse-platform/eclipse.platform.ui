@@ -24,73 +24,73 @@ import org.eclipse.swt.widgets.Text;
  * A field editor for an integer type preference.
  */
 public class IntegerFieldEditor extends StringFieldEditor {
-    private int minValidValue = 0;
+	private int minValidValue = 0;
 
-    private int maxValidValue = Integer.MAX_VALUE;
+	private int maxValidValue = Integer.MAX_VALUE;
 
-    private static final int DEFAULT_TEXT_LIMIT = 10;
+	private static final int DEFAULT_TEXT_LIMIT = 10;
 
-    /**
-    * Creates a new integer field editor
-    */
-    protected IntegerFieldEditor() {
-    }
+	/**
+	* Creates a new integer field editor
+	*/
+	protected IntegerFieldEditor() {
+	}
 
-    /**
-     * Creates an integer field editor.
-     *
-     * @param name the name of the preference this field editor works on
-     * @param labelText the label text of the field editor
-     * @param parent the parent of the field editor's control
-     */
-    public IntegerFieldEditor(String name, String labelText, Composite parent) {
-        this(name, labelText, parent, DEFAULT_TEXT_LIMIT);
-    }
+	/**
+	 * Creates an integer field editor.
+	 *
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param parent the parent of the field editor's control
+	 */
+	public IntegerFieldEditor(String name, String labelText, Composite parent) {
+		this(name, labelText, parent, DEFAULT_TEXT_LIMIT);
+	}
 
-    /**
-     * Creates an integer field editor.
-     *
-     * @param name the name of the preference this field editor works on
-     * @param labelText the label text of the field editor
-     * @param parent the parent of the field editor's control
-     * @param textLimit the maximum number of characters in the text.
-     */
-    public IntegerFieldEditor(String name, String labelText, Composite parent,
-            int textLimit) {
-        init(name, labelText);
-        setTextLimit(textLimit);
-        setEmptyStringAllowed(false);
-        setErrorMessage(JFaceResources
-                .getString("IntegerFieldEditor.errorMessage"));//$NON-NLS-1$
-        createControl(parent);
-    }
+	/**
+	 * Creates an integer field editor.
+	 *
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param parent the parent of the field editor's control
+	 * @param textLimit the maximum number of characters in the text.
+	 */
+	public IntegerFieldEditor(String name, String labelText, Composite parent,
+			int textLimit) {
+		init(name, labelText);
+		setTextLimit(textLimit);
+		setEmptyStringAllowed(false);
+		setErrorMessage(JFaceResources
+				.getString("IntegerFieldEditor.errorMessage"));//$NON-NLS-1$
+		createControl(parent);
+	}
 
-    /**
-     * Sets the range of valid values for this field.
-     *
-     * @param min the minimum allowed value (inclusive)
-     * @param max the maximum allowed value (inclusive)
-     */
-    public void setValidRange(int min, int max) {
-        minValidValue = min;
-        maxValidValue = max;
+	/**
+	 * Sets the range of valid values for this field.
+	 *
+	 * @param min the minimum allowed value (inclusive)
+	 * @param max the maximum allowed value (inclusive)
+	 */
+	public void setValidRange(int min, int max) {
+		minValidValue = min;
+		maxValidValue = max;
 		setErrorMessage(JFaceResources.format("IntegerFieldEditor.errorMessageRange", //$NON-NLS-1$
 				Integer.valueOf(min), Integer.valueOf(max)));
-    }
+	}
 
-    @Override
+	@Override
 	protected boolean checkState() {
 
-        Text text = getTextControl();
+		Text text = getTextControl();
 
-        if (text == null) {
+		if (text == null) {
 			return false;
 		}
 
-        String numberString = text.getText();
-        try {
-            int number = Integer.valueOf(numberString).intValue();
-            if (number >= minValidValue && number <= maxValidValue) {
+		String numberString = text.getText();
+		try {
+			int number = Integer.valueOf(numberString).intValue();
+			if (number >= minValidValue && number <= maxValidValue) {
 				clearErrorMessage();
 				return true;
 			}
@@ -98,51 +98,51 @@ public class IntegerFieldEditor extends StringFieldEditor {
 			showErrorMessage();
 			return false;
 
-        } catch (NumberFormatException e1) {
-            showErrorMessage();
-        }
+		} catch (NumberFormatException e1) {
+			showErrorMessage();
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	protected void doLoad() {
-        Text text = getTextControl();
-        if (text != null) {
-            int value = getPreferenceStore().getInt(getPreferenceName());
-            text.setText("" + value);//$NON-NLS-1$
-            oldValue = "" + value; //$NON-NLS-1$
-        }
+		Text text = getTextControl();
+		if (text != null) {
+			int value = getPreferenceStore().getInt(getPreferenceName());
+			text.setText("" + value);//$NON-NLS-1$
+			oldValue = "" + value; //$NON-NLS-1$
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	protected void doLoadDefault() {
-        Text text = getTextControl();
-        if (text != null) {
-            int value = getPreferenceStore().getDefaultInt(getPreferenceName());
-            text.setText("" + value);//$NON-NLS-1$
-        }
-        valueChanged();
-    }
+		Text text = getTextControl();
+		if (text != null) {
+			int value = getPreferenceStore().getDefaultInt(getPreferenceName());
+			text.setText("" + value);//$NON-NLS-1$
+		}
+		valueChanged();
+	}
 
-    @Override
+	@Override
 	protected void doStore() {
-        Text text = getTextControl();
-        if (text != null) {
+		Text text = getTextControl();
+		if (text != null) {
 			Integer i = Integer.valueOf(text.getText());
-            getPreferenceStore().setValue(getPreferenceName(), i.intValue());
-        }
-    }
+			getPreferenceStore().setValue(getPreferenceName(), i.intValue());
+		}
+	}
 
-    /**
-     * Returns this field editor's current value as an integer.
-     *
-     * @return the value
-     * @exception NumberFormatException if the <code>String</code> does not
-     *   contain a parsable integer
-     */
-    public int getIntValue() throws NumberFormatException {
+	/**
+	 * Returns this field editor's current value as an integer.
+	 *
+	 * @return the value
+	 * @exception NumberFormatException if the <code>String</code> does not
+	 *   contain a parsable integer
+	 */
+	public int getIntValue() throws NumberFormatException {
 		return Integer.valueOf(getStringValue()).intValue();
-    }
+	}
 }

@@ -29,263 +29,263 @@ package org.eclipse.ui.ide;
  */
 public interface IIDEActionConstants {
 
-    /**
-     * Name of standard File menu (value <code>"file"</code>).
-     */
+	/**
+	 * Name of standard File menu (value <code>"file"</code>).
+	 */
 	String M_FILE = "file"; //$NON-NLS-1$
 
-    /**
-     * Name of standard Edit menu (value <code>"edit"</code>).
-     */
+	/**
+	 * Name of standard Edit menu (value <code>"edit"</code>).
+	 */
 	String M_EDIT = "edit"; //$NON-NLS-1$
 
-    /**
-     * Name of standard Navigate menu (value <code>"navigate"</code>).
-     */
+	/**
+	 * Name of standard Navigate menu (value <code>"navigate"</code>).
+	 */
 	String M_NAVIGATE = "navigate"; //$NON-NLS-1$
 
-    /**
-     * Name of standard Project menu (value <code>"project"</code>).
-     */
+	/**
+	 * Name of standard Project menu (value <code>"project"</code>).
+	 */
 	String M_PROJECT = "project"; //$NON-NLS-1$
 
-    /**
-     * Name of standard Window menu (value <code>"window"</code>).
-     */
+	/**
+	 * Name of standard Window menu (value <code>"window"</code>).
+	 */
 	String M_WINDOW = "window"; //$NON-NLS-1$
 
-    /**
-     * Name of standard Help menu (value <code>"help"</code>).
-     */
+	/**
+	 * Name of standard Help menu (value <code>"help"</code>).
+	 */
 	String M_HELP = "help"; //$NON-NLS-1$
 
-    /**
-     * File menu: name of group for start of menu (value <code>"fileStart"</code>).
-     */
+	/**
+	 * File menu: name of group for start of menu (value <code>"fileStart"</code>).
+	 */
 	String FILE_START = "fileStart"; //$NON-NLS-1$
 
-    /**
-     * File menu: name of group for end of menu (value <code>"fileEnd"</code>).
-     */
+	/**
+	 * File menu: name of group for end of menu (value <code>"fileEnd"</code>).
+	 */
 	String FILE_END = "fileEnd"; //$NON-NLS-1$
 
-    /**
-     * File menu: name of group for extra New-like actions (value <code>"new.ext"</code>).
-     */
+	/**
+	 * File menu: name of group for extra New-like actions (value <code>"new.ext"</code>).
+	 */
 	String NEW_EXT = "new.ext"; //$NON-NLS-1$
 
-    /**
-     * File menu: name of group for extra Close-like actions (value <code>"close.ext"</code>).
-     */
+	/**
+	 * File menu: name of group for extra Close-like actions (value <code>"close.ext"</code>).
+	 */
 	String CLOSE_EXT = "close.ext"; //$NON-NLS-1$
 
-    /**
-     * File menu: name of group for extra Save-like actions (value <code>"save.ext"</code>).
-     */
+	/**
+	 * File menu: name of group for extra Save-like actions (value <code>"save.ext"</code>).
+	 */
 	String SAVE_EXT = "save.ext"; //$NON-NLS-1$
 
-    /**
-     * File menu: name of group for extra Print-like actions (value <code>"print.ext"</code>).
-     */
+	/**
+	 * File menu: name of group for extra Print-like actions (value <code>"print.ext"</code>).
+	 */
 	String PRINT_EXT = "print.ext"; //$NON-NLS-1$
 
-    /**
-     * File menu: name of group for extra Import-like actions (value <code>"import.ext"</code>).
-     */
+	/**
+	 * File menu: name of group for extra Import-like actions (value <code>"import.ext"</code>).
+	 */
 	String IMPORT_EXT = "import.ext"; //$NON-NLS-1$
 
-    /**
-     * File menu: name of "Most Recently Used File" group.
-     * (value <code>"mru"</code>).
-     */
+	/**
+	 * File menu: name of "Most Recently Used File" group.
+	 * (value <code>"mru"</code>).
+	 */
 	String MRU = "mru"; //$NON-NLS-1$
 
-    /**
-     * Edit menu: name of group for start of menu (value <code>"editStart"</code>).
-     */
+	/**
+	 * Edit menu: name of group for start of menu (value <code>"editStart"</code>).
+	 */
 	String EDIT_START = "editStart"; //$NON-NLS-1$
 
-    /**
-     * Edit menu: name of group for end of menu (value <code>"editEnd"</code>).
-     */
+	/**
+	 * Edit menu: name of group for end of menu (value <code>"editEnd"</code>).
+	 */
 	String EDIT_END = "editEnd"; //$NON-NLS-1$
 
-    /**
-     * Edit menu: name of group for extra Undo-like actions (value <code>"undo.ext"</code>).
-     */
+	/**
+	 * Edit menu: name of group for extra Undo-like actions (value <code>"undo.ext"</code>).
+	 */
 	String UNDO_EXT = "undo.ext"; //$NON-NLS-1$
 
-    /**
-     * Edit menu: name of group for extra Cut-like actions (value <code>"cut.ext"</code>).
-     */
+	/**
+	 * Edit menu: name of group for extra Cut-like actions (value <code>"cut.ext"</code>).
+	 */
 	String CUT_EXT = "cut.ext"; //$NON-NLS-1$
 
-    /**
-     * Edit menu: name of group for extra Find-like actions (value <code>"find.ext"</code>).
-     * <p>Note: The value of this constant has changed in 3.3 to match the specification;
-     * before 3.3, its value was incorrect (<code>"cut.ext"</code>).  See bug 155856 for details.</p>
-     */
+	/**
+	 * Edit menu: name of group for extra Find-like actions (value <code>"find.ext"</code>).
+	 * <p>Note: The value of this constant has changed in 3.3 to match the specification;
+	 * before 3.3, its value was incorrect (<code>"cut.ext"</code>).  See bug 155856 for details.</p>
+	 */
 	String FIND_EXT = "find.ext"; //$NON-NLS-1$
 
-    /**
-     * Edit menu: name of group for extra Add-like actions (value <code>"add.ext"</code>).
-     */
+	/**
+	 * Edit menu: name of group for extra Add-like actions (value <code>"add.ext"</code>).
+	 */
 	String ADD_EXT = "add.ext"; //$NON-NLS-1$
 
-    /**
-     * Workbench menu: name of group for extra Build-like actions
-     * (value <code>"build.ext"</code>).
-     */
+	/**
+	 * Workbench menu: name of group for extra Build-like actions
+	 * (value <code>"build.ext"</code>).
+	 */
 	String BUILD_EXT = "build.ext"; //$NON-NLS-1$
 
-    /**
-     * Workbench toolbar id for file toolbar group.
-     *
-     * @since 2.1
-     */
+	/**
+	 * Workbench toolbar id for file toolbar group.
+	 *
+	 * @since 2.1
+	 */
 	String TOOLBAR_FILE = "org.eclipse.ui.workbench.file"; //$NON-NLS-1$
 
-    /**
-     * Workbench toolbar id for navigate toolbar group.
-     *
-     * @since 2.1
-     */
+	/**
+	 * Workbench toolbar id for navigate toolbar group.
+	 *
+	 * @since 2.1
+	 */
 	String TOOLBAR_NAVIGATE = "org.eclipse.ui.workbench.navigate"; //$NON-NLS-1$
 
-    // Workbench toolbar group ids.  To add an item at the beginning of the group,
-    // use the GROUP id.  To add an item at the end of the group, use the EXT id.
+	// Workbench toolbar group ids.  To add an item at the beginning of the group,
+	// use the GROUP id.  To add an item at the end of the group, use the EXT id.
 
-    /**
-     * Group id for pin toolbar group.
-     *
-     * @since 2.1
-     */
+	/**
+	 * Group id for pin toolbar group.
+	 *
+	 * @since 2.1
+	 */
 	String PIN_GROUP = "pin.group"; //$NON-NLS-1$
 
-    /**
-     * Group ids for history toolbar group.
-     *
-     * @since 2.1
-     */
+	/**
+	 * Group ids for history toolbar group.
+	 *
+	 * @since 2.1
+	 */
 	String HISTORY_GROUP = "history.group"; //$NON-NLS-1$
 
-    /**
-     * Group ids for new toolbar group.
-     *
-     * @since 2.1
-     */
+	/**
+	 * Group ids for new toolbar group.
+	 *
+	 * @since 2.1
+	 */
 	String NEW_GROUP = "new.group"; //$NON-NLS-1$
 
-    /**
-     * Group ids for save toolbar group.
-     *
-     * @since 2.1
-     */
+	/**
+	 * Group ids for save toolbar group.
+	 *
+	 * @since 2.1
+	 */
 	String SAVE_GROUP = "save.group"; //$NON-NLS-1$
 
-    /**
-     * Group ids for build toolbar group.
-     *
-     * @since 2.1
-     */
+	/**
+	 * Group ids for build toolbar group.
+	 *
+	 * @since 2.1
+	 */
 	String BUILD_GROUP = "build.group"; //$NON-NLS-1$
 
-    // Pop-up menu groups:
-    /**
-     * Pop-up menu: name of group for Add actions (value <code>"group.add"</code>).
-     */
+	// Pop-up menu groups:
+	/**
+	 * Pop-up menu: name of group for Add actions (value <code>"group.add"</code>).
+	 */
 	String GROUP_ADD = "group.add"; //$NON-NLS-1$
 
-    /**
-     * Pop-up menu and cool bar: name of group for File actions (value <code>"group.file"</code>).
-     */
+	/**
+	 * Pop-up menu and cool bar: name of group for File actions (value <code>"group.file"</code>).
+	 */
 	String GROUP_FILE = "group.file"; //$NON-NLS-1$
 
-    /**
-     * Pop-up menu and cool bar: name of group for Edit actions (value <code>"group.edit"</code>).
-     *
-     * @since 3.14
-     */
+	/**
+	 * Pop-up menu and cool bar: name of group for Edit actions (value <code>"group.edit"</code>).
+	 *
+	 * @since 3.14
+	 */
 	String GROUP_EDIT = "group.edit"; //$NON-NLS-1$
 
-    /**
-     * Coolbar: name of group for Navigate actions (value <code>"group.nav"</code>).
-     */
+	/**
+	 * Coolbar: name of group for Navigate actions (value <code>"group.nav"</code>).
+	 */
 	String GROUP_NAV = "group.nav"; //$NON-NLS-1$
 
-    /**
-     * Pop-up menu: name of group for Show In actions (value <code>"group.showIn"</code>).
-     *
-     * @since 2.1
-     */
+	/**
+	 * Pop-up menu: name of group for Show In actions (value <code>"group.showIn"</code>).
+	 *
+	 * @since 2.1
+	 */
 	String GROUP_SHOW_IN = "group.showIn"; //$NON-NLS-1$
 
-    /**
-     * Navigate menu: name of group for start of menu
-     * (value <code>"navStart"</code>).
-     */
+	/**
+	 * Navigate menu: name of group for start of menu
+	 * (value <code>"navStart"</code>).
+	 */
 	String NAV_START = "navStart"; //$NON-NLS-1$
 
-    /**
-     * Navigate menu: name of group for end of menu
-     * (value <code>"navEnd"</code>).
-     */
+	/**
+	 * Navigate menu: name of group for end of menu
+	 * (value <code>"navEnd"</code>).
+	 */
 	String NAV_END = "navEnd"; //$NON-NLS-1$
 
-    /**
-     * Navigate menu: name of group for extra Open actions
-     * (value <code>"open.ext"</code>).
-     */
+	/**
+	 * Navigate menu: name of group for extra Open actions
+	 * (value <code>"open.ext"</code>).
+	 */
 	String OPEN_EXT = "open.ext"; //$NON-NLS-1$
 
-    /**
-     * Navigate menu: name of group for extra Show actions
-     * (value <code>"show.ext"</code>).
-     */
+	/**
+	 * Navigate menu: name of group for extra Show actions
+	 * (value <code>"show.ext"</code>).
+	 */
 	String SHOW_EXT = "show.ext"; //$NON-NLS-1$
 
-    /**
-     * Navigate menu: name of standard Go Into global action
-     * (value <code>"goInto"</code>).
-     */
+	/**
+	 * Navigate menu: name of standard Go Into global action
+	 * (value <code>"goInto"</code>).
+	 */
 	String GO_INTO = "goInto"; // Global action. //$NON-NLS-1$
 
-    /**
-     * Navigate menu: name of standard Go To submenu
-     * (value <code>"goTo"</code>).
-     */
+	/**
+	 * Navigate menu: name of standard Go To submenu
+	 * (value <code>"goTo"</code>).
+	 */
 	String GO_TO = "goTo"; //$NON-NLS-1$
 
-    /**
-     * Navigate menu: name of standard Go To Resource global action
-     * (value <code>"goToResource"</code>).
-     *
-     * Note:should be in an action factory
-     */
+	/**
+	 * Navigate menu: name of standard Go To Resource global action
+	 * (value <code>"goToResource"</code>).
+	 *
+	 * Note:should be in an action factory
+	 */
 	String GO_TO_RESOURCE = "goToResource"; // Global action. //$NON-NLS-1$
 
-    /**
-     * Project menu: name of group for start of menu
-     * (value <code>"projStart"</code>).
-     */
+	/**
+	 * Project menu: name of group for start of menu
+	 * (value <code>"projStart"</code>).
+	 */
 	String PROJ_START = "projStart"; //$NON-NLS-1$
 
-    /**
-     * Project menu: name of group for start of menu
-     * (value <code>"projEnd"</code>).
-     */
+	/**
+	 * Project menu: name of group for start of menu
+	 * (value <code>"projEnd"</code>).
+	 */
 	String PROJ_END = "projEnd"; //$NON-NLS-1$
 
-    /**
-     * Help menu: name of group for start of menu
-     * (value <code>"helpStart"</code>).
-     */
+	/**
+	 * Help menu: name of group for start of menu
+	 * (value <code>"helpStart"</code>).
+	 */
 	String HELP_START = "helpStart"; //$NON-NLS-1$
 
-    /**
-     * Help menu: name of group for end of menu
-     * (value <code>"helpEnd"</code>).
-     */
+	/**
+	 * Help menu: name of group for end of menu
+	 * (value <code>"helpEnd"</code>).
+	 */
 	String HELP_END = "helpEnd"; //$NON-NLS-1$
 
 }

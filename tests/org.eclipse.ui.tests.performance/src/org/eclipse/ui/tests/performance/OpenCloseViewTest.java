@@ -26,27 +26,27 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class OpenCloseViewTest extends BasicPerformanceTest {
 
-    private String viewId;
+	private String viewId;
 
-    public OpenCloseViewTest(String viewId, int tagging) {
-        super("showView:" + viewId, tagging);
-        this.viewId = viewId;
-    }
+	public OpenCloseViewTest(String viewId, int tagging) {
+		super("showView:" + viewId, tagging);
+		this.viewId = viewId;
+	}
 
-    @Override
+	@Override
 	protected void runTest() throws Throwable {
-        IWorkbenchWindow window = openTestWindow();
-        final IWorkbenchPage page = window.getActivePage();
+		IWorkbenchWindow window = openTestWindow();
+		final IWorkbenchPage page = window.getActivePage();
 
-        // prime it
-        IViewPart view1 = page.showView(viewId);
-        page.hideView(view1);
-        waitForBackgroundJobs();
-        processEvents();
+		// prime it
+		IViewPart view1 = page.showView(viewId);
+		page.hideView(view1);
+		waitForBackgroundJobs();
+		processEvents();
 
-       	tagIfNecessary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
-       	if ("org.eclipse.ui.views.BookmarkView".equals(viewId))
-       		setDegradationComment("The test results are influenced by the test machine setup. See bug 340136.");
+		tagIfNecessary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
+		if ("org.eclipse.ui.views.BookmarkView".equals(viewId))
+			setDegradationComment("The test results are influenced by the test machine setup. See bug 340136.");
 
 		for (int j = 0; j < 100; j++) {
 
@@ -61,7 +61,7 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 			stopMeasuring();
 		}
 
-        commitMeasurements();
-        assertPerformance();
-    }
+		commitMeasurements();
+		assertPerformance();
+	}
 }

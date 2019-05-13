@@ -19,27 +19,27 @@ import org.eclipse.swt.graphics.Image;
 
 public class TestLabelProvider extends LabelProvider {
 
-    static Image fgImage = null;
+	static Image fgImage = null;
 
-    /**
-     *
-     */
-    public static Image getImage() {
-        if (fgImage == null) {
+	/**
+	 *
+	 */
+	public static Image getImage() {
+		if (fgImage == null) {
 			fgImage = ImageDescriptor.createFromFile(TestLabelProvider.class,
-                    "images/java.gif").createImage();
+					"images/java.gif").createImage();
 		}
-        return fgImage;
-    }
+		return fgImage;
+	}
 
-    @Override
+	@Override
 	public Image getImage(Object element) {
-        return getImage();
-    }
+		return getImage();
+	}
 
-    @Override
+	@Override
 	public String getText(Object element) {
-        String label = element.toString();
-        return label + " <rendered>";
-    }
+		String label = element.toString();
+		return label + " <rendered>";
+	}
 }

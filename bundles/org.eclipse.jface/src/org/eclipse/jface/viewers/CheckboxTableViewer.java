@@ -43,201 +43,201 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class CheckboxTableViewer extends TableViewer implements ICheckable {
 
-    /**
-     * List of check state listeners (element type: <code>ICheckStateListener</code>).
-     */
+	/**
+	 * List of check state listeners (element type: <code>ICheckStateListener</code>).
+	 */
 	private ListenerList<ICheckStateListener> checkStateListeners = new ListenerList<>();
 
-    /**
-     * Provides the desired state of the check boxes.
-     */
-    private ICheckStateProvider checkStateProvider;
+	/**
+	 * Provides the desired state of the check boxes.
+	 */
+	private ICheckStateProvider checkStateProvider;
 
-    /**
-     * Creates a table viewer on a newly-created table control under the given parent.
-     * The table control is created using the SWT style bits:
-     * <code>SWT.CHECK</code> and <code>SWT.BORDER</code>.
-     * The table has one column.
-     * The viewer has no input, no content provider, a default label provider,
-     * no sorter, and no filters.
-     * <p>
-     * This is equivalent to calling <code>new CheckboxTableViewer(parent, SWT.BORDER)</code>.
-     * See that constructor for more details.
-     * </p>
-     *
-     * @param parent the parent control
-     *
-     * @deprecated use newCheckList(Composite, int) or new CheckboxTableViewer(Table)
-     *   instead (see below for details)
-     */
-    @Deprecated
+	/**
+	 * Creates a table viewer on a newly-created table control under the given parent.
+	 * The table control is created using the SWT style bits:
+	 * <code>SWT.CHECK</code> and <code>SWT.BORDER</code>.
+	 * The table has one column.
+	 * The viewer has no input, no content provider, a default label provider,
+	 * no sorter, and no filters.
+	 * <p>
+	 * This is equivalent to calling <code>new CheckboxTableViewer(parent, SWT.BORDER)</code>.
+	 * See that constructor for more details.
+	 * </p>
+	 *
+	 * @param parent the parent control
+	 *
+	 * @deprecated use newCheckList(Composite, int) or new CheckboxTableViewer(Table)
+	 *   instead (see below for details)
+	 */
+	@Deprecated
 	public CheckboxTableViewer(Composite parent) {
-        this(parent, SWT.BORDER);
-    }
-
-    /**
-     * Creates a table viewer on a newly-created table control under the given parent.
-     * The table control is created using the given SWT style bits, plus the
-     * <code>SWT.CHECK</code> style bit.
-     * The table has one column.
-     * The viewer has no input, no content provider, a default label provider,
-     * no sorter, and no filters.
-     * <p>
-     * This also adds a <code>TableColumn</code> for the single column,
-     * and sets a <code>TableLayout</code> on the table which sizes the column to fill
-     * the table for its initial sizing, but does nothing on subsequent resizes.
-     * </p>
-     * <p>
-     * If the caller just needs to show a single column with no header,
-     * it is preferable to use the <code>newCheckList</code> factory method instead,
-     * since SWT properly handles the initial sizing and subsequent resizes in this case.
-     * </p>
-     * <p>
-     * If the caller adds its own columns, uses <code>Table.setHeadersVisible(true)</code>,
-     * or needs to handle dynamic resizing of the table, it is recommended to
-     * create the <code>Table</code> itself, specifying the <code>SWT.CHECK</code> style bit
-     * (along with any other style bits needed), and use <code>new CheckboxTableViewer(Table)</code>
-     * rather than this constructor.
-     * </p>
-     *
-     * @param parent the parent control
-     * @param style SWT style bits
-     *
-     * @deprecated use newCheckList(Composite, int) or new CheckboxTableViewer(Table)
-     *   instead (see above for details)
-     */
-    @Deprecated
-	public CheckboxTableViewer(Composite parent, int style) {
-        this(createTable(parent, style));
-    }
-
-    /**
-     * Creates a table viewer on a newly-created table control under the given parent.
-     * The table control is created using the given SWT style bits, plus the
-     * <code>SWT.CHECK</code> style bit.
-     * The table shows its contents in a single column, with no header.
-     * The viewer has no input, no content provider, a default label provider,
-     * no sorter, and no filters.
-     * <p>
-     * No <code>TableColumn</code> is added. SWT does not require a
-     * <code>TableColumn</code> if showing only a single column with no header.
-     * SWT correctly handles the initial sizing and subsequent resizes in this case.
-     *
-     * @param parent the parent control
-     * @param style SWT style bits
-     *
-     * @since 2.0
-     * @return CheckboxTableViewer
-     */
-    public static CheckboxTableViewer newCheckList(Composite parent, int style) {
-        Table table = new Table(parent, SWT.CHECK | style);
-        return new CheckboxTableViewer(table);
-    }
-
-    /**
-     * Creates a table viewer on the given table control.
-     * The <code>SWT.CHECK</code> style bit must be set on the given table control.
-     * The viewer has no input, no content provider, a default label provider,
-     * no sorter, and no filters.
-     *
-     * @param table the table control
-     */
-    public CheckboxTableViewer(Table table) {
-        super(table);
-    }
-
-    @Override
-	public void addCheckStateListener(ICheckStateListener listener) {
-        checkStateListeners.add(listener);
-    }
-
-    /**
-     * Sets the {@link ICheckStateProvider} for this {@link CheckboxTreeViewer}.
-     * The check state provider will supply the logic for deciding whether the
-     * check box associated with each item should be checked, grayed or
-     * unchecked.
-     * @param checkStateProvider	The provider.
-     * @since 3.5
-     */
-    public void setCheckStateProvider(ICheckStateProvider checkStateProvider) {
-    	this.checkStateProvider = checkStateProvider;
-    	refresh();
-    }
-
-    /*
-     * Extends this method to update check box states.
-     */
-    @Override
-	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
-    	super.doUpdateItem(widget, element, fullMap);
-    	if(!widget.isDisposed()) {
-    		if(checkStateProvider != null) {
-				setChecked(element, checkStateProvider.isChecked(element));
-				setGrayed(element, checkStateProvider.isGrayed(element));
-			}
-    	}
+		this(parent, SWT.BORDER);
 	}
 
 	/**
-     * Creates a new table control with one column.
-     *
-     * @param parent the parent control
-     * @param style style bits
-     * @return a new table control
-     */
-    protected static Table createTable(Composite parent, int style) {
-        Table table = new Table(parent, SWT.CHECK | style);
+	 * Creates a table viewer on a newly-created table control under the given parent.
+	 * The table control is created using the given SWT style bits, plus the
+	 * <code>SWT.CHECK</code> style bit.
+	 * The table has one column.
+	 * The viewer has no input, no content provider, a default label provider,
+	 * no sorter, and no filters.
+	 * <p>
+	 * This also adds a <code>TableColumn</code> for the single column,
+	 * and sets a <code>TableLayout</code> on the table which sizes the column to fill
+	 * the table for its initial sizing, but does nothing on subsequent resizes.
+	 * </p>
+	 * <p>
+	 * If the caller just needs to show a single column with no header,
+	 * it is preferable to use the <code>newCheckList</code> factory method instead,
+	 * since SWT properly handles the initial sizing and subsequent resizes in this case.
+	 * </p>
+	 * <p>
+	 * If the caller adds its own columns, uses <code>Table.setHeadersVisible(true)</code>,
+	 * or needs to handle dynamic resizing of the table, it is recommended to
+	 * create the <code>Table</code> itself, specifying the <code>SWT.CHECK</code> style bit
+	 * (along with any other style bits needed), and use <code>new CheckboxTableViewer(Table)</code>
+	 * rather than this constructor.
+	 * </p>
+	 *
+	 * @param parent the parent control
+	 * @param style SWT style bits
+	 *
+	 * @deprecated use newCheckList(Composite, int) or new CheckboxTableViewer(Table)
+	 *   instead (see above for details)
+	 */
+	@Deprecated
+	public CheckboxTableViewer(Composite parent, int style) {
+		this(createTable(parent, style));
+	}
 
-        // Although this table column is not needed, and can cause resize problems,
-        // it can't be removed since this would be a breaking change against R1.0.
-        // See bug 6643 for more details.
-        new TableColumn(table, SWT.NONE);
-        TableLayout layout = new TableLayout();
-        layout.addColumnData(new ColumnWeightData(100));
-        table.setLayout(layout);
+	/**
+	 * Creates a table viewer on a newly-created table control under the given parent.
+	 * The table control is created using the given SWT style bits, plus the
+	 * <code>SWT.CHECK</code> style bit.
+	 * The table shows its contents in a single column, with no header.
+	 * The viewer has no input, no content provider, a default label provider,
+	 * no sorter, and no filters.
+	 * <p>
+	 * No <code>TableColumn</code> is added. SWT does not require a
+	 * <code>TableColumn</code> if showing only a single column with no header.
+	 * SWT correctly handles the initial sizing and subsequent resizes in this case.
+	 *
+	 * @param parent the parent control
+	 * @param style SWT style bits
+	 *
+	 * @since 2.0
+	 * @return CheckboxTableViewer
+	 */
+	public static CheckboxTableViewer newCheckList(Composite parent, int style) {
+		Table table = new Table(parent, SWT.CHECK | style);
+		return new CheckboxTableViewer(table);
+	}
 
-        return table;
-    }
+	/**
+	 * Creates a table viewer on the given table control.
+	 * The <code>SWT.CHECK</code> style bit must be set on the given table control.
+	 * The viewer has no input, no content provider, a default label provider,
+	 * no sorter, and no filters.
+	 *
+	 * @param table the table control
+	 */
+	public CheckboxTableViewer(Table table) {
+		super(table);
+	}
 
-    /**
-     * Notifies any check state listeners that a check state changed  has been received.
-     * Only listeners registered at the time this method is called are notified.
-     *
-     * @param event a check state changed event
-     *
-     * @see ICheckStateListener#checkStateChanged
-     */
-    private void fireCheckStateChanged(final CheckStateChangedEvent event) {
+	@Override
+	public void addCheckStateListener(ICheckStateListener listener) {
+		checkStateListeners.add(listener);
+	}
+
+	/**
+	 * Sets the {@link ICheckStateProvider} for this {@link CheckboxTreeViewer}.
+	 * The check state provider will supply the logic for deciding whether the
+	 * check box associated with each item should be checked, grayed or
+	 * unchecked.
+	 * @param checkStateProvider	The provider.
+	 * @since 3.5
+	 */
+	public void setCheckStateProvider(ICheckStateProvider checkStateProvider) {
+		this.checkStateProvider = checkStateProvider;
+		refresh();
+	}
+
+	/*
+	 * Extends this method to update check box states.
+	 */
+	@Override
+	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
+		super.doUpdateItem(widget, element, fullMap);
+		if(!widget.isDisposed()) {
+			if(checkStateProvider != null) {
+				setChecked(element, checkStateProvider.isChecked(element));
+				setGrayed(element, checkStateProvider.isGrayed(element));
+			}
+		}
+	}
+
+	/**
+	 * Creates a new table control with one column.
+	 *
+	 * @param parent the parent control
+	 * @param style style bits
+	 * @return a new table control
+	 */
+	protected static Table createTable(Composite parent, int style) {
+		Table table = new Table(parent, SWT.CHECK | style);
+
+		// Although this table column is not needed, and can cause resize problems,
+		// it can't be removed since this would be a breaking change against R1.0.
+		// See bug 6643 for more details.
+		new TableColumn(table, SWT.NONE);
+		TableLayout layout = new TableLayout();
+		layout.addColumnData(new ColumnWeightData(100));
+		table.setLayout(layout);
+
+		return table;
+	}
+
+	/**
+	 * Notifies any check state listeners that a check state changed  has been received.
+	 * Only listeners registered at the time this method is called are notified.
+	 *
+	 * @param event a check state changed event
+	 *
+	 * @see ICheckStateListener#checkStateChanged
+	 */
+	private void fireCheckStateChanged(final CheckStateChangedEvent event) {
 		for (ICheckStateListener l : checkStateListeners) {
-            SafeRunnable.run(new SafeRunnable() {
-                @Override
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() {
-                    l.checkStateChanged(event);
-                }
-            });
-        }
-    }
+					l.checkStateChanged(event);
+				}
+			});
+		}
+	}
 
-    @Override
+	@Override
 	public boolean getChecked(Object element) {
-        Widget widget = findItem(element);
-        if (widget instanceof TableItem) {
-            return ((TableItem) widget).getChecked();
-        }
-        return false;
-    }
+		Widget widget = findItem(element);
+		if (widget instanceof TableItem) {
+			return ((TableItem) widget).getChecked();
+		}
+		return false;
+	}
 
-    /**
-     * Returns a list of elements corresponding to checked table items in this
-     * viewer.
-     * <p>
-     * This method is typically used when preserving the interesting
-     * state of a viewer; <code>setCheckedElements</code> is used during the restore.
-     * </p>
-     *
-     * @return the array of checked elements
-     * @see #setCheckedElements
-     */
+	/**
+	 * Returns a list of elements corresponding to checked table items in this
+	 * viewer.
+	 * <p>
+	 * This method is typically used when preserving the interesting
+	 * state of a viewer; <code>setCheckedElements</code> is used during the restore.
+	 * </p>
+	 *
+	 * @return the array of checked elements
+	 * @see #setCheckedElements
+	 */
 	public Object[] getCheckedElements() {
 		TableItem[] children = getTable().getItems();
 		ArrayList v = new ArrayList(children.length);
@@ -252,32 +252,32 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 		return v.toArray();
 	}
 
-    /**
-     * Returns the grayed state of the given element.
-     *
-     * @param element the element
-     * @return <code>true</code> if the element is grayed,
-     *   and <code>false</code> if not grayed
-     */
-    public boolean getGrayed(Object element) {
-        Widget widget = findItem(element);
-        if (widget instanceof TableItem) {
-            return ((TableItem) widget).getGrayed();
-        }
-        return false;
-    }
+	/**
+	 * Returns the grayed state of the given element.
+	 *
+	 * @param element the element
+	 * @return <code>true</code> if the element is grayed,
+	 *   and <code>false</code> if not grayed
+	 */
+	public boolean getGrayed(Object element) {
+		Widget widget = findItem(element);
+		if (widget instanceof TableItem) {
+			return ((TableItem) widget).getGrayed();
+		}
+		return false;
+	}
 
-    /**
-     * Returns a list of elements corresponding to grayed nodes in this
-     * viewer.
-     * <p>
-     * This method is typically used when preserving the interesting
-     * state of a viewer; <code>setGrayedElements</code> is used during the restore.
-     * </p>
-     *
-     * @return the array of grayed elements
-     * @see #setGrayedElements
-     */
+	/**
+	 * Returns a list of elements corresponding to grayed nodes in this
+	 * viewer.
+	 * <p>
+	 * This method is typically used when preserving the interesting
+	 * state of a viewer; <code>setGrayedElements</code> is used during the restore.
+	 * </p>
+	 *
+	 * @return the array of grayed elements
+	 * @see #setGrayedElements
+	 */
 	public Object[] getGrayedElements() {
 		TableItem[] children = getTable().getItems();
 		List v = new ArrayList(children.length);
@@ -292,77 +292,77 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 		return v.toArray();
 	}
 
-    @Override
+	@Override
 	public void handleSelect(SelectionEvent event) {
-        if (event.detail == SWT.CHECK) {
-            super.handleSelect(event); // this will change the current selection
+		if (event.detail == SWT.CHECK) {
+			super.handleSelect(event); // this will change the current selection
 
-            TableItem item = (TableItem) event.item;
-            Object data = item.getData();
-            if (data != null) {
-                fireCheckStateChanged(new CheckStateChangedEvent(this, data,
-                        item.getChecked()));
-            }
-        } else {
+			TableItem item = (TableItem) event.item;
+			Object data = item.getData();
+			if (data != null) {
+				fireCheckStateChanged(new CheckStateChangedEvent(this, data,
+						item.getChecked()));
+			}
+		} else {
 			super.handleSelect(event);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected void preservingSelection(Runnable updateCode) {
 		if (!getPreserveSelection()) {
 			return;
 		}
-    	//If a check provider is present, it determines the state across input
-    	//changes.
-    	if(checkStateProvider != null) {
-    		//Try to preserve the selection, let the ICheckProvider manage
-    		//the check states
-    		super.preservingSelection(updateCode);
-    		return;
-    	}
+		//If a check provider is present, it determines the state across input
+		//changes.
+		if(checkStateProvider != null) {
+			//Try to preserve the selection, let the ICheckProvider manage
+			//the check states
+			super.preservingSelection(updateCode);
+			return;
+		}
 
-    	//Preserve checked items
-        TableItem[] children = getTable().getItems();
-        CustomHashtable checked = newHashtable(children.length * 2 + 1);
-        CustomHashtable grayed = newHashtable(children.length * 2 + 1);
+		//Preserve checked items
+		TableItem[] children = getTable().getItems();
+		CustomHashtable checked = newHashtable(children.length * 2 + 1);
+		CustomHashtable grayed = newHashtable(children.length * 2 + 1);
 
-        for (TableItem item : children) {
-            Object data = item.getData();
-            if (data != null) {
-                if (item.getChecked()) {
+		for (TableItem item : children) {
+			Object data = item.getData();
+			if (data != null) {
+				if (item.getChecked()) {
 					checked.put(data, data);
 				}
-                if (item.getGrayed()) {
+				if (item.getGrayed()) {
 					grayed.put(data, data);
 				}
-            }
-        }
+			}
+		}
 
-        super.preservingSelection(updateCode);
+		super.preservingSelection(updateCode);
 
-        children = getTable().getItems();
-        for (TableItem item : children) {
-            Object data = item.getData();
-            if (data != null) {
-                item.setChecked(checked.containsKey(data));
-                item.setGrayed(grayed.containsKey(data));
-            }
-        }
-    }
+		children = getTable().getItems();
+		for (TableItem item : children) {
+			Object data = item.getData();
+			if (data != null) {
+				item.setChecked(checked.containsKey(data));
+				item.setGrayed(grayed.containsKey(data));
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void removeCheckStateListener(ICheckStateListener listener) {
-        checkStateListeners.remove(listener);
-    }
+		checkStateListeners.remove(listener);
+	}
 
-    /**
-     * Sets to the given value the checked state for all elements in this viewer.
-     * Does not fire events to check state listeners.
-     *
-     * @param state <code>true</code> if the element should be checked,
-     *  and <code>false</code> if it should be unchecked
-     */
+	/**
+	 * Sets to the given value the checked state for all elements in this viewer.
+	 * Does not fire events to check state listeners.
+	 *
+	 * @param state <code>true</code> if the element should be checked,
+	 *  and <code>false</code> if it should be unchecked
+	 */
 	public void setAllChecked(boolean state) {
 		TableItem[] children = getTable().getItems();
 		for (TableItem item : children) {
@@ -373,117 +373,117 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 		}
 	}
 
-    /**
-     * Sets to the given value the grayed state for all elements in this viewer.
-     *
-     * @param state <code>true</code> if the element should be grayed,
-     *  and <code>false</code> if it should be ungrayed
-     */
-    public void setAllGrayed(boolean state) {
-        TableItem[] children = getTable().getItems();
-        for (TableItem item : children) {
-            if (item.getData() != null) {
+	/**
+	 * Sets to the given value the grayed state for all elements in this viewer.
+	 *
+	 * @param state <code>true</code> if the element should be grayed,
+	 *  and <code>false</code> if it should be ungrayed
+	 */
+	public void setAllGrayed(boolean state) {
+		TableItem[] children = getTable().getItems();
+		for (TableItem item : children) {
+			if (item.getData() != null) {
 				if (item.getGrayed() != state)
 					item.setGrayed(state);
 			}
-        }
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public boolean setChecked(Object element, boolean state) {
-        Assert.isNotNull(element);
-        Widget widget = findItem(element);
+		Assert.isNotNull(element);
+		Widget widget = findItem(element);
 		if (widget instanceof TableItem) {
 			TableItem item = (TableItem) widget;
 			if (item.getChecked() != state)
 				item.setChecked(state);
 			return true;
 		}
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Sets which nodes are checked in this viewer.
-     * The given list contains the elements that are to be checked;
-     * all other nodes are to be unchecked.
-     * Does not fire events to check state listeners.
-     * <p>
-     * This method is typically used when restoring the interesting
-     * state of a viewer captured by an earlier call to <code>getCheckedElements</code>.
-     * </p>
-     *
-     * @param elements the list of checked elements (element type: <code>Object</code>)
-     * @see #getCheckedElements
-     */
-    public void setCheckedElements(Object[] elements) {
-        assertElementsNotNull(elements);
-        CustomHashtable set = newHashtable(elements.length * 2 + 1);
-        for (Object element : elements) {
-            set.put(element, element);
-        }
-        TableItem[] items = getTable().getItems();
-        for (TableItem item : items) {
-            Object element = item.getData();
-            if (element != null) {
-                boolean check = set.containsKey(element);
-                // only set if different, to avoid flicker
-                if (item.getChecked() != check) {
-                    item.setChecked(check);
-                }
-            }
-        }
-    }
+	/**
+	 * Sets which nodes are checked in this viewer.
+	 * The given list contains the elements that are to be checked;
+	 * all other nodes are to be unchecked.
+	 * Does not fire events to check state listeners.
+	 * <p>
+	 * This method is typically used when restoring the interesting
+	 * state of a viewer captured by an earlier call to <code>getCheckedElements</code>.
+	 * </p>
+	 *
+	 * @param elements the list of checked elements (element type: <code>Object</code>)
+	 * @see #getCheckedElements
+	 */
+	public void setCheckedElements(Object[] elements) {
+		assertElementsNotNull(elements);
+		CustomHashtable set = newHashtable(elements.length * 2 + 1);
+		for (Object element : elements) {
+			set.put(element, element);
+		}
+		TableItem[] items = getTable().getItems();
+		for (TableItem item : items) {
+			Object element = item.getData();
+			if (element != null) {
+				boolean check = set.containsKey(element);
+				// only set if different, to avoid flicker
+				if (item.getChecked() != check) {
+					item.setChecked(check);
+				}
+			}
+		}
+	}
 
-    /**
-     * Sets the grayed state for the given element in this viewer.
-     *
-     * @param element the element
-     * @param state <code>true</code> if the item should be grayed,
-     *  and <code>false</code> if it should be ungrayed
-     * @return <code>true</code> if the element is visible and the gray
-     *  state could be set, and <code>false</code> otherwise
-     */
-    public boolean setGrayed(Object element, boolean state) {
-        Assert.isNotNull(element);
-        Widget widget = findItem(element);
+	/**
+	 * Sets the grayed state for the given element in this viewer.
+	 *
+	 * @param element the element
+	 * @param state <code>true</code> if the item should be grayed,
+	 *  and <code>false</code> if it should be ungrayed
+	 * @return <code>true</code> if the element is visible and the gray
+	 *  state could be set, and <code>false</code> otherwise
+	 */
+	public boolean setGrayed(Object element, boolean state) {
+		Assert.isNotNull(element);
+		Widget widget = findItem(element);
 		if (widget instanceof TableItem) {
 			TableItem item = (TableItem) widget;
 			if (item.getGrayed() != state)
 				item.setGrayed(state);
 			return true;
 		}
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Sets which nodes are grayed in this viewer.
-     * The given list contains the elements that are to be grayed;
-     * all other nodes are to be ungrayed.
-     * <p>
-     * This method is typically used when restoring the interesting
-     * state of a viewer captured by an earlier call to <code>getGrayedElements</code>.
-     * </p>
-     *
-     * @param elements the array of grayed elements
-     *
-     * @see #getGrayedElements
-     */
-    public void setGrayedElements(Object[] elements) {
-        assertElementsNotNull(elements);
-        CustomHashtable set = newHashtable(elements.length * 2 + 1);
-        for (Object element : elements) {
-            set.put(element, element);
-        }
-        TableItem[] items = getTable().getItems();
-        for (TableItem item : items) {
-            Object element = item.getData();
-            if (element != null) {
-                boolean gray = set.containsKey(element);
-                // only set if different, to avoid flicker
-                if (item.getGrayed() != gray) {
-                    item.setGrayed(gray);
-                }
-            }
-        }
-    }
+	/**
+	 * Sets which nodes are grayed in this viewer.
+	 * The given list contains the elements that are to be grayed;
+	 * all other nodes are to be ungrayed.
+	 * <p>
+	 * This method is typically used when restoring the interesting
+	 * state of a viewer captured by an earlier call to <code>getGrayedElements</code>.
+	 * </p>
+	 *
+	 * @param elements the array of grayed elements
+	 *
+	 * @see #getGrayedElements
+	 */
+	public void setGrayedElements(Object[] elements) {
+		assertElementsNotNull(elements);
+		CustomHashtable set = newHashtable(elements.length * 2 + 1);
+		for (Object element : elements) {
+			set.put(element, element);
+		}
+		TableItem[] items = getTable().getItems();
+		for (TableItem item : items) {
+			Object element = item.getData();
+			if (element != null) {
+				boolean gray = set.containsKey(element);
+				// only set if different, to avoid flicker
+				if (item.getGrayed() != gray) {
+					item.setGrayed(gray);
+				}
+			}
+		}
+	}
 }

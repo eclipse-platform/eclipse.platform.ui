@@ -49,7 +49,7 @@ public final class HandlerEvent extends AbstractBitSetEvent {
 	 *
 	 * @param handler
 	 *            the instance of the interface that changed; must not be
-     *            <code>null</code>.
+	 *            <code>null</code>.
 	 * @param enabledChanged
 	 *            Whether the enabled state of the handler has changed.
 	 * @param handledChanged

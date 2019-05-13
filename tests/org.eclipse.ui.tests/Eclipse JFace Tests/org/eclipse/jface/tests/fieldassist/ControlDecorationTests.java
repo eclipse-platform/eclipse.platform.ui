@@ -34,7 +34,7 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		window.open();
 		ControlDecoration decoration = new ControlDecoration(getFieldAssistWindow().getFieldAssistControl(), SWT.RIGHT);
 		decoration.setImage(FieldDecorationRegistry.getDefault()
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("foo");
 		window.open();
 		assertTrue("1.0", decoration.isVisible());
@@ -69,7 +69,7 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		window.open();
 		ControlDecoration decoration = new ControlDecoration(window.getFieldAssistControl(), SWT.RIGHT);
 		decoration.setImage(FieldDecorationRegistry.getDefault()
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("foo");
 		assertTrue("1.0", decoration.isVisible());
 		assertOneShellUp();
@@ -93,7 +93,7 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		window.open();
 		ControlDecoration decoration = new ControlDecoration(window.getFieldAssistControl(), SWT.RIGHT);
 		decoration.setImage(FieldDecorationRegistry.getDefault()
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+			.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("foo");
 		decoration.setShowOnlyOnFocus(true);
 		anotherControl.forceFocus();

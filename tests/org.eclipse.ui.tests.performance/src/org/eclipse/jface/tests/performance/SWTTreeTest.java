@@ -67,18 +67,18 @@ public class SWTTreeTest extends BasicPerformanceTest {
 	public void testGetItems() throws CoreException {
 		openBrowser();
 
-        exercise(new TestRunnable() {
-            @Override
+		exercise(new TestRunnable() {
+			@Override
 			public void run() throws Exception {
-                processEvents();
-                startMeasuring();
-                for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
-                    tree.getItems();
-                    processEvents();
-                }
-                stopMeasuring();
-            }
-        });
+				processEvents();
+				startMeasuring();
+				for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+					tree.getItems();
+					processEvents();
+				}
+				stopMeasuring();
+			}
+		});
 
 		commitMeasurements();
 		assertPerformance();
@@ -93,18 +93,18 @@ public class SWTTreeTest extends BasicPerformanceTest {
 	public void testGetItemAt() throws CoreException {
 		openBrowser();
 
-        exercise(new TestRunnable() {
-            @Override
+		exercise(new TestRunnable() {
+			@Override
 			public void run() throws Exception {
-                processEvents();
-                startMeasuring();
-                for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
-                    tree.getItem(j);
-                    processEvents();
-                }
-                stopMeasuring();
-            }
-        });
+				processEvents();
+				startMeasuring();
+				for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+					tree.getItem(j);
+					processEvents();
+				}
+				stopMeasuring();
+			}
+		});
 
 		commitMeasurements();
 		assertPerformance();

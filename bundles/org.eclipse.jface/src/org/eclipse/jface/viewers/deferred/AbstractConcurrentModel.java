@@ -23,66 +23,66 @@ import org.eclipse.core.runtime.ListenerList;
  * @since 3.1
  */
 public abstract class AbstractConcurrentModel implements
-        IConcurrentModel {
+		IConcurrentModel {
 
 	private ListenerList<IConcurrentModelListener> listeners = new ListenerList<>();
 
-    @Override
+	@Override
 	public void addListener(IConcurrentModelListener listener) {
-        listeners.add(listener);
-    }
+		listeners.add(listener);
+	}
 
-    /**
-     * Fires an add notification to all listeners
-     *
-     * @param added objects added to the set
-     */
-    protected final void fireAdd(Object[] added) {
+	/**
+	 * Fires an add notification to all listeners
+	 *
+	 * @param added objects added to the set
+	 */
+	protected final void fireAdd(Object[] added) {
 		for (IConcurrentModelListener next : listeners) {
-            next.add(added);
-        }
-    }
+			next.add(added);
+		}
+	}
 
-    /**
-     * Fires a remove notification to all listeners
-     *
-     * @param removed objects removed from the set
-     */
-    protected final void fireRemove(Object[] removed) {
+	/**
+	 * Fires a remove notification to all listeners
+	 *
+	 * @param removed objects removed from the set
+	 */
+	protected final void fireRemove(Object[] removed) {
 		for (IConcurrentModelListener next : listeners) {
-            next.remove(removed);
-        }
-    }
+			next.remove(removed);
+		}
+	}
 
-    /**
-     * Fires an update notification to all listeners
-     *
-     * @param updated objects that have changed
-     */
-    protected final void fireUpdate(Object[] updated) {
+	/**
+	 * Fires an update notification to all listeners
+	 *
+	 * @param updated objects that have changed
+	 */
+	protected final void fireUpdate(Object[] updated) {
 		for (IConcurrentModelListener next : listeners) {
-            next.update(updated);
-        }
-    }
+			next.update(updated);
+		}
+	}
 
-    /**
-     * Returns the array of listeners for this model
-     *
-     * @return the array of listeners for this model
-     */
-    protected final IConcurrentModelListener[] getListeners() {
-    	Object[] l = listeners.getListeners();
-    	IConcurrentModelListener[] result = new IConcurrentModelListener[l.length];
+	/**
+	 * Returns the array of listeners for this model
+	 *
+	 * @return the array of listeners for this model
+	 */
+	protected final IConcurrentModelListener[] getListeners() {
+		Object[] l = listeners.getListeners();
+		IConcurrentModelListener[] result = new IConcurrentModelListener[l.length];
 
-    	for (int i = 0; i < l.length; i++) {
+		for (int i = 0; i < l.length; i++) {
 			result[i] = (IConcurrentModelListener)l[i];
 		}
 
-    	return result;
-    }
+		return result;
+	}
 
-    @Override
+	@Override
 	public void removeListener(IConcurrentModelListener listener) {
-        listeners.remove(listener);
-    }
+		listeners.remove(listener);
+	}
 }

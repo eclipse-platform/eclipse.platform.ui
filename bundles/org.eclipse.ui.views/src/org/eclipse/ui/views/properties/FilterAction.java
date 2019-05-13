@@ -20,31 +20,31 @@ import org.eclipse.ui.PlatformUI;
  * This action hides or shows expert properties in the <code>PropertySheetViewer</code>.
  */
 /*package*/class FilterAction extends PropertySheetAction {
-    /**
-     * Create the Filter action. This action is used to show
-     * or hide expert properties.
-     *
-     * @param viewer the viewer
-     * @param name the name
-     */
-    public FilterAction(PropertySheetViewer viewer, String name) {
-        super(viewer, name);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Create the Filter action. This action is used to show
+	 * or hide expert properties.
+	 *
+	 * @param viewer the viewer
+	 * @param name the name
+	 */
+	public FilterAction(PropertySheetViewer viewer, String name) {
+		super(viewer, name);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IPropertiesHelpContextIds.FILTER_ACTION);
-    }
+	}
 
-    /**
-     * Toggle the display of expert properties.
-     */
+	/**
+	 * Toggle the display of expert properties.
+	 */
 
-    @Override
+	@Override
 	public void run() {
-        PropertySheetViewer ps = getPropertySheet();
-        ps.deactivateCellEditor();
-        if (isChecked()) {
-            ps.showExpert();
-        } else {
-            ps.hideExpert();
-        }
-    }
+		PropertySheetViewer ps = getPropertySheet();
+		ps.deactivateCellEditor();
+		if (isChecked()) {
+			ps.showExpert();
+		} else {
+			ps.hideExpert();
+		}
+	}
 }

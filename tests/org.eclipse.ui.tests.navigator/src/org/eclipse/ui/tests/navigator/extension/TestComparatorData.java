@@ -62,12 +62,12 @@ public class TestComparatorData extends ViewerComparator {
 	}
 
 
-    @Override
+	@Override
 	public boolean isSorterProperty(Object element, String property) {
-    	_sorterProperty = property;
-    	_sorterElement = element;
+		_sorterProperty = property;
+		_sorterElement = element;
 		return Boolean.parseBoolean(property);
-    }
+	}
 
 
 }

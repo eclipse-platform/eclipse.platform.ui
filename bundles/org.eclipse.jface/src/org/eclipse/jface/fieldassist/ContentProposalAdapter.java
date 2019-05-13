@@ -2130,7 +2130,7 @@ public class ContentProposalAdapter {
 	 */
 	private boolean allowsAutoActivate() {
 		return (autoActivateString != null && autoActivateString.length() > 0) // there are specific autoactivation chars supplied
-		  || (autoActivateString == null && triggerKeyStroke == null);    // we autoactivate on everything
+			|| (autoActivateString == null && triggerKeyStroke == null);    // we autoactivate on everything
 	}
 
 	/**

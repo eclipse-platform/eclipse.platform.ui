@@ -34,7 +34,7 @@ public class UITestJob extends UIJob {
 			setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
 	@Override
-    public IStatus runInUIThread(IProgressMonitor monitor) {
+	public IStatus runInUIThread(IProgressMonitor monitor) {
 		if (failure)
 			throw new RuntimeException();
 		final long sleep = 10;

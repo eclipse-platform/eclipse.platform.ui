@@ -59,9 +59,9 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CloseResourceAction extends WorkspaceAction implements IResourceChangeListener {
-    /**
-     * The id of this action.
-     */
+	/**
+	 * The id of this action.
+	 */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseResourceAction"; //$NON-NLS-1$
 
 	private final String defaultText;
@@ -71,40 +71,40 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 
 	private String[] modelProviderIds;
 
-    /**
-     * Creates a new action.
-     *
-     * @param shell the shell for any dialogs
-     * @deprecated See {@link #CloseResourceAction(IShellProvider)}
-     */
-    @Deprecated
+	/**
+	 * Creates a new action.
+	 *
+	 * @param shell the shell for any dialogs
+	 * @deprecated See {@link #CloseResourceAction(IShellProvider)}
+	 */
+	@Deprecated
 	public CloseResourceAction(Shell shell) {
 		this(() -> shell);
-    }
+	}
 
-    /**
+	/**
 	 * Override super constructor to allow subclass to
 	 * override with unique text.
 	 * @deprecated See {@link #CloseResourceAction(IShellProvider, String)}
 	 */
-    @Deprecated
+	@Deprecated
 	protected CloseResourceAction(Shell shell, String text) {
 		this(() -> shell, text);
-    }
+	}
 
-    /**
+	/**
 	 * Create the new action.
 	 *
 	 * @param provider
 	 *            the shell provider for any dialogs
 	 * @since 3.4
 	 */
-    public CloseResourceAction(IShellProvider provider) {
+	public CloseResourceAction(IShellProvider provider) {
 		this(provider, IDEWorkbenchMessages.CloseResourceAction_text);
-        initAction();
-    }
+		initAction();
+	}
 
-    /**
+	/**
 	 * Provide text to the action.
 	 *
 	 * @param provider
@@ -113,11 +113,11 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 *            label for action when only a singular selection is made
 	 * @since 3.4
 	 */
-    protected CloseResourceAction(IShellProvider provider, String text) {
+	protected CloseResourceAction(IShellProvider provider, String text) {
 		this(provider, text, IDEWorkbenchMessages.CloseResourceAction_toolTip,
 				IDEWorkbenchMessages.CloseResourceAction_text_plural,
 				IDEWorkbenchMessages.CloseResourceAction_toolTip_plural);
-    }
+	}
 
 	/**
 	 * Provide text to the action.
@@ -149,40 +149,40 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
 	}
 
-    @Override
+	@Override
 	protected String getOperationMessage() {
 		if (getActionResources().size() > 1)
 			return IDEWorkbenchMessages.CloseResourceAction_operationMessage_plural;
-        return IDEWorkbenchMessages.CloseResourceAction_operationMessage;
-    }
+		return IDEWorkbenchMessages.CloseResourceAction_operationMessage;
+	}
 
-    @Override
+	@Override
 	protected String getProblemsMessage() {
-        return IDEWorkbenchMessages.CloseResourceAction_problemMessage;
-    }
+		return IDEWorkbenchMessages.CloseResourceAction_problemMessage;
+	}
 
-    @Override
+	@Override
 	protected String getProblemsTitle() {
-        return IDEWorkbenchMessages.CloseResourceAction_title;
-    }
+		return IDEWorkbenchMessages.CloseResourceAction_title;
+	}
 
-    @Override
+	@Override
 	protected void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
 		((IProject) resource).close(monitor);
 	}
 
-    /**
-     * The implementation of this <code>WorkspaceAction</code> method
-     * method saves and closes the resource's dirty editors before closing
-     * it.
-     */
-    @Override
+	/**
+	 * The implementation of this <code>WorkspaceAction</code> method
+	 * method saves and closes the resource's dirty editors before closing
+	 * it.
+	 */
+	@Override
 	public void run() {
-        // Get the items to close.
+		// Get the items to close.
 		List<? extends IResource> projects = getSelectedResources();
-        if (projects == null || projects.isEmpty()) {
+		if (projects == null || projects.isEmpty()) {
 			// no action needs to be taken since no projects are selected
-            return;
+			return;
 		}
 
 		final IResource[] projectArray = projects.toArray(new IResource[projects.size()]);
@@ -190,34 +190,34 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		if (!IDE.saveAllEditors(projectArray, true)) {
 			return;
 		}
-        if (!validateClose()) {
-        	return;
-        }
+		if (!validateClose()) {
+			return;
+		}
 
 		closeMatchingEditors(projects, false);
 
-        //be conservative and include all projects in the selection - projects
-        //can change state between now and when the job starts
-    	ISchedulingRule rule = null;
-    	IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
+		//be conservative and include all projects in the selection - projects
+		//can change state between now and when the job starts
+		ISchedulingRule rule = null;
+		IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
 		for (IResource element : projectArray) {
 			IProject project = (IProject) element;
-       		rule = MultiRule.combine(rule, factory.modifyRule(project));
-        }
-        runInBackground(rule);
-    }
+			rule = MultiRule.combine(rule, factory.modifyRule(project));
+		}
+		runInBackground(rule);
+	}
 
-    @Override
+	@Override
 	protected boolean shouldPerformResourcePruning() {
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * The <code>CloseResourceAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method ensures that this action is
-     * enabled only if one of the selections is an open project.
-     */
-    @Override
+	/**
+	 * The <code>CloseResourceAction</code> implementation of this
+	 * <code>SelectionListenerAction</code> method ensures that this action is
+	 * enabled only if one of the selections is an open project.
+	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
 		// don't call super since we want to enable if open project is selected.
 		setText(defaultText);
@@ -240,61 +240,61 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 			}
 		}
 		return hasOpenProjects;
-    }
+	}
 
-    /**
-     * Handles a resource changed event by updating the enablement
-     * if one of the selected projects is opened or closed.
-     */
-    @Override
+	/**
+	 * Handles a resource changed event by updating the enablement
+	 * if one of the selected projects is opened or closed.
+	 */
+	@Override
 	public synchronized void resourceChanged(IResourceChangeEvent event) {
-        // Warning: code duplicated in OpenResourceAction
+		// Warning: code duplicated in OpenResourceAction
 		List<? extends IResource> sel = getSelectedResources();
-        // don't bother looking at delta if selection not applicable
-        if (selectionIsOfType(IResource.PROJECT)) {
-            IResourceDelta delta = event.getDelta();
-            if (delta != null) {
+		// don't bother looking at delta if selection not applicable
+		if (selectionIsOfType(IResource.PROJECT)) {
+			IResourceDelta delta = event.getDelta();
+			if (delta != null) {
 				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
 				for (IResourceDelta projDelta : projDeltas) {
-                    if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
-                        if (sel.contains(projDelta.getResource())) {
-                            selectionChanged(getStructuredSelection());
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
+					if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
+						if (sel.contains(projDelta.getResource())) {
+							selectionChanged(getStructuredSelection());
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
 
 
-    @Override
+	@Override
 	protected synchronized List<? extends IResource> getSelectedResources() {
-    	return super.getSelectedResources();
-    }
+		return super.getSelectedResources();
+	}
 
-    @Override
+	@Override
 	protected synchronized List<?> getSelectedNonResources() {
-    	return super.getSelectedNonResources();
-    }
+		return super.getSelectedNonResources();
+	}
 
-    /**
-     * Returns the model provider ids that are known to the client
-     * that instantiated this operation.
-     *
-     * @return the model provider ids that are known to the client
-     * that instantiated this operation.
-     * @since 3.2
-     */
+	/**
+	 * Returns the model provider ids that are known to the client
+	 * that instantiated this operation.
+	 *
+	 * @return the model provider ids that are known to the client
+	 * that instantiated this operation.
+	 * @since 3.2
+	 */
 	public String[] getModelProviderIds() {
 		return modelProviderIds;
 	}
 
 	/**
-     * Sets the model provider ids that are known to the client
-     * that instantiated this operation. Any potential side effects
-     * reported by these models during validation will be ignored.
-     *
+	 * Sets the model provider ids that are known to the client
+	 * that instantiated this operation. Any potential side effects
+	 * reported by these models during validation will be ignored.
+	 *
 	 * @param modelProviderIds the model providers known to the client
 	 * who is using this operation.
 	 * @since 3.2
@@ -308,8 +308,8 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 *
 	 * @return whether the operation should proceed
 	 */
-    private boolean validateClose() {
-    	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
+	private boolean validateClose() {
+		IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
 		List<? extends IResource> resources = getActionResources();
 		for (IResource resource : resources) {
 			if (resource instanceof IProject) {
@@ -317,12 +317,12 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 				factory.close(project);
 			}
 		}
-    	String message;
-    	if (resources.size() == 1) {
-    		message = NLS.bind(IDEWorkbenchMessages.CloseResourceAction_warningForOne, resources.get(0).getName());
-    	} else {
-    		message = IDEWorkbenchMessages.CloseResourceAction_warningForMultiple;
-    	}
+		String message;
+		if (resources.size() == 1) {
+			message = NLS.bind(IDEWorkbenchMessages.CloseResourceAction_warningForOne, resources.get(0).getName());
+		} else {
+			message = IDEWorkbenchMessages.CloseResourceAction_warningForMultiple;
+		}
 		return IDE.promptToConfirm(getShell(), IDEWorkbenchMessages.CloseResourceAction_confirm, message, factory.getDelta(), getModelProviderIds(), false /* no need to syncExec */);
 	}
 

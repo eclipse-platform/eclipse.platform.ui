@@ -23,18 +23,18 @@ public interface IDialogTestPass {
 	/**
 	 * @return String The title of the test pass.
 	 */
-    public String title();
+	public String title();
 
 	/**
 	 * @return String The description of the test pass.
 	 */
-    public String description();
+	public String description();
 
 	/**
 	 * @return String The label of the test pass to be used in a selection list.
 	 *         The return includes an '&' if a mnemonic is desired.
 	 */
-    public String label();
+	public String label();
 
 	/**
 	 * @return A list of items to appear in a checklist. The items in the list
@@ -48,17 +48,17 @@ public interface IDialogTestPass {
 	 *         checklist items. The size of this array should be the same size
 	 *         as the checklist.
 	 */
-    public String[] failureTexts();
+	public String[] failureTexts();
 
 	/**
 	 * @return String The test that corresponds to the test pass to which the
 	 *         tester will respond with a 'yes' or 'no'.
 	 */
-    public String queryText();
+	public String queryText();
 
 	/**
 	 * @return int A unique number that identifies the test pass.
 	 */
-    public int getID();
+	public int getID();
 }
 

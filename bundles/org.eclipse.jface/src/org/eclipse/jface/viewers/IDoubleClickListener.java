@@ -19,10 +19,10 @@ package org.eclipse.jface.viewers;
  */
 @FunctionalInterface
 public interface IDoubleClickListener {
-    /**
-     * Notifies of a double click.
-     *
-     * @param event event object describing the double-click
-     */
-    public void doubleClick(DoubleClickEvent event);
+	/**
+	 * Notifies of a double click.
+	 *
+	 * @param event event object describing the double-click
+	 */
+	public void doubleClick(DoubleClickEvent event);
 }

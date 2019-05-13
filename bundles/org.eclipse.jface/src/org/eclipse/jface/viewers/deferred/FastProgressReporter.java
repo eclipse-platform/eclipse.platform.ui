@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.1
  */
 final class FastProgressReporter {
-    private IProgressMonitor monitor;
-    private volatile boolean canceled = false;
-    private int cancelCheck = 0;
+	private IProgressMonitor monitor;
+	private volatile boolean canceled = false;
+	private int cancelCheck = 0;
 //    private String taskName;
 //
 //    private int taskDepth = 0;
@@ -34,25 +34,25 @@ final class FastProgressReporter {
 //    private int parentWork = 1;
 //    private int monitorUnitsRemaining;
 
-    private static int CANCEL_CHECK_PERIOD = 40;
+	private static int CANCEL_CHECK_PERIOD = 40;
 
-    /**
-     * Constructs a null FastProgressReporter
-     */
-    public FastProgressReporter() {
-    }
+	/**
+	 * Constructs a null FastProgressReporter
+	 */
+	public FastProgressReporter() {
+	}
 
-    /**
-     * Constructs a FastProgressReporter that wraps the given progress monitor
-     *
-     * @param monitor the monitor to wrap
-     * @param totalProgress the total progress to be reported
-     */
-    public FastProgressReporter(IProgressMonitor monitor, int totalProgress) {
-        this.monitor = monitor;
-        //monitorUnitsRemaining = totalProgress;
-        canceled = monitor.isCanceled();
-    }
+	/**
+	 * Constructs a FastProgressReporter that wraps the given progress monitor
+	 *
+	 * @param monitor the monitor to wrap
+	 * @param totalProgress the total progress to be reported
+	 */
+	public FastProgressReporter(IProgressMonitor monitor, int totalProgress) {
+		this.monitor = monitor;
+		//monitorUnitsRemaining = totalProgress;
+		canceled = monitor.isCanceled();
+	}
 
 //    /**
 //     * Every call to beginTask must have a corresponding call to endTask, with the
@@ -117,33 +117,33 @@ final class FastProgressReporter {
 //
 //    }
 
-    /**
-     * Return whether the progress monitor has been canceled.
-     *
-     * @return <code>true</code> if the monitor has been cancelled, <code>false</code> otherwise.
-     */
-    public boolean isCanceled() {
-        if (monitor == null) {
-            return canceled;
-        }
+	/**
+	 * Return whether the progress monitor has been canceled.
+	 *
+	 * @return <code>true</code> if the monitor has been cancelled, <code>false</code> otherwise.
+	 */
+	public boolean isCanceled() {
+		if (monitor == null) {
+			return canceled;
+		}
 
-        cancelCheck++;
-        if (cancelCheck > CANCEL_CHECK_PERIOD) {
-            canceled = monitor.isCanceled();
-            cancelCheck = 0;
-        }
-        return canceled;
-    }
+		cancelCheck++;
+		if (cancelCheck > CANCEL_CHECK_PERIOD) {
+			canceled = monitor.isCanceled();
+			cancelCheck = 0;
+		}
+		return canceled;
+	}
 
-    /**
-     * Cancel the progress monitor.
-     */
-    public void cancel() {
-        canceled = true;
+	/**
+	 * Cancel the progress monitor.
+	 */
+	public void cancel() {
+		canceled = true;
 
-        if (monitor == null) {
-            return;
-        }
-        monitor.setCanceled(true);
-    }
+		if (monitor == null) {
+			return;
+		}
+		monitor.setCanceled(true);
+	}
 }

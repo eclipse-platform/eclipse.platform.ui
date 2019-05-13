@@ -68,7 +68,7 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 
 	@Override
 	public Control createContents(Composite parent) {
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.WORKSPACES_PREFERENCE_PAGE);
 
 		Composite container = new Composite(parent, SWT.NULL);

@@ -146,27 +146,27 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 	 * @return the location
 	 */
 	private String copyDataLocation() throws IOException {
-        TestPlugin plugin = TestPlugin.getDefault();
-        if (plugin == null) {
+		TestPlugin plugin = TestPlugin.getDefault();
+		if (plugin == null) {
 			throw new IllegalStateException(
-                    "TestPlugin default reference is null");
+					"TestPlugin default reference is null");
 		}
 
 		Bundle bundle = FrameworkUtil.getBundle(BadIndexDecorator.class);
 		URL fullPathString = bundle.getEntry("data/workspaces/" + dataLocation + ".zip");
 
-        if (fullPathString == null) {
+		if (fullPathString == null) {
 			throw new IllegalArgumentException();
 		}
 
-        IPath path = new Path(fullPathString.getPath());
+		IPath path = new Path(fullPathString.getPath());
 
-        File origin = path.toFile();
-        if (!origin.exists()) {
+		File origin = path.toFile();
+		if (!origin.exists()) {
 			throw new IllegalArgumentException();
 		}
 
-        ZipFile zFile = new ZipFile(origin);
+		ZipFile zFile = new ZipFile(origin);
 
 		File destination = new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir()).toOSString());
 		FileTool.unzip(zFile, destination);

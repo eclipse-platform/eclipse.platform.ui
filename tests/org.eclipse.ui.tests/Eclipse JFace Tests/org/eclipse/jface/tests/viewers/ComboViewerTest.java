@@ -22,39 +22,39 @@ import org.eclipse.swt.widgets.Composite;
  * @since 3.0
  */
 public class ComboViewerTest extends StructuredViewerTest {
-    public ComboViewerTest(String name) {
-        super(name);
-    }
+	public ComboViewerTest(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-        ComboViewer viewer = new ComboViewer(parent);
-        viewer.setContentProvider(new TestModelContentProvider());
-        return viewer;
-    }
+		ComboViewer viewer = new ComboViewer(parent);
+		viewer.setContentProvider(new TestModelContentProvider());
+		return viewer;
+	}
 
-    @Override
+	@Override
 	protected int getItemCount() {
-        TestElement first = fRootElement.getFirstChild();
-        Combo list = (Combo) fViewer.testFindItem(first);
-        return list.getItemCount();
-    }
+		TestElement first = fRootElement.getFirstChild();
+		Combo list = (Combo) fViewer.testFindItem(first);
+		return list.getItemCount();
+	}
 
-    @Override
+	@Override
 	protected String getItemText(int at) {
-        Combo list = (Combo) fViewer.getControl();
-        return list.getItem(at);
-    }
+		Combo list = (Combo) fViewer.getControl();
+		return list.getItem(at);
+	}
 
-    public static void main(String args[]) {
-        junit.textui.TestRunner.run(ComboViewerTest.class);
-    }
+	public static void main(String args[]) {
+		junit.textui.TestRunner.run(ComboViewerTest.class);
+	}
 
-    /**
-     * TODO: Determine if this test is applicable to ComboViewer
-     */
-    @Override
+	/**
+	 * TODO: Determine if this test is applicable to ComboViewer
+	 */
+	@Override
 	public void testInsertChild() {
 
-    }
+	}
 }

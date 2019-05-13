@@ -18,16 +18,16 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 public class Information
-    extends Element {
+	extends Element {
 
-    public Information(String name) {
-        super(name);
-    }
+	public Information(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	public Image getImage() {
-        return PlatformUI.getWorkbench().getSharedImages().getImage(
-            ISharedImages.IMG_OBJS_INFO_TSK);
-    }
+		return PlatformUI.getWorkbench().getSharedImages().getImage(
+			ISharedImages.IMG_OBJS_INFO_TSK);
+	}
 
 }

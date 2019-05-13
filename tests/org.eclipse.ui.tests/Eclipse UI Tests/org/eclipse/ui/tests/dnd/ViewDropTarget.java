@@ -24,37 +24,37 @@ import org.eclipse.ui.views.IViewDescriptor;
  */
 public class ViewDropTarget extends WorkbenchWindowDropTarget {
 
-    String targetPart;
+	String targetPart;
 
-    int side;
+	int side;
 
-    public ViewDropTarget(IWorkbenchWindowProvider provider, String part, int side) {
-        super(provider);
-        targetPart = part;
-        this.side = side;
-    }
+	public ViewDropTarget(IWorkbenchWindowProvider provider, String part, int side) {
+		super(provider);
+		targetPart = part;
+		this.side = side;
+	}
 
-    IViewPart getPart() {
-        return getPage().findView(targetPart);
-    }
+	IViewPart getPart() {
+		return getPage().findView(targetPart);
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
-                .find(targetPart);
-        String title = desc.getLabel();
+		IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
+				.find(targetPart);
+		String title = desc.getLabel();
 
-        return DragOperations.nameForConstant(side) + " of " + title;
-    }
+		return DragOperations.nameForConstant(side) + " of " + title;
+	}
 
-    @Override
+	@Override
 	public Point getLocation() {
-        return DragOperations.getLocation(DragOperations.getPane(getPart()),
-                side);
-    }
+		return DragOperations.getLocation(DragOperations.getPane(getPart()),
+				side);
+	}
 
-    @Override
+	@Override
 	public Shell getShell() {
-    	return getPart().getSite().getShell();
-    }
+		return getPart().getSite().getShell();
+	}
 }

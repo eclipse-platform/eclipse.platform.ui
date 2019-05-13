@@ -35,66 +35,66 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
  * @author Anthony Hunter
  */
 public class NameSection
-    extends AbstractPropertySection {
+	extends AbstractPropertySection {
 
-    private TreeNode treeNode;
+	private TreeNode treeNode;
 
-    private Text nameText;
+	private Text nameText;
 
-    /**
-     * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySection#createControls(org.eclipse.swt.widgets.Composite,
-     *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySection#createControls(org.eclipse.swt.widgets.Composite,
+	 *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
+	 */
+	@Override
 	public void createControls(Composite parent,
-            TabbedPropertySheetPage tabbedPropertySheetPage) {
-        super.createControls(parent, tabbedPropertySheetPage);
-        Composite composite = getWidgetFactory()
-            .createFlatFormComposite(parent);
-        FormData data;
+			TabbedPropertySheetPage tabbedPropertySheetPage) {
+		super.createControls(parent, tabbedPropertySheetPage);
+		Composite composite = getWidgetFactory()
+			.createFlatFormComposite(parent);
+		FormData data;
 
-        nameText = getWidgetFactory().createText(composite, ""); //$NON-NLS-1$
-        nameText.setEditable(false);
-        data = new FormData();
-        data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
-        data.right = new FormAttachment(100, 0);
-        data.top = new FormAttachment(0, 0);
-        nameText.setLayoutData(data);
+		nameText = getWidgetFactory().createText(composite, ""); //$NON-NLS-1$
+		nameText.setEditable(false);
+		data = new FormData();
+		data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
+		data.right = new FormAttachment(100, 0);
+		data.top = new FormAttachment(0, 0);
+		nameText.setLayoutData(data);
 
-        CLabel nameLabel = getWidgetFactory().createCLabel(composite, "Name:"); //$NON-NLS-1$
-        data = new FormData();
-        data.left = new FormAttachment(0, 0);
-        data.right = new FormAttachment(nameText,
-            -ITabbedPropertyConstants.HSPACE);
-        data.top = new FormAttachment(nameText, 0, SWT.CENTER);
-        nameLabel.setLayoutData(data);
+		CLabel nameLabel = getWidgetFactory().createCLabel(composite, "Name:"); //$NON-NLS-1$
+		data = new FormData();
+		data.left = new FormAttachment(0, 0);
+		data.right = new FormAttachment(nameText,
+			-ITabbedPropertyConstants.HSPACE);
+		data.top = new FormAttachment(nameText, 0, SWT.CENTER);
+		nameLabel.setLayoutData(data);
 
-    }
+	}
 
-    /**
-     * Get the element.
-     *
-     * @return the element.
-     */
-    public TreeNode getTreeNode() {
-        return treeNode;
-    }
+	/**
+	 * Get the element.
+	 *
+	 * @return the element.
+	 */
+	public TreeNode getTreeNode() {
+		return treeNode;
+	}
 
-    /*
-     * @see org.eclipse.ui.views.properties.tabbed.view.ITabbedPropertySection#refresh()
-     */
-    @Override
+	/*
+	 * @see org.eclipse.ui.views.properties.tabbed.view.ITabbedPropertySection#refresh()
+	 */
+	@Override
 	public void refresh() {
-        Element element = (Element) getTreeNode().getValue();
-        nameText.setText(element.getName());
-    }
+		Element element = (Element) getTreeNode().getValue();
+		nameText.setText(element.getName());
+	}
 
-    @Override
+	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
-        super.setInput(part, selection);
-        Assert.isTrue(selection instanceof IStructuredSelection);
-        Object input = ((IStructuredSelection) selection).getFirstElement();
-        Assert.isTrue(input instanceof TreeNode);
-        this.treeNode = (TreeNode) input;
-    }
+		super.setInput(part, selection);
+		Assert.isTrue(selection instanceof IStructuredSelection);
+		Object input = ((IStructuredSelection) selection).getFirstElement();
+		Assert.isTrue(input instanceof TreeNode);
+		this.treeNode = (TreeNode) input;
+	}
 }

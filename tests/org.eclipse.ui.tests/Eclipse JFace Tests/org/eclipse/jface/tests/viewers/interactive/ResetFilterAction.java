@@ -19,16 +19,16 @@ import org.eclipse.jface.viewers.Viewer;
 
 public class ResetFilterAction extends TestBrowserAction {
 
-    public ResetFilterAction(String label, TestBrowser browser) {
-        super(label, browser);
-    }
+	public ResetFilterAction(String label, TestBrowser browser) {
+		super(label, browser);
+	}
 
-    @Override
+	@Override
 	public void run() {
-        Viewer viewer = getBrowser().getViewer();
-        if (viewer instanceof StructuredViewer) {
-            StructuredViewer v = (StructuredViewer) viewer;
-            v.resetFilters();
-        }
-    }
+		Viewer viewer = getBrowser().getViewer();
+		if (viewer instanceof StructuredViewer) {
+			StructuredViewer v = (StructuredViewer) viewer;
+			v.resetFilters();
+		}
+	}
 }

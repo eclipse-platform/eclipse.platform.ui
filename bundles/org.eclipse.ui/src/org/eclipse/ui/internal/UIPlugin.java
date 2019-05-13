@@ -27,19 +27,19 @@ import org.osgi.framework.BundleContext;
  */
 public final class UIPlugin extends AbstractUIPlugin {
 
-    private static UIPlugin inst;
+	private static UIPlugin inst;
 
-    /**
-     * Creates an instance of the UIPlugin.
-     *
-     * @since 3.0
-     */
-    public UIPlugin() {
-        super();
-        inst = this;
-    }
+	/**
+	 * Creates an instance of the UIPlugin.
+	 *
+	 * @since 3.0
+	 */
+	public UIPlugin() {
+		super();
+		inst = this;
+	}
 
-    /**
+	/**
 	 * Returns the image registry for this plugin.
 	 *
 	 * Where are the images? The images (typically png) are found in the same
@@ -52,51 +52,51 @@ public final class UIPlugin extends AbstractUIPlugin {
 	 *
 	 * @see ImageRegistry
 	 */
-    @Override
+	@Override
 	protected ImageRegistry createImageRegistry() {
-        /* Just to be sure that we don't access this
-         * plug-ins image registry.
-         */
-        Assert.isLegal(false);
-        return null;
-    }
+		/* Just to be sure that we don't access this
+		 * plug-ins image registry.
+		 */
+		Assert.isLegal(false);
+		return null;
+	}
 
-    @Override
+	@Override
 	public ImageRegistry getImageRegistry() {
-        /* Just to be sure that we don't access this
-         * plug-ins image registry.
-         */
-        Assert.isLegal(false);
-        return null;
-    }
+		/* Just to be sure that we don't access this
+		 * plug-ins image registry.
+		 */
+		Assert.isLegal(false);
+		return null;
+	}
 
-    /**
-     * Returns the default instance of the receiver. This represents the runtime plugin.
-     *
-     * @return UIPlugin the singleton instance of the receiver.
-     * @see AbstractUIPlugin for the typical implementation pattern for plugin classes.
-     */
-    public static UIPlugin getDefault() {
-        return inst;
-    }
+	/**
+	 * Returns the default instance of the receiver. This represents the runtime plugin.
+	 *
+	 * @return UIPlugin the singleton instance of the receiver.
+	 * @see AbstractUIPlugin for the typical implementation pattern for plugin classes.
+	 */
+	public static UIPlugin getDefault() {
+		return inst;
+	}
 
 
-    @Override
+	@Override
 	public void start(BundleContext context) throws Exception {
-        super.start(context);
+		super.start(context);
 
-        // set a callback allowing the workbench plugin to obtain
-        // and save the UI plugin's preference store
-        PrefUtil.setUICallback(new PrefUtil.ICallback() {
-            @Override
+		// set a callback allowing the workbench plugin to obtain
+		// and save the UI plugin's preference store
+		PrefUtil.setUICallback(new PrefUtil.ICallback() {
+			@Override
 			public IPreferenceStore getPreferenceStore() {
-                return UIPlugin.this.getPreferenceStore();
-            }
+				return UIPlugin.this.getPreferenceStore();
+			}
 
-            @Override
+			@Override
 			public void savePreferences() {
-                UIPlugin.this.savePluginPreferences();
-            }
-        });
-    }
+				UIPlugin.this.savePluginPreferences();
+			}
+		});
+	}
 }

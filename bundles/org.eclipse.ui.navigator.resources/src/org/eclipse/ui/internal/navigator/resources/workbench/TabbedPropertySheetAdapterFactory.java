@@ -26,23 +26,23 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
  * @since 3.2
  */
 public class TabbedPropertySheetAdapterFactory
-    implements IAdapterFactory {
+	implements IAdapterFactory {
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-        if (adaptableObject instanceof ProjectExplorer) {
-        	if (IPropertySheetPage.class == adapterType)
+		if (adaptableObject instanceof ProjectExplorer) {
+			if (IPropertySheetPage.class == adapterType)
 				return (T) new TabbedPropertySheetPage(
-                    new TabbedPropertySheetProjectExplorerContributor(
-                        (CommonNavigator) adaptableObject));
-        }
-        return null;
-    }
+					new TabbedPropertySheetProjectExplorerContributor(
+						(CommonNavigator) adaptableObject));
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public Class<?>[] getAdapterList() {
-        return new Class[] {IPropertySheetPage.class};
-    }
+		return new Class[] {IPropertySheetPage.class};
+	}
 
 }

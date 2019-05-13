@@ -29,40 +29,40 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
  */
 public class PropertySheetContentOutlinePage extends ContentOutlinePage {
 
-    private IAdaptable model;
+	private IAdaptable model;
 
-    /**
-     * Create a new instance of the reciver using adapatable
-     * as the model.
-     */
-    public PropertySheetContentOutlinePage(IAdaptable adaptable) {
-        this.model = adaptable;
-    }
+	/**
+	 * Create a new instance of the reciver using adapatable
+	 * as the model.
+	 */
+	public PropertySheetContentOutlinePage(IAdaptable adaptable) {
+		this.model = adaptable;
+	}
 
-    /**
-     * Creates the control and registers the popup menu for this page
-     * Menu id "org.eclipse.ui.examples.propertysheet.outline"
-     */
-    @Override
+	/**
+	 * Creates the control and registers the popup menu for this page
+	 * Menu id "org.eclipse.ui.examples.propertysheet.outline"
+	 */
+	@Override
 	public void createControl(Composite parent) {
-        super.createControl(parent);
-        TreeViewer viewer = getTreeViewer();
-        viewer.setContentProvider(new WorkbenchContentProvider());
-        viewer.setLabelProvider(new WorkbenchLabelProvider());
-        viewer.setInput(this.model);
-        viewer.expandAll();
+		super.createControl(parent);
+		TreeViewer viewer = getTreeViewer();
+		viewer.setContentProvider(new WorkbenchContentProvider());
+		viewer.setLabelProvider(new WorkbenchLabelProvider());
+		viewer.setInput(this.model);
+		viewer.expandAll();
 
-        // Configure the context menu.
-        MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-        menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-        menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
-                + "-end")); //$NON-NLS-1$
+		// Configure the context menu.
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
+				+ "-end")); //$NON-NLS-1$
 
-        Menu menu = menuMgr.createContextMenu(viewer.getTree());
-        viewer.getTree().setMenu(menu);
-        // Be sure to register it so that other plug-ins can add actions.
-        getSite()
-                .registerContextMenu(
-                        "org.eclipse.ui.examples.propertysheet.outline", menuMgr, viewer); //$NON-NLS-1$
-    }
+		Menu menu = menuMgr.createContextMenu(viewer.getTree());
+		viewer.getTree().setMenu(menu);
+		// Be sure to register it so that other plug-ins can add actions.
+		getSite()
+				.registerContextMenu(
+						"org.eclipse.ui.examples.propertysheet.outline", menuMgr, viewer); //$NON-NLS-1$
+	}
 }

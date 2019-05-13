@@ -25,28 +25,28 @@ import org.junit.Assert;
  */
 public class TestAdaptableDecoratorContributor extends TestLightweightDecoratorContributor {
 
-    public static final String SUFFIX = "ICommon.1";
-    public static final String ID = "org.eclipse.ui.tests.decorators.generalAdaptabilityOn";
+	public static final String SUFFIX = "ICommon.1";
+	public static final String ID = "org.eclipse.ui.tests.decorators.generalAdaptabilityOn";
 
 	private Class<?> clazz;
-    private String suffix;
+	private String suffix;
 
-    public TestAdaptableDecoratorContributor() {
-        setExpectedElementType(ObjectContributionClasses.ICommon.class);
-        setSuffix(SUFFIX);
-    }
+	public TestAdaptableDecoratorContributor() {
+		setExpectedElementType(ObjectContributionClasses.ICommon.class);
+		setSuffix(SUFFIX);
+	}
 
-    protected void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
+	protected void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
 
 	protected void setExpectedElementType(Class<?> clazz) {
-        this.clazz = clazz;
-    }
+		this.clazz = clazz;
+	}
 
-    @Override
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
-        Assert.assertTrue(clazz.isInstance(element));
-        decoration.addSuffix(suffix);
-    }
+		Assert.assertTrue(clazz.isInstance(element));
+		decoration.addSuffix(suffix);
+	}
 }

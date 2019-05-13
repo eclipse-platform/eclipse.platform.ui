@@ -45,19 +45,19 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 public class ProjectLinkedResourcePage extends PropertyPage implements
 		IWorkbenchPropertyPage {
 
-	 private Label topLabel;
+	private Label topLabel;
 
-	 private PathVariablesGroup pathVariablesGroup;
-	 private LinkedResourceEditor linkedResourceEditor;
+	private PathVariablesGroup pathVariablesGroup;
+	private LinkedResourceEditor linkedResourceEditor;
 
-	 /**
+	/**
 	 *
 	 */
 	public ProjectLinkedResourcePage() {
-		 pathVariablesGroup = new PathVariablesGroup(true, IResource.FILE | IResource.FOLDER);
-		 linkedResourceEditor = new LinkedResourceEditor();
-		 this.noDefaultAndApplyButton();
-	 }
+		pathVariablesGroup = new PathVariablesGroup(true, IResource.FILE | IResource.FOLDER);
+		linkedResourceEditor = new LinkedResourceEditor();
+		this.noDefaultAndApplyButton();
+	}
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -74,22 +74,22 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 
 		Font font = parent.getFont();
 
-        // PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IIDEHelpContextIds.LINKED_RESOURCE_PREFERENCE_PAGE);
-        // define container & its gridding
-        Composite pageComponent = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        pageComponent.setLayout(layout);
-        GridData data = new GridData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        pageComponent.setLayoutData(data);
-        pageComponent.setFont(font);
+		// PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IIDEHelpContextIds.LINKED_RESOURCE_PREFERENCE_PAGE);
+		// define container & its gridding
+		Composite pageComponent = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		pageComponent.setLayout(layout);
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		pageComponent.setLayoutData(data);
+		pageComponent.setFont(font);
 
-       // createSpace(pageComponent);
+		// createSpace(pageComponent);
 
-        TabFolder tabFolder = new TabFolder(pageComponent, SWT.TOP);
+		TabFolder tabFolder = new TabFolder(pageComponent, SWT.TOP);
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -99,49 +99,49 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 				else
 					switchToPathVariables();
 			}
-        });
+		});
 
-        pageComponent.setLayout(layout);
-        data = new GridData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
+		pageComponent.setLayout(layout);
+		data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
  		data.grabExcessHorizontalSpace = true;
  		data.grabExcessVerticalSpace = true;
-        tabFolder.setLayoutData(data);
-        tabFolder.setFont(font);
+		tabFolder.setLayoutData(data);
+		tabFolder.setFont(font);
 
-        TabItem variableItem = new TabItem(tabFolder, SWT.BORDER);
+		TabItem variableItem = new TabItem(tabFolder, SWT.BORDER);
 
-        Composite variableComposite = new Composite(tabFolder, 0);
-        variableComposite.setLayout(new GridLayout());
-        variableComposite.setFont(font);
+		Composite variableComposite = new Composite(tabFolder, 0);
+		variableComposite.setLayout(new GridLayout());
+		variableComposite.setFont(font);
 
-        topLabel = new Label(variableComposite, SWT.NONE);
-        topLabel.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_description);
-        data = new GridData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        topLabel.setLayoutData(data);
-        topLabel.setFont(font);
+		topLabel = new Label(variableComposite, SWT.NONE);
+		topLabel.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_description);
+		data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		topLabel.setLayoutData(data);
+		topLabel.setFont(font);
 
-        pathVariablesGroup.createContents(variableComposite);
+		pathVariablesGroup.createContents(variableComposite);
 
-        variableItem.setControl(variableComposite);
-        variableItem.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_pathVariableTabTitle);
+		variableItem.setControl(variableComposite);
+		variableItem.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_pathVariableTabTitle);
 
-        TabItem linkedResourceItem = new TabItem(tabFolder, SWT.BORDER);
+		TabItem linkedResourceItem = new TabItem(tabFolder, SWT.BORDER);
 
-        Composite linkedResourceComposite = new Composite(tabFolder, 0);
-        linkedResourceComposite.setLayout(new GridLayout());
-        linkedResourceComposite.setFont(font);
+		Composite linkedResourceComposite = new Composite(tabFolder, 0);
+		linkedResourceComposite.setLayout(new GridLayout());
+		linkedResourceComposite.setFont(font);
 
-        linkedResourceEditor.createContents(linkedResourceComposite);
+		linkedResourceEditor.createContents(linkedResourceComposite);
 
-        linkedResourceItem.setControl(linkedResourceComposite);
-        linkedResourceItem.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_linkedResourcesTabTitle);
+		linkedResourceItem.setControl(linkedResourceComposite);
+		linkedResourceItem.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_linkedResourcesTabTitle);
 
-        updateWidgetState(true);
-        return pageComponent;
+		updateWidgetState(true);
+		return pageComponent;
 	}
 
 	private void switchToPathVariables() {
@@ -152,61 +152,61 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 		linkedResourceEditor.reloadContent();
 	}
 
-    /**
-     * Creates a tab of one horizontal spans.
-     *
-     * @param parent  the parent in which the tab should be created
-     */
-    protected static void createSpace(Composite parent) {
-        Label vfiller = new Label(parent, SWT.LEFT);
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.BEGINNING;
-        gridData.grabExcessHorizontalSpace = false;
-        gridData.verticalAlignment = GridData.CENTER;
-        gridData.grabExcessVerticalSpace = false;
-        vfiller.setLayoutData(gridData);
-    }
+	/**
+	 * Creates a tab of one horizontal spans.
+	 *
+	 * @param parent  the parent in which the tab should be created
+	 */
+	protected static void createSpace(Composite parent) {
+		Label vfiller = new Label(parent, SWT.LEFT);
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.BEGINNING;
+		gridData.grabExcessHorizontalSpace = false;
+		gridData.verticalAlignment = GridData.CENTER;
+		gridData.grabExcessVerticalSpace = false;
+		vfiller.setLayoutData(gridData);
+	}
 
-    /**
-     * Disposes the path variables group.
-     * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-     */
-    @Override
+	/**
+	 * Disposes the path variables group.
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	@Override
 	public void dispose() {
-        pathVariablesGroup.dispose();
-        linkedResourceEditor.dispose();
-        super.dispose();
-    }
+		pathVariablesGroup.dispose();
+		linkedResourceEditor.dispose();
+		super.dispose();
+	}
 
-    /**
-     * Empty implementation. This page does not use the workbench.
-     * @param workbench
-     *
-     * @see IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-     */
-    public void init(IWorkbench workbench) {
-    }
+	/**
+	 * Empty implementation. This page does not use the workbench.
+	 * @param workbench
+	 *
+	 * @see IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
+	public void init(IWorkbench workbench) {
+	}
 
-    /**
-     * Commits the temporary state to the path variable manager in response to user
-     * confirmation.
-     *
-     * @see PreferencePage#performOk()
-     * @see PathVariablesGroup#performOk()
-     */
-    @Override
+	/**
+	 * Commits the temporary state to the path variable manager in response to user
+	 * confirmation.
+	 *
+	 * @see PreferencePage#performOk()
+	 * @see PathVariablesGroup#performOk()
+	 */
+	@Override
 	public boolean performOk() {
-        return pathVariablesGroup.performOk() && linkedResourceEditor.performOk();
-    }
+		return pathVariablesGroup.performOk() && linkedResourceEditor.performOk();
+	}
 
-    /**
-     * Set the widget enabled state
-     *
-     * @param enableLinking the new widget enabled state
-     */
-    protected void updateWidgetState(boolean enableLinking) {
-        topLabel.setEnabled(enableLinking);
-        pathVariablesGroup.setEnabled(enableLinking);
-        linkedResourceEditor.setEnabled(enableLinking);
-    }
+	/**
+	 * Set the widget enabled state
+	 *
+	 * @param enableLinking the new widget enabled state
+	 */
+	protected void updateWidgetState(boolean enableLinking) {
+		topLabel.setEnabled(enableLinking);
+		pathVariablesGroup.setEnabled(enableLinking);
+		linkedResourceEditor.setEnabled(enableLinking);
+	}
 }

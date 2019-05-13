@@ -33,55 +33,55 @@ import junit.framework.TestCase;
 
 public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 
-    private DecorationTestsView decorationTestsView;
+	private DecorationTestsView decorationTestsView;
 
-    private TreeNode[] treeNodes;
+	private TreeNode[] treeNodes;
 
-    @Override
+	@Override
 	protected void setUp()
-        throws Exception {
-        super.setUp();
+		throws Exception {
+		super.setUp();
 
-        /**
-         * Close the existing perspectives.
-         */
-        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
-            .getActiveWorkbenchWindow();
-        assertNotNull(workbenchWindow);
-        IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
-        assertNotNull(workbenchPage);
+		/**
+		 * Close the existing perspectives.
+		 */
+		IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
+			.getActiveWorkbenchWindow();
+		assertNotNull(workbenchWindow);
+		IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+		assertNotNull(workbenchPage);
 		closeIntroView(workbenchPage);
 		processUiEvents();
 		workbenchPage.closeAllPerspectives(false, false);
 		processUiEvents();
 
-        /**
-         * Open the tests perspective.
-         */
-        PlatformUI.getWorkbench().showPerspective(
-            TestsPerspective.TESTS_PERSPECTIVE_ID, workbenchWindow);
+		/**
+		 * Open the tests perspective.
+		 */
+		PlatformUI.getWorkbench().showPerspective(
+			TestsPerspective.TESTS_PERSPECTIVE_ID, workbenchWindow);
 		processUiEvents();
-        /**
-         * Select the Decoration Tests view.
-         */
-        IViewPart view = workbenchPage.showView(DecorationTestsView.DECORATION_TESTS_VIEW_ID);
+		/**
+		 * Select the Decoration Tests view.
+		 */
+		IViewPart view = workbenchPage.showView(DecorationTestsView.DECORATION_TESTS_VIEW_ID);
 		processUiEvents();
 
-        assertNotNull(view);
-        assertTrue(view instanceof DecorationTestsView);
+		assertNotNull(view);
+		assertTrue(view instanceof DecorationTestsView);
 		assertTrue(workbenchPage.isPartVisible(view));
-        decorationTestsView = (DecorationTestsView) view;
+		decorationTestsView = (DecorationTestsView) view;
 
-        /**
-         * get the list of tree nodes from the view.
-         */
-        IContentProvider contentProvider = decorationTestsView.getViewer()
-            .getContentProvider();
-        assertTrue(contentProvider instanceof TestsViewContentProvider);
-        TestsViewContentProvider viewContentProvider = (TestsViewContentProvider) contentProvider;
-        treeNodes = viewContentProvider.getInvisibleRoot().getChildren();
-        assertEquals(treeNodes.length, 8);
-    }
+		/**
+		 * get the list of tree nodes from the view.
+		 */
+		IContentProvider contentProvider = decorationTestsView.getViewer()
+			.getContentProvider();
+		assertTrue(contentProvider instanceof TestsViewContentProvider);
+		TestsViewContentProvider viewContentProvider = (TestsViewContentProvider) contentProvider;
+		treeNodes = viewContentProvider.getInvisibleRoot().getChildren();
+		assertEquals(treeNodes.length, 8);
+	}
 
 	private void closeIntroView(IWorkbenchPage workbenchPage) {
 		IViewPart intro = workbenchPage.findView("org.eclipse.ui.internal.introview");
@@ -90,164 +90,164 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 		}
 	}
 
-    @Override
+	@Override
 	protected void tearDown()
-        throws Exception {
-        super.tearDown();
+		throws Exception {
+		super.tearDown();
 
-        /**
+		/**
 		 * Bug 175070: Make sure the views have finished painting.
-         */
+		 */
 		processUiEvents();
 
-        /**
-         * Deselect everything in the Tests view.
-         */
-        setSelection(new TreeNode[] {} );
-    }
+		/**
+		 * Deselect everything in the Tests view.
+		 */
+		setSelection(new TreeNode[] {} );
+	}
 
 	private void processUiEvents() {
 		while (Display.getCurrent().readAndDispatch()) {
-            //
-        }
+			//
+		}
 	}
 
-    /**
-     * Set the selection in the view to cause the properties view to change.
-     *
-     * @param selectedNodes
-     *            nodes to select in the view.
-     */
-    private void setSelection(TreeNode[] selectedNodes) {
-        StructuredSelection selection = new StructuredSelection(selectedNodes);
-        decorationTestsView.getViewer().setSelection(selection, true);
-    }
+	/**
+	 * Set the selection in the view to cause the properties view to change.
+	 *
+	 * @param selectedNodes
+	 *            nodes to select in the view.
+	 */
+	private void setSelection(TreeNode[] selectedNodes) {
+		StructuredSelection selection = new StructuredSelection(selectedNodes);
+		decorationTestsView.getViewer().setSelection(selection, true);
+	}
 
-    /**
-     * When Information node is selected, the Information tab is widest if decorations are not used.
-     */
-    public void test_widestLabelIndex1_WithoutDecorations() {
-    	((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(false);
-        /**
-         * select Information node
-         */
-        setSelection(new TreeNode[] {treeNodes[0]});
-        ITabDescriptor[] tabDescriptors = decorationTestsView.getTabbedPropertySheetPage().getActiveTabs();
+	/**
+	 * When Information node is selected, the Information tab is widest if decorations are not used.
+	 */
+	public void test_widestLabelIndex1_WithoutDecorations() {
+		((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(false);
+		/**
+		 * select Information node
+		 */
+		setSelection(new TreeNode[] {treeNodes[0]});
+		ITabDescriptor[] tabDescriptors = decorationTestsView.getTabbedPropertySheetPage().getActiveTabs();
 
-        /**
-         * First tab is Name
-         */
-        assertEquals("Name", tabDescriptors[0].getLabel());//$NON-NLS-1$
-        /**
-         * Second tab is Information
-         */
-        assertEquals("Information", tabDescriptors[1].getLabel());//$NON-NLS-1$
-        /**
-         * Third tab is Message
-         */
-        assertEquals("Message", tabDescriptors[2].getLabel());//$NON-NLS-1$
-        /**
-         * No fourth tab
-         */
-        assertEquals(3, tabDescriptors.length);
+		/**
+		 * First tab is Name
+		 */
+		assertEquals("Name", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		/**
+		 * Second tab is Information
+		 */
+		assertEquals("Information", tabDescriptors[1].getLabel());//$NON-NLS-1$
+		/**
+		 * Third tab is Message
+		 */
+		assertEquals("Message", tabDescriptors[2].getLabel());//$NON-NLS-1$
+		/**
+		 * No fourth tab
+		 */
+		assertEquals(3, tabDescriptors.length);
 
-        /**
-         * Information tab is widest
-         */
-        assertEquals(1, ((TabbedPropertyComposite) decorationTestsView.getTabbedPropertySheetPage().getControl()).getList().getWidestLabelIndex());
-    }
+		/**
+		 * Information tab is widest
+		 */
+		assertEquals(1, ((TabbedPropertyComposite) decorationTestsView.getTabbedPropertySheetPage().getControl()).getList().getWidestLabelIndex());
+	}
 
-    /**
-     * When Information node is selected, the Name tab is widest if decorations are used.
-     */
-    public void test_widestLabelIndex1_WithDecorations() {
-    	((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(true);
-        /**
-         * select Information node
-         */
-        setSelection(new TreeNode[] {treeNodes[0]});
-        ITabDescriptor[] tabDescriptors = decorationTestsView.getTabbedPropertySheetPage().getActiveTabs();
+	/**
+	 * When Information node is selected, the Name tab is widest if decorations are used.
+	 */
+	public void test_widestLabelIndex1_WithDecorations() {
+		((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(true);
+		/**
+		 * select Information node
+		 */
+		setSelection(new TreeNode[] {treeNodes[0]});
+		ITabDescriptor[] tabDescriptors = decorationTestsView.getTabbedPropertySheetPage().getActiveTabs();
 
-        /**
-         * First tab is Name
-         */
-        assertEquals("Name", tabDescriptors[0].getLabel());//$NON-NLS-1$
-        /**
-         * Second tab is Information
-         */
-        assertEquals("Information", tabDescriptors[1].getLabel());//$NON-NLS-1$
-        /**
-         * Third tab is Message
-         */
-        assertEquals("Message", tabDescriptors[2].getLabel());//$NON-NLS-1$
-        /**
-         * No fourth tab
-         */
-        assertEquals(3, tabDescriptors.length);
+		/**
+		 * First tab is Name
+		 */
+		assertEquals("Name", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		/**
+		 * Second tab is Information
+		 */
+		assertEquals("Information", tabDescriptors[1].getLabel());//$NON-NLS-1$
+		/**
+		 * Third tab is Message
+		 */
+		assertEquals("Message", tabDescriptors[2].getLabel());//$NON-NLS-1$
+		/**
+		 * No fourth tab
+		 */
+		assertEquals(3, tabDescriptors.length);
 
-        /**
-         * Name tab is widest
-         */
-        assertEquals(0, ((TabbedPropertyComposite) decorationTestsView.getTabbedPropertySheetPage().getControl()).getList().getWidestLabelIndex());
-    }
+		/**
+		 * Name tab is widest
+		 */
+		assertEquals(0, ((TabbedPropertyComposite) decorationTestsView.getTabbedPropertySheetPage().getControl()).getList().getWidestLabelIndex());
+	}
 
-    /**
-     * When Two Information nodes are selected, the Information tab is widest if decorations are not used.
-     */
-    public void test_widestLabelIndex2_WithoutDecorations() {
-    	((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(false);
-        /**
-         * select nodes
-         */
-        setSelection(new TreeNode[] {treeNodes[0], treeNodes[1]});
-        ITabDescriptor[] tabDescriptors = decorationTestsView.getTabbedPropertySheetPage().getActiveTabs();
+	/**
+	 * When Two Information nodes are selected, the Information tab is widest if decorations are not used.
+	 */
+	public void test_widestLabelIndex2_WithoutDecorations() {
+		((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(false);
+		/**
+		 * select nodes
+		 */
+		setSelection(new TreeNode[] {treeNodes[0], treeNodes[1]});
+		ITabDescriptor[] tabDescriptors = decorationTestsView.getTabbedPropertySheetPage().getActiveTabs();
 
-        /**
-         * First tab is Information
-         */
-        assertEquals("Information", tabDescriptors[0].getLabel());//$NON-NLS-1$
-        /**
-         * Second tab is Message
-         */
-        assertEquals("Message", tabDescriptors[1].getLabel());//$NON-NLS-1$
-        /**
-         * No other tab
-         */
-        assertEquals(2, tabDescriptors.length);
+		/**
+		 * First tab is Information
+		 */
+		assertEquals("Information", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		/**
+		 * Second tab is Message
+		 */
+		assertEquals("Message", tabDescriptors[1].getLabel());//$NON-NLS-1$
+		/**
+		 * No other tab
+		 */
+		assertEquals(2, tabDescriptors.length);
 
-        /**
-         * Information tab is widest
-         */
-        assertEquals(0, ((TabbedPropertyComposite) decorationTestsView.getTabbedPropertySheetPage().getControl()).getList().getWidestLabelIndex());
-    }
+		/**
+		 * Information tab is widest
+		 */
+		assertEquals(0, ((TabbedPropertyComposite) decorationTestsView.getTabbedPropertySheetPage().getControl()).getList().getWidestLabelIndex());
+	}
 
-    /**
-     * When Two Information nodes are selected, the Message tab is widest if decorations are used.
-     */
-    public void test_widestLabelIndex2_WithDecorations() {
-    	((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(true);
-        /**
-         * select nodes
-         */
-        setSelection(new TreeNode[] {treeNodes[0], treeNodes[1]});
-        ITabDescriptor[] tabDescriptors = decorationTestsView.getTabbedPropertySheetPage().getActiveTabs();
+	/**
+	 * When Two Information nodes are selected, the Message tab is widest if decorations are used.
+	 */
+	public void test_widestLabelIndex2_WithDecorations() {
+		((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(true);
+		/**
+		 * select nodes
+		 */
+		setSelection(new TreeNode[] {treeNodes[0], treeNodes[1]});
+		ITabDescriptor[] tabDescriptors = decorationTestsView.getTabbedPropertySheetPage().getActiveTabs();
 
-        /**
-         * First tab is Information
-         */
-        assertEquals("Information", tabDescriptors[0].getLabel());//$NON-NLS-1$
-        /**
-         * Second tab is Message
-         */
-        assertEquals("Message", tabDescriptors[1].getLabel());//$NON-NLS-1$
-        /**
-         * No other tab
-         */
-        assertEquals(2, tabDescriptors.length);
+		/**
+		 * First tab is Information
+		 */
+		assertEquals("Information", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		/**
+		 * Second tab is Message
+		 */
+		assertEquals("Message", tabDescriptors[1].getLabel());//$NON-NLS-1$
+		/**
+		 * No other tab
+		 */
+		assertEquals(2, tabDescriptors.length);
 
-        /**
-         * Message tab is widest
-         */
-        assertEquals(1, ((TabbedPropertyComposite) decorationTestsView.getTabbedPropertySheetPage().getControl()).getList().getWidestLabelIndex());
-    }
+		/**
+		 * Message tab is widest
+		 */
+		assertEquals(1, ((TabbedPropertyComposite) decorationTestsView.getTabbedPropertySheetPage().getControl()).getList().getWidestLabelIndex());
+	}
 }

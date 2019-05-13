@@ -54,51 +54,51 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImpo
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSystemImportWizard extends Wizard implements IImportWizard {
-    private IWorkbench workbench;
+	private IWorkbench workbench;
 
-    private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-    private WizardFileSystemResourceImportPage1 mainPage;
+	private WizardFileSystemResourceImportPage1 mainPage;
 
-    /**
-     * Creates a wizard for importing resources into the workspace from
-     * the file system.
-     */
-    public FileSystemImportWizard() {
-        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = workbenchSettings
-                .getSection("FileSystemImportWizard");//$NON-NLS-1$
-        if (section == null) {
+	/**
+	 * Creates a wizard for importing resources into the workspace from
+	 * the file system.
+	 */
+	public FileSystemImportWizard() {
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = workbenchSettings
+				.getSection("FileSystemImportWizard");//$NON-NLS-1$
+		if (section == null) {
 			section = workbenchSettings.addNewSection("FileSystemImportWizard");//$NON-NLS-1$
 		}
-        setDialogSettings(section);
-    }
+		setDialogSettings(section);
+	}
 
-    @Override
+	@Override
 	public void addPages() {
-        super.addPages();
-        mainPage = new WizardFileSystemResourceImportPage1(workbench, selection);
-        addPage(mainPage);
-    }
+		super.addPages();
+		mainPage = new WizardFileSystemResourceImportPage1(workbench, selection);
+		addPage(mainPage);
+	}
 
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        this.workbench = workbench;
-        this.selection = currentSelection;
+		this.workbench = workbench;
+		this.selection = currentSelection;
 
 		List<IResource> selectedResources = IDE.computeSelectedResources(currentSelection);
-        if (!selectedResources.isEmpty()) {
-            this.selection = new StructuredSelection(selectedResources);
-        }
+		if (!selectedResources.isEmpty()) {
+			this.selection = new StructuredSelection(selectedResources);
+		}
 
-        setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
-        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.png"));//$NON-NLS-1$
-        setNeedsProgressMonitor(true);
-    }
+		setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
+		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.png"));//$NON-NLS-1$
+		setNeedsProgressMonitor(true);
+	}
 
-    @Override
+	@Override
 	public boolean performFinish() {
-        return mainPage.finish();
-    }
+		return mainPage.finish();
+	}
 }

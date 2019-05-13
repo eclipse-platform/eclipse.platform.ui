@@ -61,11 +61,11 @@ public class TestSorterResource extends ViewerSorter {
 	}
 
 
-    @Override
+	@Override
 	public boolean isSorterProperty(Object element, String property) {
-    	_sorterProperty = property;
-    	_sorterElement = element;
-        return false;
-    }
+		_sorterProperty = property;
+		_sorterElement = element;
+		return false;
+	}
 
 }

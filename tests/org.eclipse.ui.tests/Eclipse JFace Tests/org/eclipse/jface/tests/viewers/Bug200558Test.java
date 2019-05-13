@@ -95,8 +95,8 @@ public class Bug200558Test extends ViewerTestCase {
 
 		});
 
-	    new TreeColumn(treeViewer.getTree(), SWT.NONE);
-	    new TreeColumn(treeViewer.getTree(), SWT.NONE).setWidth(100);
+		new TreeColumn(treeViewer.getTree(), SWT.NONE);
+		new TreeColumn(treeViewer.getTree(), SWT.NONE).setWidth(100);
 
 		return treeViewer;
 	}

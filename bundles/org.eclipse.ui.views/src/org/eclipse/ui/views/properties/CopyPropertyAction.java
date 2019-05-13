@@ -28,75 +28,75 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
  * Copies a property to the clipboard.
  */
 /*package*/class CopyPropertyAction extends PropertySheetAction {
-    /**
-     * System clipboard
-     */
-    private Clipboard clipboard;
+	/**
+	 * System clipboard
+	 */
+	private Clipboard clipboard;
 
-    /**
-     * Creates the action.
-     *
-     * @param viewer the viewer
-     * @param name the name
-     * @param clipboard the clipboard
-     */
-    public CopyPropertyAction(PropertySheetViewer viewer, String name,
-            Clipboard clipboard) {
-        super(viewer, name);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                IPropertiesHelpContextIds.COPY_PROPERTY_ACTION);
-        this.clipboard = clipboard;
-    }
+	/**
+	 * Creates the action.
+	 *
+	 * @param viewer the viewer
+	 * @param name the name
+	 * @param clipboard the clipboard
+	 */
+	public CopyPropertyAction(PropertySheetViewer viewer, String name,
+			Clipboard clipboard) {
+		super(viewer, name);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IPropertiesHelpContextIds.COPY_PROPERTY_ACTION);
+		this.clipboard = clipboard;
+	}
 
-    /**
-     * Performs this action.
-     */
-    @Override
+	/**
+	 * Performs this action.
+	 */
+	@Override
 	public void run() {
-        // Get the selected property
-        IStructuredSelection selection = (IStructuredSelection) getPropertySheet()
-                .getSelection();
-        if (selection.isEmpty()) {
+		// Get the selected property
+		IStructuredSelection selection = (IStructuredSelection) getPropertySheet()
+				.getSelection();
+		if (selection.isEmpty()) {
 			return;
 		}
-        // Assume single selection
-        IPropertySheetEntry entry = (IPropertySheetEntry) selection
-                .getFirstElement();
+		// Assume single selection
+		IPropertySheetEntry entry = (IPropertySheetEntry) selection
+				.getFirstElement();
 
-        // Place text on the clipboard
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(entry.getDisplayName());
-        buffer.append("\t"); //$NON-NLS-1$
-        buffer.append(entry.getValueAsString());
+		// Place text on the clipboard
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(entry.getDisplayName());
+		buffer.append("\t"); //$NON-NLS-1$
+		buffer.append(entry.getValueAsString());
 
-        setClipboard(buffer.toString());
-    }
+		setClipboard(buffer.toString());
+	}
 
-    /**
-     * Updates enablement based on the current selection.
-     *
-     * @param sel the selection
-     */
-    public void selectionChanged(IStructuredSelection sel) {
-        setEnabled(!sel.isEmpty());
-    }
+	/**
+	 * Updates enablement based on the current selection.
+	 *
+	 * @param sel the selection
+	 */
+	public void selectionChanged(IStructuredSelection sel) {
+		setEnabled(!sel.isEmpty());
+	}
 
-    private void setClipboard(String text) {
-        try {
-            Object[] data = new Object[] { text };
-            Transfer[] transferTypes = new Transfer[] { TextTransfer
-                    .getInstance() };
-            clipboard.setContents(data, transferTypes);
-        } catch (SWTError e) {
-            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
+	private void setClipboard(String text) {
+		try {
+			Object[] data = new Object[] { text };
+			Transfer[] transferTypes = new Transfer[] { TextTransfer
+					.getInstance() };
+			clipboard.setContents(data, transferTypes);
+		} catch (SWTError e) {
+			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 				throw e;
 			}
-            if (MessageDialog.openQuestion(getPropertySheet().getControl()
-                    .getShell(), PropertiesMessages.CopyToClipboardProblemDialog_title,
-                    PropertiesMessages.CopyToClipboardProblemDialog_message)) {
+			if (MessageDialog.openQuestion(getPropertySheet().getControl()
+					.getShell(), PropertiesMessages.CopyToClipboardProblemDialog_title,
+					PropertiesMessages.CopyToClipboardProblemDialog_message)) {
 				setClipboard(text);
 			}
-        }
-    }
+		}
+	}
 }
 

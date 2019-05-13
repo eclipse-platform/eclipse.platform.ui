@@ -136,7 +136,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		}
 	}
 
-   /**
+	/**
 	 * Returns whether to close unrelated projects.
 	 * Consults the preference and prompts the user if necessary.
 	 *
@@ -179,8 +179,8 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	}
 
 	/**
-     * Initializes for the constructor.
-     */
+	 * Initializes for the constructor.
+	 */
 	private void initAction(){
 		setId(ID);
 		setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);

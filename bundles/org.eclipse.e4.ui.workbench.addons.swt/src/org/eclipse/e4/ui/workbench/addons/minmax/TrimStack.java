@@ -567,7 +567,7 @@ public class TrimStack {
 				orientation = SWT.VERTICAL;
 			}
 			// TrimStacks are draggable by default
-			 me.getTags().add(IPresentationEngine.DRAGGABLE);
+			me.getTags().add(IPresentationEngine.DRAGGABLE);
 		}
 		trimStackTB = new ToolBar(parent, orientation | SWT.FLAT | SWT.WRAP);
 		trimStackTB.addDisposeListener(e -> {

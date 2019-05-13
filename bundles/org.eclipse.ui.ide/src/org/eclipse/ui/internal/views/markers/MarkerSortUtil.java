@@ -203,7 +203,7 @@ public class MarkerSortUtil {
 		 * holes would replace only a few parents above them.
 		 * This code has been left commented for future examination.
 		 * */
-	    /*
+		/*
 		int top = position - first;
 		int lowParent = 1;
 		int highParent = 0;

@@ -37,182 +37,182 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class DialogTaskProperties extends DialogMarkerProperties {
 
-    private static final String PRIORITY_HIGH =
-    	MarkerMessages.propertiesDialog_priorityHigh;
+	private static final String PRIORITY_HIGH =
+		MarkerMessages.propertiesDialog_priorityHigh;
 
-    private static final String PRIORITY_NORMAL =
-    	MarkerMessages.propertiesDialog_priorityNormal;
+	private static final String PRIORITY_NORMAL =
+		MarkerMessages.propertiesDialog_priorityNormal;
 
-    private static final String PRIORITY_LOW =
-    	MarkerMessages.propertiesDialog_priorityLow;
+	private static final String PRIORITY_LOW =
+		MarkerMessages.propertiesDialog_priorityLow;
 
-    protected Combo priorityCombo;
+	protected Combo priorityCombo;
 
-    protected Button completedCheckbox;
+	protected Button completedCheckbox;
 
-    /**
-     * @param parentShell
-     */
-    public DialogTaskProperties(Shell parentShell) {
-        super(parentShell);
-        setType(IMarker.TASK);
-    }
+	/**
+	 * @param parentShell
+	 */
+	public DialogTaskProperties(Shell parentShell) {
+		super(parentShell);
+		setType(IMarker.TASK);
+	}
 
-    /**
+	/**
 	 * @param parentShell
 	 * @param title
 	 */
-    public DialogTaskProperties(Shell parentShell, String title) {
-        super(parentShell, title);
-        setType(IMarker.TASK);
-    }
+	public DialogTaskProperties(Shell parentShell, String title) {
+		super(parentShell, title);
+		setType(IMarker.TASK);
+	}
 
-    @Override
+	@Override
 	protected void createAttributesArea(Composite parent) {
-    	createSeperator(parent);
-        super.createAttributesArea(parent);
+		createSeperator(parent);
+		super.createAttributesArea(parent);
 
-        Label label = new Label(parent, SWT.NONE);
-        label.setText(MarkerMessages.propertiesDialog_priority);
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(MarkerMessages.propertiesDialog_priority);
 
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        composite.setLayout(layout);
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
 
-        priorityCombo = new Combo(composite, SWT.READ_ONLY);
-        priorityCombo.setItems(new String[] { PRIORITY_HIGH, PRIORITY_NORMAL,
-                PRIORITY_LOW });
-        // Prevent Esc and Return from closing the dialog when the combo is active.
-        priorityCombo.addTraverseListener(e -> {
-		    if (e.detail == SWT.TRAVERSE_ESCAPE
-		            || e.detail == SWT.TRAVERSE_RETURN) {
-		        e.doit = false;
-		    }
+		priorityCombo = new Combo(composite, SWT.READ_ONLY);
+		priorityCombo.setItems(new String[] { PRIORITY_HIGH, PRIORITY_NORMAL,
+				PRIORITY_LOW });
+		// Prevent Esc and Return from closing the dialog when the combo is active.
+		priorityCombo.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_ESCAPE
+					|| e.detail == SWT.TRAVERSE_RETURN) {
+				e.doit = false;
+			}
 		});
-        priorityCombo.addSelectionListener(new SelectionAdapter() {
-            @Override
+		priorityCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                if (getMarker() == null) {
+				if (getMarker() == null) {
 					Map<String, Object> initialAttributes = getInitialAttributes();
 					initialAttributes.put(IMarker.PRIORITY, getPriorityFromDialog());
-                }
-                markDirty();
-            }
-        });
+				}
+				markDirty();
+			}
+		});
 
-        completedCheckbox = new Button(composite, SWT.CHECK);
-        completedCheckbox.setText(MarkerMessages.propertiesDialog_completed);
-        GridData gridData = new GridData();
-        gridData.horizontalIndent = convertHorizontalDLUsToPixels(20);
-        completedCheckbox.setLayoutData(gridData);
-        completedCheckbox.addSelectionListener(new SelectionAdapter() {
-            @Override
+		completedCheckbox = new Button(composite, SWT.CHECK);
+		completedCheckbox.setText(MarkerMessages.propertiesDialog_completed);
+		GridData gridData = new GridData();
+		gridData.horizontalIndent = convertHorizontalDLUsToPixels(20);
+		completedCheckbox.setLayoutData(gridData);
+		completedCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                if (getMarker() == null) {
+				if (getMarker() == null) {
 					Map<String, Object> initialAttributes = getInitialAttributes();
-                    initialAttributes.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
-                }
-                markDirty();
-            }
-        });
-    }
+					initialAttributes.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
+				}
+				markDirty();
+			}
+		});
+	}
 
-    protected boolean getCompleted() {
-        IMarker marker = getMarker();
-        if (marker == null) {
+	protected boolean getCompleted() {
+		IMarker marker = getMarker();
+		if (marker == null) {
 			Map<String, Object> attributes = getInitialAttributes();
-            Object done = attributes.get(IMarker.DONE);
-            return done != null && done instanceof Boolean
-                    && ((Boolean) done).booleanValue();
-        }
-        return marker.getAttribute(IMarker.DONE, false);
-    }
+			Object done = attributes.get(IMarker.DONE);
+			return done != null && done instanceof Boolean
+					&& ((Boolean) done).booleanValue();
+		}
+		return marker.getAttribute(IMarker.DONE, false);
+	}
 
-    protected int getPriority() {
-        IMarker marker = getMarker();
-        int priority = IMarker.PRIORITY_NORMAL;
-        if (marker == null) {
+	protected int getPriority() {
+		IMarker marker = getMarker();
+		int priority = IMarker.PRIORITY_NORMAL;
+		if (marker == null) {
 			Map<String, Object> attributes = getInitialAttributes();
-            Object priorityObj = attributes.get(IMarker.PRIORITY);
-            if (priorityObj != null && priorityObj instanceof Integer) {
-                priority = ((Integer) priorityObj).intValue();
-            }
-        } else {
-            priority = marker.getAttribute(IMarker.PRIORITY,
-                    IMarker.PRIORITY_NORMAL);
-        }
-        return priority;
-    }
+			Object priorityObj = attributes.get(IMarker.PRIORITY);
+			if (priorityObj != null && priorityObj instanceof Integer) {
+				priority = ((Integer) priorityObj).intValue();
+			}
+		} else {
+			priority = marker.getAttribute(IMarker.PRIORITY,
+					IMarker.PRIORITY_NORMAL);
+		}
+		return priority;
+	}
 
-    @Override
+	@Override
 	protected void updateEnablement() {
-        super.updateEnablement();
-        priorityCombo.setEnabled(isEditable());
-        completedCheckbox.setEnabled(isEditable());
-    }
+		super.updateEnablement();
+		priorityCombo.setEnabled(isEditable());
+		completedCheckbox.setEnabled(isEditable());
+	}
 
-    @Override
+	@Override
 	protected void updateDialogForNewMarker() {
 		Map<String, Object> initialAttributes = getInitialAttributes();
-        int priority = getPriority();
-        initialAttributes.put(IMarker.PRIORITY, priority);
-        if (priority == IMarker.PRIORITY_HIGH) {
-            priorityCombo.select(priorityCombo.indexOf(PRIORITY_HIGH));
-        } else if (priority == IMarker.PRIORITY_LOW) {
-            priorityCombo.select(priorityCombo.indexOf(PRIORITY_LOW));
-        } else {
-            priorityCombo.select(priorityCombo.indexOf(PRIORITY_NORMAL));
-        }
-        boolean completed = getCompleted();
-        initialAttributes.put(IMarker.DONE, completed ? Boolean.TRUE : Boolean.FALSE);
-        completedCheckbox.setSelection(completed);
-        super.updateDialogForNewMarker();
-    }
+		int priority = getPriority();
+		initialAttributes.put(IMarker.PRIORITY, priority);
+		if (priority == IMarker.PRIORITY_HIGH) {
+			priorityCombo.select(priorityCombo.indexOf(PRIORITY_HIGH));
+		} else if (priority == IMarker.PRIORITY_LOW) {
+			priorityCombo.select(priorityCombo.indexOf(PRIORITY_LOW));
+		} else {
+			priorityCombo.select(priorityCombo.indexOf(PRIORITY_NORMAL));
+		}
+		boolean completed = getCompleted();
+		initialAttributes.put(IMarker.DONE, completed ? Boolean.TRUE : Boolean.FALSE);
+		completedCheckbox.setSelection(completed);
+		super.updateDialogForNewMarker();
+	}
 
-    @Override
+	@Override
 	protected void updateDialogFromMarker() {
 		Map<String, Object> initialAttributes = getInitialAttributes();
-        int priority = getPriority();
-        initialAttributes.put(IMarker.PRIORITY, priority);
-        if (priority == IMarker.PRIORITY_HIGH) {
-            priorityCombo.select(priorityCombo.indexOf(PRIORITY_HIGH));
-        } else if (priority == IMarker.PRIORITY_LOW) {
-            priorityCombo.select(priorityCombo.indexOf(PRIORITY_LOW));
-        } else {
-            priorityCombo.select(priorityCombo.indexOf(PRIORITY_NORMAL));
-        }
-        boolean completed = getCompleted();
-        initialAttributes.put(IMarker.DONE, completed ? Boolean.TRUE : Boolean.FALSE);
-        completedCheckbox.setSelection(completed);
-        super.updateDialogFromMarker();
-    }
+		int priority = getPriority();
+		initialAttributes.put(IMarker.PRIORITY, priority);
+		if (priority == IMarker.PRIORITY_HIGH) {
+			priorityCombo.select(priorityCombo.indexOf(PRIORITY_HIGH));
+		} else if (priority == IMarker.PRIORITY_LOW) {
+			priorityCombo.select(priorityCombo.indexOf(PRIORITY_LOW));
+		} else {
+			priorityCombo.select(priorityCombo.indexOf(PRIORITY_NORMAL));
+		}
+		boolean completed = getCompleted();
+		initialAttributes.put(IMarker.DONE, completed ? Boolean.TRUE : Boolean.FALSE);
+		completedCheckbox.setSelection(completed);
+		super.updateDialogFromMarker();
+	}
 
-    private int getPriorityFromDialog() {
-        int priority = IMarker.PRIORITY_NORMAL;
-        if (priorityCombo.getSelectionIndex() == priorityCombo
-                .indexOf(PRIORITY_HIGH)) {
-            priority = IMarker.PRIORITY_HIGH;
-        } else if (priorityCombo.getSelectionIndex() == priorityCombo
-                .indexOf(PRIORITY_LOW)) {
-            priority = IMarker.PRIORITY_LOW;
-        }
-        return priority;
-    }
+	private int getPriorityFromDialog() {
+		int priority = IMarker.PRIORITY_NORMAL;
+		if (priorityCombo.getSelectionIndex() == priorityCombo
+				.indexOf(PRIORITY_HIGH)) {
+			priority = IMarker.PRIORITY_HIGH;
+		} else if (priorityCombo.getSelectionIndex() == priorityCombo
+				.indexOf(PRIORITY_LOW)) {
+			priority = IMarker.PRIORITY_LOW;
+		}
+		return priority;
+	}
 
-    @Override
+	@Override
 	protected Map<String, Object> getMarkerAttributes() {
 		Map<String, Object> attrs = super.getMarkerAttributes();
-        attrs.put(IMarker.PRIORITY, getPriorityFromDialog());
-        attrs.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
-        Object userEditable = attrs.get(IMarker.USER_EDITABLE);
-        if (userEditable == null || !(userEditable instanceof Boolean)) {
-            attrs.put(IMarker.USER_EDITABLE, Boolean.TRUE);
-        }
-        return attrs;
-    }
+		attrs.put(IMarker.PRIORITY, getPriorityFromDialog());
+		attrs.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
+		Object userEditable = attrs.get(IMarker.USER_EDITABLE);
+		if (userEditable == null || !(userEditable instanceof Boolean)) {
+			attrs.put(IMarker.USER_EDITABLE, Boolean.TRUE);
+		}
+		return attrs;
+	}
 
 	@Override
 	protected String getModifyOperationTitle() {

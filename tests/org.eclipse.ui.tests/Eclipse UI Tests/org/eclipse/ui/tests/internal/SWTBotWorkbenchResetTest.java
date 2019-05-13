@@ -29,17 +29,17 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class SWTBotWorkbenchResetTest extends UITestCase {
 
-    /**
-     * Constructs a new instance of this test case.
-     *
-     * @param testName
-     *            The name of the test
-     */
-    public SWTBotWorkbenchResetTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * Constructs a new instance of this test case.
+	 *
+	 * @param testName
+	 *            The name of the test
+	 */
+	public SWTBotWorkbenchResetTest(String testName) {
+		super(testName);
+	}
 
-    /**
+	/**
 	 * Open a new window, switch to a different perspective such that parts are
 	 * hidden. Then perform resetWorkbench(), and verify view parts are restored
 	 * and appear healthy.
@@ -74,7 +74,7 @@ public class SWTBotWorkbenchResetTest extends UITestCase {
 			if (shell != window.getShell() && !shell.isDisposed()) {
 				shell.close();
 			}
-        }
+		}
 		processEvents();
 
 		// saveAllEditors();

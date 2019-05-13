@@ -19,13 +19,13 @@ import org.eclipse.jface.viewers.ContentViewer;
 
 public class SetLabelProviderAction extends TestBrowserAction {
 
-    public SetLabelProviderAction(String label, TestBrowser browser) {
-        super(label, browser);
-    }
+	public SetLabelProviderAction(String label, TestBrowser browser) {
+		super(label, browser);
+	}
 
-    @Override
+	@Override
 	public void run() {
-        ((ContentViewer) getBrowser().getViewer())
-                .setLabelProvider(new TestLabelProvider());
-    }
+		((ContentViewer) getBrowser().getViewer())
+				.setLabelProvider(new TestLabelProvider());
+	}
 }

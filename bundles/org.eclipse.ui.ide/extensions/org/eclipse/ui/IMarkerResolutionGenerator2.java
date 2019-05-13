@@ -25,13 +25,13 @@ import org.eclipse.core.resources.IMarker;
  */
 public interface IMarkerResolutionGenerator2 extends IMarkerResolutionGenerator {
 
-    /**
-     * Returns whether there are any resolutions for the given marker.
-     *
-     * @param marker the marker
-     * @return <code>true</code> if there are resolutions for the given marker,
-     *   <code>false</code> if not
-     */
-    public boolean hasResolutions(IMarker marker);
+	/**
+	 * Returns whether there are any resolutions for the given marker.
+	 *
+	 * @param marker the marker
+	 * @return <code>true</code> if there are resolutions for the given marker,
+	 *   <code>false</code> if not
+	 */
+	public boolean hasResolutions(IMarker marker);
 }
 

@@ -34,98 +34,98 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class FileSystemExporter {
 	private static final int DEFAULT_BUFFER_SIZE = 16*1024;
 
-    /**
-     *  Creates the specified file system directory at <code>destinationPath</code>.
-     *  This creates a new file system directory.
-     *
-     *  @param destinationPath location to which files will be written
-     */
-    public void createFolder(IPath destinationPath) {
-        new File(destinationPath.toOSString()).mkdir();
-    }
+	/**
+	 *  Creates the specified file system directory at <code>destinationPath</code>.
+	 *  This creates a new file system directory.
+	 *
+	 *  @param destinationPath location to which files will be written
+	 */
+	public void createFolder(IPath destinationPath) {
+		new File(destinationPath.toOSString()).mkdir();
+	}
 
-    /**
-     *  Writes the passed resource to the specified location recursively.
-     *
-     *  @param resource the resource to write out to the file system
-     *  @param destinationPath location where the resource will be written
-     *  @exception CoreException if the operation fails
-     *  @exception IOException if an I/O error occurs when writing files
-     */
-    public void write(IResource resource, IPath destinationPath)
-            throws CoreException, IOException {
-        if (resource.getType() == IResource.FILE) {
+	/**
+	 *  Writes the passed resource to the specified location recursively.
+	 *
+	 *  @param resource the resource to write out to the file system
+	 *  @param destinationPath location where the resource will be written
+	 *  @exception CoreException if the operation fails
+	 *  @exception IOException if an I/O error occurs when writing files
+	 */
+	public void write(IResource resource, IPath destinationPath)
+			throws CoreException, IOException {
+		if (resource.getType() == IResource.FILE) {
 			writeFile((IFile) resource, destinationPath);
 		} else {
 			writeChildren((IContainer) resource, destinationPath);
 		}
-    }
+	}
 
-    /**
-     *  Exports the passed container's children
-     */
-    protected void writeChildren(IContainer folder, IPath destinationPath)
-            throws CoreException, IOException {
-        if (folder.isAccessible()) {
+	/**
+	 *  Exports the passed container's children
+	 */
+	protected void writeChildren(IContainer folder, IPath destinationPath)
+			throws CoreException, IOException {
+		if (folder.isAccessible()) {
 			for (IResource child : folder.members()) {
-                writeResource(child, destinationPath.append(child.getName()));
-            }
-        }
-    }
+				writeResource(child, destinationPath.append(child.getName()));
+			}
+		}
+	}
 
-    /**
-     *  Writes the passed file resource to the specified destination on the local
-     *  file system
-     */
-    protected void writeFile(IFile file, IPath destinationPath)
-            throws IOException, CoreException {
-        OutputStream output = null;
-        InputStream contentStream = null;
+	/**
+	 *  Writes the passed file resource to the specified destination on the local
+	 *  file system
+	 */
+	protected void writeFile(IFile file, IPath destinationPath)
+			throws IOException, CoreException {
+		OutputStream output = null;
+		InputStream contentStream = null;
 
-        try {
-            contentStream = new BufferedInputStream(file.getContents(false));
-            output = new BufferedOutputStream(new FileOutputStream(destinationPath.toOSString()));
-            // for large files, need to make sure the chunk size can be handled by the VM
-            int available = contentStream.available();
-            available = available <= 0 ? DEFAULT_BUFFER_SIZE : available;
-            int chunkSize = Math.min(DEFAULT_BUFFER_SIZE, available);
-            byte[] readBuffer = new byte[chunkSize];
-            int n = contentStream.read(readBuffer);
+		try {
+			contentStream = new BufferedInputStream(file.getContents(false));
+			output = new BufferedOutputStream(new FileOutputStream(destinationPath.toOSString()));
+			// for large files, need to make sure the chunk size can be handled by the VM
+			int available = contentStream.available();
+			available = available <= 0 ? DEFAULT_BUFFER_SIZE : available;
+			int chunkSize = Math.min(DEFAULT_BUFFER_SIZE, available);
+			byte[] readBuffer = new byte[chunkSize];
+			int n = contentStream.read(readBuffer);
 
-            while (n > 0) {
-            	// only write the number of bytes read
-                output.write(readBuffer, 0, n);
-                n = contentStream.read(readBuffer);
-            }
-        } finally {
-            if (contentStream != null) {
-            	// wrap in a try-catch to ensure attempt to close output stream
-            	try {
-            		contentStream.close();
-            	}
-            	catch(IOException e){
-            		IDEWorkbenchPlugin
+			while (n > 0) {
+				// only write the number of bytes read
+				output.write(readBuffer, 0, n);
+				n = contentStream.read(readBuffer);
+			}
+		} finally {
+			if (contentStream != null) {
+				// wrap in a try-catch to ensure attempt to close output stream
+				try {
+					contentStream.close();
+				}
+				catch(IOException e){
+					IDEWorkbenchPlugin
 							.log(
 									"Error closing input stream for file: " + file.getLocation(), e); //$NON-NLS-1$
-            	}
+				}
 			}
-        	if (output != null) {
-        		// propogate this error to the user
-           		output.close();
+			if (output != null) {
+				// propogate this error to the user
+				output.close();
 			}
-        }
-    }
+		}
+	}
 
-    /**
-     *  Writes the passed resource to the specified location recursively
-     */
-    protected void writeResource(IResource resource, IPath destinationPath)
-            throws CoreException, IOException {
-        if (resource.getType() == IResource.FILE) {
+	/**
+	 *  Writes the passed resource to the specified location recursively
+	 */
+	protected void writeResource(IResource resource, IPath destinationPath)
+			throws CoreException, IOException {
+		if (resource.getType() == IResource.FILE) {
 			writeFile((IFile) resource, destinationPath);
 		} else {
-            createFolder(destinationPath);
-            writeChildren((IContainer) resource, destinationPath);
-        }
-    }
+			createFolder(destinationPath);
+			writeChildren((IContainer) resource, destinationPath);
+		}
+	}
 }

@@ -316,7 +316,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 								+ componenents2[i]);
 					}
 				}
-	        }
+			}
 
 		} finally {
 			// restore

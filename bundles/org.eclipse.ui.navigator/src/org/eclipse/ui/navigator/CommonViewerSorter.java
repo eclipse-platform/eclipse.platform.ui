@@ -147,19 +147,19 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return categoryDelta;
 	}
 
-    @Override
+	@Override
 	public boolean isSorterProperty(Object element, String property) {
-    	// Have to get the parent path from the content provider
-    	NavigatorContentServiceContentProvider cp = (NavigatorContentServiceContentProvider) contentService.createCommonContentProvider();
-    	TreePath[] parentPaths = cp.getParents(element);
-    	for (TreePath parentPath : parentPaths) {
-    		if (isSorterProperty(parentPath, element, property))
-    			return true;
-    	}
-    	return false;
-    }
+		// Have to get the parent path from the content provider
+		NavigatorContentServiceContentProvider cp = (NavigatorContentServiceContentProvider) contentService.createCommonContentProvider();
+		TreePath[] parentPaths = cp.getParents(element);
+		for (TreePath parentPath : parentPaths) {
+			if (isSorterProperty(parentPath, element, property))
+				return true;
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
 		INavigatorContentDescriptor contentDesc = getSource(element);
 		if (parentPath.getSegmentCount() == 0)
@@ -167,8 +167,8 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		ViewerSorter sorter = sorterService.findSorter(contentDesc, parentPath.getLastSegment(), element, null);
 		if (sorter != null)
 			return sorter.isSorterProperty(element, property);
-        return false;
-    }
+		return false;
+	}
 
 
 	private INavigatorContentDescriptor getSource(Object o) {

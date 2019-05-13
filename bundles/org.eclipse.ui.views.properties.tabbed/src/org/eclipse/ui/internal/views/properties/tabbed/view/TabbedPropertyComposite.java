@@ -85,15 +85,15 @@ public class TabbedPropertyComposite
 	 * Create the contents in the main composite.
 	 */
 	protected void createMainContents() {
-        if (displayTitle) {
-            title = new TabbedPropertyTitle(mainComposite, factory);
+		if (displayTitle) {
+			title = new TabbedPropertyTitle(mainComposite, factory);
 
-            FormData data = new FormData();
-            data.left = new FormAttachment(0, 0);
-            data.right = new FormAttachment(100, 0);
-            data.top = new FormAttachment(0, 0);
-            title.setLayoutData(data);
-        }
+			FormData data = new FormData();
+			data.left = new FormAttachment(0, 0);
+			data.right = new FormAttachment(100, 0);
+			data.top = new FormAttachment(0, 0);
+			title.setLayoutData(data);
+		}
 
 		leftComposite = factory.createComposite(mainComposite, SWT.NO_FOCUS);
 		leftComposite.setLayout(new FormLayout());
@@ -104,27 +104,27 @@ public class TabbedPropertyComposite
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(leftComposite, 0);
 		formData.right = new FormAttachment(100, 0);
-        if (displayTitle) {
-            formData.top = new FormAttachment(title, 0);
-        } else {
-            formData.top = new FormAttachment(0, 0);
-        }
+		if (displayTitle) {
+			formData.top = new FormAttachment(title, 0);
+		} else {
+			formData.top = new FormAttachment(0, 0);
+		}
 		formData.bottom = new FormAttachment(100, 0);
 		scrolledComposite.setLayoutData(formData);
 
 		formData = new FormData();
 		formData.left = new FormAttachment(0, 0);
 		formData.right = new FormAttachment(scrolledComposite, 0);
-        if (displayTitle) {
-            formData.top = new FormAttachment(title, 0);
-        } else {
-            formData.top = new FormAttachment(0, 0);
-        }
+		if (displayTitle) {
+			formData.top = new FormAttachment(title, 0);
+		} else {
+			formData.top = new FormAttachment(0, 0);
+		}
 		formData.bottom = new FormAttachment(100, 0);
 		leftComposite.setLayoutData(formData);
 
-        tabComposite = factory.createComposite(scrolledComposite, SWT.NO_FOCUS);
-        tabComposite.setLayout(new FormLayout());
+		tabComposite = factory.createComposite(scrolledComposite, SWT.NO_FOCUS);
+		tabComposite.setLayout(new FormLayout());
 
 		scrolledComposite.setContent(tabComposite);
 		scrolledComposite.setAlwaysShowScrollBars(false);

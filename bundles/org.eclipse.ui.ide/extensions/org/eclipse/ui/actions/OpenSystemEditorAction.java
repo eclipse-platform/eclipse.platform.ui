@@ -37,79 +37,79 @@ import org.eclipse.ui.part.FileEditorInput;
  */
 public class OpenSystemEditorAction extends SelectionListenerAction {
 
-    /**
-     * The id of this action.
-     */
-    public static final String ID = PlatformUI.PLUGIN_ID
-            + ".OpenSystemEditorAction";//$NON-NLS-1$
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = PlatformUI.PLUGIN_ID
+			+ ".OpenSystemEditorAction";//$NON-NLS-1$
 
-    /**
-     * The workbench page to open the editor in.
-     */
-    private IWorkbenchPage workbenchPage;
+	/**
+	 * The workbench page to open the editor in.
+	 */
+	private IWorkbenchPage workbenchPage;
 
-    /**
-     * Creates a new action that will open system editors on the then-selected file
-     * resources.
-     *
-     * @param page the workbench page in which to open the editor
-     */
-    public OpenSystemEditorAction(IWorkbenchPage page) {
-        super(IDEWorkbenchMessages.OpenSystemEditorAction_text);
-        setToolTipText(IDEWorkbenchMessages.OpenSystemEditorAction_toolTip);
-        setId(ID);
+	/**
+	 * Creates a new action that will open system editors on the then-selected file
+	 * resources.
+	 *
+	 * @param page the workbench page in which to open the editor
+	 */
+	public OpenSystemEditorAction(IWorkbenchPage page) {
+		super(IDEWorkbenchMessages.OpenSystemEditorAction_text);
+		setToolTipText(IDEWorkbenchMessages.OpenSystemEditorAction_toolTip);
+		setId(ID);
 		if (page == null) {
 			throw new IllegalArgumentException();
 		}
-        page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+		page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
-        this.workbenchPage = page;
-    }
+		this.workbenchPage = page;
+	}
 
-    /**
-     * Return the workbench page to open the editor in.
-     *
-     * @return the workbench page to open the editor in
-     */
-    /* package */final IWorkbenchPage getWorkbenchPage() {
-        return workbenchPage;
-    }
+	/**
+	 * Return the workbench page to open the editor in.
+	 *
+	 * @return the workbench page to open the editor in
+	 */
+	/* package */final IWorkbenchPage getWorkbenchPage() {
+		return workbenchPage;
+	}
 
-    /**
-     * Opens a system editor on the given file resource.
-     *
-     * @param file the file resource
-     */
-    /* package */void openFile(IFile file) {
-        try {
-            getWorkbenchPage().openEditor(new FileEditorInput(file),
-                    IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-        } catch (PartInitException e) {
-            DialogUtil.openError(getWorkbenchPage().getWorkbenchWindow()
-                    .getShell(), IDEWorkbenchMessages.OpenSystemEditorAction_dialogTitle,
-                    e.getMessage(), e);
-        }
-    }
+	/**
+	 * Opens a system editor on the given file resource.
+	 *
+	 * @param file the file resource
+	 */
+	/* package */void openFile(IFile file) {
+		try {
+			getWorkbenchPage().openEditor(new FileEditorInput(file),
+					IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		} catch (PartInitException e) {
+			DialogUtil.openError(getWorkbenchPage().getWorkbenchWindow()
+					.getShell(), IDEWorkbenchMessages.OpenSystemEditorAction_dialogTitle,
+					e.getMessage(), e);
+		}
+	}
 
-    @Override
+	@Override
 	public void run() {
-        Iterator itr = getSelectedResources().iterator();
-        while (itr.hasNext()) {
-            IResource resource = (IResource) itr.next();
-            if (resource instanceof IFile) {
+		Iterator itr = getSelectedResources().iterator();
+		while (itr.hasNext()) {
+			IResource resource = (IResource) itr.next();
+			if (resource instanceof IFile) {
 				openFile((IFile) resource);
 			}
-        }
-    }
+		}
+	}
 
-    /**
-     * The <code>OpenSystemEditorAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method enables the action only
-     * if the selection contains just file resources.
-     */
-    @Override
+	/**
+	 * The <code>OpenSystemEditorAction</code> implementation of this
+	 * <code>SelectionListenerAction</code> method enables the action only
+	 * if the selection contains just file resources.
+	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-        return super.updateSelection(selection)
-                && selectionIsOfType(IResource.FILE);
-    }
+		return super.updateSelection(selection)
+				&& selectionIsOfType(IResource.FILE);
+	}
 }

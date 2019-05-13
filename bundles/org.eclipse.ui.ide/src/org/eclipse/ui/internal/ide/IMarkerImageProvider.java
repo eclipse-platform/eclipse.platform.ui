@@ -41,16 +41,16 @@ import org.eclipse.core.resources.IMarker;
  * <p><code>myMarker.getAdapter(IWorkbenchAdapter).getImageDescriptor(myMarker);</code></p>
  */
 public interface IMarkerImageProvider {
-    /**
-     * Returns the relative path for the image
-     * to be used for displaying an marker in the workbench.
-     * This path is relative to the plugin location
-     *
-     * Returns <code>null</code> if there is no appropriate image.
-     *
-     * @param marker The marker to get an image path for.
-     * @return String
-     *
-     */
-    public String getImagePath(IMarker marker);
+	/**
+	 * Returns the relative path for the image
+	 * to be used for displaying an marker in the workbench.
+	 * This path is relative to the plugin location
+	 *
+	 * Returns <code>null</code> if there is no appropriate image.
+	 *
+	 * @param marker The marker to get an image path for.
+	 * @return String
+	 *
+	 */
+	public String getImagePath(IMarker marker);
 }

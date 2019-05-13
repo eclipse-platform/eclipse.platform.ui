@@ -45,386 +45,386 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 
-    /**
-     * List of check state listeners (element type: <code>ICheckStateListener</code>).
-     */
+	/**
+	 * List of check state listeners (element type: <code>ICheckStateListener</code>).
+	 */
 	private ListenerList<ICheckStateListener> checkStateListeners = new ListenerList<>();
 
-    /**
-     * Provides the desired state of the check boxes.
-     */
-    private ICheckStateProvider checkStateProvider;
+	/**
+	 * Provides the desired state of the check boxes.
+	 */
+	private ICheckStateProvider checkStateProvider;
 
-    /**
-     * Last item clicked on, or <code>null</code> if none.
-     */
-    private TreeItem lastClickedItem = null;
+	/**
+	 * Last item clicked on, or <code>null</code> if none.
+	 */
+	private TreeItem lastClickedItem = null;
 
-    /**
-     * Creates a tree viewer on a newly-created tree control under the given parent.
-     * The tree control is created using the SWT style bits: <code>CHECK</code> and <code>BORDER</code>.
-     * The viewer has no input, no content provider, a default label provider,
-     * no sorter, and no filters.
-     *
-     * @param parent the parent control
-     */
-    public CheckboxTreeViewer(Composite parent) {
-        this(parent, SWT.BORDER);
-    }
-
-    /**
-     * Creates a tree viewer on a newly-created tree control under the given parent.
-     * The tree control is created using the given SWT style bits, plus the <code>CHECK</code> style bit.
-     * The viewer has no input, no content provider, a default label provider,
-     * no sorter, and no filters.
-     *
-     * @param parent the parent control
-     * @param style the SWT style bits
-     */
-    public CheckboxTreeViewer(Composite parent, int style) {
-        this(new Tree(parent, SWT.CHECK | style));
-    }
-
-    /**
-     * Creates a tree viewer on the given tree control.
-     * The <code>SWT.CHECK</code> style bit must be set on the given tree control.
-     * The viewer has no input, no content provider, a default label provider,
-     * no sorter, and no filters.
-     *
-     * @param tree the tree control
-     */
-    public CheckboxTreeViewer(Tree tree) {
-        super(tree);
-    }
-
-    @Override
-	public void addCheckStateListener(ICheckStateListener listener) {
-        checkStateListeners.add(listener);
-    }
-
-    /**
-     * Sets the {@link ICheckStateProvider} for this {@link CheckboxTreeViewer}.
-     * The check state provider will supply the logic for deciding whether the
-     * check box associated with each item should be checked, grayed or
-     * unchecked.
-     * @param checkStateProvider	The provider.
-     * @since 3.5
-     */
-    public void setCheckStateProvider(ICheckStateProvider checkStateProvider) {
-    	this.checkStateProvider = checkStateProvider;
-    	refresh();
-    }
-
-    /*
-     * Extends this method to update check box states.
-     */
-    @Override
-	protected void doUpdateItem(Item item, Object element) {
-    	super.doUpdateItem(item, element);
-    	if(!item.isDisposed() && checkStateProvider != null) {
-			setChecked(element, checkStateProvider.isChecked(element));
-			setGrayed(element, checkStateProvider.isGrayed(element));
-    	}
+	/**
+	 * Creates a tree viewer on a newly-created tree control under the given parent.
+	 * The tree control is created using the SWT style bits: <code>CHECK</code> and <code>BORDER</code>.
+	 * The viewer has no input, no content provider, a default label provider,
+	 * no sorter, and no filters.
+	 *
+	 * @param parent the parent control
+	 */
+	public CheckboxTreeViewer(Composite parent) {
+		this(parent, SWT.BORDER);
 	}
 
 	/**
-     * Applies the checked and grayed states of the given widget and its
-     * descendents.
-     *
-     * @param checked a set of elements (element type: <code>Object</code>)
-     * @param grayed a set of elements (element type: <code>Object</code>)
-     * @param widget the widget
-     */
-    private void applyState(CustomHashtable checked, CustomHashtable grayed,
-            Widget widget) {
-        Item[] items = getChildren(widget);
-        for (Item item : items) {
-            if (item instanceof TreeItem) {
-                Object data = item.getData();
-                if (data != null) {
-                    TreeItem ti = (TreeItem) item;
-                    ti.setChecked(checked.containsKey(data));
-                    ti.setGrayed(grayed.containsKey(data));
-                }
-            }
-            applyState(checked, grayed, item);
-        }
-    }
+	 * Creates a tree viewer on a newly-created tree control under the given parent.
+	 * The tree control is created using the given SWT style bits, plus the <code>CHECK</code> style bit.
+	 * The viewer has no input, no content provider, a default label provider,
+	 * no sorter, and no filters.
+	 *
+	 * @param parent the parent control
+	 * @param style the SWT style bits
+	 */
+	public CheckboxTreeViewer(Composite parent, int style) {
+		this(new Tree(parent, SWT.CHECK | style));
+	}
 
-    /**
-     * Notifies any check state listeners that the check state of an element has changed.
-     * Only listeners registered at the time this method is called are notified.
-     *
-     * @param event a check state changed event
-     *
-     * @see ICheckStateListener#checkStateChanged
-     */
-    protected void fireCheckStateChanged(final CheckStateChangedEvent event) {
+	/**
+	 * Creates a tree viewer on the given tree control.
+	 * The <code>SWT.CHECK</code> style bit must be set on the given tree control.
+	 * The viewer has no input, no content provider, a default label provider,
+	 * no sorter, and no filters.
+	 *
+	 * @param tree the tree control
+	 */
+	public CheckboxTreeViewer(Tree tree) {
+		super(tree);
+	}
+
+	@Override
+	public void addCheckStateListener(ICheckStateListener listener) {
+		checkStateListeners.add(listener);
+	}
+
+	/**
+	 * Sets the {@link ICheckStateProvider} for this {@link CheckboxTreeViewer}.
+	 * The check state provider will supply the logic for deciding whether the
+	 * check box associated with each item should be checked, grayed or
+	 * unchecked.
+	 * @param checkStateProvider	The provider.
+	 * @since 3.5
+	 */
+	public void setCheckStateProvider(ICheckStateProvider checkStateProvider) {
+		this.checkStateProvider = checkStateProvider;
+		refresh();
+	}
+
+	/*
+	 * Extends this method to update check box states.
+	 */
+	@Override
+	protected void doUpdateItem(Item item, Object element) {
+		super.doUpdateItem(item, element);
+		if(!item.isDisposed() && checkStateProvider != null) {
+			setChecked(element, checkStateProvider.isChecked(element));
+			setGrayed(element, checkStateProvider.isGrayed(element));
+		}
+	}
+
+	/**
+	 * Applies the checked and grayed states of the given widget and its
+	 * descendents.
+	 *
+	 * @param checked a set of elements (element type: <code>Object</code>)
+	 * @param grayed a set of elements (element type: <code>Object</code>)
+	 * @param widget the widget
+	 */
+	private void applyState(CustomHashtable checked, CustomHashtable grayed,
+			Widget widget) {
+		Item[] items = getChildren(widget);
+		for (Item item : items) {
+			if (item instanceof TreeItem) {
+				Object data = item.getData();
+				if (data != null) {
+					TreeItem ti = (TreeItem) item;
+					ti.setChecked(checked.containsKey(data));
+					ti.setGrayed(grayed.containsKey(data));
+				}
+			}
+			applyState(checked, grayed, item);
+		}
+	}
+
+	/**
+	 * Notifies any check state listeners that the check state of an element has changed.
+	 * Only listeners registered at the time this method is called are notified.
+	 *
+	 * @param event a check state changed event
+	 *
+	 * @see ICheckStateListener#checkStateChanged
+	 */
+	protected void fireCheckStateChanged(final CheckStateChangedEvent event) {
 		for (ICheckStateListener l : checkStateListeners) {
-            SafeRunnable.run(new SafeRunnable() {
-                @Override
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() {
-                    l.checkStateChanged(event);
-                }
-            });
-        }
+					l.checkStateChanged(event);
+				}
+			});
+		}
 
-    }
+	}
 
-    /**
-     * Gathers the checked and grayed states of the given widget and its
-     * descendents.
-     *
-     * @param checked a writable set of elements (element type: <code>Object</code>)
-     * @param grayed a writable set of elements (element type: <code>Object</code>)
-     * @param widget the widget
-     */
-    private void gatherState(CustomHashtable checked, CustomHashtable grayed,
-            Widget widget) {
-        Item[] items = getChildren(widget);
-        for (Item item : items) {
-            if (item instanceof TreeItem) {
-                Object data = item.getData();
-                if (data != null) {
-                    TreeItem ti = (TreeItem) item;
-                    if (ti.getChecked()) {
+	/**
+	 * Gathers the checked and grayed states of the given widget and its
+	 * descendents.
+	 *
+	 * @param checked a writable set of elements (element type: <code>Object</code>)
+	 * @param grayed a writable set of elements (element type: <code>Object</code>)
+	 * @param widget the widget
+	 */
+	private void gatherState(CustomHashtable checked, CustomHashtable grayed,
+			Widget widget) {
+		Item[] items = getChildren(widget);
+		for (Item item : items) {
+			if (item instanceof TreeItem) {
+				Object data = item.getData();
+				if (data != null) {
+					TreeItem ti = (TreeItem) item;
+					if (ti.getChecked()) {
 						checked.put(data, data);
 					}
-                    if (ti.getGrayed()) {
+					if (ti.getGrayed()) {
 						grayed.put(data, data);
 					}
-                }
-            }
-            gatherState(checked, grayed, item);
-        }
-    }
+				}
+			}
+			gatherState(checked, grayed, item);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean getChecked(Object element) {
-        Widget widget = findItem(element);
-        if (widget instanceof TreeItem) {
+		Widget widget = findItem(element);
+		if (widget instanceof TreeItem) {
 			return ((TreeItem) widget).getChecked();
 		}
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Returns a list of checked elements in this viewer's tree,
-     * including currently hidden ones that are marked as
-     * checked but are under a collapsed ancestor.
-     * <p>
-     * This method is typically used when preserving the interesting
-     * state of a viewer; <code>setCheckedElements</code> is used during the restore.
-     * </p>
-     *
-     * @return the array of checked elements
-     *
-     * @see #setCheckedElements
-     */
-    public Object[] getCheckedElements() {
-        ArrayList v = new ArrayList();
-        Control tree = getControl();
-        internalCollectChecked(v, tree);
-        return v.toArray();
-    }
+	/**
+	 * Returns a list of checked elements in this viewer's tree,
+	 * including currently hidden ones that are marked as
+	 * checked but are under a collapsed ancestor.
+	 * <p>
+	 * This method is typically used when preserving the interesting
+	 * state of a viewer; <code>setCheckedElements</code> is used during the restore.
+	 * </p>
+	 *
+	 * @return the array of checked elements
+	 *
+	 * @see #setCheckedElements
+	 */
+	public Object[] getCheckedElements() {
+		ArrayList v = new ArrayList();
+		Control tree = getControl();
+		internalCollectChecked(v, tree);
+		return v.toArray();
+	}
 
-    /**
-     * Returns the grayed state of the given element.
-     *
-     * @param element the element
-     * @return <code>true</code> if the element is grayed,
-     *   and <code>false</code> if not grayed
-     */
-    public boolean getGrayed(Object element) {
-        Widget widget = findItem(element);
-        if (widget instanceof TreeItem) {
-            return ((TreeItem) widget).getGrayed();
-        }
-        return false;
-    }
+	/**
+	 * Returns the grayed state of the given element.
+	 *
+	 * @param element the element
+	 * @return <code>true</code> if the element is grayed,
+	 *   and <code>false</code> if not grayed
+	 */
+	public boolean getGrayed(Object element) {
+		Widget widget = findItem(element);
+		if (widget instanceof TreeItem) {
+			return ((TreeItem) widget).getGrayed();
+		}
+		return false;
+	}
 
-    /**
-     * Returns a list of grayed elements in this viewer's tree,
-     * including currently hidden ones that are marked as
-     * grayed but are under a collapsed ancestor.
-     * <p>
-     * This method is typically used when preserving the interesting
-     * state of a viewer; <code>setGrayedElements</code> is used during the restore.
-     * </p>
-     *
-     * @return the array of grayed elements
-     *
-     * @see #setGrayedElements
-     */
-    public Object[] getGrayedElements() {
-        List result = new ArrayList();
-        internalCollectGrayed(result, getControl());
-        return result.toArray();
-    }
+	/**
+	 * Returns a list of grayed elements in this viewer's tree,
+	 * including currently hidden ones that are marked as
+	 * grayed but are under a collapsed ancestor.
+	 * <p>
+	 * This method is typically used when preserving the interesting
+	 * state of a viewer; <code>setGrayedElements</code> is used during the restore.
+	 * </p>
+	 *
+	 * @return the array of grayed elements
+	 *
+	 * @see #setGrayedElements
+	 */
+	public Object[] getGrayedElements() {
+		List result = new ArrayList();
+		internalCollectGrayed(result, getControl());
+		return result.toArray();
+	}
 
-    @Override
+	@Override
 	protected void handleDoubleSelect(SelectionEvent event) {
 
-        if (lastClickedItem != null) {
-            TreeItem item = lastClickedItem;
-            Object data = item.getData();
-            if (data != null) {
-                boolean state = item.getChecked();
-                setChecked(data, !state);
-                fireCheckStateChanged(new CheckStateChangedEvent(this, data,
-                        !state));
-            }
-            lastClickedItem = null;
-        } else {
+		if (lastClickedItem != null) {
+			TreeItem item = lastClickedItem;
+			Object data = item.getData();
+			if (data != null) {
+				boolean state = item.getChecked();
+				setChecked(data, !state);
+				fireCheckStateChanged(new CheckStateChangedEvent(this, data,
+						!state));
+			}
+			lastClickedItem = null;
+		} else {
 			super.handleDoubleSelect(event);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected void handleSelect(SelectionEvent event) {
 
-        lastClickedItem = null;
-        if (event.detail == SWT.CHECK) {
-            TreeItem item = (TreeItem) event.item;
-            lastClickedItem = item;
-            super.handleSelect(event);
+		lastClickedItem = null;
+		if (event.detail == SWT.CHECK) {
+			TreeItem item = (TreeItem) event.item;
+			lastClickedItem = item;
+			super.handleSelect(event);
 
-            Object data = item.getData();
-            if (data != null) {
-                fireCheckStateChanged(new CheckStateChangedEvent(this, data,
-                        item.getChecked()));
-            }
-        } else {
+			Object data = item.getData();
+			if (data != null) {
+				fireCheckStateChanged(new CheckStateChangedEvent(this, data,
+						item.getChecked()));
+			}
+		} else {
 			super.handleSelect(event);
 		}
-    }
+	}
 
-    /**
-     * Gathers the checked states of the given widget and its
-     * descendents, following a pre-order traversal of the tree.
-     *
-     * @param result a writable list of elements (element type: <code>Object</code>)
-     * @param widget the widget
-     */
-    private void internalCollectChecked(List result, Widget widget) {
-        Item[] items = getChildren(widget);
-        for (Item item : items) {
-            if (item instanceof TreeItem && ((TreeItem) item).getChecked()) {
-                Object data = item.getData();
-                if (data != null) {
+	/**
+	 * Gathers the checked states of the given widget and its
+	 * descendents, following a pre-order traversal of the tree.
+	 *
+	 * @param result a writable list of elements (element type: <code>Object</code>)
+	 * @param widget the widget
+	 */
+	private void internalCollectChecked(List result, Widget widget) {
+		Item[] items = getChildren(widget);
+		for (Item item : items) {
+			if (item instanceof TreeItem && ((TreeItem) item).getChecked()) {
+				Object data = item.getData();
+				if (data != null) {
 					result.add(data);
 				}
-            }
-            internalCollectChecked(result, item);
-        }
-    }
-
-    /**
-     * Gathers the grayed states of the given widget and its
-     * descendents, following a pre-order traversal of the tree.
-     *
-     * @param result a writable list of elements (element type: <code>Object</code>)
-     * @param widget the widget
-     */
-    private void internalCollectGrayed(List result, Widget widget) {
-        Item[] items = getChildren(widget);
-        for (Item item : items) {
-            if (item instanceof TreeItem && ((TreeItem) item).getGrayed()) {
-                Object data = item.getData();
-                if (data != null) {
-					result.add(data);
-				}
-            }
-            internalCollectGrayed(result, item);
-        }
-    }
-
-    /**
-     * Sets the checked state of all items to correspond to the given set of checked elements.
-     *
-     * @param checkedElements the set (element type: <code>Object</code>) of elements which are checked
-     * @param widget the widget
-     */
-    private void internalSetChecked(CustomHashtable checkedElements,
-            Widget widget) {
-        Item[] items = getChildren(widget);
-        for (Item child : items) {
-            TreeItem item = (TreeItem) child;
-            Object data = item.getData();
-            if (data != null) {
-                boolean checked = checkedElements.containsKey(data);
-                if (checked != item.getChecked()) {
-                    item.setChecked(checked);
-                }
-            }
-            internalSetChecked(checkedElements, item);
-        }
-    }
-
-    /**
-     * Sets the grayed state of all items to correspond to the given set of grayed elements.
-     *
-     * @param grayedElements the set (element type: <code>Object</code>) of elements which are grayed
-     * @param widget the widget
-     */
-    private void internalSetGrayed(CustomHashtable grayedElements, Widget widget) {
-        Item[] items = getChildren(widget);
-        for (Item child : items) {
-            TreeItem item = (TreeItem) child;
-            Object data = item.getData();
-            if (data != null) {
-                boolean grayed = grayedElements.containsKey(data);
-                if (grayed != item.getGrayed()) {
-                    item.setGrayed(grayed);
-                }
-            }
-            internalSetGrayed(grayedElements, item);
-        }
-    }
-
-    @Override
-	protected void preservingSelection(Runnable updateCode) {
-    	if (!getPreserveSelection()) {
-    		return;
-    	}
-    	//If a check provider is present, it determines the state across input
-    	//changes.
-    	if(checkStateProvider != null) {
-    		//Try to preserve the selection, let the ICheckProvider manage
-    		//the check states
-    		super.preservingSelection(updateCode);
-    		return;
-    	}
-
-    	//Preserve checked items
-        int n = getItemCount(getControl());
-        CustomHashtable checkedNodes = newHashtable(n * 2 + 1);
-        CustomHashtable grayedNodes = newHashtable(n * 2 + 1);
-
-        gatherState(checkedNodes, grayedNodes, getControl());
-
-        super.preservingSelection(updateCode);
-
-        applyState(checkedNodes, grayedNodes, getControl());
-    }
-
-    @Override
-	public void removeCheckStateListener(ICheckStateListener listener) {
-        checkStateListeners.remove(listener);
-    }
-
-    @Override
-	public boolean setChecked(Object element, boolean state) {
-        Assert.isNotNull(element);
-        Widget widget = internalExpand(element, false);
-        if (widget instanceof TreeItem) {
-            ((TreeItem) widget).setChecked(state);
-            return true;
+			}
+			internalCollectChecked(result, item);
 		}
-        return false;
-    }
+	}
 
-    /**
+	/**
+	 * Gathers the grayed states of the given widget and its
+	 * descendents, following a pre-order traversal of the tree.
+	 *
+	 * @param result a writable list of elements (element type: <code>Object</code>)
+	 * @param widget the widget
+	 */
+	private void internalCollectGrayed(List result, Widget widget) {
+		Item[] items = getChildren(widget);
+		for (Item item : items) {
+			if (item instanceof TreeItem && ((TreeItem) item).getGrayed()) {
+				Object data = item.getData();
+				if (data != null) {
+					result.add(data);
+				}
+			}
+			internalCollectGrayed(result, item);
+		}
+	}
+
+	/**
+	 * Sets the checked state of all items to correspond to the given set of checked elements.
+	 *
+	 * @param checkedElements the set (element type: <code>Object</code>) of elements which are checked
+	 * @param widget the widget
+	 */
+	private void internalSetChecked(CustomHashtable checkedElements,
+			Widget widget) {
+		Item[] items = getChildren(widget);
+		for (Item child : items) {
+			TreeItem item = (TreeItem) child;
+			Object data = item.getData();
+			if (data != null) {
+				boolean checked = checkedElements.containsKey(data);
+				if (checked != item.getChecked()) {
+					item.setChecked(checked);
+				}
+			}
+			internalSetChecked(checkedElements, item);
+		}
+	}
+
+	/**
+	 * Sets the grayed state of all items to correspond to the given set of grayed elements.
+	 *
+	 * @param grayedElements the set (element type: <code>Object</code>) of elements which are grayed
+	 * @param widget the widget
+	 */
+	private void internalSetGrayed(CustomHashtable grayedElements, Widget widget) {
+		Item[] items = getChildren(widget);
+		for (Item child : items) {
+			TreeItem item = (TreeItem) child;
+			Object data = item.getData();
+			if (data != null) {
+				boolean grayed = grayedElements.containsKey(data);
+				if (grayed != item.getGrayed()) {
+					item.setGrayed(grayed);
+				}
+			}
+			internalSetGrayed(grayedElements, item);
+		}
+	}
+
+	@Override
+	protected void preservingSelection(Runnable updateCode) {
+		if (!getPreserveSelection()) {
+			return;
+		}
+		//If a check provider is present, it determines the state across input
+		//changes.
+		if(checkStateProvider != null) {
+			//Try to preserve the selection, let the ICheckProvider manage
+			//the check states
+			super.preservingSelection(updateCode);
+			return;
+		}
+
+		//Preserve checked items
+		int n = getItemCount(getControl());
+		CustomHashtable checkedNodes = newHashtable(n * 2 + 1);
+		CustomHashtable grayedNodes = newHashtable(n * 2 + 1);
+
+		gatherState(checkedNodes, grayedNodes, getControl());
+
+		super.preservingSelection(updateCode);
+
+		applyState(checkedNodes, grayedNodes, getControl());
+	}
+
+	@Override
+	public void removeCheckStateListener(ICheckStateListener listener) {
+		checkStateListeners.remove(listener);
+	}
+
+	@Override
+	public boolean setChecked(Object element, boolean state) {
+		Assert.isNotNull(element);
+		Widget widget = internalExpand(element, false);
+		if (widget instanceof TreeItem) {
+			((TreeItem) widget).setChecked(state);
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Sets the checked state for the children of the given item.
 	 *
 	 * @param item
@@ -435,180 +435,180 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	 * @since 3.11
 	 */
 	protected void setCheckedChildren(Item item, boolean state) {
-        createChildren(item);
-        Item[] items = getChildren(item);
-        if (items != null) {
-            for (Item child : items) {
-                if (child.getData() != null && (child instanceof TreeItem)) {
-                    TreeItem treeItem = (TreeItem) child;
-                    treeItem.setChecked(state);
-                    setCheckedChildren(treeItem, state);
-                }
-            }
-        }
-    }
+		createChildren(item);
+		Item[] items = getChildren(item);
+		if (items != null) {
+			for (Item child : items) {
+				if (child.getData() != null && (child instanceof TreeItem)) {
+					TreeItem treeItem = (TreeItem) child;
+					treeItem.setChecked(state);
+					setCheckedChildren(treeItem, state);
+				}
+			}
+		}
+	}
 
-    /**
-     * Sets which elements are checked in this viewer's tree.
-     * The given list contains the elements that are to be checked;
-     * all other elements are to be unchecked.
-     * Does not fire events to check state listeners.
-     * <p>
-     * This method is typically used when restoring the interesting
-     * state of a viewer captured by an earlier call to <code>getCheckedElements</code>.
-     * </p>
-     *
-     * @param elements the array of checked elements
-     * @see #getCheckedElements
-     */
-    public void setCheckedElements(Object[] elements) {
-        assertElementsNotNull(elements);
-        CustomHashtable checkedElements = newHashtable(elements.length * 2 + 1);
-        for (Object element : elements) {
-            // Ensure item exists for element
-            internalExpand(element, false);
-            checkedElements.put(element, element);
-        }
-        Control tree = getControl();
-        tree.setRedraw(false);
-        internalSetChecked(checkedElements, tree);
-        tree.setRedraw(true);
-    }
+	/**
+	 * Sets which elements are checked in this viewer's tree.
+	 * The given list contains the elements that are to be checked;
+	 * all other elements are to be unchecked.
+	 * Does not fire events to check state listeners.
+	 * <p>
+	 * This method is typically used when restoring the interesting
+	 * state of a viewer captured by an earlier call to <code>getCheckedElements</code>.
+	 * </p>
+	 *
+	 * @param elements the array of checked elements
+	 * @see #getCheckedElements
+	 */
+	public void setCheckedElements(Object[] elements) {
+		assertElementsNotNull(elements);
+		CustomHashtable checkedElements = newHashtable(elements.length * 2 + 1);
+		for (Object element : elements) {
+			// Ensure item exists for element
+			internalExpand(element, false);
+			checkedElements.put(element, element);
+		}
+		Control tree = getControl();
+		tree.setRedraw(false);
+		internalSetChecked(checkedElements, tree);
+		tree.setRedraw(true);
+	}
 
-    /**
-     * Sets the grayed state for the given element in this viewer.
-     *
-     * @param element the element
-     * @param state <code>true</code> if the item should be grayed,
-     *  and <code>false</code> if it should be ungrayed
-     * @return <code>true</code> if the gray state could be set,
-     *  and <code>false</code> otherwise
-     */
-    public boolean setGrayed(Object element, boolean state) {
-        Assert.isNotNull(element);
-        Widget widget = internalExpand(element, false);
-        if (widget instanceof TreeItem) {
-            ((TreeItem) widget).setGrayed(state);
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * Sets the grayed state for the given element in this viewer.
+	 *
+	 * @param element the element
+	 * @param state <code>true</code> if the item should be grayed,
+	 *  and <code>false</code> if it should be ungrayed
+	 * @return <code>true</code> if the gray state could be set,
+	 *  and <code>false</code> otherwise
+	 */
+	public boolean setGrayed(Object element, boolean state) {
+		Assert.isNotNull(element);
+		Widget widget = internalExpand(element, false);
+		if (widget instanceof TreeItem) {
+			((TreeItem) widget).setGrayed(state);
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     * Check and gray the selection rather than calling both
-     * setGrayed and setChecked as an optimization.
-     * Does not fire events to check state listeners.
-     * @param element the item being checked
-     * @param state a boolean indicating selection or deselection
-     * @return boolean indicating success or failure.
-     */
-    public boolean setGrayChecked(Object element, boolean state) {
-        Assert.isNotNull(element);
-        Widget widget = internalExpand(element, false);
-        if (widget instanceof TreeItem) {
-            TreeItem item = (TreeItem) widget;
-            item.setChecked(state);
-            item.setGrayed(state);
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * Check and gray the selection rather than calling both
+	 * setGrayed and setChecked as an optimization.
+	 * Does not fire events to check state listeners.
+	 * @param element the item being checked
+	 * @param state a boolean indicating selection or deselection
+	 * @return boolean indicating success or failure.
+	 */
+	public boolean setGrayChecked(Object element, boolean state) {
+		Assert.isNotNull(element);
+		Widget widget = internalExpand(element, false);
+		if (widget instanceof TreeItem) {
+			TreeItem item = (TreeItem) widget;
+			item.setChecked(state);
+			item.setGrayed(state);
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     * Sets which elements are grayed in this viewer's tree.
-     * The given list contains the elements that are to be grayed;
-     * all other elements are to be ungrayed.
-     * <p>
-     * This method is typically used when restoring the interesting
-     * state of a viewer captured by an earlier call to <code>getGrayedElements</code>.
-     * </p>
-     *
-     * @param elements the array of grayed elements
-     *
-     * @see #getGrayedElements
-     */
-    public void setGrayedElements(Object[] elements) {
-        assertElementsNotNull(elements);
-        CustomHashtable grayedElements = newHashtable(elements.length * 2 + 1);
-        for (Object element : elements) {
-            // Ensure item exists for element
-            internalExpand(element, false);
-            grayedElements.put(element, element);
-        }
-        Control tree = getControl();
-        tree.setRedraw(false);
-        internalSetGrayed(grayedElements, tree);
-        tree.setRedraw(true);
-    }
+	/**
+	 * Sets which elements are grayed in this viewer's tree.
+	 * The given list contains the elements that are to be grayed;
+	 * all other elements are to be ungrayed.
+	 * <p>
+	 * This method is typically used when restoring the interesting
+	 * state of a viewer captured by an earlier call to <code>getGrayedElements</code>.
+	 * </p>
+	 *
+	 * @param elements the array of grayed elements
+	 *
+	 * @see #getGrayedElements
+	 */
+	public void setGrayedElements(Object[] elements) {
+		assertElementsNotNull(elements);
+		CustomHashtable grayedElements = newHashtable(elements.length * 2 + 1);
+		for (Object element : elements) {
+			// Ensure item exists for element
+			internalExpand(element, false);
+			grayedElements.put(element, element);
+		}
+		Control tree = getControl();
+		tree.setRedraw(false);
+		internalSetGrayed(grayedElements, tree);
+		tree.setRedraw(true);
+	}
 
-    /**
-     * Sets the grayed state for the given element and its parents
-     * in this viewer.
-     *
-     * @param element the element
-     * @param state <code>true</code> if the item should be grayed,
-     *  and <code>false</code> if it should be ungrayed
-     * @return <code>true</code> if the element is visible and the gray
-     *  state could be set, and <code>false</code> otherwise
-     * @see #setGrayed
-     */
-    public boolean setParentsGrayed(Object element, boolean state) {
-        Assert.isNotNull(element);
-        Widget widget = internalExpand(element, false);
-        if (widget instanceof TreeItem) {
-            TreeItem item = (TreeItem) widget;
-            item.setGrayed(state);
-            item = item.getParentItem();
-            while (item != null) {
-                item.setGrayed(state);
-                item = item.getParentItem();
-            }
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * Sets the grayed state for the given element and its parents
+	 * in this viewer.
+	 *
+	 * @param element the element
+	 * @param state <code>true</code> if the item should be grayed,
+	 *  and <code>false</code> if it should be ungrayed
+	 * @return <code>true</code> if the element is visible and the gray
+	 *  state could be set, and <code>false</code> otherwise
+	 * @see #setGrayed
+	 */
+	public boolean setParentsGrayed(Object element, boolean state) {
+		Assert.isNotNull(element);
+		Widget widget = internalExpand(element, false);
+		if (widget instanceof TreeItem) {
+			TreeItem item = (TreeItem) widget;
+			item.setGrayed(state);
+			item = item.getParentItem();
+			while (item != null) {
+				item.setGrayed(state);
+				item = item.getParentItem();
+			}
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     * Sets the checked state for the given element and its visible
-     * children in this viewer.
-     * Assumes that the element has been expanded before. To enforce
-     * that the item is expanded, call <code>expandToLevel</code>
-     * for the element.
-     * Does not fire events to check state listeners.
-     *
-     * @param element the element
-     * @param state <code>true</code> if the item should be checked,
-     *  and <code>false</code> if it should be unchecked
-     * @return <code>true</code> if the checked state could be set,
-     *  and <code>false</code> otherwise
-     */
-    public boolean setSubtreeChecked(Object element, boolean state) {
-        Widget widget = internalExpand(element, false);
-        if (widget instanceof TreeItem) {
-            TreeItem item = (TreeItem) widget;
-            item.setChecked(state);
-            setCheckedChildren(item, state);
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * Sets the checked state for the given element and its visible
+	 * children in this viewer.
+	 * Assumes that the element has been expanded before. To enforce
+	 * that the item is expanded, call <code>expandToLevel</code>
+	 * for the element.
+	 * Does not fire events to check state listeners.
+	 *
+	 * @param element the element
+	 * @param state <code>true</code> if the item should be checked,
+	 *  and <code>false</code> if it should be unchecked
+	 * @return <code>true</code> if the checked state could be set,
+	 *  and <code>false</code> otherwise
+	 */
+	public boolean setSubtreeChecked(Object element, boolean state) {
+		Widget widget = internalExpand(element, false);
+		if (widget instanceof TreeItem) {
+			TreeItem item = (TreeItem) widget;
+			item.setChecked(state);
+			setCheckedChildren(item, state);
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     * Sets to the given value the checked state for all elements in this viewer.
-     * Does not fire events to check state listeners.
-     * Assumes that the element has been expanded before. To enforce
-     * that the item is expanded, call <code>expandToLevel</code>
-     * for the element.
-     *
-     * @param state <code>true</code> if the element should be checked,
-     *  and <code>false</code> if it should be unchecked
-     * @deprecated as this method only checks or unchecks visible items
-     * is is recommended that {@link #setSubtreeChecked(Object, boolean)}
-     * is used instead.
-     * @see #setSubtreeChecked(Object, boolean)
-     *
-     *  @since 3.2
-     */
+	/**
+	 * Sets to the given value the checked state for all elements in this viewer.
+	 * Does not fire events to check state listeners.
+	 * Assumes that the element has been expanded before. To enforce
+	 * that the item is expanded, call <code>expandToLevel</code>
+	 * for the element.
+	 *
+	 * @param state <code>true</code> if the element should be checked,
+	 *  and <code>false</code> if it should be unchecked
+	 * @deprecated as this method only checks or unchecks visible items
+	 * is is recommended that {@link #setSubtreeChecked(Object, boolean)}
+	 * is used instead.
+	 * @see #setSubtreeChecked(Object, boolean)
+	 *
+	 *  @since 3.2
+	 */
 	@Deprecated
 	public void setAllChecked(boolean state) {
 		setAllChecked(state,  getTree().getItems());

@@ -119,7 +119,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
 		IStatus status = super.computeExecutionStatus(monitor);
 		if (status.isOK()) {
-		    // Overwrite is not allowed when we are creating a new file
+			// Overwrite is not allowed when we are creating a new file
 			status = computeCreateStatus(false);
 		}
 		return status;

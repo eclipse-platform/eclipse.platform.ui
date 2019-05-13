@@ -29,39 +29,39 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class PerspectiveWidgetFactory extends TestWidgetFactory {
 
-    private String perspectiveId;
-    private IWorkbenchWindow window;
+	private String perspectiveId;
+	private IWorkbenchWindow window;
 
-    public PerspectiveWidgetFactory(String initialPerspective) {
-        perspectiveId = initialPerspective;
-    }
+	public PerspectiveWidgetFactory(String initialPerspective) {
+		perspectiveId = initialPerspective;
+	}
 
-    @Override
+	@Override
 	public Point getMaxSize() {
-        return new Point(1024, 768);
-    }
+		return new Point(1024, 768);
+	}
 
-    @Override
+	@Override
 	public void init() throws WorkbenchException {
-    	// open the perspective in a new window
-        window = PlatformUI.getWorkbench().openWorkbenchWindow(perspectiveId, UITestCase.getPageInput());
+		// open the perspective in a new window
+		window = PlatformUI.getWorkbench().openWorkbenchWindow(perspectiveId, UITestCase.getPageInput());
 		IWorkbenchPage page = window.getActivePage();
-        Assert.assertNotNull(page);
-    }
+		Assert.assertNotNull(page);
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return "Perspective " + perspectiveId;
-    }
+		return "Perspective " + perspectiveId;
+	}
 
-    @Override
+	@Override
 	public Composite getControl() {
-        return window.getShell();
-    }
+		return window.getShell();
+	}
 
-    @Override
+	@Override
 	public void done() throws CoreException, WorkbenchException {
-    	window.close();
-    	super.done();
-    }
+		window.close();
+		super.done();
+	}
 }

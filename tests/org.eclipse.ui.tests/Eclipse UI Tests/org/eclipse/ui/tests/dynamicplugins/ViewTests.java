@@ -35,13 +35,13 @@ import org.eclipse.ui.views.IViewRegistry;
  */
 public class ViewTests extends DynamicTestCase {
 
-    private static final String VIEW_ID1 = "org.eclipse.newView1.newView1";
-    private static final String VIEW_ID2 = "org.eclipse.newView1.newView2";
-    private static final String CATEGORY_ID = "org.eclipse.newView1.newCategory1";
+	private static final String VIEW_ID1 = "org.eclipse.newView1.newView1";
+	private static final String VIEW_ID2 = "org.eclipse.newView1.newView2";
+	private static final String CATEGORY_ID = "org.eclipse.newView1.newCategory1";
 
 	public ViewTests(String testName) {
-        super(testName);
-    }
+		super(testName);
+	}
 
 	public void testViewClosure() throws CoreException {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
@@ -52,8 +52,8 @@ public class ViewTests extends DynamicTestCase {
 		// we need to ensure that the view is closed in all open perspectives but this is not currently possible.
 		// window.getActivePage().setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId(EmptyPerspective.PERSP_ID2));
 		WeakReference<IViewPart> ref = new WeakReference<>(part, queue);
-        assertNotNull(part);
-        part = null; //null the reference
+		assertNotNull(part);
+		part = null; //null the reference
 
 		removeBundle();
 		try {
@@ -62,11 +62,11 @@ public class ViewTests extends DynamicTestCase {
 			fail(e.getMessage());
 		}
 
-        assertNull(window.getActivePage().findView(VIEW_ID1));
+		assertNull(window.getActivePage().findView(VIEW_ID1));
 	}
 
-    public void testViewWithoutCategory() {
-    		IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
+	public void testViewWithoutCategory() {
+			IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
 
 		assertNull(registry.find(VIEW_ID2));
 		getBundle();
@@ -83,7 +83,7 @@ public class ViewTests extends DynamicTestCase {
 		catch (RuntimeException e) {
 			// no-op
 		}
-    }
+	}
 
 	public void testViewWithCategory() {
 		IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();

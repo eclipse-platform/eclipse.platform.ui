@@ -28,67 +28,67 @@ import org.eclipse.ui.tests.TestPlugin;
  * @since 3.1
  */
 public class AutoTestSuite extends TestSuite {
-    private AutoTestLogger logger;
+	private AutoTestLogger logger;
 
-    public AutoTestSuite(URL expectedResults) {
-        if (expectedResults == null) {
-            logger = new AutoTestLogger();
-        } else {
-            try {
-                logger = new AutoTestLogger(expectedResults);
-            } catch (WorkbenchException e) {
-                logger = new AutoTestLogger();
-                e.printStackTrace();
-            }
-        }
-    }
+	public AutoTestSuite(URL expectedResults) {
+		if (expectedResults == null) {
+			logger = new AutoTestLogger();
+		} else {
+			try {
+				logger = new AutoTestLogger(expectedResults);
+			} catch (WorkbenchException e) {
+				logger = new AutoTestLogger();
+				e.printStackTrace();
+			}
+		}
+	}
 
-    protected AutoTestLogger getLog() {
-        return logger;
-    }
+	protected AutoTestLogger getLog() {
+		return logger;
+	}
 
-    public void addWrapper(AutoTest test) {
-        addTest(new AutoTestWrapper(test, logger));
-    }
+	public void addWrapper(AutoTest test) {
+		addTest(new AutoTestWrapper(test, logger));
+	}
 
-    @Override
+	@Override
 	public void run(TestResult result) {
-        super.run(result);
+		super.run(result);
 
-        IPath statePath = Platform.getStateLocation(TestPlugin.getDefault().getBundle());
+		IPath statePath = Platform.getStateLocation(TestPlugin.getDefault().getBundle());
 
-        String testName = this.getName();
-        if (testName == null) {
-            testName = this.getClass().getName();
-        }
+		String testName = this.getName();
+		if (testName == null) {
+			testName = this.getClass().getName();
+		}
 
-        if (!logger.getErrors().isEmpty()) {
-            IPath errorsPath = statePath.append(testName).append("errors.xml");
+		if (!logger.getErrors().isEmpty()) {
+			IPath errorsPath = statePath.append(testName).append("errors.xml");
 
-            System.out.println("Errors detected. Results written to " + errorsPath.toString());
+			System.out.println("Errors detected. Results written to " + errorsPath.toString());
 
-            XMLMemento output = XMLMemento.createWriteRoot("errors");
-            logger.getErrors().saveState(output);
-            try {
-                XmlUtil.write(errorsPath.toFile(), output);
-            } catch (WorkbenchException e) {
-                e.printStackTrace();
-            }
-        }
+			XMLMemento output = XMLMemento.createWriteRoot("errors");
+			logger.getErrors().saveState(output);
+			try {
+				XmlUtil.write(errorsPath.toFile(), output);
+			} catch (WorkbenchException e) {
+				e.printStackTrace();
+			}
+		}
 
-        if (!logger.getUnknownTests().isEmpty()) {
+		if (!logger.getUnknownTests().isEmpty()) {
 
-            IPath unknownPath = statePath.append(testName).append("newtests.xml");
+			IPath unknownPath = statePath.append(testName).append("newtests.xml");
 
-            System.out.println("New tests detected. Results written to " + unknownPath.toString());
+			System.out.println("New tests detected. Results written to " + unknownPath.toString());
 
-            XMLMemento output = XMLMemento.createWriteRoot("unknown");
-            logger.getUnknownTests().saveState(output);
-            try {
-                XmlUtil.write(unknownPath.toFile(), output);
-            } catch (WorkbenchException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+			XMLMemento output = XMLMemento.createWriteRoot("unknown");
+			logger.getUnknownTests().saveState(output);
+			try {
+				XmlUtil.write(unknownPath.toFile(), output);
+			} catch (WorkbenchException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

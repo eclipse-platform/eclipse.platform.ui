@@ -27,72 +27,72 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 public class TestNavigatorActionGroup extends ActionGroup {
 
-    private AdaptedResourceNavigator navigator;
+	private AdaptedResourceNavigator navigator;
 
-    private AddBookmarkAction addBookmarkAction;
+	private AddBookmarkAction addBookmarkAction;
 
-    private PropertyDialogAction propertyDialogAction;
+	private PropertyDialogAction propertyDialogAction;
 
 
-    public TestNavigatorActionGroup(AdaptedResourceNavigator navigator) {
-        this.navigator = navigator;
-    }
+	public TestNavigatorActionGroup(AdaptedResourceNavigator navigator) {
+		this.navigator = navigator;
+	}
 
-    protected void makeActions() {
-        Shell shell = navigator.getSite().getShell();
-        addBookmarkAction = new AddBookmarkAction(navigator.getSite(), true);
-        propertyDialogAction = new PropertyDialogAction(shell, navigator
-                .getViewer());
-    }
+	protected void makeActions() {
+		Shell shell = navigator.getSite().getShell();
+		addBookmarkAction = new AddBookmarkAction(navigator.getSite(), true);
+		propertyDialogAction = new PropertyDialogAction(shell, navigator
+				.getViewer());
+	}
 
-    @Override
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
-        IStructuredSelection selection = (IStructuredSelection) getContext()
-                .getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext()
+				.getSelection();
 
-        MenuManager newMenu = new MenuManager(ResourceNavigatorMessages.ResourceNavigator_new);
-        menu.add(newMenu);
-        newMenu.add(new NewWizardMenu(navigator.getSite().getWorkbenchWindow()));
+		MenuManager newMenu = new MenuManager(ResourceNavigatorMessages.ResourceNavigator_new);
+		menu.add(newMenu);
+		newMenu.add(new NewWizardMenu(navigator.getSite().getWorkbenchWindow()));
 
-        //Update the selections of those who need a refresh before filling
-        addBookmarkAction.selectionChanged(selection);
-        menu.add(addBookmarkAction);
+		//Update the selections of those who need a refresh before filling
+		addBookmarkAction.selectionChanged(selection);
+		menu.add(addBookmarkAction);
 
-        menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-        menu
-                .add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
-                        + "-end")); //$NON-NLS-1$
-        menu.add(new Separator());
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu
+				.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
+						+ "-end")); //$NON-NLS-1$
+		menu.add(new Separator());
 
-        propertyDialogAction.selectionChanged(selection);
-        if (propertyDialogAction.isApplicableForSelection()) {
+		propertyDialogAction.selectionChanged(selection);
+		if (propertyDialogAction.isApplicableForSelection()) {
 			menu.add(propertyDialogAction);
 		}
-    }
+	}
 
-    public void fillActionBarMenu(IMenuManager menu,
-            IStructuredSelection selection) {
-    }
+	public void fillActionBarMenu(IMenuManager menu,
+			IStructuredSelection selection) {
+	}
 
-    /**
-     * Updates the global actions with the given selection.
-     * Be sure to invoke after actions objects have updated, since can* methods delegate to action objects.
-     */
-    public void updateGlobalActions(IStructuredSelection selection) {
+	/**
+	 * Updates the global actions with the given selection.
+	 * Be sure to invoke after actions objects have updated, since can* methods delegate to action objects.
+	 */
+	public void updateGlobalActions(IStructuredSelection selection) {
 
-    }
+	}
 
-    /**
-     * Contributes actions to the local tool bar and local pulldown menu.
-     * @since 2.0
-     */
-    public void fillActionBars(IStructuredSelection selection) {
-    }
+	/**
+	 * Contributes actions to the local tool bar and local pulldown menu.
+	 * @since 2.0
+	 */
+	public void fillActionBars(IStructuredSelection selection) {
+	}
 
-    /**
-     * Update the selection for new selection.
-     */
-    public void selectionChanged(IStructuredSelection selection) {
-    }
+	/**
+	 * Update the selection for new selection.
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+	}
 
 }

@@ -45,57 +45,57 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
 
-    /**
-     * The labels to display in the combo box
-     */
-    private String[] labels;
+	/**
+	 * The labels to display in the combo box
+	 */
+	private String[] labels;
 
-    /**
-     * Creates an property descriptor with the given id, display name, and list
-     * of value labels to display in the combo box cell editor.
-     *
-     * @param id the id of the property
-     * @param displayName the name to display for the property
-     * @param labelsArray the labels to display in the combo box
-     */
-    public ComboBoxPropertyDescriptor(Object id, String displayName,
-            String[] labelsArray) {
-        super(id, displayName);
-        labels = labelsArray;
-    }
+	/**
+	 * Creates an property descriptor with the given id, display name, and list
+	 * of value labels to display in the combo box cell editor.
+	 *
+	 * @param id the id of the property
+	 * @param displayName the name to display for the property
+	 * @param labelsArray the labels to display in the combo box
+	 */
+	public ComboBoxPropertyDescriptor(Object id, String displayName,
+			String[] labelsArray) {
+		super(id, displayName);
+		labels = labelsArray;
+	}
 
-    /**
-     * The <code>ComboBoxPropertyDescriptor</code> implementation of this
-     * <code>IPropertyDescriptor</code> method creates and returns a new
-     * <code>ComboBoxCellEditor</code>.
-     * <p>
-     * The editor is configured with the current validator if there is one.
-     * </p>
-     */
-    @Override
+	/**
+	 * The <code>ComboBoxPropertyDescriptor</code> implementation of this
+	 * <code>IPropertyDescriptor</code> method creates and returns a new
+	 * <code>ComboBoxCellEditor</code>.
+	 * <p>
+	 * The editor is configured with the current validator if there is one.
+	 * </p>
+	 */
+	@Override
 	public CellEditor createPropertyEditor(Composite parent) {
-        CellEditor editor = new ComboBoxCellEditor(parent, labels,
-                SWT.READ_ONLY);
-        if (getValidator() != null) {
+		CellEditor editor = new ComboBoxCellEditor(parent, labels,
+				SWT.READ_ONLY);
+		if (getValidator() != null) {
 			editor.setValidator(getValidator());
 		}
-        return editor;
-    }
+		return editor;
+	}
 
-    /**
-     * The <code>ComboBoxPropertyDescriptor</code> implementation of this
-     * <code>IPropertyDescriptor</code> method returns the value set by
-     * the <code>setProvider</code> method or, if no value has been set
-     * it returns a <code>ComboBoxLabelProvider</code> created from the
-     * valuesArray of this <code>ComboBoxPropertyDescriptor</code>.
-     *
-     * @see #setLabelProvider(ILabelProvider)
-     */
-    @Override
+	/**
+	 * The <code>ComboBoxPropertyDescriptor</code> implementation of this
+	 * <code>IPropertyDescriptor</code> method returns the value set by
+	 * the <code>setProvider</code> method or, if no value has been set
+	 * it returns a <code>ComboBoxLabelProvider</code> created from the
+	 * valuesArray of this <code>ComboBoxPropertyDescriptor</code>.
+	 *
+	 * @see #setLabelProvider(ILabelProvider)
+	 */
+	@Override
 	public ILabelProvider getLabelProvider() {
-        if (isLabelProviderSet()) {
+		if (isLabelProviderSet()) {
 			return super.getLabelProvider();
 		}
 		return new ComboBoxLabelProvider(labels);
-    }
+	}
 }

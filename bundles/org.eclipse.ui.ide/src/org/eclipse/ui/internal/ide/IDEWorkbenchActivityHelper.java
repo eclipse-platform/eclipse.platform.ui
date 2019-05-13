@@ -46,23 +46,23 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class IDEWorkbenchActivityHelper {
 
-    private static final String NATURE_POINT = "org.eclipse.ui.ide.natures"; //$NON-NLS-1$
+	private static final String NATURE_POINT = "org.eclipse.ui.ide.natures"; //$NON-NLS-1$
 
-    /**
-     * Resource listener that reacts to new projects (and associated natures)
-     * coming into the workspace.
-     */
-    private IResourceChangeListener listener;
+	/**
+	 * Resource listener that reacts to new projects (and associated natures)
+	 * coming into the workspace.
+	 */
+	private IResourceChangeListener listener;
 
-    /**
-     * Mapping from composite nature ID to IPluginContribution.  Used for proper
-     * activity mapping of natures.
-     */
+	/**
+	 * Mapping from composite nature ID to IPluginContribution.  Used for proper
+	 * activity mapping of natures.
+	 */
 	private Map<String, IPluginContribution> natureMap;
 
-    /**
-     * Lock for the list of nature ids to be processed.
-     */
+	/**
+	 * Lock for the list of nature ids to be processed.
+	 */
 	private final IDEWorkbenchActivityHelper lock;
 
 	/**
@@ -75,89 +75,89 @@ public class IDEWorkbenchActivityHelper {
 	 */
 	private HashSet<String> fPendingNatureUpdates = new HashSet<>();
 
-    /**
-     * Singleton instance.
-     */
-    private static IDEWorkbenchActivityHelper singleton;
+	/**
+	 * Singleton instance.
+	 */
+	private static IDEWorkbenchActivityHelper singleton;
 
-    /**
-     * Get the singleton instance of this class.
-     * @return the singleton instance of this class.
-     * @since 3.0
-     */
-    public static IDEWorkbenchActivityHelper getInstance() {
-        if (singleton == null) {
-            singleton = new IDEWorkbenchActivityHelper();
-        }
-        return singleton;
-    }
+	/**
+	 * Get the singleton instance of this class.
+	 * @return the singleton instance of this class.
+	 * @since 3.0
+	 */
+	public static IDEWorkbenchActivityHelper getInstance() {
+		if (singleton == null) {
+			singleton = new IDEWorkbenchActivityHelper();
+		}
+		return singleton;
+	}
 
-    /**
-     * Create a new <code>IDEWorkbenchActivityHelper</code> which will listen
-     * for workspace changes and promote activities accordingly.
-     */
-    private IDEWorkbenchActivityHelper() {
-    	lock = this;
+	/**
+	 * Create a new <code>IDEWorkbenchActivityHelper</code> which will listen
+	 * for workspace changes and promote activities accordingly.
+	 */
+	private IDEWorkbenchActivityHelper() {
+		lock = this;
 		natureMap = new HashMap<>();
-        // for dynamic UI
-        Platform.getExtensionRegistry().addRegistryChangeListener(
-                event -> {
-				    if (event.getExtensionDeltas(
-				            "org.eclipse.core.resources", "natures").length > 0) { //$NON-NLS-1$ //$NON-NLS-2$
+		// for dynamic UI
+		Platform.getExtensionRegistry().addRegistryChangeListener(
+				event -> {
+					if (event.getExtensionDeltas(
+							"org.eclipse.core.resources", "natures").length > 0) { //$NON-NLS-1$ //$NON-NLS-2$
 						loadNatures();
 					}
 				}, "org.eclipse.core.resources"); //$NON-NLS-1$
-        loadNatures();
-        listener = getChangeListener();
-        ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
-        // crawl the initial projects to set up nature bindings
-        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
-                .getProjects();
+		loadNatures();
+		listener = getChangeListener();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
+		// crawl the initial projects to set up nature bindings
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
+				.getProjects();
 		processProjects(new HashSet<>(Arrays.asList(projects)));
-    }
+	}
 
-    /**
-     * For dynamic UI.  Clears the cache of known natures and recreates it.
-     */
-    public void loadNatures() {
-        natureMap.clear();
-        IExtensionPoint point = Platform.getExtensionRegistry()
-                .getExtensionPoint("org.eclipse.core.resources.natures"); //$NON-NLS-1$
+	/**
+	 * For dynamic UI.  Clears the cache of known natures and recreates it.
+	 */
+	public void loadNatures() {
+		natureMap.clear();
+		IExtensionPoint point = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.core.resources.natures"); //$NON-NLS-1$
 		for (IExtension extension : point.getExtensions()) {
-            final String localId = extension.getSimpleIdentifier();
+			final String localId = extension.getSimpleIdentifier();
 			final String pluginId = extension.getContributor().getName();
-            String natureId = extension.getUniqueIdentifier();
-            natureMap.put(natureId, new IPluginContribution() {
-                @Override
+			String natureId = extension.getUniqueIdentifier();
+			natureMap.put(natureId, new IPluginContribution() {
+				@Override
 				public String getLocalId() {
-                    return localId;
-                }
+					return localId;
+				}
 
-                @Override
+				@Override
 				public String getPluginId() {
-                    return pluginId;
-                }
-            });
-        }
-    }
+					return pluginId;
+				}
+			});
+		}
+	}
 
-    /**
-     * Get a change listener for listening to resource changes.
-     *
-     * @return the resource change listeners
-     */
-    private IResourceChangeListener getChangeListener() {
-        return event -> {
-		    if (!WorkbenchActivityHelper.isFiltering()) {
+	/**
+	 * Get a change listener for listening to resource changes.
+	 *
+	 * @return the resource change listeners
+	 */
+	private IResourceChangeListener getChangeListener() {
+		return event -> {
+			if (!WorkbenchActivityHelper.isFiltering()) {
 				return;
 			}
-		    IResourceDelta mainDelta = event.getDelta();
+			IResourceDelta mainDelta = event.getDelta();
 
-		    if (mainDelta == null) {
+			if (mainDelta == null) {
 				return;
 			}
-		    //Has the root changed?
-		    if (mainDelta.getKind() == IResourceDelta.CHANGED
+			//Has the root changed?
+			if (mainDelta.getKind() == IResourceDelta.CHANGED
 					&& mainDelta.getResource().getType() == IResource.ROOT) {
 
 				Set<IProject> projectsToUpdate = new HashSet<>();
@@ -174,10 +174,10 @@ public class IDEWorkbenchActivityHelper {
 				processProjects(projectsToUpdate);
 			}
 		};
-    }
+	}
 
 
-    /**
+	/**
 	 * Drain the queue and consult the helper.
 	 */
 	protected void runPendingUpdates() {
@@ -207,12 +207,12 @@ public class IDEWorkbenchActivityHelper {
 	/**
 	 * Unhooks the <code>IResourceChangeListener</code>.
 	 */
-    public void shutdown() {
-        if (listener != null) {
-            ResourcesPlugin.getWorkspace().removeResourceChangeListener(
-                    listener);
-        }
-    }
+	public void shutdown() {
+		if (listener != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+					listener);
+		}
+	}
 
 	/**
 	 * @param projectsToUpdate

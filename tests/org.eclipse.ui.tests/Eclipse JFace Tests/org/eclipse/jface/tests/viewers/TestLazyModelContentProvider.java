@@ -46,7 +46,7 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 			return; //Nothing to update yet
 		}
 
-        ((TableViewer) test.fViewer).replace(input.getChildAt(index), index);
+		((TableViewer) test.fViewer).replace(input.getChildAt(index), index);
 
 	}
 

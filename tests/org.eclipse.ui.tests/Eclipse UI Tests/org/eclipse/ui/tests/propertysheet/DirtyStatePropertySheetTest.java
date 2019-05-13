@@ -36,90 +36,90 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 @RunWith(BlockJUnit4ClassRunner.class)
 public class DirtyStatePropertySheetTest extends AbstractPropertySheetTest {
 
-    private AdaptingSaveableView saveableView;
-    private ISecondarySaveableSource dirtyDisallowed;
-    private ISecondarySaveableSource dirtyAllowed;
-    private MockAdapterFactory adapterFactory;
+	private AdaptingSaveableView saveableView;
+	private ISecondarySaveableSource dirtyDisallowed;
+	private ISecondarySaveableSource dirtyAllowed;
+	private MockAdapterFactory adapterFactory;
 
-    static class MockAdapterFactory implements IAdapterFactory {
+	static class MockAdapterFactory implements IAdapterFactory {
 
-        private Map<Class<?>, Object> adaptersMap;
+		private Map<Class<?>, Object> adaptersMap;
 
-        public MockAdapterFactory() {
-            adaptersMap = new HashMap<>();
-        }
+		public MockAdapterFactory() {
+			adaptersMap = new HashMap<>();
+		}
 
-        @Override
-        public Class<?>[] getAdapterList() {
-            return adaptersMap.keySet().toArray(new Class[0]);
-        }
+		@Override
+		public Class<?>[] getAdapterList() {
+			return adaptersMap.keySet().toArray(new Class[0]);
+		}
 
-        public <T> void setAdapter(Class<T> clazz, T adapter) {
-            adaptersMap.put(clazz, adapter);
-        }
+		public <T> void setAdapter(Class<T> clazz, T adapter) {
+			adaptersMap.put(clazz, adapter);
+		}
 
-        @Override
-        public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-            return adapterType.cast(adaptersMap.get(adapterType));
-        }
-    }
+		@Override
+		public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+			return adapterType.cast(adaptersMap.get(adapterType));
+		}
+	}
 
 	public DirtyStatePropertySheetTest() {
 		super(DirtyStatePropertySheetTest.class.getName());
-    }
+	}
 
-    @Override
-    protected void doSetUp() throws Exception {
-        super.doSetUp();
-        PropertySheetPerspectiveFactory.applyPerspective(activePage);
-        dirtyDisallowed = new ISecondarySaveableSource() {
-        };
-        dirtyAllowed = new ISecondarySaveableSource() {
-            @Override
-            public boolean isDirtyStateSupported() {
-                return true;
-            }
-        };
-        adapterFactory = new MockAdapterFactory();
-        propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
+	@Override
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		PropertySheetPerspectiveFactory.applyPerspective(activePage);
+		dirtyDisallowed = new ISecondarySaveableSource() {
+		};
+		dirtyAllowed = new ISecondarySaveableSource() {
+			@Override
+			public boolean isDirtyStateSupported() {
+				return true;
+			}
+		};
+		adapterFactory = new MockAdapterFactory();
+		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
 		saveableView = (AdaptingSaveableView) activePage.showView(AdaptingSaveableView.ID_ADAPTING_SAVEABLE);
 
-        // some basic checks
-        assertEquals(activePage.getActivePart(), saveableView);
-        PropertySheetPage page = (PropertySheetPage) propertySheet.getCurrentPage();
-        assertEquals(saveableView, page.getAdapter(ISaveablePart.class));
-        assertEquals(saveableView, propertySheet.getAdapter(ISaveablePart.class));
-        assertFalse(propertySheet.isDirtyStateSupported());
-    }
+		// some basic checks
+		assertEquals(activePage.getActivePart(), saveableView);
+		PropertySheetPage page = (PropertySheetPage) propertySheet.getCurrentPage();
+		assertEquals(saveableView, page.getAdapter(ISaveablePart.class));
+		assertEquals(saveableView, propertySheet.getAdapter(ISaveablePart.class));
+		assertFalse(propertySheet.isDirtyStateSupported());
+	}
 
-    @Override
-    protected void doTearDown() throws Exception {
-        Platform.getAdapterManager().unregisterAdapters(adapterFactory);
-        activePage.resetPerspective();
-        super.doTearDown();
-    }
+	@Override
+	protected void doTearDown() throws Exception {
+		Platform.getAdapterManager().unregisterAdapters(adapterFactory);
+		activePage.resetPerspective();
+		super.doTearDown();
+	}
 
-    @Test
-    public void testIsDirtyStateIndicationSupported() throws Exception {
-        assertTrue(isDirtyStateSupported(saveableView));
+	@Test
+	public void testIsDirtyStateIndicationSupported() throws Exception {
+		assertTrue(isDirtyStateSupported(saveableView));
 
-        // override default for this view
-        saveableView.setAdapter(ISecondarySaveableSource.class, dirtyAllowed);
-        assertTrue(isDirtyStateSupported(propertySheet));
+		// override default for this view
+		saveableView.setAdapter(ISecondarySaveableSource.class, dirtyAllowed);
+		assertTrue(isDirtyStateSupported(propertySheet));
 
-        // check if we can also reset it back
-        saveableView.setAdapter(ISecondarySaveableSource.class, dirtyDisallowed);
-        assertFalse(isDirtyStateSupported(propertySheet));
+		// check if we can also reset it back
+		saveableView.setAdapter(ISecondarySaveableSource.class, dirtyDisallowed);
+		assertFalse(isDirtyStateSupported(propertySheet));
 
-        // check if we can set global adapter, set to default first (no
-        // adapters)
-        saveableView.setAdapter(ISecondarySaveableSource.class, null);
-        assertFalse(isDirtyStateSupported(propertySheet));
+		// check if we can set global adapter, set to default first (no
+		// adapters)
+		saveableView.setAdapter(ISecondarySaveableSource.class, null);
+		assertFalse(isDirtyStateSupported(propertySheet));
 
-        // register a global adapter and test
-        adapterFactory.setAdapter(ISecondarySaveableSource.class, dirtyAllowed);
-        Platform.getAdapterManager().registerAdapters(adapterFactory, ISecondarySaveableSource.class);
-        assertTrue(isDirtyStateSupported(propertySheet));
-    }
+		// register a global adapter and test
+		adapterFactory.setAdapter(ISecondarySaveableSource.class, dirtyAllowed);
+		Platform.getAdapterManager().registerAdapters(adapterFactory, ISecondarySaveableSource.class);
+		assertTrue(isDirtyStateSupported(propertySheet));
+	}
 
 }

@@ -58,61 +58,61 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExpo
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSystemExportWizard extends Wizard implements IExportWizard {
-    private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-    private WizardFileSystemResourceExportPage1 mainPage;
+	private WizardFileSystemResourceExportPage1 mainPage;
 
-    /**
-     * Creates a wizard for exporting workspace resources to the local file system.
-     */
-    public FileSystemExportWizard() {
-        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = workbenchSettings
-                .getSection("FileSystemExportWizard");//$NON-NLS-1$
-        if (section == null) {
+	/**
+	 * Creates a wizard for exporting workspace resources to the local file system.
+	 */
+	public FileSystemExportWizard() {
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = workbenchSettings
+				.getSection("FileSystemExportWizard");//$NON-NLS-1$
+		if (section == null) {
 			section = workbenchSettings.addNewSection("FileSystemExportWizard");//$NON-NLS-1$
 		}
-        setDialogSettings(section);
-    }
+		setDialogSettings(section);
+	}
 
-    @Override
+	@Override
 	public void addPages() {
-        super.addPages();
-        mainPage = new WizardFileSystemResourceExportPage1(selection);
-        addPage(mainPage);
-    }
+		super.addPages();
+		mainPage = new WizardFileSystemResourceExportPage1(selection);
+		addPage(mainPage);
+	}
 
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        this.selection = currentSelection;
+		this.selection = currentSelection;
 		List<IResource> selectedResources = IDE.computeSelectedResources(currentSelection);
-        if (!selectedResources.isEmpty()) {
-            this.selection = new StructuredSelection(selectedResources);
-        }
+		if (!selectedResources.isEmpty()) {
+			this.selection = new StructuredSelection(selectedResources);
+		}
 
-        // look it up if current selection (after resource adapting) is empty
-        if (selection.isEmpty() && workbench.getActiveWorkbenchWindow() != null) {
-            IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
-                    .getActivePage();
-            if (page != null) {
-                IEditorPart currentEditor = page.getActiveEditor();
+		// look it up if current selection (after resource adapting) is empty
+		if (selection.isEmpty() && workbench.getActiveWorkbenchWindow() != null) {
+			IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
+					.getActivePage();
+			if (page != null) {
+				IEditorPart currentEditor = page.getActiveEditor();
 				if (currentEditor != null) {
 					Object selectedResource = Adapters.adapt(currentEditor.getEditorInput(), IResource.class);
 					if (selectedResource != null) {
 						selection = new StructuredSelection(selectedResource);
 					}
 				}
-            }
-        }
+			}
+		}
 
-        setWindowTitle(DataTransferMessages.DataTransfer_export);
-        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.png"));//$NON-NLS-1$
-        setNeedsProgressMonitor(true);
-    }
+		setWindowTitle(DataTransferMessages.DataTransfer_export);
+		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.png"));//$NON-NLS-1$
+		setNeedsProgressMonitor(true);
+	}
 
-    @Override
+	@Override
 	public boolean performFinish() {
-        return mainPage.finish();
-    }
+		return mainPage.finish();
+	}
 }

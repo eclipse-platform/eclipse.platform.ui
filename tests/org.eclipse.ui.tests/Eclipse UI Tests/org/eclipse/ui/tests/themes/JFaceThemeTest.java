@@ -30,57 +30,57 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public class JFaceThemeTest extends ThemeTest {
 
-    public JFaceThemeTest(String testName) {
-        super(testName);
-    }
+	public JFaceThemeTest(String testName) {
+		super(testName);
+	}
 
-    private void setAndTest(String themeId, IPropertyChangeListener listener) {
-        JFaceResources.getFontRegistry().addListener(listener);
-        JFaceResources.getColorRegistry().addListener(listener);
-        fManager.setCurrentTheme(themeId);
-        ITheme theme = fManager.getTheme(themeId);
-        assertEquals(theme, fManager.getCurrentTheme());
-        {
-            FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
-            FontRegistry themeFonts = theme.getFontRegistry();
-            // don't test for equality - other tests (or clients) may be pushing
-            // new items into jface
-            assertTrue(jfaceFonts.getKeySet().containsAll(
-                    themeFonts.getKeySet()));
-            for (Object element : themeFonts.getKeySet()) {
-                String key = (String) element;
-                assertArrayEquals(themeFonts.getFontData(key), jfaceFonts
-                        .getFontData(key));
-            }
-        }
-        {
-            ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
-            ColorRegistry themeColors = theme.getColorRegistry();
-            assertTrue(jfaceColors.getKeySet().containsAll(
-                    themeColors.getKeySet()));
-            for (Object element : themeColors.getKeySet()) {
-                String key = (String) element;
-                assertEquals(themeColors.getRGB(key), jfaceColors.getRGB(key));
-            }
-        }
-        JFaceResources.getFontRegistry().removeListener(listener);
-        JFaceResources.getColorRegistry().removeListener(listener);
-    }
+	private void setAndTest(String themeId, IPropertyChangeListener listener) {
+		JFaceResources.getFontRegistry().addListener(listener);
+		JFaceResources.getColorRegistry().addListener(listener);
+		fManager.setCurrentTheme(themeId);
+		ITheme theme = fManager.getTheme(themeId);
+		assertEquals(theme, fManager.getCurrentTheme());
+		{
+			FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
+			FontRegistry themeFonts = theme.getFontRegistry();
+			// don't test for equality - other tests (or clients) may be pushing
+			// new items into jface
+			assertTrue(jfaceFonts.getKeySet().containsAll(
+					themeFonts.getKeySet()));
+			for (Object element : themeFonts.getKeySet()) {
+				String key = (String) element;
+				assertArrayEquals(themeFonts.getFontData(key), jfaceFonts
+						.getFontData(key));
+			}
+		}
+		{
+			ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
+			ColorRegistry themeColors = theme.getColorRegistry();
+			assertTrue(jfaceColors.getKeySet().containsAll(
+					themeColors.getKeySet()));
+			for (Object element : themeColors.getKeySet()) {
+				String key = (String) element;
+				assertEquals(themeColors.getRGB(key), jfaceColors.getRGB(key));
+			}
+		}
+		JFaceResources.getFontRegistry().removeListener(listener);
+		JFaceResources.getColorRegistry().removeListener(listener);
+	}
 
-    /**
-     * TODO: detailed checking of the events
-     */
-    public void testPushdown() {
-        ThemePropertyListener listener = new ThemePropertyListener();
-        setAndTest(THEME1, listener);
-        // ten changes, not the apparent 6 - remember the changes for the defaulted elements
-        assertEquals(10, listener.getEvents().size());
-        listener.getEvents().clear();
-        setAndTest(IThemeManager.DEFAULT_THEME, listener);
-        assertEquals(10, listener.getEvents().size());
-    }
+	/**
+	 * TODO: detailed checking of the events
+	 */
+	public void testPushdown() {
+		ThemePropertyListener listener = new ThemePropertyListener();
+		setAndTest(THEME1, listener);
+		// ten changes, not the apparent 6 - remember the changes for the defaulted elements
+		assertEquals(10, listener.getEvents().size());
+		listener.getEvents().clear();
+		setAndTest(IThemeManager.DEFAULT_THEME, listener);
+		assertEquals(10, listener.getEvents().size());
+	}
 
-    /**
+	/**
 	 * Tests to ensure correct behavior of getColorDescriptor methods.
 	 */
 	public void testDefaultColorDescriptor() {

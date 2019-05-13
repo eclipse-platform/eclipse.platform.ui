@@ -40,26 +40,26 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  */
 public class CollectionChildNodeIterator extends CollectionNodeIterator {
 
-    private NodeTest test;
+	private NodeTest test;
 
-    /**
-     * Create a new CollectionChildNodeIterator.
-     * @param pointer CollectionPointer
-     * @param test child test
-     * @param reverse iteration order
-     * @param startWith starting pointer
-     */
-    public CollectionChildNodeIterator(
-        CollectionPointer pointer,
-        NodeTest test,
-        boolean reverse,
-        NodePointer startWith) {
-        super(pointer, reverse, startWith);
-        this.test = test;
-    }
+	/**
+	 * Create a new CollectionChildNodeIterator.
+	 * @param pointer CollectionPointer
+	 * @param test child test
+	 * @param reverse iteration order
+	 * @param startWith starting pointer
+	 */
+	public CollectionChildNodeIterator(
+		CollectionPointer pointer,
+		NodeTest test,
+		boolean reverse,
+		NodePointer startWith) {
+		super(pointer, reverse, startWith);
+		this.test = test;
+	}
 
-    @Override
+	@Override
 	protected NodeIterator getElementNodeIterator(NodePointer elementPointer) {
-        return elementPointer.childIterator(test, false, null);
-    }
+		return elementPointer.childIterator(test, false, null);
+	}
 }

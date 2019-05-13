@@ -86,7 +86,7 @@ public class Snippet064TreeViewerReplacingElements {
 						System.out.println("no children list present");
 					}
 				}
-		    }
+			}
 		});
 	}
 

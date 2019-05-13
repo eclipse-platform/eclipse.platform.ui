@@ -22,35 +22,35 @@ import org.eclipse.ui.activities.IActivityManager;
  */
 public class GenerateIdentifiersTest extends BasicPerformanceTest {
 
-    private int count;
+	private int count;
 
-    public GenerateIdentifiersTest(int numberOfIdentifiers) {
-        super("Generate " + numberOfIdentifiers + " identifiers");
-        this.count = numberOfIdentifiers;
-    }
+	public GenerateIdentifiersTest(int numberOfIdentifiers) {
+		super("Generate " + numberOfIdentifiers + " identifiers");
+		this.count = numberOfIdentifiers;
+	}
 
-    @Override
+	@Override
 	protected void runTest() throws Throwable {
-        final IActivityManager activityManager = fWorkbench.getActivitySupport().getActivityManager();
+		final IActivityManager activityManager = fWorkbench.getActivitySupport().getActivityManager();
 
-        exercise(new TestRunnable() {
-            @Override
+		exercise(new TestRunnable() {
+			@Override
 			public void run() throws Exception {
-                // construct the Identifiers to test
-                final String [] ids = new String[count];
-                for (int i = 0; i < ids.length; i++) {
-                    long timestamp = System.currentTimeMillis();
-                    ids[i] = "org.eclipse.jdt.ui/" + i + timestamp;
-                }
+				// construct the Identifiers to test
+				final String [] ids = new String[count];
+				for (int i = 0; i < ids.length; i++) {
+					long timestamp = System.currentTimeMillis();
+					ids[i] = "org.eclipse.jdt.ui/" + i + timestamp;
+				}
 
-                startMeasuring();
-                for(int i = 0; i < ids.length; i++) {
-                    activityManager.getIdentifier(ids[i]);
-                }
-                stopMeasuring();
-            }
-        });
-        commitMeasurements();
-        assertPerformance();
-    }
+				startMeasuring();
+				for(int i = 0; i < ids.length; i++) {
+					activityManager.getIdentifier(ids[i]);
+				}
+				stopMeasuring();
+			}
+		});
+		commitMeasurements();
+		assertPerformance();
+	}
 }

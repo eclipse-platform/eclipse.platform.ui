@@ -94,7 +94,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 					return selectionProvider.getSelection();
 			}
 			if (globalSelection != null) {
-			    return globalSelection;
+				return globalSelection;
 			}
 			return StructuredSelection.EMPTY;
 		}

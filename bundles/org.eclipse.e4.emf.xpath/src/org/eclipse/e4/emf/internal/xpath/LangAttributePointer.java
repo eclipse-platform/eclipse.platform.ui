@@ -41,97 +41,97 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  */
 public class LangAttributePointer extends NodePointer {
 
-    private static final long serialVersionUID = -8665319197100034134L;
+	private static final long serialVersionUID = -8665319197100034134L;
 
-    /**
-     * Create a new LangAttributePointer.
-     * @param parent parent pointer.
-     */
-    public LangAttributePointer(NodePointer parent) {
-        super(parent);
-    }
+	/**
+	 * Create a new LangAttributePointer.
+	 * @param parent parent pointer.
+	 */
+	public LangAttributePointer(NodePointer parent) {
+		super(parent);
+	}
 
-    @Override
+	@Override
 	public QName getName() {
-        return new QName("xml", "lang");
-    }
+		return new QName("xml", "lang");
+	}
 
-    @Override
+	@Override
 	public String getNamespaceURI() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean isCollection() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public int getLength() {
-        return 1;
-    }
+		return 1;
+	}
 
-    @Override
+	@Override
 	public Object getBaseValue() {
-        return parent.getLocale().toString().replace('_', '-');
-    }
+		return parent.getLocale().toString().replace('_', '-');
+	}
 
-    @Override
+	@Override
 	public Object getImmediateNode() {
-        return getBaseValue();
-    }
+		return getBaseValue();
+	}
 
-    @Override
+	@Override
 	public boolean isLeaf() {
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * Throws UnsupportedOperationException.
-     * @param value Object
-     */
-    @Override
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Throws UnsupportedOperationException.
+	 * @param value Object
+	 */
+	@Override
 	public void setValue(Object value) {
-        throw new UnsupportedOperationException(
-                "Cannot change locale using the 'lang' attribute");
-    }
+		throw new UnsupportedOperationException(
+				"Cannot change locale using the 'lang' attribute");
+	}
 
-    @Override
+	@Override
 	public String asPath() {
-        StringBuilder buffer = new StringBuilder();
-        if (parent != null) {
-            buffer.append(parent.asPath());
-            if (buffer.length() == 0
-                || buffer.charAt(buffer.length() - 1) != '/') {
-                buffer.append('/');
-            }
-        }
-        buffer.append("@xml:lang");
-        return buffer.toString();
-    }
+		StringBuilder buffer = new StringBuilder();
+		if (parent != null) {
+			buffer.append(parent.asPath());
+			if (buffer.length() == 0
+				|| buffer.charAt(buffer.length() - 1) != '/') {
+				buffer.append('/');
+			}
+		}
+		buffer.append("@xml:lang");
+		return buffer.toString();
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return 0;
-    }
+		return 0;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        return object instanceof LangAttributePointer;
-    }
+		return object instanceof LangAttributePointer;
+	}
 
-    @Override
+	@Override
 	public boolean testNode(NodeTest test) {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public int compareChildNodePointers(
-        NodePointer pointer1,
-        NodePointer pointer2) {
-        // Won't happen - lang attributes don't have children
-        return 0;
-    }
+		NodePointer pointer1,
+		NodePointer pointer2) {
+		// Won't happen - lang attributes don't have children
+		return 0;
+	}
 }

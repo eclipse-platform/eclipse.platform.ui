@@ -74,7 +74,7 @@ public class TestJob extends Job {
 		this.rescheduleWait = rescheduleWait;
 
 		setProperty(IProgressConstants.ICON_PROPERTY,
-		        getImageDescriptor("icons/sample.gif"));
+				getImageDescriptor("icons/sample.gif"));
 		if (lock)
 			setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
@@ -85,7 +85,7 @@ public class TestJob extends Job {
 	 * @see org.eclipse.core.internal.jobs.InternalJob#belongsTo(java.lang.Object)
 	 */
 	@Override
-    public boolean belongsTo(Object family) {
+	public boolean belongsTo(Object family) {
 		if (family instanceof TestJob) {
 			return true;
 		}
@@ -98,7 +98,7 @@ public class TestJob extends Job {
 	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-    public IStatus run(IProgressMonitor monitor) {
+	public IStatus run(IProgressMonitor monitor) {
 		if (failure) {
 			MultiStatus result = new MultiStatus(
 					"org.eclipse.ui.examples.jobs", 1, "This is the MultiStatus message", new RuntimeException("This is the MultiStatus exception")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -135,10 +135,10 @@ public class TestJob extends Job {
 	}
 
 	private static ImageDescriptor getImageDescriptor(
-	        String relativePath) {
+			String relativePath) {
 		URL url = FileLocator.find(Platform
-		        .getBundle("org.eclipse.e4.ui.examples.job"), new Path(
-		        relativePath), null);
+				.getBundle("org.eclipse.e4.ui.examples.job"), new Path(
+				relativePath), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 }

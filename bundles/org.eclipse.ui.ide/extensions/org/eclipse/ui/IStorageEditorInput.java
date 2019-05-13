@@ -37,11 +37,11 @@ import org.eclipse.core.runtime.CoreException;
  * </p>
  */
 public interface IStorageEditorInput extends IEditorInput {
-    /**
-     * Returns the underlying IStorage object.
-     *
-     * @return an IStorage object.
-     * @exception CoreException if this method fails
-     */
-    public IStorage getStorage() throws CoreException;
+	/**
+	 * Returns the underlying IStorage object.
+	 *
+	 * @return an IStorage object.
+	 * @exception CoreException if this method fails
+	 */
+	public IStorage getStorage() throws CoreException;
 }

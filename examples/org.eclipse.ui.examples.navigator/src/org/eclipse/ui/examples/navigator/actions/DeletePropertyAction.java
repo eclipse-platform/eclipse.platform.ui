@@ -63,56 +63,56 @@ public class DeletePropertyAction extends ActionDelegate {
 				try {
 					if(selection.size() == 1) {
 
-						 Object firstElement = selection.getFirstElement();
-						 if(firstElement instanceof PropertiesTreeData) {
-							 PropertiesTreeData data = (PropertiesTreeData) firstElement;
+						Object firstElement = selection.getFirstElement();
+						if(firstElement instanceof PropertiesTreeData) {
+							PropertiesTreeData data = (PropertiesTreeData) firstElement;
 
-							 IFile propertiesFile = data.getFile();
-							 monitor.worked(1);
+							IFile propertiesFile = data.getFile();
+							monitor.worked(1);
 
-							 if(propertiesFile != null && propertiesFile.isAccessible()) {
+							if(propertiesFile != null && propertiesFile.isAccessible()) {
 
-								 try {
+								try {
 									// load the model
-									 Properties properties = new Properties();
-									 properties.load(propertiesFile.getContents());
-									 monitor.worked(1);
+									Properties properties = new Properties();
+									properties.load(propertiesFile.getContents());
+									monitor.worked(1);
 
-									 // delete the property
-									 properties.remove(data.getName());
-									 monitor.worked(1);
+									// delete the property
+									properties.remove(data.getName());
+									monitor.worked(1);
 
-									 // persist the model to a temporary storage medium (byte[])
-									 ByteArrayOutputStream output = new ByteArrayOutputStream();
-									 properties.store(output, null);
-									 monitor.worked(1);
+									// persist the model to a temporary storage medium (byte[])
+									ByteArrayOutputStream output = new ByteArrayOutputStream();
+									properties.store(output, null);
+									monitor.worked(1);
 
-									 // set the contents of the properties file
-									 propertiesFile.setContents(
-											 			new ByteArrayInputStream(output.toByteArray()),
-											 					IResource.FORCE | IResource.KEEP_HISTORY, monitor);
-									 monitor.worked(1);
+									// set the contents of the properties file
+									propertiesFile.setContents(
+														new ByteArrayInputStream(output.toByteArray()),
+																IResource.FORCE | IResource.KEEP_HISTORY, monitor);
+									monitor.worked(1);
 								} catch (IOException e) {
-									 // handle error gracefully
+									// handle error gracefully
 									Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
 									MessageDialog.openError(Display.getDefault().getActiveShell(),
-							 				"Error Deleting Property",  //$NON-NLS-1$
-							 				"Could not delete property!");   //$NON-NLS-1$
+											"Error Deleting Property",  //$NON-NLS-1$
+											"Could not delete property!");   //$NON-NLS-1$
 								}
 
-							 } else // shouldn't happen, but handle error condition
-								 MessageDialog.openError(Display.getDefault().getActiveShell(),
-										 				"Error Deleting Property",  //$NON-NLS-1$
-										 				"The properties file was not accessible!");   //$NON-NLS-1$
+							} else // shouldn't happen, but handle error condition
+								MessageDialog.openError(Display.getDefault().getActiveShell(),
+														"Error Deleting Property",  //$NON-NLS-1$
+														"The properties file was not accessible!");   //$NON-NLS-1$
 
-						 } else // shouldn't happen, but handle error condition
-							 MessageDialog.openError(Display.getDefault().getActiveShell(),
-						 				"Error Deleting Property",  //$NON-NLS-1$
-						 				"The element that was selected was not of the right type.");   //$NON-NLS-1$
-					 } else // shouldn't happen, but handle error condition
-						 MessageDialog.openError(Display.getDefault().getActiveShell(),
-					 				"Error Deleting Property",  //$NON-NLS-1$
-					 				"An invalid number of properties were selected.");   //$NON-NLS-1$
+						} else // shouldn't happen, but handle error condition
+							MessageDialog.openError(Display.getDefault().getActiveShell(),
+										"Error Deleting Property",  //$NON-NLS-1$
+										"The element that was selected was not of the right type.");   //$NON-NLS-1$
+					} else // shouldn't happen, but handle error condition
+						MessageDialog.openError(Display.getDefault().getActiveShell(),
+									"Error Deleting Property",  //$NON-NLS-1$
+									"An invalid number of properties were selected.");   //$NON-NLS-1$
 				} finally {
 					monitor.done();
 				}
@@ -124,14 +124,14 @@ public class DeletePropertyAction extends ActionDelegate {
 			// handle error gracefully
 			Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
-	 				"Error Deleting Property",  //$NON-NLS-1$
-	 				"Could not delete property!");   //$NON-NLS-1$
+					"Error Deleting Property",  //$NON-NLS-1$
+					"Could not delete property!");   //$NON-NLS-1$
 		} catch (InterruptedException e) {
-			 // handle error gracefully
+			// handle error gracefully
 			Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
-	 				"Error Deleting Property",  //$NON-NLS-1$
-	 				"Could not delete property!");   //$NON-NLS-1$
+					"Error Deleting Property",  //$NON-NLS-1$
+					"Could not delete property!");   //$NON-NLS-1$
 		}
 
 	}

@@ -34,13 +34,13 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 public class ExportFileSystemOperationTest extends UITestCase implements
 		IOverwriteQuery {
 
-    private static final String[] directoryNames = { "dir1", "dir2" };
+	private static final String[] directoryNames = { "dir1", "dir2" };
 
-    private static final String[] fileNames = { "file1.txt", "file2.txt" };
+	private static final String[] fileNames = { "file1.txt", "file2.txt" };
 
-    private String localDirectory;
+	private String localDirectory;
 
-    private IProject project;
+	private IProject project;
 
 	public ExportFileSystemOperationTest(String testName) {
 		super(testName);
@@ -51,78 +51,78 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		return "";
 	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		project = FileUtil.createProject("Export" + getName());
 		File destination =
 			new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir())
-    			.toOSString());
+				.toOSString());
 		localDirectory = destination.getAbsolutePath();
 		if (!destination.mkdirs()) {
 			fail("Could not set up destination directory for " + getName());
 		}
-	    setUpData();
+		setUpData();
 	}
 
-    private void setUpData(){
-    	try{
-	    	for (String directoryName : directoryNames) {
-	    		IFolder folder = project.getFolder(directoryName);
-	    		folder.create(false, true, new NullProgressMonitor());
-	    		for (String fileName : fileNames) {
-	    			IFile file = folder.getFile(fileName);
-	    			String contents =
-	    				directoryName + ", " + fileName;
-	    			file.create(new ByteArrayInputStream(contents.getBytes()),
-	    				true, new NullProgressMonitor());
-	    		}
-	    	}
-    	}
-    	catch(Exception e){
-    		fail(e.toString());
-    	}
-    }
+	private void setUpData(){
+		try{
+			for (String directoryName : directoryNames) {
+				IFolder folder = project.getFolder(directoryName);
+				folder.create(false, true, new NullProgressMonitor());
+				for (String fileName : fileNames) {
+					IFile file = folder.getFile(fileName);
+					String contents =
+						directoryName + ", " + fileName;
+					file.create(new ByteArrayInputStream(contents.getBytes()),
+						true, new NullProgressMonitor());
+				}
+			}
+		}
+		catch(Exception e){
+			fail(e.toString());
+		}
+	}
 
 	@Override
 	protected void doTearDown() throws Exception {
-        super.doTearDown();
-        // delete exported data
-        File root = new File(localDirectory);
-        if (root.exists()){
-        	FileSystemHelper.clear(root);
-        }
-        try {
-            project.delete(true, true, null);
-        } catch (CoreException e) {
-            fail(e.toString());
-        }
-        finally{
-        	project = null;
-        	localDirectory = null;
-        }
+		super.doTearDown();
+		// delete exported data
+		File root = new File(localDirectory);
+		if (root.exists()){
+			FileSystemHelper.clear(root);
+		}
+		try {
+			project.delete(true, true, null);
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+		finally{
+			project = null;
+			localDirectory = null;
+		}
 	}
 
 	public void testGetStatus() throws Exception {
 		List<IResource> resources = new ArrayList<>();
 		resources.add(project);
-        FileSystemExportOperation operation =
-        	new FileSystemExportOperation(
-        			null, resources, localDirectory, this);
+		FileSystemExportOperation operation =
+			new FileSystemExportOperation(
+					null, resources, localDirectory, this);
 
-        assertTrue(operation.getStatus().getCode() == IStatus.OK);
-    }
+		assertTrue(operation.getStatus().getCode() == IStatus.OK);
+	}
 
 	/* Export a project, with all directories */
 	public void testExportRootResource() throws Exception {
 		List<IResource> resources = new ArrayList<>();
 		resources.add(project);
-        FileSystemExportOperation operation =
-        	new FileSystemExportOperation(
-        			null, resources, localDirectory, this);
-        openTestWindow().run(true, true, operation);
+		FileSystemExportOperation operation =
+			new FileSystemExportOperation(
+					null, resources, localDirectory, this);
+		openTestWindow().run(true, true, operation);
 
-        verifyFolders(directoryNames.length);
+		verifyFolders(directoryNames.length);
 	}
 
 	/* Export a project, create all leadup folders. */
@@ -132,12 +132,12 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		for (IResource member : members) {
 			resources.add(member);
 		}
-        FileSystemExportOperation operation =
-        	new FileSystemExportOperation(
-        			null, resources, localDirectory, this);
-        openTestWindow().run(true, true, operation);
+		FileSystemExportOperation operation =
+			new FileSystemExportOperation(
+					null, resources, localDirectory, this);
+		openTestWindow().run(true, true, operation);
 
-        verifyFolders(directoryNames.length);
+		verifyFolders(directoryNames.length);
 	}
 
 	/* Export folders, do not create leadup folders. */
@@ -149,15 +149,15 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 				resources.add(member);
 			}
 		}
-        FileSystemExportOperation operation =
-        	new FileSystemExportOperation(
-        			null, resources, localDirectory, this);
+		FileSystemExportOperation operation =
+			new FileSystemExportOperation(
+					null, resources, localDirectory, this);
 
-        operation.setCreateContainerDirectories(true);
-        operation.setCreateLeadupStructure(false);
-        openTestWindow().run(true, true, operation);
+		operation.setCreateContainerDirectories(true);
+		operation.setCreateLeadupStructure(false);
+		openTestWindow().run(true, true, operation);
 
-        verifyFolders(directoryNames.length, false);
+		verifyFolders(directoryNames.length, false);
 	}
 
 	/* Export files, do not create leadup folders. */
@@ -175,30 +175,30 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 			}
 		}
 		FileSystemExportOperation operation =
-        	new FileSystemExportOperation(
-        			null, resources, localDirectory, this);
+			new FileSystemExportOperation(
+					null, resources, localDirectory, this);
 
-        operation.setCreateContainerDirectories(true);
-        operation.setCreateLeadupStructure(false);
-        openTestWindow().run(true, true, operation);
+		operation.setCreateContainerDirectories(true);
+		operation.setCreateLeadupStructure(false);
+		openTestWindow().run(true, true, operation);
 
-        verifyFiles(resources);
+		verifyFiles(resources);
 	}
 
 	/* Export files, overwrite - do not create container directories or lead up folders. */
 	public void testExportOverwrite() throws Exception {
 		List<IProject> resources = new ArrayList<>();
 		resources.add(project);
-        FileSystemExportOperation operation =
-        	new FileSystemExportOperation(
-        			null, resources, localDirectory, this);
-        openTestWindow().run(true, true, operation);
-        operation.setOverwriteFiles(true);
-        operation.setCreateContainerDirectories(false);
-        operation.setCreateLeadupStructure(false);
-        openTestWindow().run(true, true, operation);
+		FileSystemExportOperation operation =
+			new FileSystemExportOperation(
+					null, resources, localDirectory, this);
+		openTestWindow().run(true, true, operation);
+		operation.setOverwriteFiles(true);
+		operation.setCreateContainerDirectories(false);
+		operation.setCreateLeadupStructure(false);
+		openTestWindow().run(true, true, operation);
 
-        verifyFolders(directoryNames.length);
+		verifyFolders(directoryNames.length);
 	}
 
 	private boolean isFile(IResource resource){
@@ -233,32 +233,32 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		else{
 			root = new File(localDirectory);
 		}
-        File[] files = root.listFiles();
+		File[] files = root.listFiles();
 		List<File> directories = new ArrayList<>();
-        if (files != null){
-	        for (File file : files) {
-	        	if (file.isDirectory()) {
+		if (files != null){
+			for (File file : files) {
+				if (file.isDirectory()) {
 					directories.add(file);
 				}
-	        }
-        }
-        assertEquals("Export failed to Export all directories",
-                folderCount, directories.size());
+			}
+		}
+		assertEquals("Export failed to Export all directories",
+				folderCount, directories.size());
 
-        for (int i = 0; i < directories.size(); i++) {
-        	File directory = directories.get(i);
-            assertTrue("Export failed to export directory " + directory.getName(), directory.exists());
-            verifyFolder(directory);
-        }
+		for (int i = 0; i < directories.size(); i++) {
+			File directory = directories.get(i);
+			assertTrue("Export failed to export directory " + directory.getName(), directory.exists());
+			verifyFolder(directory);
+		}
 	}
 
 	private void verifyFolder(File directory){
-    	File[] files = directory.listFiles();
-    	if (files != null){
-	    	for (File file : files) {
-	    		assertTrue("Export failed to export file: " + file.getName(), file.exists());
-	    	}
-    	}
+		File[] files = directory.listFiles();
+		if (files != null){
+			for (File file : files) {
+				assertTrue("Export failed to export file: " + file.getName(), file.exists());
+			}
+		}
 	}
 
 	private boolean isDirectory(IResource resource){

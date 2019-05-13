@@ -104,11 +104,11 @@ public class TableViewerTest extends StructuredItemViewerTest {
 	}
 
 	public void testViewerColumn() {
-    	assertNull(getViewerColumn((TableViewer) fViewer, -1));
+		assertNull(getViewerColumn((TableViewer) fViewer, -1));
 		assertNotNull(getViewerColumn((TableViewer) fViewer, 0));
 		assertNotNull(getViewerColumn((TableViewer) fViewer, 1));
 		assertNull(getViewerColumn((TableViewer) fViewer, 2));
-    }
+	}
 
 	/**
 	 * Get the content provider for the viewer.

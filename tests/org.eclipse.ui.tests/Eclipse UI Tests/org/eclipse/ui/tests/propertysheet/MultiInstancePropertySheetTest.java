@@ -116,7 +116,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	@Override
 	protected void doTearDown() throws Exception {
-	    activePage.resetPerspective();
+		activePage.resetPerspective();
 		super.doTearDown();
 		// reset the exception to null
 		e = null;
@@ -128,10 +128,10 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		testPropertySheetPage = null;
 		selectionProviderView = null;
 
-        if (project != null) {
-            FileUtil.deleteProject(project);
-            project = null;
-        }
+		if (project != null) {
+			FileUtil.deleteProject(project);
+			project = null;
+		}
 	}
 
 	/**
@@ -373,29 +373,29 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
 
 		// create a project for properties rendering purposes
-        project = FileUtil.createProject("projectToSelect");
-        ISelection selection = new StructuredSelection(project);
+		project = FileUtil.createProject("projectToSelect");
+		ISelection selection = new StructuredSelection(project);
 
 		// show the 'Navigator'
 		IViewPart navigator = activePage.showView(IPageLayout.ID_RES_NAV);
-        // have the 'Navigator' select it
-        navigator.getSite().getSelectionProvider().setSelection(selection);
+		// have the 'Navigator' select it
+		navigator.getSite().getSelectionProvider().setSelection(selection);
 
-        // verify that the 'Navigator' uses a regular property sheet page
+		// verify that the 'Navigator' uses a regular property sheet page
 		assertTrue("The 'Properties' view should render the content of the 'Navigator' in a regular property sheet page",
 				propertySheet.getCurrentPage() instanceof PropertySheetPage);
 
 		// show the 'Project Explorer'
 		IViewPart projectExplorer = activePage.showView(IPageLayout.ID_PROJECT_EXPLORER);
-        // have the 'Project Explorer' select it
-        projectExplorer.getSite().getSelectionProvider().setSelection(selection);
+		// have the 'Project Explorer' select it
+		projectExplorer.getSite().getSelectionProvider().setSelection(selection);
 
 		assertFalse("The 'Navigator' should be hidden behind the 'Project Explorer'",
 				activePage.isPartVisible(navigator));
 		assertTrue("The 'Project Explorer' should be visible in front of the 'Navigator'",
 				activePage.isPartVisible(projectExplorer));
 
-        // verify that the 'Project Explorer' uses a non-standard property sheet page
+		// verify that the 'Project Explorer' uses a non-standard property sheet page
 		assertFalse("The 'Properties' view should be showing the content of the 'Project Explorer' in a tabbed property sheet, not a regular one",
 				propertySheet.getCurrentPage() instanceof PropertySheetPage);
 
@@ -470,25 +470,25 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
 
 		// create a project for properties rendering purposes
-        project = FileUtil.createProject("projectToSelect");
-        ISelection selection = new StructuredSelection(project);
+		project = FileUtil.createProject("projectToSelect");
+		ISelection selection = new StructuredSelection(project);
 
 		// show the contributing view
 		IViewPart contributingView = activePage.showView(viewId);
-        // have the contributing view select the created project, this should populate the 'Properties' view
-        contributingView.getSite().getSelectionProvider().setSelection(selection);
+		// have the contributing view select the created project, this should populate the 'Properties' view
+		contributingView.getSite().getSelectionProvider().setSelection(selection);
 
-        if (standardPage) {
-            // verify that the contributing view uses standard property sheet page
-    		assertTrue("The 'Properties' view should be showing the content of the contributing view (" + contributingView.getTitle() + ") in a regular property page",
-    				propertySheet.getCurrentPage() instanceof PropertySheetPage);
-        } else {
-            // verify that the contributing view uses non-standard property sheet page
-    		assertFalse("The 'Properties' view should be showing the content of the contributing view (" + contributingView.getTitle() + ") in a non-standard customiezd page",
-    				propertySheet.getCurrentPage() instanceof PropertySheetPage);
-        }
+		if (standardPage) {
+			// verify that the contributing view uses standard property sheet page
+			assertTrue("The 'Properties' view should be showing the content of the contributing view (" + contributingView.getTitle() + ") in a regular property page",
+					propertySheet.getCurrentPage() instanceof PropertySheetPage);
+		} else {
+			// verify that the contributing view uses non-standard property sheet page
+			assertFalse("The 'Properties' view should be showing the content of the contributing view (" + contributingView.getTitle() + ") in a non-standard customiezd page",
+					propertySheet.getCurrentPage() instanceof PropertySheetPage);
+		}
 
-        // add our log listener so we can monitor for failures when switching perspectives
+		// add our log listener so we can monitor for failures when switching perspectives
 		Platform.addLogListener(logListener);
 		// switch the perspective, the original bug threw an NPE within a listener
 		activePage.setPerspective(desc);

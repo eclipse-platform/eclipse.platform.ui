@@ -58,156 +58,156 @@ import org.eclipse.swt.widgets.Display;
  */
 public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 
-    /**
-     * A small red square used to warn that an image cannot be created.
-     */
-    protected static final ImageData DEFAULT_IMAGE_DATA = new ImageData(6, 6,
-            1, new PaletteData(new RGB[] { new RGB(255, 0, 0) }));
+	/**
+	 * A small red square used to warn that an image cannot be created.
+	 */
+	protected static final ImageData DEFAULT_IMAGE_DATA = new ImageData(6, 6,
+			1, new PaletteData(new RGB[] { new RGB(255, 0, 0) }));
 
-    /**
-     * Constructs an image descriptor.
-     */
-    protected ImageDescriptor() {
-        // do nothing
-    }
+	/**
+	 * Constructs an image descriptor.
+	 */
+	protected ImageDescriptor() {
+		// do nothing
+	}
 
-    /**
-     * Creates and returns a new image descriptor from a file.
-     *
-     * @param location the class whose resource directory contain the file
-     * @param filename the file name
-     * @return a new image descriptor
-     */
-    public static ImageDescriptor createFromFile(Class<?> location, String filename) {
-        return new FileImageDescriptor(location, filename);
-    }
+	/**
+	 * Creates and returns a new image descriptor from a file.
+	 *
+	 * @param location the class whose resource directory contain the file
+	 * @param filename the file name
+	 * @return a new image descriptor
+	 */
+	public static ImageDescriptor createFromFile(Class<?> location, String filename) {
+		return new FileImageDescriptor(location, filename);
+	}
 
-    /**
-     * Creates and returns a new image descriptor given ImageData
-     * describing the image.
-     *
-     * @since 3.1
-     *
-     * @param data contents of the image
-     * @return newly created image descriptor
-     * @deprecated use {@link #createFromImageDataProvider(ImageDataProvider)}
-     */
-    @Deprecated
+	/**
+	 * Creates and returns a new image descriptor given ImageData
+	 * describing the image.
+	 *
+	 * @since 3.1
+	 *
+	 * @param data contents of the image
+	 * @return newly created image descriptor
+	 * @deprecated use {@link #createFromImageDataProvider(ImageDataProvider)}
+	 */
+	@Deprecated
 	public static ImageDescriptor createFromImageData(ImageData data) {
-        return new ImageDataImageDescriptor(data);
-    }
+		return new ImageDataImageDescriptor(data);
+	}
 
-    /**
-     * Creates and returns a new image descriptor given an ImageDataProvider
-     * describing the image.
-     *
-     * @param provider contents of the image
-     * @return newly created image descriptor
-     * @since 3.13
-     */
-    public static ImageDescriptor createFromImageDataProvider(ImageDataProvider provider) {
-    	return new ImageDataImageDescriptor(provider);
-    }
+	/**
+	 * Creates and returns a new image descriptor given an ImageDataProvider
+	 * describing the image.
+	 *
+	 * @param provider contents of the image
+	 * @return newly created image descriptor
+	 * @since 3.13
+	 */
+	public static ImageDescriptor createFromImageDataProvider(ImageDataProvider provider) {
+		return new ImageDataImageDescriptor(provider);
+	}
 
-    /**
-     * Creates and returns a new image descriptor for the given image. Note
-     * that disposing the original Image will cause the descriptor to become invalid.
-     *
-     * @since 3.1
-     *
-     * @param img image to create
-     * @return a newly created image descriptor
-     */
-    public static ImageDescriptor createFromImage(Image img) {
-        return new ImageDataImageDescriptor(img);
-    }
+	/**
+	 * Creates and returns a new image descriptor for the given image. Note
+	 * that disposing the original Image will cause the descriptor to become invalid.
+	 *
+	 * @since 3.1
+	 *
+	 * @param img image to create
+	 * @return a newly created image descriptor
+	 */
+	public static ImageDescriptor createFromImage(Image img) {
+		return new ImageDataImageDescriptor(img);
+	}
 
-    /**
-     * Creates an ImageDescriptor based on the given original descriptor, but with additional
-     * SWT flags.
-     *
-     * <p>
-     * Note that this sort of ImageDescriptor is slower and consumes more resources than
-     * a regular image descriptor. It will also never generate results that look as nice as
-     * a hand-drawn image. Clients are encouraged to supply their own disabled/grayed/etc. images
-     * rather than using a default image and transforming it.
-     * </p>
-     *
-     * @param originalImage image to transform
-     * @param swtFlags any flag that can be passed to the flags argument of Image#Image(Device, Image, int)
-     * @return an ImageDescriptor that creates new images by transforming the given image descriptor
-     *
-     * @see Image#Image(Device, Image, int)
-     * @since 3.1
-     *
-     */
-    public static ImageDescriptor createWithFlags(ImageDescriptor originalImage, int swtFlags) {
-        return new DerivedImageDescriptor(originalImage, swtFlags);
-    }
+	/**
+	 * Creates an ImageDescriptor based on the given original descriptor, but with additional
+	 * SWT flags.
+	 *
+	 * <p>
+	 * Note that this sort of ImageDescriptor is slower and consumes more resources than
+	 * a regular image descriptor. It will also never generate results that look as nice as
+	 * a hand-drawn image. Clients are encouraged to supply their own disabled/grayed/etc. images
+	 * rather than using a default image and transforming it.
+	 * </p>
+	 *
+	 * @param originalImage image to transform
+	 * @param swtFlags any flag that can be passed to the flags argument of Image#Image(Device, Image, int)
+	 * @return an ImageDescriptor that creates new images by transforming the given image descriptor
+	 *
+	 * @see Image#Image(Device, Image, int)
+	 * @since 3.1
+	 *
+	 */
+	public static ImageDescriptor createWithFlags(ImageDescriptor originalImage, int swtFlags) {
+		return new DerivedImageDescriptor(originalImage, swtFlags);
+	}
 
-    /**
-     * Creates and returns a new image descriptor for the given image. This
-     * method takes the Device that created the Image as an argument, allowing
-     * the original Image to be reused if the descriptor is asked for another
-     * Image on the same device. Note that disposing the original Image will
-     * cause the descriptor to become invalid.
-     *
-     * @deprecated use {@link ImageDescriptor#createFromImage(Image)}
-     * @since 3.1
-     *
-     * @param img image to create
-     * @param theDevice the device that was used to create the Image
-     * @return a newly created image descriptor
-     */
-    @Deprecated
+	/**
+	 * Creates and returns a new image descriptor for the given image. This
+	 * method takes the Device that created the Image as an argument, allowing
+	 * the original Image to be reused if the descriptor is asked for another
+	 * Image on the same device. Note that disposing the original Image will
+	 * cause the descriptor to become invalid.
+	 *
+	 * @deprecated use {@link ImageDescriptor#createFromImage(Image)}
+	 * @since 3.1
+	 *
+	 * @param img image to create
+	 * @param theDevice the device that was used to create the Image
+	 * @return a newly created image descriptor
+	 */
+	@Deprecated
 	public static ImageDescriptor createFromImage(Image img, Device theDevice) {
-        return new ImageDataImageDescriptor(img);
-    }
+		return new ImageDataImageDescriptor(img);
+	}
 
-    /**
-     * Creates and returns a new image descriptor from a URL.
-     *
-     * @param url The URL of the image file.
-     * @return a new image descriptor
-     */
-    public static ImageDescriptor createFromURL(URL url) {
-        if (url == null) {
-            return getMissingImageDescriptor();
-        }
-        return new URLImageDescriptor(url);
-    }
+	/**
+	 * Creates and returns a new image descriptor from a URL.
+	 *
+	 * @param url The URL of the image file.
+	 * @return a new image descriptor
+	 */
+	public static ImageDescriptor createFromURL(URL url) {
+		if (url == null) {
+			return getMissingImageDescriptor();
+		}
+		return new URLImageDescriptor(url);
+	}
 
-    @Override
+	@Override
 	public Object createResource(Device device) throws DeviceResourceException {
-        Image result = createImage(false, device);
-        if (result == null) {
-            throw new DeviceResourceException(this);
-        }
-        return result;
-    }
+		Image result = createImage(false, device);
+		if (result == null) {
+			throw new DeviceResourceException(this);
+		}
+		return result;
+	}
 
-    @Override
+	@Override
 	public void destroyResource(Object previouslyCreatedObject) {
-        ((Image)previouslyCreatedObject).dispose();
-    }
+		((Image)previouslyCreatedObject).dispose();
+	}
 
-    /**
+	/**
 	 * Creates and returns a new SWT image for this image descriptor. Note that
 	 * each call returns a new SWT image object. The returned image must be
 	 * explicitly disposed using the image's dispose call. The image will not be
 	 * automatically garbage collected. A default image is returned in the event
 	 * of an error.
-     *
-     * <p>
-     * Note: this method differs from createResource(Device) in that the returned image
-     * must be disposed directly, whereas an image obtained from createResource(...)
-     * must be disposed by calling destroyResource(...). It is not possible to
-     * mix-and-match. If you obtained the Image from this method, you must not dispose
-     * it by calling destroyResource. Clients are encouraged to use
-     * create/destroyResource and downcast the result to Image rather than using
-     * createImage.
-     * </p>
-     *
+	 *
+	 * <p>
+	 * Note: this method differs from createResource(Device) in that the returned image
+	 * must be disposed directly, whereas an image obtained from createResource(...)
+	 * must be disposed by calling destroyResource(...). It is not possible to
+	 * mix-and-match. If you obtained the Image from this method, you must not dispose
+	 * it by calling destroyResource. Clients are encouraged to use
+	 * create/destroyResource and downcast the result to Image rather than using
+	 * createImage.
+	 * </p>
+	 *
 	 * <p>
 	 * Note: it is still possible for this method to return <code>null</code>
 	 * in extreme cases, for example if SWT runs out of image handles.
@@ -216,11 +216,11 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	 * @return a new image or <code>null</code> if the image could not be
 	 *         created
 	 */
-    public Image createImage() {
-        return createImage(true);
-    }
+	public Image createImage() {
+		return createImage(true);
+	}
 
-    /**
+	/**
 	 * Creates and returns a new SWT image for this image descriptor. The
 	 * returned image must be explicitly disposed using the image's dispose
 	 * call. The image will not be automatically garbage collected. In the event
@@ -238,11 +238,11 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	 * @return a new image or <code>null</code> if the image could not be
 	 *         created
 	 */
-    public Image createImage(boolean returnMissingImageOnError) {
-        return createImage(returnMissingImageOnError, Display.getCurrent());
-    }
+	public Image createImage(boolean returnMissingImageOnError) {
+		return createImage(returnMissingImageOnError, Display.getCurrent());
+	}
 
-    /**
+	/**
 	 * Creates and returns a new SWT image for this image descriptor. The
 	 * returned image must be explicitly disposed using the image's dispose
 	 * call. The image will not be automatically garbage collected. A default
@@ -258,11 +258,11 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	 *         created
 	 * @since 2.0
 	 */
-    public Image createImage(Device device) {
-        return createImage(true, device);
-    }
+	public Image createImage(Device device) {
+		return createImage(true, device);
+	}
 
-    /**
+	/**
 	 * Creates and returns a new SWT image for this image descriptor. The
 	 * returned image must be explicitly disposed using the image's dispose
 	 * call. The image will not be automatically garbage collected. In the even
@@ -340,24 +340,24 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 		return null;
 	}
 
-    /**
-     * Creates and returns a new SWT <code>ImageData</code> object
-     * for this image descriptor.
-     * Note that each call returns a new SWT image data object.
-     * <p>
-     * This framework method is declared public so that it is
-     * possible to request an image descriptor's image data without
-     * creating an SWT image object.
-     * </p>
-     * <p>
-     * Returns <code>null</code> if the image data could not be created.
-     * </p>
-     * <p>
-     * This method was abstract until 3.13. Clients should stop re-implementing
-     * this method and should re-implement {@link #getImageData(int)} instead.
-     * </p>
-     *
-     * @return a new image data or <code>null</code>
+	/**
+	 * Creates and returns a new SWT <code>ImageData</code> object
+	 * for this image descriptor.
+	 * Note that each call returns a new SWT image data object.
+	 * <p>
+	 * This framework method is declared public so that it is
+	 * possible to request an image descriptor's image data without
+	 * creating an SWT image object.
+	 * </p>
+	 * <p>
+	 * Returns <code>null</code> if the image data could not be created.
+	 * </p>
+	 * <p>
+	 * This method was abstract until 3.13. Clients should stop re-implementing
+	 * this method and should re-implement {@link #getImageData(int)} instead.
+	 * </p>
+	 *
+	 * @return a new image data or <code>null</code>
 	 * @deprecated Use {@link #getImageData(int)} instead.
 	 */
 	@Deprecated
@@ -365,12 +365,12 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 		return getImageData(100);
 	}
 
-    /**
-     * Returns the shared image descriptor for a missing image.
-     *
-     * @return the missing image descriptor
-     */
-    public static ImageDescriptor getMissingImageDescriptor() {
-        return MissingImageDescriptor.getInstance();
-    }
+	/**
+	 * Returns the shared image descriptor for a missing image.
+	 *
+	 * @return the missing image descriptor
+	 */
+	public static ImageDescriptor getMissingImageDescriptor() {
+		return MissingImageDescriptor.getInstance();
+	}
 }

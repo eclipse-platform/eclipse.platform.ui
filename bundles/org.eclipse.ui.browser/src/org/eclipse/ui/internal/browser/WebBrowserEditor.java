@@ -208,7 +208,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			if (pinput != null) {
 				init(site, pinput);
 			} else {
-			    throw new PartInitException(NLS.bind(Messages.errorInvalidEditorInput, input.getName()));
+				throw new PartInitException(NLS.bind(Messages.errorInvalidEditorInput, input.getName()));
 			}
 		}
 
@@ -270,77 +270,77 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	 */
 	@Override
 	public boolean close() {
-        final boolean [] result = new boolean[1];
+		final boolean [] result = new boolean[1];
 		Display.getDefault()
 				.asyncExec(() -> result[0] = getEditorSite().getPage().closeEditor(WebBrowserEditor.this, false));
-        return result[0];
+		return result[0];
 	}
 
-    @Override
+	@Override
 	public IActionBars getActionBars() {
-        return getEditorSite().getActionBars();
-    }
+		return getEditorSite().getActionBars();
+	}
 
-    @Override
+	@Override
 	public void openInExternalBrowser(String url) {
-        final IEditorInput input = getEditorInput();
-        final String id = getEditorSite().getId();
+		final IEditorInput input = getEditorInput();
+		final String id = getEditorSite().getId();
 		Runnable runnable = () -> doOpenExternalEditor(id, input);
-        Display display = getSite().getShell().getDisplay();
-        close();
-        display.asyncExec(runnable);
-    }
+		Display display = getSite().getShell().getDisplay();
+		close();
+		display.asyncExec(runnable);
+	}
 
-    protected void doOpenExternalEditor(String id, IEditorInput input) {
-        IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-        String name = input.getName();
-        IEditorDescriptor [] editors = registry.getEditors(name);
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	protected void doOpenExternalEditor(String id, IEditorInput input) {
+		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+		String name = input.getName();
+		IEditorDescriptor [] editors = registry.getEditors(name);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-        String editorId = null;
-        for (IEditorDescriptor editor : editors) {
-            if (editor.getId().equals(id))
-                continue;
-            editorId = editor.getId();
-            break;
-        }
+		String editorId = null;
+		for (IEditorDescriptor editor : editors) {
+			if (editor.getId().equals(id))
+				continue;
+			editorId = editor.getId();
+			break;
+		}
 
-        IEditorDescriptor ddesc = registry.getDefaultEditor(name);
-        if (ddesc!=null && ddesc.getId().equals(id)) {
-            int dot = name.lastIndexOf('.');
-            String ext = name;
-            if (dot!= -1)
-                ext = "*."+name.substring(dot+1); //$NON-NLS-1$
-            registry.setDefaultEditor(ext, null);
-        }
+		IEditorDescriptor ddesc = registry.getDefaultEditor(name);
+		if (ddesc!=null && ddesc.getId().equals(id)) {
+			int dot = name.lastIndexOf('.');
+			String ext = name;
+			if (dot!= -1)
+				ext = "*."+name.substring(dot+1); //$NON-NLS-1$
+			registry.setDefaultEditor(ext, null);
+		}
 
-         if (editorId==null) {
-            // no editor
-            // next check with the OS for an external editor
-            if (registry.isSystemExternalEditorAvailable(name))
-                editorId = IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID;
-        }
+		if (editorId==null) {
+			// no editor
+			// next check with the OS for an external editor
+			if (registry.isSystemExternalEditorAvailable(name))
+				editorId = IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID;
+		}
 
-        if (editorId!=null) {
-            try {
-                page.openEditor(input, editorId);
-                return;
-            } catch (PartInitException e) {
+		if (editorId!=null) {
+			try {
+				page.openEditor(input, editorId);
+				return;
+			} catch (PartInitException e) {
 					// ignore
-            }
-        }
+			}
+		}
 
-        // no registered editor - open using browser support
-        try {
-            URL theURL = new URL(webBrowser.getURL());
-            IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
-            support.getExternalBrowser().openURL(theURL);
-        }
-        catch (MalformedURLException e) {
-            //TODO handle this
-        }
-        catch (PartInitException e) {
-            //TODO handle this
-        }
-    }
+		// no registered editor - open using browser support
+		try {
+			URL theURL = new URL(webBrowser.getURL());
+			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+			support.getExternalBrowser().openURL(theURL);
+		}
+		catch (MalformedURLException e) {
+			//TODO handle this
+		}
+		catch (PartInitException e) {
+			//TODO handle this
+		}
+	}
 }

@@ -33,62 +33,62 @@ import org.eclipse.swt.widgets.CoolBar;
 */
 public class CoolBarManager2 extends CoolBarManager implements ICoolBarManager2 {
 
-    /**
-     * Creates a new cool bar manager with the default style. Equivalent to
-     * <code>CoolBarManager(SWT.NONE)</code>.
-     */
-    public CoolBarManager2() {
-        super();
-    }
+	/**
+	 * Creates a new cool bar manager with the default style. Equivalent to
+	 * <code>CoolBarManager(SWT.NONE)</code>.
+	 */
+	public CoolBarManager2() {
+		super();
+	}
 
-    /**
-     * Creates a cool bar manager for an existing cool bar control. This
-     * manager becomes responsible for the control, and will dispose of it when
-     * the manager is disposed.
-     *
-     * @param coolBar
-     *            the cool bar control
-     */
-    public CoolBarManager2(CoolBar coolBar) {
-        super(coolBar);
-    }
+	/**
+	 * Creates a cool bar manager for an existing cool bar control. This
+	 * manager becomes responsible for the control, and will dispose of it when
+	 * the manager is disposed.
+	 *
+	 * @param coolBar
+	 *            the cool bar control
+	 */
+	public CoolBarManager2(CoolBar coolBar) {
+		super(coolBar);
+	}
 
-    /**
-     * Creates a cool bar manager with the given SWT style. Calling <code>createControl</code>
-     * will create the cool bar control.
-     *
-     * @param style
-     *            the cool bar item style; see
-     *            {@link org.eclipse.swt.widgets.CoolBar CoolBar}for for valid
-     *            style bits
-     */
-    public CoolBarManager2(int style) {
-       super(style);
-    }
+	/**
+	 * Creates a cool bar manager with the given SWT style. Calling <code>createControl</code>
+	 * will create the cool bar control.
+	 *
+	 * @param style
+	 *            the cool bar item style; see
+	 *            {@link org.eclipse.swt.widgets.CoolBar CoolBar}for for valid
+	 *            style bits
+	 */
+	public CoolBarManager2(int style) {
+		super(style);
+	}
 
-    /**
-     * Creates and returns this manager's cool bar control. Does not create a
-     * new control if one already exists.
-     *
-     * @param parent
-     *            the parent control
-     * @return the cool bar control
+	/**
+	 * Creates and returns this manager's cool bar control. Does not create a
+	 * new control if one already exists.
+	 *
+	 * @param parent
+	 *            the parent control
+	 * @return the cool bar control
 	 * @since 3.2
-     */
-    @Override
+	 */
+	@Override
 	public Control createControl2(Composite parent) {
-        return createControl(parent);
-    }
+		return createControl(parent);
+	}
 
-    /**
-     * Returns the control for this manager.
-     *
-     * @return the control, or <code>null</code> if none
+	/**
+	 * Returns the control for this manager.
+	 *
+	 * @return the control, or <code>null</code> if none
 	 * @since 3.2
-     */
-    @Override
+	 */
+	@Override
 	public Control getControl2() {
-        return getControl();
-    }
+		return getControl();
+	}
 
 }

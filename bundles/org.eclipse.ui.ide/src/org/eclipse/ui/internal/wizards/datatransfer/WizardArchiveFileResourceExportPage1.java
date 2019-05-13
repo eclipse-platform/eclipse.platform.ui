@@ -39,376 +39,376 @@ import org.eclipse.ui.PlatformUI;
 public class WizardArchiveFileResourceExportPage1 extends
 		WizardFileSystemResourceExportPage1 {
 
-    // widgets
-    protected Button compressContentsCheckbox;
+	// widgets
+	protected Button compressContentsCheckbox;
 
-    private Button zipFormatButton;
-    private Button targzFormatButton;
+	private Button zipFormatButton;
+	private Button targzFormatButton;
 
-    // dialog store id constants
-    private static final String STORE_DESTINATION_NAMES_ID = "WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
+	// dialog store id constants
+	private static final String STORE_DESTINATION_NAMES_ID = "WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
 
-    private static final String STORE_CREATE_STRUCTURE_ID = "WizardZipFileResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
+	private static final String STORE_CREATE_STRUCTURE_ID = "WizardZipFileResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
 
-    private static final String STORE_COMPRESS_CONTENTS_ID = "WizardZipFileResourceExportPage1.STORE_COMPRESS_CONTENTS_ID"; //$NON-NLS-1$
+	private static final String STORE_COMPRESS_CONTENTS_ID = "WizardZipFileResourceExportPage1.STORE_COMPRESS_CONTENTS_ID"; //$NON-NLS-1$
 
-    /**
-     *	Create an instance of this class.
-     *
-     *	@param name java.lang.String
-     */
-    protected WizardArchiveFileResourceExportPage1(String name,
-            IStructuredSelection selection) {
-        super(name, selection);
-    }
+	/**
+	 *	Create an instance of this class.
+	 *
+	 *	@param name java.lang.String
+	 */
+	protected WizardArchiveFileResourceExportPage1(String name,
+			IStructuredSelection selection) {
+		super(name, selection);
+	}
 
-    /**
-     * Create an instance of this class
-     * @param selection the selection
-     */
-    public WizardArchiveFileResourceExportPage1(IStructuredSelection selection) {
-        this("zipFileExportPage1", selection); //$NON-NLS-1$
-        setTitle(DataTransferMessages.ArchiveExport_exportTitle);
-        setDescription(DataTransferMessages.ArchiveExport_description);
-    }
+	/**
+	 * Create an instance of this class
+	 * @param selection the selection
+	 */
+	public WizardArchiveFileResourceExportPage1(IStructuredSelection selection) {
+		this("zipFileExportPage1", selection); //$NON-NLS-1$
+		setTitle(DataTransferMessages.ArchiveExport_exportTitle);
+		setDescription(DataTransferMessages.ArchiveExport_description);
+	}
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
-        super.createControl(parent);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-                IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE);
-    }
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE);
+	}
 
-    /**
-     *	Create the export options specification widgets.
-     *
-     */
-    @Override
+	/**
+	 *	Create the export options specification widgets.
+	 *
+	 */
+	@Override
 	protected void createOptionsGroupButtons(Group optionsGroup) {
-    	Font font = optionsGroup.getFont();
-    	optionsGroup.setLayout(new GridLayout(2, true));
+		Font font = optionsGroup.getFont();
+		optionsGroup.setLayout(new GridLayout(2, true));
 
-    	Composite left = new Composite(optionsGroup, SWT.NONE);
-    	left.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
-    	left.setLayout(new GridLayout(1, true));
+		Composite left = new Composite(optionsGroup, SWT.NONE);
+		left.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
+		left.setLayout(new GridLayout(1, true));
 
-        createFileFormatOptions(left, font);
+		createFileFormatOptions(left, font);
 
-        // compress... checkbox
-        compressContentsCheckbox = new Button(left, SWT.CHECK
-                | SWT.LEFT);
-        compressContentsCheckbox.setText(DataTransferMessages.ZipExport_compressContents);
-        compressContentsCheckbox.setFont(font);
+		// compress... checkbox
+		compressContentsCheckbox = new Button(left, SWT.CHECK
+				| SWT.LEFT);
+		compressContentsCheckbox.setText(DataTransferMessages.ZipExport_compressContents);
+		compressContentsCheckbox.setFont(font);
 
 		createResolveLinkedResources(left, font);
 
-        Composite right = new Composite(optionsGroup, SWT.NONE);
-        right.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
-        right.setLayout(new GridLayout(1, true));
+		Composite right = new Composite(optionsGroup, SWT.NONE);
+		right.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
+		right.setLayout(new GridLayout(1, true));
 
-        createDirectoryStructureOptions(right, font);
+		createDirectoryStructureOptions(right, font);
 
-        // initial setup
-        createDirectoryStructureButton.setSelection(true);
-        createSelectionOnlyButton.setSelection(false);
-        compressContentsCheckbox.setSelection(true);
-    }
+		// initial setup
+		createDirectoryStructureButton.setSelection(true);
+		createSelectionOnlyButton.setSelection(false);
+		compressContentsCheckbox.setSelection(true);
+	}
 
-    /**
-     * Create the buttons for the group that determine if the entire or
-     * selected directory structure should be created.
-     * @param optionsGroup
-     * @param font
-     */
-    protected void createFileFormatOptions(Composite optionsGroup, Font font) {
-        // create directory structure radios
-        zipFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-        zipFormatButton.setText(DataTransferMessages.ArchiveExport_saveInZipFormat);
-        zipFormatButton.setSelection(true);
-        zipFormatButton.setFont(font);
+	/**
+	 * Create the buttons for the group that determine if the entire or
+	 * selected directory structure should be created.
+	 * @param optionsGroup
+	 * @param font
+	 */
+	protected void createFileFormatOptions(Composite optionsGroup, Font font) {
+		// create directory structure radios
+		zipFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+		zipFormatButton.setText(DataTransferMessages.ArchiveExport_saveInZipFormat);
+		zipFormatButton.setSelection(true);
+		zipFormatButton.setFont(font);
 
-        // create directory structure radios
-        targzFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-        targzFormatButton.setText(DataTransferMessages.ArchiveExport_saveInTarFormat);
-        targzFormatButton.setSelection(false);
-        targzFormatButton.setFont(font);
-    }
+		// create directory structure radios
+		targzFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+		targzFormatButton.setText(DataTransferMessages.ArchiveExport_saveInTarFormat);
+		targzFormatButton.setSelection(false);
+		targzFormatButton.setFont(font);
+	}
 
-    /**
-     * Returns a boolean indicating whether the directory portion of the
-     * passed pathname is valid and available for use.
-     */
-    protected boolean ensureTargetDirectoryIsValid(String fullPathname) {
-        int separatorIndex = fullPathname.lastIndexOf(File.separator);
+	/**
+	 * Returns a boolean indicating whether the directory portion of the
+	 * passed pathname is valid and available for use.
+	 */
+	protected boolean ensureTargetDirectoryIsValid(String fullPathname) {
+		int separatorIndex = fullPathname.lastIndexOf(File.separator);
 
-        if (separatorIndex == -1) {
+		if (separatorIndex == -1) {
 			return true;
 		}
 
-        return ensureTargetIsValid(new File(fullPathname.substring(0,
-                separatorIndex)));
-    }
+		return ensureTargetIsValid(new File(fullPathname.substring(0,
+				separatorIndex)));
+	}
 
-    /**
-     * Returns a boolean indicating whether the passed File handle is
-     * is valid and available for use.
-     */
-    protected boolean ensureTargetFileIsValid(File targetFile) {
-        if (targetFile.exists() && targetFile.isDirectory()) {
-            displayErrorDialog(DataTransferMessages.ZipExport_mustBeFile);
-            giveFocusToDestination();
-            return false;
-        }
+	/**
+	 * Returns a boolean indicating whether the passed File handle is
+	 * is valid and available for use.
+	 */
+	protected boolean ensureTargetFileIsValid(File targetFile) {
+		if (targetFile.exists() && targetFile.isDirectory()) {
+			displayErrorDialog(DataTransferMessages.ZipExport_mustBeFile);
+			giveFocusToDestination();
+			return false;
+		}
 
-        if (targetFile.exists()) {
-            if (targetFile.canWrite()) {
-                if (!queryYesNoQuestion(DataTransferMessages.ZipExport_alreadyExists)) {
+		if (targetFile.exists()) {
+			if (targetFile.canWrite()) {
+				if (!queryYesNoQuestion(DataTransferMessages.ZipExport_alreadyExists)) {
 					return false;
 				}
-            } else {
-                displayErrorDialog(DataTransferMessages.ZipExport_alreadyExistsError);
-                giveFocusToDestination();
-                return false;
-            }
-        }
+			} else {
+				displayErrorDialog(DataTransferMessages.ZipExport_alreadyExistsError);
+				giveFocusToDestination();
+				return false;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Ensures that the target output file and its containing directory are
-     * both valid and able to be used.  Answer a boolean indicating validity.
-     */
-    protected boolean ensureTargetIsValid() {
-        String targetPath = getDestinationValue();
+	/**
+	 * Ensures that the target output file and its containing directory are
+	 * both valid and able to be used.  Answer a boolean indicating validity.
+	 */
+	protected boolean ensureTargetIsValid() {
+		String targetPath = getDestinationValue();
 
-        if (!ensureTargetDirectoryIsValid(targetPath)) {
+		if (!ensureTargetDirectoryIsValid(targetPath)) {
 			return false;
 		}
 
-        if (!ensureTargetFileIsValid(new File(targetPath))) {
+		if (!ensureTargetFileIsValid(new File(targetPath))) {
 			return false;
 		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     *  Export the passed resource and recursively export all of its child resources
-     *  (iff it's a container).  Answer a boolean indicating success.
-     */
-    protected boolean executeExportOperation(ArchiveFileExportOperation op) {
-        op.setCreateLeadupStructure(createDirectoryStructureButton
-                .getSelection());
-        op.setUseCompression(compressContentsCheckbox.getSelection());
-        op.setIncludeLinkedResources(resolveLinkedResourcesCheckbox.getSelection());
-        op.setUseTarFormat(targzFormatButton.getSelection());
+	/**
+	 *  Export the passed resource and recursively export all of its child resources
+	 *  (iff it's a container).  Answer a boolean indicating success.
+	 */
+	protected boolean executeExportOperation(ArchiveFileExportOperation op) {
+		op.setCreateLeadupStructure(createDirectoryStructureButton
+				.getSelection());
+		op.setUseCompression(compressContentsCheckbox.getSelection());
+		op.setIncludeLinkedResources(resolveLinkedResourcesCheckbox.getSelection());
+		op.setUseTarFormat(targzFormatButton.getSelection());
 
-        try {
-            getContainer().run(true, true, op);
-        } catch (InterruptedException e) {
-            return false;
-        } catch (InvocationTargetException e) {
-            displayErrorDialog(e.getTargetException());
-            return false;
-        }
+		try {
+			getContainer().run(true, true, op);
+		} catch (InterruptedException e) {
+			return false;
+		} catch (InvocationTargetException e) {
+			displayErrorDialog(e.getTargetException());
+			return false;
+		}
 
-        IStatus status = op.getStatus();
-        if (!status.isOK()) {
-            ErrorDialog.openError(getContainer().getShell(),
-                    DataTransferMessages.DataTransfer_exportProblems,
-                    null, // no special message
-                    status);
-            return false;
-        }
+		IStatus status = op.getStatus();
+		if (!status.isOK()) {
+			ErrorDialog.openError(getContainer().getShell(),
+					DataTransferMessages.DataTransfer_exportProblems,
+					null, // no special message
+					status);
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * The Finish button was pressed.  Try to do the required work now and answer
-     * a boolean indicating success.  If false is returned then the wizard will
-     * not close.
-     * @returns boolean
-     */
-    @Override
+	/**
+	 * The Finish button was pressed.  Try to do the required work now and answer
+	 * a boolean indicating success.  If false is returned then the wizard will
+	 * not close.
+	 * @returns boolean
+	 */
+	@Override
 	public boolean finish() {
-    	List resourcesToExport = getWhiteCheckedResources();
+		List resourcesToExport = getWhiteCheckedResources();
 
-        if (!ensureTargetIsValid()) {
+		if (!ensureTargetIsValid()) {
 			return false;
 		}
 
-        //Save dirty editors if possible but do not stop if not all are saved
-        saveDirtyEditors();
-        // about to invoke the operation so save our state
-        saveWidgetValues();
+		//Save dirty editors if possible but do not stop if not all are saved
+		saveDirtyEditors();
+		// about to invoke the operation so save our state
+		saveWidgetValues();
 
-        return executeExportOperation(new ArchiveFileExportOperation(null,
-                resourcesToExport, getDestinationValue()));
-    }
+		return executeExportOperation(new ArchiveFileExportOperation(null,
+				resourcesToExport, getDestinationValue()));
+	}
 
-    /**
-     *	Answer the string to display in the receiver as the destination type
-     */
-    @Override
+	/**
+	 *	Answer the string to display in the receiver as the destination type
+	 */
+	@Override
 	protected String getDestinationLabel() {
-        return DataTransferMessages.ArchiveExport_destinationLabel;
-    }
+		return DataTransferMessages.ArchiveExport_destinationLabel;
+	}
 
-    /**
-     *	Answer the contents of self's destination specification widget.  If this
-     *	value does not have a suffix then add it first.
-     */
-    @Override
+	/**
+	 *	Answer the contents of self's destination specification widget.  If this
+	 *	value does not have a suffix then add it first.
+	 */
+	@Override
 	protected String getDestinationValue() {
-        String idealSuffix = getOutputSuffix();
-        String destinationText = super.getDestinationValue();
+		String idealSuffix = getOutputSuffix();
+		String destinationText = super.getDestinationValue();
 
-        // only append a suffix if the destination doesn't already have a . in
-        // its last path segment.
-        // Also prevent the user from selecting a directory.  Allowing this will
-        // create a ".zip" file in the directory
-        if (destinationText.length() != 0
-                && !destinationText.endsWith(File.separator)) {
-            int dotIndex = destinationText.lastIndexOf('.');
-            if (dotIndex != -1) {
-                // the last path seperator index
-                int pathSepIndex = destinationText.lastIndexOf(File.separator);
-                if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
-                    destinationText += idealSuffix;
-                }
-            } else {
-                destinationText += idealSuffix;
-            }
-        }
-
-        return destinationText;
-    }
-
-    /**
-     *	Answer the suffix that files exported from this wizard should have.
-     *	If this suffix is a file extension (which is typically the case)
-     *	then it must include the leading period character.
-     *
-     */
-    protected String getOutputSuffix() {
-    	if(zipFormatButton.getSelection()) {
-        	return ".zip"; //$NON-NLS-1$
-    	} else if(compressContentsCheckbox.getSelection()) {
-    		return ".tar.gz"; //$NON-NLS-1$
-    	} else {
-    		return ".tar"; //$NON-NLS-1$
-    	}
-    }
-
-    /**
-     *	Open an appropriate destination browser so that the user can specify a source
-     *	to import from
-     */
-    @Override
-	protected void handleDestinationBrowseButtonPressed() {
-        FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE | SWT.SHEET);
-        dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tgz", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
-        dialog.setText(DataTransferMessages.ArchiveExport_selectDestinationTitle);
-        String currentSourceString = getDestinationValue();
-        int lastSeparatorIndex = currentSourceString
-                .lastIndexOf(File.separator);
-        if (lastSeparatorIndex != -1) {
-			dialog.setFilterPath(currentSourceString.substring(0,
-                    lastSeparatorIndex));
+		// only append a suffix if the destination doesn't already have a . in
+		// its last path segment.
+		// Also prevent the user from selecting a directory.  Allowing this will
+		// create a ".zip" file in the directory
+		if (destinationText.length() != 0
+				&& !destinationText.endsWith(File.separator)) {
+			int dotIndex = destinationText.lastIndexOf('.');
+			if (dotIndex != -1) {
+				// the last path seperator index
+				int pathSepIndex = destinationText.lastIndexOf(File.separator);
+				if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
+					destinationText += idealSuffix;
+				}
+			} else {
+				destinationText += idealSuffix;
+			}
 		}
-        String selectedFileName = dialog.open();
 
-        if (selectedFileName != null) {
-            setErrorMessage(null);
-            setDestinationValue(selectedFileName);
-        }
-    }
+		return destinationText;
+	}
 
-    /**
-     *	Hook method for saving widget values for restoration by the next instance
-     *	of this class.
-     */
-    @Override
+	/**
+	 *	Answer the suffix that files exported from this wizard should have.
+	 *	If this suffix is a file extension (which is typically the case)
+	 *	then it must include the leading period character.
+	 *
+	 */
+	protected String getOutputSuffix() {
+		if(zipFormatButton.getSelection()) {
+			return ".zip"; //$NON-NLS-1$
+		} else if(compressContentsCheckbox.getSelection()) {
+			return ".tar.gz"; //$NON-NLS-1$
+		} else {
+			return ".tar"; //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 *	Open an appropriate destination browser so that the user can specify a source
+	 *	to import from
+	 */
+	@Override
+	protected void handleDestinationBrowseButtonPressed() {
+		FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE | SWT.SHEET);
+		dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tgz", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+		dialog.setText(DataTransferMessages.ArchiveExport_selectDestinationTitle);
+		String currentSourceString = getDestinationValue();
+		int lastSeparatorIndex = currentSourceString
+				.lastIndexOf(File.separator);
+		if (lastSeparatorIndex != -1) {
+			dialog.setFilterPath(currentSourceString.substring(0,
+					lastSeparatorIndex));
+		}
+		String selectedFileName = dialog.open();
+
+		if (selectedFileName != null) {
+			setErrorMessage(null);
+			setDestinationValue(selectedFileName);
+		}
+	}
+
+	/**
+	 *	Hook method for saving widget values for restoration by the next instance
+	 *	of this class.
+	 */
+	@Override
 	protected void internalSaveWidgetValues() {
-        // update directory names history
-        IDialogSettings settings = getDialogSettings();
-        if (settings != null) {
-            String[] directoryNames = settings
-                    .getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null) {
+		// update directory names history
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			String[] directoryNames = settings
+					.getArray(STORE_DESTINATION_NAMES_ID);
+			if (directoryNames == null) {
 				directoryNames = new String[0];
 			}
 
-            directoryNames = addToHistory(directoryNames, getDestinationValue());
-            settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
+			directoryNames = addToHistory(directoryNames, getDestinationValue());
+			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
 
-            settings.put(STORE_CREATE_STRUCTURE_ID,
-                    createDirectoryStructureButton.getSelection());
+			settings.put(STORE_CREATE_STRUCTURE_ID,
+					createDirectoryStructureButton.getSelection());
 
-            settings.put(STORE_COMPRESS_CONTENTS_ID, compressContentsCheckbox
-                    .getSelection());
-        }
-    }
+			settings.put(STORE_COMPRESS_CONTENTS_ID, compressContentsCheckbox
+					.getSelection());
+		}
+	}
 
-    /**
-     *	Hook method for restoring widget values to the values that they held
-     *	last time this wizard was used to completion.
-     */
-    @Override
+	/**
+	 *	Hook method for restoring widget values to the values that they held
+	 *	last time this wizard was used to completion.
+	 */
+	@Override
 	protected void restoreWidgetValues() {
-        IDialogSettings settings = getDialogSettings();
-        if (settings != null) {
-            String[] directoryNames = settings
-                    .getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null || directoryNames.length == 0) {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			String[] directoryNames = settings
+					.getArray(STORE_DESTINATION_NAMES_ID);
+			if (directoryNames == null || directoryNames.length == 0) {
 				return; // ie.- no settings stored
 			}
 
-            // destination
-            setDestinationValue(directoryNames[0]);
-            for (String directoryName : directoryNames) {
+			// destination
+			setDestinationValue(directoryNames[0]);
+			for (String directoryName : directoryNames) {
 				addDestinationItem(directoryName);
 			}
 
-            boolean setStructure = settings
-                    .getBoolean(STORE_CREATE_STRUCTURE_ID);
+			boolean setStructure = settings
+					.getBoolean(STORE_CREATE_STRUCTURE_ID);
 
-            createDirectoryStructureButton.setSelection(setStructure);
-            createSelectionOnlyButton.setSelection(!setStructure);
+			createDirectoryStructureButton.setSelection(setStructure);
+			createSelectionOnlyButton.setSelection(!setStructure);
 
-            compressContentsCheckbox.setSelection(settings
-                    .getBoolean(STORE_COMPRESS_CONTENTS_ID));
-        }
-    }
+			compressContentsCheckbox.setSelection(settings
+					.getBoolean(STORE_COMPRESS_CONTENTS_ID));
+		}
+	}
 
-    @Override
+	@Override
 	protected String destinationEmptyMessage() {
-        return DataTransferMessages.ArchiveExport_destinationEmpty;
-    }
+		return DataTransferMessages.ArchiveExport_destinationEmpty;
+	}
 
-    /**
-     *	Answer a boolean indicating whether the receivers destination specification
-     *	widgets currently all contain valid values.
-     */
-    @Override
+	/**
+	 *	Answer a boolean indicating whether the receivers destination specification
+	 *	widgets currently all contain valid values.
+	 */
+	@Override
 	protected boolean validateDestinationGroup() {
-    	String destinationValue = getDestinationValue();
-    	if (destinationValue.endsWith(".tar")) { //$NON-NLS-1$
-    		compressContentsCheckbox.setSelection(false);
-    		targzFormatButton.setSelection(true);
-    		zipFormatButton.setSelection(false);
-    	} else if (destinationValue.endsWith(".tar.gz") //$NON-NLS-1$
+		String destinationValue = getDestinationValue();
+		if (destinationValue.endsWith(".tar")) { //$NON-NLS-1$
+			compressContentsCheckbox.setSelection(false);
+			targzFormatButton.setSelection(true);
+			zipFormatButton.setSelection(false);
+		} else if (destinationValue.endsWith(".tar.gz") //$NON-NLS-1$
 				|| destinationValue.endsWith(".tgz")) { //$NON-NLS-1$
-    		compressContentsCheckbox.setSelection(true);
-    		targzFormatButton.setSelection(true);
-    		zipFormatButton.setSelection(false);
-    	} else if (destinationValue.endsWith(".zip")) { //$NON-NLS-1$
-    		zipFormatButton.setSelection(true);
-    		targzFormatButton.setSelection(false);
-    	}
+			compressContentsCheckbox.setSelection(true);
+			targzFormatButton.setSelection(true);
+			zipFormatButton.setSelection(false);
+		} else if (destinationValue.endsWith(".zip")) { //$NON-NLS-1$
+			zipFormatButton.setSelection(true);
+			targzFormatButton.setSelection(false);
+		}
 
-    	return super.validateDestinationGroup();
-    }
+		return super.validateDestinationGroup();
+	}
 }

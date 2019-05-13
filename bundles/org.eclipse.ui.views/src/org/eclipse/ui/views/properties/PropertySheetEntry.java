@@ -448,13 +448,13 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 
 		if (provider == null && object != null) {
 			provider = Adapters.adapt(object, IPropertySourceProvider.class);
-        }
+		}
 
 		if (provider != null) {
 			result = provider.getPropertySource(object);
 		} else {
 			result = Adapters.adapt(object, IPropertySource.class);
-        }
+		}
 
 		sources.put(object, result);
 		return result;

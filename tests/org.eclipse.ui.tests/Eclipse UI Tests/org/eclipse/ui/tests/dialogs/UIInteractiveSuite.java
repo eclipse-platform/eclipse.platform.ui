@@ -23,13 +23,13 @@ import org.eclipse.ui.tests.compare.UIComparePreferences;
  */
 public class UIInteractiveSuite extends TestSuite {
 
-    /**
-     * Returns the suite.  This is required to
-     * use the JUnit Launcher.
-     */
-    public static Test suite() {
-        return new UIInteractiveSuite();
-    }
+	/**
+	 * Returns the suite.  This is required to
+	 * use the JUnit Launcher.
+	 */
+	public static Test suite() {
+		return new UIInteractiveSuite();
+	}
 
 	/**
 	 * Construct the test suite.

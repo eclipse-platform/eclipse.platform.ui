@@ -42,55 +42,55 @@ public class SaveableMockViewPart extends MockViewPart implements
 
 	private boolean isDirty = false;
 
-    private boolean saveAsAllowed = false;
+	private boolean saveAsAllowed = false;
 
-    private boolean saveNeeded = true;
+	private boolean saveNeeded = true;
 
 	private boolean adapt;
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        super.createPartControl(parent);
+		super.createPartControl(parent);
 
-        final Button dirtyToggle = new Button(parent, SWT.CHECK);
-        dirtyToggle.setText("Dirty");
-        dirtyToggle.addSelectionListener(new SelectionAdapter() {
-            @Override
+		final Button dirtyToggle = new Button(parent, SWT.CHECK);
+		dirtyToggle.setText("Dirty");
+		dirtyToggle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                setDirty(dirtyToggle.getSelection());
-            }
-        });
-        dirtyToggle.setSelection(isDirty());
+				setDirty(dirtyToggle.getSelection());
+			}
+		});
+		dirtyToggle.setSelection(isDirty());
 
-        final Button adaptToggle = new Button(parent, SWT.CHECK);
-        adaptToggle.setText("Adapt to resource");
-        adaptToggle.addSelectionListener(new SelectionAdapter() {
-        	@Override
+		final Button adaptToggle = new Button(parent, SWT.CHECK);
+		adaptToggle.setText("Adapt to resource");
+		adaptToggle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-        		setAdapt(adaptToggle.getSelection());
-        	}
-        });
+				setAdapt(adaptToggle.getSelection());
+			}
+		});
 
-        final Button saveNeededToggle = new Button(parent, SWT.CHECK);
-        saveNeededToggle.setText("Save on close");
-        saveNeededToggle.addSelectionListener(new SelectionAdapter() {
-            @Override
+		final Button saveNeededToggle = new Button(parent, SWT.CHECK);
+		saveNeededToggle.setText("Save on close");
+		saveNeededToggle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                setSaveNeeded(saveNeededToggle.getSelection());
-            }
-        });
-        saveNeededToggle.setSelection(saveNeeded);
+				setSaveNeeded(saveNeededToggle.getSelection());
+			}
+		});
+		saveNeededToggle.setSelection(saveNeeded);
 
-        final Button saveAsToggle = new Button(parent, SWT.CHECK);
-        saveAsToggle.setText("Save as allowed");
-        saveAsToggle.addSelectionListener(new SelectionAdapter() {
-            @Override
+		final Button saveAsToggle = new Button(parent, SWT.CHECK);
+		saveAsToggle.setText("Save as allowed");
+		saveAsToggle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                setSaveAsAllowed(saveAsToggle.getSelection());
-            }
-        });
-        saveAsToggle.setSelection(saveAsAllowed);
-    }
+				setSaveAsAllowed(saveAsToggle.getSelection());
+			}
+		});
+		saveAsToggle.setSelection(saveAsAllowed);
+	}
 
 	/**
 	 * @param selection
@@ -129,16 +129,16 @@ public class SaveableMockViewPart extends MockViewPart implements
 
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
-        firePropertyChange(PROP_DIRTY);
+		firePropertyChange(PROP_DIRTY);
 	}
 
-    public void setSaveAsAllowed(boolean isSaveAsAllowed) {
-        this.saveAsAllowed = isSaveAsAllowed;
-    }
+	public void setSaveAsAllowed(boolean isSaveAsAllowed) {
+		this.saveAsAllowed = isSaveAsAllowed;
+	}
 
-    public void setSaveNeeded(boolean isSaveOnCloseNeeded) {
-        this.saveNeeded = isSaveOnCloseNeeded;
-    }
+	public void setSaveNeeded(boolean isSaveOnCloseNeeded) {
+		this.saveNeeded = isSaveOnCloseNeeded;
+	}
 
 	@Override
 	public Saveable[] getActiveSaveables() {

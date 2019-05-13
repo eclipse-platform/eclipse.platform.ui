@@ -34,100 +34,100 @@ import org.eclipse.swt.widgets.Control;
  */
 public interface ICoolBarManager2 extends ICoolBarManager {
 
-    /**
-     * Creates and returns this manager's control. Does not create a
-     * new control if one already exists.
-     *
-     *
-     * @param parent
-     *            the parent control
-     * @return the control
+	/**
+	 * Creates and returns this manager's control. Does not create a
+	 * new control if one already exists.
+	 *
+	 *
+	 * @param parent
+	 *            the parent control
+	 * @return the control
 	 * @since 3.2
-     */
-    public Control createControl2(Composite parent);
+	 */
+	public Control createControl2(Composite parent);
 
-    /**
-     * Returns the bar control for this manager.
-     *
+	/**
+	 * Returns the bar control for this manager.
+	 *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     *
-     * @return the bar control, or <code>null</code> if none
+	 *
+	 * @return the bar control, or <code>null</code> if none
 	 * @since 3.2
-     */
-    public Control getControl2();
+	 */
+	public Control getControl2();
 
-    /**
-     * Synchronizes the visual order of the cool items in the control with this
-     * manager's internal data structures. This method should be called before
-     * requesting the order of the contribution items to ensure that the order
-     * is accurate.
-     * <p>
-     * Note that <code>update()</code> and <code>refresh()</code> are
-     * converses: <code>update()</code> changes the visual order to match the
-     * internal structures, and <code>refresh</code> changes the internal
-     * structures to match the visual order.
-     * </p>
-     *
+	/**
+	 * Synchronizes the visual order of the cool items in the control with this
+	 * manager's internal data structures. This method should be called before
+	 * requesting the order of the contribution items to ensure that the order
+	 * is accurate.
+	 * <p>
+	 * Note that <code>update()</code> and <code>refresh()</code> are
+	 * converses: <code>update()</code> changes the visual order to match the
+	 * internal structures, and <code>refresh</code> changes the internal
+	 * structures to match the visual order.
+	 * </p>
+	 *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     *
+	 *
 	 * @since 3.2
-     */
-    public void refresh();
+	 */
+	public void refresh();
 
-    /**
+	/**
 	 * Disposes the resources for this manager.
-     *
+	 *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     *
-     * @since 3.2
-     */
-    public void dispose();
-
-    /**
-     * Restores the canonical order of this cool bar manager. The canonical
-     * order is the order in which the contribution items where added.
-     *
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
-     *
+	 *
 	 * @since 3.2
 	 */
-    public void resetItemOrder();
+	public void dispose();
 
-    /**
-     * Replaces the current items with the given items.
-     * Forces an update.
-     *
+	/**
+	 * Restores the canonical order of this cool bar manager. The canonical
+	 * order is the order in which the contribution items where added.
+	 *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     *
-     * @param newItems the items with which to replace the current items
-     * @since 3.2
+	 *
+	 * @since 3.2
 	 */
-    public void setItems(IContributionItem[] newItems);
+	public void resetItemOrder();
+
+	/**
+	 * Replaces the current items with the given items.
+	 * Forces an update.
+	 *
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+	 *
+	 * @param newItems the items with which to replace the current items
+	 * @since 3.2
+	 */
+	public void setItems(IContributionItem[] newItems);
 
 	/**
 	 * Sets the overrides for this contribution manager

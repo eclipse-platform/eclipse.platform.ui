@@ -20,97 +20,97 @@ package org.eclipse.ui.internal.navigator.framelist;
  */
 public class Frame {
 
-    private int index = -1;
+	private int index = -1;
 
-    private FrameList parent;
+	private FrameList parent;
 
-    private String name = ""; //$NON-NLS-1$
+	private String name = ""; //$NON-NLS-1$
 
-    private String toolTipText;
+	private String toolTipText;
 
-    /**
-     * Constructs a new frame. <p>
-     *
-     * This implementation does nothing.
-     */
-    public Frame() {
-    }
+	/**
+	 * Constructs a new frame. <p>
+	 *
+	 * This implementation does nothing.
+	 */
+	public Frame() {
+	}
 
-    /**
-     * Returns the index of the frame in the frame list.
-     * Only valid once the frame has been added to the frame list.
-     *
-     * @return the index of the frame in the frame list.
-     */
-    public int getIndex() {
-        return index;
-    }
+	/**
+	 * Returns the index of the frame in the frame list.
+	 * Only valid once the frame has been added to the frame list.
+	 *
+	 * @return the index of the frame in the frame list.
+	 */
+	public int getIndex() {
+		return index;
+	}
 
-    /**
-     * Returns the displayable name for the frame.
-     *
-     * @return the displayable name for the frame.
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Returns the displayable name for the frame.
+	 *
+	 * @return the displayable name for the frame.
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Returns the frame list.
-     *
-     * @return the frame list
-     */
-    public FrameList getParent() {
-        return parent;
-    }
+	/**
+	 * Returns the frame list.
+	 *
+	 * @return the frame list
+	 */
+	public FrameList getParent() {
+		return parent;
+	}
 
-    /**
-     * Returns the tool tip text to show for the frame.
-     * This can form part of the tool tip for actions like the back and forward
-     * actions.
-     *
-     * @return the tool tip text to show for the frame
-     */
-    public String getToolTipText() {
-        return toolTipText;
-    }
+	/**
+	 * Returns the tool tip text to show for the frame.
+	 * This can form part of the tool tip for actions like the back and forward
+	 * actions.
+	 *
+	 * @return the tool tip text to show for the frame
+	 */
+	public String getToolTipText() {
+		return toolTipText;
+	}
 
-    /**
-     * Sets the index of the frame in the frame list.
-     * Should only be called by the frame list.
-     *
-     * @param index the index of the frame in the frame list
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
+	/**
+	 * Sets the index of the frame in the frame list.
+	 * Should only be called by the frame list.
+	 *
+	 * @param index the index of the frame in the frame list
+	 */
+	public void setIndex(int index) {
+		this.index = index;
+	}
 
-    /**
-     * Sets the displayable name for the frame.
-     *
-     * @param name the displayable name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 * Sets the displayable name for the frame.
+	 *
+	 * @param name the displayable name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    /**
-     * Sets the frame list.
-     *
-     * @param parent the frame list
-     */
-    public void setParent(FrameList parent) {
-        this.parent = parent;
-    }
+	/**
+	 * Sets the frame list.
+	 *
+	 * @param parent the frame list
+	 */
+	public void setParent(FrameList parent) {
+		this.parent = parent;
+	}
 
-    /**
-     * Sets the tool tip text to show for the frame.
-     * This can form part of the tool tip for actions like the back and forward
-     * actions.
-     *
-     * @param toolTipText the tool tip text to show for the frame.
-     */
-    public void setToolTipText(String toolTipText) {
-        this.toolTipText = toolTipText;
-    }
+	/**
+	 * Sets the tool tip text to show for the frame.
+	 * This can form part of the tool tip for actions like the back and forward
+	 * actions.
+	 *
+	 * @param toolTipText the tool tip text to show for the frame.
+	 */
+	public void setToolTipText(String toolTipText) {
+		this.toolTipText = toolTipText;
+	}
 }

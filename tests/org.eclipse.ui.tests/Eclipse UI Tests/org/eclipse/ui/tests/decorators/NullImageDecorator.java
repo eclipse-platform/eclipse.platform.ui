@@ -22,43 +22,43 @@ import org.eclipse.ui.tests.internal.ForcedException;
  * @see ILabelDecorator
  */
 public class NullImageDecorator implements ILightweightLabelDecorator {
-    /**
-     * Whether we should fail with an exception
-     */
-    public static boolean fail = false;
+	/**
+	 * Whether we should fail with an exception
+	 */
+	public static boolean fail = false;
 
-    /**
-     *
-     */
-    public NullImageDecorator() {
-    }
+	/**
+	 *
+	 */
+	public NullImageDecorator() {
+	}
 
-    @Override
+	@Override
 	public void addListener(ILabelProviderListener listener) {
-        // XXX Auto-generated method stub
-    }
+		// XXX Auto-generated method stub
+	}
 
-    @Override
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
-        if (fail) {
-            fail = false;
-            throw new ForcedException("Lighweight decorator boom");
-        }
-    }
+		if (fail) {
+			fail = false;
+			throw new ForcedException("Lighweight decorator boom");
+		}
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        // XXX Auto-generated method stub
-    }
+		// XXX Auto-generated method stub
+	}
 
-    @Override
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
-        // XXX Auto-generated method stub
-        return false;
-    }
+		// XXX Auto-generated method stub
+		return false;
+	}
 
-    @Override
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
-        // XXX Auto-generated method stub
-    }
+		// XXX Auto-generated method stub
+	}
 }

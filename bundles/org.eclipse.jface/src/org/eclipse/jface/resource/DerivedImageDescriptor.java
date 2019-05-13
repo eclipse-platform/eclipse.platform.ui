@@ -28,67 +28,67 @@ import org.eclipse.swt.widgets.Display;
  */
 final class DerivedImageDescriptor extends ImageDescriptor {
 
-    private ImageDescriptor original;
-    private int flags;
+	private ImageDescriptor original;
+	private int flags;
 
-    /**
-     * Create a new image descriptor
-     * @param original the original one
-     * @param swtFlags flags to be used when image is created {@link Image#Image(Device, Image, int)}
-     * @see SWT#IMAGE_COPY
-     * @see SWT#IMAGE_DISABLE
-     * @see SWT#IMAGE_GRAY
-     */
-    public DerivedImageDescriptor(ImageDescriptor original, int swtFlags) {
-        this.original = original;
-        flags = swtFlags;
-    }
+	/**
+	 * Create a new image descriptor
+	 * @param original the original one
+	 * @param swtFlags flags to be used when image is created {@link Image#Image(Device, Image, int)}
+	 * @see SWT#IMAGE_COPY
+	 * @see SWT#IMAGE_DISABLE
+	 * @see SWT#IMAGE_GRAY
+	 */
+	public DerivedImageDescriptor(ImageDescriptor original, int swtFlags) {
+		this.original = original;
+		flags = swtFlags;
+	}
 
-    @Override
+	@Override
 	public Object createResource(Device device) throws DeviceResourceException {
-        try {
-            return internalCreateImage(device);
-        } catch (SWTException e) {
-            throw new DeviceResourceException(this, e);
-        }
-    }
+		try {
+			return internalCreateImage(device);
+		} catch (SWTException e) {
+			throw new DeviceResourceException(this, e);
+		}
+	}
 
-    @Override
+	@Override
 	public Image createImage(Device device) {
-        return internalCreateImage(device);
-    }
+		return internalCreateImage(device);
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return original.hashCode() + flags;
-    }
+		return original.hashCode() + flags;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object arg0) {
-        if (arg0 instanceof DerivedImageDescriptor) {
-            DerivedImageDescriptor desc = (DerivedImageDescriptor)arg0;
+		if (arg0 instanceof DerivedImageDescriptor) {
+			DerivedImageDescriptor desc = (DerivedImageDescriptor)arg0;
 
 			return desc.original.equals(original) && flags == desc.flags;
-        }
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Creates a new Image on the given device. Note that we defined a new
-     * method rather than overloading createImage since this needs to be
-     * called by getImageData(), and we want to be absolutely certain not
-     * to cause infinite recursion if the base class gets refactored.
-     *
-     * @param device device to create the image on
-     * @return a newly allocated Image. Must be disposed by calling image.dispose().
-     */
-    private final Image internalCreateImage(Device device) {
-        Image originalImage = original.createImage(device);
-        Image result = new Image(device, originalImage, flags);
-        original.destroyResource(originalImage);
-        return result;
-    }
+	/**
+	 * Creates a new Image on the given device. Note that we defined a new
+	 * method rather than overloading createImage since this needs to be
+	 * called by getImageData(), and we want to be absolutely certain not
+	 * to cause infinite recursion if the base class gets refactored.
+	 *
+	 * @param device device to create the image on
+	 * @return a newly allocated Image. Must be disposed by calling image.dispose().
+	 */
+	private final Image internalCreateImage(Device device) {
+		Image originalImage = original.createImage(device);
+		Image result = new Image(device, originalImage, flags);
+		original.destroyResource(originalImage);
+		return result;
+	}
 
 	@Override
 	public ImageData getImageData(int zoom) {

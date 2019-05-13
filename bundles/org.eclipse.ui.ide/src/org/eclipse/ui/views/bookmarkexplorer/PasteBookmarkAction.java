@@ -34,38 +34,38 @@ import org.eclipse.ui.part.MarkerTransfer;
  */
 class PasteBookmarkAction extends BookmarkAction {
 
-    private BookmarkNavigator view;
+	private BookmarkNavigator view;
 
-    /**
-     * The constructor.
-     *
-     * @param view the view
-     */
-    public PasteBookmarkAction(BookmarkNavigator view) {
-        super(view, BookmarkMessages.PasteBookmark_text);
-        this.view = view;
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                IBookmarkHelpContextIds.PASTE_BOOKMARK_ACTION);
-        setEnabled(false);
-    }
+	/**
+	 * The constructor.
+	 *
+	 * @param view the view
+	 */
+	public PasteBookmarkAction(BookmarkNavigator view) {
+		super(view, BookmarkMessages.PasteBookmark_text);
+		this.view = view;
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IBookmarkHelpContextIds.PASTE_BOOKMARK_ACTION);
+		setEnabled(false);
+	}
 
-    /**
-     * Copies the marker(s) from the clipboard to the bookmark navigator view.
-     */
-    @Override
+	/**
+	 * Copies the marker(s) from the clipboard to the bookmark navigator view.
+	 */
+	@Override
 	public void run() {
-        // Get the markers from the clipboard
-        MarkerTransfer transfer = MarkerTransfer.getInstance();
-        final IMarker[] markerData = (IMarker[]) view.getClipboard()
-                .getContents(transfer);
+		// Get the markers from the clipboard
+		MarkerTransfer transfer = MarkerTransfer.getInstance();
+		final IMarker[] markerData = (IMarker[]) view.getClipboard()
+				.getContents(transfer);
 
-        if (markerData == null) {
+		if (markerData == null) {
 			return;
 		}
-        final ArrayList newMarkerAttributes = new ArrayList();
+		final ArrayList newMarkerAttributes = new ArrayList();
 		final ArrayList<IResource> newMarkerResources = new ArrayList<>();
-        try {
-            ResourcesPlugin.getWorkspace().run(monitor -> {
+		try {
+			ResourcesPlugin.getWorkspace().run(monitor -> {
 				for (int i = 0; i < markerData.length; i++) {
 					// Collect the info about the markers to be pasted.
 					// Ignore any markers that aren't bookmarks.
@@ -76,11 +76,11 @@ class PasteBookmarkAction extends BookmarkAction {
 					newMarkerAttributes.add(markerData[i].getAttributes());
 				}
 			}, null);
-        } catch (CoreException e) {
-            ErrorDialog.openError(view.getShell(), BookmarkMessages.PasteBookmark_errorTitle,
-                    null, e.getStatus());
-            return;
-        }
+		} catch (CoreException e) {
+			ErrorDialog.openError(view.getShell(), BookmarkMessages.PasteBookmark_errorTitle,
+					null, e.getStatus());
+			return;
+		}
 		final Map [] attrs = (Map []) newMarkerAttributes.toArray(new Map [newMarkerAttributes.size()]);
 		final IResource [] resources = newMarkerResources.toArray(new IResource [newMarkerResources.size()]);
 		final CreateMarkersOperation op = new CreateMarkersOperation(IMarker.BOOKMARK, attrs,
@@ -88,18 +88,18 @@ class PasteBookmarkAction extends BookmarkAction {
 		execute(op, BookmarkMessages.PasteBookmark_errorTitle, null,
 				WorkspaceUndoUtil.getUIInfoAdapter(view.getShell()));
 
-        // Need to do this in an asyncExec, even though we're in the UI thread here,
-        // since the bookmark navigator updates itself with the addition in an asyncExec,
-        // which hasn't been processed yet.
-        // Must be done outside the create marker operation above since notification for add is
-        // sent after the operation is executed.
-        if (op.getMarkers() != null) {
-            view.getShell().getDisplay().asyncExec(() -> {
-			    view.getViewer().setSelection(
-			            new StructuredSelection(op.getMarkers()));
-			    view.updatePasteEnablement();
+		// Need to do this in an asyncExec, even though we're in the UI thread here,
+		// since the bookmark navigator updates itself with the addition in an asyncExec,
+		// which hasn't been processed yet.
+		// Must be done outside the create marker operation above since notification for add is
+		// sent after the operation is executed.
+		if (op.getMarkers() != null) {
+			view.getShell().getDisplay().asyncExec(() -> {
+				view.getViewer().setSelection(
+						new StructuredSelection(op.getMarkers()));
+				view.updatePasteEnablement();
 			});
-        }
-    }
+		}
+	}
 
 }

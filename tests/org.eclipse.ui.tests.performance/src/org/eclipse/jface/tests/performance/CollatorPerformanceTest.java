@@ -49,8 +49,8 @@ public class CollatorPerformanceTest extends BasicPerformanceTest {
 			Arrays.sort(array, comparator);
 			stopMeasuring();
 		}
-        commitMeasurements();
-        assertPerformance();
+		commitMeasurements();
+		assertPerformance();
 	}
 
 	/**

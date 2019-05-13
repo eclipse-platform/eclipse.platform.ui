@@ -26,12 +26,12 @@ public class ThemePropertyListener implements IPropertyChangeListener {
 
 	private ArrayList<PropertyChangeEvent> events = new ArrayList<>();
 
-    @Override
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-        events.add(event);
-    }
+		events.add(event);
+	}
 
 	public List<PropertyChangeEvent> getEvents() {
-        return events;
-    }
+		return events;
+	}
 }

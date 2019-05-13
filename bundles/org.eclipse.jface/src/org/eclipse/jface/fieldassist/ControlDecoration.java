@@ -1254,7 +1254,7 @@ public class ControlDecoration {
 	 * @see #setShowOnlyOnFocus(boolean)
 	 * @see #hide()
 	 * @see #show()
-     *
+	 *
 	 * @since 3.6
 	 */
 	public boolean isVisible() {

@@ -25,53 +25,53 @@ import org.junit.Assert;
  */
 public class ViewDragSource extends TestDragSource {
 
-    String targetPart;
+	String targetPart;
 
-    boolean wholeFolder;
+	boolean wholeFolder;
 
-    boolean maximized = false;
+	boolean maximized = false;
 
-    public ViewDragSource(String part, boolean dragWholeFolder) {
-        this(part, dragWholeFolder, false);
-    }
+	public ViewDragSource(String part, boolean dragWholeFolder) {
+		this(part, dragWholeFolder, false);
+	}
 
-    public ViewDragSource(String part, boolean dragWholeFolder,
-            boolean maximized) {
-        this.maximized = maximized;
-        this.targetPart = part;
+	public ViewDragSource(String part, boolean dragWholeFolder,
+			boolean maximized) {
+		this.maximized = maximized;
+		this.targetPart = part;
 
-        wholeFolder = dragWholeFolder;
-    }
+		wholeFolder = dragWholeFolder;
+	}
 
-    public IViewPart getPart() {
-        return getPage().findView(targetPart);
-    }
+	public IViewPart getPart() {
+		return getPage().findView(targetPart);
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
-                .find(targetPart);
-        String title = desc.getLabel();
+		IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
+				.find(targetPart);
+		String title = desc.getLabel();
 
-        if (wholeFolder) {
-            title = title + " folder";
-        }
+		if (wholeFolder) {
+			title = title + " folder";
+		}
 
-        if (maximized) {
-            title = "maximized " + title;
-        }
+		if (maximized) {
+			title = "maximized " + title;
+		}
 
-        return title;
-    }
+		return title;
+	}
 
-    @Override
+	@Override
 	public void drag(TestDropLocation target) {
-        IViewPart part = getPart();
+		IViewPart part = getPart();
 
-        WorkbenchPage page = getPage();
-        if (maximized) {
-            page.toggleZoom(page.getReference(part));
-        }
+		WorkbenchPage page = getPage();
+		if (maximized) {
+			page.toggleZoom(page.getReference(part));
+		}
 
 //        DragUtil.forceDropLocation(target);
 //        ViewStack parent = ((ViewStack) (pane.getContainer()));
@@ -79,9 +79,9 @@ public class ViewDragSource extends TestDragSource {
 //        PartPane presentablePart = wholeFolder ? null : pane;
 //        parent.paneDragStart(presentablePart, Display.getDefault()
 //                .getCursorLocation(), false);
-        Assert.fail("DND needs updated");
+		Assert.fail("DND needs updated");
 
 //        DragUtil.forceDropLocation(null);
-    }
+	}
 
 }

@@ -134,11 +134,11 @@ public class ObjectContributionClasses implements IAdapterFactory {
 		}
 	}
 
-    public interface IModelElement {
-    }
+	public interface IModelElement {
+	}
 
-    public static class ModelElement extends PlatformObject implements IModelElement {
-    }
+	public static class ModelElement extends PlatformObject implements IModelElement {
+	}
 
 	// Default contributor adapter
 
@@ -153,10 +153,10 @@ public class ObjectContributionClasses implements IAdapterFactory {
 			}
 			return null;
 		}
-        @Override
+		@Override
 		public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
 			return getAdaptedResource(adaptable).getAdapter(ResourceMapping.class);
-        }
+		}
 	}
 
 	// Contributor adapter that doesn't handle resource mappings
@@ -188,28 +188,28 @@ public class ObjectContributionClasses implements IAdapterFactory {
 		if(adapterType == ICommon.class) {
 			return (T) new Common();
 		}
-        if(adapterType == ResourceMapping.class) {
+		if(adapterType == ResourceMapping.class) {
 			return (T) new ResourceMapping() {
-                @Override
+				@Override
 				public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
-                    return new ResourceTraversal[] {
-                            new ResourceTraversal(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, IResource.DEPTH_INFINITE, IResource.NONE)
-                    };
-                }
-                @Override
+					return new ResourceTraversal[] {
+							new ResourceTraversal(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, IResource.DEPTH_INFINITE, IResource.NONE)
+					};
+				}
+				@Override
 				public IProject[] getProjects() {
-                    return ResourcesPlugin.getWorkspace().getRoot().getProjects();
-                }
-                @Override
+					return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+				}
+				@Override
 				public Object getModelObject() {
-                    return adaptableObject;
-                }
-                @Override
+					return adaptableObject;
+				}
+				@Override
 				public String getModelProviderId() {
-            		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
-                }
-            };
-        }
+					return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
+				}
+			};
+		}
 
 		return null;
 	}

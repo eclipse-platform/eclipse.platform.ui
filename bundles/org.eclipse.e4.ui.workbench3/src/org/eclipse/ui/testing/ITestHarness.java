@@ -21,9 +21,9 @@ package org.eclipse.ui.testing;
  */
 public interface ITestHarness {
 
-    /**
-     * Runs the tests.
-     */
-    public void runTests();
+	/**
+	 * Runs the tests.
+	 */
+	public void runTests();
 
 }

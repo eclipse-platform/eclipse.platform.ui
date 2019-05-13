@@ -57,25 +57,25 @@ import org.eclipse.swt.widgets.Shell;
  */
 public interface IProgressService extends IRunnableContext {
 
-    /**
-     * The time at which an operation becomes considered a long
-     * operation. Used to determine when the busy cursor will
-     * be replaced with a progress monitor.
-     * @return int
-     * @see IProgressService#busyCursorWhile(IRunnableWithProgress)
-     */
-    public int getLongOperationTime();
+	/**
+	 * The time at which an operation becomes considered a long
+	 * operation. Used to determine when the busy cursor will
+	 * be replaced with a progress monitor.
+	 * @return int
+	 * @see IProgressService#busyCursorWhile(IRunnableWithProgress)
+	 */
+	public int getLongOperationTime();
 
-    /**
-     * Register the ImageDescriptor to be the icon used for
-     * all jobs that belong to family within the workbench.
-     * @param icon ImageDescriptor that will be used when the job is being displayed
-     * @param family The family to associate with
-     * @see Job#belongsTo(Object)
-     */
-    public void registerIconForFamily(ImageDescriptor icon, Object family);
+	/**
+	 * Register the ImageDescriptor to be the icon used for
+	 * all jobs that belong to family within the workbench.
+	 * @param icon ImageDescriptor that will be used when the job is being displayed
+	 * @param family The family to associate with
+	 * @see Job#belongsTo(Object)
+	 */
+	public void registerIconForFamily(ImageDescriptor icon, Object family);
 
-    /**
+	/**
 	 * Runs the given operation in the UI thread using the given runnable context.
 	 * The given scheduling rule, if any, will be acquired for the duration of the
 	 * operation. If the rule is not available when this method is called, a
@@ -109,62 +109,62 @@ public interface IProgressService extends IRunnableContext {
 	 *                                   exception.
 	 *
 	 */
-    public void runInUI(IRunnableContext context,
-            IRunnableWithProgress runnable, ISchedulingRule rule)
-            throws InvocationTargetException, InterruptedException;
+	public void runInUI(IRunnableContext context,
+			IRunnableWithProgress runnable, ISchedulingRule rule)
+			throws InvocationTargetException, InterruptedException;
 
-    /**
-     * Get the icon that has been registered for a Job by
-     * checking if the job belongs to any of the registered
-     * families.
-     * @param job
-     * @return Icon or <code>null</code> if there isn't one.
-     * @see IProgressService#registerIconForFamily(ImageDescriptor,Object)
-     */
-    public Image getIconFor(Job job);
+	/**
+	 * Get the icon that has been registered for a Job by
+	 * checking if the job belongs to any of the registered
+	 * families.
+	 * @param job
+	 * @return Icon or <code>null</code> if there isn't one.
+	 * @see IProgressService#registerIconForFamily(ImageDescriptor,Object)
+	 */
+	public Image getIconFor(Job job);
 
-    /**
-     * Set the cursor to busy and run the runnable in a non-UI Thread.
-     * The calling thread will be blocked for the duration of the execution
-     * of the supplied runnable.
-     *
-     * After the cursor has been running for
-     * <code>getLongOperationTime()</code> replace it with
-     * a ProgressMonitorDialog so that the user may cancel.
-     * Do not open the ProgressMonitorDialog if there is already a modal
-     * dialog open.
-     *
-     * @param runnable The runnable to execute and show the progress for.
-     * @see IProgressService#getLongOperationTime
-     * @throws InvocationTargetException
-     * @throws InterruptedException
-     */
-    public void busyCursorWhile(IRunnableWithProgress runnable)
-            throws InvocationTargetException, InterruptedException;
+	/**
+	 * Set the cursor to busy and run the runnable in a non-UI Thread.
+	 * The calling thread will be blocked for the duration of the execution
+	 * of the supplied runnable.
+	 *
+	 * After the cursor has been running for
+	 * <code>getLongOperationTime()</code> replace it with
+	 * a ProgressMonitorDialog so that the user may cancel.
+	 * Do not open the ProgressMonitorDialog if there is already a modal
+	 * dialog open.
+	 *
+	 * @param runnable The runnable to execute and show the progress for.
+	 * @see IProgressService#getLongOperationTime
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
+	 */
+	public void busyCursorWhile(IRunnableWithProgress runnable)
+			throws InvocationTargetException, InterruptedException;
 
-    /**
-     * This specialization of IRunnableContext#run(boolean, boolean,
-     * IRunnableWithProgress) might run the runnable asynchronously
-     * if <code>fork</code> is <code>true</code>.
-     *
-     * @since 3.2
-     */
-    @Override
+	/**
+	 * This specialization of IRunnableContext#run(boolean, boolean,
+	 * IRunnableWithProgress) might run the runnable asynchronously
+	 * if <code>fork</code> is <code>true</code>.
+	 *
+	 * @since 3.2
+	 */
+	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
 
-    /**
-     * Open a dialog on job when it starts to run and close it
-     * when the job is finished. Wait for ProgressManagerUtil#SHORT_OPERATION_TIME
-     * before opening the dialog. Do not open if it is already done or
-     * if the user has set a preference to always run in the background.
-     *
-     * Parent the dialog from the shell.
-     *
-     * @param shell The Shell to parent the dialog from or
-     * <code>null</code> if the active shell is to be used.
-     * @param job The Job that will be reported in the dialog. job
-     * must not be <code>null</code>.
-     */
-    public void showInDialog(Shell shell, Job job);
+	/**
+	 * Open a dialog on job when it starts to run and close it
+	 * when the job is finished. Wait for ProgressManagerUtil#SHORT_OPERATION_TIME
+	 * before opening the dialog. Do not open if it is already done or
+	 * if the user has set a preference to always run in the background.
+	 *
+	 * Parent the dialog from the shell.
+	 *
+	 * @param shell The Shell to parent the dialog from or
+	 * <code>null</code> if the active shell is to be used.
+	 * @param job The Job that will be reported in the dialog. job
+	 * must not be <code>null</code>.
+	 */
+	public void showInDialog(Shell shell, Job job);
 
 }

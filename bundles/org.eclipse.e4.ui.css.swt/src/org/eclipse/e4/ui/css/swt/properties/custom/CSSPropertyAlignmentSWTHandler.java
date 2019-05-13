@@ -30,7 +30,7 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 
 	@Override
 	public void applyCSSProperty(Control control, String property,
-		    CSSValue value, String pseudo, CSSEngine engine) throws Exception {
+			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if (control instanceof Button) {
 			Button button = (Button)control;
 			String stringValue = value.getCssText().toLowerCase();

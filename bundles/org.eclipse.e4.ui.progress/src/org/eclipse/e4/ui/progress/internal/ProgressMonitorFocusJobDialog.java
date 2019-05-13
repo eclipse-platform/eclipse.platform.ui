@@ -55,11 +55,11 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 *            The shell this is parented from.
 	 */
 	public ProgressMonitorFocusJobDialog(Shell parentShell,
-	        IProgressService progressService, ProgressManager progressManager,
-	        ContentProviderFactory contentProviderFactory, FinishedJobs finishedJobs) {
+			IProgressService progressService, ProgressManager progressManager,
+			ContentProviderFactory contentProviderFactory, FinishedJobs finishedJobs) {
 		super(parentShell == null ? ProgressManagerUtil.getNonModalShell()
-		        : parentShell, progressService, progressManager,
-		        contentProviderFactory, finishedJobs);
+				: parentShell, progressService, progressManager,
+				contentProviderFactory, finishedJobs);
 		this.progressManager = progressManager;
 		setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
 				| SWT.RESIZE | SWT.MAX | SWT.MODELESS);
@@ -398,6 +398,6 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	}
 
 	protected Display getDisplay() {
-	    return Services.getInstance().getDisplay();
-    }
+		return Services.getInstance().getDisplay();
+	}
 }

@@ -33,34 +33,34 @@ public class DeviceResourceException extends RuntimeException {
 	 * create a resource and an embedded low-level exception describing the cause
 	 *
 	 * @param missingResource
-     * @param cause cause of the exception (or null if none)
+	 * @param cause cause of the exception (or null if none)
 	 */
-    public DeviceResourceException(DeviceResourceDescriptor missingResource, Throwable cause) {
-        super("Unable to create resource " + missingResource.toString()); //$NON-NLS-1$
-        // don't pass the cause to super, to allow compilation against JCL Foundation (bug 80059)
-        this.cause = cause;
-    }
+	public DeviceResourceException(DeviceResourceDescriptor missingResource, Throwable cause) {
+		super("Unable to create resource " + missingResource.toString()); //$NON-NLS-1$
+		// don't pass the cause to super, to allow compilation against JCL Foundation (bug 80059)
+		this.cause = cause;
+	}
 
-    /**
-     * Creates a DeviceResourceException indicating an error attempting to
-     * create a resource
-     *
-     * @param missingResource
-     */
-    public DeviceResourceException(DeviceResourceDescriptor missingResource) {
-        this(missingResource, null);
-    }
+	/**
+	 * Creates a DeviceResourceException indicating an error attempting to
+	 * create a resource
+	 *
+	 * @param missingResource
+	 */
+	public DeviceResourceException(DeviceResourceDescriptor missingResource) {
+		this(missingResource, null);
+	}
 
-    /**
-     * Returns the cause of this throwable or <code>null</code> if the
-     * cause is nonexistent or unknown.
-     *
-     * @return the cause or <code>null</code>
-     * @since 3.1
-     */
-    @Override
+	/**
+	 * Returns the cause of this throwable or <code>null</code> if the
+	 * cause is nonexistent or unknown.
+	 *
+	 * @return the cause or <code>null</code>
+	 * @since 3.1
+	 */
+	@Override
 	public Throwable getCause() {
-        return cause;
-    }
+		return cause;
+	}
 
 }

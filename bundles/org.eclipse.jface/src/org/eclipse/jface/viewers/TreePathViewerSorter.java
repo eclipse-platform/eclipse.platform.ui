@@ -53,55 +53,55 @@ public class TreePathViewerSorter extends ViewerSorter {
 	 * {@code ViewerSorter#sort(Viewer, Object[])}. Subclasses may override.
 	 * @param viewer the viewer
 	 * @param parentPath the parent path for the two elements
-     * @param e1 the first element
-     * @param e2 the second element
-     * @return a negative number if the first element is less  than the
-     *  second element; the value <code>0</code> if the first element is
-     *  equal to the second element; and a positive
+	 * @param e1 the first element
+	 * @param e2 the second element
+	 * @return a negative number if the first element is less  than the
+	 *  second element; the value <code>0</code> if the first element is
+	 *  equal to the second element; and a positive
 	 */
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
 		return compare(viewer, e1, e2);
 	}
 
 	/**
-     * Returns whether this viewer sorter would be affected
-     * by a change to the given property of the given element.
-     * The provided path is
+	 * Returns whether this viewer sorter would be affected
+	 * by a change to the given property of the given element.
+	 * The provided path is
 	 * relative to the viewer input. The parent path will
 	 * be <code>null</code> when the elements are root elements.
-     * <p>
-     * The default implementation of this method calls
-     * {@code ViewerSorter#isSorterProperty(Object, String)}.
-     * Subclasses may reimplement.
+	 * <p>
+	 * The default implementation of this method calls
+	 * {@code ViewerSorter#isSorterProperty(Object, String)}.
+	 * Subclasses may reimplement.
 	 * @param parentPath the parent path of the element
-     * @param element the element
-     * @param property the property
-     * @return <code>true</code> if the sorting would be affected,
-     *    and <code>false</code> if it would be unaffected
+	 * @param element the element
+	 * @param property the property
+	 * @return <code>true</code> if the sorting would be affected,
+	 *    and <code>false</code> if it would be unaffected
 	 */
-    public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
-        return isSorterProperty(element, property);
-    }
+	public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
+		return isSorterProperty(element, property);
+	}
 
-    /**
-     * Sorts the given elements in-place, modifying the given array.
-     * The provided path is
+	/**
+	 * Sorts the given elements in-place, modifying the given array.
+	 * The provided path is
 	 * relative to the viewer input. The parent path will
 	 * be <code>null</code> when the elements are root elements.
-     * <p>
-     * The default implementation of this method uses the
-     * java.util.Arrays#sort algorithm on the given array,
-     * calling {@link #compare(Viewer, TreePath, Object, Object)} to compare elements.
-     * </p>
-     * <p>
-     * Subclasses may reimplement this method to provide a more optimized implementation.
-     * </p>
-     *
-     * @param viewer the viewer
-     * @param parentPath the parent path of the given elements
-     * @param elements the elements to sort
-     */
-    public void sort(final Viewer viewer, final TreePath parentPath, Object[] elements) {
-        Arrays.sort(elements, (a, b) -> TreePathViewerSorter.this.compare(viewer, parentPath, a, b));
-    }
+	 * <p>
+	 * The default implementation of this method uses the
+	 * java.util.Arrays#sort algorithm on the given array,
+	 * calling {@link #compare(Viewer, TreePath, Object, Object)} to compare elements.
+	 * </p>
+	 * <p>
+	 * Subclasses may reimplement this method to provide a more optimized implementation.
+	 * </p>
+	 *
+	 * @param viewer the viewer
+	 * @param parentPath the parent path of the given elements
+	 * @param elements the elements to sort
+	 */
+	public void sort(final Viewer viewer, final TreePath parentPath, Object[] elements) {
+		Arrays.sort(elements, (a, b) -> TreePathViewerSorter.this.compare(viewer, parentPath, a, b));
+	}
 }

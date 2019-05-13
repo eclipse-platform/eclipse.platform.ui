@@ -40,94 +40,94 @@ import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 @Deprecated
 public class CreateFileAction extends SelectionListenerAction {
 
-    /**
-     * The id of this action.
-     */
-    public static final String ID = PlatformUI.PLUGIN_ID + ".CreateFileAction";//$NON-NLS-1$
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CreateFileAction";//$NON-NLS-1$
 
-    /**
-     * The shell in which to show any dialogs.
-     */
-    protected IShellProvider shellProvider;
+	/**
+	 * The shell in which to show any dialogs.
+	 */
+	protected IShellProvider shellProvider;
 
-    /**
-     * Creates a new action for creating a file resource.
-     *
-     * @param shell the shell for any dialogs
-     *
-     * @deprecated {@link #CreateFileAction(IShellProvider)}
-     */
-    @Deprecated
+	/**
+	 * Creates a new action for creating a file resource.
+	 *
+	 * @param shell the shell for any dialogs
+	 *
+	 * @deprecated {@link #CreateFileAction(IShellProvider)}
+	 */
+	@Deprecated
 	public CreateFileAction(final Shell shell) {
-        super(IDEWorkbenchMessages.CreateFileAction_text);
-        Assert.isNotNull(shell);
-        shellProvider = () -> shell;
-        initAction();
-    }
+		super(IDEWorkbenchMessages.CreateFileAction_text);
+		Assert.isNotNull(shell);
+		shellProvider = () -> shell;
+		initAction();
+	}
 
-    /**
-     * Creates a new action for creating a file resource.
-     *
-     * @param provider the shell for any dialogs
-     *
-     * @deprecated see deprecated tag on class
-     * @since 3.4
-     */
-    @Deprecated
+	/**
+	 * Creates a new action for creating a file resource.
+	 *
+	 * @param provider the shell for any dialogs
+	 *
+	 * @deprecated see deprecated tag on class
+	 * @since 3.4
+	 */
+	@Deprecated
 	public CreateFileAction(IShellProvider provider){
-    	super(IDEWorkbenchMessages.CreateFileAction_toolTip);
-    	Assert.isNotNull(provider);
-    	shellProvider = provider;
-    	initAction();
-    }
-    /**
-     * Initializes for the constructor.
-     */
-    private void initAction(){
-    	setToolTipText(IDEWorkbenchMessages.CreateFileAction_toolTip);
-        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-                .getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
-        setId(ID);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+		super(IDEWorkbenchMessages.CreateFileAction_toolTip);
+		Assert.isNotNull(provider);
+		shellProvider = provider;
+		initAction();
+	}
+	/**
+	 * Initializes for the constructor.
+	 */
+	private void initAction(){
+		setToolTipText(IDEWorkbenchMessages.CreateFileAction_toolTip);
+		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
+		setId(ID);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.CREATE_FILE_ACTION);
-    }
-    /**
-     * The <code>CreateFileAction</code> implementation of this
-     * <code>IAction</code> method opens a <code>BasicNewFileResourceWizard</code>
-     * in a wizard dialog under the shell passed to the constructor.
-     */
-    @Override
+	}
+	/**
+	 * The <code>CreateFileAction</code> implementation of this
+	 * <code>IAction</code> method opens a <code>BasicNewFileResourceWizard</code>
+	 * in a wizard dialog under the shell passed to the constructor.
+	 */
+	@Override
 	public void run() {
-        BasicNewFileResourceWizard wizard = new BasicNewFileResourceWizard();
-        wizard.init(PlatformUI.getWorkbench(), getStructuredSelection());
-        wizard.setNeedsProgressMonitor(true);
-        WizardDialog dialog = new WizardDialog(shellProvider.getShell(), wizard);
-        dialog.create();
-        dialog.getShell().setText(
-                IDEWorkbenchMessages.CreateFileAction_title);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
-                IIDEHelpContextIds.NEW_FILE_WIZARD);
-        dialog.open();
-    }
+		BasicNewFileResourceWizard wizard = new BasicNewFileResourceWizard();
+		wizard.init(PlatformUI.getWorkbench(), getStructuredSelection());
+		wizard.setNeedsProgressMonitor(true);
+		WizardDialog dialog = new WizardDialog(shellProvider.getShell(), wizard);
+		dialog.create();
+		dialog.getShell().setText(
+				IDEWorkbenchMessages.CreateFileAction_title);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+				IIDEHelpContextIds.NEW_FILE_WIZARD);
+		dialog.open();
+	}
 
-    /**
-     * The <code>CreateFileAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method enables the action only
-     * if the selection contains folders and open projects.
-     */
-    @Override
+	/**
+	 * The <code>CreateFileAction</code> implementation of this
+	 * <code>SelectionListenerAction</code> method enables the action only
+	 * if the selection contains folders and open projects.
+	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
-        if (!super.updateSelection(s)) {
-            return false;
-        }
+		if (!super.updateSelection(s)) {
+			return false;
+		}
 		Iterator<? extends IResource> resources = getSelectedResources().iterator();
-        while (resources.hasNext()) {
-            IResource resource = resources.next();
-            if (!resourceIsType(resource, IResource.PROJECT | IResource.FOLDER)
-                    || !resource.isAccessible()) {
-                return false;
-            }
-        }
-        return true;
-    }
+		while (resources.hasNext()) {
+			IResource resource = resources.next();
+			if (!resourceIsType(resource, IResource.PROJECT | IResource.FOLDER)
+					|| !resource.isAccessible()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

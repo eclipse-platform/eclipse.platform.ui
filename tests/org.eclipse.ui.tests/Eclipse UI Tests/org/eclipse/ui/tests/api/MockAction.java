@@ -19,38 +19,38 @@ import org.eclipse.ui.tests.TestPlugin;
 
 public class MockAction extends Action {
 
-    private boolean hasRun = false;
+	private boolean hasRun = false;
 
-    /**
-     * Constructor for MockAction
-     */
-    protected MockAction(String text) {
-        super(text);
-        TestPlugin plugin = TestPlugin.getDefault();
-        setImageDescriptor(plugin.getImageDescriptor("anything.gif"));
-        setToolTipText(text);
-    }
+	/**
+	 * Constructor for MockAction
+	 */
+	protected MockAction(String text) {
+		super(text);
+		TestPlugin plugin = TestPlugin.getDefault();
+		setImageDescriptor(plugin.getImageDescriptor("anything.gif"));
+		setToolTipText(text);
+	}
 
-    /**
-     * Constructor for MockAction
-     */
-    protected MockAction(String text, ImageDescriptor image) {
-        super(text, image);
-        setToolTipText(text);
-    }
+	/**
+	 * Constructor for MockAction
+	 */
+	protected MockAction(String text, ImageDescriptor image) {
+		super(text, image);
+		setToolTipText(text);
+	}
 
-    @Override
+	@Override
 	public void run() {
-        hasRun = true;
-    }
+		hasRun = true;
+	}
 
-    public void clearRun() {
-        hasRun = false;
-    }
+	public void clearRun() {
+		hasRun = false;
+	}
 
-    public boolean getRun() {
-        return hasRun;
-    }
+	public boolean getRun() {
+		return hasRun;
+	}
 
 }
 

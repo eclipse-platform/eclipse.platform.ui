@@ -63,207 +63,207 @@ import com.ibm.icu.text.NumberFormat;
 
 public class PropertyScenarios extends ScenariosTestCase {
 
-    private Adventure adventure;
+	private Adventure adventure;
 
-    @Override
+	@Override
 	@Before
 	public void setUp() throws Exception {
-        super.setUp();
-        // do any setup work here
-        adventure = SampleData.WINTER_HOLIDAY;
-    }
+		super.setUp();
+		// do any setup work here
+		adventure = SampleData.WINTER_HOLIDAY;
+	}
 
-    @Override
+	@Override
 	@After
 	public void tearDown() throws Exception {
-        // do any teardown work here
-        super.tearDown();
-    }
+		// do any teardown work here
+		super.tearDown();
+	}
 
-    @Test
+	@Test
 	public void testEnterText() {
-        // just to make sure enterText() generates a FocusOut event.
-        Text text = new Text(getComposite(), SWT.BORDER);
-        final boolean[] focusLostHolder = { false };
-        text.addFocusListener(new FocusListener() {
+		// just to make sure enterText() generates a FocusOut event.
+		Text text = new Text(getComposite(), SWT.BORDER);
+		final boolean[] focusLostHolder = { false };
+		text.addFocusListener(new FocusListener() {
 
-            @Override
+			@Override
 			public void focusGained(FocusEvent e) {
-                // only interested in focus lost events
-            }
+				// only interested in focus lost events
+			}
 
-            @Override
+			@Override
 			public void focusLost(FocusEvent e) {
-                focusLostHolder[0] = true;
-            }
-        });
-        enterText(text, "hallo");
-        assertTrue(focusLostHolder[0]);
-    }
+				focusLostHolder[0] = true;
+			}
+		});
+		enterText(text, "hallo");
+		assertTrue(focusLostHolder[0]);
+	}
 
-    @Test
+	@Test
 	public void testScenario01() {
-        Text text = new Text(getComposite(), SWT.BORDER);
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(adventure, "name"));
+		Text text = new Text(getComposite(), SWT.BORDER);
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(adventure, "name"));
 
-        // getDbc().bind(text, new Property(adventure, "name"), null);
-        // uncomment the following line to see what's happening
-        // spinEventLoop(1);
-        assertEquals(adventure.getName(), text.getText());
-        enterText(text, "foobar");
-        // uncomment the following line to see what's happening
-        // spinEventLoop(1);
-        assertEquals("foobar", adventure.getName());
-        adventure.setName("barfoo");
-        // uncomment the following line to see what's happening
-        // spinEventLoop(1);
-        assertEquals("barfoo", text.getText());
-    }
+		// getDbc().bind(text, new Property(adventure, "name"), null);
+		// uncomment the following line to see what's happening
+		// spinEventLoop(1);
+		assertEquals(adventure.getName(), text.getText());
+		enterText(text, "foobar");
+		// uncomment the following line to see what's happening
+		// spinEventLoop(1);
+		assertEquals("foobar", adventure.getName());
+		adventure.setName("barfoo");
+		// uncomment the following line to see what's happening
+		// spinEventLoop(1);
+		assertEquals("barfoo", text.getText());
+	}
 
-    @Test
+	@Test
 	public void testScenario02() {
-        // Binding the name property of an Adventure object to the contents of
-        // Text controls, no conversion, no validation. The Text widget editable
-        // is set to false.by the developer (can not change the name)
-        Text text = new Text(getComposite(), SWT.READ_ONLY);
+		// Binding the name property of an Adventure object to the contents of
+		// Text controls, no conversion, no validation. The Text widget editable
+		// is set to false.by the developer (can not change the name)
+		Text text = new Text(getComposite(), SWT.READ_ONLY);
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.None),
-                BeansObservables.observeValue(adventure, "name"));
-        assertEquals(adventure.getName(), text.getText());
-    }
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.None),
+				BeansObservables.observeValue(adventure, "name"));
+		assertEquals(adventure.getName(), text.getText());
+	}
 
-    @Test
+	@Test
 	public void testScenario03() {
-        // Binding of a read-only property of an Adventure object to the
-        // contents of Text controls, no conversion, no validation. Text control
-        // is not editable as a side effect of binding to a read-only property..
-        Cart cart = SampleData.CART;
-        cart.setAdventureDays(42);
-        // bind to the lodgingDays feature, which is read-only and always one
-        // less than the number of adventure days.
-        Text text = new Text(getComposite(), SWT.BORDER);
+		// Binding of a read-only property of an Adventure object to the
+		// contents of Text controls, no conversion, no validation. Text control
+		// is not editable as a side effect of binding to a read-only property..
+		Cart cart = SampleData.CART;
+		cart.setAdventureDays(42);
+		// bind to the lodgingDays feature, which is read-only and always one
+		// less than the number of adventure days.
+		Text text = new Text(getComposite(), SWT.BORDER);
 
-        System.out.println("Expecting message about not being able to attach a listener");
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(cart, "lodgingDays"));
+		System.out.println("Expecting message about not being able to attach a listener");
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(cart, "lodgingDays"));
 
-        assertEquals(Integer.valueOf(cart.getLodgingDays()).toString(), text.getText());
-    }
+		assertEquals(Integer.valueOf(cart.getLodgingDays()).toString(), text.getText());
+	}
 
-    @Test
+	@Test
 	public void testScenario04() {
-        // Binding a nested property of an Adventure object to the content of a
-        // Text control, no conversion, no validation.
-        Text text = new Text(getComposite(), SWT.BORDER);
-        // TODO Scenario needs to be more specific - I'm binding to the default
-        // lodging's description of an adventure. What do we expect to happen
-        // when the default lodging changes? If we expect no change, then this
-        // scenario does not introduce anything new. If we expect the binding to
-        // be to the new default lodging's description, shouldn't we move this
-        // scenario to the master/detail section? I'm assuming the latter for
-        // now.
+		// Binding a nested property of an Adventure object to the content of a
+		// Text control, no conversion, no validation.
+		Text text = new Text(getComposite(), SWT.BORDER);
+		// TODO Scenario needs to be more specific - I'm binding to the default
+		// lodging's description of an adventure. What do we expect to happen
+		// when the default lodging changes? If we expect no change, then this
+		// scenario does not introduce anything new. If we expect the binding to
+		// be to the new default lodging's description, shouldn't we move this
+		// scenario to the master/detail section? I'm assuming the latter for
+		// now.
 
-        IObservableValue defaultLodging = BeansObservables.observeDetailValue(
-        		BeansObservables.observeValue(adventure, "defaultLodging"),
-        		"description", String.class);
+		IObservableValue defaultLodging = BeansObservables.observeDetailValue(
+				BeansObservables.observeValue(adventure, "defaultLodging"),
+				"description", String.class);
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), defaultLodging);
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), defaultLodging);
 
-        // test changing the description
-        assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
-        enterText(text, "foobar");
-        assertEquals("foobar", adventure.getDefaultLodging().getDescription());
-        adventure.getDefaultLodging().setDescription("barfoo");
-        assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
+		// test changing the description
+		assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
+		enterText(text, "foobar");
+		assertEquals("foobar", adventure.getDefaultLodging().getDescription());
+		adventure.getDefaultLodging().setDescription("barfoo");
+		assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
 
-        // test changing the default lodging
-        adventure.setDefaultLodging(SampleData.CAMP_GROUND);
-        assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
-        adventure.getDefaultLodging().setDescription("barfo");
-        assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
+		// test changing the default lodging
+		adventure.setDefaultLodging(SampleData.CAMP_GROUND);
+		assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
+		adventure.getDefaultLodging().setDescription("barfo");
+		assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
 
-        adventure.setDefaultLodging(null);
-        assertEquals("", text.getText());
+		adventure.setDefaultLodging(null);
+		assertEquals("", text.getText());
 
-        adventure.setDefaultLodging(SampleData.FIVE_STAR_HOTEL);
-        assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
-        adventure.getDefaultLodging().setDescription("barf");
-        assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
+		adventure.setDefaultLodging(SampleData.FIVE_STAR_HOTEL);
+		assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
+		adventure.getDefaultLodging().setDescription("barf");
+		assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
 
-    }
+	}
 
-    @Test
+	@Test
 	public void testScenario05() {
-        // Binding the name property of an Adventure object to the contents of
-        // Text controls where conversion occurs � the model data is held all
-        // in
-        // uppercase and displayed in lowercase with the first letter
-        // capitalized.
-        Text text = new Text(getComposite(), SWT.BORDER);
-        adventure.setName("UPPERCASE");
+		// Binding the name property of an Adventure object to the contents of
+		// Text controls where conversion occurs � the model data is held all
+		// in
+		// uppercase and displayed in lowercase with the first letter
+		// capitalized.
+		Text text = new Text(getComposite(), SWT.BORDER);
+		adventure.setName("UPPERCASE");
 
-        IConverter converter1 = new IConverter() {
-            @Override
+		IConverter converter1 = new IConverter() {
+			@Override
 			public Object getFromType() {
-                return String.class;
-            }
+				return String.class;
+			}
 
-            @Override
+			@Override
 			public Object getToType() {
-                return String.class;
-            }
+				return String.class;
+			}
 
-            @Override
+			@Override
 			public Object convert(Object toObject) {
-                String modelValue = (String) toObject;
-                if (modelValue == null || modelValue.isEmpty()) {
-                    return modelValue;
-                }
-                String firstChar = modelValue.substring(0, 1);
-                String remainingChars = modelValue.substring(1);
-                return firstChar.toUpperCase() + remainingChars.toLowerCase();
-            }
-        };
-        IConverter converter2 = new IConverter() {
-            @Override
+				String modelValue = (String) toObject;
+				if (modelValue == null || modelValue.isEmpty()) {
+					return modelValue;
+				}
+				String firstChar = modelValue.substring(0, 1);
+				String remainingChars = modelValue.substring(1);
+				return firstChar.toUpperCase() + remainingChars.toLowerCase();
+			}
+		};
+		IConverter converter2 = new IConverter() {
+			@Override
 			public Object getFromType() {
-                return String.class;
-            }
+				return String.class;
+			}
 
-            @Override
+			@Override
 			public Object getToType() {
-                return String.class;
-            }
+				return String.class;
+			}
 
-            @Override
+			@Override
 			public Object convert(Object fromObject) {
-                return ((String) fromObject).toUpperCase();
-            }
-        };
+				return ((String) fromObject).toUpperCase();
+			}
+		};
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(adventure, "name"),
-                new UpdateValueStrategy().setConverter(converter2), new UpdateValueStrategy().setConverter(converter1));
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(adventure, "name"),
+				new UpdateValueStrategy().setConverter(converter2), new UpdateValueStrategy().setConverter(converter1));
 
-        // spinEventLoop(1);
-        assertEquals("Uppercase", text.getText());
-        enterText(text, "lowercase");
-        // spinEventLoop(1);
-        // TODO If we wanted to "canonicalize" the value in the text field, how
-        // could we do that?
-        assertEquals("LOWERCASE", adventure.getName());
-    }
+		// spinEventLoop(1);
+		assertEquals("Uppercase", text.getText());
+		enterText(text, "lowercase");
+		// spinEventLoop(1);
+		// TODO If we wanted to "canonicalize" the value in the text field, how
+		// could we do that?
+		assertEquals("LOWERCASE", adventure.getName());
+	}
 
-    @Test
+	@Test
 	public void testScenario06() {
-        // Binding the name property of an Adventure object to the contents of
-        // Text controls where validation occurs and the name cannot be longer
-        // than 15 characters and cannot contain spaces
-        Text text = new Text(getComposite(), SWT.BORDER);
-        final String noSpacesMessage = "Name must not contain spaces.";
-        final String max15CharactersMessage = "Maximum length for name is 15 characters.";
-        adventure.setName("ValidValue");
+		// Binding the name property of an Adventure object to the contents of
+		// Text controls where validation occurs and the name cannot be longer
+		// than 15 characters and cannot contain spaces
+		Text text = new Text(getComposite(), SWT.BORDER);
+		final String noSpacesMessage = "Name must not contain spaces.";
+		final String max15CharactersMessage = "Maximum length for name is 15 characters.";
+		adventure.setName("ValidValue");
 
 		IValidator validator = value -> {
 			String stringValue = (String) value;
@@ -280,7 +280,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 //                .setTargetToModelConverter(new IdentityConverter(String.class))
 //                .addTargetValidator(BindingEvent.PIPELINE_VALUE_CHANGING, validator);
 
-        Binding binding = getDbc().bindValue(
+		Binding binding = getDbc().bindValue(
 				SWTObservables.observeText(text, SWT.Modify),
 				BeansObservables.observeValue(adventure, "name"),
 				new UpdateValueStrategy().setConverter(new IdentityConverter(
@@ -288,29 +288,29 @@ public class PropertyScenarios extends ScenariosTestCase {
 				new UpdateValueStrategy().setConverter(new IdentityConverter(
 						String.class)));
 
-        // no validation message
+		// no validation message
 		assertTrue(binding.getValidationStatus().getValue().isOK());
-        enterText(text, "Invalid Value");
-        assertEquals(noSpacesMessage, binding.getValidationStatus().getValue().getMessage());
-        assertEquals("ValidValue", adventure.getName());
-        text.setText("InvalidValueBecauseTooLong");
-        assertEquals(max15CharactersMessage,
-                binding.getValidationStatus().getValue().getMessage());
-        assertEquals("ValidValue", adventure.getName());
-        enterText(text, "anothervalid");
-        assertTrue(binding.getValidationStatus().getValue().isOK());
-        assertEquals("anothervalid", adventure.getName());
-    }
+		enterText(text, "Invalid Value");
+		assertEquals(noSpacesMessage, binding.getValidationStatus().getValue().getMessage());
+		assertEquals("ValidValue", adventure.getName());
+		text.setText("InvalidValueBecauseTooLong");
+		assertEquals(max15CharactersMessage,
+				binding.getValidationStatus().getValue().getMessage());
+		assertEquals("ValidValue", adventure.getName());
+		enterText(text, "anothervalid");
+		assertTrue(binding.getValidationStatus().getValue().isOK());
+		assertEquals("anothervalid", adventure.getName());
+	}
 
-    @Test
+	@Test
 	public void testScenario07() {
-        // Binding the price property of an Adventure to a Text control. Price
-        // is a double and Text accepts String so conversion will have to occur.
-        // Validation ensure that the value is positive
-        Text text = new Text(getComposite(), SWT.BORDER);
-        adventure.setPrice(5.0);
-        final String cannotBeNegativeMessage = "Price cannot be negative.";
-        final String mustBeCurrencyMessage = "Price must be a currency.";
+		// Binding the price property of an Adventure to a Text control. Price
+		// is a double and Text accepts String so conversion will have to occur.
+		// Validation ensure that the value is positive
+		Text text = new Text(getComposite(), SWT.BORDER);
+		adventure.setPrice(5.0);
+		final String cannotBeNegativeMessage = "Price cannot be negative.";
+		final String mustBeCurrencyMessage = "Price must be a currency.";
 
 		IValidator validator = value -> {
 			String stringValue = (String) value;
@@ -325,7 +325,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 			}
 		};
 
-        //Create a number formatter that will display one decimal position.
+		//Create a number formatter that will display one decimal position.
 		NumberFormat numberFormat = NumberFormat.getInstance();
 		numberFormat.setMinimumFractionDigits(1);
 
@@ -342,62 +342,62 @@ public class PropertyScenarios extends ScenariosTestCase {
 				new UpdateValueStrategy().setConverter(modelToTargetConverter));
 
 		String expected = numberFormat.format(adventure.getPrice());
-        assertEquals(expected, text.getText());
-        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+		assertEquals(expected, text.getText());
+		assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
 
-        String toEnter = numberFormat.format(0.65);
-        enterText(text, toEnter);
-        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-        assertEquals(0.65, adventure.getPrice(), 0.0001);
+		String toEnter = numberFormat.format(0.65);
+		enterText(text, toEnter);
+		assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+		assertEquals(0.65, adventure.getPrice(), 0.0001);
 
-        adventure.setPrice(42.24);
-        expected = numberFormat.format(adventure.getPrice());
-        assertEquals(expected, text.getText());
-        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+		adventure.setPrice(42.24);
+		expected = numberFormat.format(adventure.getPrice());
+		assertEquals(expected, text.getText());
+		assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
 
-        enterText(text, "jygt");
-        assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
+		enterText(text, "jygt");
+		assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
 
-        toEnter = numberFormat.format(-23.9);
-        enterText(text, toEnter);
-        assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
-        assertEquals(42.24, adventure.getPrice(), 0.0001);
+		toEnter = numberFormat.format(-23.9);
+		enterText(text, toEnter);
+		assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
+		assertEquals(42.24, adventure.getPrice(), 0.0001);
 
-        adventure.setPrice(0.0);
-        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-    }
+		adventure.setPrice(0.0);
+		assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+	}
 
-    @Test
+	@Test
 	public void testScenario08() {
-        // Binding the price property of an Adventure to a Text control but with
-        // custom conversion � the double will be validated to only have two
-        // decimal places and displayed with a leading currency symbol, and can
-        // be entered with or without the currency symbol.
-        Text text = new Text(getComposite(), SWT.BORDER);
-        adventure.setPrice(5.0);
-        final String cannotBeNegativeMessage = "Price cannot be negative.";
-        final String mustBeCurrencyMessage = "Price must be a currency.";
-        final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.CANADA);
+		// Binding the price property of an Adventure to a Text control but with
+		// custom conversion � the double will be validated to only have two
+		// decimal places and displayed with a leading currency symbol, and can
+		// be entered with or without the currency symbol.
+		Text text = new Text(getComposite(), SWT.BORDER);
+		adventure.setPrice(5.0);
+		final String cannotBeNegativeMessage = "Price cannot be negative.";
+		final String mustBeCurrencyMessage = "Price must be a currency.";
+		final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.CANADA);
 
-        IConverter toCurrency = new Converter(double.class, String.class) {
-            @Override
+		IConverter toCurrency = new Converter(double.class, String.class) {
+			@Override
 			public Object convert(Object toObject) {
-                return currencyFormat.format(((Double) toObject).doubleValue());
-            }
-        };
+				return currencyFormat.format(((Double) toObject).doubleValue());
+			}
+		};
 
-        IConverter toDouble = new Converter(String.class, double.class) {
-            @Override
+		IConverter toDouble = new Converter(String.class, double.class) {
+			@Override
 			public Object convert(Object fromObject) {
-                try {
-                    return new Double(currencyFormat.parse((String) fromObject).doubleValue());
-                } catch (ParseException e) {
-                    // TODO throw something like
-                    // IllegalConversionException?
-                    return new Double(0);
-                }
-            }
-        };
+				try {
+					return new Double(currencyFormat.parse((String) fromObject).doubleValue());
+				} catch (ParseException e) {
+					// TODO throw something like
+					// IllegalConversionException?
+					return new Double(0);
+				}
+			}
+		};
 
 		IValidator validator = value -> {
 			String stringValue = (String) value;
@@ -412,193 +412,193 @@ public class PropertyScenarios extends ScenariosTestCase {
 			}
 		};
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(adventure, "price"),
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(adventure, "price"),
 new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator),new UpdateValueStrategy().setConverter(toCurrency));
 
-        String expected = currencyFormat.format(5);
-        assertEquals(expected, text.getText());
-        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+		String expected = currencyFormat.format(5);
+		assertEquals(expected, text.getText());
+		assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
 
-        String toEnter = currencyFormat.format(0.65);
-        enterText(text, toEnter);
-        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-        assertEquals(0.65, adventure.getPrice(), 0.0001);
+		String toEnter = currencyFormat.format(0.65);
+		enterText(text, toEnter);
+		assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+		assertEquals(0.65, adventure.getPrice(), 0.0001);
 
-        adventure.setPrice(42.24);
-        expected = currencyFormat.format(adventure.getPrice());
-        assertEquals(expected, text.getText());
+		adventure.setPrice(42.24);
+		expected = currencyFormat.format(adventure.getPrice());
+		assertEquals(expected, text.getText());
 
-        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-        enterText(text, "jygt");
-        assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
+		assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+		enterText(text, "jygt");
+		assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
 
-        toEnter = currencyFormat.format(-23.9);
-        enterText(text, toEnter);
+		toEnter = currencyFormat.format(-23.9);
+		enterText(text, toEnter);
 
-        assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
-        assertEquals(42.24, adventure.getPrice(), 0.0001);
-        adventure.setPrice(0.0);
-        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-    }
+		assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
+		assertEquals(42.24, adventure.getPrice(), 0.0001);
+		adventure.setPrice(0.0);
+		assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+	}
 
-    @Test
+	@Test
 	public void testScenario09() {
-        // Binding a boolean property to a CheckBox. Adventure will have a
-        // Boolean property �petsAllowed�
-        Button checkbox = new Button(getComposite(), SWT.CHECK);
-        // checkbox.setText("Pets allowed");
-        // checkbox.setLayoutData(new GridData(SWT.LEFT,SWT.TOP, false,false));
-        adventure.setPetsAllowed(true);
+		// Binding a boolean property to a CheckBox. Adventure will have a
+		// Boolean property �petsAllowed�
+		Button checkbox = new Button(getComposite(), SWT.CHECK);
+		// checkbox.setText("Pets allowed");
+		// checkbox.setLayoutData(new GridData(SWT.LEFT,SWT.TOP, false,false));
+		adventure.setPetsAllowed(true);
 
-        getDbc().bindValue(SWTObservables.observeSelection(checkbox),
-                BeansObservables.observeValue(adventure, "petsAllowed"));
+		getDbc().bindValue(SWTObservables.observeSelection(checkbox),
+				BeansObservables.observeValue(adventure, "petsAllowed"));
 
-        assertEquals(true, checkbox.getSelection());
-        setButtonSelectionWithEvents(checkbox, false);
-        assertEquals(false, adventure.isPetsAllowed());
-        adventure.setPetsAllowed(true);
-        assertEquals(true, checkbox.getSelection());
-    }
+		assertEquals(true, checkbox.getSelection());
+		setButtonSelectionWithEvents(checkbox, false);
+		assertEquals(false, adventure.isPetsAllowed());
+		adventure.setPetsAllowed(true);
+		assertEquals(true, checkbox.getSelection());
+	}
 
-    @Test
+	@Test
 	public void testScenario10() {
-        // Binding a Transportation departure time to a Text control that
-        // formats and validates the time to and from a String. There are
-        // property bindings that bind elements of the GUI to elements to GUI
-        // and also elements of the domain to elements of the domain
-        // TODO fail("not implemented");
-    }
+		// Binding a Transportation departure time to a Text control that
+		// formats and validates the time to and from a String. There are
+		// property bindings that bind elements of the GUI to elements to GUI
+		// and also elements of the domain to elements of the domain
+		// TODO fail("not implemented");
+	}
 
-    @Test
+	@Test
 	public void testScenario11() {
-        // Binding the max value of a spinner to another spinner.
-        Spinner spinner1 = new Spinner(getComposite(), SWT.NONE);
-        spinner1.setSelection(10);
-        spinner1.setMinimum(1);
-        spinner1.setMaximum(100);
-        Spinner spinner2 = new Spinner(getComposite(), SWT.NONE);
-        spinner2.setMaximum(1);
+		// Binding the max value of a spinner to another spinner.
+		Spinner spinner1 = new Spinner(getComposite(), SWT.NONE);
+		spinner1.setSelection(10);
+		spinner1.setMinimum(1);
+		spinner1.setMaximum(100);
+		Spinner spinner2 = new Spinner(getComposite(), SWT.NONE);
+		spinner2.setMaximum(1);
 
-        getDbc().bindValue(SWTObservables.observeSelection(spinner1), SWTObservables.observeMax(spinner2));
+		getDbc().bindValue(SWTObservables.observeSelection(spinner1), SWTObservables.observeMax(spinner2));
 
-        assertEquals(1, spinner1.getSelection());
-        spinner1.setSelection(10);
-        spinner1.notifyListeners(SWT.Modify, new Event());
-        assertEquals(10, spinner2.getMaximum());
-    }
+		assertEquals(1, spinner1.getSelection());
+		spinner1.setSelection(10);
+		spinner1.notifyListeners(SWT.Modify, new Event());
+		assertEquals(10, spinner2.getMaximum());
+	}
 
-    @Test
+	@Test
 	public void testScenario12() {
-        // Binding the enabled state of several Text controls to a check box.
-        // There will be two check boxes, so as each is enabled/disabled the
-        // other one follows as do the states of the Text controls.
-        Button checkbox1 = new Button(getComposite(), SWT.CHECK);
-        checkbox1.setSelection(false);
-        Button checkbox2 = new Button(getComposite(), SWT.CHECK);
-        checkbox2.setSelection(false);
-        Text text1 = new Text(getComposite(), SWT.NONE);
-        Text text2 = new Text(getComposite(), SWT.NONE);
+		// Binding the enabled state of several Text controls to a check box.
+		// There will be two check boxes, so as each is enabled/disabled the
+		// other one follows as do the states of the Text controls.
+		Button checkbox1 = new Button(getComposite(), SWT.CHECK);
+		checkbox1.setSelection(false);
+		Button checkbox2 = new Button(getComposite(), SWT.CHECK);
+		checkbox2.setSelection(false);
+		Text text1 = new Text(getComposite(), SWT.NONE);
+		Text text2 = new Text(getComposite(), SWT.NONE);
 
-        IObservableValue checkbox1Selected = SWTObservables.observeSelection(checkbox1);
-        IObservableValue checkbox2Selected = SWTObservables.observeSelection(checkbox2);
+		IObservableValue checkbox1Selected = SWTObservables.observeSelection(checkbox1);
+		IObservableValue checkbox2Selected = SWTObservables.observeSelection(checkbox2);
 
-        // bind the two checkboxes so that if one is checked, the other is not
-        // and vice versa.
-        Converter negatingConverter = new Converter(boolean.class, boolean.class) {
-            private Boolean negated(Boolean booleanObject) {
-                return Boolean.valueOf(!booleanObject.booleanValue());
-            }
+		// bind the two checkboxes so that if one is checked, the other is not
+		// and vice versa.
+		Converter negatingConverter = new Converter(boolean.class, boolean.class) {
+			private Boolean negated(Boolean booleanObject) {
+				return Boolean.valueOf(!booleanObject.booleanValue());
+			}
 
-            @Override
+			@Override
 			public Object convert(Object targetObject) {
-                return negated((Boolean) targetObject);
-            }
-        };
+				return negated((Boolean) targetObject);
+			}
+		};
 
-        getDbc().bindValue(checkbox1Selected,
-                checkbox2Selected,new UpdateValueStrategy().setConverter(negatingConverter),
-                new UpdateValueStrategy().setConverter(negatingConverter));
+		getDbc().bindValue(checkbox1Selected,
+				checkbox2Selected,new UpdateValueStrategy().setConverter(negatingConverter),
+				new UpdateValueStrategy().setConverter(negatingConverter));
 
-        // bind the enabled state of the two text widgets to one of the
-        // checkboxes each.
+		// bind the enabled state of the two text widgets to one of the
+		// checkboxes each.
 
-        getDbc().bindValue(SWTObservables.observeEnabled(text1), checkbox1Selected);
-        getDbc().bindValue(SWTObservables.observeEnabled(text2), checkbox2Selected);
+		getDbc().bindValue(SWTObservables.observeEnabled(text1), checkbox1Selected);
+		getDbc().bindValue(SWTObservables.observeEnabled(text2), checkbox2Selected);
 
-        assertEquals(true, text1.getEnabled());
-        assertEquals(false, text2.getEnabled());
-        assertEquals(true, checkbox1.getSelection());
-        setButtonSelectionWithEvents(checkbox1, false);
-        assertEquals(false, text1.getEnabled());
-        assertEquals(true, text2.getEnabled());
-        assertEquals(true, checkbox2.getSelection());
-        setButtonSelectionWithEvents(checkbox2, false);
-        assertEquals(true, text1.getEnabled());
-        assertEquals(false, text2.getEnabled());
-        assertEquals(true, checkbox1.getSelection());
-    }
+		assertEquals(true, text1.getEnabled());
+		assertEquals(false, text2.getEnabled());
+		assertEquals(true, checkbox1.getSelection());
+		setButtonSelectionWithEvents(checkbox1, false);
+		assertEquals(false, text1.getEnabled());
+		assertEquals(true, text2.getEnabled());
+		assertEquals(true, checkbox2.getSelection());
+		setButtonSelectionWithEvents(checkbox2, false);
+		assertEquals(true, text1.getEnabled());
+		assertEquals(false, text2.getEnabled());
+		assertEquals(true, checkbox1.getSelection());
+	}
 
-    @Test
+	@Test
 	public void testScenario13() {
-        Text text = new Text(getComposite(), SWT.BORDER);
+		Text text = new Text(getComposite(), SWT.BORDER);
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), BeansObservables.observeValue(adventure, "name"));
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), BeansObservables.observeValue(adventure, "name"));
 
-        // uncomment the following line to see what's happening
-        // happening
-        // spinEventLoop(1);
-        String adventureName = adventure.getName();
-        assertEquals(adventureName, text.getText());
-        enterText(text, "foobar");
-        // uncomment the following line to see what's happening
-        // spinEventLoop(1);
-        assertEquals("foobar", adventure.getName());
-        adventure.setName("barfoo");
-        // uncomment the following line to see what's happening
-        // spinEventLoop(1);
-        assertEquals("barfoo", text.getText());
-    }
+		// uncomment the following line to see what's happening
+		// happening
+		// spinEventLoop(1);
+		String adventureName = adventure.getName();
+		assertEquals(adventureName, text.getText());
+		enterText(text, "foobar");
+		// uncomment the following line to see what's happening
+		// spinEventLoop(1);
+		assertEquals("foobar", adventure.getName());
+		adventure.setName("barfoo");
+		// uncomment the following line to see what's happening
+		// spinEventLoop(1);
+		assertEquals("barfoo", text.getText());
+	}
 
-    @Test
+	@Test
 	public void testScenario14() {
-        Text t1 = new Text(getComposite(), SWT.BORDER);
-        Text t2 = new Text(getComposite(), SWT.BORDER);
+		Text t1 = new Text(getComposite(), SWT.BORDER);
+		Text t2 = new Text(getComposite(), SWT.BORDER);
 
-        getDbc().bindValue(SWTObservables.observeText(t1, SWT.Modify), BeansObservables.observeValue(adventure, "name"));
-        getDbc().bindValue(SWTObservables.observeText(t2, SWT.Modify), BeansObservables.observeValue(adventure, "name"));
+		getDbc().bindValue(SWTObservables.observeText(t1, SWT.Modify), BeansObservables.observeValue(adventure, "name"));
+		getDbc().bindValue(SWTObservables.observeText(t2, SWT.Modify), BeansObservables.observeValue(adventure, "name"));
 
-        final int[] counter = { 0 };
+		final int[] counter = { 0 };
 
-        IObservableValue uv = BeansObservables.observeValue(adventure, "name");
+		IObservableValue uv = BeansObservables.observeValue(adventure, "name");
 
 		uv.addChangeListener(event -> counter[0]++);
 
-        String name = adventure.getName() + "Foo";
-        enterText(t1, name);
-        assertEquals(name, adventure.getName());
-        assertEquals(name, t2.getText());
-        assertTrue(counter[0] == 1);
+		String name = adventure.getName() + "Foo";
+		enterText(t1, name);
+		assertEquals(name, adventure.getName());
+		assertEquals(name, t2.getText());
+		assertTrue(counter[0] == 1);
 
-        name = name + "Bar";
-        uv.setValue(name);
-        assertEquals(t1.getText(), adventure.getName());
-        assertEquals(2, counter[0]);
+		name = name + "Bar";
+		uv.setValue(name);
+		assertEquals(t1.getText(), adventure.getName());
+		assertEquals(2, counter[0]);
 
-    }
+	}
 
-    @Test
+	@Test
 	public void testScenario15() {
-        Text text = new Text(getComposite(), SWT.NONE);
-        Account account = new Account();
-        account.setExpiryDate(new Date());
+		Text text = new Text(getComposite(), SWT.NONE);
+		Account account = new Account();
+		account.setExpiryDate(new Date());
 
-        Binding b = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"));
-        Text errorText = new Text(getComposite(), SWT.NONE);
+		Binding b = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"));
+		Text errorText = new Text(getComposite(), SWT.NONE);
 
-        getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
-        assertTrue(b.getValidationStatus().getValue().isOK());
-        enterText(text, "foo");
-        assertFalse(b.getValidationStatus().getValue().isOK());
-    }
+		getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
+		assertTrue(b.getValidationStatus().getValue().isOK());
+		enterText(text, "foo");
+		assertFalse(b.getValidationStatus().getValue().isOK());
+	}
 }

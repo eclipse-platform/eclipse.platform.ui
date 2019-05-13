@@ -40,8 +40,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class PR263695 {
 
-        public static void main(String[] args) {
-                final Display display = new Display();
+		public static void main(String[] args) {
+				final Display display = new Display();
 
 		Listener listener = event -> {
 			switch (event.type) {
@@ -56,31 +56,31 @@ public class PR263695 {
 				break;
 			}
 		};
-                display.addFilter(SWT.MouseMove, listener);
-                display.addFilter(SWT.MouseDown, listener);
-                display.addFilter(SWT.MouseUp, listener);
+				display.addFilter(SWT.MouseMove, listener);
+				display.addFilter(SWT.MouseDown, listener);
+				display.addFilter(SWT.MouseUp, listener);
 
-                final Shell shell = new Shell(display);
-                shell.setLayout(new FillLayout());
-                final Label label1 = new Label(shell, SWT.BORDER);
-                label1.setText("TEXT");
-                final Label label2 = new Label(shell, SWT.BORDER);
-                setDragDrop(label1);
-                setDragDrop(label2);
-                shell.setSize(200, 200);
-                shell.open();
+				final Shell shell = new Shell(display);
+				shell.setLayout(new FillLayout());
+				final Label label1 = new Label(shell, SWT.BORDER);
+				label1.setText("TEXT");
+				final Label label2 = new Label(shell, SWT.BORDER);
+				setDragDrop(label1);
+				setDragDrop(label2);
+				shell.setSize(200, 200);
+				shell.open();
 
-                Rectangle bounds = label1.getBounds();
-                bounds = display.map(label1.getParent(), null, bounds);
-                final int downX = bounds.x + (bounds.width / 2);
-                final int downY = bounds.y + (bounds.height / 2);
+				Rectangle bounds = label1.getBounds();
+				bounds = display.map(label1.getParent(), null, bounds);
+				final int downX = bounds.x + (bounds.width / 2);
+				final int downY = bounds.y + (bounds.height / 2);
 
-                bounds = label2.getBounds();
-                bounds = display.map(label2.getParent(), null, bounds);
-                final int upX = bounds.x + (bounds.width / 2);
-                final int upY = bounds.y + (bounds.height / 2);
+				bounds = label2.getBounds();
+				bounds = display.map(label2.getParent(), null, bounds);
+				final int upX = bounds.x + (bounds.width / 2);
+				final int upY = bounds.y + (bounds.height / 2);
 
-                display.setCursorLocation(downX, downY);
+				display.setCursorLocation(downX, downY);
 
 		Thread t = new Thread(() -> {
 			try {
@@ -135,59 +135,59 @@ public class PR263695 {
 			event.button = 1;
 			display.post(event);
 		});
-                t.start();
+				t.start();
 
 
 
 
 
-                while (!shell.isDisposed()) {
-                        if (!display.readAndDispatch())
-                                display.sleep();
-                }
-                display.dispose();
-        }
+				while (!shell.isDisposed()) {
+						if (!display.readAndDispatch())
+								display.sleep();
+				}
+				display.dispose();
+		}
 
-        public static void setDragDrop(final Label label) {
+		public static void setDragDrop(final Label label) {
 
-                Transfer[] types = new Transfer[] { TextTransfer.getInstance()
+				Transfer[] types = new Transfer[] { TextTransfer.getInstance()
 };
-                int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
+				int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
 
-                final DragSource source = new DragSource(label, operations);
-                source.setTransfer(types);
-                source.addDragListener(new DragSourceListener() {
-                        @Override
+				final DragSource source = new DragSource(label, operations);
+				source.setTransfer(types);
+				source.addDragListener(new DragSourceListener() {
+						@Override
 						public void dragStart(DragSourceEvent event) {
-                                event.doit = (label.getText().length() != 0);
-                                System.out.println("dragStart: " + event);
-                        }
+								event.doit = (label.getText().length() != 0);
+								System.out.println("dragStart: " + event);
+						}
 
-                        @Override
+						@Override
 						public void dragSetData(DragSourceEvent event) {
-                                event.data = label.getText();
-                        }
+								event.data = label.getText();
+						}
 
-                        @Override
+						@Override
 						public void dragFinished(DragSourceEvent event) {
-                                if (event.detail == DND.DROP_MOVE)
-                                        label.setText("");
-                        }
-                });
+								if (event.detail == DND.DROP_MOVE)
+										label.setText("");
+						}
+				});
 
-                DropTarget target = new DropTarget(label, operations);
-                target.setTransfer(types);
-                target.addDropListener(new DropTargetAdapter() {
-                        @Override
+				DropTarget target = new DropTarget(label, operations);
+				target.setTransfer(types);
+				target.addDropListener(new DropTargetAdapter() {
+						@Override
 						public void drop(DropTargetEvent event) {
-                                System.out.println("got event");
-                                if (event.data == null) {
-                                        event.detail = DND.DROP_NONE;
-                                        return;
-                                }
-                                label.setText((String) event.data);
-                        }
-                });
-        }
+								System.out.println("got event");
+								if (event.data == null) {
+										event.detail = DND.DROP_NONE;
+										return;
+								}
+								label.setText((String) event.data);
+						}
+				});
+		}
 }
 

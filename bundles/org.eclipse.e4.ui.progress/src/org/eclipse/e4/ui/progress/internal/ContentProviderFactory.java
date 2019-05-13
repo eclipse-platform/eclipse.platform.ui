@@ -33,14 +33,14 @@ public class ContentProviderFactory {
 	}
 
 	public ProgressViewerContentProvider getProgressViewerContentProvider(
-	        AbstractProgressViewer structured, boolean debug,
-	        boolean showFinished) {
+			AbstractProgressViewer structured, boolean debug,
+			boolean showFinished) {
 
 		//TODO E4 workaround for @Creatable problem
 		return new ProgressViewerContentProvider(structured,
 				services.getService(FinishedJobs.class),
-		        services.getService(ProgressViewUpdater.class),
-		        services.getService(ProgressManager.class), debug, showFinished);
+				services.getService(ProgressViewUpdater.class),
+				services.getService(ProgressManager.class), debug, showFinished);
 	}
 
 }

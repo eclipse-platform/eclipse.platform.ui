@@ -197,11 +197,11 @@ public class WebBrowserEditorInput implements IEditorInput,
 		WebBrowserEditorInput other = (WebBrowserEditorInput) obj;
 
 		if (url != null) {
-			if (other.url == null || !url.toExternalForm().equals(other.url.toExternalForm()))	 {
-			    return false;
+			if (other.url == null || !url.toExternalForm().equals(other.url.toExternalForm())) {
+				return false;
 			}
 		} else if (other.url != null) {
-		    return false;
+			return false;
 		}
 		return canReplaceInput(other);
 	}

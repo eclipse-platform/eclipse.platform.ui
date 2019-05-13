@@ -30,12 +30,12 @@ import junit.framework.TestCase;
  */
 public class PatternUtilTest extends TestCase {
 
-    /**
-     * Tests if the quote function of ActivityPatternBinding works.
-     */
-    public static void testQuotePattern() {
-    	assertTrue(PatternUtil.quotePattern("abcd").equals("\\Qabcd\\E"));
-    	assertTrue(PatternUtil.quotePattern("Test\\Q").equals("\\QTest\\Q\\E"));
+	/**
+	 * Tests if the quote function of ActivityPatternBinding works.
+	 */
+	public static void testQuotePattern() {
+		assertTrue(PatternUtil.quotePattern("abcd").equals("\\Qabcd\\E"));
+		assertTrue(PatternUtil.quotePattern("Test\\Q").equals("\\QTest\\Q\\E"));
 		assertTrue(PatternUtil.quotePattern("Test\\Q\\E").equals(
 				"\\QTest\\Q\\E\\\\E\\Q\\E"));
 		assertTrue(PatternUtil.quotePattern("Test\\E\\Q").equals(
@@ -47,14 +47,14 @@ public class PatternUtilTest extends TestCase {
 				.matches());
 		assertTrue(Pattern.compile(PatternUtil.quotePattern(searchString))
 				.matcher(searchString).matches());
-    }
+	}
 
-    /**
-     * For quick testing, without JUnit launch.
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-    	testQuotePattern();
-    }
+	/**
+	 * For quick testing, without JUnit launch.
+	 *
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		testQuotePattern();
+	}
 }

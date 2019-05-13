@@ -96,8 +96,8 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		// The help editor will open in an editor regardless of the user preferences
 		boolean isHelpEditor = ((style & AS_EDITOR) != 0) && HELP_BROWSER_ID.equals(browserId);
 		if ((style & AS_EXTERNAL) != 0 ||
-		    (WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL && !isHelpEditor)
-		    || !WebBrowserUtil.canUseInternalWebBrowser()) {
+			(WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL && !isHelpEditor)
+			|| !WebBrowserUtil.canUseInternalWebBrowser()) {
 			IBrowserDescriptor ewb = BrowserManager.getInstance()
 					.getCurrentWebBrowser();
 			if (ewb == null)

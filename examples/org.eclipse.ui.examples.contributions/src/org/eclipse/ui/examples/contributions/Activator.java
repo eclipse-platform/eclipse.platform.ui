@@ -47,6 +47,6 @@ public class Activator extends AbstractUIPlugin {
 	public static boolean DEBUG_COMMANDS = false;
 	
 	private static boolean getDebugOption(String option) {
-        return "true".equalsIgnoreCase(Platform.getDebugOption(PlatformUI.PLUGIN_ID + option)); //$NON-NLS-1$
-    }
+		return "true".equalsIgnoreCase(Platform.getDebugOption(PlatformUI.PLUGIN_ID + option)); //$NON-NLS-1$
+	}
 }

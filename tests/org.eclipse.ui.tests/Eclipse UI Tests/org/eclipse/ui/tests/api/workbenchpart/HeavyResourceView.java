@@ -29,72 +29,72 @@ import org.eclipse.ui.tests.TestPlugin;
 
 public class HeavyResourceView extends ViewPart {
 
-    private Button useAllComposites;
-    private Button releaseAllComposites;
+	private Button useAllComposites;
+	private Button releaseAllComposites;
 
-    private Shell tempShell;
-    private Composite control;
+	private Shell tempShell;
+	private Composite control;
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        control = parent;
+		control = parent;
 
-        SelectionListener listener = new SelectionAdapter() {
-          @Override
+		SelectionListener listener = new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
-                super.widgetSelected(e);
+				super.widgetSelected(e);
 
-                if (e.widget == useAllComposites) {
-                    useAll();
-                } else if (e.widget == releaseAllComposites) {
-                    releaseAll();
-                }
-            }
-        };
+				if (e.widget == useAllComposites) {
+					useAll();
+				} else if (e.widget == releaseAllComposites) {
+					releaseAll();
+				}
+			}
+		};
 
-        Label explanation = new Label(parent, SWT.WRAP);
-        explanation.setText("This view allocates all available SWT resources on demand. "
-                + "This is not supposed to be a recoverable error, and is expected to crash the workbench. "
-                + "This view allows us observe the workbench when it crashes in this manner.");
+		Label explanation = new Label(parent, SWT.WRAP);
+		explanation.setText("This view allocates all available SWT resources on demand. "
+				+ "This is not supposed to be a recoverable error, and is expected to crash the workbench. "
+				+ "This view allows us observe the workbench when it crashes in this manner.");
 
-        useAllComposites = new Button(parent, SWT.PUSH);
-        useAllComposites.setText("&Allocate all available composites (very slow!)");
-        useAllComposites.addSelectionListener(listener);
+		useAllComposites = new Button(parent, SWT.PUSH);
+		useAllComposites.setText("&Allocate all available composites (very slow!)");
+		useAllComposites.addSelectionListener(listener);
 
-        releaseAllComposites = new Button(parent, SWT.PUSH);
-        releaseAllComposites.setText("&Release all composites");
-        releaseAllComposites.addSelectionListener(listener);
+		releaseAllComposites = new Button(parent, SWT.PUSH);
+		releaseAllComposites.setText("&Release all composites");
+		releaseAllComposites.addSelectionListener(listener);
 
-    }
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
-        control.setFocus();
-    }
+		control.setFocus();
+	}
 
-    public void useAll() {
-        releaseAll();
-        tempShell = new Shell(Display.getCurrent(), SWT.NONE);
-        try {
-            for(;;) {
-                new Composite(tempShell, SWT.NONE);
-            }
-        } catch (SWTError e) {
-            TestPlugin.getDefault().getLog().log(WorkbenchPlugin.getStatus(e));
-        }
-    }
+	public void useAll() {
+		releaseAll();
+		tempShell = new Shell(Display.getCurrent(), SWT.NONE);
+		try {
+			for(;;) {
+				new Composite(tempShell, SWT.NONE);
+			}
+		} catch (SWTError e) {
+			TestPlugin.getDefault().getLog().log(WorkbenchPlugin.getStatus(e));
+		}
+	}
 
-    public void releaseAll() {
-        if (tempShell != null) {
-            tempShell.dispose();
-            tempShell = null;
-        }
-    }
+	public void releaseAll() {
+		if (tempShell != null) {
+			tempShell.dispose();
+			tempShell = null;
+		}
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        releaseAll();
-        super.dispose();
-    }
+		releaseAll();
+		super.dispose();
+	}
 
 }

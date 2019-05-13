@@ -37,50 +37,50 @@ import com.ibm.icu.text.MessageFormat;
  * not they wish to continue the operation on it.
  */
 public class ReadOnlyStateChecker {
-    private Shell shell;
+	private Shell shell;
 
-    private String titleMessage;
+	private String titleMessage;
 
-    private String mainMessage;
+	private String mainMessage;
 
-    private boolean yesToAllSelected = false;
+	private boolean yesToAllSelected = false;
 
-    private boolean cancelSelected = false;
+	private boolean cancelSelected = false;
 
-    private boolean ignoreLinkedResources = false;
+	private boolean ignoreLinkedResources = false;
 
-    private String READ_ONLY_EXCEPTION_MESSAGE = IDEWorkbenchMessages.ReadOnlyCheck_problems;
+	private String READ_ONLY_EXCEPTION_MESSAGE = IDEWorkbenchMessages.ReadOnlyCheck_problems;
 
-    /**
-     * Create a new checker that parents the dialog off of parent using the supplied
-     * title and message.
-     * @param parent the shell used for dialogs
-     * @param title the title for dialogs
-     * @param message the message for a dialog - this will be prefaced with the name of the resource.
-     */
-    public ReadOnlyStateChecker(Shell parent, String title, String message) {
-        this.shell = parent;
-        this.titleMessage = title;
-        this.mainMessage = message;
-    }
+	/**
+	 * Create a new checker that parents the dialog off of parent using the supplied
+	 * title and message.
+	 * @param parent the shell used for dialogs
+	 * @param title the title for dialogs
+	 * @param message the message for a dialog - this will be prefaced with the name of the resource.
+	 */
+	public ReadOnlyStateChecker(Shell parent, String title, String message) {
+		this.shell = parent;
+		this.titleMessage = title;
+		this.mainMessage = message;
+	}
 
-    /**
-     * Check an individual resource to see if it passed the read only query. If it is a file
-     * just add it, otherwise it is a container and the children need to be checked too.
-     * Return true if all items are selected and false if any are skipped.
-     */
-    private boolean checkAcceptedResource(IResource resourceToCheck,
-            List selectedChildren) throws CoreException {
+	/**
+	 * Check an individual resource to see if it passed the read only query. If it is a file
+	 * just add it, otherwise it is a container and the children need to be checked too.
+	 * Return true if all items are selected and false if any are skipped.
+	 */
+	private boolean checkAcceptedResource(IResource resourceToCheck,
+			List selectedChildren) throws CoreException {
 
-        if (resourceToCheck.getType() == IResource.FILE) {
+		if (resourceToCheck.getType() == IResource.FILE) {
 			selectedChildren.add(resourceToCheck);
 		} else if (getIgnoreLinkedResources() && resourceToCheck.isLinked()) {
-            selectedChildren.add(resourceToCheck);
-        }
-        else {
-        	IContainer container = (IContainer) resourceToCheck;
-        	// if the project is closed, there's no point in checking
-        	// it's children.  bug 99858
+			selectedChildren.add(resourceToCheck);
+		}
+		else {
+			IContainer container = (IContainer) resourceToCheck;
+			// if the project is closed, there's no point in checking
+			// it's children.  bug 99858
 			if (container.isAccessible()) {
 				// Now check below
 				int childCheck = checkReadOnlyResources(container.members(),
@@ -95,184 +95,184 @@ public class ReadOnlyStateChecker {
 			} else {
 				selectedChildren.add(resourceToCheck);
 			}
-        }
-        return true;
+		}
+		return true;
 
-    }
+	}
 
-    /**
-     * Check the supplied resources to see if they are read only. If so then
+	/**
+	 * Check the supplied resources to see if they are read only. If so then
 	 * prompt the user to see if they can be deleted.Return those that were
 	 * accepted.
 	 *
-     * @param itemsToCheck
-     * @return the resulting selected resources
-     */
-    public IResource[] checkReadOnlyResources(IResource[] itemsToCheck) {
+	 * @param itemsToCheck
+	 * @return the resulting selected resources
+	 */
+	public IResource[] checkReadOnlyResources(IResource[] itemsToCheck) {
 
 		List<IResource> selections = new ArrayList<>();
-        int result = IDialogConstants.CANCEL_ID;
-        try {
-            result = checkReadOnlyResources(itemsToCheck, selections);
-        } catch (final CoreException exception) {
-            shell.getDisplay().syncExec(() -> ErrorDialog.openError(shell, READ_ONLY_EXCEPTION_MESSAGE,
-			        null, exception.getStatus()));
-        }
+		int result = IDialogConstants.CANCEL_ID;
+		try {
+			result = checkReadOnlyResources(itemsToCheck, selections);
+		} catch (final CoreException exception) {
+			shell.getDisplay().syncExec(() -> ErrorDialog.openError(shell, READ_ONLY_EXCEPTION_MESSAGE,
+					null, exception.getStatus()));
+		}
 
-        if (result == IDialogConstants.CANCEL_ID) {
+		if (result == IDialogConstants.CANCEL_ID) {
 			return new IResource[0];
 		}
 
-        //All were selected so return the original items
-        if (result == IDialogConstants.YES_TO_ALL_ID) {
+		//All were selected so return the original items
+		if (result == IDialogConstants.YES_TO_ALL_ID) {
 			return itemsToCheck;
 		}
 
-        IResource[] returnValue = new IResource[selections.size()];
-        selections.toArray(returnValue);
-        return returnValue;
-    }
+		IResource[] returnValue = new IResource[selections.size()];
+		selections.toArray(returnValue);
+		return returnValue;
+	}
 
-    /**
-     * Check the children of the container to see if they are read only.
-     * @return int
-     * one of
-     * 	YES_TO_ALL_ID - all elements were selected
-     * 	NO_ID - No was hit at some point
-     * 	CANCEL_ID - cancel was hit
-     * @param itemsToCheck IResource[]
-     * @param allSelected the List of currently selected resources to add to.
-     */
-    private int checkReadOnlyResources(IResource[] itemsToCheck,
-            List allSelected) throws CoreException {
+	/**
+	 * Check the children of the container to see if they are read only.
+	 * @return int
+	 * one of
+	 * 	YES_TO_ALL_ID - all elements were selected
+	 * 	NO_ID - No was hit at some point
+	 * 	CANCEL_ID - cancel was hit
+	 * @param itemsToCheck IResource[]
+	 * @param allSelected the List of currently selected resources to add to.
+	 */
+	private int checkReadOnlyResources(IResource[] itemsToCheck,
+			List allSelected) throws CoreException {
 
-        //Shortcut. If the user has already selected yes to all then just return it
-        if (yesToAllSelected) {
+		//Shortcut. If the user has already selected yes to all then just return it
+		if (yesToAllSelected) {
 			return IDialogConstants.YES_TO_ALL_ID;
 		}
 
-        boolean noneSkipped = true;
-        List selectedChildren = new ArrayList();
+		boolean noneSkipped = true;
+		List selectedChildren = new ArrayList();
 
-        for (IResource resourceToCheck : itemsToCheck) {
-            ResourceAttributes checkAttributes = resourceToCheck.getResourceAttributes();
-            if (!yesToAllSelected && shouldCheck(resourceToCheck)
-            		&& checkAttributes!=null
-            		&& checkAttributes.isReadOnly()) {
-                int action = queryYesToAllNoCancel(resourceToCheck);
-                if (action == IDialogConstants.YES_ID) {
-                    boolean childResult = checkAcceptedResource(
-                            resourceToCheck, selectedChildren);
-                    if (!childResult) {
+		for (IResource resourceToCheck : itemsToCheck) {
+			ResourceAttributes checkAttributes = resourceToCheck.getResourceAttributes();
+			if (!yesToAllSelected && shouldCheck(resourceToCheck)
+					&& checkAttributes!=null
+					&& checkAttributes.isReadOnly()) {
+				int action = queryYesToAllNoCancel(resourceToCheck);
+				if (action == IDialogConstants.YES_ID) {
+					boolean childResult = checkAcceptedResource(
+							resourceToCheck, selectedChildren);
+					if (!childResult) {
 						noneSkipped = false;
 					}
-                }
-                if (action == IDialogConstants.NO_ID) {
+				}
+				if (action == IDialogConstants.NO_ID) {
 					noneSkipped = false;
 				}
-                if (action == IDialogConstants.CANCEL_ID) {
-                    cancelSelected = true;
-                    return IDialogConstants.CANCEL_ID;
-                }
-                if (action == IDialogConstants.YES_TO_ALL_ID) {
-                    yesToAllSelected = true;
-                    selectedChildren.add(resourceToCheck);
-                }
-            } else {
-                boolean childResult = checkAcceptedResource(resourceToCheck,
-                        selectedChildren);
-                if (cancelSelected) {
+				if (action == IDialogConstants.CANCEL_ID) {
+					cancelSelected = true;
 					return IDialogConstants.CANCEL_ID;
 				}
-                if (!childResult) {
+				if (action == IDialogConstants.YES_TO_ALL_ID) {
+					yesToAllSelected = true;
+					selectedChildren.add(resourceToCheck);
+				}
+			} else {
+				boolean childResult = checkAcceptedResource(resourceToCheck,
+						selectedChildren);
+				if (cancelSelected) {
+					return IDialogConstants.CANCEL_ID;
+				}
+				if (!childResult) {
 					noneSkipped = false;
 				}
-            }
+			}
 
-        }
+		}
 
-        if (noneSkipped) {
+		if (noneSkipped) {
 			return IDialogConstants.YES_TO_ALL_ID;
 		}
-       allSelected.addAll(selectedChildren);
-       return IDialogConstants.NO_ID;
+		allSelected.addAll(selectedChildren);
+		return IDialogConstants.NO_ID;
 
-    }
+	}
 
-    /**
+	/**
 	 * Returns whether the given resource should be checked for read-only state.
 	 *
 	 * @param resourceToCheck the resource to check
 	 * @return <code>true</code> to check it, <code>false</code> to skip it
 	 */
 	private boolean shouldCheck(IResource resourceToCheck) {
-        if (ignoreLinkedResources) {
-        	if (resourceToCheck.isLinked()) {
+		if (ignoreLinkedResources) {
+			if (resourceToCheck.isLinked()) {
 				return false;
 			}
-        }
-        return true;
-    }
+		}
+		return true;
+	}
 
 	/**
-     * Open a message dialog with Yes No, Yes To All and Cancel buttons. Return the
-     * code that indicates the selection.
-     * @return int
-     *	one of
-     *		YES_TO_ALL_ID
-     *		YES_ID
-     *		NO_ID
-     *		CANCEL_ID
-     *
-     * @param resource - the resource being queried.
-     */
-    private int queryYesToAllNoCancel(IResource resource) {
+	 * Open a message dialog with Yes No, Yes To All and Cancel buttons. Return the
+	 * code that indicates the selection.
+	 * @return int
+	 *	one of
+	 *		YES_TO_ALL_ID
+	 *		YES_ID
+	 *		NO_ID
+	 *		CANCEL_ID
+	 *
+	 * @param resource - the resource being queried.
+	 */
+	private int queryYesToAllNoCancel(IResource resource) {
 
-        final MessageDialog dialog = new MessageDialog(this.shell,
-                this.titleMessage, null, MessageFormat.format(this.mainMessage,
+		final MessageDialog dialog = new MessageDialog(this.shell,
+				this.titleMessage, null, MessageFormat.format(this.mainMessage,
 						resource.getName()),
-                		MessageDialog.QUESTION, 0,
-                        IDialogConstants.YES_LABEL,
-                        IDialogConstants.YES_TO_ALL_LABEL,
-                        IDialogConstants.NO_LABEL,
-                        IDialogConstants.CANCEL_LABEL) {
-        	@Override
+						MessageDialog.QUESTION, 0,
+						IDialogConstants.YES_LABEL,
+						IDialogConstants.YES_TO_ALL_LABEL,
+						IDialogConstants.NO_LABEL,
+						IDialogConstants.CANCEL_LABEL) {
+			@Override
 			protected int getShellStyle() {
-        		return super.getShellStyle() | SWT.SHEET;
-        	}
-        };
-        shell.getDisplay().syncExec(() -> dialog.open());
-        int result = dialog.getReturnCode();
-        if (result == 0) {
+				return super.getShellStyle() | SWT.SHEET;
+			}
+		};
+		shell.getDisplay().syncExec(() -> dialog.open());
+		int result = dialog.getReturnCode();
+		if (result == 0) {
 			return IDialogConstants.YES_ID;
 		}
-        if (result == 1) {
+		if (result == 1) {
 			return IDialogConstants.YES_TO_ALL_ID;
 		}
-        if (result == 2) {
+		if (result == 2) {
 			return IDialogConstants.NO_ID;
 		}
-        return IDialogConstants.CANCEL_ID;
-    }
+		return IDialogConstants.CANCEL_ID;
+	}
 
-    /**
-     * Returns whether to ignore linked resources.
-     *
-     * @return <code>true</code> to ignore linked resources, <code>false</code> to consider them
-     * @since 3.1
-     */
-    public boolean getIgnoreLinkedResources() {
-    	return ignoreLinkedResources;
-    }
+	/**
+	 * Returns whether to ignore linked resources.
+	 *
+	 * @return <code>true</code> to ignore linked resources, <code>false</code> to consider them
+	 * @since 3.1
+	 */
+	public boolean getIgnoreLinkedResources() {
+		return ignoreLinkedResources;
+	}
 
-    /**
-     * Sets whether to ignore linked resources.
-     * The default is <code>false</code>.
-     *
-     * @param ignore <code>true</code> to ignore linked resources, <code>false</code> to consider them
-     * @since 3.1
-     */
-    public void setIgnoreLinkedResources(boolean ignore) {
-    	ignoreLinkedResources = ignore;
-    }
+	/**
+	 * Sets whether to ignore linked resources.
+	 * The default is <code>false</code>.
+	 *
+	 * @param ignore <code>true</code> to ignore linked resources, <code>false</code> to consider them
+	 * @since 3.1
+	 */
+	public void setIgnoreLinkedResources(boolean ignore) {
+		ignoreLinkedResources = ignore;
+	}
 }

@@ -32,68 +32,68 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
  */
 public abstract class AbstractNavigatorTest extends UITestCase {
 
-    private static final String NAVIGATOR_VIEW_ID = "org.eclipse.ui.views.ResourceNavigator";
+	private static final String NAVIGATOR_VIEW_ID = "org.eclipse.ui.views.ResourceNavigator";
 
-    protected IProject testProject;
+	protected IProject testProject;
 
-    protected IFolder testFolder;
+	protected IFolder testFolder;
 
-    protected IFile testFile;
+	protected IFile testFile;
 
-    protected ResourceNavigator navigator;
+	protected ResourceNavigator navigator;
 
-    public AbstractNavigatorTest(String testName) {
-        super(testName);
-    }
+	public AbstractNavigatorTest(String testName) {
+		super(testName);
+	}
 
-    protected void createTestProject() throws CoreException {
-        if (testProject == null) {
-            IWorkspace workspace = ResourcesPlugin.getWorkspace();
-            testProject = workspace.getRoot().getProject("TestProject");
-            testProject.create(null);
-            testProject.open(null);
-        }
-    }
+	protected void createTestProject() throws CoreException {
+		if (testProject == null) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			testProject = workspace.getRoot().getProject("TestProject");
+			testProject.create(null);
+			testProject.open(null);
+		}
+	}
 
-    protected void createTestFolder() throws CoreException {
-        if (testFolder == null) {
-            createTestProject();
-            testFolder = testProject.getFolder("TestFolder");
-            testFolder.create(false, false, null);
-        }
-    }
+	protected void createTestFolder() throws CoreException {
+		if (testFolder == null) {
+			createTestProject();
+			testFolder = testProject.getFolder("TestFolder");
+			testFolder.create(false, false, null);
+		}
+	}
 
-    protected void createTestFile() throws CoreException {
-        if (testFile == null) {
-            createTestFolder();
-            testFile = testFolder.getFile("Foo.txt");
-            testFile.create(
-                    new ByteArrayInputStream("Some content.".getBytes()),
-                    false, null);
-        }
-    }
+	protected void createTestFile() throws CoreException {
+		if (testFile == null) {
+			createTestFolder();
+			testFile = testFolder.getFile("Foo.txt");
+			testFile.create(
+					new ByteArrayInputStream("Some content.".getBytes()),
+					false, null);
+		}
+	}
 
-    /** Shows the Navigator in a new test window. */
-    protected void showNav() throws PartInitException {
-        IWorkbenchWindow window = openTestWindow();
-        navigator = (ResourceNavigator) window.getActivePage().showView(
-                NAVIGATOR_VIEW_ID);
-    }
+	/** Shows the Navigator in a new test window. */
+	protected void showNav() throws PartInitException {
+		IWorkbenchWindow window = openTestWindow();
+		navigator = (ResourceNavigator) window.getActivePage().showView(
+				NAVIGATOR_VIEW_ID);
+	}
 
-    @Override
+	@Override
 	protected void doTearDown() throws Exception {
-        if (testProject != null) {
-            try {
-                testProject.delete(true, null);
-            } catch (CoreException e) {
-                fail(e.toString());
-            }
-            testProject = null;
-            testFolder = null;
-            testFile = null;
-        }
-        super.doTearDown();
-        navigator = null;
-    }
+		if (testProject != null) {
+			try {
+				testProject.delete(true, null);
+			} catch (CoreException e) {
+				fail(e.toString());
+			}
+			testProject = null;
+			testFolder = null;
+			testFile = null;
+		}
+		super.doTearDown();
+		navigator = null;
+	}
 
 }

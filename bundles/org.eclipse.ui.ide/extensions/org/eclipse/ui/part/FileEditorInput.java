@@ -61,10 +61,10 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 			return true;
 		//this is not a local file, so try to obtain a local file
 		try {
-	        final URI locationURI = file.getLocationURI();
-	        if (locationURI == null)
-	           return false;
-	        IFileStore store = EFS.getStore(locationURI);
+			final URI locationURI = file.getLocationURI();
+			if (locationURI == null)
+				return false;
+			IFileStore store = EFS.getStore(locationURI);
 			//first try to obtain a local file directly fo1r this store
 			java.io.File localFile = store.toLocalFile(EFS.NONE, null);
 			//if no local file is available, obtain a cached file
@@ -179,10 +179,10 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 			return location;
 		//this is not a local file, so try to obtain a local file
 		try {
-	        final URI locationURI = file.getLocationURI();
-	        if (locationURI == null)
-	           throw new IllegalArgumentException();
-	        IFileStore store = EFS.getStore(locationURI);
+			final URI locationURI = file.getLocationURI();
+			if (locationURI == null)
+				throw new IllegalArgumentException();
+			IFileStore store = EFS.getStore(locationURI);
 			//first try to obtain a local file directly fo1r this store
 			java.io.File localFile = store.toLocalFile(EFS.NONE, null);
 			//if no local file is available, obtain a cached file

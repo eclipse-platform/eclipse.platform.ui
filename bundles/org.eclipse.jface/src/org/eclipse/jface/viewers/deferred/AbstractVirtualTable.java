@@ -36,56 +36,56 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.1
  */
 abstract class AbstractVirtualTable {
-    /**
-     * Tells the receiver that the item at given row has changed. This may indicate
-     * that a different element is now at this row, but does not necessarily indicate
-     * that the element itself has changed. The receiver should request information for
-     * this row the next time it becomes visibile.
-     *
-     * @param index row to clear
-     */
-    public abstract void clear(int index);
+	/**
+	 * Tells the receiver that the item at given row has changed. This may indicate
+	 * that a different element is now at this row, but does not necessarily indicate
+	 * that the element itself has changed. The receiver should request information for
+	 * this row the next time it becomes visibile.
+	 *
+	 * @param index row to clear
+	 */
+	public abstract void clear(int index);
 
-    /**
-     * Notifies the receiver that the given element is now located at the given index.
-     *
-     * @param element object located at the row
-     * @param itemIndex row number
-     */
-    public abstract void replace(Object element, int itemIndex);
+	/**
+	 * Notifies the receiver that the given element is now located at the given index.
+	 *
+	 * @param element object located at the row
+	 * @param itemIndex row number
+	 */
+	public abstract void replace(Object element, int itemIndex);
 
-    /**
-     * Sets the item count for this table
-     *
-     * @param total new total number of items
-     */
-    public abstract void setItemCount(int total);
+	/**
+	 * Sets the item count for this table
+	 *
+	 * @param total new total number of items
+	 */
+	public abstract void setItemCount(int total);
 
-    /**
-     * Returns the index of the top item visible in the table
-     *
-     * @return the index of the top item visible in the table
-     */
-    public abstract int getTopIndex();
+	/**
+	 * Returns the index of the top item visible in the table
+	 *
+	 * @return the index of the top item visible in the table
+	 */
+	public abstract int getTopIndex();
 
-    /**
-     * Returns the number of items currently visible in the table. This is
-     * the size of the currently visible window, not the total size of the table.
-     *
-     * @return the number of items currently visible in the table
-     */
-    public abstract int getVisibleItemCount();
+	/**
+	 * Returns the number of items currently visible in the table. This is
+	 * the size of the currently visible window, not the total size of the table.
+	 *
+	 * @return the number of items currently visible in the table
+	 */
+	public abstract int getVisibleItemCount();
 
-    /**
-     * Returns the total number of items in the table
-     *
-     * @return the total number of items in the table
-     */
-    public abstract int getItemCount();
+	/**
+	 * Returns the total number of items in the table
+	 *
+	 * @return the total number of items in the table
+	 */
+	public abstract int getItemCount();
 
-    /**
-     * Returns the SWT control that this API is wrappering.
-     * @return Control.
-     */
-    public abstract Control getControl();
+	/**
+	 * Returns the SWT control that this API is wrappering.
+	 * @return Control.
+	 */
+	public abstract Control getControl();
 }

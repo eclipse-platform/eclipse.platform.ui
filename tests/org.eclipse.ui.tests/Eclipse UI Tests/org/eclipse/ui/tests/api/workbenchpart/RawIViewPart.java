@@ -38,8 +38,8 @@ public class RawIViewPart extends EventManager implements IViewPart {
 	private String title = "SomeTitle";
 
 	/**
-     *
-     */
+	 *
+	 */
 	public RawIViewPart() {
 		super();
 	}

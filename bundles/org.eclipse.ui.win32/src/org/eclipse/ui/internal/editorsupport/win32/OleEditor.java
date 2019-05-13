@@ -72,33 +72,33 @@ import org.eclipse.ui.part.FileEditorInput;
  */
 public class OleEditor extends EditorPart {
 
-    /**
-     * The resource listener updates the receiver when
-     * a change has occurred.
-     */
-    private IResourceChangeListener resourceListener = new IResourceChangeListener() {
+	/**
+	 * The resource listener updates the receiver when
+	 * a change has occurred.
+	 */
+	private IResourceChangeListener resourceListener = new IResourceChangeListener() {
 
-        @Override
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
-            IResourceDelta mainDelta = event.getDelta();
-            if (mainDelta == null)
-                return;
-            IResourceDelta affectedElement = mainDelta.findMember(resource
-                    .getFullPath());
-            if (affectedElement != null)
-                processDelta(affectedElement);
-        }
+			IResourceDelta mainDelta = event.getDelta();
+			if (mainDelta == null)
+				return;
+			IResourceDelta affectedElement = mainDelta.findMember(resource
+					.getFullPath());
+			if (affectedElement != null)
+				processDelta(affectedElement);
+		}
 
-        /*
-         * Process the delta for the receiver
-         */
-        private boolean processDelta(final IResourceDelta delta) {
+		/*
+		 * Process the delta for the receiver
+		 */
+		private boolean processDelta(final IResourceDelta delta) {
 
-            Runnable changeRunnable = null;
+			Runnable changeRunnable = null;
 
-            switch (delta.getKind()) {
-            case IResourceDelta.REMOVED:
-                if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
+			switch (delta.getKind()) {
+			case IResourceDelta.REMOVED:
+				if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
 					changeRunnable = () -> {
 						IPath path = delta.getMovedToPath();
 						IFile newFile = delta.getResource().getWorkspace().getRoot().getFile(path);
@@ -106,159 +106,159 @@ public class OleEditor extends EditorPart {
 							sourceChanged(newFile);
 						}
 					};
-                } else {
+				} else {
 					changeRunnable = () -> {
 						sourceDeleted = true;
 						getSite().getPage().closeEditor(OleEditor.this, true);
 					};
 
-                }
+				}
 
-                break;
-            }
+				break;
+			}
 
-            if (changeRunnable != null)
-                update(changeRunnable);
+			if (changeRunnable != null)
+				update(changeRunnable);
 
-            return true; // because we are sitting on files anyway
-        }
+			return true; // because we are sitting on files anyway
+		}
 
-    };
+	};
 
-    private OleFrame clientFrame;
+	private OleFrame clientFrame;
 
-    private OleClientSite clientSite;
+	private OleClientSite clientSite;
 
-    private File source;
+	private File source;
 
-    private IFile resource;
+	private IFile resource;
 
-    private Image oleTitleImage;
+	private Image oleTitleImage;
 
-    //The sourceDeleted flag makes sure that the receiver is not
-    //dirty when shutting down
-    boolean sourceDeleted = false;
+	//The sourceDeleted flag makes sure that the receiver is not
+	//dirty when shutting down
+	boolean sourceDeleted = false;
 
-    //The sourceChanged flag indicates whether or not the save from the ole component
-    //can be used or if the input changed
-    boolean sourceChanged = false;
+	//The sourceChanged flag indicates whether or not the save from the ole component
+	//can be used or if the input changed
+	boolean sourceChanged = false;
 
-    private static final String RENAME_ERROR_TITLE = OleMessages
-            .getString("OleEditor.errorSaving"); //$NON-NLS-1$
+	private static final String RENAME_ERROR_TITLE = OleMessages
+			.getString("OleEditor.errorSaving"); //$NON-NLS-1$
 
-    private static final String OLE_EXCEPTION_TITLE = OleMessages
-            .getString("OleEditor.oleExceptionTitle"); //$NON-NLS-1$
+	private static final String OLE_EXCEPTION_TITLE = OleMessages
+			.getString("OleEditor.oleExceptionTitle"); //$NON-NLS-1$
 
-    private static final String OLE_EXCEPTION_MESSAGE = OleMessages
-            .getString("OleEditor.oleExceptionMessage"); //$NON-NLS-1$
+	private static final String OLE_EXCEPTION_MESSAGE = OleMessages
+			.getString("OleEditor.oleExceptionMessage"); //$NON-NLS-1$
 
-    private static final String OLE_CREATE_EXCEPTION_MESSAGE = OleMessages
-            .getString("OleEditor.oleCreationExceptionMessage"); //$NON-NLS-1$
+	private static final String OLE_CREATE_EXCEPTION_MESSAGE = OleMessages
+			.getString("OleEditor.oleCreationExceptionMessage"); //$NON-NLS-1$
 
-    private static final String OLE_CREATE_EXCEPTION_REASON = OleMessages
-            .getString("OleEditor.oleCreationExceptionReason"); //$NON-NLS-1$
+	private static final String OLE_CREATE_EXCEPTION_REASON = OleMessages
+			.getString("OleEditor.oleCreationExceptionReason"); //$NON-NLS-1$
 
-    private static final String SAVE_ERROR_TITLE = OleMessages
-            .getString("OleEditor.savingTitle"); //$NON-NLS-1$
+	private static final String SAVE_ERROR_TITLE = OleMessages
+			.getString("OleEditor.savingTitle"); //$NON-NLS-1$
 
-    private static final String SAVE_ERROR_MESSAGE = OleMessages
-            .getString("OleEditor.savingMessage"); //$NON-NLS-1$
+	private static final String SAVE_ERROR_MESSAGE = OleMessages
+			.getString("OleEditor.savingMessage"); //$NON-NLS-1$
 
-    /**
-     * Return a new ole editor.
-     */
-    public OleEditor() {
-        //Do nothing
-    }
+	/**
+	 * Return a new ole editor.
+	 */
+	public OleEditor() {
+		//Do nothing
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
 
-        // Create a frame.
-        clientFrame = new OleFrame(parent, SWT.CLIP_CHILDREN);
-        clientFrame.setBackground(JFaceColors.getBannerBackground(clientFrame
-                .getDisplay()));
+		// Create a frame.
+		clientFrame = new OleFrame(parent, SWT.CLIP_CHILDREN);
+		clientFrame.setBackground(JFaceColors.getBannerBackground(clientFrame
+				.getDisplay()));
 
-        initializeWorkbenchMenus();
+		initializeWorkbenchMenus();
 
-        createClientSite();
-        updateDirtyFlag();
+		createClientSite();
+		updateDirtyFlag();
 
 		oleActivate();
-    }
+	}
 
-    /**
-     * Create the client site for the receiver
-     */
+	/**
+	 * Create the client site for the receiver
+	 */
 
-    private void createClientSite() {
-        //If there was an OLE Error or nothing has been created yet
-        if (clientFrame == null || clientFrame.isDisposed())
-            return;
-        // Create a OLE client site.
-        try {
-            clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
-        } catch (SWTException exception) {
+	private void createClientSite() {
+		//If there was an OLE Error or nothing has been created yet
+		if (clientFrame == null || clientFrame.isDisposed())
+			return;
+		// Create a OLE client site.
+		try {
+			clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
+		} catch (SWTException exception) {
 
-            IStatus errorStatus = new Status(IStatus.ERROR,
-                    WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
-                    OLE_CREATE_EXCEPTION_REASON, exception);
-            //ErrorDialog.openError(null, OLE_EXCEPTION_TITLE, OLE_CREATE_EXCEPTION_REASON, errorStatus);
-            ErrorDialog.openError(null, OLE_EXCEPTION_TITLE, OLE_CREATE_EXCEPTION_MESSAGE, errorStatus);
-            return;
-        }
-        clientSite.setBackground(JFaceColors.getBannerBackground(clientFrame
-                .getDisplay()));
+			IStatus errorStatus = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
+					OLE_CREATE_EXCEPTION_REASON, exception);
+			//ErrorDialog.openError(null, OLE_EXCEPTION_TITLE, OLE_CREATE_EXCEPTION_REASON, errorStatus);
+			ErrorDialog.openError(null, OLE_EXCEPTION_TITLE, OLE_CREATE_EXCEPTION_MESSAGE, errorStatus);
+			return;
+		}
+		clientSite.setBackground(JFaceColors.getBannerBackground(clientFrame
+				.getDisplay()));
 
-    }
+	}
 
-    /**
-     * Display an error dialog with the supplied title and message.
-     * @param title
-     * @param message
-     */
-    private void displayErrorDialog(String title, String message) {
-        Shell parent = null;
-        if (getClientSite() != null)
-            parent = getClientSite().getShell();
-        MessageDialog.openError(parent, title, message);
-    }
+	/**
+	 * Display an error dialog with the supplied title and message.
+	 * @param title
+	 * @param message
+	 */
+	private void displayErrorDialog(String title, String message) {
+		Shell parent = null;
+		if (getClientSite() != null)
+			parent = getClientSite().getShell();
+		MessageDialog.openError(parent, title, message);
+	}
 
-    /**
-     * @see IWorkbenchPart#dispose
-     */
-    @Override
+	/**
+	 * @see IWorkbenchPart#dispose
+	 */
+	@Override
 	public void dispose() {
-        if (resource != null) {
-            ResourcesPlugin.getWorkspace().removeResourceChangeListener(
-                    resourceListener);
-            resource = null;
-        }
+		if (resource != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+					resourceListener);
+			resource = null;
+		}
 
-        //can dispose the title image because it was created in init
-        if (oleTitleImage != null) {
-            oleTitleImage.dispose();
-            oleTitleImage = null;
-        }
-    }
+		//can dispose the title image because it was created in init
+		if (oleTitleImage != null) {
+			oleTitleImage.dispose();
+			oleTitleImage = null;
+		}
+	}
 
-    /**
-     *	Print this object's contents
-     */
-    public void doPrint() {
-        if (clientSite == null)
-            return;
+	/**
+	 *	Print this object's contents
+	 */
+	public void doPrint() {
+		if (clientSite == null)
+			return;
 		BusyIndicator.showWhile(clientSite.getDisplay(),
 				() -> clientSite.exec(OLE.OLECMDID_PRINT, OLE.OLECMDEXECOPT_PROMPTUSER, null, null));
-    }
+	}
 
-    /**
-     *	Save the viewer's contents to the source file system file
-     */
-    @Override
+	/**
+	 *	Save the viewer's contents to the source file system file
+	 */
+	@Override
 	public void doSave(final IProgressMonitor monitor) {
-        if (clientSite == null)
-            return;
+		if (clientSite == null)
+			return;
 		BusyIndicator.showWhile(clientSite.getDisplay(), () -> {
 
 			// Do not try and use the component provided save if the source has
@@ -289,339 +289,339 @@ public class OleEditor extends EditorPart {
 			} else
 				displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE + source.getName());
 		});
-    }
+	}
 
-    /**
-     *	Save the viewer's contents into the provided resource.
-     */
-    @Override
+	/**
+	 *	Save the viewer's contents into the provided resource.
+	 */
+	@Override
 	public void doSaveAs() {
-        if (clientSite == null)
-            return;
-        WorkspaceModifyOperation op = saveNewFileOperation();
-        Shell shell = clientSite.getShell();
-        try {
-            new ProgressMonitorDialog(shell).run(false, true, op);
-        } catch (InterruptedException interrupt) {
-            //Nothing to reset so do nothing
-        } catch (InvocationTargetException invocationException) {
-            MessageDialog.openError(shell, RENAME_ERROR_TITLE,
-                    invocationException.getTargetException().getMessage());
-        }
+		if (clientSite == null)
+			return;
+		WorkspaceModifyOperation op = saveNewFileOperation();
+		Shell shell = clientSite.getShell();
+		try {
+			new ProgressMonitorDialog(shell).run(false, true, op);
+		} catch (InterruptedException interrupt) {
+			//Nothing to reset so do nothing
+		} catch (InvocationTargetException invocationException) {
+			MessageDialog.openError(shell, RENAME_ERROR_TITLE,
+					invocationException.getTargetException().getMessage());
+		}
 
-    }
+	}
 
-    /**
-     *	Answer self's client site
-     *
-     *	@return org.eclipse.swt.ole.win32.OleClientSite
-     */
-    public OleClientSite getClientSite() {
-        return clientSite;
-    }
+	/**
+	 *	Answer self's client site
+	 *
+	 *	@return org.eclipse.swt.ole.win32.OleClientSite
+	 */
+	public OleClientSite getClientSite() {
+		return clientSite;
+	}
 
-    /**
-     *	Answer the file system representation of self's input element
-     *
-     *	@return java.io.File
-     */
-    public File getSourceFile() {
-        return source;
-    }
+	/**
+	 *	Answer the file system representation of self's input element
+	 *
+	 *	@return java.io.File
+	 */
+	public File getSourceFile() {
+		return source;
+	}
 
-    private void handleWord() {
-        OleAutomation dispInterface = new OleAutomation(clientSite);
-        // Get Application
-        int[] appId = dispInterface
-                .getIDsOfNames(new String[] { "Application" }); //$NON-NLS-1$
-        if (appId != null) {
-            Variant pVarResult = dispInterface.getProperty(appId[0]);
-            if (pVarResult != null) {
-                OleAutomation application = pVarResult.getAutomation();
-                int[] dispid = application
-                        .getIDsOfNames(new String[] { "DisplayScrollBars" }); //$NON-NLS-1$
-                if (dispid != null) {
-                    Variant rgvarg = new Variant(true);
-                    application.setProperty(dispid[0], rgvarg);
-                }
-                application.dispose();
-            }
-        }
-        dispInterface.dispose();
-    }
+	private void handleWord() {
+		OleAutomation dispInterface = new OleAutomation(clientSite);
+		// Get Application
+		int[] appId = dispInterface
+				.getIDsOfNames(new String[] { "Application" }); //$NON-NLS-1$
+		if (appId != null) {
+			Variant pVarResult = dispInterface.getProperty(appId[0]);
+			if (pVarResult != null) {
+				OleAutomation application = pVarResult.getAutomation();
+				int[] dispid = application
+						.getIDsOfNames(new String[] { "DisplayScrollBars" }); //$NON-NLS-1$
+				if (dispid != null) {
+					Variant rgvarg = new Variant(true);
+					application.setProperty(dispid[0], rgvarg);
+				}
+				application.dispose();
+			}
+		}
+		dispInterface.dispose();
+	}
 
-    @Override
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
-            throws PartInitException {
+			throws PartInitException {
 
-    	validatePathEditorInput(input);
+		validatePathEditorInput(input);
 
-        // Save input.
-        setSite(site);
-        setInputWithNotify(input);
+		// Save input.
+		setSite(site);
+		setInputWithNotify(input);
 
-        // Update titles.
-        setPartName(input.getName());
-        setTitleToolTip(input.getToolTipText());
-        ImageDescriptor desc = input.getImageDescriptor();
-        if (desc != null) {
-            oleTitleImage = desc.createImage();
-            setTitleImage(oleTitleImage);
-        }
-    }
+		// Update titles.
+		setPartName(input.getName());
+		setTitleToolTip(input.getToolTipText());
+		ImageDescriptor desc = input.getImageDescriptor();
+		if (desc != null) {
+			oleTitleImage = desc.createImage();
+			setTitleImage(oleTitleImage);
+		}
+	}
 
-    /**
-     * Validates the given input
-     *
-     * @param input the editor input to validate
-     * @throws PartInitException if the editor input is not OK
-     */
-    private boolean validatePathEditorInput(IEditorInput input) throws PartInitException {
-        // Check input type.
+	/**
+	 * Validates the given input
+	 *
+	 * @param input the editor input to validate
+	 * @throws PartInitException if the editor input is not OK
+	 */
+	private boolean validatePathEditorInput(IEditorInput input) throws PartInitException {
+		// Check input type.
 		IPathEditorInput pathEditorInput = Adapters.adapt(input, IPathEditorInput.class);
-        if (pathEditorInput == null)
-            throw new PartInitException(OleMessages.format(
-                    "OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
+		if (pathEditorInput == null)
+			throw new PartInitException(OleMessages.format(
+					"OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
 
-        IPath path = pathEditorInput.getPath();
+		IPath path = pathEditorInput.getPath();
 
-        //Cannot create this with a file and no physical location
-        if (!(new File(path.toOSString()).exists()))
-            throw new PartInitException(
-                    OleMessages
-                            .format(
-                                    "OleEditor.noFileInput", new Object[] { path.toOSString() })); //$NON-NLS-1$
-        return true;
-    }
+		//Cannot create this with a file and no physical location
+		if (!(new File(path.toOSString()).exists()))
+			throw new PartInitException(
+					OleMessages
+							.format(
+									"OleEditor.noFileInput", new Object[] { path.toOSString() })); //$NON-NLS-1$
+		return true;
+	}
 
-    /**
-     *	Initialize the workbench menus for proper merging
-     */
-    protected void initializeWorkbenchMenus() {
-        //If there was an OLE Error or nothing has been created yet
-        if (clientFrame == null || clientFrame.isDisposed())
-            return;
-        // Get the browser menu bar.  If one does not exist then
-        // create it.
-        Shell shell = clientFrame.getShell();
-        Menu menuBar = shell.getMenuBar();
-        if (menuBar == null) {
-            menuBar = new Menu(shell, SWT.BAR);
-            shell.setMenuBar(menuBar);
-        }
+	/**
+	 *	Initialize the workbench menus for proper merging
+	 */
+	protected void initializeWorkbenchMenus() {
+		//If there was an OLE Error or nothing has been created yet
+		if (clientFrame == null || clientFrame.isDisposed())
+			return;
+		// Get the browser menu bar.  If one does not exist then
+		// create it.
+		Shell shell = clientFrame.getShell();
+		Menu menuBar = shell.getMenuBar();
+		if (menuBar == null) {
+			menuBar = new Menu(shell, SWT.BAR);
+			shell.setMenuBar(menuBar);
+		}
 
-        // Swap the file and window menus.
-        MenuItem[] windowMenu = new MenuItem[1];
-        MenuItem[] fileMenu = new MenuItem[1];
+		// Swap the file and window menus.
+		MenuItem[] windowMenu = new MenuItem[1];
+		MenuItem[] fileMenu = new MenuItem[1];
 		Vector<MenuItem> containerItems = new Vector<>();
 
-        IWorkbenchWindow window = getSite().getWorkbenchWindow();
+		IWorkbenchWindow window = getSite().getWorkbenchWindow();
 
-        for (int i = 0; i < menuBar.getItemCount(); i++) {
-            MenuItem item = menuBar.getItem(i);
-            String id = ""; //$NON-NLS-1$
-            if (item.getData() instanceof IMenuManager)
-                id = ((IMenuManager) item.getData()).getId();
-            if (id.equals(IWorkbenchActionConstants.M_FILE))
-                fileMenu[0] = item;
-            else if (id.equals(IWorkbenchActionConstants.M_WINDOW))
-                windowMenu[0] = item;
-            else {
-                if (window.isApplicationMenu(id)) {
-                    containerItems.addElement(item);
-                }
-            }
-        }
-        MenuItem[] containerMenu = new MenuItem[containerItems.size()];
-        containerItems.copyInto(containerMenu);
-        clientFrame.setFileMenus(fileMenu);
-        clientFrame.setContainerMenus(containerMenu);
-        clientFrame.setWindowMenus(windowMenu);
-    }
+		for (int i = 0; i < menuBar.getItemCount(); i++) {
+			MenuItem item = menuBar.getItem(i);
+			String id = ""; //$NON-NLS-1$
+			if (item.getData() instanceof IMenuManager)
+				id = ((IMenuManager) item.getData()).getId();
+			if (id.equals(IWorkbenchActionConstants.M_FILE))
+				fileMenu[0] = item;
+			else if (id.equals(IWorkbenchActionConstants.M_WINDOW))
+				windowMenu[0] = item;
+			else {
+				if (window.isApplicationMenu(id)) {
+					containerItems.addElement(item);
+				}
+			}
+		}
+		MenuItem[] containerMenu = new MenuItem[containerItems.size()];
+		containerItems.copyInto(containerMenu);
+		clientFrame.setFileMenus(fileMenu);
+		clientFrame.setContainerMenus(containerMenu);
+		clientFrame.setWindowMenus(windowMenu);
+	}
 
-    @Override
+	@Override
 	public boolean isDirty() {
-        /*Return only if we have a clientSite which is dirty
-         as this can be asked before anything is opened*/
-        return clientSite != null && clientSite.isDirty();
-    }
+		/*Return only if we have a clientSite which is dirty
+		 as this can be asked before anything is opened*/
+		return clientSite != null && clientSite.isDirty();
+	}
 
-    @Override
+	@Override
 	public boolean isSaveAsAllowed() {
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     *Since we don't know when a change has been made, always answer true
-     * @return <code>false</code> if it was not opened and <code>true</code>
-     * only if it is dirty
-     */
-    public boolean isSaveNeeded() {
-        return isDirty();
-    }
+	/**
+	 *Since we don't know when a change has been made, always answer true
+	 * @return <code>false</code> if it was not opened and <code>true</code>
+	 * only if it is dirty
+	 */
+	public boolean isSaveNeeded() {
+		return isDirty();
+	}
 
-    /**
-     * Save the supplied file using the SWT API.
-     * @param file java.io.File
-     * @return <code>true</code> if the save was successful
-     */
-    private boolean saveFile(File file) {
+	/**
+	 * Save the supplied file using the SWT API.
+	 * @param file java.io.File
+	 * @return <code>true</code> if the save was successful
+	 */
+	private boolean saveFile(File file) {
 
-        File tempFile = new File(file.getAbsolutePath() + ".tmp"); //$NON-NLS-1$
-        file.renameTo(tempFile);
-        boolean saved = false;
-        if (OLE.isOleFile(file) || usesStorageFiles(clientSite.getProgramID())) {
-            saved = clientSite.save(file, true);
-        } else {
-            saved = clientSite.save(file, false);
-        }
+		File tempFile = new File(file.getAbsolutePath() + ".tmp"); //$NON-NLS-1$
+		file.renameTo(tempFile);
+		boolean saved = false;
+		if (OLE.isOleFile(file) || usesStorageFiles(clientSite.getProgramID())) {
+			saved = clientSite.save(file, true);
+		} else {
+			saved = clientSite.save(file, false);
+		}
 
-        if (saved) {
-            // save was successful so discard the backup
-            tempFile.delete();
-            return true;
-        }
-        // save failed so restore the backup
-        tempFile.renameTo(file);
-        return false;
-    }
+		if (saved) {
+			// save was successful so discard the backup
+			tempFile.delete();
+			return true;
+		}
+		// save failed so restore the backup
+		tempFile.renameTo(file);
+		return false;
+	}
 
-    /**
-     * Save the new File using the client site.
-     * @return WorkspaceModifyOperation
-     */
-    private WorkspaceModifyOperation saveNewFileOperation() {
+	/**
+	 * Save the new File using the client site.
+	 * @return WorkspaceModifyOperation
+	 */
+	private WorkspaceModifyOperation saveNewFileOperation() {
 
-        return new WorkspaceModifyOperation() {
-            @Override
+		return new WorkspaceModifyOperation() {
+			@Override
 			public void execute(final IProgressMonitor monitor)
-                    throws CoreException {
-                SaveAsDialog dialog = new SaveAsDialog(clientFrame.getShell());
-                IFile sFile = ResourceUtil.getFile(getEditorInput());
-                if (sFile != null) {
-                    dialog.setOriginalFile(sFile);
-                    dialog.open();
+					throws CoreException {
+				SaveAsDialog dialog = new SaveAsDialog(clientFrame.getShell());
+				IFile sFile = ResourceUtil.getFile(getEditorInput());
+				if (sFile != null) {
+					dialog.setOriginalFile(sFile);
+					dialog.open();
 
-                    IPath newPath = dialog.getResult();
-                    if (newPath == null)
-                        return;
+					IPath newPath = dialog.getResult();
+					if (newPath == null)
+						return;
 
-                    if (dialog.getReturnCode() == Window.OK) {
-                        String projectName = newPath.segment(0);
-                        newPath = newPath.removeFirstSegments(1);
-                        IProject project = resource.getWorkspace().getRoot()
-                                .getProject(projectName);
-                        newPath = project.getLocation().append(newPath);
-                        File newFile = newPath.toFile();
-                        if (saveFile(newFile)) {
-                            IFile newResource = resource.getWorkspace().getRoot()
-                                    .getFileForLocation(newPath);
-                            if (newResource != null) {
-                                sourceChanged(newResource);
-                                newResource.refreshLocal(IResource.DEPTH_ZERO,
-                                        monitor);
-                            }
-                        } else {
-                            displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE
-                                    + newFile.getName());
-                            return;
-                        }
-                    }
-                }
-            }
-        };
+					if (dialog.getReturnCode() == Window.OK) {
+						String projectName = newPath.segment(0);
+						newPath = newPath.removeFirstSegments(1);
+						IProject project = resource.getWorkspace().getRoot()
+								.getProject(projectName);
+						newPath = project.getLocation().append(newPath);
+						File newFile = newPath.toFile();
+						if (saveFile(newFile)) {
+							IFile newResource = resource.getWorkspace().getRoot()
+									.getFileForLocation(newPath);
+							if (newResource != null) {
+								sourceChanged(newResource);
+								newResource.refreshLocal(IResource.DEPTH_ZERO,
+										monitor);
+							}
+						} else {
+							displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE
+									+ newFile.getName());
+							return;
+						}
+					}
+				}
+			}
+		};
 
-    }
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
 		if (clientSite != null)
 			clientSite.setFocus();
-    }
+	}
 
-    /**
-     * Make ole active so that the controls are rendered.
-     */
-    private void oleActivate() {
-        //If there was an OLE Error or nothing has been created yet
-        if (clientSite == null || clientFrame == null
-                || clientFrame.isDisposed())
-            return;
+	/**
+	 * Make ole active so that the controls are rendered.
+	 */
+	private void oleActivate() {
+		//If there was an OLE Error or nothing has been created yet
+		if (clientSite == null || clientFrame == null
+				|| clientFrame.isDisposed())
+			return;
 
 		clientSite.doVerb(OLE.OLEIVERB_SHOW);
 		String progId = clientSite.getProgramID();
 		if (progId != null && progId.startsWith("Word.Document")) { //$NON-NLS-1$
 			handleWord();
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected void setInputWithNotify(IEditorInput input) {
 		IPathEditorInput pathEditorInput = Adapters.adapt(input, IPathEditorInput.class);
-    	if (pathEditorInput != null)
-    		source = new File(pathEditorInput.getPath().toOSString());
+		if (pathEditorInput != null)
+			source = new File(pathEditorInput.getPath().toOSString());
 
-        if (input instanceof IFileEditorInput) {
-        	if (resource == null)
-        		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
-        	resource = ((IFileEditorInput)input).getFile();
-        } else if (resource != null) {
-        	ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
-        	resource = null;
-        }
+		if (input instanceof IFileEditorInput) {
+			if (resource == null)
+				ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
+			resource = ((IFileEditorInput)input).getFile();
+		} else if (resource != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+			resource = null;
+		}
 
-        super.setInputWithNotify(input);
-    }
+		super.setInputWithNotify(input);
+	}
 
-    /**
-     * See if it is one of the known types that use OLE Storage.
-     * @param progID the type to test
-     * @return <code>true</code> if it is one of the known types
-     */
-    private static boolean usesStorageFiles(String progID) {
-        return (progID != null && (progID.startsWith("Word.", 0) //$NON-NLS-1$
-                || progID.startsWith("MSGraph", 0) //$NON-NLS-1$
-                || progID.startsWith("PowerPoint", 0) //$NON-NLS-1$
-        || progID.startsWith("Excel", 0))); //$NON-NLS-1$
-    }
+	/**
+	 * See if it is one of the known types that use OLE Storage.
+	 * @param progID the type to test
+	 * @return <code>true</code> if it is one of the known types
+	 */
+	private static boolean usesStorageFiles(String progID) {
+		return (progID != null && (progID.startsWith("Word.", 0) //$NON-NLS-1$
+				|| progID.startsWith("MSGraph", 0) //$NON-NLS-1$
+				|| progID.startsWith("PowerPoint", 0) //$NON-NLS-1$
+		|| progID.startsWith("Excel", 0))); //$NON-NLS-1$
+	}
 
-    /**
-     * The source has changed to the newFile. Update
-     * editors and set any required flags
-     * @param newFile The file to get the new contents from.
-     */
-    private void sourceChanged(IFile newFile) {
+	/**
+	 * The source has changed to the newFile. Update
+	 * editors and set any required flags
+	 * @param newFile The file to get the new contents from.
+	 */
+	private void sourceChanged(IFile newFile) {
 
-        FileEditorInput newInput = new FileEditorInput(newFile);
-        setInputWithNotify(newInput);
-        sourceChanged = true;
-        setPartName(newInput.getName());
+		FileEditorInput newInput = new FileEditorInput(newFile);
+		setInputWithNotify(newInput);
+		sourceChanged = true;
+		setPartName(newInput.getName());
 
-    }
+	}
 
-    @Override
+	@Override
 	public boolean isSaveOnCloseNeeded() {
-        return !sourceDeleted && super.isSaveOnCloseNeeded();
-    }
+		return !sourceDeleted && super.isSaveOnCloseNeeded();
+	}
 
-    /**
-     * Posts the update code "behind" the running operation.
-     *
-     * @param runnable the update code
-     */
-    private void update(Runnable runnable) {
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        if (windows != null && windows.length > 0) {
-            Display display = windows[0].getShell().getDisplay();
-            display.asyncExec(runnable);
-        } else
-            runnable.run();
-    }
+	/**
+	 * Posts the update code "behind" the running operation.
+	 *
+	 * @param runnable the update code
+	 */
+	private void update(Runnable runnable) {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+		if (windows != null && windows.length > 0) {
+			Display display = windows[0].getShell().getDisplay();
+			display.asyncExec(runnable);
+		} else
+			runnable.run();
+	}
 
-    private boolean isDirty = false;
-    private void updateDirtyFlag() {
-    	final Runnable dirtyFlagUpdater = new Runnable() {
+	private boolean isDirty = false;
+	private void updateDirtyFlag() {
+		final Runnable dirtyFlagUpdater = new Runnable() {
 			@Override
 			public void run() {
 				if (clientSite == null || resource == null) return;
@@ -632,7 +632,7 @@ public class OleEditor extends EditorPart {
 				}
 				clientSite.getDisplay().timerExec(1000, this);
 			}
-    	};
-    	dirtyFlagUpdater.run();
-    }
+		};
+		dirtyFlagUpdater.run();
+	}
 }

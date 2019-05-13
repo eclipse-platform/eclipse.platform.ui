@@ -31,67 +31,67 @@ import org.eclipse.swt.widgets.Shell;
 @Creatable
 @Singleton
 public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
-    IProgressMonitor outerMonitor;
+	IProgressMonitor outerMonitor;
 
-    @Inject
-    @Optional
-    IProgressService progressService;
+	@Inject
+	@Optional
+	IProgressService progressService;
 
-    @Inject
-    @Optional
-    ProgressManager progressManager;
+	@Inject
+	@Optional
+	ProgressManager progressManager;
 
-    @Inject
-    @Optional
-    FinishedJobs finishedJobs;
+	@Inject
+	@Optional
+	FinishedJobs finishedJobs;
 
-    @Inject
-    @Optional
-    ProgressViewUpdater progressViewUpdater;
-
-
+	@Inject
+	@Optional
+	ProgressViewUpdater progressViewUpdater;
 
 
-    int nestingDepth = 0;
 
-    @Override
+
+	int nestingDepth = 0;
+
+	@Override
 	public void clearBlocked() {
-        if (nestingDepth == 0) {
+		if (nestingDepth == 0) {
 			return;
 		}
 
-        nestingDepth--;
+		nestingDepth--;
 
-        if (nestingDepth <= 0) {
-            BlockedJobsDialog.clear(outerMonitor);
-            outerMonitor = null;
-            nestingDepth = 0;
-        }
+		if (nestingDepth <= 0) {
+			BlockedJobsDialog.clear(outerMonitor);
+			outerMonitor = null;
+			nestingDepth = 0;
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	public void showBlocked(Shell parentShell,
-            IProgressMonitor blockingMonitor, IStatus blockingStatus,
-            String blockedName) {
+			IProgressMonitor blockingMonitor, IStatus blockingStatus,
+			String blockedName) {
 
-        nestingDepth++;
-        if (outerMonitor == null) {
-            outerMonitor = blockingMonitor;
-            //Try to get a name as best as possible
-            if (blockedName == null && parentShell != null) {
+		nestingDepth++;
+		if (outerMonitor == null) {
+			outerMonitor = blockingMonitor;
+			//Try to get a name as best as possible
+			if (blockedName == null && parentShell != null) {
 				blockedName = parentShell.getText();
 			}
 			BlockedJobsDialog.createBlockedDialog(parentShell, blockingMonitor,
-			        blockingStatus, blockedName, progressService, finishedJobs,
-			        progressViewUpdater, progressManager);
-        }
+					blockingStatus, blockedName, progressService, finishedJobs,
+					progressViewUpdater, progressManager);
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	public void showBlocked(IProgressMonitor blocking, IStatus blockingStatus,
-            String blockedName) {
-        showBlocked(null, blocking, blockingStatus, blockedName);
-    }
+			String blockedName) {
+		showBlocked(null, blocking, blockingStatus, blockedName);
+	}
 }

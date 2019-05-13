@@ -35,12 +35,12 @@ public class DecoratorTreeView extends DecoratorTestPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		 viewer = new TreeViewer(parent){
+		viewer = new TreeViewer(parent){
 			@Override
 			protected void labelProviderChanged() {
 				super.labelProviderChanged();
 			}
-		 };
+		};
 
 		viewer.setLabelProvider(getLabelProvider());
 

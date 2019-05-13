@@ -41,28 +41,28 @@ public class ViewSettingsDialog extends Dialog {
 	}
 
 	@Override
-    protected void buttonPressed(int buttonId) {
+	protected void buttonPressed(int buttonId) {
 		if (buttonId == DEFAULTS_BUTTON_ID) {
 			performDefaults();
 		}
 		super.buttonPressed(buttonId);
 	}
 
-	 /**
-     * Performs special processing when this dialog Defaults button has been pressed.
-     * <p>
-     * This is a framework hook method for subclasses to do special things when
-     * the Defaults button has been pressed.
-     * Subclasses may override, but should call <code>super.performDefaults</code>.
-     * </p>
-     */
+	/**
+	 * Performs special processing when this dialog Defaults button has been pressed.
+	 * <p>
+	 * This is a framework hook method for subclasses to do special things when
+	 * the Defaults button has been pressed.
+	 * Subclasses may override, but should call <code>super.performDefaults</code>.
+	 * </p>
+	 */
 	protected void performDefaults() {
 		//Do nothing by default
 
 	}
 
 	@Override
-    protected void createButtonsForButtonBar(Composite parent) {
+	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		createButton(parent, DEFAULTS_BUTTON_ID, JFaceResources.getString("defaults"), false); //$NON-NLS-1$

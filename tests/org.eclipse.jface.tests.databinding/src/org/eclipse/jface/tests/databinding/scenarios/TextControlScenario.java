@@ -44,73 +44,73 @@ import com.ibm.icu.text.NumberFormat;
 
 public class TextControlScenario extends ScenariosTestCase {
 
-    private Text text;
+	private Text text;
 
-    private Adventure adventure;
+	private Adventure adventure;
 
-    private Transportation transportation;
+	private Transportation transportation;
 
-    Account account;
+	Account account;
 
-    @Override
+	@Override
 	@Before
 	public void setUp() throws Exception {
-        super.setUp();
-        // do any setup work here
-        adventure = SampleData.WINTER_HOLIDAY;
-        transportation = SampleData.EXECUTIVE_JET;
-        account = SampleData.PRESIDENT;
-        text = new Text(getComposite(), SWT.BORDER);
-    }
+		super.setUp();
+		// do any setup work here
+		adventure = SampleData.WINTER_HOLIDAY;
+		transportation = SampleData.EXECUTIVE_JET;
+		account = SampleData.PRESIDENT;
+		text = new Text(getComposite(), SWT.BORDER);
+	}
 
-    @Override
+	@Override
 	@After
 	public void tearDown() throws Exception {
-        text.dispose();
-        text = null;
-        super.tearDown();
-    }
+		text.dispose();
+		text = null;
+		super.tearDown();
+	}
 
-    @Test
+	@Test
 	public void testScenario01() {
-        // Bind the adventure "name" property to a text field
-        // Change the UI and verify the model changes
-        // Change the model and verify the UI changes
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(adventure, "name"));
+		// Bind the adventure "name" property to a text field
+		// Change the UI and verify the model changes
+		// Change the model and verify the UI changes
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(adventure, "name"));
 
-        assertEquals(adventure.getName(), text.getText());
-        text.setText("England");
-        text.notifyListeners(SWT.FocusOut, null);
-        assertEquals("England", adventure.getName());
-        adventure.setName("France");
-        assertEquals("France", text.getText());
-        adventure.setName("Germany");
-        spinEventLoop(0);
-        assertEquals("Germany", text.getText());
-    }
+		assertEquals(adventure.getName(), text.getText());
+		text.setText("England");
+		text.notifyListeners(SWT.FocusOut, null);
+		assertEquals("England", adventure.getName());
+		adventure.setName("France");
+		assertEquals("France", text.getText());
+		adventure.setName("Germany");
+		spinEventLoop(0);
+		assertEquals("Germany", text.getText());
+	}
 
-    @Test
+	@Test
 	public void testScenario02() {
 
-        // Bind the transportation "price" property to a text field
-        // This is a Double.TYPE so we check that conversion and validation
-        // occurs
-        // Change the UI and verify the model changes
-        // Change the model and verify the UI changes
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(transportation, "price"));
+		// Bind the transportation "price" property to a text field
+		// This is a Double.TYPE so we check that conversion and validation
+		// occurs
+		// Change the UI and verify the model changes
+		// Change the model and verify the UI changes
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(transportation, "price"));
 
-        NumberFormat numberFormat = NumberFormat.getInstance();
+		NumberFormat numberFormat = NumberFormat.getInstance();
 
-        assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
-        text.setText("9876.54");
-        text.notifyListeners(SWT.FocusOut, null);
-        assertEquals(9876.54, transportation.getPrice(), 0);
+		assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
+		text.setText("9876.54");
+		text.notifyListeners(SWT.FocusOut, null);
+		assertEquals(9876.54, transportation.getPrice(), 0);
 
-        transportation.setPrice(1234.56);
-        assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
-    }
+		transportation.setPrice(1234.56);
+		assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
+	}
 
 //    @Test
 	// public void testScenario03() {
@@ -192,138 +192,138 @@ public class TextControlScenario extends ScenariosTestCase {
 //        assertEquals(newName, adventure.getName());
 //    }
 
-    /**
-     * @Test
+	/**
+	 * @Test
 	public void testScenario05(){ // Show that nesting of properties works.
-     * Adventure has defaultLodging and Lodging has name getDbc().bind(text,new
-     * Property(adventure,"defaultLodging.name"),null); // Verify the GUI is
-     * showing the model value
-     * assertEquals(text.getText(),adventure.getDefaultLodging().getName()); }
-     */
-    @Test
+	 * Adventure has defaultLodging and Lodging has name getDbc().bind(text,new
+	 * Property(adventure,"defaultLodging.name"),null); // Verify the GUI is
+	 * showing the model value
+	 * assertEquals(text.getText(),adventure.getDefaultLodging().getName()); }
+	 */
+	@Test
 	public void testScenario06() {
-        // // Show that partial validation works for TIME_EARLY
-        // // We are using TIME_EARLY to verify that invalid states are not sent
-        // to the model
-        // getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
-        // getDbc().bind(text, new Property(account, "phone"), new BindSpec(new
-        // PhoneConverter(),new PhoneValidator()));
-        // // Verify we have no error message for partial validation or full
-        // validation yet
-        // assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
-        // == 0);
-        // assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
-        // == 0);
-        // // Update some of the phone number
-        // String originalPhoneNumber = account.getPhone();
-        // text.setText("999");
-        // // Verify that the phone number is partially invalid and there is no
-        // validation message
-        // assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
-        // > 0);
-        // assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
-        // == 0);
-        // // And that the model has not changed
-        // assertEquals(account.getPhone(),originalPhoneNumber);
-        // // Verify that fixing the phone removes the error and the model is
-        // updated too
-        // text.setText("999-888-7777");
-        // assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
-        // == 0);
-        // assertEquals(account.getPhone(),"9998887777");
-    }
+		// // Show that partial validation works for TIME_EARLY
+		// // We are using TIME_EARLY to verify that invalid states are not sent
+		// to the model
+		// getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
+		// getDbc().bind(text, new Property(account, "phone"), new BindSpec(new
+		// PhoneConverter(),new PhoneValidator()));
+		// // Verify we have no error message for partial validation or full
+		// validation yet
+		// assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
+		// == 0);
+		// assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
+		// == 0);
+		// // Update some of the phone number
+		// String originalPhoneNumber = account.getPhone();
+		// text.setText("999");
+		// // Verify that the phone number is partially invalid and there is no
+		// validation message
+		// assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
+		// > 0);
+		// assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
+		// == 0);
+		// // And that the model has not changed
+		// assertEquals(account.getPhone(),originalPhoneNumber);
+		// // Verify that fixing the phone removes the error and the model is
+		// updated too
+		// text.setText("999-888-7777");
+		// assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
+		// == 0);
+		// assertEquals(account.getPhone(),"9998887777");
+	}
 
-    @Test
+	@Test
 	public void testScenario07() {
-        // // Show that partial validation works for TIME_LATE
-        // getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_LATE);
-        // getDbc().bind(text, new Property(account, "phone"), new BindSpec(new
-        // PhoneConverter(),new PhoneValidator()));
-        // // Update some of the phone number
-        // String originalPhoneNumber = account.getPhone();
-        // text.setText("222");
-        // // Verify that we have no completion validation message and a partial
-        // one
-        // assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
-        // > 0);
-        // assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
-        // == 0);
-        // // Fix the error
-        // text.setText("222-333-4444");
-        // // Verify that the errors are both fixed
-        // assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
-        // == 0);
-        // assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
-        // == 0);
-        // // The model should not be changed
-        // assertEquals(originalPhoneNumber,account.getPhone());
-        // // Lose focus and verify that the complete validation message is
-        // fixed
-        // text.notifyListeners(SWT.FocusOut,null);
-        // assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
-        // == 0);
-        // // The model should be changed
-        // assertEquals("2223334444",account.getPhone());
-    }
+		// // Show that partial validation works for TIME_LATE
+		// getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_LATE);
+		// getDbc().bind(text, new Property(account, "phone"), new BindSpec(new
+		// PhoneConverter(),new PhoneValidator()));
+		// // Update some of the phone number
+		// String originalPhoneNumber = account.getPhone();
+		// text.setText("222");
+		// // Verify that we have no completion validation message and a partial
+		// one
+		// assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
+		// > 0);
+		// assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
+		// == 0);
+		// // Fix the error
+		// text.setText("222-333-4444");
+		// // Verify that the errors are both fixed
+		// assertTrue(((String)getDbc().getPartialValidationMessage().getValue()).length()
+		// == 0);
+		// assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
+		// == 0);
+		// // The model should not be changed
+		// assertEquals(originalPhoneNumber,account.getPhone());
+		// // Lose focus and verify that the complete validation message is
+		// fixed
+		// text.notifyListeners(SWT.FocusOut,null);
+		// assertTrue(((String)getDbc().getValidationMessage().getValue()).length()
+		// == 0);
+		// // The model should be changed
+		// assertEquals("2223334444",account.getPhone());
+	}
 
-    @Test
+	@Test
 	@Ignore
 	public void testScenario08() {
 
-        // Show that the CustomBeanBindSupportFactory will automatically pick up
-        // the
-        // validator on the MaxNumberOfPeople property
+		// Show that the CustomBeanBindSupportFactory will automatically pick up
+		// the
+		// validator on the MaxNumberOfPeople property
 
-        DataBindingContext dbc = getDbc();
+		DataBindingContext dbc = getDbc();
 
-        dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
+		dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
 				BeansObservables.observeValue(adventure, "maxNumberOfPeople"),
 				new CustomBeanUpdateValueStrategy(), null);
 
-        // make sure we can set a value inside the validator's range
-        text.setText("4");
-        assertEquals(4, adventure.getMaxNumberOfPeople());
-        // Now try to set a value outside the validator's range
-        text.setText("999");
-        assertEquals(4, adventure.getMaxNumberOfPeople());
-        dbc.dispose();
-    }
+		// make sure we can set a value inside the validator's range
+		text.setText("4");
+		assertEquals(4, adventure.getMaxNumberOfPeople());
+		// Now try to set a value outside the validator's range
+		text.setText("999");
+		assertEquals(4, adventure.getMaxNumberOfPeople());
+		dbc.dispose();
+	}
 
-    @Test
+	@Test
 	public void testScenario09() {
-        // Verify direct binding between a Text and Label following bugzilla
-        // 118696
-        Label label = new Label(getComposite(), SWT.NONE);
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label));
+		// Verify direct binding between a Text and Label following bugzilla
+		// 118696
+		Label label = new Label(getComposite(), SWT.NONE);
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label));
 
-        // Change the text
-        text.setText("Frog");
-        // Verify the label does not change
-        assertTrue(label.getText().length() == 0);
-        // Lose focus from the text field
-        text.notifyListeners(SWT.FocusOut, null);
-        assertEquals(label.getText(), "Frog");
+		// Change the text
+		text.setText("Frog");
+		// Verify the label does not change
+		assertTrue(label.getText().length() == 0);
+		// Lose focus from the text field
+		text.notifyListeners(SWT.FocusOut, null);
+		assertEquals(label.getText(), "Frog");
 
-    }
+	}
 
-    @Test
+	@Test
 	public void testScenario10() {
-        // Verify direct binding between a Text and Label following bugzilla
-        // 118696 with TIME_EARLY
-        Label label = new Label(getComposite(), SWT.NONE);
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), SWTObservables.observeText(label));
+		// Verify direct binding between a Text and Label following bugzilla
+		// 118696 with TIME_EARLY
+		Label label = new Label(getComposite(), SWT.NONE);
+		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), SWTObservables.observeText(label));
 
-        // Change the text
-        String newTextValue = "Frog";
-        for (int i = 0; i < newTextValue.length(); i++) {
-            text.setText(newTextValue.substring(0, i + 1));
-            // Verify the label has changed key by key
-            assertEquals(text.getText(), label.getText());
-        }
-        // Lose focus
-        text.notifyListeners(SWT.FocusOut, null);
-        // Verify the text and label are the same following a lose focus
-        assertEquals(text.getText(), label.getText());
-    }
+		// Change the text
+		String newTextValue = "Frog";
+		for (int i = 0; i < newTextValue.length(); i++) {
+			text.setText(newTextValue.substring(0, i + 1));
+			// Verify the label has changed key by key
+			assertEquals(text.getText(), label.getText());
+		}
+		// Lose focus
+		text.notifyListeners(SWT.FocusOut, null);
+		// Verify the text and label are the same following a lose focus
+		assertEquals(text.getText(), label.getText());
+	}
 
 }

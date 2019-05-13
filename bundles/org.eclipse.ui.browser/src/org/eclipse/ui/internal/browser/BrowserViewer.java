@@ -85,78 +85,78 @@ import org.eclipse.ui.PlatformUI;
  * @since 1.0
  */
 public class BrowserViewer extends Composite {
-    /**
-     * Style parameter (value 1) indicating that the URL and Go button will be
-     * on the local toolbar.
-     */
-    public static final int LOCATION_BAR = 1 << 1;
+	/**
+	 * Style parameter (value 1) indicating that the URL and Go button will be
+	 * on the local toolbar.
+	 */
+	public static final int LOCATION_BAR = 1 << 1;
 
-    /**
-     * Style parameter (value 2) indicating that the toolbar will be available
-     * on the web browser. This style parameter cannot be used without the
-     * LOCATION_BAR style.
-     */
-    public static final int BUTTON_BAR = 1 << 2;
+	/**
+	 * Style parameter (value 2) indicating that the toolbar will be available
+	 * on the web browser. This style parameter cannot be used without the
+	 * LOCATION_BAR style.
+	 */
+	public static final int BUTTON_BAR = 1 << 2;
 
-	 protected static final String PROPERTY_TITLE = "title"; //$NON-NLS-1$
+	protected static final String PROPERTY_TITLE = "title"; //$NON-NLS-1$
 
-    private static final int MAX_HISTORY = 50;
+	private static final int MAX_HISTORY = 50;
 
-    public Clipboard clipboard;
+	public Clipboard clipboard;
 
-    public Combo combo;
+	public Combo combo;
 
-    protected boolean showToolbar;
+	protected boolean showToolbar;
 
-    protected boolean showURLbar;
+	protected boolean showURLbar;
 
-    protected ToolItem back;
+	protected ToolItem back;
 
-    protected ToolItem forward;
+	protected ToolItem forward;
 
-    protected MenuItem autoRefresh;
+	protected MenuItem autoRefresh;
 
-    protected BusyIndicator busy;
+	protected BusyIndicator busy;
 
-    protected boolean loading;
+	protected boolean loading;
 
-    protected static java.util.List<String> history;
+	protected static java.util.List<String> history;
 
-    protected Browser browser;
+	protected Browser browser;
 
-    protected BrowserText text;
+	protected BrowserText text;
 
-    protected boolean newWindow;
+	protected boolean newWindow;
 
-    protected IBrowserViewerContainer container;
+	protected IBrowserViewerContainer container;
 
-    protected String title;
+	protected String title;
 
-    protected int progressWorked = 0;
+	protected int progressWorked = 0;
 
 	protected WatchService watcher;
 
-	 protected List<PropertyChangeListener> propertyListeners;
+	protected List<PropertyChangeListener> propertyListeners;
 
-    /**
-     * Under development - do not use
-     */
-    public static interface ILocationListener {
-        public void locationChanged(String url);
+	/**
+	 * Under development - do not use
+	 */
+	public static interface ILocationListener {
+		public void locationChanged(String url);
 
-        public void historyChanged(String[] history2);
-    }
+		public void historyChanged(String[] history2);
+	}
 
-    public ILocationListener locationListener;
+	public ILocationListener locationListener;
 
-    /**
-     * Under development - do not use
-     */
-    public static interface IBackNextListener {
-        public void updateBackNextBusy();
-    }
+	/**
+	 * Under development - do not use
+	 */
+	public static interface IBackNextListener {
+		public void updateBackNextBusy();
+	}
 
-    public IBackNextListener backNextListener;
+	public IBackNextListener backNextListener;
 
 	private ImageResourceManager imageManager;
 
@@ -165,43 +165,43 @@ public class BrowserViewer extends Composite {
 	private static final String URL_CLCL = URL_PREFIX + "clcl16/"; //$NON-NLS-1$
 	private static final String URL_DLCL = URL_PREFIX + "dlcl16/"; //$NON-NLS-1$
 
-    /**
-     * Creates a new Web browser given its parent and a style value describing
-     * its behavior and appearance.
-     * <p>
-     * The style value is either one of the style constants defined in the class
-     * header or class <code>SWT</code> which is applicable to instances of
-     * this class, or must be built by <em>bitwise OR</em>'ing together (that
-     * is, using the <code>int</code> "|" operator) two or more of those
-     * <code>SWT</code> style constants. The class description lists the style
-     * constants that are applicable to the class. Style bits are also inherited
-     * from superclasses.
-     * </p>
-     *
-     * @param parent
-     *            a composite control which will be the parent of the new
-     *            instance (cannot be null)
-     * @param style
-     *            the style of control to construct
-     */
-    public BrowserViewer(Composite parent, int style) {
-        super(parent, SWT.NONE);
+	/**
+	 * Creates a new Web browser given its parent and a style value describing
+	 * its behavior and appearance.
+	 * <p>
+	 * The style value is either one of the style constants defined in the class
+	 * header or class <code>SWT</code> which is applicable to instances of
+	 * this class, or must be built by <em>bitwise OR</em>'ing together (that
+	 * is, using the <code>int</code> "|" operator) two or more of those
+	 * <code>SWT</code> style constants. The class description lists the style
+	 * constants that are applicable to the class. Style bits are also inherited
+	 * from superclasses.
+	 * </p>
+	 *
+	 * @param parent
+	 *            a composite control which will be the parent of the new
+	 *            instance (cannot be null)
+	 * @param style
+	 *            the style of control to construct
+	 */
+	public BrowserViewer(Composite parent, int style) {
+		super(parent, SWT.NONE);
 
-        if ((style & LOCATION_BAR) != 0)
-            showURLbar = true;
+		if ((style & LOCATION_BAR) != 0)
+			showURLbar = true;
 
-        if ((style & BUTTON_BAR) != 0)
-            showToolbar = true;
+		if ((style & BUTTON_BAR) != 0)
+			showToolbar = true;
 
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        layout.horizontalSpacing = 0;
-        layout.verticalSpacing = 0;
-        layout.numColumns = 1;
-        setLayout(layout);
-        setLayoutData(new GridData(GridData.FILL_BOTH));
-        clipboard = new Clipboard(parent.getDisplay());
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.numColumns = 1;
+		setLayout(layout);
+		setLayoutData(new GridData(GridData.FILL_BOTH));
+		clipboard = new Clipboard(parent.getDisplay());
 
 		if (showToolbar || showURLbar) {
 			Composite toolbarComp = new Composite(this, SWT.NONE);
@@ -228,106 +228,106 @@ public class BrowserViewer extends Composite {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ContextIds.WEB_BROWSER);
 		}
 
-        // create a new SWT Web browser widget, checking once again to make sure
-        // we can use it in this environment
-        //if (WebBrowserUtil.canUseInternalWebBrowser())
-        try {
-            this.browser = new Browser(this, SWT.NONE);
-        }
-        catch (SWTError e) {
-            if (e.code!=SWT.ERROR_NO_HANDLES) {
-                WebBrowserUtil.openError(Messages.errorCouldNotLaunchInternalWebBrowser);
-                return;
-            }
-            text = new BrowserText(this, this, e);
-        }
+		// create a new SWT Web browser widget, checking once again to make sure
+		// we can use it in this environment
+		//if (WebBrowserUtil.canUseInternalWebBrowser())
+		try {
+			this.browser = new Browser(this, SWT.NONE);
+		}
+		catch (SWTError e) {
+			if (e.code!=SWT.ERROR_NO_HANDLES) {
+				WebBrowserUtil.openError(Messages.errorCouldNotLaunchInternalWebBrowser);
+				return;
+			}
+			text = new BrowserText(this, this, e);
+		}
 
-        if (showURLbar)
-            updateHistory();
-        if (showToolbar)
-            updateBackNextBusy();
+		if (showURLbar)
+			updateHistory();
+		if (showToolbar)
+			updateBackNextBusy();
 
-         if (browser!=null) {
-            browser.setLayoutData(new GridData(GridData.FILL_BOTH));
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(browser,
-                    ContextIds.WEB_BROWSER);
-        }
-        else
-            text.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		if (browser!=null) {
+			browser.setLayoutData(new GridData(GridData.FILL_BOTH));
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(browser,
+					ContextIds.WEB_BROWSER);
+		}
+		else
+			text.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        addBrowserListeners();
-        //listen();
-    }
+		addBrowserListeners();
+		//listen();
+	}
 
-    /**
-     * Returns the underlying SWT browser widget.
-     *
-     * @return the underlying browser
-     */
-    public Browser getBrowser() {
-        return browser;
-    }
+	/**
+	 * Returns the underlying SWT browser widget.
+	 *
+	 * @return the underlying browser
+	 */
+	public Browser getBrowser() {
+		return browser;
+	}
 
-    /**
-     * Navigate to the home URL.
-     */
-    public void home() {
-   	 browser.setText(""); //$NON-NLS-1$
-    }
+	/**
+	 * Navigate to the home URL.
+	 */
+	public void home() {
+		browser.setText(""); //$NON-NLS-1$
+	}
 
-    /**
-     * Loads a URL.
-     *
-     * @param url
-     *            the URL to be loaded
-     * @return true if the operation was successful and false otherwise.
-     * @exception IllegalArgumentException
-     *                <ul>
-     *                <li>ERROR_NULL_ARGUMENT - if the url is null</li>
-     *                </ul>
-     * @exception SWTException
-     *                <ul>
-     *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
-     *                wrong thread</li>
-     *                <li>ERROR_WIDGET_DISPOSED when the widget has been
-     *                disposed</li>
-     *                </ul>
-     * @see #getURL()
-     */
-    public void setURL(String url) {
-       setURL(url, true);
-    }
+	/**
+	 * Loads a URL.
+	 *
+	 * @param url
+	 *            the URL to be loaded
+	 * @return true if the operation was successful and false otherwise.
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the url is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
+	 *                wrong thread</li>
+	 *                <li>ERROR_WIDGET_DISPOSED when the widget has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @see #getURL()
+	 */
+	public void setURL(String url) {
+		setURL(url, true);
+	}
 
-    protected void updateBackNextBusy() {
-    	if (!back.isDisposed()) {
-            back.setEnabled(isBackEnabled());
-    	}
-    	if (!forward.isDisposed()) {
-            forward.setEnabled(isForwardEnabled());
-    	}
-    	if (!busy.isDisposed()) {
-            busy.setBusy(loading);
-        }
+	protected void updateBackNextBusy() {
+		if (!back.isDisposed()) {
+			back.setEnabled(isBackEnabled());
+		}
+		if (!forward.isDisposed()) {
+			forward.setEnabled(isForwardEnabled());
+		}
+		if (!busy.isDisposed()) {
+			busy.setBusy(loading);
+		}
 
-        if (backNextListener != null)
-            backNextListener.updateBackNextBusy();
-    }
+		if (backNextListener != null)
+			backNextListener.updateBackNextBusy();
+	}
 
-    protected void updateLocation() {
-        if (locationListener != null)
-            locationListener.historyChanged(null);
+	protected void updateLocation() {
+		if (locationListener != null)
+			locationListener.historyChanged(null);
 
-        if (locationListener != null)
-            locationListener.locationChanged(null);
-    }
+		if (locationListener != null)
+			locationListener.locationChanged(null);
+	}
 
-    /**
-     *
-     */
-    private void addBrowserListeners() {
-        if (browser==null) return;
-        // respond to ExternalBrowserInstance StatusTextEvents events by
-        // updating the status line
+	/**
+	 *
+	 */
+	private void addBrowserListeners() {
+		if (browser==null) return;
+		// respond to ExternalBrowserInstance StatusTextEvents events by
+		// updating the status line
 		browser.addStatusTextListener(event -> {
 			// System.out.println("status: " + event.text); //$NON-NLS-1$
 			if (container != null) {
@@ -336,11 +336,11 @@ public class BrowserViewer extends Composite {
 			}
 		});
 
-        // Add listener for new window creation so that we can instead of
-        // opening a separate
-        // new window in which the session is lost, we can instead open a new
-        // window in a new
-        // shell within the browser area thereby maintaining the session.
+		// Add listener for new window creation so that we can instead of
+		// opening a separate
+		// new window in which the session is lost, we can instead open a new
+		// window in a new
+		// shell within the browser area thereby maintaining the session.
 		browser.addOpenWindowListener(event -> {
 			Shell shell2 = new Shell(getShell(), SWT.SHELL_TRIM);
 			shell2.setLayout(new FillLayout());
@@ -384,74 +384,74 @@ public class BrowserViewer extends Composite {
 				container.close();
 		});
 
-        browser.addProgressListener(new ProgressListener() {
-            @Override
+		browser.addProgressListener(new ProgressListener() {
+			@Override
 			public void changed(ProgressEvent event) {
 					//System.out.println("progress: " + event.current + ", " + event.total); //$NON-NLS-1$ //$NON-NLS-2$
-                if (event.total == 0)
-                    return;
+				if (event.total == 0)
+					return;
 
-                boolean done = (event.current == event.total);
+				boolean done = (event.current == event.total);
 
-                int percentProgress = event.current * 100 / event.total;
-                if (container != null) {
-                    IProgressMonitor monitor = container.getActionBars()
-                            .getStatusLineManager().getProgressMonitor();
-                    if (done) {
-                        monitor.done();
-                        progressWorked = 0;
-                    } else if (progressWorked == 0) {
-                        monitor.beginTask("", event.total); //$NON-NLS-1$
-                        progressWorked = percentProgress;
-                    } else {
-                        monitor.worked(event.current - progressWorked);
-                        progressWorked = event.current;
-                    }
-                }
+				int percentProgress = event.current * 100 / event.total;
+				if (container != null) {
+					IProgressMonitor monitor = container.getActionBars()
+							.getStatusLineManager().getProgressMonitor();
+					if (done) {
+						monitor.done();
+						progressWorked = 0;
+					} else if (progressWorked == 0) {
+						monitor.beginTask("", event.total); //$NON-NLS-1$
+						progressWorked = percentProgress;
+					} else {
+						monitor.worked(event.current - progressWorked);
+						progressWorked = event.current;
+					}
+				}
 
-                if (showToolbar) {
-                    if (!busy.isBusy() && !done)
-                        loading = true;
-                    else if (busy.isBusy() && done) // once the progress hits
-                        // 100 percent, done, set
-                        // busy to false
-                        loading = false;
+				if (showToolbar) {
+					if (!busy.isBusy() && !done)
+						loading = true;
+					else if (busy.isBusy() && done) // once the progress hits
+						// 100 percent, done, set
+						// busy to false
+						loading = false;
 
-						  //System.out.println("loading: " + loading); //$NON-NLS-1$
-                    updateBackNextBusy();
-                    updateHistory();
-                }
-            }
+					//System.out.println("loading: " + loading); //$NON-NLS-1$
+					updateBackNextBusy();
+					updateHistory();
+				}
+			}
 
-            @Override
+			@Override
 			public void completed(ProgressEvent event) {
-                if (container != null) {
-                    IProgressMonitor monitor = container.getActionBars()
-                            .getStatusLineManager().getProgressMonitor();
-                    monitor.done();
-                }
-                if (showToolbar) {
-                    loading = false;
-                    updateBackNextBusy();
-                    updateHistory();
-                }
-            }
-        });
+				if (container != null) {
+					IProgressMonitor monitor = container.getActionBars()
+							.getStatusLineManager().getProgressMonitor();
+					monitor.done();
+				}
+				if (showToolbar) {
+					loading = false;
+					updateBackNextBusy();
+					updateHistory();
+				}
+			}
+		});
 
-        if (showURLbar) {
+		if (showURLbar) {
 			browser.addLocationListener(new LocationAdapter() {
-                @Override
+				@Override
 				public void changed(LocationEvent event) {
-                    if (!event.top)
-                        return;
-                    if (combo != null) {
-                        if (!"about:blank".equals(event.location)) { //$NON-NLS-1$
-                            combo.setText(event.location);
-                            addToHistory(event.location);
-                            updateHistory();
-                        }// else
-                        //    combo.setText(""); //$NON-NLS-1$
-                    }
+					if (!event.top)
+						return;
+					if (combo != null) {
+						if (!"about:blank".equals(event.location)) { //$NON-NLS-1$
+							combo.setText(event.location);
+							addToHistory(event.location);
+							updateHistory();
+						}// else
+						//    combo.setText(""); //$NON-NLS-1$
+					}
 					if (showToolbar) {
 						// enable auto-refresh button if URL is a file
 						File temp = getFile(browser.getUrl());
@@ -465,17 +465,17 @@ public class BrowserViewer extends Composite {
 							toggleAutoRefresh();
 							autoRefresh.setEnabled(false);
 						}
-                    }
-                }
-            });
-        }
+					}
+				}
+			});
+		}
 
 		browser.addTitleListener(event -> {
 			String oldTitle = title;
 			title = event.title;
 			firePropertyChangeEvent(PROPERTY_TITLE, oldTitle, title);
 		});
-    }
+	}
 
 	 /**
 		 * Add a property change listener to this instance.
@@ -523,229 +523,229 @@ public class BrowserViewer extends Composite {
 			}
 		}
 
-    /**
-     * Navigate to the next session history item. Convenience method that calls
-     * the underlying SWT browser.
-     *
-     * @return <code>true</code> if the operation was successful and
-     *         <code>false</code> otherwise
-     * @exception SWTException
-     *                <ul>
-     *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
-     *                wrong thread</li>
-     *                <li>ERROR_WIDGET_DISPOSED when the widget has been
-     *                disposed</li>
-     *                </ul>
-     * @see #back
-     */
-    public boolean forward() {
-        if (browser==null)
-            return false;
-        return browser.forward();
-    }
+	/**
+	 * Navigate to the next session history item. Convenience method that calls
+	 * the underlying SWT browser.
+	 *
+	 * @return <code>true</code> if the operation was successful and
+	 *         <code>false</code> otherwise
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
+	 *                wrong thread</li>
+	 *                <li>ERROR_WIDGET_DISPOSED when the widget has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @see #back
+	 */
+	public boolean forward() {
+		if (browser==null)
+			return false;
+		return browser.forward();
+	}
 
-    /**
-     * Navigate to the previous session history item. Convenience method that
-     * calls the underlying SWT browser.
-     *
-     * @return <code>true</code> if the operation was successful and
-     *         <code>false</code> otherwise
-     * @exception SWTException
-     *                <ul>
-     *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
-     *                wrong thread</li>
-     *                <li>ERROR_WIDGET_DISPOSED when the widget has been
-     *                disposed</li>
-     *                </ul>
-     * @see #forward
-     */
-    public boolean back() {
-        if (browser==null)
-            return false;
-        return browser.back();
-    }
+	/**
+	 * Navigate to the previous session history item. Convenience method that
+	 * calls the underlying SWT browser.
+	 *
+	 * @return <code>true</code> if the operation was successful and
+	 *         <code>false</code> otherwise
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
+	 *                wrong thread</li>
+	 *                <li>ERROR_WIDGET_DISPOSED when the widget has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @see #forward
+	 */
+	public boolean back() {
+		if (browser==null)
+			return false;
+		return browser.back();
+	}
 
-    /**
-     * Returns <code>true</code> if the receiver can navigate to the previous
-     * session history item, and <code>false</code> otherwise. Convenience
-     * method that calls the underlying SWT browser.
-     *
-     * @return the receiver's back command enabled state
-     * @exception SWTException
-     *                <ul>
-     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-     *                disposed</li>
-     *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-     *                thread that created the receiver</li>
-     *                </ul>
-     * @see #back
-     */
-    public boolean isBackEnabled() {
-        if (browser==null)
-            return false;
-        return browser.isBackEnabled();
-    }
+	/**
+	 * Returns <code>true</code> if the receiver can navigate to the previous
+	 * session history item, and <code>false</code> otherwise. Convenience
+	 * method that calls the underlying SWT browser.
+	 *
+	 * @return the receiver's back command enabled state
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * @see #back
+	 */
+	public boolean isBackEnabled() {
+		if (browser==null)
+			return false;
+		return browser.isBackEnabled();
+	}
 
-    /**
-     * Returns <code>true</code> if the receiver can navigate to the next
-     * session history item, and <code>false</code> otherwise. Convenience
-     * method that calls the underlying SWT browser.
-     *
-     * @return the receiver's forward command enabled state
-     * @exception SWTException
-     *                <ul>
-     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-     *                disposed</li>
-     *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-     *                thread that created the receiver</li>
-     *                </ul>
-     * @see #forward
-     */
-    public boolean isForwardEnabled() {
-        if (browser==null)
-            return false;
-        return browser.isForwardEnabled();
-    }
+	/**
+	 * Returns <code>true</code> if the receiver can navigate to the next
+	 * session history item, and <code>false</code> otherwise. Convenience
+	 * method that calls the underlying SWT browser.
+	 *
+	 * @return the receiver's forward command enabled state
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * @see #forward
+	 */
+	public boolean isForwardEnabled() {
+		if (browser==null)
+			return false;
+		return browser.isForwardEnabled();
+	}
 
-    /**
-     * Stop any loading and rendering activity. Convenience method that calls
-     * the underlying SWT browser.
-     *
-     * @exception SWTException
-     *                <ul>
-     *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
-     *                wrong thread</li>
-     *                <li>ERROR_WIDGET_DISPOSED when the widget has been
-     *                disposed</li>
-     *                </ul>
-     */
-    public void stop() {
-        if (browser!=null)
-            browser.stop();
-    }
+	/**
+	 * Stop any loading and rendering activity. Convenience method that calls
+	 * the underlying SWT browser.
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
+	 *                wrong thread</li>
+	 *                <li>ERROR_WIDGET_DISPOSED when the widget has been
+	 *                disposed</li>
+	 *                </ul>
+	 */
+	public void stop() {
+		if (browser!=null)
+			browser.stop();
+	}
 
-    /**
-     *
-     */
-    private boolean navigate(String url) {
-        Trace.trace(Trace.FINER, "Navigate: " + url); //$NON-NLS-1$
-        if (url != null && url.equals(getURL())) {
-            refresh();
-            return true;
-        }
-        if (browser!=null)
-            return browser.setUrl(url, null, new String[] {"Cache-Control: no-cache"}); //$NON-NLS-1$
-        return text.setUrl(url);
-    }
+	/**
+	 *
+	 */
+	private boolean navigate(String url) {
+		Trace.trace(Trace.FINER, "Navigate: " + url); //$NON-NLS-1$
+		if (url != null && url.equals(getURL())) {
+			refresh();
+			return true;
+		}
+		if (browser!=null)
+			return browser.setUrl(url, null, new String[] {"Cache-Control: no-cache"}); //$NON-NLS-1$
+		return text.setUrl(url);
+	}
 
-    /**
-     * Refresh the current page. Convenience method that calls the underlying
-     * SWT browser.
-     *
-     * @exception SWTException
-     *                <ul>
-     *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
-     *                wrong thread</li>
-     *                <li>ERROR_WIDGET_DISPOSED when the widget has been
-     *                disposed</li>
-     *                </ul>
-     */
-    public void refresh() {
-        if (browser!=null)
-            browser.refresh();
-        else
-            text.refresh();
-		  try {
-			  Thread.sleep(50);
-		  } catch (Exception e) {
-			  // ignore
-		  }
-    }
+	/**
+	 * Refresh the current page. Convenience method that calls the underlying
+	 * SWT browser.
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
+	 *                wrong thread</li>
+	 *                <li>ERROR_WIDGET_DISPOSED when the widget has been
+	 *                disposed</li>
+	 *                </ul>
+	 */
+	public void refresh() {
+		if (browser!=null)
+			browser.refresh();
+		else
+			text.refresh();
+		try {
+			Thread.sleep(50);
+		} catch (Exception e) {
+			// ignore
+		}
+	}
 
 	private void toggleAutoRefresh() {
-        File temp = getFile(browser.getUrl());
-        if (temp != null && temp.exists() && autoRefresh.getSelection()) {
+		File temp = getFile(browser.getUrl());
+		if (temp != null && temp.exists() && autoRefresh.getSelection()) {
 			refresh();
 			fileChangedWatchService(temp);
-        } else if (watcher != null) {
-            try {
-                watcher.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+		} else if (watcher != null) {
+			try {
+				watcher.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-    private void setURL(String url, boolean browse) {
-        Trace.trace(Trace.FINEST, "setURL: " + url + " " + browse); //$NON-NLS-1$ //$NON-NLS-2$
-        if (url == null) {
-            home();
-            return;
-        }
+	private void setURL(String url, boolean browse) {
+		Trace.trace(Trace.FINEST, "setURL: " + url + " " + browse); //$NON-NLS-1$ //$NON-NLS-2$
+		if (url == null) {
+			home();
+			return;
+		}
 
-        if ("eclipse".equalsIgnoreCase(url)) //$NON-NLS-1$
-            url = "http://www.eclipse.org"; //$NON-NLS-1$
-        else if ("wtp".equalsIgnoreCase(url)) //$NON-NLS-1$
-            url = "http://www.eclipse.org/webtools/"; //$NON-NLS-1$
+		if ("eclipse".equalsIgnoreCase(url)) //$NON-NLS-1$
+			url = "http://www.eclipse.org"; //$NON-NLS-1$
+		else if ("wtp".equalsIgnoreCase(url)) //$NON-NLS-1$
+			url = "http://www.eclipse.org/webtools/"; //$NON-NLS-1$
 
-        if (browse)
-            navigate(url);
+		if (browse)
+			navigate(url);
 
-        addToHistory(url);
-        updateHistory();
-    }
+		addToHistory(url);
+		updateHistory();
+	}
 
-    protected void addToHistory(String url) {
-        if (history == null)
-            history = WebBrowserPreference.getInternalWebBrowserHistory();
-        int found = -1;
-        int size = history.size();
-        for (int i = 0; i < size; i++) {
-            String s = history.get(i);
-            if (s.equals(url)) {
-                found = i;
-                break;
-            }
-        }
+	protected void addToHistory(String url) {
+		if (history == null)
+			history = WebBrowserPreference.getInternalWebBrowserHistory();
+		int found = -1;
+		int size = history.size();
+		for (int i = 0; i < size; i++) {
+			String s = history.get(i);
+			if (s.equals(url)) {
+				found = i;
+				break;
+			}
+		}
 
-        if (found == -1) {
-            if (size >= MAX_HISTORY)
-                history.remove(size - 1);
-            history.add(0, url);
-            WebBrowserPreference.setInternalWebBrowserHistory(history);
-        } else if (found != 0) {
-            history.remove(found);
-            history.add(0, url);
-            WebBrowserPreference.setInternalWebBrowserHistory(history);
-        }
-    }
+		if (found == -1) {
+			if (size >= MAX_HISTORY)
+				history.remove(size - 1);
+			history.add(0, url);
+			WebBrowserPreference.setInternalWebBrowserHistory(history);
+		} else if (found != 0) {
+			history.remove(found);
+			history.add(0, url);
+			WebBrowserPreference.setInternalWebBrowserHistory(history);
+		}
+	}
 
-    /**
-     *
-     */
-    @Override
+	/**
+	 *
+	 */
+	@Override
 	public void dispose() {
-        super.dispose();
+		super.dispose();
 
-        showToolbar = false;
+		showToolbar = false;
 
-        if (busy != null)
-            busy.dispose();
-        busy = null;
+		if (busy != null)
+			busy.dispose();
+		busy = null;
 
-        browser = null;
-        text = null;
-        if (clipboard!=null)
-        	clipboard.dispose();
-        clipboard=null;
+		browser = null;
+		text = null;
+		if (clipboard!=null)
+			clipboard.dispose();
+		clipboard=null;
 
-        removeSynchronizationListener();
-    }
+		removeSynchronizationListener();
+	}
 
-    private ToolBar createLocationBar(Composite parent) {
-        combo = new Combo(parent, SWT.DROP_DOWN);
+	private ToolBar createLocationBar(Composite parent) {
+		combo = new Combo(parent, SWT.DROP_DOWN);
 
-        updateHistory();
+		updateHistory();
 
 		combo.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			try {
@@ -758,141 +758,141 @@ public class BrowserViewer extends Composite {
 		}));
 		combo.addListener(SWT.DefaultSelection, e -> setURL(combo.getText()));
 
-        ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
+		ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
 
-        ToolItem go = new ToolItem(toolbar, SWT.NONE);
+		ToolItem go = new ToolItem(toolbar, SWT.NONE);
 		go.setImage(getImage(URL_ELCL, "nav_go.png")); //$NON-NLS-1$
 		go.setHotImage(getImage(URL_CLCL, "nav_go.png")); //$NON-NLS-1$
 		go.setDisabledImage(getImage(URL_DLCL, "nav_go.png")); //$NON-NLS-1$
-        go.setToolTipText(Messages.actionWebBrowserGo);
+		go.setToolTipText(Messages.actionWebBrowserGo);
 		go.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> setURL(combo.getText())));
 
 		return toolbar;
-    }
+	}
 
-    private ToolBar createToolbar(Composite parent) {
-		  ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
+	private ToolBar createToolbar(Composite parent) {
+			ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
 
-        // create back and forward actions
-        back = new ToolItem(toolbar, SWT.NONE);
+		// create back and forward actions
+		back = new ToolItem(toolbar, SWT.NONE);
 		back.setImage(getImage(URL_ELCL, "nav_backward.png")); //$NON-NLS-1$
 		back.setHotImage(getImage(URL_CLCL, "nav_backward.png")); //$NON-NLS-1$
 		back.setDisabledImage(getImage(URL_DLCL, "nav_backward.png")); //$NON-NLS-1$
-        back.setToolTipText(Messages.actionWebBrowserBack);
+		back.setToolTipText(Messages.actionWebBrowserBack);
 		back.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> back()));
 
-        forward = new ToolItem(toolbar, SWT.NONE);
+		forward = new ToolItem(toolbar, SWT.NONE);
 		forward.setImage(getImage(URL_ELCL, "nav_forward.png")); //$NON-NLS-1$
 		forward.setHotImage(getImage(URL_CLCL, "nav_forward.png")); //$NON-NLS-1$
 		forward.setDisabledImage(getImage(URL_DLCL, "nav_forward.png")); //$NON-NLS-1$
-        forward.setToolTipText(Messages.actionWebBrowserForward);
+		forward.setToolTipText(Messages.actionWebBrowserForward);
 		forward.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> forward()));
 
-        // create refresh, stop, and print actions
-        ToolItem stop = new ToolItem(toolbar, SWT.NONE);
+		// create refresh, stop, and print actions
+		ToolItem stop = new ToolItem(toolbar, SWT.NONE);
 		stop.setImage(getImage(URL_ELCL, "nav_stop.png")); //$NON-NLS-1$
 		stop.setHotImage(getImage(URL_CLCL, "nav_stop.png")); //$NON-NLS-1$
 		stop.setDisabledImage(getImage(URL_DLCL, "nav_stop.png")); //$NON-NLS-1$
-        stop.setToolTipText(Messages.actionWebBrowserStop);
+		stop.setToolTipText(Messages.actionWebBrowserStop);
 		stop.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> stop()));
 
-        ToolItem refresh = new ToolItem(toolbar, SWT.DROP_DOWN);
+		ToolItem refresh = new ToolItem(toolbar, SWT.DROP_DOWN);
 		refresh.setImage(getImage(URL_ELCL, "nav_refresh.png")); //$NON-NLS-1$
 		refresh.setHotImage(getImage(URL_CLCL, "nav_refresh.png")); //$NON-NLS-1$
 		refresh.setDisabledImage(getImage(URL_DLCL, "nav_refresh.png")); //$NON-NLS-1$
-        refresh.setToolTipText(Messages.actionWebBrowserRefresh);
+		refresh.setToolTipText(Messages.actionWebBrowserRefresh);
 
-        // create auto-refresh action
-        Menu refreshMenu = new Menu(getShell(), SWT.POP_UP);
-        autoRefresh = new MenuItem(refreshMenu, SWT.CHECK);
-        autoRefresh.setText(Messages.actionWebBrowserAutoRefresh);
+		// create auto-refresh action
+		Menu refreshMenu = new Menu(getShell(), SWT.POP_UP);
+		autoRefresh = new MenuItem(refreshMenu, SWT.CHECK);
+		autoRefresh.setText(Messages.actionWebBrowserAutoRefresh);
 		autoRefresh.setEnabled(false);
-        refresh.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-            if (e.detail == SWT.ARROW) {
-                refreshMenu.setVisible(true);
-            } else {
-                refresh();
-            }
-        }));
+		refresh.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			if (e.detail == SWT.ARROW) {
+				refreshMenu.setVisible(true);
+			} else {
+				refresh();
+			}
+		}));
 		autoRefresh.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> toggleAutoRefresh()));
 
-        return toolbar;
-    }
+		return toolbar;
+	}
 
 	private Image getImage(String folder, String name) {
 		ImageDescriptor id = ImageResourceManager.getImageDescriptor(folder + name);
 		return imageManager.getImage(id);
 	}
 
-    /**
-     * Returns the current URL. Convenience method that calls the underlying SWT
-     * browser.
-     *
-     * @return the current URL or an empty <code>String</code> if there is no
-     *         current URL
-     * @exception SWTException
-     *                <ul>
-     *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
-     *                wrong thread</li>
-     *                <li>ERROR_WIDGET_DISPOSED when the widget has been
-     *                disposed</li>
-     *                </ul>
-     * @see #setURL(String)
-     */
-    public String getURL() {
-        if (browser!=null)
-            return browser.getUrl();
-        return text.getUrl();
-    }
+	/**
+	 * Returns the current URL. Convenience method that calls the underlying SWT
+	 * browser.
+	 *
+	 * @return the current URL or an empty <code>String</code> if there is no
+	 *         current URL
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS when called from the
+	 *                wrong thread</li>
+	 *                <li>ERROR_WIDGET_DISPOSED when the widget has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @see #setURL(String)
+	 */
+	public String getURL() {
+		if (browser!=null)
+			return browser.getUrl();
+		return text.getUrl();
+	}
 
-    @Override
+	@Override
 	public boolean setFocus() {
-        if (browser!=null) {
-            browser.setFocus();
-            updateHistory();
-            return true;
-        }
-        return super.setFocus();
-    }
+		if (browser!=null) {
+			browser.setFocus();
+			updateHistory();
+			return true;
+		}
+		return super.setFocus();
+	}
 
-    /**
-     * Update the history list to the global/shared copy.
-     */
-    protected void updateHistory() {
-        if (combo == null || combo.isDisposed())
-            return;
+	/**
+	 * Update the history list to the global/shared copy.
+	 */
+	protected void updateHistory() {
+		if (combo == null || combo.isDisposed())
+			return;
 
-        String temp = combo.getText();
-        if (history == null)
-            history = WebBrowserPreference.getInternalWebBrowserHistory();
+		String temp = combo.getText();
+		if (history == null)
+			history = WebBrowserPreference.getInternalWebBrowserHistory();
 
-        String[] historyList = new String[history.size()];
-        history.toArray(historyList);
-        combo.setItems(historyList);
+		String[] historyList = new String[history.size()];
+		history.toArray(historyList);
+		combo.setItems(historyList);
 
-        combo.setText(temp);
-    }
+		combo.setText(temp);
+	}
 
-    public IBrowserViewerContainer getContainer() {
-        return container;
-    }
+	public IBrowserViewerContainer getContainer() {
+		return container;
+	}
 
-    public void setContainer(IBrowserViewerContainer container) {
-    	if (container==null && this.container!=null) {
-    		IStatusLineManager manager = this.container.getActionBars().getStatusLineManager();
-    		if (manager!=null)
-    			manager.getProgressMonitor().done();
-    	}
-        this.container = container;
-    }
+	public void setContainer(IBrowserViewerContainer container) {
+		if (container==null && this.container!=null) {
+			IStatusLineManager manager = this.container.getActionBars().getStatusLineManager();
+			if (manager!=null)
+				manager.getProgressMonitor().done();
+		}
+		this.container = container;
+	}
 
-    protected File file;
-    protected long timestamp;
-    protected Thread fileListenerThread;
-    protected LocationListener locationListener2;
-    protected Object syncObject = new Object();
+	protected File file;
+	protected long timestamp;
+	protected Thread fileListenerThread;
+	protected LocationListener locationListener2;
+	protected Object syncObject = new Object();
 
-    protected void addSynchronizationListener() {
+	protected void addSynchronizationListener() {
 		if (fileListenerThread != null)
 			return;
 
@@ -938,25 +938,25 @@ public class BrowserViewer extends Composite {
 			timestamp = file.lastModified();
 		}
 		fileListenerThread.start();
-    }
+	}
 
-    protected static File getFile(String location) {
-   	 if (location == null)
-   		 return null;
-   	 if (location.startsWith("file:/")) //$NON-NLS-1$
-   		 location = location.substring(6);
+	protected static File getFile(String location) {
+		if (location == null)
+			return null;
+		if (location.startsWith("file:/")) //$NON-NLS-1$
+			location = location.substring(6);
 
-   	 return new File(location);
-    }
+		return new File(location);
+	}
 
-    protected void removeSynchronizationListener() {
-   	 if (fileListenerThread == null)
-   		 return;
+	protected void removeSynchronizationListener() {
+		if (fileListenerThread == null)
+			return;
 
-   	 fileListenerThread = null;
-   	 browser.removeLocationListener(locationListener2);
-   	 locationListener2 = null;
-    }
+		fileListenerThread = null;
+		browser.removeLocationListener(locationListener2);
+		locationListener2 = null;
+	}
 
 	/*
 	 * Start the WatchService so that it monitors the local file system for any

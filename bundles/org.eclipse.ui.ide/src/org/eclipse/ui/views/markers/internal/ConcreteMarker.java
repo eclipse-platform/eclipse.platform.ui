@@ -29,29 +29,29 @@ import com.ibm.icu.text.Collator;
  */
 public class ConcreteMarker extends MarkerNode{
 
-    private String description;
+	private String description;
 
-    private String resourceName;
+	private String resourceName;
 
-    private String inFolder;
+	private String inFolder;
 
-    private CollationKey descriptionKey;
+	private CollationKey descriptionKey;
 
-    private CollationKey resourceNameKey;
+	private CollationKey resourceNameKey;
 
-    private int line;
+	private int line;
 
-    private String locationString;
+	private String locationString;
 
-    private long creationTime;
+	private long creationTime;
 
-    private String type;
+	private String type;
 
-    private IMarker marker;
+	private IMarker marker;
 
-    /**
-     * Cache for the marker ID.
-     */
+	/**
+	 * Cache for the marker ID.
+	 */
 	private long id = -1L;
 
 	private MarkerNode markerCategory;
@@ -61,123 +61,123 @@ public class ConcreteMarker extends MarkerNode{
 	private Object group;
 
 	public ConcreteMarker(IMarker toCopy) {
-        marker = toCopy;
-        refresh();
-    }
+		marker = toCopy;
+		refresh();
+	}
 
-    /**
-     * Clears any cached information. This frees up some memory, but will slow down
-     * the next comparison operation. It is a good idea to call this on a set of markers
-     * after sorting them, in order to reduce their memory cost.
-     */
-    public void clearCache() {
-        resourceNameKey = null;
-        descriptionKey = null;
-    }
+	/**
+	 * Clears any cached information. This frees up some memory, but will slow down
+	 * the next comparison operation. It is a good idea to call this on a set of markers
+	 * after sorting them, in order to reduce their memory cost.
+	 */
+	public void clearCache() {
+		resourceNameKey = null;
+		descriptionKey = null;
+	}
 
-    /**
-     * Refresh the properties of this marker from the underlying IMarker instance
-     */
-    public void refresh() {
-        clearCache();
+	/**
+	 * Refresh the properties of this marker from the underlying IMarker instance
+	 */
+	public void refresh() {
+		clearCache();
 
-        description = Util.getProperty(IMarker.MESSAGE, marker);
-        resourceName = Util.getResourceName(marker);
-        inFolder = Util.getContainerName(marker);
-        shortFolder = null;
-        line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
-        locationString = marker.getAttribute(IMarker.LOCATION,
+		description = Util.getProperty(IMarker.MESSAGE, marker);
+		resourceName = Util.getResourceName(marker);
+		inFolder = Util.getContainerName(marker);
+		shortFolder = null;
+		line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+		locationString = marker.getAttribute(IMarker.LOCATION,
 				Util.EMPTY_STRING);
 
-        try {
-            creationTime = marker.getCreationTime();
-        } catch (CoreException e) {
-            creationTime = 0;
-        }
+		try {
+			creationTime = marker.getCreationTime();
+		} catch (CoreException e) {
+			creationTime = 0;
+		}
 
-        try {
-            type = marker.getType();
-        } catch (CoreException e1) {
-            type = Util.EMPTY_STRING;
-        }
+		try {
+			type = marker.getType();
+		} catch (CoreException e1) {
+			type = Util.EMPTY_STRING;
+		}
 
-        // store the marker ID locally
-        id = marker.getId();
-    }
+		// store the marker ID locally
+		id = marker.getId();
+	}
 
-    public IResource getResource() {
-        return marker.getResource();
-    }
+	public IResource getResource() {
+		return marker.getResource();
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getType() {
+		return type;
+	}
 
-    @Override
+	@Override
 	public String getDescription() {
-        return description;
-    }
+		return description;
+	}
 
-    public CollationKey getDescriptionKey() {
-        if (descriptionKey == null) {
-            descriptionKey = Collator.getInstance()
-                    .getCollationKey(description);
-        }
+	public CollationKey getDescriptionKey() {
+		if (descriptionKey == null) {
+			descriptionKey = Collator.getInstance()
+					.getCollationKey(description);
+		}
 
-        return descriptionKey;
-    }
+		return descriptionKey;
+	}
 
-    public String getResourceName() {
-        return resourceName;
-    }
+	public String getResourceName() {
+		return resourceName;
+	}
 
-    public CollationKey getResourceNameKey() {
-        if (resourceNameKey == null) {
-            resourceNameKey = Collator.getInstance().getCollationKey(
-                    resourceName);
-        }
-        return resourceNameKey;
-    }
+	public CollationKey getResourceNameKey() {
+		if (resourceNameKey == null) {
+			resourceNameKey = Collator.getInstance().getCollationKey(
+					resourceName);
+		}
+		return resourceNameKey;
+	}
 
-    public int getLine() {
-        return line;
-    }
+	public int getLine() {
+		return line;
+	}
 
-    public String getFolder() {
-        return inFolder;
-    }
+	public String getFolder() {
+		return inFolder;
+	}
 
-    public long getCreationTime() {
-        return creationTime;
-    }
+	public long getCreationTime() {
+		return creationTime;
+	}
 
-    /**
-     * The underlying marker ID value.
-     * @return the marker's ID.
-     */
-    public long getId() {
-    	return id;
-    }
+	/**
+	 * The underlying marker ID value.
+	 * @return the marker's ID.
+	 */
+	public long getId() {
+		return id;
+	}
 
-    public IMarker getMarker() {
-        return marker;
-    }
+	public IMarker getMarker() {
+		return marker;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (!(object instanceof ConcreteMarker)) {
-            return false;
-        }
+		if (!(object instanceof ConcreteMarker)) {
+			return false;
+		}
 
-        ConcreteMarker other = (ConcreteMarker) object;
+		ConcreteMarker other = (ConcreteMarker) object;
 
-        return other.getMarker().equals(getMarker());
-    }
+		return other.getMarker().equals(getMarker());
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return getMarker().hashCode();
-    }
+		return getMarker().hashCode();
+	}
 
 	/**
 	 * Set the category the receiver is in.

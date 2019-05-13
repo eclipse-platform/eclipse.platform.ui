@@ -38,61 +38,61 @@ import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
  */
 public class EditorWidgetFactory extends TestWidgetFactory {
 
-    private String editorId;
-    private String filename;
-    private IWorkbenchWindow window;
-    private Composite ctrl;
+	private String editorId;
+	private String filename;
+	private IWorkbenchWindow window;
+	private Composite ctrl;
 
-    public EditorWidgetFactory(String filename) {
-        this.filename = filename;
-        this.editorId = null;
-    }
+	public EditorWidgetFactory(String filename) {
+		this.filename = filename;
+		this.editorId = null;
+	}
 
-    public EditorWidgetFactory(String filename, String editorId) {
-        this.filename = filename;
-        this.editorId = editorId;
-    }
+	public EditorWidgetFactory(String filename, String editorId) {
+		this.filename = filename;
+		this.editorId = editorId;
+	}
 
-    public static Composite getControl(IEditorPart part) {
+	public static Composite getControl(IEditorPart part) {
 		EditorSite site = (EditorSite)part.getSite();
 		MPart modelPart = site.getModel();
 		return (Composite) modelPart.getWidget();
-    }
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return "editor " + filename + (editorId != null ? editorId : "");
-    }
+		return "editor " + filename + (editorId != null ? editorId : "");
+	}
 
-    @Override
+	@Override
 	public void init() throws CoreException, WorkbenchException {
 
 		// Open an editor in a new window.
-        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
+		window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
 		IWorkbenchPage activePage = window.getActivePage();
-        Assert.assertNotNull(activePage);
+		Assert.assertNotNull(activePage);
 
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IProject testProject = workspace.getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
-        IFile file = testProject.getFile(filename);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject testProject = workspace.getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
+		IFile file = testProject.getFile(filename);
 
-        if (editorId == null) {
+		if (editorId == null) {
 			editorId = IDE.getEditorDescriptor(file, true, /* allowInteractive */false).getId();
-        }
+		}
 
-        IEditorPart part = IDE.openEditor(activePage, file, editorId, true);
-        ctrl = getControl(part);
-    }
+		IEditorPart part = IDE.openEditor(activePage, file, editorId, true);
+		ctrl = getControl(part);
+	}
 
-    @Override
+	@Override
 	public Composite getControl() throws CoreException, WorkbenchException {
-        return ctrl;
-    }
+		return ctrl;
+	}
 
-    @Override
+	@Override
 	public void done() throws CoreException, WorkbenchException {
-    	window.close();
-    	super.done();
-    }
+		window.close();
+		super.done();
+	}
 
 }

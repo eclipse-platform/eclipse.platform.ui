@@ -18,16 +18,16 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 public class Error
-    extends Element {
+	extends Element {
 
-    public Error(String name) {
-        super(name);
-    }
+	public Error(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	public Image getImage() {
-        return PlatformUI.getWorkbench().getSharedImages().getImage(
-            ISharedImages.IMG_OBJS_ERROR_TSK);
-    }
+		return PlatformUI.getWorkbench().getSharedImages().getImage(
+			ISharedImages.IMG_OBJS_ERROR_TSK);
+	}
 
 }

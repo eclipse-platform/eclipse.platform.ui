@@ -176,7 +176,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 
 	private Map<String, List> inactivePluginsWithSaveablesProviders;
 
-    /**
+	/**
 	 * a TreeMap (NavigatorContentDescriptor->SaveablesProvider) which uses
 	 * ExtensionPriorityComparator.INSTANCE as its Comparator
 	 */
@@ -244,19 +244,19 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 				for (int k = 0; !foundRoot && k < elements.length; k++) {
 					Object element = elements[k];
 					if (roots.contains(element)) {
-					    result.add(saveable);
-					    foundRoot = true;
+						result.add(saveable);
+						foundRoot = true;
 					} else if (isTreepathContentProvider) {
 						ITreePathContentProvider treePathContentProvider = (ITreePathContentProvider) contentProvider;
 						TreePath[] parentPaths = treePathContentProvider.getParents(element);
 						for (int l = 0; !foundRoot && l < parentPaths.length; l++) {
 							TreePath parentPath = parentPaths[l];
-                            for (int m = 0; !foundRoot && m < parentPath.getSegmentCount(); m++) {
-                                if (roots.contains(parentPath.getSegment(m))) {
-                                    result.add(saveable);
-                                    foundRoot = true;
-                                }
-                            }
+							for (int m = 0; !foundRoot && m < parentPath.getSegmentCount(); m++) {
+								if (roots.contains(parentPath.getSegment(m))) {
+									result.add(saveable);
+									foundRoot = true;
+								}
+							}
 						}
 					} else {
 						while (!foundRoot && element != null) {
@@ -410,15 +410,15 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 		for (Entry<NavigatorContentDescriptor, SaveablesProvider> entry : saveablesProviderMap.entrySet()) {
 			NavigatorContentDescriptor descriptor = entry.getKey();
-                if(descriptor.isTriggerPoint(element) || descriptor.isPossibleChild(element)) {
+				if(descriptor.isTriggerPoint(element) || descriptor.isPossibleChild(element)) {
 				SaveablesProvider provider = entry.getValue();
-                	Saveable  saveable = provider.getSaveable(element);
-                        if(saveable != null) {
-                                return saveable;
-                        }
-                }
-        }
-        return null;
+					Saveable  saveable = provider.getSaveable(element);
+						if(saveable != null) {
+								return saveable;
+						}
+				}
+		}
+		return null;
 	}
 
 	/**

@@ -757,9 +757,9 @@ public class ErrorDialog extends IconAndMessageDialog {
 		return 3;
 	}
 
-    @Override
+	@Override
 	protected boolean isResizable() {
-    	return true;
-    }
+		return true;
+	}
 
 }

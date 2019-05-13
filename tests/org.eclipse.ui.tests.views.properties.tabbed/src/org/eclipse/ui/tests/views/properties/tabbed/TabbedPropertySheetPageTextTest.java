@@ -45,21 +45,21 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-        /**
-         * Close the existing perspectives.
-         */
-        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
-            .getActiveWorkbenchWindow();
-        assertNotNull(workbenchWindow);
-        IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
-        assertNotNull(workbenchPage);
-        workbenchPage.closeAllPerspectives(false, false);
+		/**
+		 * Close the existing perspectives.
+		 */
+		IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
+			.getActiveWorkbenchWindow();
+		assertNotNull(workbenchWindow);
+		IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+		assertNotNull(workbenchPage);
+		workbenchPage.closeAllPerspectives(false, false);
 
-        /**
-         * Open the tests perspective.
-         */
-        PlatformUI.getWorkbench().showPerspective(
-            TestsPerspective.TESTS_PERSPECTIVE_ID, workbenchWindow);
+		/**
+		 * Open the tests perspective.
+		 */
+		PlatformUI.getWorkbench().showPerspective(
+			TestsPerspective.TESTS_PERSPECTIVE_ID, workbenchWindow);
 
 		/**
 		 * Open the dynamic tests view.
@@ -84,72 +84,72 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 
 	}
 
-    /**
-     * When text is selected, there is one tab for each selected word.
-     */
-    public void test_tabForSelectedTextDisplay() {
-        IDocument document = textTestsView.getViewer().getDocument();
-        document.set("This is a test");
-        textTestsView.getViewer().setSelectedRange(0, 14);
+	/**
+	 * When text is selected, there is one tab for each selected word.
+	 */
+	public void test_tabForSelectedTextDisplay() {
+		IDocument document = textTestsView.getViewer().getDocument();
+		document.set("This is a test");
+		textTestsView.getViewer().setSelectedRange(0, 14);
 
 		ITabDescriptor[] tabDescriptors= waitForActiveTabs();
-        /**
-         * First tab is "This"
-         */
-        assertEquals("This", tabDescriptors[0].getLabel());//$NON-NLS-1$
-        /**
-         * Second tab is "is"
-         */
-        assertEquals("is", tabDescriptors[1].getLabel());//$NON-NLS-1$
-        /**
-         * Third tab is "a"
-         */
-        assertEquals("a", tabDescriptors[2].getLabel());//$NON-NLS-1$
-        /**
-         * Third tab is "test"
-         */
-        assertEquals("test", tabDescriptors[3].getLabel());//$NON-NLS-1$
-        /**
-         * No fifth tab
-         */
-        assertEquals(4, tabDescriptors.length);
-    }
+		/**
+		 * First tab is "This"
+		 */
+		assertEquals("This", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		/**
+		 * Second tab is "is"
+		 */
+		assertEquals("is", tabDescriptors[1].getLabel());//$NON-NLS-1$
+		/**
+		 * Third tab is "a"
+		 */
+		assertEquals("a", tabDescriptors[2].getLabel());//$NON-NLS-1$
+		/**
+		 * Third tab is "test"
+		 */
+		assertEquals("test", tabDescriptors[3].getLabel());//$NON-NLS-1$
+		/**
+		 * No fifth tab
+		 */
+		assertEquals(4, tabDescriptors.length);
+	}
 
 	/**
 	 * Test changing the selected tab through API (Bug 119085).
 	 */
 	public void test_tabSelectedTab() {
-	    IDocument document = textTestsView.getViewer().getDocument();
-	    document.set("The fifth tab is selected");
-	    textTestsView.getViewer().setSelectedRange(0, 26);
+		IDocument document = textTestsView.getViewer().getDocument();
+		document.set("The fifth tab is selected");
+		textTestsView.getViewer().setSelectedRange(0, 26);
 
 		ITabDescriptor[] tabDescriptors= waitForActiveTabs();
 
-	    /**
-	     * First tab is "the" and is selected.
-	     */
-	    assertEquals("The", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		/**
+		 * First tab is "the" and is selected.
+		 */
+		assertEquals("The", tabDescriptors[0].getLabel());//$NON-NLS-1$
 		assertEquals("The", textTestsView.getTabbedPropertySheetPage()
 				.getSelectedTab().getLabel());
-	    /**
-	     * Fifth tab is "selected"
-	     */
-	    assertEquals("selected", tabDescriptors[4].getLabel());//$NON-NLS-1$
+		/**
+		 * Fifth tab is "selected"
+		 */
+		assertEquals("selected", tabDescriptors[4].getLabel());//$NON-NLS-1$
 
-	    /**
-	     * Set the new selected tab.
-	     */
-	    textTestsView.getTabbedPropertySheetPage().setSelectedTab(tabDescriptors[4].getId());
+		/**
+		 * Set the new selected tab.
+		 */
+		textTestsView.getTabbedPropertySheetPage().setSelectedTab(tabDescriptors[4].getId());
 
-	    tabDescriptors = textTestsView.getTabbedPropertySheetPage().getActiveTabs();
-	    /**
-	     * First tab is "the"
-	     */
-	    assertEquals("The", tabDescriptors[0].getLabel());//$NON-NLS-1$
-	    /**
-	     * Fifth tab is "selected" and is selected.
-	     */
-	    assertEquals("selected", tabDescriptors[4].getLabel());//$NON-NLS-1$
+		tabDescriptors = textTestsView.getTabbedPropertySheetPage().getActiveTabs();
+		/**
+		 * First tab is "the"
+		 */
+		assertEquals("The", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		/**
+		 * Fifth tab is "selected" and is selected.
+		 */
+		assertEquals("selected", tabDescriptors[4].getLabel());//$NON-NLS-1$
 		assertEquals("selected", textTestsView.getTabbedPropertySheetPage()
 				.getSelectedTab().getLabel());
 	}
@@ -171,9 +171,9 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	 * filtered (Bug 245690).
 	 */
 	public void test_listOfSections() {
-        IDocument document = textTestsView.getViewer().getDocument();
-        document.set("This is a test");
-        textTestsView.getViewer().setSelectedRange(0, 14);
+		IDocument document = textTestsView.getViewer().getDocument();
+		document.set("This is a test");
+		textTestsView.getViewer().setSelectedRange(0, 14);
 
 		waitForActiveTabs();
 
@@ -181,8 +181,8 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 		 * each tab has one section.
 		 */
 		TabContents tabContents= textTestsView.getTabbedPropertySheetPage().getCurrentTab();
-        ISection[] sections = tabContents.getSections();
-        assertEquals(1, sections.length);
-        assertEquals(TextTestsLabelSection.class, sections[0].getClass());
+		ISection[] sections = tabContents.getSections();
+		assertEquals(1, sections.length);
+		assertEquals(TextTestsLabelSection.class, sections[0].getClass());
 	}
 }

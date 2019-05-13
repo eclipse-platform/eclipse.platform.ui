@@ -31,16 +31,16 @@ public class ObjectContributionsPerformance extends BasicPerformanceTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Object contribution performance");
-        suite.addTest(new ObjectContributionsPerformance(
-                "large selection, limited contributors",
-                generateAdaptableSelection(SEED, 5000),
-                BasicPerformanceTest.NONE));
-        suite
-                .addTest(new ObjectContributionsPerformance(
-                        "limited selection, limited contributors",
-                        generateAdaptableSelection(SEED, 50),
-                        BasicPerformanceTest.NONE));
-        return suite;
+		suite.addTest(new ObjectContributionsPerformance(
+				"large selection, limited contributors",
+				generateAdaptableSelection(SEED, 5000),
+				BasicPerformanceTest.NONE));
+		suite
+				.addTest(new ObjectContributionsPerformance(
+						"limited selection, limited contributors",
+						generateAdaptableSelection(SEED, 50),
+						BasicPerformanceTest.NONE));
+		return suite;
 	}
 
 	public ObjectContributionsPerformance(String label, IStructuredSelection selection, int tagging) {
@@ -51,17 +51,17 @@ public class ObjectContributionsPerformance extends BasicPerformanceTest {
 	@Override
 	protected void runTest() {
 		ObjectContributionTest tests = new ObjectContributionTest(
-                "testObjectContributions");
-        tagIfNecessary("UI - " + selection.size() + " contribution(s)",
-                Dimension.ELAPSED_PROCESS);
-        startMeasuring();
-        for (int i = 0; i < 5000; i++) {
-            tests.assertPopupMenus("1", new String[] { "bogus" }, selection,
-                    null, false);
-        }
-        stopMeasuring();
-        commitMeasurements();
-        assertPerformance();
+				"testObjectContributions");
+		tagIfNecessary("UI - " + selection.size() + " contribution(s)",
+				Dimension.ELAPSED_PROCESS);
+		startMeasuring();
+		for (int i = 0; i < 5000; i++) {
+			tests.assertPopupMenus("1", new String[] { "bogus" }, selection,
+					null, false);
+		}
+		stopMeasuring();
+		commitMeasurements();
+		assertPerformance();
 	}
 
 	protected static IStructuredSelection generateAdaptableSelection(int seed, int size) {

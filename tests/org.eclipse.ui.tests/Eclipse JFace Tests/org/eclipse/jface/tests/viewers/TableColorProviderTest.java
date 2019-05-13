@@ -37,193 +37,193 @@ import org.eclipse.swt.widgets.TableItem;
  * ITableColorProviders.
  */
 public class TableColorProviderTest extends StructuredViewerTest {
-    Color red = null;
+	Color red = null;
 
-    Color green = null;
+	Color green = null;
 
-    /**
-     * Create a new instance of the receiver
-     * @param name
-     */
-    public TableColorProviderTest(String name) {
-        super(name);
-    }
+	/**
+	 * Create a new instance of the receiver
+	 * @param name
+	 */
+	public TableColorProviderTest(String name) {
+		super(name);
+	}
 
-    /**
-     *  Test with a standard color provider.
-     */
-    public void testColorProviderForeground() {
-        TableViewer viewer = (TableViewer) fViewer;
-        ColorViewLabelProvider provider = new ColorViewLabelProvider();
+	/**
+	 *  Test with a standard color provider.
+	 */
+	public void testColorProviderForeground() {
+		TableViewer viewer = (TableViewer) fViewer;
+		ColorViewLabelProvider provider = new ColorViewLabelProvider();
 
-        viewer.setLabelProvider(provider);
+		viewer.setLabelProvider(provider);
 
-        //refresh so that the colors are set
-        fViewer.refresh();
+		//refresh so that the colors are set
+		fViewer.refresh();
 
-        assertEquals("foreground 1 green", viewer.getTable().getItem(0).getForeground(0), green);//$NON-NLS-1$
-        assertEquals("foreground 2 green", viewer.getTable().getItem(0).getForeground(1), green);//$NON-NLS-1$
+		assertEquals("foreground 1 green", viewer.getTable().getItem(0).getForeground(0), green);//$NON-NLS-1$
+		assertEquals("foreground 2 green", viewer.getTable().getItem(0).getForeground(1), green);//$NON-NLS-1$
 
-        provider.fExtended = false;
+		provider.fExtended = false;
 
-    }
+	}
 
-    /**
-     * Test that the backgrounds are being set.
-     */
-    public void testColorProviderBackground() {
-        TableViewer viewer = (TableViewer) fViewer;
-        ColorViewLabelProvider provider = new ColorViewLabelProvider();
+	/**
+	 * Test that the backgrounds are being set.
+	 */
+	public void testColorProviderBackground() {
+		TableViewer viewer = (TableViewer) fViewer;
+		ColorViewLabelProvider provider = new ColorViewLabelProvider();
 
-        viewer.setLabelProvider(provider);
+		viewer.setLabelProvider(provider);
 
-        fViewer.refresh();
+		fViewer.refresh();
 
-        assertEquals("background 1 red", viewer.getTable().getItem(0).getBackground(0), red);//$NON-NLS-1$
-        assertEquals("background 2 red", viewer.getTable().getItem(1).getBackground(1), red);//$NON-NLS-1$
+		assertEquals("background 1 red", viewer.getTable().getItem(0).getBackground(0), red);//$NON-NLS-1$
+		assertEquals("background 2 red", viewer.getTable().getItem(1).getBackground(1), red);//$NON-NLS-1$
 
-        provider.fExtended = false;
+		provider.fExtended = false;
 
-    }
+	}
 
-    /**
-     * Test that the foregrounds are being set.
-     *
-     */
-    public void testTableItemsColorProviderForeground() {
-        TableViewer viewer = (TableViewer) fViewer;
-        TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
+	/**
+	 * Test that the foregrounds are being set.
+	 *
+	 */
+	public void testTableItemsColorProviderForeground() {
+		TableViewer viewer = (TableViewer) fViewer;
+		TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
 
-        viewer.setLabelProvider(provider);
-        Table table = viewer.getTable();
+		viewer.setLabelProvider(provider);
+		Table table = viewer.getTable();
 
-        fViewer.refresh();
+		fViewer.refresh();
 
-        assertEquals("table item 1 green", table.getItem(0).getForeground(0), green);//$NON-NLS-1$
-        assertEquals("table item 2 red", table.getItem(0).getForeground(1), red);//$NON-NLS-1$
-        provider.fExtended = false;
+		assertEquals("table item 1 green", table.getItem(0).getForeground(0), green);//$NON-NLS-1$
+		assertEquals("table item 2 red", table.getItem(0).getForeground(1), red);//$NON-NLS-1$
+		provider.fExtended = false;
 
-    }
+	}
 
-    /**
-     * Test the table item colours.
-     *
-     */
-    public void testTableItemsColorProviderBackground() {
-        TableViewer viewer = (TableViewer) fViewer;
-        TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
+	/**
+	 * Test the table item colours.
+	 *
+	 */
+	public void testTableItemsColorProviderBackground() {
+		TableViewer viewer = (TableViewer) fViewer;
+		TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
 
-        viewer.setLabelProvider(provider);
+		viewer.setLabelProvider(provider);
 
-        Table table = viewer.getTable();
-        fViewer.refresh();
+		Table table = viewer.getTable();
+		fViewer.refresh();
 
-        assertEquals("table item 1 background red", table.getItem(0).getBackground(0), red);//$NON-NLS-1$
-        assertEquals("table item 2 background green", table.getItem(0).getBackground(1), green);//$NON-NLS-1$
-        provider.fExtended = false;
+		assertEquals("table item 1 background red", table.getItem(0).getBackground(0), red);//$NON-NLS-1$
+		assertEquals("table item 2 background green", table.getItem(0).getBackground(1), green);//$NON-NLS-1$
+		provider.fExtended = false;
 
-    }
+	}
 
-    @Override
+	@Override
 	public void tearDown() {
-        super.tearDown();
-        red.dispose();
-        green.dispose();
-    }
+		super.tearDown();
+		red.dispose();
+		green.dispose();
+	}
 
-    @Override
+	@Override
 	public void setUp() {
-        super.setUp();
-        red = new Color(Display.getCurrent(), 255, 0, 0);
-        green = new Color(Display.getCurrent(), 0, 255, 0);
-    }
+		super.setUp();
+		red = new Color(Display.getCurrent(), 255, 0, 0);
+		green = new Color(Display.getCurrent(), 0, 255, 0);
+	}
 
-    /**
-     * Run as a stand alone test
-     * @param args
-     */
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(TableColorProviderTest.class);
-    }
+	/**
+	 * Run as a stand alone test
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(TableColorProviderTest.class);
+	}
 
-    @Override
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-        TableViewer viewer = new TableViewer(parent);
-        viewer.setContentProvider(new TestModelContentProvider());
+		TableViewer viewer = new TableViewer(parent);
+		viewer.setContentProvider(new TestModelContentProvider());
 
-        viewer.getTable().setLinesVisible(true);
+		viewer.getTable().setLinesVisible(true);
 
-        TableLayout layout = new TableLayout();
-        viewer.getTable().setLayout(layout);
-        viewer.getTable().setHeaderVisible(true);
-        String headers[] = { "column 1 header", "column 2 header" };//$NON-NLS-1$ //$NON-NLS-2$
+		TableLayout layout = new TableLayout();
+		viewer.getTable().setLayout(layout);
+		viewer.getTable().setHeaderVisible(true);
+		String headers[] = { "column 1 header", "column 2 header" };//$NON-NLS-1$ //$NON-NLS-2$
 
-        ColumnLayoutData layouts[] = { new ColumnWeightData(100),
-                new ColumnWeightData(100) };
+		ColumnLayoutData layouts[] = { new ColumnWeightData(100),
+				new ColumnWeightData(100) };
 
-        final TableColumn columns[] = new TableColumn[headers.length];
+		final TableColumn columns[] = new TableColumn[headers.length];
 
-        for (int i = 0; i < headers.length; i++) {
-            layout.addColumnData(layouts[i]);
-            TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, i);
-            tc.setResizable(layouts[i].resizable);
-            tc.setText(headers[i]);
-            columns[i] = tc;
-        }
-        return viewer;
-    }
+		for (int i = 0; i < headers.length; i++) {
+			layout.addColumnData(layouts[i]);
+			TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, i);
+			tc.setResizable(layouts[i].resizable);
+			tc.setText(headers[i]);
+			columns[i] = tc;
+		}
+		return viewer;
+	}
 
-    @Override
+	@Override
 	protected int getItemCount() {
-        TestElement first = fRootElement.getFirstChild();
-        TableItem ti = (TableItem) fViewer.testFindItem(first);
-        Table table = ti.getParent();
-        return table.getItemCount();
-    }
+		TestElement first = fRootElement.getFirstChild();
+		TableItem ti = (TableItem) fViewer.testFindItem(first);
+		Table table = ti.getParent();
+		return table.getItemCount();
+	}
 
-    @Override
+	@Override
 	protected String getItemText(int at) {
-        Table table = (Table) fViewer.getControl();
-        return table.getItem(at).getText();
-    }
+		Table table = (Table) fViewer.getControl();
+		return table.getItem(at).getText();
+	}
 
-    class TableColorViewLabelProvider extends TableTestLabelProvider implements
-            ITableColorProvider {
+	class TableColorViewLabelProvider extends TableTestLabelProvider implements
+			ITableColorProvider {
 
-        @Override
+		@Override
 		public Image getColumnImage(Object obj, int index) {
-            return null;
-        }
+			return null;
+		}
 
-        @Override
+		@Override
 		public Color getForeground(Object element, int columnIndex) {
-            switch (columnIndex) {
-            case 0:
-                return green;
+			switch (columnIndex) {
+			case 0:
+				return green;
 
-            default:
-                return red;
-            }
-        }
+			default:
+				return red;
+			}
+		}
 
 
 
-        @Override
+		@Override
 		public Color getBackground(Object element, int columnIndex) {
-            switch (columnIndex) {
-            case 0:
-                return red;
-            default:
-                return green;
-            }
-        }
+			switch (columnIndex) {
+			case 0:
+				return red;
+			default:
+				return green;
+			}
+		}
 
-    }
+	}
 
-    /**
-     * A class to test color providing without coloured columns.
-     */
-    class ColorViewLabelProvider extends TableTestLabelProvider implements IColorProvider{
+	/**
+	 * A class to test color providing without coloured columns.
+	 */
+	class ColorViewLabelProvider extends TableTestLabelProvider implements IColorProvider{
 		@Override
 		public Color getBackground(Object element) {
 			return red;
@@ -233,5 +233,5 @@ public class TableColorProviderTest extends StructuredViewerTest {
 		public Color getForeground(Object element) {
 			return green;
 		}
-    }
+	}
 }

@@ -542,86 +542,86 @@ public class UtilTest extends TestCase {
 				set);
 	}
 
-    /**
-     * Return the system activity manager.
-     *
-     * @return the system activity manager
-     */
-    private IActivityManager getActivityManager() {
-        return  PlatformUI.getWorkbench()
-        .getActivitySupport().getActivityManager();
-    }
+	/**
+	 * Return the system activity manager.
+	 *
+	 * @return the system activity manager
+	 */
+	private IActivityManager getActivityManager() {
+		return  PlatformUI.getWorkbench()
+		.getActivitySupport().getActivityManager();
+	}
 
-    /**
-     * Tests non-regular Expression Pattern bindings.
-     */
-    public void testNonRegExpressionPattern() {
-    	final String ACTIVITY_NON_REG_EXP = "org.eclipse.activityNonRegExp";
+	/**
+	 * Tests non-regular Expression Pattern bindings.
+	 */
+	public void testNonRegExpressionPattern() {
+		final String ACTIVITY_NON_REG_EXP = "org.eclipse.activityNonRegExp";
 
-    	// Check Activity -> Binding connection.
-    	IActivityManager manager = getActivityManager();
-    	IActivity activity = manager.getActivity(ACTIVITY_NON_REG_EXP);
+		// Check Activity -> Binding connection.
+		IActivityManager manager = getActivityManager();
+		IActivity activity = manager.getActivity(ACTIVITY_NON_REG_EXP);
 		Set<IActivityPatternBinding> bindings = activity.getActivityPatternBindings();
-    	assertTrue(bindings.size() == 1);
-    	IActivityPatternBinding binding =
-    		bindings.iterator().next();
-    	assertTrue(binding.isEqualityPattern());
+		assertTrue(bindings.size() == 1);
+		IActivityPatternBinding binding =
+			bindings.iterator().next();
+		assertTrue(binding.isEqualityPattern());
 
-    	// Check Binding -> Activity connection.
-    	final String IDENTIFIER = "org.eclipse.ui.tests.activity{No{Reg(Exp[^d]";
-    	IIdentifier identifier = manager.getIdentifier(IDENTIFIER);
+		// Check Binding -> Activity connection.
+		final String IDENTIFIER = "org.eclipse.ui.tests.activity{No{Reg(Exp[^d]";
+		IIdentifier identifier = manager.getIdentifier(IDENTIFIER);
 		Set<String> boundActivities = identifier.getActivityIds();
-    	assertTrue(boundActivities.size() == 1);
-    	String id = boundActivities.iterator().next().toString();
-    	assertTrue(id.equals(ACTIVITY_NON_REG_EXP));
+		assertTrue(boundActivities.size() == 1);
+		String id = boundActivities.iterator().next().toString();
+		assertTrue(id.equals(ACTIVITY_NON_REG_EXP));
 
-    	// Check conversion from normal string to regular expression string
-    	// for <code>Pattern()</code> constructing.
-    	Pattern pattern = binding.getPattern();
-    	assertTrue(pattern.pattern().equals(
+		// Check conversion from normal string to regular expression string
+		// for <code>Pattern()</code> constructing.
+		Pattern pattern = binding.getPattern();
+		assertTrue(pattern.pattern().equals(
 				Pattern.compile("\\Q" + IDENTIFIER + "\\E").pattern()));
-    }
+	}
 
-    /**
+	/**
 	 * Tests to ensure that setting enabled of an activity disabled by
 	 * expression and setting disabled of an activity enabled by expression both
 	 * behave as expected. Ie: it's a no-op.
 	 */
-    public void testSetEnabledExpressionActivity() {
-    	try {
-    		TestSourceProvider testSourceProvider = new TestSourceProvider();
-    		IEvaluationService evalService = PlatformUI
-    				.getWorkbench().getService(IEvaluationService.class);
-    		evalService.addSourceProvider(testSourceProvider);
-    		testSourceProvider.fireSourceChanged();
+	public void testSetEnabledExpressionActivity() {
+		try {
+			TestSourceProvider testSourceProvider = new TestSourceProvider();
+			IEvaluationService evalService = PlatformUI
+					.getWorkbench().getService(IEvaluationService.class);
+			evalService.addSourceProvider(testSourceProvider);
+			testSourceProvider.fireSourceChanged();
 
 
-    		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
-    			.getActivitySupport();
+			IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+				.getActivitySupport();
 			support.setEnabledActivityIds(new HashSet<>());
 			Set<String> set = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
 			Set<String> previousSet = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
-    		set.add(EXPRESSION_ACTIVITY_ID_2);
-    		support.setEnabledActivityIds(set);
-    		assertEquals(previousSet, support.getActivityManager().getEnabledActivityIds());
+			set.add(EXPRESSION_ACTIVITY_ID_2);
+			support.setEnabledActivityIds(set);
+			assertEquals(previousSet, support.getActivityManager().getEnabledActivityIds());
 
-    		testSourceProvider.setVariable();
-    		testSourceProvider.fireSourceChanged();
+			testSourceProvider.setVariable();
+			testSourceProvider.fireSourceChanged();
 
 			set = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
-    		assertFalse(set.equals(previousSet));
+			assertFalse(set.equals(previousSet));
 
-    		set.remove(EXPRESSION_ACTIVITY_ID_2);
-    		support.setEnabledActivityIds(set);
+			set.remove(EXPRESSION_ACTIVITY_ID_2);
+			support.setEnabledActivityIds(set);
 
-    		assertFalse(support.getActivityManager().getEnabledActivityIds().equals(previousSet));
+			assertFalse(support.getActivityManager().getEnabledActivityIds().equals(previousSet));
 
-    		evalService.removeSourceProvider(testSourceProvider);
-    	}
-    	finally {
+			evalService.removeSourceProvider(testSourceProvider);
+		}
+		finally {
 
-    	}
-    }
+		}
+	}
 
 	@Override
 	protected void setUp() throws Exception {

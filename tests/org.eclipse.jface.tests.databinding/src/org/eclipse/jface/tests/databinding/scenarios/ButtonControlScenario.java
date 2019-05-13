@@ -36,99 +36,99 @@ import org.junit.Test;
 
 public class ButtonControlScenario extends ScenariosTestCase {
 
-    private Adventure adventure;
+	private Adventure adventure;
 
-    private Button button;
+	private Button button;
 
-    @Override
+	@Override
 	@Before
 	public void setUp() throws Exception {
-        super.setUp();
-        // do any setup work here
-        button = new Button(getComposite(), SWT.CHECK);
-        adventure = SampleData.WINTER_HOLIDAY;
-    }
+		super.setUp();
+		// do any setup work here
+		button = new Button(getComposite(), SWT.CHECK);
+		adventure = SampleData.WINTER_HOLIDAY;
+	}
 
-    @Override
+	@Override
 	@After
 	public void tearDown() throws Exception {
-        button.dispose();
-        super.tearDown();
-    }
+		button.dispose();
+		super.tearDown();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testScenario01() {
-        // Bind the button's selection to the adventure "isPetsAllowed"
-        getDbc().bindValue(SWTObservables.observeSelection(button),
-                BeansObservables.observeValue(adventure, "petsAllowed"));
+		// Bind the button's selection to the adventure "isPetsAllowed"
+		getDbc().bindValue(SWTObservables.observeSelection(button),
+				BeansObservables.observeValue(adventure, "petsAllowed"));
 
-        // Check the model and GUI are in the same state
-        assertEquals(button.getSelection(), adventure.isPetsAllowed());
-        // Change the model and check the GUI is updated
-        boolean newBoolean = !adventure.isPetsAllowed();
-        adventure.setPetsAllowed(newBoolean);
-        assertEquals(newBoolean, adventure.isPetsAllowed());
-        assertEquals(button.getSelection(), newBoolean);
-        // Change the GUI and check the model
-        newBoolean = !newBoolean;
-        button.setSelection(newBoolean);
-        button.notifyListeners(SWT.Selection, null);
-        assertEquals(newBoolean, adventure.isPetsAllowed());
-        newBoolean = !newBoolean;
-        final boolean finalNewBoolean = newBoolean;
-        adventure.setPetsAllowed(finalNewBoolean);
-        spinEventLoop(0);
-        assertEquals(newBoolean, button.getSelection());
+		// Check the model and GUI are in the same state
+		assertEquals(button.getSelection(), adventure.isPetsAllowed());
+		// Change the model and check the GUI is updated
+		boolean newBoolean = !adventure.isPetsAllowed();
+		adventure.setPetsAllowed(newBoolean);
+		assertEquals(newBoolean, adventure.isPetsAllowed());
+		assertEquals(button.getSelection(), newBoolean);
+		// Change the GUI and check the model
+		newBoolean = !newBoolean;
+		button.setSelection(newBoolean);
+		button.notifyListeners(SWT.Selection, null);
+		assertEquals(newBoolean, adventure.isPetsAllowed());
+		newBoolean = !newBoolean;
+		final boolean finalNewBoolean = newBoolean;
+		adventure.setPetsAllowed(finalNewBoolean);
+		spinEventLoop(0);
+		assertEquals(newBoolean, button.getSelection());
 
-    }
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testScenario02() {
-        // Test with an SWT.Toggle button
-        button.dispose();
-        button = new Button(getComposite(), SWT.TOGGLE);
-        // Bind the button's selection to the adventure "isPetsAllowed"
-        getDbc().bindValue(SWTObservables.observeSelection(button),
-                BeansObservables.observeValue(adventure, "petsAllowed"));
+		// Test with an SWT.Toggle button
+		button.dispose();
+		button = new Button(getComposite(), SWT.TOGGLE);
+		// Bind the button's selection to the adventure "isPetsAllowed"
+		getDbc().bindValue(SWTObservables.observeSelection(button),
+				BeansObservables.observeValue(adventure, "petsAllowed"));
 
-        // Check the model and GUI are in the same state
-        assertEquals(button.getSelection(), adventure.isPetsAllowed());
-        // Change the model and check the GUI is updated
-        boolean newBoolean = !adventure.isPetsAllowed();
-        adventure.setPetsAllowed(newBoolean);
-        assertEquals(newBoolean, adventure.isPetsAllowed());
-        assertEquals(button.getSelection(), newBoolean);
-        // Change the GUI and check the model
-        newBoolean = !newBoolean;
-        button.setSelection(newBoolean);
-        button.notifyListeners(SWT.Selection, null);
-        assertEquals(newBoolean, adventure.isPetsAllowed());
-    }
+		// Check the model and GUI are in the same state
+		assertEquals(button.getSelection(), adventure.isPetsAllowed());
+		// Change the model and check the GUI is updated
+		boolean newBoolean = !adventure.isPetsAllowed();
+		adventure.setPetsAllowed(newBoolean);
+		assertEquals(newBoolean, adventure.isPetsAllowed());
+		assertEquals(button.getSelection(), newBoolean);
+		// Change the GUI and check the model
+		newBoolean = !newBoolean;
+		button.setSelection(newBoolean);
+		button.notifyListeners(SWT.Selection, null);
+		assertEquals(newBoolean, adventure.isPetsAllowed());
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testScenario03() {
-        // Test with an SWT.Radio button
-        button.dispose();
-        button = new Button(getComposite(), SWT.RADIO);
+		// Test with an SWT.Radio button
+		button.dispose();
+		button = new Button(getComposite(), SWT.RADIO);
 
-        // Bind the button's selection to the adventure "isPetsAllowed"
-        getDbc().bindValue(SWTObservables.observeSelection(button),
-                BeansObservables.observeValue(adventure, "petsAllowed"));
+		// Bind the button's selection to the adventure "isPetsAllowed"
+		getDbc().bindValue(SWTObservables.observeSelection(button),
+				BeansObservables.observeValue(adventure, "petsAllowed"));
 
-        // Check the model and GUI are in the same state
-        assertEquals(button.getSelection(), adventure.isPetsAllowed());
-        // Change the model and check the GUI is updated
-        boolean newBoolean = !adventure.isPetsAllowed();
-        adventure.setPetsAllowed(newBoolean);
-        assertEquals(newBoolean, adventure.isPetsAllowed());
-        assertEquals(button.getSelection(), newBoolean);
-        // Change the GUI and check the model
-        newBoolean = !newBoolean;
-        button.setSelection(newBoolean);
-        button.notifyListeners(SWT.Selection, null);
-        assertEquals(newBoolean, adventure.isPetsAllowed());
-    }
+		// Check the model and GUI are in the same state
+		assertEquals(button.getSelection(), adventure.isPetsAllowed());
+		// Change the model and check the GUI is updated
+		boolean newBoolean = !adventure.isPetsAllowed();
+		adventure.setPetsAllowed(newBoolean);
+		assertEquals(newBoolean, adventure.isPetsAllowed());
+		assertEquals(button.getSelection(), newBoolean);
+		// Change the GUI and check the model
+		newBoolean = !newBoolean;
+		button.setSelection(newBoolean);
+		button.notifyListeners(SWT.Selection, null);
+		assertEquals(newBoolean, adventure.isPetsAllowed());
+	}
 }

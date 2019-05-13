@@ -32,55 +32,55 @@ import org.eclipse.core.runtime.Assert;
  */
 public class TestableObject {
 
-    private ITestHarness testHarness;
+	private ITestHarness testHarness;
 
-    /**
-     * Returns the test harness, or <code>null</code> if it has not yet been set.
-     *
-     * @return the test harness or <code>null</code>
-     */
-    public ITestHarness getTestHarness() {
-        return testHarness;
-    }
+	/**
+	 * Returns the test harness, or <code>null</code> if it has not yet been set.
+	 *
+	 * @return the test harness or <code>null</code>
+	 */
+	public ITestHarness getTestHarness() {
+		return testHarness;
+	}
 
-    /**
-     * Sets the test harness.
-     *
-     * @param testHarness the test harness
-     */
-    public void setTestHarness(ITestHarness testHarness) {
-        Assert.isNotNull(testHarness);
-        this.testHarness = testHarness;
-    }
+	/**
+	 * Sets the test harness.
+	 *
+	 * @param testHarness the test harness
+	 */
+	public void setTestHarness(ITestHarness testHarness) {
+		Assert.isNotNull(testHarness);
+		this.testHarness = testHarness;
+	}
 
-    /**
-     * Runs the given test runnable.
-     * The default implementation simply invokes <code>run</code> on the
-     * given test runnable.  Subclasses may extend.
-     *
-     * @param testRunnable the test runnable to run
-     */
-    public void runTest(Runnable testRunnable) {
-        testRunnable.run();
-    }
+	/**
+	 * Runs the given test runnable.
+	 * The default implementation simply invokes <code>run</code> on the
+	 * given test runnable.  Subclasses may extend.
+	 *
+	 * @param testRunnable the test runnable to run
+	 */
+	public void runTest(Runnable testRunnable) {
+		testRunnable.run();
+	}
 
-    /**
-     * Notification from the test harness that it is starting to run
-     * the tests.
-     * The default implementation does nothing.
-     * Subclasses may override.
-     */
-    public void testingStarting() {
-        // do nothing
-    }
+	/**
+	 * Notification from the test harness that it is starting to run
+	 * the tests.
+	 * The default implementation does nothing.
+	 * Subclasses may override.
+	 */
+	public void testingStarting() {
+		// do nothing
+	}
 
-    /**
-     * Notification from the test harness that it has finished running the
-     * tests.
-     * The default implementation does nothing.
-     * Subclasses may override.
-     */
-    public void testingFinished() {
-        // do nothing
-    }
+	/**
+	 * Notification from the test harness that it has finished running the
+	 * tests.
+	 * The default implementation does nothing.
+	 * Subclasses may override.
+	 */
+	public void testingFinished() {
+		// do nothing
+	}
 }

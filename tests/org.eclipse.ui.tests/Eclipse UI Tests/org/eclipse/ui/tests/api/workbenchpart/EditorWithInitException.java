@@ -25,45 +25,45 @@ import org.eclipse.ui.part.EditorPart;
 
 public class EditorWithInitException extends EditorPart {
 
-    @Override
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 
-    }
+	}
 
-    @Override
+	@Override
 	public void doSaveAs() {
 
-    }
+	}
 
-    @Override
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
-            throws PartInitException {
+			throws PartInitException {
 
-        throw new PartInitException("This exception was thrown intentionally as part of an error handling test");
-    }
+		throw new PartInitException("This exception was thrown intentionally as part of an error handling test");
+	}
 
-    @Override
+	@Override
 	public boolean isDirty() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isSaveAsAllowed() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
 
-        parent.setLayout(new FillLayout());
+		parent.setLayout(new FillLayout());
 
-        Label message = new Label(parent, SWT.NONE);
-        message.setText("This editor threw an exception on init. You should not be able to read this");
-    }
+		Label message = new Label(parent, SWT.NONE);
+		message.setText("This editor threw an exception on init. You should not be able to read this");
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
 
-    }
+	}
 
 }

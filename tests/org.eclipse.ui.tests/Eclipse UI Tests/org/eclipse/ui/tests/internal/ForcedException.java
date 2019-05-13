@@ -24,25 +24,25 @@ import java.io.PrintWriter;
  */
 public class ForcedException extends RuntimeException {
 
-	 private static final long serialVersionUID= 1L;
+	private static final long serialVersionUID= 1L;
 
-	 /**
-	  * Creates a <code>ForcedException</code> with the given message.
-	  *
-	  * @param message the message
-	  */
-	 public ForcedException(String message) {
-		 super(message);
-	 }
+	/**
+	 * Creates a <code>ForcedException</code> with the given message.
+	 *
+	 * @param message the message
+	 */
+	public ForcedException(String message) {
+		super(message);
+	}
 
-	 @Override
+	@Override
 	public void printStackTrace(PrintStream s) {
-	 		 s.println("!FORCED BY TEST: this entry is intentional: " + getMessage());
-	 }
+		s.println("!FORCED BY TEST: this entry is intentional: " + getMessage());
+	}
 
-	 @Override
+	@Override
 	public void printStackTrace(PrintWriter s) {
-	 		 s.println("!FORCED BY TEST: this entry is intentional:" + getMessage());
-	 }
+		s.println("!FORCED BY TEST: this entry is intentional:" + getMessage());
+	}
 }
 

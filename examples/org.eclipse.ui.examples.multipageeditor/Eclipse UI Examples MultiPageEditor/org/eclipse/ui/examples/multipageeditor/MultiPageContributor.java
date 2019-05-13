@@ -27,59 +27,59 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Multi-page contributor replaces the contributors for the individual editors in the multi-page editor.
  */
 public class MultiPageContributor extends MultiPageEditorActionBarContributor {
-    private IEditorPart activeEditorPart;
+	private IEditorPart activeEditorPart;
 
-    /**
-     * Creates a multi-page contributor.
-     */
-    public MultiPageContributor() {
-        super();
-    }
+	/**
+	 * Creates a multi-page contributor.
+	 */
+	public MultiPageContributor() {
+		super();
+	}
 
-    /**
-     * Returns the action registed with the given text editor.
-     * @return IAction or null if editor is null.
-     */
-    protected IAction getAction(ITextEditor editor, String actionID) {
-        return (editor == null ? null : editor.getAction(actionID));
-    }
+	/**
+	 * Returns the action registed with the given text editor.
+	 * @return IAction or null if editor is null.
+	 */
+	protected IAction getAction(ITextEditor editor, String actionID) {
+		return (editor == null ? null : editor.getAction(actionID));
+	}
 
-    @Override
+	@Override
 	public void setActivePage(IEditorPart part) {
-        if (activeEditorPart == part)
-            return;
+		if (activeEditorPart == part)
+			return;
 
-        activeEditorPart = part;
+		activeEditorPart = part;
 
-        IActionBars actionBars = getActionBars();
-        if (actionBars != null) {
+		IActionBars actionBars = getActionBars();
+		if (actionBars != null) {
 
-            ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part
-                    : null;
+			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part
+					: null;
 
-            actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
-                    getAction(editor, ActionFactory.DELETE.getId()));
-            actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
-                    getAction(editor, ActionFactory.UNDO.getId()));
-            actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
-                    getAction(editor, ActionFactory.REDO.getId()));
-            actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(),
-                    getAction(editor, ActionFactory.CUT.getId()));
-            actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
-                    getAction(editor, ActionFactory.COPY.getId()));
-            actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
-                    getAction(editor, ActionFactory.PASTE.getId()));
-            actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
-                    getAction(editor, ActionFactory.SELECT_ALL.getId()));
-            actionBars.setGlobalActionHandler(ActionFactory.FIND.getId(),
-                    getAction(editor, ActionFactory.FIND.getId()));
-            actionBars.setGlobalActionHandler(
-                    IDEActionFactory.BOOKMARK.getId(), getAction(editor,
-                            IDEActionFactory.BOOKMARK.getId()));
-            actionBars.setGlobalActionHandler(
-                    IDEActionFactory.ADD_TASK.getId(), getAction(editor,
-                            IDEActionFactory.ADD_TASK.getId()));
-            actionBars.updateActionBars();
-        }
-    }
+			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
+					getAction(editor, ActionFactory.DELETE.getId()));
+			actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
+					getAction(editor, ActionFactory.UNDO.getId()));
+			actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
+					getAction(editor, ActionFactory.REDO.getId()));
+			actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(),
+					getAction(editor, ActionFactory.CUT.getId()));
+			actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
+					getAction(editor, ActionFactory.COPY.getId()));
+			actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
+					getAction(editor, ActionFactory.PASTE.getId()));
+			actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
+					getAction(editor, ActionFactory.SELECT_ALL.getId()));
+			actionBars.setGlobalActionHandler(ActionFactory.FIND.getId(),
+					getAction(editor, ActionFactory.FIND.getId()));
+			actionBars.setGlobalActionHandler(
+					IDEActionFactory.BOOKMARK.getId(), getAction(editor,
+							IDEActionFactory.BOOKMARK.getId()));
+			actionBars.setGlobalActionHandler(
+					IDEActionFactory.ADD_TASK.getId(), getAction(editor,
+							IDEActionFactory.ADD_TASK.getId()));
+			actionBars.updateActionBars();
+		}
+	}
 }

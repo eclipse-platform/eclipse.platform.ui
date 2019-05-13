@@ -46,23 +46,23 @@ import org.junit.Test;
 public class WorkbenchConfigurerTest {
 
 
-    private Display display = null;
+	private Display display = null;
 
 	@Before
 	public void setUp() {
 
-        assertNull(display);
-        display = PlatformUI.createDisplay();
-        assertNotNull(display);
-    }
+		assertNull(display);
+		display = PlatformUI.createDisplay();
+		assertNotNull(display);
+	}
 
 	@After
 	public void tearDown() {
-        assertNotNull(display);
-        display.dispose();
-        assertTrue(display.isDisposed());
+		assertNotNull(display);
+		display.dispose();
+		assertTrue(display.isDisposed());
 
-    }
+	}
 
 	@Ignore
 	@Test

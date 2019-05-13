@@ -34,134 +34,134 @@ import org.eclipse.ui.part.EditorPart;
  */
 public class TitleTestEditor extends EditorPart {
 
-    Composite composite;
+	Composite composite;
 
-    Text title;
+	Text title;
 
-    Text name;
+	Text name;
 
-    Text contentDescription;
+	Text contentDescription;
 
-    Label titleLabel;
+	Label titleLabel;
 
-    Label nameLabel;
+	Label nameLabel;
 
-    Label cdLabel;
+	Label cdLabel;
 
-    /**
-     *
-     */
-    public TitleTestEditor() {
-        super();
-    }
+	/**
+	 *
+	 */
+	public TitleTestEditor() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 
-    }
+	}
 
-    @Override
+	@Override
 	public void doSaveAs() {
 
-    }
+	}
 
-    @Override
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
-            throws PartInitException {
+			throws PartInitException {
 
-        if (!(input instanceof IFileEditorInput)) {
+		if (!(input instanceof IFileEditorInput)) {
 			throw new PartInitException(
-                    "Invalid Input: Must be IFileEditorInput");
+					"Invalid Input: Must be IFileEditorInput");
 		}
-        setSite(site);
-        setInput(input);
-    }
+		setSite(site);
+		setInput(input);
+	}
 
-    @Override
+	@Override
 	public boolean isDirty() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isSaveAsAllowed() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        composite = new Composite(parent, SWT.NONE);
-        CellLayout layout = new CellLayout(2).setColumn(0, Row.fixed())
-                .setColumn(1, Row.growing());
-        composite.setLayout(layout);
+		composite = new Composite(parent, SWT.NONE);
+		CellLayout layout = new CellLayout(2).setColumn(0, Row.fixed())
+				.setColumn(1, Row.growing());
+		composite.setLayout(layout);
 
-        Label firstLabel = new Label(composite, SWT.NONE);
-        firstLabel.setText("Title");
-        title = new Text(composite, SWT.BORDER);
-        title.setText(getTitle());
+		Label firstLabel = new Label(composite, SWT.NONE);
+		firstLabel.setText("Title");
+		title = new Text(composite, SWT.BORDER);
+		title.setText(getTitle());
 
-        title.addModifyListener(new ModifyListener() {
-            @Override
+		title.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-                setTitle(title.getText());
-            }
-        });
+				setTitle(title.getText());
+			}
+		});
 
-        Label secondLabel = new Label(composite, SWT.NONE);
-        secondLabel.setText("Name");
-        name = new Text(composite, SWT.BORDER);
-        name.setText(getPartName());
-        name.addModifyListener(new ModifyListener() {
-            @Override
+		Label secondLabel = new Label(composite, SWT.NONE);
+		secondLabel.setText("Name");
+		name = new Text(composite, SWT.BORDER);
+		name.setText(getPartName());
+		name.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-                setPartName(name.getText());
-            }
-        });
+				setPartName(name.getText());
+			}
+		});
 
-        Label thirdLabel = new Label(composite, SWT.NONE);
-        thirdLabel.setText("Content");
-        contentDescription = new Text(composite, SWT.BORDER);
-        contentDescription.setText(getContentDescription());
-        contentDescription.addModifyListener(new ModifyListener() {
-            @Override
+		Label thirdLabel = new Label(composite, SWT.NONE);
+		thirdLabel.setText("Content");
+		contentDescription = new Text(composite, SWT.BORDER);
+		contentDescription.setText(getContentDescription());
+		contentDescription.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-                setContentDescription(contentDescription.getText());
-            }
-        });
+				setContentDescription(contentDescription.getText());
+			}
+		});
 
-        Label tlLabel = new Label(composite, SWT.NONE);
-        tlLabel.setText("getTitle() = ");
-        titleLabel = new Label(composite, SWT.NONE);
+		Label tlLabel = new Label(composite, SWT.NONE);
+		tlLabel.setText("getTitle() = ");
+		titleLabel = new Label(composite, SWT.NONE);
 
-        Label nmLabel = new Label(composite, SWT.NONE);
-        nmLabel.setText("getPartName() = ");
-        nameLabel = new Label(composite, SWT.NONE);
+		Label nmLabel = new Label(composite, SWT.NONE);
+		nmLabel.setText("getPartName() = ");
+		nameLabel = new Label(composite, SWT.NONE);
 
-        Label descLabel = new Label(composite, SWT.NONE);
-        descLabel.setText("getContentDescription() = ");
-        cdLabel = new Label(composite, SWT.NONE);
+		Label descLabel = new Label(composite, SWT.NONE);
+		descLabel.setText("getContentDescription() = ");
+		cdLabel = new Label(composite, SWT.NONE);
 
-        updateLabels();
+		updateLabels();
 
-        addPropertyListener(new IPropertyListener() {
-            @Override
+		addPropertyListener(new IPropertyListener() {
+			@Override
 			public void propertyChanged(Object source, int propId) {
-                updateLabels();
-            }
-        });
-    }
+				updateLabels();
+			}
+		});
+	}
 
-    private void updateLabels() {
-        titleLabel.setText(getTitle());
-        nameLabel.setText(getPartName());
-        cdLabel.setText(getContentDescription());
-    }
+	private void updateLabels() {
+		titleLabel.setText(getTitle());
+		nameLabel.setText(getPartName());
+		cdLabel.setText(getContentDescription());
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
-        composite.setFocus();
+		composite.setFocus();
 
-    }
+	}
 
 }

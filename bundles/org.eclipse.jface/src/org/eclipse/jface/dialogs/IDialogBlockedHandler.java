@@ -29,45 +29,45 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.0
  */
 public interface IDialogBlockedHandler {
-    /**
-     * The blockage has been cleared. Clear the
-     * extra information and resume.
-     */
-    public void clearBlocked();
+	/**
+	 * The blockage has been cleared. Clear the
+	 * extra information and resume.
+	 */
+	public void clearBlocked();
 
-    /**
-     * A blockage has occured. Show the blockage and
-     * forward any actions to blockingMonitor.
-     * <b>NOTE:</b> This will open any blocked notification immediately
-     * even if there is a modal shell open.
-     *
-     * @param parentShell The shell this is being sent from. If the parent
-     * shell is <code>null</code> the behavior will be the same as
-     * IDialogBlockedHandler#showBlocked(IProgressMonitor, IStatus, String)
-     *
-     * @param blocking The monitor to forward to. This is most
-     * important for calls to <code>cancel()</code>.
-     * @param blockingStatus The status that describes the blockage
-     * @param blockedName The name of the locked operation.
-     * @see IDialogBlockedHandler#showBlocked(IProgressMonitor, IStatus, String)
-     */
-    public void showBlocked(Shell parentShell, IProgressMonitor blocking,
-            IStatus blockingStatus, String blockedName);
+	/**
+	 * A blockage has occured. Show the blockage and
+	 * forward any actions to blockingMonitor.
+	 * <b>NOTE:</b> This will open any blocked notification immediately
+	 * even if there is a modal shell open.
+	 *
+	 * @param parentShell The shell this is being sent from. If the parent
+	 * shell is <code>null</code> the behavior will be the same as
+	 * IDialogBlockedHandler#showBlocked(IProgressMonitor, IStatus, String)
+	 *
+	 * @param blocking The monitor to forward to. This is most
+	 * important for calls to <code>cancel()</code>.
+	 * @param blockingStatus The status that describes the blockage
+	 * @param blockedName The name of the locked operation.
+	 * @see IDialogBlockedHandler#showBlocked(IProgressMonitor, IStatus, String)
+	 */
+	public void showBlocked(Shell parentShell, IProgressMonitor blocking,
+			IStatus blockingStatus, String blockedName);
 
-    /**
-     * A blockage has occured. Show the blockage when there is
-     * no longer any modal shells in the UI and forward any actions
-     * to blockingMonitor.
-     *
-     * <b>NOTE:</b> As no shell has been specified this method will
-     * not open any blocked notification until all other modal shells
-     * have been closed.
-     *
-     * @param blocking The monitor to forward to. This is most
-     * important for calls to <code>cancel()</code>.
-     * @param blockingStatus The status that describes the blockage
-     * @param blockedName The name of the locked operation.
-     */
-    public void showBlocked(IProgressMonitor blocking, IStatus blockingStatus,
-            String blockedName);
+	/**
+	 * A blockage has occured. Show the blockage when there is
+	 * no longer any modal shells in the UI and forward any actions
+	 * to blockingMonitor.
+	 *
+	 * <b>NOTE:</b> As no shell has been specified this method will
+	 * not open any blocked notification until all other modal shells
+	 * have been closed.
+	 *
+	 * @param blocking The monitor to forward to. This is most
+	 * important for calls to <code>cancel()</code>.
+	 * @param blockingStatus The status that describes the blockage
+	 * @param blockedName The name of the locked operation.
+	 */
+	public void showBlocked(IProgressMonitor blocking, IStatus blockingStatus,
+			String blockedName);
 }

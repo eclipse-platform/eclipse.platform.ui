@@ -31,48 +31,48 @@ import org.eclipse.swt.widgets.ToolItem;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class Separator extends AbstractGroupMarker {
-    /**
-     * Creates a separator which does not start a new group.
-     */
-    public Separator() {
-        super();
-    }
+	/**
+	 * Creates a separator which does not start a new group.
+	 */
+	public Separator() {
+		super();
+	}
 
-    /**
-     * Creates a new separator which also defines a new group having the given group name.
-     * The group name must not be <code>null</code> or the empty string.
-     * The group name is also used as the item id.
-     *
-     * @param groupName the group name of the separator
-     */
-    public Separator(String groupName) {
-        super(groupName);
-    }
+	/**
+	 * Creates a new separator which also defines a new group having the given group name.
+	 * The group name must not be <code>null</code> or the empty string.
+	 * The group name is also used as the item id.
+	 *
+	 * @param groupName the group name of the separator
+	 */
+	public Separator(String groupName) {
+		super(groupName);
+	}
 
-    @Override
+	@Override
 	public void fill(Menu menu, int index) {
-        if (index >= 0) {
+		if (index >= 0) {
 			new MenuItem(menu, SWT.SEPARATOR, index);
 		} else {
 			new MenuItem(menu, SWT.SEPARATOR);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void fill(ToolBar toolbar, int index) {
-        if (index >= 0) {
+		if (index >= 0) {
 			new ToolItem(toolbar, SWT.SEPARATOR, index);
 		} else {
 			new ToolItem(toolbar, SWT.SEPARATOR);
 		}
-    }
+	}
 
-    /**
-     * The <code>Separator</code> implementation of this <code>IContributionItem</code>
-     * method returns <code>true</code>
-     */
-    @Override
+	/**
+	 * The <code>Separator</code> implementation of this <code>IContributionItem</code>
+	 * method returns <code>true</code>
+	 */
+	@Override
 	public boolean isSeparator() {
-        return true;
-    }
+		return true;
+	}
 }

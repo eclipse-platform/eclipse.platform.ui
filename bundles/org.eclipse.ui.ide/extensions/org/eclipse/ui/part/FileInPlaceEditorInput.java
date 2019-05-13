@@ -33,88 +33,88 @@ import org.eclipse.ui.IInPlaceEditorInput;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileInPlaceEditorInput extends FileEditorInput implements
-        IInPlaceEditorInput {
-    IInPlaceEditor embeddedEditor;
+		IInPlaceEditorInput {
+	IInPlaceEditor embeddedEditor;
 
-    /**
-     * A resource listener to update the input and in-place
-     * editor if the input's file resource changes.
-     */
-    private IResourceChangeListener resourceListener = new IResourceChangeListener() {
-        @Override
+	/**
+	 * A resource listener to update the input and in-place
+	 * editor if the input's file resource changes.
+	 */
+	private IResourceChangeListener resourceListener = new IResourceChangeListener() {
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
-            IResourceDelta mainDelta = event.getDelta();
-            if (mainDelta != null && embeddedEditor != null) {
-                IResourceDelta affectedElement = mainDelta.findMember(getFile()
-                        .getFullPath());
-                if (affectedElement != null) {
-                	processDelta(affectedElement);
-                }
-            }
-        }
+			IResourceDelta mainDelta = event.getDelta();
+			if (mainDelta != null && embeddedEditor != null) {
+				IResourceDelta affectedElement = mainDelta.findMember(getFile()
+						.getFullPath());
+				if (affectedElement != null) {
+					processDelta(affectedElement);
+				}
+			}
+		}
 
-        private boolean processDelta(final IResourceDelta delta) {
-            Runnable changeRunnable = null;
+		private boolean processDelta(final IResourceDelta delta) {
+			Runnable changeRunnable = null;
 
-            switch (delta.getKind()) {
-            case IResourceDelta.REMOVED:
-                if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
-                    changeRunnable = () -> {
-					    IPath path = delta.getMovedToPath();
-					    IFile newFile = delta.getResource().getWorkspace()
-					            .getRoot().getFile(path);
-					    if (newFile != null && embeddedEditor != null) {
-					        embeddedEditor
-					                .sourceChanged(new FileInPlaceEditorInput(
-					                        newFile));
-					    }
+			switch (delta.getKind()) {
+			case IResourceDelta.REMOVED:
+				if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
+					changeRunnable = () -> {
+						IPath path = delta.getMovedToPath();
+						IFile newFile = delta.getResource().getWorkspace()
+								.getRoot().getFile(path);
+						if (newFile != null && embeddedEditor != null) {
+							embeddedEditor
+									.sourceChanged(new FileInPlaceEditorInput(
+											newFile));
+						}
 					};
-                } else {
-                    changeRunnable = () -> {
-					    if (embeddedEditor != null) {
-					        embeddedEditor.sourceDeleted();
-					        embeddedEditor.getSite().getPage().closeEditor(
-					                embeddedEditor, true);
-					    }
+				} else {
+					changeRunnable = () -> {
+						if (embeddedEditor != null) {
+							embeddedEditor.sourceDeleted();
+							embeddedEditor.getSite().getPage().closeEditor(
+									embeddedEditor, true);
+						}
 					};
 
-                }
+				}
 
-                break;
-            }
+				break;
+			}
 
-            if (changeRunnable != null && embeddedEditor != null) {
-                embeddedEditor.getSite().getShell().getDisplay().asyncExec(
-                        changeRunnable);
-            }
+			if (changeRunnable != null && embeddedEditor != null) {
+				embeddedEditor.getSite().getShell().getDisplay().asyncExec(
+						changeRunnable);
+			}
 
-            return true; // because we are sitting on files anyway
-        }
-    };
+			return true; // because we are sitting on files anyway
+		}
+	};
 
-    /**
-     * Creates an in-place editor input based on a file resource.
-     *
-     * @param file the file resource
-     */
-    public FileInPlaceEditorInput(IFile file) {
-        super(file);
-    }
+	/**
+	 * Creates an in-place editor input based on a file resource.
+	 *
+	 * @param file the file resource
+	 */
+	public FileInPlaceEditorInput(IFile file) {
+		super(file);
+	}
 
-    @Override
+	@Override
 	public void setInPlaceEditor(IInPlaceEditor editor) {
-        if (embeddedEditor != editor) {
-            if (embeddedEditor != null) {
-                getFile().getWorkspace().removeResourceChangeListener(
-                        resourceListener);
-            }
+		if (embeddedEditor != editor) {
+			if (embeddedEditor != null) {
+				getFile().getWorkspace().removeResourceChangeListener(
+						resourceListener);
+			}
 
-            embeddedEditor = editor;
+			embeddedEditor = editor;
 
-            if (embeddedEditor != null) {
-                getFile().getWorkspace().addResourceChangeListener(
-                        resourceListener);
-            }
-        }
-    }
+			if (embeddedEditor != null) {
+				getFile().getWorkspace().addResourceChangeListener(
+						resourceListener);
+			}
+		}
+	}
 }

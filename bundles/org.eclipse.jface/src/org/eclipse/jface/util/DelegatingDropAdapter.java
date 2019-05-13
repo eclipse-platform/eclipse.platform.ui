@@ -107,298 +107,298 @@ import org.eclipse.swt.dnd.TransferData;
  * @since 3.0
  */
 public class DelegatingDropAdapter implements DropTargetListener {
-    private List<TransferDropTargetListener> listeners = new ArrayList<>();
+	private List<TransferDropTargetListener> listeners = new ArrayList<>();
 
-    private TransferDropTargetListener currentListener;
+	private TransferDropTargetListener currentListener;
 
-    private int originalDropType;
+	private int originalDropType;
 
-    /**
-     * Adds the given <code>TransferDropTargetListener</code>.
-     *
-     * @param listener the new listener
-     */
-    public void addDropTargetListener(TransferDropTargetListener listener) {
-        listeners.add(listener);
-    }
+	/**
+	 * Adds the given <code>TransferDropTargetListener</code>.
+	 *
+	 * @param listener the new listener
+	 */
+	public void addDropTargetListener(TransferDropTargetListener listener) {
+		listeners.add(listener);
+	}
 
-    /**
-     * The cursor has entered the drop target boundaries. The current listener is
-     * updated, and <code>#dragEnter()</code> is forwarded to the current listener.
-     *
-     * @param event the drop target event
-     * @see DropTargetListener#dragEnter(DropTargetEvent)
-     */
-    @Override
+	/**
+	 * The cursor has entered the drop target boundaries. The current listener is
+	 * updated, and <code>#dragEnter()</code> is forwarded to the current listener.
+	 *
+	 * @param event the drop target event
+	 * @see DropTargetListener#dragEnter(DropTargetEvent)
+	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
-        //		if (Policy.DEBUG_DRAG_DROP)
-        //			System.out.println("Drag Enter: " + toString()); //$NON-NLS-1$
-        originalDropType = event.detail;
-        updateCurrentListener(event);
-    }
+		//		if (Policy.DEBUG_DRAG_DROP)
+		//			System.out.println("Drag Enter: " + toString()); //$NON-NLS-1$
+		originalDropType = event.detail;
+		updateCurrentListener(event);
+	}
 
-    /**
-     * The cursor has left the drop target boundaries. The event is forwarded to the
-     * current listener.
-     *
-     * @param event the drop target event
-     * @see DropTargetListener#dragLeave(DropTargetEvent)
-     */
-    @Override
+	/**
+	 * The cursor has left the drop target boundaries. The event is forwarded to the
+	 * current listener.
+	 *
+	 * @param event the drop target event
+	 * @see DropTargetListener#dragLeave(DropTargetEvent)
+	 */
+	@Override
 	public void dragLeave(final DropTargetEvent event) {
-        //		if (Policy.DEBUG_DRAG_DROP)
-        //			System.out.println("Drag Leave: " + toString()); //$NON-NLS-1$
-        setCurrentListener(null, event);
-    }
+		//		if (Policy.DEBUG_DRAG_DROP)
+		//			System.out.println("Drag Leave: " + toString()); //$NON-NLS-1$
+		setCurrentListener(null, event);
+	}
 
-    /**
-     * The operation being performed has changed (usually due to the user changing
-     * a drag modifier key while dragging). Updates the current listener and forwards
-     * this event to that listener.
-     *
-     * @param event the drop target event
-     * @see DropTargetListener#dragOperationChanged(DropTargetEvent)
-     */
-    @Override
+	/**
+	 * The operation being performed has changed (usually due to the user changing
+	 * a drag modifier key while dragging). Updates the current listener and forwards
+	 * this event to that listener.
+	 *
+	 * @param event the drop target event
+	 * @see DropTargetListener#dragOperationChanged(DropTargetEvent)
+	 */
+	@Override
 	public void dragOperationChanged(final DropTargetEvent event) {
-        //		if (Policy.DEBUG_DRAG_DROP)
-        //			System.out.println("Drag Operation Changed to: " + event.detail); //$NON-NLS-1$
-        originalDropType = event.detail;
-        TransferDropTargetListener oldListener = getCurrentListener();
-        updateCurrentListener(event);
-        final TransferDropTargetListener newListener = getCurrentListener();
-        // only notify the current listener if it hasn't changed based on the
-        // operation change. otherwise the new listener would get a dragEnter
-        // followed by a dragOperationChanged with the exact same event.
-        if (newListener != null && newListener == oldListener) {
-            SafeRunnable.run(new SafeRunnable() {
-                @Override
+		//		if (Policy.DEBUG_DRAG_DROP)
+		//			System.out.println("Drag Operation Changed to: " + event.detail); //$NON-NLS-1$
+		originalDropType = event.detail;
+		TransferDropTargetListener oldListener = getCurrentListener();
+		updateCurrentListener(event);
+		final TransferDropTargetListener newListener = getCurrentListener();
+		// only notify the current listener if it hasn't changed based on the
+		// operation change. otherwise the new listener would get a dragEnter
+		// followed by a dragOperationChanged with the exact same event.
+		if (newListener != null && newListener == oldListener) {
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
-                    newListener.dragOperationChanged(event);
-                }
-            });
-        }
-    }
+					newListener.dragOperationChanged(event);
+				}
+			});
+		}
+	}
 
-    /**
-     * The cursor is moving over the drop target. Updates the current listener and
-     * forwards this event to that listener. If no listener can handle the drag
-     * operation the <code>event.detail</code> field is set to <code>DND.DROP_NONE</code>
-     * to indicate an invalid drop.
-     *
-     * @param event the drop target event
-     * @see DropTargetListener#dragOver(DropTargetEvent)
-     */
-    @Override
+	/**
+	 * The cursor is moving over the drop target. Updates the current listener and
+	 * forwards this event to that listener. If no listener can handle the drag
+	 * operation the <code>event.detail</code> field is set to <code>DND.DROP_NONE</code>
+	 * to indicate an invalid drop.
+	 *
+	 * @param event the drop target event
+	 * @see DropTargetListener#dragOver(DropTargetEvent)
+	 */
+	@Override
 	public void dragOver(final DropTargetEvent event) {
-        TransferDropTargetListener oldListener = getCurrentListener();
-        updateCurrentListener(event);
-        final TransferDropTargetListener newListener = getCurrentListener();
+		TransferDropTargetListener oldListener = getCurrentListener();
+		updateCurrentListener(event);
+		final TransferDropTargetListener newListener = getCurrentListener();
 
-        // only notify the current listener if it hasn't changed based on the
-        // drag over. otherwise the new listener would get a dragEnter
-        // followed by a dragOver with the exact same event.
-        if (newListener != null && newListener == oldListener) {
-        	SafeRunnable.run(new SafeRunnable() {
-                @Override
+		// only notify the current listener if it hasn't changed based on the
+		// drag over. otherwise the new listener would get a dragEnter
+		// followed by a dragOver with the exact same event.
+		if (newListener != null && newListener == oldListener) {
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
-                    newListener.dragOver(event);
-                }
-            });
-        }
-    }
+					newListener.dragOver(event);
+				}
+			});
+		}
+	}
 
-    /**
-     * Forwards this event to the current listener, if there is one. Sets the
-     * current listener to <code>null</code> afterwards.
-     *
-     * @param event the drop target event
-     * @see DropTargetListener#drop(DropTargetEvent)
-     */
-    @Override
+	/**
+	 * Forwards this event to the current listener, if there is one. Sets the
+	 * current listener to <code>null</code> afterwards.
+	 *
+	 * @param event the drop target event
+	 * @see DropTargetListener#drop(DropTargetEvent)
+	 */
+	@Override
 	public void drop(final DropTargetEvent event) {
-        //		if (Policy.DEBUG_DRAG_DROP)
-        //			System.out.println("Drop: " + toString()); //$NON-NLS-1$
-        updateCurrentListener(event);
-        if (getCurrentListener() != null) {
-        	SafeRunnable.run(new SafeRunnable() {
-                @Override
+		//		if (Policy.DEBUG_DRAG_DROP)
+		//			System.out.println("Drop: " + toString()); //$NON-NLS-1$
+		updateCurrentListener(event);
+		if (getCurrentListener() != null) {
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
-                    getCurrentListener().drop(event);
-                }
-            });
-        }
-        setCurrentListener(null, event);
-    }
+					getCurrentListener().drop(event);
+				}
+			});
+		}
+		setCurrentListener(null, event);
+	}
 
-    /**
-     * Forwards this event to the current listener if there is one.
-     *
-     * @param event the drop target event
-     * @see DropTargetListener#dropAccept(DropTargetEvent)
-     */
-    @Override
+	/**
+	 * Forwards this event to the current listener if there is one.
+	 *
+	 * @param event the drop target event
+	 * @see DropTargetListener#dropAccept(DropTargetEvent)
+	 */
+	@Override
 	public void dropAccept(final DropTargetEvent event) {
-        //		if (Policy.DEBUG_DRAG_DROP)
-        //			System.out.println("Drop Accept: " + toString()); //$NON-NLS-1$
-        if (getCurrentListener() != null) {
-        	SafeRunnable.run(new SafeRunnable() {
-                @Override
+		//		if (Policy.DEBUG_DRAG_DROP)
+		//			System.out.println("Drop Accept: " + toString()); //$NON-NLS-1$
+		if (getCurrentListener() != null) {
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
-                    getCurrentListener().dropAccept(event);
-                }
-            });
-        }
-    }
+					getCurrentListener().dropAccept(event);
+				}
+			});
+		}
+	}
 
-    /**
-     * Returns the listener which currently handles drop events.
-     *
-     * @return the <code>TransferDropTargetListener</code> which currently
-     * 	handles drop events.
-     */
-    private TransferDropTargetListener getCurrentListener() {
-        return currentListener;
-    }
+	/**
+	 * Returns the listener which currently handles drop events.
+	 *
+	 * @return the <code>TransferDropTargetListener</code> which currently
+	 * 	handles drop events.
+	 */
+	private TransferDropTargetListener getCurrentListener() {
+		return currentListener;
+	}
 
-    /**
-     * Returns the transfer data type supported by the given listener.
-     * Returns <code>null</code> if the listener does not support any of the
-     * specified data types.
-     *
-     * @param dataTypes available data types
-     * @param listener <code>TransferDropTargetListener</code> to use for testing
-     * 	supported data types.
-     * @return the transfer data type supported by the given listener or
-     * 	<code>null</code>.
-     */
-    private TransferData getSupportedTransferType(TransferData[] dataTypes,
-            TransferDropTargetListener listener) {
-        for (TransferData dataType : dataTypes) {
-            if (listener.getTransfer().isSupportedType(dataType)) {
-                return dataType;
-            }
-        }
-        return null;
-    }
+	/**
+	 * Returns the transfer data type supported by the given listener.
+	 * Returns <code>null</code> if the listener does not support any of the
+	 * specified data types.
+	 *
+	 * @param dataTypes available data types
+	 * @param listener <code>TransferDropTargetListener</code> to use for testing
+	 * 	supported data types.
+	 * @return the transfer data type supported by the given listener or
+	 * 	<code>null</code>.
+	 */
+	private TransferData getSupportedTransferType(TransferData[] dataTypes,
+			TransferDropTargetListener listener) {
+		for (TransferData dataType : dataTypes) {
+			if (listener.getTransfer().isSupportedType(dataType)) {
+				return dataType;
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Returns the combined set of <code>Transfer</code> types of all
-     * <code>TransferDropTargetListeners</code>.
-     *
-     * @return the combined set of <code>Transfer</code> types
-     */
-    public Transfer[] getTransfers() {
-        Transfer[] types = new Transfer[listeners.size()];
-        for (int i = 0; i < listeners.size(); i++) {
-            TransferDropTargetListener listener = listeners
-                    .get(i);
-            types[i] = listener.getTransfer();
-        }
-        return types;
-    }
+	/**
+	 * Returns the combined set of <code>Transfer</code> types of all
+	 * <code>TransferDropTargetListeners</code>.
+	 *
+	 * @return the combined set of <code>Transfer</code> types
+	 */
+	public Transfer[] getTransfers() {
+		Transfer[] types = new Transfer[listeners.size()];
+		for (int i = 0; i < listeners.size(); i++) {
+			TransferDropTargetListener listener = listeners
+					.get(i);
+			types[i] = listener.getTransfer();
+		}
+		return types;
+	}
 
-    /**
-     * Returns <code>true</code> if there are no listeners to delegate events to.
-     *
-     * @return <code>true</code> if there are no <code>TransferDropTargetListeners</code>
-     *	<code>false</code> otherwise
-     */
-    public boolean isEmpty() {
-        return listeners.isEmpty();
-    }
+	/**
+	 * Returns <code>true</code> if there are no listeners to delegate events to.
+	 *
+	 * @return <code>true</code> if there are no <code>TransferDropTargetListeners</code>
+	 *	<code>false</code> otherwise
+	 */
+	public boolean isEmpty() {
+		return listeners.isEmpty();
+	}
 
-    /**
-     * Removes the given <code>TransferDropTargetListener</code>.
-     * Listeners should not be removed while a drag and drop operation is in progress.
-     *
-     * @param listener the listener to remove
-     */
-    public void removeDropTargetListener(TransferDropTargetListener listener) {
-        if (currentListener == listener) {
+	/**
+	 * Removes the given <code>TransferDropTargetListener</code>.
+	 * Listeners should not be removed while a drag and drop operation is in progress.
+	 *
+	 * @param listener the listener to remove
+	 */
+	public void removeDropTargetListener(TransferDropTargetListener listener) {
+		if (currentListener == listener) {
 			currentListener = null;
 		}
-        listeners.remove(listener);
-    }
+		listeners.remove(listener);
+	}
 
-    /**
-     * Sets the current listener to <code>listener</code>. Sends the given
-     * <code>DropTargetEvent</code> if the current listener changes.
-     *
-     * @return <code>true</code> if the new listener is different than the previous
-     *	<code>false</code> otherwise
-     */
-    private boolean setCurrentListener(TransferDropTargetListener listener,
-            final DropTargetEvent event) {
-        if (currentListener == listener) {
+	/**
+	 * Sets the current listener to <code>listener</code>. Sends the given
+	 * <code>DropTargetEvent</code> if the current listener changes.
+	 *
+	 * @return <code>true</code> if the new listener is different than the previous
+	 *	<code>false</code> otherwise
+	 */
+	private boolean setCurrentListener(TransferDropTargetListener listener,
+			final DropTargetEvent event) {
+		if (currentListener == listener) {
 			return false;
 		}
-        if (currentListener != null) {
-        	SafeRunnable.run(new SafeRunnable() {
-                @Override
+		if (currentListener != null) {
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
-                    currentListener.dragLeave(event);
-                }
-            });
-        }
-        currentListener = listener;
-        //		if (Policy.DEBUG_DRAG_DROP)
-        //			System.out.println("Current drop listener: " + listener); //$NON-NLS-1$
-        if (currentListener != null) {
-        	SafeRunnable.run(new SafeRunnable() {
-                @Override
+					currentListener.dragLeave(event);
+				}
+			});
+		}
+		currentListener = listener;
+		//		if (Policy.DEBUG_DRAG_DROP)
+		//			System.out.println("Current drop listener: " + listener); //$NON-NLS-1$
+		if (currentListener != null) {
+			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
-                    currentListener.dragEnter(event);
-                }
-            });
-        }
-        return true;
-    }
+					currentListener.dragEnter(event);
+				}
+			});
+		}
+		return true;
+	}
 
-    /**
-     * Updates the current listener to one that can handle the drop. There can be many
-     * listeners and each listener may be able to handle many <code>TransferData</code>
-     * types. The first listener found that can handle a drop of one of the given
-     * <code>TransferData</code> types will be selected.
-     * If no listener can handle the drag operation the <code>event.detail</code> field
-     * is set to <code>DND.DROP_NONE</code> to indicate an invalid drop.
-     *
-     * @param event the drop target event
-     */
-    private void updateCurrentListener(DropTargetEvent event) {
-        int originalDetail = event.detail;
-        // revert the detail to the "original" drop type that the User indicated.
-        // this is necessary because the previous listener may have changed the detail
-        // to something other than what the user indicated.
-        event.detail = originalDropType;
+	/**
+	 * Updates the current listener to one that can handle the drop. There can be many
+	 * listeners and each listener may be able to handle many <code>TransferData</code>
+	 * types. The first listener found that can handle a drop of one of the given
+	 * <code>TransferData</code> types will be selected.
+	 * If no listener can handle the drag operation the <code>event.detail</code> field
+	 * is set to <code>DND.DROP_NONE</code> to indicate an invalid drop.
+	 *
+	 * @param event the drop target event
+	 */
+	private void updateCurrentListener(DropTargetEvent event) {
+		int originalDetail = event.detail;
+		// revert the detail to the "original" drop type that the User indicated.
+		// this is necessary because the previous listener may have changed the detail
+		// to something other than what the user indicated.
+		event.detail = originalDropType;
 
-        Iterator<TransferDropTargetListener> iter = listeners.iterator();
-        while (iter.hasNext()) {
-            TransferDropTargetListener listener = iter
-                    .next();
-            TransferData dataType = getSupportedTransferType(event.dataTypes,
-                    listener);
-            if (dataType != null) {
-                TransferData originalDataType = event.currentDataType;
-                // set the data type supported by the drop listener
-                event.currentDataType = dataType;
-                if (listener.isEnabled(event)) {
-                    // if the listener stays the same, set its previously determined
-                    // event detail
-                    if (!setCurrentListener(listener, event)) {
+		Iterator<TransferDropTargetListener> iter = listeners.iterator();
+		while (iter.hasNext()) {
+			TransferDropTargetListener listener = iter
+					.next();
+			TransferData dataType = getSupportedTransferType(event.dataTypes,
+					listener);
+			if (dataType != null) {
+				TransferData originalDataType = event.currentDataType;
+				// set the data type supported by the drop listener
+				event.currentDataType = dataType;
+				if (listener.isEnabled(event)) {
+					// if the listener stays the same, set its previously determined
+					// event detail
+					if (!setCurrentListener(listener, event)) {
 						event.detail = originalDetail;
 					}
-                    return;
-                }
+					return;
+				}
 				event.currentDataType = originalDataType;
-            }
-        }
-        setCurrentListener(null, event);
-        event.detail = DND.DROP_NONE;
+			}
+		}
+		setCurrentListener(null, event);
+		event.detail = DND.DROP_NONE;
 
-        // -always- ensure that expand/scroll are on...otherwise
-        // if a valid drop target is a child of an invalid one
-        // you can't get there...
-        event.feedback = DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
-    }
+		// -always- ensure that expand/scroll are on...otherwise
+		// if a valid drop target is a child of an invalid one
+		// you can't get there...
+		event.feedback = DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
+	}
 }

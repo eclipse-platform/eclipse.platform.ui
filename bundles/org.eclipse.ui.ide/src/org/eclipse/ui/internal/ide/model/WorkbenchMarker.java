@@ -26,38 +26,38 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  * interface.
  */
 public class WorkbenchMarker extends WorkbenchAdapter implements
-        IMarkerActionFilter {
-    @Override
+		IMarkerActionFilter {
+	@Override
 	public ImageDescriptor getImageDescriptor(Object o) {
-        if (!(o instanceof IMarker)) {
+		if (!(o instanceof IMarker)) {
 			return null;
 		}
-        return IDEWorkbenchPlugin.getDefault().getMarkerImageProviderRegistry()
-                .getImageDescriptor((IMarker) o);
-    }
+		return IDEWorkbenchPlugin.getDefault().getMarkerImageProviderRegistry()
+				.getImageDescriptor((IMarker) o);
+	}
 
-    @Override
+	@Override
 	public String getLabel(Object o) {
-        IMarker marker = (IMarker) o;
-        return marker.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
-    }
+		IMarker marker = (IMarker) o;
+		return marker.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object o) {
-        return ((IMarker) o).getResource();
-    }
+		return ((IMarker) o).getResource();
+	}
 
-    /**
-     * Returns whether the specific attribute matches the state of the target
-     * object.
-     *
-     * @param target the target object
-     * @param name the attribute name
-     * @param value the attriute value
-     * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
-     */
-    @Override
+	/**
+	 * Returns whether the specific attribute matches the state of the target
+	 * object.
+	 *
+	 * @param target the target object
+	 * @param name the attribute name
+	 * @param value the attriute value
+	 * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
+	 */
+	@Override
 	public boolean testAttribute(Object target, String name, String value) {
-        return MarkerPropertyTester.test((IMarker) target, name, value);
-    }
+		return MarkerPropertyTester.test((IMarker) target, name, value);
+	}
 }

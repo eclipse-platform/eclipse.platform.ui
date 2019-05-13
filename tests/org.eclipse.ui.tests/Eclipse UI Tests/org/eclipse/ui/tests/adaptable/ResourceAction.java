@@ -22,31 +22,31 @@ import org.eclipse.ui.tests.decorators.TestDecoratorContributor;
 
 public class ResourceAction implements IObjectActionDelegate {
 
-    Object selectedItem;
+	Object selectedItem;
 
-    @Override
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-    }
+	}
 
-    @Override
+	@Override
 	public void run(IAction action) {
 
-        if (selectedItem != null) {
+		if (selectedItem != null) {
 			TestDecoratorContributor.contributor.refreshListeners(selectedItem);
 		}
 
-    }
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection structured = (IStructuredSelection) selection;
-            if (structured.isEmpty()) {
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structured = (IStructuredSelection) selection;
+			if (structured.isEmpty()) {
 				selectedItem = null;
 			} else {
 				selectedItem = structured.getFirstElement();
 			}
-        }
-    }
+		}
+	}
 
 }

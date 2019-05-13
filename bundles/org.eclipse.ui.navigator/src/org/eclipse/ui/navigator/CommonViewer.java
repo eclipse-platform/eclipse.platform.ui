@@ -375,22 +375,22 @@ public class CommonViewer extends TreeViewer {
 		}
 	}
 
-    @Override
+	@Override
 	protected void hookControl(Control control) {
-    	super.hookControl(control);
-        // FIXME - This caching thing should not be here; it's brittle.
-        // The underlying problem of over-calling of getSelection() should
-        // be addressed instead (see bugs 144294 and 140032)
-        // The DragStart event will come before the SelectionEvent on
-        // some platforms (GTK).  Since DragStart can turn around and
-        // call getSelection(), we need to clear the cache.
-        control.addMouseListener(new MouseAdapter() {
-            @Override
+		super.hookControl(control);
+		// FIXME - This caching thing should not be here; it's brittle.
+		// The underlying problem of over-calling of getSelection() should
+		// be addressed instead (see bugs 144294 and 140032)
+		// The DragStart event will come before the SelectionEvent on
+		// some platforms (GTK).  Since DragStart can turn around and
+		// call getSelection(), we need to clear the cache.
+		control.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDown(MouseEvent e) {
-            	clearSelectionCache();
-            }
-        });
-    }
+				clearSelectionCache();
+			}
+		});
+	}
 
 
 	/**
@@ -537,11 +537,11 @@ public class CommonViewer extends TreeViewer {
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @since 3.4
 	 */
-    public void createFrameList() {
-        CommonNavigatorFrameSource frameSource = new CommonNavigatorFrameSource(commonNavigator);
-        frameList = new FrameList(frameSource);
-        frameSource.connectTo(frameList);
-    }
+	public void createFrameList() {
+		CommonNavigatorFrameSource frameSource = new CommonNavigatorFrameSource(commonNavigator);
+		frameList = new FrameList(frameSource);
+		frameSource.connectTo(frameList);
+	}
 
 	/**
 	 * @return a FrameList
@@ -549,9 +549,9 @@ public class CommonViewer extends TreeViewer {
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @since 3.4
 	 */
-    public FrameList getFrameList() {
-        return frameList;
-    }
+	public FrameList getFrameList() {
+		return frameList;
+	}
 
 
 }

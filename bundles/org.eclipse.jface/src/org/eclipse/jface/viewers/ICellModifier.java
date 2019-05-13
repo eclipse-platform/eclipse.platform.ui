@@ -28,28 +28,28 @@ package org.eclipse.jface.viewers;
  * </p>
  */
 public interface ICellModifier {
-    /**
-     * Checks whether the given property of the given element can be
-     * modified.
-     *
-     * @param element the element
-     * @param property the property
-     * @return <code>true</code> if the property can be modified,
-     *   and <code>false</code> if it is not modifiable
-     */
-    public boolean canModify(Object element, String property);
+	/**
+	 * Checks whether the given property of the given element can be
+	 * modified.
+	 *
+	 * @param element the element
+	 * @param property the property
+	 * @return <code>true</code> if the property can be modified,
+	 *   and <code>false</code> if it is not modifiable
+	 */
+	public boolean canModify(Object element, String property);
 
-    /**
-     * Returns the value for the given property of the given element.
-     * Returns <code>null</code> if the element does not have the given property.
-     *
-     * @param element the element
-     * @param property the property
-     * @return the property value
-     */
-    public Object getValue(Object element, String property);
+	/**
+	 * Returns the value for the given property of the given element.
+	 * Returns <code>null</code> if the element does not have the given property.
+	 *
+	 * @param element the element
+	 * @param property the property
+	 * @return the property value
+	 */
+	public Object getValue(Object element, String property);
 
-    /**
+	/**
 	 * Modifies the value for the given property of the given element. Has no effect
 	 * if the element does not have the given property, or if the property cannot be
 	 * modified.
@@ -71,5 +71,5 @@ public interface ICellModifier {
 	 *
 	 * @see org.eclipse.swt.widgets.Item
 	 */
-    public void modify(Object element, String property, Object value);
+	public void modify(Object element, String property, Object value);
 }

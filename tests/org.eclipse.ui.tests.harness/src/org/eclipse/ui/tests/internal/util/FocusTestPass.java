@@ -20,44 +20,44 @@ import java.util.ArrayList;
  * This test pass verifies the initial focus of a dialog when it is given focus.
  */
 public class FocusTestPass implements IDialogTestPass {
-    private static final int CHECKLIST_SIZE = 1;
+	private static final int CHECKLIST_SIZE = 1;
 
-    @Override
+	@Override
 	public String title() {
-        return "Test Pass: Initial Focus";
-    }
+		return "Test Pass: Initial Focus";
+	}
 
-    @Override
+	@Override
 	public String description() {
-        return "Verify the initial focus of the dialogs.";
-    }
+		return "Verify the initial focus of the dialogs.";
+	}
 
-    @Override
+	@Override
 	public String label() {
-        return "&Initial Focus";
-    }
+		return "&Initial Focus";
+	}
 
 	@Override
 	public ArrayList<String> checkListTexts() {
 		ArrayList<String> list = new ArrayList<>(CHECKLIST_SIZE);
-        list.add("&1) the initial focus is appropriate.");
-        return list;
-    }
+		list.add("&1) the initial focus is appropriate.");
+		return list;
+	}
 
-    @Override
+	@Override
 	public String[] failureTexts() {
-        String[] failureText = new String[CHECKLIST_SIZE];
-        failureText[0] = "The initial focus is inappropriate.";
-        return failureText;
-    }
+		String[] failureText = new String[CHECKLIST_SIZE];
+		failureText[0] = "The initial focus is inappropriate.";
+		return failureText;
+	}
 
-    @Override
+	@Override
 	public String queryText() {
-        return "Is the initial focus of the dialog correct?";
-    }
+		return "Is the initial focus of the dialog correct?";
+	}
 
-    @Override
+	@Override
 	public int getID() {
-        return VerifyDialog.TEST_FOCUS;
-    }
+		return VerifyDialog.TEST_FOCUS;
+	}
 }

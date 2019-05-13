@@ -33,84 +33,84 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class WorkingSetTestCase extends UITestCase {
 
-    public WorkingSetTestCase(String testName) {
-        super(testName);
-    }
+	public WorkingSetTestCase(String testName) {
+		super(testName);
+	}
 
-    private ResourceMapping getResourceMapping(IWorkingSet set) {
+	private ResourceMapping getResourceMapping(IWorkingSet set) {
 		return ((IAdaptable) set).getAdapter(ResourceMapping.class);
-    }
+	}
 
-    private IWorkbenchAdapter getWorkbenchAdapter(IWorkingSet set) {
+	private IWorkbenchAdapter getWorkbenchAdapter(IWorkingSet set) {
 		return ((IAdaptable) set).getAdapter(IWorkbenchAdapter.class);
-    }
+	}
 
-    private void assertMatches(ResourceMapping mapping, IResource[] resources) throws CoreException {
-    	assertTrue(mapping != null);
-        ResourceTraversal[] traversals = mapping.getTraversals(null, null);
-        assertTrue(traversals.length == resources.length);
-        for (ResourceTraversal traversal : traversals) {
-            boolean found = false;
-            for (IResource element : resources) {
-                if (element.equals(traversal.getResources()[0])) {
-                    found = true;
-                }
-            }
-            assertTrue(found);
-        }
+	private void assertMatches(ResourceMapping mapping, IResource[] resources) throws CoreException {
+		assertTrue(mapping != null);
+		ResourceTraversal[] traversals = mapping.getTraversals(null, null);
+		assertTrue(traversals.length == resources.length);
+		for (ResourceTraversal traversal : traversals) {
+			boolean found = false;
+			for (IResource element : resources) {
+				if (element.equals(traversal.getResources()[0])) {
+					found = true;
+				}
+			}
+			assertTrue(found);
+		}
 
-    }
+	}
 
-    private IProject createProject(String name) throws CoreException {
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getName() + name);
-        project.create(null);
-        project.open(IResource.NONE, null);
-        return project;
-    }
+	private IProject createProject(String name) throws CoreException {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getName() + name);
+		project.create(null);
+		project.open(IResource.NONE, null);
+		return project;
+	}
 
-    public void testWorkSetAdaptation() throws CoreException {
+	public void testWorkSetAdaptation() throws CoreException {
 
-        // First, test that the set adapts to a ResourceMapping
-        IWorkingSetManager man = getWorkbench().getWorkingSetManager();
-        IResource[] resources = new IResource[3];
-        resources[0] = createProject("Project0");
-        resources[1] = createProject("Project1");
-        resources[2] = createProject("Project2");
-        IWorkingSet set = man.createWorkingSet("test", resources);
-        ResourceMapping mapping = getResourceMapping(set);
-        assertMatches(mapping, resources);
+		// First, test that the set adapts to a ResourceMapping
+		IWorkingSetManager man = getWorkbench().getWorkingSetManager();
+		IResource[] resources = new IResource[3];
+		resources[0] = createProject("Project0");
+		resources[1] = createProject("Project1");
+		resources[2] = createProject("Project2");
+		IWorkingSet set = man.createWorkingSet("test", resources);
+		ResourceMapping mapping = getResourceMapping(set);
+		assertMatches(mapping, resources);
 
-        // Next, test that the set adapts to an IWorkbenchAdapter
-        IWorkbenchAdapter adapter = getWorkbenchAdapter(set);
-        String name = adapter.getLabel(set);
-        assertEquals("test", name);
+		// Next, test that the set adapts to an IWorkbenchAdapter
+		IWorkbenchAdapter adapter = getWorkbenchAdapter(set);
+		String name = adapter.getLabel(set);
+		assertEquals("test", name);
 
-        // Test the persistent property filter
-        QualifiedName key = new QualifiedName("org.eclipse.ui.test", "set");
-        ResourceMappingPropertyTester tester = new ResourceMappingPropertyTester();
+		// Test the persistent property filter
+		QualifiedName key = new QualifiedName("org.eclipse.ui.test", "set");
+		ResourceMappingPropertyTester tester = new ResourceMappingPropertyTester();
 
-        // Test with no persistent properties set
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
+		// Test with no persistent properties set
+		assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
 
-        // Test with one set on a subset of projects
-        resources[0].setPersistentProperty(key, "one");
-        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "wrong"}, null));
+		// Test with one set on a subset of projects
+		resources[0].setPersistentProperty(key, "one");
+		assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
+		assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "wrong"}, null));
 
-        // Test again with the property set to two different values
-        resources[1].setPersistentProperty(key, "two");
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "two"}, null));
+		// Test again with the property set to two different values
+		resources[1].setPersistentProperty(key, "two");
+		assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
+		assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "two"}, null));
 
-        // Test with them all set
-        resources[1].setPersistentProperty(key, "one");
-        resources[2].setPersistentProperty(key, "one");
-        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
-        assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "two"}, null));
+		// Test with them all set
+		resources[1].setPersistentProperty(key, "one");
+		resources[2].setPersistentProperty(key, "one");
+		assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
+		assertFalse(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "two"}, null));
 
-        // Test with a closed project in the set
-        ((IProject)resources[0]).close(null);
-        assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
-    }
+		// Test with a closed project in the set
+		((IProject)resources[0]).close(null);
+		assertTrue(tester.test(getResourceMapping(set), IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY, new Object[] { "org.eclipse.ui.test.set", "one"}, null));
+	}
 
 }

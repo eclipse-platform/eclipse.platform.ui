@@ -65,16 +65,16 @@ public class UserSaveableMockViewPart extends MockViewPart implements
 
 	public void setDirty(boolean d) {
 		this.isDirty = d;
-        firePropertyChange(PROP_DIRTY);
+		firePropertyChange(PROP_DIRTY);
 	}
 
-    public void setSaveAsAllowed(boolean isSaveAsAllowed) {
-        this.saveAsAllowed = isSaveAsAllowed;
-    }
+	public void setSaveAsAllowed(boolean isSaveAsAllowed) {
+		this.saveAsAllowed = isSaveAsAllowed;
+	}
 
-    public void setSaveNeeded(boolean isSaveOnCloseNeeded) {
-        this.saveNeeded = isSaveOnCloseNeeded;
-    }
+	public void setSaveNeeded(boolean isSaveOnCloseNeeded) {
+		this.saveNeeded = isSaveOnCloseNeeded;
+	}
 
 	@Override
 	public int promptToSaveOnClose() {

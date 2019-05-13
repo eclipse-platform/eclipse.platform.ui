@@ -44,95 +44,95 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 	private IAction newExampleAction;
 	private IAction newProjectAction;
 
-    private boolean enabled = true;
+	private boolean enabled = true;
 
-    /**
-     * Creates a new wizard shortcut menu for the IDE.
-     * <p>
-     * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
-     * </p>
-     *
-     * @param window
-     *            the window containing the menu
-     */
-    public NewWizardMenu(IWorkbenchWindow window) {
-        this(window, null);
+	/**
+	 * Creates a new wizard shortcut menu for the IDE.
+	 * <p>
+	 * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
+	 * </p>
+	 *
+	 * @param window
+	 *            the window containing the menu
+	 */
+	public NewWizardMenu(IWorkbenchWindow window) {
+		this(window, null);
 
-    }
+	}
 
-    /**
-     * Creates a new wizard shortcut menu for the IDE.
-     * <p>
-     * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
-     * </p>
-     *
-     * @param window
-     *            the window containing the menu
-     * @param id
-     *            the identifier for this contribution item
-     */
-    public NewWizardMenu(IWorkbenchWindow window, String id) {
-        super(window, id);
-        newExampleAction = new NewExampleAction(window);
-        newProjectAction = new NewProjectAction(window);
-    }
+	/**
+	 * Creates a new wizard shortcut menu for the IDE.
+	 * <p>
+	 * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
+	 * </p>
+	 *
+	 * @param window
+	 *            the window containing the menu
+	 * @param id
+	 *            the identifier for this contribution item
+	 */
+	public NewWizardMenu(IWorkbenchWindow window, String id) {
+		super(window, id);
+		newExampleAction = new NewExampleAction(window);
+		newProjectAction = new NewProjectAction(window);
+	}
 
-    /**
-     * Create a new wizard shortcut menu.
-     * <p>
-     * If the menu will appear on a semi-permanent basis, for instance within
-     * a toolbar or menubar, the value passed for <code>register</code> should be true.
-     * If set, the menu will listen to perspective activation and update itself
-     * to suit.  In this case clients are expected to call <code>deregister</code>
-     * when the menu is no longer needed.  This will unhook any perspective
-     * listeners.
-     * </p>
-     * <p>
-     * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
-     * </p>
-     *
-     * @param innerMgr the location for the shortcut menu contents
-     * @param window the window containing the menu
-     * @param register if <code>true</code> the menu listens to perspective changes in
-     *      the window
-     * @deprecated use NewWizardMenu(IWorkbenchWindow) instead
-     */
-    @Deprecated
+	/**
+	 * Create a new wizard shortcut menu.
+	 * <p>
+	 * If the menu will appear on a semi-permanent basis, for instance within
+	 * a toolbar or menubar, the value passed for <code>register</code> should be true.
+	 * If set, the menu will listen to perspective activation and update itself
+	 * to suit.  In this case clients are expected to call <code>deregister</code>
+	 * when the menu is no longer needed.  This will unhook any perspective
+	 * listeners.
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
+	 * </p>
+	 *
+	 * @param innerMgr the location for the shortcut menu contents
+	 * @param window the window containing the menu
+	 * @param register if <code>true</code> the menu listens to perspective changes in
+	 *      the window
+	 * @deprecated use NewWizardMenu(IWorkbenchWindow) instead
+	 */
+	@Deprecated
 	public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window,
-            boolean register) {
-        this(window, null);
-        fillMenu(innerMgr);
-        // Must be done after constructor to ensure field initialization.
-    }
+			boolean register) {
+		this(window, null);
+		fillMenu(innerMgr);
+		// Must be done after constructor to ensure field initialization.
+	}
 
-    private void fillMenu(IContributionManager innerMgr) {
-        // Remove all.
-        innerMgr.removeAll();
+	private void fillMenu(IContributionManager innerMgr) {
+		// Remove all.
+		innerMgr.removeAll();
 
 		for (IContributionItem item : getContributionItems()) {
-            innerMgr.add(item);
-        }
-    }
+			innerMgr.add(item);
+		}
+	}
 
-    /**
-     * Removes all listeners from the containing workbench window.
-     * <p>
-     * This method should only be called if the shortcut menu is created with
-     * <code>register = true</code>.
-     * </p>
-     *
-     * @deprecated has no effect
-     */
-    @Deprecated
+	/**
+	 * Removes all listeners from the containing workbench window.
+	 * <p>
+	 * This method should only be called if the shortcut menu is created with
+	 * <code>register = true</code>.
+	 * </p>
+	 *
+	 * @deprecated has no effect
+	 */
+	@Deprecated
 	public void deregisterListeners() {
-        // do nothing
-    }
+		// do nothing
+	}
 
-    /**
-     * Return whether or not any examples are in the current install.
-     *
-     * @return boolean
-     */
+	/**
+	 * Return whether or not any examples are in the current install.
+	 *
+	 * @return boolean
+	 */
 	private boolean hasExamples() {
 		boolean hasCategory = registryHasCategory(WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
 		if (hasCategory) {
@@ -163,12 +163,12 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 		return false;
 	}
 
-    @Override
+	@Override
 	protected void addItems(List list) {
-    	ArrayList shortCuts= new ArrayList();
-    	addShortcuts(shortCuts);
+		ArrayList shortCuts= new ArrayList();
+		addShortcuts(shortCuts);
 
-    	for (Iterator iterator= shortCuts.iterator(); iterator.hasNext();) {
+		for (Iterator iterator= shortCuts.iterator(); iterator.hasNext();) {
 			Object curr= iterator.next();
 			if (curr instanceof ActionContributionItem && isNewProjectWizardAction(((ActionContributionItem) curr).getAction())) {
 				iterator.remove();
@@ -176,17 +176,17 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 			}
 		}
 		list.add(new ActionContributionItem(newProjectAction));
-        list.add(new Separator());
-        if (!shortCuts.isEmpty()) {
-        	list.addAll(shortCuts);
-        	list.add(new Separator());
-        }
-        if (hasExamples()) {
-            list.add(new ActionContributionItem(newExampleAction));
-            list.add(new Separator());
-        }
-        list.add(new ActionContributionItem(getShowDialogAction()));
-    }
+		list.add(new Separator());
+		if (!shortCuts.isEmpty()) {
+			list.addAll(shortCuts);
+			list.add(new Separator());
+		}
+		if (hasExamples()) {
+			list.add(new ActionContributionItem(newExampleAction));
+			list.add(new Separator());
+		}
+		list.add(new ActionContributionItem(getShowDialogAction()));
+	}
 
 	private boolean isNewProjectWizardAction(IAction action) {
 		if (action instanceof NewWizardShortcutAction) {

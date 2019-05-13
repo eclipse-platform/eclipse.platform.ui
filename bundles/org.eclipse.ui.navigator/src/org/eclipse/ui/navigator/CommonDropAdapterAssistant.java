@@ -268,27 +268,27 @@ public abstract class CommonDropAdapterAssistant {
 		return _currentEvent;
 	}
 
-    /**
-     * Sets the {@link CommonDropAdapter}.
-     * @param dropAdapter
-     *
-     * @noreference This method is not intended to be referenced by clients.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     */
+	/**
+	 * Sets the {@link CommonDropAdapter}.
+	 * @param dropAdapter
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
 	public void setCommonDropAdapter(CommonDropAdapter dropAdapter) {
 		_dropAdapter = dropAdapter;
 	}
 
-    /**
-     * Returns the {@link CommonDropAdapter}.
-     *
-     * @return the CommonDropAdapter.
-     *
-     * @since 3.4
-     *
-     */
-    protected CommonDropAdapter getCommonDropAdapter() {
-        return _dropAdapter;
-    }
+	/**
+	 * Returns the {@link CommonDropAdapter}.
+	 *
+	 * @return the CommonDropAdapter.
+	 *
+	 * @since 3.4
+	 *
+	 */
+	protected CommonDropAdapter getCommonDropAdapter() {
+		return _dropAdapter;
+	}
 
 }

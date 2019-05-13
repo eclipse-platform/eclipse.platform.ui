@@ -21,40 +21,40 @@ import org.eclipse.swt.widgets.TreeItem;
 
 public class TreeViewerTest extends AbstractTreeViewerTest {
 
-    public TreeViewerTest(String name) {
-        super(name);
-    }
+	public TreeViewerTest(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-        fTreeViewer = new TreeViewer(parent);
-        fTreeViewer.setContentProvider(new TestModelContentProvider());
-        return fTreeViewer;
-    }
+		fTreeViewer = new TreeViewer(parent);
+		fTreeViewer.setContentProvider(new TestModelContentProvider());
+		return fTreeViewer;
+	}
 
-    @Override
+	@Override
 	protected int getItemCount() {
-        TestElement first = fRootElement.getFirstChild();
-        TreeItem ti = (TreeItem) fViewer.testFindItem(first);
-        Tree tree = ti.getParent();
-        return tree.getItemCount();
-    }
+		TestElement first = fRootElement.getFirstChild();
+		TreeItem ti = (TreeItem) fViewer.testFindItem(first);
+		Tree tree = ti.getParent();
+		return tree.getItemCount();
+	}
 
-    /**
-     * getItemCount method comment.
-     */
-    @Override
+	/**
+	 * getItemCount method comment.
+	 */
+	@Override
 	protected int getItemCount(TestElement element) {
-        return element.getChildCount();
-    }
+		return element.getChildCount();
+	}
 
-    @Override
+	@Override
 	protected String getItemText(int at) {
-        Tree tree = (Tree) fTreeViewer.getControl();
-        return tree.getItems()[at].getText();
-    }
+		Tree tree = (Tree) fTreeViewer.getControl();
+		return tree.getItems()[at].getText();
+	}
 
-    public static void main(String args[]) {
-        junit.textui.TestRunner.run(TreeViewerTest.class);
-    }
+	public static void main(String args[]) {
+		junit.textui.TestRunner.run(TreeViewerTest.class);
+	}
 }

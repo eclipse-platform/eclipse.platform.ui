@@ -55,32 +55,32 @@ import org.eclipse.ui.part.Page;
 public abstract class ContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
 
-    private TreeViewer treeViewer;
+	private TreeViewer treeViewer;
 
-    /**
-     * Create a new content outline page.
-     */
-    protected ContentOutlinePage() {
-        super();
-    }
+	/**
+	 * Create a new content outline page.
+	 */
+	protected ContentOutlinePage() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-        selectionChangedListeners.add(listener);
-    }
+		selectionChangedListeners.add(listener);
+	}
 
-    /**
-     * The <code>ContentOutlinePage</code> implementation of this
-     * <code>IContentOutlinePage</code> method creates a tree viewer. Subclasses
-     * must extend this method configure the tree viewer with a proper content
-     * provider, label provider, and input element.
-     * @param parent
-     */
-    @Override
+	/**
+	 * The <code>ContentOutlinePage</code> implementation of this
+	 * <code>IContentOutlinePage</code> method creates a tree viewer. Subclasses
+	 * must extend this method configure the tree viewer with a proper content
+	 * provider, label provider, and input element.
+	 * @param parent
+	 */
+	@Override
 	public void createControl(Composite parent) {
-        treeViewer = new TreeViewer(parent, getTreeStyle());
-        treeViewer.addSelectionChangedListener(this);
-    }
+		treeViewer = new TreeViewer(parent, getTreeStyle());
+		treeViewer.addSelectionChangedListener(this);
+	}
 
 	/**
 	 * A hint for the styles to use while constructing the TreeViewer.
@@ -94,81 +94,81 @@ public abstract class ContentOutlinePage extends Page implements IContentOutline
 		return SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL;
 	}
 
-    /**
-     * Fires a selection changed event.
-     *
-     * @param selection the new selection
-     */
-    protected void fireSelectionChanged(ISelection selection) {
-        // create an event
-        final SelectionChangedEvent event = new SelectionChangedEvent(this,
-                selection);
+	/**
+	 * Fires a selection changed event.
+	 *
+	 * @param selection the new selection
+	 */
+	protected void fireSelectionChanged(ISelection selection) {
+		// create an event
+		final SelectionChangedEvent event = new SelectionChangedEvent(this,
+				selection);
 
-        // fire the event
+		// fire the event
 		for (final ISelectionChangedListener l : selectionChangedListeners) {
-            SafeRunner.run(new SafeRunnable() {
-                @Override
+			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() {
-                    l.selectionChanged(event);
-                }
-            });
-        }
-    }
+					l.selectionChanged(event);
+				}
+			});
+		}
+	}
 
-    @Override
+	@Override
 	public Control getControl() {
-        if (treeViewer == null) {
+		if (treeViewer == null) {
 			return null;
 		}
-        return treeViewer.getControl();
-    }
+		return treeViewer.getControl();
+	}
 
-    @Override
+	@Override
 	public ISelection getSelection() {
-        if (treeViewer == null) {
+		if (treeViewer == null) {
 			return StructuredSelection.EMPTY;
 		}
-        return treeViewer.getSelection();
-    }
+		return treeViewer.getSelection();
+	}
 
-    /**
-     * Returns this page's tree viewer.
-     *
-     * @return this page's tree viewer, or <code>null</code> if
-     *   <code>createControl</code> has not been called yet
-     */
-    protected TreeViewer getTreeViewer() {
-        return treeViewer;
-    }
+	/**
+	 * Returns this page's tree viewer.
+	 *
+	 * @return this page's tree viewer, or <code>null</code> if
+	 *   <code>createControl</code> has not been called yet
+	 */
+	protected TreeViewer getTreeViewer() {
+		return treeViewer;
+	}
 
-    @Override
+	@Override
 	public void init(IPageSite pageSite) {
-        super.init(pageSite);
-        pageSite.setSelectionProvider(this);
-    }
+		super.init(pageSite);
+		pageSite.setSelectionProvider(this);
+	}
 
-    @Override
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-        selectionChangedListeners.remove(listener);
-    }
+		selectionChangedListeners.remove(listener);
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
-        fireSelectionChanged(event.getSelection());
-    }
+		fireSelectionChanged(event.getSelection());
+	}
 
-    /**
-     * Sets focus to a part in the page.
-     */
-    @Override
+	/**
+	 * Sets focus to a part in the page.
+	 */
+	@Override
 	public void setFocus() {
-        treeViewer.getControl().setFocus();
-    }
+		treeViewer.getControl().setFocus();
+	}
 
-    @Override
+	@Override
 	public void setSelection(ISelection selection) {
-        if (treeViewer != null) {
+		if (treeViewer != null) {
 			treeViewer.setSelection(selection);
 		}
-    }
+	}
 }

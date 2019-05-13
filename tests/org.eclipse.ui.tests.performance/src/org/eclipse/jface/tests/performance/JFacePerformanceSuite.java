@@ -31,11 +31,11 @@ public class JFacePerformanceSuite extends FilteredTestSuite {
 	public static int MAX_TIME = 10000;
 
 	/**
-     * Returns the suite. This is required to use the JUnit Launcher.
-     */
-    public static Test suite() {
-    	return new UIPerformanceTestSetup(new JFacePerformanceSuite());
-    }
+	 * Returns the suite. This is required to use the JUnit Launcher.
+	 */
+	public static Test suite() {
+		return new UIPerformanceTestSetup(new JFacePerformanceSuite());
+	}
 
 	public JFacePerformanceSuite() {
 		super();

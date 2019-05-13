@@ -583,14 +583,14 @@ public class ResourceFilterGroup {
 	 */
 	public Control createContents(Composite parent) {
 
-        Font font = parent.getFont();
+		Font font = parent.getFont();
 		shell = parent.getShell();
 
 		if (resource == null) {
 			Label label = new Label(parent, SWT.NONE);
 			label.setText(NLS.bind(
 					IDEWorkbenchMessages.ResourceFilterPage_noResource, null));
-	        label.setFont(font);
+			label.setFont(font);
 			return label;
 		}
 
@@ -735,8 +735,8 @@ public class ResourceFilterGroup {
 			FontData base = originalData[i];
 			styleData[i] = new FontData(base.getName(), base.getHeight(), base.getStyle() | additionalStyle);
 		}
-       	return styleData;
-    }
+		return styleData;
+	}
 
 	class EditFilterAction extends Action {
 
@@ -1300,20 +1300,20 @@ public class ResourceFilterGroup {
 				FilterCopy[] myData;
 				try {
 					ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-				    try (DataInputStream readIn = new DataInputStream(in)) {
+					try (DataInputStream readIn = new DataInputStream(in)) {
 					int size = readIn.readInt();
 
 					LinkedList<FilterCopy> droppedFilters = new LinkedList<>();
 					for (int i = 0; i < size; i++) {
-					    int serialNumber = readIn.readInt();
-					    FilterCopy tmp = filters
-						    .findBySerialNumber(serialNumber);
-					    if (tmp != null)
+						int serialNumber = readIn.readInt();
+						FilterCopy tmp = filters
+							.findBySerialNumber(serialNumber);
+						if (tmp != null)
 						droppedFilters.add(tmp);
 					}
 					myData = droppedFilters
 						.toArray(new FilterCopy[0]);
-				    }
+					}
 				} catch (IOException ex) {
 					return null;
 				}
@@ -1954,23 +1954,23 @@ class FilterEditDialog extends TrayDialog {
 		label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
 		Composite composite = new Composite(parent, SWT.NONE);
-    	GridLayout layout = new GridLayout();
-    	layout.marginWidth = 0;
-    	layout.marginHeight = 0;
-    	layout.horizontalSpacing = 0;
-    	composite.setLayout(layout);
-    	composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-    	composite.setFont(parent.getFont());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		composite.setFont(parent.getFont());
 
 		// create help control if needed
-        if (isHelpAvailable()) {
-        	Control helpControl = createHelpControl(composite);
-        	((GridData) helpControl.getLayoutData()).horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		if (isHelpAvailable()) {
+			Control helpControl = createHelpControl(composite);
+			((GridData) helpControl.getLayoutData()).horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		}
 
-        Control buttonSection = dialogCreateButtonBar(composite);
-        ((GridData) buttonSection.getLayoutData()).grabExcessHorizontalSpace = true;
-        return composite;
+		Control buttonSection = dialogCreateButtonBar(composite);
+		((GridData) buttonSection.getLayoutData()).grabExcessHorizontalSpace = true;
+		return composite;
 	}
 
 	private Control dialogCreateButtonBar(Composite parent) {

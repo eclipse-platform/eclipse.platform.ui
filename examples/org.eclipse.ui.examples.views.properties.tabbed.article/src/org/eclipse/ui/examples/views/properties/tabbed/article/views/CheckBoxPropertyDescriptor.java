@@ -24,24 +24,24 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  * @author Anthony Hunter
  */
 public class CheckBoxPropertyDescriptor
-    extends PropertyDescriptor {
+	extends PropertyDescriptor {
 
-    /**
-     * Constructs a new property descriptor with the given id and display name.
-     * 
-     * @param id
-     *            the id for the descriptor.
-     * @param displayName
-     *            the display name for the descriptor.
-     */
-    public CheckBoxPropertyDescriptor(Object id, String displayName) {
-        super(id, displayName);
-    }
+	/**
+	 * Constructs a new property descriptor with the given id and display name.
+	 * 
+	 * @param id
+	 *            the id for the descriptor.
+	 * @param displayName
+	 *            the display name for the descriptor.
+	 */
+	public CheckBoxPropertyDescriptor(Object id, String displayName) {
+		super(id, displayName);
+	}
 
-    public CellEditor createPropertyEditor(Composite parent) {
-        CellEditor editor = new CheckboxCellEditor(parent);
-        if (getValidator() != null)
-            editor.setValidator(getValidator());
-        return editor;
-    }
+	public CellEditor createPropertyEditor(Composite parent) {
+		CellEditor editor = new CheckboxCellEditor(parent);
+		if (getValidator() != null)
+			editor.setValidator(getValidator());
+		return editor;
+	}
 }

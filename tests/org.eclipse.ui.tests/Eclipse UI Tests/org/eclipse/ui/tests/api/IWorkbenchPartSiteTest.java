@@ -26,142 +26,142 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public abstract class IWorkbenchPartSiteTest extends UITestCase {
 
-    protected IWorkbenchWindow fWindow;
+	protected IWorkbenchWindow fWindow;
 
-    protected IWorkbenchPage fPage;
+	protected IWorkbenchPage fPage;
 
-    /**
-     * Constructor for IWorkbenchPartSiteTest
-     */
-    public IWorkbenchPartSiteTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * Constructor for IWorkbenchPartSiteTest
+	 */
+	public IWorkbenchPartSiteTest(String testName) {
+		super(testName);
+	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
-        super.doSetUp();
-        fWindow = openTestWindow();
-        fPage = fWindow.getActivePage();
-    }
+		super.doSetUp();
+		fWindow = openTestWindow();
+		fPage = fWindow.getActivePage();
+	}
 
-    public void testGetId() throws Throwable {
-        // From Javadoc: "Returns the part registry extension id for
-        // this workbench site's part."
+	public void testGetId() throws Throwable {
+		// From Javadoc: "Returns the part registry extension id for
+		// this workbench site's part."
 
-        IWorkbenchPart part = createTestPart(fPage);
-        IWorkbenchPartSite site = part.getSite();
-        assertEquals(getTestPartId(), site.getId());
-    }
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
+		assertEquals(getTestPartId(), site.getId());
+	}
 
-    public void testGetPage() throws Throwable {
-        // From Javadoc: "Returns the page containing this workbench
-        // site's part."
+	public void testGetPage() throws Throwable {
+		// From Javadoc: "Returns the page containing this workbench
+		// site's part."
 
-        IWorkbenchPart part = createTestPart(fPage);
-        IWorkbenchPartSite site = part.getSite();
-        assertEquals(fPage, site.getPage());
-    }
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
+		assertEquals(fPage, site.getPage());
+	}
 
-    public void testGetPluginId() throws Throwable {
-        // From Javadoc: "Returns the unique identifier of the
-        // plug-in that defines this workbench site's part."
+	public void testGetPluginId() throws Throwable {
+		// From Javadoc: "Returns the unique identifier of the
+		// plug-in that defines this workbench site's part."
 
-        IWorkbenchPart part = createTestPart(fPage);
-        IWorkbenchPartSite site = part.getSite();
-        assertEquals(getTestPartPluginId(), site.getPluginId());
-    }
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
+		assertEquals(getTestPartPluginId(), site.getPluginId());
+	}
 
-    public void testGetRegisteredName() throws Throwable {
-        // From Javadoc: "Returns the registered name for this
-        // workbench site's part."
+	public void testGetRegisteredName() throws Throwable {
+		// From Javadoc: "Returns the registered name for this
+		// workbench site's part."
 
-        IWorkbenchPart part = createTestPart(fPage);
-        IWorkbenchPartSite site = part.getSite();
-        assertEquals(getTestPartName(), site.getRegisteredName());
-    }
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
+		assertEquals(getTestPartName(), site.getRegisteredName());
+	}
 
-    public void testGetShell() throws Throwable {
-        // From Javadoc: "Returns the shell containing this
-        // workbench site's part"
+	public void testGetShell() throws Throwable {
+		// From Javadoc: "Returns the shell containing this
+		// workbench site's part"
 
-        IWorkbenchPart part = createTestPart(fPage);
-        IWorkbenchPartSite site = part.getSite();
-        assertEquals(fWindow.getShell(), site.getShell());
-    }
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
+		assertEquals(fWindow.getShell(), site.getShell());
+	}
 
-    public void testGetWorkbenchWindow() throws Throwable {
-        // From Javadoc: "Returns the workbench window
-        // containing this workbench site's part."
+	public void testGetWorkbenchWindow() throws Throwable {
+		// From Javadoc: "Returns the workbench window
+		// containing this workbench site's part."
 
-        IWorkbenchPart part = createTestPart(fPage);
-        IWorkbenchPartSite site = part.getSite();
-        assertEquals(fWindow, site.getWorkbenchWindow());
-    }
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
+		assertEquals(fWindow, site.getWorkbenchWindow());
+	}
 
-    public void testGetSelectionProvider() throws Throwable {
-        // From Javadoc: "'Get' returns the selection provider
-        // for this workbench site's part.
+	public void testGetSelectionProvider() throws Throwable {
+		// From Javadoc: "'Get' returns the selection provider
+		// for this workbench site's part.
 
-        IWorkbenchPart part = createTestPart(fPage);
-        IWorkbenchPartSite site = part.getSite();
-        assertTrue(part instanceof MockWorkbenchPart);
-        MockWorkbenchPart mock = (MockWorkbenchPart) part;
-        assertEquals(mock.getSelectionProvider(), site.getSelectionProvider());
-    }
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
+		assertTrue(part instanceof MockWorkbenchPart);
+		MockWorkbenchPart mock = (MockWorkbenchPart) part;
+		assertEquals(mock.getSelectionProvider(), site.getSelectionProvider());
+	}
 
-    public void testSetSelectionProvider() throws Throwable {
-        // From Javadoc: 'Set' sets the selection provider.
+	public void testSetSelectionProvider() throws Throwable {
+		// From Javadoc: 'Set' sets the selection provider.
 
-        // Set selection provider to null.
-        IWorkbenchPart part = createTestPart(fPage);
-        IWorkbenchPartSite site = part.getSite();
-        site.setSelectionProvider(null);
-        assertNull(site.getSelectionProvider());
+		// Set selection provider to null.
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
+		site.setSelectionProvider(null);
+		assertNull(site.getSelectionProvider());
 
-        // Set selection provider to real.
-        MockSelectionProvider provider = new MockSelectionProvider();
-        site.setSelectionProvider(provider);
-        assertEquals(provider, site.getSelectionProvider());
-    }
+		// Set selection provider to real.
+		MockSelectionProvider provider = new MockSelectionProvider();
+		site.setSelectionProvider(provider);
+		assertEquals(provider, site.getSelectionProvider());
+	}
 
-    public void testINestableService() throws Throwable {
-    	IWorkbenchPart part = createTestPart(fPage);
-    	IWorkbenchPartSite site = part.getSite();
+	public void testINestableService() throws Throwable {
+		IWorkbenchPart part = createTestPart(fPage);
+		IWorkbenchPartSite site = part.getSite();
 		DummyService service = site.getService(DummyService.class);
 
-    	assertTrue(service.isActive());
-    	if(part instanceof IViewPart) {
+		assertTrue(service.isActive());
+		if(part instanceof IViewPart) {
 			fPage.hideView((IViewPart) part);
 		} else {
 			fPage.closeEditor((IEditorPart) part, false);
 		}
-    	assertFalse(service.isActive());
+		assertFalse(service.isActive());
 
-    }
+	}
 
 
-    /**
-     * Creates a test part in the page.
-     */
-    abstract protected IWorkbenchPart createTestPart(IWorkbenchPage page)
-            throws Throwable;
+	/**
+	 * Creates a test part in the page.
+	 */
+	abstract protected IWorkbenchPart createTestPart(IWorkbenchPage page)
+			throws Throwable;
 
-    /**
-     * Returns the expected id for a test part.
-     */
-    abstract protected String getTestPartId() throws Throwable;
+	/**
+	 * Returns the expected id for a test part.
+	 */
+	abstract protected String getTestPartId() throws Throwable;
 
-    /**
-     * Returns the expected name for a test part.
-     */
-    abstract protected String getTestPartName() throws Throwable;
+	/**
+	 * Returns the expected name for a test part.
+	 */
+	abstract protected String getTestPartName() throws Throwable;
 
-    /**
-     * Returns the expected id for a test part plugin.  Subclasses may
-     * override this.
-     */
-    protected String getTestPartPluginId() throws Throwable {
-        return "org.eclipse.ui.tests";
-    }
+	/**
+	 * Returns the expected id for a test part plugin.  Subclasses may
+	 * override this.
+	 */
+	protected String getTestPartPluginId() throws Throwable {
+		return "org.eclipse.ui.tests";
+	}
 }
 

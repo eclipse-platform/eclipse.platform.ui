@@ -21,58 +21,58 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 
 public class IFileEditorMappingTest extends TestCase {
-    private IFileEditorMapping[] fMappings;
+	private IFileEditorMapping[] fMappings;
 
-    public IFileEditorMappingTest(String testName) {
-        super(testName);
-    }
+	public IFileEditorMappingTest(String testName) {
+		super(testName);
+	}
 
-    @Override
+	@Override
 	public void setUp() {
-        fMappings = PlatformUI.getWorkbench().getEditorRegistry()
-                .getFileEditorMappings();
-    }
+		fMappings = PlatformUI.getWorkbench().getEditorRegistry()
+				.getFileEditorMappings();
+	}
 
-    public void testGetName() throws Throwable {
-        for (IFileEditorMapping fMapping : fMappings) {
+	public void testGetName() throws Throwable {
+		for (IFileEditorMapping fMapping : fMappings) {
 			assertNotNull(fMapping.getName());
 		}
-    }
+	}
 
-    public void testGetLabel() throws Throwable {
-        String label;
-        for (IFileEditorMapping fMapping : fMappings) {
-            label = fMapping.getLabel();
-            assertNotNull(label);
-            assertEquals(label, fMapping.getName() + "."
-                    + fMapping.getExtension());
-        }
-    }
+	public void testGetLabel() throws Throwable {
+		String label;
+		for (IFileEditorMapping fMapping : fMappings) {
+			label = fMapping.getLabel();
+			assertNotNull(label);
+			assertEquals(label, fMapping.getName() + "."
+					+ fMapping.getExtension());
+		}
+	}
 
-    public void testGetExtension() throws Throwable {
-        for (IFileEditorMapping fMapping : fMappings) {
+	public void testGetExtension() throws Throwable {
+		for (IFileEditorMapping fMapping : fMappings) {
 			assertNotNull(fMapping.getExtension());
 		}
-    }
+	}
 
-    public void testGetEditors() throws Throwable {
-        IEditorDescriptor[] editors;
+	public void testGetEditors() throws Throwable {
+		IEditorDescriptor[] editors;
 
-        for (IFileEditorMapping fMapping : fMappings) {
-            editors = fMapping.getEditors();
-            assertTrue(ArrayUtil.checkNotNull(editors) == true);
-        }
-    }
+		for (IFileEditorMapping fMapping : fMappings) {
+			editors = fMapping.getEditors();
+			assertTrue(ArrayUtil.checkNotNull(editors) == true);
+		}
+	}
 
-    public void testGetImageDescriptor() throws Throwable {
-        for (IFileEditorMapping fMapping : fMappings) {
+	public void testGetImageDescriptor() throws Throwable {
+		for (IFileEditorMapping fMapping : fMappings) {
 			assertNotNull(fMapping.getImageDescriptor());
 		}
-    }
+	}
 
-    //how do i set the default editor?
-    public void testGetDefaultEditor() throws Throwable {
-        /*		for( int i = 0; i < fMappings.length; i ++ )
-         assertNotNull( fMappings[ i ].getDefaultEditor() );*/
-    }
+	//how do i set the default editor?
+	public void testGetDefaultEditor() throws Throwable {
+		/*		for( int i = 0; i < fMappings.length; i ++ )
+		 assertNotNull( fMappings[ i ].getDefaultEditor() );*/
+	}
 }

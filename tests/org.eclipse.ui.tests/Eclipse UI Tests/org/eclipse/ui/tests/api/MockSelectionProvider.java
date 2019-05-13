@@ -27,41 +27,41 @@ public class MockSelectionProvider implements ISelectionProvider {
 
 	private List<ISelectionChangedListener> listeners = new ArrayList<>(3);
 
-    /**
-     * Fires out a selection to all listeners.
-     */
-    public void fireSelection() {
-        fireSelection(new SelectionChangedEvent(this, StructuredSelection.EMPTY));
-    }
+	/**
+	 * Fires out a selection to all listeners.
+	 */
+	public void fireSelection() {
+		fireSelection(new SelectionChangedEvent(this, StructuredSelection.EMPTY));
+	}
 
-    /**
-     * Fires out a selection to all listeners.
-     */
-    public void fireSelection(SelectionChangedEvent event) {
+	/**
+	 * Fires out a selection to all listeners.
+	 */
+	public void fireSelection(SelectionChangedEvent event) {
 		Iterator<ISelectionChangedListener> iter = listeners.iterator();
-        while (iter.hasNext()) {
-            iter.next().selectionChanged(event);
-        }
-    }
+		while (iter.hasNext()) {
+			iter.next().selectionChanged(event);
+		}
+	}
 
-    @Override
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-        listeners.add(listener);
-    }
+		listeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public ISelection getSelection() {
-        return StructuredSelection.EMPTY;
-    }
+		return StructuredSelection.EMPTY;
+	}
 
-    @Override
+	@Override
 	public void removeSelectionChangedListener(
-            ISelectionChangedListener listener) {
-        listeners.remove(listener);
-    }
+			ISelectionChangedListener listener) {
+		listeners.remove(listener);
+	}
 
-    @Override
+	@Override
 	public void setSelection(ISelection selection) {
-    }
+	}
 }
 

@@ -29,7 +29,7 @@ public class StructuredSelectionTest extends TestCase {
 		@Override
 		public int hashCode(Object element) {
 			return element.hashCode() + 71; // arbitrary prime number different from the
-			                                // one used in IDENTITY_COMPARER
+											// one used in IDENTITY_COMPARER
 		}
 
 		@Override
@@ -42,7 +42,7 @@ public class StructuredSelectionTest extends TestCase {
 		@Override
 		public int hashCode(Object element) {
 			return element.hashCode() + 97; // arbitrary prime number different from the
-			                                // one used in JAVA_LANG_OBJECT_COMPARER
+											// one used in JAVA_LANG_OBJECT_COMPARER
 		}
 
 		@Override
@@ -52,88 +52,88 @@ public class StructuredSelectionTest extends TestCase {
 	};
 
 	public StructuredSelectionTest(String name) {
-        super(name);
-    }
+		super(name);
+	}
 
-    public static void main(String args[]) {
-        junit.textui.TestRunner.run(StructuredSelectionTest.class);
-    }
+	public static void main(String args[]) {
+		junit.textui.TestRunner.run(StructuredSelectionTest.class);
+	}
 
-    public void testEquals() {
-        String element = "A selection";
-        StructuredSelection sel1 = new StructuredSelection(element);
-        StructuredSelection sel2 = new StructuredSelection(element);
+	public void testEquals() {
+		String element = "A selection";
+		StructuredSelection sel1 = new StructuredSelection(element);
+		StructuredSelection sel2 = new StructuredSelection(element);
 
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(sel1, sel2);
-    }
+	}
 
-    public void testEquals2() {
-        String element1 = "A selection";
-        String element2 = "A selection";
-        String element3 = "Other";
-        StructuredSelection sel1 = new StructuredSelection(element1);
-        StructuredSelection sel2 = new StructuredSelection(element2);
-        StructuredSelection sel3 = new StructuredSelection(element3);
+	public void testEquals2() {
+		String element1 = "A selection";
+		String element2 = "A selection";
+		String element3 = "Other";
+		StructuredSelection sel1 = new StructuredSelection(element1);
+		StructuredSelection sel2 = new StructuredSelection(element2);
+		StructuredSelection sel3 = new StructuredSelection(element3);
 
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(sel1, sel2);
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel1, sel3);
-    }
+	}
 
-    public void testEquals3() { // two empty selections
-        StructuredSelection empty1 = new StructuredSelection();
-        StructuredSelection empty2 = new StructuredSelection();
+	public void testEquals3() { // two empty selections
+		StructuredSelection empty1 = new StructuredSelection();
+		StructuredSelection empty2 = new StructuredSelection();
 
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(empty1, empty2);
-    }
+	}
 
-    public void testEquals4() { // empty selection with non-empty selection
-        StructuredSelection sel = new StructuredSelection("A selection");
-        StructuredSelection empty = new StructuredSelection();
+	public void testEquals4() { // empty selection with non-empty selection
+		StructuredSelection sel = new StructuredSelection("A selection");
+		StructuredSelection empty = new StructuredSelection();
 
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel, empty);
-    }
+	}
 
-    public void testEquals5() { // equality is order-dependent
+	public void testEquals5() { // equality is order-dependent
 		List<String> l1 = new ArrayList<>();
-        l1.add("element 1");
-        l1.add("element 2");
+		l1.add("element 1");
+		l1.add("element 2");
 
 		List<String> l2 = new ArrayList<>();
-        l2.add("element 2");
-        l2.add("element 1");
+		l2.add("element 2");
+		l2.add("element 1");
 
-        StructuredSelection sel1 = new StructuredSelection(l1);
-        StructuredSelection sel2 = new StructuredSelection(l2);
+		StructuredSelection sel1 = new StructuredSelection(l1);
+		StructuredSelection sel2 = new StructuredSelection(l2);
 
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel1, sel2);
-    }
+	}
 
-    public void testEquals6() { // different selections
+	public void testEquals6() { // different selections
 		List<String> l1 = new ArrayList<>();
-        l1.add("element 1");
-        l1.add("element 2");
+		l1.add("element 1");
+		l1.add("element 2");
 
 		List<String> l2 = new ArrayList<>();
-        l2.add("element 2");
-        l2.add("element 3");
-        l2.add("element 1");
+		l2.add("element 2");
+		l2.add("element 3");
+		l2.add("element 1");
 
-        StructuredSelection sel1 = new StructuredSelection(l1);
-        StructuredSelection sel2 = new StructuredSelection(l2);
+		StructuredSelection sel1 = new StructuredSelection(l1);
+		StructuredSelection sel2 = new StructuredSelection(l2);
 
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel1, sel2);
-    }
+	}
 
-    /**
-     * Empty selections via different constructors.
-     * Regression test for bug 40245.
-     */
-    public void testEquals7() {
-        StructuredSelection empty1 = new StructuredSelection();
-        StructuredSelection empty2 = new StructuredSelection(new Object[0]);
+	/**
+	 * Empty selections via different constructors.
+	 * Regression test for bug 40245.
+	 */
+	public void testEquals7() {
+		StructuredSelection empty1 = new StructuredSelection();
+		StructuredSelection empty2 = new StructuredSelection(new Object[0]);
 
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(empty1, empty2);
-    }
+	}
 
 	public void testEqualsWithComparer1() {
 		doTestEqualsWithComparer1(JAVA_LANG_OBJECT_COMPARER);

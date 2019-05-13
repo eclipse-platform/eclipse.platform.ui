@@ -85,194 +85,194 @@ import com.ibm.icu.text.Collator;
  * @since 2.1
  */
 public class PathVariablesGroup {
-    /**
-     * Simple data structure that holds a path variable name/value pair.
-     */
-    public static class PathVariableElement {
-        /**
-         * The name of the element.
-         */
-        public String name;
+	/**
+	 * Simple data structure that holds a path variable name/value pair.
+	 */
+	public static class PathVariableElement {
+		/**
+		 * The name of the element.
+		 */
+		public String name;
 
-        /**
-         * The path of the element.
-         */
-        public IPath path;
-    }
+		/**
+		 * The path of the element.
+		 */
+		public IPath path;
+	}
 
-    // sizing constants
-    private static final int SIZING_SELECTION_PANE_WIDTH = 400;
+	// sizing constants
+	private static final int SIZING_SELECTION_PANE_WIDTH = 400;
 
-    // parent shell
-    private Shell shell;
+	// parent shell
+	private Shell shell;
 
-    private Label variableLabel;
+	private Label variableLabel;
 
-    private TableViewer variableTable;
+	private TableViewer variableTable;
 
-    private Button addButton;
+	private Button addButton;
 
-    private Button editButton;
+	private Button editButton;
 
-    private Button removeButton;
+	private Button removeButton;
 
-    // used to compute layout sizes
-    private FontMetrics fontMetrics;
+	// used to compute layout sizes
+	private FontMetrics fontMetrics;
 
-    // create a multi select table
-    private boolean multiSelect;
+	// create a multi select table
+	private boolean multiSelect;
 
-    // IResource.FILE and/or IResource.FOLDER
-    private int variableType;
+	// IResource.FILE and/or IResource.FOLDER
+	private int variableType;
 
-    // External listener called when the table selection changes
-    private Listener selectionListener;
+	// External listener called when the table selection changes
+	private Listener selectionListener;
 
-    // temporary collection for keeping currently defined variables
+	// temporary collection for keeping currently defined variables
 	private SortedMap<String, IPath> tempPathVariables;
 
-    // set of removed variables' names
+	// set of removed variables' names
 	private Set<String> removedVariableNames;
 
-    // reference to the workspace's path variable manager
-    private IPathVariableManager pathVariableManager;
+	// reference to the workspace's path variable manager
+	private IPathVariableManager pathVariableManager;
 
-    // if set to true, variables will be saved after each change
-    private boolean saveVariablesOnChange = false;
+	// if set to true, variables will be saved after each change
+	private boolean saveVariablesOnChange = false;
 
-    // file image
-    private final Image FILE_IMG = PlatformUI.getWorkbench().getSharedImages()
-            .getImage(ISharedImages.IMG_OBJ_FILE);
+	// file image
+	private final Image FILE_IMG = PlatformUI.getWorkbench().getSharedImages()
+			.getImage(ISharedImages.IMG_OBJ_FILE);
 
-    // folder image
-    private final Image FOLDER_IMG = PlatformUI.getWorkbench()
-            .getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+	// folder image
+	private final Image FOLDER_IMG = PlatformUI.getWorkbench()
+			.getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 
-    private final Image BUILTIN_IMG = PlatformUI.getWorkbench()
-            .getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-    // unknown (non-existent) image. created locally, dispose locally
-    private Image imageUnkown;
+	private final Image BUILTIN_IMG = PlatformUI.getWorkbench()
+			.getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+	// unknown (non-existent) image. created locally, dispose locally
+	private Image imageUnkown;
 
-    // current project for which the variables are being edited.
-    // If null, the workspace variables are being edited instead.
-    private IResource currentResource = null;
+	// current project for which the variables are being edited.
+	// If null, the workspace variables are being edited instead.
+	private IResource currentResource = null;
 
-    private static final String PARENT_VARIABLE_NAME = "PARENT"; //$NON-NLS-1$
+	private static final String PARENT_VARIABLE_NAME = "PARENT"; //$NON-NLS-1$
 
 	/**
-     * Creates a new PathVariablesGroup.
-     *
-     * @param multiSelect create a multi select tree
-     * @param variableType the type of variables that are displayed in
-     * 	the widget group. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
-     * 	logically ORed together.
-     */
-    public PathVariablesGroup(boolean multiSelect, int variableType) {
-        this.multiSelect = multiSelect;
-        this.variableType = variableType;
-        pathVariableManager = ResourcesPlugin.getWorkspace()
-                .getPathVariableManager();
+	 * Creates a new PathVariablesGroup.
+	 *
+	 * @param multiSelect create a multi select tree
+	 * @param variableType the type of variables that are displayed in
+	 * 	the widget group. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
+	 * 	logically ORed together.
+	 */
+	public PathVariablesGroup(boolean multiSelect, int variableType) {
+		this.multiSelect = multiSelect;
+		this.variableType = variableType;
+		pathVariableManager = ResourcesPlugin.getWorkspace()
+				.getPathVariableManager();
 		removedVariableNames = new HashSet<>();
-        Collator ignoreCaseComparator = Collator.getInstance();
+		Collator ignoreCaseComparator = Collator.getInstance();
 		tempPathVariables = new TreeMap<>(ignoreCaseComparator);
-        // initialize internal model
-        initTemporaryState();
-    }
+		// initialize internal model
+		initTemporaryState();
+	}
 
-    /**
-     * Creates a new PathVariablesGroup.
-     *
-     * @param multiSelect create a multi select tree
-     * @param variableType the type of variables that are displayed in
-     * 	the widget group. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
-     * 	logically ORed together.
-     * @param selectionListener listener notified when the selection changes
-     * 	in the variables list.
-     */
-    public PathVariablesGroup(boolean multiSelect, int variableType,
-            Listener selectionListener) {
-        this(multiSelect, variableType);
-        this.selectionListener = selectionListener;
-    }
+	/**
+	 * Creates a new PathVariablesGroup.
+	 *
+	 * @param multiSelect create a multi select tree
+	 * @param variableType the type of variables that are displayed in
+	 * 	the widget group. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
+	 * 	logically ORed together.
+	 * @param selectionListener listener notified when the selection changes
+	 * 	in the variables list.
+	 */
+	public PathVariablesGroup(boolean multiSelect, int variableType,
+			Listener selectionListener) {
+		this(multiSelect, variableType);
+		this.selectionListener = selectionListener;
+	}
 
-    /**
-     * Opens a dialog for creating a new variable.
-     */
-    private void addNewVariable() {
-        // constructs a dialog for editing the new variable's current name and value
-        PathVariableDialog dialog = new PathVariableDialog(shell,
-                PathVariableDialog.NEW_VARIABLE, variableType,
-                pathVariableManager, tempPathVariables.keySet());
+	/**
+	 * Opens a dialog for creating a new variable.
+	 */
+	private void addNewVariable() {
+		// constructs a dialog for editing the new variable's current name and value
+		PathVariableDialog dialog = new PathVariableDialog(shell,
+				PathVariableDialog.NEW_VARIABLE, variableType,
+				pathVariableManager, tempPathVariables.keySet());
 
-        dialog.setResource(currentResource);
-        // opens the dialog - just returns if the user cancels it
-        if (dialog.open() == Window.CANCEL) {
+		dialog.setResource(currentResource);
+		// opens the dialog - just returns if the user cancels it
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 
-        // otherwise, adds the new variable (or updates an existing one) in the
-        // temporary collection of currently defined variables
-        String newVariableName = dialog.getVariableName();
-        IPath newVariableValue = new Path(dialog.getVariableValue());
-        tempPathVariables.put(newVariableName, newVariableValue);
+		// otherwise, adds the new variable (or updates an existing one) in the
+		// temporary collection of currently defined variables
+		String newVariableName = dialog.getVariableName();
+		IPath newVariableValue = new Path(dialog.getVariableValue());
+		tempPathVariables.put(newVariableName, newVariableValue);
 
-        // the UI must be updated
-        updateWidgetState();
-        saveVariablesIfRequired();
-    }
+		// the UI must be updated
+		updateWidgetState();
+		saveVariablesIfRequired();
+	}
 
-    /**
-     * Creates the widget group.
-     * Callers must call <code>dispose</code> when the group is no
-     * longer needed.
-     *
-     * @param parent the widget parent
-     * @return container of the widgets
-     */
-    public Control createContents(Composite parent) {
-        Font font = parent.getFont();
+	/**
+	 * Creates the widget group.
+	 * Callers must call <code>dispose</code> when the group is no
+	 * longer needed.
+	 *
+	 * @param parent the widget parent
+	 * @return container of the widgets
+	 */
+	public Control createContents(Composite parent) {
+		Font font = parent.getFont();
 
-        if (imageUnkown == null) {
-            ImageDescriptor descriptor = AbstractUIPlugin
-                    .imageDescriptorFromPlugin(
-                            IDEWorkbenchPlugin.IDE_WORKBENCH,
-                            "$nl$/icons/full/obj16/warning.png"); //$NON-NLS-1$
-            imageUnkown = descriptor.createImage();
-        }
-        initializeDialogUnits(parent);
-        shell = parent.getShell();
+		if (imageUnkown == null) {
+			ImageDescriptor descriptor = AbstractUIPlugin
+					.imageDescriptorFromPlugin(
+							IDEWorkbenchPlugin.IDE_WORKBENCH,
+							"$nl$/icons/full/obj16/warning.png"); //$NON-NLS-1$
+			imageUnkown = descriptor.createImage();
+		}
+		initializeDialogUnits(parent);
+		shell = parent.getShell();
 
-        // define container & its layout
-        Composite pageComponent = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        pageComponent.setLayout(layout);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = SIZING_SELECTION_PANE_WIDTH;
-        pageComponent.setLayoutData(data);
-        pageComponent.setFont(font);
+		// define container & its layout
+		Composite pageComponent = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		pageComponent.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+		pageComponent.setLayoutData(data);
+		pageComponent.setFont(font);
 
-        // layout the table & its buttons
-        variableLabel = new Label(pageComponent, SWT.LEFT);
-        if (currentResource == null)
-            variableLabel.setText(IDEWorkbenchMessages.PathVariablesBlock_variablesLabel);
-        else
-            variableLabel.setText(NLS.bind(
-                                    IDEWorkbenchMessages.PathVariablesBlock_variablesLabelForResource,
-                                    currentResource.getName()));
+		// layout the table & its buttons
+		variableLabel = new Label(pageComponent, SWT.LEFT);
+		if (currentResource == null)
+			variableLabel.setText(IDEWorkbenchMessages.PathVariablesBlock_variablesLabel);
+		else
+			variableLabel.setText(NLS.bind(
+									IDEWorkbenchMessages.PathVariablesBlock_variablesLabelForResource,
+									currentResource.getName()));
 
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.horizontalSpan = 2;
-        variableLabel.setLayoutData(data);
-        variableLabel.setFont(font);
+		data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalSpan = 2;
+		variableLabel.setLayoutData(data);
+		variableLabel.setFont(font);
 
-        int tableStyle = SWT.BORDER | SWT.FULL_SELECTION;
-        if (multiSelect) {
-            tableStyle |= SWT.MULTI;
-        }
+		int tableStyle = SWT.BORDER | SWT.FULL_SELECTION;
+		if (multiSelect) {
+			tableStyle |= SWT.MULTI;
+		}
 
 		Composite tableComposite = new Composite(pageComponent, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -281,74 +281,74 @@ public class PathVariablesGroup {
 		tableComposite.setLayoutData(data);
 
 		variableTable = new TableViewer(tableComposite, tableStyle);
-        variableTable.getTable().addSelectionListener(new SelectionAdapter() {
-            @Override
+		variableTable.getTable().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                updateEnabledState();
-                if (selectionListener != null) {
+				updateEnabledState();
+				if (selectionListener != null) {
 					selectionListener.handleEvent(new Event());
 				}
-            }
-        });
+			}
+		});
 
-        variableTable.getTable().setFont(font);
+		variableTable.getTable().setFont(font);
 		ColumnViewerToolTipSupport.enableFor(variableTable, ToolTip.NO_RECREATE);
 
 		TableViewerColumn nameColumn = new TableViewerColumn(variableTable, SWT.NONE);
 		nameColumn.setLabelProvider(new NameLabelProvider());
 		nameColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_nameColumn);
 
-        TableViewerColumn valueColumn = new TableViewerColumn(variableTable, SWT.NONE);
-        valueColumn.setLabelProvider(new ValueLabelProvider());
-        valueColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_valueColumn);
+		TableViewerColumn valueColumn = new TableViewerColumn(variableTable, SWT.NONE);
+		valueColumn.setLabelProvider(new ValueLabelProvider());
+		valueColumn.getColumn().setText(IDEWorkbenchMessages.PathVariablesBlock_valueColumn);
 
-        TableColumnLayout tableLayout = new TableColumnLayout();
+		TableColumnLayout tableLayout = new TableColumnLayout();
 		tableComposite.setLayout( tableLayout );
 
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(150));
 		tableLayout.setColumnData(valueColumn.getColumn(), new ColumnWeightData(280));
 
 		variableTable.getTable().setHeaderVisible(true);
-        data = new GridData(GridData.FILL_BOTH);
-        data.heightHint = variableTable.getTable().getItemHeight() * 7;
-        variableTable.getTable().setLayoutData(data);
-        variableTable.getTable().setFont(font);
+		data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = variableTable.getTable().getItemHeight() * 7;
+		variableTable.getTable().setLayoutData(data);
+		variableTable.getTable().setFont(font);
 
-        variableTable.getTable().addMouseListener(new MouseListener() {
+		variableTable.getTable().addMouseListener(new MouseListener() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-		        int itemsSelectedCount = variableTable.getTable().getSelectionCount();
-		        if (itemsSelectedCount == 1 && canChangeSelection())
-		        	editSelectedVariable();
+				int itemsSelectedCount = variableTable.getTable().getSelectionCount();
+				if (itemsSelectedCount == 1 && canChangeSelection())
+					editSelectedVariable();
 			}
 			@Override
 			public void mouseDown(MouseEvent e) { }
 			@Override
 			public void mouseUp(MouseEvent e) { }
-        });
-        variableTable.getTable().addSelectionListener(new SelectionListener() {
+		});
+		variableTable.getTable().addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-		        updateEnabledState();
+				updateEnabledState();
 			}
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-		        updateEnabledState();
+				updateEnabledState();
 			}
-        });
+		});
 
-        variableTable.getTable().setToolTipText(null);
-        variableTable.setContentProvider(new ContentProvider());
-        variableTable.setInput(this);
-        createButtonGroup(pageComponent);
-        return pageComponent;
-    }
+		variableTable.getTable().setToolTipText(null);
+		variableTable.setContentProvider(new ContentProvider());
+		variableTable.setInput(this);
+		createButtonGroup(pageComponent);
+		return pageComponent;
+	}
 
-    class NameLabelProvider extends CellLabelProvider
-    {
+	class NameLabelProvider extends CellLabelProvider
+	{
 		@Override
 		public String getToolTipText(Object element) {
-            return null;
+			return null;
 		}
 
 		@Override
@@ -371,25 +371,25 @@ public class PathVariablesGroup {
 			String varName = (String) cell.getElement();
 			cell.setText(varName);
 			IPath value = tempPathVariables.get(varName);
-        	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value));
-        	IPath resolvedValue = URIUtil.toPath(resolvedURI);
-            IFileInfo file = IDEResourceInfoUtils.getFileInfo(resolvedValue);
-            if (!isBuiltInVariable(varName))
-            	cell.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG : FILE_IMG) : imageUnkown);
-            else
-            	cell.setImage(BUILTIN_IMG);
+			URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value));
+			IPath resolvedValue = URIUtil.toPath(resolvedURI);
+			IFileInfo file = IDEResourceInfoUtils.getFileInfo(resolvedValue);
+			if (!isBuiltInVariable(varName))
+				cell.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG : FILE_IMG) : imageUnkown);
+			else
+				cell.setImage(BUILTIN_IMG);
 		}
 
-    }
+	}
 
-    class ValueLabelProvider extends CellLabelProvider
-    {
+	class ValueLabelProvider extends CellLabelProvider
+	{
 		@Override
 		public String getToolTipText(Object element) {
-            IPath value = tempPathVariables.get(element);
-        	URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value));
-        	IPath resolvedValue = URIUtil.toPath(resolvedURI);
-            return TextProcessor.process(resolvedValue.toOSString());
+			IPath value = tempPathVariables.get(element);
+			URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value));
+			IPath resolvedValue = URIUtil.toPath(resolvedURI);
+			return TextProcessor.process(resolvedValue.toOSString());
 		}
 
 		@Override
@@ -409,225 +409,225 @@ public class PathVariablesGroup {
 
 		@Override
 		public void update(ViewerCell cell) {
-            IPath value = tempPathVariables.get(cell.getElement());
+			IPath value = tempPathVariables.get(cell.getElement());
 			cell.setText(TextProcessor.process(removeParentVariable(value.toOSString())));
 		}
 
-    }
+	}
 
 	/**
-     * Disposes the group's resources.
-     */
-    public void dispose() {
-        if (imageUnkown != null) {
-            imageUnkown.dispose();
-            imageUnkown = null;
-        }
-    }
+	 * Disposes the group's resources.
+	 */
+	public void dispose() {
+		if (imageUnkown != null) {
+			imageUnkown.dispose();
+			imageUnkown = null;
+		}
+	}
 
-    /**
-     * Opens a dialog for editing an existing variable.
-     *
-     * @see PathVariableDialog
-     */
-    private void editSelectedVariable() {
-        // retrieves the name and value for the currently selected variable
-        TableItem item = variableTable.getTable().getItem(variableTable.getTable()
-                .getSelectionIndex());
-        String variableName = (String) item.getData();
-        IPath variableValue = tempPathVariables.get(variableName);
+	/**
+	 * Opens a dialog for editing an existing variable.
+	 *
+	 * @see PathVariableDialog
+	 */
+	private void editSelectedVariable() {
+		// retrieves the name and value for the currently selected variable
+		TableItem item = variableTable.getTable().getItem(variableTable.getTable()
+				.getSelectionIndex());
+		String variableName = (String) item.getData();
+		IPath variableValue = tempPathVariables.get(variableName);
 
-        // constructs a dialog for editing the variable's current name and value
-        PathVariableDialog dialog = new PathVariableDialog(shell,
-                PathVariableDialog.EXISTING_VARIABLE, variableType,
-                pathVariableManager, tempPathVariables.keySet());
-        dialog.setVariableName(variableName);
-        dialog.setVariableValue(variableValue.toOSString());
-        dialog.setResource(currentResource);
+		// constructs a dialog for editing the variable's current name and value
+		PathVariableDialog dialog = new PathVariableDialog(shell,
+				PathVariableDialog.EXISTING_VARIABLE, variableType,
+				pathVariableManager, tempPathVariables.keySet());
+		dialog.setVariableName(variableName);
+		dialog.setVariableValue(variableValue.toOSString());
+		dialog.setResource(currentResource);
 
-        // opens the dialog - just returns if the user cancels it
-        if (dialog.open() == Window.CANCEL) {
+		// opens the dialog - just returns if the user cancels it
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 
-        // the name can be changed, so we remove the current variable definition...
-        removedVariableNames.add(variableName);
-        tempPathVariables.remove(variableName);
+		// the name can be changed, so we remove the current variable definition...
+		removedVariableNames.add(variableName);
+		tempPathVariables.remove(variableName);
 
-        String newVariableName = dialog.getVariableName();
-        IPath newVariableValue = new Path(dialog.getVariableValue());
+		String newVariableName = dialog.getVariableName();
+		IPath newVariableValue = new Path(dialog.getVariableValue());
 
-        // and add it again (maybe with a different name)
-        tempPathVariables.put(newVariableName, newVariableValue);
+		// and add it again (maybe with a different name)
+		tempPathVariables.put(newVariableName, newVariableValue);
 
-        // now we must refresh the UI state
-        updateWidgetState();
-        saveVariablesIfRequired();
-    }
+		// now we must refresh the UI state
+		updateWidgetState();
+		saveVariablesIfRequired();
+	}
 
-    /**
-     * Returns the enabled state of the group's widgets.
-     * Returns <code>true</code> if called prior to calling
-     * <code>createContents</code>.
-     *
-     * @return boolean the enabled state of the group's widgets.
-     * 	 <code>true</code> if called prior to calling <code>createContents</code>.
-     */
-    public boolean getEnabled() {
-        if (variableTable != null && !variableTable.getTable().isDisposed()) {
-            return variableTable.getTable().getEnabled();
-        }
-        return true;
-    }
+	/**
+	 * Returns the enabled state of the group's widgets.
+	 * Returns <code>true</code> if called prior to calling
+	 * <code>createContents</code>.
+	 *
+	 * @return boolean the enabled state of the group's widgets.
+	 * 	 <code>true</code> if called prior to calling <code>createContents</code>.
+	 */
+	public boolean getEnabled() {
+		if (variableTable != null && !variableTable.getTable().isDisposed()) {
+			return variableTable.getTable().getEnabled();
+		}
+		return true;
+	}
 
-    /**
-     * Automatically save the path variable list when new variables
-     * are added, changed, or removed by the user.
-     * @param value
-     *
-     */
-    public void setSaveVariablesOnChange(boolean value) {
-    	saveVariablesOnChange = value;
-    }
+	/**
+	 * Automatically save the path variable list when new variables
+	 * are added, changed, or removed by the user.
+	 * @param value
+	 *
+	 */
+	public void setSaveVariablesOnChange(boolean value) {
+		saveVariablesOnChange = value;
+	}
 
-    private void saveVariablesIfRequired() {
-    	if (saveVariablesOnChange) {
-    		performOk();
-    	}
-    }
-    /**
-     * Returns the selected variables.
-     *
-     * @return the selected variables. Returns an empty array if
-     * 	the widget group has not been created yet by calling
-     * 	<code>createContents</code>
-     */
-    public PathVariableElement[] getSelection() {
-        if (variableTable == null) {
-            return new PathVariableElement[0];
-        }
-        TableItem[] items = variableTable.getTable().getSelection();
-        PathVariableElement[] selection = new PathVariableElement[items.length];
+	private void saveVariablesIfRequired() {
+		if (saveVariablesOnChange) {
+			performOk();
+		}
+	}
+	/**
+	 * Returns the selected variables.
+	 *
+	 * @return the selected variables. Returns an empty array if
+	 * 	the widget group has not been created yet by calling
+	 * 	<code>createContents</code>
+	 */
+	public PathVariableElement[] getSelection() {
+		if (variableTable == null) {
+			return new PathVariableElement[0];
+		}
+		TableItem[] items = variableTable.getTable().getSelection();
+		PathVariableElement[] selection = new PathVariableElement[items.length];
 
-        for (int i = 0; i < items.length; i++) {
-            String name = (String) items[i].getData();
-            selection[i] = new PathVariableElement();
-            selection[i].name = name;
-            selection[i].path = tempPathVariables.get(name);
-        }
-        return selection;
-    }
+		for (int i = 0; i < items.length; i++) {
+			String name = (String) items[i].getData();
+			selection[i] = new PathVariableElement();
+			selection[i].name = name;
+			selection[i].path = tempPathVariables.get(name);
+		}
+		return selection;
+	}
 
-    /**
-     * Creates the add/edit/remove buttons
-     *
-     * @param parent the widget parent
-     */
-    private void createButtonGroup(Composite parent) {
-        Font font = parent.getFont();
-        Composite groupComponent = new Composite(parent, SWT.NULL);
-        GridLayout groupLayout = new GridLayout();
-        groupLayout.marginWidth = 0;
-        groupLayout.marginHeight = 0;
-        groupComponent.setLayout(groupLayout);
-        GridData data = new GridData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        groupComponent.setLayoutData(data);
-        groupComponent.setFont(font);
+	/**
+	 * Creates the add/edit/remove buttons
+	 *
+	 * @param parent the widget parent
+	 */
+	private void createButtonGroup(Composite parent) {
+		Font font = parent.getFont();
+		Composite groupComponent = new Composite(parent, SWT.NULL);
+		GridLayout groupLayout = new GridLayout();
+		groupLayout.marginWidth = 0;
+		groupLayout.marginHeight = 0;
+		groupComponent.setLayout(groupLayout);
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		groupComponent.setLayoutData(data);
+		groupComponent.setFont(font);
 
-        addButton = new Button(groupComponent, SWT.PUSH);
-        addButton.setText(IDEWorkbenchMessages.PathVariablesBlock_addVariableButton);
-        addButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+		addButton = new Button(groupComponent, SWT.PUSH);
+		addButton.setText(IDEWorkbenchMessages.PathVariablesBlock_addVariableButton);
+		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                addNewVariable();
-            }
-        });
-        addButton.setFont(font);
-        setButtonLayoutData(addButton);
+				addNewVariable();
+			}
+		});
+		addButton.setFont(font);
+		setButtonLayoutData(addButton);
 
-        editButton = new Button(groupComponent, SWT.PUSH);
-        editButton.setText(IDEWorkbenchMessages.PathVariablesBlock_editVariableButton);
-        editButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+		editButton = new Button(groupComponent, SWT.PUSH);
+		editButton.setText(IDEWorkbenchMessages.PathVariablesBlock_editVariableButton);
+		editButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                editSelectedVariable();
-            }
-        });
-        editButton.setFont(font);
-        setButtonLayoutData(editButton);
+				editSelectedVariable();
+			}
+		});
+		editButton.setFont(font);
+		setButtonLayoutData(editButton);
 
-        removeButton = new Button(groupComponent, SWT.PUSH);
-        removeButton.setText(IDEWorkbenchMessages.PathVariablesBlock_removeVariableButton);
-        removeButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+		removeButton = new Button(groupComponent, SWT.PUSH);
+		removeButton.setText(IDEWorkbenchMessages.PathVariablesBlock_removeVariableButton);
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                removeSelectedVariables();
-            }
-        });
-        removeButton.setFont(font);
-        setButtonLayoutData(removeButton);
-        updateEnabledState();
-    }
+				removeSelectedVariables();
+			}
+		});
+		removeButton.setFont(font);
+		setButtonLayoutData(removeButton);
+		updateEnabledState();
+	}
 
-    /**
-     * Initializes the computation of horizontal and vertical dialog units
-     * based on the size of current font.
-     * <p>
-     * This method must be called before <code>setButtonLayoutData</code>
-     * is called.
-     * </p>
-     *
-     * @param control a control from which to obtain the current font
-     */
-    protected void initializeDialogUnits(Control control) {
-        // Compute and store a font metric
-        GC gc = new GC(control);
-        gc.setFont(control.getFont());
-        fontMetrics = gc.getFontMetrics();
-        gc.dispose();
-    }
+	/**
+	 * Initializes the computation of horizontal and vertical dialog units
+	 * based on the size of current font.
+	 * <p>
+	 * This method must be called before <code>setButtonLayoutData</code>
+	 * is called.
+	 * </p>
+	 *
+	 * @param control a control from which to obtain the current font
+	 */
+	protected void initializeDialogUnits(Control control) {
+		// Compute and store a font metric
+		GC gc = new GC(control);
+		gc.setFont(control.getFont());
+		fontMetrics = gc.getFontMetrics();
+		gc.dispose();
+	}
 
-    /**
-     * (Re-)Initialize collections used to mantain temporary variable state.
-     */
-    private void initTemporaryState() {
-        tempPathVariables.clear();
+	/**
+	 * (Re-)Initialize collections used to mantain temporary variable state.
+	 */
+	private void initTemporaryState() {
+		tempPathVariables.clear();
 		for (String varName : pathVariableManager.getPathVariableNames()) {
-        	// hide the PARENT variable
-        	if (varName.equals(PARENT_VARIABLE_NAME))
-        		continue;
-            try {
+			// hide the PARENT variable
+			if (varName.equals(PARENT_VARIABLE_NAME))
+				continue;
+			try {
 				URI uri = pathVariableManager.getURIValue(varName);
 				// the value may not exist any more
 				if (uri != null) {
-				    IPath value = URIUtil.toPath(uri);
-				    if (value != null) {
-				        boolean isFile = value.toFile().isFile();
-				        if ((isFile && (variableType & IResource.FILE) != 0)
-				                || (isFile == false && (variableType & IResource.FOLDER) != 0)) {
+					IPath value = URIUtil.toPath(uri);
+					if (value != null) {
+						boolean isFile = value.toFile().isFile();
+						if ((isFile && (variableType & IResource.FILE) != 0)
+								|| (isFile == false && (variableType & IResource.FOLDER) != 0)) {
 
-				            tempPathVariables.put(varName, value);
-				        }
-				    }
+							tempPathVariables.put(varName, value);
+						}
+					}
 				}
 			} catch (Exception e) {
 				// do not present the variable
 			}
-        }
-        removedVariableNames.clear();
-    }
+		}
+		removedVariableNames.clear();
+	}
 
-    /**
-     * Updates button enabled state, depending on the number of currently selected
-     * variables in the table.
-     */
-    private void updateEnabledState() {
-        int itemsSelectedCount = variableTable.getTable().getSelectionCount();
-        editButton.setEnabled(itemsSelectedCount == 1 && canChangeSelection());
-        removeButton.setEnabled(itemsSelectedCount > 0 && canChangeSelection());
-    }
+	/**
+	 * Updates button enabled state, depending on the number of currently selected
+	 * variables in the table.
+	 */
+	private void updateEnabledState() {
+		int itemsSelectedCount = variableTable.getTable().getSelectionCount();
+		editButton.setEnabled(itemsSelectedCount == 1 && canChangeSelection());
+		removeButton.setEnabled(itemsSelectedCount > 0 && canChangeSelection());
+	}
 
 	private class ContentProvider implements IStructuredContentProvider {
 
@@ -638,153 +638,153 @@ public class PathVariablesGroup {
 	}
 
 	/**
-     * Converts the ${PARENT-COUNT-VAR} format to "VAR/../../" format
-     * @param value
-     * @return the converted value
-     */
-    private String removeParentVariable(String value) {
-    	return pathVariableManager.convertToUserEditableFormat(value, false);
-    }
+	 * Converts the ${PARENT-COUNT-VAR} format to "VAR/../../" format
+	 * @param value
+	 * @return the converted value
+	 */
+	private String removeParentVariable(String value) {
+		return pathVariableManager.convertToUserEditableFormat(value, false);
+	}
 
-    /**
-     * Commits the temporary state to the path variable manager in response to user
-     * confirmation.
-     * @return boolean <code>true</code> if there were no problems.
-     * @see IPathVariableManager#setValue(String, IResource, URI)
-     */
-    public boolean performOk() {
-        try {
-            // first process removed variables
+	/**
+	 * Commits the temporary state to the path variable manager in response to user
+	 * confirmation.
+	 * @return boolean <code>true</code> if there were no problems.
+	 * @see IPathVariableManager#setValue(String, IResource, URI)
+	 */
+	public boolean performOk() {
+		try {
+			// first process removed variables
 			for (Iterator<String> removed = removedVariableNames.iterator(); removed
-                    .hasNext();) {
-                String removedVariableName = removed.next();
-                // only removes variables that have not been added again
-                if (!tempPathVariables.containsKey(removedVariableName)) {
+					.hasNext();) {
+				String removedVariableName = removed.next();
+				// only removes variables that have not been added again
+				if (!tempPathVariables.containsKey(removedVariableName)) {
 					pathVariableManager.setURIValue(removedVariableName, null);
 				}
-            }
+			}
 
-            // then process the current collection of variables, adding/updating them
+			// then process the current collection of variables, adding/updating them
 			for (Iterator<Entry<String, IPath>> current = tempPathVariables.entrySet().iterator(); current
-                    .hasNext();) {
+					.hasNext();) {
 				Entry<String, IPath> entry = current.next();
-                String variableName = entry.getKey();
-                IPath variableValue = entry.getValue();
-                if (!isBuiltInVariable(variableName))
-                    pathVariableManager.setURIValue(variableName, URIUtil.toURI(variableValue));
-            }
-            // re-initialize temporary state
-            initTemporaryState();
+				String variableName = entry.getKey();
+				IPath variableValue = entry.getValue();
+				if (!isBuiltInVariable(variableName))
+					pathVariableManager.setURIValue(variableName, URIUtil.toURI(variableValue));
+			}
+			// re-initialize temporary state
+			initTemporaryState();
 
-            // performOk accepted
-            return true;
-        } catch (CoreException ce) {
-            ErrorDialog.openError(shell, null, null, ce.getStatus());
-        }
-        return false;
-    }
+			// performOk accepted
+			return true;
+		} catch (CoreException ce) {
+			ErrorDialog.openError(shell, null, null, ce.getStatus());
+		}
+		return false;
+	}
 
-    /**
-     * Removes the currently selected variables.
-     */
-    private void removeSelectedVariables() {
-        // remove each selected element
+	/**
+	 * Removes the currently selected variables.
+	 */
+	private void removeSelectedVariables() {
+		// remove each selected element
 		for (int selectedIndex : variableTable.getTable().getSelectionIndices()) {
 			TableItem selectedItem = variableTable.getTable().getItem(selectedIndex);
-            String varName = (String) selectedItem.getData();
-            removedVariableNames.add(varName);
-            tempPathVariables.remove(varName);
-        }
-        updateWidgetState();
-        saveVariablesIfRequired();
-    }
+			String varName = (String) selectedItem.getData();
+			removedVariableNames.add(varName);
+			tempPathVariables.remove(varName);
+		}
+		updateWidgetState();
+		saveVariablesIfRequired();
+	}
 
-    private boolean canChangeSelection() {
+	private boolean canChangeSelection() {
 		for (int selectedIndex : variableTable.getTable().getSelectionIndices()) {
 			TableItem selectedItem = variableTable.getTable().getItem(selectedIndex);
-            String varName = (String) selectedItem.getData();
-            if (isBuiltInVariable(varName))
-                return false;
-        }
-        return true;
-    }
+			String varName = (String) selectedItem.getData();
+			if (isBuiltInVariable(varName))
+				return false;
+		}
+		return true;
+	}
 
-    /**
-     * @param varName
-     *            the variable name to test
-     */
-    private boolean isBuiltInVariable(String varName) {
-        if (currentResource != null) {
-        	return !pathVariableManager.isUserDefined(varName);
-        }
-        return false;
-    }
+	/**
+	 * @param varName
+	 *            the variable name to test
+	 */
+	private boolean isBuiltInVariable(String varName) {
+		if (currentResource != null) {
+			return !pathVariableManager.isUserDefined(varName);
+		}
+		return false;
+	}
 
-    /**
-     * Sets the <code>GridData</code> on the specified button to
-     * be one that is spaced for the current dialog page units. The
-     * method <code>initializeDialogUnits</code> must be called once
-     * before calling this method for the first time.
-     *
-     * @param button the button to set the <code>GridData</code>
-     * @return the <code>GridData</code> set on the specified button
-     */
-    private GridData setButtonLayoutData(Button button) {
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics,
-                IDialogConstants.BUTTON_WIDTH);
-        data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
-                SWT.DEFAULT, true).x);
-        button.setLayoutData(data);
-        return data;
-    }
+	/**
+	 * Sets the <code>GridData</code> on the specified button to
+	 * be one that is spaced for the current dialog page units. The
+	 * method <code>initializeDialogUnits</code> must be called once
+	 * before calling this method for the first time.
+	 *
+	 * @param button the button to set the <code>GridData</code>
+	 * @return the <code>GridData</code> set on the specified button
+	 */
+	private GridData setButtonLayoutData(Button button) {
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics,
+				IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT, true).x);
+		button.setLayoutData(data);
+		return data;
+	}
 
-    /**
-     * Sets the enabled state of the group's widgets.
-     * Does nothing if called prior to calling <code>createContents</code>.
-     *
-     * @param enabled the new enabled state of the group's widgets
-     */
-    public void setEnabled(boolean enabled) {
-        if (variableTable != null && !variableTable.getTable().isDisposed()) {
-            variableLabel.setEnabled(enabled);
-            variableTable.getTable().setEnabled(enabled);
-            addButton.setEnabled(enabled);
-            if (enabled) {
+	/**
+	 * Sets the enabled state of the group's widgets.
+	 * Does nothing if called prior to calling <code>createContents</code>.
+	 *
+	 * @param enabled the new enabled state of the group's widgets
+	 */
+	public void setEnabled(boolean enabled) {
+		if (variableTable != null && !variableTable.getTable().isDisposed()) {
+			variableLabel.setEnabled(enabled);
+			variableTable.getTable().setEnabled(enabled);
+			addButton.setEnabled(enabled);
+			if (enabled) {
 				updateEnabledState();
 			} else {
-                editButton.setEnabled(enabled);
-                removeButton.setEnabled(enabled);
-            }
-        }
-    }
+				editButton.setEnabled(enabled);
+				removeButton.setEnabled(enabled);
+			}
+		}
+	}
 
-    /**
-     * Updates the widget's current state: refreshes the table with the current
-     * defined variables, selects the item corresponding to the given variable
-     * (selects the first item if <code>null</code> is provided) and updates
-     * the enabled state for the Add/Remove/Edit buttons.
-     *
-     */
-    private void updateWidgetState() {
-    	variableTable.refresh();
-        updateEnabledState();
-    }
+	/**
+	 * Updates the widget's current state: refreshes the table with the current
+	 * defined variables, selects the item corresponding to the given variable
+	 * (selects the first item if <code>null</code> is provided) and updates
+	 * the enabled state for the Add/Remove/Edit buttons.
+	 *
+	 */
+	private void updateWidgetState() {
+		variableTable.refresh();
+		updateEnabledState();
+	}
 
-    /**
-     * @param resource
-     */
-    public void setResource(IResource resource) {
-    	currentResource = resource;
-        if (resource != null)
-        	pathVariableManager = resource.getPathVariableManager();
-        else
-        	pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
+	/**
+	 * @param resource
+	 */
+	public void setResource(IResource resource) {
+		currentResource = resource;
+		if (resource != null)
+			pathVariableManager = resource.getPathVariableManager();
+		else
+			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 		removedVariableNames = new HashSet<>();
 		tempPathVariables = new TreeMap<>();
-        // initialize internal model
-        initTemporaryState();
-    }
+		// initialize internal model
+		initTemporaryState();
+	}
 
 	/**
 	 * Reloads the path variables from the project description.
@@ -794,6 +794,6 @@ public class PathVariablesGroup {
 		tempPathVariables = new TreeMap<>();
 		initTemporaryState();
 		if (variableTable != null)
-	        updateWidgetState();
+			updateWidgetState();
 	}
 }

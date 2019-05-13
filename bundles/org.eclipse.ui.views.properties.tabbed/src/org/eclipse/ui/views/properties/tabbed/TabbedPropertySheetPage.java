@@ -325,8 +325,8 @@ public class TabbedPropertySheetPage
 		 * of these events since we want to send aboutToBeHidden() and
 		 * aboutToBeShown() when the property sheet is hidden or shown.
 		 */
-        if (!thisActivated && !part.equals(contributor)
-                && !part.getSite().getId().equals(contributor.getContributorId())) {
+		if (!thisActivated && !part.equals(contributor)
+				&& !part.getSite().getId().equals(contributor.getContributorId())) {
 			/*
 			 * Is the part is a IContributedContentsView for the contributor,
 			 * for example, outline view.
@@ -512,8 +512,8 @@ public class TabbedPropertySheetPage
 			registry = null;
 		}
 
-        contributor = null;
-        currentSelection = null;
+		contributor = null;
+		currentSelection = null;
 	}
 
 	/**
@@ -531,27 +531,27 @@ public class TabbedPropertySheetPage
 	public void setActionBars(IActionBars actionBars) {
 		// Override the undo and redo global action handlers
 		// to use the contributor action handlers
-        IActionBars partActionBars = null;
+		IActionBars partActionBars = null;
 		if (contributor instanceof IEditorPart) {
 			IEditorPart editorPart = (IEditorPart) contributor;
-            partActionBars = editorPart.getEditorSite().getActionBars();
+			partActionBars = editorPart.getEditorSite().getActionBars();
 		} else if (contributor instanceof IViewPart) {
-            IViewPart viewPart = (IViewPart) contributor;
-            partActionBars = viewPart.getViewSite().getActionBars();
-        }
+			IViewPart viewPart = (IViewPart) contributor;
+			partActionBars = viewPart.getViewSite().getActionBars();
+		}
 
-        if (partActionBars != null) {
-            IAction action = partActionBars.getGlobalActionHandler(ActionFactory.UNDO
-                .getId());
-            if (action != null) {
-                actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), action);
-            }
-            action = partActionBars.getGlobalActionHandler(ActionFactory.REDO
-                .getId());
-            if (action != null) {
-                actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
-            }
-        }
+		if (partActionBars != null) {
+			IAction action = partActionBars.getGlobalActionHandler(ActionFactory.UNDO
+				.getId());
+			if (action != null) {
+				actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), action);
+			}
+			action = partActionBars.getGlobalActionHandler(ActionFactory.REDO
+				.getId());
+			if (action != null) {
+				actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
+			}
+		}
 	}
 
 	/**
@@ -877,13 +877,13 @@ public class TabbedPropertySheetPage
 		refreshTitleBar();
 	}
 
-    /**
-     * Retrieve the contributor from the selection.
-     *
-     * @param object -
-     *            the selected element
-     * @return the TabbedPropertySheetPageContributor or null if not applicable
-     */
+	/**
+	 * Retrieve the contributor from the selection.
+	 *
+	 * @param object -
+	 *            the selected element
+	 * @return the TabbedPropertySheetPageContributor or null if not applicable
+	 */
 	private ITabbedPropertySheetPageContributor getTabbedPropertySheetPageContributor(Object object) {
 		return Adapters.adapt(object, ITabbedPropertySheetPageContributor.class);
 	}
@@ -915,7 +915,7 @@ public class TabbedPropertySheetPage
 			return;
 		}
 
-        ITabbedPropertySheetPageContributor newContributor = getTabbedPropertySheetPageContributor(structuredSelection.getFirstElement());
+		ITabbedPropertySheetPageContributor newContributor = getTabbedPropertySheetPageContributor(structuredSelection.getFirstElement());
 
 		if (newContributor == null) {
 			/**
@@ -924,7 +924,7 @@ public class TabbedPropertySheetPage
 			newContributor = contributor;
 		}
 
-        String selectionContributorId = newContributor.getContributorId();
+		String selectionContributorId = newContributor.getContributorId();
 		if (selectionContributorId.equals(currentContributorId)) {
 			/**
 			 * selection has the same contributor id as current, so leave
@@ -940,9 +940,9 @@ public class TabbedPropertySheetPage
 		 * contributor from the workbench part.
 		 */
 		Iterator i = structuredSelection.iterator();
-        i.next();
+		i.next();
 		while (i.hasNext()) {
-            newContributor = getTabbedPropertySheetPageContributor(i.next());
+			newContributor = getTabbedPropertySheetPageContributor(i.next());
 			if (newContributor == null || !newContributor.getContributorId().equals(selectionContributorId)) {
 				/**
 				 * fall back to use the default contributor id from the
@@ -964,18 +964,18 @@ public class TabbedPropertySheetPage
 		disposeContributor();
 		currentContributorId = selectionContributorId;
 		initContributor(currentContributorId);
-        overrideActionBars();
+		overrideActionBars();
 	}
 
-    /**
-     * Override the action bars for the selection based contributor.
-     */
-    private void overrideActionBars() {
-        if (registry.getActionProvider() != null ) {
-            IActionProvider actionProvider = registry.getActionProvider();
-            actionProvider.setActionBars(contributor, getSite().getActionBars());
-        }
-    }
+	/**
+	 * Override the action bars for the selection based contributor.
+	 */
+	private void overrideActionBars() {
+		if (registry.getActionProvider() != null ) {
+			IActionProvider actionProvider = registry.getActionProvider();
+			actionProvider.setActionBars(contributor, getSite().getActionBars());
+		}
+	}
 
 	/**
 	 * Returns the currently selected tab.
@@ -1033,34 +1033,34 @@ public class TabbedPropertySheetPage
 	}
 
 	/**
-     * Returns text of the properties title for given selection. If selection is null,
-     * then currentSelection is used
-     *
+	 * Returns text of the properties title for given selection. If selection is null,
+	 * then currentSelection is used
+	 *
 	 * @param selection Selection whose properties title text is to be returned
-     * @return String representing title text.
+	 * @return String representing title text.
 	 * @since 3.5
-     */
-    public String getTitleText(ISelection selection) {
-    	if (selection == null) {
-    		selection = currentSelection;
-    	}
-    	return registry.getLabelProvider().getText(selection);
-    }
+	 */
+	public String getTitleText(ISelection selection) {
+		if (selection == null) {
+			selection = currentSelection;
+		}
+		return registry.getLabelProvider().getText(selection);
+	}
 
-    /**
-     * Returns the title image for given selection. If selection is null,
-     * then currentSelection is used.
-     *
-     * @param selection Selection whose properties title image is to be returned
-     * @return Image that is used as a title image.
-     * @since 3.5
-     */
-    public Image getTitleImage(ISelection selection) {
-    	if (selection == null) {
-    		selection = currentSelection;
-    	}
+	/**
+	 * Returns the title image for given selection. If selection is null,
+	 * then currentSelection is used.
+	 *
+	 * @param selection Selection whose properties title image is to be returned
+	 * @return Image that is used as a title image.
+	 * @since 3.5
+	 */
+	public Image getTitleImage(ISelection selection) {
+		if (selection == null) {
+			selection = currentSelection;
+		}
 		return registry.getLabelProvider().getImage(selection);
-    }
+	}
 
 	/**
 	 * Returns the TabContents object corresponding to the given tab-descriptor.

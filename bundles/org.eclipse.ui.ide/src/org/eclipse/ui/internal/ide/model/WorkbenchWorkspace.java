@@ -22,23 +22,23 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  * IWorkbenchAdapter adapter for the IWorkspace object.
  */
 public class WorkbenchWorkspace extends WorkbenchAdapter {
-    @Override
+	@Override
 	public Object[] getChildren(Object o) {
-        IWorkspace workspace = (IWorkspace) o;
-        return workspace.getRoot().getProjects();
-    }
+		IWorkspace workspace = (IWorkspace) o;
+		return workspace.getRoot().getProjects();
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * getLabel method comment.
-     */
-    @Override
+	/**
+	 * getLabel method comment.
+	 */
+	@Override
 	public String getLabel(Object o) {
-        //workspaces don't have a name
-        return IDEWorkbenchMessages.Workspace;
-    }
+		//workspaces don't have a name
+		return IDEWorkbenchMessages.Workspace;
+	}
 }

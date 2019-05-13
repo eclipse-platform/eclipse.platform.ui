@@ -42,222 +42,222 @@ public class ZoomTestCase extends UITestCase {
 //
 //    protected static final String view2Id = IPageLayout.ID_OUTLINE;
 
-    protected WorkbenchWindow window;
+	protected WorkbenchWindow window;
 
-    protected WorkbenchPage page;
+	protected WorkbenchPage page;
 
-    protected IProject project;
+	protected IProject project;
 
-    protected IFile file1, file2;
+	protected IFile file1, file2;
 
-    protected IEditorPart editor1, editor2, editor3;
+	protected IEditorPart editor1, editor2, editor3;
 
-    protected IViewPart stackedView1;
-    protected IViewPart stackedView2;
-    protected IViewPart unstackedView;
-    protected IViewPart fastView;
+	protected IViewPart stackedView1;
+	protected IViewPart stackedView2;
+	protected IViewPart unstackedView;
+	protected IViewPart fastView;
 
-    private IFile file3;
+	private IFile file3;
 
-    // Remember the actual value of the 'useMinMax' state
-    // so that 'tearDown' can restore it
+	// Remember the actual value of the 'useMinMax' state
+	// so that 'tearDown' can restore it
 	private boolean oldMinMaxState;
 
-    public ZoomTestCase(String name) {
-        super(name);
-    }
+	public ZoomTestCase(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected void doTearDown() throws Exception {
-    	// Ensure that the model is sane
-        // page.testInvariants();
+		// Ensure that the model is sane
+		// page.testInvariants();
 
-        super.doTearDown();
+		super.doTearDown();
 
-        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, oldMinMaxState);
-    }
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, oldMinMaxState);
+	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
-        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-        oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
 
-        super.doSetUp();
+		super.doSetUp();
 
-        window = (WorkbenchWindow) openTestWindow(ZoomPerspectiveFactory.PERSP_ID);
-        page = (WorkbenchPage) window.getActivePage();
+		window = (WorkbenchWindow) openTestWindow(ZoomPerspectiveFactory.PERSP_ID);
+		page = (WorkbenchPage) window.getActivePage();
 
-        // Disable animations since they occur concurrently and can interferre
-        // with locating drop targets
-        apiStore.setValue(
-                IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
-                false);
+		// Disable animations since they occur concurrently and can interferre
+		// with locating drop targets
+		apiStore.setValue(
+				IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
+				false);
 
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
-        oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+		oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
 
-        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 
-        try {
-            project = FileUtil.createProject("IEditorPartTest"); //$NON-NLS-1$
-            file1 = FileUtil.createFile("Test1.txt", project); //$NON-NLS-1$
-            file2 = FileUtil.createFile("Test2.txt", project); //$NON-NLS-1$
-            file3 = FileUtil.createFile("Test3.txt", project); //$NON-NLS-1$
-            editor1 = page.openEditor(new FileEditorInput(file1),
-                    MockEditorPart.ID1);
-            editor2 = page.openEditor(new FileEditorInput(file2),
-                    MockEditorPart.ID2);
-            editor3 = page.openEditor(new FileEditorInput(file3),
-                    MockEditorPart.ID2);
+		try {
+			project = FileUtil.createProject("IEditorPartTest"); //$NON-NLS-1$
+			file1 = FileUtil.createFile("Test1.txt", project); //$NON-NLS-1$
+			file2 = FileUtil.createFile("Test2.txt", project); //$NON-NLS-1$
+			file3 = FileUtil.createFile("Test3.txt", project); //$NON-NLS-1$
+			editor1 = page.openEditor(new FileEditorInput(file1),
+					MockEditorPart.ID1);
+			editor2 = page.openEditor(new FileEditorInput(file2),
+					MockEditorPart.ID2);
+			editor3 = page.openEditor(new FileEditorInput(file3),
+					MockEditorPart.ID2);
 
 //            DragOperations
 //        		.drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
-        } catch (PartInitException e) {
-        } catch (CoreException e) {
-        }
+		} catch (PartInitException e) {
+		} catch (CoreException e) {
+		}
 
-        stackedView1 = findView(ZoomPerspectiveFactory.STACK1_VIEW1);
-        stackedView2 = findView(ZoomPerspectiveFactory.STACK1_VIEW2);
-        unstackedView = findView(ZoomPerspectiveFactory.UNSTACKED_VIEW1);
+		stackedView1 = findView(ZoomPerspectiveFactory.STACK1_VIEW1);
+		stackedView2 = findView(ZoomPerspectiveFactory.STACK1_VIEW2);
+		unstackedView = findView(ZoomPerspectiveFactory.UNSTACKED_VIEW1);
 //        fastView = findView(ZoomPerspectiveFactory.FASTVIEW1);
-    }
+	}
 
-    // zooms the given part
-    protected void zoom(IWorkbenchPart part) {
-        if (part == null) {
+	// zooms the given part
+	protected void zoom(IWorkbenchPart part) {
+		if (part == null) {
 			throw new NullPointerException();
 		}
-        page.activate(part);
-        page.toggleZoom(page.getReference(part));
-        Assert.assertTrue(page.isPageZoomed());
-        Assert.assertTrue(isZoomed(part));
-    }
+		page.activate(part);
+		page.toggleZoom(page.getReference(part));
+		Assert.assertTrue(page.isPageZoomed());
+		Assert.assertTrue(isZoomed(part));
+	}
 
-    // open the given file in an editor
-    protected void openEditor(IFile file, boolean activate) {
-        try {
-            if (file == file1) {
+	// open the given file in an editor
+	protected void openEditor(IFile file, boolean activate) {
+		try {
+			if (file == file1) {
 				editor1 = IDE.openEditor(page, file, activate);
 			}
-            if (file == file2) {
+			if (file == file2) {
 				editor2 = IDE.openEditor(page, file, activate);
 			}
-        } catch (PartInitException e) {
-        }
-    }
+		} catch (PartInitException e) {
+		}
+	}
 
-    // show the given view as a regular view
-    protected IViewPart showRegularView(String id, int mode) {
-        try {
-            IViewPart view = page.showView(id, null, mode);
-            return view;
-        } catch (PartInitException e) {
-        }
-        return null;
-    }
+	// show the given view as a regular view
+	protected IViewPart showRegularView(String id, int mode) {
+		try {
+			IViewPart view = page.showView(id, null, mode);
+			return view;
+		} catch (PartInitException e) {
+		}
+		return null;
+	}
 
-    protected IViewPart findView(String id) {
-        IViewPart view = page.findView(id);
-        assertNotNull("View " + id + " not found", view);
-        return view;
-    }
+	protected IViewPart findView(String id) {
+		IViewPart view = page.findView(id);
+		assertNotNull("View " + id + " not found", view);
+		return view;
+	}
 
-    protected MPart getPartModel(IWorkbenchPart part) {
-        PartSite site = (PartSite) part.getSite();
-        return site.getModel();
-    }
+	protected MPart getPartModel(IWorkbenchPart part) {
+		PartSite site = (PartSite) part.getSite();
+		return site.getModel();
+	}
 
-    protected MUIElement getPartParent(IWorkbenchPart part) {
-        MPart partModel = getPartModel(part);
+	protected MUIElement getPartParent(IWorkbenchPart part) {
+		MPart partModel = getPartModel(part);
 
-        MUIElement partParent = partModel.getParent();
-        if (partParent == null && partModel.getCurSharedRef() != null) {
+		MUIElement partParent = partModel.getParent();
+		if (partParent == null && partModel.getCurSharedRef() != null) {
 			partParent = partModel.getCurSharedRef().getParent();
 		}
 
-        return partParent;
-    }
+		return partParent;
+	}
 
-    // returns whether this part is zoomed
-    protected boolean isZoomed(IWorkbenchPart part) {
-    	if (part == null) {
+	// returns whether this part is zoomed
+	protected boolean isZoomed(IWorkbenchPart part) {
+		if (part == null) {
 			return false;
 		}
 
-    	MUIElement toTest = page.getActiveElement(page.getReference(part));
-    	if (toTest == null) {
+		MUIElement toTest = page.getActiveElement(page.getReference(part));
+		if (toTest == null) {
 			return false;
 		}
 
-    	return toTest.getTags().contains(IPresentationEngine.MAXIMIZED);
-    }
+		return toTest.getTags().contains(IPresentationEngine.MAXIMIZED);
+	}
 
-    /**
-     * Asserts that the given part is zoomed. If the part is null, asserts
-     * that no parts are zoomed.
-     *
-     * @param part
-     * @since 3.1
-     */
-    protected void assertZoomed(IWorkbenchPart part) {
-        if (part == null) {
-            Assert.assertFalse("Page should not be zoomed", isZoomed());
-        } else {
-            // Assert that the part is zoomed
-            Assert.assertTrue("Expecting " + partName(part) + " to be zoomed", isZoomed(part));
-            // Assert that the page is zoomed (paranoia check)
-            Assert.assertTrue("Page should be zoomed", isZoomed());
-        }
-    }
+	/**
+	 * Asserts that the given part is zoomed. If the part is null, asserts
+	 * that no parts are zoomed.
+	 *
+	 * @param part
+	 * @since 3.1
+	 */
+	protected void assertZoomed(IWorkbenchPart part) {
+		if (part == null) {
+			Assert.assertFalse("Page should not be zoomed", isZoomed());
+		} else {
+			// Assert that the part is zoomed
+			Assert.assertTrue("Expecting " + partName(part) + " to be zoomed", isZoomed(part));
+			// Assert that the page is zoomed (paranoia check)
+			Assert.assertTrue("Page should be zoomed", isZoomed());
+		}
+	}
 
-    /**
-     * Asserts that the given part is active.
-     *
-     * @param part
-     * @since 3.1
-     */
-    protected void assertActive(IWorkbenchPart part) {
-        IWorkbenchPart activePart = page.getActivePart();
+	/**
+	 * Asserts that the given part is active.
+	 *
+	 * @param part
+	 * @since 3.1
+	 */
+	protected void assertActive(IWorkbenchPart part) {
+		IWorkbenchPart activePart = page.getActivePart();
 
-        // Assert that the part is active
-        Assert.assertTrue("Unexpected active part: expected " + partName(part)
-                + " and found " + partName(activePart), activePart == part);
+		// Assert that the part is active
+		Assert.assertTrue("Unexpected active part: expected " + partName(part)
+				+ " and found " + partName(activePart), activePart == part);
 
-        // If the part is an editor, assert that the editor is active
-        if (part instanceof IEditorPart) {
-            assertActiveEditor((IEditorPart)part);
-        }
-    }
+		// If the part is an editor, assert that the editor is active
+		if (part instanceof IEditorPart) {
+			assertActiveEditor((IEditorPart)part);
+		}
+	}
 
-    protected String partName(IWorkbenchPart part) {
-        if (part == null) {
-            return "null";
-        }
+	protected String partName(IWorkbenchPart part) {
+		if (part == null) {
+			return "null";
+		}
 
-        return Util.safeString(part.getTitle());
-    }
+		return Util.safeString(part.getTitle());
+	}
 
-    protected void assertActiveEditor(IEditorPart part) {
-        IWorkbenchPart activeEditor = page.getActiveEditor();
+	protected void assertActiveEditor(IEditorPart part) {
+		IWorkbenchPart activeEditor = page.getActiveEditor();
 
-        Assert.assertTrue("Unexpected active editor: expected " + partName(part)
-                + " and found " + partName(activeEditor), activeEditor == part);
-    }
+		Assert.assertTrue("Unexpected active editor: expected " + partName(part)
+				+ " and found " + partName(activeEditor), activeEditor == part);
+	}
 
-    // returns true if the page is not zoomed, false otherwise
-    protected boolean isZoomed() {
-        return page.isPageZoomed();
-    }
+	// returns true if the page is not zoomed, false otherwise
+	protected boolean isZoomed() {
+		return page.isPageZoomed();
+	}
 
-    public void close(IWorkbenchPart part) {
-        if (part instanceof IViewPart) {
-            page.hideView((IViewPart)part);
-        } else if (part instanceof IEditorPart) {
-            page.closeEditor((IEditorPart)part, false);
-        }
-    }
+	public void close(IWorkbenchPart part) {
+		if (part instanceof IViewPart) {
+			page.hideView((IViewPart)part);
+		} else if (part instanceof IEditorPart) {
+			page.closeEditor((IEditorPart)part, false);
+		}
+	}
 }

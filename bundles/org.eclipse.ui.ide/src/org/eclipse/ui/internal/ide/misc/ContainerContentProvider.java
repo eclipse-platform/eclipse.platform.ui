@@ -28,28 +28,28 @@ import org.eclipse.jface.viewers.Viewer;
  * Provides content for a tree viewer that shows only containers.
  */
 public class ContainerContentProvider implements ITreeContentProvider {
-    private boolean showClosedProjects = true;
+	private boolean showClosedProjects = true;
 
-    /**
-     * Creates a new ContainerContentProvider.
-     */
-    public ContainerContentProvider() {
-    }
+	/**
+	 * Creates a new ContainerContentProvider.
+	 */
+	public ContainerContentProvider() {
+	}
 
-    /**
-     * The visual part that is using this content provider is about
-     * to be disposed. Deallocate all allocated SWT resources.
-     */
-    @Override
+	/**
+	 * The visual part that is using this content provider is about
+	 * to be disposed. Deallocate all allocated SWT resources.
+	 */
+	@Override
 	public void dispose() {
-    }
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object element) {
-        if (element instanceof IWorkspace) {
-            // check if closed projects should be shown
+		if (element instanceof IWorkspace) {
+			// check if closed projects should be shown
 			IProject[] allProjects = ((IWorkspace) element).getRoot().getProjects();
-            if (showClosedProjects) {
+			if (showClosedProjects) {
 				return allProjects;
 			}
 
@@ -57,58 +57,58 @@ public class ContainerContentProvider implements ITreeContentProvider {
 			for (IProject project : allProjects) {
 				if (project.isOpen()) {
 					accessibleProjects.add(project);
-                }
-            }
-            return accessibleProjects.toArray();
-        } else if (element instanceof IContainer) {
-            IContainer container = (IContainer) element;
-            if (container.isAccessible()) {
-                try {
+				}
+			}
+			return accessibleProjects.toArray();
+		} else if (element instanceof IContainer) {
+			IContainer container = (IContainer) element;
+			if (container.isAccessible()) {
+				try {
 					List<IResource> children = new ArrayList<>();
 					for (IResource member : container.members()) {
-                        if (member.getType() != IResource.FILE) {
-                            children.add(member);
-                        }
-                    }
-                    return children.toArray();
-                } catch (CoreException e) {
-                    // this should never happen because we call #isAccessible before invoking #members
-                }
-            }
-        }
-        return new Object[0];
-    }
+						if (member.getType() != IResource.FILE) {
+							children.add(member);
+						}
+					}
+					return children.toArray();
+				} catch (CoreException e) {
+					// this should never happen because we call #isAccessible before invoking #members
+				}
+			}
+		}
+		return new Object[0];
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object element) {
-        return getChildren(element);
-    }
+		return getChildren(element);
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {
-        if (element instanceof IResource) {
+		if (element instanceof IResource) {
 			return ((IResource) element).getParent();
 		}
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        return getChildren(element).length > 0;
-    }
+		return getChildren(element).length > 0;
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    }
+	}
 
-    /**
-     * Specify whether or not to show closed projects in the tree
-     * viewer.  Default is to show closed projects.
-     *
-     * @param show boolean if false, do not show closed projects in the tree
-     */
-    public void showClosedProjects(boolean show) {
-        showClosedProjects = show;
-    }
+	/**
+	 * Specify whether or not to show closed projects in the tree
+	 * viewer.  Default is to show closed projects.
+	 *
+	 * @param show boolean if false, do not show closed projects in the tree
+	 */
+	public void showClosedProjects(boolean show) {
+		showClosedProjects = show;
+	}
 
 }

@@ -31,84 +31,84 @@ import org.eclipse.ui.tests.harness.util.CallHistory;
  */
 public class IntroPartTest extends IWorkbenchPartTest {
 
-    private IntroDescriptor oldDesc;
+	private IntroDescriptor oldDesc;
 
-    /**
-     * @param testName
-     */
-    public IntroPartTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * @param testName
+	 */
+	public IntroPartTest(String testName) {
+		super(testName);
+	}
 
-    @Override
+	@Override
 	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
-        return (MockIntroPart) page.getWorkbenchWindow().getWorkbench()
-                .getIntroManager().showIntro(page.getWorkbenchWindow(), false);
-    }
+		return (MockIntroPart) page.getWorkbenchWindow().getWorkbench()
+				.getIntroManager().showIntro(page.getWorkbenchWindow(), false);
+	}
 
-    @Override
+	@Override
 	protected void closePart(IWorkbenchPage page, MockPart part)
-            throws Throwable {
-        assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager()
-                .closeIntro((IIntroPart) part));
-    }
+			throws Throwable {
+		assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager()
+				.closeIntro((IIntroPart) part));
+	}
 
-    @Override
+	@Override
 	public void testOpenAndClose() throws Throwable {
-        // Open a part.
-        MockPart part = openPart(fPage);
-        CallHistory history = part.getCallHistory();
-        assertTrue(history.verifyOrder(new String[] { "init",
-                "createPartControl", "setFocus", "standbyStateChanged" }));
+		// Open a part.
+		MockPart part = openPart(fPage);
+		CallHistory history = part.getCallHistory();
+		assertTrue(history.verifyOrder(new String[] { "init",
+				"createPartControl", "setFocus", "standbyStateChanged" }));
 
-        // Close the part.
-        closePart(fPage, part);
-        assertTrue(history.verifyOrder(new String[] { "init",
-                "createPartControl", "setFocus", "dispose" }));
-    }
+		// Close the part.
+		closePart(fPage, part);
+		assertTrue(history.verifyOrder(new String[] { "init",
+				"createPartControl", "setFocus", "dispose" }));
+	}
 
-    /**
-     * Tests to ensure that the image of the descriptor is the same as the part.
-     *
-     * @throws Throwable
-     */
-    public void testImage() throws Throwable {
-        MockPart part = openPart(fPage);
-        ImageDescriptor imageDescriptor = getIntroDesc().getImageDescriptor();
-        assertNotNull(imageDescriptor);
+	/**
+	 * Tests to ensure that the image of the descriptor is the same as the part.
+	 *
+	 * @throws Throwable
+	 */
+	public void testImage() throws Throwable {
+		MockPart part = openPart(fPage);
+		ImageDescriptor imageDescriptor = getIntroDesc().getImageDescriptor();
+		assertNotNull(imageDescriptor);
 
-        Image descImage = imageDescriptor.createImage(false);
-        assertNotNull(descImage);
+		Image descImage = imageDescriptor.createImage(false);
+		assertNotNull(descImage);
 
-        Image partImage = part.getTitleImage();
-        assertNotNull(partImage);
-        assertTrue(Arrays.equals(descImage.getImageData().data, partImage
-                .getImageData().data));
-        if (descImage != null) {
+		Image partImage = part.getTitleImage();
+		assertNotNull(partImage);
+		assertTrue(Arrays.equals(descImage.getImageData().data, partImage
+				.getImageData().data));
+		if (descImage != null) {
 			descImage.dispose();
 		}
-        closePart(fPage, part);
-    }
+		closePart(fPage, part);
+	}
 
-    @Override
+	@Override
 	protected void doSetUp() throws Exception {
-        super.doSetUp();
-        oldDesc = Workbench.getInstance().getIntroDescriptor();
-        IntroDescriptor testDesc = getIntroDesc();
-        Workbench.getInstance().setIntroDescriptor(testDesc);
-    }
+		super.doSetUp();
+		oldDesc = Workbench.getInstance().getIntroDescriptor();
+		IntroDescriptor testDesc = getIntroDesc();
+		Workbench.getInstance().setIntroDescriptor(testDesc);
+	}
 
-    /**
-     * @return
-     */
-    private IntroDescriptor getIntroDesc() {
-        return (IntroDescriptor) WorkbenchPlugin.getDefault()
-                .getIntroRegistry().getIntro("org.eclipse.ui.testintro");
-    }
+	/**
+	 * @return
+	 */
+	private IntroDescriptor getIntroDesc() {
+		return (IntroDescriptor) WorkbenchPlugin.getDefault()
+				.getIntroRegistry().getIntro("org.eclipse.ui.testintro");
+	}
 
-    @Override
+	@Override
 	protected void doTearDown() throws Exception {
-        super.doTearDown();
-        Workbench.getInstance().setIntroDescriptor(oldDesc);
-    }
+		super.doTearDown();
+		Workbench.getInstance().setIntroDescriptor(oldDesc);
+	}
 }

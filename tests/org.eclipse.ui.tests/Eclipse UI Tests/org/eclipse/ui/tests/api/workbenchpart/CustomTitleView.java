@@ -18,13 +18,13 @@ package org.eclipse.ui.tests.api.workbenchpart;
  */
 public class CustomTitleView extends EmptyView {
 
-    /**
-     *
-     */
-    public CustomTitleView() {
-        super();
+	/**
+	 *
+	 */
+	public CustomTitleView() {
+		super();
 
-        setTitle("Custom title");
-    }
+		setTitle("Custom title");
+	}
 
 }

@@ -25,26 +25,26 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SameShellProvider implements IShellProvider {
 
-    private Control targetControl;
+	private Control targetControl;
 
-    /**
-     * Returns a shell provider that always returns the current
-     * shell for the given control.
-     *
-     * @param targetControl control whose shell will be tracked, or null if getShell() should always
-     * return null
-     */
-    public SameShellProvider(Control targetControl) {
-        this.targetControl = targetControl;
-    }
+	/**
+	 * Returns a shell provider that always returns the current
+	 * shell for the given control.
+	 *
+	 * @param targetControl control whose shell will be tracked, or null if getShell() should always
+	 * return null
+	 */
+	public SameShellProvider(Control targetControl) {
+		this.targetControl = targetControl;
+	}
 
-    @Override
+	@Override
 	public Shell getShell() {
-        if (targetControl instanceof Shell) {
-            return (Shell)targetControl;
-        }
+		if (targetControl instanceof Shell) {
+			return (Shell)targetControl;
+		}
 
-        return targetControl == null? null :targetControl.getShell();
-    }
+		return targetControl == null? null :targetControl.getShell();
+	}
 
 }

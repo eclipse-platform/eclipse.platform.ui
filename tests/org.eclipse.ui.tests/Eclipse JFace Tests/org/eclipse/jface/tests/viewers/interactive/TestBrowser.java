@@ -29,234 +29,234 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class TestBrowser extends ApplicationWindow {
-    TestElement fInput;
+	TestElement fInput;
 
-    Viewer fViewer;
+	Viewer fViewer;
 
-    Action fChangeLabelAction;
+	Action fChangeLabelAction;
 
-    Action fChangeInputLabelAction;
+	Action fChangeInputLabelAction;
 
-    Action fChangeChildLabelAction;
+	Action fChangeChildLabelAction;
 
-    Action fReloadAction;
+	Action fReloadAction;
 
-    Action fReloadActionLarge;
+	Action fReloadActionLarge;
 
-    Action fReloadActionFlat;
+	Action fReloadActionFlat;
 
-    Action fDeleteAction;
+	Action fDeleteAction;
 
-    Action fDeleteChildrenAction;
+	Action fDeleteChildrenAction;
 
-    Action fDeleteSomeChildrenAction;
+	Action fDeleteSomeChildrenAction;
 
-    Action fDeleteSiblingsAction;
+	Action fDeleteSiblingsAction;
 
-    Action fFlushInputAction;
+	Action fFlushInputAction;
 
-    Action fAddElementAction;
+	Action fAddElementAction;
 
-    Action fAddSiblingAction;
+	Action fAddSiblingAction;
 
-    Action fAddSiblingRevealAction;
+	Action fAddSiblingRevealAction;
 
-    Action fAddSiblingSelectAction;
+	Action fAddSiblingSelectAction;
 
-    Action fAddChildAction;
+	Action fAddChildAction;
 
-    Action fAddChildRevealAction;
+	Action fAddChildRevealAction;
 
-    Action fAddChildSelectAction;
+	Action fAddChildSelectAction;
 
-    Action fWorldChangedAction;
+	Action fWorldChangedAction;
 
-    Action fSetLabelProvider;
+	Action fSetLabelProvider;
 
-    Action fAddFilterAction;
+	Action fAddFilterAction;
 
-    Action fResetFilters;
+	Action fResetFilters;
 
-    Action fSetSorter;
+	Action fSetSorter;
 
-    Action fResetSorter;
+	Action fResetSorter;
 
-    Action fClearSelection;
+	Action fClearSelection;
 
-    int fPanes = 1;
+	int fPanes = 1;
 
-    public TestBrowser() {
-        super(null);
-        addMenuBar();
-    }
+	public TestBrowser() {
+		super(null);
+		addMenuBar();
+	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        shell.setText("Test Browser");
-    }
+		super.configureShell(shell);
+		shell.setText("Test Browser");
+	}
 
-    protected void createActions() {
-        fChangeLabelAction = new ChangeLabelAction("Change Label", this);
-        fChangeChildLabelAction = new ChangeChildLabelAction(
-                "Change Child Label", this);
-        //	fChangeInputLabelAction =
-        //		new ChangeInputLabelAction("Change Input Label", this);
+	protected void createActions() {
+		fChangeLabelAction = new ChangeLabelAction("Change Label", this);
+		fChangeChildLabelAction = new ChangeChildLabelAction(
+				"Change Child Label", this);
+		//	fChangeInputLabelAction =
+		//		new ChangeInputLabelAction("Change Input Label", this);
 
-        fReloadAction = new CreateModelAction("Reload Test Data (small)", this,
-                3, 10);
-        fReloadActionLarge = new CreateModelAction("Reload Test Data (large)",
-                this, 3, 33);
-        fReloadActionFlat = new CreateModelAction("Reload Test Data (flat)",
-                this, 1, 2000);
+		fReloadAction = new CreateModelAction("Reload Test Data (small)", this,
+				3, 10);
+		fReloadActionLarge = new CreateModelAction("Reload Test Data (large)",
+				this, 3, 33);
+		fReloadActionFlat = new CreateModelAction("Reload Test Data (flat)",
+				this, 1, 2000);
 
-        fDeleteAction = new DeleteAction("Delete", this);
-        fDeleteChildrenAction = new DeleteChildrenAction("Delete Children",
-                this, true);
-        fDeleteSomeChildrenAction = new DeleteChildrenAction(
-                "Delete Odd Children", this, false);
-        fDeleteSiblingsAction = new DeleteSiblingsAction("Delete Siblings",
-                this, true);
+		fDeleteAction = new DeleteAction("Delete", this);
+		fDeleteChildrenAction = new DeleteChildrenAction("Delete Children",
+				this, true);
+		fDeleteSomeChildrenAction = new DeleteChildrenAction(
+				"Delete Odd Children", this, false);
+		fDeleteSiblingsAction = new DeleteSiblingsAction("Delete Siblings",
+				this, true);
 
-        fFlushInputAction = new FlushInputAction("Flush Input", this);
+		fFlushInputAction = new FlushInputAction("Flush Input", this);
 
-        fAddElementAction = new AddElementAction("Add Element to Input", this);
-        fAddSiblingAction = new AddSiblingAction("Add Sibling", this);
-        fAddSiblingRevealAction = new AddSiblingAction(
-                "Add Sibling and Reveal", this, TestModelChange.INSERT
-                        | TestModelChange.REVEAL);
-        fAddSiblingSelectAction = new AddSiblingAction(
-                "Add Sibling and Select", this, TestModelChange.INSERT
-                        | TestModelChange.REVEAL | TestModelChange.SELECT);
-        fAddChildAction = new AddChildAction("Add Child", this);
-        fAddChildRevealAction = new AddChildAction("Add Child and Reveal",
-                this, TestModelChange.INSERT | TestModelChange.REVEAL);
-        fAddChildSelectAction = new AddChildAction("Add Child and Select",
-                this, TestModelChange.INSERT | TestModelChange.REVEAL
-                        | TestModelChange.SELECT);
+		fAddElementAction = new AddElementAction("Add Element to Input", this);
+		fAddSiblingAction = new AddSiblingAction("Add Sibling", this);
+		fAddSiblingRevealAction = new AddSiblingAction(
+				"Add Sibling and Reveal", this, TestModelChange.INSERT
+						| TestModelChange.REVEAL);
+		fAddSiblingSelectAction = new AddSiblingAction(
+				"Add Sibling and Select", this, TestModelChange.INSERT
+						| TestModelChange.REVEAL | TestModelChange.SELECT);
+		fAddChildAction = new AddChildAction("Add Child", this);
+		fAddChildRevealAction = new AddChildAction("Add Child and Reveal",
+				this, TestModelChange.INSERT | TestModelChange.REVEAL);
+		fAddChildSelectAction = new AddChildAction("Add Child and Select",
+				this, TestModelChange.INSERT | TestModelChange.REVEAL
+						| TestModelChange.SELECT);
 
-        fWorldChangedAction = new WorldChangedAction("World Changed", this);
+		fWorldChangedAction = new WorldChangedAction("World Changed", this);
 
-        fSetLabelProvider = new SetLabelProviderAction(
-                "Set Custom Label Provider", this);
+		fSetLabelProvider = new SetLabelProviderAction(
+				"Set Custom Label Provider", this);
 
-        fAddFilterAction = new AddFilterAction("Add Filter", this);
-        fResetFilters = new ResetFilterAction("Reset All Filters", this);
+		fAddFilterAction = new AddFilterAction("Add Filter", this);
+		fResetFilters = new ResetFilterAction("Reset All Filters", this);
 
-        fSetSorter = new SetSorterAction("Set Sorter", this);
-        fResetSorter = new ResetSorterAction("Reset Sorter", this);
+		fSetSorter = new SetSorterAction("Set Sorter", this);
+		fResetSorter = new ResetSorterAction("Reset Sorter", this);
 
-        fClearSelection = new ClearSelectionAction("Clear Selection", this);
-    }
+		fClearSelection = new ClearSelectionAction("Clear Selection", this);
+	}
 
-    @Override
+	@Override
 	protected Control createContents(Composite parent) {
-        ViewForm form = new ViewForm(parent, SWT.NONE);
-        CLabel label = new CLabel(form, SWT.NONE);
-        form.setTopLeft(label);
-        Object input = getInput();
-        label.setText(input.toString());
-        if (fPanes == 1) {
-            Viewer viewer = createViewer(form);
-            form.setContent(viewer.getControl());
-            fViewer = viewer;
-            setInput((TestElement) input);
-        } else if (fPanes == 2) {
-            SashForm sashForm = new SashForm(form, SWT.VERTICAL);
-            form.setContent(sashForm);
-            Viewer viewer = createViewer(sashForm);
-            fViewer = viewer;
-            viewer.setInput(input);
-            viewer = createViewer(sashForm);
-            viewer.setInput(input);
-        }
-        createActions();
-        fillMenuBar(getMenuBarManager());
-        viewerFillMenuBar(getMenuBarManager());
-        getMenuBarManager().updateAll(false);
-        return form;
-    }
+		ViewForm form = new ViewForm(parent, SWT.NONE);
+		CLabel label = new CLabel(form, SWT.NONE);
+		form.setTopLeft(label);
+		Object input = getInput();
+		label.setText(input.toString());
+		if (fPanes == 1) {
+			Viewer viewer = createViewer(form);
+			form.setContent(viewer.getControl());
+			fViewer = viewer;
+			setInput((TestElement) input);
+		} else if (fPanes == 2) {
+			SashForm sashForm = new SashForm(form, SWT.VERTICAL);
+			form.setContent(sashForm);
+			Viewer viewer = createViewer(sashForm);
+			fViewer = viewer;
+			viewer.setInput(input);
+			viewer = createViewer(sashForm);
+			viewer.setInput(input);
+		}
+		createActions();
+		fillMenuBar(getMenuBarManager());
+		viewerFillMenuBar(getMenuBarManager());
+		getMenuBarManager().updateAll(false);
+		return form;
+	}
 
-    public abstract Viewer createViewer(Composite parent);
+	public abstract Viewer createViewer(Composite parent);
 
-    protected void fillMenuBar(MenuManager mgr) {
+	protected void fillMenuBar(MenuManager mgr) {
 
-        MenuManager setupMenu = new MenuManager("Setup", "Setup");
-        mgr.add(setupMenu);
-        setupMenu.add(fReloadAction);
-        setupMenu.add(fReloadActionLarge);
-        setupMenu.add(fReloadActionFlat);
-        setupMenu.add(new Separator());
-        setupMenu.add(fFlushInputAction);
-        setupMenu.add(new Separator());
-        setupMenu.add(fSetLabelProvider);
-        setupMenu.add(new Separator());
-        setupMenu.add(fAddFilterAction);
-        setupMenu.add(fResetFilters);
-        setupMenu.add(new Separator());
-        setupMenu.add(fSetSorter);
-        setupMenu.add(fResetSorter);
+		MenuManager setupMenu = new MenuManager("Setup", "Setup");
+		mgr.add(setupMenu);
+		setupMenu.add(fReloadAction);
+		setupMenu.add(fReloadActionLarge);
+		setupMenu.add(fReloadActionFlat);
+		setupMenu.add(new Separator());
+		setupMenu.add(fFlushInputAction);
+		setupMenu.add(new Separator());
+		setupMenu.add(fSetLabelProvider);
+		setupMenu.add(new Separator());
+		setupMenu.add(fAddFilterAction);
+		setupMenu.add(fResetFilters);
+		setupMenu.add(new Separator());
+		setupMenu.add(fSetSorter);
+		setupMenu.add(fResetSorter);
 
-        MenuManager testMenu = new MenuManager("Tests", "Tests");
-        mgr.add(testMenu);
-        testMenu.add(fChangeLabelAction);
-        testMenu.add(fChangeChildLabelAction);
-        //	testMenu.add(fChangeInputLabelAction);
-        testMenu.add(new Separator());
+		MenuManager testMenu = new MenuManager("Tests", "Tests");
+		mgr.add(testMenu);
+		testMenu.add(fChangeLabelAction);
+		testMenu.add(fChangeChildLabelAction);
+		//	testMenu.add(fChangeInputLabelAction);
+		testMenu.add(new Separator());
 
-        testMenu.add(fDeleteAction);
-        testMenu.add(fDeleteChildrenAction);
-        testMenu.add(fDeleteSomeChildrenAction);
-        testMenu.add(fDeleteSiblingsAction);
-        testMenu.add(new Separator());
+		testMenu.add(fDeleteAction);
+		testMenu.add(fDeleteChildrenAction);
+		testMenu.add(fDeleteSomeChildrenAction);
+		testMenu.add(fDeleteSiblingsAction);
+		testMenu.add(new Separator());
 
-        testMenu.add(fAddElementAction);
-        testMenu.add(new Separator());
+		testMenu.add(fAddElementAction);
+		testMenu.add(new Separator());
 
-        testMenu.add(fAddSiblingAction);
-        testMenu.add(fAddSiblingRevealAction);
-        testMenu.add(fAddSiblingSelectAction);
-        testMenu.add(new Separator());
+		testMenu.add(fAddSiblingAction);
+		testMenu.add(fAddSiblingRevealAction);
+		testMenu.add(fAddSiblingSelectAction);
+		testMenu.add(new Separator());
 
-        testMenu.add(fAddChildAction);
-        testMenu.add(fAddChildRevealAction);
-        testMenu.add(fAddChildSelectAction);
-        testMenu.add(new Separator());
+		testMenu.add(fAddChildAction);
+		testMenu.add(fAddChildRevealAction);
+		testMenu.add(fAddChildSelectAction);
+		testMenu.add(new Separator());
 
-        testMenu.add(fClearSelection);
-        testMenu.add(new Separator());
+		testMenu.add(fClearSelection);
+		testMenu.add(new Separator());
 
-        testMenu.add(fWorldChangedAction);
-        //	((TestTree)this).testTreeFillMenuBar(testMenu);
-    }
+		testMenu.add(fWorldChangedAction);
+		//	((TestTree)this).testTreeFillMenuBar(testMenu);
+	}
 
-    public TestElement getInput() {
-        return fInput;
-    }
+	public TestElement getInput() {
+		return fInput;
+	}
 
-    public Viewer getViewer() {
-        return fViewer;
-    }
+	public Viewer getViewer() {
+		return fViewer;
+	}
 
-    public Composite getViewerContainer() {
-        return null;
-    }
+	public Composite getViewerContainer() {
+		return null;
+	}
 
-    public void open(TestElement input) {
-    	setInput(input);
-        super.open();
-    }
+	public void open(TestElement input) {
+		setInput(input);
+		super.open();
+	}
 
-    public void setInput(TestElement input) {
-        fInput = input;
-        if (getViewer() != null) {
+	public void setInput(TestElement input) {
+		fInput = input;
+		if (getViewer() != null) {
 			getViewer().setInput(input);
 		}
-    }
+	}
 
-    public void show2Panes() {
-        fPanes = 2;
-    }
+	public void show2Panes() {
+		fPanes = 2;
+	}
 
-    protected abstract void viewerFillMenuBar(MenuManager mgr);
+	protected abstract void viewerFillMenuBar(MenuManager mgr);
 }

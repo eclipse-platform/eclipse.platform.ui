@@ -29,45 +29,45 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * @since 3.0
  */
 public class SelectBuildWorkingSetAction extends Action implements
-        ActionFactory.IWorkbenchAction {
-    private IWorkbenchWindow window;
+		ActionFactory.IWorkbenchAction {
+	private IWorkbenchWindow window;
 
-    private IActionBarConfigurer actionBars;
+	private IActionBarConfigurer actionBars;
 
-    public SelectBuildWorkingSetAction(IWorkbenchWindow window,
-            IActionBarConfigurer actionBars) {
-        super(IDEWorkbenchMessages.SelectWorkingSetAction_text);
-        this.window = window;
-        this.actionBars = actionBars;
-    }
+	public SelectBuildWorkingSetAction(IWorkbenchWindow window,
+			IActionBarConfigurer actionBars) {
+		super(IDEWorkbenchMessages.SelectWorkingSetAction_text);
+		this.window = window;
+		this.actionBars = actionBars;
+	}
 
-    private IWorkingSet queryForWorkingSet() {
-        IWorkingSetManager manager = window.getWorkbench()
-                .getWorkingSetManager();
-        IWorkingSetSelectionDialog dialog = manager
-                .createWorkingSetSelectionDialog(window.getShell(), false);
-        dialog.open();
-        IWorkingSet[] sets = dialog.getSelection();
-        //check for cancel
-        if (sets == null || sets.length == 0) {
+	private IWorkingSet queryForWorkingSet() {
+		IWorkingSetManager manager = window.getWorkbench()
+				.getWorkingSetManager();
+		IWorkingSetSelectionDialog dialog = manager
+				.createWorkingSetSelectionDialog(window.getShell(), false);
+		dialog.open();
+		IWorkingSet[] sets = dialog.getSelection();
+		//check for cancel
+		if (sets == null || sets.length == 0) {
 			return null;
 		}
-        return sets[0];
-    }
+		return sets[0];
+	}
 
-    @Override
+	@Override
 	public void run() {
-        IWorkingSet set = queryForWorkingSet();
-        if (set != null) {
-            new BuildSetAction(set, window, actionBars).run();
-        }
-    }
+		IWorkingSet set = queryForWorkingSet();
+		if (set != null) {
+			new BuildSetAction(set, window, actionBars).run();
+		}
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    }
+	}
 
-    public void setActionBars(IActionBarConfigurer actionBars) {
-        this.actionBars = actionBars;
-    }
+	public void setActionBars(IActionBarConfigurer actionBars) {
+		this.actionBars = actionBars;
+	}
 }

@@ -18,18 +18,18 @@ import org.eclipse.swt.widgets.Shell;
 
 public class DetachedDropTarget implements TestDropLocation {
 
-    @Override
+	@Override
 	public String toString() {
-        return "out of the window";
-    }
+		return "out of the window";
+	}
 
-    @Override
+	@Override
 	public Point getLocation() {
-        return new Point(0,0);
-    }
+		return new Point(0,0);
+	}
 
-    @Override
+	@Override
 	public Shell[] getShells() {
-        return new Shell[0];
-    }
+		return new Shell[0];
+	}
 }

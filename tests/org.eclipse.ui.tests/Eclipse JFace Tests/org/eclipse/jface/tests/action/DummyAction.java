@@ -21,9 +21,9 @@ import org.eclipse.jface.action.Action;
  */
 class DummyAction extends Action {
 
-    static int Count = 0;
+	static int Count = 0;
 
-    public DummyAction() {
-        super("DummyAction " + ++Count);
-    }
+	public DummyAction() {
+		super("DummyAction " + ++Count);
+	}
 }

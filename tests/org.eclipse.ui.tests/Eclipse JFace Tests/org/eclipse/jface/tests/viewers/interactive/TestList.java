@@ -21,24 +21,24 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
 public class TestList extends TestBrowser {
-    @Override
+	@Override
 	public Viewer createViewer(Composite parent) {
-        ListViewer viewer = new ListViewer(parent);
-        viewer.setUseHashlookup(true);
-        viewer.setContentProvider(new TestModelContentProvider());
-        return viewer;
-    }
+		ListViewer viewer = new ListViewer(parent);
+		viewer.setUseHashlookup(true);
+		viewer.setContentProvider(new TestModelContentProvider());
+		return viewer;
+	}
 
-    public static void main(String[] args) {
-        TestList browser = new TestList();
-        browser.setBlockOnOpen(true);
-        browser.open(TestElement.createModel(3, 10));
-    }
+	public static void main(String[] args) {
+		TestList browser = new TestList();
+		browser.setBlockOnOpen(true);
+		browser.open(TestElement.createModel(3, 10));
+	}
 
-    /**
-     *
-     */
-    @Override
+	/**
+	 *
+	 */
+	@Override
 	protected void viewerFillMenuBar(MenuManager mgr) {
-    }
+	}
 }

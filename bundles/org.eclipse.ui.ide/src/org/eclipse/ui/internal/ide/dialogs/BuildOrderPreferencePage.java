@@ -63,48 +63,48 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * by the workspace.
  */
 public class BuildOrderPreferencePage extends PreferencePage implements
-        IWorkbenchPreferencePage {
+		IWorkbenchPreferencePage {
 
-    private IWorkbench workbench;
+	private IWorkbench workbench;
 
-    private Button defaultOrderButton;
+	private Button defaultOrderButton;
 
-    private Label buildLabel;
+	private Label buildLabel;
 
-    private List buildList;
+	private List buildList;
 
-    private Composite buttonComposite;
+	private Composite buttonComposite;
 
-    private IntegerFieldEditor maxItersField;
+	private IntegerFieldEditor maxItersField;
 
-    private String[] defaultBuildOrder;
+	private String[] defaultBuildOrder;
 
-    private String[] customBuildOrder;
+	private String[] customBuildOrder;
 
-    //Boolean to indicate if we have looked it up
-    private boolean notCheckedBuildOrder = true;
+	//Boolean to indicate if we have looked it up
+	private boolean notCheckedBuildOrder = true;
 
-    private final String UP_LABEL = IDEWorkbenchMessages.BuildOrderPreference_up;
+	private final String UP_LABEL = IDEWorkbenchMessages.BuildOrderPreference_up;
 
-    private final String DOWN_LABEL = IDEWorkbenchMessages.BuildOrderPreference_down;
+	private final String DOWN_LABEL = IDEWorkbenchMessages.BuildOrderPreference_down;
 
-    private final String ADD_LABEL = IDEWorkbenchMessages.BuildOrderPreference_add;
+	private final String ADD_LABEL = IDEWorkbenchMessages.BuildOrderPreference_add;
 
-    private final String REMOVE_LABEL = IDEWorkbenchMessages.BuildOrderPreference_remove;
+	private final String REMOVE_LABEL = IDEWorkbenchMessages.BuildOrderPreference_remove;
 
-    private final String PROJECT_SELECTION_MESSAGE = IDEWorkbenchMessages.BuildOrderPreference_selectOtherProjects;
+	private final String PROJECT_SELECTION_MESSAGE = IDEWorkbenchMessages.BuildOrderPreference_selectOtherProjects;
 
-    private final String DEFAULTS_LABEL = IDEWorkbenchMessages.BuildOrderPreference_useDefaults;
+	private final String DEFAULTS_LABEL = IDEWorkbenchMessages.BuildOrderPreference_useDefaults;
 
-    private final String LIST_LABEL = IDEWorkbenchMessages.BuildOrderPreference_projectBuildOrder;
+	private final String LIST_LABEL = IDEWorkbenchMessages.BuildOrderPreference_projectBuildOrder;
 
-    private final String NOTE_LABEL = IDEWorkbenchMessages.Preference_note;
+	private final String NOTE_LABEL = IDEWorkbenchMessages.Preference_note;
 
-    private final String REMOVE_MESSAGE = IDEWorkbenchMessages.BuildOrderPreference_removeNote;
+	private final String REMOVE_MESSAGE = IDEWorkbenchMessages.BuildOrderPreference_removeNote;
 
-    // whether or not the use defaults option was selected when Apply (or OK) was last pressed
-    // (or when the preference page was opened). This represents the most recent applied state.
-    private boolean defaultOrderInitiallySelected;
+	// whether or not the use defaults option was selected when Apply (or OK) was last pressed
+	// (or when the preference page was opened). This represents the most recent applied state.
+	private boolean defaultOrderInitiallySelected;
 
 	private Button autoBuildButton;
 
@@ -112,143 +112,143 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
 	private Button autoSaveAllButton;
 
-    private IPropertyChangeListener validityChangeListener = event -> {
-	    if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+	private IPropertyChangeListener validityChangeListener = event -> {
+		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 			updateValidState();
 		}
 	};
 
-    /**
-     * Add another project to the list at the end.
-     */
-    private void addProject() {
+	/**
+	 * Add another project to the list at the end.
+	 */
+	private void addProject() {
 
-        String[] currentItems = this.buildList.getItems();
+		String[] currentItems = this.buildList.getItems();
 
-        IProject[] allProjects = getWorkspace().getRoot().getProjects();
+		IProject[] allProjects = getWorkspace().getRoot().getProjects();
 
-        ILabelProvider labelProvider = new LabelProvider() {
-            @Override
+		ILabelProvider labelProvider = new LabelProvider() {
+			@Override
 			public String getText(Object element) {
-                return (String) element;
-            }
-        };
+				return (String) element;
+			}
+		};
 
 		ListSelectionDialog dialog = new ListSelectionDialog(this.getShell(), sortedDifference(allProjects,
 				currentItems), ArrayContentProvider.getInstance(), labelProvider,
-                PROJECT_SELECTION_MESSAGE) {
-        	@Override
+				PROJECT_SELECTION_MESSAGE) {
+			@Override
 			protected int getShellStyle() {
-        		return super.getShellStyle() | SWT.SHEET;
-        	}
-        };
+				return super.getShellStyle() | SWT.SHEET;
+			}
+		};
 
-        if (dialog.open() != Window.OK) {
+		if (dialog.open() != Window.OK) {
 			return;
 		}
 
-        Object[] result = dialog.getResult();
+		Object[] result = dialog.getResult();
 
-        int currentItemsLength = currentItems.length;
-        int resultLength = result.length;
-        String[] newItems = new String[currentItemsLength + resultLength];
+		int currentItemsLength = currentItems.length;
+		int resultLength = result.length;
+		String[] newItems = new String[currentItemsLength + resultLength];
 
-        System.arraycopy(currentItems, 0, newItems, 0, currentItemsLength);
-        System
-                .arraycopy(result, 0, newItems, currentItemsLength,
-                        result.length);
-        this.buildList.setItems(newItems);
-    }
+		System.arraycopy(currentItems, 0, newItems, 0, currentItemsLength);
+		System
+				.arraycopy(result, 0, newItems, currentItemsLength,
+						result.length);
+		this.buildList.setItems(newItems);
+	}
 
-    /**
-     * Updates the valid state of the page.
-     */
-    private void updateValidState() {
-        setValid(maxItersField.isValid());
-    }
+	/**
+	 * Updates the valid state of the page.
+	 */
+	private void updateValidState() {
+		setValid(maxItersField.isValid());
+	}
 
-    /**
-     * Create the list of build paths. If the current build order is empty make the list empty
-     * and disable it.
-     * @param composite - the parent to create the list in
-     * @param enabled - the boolean that indcates if the list will be sensitive initially or not
-     */
-    private void createBuildOrderList(Composite composite, boolean enabled) {
+	/**
+	 * Create the list of build paths. If the current build order is empty make the list empty
+	 * and disable it.
+	 * @param composite - the parent to create the list in
+	 * @param enabled - the boolean that indcates if the list will be sensitive initially or not
+	 */
+	private void createBuildOrderList(Composite composite, boolean enabled) {
 
-        Font font = composite.getFont();
+		Font font = composite.getFont();
 
-        this.buildLabel = new Label(composite, SWT.NONE);
-        this.buildLabel.setText(LIST_LABEL);
-        this.buildLabel.setEnabled(enabled);
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.horizontalSpan = 2;
-        this.buildLabel.setLayoutData(gridData);
-        this.buildLabel.setFont(font);
+		this.buildLabel = new Label(composite, SWT.NONE);
+		this.buildLabel.setText(LIST_LABEL);
+		this.buildLabel.setEnabled(enabled);
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.FILL;
+		gridData.horizontalSpan = 2;
+		this.buildLabel.setLayoutData(gridData);
+		this.buildLabel.setFont(font);
 
-        this.buildList = new List(composite, SWT.BORDER | SWT.MULTI
-                | SWT.H_SCROLL | SWT.V_SCROLL);
-        this.buildList.setEnabled(enabled);
-        GridData data = new GridData();
-        //Set heightHint with a small value so the list size will be defined by
-        //the space available in the dialog instead of resizing the dialog to
-        //fit all the items in the list.
-        data.heightHint = buildList.getItemHeight();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        data.grabExcessHorizontalSpace = true;
-        data.grabExcessVerticalSpace = true;
-        this.buildList.setLayoutData(data);
-        this.buildList.setFont(font);
-    }
+		this.buildList = new List(composite, SWT.BORDER | SWT.MULTI
+				| SWT.H_SCROLL | SWT.V_SCROLL);
+		this.buildList.setEnabled(enabled);
+		GridData data = new GridData();
+		//Set heightHint with a small value so the list size will be defined by
+		//the space available in the dialog instead of resizing the dialog to
+		//fit all the items in the list.
+		data.heightHint = buildList.getItemHeight();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
+		this.buildList.setLayoutData(data);
+		this.buildList.setFont(font);
+	}
 
-    /**
-     * Create the widgets that are used to determine the build order.
-     *
-     * @param parent the parent composite
-     * @return the new control
-     */
-    @Override
+	/**
+	 * Create the widgets that are used to determine the build order.
+	 *
+	 * @param parent the parent composite
+	 * @return the new control
+	 */
+	@Override
 	protected Control createContents(Composite parent) {
 
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-                IIDEHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IIDEHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE);
 
-        Font font = parent.getFont();
+		Font font = parent.getFont();
 
-        //The main composite
-        Composite composite = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        composite.setLayout(layout);
-        GridData data = new GridData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        composite.setLayoutData(data);
-        composite.setFont(font);
+		//The main composite
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		composite.setLayoutData(data);
+		composite.setFont(font);
 
 		createSaveAllBeforeBuildPref(composite);
 		createAutoBuildPref(composite);
 		createSpacer(composite);
 
-        String[] buildOrder = getCurrentBuildOrder();
-        boolean useDefault = (buildOrder == null);
+		String[] buildOrder = getCurrentBuildOrder();
+		boolean useDefault = (buildOrder == null);
 
-        createDefaultPathButton(composite, useDefault);
-        // List always enabled so user can scroll list.
-        // Only the buttons need to be disabled.
-        createBuildOrderList(composite, true);
-        createListButtons(composite, !useDefault);
+		createDefaultPathButton(composite, useDefault);
+		// List always enabled so user can scroll list.
+		// Only the buttons need to be disabled.
+		createBuildOrderList(composite, true);
+		createListButtons(composite, !useDefault);
 
-        Composite noteComposite = createNoteComposite(font, composite,
-                NOTE_LABEL, REMOVE_MESSAGE);
-        GridData noteData = new GridData();
-        noteData.horizontalSpan = 2;
-        noteComposite.setLayoutData(noteData);
+		Composite noteComposite = createNoteComposite(font, composite,
+				NOTE_LABEL, REMOVE_MESSAGE);
+		GridData noteData = new GridData();
+		noteData.horizontalSpan = 2;
+		noteComposite.setLayoutData(noteData);
 
-        createSpacer(composite);
+		createSpacer(composite);
 
 		Composite intFieldsComposite = new Composite(composite, SWT.NONE);
 		intFieldsComposite.setLayout(new GridLayout(2, false));
@@ -256,311 +256,311 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 		createMaxIterationsField(intFieldsComposite);
 		createMaxSimultaneousBuildsGroup(intFieldsComposite);
 
-        if (useDefault) {
-            this.buildList.setItems(getDefaultProjectOrder());
-        } else {
-            this.buildList.setItems(buildOrder);
-        }
+		if (useDefault) {
+			this.buildList.setItems(getDefaultProjectOrder());
+		} else {
+			this.buildList.setItems(buildOrder);
+		}
 
-        return composite;
+		return composite;
 
-    }
+	}
 
-    /**
-     * Adds in a spacer.
-     *
-     * @param composite the parent composite
-     */
-    private void createSpacer(Composite composite) {
-        Label spacer = new Label(composite, SWT.NONE);
-        GridData spacerData = new GridData();
-        spacerData.horizontalSpan = 2;
-        spacer.setLayoutData(spacerData);
-    }
+	/**
+	 * Adds in a spacer.
+	 *
+	 * @param composite the parent composite
+	 */
+	private void createSpacer(Composite composite) {
+		Label spacer = new Label(composite, SWT.NONE);
+		GridData spacerData = new GridData();
+		spacerData.horizontalSpan = 2;
+		spacer.setLayoutData(spacerData);
+	}
 
-    /**
-     * Create the default path button. Set it to selected based on the current workspace
-     * build path.
-     * @param composite org.eclipse.swt.widgets.Composite
-     * @param selected - the boolean that indicates the buttons initial state
-     */
-    private void createDefaultPathButton(Composite composite, boolean selected) {
+	/**
+	 * Create the default path button. Set it to selected based on the current workspace
+	 * build path.
+	 * @param composite org.eclipse.swt.widgets.Composite
+	 * @param selected - the boolean that indicates the buttons initial state
+	 */
+	private void createDefaultPathButton(Composite composite, boolean selected) {
 
-        defaultOrderInitiallySelected = selected;
+		defaultOrderInitiallySelected = selected;
 
-        this.defaultOrderButton = new Button(composite, SWT.LEFT | SWT.CHECK);
-        this.defaultOrderButton.setSelection(selected);
-        this.defaultOrderButton.setText(DEFAULTS_LABEL);
-        SelectionListener listener = new SelectionAdapter() {
-            @Override
+		this.defaultOrderButton = new Button(composite, SWT.LEFT | SWT.CHECK);
+		this.defaultOrderButton.setSelection(selected);
+		this.defaultOrderButton.setText(DEFAULTS_LABEL);
+		SelectionListener listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                defaultsButtonSelected(defaultOrderButton.getSelection());
-            }
-        };
-        this.defaultOrderButton.addSelectionListener(listener);
+				defaultsButtonSelected(defaultOrderButton.getSelection());
+			}
+		};
+		this.defaultOrderButton.addSelectionListener(listener);
 
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.horizontalSpan = 2;
-        this.defaultOrderButton.setLayoutData(gridData);
-        this.defaultOrderButton.setFont(composite.getFont());
-    }
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.FILL;
+		gridData.horizontalSpan = 2;
+		this.defaultOrderButton.setLayoutData(gridData);
+		this.defaultOrderButton.setFont(composite.getFont());
+	}
 
-    /**
-     * Create the buttons used to manipulate the list. These Add, Remove and Move Up or Down
-     * the list items.
-     * @param composite the parent of the buttons
-     * @param enableComposite - boolean that indicates if a composite should be enabled
-     */
-    private void createListButtons(Composite composite, boolean enableComposite) {
+	/**
+	 * Create the buttons used to manipulate the list. These Add, Remove and Move Up or Down
+	 * the list items.
+	 * @param composite the parent of the buttons
+	 * @param enableComposite - boolean that indicates if a composite should be enabled
+	 */
+	private void createListButtons(Composite composite, boolean enableComposite) {
 
-        Font font = composite.getFont();
+		Font font = composite.getFont();
 
-        //Create an intermeditate composite to keep the buttons in the same column
-        this.buttonComposite = new Composite(composite, SWT.RIGHT);
-        GridLayout layout = new GridLayout();
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        this.buttonComposite.setLayout(layout);
-        GridData gridData = new GridData();
-        gridData.verticalAlignment = GridData.FILL;
-        gridData.horizontalAlignment = GridData.FILL;
-        this.buttonComposite.setLayoutData(gridData);
-        this.buttonComposite.setFont(font);
+		//Create an intermeditate composite to keep the buttons in the same column
+		this.buttonComposite = new Composite(composite, SWT.RIGHT);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		this.buttonComposite.setLayout(layout);
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.horizontalAlignment = GridData.FILL;
+		this.buttonComposite.setLayoutData(gridData);
+		this.buttonComposite.setFont(font);
 
-        Button upButton = new Button(this.buttonComposite, SWT.CENTER
-                | SWT.PUSH);
-        upButton.setText(UP_LABEL);
-        upButton.setEnabled(enableComposite);
-        upButton.setFont(font);
-        setButtonLayoutData(upButton);
+		Button upButton = new Button(this.buttonComposite, SWT.CENTER
+				| SWT.PUSH);
+		upButton.setText(UP_LABEL);
+		upButton.setEnabled(enableComposite);
+		upButton.setFont(font);
+		setButtonLayoutData(upButton);
 
-        SelectionListener listener = new SelectionAdapter() {
-            @Override
+		SelectionListener listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                moveSelectionUp();
-            }
-        };
-        upButton.addSelectionListener(listener);
+				moveSelectionUp();
+			}
+		};
+		upButton.addSelectionListener(listener);
 
-        Button downButton = new Button(this.buttonComposite, SWT.CENTER
-                | SWT.PUSH);
-        downButton.setText(DOWN_LABEL);
-        downButton.setEnabled(enableComposite);
-        listener = new SelectionAdapter() {
-            @Override
+		Button downButton = new Button(this.buttonComposite, SWT.CENTER
+				| SWT.PUSH);
+		downButton.setText(DOWN_LABEL);
+		downButton.setEnabled(enableComposite);
+		listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                moveSelectionDown();
-            }
-        };
-        downButton.addSelectionListener(listener);
-        downButton.setFont(font);
-        setButtonLayoutData(downButton);
+				moveSelectionDown();
+			}
+		};
+		downButton.addSelectionListener(listener);
+		downButton.setFont(font);
+		setButtonLayoutData(downButton);
 
-        Button addButton = new Button(this.buttonComposite, SWT.CENTER
-                | SWT.PUSH);
-        addButton.setText(ADD_LABEL);
-        listener = new SelectionAdapter() {
-            @Override
+		Button addButton = new Button(this.buttonComposite, SWT.CENTER
+				| SWT.PUSH);
+		addButton.setText(ADD_LABEL);
+		listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                addProject();
-            }
-        };
-        addButton.addSelectionListener(listener);
-        addButton.setEnabled(enableComposite);
-        addButton.setFont(font);
-        setButtonLayoutData(addButton);
+				addProject();
+			}
+		};
+		addButton.addSelectionListener(listener);
+		addButton.setEnabled(enableComposite);
+		addButton.setFont(font);
+		setButtonLayoutData(addButton);
 
-        Button removeButton = new Button(this.buttonComposite, SWT.CENTER
-                | SWT.PUSH);
-        removeButton.setText(REMOVE_LABEL);
-        listener = new SelectionAdapter() {
-            @Override
+		Button removeButton = new Button(this.buttonComposite, SWT.CENTER
+				| SWT.PUSH);
+		removeButton.setText(REMOVE_LABEL);
+		listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-                removeSelection();
-            }
-        };
-        removeButton.addSelectionListener(listener);
-        removeButton.setEnabled(enableComposite);
-        removeButton.setFont(font);
-        setButtonLayoutData(removeButton);
+				removeSelection();
+			}
+		};
+		removeButton.addSelectionListener(listener);
+		removeButton.setEnabled(enableComposite);
+		removeButton.setFont(font);
+		setButtonLayoutData(removeButton);
 
-    }
+	}
 
-    /**
-     * Create the field for the maximum number of iterations in the presence
-     * of cycles.
-     */
-    private void createMaxIterationsField(Composite composite) {
-        maxItersField = new IntegerFieldEditor(
+	/**
+	 * Create the field for the maximum number of iterations in the presence
+	 * of cycles.
+	 */
+	private void createMaxIterationsField(Composite composite) {
+		maxItersField = new IntegerFieldEditor(
 				"", IDEWorkbenchMessages.BuildOrderPreference_maxIterationsLabel, composite) { //$NON-NLS-1$
-            @Override
+			@Override
 			protected void doLoad() {
-                Text text = getTextControl();
-                if (text != null) {
-                    int value = getWorkspace().getDescription()
-                            .getMaxBuildIterations();
-                    text.setText(Integer.toString(value));
-                }
-            }
+				Text text = getTextControl();
+				if (text != null) {
+					int value = getWorkspace().getDescription()
+							.getMaxBuildIterations();
+					text.setText(Integer.toString(value));
+				}
+			}
 
-            @Override
+			@Override
 			protected void doLoadDefault() {
-                Text text = getTextControl();
-                if (text != null) {
-                    int value = ResourcesPlugin.getPlugin()
-                            .getPluginPreferences().getDefaultInt(
-                                    ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS);
-                    text.setText(Integer.toString(value));
-                }
-                valueChanged();
-            }
+				Text text = getTextControl();
+				if (text != null) {
+					int value = ResourcesPlugin.getPlugin()
+							.getPluginPreferences().getDefaultInt(
+									ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS);
+					text.setText(Integer.toString(value));
+				}
+				valueChanged();
+			}
 
-            @Override
+			@Override
 			protected void doStore() {
-                // handled specially in performOK()
-                throw new UnsupportedOperationException();
-            }
-        };
-        maxItersField.setValidRange(1, Integer.MAX_VALUE);
-        maxItersField.setPage(this);
-        maxItersField.setPreferenceStore(getPreferenceStore());
-        maxItersField.setPropertyChangeListener(validityChangeListener);
-        maxItersField.load();
-    }
+				// handled specially in performOK()
+				throw new UnsupportedOperationException();
+			}
+		};
+		maxItersField.setValidRange(1, Integer.MAX_VALUE);
+		maxItersField.setPage(this);
+		maxItersField.setPreferenceStore(getPreferenceStore());
+		maxItersField.setPropertyChangeListener(validityChangeListener);
+		maxItersField.load();
+	}
 
-    /**
-     * The defaults button has been selected - update the other widgets as required.
-     * @param selected - whether or not the defaults button got selected
-     */
-    private void defaultsButtonSelected(boolean selected) {
-        if (selected) {
-            setBuildOrderWidgetsEnablement(false);
-            //Cache the current value as the custom order
-            customBuildOrder = buildList.getItems();
-            buildList.setItems(getDefaultProjectOrder());
+	/**
+	 * The defaults button has been selected - update the other widgets as required.
+	 * @param selected - whether or not the defaults button got selected
+	 */
+	private void defaultsButtonSelected(boolean selected) {
+		if (selected) {
+			setBuildOrderWidgetsEnablement(false);
+			//Cache the current value as the custom order
+			customBuildOrder = buildList.getItems();
+			buildList.setItems(getDefaultProjectOrder());
 
-        } else {
-            setBuildOrderWidgetsEnablement(true);
-            String[] buildOrder = getCurrentBuildOrder();
-            if (buildOrder == null) {
+		} else {
+			setBuildOrderWidgetsEnablement(true);
+			String[] buildOrder = getCurrentBuildOrder();
+			if (buildOrder == null) {
 				buildList.setItems(getDefaultProjectOrder());
 			} else {
 				buildList.setItems(buildOrder);
 			}
-        }
-    }
+		}
+	}
 
-    /**
-     * Get the project names for the current custom build
-     * order stored in the workspace description.
-     *
-     * @return java.lang.String[] or null if there is no setting
-     */
-    private String[] getCurrentBuildOrder() {
-        if (notCheckedBuildOrder) {
-            customBuildOrder = getWorkspace().getDescription().getBuildOrder();
-            notCheckedBuildOrder = false;
-        }
+	/**
+	 * Get the project names for the current custom build
+	 * order stored in the workspace description.
+	 *
+	 * @return java.lang.String[] or null if there is no setting
+	 */
+	private String[] getCurrentBuildOrder() {
+		if (notCheckedBuildOrder) {
+			customBuildOrder = getWorkspace().getDescription().getBuildOrder();
+			notCheckedBuildOrder = false;
+		}
 
-        return customBuildOrder;
-    }
+		return customBuildOrder;
+	}
 
-    /**
-     * Get the project names in the default build order
-     * based on the current Workspace settings.
-     *
-     * @return java.lang.String[]
-     */
-    private String[] getDefaultProjectOrder() {
-        if (defaultBuildOrder == null) {
-            IWorkspace workspace = getWorkspace();
-            IWorkspace.ProjectOrder projectOrder = getWorkspace()
-                    .computeProjectOrder(workspace.getRoot().getProjects());
-            IProject[] foundProjects = projectOrder.projects;
-            defaultBuildOrder = new String[foundProjects.length];
-            int foundSize = foundProjects.length;
-            for (int i = 0; i < foundSize; i++) {
-                defaultBuildOrder[i] = foundProjects[i].getName();
-            }
-        }
+	/**
+	 * Get the project names in the default build order
+	 * based on the current Workspace settings.
+	 *
+	 * @return java.lang.String[]
+	 */
+	private String[] getDefaultProjectOrder() {
+		if (defaultBuildOrder == null) {
+			IWorkspace workspace = getWorkspace();
+			IWorkspace.ProjectOrder projectOrder = getWorkspace()
+					.computeProjectOrder(workspace.getRoot().getProjects());
+			IProject[] foundProjects = projectOrder.projects;
+			defaultBuildOrder = new String[foundProjects.length];
+			int foundSize = foundProjects.length;
+			for (int i = 0; i < foundSize; i++) {
+				defaultBuildOrder[i] = foundProjects[i].getName();
+			}
+		}
 
-        return defaultBuildOrder;
-    }
+		return defaultBuildOrder;
+	}
 
-    /**
-     * Return the Workspace the build order is from.
-     * @return org.eclipse.core.resources.IWorkspace
-     */
-    private IWorkspace getWorkspace() {
-        return ResourcesPlugin.getWorkspace();
-    }
+	/**
+	 * Return the Workspace the build order is from.
+	 * @return org.eclipse.core.resources.IWorkspace
+	 */
+	private IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
 
-    /**
-     * Return whether or not searchElement is in testArray.
-     */
-    private boolean includes(String[] testArray, String searchElement) {
+	/**
+	 * Return whether or not searchElement is in testArray.
+	 */
+	private boolean includes(String[] testArray, String searchElement) {
 
-        for (String currentSearchElement : testArray) {
-            if (searchElement.equals(currentSearchElement)) {
+		for (String currentSearchElement : testArray) {
+			if (searchElement.equals(currentSearchElement)) {
 				return true;
 			}
-        }
-        return false;
+		}
+		return false;
 
-    }
+	}
 
-    /**
-     * See IWorkbenchPreferencePage. This class does nothing with he Workbench.
-     */
-    @Override
+	/**
+	 * See IWorkbenchPreferencePage. This class does nothing with he Workbench.
+	 */
+	@Override
 	public void init(IWorkbench workbench) {
-        this.workbench = workbench;
-        setPreferenceStore(PrefUtil.getInternalPreferenceStore());
-    }
+		this.workbench = workbench;
+		setPreferenceStore(PrefUtil.getInternalPreferenceStore());
+	}
 
-    /**
-     * Move the current selection in the build list down.
-     */
-    private void moveSelectionDown() {
+	/**
+	 * Move the current selection in the build list down.
+	 */
+	private void moveSelectionDown() {
 
-        //Only do this operation on a single selection
-        if (this.buildList.getSelectionCount() == 1) {
-            int currentIndex = this.buildList.getSelectionIndex();
-            if (currentIndex < this.buildList.getItemCount() - 1) {
-                String elementToMove = this.buildList.getItem(currentIndex);
-                this.buildList.remove(currentIndex);
-                this.buildList.add(elementToMove, currentIndex + 1);
-                this.buildList.select(currentIndex + 1);
-            }
-        }
-    }
+		//Only do this operation on a single selection
+		if (this.buildList.getSelectionCount() == 1) {
+			int currentIndex = this.buildList.getSelectionIndex();
+			if (currentIndex < this.buildList.getItemCount() - 1) {
+				String elementToMove = this.buildList.getItem(currentIndex);
+				this.buildList.remove(currentIndex);
+				this.buildList.add(elementToMove, currentIndex + 1);
+				this.buildList.select(currentIndex + 1);
+			}
+		}
+	}
 
-    /**
-     * Move the current selection in the build list up.
-     */
-    private void moveSelectionUp() {
+	/**
+	 * Move the current selection in the build list up.
+	 */
+	private void moveSelectionUp() {
 
-        int currentIndex = this.buildList.getSelectionIndex();
+		int currentIndex = this.buildList.getSelectionIndex();
 
-        //Only do this operation on a single selection
-        if (currentIndex > 0 && this.buildList.getSelectionCount() == 1) {
-            String elementToMove = this.buildList.getItem(currentIndex);
-            this.buildList.remove(currentIndex);
-            this.buildList.add(elementToMove, currentIndex - 1);
-            this.buildList.select(currentIndex - 1);
-        }
-    }
+		//Only do this operation on a single selection
+		if (currentIndex > 0 && this.buildList.getSelectionCount() == 1) {
+			String elementToMove = this.buildList.getItem(currentIndex);
+			this.buildList.remove(currentIndex);
+			this.buildList.add(elementToMove, currentIndex - 1);
+			this.buildList.select(currentIndex - 1);
+		}
+	}
 
-    /**
-     * Performs special processing when this page's Defaults button has been pressed.
-     * In this case change the defaultOrderButton to have it's selection set to true.
-     */
-    @Override
+	/**
+	 * Performs special processing when this page's Defaults button has been pressed.
+	 * In this case change the defaultOrderButton to have it's selection set to true.
+	 */
+	@Override
 	protected void performDefaults() {
-        this.defaultOrderButton.setSelection(true);
-        defaultsButtonSelected(true);
-        maxItersField.loadDefault();
+		this.defaultOrderButton.setSelection(true);
+		defaultsButtonSelected(true);
+		maxItersField.loadDefault();
 
 		// core holds onto this preference.
 		boolean autoBuild = ResourcesPlugin.getPlugin().getPluginPreferences()
@@ -573,37 +573,37 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
 		IPreferenceStore store = getIDEPreferenceStore();
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
-        super.performDefaults();
-    }
+		super.performDefaults();
+	}
 
-    /**
-     * OK has been pressed. If the defualt button is pressed then reset the build order to false;
-     * otherwise set it to the contents of the list.
-     */
-    @Override
+	/**
+	 * OK has been pressed. If the defualt button is pressed then reset the build order to false;
+	 * otherwise set it to the contents of the list.
+	 */
+	@Override
 	public boolean performOk() {
 
-        String[] buildOrder = null;
-        boolean useDefault = defaultOrderButton.getSelection();
+		String[] buildOrder = null;
+		boolean useDefault = defaultOrderButton.getSelection();
 
-        // if use defaults is turned off
-        if (!useDefault) {
+		// if use defaults is turned off
+		if (!useDefault) {
 			buildOrder = buildList.getItems();
 		}
 
-        //Get a copy of the description from the workspace, set the build order and then
-        //apply it to the workspace.
-        IWorkspaceDescription description = getWorkspace().getDescription();
+		//Get a copy of the description from the workspace, set the build order and then
+		//apply it to the workspace.
+		IWorkspaceDescription description = getWorkspace().getDescription();
 		if (autoBuildButton.getSelection() != getWorkspace().isAutoBuilding()) {
-            try {
-                description.setAutoBuilding(autoBuildButton.getSelection());
+			try {
+				description.setAutoBuilding(autoBuildButton.getSelection());
 				getWorkspace().setDescription(description);
-            } catch (CoreException e) {
-                IDEWorkbenchPlugin.log(
-                        "Error changing auto build workspace setting.", e//$NON-NLS-1$
-                                .getStatus());
-            }
-        }
+			} catch (CoreException e) {
+				IDEWorkbenchPlugin.log(
+						"Error changing auto build workspace setting.", e//$NON-NLS-1$
+								.getStatus());
+			}
+		}
 		if (maxSimultaneousBuilds.getIntValue() != description.getMaxConcurrentBuilds()) {
 			try {
 				description.setMaxConcurrentBuilds(maxSimultaneousBuilds.getIntValue());
@@ -614,85 +614,85 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 			}
 		}
 
-        IPreferenceStore store = getIDEPreferenceStore();
+		IPreferenceStore store = getIDEPreferenceStore();
 
-        // store the save all prior to build setting
-        store.setValue(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD,
-                autoSaveAllButton.getSelection());
+		// store the save all prior to build setting
+		store.setValue(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD,
+				autoSaveAllButton.getSelection());
 
-        description.setBuildOrder(buildOrder);
-        description.setMaxBuildIterations(maxItersField.getIntValue());
-        try {
-            getWorkspace().setDescription(description);
-        } catch (CoreException exception) {
-            //failed - return false
-            return false;
-        }
+		description.setBuildOrder(buildOrder);
+		description.setMaxBuildIterations(maxItersField.getIntValue());
+		try {
+			getWorkspace().setDescription(description);
+		} catch (CoreException exception) {
+			//failed - return false
+			return false;
+		}
 
-        // Perform auto-build if use default is off (because
-        // order could have changed) or if use default setting
-        // was changed.
-        if (!useDefault || (useDefault != defaultOrderInitiallySelected)) {
-            defaultOrderInitiallySelected = useDefault;
-            // If auto build is turned on, then do a global incremental
-            // build on all the projects.
-            if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-                GlobalBuildAction action = new GlobalBuildAction(workbench
-                        .getActiveWorkbenchWindow(),
-                        IncrementalProjectBuilder.INCREMENTAL_BUILD);
-                action.doBuild();
-            }
-        }
+		// Perform auto-build if use default is off (because
+		// order could have changed) or if use default setting
+		// was changed.
+		if (!useDefault || (useDefault != defaultOrderInitiallySelected)) {
+			defaultOrderInitiallySelected = useDefault;
+			// If auto build is turned on, then do a global incremental
+			// build on all the projects.
+			if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+				GlobalBuildAction action = new GlobalBuildAction(workbench
+						.getActiveWorkbenchWindow(),
+						IncrementalProjectBuilder.INCREMENTAL_BUILD);
+				action.doBuild();
+			}
+		}
 
-        // Clear the custom build order cache
-        customBuildOrder = null;
+		// Clear the custom build order cache
+		customBuildOrder = null;
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Remove the current selection in the build list.
-     */
-    private void removeSelection() {
+	/**
+	 * Remove the current selection in the build list.
+	 */
+	private void removeSelection() {
 
-        this.buildList.remove(this.buildList.getSelectionIndices());
-    }
+		this.buildList.remove(this.buildList.getSelectionIndices());
+	}
 
-    /**
-     * Set the widgets that select build order to be enabled or diabled.
-     * @param value boolean
-     */
-    private void setBuildOrderWidgetsEnablement(boolean value) {
+	/**
+	 * Set the widgets that select build order to be enabled or diabled.
+	 * @param value boolean
+	 */
+	private void setBuildOrderWidgetsEnablement(boolean value) {
 
-        // Only change enablement of buttons. Leave list alone
-        // because you can't scroll it when disabled.
+		// Only change enablement of buttons. Leave list alone
+		// because you can't scroll it when disabled.
 		for (Control child : this.buttonComposite.getChildren()) {
 			child.setEnabled(value);
-        }
-    }
+		}
+	}
 
-    /**
-     * Return a sorted array of the names of the projects that are already in the currently
-     * displayed names.
-     * @return String[]
-     * @param allProjects - all of the projects in the workspace
-     * @param currentlyDisplayed - the names of the projects already being displayed
-     */
-    private String[] sortedDifference(IProject[] allProjects,
-            String[] currentlyDisplayed) {
+	/**
+	 * Return a sorted array of the names of the projects that are already in the currently
+	 * displayed names.
+	 * @return String[]
+	 * @param allProjects - all of the projects in the workspace
+	 * @param currentlyDisplayed - the names of the projects already being displayed
+	 */
+	private String[] sortedDifference(IProject[] allProjects,
+			String[] currentlyDisplayed) {
 
 		TreeSet<String> difference = new TreeSet<>();
 
-        for (int i = 0; i < allProjects.length; i++) {
-            if (!includes(currentlyDisplayed, allProjects[i].getName())) {
+		for (int i = 0; i < allProjects.length; i++) {
+			if (!includes(currentlyDisplayed, allProjects[i].getName())) {
 				difference.add(allProjects[i].getName());
 			}
-        }
+		}
 
-        String[] returnValue = new String[difference.size()];
-        difference.toArray(returnValue);
-        return returnValue;
-    }
+		String[] returnValue = new String[difference.size()];
+		difference.toArray(returnValue);
+		return returnValue;
+	}
 
 	/**
 	 * Create a composite that contains entry fields specifying save interval

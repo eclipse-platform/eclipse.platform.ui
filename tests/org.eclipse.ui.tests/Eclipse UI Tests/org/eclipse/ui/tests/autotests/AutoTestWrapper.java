@@ -19,27 +19,27 @@ import junit.framework.TestCase;
  * @since 3.1
  */
 public class AutoTestWrapper extends TestCase {
-    private AutoTest test;
-    private AbstractTestLogger log;
+	private AutoTest test;
+	private AbstractTestLogger log;
 
-    public AutoTestWrapper(AutoTest test, AbstractTestLogger resultLog) {
-        super(test.getName());
+	public AutoTestWrapper(AutoTest test, AbstractTestLogger resultLog) {
+		super(test.getName());
 
-        this.test = test;
-        this.log = resultLog;
-    }
+		this.test = test;
+		this.log = resultLog;
+	}
 
-    @Override
+	@Override
 	protected void runTest() throws Throwable {
-        String testName = test.getName();
+		String testName = test.getName();
 
-        TestResult result;
-        try {
-            result = new TestResult(test.performTest());
-        } catch (Throwable t) {
-            result = new TestResult(t);
-        }
+		TestResult result;
+		try {
+			result = new TestResult(test.performTest());
+		} catch (Throwable t) {
+			result = new TestResult(t);
+		}
 
-        log.reportResult(testName, result);
-    }
+		log.reportResult(testName, result);
+	}
 }

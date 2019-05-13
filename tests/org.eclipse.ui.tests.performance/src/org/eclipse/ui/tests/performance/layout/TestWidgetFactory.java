@@ -24,13 +24,13 @@ import org.eclipse.ui.WorkbenchException;
  */
 public abstract class TestWidgetFactory {
 	public Point getMaxSize() throws CoreException, WorkbenchException {
-	    Composite control = getControl();
-	    Composite parent = control.getParent();
+		Composite control = getControl();
+		Composite parent = control.getParent();
 
-	    if (parent == null) {
-	        return new Point(800, 600);
-	    }
-	    return Geometry.getSize(parent.getClientArea());
+		if (parent == null) {
+			return new Point(800, 600);
+		}
+		return Geometry.getSize(parent.getClientArea());
 	}
 	public void init() throws CoreException, WorkbenchException {}
 	public void done() throws CoreException, WorkbenchException {}

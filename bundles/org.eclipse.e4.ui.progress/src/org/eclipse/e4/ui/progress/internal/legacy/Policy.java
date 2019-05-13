@@ -20,12 +20,12 @@ package org.eclipse.e4.ui.progress.internal.legacy;
  * @since 2.1
  */
 public class Policy {
-    public static boolean DEFAULT = false;
+	public static boolean DEFAULT = false;
 
 
-    /**
-     * Whether or not to show system jobs at all times.
-     */
-    public static boolean DEBUG_SHOW_ALL_JOBS = DEFAULT;
+	/**
+	 * Whether or not to show system jobs at all times.
+	 */
+	public static boolean DEBUG_SHOW_ALL_JOBS = DEFAULT;
 
 }

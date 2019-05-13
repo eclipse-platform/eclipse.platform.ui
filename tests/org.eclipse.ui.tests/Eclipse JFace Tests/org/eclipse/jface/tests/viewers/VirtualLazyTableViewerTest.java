@@ -56,7 +56,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 	@Override
 	protected void setUpModel() {
 		fRootElement = TestElement.createModel(2, 100);
-        fModel = fRootElement.getModel();
+		fModel = fRootElement.getModel();
 	}
 
 	@Override

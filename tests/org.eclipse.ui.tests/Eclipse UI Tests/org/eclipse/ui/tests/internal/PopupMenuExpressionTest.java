@@ -22,47 +22,47 @@ import org.eclipse.ui.tests.harness.util.ActionUtil;
  */
 public class PopupMenuExpressionTest extends ActionExpressionTest {
 
-    public PopupMenuExpressionTest(String testName) {
-        super(testName);
-    }
+	public PopupMenuExpressionTest(String testName) {
+		super(testName);
+	}
 
-    /**
-     * Returns the menu manager containing the actions.
-     */
-    @Override
+	/**
+	 * Returns the menu manager containing the actions.
+	 */
+	@Override
 	protected MenuManager getActionMenuManager(ListView view) throws Throwable {
-        return view.getMenuManager();
-    }
+		return view.getMenuManager();
+	}
 
-    /**
-     * Tests the visibility of an action.
-     */
-    @Override
+	/**
+	 * Tests the visibility of an action.
+	 */
+	@Override
 	protected void testAction(MenuManager mgr, String action, boolean expected)
-            throws Throwable {
-        if (expected) {
+			throws Throwable {
+		if (expected) {
 			assertNotNull(action, ActionUtil.getActionWithLabel(mgr, action));
 		} else {
 			assertNull(action, ActionUtil.getActionWithLabel(mgr, action));
 		}
-    }
+	}
 
-    public void testExpressionEnabledAction() throws Throwable {
-        // Setup.
-        ListView view = showListView();
-        MenuManager mgr = getActionMenuManager(view);
+	public void testExpressionEnabledAction() throws Throwable {
+		// Setup.
+		ListView view = showListView();
+		MenuManager mgr = getActionMenuManager(view);
 
-        // Test null selection.
-        selectAndUpdateMenu(view, null, mgr);
-        testAction(mgr, "expressionEnablementAction_v2", false);
+		// Test null selection.
+		selectAndUpdateMenu(view, null, mgr);
+		testAction(mgr, "expressionEnablementAction_v2", false);
 
-        // Test red selection.
-        selectAndUpdateMenu(view, red, mgr);
-        testAction(mgr, "expressionEnablementAction_v2", true);
+		// Test red selection.
+		selectAndUpdateMenu(view, red, mgr);
+		testAction(mgr, "expressionEnablementAction_v2", true);
 
-        // Test blue selection.
-        selectAndUpdateMenu(view, blue, mgr);
-        testAction(mgr, "expressionEnablementAction_v2", false);
-    }
+		// Test blue selection.
+		selectAndUpdateMenu(view, blue, mgr);
+		testAction(mgr, "expressionEnablementAction_v2", false);
+	}
 
 }

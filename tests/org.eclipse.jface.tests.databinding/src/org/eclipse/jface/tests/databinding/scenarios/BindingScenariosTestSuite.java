@@ -40,36 +40,36 @@ import junit.framework.JUnit4TestAdapter;
 		TableScenarios.class, TextControlScenario.class })
 public class BindingScenariosTestSuite {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(suite());
+	}
 
-    private static Display display;
+	private static Display display;
 
-    private static Shell shell;
+	private static Shell shell;
 
-    public static junit.framework.Test suite() {
+	public static junit.framework.Test suite() {
 		return new TestSetup(new JUnit4TestAdapter(BindingScenariosTestSuite.class)) {
-            @Override
+			@Override
 			public void setUp() throws Exception {
-                Display d = Display.getDefault();
-                shell = new Shell(d, SWT.SHELL_TRIM);
-                shell.setLayout(new FillLayout());
-            }
+				Display d = Display.getDefault();
+				shell = new Shell(d, SWT.SHELL_TRIM);
+				shell.setLayout(new FillLayout());
+			}
 
-            @Override
+			@Override
 			public void tearDown() throws Exception {
-                shell.close();
-                shell.dispose();
-                if (display != null) {
-                    display.dispose();
-                }
-            }
-        };
-    }
+				shell.close();
+				shell.dispose();
+				if (display != null) {
+					display.dispose();
+				}
+			}
+		};
+	}
 
-    public static Shell getShell() {
-        return shell;
-    }
+	public static Shell getShell() {
+		return shell;
+	}
 
 }

@@ -32,39 +32,39 @@ import org.junit.Test;
 public class ActionBarConfigurerTest {
 
 
-    private Display display = null;
+	private Display display = null;
 
 	@Before
 	public void setUp() throws Exception {
 
-        assertNull(display);
-        display = PlatformUI.createDisplay();
-        assertNotNull(display);
-    }
+		assertNull(display);
+		display = PlatformUI.createDisplay();
+		assertNotNull(display);
+	}
 
 	@After
 	public void tearDown() throws Exception {
-        assertNotNull(display);
-        display.dispose();
-        assertTrue(display.isDisposed());
-    }
+		assertNotNull(display);
+		display.dispose();
+		assertTrue(display.isDisposed());
+	}
 
 	@Test
 	public void testDefaults() {
-        WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
-            @Override
+			@Override
 			public void fillActionBars(IWorkbenchWindow window,
-                    IActionBarConfigurer actionBarConfig, int flags) {
-                super.fillActionBars(window, actionBarConfig, flags);
+					IActionBarConfigurer actionBarConfig, int flags) {
+				super.fillActionBars(window, actionBarConfig, flags);
 
-                assertNotNull(actionBarConfig.getMenuManager());
-                assertNotNull(actionBarConfig.getStatusLineManager());
-                assertNotNull(actionBarConfig.getCoolBarManager());
-            }
-        };
+				assertNotNull(actionBarConfig.getMenuManager());
+				assertNotNull(actionBarConfig.getStatusLineManager());
+				assertNotNull(actionBarConfig.getCoolBarManager());
+			}
+		};
 
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
-    }
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
+	}
 }

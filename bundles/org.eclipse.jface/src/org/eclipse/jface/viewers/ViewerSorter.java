@@ -40,42 +40,42 @@ import java.text.Collator; // can't use ICU - Collator used in public API
  */
 @Deprecated
 public class ViewerSorter extends ViewerComparator {
-    /**
-     * The collator used to sort strings.
-     *
-     * @deprecated as of 3.3 Use {@link ViewerComparator#getComparator()}
-     */
-    @Deprecated
+	/**
+	 * The collator used to sort strings.
+	 *
+	 * @deprecated as of 3.3 Use {@link ViewerComparator#getComparator()}
+	 */
+	@Deprecated
 	protected Collator collator;
 
-    /**
-     * Creates a new viewer sorter, which uses the default collator
-     * to sort strings.
-     */
-    public ViewerSorter() {
-        this(Collator.getInstance());
-    }
+	/**
+	 * Creates a new viewer sorter, which uses the default collator
+	 * to sort strings.
+	 */
+	public ViewerSorter() {
+		this(Collator.getInstance());
+	}
 
-    /**
-     * Creates a new viewer sorter, which uses the given collator
-     * to sort strings.
-     *
-     * @param collator the collator to use to sort strings
-     */
-    public ViewerSorter(Collator collator) {
-    	super(collator);
-        this.collator = collator;
-    }
+	/**
+	 * Creates a new viewer sorter, which uses the given collator
+	 * to sort strings.
+	 *
+	 * @param collator the collator to use to sort strings
+	 */
+	public ViewerSorter(Collator collator) {
+		super(collator);
+		this.collator = collator;
+	}
 
-    /**
-     * Returns the collator used to sort strings.
-     *
-     * @return the collator used to sort strings
-     * @deprecated as of 3.3 Use {@link ViewerComparator#getComparator()}
-     */
-    @Deprecated
+	/**
+	 * Returns the collator used to sort strings.
+	 *
+	 * @return the collator used to sort strings
+	 * @deprecated as of 3.3 Use {@link ViewerComparator#getComparator()}
+	 */
+	@Deprecated
 	public Collator getCollator() {
-        return collator;
-    }
+		return collator;
+	}
 
 }

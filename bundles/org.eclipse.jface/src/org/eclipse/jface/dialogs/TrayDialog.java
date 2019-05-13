@@ -69,19 +69,19 @@ public abstract class TrayDialog extends Dialog {
 
 		@Override
 		public void controlResized (ControlEvent event) {
-				int newWidth = shell.getSize().x;
-				if (newWidth != shellWidth) {
-					int shellWidthIncrease = newWidth - shellWidth;
-					int trayWidthIncreaseTimes100 = (shellWidthIncrease * TRAY_RATIO) + remainder;
-					int trayWidthIncrease = trayWidthIncreaseTimes100/100;
-					remainder = trayWidthIncreaseTimes100 - (100 * trayWidthIncrease);
-					data.widthHint = data.widthHint + trayWidthIncrease;
-					shellWidth = newWidth;
-					if (!shell.isDisposed()) {
-						shell.layout();
-					}
+			int newWidth = shell.getSize().x;
+			if (newWidth != shellWidth) {
+				int shellWidthIncrease = newWidth - shellWidth;
+				int trayWidthIncreaseTimes100 = (shellWidthIncrease * TRAY_RATIO) + remainder;
+				int trayWidthIncrease = trayWidthIncreaseTimes100/100;
+				remainder = trayWidthIncreaseTimes100 - (100 * trayWidthIncrease);
+				data.widthHint = data.widthHint + trayWidthIncrease;
+				shellWidth = newWidth;
+				if (!shell.isDisposed()) {
+					shell.layout();
 				}
-		  }
+			}
+		}
 	}
 
 	private static boolean dialogHelpAvailable;
@@ -222,23 +222,23 @@ public abstract class TrayDialog extends Dialog {
 
 	@Override
 	protected Control createButtonBar(Composite parent) {
-    	Composite composite = new Composite(parent, SWT.NONE);
-    	GridLayout layout = new GridLayout();
-    	layout.marginWidth = 0;
-    	layout.marginHeight = 0;
-    	layout.horizontalSpacing = 0;
-    	composite.setLayout(layout);
-    	composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-    	composite.setFont(parent.getFont());
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		composite.setFont(parent.getFont());
 
 		// create help control if needed
-        if (isHelpAvailable()) {
-        	Control helpControl = createHelpControl(composite);
-        	((GridData) helpControl.getLayoutData()).horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		if (isHelpAvailable()) {
+			Control helpControl = createHelpControl(composite);
+			((GridData) helpControl.getLayoutData()).horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		}
-        Control buttonSection = super.createButtonBar(composite);
-        ((GridData) buttonSection.getLayoutData()).grabExcessHorizontalSpace = true;
-        return composite;
+		Control buttonSection = super.createButtonBar(composite);
+		((GridData) buttonSection.getLayoutData()).grabExcessHorizontalSpace = true;
+		return composite;
 	}
 
 	/**
@@ -254,24 +254,24 @@ public abstract class TrayDialog extends Dialog {
 	 * @param parent the parent composite
 	 * @return the help control
 	 */
-    protected Control createHelpControl(Composite parent) {
+	protected Control createHelpControl(Composite parent) {
 		Image helpImage = JFaceResources.getImage(DLG_IMG_HELP);
 		if (helpImage != null) {
 			return createHelpImageButton(parent, helpImage);
 		}
 		return createHelpLink(parent);
-    }
+	}
 
-    /*
-     * Creates a button with a help image. This is only used if there
-     * is an image available.
-     */
+	/*
+	 * Creates a button with a help image. This is only used if there
+	 * is an image available.
+	 */
 	private ToolBar createHelpImageButton(Composite parent, Image image) {
-        ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
-        ((GridLayout) parent.getLayout()).numColumns++;
+		ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
+		((GridLayout) parent.getLayout()).numColumns++;
 		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		toolBar.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
-        fHelpButton = new ToolItem(toolBar, SWT.CHECK);
+		fHelpButton = new ToolItem(toolBar, SWT.CHECK);
 		fHelpButton.setImage(image);
 		fHelpButton.setToolTipText(JFaceResources.getString("helpToolTip")); //$NON-NLS-1$
 		fHelpButton.addSelectionListener(widgetSelectedAdapter(e -> helpPressed()));
@@ -284,7 +284,7 @@ public abstract class TrayDialog extends Dialog {
 	 */
 	private Link createHelpLink(Composite parent) {
 		Link link = new Link(parent, SWT.WRAP | SWT.NO_FOCUS);
-        ((GridLayout) parent.getLayout()).numColumns++;
+		((GridLayout) parent.getLayout()).numColumns++;
 		link.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		link.setText("<a>"+IDialogConstants.HELP_LABEL+"</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 		link.setToolTipText(IDialogConstants.HELP_LABEL);

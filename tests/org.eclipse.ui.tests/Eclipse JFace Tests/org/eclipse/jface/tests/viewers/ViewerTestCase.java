@@ -59,30 +59,30 @@ public abstract class ViewerTestCase extends TestCase {
 	protected abstract StructuredViewer createViewer(Composite parent);
 
 	public void interact() {
-	    Shell shell = fShell;
-	    if (shell != null && !shell.isDisposed()) {
-	        Display display = shell.getDisplay();
-	        if (display != null) {
-	            while (shell.isVisible()) {
+		Shell shell = fShell;
+		if (shell != null && !shell.isDisposed()) {
+			Display display = shell.getDisplay();
+			if (display != null) {
+				while (shell.isVisible()) {
 					display.readAndDispatch();
 				}
-	        }
-	    }
+			}
+		}
 	}
 
 	protected void openBrowser() {
-	    fDisplay = Display.getCurrent();
-	    if (fDisplay == null) {
-	        fDisplay = new Display();
-	    }
-	    fShell = new Shell(fDisplay, getShellStyle());
-	    fShell.setSize(500, 500);
-	    fShell.setLayout(new FillLayout());
-	    fViewer = createViewer(fShell);
-	    fViewer.setUseHashlookup(true);
-	    setInput();
-	    fShell.open();
-	    //processEvents();
+		fDisplay = Display.getCurrent();
+		if (fDisplay == null) {
+			fDisplay = new Display();
+		}
+		fShell = new Shell(fDisplay, getShellStyle());
+		fShell.setSize(500, 500);
+		fShell.setLayout(new FillLayout());
+		fViewer = createViewer(fShell);
+		fViewer.setUseHashlookup(true);
+		setInput();
+		fShell.open();
+		//processEvents();
 	}
 
 	/**
@@ -97,15 +97,15 @@ public abstract class ViewerTestCase extends TestCase {
 	}
 
 	public void processEvents() {
-	    Shell shell = fShell;
-	    if (shell != null && !shell.isDisposed()) {
-	        Display display = shell.getDisplay();
-	        if (display != null) {
-	            while (display.readAndDispatch()) {
-	            	// loop until there are no more events to dispatch
-	            }
-	        }
-	    }
+		Shell shell = fShell;
+		if (shell != null && !shell.isDisposed()) {
+			Display display = shell.getDisplay();
+			if (display != null) {
+				while (display.readAndDispatch()) {
+					// loop until there are no more events to dispatch
+				}
+			}
+		}
 	}
 
 	@Override
@@ -120,13 +120,13 @@ public abstract class ViewerTestCase extends TestCase {
 				throw new RuntimeException(th);
 			}
 		});
-	    setUpModel();
-	    openBrowser();
+		setUpModel();
+		openBrowser();
 	}
 
 	protected void setUpModel() {
 		fRootElement = TestElement.createModel(3, 10);
-	    fModel = fRootElement.getModel();
+		fModel = fRootElement.getModel();
 	}
 
 	/**
@@ -146,15 +146,15 @@ public abstract class ViewerTestCase extends TestCase {
 	public void tearDown() {
 		Policy.setLog(oldLogger);
 		SafeRunnable.setRunner(oldRunner);
-	    processEvents();
-	    fViewer = null;
-	    if (fShell != null) {
-	        fShell.dispose();
-	        fShell = null;
-	    }
-	    // leave the display
-	    fRootElement = null;
-	    fModel = null;
+		processEvents();
+		fViewer = null;
+		if (fShell != null) {
+			fShell.dispose();
+			fShell = null;
+		}
+		// leave the display
+		fRootElement = null;
+		fModel = null;
 	}
 
 	/**

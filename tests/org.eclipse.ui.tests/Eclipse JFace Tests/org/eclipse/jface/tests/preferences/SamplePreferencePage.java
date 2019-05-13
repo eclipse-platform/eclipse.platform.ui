@@ -32,13 +32,13 @@ public class SamplePreferencePage extends PreferencePage {
 
 	@Override
 	protected Control createContents(Composite parent) {
-        Label label = new Label(parent, SWT.LEFT);
-        label.setText(text);
-        GridData data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        label.setLayoutData(data);
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		label.setLayoutData(data);
 
-        return new Composite(parent, SWT.NULL);
+		return new Composite(parent, SWT.NULL);
 	}
 
 }

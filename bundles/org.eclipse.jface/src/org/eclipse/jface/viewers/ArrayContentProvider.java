@@ -48,18 +48,18 @@ public class ArrayContentProvider implements IStructuredContentProvider {
 			return instance;
 		}
 	}
-    /**
-     * Returns the elements in the input, which must be either an array or a
-     * <code>Collection</code>.
-     */
-    @Override
+	/**
+	 * Returns the elements in the input, which must be either an array or a
+	 * <code>Collection</code>.
+	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
-        if (inputElement instanceof Object[]) {
+		if (inputElement instanceof Object[]) {
 			return (Object[]) inputElement;
 		}
-        if (inputElement instanceof Collection) {
+		if (inputElement instanceof Collection) {
 			return ((Collection) inputElement).toArray();
 		}
-        return new Object[0];
-    }
+		return new Object[0];
+	}
 }

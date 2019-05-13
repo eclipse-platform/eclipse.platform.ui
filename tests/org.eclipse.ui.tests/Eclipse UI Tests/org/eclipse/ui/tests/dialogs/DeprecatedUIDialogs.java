@@ -25,22 +25,22 @@ import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 public class DeprecatedUIDialogs extends TestCase {
 
-    public DeprecatedUIDialogs(String name) {
-        super(name);
-    }
+	public DeprecatedUIDialogs(String name) {
+		super(name);
+	}
 
-    private Shell getShell() {
-        return DialogCheck.getShell();
-    }
+	private Shell getShell() {
+		return DialogCheck.getShell();
+	}
 
-    public void testSaveAll() {
-        YesNoCancelListSelectionDialog dialog = new YesNoCancelListSelectionDialog(
-                getShell(), new AdaptableList(),
-                new WorkbenchContentProvider(),
-                new WorkbenchPartLabelProvider(), WorkbenchMessages.EditorManager_saveResourcesMessage);
-        dialog.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
-        DialogCheck.assertDialog(dialog);
-    }
+	public void testSaveAll() {
+		YesNoCancelListSelectionDialog dialog = new YesNoCancelListSelectionDialog(
+				getShell(), new AdaptableList(),
+				new WorkbenchContentProvider(),
+				new WorkbenchPartLabelProvider(), WorkbenchMessages.EditorManager_saveResourcesMessage);
+		dialog.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
+		DialogCheck.assertDialog(dialog);
+	}
 
 }
 

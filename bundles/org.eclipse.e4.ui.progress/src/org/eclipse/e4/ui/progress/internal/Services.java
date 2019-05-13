@@ -101,8 +101,8 @@ public class Services {
 	}
 
 	public static Services getInstance() {
-	    return instance;
-    }
+		return instance;
+	}
 
 	public Display getDisplay() {
 		return display != null ? display : getDefaultDisplay();
@@ -129,16 +129,16 @@ public class Services {
 	}
 
 	public LogService getLogService() {
-	    return logService;
-    }
+		return logService;
+	}
 
 	public StatusReporter getStatusReporter() {
-	    return statusReporter;
-    }
+		return statusReporter;
+	}
 
 	public IProgressService getProgressService() {
-	    return progressService;
-    }
+		return progressService;
+	}
 
 	public EModelService getModelService() {
 		return modelService;
@@ -149,8 +149,8 @@ public class Services {
 	}
 
 	public MWindow getMWindow() {
-	    return window;
-    }
+		return window;
+	}
 
 	public MApplication getMApplication() {
 		return mApplication;

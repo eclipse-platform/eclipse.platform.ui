@@ -32,14 +32,14 @@ public class Preferences {
 
 	public static synchronized boolean getBoolean(String key) {
 		return Boolean.parseBoolean(preferences.get(key));
-    }
+	}
 
 	public static synchronized void set(String key, boolean value) {
 		preferences.put(key, Boolean.toString(value));
-    }
+	}
 
 	public static synchronized void set(String key, String value) {
-	    preferences.put(key, value);
-    }
+		preferences.put(key, value);
+	}
 
 }

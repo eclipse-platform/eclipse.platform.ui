@@ -43,12 +43,12 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		fileEditorsArea.getControl().setLayoutData(data);
 
-        PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(composite, SWT.NONE,
-                "org.eclipse.ui.preferencePages.ContentTypes", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink,//$NON-NLS-1$
-                (IWorkbenchPreferenceContainer) getContainer(),null);
+		PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(composite, SWT.NONE,
+				"org.eclipse.ui.preferencePages.ContentTypes", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink,//$NON-NLS-1$
+				(IWorkbenchPreferenceContainer) getContainer(),null);
 
-        data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-        contentTypeArea.getControl().setLayoutData(data);
+		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		contentTypeArea.getControl().setLayoutData(data);
 
 		PreferenceLinkArea appearanceArea = new PreferenceLinkArea(composite, SWT.NONE,
 				"org.eclipse.ui.preferencePages.Views", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink,//$NON-NLS-1$
@@ -69,7 +69,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
 		applyDialogFont(composite);
 
-        super.setHelpContext(parent);
+		super.setHelpContext(parent);
 
 		return composite;
 	}

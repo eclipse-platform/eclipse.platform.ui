@@ -322,8 +322,8 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	}
 
 	// dialog store id constants
-    private static final String STORE_DIRECTORIES = "WizardProjectsImportPage.STORE_DIRECTORIES";//$NON-NLS-1$
-    private static final String STORE_ARCHIVES = "WizardProjectsImportPage.STORE_ARCHIVES";//$NON-NLS-1$
+	private static final String STORE_DIRECTORIES = "WizardProjectsImportPage.STORE_DIRECTORIES";//$NON-NLS-1$
+	private static final String STORE_ARCHIVES = "WizardProjectsImportPage.STORE_ARCHIVES";//$NON-NLS-1$
 
 	private static final String STORE_NESTED_PROJECTS = "WizardProjectsImportPage.STORE_NESTED_PROJECTS"; //$NON-NLS-1$
 
@@ -1266,7 +1266,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 		IWorkingSet[] selectedWorkingSets = workingSetGroup.getSelectedWorkingSets();
 		if(selectedWorkingSets == null || selectedWorkingSets.length == 0)
-		 {
+		{
 			return; // no Working set is selected
 		}
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
@@ -1511,10 +1511,10 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		// take care of the checkbox
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
-            restoreFromHistory(settings, STORE_DIRECTORIES, directoryPathField);
-            restoreFromHistory(settings, STORE_ARCHIVES, archivePathField);
+			restoreFromHistory(settings, STORE_DIRECTORIES, directoryPathField);
+			restoreFromHistory(settings, STORE_ARCHIVES, archivePathField);
 
-            // checkbox
+			// checkbox
 			nestedProjects = settings.getBoolean(STORE_NESTED_PROJECTS);
 			nestedProjectsCheckbox.setSelection(nestedProjects);
 
@@ -1583,10 +1583,10 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	public void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
-            saveInHistory(settings, STORE_DIRECTORIES, directoryPathField.getText());
-            saveInHistory(settings, STORE_ARCHIVES, archivePathField.getText());
+			saveInHistory(settings, STORE_DIRECTORIES, directoryPathField.getText());
+			saveInHistory(settings, STORE_ARCHIVES, archivePathField.getText());
 
-            settings.put(STORE_NESTED_PROJECTS, nestedProjectsCheckbox.getSelection());
+			settings.put(STORE_NESTED_PROJECTS, nestedProjectsCheckbox.getSelection());
 
 			settings.put(STORE_COPY_PROJECT_ID, copyCheckbox.getSelection());
 

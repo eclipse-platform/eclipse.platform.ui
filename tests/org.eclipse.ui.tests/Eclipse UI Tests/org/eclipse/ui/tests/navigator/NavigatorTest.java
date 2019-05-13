@@ -24,40 +24,40 @@ import org.eclipse.ui.PartInitException;
  */
 public class NavigatorTest extends AbstractNavigatorTest {
 
-    public NavigatorTest(String testName) {
-        super(testName);
-    }
+	public NavigatorTest(String testName) {
+		super(testName);
+	}
 
-    /**
-     * Tests that the Navigator is initially populated with
-     * the correct elements from the workspace.
-     */
-    public void testInitialPopulation() throws CoreException, PartInitException {
-        createTestFile();
-        showNav();
+	/**
+	 * Tests that the Navigator is initially populated with
+	 * the correct elements from the workspace.
+	 */
+	public void testInitialPopulation() throws CoreException, PartInitException {
+		createTestFile();
+		showNav();
 
-        // test its initial content by setting and getting selection on the file
-        ISelectionProvider selProv = navigator.getSite().getSelectionProvider();
-        StructuredSelection sel = new StructuredSelection(testFile);
-        selProv.setSelection(sel);
-        assertEquals(sel.size(), ((IStructuredSelection)selProv.getSelection()).size());
+		// test its initial content by setting and getting selection on the file
+		ISelectionProvider selProv = navigator.getSite().getSelectionProvider();
+		StructuredSelection sel = new StructuredSelection(testFile);
+		selProv.setSelection(sel);
+		assertEquals(sel.size(), ((IStructuredSelection)selProv.getSelection()).size());
 		assertEquals(sel.getFirstElement(), ((IStructuredSelection) selProv.getSelection()).getFirstElement());
-    }
+	}
 
-    /**
-     * Tests that the Navigator updates properly when a file is added to the workbench.
-     */
-    public void testFileAddition() throws CoreException, PartInitException {
-        createTestFolder(); // create the project and folder before the Navigator is shown
-        showNav();
-        createTestFile(); // create the file after the Navigator is shown
+	/**
+	 * Tests that the Navigator updates properly when a file is added to the workbench.
+	 */
+	public void testFileAddition() throws CoreException, PartInitException {
+		createTestFolder(); // create the project and folder before the Navigator is shown
+		showNav();
+		createTestFile(); // create the file after the Navigator is shown
 
-        // test its initial content by setting and getting selection on the file
-        ISelectionProvider selProv = navigator.getSite().getSelectionProvider();
-        StructuredSelection sel = new StructuredSelection(testFile);
-        selProv.setSelection(sel);
-        assertEquals(sel.size(), ((IStructuredSelection)selProv.getSelection()).size());
-        assertEquals(sel.getFirstElement(), ((IStructuredSelection)selProv.getSelection()).getFirstElement());
-    }
+		// test its initial content by setting and getting selection on the file
+		ISelectionProvider selProv = navigator.getSite().getSelectionProvider();
+		StructuredSelection sel = new StructuredSelection(testFile);
+		selProv.setSelection(sel);
+		assertEquals(sel.size(), ((IStructuredSelection)selProv.getSelection()).size());
+		assertEquals(sel.getFirstElement(), ((IStructuredSelection)selProv.getSelection()).getFirstElement());
+	}
 
 }

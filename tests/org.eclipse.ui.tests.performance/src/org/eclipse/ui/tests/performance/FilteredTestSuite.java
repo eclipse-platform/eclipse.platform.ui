@@ -48,15 +48,15 @@ public class FilteredTestSuite extends TestSuite {
 
 	static final public String FILTER_TEST_NAME = "org.eclipse.ui.tests.filter";
 
-    private String filterTestClassName;
-    private String filterTestName;
+	private String filterTestClassName;
+	private String filterTestName;
 
-    public FilteredTestSuite() {
-    	BundleContext context = UIPerformancePlugin.getDefault().getContext();
-    	if (context == null) { // most likely run in a wrong launch mode
-    		System.err.println("UIPerformanceTestSuite was unable to retirieve bundle context; test filtering is disabled");
-    		return;
-    	}
+	public FilteredTestSuite() {
+		BundleContext context = UIPerformancePlugin.getDefault().getContext();
+		if (context == null) { // most likely run in a wrong launch mode
+			System.err.println("UIPerformanceTestSuite was unable to retirieve bundle context; test filtering is disabled");
+			return;
+		}
 		String filterString = context.getProperty(FILTER_TEST_NAME);
 		if (filterString == null)
 			return;
@@ -80,24 +80,24 @@ public class FilteredTestSuite extends TestSuite {
 			filterTestClassName = filterString;
 			filterTestName = null;
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void addTest(Test test) {
-    	if ((filterTestClassName != null) || (filterTestName != null)) {
-    		if (test instanceof TestSuite) {
-    			addFilteredTestSuite((TestSuite)test);
-    			return;
-    		} else if (test instanceof TestCase) {
-    			addFilteredTestCase((TestCase)test);
-    			return;
-    		}
-    	}
-    	// default processing: no filter or unknown test type
-    	super.addTest(test);
-    }
+		if ((filterTestClassName != null) || (filterTestName != null)) {
+			if (test instanceof TestSuite) {
+				addFilteredTestSuite((TestSuite)test);
+				return;
+			} else if (test instanceof TestCase) {
+				addFilteredTestCase((TestCase)test);
+				return;
+			}
+		}
+		// default processing: no filter or unknown test type
+		super.addTest(test);
+	}
 
-    private void addFilteredTestSuite(TestSuite testSuite) {
+	private void addFilteredTestSuite(TestSuite testSuite) {
 		for (Enumeration<Test> allTests = testSuite.tests(); allTests.hasMoreElements();) {
 			Object subTest = allTests.nextElement();
 
@@ -123,17 +123,17 @@ public class FilteredTestSuite extends TestSuite {
 			}
 			addFilteredTestCase((TestCase)subTest);
 		}
-    }
+	}
 
-    private void addFilteredTestCase(TestCase testCase) {
-   		if (filterTestName == null) {
-   			super.addTest(testCase);
-   			return;
-   		}
+	private void addFilteredTestCase(TestCase testCase) {
+		if (filterTestName == null) {
+			super.addTest(testCase);
+			return;
+		}
 		String testCaseName = testCase.getName();
-   		if (testCaseName == null)
-   			return;
-   		if (testCaseName.matches(filterTestName))
-   			super.addTest(testCase);
-    }
+		if (testCaseName == null)
+			return;
+		if (testCaseName.matches(filterTestName))
+			super.addTest(testCase);
+	}
 }

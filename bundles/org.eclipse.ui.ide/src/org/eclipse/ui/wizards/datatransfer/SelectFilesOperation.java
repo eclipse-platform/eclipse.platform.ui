@@ -33,137 +33,137 @@ import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
  *	(the Cancel button) if the operation drags on for too long
  */
 public class SelectFilesOperation implements IRunnableWithProgress {
-    IProgressMonitor monitor;
+	IProgressMonitor monitor;
 
-    Object root;
+	Object root;
 
-    IImportStructureProvider provider;
+	IImportStructureProvider provider;
 
-    String desiredExtensions[];
+	String desiredExtensions[];
 
-    FileSystemElement result;
+	FileSystemElement result;
 
-    /**
-     * Creates a new <code>SelectFilesOperation</code>.
-     */
-    public SelectFilesOperation(Object rootObject,
-            IImportStructureProvider structureProvider) {
-        super();
-        root = rootObject;
-        provider = structureProvider;
-    }
+	/**
+	 * Creates a new <code>SelectFilesOperation</code>.
+	 */
+	public SelectFilesOperation(Object rootObject,
+			IImportStructureProvider structureProvider) {
+		super();
+		root = rootObject;
+		provider = structureProvider;
+	}
 
-    /**
-     * Creates and returns a <code>FileSystemElement</code> if the specified
-     * file system object merits one.  The criteria for this are:
-     * - if the file system object is a container then it must have either a
-     *   child container or an associated file
-     * - if the file system object is a file then it must have an extension
-     *   suitable for selection
-     */
-    protected FileSystemElement createElement(FileSystemElement parent,
-            Object fileSystemObject) throws InterruptedException {
-        ModalContext.checkCanceled(monitor);
-        boolean isContainer = provider.isFolder(fileSystemObject);
-        String elementLabel = parent == null ? provider
-                .getFullPath(fileSystemObject) : provider
-                .getLabel(fileSystemObject);
+	/**
+	 * Creates and returns a <code>FileSystemElement</code> if the specified
+	 * file system object merits one.  The criteria for this are:
+	 * - if the file system object is a container then it must have either a
+	 *   child container or an associated file
+	 * - if the file system object is a file then it must have an extension
+	 *   suitable for selection
+	 */
+	protected FileSystemElement createElement(FileSystemElement parent,
+			Object fileSystemObject) throws InterruptedException {
+		ModalContext.checkCanceled(monitor);
+		boolean isContainer = provider.isFolder(fileSystemObject);
+		String elementLabel = parent == null ? provider
+				.getFullPath(fileSystemObject) : provider
+				.getLabel(fileSystemObject);
 
-        if (!isContainer && !hasDesiredExtension(elementLabel)) {
+		if (!isContainer && !hasDesiredExtension(elementLabel)) {
 			return null;
 		}
 
-        FileSystemElement result = new FileSystemElement(elementLabel, parent,
-                isContainer);
-        result.setFileSystemObject(fileSystemObject);
+		FileSystemElement result = new FileSystemElement(elementLabel, parent,
+				isContainer);
+		result.setFileSystemObject(fileSystemObject);
 
-        if (isContainer) {
-            boolean haveChildOrFile = false;
-            List children = provider.getChildren(fileSystemObject);
-            if (children == null) {
+		if (isContainer) {
+			boolean haveChildOrFile = false;
+			List children = provider.getChildren(fileSystemObject);
+			if (children == null) {
 				children = new ArrayList(1);
 			}
-            Iterator childrenEnum = children.iterator();
-            while (childrenEnum.hasNext()) {
-                if (createElement(result, childrenEnum.next()) != null) {
+			Iterator childrenEnum = children.iterator();
+			while (childrenEnum.hasNext()) {
+				if (createElement(result, childrenEnum.next()) != null) {
 					haveChildOrFile = true;
 				}
-            }
+			}
 
-            if (!haveChildOrFile && parent != null) {
-                parent.removeFolder(result);
-                result = null;
-            }
-        }
+			if (!haveChildOrFile && parent != null) {
+				parent.removeFolder(result);
+				result = null;
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    /**
-     * Returns the extension portion of the passed filename string.
-     */
-    protected String getExtensionFor(String filename) {
-        int nIndex = filename.lastIndexOf('.');
+	/**
+	 * Returns the extension portion of the passed filename string.
+	 */
+	protected String getExtensionFor(String filename) {
+		int nIndex = filename.lastIndexOf('.');
 
-        if (nIndex >= 0) {
+		if (nIndex >= 0) {
 			return filename.substring(nIndex + 1);
 		}
 
-        return "";//$NON-NLS-1$
+		return "";//$NON-NLS-1$
 
-    }
+	}
 
-    /**
-     * Returns the resulting root file system element.
-     */
-    public FileSystemElement getResult() {
-        return result;
-    }
+	/**
+	 * Returns the resulting root file system element.
+	 */
+	public FileSystemElement getResult() {
+		return result;
+	}
 
-    /**
-     * Returns a boolean indicating whether the extension of the passed filename
-     * is one of the extensions specified as desired by the filter.
-     */
-    protected boolean hasDesiredExtension(String filename) {
-        if (desiredExtensions == null) {
+	/**
+	 * Returns a boolean indicating whether the extension of the passed filename
+	 * is one of the extensions specified as desired by the filter.
+	 */
+	protected boolean hasDesiredExtension(String filename) {
+		if (desiredExtensions == null) {
 			return true;
 		}
 
-        int extensionsSize = desiredExtensions.length;
-        for (int i = 0; i < extensionsSize; i++) {
-            if (getExtensionFor(filename)
-                    .equalsIgnoreCase(desiredExtensions[i])) {
+		int extensionsSize = desiredExtensions.length;
+		for (int i = 0; i < extensionsSize; i++) {
+			if (getExtensionFor(filename)
+					.equalsIgnoreCase(desiredExtensions[i])) {
 				return true;
 			}
-        }
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Runs the operation.
-     */
-    @Override
+	/**
+	 * Runs the operation.
+	 */
+	@Override
 	public void run(IProgressMonitor monitor) throws InterruptedException {
-        try {
-            this.monitor = monitor;
-            monitor.beginTask(DataTransferMessages.DataTransfer_scanningMatching, IProgressMonitor.UNKNOWN);
-            result = createElement(null, root);
-            if (result == null) {
-                result = new FileSystemElement(provider.getLabel(root), null,
-                        provider.isFolder(root));
-                result.setFileSystemObject(root);
-            }
-        } finally {
-            monitor.done();
-        }
-    }
+		try {
+			this.monitor = monitor;
+			monitor.beginTask(DataTransferMessages.DataTransfer_scanningMatching, IProgressMonitor.UNKNOWN);
+			result = createElement(null, root);
+			if (result == null) {
+				result = new FileSystemElement(provider.getLabel(root), null,
+						provider.isFolder(root));
+				result.setFileSystemObject(root);
+			}
+		} finally {
+			monitor.done();
+		}
+	}
 
-    /**
-     * Sets the file extensions which are desired.  A value of <code>null</code>
-     * indicates that all files should be kept regardless of extension.
-     */
-    public void setDesiredExtensions(String[] extensions) {
-        desiredExtensions = extensions;
-    }
+	/**
+	 * Sets the file extensions which are desired.  A value of <code>null</code>
+	 * indicates that all files should be kept regardless of extension.
+	 */
+	public void setDesiredExtensions(String[] extensions) {
+		desiredExtensions = extensions;
+	}
 }

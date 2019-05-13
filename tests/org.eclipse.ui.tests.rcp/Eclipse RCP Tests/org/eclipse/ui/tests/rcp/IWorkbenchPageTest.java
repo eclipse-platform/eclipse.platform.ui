@@ -40,55 +40,55 @@ import org.junit.Test;
 public class IWorkbenchPageTest {
 
 
-    private Display display = null;
+	private Display display = null;
 
 	@Before
 	public void setUp() throws Exception {
 
-        assertNull(display);
-        display = PlatformUI.createDisplay();
-        assertNotNull(display);
-    }
+		assertNull(display);
+		display = PlatformUI.createDisplay();
+		assertNotNull(display);
+	}
 
 	@After
 	public void tearDown() throws Exception {
-        assertNotNull(display);
-        display.dispose();
-        assertTrue(display.isDisposed());
+		assertNotNull(display);
+		display.dispose();
+		assertTrue(display.isDisposed());
 
-    }
+	}
 
-    /**
-     * Regression test for Bug 70080 [RCP] Reset Perspective does not work if no
-     * perspective toolbar shown (RCP).
-     */
+	/**
+	 * Regression test for Bug 70080 [RCP] Reset Perspective does not work if no
+	 * perspective toolbar shown (RCP).
+	 */
 	@Test
 	public void test70080() {
-        WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
+		WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
-            @Override
+			@Override
 			public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
-                super.preWindowOpen(configurer);
-                configurer.setShowPerspectiveBar(false);
-            }
+				super.preWindowOpen(configurer);
+				configurer.setShowPerspectiveBar(false);
+			}
 
-            @Override
+			@Override
 			public void postStartup() {
-                try {
-                    IWorkbenchWindow window = getWorkbenchConfigurer()
-                            .getWorkbench().getActiveWorkbenchWindow();
-                    IWorkbenchPage page = window.getActivePage();
-                    page.showView(EmptyView.ID);
-                    assertNotNull(page.findView(EmptyView.ID));
-                    page.resetPerspective();
-                    assertNull(page.findView(EmptyView.ID));
-                } catch (PartInitException e) {
-                    fail(e.toString());
-                }
-            }
-        };
-        int code = PlatformUI.createAndRunWorkbench(display, wa);
-        assertEquals(PlatformUI.RETURN_OK, code);
-    }
+				try {
+					IWorkbenchWindow window = getWorkbenchConfigurer()
+							.getWorkbench().getActiveWorkbenchWindow();
+					IWorkbenchPage page = window.getActivePage();
+					page.showView(EmptyView.ID);
+					assertNotNull(page.findView(EmptyView.ID));
+					page.resetPerspective();
+					assertNull(page.findView(EmptyView.ID));
+				} catch (PartInitException e) {
+					fail(e.toString());
+				}
+			}
+		};
+		int code = PlatformUI.createAndRunWorkbench(display, wa);
+		assertEquals(PlatformUI.RETURN_OK, code);
+	}
 
 }

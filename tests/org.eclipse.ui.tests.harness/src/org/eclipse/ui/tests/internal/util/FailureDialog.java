@@ -30,83 +30,83 @@ import org.eclipse.swt.widgets.Text;
  * the failure of a test.
  */
 public class FailureDialog extends Dialog {
-    private Text _text;
+	private Text _text;
 
-    private String _log;
+	private String _log;
 
-    private int SIZING_TEXT_WIDTH = 400;
+	private int SIZING_TEXT_WIDTH = 400;
 
-    private int SIZING_TEXT_HEIGHT = 200;
+	private int SIZING_TEXT_HEIGHT = 200;
 
-    /**
-     * Constructor for FailureDialog
-     */
-    public FailureDialog(Shell parentShell) {
-        super(parentShell);
-    }
+	/**
+	 * Constructor for FailureDialog
+	 */
+	public FailureDialog(Shell parentShell) {
+		super(parentShell);
+	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText("Dialog Test Failed");
-    }
+		super.configureShell(newShell);
+		newShell.setText("Dialog Test Failed");
+	}
 
-    @Override
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, "&OK", true);
-        createButton(parent, IDialogConstants.CANCEL_ID,
-                IDialogConstants.CANCEL_LABEL, false);
-    }
+		createButton(parent, IDialogConstants.OK_ID, "&OK", true);
+		createButton(parent, IDialogConstants.CANCEL_ID,
+				IDialogConstants.CANCEL_LABEL, false);
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        // page group
-        Composite composite = (Composite) super.createDialogArea(parent);
-        composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		// page group
+		Composite composite = (Composite) super.createDialogArea(parent);
+		composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-        Label label = new Label(composite, SWT.WRAP);
-        label.setText("&Enter a note regarding the failure:");
+		Label label = new Label(composite, SWT.WRAP);
+		label.setText("&Enter a note regarding the failure:");
 
-        _text = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL
-                | SWT.V_SCROLL);
-        _text.setFont(JFaceResources.getFontRegistry().get(
-                JFaceResources.TEXT_FONT));
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = SIZING_TEXT_WIDTH;
-        data.heightHint = SIZING_TEXT_HEIGHT;
-        _text.setLayoutData(data);
+		_text = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL
+				| SWT.V_SCROLL);
+		_text.setFont(JFaceResources.getFontRegistry().get(
+				JFaceResources.TEXT_FONT));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = SIZING_TEXT_WIDTH;
+		data.heightHint = SIZING_TEXT_HEIGHT;
+		_text.setLayoutData(data);
 
-        return composite;
-    }
+		return composite;
+	}
 
-    @Override
+	@Override
 	protected void okPressed() {
-        _log = _text.getText();
-        super.okPressed();
-    }
+		_log = _text.getText();
+		super.okPressed();
+	}
 
 	/**
 	 * @return String the text contained in the input area of the dialog.
 	 */
-    String getText() {
+	String getText() {
 		return (_log == null) ? "Empty entry." : _log;
-    }
+	}
 
 	/**
 	 * Sets the text of the input area. This should only be called to set the
 	 * initial text so only call before invoking open().
 	 */
-    void setText(String text) {
-        _text.setText(text);
-    }
+	void setText(String text) {
+		_text.setText(text);
+	}
 
 	/**
 	 * Returns a string representation of this class which the text contained in
 	 * the input area of the dialog.
 	 */
-    @Override
+	@Override
 	public String toString() {
-        return getText();
-    }
+		return getText();
+	}
 }
 

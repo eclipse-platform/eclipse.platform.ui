@@ -17,16 +17,16 @@ import org.eclipse.swt.graphics.Image;
 
 public abstract class Element {
 
-    private String name;
+	private String name;
 
-    public Element(String aName) {
-        super();
-        this.name = aName;
-    }
+	public Element(String aName) {
+		super();
+		this.name = aName;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public abstract Image getImage();
+	public abstract Image getImage();
 }

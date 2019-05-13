@@ -34,68 +34,68 @@ import org.eclipse.ui.part.MarkerTransfer;
  */
 class CopyBookmarkAction extends BookmarkAction {
 
-    /**
-     * Creates the action.
-     *
-     * @param bookmarkNavigator the view
-     */
-    public CopyBookmarkAction(BookmarkNavigator bookmarkNavigator) {
-        super(bookmarkNavigator, BookmarkMessages.CopyBookmark_text);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                IBookmarkHelpContextIds.COPY_BOOKMARK_ACTION);
-        setEnabled(false);
-    }
+	/**
+	 * Creates the action.
+	 *
+	 * @param bookmarkNavigator the view
+	 */
+	public CopyBookmarkAction(BookmarkNavigator bookmarkNavigator) {
+		super(bookmarkNavigator, BookmarkMessages.CopyBookmark_text);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IBookmarkHelpContextIds.COPY_BOOKMARK_ACTION);
+		setEnabled(false);
+	}
 
-    /**
-     * Performs this action.
-     */
-    @Override
+	/**
+	 * Performs this action.
+	 */
+	@Override
 	public void run() {
-        // Get the selected markers
-        BookmarkNavigator bookmarkNavigator = getView();
-        StructuredViewer viewer = bookmarkNavigator.getViewer();
+		// Get the selected markers
+		BookmarkNavigator bookmarkNavigator = getView();
+		StructuredViewer viewer = bookmarkNavigator.getViewer();
 		IStructuredSelection selection = viewer.getStructuredSelection();
-        if (selection.isEmpty()) {
-            return;
-        }
-        List list = selection.toList();
-        IMarker[] markers = new IMarker[list.size()];
-        list.toArray(markers);
+		if (selection.isEmpty()) {
+			return;
+		}
+		List list = selection.toList();
+		IMarker[] markers = new IMarker[list.size()];
+		list.toArray(markers);
 
-        setClipboard(markers, createBookmarkReport(markers));
-    }
+		setClipboard(markers, createBookmarkReport(markers));
+	}
 
-    /**
-     * Updates enablement based on the current selection
-     */
-    @Override
+	/**
+	 * Updates enablement based on the current selection
+	 */
+	@Override
 	public void selectionChanged(IStructuredSelection sel) {
-        setEnabled(!sel.isEmpty());
-    }
+		setEnabled(!sel.isEmpty());
+	}
 
-    private void setClipboard(IMarker[] markers, String markerReport) {
-        try {
-            // Place the markers on the clipboard
-            Object[] data = new Object[] { markers, markerReport };
-            Transfer[] transferTypes = new Transfer[] {
-                    MarkerTransfer.getInstance(), TextTransfer.getInstance() };
+	private void setClipboard(IMarker[] markers, String markerReport) {
+		try {
+			// Place the markers on the clipboard
+			Object[] data = new Object[] { markers, markerReport };
+			Transfer[] transferTypes = new Transfer[] {
+					MarkerTransfer.getInstance(), TextTransfer.getInstance() };
 
-            // set the clipboard contents
-            getView().getClipboard().setContents(data, transferTypes);
-        } catch (SWTError e) {
-            if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
+			// set the clipboard contents
+			getView().getClipboard().setContents(data, transferTypes);
+		} catch (SWTError e) {
+			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 				throw e;
 			}
-            if (MessageDialog
-                    .openQuestion(
-                            getView().getShell(),
-                            BookmarkMessages.CopyToClipboardProblemDialog_title, BookmarkMessages.CopyToClipboardProblemDialog_message)) {
+			if (MessageDialog
+					.openQuestion(
+							getView().getShell(),
+							BookmarkMessages.CopyToClipboardProblemDialog_title, BookmarkMessages.CopyToClipboardProblemDialog_message)) {
 				setClipboard(markers, markerReport);
 			}
-        }
-    }
+		}
+	}
 
-    private String createBookmarkReport(IMarker[] markers) {
+	private String createBookmarkReport(IMarker[] markers) {
 		StringBuilder report = new StringBuilder();
 		// write header
 		report.append(BookmarkMessages.ColumnDescription_header).append('\t');

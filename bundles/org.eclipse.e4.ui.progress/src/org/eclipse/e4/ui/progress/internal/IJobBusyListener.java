@@ -22,16 +22,16 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 interface IJobBusyListener {
 
-    /**
-     * Increment the busy count for job.
-     * @param job
-     */
-    public void incrementBusy(Job job);
+	/**
+	 * Increment the busy count for job.
+	 * @param job
+	 */
+	public void incrementBusy(Job job);
 
-    /**
-     * Decrement the busy count for job.
-     * @param job
-     */
-    public void decrementBusy(Job job);
+	/**
+	 * Decrement the busy count for job.
+	 * @param job
+	 */
+	public void decrementBusy(Job job);
 
 }

@@ -41,98 +41,98 @@ import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 @Deprecated
 public class CreateFolderAction extends SelectionListenerAction {
 
-    /**
-     * The id of this action.
-     */
-    public static final String ID = PlatformUI.PLUGIN_ID
-            + ".CreateFolderAction";//$NON-NLS-1$
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = PlatformUI.PLUGIN_ID
+			+ ".CreateFolderAction";//$NON-NLS-1$
 
-    /**
-     * The shell in which to show any dialogs.
-     */
-    protected IShellProvider shellProvider;
+	/**
+	 * The shell in which to show any dialogs.
+	 */
+	protected IShellProvider shellProvider;
 
-    /**
-     * Creates a new action for creating a folder resource.
-     *
-     * @param shell the shell for any dialogs
-     *
-     * @deprecated {@link #CreateFolderAction(IShellProvider)}
-     */
-    @Deprecated
+	/**
+	 * Creates a new action for creating a folder resource.
+	 *
+	 * @param shell the shell for any dialogs
+	 *
+	 * @deprecated {@link #CreateFolderAction(IShellProvider)}
+	 */
+	@Deprecated
 	public CreateFolderAction(final Shell shell) {
-        super(IDEWorkbenchMessages.CreateFolderAction_text);
-        Assert.isNotNull(shell);
-        shellProvider = () -> shell;
-        initAction();
-    }
+		super(IDEWorkbenchMessages.CreateFolderAction_text);
+		Assert.isNotNull(shell);
+		shellProvider = () -> shell;
+		initAction();
+	}
 
-    /**
-     * Creates a new action for creating a folder resource.
-     *
-     * @param provider the shell for any dialogs
-     *
-     * @deprecated see deprecated tag on class
-     * @since 3.4
-     */
-    @Deprecated
+	/**
+	 * Creates a new action for creating a folder resource.
+	 *
+	 * @param provider the shell for any dialogs
+	 *
+	 * @deprecated see deprecated tag on class
+	 * @since 3.4
+	 */
+	@Deprecated
 	public CreateFolderAction(IShellProvider provider){
-    	super(IDEWorkbenchMessages.CreateFolderAction_text);
-    	Assert.isNotNull(provider);
-    	shellProvider = provider;
-    	initAction();
-    }
+		super(IDEWorkbenchMessages.CreateFolderAction_text);
+		Assert.isNotNull(provider);
+		shellProvider = provider;
+		initAction();
+	}
 
-    /**
-     * Initializes for the constructor.
-     */
-    private void initAction(){
-    	setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-                .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));
-        setToolTipText(IDEWorkbenchMessages.CreateFolderAction_toolTip);
-        setId(ID);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Initializes for the constructor.
+	 */
+	private void initAction(){
+		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));
+		setToolTipText(IDEWorkbenchMessages.CreateFolderAction_toolTip);
+		setId(ID);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.CREATE_FOLDER_ACTION);
-    }
+	}
 
-    /**
-     * The <code>CreateFolderAction</code> implementation of this
-     * <code>IAction</code> method opens a <code>BasicNewFolderResourceWizard</code>
-     * in a wizard dialog under the shell passed to the constructor.
-     */
-    @Override
+	/**
+	 * The <code>CreateFolderAction</code> implementation of this
+	 * <code>IAction</code> method opens a <code>BasicNewFolderResourceWizard</code>
+	 * in a wizard dialog under the shell passed to the constructor.
+	 */
+	@Override
 	public void run() {
-        BasicNewFolderResourceWizard wizard = new BasicNewFolderResourceWizard();
-        wizard.init(PlatformUI.getWorkbench(), getStructuredSelection());
-        wizard.setNeedsProgressMonitor(true);
-        WizardDialog dialog = new WizardDialog(shellProvider.getShell(), wizard);
-        dialog.create();
-        dialog.getShell().setText(
-                IDEWorkbenchMessages.CreateFolderAction_title);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
-                IIDEHelpContextIds.NEW_FOLDER_WIZARD);
-        dialog.open();
+		BasicNewFolderResourceWizard wizard = new BasicNewFolderResourceWizard();
+		wizard.init(PlatformUI.getWorkbench(), getStructuredSelection());
+		wizard.setNeedsProgressMonitor(true);
+		WizardDialog dialog = new WizardDialog(shellProvider.getShell(), wizard);
+		dialog.create();
+		dialog.getShell().setText(
+				IDEWorkbenchMessages.CreateFolderAction_title);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+				IIDEHelpContextIds.NEW_FOLDER_WIZARD);
+		dialog.open();
 
-    }
+	}
 
-    /**
-     * The <code>CreateFolderAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method enables the action only
-     * if the selection contains folders and open projects.
-     */
-    @Override
+	/**
+	 * The <code>CreateFolderAction</code> implementation of this
+	 * <code>SelectionListenerAction</code> method enables the action only
+	 * if the selection contains folders and open projects.
+	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection s) {
-        if (!super.updateSelection(s)) {
-            return false;
-        }
+		if (!super.updateSelection(s)) {
+			return false;
+		}
 		Iterator<? extends IResource> resources = getSelectedResources().iterator();
-        while (resources.hasNext()) {
-            IResource resource = resources.next();
-            if (!resourceIsType(resource, IResource.PROJECT | IResource.FOLDER)
-                    || !resource.isAccessible()) {
-                return false;
-            }
-        }
-        return true;
-    }
+		while (resources.hasNext()) {
+			IResource resource = resources.next();
+			if (!resourceIsType(resource, IResource.PROJECT | IResource.FOLDER)
+					|| !resource.isAccessible()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

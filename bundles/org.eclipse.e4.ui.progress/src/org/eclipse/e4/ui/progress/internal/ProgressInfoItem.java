@@ -139,15 +139,15 @@ public class ProgressInfoItem extends Composite {
 
 	static {
 		ImageTools.getInstance().putIntoRegistry(STOP_IMAGE_KEY,
-		        "elcl16/progress_stop.png");//$NON-NLS-1$
+				"elcl16/progress_stop.png");//$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(DISABLED_STOP_IMAGE_KEY,
-		        "dlcl16/progress_stop.png");//$NON-NLS-1$
+				"dlcl16/progress_stop.png");//$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(DEFAULT_JOB_KEY,
-		        "progress/progress_task.png"); //$NON-NLS-1$
+				"progress/progress_task.png"); //$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(CLEAR_FINISHED_JOB_KEY,
-		        "elcl16/progress_rem.png"); //$NON-NLS-1$
+				"elcl16/progress_rem.png"); //$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(
-		        DISABLED_CLEAR_FINISHED_JOB_KEY, "dlcl16/progress_rem.png"); //$NON-NLS-1$
+				DISABLED_CLEAR_FINISHED_JOB_KEY, "dlcl16/progress_rem.png"); //$NON-NLS-1$
 
 		// Mac has different Gamma value
 		int shift = Util.isMac() ? -25 : -10;
@@ -157,8 +157,8 @@ public class ProgressInfoItem extends Composite {
 
 		// Determine a dark color by shifting the list color
 		RGB darkRGB = new RGB(Math.max(0, lightColor.getRed() + shift),
-		        Math.max(0, lightColor.getGreen() + shift), Math.max(0,
-		                lightColor.getBlue() + shift));
+				Math.max(0, lightColor.getGreen() + shift), Math.max(0,
+						lightColor.getBlue() + shift));
 		JFaceResources.getColorRegistry().put(DARK_COLOR_KEY, darkRGB);
 	}
 
@@ -171,8 +171,8 @@ public class ProgressInfoItem extends Composite {
 	 * @param progressInfo
 	 */
 	public ProgressInfoItem(Composite parent, int style,
-	        JobTreeElement progressInfo, IProgressService progressService,
-	        FinishedJobs finishedJobs) {
+			JobTreeElement progressInfo, IProgressService progressService,
+			FinishedJobs finishedJobs) {
 		super(parent, style);
 		info = progressInfo;
 		this.progressService = progressService;
@@ -182,7 +182,7 @@ public class ProgressInfoItem extends Composite {
 		createChildren();
 		if (info.isJobInfo()) {
 			setToolTipText(decorateText(getMainTitle(),
-			        ((JobInfo) info).getJob()));
+					((JobInfo) info).getJob()));
 		}
 	}
 
@@ -770,7 +770,7 @@ public class ProgressInfoItem extends Composite {
 		Object actionProperty = linkJob
 				.getProperty(IProgressConstants.ACTION_PROPERTY);
 		Object commandProperty = linkJob
-		        .getProperty(IProgressConstants.COMMAND_PROPERTY);
+				.getProperty(IProgressConstants.COMMAND_PROPERTY);
 
 		if (actionProperty != null && commandProperty != null) {
 			// if both are specified, then use neither
@@ -998,7 +998,7 @@ public class ProgressInfoItem extends Composite {
 
 	private static String decorateText(String text, Object element) {
 		String bundleId = FrameworkUtil.getBundle(element.getClass())
-		        .getSymbolicName();
+				.getSymbolicName();
 		return element == null ? text : text + " (" + bundleId + ")"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 

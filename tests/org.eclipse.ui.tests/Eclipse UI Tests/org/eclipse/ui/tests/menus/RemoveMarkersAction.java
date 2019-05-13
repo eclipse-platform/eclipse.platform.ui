@@ -33,60 +33,60 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class RemoveMarkersAction implements IWorkbenchWindowActionDelegate {
 
-    private IWorkbenchWindow window;
+	private IWorkbenchWindow window;
 
 
-    @Override
+	@Override
 	public void dispose() {
-        // TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbenchWindow window) {
-        this.window = window;
-    }
+		this.window = window;
+	}
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        try {
-	        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-	        IMarker[] markers = root.findMarkers(AddMarkersAction.CATEGORY_TEST_MARKER, false, IResource.DEPTH_ZERO);
+			IMarker[] markers = root.findMarkers(AddMarkersAction.CATEGORY_TEST_MARKER, false, IResource.DEPTH_ZERO);
 
-	        for (IMarker marker : markers) {
-	            String message = (String) marker.getAttribute(IMarker.MESSAGE);
+			for (IMarker marker : markers) {
+				String message = (String) marker.getAttribute(IMarker.MESSAGE);
 
-	            if (message != null && message.startsWith("this is a test")) {
-	                marker.delete();
-	            }
-	        }
-        } catch (CoreException e) {
-            openError(e);
-        }
-    }
+				if (message != null && message.startsWith("this is a test")) {
+					marker.delete();
+				}
+			}
+		} catch (CoreException e) {
+			openError(e);
+		}
+	}
 
-    private void openError(Exception e) {
-        String msg = e.getMessage();
-        if (msg == null) {
-            msg = e.getClass().getName();
-        }
+	private void openError(Exception e) {
+		String msg = e.getMessage();
+		if (msg == null) {
+			msg = e.getClass().getName();
+		}
 
-        e.printStackTrace();
+		e.printStackTrace();
 		String bundleId = FrameworkUtil.getBundle(RemoveMarkersAction.class).getSymbolicName();
 
 		IStatus status = new Status(IStatus.ERROR, bundleId, 0, msg, e);
 
-        TestPlugin.getDefault().getLog().log(status);
+		TestPlugin.getDefault().getLog().log(status);
 
-        ErrorDialog.openError(window.getShell(), "Error", msg, status);
-    }
+		ErrorDialog.openError(window.getShell(), "Error", msg, status);
+	}
 
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        // TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 
-    }
+	}
 
 }

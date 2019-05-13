@@ -24,36 +24,36 @@ import org.eclipse.core.resources.IMarker;
  */
 public class TaskMarker extends ConcreteMarker {
 
-    private int priority;
+	private int priority;
 
-    private int done;
+	private int done;
 
-    /**
-     * @param toCopy
-     */
-    public TaskMarker(IMarker toCopy) {
-        super(toCopy);
-    }
+	/**
+	 * @param toCopy
+	 */
+	public TaskMarker(IMarker toCopy) {
+		super(toCopy);
+	}
 
-    @Override
+	@Override
 	public void refresh() {
-        super.refresh();
-        priority = getMarker().getAttribute(IMarker.PRIORITY,
-                IMarker.PRIORITY_NORMAL);
-        done = -1;
-        if (getMarker().getAttribute(IMarker.USER_EDITABLE, true)) {
-            done = 0;
-            if (getMarker().getAttribute(IMarker.DONE, false)) {
-                done = 1;
-            }
-        }
-    }
+		super.refresh();
+		priority = getMarker().getAttribute(IMarker.PRIORITY,
+				IMarker.PRIORITY_NORMAL);
+		done = -1;
+		if (getMarker().getAttribute(IMarker.USER_EDITABLE, true)) {
+			done = 0;
+			if (getMarker().getAttribute(IMarker.DONE, false)) {
+				done = 1;
+			}
+		}
+	}
 
-    public int getPriority() {
-        return priority;
-    }
+	public int getPriority() {
+		return priority;
+	}
 
-    public int getDone() {
-        return done;
-    }
+	public int getDone() {
+		return done;
+	}
 }

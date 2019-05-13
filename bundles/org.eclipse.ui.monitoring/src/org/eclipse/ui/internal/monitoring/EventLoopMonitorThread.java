@@ -185,7 +185,7 @@ public class EventLoopMonitorThread extends Thread {
 				if (eventHistory != null) {
 					eventHistory.recordEvent(event.type, event.detail, nestingLevel);
 				}
-				 // Log a long interval, start the timer if inside another event.
+				// Log a long interval, start the timer if inside another event.
 				handleEventTransition(true, nestingLevel > 0);
 				break;
 			case SWT.PreExternalEventDispatch:

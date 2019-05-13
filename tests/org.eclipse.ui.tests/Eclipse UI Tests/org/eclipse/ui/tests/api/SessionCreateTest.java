@@ -29,75 +29,75 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class SessionCreateTest extends UITestCase {
 
-    private IWorkbenchWindow[] oldWindows;
+	private IWorkbenchWindow[] oldWindows;
 
-    public static String TEST_PROJ = "sessionTest";
+	public static String TEST_PROJ = "sessionTest";
 
-    public static String TEST_FILE_1 = "one.mock1";
+	public static String TEST_FILE_1 = "one.mock1";
 
-    public static String TEST_FILE_2 = "two.mock1";
+	public static String TEST_FILE_2 = "two.mock1";
 
-    public static String TEST_FILE_3 = "three.mock1";
+	public static String TEST_FILE_3 = "three.mock1";
 
-    /**
-     * Construct an instance.
-     */
-    public SessionCreateTest(String arg) {
-        super(arg);
-    }
+	/**
+	 * Construct an instance.
+	 */
+	public SessionCreateTest(String arg) {
+		super(arg);
+	}
 
-    /**
-     * Generates a session state in the workbench.
-     */
-    public void testSessionCreation() throws Throwable {
-        IWorkbenchWindow window;
-        IWorkbenchPage page;
+	/**
+	 * Generates a session state in the workbench.
+	 */
+	public void testSessionCreation() throws Throwable {
+		IWorkbenchWindow window;
+		IWorkbenchPage page;
 
-        // Save the original windows.  We close all of
-        // these at the end, after the test windows have
-        // been created.
-        saveOriginalWindows();
+		// Save the original windows.  We close all of
+		// these at the end, after the test windows have
+		// been created.
+		saveOriginalWindows();
 
-        // Create test window with empty perspective.
-        window = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
+		// Create test window with empty perspective.
+		window = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
 
-        // Create test window with empty perspective and
-        // session perspective.
-        window = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
-        page = window.openPage(SessionPerspective.ID, getPageInput());
+		// Create test window with empty perspective and
+		// session perspective.
+		window = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
+		page = window.openPage(SessionPerspective.ID, getPageInput());
 
-        // Create test window with two session perspectives.
-        window = fWorkbench.openWorkbenchWindow(SessionPerspective.ID, getPageInput());
-        page = window.openPage(SessionPerspective.ID, getPageInput());
+		// Create test window with two session perspectives.
+		window = fWorkbench.openWorkbenchWindow(SessionPerspective.ID, getPageInput());
+		page = window.openPage(SessionPerspective.ID, getPageInput());
 
-        // Open 3 editors in last page.
-        IProject proj = FileUtil.createProject(TEST_PROJ);
-        IFile file = FileUtil.createFile(TEST_FILE_1, proj);
-        page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
-        file = FileUtil.createFile(TEST_FILE_2, proj);
-        page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
-        file = FileUtil.createFile(TEST_FILE_3, proj);
-        page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
+		// Open 3 editors in last page.
+		IProject proj = FileUtil.createProject(TEST_PROJ);
+		IFile file = FileUtil.createFile(TEST_FILE_1, proj);
+		page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
+		file = FileUtil.createFile(TEST_FILE_2, proj);
+		page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
+		file = FileUtil.createFile(TEST_FILE_3, proj);
+		page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
 
-        // Close the original windows.
-        closeOriginalWindows();
-    }
+		// Close the original windows.
+		closeOriginalWindows();
+	}
 
-    /**
-     * Saves the original window set.
-     */
-    private void saveOriginalWindows() {
-        oldWindows = fWorkbench.getWorkbenchWindows();
-    }
+	/**
+	 * Saves the original window set.
+	 */
+	private void saveOriginalWindows() {
+		oldWindows = fWorkbench.getWorkbenchWindows();
+	}
 
-    /**
-     * Closes the original window set.
-     */
-    private void closeOriginalWindows() {
-        for (IWorkbenchWindow oldWindow : oldWindows) {
-            oldWindow.close();
-        }
-    }
+	/**
+	 * Closes the original window set.
+	 */
+	private void closeOriginalWindows() {
+		for (IWorkbenchWindow oldWindow : oldWindows) {
+			oldWindow.close();
+		}
+	}
 
 }
 

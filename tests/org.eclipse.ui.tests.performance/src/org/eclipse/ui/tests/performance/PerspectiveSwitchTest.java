@@ -29,79 +29,79 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
-    private String id1;
-    private String id2;
-    private String activeEditor;
+	private String id1;
+	private String id2;
+	private String activeEditor;
 
-    /**
-     * Constructor.
-     *
-     * @param id
-     */
-    public PerspectiveSwitchTest(String [] ids, int tagging) {
-        super("testPerspectiveSwitch:" + ids[0] + "," + ids[1] + ",editor " + ids[2], tagging);
-        this.id1 = ids[0];
-        this.id2 = ids[1];
-        this.activeEditor = ids[2];
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @param id
+	 */
+	public PerspectiveSwitchTest(String [] ids, int tagging) {
+		super("testPerspectiveSwitch:" + ids[0] + "," + ids[1] + ",editor " + ids[2], tagging);
+		this.id1 = ids[0];
+		this.id2 = ids[1];
+		this.activeEditor = ids[2];
+	}
 
-    /**
-     * Test perspective switching performance.
-     */
-    @Override
+	/**
+	 * Test perspective switching performance.
+	 */
+	@Override
 	protected void runTest() throws CoreException, WorkbenchException {
-        // Get the two perspectives to switch between.
-        final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
-                .getPerspectiveRegistry();
-        final IPerspectiveDescriptor perspective1 = registry
-                .findPerspectiveWithId(id1);
-        final IPerspectiveDescriptor perspective2 = registry
-                .findPerspectiveWithId(id2);
+		// Get the two perspectives to switch between.
+		final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry();
+		final IPerspectiveDescriptor perspective1 = registry
+				.findPerspectiveWithId(id1);
+		final IPerspectiveDescriptor perspective2 = registry
+				.findPerspectiveWithId(id2);
 
-        // Don't fail if we reference an unknown perspective ID. This can be
-        // a normal occurrance since the test suites reference JDT perspectives, which
-        // might not exist. Just skip the test.
-        if (perspective1 == null) {
-            System.out.println("Unknown perspective ID: " + id1);
-            return;
-        }
+		// Don't fail if we reference an unknown perspective ID. This can be
+		// a normal occurrance since the test suites reference JDT perspectives, which
+		// might not exist. Just skip the test.
+		if (perspective1 == null) {
+			System.out.println("Unknown perspective ID: " + id1);
+			return;
+		}
 
-        if (perspective2 == null) {
-            System.out.println("Unknown perspective ID: " + id2);
-            return;
-        }
+		if (perspective2 == null) {
+			System.out.println("Unknown perspective ID: " + id2);
+			return;
+		}
 
-        // Open the two perspectives and the file, in a new window.
-        // Do this outside the loop so as not to include
-        // the initial time to open, just switching.
-        IWorkbenchWindow window = openTestWindow(id1);
-        final IWorkbenchPage page = window.getActivePage();
-        assertNotNull(page);
-        page.setPerspective(perspective2);
+		// Open the two perspectives and the file, in a new window.
+		// Do this outside the loop so as not to include
+		// the initial time to open, just switching.
+		IWorkbenchWindow window = openTestWindow(id1);
+		final IWorkbenchPage page = window.getActivePage();
+		assertNotNull(page);
+		page.setPerspective(perspective2);
 
-        //IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
-        IFile aFile = getProject().getFile(activeEditor);
-        assertTrue(aFile.exists());
+		//IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
+		IFile aFile = getProject().getFile(activeEditor);
+		assertTrue(aFile.exists());
 
-        IDE.openEditor(page, aFile, true);
+		IDE.openEditor(page, aFile, true);
 
-       	tagIfNecessary("UI - Perspective Switch", Dimension.ELAPSED_PROCESS);
+		tagIfNecessary("UI - Perspective Switch", Dimension.ELAPSED_PROCESS);
 
-        exercise(new TestRunnable() {
-            @Override
+		exercise(new TestRunnable() {
+			@Override
 			public void run() throws Exception {
-                processEvents();
+				processEvents();
 
-                startMeasuring();
-                page.setPerspective(perspective1);
-                processEvents();
-                page.setPerspective(perspective2);
-                processEvents();
-                stopMeasuring();
-            }
-        });
+				startMeasuring();
+				page.setPerspective(perspective1);
+				processEvents();
+				page.setPerspective(perspective2);
+				processEvents();
+				stopMeasuring();
+			}
+		});
 
-        commitMeasurements();
-        assertPerformance();
-    }
+		commitMeasurements();
+		assertPerformance();
+	}
 }

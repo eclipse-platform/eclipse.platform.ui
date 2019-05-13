@@ -35,9 +35,9 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * content of specified zip file entry objects.
  */
 public class ZipFileStructureProvider implements IImportStructureProvider {
-    private ZipFile zipFile;
+	private ZipFile zipFile;
 
-    private ZipEntry root = new ZipEntry("/");//$NON-NLS-1$
+	private ZipEntry root = new ZipEntry("/");//$NON-NLS-1$
 
 	private Map<ZipEntry, List<ZipEntry>> children;
 
@@ -45,128 +45,128 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 
 	private Set<String> invalidEntries = new HashSet<>();
 
-    /**
-     * Creates a <code>ZipFileStructureProvider</code>, which will operate
-     * on the passed zip file.
-     *
-     * @param sourceFile the zip file used to create this structure provider
-     */
-    public ZipFileStructureProvider(ZipFile sourceFile) {
-        super();
-        zipFile = sourceFile;
-    }
+	/**
+	 * Creates a <code>ZipFileStructureProvider</code>, which will operate
+	 * on the passed zip file.
+	 *
+	 * @param sourceFile the zip file used to create this structure provider
+	 */
+	public ZipFileStructureProvider(ZipFile sourceFile) {
+		super();
+		zipFile = sourceFile;
+	}
 
-    /**
-     * Adds the specified child to the internal collection of the parent's children.
-     */
-    protected void addToChildren(ZipEntry parent, ZipEntry child) {
+	/**
+	 * Adds the specified child to the internal collection of the parent's children.
+	 */
+	protected void addToChildren(ZipEntry parent, ZipEntry child) {
 		List<ZipEntry> childList = children.get(parent);
-        if (childList == null) {
+		if (childList == null) {
 			childList = new ArrayList<>();
-            children.put(parent, childList);
-        }
+			children.put(parent, childList);
+		}
 
-        childList.add(child);
-    }
+		childList.add(child);
+	}
 
-    /**
-     * Creates a new container zip entry with the specified name, iff
-     * it has not already been created.
-     */
-    protected void createContainer(IPath pathname) {
-        if (directoryEntryCache.containsKey(pathname)) {
+	/**
+	 * Creates a new container zip entry with the specified name, iff
+	 * it has not already been created.
+	 */
+	protected void createContainer(IPath pathname) {
+		if (directoryEntryCache.containsKey(pathname)) {
 			return;
 		}
 
-        ZipEntry parent;
-        if (pathname.segmentCount() == 1) {
+		ZipEntry parent;
+		if (pathname.segmentCount() == 1) {
 			parent = root;
 		} else {
 			parent = directoryEntryCache.get(pathname
-                    .removeLastSegments(1));
+					.removeLastSegments(1));
 		}
 
-        ZipEntry newEntry = new ZipEntry(pathname.toString());
-        directoryEntryCache.put(pathname, newEntry);
-        addToChildren(parent, newEntry);
-    }
+		ZipEntry newEntry = new ZipEntry(pathname.toString());
+		directoryEntryCache.put(pathname, newEntry);
+		addToChildren(parent, newEntry);
+	}
 
-    /**
-     * Creates a new file zip entry with the specified name.
-     */
-    protected void createFile(ZipEntry entry) {
-        IPath pathname = new Path(entry.getName());
-        ZipEntry parent;
-        if (pathname.segmentCount() == 1) {
+	/**
+	 * Creates a new file zip entry with the specified name.
+	 */
+	protected void createFile(ZipEntry entry) {
+		IPath pathname = new Path(entry.getName());
+		ZipEntry parent;
+		if (pathname.segmentCount() == 1) {
 			parent = root;
 		} else {
 			parent = directoryEntryCache.get(pathname
-                    .removeLastSegments(1));
+					.removeLastSegments(1));
 		}
 
-        addToChildren(parent, entry);
-    }
+		addToChildren(parent, entry);
+	}
 
-    @Override
+	@Override
 	public List<?> getChildren(Object element) {
-        if (children == null) {
+		if (children == null) {
 			initialize();
 		}
 
-        return (children.get(element));
-    }
+		return (children.get(element));
+	}
 
-    @Override
+	@Override
 	public InputStream getContents(Object element) {
-        try {
+		try {
 			if (invalidEntries.contains(((ZipEntry) element).getName())) {
 				throw new IOException("Cannot get content of Entry as it is outside of the target dir: " //$NON-NLS-1$
 						+ ((ZipEntry) element).getName());
 			}
-            return zipFile.getInputStream((ZipEntry) element);
-        } catch (IOException e) {
-        	IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
-            return null;
-        }
-    }
+			return zipFile.getInputStream((ZipEntry) element);
+		} catch (IOException e) {
+			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
+			return null;
+		}
+	}
 
-    @Override
+	@Override
 	public String getFullPath(Object element) {
-        return ((ZipEntry) element).getName();
-    }
+		return ((ZipEntry) element).getName();
+	}
 
-    @Override
+	@Override
 	public String getLabel(Object element) {
-        if (element.equals(root)) {
+		if (element.equals(root)) {
 			return ((ZipEntry) element).getName();
 		}
 
-        return new Path(((ZipEntry) element).getName()).lastSegment();
-    }
+		return new Path(((ZipEntry) element).getName()).lastSegment();
+	}
 
-    /**
-     * Returns the entry that this importer uses as the root sentinel.
-     *
-     * @return java.util.zip.ZipEntry
-     */
-    public ZipEntry getRoot() {
-        return root;
-    }
+	/**
+	 * Returns the entry that this importer uses as the root sentinel.
+	 *
+	 * @return java.util.zip.ZipEntry
+	 */
+	public ZipEntry getRoot() {
+		return root;
+	}
 
-    /**
-     * Returns the zip file that this provider provides structure for.
-     *
-     * @return the zip file this provider provides structure for
-     */
-    public ZipFile getZipFile() {
-        return zipFile;
-    }
+	/**
+	 * Returns the zip file that this provider provides structure for.
+	 *
+	 * @return the zip file this provider provides structure for
+	 */
+	public ZipFile getZipFile() {
+		return zipFile;
+	}
 
-    /**
-     * Initializes this object's children table based on the contents of
-     * the specified source file.
-     */
-    protected void initialize() {
+	/**
+	 * Initializes this object's children table based on the contents of
+	 * the specified source file.
+	 */
+	protected void initialize() {
 		children = new HashMap<>(1000);
 
 		IPath zipFileDirPath = (new Path(zipFile.getName())).removeLastSegments(1);
@@ -179,7 +179,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 			return;
 		}
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
+		while (entries.hasMoreElements()) {
 			try {
 				ZipEntry entry = entries.nextElement();
 				File destinationfile = new File(zipDestinationDir, entry.getName());
@@ -199,12 +199,12 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 				}
 			} catch (IOException e) {
 				IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
-            }
-        }
-    }
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public boolean isFolder(Object element) {
-        return ((ZipEntry) element).isDirectory();
-    }
+		return ((ZipEntry) element).isDirectory();
+	}
 }

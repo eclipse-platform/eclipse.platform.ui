@@ -22,23 +22,23 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @see AbstractUIPlugin for additional information on UI plugins
  */
 public class PropertySheetPlugin extends AbstractUIPlugin {
-    // Default instance of the receiver
-    private static PropertySheetPlugin inst;
+	// Default instance of the receiver
+	private static PropertySheetPlugin inst;
 
-    /**
-     * Create the PropertySheet plugin and cache its default instance
-     */
-    public PropertySheetPlugin() {
-        if (inst == null)
-            inst = this;
-    }
+	/**
+	 * Create the PropertySheet plugin and cache its default instance
+	 */
+	public PropertySheetPlugin() {
+		if (inst == null)
+			inst = this;
+	}
 
-    /**
-     * Returns the plugin singleton.
-     *
-     * @return the default PropertySheetPlugin instance
-     */
-    static public PropertySheetPlugin getDefault() {
-        return inst;
-    }
+	/**
+	 * Returns the plugin singleton.
+	 *
+	 * @return the default PropertySheetPlugin instance
+	 */
+	static public PropertySheetPlugin getDefault() {
+		return inst;
+	}
 }

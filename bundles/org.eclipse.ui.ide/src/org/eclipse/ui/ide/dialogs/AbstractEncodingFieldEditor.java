@@ -414,7 +414,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 *
 	 * @param groupTitle
 	 *            The groupTitle to set.
-     * @since 3.3
+	 * @since 3.3
 	 */
 	public void setGroupTitle(String groupTitle) {
 		this.groupTitle = groupTitle;

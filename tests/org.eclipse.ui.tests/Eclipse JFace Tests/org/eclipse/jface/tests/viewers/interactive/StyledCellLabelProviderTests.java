@@ -231,8 +231,8 @@ public class StyledCellLabelProviderTests {
 			FontData base = originalData[i];
 			styleData[i] = new FontData(base.getName(), base.getHeight(), base.getStyle() | additionalStyle);
 		}
-       	return styleData;
-    }
+		return styleData;
+	}
 
 	private class ExampleLabelProvider extends StyledCellLabelProvider {
 

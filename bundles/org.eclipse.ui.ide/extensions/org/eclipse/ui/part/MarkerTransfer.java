@@ -51,60 +51,60 @@ import org.eclipse.swt.dnd.TransferData;
  */
 public class MarkerTransfer extends ByteArrayTransfer {
 
-    /**
-     * Singleton instance.
-     */
-    private static final MarkerTransfer instance = new MarkerTransfer();
+	/**
+	 * Singleton instance.
+	 */
+	private static final MarkerTransfer instance = new MarkerTransfer();
 
-    // Create a unique ID to make sure that different Eclipse
-    // applications use different "types" of <code>MarkerTransfer</code>
-    private static final String TYPE_NAME = "marker-transfer-format" + System.currentTimeMillis() + ":" + instance.hashCode();//$NON-NLS-2$//$NON-NLS-1$
+	// Create a unique ID to make sure that different Eclipse
+	// applications use different "types" of <code>MarkerTransfer</code>
+	private static final String TYPE_NAME = "marker-transfer-format" + System.currentTimeMillis() + ":" + instance.hashCode();//$NON-NLS-2$//$NON-NLS-1$
 
-    private static final int TYPEID = registerType(TYPE_NAME);
+	private static final int TYPEID = registerType(TYPE_NAME);
 
-    private IWorkspace workspace;
+	private IWorkspace workspace;
 
-    /**
-     * Creates a new transfer object.
-     */
-    private MarkerTransfer() {
-    }
+	/**
+	 * Creates a new transfer object.
+	 */
+	private MarkerTransfer() {
+	}
 
-    /**
-     * Locates and returns the marker associated with the given attributes.
-     *
-     * @param pathString the resource path
-     * @param id the id of the marker to get (as per {@link IResource#getMarker
-     *    IResource.getMarker})
-     * @return the specified marker
-     */
-    private IMarker findMarker(String pathString, long id) {
-        IPath path = new Path(pathString);
-        IResource resource = workspace.getRoot().findMember(path);
-        if (resource != null) {
-            return resource.getMarker(id);
-        }
-        return null;
-    }
+	/**
+	 * Locates and returns the marker associated with the given attributes.
+	 *
+	 * @param pathString the resource path
+	 * @param id the id of the marker to get (as per {@link IResource#getMarker
+	 *    IResource.getMarker})
+	 * @return the specified marker
+	 */
+	private IMarker findMarker(String pathString, long id) {
+		IPath path = new Path(pathString);
+		IResource resource = workspace.getRoot().findMember(path);
+		if (resource != null) {
+			return resource.getMarker(id);
+		}
+		return null;
+	}
 
-    /**
-     * Returns the singleton instance.
-     *
-     * @return the singleton instance
-     */
-    public static MarkerTransfer getInstance() {
-        return instance;
-    }
+	/**
+	 * Returns the singleton instance.
+	 *
+	 * @return the singleton instance
+	 */
+	public static MarkerTransfer getInstance() {
+		return instance;
+	}
 
-    @Override
+	@Override
 	protected int[] getTypeIds() {
-        return new int[] { TYPEID };
-    }
+		return new int[] { TYPEID };
+	}
 
-    @Override
+	@Override
 	protected String[] getTypeNames() {
-        return new String[] { TYPE_NAME };
-    }
+		return new String[] { TYPE_NAME };
+	}
 
 	/*
 	 * On a successful conversion, the transferData.result field will be set to
@@ -112,112 +112,112 @@ public class MarkerTransfer extends ByteArrayTransfer {
 	 * transferData.result field will be set to the failure value of
 	 * OLE.DV_E_TYMED.
 	 */
-    @Override
+	@Override
 	protected void javaToNative(Object object, TransferData transferData) {
-        /**
-         * Transfer data is an array of markers.  Serialized version is:
-         * (int) number of markers
-         * (Marker) marker 1
-         * (Marker) marker 2
-         * ... repeat last four for each subsequent marker
-         * see writeMarker for the (Marker) format.
-         */
-        Object[] markers = (Object[]) object;
-        lazyInit(markers);
+		/**
+		 * Transfer data is an array of markers.  Serialized version is:
+		 * (int) number of markers
+		 * (Marker) marker 1
+		 * (Marker) marker 2
+		 * ... repeat last four for each subsequent marker
+		 * see writeMarker for the (Marker) format.
+		 */
+		Object[] markers = (Object[]) object;
+		lazyInit(markers);
 
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(byteOut);
+		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(byteOut);
 
-        byte[] bytes = null;
+		byte[] bytes = null;
 
-        try {
-            /* write number of markers */
-            out.writeInt(markers.length);
+		try {
+			/* write number of markers */
+			out.writeInt(markers.length);
 
-            /* write markers */
-            for (Object marker : markers) {
-                writeMarker((IMarker) marker, out);
-            }
-            out.close();
-            bytes = byteOut.toByteArray();
-        } catch (IOException e) {
-            //when in doubt send nothing
-        }
+			/* write markers */
+			for (Object marker : markers) {
+				writeMarker((IMarker) marker, out);
+			}
+			out.close();
+			bytes = byteOut.toByteArray();
+		} catch (IOException e) {
+			//when in doubt send nothing
+		}
 
-        if (bytes != null) {
-            super.javaToNative(bytes, transferData);
-        }
-    }
+		if (bytes != null) {
+			super.javaToNative(bytes, transferData);
+		}
+	}
 
-    /**
-     * Initializes the transfer mechanism if necessary.
-     */
-    private void lazyInit(Object[] markers) {
-        if (workspace == null) {
-            if (markers != null && markers.length > 0) {
-                this.workspace = ((IMarker) markers[0]).getResource()
-                        .getWorkspace();
-            }
-        }
-    }
+	/**
+	 * Initializes the transfer mechanism if necessary.
+	 */
+	private void lazyInit(Object[] markers) {
+		if (workspace == null) {
+			if (markers != null && markers.length > 0) {
+				this.workspace = ((IMarker) markers[0]).getResource()
+						.getWorkspace();
+			}
+		}
+	}
 
-    @Override
+	@Override
 	protected Object nativeToJava(TransferData transferData) {
-        byte[] bytes = (byte[]) super.nativeToJava(transferData);
+		byte[] bytes = (byte[]) super.nativeToJava(transferData);
 		try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes))) {
 
-            /* read number of markers */
-            int n = in.readInt();
+			/* read number of markers */
+			int n = in.readInt();
 
-            /* read markers */
-            IMarker[] markers = new IMarker[n];
-            for (int i = 0; i < n; i++) {
-                IMarker marker = readMarker(in);
-                if (marker == null) {
-                    return null;
-                }
-                markers[i] = marker;
-            }
-            return markers;
-        } catch (IOException e) {
-            return null;
-        }
-    }
+			/* read markers */
+			IMarker[] markers = new IMarker[n];
+			for (int i = 0; i < n; i++) {
+				IMarker marker = readMarker(in);
+				if (marker == null) {
+					return null;
+				}
+				markers[i] = marker;
+			}
+			return markers;
+		} catch (IOException e) {
+			return null;
+		}
+	}
 
-    /**
-     * Reads and returns a single marker from the given stream.
-     *
-     * @param dataIn the input stream
-     * @return the marker
-     * @exception IOException if there is a problem reading from the stream
-     */
-    private IMarker readMarker(DataInputStream dataIn) throws IOException {
-        /**
-         * Marker serialization format is as follows:
-         * (String) path of resource for marker
-         * (int) marker ID
-         */
-        String path = dataIn.readUTF();
-        long id = dataIn.readLong();
-        return findMarker(path, id);
-    }
+	/**
+	 * Reads and returns a single marker from the given stream.
+	 *
+	 * @param dataIn the input stream
+	 * @return the marker
+	 * @exception IOException if there is a problem reading from the stream
+	 */
+	private IMarker readMarker(DataInputStream dataIn) throws IOException {
+		/**
+		 * Marker serialization format is as follows:
+		 * (String) path of resource for marker
+		 * (int) marker ID
+		 */
+		String path = dataIn.readUTF();
+		long id = dataIn.readLong();
+		return findMarker(path, id);
+	}
 
-    /**
-     * Writes the given marker to the given stream.
-     *
-     * @param marker the marker
-     * @param dataOut the output stream
-     * @exception IOException if there is a problem writing to the stream
-     */
-    private void writeMarker(IMarker marker, DataOutputStream dataOut)
-            throws IOException {
-        /**
-         * Marker serialization format is as follows:
-         * (String) path of resource for marker
-         * (int) marker ID
-         */
+	/**
+	 * Writes the given marker to the given stream.
+	 *
+	 * @param marker the marker
+	 * @param dataOut the output stream
+	 * @exception IOException if there is a problem writing to the stream
+	 */
+	private void writeMarker(IMarker marker, DataOutputStream dataOut)
+			throws IOException {
+		/**
+		 * Marker serialization format is as follows:
+		 * (String) path of resource for marker
+		 * (int) marker ID
+		 */
 
-        dataOut.writeUTF(marker.getResource().getFullPath().toString());
-        dataOut.writeLong(marker.getId());
-    }
+		dataOut.writeUTF(marker.getResource().getFullPath().toString());
+		dataOut.writeLong(marker.getId());
+	}
 }

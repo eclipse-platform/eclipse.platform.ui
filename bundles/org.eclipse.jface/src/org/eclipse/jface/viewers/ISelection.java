@@ -22,11 +22,11 @@ package org.eclipse.jface.viewers;
  */
 public interface ISelection {
 
-    /**
-     * Returns whether this selection is empty.
-     *
-     * @return <code>true</code> if this selection is empty,
-     *   and <code>false</code> otherwise
-     */
-    public boolean isEmpty();
+	/**
+	 * Returns whether this selection is empty.
+	 *
+	 * @return <code>true</code> if this selection is empty,
+	 *   and <code>false</code> otherwise
+	 */
+	public boolean isEmpty();
 }

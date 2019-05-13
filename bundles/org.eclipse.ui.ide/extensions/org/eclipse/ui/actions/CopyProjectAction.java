@@ -305,16 +305,16 @@ public class CopyProjectAction extends SelectionListenerAction {
 
 		boolean completed = performCopy(project, newName, newLocation);
 
-        if (!completed) {
+		if (!completed) {
 			return; // not appropriate to show errors
 		}
 
-        // If errors occurred, open an Error dialog
-        if (errorStatus != null) {
-            ErrorDialog.openError(this.shellProvider.getShell(), getErrorsTitle(), null,
-                    errorStatus);
-            errorStatus = null;
-        }
+		// If errors occurred, open an Error dialog
+		if (errorStatus != null) {
+			ErrorDialog.openError(this.shellProvider.getShell(), getErrorsTitle(), null,
+					errorStatus);
+			errorStatus = null;
+		}
 	}
 
 	/**

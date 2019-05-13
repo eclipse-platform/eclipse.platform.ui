@@ -33,84 +33,84 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  */
 public class PerformanceEditorPart extends EditorPart {
 
-    private static final String PARAM_OUTLINE = "outline";
+	private static final String PARAM_OUTLINE = "outline";
 
-    private boolean dirty;
-    private Label control;
-    private boolean useOutline = false;
+	private boolean dirty;
+	private Label control;
+	private boolean useOutline = false;
 
-    /**
-     *
-     */
-    public PerformanceEditorPart() {
-        super();
-    }
+	/**
+	 *
+	 */
+	public PerformanceEditorPart() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void doSave(IProgressMonitor monitor) {
-    }
+	}
 
-    @Override
+	@Override
 	public void doSaveAs() {
-    }
+	}
 
-    @Override
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
-            throws PartInitException {
-        super.setSite(site);
-        super.setInput(input);
-    }
+			throws PartInitException {
+		super.setSite(site);
+		super.setInput(input);
+	}
 
-    @Override
+	@Override
 	public boolean isDirty() {
-        return dirty;
-    }
+		return dirty;
+	}
 
-    public void setDirty(boolean dirty) {
-        this.dirty = dirty;
-    }
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
 
-    @Override
+	@Override
 	public boolean isSaveAsAllowed() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-        control = new Label(parent, SWT.NONE);
+		control = new Label(parent, SWT.NONE);
 
-    }
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
-        control.setFocus();
-    }
+		control.setFocus();
+	}
 
-    @Override
+	@Override
 	public void setInitializationData(IConfigurationElement cfig,
-            String propertyName, Object data) {
-        super.setInitializationData(cfig, propertyName, data);
+			String propertyName, Object data) {
+		super.setInitializationData(cfig, propertyName, data);
 
-        if (data instanceof String) {
-           for (StringTokenizer toker = new StringTokenizer((String) data, ","); toker.hasMoreTokens(); ) {
-               String token = toker.nextToken();
-               if (token.equals(PARAM_OUTLINE))
-                   useOutline = true;
-           }
+		if (data instanceof String) {
+			for (StringTokenizer toker = new StringTokenizer((String) data, ","); toker.hasMoreTokens(); ) {
+				String token = toker.nextToken();
+				if (token.equals(PARAM_OUTLINE))
+					useOutline = true;
+			}
 
-        }
-    }
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        Object object = null;
-        if (useOutline && adapter.equals(IContentOutlinePage.class)) {
-            object = new ContentOutlinePage() {
-            };
-        }
-        if (object != null)
+		Object object = null;
+		if (useOutline && adapter.equals(IContentOutlinePage.class)) {
+			object = new ContentOutlinePage() {
+			};
+		}
+		if (object != null)
 			return (T) object;
-        return super.getAdapter(adapter);
-    }
+		return super.getAdapter(adapter);
+	}
 }

@@ -42,10 +42,10 @@ public class EventBrokerFactory extends ContextFunction {
 
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
-        EventBroker broker = context.getLocal(EventBroker.class);
+		EventBroker broker = context.getLocal(EventBroker.class);
 		if (broker == null) {
-            broker = ContextInjectionFactory.make(EventBroker.class, context);
-            context.set(EventBroker.class, broker);
+			broker = ContextInjectionFactory.make(EventBroker.class, context);
+			context.set(EventBroker.class, broker);
 		}
 		return broker;
 	}

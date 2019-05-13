@@ -290,7 +290,7 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 */
 	public final void testFindPropertySheetWithUnpinnedPSandSPVActive()
 			throws PartInitException, ExecutionException {
-	    PropertySheetPerspectiveFactory.applyPerspective(activePage);
+		PropertySheetPerspectiveFactory.applyPerspective(activePage);
 
 		PropertySheet sheet = (PropertySheet) activePage
 				.showView(IPageLayout.ID_PROP_SHEET);

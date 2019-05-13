@@ -35,93 +35,93 @@ import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class AddTaskAction extends SelectionListenerAction {
-    /**
-     * The id of this action.
-     */
-    public static final String ID = PlatformUI.PLUGIN_ID + ".AddTaskAction";//$NON-NLS-1$
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = PlatformUI.PLUGIN_ID + ".AddTaskAction";//$NON-NLS-1$
 
-    /**
-     * The IShellProvider in which to show any dialogs.
-     */
-    private IShellProvider shellProvider;
+	/**
+	 * The IShellProvider in which to show any dialogs.
+	 */
+	private IShellProvider shellProvider;
 
-    /**
-     * Creates a new instance of the receiver.
-     *
-     * @param shell shell to use to show any dialogs
-     * @deprecated See {@link #AddTaskAction(IShellProvider)}
-     */
-    @Deprecated
+	/**
+	 * Creates a new instance of the receiver.
+	 *
+	 * @param shell shell to use to show any dialogs
+	 * @deprecated See {@link #AddTaskAction(IShellProvider)}
+	 */
+	@Deprecated
 	public AddTaskAction(final Shell shell) {
-        super(IDEWorkbenchMessages.AddTaskLabel);
-        Assert.isNotNull(shell);
-        this.shellProvider = () -> shell;
-        initAction();
-    }
+		super(IDEWorkbenchMessages.AddTaskLabel);
+		Assert.isNotNull(shell);
+		this.shellProvider = () -> shell;
+		initAction();
+	}
 
-    /**
+	/**
 	 * Creates a new instance of the receiver.
 	 *
 	 * @param provider
 	 *            the IShellProvider to show any dialogs
 	 * @since 3.4
 	 */
-    public AddTaskAction(IShellProvider provider) {
-    	super(IDEWorkbenchMessages.AddTaskLabel);
-        Assert.isNotNull(provider);
-        shellProvider = provider;
-        initAction();
-    }
+	public AddTaskAction(IShellProvider provider) {
+		super(IDEWorkbenchMessages.AddTaskLabel);
+		Assert.isNotNull(provider);
+		shellProvider = provider;
+		initAction();
+	}
 
 	/**
 	 *  Initializes the workbench
 	 */
 	private void initAction() {
 		setId(ID);
-        setToolTipText(IDEWorkbenchMessages.AddTaskToolTip);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+		setToolTipText(IDEWorkbenchMessages.AddTaskToolTip);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.ADD_TASK_ACTION);
 	}
 
-    private IResource getElement(IStructuredSelection selection) {
-        if (selection.size() != 1) {
+	private IResource getElement(IStructuredSelection selection) {
+		if (selection.size() != 1) {
 			return null;
 		}
 
-        Object element = selection.getFirstElement();
+		Object element = selection.getFirstElement();
 		IResource resource = Adapters.adapt(element, IResource.class);
 
-        if (resource != null && resource instanceof IProject) {
-            IProject project = (IProject) resource;
-            if (project.isOpen() == false) {
+		if (resource != null && resource instanceof IProject) {
+			IProject project = (IProject) resource;
+			if (project.isOpen() == false) {
 				resource = null;
 			}
-        }
-        return resource;
-    }
+		}
+		return resource;
+	}
 
-    @Override
+	@Override
 	public void run() {
-        IResource resource = getElement(getStructuredSelection());
-        if (resource != null) {
-            DialogTaskProperties dialog = new DialogTaskProperties(
+		IResource resource = getElement(getStructuredSelection());
+		if (resource != null) {
+			DialogTaskProperties dialog = new DialogTaskProperties(
 					shellProvider.getShell());
-            dialog.setResource(resource);
-            dialog.open();
-        }
-    }
+			dialog.setResource(resource);
+			dialog.open();
+		}
+	}
 
-    /**
-     * The <code>AddTaskAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method enables the action only
-     * if the selection contains a single resource and the resource is
-     * not a closed project.
-     *
-     * @param selection the selection to update the enabled state for
-     */
-    @Override
+	/**
+	 * The <code>AddTaskAction</code> implementation of this
+	 * <code>SelectionListenerAction</code> method enables the action only
+	 * if the selection contains a single resource and the resource is
+	 * not a closed project.
+	 *
+	 * @param selection the selection to update the enabled state for
+	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-        return super.updateSelection(selection)
-                && getElement(selection) != null;
-    }
+		return super.updateSelection(selection)
+				&& getElement(selection) != null;
+	}
 }

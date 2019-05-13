@@ -559,7 +559,7 @@ public class TextSegment extends ParagraphSegment {
 			int rindex = sstop != -1 ? sstop : s.length();
 			String mid = s.substring(lindex, rindex);
 			if (mid.length() > 0 ) {
-			    selData.addSegment(mid);
+				selData.addSegment(mid);
 			}
 		}
 	}

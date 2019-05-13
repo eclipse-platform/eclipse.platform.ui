@@ -28,7 +28,7 @@ public class JobInfoFactory {
 
 	public JobInfo getJobInfo(Job enclosingJob) {
 		return new JobInfo(enclosingJob,
-		        services.getService(ProgressManager.class),
-		        services.getService(FinishedJobs.class));
+				services.getService(ProgressManager.class),
+				services.getService(FinishedJobs.class));
 	}
 }

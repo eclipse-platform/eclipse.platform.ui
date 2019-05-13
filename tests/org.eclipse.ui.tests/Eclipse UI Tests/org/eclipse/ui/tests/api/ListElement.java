@@ -18,40 +18,40 @@ import org.eclipse.ui.IActionFilter;
 
 public class ListElement implements IAdaptable {
 
-    private String name;
+	private String name;
 
-    private boolean flag;
+	private boolean flag;
 
-    public ListElement(String name) {
-        this(name, false);
-    }
+	public ListElement(String name) {
+		this(name, false);
+	}
 
-    public ListElement(String name, boolean flag) {
-        this.name = name;
-        this.flag = flag;
-    }
+	public ListElement(String name, boolean flag) {
+		this.name = name;
+		this.flag = flag;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        return name + ':' + flag;
-    }
+		return name + ':' + flag;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public boolean getFlag() {
-        return flag;
-    }
+	public boolean getFlag() {
+		return flag;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter == IActionFilter.class) {
+		if (adapter == IActionFilter.class) {
 			return (T) ListElementActionFilter.getSingleton();
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
 }
 

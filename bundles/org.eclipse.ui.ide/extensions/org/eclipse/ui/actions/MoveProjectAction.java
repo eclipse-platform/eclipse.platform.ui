@@ -133,7 +133,7 @@ public class MoveProjectAction extends CopyProjectAction {
 			// CoreExceptions are collected by the operation, but unexpected runtime
 			// exceptions and errors may still occur.
 			IDEWorkbenchPlugin.log(getClass(),
-                    "performMove()", e.getTargetException()); //$NON-NLS-1$
+					"performMove()", e.getTargetException()); //$NON-NLS-1$
 			displayError(NLS.bind(IDEWorkbenchMessages.MoveProjectAction_internalError, e.getTargetException().getMessage()));
 			return false;
 		}

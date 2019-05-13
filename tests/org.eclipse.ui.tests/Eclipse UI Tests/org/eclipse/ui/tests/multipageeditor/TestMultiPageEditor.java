@@ -29,43 +29,43 @@ import org.eclipse.ui.part.MultiPageEditorPart;
  */
 public final class TestMultiPageEditor extends MultiPageEditorPart {
 
-    @Override
+	@Override
 	protected void createPages() {
-        try {
-            IEditorPart part1 = new TestKeyBindingMultiPageEditorPart(0);
-            addPage(part1, getEditorInput());
+		try {
+			IEditorPart part1 = new TestKeyBindingMultiPageEditorPart(0);
+			addPage(part1, getEditorInput());
 
-            IEditorPart part2 = new TestKeyBindingMultiPageEditorPart(1);
-            addPage(part2, getEditorInput());
-        } catch (PartInitException e) {
-            throw new RuntimeException(e);
-        }
-    }
+			IEditorPart part2 = new TestKeyBindingMultiPageEditorPart(1);
+			addPage(part2, getEditorInput());
+		} catch (PartInitException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-        // Do nothing.
-    }
+		// Do nothing.
+	}
 
 	@Override
 	public void doSaveAs() {
-        throw new UnsupportedOperationException("Not implemented in this test."); //$NON-NLS-1$
-    }
+		throw new UnsupportedOperationException("Not implemented in this test."); //$NON-NLS-1$
+	}
 
 	@Override
 	public boolean isSaveAsAllowed() {
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Sets the active page.
-     *
-     * @param page
-     *            The page to activate; should be either <code>0</code> or
-     *            <code>1</code>.
-     */
-    public void setPage(int page) {
-        setActivePage(page);
-    }
+	/**
+	 * Sets the active page.
+	 *
+	 * @param page
+	 *            The page to activate; should be either <code>0</code> or
+	 *            <code>1</code>.
+	 */
+	public void setPage(int page) {
+		setActivePage(page);
+	}
 
 }

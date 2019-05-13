@@ -24,56 +24,56 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @since 3.4
  */
 public abstract class FrameAction extends Action {
-    private FrameList frameList;
+	private FrameList frameList;
 
-    private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-        @Override
+	private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-            FrameAction.this.handlePropertyChange(event);
-        }
-    };
+			FrameAction.this.handlePropertyChange(event);
+		}
+	};
 
-    /**
-     * Constructs a new action for the specified frame list.
-     * and adds a property change listener on it.
-     *
-     * @param frameList the frame list
-     */
-    protected FrameAction(FrameList frameList) {
-        this.frameList = frameList;
-        frameList.addPropertyChangeListener(propertyChangeListener);
-    }
+	/**
+	 * Constructs a new action for the specified frame list.
+	 * and adds a property change listener on it.
+	 *
+	 * @param frameList the frame list
+	 */
+	protected FrameAction(FrameList frameList) {
+		this.frameList = frameList;
+		frameList.addPropertyChangeListener(propertyChangeListener);
+	}
 
-    /**
-     * Disposes this frame action.
-     * This implementation removes the property change listener from the frame list.
-     */
-    public void dispose() {
-        frameList.removePropertyChangeListener(propertyChangeListener);
-    }
+	/**
+	 * Disposes this frame action.
+	 * This implementation removes the property change listener from the frame list.
+	 */
+	public void dispose() {
+		frameList.removePropertyChangeListener(propertyChangeListener);
+	}
 
-    /**
-     * Returns the frame list.
-     * @return a FrameList
-     */
-    public FrameList getFrameList() {
-        return frameList;
-    }
+	/**
+	 * Returns the frame list.
+	 * @return a FrameList
+	 */
+	public FrameList getFrameList() {
+		return frameList;
+	}
 
-    /**
-     * Handles a property change event from the frame list.
-     * This implementation calls <code>update()</code>.
-     * @param event
-     */
-    protected void handlePropertyChange(PropertyChangeEvent event) {
-        update();
-    }
+	/**
+	 * Handles a property change event from the frame list.
+	 * This implementation calls <code>update()</code>.
+	 * @param event
+	 */
+	protected void handlePropertyChange(PropertyChangeEvent event) {
+		update();
+	}
 
-    /**
-     * Updates this action.  This implementation does nothing.
-     * Most implementations will override this method.
-     */
-    public void update() {
-    }
+	/**
+	 * Updates this action.  This implementation does nothing.
+	 * Most implementations will override this method.
+	 */
+	public void update() {
+	}
 
 }

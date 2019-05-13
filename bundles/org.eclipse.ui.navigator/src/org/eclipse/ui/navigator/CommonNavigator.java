@@ -192,7 +192,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		try {
 			commonViewer.getControl().setRedraw(false);
 
-	        INavigatorFilterService filterService = commonViewer
+			INavigatorFilterService filterService = commonViewer
 					.getNavigatorContentService().getFilterService();
 			ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
 			for (ViewerFilter visibleFilter : visibleFilters) {
@@ -214,9 +214,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			commonViewer.getControl().setRedraw(true);
 		}
 
-        commonViewer.createFrameList();
+		commonViewer.createFrameList();
 
-        /*
+		/*
 		 * Create the CommonNavigatorManager last because information about the
 		 * state of the CommonNavigator is required for the initialization of
 		 * the CommonNavigatorManager
@@ -464,21 +464,21 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			return adapter.cast(this);
 		} else if (adapter == IShowInSource.class) {
 			return adapter.cast(getShowInSource());
-        }
+		}
 		return super.getAdapter(adapter);
 	}
 
-    /**
-     * Returns the <code>IShowInSource</code> for this view.
-     */
-    private IShowInSource getShowInSource() {
-        return new IShowInSource() {
-            @Override
+	/**
+	 * Returns the <code>IShowInSource</code> for this view.
+	 */
+	private IShowInSource getShowInSource() {
+		return new IShowInSource() {
+			@Override
 			public ShowInContext getShowInContext() {
-                return new ShowInContext(getCommonViewer().getInput(), getCommonViewer().getSelection());
-            }
-        };
-    }
+				return new ShowInContext(getCommonViewer().getInput(), getCommonViewer().getSelection());
+			}
+		};
+	}
 
 	/**
 	 * @return The Navigator Action Service which populates this instance of Common

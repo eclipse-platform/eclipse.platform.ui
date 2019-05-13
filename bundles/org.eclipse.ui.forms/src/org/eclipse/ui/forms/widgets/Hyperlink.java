@@ -303,7 +303,7 @@ public class Hyperlink extends AbstractHyperlink {
 			}
 		}
 		if (mid == 0) return t;
-	 	return t.substring(0, mid)+ELLIPSIS+t.substring(l-mid, l);
+		return t.substring(0, mid)+ELLIPSIS+t.substring(l-mid, l);
 	}
 
 	protected Point computeTextSize(int wHint, int hHint) {

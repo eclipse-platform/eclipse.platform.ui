@@ -22,47 +22,47 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class RefreshTestTreeContentProvider implements ITreeContentProvider {
 
-    static TestTreeElement[] elements;
-    static {
-        elements = new TestTreeElement[RefreshTestContentProvider.ELEMENT_COUNT];
-        for (int i = 0; i < RefreshTestContentProvider.ELEMENT_COUNT; i++) {
-           elements[i] = (new TestTreeElement(i,null));
+	static TestTreeElement[] elements;
+	static {
+		elements = new TestTreeElement[RefreshTestContentProvider.ELEMENT_COUNT];
+		for (int i = 0; i < RefreshTestContentProvider.ELEMENT_COUNT; i++) {
+			elements[i] = (new TestTreeElement(i,null));
 
-        }
+		}
 
-    }
+	}
 
-    public RefreshTestTreeContentProvider() {
-        super();
-    }
+	public RefreshTestTreeContentProvider() {
+		super();
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object parentElement) {
-       return ((TestTreeElement)parentElement).children;
-    }
+		return ((TestTreeElement)parentElement).children;
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {
-        return ((TestTreeElement)element).parent;
-    }
+		return ((TestTreeElement)element).parent;
+	}
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        return ((TestTreeElement)element).children.length > 0;
-    }
+		return ((TestTreeElement)element).children.length > 0;
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object inputElement) {
-       return elements;
-    }
+		return elements;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    }
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
-    }
+	}
 
 }

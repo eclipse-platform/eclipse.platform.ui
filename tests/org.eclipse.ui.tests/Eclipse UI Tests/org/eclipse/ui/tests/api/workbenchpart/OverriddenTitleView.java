@@ -21,24 +21,24 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class OverriddenTitleView extends EmptyView {
 
-    String overriddenTitle = "OverriddenTitle";
+	String overriddenTitle = "OverriddenTitle";
 
-    /**
-     *
-     */
-    public OverriddenTitleView() {
-        super();
-    }
+	/**
+	 *
+	 */
+	public OverriddenTitleView() {
+		super();
+	}
 
-    @Override
+	@Override
 	public String getTitle() {
-        return overriddenTitle;
-    }
+		return overriddenTitle;
+	}
 
-    public void customSetTitle(String title) {
-        overriddenTitle = Util.safeString(title);
+	public void customSetTitle(String title) {
+		overriddenTitle = Util.safeString(title);
 
-        firePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
-    }
+		firePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
+	}
 
 }

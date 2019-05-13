@@ -43,7 +43,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public final class IDEEncoding {
 
 	private IDEEncoding () {
-        // prevent instantiation
+		// prevent instantiation
 	}
 
 	//The preference for the user entered encodings.

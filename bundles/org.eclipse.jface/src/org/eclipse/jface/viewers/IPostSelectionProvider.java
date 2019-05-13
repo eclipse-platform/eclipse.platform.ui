@@ -26,21 +26,21 @@ package org.eclipse.jface.viewers;
  */
 public interface IPostSelectionProvider extends ISelectionProvider {
 
-    /**
-     * Adds a listener for post selection changes in this selection provider.
-     * Has no effect if an identical listener is already registered.
-     *
-     * @param listener a selection changed listener
-     */
+	/**
+	 * Adds a listener for post selection changes in this selection provider.
+	 * Has no effect if an identical listener is already registered.
+	 *
+	 * @param listener a selection changed listener
+	 */
 	public void addPostSelectionChangedListener(ISelectionChangedListener listener);
 
-    /**
-     * Removes the given listener for post selection changes from this selection
-     * provider.
-     * Has no effect if an identical listener is not registered.
-     *
-     * @param listener a selection changed listener
-     */
+	/**
+	 * Removes the given listener for post selection changes from this selection
+	 * provider.
+	 * Has no effect if an identical listener is not registered.
+	 *
+	 * @param listener a selection changed listener
+	 */
 	public void removePostSelectionChangedListener(ISelectionChangedListener listener);
 
 }

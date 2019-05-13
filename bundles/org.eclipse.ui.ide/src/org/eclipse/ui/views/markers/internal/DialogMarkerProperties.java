@@ -168,14 +168,14 @@ public class DialogMarkerProperties extends TrayDialog {
 	}
 
 	/**
-     * Sets the marker to show or modify.
-     * <p>IMPORTANT:  Although this class is internal, there are public
-     * subclasses that expose this method as API.  Changes in
-     * this implementation should be treated as API changes.
-     *
-     * @param marker the marker, or <code>null</code> to create a new marker
-     *
-     * @since 3.3
+	 * Sets the marker to show or modify.
+	 * <p>IMPORTANT:  Although this class is internal, there are public
+	 * subclasses that expose this method as API.  Changes in
+	 * this implementation should be treated as API changes.
+	 *
+	 * @param marker the marker, or <code>null</code> to create a new marker
+	 *
+	 * @since 3.3
 	 */
 	public void setMarker(IMarker marker) {
 		this.marker = marker;
@@ -188,76 +188,76 @@ public class DialogMarkerProperties extends TrayDialog {
 	}
 
 	/**
-     * Returns the marker being created or modified.
-     * For a new marker, this returns <code>null</code> until
-     * the dialog returns, but is non-null after.
-     * <p>IMPORTANT:  Although this method is protected and the class is
-     * internal, there are public subclasses that expose this method as API.
-     * Changes in this implementation should be treated as API changes.
-     *
-     * @return the marker
-     *
-     * @since 3.3
+	 * Returns the marker being created or modified.
+	 * For a new marker, this returns <code>null</code> until
+	 * the dialog returns, but is non-null after.
+	 * <p>IMPORTANT:  Although this method is protected and the class is
+	 * internal, there are public subclasses that expose this method as API.
+	 * Changes in this implementation should be treated as API changes.
+	 *
+	 * @return the marker
+	 *
+	 * @since 3.3
 	 */
 	protected IMarker getMarker() {
 		return marker;
 	}
 
 	/**
-     * Sets the resource to use when creating a new task.
-     * If not set, the new task is created on the workspace root.
-     * <p>IMPORTANT:  Although this class is internal, there are public
-     * subclasses that expose this method as API.  Changes in
-     * this implementation should be treated as API changes.
-     *
-     * @param resource the resource
+	 * Sets the resource to use when creating a new task.
+	 * If not set, the new task is created on the workspace root.
+	 * <p>IMPORTANT:  Although this class is internal, there are public
+	 * subclasses that expose this method as API.  Changes in
+	 * this implementation should be treated as API changes.
+	 *
+	 * @param resource the resource
 	 */
 	public void setResource(IResource resource) {
 		this.resource = resource;
 	}
 
 	/**
-     * Returns the resource to use when creating a new task,
-     * or <code>null</code> if none has been set.
-     * If not set, the new task is created on the workspace root.
-     * <p>IMPORTANT:  Although this method is protected and the class is
-     * internal, there are public subclasses that expose this method as API.
-     * Changes in this implementation should be treated as API changes.
-     *
-     * @return the resource
-     *
-     * @since 3.3
+	 * Returns the resource to use when creating a new task,
+	 * or <code>null</code> if none has been set.
+	 * If not set, the new task is created on the workspace root.
+	 * <p>IMPORTANT:  Although this method is protected and the class is
+	 * internal, there are public subclasses that expose this method as API.
+	 * Changes in this implementation should be treated as API changes.
+	 *
+	 * @return the resource
+	 *
+	 * @since 3.3
 	 */
 	protected IResource getResource() {
 		return resource;
 	}
 
 	/**
-     * Sets initial attributes to use when creating a new task.
-     * If not set, the new task is created with default attributes.
-     * <p>IMPORTANT:  Although this method is protected and the class is
-     * internal, there are public subclasses that expose this method as API.
-     * Changes in this implementation should be treated as API changes.
-     *
-     * @param initialAttributes the initial attributes
-     *
-     * @since 3.3
+	 * Sets initial attributes to use when creating a new task.
+	 * If not set, the new task is created with default attributes.
+	 * <p>IMPORTANT:  Although this method is protected and the class is
+	 * internal, there are public subclasses that expose this method as API.
+	 * Changes in this implementation should be treated as API changes.
+	 *
+	 * @param initialAttributes the initial attributes
+	 *
+	 * @since 3.3
 	 */
 	protected void setInitialAttributes(Map<String, Object> initialAttributes) {
 		this.initialAttributes = initialAttributes;
 	}
 
 	/**
-     * Returns the initial attributes to use when creating a new task,
-     * or <code>null</code> if not set.
-     * If not set, the new task is created with default attributes.
-     * <p>IMPORTANT:  Although this method is protected and the class is
-     * internal, there are public subclasses that expose this method as API.
-     * Changes in this implementation should be treated as API changes.
-     *
-     * @return the initial attributes
-     *
-     * @since 3.3
+	 * Returns the initial attributes to use when creating a new task,
+	 * or <code>null</code> if not set.
+	 * If not set, the new task is created with default attributes.
+	 * <p>IMPORTANT:  Although this method is protected and the class is
+	 * internal, there are public subclasses that expose this method as API.
+	 * Changes in this implementation should be treated as API changes.
+	 *
+	 * @return the initial attributes
+	 *
+	 * @since 3.3
 	 */
 	protected Map<String, Object> getInitialAttributes() {
 		if (initialAttributes == null) {
@@ -272,12 +272,12 @@ public class DialogMarkerProperties extends TrayDialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-        if (title == null) {
+		if (title == null) {
 			newShell.setText(MarkerMessages.propertiesDialog_title);
 		} else {
 			newShell.setText(title);
 		}
-    }
+	}
 
 	/**
 	 * Method declared on Dialog.
@@ -295,53 +295,53 @@ public class DialogMarkerProperties extends TrayDialog {
 			resource = ResourcesPlugin.getWorkspace().getRoot();
 		}
 
-        Composite comp = (Composite) super.createDialogArea(parent);
-        Composite composite = new Composite(comp, SWT.NULL);
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
+		Composite comp = (Composite) super.createDialogArea(parent);
+		Composite composite = new Composite(comp, SWT.NULL);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        composite.setLayoutData(gridData);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		composite.setLayoutData(gridData);
 
 		initializeDialogUnits(composite);
 		createDescriptionArea(composite);
 		if (marker != null) {
-            createSeperator(composite);
+			createSeperator(composite);
 			createCreationTimeArea(composite);
 		}
 		createAttributesArea(composite);
-        if (resource != null) {
-            createSeperator(composite);
+		if (resource != null) {
+			createSeperator(composite);
 			createResourceArea(composite);
 		}
 		updateDialogFromMarker();
 		updateEnablement();
 
-        Dialog.applyDialogFont(composite);
+		Dialog.applyDialogFont(composite);
 
 		return composite;
 	}
 
 	/**
-     * Creates a seperator.
-     */
-    protected void createSeperator(Composite parent) {
+	 * Creates a seperator.
+	 */
+	protected void createSeperator(Composite parent) {
 		Label seperator = new Label(parent, SWT.NULL);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 		seperator.setLayoutData(gridData);
 	}
 
-    /**
+	/**
 	 * Method createCreationTimeArea.
 	 * @param parent
 	 */
 	private void createCreationTimeArea(Composite parent) {
-        Label label = new Label(parent, SWT.NONE);
-        label.setText(MarkerMessages.propertiesDialog_creationTime_text);
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(MarkerMessages.propertiesDialog_creationTime_text);
 
-        creationTime = new Text(parent, SWT.SINGLE | SWT.READ_ONLY);
+		creationTime = new Text(parent, SWT.SINGLE | SWT.READ_ONLY);
 	}
 
 	/**
@@ -357,9 +357,9 @@ public class DialogMarkerProperties extends TrayDialog {
 	 * Creates the area for the Description field.
 	 */
 	private void createDescriptionArea(Composite parent) {
-        Label label = new Label(parent, SWT.NONE);
-        label.setText(MarkerMessages.propertiesDialog_description_text);
-        descriptionText = new Text(parent, (SWT.SINGLE | SWT.BORDER));
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(MarkerMessages.propertiesDialog_description_text);
+		descriptionText = new Text(parent, (SWT.SINGLE | SWT.BORDER));
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint = convertHorizontalDLUsToPixels(400);
 		descriptionText.setLayoutData(gridData);
@@ -381,97 +381,97 @@ public class DialogMarkerProperties extends TrayDialog {
 	 * Creates the area for the Resource field.
 	 */
 	private void createResourceArea(Composite parent) {
-        Label resourceLabel = new Label(parent, SWT.NONE);
+		Label resourceLabel = new Label(parent, SWT.NONE);
 		resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
-        resourceText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		resourceText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		resourceText.setLayoutData(gridData);
 
-        Label folderLabel = new Label(parent, SWT.NONE);
+		Label folderLabel = new Label(parent, SWT.NONE);
 		folderLabel.setText(MarkerMessages.propertiesDialog_folder_text);
-        folderText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY	| SWT.BORDER);
+		folderText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY	| SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		folderText.setLayoutData(gridData);
 
-        Label locationLabel = new Label(parent, SWT.NONE);
+		Label locationLabel = new Label(parent, SWT.NONE);
 		locationLabel.setText(MarkerMessages.propertiesDialog_location_text);
-        locationText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+		locationText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		locationText.setLayoutData(gridData);
 	}
 
-    /**
-     * Updates the dialog from the marker state.
-     */
-    protected void updateDialogFromMarker() {
-        if (marker == null) {
-            updateDialogForNewMarker();
-            return;
-        }
-        descriptionText.setText(Util.getProperty(IMarker.MESSAGE, marker));
-        if (creationTime != null) {
+	/**
+	 * Updates the dialog from the marker state.
+	 */
+	protected void updateDialogFromMarker() {
+		if (marker == null) {
+			updateDialogForNewMarker();
+			return;
+		}
+		descriptionText.setText(Util.getProperty(IMarker.MESSAGE, marker));
+		if (creationTime != null) {
 			creationTime.setText(Util.getCreationTime(marker));
 		}
-        if (resourceText != null) {
+		if (resourceText != null) {
 			resourceText.setText(Util.getResourceName(marker));
 		}
-        if (folderText != null) {
+		if (folderText != null) {
 			folderText.setText(Util.getContainerName(marker));
 		}
-        if (locationText != null) {
-            String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
+		if (locationText != null) {
+			String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
 			if (line.isEmpty()) {
 				locationText.setText(""); //$NON-NLS-1$
 			} else {
 				locationText.setText(NLS.bind(MarkerMessages.label_lineNumber, line));
 			}
-        }
+		}
 
-        descriptionText.selectAll();
-    }
+		descriptionText.selectAll();
+	}
 
-    /**
-     * Updates the dialog from the predefined attributes.
-     */
-    protected void updateDialogForNewMarker() {
-        if (resource != null && resourceText != null && folderText != null) {
-            resourceText.setText(resource.getName());
+	/**
+	 * Updates the dialog from the predefined attributes.
+	 */
+	protected void updateDialogForNewMarker() {
+		if (resource != null && resourceText != null && folderText != null) {
+			resourceText.setText(resource.getName());
 
-            IPath path = resource.getFullPath();
-            int n = path.segmentCount() - 1; // n is the number of segments in container, not path
-            if (n > 0) {
-                int len = 0;
-                for (int i = 0; i < n; ++i) {
+			IPath path = resource.getFullPath();
+			int n = path.segmentCount() - 1; // n is the number of segments in container, not path
+			if (n > 0) {
+				int len = 0;
+				for (int i = 0; i < n; ++i) {
 					len += path.segment(i).length();
 				}
-                // account for /'s
-                if (n > 1) {
+				// account for /'s
+				if (n > 1) {
 					len += n - 1;
 				}
-                StringBuilder sb = new StringBuilder(len);
-                for (int i = 0; i < n; ++i) {
-                    if (i != 0) {
+				StringBuilder sb = new StringBuilder(len);
+				for (int i = 0; i < n; ++i) {
+					if (i != 0) {
 						sb.append('/');
 					}
-                    sb.append(path.segment(i));
-                }
-                folderText.setText(sb.toString());
-            }
-        }
+					sb.append(path.segment(i));
+				}
+				folderText.setText(sb.toString());
+			}
+		}
 
-        if (initialAttributes != null) {
-            Object description = initialAttributes.get(IMarker.MESSAGE);
-            if (description != null && description instanceof String) {
+		if (initialAttributes != null) {
+			Object description = initialAttributes.get(IMarker.MESSAGE);
+			if (description != null && description instanceof String) {
 				descriptionText.setText((String) description);
 			}
-            descriptionText.selectAll();
+			descriptionText.selectAll();
 
-            Object line = initialAttributes.get(IMarker.LINE_NUMBER);
-            if (line != null && line instanceof Integer && locationText != null) {
+			Object line = initialAttributes.get(IMarker.LINE_NUMBER);
+			if (line != null && line instanceof Integer && locationText != null) {
 				locationText.setText(NLS.bind(MarkerMessages.label_lineNumber, line));
 			}
-        }
-    }
+		}
+	}
 
 	/**
 	 * Method declared on Dialog
@@ -528,8 +528,8 @@ public class DialogMarkerProperties extends TrayDialog {
 			} catch (ExecutionException e) {
 				if (e.getCause() instanceof CoreException) {
 					ErrorDialog.openError(
-	                        getShell(),
-	                        MarkerMessages.Error, null, ((CoreException)e.getCause()).getStatus());
+							getShell(),
+							MarkerMessages.Error, null, ((CoreException)e.getCause()).getStatus());
 				} else {
 					IDEWorkbenchPlugin.log(e.getMessage(), e);
 				}
@@ -584,12 +584,12 @@ public class DialogMarkerProperties extends TrayDialog {
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-        IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-        if (section == null) {
-            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-        }
-        return section;
+		IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null) {
+			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+		}
+		return section;
 	}
 
 	/**
@@ -623,9 +623,9 @@ public class DialogMarkerProperties extends TrayDialog {
 
 	}
 
-    @Override
+	@Override
 	protected boolean isResizable() {
-    	return true;
-    }
+		return true;
+	}
 
 }

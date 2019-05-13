@@ -22,10 +22,10 @@ package org.eclipse.jface.viewers;
  */
 @FunctionalInterface
 public interface ICheckStateListener {
-    /**
-     * Notifies of a change to the checked state of an element.
-     *
-     * @param event event object describing the change
-     */
-    void checkStateChanged(CheckStateChangedEvent event);
+	/**
+	 * Notifies of a change to the checked state of an element.
+	 *
+	 * @param event event object describing the change
+	 */
+	void checkStateChanged(CheckStateChangedEvent event);
 }
