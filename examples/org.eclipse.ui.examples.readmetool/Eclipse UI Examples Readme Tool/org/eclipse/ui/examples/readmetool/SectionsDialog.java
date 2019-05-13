@@ -27,40 +27,39 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * This dialog is an example of a detached window launched
- * from an action in the workbench.
+ * This dialog is an example of a detached window launched from an action in the
+ * workbench.
  */
 public class SectionsDialog extends Dialog {
-    protected IAdaptable input;
+	protected IAdaptable input;
 
-    /**
-     * Creates a new SectionsDialog.
-     */
-    public SectionsDialog(Shell parentShell, IAdaptable input) {
-        super(parentShell);
-        this.input = input;
-    }
+	/**
+	 * Creates a new SectionsDialog.
+	 */
+	public SectionsDialog(Shell parentShell, IAdaptable input) {
+		super(parentShell);
+		this.input = input;
+	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText(MessageUtil.getString("Readme_Sections")); //$NON-NLS-1$
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
-				IReadmeConstants.SECTIONS_DIALOG_CONTEXT);
-    }
+		super.configureShell(newShell);
+		newShell.setText(MessageUtil.getString("Readme_Sections")); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IReadmeConstants.SECTIONS_DIALOG_CONTEXT);
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        Composite composite = (Composite) super.createDialogArea(parent);
+		Composite composite = (Composite) super.createDialogArea(parent);
 
-        List list = new List(composite, SWT.BORDER);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        list.setLayoutData(data);
-        ListViewer viewer = new ListViewer(list);
-        viewer.setContentProvider(new WorkbenchContentProvider());
-        viewer.setLabelProvider(new WorkbenchLabelProvider());
-        viewer.setInput(input);
+		List list = new List(composite, SWT.BORDER);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		list.setLayoutData(data);
+		ListViewer viewer = new ListViewer(list);
+		viewer.setContentProvider(new WorkbenchContentProvider());
+		viewer.setLabelProvider(new WorkbenchLabelProvider());
+		viewer.setInput(input);
 
-        return composite;
-    }
+		return composite;
+	}
 }

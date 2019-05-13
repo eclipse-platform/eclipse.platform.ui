@@ -38,113 +38,100 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
  * Content outline page for the readme editor.
  */
 public class ReadmeContentOutlinePage extends ContentOutlinePage {
-    protected IFile input;
+	protected IFile input;
 
-    class OutlineAction extends Action {
-        private Shell shell;
+	class OutlineAction extends Action {
+		private Shell shell;
 
-        public OutlineAction(String label) {
-            super(label);
-            getTreeViewer().addSelectionChangedListener(
-                    event -> setEnabled(!event.getSelection().isEmpty()));
-        }
+		public OutlineAction(String label) {
+			super(label);
+			getTreeViewer().addSelectionChangedListener(event -> setEnabled(!event.getSelection().isEmpty()));
+		}
 
-        public void setShell(Shell shell) {
-            this.shell = shell;
-        }
+		public void setShell(Shell shell) {
+			this.shell = shell;
+		}
 
-        @Override
+		@Override
 		public void run() {
-            MessageDialog.openInformation(shell, MessageUtil
-                    .getString("Readme_Outline"), //$NON-NLS-1$
-                    MessageUtil.getString("ReadmeOutlineActionExecuted")); //$NON-NLS-1$
-        }
-    }
+			MessageDialog.openInformation(shell, MessageUtil.getString("Readme_Outline"), //$NON-NLS-1$
+					MessageUtil.getString("ReadmeOutlineActionExecuted")); //$NON-NLS-1$
+		}
+	}
 
-    /**
-     * Creates a new ReadmeContentOutlinePage.
-     */
-    public ReadmeContentOutlinePage(IFile input) {
-        super();
-        this.input = input;
-    }
+	/**
+	 * Creates a new ReadmeContentOutlinePage.
+	 */
+	public ReadmeContentOutlinePage(IFile input) {
+		super();
+		this.input = input;
+	}
 
-    /**
-     * Creates the control and registers the popup menu for this page
-     * Menu id "org.eclipse.ui.examples.readmetool.outline"
-     */
-    @Override
+	/**
+	 * Creates the control and registers the popup menu for this page Menu id
+	 * "org.eclipse.ui.examples.readmetool.outline"
+	 */
+	@Override
 	public void createControl(Composite parent) {
-        super.createControl(parent);
+		super.createControl(parent);
 
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-                IReadmeConstants.CONTENT_OUTLINE_PAGE_CONTEXT);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IReadmeConstants.CONTENT_OUTLINE_PAGE_CONTEXT);
 
-        TreeViewer viewer = getTreeViewer();
-        viewer.setContentProvider(new WorkbenchContentProvider());
-        viewer.setLabelProvider(new WorkbenchLabelProvider());
-        viewer.setInput(getContentOutline(input));
-        initDragAndDrop();
+		TreeViewer viewer = getTreeViewer();
+		viewer.setContentProvider(new WorkbenchContentProvider());
+		viewer.setLabelProvider(new WorkbenchLabelProvider());
+		viewer.setInput(getContentOutline(input));
+		initDragAndDrop();
 
-        // Configure the context menu.
-        MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-        menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-        menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
-                + "-end")); //$NON-NLS-1$
+		// Configure the context menu.
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 
-        Menu menu = menuMgr.createContextMenu(viewer.getTree());
-        viewer.getTree().setMenu(menu);
-        // Be sure to register it so that other plug-ins can add actions.
-        getSite().registerContextMenu(
-                "org.eclipse.ui.examples.readmetool.outline", menuMgr, viewer); //$NON-NLS-1$
+		Menu menu = menuMgr.createContextMenu(viewer.getTree());
+		viewer.getTree().setMenu(menu);
+		// Be sure to register it so that other plug-ins can add actions.
+		getSite().registerContextMenu("org.eclipse.ui.examples.readmetool.outline", menuMgr, viewer); //$NON-NLS-1$
 
-        getSite().getActionBars().setGlobalActionHandler(
-                IReadmeConstants.RETARGET2,
-                new OutlineAction(MessageUtil.getString("Outline_Action2"))); //$NON-NLS-1$
+		getSite().getActionBars().setGlobalActionHandler(IReadmeConstants.RETARGET2,
+				new OutlineAction(MessageUtil.getString("Outline_Action2"))); //$NON-NLS-1$
 
-        OutlineAction action = new OutlineAction(MessageUtil
-                .getString("Outline_Action3")); //$NON-NLS-1$
-        action.setToolTipText(MessageUtil.getString("Readme_Outline_Action3")); //$NON-NLS-1$
-        getSite().getActionBars().setGlobalActionHandler(
-                IReadmeConstants.LABELRETARGET3, action);
-        action = new OutlineAction(MessageUtil.getString("Outline_Action4")); //$NON-NLS-1$
-        getSite().getActionBars().setGlobalActionHandler(
-                IReadmeConstants.ACTION_SET_RETARGET4, action);
-        action = new OutlineAction(MessageUtil.getString("Outline_Action5")); //$NON-NLS-1$
-        action.setToolTipText(MessageUtil.getString("Readme_Outline_Action5")); //$NON-NLS-1$
-        getSite().getActionBars().setGlobalActionHandler(
-                IReadmeConstants.ACTION_SET_LABELRETARGET5, action);
-    }
+		OutlineAction action = new OutlineAction(MessageUtil.getString("Outline_Action3")); //$NON-NLS-1$
+		action.setToolTipText(MessageUtil.getString("Readme_Outline_Action3")); //$NON-NLS-1$
+		getSite().getActionBars().setGlobalActionHandler(IReadmeConstants.LABELRETARGET3, action);
+		action = new OutlineAction(MessageUtil.getString("Outline_Action4")); //$NON-NLS-1$
+		getSite().getActionBars().setGlobalActionHandler(IReadmeConstants.ACTION_SET_RETARGET4, action);
+		action = new OutlineAction(MessageUtil.getString("Outline_Action5")); //$NON-NLS-1$
+		action.setToolTipText(MessageUtil.getString("Readme_Outline_Action5")); //$NON-NLS-1$
+		getSite().getActionBars().setGlobalActionHandler(IReadmeConstants.ACTION_SET_LABELRETARGET5, action);
+	}
 
-    /**
-     * Gets the content outline for a given input element.
-     * Returns the outline (a list of MarkElements), or null
-     * if the outline could not be generated.
-     */
-    private IAdaptable getContentOutline(IAdaptable input) {
-        return ReadmeModelFactory.getInstance().getContentOutline(input);
-    }
+	/**
+	 * Gets the content outline for a given input element. Returns the outline (a
+	 * list of MarkElements), or null if the outline could not be generated.
+	 */
+	private IAdaptable getContentOutline(IAdaptable input) {
+		return ReadmeModelFactory.getInstance().getContentOutline(input);
+	}
 
-    /**
-     * Initializes drag and drop for this content outline page.
-     */
-    private void initDragAndDrop() {
-        int ops = DND.DROP_COPY | DND.DROP_MOVE;
-        Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-                PluginTransfer.getInstance() };
-        getTreeViewer().addDragSupport(ops, transfers,
-                new ReadmeContentOutlineDragListener(this));
-    }
+	/**
+	 * Initializes drag and drop for this content outline page.
+	 */
+	private void initDragAndDrop() {
+		int ops = DND.DROP_COPY | DND.DROP_MOVE;
+		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(), PluginTransfer.getInstance() };
+		getTreeViewer().addDragSupport(ops, transfers, new ReadmeContentOutlineDragListener(this));
+	}
 
-    /**
-     * Forces the page to update its contents.
-     *
-     * @see ReadmeEditor#doSave(IProgressMonitor)
-     */
-    public void update() {
-        getControl().setRedraw(false);
-        getTreeViewer().setInput(getContentOutline(input));
-        getTreeViewer().expandAll();
-        getControl().setRedraw(true);
-    }
+	/**
+	 * Forces the page to update its contents.
+	 *
+	 * @see ReadmeEditor#doSave(IProgressMonitor)
+	 */
+	public void update() {
+		getControl().setRedraw(false);
+		getTreeViewer().setInput(getContentOutline(input));
+		getTreeViewer().expandAll();
+		getControl().setRedraw(true);
+	}
 }

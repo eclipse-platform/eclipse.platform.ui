@@ -18,34 +18,33 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * This class is used to demonstrate view action extensions.
- * An extension should be defined in the readme plugin.xml.
+ * This class is used to demonstrate view action extensions. An extension should
+ * be defined in the readme plugin.xml.
  */
 public class ViewActionDelegate implements IViewActionDelegate {
-    public IViewPart view;
+	public IViewPart view;
 
-    /**
-     * Creates a new ViewActionDelegate.
-     */
-    public ViewActionDelegate() {
-        super();
-    }
+	/**
+	 * Creates a new ViewActionDelegate.
+	 */
+	public ViewActionDelegate() {
+		super();
+	}
 
-    @Override
+	@Override
 	public void init(IViewPart view) {
-        this.view = view;
-    }
+		this.view = view;
+	}
 
-    @Override
+	@Override
 	public void run(org.eclipse.jface.action.IAction action) {
-        MessageDialog.openInformation(view.getSite().getShell(), MessageUtil
-                .getString("Readme_Editor"), //$NON-NLS-1$
-                MessageUtil.getString("View_Action_executed")); //$NON-NLS-1$
-    }
+		MessageDialog.openInformation(view.getSite().getShell(), MessageUtil.getString("Readme_Editor"), //$NON-NLS-1$
+				MessageUtil.getString("View_Action_executed")); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(org.eclipse.jface.action.IAction action,
-            org.eclipse.jface.viewers.ISelection selection) {
-        // do nothing
-    }
+			org.eclipse.jface.viewers.ISelection selection) {
+		// do nothing
+	}
 }

@@ -19,32 +19,32 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 /**
- * This class implements the interface required by the workbench
- * for all 'New' wizards.  This wizard creates readme files.
+ * This class implements the interface required by the workbench for all 'New'
+ * wizards. This wizard creates readme files.
  */
 public class ReadmeCreationWizard extends Wizard implements INewWizard {
-    private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-    private IWorkbench workbench;
+	private IWorkbench workbench;
 
-    private ReadmeCreationPage mainPage;
+	private ReadmeCreationPage mainPage;
 
-    @Override
+	@Override
 	public void addPages() {
-        mainPage = new ReadmeCreationPage(workbench, selection);
-        addPage(mainPage);
-    }
+		mainPage = new ReadmeCreationPage(workbench, selection);
+		addPage(mainPage);
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-        this.workbench = workbench;
-        this.selection = selection;
-        setWindowTitle(MessageUtil.getString("New_Readme_File")); //$NON-NLS-1$
-        setDefaultPageImageDescriptor(ReadmeImages.README_WIZARD_BANNER);
-    }
+		this.workbench = workbench;
+		this.selection = selection;
+		setWindowTitle(MessageUtil.getString("New_Readme_File")); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(ReadmeImages.README_WIZARD_BANNER);
+	}
 
-    @Override
+	@Override
 	public boolean performFinish() {
-        return mainPage.finish();
-    }
+		return mainPage.finish();
+	}
 }

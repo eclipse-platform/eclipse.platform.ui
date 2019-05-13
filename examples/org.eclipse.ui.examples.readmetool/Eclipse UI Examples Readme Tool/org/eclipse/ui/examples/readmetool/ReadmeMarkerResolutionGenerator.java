@@ -21,17 +21,16 @@ import org.eclipse.ui.IMarkerResolutionGenerator2;
 /**
  * Creates resolutions for readme markers.
  */
-public class ReadmeMarkerResolutionGenerator implements
-        IMarkerResolutionGenerator2 {
+public class ReadmeMarkerResolutionGenerator implements IMarkerResolutionGenerator2 {
 
-    @Override
+	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-        return new IMarkerResolution[] { new AddSentenceResolution() };
-    }
+		return new IMarkerResolution[] { new AddSentenceResolution() };
+	}
 
-    @Override
+	@Override
 	public boolean hasResolutions(IMarker marker) {
-        return true;
-    }
+		return true;
+	}
 
 }

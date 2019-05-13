@@ -23,28 +23,28 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class ReadmePlugin extends AbstractUIPlugin {
 
-    public static final String PLUGIN_ID = "org.eclipse.ui.examples.readmetool"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.ui.examples.readmetool"; //$NON-NLS-1$
 
-    /**
-     * Default instance of the receiver
-     */
-    private static ReadmePlugin inst;
+	/**
+	 * Default instance of the receiver
+	 */
+	private static ReadmePlugin inst;
 
-    /**
-     * Creates the Readme plugin and caches its default instance
-     */
-    public ReadmePlugin() {
-        if (inst == null)
-            inst = this;
-    }
+	/**
+	 * Creates the Readme plugin and caches its default instance
+	 */
+	public ReadmePlugin() {
+		if (inst == null)
+			inst = this;
+	}
 
-    /**
-     * Gets the plugin singleton.
-     *
-     * @return the default ReadmePlugin instance
-     */
-    static public ReadmePlugin getDefault() {
-        return inst;
-    }
+	/**
+	 * Gets the plugin singleton.
+	 *
+	 * @return the default ReadmePlugin instance
+	 */
+	static public ReadmePlugin getDefault() {
+		return inst;
+	}
 
 }

@@ -24,96 +24,94 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * A list of adaptable objects.  This is a generic list that can
- * be used to display an arbitrary set of adaptable objects in the workbench.
- * Also implements the IWorkbenchAdapter interface for simple display
- * and navigation.
+ * A list of adaptable objects. This is a generic list that can be used to
+ * display an arbitrary set of adaptable objects in the workbench. Also
+ * implements the IWorkbenchAdapter interface for simple display and navigation.
  */
 public class AdaptableList implements IWorkbenchAdapter, IAdaptable {
-    protected List<IAdaptable> children = new ArrayList<>();
+	protected List<IAdaptable> children = new ArrayList<>();
 
-    /**
-     * Creates a new adaptable list with the given children.
-     */
-    public AdaptableList() {
-        // do nothing
-    }
+	/**
+	 * Creates a new adaptable list with the given children.
+	 */
+	public AdaptableList() {
+		// do nothing
+	}
 
-    /**
-     * Creates a new adaptable list with the given children.
-     */
-    public AdaptableList(IAdaptable[] newChildren) {
-        for (int i = 0; i < newChildren.length; i++) {
-            children.add(newChildren[i]);
-        }
-    }
+	/**
+	 * Creates a new adaptable list with the given children.
+	 */
+	public AdaptableList(IAdaptable[] newChildren) {
+		for (int i = 0; i < newChildren.length; i++) {
+			children.add(newChildren[i]);
+		}
+	}
 
-    /**
-     * Adds all the adaptable objects in the given enumeration to this list.
-     * Returns this list.
-     */
-    public AdaptableList add(Iterator<IAdaptable> iterator) {
-        while (iterator.hasNext()) {
-            add(iterator.next());
-        }
-        return this;
-    }
+	/**
+	 * Adds all the adaptable objects in the given enumeration to this list. Returns
+	 * this list.
+	 */
+	public AdaptableList add(Iterator<IAdaptable> iterator) {
+		while (iterator.hasNext()) {
+			add(iterator.next());
+		}
+		return this;
+	}
 
-    /**
-     * Adds the given adaptable object to this list.
-     * Returns this list.
-     */
-    public AdaptableList add(IAdaptable adaptable) {
-        children.add(adaptable);
-        return this;
-    }
+	/**
+	 * Adds the given adaptable object to this list. Returns this list.
+	 */
+	public AdaptableList add(IAdaptable adaptable) {
+		children.add(adaptable);
+		return this;
+	}
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        if (adapter == IWorkbenchAdapter.class)
-            return (T)this;
-        return null;
-    }
+		if (adapter == IWorkbenchAdapter.class)
+			return (T) this;
+		return null;
+	}
 
-    /**
-     * Returns the elements in this list.
-     */
-    public Object[] getChildren() {
-        return children.toArray();
-    }
+	/**
+	 * Returns the elements in this list.
+	 */
+	public Object[] getChildren() {
+		return children.toArray();
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object o) {
-        return children.toArray();
-    }
+		return children.toArray();
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public String getLabel(Object object) {
-        return object == null ? "" : object.toString(); //$NON-NLS-1$
-    }
+		return object == null ? "" : object.toString(); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object object) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Removes the given adaptable object from this list.
-     */
-    public void remove(IAdaptable adaptable) {
-        children.remove(adaptable);
-    }
+	/**
+	 * Removes the given adaptable object from this list.
+	 */
+	public void remove(IAdaptable adaptable) {
+		children.remove(adaptable);
+	}
 
-    /**
-     * Returns the number of items in the list
-     */
-    public int size() {
-        return children.size();
-    }
+	/**
+	 * Returns the number of items in the list
+	 */
+	public int size() {
+		return children.size();
+	}
 }

@@ -36,55 +36,50 @@ public class AddSentenceResolution implements IMarkerResolution {
 
 	@Override
 	public String getLabel() {
-        return MessageUtil.getString("Add_Sentence"); //$NON-NLS-1$
-    }
+		return MessageUtil.getString("Add_Sentence"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public void run(IMarker marker) {
-        // Se if there is an open editor on the file containing the marker
-        IWorkbenchWindow w = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
-        if (w == null)
-            return;
-        IWorkbenchPage page = w.getActivePage();
-        if (page == null)
-            return;
-        IFileEditorInput input = new FileEditorInput((IFile) marker
-                .getResource());
-        IEditorPart editorPart = page.findEditor(input);
+		// Se if there is an open editor on the file containing the marker
+		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (w == null)
+			return;
+		IWorkbenchPage page = w.getActivePage();
+		if (page == null)
+			return;
+		IFileEditorInput input = new FileEditorInput((IFile) marker.getResource());
+		IEditorPart editorPart = page.findEditor(input);
 
-        if (editorPart == null) {
-            // open an editor
-            try {
-                editorPart = IDE.openEditor(page, (IFile) marker.getResource(),
-                        true);
-            } catch (PartInitException e) {
-                MessageDialog.openError(w.getShell(), MessageUtil
-                        .getString("Resolution_Error"), //$NON-NLS-1$
-                        MessageUtil.getString("Unable_to_open_file_editor")); //$NON-NLS-1$
-            }
-        }
-        if (editorPart == null || !(editorPart instanceof ReadmeEditor))
-            return;
-        // insert the sentence
-        ReadmeEditor editor = (ReadmeEditor) editorPart;
-        IDocument doc = editor.getDocumentProvider().getDocument(
-                editor.getEditorInput());
-        String s = MessageUtil.getString("Simple_sentence"); //$NON-NLS-1$
-        try {
-            doc.replace(marker.getAttribute(IMarker.CHAR_START, -1), 0, s);
-        } catch (BadLocationException e) {
-            // ignore
-            return;
-        }
-        // delete the marker
-        try {
-            marker.delete();
-        } catch (CoreException e) {
-            e.printStackTrace();
-            // ignore
-        }
+		if (editorPart == null) {
+			// open an editor
+			try {
+				editorPart = IDE.openEditor(page, (IFile) marker.getResource(), true);
+			} catch (PartInitException e) {
+				MessageDialog.openError(w.getShell(), MessageUtil.getString("Resolution_Error"), //$NON-NLS-1$
+						MessageUtil.getString("Unable_to_open_file_editor")); //$NON-NLS-1$
+			}
+		}
+		if (editorPart == null || !(editorPart instanceof ReadmeEditor))
+			return;
+		// insert the sentence
+		ReadmeEditor editor = (ReadmeEditor) editorPart;
+		IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		String s = MessageUtil.getString("Simple_sentence"); //$NON-NLS-1$
+		try {
+			doc.replace(marker.getAttribute(IMarker.CHAR_START, -1), 0, s);
+		} catch (BadLocationException e) {
+			// ignore
+			return;
+		}
+		// delete the marker
+		try {
+			marker.delete();
+		} catch (CoreException e) {
+			e.printStackTrace();
+			// ignore
+		}
 
-    }
+	}
 
 }
