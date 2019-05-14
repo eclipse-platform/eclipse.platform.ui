@@ -137,8 +137,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String Workbench_new;
 	public static String OpenWorkspaceAction_text;
 	public static String OpenWorkspaceAction_toolTip;
-	public static String OpenWorkspaceAction_errorTitle;
-	public static String OpenWorkspaceAction_errorMessage;
 	public static String OpenWorkspaceAction_other;
 	public static String NewProjectAction_text;
 	public static String NewProjectAction_toolTip;
@@ -1044,6 +1042,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEApplication_versionMessage_olderWorkspace;
 	public static String IDEApplication_version_doNotWarnAgain;
 	public static String IDEApplication_version_continue;
+	public static String IDEApplication_version_switch;
+	public static String IDEApplication_version_exit;
 	public static String GlobalBuildAction_BuildRunningTitle;
 	public static String GlobalBuildAction_BuildRunningMessage;
 	public static String CleanDialog_buildCleanAuto;

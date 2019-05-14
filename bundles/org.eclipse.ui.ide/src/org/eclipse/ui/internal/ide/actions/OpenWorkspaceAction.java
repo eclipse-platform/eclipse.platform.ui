@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -24,14 +25,13 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceWithSettingsDialog;
@@ -93,22 +93,6 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 			restart(location);
 		}
 	}
-
-	private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
-
-	private static final String PROP_VMARGS = "eclipse.vmargs"; //$NON-NLS-1$
-
-	private static final String PROP_COMMANDS = "eclipse.commands"; //$NON-NLS-1$
-
-	private static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
-
-	private static final String PROP_EXIT_DATA = "eclipse.exitdata"; //$NON-NLS-1$
-
-	private static final String CMD_DATA = "-data"; //$NON-NLS-1$
-
-	private static final String CMD_VMARGS = "-vmargs"; //$NON-NLS-1$
-
-	private static final String NEW_LINE = "\n"; //$NON-NLS-1$
 
 	private IWorkbenchWindow window;
 
@@ -230,19 +214,14 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 	/**
 	 * Restart the workbench using the specified path as the workspace location.
 	 *
-	 * @param path
-	 *            the location
+	 * @param workspacePath the new workspace location
 	 * @since 3.3
 	 */
-	private void restart(String path) {
-		String command_line = buildCommandLine(path);
-		if (command_line == null) {
-			return;
+	private void restart(String workspacePath) {
+		Object result = Workbench.setRestartArguments(workspacePath);
+		if (result == IApplication.EXIT_RELAUNCH) {
+			window.getWorkbench().restart();
 		}
-
-		System.setProperty(PROP_EXIT_CODE, Integer.toString(24));
-		System.setProperty(PROP_EXIT_DATA, command_line);
-		window.getWorkbench().restart();
 	}
 
 	/**
@@ -267,75 +246,6 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 		// otherwise store the new selection and return the selection
 		data.writePersistedData();
 		return selection;
-	}
-
-	/**
-	 * Create and return a string with command line options for eclipse.exe that
-	 * will launch a new workbench that is the same as the currently running
-	 * one, but using the argument directory as its workspace.
-	 *
-	 * @param workspace
-	 *            the directory to use as the new workspace
-	 * @return a string of command line options or null on error
-	 */
-	private String buildCommandLine(String workspace) {
-		String property = System.getProperty(PROP_VM);
-		if (property == null) {
-			MessageDialog.openError(window.getShell(), IDEWorkbenchMessages.OpenWorkspaceAction_errorTitle,
-					NLS.bind(IDEWorkbenchMessages.OpenWorkspaceAction_errorMessage, PROP_VM));
-			return null;
-		}
-
-		StringBuilder result = new StringBuilder(512);
-		result.append(property);
-		result.append(NEW_LINE);
-
-		// append the vmargs and commands. Assume that these already end in \n
-		String vmargs = System.getProperty(PROP_VMARGS);
-		if (vmargs != null) {
-			result.append(vmargs);
-		}
-
-		// append the rest of the args, replacing or adding -data as required
-		property = System.getProperty(PROP_COMMANDS);
-		if (property == null) {
-			result.append(CMD_DATA);
-			result.append(NEW_LINE);
-			result.append(workspace);
-			result.append(NEW_LINE);
-		} else {
-			// find the index of the arg to add/replace its value
-			int cmd_data_pos = property.lastIndexOf(CMD_DATA);
-			if (cmd_data_pos != -1) {
-				cmd_data_pos += CMD_DATA.length() + 1;
-				result.append(property.substring(0, cmd_data_pos));
-				result.append(workspace);
-				// append from the next arg
-				int nextArg = property.indexOf("\n-", cmd_data_pos - 1); //$NON-NLS-1$
-				if (nextArg != -1) {
-					result.append(property.substring(nextArg));
-				}
-			} else {
-				result.append(CMD_DATA);
-				result.append(NEW_LINE);
-				result.append(workspace);
-				result.append(NEW_LINE);
-				result.append(property);
-			}
-		}
-
-		// put the vmargs back at the very end (the eclipse.commands property
-		// already contains the -vm arg)
-		if (vmargs != null) {
-			if (result.charAt(result.length() - 1) != '\n') {
-				result.append('\n');
-			}
-			result.append(CMD_VMARGS);
-			result.append(NEW_LINE);
-			result.append(vmargs);
-		}
-
-		return result.toString();
 	}
 
 	@Override

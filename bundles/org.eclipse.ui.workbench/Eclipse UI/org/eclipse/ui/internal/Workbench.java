@@ -292,7 +292,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
 	private static final String PROP_VMARGS = "eclipse.vmargs"; //$NON-NLS-1$
 	private static final String PROP_COMMANDS = "eclipse.commands"; //$NON-NLS-1$
-	private static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
+	public static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String CMD_DATA = "-data"; //$NON-NLS-1$
 	private static final String CMD_VMARGS = "-vmargs"; //$NON-NLS-1$
 
@@ -2568,16 +2568,12 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * Create and return a string with command line options for eclipse.exe that
 	 * will launch a new workbench that is the same as the currently running one,
 	 * but using the argument directory as its workspace.
-	 * <p>
-	 * Note that this method has been copied from
-	 * OpenWorkspaceAction.buildCommandLine(String workspace)
-	 * </p>
 	 *
 	 * @param workspace the directory to use as the new workspace
 	 * @return a string of command line options or <code>null</code> if 'eclipse.vm'
 	 *         is not set
 	 */
-	private String buildCommandLine(String workspace) {
+	private static String buildCommandLine(String workspace) {
 		String property = System.getProperty(PROP_VM);
 		if (property == null) {
 			if (!Platform.inDevelopmentMode()) {
@@ -2638,6 +2634,30 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		}
 
 		return result.toString();
+	}
+
+	/**
+	 * Sets the arguments required to restart the workbench using the specified path
+	 * as the workspace location.
+	 *
+	 * @param workspacePath the new workspace location
+	 * @return {@link IApplication#EXIT_OK} or {@link IApplication#EXIT_RELAUNCH}
+	 */
+	public static Object setRestartArguments(String workspacePath) {
+		String property = System.getProperty(Workbench.PROP_VM);
+		if (property == null) {
+			MessageDialog.openError(null, WorkbenchMessages.Workbench_problemsRestartErrorTitle,
+					NLS.bind(WorkbenchMessages.Workbench_problemsRestartErrorMessage, Workbench.PROP_VM));
+			return IApplication.EXIT_OK;
+		}
+		String command_line = Workbench.buildCommandLine(workspacePath);
+		if (command_line == null) {
+			return IApplication.EXIT_OK;
+		}
+
+		System.setProperty(Workbench.PROP_EXIT_CODE, IApplication.EXIT_RELAUNCH.toString());
+		System.setProperty(IApplicationContext.EXIT_DATA_PROPERTY, command_line);
+		return IApplication.EXIT_RELAUNCH;
 	}
 
 	/**

@@ -25,12 +25,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -49,6 +51,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
@@ -86,18 +89,10 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	private static final String WORKSPACE_CHECK_REFERENCE_BUNDLE_NAME_LEGACY = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String WORKSPACE_CHECK_LEGACY_VERSION_INCREMENTED = "2"; //$NON-NLS-1$   legacy version=1
 
-	private static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
-
 	/**
 	 * Return value when the user wants to retry loading the current workspace
 	 */
 	private static final int RETRY_LOAD = 0;
-
-	/**
-	 * A special return code that will be recognized by the launcher and used to
-	 * restart the workbench.
-	 */
-	private static final Integer EXIT_RELAUNCH = Integer.valueOf(24);
 
 	/**
 	 * A special return code that will be recognized by the PDE launcher and used to
@@ -164,7 +159,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 			// if the exit code property has been set to the relaunch code, then
 			// return that code now, otherwise this is a normal restart
-			return EXIT_RELAUNCH.equals(Integer.getInteger(PROP_EXIT_CODE)) ? EXIT_RELAUNCH
+			return EXIT_RELAUNCH.equals(Integer.getInteger(Workbench.PROP_EXIT_CODE)) ? EXIT_RELAUNCH
 					: EXIT_RESTART;
 		} finally {
 			if (display != null) {
@@ -216,52 +211,54 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		if (instanceLoc.isSet()) {
 			// make sure the meta data version is compatible (or the user has
 			// chosen to overwrite it).
-			if (!checkValidWorkspace(shell, instanceLoc.getURL())) {
+			ReturnCode result = checkValidWorkspace(shell, instanceLoc.getURL());
+			if (result == ReturnCode.EXIT) {
 				return EXIT_OK;
 			}
-
-			// at this point its valid, so try to lock it and update the
-			// metadata version information if successful
-			try {
-				if (instanceLoc.lock()) {
-					writeWorkspaceVersion();
-					return null;
-				}
-
-				// we failed to create the directory.
-				// Two possibilities:
-				// 1. directory is already in use
-				// 2. directory could not be created
-				File workspaceDirectory = new File(instanceLoc.getURL().getFile());
-				if (workspaceDirectory.exists()) {
-					if (isDevLaunchMode(applicationArguments)) {
-						return EXIT_WORKSPACE_LOCKED;
+			if (result == ReturnCode.VALID) {
+				// at this point its valid, so try to lock it and update the
+				// metadata version information if successful
+				try {
+					if (instanceLoc.lock()) {
+						writeWorkspaceVersion();
+						return null;
 					}
-					MessageDialog.openError(
+
+					// we failed to create the directory.
+					// Two possibilities:
+					// 1. directory is already in use
+					// 2. directory could not be created
+					File workspaceDirectory = new File(instanceLoc.getURL().getFile());
+					if (workspaceDirectory.exists()) {
+						if (isDevLaunchMode(applicationArguments)) {
+							return EXIT_WORKSPACE_LOCKED;
+						}
+						MessageDialog.openError(
+								shell,
+								IDEWorkbenchMessages.IDEApplication_workspaceCannotLockTitle,
+								NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage, workspaceDirectory.getAbsolutePath()));
+					} else {
+						MessageDialog.openError(
+								shell,
+								IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
+								IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
+					}
+				} catch (IOException e) {
+					IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", //$NON-NLS-1$
+							e);
+					MessageDialog
+					.openError(
 							shell,
-							IDEWorkbenchMessages.IDEApplication_workspaceCannotLockTitle,
-							NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage, workspaceDirectory.getAbsolutePath()));
-				} else {
-					MessageDialog.openError(
-							shell,
-							IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
-							IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
+							IDEWorkbenchMessages.InternalError,
+							e.getMessage());
 				}
-			} catch (IOException e) {
-				IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", //$NON-NLS-1$
-						e);
-				MessageDialog
-				.openError(
-						shell,
-						IDEWorkbenchMessages.InternalError,
-						e.getMessage());
+				return EXIT_OK;
 			}
-			return EXIT_OK;
 		}
 
-		// -data @noDefault or -data not specified, prompt and set
-		ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc
-				.getDefault());
+		// -data @noDefault or -data not specified => prompt and set
+		// -data is specified but invalid according to checkValidWorkspace(): re-launch
+		ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc.getDefault());
 
 		boolean force = false;
 
@@ -279,7 +276,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		URL workspaceUrl = null;
 		while (true) {
 			if (returnValue != RETRY_LOAD) {
-				workspaceUrl = promptForWorkspace(shell, launchData, force);
+				try {
+					workspaceUrl = promptForWorkspace(shell, launchData, force);
+				} catch (OperationCanceledException e) {
+					// Chosen workspace location was not compatible, select default one
+					launchData = new ChooseWorkspaceData(instanceLoc.getDefault());
+					continue;
+				}
 			}
 			if (workspaceUrl == null) {
 				return EXIT_OK;
@@ -290,6 +293,11 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			force = true;
 
 			try {
+				if (instanceLoc.isSet()) {
+					// restart with new location
+					return Workbench.setRestartArguments(workspaceUrl.getFile());
+				}
+
 				// the operation will fail if the url is not a valid
 				// instance data area, so other checking is unneeded
 				if (instanceLoc.set(workspaceUrl, true)) {
@@ -402,9 +410,15 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 								IDEWorkbenchMessages.IDEApplication_workspaceInvalidMessage);
 				continue;
 			}
-		} while (!checkValidWorkspace(shell, url));
-
-		return url;
+			ReturnCode result = checkValidWorkspace(shell, url);
+			if (result == ReturnCode.INVALID) {
+				throw new OperationCanceledException("Invalid workspace location: " + url); //$NON-NLS-1$
+			}
+			if (result == ReturnCode.EXIT) {
+				return null;
+			}
+			return url;
+		} while (true);
 	}
 
 	/**
@@ -415,23 +429,36 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	}
 
 	/**
-	 * Return true if the argument directory is ok to use as a workspace and
-	 * false otherwise. A version check will be performed, and a confirmation
-	 * box may be displayed on the argument shell if an older version is
-	 * detected.
-	 *
-	 * @return true if the argument URL is ok to use as a workspace and false
-	 *         otherwise.
+	 * Result of the {@link IDEApplication#checkValidWorkspace(Shell, URL)}
+	 * operation
 	 */
-	protected boolean checkValidWorkspace(Shell shell, URL url) {
+	public enum ReturnCode {
+		/** valid workspace */
+		VALID,
+		/** invalid workspace */
+		INVALID,
+		/** exit application */
+		EXIT
+	}
+
+	/**
+	 * Return true if the argument directory is ok to use as a workspace and false
+	 * otherwise. A version check will be performed, and a confirmation box may be
+	 * displayed on the argument shell if an older version is detected.
+	 *
+	 * @return {@link ReturnCode#VALID} if the argument URL is ok to use as a
+	 *         workspace, {@link ReturnCode#INVALID} otherwise or
+	 *         {@link ReturnCode#EXIT} to exit application.
+	 */
+	protected ReturnCode checkValidWorkspace(Shell shell, URL url) {
 		// a null url is not a valid workspace
 		if (url == null) {
-			return false;
+			return ReturnCode.INVALID;
 		}
 
 		if (WORKSPACE_CHECK_REFERENCE_BUNDLE_VERSION == null) {
 			// no reference bundle installed, no check possible
-			return true;
+			return ReturnCode.VALID;
 		}
 
 		int versionCompareResult = compareWorkspaceAndIdeVersions(url);
@@ -439,7 +466,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		// equality test is required since any version difference (newer
 		// or older) may result in data being trampled
 		if (versionCompareResult == 0) {
-			return true;
+			return ReturnCode.VALID;
 		}
 
 		// At this point workspace has been detected to be from a version
@@ -465,13 +492,30 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		IPersistentPreferenceStore prefStore = new ScopedPreferenceStore(ConfigurationScope.INSTANCE, IDEWorkbenchPlugin.IDE_WORKBENCH);
 		boolean keepOnWarning = prefStore.getBoolean(IDEInternalPreferences.WARN_ABOUT_WORKSPACE_INCOMPATIBILITY);
 		if (keepOnWarning) {
+			LinkedHashMap<String, Integer> buttonLabelToId = new LinkedHashMap<>();
+			buttonLabelToId.put(IDEWorkbenchMessages.IDEApplication_version_continue, IDialogConstants.YES_ID);
+			buttonLabelToId.put(IDEWorkbenchMessages.IDEApplication_version_switch, IDialogConstants.RETRY_ID);
+			buttonLabelToId.put(IDEWorkbenchMessages.IDEApplication_version_exit, IDialogConstants.CLOSE_ID);
 			MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, title, null, message, severity,
-					new String[] { IDEWorkbenchMessages.IDEApplication_version_continue,
-							IDialogConstants.CANCEL_LABEL },
-					0, IDEWorkbenchMessages.IDEApplication_version_doNotWarnAgain, false);
+					buttonLabelToId, 0, IDEWorkbenchMessages.IDEApplication_version_doNotWarnAgain, false) {
+				@Override
+				protected Shell getParentShell() {
+					// Bug 429308: Make workspace selection dialog visible
+					// in the task manager of the OS
+					return null;
+				}
+			};
+			// hide splash if any
+			if (isValidShell(shell)) {
+				shell.setVisible(false);
+			}
+
 			int returnCode = dialog.open();
-			if (returnCode == Window.CANCEL || returnCode == SWT.DEFAULT) {
-				return false;
+			if (returnCode == IDialogConstants.RETRY_ID || returnCode == SWT.DEFAULT) {
+				return ReturnCode.INVALID;
+			}
+			if (returnCode == IDialogConstants.CLOSE_ID) {
+				return ReturnCode.EXIT;
 			}
 			keepOnWarning = !dialog.getToggleState();
 			try {
@@ -482,7 +526,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 					new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, e.getMessage(), e));
 			}
 		}
-		return true;
+		return ReturnCode.VALID;
 	}
 
 	/**

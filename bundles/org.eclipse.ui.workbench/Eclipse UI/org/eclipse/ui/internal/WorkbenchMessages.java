@@ -709,6 +709,9 @@ public class WorkbenchMessages extends NLS {
 	public static String Workbench_problemsRestoring;
 	public static String Workbench_problemsSaving;
 
+	public static String Workbench_problemsRestartErrorTitle;
+	public static String Workbench_problemsRestartErrorMessage;
+
 	public static String PageLayout_missingRefPart;
 
 	// ==============================================================================
