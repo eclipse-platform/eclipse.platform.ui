@@ -291,21 +291,19 @@ public abstract class HeadlessApplicationTest extends HeadlessApplicationElement
 		IConfigurationElement[] parts = registry
 				.getConfigurationElementsFor(extId);
 
-		for (int i = 0; i < parts.length; i++) {
+		for (IConfigurationElement p : parts) {
 			MPart part = ems.createModelElement(MPart.class);
-			part.setLabel(parts[i].getAttribute("label")); //$NON-NLS-1$
+			part.setLabel(p.getAttribute("label")); //$NON-NLS-1$
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
-					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
-					+ parts[i].getAttribute("icon")); //$NON-NLS-1$
+					+ p.getContributor().getName() + "/" //$NON-NLS-1$
+					+ p.getAttribute("icon")); //$NON-NLS-1$
 			part.setContributionURI("bundleclass://" //$NON-NLS-1$
-					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
-					+ parts[i].getAttribute("class")); //$NON-NLS-1$
-			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$
-
+					+ p.getContributor().getName() + "/" //$NON-NLS-1$
+					+ p.getAttribute("class")); //$NON-NLS-1$
+			String parentId = p.getAttribute("parentId"); //$NON-NLS-1$
 			Object parent = findObject(resource.getAllContents(), parentId);
 			if (parent instanceof MElementContainer<?>) {
-				((MElementContainer<MPartSashContainerElement>) parent)
-						.getChildren().add(part);
+				((MElementContainer<MPartSashContainerElement>) parent).getChildren().add(part);
 			}
 		}
 

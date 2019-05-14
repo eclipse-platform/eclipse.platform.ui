@@ -9954,9 +9954,9 @@ public class EPartServiceTest extends UITest {
 			MPartStack partStack = ems.createModelElement(MPartStack.class);
 			window.getChildren().add(partStack);
 
-			for (int j = 0; j < partIds[i].length; j++) {
+			for (String partId : partIds[i]) {
 				MPart part = ems.createModelElement(MPart.class);
-				part.setElementId(partIds[i][j]);
+				part.setElementId(partId);
 				partStack.getChildren().add(part);
 			}
 		}

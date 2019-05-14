@@ -159,10 +159,9 @@ public class SampleView {
 		IExtension input = null;
 		IExtension[] extensions = registry
 				.getExtensions("org.eclipse.e4.ui.workbench"); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; i++) {
-			if (extensions[i].getExtensionPointUniqueIdentifier().equals(
-					"org.eclipse.e4.services")) { //$NON-NLS-1$
-				input = extensions[i];
+		for (IExtension extension : extensions) {
+			if (extension.getExtensionPointUniqueIdentifier().equals("org.eclipse.e4.services")) { // $NON-NLS-1$
+				input = extension;
 				break;
 			}
 		}

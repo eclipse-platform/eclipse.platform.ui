@@ -405,8 +405,8 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		String[] unfiredIds = tester.getAttIds(false);
 		if (unfiredIds.length > 0) {
 			StringBuilder msg = new StringBuilder("No event fired:").append(unfiredIds);
-			for (int i = 0; i < unfiredIds.length; i++) {
-				msg.append(' ').append(unfiredIds[i]);
+			for (String unfiredId : unfiredIds) {
+				msg.append(' ').append(unfiredId);
 			}
 			fail(msg.toString());
 		}

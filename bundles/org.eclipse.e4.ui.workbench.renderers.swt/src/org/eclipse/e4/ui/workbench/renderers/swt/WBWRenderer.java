@@ -469,8 +469,8 @@ public class WBWRenderer extends SWTPartRenderer {
 					Arrays.fill(response, Save.CANCEL);
 				} else {
 					Arrays.fill(response, Save.NO);
-					for (int i = 0; i < elements.length; i++) {
-						response[parts.indexOf(elements[i])] = Save.YES;
+					for (Object element : elements) {
+						response[parts.indexOf(element)] = Save.YES;
 					}
 				}
 				return response;
