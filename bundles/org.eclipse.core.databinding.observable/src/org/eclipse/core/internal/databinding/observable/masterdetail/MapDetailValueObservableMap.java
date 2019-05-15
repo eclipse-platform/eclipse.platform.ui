@@ -69,6 +69,7 @@ public class MapDetailValueObservableMap<K, M, E> extends
 
 	private IStaleListener masterStaleListener = staleEvent -> fireStale();
 
+	@SuppressWarnings("unchecked")
 	private IStaleListener detailStaleListener = (StaleEvent staleEvent) -> {
 		addStaleDetailObservable((IObservableValue<E>) staleEvent.getObservable());
 	};
