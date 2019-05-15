@@ -137,13 +137,13 @@ public class TabbedPropertySheetPageWithDecorations extends
 
 	private Map getImageDecorationsForTabs(ITabItem[] tabItems) {
 		Map tabToImageDecorationsMap = new HashMap();
-		for (int i = 0; i < tabItems.length; i++) {
-			if (tabItems[i].getText().equals("Name")) {
-				tabToImageDecorationsMap.put(tabItems[i], Integer.valueOf(5));
-			} else if (tabItems[i].getText().equals("Message")) {
-				tabToImageDecorationsMap.put(tabItems[i], Integer.valueOf(3));
+		for (ITabItem tabItem : tabItems) {
+			if (tabItem.getText().equals("Name")) {
+				tabToImageDecorationsMap.put(tabItem, Integer.valueOf(5));
+			} else if (tabItem.getText().equals("Message")) {
+				tabToImageDecorationsMap.put(tabItem, Integer.valueOf(3));
 			} else {
-				tabToImageDecorationsMap.put(tabItems[i], Integer.valueOf(0));
+				tabToImageDecorationsMap.put(tabItem, Integer.valueOf(0));
 			}
 		}
 		return tabToImageDecorationsMap;

@@ -507,8 +507,9 @@ public abstract class UITestCase extends TestCase {
 	 */
 	public void closeAllPages(IWorkbenchWindow window) {
 		IWorkbenchPage[] pages = window.getPages();
-		for (int i = 0; i < pages.length; i++)
-			pages[i].close();
+		for (IWorkbenchPage page : pages) {
+			page.close();
+		}
 	}
 
 	/**

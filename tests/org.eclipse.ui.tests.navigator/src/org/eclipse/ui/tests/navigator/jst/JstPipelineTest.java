@@ -107,19 +107,19 @@ public class JstPipelineTest extends NavigatorTestBase {
 		// and 3a) `charset.jar` if the java project uses JRE of java8 or below
 		// or 3b) `java.base` if the java project uses JRE of java9 or above
 		// and checks if the ContentProvider and LabelProvider are working as expected.
-		for (int i = 0; i < projectChildren.length; i++) {
-			if (projectChildren[i].getText().startsWith("Compressed Java")) {
+		for (TreeItem projectChild : projectChildren) {
+			if (projectChild.getText().startsWith("Compressed Java")) {
 				foundJava = true;
-				_viewer.setExpandedState(projectChildren[i].getData(), true);
-
-				TreeItem[] srcChildren = projectChildren[i].getItems();
-				for (int j = 0; j < srcChildren.length; j++) {
-					if (srcChildren[j].getText().startsWith(
-							"Compressed Libraries"))
+				_viewer.setExpandedState(projectChild.getData(), true);
+				TreeItem[] srcChildren = projectChild.getItems();
+				for (TreeItem srcChild : srcChildren) {
+					if (srcChild.getText().startsWith("Compressed Libraries")) {
 						foundCompressedLibrary = true;
-					if (srcChildren[j].getText().startsWith("charsets.jar")
-							|| srcChildren[j].getText().startsWith("java.base"))
+					}
+					if (srcChild.getText().startsWith("charsets.jar")
+							|| srcChild.getText().startsWith("java.base")) {
 						foundJavaLibrary = true;
+					}
 				}
 			}
 		}

@@ -145,9 +145,11 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 		INavigatorContentDescriptor[] visibleDescriptors = contentServiceWithProgrammaticBindings
 				.getVisibleExtensions();
 		boolean found = false;
-		for (int i = 0; i < visibleDescriptors.length; i++)
-			if (TEST_CONTENT2.equals(visibleDescriptors[i].getId()))
+		for (INavigatorContentDescriptor visibleDescriptor : visibleDescriptors) {
+			if (TEST_CONTENT2.equals(visibleDescriptor.getId())) {
 				found = true;
+			}
+		}
 		assertTrue("The programmatically bound extension should be bound.",
 				found);
 
@@ -180,12 +182,10 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 		assertEquals("There should be three visible extensions.", 3,
 				visibleIds.length);
 
-		for (int i = 0; i < visibleIds.length; i++) {
-			if (!TEST_CONTENT.equals(visibleIds[i])
-					&& !COMMON_NAVIGATOR_RESOURCE_EXT.equals(visibleIds[i])
-					&& !TEST_CONTENT_HAS_CHILDREN.equals(visibleIds[i])) {
-				assertTrue("The extension id is invalid:" + visibleIds[i],
-						false);
+		for (String visibleId : visibleIds) {
+			if (!TEST_CONTENT.equals(visibleId) && !COMMON_NAVIGATOR_RESOURCE_EXT.equals(visibleId)
+					&& !TEST_CONTENT_HAS_CHILDREN.equals(visibleId)) {
+				assertTrue("The extension id is invalid:" + visibleId, false);
 			}
 		}
 

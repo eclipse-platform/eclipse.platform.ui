@@ -97,12 +97,10 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 			IMarker[] markers = root.findMarkers(IMarker.PROBLEM, false,
 					IResource.DEPTH_ZERO);
 
-			for (int i = 0; i < markers.length; i++) {
-				String message = (String) markers[i]
-						.getAttribute(IMarker.MESSAGE);
-
+			for (IMarker marker : markers) {
+				String message = (String) marker.getAttribute(IMarker.MESSAGE);
 				if (message != null && message.startsWith("this is a test")) {
-					markers[i].delete();
+					marker.delete();
 				}
 			}
 		} catch (CoreException e) {

@@ -44,9 +44,11 @@ public class ArrayUtil {
 	public static boolean checkNotNull(Object[] array) {
 		if (array == null)
 			return false;
-		for (int i = 0; i < array.length; i++)
-			if (array[i] == null)
+		for (Object a : array) {
+			if (a == null) {
 				return false;
+			}
+		}
 		return true;
 	}
 
@@ -61,9 +63,11 @@ public class ArrayUtil {
 	public static boolean contains(Object[] array, Object element) {
 		if (array == null || element == null)
 			return false;
-		for (int i = 0; i < array.length; i++)
-			if (array[i] == element)
+		for (Object a : array) {
+			if (a == element) {
 				return true;
+			}
+		}
 		return false;
 	}
 

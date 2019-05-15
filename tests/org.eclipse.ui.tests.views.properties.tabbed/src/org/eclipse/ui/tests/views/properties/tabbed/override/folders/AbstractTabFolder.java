@@ -64,13 +64,13 @@ public abstract class AbstractTabFolder implements IOverrideTestsTabFolder {
 
 		IOverrideTestsItem[] items = getItem();
 
-		for (int i = 0; i < items.length; i++) {
+		for (IOverrideTestsItem item : items) {
 			CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
-			items[i].createControls(tabFolder);
-			tabItem.setText(items[i].getText());
-			tabItem.setImage(items[i].getImage());
-			tabItem.setControl(items[i].getComposite());
-			tabItem.setData(items[i]);
+			item.createControls(tabFolder);
+			tabItem.setText(item.getText());
+			tabItem.setImage(item.getImage());
+			tabItem.setControl(item.getComposite());
+			tabItem.setData(item);
 		}
 		tabFolder.setSelection(0);
 
@@ -79,11 +79,9 @@ public abstract class AbstractTabFolder implements IOverrideTestsTabFolder {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				CTabItem aTabItem = (CTabItem) e.item;
-				Object[] listeners = itemSelectionListeners.getListeners();
-				for (int i = 0; i < listeners.length; i++) {
-					IOverrideTestsTabItemSelectionListener listener = (IOverrideTestsTabItemSelectionListener) listeners[i];
-					listener.itemSelected((IOverrideTestsItem) aTabItem
-							.getData());
+				IOverrideTestsTabItemSelectionListener[] listeners = (IOverrideTestsTabItemSelectionListener[]) itemSelectionListeners.getListeners();
+				for (IOverrideTestsTabItemSelectionListener listener : listeners) {
+					listener.itemSelected((IOverrideTestsItem) aTabItem.getData());
 				}
 			}
 		});
@@ -103,10 +101,8 @@ public abstract class AbstractTabFolder implements IOverrideTestsTabFolder {
 	@Override
 	public void selectionChanged(Element element) {
 		CTabItem[] items = tabFolder.getItems();
-		for (int i = 0; i < items.length; i++) {
-			CTabItem tabItem = items[i];
-			if (((IOverrideTestsItem) tabItem.getData()).getText().equals(
-					element.getName())) {
+		for (CTabItem tabItem : items) {
+			if (((IOverrideTestsItem) tabItem.getData()).getText().equals(element.getName())) {
 				tabFolder.setSelection(tabItem);
 			}
 		}

@@ -82,10 +82,10 @@ public class PipelineTest extends NavigatorTestBase {
 		TreeItem[] projectChildren = rootItems[_projectInd].getItems();
 
 		assertTrue("There should be some items.", projectChildren.length > 0); //$NON-NLS-1$
-
-		for (int i = 0; i < projectChildren.length; i++) {
-			if (projectChildren[i].getData() == sourceFolder)
+		for (TreeItem projectChild : projectChildren) {
+			if (projectChild.getData() == sourceFolder) {
 				fail("The src folder should not be added as an IFolder.");
+			}
 		}
 
 		// a new project without a Java nature should add without an issue.

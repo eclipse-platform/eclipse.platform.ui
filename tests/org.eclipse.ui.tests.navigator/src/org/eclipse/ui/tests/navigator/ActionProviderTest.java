@@ -127,18 +127,16 @@ public class ActionProviderTest extends NavigatorTestBase {
 		_actionService.setContext(new ActionContext(sel));
 		_actionService.fillContextMenu(mm);
 
-		List<String> priorityItems = new ArrayList<String>();
+		List<String> priorityItems = new ArrayList<>();
 
 		IContributionItem[] items = mm.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof ActionContributionItem) {
-				ActionContributionItem aci = (ActionContributionItem) items[i];
+		for (IContributionItem item : items) {
+			if (item instanceof ActionContributionItem) {
+				ActionContributionItem aci = (ActionContributionItem) item;
 				if (DEBUG) {
-					System.out.println("action text: "
-							+ aci.getAction().getText());
+					System.out.println("action text: " + aci.getAction().getText());
 				}
-				if (aci.getAction().getText().startsWith(
-						TEST_ACTION_PROVIDER_PRIORITY))
+				if (aci.getAction().getText().startsWith(TEST_ACTION_PROVIDER_PRIORITY))
 					priorityItems.add(aci.getAction().getText());
 			}
 		}

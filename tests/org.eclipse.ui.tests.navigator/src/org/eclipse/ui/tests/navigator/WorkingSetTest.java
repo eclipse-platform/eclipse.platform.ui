@@ -246,9 +246,10 @@ public class WorkingSetTest extends NavigatorTestBase {
 		ViewerFilter vf[];
 		vf = _viewer.getFilters();
 		boolean found = false;
-		for (int i = 0; i < vf.length; i++) {
-			if (vf[i] instanceof ResourceWorkingSetFilter)
+		for (ViewerFilter vf1 : vf) {
+			if (vf1 instanceof ResourceWorkingSetFilter) {
 				found = true;
+			}
 		}
 		assertTrue(found);
 
@@ -257,9 +258,10 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		vf = _viewer.getFilters();
 		found = false;
-		for (int i = 0; i < vf.length; i++) {
-			if (vf[i] instanceof ResourceWorkingSetFilter)
+		for (ViewerFilter vf1 : vf) {
+			if (vf1 instanceof ResourceWorkingSetFilter) {
 				found = true;
+			}
 		}
 		assertTrue("Working set filter is gone, oh my!", found);
 	}

@@ -80,8 +80,8 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 		}
 		closePerspective(activePage);
 		//populate the empty perspective with all view that will be shown in the test view
-		for (int i = 0; i < ids.length; i++) {
-			activePage.showView(ids[i]);
+		for (String i : ids) {
+			activePage.showView(i);
 		}
 
 		tagIfNecessary("UI - Open/Close " + perspective1.getLabel() + " Perspective", Dimension.ELAPSED_PROCESS);

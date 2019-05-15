@@ -102,8 +102,8 @@ public class UIPerformanceTestSetup extends TestSetup {
 		projectDescription.setBuildSpec(new ICommand[] { buildCommand });
 		testProject.setDescription(projectDescription, null);*/
 
-		for (int i = 0; i < EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS.length; i++) {
-			createFiles(EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[i]);
+		for (String EDITOR_FILE_EXTENSION : EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS) {
+			createFiles(EDITOR_FILE_EXTENSION);
 		}
 	}
 

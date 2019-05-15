@@ -126,13 +126,11 @@ public class OverrideTestsView extends ViewPart implements
 		if (elementClass == null) {
 			viewer.setSelection(StructuredSelection.EMPTY);
 		}
-		Object[] elements = overrideTestsContentProvider.getElements(null);
-		for (int i = 0; i < elements.length; i++) {
-			Element element = (Element) elements[i];
+		Element[] elements = (Element[]) overrideTestsContentProvider.getElements(null);
+		for (Element element : elements) {
 			Class clazz = element.getClass();
 			if (elementClass == clazz) {
-				StructuredSelection newSelection = new StructuredSelection(
-						element);
+				StructuredSelection newSelection = new StructuredSelection(element);
 				viewer.setSelection(newSelection);
 				break;
 			}

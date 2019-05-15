@@ -56,8 +56,8 @@ public class EditorPerformanceSuite extends TestSuite {
 	 *
 	 */
 	private void addSwitchScenarios() {
-		for (int i = 0; i < EDITOR_SWITCH_PAIRS.length; i++) {
-			addTest(new EditorSwitchTest(EDITOR_SWITCH_PAIRS[i]));
+		for (String[] EDITOR_SWITCH_PAIR : EDITOR_SWITCH_PAIRS) {
+			addTest(new EditorSwitchTest(EDITOR_SWITCH_PAIR));
 		}
 	}
 
@@ -65,8 +65,8 @@ public class EditorPerformanceSuite extends TestSuite {
 	 *
 	 */
 	private void addOpenMultipleScenarios(boolean closeAll) {
-		for (int i = 0; i < EDITOR_FILE_EXTENSIONS.length; i++) {
-			addTest(new OpenMultipleEditorTest(EDITOR_FILE_EXTENSIONS[i], closeAll, BasicPerformanceTest.NONE));
+		for (String EDITOR_FILE_EXTENSION : EDITOR_FILE_EXTENSIONS) {
+			addTest(new OpenMultipleEditorTest(EDITOR_FILE_EXTENSION, closeAll, BasicPerformanceTest.NONE));
 		}
 	}
 

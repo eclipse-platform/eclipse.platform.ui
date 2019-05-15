@@ -105,8 +105,8 @@ class WorkbenchPerformanceSuite extends TestSuite {
 	 *
 	 */
 	private void addWindowOpenCloseScenarios() {
-		for (int i = 0; i < PERSPECTIVE_IDS.length; i++) {
-			addTest(new OpenCloseWindowTest(PERSPECTIVE_IDS[i], BasicPerformanceTest.NONE));
+		for (String PERSPECTIVE_ID : PERSPECTIVE_IDS) {
+			addTest(new OpenCloseWindowTest(PERSPECTIVE_ID, BasicPerformanceTest.NONE));
 		}
 	}
 
@@ -124,8 +124,8 @@ class WorkbenchPerformanceSuite extends TestSuite {
 	 *
 	 */
 	private void addPerspectiveSwitchScenarios() {
-		for (int i = 0; i < PERSPECTIVE_SWITCH_PAIRS.length; i++) {
-			addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], BasicPerformanceTest.NONE));
+		for (String[] PERSPECTIVE_SWITCH_PAIR : PERSPECTIVE_SWITCH_PAIRS) {
+			addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIR, BasicPerformanceTest.NONE));
 		}
 	}
 
@@ -136,8 +136,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
 		ArrayList<String> result = new ArrayList<>();
 		IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives();
 
-		for (int i = 0; i < perspectives.length; i++) {
-			IPerspectiveDescriptor descriptor = perspectives[i];
+		for (IPerspectiveDescriptor descriptor : perspectives) {
 			String id = descriptor.getId();
 			result.add(id);
 		}
@@ -150,11 +149,10 @@ class WorkbenchPerformanceSuite extends TestSuite {
 	 */
 	private void addResizeScenarios() {
 		String[] perspectiveIds = getAllPerspectiveIds();
-		for (int i = 0; i < perspectiveIds.length; i++) {
-			String id = perspectiveIds[i];
+		for (String id : perspectiveIds) {
 			addTest(new ResizeTest(new PerspectiveWidgetFactory(id),
 					id.equals(resizeFingerprintTest) ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE,
-							"UI - Workbench Window Resize"));
+					"UI - Workbench Window Resize"));
 		}
 	}
 }

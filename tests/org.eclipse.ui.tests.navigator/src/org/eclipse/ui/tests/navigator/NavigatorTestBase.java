@@ -275,9 +275,9 @@ public class NavigatorTestBase {
 
 	protected void clearAll() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
+		for (IProject project : projects) {
 			try {
-				FileUtil.delete(projects[i]);
+				FileUtil.delete(project);
 			} catch (CoreException e) {
 				fail("Should not throw an exception");
 			}
@@ -296,8 +296,9 @@ public class NavigatorTestBase {
 			// to refresh immediately and not wait for one that is scheduled to
 			// run.
 			TreeItem[] rootItems = _viewer.getTree().getItems();
-			for (int i = 0; i < rootItems.length; i++)
-				rootItems[i].setText("");
+			for (TreeItem rootItem : rootItems) {
+				rootItem.setText("");
+			}
 		} catch (Exception ex) {
 			// Ignore
 		}
@@ -310,16 +311,16 @@ public class NavigatorTestBase {
 		_actionService.fillContextMenu(mm);
 
 		IContributionItem[] items = mm.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof MenuManager) {
-				MenuManager childMm = (MenuManager) items[i];
+		for (IContributionItem item1 : items) {
+			if (item1 instanceof MenuManager) {
+				MenuManager childMm = (MenuManager) item1;
 				if (DEBUG) {
 					System.out.println("menu text: " + childMm.getMenuText());
 				}
 				if (childMm.getMenuText().indexOf(item) >= 0)
 					return childMm;
-			} else if (items[i] instanceof ActionContributionItem) {
-				ActionContributionItem aci = (ActionContributionItem) items[i];
+			} else if (item1 instanceof ActionContributionItem) {
+				ActionContributionItem aci = (ActionContributionItem) item1;
 				if (DEBUG) {
 					System.out.println("action text: " + aci.getAction().getText());
 				}
@@ -343,9 +344,9 @@ public class NavigatorTestBase {
 			items = newMm.getItems();
 		}
 
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof ActionContributionItem) {
-				ActionContributionItem aci = (ActionContributionItem) items[i];
+		for (IContributionItem i : items) {
+			if (i instanceof ActionContributionItem) {
+				ActionContributionItem aci = (ActionContributionItem) i;
 				if (aci.getAction().getText().startsWith(item))
 					return true;
 				if (DEBUG)
@@ -368,19 +369,21 @@ public class NavigatorTestBase {
 	}
 
 	protected void checkItems(TreeItem[] rootItems, TestLabelProvider tlp, boolean all, boolean text) {
-		for (int i = 0; i < rootItems.length; i++) {
+		for (TreeItem rootItem : rootItems) {
 			// Skip the dummy items (for the + placeholder)
-			if (rootItems[i].getText() == null || rootItems[i].getText().isEmpty())
+			if (rootItem.getText() == null || rootItem.getText().equals("")) {
 				continue;
-			if (text && !rootItems[i].getText().startsWith(tlp.getColorName()))
-				fail("Wrong text: " + rootItems[i].getText());
-			assertEquals(tlp.backgroundColor, rootItems[i].getBackground(0));
-			assertEquals(TestLabelProvider.toForegroundColor(tlp.backgroundColor), rootItems[i]
-					.getForeground(0));
-			assertEquals(tlp.font, rootItems[i].getFont(0));
-			assertEquals(tlp.image, rootItems[i].getImage(0));
-			if (all)
-				checkItems(rootItems[i].getItems(), tlp, all, text);
+			}
+			if (text && !rootItem.getText().startsWith(tlp.getColorName())) {
+				fail("Wrong text: " + rootItem.getText());
+			}
+			assertEquals(tlp.backgroundColor, rootItem.getBackground(0));
+			assertEquals(TestLabelProvider.toForegroundColor(tlp.backgroundColor), rootItem.getForeground(0));
+			assertEquals(tlp.font, rootItem.getFont(0));
+			assertEquals(tlp.image, rootItem.getImage(0));
+			if (all) {
+				checkItems(rootItem.getItems(), tlp, all, text);
+			}
 		}
 	}
 
@@ -389,20 +392,19 @@ public class NavigatorTestBase {
 	 * name.
 	 */
 	protected TreeItem _findChild(String name, TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			assertTrue("Child " + items[i] + " should be an M1 or M2 resource",
-					items[i].getData() instanceof ResourceWrapper);
-			ResourceWrapper rw = (ResourceWrapper) items[i].getData();
+		for (TreeItem item : items) {
+			assertTrue("Child " + item + " should be an M1 or M2 resource", item.getData() instanceof ResourceWrapper);
+			ResourceWrapper rw = (ResourceWrapper) item.getData();
 			if (name.equals(rw.getResource().getName())) {
-				return items[i];
+				return item;
 			}
 		}
 		return null;
 	}
 
 	protected void _expand(TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			_viewer.setExpandedState(items[i].getData(), true);
+		for (TreeItem item : items) {
+			_viewer.setExpandedState(item.getData(), true);
 		}
 	}
 

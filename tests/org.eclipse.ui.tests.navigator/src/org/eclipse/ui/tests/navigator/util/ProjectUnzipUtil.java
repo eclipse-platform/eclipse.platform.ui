@@ -143,13 +143,11 @@ public class ProjectUnzipUtil {
 	}
 
 	private void buildProjects() throws IOException, CoreException {
-		for (int i = 0; i < projectNames.length; i++) {
-
+		for (String projectName : projectNames) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-
-			IPath projectPath = new Path("/" + projectNames[i] + "/" + META_PROJECT_NAME); //$NON-NLS-1$//$NON-NLS-2$
+			IPath projectPath = new Path("/" + projectName + "/" + META_PROJECT_NAME); //$NON-NLS-1$//$NON-NLS-2$
 			IPath path = rootLocation.append(projectPath);
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectNames[i]);
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			IProjectDescription description = workspace.loadProjectDescription(path);
 			project.create(description, (getProgessMonitor()));
 			project.open(getProgessMonitor());

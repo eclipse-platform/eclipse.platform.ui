@@ -214,8 +214,8 @@ public class WorkspaceOperationsTests extends UITestCase {
 			if (!contentMatch) {
 				return false;
 			}
-			for (int i = 0; i < markerSnapshots.length; i++) {
-				if (!markerSnapshots[i].existsOn(resource)) {
+			for (MarkerSnapshot markerSnapshot : markerSnapshots) {
+				if (!markerSnapshot.existsOn(resource)) {
 					return false;
 				}
 			}
@@ -253,9 +253,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 					return false;
 				}
 			}
-			for (int i = 0; i < memberSnapshots.length; i++) {
-				if (!fileNameExcludes.contains(memberSnapshots[i].name)) {
-					if (!memberSnapshots[i].isValid(folder)) {
+			for (ResourceSnapshot memberSnapshot : memberSnapshots) {
+				if (!fileNameExcludes.contains(memberSnapshot.name)) {
+					if (!memberSnapshot.isValid(folder)) {
 						return false;
 					}
 				}
@@ -322,9 +322,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 				project.open(null);
 			}
 
-			for (int i = 0; i < memberSnapshots.length; i++) {
-				if (!fileNameExcludes.contains(memberSnapshots[i].name)) {
-					if (!memberSnapshots[i].isValid(resource)) {
+			for (ResourceSnapshot memberSnapshot : memberSnapshots) {
+				if (!fileNameExcludes.contains(memberSnapshot.name)) {
+					if (!memberSnapshot.isValid(resource)) {
 						return false;
 					}
 				}

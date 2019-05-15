@@ -346,10 +346,10 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		//Check that all states are properly set
 		checkAllStates("Testing checkbox state with a sorter", ctv, 0);
 
-		//Check that the provider is only invoked on elements which pass the filter
-		for (Iterator<TestElement> i = checkStateProvider.isCheckedInvokedOn.iterator(); i.hasNext();) {
-			TestElement element = i.next();
-			assertTrue("The check provider should not be invoked on elements which did not get through the filter", filter.select(ctv, null, element));
+		// Check that the provider is only invoked on elements which pass the filter
+		for (TestElement element : checkStateProvider.isCheckedInvokedOn) {
+			assertTrue("The check provider should not be invoked on elements which did not get through the filter",
+					filter.select(ctv, null, element));
 		}
 
 		for (Iterator<TestElement> i = checkStateProvider.isGrayedInvokedOn.iterator(); i.hasNext();) {

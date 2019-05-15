@@ -45,18 +45,16 @@ public class CompressedJavaLibraries implements ICompressedNode {
 		List classpathContainers = new ArrayList();
 		Object[] delegateChildren = delegateContentProvider
 				.getChildren(compressedProject.getProject());
-		for (int i = 0; i < delegateChildren.length; i++) {
-			if (WebJavaContentProvider.IPACKAGE_FRAGMENT_ROOT_CLASS
-					.isInstance(delegateChildren[i])) {
+		for (Object delegateChild : delegateChildren) {
+			if (WebJavaContentProvider.IPACKAGE_FRAGMENT_ROOT_CLASS.isInstance(delegateChild)) {
 				try {
-					classpathContainers.add(delegateChildren[i]);
+					classpathContainers.add(delegateChild);
 				} catch (Exception e) {
 
 				}
-			} else if (!WebJavaContentProvider.IJAVA_ELEMENT_CLASS
-					.isInstance(delegateChildren[i])
-					&& !(delegateChildren[i] instanceof IResource)) {
-				classpathContainers.add(delegateChildren[i]);
+			} else if (!WebJavaContentProvider.IJAVA_ELEMENT_CLASS.isInstance(delegateChild)
+					&& !(delegateChild instanceof IResource)) {
+				classpathContainers.add(delegateChild);
 			}
 		}
 		return classpathContainers.toArray();

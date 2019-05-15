@@ -66,9 +66,9 @@ public class CdtTest extends NavigatorTestBase {
 		_viewer.setExpandedState(project, true);
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
-		for (int i = 0; i < rootItems.length; i++) {
-			if (rootItems[i].getText().equals(CPROJECT_NAME)) {
-				TreeItem[] items = rootItems[i].getItems();
+		for (TreeItem rootItem : rootItems) {
+			if (rootItem.getText().equals(CPROJECT_NAME)) {
+				TreeItem[] items = rootItem.getItems();
 				assertEquals("CL: CElement: Debug", items[0].getText());
 				assertEquals("CL: CElement: src", items[1].getText());
 

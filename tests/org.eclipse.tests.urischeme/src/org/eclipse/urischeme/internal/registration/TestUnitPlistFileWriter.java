@@ -278,8 +278,8 @@ public class TestUnitPlistFileWriter {
 	private String getXml(String[] schemes) {
 		String snippets = "";
 		if (schemes != null) {
-			for (int i = 0; i < schemes.length; i++) {
-				snippets += getSchemeXmlSnippet(schemes[i]);
+			for (String scheme : schemes) {
+				snippets += getSchemeXmlSnippet(scheme);
 			}
 		}
 		return getPlistStartXmlSnippet() +

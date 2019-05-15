@@ -172,8 +172,8 @@ public class VerifyDialog extends TitleAreaDialog {
 		group.setLayoutData(data);
 
 		int checkListSize = 0;
-		for (int i = 0; i < _dialogTests.length; i++) {
-			int size = _dialogTests[i].checkListTexts().size();
+		for (IDialogTestPass _dialogTest : _dialogTests) {
+			int size = _dialogTest.checkListTexts().size();
 			if (size > checkListSize) {
 				checkListSize = size;
 			}

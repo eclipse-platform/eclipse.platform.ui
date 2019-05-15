@@ -76,15 +76,12 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 					URL[] files = FileLocator.findEntries(bundle, new Path(
 							localImagePath));
 
-					for (int i = 0; i < files.length; i++) {
-
+					for (URL file : files) {
 						startMeasuring();
-
 						try {
-							descriptor = ImageDescriptor.createFromFile(missing,
-									FileLocator.toFileURL(files[i]).getFile());
+							descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
 						} catch (IOException e) {
-							fail(e.getLocalizedMessage(),e);
+							fail(e.getLocalizedMessage(), e);
 							continue;
 						}
 

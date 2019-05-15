@@ -1185,9 +1185,9 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		ProjectRecord[] projectRecords = newWizard.getProjectRecords();
 
 		List<String> projectNames = new ArrayList<>();
-		for (int i = 0; i < projectRecords.length; i++) {
-			if(!projectRecords[i].hasConflicts()) {
-				projectNames.add(projectRecords[i].getProjectName());
+		for (ProjectRecord projectRecord : projectRecords) {
+			if (!projectRecord.hasConflicts()) {
+				projectNames.add(projectRecord.getProjectName());
 			}
 		}
 		return projectNames;
@@ -1251,9 +1251,9 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 
 	private List<String> getValidProjects(ProjectRecord[] projectRecords) {
 		List<String> projectNames = new ArrayList<>();
-		for (int i = 0; i < projectRecords.length; i++) {
-			if (!projectRecords[i].isInvalidProject()) {
-				projectNames.add(projectRecords[i].getProjectName());
+		for (ProjectRecord projectRecord : projectRecords) {
+			if (!projectRecord.isInvalidProject()) {
+				projectNames.add(projectRecord.getProjectName());
 			}
 		}
 		return projectNames;

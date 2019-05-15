@@ -44,8 +44,8 @@ public class GenerateIdentifiersTest extends BasicPerformanceTest {
 				}
 
 				startMeasuring();
-				for(int i = 0; i < ids.length; i++) {
-					activityManager.getIdentifier(ids[i]);
+				for (String id : ids) {
+					activityManager.getIdentifier(id);
 				}
 				stopMeasuring();
 			}

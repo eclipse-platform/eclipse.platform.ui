@@ -45,11 +45,9 @@ public class TreeAddTest extends TreeTest {
 			input.createChildren(TEST_COUNT);
 			processEvents();
 			startMeasuring();
-			for (int j = 0; j < input.children.length; j++) {
-
-				viewer.add(input, input.children[j]);
+			for (TestTreeElement child : input.children) {
+				viewer.add(input, child);
 				processEvents();
-
 			}
 			stopMeasuring();
 		}
@@ -121,8 +119,8 @@ public class TreeAddTest extends TreeTest {
 				startMeasuring();
 
 				// Measure more than one for the fast cases
-				for (int k = 0; k < batchArray.length; k++) {
-					viewer.add(input, (Object[]) batchArray[k]);
+				for (Object batch : batchArray) {
+					viewer.add(input, (Object[]) batch);
 					processEvents();
 				}
 

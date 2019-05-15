@@ -67,12 +67,11 @@ public class StatusDialogUtil {
 
 	public static Shell getStatusShellImmediately() {
 		Shell[] shells = Display.getDefault().getShells();
-		for (int i = 0; i < shells.length; i++) {
-			if (shells[i].getText().equals("Problem Occurred")
-					|| shells[i].getText().equals(
-							"Multiple problems have occurred")) {
-				if (!shells[i].isDisposed()) {
-					return shells[i];
+		for (Shell shell : shells) {
+			if (shell.getText().equals("Problem Occurred")
+					|| shell.getText().equals("Multiple problems have occurred")) {
+				if (!shell.isDisposed()) {
+					return shell;
 				}
 			}
 		}

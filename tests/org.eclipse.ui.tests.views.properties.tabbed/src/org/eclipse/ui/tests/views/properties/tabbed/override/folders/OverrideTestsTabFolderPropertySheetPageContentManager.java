@@ -77,9 +77,9 @@ public class OverrideTestsTabFolderPropertySheetPageContentManager implements
 		if (element == null) {
 			newFolder = emptyFolder;
 		} else {
-			for (int i = 0; i < folders.length; i++) {
-				if (folders[i].appliesTo(element)) {
-					newFolder = folders[i];
+			for (IOverrideTestsTabFolder folder : folders) {
+				if (folder.appliesTo(element)) {
+					newFolder = folder;
 					break;
 				}
 			}

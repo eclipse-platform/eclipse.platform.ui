@@ -37,9 +37,8 @@ public class TestAccessHelper {
 				.getInstance().findRelevantActionDescriptors(contentService,
 						new ActionContext(new StructuredSelection()));
 		if (providerDescriptors.length > 0) {
-			for (int i = 0; i < providerDescriptors.length; i++) {
-				provider = actionService
-						.getActionProviderInstance(providerDescriptors[i]);
+			for (CommonActionProviderDescriptor providerDescriptor : providerDescriptors) {
+				provider = actionService.getActionProviderInstance(providerDescriptor);
 				if (provider.getClass() == cls)
 					return provider;
 			}

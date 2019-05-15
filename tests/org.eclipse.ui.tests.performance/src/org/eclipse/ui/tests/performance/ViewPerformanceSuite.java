@@ -57,21 +57,16 @@ public class ViewPerformanceSuite extends TestSuite {
 	private void addOpenCloseTests() {
 		String[] ids = getAllTestableViewIds();
 
-		for (int i = 0; i < ids.length; i++) {
-			String id = ids[i];
-
+		for (String id : ids) {
 			addTest(new OpenCloseViewTest(id,
-					id.equals(PROJECT_EXPLORER) ? BasicPerformanceTest.GLOBAL
-							: BasicPerformanceTest.NONE));
+					id.equals(PROJECT_EXPLORER) ? BasicPerformanceTest.GLOBAL : BasicPerformanceTest.NONE));
 		}
 	}
 
 	private void addResizeTests() {
 		String[] ids = getAllTestableViewIds();
 
-		for (int i = 0; i < ids.length; i++) {
-			String id = ids[i];
-
+		for (String id : ids) {
 			addTest(new ResizeTest(new ViewWidgetFactory(id)));
 		}
 
@@ -82,24 +77,18 @@ public class ViewPerformanceSuite extends TestSuite {
 
 		IViewDescriptor[] descriptors = PlatformUI.getWorkbench()
 				.getViewRegistry().getViews();
-		for (int i = 0; i < descriptors.length; i++) {
-			IViewDescriptor descriptor = descriptors[i];
-
+		for (IViewDescriptor descriptor : descriptors) {
 			String[] categoryPath = descriptor.getCategoryPath();
-
 			if (categoryPath == null)
 				continue;
-
-			for (int j = 0; j < categoryPath.length; j++) {
+			for (String categoryPath1 : categoryPath) {
 				// Only test basic views
-				if (categoryPath[j].equals(BASIC_PATH)) {
-					if (descriptor.getId().indexOf(VIEWS_PATTERN) >= 0
-							|| descriptor.getId().equals(PROJECT_EXPLORER)) {
+				if (categoryPath1.equals(BASIC_PATH)) {
+					if (descriptor.getId().indexOf(VIEWS_PATTERN) >= 0 || descriptor.getId().equals(PROJECT_EXPLORER)) {
 						result.add(descriptor.getId());
 					}
 				}
 			}
-
 		}
 
 		return result.toArray(new String[result.size()]);

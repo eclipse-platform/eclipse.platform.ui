@@ -412,8 +412,7 @@ public final class ObjectContributionTest extends UITestCase {
 		final IContributionItem[] items = fakeMenuManager.getItems();
 		Set<String> seenCommands = new HashSet<>(Arrays.asList(commandIds));
 		List<String> commands = new ArrayList<>(Arrays.asList(commandIds));
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem contributionItem = items[i];
+		for (IContributionItem contributionItem : items) {
 			// Step 1: test the selection
 			if (selectionType != null) {
 				IContributionItem item = contributionItem;

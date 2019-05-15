@@ -57,8 +57,8 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
 		}
 		else {
 			IEditorPart [] parts = activePage.getEditors();
-			for (int i = 0; i < parts.length; i++) {
-				activePage.closeEditor(parts[i], false);
+			for (IEditorPart part : parts) {
+				activePage.closeEditor(part, false);
 			}
 		}
 		stopMeasuring();

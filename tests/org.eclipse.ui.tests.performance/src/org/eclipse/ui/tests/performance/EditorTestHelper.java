@@ -133,16 +133,15 @@ public class EditorTestHelper {
 	public static boolean isCalm() {
 		IJobManager jobManager = Job.getJobManager();
 		Job[] jobs= jobManager.find(null);
-		for (int i= 0; i < jobs.length; i++) {
-			Job job= jobs[i];
-			int state= job.getState();
-//			System.out.println(job.getName() + ": " + getStateName(state));
+		for (Job job : jobs) {
+			int state = job.getState();
+			// System.out.println(job.getName() + ": " + getStateName(state));
 			if (state == Job.RUNNING || state == Job.WAITING) {
-//				System.out.println();
+				// System.out.println();
 				return false;
 			}
 		}
-//		System.out.println();
+		// System.out.println();
 		return true;
 	}
 

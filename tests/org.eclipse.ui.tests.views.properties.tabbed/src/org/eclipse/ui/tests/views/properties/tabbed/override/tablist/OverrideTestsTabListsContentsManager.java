@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.tests.views.properties.tabbed.model.Element;
 import org.eclipse.ui.tests.views.properties.tabbed.override.OverrideTestsSelection;
 import org.eclipse.ui.tests.views.properties.tabbed.override.OverrideTestsView;
-import org.eclipse.ui.tests.views.properties.tabbed.model.Element;
 import org.eclipse.ui.views.properties.tabbed.ISection;
 import org.eclipse.ui.views.properties.tabbed.ITabItem;
 import org.eclipse.ui.views.properties.tabbed.TabContents;
@@ -130,9 +130,9 @@ public class OverrideTestsTabListsContentsManager {
 		if (newElement == null) {
 			newFolder = emptyFolder;
 		} else {
-			for (int i = 0; i < folders.length; i++) {
-				if (folders[i].appliesTo(newElement)) {
-					newFolder = folders[i];
+			for (IOverrideTestsTabList folder : folders) {
+				if (folder.appliesTo(newElement)) {
+					newFolder = folder;
 					break;
 				}
 			}
@@ -196,8 +196,8 @@ public class OverrideTestsTabListsContentsManager {
 		if (tab != null) {
 			ISection[] sections = tab.getSections();
 			if (sections != null) {
-				for (int i = 0; i < sections.length; i++) {
-					if (sections[i] == section) {
+				for (ISection sec : sections) {
+					if (sec == section) {
 						return true;
 					}
 				}

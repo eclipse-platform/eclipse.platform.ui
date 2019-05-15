@@ -206,10 +206,9 @@ public class EditorActionBarsTest extends UITestCase {
 			// a CoolBarManager and it contains only separators or invisible
 			// objects.
 			IContributionItem[] items = manager.getItems();
-			for (int i = 0; i < items.length; i++) {
-				if (!(items[i] instanceof Separator) && items[i].isVisible()) {
-					fail("No toolbar for a visible action text \"" + actionText
-							+ "\"");
+			for (IContributionItem item : items) {
+				if (!(item instanceof Separator) && item.isVisible()) {
+					fail("No toolbar for a visible action text \"" + actionText + "\"");
 				}
 			}
 

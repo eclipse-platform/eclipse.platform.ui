@@ -132,8 +132,8 @@ public class CNavigatorContentProvider implements
 	public Object[] getElements(Object parent) {
 		if (parent instanceof IWorkspaceRoot) {
 			IProject[] projects = ((IWorkspaceRoot) parent).getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				new CProject(this, projects[i], _root);
+			for (IProject project : projects) {
+				new CProject(this, project, _root);
 			}
 			return projects;
 		}
@@ -189,15 +189,15 @@ public class CNavigatorContentProvider implements
 				}
 			}
 		}
-		for (int i = 0; i < cChildren.length; i++) {
-			if (cChildren[i] instanceof CElement) {
-				IResource resource = ((CElement) cChildren[i]).getResource();
+		for (Object cChild : cChildren) {
+			if (cChild instanceof CElement) {
+				IResource resource = ((CElement) cChild).getResource();
 				if (resource != null) {
 					proposedChildren.remove(resource);
 				}
-				proposedChildren.add(cChildren[i]);
-			} else if (cChildren[i] != null) {
-				proposedChildren.add(cChildren[i]);
+				proposedChildren.add(cChild);
+			} else if (cChild != null) {
+				proposedChildren.add(cChild);
 			}
 		}
 	}

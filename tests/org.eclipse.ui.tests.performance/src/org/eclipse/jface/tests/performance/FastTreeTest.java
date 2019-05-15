@@ -96,8 +96,8 @@ public class FastTreeTest extends TreeAddTest {
 				startMeasuring();
 				for (int i = 0; i < 10; i++) {
 					viewer.remove(input.children);
-					for (int k = 0; k < batchArray.length; k++) {
-						viewer.add(input, (Object[]) batchArray[k]);
+					for (Object batch : batchArray) {
+						viewer.add(input, (Object[]) batch);
 						processEvents();
 					}
 				}

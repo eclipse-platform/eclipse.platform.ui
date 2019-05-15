@@ -89,8 +89,8 @@ public class ListPopulationTest extends BasicPerformanceTest {
 			public void run() {
 				list.removeAll();
 				startMeasuring();
-				for (int j = 0; j < items.length; j++) {
-					list.add(items[j]);
+				for (String item : items) {
+					list.add(item);
 				}
 				processEvents();
 				stopMeasuring();
