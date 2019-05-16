@@ -270,7 +270,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 			AggregateWorkingSet workingSet = (AggregateWorkingSet) object;
 
 			return Objects.equals(workingSet.getName(), getName())
-					&& Objects.equals(workingSet.getComponentsInternal(), getComponentsInternal());
+					&& Arrays.equals(workingSet.getComponentsInternal(), getComponentsInternal());
 		}
 		return false;
 	}

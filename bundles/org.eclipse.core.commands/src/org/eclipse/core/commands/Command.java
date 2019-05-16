@@ -367,7 +367,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		final boolean categoryChanged = !Objects.equals(this.category, category);
 		this.category = category;
 
-		final boolean parametersChanged = !Objects.equals(this.parameters,
+		final boolean parametersChanged = !Arrays.equals(this.parameters,
 				parameters);
 		this.parameters = parameters;
 

@@ -14,9 +14,9 @@
 
 package org.eclipse.ui.internal.services;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.ActionSetsEvent;
@@ -54,7 +54,7 @@ public final class ActionSetSourceProvider extends AbstractSourceProvider implem
 	@Override
 	public void actionSetsChanged(final ActionSetsEvent event) {
 		final IActionSetDescriptor[] newActionSets = event.getNewActionSets();
-		if (!Objects.equals(newActionSets, activeActionSets)) {
+		if (!Arrays.equals(newActionSets, activeActionSets)) {
 			if (DEBUG) {
 				final StringBuilder message = new StringBuilder();
 				message.append("Action sets changed to ["); //$NON-NLS-1$

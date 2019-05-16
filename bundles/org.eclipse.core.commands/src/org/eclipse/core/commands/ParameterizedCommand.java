@@ -431,11 +431,8 @@ public final class ParameterizedCommand implements Comparable {
 		}
 
 		final ParameterizedCommand command = (ParameterizedCommand) object;
-		if (!Objects.equals(this.command, command.command)) {
-			return false;
-		}
-
-		return Objects.equals(this.parameterizations, command.parameterizations);
+		return Objects.equals(this.command, command.command)
+				&& Arrays.equals(this.parameterizations, command.parameterizations);
 	}
 
 	/**

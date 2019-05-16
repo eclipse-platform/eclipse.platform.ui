@@ -39,7 +39,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.StringTokenizer;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -112,7 +111,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
 		/**
 		 * Return the objects related to the filename
-		 * 
+		 *
 		 * @param fileName
 		 * @return the objects related to the filename
 		 */
@@ -176,7 +175,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	/**
 	 * Return an instance of the receiver. Adds listeners into the extension
 	 * registry for dynamic UI purposes.
-	 * 
+	 *
 	 * @param contentTypeManager
 	 */
 	public EditorRegistry(IContentTypeManager contentTypeManager) {
@@ -456,7 +455,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * if they access any of the images held by these editors that they also dispose
 	 * them
 	 * </p>
-	 * 
+	 *
 	 * @return the editor descriptors
 	 */
 	public IEditorDescriptor[] getSortedEditorsFromOS() {
@@ -1695,17 +1694,8 @@ class MockMapping implements IFileEditorMapping {
 		}
 
 		MockMapping mapping = (MockMapping) obj;
-		if (!this.filename.equals(mapping.filename)) {
-			return false;
-		}
-
-		if (!this.extension.equals(mapping.extension)) {
-			return false;
-		}
-
-		if (!Objects.equals(this.getEditors(), mapping.getEditors())) {
-			return false;
-		}
-		return Objects.equals(this.getDeletedEditors(), mapping.getDeletedEditors());
+		return this.filename.equals(mapping.filename) && this.extension.equals(mapping.extension)
+				&& Arrays.equals(this.getEditors(), mapping.getEditors())
+				&& Arrays.equals(this.getDeletedEditors(), mapping.getDeletedEditors());
 	}
 }
