@@ -81,8 +81,8 @@ public class ReadmeModelFactory {
 	public AdaptableList getSections(IFile file) {
 		MarkElement[] topLevel = getToc(file);
 		AdaptableList list = new AdaptableList();
-		for (int i = 0; i < topLevel.length; i++) {
-			addSections(list, topLevel[i]);
+		for (MarkElement t : topLevel) {
+			addSections(list, t);
 		}
 		return list;
 	}
@@ -144,9 +144,10 @@ public class ReadmeModelFactory {
 				// of simplicity, we will pick the last extension only.
 				if (i == extensions.length - 1) {
 					IConfigurationElement[] configElements = currentExtension.getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
+					for (IConfigurationElement configElement : configElements) {
 						IConfigurationElement config = configElements[i];
-						if (config.getName().equals(IReadmeConstants.TAG_PARSER)) {
+						if (config.getName()
+								.equals(IReadmeConstants.TAG_PARSER)) {
 							// process the first 'parser' element and stop
 							processParserElement(config);
 							break;

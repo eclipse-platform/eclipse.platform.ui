@@ -80,8 +80,8 @@ public class AddReadmeMarkerAction extends Action {
 			MarkerUtilities.setLineNumber(attributes, line == -1 ? -1 : line + 1);
 
 			// set custom attribute values
-			for (int i = 0; i < customAttributes.length; i++) {
-				attributes.put((String) customAttributes[i][0], customAttributes[i][1]);
+			for (Object[] customAttribute : customAttributes) {
+				attributes.put((String) customAttribute[0], customAttribute[1]);
 			}
 
 			MarkerUtilities.setMessage(attributes, message);

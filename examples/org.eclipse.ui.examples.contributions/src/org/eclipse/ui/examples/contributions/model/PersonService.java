@@ -113,8 +113,8 @@ public class PersonService implements IPersonService, IDisposable {
 		PropertyChangeEvent event = new PropertyChangeEvent(this, property,
 				oldVal, person);
 		Object[] array = listeners.getListeners();
-		for (int i = 0; i < array.length; i++) {
-			((IPropertyChangeListener) array[i]).propertyChange(event);
+		for (Object a: array) {
+			((IPropertyChangeListener) a).propertyChange(event);
 		}
 	}
 

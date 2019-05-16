@@ -78,9 +78,8 @@ public class PersonServiceSlave implements IPersonService, IDisposable {
 	public void dispose() {
 		Object[] array = localListeners.getListeners();
 		localListeners.clear();
-		for (int i = 0; i < array.length; i++) {
-			parentService
-					.removePersonChangeListener((IPropertyChangeListener) array[i]);
+		for (Object a : array) {
+			parentService.removePersonChangeListener((IPropertyChangeListener) a);
 		}
 		serviceLocator = null;
 		parentService = null;

@@ -43,11 +43,11 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 				sleep(4000);
 				collector.add(children, monitor);
 			} else {
-				for (int i = 0; i < children.length; i++) {
+				for (Object child : children) {
 					if (monitor.isCanceled()) {
 						return;
 					}
-					collector.add(children[i], monitor);
+					collector.add(child, monitor);
 					sleep(4000);
 				}
 			}
