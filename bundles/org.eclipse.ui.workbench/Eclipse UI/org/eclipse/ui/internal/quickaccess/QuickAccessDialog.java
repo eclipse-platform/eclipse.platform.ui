@@ -47,6 +47,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -88,6 +89,8 @@ public class QuickAccessDialog extends PopupDialog {
 	protected Map<QuickAccessElement, ArrayList<String>> textMap = new HashMap<>();
 	protected Map<String, QuickAccessElement> elementMap = new HashMap<>();
 	protected Map<String, QuickAccessProvider> providerMap;
+	private final Display display;
+	private String lastSelectionFilter = ""; //$NON-NLS-1$
 
 	public QuickAccessDialog(final IWorkbenchWindow window, final Command invokingCommand) {
 		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true, // persist
@@ -95,7 +98,7 @@ public class QuickAccessDialog extends PopupDialog {
 				false, // but not location
 				true, true, null, QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
 		this.window = window;
-
+		this.display = window.getShell() != null ? window.getShell().getDisplay() : null;
 		WorkbenchWindow workbenchWindow = (WorkbenchWindow) window;
 		final MWindow model = workbenchWindow.getModel();
 
@@ -112,7 +115,15 @@ public class QuickAccessDialog extends PopupDialog {
 			providers.add(new WizardProvider());
 			providers.add(new PreferenceProvider());
 			providers.add(new PropertiesProvider());
-			providers.addAll(QuickAccessExtensionManager.getProviders());
+			providers.addAll(QuickAccessExtensionManager.getProviders(() -> {
+				if (display != null) {
+					display.asyncExec(() -> {
+						QuickAccessDialog dialog = new QuickAccessDialog(window, invokingCommand);
+						dialog.filterText.setText(lastSelectionFilter);
+						dialog.open();
+					});
+				}
+			}));
 			providerMap = new HashMap<>();
 			for (QuickAccessProvider provider : providers) {
 				providerMap.put(provider.getId(), provider);
@@ -214,6 +225,7 @@ public class QuickAccessDialog extends PopupDialog {
 
 				@Override
 				protected void handleElementSelected(String text, Object selectedElement) {
+					lastSelectionFilter = text;
 					if (selectedElement instanceof QuickAccessElement) {
 						addPreviousPick(text, (QuickAccessElement) selectedElement);
 						storeDialog(getDialogSettings());

@@ -132,6 +132,7 @@ public class SearchField {
 	Shell shell;
 	private Table table;
 
+	private String lastSelectionFilter = ""; //$NON-NLS-1$
 	private QuickAccessContents quickAccessContents;
 
 	private Map<String, QuickAccessElement> elementMap = Collections.synchronizedMap(new HashMap<>());
@@ -259,7 +260,13 @@ public class SearchField {
 		providers.add(new WizardProvider());
 		providers.add(new PreferenceProvider());
 		providers.add(new PropertiesProvider());
-		providers.addAll(QuickAccessExtensionManager.getProviders());
+		providers.addAll(QuickAccessExtensionManager.getProviders(() -> {
+			txtQuickAccess.getDisplay().asyncExec(() -> {
+				txtQuickAccess.setText(lastSelectionFilter);
+				txtQuickAccess.setFocus();
+				SearchField.this.showList();
+			});
+		}));
 
 		quickAccessContents = new QuickAccessContents(providers.toArray(new QuickAccessProvider[providers.size()])) {
 			@Override
@@ -283,10 +290,10 @@ public class SearchField {
 
 			@Override
 			protected void handleElementSelected(String string, Object selectedElement) {
+				lastSelectionFilter = string;
 				if (selectedElement instanceof QuickAccessElement) {
 					QuickAccessElement element = (QuickAccessElement) selectedElement;
 					addPreviousPick(string, element);
-					txtQuickAccess.setText(""); //$NON-NLS-1$
 					element.execute();
 
 					// after execution, the search box might be disposed
