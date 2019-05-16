@@ -161,8 +161,8 @@ public class QuickFixHandler extends MarkerViewHandler {
 	 */
 	private static boolean containsAllButFirst(Object[] extent, Object[] members) {
 		outer: for (int i= 1; i < members.length; i++) {
-			for (int j= 0; j < extent.length; j++) {
-				if (members[i] == extent[j]) {
+			for (Object e : extent) {
+				if (members[i] == e) {
 					continue outer;
 				}
 			}

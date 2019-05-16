@@ -171,14 +171,12 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 			markInvalid();
 			return getErrorStatus(UndoMessages.AbstractResourcesOperation_NotEnoughInfo);
 		}
-		for (int i = 0; i < resourceDescriptions.length; i++) {
+		for (ResourceDescription resourceDescription : resourceDescriptions) {
 			// Check for enough info to restore the resource
-			if (resourceDescriptions[i] == null
-					|| !resourceDescriptions[i].isValid()) {
+			if (resourceDescription == null || !resourceDescription.isValid()) {
 				markInvalid();
 				return getErrorStatus(UndoMessages.AbstractResourcesOperation_InvalidRestoreInfo);
-			} else if (!allowOverwrite
-					&& resourceDescriptions[i].verifyExistence(false)) {
+			} else if (!allowOverwrite && resourceDescription.verifyExistence(false)) {
 				// overwrites are not allowed and the resource already exists
 				markInvalid();
 				return getErrorStatus(UndoMessages.AbstractResourcesOperation_ResourcesAlreadyExist);
@@ -324,9 +322,9 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		}
 		IResource[] nestedResourcesRemoved = new IResource[targetResources.length - subResources.size()];
 		int j = 0;
-		for (int i = 0; i < targetResources.length; i++) {
-			if (!subResources.contains(targetResources[i])) {
-				nestedResourcesRemoved[j] = targetResources[i];
+		for (IResource targetResource : targetResources) {
+			if (!subResources.contains(targetResource)) {
+				nestedResourcesRemoved[j] = targetResource;
 				j++;
 			}
 		}

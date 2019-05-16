@@ -194,14 +194,12 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 		for (int i = 1; i < propertyDescriptorMaps.length; i++) {
 			// get the current ids
 			Object[] ids = intersection.keySet().toArray();
-			for (int j = 0; j < ids.length; j++) {
-				Object object = propertyDescriptorMaps[i].get(ids[j]);
-				if (object == null ||
-				// see if the descriptors (which have the same id) are
-						// compatible
-						!intersection.get(ids[j])
-								.isCompatibleWith((IPropertyDescriptor) object)) {
-					intersection.remove(ids[j]);
+			for (Object id : ids) {
+				Object object = propertyDescriptorMaps[i].get(id);
+				if (object == null || // see if the descriptors (which have the same id) are
+				// compatible
+						!intersection.get(id).isCompatibleWith((IPropertyDescriptor) object)) {
+					intersection.remove(id);
 				}
 			}
 		}

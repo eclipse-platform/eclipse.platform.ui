@@ -683,9 +683,9 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
 		TreeSet<String> difference = new TreeSet<>();
 
-		for (int i = 0; i < allProjects.length; i++) {
-			if (!includes(currentlyDisplayed, allProjects[i].getName())) {
-				difference.add(allProjects[i].getName());
+		for (IProject allProject : allProjects) {
+			if (!includes(currentlyDisplayed, allProject.getName())) {
+				difference.add(allProject.getName());
 			}
 		}
 

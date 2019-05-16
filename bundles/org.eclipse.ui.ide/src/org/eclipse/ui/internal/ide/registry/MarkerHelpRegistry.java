@@ -113,9 +113,8 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 			Collections.sort(sortedHelpQueries, new QueryComparator());
 		}
 
-		// Return the first match (we assume there is only one)
-		for (Iterator<MarkerQuery> iter = sortedHelpQueries.iterator(); iter.hasNext();) {
-			MarkerQuery query = iter.next();
+	    // Return the first match (we assume there is only one)
+		for (MarkerQuery query : sortedHelpQueries) {
 			MarkerQueryResult result = query.performQuery(marker);
 			if (result != null) {
 				// See if a matching result is registered

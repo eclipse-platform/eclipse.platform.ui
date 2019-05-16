@@ -896,8 +896,7 @@ public class LogView extends ViewPart implements ILogListener {
 		if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
 			elements.addAll(entries);
 		} else {
-			for (Iterator<LogEntry> i = entries.iterator(); i.hasNext();) {
-				LogEntry entry = i.next();
+			for (LogEntry entry : entries) {
 				Group group = getGroup(entry);
 				group.addChild(entry);
 			}
@@ -934,18 +933,16 @@ public class LogView extends ViewPart implements ILogListener {
 			elements.subList(0, elements.size() - limit).clear();
 		} else {
 			List copy = new ArrayList(entriesCount);
-			for (Iterator<AbstractEntry> i = elements.iterator(); i.hasNext();) {
-				AbstractEntry group = i.next();
-				copy.addAll(Arrays.asList(group.getChildren(group)));
-			}
+		    for (AbstractEntry group : elements) {
+			copy.addAll(Arrays.asList(group.getChildren(group)));
+		    }
 
 			Collections.sort(copy, dateComparator);
 			List toRemove = copy.subList(0, copy.size() - limit);
 
-			for (Iterator<AbstractEntry> i = elements.iterator(); i.hasNext();) {
-				AbstractEntry group = i.next();
-				group.removeChildren(toRemove);
-			}
+		    for (AbstractEntry group : elements) {
+			group.removeChildren(toRemove);
+		    }
 		}
 
 	}
@@ -955,10 +952,9 @@ public class LogView extends ViewPart implements ILogListener {
 			return elements.size();
 		}
 		int size = 0;
-		for (Iterator<AbstractEntry> i = elements.iterator(); i.hasNext();) {
-			AbstractEntry group = i.next();
-			size += group.size();
-		}
+	    for (AbstractEntry group : elements) {
+		size += group.size();
+	    }
 		return size;
 	}
 

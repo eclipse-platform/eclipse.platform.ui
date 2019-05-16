@@ -308,8 +308,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 			operation.copyResources(sources, target);
 		} else {
 			boolean allSourceAreLinksOrGroups = true;
-			for (int i = 0; i < sources.length; i++) {
-				if (!sources[0].isVirtual() && !sources[0].isLinked()) {
+			for (IResource source : sources) {
+				if (!source.isVirtual() && !source.isLinked()) {
 					allSourceAreLinksOrGroups = false;
 					break;
 				}

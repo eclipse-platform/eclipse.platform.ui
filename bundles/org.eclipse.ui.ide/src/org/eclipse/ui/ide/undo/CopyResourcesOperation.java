@@ -245,8 +245,8 @@ public class CopyResourcesOperation extends
 			markInvalid();
 			return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 		}
-		for (int i = 0; i < snapshotResourceDescriptions.length; i++) {
-			if (!snapshotResourceDescriptions[i].verifyExistence(true)) {
+		for (ResourceDescription snapshotResourceDescription : snapshotResourceDescriptions) {
+			if (!snapshotResourceDescription.verifyExistence(true)) {
 				markInvalid();
 				return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 			}

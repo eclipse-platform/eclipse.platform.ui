@@ -133,9 +133,9 @@ public class ProjectReferencePage extends PropertyPage {
 				// Add any referenced that do not exist in the workspace currently
 				try {
 					projects = project.getDescription().getReferencedProjects();
-					for (int i = 0; i < projects.length; i++) {
-						if (!referenced.contains(projects[i])) {
-							referenced.add(projects[i]);
+					for (IProject project : projects) {
+						if (!referenced.contains(project)) {
+							referenced.add(project);
 						}
 					}
 				} catch (CoreException e) {

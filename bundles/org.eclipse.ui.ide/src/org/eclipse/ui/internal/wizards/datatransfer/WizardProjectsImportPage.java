@@ -1453,11 +1453,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 */
 	public ProjectRecord[] getProjectRecords() {
 		List<ProjectRecord> projectRecords = new ArrayList<>();
-		for (int i = 0; i < selectedProjects.length; i++) {
-			String projectName = selectedProjects[i].getProjectName();
-			selectedProjects[i].hasConflicts = (isProjectInWorkspacePath(projectName) && copyFiles)
+		for (ProjectRecord selectedProject : selectedProjects) {
+			String projectName = selectedProject.getProjectName();
+			selectedProject.hasConflicts = (isProjectInWorkspacePath(projectName) && copyFiles)
 					|| isProjectInWorkspace(projectName);
-			projectRecords.add(selectedProjects[i]);
+			projectRecords.add(selectedProject);
 		}
 		return projectRecords
 				.toArray(new ProjectRecord[projectRecords.size()]);

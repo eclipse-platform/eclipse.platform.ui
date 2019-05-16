@@ -309,8 +309,8 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		if (markers == null || markers.length == 0) {
 			return false;
 		}
-		for (int i = 0; i < markers.length; i++) {
-			if (!markers[i].exists()) {
+		for (IMarker marker : markers) {
+			if (!marker.exists()) {
 				return false;
 			}
 		}

@@ -665,9 +665,7 @@ public class PathVariablesGroup {
 			}
 
 			// then process the current collection of variables, adding/updating them
-			for (Iterator<Entry<String, IPath>> current = tempPathVariables.entrySet().iterator(); current
-					.hasNext();) {
-				Entry<String, IPath> entry = current.next();
+			for (Entry<String, IPath> entry : tempPathVariables.entrySet()) {
 				String variableName = entry.getKey();
 				IPath variableValue = entry.getValue();
 				if (!isBuiltInVariable(variableName))

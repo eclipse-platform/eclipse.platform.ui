@@ -478,9 +478,10 @@ public class LinkedResourceEditor {
 	}
 
 	boolean areAbsolute(IResource[] res) {
-		for (int i = 0; i < res.length; i++) {
-			if (!isAbsolute(res[i]))
+		for (IResource re : res) {
+			if (!isAbsolute(re)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -515,10 +516,11 @@ public class LinkedResourceEditor {
 		IStructuredSelection selection = fTree.getStructuredSelection();
 		Object[] array = selection.toArray();
 		if (array.length > 0) {
-			for (int i = 0; i < array.length; i++) {
-				if (!(array[i] instanceof IResource))
-					return new IResource[0];
+		    for (Object array1 : array) {
+			if (!(array1 instanceof IResource)) {
+			    return new IResource[0];
 			}
+		    }
 			IResource[] result = new IResource[array.length];
 			System.arraycopy(array, 0, result, 0, array.length);
 			return result;

@@ -340,11 +340,11 @@ public class EventLoopMonitorThread extends Thread {
 	private final int longEventWarningThreshold;
 	private final AtomicBoolean cancelled = new AtomicBoolean(false);
 	private final AtomicReference<LongEventInfo> eventToPublish =
-			new AtomicReference<LongEventInfo>(null);
+			new AtomicReference<>(null);
 
 	// Accessed only by the monitoring thread.
 	private final List<IUiFreezeEventLogger> externalLoggers =
-			new ArrayList<IUiFreezeEventLogger>();
+			new ArrayList<>();
 	private DefaultUiFreezeEventLogger defaultLogger;
 	private final Display display;
 	private final FilterHandler uiThreadFilter;
@@ -651,8 +651,7 @@ public class EventLoopMonitorThread extends Thread {
 					threadMXBean.dumpAllThreads(dumpLockedMonitors, dumpLockedSynchronizers);
 			// Remove the info for the monitoring thread.
 			int index = 0;
-			for (int i = 0; i < threadStacks.length; i++) {
-				ThreadInfo thread = threadStacks[i];
+			for (ThreadInfo thread : threadStacks) {
 				long threadId = thread.getThreadId();
 				// Skip the stack trace of the event loop monitoring thread.
 				if (threadId != monitoringThreadId) {
@@ -660,7 +659,7 @@ public class EventLoopMonitorThread extends Thread {
 						// Swap the UI thread to first slot in the array if it is not there already.
 						if (index != 0) {
 							thread = threadStacks[0];
-							threadStacks[0] = threadStacks[i];
+							threadStacks[0] = thread;
 						}
 					} else if (!isInteresting(thread)) {
 						continue; // Skip the non-interesting thread.

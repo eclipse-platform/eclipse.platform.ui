@@ -1288,8 +1288,7 @@ public class FormText extends Canvas {
 		IHyperlinkSegment selectedLink = getSelectedLink();
 		if (getDisplay().getFocusControl() != this)
 			selectedLink = null;
-		for (int i = 0; i < paragraphs.length; i++) {
-			Paragraph p = paragraphs[i];
+		for (Paragraph p : paragraphs) {
 			p.computeSelection(gc, resourceTable, selectedLink, selData);
 		}
 		gc.dispose();

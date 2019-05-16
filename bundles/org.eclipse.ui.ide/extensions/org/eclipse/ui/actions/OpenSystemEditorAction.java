@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -93,9 +91,7 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
 
 	@Override
 	public void run() {
-		Iterator itr = getSelectedResources().iterator();
-		while (itr.hasNext()) {
-			IResource resource = (IResource) itr.next();
+		for (IResource resource : getSelectedResources()) {
 			if (resource instanceof IFile) {
 				openFile((IFile) resource);
 			}

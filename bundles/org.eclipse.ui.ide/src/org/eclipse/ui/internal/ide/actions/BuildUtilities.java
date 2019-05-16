@@ -149,19 +149,19 @@ public class BuildUtilities {
 	 * trigger activation matches the provided value, and <code>false</code> otherwise.
 	 */
 	private static boolean matchingTrigger(IProject[] projects, int trigger, boolean value) {
-		for (int i = 0; i < projects.length; i++) {
-			if (!projects[i].isAccessible()) {
+		for (IProject project : projects) {
+			if (!project.isAccessible()) {
 				continue;
 			}
 			try {
-				IProjectDescription description = projects[i].getDescription();
+				IProjectDescription description = project.getDescription();
 				for (ICommand buildSpec : description.getBuildSpec()) {
 					if (buildSpec.isBuilding(trigger) == value) {
 						return true;
 					}
 				}
 			} catch (CoreException e) {
-				//ignore projects that are not available
+				// ignore projects that are not available
 			}
 		}
 		return false;

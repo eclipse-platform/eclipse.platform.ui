@@ -272,13 +272,13 @@ public class ContentGeneratorDescriptor {
 		IConfigurationElement[] elements = configurationElement.getChildren(MARKER_FIELD_REFERENCE);
 		Collection<MarkerField> allFieldList = new ArrayList<>();
 		Collection<MarkerField> initialVisibleList = new ArrayList<>();
-		for (int i = 0; i < elements.length; i++) {
-			MarkerField field = registry.getField(elements[i].getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID));
+		for (IConfigurationElement element : elements) {
+			MarkerField field = registry.getField(element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID));
 			if (field == null) {
 				continue;
 			}
 			allFieldList.add(field);
-			if (!MarkerSupportInternalUtilities.VALUE_FALSE.equals(elements[i].getAttribute(ATTRIBUTE_VISIBLE))) {
+			if (!MarkerSupportInternalUtilities.VALUE_FALSE.equals(element.getAttribute(ATTRIBUTE_VISIBLE))) {
 				initialVisibleList.add(field);
 			}
 		}

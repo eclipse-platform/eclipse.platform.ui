@@ -242,23 +242,22 @@ public class NavigatorFilterService implements INavigatorFilterService {
 
 		List<String> nonUiVisible = null;
 
-		/* is there a delta? */
-		for (int i = 0; i < visibleFilterDescriptors.length; i++) {
-			indexofFilterIdToBeActivated = Arrays.binarySearch(filterIdsToActivate,
-					visibleFilterDescriptors[i].getId());
+	    /* is there a delta? */
+		for (CommonFilterDescriptor visibleFilterDescriptor : visibleFilterDescriptors) {
+			indexofFilterIdToBeActivated = Arrays.binarySearch(filterIdsToActivate, visibleFilterDescriptor.getId());
 			/*
-			 * Either we have a filter that should be active that isn't XOR a
-			 * filter that shouldn't be active that is currently
+			 * Either we have a filter that should be active that isn't XOR a filter that
+			 * shouldn't be active that is currently
 			 */
-			if (indexofFilterIdToBeActivated >= 0 ^ isActive(visibleFilterDescriptors[i].getId())) {
+			if (indexofFilterIdToBeActivated >= 0 ^ isActive(visibleFilterDescriptor.getId())) {
 				updateFilterActivation = true;
 			}
-
-			// We don't turn of non-UI visible filters here, they have to be manipulated explicitly
-			if (!visibleFilterDescriptors[i].isVisibleInUi()) {
+			// We don't turn of non-UI visible filters here, they have to be manipulated
+			// explicitly
+			if (!visibleFilterDescriptor.isVisibleInUi()) {
 				if (nonUiVisible == null)
 					nonUiVisible = new ArrayList<String>();
-				nonUiVisible.add(visibleFilterDescriptors[i].getId());
+				nonUiVisible.add(visibleFilterDescriptor.getId());
 			}
 		}
 

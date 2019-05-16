@@ -603,8 +603,8 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		if (resources == null || resources.length == 0) {
 			return false;
 		}
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i] == null || !resources[i].exists()) {
+		for (IResource resource : resources) {
+			if (resource == null || !resource.exists()) {
 				return false;
 			}
 		}

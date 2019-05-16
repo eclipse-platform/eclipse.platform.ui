@@ -120,10 +120,9 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 		data.readPersistedData();
 		String current = data.getInitialDefault();
 		String[] workspaces = data.getRecentWorkspaces();
-		for (int i = 0; i < workspaces.length; i++) {
-			if (workspaces[i] != null && !workspaces[i].equals(current)) {
-				list.add(new ActionContributionItem(new WorkspaceMRUAction(
-						workspaces[i], data)));
+		for (String workspace : workspaces) {
+			if (workspace != null && !workspace.equals(current)) {
+				list.add(new ActionContributionItem(new WorkspaceMRUAction(workspace, data)));
 			}
 		}
 		if (list.size()>0) {

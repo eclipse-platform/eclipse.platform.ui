@@ -358,12 +358,12 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 				return;
 			}
 			tree.setCheckedElements(items);
-			for (int i = 0; i < items.length; i++) {
+			for (Object i : items) {
 				IAdaptable item = null;
-				if (!(items[i] instanceof IAdaptable)) {
+				if (!(i instanceof IAdaptable)) {
 					continue;
 				}
-				item = (IAdaptable) items[i];
+				item = (IAdaptable) i;
 				IContainer container = Adapters.adapt(item, IContainer.class);
 
 				if (container != null) {

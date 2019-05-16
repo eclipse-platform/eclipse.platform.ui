@@ -66,14 +66,14 @@ class PasteBookmarkAction extends BookmarkAction {
 		final ArrayList<IResource> newMarkerResources = new ArrayList<>();
 		try {
 			ResourcesPlugin.getWorkspace().run(monitor -> {
-				for (int i = 0; i < markerData.length; i++) {
+				for (IMarker markerData1 : markerData) {
 					// Collect the info about the markers to be pasted.
 					// Ignore any markers that aren't bookmarks.
-					if (!markerData[i].getType().equals(IMarker.BOOKMARK)) {
+					if (!markerData1.getType().equals(IMarker.BOOKMARK)) {
 						continue;
 					}
-					newMarkerResources.add(markerData[i].getResource());
-					newMarkerAttributes.add(markerData[i].getAttributes());
+					newMarkerResources.add(markerData1.getResource());
+					newMarkerAttributes.add(markerData1.getAttributes());
 				}
 			}, null);
 		} catch (CoreException e) {

@@ -149,8 +149,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 	private boolean hasWizards(IWizardCategory category) {
 		IWizardDescriptor[] wizards = category.getWizards();
 		if (wizards.length>0) {
-			for (int i = 0; i < wizards.length; i++) {
-				if (!WorkbenchActivityHelper.filterItem(wizards[i])) {
+			for (IWizardDescriptor wizard : wizards) {
+				if (!WorkbenchActivityHelper.filterItem(wizard)) {
 					return true;
 				}
 			}

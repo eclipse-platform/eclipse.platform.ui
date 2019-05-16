@@ -384,8 +384,8 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			operation.copyResources(sources, target);
 		} else {
 			boolean allSourceAreLinksOrVirtualFolders = true;
-			for (int i = 0; i < sources.length; i++) {
-				if (!sources[i].isVirtual() && !sources[i].isLinked()) {
+			for (IResource source : sources) {
+				if (!source.isVirtual() && !source.isLinked()) {
 					allSourceAreLinksOrVirtualFolders = false;
 					break;
 				}

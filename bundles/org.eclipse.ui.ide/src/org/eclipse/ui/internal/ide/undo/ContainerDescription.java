@@ -186,9 +186,9 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 		// restore any children
 		if (members != null && members.length > 0) {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, members.length);
-			for (int i = 0; i < members.length; i++) {
-				members[i].parent = parentHandle;
-				members[i].createResource(subMonitor.split(1));
+			for (AbstractResourceDescription member : members) {
+				member.parent = parentHandle;
+				member.createResource(subMonitor.split(1));
 			}
 		}
 	}
@@ -301,8 +301,8 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 			if (checkMembers) {
 				// restore any children
 				if (members != null && members.length > 0) {
-					for (int i = 0; i < members.length; i++) {
-						if (!members[i].verifyExistence(checkMembers)) {
+					for (AbstractResourceDescription member : members) {
+						if (!member.verifyExistence(checkMembers)) {
 							return false;
 						}
 					}
