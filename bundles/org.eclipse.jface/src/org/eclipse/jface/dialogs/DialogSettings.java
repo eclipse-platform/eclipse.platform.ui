@@ -368,9 +368,10 @@ public class DialogSettings implements IDialogSettings {
 
 	@Override
 	public void save(Writer writer) throws IOException {
-		final XMLWriter xmlWriter = new XMLWriter(writer);
-		save(xmlWriter);
-		xmlWriter.flush();
+		try (XMLWriter xmlWriter = new XMLWriter(writer)) {
+			save(xmlWriter);
+			xmlWriter.flush();
+		}
 	}
 
 	@Override
