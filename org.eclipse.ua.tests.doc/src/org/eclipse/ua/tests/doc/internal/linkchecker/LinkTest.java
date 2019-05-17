@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2019 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,8 @@
  *     Mickael Istria (Red Hat Inc.) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ua.tests.doc.internal.linkchecker;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,11 +36,11 @@ import org.eclipse.help.internal.search.QueryTooComplexException;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.ui.PlatformUI;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class LinkTest {
 
-public class LinkTest extends TestCase {
-
+	@Test
 	public void testAllLinks() {
 		ISearchQuery query = new SearchQuery("*", false, Collections.emptyList(), Platform.getNL());
 		final Set<URI> indexedPagesURIs = new HashSet<>();
