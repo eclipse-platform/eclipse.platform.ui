@@ -36,11 +36,6 @@
             base-name="/advanced"
             httpcontextId="help">
       </resource>
-      <resource
-            alias="/basic"
-            base-name="/basic"
-            httpcontextId="help">
-      </resource>
       <serviceSelector
             filter="(other.info=org.eclipse.help)">
       </serviceSelector>
@@ -150,11 +145,6 @@
       <servlet
             alias="/advanced/*.jsp"
             class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/advanced/"
-            httpcontextId="help">
-      </servlet>
-      <servlet
-            alias="/basic/*.jsp"
-            class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/basic/"
             httpcontextId="help">
       </servlet>
       <serviceSelector

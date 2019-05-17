@@ -241,13 +241,6 @@ public class LayoutData extends RequestData {
 		return createURL(view.getURL(), view.getName(), fileSuffix);
 	}
 
-	/**
-	 * Returns the URL of a JSP file in the basic presentation
-	 */
-	public String getBasicURL(AbstractView view, String fileSuffix) {
-		return createURL(view.getBasicURL(), view.getName(), fileSuffix);
-	}
-
 	private String createURL(String path, String viewName, String fileSuffix) {
 		if (path == null || path.length() == 0) {
 			return viewName + fileSuffix;

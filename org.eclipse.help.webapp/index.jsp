@@ -19,11 +19,6 @@
 	RequestScope.setScopeFromRequest(request, response);
 	LayoutData data = new LayoutData(application,request, response);
 
-	if (request.getParameter("noscript") != null) {
-		request.getRequestDispatcher("/basic/index.jsp" + data.getQuery()).forward(request, response);
-		return;
-	}
-
 	if(data.isBot()){
 		TocData tData = new TocData(application,request, response);
 %>
@@ -38,9 +33,7 @@
 </body>
 </html>	
 <%
-	}else if(data.isAdvancedUI()){
+	}else {
 		request.getRequestDispatcher("/advanced/index.jsp" + data.getQuery()).forward(request, response);
-	}else{
-		request.getRequestDispatcher("/basic/index.jsp" + data.getQuery()).forward(request, response);
 	}
 %>

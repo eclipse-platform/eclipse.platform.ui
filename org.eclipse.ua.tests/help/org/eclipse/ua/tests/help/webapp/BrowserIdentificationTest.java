@@ -37,7 +37,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertFalse(UrlUtil.isGecko(agent));
 		assertEquals("6.0", UrlUtil.getIEVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -50,7 +49,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertTrue(UrlUtil.isGecko(agent));
 		assertEquals("1.8.0.8", UrlUtil.getMozillaVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -63,7 +61,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertTrue(UrlUtil.isGecko(agent));
 		assertEquals("1.4", UrlUtil.getMozillaVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -75,7 +72,6 @@ public class BrowserIdentificationTest {
 		assertTrue(UrlUtil.isKonqueror(agent));
 		assertFalse(UrlUtil.isSafari(agent));
 		assertFalse(UrlUtil.isGecko(agent));
-		assertFalse(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -88,7 +84,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertTrue(UrlUtil.isGecko(agent));
 		assertEquals("1.7.3", UrlUtil.getMozillaVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -101,7 +96,6 @@ public class BrowserIdentificationTest {
 		assertTrue(UrlUtil.isSafari(agent));
 		assertFalse(UrlUtil.isGecko(agent));
 		assertEquals("417", UrlUtil.getSafariVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -114,7 +108,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertFalse(UrlUtil.isGecko(agent));
 		assertEquals("9.02", UrlUtil.getOperaVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -127,7 +120,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertFalse(UrlUtil.isGecko(agent));
 		assertEquals("6.0", UrlUtil.getIEVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -140,7 +132,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertTrue(UrlUtil.isGecko(agent));
 		assertEquals("1.9", UrlUtil.getMozillaVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -152,7 +143,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isKonqueror(agent));
 		assertFalse(UrlUtil.isSafari(agent));
 		assertFalse(UrlUtil.isGecko(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 	@Test
@@ -165,7 +155,6 @@ public class BrowserIdentificationTest {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertTrue(UrlUtil.isGecko(agent));
 		assertEquals("1.8.1.13", UrlUtil.getMozillaVersion(agent));
-		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 
 

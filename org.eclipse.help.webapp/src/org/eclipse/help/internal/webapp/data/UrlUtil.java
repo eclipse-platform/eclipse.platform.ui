@@ -721,32 +721,6 @@ public class UrlUtil {
 		}
 	}
 
-	/*
-	 * Get the version from a string of the form mm.nn
-	 */
-	private static int getMajorVersion(String version) {
-		int result = 0;
-		for (int i = 0; i < version.length(); i++) {
-			char next = version.charAt(i);
-			if (next >= '0' && next <= '9') {
-				result = result * 10 + next - '0';
-			} else {
-				break;
-			}
-		}
-		return result;
-	}
-
-	public static boolean isAdvanced(String agent) {
-	        if (agent == null) return false;
-		if (isIE(agent) && "5.5".compareTo(getIEVersion(agent)) <= 0) return true; //$NON-NLS-1$
-		if (isMozilla(agent) && isGecko(agent)) return true;
-		if (isSafari(agent) && "120".compareTo(getSafariVersion(agent)) <= 0) return true; //$NON-NLS-1$
-		if (isOpera(agent) && getMajorVersion(getOperaVersion(agent)) >= 9) return true;
-		if (isMozilla(agent) && !isKonqueror(agent)) return true;
-		return false;
-	}
-
 	// Return true if the URI is of the form /<context>/nav/*
 	public static boolean isNavPath(String uri) {
 		int slash1 = uri.indexOf('/');

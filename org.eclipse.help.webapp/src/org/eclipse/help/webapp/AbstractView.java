@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,8 +41,10 @@ public abstract class AbstractView {
     /**
      * @return a URL path, relative to /help which is the
      * location of the jsp files in the basic presentation
+     * @deprecated Help webapp no longer has basic view.
      */
-    public String getBasicURL() {
+    @Deprecated
+	public String getBasicURL() {
     	return getURL();
     }
 
@@ -84,8 +86,10 @@ public abstract class AbstractView {
 
     /**
      * @return true if the view should be shown in the basic presentation
+     * @deprecated Help webapp no longer has basic view.
      */
-    public boolean isVisibleBasic() {
+    @Deprecated
+	public boolean isVisibleBasic() {
         return true;
     }
 
