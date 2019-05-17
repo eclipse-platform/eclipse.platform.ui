@@ -2398,7 +2398,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertNull(fWin.getActivePage()); // page closed
 	}
 
- 	/**
+	/**
 	 * This tests that closing a perspective will not bring a prompt up for
 	 * {@link org.eclipse.ui.ISaveablePart ISaveablePart} implementations that
 	 * are returning false for their
@@ -2504,7 +2504,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertNull(fWin.getActivePage()); // page closed
 	}
 
- 	/**
+	/**
 	 * This tests that closing all perspectives will not bring a prompt up for
 	 * {@link org.eclipse.ui.ISaveablePart ISaveablePart} implementations that
 	 * are returning false for their

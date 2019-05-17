@@ -286,8 +286,8 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 		if (root == null) {
 			return null;
 		}
- 		if (root.isDirectory()) {
- 			this.directoryToImport = root;
+		if (root.isDirectory()) {
+			this.directoryToImport = root;
 		} else if (SmartImportWizard.isValidArchive(root)) {
 			this.directoryToImport = getExpandDirectory(root);
 			if (!directoryToImport.isDirectory()) {
@@ -295,7 +295,7 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 			}
 		} else {
 			return null;
- 		}
+		}
 		if (this.easymportJob == null || !matchesPage(this.easymportJob, this.projectRootPage)) {
 			this.easymportJob = new SmartImportJob(this.directoryToImport, projectRootPage.getSelectedWorkingSets(),
 					projectRootPage.isConfigureProjects(), projectRootPage.isDetectNestedProject());

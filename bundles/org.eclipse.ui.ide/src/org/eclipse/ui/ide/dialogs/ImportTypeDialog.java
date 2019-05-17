@@ -273,8 +273,8 @@ public class ImportTypeDialog extends TrayDialog {
 			createMessageArea(parent);
 		Composite composite = new Composite(parent, 0);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
- 		composite.setLayoutData(gridData);
- 		composite.setFont(parent.getFont());
+		composite.setLayoutData(gridData);
+		composite.setFont(parent.getFont());
 
 
 		GridLayout layout = new GridLayout();
@@ -424,7 +424,7 @@ public class ImportTypeDialog extends TrayDialog {
 	protected Control createMessageArea(Composite parent) {
 		Composite composite = new Composite(parent, 0);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
- 		composite.setLayoutData(gridData);
+		composite.setLayoutData(gridData);
 		composite.setFont(parent.getFont());
 
 

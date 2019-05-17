@@ -72,7 +72,7 @@ public class OpenFolderAsProjectAction extends Action {
 						parentWorkingSets.add(workingSet);
 						break;
 					}
- 				}
+				}
 			}
 			IProjectDescription desc = ResourcesPlugin.getWorkspace().loadProjectDescription(
 					folder.getLocation().append(IProjectDescription.DESCRIPTION_FILE_NAME));

@@ -66,7 +66,7 @@ public class CustomBeanUpdateValueStrategy<S, D> extends UpdateValueStrategy<S, 
 				}
 
 			}
- 		}
+		}
 		super.fillDefaults(source, destination);
 	}
 

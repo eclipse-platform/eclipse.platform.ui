@@ -200,9 +200,9 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 			Composite composite, String imageKey) {
 		CTabItem extensionsTabItem = new CTabItem(aTabFolder, SWT.BORDER);
 		extensionsTabItem.setText(label);
- 		extensionsTabItem.setControl(composite);
- 		extensionsTabItem.setImage(NavigatorPlugin.getDefault().getImage(imageKey));
- 		return extensionsTabItem;
+		extensionsTabItem.setControl(composite);
+		extensionsTabItem.setImage(NavigatorPlugin.getDefault().getImage(imageKey));
+		return extensionsTabItem;
 	}
 
 	private void createDescriptionText(Composite composite) {

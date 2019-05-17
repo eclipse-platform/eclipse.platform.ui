@@ -410,7 +410,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 */
 	public WizardProjectsImportPage(String pageName,String initialPath,
 			IStructuredSelection currentSelection) {
- 		super(pageName);
+		super(pageName);
 		if (initialPath != null) {
 			this.initialPath = initialPath;
 		} else {
