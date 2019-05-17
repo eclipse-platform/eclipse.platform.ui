@@ -16,10 +16,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt.cocoa;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +42,6 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
@@ -63,20 +57,9 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.internal.C;
-import org.eclipse.swt.internal.Callback;
-import org.eclipse.swt.internal.cocoa.NSButton;
-import org.eclipse.swt.internal.cocoa.NSControl;
-import org.eclipse.swt.internal.cocoa.NSString;
-import org.eclipse.swt.internal.cocoa.NSToolbar;
-import org.eclipse.swt.internal.cocoa.NSWindow;
-import org.eclipse.swt.internal.cocoa.OS;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 
 /**
@@ -98,19 +81,6 @@ public class CocoaUIHandler {
 	private static final String COMMAND_ID_PREFERENCES = "org.eclipse.ui.window.preferences"; //$NON-NLS-1$
 	private static final String COMMAND_ID_QUIT = "org.eclipse.ui.file.exit"; //$NON-NLS-1$
 	private static final String COMMAND_PARAMETER_ID_MAY_PROMPT = "mayPrompt"; //$NON-NLS-1$
-	// toggle coolbar isn't actually defined anywhere
-	private static final String COMMAND_ID_TOGGLE_COOLBAR = "org.eclipse.ui.ToggleCoolbarAction"; //$NON-NLS-1$
-
-	static long sel_toolbarButtonClicked_;
-	private static final long NSWindowToolbarButton = 3;
-
-	/* This callback is not freed */
-	@SuppressWarnings("restriction")
-	static Callback proc3Args;
-	static final byte[] SWT_OBJECT = { 'S', 'W', 'T', '_', 'O', 'B', 'J', 'E', 'C', 'T', '\0' };
-
-	SWTCocoaEnhancerDelegate delegate;
-	private long delegateJniRef;
 
 	protected MCommand closeDialogCommand;
 
@@ -132,77 +102,13 @@ public class CocoaUIHandler {
 	@Optional
 	protected IPresentationEngine engine;
 
-	/**
-	 *
-	 */
-	private void registerSelectors() {
-		try {
-			if (sel_toolbarButtonClicked_ == 0) {
-				sel_toolbarButtonClicked_ = registerName("toolbarButtonClicked:"); //$NON-NLS-1$
-				setupDelegateClass();
-			}
-		} catch (Exception e) {
-			// theoretically, one of
-			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
-			// not expected to happen at all.
-			log(e);
-		}
-	}
-
-	@SuppressWarnings("restriction")
-	private void setupDelegateClass() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-		// TODO: These should either move out of Display or be accessible to
-		// this class.
-		byte[] types = { '*', '\0' };
-		int size = C.PTR_SIZEOF, align = C.PTR_SIZEOF == 4 ? 2 : 3;
-
-		Class<?> clazz = CocoaUIHandler.class;
-
-		proc3Args = new Callback(clazz, "actionProc", 3); //$NON-NLS-1$
-		// call getAddress
-		Method getAddress = Callback.class.getMethod("getAddress", new Class[0]); //$NON-NLS-1$
-		Object object = getAddress.invoke(proc3Args);
-		long proc3 = convertToLong(object);
-		if (proc3 == 0)
-			SWT.error(SWT.ERROR_NO_MORE_CALLBACKS);
-
-		// call objc_allocateClassPair
-		Field field = OS.class.getField("class_NSObject"); //$NON-NLS-1$
-		Object fieldObj = field.get(OS.class);
-		object = invokeMethod(OS.class, "objc_allocateClassPair", //$NON-NLS-1$
-				new Object[] { fieldObj, "SWTCocoaEnhancerDelegate", wrapPointer(0) }); //$NON-NLS-1$
-		long cls = convertToLong(object);
-
-		invokeMethod(OS.class, "class_addIvar", new Object[] { //$NON-NLS-1$
-				wrapPointer(cls), SWT_OBJECT, wrapPointer(size), Byte.valueOf((byte) align), types });
-
-		// Add the action callback
-		invokeMethod(OS.class, "class_addMethod", //$NON-NLS-1$
-				new Object[] { wrapPointer(cls), wrapPointer(sel_toolbarButtonClicked_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
-		invokeMethod(OS.class, "objc_registerClassPair", //$NON-NLS-1$
-				new Object[] { wrapPointer(cls) });
-	}
-
-	@SuppressWarnings("restriction")
-	private long registerName(String name) throws IllegalArgumentException, SecurityException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
-		Class<OS> clazz = OS.class;
-		Object object = invokeMethod(clazz, "sel_registerName", new Object[] { name }); //$NON-NLS-1$
-		return convertToLong(object);
-	}
-
 	/** Initialize the handler */
 	@PostConstruct
 	public void init() {
-		registerSelectors();
-
 		final Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
-				allocateDelegate(display);
-
 				hookApplicationMenu();
 				processModelMenus();
 
@@ -212,60 +118,6 @@ public class CocoaUIHandler {
 				}
 			}
 		});
-	}
-
-	/**
-	 * @param display
-	 */
-	protected void allocateDelegate(Display display) {
-		try {
-			delegate = new SWTCocoaEnhancerDelegate();
-			delegate.alloc().init();
-			// call OS.NewGlobalRef
-			Method method = OS.class.getMethod("NewGlobalRef", new Class[] { Object.class }); //$NON-NLS-1$
-			Object object = method.invoke(OS.class, new Object[] { CocoaUIHandler.this });
-			delegateJniRef = convertToLong(object);
-		} catch (Exception e) {
-			// theoretically, one of
-			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
-			// not expected to happen at all.
-			log(e);
-		}
-		if (delegateJniRef == 0)
-			SWT.error(SWT.ERROR_NO_HANDLES);
-
-		try {
-			Field idField = SWTCocoaEnhancerDelegate.class.getField("id"); //$NON-NLS-1$
-			Object idValue = idField.get(delegate);
-			invokeMethod(OS.class, "object_setInstanceVariable", //$NON-NLS-1$
-					new Object[] { idValue, SWT_OBJECT, wrapPointer(delegateJniRef) });
-			display.disposeExec(new Runnable() {
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					if (delegateJniRef != 0) {
-						try {
-							invokeMethod(OS.class, "DeleteGlobalRef", new Object[] { wrapPointer(delegateJniRef) }); //$NON-NLS-1$
-						} catch (Exception e) {
-							// theoretically, one of
-							// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
-							// not expected to happen at all.
-							log(e);
-						}
-					}
-					delegateJniRef = 0;
-
-					if (delegate != null)
-						delegate.release();
-					delegate = null;
-				}
-			});
-		} catch (Exception e) {
-			// theoretically, one of
-			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
-			// not expected to happen at all.
-			log(e);
-		}
 	}
 
 	/**
@@ -312,7 +164,6 @@ public class CocoaUIHandler {
 				&& event.getProperty(UIEvents.EventTags.NEW_VALUE) != null) {
 			MWindow window = (MWindow) event.getProperty(UIEvents.EventTags.ELEMENT);
 			modifyWindowShell(window);
-			updateFullScreenStatus(window);
 		}
 	}
 
@@ -358,35 +209,13 @@ public class CocoaUIHandler {
 		}
 	}
 
-	/** Watch for a window's full-screen tag being flipped */
-	@Inject
-	@Optional
-	private void monitorApplicationTagChanges(@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
-		if (event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MWindow) {
-			MWindow window = (MWindow) event.getProperty(UIEvents.EventTags.ELEMENT);
-			updateFullScreenStatus(window);
-		}
-	}
-
-	/**
-	 * @param window
-	 */
-	protected void updateFullScreenStatus(MWindow window) {
-		// toggle full-screen is only available since MacOS X 10.7
-		if (OS.VERSION < 0x1070 || !(window.getWidget() instanceof Shell)) {
-			return;
-		}
-	}
-
 	/**
 	 * Modify the given workbench window shell bits to show the tool bar toggle
 	 * button.
 	 *
-	 * @param window
-	 *            the window to modify
+	 * @param window the window to modify
 	 * @since 3.2
 	 */
-	@SuppressWarnings("restriction")
 	protected void modifyWindowShell(MWindow window) {
 		if (window.getWidget() == null) {
 			return;
@@ -395,60 +224,6 @@ public class CocoaUIHandler {
 			return;
 		}
 		redirectHandledMenuItems(window.getMainMenu());
-
-		// the toolbar button is not available since MacOS X 10.7
-		if (OS.VERSION >= 0x1070) {
-			return;
-		}
-		// only add the button when either the cool bar or perspective bar
-		// is initially visible. This is so that RCP applications can choose to
-		// use this fragment without fear that their explicitly invisible bars
-		// can't be shown.
-		boolean trimInitiallyVisible = false;
-		if (window instanceof MTrimmedWindow && !((MTrimmedWindow) window).getTrimBars().isEmpty()) {
-			for (MTrimBar tb : ((MTrimmedWindow) window).getTrimBars()) {
-				if (tb.isVisible()) {
-					trimInitiallyVisible = true;
-				}
-			}
-		}
-
-		// It would also be worth checking if there's a command defined
-		// for COMMAND_ID_TOGGLE_COOLBAR
-		if (trimInitiallyVisible) {
-			Shell shell = ((Control) window.getWidget()).getShell();
-			NSWindow nsWindow = shell.view.window();
-			// Add an empty, hidden tool bar to the window. Without this the
-			// tool bar button at the top right of the window will not
-			// appear even when setShowsToolbarButton(true) is called.
-			// Unfortunately cannot just call shell.getToolBar() as it
-			// allocates a properly-sized toolbar
-			NSToolbar dummyBar = new NSToolbar();
-			dummyBar.alloc();
-			dummyBar.initWithIdentifier(NSString.stringWith("SWTToolbar")); //$NON-NLS-1$
-			dummyBar.setVisible(false);
-			nsWindow.setToolbar(dummyBar);
-			dummyBar.release();
-			nsWindow.setShowsToolbarButton(true);
-
-			// Override the target and action of the toolbar button so we can
-			// control it.
-			try {
-				Object fieldValue = wrapPointer(NSWindowToolbarButton);
-				NSButton toolbarButton = (NSButton) invokeMethod(NSWindow.class, nsWindow, "standardWindowButton", //$NON-NLS-1$
-						new Object[] { fieldValue });
-				if (toolbarButton != null) {
-					toolbarButton.setTarget(delegate);
-					invokeMethod(NSControl.class, toolbarButton, "setAction", //$NON-NLS-1$
-							new Object[] { wrapPointer(sel_toolbarButtonClicked_) });
-				}
-			} catch (Exception e) {
-				// theoretically, one of
-				// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
-				// not expected to happen at all.
-				log(e);
-			}
-		}
 	}
 
 	private void redirectHandledMenuItems(MMenu menu) {
@@ -516,8 +291,7 @@ public class CocoaUIHandler {
 	}
 
 	/**
-	 * @param menu
-	 *            the containing menu
+	 * @param menu       the containing menu
 	 * @param menuItemId
 	 * @return the menu item with {@code menuItemId} or null if not found
 	 */
@@ -534,8 +308,7 @@ public class CocoaUIHandler {
 	 * Locate an action (a menu item, actually) with the given id in the current
 	 * menu bar and run it.
 	 *
-	 * @param actionId
-	 *            the action to find
+	 * @param actionId the action to find
 	 * @return true if an action was found, false otherwise
 	 */
 	private boolean runAction(String actionId) {
@@ -656,10 +429,8 @@ public class CocoaUIHandler {
 	 * Find the action with the given ID by recursively crawling the provided menu
 	 * manager. If the action cannot be found <code>null</code> is returned.
 	 *
-	 * @param actionId
-	 *            the id to search for
-	 * @param menu
-	 *            the menu to search
+	 * @param actionId the id to search for
+	 * @param menu     the menu to search
 	 * @return the action or <code>null</code>
 	 */
 	private MMenuItem findAction(String actionId, MMenu menu) {
@@ -684,143 +455,6 @@ public class CocoaUIHandler {
 			}
 		}
 		return null;
-	}
-
-	/*
-	 * Action implementation for the toolbar button
-	 */
-	@SuppressWarnings("restriction")
-	void toolbarButtonClicked(NSControl source) {
-		try {
-			NSWindow window = source.window();
-			Field idField = NSWindow.class.getField("id"); //$NON-NLS-1$
-			Object idValue = idField.get(window);
-
-			Display display = Display.getCurrent();
-			Widget widget = (Widget) invokeMethod(Display.class, display, "findWidget", new Object[] { idValue }); //$NON-NLS-1$
-
-			if (!(widget instanceof Shell)) {
-				return;
-			}
-			Shell shell = (Shell) widget;
-			for (MWindow mwin : app.getChildren()) {
-				if (mwin.getWidget() == shell) {
-					if (!runCommand(COMMAND_ID_TOGGLE_COOLBAR)) {
-						// there may be a menu item to do the toggle...
-						runAction(COMMAND_ID_TOGGLE_COOLBAR);
-					}
-				}
-			}
-		} catch (Exception e) {
-			// theoretically, one of
-			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
-			// not expected to happen at all.
-			log(e);
-		}
-	}
-
-	static int actionProc(int id, int sel, int arg0) throws Exception {
-		return (int) actionProc((long) id, (long) sel, (long) arg0);
-	}
-
-	@SuppressWarnings("restriction")
-	static long actionProc(long id, long sel, long arg0) throws Exception {
-		long[] jniRef = OS_object_getInstanceVariable(id, SWT_OBJECT);
-		if (jniRef[0] == 0)
-			return 0;
-
-		CocoaUIHandler delegate = (CocoaUIHandler) invokeMethod(OS.class, "JNIGetObject", //$NON-NLS-1$
-				new Object[] { wrapPointer(jniRef[0]) });
-
-		if (sel == sel_toolbarButtonClicked_) {
-			NSControl source = new_NSControl(arg0);
-			delegate.toolbarButtonClicked(source);
-		}
-
-		return 0;
-	}
-
-	// The following methods reflectively call corresponding methods in the OS
-	// class, using ints or longs as required based on platform.
-
-	@SuppressWarnings("restriction")
-	private static NSControl new_NSControl(long arg0) throws NoSuchMethodException, InstantiationException,
-			IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		Class<NSControl> clazz = NSControl.class;
-		Class<?> PTR_CLASS = C.PTR_SIZEOF == 8 ? long.class : int.class;
-		Constructor<NSControl> constructor = clazz.getConstructor(new Class[] { PTR_CLASS });
-		return constructor.newInstance(new Object[] { wrapPointer(arg0) });
-	}
-
-	/**
-	 * Specialized method. It's behavior is isolated and different enough from the
-	 * usual invocation that custom code is warranted.
-	 */
-	@SuppressWarnings("restriction")
-	private static long[] OS_object_getInstanceVariable(long delegateId, byte[] name) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
-		Class<OS> clazz = OS.class;
-		Method method = null;
-		Class<?> PTR_CLASS = C.PTR_SIZEOF == 8 ? long.class : int.class;
-		if (PTR_CLASS == long.class) {
-			method = clazz.getMethod("object_getInstanceVariable", new Class[] { //$NON-NLS-1$
-					long.class, byte[].class, long[].class });
-			long[] resultPtr = new long[1];
-			method.invoke(null, new Object[] { Long.valueOf(delegateId), name, resultPtr });
-			return resultPtr;
-		} else {
-			method = clazz.getMethod("object_getInstanceVariable", new Class[] { //$NON-NLS-1$
-					int.class, byte[].class, int[].class });
-			int[] resultPtr = new int[1];
-			method.invoke(null, new Object[] { Integer.valueOf((int) delegateId), name, resultPtr });
-			return new long[] { resultPtr[0] };
-		}
-	}
-
-	private long convertToLong(Object object) {
-		if (object instanceof Integer) {
-			Integer i = (Integer) object;
-			return i.longValue();
-		}
-		if (object instanceof Long) {
-			Long l = (Long) object;
-			return l.longValue();
-		}
-		return 0;
-	}
-
-	private static Object invokeMethod(Class<?> clazz, String methodName, Object[] args)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException,
-			NoSuchMethodException {
-		return invokeMethod(clazz, null, methodName, args);
-	}
-
-	private static Object invokeMethod(Class<?> clazz, Object target, String methodName, Object[] args)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException,
-			NoSuchMethodException {
-		Class<?>[] signature = new Class<?>[args.length];
-		for (int i = 0; i < args.length; i++) {
-			Class<?> thisClass = args[i].getClass();
-			if (thisClass == Integer.class)
-				signature[i] = int.class;
-			else if (thisClass == Long.class)
-				signature[i] = long.class;
-			else if (thisClass == Byte.class)
-				signature[i] = byte.class;
-			else
-				signature[i] = thisClass;
-		}
-		Method method = clazz.getMethod(methodName, signature);
-		return method.invoke(target, args);
-	}
-
-	@SuppressWarnings("restriction")
-	private static Object wrapPointer(long value) {
-		Class<?> PTR_CLASS = C.PTR_SIZEOF == 8 ? long.class : int.class;
-		if (PTR_CLASS == long.class)
-			return Long.valueOf(value);
-		else
-			return Integer.valueOf((int) value);
 	}
 
 	private ParameterizedCommand generateParameterizedCommand(final MHandledItem item) {
