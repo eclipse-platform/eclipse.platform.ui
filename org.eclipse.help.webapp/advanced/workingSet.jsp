@@ -157,8 +157,6 @@ input[type="checkbox"] {
 	border:2px solid WindowText; 
 	margin:0px; 
 	padding:0px;	
-	height:12px;
-	width:12px;
 }
 
 .grayed {
