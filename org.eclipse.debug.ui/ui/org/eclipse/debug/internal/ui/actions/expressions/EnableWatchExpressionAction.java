@@ -51,8 +51,8 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 			while (iter.hasNext()) {
 				expression= getWatchExpression(iter.next());
 				if (expression != null) {
-    				expression.setEnabled(fEnable);
-    				fireWatchExpressionChanged(expression);
+					expression.setEnabled(fEnable);
+					fireWatchExpressionChanged(expression);
 				}
 			}
 		} else if (fSelection instanceof IWatchExpression) {
@@ -92,12 +92,12 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 	}
 
 	private IWatchExpression getWatchExpression(Object element) {
-	    if (element instanceof IWatchExpression) {
-	        return (IWatchExpression)element;
-	    } else if (element instanceof IAdaptable) {
-	        return ((IAdaptable)element).getAdapter(IWatchExpression.class);
-	    }
-	    return null;
+		if (element instanceof IWatchExpression) {
+			return (IWatchExpression)element;
+		} else if (element instanceof IAdaptable) {
+			return ((IAdaptable)element).getAdapter(IWatchExpression.class);
+		}
+		return null;
 	}
 
 	@Override

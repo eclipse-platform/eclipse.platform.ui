@@ -276,21 +276,21 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static final String ATTR_LAUNCH_TIMESTAMP = PI_DEBUG_CORE + ".launch.timestamp";  //$NON-NLS-1$
 
-    /**
-     * This launch attribute designates the encoding to be used by the console
-     * associated with the launch.
-     * <p>
-     * For release 3.3, the system encoding is used when unspecified. Since 3.4,
-     * the inherited encoding is used when unspecified. See {@link ILaunchManager} for a
-     * description in <code>getEncoding(ILaunchConfiguration)</code>.
-     * </p>
-     * <p>
-     * Value of this constant is the same as the value of the old
-     * <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code> constant for backward
-     * compatibility.
-     * </p>
-     * @since 3.3
-     */
+	/**
+	 * This launch attribute designates the encoding to be used by the console
+	 * associated with the launch.
+	 * <p>
+	 * For release 3.3, the system encoding is used when unspecified. Since 3.4,
+	 * the inherited encoding is used when unspecified. See {@link ILaunchManager} for a
+	 * description in <code>getEncoding(ILaunchConfiguration)</code>.
+	 * </p>
+	 * <p>
+	 * Value of this constant is the same as the value of the old
+	 * <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code> constant for backward
+	 * compatibility.
+	 * </p>
+	 * @since 3.3
+	 */
 	public static final String ATTR_CONSOLE_ENCODING = "org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING"; //$NON-NLS-1$
 
 	/**
@@ -419,43 +419,43 @@ public class DebugPlugin extends Plugin {
 		EventNotifier fNotifier = new EventNotifier();
 		AsynchRunner fRunner = new AsynchRunner();
 
-	    /**
-         * Creates a new event dispatch job.
-         */
-        public EventDispatchJob() {
-            super(DebugCoreMessages.DebugPlugin_1);
-            setPriority(Job.INTERACTIVE);
-            setSystem(true);
-        }
+		/**
+		 * Creates a new event dispatch job.
+		 */
+		public EventDispatchJob() {
+			super(DebugCoreMessages.DebugPlugin_1);
+			setPriority(Job.INTERACTIVE);
+			setSystem(true);
+		}
 
-        @Override
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 
-            while (!fEventQueue.isEmpty()) {
-                Object next = null;
-	            synchronized (fEventQueue) {
-	                if (!fEventQueue.isEmpty()) {
-	                	next = fEventQueue.remove(0);
-	                }
-	            }
-	            if (next instanceof Runnable) {
-	            	fRunner.async((Runnable) next);
-	            } else if (next != null) {
-	                fNotifier.dispatch((DebugEvent[]) next);
-	            }
-            }
-            return Status.OK_STATUS;
-        }
+			while (!fEventQueue.isEmpty()) {
+				Object next = null;
+				synchronized (fEventQueue) {
+					if (!fEventQueue.isEmpty()) {
+						next = fEventQueue.remove(0);
+					}
+				}
+				if (next instanceof Runnable) {
+					fRunner.async((Runnable) next);
+				} else if (next != null) {
+					fNotifier.dispatch((DebugEvent[]) next);
+				}
+			}
+			return Status.OK_STATUS;
+		}
 
-        @Override
+		@Override
 		public boolean shouldRun() {
-            return shouldSchedule();
-        }
+			return shouldSchedule();
+		}
 
-        @Override
+		@Override
 		public boolean shouldSchedule() {
-            return !(isShuttingDown() || fEventListeners.isEmpty());
-        }
+			return !(isShuttingDown() || fEventListeners.isEmpty());
+		}
 
 	}
 
@@ -662,7 +662,7 @@ public class DebugPlugin extends Plugin {
 			}
 
 			fEventListeners.clear();
-            fEventFilters.clear();
+			fEventFilters.clear();
 
 			SourceLookupUtils.shutdown();
 			Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());
@@ -796,37 +796,37 @@ public class DebugPlugin extends Plugin {
 		return LogicalStructureManager.getDefault().getLogicalStructureTypes(value);
 	}
 
-    /**
-     * Returns the default logical structure type among the given combination of
-     * logical structure types, or <code>null</code> if none. When the given combination
-     * of logical structure type is applicable for a value, the default logical structure
-     * type is used to display a value.
-     *
-     * @param types a combination of structures applicable to a value
-     * @return the default structure that should be used to display the value
-     * or <code>null</code> if none
-     *
-     * @since 3.1
-     */
-    public static ILogicalStructureType getDefaultStructureType(ILogicalStructureType[] types) {
-        return LogicalStructureManager.getDefault().getSelectedStructureType(types);
-    }
+	/**
+	 * Returns the default logical structure type among the given combination of
+	 * logical structure types, or <code>null</code> if none. When the given combination
+	 * of logical structure type is applicable for a value, the default logical structure
+	 * type is used to display a value.
+	 *
+	 * @param types a combination of structures applicable to a value
+	 * @return the default structure that should be used to display the value
+	 * or <code>null</code> if none
+	 *
+	 * @since 3.1
+	 */
+	public static ILogicalStructureType getDefaultStructureType(ILogicalStructureType[] types) {
+		return LogicalStructureManager.getDefault().getSelectedStructureType(types);
+	}
 
-    /**
-     * Sets the default logical structure type among the given combination of logical structure
-     * types. The logical structure types provided should all be applicable to a single
-     * value. Specifying <code>null</code> indicates there is no default logical structure
-     * for the given combination of types.
-     *
-     * @param types a combination of logical structure types applicable to a value
-     * @param def the default logical structure among the given combination of types
-     * or <code>null</code> if none
-     *
-     * @since 3.1
-     */
-    public static void setDefaultStructureType(ILogicalStructureType[] types, ILogicalStructureType def) {
-        LogicalStructureManager.getDefault().setEnabledType(types, def);
-    }
+	/**
+	 * Sets the default logical structure type among the given combination of logical structure
+	 * types. The logical structure types provided should all be applicable to a single
+	 * value. Specifying <code>null</code> indicates there is no default logical structure
+	 * for the given combination of types.
+	 *
+	 * @param types a combination of logical structure types applicable to a value
+	 * @param def the default logical structure among the given combination of types
+	 * or <code>null</code> if none
+	 *
+	 * @since 3.1
+	 */
+	public static void setDefaultStructureType(ILogicalStructureType[] types, ILogicalStructureType def) {
+		LogicalStructureManager.getDefault().setEnabledType(types, def);
+	}
 
 	/**
 	 * Convenience method that performs a runtime exec on the given command line
@@ -876,8 +876,8 @@ public class DebugPlugin extends Plugin {
 				p= Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
 			}
 		} catch (IOException e) {
-		    Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_0, e);
-		    throw new CoreException(status);
+			Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_0, e);
+			throw new CoreException(status);
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory
 			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERR_WORKING_DIRECTORY_NOT_SUPPORTED, DebugCoreMessages.DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2, e);
@@ -1165,7 +1165,7 @@ public class DebugPlugin extends Plugin {
 			}
 			for (IDebugEventSetListener iDebugEventSetListener : fEventListeners) {
 				fListener = iDebugEventSetListener;
-                SafeRunner.run(this);
+				SafeRunner.run(this);
 			}
 			fEvents = null;
 			fFilter = null;
@@ -1236,9 +1236,9 @@ public class DebugPlugin extends Plugin {
 			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
 		} finally {
 			try{
-                if (stream != null) {
-                    stream.close();
-                }
+				if (stream != null) {
+					stream.close();
+				}
 			} catch(IOException e) {
 				abort("Unable to parse XML document.", e);  //$NON-NLS-1$
 			}
@@ -1651,25 +1651,25 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.4
 	 */
 	public static Object getAdapter(Object element, Class<?> type) {
-    	Object adapter = null;
-    	if (element != null) {
-	    	if (type.isInstance(element)) {
+		Object adapter = null;
+		if (element != null) {
+			if (type.isInstance(element)) {
 				return element;
 			} else {
 				if (element instanceof IAdaptable) {
-				    adapter = ((IAdaptable)element).getAdapter(type);
+					adapter = ((IAdaptable)element).getAdapter(type);
 				}
 				// for objects that don't subclass PlatformObject, check the platform's adapter manager
 				if (adapter == null && !(element instanceof PlatformObject)) {
-	                adapter = Platform.getAdapterManager().getAdapter(element, type);
+					adapter = Platform.getAdapterManager().getAdapter(element, type);
 				}
 				// force load the adapter in case it really is available
 				if (adapter == null) {
 					adapter = Platform.getAdapterManager().loadAdapter(element, type.getName());
 				}
 			}
-    	}
-    	return adapter;
+		}
+		return adapter;
 	}
 
 }

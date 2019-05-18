@@ -24,11 +24,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAStartedEvent extends PDARunControlEvent {
 
-    public PDAStartedEvent(String message) {
-        super(message);
-    }
+	public PDAStartedEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("started"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("started"); //$NON-NLS-1$
+	}
 }

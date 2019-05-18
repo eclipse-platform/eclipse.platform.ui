@@ -60,7 +60,7 @@ public abstract class RulerBreakpointAction extends Action {
 	 * @return breakpoint associated with activity in the ruler or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint() {
-    	IAnnotationModel annotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
+		IAnnotationModel annotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
 		IDocument document = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		if (annotationModel != null) {
 			Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();

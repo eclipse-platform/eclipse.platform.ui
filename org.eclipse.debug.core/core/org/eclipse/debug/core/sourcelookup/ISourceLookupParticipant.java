@@ -37,7 +37,7 @@ public interface ISourceLookupParticipant {
 	/**
 	 * Notification this participant has been added to the specified
 	 * source lookup director.
-     *
+	 *
 	 * @param director the source lookup director that this participant
 	 *  has been added to
 	 */

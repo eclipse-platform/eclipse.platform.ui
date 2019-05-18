@@ -67,56 +67,56 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.5
  */
 public interface IToggleBreakpointsTargetFactory {
-    /**
-     * Returns all possible types of toggle breakpoints targets that this
-     * factory can create for the given selection and part, possibly empty.
-     * Toggle breakpoints targets  are returned as a set of IDs.
-     *
-     * @param part The active part.
-     * @param selection The current selection
-     * @return Set of <code>String</code> IDs for possible toggle breakpoint
-     * targets, possibly empty
-     */
+	/**
+	 * Returns all possible types of toggle breakpoints targets that this
+	 * factory can create for the given selection and part, possibly empty.
+	 * Toggle breakpoints targets  are returned as a set of IDs.
+	 *
+	 * @param part The active part.
+	 * @param selection The current selection
+	 * @return Set of <code>String</code> IDs for possible toggle breakpoint
+	 * targets, possibly empty
+	 */
 	Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection);
 
-    /**
-     * Returns the identifier of the default toggle breakpoints target to use
-     * for the given selection, or <code>null</code> if this factory has no
-     * preference.
-     *
-     * @param part The active part.
-     * @param selection The current selection
-     * @return a breakpoint toggle target identifier or <code>null</code>
-     */
-    String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection);
+	/**
+	 * Returns the identifier of the default toggle breakpoints target to use
+	 * for the given selection, or <code>null</code> if this factory has no
+	 * preference.
+	 *
+	 * @param part The active part.
+	 * @param selection The current selection
+	 * @return a breakpoint toggle target identifier or <code>null</code>
+	 */
+	String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection);
 
-    /**
-     * Creates and returns a toggle breakpoint target corresponding to the
-     * given identifier that this factory can produce (according to
-     * {@link #getToggleTargets}).
-     *
-     * @param targetID The id of the toggle target to be created
-     * @return toggle target or <code>null</code> if one could not be created
-     */
-    IToggleBreakpointsTarget createToggleTarget(String targetID);
+	/**
+	 * Creates and returns a toggle breakpoint target corresponding to the
+	 * given identifier that this factory can produce (according to
+	 * {@link #getToggleTargets}).
+	 *
+	 * @param targetID The id of the toggle target to be created
+	 * @return toggle target or <code>null</code> if one could not be created
+	 */
+	IToggleBreakpointsTarget createToggleTarget(String targetID);
 
-    /**
-     * Returns a human readable name for the breakpoint toggle target associated with the
-     * given ID. Used to populate the context menu with meaningful names of the types of
-     * breakpoints created by the given target.
-     *
-     * @param targetID toggle breakpoints target identifier
-     * @return toggle target name
-     */
-    String getToggleTargetName(String targetID);
+	/**
+	 * Returns a human readable name for the breakpoint toggle target associated with the
+	 * given ID. Used to populate the context menu with meaningful names of the types of
+	 * breakpoints created by the given target.
+	 *
+	 * @param targetID toggle breakpoints target identifier
+	 * @return toggle target name
+	 */
+	String getToggleTargetName(String targetID);
 
-    /**
-     * Returns a description for the breakpoint toggle target associated with the
-     * given ID or <code>null</code> if none.
-     *
-     * @param targetID toggle breakpoints target identifier
-     * @return toggle target name or <code>null</code> if none
-     */
-    String getToggleTargetDescription(String targetID);
+	/**
+	 * Returns a description for the breakpoint toggle target associated with the
+	 * given ID or <code>null</code> if none.
+	 *
+	 * @param targetID toggle breakpoints target identifier
+	 * @return toggle target name or <code>null</code> if none
+	 */
+	String getToggleTargetDescription(String targetID);
 
 }

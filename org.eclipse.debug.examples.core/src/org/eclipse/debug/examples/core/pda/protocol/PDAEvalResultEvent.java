@@ -23,14 +23,14 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAEvalResultEvent extends PDAEvent {
 
-    public final String fResult;
+	public final String fResult;
 
-    public PDAEvalResultEvent(String message) {
-        super(message);
-        fResult = message.substring(getName(message).length() + 1);
-    }
+	public PDAEvalResultEvent(String message) {
+		super(message);
+		fResult = message.substring(getName(message).length() + 1);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("evalresult"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("evalresult"); //$NON-NLS-1$
+	}
 }

@@ -25,20 +25,20 @@ import java.util.StringTokenizer;
 
 public class PDAStackCommandResult extends PDACommandResult {
 
-    /**
-     * Array of frames return by the stack commands.  The frames are ordered
-     * with the highest-level frame first.
-     */
-    final public PDAFrameData[] fFrames;
+	/**
+	 * Array of frames return by the stack commands.  The frames are ordered
+	 * with the highest-level frame first.
+	 */
+	final public PDAFrameData[] fFrames;
 
-    PDAStackCommandResult(String response) {
-        super(response);
-        StringTokenizer st = new StringTokenizer(response, "#"); //$NON-NLS-1$
+	PDAStackCommandResult(String response) {
+		super(response);
+		StringTokenizer st = new StringTokenizer(response, "#"); //$NON-NLS-1$
 		List<PDAFrameData> framesList = new ArrayList<>();
 
-        while (st.hasMoreTokens()) {
-            framesList.add(new PDAFrameData(st.nextToken()));
-        }
-        fFrames = framesList.toArray(new PDAFrameData[framesList.size()]);
-    }
+		while (st.hasMoreTokens()) {
+			framesList.add(new PDAFrameData(st.nextToken()));
+		}
+		fFrames = framesList.toArray(new PDAFrameData[framesList.size()]);
+	}
 }

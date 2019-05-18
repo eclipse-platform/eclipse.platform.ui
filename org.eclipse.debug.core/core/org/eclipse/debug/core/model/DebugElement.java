@@ -31,27 +31,27 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public abstract class DebugElement extends PlatformObject implements IDebugElement {
 
-    private IDebugTarget fTarget;
+	private IDebugTarget fTarget;
 
-    /**
-     * Constructs a debug element referring to an artifact in the given
-     * debug target.
-     *
-     * @param target debug target containing this element
-     */
-    public DebugElement(IDebugTarget target) {
-        fTarget = target;
-    }
+	/**
+	 * Constructs a debug element referring to an artifact in the given
+	 * debug target.
+	 *
+	 * @param target debug target containing this element
+	 */
+	public DebugElement(IDebugTarget target) {
+		fTarget = target;
+	}
 
-    @Override
+	@Override
 	public IDebugTarget getDebugTarget() {
-        return fTarget;
-    }
+		return fTarget;
+	}
 
-    @Override
+	@Override
 	public ILaunch getLaunch() {
-        return getDebugTarget().getLaunch();
-    }
+		return getDebugTarget().getLaunch();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -80,7 +80,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 			return (T) getLaunch().getLaunchConfiguration();
 		}
 		return super.getAdapter(adapter);
-    }
+	}
 
 	/**
 	 * Fires a debug event.
@@ -105,7 +105,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	/**
 	 * Fires a creation event for this debug element.
 	 */
-    public void fireCreationEvent() {
+	public void fireCreationEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.CREATE));
 	}
 
@@ -116,7 +116,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	 * @param detail detail code for the resume event, such
 	 *  as <code>DebugEvent.STEP_OVER</code>
 	 */
-    public void fireResumeEvent(int detail) {
+	public void fireResumeEvent(int detail) {
 		fireEvent(new DebugEvent(this, DebugEvent.RESUME, detail));
 	}
 
@@ -127,14 +127,14 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	 * @param detail detail code for the suspend event, such
 	 *  as <code>DebugEvent.BREAKPOINT</code>
 	 */
-    public void fireSuspendEvent(int detail) {
+	public void fireSuspendEvent(int detail) {
 		fireEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
 	}
 
 	/**
 	 * Fires a terminate event for this debug element.
 	 */
-    public void fireTerminateEvent() {
+	public void fireTerminateEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
 	}
 

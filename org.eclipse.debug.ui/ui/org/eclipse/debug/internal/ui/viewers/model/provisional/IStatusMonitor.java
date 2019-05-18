@@ -42,20 +42,20 @@ import org.eclipse.core.runtime.IStatus;
  */
 public interface IStatusMonitor extends IProgressMonitor {
 
-    /**
-     * Sets the status for a request, possibly <code>null</code>.
-     * When a request fails, the status indicates why the request failed.
-     * A <code>null</code> status is considered to be successful.
-     *
-     * @param status request status
-     */
-    void setStatus(IStatus status);
+	/**
+	 * Sets the status for a request, possibly <code>null</code>.
+	 * When a request fails, the status indicates why the request failed.
+	 * A <code>null</code> status is considered to be successful.
+	 *
+	 * @param status request status
+	 */
+	void setStatus(IStatus status);
 
-    /**
-     * Returns the status of this request, or <code>null</code>.
-     *
-     * @return request status - <code>null</code> is equivalent
-     *  to an OK status
-     */
-    IStatus getStatus();
+	/**
+	 * Returns the status of this request, or <code>null</code>.
+	 *
+	 * @return request status - <code>null</code> is equivalent
+	 *  to an OK status
+	 */
+	IStatus getStatus();
 }

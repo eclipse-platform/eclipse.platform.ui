@@ -40,10 +40,10 @@ public abstract class ShowWhenContentChangesAction extends Action implements IPr
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-	    String property = event.getProperty();
-        if (property.equals(getKey())) {
-             update();
-        }
+		String property = event.getProperty();
+		if (property.equals(getKey())) {
+			update();
+		}
 	}
 
 	protected abstract String getKey();
@@ -51,12 +51,12 @@ public abstract class ShowWhenContentChangesAction extends Action implements IPr
 	private void update() {
 		IPreferenceStore store = getPreferenceStore();
 		if (store.getBoolean(getKey())) {
-        	// on
-        	setChecked(true);
-         } else {
-        	// off
-        	setChecked(false);
-         }
+			// on
+			setChecked(true);
+		} else {
+			// off
+			setChecked(false);
+		}
 	}
 
 	private IPreferenceStore getPreferenceStore() {

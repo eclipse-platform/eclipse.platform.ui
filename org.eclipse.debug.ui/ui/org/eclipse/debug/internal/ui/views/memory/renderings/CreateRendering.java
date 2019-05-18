@@ -96,7 +96,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 				String label = ((IMemoryRenderingType)element).getLabel();
 				return label;
 			}
-            return element.toString();
+			return element.toString();
 		}
 
 		@Override

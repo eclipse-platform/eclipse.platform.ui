@@ -38,9 +38,9 @@ public class EditBreakpointGroupAction extends AbstractBreakpointsViewAction {
 
 	@Override
 	public void run(IAction action) {
-        IWorkingSetEditWizard editWizard = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetEditWizard(fSet);
-        WizardDialog dialog = new WizardDialog(DebugUIPlugin.getShell(), editWizard);
-        dialog.open();
+		IWorkingSetEditWizard editWizard = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetEditWizard(fSet);
+		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getShell(), editWizard);
+		dialog.open();
 	}
 
 	@Override
@@ -49,17 +49,17 @@ public class EditBreakpointGroupAction extends AbstractBreakpointsViewAction {
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection selection= (IStructuredSelection) sel;
 
-	        if (selection.size() == 1) {
-	            Object element = selection.getFirstElement();
+			if (selection.size() == 1) {
+				Object element = selection.getFirstElement();
 				if (element instanceof IBreakpointContainer) {
-	                IBreakpointContainer container = (IBreakpointContainer)element;
-	                IAdaptable category = container.getCategory();
-	                if (category instanceof WorkingSetCategory) {
-	                    IWorkingSet set = ((WorkingSetCategory)category).getWorkingSet();
-	                    action.setEnabled(true);
-	                    fSet = set;
-	                    return;
-	                }
+					IBreakpointContainer container = (IBreakpointContainer)element;
+					IAdaptable category = container.getCategory();
+					if (category instanceof WorkingSetCategory) {
+						IWorkingSet set = ((WorkingSetCategory)category).getWorkingSet();
+						action.setEnabled(true);
+						fSet = set;
+						return;
+					}
 				}
 			}
 		}

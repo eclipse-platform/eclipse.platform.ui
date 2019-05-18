@@ -32,44 +32,44 @@ import org.eclipse.swt.dnd.Transfer;
  */
 public class SelectionDragAdapter extends DragSourceAdapter implements TransferDragSourceListener {
 
-    /**
-     * The associated viewer for the adapter
-     */
-    private TreeModelViewer fViewer;
+	/**
+	 * The associated viewer for the adapter
+	 */
+	private TreeModelViewer fViewer;
 
-    /**
-     * Constructor, takes the viewer that contains the selection provider
-     * @param view the associated view, <b>must</b> implement <code>ISelectionProvider</code>
-     */
-    public SelectionDragAdapter(TreeModelViewer viewer) {
-        Assert.isNotNull(viewer);
-        fViewer = viewer;
-    }
+	/**
+	 * Constructor, takes the viewer that contains the selection provider
+	 * @param view the associated view, <b>must</b> implement <code>ISelectionProvider</code>
+	 */
+	public SelectionDragAdapter(TreeModelViewer viewer) {
+		Assert.isNotNull(viewer);
+		fViewer = viewer;
+	}
 
-    @Override
+	@Override
 	public Transfer getTransfer() {
-        return LocalSelectionTransfer.getTransfer();
-    }
+		return LocalSelectionTransfer.getTransfer();
+	}
 
-    @Override
+	@Override
 	public void dragStart(DragSourceEvent event) {
-        ISelection selection = fViewer.getSelection();
-        LocalSelectionTransfer.getTransfer().setSelection(selection);
-        LocalSelectionTransfer.getTransfer().setSelectionSetTime(event.time & 0xFFFFFFFFL);
-        event.doit = !selection.isEmpty();
-    }
+		ISelection selection = fViewer.getSelection();
+		LocalSelectionTransfer.getTransfer().setSelection(selection);
+		LocalSelectionTransfer.getTransfer().setSelectionSetTime(event.time & 0xFFFFFFFFL);
+		event.doit = !selection.isEmpty();
+	}
 
-    @Override
+	@Override
 	public void dragSetData(DragSourceEvent event) {
-        // For consistency set the data to the selection even though
-        // the selection is provided by the LocalSelectionTransfer
-        // to the drop target adapter.
-        event.data = LocalSelectionTransfer.getTransfer().getSelection();
-    }
+		// For consistency set the data to the selection even though
+		// the selection is provided by the LocalSelectionTransfer
+		// to the drop target adapter.
+		event.data = LocalSelectionTransfer.getTransfer().getSelection();
+	}
 
-    @Override
+	@Override
 	public void dragFinished(DragSourceEvent event) {
-        LocalSelectionTransfer.getTransfer().setSelection(null);
-        LocalSelectionTransfer.getTransfer().setSelectionSetTime(0);
-    }
+		LocalSelectionTransfer.getTransfer().setSelection(null);
+		LocalSelectionTransfer.getTransfer().setSelectionSetTime(0);
+	}
 }

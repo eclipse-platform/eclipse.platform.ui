@@ -26,17 +26,17 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class VirtualViewerPerformanceTests extends PerformanceTests {
 
-    public VirtualViewerPerformanceTests(String name) {
-        super(name);
-    }
+	public VirtualViewerPerformanceTests(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"), fVirtualItemValidator); //$NON-NLS-1$
-    }
+	}
 
-    @Override
+	@Override
 	protected int getTestModelDepth() {
-        return 7;
-    }
+		return 7;
+	}
 }

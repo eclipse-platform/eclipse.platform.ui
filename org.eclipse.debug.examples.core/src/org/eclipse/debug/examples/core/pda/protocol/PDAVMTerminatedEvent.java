@@ -22,11 +22,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAVMTerminatedEvent extends PDAEvent {
 
-    public PDAVMTerminatedEvent(String message) {
-        super(message);
-    }
+	public PDAVMTerminatedEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("vmterminated"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("vmterminated"); //$NON-NLS-1$
+	}
 }

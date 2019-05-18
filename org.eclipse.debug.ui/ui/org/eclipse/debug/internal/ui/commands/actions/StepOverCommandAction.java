@@ -32,40 +32,40 @@ public class StepOverCommandAction extends DebugCommandAction {
 		setActionDefinitionId("org.eclipse.debug.ui.commands.StepOver"); //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.StepOverAction_0;
-    }
+		return ActionMessages.StepOverAction_0;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEP_OVER);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEP_OVER);
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.step_over_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.step_over_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_OVER);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_OVER);
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.debugview.toolbar.stepOver"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.debugview.toolbar.stepOver"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_OVER);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_OVER);
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.StepOverAction_3;
-    }
+		return ActionMessages.StepOverAction_3;
+	}
 
 	@Override
 	protected Class<IStepOverHandler> getCommandType() {

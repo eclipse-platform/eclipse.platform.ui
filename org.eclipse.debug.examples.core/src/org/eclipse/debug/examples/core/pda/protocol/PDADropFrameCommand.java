@@ -38,12 +38,12 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDADropFrameCommand extends PDACommand {
 
-    public PDADropFrameCommand(int threadId) {
-        super("drop " + threadId); //$NON-NLS-1$
-    }
+	public PDADropFrameCommand(int threadId) {
+		super("drop " + threadId); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

@@ -34,14 +34,14 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAWatchCommand;
  */
 public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 
-    // 'read' or 'write' depending on what caused the last suspend for this watchpoint
-    private String fLastSuspendType;
+	// 'read' or 'write' depending on what caused the last suspend for this watchpoint
+	private String fLastSuspendType;
 
-    // marker attributes
-    public static final String ACCESS = "ACCESS"; //$NON-NLS-1$
-    public static final String MODIFICATION = "MODIFICATION"; //$NON-NLS-1$
-    public static final String FUNCTION_NAME = "FUNCTION_NAME"; //$NON-NLS-1$
-    public static final String VAR_NAME = "VAR_NAME"; //$NON-NLS-1$
+	// marker attributes
+	public static final String ACCESS = "ACCESS"; //$NON-NLS-1$
+	public static final String MODIFICATION = "MODIFICATION"; //$NON-NLS-1$
+	public static final String FUNCTION_NAME = "FUNCTION_NAME"; //$NON-NLS-1$
+	public static final String VAR_NAME = "VAR_NAME"; //$NON-NLS-1$
 
 	/**
 	 * Default constructor is required for the breakpoint manager
@@ -49,7 +49,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	 * the <code>setMarker(...)</code> method is called to restore
 	 * this breakpoint's attributes.
 	 */
-    public PDAWatchpoint() {
+	public PDAWatchpoint() {
 	}
 	/**
 	 * Constructs a line breakpoint on the given resource at the given
@@ -80,134 +80,134 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 		run(getMarkerRule(resource), runnable);
 	}
 
-    @Override
+	@Override
 	public boolean isAccess() throws CoreException {
-        return getMarker().getAttribute(ACCESS, true);
-    }
+		return getMarker().getAttribute(ACCESS, true);
+	}
 
-    @Override
+	@Override
 	public void setAccess(boolean access) throws CoreException {
-        setAttribute(ACCESS, access);
-    }
+		setAttribute(ACCESS, access);
+	}
 
-    @Override
+	@Override
 	public boolean isModification() throws CoreException {
-        return getMarker().getAttribute(MODIFICATION, true);
-    }
+		return getMarker().getAttribute(MODIFICATION, true);
+	}
 
-    @Override
+	@Override
 	public void setModification(boolean modification) throws CoreException {
-        setAttribute(MODIFICATION, modification);
-    }
+		setAttribute(MODIFICATION, modification);
+	}
 
-    @Override
+	@Override
 	public boolean supportsAccess() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean supportsModification() {
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sets the variable and function names the watchpoint is set on.
-     *
-     * @param functionName function name
-     * @param variableName variable name
-     * @throws CoreException if an exception occurrs setting marker attribtues
-     */
-    protected void setVariable(String functionName, String variableName) throws CoreException {
-        setAttribute(VAR_NAME, variableName);
-        setAttribute(FUNCTION_NAME, functionName);
-    }
+	/**
+	 * Sets the variable and function names the watchpoint is set on.
+	 *
+	 * @param functionName function name
+	 * @param variableName variable name
+	 * @throws CoreException if an exception occurrs setting marker attribtues
+	 */
+	protected void setVariable(String functionName, String variableName) throws CoreException {
+		setAttribute(VAR_NAME, variableName);
+		setAttribute(FUNCTION_NAME, functionName);
+	}
 
-    /**
-     * Returns the name of the variable this watchpoint is set on.
-     *
-     * @return the name of the variable this watchpoint is set on
-     * @throws CoreException if unable to access the attribute
-     */
-    public String getVariableName() throws CoreException {
-        return getMarker().getAttribute(VAR_NAME, (String)null);
-    }
+	/**
+	 * Returns the name of the variable this watchpoint is set on.
+	 *
+	 * @return the name of the variable this watchpoint is set on
+	 * @throws CoreException if unable to access the attribute
+	 */
+	public String getVariableName() throws CoreException {
+		return getMarker().getAttribute(VAR_NAME, (String)null);
+	}
 
-    /**
-     * Returns the name of the function the variable associted with this watchpoint is defined in.
-     *
-     * @return the name of the function the variable associted with this watchpoint is defined in
-     * @throws CoreException if unable to access the attribute
-     */
-    public String getFunctionName() throws CoreException {
-        return getMarker().getAttribute(FUNCTION_NAME, (String)null);
-    }
+	/**
+	 * Returns the name of the function the variable associted with this watchpoint is defined in.
+	 *
+	 * @return the name of the function the variable associted with this watchpoint is defined in
+	 * @throws CoreException if unable to access the attribute
+	 */
+	public String getFunctionName() throws CoreException {
+		return getMarker().getAttribute(FUNCTION_NAME, (String)null);
+	}
 
-    /**
-     * Sets the type of event that causes the last suspend event.
-     *
-     * @param description one of 'read' or 'write'
-     */
-    public void setSuspendType(String description) {
-        fLastSuspendType = description;
-    }
+	/**
+	 * Sets the type of event that causes the last suspend event.
+	 *
+	 * @param description one of 'read' or 'write'
+	 */
+	public void setSuspendType(String description) {
+		fLastSuspendType = description;
+	}
 
-    /**
-     * Returns the type of event that caused the last suspend.
-     *
-     * @return 'read', 'write', or <code>null</code> if undefined
-     */
-    public String getSuspendType() {
-        return fLastSuspendType;
-    }
+	/**
+	 * Returns the type of event that caused the last suspend.
+	 *
+	 * @return 'read', 'write', or <code>null</code> if undefined
+	 */
+	public String getSuspendType() {
+		return fLastSuspendType;
+	}
 
 	@Override
 	protected void createRequest(PDADebugTarget target) throws CoreException {
-        int flag = 0;
-        if (isAccess()) {
-            flag = flag | 1;
-        }
-        if (isModification()) {
-            flag = flag | 2;
-        }
+		int flag = 0;
+		if (isAccess()) {
+			flag = flag | 1;
+		}
+		if (isModification()) {
+			flag = flag | 2;
+		}
 		target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), flag));
 	}
 
 	@Override
 	protected void clearRequest(PDADebugTarget target) throws CoreException {
-	    target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), 0));
+		target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), 0));
 	}
 
 	@Override
 	public void handleEvent(PDAEvent event) {
-        if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
-            PDARunControlEvent rcEvent = (PDARunControlEvent)event;
-            if (rcEvent.fReason.equals("watch")) { //$NON-NLS-1$
-                handleHit(rcEvent);
-            }
-        }
+		if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
+			PDARunControlEvent rcEvent = (PDARunControlEvent)event;
+			if (rcEvent.fReason.equals("watch")) { //$NON-NLS-1$
+				handleHit(rcEvent);
+			}
+		}
 	}
 
 	/**
-     * Determines if this breakpoint was hit and notifies the thread.
-     *
-     * @param event breakpoint event
-     */
-    private void handleHit(PDARunControlEvent event) {
-        String[] strings = event.fMessage.split(" "); //$NON-NLS-1$
-        if (strings.length == 4) {
-            String fv = strings[3];
-            int j = fv.indexOf("::"); //$NON-NLS-1$
-            if (j > 0) {
-                String fcn = fv.substring(0, j);
-                String var = fv.substring(j + 2);
+	 * Determines if this breakpoint was hit and notifies the thread.
+	 *
+	 * @param event breakpoint event
+	 */
+	private void handleHit(PDARunControlEvent event) {
+		String[] strings = event.fMessage.split(" "); //$NON-NLS-1$
+		if (strings.length == 4) {
+			String fv = strings[3];
+			int j = fv.indexOf("::"); //$NON-NLS-1$
+			if (j > 0) {
+				String fcn = fv.substring(0, j);
+				String var = fv.substring(j + 2);
 				try {
 					if (getVariableName().equals(var) && getFunctionName().equals(fcn)) {
 						setSuspendType(strings[2]);
-					    notifyThread(event.fThreadId);
+						notifyThread(event.fThreadId);
 					}
 				} catch (CoreException e) {
 				}
-            }
-    	}
-    }
+			}
+		}
+	}
 }

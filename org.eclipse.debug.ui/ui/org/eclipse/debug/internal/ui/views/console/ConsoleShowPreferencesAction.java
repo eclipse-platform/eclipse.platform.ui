@@ -27,16 +27,16 @@ import org.eclipse.ui.IViewPart;
  */
 public class ConsoleShowPreferencesAction extends Action implements IViewActionDelegate {
 
-    @Override
+	@Override
 	public void init(IViewPart view) {}
 
-    @Override
+	@Override
 	public void run(IAction action) {
-    	SWTFactory.showPreferencePage("org.eclipse.debug.ui.ConsolePreferencePage"); //$NON-NLS-1$
-    }
+		SWTFactory.showPreferencePage("org.eclipse.debug.ui.ConsolePreferencePage"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        // do nothing
-    }
+		// do nothing
+	}
 }

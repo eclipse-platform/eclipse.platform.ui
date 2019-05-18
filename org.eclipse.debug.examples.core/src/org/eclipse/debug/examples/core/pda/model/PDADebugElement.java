@@ -45,50 +45,50 @@ public class PDADebugElement extends DebugElement {
 	}
 
 	/**
-     * Sends a request to the PDA interpreter, waits for and returns the reply.
-     *
-     * @param request command
-     * @return reply
-     * @throws DebugException if the request fails
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDATerminateCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAVMResumeCommand
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDASuspendCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAResumeCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAStepCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDADropFrameCommand
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDASetBreakpointCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAClearBreakpointCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAWatchCommand
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDADataCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDASetDataCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAPopDataCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAPushDataCommand
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAEvalCommand
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAEventStopCommand
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAStackCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAStackDepthCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAFrameCommand
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDASetVarCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAVarCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAChildrenCommand
-     *
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDAGroupsCommand
-     * @see org.eclipse.debug.examples.core.pda.protocol.PDARegistersCommand
-     *
-     * @since 3.5
-     */
+	 * Sends a request to the PDA interpreter, waits for and returns the reply.
+	 *
+	 * @param request command
+	 * @return reply
+	 * @throws DebugException if the request fails
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDATerminateCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAVMResumeCommand
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDASuspendCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAResumeCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAStepCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDADropFrameCommand
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDASetBreakpointCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAClearBreakpointCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAWatchCommand
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDADataCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDASetDataCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAPopDataCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAPushDataCommand
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAEvalCommand
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAEventStopCommand
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAStackCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAStackDepthCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAFrameCommand
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDASetVarCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAVarCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAChildrenCommand
+	 *
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDAGroupsCommand
+	 * @see org.eclipse.debug.examples.core.pda.protocol.PDARegistersCommand
+	 *
+	 * @since 3.5
+	 */
 	public PDACommandResult sendCommand(PDACommand command) throws DebugException {
-        return getPDADebugTarget().sendCommand(command);
-    }
+		return getPDADebugTarget().sendCommand(command);
+	}
 
 	/**
 	 * Returns the debug target as a PDA target.
@@ -96,15 +96,15 @@ public class PDADebugElement extends DebugElement {
 	 * @return PDA debug target
 	 */
 	protected PDADebugTarget getPDADebugTarget() {
-	    return (PDADebugTarget) getDebugTarget();
+		return (PDADebugTarget) getDebugTarget();
 	}
 
 	/**
 	 * Returns the breakpoint manager
 	 *
-     * @return the breakpoint manager
-     */
-    protected IBreakpointManager getBreakpointManager() {
-        return DebugPlugin.getDefault().getBreakpointManager();
-    }
+	 * @return the breakpoint manager
+	 */
+	protected IBreakpointManager getBreakpointManager() {
+		return DebugPlugin.getDefault().getBreakpointManager();
+	}
 }

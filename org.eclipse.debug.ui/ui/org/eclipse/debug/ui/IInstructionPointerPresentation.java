@@ -68,7 +68,7 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	/**
 	 * Returns an annotation used for the specified stack frame in the specified
 	 * editor, or <code>null</code> if a default annotation should be used.
-     *
+	 *
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source

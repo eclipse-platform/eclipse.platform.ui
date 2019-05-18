@@ -35,9 +35,9 @@ public class ConsoleMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);
 	}
 
-    public static String ConsoleRemoveTerminatedAction_0;
+	public static String ConsoleRemoveTerminatedAction_0;
 
-    public static String ConsoleRemoveTerminatedAction_1;
+	public static String ConsoleRemoveTerminatedAction_1;
 
 	public static String ShowStandardErrorAction_0;
 

@@ -47,26 +47,26 @@ public class ModulesView extends VariablesView {
 
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
-        tbm.add(new Separator(this.getClass().getName()));
-        tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-        tbm.add(getAction("CollapseAll")); //$NON-NLS-1$
-        tbm.add( new Separator( IDebugUIConstants.MODULES_GROUP ) );
+		tbm.add(new Separator(this.getClass().getName()));
+		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
+		tbm.add(getAction("CollapseAll")); //$NON-NLS-1$
+		tbm.add( new Separator( IDebugUIConstants.MODULES_GROUP ) );
 	}
 
-    @Override
+	@Override
 	protected void fillContextMenu( IMenuManager menu ) {
-        menu.add( new Separator( IDebugUIConstants.EMPTY_MODULES_GROUP ) );
-        menu.add( new Separator( IDebugUIConstants.MODULES_GROUP ) );
-        menu.add(getAction(FIND_ACTION));
-        menu.add(new Separator());
-        IAction action = new AvailableDetailPanesAction(this);
-        if (isDetailPaneVisible() && action.isEnabled()) {
-            menu.add(action);
-        }
-        menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
-        menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
-        menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
-    }
+		menu.add( new Separator( IDebugUIConstants.EMPTY_MODULES_GROUP ) );
+		menu.add( new Separator( IDebugUIConstants.MODULES_GROUP ) );
+		menu.add(getAction(FIND_ACTION));
+		menu.add(new Separator());
+		IAction action = new AvailableDetailPanesAction(this);
+		if (isDetailPaneVisible() && action.isEnabled()) {
+			menu.add(action);
+		}
+		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
+		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
+		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
+	}
 
 	@Override
 	protected String getDetailPanePreferenceKey() {

@@ -80,15 +80,15 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	 * <li>SWT.NONE</li>
 	 * <li>SWT.VERTICAL</li>
 	 * <li>SWT.HORIZONTAL</li>
-     * <li>SWT.BOTTOM</li>
-     * <li>SWT.RIGHT</li>
+	 * <li>SWT.BOTTOM</li>
+	 * <li>SWT.RIGHT</li>
 	 * </ul>
 	 *
 	 * @param parent the container for the viewer
 	 * @param style the style flag used for this viewer
 	 */
 	public BreadcrumbViewer(Composite parent, int style) {
-	    fStyle = style;
+		fStyle = style;
 		fBreadcrumbItems = new ArrayList<>();
 		fMenuListeners= new ListenerList<>();
 
@@ -119,17 +119,17 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	}
 
 	int getStyle() {
-	    return fStyle;
+		return fStyle;
 	}
 
-    /**
-     * Configure the given drop down viewer. The given input is used for the viewers input. Clients
-     * must at least set the label and the content provider for the viewer.
-     * @param parent the parent composite
-     * @param site the site to create the drop down for
-     * @param path the path to show
-     * @return the drop down control
-     */
+	/**
+	 * Configure the given drop down viewer. The given input is used for the viewers input. Clients
+	 * must at least set the label and the content provider for the viewer.
+	 * @param parent the parent composite
+	 * @param site the site to create the drop down for
+	 * @param path the path to show
+	 * @return the drop down control
+	 */
 	protected abstract Control createDropDown(Composite parent, IBreadcrumbDropDownSite site, TreePath path);
 
 	/*
@@ -307,39 +307,39 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		return false;
 	}
 
-   /**
-     * This implementation of getSelection() returns an instance of
-     * ITreeSelection.
-     * @return the current selection
-     */
-    @Override
+	/**
+	 * This implementation of getSelection() returns an instance of
+	 * ITreeSelection.
+	 * @return the current selection
+	 */
+	@Override
 	public ISelection getSelection() {
-        Control control = getControl();
-        if (control == null || control.isDisposed()) {
-            return TreeSelection.EMPTY;
-        }
-        if (fSelectedItem != null) {
-            TreePath path = getTreePathFromItem(fSelectedItem);
-            if (path != null) {
-                return new TreeSelection(new TreePath[] { path });
-            }
-        }
-        return TreeSelection.EMPTY;
-    }
+		Control control = getControl();
+		if (control == null || control.isDisposed()) {
+			return TreeSelection.EMPTY;
+		}
+		if (fSelectedItem != null) {
+			TreePath path = getTreePathFromItem(fSelectedItem);
+			if (path != null) {
+				return new TreeSelection(new TreePath[] { path });
+			}
+		}
+		return TreeSelection.EMPTY;
+	}
 
-    protected TreePath getTreePathFromItem(BreadcrumbItem item) {
+	protected TreePath getTreePathFromItem(BreadcrumbItem item) {
 		List<Object> elements = new ArrayList<>(fBreadcrumbItems.size());
-        for (int i = 0; i < fBreadcrumbItems.size(); i++) {
-            elements.add( fBreadcrumbItems.get(i).getData() );
-            if (fBreadcrumbItems.get(i).equals(item)) {
-                return new TreePath(elements.toArray());
-            }
-        }
-        return null;
-    }
+		for (int i = 0; i < fBreadcrumbItems.size(); i++) {
+			elements.add( fBreadcrumbItems.get(i).getData() );
+			if (fBreadcrumbItems.get(i).equals(item)) {
+				return new TreePath(elements.toArray());
+			}
+		}
+		return null;
+	}
 
 	/*
- 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
+	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
 	@Override
 	protected List getSelectionFromWidget() {
@@ -364,7 +364,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 
 		disableRedraw();
 		try {
-		    boolean layoutChanged = false;
+			boolean layoutChanged = false;
 
 			BreadcrumbItem item= (BreadcrumbItem) doFindItem(element);
 			if (item == null || element != null && element.equals(getInput())) {
@@ -373,12 +373,12 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 					layoutChanged = refreshItem(item1) || layoutChanged;
 				}
 			} else {
-			    layoutChanged = refreshItem(item) || layoutChanged;
+				layoutChanged = refreshItem(item) || layoutChanged;
 			}
 
 			if (layoutChanged) {
-			    updateSize();
-			    fContainer.layout(true, true);
+				updateSize();
+				fContainer.layout(true, true);
 			}
 		} finally {
 			enableRedraw();
@@ -403,7 +403,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		}
 
 		if (l == null) {
-		    l = Collections.EMPTY_LIST;
+			l = Collections.EMPTY_LIST;
 		}
 
 		// Set the new selection to items.
@@ -423,7 +423,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		// If there is a new selection, and it does not overlap the old selection,
 		// remove the focus marker from the old focus item.
 		if (fSelectedItem != null && focusItem != null) {
-		    focusItem.setFocus(false);
+			focusItem.setFocus(false);
 		}
 	}
 
@@ -557,46 +557,46 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 			last.setIsLastItem(false);
 		}
 
-        int index = 0;
-        boolean updateLayout = false;
+		int index = 0;
+		boolean updateLayout = false;
 		if (input != null) {
-	        ITreePathContentProvider contentProvider= (ITreePathContentProvider) getContentProvider();
-	        TreePath path = new TreePath(new Object[0]);
+			ITreePathContentProvider contentProvider= (ITreePathContentProvider) getContentProvider();
+			TreePath path = new TreePath(new Object[0]);
 
-	        // Top level elements need to be retrieved using getElements(), rest
-	        // using getChildren().
-	        Object[] children = contentProvider.getElements(input);
-	        Object element = children != null && children.length != 0 ? children[0] : null;
-	        while (element != null) {
-	            path = path.createChildPath(element);
+			// Top level elements need to be retrieved using getElements(), rest
+			// using getChildren().
+			Object[] children = contentProvider.getElements(input);
+			Object element = children != null && children.length != 0 ? children[0] : null;
+			while (element != null) {
+				path = path.createChildPath(element);
 
-	            // All but last item are hidden if the viewer is in a vertical toolbar.
-	            children = contentProvider.getChildren(path);
-	            if ((getStyle() & SWT.VERTICAL) == 0 || children == null || children.length == 0) {
-	                updateLayout = updateOrCreateItem(index++, path, element) || updateLayout;
-	            }
+				// All but last item are hidden if the viewer is in a vertical toolbar.
+				children = contentProvider.getChildren(path);
+				if ((getStyle() & SWT.VERTICAL) == 0 || children == null || children.length == 0) {
+					updateLayout = updateOrCreateItem(index++, path, element) || updateLayout;
+				}
 
-	            if (children != null && children.length != 0) {
-	                element = children[0];
-	            } else {
-	                break;
-	            }
+				if (children != null && children.length != 0) {
+					element = children[0];
+				} else {
+					break;
+				}
 
-	        }
+			}
 		}
 
-        BreadcrumbItem last = null;
-        if (index <= fBreadcrumbItems.size()) {
-        	last = (fBreadcrumbItems.get(index - 1));
-        	last.setIsLastItem(true);
-        }
+		BreadcrumbItem last = null;
+		if (index <= fBreadcrumbItems.size()) {
+			last = (fBreadcrumbItems.get(index - 1));
+			last.setIsLastItem(true);
+		}
 
 		while (index < fBreadcrumbItems.size()) {
 			updateLayout = true;
 			BreadcrumbItem item= fBreadcrumbItems.remove(fBreadcrumbItems.size() - 1);
-            if (item.hasFocus() && last != null) {
-                last.setFocus(true);
-            }
+			if (item.hasFocus() && last != null) {
+				last.setFocus(true);
+			}
 			if (item == fSelectedItem) {
 				selectItem(null);
 			}
@@ -617,25 +617,25 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	 * @return returns whether the item's size and layout needs to be updated.
 	 */
 	private boolean refreshItem(BreadcrumbItem item) {
-	    boolean layoutChanged = false;
+		boolean layoutChanged = false;
 
-	    TreePath path = getTreePathFromItem(item);
+		TreePath path = getTreePathFromItem(item);
 
-	    ViewerLabel label = new ViewerLabel(item.getText(), item.getImage());
-	    ((ITreePathLabelProvider)getLabelProvider()).updateLabel(label, path);
+		ViewerLabel label = new ViewerLabel(item.getText(), item.getImage());
+		((ITreePathLabelProvider)getLabelProvider()).updateLabel(label, path);
 
-	    if (label.hasNewText()) {
-	        item.setText(label.getText());
-	        layoutChanged = true;
-	    }
-	    if (label.hasNewImage()) {
-	        item.setImage(label.getImage());
-	        layoutChanged = true;
-	    }
-	    if (label.hasNewTooltipText()) {
-	        item.setToolTip(label.getTooltipText());
-	    }
-	    return layoutChanged;
+		if (label.hasNewText()) {
+			item.setText(label.getText());
+			layoutChanged = true;
+		}
+		if (label.hasNewImage()) {
+			item.setImage(label.getImage());
+			layoutChanged = true;
+		}
+		if (label.hasNewTooltipText()) {
+			item.setToolTip(label.getTooltipText());
+		}
+		return layoutChanged;
 	}
 
 	/**
@@ -647,30 +647,30 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	 * @return whether breadcrumb layout needs to be updated due to this change
 	 */
 	private boolean updateOrCreateItem(int index, TreePath path, Object element) {
-	    BreadcrumbItem item;
-	    if (fBreadcrumbItems.size() > index) {
-	        item = fBreadcrumbItems.get(index);
-	        if (item.getData() != null) {
-	            unmapElement(item.getData());
-	        }
-	    } else {
-	        item = new BreadcrumbItem(this, fContainer);
-	        fBreadcrumbItems.add(item);
-	    }
+		BreadcrumbItem item;
+		if (fBreadcrumbItems.size() > index) {
+			item = fBreadcrumbItems.get(index);
+			if (item.getData() != null) {
+				unmapElement(item.getData());
+			}
+		} else {
+			item = new BreadcrumbItem(this, fContainer);
+			fBreadcrumbItems.add(item);
+		}
 
 		boolean updateLayout = false;
 
-	    if (equals(element, item.getData())) {
-	        item.setPath(path);
-            updateLayout = myDoUpdateItem(item, element, false);
-        } else {
-            item.setData(element);
-            item.setPath(path);
-    	    mapElement(element, item);
-            updateLayout = refreshItem(item);
-        }
+		if (equals(element, item.getData())) {
+			item.setPath(path);
+			updateLayout = myDoUpdateItem(item, element, false);
+		} else {
+			item.setData(element);
+			item.setPath(path);
+			mapElement(element, item);
+			updateLayout = refreshItem(item);
+		}
 
-        return updateLayout;
+		return updateLayout;
 	}
 
 	/**

@@ -35,22 +35,22 @@ public class WatchExpressionFactoryTester extends PropertyTester {
 	@Override
 	public boolean test(Object element, String property, Object[] args, Object expectedValue) {
 		if (CAN_CREATE_WATCH_EXPRESSION_PROPERTY.equals(property)){
-	        if (element instanceof IVariable) {
-	            IVariable variable = (IVariable)element;
-	            if (DebugPlugin.getDefault().getExpressionManager().hasWatchExpressionDelegate(variable.getModelIdentifier())) {
-		            IWatchExpressionFactoryAdapter factory = WatchHandler.getFactory(variable);
-		            if (factory instanceof IWatchExpressionFactoryAdapterExtension) {
-		                IWatchExpressionFactoryAdapterExtension ext = (IWatchExpressionFactoryAdapterExtension) factory;
-		                return ext.canCreateWatchExpression(variable);
-		            }
-		            return true;
-	            }
-	        } else {
-	            IWatchExpressionFactoryAdapter2 factory2 = WatchHandler.getFactory2(element);
-	            if (factory2 != null) {
-	                return factory2.canCreateWatchExpression(element);
-	            }
-	        }
+			if (element instanceof IVariable) {
+				IVariable variable = (IVariable)element;
+				if (DebugPlugin.getDefault().getExpressionManager().hasWatchExpressionDelegate(variable.getModelIdentifier())) {
+					IWatchExpressionFactoryAdapter factory = WatchHandler.getFactory(variable);
+					if (factory instanceof IWatchExpressionFactoryAdapterExtension) {
+						IWatchExpressionFactoryAdapterExtension ext = (IWatchExpressionFactoryAdapterExtension) factory;
+						return ext.canCreateWatchExpression(variable);
+					}
+					return true;
+				}
+			} else {
+				IWatchExpressionFactoryAdapter2 factory2 = WatchHandler.getFactory2(element);
+				if (factory2 != null) {
+					return factory2.canCreateWatchExpression(element);
+				}
+			}
 		}
 		return false;
 	}

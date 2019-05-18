@@ -42,7 +42,7 @@ public interface IElementContentProvider {
 	 *
 	 * @param updates Each update specifies children to update and stores results.
 	 *  The update array is guaranteed to have at least one element, and for
-     *  all updates to have the same presentation context.
+	 *  all updates to have the same presentation context.
 	 */
 	void update(IChildrenUpdate[] updates);
 

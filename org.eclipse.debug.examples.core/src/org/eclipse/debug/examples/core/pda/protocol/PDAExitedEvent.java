@@ -23,11 +23,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAExitedEvent extends PDARunControlEvent {
 
-    public PDAExitedEvent(String message) {
-        super(message);
-    }
+	public PDAExitedEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("exited"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("exited"); //$NON-NLS-1$
+	}
 }

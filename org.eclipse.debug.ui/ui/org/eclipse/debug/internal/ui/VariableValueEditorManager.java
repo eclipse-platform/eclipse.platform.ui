@@ -33,65 +33,65 @@ import org.eclipse.debug.ui.actions.IVariableValueEditor;
  */
 public class VariableValueEditorManager {
 
-    /**
-     * Mapping of debug model identifiers to variable value editors.
-     * The keys in this map are always Strings (model ids).
-     * The values in the map are IConfigurationElements at startup,
-     * which are replaced by IVariableValueEditors as the editors
-     * are instantiated (editors are loaded lazily, then cached).
-     */
+	/**
+	 * Mapping of debug model identifiers to variable value editors.
+	 * The keys in this map are always Strings (model ids).
+	 * The values in the map are IConfigurationElements at startup,
+	 * which are replaced by IVariableValueEditors as the editors
+	 * are instantiated (editors are loaded lazily, then cached).
+	 */
 	private Map<String, Object> fEditorMap = new HashMap<>();
 
-    /**
-     * The singleton instance of this manager.
-     */
-    private static VariableValueEditorManager fgManager;
+	/**
+	 * The singleton instance of this manager.
+	 */
+	private static VariableValueEditorManager fgManager;
 
-    /**
-     * Creates a new variable value editor manager. Clients
-     * should access the singleton instance of this manager
-     * by calling getDefault()
-     */
-    private VariableValueEditorManager() {
-        loadVariableEditors();
-    }
+	/**
+	 * Creates a new variable value editor manager. Clients
+	 * should access the singleton instance of this manager
+	 * by calling getDefault()
+	 */
+	private VariableValueEditorManager() {
+		loadVariableEditors();
+	}
 
-    /**
-     * Returns the singleton instance of this manager.
-     * @return the singleton instance of this manager
-     */
-    public static VariableValueEditorManager getDefault() {
-        if (fgManager == null) {
-            fgManager= new VariableValueEditorManager();
-        }
-        return fgManager;
-    }
+	/**
+	 * Returns the singleton instance of this manager.
+	 * @return the singleton instance of this manager
+	 */
+	public static VariableValueEditorManager getDefault() {
+		if (fgManager == null) {
+			fgManager= new VariableValueEditorManager();
+		}
+		return fgManager;
+	}
 
-    /**
-     * Returns the variable value editor associated with the given debug
-     * model identifier or <code>null</code> if no editor has been supplied
-     * for the given debug model.
-     * @param modelIdentifier the debug model identifier
-     * @return the variable value editor associated with the given debug model
-     *  identifier or <code>null</code>
-     */
-    public IVariableValueEditor getVariableValueEditor(String modelIdentifier) {
-        Object object = fEditorMap.get(modelIdentifier);
-        IVariableValueEditor editor= null;
-        if (object instanceof IVariableValueEditor) {
-            editor= (IVariableValueEditor) object;
-        } else if (object instanceof IConfigurationElement) {
-            try {
-                editor = (IVariableValueEditor) ((IConfigurationElement) object).createExecutableExtension("class"); //$NON-NLS-1$
-                fEditorMap.put(modelIdentifier, editor);
-            } catch (CoreException e) {
-                // If an exception occurs, loading the extension, just log it and
-                // return null.
-                DebugUIPlugin.log(e);
-            }
-        }
-        return editor;
-    }
+	/**
+	 * Returns the variable value editor associated with the given debug
+	 * model identifier or <code>null</code> if no editor has been supplied
+	 * for the given debug model.
+	 * @param modelIdentifier the debug model identifier
+	 * @return the variable value editor associated with the given debug model
+	 *  identifier or <code>null</code>
+	 */
+	public IVariableValueEditor getVariableValueEditor(String modelIdentifier) {
+		Object object = fEditorMap.get(modelIdentifier);
+		IVariableValueEditor editor= null;
+		if (object instanceof IVariableValueEditor) {
+			editor= (IVariableValueEditor) object;
+		} else if (object instanceof IConfigurationElement) {
+			try {
+				editor = (IVariableValueEditor) ((IConfigurationElement) object).createExecutableExtension("class"); //$NON-NLS-1$
+				fEditorMap.put(modelIdentifier, editor);
+			} catch (CoreException e) {
+				// If an exception occurs, loading the extension, just log it and
+				// return null.
+				DebugUIPlugin.log(e);
+			}
+		}
+		return editor;
+	}
 
 	/**
 	 * Loads contributors to the org.eclipse.debug.ui.variableValueEditors extension point,
@@ -101,11 +101,11 @@ public class VariableValueEditorManager {
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_VARIABLE_VALUE_EDITORS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
-            IConfigurationElement element = elements[i];
-            String modelId = element.getAttribute("modelId"); //$NON-NLS-1$
-            if (modelId != null) {
-                fEditorMap.put(modelId, element);
-            }
-        }
+			IConfigurationElement element = elements[i];
+			String modelId = element.getAttribute("modelId"); //$NON-NLS-1$
+			if (modelId != null) {
+				fEditorMap.put(modelId, element);
+			}
+		}
 	}
 }

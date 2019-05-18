@@ -124,7 +124,7 @@ public class InputStreamMonitor {
 		}
 		if (!fClosed) {
 			try {
-			    fStream.close();
+				fStream.close();
 			} catch (IOException e) {
 				DebugPlugin.log(e);
 			}
@@ -157,20 +157,20 @@ public class InputStreamMonitor {
 		}
 	}
 
-    /**
-     * Closes the output stream attached to the standard input stream of this
-     * monitor's process.
-     *
-     * @exception IOException if an exception occurs closing the input stream
-     */
-    public void closeInputStream() throws IOException {
-        if (!fClosed) {
-            fClosed = true;
-            fStream.close();
-        } else {
-            throw new IOException();
-        }
+	/**
+	 * Closes the output stream attached to the standard input stream of this
+	 * monitor's process.
+	 *
+	 * @exception IOException if an exception occurs closing the input stream
+	 */
+	public void closeInputStream() throws IOException {
+		if (!fClosed) {
+			fClosed = true;
+			fStream.close();
+		} else {
+			throw new IOException();
+		}
 
-    }
+	}
 }
 

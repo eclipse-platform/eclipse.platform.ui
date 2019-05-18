@@ -33,229 +33,229 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class TableRenderingCellModifier implements ICellModifier {
 
-    private boolean editActionInvoked = false;
+	private boolean editActionInvoked = false;
 
-    private AbstractTableRendering fRendering;
+	private AbstractTableRendering fRendering;
 
-    public TableRenderingCellModifier(AbstractTableRendering rendering) {
-        fRendering = rendering;
-    }
+	public TableRenderingCellModifier(AbstractTableRendering rendering) {
+		fRendering = rendering;
+	}
 
-    @Override
+	@Override
 	public boolean canModify(Object element, String property) {
-        boolean canModify = true;
-        try {
-            if (!(element instanceof TableRenderingLine)) {
+		boolean canModify = true;
+		try {
+			if (!(element instanceof TableRenderingLine)) {
 				return false;
 			}
 
-            if (!editActionInvoked) {
+			if (!editActionInvoked) {
 				return false;
 			}
 
-            if (fRendering == null) {
+			if (fRendering == null) {
 				return false;
 			}
 
-            if (fRendering.getMemoryBlock().supportsValueModification() == false) {
-                return false;
-            }
+			if (fRendering.getMemoryBlock().supportsValueModification() == false) {
+				return false;
+			}
 
-            TableRenderingLine line = (TableRenderingLine) element;
-            if (TableRenderingLine.P_ADDRESS.equals(property)) {
-                return false;
-            }
+			TableRenderingLine line = (TableRenderingLine) element;
+			if (TableRenderingLine.P_ADDRESS.equals(property)) {
+				return false;
+			}
 
-            // property is stored as number of addressable unit away from the
-            // line address
-            // to calculate offset to the memory line array, offset =
-            // numberofAddressableUnit * addressableSize
-            int addressableSize = getAddressableSize();
+			// property is stored as number of addressable unit away from the
+			// line address
+			// to calculate offset to the memory line array, offset =
+			// numberofAddressableUnit * addressableSize
+			int addressableSize = getAddressableSize();
 
-            int offset = Integer.valueOf(property, 16).intValue() * addressableSize;
-            int end = offset + fRendering.getBytesPerColumn();
+			int offset = Integer.valueOf(property, 16).intValue() * addressableSize;
+			int end = offset + fRendering.getBytesPerColumn();
 
-            for (int i = offset; i < end; i++) {
-                MemoryByte oneByte = line.getByte(i);
+			for (int i = offset; i < end; i++) {
+				MemoryByte oneByte = line.getByte(i);
 
-                if (!oneByte.isWritable()) {
-                    canModify = false;
-                }
-            }
-            return canModify;
-        } catch (NumberFormatException e) {
-            canModify = false;
-            return canModify;
-        }
-    }
+				if (!oneByte.isWritable()) {
+					canModify = false;
+				}
+			}
+			return canModify;
+		} catch (NumberFormatException e) {
+			canModify = false;
+			return canModify;
+		}
+	}
 
-    /**
-     * @return
-     */
-    private int getAddressableSize() {
-        int addressableSize = fRendering.getAddressableSize();
-        if (addressableSize < 1) {
+	/**
+	 * @return
+	 */
+	private int getAddressableSize() {
+		int addressableSize = fRendering.getAddressableSize();
+		if (addressableSize < 1) {
 			addressableSize = 1;
 		}
-        return addressableSize;
-    }
+		return addressableSize;
+	}
 
-    @Override
+	@Override
 	public Object getValue(Object element, String property) {
-        // give back the value of the column
+		// give back the value of the column
 
-        if (!(element instanceof TableRenderingLine)) {
+		if (!(element instanceof TableRenderingLine)) {
 			return null;
 		}
 
-        TableRenderingLine line = (TableRenderingLine) element;
-        try {
-            if (TableRenderingLine.P_ADDRESS.equals(property)) {
+		TableRenderingLine line = (TableRenderingLine) element;
+		try {
+			if (TableRenderingLine.P_ADDRESS.equals(property)) {
 				return line.getAddress();
 			}
 
-            int offset = Integer.valueOf(property, 16).intValue() * getAddressableSize();
-            int end = offset + fRendering.getBytesPerColumn();
+			int offset = Integer.valueOf(property, 16).intValue() * getAddressableSize();
+			int end = offset + fRendering.getBytesPerColumn();
 
-            // Ask for label provider
-            MemoryByte[] memory = line.getBytes(offset, end);
+			// Ask for label provider
+			MemoryByte[] memory = line.getBytes(offset, end);
 
-            if (line.isAvailable(offset, end)) {
-                // ask the renderer for a string representation of the bytes
-                offset = Integer.valueOf(property, 16).intValue();
+			if (line.isAvailable(offset, end)) {
+				// ask the renderer for a string representation of the bytes
+				offset = Integer.valueOf(property, 16).intValue();
 
-                BigInteger address = new BigInteger(((TableRenderingLine) element).getAddress(), 16);
-                address = address.add(BigInteger.valueOf(offset));
+				BigInteger address = new BigInteger(((TableRenderingLine) element).getAddress(), 16);
+				address = address.add(BigInteger.valueOf(offset));
 
-                return fRendering.getString(fRendering.getRenderingId(), address, memory);
-            }
-            // if the range is not available, just return padded string
-            return getPaddedString(offset, end);
-        } catch (NumberFormatException e) {
-            return "00"; //$NON-NLS-1$
-        }
-    }
+				return fRendering.getString(fRendering.getRenderingId(), address, memory);
+			}
+			// if the range is not available, just return padded string
+			return getPaddedString(offset, end);
+		} catch (NumberFormatException e) {
+			return "00"; //$NON-NLS-1$
+		}
+	}
 
-    @Override
+	@Override
 	public void modify(Object element, String property, Object value) {
-        TableRenderingLine line = null;
-        if (!(element instanceof TableRenderingLine)) {
-            line = (TableRenderingLine) ((TableItem) element).getData();
-        } else {
-            line = (TableRenderingLine) element;
-        }
+		TableRenderingLine line = null;
+		if (!(element instanceof TableRenderingLine)) {
+			line = (TableRenderingLine) ((TableItem) element).getData();
+		} else {
+			line = (TableRenderingLine) element;
+		}
 
-        // validate data
-        if (!(value instanceof String)) {
+		// validate data
+		if (!(value instanceof String)) {
 			return;
 		}
 
-        try {
-            // calculate offset to update
-            IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
+		try {
+			// calculate offset to update
+			IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
 
-            int lineOffset = Integer.valueOf(property, 16).intValue();
+			int lineOffset = Integer.valueOf(property, 16).intValue();
 
-            // this offset is number of addressable unit from the line address
-            BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
+			// this offset is number of addressable unit from the line address
+			BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
 
-            byte[] bytes = null;
+			byte[] bytes = null;
 
-            String oldValue = (String) getValue(line, property);
+			String oldValue = (String) getValue(line, property);
 
-            if (!oldValue.equals(value)) {
+			if (!oldValue.equals(value)) {
 
-                // property is number of addressable unit from line address
-                // to calculate proper offset in the memoryViewLine's array
-                // offset = numberOfAddressableUnit * addressableSize
-                int offsetToLine = Integer.valueOf(property, 16).intValue() * getAddressableSize();
-                int end = offsetToLine + fRendering.getBytesPerColumn();
+				// property is number of addressable unit from line address
+				// to calculate proper offset in the memoryViewLine's array
+				// offset = numberOfAddressableUnit * addressableSize
+				int offsetToLine = Integer.valueOf(property, 16).intValue() * getAddressableSize();
+				int end = offsetToLine + fRendering.getBytesPerColumn();
 
-                MemoryByte[] oldArray = line.getBytes(offsetToLine, end);
+				MemoryByte[] oldArray = line.getBytes(offsetToLine, end);
 
-                BigInteger address = new BigInteger(line.getAddress(), 16);
-                address = address.add(BigInteger.valueOf(offsetToLine));
+				BigInteger address = new BigInteger(line.getAddress(), 16);
+				address = address.add(BigInteger.valueOf(offsetToLine));
 
-                bytes = fRendering.getBytes(fRendering.getRenderingId(), address, oldArray, (String) value);
+				bytes = fRendering.getBytes(fRendering.getRenderingId(), address, oldArray, (String) value);
 
-                if (bytes == null) {
+				if (bytes == null) {
 					return;
 				}
 
-                if (bytes.length == 0) {
+				if (bytes.length == 0) {
 					return;
 				}
 
-                if (bytes.length <= oldArray.length) {
-                    boolean changed = false;
-                    // check that the bytes returned has actually changed
-                    for (int i = 0; i < bytes.length; i++) {
-                        if (bytes[i] != oldArray[i].getValue()) {
-                            changed = true;
-                            break;
-                        }
-                    }
-                    if (!changed) {
+				if (bytes.length <= oldArray.length) {
+					boolean changed = false;
+					// check that the bytes returned has actually changed
+					for (int i = 0; i < bytes.length; i++) {
+						if (bytes[i] != oldArray[i].getValue()) {
+							changed = true;
+							break;
+						}
+					}
+					if (!changed) {
 						return;
 					}
-                }
-            } else {
-                // return if value has not changed
-                return;
-            }
+				}
+			} else {
+				// return if value has not changed
+				return;
+			}
 
-            if (memoryBlk instanceof IMemoryBlockExtension) {
+			if (memoryBlk instanceof IMemoryBlockExtension) {
 				((IMemoryBlockExtension) memoryBlk).setValue(offset, bytes);
 			} else {
 				memoryBlk.setValue(offset.longValue(), bytes);
 			}
-        } catch (DebugException e) {
-            MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_failed, e);
-        } catch (NumberFormatException e) {
-            MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_failed + "\n" + DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null); //$NON-NLS-1$
-        }
+		} catch (DebugException e) {
+			MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_failed, e);
+		} catch (NumberFormatException e) {
+			MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_failed + "\n" + DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null); //$NON-NLS-1$
+		}
 
-    }
+	}
 
-    private BigInteger getOffset(IMemoryBlock memory, String lineAddress, int lineOffset) throws DebugException {
+	private BigInteger getOffset(IMemoryBlock memory, String lineAddress, int lineOffset) throws DebugException {
 
-        BigInteger lineAddr = new BigInteger(lineAddress, 16);
-        BigInteger memoryAddr;
+		BigInteger lineAddr = new BigInteger(lineAddress, 16);
+		BigInteger memoryAddr;
 
-        if (memory instanceof IMemoryBlockExtension) {
-            memoryAddr = ((IMemoryBlockExtension) memory).getBigBaseAddress();
-        } else {
-            memoryAddr = BigInteger.valueOf(memory.getStartAddress());
-        }
+		if (memory instanceof IMemoryBlockExtension) {
+			memoryAddr = ((IMemoryBlockExtension) memory).getBigBaseAddress();
+		} else {
+			memoryAddr = BigInteger.valueOf(memory.getStartAddress());
+		}
 
-        if (memoryAddr == null)
+		if (memoryAddr == null)
 		 {
 			memoryAddr = new BigInteger("0"); //$NON-NLS-1$
 		}
 
-        return lineAddr.subtract(memoryAddr).add(BigInteger.valueOf(lineOffset));
-    }
+		return lineAddr.subtract(memoryAddr).add(BigInteger.valueOf(lineOffset));
+	}
 
-    /**
-     * @param editActionInvoked
-     *            The editActionInvoked to set.
-     */
-    public void setEditActionInvoked(boolean editActionInvoked) {
-        this.editActionInvoked = editActionInvoked;
-    }
+	/**
+	 * @param editActionInvoked
+	 *            The editActionInvoked to set.
+	 */
+	public void setEditActionInvoked(boolean editActionInvoked) {
+		this.editActionInvoked = editActionInvoked;
+	}
 
-    /**
-     * @param start
-     * @param end
-     * @return padded string
-     */
-    public String getPaddedString(int start, int end) {
-        StringBuilder buf = new StringBuilder();
-        String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
-        for (int i = start; i < end; i++) {
-            buf.append(paddedStr);
-        }
-        return buf.toString();
-    }
+	/**
+	 * @param start
+	 * @param end
+	 * @return padded string
+	 */
+	public String getPaddedString(int start, int end) {
+		StringBuilder buf = new StringBuilder();
+		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
+		for (int i = start; i < end; i++) {
+			buf.append(paddedStr);
+		}
+		return buf.toString();
+	}
 
 }

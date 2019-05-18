@@ -73,25 +73,25 @@ public class PreProcessor extends Task {
 	public PreProcessor() {
 	}
 
-    /**
-     * Adds a set of files to process.
-     *
-     * @param set a set of files to process
-     */
-    public void addFileset(FileSet set) {
-        fFileSets.addElement(set);
-    }
+	/**
+	 * Adds a set of files to process.
+	 *
+	 * @param set a set of files to process
+	 */
+	public void addFileset(FileSet set) {
+		fFileSets.addElement(set);
+	}
 
-    /**
-     * Sets the destination directory for processed files.
-     *
-     * @param destDir destination directory for processed files
-     */
-    public void setDestdir(File destDir) {
-    	fDestDir = destDir;
-    }
+	/**
+	 * Sets the destination directory for processed files.
+	 *
+	 * @param destDir destination directory for processed files
+	 */
+	public void setDestdir(File destDir) {
+		fDestDir = destDir;
+	}
 
-    /**
+	/**
 	 * Sets the symbols that are "on" for the preprocessing.
 	 *
 	 * @param symbols symbols that are "on" for the preprocessing
@@ -283,7 +283,7 @@ public class PreProcessor extends Task {
 		}
 	}
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 		PreProcessor processor = new PreProcessor();
 		processor.setSymbols("ex2"); //$NON-NLS-1$
 		String string = processor.preProcessFile(new File("c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"), "//#"); //$NON-NLS-1$ //$NON-NLS-2$

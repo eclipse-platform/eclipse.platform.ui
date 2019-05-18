@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 public class ModulesViewMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.views.modules.ModulesViewMessages";//$NON-NLS-1$
 
-    public static String ModulesView_0;
+	public static String ModulesView_0;
 
 	public static String ModulesView_1;
 

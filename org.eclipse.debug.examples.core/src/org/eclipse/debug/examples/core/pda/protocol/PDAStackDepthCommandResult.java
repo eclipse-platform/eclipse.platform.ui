@@ -21,14 +21,14 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAStackDepthCommandResult extends PDACommandResult {
 
-    final public int fDepth;
+	final public int fDepth;
 
-    PDAStackDepthCommandResult(String response) {
-        super(response);
-        int depth = 1; // default to something that won't cause NPEs
-        try {
-            depth = Integer.parseInt(response);
-        } catch (NumberFormatException e) {}
-        fDepth = depth;
-    }
+	PDAStackDepthCommandResult(String response) {
+		super(response);
+		int depth = 1; // default to something that won't cause NPEs
+		try {
+			depth = Integer.parseInt(response);
+		} catch (NumberFormatException e) {}
+		fDepth = depth;
+	}
 }

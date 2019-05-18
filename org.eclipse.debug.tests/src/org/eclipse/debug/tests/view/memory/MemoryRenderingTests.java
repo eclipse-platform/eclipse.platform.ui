@@ -67,55 +67,55 @@ public class MemoryRenderingTests extends AbstractDebugTest {
 		assertTrue("Missing binding", indexOf(manager.getRenderingType("rendering_type_2"), types) >= 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-    public void testDefaultBinding() {
-        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
-        IMemoryBlock block = new MemoryBlockOne();
-        IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
+	public void testDefaultBinding() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryBlock block = new MemoryBlockOne();
+		IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
 		assertEquals("Wrong number of bindings", 1, types.length); //$NON-NLS-1$
 		assertEquals("Wrong binding", "rendering_type_1", types[0].getId()); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	}
 
-    public void testNoDefaultBinding() {
-        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
-        IMemoryBlock block = new MemoryBlockTwo();
-        IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
+	public void testNoDefaultBinding() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryBlock block = new MemoryBlockTwo();
+		IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
 		assertEquals("Wrong number of bindings", 0, types.length); //$NON-NLS-1$
-    }
+	}
 
-    public void testPrimaryBinding() {
-        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
-        IMemoryBlock block = new MemoryBlockOne();
-        IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
+	public void testPrimaryBinding() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryBlock block = new MemoryBlockOne();
+		IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
 		assertEquals("Wrong binding", "rendering_type_1", type.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	}
 
-    public void testNoPrimaryBinding() {
-        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
-        IMemoryBlock block = new MemoryBlockTwo();
-        IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
+	public void testNoPrimaryBinding() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryBlock block = new MemoryBlockTwo();
+		IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
 		assertNull("Wrong binding", type); //$NON-NLS-1$
-    }
+	}
 
-    public void testDefaultWithoutPrimaryBinding() {
-        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
-        IMemoryBlock block = new MemoryBlockThree();
-        IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
+	public void testDefaultWithoutPrimaryBinding() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryBlock block = new MemoryBlockThree();
+		IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
 		assertEquals("Wrong number of bindings", 1, types.length); //$NON-NLS-1$
 		assertEquals("Wrong binding", "rendering_type_3", types[0].getId()); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	}
 
-    public void testDynamicBinding() {
-        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
-        IMemoryBlock block = new MemoryBlockDynamic();
-        IMemoryRenderingType[] types = manager.getRenderingTypes(block);
+	public void testDynamicBinding() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryBlock block = new MemoryBlockDynamic();
+		IMemoryRenderingType[] types = manager.getRenderingTypes(block);
 		assertEquals("Wrong number of bindings", 1, types.length); //$NON-NLS-1$
 		assertEquals("Wrong binding", "rendering_type_1", types[0].getId()); //$NON-NLS-1$ //$NON-NLS-2$
-        types = manager.getDefaultRenderingTypes(block);
+		types = manager.getDefaultRenderingTypes(block);
 		assertEquals("Wrong number of bindings", 1, types.length); //$NON-NLS-1$
 		assertEquals("Wrong binding", "rendering_type_1", types[0].getId()); //$NON-NLS-1$ //$NON-NLS-2$
-        IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
+		IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
 		assertEquals("Wrong bindings", manager.getRenderingType("rendering_type_1"), type); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	}
 
 	public void testBindingChangeNotification() {
 		final boolean[] changed = new boolean[1];
@@ -130,14 +130,14 @@ public class MemoryRenderingTests extends AbstractDebugTest {
 		// bug 374447 - Need to make sure that DynamicRenderingBindings singleton
 		// is initialized
 		IMemoryBlock block = new MemoryBlockDynamic();
-        IMemoryRenderingType[] types = manager.getRenderingTypes(block);
+		IMemoryRenderingType[] types = manager.getRenderingTypes(block);
 
 		try {
 			manager.addListener(listener);
 			assertFalse("Renderings should not have changed yet", changed[0]); //$NON-NLS-1$
 			DynamicRenderingBindings.setBinding("rendering_type_2"); //$NON-NLS-1$
 			assertTrue("Renderings should have changed", changed[0]); //$NON-NLS-1$
-	        types = manager.getRenderingTypes(block);
+			types = manager.getRenderingTypes(block);
 			assertEquals("Wrong number of bindings", 1, types.length); //$NON-NLS-1$
 			assertEquals("Wrong binding", "rendering_type_2", types[0].getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {

@@ -36,14 +36,14 @@ class DebugToolBarAction extends Action {
 		super(IInternalDebugCoreConstants.EMPTY_STRING, AS_CHECK_BOX);
 		fLaunchView = view;
 
-        setText(LaunchViewMessages.DebugToolBarAction_View_label);
-        setToolTipText(LaunchViewMessages.DebugToolBarAction_View_tooltip);
-        setDescription(LaunchViewMessages.DebugToolBarAction_View_description);
+		setText(LaunchViewMessages.DebugToolBarAction_View_label);
+		setToolTipText(LaunchViewMessages.DebugToolBarAction_View_tooltip);
+		setDescription(LaunchViewMessages.DebugToolBarAction_View_description);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.DEBUG_TOOLBAR_VIEW_ACTION);
 	}
 
 	public void setShowingDebugToolbar(boolean showingToolbar) {
-	    setChecked(showingToolbar);
+		setChecked(showingToolbar);
 	}
 
 	@Override

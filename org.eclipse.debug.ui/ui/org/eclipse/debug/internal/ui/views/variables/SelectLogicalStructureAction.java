@@ -27,8 +27,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 public class SelectLogicalStructureAction extends Action {
 
 	private VariablesView fView;
-    private ILogicalStructureType fType;
-    private ILogicalStructureType[] fAvailableTypes;
+	private ILogicalStructureType fType;
+	private ILogicalStructureType[] fAvailableTypes;
 
 	/**
 	 *
@@ -36,12 +36,12 @@ public class SelectLogicalStructureAction extends Action {
 	 * @param type the type that this action will turn on/off
 	 * @param value the value for which logical structures are to be chosen
 	 * @param availableTypes the set of logical structure types that are being offered
-     *  to the user in addition to the type controlled by this action
+	 *  to the user in addition to the type controlled by this action
 	 */
 	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType type, IValue value, ILogicalStructureType[] availableTypes) {
 		super(type.getDescription(value), IAction.AS_CHECK_BOX);
 		setView(view);
-        fAvailableTypes= availableTypes;
+		fAvailableTypes= availableTypes;
 		fType= type;
 	}
 

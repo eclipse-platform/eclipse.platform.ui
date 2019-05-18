@@ -107,9 +107,9 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 
 	@Override
 	public boolean close() {
-	    if (!isSafeToClose()) {
-	        return false;
-	    }
+		if (!isSafeToClose()) {
+			return false;
+		}
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(this);
 		return super.close();
 	}

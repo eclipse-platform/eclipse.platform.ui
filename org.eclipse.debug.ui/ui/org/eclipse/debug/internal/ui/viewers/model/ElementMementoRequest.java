@@ -32,11 +32,11 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 	private ModelDelta fDelta;
 
 	/**
-     * @param provider the content provider to use for the update
-     * @param viewerInput the current input
-     * @param collector Collector to report the result to
-     * @param element the element to update
-     * @param elementPath the path of the element to update
+	 * @param provider the content provider to use for the update
+	 * @param viewerInput the current input
+	 * @param collector Collector to report the result to
+	 * @param element the element to update
+	 * @param elementPath the path of the element to update
 	 * @param memento Memento to encode result into
 	 * @param delta Delta to write the result comparison into.
 	 */
@@ -63,22 +63,22 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 	}
 
 	private void doComplete() {
-        if (getContentProvider().isDisposed()) {
+		if (getContentProvider().isDisposed()) {
 			return;
 		}
 
-        if (!isCanceled() && (getStatus() == null || getStatus().isOK())) {
-            // replace the element with a memento
-            fDelta.setElement(getMemento());
-        }
-        fManager.requestComplete(ElementMementoRequest.this);
+		if (!isCanceled() && (getStatus() == null || getStatus().isOK())) {
+			// replace the element with a memento
+			fDelta.setElement(getMemento());
+		}
+		fManager.requestComplete(ElementMementoRequest.this);
 	}
 
 	@Override
 	public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("IElementMementoRequest: "); //$NON-NLS-1$
-        buf.append(getElement());
-        return buf.toString();
+		StringBuilder buf = new StringBuilder();
+		buf.append("IElementMementoRequest: "); //$NON-NLS-1$
+		buf.append(getElement());
+		return buf.toString();
 	}
 }

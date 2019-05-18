@@ -54,16 +54,16 @@ public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
 	@Override
 	protected synchronized boolean containsEvent(DebugEvent event) {
 		if (!isDisposed()) {
-	        Object source = event.getSource();
-	        if (source instanceof IDebugElement) {
-	            IDebugTarget debugTarget = ((IDebugElement) source).getDebugTarget();
-	            if (debugTarget != null) {
-	            	// a debug target can be null for an IExpression
-	            	return debugTarget.equals(fFrame.getDebugTarget());
-	            }
-	        }
+			Object source = event.getSource();
+			if (source instanceof IDebugElement) {
+				IDebugTarget debugTarget = ((IDebugElement) source).getDebugTarget();
+				if (debugTarget != null) {
+					// a debug target can be null for an IExpression
+					return debugTarget.equals(fFrame.getDebugTarget());
+				}
+			}
 		}
-        return false;
-    }
+		return false;
+	}
 
 }

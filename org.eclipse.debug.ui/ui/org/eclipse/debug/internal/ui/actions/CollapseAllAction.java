@@ -44,6 +44,6 @@ public class CollapseAllAction extends Action implements IUpdate {
 
 	@Override
 	public void update() {
-	    setEnabled( fViewer.getInput() != null && fViewer.getChildCount(TreePath.EMPTY) > 0 );
+		setEnabled( fViewer.getInput() != null && fViewer.getChildCount(TreePath.EMPTY) > 0 );
 	}
 }

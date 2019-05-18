@@ -28,13 +28,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDARestartCommand extends PDACommand {
 
-    public PDARestartCommand() {
-        super("restart"); //$NON-NLS-1$
-    }
+	public PDARestartCommand() {
+		super("restart"); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

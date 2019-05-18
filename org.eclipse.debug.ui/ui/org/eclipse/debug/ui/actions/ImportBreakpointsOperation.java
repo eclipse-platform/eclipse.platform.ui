@@ -302,7 +302,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	private void readAttribute(IMemento memento, Map<String, Object> map) {
 		String name = memento.getString(IImportExportConstants.IE_NODE_NAME),
-		   	   value = memento.getString(IImportExportConstants.IE_NODE_VALUE);
+			   value = memento.getString(IImportExportConstants.IE_NODE_VALUE);
 		if (value != null && name != null) {
 			if (name.equals(IInternalDebugUIConstants.WORKING_SET_NAME)) {
 				fCurrentWorkingSetProperty = value;

@@ -346,11 +346,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	@Override
 	public boolean close() {
-	    if (!isSafeToClose()) {
-	        return false;
-	    }
-	    persistSashWeights();
-	    persistExpansion();
+		if (!isSafeToClose()) {
+			return false;
+		}
+		persistSashWeights();
+		persistExpansion();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
 		fTabViewer.dispose();
 		if (fLaunchConfigurationView != null) {
@@ -394,9 +394,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setFont(font);
 		// create help control if needed
-        if (isHelpAvailable()) {
-        	createHelpControl(composite);
-        }
+		if (isHelpAvailable()) {
+			createHelpControl(composite);
+		}
 		Composite monitorComposite = new Composite(composite, SWT.NULL);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -447,7 +447,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		Button button = createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
-        button.setEnabled(false);
+		button.setEnabled(false);
 		Listener[] listeners = button.getListeners(SWT.Selection);
 		for (Listener listener : listeners) {
 			button.removeListener(SWT.Selection, listener);
@@ -528,26 +528,26 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return the composite used for launch configuration selection area
 	 */
 	protected Control createLaunchConfigurationSelectionArea(Composite parent) {
-        Composite comp = new Composite(parent, SWT.FLAT);
-        GridLayout gridLayout = new GridLayout(1, false);
-        gridLayout.marginHeight = 0;
-        gridLayout.marginWidth = 0;
-        comp.setLayout(gridLayout);
-        comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite comp = new Composite(parent, SWT.FLAT);
+		GridLayout gridLayout = new GridLayout(1, false);
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		comp.setLayout(gridLayout);
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
-        ToolBarManager toolBarManager= new ToolBarManager(SWT.FLAT);
-        ToolBar toolBar = toolBarManager.createControl(viewForm);
-        toolBar.setBackground(parent.getBackground());
-        viewForm.setTopLeft(toolBar);
-        viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
+		ToolBarManager toolBarManager= new ToolBarManager(SWT.FLAT);
+		ToolBar toolBar = toolBarManager.createControl(viewForm);
+		toolBar.setBackground(parent.getBackground());
+		viewForm.setTopLeft(toolBar);
+		viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
-        gridLayout = new GridLayout();
-        gridLayout.marginHeight = 5;
-        gridLayout.marginWidth = 5;
-        viewFormContents.setLayout(gridLayout);
-        viewFormContents.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
+		gridLayout = new GridLayout();
+		gridLayout.marginHeight = 5;
+		gridLayout.marginWidth = 5;
+		viewFormContents.setLayout(gridLayout);
+		viewFormContents.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup(), createViewerFilters());
 		fLaunchConfigurationView.createLaunchDialogControl(viewFormContents);
 		Text filterText = fLaunchConfigurationView.getFilteringTextControl();
@@ -588,7 +588,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Control control = viewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
-        viewForm.setContent(viewFormContents);
+		viewForm.setContent(viewFormContents);
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = new AbstractLaunchConfigurationAction.IConfirmationRequestor() {
 			@Override
 			public boolean getConfirmation() {
@@ -737,15 +737,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @since 3.2
 	 */
-    @Override
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-    	return getDialogSettings();
-    }
+		return getDialogSettings();
+	}
 
-    @Override
+	@Override
 	protected int getDialogBoundsStrategy() {
-    	return DIALOG_PERSISTSIZE;
-    }
+		return DIALOG_PERSISTSIZE;
+	}
 
 	/**
 	 * Returns the dialog settings for this dialog. Subclasses should override
@@ -784,12 +784,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return DebugUIPlugin.getStandardDisplay();
 	}
 
-  	/**
-  	 * Gets the duplicate menu action
-  	 *
-  	 * @return the duplicate menu action
-  	 */
-  	protected AbstractLaunchConfigurationAction getDuplicateAction() {
+	/**
+	 * Gets the duplicate menu action
+	 *
+	 * @return the duplicate menu action
+	 */
+	protected AbstractLaunchConfigurationAction getDuplicateAction() {
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION);
 	}
 
@@ -811,7 +811,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG;
 	}
 
- 	/**
+	/**
 	 * Returns the status the dialog was opened on or <code>null</code> if none.
 	 *
 	 * @return IStatus
@@ -820,7 +820,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return fInitialStatus;
 	}
 
- 	/**
+	/**
 	 * Return the last launched configuration in the workspace.
 	 *
 	 * @return the last launched configuration
@@ -829,7 +829,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(getLaunchGroup().getIdentifier());
 	}
 
- 	/**
+	/**
 	 * Returns the appropriate text for the launch button - run or debug.
 	 *
 	 * @return the launch button text
@@ -838,7 +838,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode()).getLabel();
 	}
 
- 	/**
+	/**
 	 * Returns the launch group being displayed.
 	 *
 	 * @return launch group
@@ -847,10 +847,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return fGroup;
 	}
 
- 	@Override
+	@Override
 	public String getMode() {
- 		return getLaunchGroup().getMode();
- 	}
+		return getLaunchGroup().getMode();
+	}
 
 	/**
 	 * Gets the new menu action
@@ -944,24 +944,24 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 
 	/**
- 	 * Returns the current tab group
- 	 *
- 	 * @return the current tab group, or <code>null</code> if none
- 	 */
- 	public ILaunchConfigurationTabGroup getTabGroup() {
- 		if (fTabViewer != null) {
- 			return fTabViewer.getTabGroup();
- 		}
- 		return null;
- 	}
+	 * Returns the current tab group
+	 *
+	 * @return the current tab group, or <code>null</code> if none
+	 */
+	public ILaunchConfigurationTabGroup getTabGroup() {
+		if (fTabViewer != null) {
+			return fTabViewer.getTabGroup();
+		}
+		return null;
+	}
 
- 	@Override
+	@Override
 	public ILaunchConfigurationTab[] getTabs() {
- 		if (getTabGroup() == null) {
- 			return null;
- 		}
- 		return getTabGroup().getTabs();
- 	}
+		if (getTabGroup() == null) {
+			return null;
+		}
+		return getTabGroup().getTabs();
+	}
 
 	/**
 	 * Returns the viewer used to display the tabs for a launch configuration.
@@ -1001,43 +1001,43 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 *
 	 * @param event selection changed event
 	 */
- 	protected void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
- 		Object input = fTabViewer.getInput();
- 		Object newInput = null;
+	protected void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
+		Object input = fTabViewer.getInput();
+		Object newInput = null;
 		IStructuredSelection selection = event.getStructuredSelection();
- 		if (selection.size() == 1) {
+		if (selection.size() == 1) {
 			newInput = selection.getFirstElement();
- 		}
- 		if (!isEqual(input, newInput)) {
- 			ILaunchConfiguration original = fTabViewer.getOriginal();
- 	 		if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
- 				return;
- 			}
- 			boolean deleted = false;
- 			if (original != null) {
- 				deleted = !original.exists();
- 			}
+		}
+		if (!isEqual(input, newInput)) {
+			ILaunchConfiguration original = fTabViewer.getOriginal();
+			if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
+				return;
+			}
+			boolean deleted = false;
+			if (original != null) {
+				deleted = !original.exists();
+			}
 			boolean renamed = false;
 			if (newInput instanceof ILaunchConfiguration) {
 				renamed = getLaunchManager().getMovedFrom((ILaunchConfiguration)newInput) != null;
 			}
 			try {
 				fSettingInput = true;
-	 			if (fTabViewer.canSave() && fTabViewer.isDirty() && !deleted && !renamed) {
-	 				if(fLaunchConfigurationView != null) {
-	 					fLaunchConfigurationView.setAutoSelect(false);
-	 				}
-	 				int ret = showUnsavedChangesDialog();
-	 				if(ret == IDialogConstants.YES_ID) {
-	 					fTabViewer.handleApplyPressed();
+				if (fTabViewer.canSave() && fTabViewer.isDirty() && !deleted && !renamed) {
+					if(fLaunchConfigurationView != null) {
+						fLaunchConfigurationView.setAutoSelect(false);
+					}
+					int ret = showUnsavedChangesDialog();
+					if(ret == IDialogConstants.YES_ID) {
+						fTabViewer.handleApplyPressed();
 						ILaunchConfigurationTab[] tabs = getTabs();
 						if (tabs != null) {
 							for (ILaunchConfigurationTab tab : tabs) {
 								tab.postApply();
 							}
 						}
-	 					fTabViewer.setInput(newInput);
-	 				}
+						fTabViewer.setInput(newInput);
+					}
 					else if(ret == IDialogConstants.NO_ID) {
 						fTabViewer.handleRevertPressed();
 						fTabViewer.setInput(newInput);
@@ -1045,24 +1045,24 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					else {
 						fLaunchConfigurationView.getViewer().setSelection(new StructuredSelection(input));
 					}
-	 				fLaunchConfigurationView.setAutoSelect(true);
-	  			}
-	 			else {
-	 				fTabViewer.setInput(newInput);
-	 				if(fTabViewer.isDirty()) {
-	 					fTabViewer.handleApplyPressed();
-	 				}
-	 			}
+					fLaunchConfigurationView.setAutoSelect(true);
+				}
+				else {
+					fTabViewer.setInput(newInput);
+					if(fTabViewer.isDirty()) {
+						fTabViewer.handleApplyPressed();
+					}
+				}
 			} finally {
 				fSettingInput = false;
 				updateButtons();
 				updateMessage();
 			}
- 			if(getShell() != null && getShell().isVisible()) {
- 				resize();
- 			}
- 		}
-  	}
+			if(getShell() != null && getShell().isVisible()) {
+				resize();
+			}
+		}
+		}
 
 	/**
 	 * Notification the 'launch' button has been pressed. Save and launch.
@@ -1201,14 +1201,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return true if they are equal, false if object 1 is null, the result of o1.equals(o2) otherwise
 	 */
 	protected boolean isEqual(Object o1, Object o2) {
-  		if (o1 == o2) {
-  			return true;
-  		} else if (o1 == null) {
-  			return false;
-  		} else {
-  			return o1.equals(o2);
-  		}
-  	}
+		if (o1 == o2) {
+			return true;
+		} else if (o1 == null) {
+			return false;
+		} else {
+			return o1.equals(o2);
+		}
+	}
 
 	/**
 	 * Returns whether the dialog can be closed
@@ -1216,7 +1216,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return whether the dialog can be closed
 	 */
 	protected boolean isSafeToClose() {
-	    return fActiveRunningOperations == 0;
+		return fActiveRunningOperations == 0;
 	}
 
 	/**
@@ -1349,17 +1349,17 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * resize the dialog to show all relevant content
 	 */
 	protected void resize() {
- 		if(getTabGroup() != null) {
+		if(getTabGroup() != null) {
 			Point shell = getShell().getSize();
- 			int maxx = (int)(getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT),
+			int maxx = (int)(getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT),
 				maxy = (int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
- 			maxx = (maxx < DEFAULT_INITIAL_DIALOG_SIZE.x ? DEFAULT_INITIAL_DIALOG_SIZE.x : maxx);
- 			maxy = (maxy < DEFAULT_INITIAL_DIALOG_SIZE.y ? DEFAULT_INITIAL_DIALOG_SIZE.y : maxy);
- 			Point psize = getShell().computeSize(SWT.DEFAULT, maxy);
- 			if((psize.x > maxx ? maxx : psize.x) > shell.x || (psize.y > maxy ? maxy : psize.y) > shell.y) {
+			maxx = (maxx < DEFAULT_INITIAL_DIALOG_SIZE.x ? DEFAULT_INITIAL_DIALOG_SIZE.x : maxx);
+			maxy = (maxy < DEFAULT_INITIAL_DIALOG_SIZE.y ? DEFAULT_INITIAL_DIALOG_SIZE.y : maxy);
+			Point psize = getShell().computeSize(SWT.DEFAULT, maxy);
+			if((psize.x > maxx ? maxx : psize.x) > shell.x || (psize.y > maxy ? maxy : psize.y) > shell.y) {
 				setShellSize(Math.min(psize.x, maxx), Math.min(psize.y, maxy));
 				constrainShellSize();
- 			}
+			}
 		}
 	}
 
@@ -1512,9 +1512,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 
 	/**
- 	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
- 	 * Do not increase the size of the Shell beyond the bounds of the Display.
- 	 */
+	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
+	 * Do not increase the size of the Shell beyond the bounds of the Display.
+	 */
 	protected void setShellSize(int width, int height) {
 		Rectangle bounds = getShell().getMonitor().getBounds();
 		getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));

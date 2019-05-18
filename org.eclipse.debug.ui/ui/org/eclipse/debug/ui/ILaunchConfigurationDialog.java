@@ -17,15 +17,15 @@ import org.eclipse.jface.operation.IRunnableContext;
 
 
  /**
-  * A launch configuration dialog is used to edit and launch
-  * launch configurations. It contains a launch configuration
-  * tab group.
-  * @see ILaunchConfigurationTabGroup
-  * @see ILaunchConfigurationTab
-  * @since 2.0
+ * A launch configuration dialog is used to edit and launch
+ * launch configurations. It contains a launch configuration
+ * tab group.
+ * @see ILaunchConfigurationTabGroup
+ * @see ILaunchConfigurationTab
+ * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
-  */
+ */
 
 public interface ILaunchConfigurationDialog extends IRunnableContext {
 

@@ -32,88 +32,88 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
 
-    private BreakpointSetElement[] fBreakpoints;
+	private BreakpointSetElement[] fBreakpoints;
 
 
 	/**
-     * Constructs action to remove breakpoints from a category.
-     *
-     * @param view
-     */
-    public RemoveFromWorkingSetAction(BreakpointsView view) {
-        super(BreakpointGroupMessages.RemoveFromWorkingSetAction_0, view);
-    }
+	 * Constructs action to remove breakpoints from a category.
+	 *
+	 * @param view
+	 */
+	public RemoveFromWorkingSetAction(BreakpointsView view) {
+		super(BreakpointGroupMessages.RemoveFromWorkingSetAction_0, view);
+	}
 
-    @Override
+	@Override
 	public void run() {
-    	if (fBreakpoints != null) {
-    		for (int i = 0; i < fBreakpoints.length; i++) {
-    			fBreakpoints[i].container.getOrganizer().removeBreakpoint(fBreakpoints[i].breakpoint, fBreakpoints[i].container.getCategory());
-    		}
-    	}
-    }
+		if (fBreakpoints != null) {
+			for (int i = 0; i < fBreakpoints.length; i++) {
+				fBreakpoints[i].container.getOrganizer().removeBreakpoint(fBreakpoints[i].breakpoint, fBreakpoints[i].container.getCategory());
+			}
+		}
+	}
 
-    protected static class BreakpointSetElement {
-    	BreakpointSetElement(IBreakpoint b, IBreakpointContainer c) { breakpoint = b; container = c; }
-    	IBreakpoint breakpoint;
-    	IBreakpointContainer container;
-    }
+	protected static class BreakpointSetElement {
+		BreakpointSetElement(IBreakpoint b, IBreakpointContainer c) { breakpoint = b; container = c; }
+		IBreakpoint breakpoint;
+		IBreakpointContainer container;
+	}
 
-    /**
-     * Returns a array of breakpoint/container pairs for the selection
-     *
-     *  All the returned elements contain a breakpoint and a working set container the breakpoint is contained and the breakpoint
-     *  can be removed from.
-     *
-     * @param selection
-     * @return
-     */
-    protected BreakpointSetElement[] getRemovableBreakpoints(IStructuredSelection selection) {
+	/**
+	 * Returns a array of breakpoint/container pairs for the selection
+	 *
+	 *  All the returned elements contain a breakpoint and a working set container the breakpoint is contained and the breakpoint
+	 *  can be removed from.
+	 *
+	 * @param selection
+	 * @return
+	 */
+	protected BreakpointSetElement[] getRemovableBreakpoints(IStructuredSelection selection) {
 		List<BreakpointSetElement> res = new ArrayList<>();
-    	if (selection instanceof ITreeSelection) {
-    		ITreeSelection tSel = (ITreeSelection)selection;
+		if (selection instanceof ITreeSelection) {
+			ITreeSelection tSel = (ITreeSelection)selection;
 
-    		TreePath[] paths = tSel.getPaths();
-    		for (int i = 0; i < paths.length; i++) {
-    			TreePath path = paths[i];
+			TreePath[] paths = tSel.getPaths();
+			for (int i = 0; i < paths.length; i++) {
+				TreePath path = paths[i];
 
-    			// We can remove Breakpoints from their working set if any of their parents is a non "Other" breakpoint working set
-                IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(path.getLastSegment(), IBreakpoint.class);
-    			if (breakpoint != null) {
-    				TreePath parents = path.getParentPath();
+				// We can remove Breakpoints from their working set if any of their parents is a non "Other" breakpoint working set
+				IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(path.getLastSegment(), IBreakpoint.class);
+				if (breakpoint != null) {
+					TreePath parents = path.getParentPath();
 
-    				for (int j = 0; j < parents.getSegmentCount(); j++) {
-    					Object parent = parents.getSegment(j);
+					for (int j = 0; j < parents.getSegmentCount(); j++) {
+						Object parent = parents.getSegment(j);
 
-    					if (parent instanceof IBreakpointContainer) {
-    						IBreakpointContainer container = (IBreakpointContainer)parent;
+						if (parent instanceof IBreakpointContainer) {
+							IBreakpointContainer container = (IBreakpointContainer)parent;
 
-    						// Test if this is a working set container.
-    						if (container.getCategory() instanceof WorkingSetCategory) {
-    							// Test if this container allows to remove this breakpoint.
-    							if (container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
-    								res.add(new BreakpointSetElement(breakpoint, container));
-    							}
-    						}
-    					}
-    				}
-    			}
-    		}
-    	}
-    	return res.toArray(new BreakpointSetElement[res.size()]);
-    }
+							// Test if this is a working set container.
+							if (container.getCategory() instanceof WorkingSetCategory) {
+								// Test if this container allows to remove this breakpoint.
+								if (container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
+									res.add(new BreakpointSetElement(breakpoint, container));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return res.toArray(new BreakpointSetElement[res.size()]);
+	}
 
-    @Override
+	@Override
 	public boolean isEnabled() {
-    	if(fBreakpoints != null) {
-    		return fBreakpoints.length > 0;
-    	}
-    	return false;
-    }
+		if(fBreakpoints != null) {
+			return fBreakpoints.length > 0;
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-    	fBreakpoints = getRemovableBreakpoints(selection);
-    	return fBreakpoints.length > 0;
-    }
+		fBreakpoints = getRemovableBreakpoints(selection);
+		return fBreakpoints.length > 0;
+	}
 }

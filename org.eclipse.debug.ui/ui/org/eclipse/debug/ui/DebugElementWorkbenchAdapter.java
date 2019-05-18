@@ -37,29 +37,29 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
 @Deprecated
 public abstract class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        return DebugElementHelper.getImageDescriptor(object);
-    }
+		return DebugElementHelper.getImageDescriptor(object);
+	}
 
-    @Override
+	@Override
 	public String getLabel(Object o) {
-        return DebugElementHelper.getLabel(o);
-    }
+		return DebugElementHelper.getLabel(o);
+	}
 
-    @Override
+	@Override
 	public RGB getForeground(Object element) {
-        return DebugElementHelper.getForeground(element);
-    }
+		return DebugElementHelper.getForeground(element);
+	}
 
-    @Override
+	@Override
 	public RGB getBackground(Object element) {
-        return DebugElementHelper.getBackground(element);
-    }
+		return DebugElementHelper.getBackground(element);
+	}
 
-    @Override
+	@Override
 	public FontData getFont(Object element) {
-        return DebugElementHelper.getFont(element);
-    }
+		return DebugElementHelper.getFont(element);
+	}
 
 }

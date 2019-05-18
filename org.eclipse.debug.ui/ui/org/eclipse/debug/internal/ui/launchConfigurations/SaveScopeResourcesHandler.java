@@ -169,27 +169,27 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 				 projects = (IProject[]) objects[1];
 			}
 		}
-        if (config != null) {
-            if (DebugUITools.isPrivate(config)) {
-                return Boolean.TRUE;
-            }
-        }
-        if (projects != null && projects.length > 0) {
-            IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-            String save = store.getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
-            int ret = showSaveDialog(projects, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
-            if(ret == IDialogConstants.OK_ID) {
-            	doSave();
-            	return Boolean.TRUE;
-            }
-            return Boolean.FALSE;
-        }
-        else {
+		if (config != null) {
+			if (DebugUITools.isPrivate(config)) {
+				return Boolean.TRUE;
+			}
+		}
+		if (projects != null && projects.length > 0) {
+			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+			String save = store.getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
+			int ret = showSaveDialog(projects, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
+			if(ret == IDialogConstants.OK_ID) {
+				doSave();
+				return Boolean.TRUE;
+			}
+			return Boolean.FALSE;
+		}
+		else {
 			@SuppressWarnings("deprecation")
 			boolean cancel = DebugUIPlugin.preLaunchSave();
-            return Boolean.valueOf(cancel);
-        }
-    }
+			return Boolean.valueOf(cancel);
+		}
+	}
 
 	/**
 	 *

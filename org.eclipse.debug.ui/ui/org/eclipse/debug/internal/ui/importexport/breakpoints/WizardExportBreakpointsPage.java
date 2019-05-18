@@ -203,17 +203,17 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	}
 
 	/**
-     * Creates the buttons for selecting all or none of the elements.
-     *
-     * @param parent the parent control
-     */
-    private void createButtonsGroup(Composite parent) {
-        Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
-        fSelectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_1, null);
-        fSelectAll.addListener(SWT.Selection, this);
+	 * Creates the buttons for selecting all or none of the elements.
+	 *
+	 * @param parent the parent control
+	 */
+	private void createButtonsGroup(Composite parent) {
+		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		fSelectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_1, null);
+		fSelectAll.addListener(SWT.Selection, this);
 		fDeselectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_2, null);
 		fDeselectAll.addListener(SWT.Selection, this);
-    }
+	}
 
 	/**
 	 * This method is used to determine if the page can be "finished".

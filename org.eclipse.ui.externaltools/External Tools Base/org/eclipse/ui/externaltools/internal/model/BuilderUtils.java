@@ -175,14 +175,14 @@ public class BuilderUtils {
 		return BuilderCoreUtils.migrateBuilderConfiguration(project, workingCopy);
 	}
 
-    /**
-     * Converts the build types string into an array of
-     * build kinds.
-     *
-     * @param buildTypes the string of built types to convert
-     * @return the array of build kinds.
-     */
-    public static int[] buildTypesToArray(String buildTypes) {
-    	return BuilderCoreUtils.buildTypesToArray(buildTypes);
-    }
+	/**
+	 * Converts the build types string into an array of
+	 * build kinds.
+	 *
+	 * @param buildTypes the string of built types to convert
+	 * @return the array of build kinds.
+	 */
+	public static int[] buildTypesToArray(String buildTypes) {
+		return BuilderCoreUtils.buildTypesToArray(buildTypes);
+	}
 }

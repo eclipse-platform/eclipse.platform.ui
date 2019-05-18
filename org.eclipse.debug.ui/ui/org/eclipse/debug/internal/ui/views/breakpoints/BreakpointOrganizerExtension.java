@@ -39,7 +39,7 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 	public static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	public static final String ATTR_ID = "id"; //$NON-NLS-1$
 	public static final String ATTR_ICON = "icon"; //$NON-NLS-1$
-    public static final String ATTR_OTHERS_LABEL = "othersLabel"; //$NON-NLS-1$
+	public static final String ATTR_OTHERS_LABEL = "othersLabel"; //$NON-NLS-1$
 
 	public BreakpointOrganizerExtension(IConfigurationElement element) {
 		fElement = element;
@@ -71,15 +71,15 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 		return fElement.getAttribute(ATTR_LABEL);
 	}
 
-    /**
-     * Returns this organizer's identifier.
-     *
-     * @return this organizer's identifier
-     */
-    @Override
+	/**
+	 * Returns this organizer's identifier.
+	 *
+	 * @return this organizer's identifier
+	 */
+	@Override
 	public String getIdentifier() {
-        return fElement.getAttribute(ATTR_ID);
-    }
+		return fElement.getAttribute(ATTR_ID);
+	}
 
 	/**
 	 * Returns this organizer's delegate, instantiating it if required.
@@ -97,62 +97,62 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 		return fDelegate;
 	}
 
-    @Override
+	@Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
-        return getOrganizer().getCategories(breakpoint);
-    }
+		return getOrganizer().getCategories(breakpoint);
+	}
 
-    @Override
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        getOrganizer().addPropertyChangeListener(listener);
-    }
+		getOrganizer().addPropertyChangeListener(listener);
+	}
 
-    @Override
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        getOrganizer().removePropertyChangeListener(listener);
-    }
+		getOrganizer().removePropertyChangeListener(listener);
+	}
 
-    @Override
+	@Override
 	public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
-        getOrganizer().addBreakpoint(breakpoint, category);
-    }
+		getOrganizer().addBreakpoint(breakpoint, category);
+	}
 
-    @Override
+	@Override
 	public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
-        getOrganizer().removeBreakpoint(breakpoint, category);
-    }
+		getOrganizer().removeBreakpoint(breakpoint, category);
+	}
 
-    @Override
+	@Override
 	public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
-        return getOrganizer().canAdd(breakpoint, category);
-    }
+		return getOrganizer().canAdd(breakpoint, category);
+	}
 
-    @Override
+	@Override
 	public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
-        return getOrganizer().canRemove(breakpoint, category);
-    }
+		return getOrganizer().canRemove(breakpoint, category);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    	// don't instantiate the delegate if it has not been used
-    	if (fDelegate != null) {
-    		fDelegate.dispose();
-    	}
-    }
+		// don't instantiate the delegate if it has not been used
+		if (fDelegate != null) {
+			fDelegate.dispose();
+		}
+	}
 
-    @Override
+	@Override
 	public String getOthersLabel() {
-        String attribute = fElement.getAttribute(ATTR_OTHERS_LABEL);
-        if (attribute == null) {
-            return DebugUIViewsMessages.OtherBreakpointOrganizer_0;
-        }
-        return attribute;
-    }
+		String attribute = fElement.getAttribute(ATTR_OTHERS_LABEL);
+		if (attribute == null) {
+			return DebugUIViewsMessages.OtherBreakpointOrganizer_0;
+		}
+		return attribute;
+	}
 
-    @Override
+	@Override
 	public IAdaptable[] getCategories() {
-        return getOrganizer().getCategories();
-    }
+		return getOrganizer().getCategories();
+	}
 
 	@Override
 	public void addBreakpoints(IBreakpoint[] breakpoints, IAdaptable category) {

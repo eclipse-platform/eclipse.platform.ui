@@ -37,15 +37,15 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDASetBreakpointCommand extends PDACommand {
 
-    public PDASetBreakpointCommand(int line, boolean stopVM) {
-        super("set " +  //$NON-NLS-1$
-              line + " " +  //$NON-NLS-1$
-              (stopVM ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	public PDASetBreakpointCommand(int line, boolean stopVM) {
+		super("set " +  //$NON-NLS-1$
+			  line + " " +  //$NON-NLS-1$
+			  (stopVM ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

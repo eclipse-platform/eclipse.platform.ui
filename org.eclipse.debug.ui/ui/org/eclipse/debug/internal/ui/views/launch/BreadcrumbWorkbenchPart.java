@@ -27,70 +27,70 @@ import org.eclipse.ui.IWorkbenchPartSite;
  */
 class BreadcrumbWorkbenchPart implements IWorkbenchPart {
 
-    private IWorkbenchPartSite fSite = null;
+	private IWorkbenchPartSite fSite = null;
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        return (obj instanceof BreadcrumbWorkbenchPart);
-    }
+		return (obj instanceof BreadcrumbWorkbenchPart);
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return getClass().hashCode();
-    }
+		return getClass().hashCode();
+	}
 
-    /**
-     * Constructs a part for the given console that binds to the given
-     * site
-     * @param site the backing site
-     */
-    public BreadcrumbWorkbenchPart(IWorkbenchPartSite site) {
-        fSite = site;
-    }
+	/**
+	 * Constructs a part for the given console that binds to the given
+	 * site
+	 * @param site the backing site
+	 */
+	public BreadcrumbWorkbenchPart(IWorkbenchPartSite site) {
+		fSite = site;
+	}
 
-    @Override
+	@Override
 	public void addPropertyListener(IPropertyListener listener) {
-    }
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent) {
-    }
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    }
+	}
 
-    @Override
+	@Override
 	public IWorkbenchPartSite getSite() {
-        return fSite;
-    }
+		return fSite;
+	}
 
-    @Override
+	@Override
 	public String getTitle() {
-        return ""; //$NON-NLS-1$
-    }
+		return ""; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public Image getTitleImage() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public String getTitleToolTip() {
-        return ""; //$NON-NLS-1$
-    }
+		return ""; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public void removePropertyListener(IPropertyListener listener) {
-    }
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
-    }
+	}
 
-    @Override
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        return null;
-    }
+		return null;
+	}
 }
 

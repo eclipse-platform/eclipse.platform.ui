@@ -237,7 +237,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		if (fUpdatePolicy == null) {
 			fUpdatePolicy = createUpdatePolicy();
-            fUpdatePolicy.init(this);
+			fUpdatePolicy.init(this);
 		}
 		if (fModel != null) {
 			fModel.dispose();
@@ -251,7 +251,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			unmapAllElements();
 			getControl().setData(null);
 		}
-        refresh();
+		refresh();
 	}
 
 	/**
@@ -269,14 +269,14 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	public abstract AbstractUpdatePolicy createUpdatePolicy();
 
 	Image[] getImages(ImageDescriptor[] descriptors) {
-        if (descriptors == null || descriptors.length == 0) {
-            String[] columns = getPresentationContext().getColumns();
-            if (columns == null) {
-                return new Image[1];
-            } else {
-                return new Image[columns.length];
-            }
-        }
+		if (descriptors == null || descriptors.length == 0) {
+			String[] columns = getPresentationContext().getColumns();
+			if (columns == null) {
+				return new Image[1];
+			} else {
+				return new Image[columns.length];
+			}
+		}
 		Image[] images = new Image[descriptors.length];
 		for (int i = 0; i < images.length; i++) {
 			images[i] = getImage(descriptors[i]);
@@ -306,12 +306,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	protected Font[] getFonts(FontData[] fontDatas) {
 		if (fontDatas == null || fontDatas.length == 0) {
-            String[] columns = getPresentationContext().getColumns();
-            if (columns == null) {
-                return new Font[1];
-            } else {
-                return new Font[columns.length];
-            }
+			String[] columns = getPresentationContext().getColumns();
+			if (columns == null) {
+				return new Font[1];
+			} else {
+				return new Font[columns.length];
+			}
 		}
 
 		Font[] fonts = new Font[fontDatas.length];
@@ -341,14 +341,14 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	}
 
 	protected Color[] getColors(RGB[] rgb) {
-        if (rgb == null || rgb.length == 0) {
-            String[] columns = getPresentationContext().getColumns();
-            if (columns == null) {
-                return new Color[1];
-            } else {
-                return new Color[columns.length];
-            }
-        }
+		if (rgb == null || rgb.length == 0) {
+			String[] columns = getPresentationContext().getColumns();
+			if (columns == null) {
+				return new Color[1];
+			} else {
+				return new Color[columns.length];
+			}
+		}
 		Color[] colors = new Color[rgb.length];
 		for (int i = 0; i < colors.length; i++) {
 			colors[i] = getColor(rgb[i]);
@@ -399,16 +399,16 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return null;
 	}
 
-    @Override
+	@Override
 	protected Widget doFindInputItem(Object element) {
-    	if (element instanceof ModelNode) {
+		if (element instanceof ModelNode) {
 			ModelNode node = (ModelNode) element;
 			if (node.getElement().equals(getInput())) {
 				return getControl();
 			}
 		}
-        return null;
-    }
+		return null;
+	}
 
 	@Override
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
@@ -693,19 +693,19 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							synchronized (AsynchronousViewer.this) {
-	                            if (!getControl().isDisposed()) {
-	                            	if (fPendingSelection == null || fPendingSelection.isEmpty()) {
-		                            	ISelection tempSelection = fCurrentSelection;
-		                            	if (tempSelection == null) {
-		                            		tempSelection = new StructuredSelection();
-		                				}
-		                				if (!tempSelection.equals(newSelectionFromWidget())) {
-		                					restoreSelection(tempSelection);
-		                				}
-	                            	}
-	                            }
+								if (!getControl().isDisposed()) {
+									if (fPendingSelection == null || fPendingSelection.isEmpty()) {
+										ISelection tempSelection = fCurrentSelection;
+										if (tempSelection == null) {
+											tempSelection = new StructuredSelection();
+										}
+										if (!tempSelection.equals(newSelectionFromWidget())) {
+											restoreSelection(tempSelection);
+										}
+									}
+								}
 							}
-                            return Status.OK_STATUS;
+							return Status.OK_STATUS;
 						}
 
 					};
@@ -843,7 +843,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @return if there are any more pending updates in the viewer
 	 */
 	public synchronized boolean hasPendingUpdates() {
-        return getModel().hasPendingUpdates();
+		return getModel().hasPendingUpdates();
 	}
 
 	/**
@@ -860,22 +860,22 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 *
 	 * @param item the widget
 	 */
-    protected abstract void clear(Widget item);
+	protected abstract void clear(Widget item);
 
-    /**
-     * Clears the children of the widget.
-     *
-     * @param item the widget to clear children from
-     */
-    protected abstract void clearChildren(Widget item);
+	/**
+	 * Clears the children of the widget.
+	 *
+	 * @param item the widget to clear children from
+	 */
+	protected abstract void clearChildren(Widget item);
 
-    /**
-     * Clears the child at the given index.
-     *
-     * @param parent the parent widget
-     * @param childIndex the index of the child widget to clear
-     */
-    protected abstract void clearChild(Widget parent, int childIndex);
+	/**
+	 * Clears the child at the given index.
+	 *
+	 * @param parent the parent widget
+	 * @param childIndex the index of the child widget to clear
+	 */
+	protected abstract void clearChild(Widget parent, int childIndex);
 
 	/**
 	 * Returns the child widget at the given index for the given parent or
@@ -895,12 +895,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 */
 	protected abstract void setItemCount(Widget parent, int itemCount);
 
-    /**
-     * Attempt pending updates. Subclasses may override but should call super.
-     */
-    protected void attemptPendingUpdates() {
-    	attemptSelection(false);
-    }
+	/**
+	 * Attempt pending updates. Subclasses may override but should call super.
+	 */
+	protected void attemptPendingUpdates() {
+		attemptSelection(false);
+	}
 
 	/**
 	 * Notification a node's children have changed.
@@ -975,33 +975,33 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 	}
 
-    /**
-     * Returns the node corresponding to the given widget or <code>null</code>
-     * @param widget widget for which a node is requested
-     * @return node or <code>null</code>
-     */
-    protected ModelNode findNode(Widget widget) {
-        ModelNode[] nodes = getModel().getNodes(widget.getData());
-        if (nodes != null) {
-        	for (int i = 0; i < nodes.length; i++) {
+	/**
+	 * Returns the node corresponding to the given widget or <code>null</code>
+	 * @param widget widget for which a node is requested
+	 * @return node or <code>null</code>
+	 */
+	protected ModelNode findNode(Widget widget) {
+		ModelNode[] nodes = getModel().getNodes(widget.getData());
+		if (nodes != null) {
+			for (int i = 0; i < nodes.length; i++) {
 				ModelNode node = nodes[i];
 				Widget item = findItem(node);
 				if (widget == item) {
 					return node;
 				}
 			}
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
-    /**
-     * Returns the item for the node or <code>null</code>
-     * @param node the model node
-     * @return the widget or <code>null</code>
-     */
-    protected Widget findItem(ModelNode node) {
-    	return findItem((Object)node);
-    }
+	/**
+	 * Returns the item for the node or <code>null</code>
+	 * @param node the model node
+	 * @return the widget or <code>null</code>
+	 */
+	protected Widget findItem(ModelNode node) {
+		return findItem((Object)node);
+	}
 
 	/*
 	 * A virtual item has been exposed in the control, map its data.
@@ -1009,7 +1009,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	@Override
 	public void handleEvent(final Event event) {
 		update((Item)event.item, event.index);
-    }
+	}
 
 	/**
 	 * Update the given item.
@@ -1035,10 +1035,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 					ModelNode parentNode = nodes[i];
 					Widget parentWidget = findItem(parentNode);
 					if (parentWidget == parentItem) {
-			        	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
-			        	if (childrenNodes != null && index < childrenNodes.length) {
-			        		node = childrenNodes[index];
-			        	}
+						ModelNode[] childrenNodes = parentNode.getChildrenNodes();
+						if (childrenNodes != null && index < childrenNodes.length) {
+							node = childrenNodes[index];
+						}
 					}
 				}
 			}
@@ -1089,11 +1089,11 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		// map the node to the element and refresh it
 		if (node != null) {
 			mapElement(node, item);
-    		item.setData(node.getElement());
-    		if (DebugUIPlugin.DEBUG_VIEWER) {
+			item.setData(node.getElement());
+			if (DebugUIPlugin.DEBUG_VIEWER) {
 				DebugUIPlugin.trace("\titem mapped: " + node); //$NON-NLS-1$
-    		}
-    		internalRefresh(node);
+			}
+			internalRefresh(node);
 		} else {
 			if (DebugUIPlugin.DEBUG_VIEWER) {
 				DebugUIPlugin.trace("\tFAILED - unable to find corresponding node"); //$NON-NLS-1$

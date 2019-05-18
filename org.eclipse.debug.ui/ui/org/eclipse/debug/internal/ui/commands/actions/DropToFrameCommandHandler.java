@@ -25,9 +25,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  */
 public class DropToFrameCommandHandler extends DebugCommandHandler {
 
-    @Override
+	@Override
 	protected Class<IDropToFrameHandler> getCommandType() {
-        return IDropToFrameHandler.class;
-    }
+		return IDropToFrameHandler.class;
+	}
 
 }

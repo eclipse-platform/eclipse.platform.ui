@@ -31,35 +31,35 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 public class PopHandler extends AbstractDataStackViewHandler {
 
-    @Override
+	@Override
 	protected void doExecute(DataStackView view, PDAThread thread, ISelection selection) throws ExecutionException {
-        TreeViewer viewer = (TreeViewer)view.getViewer();
-        Object popee = selection instanceof IStructuredSelection
-            ? ((IStructuredSelection)selection).getFirstElement() : null;
-        if (popee != null) {
-            try {
-                IValue[] stack = thread.getDataStack();
+		TreeViewer viewer = (TreeViewer)view.getViewer();
+		Object popee = selection instanceof IStructuredSelection
+			? ((IStructuredSelection)selection).getFirstElement() : null;
+		if (popee != null) {
+			try {
+				IValue[] stack = thread.getDataStack();
 				List<IValue> restore = new ArrayList<>();
-                for (int i = 0; i < stack.length; i++) {
-                    Object value = stack[i];
-                    if (popee.equals(value)) {
-                        // pop & stop
-                        thread.popData();
-                        break;
-                    } else {
-                        // remember value to push back on
-                        restore.add(thread.popData());
-                    }
-                }
-                while (!restore.isEmpty()) {
-                    IValue value = restore.remove(restore.size() - 1);
-                    thread.pushData(value.getValueString());
-                }
-            } catch (DebugException e) {
+				for (int i = 0; i < stack.length; i++) {
+					Object value = stack[i];
+					if (popee.equals(value)) {
+						// pop & stop
+						thread.popData();
+						break;
+					} else {
+						// remember value to push back on
+						restore.add(thread.popData());
+					}
+				}
+				while (!restore.isEmpty()) {
+					IValue value = restore.remove(restore.size() - 1);
+					thread.pushData(value.getValueString());
+				}
+			} catch (DebugException e) {
 				throw new ExecutionException("Failed to execute push command", e); //$NON-NLS-1$
-            }
-            viewer.refresh();
-        }
-    }
+			}
+			viewer.refresh();
+		}
+	}
 
 }

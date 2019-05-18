@@ -26,7 +26,7 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAListResult;
  */
 public class PDAValue extends PDADebugElement implements IValue {
 
-    final private PDAVariable fVariable;
+	final private PDAVariable fVariable;
 	final private String fValue;
 
 	public PDAValue(PDAVariable variable, String value) {
@@ -57,46 +57,46 @@ public class PDAValue extends PDADebugElement implements IValue {
 
 	@Override
 	public IVariable[] getVariables() throws DebugException {
-	    PDAStackFrame frame = fVariable.getStackFrame();
-	    PDAListResult result =  (PDAListResult) sendCommand(
-	        new PDAChildrenCommand(frame.getThreadIdentifier(), frame.getIdentifier(), fVariable.getName()) );
+		PDAStackFrame frame = fVariable.getStackFrame();
+		PDAListResult result =  (PDAListResult) sendCommand(
+			new PDAChildrenCommand(frame.getThreadIdentifier(), frame.getIdentifier(), fVariable.getName()) );
 
-	    IVariable[] children = new IVariable[result.fValues.length];
-	    for(int i = 0; i < result.fValues.length; i++) {
-	        children[i] = new PDAVariable(frame, result.fValues[i]);
-	    }
+		IVariable[] children = new IVariable[result.fValues.length];
+		for(int i = 0; i < result.fValues.length; i++) {
+			children[i] = new PDAVariable(frame, result.fValues[i]);
+		}
 		return children;
 	}
 
 	@Override
 	public boolean hasVariables() throws DebugException {
-	    if (getVariables().length != 0) {
-	        return true;
-	    }
-	    // Value with multiple words can be show as an array using logical
-	    // structures. If the value has multiple words, it needs to indicate
-	    // that it has children even if logical structures are not turned on.
+		if (getVariables().length != 0) {
+			return true;
+		}
+		// Value with multiple words can be show as an array using logical
+		// structures. If the value has multiple words, it needs to indicate
+		// that it has children even if logical structures are not turned on.
 		return fValue.split("\\W+").length > 1; //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        return obj instanceof PDAValue && ((PDAValue)obj).fValue.equals(fValue);
-    }
+		return obj instanceof PDAValue && ((PDAValue)obj).fValue.equals(fValue);
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return fValue.hashCode();
-    }
+		return fValue.hashCode();
+	}
 
-    /**
-     * Returns the variable that this value was created for.
-     *
-     * @return The variable that this value was created for.
-     *
-     * @since 3.5
-     */
-    public PDAVariable getVariable() {
-        return fVariable;
-    }
+	/**
+	 * Returns the variable that this value was created for.
+	 *
+	 * @return The variable that this value was created for.
+	 *
+	 * @since 3.5
+	 */
+	public PDAVariable getVariable() {
+		return fVariable;
+	}
 }

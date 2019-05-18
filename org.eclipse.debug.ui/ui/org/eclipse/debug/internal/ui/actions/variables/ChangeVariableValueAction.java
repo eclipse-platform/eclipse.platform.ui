@@ -47,14 +47,14 @@ import com.ibm.icu.text.MessageFormat;
 public class ChangeVariableValueAction extends SelectionProviderAction {
 
 	protected IVariable fVariable;
-    private VariablesView fView;
-    private boolean fEditing= false;
-    private boolean isApplicable = false;
+	private VariablesView fView;
+	private boolean fEditing= false;
+	private boolean isApplicable = false;
 
-    /**
-     * Creates a new ChangeVariableValueAction for the given variables view
-     * @param view the variables view in which this action will appear
-     */
+	/**
+	 * Creates a new ChangeVariableValueAction for the given variables view
+	 * @param view the variables view in which this action will appear
+	 */
 	public ChangeVariableValueAction(VariablesView view) {
 		super(view.getViewer(), ActionMessages.ChangeVariableValue_title);
 		setDescription(ActionMessages.ChangeVariableValue_toolTipText);
@@ -74,7 +74,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 * @return if this action applies to the current selection
 	 */
 	public boolean isApplicable() {
-	    return isApplicable;
+		return isApplicable;
 	}
 
 	/**
@@ -82,16 +82,16 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 * @param variable run the action on the given variable
 	 */
 	protected void doActionPerformed(final IVariable variable) {
-	    Shell shell = fView.getViewSite().getShell();
+		Shell shell = fView.getViewSite().getShell();
 		// If a previous edit is still in progress, don't start another
-	    if (fEditing) {
-	        return;
-	    }
-	    fEditing= true;
+		if (fEditing) {
+			return;
+		}
+		fEditing= true;
 		fVariable = variable;
-	    if (!delegateEdit(shell)) {
-	        doDefaultEdit(shell);
-	    }
+		if (!delegateEdit(shell)) {
+			doDefaultEdit(shell);
+		}
 		fEditing= false;
 	}
 
@@ -101,24 +101,24 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 * <code>true</code> if a delegate handled the edit, <code>false</code>
 	 * if the variable still needs to be edited.
 	 *
-     * @param shell a shell for prompting the user
-     * @return whether or not a delegate attempted to edit the variable
-     */
-    private boolean delegateEdit(Shell shell) {
-        String modelIdentifier = fVariable.getModelIdentifier();
-        IVariableValueEditor editor= VariableValueEditorManager.getDefault().getVariableValueEditor(modelIdentifier);
-        if (editor != null) {
-            return editor.editVariable(fVariable, shell);
-        }
-        return false;
-    }
+	 * @param shell a shell for prompting the user
+	 * @return whether or not a delegate attempted to edit the variable
+	 */
+	private boolean delegateEdit(Shell shell) {
+		String modelIdentifier = fVariable.getModelIdentifier();
+		IVariableValueEditor editor= VariableValueEditorManager.getDefault().getVariableValueEditor(modelIdentifier);
+		if (editor != null) {
+			return editor.editVariable(fVariable, shell);
+		}
+		return false;
+	}
 
-    /**
-     * Edits the variable using the default variable editor
-     * @param shell a shell for prompting the user
-     */
-    protected void doDefaultEdit(Shell shell) {
-	    String name= IInternalDebugCoreConstants.EMPTY_STRING;
+	/**
+	 * Edits the variable using the default variable editor
+	 * @param shell a shell for prompting the user
+	 */
+	protected void doDefaultEdit(Shell shell) {
+		String name= IInternalDebugCoreConstants.EMPTY_STRING;
 		String value= IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
 			name= fVariable.getName();
@@ -163,12 +163,12 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 * @param sel the selection to update
 	 */
 	protected void update(IStructuredSelection sel) {
-	    isApplicable = false;
+		isApplicable = false;
 		Iterator<Object> iter = sel.iterator();
 		if (iter.hasNext()) {
 			Object object= iter.next();
 			if (object instanceof IValueModification) {
-			    isApplicable = true;
+				isApplicable = true;
 				IValueModification varMod= (IValueModification)object;
 				if (!varMod.supportsValueModification()) {
 					setEnabled(false);

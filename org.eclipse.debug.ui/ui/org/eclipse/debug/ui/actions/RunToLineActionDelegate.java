@@ -72,8 +72,8 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
-                    fTargetElement = (ISuspendResume)
-                        DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
+					fTargetElement = (ISuspendResume)
+						DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
 				}
 			}
 			update();

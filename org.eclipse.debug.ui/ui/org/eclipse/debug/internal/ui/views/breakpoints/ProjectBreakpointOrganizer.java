@@ -26,16 +26,16 @@ import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
  */
 public class ProjectBreakpointOrganizer extends AbstractBreakpointOrganizerDelegate {
 
-    @Override
+	@Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
-        IMarker marker = breakpoint.getMarker();
-        if (marker != null) {
-            IProject project = marker.getResource().getProject();
-            if (project != null) {
-                return new IAdaptable[]{project};
-            }
-        }
-        return null;
-    }
+		IMarker marker = breakpoint.getMarker();
+		if (marker != null) {
+			IProject project = marker.getResource().getProject();
+			if (project != null) {
+				return new IAdaptable[]{project};
+			}
+		}
+		return null;
+	}
 
 }

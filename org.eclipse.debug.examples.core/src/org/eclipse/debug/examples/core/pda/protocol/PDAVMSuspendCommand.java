@@ -30,13 +30,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAVMSuspendCommand extends PDACommand {
 
-    public PDAVMSuspendCommand() {
-        super("vmsuspend"); //$NON-NLS-1$
-    }
+	public PDAVMSuspendCommand() {
+		super("vmsuspend"); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

@@ -32,26 +32,26 @@ public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizerDelegate
 
 	private Map<String, IAdaptable[]> fTypes = new HashMap<>();
 
-    @Override
+	@Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
-        IBreakpointTypeCategory category = breakpoint.getAdapter(IBreakpointTypeCategory.class);
-        if (category != null) {
-            return new IAdaptable[]{category};
-        }
-    	String name = DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);
-    	if (name != null) {
-    		IAdaptable[] categories = fTypes.get(name);
-    		if (categories == null) {
-    			categories = new IAdaptable[]{new BreakpointTypeCategory(name)};
-    			fTypes.put(name, categories);
-    		}
-    		return categories;
-    	}
-    	return null;
-    }
+		IBreakpointTypeCategory category = breakpoint.getAdapter(IBreakpointTypeCategory.class);
+		if (category != null) {
+			return new IAdaptable[]{category};
+		}
+		String name = DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);
+		if (name != null) {
+			IAdaptable[] categories = fTypes.get(name);
+			if (categories == null) {
+				categories = new IAdaptable[]{new BreakpointTypeCategory(name)};
+				fTypes.put(name, categories);
+			}
+			return categories;
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    	fTypes.clear();
-    }
+		fTypes.clear();
+	}
 }

@@ -123,25 +123,25 @@ public interface IConsole {
 
 	/**
 	 * Adds the given pattern match listener to this console. The listener will
-     * be connected and receive match notifications.
+	 * be connected and receive match notifications.
 	 * @param matchListener the listener to add
 	 * @since 3.1
 	 */
 	void addPatternMatchListener(IPatternMatchListener matchListener);
 
-    /**
-     * Removes the given pattern match listener from this console. The listener will be
-     * disconnected and will no longer receive match notifications.
-     * @param matchListener the pattern match listener to remove.
-     * @since 3.1
-     */
+	/**
+	 * Removes the given pattern match listener from this console. The listener will be
+	 * disconnected and will no longer receive match notifications.
+	 * @param matchListener the pattern match listener to remove.
+	 * @since 3.1
+	 */
 	void removePatternMatchListener(IPatternMatchListener matchListener);
 
 	/**
 	 * Returns the stream associated with the specified stream identifier.
-     * @param streamIdentifier Uniquely identifies the required stream
-     * @return The stream or <code>null</code> if none found with matching streamIdentifier
-     * @since 3.1
-     */
+	 * @param streamIdentifier Uniquely identifies the required stream
+	 * @return The stream or <code>null</code> if none found with matching streamIdentifier
+	 * @since 3.1
+	 */
 	IOConsoleOutputStream getStream(String streamIdentifier);
 }

@@ -213,7 +213,7 @@ public class WatchExpression implements IWatchExpression {
 	public ILaunch getLaunch() {
 		IDebugTarget debugTarget = getDebugTarget();
 		if (debugTarget != null) {
-		    return debugTarget.getLaunch();
+			return debugTarget.getLaunch();
 		}
 		return null;
 	}

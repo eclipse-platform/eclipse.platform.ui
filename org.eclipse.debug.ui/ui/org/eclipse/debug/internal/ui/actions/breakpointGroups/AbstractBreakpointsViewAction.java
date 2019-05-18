@@ -26,30 +26,30 @@ import org.eclipse.ui.IViewPart;
  */
 public abstract class AbstractBreakpointsViewAction implements IViewActionDelegate, IActionDelegate2 {
 
-    /**
-     * The breakpoints view that this action has been contributed to.
-     */
-    protected BreakpointsView fView;
+	/**
+	 * The breakpoints view that this action has been contributed to.
+	 */
+	protected BreakpointsView fView;
 
-    @Override
+	@Override
 	public void init(IViewPart view) {
-        fView= (BreakpointsView) view;
-    }
+		fView= (BreakpointsView) view;
+	}
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
-    @Override
+	@Override
 	public void dispose() {
-    }
+	}
 
-    @Override
+	@Override
 	public void init(IAction action) {
-    }
+	}
 
-    @Override
+	@Override
 	public void runWithEvent(IAction action, Event event) {
-        run(action);
-    }
+		run(action);
+	}
 }

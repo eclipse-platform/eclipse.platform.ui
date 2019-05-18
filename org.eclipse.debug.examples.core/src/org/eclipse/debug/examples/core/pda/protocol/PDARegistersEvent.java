@@ -24,11 +24,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDARegistersEvent extends PDAEvent {
 
-    public PDARegistersEvent(String message) {
-        super(message);
-    }
+	public PDARegistersEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("registers"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("registers"); //$NON-NLS-1$
+	}
 }

@@ -136,11 +136,11 @@ public class SourceContainerViewer extends TreeViewer {
 	 * @param entries additions
 	 */
 	public void addEntries(ISourceContainer[] entries) {
-        int index = 0;
+		int index = 0;
 		IStructuredSelection sel = getStructuredSelection();
 		if (!sel.isEmpty()) {
-            index = fEntries.indexOf(sel.getFirstElement());
-        }
+			index = fEntries.indexOf(sel.getFirstElement());
+		}
 		for (int i = 0; i < entries.length; i++) {
 			if (!fEntries.contains(entries[i])) {
 				fEntries.add(index, entries[i]);

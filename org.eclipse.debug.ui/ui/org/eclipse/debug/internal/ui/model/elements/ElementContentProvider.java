@@ -86,12 +86,12 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 		job.schedule();
 	}
 
-    /**
-     * Computes the children for the given parent in the specified context.
-     *
-     * @param update update request
-     */
-    protected void retrieveChildren(IChildrenUpdate update) {
+	/**
+	 * Computes the children for the given parent in the specified context.
+	 *
+	 * @param update update request
+	 */
+	protected void retrieveChildren(IChildrenUpdate update) {
 		if (!update.isCanceled()) {
 			IStatus status = Status.OK_STATUS;
 			try {
@@ -110,16 +110,16 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 			}
 			update.setStatus(status);
 		}
-    }
+	}
 
-    /**
-     * Computes whether the given element is a container.
-     *
-     * @param parent potential parent
-     * @param context presentation context
-     * @param monitor result to report to
-     */
-    protected void retrieveChildCount(IChildrenCountUpdate update) {
+	/**
+	 * Computes whether the given element is a container.
+	 *
+	 * @param parent potential parent
+	 * @param context presentation context
+	 * @param monitor result to report to
+	 */
+	protected void retrieveChildCount(IChildrenCountUpdate update) {
 		if (!update.isCanceled()) {
 			IStatus status = Status.OK_STATUS;
 			try {
@@ -137,70 +137,70 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 			}
 			update.setStatus(status);
 		}
-    }
+	}
 
-    /**
-     * Returns the children for the given parent at the specified index in the specified context
-     * or <code>null</code> if none.
-     *
-     * @param parent element to retrieve children for
-     * @param index child index
-     * @param length number of children to retrieve
-     * @param context context children will be presented in
-     * @return child or <code>null</code>
-     * @throws CoreException if an exception occurs retrieving child
-     */
-    protected abstract Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException;
+	/**
+	 * Returns the children for the given parent at the specified index in the specified context
+	 * or <code>null</code> if none.
+	 *
+	 * @param parent element to retrieve children for
+	 * @param index child index
+	 * @param length number of children to retrieve
+	 * @param context context children will be presented in
+	 * @return child or <code>null</code>
+	 * @throws CoreException if an exception occurs retrieving child
+	 */
+	protected abstract Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException;
 
-    /**
-     * Returns the number of children for the given element.
-     *
-     * @param elementPath element that may have children
-     * @param context context element will be presented in
-     * @return number of children
-     * @throws CoreException if an exception occurs determining child count
-     */
-    protected abstract int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException;
+	/**
+	 * Returns the number of children for the given element.
+	 *
+	 * @param elementPath element that may have children
+	 * @param context context element will be presented in
+	 * @return number of children
+	 * @throws CoreException if an exception occurs determining child count
+	 */
+	protected abstract int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException;
 
-    /**
-     * Returns whether this adapter supports the given context.
-     *
-     * @param context
-     * @return whether this adapter supports the given context
-     */
-    protected boolean supportsContext(IPresentationContext context) {
+	/**
+	 * Returns whether this adapter supports the given context.
+	 *
+	 * @param context
+	 * @return whether this adapter supports the given context
+	 */
+	protected boolean supportsContext(IPresentationContext context) {
 		return supportsContextId(context.getId());
-    }
+	}
 
-    /**
-     * Returns whether this adapter provides content in the specified context id.
-     *
-     * @param id part id
-     * @return whether this adapter provides content in the specified context id
-     */
-    protected abstract boolean supportsContextId(String id);
+	/**
+	 * Returns whether this adapter provides content in the specified context id.
+	 *
+	 * @param id part id
+	 * @return whether this adapter provides content in the specified context id
+	 */
+	protected abstract boolean supportsContextId(String id);
 
-    /**
-     * Returns the range of elements from <code>index</code> to <code>index + length</code>
-     * or <code>null</code> if the index and range is outside the bounds of the original element array.
-     *
-     * @param elements the original element array
-     * @param index the initial index to start copying from
-     * @param length the number of elements we want to copy into the returned array
-     * @return element or <code>null</code>
-     */
-    protected Object[] getElements(Object[] elements, int index, int length) {
-    	int max = elements.length;
-    	if (index < max && ((index + length) > max)) {
-    		length = max - index;
-    	}
-    	if ((index + length) <= elements.length) {
-    		Object[] sub = new Object[length];
-    		System.arraycopy(elements, index, sub, 0, length);
-    		return sub;
-    	}
-    	return null;
-    }
+	/**
+	 * Returns the range of elements from <code>index</code> to <code>index + length</code>
+	 * or <code>null</code> if the index and range is outside the bounds of the original element array.
+	 *
+	 * @param elements the original element array
+	 * @param index the initial index to start copying from
+	 * @param length the number of elements we want to copy into the returned array
+	 * @return element or <code>null</code>
+	 */
+	protected Object[] getElements(Object[] elements, int index, int length) {
+		int max = elements.length;
+		if (index < max && ((index + length) > max)) {
+			length = max - index;
+		}
+		if ((index + length) <= elements.length) {
+			Object[] sub = new Object[length];
+			System.arraycopy(elements, index, sub, 0, length);
+			return sub;
+		}
+		return null;
+	}
 
 	@Override
 	public void update(final IHasChildrenUpdate[] updates) {

@@ -34,11 +34,11 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class DebugTargetProxy extends EventHandlerModelProxy {
 
-    private IDebugTarget fDebugTarget;
+	private IDebugTarget fDebugTarget;
 
-    public DebugTargetProxy(IDebugTarget target) {
-        fDebugTarget = target;
-    }
+	public DebugTargetProxy(IDebugTarget target) {
+		fDebugTarget = target;
+	}
 
 	@Override
 	public synchronized void dispose() {
@@ -48,23 +48,23 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 
 	@Override
 	protected boolean containsEvent(DebugEvent event) {
-        Object source = event.getSource();
-        if (source instanceof IDebugElement) {
-            IDebugTarget debugTarget = ((IDebugElement) source).getDebugTarget();
-            // an expression can return null for debug target
-            if (debugTarget != null) {
-            	return debugTarget.equals(fDebugTarget);
-            }
-        }
-        return false;
-    }
+		Object source = event.getSource();
+		if (source instanceof IDebugElement) {
+			IDebugTarget debugTarget = ((IDebugElement) source).getDebugTarget();
+			// an expression can return null for debug target
+			if (debugTarget != null) {
+				return debugTarget.equals(fDebugTarget);
+			}
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	protected DebugEventHandler[] createEventHandlers() {
-        ThreadEventHandler threadEventHandler = new ThreadEventHandler(this);
+		ThreadEventHandler threadEventHandler = new ThreadEventHandler(this);
 		return new DebugEventHandler[] { new DebugTargetEventHandler(this), threadEventHandler,
 				new StackFrameEventHandler(this, threadEventHandler) };
-    }
+	}
 
 	@Override
 	public void installed(Viewer viewer) {
@@ -73,75 +73,75 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 		if (target != null) {
 			ModelDelta delta = getNextSuspendedThreadDelta(null, false);
 			if (delta == null) {
-                try {
-                    ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-                    ILaunch launch = target.getLaunch();
-                    int launchIndex = getLaunchIndex(launch);
-                    int targetIndex = getTargetIndex(target);
-                    delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
-                    ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
-                    node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, target.getThreads().length);
-                } catch (DebugException e) {
-                    // In case of exception do not fire delta
-                    return;
-                }
+				try {
+					ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+					ILaunch launch = target.getLaunch();
+					int launchIndex = getLaunchIndex(launch);
+					int targetIndex = getTargetIndex(target);
+					delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
+					ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+					node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, target.getThreads().length);
+				} catch (DebugException e) {
+					// In case of exception do not fire delta
+					return;
+				}
 			}
 			// expand the target if no suspended thread
 			fireModelChanged(delta);
 		}
 	}
 
-    protected ModelDelta getNextSuspendedThreadDelta(IThread currentThread, boolean reverse) {
-        IDebugTarget target = fDebugTarget;
-        if (target != null) {
-            try {
-                IThread[] threads = target.getThreads();
-                IThread chosen = null;
-                int threadIndex = -1;
-                // select the first thread with a breakpoint, or the first suspended thread
-                // if none have breakpoints
-                boolean takeNext = currentThread == null;
-                int startIdx = reverse ? threads.length - 1 : 0;
-                int endIdx = reverse ? -1 : threads.length;
-                int increment = reverse ? -1 : 1;
-                for (int i = startIdx; i != endIdx; i = i + increment) {
-                    IThread thread = threads[i];
-                    if (takeNext && thread.isSuspended()) {
-                        IBreakpoint[] bps = thread.getBreakpoints();
-                        if (bps != null && bps.length > 0) {
-                            chosen = thread;
-                            threadIndex = i;
-                            break;
-                        } else {
-                            if (chosen == null) {
-                                chosen = thread;
-                                threadIndex = i;
-                            }
-                        }
-                    }
-                    takeNext = takeNext || thread.equals(currentThread);
-                }
-                if (chosen != null) {
-                    IStackFrame frame = chosen.getTopStackFrame();
-                    if (frame != null) {
-                        ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-                        ILaunch launch = target.getLaunch();
-                        int launchIndex = getLaunchIndex(launch);
-                        int targetIndex = getTargetIndex(target);
-                        int stackFrameIndex = getStackFrameIndex(frame);
-                        ModelDelta delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
-                        ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
-                        node = node.addNode(target, targetIndex, IModelDelta.NO_CHANGE, threads.length);
-                        node = node.addNode(chosen, threadIndex, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, chosen.getStackFrames().length);
-                        node = node.addNode(frame, stackFrameIndex, IModelDelta.NO_CHANGE | IModelDelta.SELECT, 0);
-                        return delta;
-                    }
-                }
-            } catch (DebugException e) {
-            }
-        }
-        return null;
-    }
+	protected ModelDelta getNextSuspendedThreadDelta(IThread currentThread, boolean reverse) {
+		IDebugTarget target = fDebugTarget;
+		if (target != null) {
+			try {
+				IThread[] threads = target.getThreads();
+				IThread chosen = null;
+				int threadIndex = -1;
+				// select the first thread with a breakpoint, or the first suspended thread
+				// if none have breakpoints
+				boolean takeNext = currentThread == null;
+				int startIdx = reverse ? threads.length - 1 : 0;
+				int endIdx = reverse ? -1 : threads.length;
+				int increment = reverse ? -1 : 1;
+				for (int i = startIdx; i != endIdx; i = i + increment) {
+					IThread thread = threads[i];
+					if (takeNext && thread.isSuspended()) {
+						IBreakpoint[] bps = thread.getBreakpoints();
+						if (bps != null && bps.length > 0) {
+							chosen = thread;
+							threadIndex = i;
+							break;
+						} else {
+							if (chosen == null) {
+								chosen = thread;
+								threadIndex = i;
+							}
+						}
+					}
+					takeNext = takeNext || thread.equals(currentThread);
+				}
+				if (chosen != null) {
+					IStackFrame frame = chosen.getTopStackFrame();
+					if (frame != null) {
+						ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+						ILaunch launch = target.getLaunch();
+						int launchIndex = getLaunchIndex(launch);
+						int targetIndex = getTargetIndex(target);
+						int stackFrameIndex = getStackFrameIndex(frame);
+						ModelDelta delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
+						ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+						node = node.addNode(target, targetIndex, IModelDelta.NO_CHANGE, threads.length);
+						node = node.addNode(chosen, threadIndex, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, chosen.getStackFrames().length);
+						node = node.addNode(frame, stackFrameIndex, IModelDelta.NO_CHANGE | IModelDelta.SELECT, 0);
+						return delta;
+					}
+				}
+			} catch (DebugException e) {
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Computes the index of a launch at top level in the {@code Debug View} tree.

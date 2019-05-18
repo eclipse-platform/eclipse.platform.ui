@@ -40,58 +40,58 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipboardActionDelegate {
 
-    @Override
+	@Override
 	protected TreeItem[] getSelectedItems(TreeModelViewer clientViewer) {
-        LaunchView view = (LaunchView)getView();
-        if (view.isBreadcrumbVisible()) {
-            ISelection selection = getSelection();
-            if (selection instanceof ITreeSelection && getViewer() != null) {
-                TreePath path = TreePath.EMPTY;
-                if (!selection.isEmpty()) {
-                    path = ((ITreeSelection)selection).getPaths()[0];
-                }
-                return getSelectedItemsInTreeViewer(getViewer(), path);
-            }
-            return new TreeItem[0];
-        } else {
-        	// Return tree selection plus children.
-    	    TreeItem[] selection = clientViewer.getTree().getSelection();
+		LaunchView view = (LaunchView)getView();
+		if (view.isBreadcrumbVisible()) {
+			ISelection selection = getSelection();
+			if (selection instanceof ITreeSelection && getViewer() != null) {
+				TreePath path = TreePath.EMPTY;
+				if (!selection.isEmpty()) {
+					path = ((ITreeSelection)selection).getPaths()[0];
+				}
+				return getSelectedItemsInTreeViewer(getViewer(), path);
+			}
+			return new TreeItem[0];
+		} else {
+			// Return tree selection plus children.
+			TreeItem[] selection = clientViewer.getTree().getSelection();
 			Set<Widget> set = new HashSet<>();
-    	    collectChildItems(set, selection);
-            return set.toArray(new TreeItem[set.size()]);
-        }
-    }
+			collectChildItems(set, selection);
+			return set.toArray(new TreeItem[set.size()]);
+		}
+	}
 
-    /**
-     * Calculates selected items in viewer for given tree path.
-     * @param viewer Viewer to get items from.
-     * @param path Path for desired selection.
-     * @return Selected items.  If no selected items found, returns an empty
-     * array.
-     */
-    private TreeItem[] getSelectedItemsInTreeViewer(TreeModelViewer viewer, TreePath path) {
-        Widget item = viewer.findItem(path);
+	/**
+	 * Calculates selected items in viewer for given tree path.
+	 * @param viewer Viewer to get items from.
+	 * @param path Path for desired selection.
+	 * @return Selected items.  If no selected items found, returns an empty
+	 * array.
+	 */
+	private TreeItem[] getSelectedItemsInTreeViewer(TreeModelViewer viewer, TreePath path) {
+		Widget item = viewer.findItem(path);
 		Set<Widget> set = new HashSet<>();
-        if (item instanceof TreeItem) {
-        	set.add(item);
-        	if (((TreeItem) item).getExpanded()) {
-        		collectChildItems(set, ((TreeItem) item).getItems());
-        	}
-        } else if (item instanceof Tree) {
-        	collectChildItems(set, ((Tree)item).getItems());
-        }
-        return set.toArray(new TreeItem[set.size()]);
-    }
+		if (item instanceof TreeItem) {
+			set.add(item);
+			if (((TreeItem) item).getExpanded()) {
+				collectChildItems(set, ((TreeItem) item).getItems());
+			}
+		} else if (item instanceof Tree) {
+			collectChildItems(set, ((Tree)item).getItems());
+		}
+		return set.toArray(new TreeItem[set.size()]);
+	}
 
 	private void collectChildItems(Set<Widget> set, TreeItem[] items) {
-    	if (items == null) {
-    		return;
-    	}
-    	for (int i = 0; i < items.length; i++) {
-    		set.add(items[i]);
-    		if (items[i].getExpanded()) {
-    			collectChildItems(set, items[i].getItems());
-    		}
-    	}
-    }
+		if (items == null) {
+			return;
+		}
+		for (int i = 0; i < items.length; i++) {
+			set.add(items[i]);
+			if (items[i].getExpanded()) {
+				collectChildItems(set, items[i].getItems());
+			}
+		}
+	}
 }

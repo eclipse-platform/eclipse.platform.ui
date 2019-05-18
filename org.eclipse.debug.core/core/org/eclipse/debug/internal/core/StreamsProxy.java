@@ -86,11 +86,11 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * @return Returns whether the stream proxy was already closed.
 	 */
 	private synchronized boolean isClosed(boolean setClosed) {
-	    boolean closed = fClosed;
-	    if (setClosed) {
-	        fClosed = true;
-	    }
-	    return closed;
+		boolean closed = fClosed;
+		if (setClosed) {
+			fClosed = true;
+		}
+		return closed;
 	}
 
 	/**
@@ -100,9 +100,9 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * Data remaining in the streams is lost.
 	 */
 	public void kill() {
-	    synchronized (this) {
-	        fClosed= true;
-	    }
+		synchronized (this) {
+			fClosed= true;
+		}
 		fOutputMonitor.kill();
 		fErrorMonitor.kill();
 		fInputMonitor.close();
@@ -127,14 +127,14 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 		}
 	}
 
-    @Override
+	@Override
 	public void closeInputStream() throws IOException {
-        if (!isClosed(false)) {
-            fInputMonitor.closeInputStream();
-        } else {
-            throw new IOException();
-        }
+		if (!isClosed(false)) {
+			fInputMonitor.closeInputStream();
+		} else {
+			throw new IOException();
+		}
 
-    }
+	}
 
 }

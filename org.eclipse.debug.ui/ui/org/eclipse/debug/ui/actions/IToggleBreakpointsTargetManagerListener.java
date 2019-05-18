@@ -26,8 +26,8 @@ package org.eclipse.debug.ui.actions;
  */
 public interface IToggleBreakpointsTargetManagerListener {
 
-    /**
-     * Called when the preferred toggle targets have changed.
-     */
-    void preferredTargetsChanged();
+	/**
+	 * Called when the preferred toggle targets have changed.
+	 */
+	void preferredTargetsChanged();
 }

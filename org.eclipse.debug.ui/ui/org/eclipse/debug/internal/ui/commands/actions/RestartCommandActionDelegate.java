@@ -29,36 +29,36 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  */
 public class RestartCommandActionDelegate implements IWorkbenchWindowActionDelegate, IActionDelegate2 {
 
-    private DebugCommandAction fDebugAction = new RestartCommandAction();
+	private DebugCommandAction fDebugAction = new RestartCommandAction();
 
-    @Override
+	@Override
 	public void dispose() {
-        fDebugAction.dispose();
-    }
+		fDebugAction.dispose();
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbenchWindow window) {
-        fDebugAction.init(window);
-    }
+		fDebugAction.init(window);
+	}
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        fDebugAction.run();
-    }
+		fDebugAction.run();
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        // do nothing
-    }
+		// do nothing
+	}
 
-    @Override
+	@Override
 	public void init(IAction action) {
-        fDebugAction.setActionProxy(action);
+		fDebugAction.setActionProxy(action);
 
-    }
+	}
 
-    @Override
+	@Override
 	public void runWithEvent(IAction action, Event event) {
-        run(action);
-    }
+		run(action);
+	}
 }

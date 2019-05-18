@@ -31,50 +31,50 @@ import org.eclipse.swt.graphics.RGB;
  */
 public interface ITreeModelLabelProvider extends IBaseLabelProvider {
 
-    /**
-     * Requests an label update label of the given element.
-     * @param elementPath Element to update.
-     * @return true if element label provider is found and update will
-     * be requested.
-     */
-    boolean update(TreePath elementPath);
+	/**
+	 * Requests an label update label of the given element.
+	 * @param elementPath Element to update.
+	 * @return true if element label provider is found and update will
+	 * be requested.
+	 */
+	boolean update(TreePath elementPath);
 
-    /**
-     * Registers the specified listener for view label update notifications.
-     * @param listener Listener to add
-     */
-    void addLabelUpdateListener(ILabelUpdateListener listener);
+	/**
+	 * Registers the specified listener for view label update notifications.
+	 * @param listener Listener to add
+	 */
+	void addLabelUpdateListener(ILabelUpdateListener listener);
 
-    /**
-     * Removes the specified listener from view label update notifications.
-     * @param listener Listener to remove
-     */
-    void removeLabelUpdateListener(ILabelUpdateListener listener);
+	/**
+	 * Removes the specified listener from view label update notifications.
+	 * @param listener Listener to remove
+	 */
+	void removeLabelUpdateListener(ILabelUpdateListener listener);
 
-    /**
-     * Returns an image for the given image descriptor or <code>null</code>. Adds the image
-     * to a cache of images if it does not already exist.
-     *
-     * @param descriptor image descriptor or <code>null</code>
-     * @return image or <code>null</code>
-     */
-    Image getImage(ImageDescriptor descriptor);
+	/**
+	 * Returns an image for the given image descriptor or <code>null</code>. Adds the image
+	 * to a cache of images if it does not already exist.
+	 *
+	 * @param descriptor image descriptor or <code>null</code>
+	 * @return image or <code>null</code>
+	 */
+	Image getImage(ImageDescriptor descriptor);
 
-    /**
-     * Returns a font for the given font data or <code>null</code>. Adds the font to the font
-     * cache if not yet created.
-     *
-     * @param fontData font data or <code>null</code>
-     * @return font font or <code>null</code>
-     */
-    Font getFont(FontData fontData);
+	/**
+	 * Returns a font for the given font data or <code>null</code>. Adds the font to the font
+	 * cache if not yet created.
+	 *
+	 * @param fontData font data or <code>null</code>
+	 * @return font font or <code>null</code>
+	 */
+	Font getFont(FontData fontData);
 
-    /**
-     * Returns a color for the given RGB or <code>null</code>. Adds the color to the color
-     * cache if not yet created.
-     *
-     * @param rgb RGB or <code>null</code>
-     * @return color or <code>null</code>
-     */
-    Color getColor(RGB rgb);
+	/**
+	 * Returns a color for the given RGB or <code>null</code>. Adds the color to the color
+	 * cache if not yet created.
+	 *
+	 * @param rgb RGB or <code>null</code>
+	 * @return color or <code>null</code>
+	 */
+	Color getColor(RGB rgb);
 }

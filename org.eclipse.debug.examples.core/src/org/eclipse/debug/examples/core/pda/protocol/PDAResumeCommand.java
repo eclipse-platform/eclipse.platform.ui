@@ -33,13 +33,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAResumeCommand extends PDACommand {
 
-    public PDAResumeCommand(int threadId) {
-        super("resume " + threadId); //$NON-NLS-1$
-    }
+	public PDAResumeCommand(int threadId) {
+		super("resume " + threadId); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

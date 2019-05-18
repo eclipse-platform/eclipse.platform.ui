@@ -346,14 +346,14 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 	 * 	possibly <code>null</code>
 	 * @since 3.1
 	 */
-    protected ISchedulingRule getMarkerRule(IResource resource) {
-        ISchedulingRule rule = null;
-        if (resource != null) {
-            IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
-            rule = ruleFactory.markerRule(resource);
-        }
-        return rule;
-    }
+	protected ISchedulingRule getMarkerRule(IResource resource) {
+		ISchedulingRule rule = null;
+		if (resource != null) {
+			IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+			rule = ruleFactory.markerRule(resource);
+		}
+		return rule;
+	}
 
 	/**
 	 * Returns a scheduling rule to use when modifying or deleting this breakpoint's marker,
@@ -364,34 +364,34 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 	 * @return a scheduling rule to use when modifying or deleting this breakpoint's marker
 	 * @since 3.1
 	 */
-    protected ISchedulingRule getMarkerRule() {
-        ISchedulingRule rule = null;
-        IMarker marker = getMarker();
-        if (marker != null) {
-	        IResource resource = marker.getResource();
-	        if (resource != null) {
-	            IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
-	            rule = ruleFactory.markerRule(resource);
-	        }
-        }
-        return rule;
-    }
+	protected ISchedulingRule getMarkerRule() {
+		ISchedulingRule rule = null;
+		IMarker marker = getMarker();
+		if (marker != null) {
+			IResource resource = marker.getResource();
+			if (resource != null) {
+				IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+				rule = ruleFactory.markerRule(resource);
+			}
+		}
+		return rule;
+	}
 
-    /**
+	/**
 	 * Execute the given workspace runnable with the scheduling rule to use when running the operation.
 	 *
 	 * @param rule the rule to use when running the operation
-     * @param wr the runnable operation
-     * @throws DebugException If a core exception occurs performing the operation
+	 * @param wr the runnable operation
+	 * @throws DebugException If a core exception occurs performing the operation
 	 * @since 3.1
 	 */
-    protected void run(ISchedulingRule rule, IWorkspaceRunnable wr) throws DebugException {
-    	try {
-    		ResourcesPlugin.getWorkspace().run(wr, rule, IWorkspace.AVOID_UPDATE, null);
-    	} catch (CoreException e) {
-    		throw new DebugException(e.getStatus());
-    	}
-    }
+	protected void run(ISchedulingRule rule, IWorkspaceRunnable wr) throws DebugException {
+		try {
+			ResourcesPlugin.getWorkspace().run(wr, rule, IWorkspace.AVOID_UPDATE, null);
+		} catch (CoreException e) {
+			throw new DebugException(e.getStatus());
+		}
+	}
 
 	@Override
 	public String toString() {

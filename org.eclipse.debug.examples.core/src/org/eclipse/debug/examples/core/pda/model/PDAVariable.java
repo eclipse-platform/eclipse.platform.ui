@@ -49,7 +49,7 @@ public class PDAVariable extends PDADebugElement implements IVariable {
 	@Override
 	public IValue getValue() throws DebugException {
 		PDACommandResult result = sendCommand(new PDAVarCommand(
-		    fFrame.getThreadIdentifier(), getStackFrame().getIdentifier(), getName()));
+			fFrame.getThreadIdentifier(), getStackFrame().getIdentifier(), getName()));
 		return new PDAValue(this, result.fResponseText);
 	}
 
@@ -70,8 +70,8 @@ public class PDAVariable extends PDADebugElement implements IVariable {
 
 	@Override
 	public void setValue(String expression) throws DebugException {
-        sendCommand(new PDASetVarCommand(
-            fFrame.getThreadIdentifier(), getStackFrame().getIdentifier(), getName(), expression));
+		sendCommand(new PDASetVarCommand(
+			fFrame.getThreadIdentifier(), getStackFrame().getIdentifier(), getName(), expression));
 		fireChangeEvent(DebugEvent.CONTENT);
 	}
 

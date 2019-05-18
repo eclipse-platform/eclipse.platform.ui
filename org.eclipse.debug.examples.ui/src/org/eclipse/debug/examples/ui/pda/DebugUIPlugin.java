@@ -47,10 +47,10 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 
 	private final static String ICONS_PATH = "icons/full/";//$NON-NLS-1$
 	private final static String PATH_OBJECT = ICONS_PATH + "obj16/"; //Model object icons //$NON-NLS-1$
-    private final static String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //Enabled local toolbar icons //$NON-NLS-1$
-    private final static String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; //Disabled local toolbar icons //$NON-NLS-1$
+	private final static String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //Enabled local toolbar icons //$NON-NLS-1$
+	private final static String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; //Disabled local toolbar icons //$NON-NLS-1$
 
-    /**
+	/**
 	 * The id of the plugin
 	 *
 	 * @since 1.4.200
@@ -62,31 +62,31 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	public final static String IMG_ELCL_POP = "IMG_ELCL_POP"; //$NON-NLS-1$
 	public final static String IMG_DLCL_POP = "IMG_DLCL_POP"; //$NON-NLS-1$
 
-    /**
-     * Toolbar action to push onto data stack
-     */
+	/**
+	 * Toolbar action to push onto data stack
+	 */
 	public final static String IMG_ELCL_PUSH = "IMG_ELCL_PUSH"; //$NON-NLS-1$
 	public final static String IMG_DLCL_PUSH = "IMG_DLCL_PUSH"; //$NON-NLS-1$
 
-    /**
-     * PDA program image
-     */
+	/**
+	 * PDA program image
+	 */
 	public final static String IMG_OBJ_PDA = "IMB_OBJ_PDA"; //$NON-NLS-1$
 
-    /**
-     * MIDI file image
-     */
+	/**
+	 * MIDI file image
+	 */
 	public final static String IMG_OBJ_MIDI = "IMB_OBJ_MIDI"; //$NON-NLS-1$
 
-    /**
-     * Keyword color
-     */
-    public final static RGB KEYWORD = new RGB(0,0,255);
-    public final static RGB LABEL = new RGB(128, 128, 0);
+	/**
+	 * Keyword color
+	 */
+	public final static RGB KEYWORD = new RGB(0,0,255);
+	public final static RGB LABEL = new RGB(128, 128, 0);
 
-    /**
-     * Managed colors
-     */
+	/**
+	 * Managed colors
+	 */
 	private final Map<RGB, Color> fColors = new HashMap<>();
 
 	/**
@@ -118,10 +118,10 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		plugin = null;
 		resourceBundle = null;
 		Iterator<Entry<RGB, Color>> colors = fColors.entrySet().iterator();
-        while (colors.hasNext()) {
-            Entry<RGB, Color> entry = colors.next();
-            entry.getValue().dispose();
-        }
+		while (colors.hasNext()) {
+			Entry<RGB, Color> entry = colors.next();
+			entry.getValue().dispose();
+		}
 	}
 
 	/**
@@ -169,17 +169,17 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		declareImage(IMG_DLCL_PUSH, PATH_DLOCALTOOL + "push.gif"); //$NON-NLS-1$
 	}
 
-    /**
-     * Declares a workbench image given the path of the image file (relative to
-     * the workbench plug-in). This is a helper method that creates the image
-     * descriptor and passes it to the main <code>declareImage</code> method.
-     *
-     * @param symbolicName the symbolic name of the image
-     * @param path the path of the image file relative to the base of the workbench
-     * plug-ins install directory
-     * <code>false</code> if this is not a shared image
-     */
-    private void declareImage(String key, String path) {
+	/**
+	 * Declares a workbench image given the path of the image file (relative to
+	 * the workbench plug-in). This is a helper method that creates the image
+	 * descriptor and passes it to the main <code>declareImage</code> method.
+	 *
+	 * @param symbolicName the symbolic name of the image
+	 * @param path the path of the image file relative to the base of the workbench
+	 * plug-ins install directory
+	 * <code>false</code> if this is not a shared image
+	 */
+	private void declareImage(String key, String path) {
 		ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
 		Bundle bundle = Platform.getBundle(PLUGIN_ID);
 		URL url = null;
@@ -189,23 +189,23 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 				desc = ImageDescriptor.createFromURL(url);
 			}
 		}
-        getImageRegistry().put(key, desc);
-    }
+		getImageRegistry().put(key, desc);
+	}
 
-    /**
-     * Returns the color described by the given RGB.
-     *
-     * @param rgb
-     * @return color
-     */
-    public Color getColor(RGB rgb) {
-        Color color = fColors.get(rgb);
-        if (color == null) {
-            color= new Color(Display.getCurrent(), rgb);
-            fColors.put(rgb, color);
-        }
-        return color;
-    }
+	/**
+	 * Returns the color described by the given RGB.
+	 *
+	 * @param rgb
+	 * @return color
+	 */
+	public Color getColor(RGB rgb) {
+		Color color = fColors.get(rgb);
+		if (color == null) {
+			color= new Color(Display.getCurrent(), rgb);
+			fColors.put(rgb, color);
+		}
+		return color;
+	}
 
 	/**
 	 * Returns the active workbench window

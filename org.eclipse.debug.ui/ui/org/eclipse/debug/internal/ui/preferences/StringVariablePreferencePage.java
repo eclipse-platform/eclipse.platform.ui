@@ -468,7 +468,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			} catch (NumberFormatException e){
 				DebugUIPlugin.log(new Throwable("Problem loading persisted column sizes for StringVariablePreferencesPage",e)); //$NON-NLS-1$
 			}
-        }
+		}
 		return true;
 	}
 
@@ -697,12 +697,12 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 					case 3:
 						String contribution = IInternalDebugCoreConstants.EMPTY_STRING;
 						if (variable.isContributed()) {
-                            String pluginId = getVariableManager().getContributingPluginId(variable.getUnderlyingVariable());
-                            if (pluginId != null) {
-                                contribution = pluginId;
-                            } else {
-                                contribution = DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_23;
-                            }
+							String pluginId = getVariableManager().getContributingPluginId(variable.getUnderlyingVariable());
+							if (pluginId != null) {
+								contribution = pluginId;
+							} else {
+								contribution = DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_23;
+							}
 						}
 						return contribution;
 					default:

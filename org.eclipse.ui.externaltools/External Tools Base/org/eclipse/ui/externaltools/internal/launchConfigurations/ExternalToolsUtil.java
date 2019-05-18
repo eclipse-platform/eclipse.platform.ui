@@ -72,7 +72,7 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean getCaptureOutput(ILaunchConfiguration configuration) throws CoreException {
-	    return ExternalToolsCoreUtil.getCaptureOutput(configuration);
+		return ExternalToolsCoreUtil.getCaptureOutput(configuration);
 	}
 
 	/**

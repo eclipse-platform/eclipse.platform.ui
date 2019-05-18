@@ -95,20 +95,20 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 
 		fMenu= new Menu(parent);
 		ILogicalStructureType[] types = getTypes();
-        ILogicalStructureType enabledType = DebugPlugin.getDefaultStructureType(types);
+		ILogicalStructureType enabledType = DebugPlugin.getDefaultStructureType(types);
 		if (types != null && types.length > 0) {
 			for (int i = 0; i < types.length; i++) {
-                ILogicalStructureType type= types[i];
+				ILogicalStructureType type= types[i];
 				Action action = new SelectLogicalStructureAction(getView(), type, getValue(), types);
 				action.setChecked((enabledType == type) && getView().isShowLogicalStructure());
-                StringBuilder label= new StringBuilder();
-                //add the numerical accelerator
-                if (i < 9) {
-                    label.append('&');
-                    label.append(i + 1);
-                    label.append(' ');
-                }
-                label.append(action.getText());
+				StringBuilder label= new StringBuilder();
+				//add the numerical accelerator
+				if (i < 9) {
+					label.append('&');
+					label.append(i + 1);
+					label.append(' ');
+				}
+				label.append(action.getText());
 				if (enabledType == type) {
 					action.setText(label.toString() + " " + VariablesViewMessages.AvailableLogicalStructuresAction_2); //$NON-NLS-1$
 				} else {

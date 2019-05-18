@@ -39,55 +39,55 @@ public class PDAToggleWatchpointsTargetFactory implements IToggleBreakpointsTarg
 
 	private final Map<String, IToggleBreakpointsTarget> fToggleWatchpointTargets = new HashMap<>(3);
 
-    static {
-        TOGGLE_WATCHPOINTS_TARGETS.add(TOGGLE_WATCHPOINT_TARGET_BOTH);
-        TOGGLE_WATCHPOINTS_TARGETS.add(TOGGLE_WATCHPOINT_TARGET_ACCESS);
-        TOGGLE_WATCHPOINTS_TARGETS.add(TOGGLE_WATCHPOINT_TARGET_MODIFICATION);
-    }
+	static {
+		TOGGLE_WATCHPOINTS_TARGETS.add(TOGGLE_WATCHPOINT_TARGET_BOTH);
+		TOGGLE_WATCHPOINTS_TARGETS.add(TOGGLE_WATCHPOINT_TARGET_ACCESS);
+		TOGGLE_WATCHPOINTS_TARGETS.add(TOGGLE_WATCHPOINT_TARGET_MODIFICATION);
+	}
 
-    @Override
+	@Override
 	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
-        IToggleBreakpointsTarget target = fToggleWatchpointTargets.get(targetID);
-        if (target == null) {
-            if (TOGGLE_WATCHPOINT_TARGET_BOTH.equals(targetID)) {
-                target = new PDAToggleWatchpointsTarget(true, true);
-            } else if (TOGGLE_WATCHPOINT_TARGET_ACCESS.equals(targetID)) {
-                target = new PDAToggleWatchpointsTarget(true, false);
-            } else if (TOGGLE_WATCHPOINT_TARGET_MODIFICATION.equals(targetID)) {
-                target = new PDAToggleWatchpointsTarget(false, true);
-            } else {
-                return null;
-            }
-            fToggleWatchpointTargets.put(targetID, target);
-        }
-        return target;
-    }
+		IToggleBreakpointsTarget target = fToggleWatchpointTargets.get(targetID);
+		if (target == null) {
+			if (TOGGLE_WATCHPOINT_TARGET_BOTH.equals(targetID)) {
+				target = new PDAToggleWatchpointsTarget(true, true);
+			} else if (TOGGLE_WATCHPOINT_TARGET_ACCESS.equals(targetID)) {
+				target = new PDAToggleWatchpointsTarget(true, false);
+			} else if (TOGGLE_WATCHPOINT_TARGET_MODIFICATION.equals(targetID)) {
+				target = new PDAToggleWatchpointsTarget(false, true);
+			} else {
+				return null;
+			}
+			fToggleWatchpointTargets.put(targetID, target);
+		}
+		return target;
+	}
 
-    @Override
+	@Override
 	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
-        return TOGGLE_WATCHPOINT_TARGET_BOTH;
-    }
+		return TOGGLE_WATCHPOINT_TARGET_BOTH;
+	}
 
-    @Override
+	@Override
 	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
-        return TOGGLE_WATCHPOINTS_TARGETS;
-    }
+		return TOGGLE_WATCHPOINTS_TARGETS;
+	}
 
-    @Override
+	@Override
 	public String getToggleTargetName(String targetID) {
-        if (TOGGLE_WATCHPOINT_TARGET_BOTH.equals(targetID)) {
+		if (TOGGLE_WATCHPOINT_TARGET_BOTH.equals(targetID)) {
 			return "Watchpoints (Read/Write)"; //$NON-NLS-1$
-        } else if (TOGGLE_WATCHPOINT_TARGET_ACCESS.equals(targetID)) {
+		} else if (TOGGLE_WATCHPOINT_TARGET_ACCESS.equals(targetID)) {
 			return "Watchpoints (Read)"; //$NON-NLS-1$
-        } else if (TOGGLE_WATCHPOINT_TARGET_MODIFICATION.equals(targetID)) {
+		} else if (TOGGLE_WATCHPOINT_TARGET_MODIFICATION.equals(targetID)) {
 			return "Watchpoints (Write)"; //$NON-NLS-1$
-        } else {
-            return null;
-        }
-    }
+		} else {
+			return null;
+		}
+	}
 
-    @Override
+	@Override
 	public String getToggleTargetDescription(String targetID) {
-        return getToggleTargetName(targetID);
-    }
+		return getToggleTargetName(targetID);
+	}
 }

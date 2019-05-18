@@ -48,36 +48,36 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 		if (element instanceof PDADebugTarget) {
 			return getTargetText((PDADebugTarget)element);
 		} else if (element instanceof PDAThread) {
-	        return getThreadText((PDAThread)element);
-	    } else if (element instanceof PDAStackFrame) {
-	        return getStackFrameText((PDAStackFrame)element);
-	    } else if (element instanceof PDAWatchpoint) {
-	        return getWatchpointText((PDAWatchpoint)element);
-	    }
+			return getThreadText((PDAThread)element);
+		} else if (element instanceof PDAStackFrame) {
+			return getStackFrameText((PDAStackFrame)element);
+		} else if (element instanceof PDAWatchpoint) {
+			return getWatchpointText((PDAWatchpoint)element);
+		}
 		return null;
 	}
 
 	/**
 	 * Returns a label for the given watchpoint.
 	 *
-     * @param watchpoint
-     * @return a label for the given watchpoint
-     */
-    private String getWatchpointText(PDAWatchpoint watchpoint) {
-        try {
+	 * @param watchpoint
+	 * @return a label for the given watchpoint
+	 */
+	private String getWatchpointText(PDAWatchpoint watchpoint) {
+		try {
 			String label = watchpoint.getVariableName() + " (" + watchpoint.getFunctionName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-	        if (watchpoint.isAccess()) {
+			if (watchpoint.isAccess()) {
 				label += " [read]"; //$NON-NLS-1$
-	        }
-	        if (watchpoint.isModification()) {
+			}
+			if (watchpoint.isModification()) {
 				label += " [write]"; //$NON-NLS-1$
-	        }
-	        return label;
-        } catch (CoreException e) {
-            return null;
-        }
-    }
-    /**
+			}
+			return label;
+		} catch (CoreException e) {
+			return null;
+		}
+	}
+	/**
 	 * Returns a label for the given debug target
 	 *
 	 * @param target debug target
@@ -87,11 +87,11 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 		try {
 			String pgmPath = target.getLaunch().getLaunchConfiguration().getAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, (String)null);
 			if (pgmPath != null) {
-			    IPath path = new Path(pgmPath);
+				IPath path = new Path(pgmPath);
 				String label = ""; //$NON-NLS-1$
-			    if (target.isTerminated()) {
+				if (target.isTerminated()) {
 					label = "<terminated>"; //$NON-NLS-1$
-			    }
+				}
 				return label + "PDA [" + path.lastSegment() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (CoreException e) {
@@ -107,11 +107,11 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @return a label for the given stack frame
 	 */
 	private String getStackFrameText(PDAStackFrame frame) {
-	    try {
+		try {
 			return frame.getName() + " (line: " + frame.getLineNumber() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-	    } catch (DebugException e) {
-	    }
-	    return null;
+		} catch (DebugException e) {
+		}
+		return null;
 
 	}
 
@@ -122,38 +122,38 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @return a label for the given thread
 	 */
 	private String getThreadText(PDAThread thread) {
-	    String label = thread.getName();
-	    if (thread.isStepping()) {
+		String label = thread.getName();
+		if (thread.isStepping()) {
 			label += " (stepping)"; //$NON-NLS-1$
-	    } else if (thread.isSuspended()) {
-	        IBreakpoint[] breakpoints = thread.getBreakpoints();
-	        if (breakpoints.length == 0) {
-	        	if (thread.getError() == null) {
+		} else if (thread.isSuspended()) {
+			IBreakpoint[] breakpoints = thread.getBreakpoints();
+			if (breakpoints.length == 0) {
+				if (thread.getError() == null) {
 					label += " (suspended)"; //$NON-NLS-1$
-	        	} else {
+				} else {
 					label += " (" + thread.getError() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-	        	}
-	        } else {
-	            IBreakpoint breakpoint = breakpoints[0]; // there can only be one in PDA
-	            if (breakpoint instanceof PDALineBreakpoint) {
-	            	PDALineBreakpoint pdaBreakpoint = (PDALineBreakpoint) breakpoint;
-	            	if (pdaBreakpoint instanceof PDAWatchpoint) {
-	            	    try {
-		            	    PDAWatchpoint watchpoint = (PDAWatchpoint)pdaBreakpoint;
+				}
+			} else {
+				IBreakpoint breakpoint = breakpoints[0]; // there can only be one in PDA
+				if (breakpoint instanceof PDALineBreakpoint) {
+					PDALineBreakpoint pdaBreakpoint = (PDALineBreakpoint) breakpoint;
+					if (pdaBreakpoint instanceof PDAWatchpoint) {
+						try {
+							PDAWatchpoint watchpoint = (PDAWatchpoint)pdaBreakpoint;
 							label += " (watchpoint: " + watchpoint.getSuspendType() + " " + watchpoint.getVariableName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	            	    } catch (CoreException e) {
-	            	    }
-	            	} else if (pdaBreakpoint.isRunToLineBreakpoint()) {
+						} catch (CoreException e) {
+						}
+					} else if (pdaBreakpoint.isRunToLineBreakpoint()) {
 						label += " (run to line)"; //$NON-NLS-1$
-	            	} else {
+					} else {
 						label += " (suspended at line breakpoint)"; //$NON-NLS-1$
-	            	}
-	            }
-	        }
-	    } else if (thread.isTerminated()) {
+					}
+				}
+			}
+		} else if (thread.isTerminated()) {
 			label = "<terminated> " + label; //$NON-NLS-1$
-	    }
-	    return label;
+		}
+		return label;
 	}
 
 	@Override

@@ -53,120 +53,120 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 	 */
 	private IWorkbenchPart fMyPart = null;
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.TerminateAndRemoveAction_0;
-    }
+		return ActionMessages.TerminateAndRemoveAction_0;
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.terminate_and_remove_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.terminate_and_remove_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.debugview.popupMenu.terminateAndRemove"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.debugview.popupMenu.terminateAndRemove"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.TerminateAndRemoveAction_3;
-    }
+		return ActionMessages.TerminateAndRemoveAction_3;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_REMOVE);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_REMOVE);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE);
+	}
 
-    @Override
+	@Override
 	protected Class<ITerminateHandler> getCommandType() {
 		return ITerminateHandler.class;
 	}
 
-    @Override
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
-        boolean isAllTerminated = true;
-        ISelection context = event.getContext();
-        if (context instanceof IStructuredSelection) {
-            Object[] elements = ((IStructuredSelection)context).toArray();
-            for (int i = 0; i < elements.length; i++) {
-                if (!isTerminated(elements[i])) {
-                    isAllTerminated = false;
-                    break;
-                }
-            }
-        }
-        // IF all elements are terminated, we don't need to query the terminate handler, just
-        // enable the action, which whill just remove the terminated launches (bug 324959).
-        fCanTerminate = !isAllTerminated;
-        if (isAllTerminated) {
-            setEnabled(true);
-        } else {
-            super.debugContextChanged(event);
-        }
-    }
+		boolean isAllTerminated = true;
+		ISelection context = event.getContext();
+		if (context instanceof IStructuredSelection) {
+			Object[] elements = ((IStructuredSelection)context).toArray();
+			for (int i = 0; i < elements.length; i++) {
+				if (!isTerminated(elements[i])) {
+					isAllTerminated = false;
+					break;
+				}
+			}
+		}
+		// IF all elements are terminated, we don't need to query the terminate handler, just
+		// enable the action, which whill just remove the terminated launches (bug 324959).
+		fCanTerminate = !isAllTerminated;
+		if (isAllTerminated) {
+			setEnabled(true);
+		} else {
+			super.debugContextChanged(event);
+		}
+	}
 
-    protected boolean isTerminated(Object element) {
-        ILaunch launch = DebugUIPlugin.getLaunch(element);
-        if (launch != null) {
-            return launch.isTerminated();
-        }
-        return false;
-    }
+	protected boolean isTerminated(Object element) {
+		ILaunch launch = DebugUIPlugin.getLaunch(element);
+		if (launch != null) {
+			return launch.isTerminated();
+		}
+		return false;
+	}
 
 
-    @Override
+	@Override
 	protected void postExecute(IRequest request, Object[] targets) {
-        IStatus status = request.getStatus();
-        if(status == null || status.isOK()) {
-            for (int i = 0; i < targets.length; i++) {
-                ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
-                if (launch != null) {
+		IStatus status = request.getStatus();
+		if(status == null || status.isOK()) {
+			for (int i = 0; i < targets.length; i++) {
+				ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
+				if (launch != null) {
 					DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void runWithEvent(Event event) {
-    	if (fCanTerminate) {
+		if (fCanTerminate) {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-	    	if (window != null) {
-		    	if (!MessageDialog.openQuestion(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {
+			if (window != null) {
+				if (!MessageDialog.openQuestion(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {
 					return;
 				}
-	    	}
-	    	super.runWithEvent(event);
-    	} else {
-    		// don't terminate, just remove
-    		// TODO: make #getContext() API in next release
-    		ISelection sel = null;
-    		if (fMyPart != null) {
-    			sel = getDebugContextService().getActiveContext(fMyPart.getSite().getId());
-    	    } else {
-    	    	sel = getDebugContextService().getActiveContext();
-    	    }
-    		if (sel instanceof IStructuredSelection) {
-                IStructuredSelection ss = (IStructuredSelection) sel;
-                postExecute(new Request(), ss.toArray());
-            }
-    	}
-    }
+			}
+			super.runWithEvent(event);
+		} else {
+			// don't terminate, just remove
+			// TODO: make #getContext() API in next release
+			ISelection sel = null;
+			if (fMyPart != null) {
+				sel = getDebugContextService().getActiveContext(fMyPart.getSite().getId());
+			} else {
+				sel = getDebugContextService().getActiveContext();
+			}
+			if (sel instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) sel;
+				postExecute(new Request(), ss.toArray());
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbenchPart part) {
-    	super.init(part); // TODO: if #getContext() was API, this would not be needed
-    	fMyPart = part;
-    }
+		super.init(part); // TODO: if #getContext() was API, this would not be needed
+		fMyPart = part;
+	}
 }

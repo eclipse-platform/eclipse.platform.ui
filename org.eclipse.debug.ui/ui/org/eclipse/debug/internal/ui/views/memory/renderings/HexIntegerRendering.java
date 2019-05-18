@@ -38,13 +38,13 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 
-        if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
-            MemoryByte[] swapped = new MemoryByte[data.length];
-            for (int i = 0; i < data.length; i++){
-                swapped[data.length-i-1] = data[i];
-            }
-            data = swapped;
-        }
+		if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
+			MemoryByte[] swapped = new MemoryByte[data.length];
+			for (int i = 0; i < data.length; i++){
+				swapped[data.length-i-1] = data[i];
+			}
+			data = swapped;
+		}
 
 		for (int i=0; i<data.length; i++)
 		{
@@ -62,20 +62,20 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 		return strBuffer.toString().toUpperCase();
 	}
 
-    /**
-     * @todo davidp needs to add a method comment.
-     * @param data
-     * @return
-     */
-    private int getEndianness (MemoryByte[] data) {
-        // if the user has not set an endianess to the rendering
-        // take default
-        int endianess = getDisplayEndianess();
-        if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN) {
+	/**
+	 * @todo davidp needs to add a method comment.
+	 * @param data
+	 * @return
+	 */
+	private int getEndianness (MemoryByte[] data) {
+		// if the user has not set an endianess to the rendering
+		// take default
+		int endianess = getDisplayEndianess();
+		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN) {
 			endianess = getBytesEndianess(data);
 		}
-        return endianess;
-    }
+		return endianess;
+	}
 
 	@Override
 	public byte[] getBytes(String dataType, BigInteger address,
@@ -85,13 +85,13 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 		byte[] bytes = RenderingsUtil.convertHexStringToByteArray(data, currentValues.length, getNumCharsPerByte());
 
 
-        if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
-            byte[] swapped = new byte[bytes.length];
-            for (int i = 0; i < bytes.length; i++){
-                swapped[bytes.length-i-1] = bytes[i];
-            }
-           bytes = swapped;
-        }
+		if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
+			byte[] swapped = new byte[bytes.length];
+			for (int i = 0; i < bytes.length; i++){
+				swapped[bytes.length-i-1] = bytes[i];
+			}
+			bytes = swapped;
+		}
 
 		return bytes;
 	}

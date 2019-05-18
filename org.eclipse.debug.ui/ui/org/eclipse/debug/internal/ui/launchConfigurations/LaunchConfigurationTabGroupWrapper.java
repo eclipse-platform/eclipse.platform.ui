@@ -161,9 +161,9 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 					TabCollector collector = new TabCollector(Arrays.asList(fGroup.getTabs()), Arrays.asList(ext));
 					while(collector.hasNext()) {
 						ILaunchConfigurationTab next = collector.next();
-					    if (next != null) {
-					        fTabs.add(next);
-					    }
+						if (next != null) {
+							fTabs.add(next);
+						}
 					}
 				}
 				else {

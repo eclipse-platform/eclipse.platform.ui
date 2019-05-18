@@ -39,9 +39,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class TerminateAndRelaunchAction extends DebugCommandAction {
 
-    @Override
+	@Override
 	public void postExecute(IRequest request, final Object[] targets) {
-        if (request.getStatus() == null || request.getStatus().isOK()) {
+		if (request.getStatus() == null || request.getStatus().isOK()) {
 			DebugUIPlugin.getStandardDisplay().asyncExec(() -> {
 				// Must be run in the UI thread since the launch can require
 				// prompting to proceed
@@ -52,26 +52,26 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 					}
 				}
 			});
-        }
-    }
+		}
+	}
 
-    @Override
+	@Override
 	protected ISelection getContext() {
-        // Convert action context to contain only launch objects (bug 356651).
-        ISelection context = super.getContext();
-        if (context instanceof IStructuredSelection && !context.isEmpty()) {
-            IStructuredSelection ss = (IStructuredSelection)context;
+		// Convert action context to contain only launch objects (bug 356651).
+		ISelection context = super.getContext();
+		if (context instanceof IStructuredSelection && !context.isEmpty()) {
+			IStructuredSelection ss = (IStructuredSelection)context;
 			Set<ILaunch> launches = new HashSet<>(ss.size());
 			for (Iterator<Object> itr = ss.iterator(); itr.hasNext();) {
-                ILaunch launch = DebugUIPlugin.getLaunch(itr.next());
-                if (launch != null) {
-                    launches.add(launch);
-                }
-            }
-            return new StructuredSelection(launches.toArray());
-        }
-        return super.getContext();
-    }
+				ILaunch launch = DebugUIPlugin.getLaunch(itr.next());
+				if (launch != null) {
+					launches.add(launch);
+				}
+			}
+			return new StructuredSelection(launches.toArray());
+		}
+		return super.getContext();
+	}
 
 
 	@Override
@@ -94,54 +94,54 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 		super.debugContextChanged(event);
 	}
 
-    protected boolean canRelaunch(Object element) {
-    	ILaunch launch = DebugUIPlugin.getLaunch(element);
-    	if (launch != null) {
-    		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
-    		if (configuration != null) {
-    			return LaunchConfigurationManager.isVisible(configuration);
-    		}
-    	}
+	protected boolean canRelaunch(Object element) {
+		ILaunch launch = DebugUIPlugin.getLaunch(element);
+		if (launch != null) {
+			ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+			if (configuration != null) {
+				return LaunchConfigurationManager.isVisible(configuration);
+			}
+		}
 		return false;
-    }
+	}
 
-    @Override
+	@Override
 	public String getActionDefinitionId() {
-        return ActionMessages.TerminateAndRelaunchAction_0;
-    }
+		return ActionMessages.TerminateAndRelaunchAction_0;
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.terminate_and_relaunch_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.terminate_and_relaunch_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.debugview.popupMenu.TerminateAndRelaunch"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.debugview.popupMenu.TerminateAndRelaunch"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.TerminateAndRelaunchAction_3;
-    }
+		return ActionMessages.TerminateAndRelaunchAction_3;
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.TerminateAndRelaunchAction_4;
-    }
+		return ActionMessages.TerminateAndRelaunchAction_4;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_RELAUNCH);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_RELAUNCH);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_RELAUNCH);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_RELAUNCH);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_RELAUNCH);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_RELAUNCH);
+	}
 }

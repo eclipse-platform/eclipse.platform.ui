@@ -61,27 +61,27 @@ public interface IDebugHelpContextIds {
 	String DETAIL_PANE_PASTE_ACTION = PREFIX + "detail_pane_paste_action_context"; //$NON-NLS-1$
 	String DETAIL_PANE_SELECT_ALL_ACTION = PREFIX + "detail_pane_select_all_action_context"; //$NON-NLS-1$
 	String DETAIL_PANE_FIND_REPLACE_ACTION = PREFIX + "detail_pane_find_replace_action_context"; //$NON-NLS-1$
-    String DETAIL_PANE_WORD_WRAP_ACTION = PREFIX + "detail_pane_word_wrap_action_context"; //$NON-NLS-1$
-    String DETAIL_PANE_MAX_LENGTH_ACTION = PREFIX + "detail_pane_max_length_action_context"; //$NON-NLS-1$
-    String CONSOLE_TERMINATE_ACTION = PREFIX + "console_terminate_action_context"; //$NON-NLS-1$
-    String CONSOLE_REMOVE_ALL_TERMINATED = PREFIX + "console_remove_all_terminated_context"; //$NON-NLS-1$
-    String CONSOLE_REMOVE_LAUNCH = PREFIX + "console_remove_launch_context"; //$NON-NLS-1$;
-    String CONSOLE_SHOW_PREFERENCES = PREFIX + "console_show_preferences_action_context"; //$NON-NLS-1$
-    String SHOW_COLUMNS_ACTION = PREFIX + "show_columns_context"; //$NON-NLS-1$;
-    String CONFIGURE_COLUMNS_ACTION = PREFIX + "configure_columns_context"; //$NON-NLS-1$;
-    String MEMORY_VIEW_PANE_ORIENTATION_ACTION = PREFIX + "memory_view_pane_orientation_action_context"; //$NON-NLS-1$
-    String SHOW_WHEN_STDOUT_CHANGES_ACTION = PREFIX + "show_stdout_action_context"; //$NON-NLS-1$
-    String SHOW_WHEN_STDERR_CHANGES_ACTION = PREFIX + "show_stderr_action_context"; //$NON-NLS-1$
-    String HORIZONTAL_DETAIL_PANE_LAYOUT_ACTION = PREFIX + "horizontal_detail_pane_layout_action_context"; //$NON-NLS-1$
-    String VERTICAL_DETAIL_PANE_LAYOUT_ACTION = PREFIX + "vertical_detail_pane_layout_action_context"; //$NON-NLS-1$
-    String DETAIL_PANE_HIDDEN_LAYOUT_ACTION = PREFIX + "detail_pane_hidden_layout_action_context"; //$NON-NLS-1$
-    String DEBUG_VIEW_MODE_AUTO_ACTION = PREFIX + "debug_view_mode_auto_action_context"; //$NON-NLS-1$
-    String DEBUG_VIEW_MODE_FULL_ACTION = PREFIX + "debug_view_mode_full_action_context"; //$NON-NLS-1$
-    String DEBUG_VIEW_MODE_COMPACT_ACTION = PREFIX + "debug_view_mode_compact_action_context"; //$NON-NLS-1$
-    String DEBUG_VIEW_DROP_DOWN_AUTOEXPAND_ACTION = PREFIX + "debug_view_drop_down_autoexpand_action_context"; //$NON-NLS-1$
-    String DEBUG_TOOLBAR_VIEW_ACTION = PREFIX + "debug_toolbar_view_action_context"; //$NON-NLS-1$
-    String DEBUG_TOOLBAR_WINDOW_ACTION = PREFIX + "debug_toolbar_window_action_context"; //$NON-NLS-1$
-    String DEBUG_TOOLBAR_BOTH_ACTION = PREFIX + "debug_toolbar_both_action_context"; //$NON-NLS-1$
+	String DETAIL_PANE_WORD_WRAP_ACTION = PREFIX + "detail_pane_word_wrap_action_context"; //$NON-NLS-1$
+	String DETAIL_PANE_MAX_LENGTH_ACTION = PREFIX + "detail_pane_max_length_action_context"; //$NON-NLS-1$
+	String CONSOLE_TERMINATE_ACTION = PREFIX + "console_terminate_action_context"; //$NON-NLS-1$
+	String CONSOLE_REMOVE_ALL_TERMINATED = PREFIX + "console_remove_all_terminated_context"; //$NON-NLS-1$
+	String CONSOLE_REMOVE_LAUNCH = PREFIX + "console_remove_launch_context"; //$NON-NLS-1$;
+	String CONSOLE_SHOW_PREFERENCES = PREFIX + "console_show_preferences_action_context"; //$NON-NLS-1$
+	String SHOW_COLUMNS_ACTION = PREFIX + "show_columns_context"; //$NON-NLS-1$;
+	String CONFIGURE_COLUMNS_ACTION = PREFIX + "configure_columns_context"; //$NON-NLS-1$;
+	String MEMORY_VIEW_PANE_ORIENTATION_ACTION = PREFIX + "memory_view_pane_orientation_action_context"; //$NON-NLS-1$
+	String SHOW_WHEN_STDOUT_CHANGES_ACTION = PREFIX + "show_stdout_action_context"; //$NON-NLS-1$
+	String SHOW_WHEN_STDERR_CHANGES_ACTION = PREFIX + "show_stderr_action_context"; //$NON-NLS-1$
+	String HORIZONTAL_DETAIL_PANE_LAYOUT_ACTION = PREFIX + "horizontal_detail_pane_layout_action_context"; //$NON-NLS-1$
+	String VERTICAL_DETAIL_PANE_LAYOUT_ACTION = PREFIX + "vertical_detail_pane_layout_action_context"; //$NON-NLS-1$
+	String DETAIL_PANE_HIDDEN_LAYOUT_ACTION = PREFIX + "detail_pane_hidden_layout_action_context"; //$NON-NLS-1$
+	String DEBUG_VIEW_MODE_AUTO_ACTION = PREFIX + "debug_view_mode_auto_action_context"; //$NON-NLS-1$
+	String DEBUG_VIEW_MODE_FULL_ACTION = PREFIX + "debug_view_mode_full_action_context"; //$NON-NLS-1$
+	String DEBUG_VIEW_MODE_COMPACT_ACTION = PREFIX + "debug_view_mode_compact_action_context"; //$NON-NLS-1$
+	String DEBUG_VIEW_DROP_DOWN_AUTOEXPAND_ACTION = PREFIX + "debug_view_drop_down_autoexpand_action_context"; //$NON-NLS-1$
+	String DEBUG_TOOLBAR_VIEW_ACTION = PREFIX + "debug_toolbar_view_action_context"; //$NON-NLS-1$
+	String DEBUG_TOOLBAR_WINDOW_ACTION = PREFIX + "debug_toolbar_window_action_context"; //$NON-NLS-1$
+	String DEBUG_TOOLBAR_BOTH_ACTION = PREFIX + "debug_toolbar_both_action_context"; //$NON-NLS-1$
 
 	// Views
 	String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$
@@ -91,7 +91,7 @@ public interface IDebugHelpContextIds {
 	String LAUNCH_CONFIGURATION_VIEW = PREFIX + "launch_configuration_view_context"; //$NON-NLS-1$
 	String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$
 	String PROCESS_CONSOLE = PREFIX + "process_console_context";  //$NON-NLS-1$
-    String MODULES_VIEW = PREFIX + "modules_view_context"; //$NON-NLS-1$
+	String MODULES_VIEW = PREFIX + "modules_view_context"; //$NON-NLS-1$
 
 	// Preference pages
 	String DEBUG_PREFERENCE_PAGE = PREFIX + "debug_preference_page_context"; //$NON-NLS-1$

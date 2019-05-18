@@ -82,50 +82,50 @@ public class DebugTextHover implements ITextHover, ITextHoverExtension, ITextHov
 	 * Replaces reserved HTML characters in the given string with
 	 * their escaped equivalents. This is to ensure that variable
 	 * values containing reserved characters are correctly displayed.
-     */
-    private static String replaceHTMLChars(String variableText) {
-        StringBuilder buffer= new StringBuilder(variableText.length());
-        char[] characters = variableText.toCharArray();
-        for (int i = 0; i < characters.length; i++) {
-            char character= characters[i];
-            switch (character) {
-            	case '<':
-            	    buffer.append("&lt;"); //$NON-NLS-1$
-            	    break;
-            	case '>':
-            	    buffer.append("&gt;"); //$NON-NLS-1$
-            	    break;
-            	case '&':
-            	    buffer.append("&amp;"); //$NON-NLS-1$
-            	    break;
-            	case '"':
-            	    buffer.append("&quot;"); //$NON-NLS-1$
-            	    break;
-            	default:
-            	    buffer.append(character);
-            }
-        }
-        return buffer.toString();
-    }
+	 */
+	private static String replaceHTMLChars(String variableText) {
+		StringBuilder buffer= new StringBuilder(variableText.length());
+		char[] characters = variableText.toCharArray();
+		for (int i = 0; i < characters.length; i++) {
+			char character= characters[i];
+			switch (character) {
+				case '<':
+					buffer.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>':
+					buffer.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '&':
+					buffer.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '"':
+					buffer.append("&quot;"); //$NON-NLS-1$
+					break;
+				default:
+					buffer.append(character);
+			}
+		}
+		return buffer.toString();
+	}
 
-	   /**
-     * Returns the value of this filters preference (on/off) for the given
-     * view.
-     *
-     * @param part
-     * @return boolean
-     */
-    public static boolean getBooleanPreferenceValue(String id, String preference) {
-        String compositeKey = id + "." + preference; //$NON-NLS-1$
+	/**
+	 * Returns the value of this filters preference (on/off) for the given
+	 * view.
+	 *
+	 * @param part
+	 * @return boolean
+	 */
+	public static boolean getBooleanPreferenceValue(String id, String preference) {
+		String compositeKey = id + "." + preference; //$NON-NLS-1$
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-        boolean value = false;
-        if (store.contains(compositeKey)) {
-            value = store.getBoolean(compositeKey);
-        } else {
-            value = store.getBoolean(preference);
-        }
-        return value;
-    }
+		boolean value = false;
+		if (store.contains(compositeKey)) {
+			value = store.getBoolean(compositeKey);
+		} else {
+			value = store.getBoolean(preference);
+		}
+		return value;
+	}
 
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {

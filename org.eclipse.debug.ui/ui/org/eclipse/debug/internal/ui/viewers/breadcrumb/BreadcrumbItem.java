@@ -40,15 +40,15 @@ import org.eclipse.swt.widgets.Shell;
  */
 class BreadcrumbItem extends Item {
 
-    private TreePath fPath;
+	private TreePath fPath;
 
 	private final BreadcrumbViewer fParent;
 	private Composite fContainer;
 
-    private BreadcrumbItemDropDown fExpandBlock;
-    private BreadcrumbItemDetails fDetailsBlock;
+	private BreadcrumbItemDropDown fExpandBlock;
+	private BreadcrumbItemDetails fDetailsBlock;
 
-    private boolean fIsLast;
+	private boolean fIsLast;
 
 	/**
 	 * A new breadcrumb item which is shown inside the given viewer.
@@ -70,7 +70,7 @@ class BreadcrumbItem extends Item {
 		layout.horizontalSpacing= 0;
 		fContainer.setLayout(layout);
 
-        fExpandBlock= new BreadcrumbItemDropDown(this, fContainer);
+		fExpandBlock= new BreadcrumbItemDropDown(this, fContainer);
 		fDetailsBlock= new BreadcrumbItemDetails(this, fContainer);
 		fContainer.setData("org.eclipse.e4.ui.css.id", "DebugBreadcrumbItemComposite"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -94,11 +94,11 @@ class BreadcrumbItem extends Item {
 	}
 
 	public TreePath getPath() {
-	    return fPath;
+		return fPath;
 	}
 
 	public void setPath(TreePath path) {
-	    fPath = path;
+		fPath = path;
 	}
 
 	/**

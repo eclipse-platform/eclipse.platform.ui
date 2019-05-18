@@ -21,23 +21,23 @@ import org.eclipse.debug.core.model.IWatchpoint;
  */
 public class ModificationWatchpointToggleAction extends ModifyWatchpointAction {
 
-    @Override
+	@Override
 	protected boolean isEnabled(IWatchpoint watchpoint) {
-        return watchpoint.supportsModification();
-    }
+		return watchpoint.supportsModification();
+	}
 
-    @Override
+	@Override
 	protected void toggleWatchpoint(IWatchpoint watchpoint, boolean b) throws CoreException {
-        watchpoint.setModification(b);
-    }
+		watchpoint.setModification(b);
+	}
 
-    @Override
+	@Override
 	protected boolean isChecked(IWatchpoint watchpoint) {
-        try {
-            return watchpoint.isModification();
-        } catch (CoreException e) {
-        }
-        return false;
-    }
+		try {
+			return watchpoint.isModification();
+		} catch (CoreException e) {
+		}
+		return false;
+	}
 
 }

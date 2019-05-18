@@ -75,111 +75,111 @@ import org.eclipse.swt.widgets.Control;
  */
 public interface IMemoryRendering extends IAdaptable{
 
-    /**
-     * Initializes this rendering to be hosted in the given container, displaying
-     * the given memory block. This method is called before this rendering's control
-     * has been created.
-     *
-     * @param container container hosting this rendering
-     * @param block the memory block to render
-     */
-    void init(IMemoryRenderingContainer container, IMemoryBlock block);
+	/**
+	 * Initializes this rendering to be hosted in the given container, displaying
+	 * the given memory block. This method is called before this rendering's control
+	 * has been created.
+	 *
+	 * @param container container hosting this rendering
+	 * @param block the memory block to render
+	 */
+	void init(IMemoryRenderingContainer container, IMemoryBlock block);
 
-    /**
-     * Creates the top level control for this rendering under the given parent composite.
-     * This method is called after this rendering's <code>init</code> method has been
-     * called.
-     * <p>
-     * Implementors are responsible for ensuring that
-     * the created control can be accessed via <code>getControl</code>
-     * </p>
-     * @param parent the parent composite
-     * @return the new top level control
-     */
-    Control createControl(Composite parent);
+	/**
+	 * Creates the top level control for this rendering under the given parent composite.
+	 * This method is called after this rendering's <code>init</code> method has been
+	 * called.
+	 * <p>
+	 * Implementors are responsible for ensuring that
+	 * the created control can be accessed via <code>getControl</code>
+	 * </p>
+	 * @param parent the parent composite
+	 * @return the new top level control
+	 */
+	Control createControl(Composite parent);
 
-    /**
-     * Returns the top level control for this rendering.
-     * <p>
-     * May return <code>null</code> if the control
-     * has not been created yet.
-     * </p>
-     * @return the top level control or <code>null</code>
-     */
-    Control getControl();
+	/**
+	 * Returns the top level control for this rendering.
+	 * <p>
+	 * May return <code>null</code> if the control
+	 * has not been created yet.
+	 * </p>
+	 * @return the top level control or <code>null</code>
+	 */
+	Control getControl();
 
-    /**
-     * Disposes this rendering.
-     */
-    void dispose();
+	/**
+	 * Disposes this rendering.
+	 */
+	void dispose();
 
-    /**
-     * Notification this rendering has become the active rendering. Only one
-     * rendering can be active at once. Generally, the active rendering is
-     * visible and has focus.
-     */
-    void activated();
+	/**
+	 * Notification this rendering has become the active rendering. Only one
+	 * rendering can be active at once. Generally, the active rendering is
+	 * visible and has focus.
+	 */
+	void activated();
 
-    /**
-     * Notification this rendering is no longer the active rendering.
-     */
-    void deactivated();
+	/**
+	 * Notification this rendering is no longer the active rendering.
+	 */
+	void deactivated();
 
-    /**
-     * Notification this rendering has become visible in its container.
-     * Note that a rendering does not have to be active to be visible.
-     */
-    void becomesVisible();
+	/**
+	 * Notification this rendering has become visible in its container.
+	 * Note that a rendering does not have to be active to be visible.
+	 */
+	void becomesVisible();
 
-    /**
-     * Notification this rendering has become hidden in its container.
-     */
-    void becomesHidden();
+	/**
+	 * Notification this rendering has become hidden in its container.
+	 */
+	void becomesHidden();
 
-    /**
-     * Returns the memory block displayed by this rendering.
-     *
-     * @return the memory block displayed by this rendering
-     */
-    IMemoryBlock getMemoryBlock();
+	/**
+	 * Returns the memory block displayed by this rendering.
+	 *
+	 * @return the memory block displayed by this rendering
+	 */
+	IMemoryBlock getMemoryBlock();
 
-    /**
-     * Returns the identifier associated with this rendering's type.
-     *
-     * @return the identifier associated with this rendering's type
-     * @see IMemoryRenderingType
-     */
-    String getRenderingId();
+	/**
+	 * Returns the identifier associated with this rendering's type.
+	 *
+	 * @return the identifier associated with this rendering's type
+	 * @see IMemoryRenderingType
+	 */
+	String getRenderingId();
 
-    /**
-     * Adds a listener for property changes to this rendering.
-     * Has no effect if an identical listener is already registered.
-     *
-     * @param listener a property change listener
-     */
-    void addPropertyChangeListener(IPropertyChangeListener listener);
+	/**
+	 * Adds a listener for property changes to this rendering.
+	 * Has no effect if an identical listener is already registered.
+	 *
+	 * @param listener a property change listener
+	 */
+	void addPropertyChangeListener(IPropertyChangeListener listener);
 
-    /**
-     * Removes the given property change listener from this rendering.
-     * Has no effect if the identical listener is not registered.
-     *
-     * @param listener a property change listener
-     */
-    void removePropertyChangeListener(IPropertyChangeListener listener);
+	/**
+	 * Removes the given property change listener from this rendering.
+	 * Has no effect if the identical listener is not registered.
+	 *
+	 * @param listener a property change listener
+	 */
+	void removePropertyChangeListener(IPropertyChangeListener listener);
 
-    /**
-     * Returns an image for this rendering. Clients should not dispose
-     * this image. This rendering will dispose the image if required when
-     * this rendering is disposed.
-     *
-     * @return an image for this rendering
-     */
-    Image getImage();
+	/**
+	 * Returns an image for this rendering. Clients should not dispose
+	 * this image. This rendering will dispose the image if required when
+	 * this rendering is disposed.
+	 *
+	 * @return an image for this rendering
+	 */
+	Image getImage();
 
-    /**
-     * Returns a label for this rendering.
-     *
-     * @return a label for this rendering
-     */
-    String getLabel();
+	/**
+	 * Returns a label for this rendering.
+	 *
+	 * @return a label for this rendering
+	 */
+	String getLabel();
 }

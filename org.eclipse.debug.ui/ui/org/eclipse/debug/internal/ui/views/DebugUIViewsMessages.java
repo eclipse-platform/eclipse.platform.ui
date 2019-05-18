@@ -46,7 +46,7 @@ public class DebugUIViewsMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIViewsMessages.class);
 	}
 
-    public static String InspectPopupDialog_0;
+	public static String InspectPopupDialog_0;
 
-    public static String InspectPopupDialog_1;
+	public static String InspectPopupDialog_1;
 }

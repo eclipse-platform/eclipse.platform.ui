@@ -29,76 +29,76 @@ import org.eclipse.swt.widgets.Widget;
 
 public class TreeModelViewerAutopopulateAgent implements IViewerUpdateListener {
 
-    private TreeModelViewer fViewer;
+	private TreeModelViewer fViewer;
 
 
-    public TreeModelViewerAutopopulateAgent(TreeModelViewer viewer) {
-        fViewer = viewer;
-        fViewer.addViewerUpdateListener(this);
-    }
+	public TreeModelViewerAutopopulateAgent(TreeModelViewer viewer) {
+		fViewer = viewer;
+		fViewer.addViewerUpdateListener(this);
+	}
 
-    public void dispose() {
-        fViewer.removeViewerUpdateListener(this);
-        fViewer = null;
-    }
+	public void dispose() {
+		fViewer.removeViewerUpdateListener(this);
+		fViewer = null;
+	}
 
-    @Override
+	@Override
 	public void updateComplete(IViewerUpdate update) {
-        if (update instanceof IChildrenCountUpdate) {
-            TreePath path = update.getElementPath();
-            ILazyTreePathContentProvider contentProvider = (ILazyTreePathContentProvider) fViewer.getContentProvider();
+		if (update instanceof IChildrenCountUpdate) {
+			TreePath path = update.getElementPath();
+			ILazyTreePathContentProvider contentProvider = (ILazyTreePathContentProvider) fViewer.getContentProvider();
 
-            Widget[] items = fViewer.testFindItems(update.getElement());
-            for (int i = 0; i < items.length; i++) {
-                if ( path.equals(getTreePath(items[i])) ) {
-                    int itemCount = getItemChildCount(items[i]);
-                    for (int j = 0; j < itemCount; j++) {
-                        contentProvider.updateElement(path, j);
-                    }
-                }
-            }
-        }
-    }
+			Widget[] items = fViewer.testFindItems(update.getElement());
+			for (int i = 0; i < items.length; i++) {
+				if ( path.equals(getTreePath(items[i])) ) {
+					int itemCount = getItemChildCount(items[i]);
+					for (int j = 0; j < itemCount; j++) {
+						contentProvider.updateElement(path, j);
+					}
+				}
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void updateStarted(IViewerUpdate update) {
-        // TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    @Override
+	@Override
 	public void viewerUpdatesBegin() {
-        // TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    @Override
+	@Override
 	public void viewerUpdatesComplete() {
-        // TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    private TreePath getTreePath(Widget w) {
-        if (w instanceof TreeItem) {
-            TreeItem item = (TreeItem)w;
+	private TreePath getTreePath(Widget w) {
+		if (w instanceof TreeItem) {
+			TreeItem item = (TreeItem)w;
 			LinkedList<Object> segments = new LinkedList<>();
-            while (item != null) {
-                Object segment = item.getData();
-                Assert.isNotNull(segment);
-                segments.addFirst(segment);
-                item = item.getParentItem();
-            }
-            return new TreePath(segments.toArray());
-        }
-        return TreePath.EMPTY;
-    }
+			while (item != null) {
+				Object segment = item.getData();
+				Assert.isNotNull(segment);
+				segments.addFirst(segment);
+				item = item.getParentItem();
+			}
+			return new TreePath(segments.toArray());
+		}
+		return TreePath.EMPTY;
+	}
 
-    private int getItemChildCount(Widget w) {
-        if (w instanceof Tree) {
-            return ((Tree)w).getItemCount();
-        } else if (w instanceof TreeItem) {
-            return ((TreeItem)w).getItemCount();
-        }
-        return 0;
-    }
+	private int getItemChildCount(Widget w) {
+		if (w instanceof Tree) {
+			return ((Tree)w).getItemCount();
+		} else if (w instanceof TreeItem) {
+			return ((TreeItem)w).getItemCount();
+		}
+		return 0;
+	}
 }

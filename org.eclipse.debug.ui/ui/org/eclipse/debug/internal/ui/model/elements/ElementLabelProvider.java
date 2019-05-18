@@ -203,10 +203,10 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			update.setForeground(getForeground(elementPath, presentationContext, columnId), i);
 			update.setFontData(getFontData(elementPath, presentationContext, columnId), i);
 			if (update instanceof ICheckUpdate &&
-			    Boolean.TRUE.equals(presentationContext.getProperty(ICheckUpdate.PROP_CHECK)))
+				Boolean.TRUE.equals(presentationContext.getProperty(ICheckUpdate.PROP_CHECK)))
 			{
 				((ICheckUpdate) update).setChecked(
-				    getChecked(elementPath, presentationContext), getGrayed(elementPath, presentationContext));
+					getChecked(elementPath, presentationContext), getGrayed(elementPath, presentationContext));
 			}
 		}
 	}
@@ -300,11 +300,11 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	/**
 	 * Returns the checked state for the given path.
 	 *
-     * @param path Path of the element to retrieve the grayed state for.
-     * @param presentationContext Presentation context where the element is
-     * displayed.
-     * @return <code>true<code> if the element check box should be checked
-     * @throws CoreException
+	 * @param path Path of the element to retrieve the grayed state for.
+	 * @param presentationContext Presentation context where the element is
+	 * displayed.
+	 * @return <code>true<code> if the element check box should be checked
+	 * @throws CoreException
 	 *
 	 * @since 3.6
 	 */
@@ -316,18 +316,18 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * Returns the grayed state for the given path.
 	 *
 	 * @param path Path of the element to retrieve the grayed state for.
-     * @param presentationContext Presentation context where the element is
-     * displayed.
+	 * @param presentationContext Presentation context where the element is
+	 * displayed.
 	 * @return <code>true<code> if the element check box should be grayed
 	 * @throws CoreException
-     *
-     * @since 3.6
+	 *
+	 * @since 3.6
 	 */
 	protected boolean getGrayed(TreePath path, IPresentationContext presentationContext) throws CoreException {
 		return false;
 	}
 
-    @Override
+	@Override
 	public synchronized void update(ILabelUpdate[] updates) {
 		if (fLabelJob == null) {
 			fLabelJob = newLabelJob(updates);
@@ -340,39 +340,39 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		fLabelJob.schedule();
 	}
 
-    /**
-     * Returns a new <code>Job</code> to update the specified labels. This method
-     * is used to determine if a UI job is needed or not, in the event the request for an update
-     * job has come from a non-UI thread.
-     * @param updates an array of pending label updates
-     * @return a new <code>Job</code> to update labels with.
-     */
-    private Job newLabelJob(ILabelUpdate[] updates) {
-    	if (requiresUIJob(updates)) {
+	/**
+	 * Returns a new <code>Job</code> to update the specified labels. This method
+	 * is used to determine if a UI job is needed or not, in the event the request for an update
+	 * job has come from a non-UI thread.
+	 * @param updates an array of pending label updates
+	 * @return a new <code>Job</code> to update labels with.
+	 */
+	private Job newLabelJob(ILabelUpdate[] updates) {
+		if (requiresUIJob(updates)) {
 			return new UILabelJob();
 		} else {
 			return new LabelJob();
 		}
-    }
+	}
 
-    /**
-     * Returns whether a UI job should be used for updates versus a non-UI job.
-     * @param updates
-     * @return true if the array of updates requires a UI job to update the labels, false otherwise
-     */
-    protected boolean requiresUIJob(ILabelUpdate[] updates) {
-    	return false;
-    }
+	/**
+	 * Returns whether a UI job should be used for updates versus a non-UI job.
+	 * @param updates
+	 * @return true if the array of updates requires a UI job to update the labels, false otherwise
+	 */
+	protected boolean requiresUIJob(ILabelUpdate[] updates) {
+		return false;
+	}
 
-    /**
-     * Returns the scheduling rule for the given update or <code>null</code>
-     * it none.
-     *
-     * @param update label update
-     * @return associated scheduling rule, or <code>null</code>
-     */
-    protected ISchedulingRule getRule(ILabelUpdate update) {
-    	return null;
-    }
+	/**
+	 * Returns the scheduling rule for the given update or <code>null</code>
+	 * it none.
+	 *
+	 * @param update label update
+	 * @return associated scheduling rule, or <code>null</code>
+	 */
+	protected ISchedulingRule getRule(ILabelUpdate update) {
+		return null;
+	}
 
 }

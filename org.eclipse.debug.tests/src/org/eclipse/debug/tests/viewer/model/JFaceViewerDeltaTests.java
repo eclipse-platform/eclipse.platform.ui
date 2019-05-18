@@ -26,19 +26,19 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class JFaceViewerDeltaTests extends DeltaTests {
 
-    public JFaceViewerDeltaTests(String name) {
-        super(name);
-    }
+	public JFaceViewerDeltaTests(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
-    }
+	}
 
-    /**
-     * TODO: remove this method when bug 292322 gets fixed in TreeViewer
-     */
-    @Override
+	/**
+	 * TODO: remove this method when bug 292322 gets fixed in TreeViewer
+	 */
+	@Override
 	public void testBug292322() {
-    }
+	}
 }

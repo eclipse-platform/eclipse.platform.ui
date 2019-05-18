@@ -24,23 +24,23 @@ import org.eclipse.debug.core.DebugException;
  */
 public interface IDropToFrame {
 
-    /**
-     * Returns whether this element can currently perform a drop to frame.
-     * @return whether this element can currently perform a drop to frame
-     */
-    boolean canDropToFrame();
+	/**
+	 * Returns whether this element can currently perform a drop to frame.
+	 * @return whether this element can currently perform a drop to frame
+	 */
+	boolean canDropToFrame();
 
-    /**
-     * Performs a drop to frame on this element. Implementations must generate
-     * events such that debug clients can update appropriately, such as corresponding
-     * <code>RESUME</code> and <code>SUSPEND</code> events, or a single <code>CHANGE</code>
-     * event when the drop is complete. Implementations should implement drop to frame
-     * in a non-blocking fashion.
-     *
-     * @throws DebugException on failure. Reasons include:<ul>
-     * <li>TARGET_REQUEST_FAILED - The request failed in the target</li>
-     * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
-     * </ul>
-     */
-    void dropToFrame() throws DebugException;
+	/**
+	 * Performs a drop to frame on this element. Implementations must generate
+	 * events such that debug clients can update appropriately, such as corresponding
+	 * <code>RESUME</code> and <code>SUSPEND</code> events, or a single <code>CHANGE</code>
+	 * event when the drop is complete. Implementations should implement drop to frame
+	 * in a non-blocking fashion.
+	 *
+	 * @throws DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - The request failed in the target</li>
+	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
+	 * </ul>
+	 */
+	void dropToFrame() throws DebugException;
 }

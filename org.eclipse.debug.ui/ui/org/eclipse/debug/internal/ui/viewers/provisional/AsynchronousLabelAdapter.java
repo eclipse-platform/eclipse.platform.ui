@@ -62,16 +62,16 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 		job.schedule();
 	}
 
-    /**
-     * Returns the scheduling rule for label jobs.
-     *
-     * @param element the element context
-     * @param context the presentation context
-     * @return scheduling rule or <code>null</code>
-     */
-    protected ISchedulingRule getLabelRule(Object element, IPresentationContext context) {
-    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(context);
-    }
+	/**
+	 * Returns the scheduling rule for label jobs.
+	 *
+	 * @param element the element context
+	 * @param context the presentation context
+	 * @return scheduling rule or <code>null</code>
+	 */
+	protected ISchedulingRule getLabelRule(Object element, IPresentationContext context) {
+		return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(context);
+	}
 
 	/**
 	 * Returns whether this label adapter requires to be run in the UI thread.
@@ -127,49 +127,49 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 	 * @return label
 	 * @exception CoreException if an exception occurs computing label
 	 */
-    protected abstract String[] getLabels(Object element, IPresentationContext context) throws CoreException;
+	protected abstract String[] getLabels(Object element, IPresentationContext context) throws CoreException;
 
-    /**
-     * Returns an image descriptor for the given element in the specified context
-     * or <code>null</code>.
-     *
-     * @param element element to compute image descriptor for
-     * @param context presentation context
-     * @return image descriptor or <code>null</code>
-     * @throws CoreException if an exception occurs computing image descriptor
-     */
-    protected abstract ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException;
+	/**
+	 * Returns an image descriptor for the given element in the specified context
+	 * or <code>null</code>.
+	 *
+	 * @param element element to compute image descriptor for
+	 * @param context presentation context
+	 * @return image descriptor or <code>null</code>
+	 * @throws CoreException if an exception occurs computing image descriptor
+	 */
+	protected abstract ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException;
 
-    /**
-     * Returns font data for the given element in the specified context or <code>null</code>
-     * to use the default font.
-     *
-     * @param element element to compute font data for
-     * @param context presentation context
-     * @return font data or <code>null</code>
-     * @throws CoreException if an exception occurs computing font data
-     */
-    protected abstract FontData[] getFontDatas(Object element, IPresentationContext context) throws CoreException;
+	/**
+	 * Returns font data for the given element in the specified context or <code>null</code>
+	 * to use the default font.
+	 *
+	 * @param element element to compute font data for
+	 * @param context presentation context
+	 * @return font data or <code>null</code>
+	 * @throws CoreException if an exception occurs computing font data
+	 */
+	protected abstract FontData[] getFontDatas(Object element, IPresentationContext context) throws CoreException;
 
-    /**
-     * Returns a foreground color for the given element in the specified context or <code>null</code>
-     * to use the default color.
-     *
-     * @param element element to compute color for
-     * @param context presentation context
-     * @return color or <code>null</code>
-     * @throws CoreException if an exception occurs computing color
-     */
-    protected abstract RGB[] getForegrounds(Object element, IPresentationContext context) throws CoreException;
+	/**
+	 * Returns a foreground color for the given element in the specified context or <code>null</code>
+	 * to use the default color.
+	 *
+	 * @param element element to compute color for
+	 * @param context presentation context
+	 * @return color or <code>null</code>
+	 * @throws CoreException if an exception occurs computing color
+	 */
+	protected abstract RGB[] getForegrounds(Object element, IPresentationContext context) throws CoreException;
 
-    /**
-     * Returns a background color for the given element in the specified context or <code>null</code>
-     * to use the default color.
-     *
-     * @param element element to compute color for
-     * @param context presentation context
-     * @return color or <code>null</code>
-     * @throws CoreException if an exception occurs computing color
-     */
-    protected abstract RGB[] getBackgrounds(Object element, IPresentationContext context) throws CoreException;
+	/**
+	 * Returns a background color for the given element in the specified context or <code>null</code>
+	 * to use the default color.
+	 *
+	 * @param element element to compute color for
+	 * @param context presentation context
+	 * @return color or <code>null</code>
+	 * @throws CoreException if an exception occurs computing color
+	 */
+	protected abstract RGB[] getBackgrounds(Object element, IPresentationContext context) throws CoreException;
 }

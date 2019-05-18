@@ -27,36 +27,36 @@ import org.eclipse.core.runtime.Path;
  */
 public class ResourceFactory {
 
-    // These persistence constants are stored in XML.  Do not
-    // change them.
-    public static final String TAG_PATH = "path";//$NON-NLS-1$
+	// These persistence constants are stored in XML.  Do not
+	// change them.
+	public static final String TAG_PATH = "path";//$NON-NLS-1$
 
-    public static final String TAG_TYPE = "type";//$NON-NLS-1$
+	public static final String TAG_TYPE = "type";//$NON-NLS-1$
 
-    /**
-     * Creates and returns an element based on the given memento
-     *
-     * @param memento element memento
-     * @return associated element
-     */
-    public static IAdaptable createElement(XMLMemento memento) {
-        // Get the file name.
-        String fileName = memento.getString(TAG_PATH);
-        if (fileName == null) {
+	/**
+	 * Creates and returns an element based on the given memento
+	 *
+	 * @param memento element memento
+	 * @return associated element
+	 */
+	public static IAdaptable createElement(XMLMemento memento) {
+		// Get the file name.
+		String fileName = memento.getString(TAG_PATH);
+		if (fileName == null) {
 			return null;
 		}
 
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        String type = memento.getString(TAG_TYPE);
-        IResource res = null;
-        if (type == null) {
-            // Old format memento. Create an IResource using findMember.
-            // Will return null for resources in closed projects.
-            res = root.findMember(new Path(fileName));
-        } else {
-            int resourceType = Integer.parseInt(type);
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		String type = memento.getString(TAG_TYPE);
+		IResource res = null;
+		if (type == null) {
+			// Old format memento. Create an IResource using findMember.
+			// Will return null for resources in closed projects.
+			res = root.findMember(new Path(fileName));
+		} else {
+			int resourceType = Integer.parseInt(type);
 
-            if (resourceType == IResource.ROOT) {
+			if (resourceType == IResource.ROOT) {
 				res = root;
 			} else if (resourceType == IResource.PROJECT) {
 				res = root.getProject(fileName);
@@ -65,12 +65,12 @@ public class ResourceFactory {
 			} else if (resourceType == IResource.FILE) {
 				res = root.getFile(new Path(fileName));
 			}
-        }
-        return res;
-    }
+		}
+		return res;
+	}
 
-    public static void saveState(XMLMemento memento, IResource res) {
-        memento.putString(TAG_PATH, res.getFullPath().toString());
-        memento.putString(TAG_TYPE, Integer.toString(res.getType()));
-    }
+	public static void saveState(XMLMemento memento, IResource res) {
+		memento.putString(TAG_PATH, res.getFullPath().toString());
+		memento.putString(TAG_TYPE, Integer.toString(res.getType()));
+	}
 }

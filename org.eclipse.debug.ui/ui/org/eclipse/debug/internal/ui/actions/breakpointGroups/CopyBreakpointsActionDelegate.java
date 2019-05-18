@@ -48,14 +48,14 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 		fStamp = System.currentTimeMillis();
 		LocalSelectionTransfer.getTransfer().setSelectionSetTime(fStamp);
 		IAction pasteAction = ((AbstractDebugView)getView()).getAction(IDebugView.PASTE_ACTION);
-        // update the enablement of the paste action
-        // workaround since the clipboard does not suppot callbacks
-        if (pasteAction instanceof PasteBreakpointsAction) {
-        	PasteBreakpointsAction pba = (PasteBreakpointsAction) pasteAction;
-        	if (pba.getStructuredSelection() != null) {
-        		pba.selectionChanged(pba.getStructuredSelection());
-        	}
-        }
+		// update the enablement of the paste action
+		// workaround since the clipboard does not suppot callbacks
+		if (pasteAction instanceof PasteBreakpointsAction) {
+			PasteBreakpointsAction pba = (PasteBreakpointsAction) pasteAction;
+			if (pba.getStructuredSelection() != null) {
+				pba.selectionChanged(pba.getStructuredSelection());
+			}
+		}
 	}
 
 	@Override

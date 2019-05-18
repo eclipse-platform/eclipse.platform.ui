@@ -41,37 +41,37 @@ public interface ILabelUpdate extends IViewerUpdate {
 	 * @param text to set to viewer
 	 * @param columnIndex column index (0 when no columns)
 	 */
-    void setLabel(String text, int columnIndex);
+	void setLabel(String text, int columnIndex);
 
-    /**
-     * Sets the font of the label.
-     *
-     * @param fontData to set to viewer
-     * @param columnIndex column index (0 when no columns)
-     */
-    void setFontData(FontData fontData, int columnIndex);
+	/**
+	 * Sets the font of the label.
+	 *
+	 * @param fontData to set to viewer
+	 * @param columnIndex column index (0 when no columns)
+	 */
+	void setFontData(FontData fontData, int columnIndex);
 
-    /**
-     * Sets the image of the label.
-     *
-     * @param image to set to viewer
-     * @param columnIndex column index (0 when no columns)
-     */
-    void setImageDescriptor(ImageDescriptor image, int columnIndex);
+	/**
+	 * Sets the image of the label.
+	 *
+	 * @param image to set to viewer
+	 * @param columnIndex column index (0 when no columns)
+	 */
+	void setImageDescriptor(ImageDescriptor image, int columnIndex);
 
-    /**
-     * Sets the foreground color of the label.
-     *
-     * @param foreground to set to viewer
-     * @param columnIndex column index (0 when no columns)
-     */
-    void setForeground(RGB foreground, int columnIndex);
+	/**
+	 * Sets the foreground color of the label.
+	 *
+	 * @param foreground to set to viewer
+	 * @param columnIndex column index (0 when no columns)
+	 */
+	void setForeground(RGB foreground, int columnIndex);
 
-    /**
-     * Sets the background color of the label.
-     *
-     * @param background to set to viewer
-     * @param columnIndex column index (0 when no columns)
-     */
-    void setBackground(RGB background, int columnIndex);
+	/**
+	 * Sets the background color of the label.
+	 *
+	 * @param background to set to viewer
+	 * @param columnIndex column index (0 when no columns)
+	 */
+	void setBackground(RGB background, int columnIndex);
 }

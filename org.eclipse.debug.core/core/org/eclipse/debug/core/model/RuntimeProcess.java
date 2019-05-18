@@ -203,12 +203,12 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			}
 			Process process = getSystemProcess();
 			if (process != null) {
-			    process.destroy();
+				process.destroy();
 			}
 			int attempts = 0;
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
 				try {
-				    process = getSystemProcess();
+					process = getSystemProcess();
 					if (process != null) {
 						fExitValue = process.exitValue(); // throws exception if process not exited
 					}
@@ -236,24 +236,24 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * has terminated.
 	 */
 	protected void terminated() {
-        if (fStreamsProxy instanceof StreamsProxy) {
-            ((StreamsProxy)fStreamsProxy).close();
-        }
+		if (fStreamsProxy instanceof StreamsProxy) {
+			((StreamsProxy)fStreamsProxy).close();
+		}
 
 
-        // Avoid calling IProcess.exitValue() inside a sync section (Bug 311813).
-        int exitValue = -1;
-        boolean running = false;
-        try {
-            exitValue = fProcess.exitValue();
-        } catch (IllegalThreadStateException ie) {
-            running = true;
-        }
+		// Avoid calling IProcess.exitValue() inside a sync section (Bug 311813).
+		int exitValue = -1;
+		boolean running = false;
+		try {
+			exitValue = fProcess.exitValue();
+		} catch (IllegalThreadStateException ie) {
+			running = true;
+		}
 
 		synchronized (this) {
 			fTerminated= true;
 			if (!running) {
-			    fExitValue = exitValue;
+				fExitValue = exitValue;
 			}
 			fProcess= null;
 		}
@@ -265,9 +265,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 */
 	@Override
 	public IStreamsProxy getStreamsProxy() {
-	    if (!fCaptureOutput) {
-	        return null;
-	    }
+		if (!fCaptureOutput) {
+			return null;
+		}
 		return fStreamsProxy;
 	}
 
@@ -277,9 +277,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * @return streams proxy
 	 */
 	protected IStreamsProxy createStreamsProxy() {
-	    if (!fCaptureOutput) {
-	        return new NullStreamsProxy(getSystemProcess());
-	    }
+		if (!fCaptureOutput) {
+			return new NullStreamsProxy(getSystemProcess());
+		}
 		String encoding = getLaunch().getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
 		return new StreamsProxy(getSystemProcess(), encoding);
 	}

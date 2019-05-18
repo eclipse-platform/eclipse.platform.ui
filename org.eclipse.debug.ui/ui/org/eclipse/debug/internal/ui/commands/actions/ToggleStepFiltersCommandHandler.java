@@ -25,9 +25,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  */
 public class ToggleStepFiltersCommandHandler extends DebugCommandHandler {
 
-    @Override
+	@Override
 	protected Class<IStepFiltersHandler> getCommandType() {
-        return IStepFiltersHandler.class;
-    }
+		return IStepFiltersHandler.class;
+	}
 
 }

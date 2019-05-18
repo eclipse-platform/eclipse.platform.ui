@@ -26,13 +26,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAGroupsCommand extends PDACommand {
 
-    public PDAGroupsCommand() {
-        super("groups"); //$NON-NLS-1$
-    }
+	public PDAGroupsCommand() {
+		super("groups"); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDAListResult(resultText);
-    }
+		return new PDAListResult(resultText);
+	}
 }

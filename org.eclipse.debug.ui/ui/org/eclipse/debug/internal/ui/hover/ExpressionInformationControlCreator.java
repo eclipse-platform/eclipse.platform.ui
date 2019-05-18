@@ -94,16 +94,16 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		private IVariable fVariable;
 
 		private IPresentationContext fContext;
-	    private TreeModelViewer fViewer;
-	    private SashForm fSashForm;
-	    private Composite fDetailPaneComposite;
-	    private DetailPaneProxy fDetailPane;
-	    private Tree fTree;
+		private TreeModelViewer fViewer;
+		private SashForm fSashForm;
+		private Composite fDetailPaneComposite;
+		private DetailPaneProxy fDetailPane;
+		private Tree fTree;
 
 		/**
-	     * Creates the content for the root element of the tree viewer in the hover
-	     */
-	    private class TreeRoot extends ElementContentProvider {
+		 * Creates the content for the root element of the tree viewer in the hover
+		 */
+		private class TreeRoot extends ElementContentProvider {
 			@Override
 			protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 				return 1;
@@ -118,7 +118,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			protected boolean supportsContextId(String id) {
 				return true;
 			}
-	    }
+		}
 
 		/**
 		 * Inner class implementing IDetailPaneContainer methods.  Handles changes to detail
@@ -219,7 +219,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		@Override
 		public void dispose() {
 			persistSettings(getShell());
-            fContext.dispose();
+			fContext.dispose();
 			super.dispose();
 		}
 
@@ -253,61 +253,61 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		@Override
 		protected void createContent(Composite parent) {
 
-	        fSashForm = new SashForm(parent, parent.getStyle());
-	        fSashForm.setOrientation(SWT.VERTICAL);
+			fSashForm = new SashForm(parent, parent.getStyle());
+			fSashForm.setOrientation(SWT.VERTICAL);
 
-		    // update presentation context
-	        AbstractDebugView view = getViewToEmulate();
-	        fContext = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
-	        if (view != null) {
-	        	// copy over properties
-	        	IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
-	        	String[] properties = copy.getProperties();
-	        	for (int i = 0; i < properties.length; i++) {
+			// update presentation context
+			AbstractDebugView view = getViewToEmulate();
+			fContext = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
+			if (view != null) {
+				// copy over properties
+				IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
+				String[] properties = copy.getProperties();
+				for (int i = 0; i < properties.length; i++) {
 					String key = properties[i];
 					fContext.setProperty(key, copy.getProperty(key));
 				}
-	        }
+			}
 
-	        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, fContext);
-	        fViewer.setAutoExpandLevel(1);
+			fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, fContext);
+			fViewer.setAutoExpandLevel(1);
 
-	        if (view != null) {
-	        	// copy over filters
-	        	StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
-	            if (structuredViewer != null) {
-	                ViewerFilter[] filters = structuredViewer.getFilters();
-	                for (int i = 0; i < filters.length; i++) {
-	                    fViewer.addFilter(filters[i]);
-	                }
-	            }
-	        }
+			if (view != null) {
+				// copy over filters
+				StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
+				if (structuredViewer != null) {
+					ViewerFilter[] filters = structuredViewer.getFilters();
+					for (int i = 0; i < filters.length; i++) {
+						fViewer.addFilter(filters[i]);
+					}
+				}
+			}
 
-	        fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
-	        Layout layout = fDetailPaneComposite.getLayout();
-	        if (layout instanceof GridLayout) {
+			fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
+			Layout layout = fDetailPaneComposite.getLayout();
+			if (layout instanceof GridLayout) {
 				GridLayout gl = (GridLayout) layout;
 				gl.marginHeight = 0;
 				gl.marginWidth = 0;
 			}
 
-	        fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
-	        fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
+			fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
+			fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
 
-	        fTree = fViewer.getTree();
-	        fTree.addSelectionListener(new SelectionListener() {
-	            @Override
+			fTree = fViewer.getTree();
+			fTree.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fDetailPane.display(fViewer.getStructuredSelection());
-	            }
-	            @Override
+				}
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {}
-	        });
+			});
 
-	        initSashWeights();
+			initSashWeights();
 
-	        // add update listener to auto-select and display details of root expression
-	        fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
+			// add update listener to auto-select and display details of root expression
+			fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
 				@Override
 				public void viewerUpdatesComplete() {
 				}
@@ -328,55 +328,55 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				}
 			});
 
-	        setForegroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-	        setBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			setForegroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			setBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
 
 
 		/**
-	     * Attempts to find an appropriate view to emulate, this will either be the
-	     * variables view or the expressions view.
-	     * @return a view to emulate or <code>null</code>
-	     */
-	    private AbstractDebugView getViewToEmulate() {
+		 * Attempts to find an appropriate view to emulate, this will either be the
+		 * variables view or the expressions view.
+		 * @return a view to emulate or <code>null</code>
+		 */
+		private AbstractDebugView getViewToEmulate() {
 			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-	        AbstractDebugView expressionsView = (AbstractDebugView) page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-	        if (expressionsView != null && expressionsView.isVisible()) {
-	            return expressionsView;
-	        }
-	        AbstractDebugView variablesView = (AbstractDebugView) page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
-	        if (variablesView != null && variablesView.isVisible()) {
-	            return variablesView;
-	        }
-	        if (expressionsView != null) {
-	            return expressionsView;
-	        }
-	        return variablesView;
-	    }
+			AbstractDebugView expressionsView = (AbstractDebugView) page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+			if (expressionsView != null && expressionsView.isVisible()) {
+				return expressionsView;
+			}
+			AbstractDebugView variablesView = (AbstractDebugView) page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
+			if (variablesView != null && variablesView.isVisible()) {
+				return variablesView;
+			}
+			if (expressionsView != null) {
+				return expressionsView;
+			}
+			return variablesView;
+		}
 
 		/**
-	     * Initializes the sash form weights from the preference store (using default values if
-	     * no sash weights were stored previously).
-	     */
-	    protected void initSashWeights(){
-	    	IDialogSettings settings = getDialogSettings(false);
-	    	if (settings != null) {
-		    	int tree = getIntSetting(settings, SASH_WEIGHT_TREE);
-		    	if (tree > 0) {
-		    		int details = getIntSetting(settings, SASH_WEIGHT_DETAILS);
-		    		if (details > 0) {
-		    			fSashForm.setWeights(new int[]{tree, details});
-		    		}
-		    	}
-	    	}
-	    }
+		 * Initializes the sash form weights from the preference store (using default values if
+		 * no sash weights were stored previously).
+		 */
+		protected void initSashWeights(){
+			IDialogSettings settings = getDialogSettings(false);
+			if (settings != null) {
+				int tree = getIntSetting(settings, SASH_WEIGHT_TREE);
+				if (tree > 0) {
+					int details = getIntSetting(settings, SASH_WEIGHT_DETAILS);
+					if (details > 0) {
+						fSashForm.setWeights(new int[]{tree, details});
+					}
+				}
+			}
+		}
 
-	    @Override
-	    public void setForegroundColor(Color foreground) {
-	    	super.setForegroundColor(foreground);
-	    	fDetailPaneComposite.setForeground(foreground);
-	    	fTree.setForeground(foreground);
-	    }
+		@Override
+		public void setForegroundColor(Color foreground) {
+			super.setForegroundColor(foreground);
+			fDetailPaneComposite.setForeground(foreground);
+			fTree.setForeground(foreground);
+		}
 
 		@Override
 		public void setBackgroundColor(Color background) {
@@ -400,7 +400,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		public void setInput(Object input) {
 			if (input instanceof IVariable) {
 				fVariable = (IVariable) input;
-		        fViewer.setInput(new TreeRoot());
+				fViewer.setInput(new TreeRoot());
 			}
 		}
 

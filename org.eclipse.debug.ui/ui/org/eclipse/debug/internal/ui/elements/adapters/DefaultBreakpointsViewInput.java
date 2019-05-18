@@ -47,26 +47,26 @@ public class DefaultBreakpointsViewInput {
 		return fContext;
 	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        if (getContext() != null) {
-            return getContext().hashCode();
-        } else {
-            return 1;
-        }
-    }
+		if (getContext() != null) {
+			return getContext().hashCode();
+		} else {
+			return 1;
+		}
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object arg0) {
-        if ( (arg0 != null) && arg0.getClass().equals(this.getClass()) ) {
+		if ( (arg0 != null) && arg0.getClass().equals(this.getClass()) ) {
 
-            IPresentationContext context = ((DefaultBreakpointsViewInput) arg0).getContext();
-            if (getContext() != null && context != null) {
+			IPresentationContext context = ((DefaultBreakpointsViewInput) arg0).getContext();
+			if (getContext() != null && context != null) {
 				return getContext().equals(context);
 			}
-        }
+		}
 
-        return super.equals(arg0);
-    }
+		return super.equals(arg0);
+	}
 
 }

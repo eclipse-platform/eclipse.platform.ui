@@ -25,33 +25,33 @@ import org.eclipse.debug.core.model.IProcess;
  * a {@linkplain CountDownLatch synchronization object} when the process terminates.
  */
 public final class ProcessObserver implements Callable<Integer> {
-    private final IProcess p;
-    private final IProgressMonitor pMonitor;
-    private final CountDownLatch countDownLatch;
+	private final IProcess p;
+	private final IProgressMonitor pMonitor;
+	private final CountDownLatch countDownLatch;
 
-    public ProcessObserver(IProgressMonitor monitor, IProcess p, CountDownLatch countDownLatch) {
-        this.p = p;
-        this.pMonitor = monitor;
-        this.countDownLatch = countDownLatch;
-    }
+	public ProcessObserver(IProgressMonitor monitor, IProcess p, CountDownLatch countDownLatch) {
+		this.p = p;
+		this.pMonitor = monitor;
+		this.countDownLatch = countDownLatch;
+	}
 
-    @Override
-    public Integer call() throws Exception {
-        try {
-            while (!p.isTerminated() && !pMonitor.isCanceled()) {
-                TimeUnit.MILLISECONDS.sleep(250);
+	@Override
+	public Integer call() throws Exception {
+		try {
+			while (!p.isTerminated() && !pMonitor.isCanceled()) {
+				TimeUnit.MILLISECONDS.sleep(250);
 
-                if (countDownLatch.getCount() == 0) {
-                    break;
-                }
-            }
-            // check if terminated or timeout
-            if (p.isTerminated()) {
-                return p.getExitValue();
-            }
-            return 0;
-        } finally {
-            countDownLatch.countDown();
-        }
-    }
+				if (countDownLatch.getCount() == 0) {
+					break;
+				}
+			}
+			// check if terminated or timeout
+			if (p.isTerminated()) {
+				return p.getExitValue();
+			}
+			return 0;
+		} finally {
+			countDownLatch.countDown();
+		}
+	}
 }

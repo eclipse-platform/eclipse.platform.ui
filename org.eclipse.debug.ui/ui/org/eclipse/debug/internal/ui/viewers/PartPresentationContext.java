@@ -36,7 +36,7 @@ public class PartPresentationContext extends PresentationContext {
 
 	@Override
 	public IWorkbenchPart getPart() {
-	    return super.getPart();
+		return super.getPart();
 	}
 
 }

@@ -30,42 +30,42 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 abstract public class AbstractDataStackViewHandler extends AbstractHandler {
 
-    @Override
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-        IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
-        if (part instanceof DataStackView) {
-            DataStackView view = (DataStackView)part;
+		IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
+		if (part instanceof DataStackView) {
+			DataStackView view = (DataStackView)part;
 
-            ISelection selection = DebugUITools.getDebugContextForEventChecked(event);
-            if (selection instanceof IStructuredSelection) {
-                Object element = ((IStructuredSelection)selection).getFirstElement();
+			ISelection selection = DebugUITools.getDebugContextForEventChecked(event);
+			if (selection instanceof IStructuredSelection) {
+				Object element = ((IStructuredSelection)selection).getFirstElement();
 
-                PDAThread thread = null;
-                if (element instanceof PDAThread) {
-                    thread = (PDAThread)element;
-                } else if (element instanceof PDAStackFrame) {
-                    thread = (PDAThread)((PDAStackFrame)element).getThread();
-                }
+				PDAThread thread = null;
+				if (element instanceof PDAThread) {
+					thread = (PDAThread)element;
+				} else if (element instanceof PDAStackFrame) {
+					thread = (PDAThread)((PDAStackFrame)element).getThread();
+				}
 
-                if (element != null) {
-                    doExecute(
-                        view,
-                        thread,
-                        HandlerUtil.getCurrentSelectionChecked(event));
-                }
-            }
-        } else {
+				if (element != null) {
+					doExecute(
+						view,
+						thread,
+						HandlerUtil.getCurrentSelectionChecked(event));
+				}
+			}
+		} else {
 			throw new ExecutionException("Handler must be with DataStackView only"); //$NON-NLS-1$
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
-    /**
-     * Performs the actual handler operation.
-     *
-     * @param view The view that the handler was invoked in.
-     * @param target The current active debug target.
-     * @param selection The current selection in view.
-     */
-    abstract protected void doExecute(DataStackView view, PDAThread target, ISelection selection) throws ExecutionException;
+	/**
+	 * Performs the actual handler operation.
+	 *
+	 * @param view The view that the handler was invoked in.
+	 * @param target The current active debug target.
+	 * @param selection The current selection in view.
+	 */
+	abstract protected void doExecute(DataStackView view, PDAThread target, ISelection selection) throws ExecutionException;
 }

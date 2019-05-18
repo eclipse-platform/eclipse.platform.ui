@@ -115,11 +115,11 @@ public class DebugContextManager implements IDebugContextManager {
 
 		@Override
 		public void windowClosed(final IWorkbenchWindow window) {
-            DebugWindowContextService service = fServices.get(window);
-            if (service != null) {
-            	fServices.remove(window);
-                service.dispose();
-            }
+			DebugWindowContextService service = fServices.get(window);
+			if (service != null) {
+				fServices.remove(window);
+				service.dispose();
+			}
 		}
 
 		@Override

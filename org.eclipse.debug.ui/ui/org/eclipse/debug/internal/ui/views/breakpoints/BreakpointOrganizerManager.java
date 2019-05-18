@@ -46,7 +46,7 @@ public class BreakpointOrganizerManager {
 
 	// map for lookup by id
 	private Map<String, IBreakpointOrganizer> fOrganizers = new HashMap<>();
-    // cached sorted list by label
+	// cached sorted list by label
 	private List<IBreakpointOrganizer> fSorted = null;
 
 	/**
@@ -65,10 +65,10 @@ public class BreakpointOrganizerManager {
 	 * Creates and initializes a new breakpoint container factory.
 	 */
 	private BreakpointOrganizerManager() {
-        loadOrganizers();
-        // force the working set organizers to initialize their listeners
-        start("org.eclipse.debug.ui.workingSetOrganizer"); //$NON-NLS-1$
-        start("org.eclipse.debug.ui.breakpointWorkingSetOrganizer"); //$NON-NLS-1$
+		loadOrganizers();
+		// force the working set organizers to initialize their listeners
+		start("org.eclipse.debug.ui.workingSetOrganizer"); //$NON-NLS-1$
+		start("org.eclipse.debug.ui.breakpointWorkingSetOrganizer"); //$NON-NLS-1$
 	}
 
 	/**
@@ -77,53 +77,53 @@ public class BreakpointOrganizerManager {
 	 * @param organizerId organizer to start
 	 */
 	private void start(String organizerId) {
-        IBreakpointOrganizer organizer = getOrganizer(organizerId);
-        IPropertyChangeListener listener = new IPropertyChangeListener() {
-            @Override
+		IBreakpointOrganizer organizer = getOrganizer(organizerId);
+		IPropertyChangeListener listener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
-            }
-        };
-        organizer.addPropertyChangeListener(listener);
-        organizer.removePropertyChangeListener(listener);
+			}
+		};
+		organizer.addPropertyChangeListener(listener);
+		organizer.removePropertyChangeListener(listener);
 	}
 
-    /**
-     * Loads all contributed breakpoint organizers.
-     */
-    private void loadOrganizers() {
-        IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_ORGANIZERS);
-        IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-        for (int i = 0; i < configurationElements.length; i++) {
-            IConfigurationElement element= configurationElements[i];
-            IBreakpointOrganizer organizer = new BreakpointOrganizerExtension(element);
-            if (validateOrganizer(organizer)) {
-                fOrganizers.put(organizer.getIdentifier(), organizer);
-            }
-        }
-    }
+	/**
+	 * Loads all contributed breakpoint organizers.
+	 */
+	private void loadOrganizers() {
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_ORGANIZERS);
+		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
+		for (int i = 0; i < configurationElements.length; i++) {
+			IConfigurationElement element= configurationElements[i];
+			IBreakpointOrganizer organizer = new BreakpointOrganizerExtension(element);
+			if (validateOrganizer(organizer)) {
+				fOrganizers.put(organizer.getIdentifier(), organizer);
+			}
+		}
+	}
 
-    /**
-     * Validates the given organizer. Checks that certain required attributes
-     * are available.
-     * @param organizer the organizer to check
-     * @return whether the given organizer is valid
-     */
-    protected static boolean validateOrganizer(IBreakpointOrganizer organizer) {
-        String id = organizer.getIdentifier();
-        String label = organizer.getLabel();
-        return id != null && id.length() > 0 && label != null && label.length() > 0;
-    }
+	/**
+	 * Validates the given organizer. Checks that certain required attributes
+	 * are available.
+	 * @param organizer the organizer to check
+	 * @return whether the given organizer is valid
+	 */
+	protected static boolean validateOrganizer(IBreakpointOrganizer organizer) {
+		String id = organizer.getIdentifier();
+		String label = organizer.getLabel();
+		return id != null && id.length() > 0 && label != null && label.length() > 0;
+	}
 
-    /**
-     * Returns all contributed breakpoint organizers.
-     *
-     * @return all contributed breakpoint organizers
-     */
-    public IBreakpointOrganizer[] getOrganizers() {
-    	if (fSorted == null) {
+	/**
+	 * Returns all contributed breakpoint organizers.
+	 *
+	 * @return all contributed breakpoint organizers
+	 */
+	public IBreakpointOrganizer[] getOrganizers() {
+		if (fSorted == null) {
 			Collection<IBreakpointOrganizer> collection = fOrganizers.values();
 			fSorted = new ArrayList<>();
-	        fSorted.addAll(collection);
+			fSorted.addAll(collection);
 			Collections.sort(fSorted, new Comparator<Object>() {
 				@Override
 				public int compare(Object o1, Object o2) {
@@ -132,28 +132,28 @@ public class BreakpointOrganizerManager {
 					return b1.getLabel().compareTo(b2.getLabel());
 				}
 			});
-    	}
-    	return fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
-    }
+		}
+		return fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
+	}
 
-    /**
-     * Returns the specified breakpoint organizer or <code>null</code>
-     * @param id organizer identifier
-     * @return breakpoint organizer or <code>null</code>
-     */
-    public IBreakpointOrganizer getOrganizer(String id) {
-        return fOrganizers.get(id);
-    }
+	/**
+	 * Returns the specified breakpoint organizer or <code>null</code>
+	 * @param id organizer identifier
+	 * @return breakpoint organizer or <code>null</code>
+	 */
+	public IBreakpointOrganizer getOrganizer(String id) {
+		return fOrganizers.get(id);
+	}
 
-    /**
-     * Shuts down the organizer manager, disposing organizers.
-     */
-    public void shutdown() {
-        IBreakpointOrganizer[] organizers = getOrganizers();
-        for (int i = 0; i < organizers.length; i++) {
-            IBreakpointOrganizer organizer = organizers[i];
-            organizer.dispose();
-        }
-    }
+	/**
+	 * Shuts down the organizer manager, disposing organizers.
+	 */
+	public void shutdown() {
+		IBreakpointOrganizer[] organizers = getOrganizers();
+		for (int i = 0; i < organizers.length; i++) {
+			IBreakpointOrganizer organizer = organizers[i];
+			organizer.dispose();
+		}
+	}
 
 }

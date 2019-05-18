@@ -84,13 +84,13 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		return false;
 	}
 
-    @Override
+	@Override
 	protected void okPressed() {
 		ISelection selection = fViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			setResult(((IStructuredSelection) selection).toList());
 		}
 		super.okPressed();
-    }
+	}
 
 }

@@ -328,23 +328,23 @@ public interface IConfigurationElementConstants {
 	 */
 	String MEMENTO = "memento"; //$NON-NLS-1$
 
-    /**
-     * The selection node name for a configuration element.
-     * <p>Equal to the word: <code>selection</code></p>
-     */
-    String SELECTION = "selection"; //$NON-NLS-1$
+	/**
+	 * The selection node name for a configuration element.
+	 * <p>Equal to the word: <code>selection</code></p>
+	 */
+	String SELECTION = "selection"; //$NON-NLS-1$
 
-    /**
-     * The debugContext node name for a configuration element.
-     * <p>Equal to the word: <code>debugContext</code></p>
-     */
-    String DEBUG_CONTEXT = "debugContext"; //$NON-NLS-1$
+	/**
+	 * The debugContext node name for a configuration element.
+	 * <p>Equal to the word: <code>debugContext</code></p>
+	 */
+	String DEBUG_CONTEXT = "debugContext"; //$NON-NLS-1$
 
-    /**
-     * The editorInput node name for a configuration element.
-     * <p>Equal to the word: <code>editorInput</code></p>
-     */
-    String EDITOR_INPUT = "editorInput"; //$NON-NLS-1$
+	/**
+	 * The editorInput node name for a configuration element.
+	 * <p>Equal to the word: <code>editorInput</code></p>
+	 */
+	String EDITOR_INPUT = "editorInput"; //$NON-NLS-1$
 
 	/**
 	 * The allowPrototypes node name for a configuration element

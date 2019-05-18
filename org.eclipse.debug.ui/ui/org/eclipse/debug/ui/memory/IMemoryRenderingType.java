@@ -30,28 +30,28 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IMemoryRenderingType {
 
-    /**
-     * Returns a label for this type of memory rendering.
-     *
-     * @return a label for this type of memory rendering
-     */
-    String getLabel();
+	/**
+	 * Returns a label for this type of memory rendering.
+	 *
+	 * @return a label for this type of memory rendering
+	 */
+	String getLabel();
 
-    /**
-     * Returns the unique identifier for this rendering type.
-     *
-     * @return the unique identifier for this rendering type
-     */
-    String getId();
+	/**
+	 * Returns the unique identifier for this rendering type.
+	 *
+	 * @return the unique identifier for this rendering type
+	 */
+	String getId();
 
-    /**
-     * Creates and returns a new rendering of this type or <code>null</code>
-     * if none.
-     *
-     * @return a new rendering of this type
-     * @exception CoreException if an exception occurs creating
-     *  the rendering
-     */
-    IMemoryRendering createRendering() throws CoreException;
+	/**
+	 * Creates and returns a new rendering of this type or <code>null</code>
+	 * if none.
+	 *
+	 * @return a new rendering of this type
+	 * @exception CoreException if an exception occurs creating
+	 *  the rendering
+	 */
+	IMemoryRendering createRendering() throws CoreException;
 
 }

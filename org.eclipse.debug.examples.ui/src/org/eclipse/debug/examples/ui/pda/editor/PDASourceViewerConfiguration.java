@@ -29,30 +29,30 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
  */
 public class PDASourceViewerConfiguration extends TextSourceViewerConfiguration {
 
-    @Override
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-        return new TextHover();
-    }
+		return new TextHover();
+	}
 
 	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new AnnotationHover();
 	}
 
-    @Override
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-        PresentationReconciler reconciler = new PresentationReconciler();
-        reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-        DefaultDamagerRepairer dr = new DefaultDamagerRepairer(new PDAScanner());
-        reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-        reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-        return reconciler;
-    }
+		PresentationReconciler reconciler = new PresentationReconciler();
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(new PDAScanner());
+		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
+		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
+		return reconciler;
+	}
 
-    @Override
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-        return new PDAContentAssistant();
-    }
+		return new PDAContentAssistant();
+	}
 
 
 }

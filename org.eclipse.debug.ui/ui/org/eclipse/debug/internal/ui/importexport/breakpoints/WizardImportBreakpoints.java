@@ -99,7 +99,7 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(ImportExportMessages.WizardImportBreakpoints_0);
-        setNeedsProgressMonitor(true);
+		setNeedsProgressMonitor(true);
 	}
 
 	@Override

@@ -221,15 +221,15 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 		return fId;
 	}
 
-    /**
-     * Returns the stack frame's thread's unique identifier
-     *
-     * @return this stack frame's thread's unique identifier
-     *
-     * @since 3.5
-     */
+	/**
+	 * Returns the stack frame's thread's unique identifier
+	 *
+	 * @return this stack frame's thread's unique identifier
+	 *
+	 * @since 3.5
+	 */
 	protected int getThreadIdentifier() {
-	    return fThread.getIdentifier();
+		return fThread.getIdentifier();
 	}
 
 }

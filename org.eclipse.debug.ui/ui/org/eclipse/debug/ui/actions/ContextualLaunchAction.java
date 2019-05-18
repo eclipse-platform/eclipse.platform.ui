@@ -179,10 +179,10 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 
-    /**
-     * Fills the menu with applicable launch shortcuts
-     * @param menu The menu to fill
-     */
+	/**
+	 * Fills the menu with applicable launch shortcuts
+	 * @param menu The menu to fill
+	 */
 	protected void fillMenu(Menu menu) {
 		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
 		int accelerator = 1;
@@ -190,10 +190,10 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			try {
 				//try to add the shared config it the context is one.
 				ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(ss.getFirstElement());
-		        if(config != null && config.exists() && config.supportsMode(fMode)) {
-		        	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
-		            ActionContributionItem item = new ActionContributionItem(action);
-		            item.fill(menu, -1);
+				if(config != null && config.exists() && config.supportsMode(fMode)) {
+					IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+					ActionContributionItem item = new ActionContributionItem(action);
+					item.fill(menu, -1);
 				}
 			}
 			catch (CoreException ce) {}
@@ -247,8 +247,8 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				new MenuItem(menu, SWT.SEPARATOR);
 			}
 			IAction action = new OpenLaunchDialogAction(fGroup.getIdentifier());
-		    ActionContributionItem item = new ActionContributionItem(action);
-		    item.fill(menu, -1);
+			ActionContributionItem item = new ActionContributionItem(action);
+			item.fill(menu, -1);
 		} else {
 			boolean addedSep = false;
 			for (String category : categories) {
@@ -261,9 +261,9 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 						new MenuItem(menu, SWT.SEPARATOR);
 						addedSep = true;
 					}
-				    IAction action = new OpenLaunchDialogAction(group.getIdentifier());
-				    ActionContributionItem item= new ActionContributionItem(action);
-				    item.fill(menu, -1);
+					IAction action = new OpenLaunchDialogAction(group.getIdentifier());
+					ActionContributionItem item= new ActionContributionItem(action);
+					item.fill(menu, -1);
 				}
 			}
 		}

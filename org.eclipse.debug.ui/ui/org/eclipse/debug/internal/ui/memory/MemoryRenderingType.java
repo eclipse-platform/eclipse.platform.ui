@@ -30,55 +30,55 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate;
  */
 class MemoryRenderingType implements IMemoryRenderingType {
 
-    private IConfigurationElement fConfigurationElement;
-    private IMemoryRenderingTypeDelegate fDelegate;
+	private IConfigurationElement fConfigurationElement;
+	private IMemoryRenderingTypeDelegate fDelegate;
 
-    // attributes for a memoryRenderingType
-    static final String ATTR_MEM_RENDERING_TYPE_NAME = "name"; //$NON-NLS-1$
-    static final String ATTR_MEM_RENDERING_TYPE_ID = "id"; //$NON-NLS-1$
-    static final String ATTR_MEM_RENDERING_TYPE_DELEGATE = "class"; //$NON-NLS-1$
+	// attributes for a memoryRenderingType
+	static final String ATTR_MEM_RENDERING_TYPE_NAME = "name"; //$NON-NLS-1$
+	static final String ATTR_MEM_RENDERING_TYPE_ID = "id"; //$NON-NLS-1$
+	static final String ATTR_MEM_RENDERING_TYPE_DELEGATE = "class"; //$NON-NLS-1$
 
-    /**
-     * Constructs a rendering type from a contribution.
-     */
-    MemoryRenderingType(IConfigurationElement element) {
-        fConfigurationElement = element;
-    }
+	/**
+	 * Constructs a rendering type from a contribution.
+	 */
+	MemoryRenderingType(IConfigurationElement element) {
+		fConfigurationElement = element;
+	}
 
-    @Override
+	@Override
 	public String getLabel() {
-        return fConfigurationElement.getAttribute(ATTR_MEM_RENDERING_TYPE_NAME);
-    }
+		return fConfigurationElement.getAttribute(ATTR_MEM_RENDERING_TYPE_NAME);
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return fConfigurationElement.getAttribute(ATTR_MEM_RENDERING_TYPE_ID);
-    }
+		return fConfigurationElement.getAttribute(ATTR_MEM_RENDERING_TYPE_ID);
+	}
 
-    @Override
+	@Override
 	public IMemoryRendering createRendering() throws CoreException {
-        if (fDelegate == null) {
-            fDelegate = (IMemoryRenderingTypeDelegate) fConfigurationElement.createExecutableExtension(ATTR_MEM_RENDERING_TYPE_DELEGATE);
-        }
-        return fDelegate.createRendering(getId());
-    }
+		if (fDelegate == null) {
+			fDelegate = (IMemoryRenderingTypeDelegate) fConfigurationElement.createExecutableExtension(ATTR_MEM_RENDERING_TYPE_DELEGATE);
+		}
+		return fDelegate.createRendering(getId());
+	}
 
-    /**
-     * Validates this contribution.
-     *
-     * @exception CoreException if invalid
-     */
-    void validate() throws CoreException {
-        verifyPresent(ATTR_MEM_RENDERING_TYPE_ID);
-        verifyPresent(ATTR_MEM_RENDERING_TYPE_NAME);
-        verifyPresent(ATTR_MEM_RENDERING_TYPE_DELEGATE);
-    }
+	/**
+	 * Validates this contribution.
+	 *
+	 * @exception CoreException if invalid
+	 */
+	void validate() throws CoreException {
+		verifyPresent(ATTR_MEM_RENDERING_TYPE_ID);
+		verifyPresent(ATTR_MEM_RENDERING_TYPE_NAME);
+		verifyPresent(ATTR_MEM_RENDERING_TYPE_DELEGATE);
+	}
 
-    private void verifyPresent(String attrName) throws CoreException {
-        if (fConfigurationElement.getAttribute(attrName) == null) {
-            Status status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR,
-                    "<memoryRenderingType> element missing required attribute: " + attrName, null); //$NON-NLS-1$
-            throw new CoreException(status);
-        }
-    }
+	private void verifyPresent(String attrName) throws CoreException {
+		if (fConfigurationElement.getAttribute(attrName) == null) {
+			Status status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR,
+					"<memoryRenderingType> element missing required attribute: " + attrName, null); //$NON-NLS-1$
+			throw new CoreException(status);
+		}
+	}
 }

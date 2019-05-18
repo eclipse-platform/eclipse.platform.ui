@@ -25,9 +25,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  */
 public class SuspendCommandHandler extends DebugCommandHandler {
 
-    @Override
+	@Override
 	protected Class<ISuspendHandler> getCommandType() {
-        return ISuspendHandler.class;
-    }
+		return ISuspendHandler.class;
+	}
 
 }

@@ -54,26 +54,26 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	protected void added(Object[] elements) {
 		List<Object> kids = null;
 		boolean changed = false;
-    	synchronized (this) {
-    		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
-    		if (childrenNodes == null) {
+		synchronized (this) {
+			ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
+			if (childrenNodes == null) {
 				kids = new ArrayList<>(elements.length);
-    		} else {
+			} else {
 				kids = new ArrayList<>(elements.length + childrenNodes.length);
-    			for (int i = 0; i < childrenNodes.length; i++) {
+				for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
-    		}
-    		for (int i = 0; i < elements.length; i++) {
-    			if (!kids.contains(elements[i])) {
-    				kids.add(elements[i]);
-    				changed = true;
-    			}
+			}
+			for (int i = 0; i < elements.length; i++) {
+				if (!kids.contains(elements[i])) {
+					kids.add(elements[i]);
+					changed = true;
+				}
 			}
 		}
-    	if (changed) {
-    		setChildren(getRootNode(), kids);
-    	}
+		if (changed) {
+			setChildren(getRootNode(), kids);
+		}
 	}
 
 	/**
@@ -97,27 +97,27 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	protected void inserted(Object[] elements, int index) {
 		List<Object> kids = null;
 		boolean changed = false;
-    	synchronized (this) {
-    		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
-    		if (childrenNodes == null) {
+		synchronized (this) {
+			ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
+			if (childrenNodes == null) {
 				kids = new ArrayList<>(elements.length);
-    		} else {
+			} else {
 				kids = new ArrayList<>(elements.length + childrenNodes.length);
-    			for (int i = 0; i < childrenNodes.length; i++) {
+				for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
-    		}
-    		for (int i = 0; i < elements.length; i++) {
-    			if (!kids.contains(elements[i])) {
-    				kids.add(index, elements[i]);
-    				index++;
-    				changed = true;
-    			}
+			}
+			for (int i = 0; i < elements.length; i++) {
+				if (!kids.contains(elements[i])) {
+					kids.add(index, elements[i]);
+					index++;
+					changed = true;
+				}
 			}
 		}
-    	if (changed) {
-    		setChildren(getRootNode(), kids);
-    	}
+		if (changed) {
+			setChildren(getRootNode(), kids);
+		}
 	}
 
 	/**
@@ -139,23 +139,23 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	protected void removed(Object[] elements) {
 		List<Object> kids = null;
 		boolean changed = false;
-    	synchronized (this) {
-    		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
-    		if (childrenNodes != null) {
+		synchronized (this) {
+			ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
+			if (childrenNodes != null) {
 				kids = new ArrayList<>(childrenNodes.length);
-    			for (int i = 0; i < childrenNodes.length; i++) {
+				for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
-    			for (int i = 0; i < elements.length; i++) {
-        			if (kids.remove(elements[i])) {
-        				changed = true;
-        			}
-    			}
-    		}
+				for (int i = 0; i < elements.length; i++) {
+					if (kids.remove(elements[i])) {
+						changed = true;
+					}
+				}
+			}
 		}
-    	if (changed) {
-    		setChildren(getRootNode(), kids);
-    	}
+		if (changed) {
+			setChildren(getRootNode(), kids);
+		}
 	}
 
 	/**
@@ -175,24 +175,24 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	 * @param replacement the element that replaced the old element
 	 */
 	protected void replaced(Object element, Object replacement) {
-        Object[] filtered = filter(getRootNode().getElement(), new Object[] { replacement });
-        if (filtered.length == 0) {
-            remove(new Object[]{element});
-            return;
-        }
+		Object[] filtered = filter(getRootNode().getElement(), new Object[] { replacement });
+		if (filtered.length == 0) {
+			remove(new Object[]{element});
+			return;
+		}
 		List<ModelNode> list = new ArrayList<>();
-    	synchronized (this) {
-    		ModelNode[] nodes = getNodes(element);
-    		for (int i = 0; i < nodes.length; i++) {
+		synchronized (this) {
+			ModelNode[] nodes = getNodes(element);
+			for (int i = 0; i < nodes.length; i++) {
 				ModelNode node = nodes[i];
 				node.remap(replacement);
 				list.add(node);
 			}
 		}
-    	if (!list.isEmpty()) {
+		if (!list.isEmpty()) {
 			for (ModelNode node : list) {
-    			getViewer().nodeChanged(node);
-    		}
-    	}
+				getViewer().nodeChanged(node);
+			}
+		}
 	}
 }

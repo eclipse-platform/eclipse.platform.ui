@@ -37,11 +37,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDASuspendedEvent extends PDARunControlEvent {
 
-    public PDASuspendedEvent(String message) {
-        super(message);
-    }
+	public PDASuspendedEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("suspended"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("suspended"); //$NON-NLS-1$
+	}
 }

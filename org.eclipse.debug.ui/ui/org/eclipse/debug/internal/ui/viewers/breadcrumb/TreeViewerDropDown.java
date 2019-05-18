@@ -57,95 +57,95 @@ import org.eclipse.ui.progress.UIJob;
  */
 public abstract class TreeViewerDropDown {
 
-    /**
-     * Delay to control scrolling when the mouse pointer reaches the edge of
-     * the tree viewer.
-     */
-    private static long MOUSE_MOVE_SCROLL_DELAY = 500;
+	/**
+	 * Delay to control scrolling when the mouse pointer reaches the edge of
+	 * the tree viewer.
+	 */
+	private static long MOUSE_MOVE_SCROLL_DELAY = 500;
 
-    /**
-     * The breadcrumb site in which the viewer is created.
-     */
-    private IBreadcrumbDropDownSite fDropDownSite;
+	/**
+	 * The breadcrumb site in which the viewer is created.
+	 */
+	private IBreadcrumbDropDownSite fDropDownSite;
 
-    /**
-     * The tree viewer.
-     */
-    private TreeViewer fDropDownViewer;
+	/**
+	 * The tree viewer.
+	 */
+	private TreeViewer fDropDownViewer;
 
-    /**
-     * Creates the viewer and installs the listeners.
-     *
-     * @param composite Parent control of the viewer.
-     * @param site Breadcrumb site for the viewer.
-     * @param path Path to the element for which the drop-down is being opened.
-     * @return The control created for the viewer.
-     */
-    public Control createDropDown(Composite composite, IBreadcrumbDropDownSite site, TreePath path) {
+	/**
+	 * Creates the viewer and installs the listeners.
+	 *
+	 * @param composite Parent control of the viewer.
+	 * @param site Breadcrumb site for the viewer.
+	 * @param path Path to the element for which the drop-down is being opened.
+	 * @return The control created for the viewer.
+	 */
+	public Control createDropDown(Composite composite, IBreadcrumbDropDownSite site, TreePath path) {
 
-        fDropDownSite = site;
-        fDropDownViewer= createTreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL, path);
+		fDropDownSite = site;
+		fDropDownViewer= createTreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL, path);
 
-        fDropDownViewer.addOpenListener(new IOpenListener() {
-            @Override
+		fDropDownViewer.addOpenListener(new IOpenListener() {
+			@Override
 			public void open(OpenEvent event) {
-                if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
-                	DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>open"); //$NON-NLS-1$
-                }
-                openElement(event.getSelection());
-            }
-        });
+				if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
+					DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>open"); //$NON-NLS-1$
+				}
+				openElement(event.getSelection());
+			}
+		});
 
-        final Tree tree = fDropDownViewer.getTree();
+		final Tree tree = fDropDownViewer.getTree();
 
-        tree.addMouseListener(new MouseListener() {
-            @Override
+		tree.addMouseListener(new MouseListener() {
+			@Override
 			public void mouseUp(MouseEvent e) {
-                if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
-                	DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>mouseUp"); //$NON-NLS-1$
-                }
-                if (e.button != 1) {
+				if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
+					DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>mouseUp"); //$NON-NLS-1$
+				}
+				if (e.button != 1) {
 					return;
 				}
 
-                if ((OpenStrategy.getOpenMethod() & OpenStrategy.SINGLE_CLICK) != 0) {
+				if ((OpenStrategy.getOpenMethod() & OpenStrategy.SINGLE_CLICK) != 0) {
 					return;
 				}
 
-                TreeItem item= tree.getItem(new Point(e.x, e.y));
-                if (item == null) {
+				TreeItem item= tree.getItem(new Point(e.x, e.y));
+				if (item == null) {
 					return;
 				}
 
 				List<Object> pathElements = new LinkedList<>();
-                while(item != null) {
-                    Object data = item.getData();
-                    if (data == null) {
+				while(item != null) {
+					Object data = item.getData();
+					if (data == null) {
 						return;
 					}
-                    pathElements.add(0, data);
-                    item = item.getParentItem();
-                }
+					pathElements.add(0, data);
+					item = item.getParentItem();
+				}
 
-                openElement(new TreeSelection(new TreePath(pathElements.toArray())));
-            }
+				openElement(new TreeSelection(new TreePath(pathElements.toArray())));
+			}
 
-            @Override
+			@Override
 			public void mouseDown(MouseEvent e) {
-            }
+			}
 
-            @Override
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-            }
-        });
+			}
+		});
 
-        tree.addMouseMoveListener(new MouseMoveListener() {
-            TreeItem fLastItem= null;
-            long fLastScrollTime = 0;
+		tree.addMouseMoveListener(new MouseMoveListener() {
+			TreeItem fLastItem= null;
+			long fLastScrollTime = 0;
 
-            @Override
+			@Override
 			public void mouseMove(MouseEvent e) {
-                if (tree.equals(e.getSource())) {
+				if (tree.equals(e.getSource())) {
 					TreeItem currentItem = tree.getItem(new Point(e.x, e.y));
 					if (fLastItem == null ^ currentItem == null) {
 						tree.setCursor(currentItem == null ? null : tree.getDisplay()
@@ -154,176 +154,176 @@ public abstract class TreeViewerDropDown {
 					if (currentItem != null) {
 						if (!currentItem.equals(fLastItem)) {
 							fLastItem = currentItem;
-                            tree.setSelection(new TreeItem[] { fLastItem });
-                        } else if (System.currentTimeMillis() > (fLastScrollTime + MOUSE_MOVE_SCROLL_DELAY)) {
-                            if (e.y < tree.getItemHeight() / 4)
-                            {
-                                // Scroll up
-                                if (currentItem.getParentItem() == null) {
+							tree.setSelection(new TreeItem[] { fLastItem });
+						} else if (System.currentTimeMillis() > (fLastScrollTime + MOUSE_MOVE_SCROLL_DELAY)) {
+							if (e.y < tree.getItemHeight() / 4)
+							{
+								// Scroll up
+								if (currentItem.getParentItem() == null) {
 									int index = tree.indexOf(currentItem);
-                                    if (index < 1) {
+									if (index < 1) {
 										return;
 									}
 
-                                    fLastItem= tree.getItem(index - 1);
-                                    tree.setSelection(new TreeItem[] { fLastItem });
-                                } else {
-                                    Point p= tree.toDisplay(e.x, e.y);
-                                    Item item= fDropDownViewer.scrollUp(p.x, p.y);
-                                    fLastScrollTime = System.currentTimeMillis();
-                                    if (item instanceof TreeItem) {
-                                        fLastItem= (TreeItem) item;
-                                        tree.setSelection(new TreeItem[] { fLastItem });
-                                    }
-                                }
-                            } else if (e.y > tree.getBounds().height - tree.getItemHeight() / 4) {
-                                // Scroll down
-                                if (currentItem.getParentItem() == null) {
+									fLastItem= tree.getItem(index - 1);
+									tree.setSelection(new TreeItem[] { fLastItem });
+								} else {
+									Point p= tree.toDisplay(e.x, e.y);
+									Item item= fDropDownViewer.scrollUp(p.x, p.y);
+									fLastScrollTime = System.currentTimeMillis();
+									if (item instanceof TreeItem) {
+										fLastItem= (TreeItem) item;
+										tree.setSelection(new TreeItem[] { fLastItem });
+									}
+								}
+							} else if (e.y > tree.getBounds().height - tree.getItemHeight() / 4) {
+								// Scroll down
+								if (currentItem.getParentItem() == null) {
 									int index = tree.indexOf(currentItem);
-                                    if (index >= tree.getItemCount() - 1) {
+									if (index >= tree.getItemCount() - 1) {
 										return;
 									}
 
-                                    fLastItem= tree.getItem(index + 1);
-                                    tree.setSelection(new TreeItem[] { fLastItem });
-                                } else {
-                                    Point p= tree.toDisplay(e.x, e.y);
-                                    Item item= fDropDownViewer.scrollDown(p.x, p.y);
-                                    fLastScrollTime = System.currentTimeMillis();
-                                    if (item instanceof TreeItem) {
-                                        fLastItem= (TreeItem) item;
-                                        tree.setSelection(new TreeItem[] { fLastItem });
-                                    }
-                                }
-                            }
-                        }
+									fLastItem= tree.getItem(index + 1);
+									tree.setSelection(new TreeItem[] { fLastItem });
+								} else {
+									Point p= tree.toDisplay(e.x, e.y);
+									Item item= fDropDownViewer.scrollDown(p.x, p.y);
+									fLastScrollTime = System.currentTimeMillis();
+									if (item instanceof TreeItem) {
+										fLastItem= (TreeItem) item;
+										tree.setSelection(new TreeItem[] { fLastItem });
+									}
+								}
+							}
+						}
 					} else {
 						fLastItem = null;
-                    }
-                }
-            }
-        });
+					}
+				}
+			}
+		});
 
-        tree.addKeyListener(new KeyListener() {
-            @Override
+		tree.addKeyListener(new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e) {
-                if (e.keyCode == SWT.ARROW_UP) {
-                    // No elements in the tree (bug 262961).
-                    if (tree.getItemCount() == 0) {
-                        fDropDownSite.close();
-                        return;
-                    }
-
-                    TreeItem[] selection= tree.getSelection();
-                    if (selection.length != 1) {
+				if (e.keyCode == SWT.ARROW_UP) {
+					// No elements in the tree (bug 262961).
+					if (tree.getItemCount() == 0) {
+						fDropDownSite.close();
 						return;
 					}
 
-                    int selectionIndex= tree.indexOf(selection[0]);
-                    if (selectionIndex != 0) {
+					TreeItem[] selection= tree.getSelection();
+					if (selection.length != 1) {
 						return;
 					}
 
-                    fDropDownSite.close();
-                }
-            }
+					int selectionIndex= tree.indexOf(selection[0]);
+					if (selectionIndex != 0) {
+						return;
+					}
 
-            @Override
+					fDropDownSite.close();
+				}
+			}
+
+			@Override
 			public void keyReleased(KeyEvent e) {
-            }
-        });
+			}
+		});
 
-        fDropDownViewer.addTreeListener(new ITreeViewerListener() {
-            @Override
+		fDropDownViewer.addTreeListener(new ITreeViewerListener() {
+			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
-            }
+			}
 
-            @Override
+			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
-                tree.setRedraw(false);
-                new UIJob(tree.getDisplay(), IInternalDebugCoreConstants.EMPTY_STRING) {
-                    { setSystem(true); }
-                    @Override
+				tree.setRedraw(false);
+				new UIJob(tree.getDisplay(), IInternalDebugCoreConstants.EMPTY_STRING) {
+					{ setSystem(true); }
+					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-                        if (!tree.isDisposed()) {
-                            try {
-                                fDropDownSite.updateSize();
-                            } finally {
-                                tree.setRedraw(true);
-                            }
-                        }
-                        return Status.OK_STATUS;
-                    }
-                }.schedule();
-            }
+						if (!tree.isDisposed()) {
+							try {
+								fDropDownSite.updateSize();
+							} finally {
+								tree.setRedraw(true);
+							}
+						}
+						return Status.OK_STATUS;
+					}
+				}.schedule();
+			}
 
-        });
+		});
 
-        return tree;
-    }
+		return tree;
+	}
 
-    /**
-     * Creates and returns the tree viewer.
-     *
-     * @param composite Parent control of the viewer.
-     * @param style Style flags to use in creating the tree viewer.
-     * @param path Path to the element for which the drop-down is being opened.
-     * @return The newly created tree viewer.
-     */
-    protected abstract TreeViewer createTreeViewer(Composite composite, int style, TreePath path);
+	/**
+	 * Creates and returns the tree viewer.
+	 *
+	 * @param composite Parent control of the viewer.
+	 * @param style Style flags to use in creating the tree viewer.
+	 * @param path Path to the element for which the drop-down is being opened.
+	 * @return The newly created tree viewer.
+	 */
+	protected abstract TreeViewer createTreeViewer(Composite composite, int style, TreePath path);
 
-    /**
-     * Called when the given element was selected in the viewer.  It causes the
-     * breadcrumb viewer to fire an opened event.  If the viewer loses focus
-     * as a result of the open operation, then the drop-down is closed.
-     * Otherwise the selected element is expanded.
-     *
-     * @param selection The selection to open.
-     */
-    protected void openElement(ISelection selection) {
-        if (selection == null || !(selection instanceof ITreeSelection) || selection.isEmpty()) {
+	/**
+	 * Called when the given element was selected in the viewer.  It causes the
+	 * breadcrumb viewer to fire an opened event.  If the viewer loses focus
+	 * as a result of the open operation, then the drop-down is closed.
+	 * Otherwise the selected element is expanded.
+	 *
+	 * @param selection The selection to open.
+	 */
+	protected void openElement(ISelection selection) {
+		if (selection == null || !(selection instanceof ITreeSelection) || selection.isEmpty()) {
 			return;
 		}
 
-        // This might or might not open an editor
-        fDropDownSite.notifySelection(selection);
+		// This might or might not open an editor
+		fDropDownSite.notifySelection(selection);
 
-        Tree tree = fDropDownViewer.getTree();
+		Tree tree = fDropDownViewer.getTree();
 
-        boolean treeHasFocus= !tree.isDisposed() && tree.isFocusControl();
+		boolean treeHasFocus= !tree.isDisposed() && tree.isFocusControl();
 
-        if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
-        	DebugUIPlugin.trace("    isDisposed: " + tree.isDisposed()); //$NON-NLS-1$
-        	DebugUIPlugin.trace("    shell hasFocus: " + (!tree.isDisposed() && tree.isFocusControl())); //$NON-NLS-1$
-        	DebugUIPlugin.trace("    tree hasFocus: " + treeHasFocus); //$NON-NLS-1$
-        }
+		if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
+			DebugUIPlugin.trace("    isDisposed: " + tree.isDisposed()); //$NON-NLS-1$
+			DebugUIPlugin.trace("    shell hasFocus: " + (!tree.isDisposed() && tree.isFocusControl())); //$NON-NLS-1$
+			DebugUIPlugin.trace("    tree hasFocus: " + treeHasFocus); //$NON-NLS-1$
+		}
 
-        if (tree.isDisposed()) {
+		if (tree.isDisposed()) {
 			return;
 		}
 
-        if (!treeHasFocus) {
-            fDropDownSite.close();
-            return;
-        }
+		if (!treeHasFocus) {
+			fDropDownSite.close();
+			return;
+		}
 
-        toggleExpansionState( ((ITreeSelection)selection).getPaths()[0]);
-    }
+		toggleExpansionState( ((ITreeSelection)selection).getPaths()[0]);
+	}
 
-    private void toggleExpansionState(TreePath path) {
-        Tree tree= fDropDownViewer.getTree();
-        if (fDropDownViewer.getExpandedState(path)) {
+	private void toggleExpansionState(TreePath path) {
+		Tree tree= fDropDownViewer.getTree();
+		if (fDropDownViewer.getExpandedState(path)) {
 			fDropDownViewer.collapseToLevel(path, 1);
 		} else {
-            tree.setRedraw(false);
-            try {
-                fDropDownViewer.expandToLevel(path, 1);
-                fDropDownSite.updateSize();
-            } finally {
-                tree.setRedraw(true);
-            }
-        }
-    }
+			tree.setRedraw(false);
+			try {
+				fDropDownViewer.expandToLevel(path, 1);
+				fDropDownSite.updateSize();
+			} finally {
+				tree.setRedraw(true);
+			}
+		}
+	}
 
 
 

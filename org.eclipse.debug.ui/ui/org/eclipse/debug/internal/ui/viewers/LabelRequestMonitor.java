@@ -68,10 +68,10 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 		AsynchronousViewer viewer = getModel().getViewer();
 		Widget widget = viewer.findItem(getNode());
 		if (widget != null && !widget.isDisposed()) {
-    		viewer.setLabels(widget, fLabels, fImageDescriptors);
-    		viewer.setColors(widget, fForegrounds, fBackgrounds);
-    		viewer.setFonts(widget, fFontDatas);
-        }
+			viewer.setLabels(widget, fLabels, fImageDescriptors);
+			viewer.setColors(widget, fForegrounds, fBackgrounds);
+			viewer.setFonts(widget, fFontDatas);
+		}
 	}
 
 	@Override

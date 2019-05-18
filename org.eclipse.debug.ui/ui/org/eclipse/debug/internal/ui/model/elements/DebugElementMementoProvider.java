@@ -48,34 +48,34 @@ public abstract class DebugElementMementoProvider extends ElementMementoProvider
 		return false;
 	}
 
-    /**
-     * Returns whether this adapter supports the given context.
-     *
-     * @param context
-     * @return whether this adapter supports the given context
-     */
-    protected boolean supportsContext(IPresentationContext context) {
+	/**
+	 * Returns whether this adapter supports the given context.
+	 *
+	 * @param context
+	 * @return whether this adapter supports the given context
+	 */
+	protected boolean supportsContext(IPresentationContext context) {
 		return supportsContextId(context.getId());
-    }
+	}
 
-    /**
-     * Returns whether this adapter provides content in the specified context id.
-     *
-     * @param id part id
-     * @return whether this adapter provides content in the specified context id
-     */
-    protected boolean supportsContextId(String id) {
-    	return true;
-    }
+	/**
+	 * Returns whether this adapter provides content in the specified context id.
+	 *
+	 * @param id part id
+	 * @return whether this adapter provides content in the specified context id
+	 */
+	protected boolean supportsContextId(String id) {
+		return true;
+	}
 
-    /**
-     * Returns the name of the given element to use in a memento in the given context,
-     * or <code>null</code> if unsupported.
-     *
-     * @param element model element
-     * @param context presentation context
-     * @return element name or <code>null</code> if none
-     * @throws CoreException
-     */
-    protected abstract String getElementName(Object element, IPresentationContext context) throws CoreException;
+	/**
+	 * Returns the name of the given element to use in a memento in the given context,
+	 * or <code>null</code> if unsupported.
+	 *
+	 * @param element model element
+	 * @param context presentation context
+	 * @return element name or <code>null</code> if none
+	 * @throws CoreException
+	 */
+	protected abstract String getElementName(Object element, IPresentationContext context) throws CoreException;
 }

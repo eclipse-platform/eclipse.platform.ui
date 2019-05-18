@@ -90,15 +90,15 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 				0,
 				LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1,
 				false);
-        int open = dialog.open();
+		int open = dialog.open();
 		if (open == IDialogConstants.PROCEED_ID) {
-        	if(dialog.getToggleState()) {
-        		store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
-        	}
-            return Boolean.TRUE;
-        }
-        else {
-            return Boolean.FALSE;
-        }
+			if(dialog.getToggleState()) {
+				store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
+			}
+			return Boolean.TRUE;
+		}
+		else {
+			return Boolean.FALSE;
+		}
 	}
 }

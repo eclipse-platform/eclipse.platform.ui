@@ -215,13 +215,13 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 
 		@Override
 		protected IStatus run(final IProgressMonitor monitor) {
-	        if (monitor.isCanceled()) {
+			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-	        Display asyncDisplay = DebugUIPlugin.getStandardDisplay();
-	        if (asyncDisplay == null || asyncDisplay.isDisposed()) {
-	            return Status.CANCEL_STATUS;
-	        }
+			Display asyncDisplay = DebugUIPlugin.getStandardDisplay();
+			if (asyncDisplay == null || asyncDisplay.isDisposed()) {
+				return Status.CANCEL_STATUS;
+			}
 			asyncDisplay.asyncExec(() -> {
 				IStatus result = null;
 				Throwable throwable = null;
@@ -242,10 +242,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 					done(result);
 				}
 			});
-	        return Job.ASYNC_FINISH;
+			return Job.ASYNC_FINISH;
 		}
 
-	    public abstract IStatus runInUIThread(IProgressMonitor monitor);
+		public abstract IStatus runInUIThread(IProgressMonitor monitor);
 
 	}
 
@@ -270,10 +270,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	private boolean fPrompting;
 
-    /**
-     * Maps each launch to its perspective context activation. These
-     * are disabled when a launch terminates.
-     */
+	/**
+	 * Maps each launch to its perspective context activation. These
+	 * are disabled when a launch terminates.
+	 */
 	private Map<ILaunch, IContextActivation[]> fLaunchToContextActivations = new HashMap<>();
 
 	/**
@@ -304,10 +304,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	@Override
 	public synchronized void launchRemoved(final ILaunch launch) {
-        ISuspendTrigger trigger = launch.getAdapter(ISuspendTrigger.class);
-        if (trigger != null) {
-            trigger.removeSuspendTriggerListener(this);
-        }
+		ISuspendTrigger trigger = launch.getAdapter(ISuspendTrigger.class);
+		if (trigger != null) {
+			trigger.removeSuspendTriggerListener(this);
+		}
 		Runnable r = () -> {
 			IContextActivation[] activations = fLaunchToContextActivations.remove(launch);
 			if (activations != null) {
@@ -336,10 +336,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	@Override
 	public synchronized void launchAdded(ILaunch launch) {
-        ISuspendTrigger trigger = launch.getAdapter(ISuspendTrigger.class);
-        if (trigger != null) {
-            trigger.addSuspendTriggerListener(this);
-        }
+		ISuspendTrigger trigger = launch.getAdapter(ISuspendTrigger.class);
+		if (trigger != null) {
+			trigger.addSuspendTriggerListener(this);
+		}
 		String perspectiveId = null;
 		// check event filters
 		try {
@@ -890,8 +890,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 *
 	 * @return XML
 	 * @exception IOException if unable to generate the XML
-     * @exception TransformerException if unable to generate the XML
-     * @exception ParserConfigurationException if unable to generate the XML
+	 * @exception TransformerException if unable to generate the XML
+	 * @exception ParserConfigurationException if unable to generate the XML
 	 */
 	private String generatePerspectiveXML() throws ParserConfigurationException, CoreException {
 		Document doc = DebugUIPlugin.getDocument();

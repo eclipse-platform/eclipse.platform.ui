@@ -25,9 +25,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  */
 public class DisconnectCommandHandler extends DebugCommandHandler {
 
-    @Override
+	@Override
 	protected Class<IDisconnectHandler> getCommandType() {
-        return IDisconnectHandler.class;
-    }
+		return IDisconnectHandler.class;
+	}
 
 }

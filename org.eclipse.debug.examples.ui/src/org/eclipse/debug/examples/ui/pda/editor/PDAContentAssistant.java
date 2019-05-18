@@ -23,24 +23,24 @@ import org.eclipse.swt.widgets.Shell;
 
 public class PDAContentAssistant extends ContentAssistant {
 
-    public PDAContentAssistant() {
-        super();
+	public PDAContentAssistant() {
+		super();
 
-        PDAContentAssistProcessor processor= new PDAContentAssistProcessor();
-        setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		PDAContentAssistProcessor processor= new PDAContentAssistProcessor();
+		setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
-        enableAutoActivation(false);
-        enableAutoInsert(false);
+		enableAutoActivation(false);
+		enableAutoInsert(false);
 
-        setInformationControlCreator(getInformationControlCreator());
-    }
+		setInformationControlCreator(getInformationControlCreator());
+	}
 
-    private IInformationControlCreator getInformationControlCreator() {
-        return new IInformationControlCreator() {
-            @Override
+	private IInformationControlCreator getInformationControlCreator() {
+		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
-                return new DefaultInformationControl(parent);
-            }
-        };
-    }
+				return new DefaultInformationControl(parent);
+			}
+		};
+	}
 }

@@ -53,23 +53,23 @@ public class RenderingsUtil {
 			array = temp;
 			return array;
 		}
-        byte[] temp = new byte[size];
+		byte[] temp = new byte[size];
 
-        for (int i=0; i<size - array.length; i++)
-        {
-        	temp[i] = 0;
-        }
+		for (int i=0; i<size - array.length; i++)
+		{
+			temp[i] = 0;
+		}
 
-        int j=0;
-        // fill up the rest of the array
-        for (int i=size - array.length; i<size; i++)
-        {
-        	temp[i] = array[j];
-        	j++;
-        }
+		int j=0;
+		// fill up the rest of the array
+		for (int i=size - array.length; i<size; i++)
+		{
+			temp[i] = array[j];
+			j++;
+		}
 
-        array = temp;
-        return array;
+		array = temp;
+		return array;
 	}
 
 	static public BigInteger convertByteArrayToUnsignedLong(byte[] array, int endianess)
@@ -130,15 +130,15 @@ public class RenderingsUtil {
 			}
 			return value;
 		}
-        long value = 0;
-        for (int i=0; i< 8; i++)
-        {
-        	long b = array[i];
-        	b &= 0xff;
-        	value |= (b<<((7-i)*8));
-        }
+		long value = 0;
+		for (int i=0; i< 8; i++)
+		{
+			long b = array[i];
+			b &= 0xff;
+			value |= (b<<((7-i)*8));
+		}
 
-        return value;
+		return value;
 	}
 
 	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess)
@@ -162,8 +162,8 @@ public class RenderingsUtil {
 			BigInteger value = new BigInteger(holder);
 			return value;
 		}
-        BigInteger value = new BigInteger(array);
-        return value;
+		BigInteger value = new BigInteger(array);
+		return value;
 	}
 
 	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess, int arraySize)
@@ -187,8 +187,8 @@ public class RenderingsUtil {
 			BigInteger value = new BigInteger(holder);
 			return value;
 		}
-        BigInteger value = new BigInteger(array);
-        return value;
+		BigInteger value = new BigInteger(array);
+		return value;
 	}
 
 	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess)
@@ -284,15 +284,15 @@ public class RenderingsUtil {
 			}
 			return value;
 		}
-        int value = 0;
-        for (int i=0; i< 4; i++)
-        {
-        	int b = array[i];
-        	b &= 0xff;
-        	value |= (b<<((3-i)*8));
-        }
+		int value = 0;
+		for (int i=0; i< 4; i++)
+		{
+			int b = array[i];
+			b &= 0xff;
+			value |= (b<<((3-i)*8));
+		}
 
-        return value;
+		return value;
 	}
 
 	/**
@@ -318,14 +318,14 @@ public class RenderingsUtil {
 			}
 			return value;
 		}
-        short value = 0;
-        for (int i=0; i< 2; i++)
-        {
-        	short b = array[i];
-        	b &= 0xff;
-        	value |= (b<<((1-i)*8));
-        }
-        return value;
+		short value = 0;
+		for (int i=0; i< 2; i++)
+		{
+			short b = array[i];
+			b &= 0xff;
+			value |= (b<<((1-i)*8));
+		}
+		return value;
 	}
 
 	/**
@@ -347,12 +347,12 @@ public class RenderingsUtil {
 			}
 			return buf;
 		}
-        for (int j=15; j>=0; j--)
-        {
-        	BigInteger x = i.shiftRight((15-j)*8);
-        	buf[j] = x.byteValue();
-        }
-        return buf;
+		for (int j=15; j>=0; j--)
+		{
+			BigInteger x = i.shiftRight((15-j)*8);
+			buf[j] = x.byteValue();
+		}
+		return buf;
 	}
 
 	static public byte[] convertSignedBigIntToByteArray(BigInteger i, int endianess, int arraySize)
@@ -368,12 +368,12 @@ public class RenderingsUtil {
 			}
 			return buf;
 		}
-        for (int j=arraySize-1; j>=0; j--)
-        {
-        	BigInteger x = i.shiftRight((arraySize-1-j)*8);
-        	buf[j] = x.byteValue();
-        }
-        return buf;
+		for (int j=arraySize-1; j>=0; j--)
+		{
+			BigInteger x = i.shiftRight((arraySize-1-j)*8);
+			buf[j] = x.byteValue();
+		}
+		return buf;
 	}
 
 	/**
@@ -395,12 +395,12 @@ public class RenderingsUtil {
 			}
 			return buf;
 		}
-        for (int j=31; j>=0; j--)
-        {
-        	BigInteger x = i.shiftRight((31-j)*8);
-        	buf[j] = x.byteValue();
-        }
-        return buf;
+		for (int j=31; j>=0; j--)
+		{
+			BigInteger x = i.shiftRight((31-j)*8);
+			buf[j] = x.byteValue();
+		}
+		return buf;
 	}
 
 	static public byte[] convertUnsignedBigIntToByteArray(BigInteger i, int endianess, int arraySize)
@@ -416,12 +416,12 @@ public class RenderingsUtil {
 			}
 			return buf;
 		}
-        for (int j=(arraySize*2)-1; j>=0; j--)
-        {
-        	BigInteger x = i.shiftRight(((arraySize*2)-1-j)*8);
-        	buf[j] = x.byteValue();
-        }
-        return buf;
+		for (int j=(arraySize*2)-1; j>=0; j--)
+		{
+			BigInteger x = i.shiftRight(((arraySize*2)-1-j)*8);
+			buf[j] = x.byteValue();
+		}
+		return buf;
 	}
 
 	/**
@@ -442,11 +442,11 @@ public class RenderingsUtil {
 			}
 			return buf;
 		}
-        for (int j=7; j>=0; j--)
-        {
-        	buf[j] = Long.valueOf(i>>(7-j)*8).byteValue();
-        }
-        return buf;
+		for (int j=7; j>=0; j--)
+		{
+			buf[j] = Long.valueOf(i>>(7-j)*8).byteValue();
+		}
+		return buf;
 	}
 
 	/**
@@ -539,17 +539,17 @@ public class RenderingsUtil {
 	 */
 	public static byte[] convertHexStringToByteArray(String str, int numBytes, int numCharsPerByte) throws NumberFormatException
 	{
-	    if (str.length() == 0)
-	        return null;
+		if (str.length() == 0)
+			return null;
 
 		StringBuilder buf = new StringBuilder(str);
 
-	    // pad string with zeros
-	    int requiredPadding =  numBytes * numCharsPerByte - str.length();
-	    while (requiredPadding > 0) {
-	        buf.insert(0, "0"); //$NON-NLS-1$
-	        requiredPadding--;
-	    }
+		// pad string with zeros
+		int requiredPadding =  numBytes * numCharsPerByte - str.length();
+		while (requiredPadding > 0) {
+			buf.insert(0, "0"); //$NON-NLS-1$
+			requiredPadding--;
+		}
 
 		byte[] bytes = new byte[numBytes];
 		str = buf.toString();

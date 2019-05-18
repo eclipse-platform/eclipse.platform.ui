@@ -31,38 +31,38 @@ public class SystemPathResolver implements IDynamicVariableResolver {
 
 	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
-        if (argument == null) {
-            throw new CoreException(new Status(IStatus.ERROR,  ExternalToolsPlugin.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, VariableMessages.SystemPathResolver_0, null));
-        }
+		if (argument == null) {
+			throw new CoreException(new Status(IStatus.ERROR,  ExternalToolsPlugin.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, VariableMessages.SystemPathResolver_0, null));
+		}
 		Map<String, String> map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
-        String path= map.get("PATH"); //$NON-NLS-1$
-        if (path == null) {
-            return argument;
-        }
-        // On MS Windows the PATHEXT environment variable defines which file extensions
-        // mark files that are executable (e.g. .EXE, .COM, .BAT)
-        String pathext = map.get("PATHEXT"); //$NON-NLS-1$
-        StringTokenizer tokenizer= new StringTokenizer(path, File.pathSeparator);
-        while (tokenizer.hasMoreTokens()) {
-            String pathElement= tokenizer.nextToken();
-            File pathElementFile= new File(pathElement);
-            if (pathElementFile.isDirectory()) {
-                File toolFile= new File(pathElementFile, argument);
-                if (toolFile.exists()) {
-                    return toolFile.getAbsolutePath();
-                }
-                if ( pathext != null ) {
-                	StringTokenizer pathextTokenizer = new StringTokenizer(pathext, File.pathSeparator);
-                    while (pathextTokenizer.hasMoreTokens()) {
-                        String pathextElement = pathextTokenizer.nextToken();
-                        toolFile = new File(pathElementFile, argument + pathextElement);
-                        if (toolFile.exists()) {
-                            return toolFile.getAbsolutePath();
-                        }
-                    }
-                }
-            }
-        }
-        return argument;
+		String path= map.get("PATH"); //$NON-NLS-1$
+		if (path == null) {
+			return argument;
+		}
+		// On MS Windows the PATHEXT environment variable defines which file extensions
+		// mark files that are executable (e.g. .EXE, .COM, .BAT)
+		String pathext = map.get("PATHEXT"); //$NON-NLS-1$
+		StringTokenizer tokenizer= new StringTokenizer(path, File.pathSeparator);
+		while (tokenizer.hasMoreTokens()) {
+			String pathElement= tokenizer.nextToken();
+			File pathElementFile= new File(pathElement);
+			if (pathElementFile.isDirectory()) {
+				File toolFile= new File(pathElementFile, argument);
+				if (toolFile.exists()) {
+					return toolFile.getAbsolutePath();
+				}
+				if ( pathext != null ) {
+					StringTokenizer pathextTokenizer = new StringTokenizer(pathext, File.pathSeparator);
+					while (pathextTokenizer.hasMoreTokens()) {
+						String pathextElement = pathextTokenizer.nextToken();
+						toolFile = new File(pathElementFile, argument + pathextElement);
+						if (toolFile.exists()) {
+							return toolFile.getAbsolutePath();
+						}
+					}
+				}
+			}
+		}
+		return argument;
 	}
 }

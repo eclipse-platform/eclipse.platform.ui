@@ -21,10 +21,10 @@ package org.eclipse.debug.internal.ui.commands.actions;
  */
 public class SuspendCommandActionDelegate extends DebugCommandActionDelegate {
 
-    public SuspendCommandActionDelegate() {
-        super();
-        setAction(new SuspendCommandAction());
-    }
+	public SuspendCommandActionDelegate() {
+		super();
+		setAction(new SuspendCommandAction());
+	}
 
 
 }

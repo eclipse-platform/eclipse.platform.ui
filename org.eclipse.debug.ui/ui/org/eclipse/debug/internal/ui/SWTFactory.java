@@ -322,13 +322,13 @@ public class SWTFactory {
 	 *
 	 */
 	public static Text createSingleText(Composite parent, int hspan) {
-    	Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
-    	t.setFont(parent.getFont());
-    	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-    	gd.horizontalSpan = hspan;
-    	t.setLayoutData(gd);
-    	return t;
-    }
+		Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
+		t.setFont(parent.getFont());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		t.setLayoutData(gd);
+		return t;
+	}
 
 	/**
 	 * Creates a new text widget
@@ -340,13 +340,13 @@ public class SWTFactory {
 	 * @since 3.3
 	 */
 	public static Text createText(Composite parent, int style, int hspan, int fill) {
-    	Text t = new Text(parent, style);
-    	t.setFont(parent.getFont());
-    	GridData gd = new GridData(fill);
-    	gd.horizontalSpan = hspan;
-    	t.setLayoutData(gd);
-    	return t;
-    }
+		Text t = new Text(parent, style);
+		t.setFont(parent.getFont());
+		GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+		t.setLayoutData(gd);
+		return t;
+	}
 
 	/**
 	 * Creates a new text widget
@@ -357,13 +357,13 @@ public class SWTFactory {
 	 * @since 3.3
 	 */
 	public static Text createText(Composite parent, int style, int hspan) {
-    	Text t = new Text(parent, style);
-    	t.setFont(parent.getFont());
-    	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-    	gd.horizontalSpan = hspan;
-    	t.setLayoutData(gd);
-    	return t;
-    }
+		Text t = new Text(parent, style);
+		t.setFont(parent.getFont());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		t.setLayoutData(gd);
+		return t;
+	}
 
 	/**
 	 * Creates a new text widget
@@ -377,15 +377,15 @@ public class SWTFactory {
 	 * @since 3.3
 	 */
 	public static Text createText(Composite parent, int style, int hspan, int width, int height, int fill) {
-    	Text t = new Text(parent, style);
-    	t.setFont(parent.getFont());
-    	GridData gd = new GridData(fill);
-    	gd.horizontalSpan = hspan;
-    	gd.widthHint = width;
-    	gd.heightHint = height;
-    	t.setLayoutData(gd);
-    	return t;
-    }
+		Text t = new Text(parent, style);
+		t.setFont(parent.getFont());
+		GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+		gd.widthHint = width;
+		gd.heightHint = height;
+		t.setLayoutData(gd);
+		return t;
+	}
 
 	/**
 	 * Creates a new styled text widget
@@ -419,14 +419,14 @@ public class SWTFactory {
 	 * @since 3.6
 	 */
 	public static Text createText(Composite parent, int style, int hspan, String text) {
-    	Text t = new Text(parent, style);
-    	t.setFont(parent.getFont());
-    	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-    	gd.horizontalSpan = hspan;
-    	t.setLayoutData(gd);
-    	t.setText(text);
-    	return t;
-    }
+		Text t = new Text(parent, style);
+		t.setFont(parent.getFont());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		t.setLayoutData(gd);
+		t.setText(text);
+		return t;
+	}
 
 	/**
 	 * Creates a Group widget
@@ -440,15 +440,15 @@ public class SWTFactory {
 	 *
 	 */
 	public static Group createGroup(Composite parent, String text, int columns, int hspan, int fill) {
-    	Group g = new Group(parent, SWT.NONE);
-    	g.setLayout(new GridLayout(columns, false));
-    	g.setText(text);
-    	g.setFont(parent.getFont());
-    	GridData gd = new GridData(fill);
+		Group g = new Group(parent, SWT.NONE);
+		g.setLayout(new GridLayout(columns, false));
+		g.setText(text);
+		g.setFont(parent.getFont());
+		GridData gd = new GridData(fill);
 		gd.horizontalSpan = hspan;
-    	g.setLayoutData(gd);
-    	return g;
-    }
+		g.setLayoutData(gd);
+		return g;
+	}
 
 	/**
 	 * Creates a Composite widget
@@ -461,14 +461,14 @@ public class SWTFactory {
 	 * @since 3.3
 	 */
 	public static Composite createComposite(Composite parent, Font font, int columns, int hspan, int fill) {
-    	Composite g = new Composite(parent, SWT.NONE);
-    	g.setLayout(new GridLayout(columns, false));
-    	g.setFont(font);
-    	GridData gd = new GridData(fill);
+		Composite g = new Composite(parent, SWT.NONE);
+		g.setLayout(new GridLayout(columns, false));
+		g.setFont(font);
+		GridData gd = new GridData(fill);
 		gd.horizontalSpan = hspan;
-    	g.setLayoutData(gd);
-    	return g;
-    }
+		g.setLayoutData(gd);
+		return g;
+	}
 
 	/**
 	 * Creates an ExpandibleComposite widget
@@ -503,12 +503,12 @@ public class SWTFactory {
 	 */
 	public static Composite createComposite(Composite parent, int columns, int hspan, int fill) {
 		Composite g = new Composite(parent, SWT.NONE);
-    	g.setLayout(new GridLayout(columns, false));
-    	g.setFont(parent.getFont());
-    	GridData gd = new GridData(fill);
+		g.setLayout(new GridLayout(columns, false));
+		g.setFont(parent.getFont());
+		GridData gd = new GridData(fill);
 		gd.horizontalSpan = hspan;
-    	g.setLayoutData(gd);
-    	return g;
+		g.setLayoutData(gd);
+		return g;
 	}
 
 	/**
@@ -561,12 +561,12 @@ public class SWTFactory {
 		GridLayout layout = new GridLayout(columns, false);
 		layout.marginWidth = marginwidth;
 		layout.marginHeight = marginheight;
-    	g.setLayout(layout);
-    	g.setFont(font);
-    	GridData gd = new GridData(fill);
+		g.setLayout(layout);
+		g.setFont(font);
+		GridData gd = new GridData(fill);
 		gd.horizontalSpan = hspan;
-    	g.setLayoutData(gd);
-    	return g;
+		g.setLayoutData(gd);
+		return g;
 	}
 
 	/**
@@ -585,9 +585,9 @@ public class SWTFactory {
 		ViewForm form = new ViewForm(parent, style);
 		form.setFont(parent.getFont());
 		GridLayout layout = new GridLayout(cols, false);
-        layout.marginWidth = marginwidth;
+		layout.marginWidth = marginwidth;
 		layout.marginHeight = marginheight;
-        form.setLayout(layout);
+		form.setLayout(layout);
 		GridData gd = new GridData(fill);
 		gd.horizontalSpan = span;
 		form.setLayoutData(gd);
@@ -612,12 +612,12 @@ public class SWTFactory {
 		GridLayout layout = new GridLayout(columns, false);
 		layout.marginWidth = marginwidth;
 		layout.marginHeight = marginheight;
-    	g.setLayout(layout);
-    	g.setFont(font);
-    	GridData gd = new GridData(fill);
+		g.setLayout(layout);
+		g.setFont(font);
+		GridData gd = new GridData(fill);
 		gd.horizontalSpan = hspan;
-    	g.setLayoutData(gd);
-    	return g;
+		g.setLayoutData(gd);
+		return g;
 	}
 
 	/**

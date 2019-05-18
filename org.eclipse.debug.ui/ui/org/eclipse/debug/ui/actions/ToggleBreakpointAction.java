@@ -53,10 +53,10 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	private IDocument fDocument;
 	private IVerticalRulerInfo fRulerInfo;
 	private IToggleBreakpointsTargetManagerListener fListener = new IToggleBreakpointsTargetManagerListener() {
-	    @Override
+		@Override
 		public void preferredTargetsChanged() {
-	        update();
-	    }
+			update();
+		}
 	};
 
 	/**
@@ -120,7 +120,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 							}
 						}
 						if (target.canToggleLineBreakpoints(fPart, selection)) {
-						    target.toggleLineBreakpoints(fPart, selection);
+							target.toggleLineBreakpoints(fPart, selection);
 						} else if (target.canToggleWatchpoints(fPart, selection)) {
 							target.toggleWatchpoints(fPart, selection);
 						} else if (target.canToggleMethodBreakpoints(fPart, selection)) {
@@ -193,34 +193,34 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	public void update() {
 		IDocument document= getDocument();
 		if (document != null) {
-		    int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-		    if (line > -1) {
-		        try {
-		            ITextSelection selection = getTextSelection(document, line);
+			int line = fRulerInfo.getLineOfLastMouseButtonActivity();
+			if (line > -1) {
+				try {
+					ITextSelection selection = getTextSelection(document, line);
 
-                    IToggleBreakpointsTarget adapter =
-                        ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, selection);
-                    if (adapter == null) {
-                        setEnabled(false);
-                        return;
-                    }
-                    if (adapter instanceof IToggleBreakpointsTargetExtension) {
-                        IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) adapter;
-                        if (extension.canToggleBreakpoints(fPart, selection)) {
-                            setEnabled(true);
-                            return;
-                        }
-                    }
-                    if (adapter.canToggleLineBreakpoints(fPart, selection) ||
-                        adapter.canToggleWatchpoints(fPart, selection) ||
-                        adapter.canToggleMethodBreakpoints(fPart, selection))
-                    {
-                        setEnabled(true);
-                        return;
-                    }
-                } catch (BadLocationException e) {
-                    reportException(e);
-                }
+					IToggleBreakpointsTarget adapter =
+						ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, selection);
+					if (adapter == null) {
+						setEnabled(false);
+						return;
+					}
+					if (adapter instanceof IToggleBreakpointsTargetExtension) {
+						IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) adapter;
+						if (extension.canToggleBreakpoints(fPart, selection)) {
+							setEnabled(true);
+							return;
+						}
+					}
+					if (adapter.canToggleLineBreakpoints(fPart, selection) ||
+						adapter.canToggleWatchpoints(fPart, selection) ||
+						adapter.canToggleMethodBreakpoints(fPart, selection))
+					{
+						setEnabled(true);
+						return;
+					}
+				} catch (BadLocationException e) {
+					reportException(e);
+				}
 			}
 		}
 		setEnabled(false);

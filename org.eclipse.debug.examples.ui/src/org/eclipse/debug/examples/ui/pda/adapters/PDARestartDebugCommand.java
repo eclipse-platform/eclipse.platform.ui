@@ -27,34 +27,34 @@ import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
  */
 public class PDARestartDebugCommand extends AbstractDebugCommand implements IRestartHandler {
 
-    @Override
+	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-        for (int i = 0; i < targets.length; i++) {
-            ((PDADebugTarget)targets[i]).restart();
-            monitor.worked(1);
-        }
-    }
+		for (int i = 0; i < targets.length; i++) {
+			((PDADebugTarget)targets[i]).restart();
+			monitor.worked(1);
+		}
+	}
 
-    @Override
+	@Override
 	protected Object getTarget(Object element) {
-        IDebugTarget target = (IDebugTarget)getAdapter(element, IDebugTarget.class);
-        if (target instanceof PDADebugTarget) {
-            return target;
-        }
-        return null;
-    }
+		IDebugTarget target = (IDebugTarget)getAdapter(element, IDebugTarget.class);
+		if (target instanceof PDADebugTarget) {
+			return target;
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
-        throws CoreException
-    {
-        for (int i = 0; i < targets.length; i++) {
-            if (((PDADebugTarget)targets[i]).isTerminated()) {
-                return false;
-            }
-            monitor.worked(1);
-        }
-        return true;
-    }
+		throws CoreException
+	{
+		for (int i = 0; i < targets.length; i++) {
+			if (((PDADebugTarget)targets[i]).isTerminated()) {
+				return false;
+			}
+			monitor.worked(1);
+		}
+		return true;
+	}
 
 }

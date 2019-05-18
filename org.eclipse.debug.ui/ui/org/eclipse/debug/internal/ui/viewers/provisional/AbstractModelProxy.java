@@ -72,11 +72,11 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 	 * @param delta model delta to broadcast
 	 */
 	public void fireModelChanged(IModelDelta delta) {
-	    synchronized(this) {
-	        if (!fInstalled || fDisposed) {
+		synchronized(this) {
+			if (!fInstalled || fDisposed) {
 				return;
 			}
-	    }
+		}
 
 		final IModelDelta root = getRootDelta(delta);
 		for (IModelChangedListener iModelChangedListener : getListeners()) {
@@ -93,7 +93,7 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 				}
 
 			};
-            SafeRunner.run(safeRunnable);
+			SafeRunner.run(safeRunnable);
 		}
 	}
 
@@ -114,61 +114,61 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 
 	@Override
 	public synchronized void dispose() {
-	    if (fInstallJob != null) {
-	        fInstallJob.cancel();
-	        fInstallJob = null;
-	    }
+		if (fInstallJob != null) {
+			fInstallJob.cancel();
+			fInstallJob = null;
+		}
 		fDisposed = true;
 		fContext = null;
 		fViewer = null;
 	}
 
 	protected synchronized void setInstalled(boolean installed) {
-	    fInstalled = installed;
+		fInstalled = installed;
 	}
 
 	protected synchronized boolean isInstalled() {
-	    return fInstalled;
+		return fInstalled;
 	}
 
 	protected synchronized void setDisposed(boolean disposed) {
-	    fDisposed = disposed;
+		fDisposed = disposed;
 	}
 
 	@Override
 	public void initialize(ITreeModelViewer viewer) {
-        setDisposed(false);
+		setDisposed(false);
 
-        synchronized(this) {
-    	    fViewer = viewer;
-    	    fContext = viewer.getPresentationContext();
-            fInstallJob = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
-                @Override
+		synchronized(this) {
+			fViewer = viewer;
+			fContext = viewer.getPresentationContext();
+			fInstallJob = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-                    synchronized(this) {
-                        fInstallJob = null;
-                    }
-                    if (!monitor.isCanceled()) {
-                        init(getTreeModelViewer().getPresentationContext());
-                        setInstalled(true);
-                        installed(getViewer());
-                    }
-                    return Status.OK_STATUS;
-                }
+					synchronized(this) {
+						fInstallJob = null;
+					}
+					if (!monitor.isCanceled()) {
+						init(getTreeModelViewer().getPresentationContext());
+						setInstalled(true);
+						installed(getViewer());
+					}
+					return Status.OK_STATUS;
+				}
 
-                @Override
+				@Override
 				public boolean belongsTo(Object family) {
 					return AbstractModelProxy.this == family;
 				}
 
 				@Override
 				public boolean shouldRun() {
-                    return !isDisposed();
-                }
-            };
-            fInstallJob.setSystem(true);
-        }
-        fInstallJob.schedule();
+					return !isDisposed();
+				}
+			};
+			fInstallJob.setSystem(true);
+		}
+		fInstallJob.schedule();
 	}
 
 	/**
@@ -201,14 +201,14 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 		return (Viewer)fViewer;
 	}
 
-    /**
-     * Returns the viewer this proxy is installed in.
-     *
-     * @return viewer or <code>null</code> if not installed
-     */
-    protected ITreeModelViewer getTreeModelViewer() {
-        return fViewer;
-    }
+	/**
+	 * Returns the viewer this proxy is installed in.
+	 *
+	 * @return viewer or <code>null</code> if not installed
+	 */
+	protected ITreeModelViewer getTreeModelViewer() {
+		return fViewer;
+	}
 
 	@Override
 	public synchronized boolean isDisposed() {

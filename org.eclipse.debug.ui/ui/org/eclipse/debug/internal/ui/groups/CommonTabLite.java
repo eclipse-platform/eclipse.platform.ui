@@ -241,9 +241,9 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		String currentContainerString = fSharedLocationText.getText();
 		IContainer currentContainer = getContainer(currentContainerString);
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
-				   currentContainer,
-				   false,
-				   LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13);
+					currentContainer,
+					false,
+					LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13);
 		dialog.showClosedProjects(false);
 		dialog.setDialogBoundsSettings(getDialogBoundsSettings(), Dialog.DIALOG_PERSISTSIZE);
 		dialog.open();
@@ -427,11 +427,11 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		return validateLocalShared();
 	}
 
-    /**
-     * validates the local shared config file location
-     * @return true if the local shared file exists, false otherwise
-     */
-    private boolean validateLocalShared() {
+	/**
+	 * validates the local shared config file location
+	 * @return true if the local shared file exists, false otherwise
+	 */
+	private boolean validateLocalShared() {
 		if (isShared()) {
 			String path = fSharedLocationText.getText().trim();
 			IContainer container = getContainer(path);

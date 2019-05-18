@@ -259,9 +259,9 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			if (fMenuCreator == null) {
 				fMenuCreator = new AddMemoryRenderingMenuCreator();
 			}
-	        action.setMenuCreator(fMenuCreator);
-	        fAction= action;
-	    }
+			action.setMenuCreator(fMenuCreator);
+			fAction= action;
+		}
 	}
 
 	private IAddMemoryRenderingsTarget getAddMemoryRenderingTarget(Object elmt) {

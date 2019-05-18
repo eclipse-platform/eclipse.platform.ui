@@ -35,42 +35,42 @@ import org.eclipse.ui.IEditorPart;
  */
 public class PDALaunchShortcut implements ILaunchShortcut {
 
-    @Override
+	@Override
 	public void launch(ISelection selection, String mode) {
-        // must be a structured selection with one file selected
-        IFile file = (IFile) ((IStructuredSelection)selection).getFirstElement();
+		// must be a structured selection with one file selected
+		IFile file = (IFile) ((IStructuredSelection)selection).getFirstElement();
 
-        // check for an existing launch config for the pda file
-        String path = file.getFullPath().toString();
-        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-        ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(DebugCorePlugin.ID_PDA_LAUNCH_CONFIGURATION_TYPE);
-        try {
-            ILaunchConfiguration[] configurations = launchManager.getLaunchConfigurations(type);
-            for (int i = 0; i < configurations.length; i++) {
-                ILaunchConfiguration configuration = configurations[i];
-                String attribute = configuration.getAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, (String)null);
-                if (path.equals(attribute)) {
-                    DebugUITools.launch(configuration, mode);
-                    return;
-                }
-            }
-        } catch (CoreException e) {
-            return;
-        }
+		// check for an existing launch config for the pda file
+		String path = file.getFullPath().toString();
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(DebugCorePlugin.ID_PDA_LAUNCH_CONFIGURATION_TYPE);
+		try {
+			ILaunchConfiguration[] configurations = launchManager.getLaunchConfigurations(type);
+			for (int i = 0; i < configurations.length; i++) {
+				ILaunchConfiguration configuration = configurations[i];
+				String attribute = configuration.getAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, (String)null);
+				if (path.equals(attribute)) {
+					DebugUITools.launch(configuration, mode);
+					return;
+				}
+			}
+		} catch (CoreException e) {
+			return;
+		}
 
-        try {
-            // create a new configuration for the pda file
-            ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, file.getName());
-            workingCopy.setAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, path);
-            workingCopy.setMappedResources(new IResource[]{file});
-            ILaunchConfiguration configuration = workingCopy.doSave();
-            DebugUITools.launch(configuration, mode);
-        } catch (CoreException e1) {
-        }
-    }
+		try {
+			// create a new configuration for the pda file
+			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, file.getName());
+			workingCopy.setAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, path);
+			workingCopy.setMappedResources(new IResource[]{file});
+			ILaunchConfiguration configuration = workingCopy.doSave();
+			DebugUITools.launch(configuration, mode);
+		} catch (CoreException e1) {
+		}
+	}
 
-    @Override
+	@Override
 	public void launch(IEditorPart editor, String mode) {
-    }
+	}
 
 }

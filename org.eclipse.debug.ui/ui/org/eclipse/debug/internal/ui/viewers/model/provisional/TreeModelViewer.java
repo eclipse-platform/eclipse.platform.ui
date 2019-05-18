@@ -128,7 +128,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	/**
 	 * Initializes viewer state from the memento
 	 *
-     * @param memento the {@link IMemento} to read from
+	 * @param memento the {@link IMemento} to read from
 	 */
 	@Override
 	public void initState(IMemento memento) {
@@ -138,16 +138,16 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	/**
 	 * Save viewer state into the given memento.
 	 *
-     * @param memento the {@link IMemento} to save to
+	 * @param memento the {@link IMemento} to save to
 	 */
 	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 	}
 
-    /**
-     * @return Returns true if columns are being displayed currently.
-     */
+	/**
+	 * @return Returns true if columns are being displayed currently.
+	 */
 	@Override
 	public boolean isShowColumns() {
 		return super.isShowColumns();
@@ -187,8 +187,8 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 		super.setVisibleColumns(ids);
 	}
 
-    @Override
+	@Override
 	public ViewerLabel getElementLabel(TreePath path, String columnId) {
-        return super.getElementLabel(path, columnId);
-    }
+		return super.getElementLabel(path, columnId);
+	}
 }

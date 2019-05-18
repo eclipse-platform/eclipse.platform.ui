@@ -26,22 +26,22 @@ import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
  */
 public class CommandAdapterFactory implements IAdapterFactory {
 
-    private static IRestartHandler fgRestartHandler = new PDARestartDebugCommand();
+	private static IRestartHandler fgRestartHandler = new PDARestartDebugCommand();
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-        if (IRestartHandler.class.equals(adapterType)) {
-            if (adaptableObject instanceof PDADebugTarget) {
-                return (T) fgRestartHandler;
-            }
-        }
-        return null;
-    }
+		if (IRestartHandler.class.equals(adapterType)) {
+			if (adaptableObject instanceof PDADebugTarget) {
+				return (T) fgRestartHandler;
+			}
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public Class<?>[] getAdapterList() {
-        return new Class[]{IRestartHandler.class};
-    }
+		return new Class[]{IRestartHandler.class};
+	}
 
 }

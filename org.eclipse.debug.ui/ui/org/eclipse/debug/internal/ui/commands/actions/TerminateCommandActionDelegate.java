@@ -21,10 +21,10 @@ package org.eclipse.debug.internal.ui.commands.actions;
  */
 public class TerminateCommandActionDelegate extends DebugCommandActionDelegate {
 
-    public TerminateCommandActionDelegate() {
-        super();
-        setAction(new TerminateCommandAction());
-    }
+	public TerminateCommandActionDelegate() {
+		super();
+		setAction(new TerminateCommandAction());
+	}
 
 
 }

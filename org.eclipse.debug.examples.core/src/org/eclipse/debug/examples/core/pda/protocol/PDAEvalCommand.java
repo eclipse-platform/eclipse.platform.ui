@@ -37,12 +37,12 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAEvalCommand extends PDACommand {
 
-    public PDAEvalCommand(int threadId, String operation) {
-        super("eval " + threadId + " " + operation); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	public PDAEvalCommand(int threadId, String operation) {
+		super("eval " + threadId + " " + operation); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

@@ -27,39 +27,39 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public class DropToFrameCommandAction extends DebugCommandAction {
 
-    public DropToFrameCommandAction() {
-        setActionDefinitionId("org.eclipse.debug.ui.commands.DropToFrame"); //$NON-NLS-1$
-    }
+	public DropToFrameCommandAction() {
+		setActionDefinitionId("org.eclipse.debug.ui.commands.DropToFrame"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.DropToFrameAction_0;
-    }
+		return ActionMessages.DropToFrameAction_0;
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.drop_to_frame_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.drop_to_frame_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.debugview.toolbar.dropToFrame"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.debugview.toolbar.dropToFrame"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.DropToFrameAction_3;
-    }
+		return ActionMessages.DropToFrameAction_3;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DROP_TO_FRAME);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DROP_TO_FRAME);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DROP_TO_FRAME);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DROP_TO_FRAME);
+	}
 
 	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {

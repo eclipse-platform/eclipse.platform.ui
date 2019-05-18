@@ -74,30 +74,30 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class BreakpointTypesContribution extends CompoundContributionItem implements IWorkbenchContribution {
 
-    private class SelectTargetAction extends Action {
+	private class SelectTargetAction extends Action {
 		private final Set<String> fPossibleIDs;
-        private final String fID;
+		private final String fID;
 
 		SelectTargetAction(String name, Set<String> possibleIDs, String ID) {
-            super(name, AS_RADIO_BUTTON);
-            fID = ID;
-            fPossibleIDs = possibleIDs;
-        }
+			super(name, AS_RADIO_BUTTON);
+			fID = ID;
+			fPossibleIDs = possibleIDs;
+		}
 
-        @Override
+		@Override
 		public void run() {
-            if (isChecked()) {
-                // Note: setPreferredTarget is not declared on the
-                // IToggleBreakpontsTargetManager interface.
-                ToggleBreakpointsTargetManager.getDefault().setPreferredTarget(fPossibleIDs, fID);
-            }
-        }
-    }
+			if (isChecked()) {
+				// Note: setPreferredTarget is not declared on the
+				// IToggleBreakpontsTargetManager interface.
+				ToggleBreakpointsTargetManager.getDefault().setPreferredTarget(fPossibleIDs, fID);
+			}
+		}
+	}
 
-    private IServiceLocator fServiceLocator;
+	private IServiceLocator fServiceLocator;
 
-    private static IContributionItem[] NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS = new IContributionItem[] {
-    	new ContributionItem() {
+	private static IContributionItem[] NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS = new IContributionItem[] {
+		new ContributionItem() {
 			@Override
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.NONE);
@@ -109,56 +109,56 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
 			public boolean isEnabled() {
 				return false;
 			}
-    	}
-    };
+		}
+	};
 
-    @Override
+	@Override
 	protected IContributionItem[] getContributionItems() {
-        IWorkbenchPart part = null;
-        ISelection selection = null;
+		IWorkbenchPart part = null;
+		ISelection selection = null;
 
-        ISelectionService selectionService =
-            fServiceLocator.getService(ISelectionService.class);
-        if (selectionService != null) {
-            selection = selectionService.getSelection();
-        }
-        IPartService partService = fServiceLocator.getService(IPartService.class);
-        if (partService != null) {
-            part = partService.getActivePart();
-        }
+		ISelectionService selectionService =
+			fServiceLocator.getService(ISelectionService.class);
+		if (selectionService != null) {
+			selection = selectionService.getSelection();
+		}
+		IPartService partService = fServiceLocator.getService(IPartService.class);
+		if (partService != null) {
+			part = partService.getActivePart();
+		}
 
-        // If no part or selection, disable all.
-        if (part == null || selection == null) {
-            return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
-        }
+		// If no part or selection, disable all.
+		if (part == null || selection == null) {
+			return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
+		}
 
-        // Get breakpoint toggle target IDs.
-        IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager();
+		// Get breakpoint toggle target IDs.
+		IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager();
 		Set<String> enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(part, selection);
-        String preferredId = manager.getPreferredToggleBreakpointsTargetID(part, selection);
+		String preferredId = manager.getPreferredToggleBreakpointsTargetID(part, selection);
 
 		List<Action> actions = new ArrayList<>(enabledIDs.size());
 		for (String id : enabledIDs) {
-            Action action = new SelectTargetAction(manager.getToggleBreakpointsTargetName(id), enabledIDs, id);
-            if (id.equals(preferredId)) {
-                action.setChecked(true);
-            }
-            actions.add(action);
-        }
+			Action action = new SelectTargetAction(manager.getToggleBreakpointsTargetName(id), enabledIDs, id);
+			if (id.equals(preferredId)) {
+				action.setChecked(true);
+			}
+			actions.add(action);
+		}
 
-        if ( enabledIDs.isEmpty() ) {
-            return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
-        }
+		if ( enabledIDs.isEmpty() ) {
+			return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
+		}
 
-        IContributionItem[] items = new IContributionItem[enabledIDs.size()];
-        for (int i = 0; i < actions.size(); i++) {
-            items[i] = new ActionContributionItem(actions.get(i));
-        }
-        return items;
-    }
+		IContributionItem[] items = new IContributionItem[enabledIDs.size()];
+		for (int i = 0; i < actions.size(); i++) {
+			items[i] = new ActionContributionItem(actions.get(i));
+		}
+		return items;
+	}
 
-    @Override
+	@Override
 	public void initialize(IServiceLocator serviceLocator) {
-        fServiceLocator = serviceLocator;
-    }
+		fServiceLocator = serviceLocator;
+	}
 }

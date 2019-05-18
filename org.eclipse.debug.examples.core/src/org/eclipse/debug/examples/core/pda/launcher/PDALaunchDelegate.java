@@ -55,22 +55,22 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 
 		List<String> commandList = new ArrayList<>();
 
-        // Get Java VM path
-        String javaVMHome = System.getProperty("java.home"); //$NON-NLS-1$
-        String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java"; //$NON-NLS-1$ //$NON-NLS-2$
-        if (File.separatorChar == '\\') {
-            javaVMExec += ".exe"; //$NON-NLS-1$
-        }
-        File exe = new File(javaVMExec);
-        if (!exe.exists()) {
-            abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null); //$NON-NLS-1$
-        }
-        commandList.add(javaVMExec);
+		// Get Java VM path
+		String javaVMHome = System.getProperty("java.home"); //$NON-NLS-1$
+		String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (File.separatorChar == '\\') {
+			javaVMExec += ".exe"; //$NON-NLS-1$
+		}
+		File exe = new File(javaVMExec);
+		if (!exe.exists()) {
+			abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null); //$NON-NLS-1$
+		}
+		commandList.add(javaVMExec);
 
-        commandList.add("-cp"); //$NON-NLS-1$
-        commandList.add(File.pathSeparator + DebugCorePlugin.getFileInPlugin(new Path("bin"))); //$NON-NLS-1$
+		commandList.add("-cp"); //$NON-NLS-1$
+		commandList.add(File.pathSeparator + DebugCorePlugin.getFileInPlugin(new Path("bin"))); //$NON-NLS-1$
 
-        commandList.add("org.eclipse.debug.examples.pdavm.PDAVirtualMachine"); //$NON-NLS-1$
+		commandList.add("org.eclipse.debug.examples.pdavm.PDAVirtualMachine"); //$NON-NLS-1$
 
 		// program name
 		String program = configuration.getAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, (String)null);

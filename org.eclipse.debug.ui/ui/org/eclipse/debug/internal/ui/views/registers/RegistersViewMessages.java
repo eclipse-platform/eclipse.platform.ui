@@ -19,7 +19,7 @@ import org.eclipse.osgi.util.NLS;
 public class RegistersViewMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.views.registers.RegistersViewMessages";//$NON-NLS-1$
 
-    public static String RegistersView_0;
+	public static String RegistersView_0;
 
 	static {
 		// load message values from bundle file

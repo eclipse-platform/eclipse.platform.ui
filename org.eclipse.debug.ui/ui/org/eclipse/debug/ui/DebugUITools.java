@@ -236,7 +236,7 @@ public class DebugUITools {
 	}
 
 	/**
- 	 * Returns the element of the currently selected context in the
+	 * Returns the element of the currently selected context in the
 	 * active workbench window. Returns <code>null</code> if there is no
 	 * current debug context.
 	 * <p>
@@ -247,38 +247,38 @@ public class DebugUITools {
 	 * @since 2.0
 	 */
 	public static IAdaptable getDebugContext() {
-	    IWorkbenchWindow activeWindow = SelectedResourceManager.getDefault().getActiveWindow();
-	    if (activeWindow != null) {
-	    	ISelection activeContext = DebugUITools.getDebugContextManager().getContextService(activeWindow).getActiveContext();
-	    	return getDebugContextElementForSelection(activeContext);
-	    }
-	    return null;
+		IWorkbenchWindow activeWindow = SelectedResourceManager.getDefault().getActiveWindow();
+		if (activeWindow != null) {
+			ISelection activeContext = DebugUITools.getDebugContextManager().getContextService(activeWindow).getActiveContext();
+			return getDebugContextElementForSelection(activeContext);
+		}
+		return null;
 	}
 
-    /**
-     * Returns the currently selected context in the given part or part's
-     * workbench window. Returns <code>null</code> if there is no current
-     * debug context.
-     * @param part workbench part where the active context is to be evaluated
-     * @return the currently selected debug context in the given workbench part,
-     * or <code>null</code>
-     * @since 3.8
-     * @see IDebugContextService#getActiveContext(String)
-     * @see IDebugContextService#getActiveContext(String, String)
-     */
-    public static ISelection getDebugContextForPart(IWorkbenchPart part) {
-        IWorkbenchPartSite site = part.getSite();
-        IWorkbenchWindow partWindow = site.getWorkbenchWindow();
-        if (partWindow != null) {
-            IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(partWindow);
-            if (site instanceof IViewSite) {
-                return contextService.getActiveContext(site.getId(), ((IViewSite)site).getSecondaryId());
-            } else {
-                return contextService.getActiveContext(site.getId());
-            }
-        }
-        return null;
-    }
+	/**
+	 * Returns the currently selected context in the given part or part's
+	 * workbench window. Returns <code>null</code> if there is no current
+	 * debug context.
+	 * @param part workbench part where the active context is to be evaluated
+	 * @return the currently selected debug context in the given workbench part,
+	 * or <code>null</code>
+	 * @since 3.8
+	 * @see IDebugContextService#getActiveContext(String)
+	 * @see IDebugContextService#getActiveContext(String, String)
+	 */
+	public static ISelection getDebugContextForPart(IWorkbenchPart part) {
+		IWorkbenchPartSite site = part.getSite();
+		IWorkbenchWindow partWindow = site.getWorkbenchWindow();
+		if (partWindow != null) {
+			IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(partWindow);
+			if (site instanceof IViewSite) {
+				return contextService.getActiveContext(site.getId(), ((IViewSite)site).getSecondaryId());
+			} else {
+				return contextService.getActiveContext(site.getId());
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Return the undo context that should be used for operations involving breakpoints.
@@ -354,7 +354,7 @@ public class DebugUITools {
 		}
 	}
 
-    /**
+	/**
 	 * Returns the currently active context for the given workbench part. Returns
 	 * <code>null</code> if there is no current debug context.
 	 *
@@ -363,88 +363,88 @@ public class DebugUITools {
 	 *         <code>null</code>
 	 * @since 3.7
 	 */
-    public static IAdaptable getPartDebugContext(IWorkbenchPartSite site) {
-        IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
-        String id = null;
-        String secondaryId = null;
-        id = site.getId();
-        if (site instanceof IViewSite) {
-            secondaryId = ((IViewSite)site).getSecondaryId();
-        }
-        ISelection activeContext = service.getActiveContext(id, secondaryId);
-        return getDebugContextElementForSelection(activeContext);
-    }
+	public static IAdaptable getPartDebugContext(IWorkbenchPartSite site) {
+		IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+		String id = null;
+		String secondaryId = null;
+		id = site.getId();
+		if (site instanceof IViewSite) {
+			secondaryId = ((IViewSite)site).getSecondaryId();
+		}
+		ISelection activeContext = service.getActiveContext(id, secondaryId);
+		return getDebugContextElementForSelection(activeContext);
+	}
 
-    /**
-     * Adds the given debug context listener as a listener to the debug context changed events, in
-     * the context of the given workbench part.
-     * <p>
-     * This method is a utility method which ultimately calls
-     * {@link IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)}
-     * using the part id parameters extracted from the given part parameter.
-     * </p>
-     *
-     * @param site the part's site to get the part ID and part secondary ID from
-     * @param listener Debug context listener to add
-     *
-     * @see IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)
-     * @see IDebugContextManager#addDebugContextListener(IDebugContextListener)
-     * @since 3.7
-     */
-    public static void addPartDebugContextListener(IWorkbenchPartSite site, IDebugContextListener listener) {
-        IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
-        String id = site.getId();
-        String secondaryId = null;
-        if (site instanceof IViewSite) {
-            secondaryId = ((IViewSite)site).getSecondaryId();
-        }
-        service.addDebugContextListener(listener, id, secondaryId);
-    }
+	/**
+	 * Adds the given debug context listener as a listener to the debug context changed events, in
+	 * the context of the given workbench part.
+	 * <p>
+	 * This method is a utility method which ultimately calls
+	 * {@link IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)}
+	 * using the part id parameters extracted from the given part parameter.
+	 * </p>
+	 *
+	 * @param site the part's site to get the part ID and part secondary ID from
+	 * @param listener Debug context listener to add
+	 *
+	 * @see IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)
+	 * @see IDebugContextManager#addDebugContextListener(IDebugContextListener)
+	 * @since 3.7
+	 */
+	public static void addPartDebugContextListener(IWorkbenchPartSite site, IDebugContextListener listener) {
+		IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+		String id = site.getId();
+		String secondaryId = null;
+		if (site instanceof IViewSite) {
+			secondaryId = ((IViewSite)site).getSecondaryId();
+		}
+		service.addDebugContextListener(listener, id, secondaryId);
+	}
 
-    /**
-     * Removes the given debug context listener as a listener to the debug context changed events,
-     * in the context of the given workbench part.
-     * <p>
-     * This method is a utility method which ultimately calls
-     * {@link IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)}
-     * using the part id parameters extracted from the given part parameter.
-     * </p>
-     *
-     * @param site the part's site to get the part ID and part secondary ID from
-     * @param listener Debug context listener to remove
-     *
-     * @see IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)
-     * @see IDebugContextManager#removeDebugContextListener(IDebugContextListener)
-     * @since 3.7
-     */
-    public static void removePartDebugContextListener(IWorkbenchPartSite site, IDebugContextListener listener) {
-        IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
-        String id = site.getId();
-        String secondaryId = null;
-        if (site instanceof IViewSite) {
-            secondaryId = ((IViewSite)site).getSecondaryId();
-        }
-        service.removeDebugContextListener(listener, id, secondaryId);
-    }
+	/**
+	 * Removes the given debug context listener as a listener to the debug context changed events,
+	 * in the context of the given workbench part.
+	 * <p>
+	 * This method is a utility method which ultimately calls
+	 * {@link IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)}
+	 * using the part id parameters extracted from the given part parameter.
+	 * </p>
+	 *
+	 * @param site the part's site to get the part ID and part secondary ID from
+	 * @param listener Debug context listener to remove
+	 *
+	 * @see IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)
+	 * @see IDebugContextManager#removeDebugContextListener(IDebugContextListener)
+	 * @since 3.7
+	 */
+	public static void removePartDebugContextListener(IWorkbenchPartSite site, IDebugContextListener listener) {
+		IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+		String id = site.getId();
+		String secondaryId = null;
+		if (site instanceof IViewSite) {
+			secondaryId = ((IViewSite)site).getSecondaryId();
+		}
+		service.removeDebugContextListener(listener, id, secondaryId);
+	}
 
-    /**
+	/**
 	 * Extracts the first element from the given selection and casts it to IAdaptable.
 	 *
 	 * @param activeContext the selection
 	 * @return an adaptable
 	 */
-    private static IAdaptable getDebugContextElementForSelection(ISelection activeContext) {
-        if (activeContext instanceof IStructuredSelection) {
-            IStructuredSelection selection = (IStructuredSelection) activeContext;
-            if (!selection.isEmpty()) {
-                Object firstElement = selection.getFirstElement();
-                if (firstElement instanceof IAdaptable) {
-                    return (IAdaptable) firstElement;
-                }
-            }
-        }
-        return null;
-    }
+	private static IAdaptable getDebugContextElementForSelection(ISelection activeContext) {
+		if (activeContext instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection) activeContext;
+			if (!selection.isEmpty()) {
+				Object firstElement = selection.getFirstElement();
+				if (firstElement instanceof IAdaptable) {
+					return (IAdaptable) firstElement;
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Returns the currently selected resource in the active workbench window,
@@ -480,11 +480,11 @@ public class DebugUITools {
 			return ((IDebugElement)context).getDebugTarget().getProcess();
 		}
 
-        if (context instanceof IProcess) {
+		if (context instanceof IProcess) {
 			return (IProcess)context;
 		}
 
-        if (context instanceof ILaunch) {
+		if (context instanceof ILaunch) {
 			ILaunch launch= (ILaunch)context;
 			IDebugTarget target= launch.getDebugTarget();
 			if (target != null) {
@@ -499,9 +499,9 @@ public class DebugUITools {
 			}
 		}
 
-        if (context != null) {
-            return context.getAdapter(IProcess.class);
-        }
+		if (context != null) {
+			return context.getAdapter(IProcess.class);
+		}
 
 		return null;
 	}
@@ -683,37 +683,37 @@ public class DebugUITools {
 	}
 
 	/**
-     * Open the launch configuration dialog on the specified launch
-     * configuration. The dialog displays the tabs for a single configuration
-     * only (a tree of launch configuration is not displayed), and provides a
-     * launch (run or debug) button.
-     * <p>
-     * If a status is specified, a status handler is consulted to handle the
-     * status. The status handler is passed the instance of the launch
-     * configuration dialog that is opened. This gives the status handler an
-     * opportunity to perform error handling/initialization as required.
-     * </p>
-     * @param shell the parent shell for the launch configuration dialog
-     * @param configuration the configuration to display
-     * @param groupIdentifier group identifier of the launch group the launch configuration
-     * belongs to
-     * @param status the status to display, or <code>null</code> if none
-     * @return the return code from opening the launch configuration dialog -
-     *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
+	 * Open the launch configuration dialog on the specified launch
+	 * configuration. The dialog displays the tabs for a single configuration
+	 * only (a tree of launch configuration is not displayed), and provides a
+	 * launch (run or debug) button.
+	 * <p>
+	 * If a status is specified, a status handler is consulted to handle the
+	 * status. The status handler is passed the instance of the launch
+	 * configuration dialog that is opened. This gives the status handler an
+	 * opportunity to perform error handling/initialization as required.
+	 * </p>
+	 * @param shell the parent shell for the launch configuration dialog
+	 * @param configuration the configuration to display
+	 * @param groupIdentifier group identifier of the launch group the launch configuration
+	 * belongs to
+	 * @param status the status to display, or <code>null</code> if none
+	 * @return the return code from opening the launch configuration dialog -
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
 	 *  is returned if an invalid launch group identifier is provided.
 	 * @see ILaunchGroup
-     * @since 2.1
-     */
-    public static int openLaunchConfigurationDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
-    	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
-    	if (group != null) {
-    		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, configuration, group);
-    		dialog.setInitialStatus(status);
-    		return dialog.open();
-    	}
+	 * @since 2.1
+	 */
+	public static int openLaunchConfigurationDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
+		LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
+		if (group != null) {
+			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, configuration, group);
+			dialog.setInitialStatus(status);
+			return dialog.open();
+		}
 
-    	return Window.CANCEL;
-    }
+		return Window.CANCEL;
+	}
 
 	/**
 	 * Saves all dirty editors and builds the workspace according to current
@@ -1217,45 +1217,45 @@ public class DebugUITools {
 		}
 	}
 
-    /**
-     * Performs source lookup on the given artifact and returns the result.
-     * Optionally, a source locator may be specified.
-     *
-     * @param artifact object for which source is to be resolved
-     * @param locator the source locator to use, or <code>null</code>. When <code>null</code>
-     *   a source locator is determined from the artifact, if possible. If the artifact
-     *   is a debug element, the source locator from its associated launch is used.
-     * @return a source lookup result
-     * @since 3.1
-     */
-    public static ISourceLookupResult lookupSource(Object artifact, ISourceLocator locator) {
+	/**
+	 * Performs source lookup on the given artifact and returns the result.
+	 * Optionally, a source locator may be specified.
+	 *
+	 * @param artifact object for which source is to be resolved
+	 * @param locator the source locator to use, or <code>null</code>. When <code>null</code>
+	 *   a source locator is determined from the artifact, if possible. If the artifact
+	 *   is a debug element, the source locator from its associated launch is used.
+	 * @return a source lookup result
+	 * @since 3.1
+	 */
+	public static ISourceLookupResult lookupSource(Object artifact, ISourceLocator locator) {
 		return SourceLookupFacility.getDefault().lookup(artifact, locator, false);
-    }
+	}
 
-    /**
-     * Displays the given source lookup result in an editor in the given workbench
-     * page. Has no effect if the result has an unknown editor id or editor input.
-     * The editor is opened, positioned, and annotated.
-     * <p>
-     * Honors user preference for editors re-use.
-     * </p>
-     * @param result source lookup result to display
-     * @param page the page to display the result in
-     * @since 3.1
-     */
-    public static void displaySource(ISourceLookupResult result, IWorkbenchPage page) {
-    	SourceLookupFacility.getDefault().display(result, page);
-    }
+	/**
+	 * Displays the given source lookup result in an editor in the given workbench
+	 * page. Has no effect if the result has an unknown editor id or editor input.
+	 * The editor is opened, positioned, and annotated.
+	 * <p>
+	 * Honors user preference for editors re-use.
+	 * </p>
+	 * @param result source lookup result to display
+	 * @param page the page to display the result in
+	 * @since 3.1
+	 */
+	public static void displaySource(ISourceLookupResult result, IWorkbenchPage page) {
+		SourceLookupFacility.getDefault().display(result, page);
+	}
 
-    /**
-     * Returns the memory rendering manager.
-     *
-     * @return the memory rendering manager
-     * @since 3.1
-     */
-    public static IMemoryRenderingManager getMemoryRenderingManager() {
-        return MemoryRenderingManager.getDefault();
-    }
+	/**
+	 * Returns the memory rendering manager.
+	 *
+	 * @return the memory rendering manager
+	 * @since 3.1
+	 */
+	public static IMemoryRenderingManager getMemoryRenderingManager() {
+		return MemoryRenderingManager.getDefault();
+	}
 
 	/**
 	 * Returns the image associated with the specified type of source container
@@ -1308,55 +1308,55 @@ public class DebugUITools {
 		return DebugContextManager.getDefault();
 	}
 
-    /**
-     * Return the debug context for the given executionEvent or <code>null</code> if none.
-     *
-     * @param event The execution event that contains the application context
-     * @return the current debug context, or <code>null</code>.
-     *
-     * @since 3.5
-     */
-    public static ISelection getDebugContextForEvent(ExecutionEvent event) {
-        Object o = HandlerUtil.getVariable(event, IConfigurationElementConstants.DEBUG_CONTEXT);
-        if (o instanceof ISelection) {
-            return (ISelection) o;
-        }
-        return null;
-    }
+	/**
+	 * Return the debug context for the given executionEvent or <code>null</code> if none.
+	 *
+	 * @param event The execution event that contains the application context
+	 * @return the current debug context, or <code>null</code>.
+	 *
+	 * @since 3.5
+	 */
+	public static ISelection getDebugContextForEvent(ExecutionEvent event) {
+		Object o = HandlerUtil.getVariable(event, IConfigurationElementConstants.DEBUG_CONTEXT);
+		if (o instanceof ISelection) {
+			return (ISelection) o;
+		}
+		return null;
+	}
 
-    /**
-     * Return the debug context for the given executionEvent.
-     *
-     * @param event The execution event that contains the application context
-     * @return the debug context. Will not return <code>null</code>.
-     * @throws ExecutionException If the current selection variable is not found.
-     *
-     * @since 3.5
-     */
-    public static ISelection getDebugContextForEventChecked(ExecutionEvent event)
-            throws ExecutionException {
-        Object o = HandlerUtil.getVariableChecked(event, IConfigurationElementConstants.DEBUG_CONTEXT);
-        if (!(o instanceof ISelection)) {
-            throw new ExecutionException("Incorrect type for " //$NON-NLS-1$
-                + IConfigurationElementConstants.DEBUG_CONTEXT
-                + " found while executing " //$NON-NLS-1$
-                + event.getCommand().getId()
-                + ", expected " + ISelection.class.getName() //$NON-NLS-1$
-                + " found " + o.getClass().getName()); //$NON-NLS-1$
-        }
-        return (ISelection) o;
-    }
+	/**
+	 * Return the debug context for the given executionEvent.
+	 *
+	 * @param event The execution event that contains the application context
+	 * @return the debug context. Will not return <code>null</code>.
+	 * @throws ExecutionException If the current selection variable is not found.
+	 *
+	 * @since 3.5
+	 */
+	public static ISelection getDebugContextForEventChecked(ExecutionEvent event)
+			throws ExecutionException {
+		Object o = HandlerUtil.getVariableChecked(event, IConfigurationElementConstants.DEBUG_CONTEXT);
+		if (!(o instanceof ISelection)) {
+			throw new ExecutionException("Incorrect type for " //$NON-NLS-1$
+				+ IConfigurationElementConstants.DEBUG_CONTEXT
+				+ " found while executing " //$NON-NLS-1$
+				+ event.getCommand().getId()
+				+ ", expected " + ISelection.class.getName() //$NON-NLS-1$
+				+ " found " + o.getClass().getName()); //$NON-NLS-1$
+		}
+		return (ISelection) o;
+	}
 
-    /**
-     * Returns the global instance of toggle breakpoints target manager.
-     *
-     * @return toggle breakpoints target manager
-     *
-     * @since 3.8
-     */
-    public static IToggleBreakpointsTargetManager getToggleBreakpointsTargetManager() {
-        return ToggleBreakpointsTargetManager.getDefault();
-    }
+	/**
+	 * Returns the global instance of toggle breakpoints target manager.
+	 *
+	 * @return toggle breakpoints target manager
+	 *
+	 * @since 3.8
+	 */
+	public static IToggleBreakpointsTargetManager getToggleBreakpointsTargetManager() {
+		return ToggleBreakpointsTargetManager.getDefault();
+	}
 
 	/**
 	 * Returns the ILaunchConfiguration corresponding to

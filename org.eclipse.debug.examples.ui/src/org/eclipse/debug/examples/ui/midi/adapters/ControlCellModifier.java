@@ -49,15 +49,15 @@ public class ControlCellModifier implements ICellModifier {
 	@Override
 	public void modify(Object element, String property, Object value) {
 		Object oldValue = getValue(element, property);
-        if (!value.equals(oldValue)) {
-        	if (SequencerColumnPresentation.COL_VALUE.equals(property)) {
+		if (!value.equals(oldValue)) {
+			if (SequencerColumnPresentation.COL_VALUE.equals(property)) {
 				if (element instanceof SequencerControl) {
 					if (value instanceof String) {
 						SequencerControl control = (SequencerControl) element;
 						control.setValue((String) value);
 					}
 				}
-	        }
+			}
 		}
 	}
 

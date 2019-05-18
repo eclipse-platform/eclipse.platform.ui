@@ -24,9 +24,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  */
 public class RestartCommandHandler extends DebugCommandHandler {
 
-    @Override
+	@Override
 	protected Class<IRestartHandler> getCommandType() {
-        return IRestartHandler.class;
-    }
+		return IRestartHandler.class;
+	}
 
 }

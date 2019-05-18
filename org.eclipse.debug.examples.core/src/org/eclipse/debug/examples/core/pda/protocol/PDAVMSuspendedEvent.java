@@ -38,11 +38,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAVMSuspendedEvent extends PDARunControlEvent {
 
-    public PDAVMSuspendedEvent(String message) {
-        super(message);
-    }
+	public PDAVMSuspendedEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("vmsuspended"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("vmsuspended"); //$NON-NLS-1$
+	}
 }

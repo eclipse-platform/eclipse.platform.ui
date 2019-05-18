@@ -61,8 +61,8 @@ import org.eclipse.ui.actions.ActionFactory;
  */
 public class ExpressionView extends VariablesView {
 
-    private PasteWatchExpressionsAction fPasteAction;
-    private EditWatchExpressinInPlaceAction fEditInPlaceAction;
+	private PasteWatchExpressionsAction fPasteAction;
+	private EditWatchExpressinInPlaceAction fEditInPlaceAction;
 
 	@Override
 	protected String getHelpContextId() {
@@ -81,15 +81,15 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 		menu.add(getAction(FIND_ACTION));
-        ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
-        if (changeValueAction.isApplicable()) {
-            menu.add(changeValueAction);
-        }
+		ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
+		if (changeValueAction.isApplicable()) {
+			menu.add(changeValueAction);
+		}
 		menu.add(new Separator());
 		IAction action = new AvailableLogicalStructuresAction(this);
-        if (action.isEnabled()) {
-            menu.add(action);
-        }
+		if (action.isEnabled()) {
+			menu.add(action);
+		}
 		action = new AvailableDetailPanesAction(this);
 		if (isDetailPaneVisible() && action.isEnabled()) {
 			menu.add(action);
@@ -104,24 +104,24 @@ public class ExpressionView extends VariablesView {
 			return;
 		}
 		if (selection == null || selection.isEmpty()) {
-            super.contextActivated(new StructuredSelection(DebugPlugin.getDefault().getExpressionManager()));
+			super.contextActivated(new StructuredSelection(DebugPlugin.getDefault().getExpressionManager()));
 		} else {
 			super.contextActivated(selection);
 		}
-        if (isAvailable() && isVisible()) {
-            updateAction("ContentAssist"); //$NON-NLS-1$
-        }
+		if (isAvailable() && isVisible()) {
+			updateAction("ContentAssist"); //$NON-NLS-1$
+		}
 	}
 
 	@Override
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
-        IStatus status = update.getStatus();
-        if ( (status == null || status.isOK()) && update.getElement() != null) {
-            setViewerInput(update.getInputElement());
-        } else {
-            setViewerInput(DebugPlugin.getDefault().getExpressionManager());
-        }
-        updateAction(FIND_ACTION);
+		IStatus status = update.getStatus();
+		if ( (status == null || status.isOK()) && update.getElement() != null) {
+			setViewerInput(update.getInputElement());
+		} else {
+			setViewerInput(DebugPlugin.getDefault().getExpressionManager());
+		}
+		updateAction(FIND_ACTION);
 	}
 
 	@Override
@@ -139,103 +139,103 @@ public class ExpressionView extends VariablesView {
 		return IDebugUIConstants.ID_EXPRESSION_VIEW;
 	}
 
-    @Override
+	@Override
 	protected void initDragAndDrop(TreeModelViewer viewer) {
-        viewer.addDragSupport(DND.DROP_MOVE, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
-        viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(getSite(), viewer));
-    }
+		viewer.addDragSupport(DND.DROP_MOVE, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
+		viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(getSite(), viewer));
+	}
 
-    @Override
+	@Override
 	protected void createActions() {
-    	super.createActions();
-    	fPasteAction = new PasteWatchExpressionsAction(this);
-    	configure(fPasteAction, IWorkbenchCommandConstants.EDIT_PASTE, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
-    	fEditInPlaceAction = new EditWatchExpressinInPlaceAction(this);
-        configure(fEditInPlaceAction, IWorkbenchCommandConstants.FILE_RENAME, ActionFactory.RENAME.getId(), null);
-    }
+		super.createActions();
+		fPasteAction = new PasteWatchExpressionsAction(this);
+		configure(fPasteAction, IWorkbenchCommandConstants.EDIT_PASTE, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
+		fEditInPlaceAction = new EditWatchExpressinInPlaceAction(this);
+		configure(fEditInPlaceAction, IWorkbenchCommandConstants.FILE_RENAME, ActionFactory.RENAME.getId(), null);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        fEditInPlaceAction.dispose();
-        super.dispose();
-    }
+		fEditInPlaceAction.dispose();
+		super.dispose();
+	}
 
-    /**
-     * Configures the action to override the global action, and registers the
-     * action with this view.
-     *
-     * @param action
-     * 		action
-     * @param defId
-     * 		action definition id
-     * @param globalId
-     * 		global action id
-     * @param imgId
-     * 		image identifier
-     */
-    private void configure(IAction action, String defId, String globalId,
-    		String imgId) {
-    	setAction(globalId, action);
-    	action.setActionDefinitionId(defId);
-    	setGlobalAction(globalId, action);
-    	if (imgId != null) {
-    	    action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
-    	}
-    }
+	/**
+	 * Configures the action to override the global action, and registers the
+	 * action with this view.
+	 *
+	 * @param action
+	 * 		action
+	 * @param defId
+	 * 		action definition id
+	 * @param globalId
+	 * 		global action id
+	 * @param imgId
+	 * 		image identifier
+	 */
+	private void configure(IAction action, String defId, String globalId,
+			String imgId) {
+		setAction(globalId, action);
+		action.setActionDefinitionId(defId);
+		setGlobalAction(globalId, action);
+		if (imgId != null) {
+			action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
+		}
+	}
 
-    /**
-     * Returns whether the given selection can be pasted into the expressions
-     * view.
-     *
-     * @return whether the given selection can be pasted into the given target
-     */
-    public boolean canPaste() {
-    	String clipboardText = getClipboardText();
-    	if (clipboardText != null && clipboardText.length() > 0) {
-    		return true;
-    	}
-    	return false;
-    }
+	/**
+	 * Returns whether the given selection can be pasted into the expressions
+	 * view.
+	 *
+	 * @return whether the given selection can be pasted into the given target
+	 */
+	public boolean canPaste() {
+		String clipboardText = getClipboardText();
+		if (clipboardText != null && clipboardText.length() > 0) {
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     * Pastes the selection into the given target
-     *
-     * @return whether successful
-     */
-    public boolean performPaste() {
-    	String clipboardText = getClipboardText();
-    	if (clipboardText != null && clipboardText.length() > 0) {
-    		IExpressionManager expressionManager = DebugPlugin.getDefault().getExpressionManager();
-    		IWatchExpression watchExpression = expressionManager
-    				.newWatchExpression(clipboardText);
-    		expressionManager.addExpression(watchExpression);
-    		watchExpression.setExpressionContext(getContext());
-    		return true;
-    	}
-    	return false;
-    }
+	/**
+	 * Pastes the selection into the given target
+	 *
+	 * @return whether successful
+	 */
+	public boolean performPaste() {
+		String clipboardText = getClipboardText();
+		if (clipboardText != null && clipboardText.length() > 0) {
+			IExpressionManager expressionManager = DebugPlugin.getDefault().getExpressionManager();
+			IWatchExpression watchExpression = expressionManager
+					.newWatchExpression(clipboardText);
+			expressionManager.addExpression(watchExpression);
+			watchExpression.setExpressionContext(getContext());
+			return true;
+		}
+		return false;
+	}
 
-    // TODO: duplicate code from WatchExpressionAction
-    protected IDebugElement getContext() {
-        IAdaptable object = DebugUITools.getPartDebugContext(getSite());
-        IDebugElement context = null;
-        if (object instanceof IDebugElement) {
-            context = (IDebugElement) object;
-        } else if (object instanceof ILaunch) {
-            context = ((ILaunch) object).getDebugTarget();
-        }
-        return context;
-    }
+	// TODO: duplicate code from WatchExpressionAction
+	protected IDebugElement getContext() {
+		IAdaptable object = DebugUITools.getPartDebugContext(getSite());
+		IDebugElement context = null;
+		if (object instanceof IDebugElement) {
+			context = (IDebugElement) object;
+		} else if (object instanceof ILaunch) {
+			context = ((ILaunch) object).getDebugTarget();
+		}
+		return context;
+	}
 
-    protected String getClipboardText() {
-    	Clipboard clipboard = new Clipboard(Display.getDefault());
-    	try {
-    		TextTransfer textTransfer = TextTransfer.getInstance();
-    		return (String) clipboard.getContents(textTransfer);
-    	} finally {
-    		clipboard.dispose();
-    	}
-    }
+	protected String getClipboardText() {
+		Clipboard clipboard = new Clipboard(Display.getDefault());
+		try {
+			TextTransfer textTransfer = TextTransfer.getInstance();
+			return (String) clipboard.getContents(textTransfer);
+		} finally {
+			clipboard.dispose();
+		}
+	}
 
 
 }

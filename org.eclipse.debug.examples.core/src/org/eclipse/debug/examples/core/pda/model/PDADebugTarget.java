@@ -117,15 +117,15 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 				try {
 					message = fEventReader.readLine();
 					if (message != null) {
-					    PDAEvent event = null;
-					    try {
-					        event = PDAEvent.parseEvent(message);
-					    }
-					    catch (IllegalArgumentException e) {
-					        DebugCorePlugin.getDefault().getLog().log(
-					            new Status (IStatus.ERROR, "org.eclipse.debug.examples.core", "Error parsing PDA event", e)); //$NON-NLS-1$ //$NON-NLS-2$
-					        continue;
-					    }
+						PDAEvent event = null;
+						try {
+							event = PDAEvent.parseEvent(message);
+						}
+						catch (IllegalArgumentException e) {
+							DebugCorePlugin.getDefault().getLog().log(
+								new Status (IStatus.ERROR, "org.eclipse.debug.examples.core", "Error parsing PDA event", e)); //$NON-NLS-1$ //$NON-NLS-2$
+							continue;
+						}
 						Object[] listeners = fEventListeners.toArray();
 						for (int i = 0; i < listeners.length; i++) {
 							((IPDAEventListener)listeners[i]).handleEvent(event);
@@ -148,11 +148,11 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * @param listener event listener
 	 */
 	public void addEventListener(IPDAEventListener listener) {
-	    synchronized(fEventListeners) {
-    		if (!fEventListeners.contains(listener)) {
-    			fEventListeners.add(listener);
-    		}
-	    }
+		synchronized(fEventListeners) {
+			if (!fEventListeners.contains(listener)) {
+				fEventListeners.add(listener);
+			}
+		}
 	}
 
 	/**
@@ -204,12 +204,12 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		fEventDispatch = new EventDispatchJob();
 		fEventDispatch.schedule();
 		IBreakpointManager breakpointManager = getBreakpointManager();
-        breakpointManager.addBreakpointListener(this);
+		breakpointManager.addBreakpointListener(this);
 		breakpointManager.addBreakpointManagerListener(this);
 		// initialize error hanlding to suspend on 'unimplemented instructions'
 		// and 'no such label' errors
 		sendCommand(new PDAEventStopCommand(PDAEventStopCommand.UNIMPINSTR, true));
-        sendCommand(new PDAEventStopCommand(PDAEventStopCommand.NOSUCHLABEL, true));
+		sendCommand(new PDAEventStopCommand(PDAEventStopCommand.NOSUCHLABEL, true));
 	}
 
 	@Override
@@ -218,9 +218,9 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	}
 	@Override
 	public IThread[] getThreads() throws DebugException {
-	    synchronized (fThreads) {
-	        return fThreads.values().toArray(new IThread[fThreads.size()]);
-	    }
+		synchronized (fThreads) {
+			return fThreads.values().toArray(new IThread[fThreads.size()]);
+		}
 	}
 	@Override
 	public boolean hasThreads() throws DebugException {
@@ -282,7 +282,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 //#ifdef ex2
 //#     // TODO: Exercise 2 - send termination request to interpreter
 //#else
-	    sendCommand(new PDATerminateCommand());
+		sendCommand(new PDATerminateCommand());
 //#endif
 	}
 
@@ -303,12 +303,12 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 
 	@Override
 	public void resume() throws DebugException {
-	    sendCommand(new PDAVMResumeCommand());
+		sendCommand(new PDAVMResumeCommand());
 	}
 
 	@Override
 	public void suspend() throws DebugException {
-        sendCommand(new PDAVMSuspendCommand());
+		sendCommand(new PDAVMSuspendCommand());
 	}
 
 	@Override
@@ -317,7 +317,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			try {
 				if ((breakpoint.isEnabled() && getBreakpointManager().isEnabled()) || !breakpoint.isRegistered()) {
 					PDALineBreakpoint pdaBreakpoint = (PDALineBreakpoint)breakpoint;
-				    pdaBreakpoint.install(this);
+					pdaBreakpoint.install(this);
 				}
 			} catch (CoreException e) {
 			}
@@ -328,7 +328,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
 			try {
-			    PDALineBreakpoint pdaBreakpoint = (PDALineBreakpoint)breakpoint;
+				PDALineBreakpoint pdaBreakpoint = (PDALineBreakpoint)breakpoint;
 				pdaBreakpoint.remove(this);
 			} catch (CoreException e) {
 			}
@@ -405,58 +405,58 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		setTerminated(true);
 		fThreads.clear();
 		IBreakpointManager breakpointManager = getBreakpointManager();
-        breakpointManager.removeBreakpointListener(this);
+		breakpointManager.removeBreakpointListener(this);
 		breakpointManager.removeBreakpointManagerListener(this);
 		fireTerminateEvent();
 		removeEventListener(this);
 	}
 
 	private void vmResumed(PDAVMResumedEvent event) {
-	   setVMSuspended(false);
-	   fireResumeEvent(calcDetail(event.fReason));
+		setVMSuspended(false);
+		fireResumeEvent(calcDetail(event.fReason));
 	}
 
 	private void vmSuspended(PDAVMSuspendedEvent event) {
-	    setVMSuspended(true);
-	    fireSuspendEvent(calcDetail(event.fReason));
+		setVMSuspended(true);
+		fireSuspendEvent(calcDetail(event.fReason));
 	}
 
 	private int calcDetail(String reason) {
-        if (reason.equals("breakpoint") || reason.equals("watch")) { //$NON-NLS-1$ //$NON-NLS-2$
-            return DebugEvent.BREAKPOINT;
-        } else if (reason.equals("step")) { //$NON-NLS-1$
-            return DebugEvent.STEP_OVER;
-        } else if (reason.equals("drop")) { //$NON-NLS-1$
-            return DebugEvent.STEP_RETURN;
-        } else if (reason.equals("client")) { //$NON-NLS-1$
-            return DebugEvent.CLIENT_REQUEST;
-        } else if (reason.equals("event")) { //$NON-NLS-1$
-            return DebugEvent.BREAKPOINT;
-        } else {
-            return DebugEvent.UNSPECIFIED;
-        }
+		if (reason.equals("breakpoint") || reason.equals("watch")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return DebugEvent.BREAKPOINT;
+		} else if (reason.equals("step")) { //$NON-NLS-1$
+			return DebugEvent.STEP_OVER;
+		} else if (reason.equals("drop")) { //$NON-NLS-1$
+			return DebugEvent.STEP_RETURN;
+		} else if (reason.equals("client")) { //$NON-NLS-1$
+			return DebugEvent.CLIENT_REQUEST;
+		} else if (reason.equals("event")) { //$NON-NLS-1$
+			return DebugEvent.BREAKPOINT;
+		} else {
+			return DebugEvent.UNSPECIFIED;
+		}
 	}
 
 	private void started(PDAStartedEvent event) {
-	    PDAThread newThread = new PDAThread(this, event.fThreadId);
-	    fThreads.put(Integer.valueOf(event.fThreadId), newThread);
-	    newThread.start();
+		PDAThread newThread = new PDAThread(this, event.fThreadId);
+		fThreads.put(Integer.valueOf(event.fThreadId), newThread);
+		newThread.start();
 	}
 
 	private void exited(PDAExitedEvent event) {
-        PDAThread thread = fThreads.remove(Integer.valueOf(event.fThreadId));
-        if (thread != null) {
-            thread.exit();
-        }
+		PDAThread thread = fThreads.remove(Integer.valueOf(event.fThreadId));
+		if (thread != null) {
+			thread.exit();
+		}
 	}
 
 	private synchronized void setVMSuspended(boolean suspended) {
-	    fVMSuspended = suspended;
+		fVMSuspended = suspended;
 	}
 
-    private synchronized void setTerminated(boolean terminated) {
-        fTerminated = terminated;
-    }
+	private synchronized void setTerminated(boolean terminated) {
+		fTerminated = terminated;
+	}
 
 	private String sendRequest(String request) throws DebugException {
 		synchronized (fRequestSocket) {
@@ -466,7 +466,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 				// wait for reply
 				String retVal = fRequestReader.readLine();
 				if (retVal == null) {
-	                requestFailed("Request failed: " + request + ".  Debugger connection closed.", null);				     //$NON-NLS-1$ //$NON-NLS-2$
+					requestFailed("Request failed: " + request + ".  Debugger connection closed.", null);				     //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return retVal;
 			} catch (IOException e) {
@@ -479,8 +479,8 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 
 	@Override
 	public PDACommandResult sendCommand(PDACommand command) throws DebugException {
-	    String response = sendRequest(command.getRequest());
-	    return command.createResult(response);
+		String response = sendRequest(command.getRequest());
+		return command.createResult(response);
 	}
 
 	/**
@@ -496,7 +496,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			} else {
 				breakpointRemoved(breakpoints[i], null);
 			}
-        }
+		}
 	}
 
 	@Override
@@ -505,15 +505,15 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			started((PDAStartedEvent)event);
 		} else if (event instanceof PDAExitedEvent) {
 			exited((PDAExitedEvent)event);
-        } else if (event instanceof PDAVMStartedEvent) {
-            vmStarted((PDAVMStartedEvent)event);
+		} else if (event instanceof PDAVMStartedEvent) {
+			vmStarted((PDAVMStartedEvent)event);
 		} else if (event instanceof PDAVMTerminatedEvent) {
-            vmTerminated();
-        } else if (event instanceof PDAVMSuspendedEvent) {
-            vmSuspended((PDAVMSuspendedEvent)event);
-        } else if (event instanceof PDAVMResumedEvent) {
-            vmResumed((PDAVMResumedEvent)event);
-        }
+			vmTerminated();
+		} else if (event instanceof PDAVMSuspendedEvent) {
+			vmSuspended((PDAVMSuspendedEvent)event);
+		} else if (event instanceof PDAVMResumedEvent) {
+			vmResumed((PDAVMResumedEvent)event);
+		}
 	}
 
 	/**
@@ -526,15 +526,15 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * if terminated
 	 */
 	public PDAThread getThread(int threadId) {
-	    if (threadId > 0) {
-	        return fThreads.get(Integer.valueOf(threadId));
-	    } else {
-    	    synchronized(fThreads) {
-    	        if (fThreads.size() > 0) {
-    	            return fThreads.values().iterator().next();
-    	        }
-    	    }
-	    }
+		if (threadId > 0) {
+			return fThreads.get(Integer.valueOf(threadId));
+		} else {
+			synchronized(fThreads) {
+				if (fThreads.size() > 0) {
+					return fThreads.values().iterator().next();
+				}
+			}
+		}
 		return null;
 	}
 
@@ -544,7 +544,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * @throws DebugException
 	 */
 	public void restart() throws DebugException {
-        sendCommand(new PDARestartCommand());
-    }
+		sendCommand(new PDARestartCommand());
+	}
 
 }

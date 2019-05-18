@@ -82,23 +82,23 @@ public class ExternalToolsLaunchConfigurationMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, ExternalToolsLaunchConfigurationMessages.class);
 	}
 
-    public static String ExternalToolsBuilderTab_17;
+	public static String ExternalToolsBuilderTab_17;
 
-    public static String ExternalToolsBuilderTab_18;
+	public static String ExternalToolsBuilderTab_18;
 
-    public static String ExternalToolsBuilderTab_19;
+	public static String ExternalToolsBuilderTab_19;
 
-    public static String ExternalToolsBuilderTab_20;
+	public static String ExternalToolsBuilderTab_20;
 
-    public static String ExternalToolsBuilderTab_21;
+	public static String ExternalToolsBuilderTab_21;
 
-    public static String ExternalToolsBuilderTab_22;
+	public static String ExternalToolsBuilderTab_22;
 
-    public static String ExternalToolsBuilderTab_23;
+	public static String ExternalToolsBuilderTab_23;
 
-    public static String ExternalToolsBuilderTab_24;
+	public static String ExternalToolsBuilderTab_24;
 
-    public static String ExternalToolsBuilderTab_25;
+	public static String ExternalToolsBuilderTab_25;
 
-    public static String ExternalToolsBuilderTab_26;
+	public static String ExternalToolsBuilderTab_26;
 }

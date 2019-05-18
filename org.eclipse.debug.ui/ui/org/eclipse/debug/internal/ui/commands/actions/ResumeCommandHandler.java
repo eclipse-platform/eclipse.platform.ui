@@ -25,9 +25,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  */
 public class ResumeCommandHandler extends DebugCommandHandler {
 
-    @Override
+	@Override
 	protected Class<IResumeHandler> getCommandType() {
-        return IResumeHandler.class;
-    }
+		return IResumeHandler.class;
+	}
 
 }

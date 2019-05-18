@@ -25,12 +25,12 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class VirtualViewerContentTests extends ContentTests {
 
-    public VirtualViewerContentTests(String name) {
-        super(name);
-    }
+	public VirtualViewerContentTests(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, 0, new PresentationContext("TestViewer")); //$NON-NLS-1$
-    }
+	}
 }

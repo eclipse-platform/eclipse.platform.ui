@@ -59,9 +59,9 @@ public class BreakpointsComparator extends ViewerComparator {
 	 */
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-        if (!(e1 instanceof IBreakpoint)) {
-            return super.compare(viewer, e1, e2);
-        }
+		if (!(e1 instanceof IBreakpoint)) {
+			return super.compare(viewer, e1, e2);
+		}
 
 		IBreakpoint b1= (IBreakpoint)e1;
 		IBreakpoint b2= (IBreakpoint)e2;
@@ -138,7 +138,7 @@ public class BreakpointsComparator extends ViewerComparator {
 	 * E.g.
 	 * <p><code>
 	 * "0", "1", "9", "11"
-     * <p></code>
+	 * <p></code>
 	 *
 	 * Note that String.compareTo orders "11" before "9".
 	 *
@@ -146,10 +146,10 @@ public class BreakpointsComparator extends ViewerComparator {
 	 * in this case the numerical value is compared.
 	 * E.g.
 	 * <p><code>
-     * stringNumberCompareTo("a_01", "a_1") returns 0.
-     * <p></code>
-     * Note: For now no additional elements (spaces) are considered, for numbers only base 10 numbers are supported.
-     *
+	 * stringNumberCompareTo("a_01", "a_1") returns 0.
+	 * <p></code>
+	 * Note: For now no additional elements (spaces) are considered, for numbers only base 10 numbers are supported.
+	 *
 	 * @param n1 the first string to compare
 	 * @param n2 the second string to compare
 	 * @return
@@ -162,8 +162,8 @@ public class BreakpointsComparator extends ViewerComparator {
 		int index2 = 0;
 		int digitLen = 0; // Number of identical digits prior to the current index position.
 		for (; index1 < n1.length() && index2 < n2.length(); ) {
-		    char c1 = n1.charAt(index1);
-		    char c2 = n2.charAt(index2);
+			char c1 = n1.charAt(index1);
+			char c2 = n2.charAt(index2);
 
 			if (c1 != c2) {
 				// Strings are different starting at index.
@@ -205,8 +205,8 @@ public class BreakpointsComparator extends ViewerComparator {
 			} else {
 				digitLen = 0;
 			}
-		    index1++;
-		    index2++;
+			index1++;
+			index2++;
 		}
 		// Same characters up to index1/index2. Return < 0 if remaining in n1 is shorter than remaining in n2.
 		return (n1.length() - index1) - (n2.length() - index2);

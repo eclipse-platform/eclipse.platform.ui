@@ -32,10 +32,10 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  */
 public class EditVariableLogicalStructureAction extends Action {
 
-    /**
-     * The editable structure for the currently selected variable or
-     * <code>null</code> if none.
-     */
+	/**
+	 * The editable structure for the currently selected variable or
+	 * <code>null</code> if none.
+	 */
 	private ILogicalStructureType fStructure = null;
 	private VariablesView fView = null;
 
@@ -49,12 +49,12 @@ public class EditVariableLogicalStructureAction extends Action {
 	}
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-    }
+	}
 
-    /**
-     * Prompt the user to edit the logical structure associated with the currently
-     * selected variable.
-     */
+	/**
+	 * Prompt the user to edit the logical structure associated with the currently
+	 * selected variable.
+	 */
 	@Override
 	public void run() {
 		PreferencesUtil.createPreferenceDialogOn(DebugUIPlugin.getShell(), "org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage", //$NON-NLS-1$
@@ -64,37 +64,37 @@ public class EditVariableLogicalStructureAction extends Action {
 						"org.eclipse.jdt.debug.ui.JavaPrimitivesPreferencePage" }, (fStructure != null) //$NON-NLS-1$
 								? fStructure.getId() + fStructure.getDescription() + fStructure.hashCode()
 								: null).open();
-    }
+	}
 
 	private void init(ISelection selection) {
-        fStructure= null;
-        Object element = ((IStructuredSelection) selection).getFirstElement();
-        if (element instanceof IVariable) {
-            try {
-                IValue value= ((IVariable) element).getValue();
-                ILogicalStructureType type= getLogicalStructure(value);
+		fStructure= null;
+		Object element = ((IStructuredSelection) selection).getFirstElement();
+		if (element instanceof IVariable) {
+			try {
+				IValue value= ((IVariable) element).getValue();
+				ILogicalStructureType type= getLogicalStructure(value);
 				fStructure = type;
-            } catch (DebugException e) {
+			} catch (DebugException e) {
 				DebugUIPlugin.log(e.getStatus());
-            }
-        }
+			}
+		}
 		setEnabled(fView.isShowLogicalStructure());
-    }
+	}
 
-    /**
-     * Returns the logical structure currently associated with the given
-     * value or <code>null</code> if none.
-     * @param value the value
-     * @return the logical structure currently associated with the given
-     *  value or <code>null</code> if none.
-     */
+	/**
+	 * Returns the logical structure currently associated with the given
+	 * value or <code>null</code> if none.
+	 * @param value the value
+	 * @return the logical structure currently associated with the given
+	 *  value or <code>null</code> if none.
+	 */
 	private ILogicalStructureType getLogicalStructure(IValue value) {
-        // This code is based on VariablesViewContentProvider#getLogicalValue(IValue)
-        ILogicalStructureType type = null;
-        ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
-        if (types.length > 0) {
-            type= DebugPlugin.getDefaultStructureType(types);
-        }
-        return type;
-    }
+		// This code is based on VariablesViewContentProvider#getLogicalValue(IValue)
+		ILogicalStructureType type = null;
+		ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
+		if (types.length > 0) {
+			type= DebugPlugin.getDefaultStructureType(types);
+		}
+		return type;
+	}
 }

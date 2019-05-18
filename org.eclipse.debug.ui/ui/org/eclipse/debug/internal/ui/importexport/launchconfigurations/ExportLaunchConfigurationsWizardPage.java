@@ -144,11 +144,11 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
-	  //add the check table
+		//add the check table
 		createViewer(comp);
-	  //add the file path and browse button
+		//add the file path and browse button
 		createFilePath(comp);
-	  //add the overwrite option
+		//add the overwrite option
 		fOverwrite = SWTFactory.createCheckButton(comp, WizardMessages.ExportLaunchConfigurationsWizardPage_1, null, getDialogSettings().getBoolean(OVERWRITE), 2);
 		setControl(comp);
 		PlatformUI .getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.EXPORT_LAUNCH_CONFIGURATIONS_PAGE);
@@ -475,6 +475,6 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			while ((i = is.read(buf)) != -1) {
 				os.write(buf, 0, i);
 			}
-	    }
+		}
 	}
 }

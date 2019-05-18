@@ -31,46 +31,46 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
  */
 public class ExpressionEventHandler extends DebugEventHandler {
 
-    public ExpressionEventHandler(AbstractModelProxy proxy) {
-        super(proxy);
-    }
+	public ExpressionEventHandler(AbstractModelProxy proxy) {
+		super(proxy);
+	}
 
-    @Override
+	@Override
 	protected boolean handlesEvent(DebugEvent event) {
-        return event.getKind() == DebugEvent.CHANGE;
-    }
+		return event.getKind() == DebugEvent.CHANGE;
+	}
 
-    @Override
+	@Override
 	protected void handleChange(DebugEvent event) {
-    	ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.NO_CHANGE);
+		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.NO_CHANGE);
 		IExpression expression = null;
-    	if (event.getSource() instanceof IExpression) {
-    		expression = (IExpression) event.getSource();
-    		int flags = IModelDelta.NO_CHANGE;
-    		if ((event.getDetail() & DebugEvent.STATE) != 0) {
-    			flags = flags | IModelDelta.STATE;
-    		}
-    		if ((event.getDetail() & DebugEvent.CONTENT) != 0) {
-    			flags = flags | IModelDelta.CONTENT;
-    		}
-	    	delta.addNode(expression, flags);
+		if (event.getSource() instanceof IExpression) {
+			expression = (IExpression) event.getSource();
+			int flags = IModelDelta.NO_CHANGE;
+			if ((event.getDetail() & DebugEvent.STATE) != 0) {
+				flags = flags | IModelDelta.STATE;
+			}
+			if ((event.getDetail() & DebugEvent.CONTENT) != 0) {
+				flags = flags | IModelDelta.CONTENT;
+			}
+			delta.addNode(expression, flags);
 			fireDelta(delta);
 		}
-    	if (event.getSource() instanceof IVariable) {
-    		IVariable variable = (IVariable) event.getSource();
-    		int flags = IModelDelta.NO_CHANGE;
-    		if (event.getDetail()==DebugEvent.CONTENT) {
-    			flags = flags | IModelDelta.CONTENT;
-    		}
-	    	delta.addNode(variable, flags);
+		if (event.getSource() instanceof IVariable) {
+			IVariable variable = (IVariable) event.getSource();
+			int flags = IModelDelta.NO_CHANGE;
+			if (event.getDetail()==DebugEvent.CONTENT) {
+				flags = flags | IModelDelta.CONTENT;
+			}
+			delta.addNode(variable, flags);
 			fireDelta(delta);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected void refreshRoot(DebugEvent event) {
-        ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.CONTENT);
-        fireDelta(delta);
-    }
+		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.CONTENT);
+		fireDelta(delta);
+	}
 
 }

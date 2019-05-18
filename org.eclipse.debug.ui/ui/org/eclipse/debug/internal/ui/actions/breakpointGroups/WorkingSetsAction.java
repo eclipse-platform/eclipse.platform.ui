@@ -24,12 +24,12 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  */
 public class WorkingSetsAction extends AbstractBreakpointsViewAction {
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(
-        		DebugUIPlugin.getShell(),
-        		false,
-        		new String[] {IDebugUIConstants.BREAKPOINT_WORKINGSET_ID});
-        selectionDialog.open();
-    }
+		IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(
+				DebugUIPlugin.getShell(),
+				false,
+				new String[] {IDebugUIConstants.BREAKPOINT_WORKINGSET_ID});
+		selectionDialog.open();
+	}
 }

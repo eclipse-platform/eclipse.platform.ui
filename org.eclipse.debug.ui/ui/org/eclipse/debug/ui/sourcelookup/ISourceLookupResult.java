@@ -28,37 +28,37 @@ import org.eclipse.ui.IEditorInput;
  */
 public interface ISourceLookupResult {
 
-    /**
-     * Returns the artifact for which source lookup was performed,
-     * such as a stack frame.
-     *
-     * @return the artifact for which source lookup was performed
-     */
-    Object getArtifact();
+	/**
+	 * Returns the artifact for which source lookup was performed,
+	 * such as a stack frame.
+	 *
+	 * @return the artifact for which source lookup was performed
+	 */
+	Object getArtifact();
 
-    /**
-     * Returns the source element resolved during source lookup,
-     * or <code>null</code> if a source element was not resolved.
-     *
-     * @return resolved source element or <code>null</code> if unknown
-     */
-    Object getSourceElement();
+	/**
+	 * Returns the source element resolved during source lookup,
+	 * or <code>null</code> if a source element was not resolved.
+	 *
+	 * @return resolved source element or <code>null</code> if unknown
+	 */
+	Object getSourceElement();
 
-    /**
-     * Returns the identifier of an editor used to display this result,
-     * or <code>null</code> if unknown.
-     *
-     * @return the identifier of an editor used to display this result,
-     * or <code>null</code> if unknown
-     */
-    String getEditorId();
+	/**
+	 * Returns the identifier of an editor used to display this result,
+	 * or <code>null</code> if unknown.
+	 *
+	 * @return the identifier of an editor used to display this result,
+	 * or <code>null</code> if unknown
+	 */
+	String getEditorId();
 
-    /**
-     * Returns the editor input used to display result,
-     * or <code>null</code> if unknown.
-     *
-     * @return the editor input used to display result,
-     * or <code>null</code> if unknown
-     */
-    IEditorInput getEditorInput();
+	/**
+	 * Returns the editor input used to display result,
+	 * or <code>null</code> if unknown.
+	 *
+	 * @return the editor input used to display result,
+	 * or <code>null</code> if unknown
+	 */
+	IEditorInput getEditorInput();
 }

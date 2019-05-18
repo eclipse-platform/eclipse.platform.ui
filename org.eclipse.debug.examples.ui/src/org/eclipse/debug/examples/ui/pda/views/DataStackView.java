@@ -44,7 +44,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class DataStackView extends AbstractDebugView implements IDebugContextListener {
 
-    private PDAThread fThread;
+	private PDAThread fThread;
 
 	class StackViewContentProvider implements ITreeContentProvider {
 
@@ -118,46 +118,46 @@ public class DataStackView extends AbstractDebugView implements IDebugContextLis
 
 	@Override
 	public void dispose() {
-        DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		super.dispose();
 	}
 
 	@Override
 	public void debugContextChanged(final DebugContextEvent event) {
 		new UIJob(getSite().getShell().getDisplay(), "DataStackView update") { //$NON-NLS-1$
-	        {
-	            setSystem(true);
-	        }
+			{
+				setSystem(true);
+			}
 
-	        @Override
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-	        	if (getViewer() != null) { // runs asynchronously, view may be disposed
-	        		update(event.getContext());
-	        	}
-	            return Status.OK_STATUS;
-	        }
-	    }.schedule();
+				if (getViewer() != null) { // runs asynchronously, view may be disposed
+					update(event.getContext());
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
 	}
 
-    /**
-     * Updates the view for the selected thread (if suspended)
-     */
-    private void update(ISelection context) {
-        fThread = null;
+	/**
+	 * Updates the view for the selected thread (if suspended)
+	 */
+	private void update(ISelection context) {
+		fThread = null;
 
-        if (context instanceof IStructuredSelection) {
-            Object element = ((IStructuredSelection)context).getFirstElement();
-            if (element instanceof PDAThread) {
-                fThread = (PDAThread)element;
-            } else if (element instanceof PDAStackFrame) {
-                fThread = (PDAThread)((PDAStackFrame)element).getThread();
-            }
-        }
+		if (context instanceof IStructuredSelection) {
+			Object element = ((IStructuredSelection)context).getFirstElement();
+			if (element instanceof PDAThread) {
+				fThread = (PDAThread)element;
+			} else if (element instanceof PDAStackFrame) {
+				fThread = (PDAThread)((PDAStackFrame)element).getThread();
+			}
+		}
 		Object input = null;
 		if (fThread != null && fThread.isSuspended()) {
-		    input = fThread;
+			input = fThread;
 		}
 		getViewer().setInput(input);
 		getViewer().refresh();
-    }
+	}
 }

@@ -35,12 +35,12 @@ import org.eclipse.ui.services.IEvaluationService;
  */
 public class DebugContextSourceProvider extends AbstractSourceProvider implements IDebugContextListener {
 
-    /**
-     * The names of the sources supported by this source provider.
-     */
-    private static final String[] PROVIDED_SOURCE_NAMES = new String[] { IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME };
+	/**
+	 * The names of the sources supported by this source provider.
+	 */
+	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME };
 
-    private final IDebugContextService fDebugContextService;
+	private final IDebugContextService fDebugContextService;
 
 	private final IEvaluationService fEvaluationService;
 
@@ -59,7 +59,7 @@ public class DebugContextSourceProvider extends AbstractSourceProvider implement
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		final Map<String, ISelection> values = new HashMap<>(1);
-        values.put(IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME, event.getContext());
+		values.put(IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME, event.getContext());
 		// make sure fireSourceChanged is called on the UI thread
 		if (Display.getCurrent() == null) {
 			DebugUIPlugin.getStandardDisplay().asyncExec(() -> fireSourceChanged(ISources.ACTIVE_CURRENT_SELECTION, values));
@@ -82,8 +82,8 @@ public class DebugContextSourceProvider extends AbstractSourceProvider implement
 	@Override
 	public Map getCurrentState() {
 		Map<String, ISelection> currentState = new HashMap<>(1);
-	    currentState.put(IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME, fDebugContextService.getActiveContext());
-	    return currentState;
+		currentState.put(IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME, fDebugContextService.getActiveContext());
+		return currentState;
 	}
 
 }

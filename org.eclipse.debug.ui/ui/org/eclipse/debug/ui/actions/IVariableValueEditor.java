@@ -47,34 +47,34 @@ import org.eclipse.swt.widgets.Shell;
  */
 public interface IVariableValueEditor {
 
-    /**
-     * Edits the given variable, if appropriate. If this editor does not apply to
-     * the given variable this method returns false, which indicates that the
-     * Debug Platform's default variable edit dialog should be used.
-     *
-     * @param variable the variable to edit
-     * @param shell the currently active shell, which can be used to open a dialog
-     *  for the user
-     * @return whether this editor has completed the edit operation for the given variable.
-     *  <code>true</code> if no more work should be done, <code>false</code> if the debug
-     *  platform should prompt the user to edit the given variable using the default
-     *  variable editor
-     */
-    boolean editVariable(IVariable variable, Shell shell);
+	/**
+	 * Edits the given variable, if appropriate. If this editor does not apply to
+	 * the given variable this method returns false, which indicates that the
+	 * Debug Platform's default variable edit dialog should be used.
+	 *
+	 * @param variable the variable to edit
+	 * @param shell the currently active shell, which can be used to open a dialog
+	 *  for the user
+	 * @return whether this editor has completed the edit operation for the given variable.
+	 *  <code>true</code> if no more work should be done, <code>false</code> if the debug
+	 *  platform should prompt the user to edit the given variable using the default
+	 *  variable editor
+	 */
+	boolean editVariable(IVariable variable, Shell shell);
 
-    /**
-     * Saves the given expression to the given variable, if appropriate. If this
-     * editor does not set the given variable's value from the given expression, this
-     * method returns false. Returning false indicates that the Debug Platform should
-     * perform the default operation to set a variable's value based on a String.
-     *
-     * @param variable the variable to edit
-     * @param expression the expression to assign to the given variable
-     * @param shell the currently active shell, which can be used to report errors to the
-     *  user. May be <code>null</code> if no active shell could be found.
-     * @return whether this editor has completed the save operation for the given variable.
-     *  <code>true</code> if no more work should be done, <code>false</code> if the debug
-     *  platform should perform the default save operation
-     */
-    boolean saveVariable(IVariable variable, String expression, Shell shell);
+	/**
+	 * Saves the given expression to the given variable, if appropriate. If this
+	 * editor does not set the given variable's value from the given expression, this
+	 * method returns false. Returning false indicates that the Debug Platform should
+	 * perform the default operation to set a variable's value based on a String.
+	 *
+	 * @param variable the variable to edit
+	 * @param expression the expression to assign to the given variable
+	 * @param shell the currently active shell, which can be used to report errors to the
+	 *  user. May be <code>null</code> if no active shell could be found.
+	 * @return whether this editor has completed the save operation for the given variable.
+	 *  <code>true</code> if no more work should be done, <code>false</code> if the debug
+	 *  platform should perform the default save operation
+	 */
+	boolean saveVariable(IVariable variable, String expression, Shell shell);
 }

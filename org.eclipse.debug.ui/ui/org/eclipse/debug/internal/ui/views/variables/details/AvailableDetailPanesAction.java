@@ -109,12 +109,12 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 		for (String currentID : fAvailableIDs) {
 			StringBuilder name = new StringBuilder();
 			//add the numerical accelerator
-            i++;
+			i++;
 			if (i < 9) {
-                name.append('&');
-                name.append(i);
-                name.append(' ');
-            }
+				name.append('&');
+				name.append(i);
+				name.append(' ');
+			}
 
 			String typeName = DetailPaneManager.getDefault().getNameFromID(currentID);
 			if (typeName != null && typeName.length() > 0){

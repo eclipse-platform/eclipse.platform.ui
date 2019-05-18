@@ -64,7 +64,7 @@ public abstract class AsynchronousModel {
 																							// by
 																							// element
 	private AsynchronousViewer fViewer; // viewer this model works for
-    private boolean fDisposed = false; // whether disposed
+	private boolean fDisposed = false; // whether disposed
 
 	class EmptyContentAdapter extends AsynchronousContentAdapter {
 
@@ -143,8 +143,8 @@ public abstract class AsynchronousModel {
 			buffer.append(")"); //$NON-NLS-1$
 			DebugUIPlugin.trace(buffer.toString());
 		}
-        fDisposed = true;
-        cancelPendingUpdates();
+		fDisposed = true;
+		cancelPendingUpdates();
 		disposeAllModelProxies();
 		ModelNode rootNode = getRootNode();
 		if (rootNode != null) {
@@ -153,26 +153,26 @@ public abstract class AsynchronousModel {
 		fElementToNodes.clear();
 	}
 
-    /**
-     * Returns whether this model has been disposed
-     * @return <code>true</code> if the model is disposed <code>false</code> otherwise
-     */
-    public synchronized boolean isDisposed() {
-        return fDisposed;
-    }
+	/**
+	 * Returns whether this model has been disposed
+	 * @return <code>true</code> if the model is disposed <code>false</code> otherwise
+	 */
+	public synchronized boolean isDisposed() {
+		return fDisposed;
+	}
 
-    /**
-     * Cancels all pending update requests.
-     */
-    protected synchronized void cancelPendingUpdates() {
+	/**
+	 * Cancels all pending update requests.
+	 */
+	protected synchronized void cancelPendingUpdates() {
 		Iterator<IStatusMonitor> updates = fPendingUpdates.iterator();
-        while (updates.hasNext()) {
-            IStatusMonitor update = updates.next();
-            updates.remove();
-            update.setCanceled(true);
-        }
-        fPendingUpdates.clear();
-    }
+		while (updates.hasNext()) {
+			IStatusMonitor update = updates.next();
+			updates.remove();
+			update.setCanceled(true);
+		}
+		fPendingUpdates.clear();
+	}
 
 	/**
 	 * Installs the model proxy for the given element into this viewer
@@ -222,13 +222,13 @@ public abstract class AsynchronousModel {
 	 * Unintalls all model proxies installed for this model
 	 */
 	private void disposeAllModelProxies() {
-	    synchronized(fModelProxies) {
+		synchronized(fModelProxies) {
 			for (IModelProxy proxy : fModelProxies.values()) {
-	            getViewer().modelProxyRemoved(proxy);
-	            proxy.dispose();
-	        }
-	        fModelProxies.clear();
-	    }
+				getViewer().modelProxyRemoved(proxy);
+				proxy.dispose();
+			}
+			fModelProxies.clear();
+		}
 	}
 
 	/**
@@ -265,7 +265,7 @@ public abstract class AsynchronousModel {
 	 */
 	protected synchronized void mapElement(Object element, ModelNode node) {
 		ModelNode[] nodes = getNodes(element);
-        node.remap(element);
+		node.remap(element);
 		if (nodes == null) {
 			fElementToNodes.put(element, new ModelNode[] { node});
 		} else {
@@ -280,41 +280,41 @@ public abstract class AsynchronousModel {
 			newNodes[old.length] = node;
 			fElementToNodes.put(element, newNodes);
 		}
-        installModelProxy(element);
+		installModelProxy(element);
 	}
 
-    /**
-     * Unmaps the given node from its element and widget.
-     *
-     * @param node the model node
-     */
-    protected synchronized void unmapNode(ModelNode node) {
-        Object element = node.getElement();
-        ModelNode[] nodes = fElementToNodes.get(element);
-        if (nodes == null) {
-            return;
-        }
-        if (nodes.length == 1) {
-            fElementToNodes.remove(element);
-            disposeModelProxy(element);
-        } else {
-            for (int i = 0; i < nodes.length; i++) {
-                ModelNode node2 = nodes[i];
-                if (node2 == node) {
-                    ModelNode[] newNodes= new ModelNode[nodes.length - 1];
-                    System.arraycopy(nodes, 0, newNodes, 0, i);
-                    if (i < newNodes.length) {
-                        System.arraycopy(nodes, i + 1, newNodes, i, newNodes.length - i);
-                    }
-                    fElementToNodes.put(element, newNodes);
-                }
-            }
-        }
-    }
+	/**
+	 * Unmaps the given node from its element and widget.
+	 *
+	 * @param node the model node
+	 */
+	protected synchronized void unmapNode(ModelNode node) {
+		Object element = node.getElement();
+		ModelNode[] nodes = fElementToNodes.get(element);
+		if (nodes == null) {
+			return;
+		}
+		if (nodes.length == 1) {
+			fElementToNodes.remove(element);
+			disposeModelProxy(element);
+		} else {
+			for (int i = 0; i < nodes.length; i++) {
+				ModelNode node2 = nodes[i];
+				if (node2 == node) {
+					ModelNode[] newNodes= new ModelNode[nodes.length - 1];
+					System.arraycopy(nodes, 0, newNodes, 0, i);
+					if (i < newNodes.length) {
+						System.arraycopy(nodes, i + 1, newNodes, i, newNodes.length - i);
+					}
+					fElementToNodes.put(element, newNodes);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Returns the nodes in this model for the given element or
-     * <code>null</code> if none.
+	 * <code>null</code> if none.
 	 *
 	 * @param element model element
 	 * @return associated nodes or <code>null</code>
@@ -441,43 +441,43 @@ public abstract class AsynchronousModel {
 		return adapter;
 	}
 
-    /**
-     * Returns the tree element adapter for the given element or
-     * <code>null</code> if none.
-     *
-     * @param element
-     *            element to retrieve adapter for
-     * @return presentation adapter or <code>null</code>
-     */
-    protected IAsynchronousContentAdapter getContentAdapter(Object element) {
-        IAsynchronousContentAdapter adapter = null;
-        if (element instanceof IAsynchronousContentAdapter) {
-            adapter = (IAsynchronousContentAdapter) element;
-        } else if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            adapter = adaptable.getAdapter(IAsynchronousContentAdapter.class);
-        }
-        return adapter;
-    }
+	/**
+	 * Returns the tree element adapter for the given element or
+	 * <code>null</code> if none.
+	 *
+	 * @param element
+	 *            element to retrieve adapter for
+	 * @return presentation adapter or <code>null</code>
+	 */
+	protected IAsynchronousContentAdapter getContentAdapter(Object element) {
+		IAsynchronousContentAdapter adapter = null;
+		if (element instanceof IAsynchronousContentAdapter) {
+			adapter = (IAsynchronousContentAdapter) element;
+		} else if (element instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) element;
+			adapter = adaptable.getAdapter(IAsynchronousContentAdapter.class);
+		}
+		return adapter;
+	}
 
-    /**
-     * Updates the children of the given node.
-     *
-     * @param parent
-     *            node of which to update children
-     */
-    public void updateChildren(ModelNode parent) {
-        Object element = parent.getElement();
-        IAsynchronousContentAdapter adapter = getContentAdapter(element);
-        if (adapter == null) {
-        	adapter = fEmptyContentAdapter;
-        }
-        if (adapter != null) {
-            IChildrenRequestMonitor update = new ChildrenRequestMonitor(parent, this);
-            requestScheduled(update);
-            adapter.retrieveChildren(element, getPresentationContext(), update);
-        }
-    }
+	/**
+	 * Updates the children of the given node.
+	 *
+	 * @param parent
+	 *            node of which to update children
+	 */
+	public void updateChildren(ModelNode parent) {
+		Object element = parent.getElement();
+		IAsynchronousContentAdapter adapter = getContentAdapter(element);
+		if (adapter == null) {
+			adapter = fEmptyContentAdapter;
+		}
+		if (adapter != null) {
+			IChildrenRequestMonitor update = new ChildrenRequestMonitor(parent, this);
+			requestScheduled(update);
+			adapter.retrieveChildren(element, getPresentationContext(), update);
+		}
+	}
 
 	/**
 	 * Update this model's viewer preserving its selection.
@@ -523,12 +523,12 @@ public abstract class AsynchronousModel {
 		}
 	}
 
-    /**
-     * Asynchronous update for add/set children request.
-     *
-     * @param parent the parent model node
-     * @param element the element context
-     */
+	/**
+	 * Asynchronous update for add/set children request.
+	 *
+	 * @param parent the parent model node
+	 * @param element the element context
+	 */
 	protected abstract void add(ModelNode parent, Object element);
 
 	/**
@@ -538,37 +538,37 @@ public abstract class AsynchronousModel {
 	 * @param kids list of model elements
 	 */
 	protected void setChildren(final ModelNode parentNode, List<Object> kids) {
-        final Object[] children = filter(parentNode.getElement(), kids.toArray());
-        final AsynchronousViewer viewer = getViewer();
+		final Object[] children = filter(parentNode.getElement(), kids.toArray());
+		final AsynchronousViewer viewer = getViewer();
 		ViewerComparator comparator = viewer.getComparator();
-        if (comparator != null) {
-        	comparator.sort(viewer, children);
-        }
+		if (comparator != null) {
+			comparator.sort(viewer, children);
+		}
 
-        ModelNode[] prevKids = null;
-        ModelNode[] newChildren = null;
-        ModelNode[] unmap = null;
+		ModelNode[] prevKids = null;
+		ModelNode[] newChildren = null;
+		ModelNode[] unmap = null;
 
-        synchronized (this) {
-        	if (isDisposed()) {
-                return;
-            }
-        	prevKids = parentNode.getChildrenNodes();
-            if (prevKids == null) {
-            	newChildren = new ModelNode[children.length];
-            	for (int i = 0; i < children.length; i++) {
-    				ModelNode node = new ModelNode(parentNode, children[i]);
-    				mapElement(children[i], node);
-    				newChildren[i] = node;
-    			}
-            	parentNode.setChildren(newChildren);
-            } else {
-            	newChildren = new ModelNode[children.length];
-            	unmap = new ModelNode[prevKids.length];
-            	for (int i = 0; i < prevKids.length; i++) {
+		synchronized (this) {
+			if (isDisposed()) {
+				return;
+			}
+			prevKids = parentNode.getChildrenNodes();
+			if (prevKids == null) {
+				newChildren = new ModelNode[children.length];
+				for (int i = 0; i < children.length; i++) {
+					ModelNode node = new ModelNode(parentNode, children[i]);
+					mapElement(children[i], node);
+					newChildren[i] = node;
+				}
+				parentNode.setChildren(newChildren);
+			} else {
+				newChildren = new ModelNode[children.length];
+				unmap = new ModelNode[prevKids.length];
+				for (int i = 0; i < prevKids.length; i++) {
 					unmap[i] = prevKids[i];
 				}
-            	for (int i = 0; i < children.length; i++) {
+				for (int i = 0; i < children.length; i++) {
 					Object child = children[i];
 					boolean found = false;
 					for (int j = 0; j < prevKids.length; j++) {
@@ -585,23 +585,23 @@ public abstract class AsynchronousModel {
 						mapElement(child, newChildren[i]);
 					}
 				}
-            	for (int i = 0; i < prevKids.length; i++) {
-            		ModelNode kid = prevKids[i];
-            		if (kid != null) {
-            			kid.dispose();
-            			unmapNode(kid);
-            		}
-            	}
-    	        parentNode.setChildren(newChildren);
-            }
-            if (DebugUIPlugin.DEBUG_MODEL) {
-            	DebugUIPlugin.trace("CHILDREN CHANGED: " + parentNode); //$NON-NLS-1$
-            	DebugUIPlugin.trace(toString());
-            }
-        }
+				for (int i = 0; i < prevKids.length; i++) {
+					ModelNode kid = prevKids[i];
+					if (kid != null) {
+						kid.dispose();
+						unmapNode(kid);
+					}
+				}
+				parentNode.setChildren(newChildren);
+			}
+			if (DebugUIPlugin.DEBUG_MODEL) {
+				DebugUIPlugin.trace("CHILDREN CHANGED: " + parentNode); //$NON-NLS-1$
+				DebugUIPlugin.trace(toString());
+			}
+		}
 
-        //update viewer outside the lock
-    	final ModelNode[] finalUnmap = unmap;
+		//update viewer outside the lock
+		final ModelNode[] finalUnmap = unmap;
 		preservingSelection(() -> {
 			if (finalUnmap != null) {
 				for (int i = 0; i < finalUnmap.length; i++) {

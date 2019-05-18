@@ -31,27 +31,27 @@ public interface IViewerUpdate extends IRequest {
 	 */
 	IPresentationContext getPresentationContext();
 
-    /**
-     * Returns the model element associated with this request.
-     *
-     * @return associated model element
-     */
-    Object getElement();
+	/**
+	 * Returns the model element associated with this request.
+	 *
+	 * @return associated model element
+	 */
+	Object getElement();
 
-    /**
-     * Returns the viewer tree path to the model element associated with this
-     * request. An empty path indicates a root element.
-     *
-     * @return tree path, possibly empty
-     */
-    TreePath getElementPath();
+	/**
+	 * Returns the viewer tree path to the model element associated with this
+	 * request. An empty path indicates a root element.
+	 *
+	 * @return tree path, possibly empty
+	 */
+	TreePath getElementPath();
 
-    /**
-     * Returns the element that was the viewer input at the time the
-     * request was made, possibly <code>null</code>.
-     *
-     * @return viewer input element, possibly <code>null</code>
-     * @since 3.4
-     */
-    Object getViewerInput();
+	/**
+	 * Returns the element that was the viewer input at the time the
+	 * request was made, possibly <code>null</code>.
+	 *
+	 * @return viewer input element, possibly <code>null</code>
+	 * @since 3.4
+	 */
+	Object getViewerInput();
 }

@@ -34,63 +34,63 @@ import org.eclipse.ui.PlatformUI;
  */
 public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDelegate implements IPropertyChangeListener {
 
-    IWorkingSetManager fWorkingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+	IWorkingSetManager fWorkingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 
-    /**
-     * Constructs a working set breakpoint organizer. Listens for changes in
-     * working sets and fires property change notification.
-     */
-    public WorkingSetBreakpointOrganizer() {
-        fWorkingSetManager.addPropertyChangeListener(this);
-    }
+	/**
+	 * Constructs a working set breakpoint organizer. Listens for changes in
+	 * working sets and fires property change notification.
+	 */
+	public WorkingSetBreakpointOrganizer() {
+		fWorkingSetManager.addPropertyChangeListener(this);
+	}
 
-    @Override
+	@Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
 		List<IAdaptable> result = new ArrayList<>();
 		List<IResource> parents = new ArrayList<>();
-        IResource res = breakpoint.getMarker().getResource();
-        parents.add(res);
-        while (res != null) {
-            res = res.getParent();
-            if (res != null) {
-                parents.add(res);
-            }
-        }
-        IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
-        for (int i = 0; i < workingSets.length; i++) {
-            if (!IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(workingSets[i].getId())) {
-		        IAdaptable[] elements = workingSets[i].getElements();
-		        for (int j = 0; j < elements.length; j++) {
-		            IResource resource = elements[j].getAdapter(IResource.class);
-		            if (resource != null) {
-		                if (parents.contains(resource)) {
-		                	result.add(new WorkingSetCategory(workingSets[i]));
-		                	break;
-		                }
-		            }
-		        }
-            }
-        }
-        return result.toArray(new IAdaptable[result.size()]);
-    }
+		IResource res = breakpoint.getMarker().getResource();
+		parents.add(res);
+		while (res != null) {
+			res = res.getParent();
+			if (res != null) {
+				parents.add(res);
+			}
+		}
+		IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
+		for (int i = 0; i < workingSets.length; i++) {
+			if (!IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(workingSets[i].getId())) {
+				IAdaptable[] elements = workingSets[i].getElements();
+				for (int j = 0; j < elements.length; j++) {
+					IResource resource = elements[j].getAdapter(IResource.class);
+					if (resource != null) {
+						if (parents.contains(resource)) {
+							result.add(new WorkingSetCategory(workingSets[i]));
+							break;
+						}
+					}
+				}
+			}
+		}
+		return result.toArray(new IAdaptable[result.size()]);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        fWorkingSetManager.removePropertyChangeListener(this);
-        fWorkingSetManager = null;
-        super.dispose();
-    }
+		fWorkingSetManager.removePropertyChangeListener(this);
+		fWorkingSetManager = null;
+		super.dispose();
+	}
 
-    @Override
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-        IWorkingSet set = null;
-        if (event.getNewValue() instanceof IWorkingSet) {
-            set = (IWorkingSet) event.getNewValue();
-        } else if (event.getOldValue() instanceof IWorkingSet) {
-            set = (IWorkingSet) event.getOldValue();
-        }
-        if (set != null && !IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId())) {
-            fireCategoryChanged(new WorkingSetCategory(set));
-        }
-    }
+		IWorkingSet set = null;
+		if (event.getNewValue() instanceof IWorkingSet) {
+			set = (IWorkingSet) event.getNewValue();
+		} else if (event.getOldValue() instanceof IWorkingSet) {
+			set = (IWorkingSet) event.getOldValue();
+		}
+		if (set != null && !IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId())) {
+			fireCategoryChanged(new WorkingSetCategory(set));
+		}
+	}
 }

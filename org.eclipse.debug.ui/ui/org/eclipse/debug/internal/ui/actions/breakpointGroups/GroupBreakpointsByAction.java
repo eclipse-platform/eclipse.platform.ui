@@ -44,17 +44,17 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 	public void run(IAction action) {
 	}
 
-    @Override
+	@Override
 	public void dispose() {
-    }
+	}
 
-    @Override
+	@Override
 	public Menu getMenu(Control parent) {
-        // Never called
-        return null;
-    }
+		// Never called
+		return null;
+	}
 
-    @Override
+	@Override
 	public Menu getMenu(Menu parent) {
 		Menu menu = new Menu(parent);
 		menu.addMenuListener(new MenuAdapter() {
@@ -69,9 +69,9 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 			}
 		});
 		return menu;
-    }
+	}
 
- 	/**
+	/**
 	 * Fill pull down menu with the "group by" options
 	 */
 	private void fillMenu(Menu menu) {
@@ -89,72 +89,72 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 			organizer = organizers[0];
 		}
 
-        int accel = 1;
-        // Add hard-coded action for flat breakpoints list
-        IAction action = new GroupBreakpointsAction(null, fView);
-        addAccel(accel, action, BreakpointGroupMessages.GroupBreakpointsByAction_0);
-        accel++;
-        action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_VIEW_BREAKPOINTS));
-        action.setChecked(none);
-        ActionContributionItem item= new ActionContributionItem(action);
-        item.fill(menu, -1);
+		int accel = 1;
+		// Add hard-coded action for flat breakpoints list
+		IAction action = new GroupBreakpointsAction(null, fView);
+		addAccel(accel, action, BreakpointGroupMessages.GroupBreakpointsByAction_0);
+		accel++;
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_VIEW_BREAKPOINTS));
+		action.setChecked(none);
+		ActionContributionItem item= new ActionContributionItem(action);
+		item.fill(menu, -1);
 
 		// Add actions for each contributed organizer
 		List<IAction> actions = getActions(accel);
-        accel = accel + actions.size();
+		accel = accel + actions.size();
 		Iterator<IAction> actionIter = actions.iterator();
-	    while (actionIter.hasNext()) {
+		while (actionIter.hasNext()) {
 			GroupBreakpointsAction bpAction = (GroupBreakpointsAction) actionIter.next();
 			bpAction.setChecked(bpAction.getOrganizer().equals(organizer));
 			item= new ActionContributionItem(bpAction);
 			item.fill(menu, -1);
-	    }
+		}
 
-        // advanced action
-        AdvancedGroupBreakpointsByAction advancedAction = new AdvancedGroupBreakpointsByAction(fView);
-        addAccel(accel, advancedAction,BreakpointGroupMessages.GroupBreakpointsByAction_1);
-        advancedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_HIERARCHICAL));
-        advancedAction.setChecked(advanced);
+		// advanced action
+		AdvancedGroupBreakpointsByAction advancedAction = new AdvancedGroupBreakpointsByAction(fView);
+		addAccel(accel, advancedAction,BreakpointGroupMessages.GroupBreakpointsByAction_1);
+		advancedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_HIERARCHICAL));
+		advancedAction.setChecked(advanced);
 		item= new ActionContributionItem(advancedAction);
 		item.fill(menu, -1);
 	}
 
 	public List<IAction> getActions(int accel) {
 		List<IAction> actions = new ArrayList<>();
-        IBreakpointOrganizer[] organizers = BreakpointOrganizerManager.getDefault().getOrganizers();
-        for (int i = 0; i < organizers.length; i++) {
-        	IBreakpointOrganizer organizer = organizers[i];
-            IAction action = new GroupBreakpointsAction(organizer, fView);
-            addAccel(accel, action, organizer.getLabel());
-            accel++;
-            action.setImageDescriptor(organizer.getImageDescriptor());
-            actions.add(action);
-        }
-        return actions;
-    }
+		IBreakpointOrganizer[] organizers = BreakpointOrganizerManager.getDefault().getOrganizers();
+		for (int i = 0; i < organizers.length; i++) {
+			IBreakpointOrganizer organizer = organizers[i];
+			IAction action = new GroupBreakpointsAction(organizer, fView);
+			addAccel(accel, action, organizer.getLabel());
+			accel++;
+			action.setImageDescriptor(organizer.getImageDescriptor());
+			actions.add(action);
+		}
+		return actions;
+	}
 
-    private void addAccel(int accel, IAction action, String label) {
-        StringBuilder actionLabel= new StringBuilder();
-        if (accel != 10) {
-            if (accel < 10) {
-                // add the numerical accelerators 1 through 9
-                actionLabel.append('&');
-            }
-            actionLabel.append(accel);
-        } else {
-            actionLabel.append("1&0"); //$NON-NLS-1$
-        }
-        accel++;
-        actionLabel.append(' ');
-        actionLabel.append(label);
-        action.setText(actionLabel.toString());
-    }
+	private void addAccel(int accel, IAction action, String label) {
+		StringBuilder actionLabel= new StringBuilder();
+		if (accel != 10) {
+			if (accel < 10) {
+				// add the numerical accelerators 1 through 9
+				actionLabel.append('&');
+			}
+			actionLabel.append(accel);
+		} else {
+			actionLabel.append("1&0"); //$NON-NLS-1$
+		}
+		accel++;
+		actionLabel.append(' ');
+		actionLabel.append(label);
+		action.setText(actionLabel.toString());
+	}
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-	    if (action != fAction) {
-	        action.setMenuCreator(this);
-	        fAction= action;
-	    }
+		if (action != fAction) {
+			action.setMenuCreator(this);
+			fAction= action;
+		}
 	}
 }

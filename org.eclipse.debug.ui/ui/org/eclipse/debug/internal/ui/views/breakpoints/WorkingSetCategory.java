@@ -29,99 +29,99 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  */
 public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdapter, IWorkbenchAdapter2 {
 
-    private IWorkingSet fWorkingSet;
+	private IWorkingSet fWorkingSet;
 
-    /**
-     * Constructs a new workings set category for the given working set.
-     *
-     * @param workingSet
-     */
-    public WorkingSetCategory(IWorkingSet workingSet) {
-        fWorkingSet = workingSet;
-    }
+	/**
+	 * Constructs a new workings set category for the given working set.
+	 *
+	 * @param workingSet
+	 */
+	public WorkingSetCategory(IWorkingSet workingSet) {
+		fWorkingSet = workingSet;
+	}
 
-    @Override
+	@Override
 	public Object[] getChildren(Object o) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        return fWorkingSet.getImageDescriptor();
-    }
+		return fWorkingSet.getImageDescriptor();
+	}
 
-    @Override
+	@Override
 	public String getLabel(Object o) {
-        StringBuilder name = new StringBuilder(fWorkingSet.getName());
-        if (isDefault()) {
-            name.append(DebugUIViewsMessages.WorkingSetCategory_0);
-        }
-        return name.toString();
-    }
+		StringBuilder name = new StringBuilder(fWorkingSet.getName());
+		if (isDefault()) {
+			name.append(DebugUIViewsMessages.WorkingSetCategory_0);
+		}
+		return name.toString();
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object o) {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Returns the working set for this category.
-     *
-     * @return
-     */
-    public IWorkingSet getWorkingSet() {
-        return fWorkingSet;
-    }
+	/**
+	 * Returns the working set for this category.
+	 *
+	 * @return
+	 */
+	public IWorkingSet getWorkingSet() {
+		return fWorkingSet;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        if (obj instanceof WorkingSetCategory) {
-            WorkingSetCategory category = (WorkingSetCategory) obj;
-            return category.getWorkingSet().equals(fWorkingSet);
-        }
-        return false;
-    }
+		if (obj instanceof WorkingSetCategory) {
+			WorkingSetCategory category = (WorkingSetCategory) obj;
+			return category.getWorkingSet().equals(fWorkingSet);
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return fWorkingSet.hashCode();
-    }
+		return fWorkingSet.hashCode();
+	}
 
-    @Override
+	@Override
 	public RGB getForeground(Object element) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public RGB getBackground(Object element) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public FontData getFont(Object element) {
-        if (isDefault()) {
-            FontData[] fontData = JFaceResources.getDefaultFont().getFontData();
-            if (fontData != null && fontData.length > 0) {
-                FontData data = fontData[0];
-                data.setStyle(SWT.BOLD);
-                return data;
-            }
-        }
-        return null;
-    }
+		if (isDefault()) {
+			FontData[] fontData = JFaceResources.getDefaultFont().getFontData();
+			if (fontData != null && fontData.length > 0) {
+				FontData data = fontData[0];
+				data.setStyle(SWT.BOLD);
+				return data;
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Whether this is the default breakpoint working set.
-     *
-     * @return whether this is the default breakpoint working set
-     */
-    private boolean isDefault() {
-        return fWorkingSet.equals(BreakpointSetOrganizer.getDefaultWorkingSet());
-    }
+	/**
+	 * Whether this is the default breakpoint working set.
+	 *
+	 * @return whether this is the default breakpoint working set
+	 */
+	private boolean isDefault() {
+		return fWorkingSet.equals(BreakpointSetOrganizer.getDefaultWorkingSet());
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        return fWorkingSet.getName();
-    }
+		return fWorkingSet.getName();
+	}
 }
 

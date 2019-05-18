@@ -45,8 +45,8 @@ public class RetargetRunToLineAction extends RetargetAction {
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
-                    fTargetElement = (ISuspendResume)
-                        DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
+					fTargetElement = (ISuspendResume)
+						DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
 				}
 			}
 			IAction action = getAction();
@@ -80,8 +80,8 @@ public class RetargetRunToLineAction extends RetargetAction {
 
 	@Override
 	public void init(IAction action) {
-	    super.init(action);
-	    action.setActionDefinitionId("org.eclipse.debug.ui.commands.RunToLine"); //$NON-NLS-1$
+		super.init(action);
+		action.setActionDefinitionId("org.eclipse.debug.ui.commands.RunToLine"); //$NON-NLS-1$
 	}
 
 	@Override

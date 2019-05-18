@@ -95,11 +95,11 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 */
 	private Set<String> fEnabledPerspectives = new HashSet<>();
 
-    /**
-     * Whether to ignore perspective change call backs (set to
-     * true when this class is modifying views).
-     */
-    private boolean fIgnoreChanges = false;
+	/**
+	 * Whether to ignore perspective change call backs (set to
+	 * true when this class is modifying views).
+	 */
+	private boolean fIgnoreChanges = false;
 
 	/**
 	 * The window this service is working for
@@ -123,193 +123,193 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	private static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
 
 	// extension elements
-    private static final String ELEM_CONTEXT_VIEW_BINDING= "contextViewBinding"; //$NON-NLS-1$
-    private static final String ELEM_PERSPECTIVE= "perspective"; //$NON-NLS-1$
+	private static final String ELEM_CONTEXT_VIEW_BINDING= "contextViewBinding"; //$NON-NLS-1$
+	private static final String ELEM_PERSPECTIVE= "perspective"; //$NON-NLS-1$
 
 	// extension attributes
 	private static final String ATTR_CONTEXT_ID= "contextId"; //$NON-NLS-1$
 	private static final String ATTR_VIEW_ID= "viewId"; //$NON-NLS-1$
 	private static final String ATTR_AUTO_OPEN= "autoOpen"; //$NON-NLS-1$
 	private static final String ATTR_AUTO_CLOSE= "autoClose"; //$NON-NLS-1$
-    private static final String ATTR_PERSPECTIVE_ID= "perspectiveId"; //$NON-NLS-1$
+	private static final String ATTR_PERSPECTIVE_ID= "perspectiveId"; //$NON-NLS-1$
 
-    // XML tags
-    private static final String XML_ELEMENT_VIEW_BINDINGS ="viewBindings"; //$NON-NLS-1$
-    private static final String XML_ELEMENT_PERSPECTIVE ="perspective"; //$NON-NLS-1$
-    private static final String XML_ELEMENT_VIEW = "view"; //$NON-NLS-1$
-    private static final String XML_ATTR_ID = "id"; //$NON-NLS-1$
-    private static final String XML_ATTR_USER_ACTION = "userAction"; //$NON-NLS-1$
-    private static final String XML_VALUE_OPENED = "opened"; //$NON-NLS-1$
-    private static final String XML_VALUE_CLOSED = "closed"; //$NON-NLS-1$
+	// XML tags
+	private static final String XML_ELEMENT_VIEW_BINDINGS ="viewBindings"; //$NON-NLS-1$
+	private static final String XML_ELEMENT_PERSPECTIVE ="perspective"; //$NON-NLS-1$
+	private static final String XML_ELEMENT_VIEW = "view"; //$NON-NLS-1$
+	private static final String XML_ATTR_ID = "id"; //$NON-NLS-1$
+	private static final String XML_ATTR_USER_ACTION = "userAction"; //$NON-NLS-1$
+	private static final String XML_VALUE_OPENED = "opened"; //$NON-NLS-1$
+	private static final String XML_VALUE_CLOSED = "closed"; //$NON-NLS-1$
 
-    // ids of base debug views in debug perspective that should not be auto-closed
+	// ids of base debug views in debug perspective that should not be auto-closed
 	private static Set<String> fgBaseDebugViewIds = null;
 
-    static {
+	static {
 		fgBaseDebugViewIds = new HashSet<>();
-        fgBaseDebugViewIds.add(IDebugUIConstants.ID_DEBUG_VIEW);
-        fgBaseDebugViewIds.add(IDebugUIConstants.ID_VARIABLE_VIEW);
-        fgBaseDebugViewIds.add(IDebugUIConstants.ID_BREAKPOINT_VIEW);
-        fgBaseDebugViewIds.add(IConsoleConstants.ID_CONSOLE_VIEW);
-    }
+		fgBaseDebugViewIds.add(IDebugUIConstants.ID_DEBUG_VIEW);
+		fgBaseDebugViewIds.add(IDebugUIConstants.ID_VARIABLE_VIEW);
+		fgBaseDebugViewIds.add(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+		fgBaseDebugViewIds.add(IConsoleConstants.ID_CONSOLE_VIEW);
+	}
 
-    private static String[] EMPTY_IDS = new String[0];
+	private static String[] EMPTY_IDS = new String[0];
 
-    /**
-     * View bindings for a debug context
-     */
-    private class DebugContextViewBindings {
+	/**
+	 * View bindings for a debug context
+	 */
+	private class DebugContextViewBindings {
 
-    	// context id
-    	private final String fId;
+		// context id
+		private final String fId;
 
-    	// list of view bindings id's specific to this context
-    	private String[] fViewBindingIds = EMPTY_IDS;
+		// list of view bindings id's specific to this context
+		private String[] fViewBindingIds = EMPTY_IDS;
 
-    	// all bindings including inherited bindings, top down in activation order
-    	private String[] fAllViewBindingIds = null;
-    	// associated binding to activate
+		// all bindings including inherited bindings, top down in activation order
+		private String[] fAllViewBindingIds = null;
+		// associated binding to activate
 		private final Map<String, ViewBinding> fAllViewIdToBindings = new HashMap<>();
-    	// all context id's in this context hierarchy (top down order)
-    	private String[] fAllConetxtIds = null;
+		// all context id's in this context hierarchy (top down order)
+		private String[] fAllConetxtIds = null;
 
-    	// id of parent context
-    	private String fParentId;
+		// id of parent context
+		private String fParentId;
 
-    	/**
-    	 * Constructs an empty view binding for the given context.
-    	 *
-    	 * @param id context id
-    	 */
-    	public DebugContextViewBindings(String id) {
-    		fId = id;
-    	}
+		/**
+		 * Constructs an empty view binding for the given context.
+		 *
+		 * @param id context id
+		 */
+		public DebugContextViewBindings(String id) {
+			fId = id;
+		}
 
-    	/**
-    	 * Returns the context id for these view bindings
-    	 *
-    	 * @return context id
-    	 */
-    	public String getId() {
-    		return fId;
-    	}
+		/**
+		 * Returns the context id for these view bindings
+		 *
+		 * @return context id
+		 */
+		public String getId() {
+			return fId;
+		}
 
-    	/**
-    	 * Adds the given view binding to this context
-    	 *
-    	 * @param binding view binding to add
-    	 */
-    	public void addBinding(ViewBinding binding) {
-    		String[] newBindings = new String[fViewBindingIds.length + 1];
-    		System.arraycopy(fViewBindingIds, 0, newBindings, 0, fViewBindingIds.length);
-    		newBindings[fViewBindingIds.length] = binding.getViewId();
-    		fAllViewIdToBindings.put(binding.getViewId(), binding);
-    		fViewBindingIds = newBindings;
-    	}
+		/**
+		 * Adds the given view binding to this context
+		 *
+		 * @param binding view binding to add
+		 */
+		public void addBinding(ViewBinding binding) {
+			String[] newBindings = new String[fViewBindingIds.length + 1];
+			System.arraycopy(fViewBindingIds, 0, newBindings, 0, fViewBindingIds.length);
+			newBindings[fViewBindingIds.length] = binding.getViewId();
+			fAllViewIdToBindings.put(binding.getViewId(), binding);
+			fViewBindingIds = newBindings;
+		}
 
-    	/**
-    	 * Sets the parent id of this view bindings
-    	 *
-    	 * @param id parent context id
-    	 */
-    	protected void setParentId(String id) {
-    		fParentId = id;
-    	}
+		/**
+		 * Sets the parent id of this view bindings
+		 *
+		 * @param id parent context id
+		 */
+		protected void setParentId(String id) {
+			fParentId = id;
+		}
 
-    	/**
-    	 * Returns the id of parent context
-    	 *
-    	 * @return parent context id
-    	 */
-    	public DebugContextViewBindings getParentContext() {
-    		if (fParentId == null) {
-    			return null;
-    		}
-    		return fContextIdsToBindings.get(fParentId);
-    	}
+		/**
+		 * Returns the id of parent context
+		 *
+		 * @return parent context id
+		 */
+		public DebugContextViewBindings getParentContext() {
+			if (fParentId == null) {
+				return null;
+			}
+			return fContextIdsToBindings.get(fParentId);
+		}
 
-    	/**
-    	 * Activates the views in this context hierarchy. Views are activated top down, allowing
-    	 * sub-contexts to override settings in a parent context.
-    	 * @param page the page context
-    	 * @param perspective the perspective description
-    	 * @param allViewIds that are relevant to the chain activation.
-    	 */
+		/**
+		 * Activates the views in this context hierarchy. Views are activated top down, allowing
+		 * sub-contexts to override settings in a parent context.
+		 * @param page the page context
+		 * @param perspective the perspective description
+		 * @param allViewIds that are relevant to the chain activation.
+		 */
 		public void activateChain(IWorkbenchPage page, IPerspectiveDescriptor perspective, Set<String> allViewIds) {
-    		initializeChain();
-    		doActivation(page, perspective, allViewIds, fAllConetxtIds);
-    	}
+			initializeChain();
+			doActivation(page, perspective, allViewIds, fAllConetxtIds);
+		}
 
-    	public String[] getAllViewBindingsIds() {
-    	    initializeChain();
-    	    return fAllViewBindingIds;
-    	}
+		public String[] getAllViewBindingsIds() {
+			initializeChain();
+			return fAllViewBindingIds;
+		}
 
-    	/**
-    	 * Activates the view bindings for the specified views and the
-    	 * specified contexts in the given page.
-    	 *
-    	 * @param page page to activate views in
-    	 * @param perspective the perspective description
-    	 * @param allViewIds id's of all the views that are relevant in this context activation
-    	 * @param contextIds associated contexts that are activated
-    	 */
+		/**
+		 * Activates the view bindings for the specified views and the
+		 * specified contexts in the given page.
+		 *
+		 * @param page page to activate views in
+		 * @param perspective the perspective description
+		 * @param allViewIds id's of all the views that are relevant in this context activation
+		 * @param contextIds associated contexts that are activated
+		 */
 		private void doActivation(IWorkbenchPage page, IPerspectiveDescriptor perspective, Set<String> allViewIds, String[] contextIds) {
-    		// note activation of all the relevant contexts
-    		for (int i = 0; i < contextIds.length; i++) {
+			// note activation of all the relevant contexts
+			for (int i = 0; i < contextIds.length; i++) {
 				addActivated(contextIds[i]);
 			}
-    		// set the active context to be this
-    		setActive(perspective, getId());
-    		// activate the view bindings and bring most relevant views to top
-    		for (int i = 0; i < fAllViewBindingIds.length; i++) {
+			// set the active context to be this
+			setActive(perspective, getId());
+			// activate the view bindings and bring most relevant views to top
+			for (int i = 0; i < fAllViewBindingIds.length; i++) {
 				String viewId = fAllViewBindingIds[i];
 				ViewBinding binding = fAllViewIdToBindings.get(viewId);
 				binding.activated(page, perspective);
-                binding.checkZOrder(page, allViewIds);
+				binding.checkZOrder(page, allViewIds);
 			}
-    	}
+		}
 
-    	/**
-    	 * Builds the top down ordered list of bindings for this context allowing sub-contexts
-    	 * to override parent settings.
-    	 */
-    	private synchronized void initializeChain() {
-    		if (fAllViewBindingIds == null) {
+		/**
+		 * Builds the top down ordered list of bindings for this context allowing sub-contexts
+		 * to override parent settings.
+		 */
+		private synchronized void initializeChain() {
+			if (fAllViewBindingIds == null) {
 				List<String> orderedIds = new ArrayList<>();
 				List<DebugContextViewBindings> contexts = new ArrayList<>();
-    			DebugContextViewBindings context = this;
-    			while (context != null) {
-    				contexts.add(0, context);
-    				context = context.getParentContext();
-    			}
-    			fAllConetxtIds = new String[contexts.size()];
-    			int pos = 0;
+				DebugContextViewBindings context = this;
+				while (context != null) {
+					contexts.add(0, context);
+					context = context.getParentContext();
+				}
+				fAllConetxtIds = new String[contexts.size()];
+				int pos = 0;
 				for (DebugContextViewBindings bindings : contexts) {
-    				fAllConetxtIds[pos] = bindings.getId();
-    				pos++;
-    				for (int i = 0; i < bindings.fViewBindingIds.length; i++) {
+					fAllConetxtIds[pos] = bindings.getId();
+					pos++;
+					for (int i = 0; i < bindings.fViewBindingIds.length; i++) {
 						String viewId = bindings.fViewBindingIds[i];
-    					if (bindings == this) {
-    						orderedIds.add(viewId);
-    					}
-    					if (!fAllViewIdToBindings.containsKey(viewId)) {
-    						orderedIds.add(viewId);
-    						fAllViewIdToBindings.put(viewId, bindings.fAllViewIdToBindings.get(viewId));
-    					}
+						if (bindings == this) {
+							orderedIds.add(viewId);
+						}
+						if (!fAllViewIdToBindings.containsKey(viewId)) {
+							orderedIds.add(viewId);
+							fAllViewIdToBindings.put(viewId, bindings.fAllViewIdToBindings.get(viewId));
+						}
 					}
-    			}
-    			fAllViewBindingIds = orderedIds.toArray(new String[orderedIds.size()]);
-    		}
-    	}
+				}
+				fAllViewBindingIds = orderedIds.toArray(new String[orderedIds.size()]);
+			}
+		}
 
-    	/**
-    	 * Deactivates this context only (not parents)
-    	 *
-    	 * @param page workbench page
-    	 * @param perspective the perspective description
-    	 */
-    	public void deactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+		/**
+		 * Deactivates this context only (not parents)
+		 *
+		 * @param page workbench page
+		 * @param perspective the perspective description
+		 */
+		public void deactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			removeActivated(getId());
 			if (isActiveContext(getId())) {
 				setActive(page.getPerspective(), null);
@@ -319,211 +319,211 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 				ViewBinding binding = fAllViewIdToBindings.get(viewId);
 				binding.deactivated(page, perspective);
 			}
-    	}
+		}
 
-    	/**
-    	 * Notes when a view is opened/closed manually.
-    	 *
-    	 * @param opened opened or closed
-    	 * @param viewId the view identifier
-    	 */
-    	public void setViewOpened(boolean opened, String viewId) {
-    		initializeChain();
-    		ViewBinding binding = fAllViewIdToBindings.get(viewId);
-    		if (binding != null) {
-    			if (opened) {
-    				binding.userOpened();
-    			} else {
-    				binding.userClosed();
-    			}
-    		}
-    	}
-
-        public void applyUserSettings(String viewId, Element viewElement) {
-        	initializeChain();
-        	ViewBinding binding = fAllViewIdToBindings.get(viewId);
-        	if (binding != null) {
-        		binding.applyUserSettings(viewElement);
-        	}
-        }
-
-        /**
-         * Save view binding settings into XML document.
-         *
-         * @param document the document to save to
-         * @param root the root XML element
-         * @param alreadyDone views already done
-         */
-		public void saveBindings(Document document, Element root, Set<String> alreadyDone) {
-        	for (int i = 0; i < fViewBindingIds.length; i++) {
-				String viewId = fViewBindingIds[i];
-        		if (!alreadyDone.contains(viewId)) {
-        			alreadyDone.add(viewId);
-        			ViewBinding binding = fAllViewIdToBindings.get(viewId);
-        			binding.saveBindings(document, root);
-        		}
+		/**
+		 * Notes when a view is opened/closed manually.
+		 *
+		 * @param opened opened or closed
+		 * @param viewId the view identifier
+		 */
+		public void setViewOpened(boolean opened, String viewId) {
+			initializeChain();
+			ViewBinding binding = fAllViewIdToBindings.get(viewId);
+			if (binding != null) {
+				if (opened) {
+					binding.userOpened();
+				} else {
+					binding.userClosed();
+				}
 			}
-        }
-    }
+		}
 
-    /**
-     * Information for a view
-     */
-    private class ViewBinding {
-        private final IConfigurationElement fElement;
-        /**
-         * Set of perspectives this view was opened in by the user
-         */
+		public void applyUserSettings(String viewId, Element viewElement) {
+			initializeChain();
+			ViewBinding binding = fAllViewIdToBindings.get(viewId);
+			if (binding != null) {
+				binding.applyUserSettings(viewElement);
+			}
+		}
+
+		/**
+		 * Save view binding settings into XML document.
+		 *
+		 * @param document the document to save to
+		 * @param root the root XML element
+		 * @param alreadyDone views already done
+		 */
+		public void saveBindings(Document document, Element root, Set<String> alreadyDone) {
+			for (int i = 0; i < fViewBindingIds.length; i++) {
+				String viewId = fViewBindingIds[i];
+				if (!alreadyDone.contains(viewId)) {
+					alreadyDone.add(viewId);
+					ViewBinding binding = fAllViewIdToBindings.get(viewId);
+					binding.saveBindings(document, root);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Information for a view
+	 */
+	private class ViewBinding {
+		private final IConfigurationElement fElement;
+		/**
+		 * Set of perspectives this view was opened in by the user
+		 */
 		private final Set<String> fUserOpened = new HashSet<>();
-        /**
-         * Set of perspectives this view was closed in by the user
-         */
+		/**
+		 * Set of perspectives this view was closed in by the user
+		 */
 		private final Set<String> fUserClosed = new HashSet<>();
-        /**
-         * Set of perspectives this view was auto-opened by view management.
-         */
+		/**
+		 * Set of perspectives this view was auto-opened by view management.
+		 */
 		private final Set<String> fAutoOpened = new HashSet<>();
 
-        public ViewBinding(IConfigurationElement element) {
-            fElement = element;
-        }
+		public ViewBinding(IConfigurationElement element) {
+			fElement = element;
+		}
 
-        /**
-         * Returns the id of the view this binding pertains to.
-         *
-         * @return the id of the view
-         */
-        public String getViewId() {
-            return fElement.getAttribute(ATTR_VIEW_ID);
-        }
+		/**
+		 * Returns the id of the view this binding pertains to.
+		 *
+		 * @return the id of the view
+		 */
+		public String getViewId() {
+			return fElement.getAttribute(ATTR_VIEW_ID);
+		}
 
-        /**
-         * Returns whether this view binding is set for auto-open.
-         *
-         * @return if the view is set to auto-open
-         */
-        public boolean isAutoOpen() {
-            String autoopen = fElement.getAttribute(ATTR_AUTO_OPEN);
-            return autoopen == null || "true".equals(autoopen); //$NON-NLS-1$
-        }
+		/**
+		 * Returns whether this view binding is set for auto-open.
+		 *
+		 * @return if the view is set to auto-open
+		 */
+		public boolean isAutoOpen() {
+			String autoopen = fElement.getAttribute(ATTR_AUTO_OPEN);
+			return autoopen == null || "true".equals(autoopen); //$NON-NLS-1$
+		}
 
-        /**
-         * Returns whether this view binding is set for auto-close.
-         *
-         * @return if the view is set to auto-close
-         */
-        public boolean isAutoClose() {
-            String autoclose = fElement.getAttribute(ATTR_AUTO_CLOSE);
-            return autoclose == null || "true".equals(autoclose); //$NON-NLS-1$
-        }
+		/**
+		 * Returns whether this view binding is set for auto-close.
+		 *
+		 * @return if the view is set to auto-close
+		 */
+		public boolean isAutoClose() {
+			String autoclose = fElement.getAttribute(ATTR_AUTO_CLOSE);
+			return autoclose == null || "true".equals(autoclose); //$NON-NLS-1$
+		}
 
-        /**
-         * Returns whether this view was opened by the user in the active perspective.
-         * @param perspective the perspective description
-         * @return if this view was opened by the user
-         */
-        public boolean isUserOpened(IPerspectiveDescriptor perspective) {
-            return fUserOpened.contains(perspective.getId());
-        }
+		/**
+		 * Returns whether this view was opened by the user in the active perspective.
+		 * @param perspective the perspective description
+		 * @return if this view was opened by the user
+		 */
+		public boolean isUserOpened(IPerspectiveDescriptor perspective) {
+			return fUserOpened.contains(perspective.getId());
+		}
 
-        /**
-         * Returns whether this view was closed by the user in the active perspective
-         * @param perspective the description of the perspective
-         * @return if this view was closed by the user in the active perspective
-         */
-        public boolean isUserClosed(IPerspectiveDescriptor perspective) {
-            return fUserClosed.contains(getActivePerspective().getId());
-        }
+		/**
+		 * Returns whether this view was closed by the user in the active perspective
+		 * @param perspective the description of the perspective
+		 * @return if this view was closed by the user in the active perspective
+		 */
+		public boolean isUserClosed(IPerspectiveDescriptor perspective) {
+			return fUserClosed.contains(getActivePerspective().getId());
+		}
 
-        /**
-         * Returns whether this view is part of the active perspective by default
-         *
-         * TODO: we really need an API to determine which views are
-         * in a perspective by default, but it does not seem to exist.
-         * @param perspective  the description of the perspective
-         * @return if this view is part of the active perspective by default
-         */
-        public boolean isDefault(IPerspectiveDescriptor perspective) {
-            String id = perspective.getId();
-            if (IDebugUIConstants.ID_DEBUG_PERSPECTIVE.equals(id)) {
-                return fgBaseDebugViewIds.contains(getViewId());
-            }
-            return false;
-        }
+		/**
+		 * Returns whether this view is part of the active perspective by default
+		 *
+		 * TODO: we really need an API to determine which views are
+		 * in a perspective by default, but it does not seem to exist.
+		 * @param perspective  the description of the perspective
+		 * @return if this view is part of the active perspective by default
+		 */
+		public boolean isDefault(IPerspectiveDescriptor perspective) {
+			String id = perspective.getId();
+			if (IDebugUIConstants.ID_DEBUG_PERSPECTIVE.equals(id)) {
+				return fgBaseDebugViewIds.contains(getViewId());
+			}
+			return false;
+		}
 
-        protected void userOpened() {
-            if (isTrackingViews()) {
-                String id = getActivePerspective().getId();
-                fAutoOpened.remove(id);
-                fUserOpened.add(id);
-                fUserClosed.remove(id);
-                saveViewBindings();
-            }
-        }
+		protected void userOpened() {
+			if (isTrackingViews()) {
+				String id = getActivePerspective().getId();
+				fAutoOpened.remove(id);
+				fUserOpened.add(id);
+				fUserClosed.remove(id);
+				saveViewBindings();
+			}
+		}
 
-        protected void userClosed() {
-            if (isTrackingViews()) {
-                String id = getActivePerspective().getId();
-                fAutoOpened.remove(id);
-                fUserClosed.add(id);
-                fUserOpened.remove(id);
-                saveViewBindings();
-            }
-        }
+		protected void userClosed() {
+			if (isTrackingViews()) {
+				String id = getActivePerspective().getId();
+				fAutoOpened.remove(id);
+				fUserClosed.add(id);
+				fUserOpened.remove(id);
+				saveViewBindings();
+			}
+		}
 
-        /**
-         * Returns whether the preference is set to track user view open/close.
-         *
-         * @return if the service is set to track user view open/close
-         */
-        protected boolean isTrackingViews() {
-            return DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS);
-        }
+		/**
+		 * Returns whether the preference is set to track user view open/close.
+		 *
+		 * @return if the service is set to track user view open/close
+		 */
+		protected boolean isTrackingViews() {
+			return DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS);
+		}
 
-        /**
-         * Context has been activated, open/show as required.
-         *
-         * @param page the workbench page
-         * @param perspective the perspective description
-         */
-        public void activated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-            if (!isUserClosed(perspective)) {
-                if (isAutoOpen()) {
-                    try {
-                        fIgnoreChanges = true;
-                        // Remember whether the view was opened by view management.
-                        // (Bug 128065)
-                        if (page.findViewReference(getViewId()) == null) {
-                            fAutoOpened.add(perspective.getId());
-                        }
-                        page.showView(getViewId(), null, IWorkbenchPage.VIEW_CREATE);
-                    } catch (PartInitException e) {
-                        DebugUIPlugin.log(e);
-                    } finally {
-                        fIgnoreChanges = false;
-                    }
-                }
-            }
-        }
+		/**
+		 * Context has been activated, open/show as required.
+		 *
+		 * @param page the workbench page
+		 * @param perspective the perspective description
+		 */
+		public void activated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			if (!isUserClosed(perspective)) {
+				if (isAutoOpen()) {
+					try {
+						fIgnoreChanges = true;
+						// Remember whether the view was opened by view management.
+						// (Bug 128065)
+						if (page.findViewReference(getViewId()) == null) {
+							fAutoOpened.add(perspective.getId());
+						}
+						page.showView(getViewId(), null, IWorkbenchPage.VIEW_CREATE);
+					} catch (PartInitException e) {
+						DebugUIPlugin.log(e);
+					} finally {
+						fIgnoreChanges = false;
+					}
+				}
+			}
+		}
 
-        /**
-         * Context has been activated. Check the view stack to see if this view
-         * should be made visible.
-         *
-         * @param page the page to check
-         * @param relevantViews the array of view identifiers
-         */
+		/**
+		 * Context has been activated. Check the view stack to see if this view
+		 * should be made visible.
+		 *
+		 * @param page the page to check
+		 * @param relevantViews the array of view identifiers
+		 */
 		public void checkZOrder(IWorkbenchPage page, Set<String> relevantViews) {
-        	// see if view is open already
-        	String viewId = getViewId();
+			// see if view is open already
+			String viewId = getViewId();
 			IViewPart part = page.findView(viewId);
-        	if (part != null) {
-        		IViewPart[] viewStack = page.getViewStack(part);
-        		if (viewStack != null && viewStack.length > 0) {
-        			String top = viewStack[0].getSite().getId();
-        			if (relevantViews.contains(top)) {
-        			    return;
-        			}
+			if (part != null) {
+				IViewPart[] viewStack = page.getViewStack(part);
+				if (viewStack != null && viewStack.length > 0) {
+					String top = viewStack[0].getSite().getId();
+					if (relevantViews.contains(top)) {
+						return;
+					}
 
 					// Don't bring a minimized or fast view to front
 					IViewReference partRef = page.findViewReference(viewId);
@@ -531,93 +531,93 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 						return;
 					}
 
-        			// an irrelevant view is visible
-                    try {
-                        fIgnoreChanges = true;
-                        page.bringToTop(part);
-                    } finally {
-                        fIgnoreChanges = false;
-                    }
-        		}
-        	}
-        }
+					// an irrelevant view is visible
+					try {
+						fIgnoreChanges = true;
+						page.bringToTop(part);
+					} finally {
+						fIgnoreChanges = false;
+					}
+				}
+			}
+		}
 
-        /**
-         * Context has been deactivated, close as required.
-         *
-         * @param page the workbench page
-         * @param perspective the perspective description
-         */
-        public void deactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-            if (!isUserOpened(perspective)) {
-                if (fAutoOpened.remove(perspective.getId()) && isAutoClose() && !isDefault(perspective)) {
-                    IViewReference reference = page.findViewReference(getViewId());
-                    if (reference != null) {
-                        try {
-                            fIgnoreChanges = true;
-                            page.hideView(reference);
-                        } finally {
-                            fIgnoreChanges = false;
-                        }
-                    }
-                }
-            }
-        }
+		/**
+		 * Context has been deactivated, close as required.
+		 *
+		 * @param page the workbench page
+		 * @param perspective the perspective description
+		 */
+		public void deactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			if (!isUserOpened(perspective)) {
+				if (fAutoOpened.remove(perspective.getId()) && isAutoClose() && !isDefault(perspective)) {
+					IViewReference reference = page.findViewReference(getViewId());
+					if (reference != null) {
+						try {
+							fIgnoreChanges = true;
+							page.hideView(reference);
+						} finally {
+							fIgnoreChanges = false;
+						}
+					}
+				}
+			}
+		}
 
-        /**
-         * Save view binding settings into XML document.
-         *
-         * @param document the document to save to
-         * @param root the root XML element
-         */
-        public void saveBindings(Document document, Element root) {
-            Element viewElement = document.createElement(XML_ELEMENT_VIEW);
-            viewElement.setAttribute(XML_ATTR_ID, getViewId());
-            appendPerspectives(document, viewElement, fUserOpened, XML_VALUE_OPENED);
-            appendPerspectives(document, viewElement, fUserClosed, XML_VALUE_CLOSED);
-            if (viewElement.hasChildNodes()) {
-                root.appendChild(viewElement);
-            }
-        }
+		/**
+		 * Save view binding settings into XML document.
+		 *
+		 * @param document the document to save to
+		 * @param root the root XML element
+		 */
+		public void saveBindings(Document document, Element root) {
+			Element viewElement = document.createElement(XML_ELEMENT_VIEW);
+			viewElement.setAttribute(XML_ATTR_ID, getViewId());
+			appendPerspectives(document, viewElement, fUserOpened, XML_VALUE_OPENED);
+			appendPerspectives(document, viewElement, fUserClosed, XML_VALUE_CLOSED);
+			if (viewElement.hasChildNodes()) {
+				root.appendChild(viewElement);
+			}
+		}
 
 		private void appendPerspectives(Document document, Element parent, Set<String> perpectives, String xmlValue) {
-            String[] ids = perpectives.toArray(new String[perpectives.size()]);
-            for (int i = 0; i < ids.length; i++) {
-                String id = ids[i];
-                Element element = document.createElement(XML_ELEMENT_PERSPECTIVE);
-                element.setAttribute(XML_ATTR_ID, id);
-                element.setAttribute(XML_ATTR_USER_ACTION, xmlValue);
-                parent.appendChild(element);
-            }
-        }
+			String[] ids = perpectives.toArray(new String[perpectives.size()]);
+			for (int i = 0; i < ids.length; i++) {
+				String id = ids[i];
+				Element element = document.createElement(XML_ELEMENT_PERSPECTIVE);
+				element.setAttribute(XML_ATTR_ID, id);
+				element.setAttribute(XML_ATTR_USER_ACTION, xmlValue);
+				parent.appendChild(element);
+			}
+		}
 
-        public void applyUserSettings(Element viewElement) {
-            NodeList list = viewElement.getChildNodes();
-            int length = list.getLength();
-            for (int i = 0; i < length; ++i) {
-                Node node = list.item(i);
-                short type = node.getNodeType();
-                if (type == Node.ELEMENT_NODE) {
-                    Element entry = (Element) node;
-                    if(entry.getNodeName().equalsIgnoreCase(XML_ELEMENT_PERSPECTIVE)){
-                        String id = entry.getAttribute(XML_ATTR_ID);
-                        String setting = entry.getAttribute(XML_ATTR_USER_ACTION);
-                        if (id != null) {
-                            if (XML_VALUE_CLOSED.equals(setting)) {
-                                fUserClosed.add(id);
-                            } else if (XML_VALUE_OPENED.equals(setting)) {
-                                fUserOpened.add(id);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+		public void applyUserSettings(Element viewElement) {
+			NodeList list = viewElement.getChildNodes();
+			int length = list.getLength();
+			for (int i = 0; i < length; ++i) {
+				Node node = list.item(i);
+				short type = node.getNodeType();
+				if (type == Node.ELEMENT_NODE) {
+					Element entry = (Element) node;
+					if(entry.getNodeName().equalsIgnoreCase(XML_ELEMENT_PERSPECTIVE)){
+						String id = entry.getAttribute(XML_ATTR_ID);
+						String setting = entry.getAttribute(XML_ATTR_USER_ACTION);
+						if (id != null) {
+							if (XML_VALUE_CLOSED.equals(setting)) {
+								fUserClosed.add(id);
+							} else if (XML_VALUE_OPENED.equals(setting)) {
+								fUserOpened.add(id);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
-    private IDebugContextService getDebugContextService() {
-    	return fDebugContextService;
-    }
+	private IDebugContextService getDebugContextService() {
+		return fDebugContextService;
+	}
 
 	/**
 	 * Creates a service for the given window
@@ -627,9 +627,9 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	ViewContextService(IWorkbenchWindow window) {
 		fWindow = window;
 		fContextService = PlatformUI.getWorkbench().getAdapter(IContextService.class);
-        fDebugContextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
+		fDebugContextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
 		loadContextToViewExtensions();
-        applyUserViewBindings();
+		applyUserViewBindings();
 		loadPerspectives();
 		window.addPerspectiveListener(this);
 		getDebugContextService().addDebugContextListener(this);
@@ -639,10 +639,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 		fContextService.addContextManagerListener(this);
 		if (fWindow != null) {
-		    IWorkbenchPage page = fWindow.getActivePage();
-		    if (page != null) {
-		        fActivePerspective = page.getPerspective();
-		    }
+			IWorkbenchPage page = fWindow.getActivePage();
+			if (page != null) {
+				fActivePerspective = page.getPerspective();
+			}
 		}
 	}
 
@@ -655,7 +655,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 			node.removePreferenceChangeListener(this);
 		}
 		fContextService.removeContextManagerListener(this);
-        fActivePerspective = null;
+		fActivePerspective = null;
 	}
 
 	/**
@@ -668,63 +668,63 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement element = configurationElements[i];
 			if ( ELEM_CONTEXT_VIEW_BINDING.equals(element.getName()) ) {
-    			String viewId = element.getAttribute(ATTR_VIEW_ID);
-    			String contextId = element.getAttribute(ATTR_CONTEXT_ID);
-    			if (contextId == null || viewId == null) {
-    				continue;
-    			}
-                ViewBinding info = new ViewBinding(element);
-    			DebugContextViewBindings bindings = fContextIdsToBindings.get(contextId);
-    			if (bindings == null) {
-    				bindings = new DebugContextViewBindings(contextId);
-    				fContextIdsToBindings.put(contextId, bindings);
-    			}
-    			bindings.addBinding(info);
+				String viewId = element.getAttribute(ATTR_VIEW_ID);
+				String contextId = element.getAttribute(ATTR_CONTEXT_ID);
+				if (contextId == null || viewId == null) {
+					continue;
+				}
+				ViewBinding info = new ViewBinding(element);
+				DebugContextViewBindings bindings = fContextIdsToBindings.get(contextId);
+				if (bindings == null) {
+					bindings = new DebugContextViewBindings(contextId);
+					fContextIdsToBindings.put(contextId, bindings);
+				}
+				bindings.addBinding(info);
 			}
 		}
 		linkParentContexts();
 	}
 
-    /**
-     * Applies user settings that modify view binding extensions.
-     */
-    private void applyUserViewBindings() {
-        String xml = DebugUITools.getPreferenceStore().getString(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS);
-        if (xml.length() > 0) {
-            try {
-                Element root = DebugPlugin.parseDocument(xml);
-                NodeList list = root.getChildNodes();
-                int length = list.getLength();
-                for (int i = 0; i < length; ++i) {
-                    Node node = list.item(i);
-                    short type = node.getNodeType();
-                    if (type == Node.ELEMENT_NODE) {
-                        Element entry = (Element) node;
-                        if(entry.getNodeName().equalsIgnoreCase(XML_ELEMENT_VIEW)){
-                            String id = entry.getAttribute(XML_ATTR_ID);
+	/**
+	 * Applies user settings that modify view binding extensions.
+	 */
+	private void applyUserViewBindings() {
+		String xml = DebugUITools.getPreferenceStore().getString(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS);
+		if (xml.length() > 0) {
+			try {
+				Element root = DebugPlugin.parseDocument(xml);
+				NodeList list = root.getChildNodes();
+				int length = list.getLength();
+				for (int i = 0; i < length; ++i) {
+					Node node = list.item(i);
+					short type = node.getNodeType();
+					if (type == Node.ELEMENT_NODE) {
+						Element entry = (Element) node;
+						if(entry.getNodeName().equalsIgnoreCase(XML_ELEMENT_VIEW)){
+							String id = entry.getAttribute(XML_ATTR_ID);
 							for (DebugContextViewBindings binding : fContextIdsToBindings.values()) {
-                            	binding.applyUserSettings(id, entry);
-                            }
-                        }
-                    }
-                }
-            } catch (CoreException e) {
-                DebugUIPlugin.log(e);
-            }
-        }
-    }
+								binding.applyUserSettings(id, entry);
+							}
+						}
+					}
+				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+	}
 
 	/**
 	 * Load the collection of perspectives in which view management will occur from the preference store.
 	 */
 	private void loadPerspectives() {
-	    String preference = DebugUIPlugin.getDefault().getPreferenceStore().getString(
-	        IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
-	    if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT.equals(preference)) {
-            fEnabledPerspectives = getDefaultEnabledPerspectives();
-	    } else {
-            fEnabledPerspectives = parseList(preference);
-	    }
+		String preference = DebugUIPlugin.getDefault().getPreferenceStore().getString(
+			IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
+		if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT.equals(preference)) {
+			fEnabledPerspectives = getDefaultEnabledPerspectives();
+		} else {
+			fEnabledPerspectives = parseList(preference);
+		}
 	}
 
 	/**
@@ -746,11 +746,11 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * @return active perspective or <code>null</code>
 	 */
 	private IPerspectiveDescriptor getActivePerspective() {
-        if (fWindow == null) {
-            return null;
-        }
+		if (fWindow == null) {
+			return null;
+		}
 
-        return fActivePerspective;
+		return fActivePerspective;
 	}
 
 	/**
@@ -770,29 +770,29 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	}
 
 	/**
-     * Calculates the default set of perspectives enabled for view management
-     * based on the contextViewBindings extension point.
-     *
-     * @return set of enabled perspectives.
-     *
-     * @since 3.5
-     */
+	 * Calculates the default set of perspectives enabled for view management
+	 * based on the contextViewBindings extension point.
+	 *
+	 * @return set of enabled perspectives.
+	 *
+	 * @since 3.5
+	 */
 	public static Set<String> getDefaultEnabledPerspectives() {
 		Set<String> perspectives = new HashSet<>(4);
-        IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_CONTEXT_VIEW_BINDINGS);
-        IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-        for (int i = 0; i < configurationElements.length; i++) {
-            IConfigurationElement element = configurationElements[i];
-            if ( ELEM_PERSPECTIVE.equals(element.getName()) ) {
-                String perspectiveId = element.getAttribute(ATTR_PERSPECTIVE_ID);
-                if (perspectiveId != null) {
-                    perspectives.add(perspectiveId);
-                }
-            }
-        }
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_CONTEXT_VIEW_BINDINGS);
+		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
+		for (int i = 0; i < configurationElements.length; i++) {
+			IConfigurationElement element = configurationElements[i];
+			if ( ELEM_PERSPECTIVE.equals(element.getName()) ) {
+				String perspectiveId = element.getAttribute(ATTR_PERSPECTIVE_ID);
+				if (perspectiveId != null) {
+					perspectives.add(perspectiveId);
+				}
+			}
+		}
 
-        return perspectives;
-    }
+		return perspectives;
+	}
 
 	public void contextActivated(ISelection selection) {
 		if (isEnabledPerspective()) {
@@ -814,26 +814,26 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 									List<String> workbenchContexts = DebugModelContextBindingManager.getDefault().getWorkbenchContextsForDebugContext(target);
 									// TODO: do we need to check if contexts are actually enabled in workbench first?
 									if (!workbenchContexts.isEmpty()) {
-									    // Quickly check if any contexts need activating
-									    boolean needToActivate = false;
-									    for (int i = 0; i < workbenchContexts.size(); i++) {
-                                            if (!isActivated(workbenchContexts.get(i))) {
-                                                needToActivate = true;
-                                                break;
-                                            }
-									    }
+										// Quickly check if any contexts need activating
+										boolean needToActivate = false;
+										for (int i = 0; i < workbenchContexts.size(); i++) {
+											if (!isActivated(workbenchContexts.get(i))) {
+												needToActivate = true;
+												break;
+											}
+										}
 
-									    if (needToActivate) {
+										if (needToActivate) {
 											Set<String> allViewIds = getAllContextsViewIDs(workbenchContexts);
 
-    										// if all contexts already activate and last context is already active context == done
-                                            for (int i = 0; i < workbenchContexts.size(); i++) {
-    											String contextId = workbenchContexts.get(i);
-    											if (!isActivated(contextId)) {
-    												activateChain(contextId, getActivePerspective(), allViewIds);
-    											}
-    										}
-    									}
+											// if all contexts already activate and last context is already active context == done
+											for (int i = 0; i < workbenchContexts.size(); i++) {
+												String contextId = workbenchContexts.get(i);
+												if (!isActivated(contextId)) {
+													activateChain(contextId, getActivePerspective(), allViewIds);
+												}
+											}
+										}
 									}
 								}
 							} catch (CoreException e) {
@@ -942,26 +942,26 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 		if (!fIgnoreChanges && page.getWorkbenchWindow().equals(fWindow)) {
 			if(partRef != null) {
-                if (IWorkbenchPage.CHANGE_VIEW_SHOW == changeId || IWorkbenchPage.CHANGE_VIEW_HIDE == changeId) {
-                    // Update only the contexts which are currently active (Bug 128065)
+				if (IWorkbenchPage.CHANGE_VIEW_SHOW == changeId || IWorkbenchPage.CHANGE_VIEW_HIDE == changeId) {
+					// Update only the contexts which are currently active (Bug 128065)
 					Set<String> activatedContexts = fPerspectiveToActivatedContexts.get(perspective);
-                    if (activatedContexts != null) {
+					if (activatedContexts != null) {
 						for (String id : activatedContexts) {
 							DebugContextViewBindings bindings = fContextIdsToBindings.get(id);
-                    	    if (bindings != null) {
-                    	        bindings.setViewOpened(IWorkbenchPage.CHANGE_VIEW_SHOW == changeId, partRef.getId());
-                    	    }
-                    	}
-                    }
-                }
+							if (bindings != null) {
+								bindings.setViewOpened(IWorkbenchPage.CHANGE_VIEW_SHOW == changeId, partRef.getId());
+							}
+						}
+					}
+				}
 			}
-        }
+		}
 	}
 
 	@Override
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		if (page.getWorkbenchWindow().equals(fWindow)) {
-		    fActivePerspective = perspective;
+			fActivePerspective = perspective;
 			ISelection activeContext = getDebugContextService().getActiveContext();
 			if (activeContext != null) {
 				contextActivated(activeContext);
@@ -999,16 +999,16 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 
 		TreeSet<String> viewIds = new TreeSet<>();
-        for (int i = 0; i < contextsIds.size(); i++) {
-            DebugContextViewBindings bindings= fContextIdsToBindings.get(contextsIds.get(i));
-            if (bindings != null) {
-                String[] bindingViewIds = bindings.getAllViewBindingsIds();
-                for (int j = 0; j < bindingViewIds.length; j++) {
-                    viewIds.add(bindingViewIds[j]);
-                }
-            }
-        }
-        return viewIds;
+		for (int i = 0; i < contextsIds.size(); i++) {
+			DebugContextViewBindings bindings= fContextIdsToBindings.get(contextsIds.get(i));
+			if (bindings != null) {
+				String[] bindingViewIds = bindings.getAllViewBindingsIds();
+				for (int j = 0; j < bindingViewIds.length; j++) {
+					viewIds.add(bindingViewIds[j]);
+				}
+			}
+		}
+		return viewIds;
 	}
 
 	/**
@@ -1062,7 +1062,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	}
 
 	private void deactivate(String contextId, IPerspectiveDescriptor perspective) {
-	    if (fWindow == null)
+		if (fWindow == null)
 		 {
 			return;  // disposed
 		}
@@ -1101,48 +1101,48 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		return fContextIdsToBindings.containsKey(id);
 	}
 
-    /**
-     * Save view binding settings that differ from extension settings
-     */
-    private void saveViewBindings() {
-        try {
-            Document document = DebugPlugin.newDocument();
-            Element root = document.createElement(XML_ELEMENT_VIEW_BINDINGS);
-            document.appendChild(root);
+	/**
+	 * Save view binding settings that differ from extension settings
+	 */
+	private void saveViewBindings() {
+		try {
+			Document document = DebugPlugin.newDocument();
+			Element root = document.createElement(XML_ELEMENT_VIEW_BINDINGS);
+			document.appendChild(root);
 			Set<String> done = new HashSet<>();
 			for (DebugContextViewBindings binding : fContextIdsToBindings.values()) {
-                binding.saveBindings(document, root, done);
-            }
-            String prefValue = IInternalDebugCoreConstants.EMPTY_STRING;
-            if (root.hasChildNodes()) {
-            	prefValue = DebugPlugin.serializeDocument(document);
-            }
-            fIgnoreChanges = true;
-            DebugUITools.getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, prefValue);
-        } catch (CoreException e) {
-            DebugUIPlugin.log(e);
-        } finally {
-            fIgnoreChanges = false;
-        }
+				binding.saveBindings(document, root, done);
+			}
+			String prefValue = IInternalDebugCoreConstants.EMPTY_STRING;
+			if (root.hasChildNodes()) {
+				prefValue = DebugPlugin.serializeDocument(document);
+			}
+			fIgnoreChanges = true;
+			DebugUITools.getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, prefValue);
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		} finally {
+			fIgnoreChanges = false;
+		}
 
-    }
+	}
 
-    /**
-     * Returns the perspectives in which debugging is enabled.
-     *
-     * @return the array of perspective identifiers in which debugging is enabled
-     */
-    public String[] getEnabledPerspectives() {
-    	return fEnabledPerspectives.toArray(new String[fEnabledPerspectives.size()]);
-    }
+	/**
+	 * Returns the perspectives in which debugging is enabled.
+	 *
+	 * @return the array of perspective identifiers in which debugging is enabled
+	 */
+	public String[] getEnabledPerspectives() {
+		return fEnabledPerspectives.toArray(new String[fEnabledPerspectives.size()]);
+	}
 
-    /**
-     * Show the view without effecting user preferences
-     *
-     * @param viewId the id of the view to show
-     */
-    public void showViewQuiet(String viewId) {
-        if (fWindow == null)
+	/**
+	 * Show the view without effecting user preferences
+	 *
+	 * @param viewId the id of the view to show
+	 */
+	public void showViewQuiet(String viewId) {
+		if (fWindow == null)
 		 {
 			return;  // disposed;
 		}
@@ -1161,12 +1161,12 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 				fIgnoreChanges = false;
 			}
 		}
-    }
+	}
 
 	@Override
 	public void perspectivePreDeactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		if (page.getWorkbenchWindow().equals(fWindow)) {
-            fActivePerspective = null;
+			fActivePerspective = null;
 			clean(perspective);
 		}
 	}

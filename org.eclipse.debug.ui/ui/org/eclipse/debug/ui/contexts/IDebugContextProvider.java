@@ -51,25 +51,25 @@ public interface IDebugContextProvider {
 	 */
 	IWorkbenchPart getPart();
 
-    /**
-     * Registers the given listener for debug context events.
-     *
-     * @param listener event listener
-     */
+	/**
+	 * Registers the given listener for debug context events.
+	 *
+	 * @param listener event listener
+	 */
 	void addDebugContextListener(IDebugContextListener listener);
 
-    /**
-     * Unregisters the given listener for debug context events.
-     *
-     * @param listener event listener
-     */
+	/**
+	 * Unregisters the given listener for debug context events.
+	 *
+	 * @param listener event listener
+	 */
 	void removeDebugContextListener(IDebugContextListener listener);
 
-    /**
-     * Returns the currently active context, possibly empty or <code>null</code>.
-     *
-     * @return active context, possibly empty or <code>null</code>.
-     */
+	/**
+	 * Returns the currently active context, possibly empty or <code>null</code>.
+	 *
+	 * @return active context, possibly empty or <code>null</code>.
+	 */
 	ISelection getActiveContext();
 
 }

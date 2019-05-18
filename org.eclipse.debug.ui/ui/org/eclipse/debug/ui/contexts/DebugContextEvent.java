@@ -54,8 +54,8 @@ public class DebugContextEvent extends EventObject {
 	public static final int STATE = 0x10;
 
 	/**
-     * Generated serial version UID for this class.
-     */
+	 * Generated serial version UID for this class.
+	 */
 	private static final long serialVersionUID = 3395172504615255524L;
 
 	/**

@@ -26,14 +26,14 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IMemoryRenderingTypeDelegate {
 
-    /**
-     * Creates and returns a rendering of the specified type, or <code>null</code>
-     * if none.
-     *
-     * @param id unique identifier of a memory rendering type
-     * @return a new rendering of the given type or <code>null</code>
-     * @exception CoreException if unable to create the rendering
-     */
-    IMemoryRendering createRendering(String id) throws CoreException;
+	/**
+	 * Creates and returns a rendering of the specified type, or <code>null</code>
+	 * if none.
+	 *
+	 * @param id unique identifier of a memory rendering type
+	 * @return a new rendering of the given type or <code>null</code>
+	 * @exception CoreException if unable to create the rendering
+	 */
+	IMemoryRendering createRendering(String id) throws CoreException;
 
 }

@@ -111,28 +111,28 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 		return IStepFiltersHandler.class;
 	}
 
-    /**
-     * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#run()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#run()
+	 */
+	@Override
 	public void run() {
-    	// ignore initial call to run from abstract debug view
-    	// that runs the action to initialize it's state when
-    	// the workbench persisted the action as "on"
-    	if (fInitialized) {
-    		DebugUITools.setUseStepFilters(!DebugUITools.isUseStepFilters());
-    	} else {
-    		fInitialized = true;
-    	}
-    }
+		// ignore initial call to run from abstract debug view
+		// that runs the action to initialize it's state when
+		// the workbench persisted the action as "on"
+		if (fInitialized) {
+			DebugUITools.setUseStepFilters(!DebugUITools.isUseStepFilters());
+		} else {
+			fInitialized = true;
+		}
+	}
 
-    /**
-     * @see org.eclipse.jface.action.Action#getStyle()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.action.Action#getStyle()
+	 */
+	@Override
 	public int getStyle() {
-    	return AS_CHECK_BOX;
-    }
+		return AS_CHECK_BOX;
+	}
 
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
@@ -165,15 +165,15 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 		initState();
 	}
 
-    /**
-     * Initializes the state, by adding this action as a property listener
-     */
-    protected void initState() {
+	/**
+	 * Initializes the state, by adding this action as a property listener
+	 */
+	protected void initState() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
 		if (node != null) {
 			node.addPreferenceChangeListener(this);
 		}
-    }
+	}
 
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#dispose()

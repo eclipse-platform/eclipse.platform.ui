@@ -35,7 +35,7 @@ public interface IElementMementoProvider {
 	 *
 	 * @param requests Specifies elements and provides memento stores.
 	 *  The requests array is guaranteed to have at least one element, and for
-     *  all requests to have the same presentation context.
+	 *  all requests to have the same presentation context.
 	 */
 	void encodeElements(IElementMementoRequest[] requests);
 
@@ -44,7 +44,7 @@ public interface IElementMementoProvider {
 	 *
 	 * @param requests Specifies each element and previously created memento.
 	 *  The requests array is guaranteed to have at least one element, and for
-     *  all requests to have the same presentation context.
+	 *  all requests to have the same presentation context.
 	 */
 	void compareElements(IElementCompareRequest[] requests);
 

@@ -26,12 +26,12 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class JFaceViewerPopupTests extends PopupTests {
 
-    public JFaceViewerPopupTests(String name) {
-        super(name);
-    }
+	public JFaceViewerPopupTests(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell, int style) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL | style, new PresentationContext("TestViewer")); //$NON-NLS-1$
-    }
+	}
 }

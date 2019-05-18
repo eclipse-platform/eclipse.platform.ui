@@ -206,7 +206,7 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(treeContentProvider);
 		treeViewer.setLabelProvider(treeLabelProvider);
-        treeViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
+		treeViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		treeViewer.addSelectionChangedListener(this);
 	}
 

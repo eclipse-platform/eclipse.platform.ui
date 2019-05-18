@@ -100,6 +100,6 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 
 	@Override
 	public String toString() {
-	    return fName;
+		return fName;
 	}
 }

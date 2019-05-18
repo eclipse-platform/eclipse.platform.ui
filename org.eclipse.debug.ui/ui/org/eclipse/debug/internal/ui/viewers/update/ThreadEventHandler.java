@@ -65,48 +65,48 @@ public class ThreadEventHandler extends DebugEventHandler {
 
 	@Override
 	protected void handleSuspend(DebugEvent event) {
-        IThread thread = (IThread) event.getSource();
+		IThread thread = (IThread) event.getSource();
 		if (event.isEvaluation()) {
-        	ModelDelta delta = buildRootDelta();
-    		ModelDelta node = addPathToThread(delta, thread);
+			ModelDelta delta = buildRootDelta();
+			ModelDelta node = addPathToThread(delta, thread);
 			node = node.addNode(thread, IModelDelta.STATE);
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
-                if (frame != null) {
-                	int flag = IModelDelta.NO_CHANGE;
-                	if (event.getDetail() == DebugEvent.EVALUATION) {
-                		// explicit evaluations can change content
-                		flag = flag | IModelDelta.CONTENT;
-                	} else if (event.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
-                		// implicit evaluations can change state
-                		flag = flag | IModelDelta.STATE;
-                	}
-                    node.addNode(frame, flag);
-                    fireDelta(delta);
-                }
+				if (frame != null) {
+					int flag = IModelDelta.NO_CHANGE;
+					if (event.getDetail() == DebugEvent.EVALUATION) {
+						// explicit evaluations can change content
+						flag = flag | IModelDelta.CONTENT;
+					} else if (event.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
+						// implicit evaluations can change state
+						flag = flag | IModelDelta.STATE;
+					}
+					node.addNode(frame, flag);
+					fireDelta(delta);
+				}
 			} catch (DebugException e) {
 			}
-        } else {
-        	queueSuspendedThread(event);
-            int extras = IModelDelta.STATE;
-            switch (event.getDetail()) {
-            case DebugEvent.BREAKPOINT:
-            	// on breakpoint also position thread to be top element
-            	extras = IModelDelta.EXPAND | IModelDelta.REVEAL;
-            	break;
-            case DebugEvent.CLIENT_REQUEST:
-            	extras = IModelDelta.EXPAND;
-            	break;
+		} else {
+			queueSuspendedThread(event);
+			int extras = IModelDelta.STATE;
+			switch (event.getDetail()) {
+			case DebugEvent.BREAKPOINT:
+				// on breakpoint also position thread to be top element
+				extras = IModelDelta.EXPAND | IModelDelta.REVEAL;
+				break;
+			case DebugEvent.CLIENT_REQUEST:
+				extras = IModelDelta.EXPAND;
+				break;
 				default:
 					break;
-            }
+			}
 
 			// wait until initialization is completed before sending suspend
 			// event, see bug 491174 comment 1
 			waitForProxyInitialization();
 
-        	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE | extras, event);
-        }
+			fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE | extras, event);
+		}
 	}
 
 	private void waitForProxyInitialization() {
@@ -175,20 +175,20 @@ public class ThreadEventHandler extends DebugEventHandler {
 		IThread thread = queueSuspendedThread(suspend);
 		if (suspend.isEvaluation() && suspend.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
 			// late implicit evaluation - update thread and frame
-        	ModelDelta delta = buildRootDelta();
-    		ModelDelta node = addPathToThread(delta, thread);
-    		node = node.addNode(thread, IModelDelta.STATE);
+			ModelDelta delta = buildRootDelta();
+			ModelDelta node = addPathToThread(delta, thread);
+			node = node.addNode(thread, IModelDelta.STATE);
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
-                if (frame != null) {
-                    node.addNode(frame, IModelDelta.STATE);
-                    fireDelta(delta);
-                }
+				if (frame != null) {
+					node.addNode(frame, IModelDelta.STATE);
+					fireDelta(delta);
+				}
 			} catch (DebugException e) {
 			}
-        } else {
-        	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.STATE | IModelDelta.EXPAND, suspend);
-        }
+		} else {
+			fireDeltaUpdatingSelectedFrame(thread, IModelDelta.STATE | IModelDelta.EXPAND, suspend);
+		}
 	}
 
 	@Override
@@ -244,11 +244,11 @@ public class ThreadEventHandler extends DebugEventHandler {
 	private void fireDeltaUpdatingSelectedFrame(IThread thread, int flags, DebugEvent event) {
 		ModelDelta delta = buildRootDelta();
 		ModelDelta node = addPathToThread(delta, thread);
-    	IStackFrame prev = null;
-    	synchronized (this) {
-    		 prev = fLastTopFrame.get(thread);
+		IStackFrame prev = null;
+		synchronized (this) {
+			prev = fLastTopFrame.get(thread);
 		}
-    	IStackFrame frame = null;
+		IStackFrame frame = null;
 		try {
 			Object frameToSelect = event.getData();
 			if (frameToSelect == null || !(frameToSelect instanceof IStackFrame)) {
@@ -260,9 +260,9 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 		int threadIndex = indexOf(thread);
 		int childCount = childCount(thread);
-    	if (isEqual(frame, prev)) {
-    		if (frame == null) {
-    			if (thread.isSuspended()) {
+		if (isEqual(frame, prev)) {
+			if (frame == null) {
+				if (thread.isSuspended()) {
 					// try retrieving the top frame again, in case we ran into an evaluation earlier
 					try {
 						frame = thread.getTopStackFrame();
@@ -275,31 +275,31 @@ public class ThreadEventHandler extends DebugEventHandler {
 					} else {
 						node = node.addNode(thread, threadIndex, flags, childCount);
 					}
-    			}
-    		} else {
-    			node = node.addNode(thread, threadIndex, flags, childCount);
-    		}
-    	} else {
-    		if (event.getDetail() == DebugEvent.STEP_END) {
-	    		if (prev == null) {
-	    			// see bug 166602 - expand the thread if this is a step end with no previous top frame
-	    			flags = flags | IModelDelta.EXPAND;
-	    		} else if (frame == null) {
-	    			// there was a previous frame and current is null on a step: transient state
-	    			return;
-	    		}
-    		}
+				}
+			} else {
+				node = node.addNode(thread, threadIndex, flags, childCount);
+			}
+		} else {
+			if (event.getDetail() == DebugEvent.STEP_END) {
+				if (prev == null) {
+					// see bug 166602 - expand the thread if this is a step end with no previous top frame
+					flags = flags | IModelDelta.EXPAND;
+				} else if (frame == null) {
+					// there was a previous frame and current is null on a step: transient state
+					return;
+				}
+			}
 			node = node.addNode(thread, threadIndex, flags | IModelDelta.CONTENT, childCount);
-    	}
-    	if (frame != null) {
-            node.addNode(frame, indexOf(frame), IModelDelta.STATE | IModelDelta.SELECT, childCount(frame));
-        }
-    	synchronized (this) {
-    		if (!isDisposed()) {
-    			fLastTopFrame.put(thread, frame);
-    		}
 		}
-    	fireDelta(delta);
+		if (frame != null) {
+			node.addNode(frame, indexOf(frame), IModelDelta.STATE | IModelDelta.SELECT, childCount(frame));
+		}
+		synchronized (this) {
+			if (!isDisposed()) {
+				fLastTopFrame.put(thread, frame);
+			}
+		}
+		fireDelta(delta);
 	}
 
 	/**
@@ -357,8 +357,8 @@ public class ThreadEventHandler extends DebugEventHandler {
 	private void fireDeltaUpdatingThread(IThread thread, int flags) {
 		ModelDelta delta = buildRootDelta();
 		ModelDelta node = addPathToThread(delta, thread);
-	    node = node.addNode(thread, flags);
-    	fireDelta(delta);
+		node = node.addNode(thread, flags);
+		fireDelta(delta);
 	}
 
 	@Override

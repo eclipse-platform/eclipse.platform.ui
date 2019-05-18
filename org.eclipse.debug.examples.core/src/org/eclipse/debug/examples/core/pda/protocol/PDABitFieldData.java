@@ -25,21 +25,21 @@ import java.util.StringTokenizer;
  */
 public class PDABitFieldData {
 
-    final public String fName;
-    final public int fOffset;
-    final public int fCount;
+	final public String fName;
+	final public int fOffset;
+	final public int fCount;
 	final public Map<String, String> fMnemonics;
 
-    PDABitFieldData(String bitFieldString) {
-        StringTokenizer st = new StringTokenizer(bitFieldString, "   "); //$NON-NLS-1$
+	PDABitFieldData(String bitFieldString) {
+		StringTokenizer st = new StringTokenizer(bitFieldString, "   "); //$NON-NLS-1$
 
-        fName = st.nextToken();
-        fOffset = Integer.parseInt(st.nextToken());
-        fCount = Integer.parseInt(st.nextToken());
+		fName = st.nextToken();
+		fOffset = Integer.parseInt(st.nextToken());
+		fCount = Integer.parseInt(st.nextToken());
 
 		fMnemonics = new LinkedHashMap<>(0);
-        while (st.hasMoreTokens()) {
-            fMnemonics.put(st.nextToken(), st.nextToken());
-        }
-    }
+		while (st.hasMoreTokens()) {
+			fMnemonics.put(st.nextToken(), st.nextToken());
+		}
+	}
 }

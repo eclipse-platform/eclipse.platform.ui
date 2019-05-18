@@ -263,16 +263,16 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	protected void createSourceGroup(Composite parent) {}
 
 	/**
-     *	Create the group for creating the root directory
-     */
-    protected void createRootDirectoryGroup(Composite parent) {
-    	Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
-    	SWTFactory.createLabel(comp, WizardMessages.ImportLaunchConfigurationsWizardPage_6, 1);
-      // source name entry field
-    	fFromDirectory = SWTFactory.createText(comp, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-        // source browse button
-        Button browse = SWTFactory.createPushButton(comp, WizardMessages.ImportLaunchConfigurationsWizardPage_7, null);
-        browse.addSelectionListener(new SelectionAdapter () {
+	 *	Create the group for creating the root directory
+	 */
+	protected void createRootDirectoryGroup(Composite parent) {
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		SWTFactory.createLabel(comp, WizardMessages.ImportLaunchConfigurationsWizardPage_6, 1);
+		// source name entry field
+		fFromDirectory = SWTFactory.createText(comp, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		// source browse button
+		Button browse = SWTFactory.createPushButton(comp, WizardMessages.ImportLaunchConfigurationsWizardPage_7, null);
+		browse.addSelectionListener(new SelectionAdapter () {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dd = new DirectoryDialog(getContainer().getShell(), SWT.SHEET);
@@ -287,14 +287,14 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 					}
 				}
 			}
-        });
-    }
+		});
+	}
 
-    /**
-     * Resets the selection of the tree root element for the viewer
-     * @param path the path from the text widget
-     */
-    protected void resetSelection(final IPath path) {
+	/**
+	 * Resets the selection of the tree root element for the viewer
+	 * @param path the path from the text widget
+	 */
+	protected void resetSelection(final IPath path) {
 		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
 			File file = new File(path.toOSString());
 			DebugFileSystemElement dummyparent = new DebugFileSystemElement(IInternalDebugCoreConstants.EMPTY_STRING,
@@ -306,47 +306,47 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			element.getFiles();
 			selectionGroup.setRoot(dummyparent);
 		});
-    }
+	}
 
 	@Override
 	protected ITreeContentProvider getFileProvider() {
 		return new WorkbenchContentProvider() {
-            @Override
+			@Override
 			public Object[] getChildren(Object o) {
-                if (o instanceof DebugFileSystemElement) {
-                    DebugFileSystemElement element = (DebugFileSystemElement) o;
-                    return element.getFiles().getChildren(element);
-                }
-                return new Object[0];
-            }
-        };
+				if (o instanceof DebugFileSystemElement) {
+					DebugFileSystemElement element = (DebugFileSystemElement) o;
+					return element.getFiles().getChildren(element);
+				}
+				return new Object[0];
+			}
+		};
 	}
 
 	@Override
 	protected ITreeContentProvider getFolderProvider() {
 		return new WorkbenchContentProvider() {
-            @Override
+			@Override
 			public Object[] getChildren(Object o) {
-                if (o instanceof DebugFileSystemElement) {
-                    DebugFileSystemElement element = (DebugFileSystemElement) o;
-                    return element.getFolders().getChildren();
-                }
-                return new Object[0];
-            }
+				if (o instanceof DebugFileSystemElement) {
+					DebugFileSystemElement element = (DebugFileSystemElement) o;
+					return element.getFolders().getChildren();
+				}
+				return new Object[0];
+			}
 
-            @Override
+			@Override
 			public boolean hasChildren(Object o) {
-                if (o instanceof DebugFileSystemElement) {
-                    DebugFileSystemElement element = (DebugFileSystemElement) o;
-                    if (element.isPopulated()) {
+				if (o instanceof DebugFileSystemElement) {
+					DebugFileSystemElement element = (DebugFileSystemElement) o;
+					if (element.isPopulated()) {
 						return getChildren(element).length > 0;
 					}
-                    //If we have not populated then wait until asked
-                    return true;
-                }
-                return false;
-            }
-        };
+					//If we have not populated then wait until asked
+					return true;
+				}
+				return false;
+			}
+		};
 	}
 
 }

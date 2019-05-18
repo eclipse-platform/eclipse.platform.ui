@@ -26,24 +26,24 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  */
 public class PDAEditor extends AbstractDecoratedTextEditor {
 
-    /**
-     * Creates a PDE editor
-     */
-    public PDAEditor() {
-        super();
-        setSourceViewerConfiguration(new PDASourceViewerConfiguration());
+	/**
+	 * Creates a PDE editor
+	 */
+	public PDAEditor() {
+		super();
+		setSourceViewerConfiguration(new PDASourceViewerConfiguration());
 		setRulerContextMenuId("pda.editor.rulerMenu"); //$NON-NLS-1$
 		setEditorContextMenuId("pda.editor.editorMenu"); //$NON-NLS-1$
-    }
+	}
 
-    @Override
+	@Override
 	protected void createActions() {
-        super.createActions();
-        ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.debug.examples.ui.pda.editor.PDAEditorMessages"); //$NON-NLS-1$
-        IAction action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$
-        action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-        setAction("ContentAssistProposal", action); //$NON-NLS-1$
-    }
+		super.createActions();
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.debug.examples.ui.pda.editor.PDAEditorMessages"); //$NON-NLS-1$
+		IAction action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction("ContentAssistProposal", action); //$NON-NLS-1$
+	}
 
 
 }

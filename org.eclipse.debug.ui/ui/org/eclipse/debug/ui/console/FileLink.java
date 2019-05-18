@@ -101,7 +101,7 @@ public class FileLink implements IConsoleHyperlink {
 								}
 								IDocument document = provider.getDocument(input);
 								try {
-	                                IRegion region= document.getLineInformation(fFileLineNumber - 1);
+									IRegion region= document.getLineInformation(fFileLineNumber - 1);
 									fFileOffset = region.getOffset();
 									fFileLength = region.getLength();
 								} catch (BadLocationException e) {
@@ -144,14 +144,14 @@ public class FileLink implements IConsoleHyperlink {
 		return fEditorId;
 	}
 
-    private IContentType getFileContentType() {
-        try {
-            IContentDescription description= fFile.getContentDescription();
-            if (description != null) {
-                return description.getContentType();
-            }
-        } catch (CoreException e) {
-        }
-        return null;
-    }
+	private IContentType getFileContentType() {
+		try {
+			IContentDescription description= fFile.getContentDescription();
+			if (description != null) {
+				return description.getContentType();
+			}
+		} catch (CoreException e) {
+		}
+		return null;
+	}
 }

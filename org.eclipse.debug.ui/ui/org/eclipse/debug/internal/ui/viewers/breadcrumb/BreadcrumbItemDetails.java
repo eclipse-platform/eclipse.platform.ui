@@ -318,7 +318,7 @@ class BreadcrumbItemDetails {
 						}
 						break;
 					case SWT.ARROW_DOWN:
-                    case SWT.ARROW_UP:
+					case SWT.ARROW_UP:
 					case SWT.KEYPAD_ADD:
 						if (!fSelected) {
 							viewer.selectItem(fParent);
@@ -345,12 +345,12 @@ class BreadcrumbItemDetails {
 			}
 
 			private void openDropDown() {
-			    Shell shell = fParent.getDropDownShell();
-			    if (shell == null) {
-	                fParent.openDropDownMenu();
-	                shell = fParent.getDropDownShell();
-			    }
-			    shell.setFocus();
+				Shell shell = fParent.getDropDownShell();
+				if (shell == null) {
+					fParent.openDropDownMenu();
+					shell = fParent.getDropDownShell();
+				}
+				shell.setFocus();
 			}
 
 			@Override

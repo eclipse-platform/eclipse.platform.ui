@@ -32,15 +32,15 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 
 	private List<ViewerUpdateMonitor> fBatchedRequests = null;
 
-    /**
-     * Constructs a request to update an element
-     *
-     * @param provider the content provider
-     * @param viewerInput the current input
-     * @param elementPath the path to the element being update
-     * @param element the element
-     * @param elementContentProvider the content provider for the element
-     */
+	/**
+	 * Constructs a request to update an element
+	 *
+	 * @param provider the content provider
+	 * @param viewerInput the current input
+	 * @param elementPath the path to the element being update
+	 * @param element the element
+	 * @param elementContentProvider the content provider for the element
+	 */
 	public HasChildrenUpdate(TreeModelContentProvider provider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider) {
 		super(provider, viewerInput, elementPath, element, elementContentProvider, provider.getPresentationContext());
 	}
@@ -52,7 +52,7 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		if (!fHasChildren) {
 			contentProvider.clearFilters(elementPath);
 		}
-        if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+		if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 		}
 		contentProvider.getViewer().setHasChildren(elementPath, fHasChildren);
 		if (fHasChildren) {
@@ -112,17 +112,17 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 
 	@Override
 	boolean containsUpdate(TreePath path) {
-        if (getElementPath().equals(path)) {
-            return true;
-        } else if (fBatchedRequests != null) {
-            for (int i = 0; i < fBatchedRequests.size(); i++) {
-                if (fBatchedRequests.get(i).getElementPath().equals(path)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+		if (getElementPath().equals(path)) {
+			return true;
+		} else if (fBatchedRequests != null) {
+			for (int i = 0; i < fBatchedRequests.size(); i++) {
+				if (fBatchedRequests.get(i).getElementPath().equals(path)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	@Override
 	int getPriority() {
@@ -139,20 +139,20 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 	}
 
 	boolean hasChildren() {
-	    return fHasChildren;
+		return fHasChildren;
 	}
 
-    @Override
+	@Override
 	protected boolean doEquals(ViewerUpdateMonitor update) {
-        return
-            update instanceof HasChildrenUpdate &&
-            getViewerInput().equals(update.getViewerInput()) &&
-            getElementPath().equals(update.getElementPath());
-    }
+		return
+			update instanceof HasChildrenUpdate &&
+			getViewerInput().equals(update.getViewerInput()) &&
+			getElementPath().equals(update.getElementPath());
+	}
 
-    @Override
+	@Override
 	protected int doHashCode() {
-        return getClass().hashCode() + getViewerInput().hashCode() + getElementPath().hashCode();
-    }
+		return getClass().hashCode() + getViewerInput().hashCode() + getElementPath().hashCode();
+	}
 
 }

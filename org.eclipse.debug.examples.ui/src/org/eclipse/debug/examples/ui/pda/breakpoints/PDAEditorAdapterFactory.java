@@ -35,15 +35,15 @@ public class PDAEditorAdapterFactory implements IAdapterFactory {
 			if (resource != null) {
 				String extension = resource.getFileExtension();
 				if (extension != null && extension.equals("pda")) { //$NON-NLS-1$
-				    if (adapterType.equals(IToggleBreakpointsTarget.class)) {
+					if (adapterType.equals(IToggleBreakpointsTarget.class)) {
 						return (T) new PDABreakpointAdapter();
-				    }
+					}
 					//#ifdef ex7
 //#					// TODO: Exercise 7 - create run to line adapter
 					//#else
 					if (adapterType.equals(IRunToLineTarget.class)) {
 						return (T) new PDARunToLineAdapter();
-				    }
+					}
 					//#endif
 				}
 			}

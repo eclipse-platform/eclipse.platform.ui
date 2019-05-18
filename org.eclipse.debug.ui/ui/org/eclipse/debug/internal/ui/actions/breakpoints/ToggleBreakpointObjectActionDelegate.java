@@ -47,7 +47,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	@Override
 	public void run(IAction action) {
 		IToggleBreakpointsTarget target =
-		    DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
+			DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
 		if (target != null) {
 			try {
 				performAction(target, fPart, fSelection);
@@ -76,9 +76,9 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 			// selectionChagned() can sometimes be called before setActivePart().
 			// Guard here against that possibility.
 			if (fPart != null) {
-			    IToggleBreakpointsTarget target =
-			        DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
-			    enabled = target != null;
+				IToggleBreakpointsTarget target =
+					DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
+				enabled = target != null;
 			}
 		}
 		action.setEnabled(enabled);

@@ -73,7 +73,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	}
 
 	protected IWorkbenchPart getActivePart() {
-	    return fActivePart;
+		return fActivePart;
 	}
 
 	@Override
@@ -141,7 +141,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 					fTargetAdapter = getAdapter((IAdaptable) object);
 				}
 			}
-	        action.setEnabled(fTargetAdapter != null && isTargetEnabled());
+			action.setEnabled(fTargetAdapter != null && isTargetEnabled());
 		}
 	}
 
@@ -219,9 +219,9 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 */
 	protected boolean isTargetEnabled() {
 		if (fTargetAdapter != null) {
-            if (fActivePart != null) {
-                return canPerformAction(fTargetAdapter, getTargetSelection(), fActivePart);
-            }
+			if (fActivePart != null) {
+				return canPerformAction(fTargetAdapter, getTargetSelection(), fActivePart);
+			}
 		}
 		return false;
 	}

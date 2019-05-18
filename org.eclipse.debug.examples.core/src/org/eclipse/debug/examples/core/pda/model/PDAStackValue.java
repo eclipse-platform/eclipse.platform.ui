@@ -24,17 +24,17 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public class PDAStackValue extends PDADebugElement implements IValue {
 
-    final private PDAThread fThread;
-    final private String fValue;
-    final private int fIndex;
+	final private PDAThread fThread;
+	final private String fValue;
+	final private int fIndex;
 
-    /**
-     * Constructs a value that appears on the data stack
-     *
-     * @param target debug target
-     * @param value value on the stack
-     * @param index index on the stack
-     */
+	/**
+	 * Constructs a value that appears on the data stack
+	 *
+	 * @param target debug target
+	 * @param value value on the stack
+	 * @param index index on the stack
+	 */
 	public PDAStackValue(PDAThread thread, String value, int index) {
 		super(thread.getDebugTarget());
 		fThread = thread;
@@ -43,43 +43,43 @@ public class PDAStackValue extends PDADebugElement implements IValue {
 	}
 
 	public PDAThread getThread() {
-	    return fThread;
+		return fThread;
 	}
 
-    @Override
+	@Override
 	public String getValueString() throws DebugException {
-        return fValue;
-    }
+		return fValue;
+	}
 
-    @Override
+	@Override
 	public boolean isAllocated() throws DebugException {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public IVariable[] getVariables() throws DebugException {
-        return new IVariable[0];
-    }
+		return new IVariable[0];
+	}
 
-    @Override
+	@Override
 	public boolean hasVariables() throws DebugException {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public String getReferenceTypeName() throws DebugException {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        return obj instanceof PDAStackValue &&
-            ((PDAStackValue)obj).fValue.equals(fValue) &&
-            ((PDAStackValue)obj).fIndex == fIndex;
-    }
+		return obj instanceof PDAStackValue &&
+			((PDAStackValue)obj).fValue.equals(fValue) &&
+			((PDAStackValue)obj).fIndex == fIndex;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return super.hashCode() + fIndex;
-    }
+		return super.hashCode() + fIndex;
+	}
 }

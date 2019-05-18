@@ -183,13 +183,13 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		String mode = getMode();
 		try {
 			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(getSelection(context));
-	        if(config != null && config.exists() && config.supportsMode(mode)) {
-	        	IAction action = new LaunchConfigurationAction(config, mode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
-	            ActionContributionItem item = new ActionContributionItem(action);
-	            item.fill(fCreatedMenu, -1);
-	            if(!filteredShortCuts.isEmpty()) {
-	    			new MenuItem(fCreatedMenu, SWT.SEPARATOR);
-	    		}
+			if(config != null && config.exists() && config.supportsMode(mode)) {
+				IAction action = new LaunchConfigurationAction(config, mode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+				ActionContributionItem item = new ActionContributionItem(action);
+				item.fill(fCreatedMenu, -1);
+				if(!filteredShortCuts.isEmpty()) {
+					new MenuItem(fCreatedMenu, SWT.SEPARATOR);
+				}
 			}
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
@@ -320,10 +320,10 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-	    if (!fInitialized) {
-	        action.setEnabled(existsConfigTypesForMode());
-	        fInitialized = true;
-	    }
+		if (!fInitialized) {
+			action.setEnabled(existsConfigTypesForMode());
+			fInitialized = true;
+		}
 	}
 
 	/**

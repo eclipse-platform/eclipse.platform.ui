@@ -30,6 +30,6 @@ public interface IContainerRequestMonitor extends IStatusMonitor {
 	 *
 	 * @param container whether an element contains children
 	 */
-    void setIsContainer(boolean container);
+	void setIsContainer(boolean container);
 
 }

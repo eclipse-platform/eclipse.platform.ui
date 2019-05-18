@@ -166,7 +166,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	/**
 	 * Scheduling rule to serialize commands on an object
 	 */
-   private class SerialPerObjectRule implements ISchedulingRule {
+	private class SerialPerObjectRule implements ISchedulingRule {
 
 		private Object fObject = null;
 
@@ -326,7 +326,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	 * @return adapter or <code>null</code>
 	 */
 	protected Object getAdapter(Object element, Class<?> type) {
-    	return DebugPlugin.getAdapter(element, type);
+		return DebugPlugin.getAdapter(element, type);
 	}
 
 	/**

@@ -38,6 +38,6 @@ public class EditWatchExpressionAction extends WatchExpressionAction {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
-	    action.setEnabled(getSelectedExpressions().length == 1);
+		action.setEnabled(getSelectedExpressions().length == 1);
 	}
 }

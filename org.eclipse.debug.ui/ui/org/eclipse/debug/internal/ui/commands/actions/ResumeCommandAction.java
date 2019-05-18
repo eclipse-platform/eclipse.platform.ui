@@ -31,40 +31,40 @@ public class ResumeCommandAction extends DebugCommandAction{
 		setActionDefinitionId("org.eclipse.debug.ui.commands.Resume"); //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.ResumeAction_0;
-    }
+		return ActionMessages.ResumeAction_0;
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.resume_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.resume_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.debugview.toolbar.resume"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.debugview.toolbar.resume"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.ResumeAction_3;
-    }
+		return ActionMessages.ResumeAction_3;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESUME);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESUME);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME);
+	}
 
 	@Override
 	protected Class<IResumeHandler> getCommandType() {

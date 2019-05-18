@@ -22,9 +22,9 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDACommandResult {
 
-    final public String fResponseText;
+	final public String fResponseText;
 
-    public PDACommandResult(String response) {
-        fResponseText = response;
-    }
+	public PDACommandResult(String response) {
+		fResponseText = response;
+	}
 }

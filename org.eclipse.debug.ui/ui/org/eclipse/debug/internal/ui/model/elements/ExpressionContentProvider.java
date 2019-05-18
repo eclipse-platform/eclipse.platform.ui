@@ -45,46 +45,46 @@ import org.eclipse.swt.graphics.FontData;
  */
 public class ExpressionContentProvider extends VariableContentProvider {
 
-    /**
-     * @since 3.6
-     * Element object used to wrap the expression error message.  It displays
-     * the error message only in the first column if columns are visible.
-     */
-    private static class ErrorMessageElement implements IElementLabelProvider {
+	/**
+	 * @since 3.6
+	 * Element object used to wrap the expression error message.  It displays
+	 * the error message only in the first column if columns are visible.
+	 */
+	private static class ErrorMessageElement implements IElementLabelProvider {
 
-        public ErrorMessageElement(String message) {
-            fMessage = message;
-        }
+		public ErrorMessageElement(String message) {
+			fMessage = message;
+		}
 
-        private final String fMessage;
+		private final String fMessage;
 
-        @Override
+		@Override
 		public void update(ILabelUpdate[] updates) {
-            for (int i = 0; i < updates.length; i++) {
-                String[] columnIds = updates[i].getColumnIds();
-                if (columnIds == null) {
-                    updateLabel(updates[i], 0);
-                } else {
-                    for (int j = 0; j < columnIds.length; j++) {
-                        if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnIds[j])) {
-                            updateLabel(updates[i], j);
-                        } else {
-                            updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
-                        }
-                    }
-                }
+			for (int i = 0; i < updates.length; i++) {
+				String[] columnIds = updates[i].getColumnIds();
+				if (columnIds == null) {
+					updateLabel(updates[i], 0);
+				} else {
+					for (int j = 0; j < columnIds.length; j++) {
+						if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnIds[j])) {
+							updateLabel(updates[i], j);
+						} else {
+							updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
+						}
+					}
+				}
 
-                updates[i].done();
-            }
-        }
+				updates[i].done();
+			}
+		}
 
-        private void updateLabel(ILabelUpdate update, int columnIndex) {
-            update.setLabel(fMessage, columnIndex);
-            FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
-            fontData.setStyle(SWT.ITALIC);
+		private void updateLabel(ILabelUpdate update, int columnIndex) {
+			update.setLabel(fMessage, columnIndex);
+			FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
+			fontData.setStyle(SWT.ITALIC);
 
-        }
-    }
+		}
+	}
 
 	@Override
 	public void update(IChildrenCountUpdate[] updates) {
@@ -169,25 +169,25 @@ public class ExpressionContentProvider extends VariableContentProvider {
 
 	@Override
 	protected Object[] getAllChildren(Object parent, IPresentationContext context) throws CoreException {
-       if (parent instanceof IErrorReportingExpression) {
-            IErrorReportingExpression expression = (IErrorReportingExpression) parent;
-            if (expression.hasErrors()) {
-                String[] messages = expression.getErrorMessages();
+		if (parent instanceof IErrorReportingExpression) {
+			IErrorReportingExpression expression = (IErrorReportingExpression) parent;
+			if (expression.hasErrors()) {
+				String[] messages = expression.getErrorMessages();
 				LinkedHashSet<ErrorMessageElement> set = new LinkedHashSet<>(messages.length);
-                for (int i = 0; i < messages.length; i++) {
+				for (int i = 0; i < messages.length; i++) {
 					set.add(new ErrorMessageElement(messages[i]));
 				}
-                return set.toArray();
-            }
-        }
-        if (parent instanceof IExpression) {
-            IExpression expression = (IExpression) parent;
-            IValue value = expression.getValue();
-            if (value != null) {
-                return getValueChildren(expression, value, context);
-            }
-        }
-        return EMPTY;
+				return set.toArray();
+			}
+		}
+		if (parent instanceof IExpression) {
+			IExpression expression = (IExpression) parent;
+			IValue value = expression.getValue();
+			if (value != null) {
+				return getValueChildren(expression, value, context);
+			}
+		}
+		return EMPTY;
 	}
 
 	@Override

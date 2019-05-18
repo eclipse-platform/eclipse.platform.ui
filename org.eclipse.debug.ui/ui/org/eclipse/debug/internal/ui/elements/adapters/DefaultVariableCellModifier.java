@@ -55,8 +55,8 @@ public class DefaultVariableCellModifier implements ICellModifier {
 	@Override
 	public void modify(Object element, String property, Object value) {
 		Object oldValue = getValue(element, property);
-        if (!value.equals(oldValue)) {
-        	if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+		if (!value.equals(oldValue)) {
+			if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
 				if (element instanceof IVariable) {
 					if (value instanceof String) {
 						// The value column displays special characters escaped, so encode the string with any special characters escaped properly
@@ -65,7 +65,7 @@ public class DefaultVariableCellModifier implements ICellModifier {
 						DetailPaneAssignValueAction.assignValue(DebugUIPlugin.getShell(), variable, valueExpression);
 					}
 				}
-	        }
+			}
 		}
 	}
 

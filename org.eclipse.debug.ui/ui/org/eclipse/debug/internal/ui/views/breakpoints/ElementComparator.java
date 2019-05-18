@@ -48,9 +48,9 @@ public class ElementComparator implements Comparator<Object> {
 
 	@Override
 	public int compare(Object arg0, Object arg1) {
-        IBreakpoint bp0 = (IBreakpoint)DebugPlugin.getAdapter(arg0, IBreakpoint.class);
-        IBreakpoint bp1 = (IBreakpoint)DebugPlugin.getAdapter(arg1, IBreakpoint.class);
-	    if (bp0 != null && bp1 != null) {
+		IBreakpoint bp0 = (IBreakpoint)DebugPlugin.getAdapter(arg0, IBreakpoint.class);
+		IBreakpoint bp1 = (IBreakpoint)DebugPlugin.getAdapter(arg1, IBreakpoint.class);
+		if (bp0 != null && bp1 != null) {
 			return doCompare(bp0, bp1);
 		} else if (arg0 instanceof IBreakpointContainer && arg1 instanceof IBreakpointContainer) {
 			return doCompare((IBreakpointContainer) arg0, (IBreakpointContainer) arg1);
@@ -67,18 +67,18 @@ public class ElementComparator implements Comparator<Object> {
 	 * @return
 	 */
 	private int doCompare(IBreakpointContainer c1, IBreakpointContainer c2) {
-	    // The "Other" breakpoint category should be listed last.
-	    // (Bug 311457).
-	    if (c1.getCategory() instanceof OtherBreakpointCategory) {
-            if (c2.getCategory() instanceof OtherBreakpointCategory) {
-                return 0;
-            }
-	        return 1;
-	    } else if (c2.getCategory() instanceof OtherBreakpointCategory) {
-	        return -1;
-	    }
+		// The "Other" breakpoint category should be listed last.
+		// (Bug 311457).
+		if (c1.getCategory() instanceof OtherBreakpointCategory) {
+			if (c2.getCategory() instanceof OtherBreakpointCategory) {
+				return 0;
+			}
+			return 1;
+		} else if (c2.getCategory() instanceof OtherBreakpointCategory) {
+			return -1;
+		}
 
-	    // Rest of categories should be listed alphabetically.
+		// Rest of categories should be listed alphabetically.
 		if (fContext != null) {
 			String name1 = fContext.getModelPresentation().getText(c1);
 			String name2 = fContext.getModelPresentation().getText(c2);

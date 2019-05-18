@@ -44,17 +44,17 @@ public class StackFrameContentProvider extends ElementContentProvider {
 	 */
 	protected Object[] getAllChildren(Object parent, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		if (parent instanceof IStackFrame) {
-	        String id = context.getId();
-	        IStackFrame frame = (IStackFrame) parent;
-	        if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {
-	            return frame.getVariables();
-	        } else if (id.equals(IDebugUIConstants.ID_REGISTER_VIEW)) {
-	            return frame.getRegisterGroups();
-	        }
+			String id = context.getId();
+			IStackFrame frame = (IStackFrame) parent;
+			if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {
+				return frame.getVariables();
+			} else if (id.equals(IDebugUIConstants.ID_REGISTER_VIEW)) {
+				return frame.getRegisterGroups();
+			}
 		} else {
 			monitor.cancel();
 		}
-	    return EMPTY;
+		return EMPTY;
 	}
 
 	@Override
@@ -65,13 +65,13 @@ public class StackFrameContentProvider extends ElementContentProvider {
 	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		 String id = context.getId();
-        IStackFrame frame = (IStackFrame) element;
-        if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {
-            return frame.hasVariables();
-        } else if (id.equals(IDebugUIConstants.ID_REGISTER_VIEW)) {
-            return frame.hasRegisterGroups();
-        }
-        return false;
+		IStackFrame frame = (IStackFrame) element;
+		if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {
+			return frame.hasVariables();
+		} else if (id.equals(IDebugUIConstants.ID_REGISTER_VIEW)) {
+			return frame.hasRegisterGroups();
+		}
+		return false;
 	}
 
 }

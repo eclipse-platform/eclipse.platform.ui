@@ -21,10 +21,10 @@ package org.eclipse.debug.internal.ui.commands.actions;
  */
 public class StepReturnCommandActionDelegate extends DebugCommandActionDelegate {
 
-    public StepReturnCommandActionDelegate() {
-        super();
-        setAction(new StepReturnCommandAction());
-    }
+	public StepReturnCommandActionDelegate() {
+		super();
+		setAction(new StepReturnCommandAction());
+	}
 
 
 }

@@ -124,50 +124,50 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(font);
 
-        Composite dirComposite = new Composite(composite, SWT.NONE);
-        layout = new GridLayout(2, false);
+		Composite dirComposite = new Composite(composite, SWT.NONE);
+		layout = new GridLayout(2, false);
 		dirComposite.setLayout(layout);
 		dirComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		dirComposite.setFont(font);
 
-        Label label = new Label(dirComposite, SWT.NONE);
-        label.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_4);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        data.horizontalSpan = 2;
-        label.setLayoutData(data);
-        label.setFont(font);
+		Label label = new Label(dirComposite, SWT.NONE);
+		label.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_4);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
+		label.setFont(font);
 
-        fDirText = new Text(dirComposite, SWT.BORDER);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        data.horizontalSpan = 1;
-        fDirText.setLayoutData(data);
-        fDirText.setFont(font);
-        fDirText.addModifyListener(new ModifyListener() {
+		fDirText = new Text(dirComposite, SWT.BORDER);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 1;
+		fDirText.setLayoutData(data);
+		fDirText.setFont(font);
+		fDirText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText( ModifyEvent e ) {
 				validate();
 			}
-        });
+		});
 
-        Button button = new Button(dirComposite, SWT.PUSH);
-        button.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_5);
-        data = new GridData();
-        int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-        Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-        data.widthHint = Math.max(widthHint, minSize.x);
-        button.setLayoutData(data);
-        button.setFont(JFaceResources.getDialogFont());
-        button.addSelectionListener(new SelectionAdapter() {
-            @Override
+		Button button = new Button(dirComposite, SWT.PUSH);
+		button.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_5);
+		data = new GridData();
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		data.widthHint = Math.max(widthHint, minSize.x);
+		button.setLayoutData(data);
+		button.setFont(JFaceResources.getDialogFont());
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
-            	browse();
-            }
-        });
+				browse();
+			}
+		});
 
-        fSubfoldersButton = new Button(composite, SWT.CHECK);
-        fSubfoldersButton.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_6);
+		fSubfoldersButton = new Button(composite, SWT.CHECK);
+		fSubfoldersButton.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_6);
 
-        return parentComposite;
+		return parentComposite;
 	}
 
 	@Override

@@ -26,37 +26,37 @@ import org.eclipse.ui.IViewPart;
  */
 public abstract class BreakpointWorkingSetAction extends AbstractBreakpointsViewAction implements IPropertyChangeListener {
 
-    protected IAction fAction;
+	protected IAction fAction;
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        update();
-    }
+		update();
+	}
 
-    @Override
+	@Override
 	public void init(IViewPart view) {
-        super.init(view);
-        DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-    }
+		super.init(view);
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-        super.dispose();
-    }
-    @Override
+		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		super.dispose();
+	}
+	@Override
 	public void init(IAction action) {
-        fAction = action;
-        super.init(action);
-        update();
-    }
+		fAction = action;
+		super.init(action);
+		update();
+	}
 
-    @Override
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-        if (event.getProperty().equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {
-            update();
-        }
+		if (event.getProperty().equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {
+			update();
+		}
 
-    }
-    protected abstract void update();
+	}
+	protected abstract void update();
 }

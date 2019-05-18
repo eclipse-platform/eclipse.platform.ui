@@ -90,85 +90,85 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 		return false;
 	}
 
-    /**
-     * Installs this breakpoint in the given interprettor.
-     * Registeres this breakpoint as an event listener in the
-     * given target and creates the breakpoint specific request.
-     *
-     * @param target PDA interprettor
-     * @throws CoreException if installation fails
-     */
-    public void install(PDADebugTarget target) throws CoreException {
-    	fTarget = target;
-    	target.addEventListener(this);
-    	createRequest(target);
-    }
+	/**
+	 * Installs this breakpoint in the given interprettor.
+	 * Registeres this breakpoint as an event listener in the
+	 * given target and creates the breakpoint specific request.
+	 *
+	 * @param target PDA interprettor
+	 * @throws CoreException if installation fails
+	 */
+	public void install(PDADebugTarget target) throws CoreException {
+		fTarget = target;
+		target.addEventListener(this);
+		createRequest(target);
+	}
 
-    /**
-     * Create the breakpoint specific request in the target. Subclasses
-     * should override.
-     *
-     * @param target PDA interprettor
-     * @throws CoreException if request creation fails
-     */
-    protected void createRequest(PDADebugTarget target) throws CoreException {
+	/**
+	 * Create the breakpoint specific request in the target. Subclasses
+	 * should override.
+	 *
+	 * @param target PDA interprettor
+	 * @throws CoreException if request creation fails
+	 */
+	protected void createRequest(PDADebugTarget target) throws CoreException {
 		//#ifdef ex3
 //#		// TODO: Exercise 3 - create breakpoint request in interpreter
 		//#else
-    	target.sendCommand(new PDASetBreakpointCommand((getLineNumber() - 1), false));
+		target.sendCommand(new PDASetBreakpointCommand((getLineNumber() - 1), false));
 		//#endif
-    }
+	}
 
-    /**
-     * Removes this breakpoint's event request from the target. Subclasses
-     * should override.
-     *
-     * @param target PDA interprettor
-     * @throws CoreException if clearing the request fails
-     */
-    protected void clearRequest(PDADebugTarget target) throws CoreException {
+	/**
+	 * Removes this breakpoint's event request from the target. Subclasses
+	 * should override.
+	 *
+	 * @param target PDA interprettor
+	 * @throws CoreException if clearing the request fails
+	 */
+	protected void clearRequest(PDADebugTarget target) throws CoreException {
 		//#ifdef ex3
 //#		// TODO: Exercise 3 - clear breakpoint request in interpreter
 		//#else
-        target.sendCommand(new PDAClearBreakpointCommand((getLineNumber() - 1)));
+		target.sendCommand(new PDAClearBreakpointCommand((getLineNumber() - 1)));
 		//#endif
-    }
+	}
 
-    /**
-     * Removes this breakpoint from the given interprettor.
-     * Removes this breakpoint as an event listener and clears
-     * the request for the interprettor.
-     *
-     * @param target PDA interprettor
-     * @throws CoreException if removal fails
-     */
-    public void remove(PDADebugTarget target) throws CoreException {
-    	target.removeEventListener(this);
-    	clearRequest(target);
-    	fTarget = null;
+	/**
+	 * Removes this breakpoint from the given interprettor.
+	 * Removes this breakpoint as an event listener and clears
+	 * the request for the interprettor.
+	 *
+	 * @param target PDA interprettor
+	 * @throws CoreException if removal fails
+	 */
+	public void remove(PDADebugTarget target) throws CoreException {
+		target.removeEventListener(this);
+		clearRequest(target);
+		fTarget = null;
 
-    }
+	}
 
-    /**
-     * Returns the target this breakpoint is installed in or <code>null</code>.
-     *
-     * @return the target this breakpoint is installed in or <code>null</code>
-     */
-    protected PDADebugTarget getDebugTarget() {
-    	return fTarget;
-    }
+	/**
+	 * Returns the target this breakpoint is installed in or <code>null</code>.
+	 *
+	 * @return the target this breakpoint is installed in or <code>null</code>
+	 */
+	protected PDADebugTarget getDebugTarget() {
+		return fTarget;
+	}
 
-    /**
-     * Notify's the PDA interprettor that this breakpoint has been hit.
-     */
-    protected void notifyThread(int threadId) {
-    	if (fTarget != null) {
+	/**
+	 * Notify's the PDA interprettor that this breakpoint has been hit.
+	 */
+	protected void notifyThread(int threadId) {
+		if (fTarget != null) {
 			PDAThread thread = fTarget.getThread(threadId);
 			if (thread != null) {
-    			thread.suspendedBy(this);
-    		}
-    	}
-    }
+				thread.suspendedBy(this);
+			}
+		}
+	}
 
 	/*
 	 * Subclasses should override to handle their breakpoint specific event.
@@ -176,31 +176,31 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	@Override
 	public void handleEvent(PDAEvent event) {
 		if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
-		    PDARunControlEvent rcEvent = (PDARunControlEvent)event;
-		    if (rcEvent.fReason.equals("breakpoint")) { //$NON-NLS-1$
-		        handleHit(rcEvent);
-		    }
+			PDARunControlEvent rcEvent = (PDARunControlEvent)event;
+			if (rcEvent.fReason.equals("breakpoint")) { //$NON-NLS-1$
+				handleHit(rcEvent);
+			}
 		}
 	}
 
 	/**
-     * Determines if this breakpoint was hit and notifies the thread.
-     *
-     * @param event breakpoint event
-     */
-    private void handleHit(PDARunControlEvent event) {
-    	int lastSpace = event.fMessage.lastIndexOf(' ');
-    	if (lastSpace > 0) {
-    		String line = event.fMessage.substring(lastSpace + 1);
-    		int lineNumber = Integer.parseInt(line);
-    		// breakpoints event line numbers are 0 based, model objects are 1 based
-    		lineNumber++;
-    		try {
+	 * Determines if this breakpoint was hit and notifies the thread.
+	 *
+	 * @param event breakpoint event
+	 */
+	private void handleHit(PDARunControlEvent event) {
+		int lastSpace = event.fMessage.lastIndexOf(' ');
+		if (lastSpace > 0) {
+			String line = event.fMessage.substring(lastSpace + 1);
+			int lineNumber = Integer.parseInt(line);
+			// breakpoints event line numbers are 0 based, model objects are 1 based
+			lineNumber++;
+			try {
 				if (getLineNumber() == lineNumber) {
 					notifyThread(event.fThreadId);
 				}
-    		} catch (CoreException e) {
-    		}
-    	}
-    }
+			} catch (CoreException e) {
+			}
+		}
+	}
 }

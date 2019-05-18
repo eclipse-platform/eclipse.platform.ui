@@ -40,17 +40,17 @@ public class SortBreakpointsByAction extends AbstractBreakpointsViewAction imple
 	public void run(IAction action) {
 	}
 
-    @Override
+	@Override
 	public void dispose() {
-    }
+	}
 
-    @Override
+	@Override
 	public Menu getMenu(Control parent) {
-        // Never called
-        return null;
-    }
+		// Never called
+		return null;
+	}
 
-    @Override
+	@Override
 	public Menu getMenu(Menu parent) {
 		Menu menu = new Menu(parent);
 		menu.addMenuListener(new MenuAdapter() {
@@ -65,9 +65,9 @@ public class SortBreakpointsByAction extends AbstractBreakpointsViewAction imple
 			}
 		});
 		return menu;
-    }
+	}
 
- 	/**
+	/**
 	 * Fill pull down menu with the "group by" options
 	 */
 	private void fillMenu(Menu menu) {
@@ -86,9 +86,9 @@ public class SortBreakpointsByAction extends AbstractBreakpointsViewAction imple
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-	    if (action != fAction) {
-	        action.setMenuCreator(this);
-	        fAction= action;
-	    }
+		if (action != fAction) {
+			action.setMenuCreator(this);
+			fAction= action;
+		}
 	}
 }

@@ -160,7 +160,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		 *
 		 * @since 3.5
 		 */
-        prefs.setDefault(IDebugPreferenceConstants.DEBUG_VIEW_MODE, IDebugPreferenceConstants.DEBUG_VIEW_MODE_AUTO);
+		prefs.setDefault(IDebugPreferenceConstants.DEBUG_VIEW_MODE, IDebugPreferenceConstants.DEBUG_VIEW_MODE_AUTO);
 	}
 
 	/**

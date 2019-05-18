@@ -33,50 +33,50 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 public interface IMemoryRenderingBindingsProvider {
 
 	/**
-     * Returns all rendering types bound to the given memory block.
-     * This includes default and primary rendering types.
-     *
-     * @param block memory block
+	 * Returns all rendering types bound to the given memory block.
+	 * This includes default and primary rendering types.
+	 *
+	 * @param block memory block
 	 * @return all rendering types bound to the given memory block
 	 */
 	IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block);
 
-    /**
-     * Returns default rendering types bound to the given memory block,
-     * possibly empty.
-     *
-     * @param block memory block
-     * @return default rendering types bound to the given memory block,
-     * possibly empty
-     */
-    IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block);
+	/**
+	 * Returns default rendering types bound to the given memory block,
+	 * possibly empty.
+	 *
+	 * @param block memory block
+	 * @return default rendering types bound to the given memory block,
+	 * possibly empty
+	 */
+	IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block);
 
-    /**
-     * Returns the primary rendering type bound to the given memory block,
-     * or <code>null</code> if none.
-     *
-     * @param block memory block
-     * @return the primary rendering type bound to the given memory block,
-     * or <code>null</code> if none
-     */
-    IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block);
+	/**
+	 * Returns the primary rendering type bound to the given memory block,
+	 * or <code>null</code> if none.
+	 *
+	 * @param block memory block
+	 * @return the primary rendering type bound to the given memory block,
+	 * or <code>null</code> if none
+	 */
+	IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block);
 
-    /**
-     * Adds a listener to this binding provider.  The listener will be notified
-     * when rendering bindings change.
-     * <p>
-     * Has no effect if an identical listener is already registered.
-     * </p>
-     * @param listener listener to add
-     */
+	/**
+	 * Adds a listener to this binding provider.  The listener will be notified
+	 * when rendering bindings change.
+	 * <p>
+	 * Has no effect if an identical listener is already registered.
+	 * </p>
+	 * @param listener listener to add
+	 */
 	void addListener(IMemoryRenderingBindingsListener listener);
 
-    /**
-     * Removes a listener from this binding provider.
-     * <p>
-     * Has no effect if an identical listener is not already registered.
-     * </p>
-     * @param listener listener to remove
-     */
+	/**
+	 * Removes a listener from this binding provider.
+	 * <p>
+	 * Has no effect if an identical listener is not already registered.
+	 * </p>
+	 * @param listener listener to remove
+	 */
 	void removeListener(IMemoryRenderingBindingsListener listener);
 }

@@ -27,42 +27,42 @@ import org.eclipse.ui.IWorkingSet;
  */
 public class ToggleDefaultGroupAction extends AbstractBreakpointsViewAction {
 
-    private IWorkingSet fSelectedSet;
+	private IWorkingSet fSelectedSet;
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        IWorkingSet defaultWorkingSet = BreakpointSetOrganizer.getDefaultWorkingSet();
-        IWorkingSet set = null;
-        if (!fSelectedSet.equals(defaultWorkingSet)) {
-            set = fSelectedSet;
-        }
-        BreakpointSetOrganizer.setDefaultWorkingSet(set);
-    }
+		IWorkingSet defaultWorkingSet = BreakpointSetOrganizer.getDefaultWorkingSet();
+		IWorkingSet set = null;
+		if (!fSelectedSet.equals(defaultWorkingSet)) {
+			set = fSelectedSet;
+		}
+		BreakpointSetOrganizer.setDefaultWorkingSet(set);
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
-        fSelectedSet = null;
-        if (sel instanceof IStructuredSelection) {
-            IStructuredSelection selection = (IStructuredSelection) sel;
-            if (selection.size() == 1) {
-	            Object firstElement = selection.getFirstElement();
-	            if (firstElement instanceof IBreakpointContainer) {
-	                IBreakpointContainer container = (IBreakpointContainer) firstElement;
-	                if (container.getCategory() instanceof WorkingSetCategory) {
-	                    WorkingSetCategory category = (WorkingSetCategory)container.getCategory();
-	                    if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(category.getWorkingSet().getId())) {
-	                        IWorkingSet set = category.getWorkingSet();
-	                        action.setEnabled(true);
-	                        boolean isDefault = set == BreakpointSetOrganizer.getDefaultWorkingSet();
-	                        action.setChecked(isDefault);
-	                        fSelectedSet = set;
-	                        return;
-	                    }
-	                }
-	            }
-            }
-        }
-        action.setEnabled(false);
-        action.setChecked(false);
-    }
+		fSelectedSet = null;
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection) sel;
+			if (selection.size() == 1) {
+				Object firstElement = selection.getFirstElement();
+				if (firstElement instanceof IBreakpointContainer) {
+					IBreakpointContainer container = (IBreakpointContainer) firstElement;
+					if (container.getCategory() instanceof WorkingSetCategory) {
+						WorkingSetCategory category = (WorkingSetCategory)container.getCategory();
+						if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(category.getWorkingSet().getId())) {
+							IWorkingSet set = category.getWorkingSet();
+							action.setEnabled(true);
+							boolean isDefault = set == BreakpointSetOrganizer.getDefaultWorkingSet();
+							action.setChecked(isDefault);
+							fSelectedSet = set;
+							return;
+						}
+					}
+				}
+			}
+		}
+		action.setEnabled(false);
+		action.setChecked(false);
+	}
 }

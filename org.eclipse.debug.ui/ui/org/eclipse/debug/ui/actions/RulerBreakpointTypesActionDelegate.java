@@ -82,172 +82,172 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
  */
 @Deprecated
 public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate, IMenuListener, IMenuCreator {
-    private ITextEditor fEditor = null;
-    private IAction fCallerAction = null;
-    private IVerticalRulerInfo fRulerInfo;
-    private ISelection fSelection;
+	private ITextEditor fEditor = null;
+	private IAction fCallerAction = null;
+	private IVerticalRulerInfo fRulerInfo;
+	private ISelection fSelection;
 
-    /**
-     * The menu created by this action
-     */
-    private Menu fMenu;
+	/**
+	 * The menu created by this action
+	 */
+	private Menu fMenu;
 
-    private class SelectTargetAction extends Action {
+	private class SelectTargetAction extends Action {
 		private final Set<String> fPossibleIDs;
-        private final String fID;
+		private final String fID;
 
 		SelectTargetAction(String name, Set<String> possibleIDs, String ID) {
-            super(name, AS_RADIO_BUTTON);
-            fID = ID;
-            fPossibleIDs = possibleIDs;
-        }
+			super(name, AS_RADIO_BUTTON);
+			fID = ID;
+			fPossibleIDs = possibleIDs;
+		}
 
-        @Override
+		@Override
 		public void run() {
-            if (isChecked()) {
-                ToggleBreakpointsTargetManager.getDefault().setPreferredTarget(fPossibleIDs, fID);
-            }
-        }
-    }
+			if (isChecked()) {
+				ToggleBreakpointsTargetManager.getDefault().setPreferredTarget(fPossibleIDs, fID);
+			}
+		}
+	}
 
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        // In the editor we're not using the selection.
-    }
+		// In the editor we're not using the selection.
+	}
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        // Do nothing, this is a pull-down menu.
-    }
+		// Do nothing, this is a pull-down menu.
+	}
 
-    @Override
+	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
-        // Clean up old editor data.
-        if (fCallerAction != null) {
-            fCallerAction.setMenuCreator(null);
-        }
-        if (fEditor instanceof ITextEditorExtension) {
-            ((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
-        }
-        fRulerInfo = null;
+		// Clean up old editor data.
+		if (fCallerAction != null) {
+			fCallerAction.setMenuCreator(null);
+		}
+		if (fEditor instanceof ITextEditorExtension) {
+			((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
+		}
+		fRulerInfo = null;
 
-        // Set up new editor data.
-        fCallerAction = callerAction;
-        fCallerAction.setMenuCreator(this);
+		// Set up new editor data.
+		fCallerAction = callerAction;
+		fCallerAction.setMenuCreator(this);
 
-        fEditor= targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class);
+		fEditor= targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class);
 
-        if (fEditor != null) {
-            if (fEditor instanceof ITextEditorExtension) {
-                ((ITextEditorExtension) fEditor).addRulerContextMenuListener(this);
-            }
+		if (fEditor != null) {
+			if (fEditor instanceof ITextEditorExtension) {
+				((ITextEditorExtension) fEditor).addRulerContextMenuListener(this);
+			}
 
-            fRulerInfo= fEditor.getAdapter(IVerticalRulerInfo.class);
-        }
+			fRulerInfo= fEditor.getAdapter(IVerticalRulerInfo.class);
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        if (fCallerAction != null) {
-            fCallerAction.setMenuCreator(null);
-        }
-        if (fEditor instanceof ITextEditorExtension) {
-            ((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
-        }
-        fRulerInfo = null;
-    }
+		if (fCallerAction != null) {
+			fCallerAction.setMenuCreator(null);
+		}
+		if (fEditor instanceof ITextEditorExtension) {
+			((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
+		}
+		fRulerInfo = null;
+	}
 
-    @Override
+	@Override
 	public void menuAboutToShow(IMenuManager manager) {
-        fSelection = StructuredSelection.EMPTY;
-        if (fEditor != null && fRulerInfo != null) {
+		fSelection = StructuredSelection.EMPTY;
+		if (fEditor != null && fRulerInfo != null) {
 
-            IDocumentProvider provider = fEditor.getDocumentProvider();
-            if (provider != null) {
-                IDocument document =  provider.getDocument(fEditor.getEditorInput());
-                int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-                if (line > -1) {
-                    try {
-                        IRegion region = document.getLineInformation(line);
-                        fSelection = new TextSelection(document, region.getOffset(), 0);
-                    } catch (BadLocationException e) {}
-                }
-            }
-            ToggleBreakpointsTargetManager toggleTargetManager = ToggleBreakpointsTargetManager.getDefault();
+			IDocumentProvider provider = fEditor.getDocumentProvider();
+			if (provider != null) {
+				IDocument document =  provider.getDocument(fEditor.getEditorInput());
+				int line = fRulerInfo.getLineOfLastMouseButtonActivity();
+				if (line > -1) {
+					try {
+						IRegion region = document.getLineInformation(line);
+						fSelection = new TextSelection(document, region.getOffset(), 0);
+					} catch (BadLocationException e) {}
+				}
+			}
+			ToggleBreakpointsTargetManager toggleTargetManager = ToggleBreakpointsTargetManager.getDefault();
 			Set<String> enabledIDs = toggleTargetManager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
-            fCallerAction.setEnabled(enabledIDs.size() > 0);
-        } else {
-            fCallerAction.setEnabled(false);
-        }
+			fCallerAction.setEnabled(enabledIDs.size() > 0);
+		} else {
+			fCallerAction.setEnabled(false);
+		}
 
-    }
+	}
 
-    /**
-     * Sets this action's drop-down menu, disposing the previous menu.
-     *
-     * @param menu the new menu
-     */
-    private void setMenu(Menu menu) {
-        if (fMenu != null) {
-            fMenu.dispose();
-        }
-        fMenu = menu;
-    }
+	/**
+	 * Sets this action's drop-down menu, disposing the previous menu.
+	 *
+	 * @param menu the new menu
+	 */
+	private void setMenu(Menu menu) {
+		if (fMenu != null) {
+			fMenu.dispose();
+		}
+		fMenu = menu;
+	}
 
-    @Override
+	@Override
 	public Menu getMenu(Menu parent) {
-        setMenu(new Menu(parent));
-        fillMenu(fMenu);
-        initMenu();
-        return fMenu;
-    }
+		setMenu(new Menu(parent));
+		fillMenu(fMenu);
+		initMenu();
+		return fMenu;
+	}
 
-    @Override
+	@Override
 	public Menu getMenu(Control parent) {
-        setMenu(new Menu(parent));
-        fillMenu(fMenu);
-        initMenu();
-        return fMenu;
-    }
+		setMenu(new Menu(parent));
+		fillMenu(fMenu);
+		initMenu();
+		return fMenu;
+	}
 
-    /**
-     * Fills the drop-down menu with enabled toggle breakpoint targets
-     *
-     * @param menu the menu to fill
-     */
-    private void fillMenu(Menu menu) {
-        ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault();
+	/**
+	 * Fills the drop-down menu with enabled toggle breakpoint targets
+	 *
+	 * @param menu the menu to fill
+	 */
+	private void fillMenu(Menu menu) {
+		ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault();
 		Set<String> enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
-        String preferredId = manager.getPreferredToggleBreakpointsTargetID(fEditor, fSelection);
+		String preferredId = manager.getPreferredToggleBreakpointsTargetID(fEditor, fSelection);
 		for (String id : enabledIDs) {
-            SelectTargetAction action= new SelectTargetAction(manager.getToggleBreakpointsTargetName(id), enabledIDs, id);
-            if (id.equals(preferredId)){
-                action.setChecked(true);
-            }
-            ActionContributionItem item= new ActionContributionItem(action);
-            item.fill(menu, -1);
-        }
-    }
+			SelectTargetAction action= new SelectTargetAction(manager.getToggleBreakpointsTargetName(id), enabledIDs, id);
+			if (id.equals(preferredId)){
+				action.setChecked(true);
+			}
+			ActionContributionItem item= new ActionContributionItem(action);
+			item.fill(menu, -1);
+		}
+	}
 
-    /**
-     * Creates the menu for the action
-     */
-    private void initMenu() {
-        // Add listener to re-populate the menu each time
-        // it is shown because of dynamic history list
-        fMenu.addMenuListener(new MenuAdapter() {
-            @Override
+	/**
+	 * Creates the menu for the action
+	 */
+	private void initMenu() {
+		// Add listener to re-populate the menu each time
+		// it is shown because of dynamic history list
+		fMenu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
-                Menu m = (Menu)e.widget;
-                MenuItem[] items = m.getItems();
-                for (int i=0; i < items.length; i++) {
-                    items[i].dispose();
-                }
-                fillMenu(m);
-            }
-        });
-    }
+				Menu m = (Menu)e.widget;
+				MenuItem[] items = m.getItems();
+				for (int i=0; i < items.length; i++) {
+					items[i].dispose();
+				}
+				fillMenu(m);
+			}
+		});
+	}
 
 }

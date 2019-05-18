@@ -27,29 +27,29 @@ import org.eclipse.ui.PlatformUI;
  */
 public class BreakpointFactory implements IElementFactory {
 
-    @Override
+	@Override
 	public IAdaptable createElement(IMemento memento) {
-        String longString = memento.getString(BreakpointPersistableElementAdapter.TAG_MARKER_ID);
-        String factoryId = memento.getString(BreakpointPersistableElementAdapter.TAG_RESOURCE_FACTORY_ID);
-        if (factoryId != null && longString != null) {
-            IElementFactory elementFactory = PlatformUI.getWorkbench().getElementFactory(factoryId);
-            if (elementFactory != null) {
-                IAdaptable adaptable = elementFactory.createElement(memento);
-                if (adaptable instanceof IResource) {
-                    IResource resource = (IResource) adaptable;
-                    try {
-                        long id = Long.parseLong(longString);
-                        IMarker marker = resource.findMarker(id);
-                        if (marker != null) {
-                            return DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
-                        }
-                    } catch (NumberFormatException e) {
-                    } catch (CoreException e) {
-                    }
-                }
-            }
-        }
-        return null;
-    }
+		String longString = memento.getString(BreakpointPersistableElementAdapter.TAG_MARKER_ID);
+		String factoryId = memento.getString(BreakpointPersistableElementAdapter.TAG_RESOURCE_FACTORY_ID);
+		if (factoryId != null && longString != null) {
+			IElementFactory elementFactory = PlatformUI.getWorkbench().getElementFactory(factoryId);
+			if (elementFactory != null) {
+				IAdaptable adaptable = elementFactory.createElement(memento);
+				if (adaptable instanceof IResource) {
+					IResource resource = (IResource) adaptable;
+					try {
+						long id = Long.parseLong(longString);
+						IMarker marker = resource.findMarker(id);
+						if (marker != null) {
+							return DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
+						}
+					} catch (NumberFormatException e) {
+					} catch (CoreException e) {
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 }

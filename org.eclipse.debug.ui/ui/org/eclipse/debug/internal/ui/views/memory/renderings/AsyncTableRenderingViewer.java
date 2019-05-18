@@ -310,7 +310,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	private synchronized void attemptSetKeySelection()
 	{
 		if (fPendingSelection != null) {
-            doAttemptSetKeySelection(fPendingSelection);
+			doAttemptSetKeySelection(fPendingSelection);
 		}
 
 	}

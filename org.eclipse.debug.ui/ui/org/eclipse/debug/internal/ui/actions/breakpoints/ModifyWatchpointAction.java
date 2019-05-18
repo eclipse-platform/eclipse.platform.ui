@@ -32,88 +32,88 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ModifyWatchpointAction implements IObjectActionDelegate, IActionDelegate2 {
 
-    private IStructuredSelection fWatchpoints = null;
+	private IStructuredSelection fWatchpoints = null;
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        try {
-	        if (fWatchpoints != null) {
+		try {
+			if (fWatchpoints != null) {
 				Iterator<?> iterator = fWatchpoints.iterator();
-	            while (iterator.hasNext()) {
-	                IWatchpoint watchpoint = (IWatchpoint)iterator.next();
-	                toggleWatchpoint(watchpoint, action.isChecked());
-	            }
-	        }
-        } catch (CoreException e) {
-            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.ModifyWatchpointAction_0, ActionMessages.ModifyWatchpointAction_1, e.getStatus()); //
-        }
+				while (iterator.hasNext()) {
+					IWatchpoint watchpoint = (IWatchpoint)iterator.next();
+					toggleWatchpoint(watchpoint, action.isChecked());
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.ModifyWatchpointAction_0, ActionMessages.ModifyWatchpointAction_1, e.getStatus()); //
+		}
 
-    }
+	}
 
-    /**
-     * Toggles the watch point attribute to the given value.
-     *
-     * @param watchpoint the watchpoint to toggle
-     * @param b on or off
-     * @throws CoreException if an exception occurs
-     */
-    protected abstract void toggleWatchpoint(IWatchpoint watchpoint, boolean b) throws CoreException;
+	/**
+	 * Toggles the watch point attribute to the given value.
+	 *
+	 * @param watchpoint the watchpoint to toggle
+	 * @param b on or off
+	 * @throws CoreException if an exception occurs
+	 */
+	protected abstract void toggleWatchpoint(IWatchpoint watchpoint, boolean b) throws CoreException;
 
-    @Override
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-    }
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-        if (selection instanceof IStructuredSelection) {
-            fWatchpoints = (IStructuredSelection) selection;
-            if (!selection.isEmpty()) {
+		if (selection instanceof IStructuredSelection) {
+			fWatchpoints = (IStructuredSelection) selection;
+			if (!selection.isEmpty()) {
 				Iterator<?> iterator = fWatchpoints.iterator();
-	            while (iterator.hasNext()) {
-	                Object next = iterator.next();
-	                if (next instanceof IWatchpoint) {
-	                    IWatchpoint watchpoint = (IWatchpoint) next;
-	                    action.setChecked(isChecked(watchpoint));
-	                    if (!isEnabled(watchpoint)) {
-	                        action.setEnabled(false);
-	                        return;
-	                    }
-	                }
-	            }
-	            action.setEnabled(true);
-	            return;
-            }
-        }
-        action.setEnabled(false);
-    }
+				while (iterator.hasNext()) {
+					Object next = iterator.next();
+					if (next instanceof IWatchpoint) {
+						IWatchpoint watchpoint = (IWatchpoint) next;
+						action.setChecked(isChecked(watchpoint));
+						if (!isEnabled(watchpoint)) {
+							action.setEnabled(false);
+							return;
+						}
+					}
+				}
+				action.setEnabled(true);
+				return;
+			}
+		}
+		action.setEnabled(false);
+	}
 
-    /**
-     * Returns whether the action should be checke for the current selection
-     *
-     * @param watchpoint selected watchpoint
-     * @return whether the action should be checked for the current selection
-     */
-    protected abstract boolean isChecked(IWatchpoint watchpoint);
+	/**
+	 * Returns whether the action should be checke for the current selection
+	 *
+	 * @param watchpoint selected watchpoint
+	 * @return whether the action should be checked for the current selection
+	 */
+	protected abstract boolean isChecked(IWatchpoint watchpoint);
 
-    /**
-     * Returns whether this action is enabled for the given watchpoint.
-     *
-     * @param watchpoint the watchpoint to examine
-     * @return whether this action is enabled for the given watchpoint
-     */
-    protected abstract boolean isEnabled(IWatchpoint watchpoint);
+	/**
+	 * Returns whether this action is enabled for the given watchpoint.
+	 *
+	 * @param watchpoint the watchpoint to examine
+	 * @return whether this action is enabled for the given watchpoint
+	 */
+	protected abstract boolean isEnabled(IWatchpoint watchpoint);
 
-    @Override
+	@Override
 	public void init(IAction action) {
-    }
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        fWatchpoints = null;
-    }
+		fWatchpoints = null;
+	}
 
-    @Override
+	@Override
 	public void runWithEvent(IAction action, Event event) {
-        run(action);
-    }
+		run(action);
+	}
 }

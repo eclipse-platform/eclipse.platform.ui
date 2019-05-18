@@ -40,9 +40,9 @@ public class ModelNode {
 		return fElement;
 	}
 
-    public synchronized void remap(Object element) {
-        fElement = element;
-    }
+	public synchronized void remap(Object element) {
+		fElement = element;
+	}
 
 	public ModelNode getParentNode() {
 		return fParent;
@@ -62,12 +62,12 @@ public class ModelNode {
 
 	public synchronized void dispose() {
 		fDisposed = true;
-        ModelNode[] childrenNodes = getChildrenNodes();
-        if (childrenNodes != null) {
-            for (int i = 0; i < childrenNodes.length; i++) {
-                childrenNodes[i].dispose();
-            }
-        }
+		ModelNode[] childrenNodes = getChildrenNodes();
+		if (childrenNodes != null) {
+			for (int i = 0; i < childrenNodes.length; i++) {
+				childrenNodes[i].dispose();
+			}
+		}
 	}
 
 	/**
@@ -121,27 +121,27 @@ public class ModelNode {
 		}
 	}
 
-    /**
-     * Removes the given child from this node.
-     *
-     * @param child
-     */
-    public synchronized void removeChild(ModelNode child) {
-        if (fChildren != null) {
-            for (int i = 0; i < fChildren.length; i++) {
-                ModelNode kid = fChildren[i];
-                if (child == kid) {
-                    ModelNode[] newNodes= new ModelNode[fChildren.length - 1];
-                    System.arraycopy(fChildren, 0, newNodes, 0, i);
-                    if (i < newNodes.length) {
-                        System.arraycopy(fChildren, i + 1, newNodes, i, newNodes.length - i);
-                    }
-                    fChildren = newNodes;
-                    return;
-                }
-            }
-        }
-    }
+	/**
+	 * Removes the given child from this node.
+	 *
+	 * @param child
+	 */
+	public synchronized void removeChild(ModelNode child) {
+		if (fChildren != null) {
+			for (int i = 0; i < fChildren.length; i++) {
+				ModelNode kid = fChildren[i];
+				if (child == kid) {
+					ModelNode[] newNodes= new ModelNode[fChildren.length - 1];
+					System.arraycopy(fChildren, 0, newNodes, 0, i);
+					if (i < newNodes.length) {
+						System.arraycopy(fChildren, i + 1, newNodes, i, newNodes.length - i);
+					}
+					fChildren = newNodes;
+					return;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Sets the children for this node
@@ -164,50 +164,50 @@ public class ModelNode {
 	 */
 	public synchronized int getChildCount() {
 		if (fChildren == null) {
-            if (isContainer()) {
-                return 1;
-            }
+			if (isContainer()) {
+				return 1;
+			}
 			return 0;
 		}
 		return fChildren.length;
 	}
 
-    /**
-     * Returns the index of the given child in this parent, or -1
-     *
-     * @param child
-     */
-    public synchronized int getChildIndex(ModelNode child) {
-       if (fChildren != null) {
-           for (int i = 0; i < fChildren.length; i++) {
-                if (child == fChildren[i]) {
-                    return i;
-                }
-           }
-       }
-       return -1;
-    }
+	/**
+	 * Returns the index of the given child in this parent, or -1
+	 *
+	 * @param child
+	 */
+	public synchronized int getChildIndex(ModelNode child) {
+		if (fChildren != null) {
+			for (int i = 0; i < fChildren.length; i++) {
+				if (child == fChildren[i]) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
 
-    /**
-     * Sets whether this node has children.
-     *
-     * @param container
-     */
-    public synchronized void setIsContainer(boolean container) {
-        fIsContainer = container;
-    }
+	/**
+	 * Sets whether this node has children.
+	 *
+	 * @param container
+	 */
+	public synchronized void setIsContainer(boolean container) {
+		fIsContainer = container;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-    	StringBuilder buf = new StringBuilder();
-    	if (isDisposed()) {
-    		buf.append("[DISPOSED] "); //$NON-NLS-1$
-    	}
-    	if (isContainer()) {
-    		buf.append("[+] "); //$NON-NLS-1$
-    	}
-    	buf.append(getElement());
-    	return buf.toString();
-    }
+		StringBuilder buf = new StringBuilder();
+		if (isDisposed()) {
+			buf.append("[DISPOSED] "); //$NON-NLS-1$
+		}
+		if (isContainer()) {
+			buf.append("[+] "); //$NON-NLS-1$
+		}
+		buf.append(getElement());
+		return buf.toString();
+	}
 
 }

@@ -33,27 +33,27 @@ public class EclipseHomeVariableResolver implements IDynamicVariableResolver {
 
 	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
-        Location installLocation = Platform.getInstallLocation();
-        if (installLocation != null) {
-            URL url = installLocation.getURL();
-            if (url != null) {
+		Location installLocation = Platform.getInstallLocation();
+		if (installLocation != null) {
+			URL url = installLocation.getURL();
+			if (url != null) {
 
 				// Try to convert the URL to an OS string, to be consistent with
 				// how other variables, like ${workspace_loc} resolve. See
 				// ResourceResolver.translateToValue(). [bugzilla 263535]
-            	String file = url.getFile();
-            	IPath path = Path.fromOSString(file);
-            	String osstr = path.toOSString();
-            	if (osstr.length() != 0) {
-            		return osstr;
-            	}
+				String file = url.getFile();
+				IPath path = Path.fromOSString(file);
+				String osstr = path.toOSString();
+				if (osstr.length() != 0) {
+					return osstr;
+				}
 
-                if (file.length() != 0) {
-                    return file;
-                }
-            }
-        }
-        return null;
-    }
+				if (file.length() != 0) {
+					return file;
+				}
+			}
+		}
+		return null;
+	}
 
 }

@@ -214,15 +214,15 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 					message = bp.getMarker().getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 				} else if (element instanceof IBreakpointContainer) {
 					IBreakpointContainer c = (IBreakpointContainer) element;
-		            IAdaptable category = c.getCategory();
-		            if (category != null) {
-			            IWorkbenchAdapter adapter = category.getAdapter(IWorkbenchAdapter.class);
-			            if (adapter != null) {
-			                message = adapter.getLabel(category);
-			            } else {
-			            	message = c.getOrganizer().getLabel();
-			            }
-		            }
+					IAdaptable category = c.getCategory();
+					if (category != null) {
+						IWorkbenchAdapter adapter = category.getAdapter(IWorkbenchAdapter.class);
+						if (adapter != null) {
+							message = adapter.getLabel(category);
+						} else {
+							message = c.getOrganizer().getLabel();
+						}
+					}
 				}
 				// When selecting a index partition, clear the pane
 				if (val instanceof IndexedValuePartition) {
@@ -617,9 +617,9 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_CONTENT_ASSIST_ACTION);
 		ActionHandler actionHandler = new ActionHandler(textAction);
-        IHandlerService handlerService = getViewSite().getService(IHandlerService.class);
-        fContentAssistActivation = handlerService.activateHandler(textAction.getActionDefinitionId(), actionHandler);
-        setAction(DETAIL_CONTENT_ASSIST_ACTION, textAction);
+		IHandlerService handlerService = getViewSite().getService(IHandlerService.class);
+		fContentAssistActivation = handlerService.activateHandler(textAction.getActionDefinitionId(), actionHandler);
+		setAction(DETAIL_CONTENT_ASSIST_ACTION, textAction);
 
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING);
@@ -751,13 +751,13 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			}
 		}
 
-        synchronized (this) {
-        	if (fDetailJob != null) {
-        		fDetailJob.cancel();
-        	}
+		synchronized (this) {
+			if (fDetailJob != null) {
+				fDetailJob.cancel();
+			}
 			fDetailJob = new DetailJob(selection,fModelPresentation);
 			fDetailJob.schedule();
-        }
+		}
 
 	}
 
@@ -792,8 +792,8 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			}
 			if (fContentAssistActivation != null){
 				IHandlerService service = getViewSite().getService(IHandlerService.class);
-		        service.deactivateHandler(fContentAssistActivation);
-		        fContentAssistActivation = null;
+				service.deactivateHandler(fContentAssistActivation);
+				fContentAssistActivation = null;
 			}
 
 			disposeUndoRedoAction(ITextEditorActionConstants.UNDO);
@@ -873,12 +873,12 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			}
 		}
 
-	    if (svc == null) {
+		if (svc == null) {
 			svc = new SourceViewerConfiguration();
 			fSourceViewer.setEditable(false);
 		}
-	    fSourceViewer.unconfigure();
-	    fSourceViewer.configure(svc);
+		fSourceViewer.unconfigure();
+		fSourceViewer.configure(svc);
 		//update actions that depend on the configuration of the source viewer
 
 		if (isInView()){

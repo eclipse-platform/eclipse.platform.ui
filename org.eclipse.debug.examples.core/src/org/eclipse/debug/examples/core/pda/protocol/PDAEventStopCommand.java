@@ -36,18 +36,18 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAEventStopCommand extends PDACommand {
 
-    public static final int UNIMPINSTR = 0;
-    public static final int NOSUCHLABEL = 1;
+	public static final int UNIMPINSTR = 0;
+	public static final int NOSUCHLABEL = 1;
 
-    public PDAEventStopCommand(int event, boolean enable) {
-        super("eventstop " +  //$NON-NLS-1$
-              (event == UNIMPINSTR ? "unimpinstr " : "nosuchlabel ") +  //$NON-NLS-1$ //$NON-NLS-2$
-              (enable ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	public PDAEventStopCommand(int event, boolean enable) {
+		super("eventstop " +  //$NON-NLS-1$
+			  (event == UNIMPINSTR ? "unimpinstr " : "nosuchlabel ") +  //$NON-NLS-1$ //$NON-NLS-2$
+			  (enable ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

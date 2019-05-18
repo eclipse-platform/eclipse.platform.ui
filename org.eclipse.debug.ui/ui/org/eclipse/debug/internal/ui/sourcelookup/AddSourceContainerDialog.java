@@ -138,18 +138,18 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		ISourceContainerType type = (ISourceContainerType) fViewer.getStructuredSelection().getFirstElement();
 		if (type != null) {
-            ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
-            if (browser != null) {
-                ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
-                if (results != null && results.length > 0) {
-                    fSourceContainerViewer.addEntries(results);
-                    super.okPressed();
-                }
-                else {
-                	return;
-                }
-            }
-        }
+			ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
+			if (browser != null) {
+				ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
+				if (results != null && results.length > 0) {
+					fSourceContainerViewer.addEntries(results);
+					super.okPressed();
+				}
+				else {
+					return;
+				}
+			}
+		}
 		super.okPressed();
 	}
 

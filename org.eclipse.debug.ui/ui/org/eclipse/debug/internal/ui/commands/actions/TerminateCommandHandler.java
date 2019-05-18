@@ -25,9 +25,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  */
 public class TerminateCommandHandler extends DebugCommandHandler {
 
-    @Override
+	@Override
 	protected Class<ITerminateHandler> getCommandType() {
-        return ITerminateHandler.class;
-    }
+		return ITerminateHandler.class;
+	}
 
 }

@@ -25,19 +25,19 @@ import java.util.StringTokenizer;
 
 public class PDARegistersCommandResult extends PDACommandResult {
 
-    /**
-     * Array of registers returned by the registers commands.
-     */
-    final public PDARegisterData[] fRegisters;
+	/**
+	 * Array of registers returned by the registers commands.
+	 */
+	final public PDARegisterData[] fRegisters;
 
-    PDARegistersCommandResult(String response) {
-        super(response);
-        StringTokenizer st = new StringTokenizer(response, "#"); //$NON-NLS-1$
+	PDARegistersCommandResult(String response) {
+		super(response);
+		StringTokenizer st = new StringTokenizer(response, "#"); //$NON-NLS-1$
 		List<PDARegisterData> regList = new ArrayList<>();
 
-        while (st.hasMoreTokens()) {
-            regList.add(new PDARegisterData(st.nextToken()));
-        }
-        fRegisters = regList.toArray(new PDARegisterData[regList.size()]);
-    }
+		while (st.hasMoreTokens()) {
+			regList.add(new PDARegisterData(st.nextToken()));
+		}
+		fRegisters = regList.toArray(new PDARegisterData[regList.size()]);
+	}
 }

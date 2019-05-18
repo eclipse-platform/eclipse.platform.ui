@@ -28,18 +28,18 @@ import org.eclipse.debug.internal.ui.viewers.model.ViewerInputUpdate;
  */
 public class ViewerInputService {
 
-    /**
-     * An input object which will yield a null input element.
-     *
-     * @since 3.6
-     */
-    public final static Object NULL_INPUT = new IViewerInputProvider() {
-        @Override
+	/**
+	 * An input object which will yield a null input element.
+	 *
+	 * @since 3.6
+	 */
+	public final static Object NULL_INPUT = new IViewerInputProvider() {
+		@Override
 		public void update(IViewerInputUpdate update) {
-            update.setInputElement(null);
-            update.done();
-        }
-    };
+			update.setInputElement(null);
+			update.done();
+		}
+	};
 
 	// previous update request, cancelled when a new request comes in
 	private IViewerInputUpdate fPendingUpdate = null;
@@ -63,7 +63,7 @@ public class ViewerInputService {
 	/**
 	 * Constructs a viewer input service for the given requester and presentation context.
 	 *
-     * @param viewer for which inputs are required
+	 * @param viewer for which inputs are required
 	 * @param requestor client requesting viewer inputs
 	 */
 	public ViewerInputService(ITreeModelViewer viewer, IViewerInputRequestor requestor) {
@@ -90,7 +90,7 @@ public class ViewerInputService {
 		}
 		if (provdier == null) {
 			fPendingUpdate.setInputElement(source);
-            fPendingUpdate.done();
+			fPendingUpdate.done();
 		} else {
 			provdier.update(fPendingUpdate);
 		}
@@ -100,9 +100,9 @@ public class ViewerInputService {
 	 * Disposes this viewer input service, canceling any pending jobs.
 	 */
 	public synchronized void dispose() {
-        if (fPendingUpdate != null) {
-            fPendingUpdate.cancel();
-            fPendingUpdate = null;
-        }
+		if (fPendingUpdate != null) {
+			fPendingUpdate.cancel();
+			fPendingUpdate = null;
+		}
 	}
 }

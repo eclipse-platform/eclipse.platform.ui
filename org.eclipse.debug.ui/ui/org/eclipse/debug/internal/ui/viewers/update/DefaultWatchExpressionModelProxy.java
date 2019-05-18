@@ -56,27 +56,27 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		UIJob job = new UIJob("install watch expression model proxy") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-			    if (!isDisposed()) {
-    				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
-    				for (int i = 0; i < workbenchWindows.length; i++) {
-    					IWorkbenchWindow window = workbenchWindows[i];
-    					// Virtual viewer may have a null control.
-    					Control control = viewer.getControl();
-    					if (control != null && control.getShell().equals(window.getShell())) {
-    						fWindow = window;
-    						break;
-    					}
-    				}
-    				if (fWindow == null) {
-    					fWindow = DebugUIPlugin.getActiveWorkbenchWindow();
-    				}
-    				IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
-    				contextService.addDebugContextListener(DefaultWatchExpressionModelProxy.this);
-    				ISelection activeContext = contextService.getActiveContext();
-    				if (activeContext != null) {
-    					contextActivated(activeContext);
-    				}
-			    }
+				if (!isDisposed()) {
+					IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
+					for (int i = 0; i < workbenchWindows.length; i++) {
+						IWorkbenchWindow window = workbenchWindows[i];
+						// Virtual viewer may have a null control.
+						Control control = viewer.getControl();
+						if (control != null && control.getShell().equals(window.getShell())) {
+							fWindow = window;
+							break;
+						}
+					}
+					if (fWindow == null) {
+						fWindow = DebugUIPlugin.getActiveWorkbenchWindow();
+					}
+					IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
+					contextService.addDebugContextListener(DefaultWatchExpressionModelProxy.this);
+					ISelection activeContext = contextService.getActiveContext();
+					if (activeContext != null) {
+						contextActivated(activeContext);
+					}
+				}
 				return Status.OK_STATUS;
 			}
 
@@ -89,8 +89,8 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	public synchronized void dispose() {
 		super.dispose();
 		if (fWindow != null) {
-            DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(this);
-    		fWindow = null;
+			DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(this);
+			fWindow = null;
 		}
 	}
 

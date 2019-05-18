@@ -69,94 +69,94 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 		this.longOperationTime = longOperationTime;
 	}
 
-   /**
+	/**
 	 * Create a monitor for the receiver that wrappers the superclasses monitor.
 	 *
 	 */
-    public void createWrapperedMonitor() {
-        wrapperedMonitor = new IProgressMonitor() {
+	public void createWrapperedMonitor() {
+		wrapperedMonitor = new IProgressMonitor() {
 
-            IProgressMonitor superMonitor = TimeTriggeredProgressMonitorDialog.super
-                    .getProgressMonitor();
+			IProgressMonitor superMonitor = TimeTriggeredProgressMonitorDialog.super
+					.getProgressMonitor();
 
-            @Override
+			@Override
 			public void beginTask(String name, int totalWork) {
-                superMonitor.beginTask(name, totalWork);
-                checkTicking();
-            }
+				superMonitor.beginTask(name, totalWork);
+				checkTicking();
+			}
 
-            /**
+			/**
 			 * Check if we have ticked in the last 800ms.
 			 */
-            private void checkTicking() {
-            	if (triggerTime < 0) {
+			private void checkTicking() {
+				if (triggerTime < 0) {
 					triggerTime = System.currentTimeMillis() + longOperationTime;
 				}
-    			if (!dialogOpened && System.currentTimeMillis() > triggerTime) {
-    				open();
-    				dialogOpened = true;
-    			}
-            }
+				if (!dialogOpened && System.currentTimeMillis() > triggerTime) {
+					open();
+					dialogOpened = true;
+				}
+			}
 
-            @Override
+			@Override
 			public void done() {
-                superMonitor.done();
-                checkTicking();
-            }
+				superMonitor.done();
+				checkTicking();
+			}
 
-            @Override
+			@Override
 			public void internalWorked(double work) {
-                superMonitor.internalWorked(work);
-                checkTicking();
-            }
+				superMonitor.internalWorked(work);
+				checkTicking();
+			}
 
-            @Override
+			@Override
 			public boolean isCanceled() {
-                return superMonitor.isCanceled();
-            }
+				return superMonitor.isCanceled();
+			}
 
-            @Override
+			@Override
 			public void setCanceled(boolean value) {
-                superMonitor.setCanceled(value);
+				superMonitor.setCanceled(value);
 
-            }
+			}
 
-            @Override
+			@Override
 			public void setTaskName(String name) {
-                superMonitor.setTaskName(name);
-                checkTicking();
+				superMonitor.setTaskName(name);
+				checkTicking();
 
-            }
+			}
 
-            @Override
+			@Override
 			public void subTask(String name) {
-                superMonitor.subTask(name);
-                checkTicking();
-            }
+				superMonitor.subTask(name);
+				checkTicking();
+			}
 
-            @Override
+			@Override
 			public void worked(int work) {
-                superMonitor.worked(work);
-                checkTicking();
+				superMonitor.worked(work);
+				checkTicking();
 
-            }
-        };
-    }
+			}
+		};
+	}
 
-    @Override
+	@Override
 	public IProgressMonitor getProgressMonitor() {
-        if (wrapperedMonitor == null) {
+		if (wrapperedMonitor == null) {
 			createWrapperedMonitor();
 		}
-        return wrapperedMonitor;
-    }
+		return wrapperedMonitor;
+	}
 
-    @Override
+	@Override
 	public void run(final boolean fork, final boolean cancelable,
-            final IRunnableWithProgress runnable) throws InvocationTargetException,
-            InterruptedException {
-    	final InvocationTargetException[] invokes = new InvocationTargetException[1];
-        final InterruptedException[] interrupt = new InterruptedException[1];
+			final IRunnableWithProgress runnable) throws InvocationTargetException,
+			InterruptedException {
+		final InvocationTargetException[] invokes = new InvocationTargetException[1];
+		final InterruptedException[] interrupt = new InterruptedException[1];
 		Runnable dialogWaitRunnable = () -> {
 			try {
 				TimeTriggeredProgressMonitorDialog.super.run(fork, cancelable, runnable);
@@ -166,17 +166,17 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
 				interrupt[0] = e2;
 			}
 		};
-        final Display display = PlatformUI.getWorkbench().getDisplay();
-        if (display == null) {
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		if (display == null) {
 			return;
 		}
-        //show a busy cursor until the dialog opens
-        BusyIndicator.showWhile(display, dialogWaitRunnable);
-        if (invokes[0] != null) {
-            throw invokes[0];
-        }
-        if (interrupt[0] != null) {
-            throw interrupt[0];
-        }
-     }
+		//show a busy cursor until the dialog opens
+		BusyIndicator.showWhile(display, dialogWaitRunnable);
+		if (invokes[0] != null) {
+			throw invokes[0];
+		}
+		if (interrupt[0] != null) {
+			throw interrupt[0];
+		}
+	 }
 }

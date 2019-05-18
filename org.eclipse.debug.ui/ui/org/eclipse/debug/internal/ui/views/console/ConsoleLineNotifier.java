@@ -48,104 +48,104 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 
 	@Override
 	public void connect(TextConsole console) {
-	    if (console instanceof ProcessConsole) {
-	        fConsole = (ProcessConsole)console;
+		if (console instanceof ProcessConsole) {
+			fConsole = (ProcessConsole)console;
 
-	        IConsoleLineTracker[] lineTrackers = DebugUIPlugin.getDefault().getProcessConsoleManager().getLineTrackers(fConsole.getProcess());
-	        for (int i = 0; i < lineTrackers.length; i++) {
-	            lineTrackers[i].init(fConsole);
-                addConsoleListener(lineTrackers[i]);
-            }
+			IConsoleLineTracker[] lineTrackers = DebugUIPlugin.getDefault().getProcessConsoleManager().getLineTrackers(fConsole.getProcess());
+			for (int i = 0; i < lineTrackers.length; i++) {
+				lineTrackers[i].init(fConsole);
+				addConsoleListener(lineTrackers[i]);
+			}
 
-	        fConsole.addPropertyChangeListener(this);
-	    }
+			fConsole.addPropertyChangeListener(this);
+		}
 	}
 
 	@Override
 	public synchronized void disconnect() {
-        try {
-            IDocument document = fConsole.getDocument();
-            if (document != null) {
-                int lastLine = document.getNumberOfLines() - 1;
-                if (document.getLineDelimiter(lastLine) == null) {
-                    IRegion lineInformation = document.getLineInformation(lastLine);
-                    lineAppended(lineInformation);
-                }
-            }
-        } catch (BadLocationException e) {
-        }
-    }
-
-    /**
-     * Notification the console's streams have been closed
-     */
-    public synchronized void consoleClosed() {
-        int size = fListeners.size();
-        for (int i = 0; i < size; i++) {
-            IConsoleLineTracker tracker = fListeners.get(i);
-            if (tracker instanceof IConsoleLineTrackerExtension) {
-                ((IConsoleLineTrackerExtension) tracker).consoleClosed();
-            }
-            tracker.dispose();
-        }
-
-        fConsole = null;
-        fListeners = null;
-    }
+		try {
+			IDocument document = fConsole.getDocument();
+			if (document != null) {
+				int lastLine = document.getNumberOfLines() - 1;
+				if (document.getLineDelimiter(lastLine) == null) {
+					IRegion lineInformation = document.getLineInformation(lastLine);
+					lineAppended(lineInformation);
+				}
+			}
+		} catch (BadLocationException e) {
+		}
+	}
 
 	/**
-     * Adds the given listener to the list of listeners notified when a line of
-     * text is appended to the console.
-     *
-     * @param listener the listener to add
-     */
+	 * Notification the console's streams have been closed
+	 */
+	public synchronized void consoleClosed() {
+		int size = fListeners.size();
+		for (int i = 0; i < size; i++) {
+			IConsoleLineTracker tracker = fListeners.get(i);
+			if (tracker instanceof IConsoleLineTrackerExtension) {
+				((IConsoleLineTrackerExtension) tracker).consoleClosed();
+			}
+			tracker.dispose();
+		}
+
+		fConsole = null;
+		fListeners = null;
+	}
+
+	/**
+	 * Adds the given listener to the list of listeners notified when a line of
+	 * text is appended to the console.
+	 *
+	 * @param listener the listener to add
+	 */
 	public void addConsoleListener(IConsoleLineTracker listener) {
-        if (!fListeners.contains(listener)) {
+		if (!fListeners.contains(listener)) {
 			fListeners.add(listener);
 		}
 	}
 
-    @Override
+	@Override
 	public void matchFound(PatternMatchEvent event) {
-        try  {
-            IDocument document = fConsole.getDocument();
-            int lineOfOffset = document.getLineOfOffset(event.getOffset());
-            String delimiter = document.getLineDelimiter(lineOfOffset);
-            int strip = delimiter==null ? 0 : delimiter.length();
-            Region region = new Region(event.getOffset(), event.getLength()-strip);
-            lineAppended(region);
-        } catch (BadLocationException e) {}
-    }
+		try  {
+			IDocument document = fConsole.getDocument();
+			int lineOfOffset = document.getLineOfOffset(event.getOffset());
+			String delimiter = document.getLineDelimiter(lineOfOffset);
+			int strip = delimiter==null ? 0 : delimiter.length();
+			Region region = new Region(event.getOffset(), event.getLength()-strip);
+			lineAppended(region);
+		} catch (BadLocationException e) {}
+	}
 
-    public void lineAppended(IRegion region) {
-        int size = fListeners.size();
-        for (int i=0; i<size; i++) {
-            IConsoleLineTracker tracker = fListeners.get(i);
-            tracker.lineAppended(region);
-        }
-    }
+	public void lineAppended(IRegion region) {
+		int size = fListeners.size();
+		for (int i=0; i<size; i++) {
+			IConsoleLineTracker tracker = fListeners.get(i);
+			tracker.lineAppended(region);
+		}
+	}
 
-    @Override
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-        if(event.getProperty().equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
-            fConsole.removePropertyChangeListener(this);
-            consoleClosed();
-        }
-    }
+		if(event.getProperty().equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
+			fConsole.removePropertyChangeListener(this);
+			consoleClosed();
+		}
+	}
 
-    @Override
+	@Override
 	public String getPattern() {
-        return ".*\\r(\\n?)|.*\\n"; //$NON-NLS-1$
-    }
+		return ".*\\r(\\n?)|.*\\n"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public int getCompilerFlags() {
-        return 0;
-    }
+		return 0;
+	}
 
-    @Override
+	@Override
 	public String getLineQualifier() {
-        return "\\n|\\r"; //$NON-NLS-1$
-    }
+		return "\\n|\\r"; //$NON-NLS-1$
+	}
 
 }

@@ -94,30 +94,30 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-        Composite composite = (Composite) super.createDialogArea(parent);
-        Label label = new Label(composite, SWT.WRAP);
-        label.setText(VariablesViewMessages.DetailPaneMaxLengthDialog_1);
-        GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
-        data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-        label.setLayoutData(data);
-        label.setFont(parent.getFont());
-        fTextWidget = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        fTextWidget.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-        fTextWidget.setText(fValue);
-        fTextWidget.addModifyListener(new ModifyListener() {
-            @Override
+		Composite composite = (Composite) super.createDialogArea(parent);
+		Label label = new Label(composite, SWT.WRAP);
+		label.setText(VariablesViewMessages.DetailPaneMaxLengthDialog_1);
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+		label.setLayoutData(data);
+		label.setFont(parent.getFont());
+		fTextWidget = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		fTextWidget.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		fTextWidget.setText(fValue);
+		fTextWidget.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-                validateInput();
-                fValue = fTextWidget.getText();
-            }
-        });
-        fErrorTextWidget = new Text(composite, SWT.READ_ONLY);
-        fErrorTextWidget.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.HORIZONTAL_ALIGN_FILL));
-        fErrorTextWidget.setBackground(fErrorTextWidget.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-        setErrorMessage(fErrorMessage);
-        applyDialogFont(composite);
-        return composite;
+				validateInput();
+				fValue = fTextWidget.getText();
+			}
+		});
+		fErrorTextWidget = new Text(composite, SWT.READ_ONLY);
+		fErrorTextWidget.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
+				| GridData.HORIZONTAL_ALIGN_FILL));
+		fErrorTextWidget.setBackground(fErrorTextWidget.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		setErrorMessage(fErrorMessage);
+		applyDialogFont(composite);
+		return composite;
 	}
 
 	@Override
@@ -133,43 +133,43 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	}
 
 	/**
-     * Returns the string typed into this input dialog.
-     *
-     * @return the input string
-     * @since 3.3
-     */
-    public String getValue() {
-        return fValue;
-    }
+	 * Returns the string typed into this input dialog.
+	 *
+	 * @return the input string
+	 * @since 3.3
+	 */
+	public String getValue() {
+		return fValue;
+	}
 
-    /**
-     * Validates the current input
-     * @since 3.3
-     */
-    private void validateInput() {
-        String errorMessage = null;
-        if (fValidator != null) {
-            errorMessage = fValidator.isValid(fTextWidget.getText());
-        }
-        setErrorMessage(errorMessage);
-    }
+	/**
+	 * Validates the current input
+	 * @since 3.3
+	 */
+	private void validateInput() {
+		String errorMessage = null;
+		if (fValidator != null) {
+			errorMessage = fValidator.isValid(fTextWidget.getText());
+		}
+		setErrorMessage(errorMessage);
+	}
 
-    /**
-     * Sets the current error message or none if null
-     * @param errorMessage the message to display
-     * @since 3.3
-     */
-    public void setErrorMessage(String errorMessage) {
-    	fErrorMessage = errorMessage;
-    	if (fErrorTextWidget != null && !fErrorTextWidget.isDisposed()) {
-    		fErrorTextWidget.setText(errorMessage == null ? IInternalDebugCoreConstants.EMPTY_STRING : errorMessage);
-    		fErrorTextWidget.getParent().update();
-    		// Access the ok button by id, in case clients have overridden button creation.
-    		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
-    		Control button = getButton(IDialogConstants.OK_ID);
-    		if (button != null) {
-    			button.setEnabled(errorMessage == null);
-    		}
-    	}
-    }
+	/**
+	 * Sets the current error message or none if null
+	 * @param errorMessage the message to display
+	 * @since 3.3
+	 */
+	public void setErrorMessage(String errorMessage) {
+		fErrorMessage = errorMessage;
+		if (fErrorTextWidget != null && !fErrorTextWidget.isDisposed()) {
+			fErrorTextWidget.setText(errorMessage == null ? IInternalDebugCoreConstants.EMPTY_STRING : errorMessage);
+			fErrorTextWidget.getParent().update();
+			// Access the ok button by id, in case clients have overridden button creation.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
+			Control button = getButton(IDialogConstants.OK_ID);
+			if (button != null) {
+				button.setEnabled(errorMessage == null);
+			}
+		}
+	}
 }

@@ -493,9 +493,9 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	}
 
 	/**
-     * Returns whether any processes or targets can be disconnected.
-     * Ones that are already terminated or disconnected are ignored.
-     *
+	 * Returns whether any processes or targets can be disconnected.
+	 * Ones that are already terminated or disconnected are ignored.
+	 *
 	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
 	 */
 	@Override
@@ -517,7 +517,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		} finally {
 			readLock.unlock();
 		}
-        return false;
+		return false;
 	}
 
 	/**
@@ -546,10 +546,10 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	}
 
 	/**
-     * Returns whether all of the contained targets and processes are
-     * disconnected. Processes that don't support disconnecting are not
-     * counted.
-     *
+	 * Returns whether all of the contained targets and processes are
+	 * disconnected. Processes that don't support disconnecting are not
+	 * counted.
+	 *
 	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
 	 */
 	@Override
@@ -571,8 +571,8 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		} finally {
 			readLock.unlock();
 		}
-        // only return true if there are processes or targets that are disconnected
-        return hasChildren();
+		// only return true if there are processes or targets that are disconnected
+		return hasChildren();
 	}
 
 	@Override

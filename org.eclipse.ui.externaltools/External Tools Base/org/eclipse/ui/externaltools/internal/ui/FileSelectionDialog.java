@@ -61,7 +61,7 @@ public class FileSelectionDialog extends MessageDialog {
 
 	private boolean allowMultiselection= false;
 
-    private Pattern fPattern;
+	private Pattern fPattern;
 	/**
 	 * Creates a resource selection dialog rooted at the given element.
 	 *
@@ -94,15 +94,15 @@ public class FileSelectionDialog extends MessageDialog {
 	 *            this argument is ignored.
 	 */
 	public void setFileFilter(String pattern, boolean ignoreCase) {
-	    if (pattern != null) {
-	        if (ignoreCase) {
-	            fPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-	        } else {
-	            fPattern = Pattern.compile(pattern);
-	        }
-	    } else {
-	        fPattern = null;
-	    }
+		if (pattern != null) {
+			if (ignoreCase) {
+				fPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+			} else {
+				fPattern = Pattern.compile(pattern);
+			}
+		} else {
+			fPattern = null;
+		}
 	}
 
 	@Override

@@ -156,17 +156,17 @@ public interface IExpressionManager {
 	 */
 	IWatchExpressionDelegate newWatchExpressionDelegate(String id);
 
-    /**
-     * Returns whether a watch expression delegate has been contributed for
-     * the given debug model.
-     *
-     * @param id the unique identifier of a debug model
-     * @return whether a watch expression delegate has been contributed for
-     *    the given debug model
-     * @since 3.1
-     * @see IWatchExpressionDelegate
-     */
-    boolean hasWatchExpressionDelegate(String id);
+	/**
+	 * Returns whether a watch expression delegate has been contributed for
+	 * the given debug model.
+	 *
+	 * @param id the unique identifier of a debug model
+	 * @return whether a watch expression delegate has been contributed for
+	 *    the given debug model
+	 * @since 3.1
+	 * @see IWatchExpressionDelegate
+	 */
+	boolean hasWatchExpressionDelegate(String id);
 }
 
 

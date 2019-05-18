@@ -44,46 +44,46 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
 
 	@Override
 	public void init(IViewPart view) {
-	    fPart = view;
+		fPart = view;
 	}
 
-    /**
-     * Finds the currently selected context in the UI.
-     * @return the current debug context
-     */
-    protected IDebugElement getContext() {
-        IAdaptable object = DebugUITools.getDebugContext();
-        IDebugElement context = null;
-        if (object instanceof IDebugElement) {
-            context = (IDebugElement) object;
-        } else if (object instanceof ILaunch) {
-            context = ((ILaunch) object).getDebugTarget();
-        }
-        return context;
-    }
+	/**
+	 * Finds the currently selected context in the UI.
+	 * @return the current debug context
+	 */
+	protected IDebugElement getContext() {
+		IAdaptable object = DebugUITools.getDebugContext();
+		IDebugElement context = null;
+		if (object instanceof IDebugElement) {
+			context = (IDebugElement) object;
+		} else if (object instanceof ILaunch) {
+			context = ((ILaunch) object).getDebugTarget();
+		}
+		return context;
+	}
 
 	protected IWatchExpression[] getSelectedExpressions() {
-	    List<Object> list = new LinkedList<>();
-	    IStructuredSelection currentSelection = getCurrentSelection();
-	    if (currentSelection == null) {
-	        return EMPTY_EXPRESSION_ARRAY;
-	    }
+		List<Object> list = new LinkedList<>();
+		IStructuredSelection currentSelection = getCurrentSelection();
+		if (currentSelection == null) {
+			return EMPTY_EXPRESSION_ARRAY;
+		}
 
-        for (Iterator<?> iter= currentSelection.iterator(); iter.hasNext();) {
-            Object element = iter.next();
-            if (element instanceof IWatchExpression) {
-                list.add(element);
-            } else if (element instanceof IAdaptable) {
-                IWatchExpression expr = ((IAdaptable)element).getAdapter(IWatchExpression.class);
-                if (expr != null) {
-                    list.add(expr);
-                } else {
-                    return EMPTY_EXPRESSION_ARRAY;
-                }
-            } else {
-                return EMPTY_EXPRESSION_ARRAY;
-            }
-        }
+		for (Iterator<?> iter= currentSelection.iterator(); iter.hasNext();) {
+			Object element = iter.next();
+			if (element instanceof IWatchExpression) {
+				list.add(element);
+			} else if (element instanceof IAdaptable) {
+				IWatchExpression expr = ((IAdaptable)element).getAdapter(IWatchExpression.class);
+				if (expr != null) {
+					list.add(expr);
+				} else {
+					return EMPTY_EXPRESSION_ARRAY;
+				}
+			} else {
+				return EMPTY_EXPRESSION_ARRAY;
+			}
+		}
 
 		return list.toArray(new IWatchExpression[list.size()]);
 	}

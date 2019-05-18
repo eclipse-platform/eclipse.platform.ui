@@ -32,40 +32,40 @@ public class StepReturnCommandAction extends DebugCommandAction {
 		setActionDefinitionId("org.eclipse.debug.ui.commands.StepReturn"); //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEP_RETURN);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEP_RETURN);
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.step_return_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.step_return_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_RETURN);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_RETURN);
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.debugview.toolbar.stepReturn"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.debugview.toolbar.stepReturn"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_RETURN);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_RETURN);
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.StepReturnAction_2;
-    }
+		return ActionMessages.StepReturnAction_2;
+	}
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.StepReturnAction_3;
-    }
+		return ActionMessages.StepReturnAction_3;
+	}
 
 	@Override
 	protected Class<IStepReturnHandler> getCommandType() {

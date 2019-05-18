@@ -23,21 +23,21 @@ import org.eclipse.jface.viewers.ISelection;
  */
 public interface IBreadcrumbDropDownSite {
 
-    /**
-     * Notifies the breadcrumb that the given selection was made in the drop-down
-     * viewer.
-     * @param selection Selection to set to breadcrumb.
-     */
-    void notifySelection(ISelection selection);
+	/**
+	 * Notifies the breadcrumb that the given selection was made in the drop-down
+	 * viewer.
+	 * @param selection Selection to set to breadcrumb.
+	 */
+	void notifySelection(ISelection selection);
 
-    /**
-     * Notifies the breadcrumb that the drop-down viewer should be closed.
-     */
-    void close();
+	/**
+	 * Notifies the breadcrumb that the drop-down viewer should be closed.
+	 */
+	void close();
 
-    /**
-     * Notifies the breadcrumb that the drop-down viewer's contents have
-     * changed and viewer shell should be adjusted for the new size.
-     */
-    void updateSize();
+	/**
+	 * Notifies the breadcrumb that the drop-down viewer's contents have
+	 * changed and viewer shell should be adjusted for the new size.
+	 */
+	void updateSize();
 }

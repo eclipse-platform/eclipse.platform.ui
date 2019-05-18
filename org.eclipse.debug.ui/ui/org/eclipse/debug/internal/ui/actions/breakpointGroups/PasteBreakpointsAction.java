@@ -33,60 +33,60 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PasteBreakpointsAction extends BreakpointSelectionAction {
 
-    /**
-     * Creates a new action.
-     *
-     * @param view the view of this action
-     */
-    public PasteBreakpointsAction(BreakpointsView view) {
-        super(BreakpointGroupMessages.PasteBreakpointsAction_0, view);
-        setToolTipText(BreakpointGroupMessages.PasteBreakpointsAction_1);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.PASTE_BREAKPOINTS_ACTION);
-    }
+	/**
+	 * Creates a new action.
+	 *
+	 * @param view the view of this action
+	 */
+	public PasteBreakpointsAction(BreakpointsView view) {
+		super(BreakpointGroupMessages.PasteBreakpointsAction_0, view);
+		setToolTipText(BreakpointGroupMessages.PasteBreakpointsAction_1);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.PASTE_BREAKPOINTS_ACTION);
+	}
 
-    /**
-     * Returns the actual target of the paste action. Returns null
-     * if no valid target is selected.
-     *
-     * @return the actual target of the paste action
-     */
-    private Object getTarget() {
+	/**
+	 * Returns the actual target of the paste action. Returns null
+	 * if no valid target is selected.
+	 *
+	 * @return the actual target of the paste action
+	 */
+	private Object getTarget() {
 		List<?> selectedNonResources = getSelectedNonResources();
-        if (selectedNonResources.size() == 1) {
-            Object target = selectedNonResources.get(0);
-            if (target instanceof IBreakpointContainer) {
-                return target;
-            }
-        }
-        return null;
-    }
+		if (selectedNonResources.size() == 1) {
+			Object target = selectedNonResources.get(0);
+			if (target instanceof IBreakpointContainer) {
+				return target;
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Implementation of method defined on <code>IAction</code>.
-     */
-    @Override
+	/**
+	 * Implementation of method defined on <code>IAction</code>.
+	 */
+	@Override
 	public void run() {
 		if (getBreakpointsView().canPaste(getTarget(), LocalSelectionTransfer.getTransfer().getSelection())) {
 			getBreakpointsView().performPaste(getTarget(), LocalSelectionTransfer.getTransfer().getSelection());
 		}
-    }
+	}
 
-    /**
-     * Returns whether this action should be enabled based on the selection
-     * in the clipboard. Only updates when the breakpoints view has focus.
-     */
-    @Override
+	/**
+	 * Returns whether this action should be enabled based on the selection
+	 * in the clipboard. Only updates when the breakpoints view has focus.
+	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-        // can't paste into "Others" (only move)
-        Object target = getTarget();
-        if (target instanceof IBreakpointContainer) {
-            IBreakpointContainer container = (IBreakpointContainer) target;
-            if (container.getCategory() instanceof OtherBreakpointCategory) {
-                return false;
-            }
+		// can't paste into "Others" (only move)
+		Object target = getTarget();
+		if (target instanceof IBreakpointContainer) {
+			IBreakpointContainer container = (IBreakpointContainer) target;
+			if (container.getCategory() instanceof OtherBreakpointCategory) {
+				return false;
+			}
 			return true;
-        }
+		}
 		// don't access clipboard - causes Hang -see bug 84870
 		return false;
-    }
+	}
 }

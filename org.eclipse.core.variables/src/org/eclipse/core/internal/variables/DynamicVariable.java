@@ -53,9 +53,9 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 			}
 		}
 		try {
-		    return fResolver.resolveValue(this, argument);
+			return fResolver.resolveValue(this, argument);
 		} catch (RuntimeException e) {
-            throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind("Error while evaluating variable {0}.",new String[]{getName()}), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind("Error while evaluating variable {0}.",new String[]{getName()}), e)); //$NON-NLS-1$
 		}
 	}
 

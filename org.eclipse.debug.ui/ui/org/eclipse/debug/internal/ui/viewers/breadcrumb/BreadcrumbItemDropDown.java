@@ -138,15 +138,15 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 
 	// Workaround for bug 258196: set the minimum size to 500 because on Linux
 	// the size is not adjusted correctly in a virtual tree.
-    private static final int DROP_DOWN_MIN_WIDTH= 500;
-    private static final int DROP_DOWN_MAX_WIDTH= 501;
+	private static final int DROP_DOWN_MIN_WIDTH= 500;
+	private static final int DROP_DOWN_MAX_WIDTH= 501;
 
-    private static final int DROP_DOWN_DEFAULT_MIN_HEIGHT= 100;
-    private static final int DROP_DOWN_DEFAULT_MAX_HEIGHT= 500;
+	private static final int DROP_DOWN_DEFAULT_MIN_HEIGHT= 100;
+	private static final int DROP_DOWN_DEFAULT_MAX_HEIGHT= 500;
 
-    private static final String DIALOG_SETTINGS= "BreadcrumbItemDropDown"; //$NON-NLS-1$
-    private static final String DIALOG_HEIGHT= "height"; //$NON-NLS-1$
-    private static final String DIALOG_WIDTH= "width"; //$NON-NLS-1$
+	private static final String DIALOG_SETTINGS= "BreadcrumbItemDropDown"; //$NON-NLS-1$
+	private static final String DIALOG_HEIGHT= "height"; //$NON-NLS-1$
+	private static final String DIALOG_WIDTH= "width"; //$NON-NLS-1$
 
 	private final BreadcrumbItem fParent;
 	private final Composite fParentComposite;
@@ -155,9 +155,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	private boolean fMenuIsShown;
 	private boolean fEnabled;
 	private Shell fShell;
-    private boolean fIsResizingProgrammatically;
-    private int fCurrentWidth = -1;
-    private int fCurrentHeight = -1;
+	private boolean fIsResizingProgrammatically;
+	private int fCurrentWidth = -1;
+	private int fCurrentHeight = -1;
 
 
 	public BreadcrumbItemDropDown(BreadcrumbItem parent, Composite composite) {
@@ -169,11 +169,11 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		fToolBar= new ToolBar(composite, SWT.FLAT);
 		fToolBar.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
 		fToolBar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-            @Override
+			@Override
 			public void getName(AccessibleEvent e) {
-                e.result= BreadcrumbMessages.BreadcrumbItemDropDown_showDropDownMenu_action_toolTip;
-            }
-        });
+				e.result= BreadcrumbMessages.BreadcrumbItemDropDown_showDropDownMenu_action_toolTip;
+			}
+		});
 		ToolBarManager manager= new ToolBarManager(fToolBar);
 
 		final Action showDropDownMenuAction= new Action(null, SWT.NONE) {
@@ -273,23 +273,23 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			DebugUIPlugin.trace("	creating new shell"); //$NON-NLS-1$
 		}
 
-        fShell.addControlListener(new ControlAdapter() {
-            /*
-             * @see org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
-             */
-            @Override
+		fShell.addControlListener(new ControlAdapter() {
+			/*
+			 * @see org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
+			 */
+			@Override
 			public void controlResized(ControlEvent e) {
-                if (fIsResizingProgrammatically) {
+				if (fIsResizingProgrammatically) {
 					return;
 				}
 
-                Point size= fShell.getSize();
-                fCurrentWidth = size.x;
-                fCurrentHeight = size.y;
-                getDialogSettings().put(DIALOG_WIDTH, size.x);
-                getDialogSettings().put(DIALOG_HEIGHT, size.y);
-            }
-        });
+				Point size= fShell.getSize();
+				fCurrentWidth = size.x;
+				fCurrentHeight = size.y;
+				getDialogSettings().put(DIALOG_WIDTH, size.x);
+				getDialogSettings().put(DIALOG_HEIGHT, size.y);
+			}
+		});
 
 		GridLayout layout= new GridLayout(1, false);
 		layout.marginHeight= 0;
@@ -303,7 +303,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		gridLayout.marginWidth= 0;
 		composite.setLayout(gridLayout);
 
-        TreePath path= fParent.getPath();
+		TreePath path= fParent.getPath();
 
 		Control control = fParent.getViewer().createDropDown(composite, this, path);
 
@@ -366,16 +366,16 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		final ControlListener controlListener= new ControlListener() {
 			@Override
 			public void controlMoved(ControlEvent e) {
-			    if (!shell.isDisposed()) {
-			        shell.close();
-			    }
+				if (!shell.isDisposed()) {
+					shell.close();
+				}
 			}
 
 			@Override
 			public void controlResized(ControlEvent e) {
-                if (!shell.isDisposed()) {
-                    shell.close();
-                }
+				if (!shell.isDisposed()) {
+					shell.close();
+				}
 			}
 		};
 		fToolBar.getShell().addControlListener(controlListener);
@@ -427,28 +427,28 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	}
 
 	private IDialogSettings getDialogSettings() {
-	    IDialogSettings javaSettings= DebugUIPlugin.getDefault().getDialogSettings();
-	    IDialogSettings settings= javaSettings.getSection(DIALOG_SETTINGS);
-	    if (settings == null) {
+		IDialogSettings javaSettings= DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings= javaSettings.getSection(DIALOG_SETTINGS);
+		if (settings == null) {
 			settings= javaSettings.addNewSection(DIALOG_SETTINGS);
 		}
-	    return settings;
+		return settings;
 	}
 
 	private int getMaxWidth() {
-	    try {
-	        return getDialogSettings().getInt(DIALOG_WIDTH);
-	    } catch (NumberFormatException e) {
-	        return DROP_DOWN_MAX_WIDTH;
-	    }
+		try {
+			return getDialogSettings().getInt(DIALOG_WIDTH);
+		} catch (NumberFormatException e) {
+			return DROP_DOWN_MAX_WIDTH;
+		}
 	}
 
 	private int getMaxHeight() {
-	    try {
-	        return getDialogSettings().getInt(DIALOG_HEIGHT);
-	    } catch (NumberFormatException e) {
-	        return DROP_DOWN_DEFAULT_MAX_HEIGHT;
-	    }
+		try {
+			return getDialogSettings().getInt(DIALOG_HEIGHT);
+		} catch (NumberFormatException e) {
+			return DROP_DOWN_DEFAULT_MAX_HEIGHT;
+		}
 	}
 
 	/**
@@ -496,52 +496,52 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		}
 
 		shell.setLocation(pt);
-        fIsResizingProgrammatically= true;
-        try {
-            shell.setSize(width, height);
-            fCurrentWidth = width;
-            fCurrentHeight = height;
-        } finally {
-            fIsResizingProgrammatically= false;
-        }
+		fIsResizingProgrammatically= true;
+		try {
+			shell.setSize(width, height);
+			fCurrentWidth = width;
+			fCurrentHeight = height;
+		} finally {
+			fIsResizingProgrammatically= false;
+		}
 	}
 
 	/**
 	 * Set the size of the given shell such that more content can be shown. The shell size does not
-     * exceed a user-configurable maximum.
+	 * exceed a user-configurable maximum.
 	 *
 	 * @param shell the shell to resize
 	 */
 	private void resizeShell(final Shell shell) {
-        int maxHeight= getMaxHeight();
-        int maxWidth = getMaxWidth();
+		int maxHeight= getMaxHeight();
+		int maxWidth = getMaxWidth();
 
-        if (fCurrentHeight >= maxHeight && fCurrentWidth >= maxWidth) {
+		if (fCurrentHeight >= maxHeight && fCurrentWidth >= maxWidth) {
 			return;
 		}
 
 		Point preferedSize= shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
 		int newWidth;
-        if (fCurrentWidth >= DROP_DOWN_MAX_WIDTH) {
+		if (fCurrentWidth >= DROP_DOWN_MAX_WIDTH) {
 			newWidth= fCurrentWidth;
 		} else {
-		    // Workaround for bug 319612: Do not resize width below the
-		    // DROP_DOWN_MIN_WIDTH.  This can happen because the Shell.getSize()
-		    // is incorrectly small on Linux.
-            newWidth= Math.min(Math.max(Math.max(preferedSize.x, fCurrentWidth), DROP_DOWN_MIN_WIDTH), maxWidth);
+			// Workaround for bug 319612: Do not resize width below the
+			// DROP_DOWN_MIN_WIDTH.  This can happen because the Shell.getSize()
+			// is incorrectly small on Linux.
+			newWidth= Math.min(Math.max(Math.max(preferedSize.x, fCurrentWidth), DROP_DOWN_MIN_WIDTH), maxWidth);
 		}
 		int newHeight;
-        if (fCurrentHeight >= maxHeight) {
+		if (fCurrentHeight >= maxHeight) {
 			newHeight= fCurrentHeight;
 		} else {
-            newHeight= Math.min(Math.max(preferedSize.y, fCurrentHeight), maxHeight);
+			newHeight= Math.min(Math.max(preferedSize.y, fCurrentHeight), maxHeight);
 		}
 
 		if (newHeight != fCurrentHeight || newWidth != fCurrentWidth) {
 			shell.setRedraw(false);
 			try {
-                fIsResizingProgrammatically= true;
+				fIsResizingProgrammatically= true;
 				shell.setSize(newWidth, newHeight);
 				fCurrentWidth = newWidth;
 				fCurrentHeight = newHeight;
@@ -552,13 +552,13 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 					newLocation = new Point(newLocation.x - (newWidth - fCurrentWidth), newLocation.y);
 				}
 				if (!isTop()) {
-                    newLocation = new Point(newLocation.x, newLocation.y - (newHeight - fCurrentHeight));
+					newLocation = new Point(newLocation.x, newLocation.y - (newHeight - fCurrentHeight));
 				}
 				if (!location.equals(newLocation)) {
-	                shell.setLocation(newLocation.x, newLocation.y);
+					shell.setLocation(newLocation.x, newLocation.y);
 				}
 			} finally {
-                fIsResizingProgrammatically= false;
+				fIsResizingProgrammatically= false;
 				shell.setRedraw(true);
 			}
 		}
@@ -573,37 +573,37 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	 */
 	private boolean isLeft() {
 		return (fParentComposite.getStyle() & SWT.RIGHT_TO_LEFT) == 0 &&
-		    (fParent.getViewer().getStyle() & SWT.RIGHT) == 0;
+			(fParent.getViewer().getStyle() & SWT.RIGHT) == 0;
 	}
 
-	   /**
-     * Tells whether this the breadcrumb is in LTR mode or RTL mode.  Or whether the breadcrumb
-     * is on the right-side status coolbar, which has the same effect on layout.
-     *
-     * @return <code>true</code> if the breadcrumb in left-to-right mode, <code>false</code>
-     *         otherwise
-     */
-    private boolean isTop() {
-        return (fParent.getViewer().getStyle() & SWT.BOTTOM) == 0;
-    }
+	/**
+	 * Tells whether this the breadcrumb is in LTR mode or RTL mode.  Or whether the breadcrumb
+	 * is on the right-side status coolbar, which has the same effect on layout.
+	 *
+	 * @return <code>true</code> if the breadcrumb in left-to-right mode, <code>false</code>
+	 *         otherwise
+	 */
+	private boolean isTop() {
+		return (fParent.getViewer().getStyle() & SWT.BOTTOM) == 0;
+	}
 
-    @Override
+	@Override
 	public void close() {
-        if (fShell != null && !fShell.isDisposed()) {
-            fShell.close();
-        }
-    }
+		if (fShell != null && !fShell.isDisposed()) {
+			fShell.close();
+		}
+	}
 
-    @Override
+	@Override
 	public void notifySelection(ISelection selection) {
-        fParent.getViewer().fireMenuSelection(selection);
-    }
+		fParent.getViewer().fireMenuSelection(selection);
+	}
 
-    @Override
+	@Override
 	public void updateSize() {
-        if (fShell != null && !fShell.isDisposed()) {
-            resizeShell(fShell);
-        }
-    }
+		if (fShell != null && !fShell.isDisposed()) {
+			resizeShell(fShell);
+		}
+	}
 }
 

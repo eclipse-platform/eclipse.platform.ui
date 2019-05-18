@@ -39,26 +39,26 @@ public interface IMemoryBlockTablePresentation extends IDebugModelPresentation
 {
 
 	/**
-     * Returns a collection of labels to head columns in a <code>AbstractTableRendering</code>
-     * rendering, or <code>null</code> if default labels should be used.
-     *
+	 * Returns a collection of labels to head columns in a <code>AbstractTableRendering</code>
+	 * rendering, or <code>null</code> if default labels should be used.
+	 *
 	 * @param blk memory block
 	 * @param bytesPerLine the number if bytes to be displayed
 	 * @param numColumns the number of columns the bytes are divided into
 	 * @return a collection of labels to head columns in a <code>AbstractTableRendering</code>
-     * rendering, or <code>null</code> if default labels should be used
+	 * rendering, or <code>null</code> if default labels should be used
 	 */
 	String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns);
 
 
 	/**
-     * Renders and returns a label for a row starting at the given address within the given
-     * memory block, or <code>null</code> if default rendering should be used.
-     *
+	 * Renders and returns a label for a row starting at the given address within the given
+	 * memory block, or <code>null</code> if default rendering should be used.
+	 *
 	 * @param blk memory block
 	 * @param address an address in the memory block
 	 * @return a label for a row starting at the given address within the given
-     * memory block, or <code>null</code> if default rendering should be used
+	 * memory block, or <code>null</code> if default rendering should be used
 	 */
 	String getRowLabel(IMemoryBlock blk, BigInteger address);
 

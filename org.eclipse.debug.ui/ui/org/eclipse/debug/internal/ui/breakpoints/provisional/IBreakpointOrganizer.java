@@ -33,34 +33,34 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public interface IBreakpointOrganizer extends IBreakpointOrganizerDelegate {
 
-    /**
-     * Returns a label for this breakpoint organizer.
-     *
-     * @return a label for this breakpoint organizer
-     */
-    String getLabel();
+	/**
+	 * Returns a label for this breakpoint organizer.
+	 *
+	 * @return a label for this breakpoint organizer
+	 */
+	String getLabel();
 
-    /**
-     * Returns an image descriptor for this breakpoint organizer or <code>null</code>.
-     *
-     * @return an image descriptor for this breakpoint organizer or <code>null</code>
-     */
-    ImageDescriptor getImageDescriptor();
+	/**
+	 * Returns an image descriptor for this breakpoint organizer or <code>null</code>.
+	 *
+	 * @return an image descriptor for this breakpoint organizer or <code>null</code>
+	 */
+	ImageDescriptor getImageDescriptor();
 
-    /**
-     * Returns a unique identifier for this breakpoint organizer.
-     *
-     * @return a unique identifier for this breakpoint organizer
-     */
-    String getIdentifier();
+	/**
+	 * Returns a unique identifier for this breakpoint organizer.
+	 *
+	 * @return a unique identifier for this breakpoint organizer
+	 */
+	String getIdentifier();
 
-    /**
-     * Returns the label for breakpoints that do not fall into a category
-     * for this organizer.
-     *
-     * @return label for breakpoints that do not fall into a category
-     * for this organizer
-     */
-    String getOthersLabel();
+	/**
+	 * Returns the label for breakpoints that do not fall into a category
+	 * for this organizer.
+	 *
+	 * @return label for breakpoints that do not fall into a category
+	 * for this organizer
+	 */
+	String getOthersLabel();
 
 }

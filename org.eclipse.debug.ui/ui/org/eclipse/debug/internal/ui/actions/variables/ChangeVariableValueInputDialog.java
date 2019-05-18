@@ -263,15 +263,15 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		return IDebugUIConstants.PLUGIN_ID + ".CHANGE_VARIABLE_VALUE_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-         if (section == null) {
-             section = settings.addNewSection(getDialogSettingsSectionName());
-         }
-         return section;
-    }
+		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+		if (section == null) {
+			section = settings.addNewSection(getDialogSettingsSectionName());
+		}
+		return section;
+	}
 
 	@Override
 	protected void handleShellCloseEvent() {

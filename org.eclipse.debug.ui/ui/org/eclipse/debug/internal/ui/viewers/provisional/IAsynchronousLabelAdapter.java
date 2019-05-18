@@ -25,16 +25,16 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 public interface IAsynchronousLabelAdapter {
 
-    /**
-     * Asynchronously retrieves the label of the given object reporting to
-     * the given monitor. If unable to retrieve label information, an exception should be
-     * reported to the monitor with an appropriate status.
-     *
-     * @param object the element for which a label is requested
-     * @param context the context in which the label has been requested
-     * @param monitor request monitor to report the result to
-     */
-    void retrieveLabel(Object object, IPresentationContext context, ILabelRequestMonitor result);
+	/**
+	 * Asynchronously retrieves the label of the given object reporting to
+	 * the given monitor. If unable to retrieve label information, an exception should be
+	 * reported to the monitor with an appropriate status.
+	 *
+	 * @param object the element for which a label is requested
+	 * @param context the context in which the label has been requested
+	 * @param monitor request monitor to report the result to
+	 */
+	void retrieveLabel(Object object, IPresentationContext context, ILabelRequestMonitor result);
 
 
 }

@@ -678,7 +678,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Sets the viewer for this view.
 	 *
 	 * @param viewer viewer
-     * @since 3.1
+	 * @since 3.1
 	 */
 	protected void setViewer(Viewer viewer) {
 		fViewer = viewer;
@@ -789,7 +789,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
 	 * @param r the {@link Runnable} to run
- 	 *
+	 *
 	 * @see org.eclipse.swt.widgets.Display#syncExec(java.lang.Runnable)
 	 */
 	public void syncExec(Runnable r) {

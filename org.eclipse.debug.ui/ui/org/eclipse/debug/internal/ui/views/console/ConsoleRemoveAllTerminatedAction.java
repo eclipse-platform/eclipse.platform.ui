@@ -65,20 +65,20 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 		update();
 	}
 
-    @Override
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
-       if (isEnabled()) {
-           update();
-       }
-    }
+		if (isEnabled()) {
+			update();
+		}
+	}
 
-    @Override
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
-    }
+	}
 
-    @Override
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
-    }
+	}
 
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {

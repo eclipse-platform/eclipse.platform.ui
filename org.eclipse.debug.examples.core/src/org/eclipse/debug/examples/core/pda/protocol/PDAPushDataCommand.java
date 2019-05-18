@@ -29,13 +29,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAPushDataCommand extends PDACommand {
 
-    public PDAPushDataCommand(int threadId, String value) {
-        super("pushdata " + threadId + " " + value); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	public PDAPushDataCommand(int threadId, String value) {
+		super("pushdata " + threadId + " " + value); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

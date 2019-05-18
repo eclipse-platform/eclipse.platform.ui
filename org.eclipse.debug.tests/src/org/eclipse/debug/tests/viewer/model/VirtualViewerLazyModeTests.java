@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class VirtualViewerLazyModeTests extends AbstractViewerModelTest {
 
-    public VirtualViewerLazyModeTests(String name) {
-        super(name);
-    }
+	public VirtualViewerLazyModeTests(String name) {
+		super(name);
+	}
 
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
@@ -42,9 +42,9 @@ public class VirtualViewerLazyModeTests extends AbstractViewerModelTest {
 	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(display, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
-    }
+	}
 
-    public void test() {
-        // TODO
-    }
+	public void test() {
+		// TODO
+	}
 }

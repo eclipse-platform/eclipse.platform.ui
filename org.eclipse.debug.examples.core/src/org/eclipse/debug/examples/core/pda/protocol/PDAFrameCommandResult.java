@@ -21,13 +21,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAFrameCommandResult extends PDACommandResult {
 
-    /**
-     * Frame data return by the frame command.
-     */
-    final public PDAFrameData fFrame;
+	/**
+	 * Frame data return by the frame command.
+	 */
+	final public PDAFrameData fFrame;
 
-    PDAFrameCommandResult(String response) {
-        super(response);
-        fFrame = new PDAFrameData(response);
-    }
+	PDAFrameCommandResult(String response) {
+		super(response);
+		fFrame = new PDAFrameData(response);
+	}
 }

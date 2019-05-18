@@ -21,26 +21,26 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  */
 public abstract class BreakpointSelectionAction extends SelectionListenerAction {
 
-    private BreakpointsView fView;
+	private BreakpointsView fView;
 
-    /**
-     * Constructs an action for the breakpoints view.
-     *
-     * @param text action name
-     * @param view breakpoints view
-     */
-    public BreakpointSelectionAction(String text, BreakpointsView view) {
-        super(text);
-        fView = view;
-    }
+	/**
+	 * Constructs an action for the breakpoints view.
+	 *
+	 * @param text action name
+	 * @param view breakpoints view
+	 */
+	public BreakpointSelectionAction(String text, BreakpointsView view) {
+		super(text);
+		fView = view;
+	}
 
-    /**
-     * Returns the breakpoints view.
-     *
-     * @return breakpoints view
-     */
-    protected BreakpointsView getBreakpointsView() {
-        return fView;
-    }
+	/**
+	 * Returns the breakpoints view.
+	 *
+	 * @return breakpoints view
+	 */
+	protected BreakpointsView getBreakpointsView() {
+		return fView;
+	}
 
 }

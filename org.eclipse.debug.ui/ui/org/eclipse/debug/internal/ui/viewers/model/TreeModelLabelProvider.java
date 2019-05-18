@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.3
  */
 public class TreeModelLabelProvider extends ColumnLabelProvider
-    implements ITreeModelLabelProvider, IModelChangedListener
+	implements ITreeModelLabelProvider, IModelChangedListener
 {
 
 	private IInternalTreeModelViewer fViewer;
@@ -103,28 +103,28 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 */
 	private List<ILabelUpdate> fUpdatesInProgress = new ArrayList<>();
 
-    /**
-     * Delta visitor actively cancels the outstanding label updates for
-     * elements that are changed and are about to be updated.
-     */
-    class CancelPendingUpdatesVisitor implements IModelDeltaVisitor {
-        @Override
+	/**
+	 * Delta visitor actively cancels the outstanding label updates for
+	 * elements that are changed and are about to be updated.
+	 */
+	class CancelPendingUpdatesVisitor implements IModelDeltaVisitor {
+		@Override
 		public boolean visit(IModelDelta delta, int depth) {
-            if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
-                cancelElementUpdates(delta.getElement(), true);
-                return false;
-            } else if ((delta.getFlags() & IModelDelta.STATE) > 0) {
-                cancelElementUpdates(delta.getElement(), false);
-                return true;
-            }
-            return true;
-        }
-    }
+			if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
+				cancelElementUpdates(delta.getElement(), true);
+				return false;
+			} else if ((delta.getFlags() & IModelDelta.STATE) > 0) {
+				cancelElementUpdates(delta.getElement(), false);
+				return true;
+			}
+			return true;
+		}
+	}
 
-    /**
-     * Delta visitor
-     */
-    private CancelPendingUpdatesVisitor fCancelPendingUpdatesVisitor = new CancelPendingUpdatesVisitor();
+	/**
+	 * Delta visitor
+	 */
+	private CancelPendingUpdatesVisitor fCancelPendingUpdatesVisitor = new CancelPendingUpdatesVisitor();
 
 	/**
 	 * Constructs a new label provider on the given display
@@ -206,21 +206,21 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 
 	@Override
 	public void dispose() {
-        Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+		Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
 
-	    fViewer.removeModelChangedListener(this);
-	    fViewer = null;
+		fViewer.removeModelChangedListener(this);
+		fViewer = null;
 
 		List<ILabelUpdate> complete = null;
-	    synchronized(this) {
-	        complete = fComplete;
-	        fComplete = null;
-	    }
-	    if (complete != null) {
+		synchronized(this) {
+			complete = fComplete;
+			fComplete = null;
+		}
+		if (complete != null) {
 			for (ILabelUpdate update : complete) {
 				update.cancel();
 			}
-	    }
+		}
 		for (ILabelUpdate currentUpdate : fUpdatesInProgress) {
 			currentUpdate.cancel();
 		}
@@ -231,7 +231,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		for (List<ILabelUpdate> updateList : fPendingUpdates.values()) {
 			for (ILabelUpdate update : updateList) {
 				update.cancel();
-		    }
+			}
 		}
 		fPendingUpdates.clear();
 		for (Image image : fImageCache.values()) {
@@ -250,7 +250,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	}
 
 	private boolean isDisposed() {
-	    return fViewer == null;
+		return fViewer == null;
 	}
 
 	@Override
@@ -260,120 +260,120 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 
 	@Override
 	public boolean update(TreePath elementPath) {
-        Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+		Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
 
-	    cancelPathUpdates(elementPath);
+		cancelPathUpdates(elementPath);
 
 		String[] visibleColumns = fViewer.getVisibleColumns();
 		Object element = elementPath.getLastSegment();
 		IElementLabelProvider presentation = ViewerAdapterService.getLabelProvider(element);
 		if (presentation != null) {
 			List<ILabelUpdate> updates = fPendingUpdates.get(presentation);
-		    if (updates == null) {
+			if (updates == null) {
 				updates = new LinkedList<>();
-		        fPendingUpdates.put(presentation, updates);
-		    }
-		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, visibleColumns, fViewer.getPresentationContext()));
-		    fPendingUpdatesRunnable = new Runnable() {
-		        @Override
+				fPendingUpdates.put(presentation, updates);
+			}
+			updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, visibleColumns, fViewer.getPresentationContext()));
+			fPendingUpdatesRunnable = new Runnable() {
+				@Override
 				public void run() {
-		            if (isDisposed()) {
+					if (isDisposed()) {
 						return;
 					}
-                    startRequests(this);
-		        }
-		    };
-		    fViewer.getDisplay().asyncExec(fPendingUpdatesRunnable);
+					startRequests(this);
+				}
+			};
+			fViewer.getDisplay().asyncExec(fPendingUpdatesRunnable);
 			return true;
 		} else {
-		    return false;
+			return false;
 		}
 	}
 
 	/**
-     * Cancel any outstanding updates that are running for this element.
+	 * Cancel any outstanding updates that are running for this element.
 	 * @param elementPath Element to cancel updates for.
-     */
-    private void cancelPathUpdates(TreePath elementPath) {
-        Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+	 */
+	private void cancelPathUpdates(TreePath elementPath) {
+		Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
 		for (ILabelUpdate currentUpdate : fUpdatesInProgress) {
-            if (elementPath.equals(currentUpdate.getElementPath())) {
-                currentUpdate.cancel();
-            }
-        }
-    }
+			if (elementPath.equals(currentUpdate.getElementPath())) {
+				currentUpdate.cancel();
+			}
+		}
+	}
 
-    /**
-     * Sets the element's display information in the viewer.
-     *
-     * @param path Element path.
-     * @param numColumns Number of columns in the data.
-     * @param labels Array of labels.  The array cannot to be
-     * <code>null</code>, but values within the array may be.
-     * @param images Array of image descriptors, may be <code>null</code>.
-     * @param fontDatas Array of fond data objects, may be <code>null</code>.
-     * @param foregrounds Array of RGB values for foreground colors, may be
-     * <code>null</code>.
-     * @param backgrounds Array of RGB values for background colors, may be
-     * <code>null</code>.
-     * @param checked Whether given item should be checked.
-     * @param grayed Whether given item's checkbox should be grayed.
-     */
-    void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
-        FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds, boolean checked, boolean grayed)
-    {
-        fViewer.setElementData(path, numColumns, labels, images, fontDatas, foregrounds, backgrounds);
-        fViewer.setElementChecked(path, checked, grayed);
-    }
+	/**
+	 * Sets the element's display information in the viewer.
+	 *
+	 * @param path Element path.
+	 * @param numColumns Number of columns in the data.
+	 * @param labels Array of labels.  The array cannot to be
+	 * <code>null</code>, but values within the array may be.
+	 * @param images Array of image descriptors, may be <code>null</code>.
+	 * @param fontDatas Array of fond data objects, may be <code>null</code>.
+	 * @param foregrounds Array of RGB values for foreground colors, may be
+	 * <code>null</code>.
+	 * @param backgrounds Array of RGB values for background colors, may be
+	 * <code>null</code>.
+	 * @param checked Whether given item should be checked.
+	 * @param grayed Whether given item's checkbox should be grayed.
+	 */
+	void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
+		FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds, boolean checked, boolean grayed)
+	{
+		fViewer.setElementData(path, numColumns, labels, images, fontDatas, foregrounds, backgrounds);
+		fViewer.setElementChecked(path, checked, grayed);
+	}
 
 
 	private void startRequests(Runnable runnable) {
-        if (runnable != fPendingUpdatesRunnable) {
-            return;
-        }
-	    if (!fPendingUpdates.isEmpty()) {
+		if (runnable != fPendingUpdatesRunnable) {
+			return;
+		}
+		if (!fPendingUpdates.isEmpty()) {
 			List<ILabelUpdate> list = null;
 			for (Entry<IElementLabelProvider, List<ILabelUpdate>> entry : fPendingUpdates.entrySet()) {
 				list = entry.getValue();
 				for (ILabelUpdate update : list) {
 					updateStarted(update);
-                }
+				}
 				entry.getKey().update(list.toArray(new ILabelUpdate[list.size()]));
-            }
-	    }
-	    fPendingUpdates.clear();
-	    fPendingUpdatesRunnable = null;
+			}
+		}
+		fPendingUpdates.clear();
+		fPendingUpdatesRunnable = null;
 	}
 
-    /**
-    * Cancels all running updates for the given element.  If seachFullPath is true,
-    * all updates will be canceled which have the given element anywhere in their
-    * patch.
-    * @param element element to search for.
-    * @param searchFullPath flag whether to look for the element in the full path
-    * of the update
-    */
-   private void cancelElementUpdates(Object element, boolean searchFullPath) {
+	/**
+	* Cancels all running updates for the given element.  If seachFullPath is true,
+	* all updates will be canceled which have the given element anywhere in their
+	* patch.
+	* @param element element to search for.
+	* @param searchFullPath flag whether to look for the element in the full path
+	* of the update
+	*/
+	private void cancelElementUpdates(Object element, boolean searchFullPath) {
 		for (ILabelUpdate currentUpdate : fUpdatesInProgress) {
-            if (searchFullPath) {
-                if (element.equals(fViewer.getInput())) {
-                    currentUpdate.cancel();
-                } else {
-                    TreePath updatePath = currentUpdate.getElementPath();
-                    for (int i = 0; i < updatePath.getSegmentCount(); i++) {
-                        if (element.equals(updatePath.getSegment(i))) {
-                            currentUpdate.cancel();
-                            break; // Exit the for loop, stay in the while loop
-                        }
-                    }
-                }
-            } else {
-                if (element.equals(currentUpdate.getElement())) {
-                    currentUpdate.cancel();
-                }
-            }
-        }
-    }
+			if (searchFullPath) {
+				if (element.equals(fViewer.getInput())) {
+					currentUpdate.cancel();
+				} else {
+					TreePath updatePath = currentUpdate.getElementPath();
+					for (int i = 0; i < updatePath.getSegmentCount(); i++) {
+						if (element.equals(updatePath.getSegment(i))) {
+							currentUpdate.cancel();
+							break; // Exit the for loop, stay in the while loop
+						}
+					}
+				}
+			} else {
+				if (element.equals(currentUpdate.getElement())) {
+					currentUpdate.cancel();
+				}
+			}
+		}
+	}
 
 	/**
 	 * Returns the presentation context for this label provider.
@@ -384,13 +384,13 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		return fViewer.getPresentationContext();
 	}
 
-    /**
-     * A label update is complete.
-     *
-     * @param update Update that is to be completed.
-     */
-    synchronized void complete(ILabelUpdate update) {
-        if (fViewer == null) {
+	/**
+	 * A label update is complete.
+	 *
+	 * @param update Update that is to be completed.
+	 */
+	synchronized void complete(ILabelUpdate update) {
+		if (fViewer == null) {
 			return;
 		}
 
@@ -411,11 +411,11 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 					} else {
 						((LabelUpdate) itrUpdate).performUpdate();
 					}
-			    }
+				}
 			});
 		}
 		fComplete.add(update);
-    }
+	}
 
 	@Override
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {
@@ -433,7 +433,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * @param update Update that was started
 	 */
 	void updateStarted(ILabelUpdate update) {
-	    Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+		Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
 
 		boolean begin = fUpdatesInProgress.isEmpty();
 		fUpdatesInProgress.add(update);
@@ -444,8 +444,8 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 			}
 			notifyUpdate(TreeModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
 		}
-        if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-        	DebugUIPlugin.trace("\tBEGIN - " + update); //$NON-NLS-1$
+		if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+			DebugUIPlugin.trace("\tBEGIN - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(TreeModelContentProvider.UPDATE_BEGINS, update);
 	}
@@ -458,13 +458,13 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	void updateComplete(ILabelUpdate update) {
 		fUpdatesInProgress.remove(update);
 
-        if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-        	DebugUIPlugin.trace("\tEND - " + update); //$NON-NLS-1$
+		if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+			DebugUIPlugin.trace("\tEND - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(TreeModelContentProvider.UPDATE_COMPLETE, update);
 		if (fUpdatesInProgress.isEmpty()) {
-            if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-            	DebugUIPlugin.trace("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
+			if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+				DebugUIPlugin.trace("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
 			}
 			notifyUpdate(TreeModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);
 		}
@@ -505,7 +505,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 
 	@Override
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
-	    delta.accept(fCancelPendingUpdatesVisitor);
-    }
+		delta.accept(fCancelPendingUpdatesVisitor);
+	}
 
 }

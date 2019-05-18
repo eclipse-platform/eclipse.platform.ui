@@ -27,11 +27,11 @@ import java.io.IOException;
  */
 public interface IStreamsProxy2 extends IStreamsProxy {
 
-    /**
-     * Closes the output stream connected to the standard input stream
-     * of this proxy's process.
-     *
-     * @throws IOException if unable to close the stream
-     */
-    void closeInputStream() throws IOException;
+	/**
+	 * Closes the output stream connected to the standard input stream
+	 * of this proxy's process.
+	 *
+	 * @throws IOException if unable to close the stream
+	 */
+	void closeInputStream() throws IOException;
 }

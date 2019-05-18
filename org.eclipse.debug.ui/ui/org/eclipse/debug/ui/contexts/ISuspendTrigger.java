@@ -44,18 +44,18 @@ package org.eclipse.debug.ui.contexts;
  */
 public interface ISuspendTrigger {
 
-    /**
-     * Registers the given listener for suspend notifications.
-     *
-     * @param listener suspend listener
-     */
+	/**
+	 * Registers the given listener for suspend notifications.
+	 *
+	 * @param listener suspend listener
+	 */
 	void addSuspendTriggerListener(ISuspendTriggerListener listener);
 
-    /**
-     * Unregisters the given listener for suspend notifications.
-     *
-     * @param listener suspend listener
-     */
+	/**
+	 * Unregisters the given listener for suspend notifications.
+	 *
+	 * @param listener suspend listener
+	 */
 	void removeSuspendTriggerListener(ISuspendTriggerListener listener);
 
 }

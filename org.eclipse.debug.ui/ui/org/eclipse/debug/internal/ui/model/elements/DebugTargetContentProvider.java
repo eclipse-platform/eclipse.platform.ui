@@ -80,15 +80,15 @@ public class DebugTargetContentProvider extends ElementContentProvider {
 			return ((IDebugTarget)parent).getThreads();
 		}
 		else if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
-        {
+		{
 			if (parent instanceof IMemoryBlockRetrieval)
 			{
 				if (((IMemoryBlockRetrieval)parent).supportsStorageRetrieval()) {
 					return DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)parent);
 				}
 			}
-        }
-        return EMPTY;
+		}
+		return EMPTY;
 	}
 
 

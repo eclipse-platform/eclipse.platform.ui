@@ -68,29 +68,29 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	 * Command handler for launch shortcut key binding.
 	 */
 	private class LaunchCommandHandler extends AbstractHandler {
-	    // the shortcut to invoke
-	    private LaunchShortcutExtension fShortcut;
-	    private String fMode;
+		// the shortcut to invoke
+		private LaunchShortcutExtension fShortcut;
+		private String fMode;
 
-	    /**
-	     * Constructs a new command handler for the given shortcut
-	     *
-	     * @param shortcut
-	     */
-	    public LaunchCommandHandler(LaunchShortcutExtension shortcut, String mode) {
-	        fShortcut = shortcut;
-	        fMode = mode;
-	    }
+		/**
+		 * Constructs a new command handler for the given shortcut
+		 *
+		 * @param shortcut
+		 */
+		public LaunchCommandHandler(LaunchShortcutExtension shortcut, String mode) {
+			fShortcut = shortcut;
+			fMode = mode;
+		}
 
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-           LaunchShortcutAction action = new LaunchShortcutAction(fMode, fShortcut);
-            if (action.isEnabled()) {
-                action.run();
-            } else {
-                fShortcut.launch(new StructuredSelection(), fMode);
-            }
-            return null;
+			LaunchShortcutAction action = new LaunchShortcutAction(fMode, fShortcut);
+			if (action.isEnabled()) {
+				action.run();
+			} else {
+				fShortcut.launch(new StructuredSelection(), fMode);
+			}
+			return null;
 		}
 	}
 
@@ -116,16 +116,16 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	/**
 	 * Registers command handlers for launch shortcut key bindings
 	 */
-    private void registerLaunchCommandHandlers() {
-        IHandlerService handlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
-        if(handlerService != null) {
+	private void registerLaunchCommandHandlers() {
+		IHandlerService handlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		if(handlerService != null) {
 			for (String mode : getModes()) {
-	            String id = getId() + "." + mode; //$NON-NLS-1$
-		        IHandler handler = new LaunchCommandHandler(this, mode);
-		        handlerService.activateHandler(id, handler);
-	        }
-        }
-    }
+				String id = getId() + "." + mode; //$NON-NLS-1$
+				IHandler handler = new LaunchCommandHandler(this, mode);
+				handlerService.activateHandler(id, handler);
+			}
+		}
+	}
 
 	/**
 	 * Sets the configuration element that defines the attributes

@@ -30,74 +30,74 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class BreakpointsLabelProvider extends LabelProvider implements IFontProvider {
 
-    private WorkbenchLabelProvider fWorkbenchLabelProvider;
-    private IDebugModelPresentation fPresentation;
-
-    /**
-     * Constructs a new label provide for the breakpoints view.
-     */
-    public BreakpointsLabelProvider() {
-        fWorkbenchLabelProvider = new WorkbenchLabelProvider();
-        fPresentation = DebugUITools.newDebugModelPresentation();
-    }
-
-    @Override
-	public void dispose() {
-        fWorkbenchLabelProvider.dispose();
-        fPresentation.dispose();
-        super.dispose();
-    }
-
-    @Override
-	public Image getImage(Object element) {
-        if (element instanceof IBreakpoint) {
-            return fPresentation.getImage(element);
-        }
-        Image image = fWorkbenchLabelProvider.getImage(element);
-        if (image != null) {
-            int flags= computeAdornmentFlags();
-            if (flags > 0) {
-                CompositeDebugImageDescriptor descriptor= new CompositeDebugImageDescriptor(image, flags);
-                return DebugUIPlugin.getImageDescriptorRegistry().get(descriptor);
-            }
-        }
-        return image;
-    }
+	private WorkbenchLabelProvider fWorkbenchLabelProvider;
+	private IDebugModelPresentation fPresentation;
 
 	/**
-     * Computes and return common adornment flags for the given category.
-     *
-     * @return adornment flags defined in CompositeDebugImageDescriptor
-     */
-    private int computeAdornmentFlags() {
-        if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-            return CompositeDebugImageDescriptor.SKIP_BREAKPOINT;
-        }
-        return 0;
-    }
+	 * Constructs a new label provide for the breakpoints view.
+	 */
+	public BreakpointsLabelProvider() {
+		fWorkbenchLabelProvider = new WorkbenchLabelProvider();
+		fPresentation = DebugUITools.newDebugModelPresentation();
+	}
 
-    @Override
+	@Override
+	public void dispose() {
+		fWorkbenchLabelProvider.dispose();
+		fPresentation.dispose();
+		super.dispose();
+	}
+
+	@Override
+	public Image getImage(Object element) {
+		if (element instanceof IBreakpoint) {
+			return fPresentation.getImage(element);
+		}
+		Image image = fWorkbenchLabelProvider.getImage(element);
+		if (image != null) {
+			int flags= computeAdornmentFlags();
+			if (flags > 0) {
+				CompositeDebugImageDescriptor descriptor= new CompositeDebugImageDescriptor(image, flags);
+				return DebugUIPlugin.getImageDescriptorRegistry().get(descriptor);
+			}
+		}
+		return image;
+	}
+
+	/**
+	 * Computes and return common adornment flags for the given category.
+	 *
+	 * @return adornment flags defined in CompositeDebugImageDescriptor
+	 */
+	private int computeAdornmentFlags() {
+		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+			return CompositeDebugImageDescriptor.SKIP_BREAKPOINT;
+		}
+		return 0;
+	}
+
+	@Override
 	public String getText(Object element) {
-        if (element instanceof IBreakpoint) {
-            return fPresentation.getText(element);
-        }
-        return fWorkbenchLabelProvider.getText(element);
-    }
+		if (element instanceof IBreakpoint) {
+			return fPresentation.getText(element);
+		}
+		return fWorkbenchLabelProvider.getText(element);
+	}
 
-    @Override
+	@Override
 	public Font getFont(Object element) {
-        if (element instanceof IBreakpoint) {
-            return null;
-        }
-        return fWorkbenchLabelProvider.getFont(element);
-    }
+		if (element instanceof IBreakpoint) {
+			return null;
+		}
+		return fWorkbenchLabelProvider.getFont(element);
+	}
 
-    /**
-     * Returns the debug model presentation used by this label provider.
-     *
-     * @return the debug model presentation used by this label provider
-     */
-    public IDebugModelPresentation getPresentation() {
-        return fPresentation;
-    }
+	/**
+	 * Returns the debug model presentation used by this label provider.
+	 *
+	 * @return the debug model presentation used by this label provider
+	 */
+	public IDebugModelPresentation getPresentation() {
+		return fPresentation;
+	}
 }

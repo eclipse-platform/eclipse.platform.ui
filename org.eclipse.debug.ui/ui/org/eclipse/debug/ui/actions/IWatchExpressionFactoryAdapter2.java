@@ -32,18 +32,18 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IWatchExpressionFactoryAdapter2  {
 
-    /**
-     * Creates and returns an expression for the specified variable
-     * which is used to created an {@link org.eclipse.debug.core.model.IWatchExpression}.
-     *
-     * @param element element a watch expression is required for
-     * @return text used to create a watch expression
-     * @exception org.eclipse.core.runtime.CoreException if unable to create a watch
-     *  expression
-     */
-    String createWatchExpression(Object element) throws CoreException;
+	/**
+	 * Creates and returns an expression for the specified variable
+	 * which is used to created an {@link org.eclipse.debug.core.model.IWatchExpression}.
+	 *
+	 * @param element element a watch expression is required for
+	 * @return text used to create a watch expression
+	 * @exception org.eclipse.core.runtime.CoreException if unable to create a watch
+	 *  expression
+	 */
+	String createWatchExpression(Object element) throws CoreException;
 
-    /**
+	/**
 	 * Returns whether a watch expression can be created for the specified variable.
 	 *
 	 * @param variable the specified variable

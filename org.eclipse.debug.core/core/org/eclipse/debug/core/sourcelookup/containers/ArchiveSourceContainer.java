@@ -59,7 +59,7 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
 		fFile = archive;
 		fDetectRoot = detectRootPath;
 		if (archive.exists() && archive.getLocation() != null) {
-		    fDelegateContainer = new ExternalArchiveSourceContainer(archive.getLocation().toOSString(), detectRootPath);
+			fDelegateContainer = new ExternalArchiveSourceContainer(archive.getLocation().toOSString(), detectRootPath);
 		}
 	}
 
@@ -93,38 +93,38 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
 		return getName().hashCode();
 	}
 
-    @Override
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
-        ExternalArchiveSourceContainer container = getDelegateContainer();
-        if (container != null) {
-            return container.findSourceElements(name);
-        }
-        return EMPTY;
-    }
+		ExternalArchiveSourceContainer container = getDelegateContainer();
+		if (container != null) {
+			return container.findSourceElements(name);
+		}
+		return EMPTY;
+	}
 
-    /**
-     * Returns the underlying external archive source container.
-     *
-     * @return underlying external archive source container
-     * @since 3.0.1.1
-     */
-    private ExternalArchiveSourceContainer getDelegateContainer() {
-        return fDelegateContainer;
-    }
-    @Override
+	/**
+	 * Returns the underlying external archive source container.
+	 *
+	 * @return underlying external archive source container
+	 * @since 3.0.1.1
+	 */
+	private ExternalArchiveSourceContainer getDelegateContainer() {
+		return fDelegateContainer;
+	}
+	@Override
 	public void init(ISourceLookupDirector director) {
-        super.init(director);
-        if (fDelegateContainer != null) {
-            fDelegateContainer.init(director);
-        }
-    }
-    @Override
+		super.init(director);
+		if (fDelegateContainer != null) {
+			fDelegateContainer.init(director);
+		}
+	}
+	@Override
 	public void dispose() {
-        super.dispose();
-        if (fDelegateContainer != null) {
-            fDelegateContainer.dispose();
-        }
-    }
+		super.dispose();
+		if (fDelegateContainer != null) {
+			fDelegateContainer.dispose();
+		}
+	}
 
 	/**
 	 * Returns whether root paths are automatically detected in this

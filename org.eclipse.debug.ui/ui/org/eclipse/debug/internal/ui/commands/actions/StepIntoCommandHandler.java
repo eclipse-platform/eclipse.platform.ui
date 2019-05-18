@@ -25,9 +25,9 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
  */
 public class StepIntoCommandHandler extends DebugCommandHandler {
 
-    @Override
+	@Override
 	protected Class<IStepIntoHandler> getCommandType() {
-        return IStepIntoHandler.class;
-    }
+		return IStepIntoHandler.class;
+	}
 
 }

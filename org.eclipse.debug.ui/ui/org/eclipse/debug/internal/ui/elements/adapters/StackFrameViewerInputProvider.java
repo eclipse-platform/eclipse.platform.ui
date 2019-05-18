@@ -30,21 +30,21 @@ public class StackFrameViewerInputProvider extends ViewerInputProvider {
 
 	@Override
 	protected Object getViewerInput(Object source, IPresentationContext context, IViewerUpdate update) throws CoreException {
-	    if ( IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
-	        return new RegisterGroupProxy((IStackFrame) source);
-	    } else if ( IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId()) ) {
-	    	return new DefaultBreakpointsViewInput(context);
-	    } else {
-	        return DebugPlugin.getDefault().getExpressionManager();
-	    }
+		if ( IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
+			return new RegisterGroupProxy((IStackFrame) source);
+		} else if ( IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId()) ) {
+			return new DefaultBreakpointsViewInput(context);
+		} else {
+			return DebugPlugin.getDefault().getExpressionManager();
+		}
 
 	}
 
 	@Override
 	protected boolean supportsContextId(String id) {
 		return IDebugUIConstants.ID_REGISTER_VIEW.equals(id) ||
-		       IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id) ||
-		       IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(id);
+			   IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id) ||
+			   IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(id);
 	}
 
 }

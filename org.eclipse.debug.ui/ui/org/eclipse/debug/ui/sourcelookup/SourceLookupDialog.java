@@ -61,7 +61,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	 */
 	public SourceLookupDialog(Shell shell, ISourceLookupDirector director) {
 		super(shell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fDirector = director;
 	}
 
@@ -126,13 +126,13 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		return super.close();
 	}
 
-    @Override
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(getClass().getName());
-         if (section == null) {
-             section = settings.addNewSection(getClass().getName());
-         }
-         return section;
-    }
+		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getClass().getName());
+		if (section == null) {
+			section = settings.addNewSection(getClass().getName());
+		}
+		return section;
+	}
 }

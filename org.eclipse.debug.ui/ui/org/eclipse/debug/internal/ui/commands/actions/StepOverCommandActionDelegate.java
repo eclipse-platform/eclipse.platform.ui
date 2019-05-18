@@ -23,15 +23,15 @@ import org.eclipse.jface.action.IAction;
  */
 public class StepOverCommandActionDelegate extends DebugCommandActionDelegate {
 
-    public StepOverCommandActionDelegate() {
-        super();
-        setAction(new StepOverCommandAction());
-    }
+	public StepOverCommandActionDelegate() {
+		super();
+		setAction(new StepOverCommandAction());
+	}
 
-    @Override
+	@Override
 	public void init(IAction action) {
-        super.init(action);
-    }
+		super.init(action);
+	}
 
 
 }

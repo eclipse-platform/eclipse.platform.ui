@@ -291,8 +291,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			if (object instanceof LaunchConfiguration) {
 				LaunchConfiguration otherConfig = (LaunchConfiguration) object;
 				return getName().equals(otherConfig.getName())
-				 	 && getType().equals(otherConfig.getType())
-				 	 && equalOrNull(getContainer(), otherConfig.getContainer())
+					 && getType().equals(otherConfig.getType())
+					 && equalOrNull(getContainer(), otherConfig.getContainer())
 					 && getInfo().equals(otherConfig.getInfo());
 			}
 			return false;
@@ -717,21 +717,21 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 
 	@Override
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException {
-	    return launch(mode, monitor, build, true);
+		return launch(mode, monitor, build, true);
 	}
 
-    @Override
+	@Override
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
-    	/* Setup progress monitor
-    	 * - Prepare delegate (0)
-    	 * - Pre-launch check (1)
-    	 * - [Build before launch (7)]					if build
-    	 * - [Incremental build before launch (3)]		if build
-    	 * - Final launch validation (1)
-    	 * - Initialize source locator (1)
-    	 * - Launch delegate (10) */
+		/* Setup progress monitor
+		 * - Prepare delegate (0)
+		 * - Pre-launch check (1)
+		 * - [Build before launch (7)]					if build
+		 * - [Incremental build before launch (3)]		if build
+		 * - Final launch validation (1)
+		 * - Initialize source locator (1)
+		 * - Launch delegate (10) */
 		SubMonitor lmonitor = SubMonitor.convert(monitor, DebugCoreMessages.LaunchConfiguration_9, build ? 23 : 13);
-    	try {
+		try {
 			// bug 28245 - force the delegate to load in case it is interested in launch notifications
 			Set<String> modes = getModes();
 			modes.add(mode);
@@ -809,9 +809,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			launch.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, Long.toString(System.currentTimeMillis()));
 			boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
 			if(!captureOutput) {
-			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
+				launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
 			} else {
-			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
+				launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
 			}
 			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, getLaunchManager().getEncoding(this));
 			if (register) {
@@ -884,13 +884,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				getLaunchManager().removeLaunch(launch);
 			}
 			return launch;
-    	}
-    	finally {
+		}
+		finally {
 			lmonitor.done();
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public void migrate() throws CoreException {
 		((LaunchConfigurationType)getType()).migrate(this);
 	}

@@ -243,8 +243,8 @@ public interface IDebugUIConstants {
 	/**
 	 * The default value of the {@link IDebugUIConstants#PREF_MANAGE_VIEW_PERSPECTIVES} preference.
 	 *
-     * @see IDebugUIConstants#PREF_MANAGE_VIEW_PERSPECTIVES
-     *
+	 * @see IDebugUIConstants#PREF_MANAGE_VIEW_PERSPECTIVES
+	 *
 	 * @since 3.5
 	 */
 	String PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT= "DEFAULT"; //$NON-NLS-1$
@@ -283,11 +283,11 @@ public interface IDebugUIConstants {
 	 */
 	String ID_REGISTER_VIEW= "org.eclipse.debug.ui.RegisterView"; //$NON-NLS-1$
 
-   /**
-     * Module view identifier (value <code>"org.eclipse.debug.ui.ModuleView"</code>).
-     * @since 3.4
-     */
-    String ID_MODULE_VIEW= "org.eclipse.debug.ui.ModuleView"; //$NON-NLS-1$
+	/**
+	 * Module view identifier (value <code>"org.eclipse.debug.ui.ModuleView"</code>).
+	 * @since 3.4
+	 */
+	String ID_MODULE_VIEW= "org.eclipse.debug.ui.ModuleView"; //$NON-NLS-1$
 
 	/**
 	 * Console view identifier (value <code>"org.eclipse.debug.ui.ConsoleView"</code>).
@@ -334,8 +334,8 @@ public interface IDebugUIConstants {
 	 */
 	String IMG_ACT_RUN= "IMG_ACT_RUN"; //$NON-NLS-1$
 
-    /** "Link with View" action image identifier. */
-    String IMG_ACT_SYNCED= "IMG_ACT_SYNCED"; //$NON-NLS-1$
+	/** "Link with View" action image identifier. */
+	String IMG_ACT_SYNCED= "IMG_ACT_SYNCED"; //$NON-NLS-1$
 
 	/** "Skip Breakpoints" action image identifier */
 	String IMG_SKIP_BREAKPOINTS= "IMG_SKIP_BREAKPOINTS"; //$NON-NLS-1$
@@ -367,12 +367,12 @@ public interface IDebugUIConstants {
 	 */
 	String IMG_LCL_LOCK = "IMG_LCL_LOCK"; //$NON-NLS-1$
 
-    /**
-     * Add action image identifier.
-     *
-     * @since 3.8
-     */
-    String IMG_LCL_ADD = "IMG_LCL_MONITOR_EXPRESSION"; //$NON-NLS-1$
+	/**
+	 * Add action image identifier.
+	 *
+	 * @since 3.8
+	 */
+	String IMG_LCL_ADD = "IMG_LCL_MONITOR_EXPRESSION"; //$NON-NLS-1$
 
 	/**
 	 * Remove all action image identifier
@@ -381,12 +381,12 @@ public interface IDebugUIConstants {
 	 */
 	String IMG_LCL_REMOVE_ALL = "IMG_LCL_REMOVE_ALL"; //$NON-NLS-1$
 
-    /**
-     * Remove action image identifier
-     *
-     * @since 3.2
-     */
-    String IMG_LCL_REMOVE = "IMG_LCL_REMOVE"; //$NON-NLS-1$
+	/**
+	 * Remove action image identifier
+	 *
+	 * @since 3.2
+	 */
+	String IMG_LCL_REMOVE = "IMG_LCL_REMOVE"; //$NON-NLS-1$
 
 	/**
 	 * Content assist action image identifier.
@@ -615,11 +615,11 @@ public interface IDebugUIConstants {
 	/** Error overlay image identifier. */
 	String IMG_OVR_ERROR = "IMG_OVR_ERROR";  //$NON-NLS-1$
 
-    /**
-     * Skip breakpoint image overlay identifier.
-     * @since 3.1
-     */
-    String IMG_OVR_SKIP_BREAKPOINT = "IMG_OVR_SKIP_BREAKPOINT"; //$NON-NLS-1$
+	/**
+	 * Skip breakpoint image overlay identifier.
+	 * @since 3.1
+	 */
+	String IMG_OVR_SKIP_BREAKPOINT = "IMG_OVR_SKIP_BREAKPOINT"; //$NON-NLS-1$
 
 	/**
 	 * Prototype image overlay identifier.
@@ -633,22 +633,22 @@ public interface IDebugUIConstants {
 	 */
 	String DEBUG_ACTION_SET= PLUGIN_ID + ".debugActionSet"; //$NON-NLS-1$
 
-    /**
-     * Debug Toolbar action set identifier (value <code>"org.eclipse.debug.ui.debugToolbarActionSet"</code>).
-     *
-     * @since 3.8
-     */
-    String DEBUG_TOOLBAR_ACTION_SET= PLUGIN_ID + ".debugToolbarActionSet"; //$NON-NLS-1$
+	/**
+	 * Debug Toolbar action set identifier (value <code>"org.eclipse.debug.ui.debugToolbarActionSet"</code>).
+	 *
+	 * @since 3.8
+	 */
+	String DEBUG_TOOLBAR_ACTION_SET= PLUGIN_ID + ".debugToolbarActionSet"; //$NON-NLS-1$
 
-    /**
-     * System property which indicates whether the common debugging actions
-     * should be shown in the Debug view, as opposed to the top level
-     * toolbar.  Actions contributing to the debug view can use this property
-     * to control their visibility.
-     *
-     * @since 3.8
-     */
-    String DEBUG_VIEW_TOOBAR_VISIBLE = PLUGIN_ID + ".debugViewToolbarVisible"; //$NON-NLS-1$
+	/**
+	 * System property which indicates whether the common debugging actions
+	 * should be shown in the Debug view, as opposed to the top level
+	 * toolbar.  Actions contributing to the debug view can use this property
+	 * to control their visibility.
+	 *
+	 * @since 3.8
+	 */
+	String DEBUG_VIEW_TOOBAR_VISIBLE = PLUGIN_ID + ".debugViewToolbarVisible"; //$NON-NLS-1$
 
 	/**
 	 * Launch action set identifier (value <code>"org.eclipse.debug.ui.launchActionSet"</code>).
@@ -822,18 +822,18 @@ public interface IDebugUIConstants {
 	 */
 	String REGISTER_GROUP = "registerGroup"; //$NON-NLS-1$
 
-   /**
-     * Identifier for an empty group preceding a
-     * modules group in a menu (value <code>"emptyModulesGroup"</code>).
-     * @since 3.4
-     */
-    String EMPTY_MODULES_GROUP = "emptyModulesGroup"; //$NON-NLS-1$
+	/**
+	 * Identifier for an empty group preceding a
+	 * modules group in a menu (value <code>"emptyModulesGroup"</code>).
+	 * @since 3.4
+	 */
+	String EMPTY_MODULES_GROUP = "emptyModulesGroup"; //$NON-NLS-1$
 
-    /**
-     * Identifier for a modules group in a menu (value <code>"modulesGroup"</code>).
-     * @since 3.4
-     */
-    String MODULES_GROUP = "modulesGroup"; //$NON-NLS-1$
+	/**
+	 * Identifier for a modules group in a menu (value <code>"modulesGroup"</code>).
+	 * @since 3.4
+	 */
+	String MODULES_GROUP = "modulesGroup"; //$NON-NLS-1$
 
 	/**
 	 * Id for the popup menu associated with the variables (tree viewer) part of the VariableView
@@ -953,7 +953,7 @@ public interface IDebugUIConstants {
 	 * from {@link org.eclipse.ui.WorkbenchEncoding}.
 	 *
 	 * @since 3.1
-     * @deprecated in 3.3 Please use DebugPlugin.ATTR_CONSOLE_ENCODING instead.
+	 * @deprecated in 3.3 Please use DebugPlugin.ATTR_CONSOLE_ENCODING instead.
 	 */
 	@Deprecated String ATTR_CONSOLE_ENCODING = DebugPlugin.ATTR_CONSOLE_ENCODING;
 
@@ -1086,35 +1086,35 @@ public interface IDebugUIConstants {
 	/**
 	 * Variable value editors extension point identifier (value
 	 * <code>"variableValueEditors"</code>
-     *
-     * @since 3.1
+	 *
+	 * @since 3.1
 	 */
 	String EXTENSION_POINT_VARIABLE_VALUE_EDITORS = "variableValueEditors"; //$NON-NLS-1$
 
-    /**
-     * Memory renderings extension point identifier (value
-     * <code>"memoryRenderings"</code>
-     *
-     * @since 3.1
-     * @deprecated  As of release 3.4, replaced by {@link #EXTENSION_POINT_MEMORY_RENDERINGS}
-     */
-    @Deprecated String EXTENSION_POINT_MEMORY_RENDERIGNS = "memoryRenderings"; //$NON-NLS-1$
+	/**
+	 * Memory renderings extension point identifier (value
+	 * <code>"memoryRenderings"</code>
+	 *
+	 * @since 3.1
+	 * @deprecated  As of release 3.4, replaced by {@link #EXTENSION_POINT_MEMORY_RENDERINGS}
+	 */
+	@Deprecated String EXTENSION_POINT_MEMORY_RENDERIGNS = "memoryRenderings"; //$NON-NLS-1$
 
-    /**
-     * Memory renderings extension point identifier (value
-     * <code>"memoryRenderings"</code>
-     *
-     * @since 3.4
-     */
-    String EXTENSION_POINT_MEMORY_RENDERINGS = "memoryRenderings"; //$NON-NLS-1$
+	/**
+	 * Memory renderings extension point identifier (value
+	 * <code>"memoryRenderings"</code>
+	 *
+	 * @since 3.4
+	 */
+	String EXTENSION_POINT_MEMORY_RENDERINGS = "memoryRenderings"; //$NON-NLS-1$
 
-    /**
-     * Breakpoint organizers extension point identifier (value
-     * <code>"breakpointOrganizers"</code>
-     *
-     * @since 3.1
-     */
-    String EXTENSION_POINT_BREAKPOINT_ORGANIZERS = "breakpointOrganizers"; //$NON-NLS-1$
+	/**
+	 * Breakpoint organizers extension point identifier (value
+	 * <code>"breakpointOrganizers"</code>
+	 *
+	 * @since 3.1
+	 */
+	String EXTENSION_POINT_BREAKPOINT_ORGANIZERS = "breakpointOrganizers"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"detailPaneFactories"</code>) for the
@@ -1124,21 +1124,21 @@ public interface IDebugUIConstants {
 	 */
 	String EXTENSION_POINT_DETAIL_FACTORIES = "detailPaneFactories"; //$NON-NLS-1$
 
-   /**
-     * Simple identifier constant (value <code>"toggleBreakpointsTargetFactories"</code>) for the
-     * toggle breakpoint targets extension point.
-     *
-     * @since 3.5
-     */
-    String EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES = "toggleBreakpointsTargetFactories"; //$NON-NLS-1$
+	/**
+	 * Simple identifier constant (value <code>"toggleBreakpointsTargetFactories"</code>) for the
+	 * toggle breakpoint targets extension point.
+	 *
+	 * @since 3.5
+	 */
+	String EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES = "toggleBreakpointsTargetFactories"; //$NON-NLS-1$
 
-    /**
-     * Update policies extension point identifier (value
-     * <code>"updatePolicies"</code>
-     *
-     * @since 3.2
-     */
-    String EXTENSION_POINT_UPDATE_POLICIES = "updatePolicies"; //$NON-NLS-1$
+	/**
+	 * Update policies extension point identifier (value
+	 * <code>"updatePolicies"</code>
+	 *
+	 * @since 3.2
+	 */
+	String EXTENSION_POINT_UPDATE_POLICIES = "updatePolicies"; //$NON-NLS-1$
 
 	/**
 	 * Padded string preference for renderings.  Padded string is the string to be used in place of
@@ -1215,25 +1215,25 @@ public interface IDebugUIConstants {
 	 */
 	String PREF_MEMORY_HISTORY_KNOWN_COLOR = PLUGIN_ID + ".MemoryHistoryKnownColor"; //$NON-NLS-1$
 
-    /**
-     * Annotation type identifier for default annotation of the current instruction
-     * pointer (top stack frame in a thread). Value is <code>org.eclipse.debug.ui.currentIP</code>,
-     * identifying a <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
-     * extension.
-     *
-     * @since 3.2
-     */
-    String ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT = "org.eclipse.debug.ui.currentIP"; //$NON-NLS-1$
+	/**
+	 * Annotation type identifier for default annotation of the current instruction
+	 * pointer (top stack frame in a thread). Value is <code>org.eclipse.debug.ui.currentIP</code>,
+	 * identifying a <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
+	 * extension.
+	 *
+	 * @since 3.2
+	 */
+	String ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT = "org.eclipse.debug.ui.currentIP"; //$NON-NLS-1$
 
-    /**
-     * Annotation type identifier for default annotation of secondary instruction pointers
-     * (non top stack frames). Value is <code>org.eclipse.debug.ui.secondaryIP</code>,
-     * identifying a <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
-     * extension.
-     *
-     * @since 3.2
-     */
-    String ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY = "org.eclipse.debug.ui.secondaryIP"; //$NON-NLS-1$
+	/**
+	 * Annotation type identifier for default annotation of secondary instruction pointers
+	 * (non top stack frames). Value is <code>org.eclipse.debug.ui.secondaryIP</code>,
+	 * identifying a <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
+	 * extension.
+	 *
+	 * @since 3.2
+	 */
+	String ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY = "org.eclipse.debug.ui.secondaryIP"; //$NON-NLS-1$
 
 	/**
 	 * Editor Identifier for the "Common Source Not Found" editor.

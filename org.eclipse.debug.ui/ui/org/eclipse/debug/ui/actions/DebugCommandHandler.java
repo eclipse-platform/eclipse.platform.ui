@@ -61,228 +61,228 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public abstract class DebugCommandHandler extends AbstractHandler {
 
-    /**
-     * The DebugCommandService is able to evaluate the command handler
-     * enablement in each workbench window separately, however the workbench
-     * command framework uses only a single handler instance for all windows.
-     * This IEnabledTarget implementation tracks enablement of the command
-     * for a given window.  When the handler enablement is tested, the
-     * currently active window is used to determine which enabled target
-     * to use.
-     */
-    private class EnabledTarget implements IEnabledTarget, IDebugContextListener {
-        boolean fEnabled = getInitialEnablement();
-        IWorkbenchWindow fWindow;
+	/**
+	 * The DebugCommandService is able to evaluate the command handler
+	 * enablement in each workbench window separately, however the workbench
+	 * command framework uses only a single handler instance for all windows.
+	 * This IEnabledTarget implementation tracks enablement of the command
+	 * for a given window.  When the handler enablement is tested, the
+	 * currently active window is used to determine which enabled target
+	 * to use.
+	 */
+	private class EnabledTarget implements IEnabledTarget, IDebugContextListener {
+		boolean fEnabled = getInitialEnablement();
+		IWorkbenchWindow fWindow;
 
-        EnabledTarget(IWorkbenchWindow window) {
-            fWindow = window;
+		EnabledTarget(IWorkbenchWindow window) {
+			fWindow = window;
 		}
 
 		void init() {
-            DebugCommandService.getService(fWindow).updateCommand(getCommandType(), this);
-            getContextService(fWindow).addDebugContextListener(this);
+			DebugCommandService.getService(fWindow).updateCommand(getCommandType(), this);
+			getContextService(fWindow).addDebugContextListener(this);
 		}
 
-        @Override
+		@Override
 		public void setEnabled(boolean enabled) {
-            boolean oldEnabled = fEnabled;
-            fEnabled = enabled;
-            if (fEnabled != oldEnabled && fCurrentEnabledTarget == this) {
-                fireHandlerChanged(new HandlerEvent(DebugCommandHandler.this, true, false));
-            }
-        }
+			boolean oldEnabled = fEnabled;
+			fEnabled = enabled;
+			if (fEnabled != oldEnabled && fCurrentEnabledTarget == this) {
+				fireHandlerChanged(new HandlerEvent(DebugCommandHandler.this, true, false));
+			}
+		}
 
-        @Override
+		@Override
 		public void debugContextChanged(DebugContextEvent event) {
-            DebugCommandService.getService(fWindow).postUpdateCommand(getCommandType(), this);
-        }
+			DebugCommandService.getService(fWindow).postUpdateCommand(getCommandType(), this);
+		}
 
-        void dispose() {
-            if (isDisposed()) {
-                return;
-            }
-            getContextService(fWindow).removeDebugContextListener(this);
-            fWindow = null;
-        }
+		void dispose() {
+			if (isDisposed()) {
+				return;
+			}
+			getContextService(fWindow).removeDebugContextListener(this);
+			fWindow = null;
+		}
 
-        boolean isDisposed() {
-            return fWindow == null;
-        }
-    }
+		boolean isDisposed() {
+			return fWindow == null;
+		}
+	}
 
-    /**
-     * Window listener is used to make sure that the handler enablement
-     * is updated when the active workbench window is changed.
-     */
-    private IWindowListener fWindowListener =  new IWindowListener() {
+	/**
+	 * Window listener is used to make sure that the handler enablement
+	 * is updated when the active workbench window is changed.
+	 */
+	private IWindowListener fWindowListener =  new IWindowListener() {
 
-        @Override
+		@Override
 		public void windowOpened(IWorkbenchWindow w) {
-        }
+		}
 
-        @Override
+		@Override
 		public void windowDeactivated(IWorkbenchWindow w) {
-        }
+		}
 
-        @Override
+		@Override
 		public void windowClosed(IWorkbenchWindow w) {
-            EnabledTarget enabledTarget = fEnabledTargetsMap.get(w);
-            if (enabledTarget != null) {
-                enabledTarget.dispose();
-            }
-        }
+			EnabledTarget enabledTarget = fEnabledTargetsMap.get(w);
+			if (enabledTarget != null) {
+				enabledTarget.dispose();
+			}
+		}
 
-        @Override
+		@Override
 		public void windowActivated(IWorkbenchWindow w) {
-            fCurrentEnabledTarget = fEnabledTargetsMap.get(w);
-            fireHandlerChanged(new HandlerEvent(DebugCommandHandler.this, true, false));
-        }
-    };
+			fCurrentEnabledTarget = fEnabledTargetsMap.get(w);
+			fireHandlerChanged(new HandlerEvent(DebugCommandHandler.this, true, false));
+		}
+	};
 
-    /**
-     * Map of enabled targets keyed by workbench window.
-     */
-    private Map<IWorkbenchWindow, EnabledTarget> fEnabledTargetsMap = new WeakHashMap<>();
+	/**
+	 * Map of enabled targets keyed by workbench window.
+	 */
+	private Map<IWorkbenchWindow, EnabledTarget> fEnabledTargetsMap = new WeakHashMap<>();
 
-    /**
-     * The current enabled target, based on the active
-     * workbench window.
-     */
-    private EnabledTarget fCurrentEnabledTarget = null;
+	/**
+	 * The current enabled target, based on the active
+	 * workbench window.
+	 */
+	private EnabledTarget fCurrentEnabledTarget = null;
 
-    /**
-      * The constructor adds the handler as the
-     */
-    public DebugCommandHandler() {
-        super();
-        PlatformUI.getWorkbench().addWindowListener(fWindowListener);
-    }
+	/**
+	 * The constructor adds the handler as the
+	 */
+	public DebugCommandHandler() {
+		super();
+		PlatformUI.getWorkbench().addWindowListener(fWindowListener);
+	}
 
-    @Override
+	@Override
 	public void setEnabled(Object evaluationContext) {
-        // This method is called with the current evaluation context
-        // just prior to the isEnabled() being called.  Check the active
-        // window and update the current enabled target based on it
-        fCurrentEnabledTarget = null;
+		// This method is called with the current evaluation context
+		// just prior to the isEnabled() being called.  Check the active
+		// window and update the current enabled target based on it
+		fCurrentEnabledTarget = null;
 
-        if (!(evaluationContext instanceof IEvaluationContext)) {
-            return;
-        }
-        IEvaluationContext context = (IEvaluationContext) evaluationContext;
-        Object _window = context.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-        if (_window instanceof IWorkbenchWindow) {
-            IWorkbenchWindow window = (IWorkbenchWindow)_window;
-            fCurrentEnabledTarget = getEnabledTarget(window);
-        }
-    }
+		if (!(evaluationContext instanceof IEvaluationContext)) {
+			return;
+		}
+		IEvaluationContext context = (IEvaluationContext) evaluationContext;
+		Object _window = context.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+		if (_window instanceof IWorkbenchWindow) {
+			IWorkbenchWindow window = (IWorkbenchWindow)_window;
+			fCurrentEnabledTarget = getEnabledTarget(window);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean isEnabled() {
-        if (fCurrentEnabledTarget == null) {
-            return false;
-        }
-        return fCurrentEnabledTarget.fEnabled;
-    }
+		if (fCurrentEnabledTarget == null) {
+			return false;
+		}
+		return fCurrentEnabledTarget.fEnabled;
+	}
 
-    private EnabledTarget getEnabledTarget(IWorkbenchWindow window) {
-        EnabledTarget target = fEnabledTargetsMap.get(window);
-        if (target == null) {
-            target = new EnabledTarget(window);
+	private EnabledTarget getEnabledTarget(IWorkbenchWindow window) {
+		EnabledTarget target = fEnabledTargetsMap.get(window);
+		if (target == null) {
+			target = new EnabledTarget(window);
 			fEnabledTargetsMap.put(window, target);
 			target.init();
-        }
-        return target;
-    }
+		}
+		return target;
+	}
 
-    @Override
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-        IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-        if (window == null) {
-            throw new ExecutionException("No active workbench window."); //$NON-NLS-1$
-        }
-        fCurrentEnabledTarget = getEnabledTarget(window);
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+		if (window == null) {
+			throw new ExecutionException("No active workbench window."); //$NON-NLS-1$
+		}
+		fCurrentEnabledTarget = getEnabledTarget(window);
 
-        ISelection selection = getContextService(window).getActiveContext();
-        if (selection instanceof IStructuredSelection && isEnabled()) {
-            IStructuredSelection ss = (IStructuredSelection) selection;
-            boolean enabledAfterExecute = execute(window, ss.toArray());
+		ISelection selection = getContextService(window).getActiveContext();
+		if (selection instanceof IStructuredSelection && isEnabled()) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			boolean enabledAfterExecute = execute(window, ss.toArray());
 
-            // enable/disable the action according to the command
-            fCurrentEnabledTarget.setEnabled(enabledAfterExecute);
-        }
+			// enable/disable the action according to the command
+			fCurrentEnabledTarget.setEnabled(enabledAfterExecute);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private IDebugContextService getContextService(IWorkbenchWindow window) {
-        return DebugUITools.getDebugContextManager().getContextService(window);
-    }
+	private IDebugContextService getContextService(IWorkbenchWindow window) {
+		return DebugUITools.getDebugContextManager().getContextService(window);
+	}
 
-    /**
-     * Executes this action on the given target objects
-     * @param window the window
-     * @param targets the targets to execute this action on
-     * @return  if the command stays enabled while the command executes
-     */
-    private boolean execute(IWorkbenchWindow window, final Object[] targets) {
-        DebugCommandService service = DebugCommandService.getService(window);
-    	return service.executeCommand(
-    	    getCommandType(), targets,
-            new ICommandParticipant() {
-                @Override
+	/**
+	 * Executes this action on the given target objects
+	 * @param window the window
+	 * @param targets the targets to execute this action on
+	 * @return  if the command stays enabled while the command executes
+	 */
+	private boolean execute(IWorkbenchWindow window, final Object[] targets) {
+		DebugCommandService service = DebugCommandService.getService(window);
+		return service.executeCommand(
+			getCommandType(), targets,
+			new ICommandParticipant() {
+				@Override
 				public void requestDone(org.eclipse.debug.core.IRequest request) {
-                    DebugCommandHandler.this.postExecute(request, targets);
-                }
-            });
-    }
+					DebugCommandHandler.this.postExecute(request, targets);
+				}
+			});
+	}
 
-    /**
-     * This method is called after the completion of the execution of this
-     * command.  Extending classes may override this method to perform additional
-     * operation after command execution.
-     *
-     * @param request The completed request object which was given the the
-     * debug command handler.
-     * @param targets Objects which were the targets of this action
-     */
-    protected void postExecute(IRequest request, Object[] targets) {
-        // do nothing by default
-    }
+	/**
+	 * This method is called after the completion of the execution of this
+	 * command.  Extending classes may override this method to perform additional
+	 * operation after command execution.
+	 *
+	 * @param request The completed request object which was given the the
+	 * debug command handler.
+	 * @param targets Objects which were the targets of this action
+	 */
+	protected void postExecute(IRequest request, Object[] targets) {
+		// do nothing by default
+	}
 
-    /**
-     * Returns the {@link org.eclipse.debug.core.commands.IDebugCommandHandler}
-     * command handler that type this action executes.
-     *
-     * @return command class.
-     *
-     * @see org.eclipse.debug.core.commands.IDebugCommandHandler
-     */
+	/**
+	 * Returns the {@link org.eclipse.debug.core.commands.IDebugCommandHandler}
+	 * command handler that type this action executes.
+	 *
+	 * @return command class.
+	 *
+	 * @see org.eclipse.debug.core.commands.IDebugCommandHandler
+	 */
 	abstract protected Class<?> getCommandType();
 
 
-    /**
-     * Returns whether this action should be enabled when initialized
-     * and there is no active debug context.
-     *
-     * @return false, by default
-     */
-    protected boolean getInitialEnablement() {
-    	return false;
-    }
+	/**
+	 * Returns whether this action should be enabled when initialized
+	 * and there is no active debug context.
+	 *
+	 * @return false, by default
+	 */
+	protected boolean getInitialEnablement() {
+		return false;
+	}
 
 
-    /**
-     * Clean up when removing
-     */
-    @Override
+	/**
+	 * Clean up when removing
+	 */
+	@Override
 	public void dispose() {
-        PlatformUI.getWorkbench().removeWindowListener(fWindowListener);
-        for(EnabledTarget target : fEnabledTargetsMap.values()) {
-            if (!target.isDisposed()) {
-                target.dispose();
-            }
-        }
-        fEnabledTargetsMap.clear();
-        fCurrentEnabledTarget = null;
-    }
+		PlatformUI.getWorkbench().removeWindowListener(fWindowListener);
+		for(EnabledTarget target : fEnabledTargetsMap.values()) {
+			if (!target.isDisposed()) {
+				target.dispose();
+			}
+		}
+		fEnabledTargetsMap.clear();
+		fCurrentEnabledTarget = null;
+	}
 }

@@ -84,7 +84,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 				if (configuration != null) {
 					ILaunchGroup group= DebugUITools.getLaunchGroup(configuration, getMode());
 					if (group == null) {
-					    return false;
+						return false;
 					}
 					setGroup(group);
 					setLaunchConfiguration(configuration);

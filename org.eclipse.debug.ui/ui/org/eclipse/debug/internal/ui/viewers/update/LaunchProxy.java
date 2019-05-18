@@ -130,13 +130,13 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 			}
 			List<Object> childrenList = Arrays.asList(children);
 			for (Iterator<Object> itr = fPrevChildren.iterator(); itr.hasNext();) {
-	            Object child = itr.next();
-	            if (!childrenList.contains(child)) {
-	                itr.remove();
-	                changes = true;
-	                launchDelta.addNode(child, IModelDelta.UNINSTALL);
-	            }
-	        }
+				Object child = itr.next();
+				if (!childrenList.contains(child)) {
+					itr.remove();
+					changes = true;
+					launchDelta.addNode(child, IModelDelta.UNINSTALL);
+				}
+			}
 		}
 		if (changes) {
 			fireModelChanged(root);

@@ -29,13 +29,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAStackDepthCommand extends PDACommand {
 
-    public PDAStackDepthCommand(int threadId) {
-        super("stackdepth " + threadId); //$NON-NLS-1$
-    }
+	public PDAStackDepthCommand(int threadId) {
+		super("stackdepth " + threadId); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDAStackDepthCommandResult(resultText);
-    }
+		return new PDAStackDepthCommandResult(resultText);
+	}
 }

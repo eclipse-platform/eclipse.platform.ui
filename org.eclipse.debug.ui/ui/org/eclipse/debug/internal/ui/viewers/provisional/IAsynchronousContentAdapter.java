@@ -25,27 +25,27 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 public interface IAsynchronousContentAdapter {
 
-    /**
-     * Asynchronously retrieves the children of the given parent reporting to the
-     * given monitor. If unable to retrieve children, an exception should be reported
-     * to the monitor with an appropriate status.
-     *
-     * @param parent the element to retrieve children for
-     * @param context the context in which children have been requested
-     * @param monitor request monitor to report children to
-     */
-    void retrieveChildren(Object parent, IPresentationContext context, IChildrenRequestMonitor result);
+	/**
+	 * Asynchronously retrieves the children of the given parent reporting to the
+	 * given monitor. If unable to retrieve children, an exception should be reported
+	 * to the monitor with an appropriate status.
+	 *
+	 * @param parent the element to retrieve children for
+	 * @param context the context in which children have been requested
+	 * @param monitor request monitor to report children to
+	 */
+	void retrieveChildren(Object parent, IPresentationContext context, IChildrenRequestMonitor result);
 
-    /**
-     * Asynchronously determines whether the given element contains children in the specified
-     * context reporting the result to the given monitor. If unable to determine
-     * whether the element has children, an exception should be reported to the monitor
-     * with an appropriate status.
-     *
-     * @param element the element on which children may exist
-     * @param context the context in which children may exist
-     * @param monitor request monitor to report the result to
-     */
-    void isContainer(Object element, IPresentationContext context, IContainerRequestMonitor result);
+	/**
+	 * Asynchronously determines whether the given element contains children in the specified
+	 * context reporting the result to the given monitor. If unable to determine
+	 * whether the element has children, an exception should be reported to the monitor
+	 * with an appropriate status.
+	 *
+	 * @param element the element on which children may exist
+	 * @param context the context in which children may exist
+	 * @param monitor request monitor to report the result to
+	 */
+	void isContainer(Object element, IPresentationContext context, IContainerRequestMonitor result);
 
 }

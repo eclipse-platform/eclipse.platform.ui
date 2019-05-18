@@ -59,22 +59,22 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private CheckboxTableViewer fPerspectiveViewer;
 	private Button fTrackViewsButton;
 	private Button fResetViewsButton;
-    // This flag indicates whether or not the user has pressed the reset button
+	// This flag indicates whether or not the user has pressed the reset button
 	private boolean fResetPressed= false;
 	private PerspectiveLabelProvider fLabelProvider= null;
-    private SelectionListener fSelectionListener= new SelectionAdapter() {
+	private SelectionListener fSelectionListener= new SelectionAdapter() {
 
-        @Override
+		@Override
 		public void widgetSelected(SelectionEvent e) {
-            Object source = e.getSource();
-            if (source == fResetViewsButton) {
-                handleResetPressed();
-            } else if (source == fTrackViewsButton) {
-                handleTrackViewsToggled();
-            }
-        }
+			Object source = e.getSource();
+			if (source == fResetViewsButton) {
+				handleResetPressed();
+			} else if (source == fTrackViewsButton) {
+				handleTrackViewsToggled();
+			}
+		}
 
-    };
+	};
 
 	public ViewManagementPreferencePage() {
 		super();
@@ -83,7 +83,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		setPreferenceStore(DebugUITools.getPreferenceStore());
 	}
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.VIEW_MANAGEMENT_PREFERENCE_PAGE);
@@ -113,7 +113,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fTrackViewsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTrackViewsButton.setText(DebugPreferencesMessages.ViewManagementPreferencePage_3);
 		fTrackViewsButton.setSelection(DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
-        fTrackViewsButton.addSelectionListener(fSelectionListener);
+		fTrackViewsButton.addSelectionListener(fSelectionListener);
 
 		Label label= new Label(composite, SWT.WRAP);
 		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_4);
@@ -125,20 +125,20 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		updateResetButton();
 	}
 
-    private void handleResetPressed() {
-        fResetPressed= true;
-        fResetViewsButton.setEnabled(false);
-    }
+	private void handleResetPressed() {
+		fResetPressed= true;
+		fResetViewsButton.setEnabled(false);
+	}
 
-    protected void handleTrackViewsToggled() {
-        if (fTrackViewsButton.getSelection()) {
-            // When toggled on, possibly re-enable the reset button
-            updateResetButton();
-        } else {
-            // When toggled off, disable the reset button
-            fResetViewsButton.setEnabled(false);
-        }
-    }
+	protected void handleTrackViewsToggled() {
+		if (fTrackViewsButton.getSelection()) {
+			// When toggled on, possibly re-enable the reset button
+			updateResetButton();
+		} else {
+			// When toggled off, disable the reset button
+			fResetViewsButton.setEnabled(false);
+		}
+	}
 
 	/**
 	 * @param parent
@@ -162,12 +162,12 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 
 		Set<String> perspectives;
 		String preference = DebugUIPlugin.getDefault().getPreferenceStore().getString(
-            IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
-        if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT.equals(preference)) {
-            perspectives = ViewContextService.getDefaultEnabledPerspectives();
-        } else {
-            perspectives = ViewContextService.parseList(preference);
-        }
+			IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
+		if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT.equals(preference)) {
+			perspectives = ViewContextService.getDefaultEnabledPerspectives();
+		} else {
+			perspectives = ViewContextService.parseList(preference);
+		}
 		checkPerspectives(perspectives);
 	}
 
@@ -176,9 +176,9 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
 		for (String id : perspectives) {
 			IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId(id);
-            if (descriptor != null) {
-                fPerspectiveViewer.setChecked(descriptor, true);
-            }
+			if (descriptor != null) {
+				fPerspectiveViewer.setChecked(descriptor, true);
+			}
 		}
 	}
 
@@ -187,23 +187,23 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		Object[] descriptors = fPerspectiveViewer.getCheckedElements();
 		Set<String> perspectives = new HashSet<>();
 		for (int i = 0; i < descriptors.length; i++) {
-		    perspectives.add( ((IPerspectiveDescriptor)descriptors[i]).getId() );
+			perspectives.add( ((IPerspectiveDescriptor)descriptors[i]).getId() );
 		}
 		if (perspectives.equals(ViewContextService.getDefaultEnabledPerspectives())) {
-		    getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES,
-		                                  IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
+			getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES,
+										  IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
 		} else {
-		    StringBuilder buffer= new StringBuilder();
+			StringBuilder buffer= new StringBuilder();
 			for (Iterator<String> itr = perspectives.iterator(); itr.hasNext();) {
-                buffer.append(itr.next()).append(',');
-    		}
-    		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
+				buffer.append(itr.next()).append(',');
+			}
+			getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
 		}
 
 		boolean trackViews = fTrackViewsButton.getSelection();
-        getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, trackViews);
+		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, trackViews);
 		if (fResetPressed || !trackViews) {
-            // Reset if the user has pressed reset or chosen to no longer track views
+			// Reset if the user has pressed reset or chosen to no longer track views
 			getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, IInternalDebugCoreConstants.EMPTY_STRING);
 		}
 		return super.performOk();
@@ -211,7 +211,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 
 	@Override
 	protected void performDefaults() {
-        checkPerspectives( ViewContextService.getDefaultEnabledPerspectives() );
+		checkPerspectives( ViewContextService.getDefaultEnabledPerspectives() );
 		fTrackViewsButton.setSelection(getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
 		fResetPressed= false;
 		updateResetButton();
@@ -225,12 +225,12 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	/**
 	 * Updates enablement of the reset button.
 	 * Enable if either persisted view collection is not empty.
-     * Always disable if "track views" is turned off.
+	 * Always disable if "track views" is turned off.
 	 */
 	private void updateResetButton() {
 		boolean enableReset= !IInternalDebugCoreConstants.EMPTY_STRING.equals(getPreferenceStore().getString(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS));
-        // Only enable the button if there are views to clear, the user hasn't pressed the reset
-        // button, and the option to "track views" is turned on.
+		// Only enable the button if there are views to clear, the user hasn't pressed the reset
+		// button, and the option to "track views" is turned on.
 		fResetViewsButton.setEnabled(enableReset && !fResetPressed && fTrackViewsButton.getSelection());
 	}
 
@@ -245,21 +245,21 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
-        @Override
+		@Override
 		public void dispose() {
-        }
+		}
 
 	}
 
 	private static class PerspectiveComparator extends ViewerComparator {
 
-	    @Override
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-	    	if (e1 instanceof IPerspectiveDescriptor && e2 instanceof IPerspectiveDescriptor) {
-	    		return ((IPerspectiveDescriptor) e1).getLabel().compareToIgnoreCase(((IPerspectiveDescriptor) e2).getLabel());
-	    	}
-	    	return super.compare(viewer, e1, e2);
-	    }
+			if (e1 instanceof IPerspectiveDescriptor && e2 instanceof IPerspectiveDescriptor) {
+				return ((IPerspectiveDescriptor) e1).getLabel().compareToIgnoreCase(((IPerspectiveDescriptor) e2).getLabel());
+			}
+			return super.compare(viewer, e1, e2);
+		}
 	}
 
 	@Override

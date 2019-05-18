@@ -27,14 +27,14 @@ import org.eclipse.ui.XMLMemento;
  */
 public class PresentationContextTests extends AbstractDebugTest {
 
-    public PresentationContextTests(String name) {
-        super(name);
-    }
+	public PresentationContextTests(String name) {
+		super(name);
+	}
 
-    /**
-     * Tests saving and restoring presentation context properties.
-     */
-    public void testSaveRestore () {
+	/**
+	 * Tests saving and restoring presentation context properties.
+	 */
+	public void testSaveRestore () {
 		PresentationContext context = new PresentationContext("test"); //$NON-NLS-1$
 		context.setProperty("string", "string"); //$NON-NLS-1$ //$NON-NLS-2$
 		context.setProperty("integer", Integer.valueOf(1)); //$NON-NLS-1$
@@ -42,15 +42,15 @@ public class PresentationContextTests extends AbstractDebugTest {
 		context.setProperty("persistable", ResourcesPlugin.getWorkspace().getRoot().getAdapter(IPersistableElement.class)); //$NON-NLS-1$
 
 		final XMLMemento memento = XMLMemento.createWriteRoot("TEST"); //$NON-NLS-1$
-        context.saveProperites(memento);
+		context.saveProperites(memento);
 
 		context = new PresentationContext("test"); //$NON-NLS-1$
-        context.initProperties(memento);
+		context.initProperties(memento);
 		assertEquals("Wrong value restored", "string", context.getProperty("string")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("Wrong value restored", Integer.valueOf(1), context.getProperty("integer")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong value restored", Boolean.TRUE, context.getProperty("boolean")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong value restored", ResourcesPlugin.getWorkspace().getRoot(), context.getProperty("persistable")); //$NON-NLS-1$ //$NON-NLS-2$
-        context.dispose();
-    }
+		context.dispose();
+	}
 
 }

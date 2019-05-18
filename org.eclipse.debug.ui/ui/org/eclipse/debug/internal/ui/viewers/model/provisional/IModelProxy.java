@@ -69,8 +69,8 @@ public interface IModelProxy {
 	 * This method is called by the asynchronous viewer framework and should not
 	 * be called by clients.
 	 * </p>
-     * @param viewer viewer
-     * @see IModelProxy2#initialize(ITreeModelViewer)
+	 * @param viewer viewer
+	 * @see IModelProxy2#initialize(ITreeModelViewer)
 	 * @since 3.3
 	 */
 	void installed(Viewer viewer);

@@ -37,29 +37,29 @@ public class DynamicRenderingBindings extends AbstractMemoryRenderingBindingsPro
 		fgSingleton = this;
 	}
 
-    /**
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
+	 */
+	@Override
 	public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
-        return new IMemoryRenderingType[]{getPrimaryRenderingType(block)};
-    }
+		return new IMemoryRenderingType[]{getPrimaryRenderingType(block)};
+	}
 
-    /**
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getDefaultRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getDefaultRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
+	 */
+	@Override
 	public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
-        return new IMemoryRenderingType[]{getPrimaryRenderingType(block)};
-    }
+		return new IMemoryRenderingType[]{getPrimaryRenderingType(block)};
+	}
 
-    /**
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
-     */
-    @Override
+	/**
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
+	 */
+	@Override
 	public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
-        return DebugUITools.getMemoryRenderingManager().getRenderingType(fId);
-    }
+		return DebugUITools.getMemoryRenderingManager().getRenderingType(fId);
+	}
 
 	/**
 	 * Sets the current rendering bound to this provider, and notifies

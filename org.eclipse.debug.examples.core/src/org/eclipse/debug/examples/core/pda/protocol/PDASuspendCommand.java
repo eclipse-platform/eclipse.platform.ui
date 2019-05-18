@@ -33,13 +33,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDASuspendCommand extends PDACommand {
 
-    public PDASuspendCommand(int threadId) {
-        super("suspend " + threadId); //$NON-NLS-1$
-    }
+	public PDASuspendCommand(int threadId) {
+		super("suspend " + threadId); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

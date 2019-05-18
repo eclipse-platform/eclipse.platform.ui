@@ -69,8 +69,8 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 		IProcess process = fConsole.getProcess();
 		List<ITerminate> targets = collectTargets(process);
 		targets.add(process);
-        DebugCommandService service = DebugCommandService.getService(fWindow);
-        service.executeCommand(ITerminateHandler.class, targets.toArray(), null);
+		DebugCommandService service = DebugCommandService.getService(fWindow);
+		service.executeCommand(ITerminateHandler.class, targets.toArray(), null);
 	}
 
 	/**
@@ -80,28 +80,28 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	 * @return associated targets
 	 */
 	private List<ITerminate> collectTargets(IProcess process) {
-        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-        ILaunch[] launches = launchManager.getLaunches();
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
 		List<ITerminate> targets = new ArrayList<>();
-        for (int i = 0; i < launches.length; i++) {
-            ILaunch launch = launches[i];
-            IProcess[] processes = launch.getProcesses();
-            for (int j = 0; j < processes.length; j++) {
-                IProcess process2 = processes[j];
-                if (process2.equals(process)) {
-                    IDebugTarget[] debugTargets = launch.getDebugTargets();
-                    for (int k = 0; k < debugTargets.length; k++) {
-                        targets.add(debugTargets[k]);
-                    }
-                    return targets; // all possible targets have been terminated for the launch.
-                }
-            }
-        }
-        return targets;
-    }
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			IProcess[] processes = launch.getProcesses();
+			for (int j = 0; j < processes.length; j++) {
+				IProcess process2 = processes[j];
+				if (process2.equals(process)) {
+					IDebugTarget[] debugTargets = launch.getDebugTargets();
+					for (int k = 0; k < debugTargets.length; k++) {
+						targets.add(debugTargets[k]);
+					}
+					return targets; // all possible targets have been terminated for the launch.
+				}
+			}
+		}
+		return targets;
+	}
 
-    public void dispose() {
-	    fConsole = null;
+	public void dispose() {
+		fConsole = null;
 	}
 
 }

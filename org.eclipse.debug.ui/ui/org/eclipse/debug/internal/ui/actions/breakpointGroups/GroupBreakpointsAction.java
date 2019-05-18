@@ -26,39 +26,39 @@ import org.eclipse.jface.action.IAction;
  */
 public class GroupBreakpointsAction extends Action {
 
-    private IBreakpointOrganizer fOrganzier;
-    private BreakpointsView fView;
+	private IBreakpointOrganizer fOrganzier;
+	private BreakpointsView fView;
 
-    /**
-     * Creates a new action which will group breakpoints in the given
-     * breakpoint view using the given breakpoint container factory
-     * @param factory the factory that will be applied to the given view
-     *  when this action is run
-     * @param view the breakpoints view
-     */
-    public GroupBreakpointsAction(IBreakpointOrganizer organizer, BreakpointsView view) {
-        super(IInternalDebugCoreConstants.EMPTY_STRING, IAction.AS_RADIO_BUTTON);
-        fOrganzier= organizer;
-        fView= view;
-    }
+	/**
+	 * Creates a new action which will group breakpoints in the given
+	 * breakpoint view using the given breakpoint container factory
+	 * @param factory the factory that will be applied to the given view
+	 *  when this action is run
+	 * @param view the breakpoints view
+	 */
+	public GroupBreakpointsAction(IBreakpointOrganizer organizer, BreakpointsView view) {
+		super(IInternalDebugCoreConstants.EMPTY_STRING, IAction.AS_RADIO_BUTTON);
+		fOrganzier= organizer;
+		fView= view;
+	}
 
-    @Override
+	@Override
 	public void run() {
-        if (isChecked()) {
-            if (fOrganzier == null) {
-                fView.setBreakpointOrganizers(null);
-            } else {
-                fView.setBreakpointOrganizers(new IBreakpointOrganizer[]{fOrganzier});
-            }
-        }
-    }
+		if (isChecked()) {
+			if (fOrganzier == null) {
+				fView.setBreakpointOrganizers(null);
+			} else {
+				fView.setBreakpointOrganizers(new IBreakpointOrganizer[]{fOrganzier});
+			}
+		}
+	}
 
-    /**
-     * Returns this action's organizer.
-     *
-     * @return breakpoint organizer
-     */
-    public IBreakpointOrganizer getOrganizer() {
-    	return fOrganzier;
-    }
+	/**
+	 * Returns this action's organizer.
+	 *
+	 * @return breakpoint organizer
+	 */
+	public IBreakpointOrganizer getOrganizer() {
+		return fOrganzier;
+	}
 }

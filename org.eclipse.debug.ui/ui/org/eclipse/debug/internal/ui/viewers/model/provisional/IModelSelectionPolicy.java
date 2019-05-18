@@ -85,5 +85,5 @@ public interface IModelSelectionPolicy {
 	 *            the selection after the update, or <code>null</code> if none
 	 * @return new selection or <code>null</code> if none
 	 */
-    ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection);
+	ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection);
 }

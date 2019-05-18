@@ -25,17 +25,17 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class JFaceViewerPerformanceTests extends PerformanceTests {
 
-    public JFaceViewerPerformanceTests(String name) {
-        super(name);
-    }
+	public JFaceViewerPerformanceTests(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
-    }
+	}
 
-    @Override
+	@Override
 	protected int getTestModelDepth() {
-        return 5;
-    }
+		return 5;
+	}
 }

@@ -45,110 +45,110 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class ExpressionManagerContentProvider extends ElementContentProvider {
 
-    /**
-     * An element representing the "Add new expression" entry in the
-     * expressions view.
-     *
-     * @since 3.6
-     */
-    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, ICellModifier {
+	/**
+	 * An element representing the "Add new expression" entry in the
+	 * expressions view.
+	 *
+	 * @since 3.6
+	 */
+	private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, ICellModifier {
 
-        @Override
+		@Override
 		public void update(ILabelUpdate[] updates) {
-            for (int i = 0; i < updates.length; i++) {
-                String[] columnIds = updates[i].getColumnIds();
-                if (columnIds == null) {
-                    updateLabel(updates[i], 0);
-                } else {
-                    for (int j = 0; j < columnIds.length; j++) {
-                        if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnIds[j])) {
-                            updateLabel(updates[i], j);
-                        } else {
-                            updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
-                        }
-                    }
-                }
+			for (int i = 0; i < updates.length; i++) {
+				String[] columnIds = updates[i].getColumnIds();
+				if (columnIds == null) {
+					updateLabel(updates[i], 0);
+				} else {
+					for (int j = 0; j < columnIds.length; j++) {
+						if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnIds[j])) {
+							updateLabel(updates[i], j);
+						} else {
+							updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
+						}
+					}
+				}
 
-                updates[i].done();
-            }
-        }
+				updates[i].done();
+			}
+		}
 
 		@SuppressWarnings("deprecation")
 		private void updateLabel(ILabelUpdate update, int columnIndex) {
-            update.setLabel(DebugUIMessages.ExpressionManagerContentProvider_1, columnIndex);
-            update.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION), columnIndex);
+			update.setLabel(DebugUIMessages.ExpressionManagerContentProvider_1, columnIndex);
+			update.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION), columnIndex);
 
-            // Display the "Add new expression" element in italic to
-            // distinguish it from user elements in view.
-            FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
-            fontData.setStyle(SWT.ITALIC);
-            update.setFontData(fontData, columnIndex);
-        }
+			// Display the "Add new expression" element in italic to
+			// distinguish it from user elements in view.
+			FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
+			fontData.setStyle(SWT.ITALIC);
+			update.setFontData(fontData, columnIndex);
+		}
 
-        @Override
+		@Override
 		public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
-            return new TextCellEditor(parent);
-        }
+			return new TextCellEditor(parent);
+		}
 
-        @Override
+		@Override
 		public ICellModifier getCellModifier(IPresentationContext context, Object element) {
-            return this;
-        }
+			return this;
+		}
 
-        @Override
+		@Override
 		public boolean canModify(Object element, String property) {
-            return (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(property));
-        }
+			return (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(property));
+		}
 
-        @Override
+		@Override
 		public Object getValue(Object element, String property) {
-            return IInternalDebugCoreConstants.EMPTY_STRING;
-        }
+			return IInternalDebugCoreConstants.EMPTY_STRING;
+		}
 
-        @Override
+		@Override
 		public void modify(Object element, String property, Object value) {
-            // If an expression is entered, add a new watch expression to the
-            // manager.
-            if (value instanceof String &&
-                !IInternalDebugCoreConstants.EMPTY_STRING.equals( ((String)value).trim()) )
-            {
-                String expressionText = DefaultLabelProvider.encodeEsacpedChars((String)value);
-                IWatchExpression newExpression=
-                    DebugPlugin.getDefault().getExpressionManager().newWatchExpression(expressionText);
-                DebugPlugin.getDefault().getExpressionManager().addExpression(newExpression);
-                newExpression.setExpressionContext(getContext());
-            }
-        }
+			// If an expression is entered, add a new watch expression to the
+			// manager.
+			if (value instanceof String &&
+				!IInternalDebugCoreConstants.EMPTY_STRING.equals( ((String)value).trim()) )
+			{
+				String expressionText = DefaultLabelProvider.encodeEsacpedChars((String)value);
+				IWatchExpression newExpression=
+					DebugPlugin.getDefault().getExpressionManager().newWatchExpression(expressionText);
+				DebugPlugin.getDefault().getExpressionManager().addExpression(newExpression);
+				newExpression.setExpressionContext(getContext());
+			}
+		}
 
-        private IDebugElement getContext() {
-            IAdaptable object = DebugUITools.getDebugContext();
-            IDebugElement context = null;
-            if (object instanceof IDebugElement) {
-                context = (IDebugElement) object;
-            } else if (object instanceof ILaunch) {
-                context = ((ILaunch) object).getDebugTarget();
-            }
-            return context;
-        }
+		private IDebugElement getContext() {
+			IAdaptable object = DebugUITools.getDebugContext();
+			IDebugElement context = null;
+			if (object instanceof IDebugElement) {
+				context = (IDebugElement) object;
+			} else if (object instanceof ILaunch) {
+				context = ((ILaunch) object).getDebugTarget();
+			}
+			return context;
+		}
 
-    }
+	}
 
-    private static final AddNewExpressionElement ADD_NEW_EXPRESSION_ELEMENT = new AddNewExpressionElement();
+	private static final AddNewExpressionElement ADD_NEW_EXPRESSION_ELEMENT = new AddNewExpressionElement();
 
 	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-	    // Add the "Add new expression" element only if columns are displayed.
+		// Add the "Add new expression" element only if columns are displayed.
 		return ((IExpressionManager) element).getExpressions().length +
-		    (context.getColumns() != null ? 1 : 0);
+			(context.getColumns() != null ? 1 : 0);
 	}
 
 	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-	    if (context.getColumns() != null) {
-	        return getElements(((IExpressionManager) parent).getExpressions(), ADD_NEW_EXPRESSION_ELEMENT, index, length);
-	    } else {
-	        return getElements(((IExpressionManager) parent).getExpressions(), index, length);
-	    }
+		if (context.getColumns() != null) {
+			return getElements(((IExpressionManager) parent).getExpressions(), ADD_NEW_EXPRESSION_ELEMENT, index, length);
+		} else {
+			return getElements(((IExpressionManager) parent).getExpressions(), index, length);
+		}
 	}
 
 	/**
@@ -158,22 +158,22 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 	 *
 	 * @since 3.6
 	 */
-    private Object[] getElements(Object[] elements, Object lastElement, int index, int length) {
+	private Object[] getElements(Object[] elements, Object lastElement, int index, int length) {
 
-        int max = elements.length + 1;
-        if (index < max && ((index + length) > max)) {
-            length = max - index;
-        }
-        if ((index + length) <= max) {
-            Object[] sub = new Object[length];
-            System.arraycopy(elements, index, sub, 0, Math.min(elements.length - index, length));
-            if (index + length > elements.length) {
-                sub[length - 1] = lastElement;
-            }
-            return sub;
-        }
-        return null;
-    }
+		int max = elements.length + 1;
+		if (index < max && ((index + length) > max)) {
+			length = max - index;
+		}
+		if ((index + length) <= max) {
+			Object[] sub = new Object[length];
+			System.arraycopy(elements, index, sub, 0, Math.min(elements.length - index, length));
+			if (index + length > elements.length) {
+				sub[length - 1] = lastElement;
+			}
+			return sub;
+		}
+		return null;
+	}
 
 	@Override
 	protected boolean supportsContextId(String id) {
@@ -182,7 +182,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 
 	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-	    return true;
+		return true;
 	}
 
 }

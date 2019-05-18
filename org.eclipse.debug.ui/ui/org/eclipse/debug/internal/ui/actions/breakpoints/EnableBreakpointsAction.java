@@ -150,20 +150,20 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		boolean allDisabled= true;
 		while (itr.hasNext()) {
 			Object selected= itr.next();
-            IBreakpoint bp = (IBreakpoint)DebugPlugin.getAdapter(selected, IBreakpoint.class);
+			IBreakpoint bp = (IBreakpoint)DebugPlugin.getAdapter(selected, IBreakpoint.class);
 
-            if (bp != null) {
-                try {
-                    if (bp.isEnabled()) {
-                        allDisabled= false;
-                    } else {
-                        allEnabled= false;
-                    }
-                } catch (CoreException ce) {
-                    handleException(ce);
-                }
-            }
-            else if (selected instanceof IBreakpointContainer) {
+			if (bp != null) {
+				try {
+					if (bp.isEnabled()) {
+						allDisabled= false;
+					} else {
+						allEnabled= false;
+					}
+				} catch (CoreException ce) {
+					handleException(ce);
+				}
+			}
+			else if (selected instanceof IBreakpointContainer) {
 				IBreakpoint[] breakpoints = ((IBreakpointContainer) selected).getBreakpoints();
 				for (int i = 0; i < breakpoints.length; i++) {
 					try {

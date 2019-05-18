@@ -28,12 +28,12 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAPopDataCommand extends PDACommand {
 
-    public PDAPopDataCommand(int threadId) {
-        super("popdata " + threadId); //$NON-NLS-1$
-    }
+	public PDAPopDataCommand(int threadId) {
+		super("popdata " + threadId); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

@@ -33,90 +33,90 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 
-    /**
-     * Presentation context
-     */
-    private IPresentationContext fContext;
+	/**
+	 * Presentation context
+	 */
+	private IPresentationContext fContext;
 
-    /**
-     * New viewer input
-     */
-    private Object fSource;
+	/**
+	 * New viewer input
+	 */
+	private Object fSource;
 
-    /**
-     * Whether this update is done
-     */
-    private boolean fDone;
+	/**
+	 * Whether this update is done
+	 */
+	private boolean fDone;
 
-    /**
-     * Viewer input to use
-     */
-    private Object fInputElement;
+	/**
+	 * Viewer input to use
+	 */
+	private Object fInputElement;
 
-    /**
-     * Viewer input at the time the request was made
-     */
-    private Object fViewerInput;
+	/**
+	 * Viewer input at the time the request was made
+	 */
+	private Object fViewerInput;
 
-    /**
-     * Client making request
-     */
-    private IViewerInputRequestor fRequestor;
+	/**
+	 * Client making request
+	 */
+	private IViewerInputRequestor fRequestor;
 
-    /**
-     * When <code>done()</code> is called, the viewer must be informed that the update is complete in the UI thread.
-     */
-    protected WorkbenchJob fViewerInputUpdateJob = new WorkbenchJob("Asynchronous viewer input update") { //$NON-NLS-1$
-        @Override
+	/**
+	 * When <code>done()</code> is called, the viewer must be informed that the update is complete in the UI thread.
+	 */
+	protected WorkbenchJob fViewerInputUpdateJob = new WorkbenchJob("Asynchronous viewer input update") { //$NON-NLS-1$
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-        	if (ViewerInputUpdate.this.isCanceled()){
-        		return Status.CANCEL_STATUS;
-        	}
-            fRequestor.viewerInputComplete(ViewerInputUpdate.this);
-            return Status.OK_STATUS;
-        }
-    };
+			if (ViewerInputUpdate.this.isCanceled()){
+				return Status.CANCEL_STATUS;
+			}
+			fRequestor.viewerInputComplete(ViewerInputUpdate.this);
+			return Status.OK_STATUS;
+		}
+	};
 
-    /**
-     * Constructs a viewer input update request.
-     *
-     * @param context presentation context
-     * @param viewerInput viewer input at the time the request was made
-     * @param requestor client making the request
-     * @param source source from which to derive a viewer input
-     */
-    public ViewerInputUpdate(IPresentationContext context, Object viewerInput, IViewerInputRequestor requestor, Object source){
-    	fContext = context;
-    	fSource = source;
-    	fRequestor = requestor;
-    	fViewerInputUpdateJob.setSystem(true);
-    	fViewerInput = viewerInput;
-    }
+	/**
+	 * Constructs a viewer input update request.
+	 *
+	 * @param context presentation context
+	 * @param viewerInput viewer input at the time the request was made
+	 * @param requestor client making the request
+	 * @param source source from which to derive a viewer input
+	 */
+	public ViewerInputUpdate(IPresentationContext context, Object viewerInput, IViewerInputRequestor requestor, Object source){
+		fContext = context;
+		fSource = source;
+		fRequestor = requestor;
+		fViewerInputUpdateJob.setSystem(true);
+		fViewerInput = viewerInput;
+	}
 
 	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
 
-    @Override
+	@Override
 	public final void done() {
-    	synchronized (this) {
-    		if (isDone()) {
-    			return;
-    		}
-    		fDone = true;
+		synchronized (this) {
+			if (isDone()) {
+				return;
+			}
+			fDone = true;
 		}
-        fViewerInputUpdateJob.schedule();
+		fViewerInputUpdateJob.schedule();
 	}
 
-    /**
-     * Returns whether this request is done yet.
-     *
-     * @return whether this request is done yet
-     */
-    protected synchronized boolean isDone() {
-    	return fDone;
-    }
+	/**
+	 * Returns whether this request is done yet.
+	 *
+	 * @return whether this request is done yet
+	 */
+	protected synchronized boolean isDone() {
+		return fDone;
+	}
 
 	@Override
 	public Object getElement() {

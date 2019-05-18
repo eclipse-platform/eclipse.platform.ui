@@ -24,17 +24,17 @@ import org.eclipse.jface.action.IAction;
  */
 public class ToggleStepFiltersCommandActionDelegate extends DebugCommandActionDelegate {
 
-    /**
-     * Constructor
-     */
-    public ToggleStepFiltersCommandActionDelegate() {
-        super();
-        setAction(new ToggleStepFiltersAction());
-    }
+	/**
+	 * Constructor
+	 */
+	public ToggleStepFiltersCommandActionDelegate() {
+		super();
+		setAction(new ToggleStepFiltersAction());
+	}
 
-    @Override
+	@Override
 	public void init(IAction action) {
-        super.init(action);
-        action.setChecked(DebugUITools.isUseStepFilters());
-    }
+		super.init(action);
+		action.setChecked(DebugUITools.isUseStepFilters());
+	}
 }

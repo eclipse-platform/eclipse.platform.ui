@@ -28,28 +28,28 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public interface IBreakpointContainer {
 
-    /**
-     * Returns the breakpoint organizer that this container uses.
-     */
-    IBreakpointOrganizer getOrganizer();
+	/**
+	 * Returns the breakpoint organizer that this container uses.
+	 */
+	IBreakpointOrganizer getOrganizer();
 
-    /**
-     * Returns the breakpoint category that this container is based on.
-     * @return
-     */
-    IAdaptable getCategory();
+	/**
+	 * Returns the breakpoint category that this container is based on.
+	 * @return
+	 */
+	IAdaptable getCategory();
 
-    /**
-     * Returns whether this breakpoint container contains the given breakpoint.
-     *
-     * @param breakpoint Breakpoint to check
-     * @return Returns <code>true</code> if this container contains the
-     * given breakpoint.
-     */
-    boolean contains(IBreakpoint breakpoint);
+	/**
+	 * Returns whether this breakpoint container contains the given breakpoint.
+	 *
+	 * @param breakpoint Breakpoint to check
+	 * @return Returns <code>true</code> if this container contains the
+	 * given breakpoint.
+	 */
+	boolean contains(IBreakpoint breakpoint);
 
-    /**
-     * Returns the array of breakpoints in this container.
-     */
-    IBreakpoint[] getBreakpoints();
+	/**
+	 * Returns the array of breakpoints in this container.
+	 */
+	IBreakpoint[] getBreakpoints();
 }

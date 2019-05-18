@@ -25,22 +25,22 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAUnimplementedInstructionEvent extends PDAEvent {
 
-    public final String fOperation;
+	public final String fOperation;
 
-    public PDAUnimplementedInstructionEvent(String message) {
-        super(message);
-        fOperation = message.substring(getName(message).length() + 1);
-    }
+	public PDAUnimplementedInstructionEvent(String message) {
+		super(message);
+		fOperation = message.substring(getName(message).length() + 1);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("unimplemented instruction"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("unimplemented instruction"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	protected String getName(String message) {
-        if (isEventMessage(message)) {
-            return "unimplemented instruction"; //$NON-NLS-1$
-        }
-        throw new IllegalArgumentException("Invalid event: " + message); //$NON-NLS-1$
-    }
+		if (isEventMessage(message)) {
+			return "unimplemented instruction"; //$NON-NLS-1$
+		}
+		throw new IllegalArgumentException("Invalid event: " + message); //$NON-NLS-1$
+	}
 }

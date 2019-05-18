@@ -66,26 +66,26 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					int viewIndex = provider.modelToViewIndex(elementPath, modelIndex);
 					if (provider.shouldFilter(elementPath, element)) {
 						if (provider.addFilteredIndex(elementPath, modelIndex, element)) {
-                            if (!updateFilterOnly) {
-                                if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                                	DebugUIPlugin.trace("REMOVE(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-    							}
-							    viewer.remove(elementPath, viewIndex);
-                            }
+							if (!updateFilterOnly) {
+								if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+									DebugUIPlugin.trace("REMOVE(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+								}
+								viewer.remove(elementPath, viewIndex);
+							}
 						}
 					} else {
 						if (provider.isFiltered(elementPath, modelIndex)) {
 							provider.clearFilteredChild(elementPath, modelIndex);
-                            if (!updateFilterOnly) {
+							if (!updateFilterOnly) {
 								int insertIndex = provider.modelToViewIndex(elementPath, modelIndex);
 								if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER) {
 									DebugUIPlugin.trace("insert(" + getElement() + ", modelIndex: " + modelIndex + " insertIndex: " + insertIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 								}
 								viewer.insert(elementPath, element, insertIndex);
-                            }
+							}
 						} else if (!updateFilterOnly){
-		                    if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-		                    	DebugUIPlugin.trace("replace(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+							if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+								DebugUIPlugin.trace("replace(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}
 							viewer.replace(elementPath, viewIndex, element);
 						}
@@ -149,8 +149,8 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 
 	@Override
 	boolean containsUpdate(TreePath path) {
-        return getElementPath().equals(path);
-    }
+		return getElementPath().equals(path);
+	}
 
 	@Override
 	public int getLength() {
@@ -201,24 +201,24 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	}
 
 	Object[] getElements() {
-	    return fElements;
+		return fElements;
 	}
 
-    @Override
+	@Override
 	protected boolean doEquals(ViewerUpdateMonitor update) {
-        return
-            update instanceof ChildrenUpdate &&
-            ((ChildrenUpdate)update).getOffset() == getOffset() &&
-            ((ChildrenUpdate)update).getLength() == getLength() &&
-            getViewerInput().equals(update.getViewerInput()) &&
-            getElementPath().equals(update.getElementPath());
-    }
+		return
+			update instanceof ChildrenUpdate &&
+			((ChildrenUpdate)update).getOffset() == getOffset() &&
+			((ChildrenUpdate)update).getLength() == getLength() &&
+			getViewerInput().equals(update.getViewerInput()) &&
+			getElementPath().equals(update.getElementPath());
+	}
 
-    @Override
+	@Override
 	protected int doHashCode() {
-        return (int)Math.pow(
-            (getClass().hashCode() + getViewerInput().hashCode() + getElementPath().hashCode()) * (getOffset() + 2),
-            getLength() + 2);
-    }
+		return (int)Math.pow(
+			(getClass().hashCode() + getViewerInput().hashCode() + getElementPath().hashCode()) * (getOffset() + 2),
+			getLength() + 2);
+	}
 
 }

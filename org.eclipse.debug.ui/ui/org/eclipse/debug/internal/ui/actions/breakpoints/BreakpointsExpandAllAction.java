@@ -35,32 +35,32 @@ import org.eclipse.ui.IViewPart;
  */
 public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionDelegate2, IViewerUpdateListener, IModelChangedListener {
 
-    private IAction fAction;
+	private IAction fAction;
 	private BreakpointsView fView;
 
-    @Override
+	@Override
 	public void init(IAction action) {
-        fAction = action;
-    }
+		fAction = action;
+	}
 
 	@Override
 	public void init(IViewPart view) {
 		fView = (BreakpointsView) view;
 		IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
 		if (viewer != null) {
-		    viewer.addViewerUpdateListener(this);
-		    viewer.addModelChangedListener(this);
+			viewer.addViewerUpdateListener(this);
+			viewer.addModelChangedListener(this);
 		}
 	}
 
-    @Override
+	@Override
 	public void runWithEvent(IAction action, Event event) {
-        run(action);
-    }
+		run(action);
+	}
 
 	@Override
 	public void run(IAction action) {
-	    fView.expandAllElementsInViewer();
+		fView.expandAllElementsInViewer();
 	}
 
 	@Override
@@ -68,45 +68,45 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
 	}
 
 
-    @Override
+	@Override
 	public void dispose() {
-        ITreeModelViewer viewer = (ITreeModelViewer)fView.getViewer();
-        if (viewer != null) {
-            viewer.removeViewerUpdateListener(this);
-            viewer.removeModelChangedListener(this);
-        }
-    }
+		ITreeModelViewer viewer = (ITreeModelViewer)fView.getViewer();
+		if (viewer != null) {
+			viewer.removeViewerUpdateListener(this);
+			viewer.removeModelChangedListener(this);
+		}
+	}
 
-    @Override
+	@Override
 	public void viewerUpdatesBegin() {
-    }
+	}
 
-    @Override
+	@Override
 	public void viewerUpdatesComplete() {
-    }
+	}
 
-    @Override
+	@Override
 	public void updateStarted(IViewerUpdate update) {
-    }
+	}
 
-    @Override
+	@Override
 	public void updateComplete(IViewerUpdate update) {
-          if (!update.isCanceled()) {
-              if (TreePath.EMPTY.equals(update.getElementPath())) {
-                  update();
-              }
-          }
-    }
+		if (!update.isCanceled()) {
+			if (TreePath.EMPTY.equals(update.getElementPath())) {
+				update();
+			}
+		}
+	}
 
-    private void update() {
-        IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
-        if (viewer != null && fAction != null) {
-            fAction.setEnabled(viewer.getInput() != null && viewer.getChildCount(TreePath.EMPTY) > 0);
-        }
-    }
+	private void update() {
+		IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
+		if (viewer != null && fAction != null) {
+			fAction.setEnabled(viewer.getInput() != null && viewer.getChildCount(TreePath.EMPTY) > 0);
+		}
+	}
 
-    @Override
+	@Override
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
-        update();
-    }
+		update();
+	}
 }

@@ -100,13 +100,13 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return null;
 	}
 
-    @Override
+	@Override
 	protected boolean requiresUIJob(ILabelUpdate[] updates) {
-    	if (updates.length > 0) {
-	    	ILabelUpdate update = updates[0];
+		if (updates.length > 0) {
+			ILabelUpdate update = updates[0];
 			IPresentationContext context = update.getPresentationContext();
 			if (context instanceof DebugModelPresentationContext) {
-		    	DebugModelPresentationContext debugContext = (DebugModelPresentationContext) context;
+				DebugModelPresentationContext debugContext = (DebugModelPresentationContext) context;
 				IDebugModelPresentation presentation = debugContext.getModelPresentation();
 				if (presentation instanceof IDebugModelPresentationExtension) {
 					IDebugModelPresentationExtension extension = (IDebugModelPresentationExtension) presentation;
@@ -117,8 +117,8 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 					}
 				}
 			}
-    	}
+		}
 		return false;
-    }
+	}
 
 }

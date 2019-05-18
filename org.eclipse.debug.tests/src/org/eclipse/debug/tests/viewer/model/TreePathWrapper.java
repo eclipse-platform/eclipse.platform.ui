@@ -24,48 +24,48 @@ import org.junit.Assert;
  * @since 3.7
  */
 public class TreePathWrapper {
-    private final TreePath fPath;
+	private final TreePath fPath;
 
-    public TreePathWrapper(TreePath path) {
-        fPath = path;
-    }
+	public TreePathWrapper(TreePath path) {
+		fPath = path;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return fPath.hashCode();
-    }
+		return fPath.hashCode();
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
-        return obj instanceof TreePathWrapper &&
-               fPath.equals( ((TreePathWrapper)obj).fPath );
-    }
+		return obj instanceof TreePathWrapper &&
+			   fPath.equals( ((TreePathWrapper)obj).fPath );
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        if (fPath.getSegmentCount() == 0) {
-            return "TreePath:EMPTY"; //$NON-NLS-1$
-        }
+		if (fPath.getSegmentCount() == 0) {
+			return "TreePath:EMPTY"; //$NON-NLS-1$
+		}
 
-        StringBuilder buf = new StringBuilder("TreePath:["); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("TreePath:["); //$NON-NLS-1$
 
-        for (int i = 0; i < fPath.getSegmentCount(); i++) {
-            if (i != 0) {
-                buf.append(", ");                     //$NON-NLS-1$
-            }
-            buf.append(fPath.getSegment(i));
-        }
-        buf.append(']');
-        return buf.toString();
-    }
+		for (int i = 0; i < fPath.getSegmentCount(); i++) {
+			if (i != 0) {
+				buf.append(", "); //$NON-NLS-1$
+			}
+			buf.append(fPath.getSegment(i));
+		}
+		buf.append(']');
+		return buf.toString();
+	}
 
-    /**
-     * Asserts that the two given tree paths are the same.  In case of failure, the
-     * generated exception will contain a printout of the tree paths' contents.
-     */
-    public static void assertEqual(TreePath expected, TreePath actual) {
-        Assert.assertEquals(
-            expected != null ? new TreePathWrapper(expected) : null,
-            actual != null ? new TreePathWrapper(actual) : null);
-    }
+	/**
+	 * Asserts that the two given tree paths are the same.  In case of failure, the
+	 * generated exception will contain a printout of the tree paths' contents.
+	 */
+	public static void assertEqual(TreePath expected, TreePath actual) {
+		Assert.assertEquals(
+			expected != null ? new TreePathWrapper(expected) : null,
+			actual != null ? new TreePathWrapper(actual) : null);
+	}
 }

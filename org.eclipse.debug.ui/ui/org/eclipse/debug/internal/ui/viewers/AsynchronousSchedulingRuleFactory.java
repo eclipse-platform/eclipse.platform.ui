@@ -43,13 +43,13 @@ public class AsynchronousSchedulingRuleFactory {
 		}
 	}
 
-   class SerialPerObjectRule implements ISchedulingRule {
+	class SerialPerObjectRule implements ISchedulingRule {
 
-    	private Object fObject = null;
+		private Object fObject = null;
 
-    	public SerialPerObjectRule(Object lock) {
-    		fObject = lock;
-    	}
+		public SerialPerObjectRule(Object lock) {
+			fObject = lock;
+		}
 
 		@Override
 		public boolean contains(ISchedulingRule rule) {
@@ -65,7 +65,7 @@ public class AsynchronousSchedulingRuleFactory {
 			return false;
 		}
 
-    }
+	}
 
 	private AsynchronousSchedulingRuleFactory() {}
 

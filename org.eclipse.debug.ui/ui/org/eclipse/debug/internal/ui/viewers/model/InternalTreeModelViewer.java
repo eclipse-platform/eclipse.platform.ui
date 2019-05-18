@@ -82,41 +82,41 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
 	private final IPresentationContext fContext;
 
-    /**
-     * Current column presentation or <code>null</code>
-     */
-    private IColumnPresentation fColumnPresentation = null;
+	/**
+	 * Current column presentation or <code>null</code>
+	 */
+	private IColumnPresentation fColumnPresentation = null;
 
-    /**
-     * Map of columns presentation id to its visible columns id's (String[])
-     * When a columns presentation is not in the map, default settings are used.
-     */
+	/**
+	 * Map of columns presentation id to its visible columns id's (String[])
+	 * When a columns presentation is not in the map, default settings are used.
+	 */
 	private final Map<String, String[]> fVisibleColumns = new HashMap<>();
 
-    /**
-     * Map of column id's to persisted sizes
-     */
+	/**
+	 * Map of column id's to persisted sizes
+	 */
 	private final Map<Object, Integer> fColumnSizes = new HashMap<>();
 
-    /**
-     * Map of column presentation id's to an array of integers representing the column order
-     * for that presentation, or <code>null</code> if default.
-     */
+	/**
+	 * Map of column presentation id's to an array of integers representing the column order
+	 * for that presentation, or <code>null</code> if default.
+	 */
 	private final Map<String, int[]> fColumnOrder = new HashMap<>();
 
-    /**
-     * Map of column presentation id to whether columns should be displayed
-     * for that presentation (the user can toggle columns on/off when a
-     * presentation is optional.
-     */
+	/**
+	 * Map of column presentation id to whether columns should be displayed
+	 * for that presentation (the user can toggle columns on/off when a
+	 * presentation is optional.
+	 */
 	private final Map<String, Boolean> fShowColumns = new HashMap<>();
 
-    /**
-     * Item's tree path cache
-     */
-    private static final String TREE_PATH_KEY = "TREE_PATH_KEY"; //$NON-NLS-1$
+	/**
+	 * Item's tree path cache
+	 */
+	private static final String TREE_PATH_KEY = "TREE_PATH_KEY"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * Memento type for column sizes. Sizes are keyed by column presentation id
 	 */
 	private static final String COLUMN_SIZES = "COLUMN_SIZES"; //$NON-NLS-1$
@@ -190,15 +190,15 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 					if (fModifier.canModify(element, property)) {
 						// install cell editor
 						CellEditor cellEditor = editor.getCellEditor(getPresentationContext(), property, element, (Composite)getControl());
-		                if (cellEditor != null) {
-			                disposeCellEditors();
-			                CellEditor[] newEditors = new CellEditor[getVisibleColumns().length];
-			                for (int i = 0; i < newEditors.length; i++) {
+						if (cellEditor != null) {
+							disposeCellEditors();
+							CellEditor[] newEditors = new CellEditor[getVisibleColumns().length];
+							for (int i = 0; i < newEditors.length; i++) {
 								newEditors[i] = cellEditor;
 							}
-			                setCellEditors(newEditors);
-			                return true;
-		                }
+							setCellEditors(newEditors);
+							return true;
+						}
 					}
 				}
 			}
@@ -271,12 +271,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		// A pop-up viewer is transient and does not automatically expand
 		// and select elements up when requested by the model
 		if ((style & SWT.POP_UP) != 0) {
-		    ((ITreeModelContentProvider)getContentProvider()).setModelDeltaMask(
-		        ~ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
+			((ITreeModelContentProvider)getContentProvider()).setModelDeltaMask(
+				~ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
 		}
-        if ((style & SWT.CHECK) != 0) {
-            context.setProperty(ICheckUpdate.PROP_CHECK, Boolean.TRUE);
-        }
+		if ((style & SWT.CHECK) != 0) {
+			context.setProperty(ICheckUpdate.PROP_CHECK, Boolean.TRUE);
+		}
 	}
 
 	/**
@@ -346,14 +346,14 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				item.setBackground(i, (Color) backgrounds[i]);
 			}
 		}
-        Boolean checked = (Boolean) item.getData(PREV_CHECKED_KEY);
-        if (checked != null) {
-            item.setChecked(checked.booleanValue());
-	    }
-        Boolean grayed = (Boolean) item.getData(PREV_GRAYED_KEY);
-        if (grayed != null) {
-            item.setGrayed(grayed.booleanValue());
-        }
+		Boolean checked = (Boolean) item.getData(PREV_CHECKED_KEY);
+		if (checked != null) {
+			item.setChecked(checked.booleanValue());
+		}
+		Boolean grayed = (Boolean) item.getData(PREV_GRAYED_KEY);
+		if (grayed != null) {
+			item.setGrayed(grayed.booleanValue());
+		}
 	}
 
 	/*
@@ -362,23 +362,23 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 */
 	@Override
 	protected void handleInvalidSelection(ISelection selection, ISelection newSelection) {
-	    IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(selection, getPresentationContext());
-	    if (selectionPolicy != null) {
-            while (!selection.equals(newSelection)) {
-                ISelection temp = newSelection;
-                selection = selectionPolicy.replaceInvalidSelection(selection, newSelection);
-                if (selection == null) {
-                    selection = TreeSelection.EMPTY;
-                }
-                if (!temp.equals(selection)) {
-                    setSelectionToWidget(selection, false);
-                    newSelection = getSelection();
-                } else {
-                    break;
-                }
-            }
-	    }
-	    super.handleInvalidSelection(selection, newSelection);
+		IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(selection, getPresentationContext());
+		if (selectionPolicy != null) {
+			while (!selection.equals(newSelection)) {
+				ISelection temp = newSelection;
+				selection = selectionPolicy.replaceInvalidSelection(selection, newSelection);
+				if (selection == null) {
+					selection = TreeSelection.EMPTY;
+				}
+				if (!temp.equals(selection)) {
+					setSelectionToWidget(selection, false);
+					newSelection = getSelection();
+				} else {
+					break;
+				}
+			}
+		}
+		super.handleInvalidSelection(selection, newSelection);
 	}
 
 	@Override
@@ -405,7 +405,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	protected void unmapElement(Object element, Widget widget) {
 		if (fNotifyUnmap) {
 			// TODO: should we update the filter with the "new non-identical element"?
-		    ((ITreeModelContentProvider) getContentProvider()).unmapPath((TreePath) widget.getData(TREE_PATH_KEY));
+			((ITreeModelContentProvider) getContentProvider()).unmapPath((TreePath) widget.getData(TREE_PATH_KEY));
 		}
 		super.unmapElement(element, widget);
 	}
@@ -468,20 +468,20 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
 	@Override
 	protected void unmapAllElements() {
-	    // Do nothing when called from StructuredViewer.setInput(), to avoid
-	    // clearing elements before viewer state is saved.
-	    // Bug 326917
-	    if (getControl().isDisposed()) {
-	        unmapAllElements();
-	    }
+		// Do nothing when called from StructuredViewer.setInput(), to avoid
+		// clearing elements before viewer state is saved.
+		// Bug 326917
+		if (getControl().isDisposed()) {
+			unmapAllElements();
+		}
 	}
 
 	@Override
 	protected void inputChanged(Object input, Object oldInput) {
-	    fCellModifier.clear();
-        // Clear items map now that ITreeModelContentProvider.inputChanged() was already called.
-        // Bug 326917
-        super.unmapAllElements();
+		fCellModifier.clear();
+		// Clear items map now that ITreeModelContentProvider.inputChanged() was already called.
+		// Bug 326917
+		super.unmapAllElements();
 		((ITreeModelContentProvider)getContentProvider()).postInputChanged(this, oldInput, input);
 		super.inputChanged(input, oldInput);
 
@@ -489,19 +489,19 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	}
 
 	/**
-     * Configures the columns for the given viewer input.
-     *
-     * @param input the viewer input
-     */
-    protected void resetColumns(Object input) {
-    	if (input != null) {
-    		// only change columns if the input is non-null (persist when empty)
-	    	IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(input);
-	    	PresentationContext context = (PresentationContext) getPresentationContext();
-	    	String type = null;
-	    	if (factory != null) {
-	    		type = factory.getColumnPresentationId(context, input);
-	    	}
+	 * Configures the columns for the given viewer input.
+	 *
+	 * @param input the viewer input
+	 */
+	protected void resetColumns(Object input) {
+		if (input != null) {
+			// only change columns if the input is non-null (persist when empty)
+			IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(input);
+			PresentationContext context = (PresentationContext) getPresentationContext();
+			String type = null;
+			if (factory != null) {
+				type = factory.getColumnPresentationId(context, input);
+			}
 			if (type != null && factory != null) {
 				if (fColumnPresentation != null) {
 					if (!fColumnPresentation.getId().equals(type)) {
@@ -524,14 +524,14 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 					configureColumns();
 				}
 			}
-    	}
-    }
+		}
+	}
 
-    /**
-     * Configures the columns based on the current settings.
-     */
-    protected void configureColumns() {
-    	if (fColumnPresentation != null) {
+	/**
+	 * Configures the columns based on the current settings.
+	 */
+	protected void configureColumns() {
+		if (fColumnPresentation != null) {
 			IColumnPresentation build = null;
 			if (isShowColumns(fColumnPresentation.getId())) {
 				build = fColumnPresentation;
@@ -541,7 +541,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			// get rid of columns
 			buildColumns(null);
 		}
-    }
+	}
 
 	/**
 	 * Toggles columns on/off for the current column presentation, if any.
@@ -608,33 +608,33 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
 	@Override
 	protected void internalRefresh(Object element, boolean updateLabels) {
-	    ITreeModelContentProvider contentProvider = (ITreeModelContentProvider)getContentProvider();
+		ITreeModelContentProvider contentProvider = (ITreeModelContentProvider)getContentProvider();
 
-        if (element == null) {
-            internalRefresh(getControl(), getRoot(), true, updateLabels);
-            contentProvider.preserveState(TreePath.EMPTY);
-        } else {
-            Widget[] items = findItems(element);
-            if (items.length != 0) {
-                for (int i = 0; i < items.length; i++) {
-                    if (items[i] instanceof TreeItem) {
-                        contentProvider.preserveState(getTreePathFromItem((TreeItem)items[i]));
-                    } else {
-                        contentProvider.preserveState(TreePath.EMPTY);
-                    }
-                }
-            }
-        }
-	    super.internalRefresh(element, updateLabels);
+		if (element == null) {
+			internalRefresh(getControl(), getRoot(), true, updateLabels);
+			contentProvider.preserveState(TreePath.EMPTY);
+		} else {
+			Widget[] items = findItems(element);
+			if (items.length != 0) {
+				for (int i = 0; i < items.length; i++) {
+					if (items[i] instanceof TreeItem) {
+						contentProvider.preserveState(getTreePathFromItem((TreeItem)items[i]));
+					} else {
+						contentProvider.preserveState(TreePath.EMPTY);
+					}
+				}
+			}
+		}
+		super.internalRefresh(element, updateLabels);
 	}
 
-    /**
-     * Refreshes the columns in the view, based on the viewer input.
-     */
-    protected void refreshColumns() {
-    	configureColumns();
-    	refresh();
-    }
+	/**
+	 * Refreshes the columns in the view, based on the viewer input.
+	 */
+	protected void refreshColumns() {
+		configureColumns();
+		refresh();
+	}
 
 	/**
 	 * Returns whether columns are being displayed currently.
@@ -665,28 +665,28 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		return bool.booleanValue();
 	}
 
-    /**
-     * Creates new columns for the given presentation.
-     *
-     * TODO: does this need to be asynchronous?
-     *
-     * @param presentation the column presentation to build from
-     */
-    protected void buildColumns(IColumnPresentation presentation) {
-    	// dispose current columns, persisting their weights
-    	Tree tree = getTree();
+	/**
+	 * Creates new columns for the given presentation.
+	 *
+	 * TODO: does this need to be asynchronous?
+	 *
+	 * @param presentation the column presentation to build from
+	 */
+	protected void buildColumns(IColumnPresentation presentation) {
+		// dispose current columns, persisting their weights
+		Tree tree = getTree();
 		final TreeColumn[] columns = tree.getColumns();
 		String[] visibleColumnIds = getVisibleColumns();
 		// remove all listeners before disposing - see bug 223233
-    	for (int i = 0; i < columns.length; i++) {
-    		columns[i].removeControlListener(fListener);
-    	}
-    	for (int i = 0; i < columns.length; i++) {
+		for (int i = 0; i < columns.length; i++) {
+			columns[i].removeControlListener(fListener);
+		}
+		for (int i = 0; i < columns.length; i++) {
 			columns[i].dispose();
 		}
-    	PresentationContext presentationContext = (PresentationContext) getPresentationContext();
-    	if (presentation != null) {
-	    	for (int i = 0; i < visibleColumnIds.length; i++) {
+		PresentationContext presentationContext = (PresentationContext) getPresentationContext();
+		if (presentation != null) {
+			for (int i = 0; i < visibleColumnIds.length; i++) {
 				String id = visibleColumnIds[i];
 				String header = presentation.getHeader(id);
 				// TODO: allow client to specify style
@@ -700,68 +700,68 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				}
 				column.setData(id);
 			}
-	    	int[] order = fColumnOrder.get(presentation.getId());
-	    	if (order != null) {
-	    		tree.setColumnOrder(order);
-	    	}
-	    	tree.setHeaderVisible(true);
-	    	tree.setLinesVisible(true);
-	    	presentationContext.setColumns(visibleColumnIds);
-	    	setColumnProperties(visibleColumnIds);
-	    	setCellModifier(fCellModifier);
-    	} else {
-    		tree.setHeaderVisible(false);
-    		tree.setLinesVisible(false);
-    		presentationContext.setColumns(null);
-    		setCellModifier(null);
-    		setColumnProperties(null);
-    	}
+			int[] order = fColumnOrder.get(presentation.getId());
+			if (order != null) {
+				tree.setColumnOrder(order);
+			}
+			tree.setHeaderVisible(true);
+			tree.setLinesVisible(true);
+			presentationContext.setColumns(visibleColumnIds);
+			setColumnProperties(visibleColumnIds);
+			setCellModifier(fCellModifier);
+		} else {
+			tree.setHeaderVisible(false);
+			tree.setLinesVisible(false);
+			presentationContext.setColumns(null);
+			setCellModifier(null);
+			setColumnProperties(null);
+		}
 
-    	int treeWidgetWidth = tree.getSize().x;
-    	int avg = treeWidgetWidth;
-    	if (visibleColumnIds != null) {
+		int treeWidgetWidth = tree.getSize().x;
+		int avg = treeWidgetWidth;
+		if (visibleColumnIds != null) {
 			avg /= visibleColumnIds.length;
 		}
 
-        if (avg == 0) {
-            tree.addPaintListener(new PaintListener() {
-                @Override
+		if (avg == 0) {
+			tree.addPaintListener(new PaintListener() {
+				@Override
 				public void paintControl(PaintEvent e) {
-                    Tree tree2 = getTree();
-                    String[] visibleColumns = getVisibleColumns();
-                    if (visibleColumns != null) {
-                    	int treeWidgetWidth1 = tree2.getSize().x;
+					Tree tree2 = getTree();
+					String[] visibleColumns = getVisibleColumns();
+					if (visibleColumns != null) {
+						int treeWidgetWidth1 = tree2.getSize().x;
 						int avg1 = treeWidgetWidth1 / visibleColumns.length;
-	                    initColumns(avg1, treeWidgetWidth1, visibleColumns);
-                    }
-                    tree2.removePaintListener(this);
-                }
-            });
-        } else {
-            initColumns(avg, treeWidgetWidth, visibleColumnIds);
-        }
-    }
+						initColumns(avg1, treeWidgetWidth1, visibleColumns);
+					}
+					tree2.removePaintListener(this);
+				}
+			});
+		} else {
+			initColumns(avg, treeWidgetWidth, visibleColumnIds);
+		}
+	}
 
-    private void initColumns(int widthHint, int treeWidgetWidth, String[] visibleColumnIds) {
-        TreeColumn[] columns = getTree().getColumns();
-        for (int i = 0; i < columns.length; i++) {
-            TreeColumn treeColumn = columns[i];
-            Object colData = treeColumn.getData();
-            String columnId = colData instanceof String ? (String) colData : null;
-            Integer width = fColumnSizes.get(colData);
-            if (width == null) {
-            	int ans = getInitialColumnWidth(columnId, treeWidgetWidth, visibleColumnIds);
-            	if (ans == -1) {
-            		treeColumn.setWidth(widthHint);
-            	} else {
-            		treeColumn.setWidth(ans);
-            	}
-            } else {
-                treeColumn.setWidth(width.intValue());
-            }
-            treeColumn.addControlListener(fListener);
-        }
-    }
+	private void initColumns(int widthHint, int treeWidgetWidth, String[] visibleColumnIds) {
+		TreeColumn[] columns = getTree().getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			TreeColumn treeColumn = columns[i];
+			Object colData = treeColumn.getData();
+			String columnId = colData instanceof String ? (String) colData : null;
+			Integer width = fColumnSizes.get(colData);
+			if (width == null) {
+				int ans = getInitialColumnWidth(columnId, treeWidgetWidth, visibleColumnIds);
+				if (ans == -1) {
+					treeColumn.setWidth(widthHint);
+				} else {
+					treeColumn.setWidth(ans);
+				}
+			} else {
+				treeColumn.setWidth(width.intValue());
+			}
+			treeColumn.addControlListener(fListener);
+		}
+	}
 
 	/**
 	 * Returns the current column presentation for this viewer, or <code>null</code>
@@ -788,25 +788,25 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				if (columns == null) {
 					return presentation.getInitialColumns();
 				} else {
-				    String[] available = presentation.getAvailableColumns();
-				    for (int i = 0; i < columns.length; i++) {
-				        boolean columnAvailable = false;
-				        for (int j = 0; j < available.length; j++) {
-				            if (columns[i].equals(available[j])) {
+					String[] available = presentation.getAvailableColumns();
+					for (int i = 0; i < columns.length; i++) {
+						boolean columnAvailable = false;
+						for (int j = 0; j < available.length; j++) {
+							if (columns[i].equals(available[j])) {
 								columnAvailable = true;
 							}
-				        }
+						}
 
-				        if (!columnAvailable || presentation.getHeader(columns[i]) == null) {
-    				        // We found a column ID which is not in current list of available column IDs.
-				            // Or the presentation cannot return a header title for the given column.
-    				        // Clear out saved column data for given column presentation.
-                            fVisibleColumns.remove(presentation.getId());
-                            fColumnOrder.remove(presentation.getId());
-                            fColumnSizes.remove(presentation.getId());
-                            return presentation.getInitialColumns();
-				        }
-				    }
+						if (!columnAvailable || presentation.getHeader(columns[i]) == null) {
+							// We found a column ID which is not in current list of available column IDs.
+							// Or the presentation cannot return a header title for the given column.
+							// Clear out saved column data for given column presentation.
+							fVisibleColumns.remove(presentation.getId());
+							fColumnOrder.remove(presentation.getId());
+							fColumnSizes.remove(presentation.getId());
+							return presentation.getInitialColumns();
+						}
+					}
 				}
 				return columns;
 			}
@@ -834,9 +834,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	}
 
 	/**
-     * Persists column sizes in cache
-     */
-    protected void persistColumnSizes() {
+	 * Persists column sizes in cache
+	 */
+	protected void persistColumnSizes() {
 		Tree tree = getTree();
 		TreeColumn[] columns = tree.getColumns();
 		for (int i = 0; i < columns.length; i++) {
@@ -844,29 +844,29 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			Object id = treeColumn.getData();
 			fColumnSizes.put(id, Integer.valueOf(treeColumn.getWidth()));
 		}
-    }
+	}
 
-    /**
-     * Persists column ordering
-     */
-    protected void persistColumnOrder() {
-    	IColumnPresentation presentation = getColumnPresentation();
-    	if (presentation != null) {
-	    	Tree tree = getTree();
-	    	int[] order = tree.getColumnOrder();
-	    	if (order.length > 0) {
-	    		for (int i = 0; i < order.length; i++) {
+	/**
+	 * Persists column ordering
+	 */
+	protected void persistColumnOrder() {
+		IColumnPresentation presentation = getColumnPresentation();
+		if (presentation != null) {
+			Tree tree = getTree();
+			int[] order = tree.getColumnOrder();
+			if (order.length > 0) {
+				for (int i = 0; i < order.length; i++) {
 					if (i != order[i]) {
 						// non default order
 						fColumnOrder.put(presentation.getId(), order);
 						return;
 					}
 				}
-	    	}
-	    	// default order
-	    	fColumnOrder.remove(presentation.getId());
-    	}
-    }
+			}
+			// default order
+			fColumnOrder.remove(presentation.getId());
+		}
+	}
 
 	/**
 	 * Save viewer state into the given memento.
@@ -1022,7 +1022,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		return false;
 	}
 	/**
- 	 * Registers the specified listener for view update notifications.
+	 * Registers the specified listener for view update notifications.
 	 *
 	 * @param listener listener
 	 */
@@ -1038,7 +1038,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 */
 	@Override
 	public void removeViewerUpdateListener(IViewerUpdateListener listener) {
-	    ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
+		ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
 		if (cp !=  null) {
 			cp.removeViewerUpdateListener(listener);
 		}
@@ -1061,24 +1061,24 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 */
 	@Override
 	public void removeModelChangedListener(IModelChangedListener listener) {
-	    ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
+		ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
 		if (cp !=  null) {
 			cp.removeModelChangedListener(listener);
 		}
 	}
 
-    @Override
+	@Override
 	public void addStateUpdateListener(IStateUpdateListener listener) {
-        ((ITreeModelContentProvider)getContentProvider()).addStateUpdateListener(listener);
-    }
+		((ITreeModelContentProvider)getContentProvider()).addStateUpdateListener(listener);
+	}
 
-    @Override
+	@Override
 	public void removeStateUpdateListener(IStateUpdateListener listener) {
-        ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
-        if (cp !=  null) {
-            cp.removeStateUpdateListener(listener);
-        }
-    }
+		ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
+		if (cp !=  null) {
+			cp.removeStateUpdateListener(listener);
+		}
+	}
 
 	@Override
 	protected void doUpdateItem(final Item item, Object element) {
@@ -1092,9 +1092,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 
 		if ( !((ITreeModelLabelProvider)getLabelProvider()).update(getTreePathFromItem(item)) ) {
-            if (element instanceof String) {
-                item.setData(PREV_LABEL_KEY, new String[] { (String)element } );
-            }
+			if (element instanceof String) {
+				item.setData(PREV_LABEL_KEY, new String[] { (String)element } );
+			}
 		}
 
 
@@ -1107,14 +1107,14 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
 	@Override
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {
-	    ((ITreeModelLabelProvider)getLabelProvider()).addLabelUpdateListener(listener);
+		((ITreeModelLabelProvider)getLabelProvider()).addLabelUpdateListener(listener);
 	}
 
 	@Override
 	public void removeLabelUpdateListener(ILabelUpdateListener listener) {
-	    if (!getControl().isDisposed()) {
-	        ((ITreeModelLabelProvider)getLabelProvider()).removeLabelUpdateListener(listener);
-	    }
+		if (!getControl().isDisposed()) {
+			((ITreeModelLabelProvider)getLabelProvider()).removeLabelUpdateListener(listener);
+		}
 	}
 
 	/**
@@ -1271,50 +1271,50 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 //**************************************************************************
 // Another couple of methods copied from TreeViewer to workaround the UI bug 266189.
 //
-    @Override
+	@Override
 	protected void createChildren(Widget widget) {
-        Object element = widget.getData();
-        if (element == null && widget instanceof TreeItem) {
-            // parent has not been materialized
-            virtualMaterializeItem((TreeItem) widget);
-            // try getting the element now that updateElement was called
-            element = widget.getData();
-        }
-        if (element ==  null) {
-            // give up because the parent is still not materialized
-            return;
-        }
-        Item[] children = getChildren(widget);
-        if (children.length == 1 && children[0].getData() == null) {
-            // found a dummy node
-            virtualLazyUpdateChildCount(widget, children.length);
-            children = getChildren(widget);
-        }
-        // DO NOT touch all children
-        return;
-    }
+		Object element = widget.getData();
+		if (element == null && widget instanceof TreeItem) {
+			// parent has not been materialized
+			virtualMaterializeItem((TreeItem) widget);
+			// try getting the element now that updateElement was called
+			element = widget.getData();
+		}
+		if (element ==  null) {
+			// give up because the parent is still not materialized
+			return;
+		}
+		Item[] children = getChildren(widget);
+		if (children.length == 1 && children[0].getData() == null) {
+			// found a dummy node
+			virtualLazyUpdateChildCount(widget, children.length);
+			children = getChildren(widget);
+		}
+		// DO NOT touch all children
+		return;
+	}
 
-    private void virtualMaterializeItem(TreeItem treeItem) {
-        if (treeItem.getData() != null) {
-            // already materialized
-            return;
-        }
+	private void virtualMaterializeItem(TreeItem treeItem) {
+		if (treeItem.getData() != null) {
+			// already materialized
+			return;
+		}
 
-        int index;
-        Widget parent = treeItem.getParentItem();
-        if (parent == null) {
-            parent = treeItem.getParent();
-        }
-        Object parentElement = parent.getData();
-        if (parentElement != null) {
-            if (parent instanceof Tree) {
-                index = ((Tree) parent).indexOf(treeItem);
-            } else {
-                index = ((TreeItem) parent).indexOf(treeItem);
-            }
-            virtualLazyUpdateWidget(parent, index);
-        }
-    }
+		int index;
+		Widget parent = treeItem.getParentItem();
+		if (parent == null) {
+			parent = treeItem.getParent();
+		}
+		Object parentElement = parent.getData();
+		if (parentElement != null) {
+			if (parent instanceof Tree) {
+				index = ((Tree) parent).indexOf(treeItem);
+			} else {
+				index = ((TreeItem) parent).indexOf(treeItem);
+			}
+			virtualLazyUpdateWidget(parent, index);
+		}
+	}
 
 
 	/**
@@ -1333,470 +1333,470 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 	}
 
-    @Override
+	@Override
 	public int findElementIndex(TreePath parentPath, Object element) {
-        Widget parentItem = findItem(parentPath);
-        if (parentItem != null) {
-            Item[] children = getChildren(parentItem);
-            for (int i = 0; i < children.length; i++) {
-                Item item = children[i];
-                Object data = item.getData();
-                if ( (element != null && element.equals(data)) || (element == null && data == null) ) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
+		Widget parentItem = findItem(parentPath);
+		if (parentItem != null) {
+			Item[] children = getChildren(parentItem);
+			for (int i = 0; i < children.length; i++) {
+				Item item = children[i];
+				Object data = item.getData();
+				if ( (element != null && element.equals(data)) || (element == null && data == null) ) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
 
-    @Override
+	@Override
 	public boolean getElementChildrenRealized(TreePath parentPath) {
-        Widget parentItem = findItem(parentPath);
-        if (parentItem != null) {
-            Item[] children = getChildren(parentItem);
-            for (int i = 0; i < children.length; i++) {
-                if (children[i].getData() == null) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+		Widget parentItem = findItem(parentPath);
+		if (parentItem != null) {
+			Item[] children = getChildren(parentItem);
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].getData() == null) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public Display getDisplay() {
-        Control control = getControl();
+		Control control = getControl();
 		if (control != null && !control.isDisposed()) {
-            return  control.getDisplay();
-        }
-        return null;
-    }
+			return  control.getDisplay();
+		}
+		return null;
+	}
 
-    protected static final String[] STATE_PROPERTIES = new String[]{ IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
+	protected static final String[] STATE_PROPERTIES = new String[]{ IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
 
-    @Override
+	@Override
 	public void update(Object element) {
-        update(element, STATE_PROPERTIES);
-    }
+		update(element, STATE_PROPERTIES);
+	}
 
-    /**
-     * Label data cache keys
-     * TODO: workaround for bug 159461
-     */
-    static String PREV_LABEL_KEY = "PREV_LABEL_KEY"; //$NON-NLS-1$
-    static String PREV_IMAGE_KEY = "PREV_IMAGE_KEY"; //$NON-NLS-1$
-    static String PREV_FONT_KEY = "PREV_FONT_KEY"; //$NON-NLS-1$
-    static String PREV_FOREGROUND_KEY = "PREV_FOREGROUND_KEY"; //$NON-NLS-1$
-    static String PREV_BACKGROUND_KEY = "PREV_BACKGROUND_KEY"; //$NON-NLS-1$
-    static String PREV_CHECKED_KEY = "PREV_CHECKED_KEY"; //$NON-NLS-1$
-    static String PREV_GRAYED_KEY = "PREV_GRAYED_KEY"; //$NON-NLS-1$
+	/**
+	 * Label data cache keys
+	 * TODO: workaround for bug 159461
+	 */
+	static String PREV_LABEL_KEY = "PREV_LABEL_KEY"; //$NON-NLS-1$
+	static String PREV_IMAGE_KEY = "PREV_IMAGE_KEY"; //$NON-NLS-1$
+	static String PREV_FONT_KEY = "PREV_FONT_KEY"; //$NON-NLS-1$
+	static String PREV_FOREGROUND_KEY = "PREV_FOREGROUND_KEY"; //$NON-NLS-1$
+	static String PREV_BACKGROUND_KEY = "PREV_BACKGROUND_KEY"; //$NON-NLS-1$
+	static String PREV_CHECKED_KEY = "PREV_CHECKED_KEY"; //$NON-NLS-1$
+	static String PREV_GRAYED_KEY = "PREV_GRAYED_KEY"; //$NON-NLS-1$
 
-    @Override
+	@Override
 	public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] imageDescriptors,
-        FontData[] fontDatas, RGB[] _foregrounds, RGB[] _backgrounds)
-    {
-        Widget widget = findItem(path);
-        String[] columnIds = getVisibleColumns();
+		FontData[] fontDatas, RGB[] _foregrounds, RGB[] _backgrounds)
+	{
+		Widget widget = findItem(path);
+		String[] columnIds = getVisibleColumns();
 
-        if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
-            TreeItem item = (TreeItem)widget;
-            /*Object data = item.getData();
-            int itemCount = item.getItemCount();
-            item.clearAll(false);
-            item.setData(data);
-            item.setItemCount(itemCount);*/
+		if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
+			TreeItem item = (TreeItem)widget;
+			/*Object data = item.getData();
+			int itemCount = item.getItemCount();
+			item.clearAll(false);
+			item.setData(data);
+			item.setItemCount(itemCount);*/
 
-            for (int i=0; i<numColumns; i++){
-                // text might be null if the launch has been terminated
-                item.setText(i,(labels[i] == null ? IInternalDebugCoreConstants.EMPTY_STRING : labels[i]));
-            }
-            item.setData(PREV_LABEL_KEY, labels);
+			for (int i=0; i<numColumns; i++){
+				// text might be null if the launch has been terminated
+				item.setText(i,(labels[i] == null ? IInternalDebugCoreConstants.EMPTY_STRING : labels[i]));
+			}
+			item.setData(PREV_LABEL_KEY, labels);
 
-            if (imageDescriptors == null) {
-                for (int i=0; i<numColumns; i++){
-                    item.setImage(i,null);
-                }
-                item.setData(PREV_IMAGE_KEY, null);
-            } else {
-                Image[] images = new Image[imageDescriptors.length];
-                for (int i = 0; i < imageDescriptors.length; i++) {
-                    images[i] = ((ITreeModelLabelProvider)getLabelProvider()).getImage(imageDescriptors[i]);
-                }
-                if (columnIds == null) {
-                    item.setImage(images[0]);
-                } else {
-                    item.setImage(images);
-                }
-                item.setData(PREV_IMAGE_KEY, images);
-            }
+			if (imageDescriptors == null) {
+				for (int i=0; i<numColumns; i++){
+					item.setImage(i,null);
+				}
+				item.setData(PREV_IMAGE_KEY, null);
+			} else {
+				Image[] images = new Image[imageDescriptors.length];
+				for (int i = 0; i < imageDescriptors.length; i++) {
+					images[i] = ((ITreeModelLabelProvider)getLabelProvider()).getImage(imageDescriptors[i]);
+				}
+				if (columnIds == null) {
+					item.setImage(images[0]);
+				} else {
+					item.setImage(images);
+				}
+				item.setData(PREV_IMAGE_KEY, images);
+			}
 
-            if (_foregrounds == null) {
-                for (int i=0; i<numColumns; i++){
-                    item.setForeground(i,null);
-                }
-                item.setData(PREV_FOREGROUND_KEY, null);
-            } else {
-                Color[] foregrounds = new Color[_foregrounds.length];
-                for (int i = 0; i< foregrounds.length; i++) {
-                    foregrounds[i] = ((ITreeModelLabelProvider)getLabelProvider()).getColor(_foregrounds[i]);
-                }
-                if (columnIds == null) {
-                    item.setForeground(0,foregrounds[0]);
-                } else {
-                    for (int i = 0; i< foregrounds.length; i++) {
-                        item.setForeground(i, foregrounds[i]);
-                    }
-                }
-                item.setData(PREV_FOREGROUND_KEY, foregrounds);
-            }
+			if (_foregrounds == null) {
+				for (int i=0; i<numColumns; i++){
+					item.setForeground(i,null);
+				}
+				item.setData(PREV_FOREGROUND_KEY, null);
+			} else {
+				Color[] foregrounds = new Color[_foregrounds.length];
+				for (int i = 0; i< foregrounds.length; i++) {
+					foregrounds[i] = ((ITreeModelLabelProvider)getLabelProvider()).getColor(_foregrounds[i]);
+				}
+				if (columnIds == null) {
+					item.setForeground(0,foregrounds[0]);
+				} else {
+					for (int i = 0; i< foregrounds.length; i++) {
+						item.setForeground(i, foregrounds[i]);
+					}
+				}
+				item.setData(PREV_FOREGROUND_KEY, foregrounds);
+			}
 
-            if (_backgrounds == null) {
-                for (int i=0; i<numColumns; i++){
-                    item.setBackground(i,null);
-                }
-                item.setData(PREV_BACKGROUND_KEY, null);
-            } else {
-                Color[] backgrounds = new Color[_backgrounds.length];
-                for (int i = 0; i< backgrounds.length; i++) {
-                    backgrounds[i] = ((ITreeModelLabelProvider)getLabelProvider()).getColor(_backgrounds[i]);
-                }
-                if (columnIds == null) {
-                    item.setBackground(0,backgrounds[0]);
-                } else {
-                    for (int i = 0; i< backgrounds.length; i++) {
-                        item.setBackground(i, backgrounds[i]);
-                    }
-                }
-                item.setData(PREV_BACKGROUND_KEY, backgrounds);
-            }
+			if (_backgrounds == null) {
+				for (int i=0; i<numColumns; i++){
+					item.setBackground(i,null);
+				}
+				item.setData(PREV_BACKGROUND_KEY, null);
+			} else {
+				Color[] backgrounds = new Color[_backgrounds.length];
+				for (int i = 0; i< backgrounds.length; i++) {
+					backgrounds[i] = ((ITreeModelLabelProvider)getLabelProvider()).getColor(_backgrounds[i]);
+				}
+				if (columnIds == null) {
+					item.setBackground(0,backgrounds[0]);
+				} else {
+					for (int i = 0; i< backgrounds.length; i++) {
+						item.setBackground(i, backgrounds[i]);
+					}
+				}
+				item.setData(PREV_BACKGROUND_KEY, backgrounds);
+			}
 
-            if (fontDatas == null) {
-                for (int i=0; i<numColumns; i++){
-                    item.setFont(i,null);
-                }
-                item.setData(PREV_FONT_KEY, null);
-            } else {
-                Font[] fonts = new Font[fontDatas.length];
-                for (int i = 0; i < fontDatas.length; i++) {
-                    fonts[i] = ((ITreeModelLabelProvider)getLabelProvider()).getFont(fontDatas[i]);
-                }
-                if (columnIds == null) {
-                    item.setFont(0,fonts[0]);
-                } else {
-                    for (int i = 0; i < fonts.length; i++) {
-                        item.setFont(i, fonts[i]);
-                    }
-                }
-                item.setData(PREV_FONT_KEY, fonts);
-            }
-        }
-    }
+			if (fontDatas == null) {
+				for (int i=0; i<numColumns; i++){
+					item.setFont(i,null);
+				}
+				item.setData(PREV_FONT_KEY, null);
+			} else {
+				Font[] fonts = new Font[fontDatas.length];
+				for (int i = 0; i < fontDatas.length; i++) {
+					fonts[i] = ((ITreeModelLabelProvider)getLabelProvider()).getFont(fontDatas[i]);
+				}
+				if (columnIds == null) {
+					item.setFont(0,fonts[0]);
+				} else {
+					for (int i = 0; i < fonts.length; i++) {
+						item.setFont(i, fonts[i]);
+					}
+				}
+				item.setData(PREV_FONT_KEY, fonts);
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public ViewerLabel getElementLabel(TreePath path, String columnId) {
-        if (path.getSegmentCount() == 0) {
-            return null;
-        }
+		if (path.getSegmentCount() == 0) {
+			return null;
+		}
 
-        int columnIdx = -1;
-        String[] visibleColumns = getVisibleColumns();
-        if (columnId != null && visibleColumns != null) {
-            int i = 0;
-            for (i = 0; i < visibleColumns.length; i++) {
-                if (columnId.equals(getVisibleColumns()[i])) {
-                    columnIdx = i;
-                    break;
-                }
-            }
-            if (i == visibleColumns.length) {
-                return null;
-            }
-        } else {
-            columnIdx = 0;
-        }
-        TreeItem item = (TreeItem)findItem(path);
+		int columnIdx = -1;
+		String[] visibleColumns = getVisibleColumns();
+		if (columnId != null && visibleColumns != null) {
+			int i = 0;
+			for (i = 0; i < visibleColumns.length; i++) {
+				if (columnId.equals(getVisibleColumns()[i])) {
+					columnIdx = i;
+					break;
+				}
+			}
+			if (i == visibleColumns.length) {
+				return null;
+			}
+		} else {
+			columnIdx = 0;
+		}
+		TreeItem item = (TreeItem)findItem(path);
 
-        if (item != null) {
-            ViewerLabel label = new ViewerLabel(item.getText(columnIdx), item.getImage(columnIdx));
-            label.setFont(item.getFont(columnIdx));
-            label.setBackground(item.getBackground(columnIdx));
-            label.setForeground(item.getForeground(columnIdx));
-            return label;
-        }
-        return null;
-    }
+		if (item != null) {
+			ViewerLabel label = new ViewerLabel(item.getText(columnIdx), item.getImage(columnIdx));
+			label.setFont(item.getFont(columnIdx));
+			label.setBackground(item.getBackground(columnIdx));
+			label.setForeground(item.getForeground(columnIdx));
+			return label;
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public void reveal(TreePath path, int index) {
-        Widget item = findItem(path);
-        TreeItem[] children = null;
-        if (item instanceof TreeItem) {
-            children = ((TreeItem)item).getItems();
-        } else if (item instanceof Tree) {
-            children = ((Tree)item).getItems();
-        }
-        if (children != null && index < children.length) {
-            getTree().setTopItem(children[index]);
-        }
-    }
+		Widget item = findItem(path);
+		TreeItem[] children = null;
+		if (item instanceof TreeItem) {
+			children = ((TreeItem)item).getItems();
+		} else if (item instanceof Tree) {
+			children = ((Tree)item).getItems();
+		}
+		if (children != null && index < children.length) {
+			getTree().setTopItem(children[index]);
+		}
+	}
 
-    @Override
+	@Override
 	public int getChildCount(TreePath path) {
-        if (path.getSegmentCount() == 0) {
-            return ((Tree)getControl()).getItemCount();
-        } else {
-            Widget[] items = internalFindItems(path);
-            if (items.length > 0) {
-                if (items[0] instanceof TreeItem) {
-                    return ((TreeItem)items[0]).getItemCount();
-                }
-            }
-        }
-        return -1;
-    }
+		if (path.getSegmentCount() == 0) {
+			return ((Tree)getControl()).getItemCount();
+		} else {
+			Widget[] items = internalFindItems(path);
+			if (items.length > 0) {
+				if (items[0] instanceof TreeItem) {
+					return ((TreeItem)items[0]).getItemCount();
+				}
+			}
+		}
+		return -1;
+	}
 
-    @Override
+	@Override
 	public Object getChildElement(TreePath path, int index) {
-        TreeItem childItem = null;
-        if (path.getSegmentCount() == 0) {
-            Tree tree = (Tree)getControl();
-            try {
-                childItem = tree.getItem(index);
-            } catch (IllegalArgumentException e) {}
-        } else {
-            try {
-                Widget[] items = internalFindItems(path);
-                if (items.length > 0) {
-                    if (items[0] instanceof TreeItem) {
-                        childItem = ((TreeItem)items[0]).getItem(index);
-                    }
-                }
-            } catch (IllegalArgumentException e) {}
-        }
-        if (childItem != null) {
-            return childItem.getData();
-        }
-        return null;
-    }
+		TreeItem childItem = null;
+		if (path.getSegmentCount() == 0) {
+			Tree tree = (Tree)getControl();
+			try {
+				childItem = tree.getItem(index);
+			} catch (IllegalArgumentException e) {}
+		} else {
+			try {
+				Widget[] items = internalFindItems(path);
+				if (items.length > 0) {
+					if (items[0] instanceof TreeItem) {
+						childItem = ((TreeItem)items[0]).getItem(index);
+					}
+				}
+			} catch (IllegalArgumentException e) {}
+		}
+		if (childItem != null) {
+			return childItem.getData();
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public TreePath getTopElementPath() {
-        TreeItem topItem = ((Tree)getControl()).getTopItem();
+		TreeItem topItem = ((Tree)getControl()).getTopItem();
 		if (topItem != null && !topItem.isDisposed() && topItem.getData() != null) {
-            return getTreePathFromItem(topItem);
-        }
-        return null;
-    }
+			return getTreePathFromItem(topItem);
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
-        Tree tree = (Tree) getControl();
-        TreeItem[] selection = tree.getSelection();
+		Tree tree = (Tree) getControl();
+		TreeItem[] selection = tree.getSelection();
 		Set<TreeItem> set = new HashSet<>();
-        for (int i = 0; i < selection.length; i++) {
-            set.add(selection[i]);
-        }
+		for (int i = 0; i < selection.length; i++) {
+			set.add(selection[i]);
+		}
 
-        TreeItem[] items = null;
-        Widget w = internalGetWidgetToSelect(path);
-        if (w instanceof Tree) {
-            delta.setChildCount(
-                ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, tree.getItemCount()));
-            if ((flagsToSave & IModelDelta.EXPAND) != 0) {
-                delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
-            }
-            items = tree.getItems();
-        } else if (w instanceof TreeItem) {
-            TreeItem item = (TreeItem)w;
-            if (item.getExpanded()) {
-                int itemCount = item.getData() != null ? item.getItemCount() : -1;
-                delta.setChildCount(((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, itemCount));
-                if ((flagsToSave & IModelDelta.EXPAND) != 0) {
-                    delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
-                }
-            } else if ((flagsToSave & IModelDelta.COLLAPSE) != 0){
-                delta.setFlags(delta.getFlags() | IModelDelta.COLLAPSE);
-            }
+		TreeItem[] items = null;
+		Widget w = internalGetWidgetToSelect(path);
+		if (w instanceof Tree) {
+			delta.setChildCount(
+				((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, tree.getItemCount()));
+			if ((flagsToSave & IModelDelta.EXPAND) != 0) {
+				delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+			}
+			items = tree.getItems();
+		} else if (w instanceof TreeItem) {
+			TreeItem item = (TreeItem)w;
+			if (item.getExpanded()) {
+				int itemCount = item.getData() != null ? item.getItemCount() : -1;
+				delta.setChildCount(((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, itemCount));
+				if ((flagsToSave & IModelDelta.EXPAND) != 0) {
+					delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+				}
+			} else if ((flagsToSave & IModelDelta.COLLAPSE) != 0){
+				delta.setFlags(delta.getFlags() | IModelDelta.COLLAPSE);
+			}
 
-            if (set.contains(item) && (flagsToSave & IModelDelta.SELECT) != 0) {
-                delta.setFlags(delta.getFlags() | IModelDelta.SELECT);
-            }
-            items = ((TreeItem)w).getItems();
-        }
-        if (items != null && items.length != 0) {
-            for (int i = 0; i < items.length; i++) {
-                doSaveElementState(path, delta, items[i], set, i, flagsToSave);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
+			if (set.contains(item) && (flagsToSave & IModelDelta.SELECT) != 0) {
+				delta.setFlags(delta.getFlags() | IModelDelta.SELECT);
+			}
+			items = ((TreeItem)w).getItems();
+		}
+		if (items != null && items.length != 0) {
+			for (int i = 0; i < items.length; i++) {
+				doSaveElementState(path, delta, items[i], set, i, flagsToSave);
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	private void doSaveElementState(TreePath parentPath, ModelDelta delta, TreeItem item, Collection<TreeItem> set, int index, int flagsToSave) {
-        Object element = item.getData();
-        if (element != null) {
-            boolean expanded = item.getExpanded();
-            boolean selected = set.contains(item);
-            int flags = IModelDelta.NO_CHANGE;
-            if (expanded && (flagsToSave & IModelDelta.EXPAND) != 0) {
-                flags = flags | IModelDelta.EXPAND;
-            }
-            if (!expanded && (flagsToSave & IModelDelta.COLLAPSE) != 0) {
-                flags = flags | IModelDelta.COLLAPSE;
-            }
-            if (selected && (flagsToSave & IModelDelta.SELECT) != 0) {
-                flags = flags | IModelDelta.SELECT;
-            }
-            if (expanded || flags != IModelDelta.NO_CHANGE) {
-                int modelIndex = ((ITreeModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, index);
-                TreePath elementPath = parentPath.createChildPath(element);
-                ModelDelta childDelta = delta.addNode(element, modelIndex, flags, -1);
-                if (expanded) {
-                    // Only get the item count if the item is expanded.  Getting
-                    // item count triggers an update of the element (bug 335734).
-                    int itemCount = item.getItemCount();
-                    int numChildren = ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(elementPath, itemCount);
-                    childDelta.setChildCount(numChildren);
-                    TreeItem[] items = item.getItems();
-                    for (int i = 0; i < items.length; i++) {
-                        doSaveElementState(elementPath, childDelta, items[i], set, i, flagsToSave);
-                    }
-                }
-            }
-        }
-    }
+		Object element = item.getData();
+		if (element != null) {
+			boolean expanded = item.getExpanded();
+			boolean selected = set.contains(item);
+			int flags = IModelDelta.NO_CHANGE;
+			if (expanded && (flagsToSave & IModelDelta.EXPAND) != 0) {
+				flags = flags | IModelDelta.EXPAND;
+			}
+			if (!expanded && (flagsToSave & IModelDelta.COLLAPSE) != 0) {
+				flags = flags | IModelDelta.COLLAPSE;
+			}
+			if (selected && (flagsToSave & IModelDelta.SELECT) != 0) {
+				flags = flags | IModelDelta.SELECT;
+			}
+			if (expanded || flags != IModelDelta.NO_CHANGE) {
+				int modelIndex = ((ITreeModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, index);
+				TreePath elementPath = parentPath.createChildPath(element);
+				ModelDelta childDelta = delta.addNode(element, modelIndex, flags, -1);
+				if (expanded) {
+					// Only get the item count if the item is expanded.  Getting
+					// item count triggers an update of the element (bug 335734).
+					int itemCount = item.getItemCount();
+					int numChildren = ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(elementPath, itemCount);
+					childDelta.setChildCount(numChildren);
+					TreeItem[] items = item.getItems();
+					for (int i = 0; i < items.length; i++) {
+						doSaveElementState(elementPath, childDelta, items[i], set, i, flagsToSave);
+					}
+				}
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void updateViewer(IModelDelta delta) {
-        ((ITreeModelContentProvider)getContentProvider()).updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
-    }
+		((ITreeModelContentProvider)getContentProvider()).updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
+	}
 
 	@Override
 	public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
-	   	 Widget widget = findItem(path);
+		Widget widget = findItem(path);
 
-		 if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
-	         TreeItem item = (TreeItem)widget;
+		if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
+			TreeItem item = (TreeItem)widget;
 
-	         item.setChecked(checked);
-	         item.setGrayed(grayed);
+			item.setChecked(checked);
+			item.setGrayed(grayed);
 
-	         item.setData(PREV_CHECKED_KEY, checked ? Boolean.TRUE : Boolean.FALSE);
-             item.setData(PREV_GRAYED_KEY, grayed ? Boolean.TRUE : Boolean.FALSE);
-		 }
+			item.setData(PREV_CHECKED_KEY, checked ? Boolean.TRUE : Boolean.FALSE);
+			item.setData(PREV_GRAYED_KEY, grayed ? Boolean.TRUE : Boolean.FALSE);
+		}
 	}
 
-    @Override
+	@Override
 	public boolean getElementChecked(TreePath path) {
-        Widget widget = findItem(path);
+		Widget widget = findItem(path);
 
-        if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
-            TreeItem item = (TreeItem)widget;
+		if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
+			TreeItem item = (TreeItem)widget;
 
-            return item.getChecked();
-        }
-        return false;
-    }
+			return item.getChecked();
+		}
+		return false;
+	}
 
-    /**
-     * Retrieves the element's check box grayed state.
-     *
-     * @param path the path of the element to set grayed
-     * @return grayed
-     */
-    @Override
+	/**
+	 * Retrieves the element's check box grayed state.
+	 *
+	 * @param path the path of the element to set grayed
+	 * @return grayed
+	 */
+	@Override
 	public boolean getElementGrayed(TreePath path) {
-        Widget widget = findItem(path);
+		Widget widget = findItem(path);
 
-        if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
-            TreeItem item = (TreeItem)widget;
+		if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
+			TreeItem item = (TreeItem)widget;
 
-            return item.getGrayed();
-        }
-        return false;
-    }
+			return item.getGrayed();
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean getHasChildren(Object elementOrTreePath) {
-        if (elementOrTreePath instanceof TreePath &&
-            ((TreePath)elementOrTreePath).getSegmentCount() == 0)
-        {
-            return getTree().getItemCount() > 0;
-        }
+		if (elementOrTreePath instanceof TreePath &&
+			((TreePath)elementOrTreePath).getSegmentCount() == 0)
+		{
+			return getTree().getItemCount() > 0;
+		}
 
-        Widget[] items = internalFindItems(elementOrTreePath);
-        if (items != null && items.length > 0) {
-            if (items[0] instanceof TreeItem) {
-                return ((TreeItem)items[0]).getItemCount() > 0;
-            } else {
-                return ((Tree)items[0]).getItemCount() > 0;
-            }
-        }
+		Widget[] items = internalFindItems(elementOrTreePath);
+		if (items != null && items.length > 0) {
+			if (items[0] instanceof TreeItem) {
+				return ((TreeItem)items[0]).getItemCount() > 0;
+			} else {
+				return ((Tree)items[0]).getItemCount() > 0;
+			}
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public TreePath[] getElementPaths(Object element) {
-        Widget[] items = internalFindItems(element);
-        TreePath[] paths = new TreePath[items.length];
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Tree) {
-                paths[i] = TreePath.EMPTY;
-            } else {
-                paths[i] = getTreePathFromItem((Item)items[i]);
-            }
-        }
-        return paths;
-    }
+		Widget[] items = internalFindItems(element);
+		TreePath[] paths = new TreePath[items.length];
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof Tree) {
+				paths[i] = TreePath.EMPTY;
+			} else {
+				paths[i] = getTreePathFromItem((Item)items[i]);
+			}
+		}
+		return paths;
+	}
 
 	@Override
 	protected void handleSelect(SelectionEvent event) {
-        super.handleSelect(event);
+		super.handleSelect(event);
 
-        TreeItem item = (TreeItem) event.item;
-        if (item != null) { // item can be null when de-selected (bug 296703)
-	        Object element = item.getData();
-	        IContentProvider contentProvider = getContentProvider();
-	        if (element != null && contentProvider instanceof TreeModelContentProvider) {
-	            TreePath path = getTreePathFromItem(item);
+		TreeItem item = (TreeItem) event.item;
+		if (item != null) { // item can be null when de-selected (bug 296703)
+			Object element = item.getData();
+			IContentProvider contentProvider = getContentProvider();
+			if (element != null && contentProvider instanceof TreeModelContentProvider) {
+				TreePath path = getTreePathFromItem(item);
 
-	            if (event.detail == SWT.CHECK) {
-	                boolean checked = item.getChecked();
-	            	boolean accepted = ((ITreeModelContentProvider) contentProvider).setChecked(path, checked);
+				if (event.detail == SWT.CHECK) {
+					boolean checked = item.getChecked();
+					boolean accepted = ((ITreeModelContentProvider) contentProvider).setChecked(path, checked);
 
-	        	    // if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
-	            	if (!accepted) {
-	            		item.setChecked(!checked);
-	            	} else {
-	            	    item.setData(PREV_CHECKED_KEY, Boolean.valueOf(checked));
-	            	}
-	            } else {
-		            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT|IModelDelta.REVEAL);
-	    		}
-	        }
-        }
+					// if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
+					if (!accepted) {
+						item.setChecked(!checked);
+					} else {
+						item.setData(PREV_CHECKED_KEY, Boolean.valueOf(checked));
+					}
+				} else {
+					((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT|IModelDelta.REVEAL);
+				}
+			}
+		}
 	}
 
 	@Override
 	protected void handleTreeExpand(TreeEvent event) {
-        super.handleTreeExpand(event);
-        IContentProvider contentProvider = getContentProvider();
-        if (contentProvider instanceof TreeModelContentProvider && event.item.getData() != null) {
-            TreePath path = getTreePathFromItem((TreeItem)event.item);
-            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.COLLAPSE);
-        }
+		super.handleTreeExpand(event);
+		IContentProvider contentProvider = getContentProvider();
+		if (contentProvider instanceof TreeModelContentProvider && event.item.getData() != null) {
+			TreePath path = getTreePathFromItem((TreeItem)event.item);
+			((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.COLLAPSE);
+		}
 	}
 
 	@Override
 	protected void handleTreeCollapse(TreeEvent event) {
-	    super.handleTreeCollapse(event);
-        IContentProvider contentProvider = getContentProvider();
-        if (contentProvider instanceof TreeModelContentProvider && event.item.getData() != null) {
-            TreePath path = getTreePathFromItem((TreeItem)event.item);
-            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.EXPAND);
-        }
+		super.handleTreeCollapse(event);
+		IContentProvider contentProvider = getContentProvider();
+		if (contentProvider instanceof TreeModelContentProvider && event.item.getData() != null) {
+			TreePath path = getTreePathFromItem((TreeItem)event.item);
+			((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.EXPAND);
+		}
 	}
 
 	@Override

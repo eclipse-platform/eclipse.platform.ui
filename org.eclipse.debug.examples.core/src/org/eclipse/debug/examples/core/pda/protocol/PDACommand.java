@@ -20,24 +20,24 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 abstract public class PDACommand {
 
-    final private String fRequest;
+	final private String fRequest;
 
-    public PDACommand(String request) {
-        fRequest = request;
-    }
+	public PDACommand(String request) {
+		fRequest = request;
+	}
 
-    /**
-     * Returns the request to be sent to PDA.
-     */
-    public String getRequest() {
-        return fRequest;
-    }
+	/**
+	 * Returns the request to be sent to PDA.
+	 */
+	public String getRequest() {
+		return fRequest;
+	}
 
-    /**
-     * Returns the command result based on the given PDA response.  This command
-     * uses the class type parameter as the return type to allow the compiler to
-     * enforce the correct command result.  This class must be implemented by
-     * each command to create the concrete result type.
-     */
-    abstract public PDACommandResult createResult(String resultText);
+	/**
+	 * Returns the command result based on the given PDA response.  This command
+	 * uses the class type parameter as the return type to allow the compiler to
+	 * enforce the correct command result.  This class must be implemented by
+	 * each command to create the concrete result type.
+	 */
+	abstract public PDACommandResult createResult(String resultText);
 }

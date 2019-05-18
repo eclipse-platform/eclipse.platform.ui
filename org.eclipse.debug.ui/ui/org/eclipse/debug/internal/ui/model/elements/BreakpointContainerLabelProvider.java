@@ -39,28 +39,28 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		ImageDescriptor desc = super.getImageDescriptor(elementPath, presentationContext, columnId);
 		int flags = computeAdornmentFlags();
 
-        if (flags > 0) {
-        	Image image = DebugUIPlugin.getImageDescriptorRegistry().get(desc);
-            CompositeDebugImageDescriptor compDesc = new CompositeDebugImageDescriptor(image, flags);
-            return compDesc;
-        }
-        return desc;
+		if (flags > 0) {
+			Image image = DebugUIPlugin.getImageDescriptorRegistry().get(desc);
+			CompositeDebugImageDescriptor compDesc = new CompositeDebugImageDescriptor(image, flags);
+			return compDesc;
+		}
+		return desc;
 	}
 
 	@Override
 	public boolean getChecked(TreePath path, IPresentationContext presentationContext) throws CoreException {
 		Object lastSegment = path.getLastSegment();
-        if (lastSegment instanceof IBreakpointContainer) {
-            IBreakpointContainer container = (IBreakpointContainer) lastSegment;
-            IBreakpoint[] breakpoints = container.getBreakpoints();
-            for (int i = 0; i < breakpoints.length; ++i) {
-            	if (breakpoints[i].isEnabled()) {
+		if (lastSegment instanceof IBreakpointContainer) {
+			IBreakpointContainer container = (IBreakpointContainer) lastSegment;
+			IBreakpoint[] breakpoints = container.getBreakpoints();
+			for (int i = 0; i < breakpoints.length; ++i) {
+				if (breakpoints[i].isEnabled()) {
 					return true;
 				}
-            }
+			}
 
-            return false;
-        }
+			return false;
+		}
 
 		return super.getChecked(path, presentationContext);
 	}
@@ -102,10 +102,10 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		FontData fontData = super.getFontData(elementPath, presentationContext, columnId);
 		if (fontData == null && element instanceof IAdaptable) {
 
-            IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
-            if (adapter != null) {
-                fontData = adapter.getFont(element);
-            }
+			IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
+			if (adapter != null) {
+				fontData = adapter.getFont(element);
+			}
 		}
 		return fontData;
 	}
@@ -117,10 +117,10 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		RGB rgb = super.getForeground(elementPath, presentationContext, columnId);
 		if (rgb == null && element instanceof IAdaptable) {
 
-            IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
-            if (adapter != null) {
-            	rgb = adapter.getForeground(element);
-            }
+			IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
+			if (adapter != null) {
+				rgb = adapter.getForeground(element);
+			}
 		}
 		return rgb;
 	}
@@ -132,23 +132,23 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		RGB rgb = super.getBackground(elementPath, presentationContext, columnId);
 		if (rgb == null && element instanceof IAdaptable) {
 
-            IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
-            if (adapter != null) {
-            	rgb = adapter.getBackground(element);
-            }
+			IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
+			if (adapter != null) {
+				rgb = adapter.getBackground(element);
+			}
 		}
 		return rgb;
 	}
 
 	/**
-     * Computes and return common adornment flags for the given category.
-     *
-     * @return adornment flags defined in CompositeDebugImageDescriptor
-     */
-    private int computeAdornmentFlags() {
-        if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-            return CompositeDebugImageDescriptor.SKIP_BREAKPOINT;
-        }
-        return 0;
-    }
+	 * Computes and return common adornment flags for the given category.
+	 *
+	 * @return adornment flags defined in CompositeDebugImageDescriptor
+	 */
+	private int computeAdornmentFlags() {
+		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+			return CompositeDebugImageDescriptor.SKIP_BREAKPOINT;
+		}
+		return 0;
+	}
 }

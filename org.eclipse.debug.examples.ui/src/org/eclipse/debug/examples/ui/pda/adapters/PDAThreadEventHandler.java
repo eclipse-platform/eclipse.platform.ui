@@ -46,12 +46,12 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 
 	@Override
 	protected void handleSuspend(DebugEvent event) {
-        IThread thread = (IThread) event.getSource();
-        int extras = IModelDelta.STATE;
-        if (event.getDetail() == DebugEvent.BREAKPOINT | event.getDetail() == DebugEvent.CLIENT_REQUEST) {
-            extras = IModelDelta.EXPAND;
-        }
-    	fireDeltaUpdatingTopFrame(thread, IModelDelta.NO_CHANGE | extras);
+		IThread thread = (IThread) event.getSource();
+		int extras = IModelDelta.STATE;
+		if (event.getDetail() == DebugEvent.BREAKPOINT | event.getDetail() == DebugEvent.CLIENT_REQUEST) {
+			extras = IModelDelta.EXPAND;
+		}
+		fireDeltaUpdatingTopFrame(thread, IModelDelta.NO_CHANGE | extras);
 	}
 
 	private boolean isEqual(Object o1, Object o2) {
@@ -135,23 +135,23 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 		ModelDelta delta = buildRootDelta();
 		ModelDelta node = addTarget(delta, thread);
 		synchronized (this) {
-	    	IStackFrame prev = fPrev;
-	    	IStackFrame frame = null;
+			IStackFrame prev = fPrev;
+			IStackFrame frame = null;
 			try {
 				 frame = thread.getTopStackFrame();
 			} catch (DebugException e) {
 			}
-	    	if (isEqual(frame, prev)) {
-	    		node.setFlags(flags);
-	    	} else {
+			if (isEqual(frame, prev)) {
+				node.setFlags(flags);
+			} else {
 				node.setFlags(flags | IModelDelta.CONTENT);
-	    	}
-	    	if (frame != null) {
-	            node.addNode(frame, 0, IModelDelta.STATE | IModelDelta.SELECT, 0);
-	        }
-	    	fPrev = frame;
+			}
+			if (frame != null) {
+				node.addNode(frame, 0, IModelDelta.STATE | IModelDelta.SELECT, 0);
+			}
+			fPrev = frame;
 		}
-    	fireDelta(delta);
+		fireDelta(delta);
 	}
 
 	@Override

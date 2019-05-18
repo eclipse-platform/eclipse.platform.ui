@@ -34,7 +34,7 @@ public class BreakpointWorkingSetElementAdapter implements IWorkingSetElementAda
 	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		for (int i = 0; i < elements.length; i++) {
-	        IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);
+			IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);
 			if (breakpoint != null) {
 				return selectBreakpoints(elements);
 			}
@@ -45,7 +45,7 @@ public class BreakpointWorkingSetElementAdapter implements IWorkingSetElementAda
 	private IAdaptable[] selectBreakpoints(IAdaptable[] elements) {
 		List<IBreakpoint> breakpoints = new ArrayList<>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
-            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);
+			IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);
 			if (breakpoint != null) {
 				breakpoints.add(breakpoint);
 			}

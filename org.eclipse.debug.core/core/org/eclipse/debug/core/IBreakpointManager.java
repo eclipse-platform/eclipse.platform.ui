@@ -241,28 +241,28 @@ public interface IBreakpointManager {
 	 */
 	void setEnabled(boolean enabled);
 
-    /**
-     * Returns the name (user readable String) of the given
-     * breakpoint's type or <code>null</code> if none has been
-     * specified.
-     *
-     * @param breakpoint the breakpoint
-     * @return the name of the given breakpoint's type or <code>null</code>
-     * @since 3.1
-     */
-    String getTypeName(IBreakpoint breakpoint);
+	/**
+	 * Returns the name (user readable String) of the given
+	 * breakpoint's type or <code>null</code> if none has been
+	 * specified.
+	 *
+	 * @param breakpoint the breakpoint
+	 * @return the name of the given breakpoint's type or <code>null</code>
+	 * @since 3.1
+	 */
+	String getTypeName(IBreakpoint breakpoint);
 
-    /**
-     * Returns an array of {@link IBreakpointImportParticipant}s for the given
-     * breakpoint marker id, never <code>null</code>.
-     *
-     * @param markertype the {@link String} identifier of the marker type
-     * @return an array of {@link IBreakpointImportParticipant}s for the given marker type,
-     * never <code>null</code>
-     * @throws CoreException if an exception occurs
-     * @since 3.5
-     */
-    IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException;
+	/**
+	 * Returns an array of {@link IBreakpointImportParticipant}s for the given
+	 * breakpoint marker id, never <code>null</code>.
+	 *
+	 * @param markertype the {@link String} identifier of the marker type
+	 * @return an array of {@link IBreakpointImportParticipant}s for the given marker type,
+	 * never <code>null</code>
+	 * @throws CoreException if an exception occurs
+	 * @since 3.5
+	 */
+	IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException;
 
 	/**
 	 * Returns the triggers for the breakpoints associated with the workspace or

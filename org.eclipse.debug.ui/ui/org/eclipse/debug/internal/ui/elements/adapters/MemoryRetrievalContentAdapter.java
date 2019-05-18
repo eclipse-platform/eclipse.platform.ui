@@ -27,12 +27,12 @@ public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
-        {
+		{
 			if (parent instanceof IMemoryBlockRetrieval)
 			{
-        		return DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)parent);
+				return DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)parent);
 			}
-        }
+		}
 		return EMPTY;
 	}
 
@@ -40,14 +40,14 @@ public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
-        {
+		{
 			if (element instanceof IMemoryBlockRetrieval)
 			{
 				if (((IMemoryBlockRetrieval)element).supportsStorageRetrieval())
-        			return DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)element).length > 0;
+					return DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)element).length > 0;
 			}
-        }
-        return false;
+		}
+		return false;
 	}
 
 	@Override

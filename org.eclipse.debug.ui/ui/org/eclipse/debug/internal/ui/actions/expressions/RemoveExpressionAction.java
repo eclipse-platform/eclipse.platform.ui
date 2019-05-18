@@ -43,10 +43,10 @@ public class RemoveExpressionAction extends AbstractSelectionActionDelegate {
 			if (segment instanceof IExpression) {
 				expressions.add((IExpression) segment);
 			} else if (segment instanceof IAdaptable) {
-			    IExpression expression = ((IAdaptable)segment).getAdapter(IExpression.class);
-			    if (expression != null) {
-			        expressions.add(expression);
-			    }
+				IExpression expression = ((IAdaptable)segment).getAdapter(IExpression.class);
+				if (expression != null) {
+					expressions.add(expression);
+				}
 			}
 		}
 		return expressions.toArray(new IExpression[expressions.size()]);

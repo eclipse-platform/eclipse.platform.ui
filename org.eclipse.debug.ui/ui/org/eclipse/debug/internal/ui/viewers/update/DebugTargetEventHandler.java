@@ -51,7 +51,7 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 
 	@Override
 	protected void handleCreate(DebugEvent event) {
-        fireDelta((IDebugTarget) event.getSource(), IModelDelta.EXPAND);
+		fireDelta((IDebugTarget) event.getSource(), IModelDelta.EXPAND);
 	}
 
 	@Override

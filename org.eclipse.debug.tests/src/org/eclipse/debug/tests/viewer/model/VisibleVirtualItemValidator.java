@@ -23,78 +23,78 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTree;
  */
 public class VisibleVirtualItemValidator implements IVirtualItemValidator {
 
-    private int fStart = 0;
-    private int fEnd = 0;
+	private int fStart = 0;
+	private int fEnd = 0;
 
-    public VisibleVirtualItemValidator(int startPosition, int length) {
-        setVisibleRange(startPosition, length);
-    }
+	public VisibleVirtualItemValidator(int startPosition, int length) {
+		setVisibleRange(startPosition, length);
+	}
 
-    public void setVisibleRange(int startPosition, int length) {
-        fStart = startPosition;
-        fEnd = startPosition + length;
-    }
+	public void setVisibleRange(int startPosition, int length) {
+		fStart = startPosition;
+		fEnd = startPosition + length;
+	}
 
-    public int getStartPosition() {
-        return fStart;
-    }
+	public int getStartPosition() {
+		return fStart;
+	}
 
-    public int getLength() {
-        return fEnd - fStart;
-    }
+	public int getLength() {
+		return fEnd - fStart;
+	}
 
-    @Override
+	@Override
 	public boolean isItemVisible(VirtualItem item) {
-        int position = 0;
-        while (item.getParent() != null) {
-            position += item.getIndex().intValue();
-            item = item.getParent();
-        }
-        return position >= fStart && position < fEnd || isSelected(item);
-    }
+		int position = 0;
+		while (item.getParent() != null) {
+			position += item.getIndex().intValue();
+			item = item.getParent();
+		}
+		return position >= fStart && position < fEnd || isSelected(item);
+	}
 
-    @Override
+	@Override
 	public void showItem(VirtualItem item) {
-        int length = fEnd - fStart;
-        fStart = calcPosition(item);
-        fEnd = fStart + length;
-    }
+		int length = fEnd - fStart;
+		fStart = calcPosition(item);
+		fEnd = fStart + length;
+	}
 
-    private int calcPosition(VirtualItem item) {
-        int position = 0;
-        while (item.getParent() != null) {
-            position += item.getIndex().intValue();
-            item = item.getParent();
-        }
-        return position;
-    }
+	private int calcPosition(VirtualItem item) {
+		int position = 0;
+		while (item.getParent() != null) {
+			position += item.getIndex().intValue();
+			item = item.getParent();
+		}
+		return position;
+	}
 
-    private boolean isSelected(VirtualItem item) {
-        VirtualItem[] selection = getSelection(item);
-        for (int i = 0; i < selection.length; i++) {
-            VirtualItem selectionItem = selection[i];
-            while (selectionItem != null) {
-                if (item.equals(selectionItem)) {
-                    return true;
-                }
-                selectionItem = selectionItem.getParent();
-            }
-        }
-        return false;
-    }
+	private boolean isSelected(VirtualItem item) {
+		VirtualItem[] selection = getSelection(item);
+		for (int i = 0; i < selection.length; i++) {
+			VirtualItem selectionItem = selection[i];
+			while (selectionItem != null) {
+				if (item.equals(selectionItem)) {
+					return true;
+				}
+				selectionItem = selectionItem.getParent();
+			}
+		}
+		return false;
+	}
 
-    private VirtualItem[] getSelection(VirtualItem item) {
-        VirtualTree tree = getTree(item);
-        if (tree != null) {
-            return tree.getSelection();
-        }
-        return new VirtualItem[0];
-    }
+	private VirtualItem[] getSelection(VirtualItem item) {
+		VirtualTree tree = getTree(item);
+		if (tree != null) {
+			return tree.getSelection();
+		}
+		return new VirtualItem[0];
+	}
 
-    private VirtualTree getTree(VirtualItem item) {
-        while (item != null && !(item instanceof VirtualTree)) {
-            item = item.getParent();
-        }
-        return (VirtualTree)item;
-    }
+	private VirtualTree getTree(VirtualItem item) {
+		while (item != null && !(item instanceof VirtualTree)) {
+			item = item.getParent();
+		}
+		return (VirtualTree)item;
+	}
 }

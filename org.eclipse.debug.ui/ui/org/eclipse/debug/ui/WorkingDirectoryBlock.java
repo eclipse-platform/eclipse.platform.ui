@@ -209,9 +209,9 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	 * the workspace
 	 */
 	private void handleWorkspaceDirBrowseButtonSelected() {
-	    IContainer currentContainer= getContainer();
+		IContainer currentContainer= getContainer();
 		if (currentContainer == null) {
-		    currentContainer = ResourcesPlugin.getWorkspace().getRoot();
+			currentContainer = ResourcesPlugin.getWorkspace().getRoot();
 		}
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), currentContainer, false,	DebugUIMessages.WorkingDirectoryBlock_4);
 		dialog.showClosedProjects(false);
@@ -231,23 +231,23 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	protected IContainer getContainer() {
 		String path = getWorkingDirectoryText();
 		if (path.length() > 0) {
-		    IResource res = null;
-		    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		    if (path.startsWith("${workspace_loc:")) { //$NON-NLS-1$
-		        IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-			    try {
-                    path = manager.performStringSubstitution(path, false);
-                    IPath uriPath = new Path(path).makeAbsolute();
-                    IContainer[] containers = root.findContainersForLocationURI(URIUtil.toURI(uriPath));
-                    if (containers.length > 0) {
-                        res = containers[0];
-                    }
-                }
-			    catch (CoreException e) {
-			    	log(e);
-			    }
+			IResource res = null;
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			if (path.startsWith("${workspace_loc:")) { //$NON-NLS-1$
+				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+				try {
+					path = manager.performStringSubstitution(path, false);
+					IPath uriPath = new Path(path).makeAbsolute();
+					IContainer[] containers = root.findContainersForLocationURI(URIUtil.toURI(uriPath));
+					if (containers.length > 0) {
+						res = containers[0];
+					}
+				}
+				catch (CoreException e) {
+					log(e);
+				}
 			}
-		    else {
+			else {
 				res = root.findMember(path);
 			}
 			if (res instanceof IContainer) {

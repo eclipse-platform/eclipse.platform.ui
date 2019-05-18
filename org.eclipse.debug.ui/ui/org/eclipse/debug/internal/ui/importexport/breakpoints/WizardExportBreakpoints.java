@@ -96,6 +96,6 @@ public class WizardExportBreakpoints extends Wizard implements IExportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		fSelection = selection;
 		setWindowTitle(ImportExportMessages.WizardExportBreakpoints_0);
-        setNeedsProgressMonitor(true);
+		setNeedsProgressMonitor(true);
 	}
 }

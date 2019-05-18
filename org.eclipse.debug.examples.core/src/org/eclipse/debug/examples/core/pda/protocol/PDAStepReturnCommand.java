@@ -39,13 +39,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAStepReturnCommand extends PDACommand {
 
-    public PDAStepReturnCommand(int threadId) {
-        super("stepreturn " + threadId); //$NON-NLS-1$
-    }
+	public PDAStepReturnCommand(int threadId) {
+		super("stepreturn " + threadId); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

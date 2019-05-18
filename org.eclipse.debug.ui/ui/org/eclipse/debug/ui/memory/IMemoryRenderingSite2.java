@@ -21,12 +21,12 @@ package org.eclipse.debug.ui.memory;
  */
 public interface IMemoryRenderingSite2 extends IMemoryRenderingSite {
 
-    /**
-     * Sets whether the identified container should be visible.
-     *
-     * @param id identifier of the container to be affected
-     * @param visible whether the given container should be made visible
-     */
-    void setContainerVisible(String id, boolean visible);
+	/**
+	 * Sets whether the identified container should be visible.
+	 *
+	 * @param id identifier of the container to be affected
+	 * @param visible whether the given container should be made visible
+	 */
+	void setContainerVisible(String id, boolean visible);
 
 }

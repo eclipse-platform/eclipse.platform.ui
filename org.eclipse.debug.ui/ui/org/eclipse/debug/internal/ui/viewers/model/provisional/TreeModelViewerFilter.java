@@ -30,12 +30,12 @@ import org.eclipse.jface.viewers.ViewerFilter;
  */
 abstract public class TreeModelViewerFilter extends ViewerFilter {
 
-    /**
-     * Determines whether the filter applies to the given parent element.
-     * @return Returns true if the viewer should use the given filter on the
-     * given element.
-     * @param viewer The viewer that is using this filter to select elements.
-     * @param parentElement Parent element to check filter for.
-     */
-    abstract public boolean isApplicable(ITreeModelViewer viewer, Object parentElement);
+	/**
+	 * Determines whether the filter applies to the given parent element.
+	 * @return Returns true if the viewer should use the given filter on the
+	 * given element.
+	 * @param viewer The viewer that is using this filter to select elements.
+	 * @param parentElement Parent element to check filter for.
+	 */
+	abstract public boolean isApplicable(ITreeModelViewer viewer, Object parentElement);
 }

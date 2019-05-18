@@ -29,13 +29,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDASetDataCommand extends PDACommand {
 
-    public PDASetDataCommand(int threadId, int index, String value) {
-        super("setdata " + threadId + " " + index + " " + value); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+	public PDASetDataCommand(int threadId, int index, String value) {
+		super("setdata " + threadId + " " + index + " " + value); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

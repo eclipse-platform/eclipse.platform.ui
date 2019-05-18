@@ -47,111 +47,111 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	 */
 	private IElementContentProvider fElementContentProvider;
 
-    /**
-     * Whether this request's 'done' method has been called.
-     */
-    private boolean fDone = false;
+	/**
+	 * Whether this request's 'done' method has been called.
+	 */
+	private boolean fDone = false;
 
-    /**
-     * Whether this request has been started
-     */
-    private boolean fStarted = false;
+	/**
+	 * Whether this request has been started
+	 */
+	private boolean fStarted = false;
 
-    /**
-     * Viewer input at the time the request was made
-     */
-    private Object fViewerInput = null;
+	/**
+	 * Viewer input at the time the request was made
+	 */
+	private Object fViewerInput = null;
 
-    /**
-     * Whether this update has been delegated to another content provider
-     * @since 3.4
-     */
-    private boolean fIsDelegated = false;
+	/**
+	 * Whether this update has been delegated to another content provider
+	 * @since 3.4
+	 */
+	private boolean fIsDelegated = false;
 
-    /**
-     * Presentation context
-     */
-    private IPresentationContext fContext;
+	/**
+	 * Presentation context
+	 */
+	private IPresentationContext fContext;
 
-    /**
-     * Constructs an update for the given content provider
-     *
-     * @param contentProvider content provider
-     * @param viewerInput Viewer input for update
-     * @param elementPath path to associated model element - empty for root element
-     * @param element associated model element
-     * @param elementContentProvider Content provider for this update.
-     * @param context Presentation contest for this update
-     */
-    public ViewerUpdateMonitor(TreeModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
-    	fContext = context;
+	/**
+	 * Constructs an update for the given content provider
+	 *
+	 * @param contentProvider content provider
+	 * @param viewerInput Viewer input for update
+	 * @param elementPath path to associated model element - empty for root element
+	 * @param element associated model element
+	 * @param elementContentProvider Content provider for this update.
+	 * @param context Presentation contest for this update
+	 */
+	public ViewerUpdateMonitor(TreeModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
+		fContext = context;
 		// Bug 380288: Catch and log a race condition where the viewer input is null.
-    	if (viewerInput == null) {
-    		DebugUIPlugin.log(new NullPointerException("Input to viewer update should not be null")); //$NON-NLS-1$
-    	}
-    	fViewerInput = viewerInput;
-    	fElementContentProvider = elementContentProvider;
-        fContentProvider = contentProvider;
-        fElement = element;
-        fElementPath = elementPath;
-    }
-
-    /**
-     * Returns the scheduling rule for viewer update job.
-     *
-     * @return rule or <code>null</code>
-     */
-    protected ISchedulingRule getUpdateSchedulingRule() {
-    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(getContentProvider());
-    }
-
-    /**
-     * Returns the model content provider this update is being performed for.
-     *
-     * @return the model content provider this update is being performed for
-     */
-    protected TreeModelContentProvider getContentProvider() {
-        return fContentProvider;
-    }
-
-    /**
-     * Returns the element content provider to use for this request
-     *
-     * @return element content provider
-     */
-    protected IElementContentProvider getElementContentProvider() {
-    	return fElementContentProvider;
-    }
-
-    @Override
-	public final void done() {
-    	synchronized (this) {
-    		if (isDone()) {
-    			return;
-    		}
-    		fDone = true;
+		if (viewerInput == null) {
+			DebugUIPlugin.log(new NullPointerException("Input to viewer update should not be null")); //$NON-NLS-1$
 		}
-    	scheduleViewerUpdate();
+		fViewerInput = viewerInput;
+		fElementContentProvider = elementContentProvider;
+		fContentProvider = contentProvider;
+		fElement = element;
+		fElementPath = elementPath;
 	}
 
-    /**
-     * Returns whether this request is done yet.
-     *
-     * @return True if this update is done.
-     */
-    protected synchronized boolean isDone() {
-    	return fDone;
-    }
+	/**
+	 * Returns the scheduling rule for viewer update job.
+	 *
+	 * @return rule or <code>null</code>
+	 */
+	protected ISchedulingRule getUpdateSchedulingRule() {
+		return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(getContentProvider());
+	}
 
-    protected void scheduleViewerUpdate() {
-        getContentProvider().scheduleViewerUpdate(this);
-    }
+	/**
+	 * Returns the model content provider this update is being performed for.
+	 *
+	 * @return the model content provider this update is being performed for
+	 */
+	protected TreeModelContentProvider getContentProvider() {
+		return fContentProvider;
+	}
 
-    /**
+	/**
+	 * Returns the element content provider to use for this request
+	 *
+	 * @return element content provider
+	 */
+	protected IElementContentProvider getElementContentProvider() {
+		return fElementContentProvider;
+	}
+
+	@Override
+	public final void done() {
+		synchronized (this) {
+			if (isDone()) {
+				return;
+			}
+			fDone = true;
+		}
+		scheduleViewerUpdate();
+	}
+
+	/**
+	 * Returns whether this request is done yet.
+	 *
+	 * @return True if this update is done.
+	 */
+	protected synchronized boolean isDone() {
+		return fDone;
+	}
+
+	protected void scheduleViewerUpdate() {
+		getContentProvider().scheduleViewerUpdate(this);
+	}
+
+	/**
 	 * Notification this update has been completed and should now be applied to
 	 * this update's viewer. This method is called in the UI thread.
 	 */
-    protected abstract void performUpdate();
+	protected abstract void performUpdate();
 
 	@Override
 	public IPresentationContext getPresentationContext() {
@@ -183,7 +183,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	 * @param path Element path to check.
 	 * @return True if this update contains the given update path.
 	 *
-     * @since 3.6
+	 * @since 3.6
 	 */
 	abstract boolean containsUpdate(TreePath path);
 
@@ -252,15 +252,15 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 
 	@Override
 	public boolean equals(Object obj) {
-	    if (obj instanceof ViewerUpdateMonitor) {
-	        return doEquals((ViewerUpdateMonitor)obj);
-	    }
-	    return false;
+		if (obj instanceof ViewerUpdateMonitor) {
+			return doEquals((ViewerUpdateMonitor)obj);
+		}
+		return false;
 	}
 
 	@Override
 	public int hashCode() {
-	    return doHashCode();
+		return doHashCode();
 	}
 
 	/**
@@ -268,34 +268,34 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	 * the same type of update and its updating the same elements.
 	 * @param update Update to compare to.
 	 * @return True if the given update is equals
-     * @since 3.8
+	 * @since 3.8
 	 */
 	abstract protected boolean doEquals(ViewerUpdateMonitor update);
 
 	/**
 	 * Calculates the hash code of the given update using the same parameters as doEquals().
 	 * @return Update's hash code.
-     * @since 3.8
+	 * @since 3.8
 	 */
-    abstract protected int doHashCode();
+	abstract protected int doHashCode();
 
-    /**
-     * Executes the given runnable in the UI thread.  If method is called in
-     * UI thread, then runnable is executed immediately, otherwise it's executed
-     * using <code>Display.asyncExec()</code>.  Runnable is not executed if update is
-     * canceled or content provider is disposed.
-     * @since 3.8
-     */
+	/**
+	 * Executes the given runnable in the UI thread.  If method is called in
+	 * UI thread, then runnable is executed immediately, otherwise it's executed
+	 * using <code>Display.asyncExec()</code>.  Runnable is not executed if update is
+	 * canceled or content provider is disposed.
+	 * @since 3.8
+	 */
 	protected void execInDisplayThread(Runnable runnable) {
-   	    ITreeModelViewer viewer = getContentProvider().getViewer();
-   	    if (viewer != null  && !isCanceled()) {
-   	    	Display display = viewer.getDisplay();
-   	    	if (Thread.currentThread() == display.getThread()) {
-   	    		runnable.run();
-   	    	} else {
-   	    		display.asyncExec(runnable);
-   	    	}
-	    }
+		ITreeModelViewer viewer = getContentProvider().getViewer();
+		if (viewer != null  && !isCanceled()) {
+			Display display = viewer.getDisplay();
+			if (Thread.currentThread() == display.getThread()) {
+				runnable.run();
+			} else {
+				display.asyncExec(runnable);
+			}
+		}
 	}
 
 }

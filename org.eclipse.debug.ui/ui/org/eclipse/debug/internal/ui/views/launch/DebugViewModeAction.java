@@ -41,7 +41,7 @@ class DebugViewModeAction extends Action {
 	 * @param view Reference to the debug view.
 	 * @param mode The mode to be set by this action.
 	 * @param parent The view's parent control used to calculate view size
-     * in auto mode.
+	 * in auto mode.
 	 */
 	public DebugViewModeAction(LaunchView view, String mode, Composite parent) {
 		super(IInternalDebugCoreConstants.EMPTY_STRING, AS_RADIO_BUTTON);
@@ -83,7 +83,7 @@ class DebugViewModeAction extends Action {
 	 * @return the mode of the action
 	 */
 	public String getMode() {
-	    return fMode;
+		return fMode;
 	}
 }
 

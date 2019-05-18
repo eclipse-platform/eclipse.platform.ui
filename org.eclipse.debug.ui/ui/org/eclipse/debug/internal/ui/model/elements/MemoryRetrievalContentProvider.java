@@ -48,14 +48,14 @@ public class MemoryRetrievalContentProvider extends ElementContentProvider {
 	protected Object[] getAllChildren(Object parent, IPresentationContext context, IViewerUpdate monitor) {
 		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
-        {
+		{
 			if (parent instanceof IMemoryBlockRetrieval)
 			{
 				if (((IMemoryBlockRetrieval)parent).supportsStorageRetrieval())
-        			return DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)parent);
+					return DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)parent);
 			}
-        }
-        return EMPTY;
+		}
+		return EMPTY;
 	}
 
 	@Override

@@ -41,43 +41,43 @@ public class PasswordPrompt extends PromptingResolver {
 			@Override
 			protected Control createDialogArea(Composite parent) {
 				 // create composite
-		        Composite composite = (Composite) super.createDialogArea(parent);
-		        // create message
-		        if (dialogMessage != null) {
-		            Label label = new Label(composite, SWT.WRAP);
-		            label.setText(dialogMessage);
-		            GridData data = new GridData(GridData.GRAB_HORIZONTAL
-		                    | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
-		                    | GridData.VERTICAL_ALIGN_CENTER);
-		            data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-		            label.setLayoutData(data);
-		            label.setFont(parent.getFont());
-		        }
-		        text = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
-		        text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-		                | GridData.HORIZONTAL_ALIGN_FILL));
-		        String value = defaultValue == null ? lastValue : defaultValue;
-		        if (value != null){
-		        	text.setText(value);
-		        }
-		        applyDialogFont(composite);
-		        return composite;
+				Composite composite = (Composite) super.createDialogArea(parent);
+				// create message
+				if (dialogMessage != null) {
+					Label label = new Label(composite, SWT.WRAP);
+					label.setText(dialogMessage);
+					GridData data = new GridData(GridData.GRAB_HORIZONTAL
+							| GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
+							| GridData.VERTICAL_ALIGN_CENTER);
+					data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+					label.setLayoutData(data);
+					label.setFont(parent.getFont());
+				}
+				text = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+				text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
+						| GridData.HORIZONTAL_ALIGN_FILL));
+				String value = defaultValue == null ? lastValue : defaultValue;
+				if (value != null){
+					text.setText(value);
+				}
+				applyDialogFont(composite);
+				return composite;
 			}
 
 			@Override
 			protected void buttonPressed(int buttonId) {
 				if (buttonId == IDialogConstants.OK_ID) {
 					returnValue = text.getText();
-		        } else {
-		        	returnValue = null;
-		        }
-		        super.buttonPressed(buttonId);
+				} else {
+					returnValue = null;
+				}
+				super.buttonPressed(buttonId);
 			}
 
 			@Override
 			protected void configureShell(Shell newShell) {
-		        super.configureShell(newShell);
-		        newShell.setText(StringSubstitutionMessages.StringPromptExpander_0);
+				super.configureShell(newShell);
+				newShell.setText(StringSubstitutionMessages.StringPromptExpander_0);
 			}
 
 		};

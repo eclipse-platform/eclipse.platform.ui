@@ -50,9 +50,9 @@ public class SelectAllExpressionsAction extends SelectAllAction implements IExpr
 	public void expressionsChanged(IExpression[] expressions) {
 	}
 
-    @Override
+	@Override
 	public void dispose() {
-        super.dispose();
-        DebugPlugin.getDefault().getExpressionManager().removeExpressionListener(this);
-    }
+		super.dispose();
+		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener(this);
+	}
 }

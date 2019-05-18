@@ -28,12 +28,12 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAChildrenCommand extends PDACommand {
 
-    public PDAChildrenCommand(int threadId, int frameId, String name  ) {
-        super("children " + threadId + " " + frameId + " " + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+	public PDAChildrenCommand(int threadId, int frameId, String name  ) {
+		super("children " + threadId + " " + frameId + " " + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDAListResult(resultText);
-    }
+		return new PDAListResult(resultText);
+	}
 }

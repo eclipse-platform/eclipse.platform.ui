@@ -66,15 +66,15 @@ public class DebugModelPropertyTester extends PropertyTester {
 					Platform.getAdapterManager().
 						getAdapter(receiver, IDebugModelProvider.class);
 			}
-		    if (modelProvider != null) {
-		        String[] ids = modelProvider.getModelIdentifiers();
-		        for (int i = 0; i < ids.length; i++) {
-		            if (ids[i].equals(expectedValue)) {
-		                return true;
-		            }
-		        }
-		        return false;
-		    }
+			if (modelProvider != null) {
+				String[] ids = modelProvider.getModelIdentifiers();
+				for (int i = 0; i < ids.length; i++) {
+					if (ids[i].equals(expectedValue)) {
+						return true;
+					}
+				}
+				return false;
+			}
 			// There is no element selected with an associated debug model.
 			// Return true iff the expected value is an empty string.
 			return "".equals(expectedValue); //$NON-NLS-1$

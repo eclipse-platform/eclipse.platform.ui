@@ -24,89 +24,89 @@ import org.eclipse.ui.IEditorInput;
  */
 public class SourceLookupResult implements ISourceLookupResult {
 
-    /**
-     * Element that source was resolved for.
-     */
-    private Object fArtifact;
-    /**
-     * Corresponding source element, or <code>null</code>
-     * if unknown.
-     */
-    private Object fSourceElement;
-    /**
-     * Associated editor id, used to display the source element,
-     * or <code>null</code> if unknown.
-     */
-    private String fEditorId;
-    /**
-     * Associated editor input, used to display the source element,
-     * or <code>null</code> if unknown.
-     */
-    private IEditorInput fEditorInput;
+	/**
+	 * Element that source was resolved for.
+	 */
+	private Object fArtifact;
+	/**
+	 * Corresponding source element, or <code>null</code>
+	 * if unknown.
+	 */
+	private Object fSourceElement;
+	/**
+	 * Associated editor id, used to display the source element,
+	 * or <code>null</code> if unknown.
+	 */
+	private String fEditorId;
+	/**
+	 * Associated editor input, used to display the source element,
+	 * or <code>null</code> if unknown.
+	 */
+	private IEditorInput fEditorInput;
 
-    /**
-     * Creates a source lookup result on the given artifact, source element,
-     * editor id, and editor input.
-     */
-    public SourceLookupResult(Object artifact, Object sourceElement, String editorId, IEditorInput editorInput) {
-        fArtifact = artifact;
-        setSourceElement(sourceElement);
-        setEditorId(editorId);
-        setEditorInput(editorInput);
-    }
+	/**
+	 * Creates a source lookup result on the given artifact, source element,
+	 * editor id, and editor input.
+	 */
+	public SourceLookupResult(Object artifact, Object sourceElement, String editorId, IEditorInput editorInput) {
+		fArtifact = artifact;
+		setSourceElement(sourceElement);
+		setEditorId(editorId);
+		setEditorInput(editorInput);
+	}
 
-    @Override
+	@Override
 	public Object getArtifact() {
-        return fArtifact;
-    }
+		return fArtifact;
+	}
 
-    @Override
+	@Override
 	public Object getSourceElement() {
-        return fSourceElement;
-    }
+		return fSourceElement;
+	}
 
-    /**
-     * Sets the source element resolved for the artifact that source
-     * lookup was performed for, or <code>null</code> if a source element
-     * was not resolved.
-     *
-     * @param element resolved source element or <code>null</code> if unknown
-     */
-    protected void setSourceElement(Object element) {
-        fSourceElement = element;
-    }
+	/**
+	 * Sets the source element resolved for the artifact that source
+	 * lookup was performed for, or <code>null</code> if a source element
+	 * was not resolved.
+	 *
+	 * @param element resolved source element or <code>null</code> if unknown
+	 */
+	protected void setSourceElement(Object element) {
+		fSourceElement = element;
+	}
 
-    @Override
+	@Override
 	public String getEditorId() {
-        return fEditorId;
-    }
+		return fEditorId;
+	}
 
-    /**
-     * Sets the identifier of the editor used to display this source
-     * lookup result's source element, or <code>null</code> if unknown.
-     *
-     * @param id the identifier of the editor used to display this source
-     * lookup result's source element, or <code>null</code> if unknown
-     */
-    protected void setEditorId(String id) {
-        fEditorId = id;
-    }
+	/**
+	 * Sets the identifier of the editor used to display this source
+	 * lookup result's source element, or <code>null</code> if unknown.
+	 *
+	 * @param id the identifier of the editor used to display this source
+	 * lookup result's source element, or <code>null</code> if unknown
+	 */
+	protected void setEditorId(String id) {
+		fEditorId = id;
+	}
 
-    @Override
+	@Override
 	public IEditorInput getEditorInput() {
-        return fEditorInput;
-    }
+		return fEditorInput;
+	}
 
-    /**
-     * Sets the editor input used to display this source lookup
-     * result's source element, or <code>null</code> if unknown.
-     *
-     * @param input the editor input used to display this source lookup
-     * result's source element, or <code>null</code> if unknown
-     */
-    protected void setEditorInput(IEditorInput input) {
-        fEditorInput = input;
-    }
+	/**
+	 * Sets the editor input used to display this source lookup
+	 * result's source element, or <code>null</code> if unknown.
+	 *
+	 * @param input the editor input used to display this source lookup
+	 * result's source element, or <code>null</code> if unknown
+	 */
+	protected void setEditorInput(IEditorInput input) {
+		fEditorInput = input;
+	}
 
 	/**
 	 * Updates the artifact to refer to the given artifact

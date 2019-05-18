@@ -68,88 +68,88 @@ public class InspectPopupDialog extends DebugPopup {
 	private static final String PREF_INSPECT_POPUP_SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + "inspectPopupSashWeights"; //$NON-NLS-1$
 
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 75, 25 };
-    private static final int MIN_WIDTH = 300;
-    private static final int MIN_HEIGHT = 250;
+	private static final int MIN_WIDTH = 300;
+	private static final int MIN_HEIGHT = 250;
 
-    private IPresentationContext fContext;
-    private TreeModelViewer fViewer;
-    private SashForm fSashForm;
-    private Composite fDetailPaneComposite;
-    private DetailPaneProxy fDetailPane;
-    private Tree fTree;
-    private IExpression fExpression;
+	private IPresentationContext fContext;
+	private TreeModelViewer fViewer;
+	private SashForm fSashForm;
+	private Composite fDetailPaneComposite;
+	private DetailPaneProxy fDetailPane;
+	private Tree fTree;
+	private IExpression fExpression;
 
-    /**
-     * Creates a new inspect popup.
-     *
-     * @param shell The parent shell
-     * @param anchor point at which to anchor the popup in Display coordinates. Since
-     *  3.3 <code>null</code> indicates a default location should be used.
-     * @param commandId The command id to be used for persistence of
-     * the dialog (possibly <code>null</code>)
-     * @param expression The expression being inspected
-     */
-    public InspectPopupDialog(Shell shell, Point anchor, String commandId, IExpression expression) {
-        super(shell, anchor, commandId);
-        fExpression = expression;
-    }
+	/**
+	 * Creates a new inspect popup.
+	 *
+	 * @param shell The parent shell
+	 * @param anchor point at which to anchor the popup in Display coordinates. Since
+	 *  3.3 <code>null</code> indicates a default location should be used.
+	 * @param commandId The command id to be used for persistence of
+	 * the dialog (possibly <code>null</code>)
+	 * @param expression The expression being inspected
+	 */
+	public InspectPopupDialog(Shell shell, Point anchor, String commandId, IExpression expression) {
+		super(shell, anchor, commandId);
+		fExpression = expression;
+	}
 
-    @Override
+	@Override
 	protected Control createDialogArea(Composite parent) {
-        Composite composite = new Composite(parent, parent.getStyle());
-        GridLayout layout = new GridLayout();
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite composite = new Composite(parent, parent.getStyle());
+		GridLayout layout = new GridLayout();
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        fSashForm = new SashForm(composite, parent.getStyle());
-        fSashForm.setOrientation(SWT.VERTICAL);
-        fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fSashForm = new SashForm(composite, parent.getStyle());
+		fSashForm.setOrientation(SWT.VERTICAL);
+		fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        VariablesView view = getViewToEmulate();
-        fContext = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW, view);
-        if (view != null) {
-        	// copy over properties
-        	IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
-        	String[] properties = copy.getProperties();
-        	for (int i = 0; i < properties.length; i++) {
+		VariablesView view = getViewToEmulate();
+		fContext = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW, view);
+		if (view != null) {
+			// copy over properties
+			IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
+			String[] properties = copy.getProperties();
+			for (int i = 0; i < properties.length; i++) {
 				String key = properties[i];
 				fContext.setProperty(key, copy.getProperty(key));
 			}
-        }
-        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, fContext);
-        fViewer.setAutoExpandLevel(1);
+		}
+		fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, fContext);
+		fViewer.setAutoExpandLevel(1);
 
-        fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
+		fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
 
-        fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
-        fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
+		fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
+		fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
 
-        fTree = fViewer.getTree();
-        fTree.addSelectionListener(new SelectionListener() {
-            @Override
+		fTree = fViewer.getTree();
+		fTree.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fDetailPane.display(fViewer.getStructuredSelection());
-            }
-            @Override
+			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
-        });
+		});
 
-        initSashWeights();
+		initSashWeights();
 
-        fViewer.getContentProvider();
-        if (view != null) {
-            StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
-            if (structuredViewer != null) {
-                ViewerFilter[] filters = structuredViewer.getFilters();
-                for (int i = 0; i < filters.length; i++) {
-                    fViewer.addFilter(filters[i]);
-                }
-            }
-        }
+		fViewer.getContentProvider();
+		if (view != null) {
+			StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
+			if (structuredViewer != null) {
+				ViewerFilter[] filters = structuredViewer.getFilters();
+				for (int i = 0; i < filters.length; i++) {
+					fViewer.addFilter(filters[i]);
+				}
+			}
+		}
 
-        TreeRoot treeRoot = new TreeRoot();
-        // add update listener to auto-select and display details of root expression
-        fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
+		TreeRoot treeRoot = new TreeRoot();
+		// add update listener to auto-select and display details of root expression
+		fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
 			@Override
 			public void viewerUpdatesComplete() {
 			}
@@ -169,58 +169,58 @@ public class InspectPopupDialog extends DebugPopup {
 				}
 			}
 		});
-        fViewer.setInput(treeRoot);
+		fViewer.setInput(treeRoot);
 
-        return fTree;
-    }
+		return fTree;
+	}
 
-    /**
-     * Initializes the sash form weights from the preference store (using default values if
-     * no sash weights were stored previously).
-     */
-    protected void initSashWeights(){
-    	String prefWeights = DebugUIPlugin.getDefault().getPreferenceStore().getString(PREF_INSPECT_POPUP_SASH_WEIGHTS);
-    	if (prefWeights.length() > 0){
-	    	String[] weights = prefWeights.split(":"); //$NON-NLS-1$
-	    	if (weights.length == 2){
-	    		try{
-	    			int[] intWeights = new int[2];
-	    			intWeights[0] = Integer.parseInt(weights[0]);
-	    			intWeights[1] = Integer.parseInt(weights[1]);
-	    			fSashForm.setWeights(intWeights);
-	    			return;
-	    		} catch (NumberFormatException e){}
-	    	}
-    	}
-    	fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
-    }
+	/**
+	 * Initializes the sash form weights from the preference store (using default values if
+	 * no sash weights were stored previously).
+	 */
+	protected void initSashWeights(){
+		String prefWeights = DebugUIPlugin.getDefault().getPreferenceStore().getString(PREF_INSPECT_POPUP_SASH_WEIGHTS);
+		if (prefWeights.length() > 0){
+			String[] weights = prefWeights.split(":"); //$NON-NLS-1$
+			if (weights.length == 2){
+				try{
+					int[] intWeights = new int[2];
+					intWeights[0] = Integer.parseInt(weights[0]);
+					intWeights[1] = Integer.parseInt(weights[1]);
+					fSashForm.setWeights(intWeights);
+					return;
+				} catch (NumberFormatException e){}
+			}
+		}
+		fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+	}
 
-    @Override
+	@Override
 	protected void saveDialogBounds(Shell shell) {
-    	super.saveDialogBounds(shell);
-    	if (fSashForm != null && !fSashForm.isDisposed()){
-	    	int[] weights = fSashForm.getWeights();
-	    	if (weights.length == 2){
-	    		String weightString = weights[0] + ":" + weights[1]; //$NON-NLS-1$
-	    		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
-	    		if(node != null) {
-	    			node.put(PREF_INSPECT_POPUP_SASH_WEIGHTS, weightString);
-	    			try {
+		super.saveDialogBounds(shell);
+		if (fSashForm != null && !fSashForm.isDisposed()){
+			int[] weights = fSashForm.getWeights();
+			if (weights.length == 2){
+				String weightString = weights[0] + ":" + weights[1]; //$NON-NLS-1$
+				IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+				if(node != null) {
+					node.put(PREF_INSPECT_POPUP_SASH_WEIGHTS, weightString);
+					try {
 						node.flush();
 					} catch (BackingStoreException e) {
 						DebugUIPlugin.log(e);
 					}
-	    		}
-	    	}
-	    }
-    }
+				}
+			}
+		}
+	}
 
-    /**
-     * Creates the content for the root element of the tree viewer in the inspect
-     * popup dialog.  Always has one child, the expression this popup is displaying.
-     *
-     */
-    private class TreeRoot extends ElementContentProvider {
+	/**
+	 * Creates the content for the root element of the tree viewer in the inspect
+	 * popup dialog.  Always has one child, the expression this popup is displaying.
+	 *
+	 */
+	private class TreeRoot extends ElementContentProvider {
 		@Override
 		protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 			return 1;
@@ -234,69 +234,69 @@ public class InspectPopupDialog extends DebugPopup {
 		protected boolean supportsContextId(String id) {
 			return true;
 		}
-    }
+	}
 
-    /**
-     * Attempts to find an appropriate view to emulate, this will either be the
-     * variables view or the expressions view.
-     * @return a view to emulate or <code>null</code>
-     */
-    private VariablesView getViewToEmulate() {
-        IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
-        VariablesView expressionsView = (VariablesView) page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-        if (expressionsView != null && expressionsView.isVisible()) {
-            return expressionsView;
-        }
-        VariablesView variablesView = (VariablesView) page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
-        if (variablesView != null && variablesView.isVisible()) {
-            return variablesView;
-        }
-        if (expressionsView != null) {
-            return expressionsView;
-        }
-        return variablesView;
-    }
+	/**
+	 * Attempts to find an appropriate view to emulate, this will either be the
+	 * variables view or the expressions view.
+	 * @return a view to emulate or <code>null</code>
+	 */
+	private VariablesView getViewToEmulate() {
+		IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+		VariablesView expressionsView = (VariablesView) page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+		if (expressionsView != null && expressionsView.isVisible()) {
+			return expressionsView;
+		}
+		VariablesView variablesView = (VariablesView) page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
+		if (variablesView != null && variablesView.isVisible()) {
+			return variablesView;
+		}
+		if (expressionsView != null) {
+			return expressionsView;
+		}
+		return variablesView;
+	}
 
-    @Override
+	@Override
 	public boolean close() {
-    	if (!wasPersisted()) {
-    		fExpression.dispose();
-    	}
-    	fDetailPane.dispose();
-    	fContext.dispose();
+		if (!wasPersisted()) {
+			fExpression.dispose();
+		}
+		fDetailPane.dispose();
+		fContext.dispose();
 		return super.close();
 	}
 
-    @Override
+	@Override
 	protected String getActionText() {
 		return DebugUIViewsMessages.InspectPopupDialog_0;
 	}
 
-    @Override
+	@Override
 	protected void persist() {
-    	super.persist();
-        DebugPlugin.getDefault().getExpressionManager().addExpression(fExpression);
+		super.persist();
+		DebugPlugin.getDefault().getExpressionManager().addExpression(fExpression);
 
-        fExpression = null;
-        IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
-        IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-        if (part == null) {
-            try {
-                page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-            } catch (PartInitException e) {
-            }
-        } else {
-            page.bringToTop(part);
-        }
-    }
+		fExpression = null;
+		IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+		IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+		if (part == null) {
+			try {
+				page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+			} catch (PartInitException e) {
+			}
+		} else {
+			page.bringToTop(part);
+		}
+	}
 
-    @Override
+	@Override
 	protected Point getInitialSize() {
-        Point initialSize = super.getInitialSize();
-        initialSize.x = Math.max(initialSize.x, MIN_WIDTH);
-        initialSize.y = Math.max(initialSize.y, MIN_HEIGHT);
-        return initialSize;
-    }
+		Point initialSize = super.getInitialSize();
+		initialSize.x = Math.max(initialSize.x, MIN_WIDTH);
+		initialSize.y = Math.max(initialSize.y, MIN_HEIGHT);
+		return initialSize;
+	}
 
 	@Override
 	protected List<Control> getBackgroundColorExclusions() {

@@ -25,12 +25,12 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class VirtualViewerDeltaTests extends DeltaTests {
 
-    public VirtualViewerDeltaTests(String name) {
-        super(name);
-    }
+	public VirtualViewerDeltaTests(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, 0, new PresentationContext("TestViewer")); //$NON-NLS-1$
-    }
+	}
 }

@@ -29,22 +29,22 @@ import org.eclipse.core.runtime.Path;
 
 public class PDAFrameData {
 
-    final public IPath fFilePath;
-    final public int fPC;
-    final public String fFunction;
-    final public String[] fVariables;
+	final public IPath fFilePath;
+	final public int fPC;
+	final public String fFunction;
+	final public String[] fVariables;
 
-    PDAFrameData(String frameString) {
-        StringTokenizer st = new StringTokenizer(frameString, "|"); //$NON-NLS-1$
+	PDAFrameData(String frameString) {
+		StringTokenizer st = new StringTokenizer(frameString, "|"); //$NON-NLS-1$
 
-        fFilePath = new Path(st.nextToken());
-        fPC = Integer.parseInt(st.nextToken());
-        fFunction = st.nextToken();
+		fFilePath = new Path(st.nextToken());
+		fPC = Integer.parseInt(st.nextToken());
+		fFunction = st.nextToken();
 
 		List<String> variablesList = new ArrayList<>();
-        while (st.hasMoreTokens()) {
-            variablesList.add(st.nextToken());
-        }
-        fVariables = variablesList.toArray(new String[variablesList.size()]);
-    }
+		while (st.hasMoreTokens()) {
+			variablesList.add(st.nextToken());
+		}
+		fVariables = variablesList.toArray(new String[variablesList.size()]);
+	}
 }

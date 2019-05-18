@@ -25,20 +25,20 @@ import org.eclipse.ui.IWorkingSet;
  */
 public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewAction {
 
-    @Override
+	@Override
 	public void run(IAction action) {
-    	SelectBreakpointWorkingsetDialog sbwsd = new SelectBreakpointWorkingsetDialog(DebugUIPlugin.getShell());
-    	sbwsd.setTitle(BreakpointGroupMessages.SetDefaultBreakpointGroupAction_0);
-    	IWorkingSet workingSet = BreakpointSetOrganizer.getDefaultWorkingSet();
-    	if (workingSet != null){
-    		sbwsd.setInitialSelections(new Object[]{workingSet});
-    	}
-    	if(sbwsd.open() == Window.OK) {
-    		BreakpointSetOrganizer.setDefaultWorkingSet((IWorkingSet) sbwsd.getResult()[0]);
-    	}
-    }
+		SelectBreakpointWorkingsetDialog sbwsd = new SelectBreakpointWorkingsetDialog(DebugUIPlugin.getShell());
+		sbwsd.setTitle(BreakpointGroupMessages.SetDefaultBreakpointGroupAction_0);
+		IWorkingSet workingSet = BreakpointSetOrganizer.getDefaultWorkingSet();
+		if (workingSet != null){
+			sbwsd.setInitialSelections(new Object[]{workingSet});
+		}
+		if(sbwsd.open() == Window.OK) {
+			BreakpointSetOrganizer.setDefaultWorkingSet((IWorkingSet) sbwsd.getResult()[0]);
+		}
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {}
 
 }

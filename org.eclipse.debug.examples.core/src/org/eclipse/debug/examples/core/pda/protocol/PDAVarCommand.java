@@ -32,13 +32,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAVarCommand extends PDACommand {
 
-    public PDAVarCommand(int threadId, int frameId, String name) {
-        super("var " + threadId + " " + frameId + " " + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+	public PDAVarCommand(int threadId, int frameId, String name) {
+		super("var " + threadId + " " + frameId + " " + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

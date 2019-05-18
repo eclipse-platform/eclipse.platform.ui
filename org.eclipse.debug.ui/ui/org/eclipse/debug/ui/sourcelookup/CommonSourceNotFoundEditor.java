@@ -111,9 +111,9 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
 		fText = new Text(parent,SWT.READ_ONLY|SWT.WRAP);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        data.grabExcessHorizontalSpace = true;
-        fText.setLayoutData(data);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		fText.setLayoutData(data);
 		fText.setForeground(JFaceColors.getErrorText(fText.getDisplay()));
 		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		if (getEditorInput() != null) {

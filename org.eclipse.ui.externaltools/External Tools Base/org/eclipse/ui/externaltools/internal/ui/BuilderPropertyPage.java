@@ -162,10 +162,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			if (oldConfig == null) {
 				return;
 			}
-            //Replace the movedFrom config in the list of newly created configs
-            if (newConfigList.remove(oldConfig)) {
-                newConfigList.add(configuration);
-            }
+			//Replace the movedFrom config in the list of newly created configs
+			if (newConfigList.remove(oldConfig)) {
+				newConfigList.add(configuration);
+			}
 
 			Display.getDefault().asyncExec(() -> {
 				TableItem[] items = viewer.getTable().getItems();
@@ -212,7 +212,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			commands = project.getDescription().getBuildSpec();
 		} catch (CoreException e) {
 			handleException(e);
-            return;
+			return;
 		}
 
 		boolean projectNeedsMigration= false;
@@ -227,10 +227,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			Object element= null;
 			if (config != null) {
 				if (!config.isWorkingCopy() && !config.exists()) {
-                    Shell shell= getShell();
-                    if (shell == null) {
-                        return;
-                    }
+					Shell shell= getShell();
+					if (shell == null) {
+						return;
+					}
 					IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_Exists, new String[]{config.getName()}), null);
 					ErrorDialog.openError(getShell(), ExternalToolsUIMessages.BuilderPropertyPage_errorTitle,
 									NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_External_Tool_Builder__0__Not_Added_2, new String[]{config.getName()}),
@@ -258,10 +258,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			boolean prompt= store.getBoolean(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION);
 			boolean proceed= true;
 			if (prompt) {
-                Shell shell= getShell();
-                if (shell == null) {
-                    return;
-                }
+				Shell shell= getShell();
+				if (shell == null) {
+					return;
+				}
 				MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(shell, ExternalToolsUIMessages.BuilderPropertyPage_0, ExternalToolsUIMessages.BuilderPropertyPage_1, ExternalToolsUIMessages.BuilderPropertyPage_2, false, null, null);
 				proceed= dialog.getReturnCode() == IDialogConstants.YES_ID;
 				store.setValue(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION, !dialog.getToggleState());
@@ -416,9 +416,9 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		} else if (button == downButton) {
 			moveSelectionDown();
 		}
-        if (getControl().isDisposed()) {
-            return;
-        }
+		if (getControl().isDisposed()) {
+			return;
+		}
 		handleTableSelectionChanged();
 		viewer.getTable().setFocus();
 	}
@@ -430,25 +430,25 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		if (element instanceof ILaunchConfiguration) {
 			enableLaunchConfiguration((ILaunchConfiguration) element, checked);
 		} else if (element instanceof ICommand) {
-            Shell shell= getShell();
-            if (shell == null) {
-                return;
-            }
-            if (checked) {
-            	enableCommand((ICommand)element, checked);
-            	return;
-            } else if (!fWarned) {
-            	if(MessageDialog.openConfirm(shell, ExternalToolsUIMessages.BuilderPropertyPage_6, ExternalToolsUIMessages.BuilderPropertyPage_7)) {
-            		fWarned = true;
-            	}
+			Shell shell= getShell();
+			if (shell == null) {
+				return;
 			}
-            if(fWarned) {
-            	enableCommand((ICommand)element, checked);
-            }
-            else {
-            	viewer.removeCheckStateListener(this);
-    			viewer.setChecked(element, true);
-    			viewer.addCheckStateListener(this);
+			if (checked) {
+				enableCommand((ICommand)element, checked);
+				return;
+			} else if (!fWarned) {
+				if(MessageDialog.openConfirm(shell, ExternalToolsUIMessages.BuilderPropertyPage_6, ExternalToolsUIMessages.BuilderPropertyPage_7)) {
+					fWarned = true;
+				}
+			}
+			if(fWarned) {
+				enableCommand((ICommand)element, checked);
+			}
+			else {
+				viewer.removeCheckStateListener(this);
+				viewer.setChecked(element, true);
+				viewer.addCheckStateListener(this);
 			}
 
 		}
@@ -509,10 +509,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			} catch (CoreException e) {
 			}
 		}
-        Shell shell= getShell();
-        if (shell == null) {
-            return;
-        }
+		Shell shell= getShell();
+		if (shell == null) {
+			return;
+		}
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new BuilderLabelProvider());
 		dialog.setTitle(ExternalToolsUIMessages.BuilderPropertyPage_4);
 		dialog.setMessage(ExternalToolsUIMessages.BuilderPropertyPage_5);
@@ -632,10 +632,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private int editConfiguration(ILaunchConfiguration config) {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		manager.addLaunchConfigurationListener(configurationListener);
-        Shell shell= getShell();
-        if (shell == null) {
-            return Window.CANCEL;
-        }
+		Shell shell= getShell();
+		if (shell == null) {
+			return Window.CANCEL;
+		}
 		int code= DebugUITools.openLaunchConfigurationPropertiesDialog(shell, config, org.eclipse.ui.externaltools.internal.model.IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
 		manager.removeLaunchConfigurationListener(configurationListener);
 		return code;
@@ -651,10 +651,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 */
 	private ILaunchConfigurationType promptForConfigurationType() {
 		List<ILaunchConfigurationType> externalToolTypes = getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
-        Shell shell= getShell();
-        if (shell == null) {
-            return null;
-        }
+		Shell shell= getShell();
+		if (shell == null) {
+			return null;
+		}
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new BuilderLabelProvider());
 		dialog.setElements(externalToolTypes.toArray());
 		dialog.setMultipleSelection(false);
@@ -752,10 +752,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			// User has asked not to be prompted
 			return true;
 		}
-        Shell shell= getShell();
-        if (shell == null) {
-            return false;
-        }
+		Shell shell= getShell();
+		if (shell == null) {
+			return false;
+		}
 		// Warn the user that editing an old config will cause storage migration.
 		MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(),
 			ExternalToolsUIMessages.BuilderPropertyPage_Migrate_project_builder_10,
@@ -781,7 +781,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			Shell shell = getShell();
 			if (shell != null) {
 				ErrorDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_errorTitle, ExternalToolsUIMessages.BuilderPropertyPage_errorMessage, status[0]);
-		    }
+			}
 		});
 	}
 
@@ -1003,10 +1003,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 						try {
 							workingCopy.doSave();
 						} catch (CoreException e) {
-                            Shell shell= getShell();
-                            if (shell != null) {
-                                MessageDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_39, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_40, new String[] {workingCopy.getName()}));
-                            }
+							Shell shell= getShell();
+							if (shell != null) {
+								MessageDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_39, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_40, new String[] {workingCopy.getName()}));
+							}
 						}
 					}
 				}
@@ -1029,7 +1029,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				project.setDescription(desc, IResource.FORCE, monitor);
 			} catch (CoreException e) {
 				handleException(e);
-                performCancel();
+				performCancel();
 			}
 		}
 
@@ -1070,10 +1070,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			configsToBeDeleted.add(config);
 			return newCommand;
 		} catch (CoreException exception) {
-            Shell shell= getShell();
-            if (shell != null) {
-                MessageDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_13, ExternalToolsUIMessages.BuilderPropertyPage_error);
-            }
+			Shell shell= getShell();
+			if (shell != null) {
+				MessageDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_13, ExternalToolsUIMessages.BuilderPropertyPage_error);
+			}
 			return null;
 		}
 	}
@@ -1220,11 +1220,11 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		return super.performCancel();
 	}
 
-    @Override
+	@Override
 	public Shell getShell() {
-        if (getControl().isDisposed()) {
+		if (getControl().isDisposed()) {
 			return null;
-        }
-        return super.getShell();
-    }
+		}
+		return super.getShell();
+	}
 }

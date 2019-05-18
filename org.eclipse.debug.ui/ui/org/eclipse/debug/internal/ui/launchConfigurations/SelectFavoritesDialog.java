@@ -91,11 +91,11 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	/**
 	 * Returns a label to use for launch mode with accelerators removed.
 	 *
-     * @return label to use for launch mode with accelerators removed
-     */
-    private String getModeLabel() {
-        return DebugUIPlugin.removeAccelerators(fHistory.getLaunchGroup().getLabel());
-    }
+	 * @return label to use for launch mode with accelerators removed
+	 */
+	private String getModeLabel() {
+		return DebugUIPlugin.removeAccelerators(fHistory.getLaunchGroup().getLabel());
+	}
 
 	@Override
 	protected String getDialogSettingsId() {

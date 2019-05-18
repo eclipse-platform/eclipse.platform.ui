@@ -106,98 +106,98 @@ public class ProcessConsoleManager implements ILaunchListener {
 	}
 
 	/**
-     * Console document content provider extensions, keyed by extension id
-     */
+	 * Console document content provider extensions, keyed by extension id
+	 */
 	private Map<String, IConfigurationElement> fColorProviders;
 
-    /**
-     * The default color provider. Used if no color provider is contributed
-     * for the given process type.
-     */
-    private IConsoleColorProvider fDefaultColorProvider;
+	/**
+	 * The default color provider. Used if no color provider is contributed
+	 * for the given process type.
+	 */
+	private IConsoleColorProvider fDefaultColorProvider;
 
-    /**
-     * Console line trackers; keyed by process type to list of trackers (1:N)
-     */
+	/**
+	 * Console line trackers; keyed by process type to list of trackers (1:N)
+	 */
 	private Map<String, List<IConfigurationElement>> fLineTrackers;
 
-    /**
-     * Map of processes for a launch to compute removed processes
-     */
+	/**
+	 * Map of processes for a launch to compute removed processes
+	 */
 	private Map<ILaunch, IProcess[]> fProcesses;
 
 	/**
 	 * Lock for fLineTrackers
 	 */
 	private Object fLineTrackersLock = new Object();
-    /**
-     * @see ILaunchListener#launchRemoved(ILaunch)
-     */
-    @Override
+	/**
+	 * @see ILaunchListener#launchRemoved(ILaunch)
+	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
-        removeLaunch(launch);
-    }
+		removeLaunch(launch);
+	}
 
-    protected void removeLaunch(ILaunch launch) {
-        IProcess[] processes= launch.getProcesses();
-        for (int i= 0; i < processes.length; i++) {
-            IProcess iProcess = processes[i];
-            removeProcess(iProcess);
-        }
-        if (fProcesses != null) {
-            fProcesses.remove(launch);
-        }
-    }
+	protected void removeLaunch(ILaunch launch) {
+		IProcess[] processes= launch.getProcesses();
+		for (int i= 0; i < processes.length; i++) {
+			IProcess iProcess = processes[i];
+			removeProcess(iProcess);
+		}
+		if (fProcesses != null) {
+			fProcesses.remove(launch);
+		}
+	}
 
-    /**
-     * Removes the console and document associated with the given process.
-     *
-     * @param iProcess process to clean up
-     */
-    private void removeProcess(IProcess iProcess) {
-        IConsole console = getConsole(iProcess);
+	/**
+	 * Removes the console and document associated with the given process.
+	 *
+	 * @param iProcess process to clean up
+	 */
+	private void removeProcess(IProcess iProcess) {
+		IConsole console = getConsole(iProcess);
 
-        if (console != null) {
-            IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-            manager.removeConsoles(new IConsole[]{console});
-        }
-    }
+		if (console != null) {
+			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+			manager.removeConsoles(new IConsole[]{console});
+		}
+	}
 
-    /**
-     * Returns the console for the given process, or <code>null</code> if none.
-     *
-     * @param process
-     * @return the console for the given process, or <code>null</code> if none
-     */
-    public IConsole getConsole(IProcess process) {
-        IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-        IConsole[] consoles = manager.getConsoles();
-        for (int i = 0; i < consoles.length; i++) {
-            IConsole console = consoles[i];
-            if (console instanceof ProcessConsole) {
-                ProcessConsole pc = (ProcessConsole)console;
-                if (pc.getProcess().equals(process)) {
-                    return pc;
-                }
-            }
-        }
-        return null;
-    }
+	/**
+	 * Returns the console for the given process, or <code>null</code> if none.
+	 *
+	 * @param process
+	 * @return the console for the given process, or <code>null</code> if none
+	 */
+	public IConsole getConsole(IProcess process) {
+		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+		IConsole[] consoles = manager.getConsoles();
+		for (int i = 0; i < consoles.length; i++) {
+			IConsole console = consoles[i];
+			if (console instanceof ProcessConsole) {
+				ProcessConsole pc = (ProcessConsole)console;
+				if (pc.getProcess().equals(process)) {
+					return pc;
+				}
+			}
+		}
+		return null;
+	}
 
-    /**
-     * @see ILaunchListener#launchAdded(ILaunch)
-     */
-    @Override
+	/**
+	 * @see ILaunchListener#launchAdded(ILaunch)
+	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
-        launchChanged(launch);
-    }
+		launchChanged(launch);
+	}
 
-    /**
-     * @see ILaunchListener#launchChanged(ILaunch)
-     */
-    @Override
+	/**
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	@Override
 	public void launchChanged(final ILaunch launch) {
-        IProcess[] processes= launch.getProcesses();
+		IProcess[] processes= launch.getProcesses();
 		for (IProcess process : processes) {
 			if (process.getStreamsProxy() == null) {
 				continue;
@@ -206,108 +206,108 @@ public class ProcessConsoleManager implements ILaunchListener {
 				// create a new console in a separated thread, see bug 355011.
 				Job job = new ConsoleCreation(launch, process);
 				job.schedule();
-            }
-        }
+			}
+		}
 		List<IProcess> removed = getRemovedProcesses(launch);
-        if (removed != null) {
+		if (removed != null) {
 			for (IProcess p : removed) {
-                removeProcess(p);
-            }
-        }
-    }
+				removeProcess(p);
+			}
+		}
+	}
 
-    /**
-     * Returns the document for the process, or <code>null</code>
-     * if none.
-     */
-    public IDocument getConsoleDocument(IProcess process) {
-        ProcessConsole console = (ProcessConsole) getConsole(process);
-        return (console != null ? console.getDocument() : null);
-    }
+	/**
+	 * Returns the document for the process, or <code>null</code>
+	 * if none.
+	 */
+	public IDocument getConsoleDocument(IProcess process) {
+		ProcessConsole console = (ProcessConsole) getConsole(process);
+		return (console != null ? console.getDocument() : null);
+	}
 
-    /**
-     * Called by the debug ui plug-in on startup.
-     * The console document manager starts listening for
-     * launches to be registered and initializes if any launches
-     * already exist.
-     */
-    public void startup() {
-        ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-        launchManager.addLaunchListener(this);
+	/**
+	 * Called by the debug ui plug-in on startup.
+	 * The console document manager starts listening for
+	 * launches to be registered and initializes if any launches
+	 * already exist.
+	 */
+	public void startup() {
+		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		launchManager.addLaunchListener(this);
 
-        //set up the docs for launches already registered
-        ILaunch[] launches= launchManager.getLaunches();
-        for (int i = 0; i < launches.length; i++) {
-            launchAdded(launches[i]);
-        }
-    }
+		//set up the docs for launches already registered
+		ILaunch[] launches= launchManager.getLaunches();
+		for (int i = 0; i < launches.length; i++) {
+			launchAdded(launches[i]);
+		}
+	}
 
-    /**
-     * Called by the debug ui plug-in on shutdown.
-     * The console document manager de-registers as a
-     * launch listener and kills all existing console documents.
-     */
-    public void shutdown() {
+	/**
+	 * Called by the debug ui plug-in on shutdown.
+	 * The console document manager de-registers as a
+	 * launch listener and kills all existing console documents.
+	 */
+	public void shutdown() {
 		Job.getJobManager().cancel(ProcessConsoleManager.class);
-        ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-        ILaunch[] launches = launchManager.getLaunches();
-        for (int i = 0; i < launches.length; i++) {
-            ILaunch launch = launches[i];
-            removeLaunch(launch);
-        }
-        launchManager.removeLaunchListener(this);
-        if (fProcesses != null) {
-            fProcesses.clear();
-        }
-    }
+		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			removeLaunch(launch);
+		}
+		launchManager.removeLaunchListener(this);
+		if (fProcesses != null) {
+			fProcesses.clear();
+		}
+	}
 
-    /**
-     * Returns a new console document color provider extension for the given
-     * process type, or <code>null</code> if none.
-     *
-     * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>
-     * @return IConsoleColorProvider
-     */
-    public IConsoleColorProvider getColorProvider(String type) {
-        if (fColorProviders == null) {
+	/**
+	 * Returns a new console document color provider extension for the given
+	 * process type, or <code>null</code> if none.
+	 *
+	 * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>
+	 * @return IConsoleColorProvider
+	 */
+	public IConsoleColorProvider getColorProvider(String type) {
+		if (fColorProviders == null) {
 			fColorProviders = new HashMap<>();
-            IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
-            IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-            for (int i = 0; i < elements.length; i++) {
-                IConfigurationElement extension = elements[i];
-                fColorProviders.put(extension.getAttribute("processType"), extension); //$NON-NLS-1$
-            }
-        }
-        IConfigurationElement extension = fColorProviders.get(type);
-        if (extension != null) {
-            try {
-                Object colorProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
-                if (colorProvider instanceof IConsoleColorProvider) {
-                    return (IConsoleColorProvider)colorProvider;
-                }
-                DebugUIPlugin.logErrorMessage(MessageFormat.format(
-                		"Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
+			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement extension = elements[i];
+				fColorProviders.put(extension.getAttribute("processType"), extension); //$NON-NLS-1$
+			}
+		}
+		IConfigurationElement extension = fColorProviders.get(type);
+		if (extension != null) {
+			try {
+				Object colorProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
+				if (colorProvider instanceof IConsoleColorProvider) {
+					return (IConsoleColorProvider)colorProvider;
+				}
+				DebugUIPlugin.logErrorMessage(MessageFormat.format(
+						"Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
 						new Object[] { extension.getDeclaringExtension().getUniqueIdentifier() }));
-            } catch (CoreException e) {
-                DebugUIPlugin.log(e);
-            }
-        }
-        //no color provider found of specified type, return default color provider.
-        if (fDefaultColorProvider == null) {
-            fDefaultColorProvider = new ConsoleColorProvider();
-        }
-        return fDefaultColorProvider;
-    }
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		//no color provider found of specified type, return default color provider.
+		if (fDefaultColorProvider == null) {
+			fDefaultColorProvider = new ConsoleColorProvider();
+		}
+		return fDefaultColorProvider;
+	}
 
-    /**
-     * Returns the Line Trackers for a given process type.
-     * @param process The process for which line trackers are required.
-     * @return An array of line trackers which match the given process type.
-     */
-    public IConsoleLineTracker[] getLineTrackers(IProcess process) {
-        String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
+	/**
+	 * Returns the Line Trackers for a given process type.
+	 * @param process The process for which line trackers are required.
+	 * @return An array of line trackers which match the given process type.
+	 */
+	public IConsoleLineTracker[] getLineTrackers(IProcess process) {
+		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 
-        if (fLineTrackers == null) {
+		if (fLineTrackers == null) {
 			synchronized (fLineTrackersLock) { // can't use fLineTrackers as lock as it is null here
 				fLineTrackers = new HashMap<>();
 				IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
@@ -323,71 +323,71 @@ public class ProcessConsoleManager implements ILaunchListener {
 					list.add(extension);
 				}
 			}
-        }
+		}
 
 		ArrayList<IConsoleLineTracker> trackers = new ArrayList<>();
-        if (type != null) {
+		if (type != null) {
 			List<IConfigurationElement> lineTrackerExtensions;
 			synchronized (fLineTrackers) {// need to synchronize as the update to list might be still happening
 				lineTrackerExtensions = fLineTrackers.get(type);
 			}
-            if(lineTrackerExtensions != null) {
+			if(lineTrackerExtensions != null) {
 				for (IConfigurationElement element : lineTrackerExtensions) {
 					try {
 						trackers.add((IConsoleLineTracker) element.createExecutableExtension("class")); //$NON-NLS-1$
-                    } catch (CoreException e) {
-                        DebugUIPlugin.log(e);
-                    }
+					} catch (CoreException e) {
+						DebugUIPlugin.log(e);
+					}
 				}
-            }
-        }
-        return trackers.toArray(new IConsoleLineTracker[0]);
-    }
+			}
+		}
+		return trackers.toArray(new IConsoleLineTracker[0]);
+	}
 
-    /**
-     * Returns the processes that have been removed from the given
-     * launch, or <code>null</code> if none.
-     *
-     * @param launch launch that has changed
-     * @return removed processes or <code>null</code>
-     */
+	/**
+	 * Returns the processes that have been removed from the given
+	 * launch, or <code>null</code> if none.
+	 *
+	 * @param launch launch that has changed
+	 * @return removed processes or <code>null</code>
+	 */
 	private List<IProcess> getRemovedProcesses(ILaunch launch) {
 		List<IProcess> removed = null;
-        if (fProcesses == null) {
+		if (fProcesses == null) {
 			fProcesses = new HashMap<>();
-        }
-        IProcess[] old = fProcesses.get(launch);
-        IProcess[] curr = launch.getProcesses();
-        if (old != null) {
-            for (int i = 0; i < old.length; i++) {
-                IProcess process = old[i];
-                if (!contains(curr, process)) {
-                    if (removed == null) {
+		}
+		IProcess[] old = fProcesses.get(launch);
+		IProcess[] curr = launch.getProcesses();
+		if (old != null) {
+			for (int i = 0; i < old.length; i++) {
+				IProcess process = old[i];
+				if (!contains(curr, process)) {
+					if (removed == null) {
 						removed = new ArrayList<>();
-                    }
-                    removed.add(process);
-                }
-            }
-        }
-        // update cache with current processes
-        fProcesses.put(launch, curr);
-        return removed;
-    }
+					}
+					removed.add(process);
+				}
+			}
+		}
+		// update cache with current processes
+		fProcesses.put(launch, curr);
+		return removed;
+	}
 
-    /**
-     * Returns whether the given object is contained in the list.
-     *
-     * @param list list to search
-     * @param object object to search for
-     * @return whether the given object is contained in the list
-     */
-    private boolean contains(Object[] list, Object object) {
-        for (int i = 0; i < list.length; i++) {
-            Object object2 = list[i];
-            if (object2.equals(object)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * Returns whether the given object is contained in the list.
+	 *
+	 * @param list list to search
+	 * @param object object to search for
+	 * @return whether the given object is contained in the list
+	 */
+	private boolean contains(Object[] list, Object object) {
+		for (int i = 0; i < list.length; i++) {
+			Object object2 = list[i];
+			if (object2.equals(object)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

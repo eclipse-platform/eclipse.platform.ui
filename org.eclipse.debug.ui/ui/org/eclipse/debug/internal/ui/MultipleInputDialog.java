@@ -305,13 +305,13 @@ public class MultipleInputDialog extends Dialog {
 		text.setData(FIELD_NAME, labelText);
 
 		text.addTraverseListener(new TraverseListener () {
-  			@Override
+			@Override
 			public void keyTraversed(TraverseEvent e) {
-  				if(e.detail == SWT.TRAVERSE_RETURN && e.stateMask == SWT.SHIFT) {
-  					e.doit = true;
-  				}
-  			}
-  		});
+				if(e.detail == SWT.TRAVERSE_RETURN && e.stateMask == SWT.SHIFT) {
+					e.doit = true;
+				}
+			}
+		});
 
 		// make sure rows are the same height on both panels.
 		label.setSize(label.getSize().x, text.getSize().y);

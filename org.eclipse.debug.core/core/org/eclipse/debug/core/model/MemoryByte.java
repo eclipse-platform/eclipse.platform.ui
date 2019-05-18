@@ -27,9 +27,9 @@ package org.eclipse.debug.core.model;
  */
 public class MemoryByte {
 
-    /**
-     * Bit mask used to indicate a byte is writable.
-     */
+	/**
+	 * Bit mask used to indicate a byte is writable.
+	 */
 	public static final byte	WRITABLE	= 0x01;
 
 	/**
@@ -88,7 +88,7 @@ public class MemoryByte {
 	 * by default.
 	 */
 	public MemoryByte() {
-	    this((byte)0, (byte)(WRITABLE | READABLE | ENDIANESS_KNOWN));
+		this((byte)0, (byte)(WRITABLE | READABLE | ENDIANESS_KNOWN));
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class MemoryByte {
 	 *
 	 */
 	public MemoryByte(byte byteValue) {
-	    this(byteValue, (byte)(WRITABLE | READABLE | ENDIANESS_KNOWN));
+		this(byteValue, (byte)(WRITABLE | READABLE | ENDIANESS_KNOWN));
 	}
 
 	/**

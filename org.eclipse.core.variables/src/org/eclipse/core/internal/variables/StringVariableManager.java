@@ -558,13 +558,13 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		new StringSubstitutionEngine().validateStringVariables(expression, this);
 	}
 
-    @Override
+	@Override
 	public String getContributingPluginId(IStringVariable variable) {
-        if (variable instanceof StringVariable) {
-            return ((StringVariable) variable).getConfigurationElement().getContributor().getName();
-        }
-        return null;
-    }
+		if (variable instanceof StringVariable) {
+			return ((StringVariable) variable).getConfigurationElement().getContributor().getName();
+		}
+		return null;
+	}
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {

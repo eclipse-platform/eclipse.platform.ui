@@ -52,7 +52,7 @@ public class PreferredDelegateModifyListener extends PreferenceModifyListener {
 			// force VMs to be initialized before we import the new VMs
 			node.accept(new Visitor());
 		} catch (BackingStoreException e) {
-            DebugPlugin.log(e);
+			DebugPlugin.log(e);
 		}
 		return node;
 	}

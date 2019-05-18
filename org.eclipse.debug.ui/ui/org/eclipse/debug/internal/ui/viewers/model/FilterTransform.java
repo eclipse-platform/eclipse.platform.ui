@@ -375,11 +375,11 @@ public class FilterTransform {
 	}
 
 	public int indexOfFilteredElement(TreePath parentPath, Object element) {
-        Node parentNode = root.find(parentPath, 0);
-        if (parentNode == null) {
-            return -1;
-        }
-        return parentNode.indexOfFilteredElement(element);
+		Node parentNode = root.find(parentPath, 0);
+		if (parentNode == null) {
+			return -1;
+		}
+		return parentNode.indexOfFilteredElement(element);
 	}
 
 	/**

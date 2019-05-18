@@ -32,13 +32,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAStackCommand extends PDACommand {
 
-    public PDAStackCommand(int threadId) {
-        super("stack " + threadId); //$NON-NLS-1$
-    }
+	public PDAStackCommand(int threadId) {
+		super("stack " + threadId); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDAStackCommandResult(resultText);
-    }
+		return new PDAStackCommandResult(resultText);
+	}
 }

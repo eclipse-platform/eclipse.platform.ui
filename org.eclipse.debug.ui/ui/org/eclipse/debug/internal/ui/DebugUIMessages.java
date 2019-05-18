@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 public class DebugUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.DebugUIMessages";//$NON-NLS-1$
 
-    public static String AbstractAsyncTableRendering_2;
+	public static String AbstractAsyncTableRendering_2;
 
 	public static String AbstractDebugCheckboxSelectionDialog_0;
 
@@ -51,7 +51,7 @@ public class DebugUIMessages extends NLS {
 
 	public static String SwitchMemoryBlockAction_4;
 
-    public static String WorkingDirectoryStatusHandler_0;
+	public static String WorkingDirectoryStatusHandler_0;
 	public static String WorkingDirectoryStatusHandler_Eclipse_Runtime_1;
 
 	public static String DebugUITools_3;
@@ -299,7 +299,7 @@ public class DebugUIMessages extends NLS {
 	//
 	// Elements
 	//
-    public static String ExpressionManagerContentProvider_1;
+	public static String ExpressionManagerContentProvider_1;
 
 	static {
 		// load message values from bundle file

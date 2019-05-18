@@ -152,8 +152,8 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	 * @return viewer used in this dialog
 	 */
 	protected Viewer getViewer(){
-    	return fViewer;
-    }
+		return fViewer;
+	}
 
 	@Override
 	protected Control createContents(Composite parent) {

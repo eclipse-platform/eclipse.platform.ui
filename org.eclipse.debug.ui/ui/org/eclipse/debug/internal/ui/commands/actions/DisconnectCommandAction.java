@@ -27,44 +27,44 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public class DisconnectCommandAction extends DebugCommandAction{
 
-    public DisconnectCommandAction() {
-        setActionDefinitionId("org.eclipse.debug.ui.commands.Disconnect"); //$NON-NLS-1$
-    }
+	public DisconnectCommandAction() {
+		setActionDefinitionId("org.eclipse.debug.ui.commands.Disconnect"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.DisconnectAction_0;
-    }
+		return ActionMessages.DisconnectAction_0;
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.disconnect_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.disconnect_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.debugview.toolbar.disconnect"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.debugview.toolbar.disconnect"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.DisconnectAction_3;
-    }
+		return ActionMessages.DisconnectAction_3;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DISCONNECT);
-    }
+		return DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DISCONNECT);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DISCONNECT);
-    }
+		return DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DISCONNECT);
+	}
 
 	@Override
 	protected Class<IDisconnectHandler> getCommandType() {

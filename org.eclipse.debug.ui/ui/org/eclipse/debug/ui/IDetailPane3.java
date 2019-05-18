@@ -45,5 +45,5 @@ public interface IDetailPane3 extends IDetailPane, ISaveablePart {
 	 *
 	 * @param listener a property listener
 	 */
-    void removePropertyListener(IPropertyListener listener);
+	void removePropertyListener(IPropertyListener listener);
 }

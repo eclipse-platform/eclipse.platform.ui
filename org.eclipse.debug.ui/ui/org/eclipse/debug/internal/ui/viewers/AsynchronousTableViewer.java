@@ -55,135 +55,135 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class AsynchronousTableViewer extends AsynchronousViewer implements Listener {
 
-    private Table fTable;
+	private Table fTable;
 
-    private TableEditor fTableEditor;
+	private TableEditor fTableEditor;
 
-    private TableEditorImpl fTableEditorImpl;
+	private TableEditorImpl fTableEditorImpl;
 
-    public AsynchronousTableViewer(Composite parent) {
-        this(parent, SWT.VIRTUAL);
-    }
+	public AsynchronousTableViewer(Composite parent) {
+		this(parent, SWT.VIRTUAL);
+	}
 
-    public AsynchronousTableViewer(Composite parent, int style) {
-        this(new Table(parent, style));
-    }
+	public AsynchronousTableViewer(Composite parent, int style) {
+		this(new Table(parent, style));
+	}
 
-    /**
-     * Table must be SWT.VIRTUAL. This is intentional. Labels will never be
-     * retrieved for non-visible items.
-     *
-     * @see SWT#VIRTUAL
-     * @param table the backing table widget
-     */
-    public AsynchronousTableViewer(Table table) {
-        Assert.isTrue((table.getStyle() & SWT.VIRTUAL) != 0);
-        fTable = table;
-        hookControl(fTable);
-        fTableEditor = new TableEditor(fTable);
-        fTableEditorImpl = createTableEditorImpl();
-    }
+	/**
+	 * Table must be SWT.VIRTUAL. This is intentional. Labels will never be
+	 * retrieved for non-visible items.
+	 *
+	 * @see SWT#VIRTUAL
+	 * @param table the backing table widget
+	 */
+	public AsynchronousTableViewer(Table table) {
+		Assert.isTrue((table.getStyle() & SWT.VIRTUAL) != 0);
+		fTable = table;
+		hookControl(fTable);
+		fTableEditor = new TableEditor(fTable);
+		fTableEditorImpl = createTableEditorImpl();
+	}
 
-    @Override
+	@Override
 	protected void hookControl(Control control) {
-        super.hookControl(control);
-        control.addMouseListener(new MouseAdapter() {
-            @Override
+		super.hookControl(control);
+		control.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDown(MouseEvent e) {
-                fTableEditorImpl.handleMouseDown(e);
-            }
-        });
-    }
+				fTableEditorImpl.handleMouseDown(e);
+			}
+		});
+	}
 
-    @Override
+	@Override
 	public synchronized void dispose() {
-    	fTableEditor.dispose();
-    	fTable.dispose();
-        super.dispose();
-    }
+		fTableEditor.dispose();
+		fTable.dispose();
+		super.dispose();
+	}
 
-    @Override
+	@Override
 	protected ISelection doAttemptSelectionToWidget(ISelection selection, boolean reveal) {
-        if (acceptsSelection(selection)) {
+		if (acceptsSelection(selection)) {
 			List<?> list = ((IStructuredSelection) selection).toList();
-            if (list == null) {
-                fTable.deselectAll();
-                return StructuredSelection.EMPTY;
-            }
+			if (list == null) {
+				fTable.deselectAll();
+				return StructuredSelection.EMPTY;
+			}
 
-            int[] indices = new int[list.size()];
-            ModelNode[] nodes = getModel().getRootNode().getChildrenNodes();
-            if (nodes != null) {
-	            int index = 0;
+			int[] indices = new int[list.size()];
+			ModelNode[] nodes = getModel().getRootNode().getChildrenNodes();
+			if (nodes != null) {
+				int index = 0;
 
-	            // I'm not sure if it would be faster to check TableItems first...
-	            for (int i = 0; i < nodes.length; i++) {
-	                Object element = nodes[i].getElement();
-	                if (list.contains(element)) {
-	                    indices[index] = i;
-	                    index++;
-	                }
-	            }
+				// I'm not sure if it would be faster to check TableItems first...
+				for (int i = 0; i < nodes.length; i++) {
+					Object element = nodes[i].getElement();
+					if (list.contains(element)) {
+						indices[index] = i;
+						index++;
+					}
+				}
 
-	            fTable.setSelection(indices);
-	            if (reveal && indices.length > 0) {
-	                TableItem item = fTable.getItem(indices[0]);
-	                fTable.showItem(item);
-	            }
-            }
-        }
-        return StructuredSelection.EMPTY;
-    }
+				fTable.setSelection(indices);
+				if (reveal && indices.length > 0) {
+					TableItem item = fTable.getItem(indices[0]);
+					fTable.showItem(item);
+				}
+			}
+		}
+		return StructuredSelection.EMPTY;
+	}
 
-    @Override
+	@Override
 	protected boolean acceptsSelection(ISelection selection) {
-        return selection instanceof IStructuredSelection;
-    }
+		return selection instanceof IStructuredSelection;
+	}
 
-    @Override
+	@Override
 	protected ISelection getEmptySelection() {
-        return StructuredSelection.EMPTY;
-    }
+		return StructuredSelection.EMPTY;
+	}
 
-    protected Widget getParent(Widget widget) {
-        if (widget instanceof TableItem) {
-            return fTable;
-        }
-        return null;
-    }
+	protected Widget getParent(Widget widget) {
+		if (widget instanceof TableItem) {
+			return fTable;
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	protected List getSelectionFromWidget() {
-        TableItem[] selection = fTable.getSelection();
+		TableItem[] selection = fTable.getSelection();
 		List<Object> datas = new ArrayList<>(selection.length);
-        for (int i = 0; i < selection.length; i++) {
-            datas.add(selection[i].getData());
-        }
-        return datas;
-    }
+		for (int i = 0; i < selection.length; i++) {
+			datas.add(selection[i].getData());
+		}
+		return datas;
+	}
 
-    @Override
+	@Override
 	public Control getControl() {
-        return fTable;
-    }
+		return fTable;
+	}
 
-    public Table getTable() {
-        return (Table) getControl();
-    }
+	public Table getTable() {
+		return (Table) getControl();
+	}
 
-    @Override
+	@Override
 	protected void internalRefresh(ModelNode node) {
-        super.internalRefresh(node);
-        if (node.getElement().equals(getInput())) {
-            updateChildren(node);
-        }
-    }
+		super.internalRefresh(node);
+		if (node.getElement().equals(getInput())) {
+			updateChildren(node);
+		}
+	}
 
-    @Override
+	@Override
 	protected void restoreLabels(Item item) {
-    	TableItem tableItem = (TableItem) item;
-    	String[] values = (String[]) tableItem.getData(OLD_LABEL);
-    	Image[] images = (Image[]) tableItem.getData(OLD_IMAGE);
+		TableItem tableItem = (TableItem) item;
+		String[] values = (String[]) tableItem.getData(OLD_LABEL);
+		Image[] images = (Image[]) tableItem.getData(OLD_IMAGE);
 		if (values != null) {
 			tableItem.setText(values);
 			tableItem.setImage(images);
@@ -192,289 +192,289 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
 	@Override
 	public void setLabels(Widget widget, String[] labels, ImageDescriptor[] imageDescriptors) {
-        TableItem item = (TableItem) widget;
-        item.setText(labels);
-        item.setData(OLD_LABEL, labels);
-        Image[] images = new Image[labels.length];
-        item.setData(OLD_IMAGE, images);
-        if (imageDescriptors != null) {
-            for (int i = 0; i < images.length; i++) {
-                if (i < imageDescriptors.length) {
+		TableItem item = (TableItem) widget;
+		item.setText(labels);
+		item.setData(OLD_LABEL, labels);
+		Image[] images = new Image[labels.length];
+		item.setData(OLD_IMAGE, images);
+		if (imageDescriptors != null) {
+			for (int i = 0; i < images.length; i++) {
+				if (i < imageDescriptors.length) {
 					images[i] = getImage(imageDescriptors[i]);
 				}
-            }
-        }
-        item.setImage(images);
-    }
+			}
+		}
+		item.setImage(images);
+	}
 
-    @Override
+	@Override
 	public void setColors(Widget widget, RGB[] foregrounds, RGB[] backgrounds) {
-        TableItem item = (TableItem) widget;
-        if (foregrounds == null) {
-            foregrounds = new RGB[fTable.getColumnCount()];
-        }
-        if (backgrounds == null) {
-            backgrounds = new RGB[fTable.getColumnCount()];
-        }
+		TableItem item = (TableItem) widget;
+		if (foregrounds == null) {
+			foregrounds = new RGB[fTable.getColumnCount()];
+		}
+		if (backgrounds == null) {
+			backgrounds = new RGB[fTable.getColumnCount()];
+		}
 
-        for (int i = 0; i < foregrounds.length; i++) {
-            Color fg = getColor(foregrounds[i]);
-            item.setForeground(i, fg);
-        }
-        for (int i = 0; i < backgrounds.length; i++) {
-            Color bg = getColor(backgrounds[i]);
-            item.setBackground(i, bg);
-        }
-    }
+		for (int i = 0; i < foregrounds.length; i++) {
+			Color fg = getColor(foregrounds[i]);
+			item.setForeground(i, fg);
+		}
+		for (int i = 0; i < backgrounds.length; i++) {
+			Color bg = getColor(backgrounds[i]);
+			item.setBackground(i, bg);
+		}
+	}
 
-    @Override
+	@Override
 	public void setFonts(Widget widget, FontData[] fontDatas) {
-        TableItem item = (TableItem) widget;
-        if (fontDatas != null) {
-            for (int i = 0; i < fontDatas.length; i++) {
-                Font font = getFont(fontDatas[i]);
-                item.setFont(i, font);
-            }
-        }
-    }
+		TableItem item = (TableItem) widget;
+		if (fontDatas != null) {
+			for (int i = 0; i < fontDatas.length; i++) {
+				Font font = getFont(fontDatas[i]);
+				item.setFont(i, font);
+			}
+		}
+	}
 
-    public void setColumnHeaders(final String[] headers) {
-        fTableEditorImpl.setColumnProperties(headers);
-    }
+	public void setColumnHeaders(final String[] headers) {
+		fTableEditorImpl.setColumnProperties(headers);
+	}
 
-    public Object[] getColumnProperties() {
-        return fTableEditorImpl.getColumnProperties();
-    }
+	public Object[] getColumnProperties() {
+		return fTableEditorImpl.getColumnProperties();
+	}
 
-    public void showColumnHeader(final boolean showHeaders) {
-        WorkbenchJob job = new WorkbenchJob("Set Header Visibility") { //$NON-NLS-1$
-            @Override
+	public void showColumnHeader(final boolean showHeaders) {
+		WorkbenchJob job = new WorkbenchJob("Set Header Visibility") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-            	if (!fTable.isDisposed())
-            	{
-            		fTable.setHeaderVisible(showHeaders);
-            	}
-                return Status.OK_STATUS;
-            }
-        };
-        job.setPriority(Job.INTERACTIVE);
-        job.setSystem(true);
-        job.schedule();
-    }
+				if (!fTable.isDisposed())
+				{
+					fTable.setHeaderVisible(showHeaders);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setPriority(Job.INTERACTIVE);
+		job.setSystem(true);
+		job.schedule();
+	}
 
-    @Override
+	@Override
 	public void reveal(Object element) {
-        Assert.isNotNull(element);
-        Widget w = findItem(element);
-        if (w instanceof TableItem) {
+		Assert.isNotNull(element);
+		Widget w = findItem(element);
+		if (w instanceof TableItem) {
 			getTable().showItem((TableItem) w);
 		}
-    }
+	}
 
-    /**
-     * Sets the cell editors of this table viewer.
-     *
-     * @param editors
-     *            the list of cell editors
-     */
-    public void setCellEditors(CellEditor[] editors) {
-        fTableEditorImpl.setCellEditors(editors);
-    }
+	/**
+	 * Sets the cell editors of this table viewer.
+	 *
+	 * @param editors
+	 *            the list of cell editors
+	 */
+	public void setCellEditors(CellEditor[] editors) {
+		fTableEditorImpl.setCellEditors(editors);
+	}
 
-    /**
-     * Sets the cell modifier of this table viewer.
-     *
-     * @param modifier
-     *            the cell modifier
-     */
-    public void setCellModifier(ICellModifier modifier) {
-        fTableEditorImpl.setCellModifier(modifier);
-    }
+	/**
+	 * Sets the cell modifier of this table viewer.
+	 *
+	 * @param modifier
+	 *            the cell modifier
+	 */
+	public void setCellModifier(ICellModifier modifier) {
+		fTableEditorImpl.setCellModifier(modifier);
+	}
 
-    protected TableEditorImpl createTableEditorImpl() {
-        return new TableEditorImpl(this) {
-            @Override
+	protected TableEditorImpl createTableEditorImpl() {
+		return new TableEditorImpl(this) {
+			@Override
 			Rectangle getBounds(Item item, int columnNumber) {
-                return ((TableItem) item).getBounds(columnNumber);
-            }
+				return ((TableItem) item).getBounds(columnNumber);
+			}
 
-            @Override
+			@Override
 			int getColumnCount() {
-                return getTable().getColumnCount();
-            }
+				return getTable().getColumnCount();
+			}
 
-            @Override
+			@Override
 			Item[] getSelection() {
-                return getTable().getSelection();
-            }
+				return getTable().getSelection();
+			}
 
-            @Override
+			@Override
 			void setEditor(Control w, Item item, int columnNumber) {
-                fTableEditor.setEditor(w, (TableItem) item, columnNumber);
-            }
+				fTableEditor.setEditor(w, (TableItem) item, columnNumber);
+			}
 
-            @Override
+			@Override
 			void setSelection(StructuredSelection selection, boolean b) {
-                AsynchronousTableViewer.this.setSelection(selection, b);
-            }
+				AsynchronousTableViewer.this.setSelection(selection, b);
+			}
 
-            @Override
+			@Override
 			void showSelection() {
-                getTable().showSelection();
-            }
+				getTable().showSelection();
+			}
 
-            @Override
+			@Override
 			void setLayoutData(CellEditor.LayoutData layoutData) {
-                fTableEditor.grabHorizontal = layoutData.grabHorizontal;
-                fTableEditor.horizontalAlignment = layoutData.horizontalAlignment;
-                fTableEditor.minimumWidth = layoutData.minimumWidth;
-            }
+				fTableEditor.grabHorizontal = layoutData.grabHorizontal;
+				fTableEditor.horizontalAlignment = layoutData.horizontalAlignment;
+				fTableEditor.minimumWidth = layoutData.minimumWidth;
+			}
 
-            @Override
+			@Override
 			void handleDoubleClickEvent() {
-                Viewer viewer = getViewer();
-                fireDoubleClick(new DoubleClickEvent(viewer, viewer.getSelection()));
-                fireOpen(new OpenEvent(viewer, viewer.getSelection()));
-            }
-        };
-    }
+				Viewer viewer = getViewer();
+				fireDoubleClick(new DoubleClickEvent(viewer, viewer.getSelection()));
+				fireOpen(new OpenEvent(viewer, viewer.getSelection()));
+			}
+		};
+	}
 
-    @Override
+	@Override
 	protected ISelection newSelectionFromWidget() {
-        Control control = getControl();
-        if (control == null || control.isDisposed()) {
-            return StructuredSelection.EMPTY;
-        }
+		Control control = getControl();
+		if (control == null || control.isDisposed()) {
+			return StructuredSelection.EMPTY;
+		}
 		List<?> list = getSelectionFromWidget();
-        return new StructuredSelection(list);
-    }
+		return new StructuredSelection(list);
+	}
 
-    public CellEditor[] getCellEditors() {
-        return fTableEditorImpl.getCellEditors();
-    }
+	public CellEditor[] getCellEditors() {
+		return fTableEditorImpl.getCellEditors();
+	}
 
-    public ICellModifier getCellModifier() {
-        return fTableEditorImpl.getCellModifier();
-    }
+	public ICellModifier getCellModifier() {
+		return fTableEditorImpl.getCellModifier();
+	}
 
-    public boolean isCellEditorActive() {
-        return fTableEditorImpl.isCellEditorActive();
-    }
+	public boolean isCellEditorActive() {
+		return fTableEditorImpl.isCellEditorActive();
+	}
 
-    /**
-     * This is not asynchronous. This method must be called in the UI Thread.
-     */
-    public void cancelEditing() {
-        fTableEditorImpl.cancelEditing();
-    }
+	/**
+	 * This is not asynchronous. This method must be called in the UI Thread.
+	 */
+	public void cancelEditing() {
+		fTableEditorImpl.cancelEditing();
+	}
 
-    /**
-     * This is not asynchronous. This method must be called in the UI Thread.
-     *
-     * @param element
-     *            The element to edit. Each element maps to a row in the Table.
-     * @param column
-     *            The column to edit
-     */
-    public void editElement(Object element, int column) {
-        fTableEditorImpl.editElement(element, column);
-    }
+	/**
+	 * This is not asynchronous. This method must be called in the UI Thread.
+	 *
+	 * @param element
+	 *            The element to edit. Each element maps to a row in the Table.
+	 * @param column
+	 *            The column to edit
+	 */
+	public void editElement(Object element, int column) {
+		fTableEditorImpl.editElement(element, column);
+	}
 
-    protected int indexForElement(Object element) {
+	protected int indexForElement(Object element) {
 		ViewerComparator comparator = getComparator();
-        if (comparator == null) {
+		if (comparator == null) {
 			return fTable.getItemCount();
 		}
-        int count = fTable.getItemCount();
-        int min = 0, max = count - 1;
-        while (min <= max) {
-            int mid = (min + max) / 2;
-            Object data = fTable.getItem(mid).getData();
-            int compare = comparator.compare(this, data, element);
-            if (compare == 0) {
-                // find first item > element
-                while (compare == 0) {
-                    ++mid;
-                    if (mid >= count) {
-                        break;
-                    }
-                    data = fTable.getItem(mid).getData();
-                    compare = comparator.compare(this, data, element);
-                }
-                return mid;
-            }
-            if (compare < 0) {
+		int count = fTable.getItemCount();
+		int min = 0, max = count - 1;
+		while (min <= max) {
+			int mid = (min + max) / 2;
+			Object data = fTable.getItem(mid).getData();
+			int compare = comparator.compare(this, data, element);
+			if (compare == 0) {
+				// find first item > element
+				while (compare == 0) {
+					++mid;
+					if (mid >= count) {
+						break;
+					}
+					data = fTable.getItem(mid).getData();
+					compare = comparator.compare(this, data, element);
+				}
+				return mid;
+			}
+			if (compare < 0) {
 				min = mid + 1;
 			} else {
 				max = mid - 1;
 			}
-        }
-        return min;
-    }
+		}
+		return min;
+	}
 
-    public void add(Object element) {
-        if (element != null) {
+	public void add(Object element) {
+		if (element != null) {
 			add(new Object[] { element });
 		}
-    }
+	}
 
-    public void add(Object[] elements) {
-        if (elements == null || elements.length == 0)
+	public void add(Object[] elements) {
+		if (elements == null || elements.length == 0)
 		 {
 			return; // done
 		}
-        ((AsynchronousTableModel)getModel()).add(elements);
-    }
+		((AsynchronousTableModel)getModel()).add(elements);
+	}
 
-    public void remove(Object element) {
-        if (element != null) {
+	public void remove(Object element) {
+		if (element != null) {
 			remove(new Object[] { element });
 		}
-    }
+	}
 
-    public void remove(final Object[] elements) {
-        if (elements == null || elements.length == 0)
+	public void remove(final Object[] elements) {
+		if (elements == null || elements.length == 0)
 		 {
 			return; // done
 		}
-        ((AsynchronousTableModel)getModel()).remove(elements);
-    }
+		((AsynchronousTableModel)getModel()).remove(elements);
+	}
 
-    public void insert(Object element, int position) {
-        if (element != null) {
+	public void insert(Object element, int position) {
+		if (element != null) {
 			insert(new Object[] { element }, position);
 		}
-    }
+	}
 
-    public void insert(Object[] elements, int position) {
-        if (elements == null || elements.length == 0) {
+	public void insert(Object[] elements, int position) {
+		if (elements == null || elements.length == 0) {
 			return;
 		}
-        ((AsynchronousTableModel)getModel()).insert(elements, position);
-    }
+		((AsynchronousTableModel)getModel()).insert(elements, position);
+	}
 
-    public void replace(Object element, Object replacement) {
-        if (element == null || replacement == null)
+	public void replace(Object element, Object replacement) {
+		if (element == null || replacement == null)
 		 {
 			throw new IllegalArgumentException("unexpected null parameter"); //$NON-NLS-1$
 		}
-        ((AsynchronousTableModel)getModel()).replace(element, replacement);
-    }
+		((AsynchronousTableModel)getModel()).replace(element, replacement);
+	}
 
 	@Override
 	protected AsynchronousModel createModel() {
 		return new AsynchronousTableModel(this);
 	}
 
-    @Override
+	@Override
 	protected void setItemCount(Widget parent, int itemCount) {
 		fTable.setItemCount(itemCount);
 	}
 
 	protected int getVisibleItemCount(int top) {
-        int itemCount = fTable.getItemCount();
-        return Math.min((fTable.getBounds().height / fTable.getItemHeight()) + 2, itemCount - top);
-    }
+		int itemCount = fTable.getItemCount();
+		return Math.min((fTable.getBounds().height / fTable.getItemHeight()) + 2, itemCount - top);
+	}
 
 	@Override
 	public AbstractUpdatePolicy createUpdatePolicy() {

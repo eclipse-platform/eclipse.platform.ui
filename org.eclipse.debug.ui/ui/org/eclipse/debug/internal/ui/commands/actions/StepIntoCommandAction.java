@@ -31,40 +31,40 @@ public class StepIntoCommandAction extends DebugCommandAction {
 		setActionDefinitionId("org.eclipse.debug.ui.commands.StepInto"); //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.StepIntoAction_0;
-    }
+		return ActionMessages.StepIntoAction_0;
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.step_into_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.step_into_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.debugview.toolbar.stepInto"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.debugview.toolbar.stepInto"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.StepIntoAction_3;
-    }
+		return ActionMessages.StepIntoAction_3;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEP_INTO);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEP_INTO);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_INTO);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_INTO);
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_INTO);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEP_INTO);
+	}
 
 	@Override
 	protected Class<IStepIntoHandler> getCommandType() {

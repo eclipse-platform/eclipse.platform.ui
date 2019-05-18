@@ -37,76 +37,76 @@ import org.eclipse.ui.console.IConsoleView;
  */
 public class ConsoleRemoveLaunchAction extends Action implements IViewActionDelegate, IConsoleListener, ILaunchesListener2 {
 
-    private ILaunch fLaunch;
+	private ILaunch fLaunch;
 
-    // only used when a view action delegate
-    private IConsoleView fConsoleView;
+	// only used when a view action delegate
+	private IConsoleView fConsoleView;
 
-    public ConsoleRemoveLaunchAction() {
-        super(ConsoleMessages.ConsoleRemoveTerminatedAction_0);
-        setToolTipText(ConsoleMessages.ConsoleRemoveTerminatedAction_1);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_REMOVE_LAUNCH);
-        setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
-        setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
-        setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));
-        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
-        ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(this);
-    }
+	public ConsoleRemoveLaunchAction() {
+		super(ConsoleMessages.ConsoleRemoveTerminatedAction_0);
+		setToolTipText(ConsoleMessages.ConsoleRemoveTerminatedAction_1);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_REMOVE_LAUNCH);
+		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(this);
+	}
 
-    public ConsoleRemoveLaunchAction(ILaunch launch) {
-    	this();
-        fLaunch = launch;
-        update();
-    }
+	public ConsoleRemoveLaunchAction(ILaunch launch) {
+		this();
+		fLaunch = launch;
+		update();
+	}
 
-    public void dispose() {
-    	DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-        ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
-    }
+	public void dispose() {
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
+	}
 
-    public synchronized void update() {
-    	ILaunch launch = getLaunch();
-    	if (launch != null) {
-    		setEnabled(launch.isTerminated());
-    	} else {
-    		setEnabled(false);
-    	}
-    }
+	public synchronized void update() {
+		ILaunch launch = getLaunch();
+		if (launch != null) {
+			setEnabled(launch.isTerminated());
+		} else {
+			setEnabled(false);
+		}
+	}
 
-    @Override
+	@Override
 	public synchronized void run() {
-    	ILaunch launch = getLaunch();
-    	if (launch != null) {
-	        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-	        launchManager.removeLaunch(launch);
-    	}
-    }
+		ILaunch launch = getLaunch();
+		if (launch != null) {
+			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+			launchManager.removeLaunch(launch);
+		}
+	}
 
-    @Override
+	@Override
 	public void init(IViewPart view) {
-    	if (view instanceof IConsoleView) {
+		if (view instanceof IConsoleView) {
 			fConsoleView = (IConsoleView) view;
 		}
-    	update();
-    }
+		update();
+	}
 
-    @Override
+	@Override
 	public void run(IAction action) {
-        run();
-    }
+		run();
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-    }
+	}
 
-    @Override
+	@Override
 	public void consolesAdded(IConsole[] consoles) {
-    }
+	}
 
-    @Override
+	@Override
 	public void consolesRemoved(IConsole[] consoles) {
-        update();
-    }
+		update();
+	}
 
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {

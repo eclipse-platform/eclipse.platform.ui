@@ -355,12 +355,12 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		String text = null;
 		if (objects.length == 1) {
 			IStringVariable variable = (IStringVariable)objects[0];
-			 IArgumentSelector selector = StringVariablePresentationManager.getDefault().getArgumentSelector(variable);
-			 if (variable instanceof IDynamicVariable) {
-			 	argEnabled = ((IDynamicVariable)variable).supportsArgument();
-			 }
-			 buttonEnabled = argEnabled && selector != null;
-			 text = variable.getDescription();
+			IArgumentSelector selector = StringVariablePresentationManager.getDefault().getArgumentSelector(variable);
+			if (variable instanceof IDynamicVariable) {
+				argEnabled = ((IDynamicVariable)variable).supportsArgument();
+			}
+			buttonEnabled = argEnabled && selector != null;
+			text = variable.getDescription();
 		}
 		if (text == null) {
 			text = IInternalDebugCoreConstants.EMPTY_STRING;
@@ -385,13 +385,13 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		return IDebugUIConstants.PLUGIN_ID + ".STRING_VARIABLE_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-         if (section == null) {
-             section = settings.addNewSection(getDialogSettingsSectionName());
-         }
-         return section;
-    }
+		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+		if (section == null) {
+			section = settings.addNewSection(getDialogSettingsSectionName());
+		}
+		return section;
+	}
 }

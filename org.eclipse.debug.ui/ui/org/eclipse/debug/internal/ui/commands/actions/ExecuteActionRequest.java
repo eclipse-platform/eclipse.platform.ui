@@ -33,29 +33,29 @@ public class ExecuteActionRequest extends DebugCommandRequest {
 		super(elements);
 	}
 
-    @Override
+	@Override
 	public void done() {
-    	if (fParticipant != null) {
+		if (fParticipant != null) {
 			fParticipant.requestDone(this);
 			fParticipant = null;
 		}
-        final IStatus status = getStatus();
-        if (status != null) {
-            switch (status.getSeverity()) {
-            case IStatus.ERROR:
+		final IStatus status = getStatus();
+		if (status != null) {
+			switch (status.getSeverity()) {
+			case IStatus.ERROR:
 					DebugUIPlugin.getStandardDisplay().asyncExec(() -> MessageDialog.openError(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage()));
-                break;
-            case IStatus.WARNING:
+				break;
+			case IStatus.WARNING:
 					DebugUIPlugin.getStandardDisplay().asyncExec(() -> MessageDialog.openWarning(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage()));
-                break;
-            case IStatus.INFO:
+				break;
+			case IStatus.INFO:
 					DebugUIPlugin.getStandardDisplay().asyncExec(() -> MessageDialog.openInformation(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage()));
-                break;
+				break;
 				default:
 					break;
-            }
-        }
-    }
+			}
+		}
+	}
 
 	public void setCommandParticipant(ICommandParticipant participant) {
 		fParticipant = participant;

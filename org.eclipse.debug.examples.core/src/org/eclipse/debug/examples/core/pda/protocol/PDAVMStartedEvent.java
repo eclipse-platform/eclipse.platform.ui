@@ -24,11 +24,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAVMStartedEvent extends PDAEvent {
 
-    public PDAVMStartedEvent(String message) {
-        super(message);
-    }
+	public PDAVMStartedEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("vmstarted"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("vmstarted"); //$NON-NLS-1$
+	}
 }

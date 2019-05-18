@@ -30,13 +30,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDAVMResumeCommand extends PDACommand {
 
-    public PDAVMResumeCommand() {
-        super("vmresume"); //$NON-NLS-1$
-    }
+	public PDAVMResumeCommand() {
+		super("vmresume"); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

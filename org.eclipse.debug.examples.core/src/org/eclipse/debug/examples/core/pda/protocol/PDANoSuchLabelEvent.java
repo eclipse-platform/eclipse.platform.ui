@@ -24,22 +24,22 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDANoSuchLabelEvent extends PDAEvent {
 
-    public final String fLabel;
+	public final String fLabel;
 
-    public PDANoSuchLabelEvent(String message) {
-        super(message);
-        fLabel = message.substring(getName(message).length() + 1);
-    }
+	public PDANoSuchLabelEvent(String message) {
+		super(message);
+		fLabel = message.substring(getName(message).length() + 1);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("no such label"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("no such label"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	protected String getName(String message) {
-        if (isEventMessage(message)) {
-            return "no such label"; //$NON-NLS-1$
-        }
-        throw new IllegalArgumentException("Invalid event: " + message); //$NON-NLS-1$
-    }
+		if (isEventMessage(message)) {
+			return "no such label"; //$NON-NLS-1$
+		}
+		throw new IllegalArgumentException("Invalid event: " + message); //$NON-NLS-1$
+	}
 }

@@ -44,11 +44,11 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
 	@Override
 	public void init(IViewPart view) {
 		fView = (AbstractDebugView) view;
-        IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
-        if (viewer != null) {
-            viewer.addViewerUpdateListener(this);
-            viewer.addModelChangedListener(this);
-        }
+		IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
+		if (viewer != null) {
+			viewer.addViewerUpdateListener(this);
+			viewer.addModelChangedListener(this);
+		}
 	}
 
 	@Override
@@ -62,11 +62,11 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
 
 	@Override
 	public void dispose() {
-        ITreeModelViewer viewer = (ITreeModelViewer)fView.getViewer();
-        if (viewer != null) {
-            viewer.removeViewerUpdateListener(this);
-            viewer.removeModelChangedListener(this);
-        }
+		ITreeModelViewer viewer = (ITreeModelViewer)fView.getViewer();
+		if (viewer != null) {
+			viewer.removeViewerUpdateListener(this);
+			viewer.removeModelChangedListener(this);
+		}
 	}
 
 	@Override
@@ -80,36 +80,36 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
 		run(action);
 	}
 
-    @Override
+	@Override
 	public void viewerUpdatesBegin() {
-    }
+	}
 
-    @Override
+	@Override
 	public void viewerUpdatesComplete() {
-    }
+	}
 
-    @Override
+	@Override
 	public void updateStarted(IViewerUpdate update) {
-    }
+	}
 
-    @Override
+	@Override
 	public void updateComplete(IViewerUpdate update) {
-          if (!update.isCanceled()) {
-              if (TreePath.EMPTY.equals(update.getElementPath())) {
-                  update();
-              }
-          }
-    }
+		if (!update.isCanceled()) {
+			if (TreePath.EMPTY.equals(update.getElementPath())) {
+				update();
+			}
+		}
+	}
 
-    private void update() {
-        IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
-        if (viewer != null && fAction != null) {
-            fAction.setEnabled(viewer.getInput() != null && viewer.getChildCount(TreePath.EMPTY) > 0);
-        }
-    }
+	private void update() {
+		IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
+		if (viewer != null && fAction != null) {
+			fAction.setEnabled(viewer.getInput() != null && viewer.getChildCount(TreePath.EMPTY) > 0);
+		}
+	}
 
-    @Override
+	@Override
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
-        update();
-    }
+		update();
+	}
 }

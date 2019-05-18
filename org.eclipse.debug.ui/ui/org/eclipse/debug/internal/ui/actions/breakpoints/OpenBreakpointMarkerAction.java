@@ -69,13 +69,13 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		IEditorPart part= null;
 		if (input != null) {
 			String editorId = fgPresentation.getEditorId(input, breakpoint);
-            if (editorId != null) {
-    			try {
-    				part= page.openEditor(input, editorId, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
-    			} catch (PartInitException e) {
-    				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.OpenBreakpointMarkerAction_Go_to_Breakpoint_1, ActionMessages.OpenBreakpointMarkerAction_Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2, e); //
-    			}
-            }
+			if (editorId != null) {
+				try {
+					part= page.openEditor(input, editorId, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+				} catch (PartInitException e) {
+					DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.OpenBreakpointMarkerAction_Go_to_Breakpoint_1, ActionMessages.OpenBreakpointMarkerAction_Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2, e); //
+				}
+			}
 		}
 		if (part != null) {
 			IDE.gotoMarker(part, breakpoint.getMarker());
@@ -85,7 +85,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	@Override
 	public void selectionChanged(IStructuredSelection sel) {
 		if (sel.size() == 1) {
-            breakpoint = (IBreakpoint)DebugPlugin.getAdapter(sel.getFirstElement(), IBreakpoint.class);
+			breakpoint = (IBreakpoint)DebugPlugin.getAdapter(sel.getFirstElement(), IBreakpoint.class);
 			if (breakpoint != null) {
 				input= fgPresentation.getEditorInput(breakpoint);
 				if (input != null) {

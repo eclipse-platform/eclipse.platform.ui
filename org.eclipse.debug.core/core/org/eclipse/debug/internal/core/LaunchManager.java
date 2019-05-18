@@ -124,24 +124,24 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 
-    /**
-     * Preferred launch delegate preference name.
-     * <p>
-     * Prior to 3.5 this preferred launch delegates for all launch
-     * configuration types were serialized into a single XML string
-     * and stored in this preference.
-     * </p>
-     * <p>
-     * Since 3.5, the preferred launch delegates are stored in a separate
-     * preference for each launch configuration type.  The name of this
-     * preference is composed of the prefix, followed by a slash, followed by
-     * the launch configuration type id.  The values contain a set of launch
-     * delegates, delimited by a semicolon, and each delegate entry contains
-     * the delegate ID, followed by a comma, followed by comma-delimited
-     * launch modes.
-     *
-     * @since 3.3
-     */
+	/**
+	 * Preferred launch delegate preference name.
+	 * <p>
+	 * Prior to 3.5 this preferred launch delegates for all launch
+	 * configuration types were serialized into a single XML string
+	 * and stored in this preference.
+	 * </p>
+	 * <p>
+	 * Since 3.5, the preferred launch delegates are stored in a separate
+	 * preference for each launch configuration type.  The name of this
+	 * preference is composed of the prefix, followed by a slash, followed by
+	 * the launch configuration type id.  The values contain a set of launch
+	 * delegates, delimited by a semicolon, and each delegate entry contains
+	 * the delegate ID, followed by a comma, followed by comma-delimited
+	 * launch modes.
+	 *
+	 * @since 3.3
+	 */
 	protected static final String PREF_PREFERRED_DELEGATES = DebugPlugin.getUniqueIdentifier() + ".PREFERRED_DELEGATES"; //$NON-NLS-1$
 
 	/**
@@ -259,7 +259,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			fRegistered = null;
 			for (ILaunchesListener iLaunchesListener : fLaunchesListeners) {
 				fListener = iLaunchesListener;
-                SafeRunner.run(this);
+				SafeRunner.run(this);
 			}
 			fNotifierLaunches = null;
 			fRegistered = null;
@@ -357,7 +357,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					if (project.isOpen()) {
 						LaunchManager.this.projectOpened(project);
 					} else {
-					    LaunchManager.this.projectClosed(project);
+						LaunchManager.this.projectClosed(project);
 					}
 				}
 				return false;
@@ -414,7 +414,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			fType = update;
 			for (ILaunchListener iLaunchListener : fListeners) {
 				fListener = iLaunchListener;
-                SafeRunner.run(this);
+				SafeRunner.run(this);
 			}
 			fLaunch = null;
 			fListener = null;
@@ -656,7 +656,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 
 	private ILaunchConfiguration fTo;
 
-    /**
+	/**
 	 * Map of source container type extensions. Keys are extension ids
 	 * and values are associated configuration elements.
 	 */
@@ -776,7 +776,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				// pattern is [func name]=() { and we must find the '}' on its own line with no trailing ';'
 				try (InputStream stream = process.getInputStream();
 				InputStreamReader isreader = new InputStreamReader(stream);
-                BufferedReader reader = new BufferedReader(isreader)) {
+				BufferedReader reader = new BufferedReader(isreader)) {
 					String line = reader.readLine();
 					String key = null;
 					String value = null;
@@ -1097,7 +1097,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		if(reservednames == null) {
 			return generateUniqueLaunchConfigurationNameFrom(basename);
 		}
- 		int index = 1;
+		int index = 1;
 		int length= basename.length();
 		String base = basename;
 		int copyIndex = base.lastIndexOf(" ("); //$NON-NLS-1$
@@ -1256,10 +1256,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @return the resource delta visitor for the launch manager
 	 */
 	private LaunchManagerVisitor getDeltaVisitor() {
-	    if (fgVisitor == null) {
+		if (fgVisitor == null) {
 			fgVisitor= new LaunchManagerVisitor();
 		}
-	    return fgVisitor;
+		return fgVisitor;
 	}
 
 	/**
@@ -1296,35 +1296,35 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		String nativeKey = null;
 		for (Entry<String, String> entry : configEnv.entrySet()) {
 			key = entry.getKey();
-            value = entry.getValue();
-            // translate any string substitution variables
-            if (value != null) {
-                value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
-            }
-            boolean added= false;
+			value = entry.getValue();
+			// translate any string substitution variables
+			if (value != null) {
+				value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+			}
+			boolean added= false;
 			if (win32) {
-                // First, check if the key is an exact match for an existing key.
+				// First, check if the key is an exact match for an existing key.
 				nativeValue = env.get(key);
-                if (nativeValue != null) {
-                    // If an exact match is found, just replace the value
-                    env.put(key, value);
-                } else {
-                    // Win32 variables are case-insensitive. If an exact match isn't found, iterate to
-                    // check for a case-insensitive match. We maintain the key's case (see bug 86725),
-                    // but do a case-insensitive comparison (for example, "pAtH" will still override "PATH").
+				if (nativeValue != null) {
+					// If an exact match is found, just replace the value
+					env.put(key, value);
+				} else {
+					// Win32 variables are case-insensitive. If an exact match isn't found, iterate to
+					// check for a case-insensitive match. We maintain the key's case (see bug 86725),
+					// but do a case-insensitive comparison (for example, "pAtH" will still override "PATH").
 					for (Entry<String, String> nativeEntry : env.entrySet()) {
 						nativeKey = (nativeEntry).getKey();
-                        if (nativeKey.equalsIgnoreCase(key)) {
-                            nativeEntry.setValue(value);
-                            added = true;
-                            break;
-                        }
-                    }
-                }
+						if (nativeKey.equalsIgnoreCase(key)) {
+							nativeEntry.setValue(value);
+							added = true;
+							break;
+						}
+					}
+				}
 			}
-            if (!added) {
-                env.put(key, value);
-            }
+			if (!added) {
+				env.put(key, value);
+			}
 		}
 		List<String> strings = new ArrayList<>(env.size());
 		StringBuilder buffer = null;
@@ -1643,14 +1643,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						element = (Element) nodes.item(i);
 						String delegateid = element.getAttribute(IConfigurationElementConstants.ID);
 						typeid = element.getAttribute(IConfigurationElementConstants.TYPE_ID);
-                        String[] modes = element.getAttribute(IConfigurationElementConstants.MODES).split(","); //$NON-NLS-1$
+						String[] modes = element.getAttribute(IConfigurationElementConstants.MODES).split(","); //$NON-NLS-1$
 						modeset = new HashSet<>(Arrays.asList(modes));
 						LaunchDelegate delegate = getLaunchDelegateExtension(typeid, delegateid, modeset);
 						if (delegate != null) {
-    						//take type id, modeset, delegate and create entry
-    						if(!IInternalDebugCoreConstants.EMPTY_STRING.equals(typeid) & modeset != null) {
-    							fPreferredDelegates.add(new PreferredDelegate(delegate, typeid, modeset));
-    						}
+							//take type id, modeset, delegate and create entry
+							if(!IInternalDebugCoreConstants.EMPTY_STRING.equals(typeid) & modeset != null) {
+								fPreferredDelegates.add(new PreferredDelegate(delegate, typeid, modeset));
+							}
 						}
 					}
 				}
@@ -1666,7 +1666,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.6
 	 */
 	protected void resetPreferredDelegates() {
-	    fPreferredDelegates = null;
+		fPreferredDelegates = null;
 	}
 
 	/**
@@ -1678,8 +1678,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.3
 	 */
 	protected ILaunchDelegate getPreferredDelegate(String typeid, Set<String> modes) {
-	    // Retrieve preferred delegates using legacy mechanism for backward
-	    // compatibility.
+		// Retrieve preferred delegates using legacy mechanism for backward
+		// compatibility.
 		initializePreferredDelegates();
 		for (PreferredDelegate pd : fPreferredDelegates) {
 			if(pd.getModes().equals(modes) & pd.getTypeId().equals(typeid)) {
@@ -1690,23 +1690,23 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		// @since 3.5
 		// If the legacy mechanism didn't work, try the new preference name for
 		// the given launch type.
-        String preferred = Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), "//" + LaunchManager.PREF_PREFERRED_DELEGATES + '/' + typeid, IInternalDebugCoreConstants.EMPTY_STRING, null); //$NON-NLS-1$
-        if (preferred != null && preferred.length() != 0) {
-            StringTokenizer tokenizer = new StringTokenizer(preferred, ";"); //$NON-NLS-1$
-            while(tokenizer.hasMoreTokens()) {
-                StringTokenizer tokenizer2 = new StringTokenizer(tokenizer.nextToken(), ","); //$NON-NLS-1$
-                String delegateId = tokenizer2.nextToken();
+		String preferred = Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), "//" + LaunchManager.PREF_PREFERRED_DELEGATES + '/' + typeid, IInternalDebugCoreConstants.EMPTY_STRING, null); //$NON-NLS-1$
+		if (preferred != null && preferred.length() != 0) {
+			StringTokenizer tokenizer = new StringTokenizer(preferred, ";"); //$NON-NLS-1$
+			while(tokenizer.hasMoreTokens()) {
+				StringTokenizer tokenizer2 = new StringTokenizer(tokenizer.nextToken(), ","); //$NON-NLS-1$
+				String delegateId = tokenizer2.nextToken();
 				HashSet<String> modeset = new HashSet<>();
-                while(tokenizer2.hasMoreTokens()) {
-                    modeset.add(tokenizer2.nextToken());
-                }
-                LaunchDelegate delegate = getLaunchDelegateExtension(typeid, delegateId, modeset);
-                if (delegate != null && modeset.equals(modes)) {
-                    return delegate;
-                }
-            }
+				while(tokenizer2.hasMoreTokens()) {
+					modeset.add(tokenizer2.nextToken());
+				}
+				LaunchDelegate delegate = getLaunchDelegateExtension(typeid, delegateId, modeset);
+				if (delegate != null && modeset.equals(modes)) {
+					return delegate;
+				}
+			}
 
-        }
+		}
 		return null;
 	}
 
@@ -1723,16 +1723,16 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.5
 	 */
 	private LaunchDelegate getLaunchDelegateExtension(String typeId, String id, Set<String> modeset) {
-        LaunchDelegate[] extensions = getLaunchDelegates(typeId);
-        for(int j = 0; j < extensions.length; j++) {
-            if(id.equals(extensions[j].getId())) {
+		LaunchDelegate[] extensions = getLaunchDelegates(typeId);
+		for(int j = 0; j < extensions.length; j++) {
+			if(id.equals(extensions[j].getId())) {
 				List<Set<String>> modesets = extensions[j].getModes();
-                if(modesets.contains(modeset)) {
-                    return extensions[j];
-                }
-            }
-        }
-        return null;
+				if(modesets.contains(modeset)) {
+					return extensions[j];
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -1880,14 +1880,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 
 	/**
-     * Starts listening for resource change events
-     */
-    private synchronized void hookResourceChangeListener() {
-        if (!fListening) {
-        	ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
-            fListening = true;
-        }
-    }
+	 * Starts listening for resource change events
+	 */
+	private synchronized void hookResourceChangeListener() {
+		if (!fListening) {
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
+			fListening = true;
+		}
+	}
 
 	/**
 	 * Load comparator extensions.
@@ -2267,19 +2267,19 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
-		    LaunchManagerVisitor visitor = getDeltaVisitor();
-		    MappedResourceVisitor v = null;
-		    if (isDeleteConfigurations()) {
-		    	v = getMappedResourceVisitor();
-		    }
-		    try {
-		    	delta.accept(visitor);
-		    	if (v != null) {
-		    		delta.accept(v);
-		    	}
-		    } catch (CoreException e) {
-		    	DebugPlugin.log(e.getStatus());
-		    }
+			LaunchManagerVisitor visitor = getDeltaVisitor();
+			MappedResourceVisitor v = null;
+			if (isDeleteConfigurations()) {
+				v = getMappedResourceVisitor();
+			}
+			try {
+				delta.accept(visitor);
+				if (v != null) {
+					delta.accept(v);
+				}
+			} catch (CoreException e) {
+				DebugPlugin.log(e.getStatus());
+			}
 		}
 	}
 
@@ -2311,8 +2311,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				}
 			}
 		} catch (CoreException e) {
-		    DebugPlugin.log(e);
-        }
+			DebugPlugin.log(e);
+		}
 		return list;
 	}
 
@@ -2343,15 +2343,15 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			launch = launches[i];
 			if(launch != null) {
 				try {
-	                if (launch instanceof IDisconnect) {
-	                    IDisconnect disconnect = (IDisconnect)launch;
-	                    if (disconnect.canDisconnect()) {
-	                        disconnect.disconnect();
-	                    }
-	                }
-	                if (launch.canTerminate()) {
-	                    launch.terminate();
-	                }
+					if (launch instanceof IDisconnect) {
+						IDisconnect disconnect = (IDisconnect)launch;
+						if (disconnect.canDisconnect()) {
+							disconnect.disconnect();
+						}
+					}
+					if (launch.canTerminate()) {
+						launch.terminate();
+					}
 				} catch (DebugException e) {
 					DebugPlugin.log(e);
 				}
@@ -2370,10 +2370,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.3
 	 */
 	public void persistPreferredLaunchDelegates() {
-        ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
-        for(int i = 0; i < types.length; i++) {
-            persistPreferredLaunchDelegate((LaunchConfigurationType)types[i]);
-        }
+		ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
+		for(int i = 0; i < types.length; i++) {
+			persistPreferredLaunchDelegate((LaunchConfigurationType)types[i]);
+		}
 	}
 
 	/**
@@ -2382,31 +2382,31 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 *
 	 * @since 3.6
 	 */
-    public void persistPreferredLaunchDelegate(LaunchConfigurationType type) {
-        String preferenceName = PREF_PREFERRED_DELEGATES + '/' + type.getIdentifier();
+	public void persistPreferredLaunchDelegate(LaunchConfigurationType type) {
+		String preferenceName = PREF_PREFERRED_DELEGATES + '/' + type.getIdentifier();
 		Map<Set<String>, ILaunchDelegate> preferred = type.getPreferredDelegates();
-        if(preferred != null && preferred.size() > 0) {
-            StringBuilder str = new StringBuilder();
+		if(preferred != null && preferred.size() > 0) {
+			StringBuilder str = new StringBuilder();
 			for (Entry<Set<String>, ILaunchDelegate> entry : preferred.entrySet()) {
 				Set<String> modes = entry.getKey();
 				ILaunchDelegate delegate = entry.getValue();
 				if (delegate != null) {
-                    str.append(delegate.getId());
-                    str.append(',');
+					str.append(delegate.getId());
+					str.append(',');
 					for (String mode : modes) {
 						str.append(mode).append(',');
-                    }
+					}
 					str.append(';');
-                }
-            }
-            Preferences.setString(DebugPlugin.getUniqueIdentifier(), preferenceName, str.toString(), null);
-        } else {
-            Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), preferenceName);
-        }
+				}
+			}
+			Preferences.setString(DebugPlugin.getUniqueIdentifier(), preferenceName, str.toString(), null);
+		} else {
+			Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), preferenceName);
+		}
 
-        // Reset the legacy preference string.
-        Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), PREF_PREFERRED_DELEGATES);
-    }
+		// Reset the legacy preference string.
+		Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), PREF_PREFERRED_DELEGATES);
+	}
 
 	/**
 	 * finds and terminates any running launch configurations associated with the given resource
@@ -2485,28 +2485,28 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param label label to process
 	 * @return label without accelerators
 	 */
-    public static String removeAccelerators(String label) {
-        String title = label;
-        if (title != null) {
-            // strip out any '&' (accelerators)
-            int index = title.indexOf('&');
-            if (index == 0) {
-                title = title.substring(1);
-            } else if (index > 0) {
-                //DBCS languages use "(&X)" format
-                if (title.charAt(index - 1) == '(' && title.length() >= index + 3 && title.charAt(index + 2) == ')') {
-                    String first = title.substring(0, index - 1);
-                    String last = title.substring(index + 3);
-                    title = first + last;
-                } else if (index < (title.length() - 1)) {
-                    String first = title.substring(0, index);
-                    String last = title.substring(index + 1);
-                    title = first + last;
-                }
-            }
-        }
-        return title;
-    }
+	public static String removeAccelerators(String label) {
+		String title = label;
+		if (title != null) {
+			// strip out any '&' (accelerators)
+			int index = title.indexOf('&');
+			if (index == 0) {
+				title = title.substring(1);
+			} else if (index > 0) {
+				//DBCS languages use "(&X)" format
+				if (title.charAt(index - 1) == '(' && title.length() >= index + 3 && title.charAt(index + 2) == ')') {
+					String first = title.substring(0, index - 1);
+					String last = title.substring(index + 3);
+					title = first + last;
+				} else if (index < (title.length() - 1)) {
+					String first = title.substring(0, index);
+					String last = title.substring(index + 1);
+					title = first + last;
+				}
+			}
+		}
+		return title;
+	}
 
 	/**
 	 * Returns the singleton step filter manager.
@@ -2615,7 +2615,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			while ((i = fis.read(buf)) != -1) {
 				fos.write(buf, 0, i);
 			}
-	    }
+		}
 	}
 
 	/**

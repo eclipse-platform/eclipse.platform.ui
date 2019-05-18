@@ -31,18 +31,18 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAWatchCommand extends PDACommand {
 
-    public static final int READ = 1;
-    public static final int WRITE = 2;
-    public static final int BOTH = READ | WRITE;
-    public static final int NONE = 0;
+	public static final int READ = 1;
+	public static final int WRITE = 2;
+	public static final int BOTH = READ | WRITE;
+	public static final int NONE = 0;
 
-    public PDAWatchCommand(String function, String variable, int operation) {
-        super("watch " + function+ "::" + variable + " " + operation); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+	public PDAWatchCommand(String function, String variable, int operation) {
+		super("watch " + function+ "::" + variable + " " + operation); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

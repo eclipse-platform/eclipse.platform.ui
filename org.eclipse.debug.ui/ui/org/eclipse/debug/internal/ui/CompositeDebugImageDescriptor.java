@@ -106,9 +106,9 @@ public class CompositeDebugImageDescriptor extends CompositeImageDescriptor {
 		return fBaseImage;
 	}
 
-    protected void setBaseImage(Image image) {
-        fBaseImage = image;
-    }
+	protected void setBaseImage(Image image) {
+		fBaseImage = image;
+	}
 
 	protected int getFlags() {
 		return fFlags;

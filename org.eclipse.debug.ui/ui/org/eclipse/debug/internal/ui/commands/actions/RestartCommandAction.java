@@ -28,49 +28,49 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public class RestartCommandAction extends DebugCommandAction {
 
-    public RestartCommandAction() {
-        setActionDefinitionId("org.eclipse.debug.ui.commands.Restart"); //$NON-NLS-1$
-    }
+	public RestartCommandAction() {
+		setActionDefinitionId("org.eclipse.debug.ui.commands.Restart"); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	protected Class<IRestartHandler> getCommandType() {
-        return IRestartHandler.class;
-    }
+		return IRestartHandler.class;
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESTART);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESTART);
+	}
 
-    @Override
+	@Override
 	public String getHelpContextId() {
-        return "org.eclipse.debug.ui.restart_action_context"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.restart_action_context"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESTART);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESTART);
+	}
 
-    @Override
+	@Override
 	public String getId() {
-        return "org.eclipse.debug.ui.actions.Restart"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.actions.Restart"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESTART);
-    }
+		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESTART);
+	}
 
-    @Override
+	@Override
 	public String getText() {
-        return ActionMessages.RestartCommandAction__text;
-    }
+		return ActionMessages.RestartCommandAction__text;
+	}
 
-    @Override
+	@Override
 	public String getToolTipText() {
-        return ActionMessages.RestartCommandAction_tooltip;
-    }
+		return ActionMessages.RestartCommandAction_tooltip;
+	}
 
 
 }

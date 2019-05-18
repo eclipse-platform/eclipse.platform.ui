@@ -26,30 +26,30 @@ import org.eclipse.ui.IMemento;
 public class ElementCompareRequest extends MementoUpdate implements IElementCompareRequest {
 
 	private boolean fEqual;
-    private final int fModelIndex;
+	private final int fModelIndex;
 	private ModelDelta fDelta;
-    private boolean fKnowsHasChildren;
-    private boolean fKnowsChildCount;
-    private boolean fCheckChildrenRealized;
+	private boolean fKnowsHasChildren;
+	private boolean fKnowsChildCount;
+	private boolean fCheckChildrenRealized;
 
 
-    /**
-     * @param provider the content provider to use for the update
-     * @param viewerInput the current input
-     * @param element the element to update
-     * @param elementPath the path of the element to update
-     * @param memento Memento to encode result into
-     * @param delta Delta to write the result comparison into.
-     * @param modelIndex Index of element to compare.
-     * @param knowsHasChildren Flag indicating whether provider knows the has
-     * children state of element.
-     * @param knowsChildCount Flag indicating whether provider knows the
-     * child count state of element.
-     * @param checkChildrenRealized Flag indicating if any realized children should be checked
-     */
+	/**
+	 * @param provider the content provider to use for the update
+	 * @param viewerInput the current input
+	 * @param element the element to update
+	 * @param elementPath the path of the element to update
+	 * @param memento Memento to encode result into
+	 * @param delta Delta to write the result comparison into.
+	 * @param modelIndex Index of element to compare.
+	 * @param knowsHasChildren Flag indicating whether provider knows the has
+	 * children state of element.
+	 * @param knowsChildCount Flag indicating whether provider knows the
+	 * child count state of element.
+	 * @param checkChildrenRealized Flag indicating if any realized children should be checked
+	 */
 	public ElementCompareRequest(TreeModelContentProvider provider, Object viewerInput, Object element,
-	    TreePath elementPath, IMemento memento, ModelDelta delta, int modelIndex,
-	    boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized)
+		TreePath elementPath, IMemento memento, ModelDelta delta, int modelIndex,
+		boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized)
 	{
 		super(provider, viewerInput, provider.getPresentationContext(), element, elementPath, memento);
 		fProvider = provider;
@@ -67,21 +67,21 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 
 	@Override
 	public void done() {
-        ITreeModelViewer viewer = getContentProvider().getViewer();
-        if (viewer == null)
+		ITreeModelViewer viewer = getContentProvider().getViewer();
+		if (viewer == null)
 		 {
 			return;  // disposed
 		}
-        if (viewer.getDisplay().getThread() == Thread.currentThread()) {
-            fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
-        } else {
+		if (viewer.getDisplay().getThread() == Thread.currentThread()) {
+			fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
+		} else {
 			viewer.getDisplay().asyncExec(() -> {
 				if (getContentProvider().isDisposed()) {
 					return;
 				}
 				fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
 			});
-        }
+		}
 	}
 
 	public boolean isEqual() {
@@ -113,20 +113,20 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 		return fKnowsChildCount;
 	}
 
-    void setCheckChildrenRealized(boolean checkChildrenRealized) {
-        fCheckChildrenRealized = checkChildrenRealized;
-    }
+	void setCheckChildrenRealized(boolean checkChildrenRealized) {
+		fCheckChildrenRealized = checkChildrenRealized;
+	}
 
-    boolean checkChildrenRealized() {
-        return fCheckChildrenRealized;
-    }
+	boolean checkChildrenRealized() {
+		return fCheckChildrenRealized;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("IElementCompareRequest: "); //$NON-NLS-1$
-        buf.append(getElement());
-        return buf.toString();
-    }
+		StringBuilder buf = new StringBuilder();
+		buf.append("IElementCompareRequest: "); //$NON-NLS-1$
+		buf.append(getElement());
+		return buf.toString();
+	}
 
 }

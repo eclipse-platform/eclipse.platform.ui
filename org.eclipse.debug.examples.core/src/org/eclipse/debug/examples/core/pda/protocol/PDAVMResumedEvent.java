@@ -30,11 +30,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAVMResumedEvent extends PDARunControlEvent {
 
-    public PDAVMResumedEvent(String message) {
-        super(message);
-    }
+	public PDAVMResumedEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("vmresumed"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("vmresumed"); //$NON-NLS-1$
+	}
 }

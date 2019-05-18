@@ -30,37 +30,37 @@ import org.eclipse.ui.IWorkbenchPartSite;
  */
 public interface IMemoryRenderingSite {
 
-    /**
-     * Returns the workbench part site hosting memory renderings for this rendering site.
-     *
-     * @return the view site hosting memory renderings for this rendering site
-     */
-    IWorkbenchPartSite getSite();
+	/**
+	 * Returns the workbench part site hosting memory renderings for this rendering site.
+	 *
+	 * @return the view site hosting memory renderings for this rendering site
+	 */
+	IWorkbenchPartSite getSite();
 
-    /**
-     * Returns the syncrhonization service for this rendering site
-     * or <code>null</code> if none.
-     *
-     * @return the syncrhonization service for this rendering site or <code>null</code>
-     */
-    IMemoryRenderingSynchronizationService getSynchronizationService();
+	/**
+	 * Returns the syncrhonization service for this rendering site
+	 * or <code>null</code> if none.
+	 *
+	 * @return the syncrhonization service for this rendering site or <code>null</code>
+	 */
+	IMemoryRenderingSynchronizationService getSynchronizationService();
 
-    /**
-     * Returns all the memory rendering containers within this rendering site.
-     *
-     * @return all the memory rendering containers within this rendering site
-     */
-    IMemoryRenderingContainer[] getMemoryRenderingContainers();
+	/**
+	 * Returns all the memory rendering containers within this rendering site.
+	 *
+	 * @return all the memory rendering containers within this rendering site
+	 */
+	IMemoryRenderingContainer[] getMemoryRenderingContainers();
 
-    /**
-     * Returns the rendering container with the given id or <code>null</code>
-     * if none.
-     *
-     * @param id identifier of the container being requested
-     * @return the rendering container with the given id or <code>null</code>
-     * if none
-     */
-    IMemoryRenderingContainer getContainer(String id);
+	/**
+	 * Returns the rendering container with the given id or <code>null</code>
+	 * if none.
+	 *
+	 * @param id identifier of the container being requested
+	 * @return the rendering container with the given id or <code>null</code>
+	 * if none
+	 */
+	IMemoryRenderingContainer getContainer(String id);
 
 
 }

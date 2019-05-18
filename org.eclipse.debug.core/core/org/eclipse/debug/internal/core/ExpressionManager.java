@@ -134,11 +134,11 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		}
 	}
 
-    @Override
+	@Override
 	public boolean hasWatchExpressionDelegate(String id) {
-        IConfigurationElement element= fWatchExpressionDelegates.get(id);
-        return element != null;
-    }
+		IConfigurationElement element= fWatchExpressionDelegates.get(id);
+		return element != null;
+	}
 
 	/**
 	 * Loads any persisted watch expressions from the preferences.
@@ -568,7 +568,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 					fListener = iExpressionListener;
 					for (int j = 0; j < expressions.length; j++) {
 						fExpression = expressions[j];
-                        SafeRunner.run(this);
+						SafeRunner.run(this);
 					}
 				}
 			}
@@ -647,7 +647,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 				fIndex = index;
 				for (IExpressionsListener iExpressionsListener : fExpressionsListeners) {
 					fListener = iExpressionsListener;
-                    SafeRunner.run(this);
+					SafeRunner.run(this);
 				}
 			}
 			fNotifierExpressions = null;

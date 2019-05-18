@@ -23,19 +23,19 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  */
 public interface IVirtualItemValidator {
 
-    /**
-     * Allows the validator to determine whether the given item is to be deemed
-     * visible in the virtual tree.
-     *
-     * @param item Item to be tested.
-     * @return returns true if the item should be considered visible.
-     */
-    boolean isItemVisible(VirtualItem item);
+	/**
+	 * Allows the validator to determine whether the given item is to be deemed
+	 * visible in the virtual tree.
+	 *
+	 * @param item Item to be tested.
+	 * @return returns true if the item should be considered visible.
+	 */
+	boolean isItemVisible(VirtualItem item);
 
-    /**
-     * Indicates that the viewer requested to reveal the given item in viewer.
-     *
-     * @param item Item to show.
-     */
-    void showItem(VirtualItem item);
+	/**
+	 * Indicates that the viewer requested to reveal the given item in viewer.
+	 *
+	 * @param item Item to show.
+	 */
+	void showItem(VirtualItem item);
 }

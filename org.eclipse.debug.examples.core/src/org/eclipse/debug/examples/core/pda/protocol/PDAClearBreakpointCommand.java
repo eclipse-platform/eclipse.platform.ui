@@ -25,12 +25,12 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAClearBreakpointCommand extends PDACommand {
 
-    public PDAClearBreakpointCommand(int line) {
-        super("clear " + line); //$NON-NLS-1$
-    }
+	public PDAClearBreakpointCommand(int line) {
+		super("clear " + line); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+		return new PDACommandResult(resultText);
+	}
 }

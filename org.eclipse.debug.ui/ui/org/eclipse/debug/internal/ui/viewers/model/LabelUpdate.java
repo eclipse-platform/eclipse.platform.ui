@@ -137,7 +137,7 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	 * Applies settings to viewer cell
 	 */
 	public void performUpdate() {
-	    fProvider.setElementData(fElementPath, fNumColumns, fLabels, fImageDescriptors, fFontDatas, fForegrounds, fBackgrounds, fChecked, fGrayed);
+		fProvider.setElementData(fElementPath, fNumColumns, fLabels, fImageDescriptors, fFontDatas, fForegrounds, fBackgrounds, fChecked, fGrayed);
 
 		fProvider.updateComplete(this);
 	}

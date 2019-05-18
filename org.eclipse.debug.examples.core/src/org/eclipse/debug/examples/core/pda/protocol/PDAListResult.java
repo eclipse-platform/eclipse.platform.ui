@@ -25,23 +25,23 @@ import java.util.StringTokenizer;
 
 public class PDAListResult extends PDACommandResult {
 
-    final public String[] fValues;
+	final public String[] fValues;
 
-    PDAListResult(String response) {
-        super(response);
-        StringTokenizer st = new StringTokenizer(response, "|"); //$NON-NLS-1$
+	PDAListResult(String response) {
+		super(response);
+		StringTokenizer st = new StringTokenizer(response, "|"); //$NON-NLS-1$
 		List<String> valuesList = new ArrayList<>();
 
-        while (st.hasMoreTokens()) {
-            String token = st.nextToken();
-            if (token.length() != 0) {
-                valuesList.add(token);
-            }
-        }
+		while (st.hasMoreTokens()) {
+			String token = st.nextToken();
+			if (token.length() != 0) {
+				valuesList.add(token);
+			}
+		}
 
-        fValues = new String[valuesList.size()];
-        for (int i = 0; i < valuesList.size(); i++) {
-            fValues[i] = valuesList.get(i);
-        }
-    }
+		fValues = new String[valuesList.size()];
+		for (int i = 0; i < valuesList.size(); i++) {
+			fValues[i] = valuesList.get(i);
+		}
+	}
 }

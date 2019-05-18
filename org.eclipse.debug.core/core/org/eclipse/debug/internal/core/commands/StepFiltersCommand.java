@@ -48,10 +48,10 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 			}
 			return filters;
 		}
-        return null;
+		return null;
 	}
 
-   private IDebugTarget[] getDebugTargets(Object element) {
+	private IDebugTarget[] getDebugTargets(Object element) {
 		if (element instanceof IDebugElement) {
 			IDebugElement debugElement = (IDebugElement) element;
 			return new IDebugTarget[] { debugElement.getDebugTarget() };

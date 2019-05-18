@@ -30,60 +30,60 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
  */
 public class EditWatchExpressinInPlaceAction extends Action implements ISelectionChangedListener {
 
-    private ExpressionView fView;
-    private TreeModelViewer fViewer;
-    private EditWatchExpressionAction fEditActionDelegate = new EditWatchExpressionAction();
+	private ExpressionView fView;
+	private TreeModelViewer fViewer;
+	private EditWatchExpressionAction fEditActionDelegate = new EditWatchExpressionAction();
 
-    public EditWatchExpressinInPlaceAction(ExpressionView view) {
-        fView = view;
-        fViewer = (TreeModelViewer)view.getViewer();
-        fEditActionDelegate.init(view);
-        ISelectionProvider selectionProvider = fView.getSite().getSelectionProvider();
-        selectionProvider.addSelectionChangedListener(this);
-        fEditActionDelegate.selectionChanged(this, selectionProvider.getSelection());
-    }
+	public EditWatchExpressinInPlaceAction(ExpressionView view) {
+		fView = view;
+		fViewer = (TreeModelViewer)view.getViewer();
+		fEditActionDelegate.init(view);
+		ISelectionProvider selectionProvider = fView.getSite().getSelectionProvider();
+		selectionProvider.addSelectionChangedListener(this);
+		fEditActionDelegate.selectionChanged(this, selectionProvider.getSelection());
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
-        IStructuredSelection selection = fEditActionDelegate.getCurrentSelection();
-        setEnabled(selection != null && selection.size() == 1);
-    }
+		IStructuredSelection selection = fEditActionDelegate.getCurrentSelection();
+		setEnabled(selection != null && selection.size() == 1);
+	}
 
-    public void dispose() {
-        fView.getSite().getSelectionProvider().removeSelectionChangedListener(this);
-    }
+	public void dispose() {
+		fView.getSite().getSelectionProvider().removeSelectionChangedListener(this);
+	}
 
-    @Override
+	@Override
 	public void run() {
-        IStructuredSelection selelection = fEditActionDelegate.getCurrentSelection();
+		IStructuredSelection selelection = fEditActionDelegate.getCurrentSelection();
 
-        if (selelection.size() != 1) {
-            return;
-        }
+		if (selelection.size() != 1) {
+			return;
+		}
 
-        // Always edit multi-line expressions in dialog.  Otherwise try to find the expression
-        // column and activate cell editor there.
-        int expressionColumn = getExpressionColumnIndex();
-        IWatchExpression[] expressions = fEditActionDelegate.getSelectedExpressions();
-        if (expressionColumn != -1 && !isWatchExpressionWithNewLine(expressions)) {
-            fViewer.editElement(selelection.getFirstElement(), expressionColumn);
-        } else if (expressions.length == 1) {
-            fEditActionDelegate.run(this);
-        }
-    }
+		// Always edit multi-line expressions in dialog.  Otherwise try to find the expression
+		// column and activate cell editor there.
+		int expressionColumn = getExpressionColumnIndex();
+		IWatchExpression[] expressions = fEditActionDelegate.getSelectedExpressions();
+		if (expressionColumn != -1 && !isWatchExpressionWithNewLine(expressions)) {
+			fViewer.editElement(selelection.getFirstElement(), expressionColumn);
+		} else if (expressions.length == 1) {
+			fEditActionDelegate.run(this);
+		}
+	}
 
-    private boolean isWatchExpressionWithNewLine(IWatchExpression[] expressions) {
-        return expressions.length == 1 &&
-            expressions[0].getExpressionText().indexOf('\n') != -1;
-    }
+	private boolean isWatchExpressionWithNewLine(IWatchExpression[] expressions) {
+		return expressions.length == 1 &&
+			expressions[0].getExpressionText().indexOf('\n') != -1;
+	}
 
-    private int getExpressionColumnIndex() {
-        Object[] columnProperties = fViewer.getColumnProperties();
-        for (int i = 0; columnProperties != null && i < columnProperties.length; i++) {
-            if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnProperties[i])) {
-                return i;
-            }
-        }
-        return -1;
-    }
+	private int getExpressionColumnIndex() {
+		Object[] columnProperties = fViewer.getColumnProperties();
+		for (int i = 0; columnProperties != null && i < columnProperties.length; i++) {
+			if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnProperties[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }

@@ -50,8 +50,8 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 	 *
 	 * @param renderingId memory rendering type identifier
 	 * @param codePage the name of a supported
-     *  {@link java.nio.charset.Charset </code>charset<code>}, for
-     *  example <code>CP1252</code>
+	 *  {@link java.nio.charset.Charset </code>charset<code>}, for
+	 *  example <code>CP1252</code>
 	 */
 	public AbstractTextRendering(String renderingId, String codePage)
 	{
@@ -66,7 +66,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 	 *
 	 * @param codePage the name of a supported
 	 * {@link java.nio.charset.Charset </code>charset<code>}, for
-     *  example <code>CP1252</code>
+	 *  example <code>CP1252</code>
 	 */
 	public void setCodePage(String codePage)
 	{

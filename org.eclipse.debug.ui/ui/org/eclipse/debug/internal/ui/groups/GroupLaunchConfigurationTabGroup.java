@@ -134,12 +134,12 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 
 				try {
-	                String key = el.data.getType().getIdentifier();
-	                return DebugPluginImages.getImage(key);
-                } catch (CoreException e) {
-                	Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+					String key = el.data.getType().getIdentifier();
+					return DebugPluginImages.getImage(key);
+				} catch (CoreException e) {
+					Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					return errorImage;
-                }
+				}
 			}
 			return null;
 		}
@@ -398,7 +398,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						return -1;
 					}
 					GroupLaunchElement el = ((GroupLaunchElement) sel
-					        .getFirstElement());
+							.getFirstElement());
 					return input.indexOf(el);
 				}
 
@@ -444,8 +444,8 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 				protected boolean isDownEnabled() {
 					final int index = getSingleSelectionIndex();
-	                return (index >= 0) && (index != input.size() - 1);
-                }
+					return (index >= 0) && (index != input.size() - 1);
+				}
 
 				protected boolean isUpEnabled(){
 					return getSingleSelectionIndex() > 0;

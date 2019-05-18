@@ -29,13 +29,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAFrameCommand extends PDACommand {
 
-    public PDAFrameCommand(int threadId, int frameNum) {
-        super("frame " + threadId + " " + frameNum); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+	public PDAFrameCommand(int threadId, int frameNum) {
+		super("frame " + threadId + " " + frameNum); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDAFrameCommandResult(resultText);
-    }
+		return new PDAFrameCommandResult(resultText);
+	}
 }

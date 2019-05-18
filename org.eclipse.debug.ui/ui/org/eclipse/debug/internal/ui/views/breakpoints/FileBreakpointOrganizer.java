@@ -27,16 +27,16 @@ import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
  */
 public class FileBreakpointOrganizer extends AbstractBreakpointOrganizerDelegate {
 
-    @Override
+	@Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
-        IMarker marker = breakpoint.getMarker();
-        if (marker != null) {
-            IResource resource = marker.getResource();
-            if (resource.getType() == IResource.FILE) {
-                return new IAdaptable[]{(IFile)resource};
-            }
-        }
-        return null;
-    }
+		IMarker marker = breakpoint.getMarker();
+		if (marker != null) {
+			IResource resource = marker.getResource();
+			if (resource.getType() == IResource.FILE) {
+				return new IAdaptable[]{(IFile)resource};
+			}
+		}
+		return null;
+	}
 
 }

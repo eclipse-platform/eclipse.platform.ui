@@ -131,16 +131,16 @@ public class LogicalStructureType implements ILogicalStructureType {
 			return d2.getDescription(value);
 		}
 		if (!fVerifiedDescription) {
-		    fVerifiedDescription = true;
-		    try {
-                verifyAttributeExists(IConfigurationElementConstants.DESCRIPTION);
-            } catch (CoreException e) {
-                DebugPlugin.log(e);
-            }
+			fVerifiedDescription = true;
+			try {
+				verifyAttributeExists(IConfigurationElementConstants.DESCRIPTION);
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
+			}
 		}
 		String description = getDescription();
 		if (description == null) {
-		    return DebugCoreMessages.LogicalStructureType_0;
+			return DebugCoreMessages.LogicalStructureType_0;
 		}
 		return description;
 	}

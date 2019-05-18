@@ -23,11 +23,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  */
 public class PDAResumedEvent extends PDARunControlEvent {
 
-    public PDAResumedEvent(String message) {
-        super(message);
-    }
+	public PDAResumedEvent(String message) {
+		super(message);
+	}
 
-    public static boolean isEventMessage(String message) {
-        return message.startsWith("resumed"); //$NON-NLS-1$
-    }
+	public static boolean isEventMessage(String message) {
+		return message.startsWith("resumed"); //$NON-NLS-1$
+	}
 }

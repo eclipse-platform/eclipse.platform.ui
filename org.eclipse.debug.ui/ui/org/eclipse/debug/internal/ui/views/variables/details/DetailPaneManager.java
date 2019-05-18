@@ -258,12 +258,12 @@ public class DetailPaneManager {
 	 */
 	private List<DetailPaneFactoryExtension> fKnownFactories;
 
-    /**
-     * Preference key for storing the preferred detail panes map.
-     * @see #storePreferredDetailsAreas()
-     * @see #loadPreferredDetailsAreas()
-     */
-    public static final String PREF_DETAIL_AREAS = "preferredDetailPanes"; //$NON-NLS-1$
+	/**
+	 * Preference key for storing the preferred detail panes map.
+	 * @see #storePreferredDetailsAreas()
+	 * @see #loadPreferredDetailsAreas()
+	 */
+	public static final String PREF_DETAIL_AREAS = "preferredDetailPanes"; //$NON-NLS-1$
 
 	private DetailPaneManager(){
 		fFactoriesByPaneID = new HashMap<>();
@@ -488,59 +488,59 @@ public class DetailPaneManager {
 
 	}
 
-    /**
-     * Stores the map of preferred detail pane IDs to the preference store in the format:
-     *
-     * Key1A,Key1B:Value1|Key2A,Key2B,Key2C:Value2|
-     *
-     * Where the sub keys (Key1A, Key1B, etc.) are the elements of the set used at the
-     * key in the mapping and the values are the associated String value in the mapping.
-     */
-    private void storePreferredDetailsAreas() {
-        StringBuilder buffer= new StringBuilder();
+	/**
+	 * Stores the map of preferred detail pane IDs to the preference store in the format:
+	 *
+	 * Key1A,Key1B:Value1|Key2A,Key2B,Key2C:Value2|
+	 *
+	 * Where the sub keys (Key1A, Key1B, etc.) are the elements of the set used at the
+	 * key in the mapping and the values are the associated String value in the mapping.
+	 */
+	private void storePreferredDetailsAreas() {
+		StringBuilder buffer= new StringBuilder();
 		for (Entry<Set<String>, String> entry : fPreferredDetailPanes.entrySet()) {
 			for (String currentID : entry.getKey()) {
 				buffer.append(currentID);
 				buffer.append(',');
 			}
-            buffer.deleteCharAt(buffer.length()-1);
-            buffer.append(':');
-            buffer.append(entry.getValue());
-            buffer.append('|');
-        }
-        IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
-        if(node != null) {
-        	node.put(PREF_DETAIL_AREAS, buffer.toString());
-        	try {
+			buffer.deleteCharAt(buffer.length()-1);
+			buffer.append(':');
+			buffer.append(entry.getValue());
+			buffer.append('|');
+		}
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+		if(node != null) {
+			node.put(PREF_DETAIL_AREAS, buffer.toString());
+			try {
 				node.flush();
 			} catch (BackingStoreException e) {
 				DebugUIPlugin.log(e);
 			}
-        }
-    }
+		}
+	}
 
-    /**
-     * Loads the map of preferred detail pane IDs from the preference store.
-     *
-     * @see #storePreferredDetailsAreas()
-     */
-    private void loadPreferredDetailsAreas() {
+	/**
+	 * Loads the map of preferred detail pane IDs from the preference store.
+	 *
+	 * @see #storePreferredDetailsAreas()
+	 */
+	private void loadPreferredDetailsAreas() {
 		fPreferredDetailPanes = new HashMap<>();
-    	String preferenceValue = Platform.getPreferencesService().getString(DebugUIPlugin.getUniqueIdentifier(),
-    			PREF_DETAIL_AREAS,
-    			"",  //$NON-NLS-1$
-    			null);
-    	StringTokenizer entryTokenizer = new StringTokenizer(preferenceValue,"|"); //$NON-NLS-1$
-    	while (entryTokenizer.hasMoreTokens()){
-    		String token = entryTokenizer.nextToken();
-    		int valueStart = token.indexOf(':');
-    		StringTokenizer keyTokenizer = new StringTokenizer(token.substring(0,valueStart),","); //$NON-NLS-1$
+		String preferenceValue = Platform.getPreferencesService().getString(DebugUIPlugin.getUniqueIdentifier(),
+				PREF_DETAIL_AREAS,
+				"",  //$NON-NLS-1$
+				null);
+		StringTokenizer entryTokenizer = new StringTokenizer(preferenceValue,"|"); //$NON-NLS-1$
+		while (entryTokenizer.hasMoreTokens()){
+			String token = entryTokenizer.nextToken();
+			int valueStart = token.indexOf(':');
+			StringTokenizer keyTokenizer = new StringTokenizer(token.substring(0,valueStart),","); //$NON-NLS-1$
 			Set<String> keys = new LinkedHashSet<>();
-    		while (keyTokenizer.hasMoreTokens()){
-    			keys.add(keyTokenizer.nextToken());
-    		}
-    		fPreferredDetailPanes.put(keys, token.substring(valueStart+1));
-    	}
-    }
+			while (keyTokenizer.hasMoreTokens()){
+				keys.add(keyTokenizer.nextToken());
+			}
+			fPreferredDetailPanes.put(keys, token.substring(valueStart+1));
+		}
+	}
 
 }

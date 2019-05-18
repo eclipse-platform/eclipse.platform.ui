@@ -95,11 +95,11 @@ public class InstructionPointerManager{
 
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
 		IEditorInput editorInput = textEditor.getEditorInput();
-        // If there is no annotation model, there's nothing more to do
-        IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
-        if (annModel == null) {
-            return;
-        }
+		// If there is no annotation model, there's nothing more to do
+		IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
+		if (annModel == null) {
+			return;
+		}
 
 		// Create the Position object that specifies a location for the annotation
 		Position position = null;

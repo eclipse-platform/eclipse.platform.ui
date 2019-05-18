@@ -43,65 +43,65 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public interface IToggleBreakpointsTargetManager {
 
-    /**
-     * Returns the set of <code>String</code> IDs of toggle breakpoint targets,
-     * which are enabled for the given active part and selection.  The IDs can be used
-     * to create the {@link IToggleBreakpointsTarget} instance.
-     * @param part active part
-     * @param selection active selection in part
-     * @return Set of toggle target IDs or an empty set
-     */
+	/**
+	 * Returns the set of <code>String</code> IDs of toggle breakpoint targets,
+	 * which are enabled for the given active part and selection.  The IDs can be used
+	 * to create the {@link IToggleBreakpointsTarget} instance.
+	 * @param part active part
+	 * @param selection active selection in part
+	 * @return Set of toggle target IDs or an empty set
+	 */
 	Set<String> getEnabledToggleBreakpointsTargetIDs(IWorkbenchPart part, ISelection selection);
 
-    /**
-     * Returns the ID of the calculated preferred toggle breakpoints target for the
-     * given active part and selection.  The returned ID is chosen based on factory
-     * enablement, whether the target is a default one, and on user choice.
-     * @param part active part
-     * @param selection active selection in part
-     * @return The toggle target IDs or null if none.
-     */
-    String getPreferredToggleBreakpointsTargetID(IWorkbenchPart part, ISelection selection);
+	/**
+	 * Returns the ID of the calculated preferred toggle breakpoints target for the
+	 * given active part and selection.  The returned ID is chosen based on factory
+	 * enablement, whether the target is a default one, and on user choice.
+	 * @param part active part
+	 * @param selection active selection in part
+	 * @return The toggle target IDs or null if none.
+	 */
+	String getPreferredToggleBreakpointsTargetID(IWorkbenchPart part, ISelection selection);
 
-    /**
-     * Given the ID of toggle breakpoint target, this method will try to find the factory
-     * that creates it and return an instance of it.
-     *
-     * @param part The workbench part in which toggle target is to be used
-     * @param selection The active selection to use with toggle target
-     * @return The instantiated target or null
-     */
-    IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, ISelection selection);
+	/**
+	 * Given the ID of toggle breakpoint target, this method will try to find the factory
+	 * that creates it and return an instance of it.
+	 *
+	 * @param part The workbench part in which toggle target is to be used
+	 * @param selection The active selection to use with toggle target
+	 * @return The instantiated target or null
+	 */
+	IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, ISelection selection);
 
-    /**
-     * Given the ID of a toggle breakpoints target, this method will try
-     * to find the factory that creates it and ask it for the name of it.
-     *
-     * @param id The ID of the requested toggle breakpoint target.
-     * @return The name of the target.
-     */
-    String getToggleBreakpointsTargetName(String id);
+	/**
+	 * Given the ID of a toggle breakpoints target, this method will try
+	 * to find the factory that creates it and ask it for the name of it.
+	 *
+	 * @param id The ID of the requested toggle breakpoint target.
+	 * @return The name of the target.
+	 */
+	String getToggleBreakpointsTargetName(String id);
 
-    /**
-     * Given the ID of a toggle breakpoints target, this method will try
-     * to find the factory that creates it and ask it for the description of it.
-     *
-     * @param id The ID of the requested toggle breakpoint target.
-     * @return The description of the target or null.
-     */
-    String getToggleBreakpointsTargetDescription(String id);
+	/**
+	 * Given the ID of a toggle breakpoints target, this method will try
+	 * to find the factory that creates it and ask it for the description of it.
+	 *
+	 * @param id The ID of the requested toggle breakpoint target.
+	 * @return The description of the target or null.
+	 */
+	String getToggleBreakpointsTargetDescription(String id);
 
-    /**
-     * Adds the given listener to the list of listeners notified when the preferred
-     * toggle breakpoints targets change.
-     * @param listener The listener to add.
-     */
-    void addChangedListener(IToggleBreakpointsTargetManagerListener listener);
+	/**
+	 * Adds the given listener to the list of listeners notified when the preferred
+	 * toggle breakpoints targets change.
+	 * @param listener The listener to add.
+	 */
+	void addChangedListener(IToggleBreakpointsTargetManagerListener listener);
 
-    /**
-     * Removes the given listener from the list of listeners notified when the preferred
-     * toggle breakpoints targets change.
-     * @param listener The listener to add.
-     */
-    void removeChangedListener(IToggleBreakpointsTargetManagerListener listener);
+	/**
+	 * Removes the given listener from the list of listeners notified when the preferred
+	 * toggle breakpoints targets change.
+	 * @param listener The listener to add.
+	 */
+	void removeChangedListener(IToggleBreakpointsTargetManagerListener listener);
 }

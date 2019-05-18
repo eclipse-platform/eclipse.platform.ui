@@ -24,39 +24,39 @@ import org.eclipse.ui.IPersistableElement;
  */
 public class BreakpointPersistableElementAdapter implements IPersistableElement {
 
-    private IBreakpoint fBreakpoint;
+	private IBreakpoint fBreakpoint;
 
-    public static final String TAG_MARKER_ID = "TAG_MARKER_ID"; //$NON-NLS-1$
-    public static final String TAG_RESOURCE_FACTORY_ID = "TAG_RESOURCE_FACTORY_ID"; //$NON-NLS-1$
+	public static final String TAG_MARKER_ID = "TAG_MARKER_ID"; //$NON-NLS-1$
+	public static final String TAG_RESOURCE_FACTORY_ID = "TAG_RESOURCE_FACTORY_ID"; //$NON-NLS-1$
 
-    /**
-     * Constructs a new persitable element adapter for the given breakpoint.
-     *
-     * @param breakpoint the backing {@link IBreakpoint}
-     */
-    public BreakpointPersistableElementAdapter(IBreakpoint breakpoint) {
-        fBreakpoint = breakpoint;
-    }
+	/**
+	 * Constructs a new persitable element adapter for the given breakpoint.
+	 *
+	 * @param breakpoint the backing {@link IBreakpoint}
+	 */
+	public BreakpointPersistableElementAdapter(IBreakpoint breakpoint) {
+		fBreakpoint = breakpoint;
+	}
 
-    @Override
+	@Override
 	public String getFactoryId() {
-        return "org.eclipse.debug.ui.elementFactory.breakpoints"; //$NON-NLS-1$
-    }
+		return "org.eclipse.debug.ui.elementFactory.breakpoints"; //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public void saveState(IMemento memento) {
-        IMarker marker = fBreakpoint.getMarker();
-        if (marker != null) {
-            IResource resource = marker.getResource();
-            IPersistableElement pe = resource.getAdapter(IPersistableElement.class);
-            if (pe != null) {
-                long id = marker.getId();
-                String longString = Long.toString(id);
-                memento.putString(TAG_MARKER_ID, longString);
-                memento.putString(TAG_RESOURCE_FACTORY_ID, pe.getFactoryId());
-                pe.saveState(memento);
-            }
-        }
-    }
+		IMarker marker = fBreakpoint.getMarker();
+		if (marker != null) {
+			IResource resource = marker.getResource();
+			IPersistableElement pe = resource.getAdapter(IPersistableElement.class);
+			if (pe != null) {
+				long id = marker.getId();
+				String longString = Long.toString(id);
+				memento.putString(TAG_MARKER_ID, longString);
+				memento.putString(TAG_RESOURCE_FACTORY_ID, pe.getFactoryId());
+				pe.saveState(memento);
+			}
+		}
+	}
 
 }

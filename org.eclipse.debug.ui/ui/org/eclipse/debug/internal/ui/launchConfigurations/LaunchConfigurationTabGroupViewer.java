@@ -172,13 +172,13 @@ public class LaunchConfigurationTabGroupViewer {
 	 * A link to allow users to select a valid set of launch options for the specified mode
 	 * @since 3.3
 	 */
-    private Link fOptionsLink = null;
+	private Link fOptionsLink = null;
 
-    /**
-     * A label to indicate that the user needs to select an a launcher.
-     * @since 3.5
-     */
-    private Label fOptionsErrorLabel = null;
+	/**
+	 * A label to indicate that the user needs to select an a launcher.
+	 * @since 3.5
+	 */
+	private Label fOptionsErrorLabel = null;
 
 	/**
 	 * A new composite replacing the perspectives tab
@@ -232,17 +232,17 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	private void createControl(Composite parent) {
 		fViewerControl = parent;
-        fViewform = new ViewForm(parent, SWT.FLAT | SWT.BORDER);
-        GridLayout layout = new GridLayout(1, false);
-        layout.horizontalSpacing = 0;
-        layout.verticalSpacing = 0;
-        fViewform.setLayout(layout);
+		fViewform = new ViewForm(parent, SWT.FLAT | SWT.BORDER);
+		GridLayout layout = new GridLayout(1, false);
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		fViewform.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fViewform.setLayoutData(gd);
-        fViewform.setTopLeft(null);
+		fViewform.setTopLeft(null);
 
-        Composite mainComp = SWTFactory.createComposite(fViewform, fViewform.getFont(), 1, 1, 1, 0, 0);
-        fViewform.setContent(mainComp);
+		Composite mainComp = SWTFactory.createComposite(fViewform, fViewform.getFont(), 1, 1, 1, 0, 0);
+		fViewform.setContent(mainComp);
 
 		fTabPlaceHolder = SWTFactory.createComposite(mainComp, 1, 1, GridData.FILL_BOTH);
 		fTabPlaceHolder.setLayout(new StackLayout());
@@ -254,13 +254,13 @@ public class LaunchConfigurationTabGroupViewer {
 		SWTFactory.createLabel(fGroupComposite, LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16, 1);
 
 		fNameWidget = new Text(fGroupComposite, SWT.SINGLE | SWT.BORDER);
-        fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fNameWidget.addModifyListener(e -> {
 			if (!fInitializingTabs) {
 				handleNameModified();
 			}
 		}
-    		);
+			);
 
 		createTabFolder(fGroupComposite);
 
@@ -269,8 +269,8 @@ public class LaunchConfigurationTabGroupViewer {
 
 	//a link for launch options
 		fOptionsErrorLabel = new Label(linkComp, SWT.NONE);
-        gd = new GridData();
-        fOptionsErrorLabel.setLayoutData(gd);
+		gd = new GridData();
+		fOptionsErrorLabel.setLayoutData(gd);
 
 		fOptionsLink = new Link(linkComp, SWT.WRAP);
 		fOptionsLink.setFont(linkComp.getFont());
@@ -347,7 +347,7 @@ public class LaunchConfigurationTabGroupViewer {
 				}
 			}
 		});
-        Dialog.applyDialogFont(parent);
+		Dialog.applyDialogFont(parent);
 	}
 
 	/**
@@ -521,7 +521,7 @@ public class LaunchConfigurationTabGroupViewer {
 			boolean newwc = !getWorkingCopy().isDirty();
 			ILaunchConfigurationTab tab = getActiveTab();
 			if (tab != null) {
-			    tab.performApply(getWorkingCopy());
+				tab.performApply(getWorkingCopy());
 			}
 			if((fOriginal instanceof ILaunchConfigurationWorkingCopy) && newwc) {
 				try {
@@ -583,9 +583,9 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		fOptionsLink.setVisible(!canLaunchWithModes() || hasMultipleDelegates());
 		if (hasDuplicateDelegates()) {
-	        fOptionsErrorLabel.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR));
+			fOptionsErrorLabel.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR));
 		} else {
-            fOptionsErrorLabel.setImage(null);
+			fOptionsErrorLabel.setImage(null);
 		}
 		fViewform.layout(true, true);
 	}
@@ -820,12 +820,12 @@ public class LaunchConfigurationTabGroupViewer {
 			fShowCommandLineButton.setVisible(visible);
 		}
 	}
-    /**
-     * sets the current widget focus to the 'Name' widget
-     */
-    protected void setFocusOnName() {
-        fNameWidget.setFocus();
-    }
+	/**
+	 * sets the current widget focus to the 'Name' widget
+	 */
+	protected void setFocusOnName() {
+		fNameWidget.setFocus();
+	}
 
 	/**
 	 * Displays tabs for the current working copy
@@ -929,7 +929,7 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		//set the default tab as the first one
 		if (tabs.length > 0) {
-		    setActiveTab(tabs[0]);
+			setActiveTab(tabs[0]);
 		}
 		// select same tab as before, if possible
 		for (int i = 0; i < tabs.length; i++) {
@@ -1142,7 +1142,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 * Returns the working copy used to edit the original, possibly
 	 * <code>null</code>.
 	 * @return the backing {@link ILaunchConfigurationWorkingCopy}
- 	 */
+	 */
 	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
 		return fWorkingCopy;
 	}
@@ -1292,7 +1292,7 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 
 		if(hasDuplicateDelegates()) {
-		    return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_18;
+			return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_18;
 		}
 
 		String message = null;
@@ -1429,8 +1429,8 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	private void disposeExistingTabs() {
 		fDisposingTabs = true;
-        fTabFolder.dispose();
-        fTabFolder = null;
+		fTabFolder.dispose();
+		fTabFolder = null;
 		createTabFolder(fGroupComposite);
 		disposeTabGroup();
 		fDisposingTabs = false;

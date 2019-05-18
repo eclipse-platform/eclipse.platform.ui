@@ -25,14 +25,14 @@ import org.eclipse.jface.text.Region;
  */
 public class WordFinder {
 
-    /**
-     * Returns the region in the given document that contains an identifier, or
-     * <code>null</code> if none.
-     *
-     * @param document document to search
-     * @param offset offset at which to look for an identifier
-     * @return region containing an identifier, or <code>null</code>
-     */
+	/**
+	 * Returns the region in the given document that contains an identifier, or
+	 * <code>null</code> if none.
+	 *
+	 * @param document document to search
+	 * @param offset offset at which to look for an identifier
+	 * @return region containing an identifier, or <code>null</code>
+	 */
 	public static IRegion findWord(IDocument document, int offset) {
 
 		int start= -1;

@@ -33,58 +33,58 @@ import org.eclipse.jface.text.ITextViewer;
  */
 public class TextHover implements ITextHover {
 
-    @Override
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-        String varName = null;
-        try {
-            varName = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
-        } catch (BadLocationException e) {
-           return null;
-        }
+		String varName = null;
+		try {
+			varName = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
+		} catch (BadLocationException e) {
+			return null;
+		}
 		if (varName.startsWith("$") && varName.length() > 1) { //$NON-NLS-1$
-            varName = varName.substring(1);
-        }
+			varName = varName.substring(1);
+		}
 
-        PDAStackFrame frame = null;
-        IAdaptable debugContext = DebugUITools.getDebugContext();
-        if (debugContext instanceof PDAStackFrame) {
-           frame = (PDAStackFrame) debugContext;
-        } else if (debugContext instanceof PDAThread) {
-            PDAThread thread = (PDAThread) debugContext;
-            try {
-                frame = (PDAStackFrame) thread.getTopStackFrame();
-            } catch (DebugException e) {
-                return null;
-            }
-        } else if (debugContext instanceof PDADebugTarget) {
-            PDADebugTarget target = (PDADebugTarget) debugContext;
-            try {
-                IThread[] threads = target.getThreads();
-                if (threads.length > 0) {
-                    frame = (PDAStackFrame) threads[0].getTopStackFrame();
-                }
-            } catch (DebugException e) {
-                return null;
-            }
-        }
-        if (frame != null) {
-            try {
-                IVariable[] variables = frame.getVariables();
-                for (int i = 0; i < variables.length; i++) {
-                    IVariable variable = variables[i];
-                    if (variable.getName().equals(varName)) {
+		PDAStackFrame frame = null;
+		IAdaptable debugContext = DebugUITools.getDebugContext();
+		if (debugContext instanceof PDAStackFrame) {
+			frame = (PDAStackFrame) debugContext;
+		} else if (debugContext instanceof PDAThread) {
+			PDAThread thread = (PDAThread) debugContext;
+			try {
+				frame = (PDAStackFrame) thread.getTopStackFrame();
+			} catch (DebugException e) {
+				return null;
+			}
+		} else if (debugContext instanceof PDADebugTarget) {
+			PDADebugTarget target = (PDADebugTarget) debugContext;
+			try {
+				IThread[] threads = target.getThreads();
+				if (threads.length > 0) {
+					frame = (PDAStackFrame) threads[0].getTopStackFrame();
+				}
+			} catch (DebugException e) {
+				return null;
+			}
+		}
+		if (frame != null) {
+			try {
+				IVariable[] variables = frame.getVariables();
+				for (int i = 0; i < variables.length; i++) {
+					IVariable variable = variables[i];
+					if (variable.getName().equals(varName)) {
 						return varName + " = " + variable.getValue().getValueString(); //$NON-NLS-1$
-                    }
-                }
-            } catch (DebugException e) {
-            }
-        }
-        return null;
-    }
+					}
+				}
+			} catch (DebugException e) {
+			}
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-        return WordFinder.findWord(textViewer.getDocument(), offset);
-    }
+		return WordFinder.findWord(textViewer.getDocument(), offset);
+	}
 
 }

@@ -97,7 +97,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public String getId() {
-	    return "org.eclipse.debug.ui.sourceLookupTab"; //$NON-NLS-1$
+		return "org.eclipse.debug.ui.sourceLookupTab"; //$NON-NLS-1$
 	}
 
 	@Override

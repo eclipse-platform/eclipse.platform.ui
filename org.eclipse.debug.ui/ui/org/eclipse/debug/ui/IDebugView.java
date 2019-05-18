@@ -155,8 +155,8 @@ public interface IDebugView extends IViewPart {
 	/**
 	 * Removes the given IUpdate from this view's collection of updatable
 	 * objects.
- 	 * Has no effect if an identical IUpdate was not already registered.
- 	 *
+	 * Has no effect if an identical IUpdate was not already registered.
+	 *
 	 * @param updatable The IUpdate instance to be removed
 	 */
 	void remove(IUpdate updatable);

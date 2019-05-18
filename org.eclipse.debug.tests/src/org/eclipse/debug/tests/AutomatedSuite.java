@@ -51,7 +51,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
-  * Tests for integration and nightly builds.
+ * Tests for integration and nightly builds.
  *
  * @since 3.6
  */
@@ -74,18 +74,18 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(SourceLookupFacilityTests.class));
 		// BP tests
 		addTest(new TestSuite(BreakpointOrderingTests.class));
-	    // Note: jface viewer tests were moved out of nightly tests
-	    // due to frequent problems on nightly build machines.
-	    // (Bug 343308).
+		// Note: jface viewer tests were moved out of nightly tests
+		// due to frequent problems on nightly build machines.
+		// (Bug 343308).
 
 		// Virtual viewer tests
 		addTest(new TestSuite(VirtualViewerDeltaTests.class));
-        addTest(new TestSuite(VirtualViewerContentTests.class));
+		addTest(new TestSuite(VirtualViewerContentTests.class));
 		addTest(new TestSuite(VirtualViewerLazyModeTests.class));
 		addTest(new TestSuite(VirtualViewerSelectionTests.class));
 		addTest(new TestSuite(VirtualViewerStateTests.class));
 		addTest(new TestSuite(VirtualViewerUpdateTests.class));
-        addTest(new TestSuite(VirtualViewerFilterTests.class));
+		addTest(new TestSuite(VirtualViewerFilterTests.class));
 
 		// Viewer neutral tests
 		addTest(new TestSuite(FilterTransformTests.class));

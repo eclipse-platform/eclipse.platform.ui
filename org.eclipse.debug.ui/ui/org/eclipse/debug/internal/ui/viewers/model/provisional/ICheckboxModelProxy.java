@@ -26,22 +26,22 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public interface ICheckboxModelProxy {
 
-    /**
-     * Notifies the receiver that the given element has had its
-     * checked state modified in the viewer.
-     * <p>
-     * This method is called in the UI thread. Clients that execute long running operations or
-     * communicate with a potentially unreliable or blocking model should run those operations
-     * asynchronously.
-     * </p>
-     *
-     * @param context Presentation context in which the element was updated.
-     * @param viewerInput The root element of the viewer where the check
-     * selection took place.
-     * @param path Path of the element that had its checked state changed
-     * @param checked The new checked state of the element
-     * @return false if the check state should not change
-     */
-    boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked);
+	/**
+	 * Notifies the receiver that the given element has had its
+	 * checked state modified in the viewer.
+	 * <p>
+	 * This method is called in the UI thread. Clients that execute long running operations or
+	 * communicate with a potentially unreliable or blocking model should run those operations
+	 * asynchronously.
+	 * </p>
+	 *
+	 * @param context Presentation context in which the element was updated.
+	 * @param viewerInput The root element of the viewer where the check
+	 * selection took place.
+	 * @param path Path of the element that had its checked state changed
+	 * @param checked The new checked state of the element
+	 * @return false if the check state should not change
+	 */
+	boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked);
 
 }

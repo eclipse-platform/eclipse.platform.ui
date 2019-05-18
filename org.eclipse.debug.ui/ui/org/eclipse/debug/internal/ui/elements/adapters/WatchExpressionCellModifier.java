@@ -29,30 +29,30 @@ public class WatchExpressionCellModifier implements ICellModifier {
 
 	@Override
 	public boolean canModify(Object element, String property) {
-        if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property)) {
-            return element instanceof IWatchExpression;
-        }
+		if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property)) {
+			return element instanceof IWatchExpression;
+		}
 		return false;
 	}
 
 	@Override
 	public Object getValue(Object element, String property) {
-        if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property)) {
-            return DefaultLabelProvider.escapeSpecialChars( ((IWatchExpression)element).getExpressionText() );
-        }
-        return null;
+		if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property)) {
+			return DefaultLabelProvider.escapeSpecialChars( ((IWatchExpression)element).getExpressionText() );
+		}
+		return null;
 	}
 
 	@Override
 	public void modify(Object element, String property, Object value) {
 		Object oldValue = getValue(element, property);
-        if (!value.equals(oldValue)) {
-        	if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property)) {
+		if (!value.equals(oldValue)) {
+			if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property)) {
 				if (element instanceof IWatchExpression) {
 					if (value instanceof String) {
 						// The value column displays special characters
-					    // escaped, so encode the string with any special
-					    // characters escaped properly
+						// escaped, so encode the string with any special
+						// characters escaped properly
 						String expressionText = DefaultLabelProvider.encodeEsacpedChars((String)value);
 						IWatchExpression expression = (IWatchExpression) element;
 						// Bug 345974 see ExpressionManagerContentProvider.AddNewExpressionElement.modify does not allow an empty string
@@ -63,7 +63,7 @@ public class WatchExpressionCellModifier implements ICellModifier {
 						}
 					}
 				}
-	        }
+			}
 		}
 	}
 

@@ -50,10 +50,10 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendedEvent;
  */
 public class PDAThread extends PDADebugElement implements IThread, IPDAEventListener {
 
-    /**
-     * ID of this thread as reported by PDA.
-     */
-    private final int fThreadId;
+	/**
+	 * ID of this thread as reported by PDA.
+	 */
+	private final int fThreadId;
 
 	/**
 	 * Breakpoint this thread is suspended at or <code>null</code>
@@ -97,29 +97,29 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	 * @since 3.5
 	 */
 	void start() {
-	    fireCreationEvent();
-        getPDADebugTarget().addEventListener(this);
+		fireCreationEvent();
+		getPDADebugTarget().addEventListener(this);
 	}
 
-    /**
-     * Called by the debug target before the thread is removed.
-     *
-     * @since 3.5
-     */
+	/**
+	 * Called by the debug target before the thread is removed.
+	 *
+	 * @since 3.5
+	 */
 	void exit() {
-        getPDADebugTarget().removeEventListener(this);
-        fireTerminateEvent();
+		getPDADebugTarget().removeEventListener(this);
+		fireTerminateEvent();
 	}
 
 	@Override
 	public IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
-		    PDAStackCommandResult result = (PDAStackCommandResult)sendCommand(new PDAStackCommand(fThreadId));
-            IStackFrame[] frames = new IStackFrame[result.fFrames.length];
-		    for (int i = 0; i < result.fFrames.length; i++) {
-		        frames[frames.length - i - 1] = new PDAStackFrame(this, result.fFrames[i], i);
+			PDAStackCommandResult result = (PDAStackCommandResult)sendCommand(new PDAStackCommand(fThreadId));
+			IStackFrame[] frames = new IStackFrame[result.fFrames.length];
+			for (int i = 0; i < result.fFrames.length; i++) {
+				frames[frames.length - i - 1] = new PDAStackFrame(this, result.fFrames[i], i);
 			}
-            return frames;
+			return frames;
 		}
 		return new IStackFrame[0];
 	}
@@ -178,15 +178,15 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 
 	@Override
 	public boolean isSuspended() {
-	    if (getDebugTarget().isTerminated()) {
-	        return false;
-	    }
-	    if (getDebugTarget().isSuspended()) {
-	        return true;
-	    }
-	    synchronized (this) {
-	        return fSuspended;
-	    }
+		if (getDebugTarget().isTerminated()) {
+			return false;
+		}
+		if (getDebugTarget().isSuspended()) {
+			return true;
+		}
+		synchronized (this) {
+			return fSuspended;
+		}
 	}
 
 	@Override
@@ -203,7 +203,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		//#ifdef ex2
 //#		// TODO: Exercise 2 - send suspend request to interpreter
 		//#else
-	    sendCommand(new PDASuspendCommand(fThreadId));
+		sendCommand(new PDASuspendCommand(fThreadId));
 		//#endif
 	}
 
@@ -252,7 +252,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 
 	@Override
 	public void terminate() throws DebugException {
-	    getDebugTarget().terminate();
+		getDebugTarget().terminate();
 	}
 
 	/**
@@ -296,64 +296,64 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 
 	@Override
 	public void handleEvent(PDAEvent _event) {
-	    if (_event instanceof PDARunControlEvent && fThreadId == ((PDARunControlEvent)_event).fThreadId) {
-	        PDARunControlEvent event = (PDARunControlEvent)_event;
-    		// clear previous state
-    		fBreakpoint = null;
-    		setStepping(false);
+		if (_event instanceof PDARunControlEvent && fThreadId == ((PDARunControlEvent)_event).fThreadId) {
+			PDARunControlEvent event = (PDARunControlEvent)_event;
+			// clear previous state
+			fBreakpoint = null;
+			setStepping(false);
 
-    		// handle events
-    		if (event instanceof PDAResumedEvent || event instanceof PDAVMResumedEvent) {
-    			setSuspended(false);
-    			if ("step".equals(event.fReason)) { //$NON-NLS-1$
-    				setStepping(true);
-    				resumed(DebugEvent.STEP_OVER);
-    			//#ifdef ex2
-    //#			}
-    //#			// TODO: Exercise 2 - handle/fire "client" resume event
-    			//#else
-    			} else if ("client".equals(event.fReason)) { //$NON-NLS-1$
-    				resumed(DebugEvent.CLIENT_REQUEST);
-    			}
-    			//#endif
-    			//#ifdef ex5
-    //#			// TODO: Exercise 5 - handle start of drop event
-    			//#else
-    			else if ("drop".equals(event.fReason)) { //$NON-NLS-1$
-    				resumed(DebugEvent.STEP_RETURN);
-    			}
-    			//#endif
-    		} else if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
-    			setSuspended(true);
-    			//#ifdef ex2
-    //#			// TODO: Exercise 2 - handle/fire "client" suspend event
-    //#			if (event.endsWith("step")) {
-    //#				suspended(DebugEvent.STEP_END);
-    //#			} else if (event.startsWith("suspended event") && getError() != null) {
-    //#				exceptionHit();
-    //#			}
-    			//#else
-    			if ("client".equals(event.fReason)) { //$NON-NLS-1$
-    				suspended(DebugEvent.CLIENT_REQUEST);
-    			} else if ("step".equals(event.fReason)) { //$NON-NLS-1$
-    				suspended(DebugEvent.STEP_END);
-    			} else if ("event".equals(event.fReason) && getError() != null) { //$NON-NLS-1$
-    				exceptionHit();
-    			}
-    			//#endif
-    			//#ifdef ex5
-    //#			// TODO: Exercise 5 - handle end of drop event
-    			//#else
-    			else if ("drop".equals(event.fReason)) { //$NON-NLS-1$
-    				suspended(DebugEvent.STEP_END);
-    			}
-    			//#endif
-    		} else if (_event instanceof PDANoSuchLabelEvent ||
-    		           _event instanceof PDAUnimplementedInstructionEvent)
-    		{
-    			setError(event.fMessage);
-    		}
-	    }
+			// handle events
+			if (event instanceof PDAResumedEvent || event instanceof PDAVMResumedEvent) {
+				setSuspended(false);
+				if ("step".equals(event.fReason)) { //$NON-NLS-1$
+					setStepping(true);
+					resumed(DebugEvent.STEP_OVER);
+				//#ifdef ex2
+	//#			}
+	//#			// TODO: Exercise 2 - handle/fire "client" resume event
+				//#else
+				} else if ("client".equals(event.fReason)) { //$NON-NLS-1$
+					resumed(DebugEvent.CLIENT_REQUEST);
+				}
+				//#endif
+				//#ifdef ex5
+	//#			// TODO: Exercise 5 - handle start of drop event
+				//#else
+				else if ("drop".equals(event.fReason)) { //$NON-NLS-1$
+					resumed(DebugEvent.STEP_RETURN);
+				}
+				//#endif
+			} else if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
+				setSuspended(true);
+				//#ifdef ex2
+	//#			// TODO: Exercise 2 - handle/fire "client" suspend event
+	//#			if (event.endsWith("step")) {
+	//#				suspended(DebugEvent.STEP_END);
+	//#			} else if (event.startsWith("suspended event") && getError() != null) {
+	//#				exceptionHit();
+	//#			}
+				//#else
+				if ("client".equals(event.fReason)) { //$NON-NLS-1$
+					suspended(DebugEvent.CLIENT_REQUEST);
+				} else if ("step".equals(event.fReason)) { //$NON-NLS-1$
+					suspended(DebugEvent.STEP_END);
+				} else if ("event".equals(event.fReason) && getError() != null) { //$NON-NLS-1$
+					exceptionHit();
+				}
+				//#endif
+				//#ifdef ex5
+	//#			// TODO: Exercise 5 - handle end of drop event
+				//#else
+				else if ("drop".equals(event.fReason)) { //$NON-NLS-1$
+					suspended(DebugEvent.STEP_END);
+				}
+				//#endif
+			} else if (_event instanceof PDANoSuchLabelEvent ||
+					   _event instanceof PDAUnimplementedInstructionEvent)
+			{
+				setError(event.fMessage);
+			}
+		}
 	}
 
 	/**
@@ -380,12 +380,12 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	}
 
 	/**
-     * Notification an error was encountered. Fires a breakpoint
-     * suspend event.
-     */
-    private void exceptionHit() {
-    	suspended(DebugEvent.BREAKPOINT);
-    }
+	 * Notification an error was encountered. Fires a breakpoint
+	 * suspend event.
+	 */
+	private void exceptionHit() {
+		suspended(DebugEvent.BREAKPOINT);
+	}
 
 	/**
 	 * Sets the current variables for the given stack frame. Called
@@ -421,8 +421,8 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	 * Pops the top frame off the callstack.
 	 *
 	 * @throws DebugException
-     *
-     * @since 3.5
+	 *
+	 * @since 3.5
 	 */
 	public void popFrame() throws DebugException {
 		//#ifdef ex5
@@ -451,89 +451,89 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		return false;
 	}
 
-    /**
-     * Returns the values on the data stack (top down)
-     *
-     * @return the values on the data stack (top down)
-     *
-     * @since 3.5
-     */
-    public IValue[] getDataStack() throws DebugException {
-        PDAListResult result = (PDAListResult)sendCommand(new PDADataCommand(fThreadId));
-        if (result.fValues.length > 0) {
-            IValue[] values = new IValue[result.fValues.length];
-            for (int i = 0; i < result.fValues.length; i++) {
-                values[values.length - i - 1] = new PDAStackValue(this, result.fValues[i], i);
-            }
-            return values;
-        }
-        return new IValue[0];
-    }
+	/**
+	 * Returns the values on the data stack (top down)
+	 *
+	 * @return the values on the data stack (top down)
+	 *
+	 * @since 3.5
+	 */
+	public IValue[] getDataStack() throws DebugException {
+		PDAListResult result = (PDAListResult)sendCommand(new PDADataCommand(fThreadId));
+		if (result.fValues.length > 0) {
+			IValue[] values = new IValue[result.fValues.length];
+			for (int i = 0; i < result.fValues.length; i++) {
+				values[values.length - i - 1] = new PDAStackValue(this, result.fValues[i], i);
+			}
+			return values;
+		}
+		return new IValue[0];
+	}
 
-    /**
-     * Returns whether popping the data stack is currently permitted
-     *
-     * @return whether popping the data stack is currently permitted
-     *
-     * @since 3.5
-     */
-    public boolean canPopData() {
-        try {
-            return !isTerminated() && isSuspended() && getDataStack().length > 0;
-        } catch (DebugException e) {
-        }
-        return false;
-    }
+	/**
+	 * Returns whether popping the data stack is currently permitted
+	 *
+	 * @return whether popping the data stack is currently permitted
+	 *
+	 * @since 3.5
+	 */
+	public boolean canPopData() {
+		try {
+			return !isTerminated() && isSuspended() && getDataStack().length > 0;
+		} catch (DebugException e) {
+		}
+		return false;
+	}
 
-    /**
-     * Pops and returns the top of the data stack
-     *
-     * @return the top value on the stack
-     * @throws DebugException if the stack is empty or the request fails
-     *
-     * @since 3.5
-     */
-    public IValue popData() throws DebugException {
-        IValue[] dataStack = getDataStack();
-        if (dataStack.length > 0) {
-            sendCommand(new PDAPopDataCommand(fThreadId));
-            return dataStack[0];
-        }
-        requestFailed("Empty stack", null); //$NON-NLS-1$
-        return null;
-    }
+	/**
+	 * Pops and returns the top of the data stack
+	 *
+	 * @return the top value on the stack
+	 * @throws DebugException if the stack is empty or the request fails
+	 *
+	 * @since 3.5
+	 */
+	public IValue popData() throws DebugException {
+		IValue[] dataStack = getDataStack();
+		if (dataStack.length > 0) {
+			sendCommand(new PDAPopDataCommand(fThreadId));
+			return dataStack[0];
+		}
+		requestFailed("Empty stack", null); //$NON-NLS-1$
+		return null;
+	}
 
-    /**
-     * Returns whether pushing a value is currently supported.
-     *
-     * @return whether pushing a value is currently supported
-     *
-     * @since 3.5
-     */
-    public boolean canPushData() {
-        return !isTerminated() && isSuspended();
-    }
+	/**
+	 * Returns whether pushing a value is currently supported.
+	 *
+	 * @return whether pushing a value is currently supported
+	 *
+	 * @since 3.5
+	 */
+	public boolean canPushData() {
+		return !isTerminated() && isSuspended();
+	}
 
-    /**
-     * Pushes a value onto the stack.
-     *
-     * @param value value to push
-     * @throws DebugException on failure
-     *
-     * @since 3.5
-     */
-    public void pushData(String value) throws DebugException {
-        sendCommand(new PDAPushDataCommand(fThreadId, value));
-    }
+	/**
+	 * Pushes a value onto the stack.
+	 *
+	 * @param value value to push
+	 * @throws DebugException on failure
+	 *
+	 * @since 3.5
+	 */
+	public void pushData(String value) throws DebugException {
+		sendCommand(new PDAPushDataCommand(fThreadId, value));
+	}
 
-    /**
-     * Returns this thread's unique identifier
-     *
-     * @return this thread's unique identifier
-     *
-     * @since 3.5
-     */
+	/**
+	 * Returns this thread's unique identifier
+	 *
+	 * @return this thread's unique identifier
+	 *
+	 * @since 3.5
+	 */
 	public int getIdentifier() {
-	    return fThreadId;
+		return fThreadId;
 	}
 }

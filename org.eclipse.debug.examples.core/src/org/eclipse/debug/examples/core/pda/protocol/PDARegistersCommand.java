@@ -26,13 +26,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 public class PDARegistersCommand extends PDACommand {
 
-    public PDARegistersCommand(String group) {
-        super("registers " + group); //$NON-NLS-1$
-    }
+	public PDARegistersCommand(String group) {
+		super("registers " + group); //$NON-NLS-1$
+	}
 
 
-    @Override
+	@Override
 	public PDACommandResult createResult(String resultText) {
-        return new PDARegistersCommandResult(resultText);
-    }
+		return new PDARegistersCommandResult(resultText);
+	}
 }

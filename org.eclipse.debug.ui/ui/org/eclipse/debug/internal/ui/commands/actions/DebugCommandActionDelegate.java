@@ -30,40 +30,40 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActionDelegate, IActionDelegate2 {
 
 	/**
-     *The real action for this delegate
+	 *The real action for this delegate
 	 */
 	private DebugCommandAction fDebugAction;
 
 	protected void setAction(DebugCommandAction action) {
-	    fDebugAction = action;
+		fDebugAction = action;
 	}
 
 	@Override
 	public void dispose() {
-        fDebugAction.dispose();
+		fDebugAction.dispose();
 	}
 
-    @Override
+	@Override
 	public void init(IAction action) {
-        fDebugAction.setActionProxy(action);
-    }
+		fDebugAction.setActionProxy(action);
+	}
 
-    @Override
+	@Override
 	public void init(IWorkbenchWindow window) {
-        fDebugAction.init(window);
+		fDebugAction.init(window);
 	}
 
 	@Override
 	public void run(IAction action) {
-        fDebugAction.run();
+		fDebugAction.run();
 	}
 
 	@Override
 	public void runWithEvent(IAction action, Event event) {
-        run(action);
-    }
+		run(action);
+	}
 
-    @Override
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		// do nothing
 	}

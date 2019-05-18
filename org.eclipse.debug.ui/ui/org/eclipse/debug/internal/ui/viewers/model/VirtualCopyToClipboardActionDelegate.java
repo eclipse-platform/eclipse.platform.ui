@@ -65,50 +65,50 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	private class VirtualViewerListener implements ILabelUpdateListener, IVirtualItemListener {
 
 		VirtualTreeModelViewer fVirtualViewer;
-	    IProgressMonitor fProgressMonitor;
-        int fSelectionRootDepth;
+		IProgressMonitor fProgressMonitor;
+		int fSelectionRootDepth;
 		Set<VirtualItem> fItemsToUpdate;
 
-        @Override
+		@Override
 		public void labelUpdateStarted(ILabelUpdate update) {}
-        @Override
+		@Override
 		public void labelUpdateComplete(ILabelUpdate update) {
-        	VirtualItem updatedItem = fVirtualViewer.findItem(update.getElementPath());
-        	if (fItemsToUpdate.remove(updatedItem)) {
-                incrementProgress(1);
-        	}
-        }
-        @Override
+			VirtualItem updatedItem = fVirtualViewer.findItem(update.getElementPath());
+			if (fItemsToUpdate.remove(updatedItem)) {
+				incrementProgress(1);
+			}
+		}
+		@Override
 		public void labelUpdatesBegin() {
-        }
-        @Override
+		}
+		@Override
 		public void labelUpdatesComplete() {
-        }
+		}
 
-        @Override
+		@Override
 		public void revealed(VirtualItem item) {
-        }
+		}
 
-        @Override
+		@Override
 		public void disposed(VirtualItem item) {
-        	if (fItemsToUpdate.remove(item)) {
-        		incrementProgress(1);
-        	}
-        }
+			if (fItemsToUpdate.remove(item)) {
+				incrementProgress(1);
+			}
+		}
 
-        private void incrementProgress(int count) {
-            IProgressMonitor pm;
-            synchronized (VirtualCopyToClipboardActionDelegate.this) {
-                pm = fProgressMonitor;
-            }
-            if (pm != null) {
-                pm.worked(count);
-                if (fItemsToUpdate.isEmpty()) {
-                    pm.done();
-                }
-            }
-        }
-    }
+		private void incrementProgress(int count) {
+			IProgressMonitor pm;
+			synchronized (VirtualCopyToClipboardActionDelegate.this) {
+				pm = fProgressMonitor;
+			}
+			if (pm != null) {
+				pm.worked(count);
+				if (fItemsToUpdate.isEmpty()) {
+					pm.done();
+				}
+			}
+		}
+	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#initialize(IAction, ISelection)
@@ -176,76 +176,76 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		Set<VirtualItem> fItemsToCopy = Collections.EMPTY_SET;
 		Set<VirtualItem> fItemsToValidate = Collections.EMPTY_SET;
 
-	    @Override
+		@Override
 		public boolean isItemVisible(VirtualItem item) {
-	        return fItemsToValidate.contains(item);
-	    }
+			return fItemsToValidate.contains(item);
+		}
 
-	    @Override
+		@Override
 		public void showItem(VirtualItem item) {
-	    }
+		}
 
 		void setItemsToCopy(Set<VirtualItem> itemsToCopy) {
-	        fItemsToCopy = itemsToCopy;
+			fItemsToCopy = itemsToCopy;
 			fItemsToValidate = new HashSet<>();
 			for (VirtualItem itemToCopy : itemsToCopy) {
-	            while (itemToCopy != null) {
-	                fItemsToValidate.add(itemToCopy);
-	                itemToCopy = itemToCopy.getParent();
-	            }
-	        }
-	    }
+				while (itemToCopy != null) {
+					fItemsToValidate.add(itemToCopy);
+					itemToCopy = itemToCopy.getParent();
+				}
+			}
+		}
 	}
 
 	private VirtualTreeModelViewer initVirtualViewer(TreeModelViewer clientViewer, VirtualViewerListener listener, ItemsToCopyVirtualItemValidator validator) {
-        Object input = clientViewer.getInput();
-        ModelDelta stateDelta = new ModelDelta(input, IModelDelta.NO_CHANGE);
-        clientViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND);
-        VirtualTreeModelViewer virtualViewer = new VirtualTreeModelViewer(
-            clientViewer.getDisplay(),
-            SWT.VIRTUAL,
-            clientViewer.getPresentationContext(),
-            validator);
-        virtualViewer.setFilters(clientViewer.getFilters());
-        virtualViewer.addLabelUpdateListener(listener);
-        virtualViewer.getTree().addItemListener(listener);
-        String[] columns = clientViewer.getPresentationContext().getColumns();
-        virtualViewer.setInput(input);
-        if (virtualViewer.canToggleColumns()) {
-            virtualViewer.setShowColumns(clientViewer.isShowColumns());
-            virtualViewer.setVisibleColumns(columns);
-        }
-        virtualViewer.updateViewer(stateDelta);
+		Object input = clientViewer.getInput();
+		ModelDelta stateDelta = new ModelDelta(input, IModelDelta.NO_CHANGE);
+		clientViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND);
+		VirtualTreeModelViewer virtualViewer = new VirtualTreeModelViewer(
+			clientViewer.getDisplay(),
+			SWT.VIRTUAL,
+			clientViewer.getPresentationContext(),
+			validator);
+		virtualViewer.setFilters(clientViewer.getFilters());
+		virtualViewer.addLabelUpdateListener(listener);
+		virtualViewer.getTree().addItemListener(listener);
+		String[] columns = clientViewer.getPresentationContext().getColumns();
+		virtualViewer.setInput(input);
+		if (virtualViewer.canToggleColumns()) {
+			virtualViewer.setShowColumns(clientViewer.isShowColumns());
+			virtualViewer.setVisibleColumns(columns);
+		}
+		virtualViewer.updateViewer(stateDelta);
 
-        // Parse selected items from client viewer and add them to the virtual viewer selection.
-        listener.fSelectionRootDepth = Integer.MAX_VALUE;
-        TreeItem[] selection = getSelectedItems(clientViewer);
+		// Parse selected items from client viewer and add them to the virtual viewer selection.
+		listener.fSelectionRootDepth = Integer.MAX_VALUE;
+		TreeItem[] selection = getSelectedItems(clientViewer);
 		Set<VirtualItem> vSelection = new HashSet<>(selection.length * 4 / 3);
-        for (int i = 0; i < selection.length; i++) {
-            TreePath parentPath = fClientViewer.getTreePathFromItem(selection[i].getParentItem());
-            listener.fSelectionRootDepth = Math.min(parentPath.getSegmentCount() + 1, listener.fSelectionRootDepth);
-            VirtualItem parentVItem = virtualViewer.findItem(parentPath);
-            if (parentVItem != null) {
-                int index = -1;
-                TreeItem parentItem = selection[i].getParentItem();
-                if (parentItem != null) {
-                    index = parentItem.indexOf(selection[i]);
-                } else {
-                    Tree parentTree = selection[i].getParent();
-                    index = parentTree.indexOf(selection[i]);
-                }
-                index = ((ITreeModelContentProvider)clientViewer.getContentProvider()).viewToModelIndex(parentPath, index);
-                vSelection.add( parentVItem.getItem(new Index(index)) );
-            }
-        }
-        validator.setItemsToCopy(vSelection);
+		for (int i = 0; i < selection.length; i++) {
+			TreePath parentPath = fClientViewer.getTreePathFromItem(selection[i].getParentItem());
+			listener.fSelectionRootDepth = Math.min(parentPath.getSegmentCount() + 1, listener.fSelectionRootDepth);
+			VirtualItem parentVItem = virtualViewer.findItem(parentPath);
+			if (parentVItem != null) {
+				int index = -1;
+				TreeItem parentItem = selection[i].getParentItem();
+				if (parentItem != null) {
+					index = parentItem.indexOf(selection[i]);
+				} else {
+					Tree parentTree = selection[i].getParent();
+					index = parentTree.indexOf(selection[i]);
+				}
+				index = ((ITreeModelContentProvider)clientViewer.getContentProvider()).viewToModelIndex(parentPath, index);
+				vSelection.add( parentVItem.getItem(new Index(index)) );
+			}
+		}
+		validator.setItemsToCopy(vSelection);
 		listener.fItemsToUpdate = new HashSet<>(vSelection);
-        virtualViewer.getTree().validate();
-        return virtualViewer;
+		virtualViewer.getTree().validate();
+		return virtualViewer;
 	}
 
 	protected TreeItem[] getSelectedItems(TreeModelViewer clientViewer) {
-	    return clientViewer.getTree().getSelection();
+		return clientViewer.getTree().getSelection();
 	}
 
 	/**
@@ -254,9 +254,9 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	 */
 	@Override
 	public void run(final IAction action) {
-	    if (fClientViewer.getSelection().isEmpty()) {
-	        return;
-	    }
+		if (fClientViewer.getSelection().isEmpty()) {
+			return;
+		}
 
 		final VirtualViewerListener listener = new VirtualViewerListener();
 		ItemsToCopyVirtualItemValidator validator = new ItemsToCopyVirtualItemValidator();
@@ -270,17 +270,17 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			@Override
 			public void run(final IProgressMonitor m) throws InvocationTargetException, InterruptedException {
-	            synchronized(listener) {
-	                listener.fProgressMonitor = m;
-	                listener.fProgressMonitor.beginTask(DebugUIPlugin.removeAccelerators(getAction().getText()), listener.fItemsToUpdate.size());
-	            }
+				synchronized(listener) {
+					listener.fProgressMonitor = m;
+					listener.fProgressMonitor.beginTask(DebugUIPlugin.removeAccelerators(getAction().getText()), listener.fItemsToUpdate.size());
+				}
 
-	            while (!listener.fItemsToUpdate.isEmpty() && !listener.fProgressMonitor.isCanceled()) {
-	                Thread.sleep(1);
-	            }
-	            synchronized(listener) {
-	                listener.fProgressMonitor = null;
-	            }
+				while (!listener.fItemsToUpdate.isEmpty() && !listener.fProgressMonitor.isCanceled()) {
+					Thread.sleep(1);
+				}
+				synchronized(listener) {
+					listener.fProgressMonitor = null;
+				}
 			}
 		};
 		try {
@@ -293,24 +293,24 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		}
 
 		if (!monitor.isCanceled()) {
-		    copySelectionToClipboard(virtualViewer, validator.fItemsToCopy, listener.fSelectionRootDepth);
+			copySelectionToClipboard(virtualViewer, validator.fItemsToCopy, listener.fSelectionRootDepth);
 		}
 
-        virtualViewer.removeLabelUpdateListener(listener);
-        virtualViewer.getTree().removeItemListener(listener);
+		virtualViewer.removeLabelUpdateListener(listener);
+		virtualViewer.getTree().removeItemListener(listener);
 		virtualViewer.dispose();
 	}
 
 	private void copySelectionToClipboard(VirtualTreeModelViewer virtualViewer, Set<VirtualItem> itemsToCopy, int selectionRootDepth) {
-        StringBuffer buffer = new StringBuffer();
-        writeItemToBuffer (virtualViewer.getTree(), itemsToCopy, buffer, -selectionRootDepth);
-        writeBufferToClipboard(buffer);
+		StringBuffer buffer = new StringBuffer();
+		writeItemToBuffer (virtualViewer.getTree(), itemsToCopy, buffer, -selectionRootDepth);
+		writeBufferToClipboard(buffer);
 	}
 
 	protected void writeItemToBuffer(VirtualItem item, Set<VirtualItem> itemsToCopy, StringBuffer buffer, int indent) {
-	    if (itemsToCopy.contains(item)) {
-	        append(item, buffer, indent);
-	    }
+		if (itemsToCopy.contains(item)) {
+			append(item, buffer, indent);
+		}
 		VirtualItem[] children = item.getItems();
 		if (children != null) {
 			for (int i = 0; i < children.length; i++) {
@@ -324,8 +324,8 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 			return;
 		}
 
-        TextTransfer plainTextTransfer = TextTransfer.getInstance();
-        Clipboard clipboard= new Clipboard(fClientViewer.getControl().getDisplay());
+		TextTransfer plainTextTransfer = TextTransfer.getInstance();
+		Clipboard clipboard= new Clipboard(fClientViewer.getControl().getDisplay());
 		try {
 			clipboard.setContents(
 					new String[]{buffer.toString()},
@@ -338,7 +338,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 				writeBufferToClipboard(buffer);
 			}
 		} finally {
-		    clipboard.dispose();
+			clipboard.dispose();
 		}
 	}
 
@@ -359,11 +359,11 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 
 	@Override
 	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
-	    if (selection.isEmpty()) {
-	        return true;
-	    } else {
-	        return super.getEnableStateForSelection(selection);
-	    }
+		if (selection.isEmpty()) {
+			return true;
+		} else {
+			return super.getEnableStateForSelection(selection);
+		}
 	}
 
 	@Override

@@ -87,7 +87,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 				for (int i= 0; i < copiedListeners.length; i++) {
 					fListener = (IMemoryBlockListener)copiedListeners[i];
 					fMemoryBlocks = memBlocks;
-                    SafeRunner.run(this);
+					SafeRunner.run(this);
 				}
 			}
 			fListener = null;

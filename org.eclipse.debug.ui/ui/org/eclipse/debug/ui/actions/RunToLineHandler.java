@@ -47,103 +47,103 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class RunToLineHandler implements IDebugEventSetListener, IBreakpointManagerListener, IWorkspaceRunnable {
 
-    private IDebugTarget fTarget;
-    private ISuspendResume fResumee;
-    private IBreakpoint fBreakpoint;
-    private boolean fAutoSkip = false;
+	private IDebugTarget fTarget;
+	private ISuspendResume fResumee;
+	private IBreakpoint fBreakpoint;
+	private boolean fAutoSkip = false;
 
-    /**
-     * Constructs a handler to perform a run to line operation.
-     *
-     * @param target the debug target in which the operation is to be performed
-     * @param suspendResume the element to be resumed to begin the operation
-     * @param breakpoint the run to line breakpoint
-     */
-    public RunToLineHandler(IDebugTarget target, ISuspendResume suspendResume, IBreakpoint breakpoint) {
-        fResumee = suspendResume;
-        fTarget = target;
-        fBreakpoint = breakpoint;
-    }
+	/**
+	 * Constructs a handler to perform a run to line operation.
+	 *
+	 * @param target the debug target in which the operation is to be performed
+	 * @param suspendResume the element to be resumed to begin the operation
+	 * @param breakpoint the run to line breakpoint
+	 */
+	public RunToLineHandler(IDebugTarget target, ISuspendResume suspendResume, IBreakpoint breakpoint) {
+		fResumee = suspendResume;
+		fTarget = target;
+		fBreakpoint = breakpoint;
+	}
 
-    @Override
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-        for (int i = 0; i < events.length; i++) {
-            DebugEvent event= events[i];
-            Object source= event.getSource();
-            if (source instanceof IThread && event.getKind() == DebugEvent.SUSPEND &&
-                    event.getDetail() == DebugEvent.BREAKPOINT) {
-                IThread thread = (IThread) source;
-                IDebugTarget suspendee = thread.getAdapter(IDebugTarget.class);
-                if (fTarget.equals(suspendee)) {
-                    // cleanup if the breakpoint was hit or not
-                    cancel();
-                }
-            } else if (source instanceof IDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
-                if (source.equals(fTarget)) {
-                    // Clean up if the debug target terminates without
-                    // hitting the breakpoint.
-                    cancel();
-                }
-            }
-        }
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event= events[i];
+			Object source= event.getSource();
+			if (source instanceof IThread && event.getKind() == DebugEvent.SUSPEND &&
+					event.getDetail() == DebugEvent.BREAKPOINT) {
+				IThread thread = (IThread) source;
+				IDebugTarget suspendee = thread.getAdapter(IDebugTarget.class);
+				if (fTarget.equals(suspendee)) {
+					// cleanup if the breakpoint was hit or not
+					cancel();
+				}
+			} else if (source instanceof IDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
+				if (source.equals(fTarget)) {
+					// Clean up if the debug target terminates without
+					// hitting the breakpoint.
+					cancel();
+				}
+			}
+		}
 
-    }
+	}
 
-    @Override
+	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
-        // if the user changes the breakpoint manager enablement, don't restore it
-        fAutoSkip = false;
-    }
+		// if the user changes the breakpoint manager enablement, don't restore it
+		fAutoSkip = false;
+	}
 
-    private IBreakpointManager getBreakpointManager() {
-        return getDebugPlugin().getBreakpointManager();
-    }
+	private IBreakpointManager getBreakpointManager() {
+		return getDebugPlugin().getBreakpointManager();
+	}
 
-    private DebugPlugin getDebugPlugin() {
-        return DebugPlugin.getDefault();
-    }
+	private DebugPlugin getDebugPlugin() {
+		return DebugPlugin.getDefault();
+	}
 
-    /**
-     * Cancels the run to line operation.
-     */
-    public void cancel() {
-        IBreakpointManager manager = getBreakpointManager();
-        try {
-            getDebugPlugin().removeDebugEventListener(this);
-            manager.removeBreakpointManagerListener(this);
-            fTarget.breakpointRemoved(fBreakpoint, null);
-        } finally {
-            if (fAutoSkip) {
-                manager.setEnabled(true);
-            }
-        }
-    }
+	/**
+	 * Cancels the run to line operation.
+	 */
+	public void cancel() {
+		IBreakpointManager manager = getBreakpointManager();
+		try {
+			getDebugPlugin().removeDebugEventListener(this);
+			manager.removeBreakpointManagerListener(this);
+			fTarget.breakpointRemoved(fBreakpoint, null);
+		} finally {
+			if (fAutoSkip) {
+				manager.setEnabled(true);
+			}
+		}
+	}
 
-    @Override
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-        getDebugPlugin().addDebugEventListener(this);
-        IBreakpointManager breakpointManager = getBreakpointManager();
-        fAutoSkip = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE) && breakpointManager.isEnabled();
-        if (fAutoSkip) {
-            getBreakpointManager().setEnabled(false);
-            breakpointManager.addBreakpointManagerListener(this);
-        }
-        Job job = new Job(ActionMessages.RunToLineHandler_0) {
-            @Override
+		getDebugPlugin().addDebugEventListener(this);
+		IBreakpointManager breakpointManager = getBreakpointManager();
+		fAutoSkip = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE) && breakpointManager.isEnabled();
+		if (fAutoSkip) {
+			getBreakpointManager().setEnabled(false);
+			breakpointManager.addBreakpointManagerListener(this);
+		}
+		Job job = new Job(ActionMessages.RunToLineHandler_0) {
+			@Override
 			protected IStatus run(IProgressMonitor jobMonitor) {
-                if (!jobMonitor.isCanceled()) {
-                    fTarget.breakpointAdded(fBreakpoint);
-                    try {
-                        fResumee.resume();
-                    } catch (DebugException e) {
-                        cancel();
-                        return e.getStatus();
-                    }
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        job.schedule();
-    }
+				if (!jobMonitor.isCanceled()) {
+					fTarget.breakpointAdded(fBreakpoint);
+					try {
+						fResumee.resume();
+					} catch (DebugException e) {
+						cancel();
+						return e.getStatus();
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
 
 }

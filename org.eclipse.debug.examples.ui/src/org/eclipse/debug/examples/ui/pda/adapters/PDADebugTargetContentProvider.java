@@ -26,7 +26,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class PDADebugTargetContentProvider extends ElementContentProvider {
 
-    @Override
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		PDAThread thread = ((PDADebugTarget) element).getThread(0);
 		if (thread != null) {

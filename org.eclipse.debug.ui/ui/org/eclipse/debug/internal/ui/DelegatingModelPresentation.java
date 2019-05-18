@@ -146,14 +146,14 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return getDefaultImage(item);
 	}
 
-    @Override
+	@Override
 	public String getText(Object item) {
-    	IDebugModelPresentation lp= getConfiguredPresentation(item);
-    	if (lp != null) {
-    		return lp.getText(item);
-    	}
-    	return getDefaultText(item);
-    }
+		IDebugModelPresentation lp= getConfiguredPresentation(item);
+		if (lp != null) {
+			return lp.getText(item);
+		}
+		return getDefaultText(item);
+	}
 
 	@Override
 	public IEditorInput getEditorInput(Object item) {
@@ -319,35 +319,35 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return fLabelProviders;
 	}
 
-    @Override
+	@Override
 	public Color getForeground(Object element) {
-        IDebugModelPresentation presentation = getConfiguredPresentation(element);
-        if (presentation instanceof IColorProvider) {
-            IColorProvider colorProvider = (IColorProvider) presentation;
-            return colorProvider.getForeground(element);
-        }
-        return null;
-    }
+		IDebugModelPresentation presentation = getConfiguredPresentation(element);
+		if (presentation instanceof IColorProvider) {
+			IColorProvider colorProvider = (IColorProvider) presentation;
+			return colorProvider.getForeground(element);
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public Color getBackground(Object element) {
-        IDebugModelPresentation presentation = getConfiguredPresentation(element);
-        if (presentation instanceof IColorProvider) {
-            IColorProvider colorProvider = (IColorProvider) presentation;
-            return colorProvider.getBackground(element);
-        }
-        return null;
-    }
+		IDebugModelPresentation presentation = getConfiguredPresentation(element);
+		if (presentation instanceof IColorProvider) {
+			IColorProvider colorProvider = (IColorProvider) presentation;
+			return colorProvider.getBackground(element);
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public Font getFont(Object element) {
-        IDebugModelPresentation presentation = getConfiguredPresentation(element);
-        if (presentation instanceof IFontProvider) {
-            IFontProvider fontProvider = (IFontProvider) presentation;
-            return fontProvider.getFont(element);
-        }
-        return null;
-    }
+		IDebugModelPresentation presentation = getConfiguredPresentation(element);
+		if (presentation instanceof IFontProvider) {
+			IFontProvider fontProvider = (IFontProvider) presentation;
+			return fontProvider.getFont(element);
+		}
+		return null;
+	}
 
 	@Override
 	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame) {
@@ -371,7 +371,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 			}
 		}
 		if (annotation == null) {
-            boolean defaultAnnotation = id == null;
+			boolean defaultAnnotation = id == null;
 			if (id == null || text == null || (defaultAnnotation && image == null)) {
 				IThread thread = frame.getThread();
 				IStackFrame tos = null;

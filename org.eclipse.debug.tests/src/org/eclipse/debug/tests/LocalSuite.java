@@ -55,9 +55,9 @@ public class LocalSuite extends TestSuite {
 		addTest(new TestSuite(JFaceViewerSelectionTests.class));
 		addTest(new TestSuite(JFaceViewerStateTests.class));
 		addTest(new TestSuite(JFaceViewerUpdateTests.class));
-        addTest(new TestSuite(JFaceViewerLazyTests.class));
-        addTest(new TestSuite(JFaceViewerTopIndexTests.class));
-        addTest(new TestSuite(JFaceViewerFilterTests.class));
-        addTest(new TestSuite(ColumnPresentationTests.class));
+		addTest(new TestSuite(JFaceViewerLazyTests.class));
+		addTest(new TestSuite(JFaceViewerTopIndexTests.class));
+		addTest(new TestSuite(JFaceViewerFilterTests.class));
+		addTest(new TestSuite(ColumnPresentationTests.class));
 	}
 }

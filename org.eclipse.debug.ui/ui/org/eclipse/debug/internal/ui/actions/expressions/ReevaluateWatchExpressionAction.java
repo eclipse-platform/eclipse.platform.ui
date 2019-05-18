@@ -36,35 +36,35 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
 
-    @Override
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-    }
+	}
 
-    /**
-     * Finds the currently selected context in the UI.
-     * @return the current debug context
-     */
-    protected IDebugElement getContext() {
-        IAdaptable object = DebugUITools.getDebugContext();
-        IDebugElement context = null;
-        if (object instanceof IDebugElement) {
-            context = (IDebugElement) object;
-        } else if (object instanceof ILaunch) {
-            context = ((ILaunch) object).getDebugTarget();
-        }
-        return context;
-    }
+	/**
+	 * Finds the currently selected context in the UI.
+	 * @return the current debug context
+	 */
+	protected IDebugElement getContext() {
+		IAdaptable object = DebugUITools.getDebugContext();
+		IDebugElement context = null;
+		if (object instanceof IDebugElement) {
+			context = (IDebugElement) object;
+		} else if (object instanceof ILaunch) {
+			context = ((ILaunch) object).getDebugTarget();
+		}
+		return context;
+	}
 
-    protected IStructuredSelection getCurrentSelection() {
-        IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
-        if (page != null) {
-            ISelection selection = page.getSelection();
-            if (selection instanceof IStructuredSelection) {
-                return (IStructuredSelection) selection;
-            }
-        }
-        return null;
-    }
+	protected IStructuredSelection getCurrentSelection() {
+		IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+		if (page != null) {
+			ISelection selection = page.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				return (IStructuredSelection) selection;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)

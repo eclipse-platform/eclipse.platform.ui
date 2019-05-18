@@ -26,22 +26,22 @@ import java.util.StringTokenizer;
 
 public class PDARegisterData {
 
-    final public String fName;
-    final public boolean fWritable;
-    final public PDABitFieldData[] fBitFields;
+	final public String fName;
+	final public boolean fWritable;
+	final public PDABitFieldData[] fBitFields;
 
-    PDARegisterData(String regString) {
-        StringTokenizer st = new StringTokenizer(regString, "|"); //$NON-NLS-1$
+	PDARegisterData(String regString) {
+		StringTokenizer st = new StringTokenizer(regString, "|"); //$NON-NLS-1$
 
-        String regInfo = st.nextToken();
-        StringTokenizer regSt = new StringTokenizer(regInfo, " "); //$NON-NLS-1$
-        fName = regSt.nextToken();
-        fWritable = Boolean.getBoolean(regSt.nextToken());
+		String regInfo = st.nextToken();
+		StringTokenizer regSt = new StringTokenizer(regInfo, " "); //$NON-NLS-1$
+		fName = regSt.nextToken();
+		fWritable = Boolean.getBoolean(regSt.nextToken());
 
 		List<PDABitFieldData> bitFieldsList = new ArrayList<>();
-        while (st.hasMoreTokens()) {
-            bitFieldsList.add(new PDABitFieldData(st.nextToken()));
-        }
-        fBitFields = bitFieldsList.toArray(new PDABitFieldData[bitFieldsList.size()]);
-    }
+		while (st.hasMoreTokens()) {
+			bitFieldsList.add(new PDABitFieldData(st.nextToken()));
+		}
+		fBitFields = bitFieldsList.toArray(new PDABitFieldData[bitFieldsList.size()]);
+	}
 }

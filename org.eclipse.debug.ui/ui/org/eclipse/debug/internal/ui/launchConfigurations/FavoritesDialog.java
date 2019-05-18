@@ -248,17 +248,17 @@ public class FavoritesDialog extends TrayDialog {
 	/**
 	 * Returns a label to use for launch mode with accelerators removed.
 	 *
-     * @return label to use for launch mode with accelerators removed
-     */
-    private String getModeLabel() {
-        return DebugUIPlugin.removeAccelerators(fHistory.getLaunchGroup().getLabel());
-    }
+	 * @return label to use for launch mode with accelerators removed
+	 */
+	private String getModeLabel() {
+		return DebugUIPlugin.removeAccelerators(fHistory.getLaunchGroup().getLabel());
+	}
 
-    /**
-     * Creates the main area of the dialog
-     * @param parent the parent to add this content to
-     */
-    protected void createFavoritesArea(Composite parent) {
+	/**
+	 * Creates the main area of the dialog
+	 * @param parent the parent to add this content to
+	 */
+	protected void createFavoritesArea(Composite parent) {
 		Composite topComp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
 		SWTFactory.createLabel(topComp, LaunchConfigurationsMessages.FavoritesDialog_2, 2);
 		fFavoritesTable = createTable(topComp, new FavoritesContentProvider());
@@ -451,15 +451,15 @@ public class FavoritesDialog extends TrayDialog {
 		super.okPressed();
 	}
 
-    @Override
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-         if (section == null) {
-             section = settings.addNewSection(getDialogSettingsSectionName());
-         }
-         return section;
-    }
+		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+		if (section == null) {
+			section = settings.addNewSection(getDialogSettingsSectionName());
+		}
+		return section;
+	}
 
 	/**
 	 * Returns the name of the section that this dialog stores its settings in

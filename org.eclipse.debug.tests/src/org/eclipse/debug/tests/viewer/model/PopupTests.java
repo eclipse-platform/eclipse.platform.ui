@@ -40,18 +40,18 @@ import org.eclipse.swt.widgets.Shell;
  */
 abstract public class PopupTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
-    public PopupTests(String name) {
-        super(name);
-    }
+	public PopupTests(String name) {
+		super(name);
+	}
 
-    @Override
+	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
 		return new TestModelUpdatesListener(viewer, false, false);
 	}
 
-    protected IInternalTreeModelViewer getCTargetViewer() {
-        return fViewer;
-    }
+	protected IInternalTreeModelViewer getCTargetViewer() {
+		return fViewer;
+	}
 
 	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
@@ -60,152 +60,152 @@ abstract public class PopupTests extends AbstractViewerModelTest implements ITes
 
 	abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell, int style);
 
-    /**
-     * This test verifies that content updates are still being performed.
-     */
+	/**
+	 * This test verifies that content updates are still being performed.
+	 */
 	public void testRefreshStruct() throws Exception {
-        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
-        TestModel model = TestModel.simpleSingleLevel();
-        fViewer.setAutoExpandLevel(-1);
+		TestModel model = TestModel.simpleSingleLevel();
+		fViewer.setAutoExpandLevel(-1);
 
-        // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
+		// Create the listener
+		fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
-        // Set the input into the view and update the view.
-        fViewer.setInput(model.getRootElement());
+		// Set the input into the view and update the view.
+		fViewer.setInput(model.getRootElement());
 		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
-        model.validateData(fViewer, TreePath.EMPTY);
+		model.validateData(fViewer, TreePath.EMPTY);
 
-        // Update the model
-        TestElement element = model.getRootElement().getChildren()[0];
-        TreePath elementPath = new TreePath(new Object[] { element });
-        TestElement[] newChildren = new TestElement[] {
+		// Update the model
+		TestElement element = model.getRootElement().getChildren()[0];
+		TreePath elementPath = new TreePath(new Object[] { element });
+		TestElement[] newChildren = new TestElement[] {
  new TestElement(model, "1.1 - new", new TestElement[0]), //$NON-NLS-1$
 		new TestElement(model, "1.2 - new", new TestElement[0]), //$NON-NLS-1$
 		new TestElement(model, "1.3 - new", new TestElement[0]), //$NON-NLS-1$
-        };
-        ModelDelta delta = model.setElementChildren(elementPath, newChildren);
+		};
+		ModelDelta delta = model.setElementChildren(elementPath, newChildren);
 
-        fListener.reset(elementPath, element, -1, true, false);
-        model.postDelta(delta);
+		fListener.reset(elementPath, element, -1, true, false);
+		model.postDelta(delta);
 		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
-        model.validateData(fViewer, TreePath.EMPTY);
-    }
+		model.validateData(fViewer, TreePath.EMPTY);
+	}
 
-    /**
-     * This test verifies that expand and select updates are being ignored.
-     */
+	/**
+	 * This test verifies that expand and select updates are being ignored.
+	 */
 	public void testExpandAndSelect() throws Exception {
-        TestModel model = TestModel.simpleMultiLevel();
+		TestModel model = TestModel.simpleMultiLevel();
 
-        // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, false);
+		// Create the listener
+		fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, false);
 
-        // Set the input into the view and update the view.
-        fViewer.setInput(model.getRootElement());
+		// Set the input into the view and update the view.
+		fViewer.setInput(model.getRootElement());
 		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
-        model.validateData(fViewer, TreePath.EMPTY, true);
+		model.validateData(fViewer, TreePath.EMPTY, true);
 
-        // Create the delta
-        fListener.reset();
-        // TODO Investigate: there seem to be unnecessary updates being issued
-        // by the viewer.  These include the updates that are commented out:
-        // For now disable checking for extra updates.
-        fListener.setFailOnRedundantUpdates(false);
-        TestElement element = model.getRootElement();
-        TreePath path_root = TreePath.EMPTY;
-        ModelDelta delta= new ModelDelta(model.getRootElement(), -1, IModelDelta.EXPAND, element.getChildren().length);
-        ModelDelta deltaRoot = delta;
-        element = element.getChildren()[2];
-        TreePath path_root_3 = path_root.createChildPath(element);
-        delta.addNode(element, 2, IModelDelta.SELECT | IModelDelta.EXPAND, element.fChildren.length);
+		// Create the delta
+		fListener.reset();
+		// TODO Investigate: there seem to be unnecessary updates being issued
+		// by the viewer.  These include the updates that are commented out:
+		// For now disable checking for extra updates.
+		fListener.setFailOnRedundantUpdates(false);
+		TestElement element = model.getRootElement();
+		TreePath path_root = TreePath.EMPTY;
+		ModelDelta delta= new ModelDelta(model.getRootElement(), -1, IModelDelta.EXPAND, element.getChildren().length);
+		ModelDelta deltaRoot = delta;
+		element = element.getChildren()[2];
+		TreePath path_root_3 = path_root.createChildPath(element);
+		delta.addNode(element, 2, IModelDelta.SELECT | IModelDelta.EXPAND, element.fChildren.length);
 
-        // Validate the expansion state BEFORE posting the delta.
+		// Validate the expansion state BEFORE posting the delta.
 
-        IInternalTreeModelViewer contentProviderViewer = fViewer;
-        assertFalse(contentProviderViewer.getExpandedState(path_root_3));
+		IInternalTreeModelViewer contentProviderViewer = fViewer;
+		assertFalse(contentProviderViewer.getExpandedState(path_root_3));
 
-        model.postDelta(deltaRoot);
+		model.postDelta(deltaRoot);
 		TestUtil.processUIEvents();
 		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE)
 				&& (fListener.isFinished(CONTENT_SEQUENCE_STARTED)
 						|| !fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)),
 				createListenerErrorMessage());
-        model.validateData(fViewer, TreePath.EMPTY, true);
+		model.validateData(fViewer, TreePath.EMPTY, true);
 
-        // Validate the expansion state AFTER posting the delta.
-        assertFalse(contentProviderViewer.getExpandedState(path_root_3));
+		// Validate the expansion state AFTER posting the delta.
+		assertFalse(contentProviderViewer.getExpandedState(path_root_3));
 
-        // Verify selection
-        ISelection selection = fViewer.getSelection();
-        if (selection instanceof ITreeSelection) {
+		// Verify selection
+		ISelection selection = fViewer.getSelection();
+		if (selection instanceof ITreeSelection) {
 			List<TreePath> selectionPathsList = Arrays.asList(((ITreeSelection) selection).getPaths());
-            assertFalse(selectionPathsList.contains(path_root_3));
-        } else {
+			assertFalse(selectionPathsList.contains(path_root_3));
+		} else {
 			fail("Not a tree selection"); //$NON-NLS-1$
-        }
-    }
+		}
+	}
 
 	public void testPreserveExpandedOnSubTreeContent() throws Exception {
-        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-        TestModel model = TestModel.simpleMultiLevel();
+		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+		TestModel model = TestModel.simpleMultiLevel();
 
-        // Expand all
-        fViewer.setAutoExpandLevel(-1);
+		// Expand all
+		fViewer.setAutoExpandLevel(-1);
 
-        // Create the listener,
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
+		// Create the listener,
+		fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
-        // Set the input into the view and update the view.
-        fViewer.setInput(model.getRootElement());
+		// Set the input into the view and update the view.
+		fViewer.setInput(model.getRootElement());
 		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
-        model.validateData(fViewer, TreePath.EMPTY, true);
+		model.validateData(fViewer, TreePath.EMPTY, true);
 
-        // Turn off auto-expansion
-        fViewer.setAutoExpandLevel(0);
+		// Turn off auto-expansion
+		fViewer.setAutoExpandLevel(0);
 
-        // Set a selection in view
+		// Set a selection in view
 		TreeSelection originalSelection = new TreeSelection(model.findElement("3.3.1")); //$NON-NLS-1$
-        fViewer.setSelection(originalSelection);
+		fViewer.setSelection(originalSelection);
 
-        // Update the model
+		// Update the model
 		model.addElementChild(model.findElement("3"), null, 0, new TestElement(model, "3.0 - new", new TestElement[0])); //$NON-NLS-1$ //$NON-NLS-2$
 
-        // Create the delta for element "3" with content update.
+		// Create the delta for element "3" with content update.
 		TreePath elementPath = model.findElement("3"); //$NON-NLS-1$
-        ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
-        ModelDelta elementDelta = model.getElementDelta(rootDelta, elementPath, true);
-        elementDelta.setFlags(IModelDelta.CONTENT);
+		ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+		ModelDelta elementDelta = model.getElementDelta(rootDelta, elementPath, true);
+		elementDelta.setFlags(IModelDelta.CONTENT);
 
-        // Note: Re-expanding nodes causes redundant updates.
-        fListener.reset(false, false);
-        fListener.addUpdates(getCTargetViewer(), elementPath, model.getElement(elementPath), -1, ALL_UPDATES_COMPLETE);
+		// Note: Re-expanding nodes causes redundant updates.
+		fListener.reset(false, false);
+		fListener.addUpdates(getCTargetViewer(), elementPath, model.getElement(elementPath), -1, ALL_UPDATES_COMPLETE);
 
-        // Post the sub-tree update
-        model.postDelta(rootDelta);
+		// Post the sub-tree update
+		model.postDelta(rootDelta);
 		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
-        // Validate data
-        model.validateData(fViewer, TreePath.EMPTY, true);
+		// Validate data
+		model.validateData(fViewer, TreePath.EMPTY, true);
 		assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true); //$NON-NLS-1$
-        // On windows, getExpandedState() may return true for an element with no children:
-        // assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
+		// On windows, getExpandedState() may return true for an element with no children:
+		// assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
 		assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true); //$NON-NLS-1$
 		assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.2")) == true); //$NON-NLS-1$
 		assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.3")) == true); //$NON-NLS-1$
-        assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
-    }
+		assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
+	}
 
-    private boolean areTreeSelectionsEqual(ITreeSelection sel1, ITreeSelection sel2) {
+	private boolean areTreeSelectionsEqual(ITreeSelection sel1, ITreeSelection sel2) {
 		Set<TreePath> sel1Set = new HashSet<>();
-        sel1Set.addAll( Arrays.asList(sel1.getPaths()) );
+		sel1Set.addAll( Arrays.asList(sel1.getPaths()) );
 
 		Set<TreePath> sel2Set = new HashSet<>();
-        sel2Set.addAll( Arrays.asList(sel2.getPaths()) );
+		sel2Set.addAll( Arrays.asList(sel2.getPaths()) );
 
-        return sel1Set.equals(sel2Set);
-    }
+		return sel1Set.equals(sel2Set);
+	}
 
 
 }

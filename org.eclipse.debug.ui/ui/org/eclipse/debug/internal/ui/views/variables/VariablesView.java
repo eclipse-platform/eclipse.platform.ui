@@ -297,7 +297,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		@Override
 		public void viewerInputComplete(IViewerInputUpdate update) {
 			if (!update.isCanceled()) {
-			    viewerInputUpdateComplete(update);
+				viewerInputUpdateComplete(update);
 			}
 		}
 	};
@@ -313,7 +313,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private ToggleDetailPaneAction[] fToggleDetailPaneActions;
 	private ConfigureColumnsAction fConfigureColumnsAction;
 
-    protected String PREF_STATE_MEMENTO = "pref_state_memento."; //$NON-NLS-1$
+	protected String PREF_STATE_MEMENTO = "pref_state_memento."; //$NON-NLS-1$
 
 	public static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
 
@@ -339,16 +339,16 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected static final String DETAIL_PANE_TYPE = "DETAIL_PANE_TYPE"; //$NON-NLS-1$
 
-    /**
-     * Visits deltas to determine if details should be displayed
-     */
-    class Visitor implements IModelDeltaVisitor {
-        /**
-         * Whether to trigger details display.
-         *
-         * @since 3.3
-         */
-        private boolean fTriggerDetails = false;
+	/**
+	 * Visits deltas to determine if details should be displayed
+	 */
+	class Visitor implements IModelDeltaVisitor {
+		/**
+		 * Whether to trigger details display.
+		 *
+		 * @since 3.3
+		 */
+		private boolean fTriggerDetails = false;
 		@Override
 		public boolean visit(IModelDelta delta, int depth) {
 			if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
@@ -366,16 +366,16 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			return fTriggerDetails;
 		}
 
-    }
-    /**
-     * Delta visitor
-     */
-    private Visitor fVisitor = new Visitor();
+	}
+	/**
+	 * Delta visitor
+	 */
+	private Visitor fVisitor = new Visitor();
 
-    /**
-     * Job to update details in the UI thread.
-     */
-    private Job fTriggerDetailsJob = new UIJob("trigger details") { //$NON-NLS-1$
+	/**
+	 * Job to update details in the UI thread.
+	 */
+	private Job fTriggerDetailsJob = new UIJob("trigger details") { //$NON-NLS-1$
 
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -406,7 +406,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	@Override
 	public void dispose() {
 
-        DebugUITools.removePartDebugContextListener(getSite(), this);
+		DebugUITools.removePartDebugContextListener(getSite(), this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
@@ -416,14 +416,14 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			viewer.removeViewerUpdateListener(this);
 		}
 		if (fPresentationContext != null) {
-		    fPresentationContext.dispose();
-		    fPresentationContext = null;
+			fPresentationContext.dispose();
+			fPresentationContext = null;
 		}
 		if (fDetailPane != null) {
 			fDetailPane.dispose();
 		}
-        fInputService.dispose();
-        fSelectionProvider.dispose();
+		fInputService.dispose();
+		fSelectionProvider.dispose();
 		super.dispose();
 	}
 
@@ -435,8 +435,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @param update Completed viewer input update.
 	 */
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
-	    setViewerInput(update.getInputElement());
-        updateAction(FIND_ACTION);
+		setViewerInput(update.getInputElement());
+		updateAction(FIND_ACTION);
 	}
 
 	/**
@@ -444,24 +444,24 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @param context the object context
 	 */
 	protected void setViewerInput(Object context) {
-        if (context == null) {
-            // Clear the detail pane
-        	refreshDetailPaneContents();
-        }
+		if (context == null) {
+			// Clear the detail pane
+			refreshDetailPaneContents();
+		}
 
-        Object current = getViewer().getInput();
+		Object current = getViewer().getInput();
 
-        if (current == null && context == null) {
-            return;
-        }
+		if (current == null && context == null) {
+			return;
+		}
 
-        if (current != null && current.equals(context)) {
-            return;
-        }
+		if (current != null && current.equals(context)) {
+			return;
+		}
 
-        showViewer();
-        getViewer().setInput(context);
-        updateObjects();
+		showViewer();
+		getViewer().setInput(context);
+		updateObjects();
 	}
 
 	@Override
@@ -521,39 +521,39 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		variablesViewer.addModelChangedListener(this);
 		variablesViewer.addViewerUpdateListener(this);
 
-        initDragAndDrop(variablesViewer);
+		initDragAndDrop(variablesViewer);
 
 		return variablesViewer;
 	}
 
-    /**
-     * Initializes the drag and/or drop adapters for this view.  Called from createViewer().
-     *
-     * @param viewer the viewer to add drag/drop support to.
-     * @since 3.4
-     */
-    protected void initDragAndDrop(TreeModelViewer viewer) {
-        // Drag only
-        viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
-    }
+	/**
+	 * Initializes the drag and/or drop adapters for this view.  Called from createViewer().
+	 *
+	 * @param viewer the viewer to add drag/drop support to.
+	 * @since 3.4
+	 */
+	protected void initDragAndDrop(TreeModelViewer viewer) {
+		// Drag only
+		viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
+	}
 
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		PREF_STATE_MEMENTO = PREF_STATE_MEMENTO + site.getId();
-        IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-        String string = store.getString(PREF_STATE_MEMENTO);
-        if(string.length() > 0) {
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+		String string = store.getString(PREF_STATE_MEMENTO);
+		if(string.length() > 0) {
 			try (ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes()); InputStreamReader reader = new InputStreamReader(bin);) {
-        		XMLMemento stateMemento = XMLMemento.createReadRoot(reader);
-        		setMemento(stateMemento);
-        	} catch (WorkbenchException e) {
+				XMLMemento stateMemento = XMLMemento.createReadRoot(reader);
+				setMemento(stateMemento);
+			} catch (WorkbenchException e) {
 			} catch (IOException e1) {
 			}
-        }
-        IMemento mem = getMemento();
-        // check the weights to makes sure they are valid -- bug 154025
-        setLastSashWeights(DEFAULT_SASH_WEIGHTS);
+		}
+		IMemento mem = getMemento();
+		// check the weights to makes sure they are valid -- bug 154025
+		setLastSashWeights(DEFAULT_SASH_WEIGHTS);
 		if (mem != null) {
 			int[] weights = getWeights(mem);
 			if (weights != null) {
@@ -561,7 +561,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			}
 		}
 		site.getWorkbenchWindow().addPerspectiveListener(this);
-    }
+	}
 
 	/**
 	 * Returns sash weights stored in the given memento or <code>null</code> if none.
@@ -584,7 +584,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return null;
 	}
 
-    @Override
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
 		String id = part.getSite().getId();
 		if (id.equals(getSite().getId())) {
@@ -608,7 +608,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public void saveViewerState(IMemento memento) {
 		if (fSashForm != null && !fSashForm.isDisposed()) {
-	        int[] weights = fSashForm.getWeights();
+			int[] weights = fSashForm.getWeights();
 			memento.putInteger(SASH_VIEW_PART, weights[0]);
 			memento.putInteger(SASH_DETAILS_PART, weights[1]);
 		}
@@ -643,10 +643,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 			@Override
 			public void focusLost(FocusEvent e){
-			    // Do not reset the selection provider with the provider proxy.
-			    // This should allow toolbar actions to remain active when the view
-			    // is de-activated but still visible.
-			    // Bug 316850.
+				// Do not reset the selection provider with the provider proxy.
+				// This should allow toolbar actions to remain active when the view
+				// is de-activated but still visible.
+				// Bug 316850.
 				clearGlobalActions();
 				getViewSite().getActionBars().updateActionBars();
 			}
@@ -717,7 +717,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @since 3.7
 	 */
 	protected ISelection getDebugContext() {
-	    IViewSite site = (IViewSite)getSite();
+		IViewSite site = (IViewSite)getSite();
 		IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
 		return contextService.getActiveContext(site.getId(), site.getSecondaryId());
 	}
@@ -1062,7 +1062,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		tbm.add(getAction(COLLAPSE_ALL));
 	}
 
-   /**
+	/**
 	* Adds items to the tree viewer's context menu including any extension defined
 	* actions.
 	*
@@ -1075,7 +1075,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		menu.add(getAction(FIND_ACTION));
 		ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
 		if (changeValueAction.isApplicable()) {
-		    menu.add(changeValueAction);
+			menu.add(changeValueAction);
 		}
 		menu.add(new Separator());
 		IAction action = new AvailableLogicalStructuresAction(this);
@@ -1091,31 +1091,31 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
-   /**
+	/**
 	 * Lazily instantiate and return a selection listener that populates the detail pane,
 	 * but only if the detail is currently visible.
 	 *
 	 * @return Created selection listener
 	 */
-    protected ISelectionChangedListener getTreeSelectionChangedListener() {
-        if (fTreeSelectionChangedListener == null) {
-            fTreeSelectionChangedListener = new ISelectionChangedListener() {
-                @Override
+	protected ISelectionChangedListener getTreeSelectionChangedListener() {
+		if (fTreeSelectionChangedListener == null) {
+			fTreeSelectionChangedListener = new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(final SelectionChangedEvent event) {
-                    if (event.getSelectionProvider().equals(getViewer())) {
-                        clearStatusLine();
-                        // if the detail pane is not visible, don't waste time retrieving details
-                        if (fSashForm.getMaximizedControl() == getViewer().getControl()) {
-                            return;
-                        }
-                        refreshDetailPaneContents();
-                        treeSelectionChanged(event);
-                    }
-                }
-            };
-        }
-        return fTreeSelectionChangedListener;
-    }
+					if (event.getSelectionProvider().equals(getViewer())) {
+						clearStatusLine();
+						// if the detail pane is not visible, don't waste time retrieving details
+						if (fSashForm.getMaximizedControl() == getViewer().getControl()) {
+							return;
+						}
+						refreshDetailPaneContents();
+						treeSelectionChanged(event);
+					}
+				}
+			};
+		}
+		return fTreeSelectionChangedListener;
+	}
 
 	/**
 	 * Selection in the variable tree changed. Perform any updates.
@@ -1322,7 +1322,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @param flag If true, turns the logical structures on.
 	 */
 	public void setShowLogicalStructure(boolean flag) {
-	    getPresentationContext().setProperty(PRESENTATION_SHOW_LOGICAL_STRUCTURES, Boolean.valueOf(flag));
+		getPresentationContext().setProperty(PRESENTATION_SHOW_LOGICAL_STRUCTURES, Boolean.valueOf(flag));
 	}
 
 	/**
@@ -1336,7 +1336,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 	@Override
 	protected void becomesHidden() {
-        fInputService.resolveViewerInput(ViewerInputService.NULL_INPUT);
+		fInputService.resolveViewerInput(ViewerInputService.NULL_INPUT);
 		super.becomesHidden();
 	}
 
@@ -1381,7 +1381,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		delta.accept(fVisitor);
 
 		updateAction(FIND_ACTION);
-        updateAction(COLLAPSE_ALL);
+		updateAction(COLLAPSE_ALL);
 	}
 
 	@Override
@@ -1394,8 +1394,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				showViewer();
 			}
 			if (TreePath.EMPTY.equals(update.getElementPath())) {
-			    updateAction(FIND_ACTION);
-			    updateAction(COLLAPSE_ALL);
+				updateAction(FIND_ACTION);
+				updateAction(COLLAPSE_ALL);
 			}
 		}
 	}
@@ -1407,11 +1407,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	@Override
 	public synchronized void viewerUpdatesBegin() {
 		fTriggerDetailsJob.cancel();
-        IWorkbenchSiteProgressService progressService =
-            getSite().getAdapter(IWorkbenchSiteProgressService.class);
-        if (progressService != null) {
-            progressService.incrementBusy();
-        }
+		IWorkbenchSiteProgressService progressService =
+			getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		if (progressService != null) {
+			progressService.incrementBusy();
+		}
 	}
 
 	@Override
@@ -1419,11 +1419,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (fVisitor.isTriggerDetails()) {
 			fTriggerDetailsJob.schedule();
 		}
-        IWorkbenchSiteProgressService progressService =
-            getSite().getAdapter(IWorkbenchSiteProgressService.class);
-        if (progressService != null) {
-            progressService.decrementBusy();
-        }
+		IWorkbenchSiteProgressService progressService =
+			getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		if (progressService != null) {
+			progressService.decrementBusy();
+		}
 	}
 
 	@Override

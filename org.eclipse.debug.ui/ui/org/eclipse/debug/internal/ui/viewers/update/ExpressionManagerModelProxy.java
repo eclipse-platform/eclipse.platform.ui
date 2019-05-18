@@ -56,7 +56,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 
 	@Override
 	public synchronized void dispose() {
-        getPresentationContext().removePropertyChangeListener(this);
+		getPresentationContext().removePropertyChangeListener(this);
 		super.dispose();
 		getExpressionManager().removeExpressionListener(this);
 	}
@@ -64,7 +64,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	@Override
 	public void expressionsMoved(IExpression[] expressions, int index){
 		int count = getElementsCount();
-        ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
+		ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
 			delta.addNode(expression, IModelDelta.REMOVED);
@@ -78,8 +78,8 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 
 	@Override
 	public void expressionsInserted(IExpression[] expressions, int index){
-	    int count = getElementsCount();
-        ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
+		int count = getElementsCount();
+		ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
 			delta.addNode(expression, index+i, IModelDelta.ADDED | IModelDelta.INSTALL, -1);
@@ -89,14 +89,14 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 
 	@Override
 	public void expressionsAdded(IExpression[] expressions) {
-	    int index = getExpressionManager().getExpressions().length - expressions.length;
-	    int count = getElementsCount();
-        ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
-        for (int i = 0; i < expressions.length; i++) {
-            IExpression expression = expressions[i];
-            delta.addNode(expression, index+i, IModelDelta.ADDED | IModelDelta.INSTALL, -1);
-        }
-        fireModelChanged(delta);
+		int index = getExpressionManager().getExpressions().length - expressions.length;
+		int count = getElementsCount();
+		ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
+		for (int i = 0; i < expressions.length; i++) {
+			IExpression expression = expressions[i];
+			delta.addNode(expression, index+i, IModelDelta.ADDED | IModelDelta.INSTALL, -1);
+		}
+		fireModelChanged(delta);
 	}
 
 	@Override
@@ -109,30 +109,30 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		updateExpressions(expressions, IModelDelta.CONTENT | IModelDelta.STATE);
 	}
 
-    private void updateExpressions(IExpression[] expressions, int flags) {
+	private void updateExpressions(IExpression[] expressions, int flags) {
 		ModelDelta delta = new ModelDelta(getExpressionManager(), IModelDelta.NO_CHANGE);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
 			delta.addNode(expression, flags);
 		}
 		fireModelChanged(delta);
-    }
+	}
 
-    private int getElementsCount() {
-        // Account for the "Add new expression" element only if columns are
-        // displayed.
-        return getExpressionManager().getExpressions().length +
-            (getPresentationContext().getColumns() != null ? 1 : 0);
-    }
+	private int getElementsCount() {
+		// Account for the "Add new expression" element only if columns are
+		// displayed.
+		return getExpressionManager().getExpressions().length +
+			(getPresentationContext().getColumns() != null ? 1 : 0);
+	}
 
-    @Override
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-        // If columns are turned on/off, refresh the view to account for the
-        // "Add new expression" element.
-        if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
-            fireModelChanged(new ModelDelta(getExpressionManager(), IModelDelta.CONTENT));
-       }
-    }
+		// If columns are turned on/off, refresh the view to account for the
+		// "Add new expression" element.
+		if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
+			fireModelChanged(new ModelDelta(getExpressionManager(), IModelDelta.CONTENT));
+		}
+	}
 
 
 }

@@ -41,8 +41,8 @@ public class BreakpointMementoProvider extends ElementMementoProvider {
 	private static final String RESOURCE_PATH = "RESOURCE_PATH"; 	//$NON-NLS-1$
 
 	protected boolean supportsContextId(String id) {
-    	return IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(id);
-    }
+		return IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(id);
+	}
 
 	@Override
 	protected boolean encodeElement(Object element, IMemento memento, IPresentationContext context) throws CoreException {
