@@ -42,10 +42,10 @@ public abstract class Expression {
 	 *
 	 * @since 3.2
 	 */
-    protected static final boolean equals(final Object left, final Object right) {
-        return left == null ? right == null : ((right != null) && left
-                .equals(right));
-    }
+	protected static final boolean equals(final Object left, final Object right) {
+		return left == null ? right == null : ((right != null) && left
+				.equals(right));
+	}
 
 	/**
 	 * Tests whether two arrays of objects are equal to each other. The arrays
@@ -89,7 +89,7 @@ public abstract class Expression {
 		return true;
 	}
 
-    /**
+	/**
 	 * Returns the hash code for the given <code>object</code>. This method
 	 * handles <code>null</code>.
 	 *
@@ -101,11 +101,11 @@ public abstract class Expression {
 	 *
 	 * @since 3.2
 	 */
-    protected static final int hashCode(final Object object) {
-        return object != null ? object.hashCode() : 0;
-    }
+	protected static final int hashCode(final Object object) {
+		return object != null ? object.hashCode() : 0;
+	}
 
-    /**
+	/**
 	 * Returns the hash code for the given array. This method handles
 	 * <code>null</code>.
 	 *

@@ -20,14 +20,14 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public class AdaptableAdaptee implements IAdaptable {
 
-    private Adapter fAdapter = new Adapter();
+	private Adapter fAdapter = new Adapter();
 
-    @Override
+	@Override
 	public <T> T getAdapter(Class<T> adapterType) {
 		if (adapterType.isInstance(fAdapter)) {
 			return adapterType.cast(fAdapter);
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
 }

@@ -52,21 +52,21 @@ public class DisposeClassLinkTest {
 
 	public static class InjectionObject {
 
-	    @Inject
-	    IEclipseContext context;
+		@Inject
+		IEclipseContext context;
 
-	    int postConstruct = 0;
-	    int preDestroy = 0;
+		int postConstruct = 0;
+		int preDestroy = 0;
 
-	    @PostConstruct
-	    void construct() {
-	        postConstruct++;
-	    }
+		@PostConstruct
+		void construct() {
+			postConstruct++;
+		}
 
-	    @PreDestroy
-	    void destroy() {
-	        preDestroy++;
-	    }
+		@PreDestroy
+		void destroy() {
+			preDestroy++;
+		}
 	}
 
 	public static class TestBug430041 {
@@ -79,9 +79,9 @@ public class DisposeClassLinkTest {
 		}
 
 		@PreDestroy
-	    void destroy() {
-	        preDestroy++;
-	    }
+		void destroy() {
+			preDestroy++;
+		}
 	}
 
 	@Test
@@ -135,19 +135,19 @@ public class DisposeClassLinkTest {
 
 	@Test
 	public void testInjectedWithContext() throws Exception {
-	    IEclipseContext context = EclipseContextFactory.create();
+		IEclipseContext context = EclipseContextFactory.create();
 
-	    InjectionObject obj = ContextInjectionFactory.make(InjectionObject.class, context);
+		InjectionObject obj = ContextInjectionFactory.make(InjectionObject.class, context);
 
-	    assertEquals("The object has been injected with the context", context, obj.context);
-	    assertEquals("@PostConstruct should have been called once", 1, obj.postConstruct);
-	    assertEquals("@PreDestroy should not have been called", 0, obj.preDestroy);
+		assertEquals("The object has been injected with the context", context, obj.context);
+		assertEquals("@PostConstruct should have been called once", 1, obj.postConstruct);
+		assertEquals("@PreDestroy should not have been called", 0, obj.preDestroy);
 
-	    context.dispose();
+		context.dispose();
 
-	    assertNotNull(obj.context);
-	    assertEquals("@PostConstruct should only have been called once", 1, obj.postConstruct);
-	    assertEquals("@PreDestroy should have been called during uninjection", 1, obj.preDestroy);
+		assertNotNull(obj.context);
+		assertEquals("@PostConstruct should only have been called once", 1, obj.postConstruct);
+		assertEquals("@PreDestroy should have been called during uninjection", 1, obj.preDestroy);
 	}
 
 	@Test

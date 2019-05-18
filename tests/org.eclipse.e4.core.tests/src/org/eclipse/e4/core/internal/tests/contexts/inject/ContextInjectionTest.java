@@ -305,21 +305,21 @@ public class ContextInjectionTest {
 		assertTrue(userObject.finishOverrideCalled);
 	}
 
-    @Test
+	@Test
 	public void testBug374421() {
-    	try {
-	        IEclipseContext context = EclipseContextFactory.create();
-	        context.runAndTrack(new RunAndTrack() {
-	            @Override
+		try {
+			IEclipseContext context = EclipseContextFactory.create();
+			context.runAndTrack(new RunAndTrack() {
+				@Override
 				public boolean changed(IEclipseContext context) {
-	                IEclipseContext staticContext = EclipseContextFactory.create();
-	                ContextInjectionFactory.make(Object.class, context, staticContext);
-	                return true;
-	            }
-	        });
-    	} catch (StackOverflowError e) {
-    		fail("See bug 374421 for details.");
-    	}
-    }
+					IEclipseContext staticContext = EclipseContextFactory.create();
+					ContextInjectionFactory.make(Object.class, context, staticContext);
+					return true;
+				}
+			});
+		} catch (StackOverflowError e) {
+			fail("See bug 374421 for details.");
+		}
+	}
 
 }

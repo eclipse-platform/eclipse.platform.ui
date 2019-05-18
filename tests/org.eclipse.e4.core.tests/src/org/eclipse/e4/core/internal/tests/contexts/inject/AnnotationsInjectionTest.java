@@ -238,27 +238,27 @@ public class AnnotationsInjectionTest {
 		class TestObject {
 			public int called = 0;
 
-		    @Execute
+			@Execute
 			public String something(@Optional String param) {
-		    	called++;
-		        return param;
-		    }
+				called++;
+				return param;
+			}
 		}
 
-	    IEclipseContext context = EclipseContextFactory.create();
-	    Object notAnObject = new Object();
-	    TestObject testObject = new TestObject();
-	    context.set(String.class.getName(), testObject);
+		IEclipseContext context = EclipseContextFactory.create();
+		Object notAnObject = new Object();
+		TestObject testObject = new TestObject();
+		context.set(String.class.getName(), testObject);
 
-	    Object result = ContextInjectionFactory.invoke(testObject, Execute.class, context, notAnObject);
-	    assertNull(result);
-	    assertEquals(1, testObject.called);
+		Object result = ContextInjectionFactory.invoke(testObject, Execute.class, context, notAnObject);
+		assertNull(result);
+		assertEquals(1, testObject.called);
 
-	    String string = "sample";
+		String string = "sample";
 		context.set(String.class, string);
-	    result = ContextInjectionFactory.invoke(testObject, Execute.class, context, notAnObject);
-	    assertEquals(string, result);
-	    assertEquals(2, testObject.called);
+		result = ContextInjectionFactory.invoke(testObject, Execute.class, context, notAnObject);
+		assertEquals(string, result);
+		assertEquals(2, testObject.called);
 	}
 
 	/**
