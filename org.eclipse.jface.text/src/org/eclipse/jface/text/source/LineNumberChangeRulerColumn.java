@@ -229,16 +229,16 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 		postRedraw();
 	}
 
-    @Override
+	@Override
 	public ISelectionProvider getRevisionSelectionProvider() {
-	    return fRevisionPainter.getRevisionSelectionProvider();
-    }
+		return fRevisionPainter.getRevisionSelectionProvider();
+	}
 
-    /*
-     * @see org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension#setRenderingMode(org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode)
-     * @since 3.3
-     */
-    @Override
+	/*
+	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension#setRenderingMode(org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode)
+	 * @since 3.3
+	 */
+	@Override
 	public void setRevisionRenderingMode(RenderingMode renderingMode) {
 		fRevisionPainter.setRenderingMode(renderingMode);
 	}
@@ -250,22 +250,22 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 	 *        diff / revision info.
 	 * @since 3.3
 	 */
-    public void showLineNumbers(boolean showNumbers) {
-    	if (fShowNumbers != showNumbers) {
-    		fShowNumbers= showNumbers;
+	public void showLineNumbers(boolean showNumbers) {
+		if (fShowNumbers != showNumbers) {
+			fShowNumbers= showNumbers;
 			updateNumberOfDigits();
 			computeIndentations();
 			layout(true);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	public int getWidth() {
-   		int width= super.getWidth();
+		int width= super.getWidth();
 		return width > 0 ? width : 8; // minimal width to display quick diff / revisions if no textual info is shown
-    }
+	}
 
-    /**
+	/**
 	 * Returns <code>true</code> if the ruler is showing line numbers, <code>false</code>
 	 * otherwise
 	 *

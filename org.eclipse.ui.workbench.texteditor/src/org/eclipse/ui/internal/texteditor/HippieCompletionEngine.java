@@ -162,15 +162,15 @@ public final class HippieCompletionEngine {
 
 	/**
 	 * Search for possible completions in the backward direction. If there
-     * is a possible completion that begins before <code>firstPosition</code>
-     * but ends after that position, it will not be included in the results.
+	 * is a possible completion that begins before <code>firstPosition</code>
+	 * but ends after that position, it will not be included in the results.
 	 *
 	 * @param document the document to be scanned
 	 * @param prefix the completion prefix
 	 * @param firstPosition the caret position
 	 * @return a {@link List} of possible completions ({@link String}s)
 	 *         from the caret position to the beginning of the document.
-     *         The empty suggestion is not included in the results.
+	 *         The empty suggestion is not included in the results.
 	 * @throws BadLocationException if any error occurs
 	 */
 	public List<String> getCompletionsBackwards(IDocument document, CharSequence prefix, int firstPosition) throws BadLocationException {

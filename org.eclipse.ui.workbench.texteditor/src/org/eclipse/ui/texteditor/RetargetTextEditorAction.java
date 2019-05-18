@@ -64,7 +64,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
- 	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
+	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
 	 *
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String, int)
 	 * @see IAction#AS_CHECK_BOX
@@ -109,7 +109,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 *   (described in <code>ResourceAction</code> constructor), or <code>null</code> if none
 	 * @param actionId the action id
 	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
- 	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
+	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
 	 *
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String, int)
 	 * @see IAction#AS_CHECK_BOX
@@ -183,7 +183,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 
 			setEnabled(false);
 			if (getStyle() == AS_CHECK_BOX || getStyle() == AS_RADIO_BUTTON)
-			   setChecked(false);
+				setChecked(false);
 			setText(fDefaultText);
 			setToolTipText(""); //$NON-NLS-1$
 
@@ -191,7 +191,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 
 			setEnabled(fAction.isEnabled());
 			if (fAction.getStyle() == AS_CHECK_BOX || fAction.getStyle() ==  AS_RADIO_BUTTON)
-			   super.setChecked(fAction.isChecked());
+				super.setChecked(fAction.isChecked());
 			setText(fAction.getText());
 			setToolTipText(fAction.getToolTipText());
 			fAction.addPropertyChangeListener(fListener);

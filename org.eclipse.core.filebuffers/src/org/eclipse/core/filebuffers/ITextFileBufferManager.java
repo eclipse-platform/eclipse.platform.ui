@@ -96,7 +96,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	ITextFileBuffer getFileStoreTextFileBuffer(IFileStore fileStore);
 
 	/**
- 	 * Returns the text file buffer managed for the given document
+	 * Returns the text file buffer managed for the given document
 	 * or <code>null</code> if there is no such text file buffer.
 	 * <p>
 	 * <strong>Note:</strong> This method goes through the list

@@ -69,7 +69,7 @@ public final class Assert {
 			 * @param detail the detailed message
 			 */
 			public AssertionFailedException(String detail) {
-			    super(detail);
+				super(detail);
 			}
 		}
 

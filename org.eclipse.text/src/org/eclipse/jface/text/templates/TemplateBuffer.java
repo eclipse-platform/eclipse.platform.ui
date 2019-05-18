@@ -36,9 +36,9 @@ public final class TemplateBuffer {
 	 * @param string the string
 	 * @param variables the variable positions
 	 */
-    public TemplateBuffer(String string, TemplateVariable[] variables) {
+	public TemplateBuffer(String string, TemplateVariable[] variables) {
 		setContent(string, variables);
-    }
+	}
 
 	/**
 	 * Sets the content of the template buffer.

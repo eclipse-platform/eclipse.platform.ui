@@ -97,9 +97,9 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	/**
 	 * Installs the encoding support on the given text editor.
 	 * <p>
- 	 * Subclasses may override to install their own encoding
- 	 * support or to disable the default encoding support.
- 	 * </p>
+	 * Subclasses may override to install their own encoding
+	 * support or to disable the default encoding support.
+	 * </p>
 	 * @since 2.1
 	 */
 	protected void installEncodingSupport() {

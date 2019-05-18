@@ -65,7 +65,7 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		if (containsOnlyFiles(resources))
 			return files;
 
-    	final IFilter filter= new IFilter() {
+		final IFilter filter= new IFilter() {
 			@Override
 			public boolean accept(IResource resource) {
 				return resource != null && isAcceptableLocation(resource.getFullPath());

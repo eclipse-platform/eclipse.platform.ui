@@ -302,19 +302,19 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 
 
-    public TextSearchEngineRegistry getTextSearchEngineRegistry() {
-        if (fTextSearchEngineRegistry == null) {
-        	fTextSearchEngineRegistry= new TextSearchEngineRegistry();
-        }
-        return fTextSearchEngineRegistry;
-    }
+	public TextSearchEngineRegistry getTextSearchEngineRegistry() {
+		if (fTextSearchEngineRegistry == null) {
+			fTextSearchEngineRegistry= new TextSearchEngineRegistry();
+		}
+		return fTextSearchEngineRegistry;
+	}
 
-    public TextSearchQueryProviderRegistry getTextSearchQueryProviderRegistry() {
-        if (fTextSearchQueryProviderRegistry == null) {
-        	fTextSearchQueryProviderRegistry= new TextSearchQueryProviderRegistry();
-        }
-        return fTextSearchQueryProviderRegistry;
-    }
+	public TextSearchQueryProviderRegistry getTextSearchQueryProviderRegistry() {
+		if (fTextSearchQueryProviderRegistry == null) {
+			fTextSearchQueryProviderRegistry= new TextSearchQueryProviderRegistry();
+		}
+		return fTextSearchQueryProviderRegistry;
+	}
 
 	/**
 	 * Creates all necessary sorter description nodes.

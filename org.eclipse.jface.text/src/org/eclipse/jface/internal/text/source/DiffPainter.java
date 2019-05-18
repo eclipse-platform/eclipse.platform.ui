@@ -526,9 +526,9 @@ public final class DiffPainter {
 	/**
 	 * Returns <code>true</code> if diff information is being displayed, <code>false</code> otherwise.
 	 *
-     * @return <code>true</code> if diff information is being displayed, <code>false</code> otherwise
-     * @since 3.3
-     */
+	 * @return <code>true</code> if diff information is being displayed, <code>false</code> otherwise
+	 * @since 3.3
+	 */
 	public boolean hasInformation() {
 		if (fLineDiffer instanceof ILineDifferExtension2)
 			return !((ILineDifferExtension2) fLineDiffer).isSuspended();

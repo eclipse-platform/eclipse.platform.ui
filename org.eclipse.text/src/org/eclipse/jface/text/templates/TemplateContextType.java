@@ -85,7 +85,7 @@ public class TemplateContextType {
 	 * @return the id of the receiver
 	 */
 	public String getId() {
-	    return fId;
+		return fId;
 	}
 
 
@@ -235,9 +235,9 @@ public class TemplateContextType {
 		List<RangeMarker> positions= variablesToPositions(variables);
 		List<ReplaceEdit> edits= new ArrayList<>(5);
 
-        // iterate over all variables and try to resolve them
-        for (int i= 0; i != variables.length; i++) {
-            TemplateVariable variable= variables[i];
+		// iterate over all variables and try to resolve them
+		for (int i= 0; i != variables.length; i++) {
+			TemplateVariable variable= variables[i];
 
 			if (!variable.isResolved())
 				resolve(variable, context);
@@ -248,18 +248,18 @@ public class TemplateContextType {
 			for (int k= 0; k != offsets.length; k++)
 				edits.add(new ReplaceEdit(offsets[k], variable.getInitialLength(), value));
 
-        }
+		}
 
-    	IDocument document= new Document(buffer.getString());
-        MultiTextEdit edit= new MultiTextEdit(0, document.getLength());
-        edit.addChildren(positions.toArray(new TextEdit[positions.size()]));
-        edit.addChildren(edits.toArray(new TextEdit[edits.size()]));
-        edit.apply(document, TextEdit.UPDATE_REGIONS);
+		IDocument document= new Document(buffer.getString());
+		MultiTextEdit edit= new MultiTextEdit(0, document.getLength());
+		edit.addChildren(positions.toArray(new TextEdit[positions.size()]));
+		edit.addChildren(edits.toArray(new TextEdit[edits.size()]));
+		edit.apply(document, TextEdit.UPDATE_REGIONS);
 
 		positionsToVariables(positions, variables);
 
-        buffer.setContent(document.get(), variables);
-    }
+		buffer.setContent(document.get(), variables);
+	}
 
 	/**
 	 * Resolves a single variable in a context. Resolving is delegated to the registered resolver.
@@ -277,10 +277,10 @@ public class TemplateContextType {
 	}
 
 	private static List<RangeMarker> variablesToPositions(TemplateVariable[] variables) {
-   		List<RangeMarker> positions= new ArrayList<>(5);
+		List<RangeMarker> positions= new ArrayList<>(5);
 		for (int i= 0; i != variables.length; i++) {
-		    int[] offsets= variables[i].getOffsets();
-		    for (int j= 0; j != offsets.length; j++)
+			int[] offsets= variables[i].getOffsets();
+			for (int j= 0; j != offsets.length; j++)
 				positions.add(new RangeMarker(offsets[j], 0));
 		}
 
@@ -291,7 +291,7 @@ public class TemplateContextType {
 		Iterator<RangeMarker> iterator= positions.iterator();
 
 		for (int i= 0; i != variables.length; i++) {
-		    TemplateVariable variable= variables[i];
+			TemplateVariable variable= variables[i];
 
 			int[] offsets= new int[variable.getOffsets().length];
 			for (int j= 0; j != offsets.length; j++)

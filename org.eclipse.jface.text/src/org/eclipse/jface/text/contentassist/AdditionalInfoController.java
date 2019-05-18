@@ -63,16 +63,16 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			/**
 			 * @return the delay in milliseconds before this task should be run
 			 */
-	        public abstract long delay();
-	        /**
-	         * Runs this task.
-	         */
-	        @Override
+			public abstract long delay();
+			/**
+			 * Runs this task.
+			 */
+			@Override
 			public abstract void run();
-	        /**
-	         * @return the task to be scheduled after this task has been run
-	         */
-	        public abstract Task nextTask();
+			/**
+			 * @return the task to be scheduled after this task has been run
+			 */
+			public abstract Task nextTask();
 		}
 
 		/**
@@ -88,7 +88,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			@Override
 			public Task nextTask() {
 				Assert.isTrue(false);
-			    return null;
+				return null;
 			}
 
 			@Override
@@ -112,15 +112,15 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						Object info;
-                        try {
-	                        info= proposal.getAdditionalProposalInfo(monitor);
-                        } catch (RuntimeException x) {
-                        	/*
+						try {
+							info= proposal.getAdditionalProposalInfo(monitor);
+						} catch (RuntimeException x) {
+							/*
 							 * XXX: This is the safest fix at this point so close to end of 3.2.
 							 *		Will be revisited when fixing https://bugs.eclipse.org/bugs/show_bug.cgi?id=101033
-                        	 */
-                        	return new Status(IStatus.WARNING, "org.eclipse.jface.text", IStatus.OK, "", x); //$NON-NLS-1$ //$NON-NLS-2$
-                        }
+							 */
+							return new Status(IStatus.WARNING, "org.eclipse.jface.text", IStatus.OK, "", x); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 						setInfo((ICompletionProposal) proposal, info);
 						return Status.OK_STATUS;
 					}
@@ -200,7 +200,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 
 			@Override
 			public String toString() {
-			    return "LEGACY_WAIT"; //$NON-NLS-1$
+				return "LEGACY_WAIT"; //$NON-NLS-1$
 			}
 		};
 		/**
@@ -209,19 +209,19 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		private final Task EXIT= new Task() {
 			@Override
 			public long delay() {
-		        return 1;
-	        }
+				return 1;
+			}
 
 			@Override
 			public Task nextTask() {
 				Assert.isTrue(false);
-		        return EXIT;
-	        }
+				return EXIT;
+			}
 
 			@Override
 			public void run() {
 				Assert.isTrue(false);
-	        }
+			}
 
 			@Override
 			public String toString() {
@@ -251,10 +251,10 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 * @param delay the delay until to show additional info
 		 */
 		public Timer(Display display, int delay) {
-    		fDisplay= display;
+			fDisplay= display;
 			fDelay= delay;
 			long current= System.currentTimeMillis();
-    		schedule(IDLE, current);
+			schedule(IDLE, current);
 
 			fThread= new Thread((Runnable) () -> {
 				try {
@@ -292,68 +292,68 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			}
 		}
 
-        private Task taskOnReset(ICompletionProposal p) {
+		private Task taskOnReset(ICompletionProposal p) {
 			if (p == null)
 				return IDLE;
 			if (isExt5(p))
 				return FIRST_WAIT;
 			return LEGACY_WAIT;
-        }
+		}
 
-        private synchronized void loop() throws InterruptedException {
-        	long current= System.currentTimeMillis();
-        	Task task= currentTask();
+		private synchronized void loop() throws InterruptedException {
+			long current= System.currentTimeMillis();
+			Task task= currentTask();
 
-        	while (task != EXIT) {
-        		long delay= fNextWakeup - current;
-        		if (delay <= 0) {
-        			task.run();
-        			task= task.nextTask();
-        			schedule(task, current);
-        		} else {
-        			wait(delay);
-        			current= System.currentTimeMillis();
-        			task= currentTask();
-        		}
-        	}
-        }
+			while (task != EXIT) {
+				long delay= fNextWakeup - current;
+				if (delay <= 0) {
+					task.run();
+					task= task.nextTask();
+					schedule(task, current);
+				} else {
+					wait(delay);
+					current= System.currentTimeMillis();
+					task= currentTask();
+				}
+			}
+		}
 
-        private Task currentTask() {
-        	return fTask;
-        }
+		private Task currentTask() {
+			return fTask;
+		}
 
-        private void schedule(Task task, long current) {
-        	fTask= task;
-        	long nextWakeup= current + task.delay();
-        	if (nextWakeup <= current)
-        		fNextWakeup= Long.MAX_VALUE;
-        	else
-        		fNextWakeup= nextWakeup;
-        }
+		private void schedule(Task task, long current) {
+			fTask= task;
+			long nextWakeup= current + task.delay();
+			if (nextWakeup <= current)
+				fNextWakeup= Long.MAX_VALUE;
+			else
+				fNextWakeup= nextWakeup;
+		}
 
 		private boolean isExt5(ICompletionProposal p) {
 			return p instanceof ICompletionProposalExtension5;
 		}
 
-        ICompletionProposal getCurrentProposal() {
-	        return fCurrentProposal;
-        }
+		ICompletionProposal getCurrentProposal() {
+			return fCurrentProposal;
+		}
 
-        ICompletionProposalExtension5 getCurrentProposalEx() {
-        	Assert.isTrue(fCurrentProposal instanceof ICompletionProposalExtension5);
-        	return (ICompletionProposalExtension5) fCurrentProposal;
-        }
+		ICompletionProposalExtension5 getCurrentProposalEx() {
+			Assert.isTrue(fCurrentProposal instanceof ICompletionProposalExtension5);
+			return (ICompletionProposalExtension5) fCurrentProposal;
+		}
 
-        synchronized void setInfo(ICompletionProposal proposal, Object info) {
-        	if (proposal == fCurrentProposal) {
-        		fCurrentInfo= info;
-        		if (fAllowShowing) {
-        			triggerShowing();
-        		}
-        	}
-        }
+		synchronized void setInfo(ICompletionProposal proposal, Object info) {
+			if (proposal == fCurrentProposal) {
+				fCurrentInfo= info;
+				if (fAllowShowing) {
+					triggerShowing();
+				}
+			}
+		}
 
-        private void triggerShowing() {
+		private void triggerShowing() {
 			final Object info= fCurrentInfo;
 			if (!fDisplay.isDisposed()) {
 				fDisplay.asyncExec(() -> {
@@ -364,20 +364,20 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 					}
 				});
 			}
-        }
+		}
 
-        /**
-         * Called in the display thread to show additional info.
-         *
-         * @param proposal the proposal to show information about
-         * @param info the information about <code>proposal</code>
-         */
-        protected abstract void showInformation(ICompletionProposal proposal, Object info);
+		/**
+		 * Called in the display thread to show additional info.
+		 *
+		 * @param proposal the proposal to show information about
+		 * @param info the information about <code>proposal</code>
+		 */
+		protected abstract void showInformation(ICompletionProposal proposal, Object info);
 
-        void allowShowing() {
-        	fAllowShowing= true;
-       		triggerShowing();
-        }
+		void allowShowing() {
+			fAllowShowing= true;
+			triggerShowing();
+		}
 	}
 	/**
 	 * Internal table selection listener.
@@ -441,12 +441,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		setAnchor(ANCHOR_RIGHT);
 		setFallbackAnchors(new Anchor[] { ANCHOR_RIGHT, ANCHOR_LEFT, ANCHOR_BOTTOM });
 
-	    /*
+		/*
 		 * Adjust the location by one pixel towards the proposal popup, so that the single pixel
 		 * border of the additional info popup overlays with the border of the popup. This avoids
 		 * having a double black line.
 		 */
-	    int spacing= -1;
+		int spacing= -1;
 		setMargins(spacing, spacing); // see also adjustment in #computeLocation
 
 		InformationControlReplacer replacer= new InformationControlReplacer(new DefaultPresenterControlCreator());
@@ -525,10 +525,10 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		if (fProposal == proposal && ((info == null && fInformation == null) || (info != null && info.equals(fInformation))))
 			return;
 
-        fInformation= info;
-        fProposal= proposal;
-        showInformation();
-    }
+		fInformation= info;
+		fProposal= proposal;
+		showInformation();
+	}
 
 	@Override
 	protected void computeInformation() {
@@ -546,16 +546,16 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 
 	@Override
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
-	    Point location= super.computeLocation(subjectArea, controlSize, anchor);
+		Point location= super.computeLocation(subjectArea, controlSize, anchor);
 
-	    /*
+		/*
 		 * The location is computed using subjectControl.toDisplay(), which does not include the
 		 * trim of the subject control. As we want the additional info popup aligned with the outer
 		 * coordinates of the proposal popup, adjust this here
 		 */
-	    Rectangle trim= fProposalTable.getShell().computeTrim(0, 0, 0, 0);
-	    location.x += trim.x;
-	    location.y += trim.y;
+		Rectangle trim= fProposalTable.getShell().computeTrim(0, 0, 0, 0);
+		location.x += trim.x;
+		location.y += trim.y;
 
 		return location;
 	}
@@ -566,14 +566,14 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= subjectControl.getShell().getSize();
 
-	    // AbstractInformationControlManager#internalShowInformationControl(Rectangle, Object) adds trims
+		// AbstractInformationControlManager#internalShowInformationControl(Rectangle, Object) adds trims
 		// to the computed constraints. Need to remove them here, to make the outer bounds of the additional
 		// info shell fit the bounds of the proposal shell:
-	    if (fInformationControl instanceof IInformationControlExtension3) {
-	    	Rectangle shellTrim= ((IInformationControlExtension3) fInformationControl).computeTrim();
-	    	size.x -= shellTrim.width;
-	    	size.y -= shellTrim.height;
-	    }
+		if (fInformationControl instanceof IInformationControlExtension3) {
+			Rectangle shellTrim= ((IInformationControlExtension3) fInformationControl).computeTrim();
+			size.x -= shellTrim.width;
+			size.y -= shellTrim.height;
+		}
 
 		if (sizeConstraint.x < size.x)
 			sizeConstraint.x= size.x;

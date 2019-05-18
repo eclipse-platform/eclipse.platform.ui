@@ -54,49 +54,49 @@ public class ScreenshotTest {
 		
 		Display display= Display.getDefault();
 		
-        Event event= new Event();
-        event.type= SWT.KeyDown;
-        event.keyCode= SWT.CTRL;
-        System.out.println("* CTRL " + display.post(event));
-        event.keyCode= SWT.SHIFT;
-        System.out.println("* SHIFT " + display.post(event));
-        event.character= SWT.ESC;
-        event.keyCode= SWT.ESC;
-        System.out.println("* ESC " + display.post(event));
-        
-        event.type= SWT.KeyUp;
-        System.out.println("* ESC up " + display.post(event));
-        event.character= 0;
-        event.keyCode= SWT.SHIFT;
-        System.out.println("* SHIFT up " + display.post(event));
-        event.keyCode= SWT.CTRL;
-        System.out.println("* CTRL up " + display.post(event));
-        
-        runEventQueue();
-        takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 2, System.out);
-        
-        event.type= SWT.KeyDown;
-        event.character= SWT.ESC;
-        event.keyCode= SWT.ESC;
-        System.out.println("* ESC " + display.post(event));
-        event.type= SWT.KeyUp;
-        System.out.println("* ESC up " + display.post(event));
-        
-        runEventQueue();
-        takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 3, System.out);
+		Event event= new Event();
+		event.type= SWT.KeyDown;
+		event.keyCode= SWT.CTRL;
+		System.out.println("* CTRL " + display.post(event));
+		event.keyCode= SWT.SHIFT;
+		System.out.println("* SHIFT " + display.post(event));
+		event.character= SWT.ESC;
+		event.keyCode= SWT.ESC;
+		System.out.println("* ESC " + display.post(event));
+		
+		event.type= SWT.KeyUp;
+		System.out.println("* ESC up " + display.post(event));
+		event.character= 0;
+		event.keyCode= SWT.SHIFT;
+		System.out.println("* SHIFT up " + display.post(event));
+		event.keyCode= SWT.CTRL;
+		System.out.println("* CTRL up " + display.post(event));
+		
+		runEventQueue();
+		takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 2, System.out);
+		
+		event.type= SWT.KeyDown;
+		event.character= SWT.ESC;
+		event.keyCode= SWT.ESC;
+		System.out.println("* ESC " + display.post(event));
+		event.type= SWT.KeyUp;
+		System.out.println("* ESC up " + display.post(event));
+		
+		runEventQueue();
+		takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 3, System.out);
 	}
 	
 	/**
 	 * Takes a screenshot and dumps other debugging information to the given stream.
 	 * 
-     * <p>
-     * Workaround for missing {@link junit.framework.TestCase#getName()} in JUnit 4:
-     * </p>
-     * 
-     * <pre>
-     * &#64;Rule
-     * public TestName testName = new TestName();
-     * </pre>
+	 * <p>
+	 * Workaround for missing {@link junit.framework.TestCase#getName()} in JUnit 4:
+	 * </p>
+	 * 
+	 * <pre>
+	 * &#64;Rule
+	 * public TestName testName = new TestName();
+	 * </pre>
 	 * 
 	 * @param testClass test class that takes the screenshot
 	 * @param name screenshot identifier (e.g. test name)

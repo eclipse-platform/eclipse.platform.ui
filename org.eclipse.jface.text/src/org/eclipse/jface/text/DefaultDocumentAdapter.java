@@ -352,9 +352,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 			return;
 
 		try {
-		    IDocument document= fEvent.getDocument();
-		    if (document == null)
-		    	return;
+			IDocument document= fEvent.getDocument();
+			if (document == null)
+				return;
 
 			TextChangingEvent event= new TextChangingEvent(this);
 			event.start= fEvent.fOffset;

@@ -823,7 +823,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 		} else if (key == SWT.ESC) {
 			e.doit= false;
- 			hideContextInfoPopup();
+			hideContextInfoPopup();
 		} else {
 			validateContextInformation();
 		}

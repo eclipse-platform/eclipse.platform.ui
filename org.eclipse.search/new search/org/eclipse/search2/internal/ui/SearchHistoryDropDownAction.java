@@ -36,7 +36,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		private ISearchResult fSearch;
 
 		public ShowSearchFromHistoryAction(ISearchResult search) {
-	        super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 			fSearch= search;
 
 			String label= escapeAmp(search.getLabel());

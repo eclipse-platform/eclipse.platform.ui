@@ -574,7 +574,7 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 		return null;
 	}
 
-    /* zero-length partition support */
+	/* zero-length partition support */
 
 	/**
 	 * {@inheritDoc}
@@ -606,7 +606,7 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 				return new TypedRegion(offset, 0, IDocument.DEFAULT_CONTENT_TYPE);
 			}
 		}
-        return region;
+		return region;
 	}
 
 	/**

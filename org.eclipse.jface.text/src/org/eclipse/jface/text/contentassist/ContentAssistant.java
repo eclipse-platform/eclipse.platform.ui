@@ -2464,12 +2464,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Returns the prefix completion state.
 	 *
-     * @return <code>true</code> if prefix completion is enabled, <code>false</code> otherwise
-     * @since 3.2
-     */
-    boolean isPrefixCompletionEnabled() {
-	    return fIsPrefixCompletionEnabled;
-    }
+	 * @return <code>true</code> if prefix completion is enabled, <code>false</code> otherwise
+	 * @since 3.2
+	 */
+	boolean isPrefixCompletionEnabled() {
+		return fIsPrefixCompletionEnabled;
+	}
 
 	/**
 	 * Returns whether the content assistant proposal popup has the focus.
@@ -2732,7 +2732,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.4
 	 */
 	boolean isColoredLabelsSupportEnabled() {
-	    return fIsColoredLabelsSupportEnabled;
+		return fIsColoredLabelsSupportEnabled;
 	}
 
 	/**

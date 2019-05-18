@@ -113,7 +113,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	/** Tells whether the file on disk has a BOM. */
 	private boolean fHasBOM;
 	/** The annotation model of this file buffer */
-    private IAnnotationModel fAnnotationModel;
+	private IAnnotationModel fAnnotationModel;
 	/**
 	 * Lock for lazy creation of annotation model.
 	 * @since 3.2
@@ -258,7 +258,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
 				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
 				try {
-				    persistableModel.revert(fDocument);
+					persistableModel.revert(fDocument);
 				} catch (CoreException x) {
 					fStatus= x.getStatus();
 				}

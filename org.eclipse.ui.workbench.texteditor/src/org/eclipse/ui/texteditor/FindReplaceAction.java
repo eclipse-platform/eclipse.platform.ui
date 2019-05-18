@@ -290,7 +290,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		Assert.isLegal(target != null && shell != null);
 		fTarget= target;
 		fShell= shell;
- 		update();
+		update();
 	}
 
 	/**

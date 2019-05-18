@@ -37,9 +37,9 @@ public abstract class TextSearchQueryProvider {
 
 	/**
 	 * Specified the input for a search query.
-     * <p>
-     * Clients may instantiate this class.
-     * </p>
+	 * <p>
+	 * Clients may instantiate this class.
+	 * </p>
 	 */
 	public static abstract class TextSearchInput {
 

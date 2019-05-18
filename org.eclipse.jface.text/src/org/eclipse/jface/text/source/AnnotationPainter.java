@@ -957,8 +957,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private void invalidateTextPresentation() {
 		IRegion r= null;
 		synchronized (fHighlightedDecorationsMapLock) {
-		    if (fCurrentHighlightAnnotationRange != null)
-		    	r= new Region(fCurrentHighlightAnnotationRange.getOffset(), fCurrentHighlightAnnotationRange.getLength());
+			if (fCurrentHighlightAnnotationRange != null)
+				r= new Region(fCurrentHighlightAnnotationRange.getOffset(), fCurrentHighlightAnnotationRange.getLength());
 		}
 		if (r == null)
 			return;
@@ -1610,10 +1610,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	/**
-     * Retrieves the annotation model from the given source viewer.
-     *
-     * @param sourceViewer the source viewer
-     * @return the source viewer's annotation model or <code>null</code> if none can be found
+	 * Retrieves the annotation model from the given source viewer.
+	 *
+	 * @param sourceViewer the source viewer
+	 * @return the source viewer's annotation model or <code>null</code> if none can be found
 	 * @since 3.0
 	 */
 	protected IAnnotationModel findAnnotationModel(ISourceViewer sourceViewer) {

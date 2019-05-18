@@ -23,31 +23,31 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 public class NatureLabelHoverProvider implements ITextHover {
 
-    public NatureLabelHoverProvider() {
-    }
+	public NatureLabelHoverProvider() {
+	}
 
-    @Override
-    public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
+	@Override
+	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 
-        String contents= textViewer.getDocument().get();
-        int offset= hoverRegion.getOffset();
-        int endIndex= contents.indexOf("</nature>", offset);
-        if (endIndex==-1) return "";
-        int startIndex= contents.substring(0, offset).lastIndexOf("<nature>");
-        if (startIndex==-1) return "";
-        String selection = contents.substring(startIndex+"<nature>".length(), endIndex);
+		String contents= textViewer.getDocument().get();
+		int offset= hoverRegion.getOffset();
+		int endIndex= contents.indexOf("</nature>", offset);
+		if (endIndex==-1) return "";
+		int startIndex= contents.substring(0, offset).lastIndexOf("<nature>");
+		if (startIndex==-1) return "";
+		String selection = contents.substring(startIndex+"<nature>".length(), endIndex);
 
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IProjectNatureDescriptor[] natureDescriptors= workspace.getNatureDescriptors();
-        for (int i= 0; i < natureDescriptors.length; i++) {
-            if (natureDescriptors[i].getNatureId().equals(selection))
-                return natureDescriptors[i].getLabel();
-        }
-        return null;
-    }
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProjectNatureDescriptor[] natureDescriptors= workspace.getNatureDescriptors();
+		for (int i= 0; i < natureDescriptors.length; i++) {
+			if (natureDescriptors[i].getNatureId().equals(selection))
+				return natureDescriptors[i].getLabel();
+		}
+		return null;
+	}
 
-    @Override
-    public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-        return new Region(offset, 0);
-    }
+	@Override
+	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
+		return new Region(offset, 0);
+	}
 }

@@ -382,12 +382,12 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 	
 	@Test
 	public void testNoDelimiterLine() throws Exception {
-	    set("abcef");
-	    checkLines(new int[] { 5 });
+		set("abcef");
+		checkLines(new int[] { 5 });
 
-	    replace(0, 0, ""); // switch to TreeLineTracker
-	    checkLines(new int[] { 5 });
-    }
+		replace(0, 0, ""); // switch to TreeLineTracker
+		checkLines(new int[] { 5 });
+	}
 	
 	@Test
 	public void testFunnyLastLineCompatibility2() throws Exception {

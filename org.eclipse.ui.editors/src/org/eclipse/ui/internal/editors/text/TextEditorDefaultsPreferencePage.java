@@ -1058,12 +1058,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		fFieldsInitialized= true;
 		updateStatus(new StatusInfo());
 
-        // Update slaves
-        Iterator<SelectionListener> iter= fMasterSlaveListeners.iterator();
-        while (iter.hasNext()) {
-            SelectionListener listener= iter.next();
-            listener.widgetSelected(null);
-        }
+		// Update slaves
+		Iterator<SelectionListener> iter= fMasterSlaveListeners.iterator();
+		while (iter.hasNext()) {
+			SelectionListener listener= iter.next();
+			listener.widgetSelected(null);
+		}
 
 	}
 

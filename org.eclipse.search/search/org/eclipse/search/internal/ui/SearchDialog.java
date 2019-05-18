@@ -385,7 +385,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		ArrayList<SearchPageDescriptor> filteredList= new ArrayList<>(input.size());
 		for (SearchPageDescriptor descriptor : input) {
 			if (!WorkbenchActivityHelper.filterItem(descriptor))
-			    filteredList.add(descriptor);
+				filteredList.add(descriptor);
 
 		}
 		return filteredList;
@@ -431,7 +431,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		for (int i= 0; i < numPages; i++) {
 			SearchPageDescriptor descriptor= getDescriptorAt(i);
 			if (WorkbenchActivityHelper.filterItem(descriptor))
-			    continue;
+				continue;
 
 			final CTabItem item = new CTabItem(folder, SWT.NONE);
 			item.setData("descriptor", descriptor); //$NON-NLS-1$
@@ -480,9 +480,9 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// create help control if needed
-        if (isHelpAvailable()) {
-        	createHelpControl(composite);
-        }
+		if (isHelpAvailable()) {
+			createHelpControl(composite);
+		}
 		fCustomizeButton= createButton(composite, CUSTOMIZE_ID, SearchMessages.SearchDialog_customize, true);
 
 		Label filler= new Label(composite, SWT.NONE);

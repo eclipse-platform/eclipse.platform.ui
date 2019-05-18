@@ -102,7 +102,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that controls whether the print margin is turned on or off
- 	 * (value <code>"printMargin"</code>).
+	 * (value <code>"printMargin"</code>).
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
@@ -170,7 +170,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that controls whether the overview ruler shows unknown indicators
- 	 * (value <code>"othersIndicationInOverviewRuler"</code>).
+	 * (value <code>"othersIndicationInOverviewRuler"</code>).
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
@@ -181,7 +181,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that controls if the overview ruler is shown in the UI
- 	 * (value <code>"overviewRuler"</code>).
+	 * (value <code>"overviewRuler"</code>).
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
@@ -672,10 +672,10 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_HOVER_ENRICH_MODE= AbstractTextEditor.PREFERENCE_HOVER_ENRICH_MODE;
 
 	/**
-  	* Initializes the given preference store with the default values.
+	* Initializes the given preference store with the default values.
 	 *
-  	* @param store the preference store to be initialized
-  	*/
+	* @param store the preference store to be initialized
+	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, false);

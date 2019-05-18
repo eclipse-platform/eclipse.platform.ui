@@ -18,6 +18,6 @@
   </parent>
   <groupId>org.eclipse.search</groupId>
   <artifactId>org.eclipse.search</artifactId>
-  <version>3.11.500-SNAPSHOT</version>
+  <version>3.11.600-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

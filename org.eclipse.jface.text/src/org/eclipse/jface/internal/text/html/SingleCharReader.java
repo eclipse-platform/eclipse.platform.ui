@@ -50,7 +50,7 @@ public abstract class SingleCharReader extends Reader {
 	/**
 	 * @see Reader#ready()
 	 */
-    @Override
+	@Override
 	public boolean ready() throws IOException {
 		return true;
 	}

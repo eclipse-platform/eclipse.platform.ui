@@ -350,14 +350,14 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 	@Override
 	protected void showInformationControl(Rectangle subjectArea) {
-	    super.showInformationControl(subjectArea);
-	    fCurrentHover= getHover(getHoverEvent());
+		super.showInformationControl(subjectArea);
+		fCurrentHover= getHover(getHoverEvent());
 	}
 
 	@Override
 	protected void hideInformationControl() {
 		fCurrentHover= null;
-	    super.hideInformationControl();
+		super.hideInformationControl();
 	}
 
 	/**
@@ -707,9 +707,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @return the currently shown annotation hover or <code>null</code>
 	 * @since 3.2
 	 */
-    public IAnnotationHover getCurrentAnnotationHover() {
-	    return fCurrentHover;
-    }
+	public IAnnotationHover getCurrentAnnotationHover() {
+		return fCurrentHover;
+	}
 
 	/**
 	 * Returns an adapter that gives access to internal methods.
@@ -722,9 +722,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
-    @Override
+	@Override
 	public InternalAccessor getInternalAccessor() {
-    	return new InternalAccessor() {
+		return new InternalAccessor() {
 			@Override
 			public IInformationControl getCurrentInformationControl() {
 				return AnnotationBarHoverManager.super.getInternalAccessor().getCurrentInformationControl();
@@ -770,6 +770,6 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				return fAllowMouseExit;
 			}
 		};
-    }
+	}
 }
 

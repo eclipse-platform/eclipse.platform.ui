@@ -30,7 +30,7 @@ public final class LineIndexOutOfBoundsException extends IndexOutOfBoundsExcepti
 		super();
 	}
 
-    /**
+	/**
 	 * Constructs an <code>LineIndexOutOfBoundsException</code> with the specified detail message.
 	 *
 	 * @param s the detail message.

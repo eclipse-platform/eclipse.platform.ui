@@ -131,7 +131,7 @@ public abstract class SubstitutionTextReader extends SingleCharReader {
 	/**
 	 * @see Reader#ready()
 	 */
-    @Override
+	@Override
 	public boolean ready() throws IOException {
 		return fReader.ready();
 	}

@@ -78,7 +78,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 		void filterElements(Collection<Object> elements) throws InterruptedException;
 
-	    void filterElements(Object[] elements) throws InterruptedException;
+		void filterElements(Object[] elements) throws InterruptedException;
 	}
 
 

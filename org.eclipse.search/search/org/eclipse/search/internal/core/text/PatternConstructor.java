@@ -156,9 +156,9 @@ public class PatternConstructor {
 	}
 
 
-    private static boolean isWordChar(char c) {
-        return Character.isLetterOrDigit(c);
-    }
+	private static boolean isWordChar(char c) {
+		return Character.isLetterOrDigit(c);
+	}
 
 	/**
 	 * Creates a pattern element from an array of patterns in the old 'StringMatcher' format.
@@ -172,8 +172,8 @@ public class PatternConstructor {
 		StringBuilder pattern= new StringBuilder();
 		for (int i= 0; i < patterns.length; i++) {
 			if (i > 0) {
-                // note that this works only as we know that the operands of the
-                // or expression will be simple and need no brackets.
+				// note that this works only as we know that the operands of the
+				// or expression will be simple and need no brackets.
 				pattern.append('|');
 			}
 			appendAsRegEx(true, patterns[i], pattern);
@@ -183,75 +183,75 @@ public class PatternConstructor {
 
 
 	public static StringBuilder appendAsRegEx(boolean isStringMatcher, String pattern, StringBuilder buffer) {
-        boolean isEscaped= false;
-        for (int i = 0; i < pattern.length(); i++) {
-            char c = pattern.charAt(i);
-            switch(c) {
-            // the backslash
-            case '\\':
-                // the backslash is escape char in string matcher
-                if (isStringMatcher && !isEscaped) {
-                    isEscaped= true;
-                }
-                else {
-                    buffer.append("\\\\");  //$NON-NLS-1$
-                    isEscaped= false;
-                }
-                break;
-            // characters that need to be escaped in the regex.
-            case '(':
-            case ')':
-            case '{':
-            case '}':
-            case '.':
-            case '[':
-            case ']':
-            case '$':
-            case '^':
-            case '+':
-            case '|':
-                if (isEscaped) {
-                    buffer.append("\\\\");  //$NON-NLS-1$
-                    isEscaped= false;
-                }
-                buffer.append('\\');
-                buffer.append(c);
-                break;
-            case '?':
-                if (isStringMatcher && !isEscaped) {
-                    buffer.append('.');
-                }
-                else {
-                    buffer.append('\\');
-                    buffer.append(c);
-                    isEscaped= false;
-                }
-                break;
-            case '*':
-                if (isStringMatcher && !isEscaped) {
-                    buffer.append(".*"); //$NON-NLS-1$
-                }
-                else {
-                    buffer.append('\\');
-                    buffer.append(c);
-                    isEscaped= false;
-                }
-                break;
-            default:
-                if (isEscaped) {
-                    buffer.append("\\\\");  //$NON-NLS-1$
-                    isEscaped= false;
-                }
-                buffer.append(c);
-                break;
-            }
-        }
-        if (isEscaped) {
-            buffer.append("\\\\");  //$NON-NLS-1$
-            isEscaped= false;
-        }
-        return buffer;
-    }
+		boolean isEscaped= false;
+		for (int i = 0; i < pattern.length(); i++) {
+			char c = pattern.charAt(i);
+			switch(c) {
+			// the backslash
+			case '\\':
+				// the backslash is escape char in string matcher
+				if (isStringMatcher && !isEscaped) {
+					isEscaped= true;
+				}
+				else {
+					buffer.append("\\\\");  //$NON-NLS-1$
+					isEscaped= false;
+				}
+				break;
+			// characters that need to be escaped in the regex.
+			case '(':
+			case ')':
+			case '{':
+			case '}':
+			case '.':
+			case '[':
+			case ']':
+			case '$':
+			case '^':
+			case '+':
+			case '|':
+				if (isEscaped) {
+					buffer.append("\\\\");  //$NON-NLS-1$
+					isEscaped= false;
+				}
+				buffer.append('\\');
+				buffer.append(c);
+				break;
+			case '?':
+				if (isStringMatcher && !isEscaped) {
+					buffer.append('.');
+				}
+				else {
+					buffer.append('\\');
+					buffer.append(c);
+					isEscaped= false;
+				}
+				break;
+			case '*':
+				if (isStringMatcher && !isEscaped) {
+					buffer.append(".*"); //$NON-NLS-1$
+				}
+				else {
+					buffer.append('\\');
+					buffer.append(c);
+					isEscaped= false;
+				}
+				break;
+			default:
+				if (isEscaped) {
+					buffer.append("\\\\");  //$NON-NLS-1$
+					isEscaped= false;
+				}
+				buffer.append(c);
+				break;
+			}
+		}
+		if (isEscaped) {
+			buffer.append("\\\\");  //$NON-NLS-1$
+			isEscaped= false;
+		}
+		return buffer;
+	}
 
 	/**
 	 * Interprets escaped characters in the given replace pattern.

@@ -194,7 +194,7 @@ public interface ITextViewer {
 	 * behavior over the course of time, this method causes them to be set
 	 * back to their initial state and behavior. E.g., if an {@link IUndoManager}
 	 * has been installed on this text viewer, the manager's list of remembered
-     * text editing operations is removed.
+	 * text editing operations is removed.
 	 */
 	void resetPlugins();
 

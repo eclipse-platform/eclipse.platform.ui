@@ -75,8 +75,8 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 
 		@Override
 		public char last() {
-	        fIndex= fOffset < fEndOffset ? fEndOffset -1 : fEndOffset;
-        	return current();
+			fIndex= fOffset < fEndOffset ? fEndOffset -1 : fEndOffset;
+			return current();
 		}
 
 		@Override

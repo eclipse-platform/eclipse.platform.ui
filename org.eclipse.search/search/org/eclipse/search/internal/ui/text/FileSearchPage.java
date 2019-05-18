@@ -90,30 +90,30 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			return 2;
 		}
 
-	    @Override
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-	        int cat1 = category(e1);
-	        int cat2 = category(e2);
+			int cat1 = category(e1);
+			int cat2 = category(e2);
 
-	        if (cat1 != cat2) {
+			if (cat1 != cat2) {
 				return cat1 - cat2;
 			}
 
-	        if (e1 instanceof LineElement && e2 instanceof LineElement) {
+			if (e1 instanceof LineElement && e2 instanceof LineElement) {
 				LineElement m1= (LineElement) e1;
 				LineElement m2= (LineElement) e2;
-        		return m1.getOffset() - m2.getOffset();
-	        }
+				return m1.getOffset() - m2.getOffset();
+			}
 
-	        String name1= fLabelProvider.getText(e1);
-	        String name2= fLabelProvider.getText(e2);
-	        if (name1 == null)
-	            name1 = "";//$NON-NLS-1$
-	        if (name2 == null)
-	            name2 = "";//$NON-NLS-1$
+			String name1= fLabelProvider.getText(e1);
+			String name2= fLabelProvider.getText(e2);
+			if (name1 == null)
+				name1 = "";//$NON-NLS-1$
+			if (name2 == null)
+				name2 = "";//$NON-NLS-1$
 			int result= getComparator().compare(name1, name2);
 			return result;
-	    }
+		}
 	}
 
 	private static final String KEY_SORTING= "org.eclipse.search.resultpage.sorting"; //$NON-NLS-1$

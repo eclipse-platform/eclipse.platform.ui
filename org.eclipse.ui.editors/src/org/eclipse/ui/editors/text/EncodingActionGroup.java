@@ -83,7 +83,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * @param editor the target editor
 		 */
 		public PredefinedEncodingAction(ResourceBundle bundle, String prefix, String encoding, ITextEditor editor) {
-       		super(bundle, prefix, editor);
+			super(bundle, prefix, editor);
 			fEncoding= encoding;
 			if (prefix == null)
 				setText(encoding);
@@ -98,7 +98,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * @param editor the target editor
 		 */
 		public PredefinedEncodingAction(ResourceBundle bundle, String encoding, ITextEditor editor) {
-       		super(bundle, null, editor);
+			super(bundle, null, editor);
 			fEncoding= encoding;
 			setText(encoding);
 			fLabel= getText();

@@ -609,7 +609,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	private MouseTracker fMouseTracker= new MouseTracker();
 	/**
 	 * The remembered hover event.
-     * @since 3.0
+	 * @since 3.0
 	 */
 	private MouseEvent fHoverEvent= null;
 	/** The remembered hover event state mask of the keyboard modifiers */
@@ -845,7 +845,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		fReplacingDelayJob= new Job("AbstractHoverInformationControlManager Replace Delayer") { //$NON-NLS-1$
 			@Override
 			public IStatus run(final IProgressMonitor monitor) {
-		        if (monitor.isCanceled() || display.isDisposed()) {
+				if (monitor.isCanceled() || display.isDisposed()) {
 					return Status.CANCEL_STATUS;
 				}
 				display.syncExec(() -> {
@@ -939,14 +939,14 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		return fHoverEvent;
 	}
 
- 	/**
+	/**
 	 * Returns the SWT event state of the most recent mouse hover event.
 	 *
 	 * @return the SWT event state of the most recent mouse hover event
 	 */
 	protected int getHoverEventStateMask() {
 		return fHoverEventStateMask;
- 	}
+	}
 
 	/**
 	 * Returns an adapter that gives access to internal methods.

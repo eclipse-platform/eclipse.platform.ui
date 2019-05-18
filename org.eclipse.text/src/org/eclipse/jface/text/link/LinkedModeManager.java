@@ -175,45 +175,45 @@ class LinkedModeManager {
 		}
 	}
 
-    /**
-     * Tries to nest the given <code>LinkedModeModel</code> onto the top of
-     * the stack of environments managed by the receiver. If <code>force</code>
-     * is <code>true</code>, any environments on the stack that create a conflict
-     * are killed.
-     *
-     * @param model the model to nest
-     * @param force whether to force the addition of the model
-     * @return <code>true</code> if nesting was successful, <code>false</code> otherwise (only possible if <code>force</code> is <code>false</code>
-     */
-    public boolean nestEnvironment(LinkedModeModel model, boolean force) {
-    	Assert.isNotNull(model);
+	/**
+	 * Tries to nest the given <code>LinkedModeModel</code> onto the top of
+	 * the stack of environments managed by the receiver. If <code>force</code>
+	 * is <code>true</code>, any environments on the stack that create a conflict
+	 * are killed.
+	 *
+	 * @param model the model to nest
+	 * @param force whether to force the addition of the model
+	 * @return <code>true</code> if nesting was successful, <code>false</code> otherwise (only possible if <code>force</code> is <code>false</code>
+	 */
+	public boolean nestEnvironment(LinkedModeModel model, boolean force) {
+		Assert.isNotNull(model);
 
-    	try {
-    		while (true) {
-    			if (fEnvironments.isEmpty()) {
-    				model.addLinkingListener(fListener);
-    				fEnvironments.push(model);
-    				return true;
-    			}
+		try {
+			while (true) {
+				if (fEnvironments.isEmpty()) {
+					model.addLinkingListener(fListener);
+					fEnvironments.push(model);
+					return true;
+				}
 
-    			LinkedModeModel top= fEnvironments.peek();
-    			if (model.canNestInto(top)) {
-    				model.addLinkingListener(fListener);
-    				fEnvironments.push(model);
-    				return true;
-    			} else if (!force) {
-    				return false;
-    			} else { // force
-    				fEnvironments.pop();
-    				top.exit(ILinkedModeListener.NONE);
-    				// continue;
-    			}
-    		}
-    	} finally {
-    		// if we remove any, make sure the new one got inserted
-    		Assert.isTrue(fEnvironments.size() > 0);
-    	}
-    }
+				LinkedModeModel top= fEnvironments.peek();
+				if (model.canNestInto(top)) {
+					model.addLinkingListener(fListener);
+					fEnvironments.push(model);
+					return true;
+				} else if (!force) {
+					return false;
+				} else { // force
+					fEnvironments.pop();
+					top.exit(ILinkedModeListener.NONE);
+					// continue;
+				}
+			}
+		} finally {
+			// if we remove any, make sure the new one got inserted
+			Assert.isTrue(fEnvironments.size() > 0);
+		}
+	}
 
 	/**
 	 * Returns the <code>LinkedModeModel</code> that is on top of the stack of

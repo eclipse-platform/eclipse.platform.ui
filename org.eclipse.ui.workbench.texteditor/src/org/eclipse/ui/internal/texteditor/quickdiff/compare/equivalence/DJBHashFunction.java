@@ -25,14 +25,14 @@ public final class DJBHashFunction implements IHashFunction {
 	}
 
 	private int hash(CharSequence seq){
-        int hash = 5381;
-        int len= seq.length();
-        for (int i= 0; i < len; i++) {
-        	char ch= seq.charAt(i);
-            hash = ((hash << 5) + hash) + ch; /* hash * 33 + ch */
-        }
+		int hash = 5381;
+		int len= seq.length();
+		for (int i= 0; i < len; i++) {
+			char ch= seq.charAt(i);
+			hash = ((hash << 5) + hash) + ch; /* hash * 33 + ch */
+		}
 
-        return hash;
-    }
+		return hash;
+	}
 
 }

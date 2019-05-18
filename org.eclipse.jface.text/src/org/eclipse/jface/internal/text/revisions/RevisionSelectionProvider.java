@@ -46,29 +46,29 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 	 * Post selection listener on the viewer that remembers the selection provider it is registered
 	 * with.
 	 */
-    private final class PostSelectionListener implements ISelectionChangedListener {
-        private final IPostSelectionProvider fPostProvider;
+	private final class PostSelectionListener implements ISelectionChangedListener {
+		private final IPostSelectionProvider fPostProvider;
 
 		public PostSelectionListener(IPostSelectionProvider postProvider) {
 			postProvider.addPostSelectionChangedListener(this);
 			fPostProvider= postProvider;
-        }
+		}
 
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-	    	ISelection selection= event.getSelection();
-	    	if (selection instanceof ITextSelection) {
-	    		ITextSelection ts= (ITextSelection) selection;
-	            int offset= ts.getOffset();
-	            setSelectedRevision(fPainter.getRevision(offset));
-	        }
+			ISelection selection= event.getSelection();
+			if (selection instanceof ITextSelection) {
+				ITextSelection ts= (ITextSelection) selection;
+				int offset= ts.getOffset();
+				setSelectedRevision(fPainter.getRevision(offset));
+			}
 
-	    }
+		}
 
 		public void dispose() {
 			fPostProvider.removePostSelectionChangedListener(this);
 		}
-    }
+	}
 
 	private final RevisionPainter fPainter;
 
@@ -98,78 +98,78 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 	 *
 	 * @param painter the painter that the created provider interacts with
 	 */
-    RevisionSelectionProvider(RevisionPainter painter) {
+	RevisionSelectionProvider(RevisionPainter painter) {
 		fPainter= painter;
-    }
+	}
 
-    @Override
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-    	fListeners.add(listener);
-    }
+		fListeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-    	fListeners.remove(listener);
-    }
+		fListeners.remove(listener);
+	}
 
-    @Override
+	@Override
 	public ISelection getSelection() {
-    	if (fSelection == null)
-    		return StructuredSelection.EMPTY;
-	    return new StructuredSelection(fSelection);
-    }
+		if (fSelection == null)
+			return StructuredSelection.EMPTY;
+		return new StructuredSelection(fSelection);
+	}
 
-    @Override
+	@Override
 	public void setSelection(ISelection selection) {
-    	if (fIgnoreEvents)
-    		return;
-    	if (selection instanceof IStructuredSelection) {
-    		Object first= ((IStructuredSelection) selection).getFirstElement();
-    		if (first instanceof Revision)
+		if (fIgnoreEvents)
+			return;
+		if (selection instanceof IStructuredSelection) {
+			Object first= ((IStructuredSelection) selection).getFirstElement();
+			if (first instanceof Revision)
 				fPainter.handleRevisionSelected((Revision) first);
 			else if (first instanceof String)
 				fPainter.handleRevisionSelected((String) first);
 			else if (selection.isEmpty())
 				fPainter.handleRevisionSelected((Revision) null);
-    	}
-    }
+		}
+	}
 
-    /**
+	/**
 	 * Installs the selection provider on the viewer.
 	 *
 	 * @param viewer the viewer on which we listen to for post selection events
 	 */
-    void install(ITextViewer viewer) {
-    	uninstall();
+	void install(ITextViewer viewer) {
+		uninstall();
 		fViewer= viewer;
 		if (fViewer != null) {
 			ISelectionProvider provider= fViewer.getSelectionProvider();
 			if (provider instanceof IPostSelectionProvider) {
-	            IPostSelectionProvider postProvider= (IPostSelectionProvider) provider;
-	            fSelectionListener= new PostSelectionListener(postProvider);
-            }
+				IPostSelectionProvider postProvider= (IPostSelectionProvider) provider;
+				fSelectionListener= new PostSelectionListener(postProvider);
+			}
 		}
-    }
+	}
 
-    /**
-     * Uninstalls the selection provider.
-     */
-    void uninstall() {
-    	fViewer= null;
-    	if (fSelectionListener != null) {
-    		fSelectionListener.dispose();
-    		fSelectionListener= null;
-    	}
-    }
+	/**
+	 * Uninstalls the selection provider.
+	 */
+	void uninstall() {
+		fViewer= null;
+		if (fSelectionListener != null) {
+			fSelectionListener.dispose();
+			fSelectionListener= null;
+		}
+	}
 
-    /**
+	/**
 	 * Private protocol used by {@link RevisionPainter} to signal selection of a revision.
 	 *
 	 * @param revision the selected revision, or <code>null</code> for none
 	 */
-    void revisionSelected(Revision revision) {
-    	setSelectedRevision(revision);
-    }
+	void revisionSelected(Revision revision) {
+		setSelectedRevision(revision);
+	}
 
 	/**
 	 * Updates the currently selected revision and sends out an event if it changed.
@@ -181,19 +181,19 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 			fSelection= revision;
 			fireSelectionEvent();
 		}
-    }
+	}
 
-    private void fireSelectionEvent() {
-    	fIgnoreEvents= true;
-    	try {
-    		ISelection selection= getSelection();
-    		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+	private void fireSelectionEvent() {
+		fIgnoreEvents= true;
+		try {
+			ISelection selection= getSelection();
+			SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
 
 			for (ISelectionChangedListener listener : fListeners) {
 				listener.selectionChanged(event);
 			}
-    	} finally {
-    		fIgnoreEvents= false;
-    	}
-    }
+		} finally {
+			fIgnoreEvents= false;
+		}
+	}
 }

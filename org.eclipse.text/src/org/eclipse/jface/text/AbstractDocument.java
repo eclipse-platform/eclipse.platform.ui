@@ -245,7 +245,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * Returns all positions managed by the document grouped by category.
 	 *
 	 * @return the document's positions
-     */
+	 */
 	protected Map<String, List<Position>> getDocumentManagedPositions() {
 		return fPositions;
 	}

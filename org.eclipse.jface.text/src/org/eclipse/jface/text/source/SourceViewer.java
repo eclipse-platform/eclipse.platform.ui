@@ -1258,14 +1258,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		}
 	}
 
-    @Override
+	@Override
 	public IAnnotationHover getCurrentAnnotationHover() {
-    	if (fVerticalRulerHoveringController == null)
-    		return null;
-    	return fVerticalRulerHoveringController.getCurrentAnnotationHover();
-    }
+		if (fVerticalRulerHoveringController == null)
+			return null;
+		return fVerticalRulerHoveringController.getCurrentAnnotationHover();
+	}
 
-    @Override
+	@Override
 	public void setCodeMiningProviders(ICodeMiningProvider[] codeMiningProviders) {
 		boolean enable= codeMiningProviders != null && codeMiningProviders.length > 0;
 		fCodeMiningProviders= codeMiningProviders;

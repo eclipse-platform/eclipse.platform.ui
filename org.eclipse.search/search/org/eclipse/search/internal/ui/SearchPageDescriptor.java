@@ -192,15 +192,15 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 		if (sizeHint != null) {
 			int commaSep= sizeHint.indexOf(',');
 			if (commaSep != -1) {
-		        try {
-		            int xval= Integer.parseInt(sizeHint.substring(0, commaSep).trim());
-		            int yval= Integer.parseInt(sizeHint.substring(commaSep + 1).trim());
-		            return new Point(xval, yval);
-		        } catch (NumberFormatException e) {
-		        }
+				try {
+					int xval= Integer.parseInt(sizeHint.substring(0, commaSep).trim());
+					int yval= Integer.parseInt(sizeHint.substring(commaSep + 1).trim());
+					return new Point(xval, yval);
+				} catch (NumberFormatException e) {
+				}
 			}
 		}
-    	return UNKNOWN_SIZE;
+		return UNKNOWN_SIZE;
 	}
 
 	/**
@@ -367,13 +367,13 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 		}
 	}
 
-    @Override
+	@Override
 	public String getLocalId() {
-        return getId();
-    }
+		return getId();
+	}
 
-    @Override
+	@Override
 	public String getPluginId() {
-        return fElement.getContributor().getName();
-    }
+		return fElement.getContributor().getName();
+	}
 }

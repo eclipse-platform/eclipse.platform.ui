@@ -152,14 +152,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			} else {
 				fIsUIUpdateScheduled= false;
 				turnOnDecoration();
-                updateBusyLabel();
-                if (fScheduleEnsureSelection) {
-                    fScheduleEnsureSelection= false;
-                    AbstractTextSearchResult result = getInput();
-                    if (result != null && fViewer.getSelection().isEmpty()) {
-                        navigateNext(true);
-                    }
-                }
+				updateBusyLabel();
+				if (fScheduleEnsureSelection) {
+					fScheduleEnsureSelection= false;
+					AbstractTextSearchResult result = getInput();
+					if (result != null && fViewer.getSelection().isEmpty()) {
+						navigateNext(true);
+					}
+				}
 			}
 			fViewPart.updateLabel();
 			return Status.OK_STATUS;
@@ -210,7 +210,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private volatile boolean fIsUIUpdateScheduled= false;
-    private volatile boolean fScheduleEnsureSelection= false;
+	private volatile boolean fScheduleEnsureSelection= false;
 	private static final String KEY_LAYOUT = "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
 
 	/**
@@ -606,9 +606,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 			@Override
 			public void queryFinished(final ISearchQuery query) {
-                // handle the end of the query in the UIUpdateJob, as ui updates
-                // may not be finished here.
-                postEnsureSelection();
+				// handle the end of the query in the UIUpdateJob, as ui updates
+				// may not be finished here.
+				postEnsureSelection();
 			}
 		};
 	}
@@ -617,10 +617,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Posts a  UI update to make sure an element is selected.
 	 * @since 3.2
 	 */
-    protected void postEnsureSelection() {
-        fScheduleEnsureSelection= true;
-        scheduleUIUpdate();
-    }
+	protected void postEnsureSelection() {
+		fScheduleEnsureSelection= true;
+		scheduleUIUpdate();
+	}
 
 
 	private void updateBusyLabel() {

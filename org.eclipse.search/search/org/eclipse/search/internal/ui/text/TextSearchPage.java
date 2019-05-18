@@ -279,7 +279,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_searchproblems_message, e.getStatus());
 			return false;
 		}
- 		return true;
+		return true;
 	}
 
 	@Override
@@ -741,7 +741,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		});
 		fSearchBinaryCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1));
 		fSearchBinaryCheckbox.setFont(searchInGroup.getFont());
-  	}
+	}
 
 	/**
 	 * Sets the search page's container.

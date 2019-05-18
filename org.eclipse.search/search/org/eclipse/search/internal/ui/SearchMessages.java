@@ -216,7 +216,7 @@ public final class SearchMessages extends NLS {
 	}
 
 //	public static String ReplaceDialog2_nomatches_error;
-    public static String SearchPreferencePage_textSearchEngine;
+	public static String SearchPreferencePage_textSearchEngine;
 	public static String TextSearchEngineRegistry_defaulttextsearch_label;
 	public static String FileSearchQuery_singularPatternWithFileExt;
 	public static String FileSearchQuery_pluralPatternWithFileExt;

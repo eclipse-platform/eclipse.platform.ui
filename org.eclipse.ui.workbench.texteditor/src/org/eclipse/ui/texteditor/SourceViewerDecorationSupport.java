@@ -507,7 +507,7 @@ public class SourceViewerDecorationSupport {
 
 	/*
 	 * @see AbstractTextEditor#handlePreferenceStoreChanged(PropertyChangeEvent)
- 	 */
+	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 
 		String p= event.getProperty();

@@ -505,8 +505,8 @@ public class LinkedModeModel {
 		// register positions
 		try {
 			for (LinkedPositionGroup group : fGroups) {
-	            group.register(this);
-	        }
+				group.register(this);
+			}
 			return true;
 		} catch (BadLocationException e){
 			// if we fail to add, make sure to release all listeners again
@@ -520,7 +520,7 @@ public class LinkedModeModel {
 	 * model, throws an IllegalStateException otherwise.
 	 */
 	private void enforceNotEmpty() {
-        boolean hasPosition= false;
+		boolean hasPosition= false;
 		for (LinkedPositionGroup linkedPositionGroup : fGroups)
 			if (!linkedPositionGroup.isEmpty()) {
 				hasPosition= true;
@@ -529,42 +529,42 @@ public class LinkedModeModel {
 		if (!hasPosition)
 			throw new IllegalStateException("must specify at least one linked position"); //$NON-NLS-1$
 
-    }
+	}
 
-    /**
+	/**
 	 * Collects all the documents that contained positions are set upon.
-     * @return the set of documents affected by this model
-     */
-    private IDocument[] getDocuments() {
-    	Set<IDocument> docs= new HashSet<>();
-        for (LinkedPositionGroup group : fGroups) {
-            docs.addAll(Arrays.asList(group.getDocuments()));
-        }
-        return docs.toArray(new IDocument[docs.size()]);
-    }
+	 * @return the set of documents affected by this model
+	 */
+	private IDocument[] getDocuments() {
+		Set<IDocument> docs= new HashSet<>();
+		for (LinkedPositionGroup group : fGroups) {
+			docs.addAll(Arrays.asList(group.getDocuments()));
+		}
+		return docs.toArray(new IDocument[docs.size()]);
+	}
 
-    /**
-     * Returns whether the receiver can be nested into the given <code>parent</code>
-     * model. If yes, the parent model and its position that the receiver
-     * fits in are remembered.
-     *
-     * @param parent the parent model candidate
-     * @return <code>true</code> if the receiver can be nested into <code>parent</code>, <code>false</code> otherwise
-     */
-    boolean canNestInto(LinkedModeModel parent) {
-    	for (LinkedPositionGroup group : fGroups) {
+	/**
+	 * Returns whether the receiver can be nested into the given <code>parent</code>
+	 * model. If yes, the parent model and its position that the receiver
+	 * fits in are remembered.
+	 *
+	 * @param parent the parent model candidate
+	 * @return <code>true</code> if the receiver can be nested into <code>parent</code>, <code>false</code> otherwise
+	 */
+	boolean canNestInto(LinkedModeModel parent) {
+		for (LinkedPositionGroup group : fGroups) {
 			if (!enforceNestability(group, parent)) {
 				fParentPosition= null;
 				return false;
 			}
 		}
 
-    	Assert.isNotNull(fParentPosition);
-    	fParentEnvironment= parent;
-    	return true;
-    }
+		Assert.isNotNull(fParentPosition);
+		fParentEnvironment= parent;
+		return true;
+	}
 
-    /**
+	/**
 	 * Called by nested models when a group is added to them. All
 	 * positions in all groups of a nested model have to fit inside a
 	 * single position in the parent model.

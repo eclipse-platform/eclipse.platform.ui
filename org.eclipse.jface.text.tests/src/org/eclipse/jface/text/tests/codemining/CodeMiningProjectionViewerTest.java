@@ -118,8 +118,8 @@ public class CodeMiningProjectionViewerTest {
 			public void dispose() {
 			}
 		});
-	    projectionSupport.install();
-	    fViewer.doOperation(ProjectionViewer.TOGGLE);
+		projectionSupport.install();
+		fViewer.doOperation(ProjectionViewer.TOGGLE);
 	}
 
 	@After

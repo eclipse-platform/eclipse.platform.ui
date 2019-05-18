@@ -29,7 +29,7 @@ package org.eclipse.jface.text;
  */
 public interface ISynchronizable {
 
-    /**
+	/**
 	 * Sets the lock object for this object. If the lock object is not
 	 * <code>null</code> subsequent calls to specified methods of this object
 	 * are synchronized on this lock object. Which methods are synchronized is
@@ -41,14 +41,14 @@ public interface ISynchronizable {
 	 *
 	 * @param lockObject the lock object. May be <code>null</code>.
 	 */
-    void setLockObject(Object lockObject);
+	void setLockObject(Object lockObject);
 
-    /**
+	/**
 	 * Returns the lock object or <code>null</code> if there is none. Clients
 	 * should use the lock object in order to synchronize concurrent access to
 	 * the implementer.
 	 *
 	 * @return the lock object or <code>null</code>
 	 */
-    Object getLockObject();
+	Object getLockObject();
 }

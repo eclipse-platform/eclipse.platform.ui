@@ -63,10 +63,10 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 			if (resource == null)
 				return;
 
-           TaskPropertiesDialog dialog = new TaskPropertiesDialog(getTextEditor().getSite().getShell());
-            dialog.setResource(resource);
-            dialog.setInitialAttributes(getInitialAttributes());
-            dialog.open();
+			TaskPropertiesDialog dialog = new TaskPropertiesDialog(getTextEditor().getSite().getShell());
+			dialog.setResource(resource);
+			dialog.setInitialAttributes(getInitialAttributes());
+			dialog.open();
 		}
 	}
 

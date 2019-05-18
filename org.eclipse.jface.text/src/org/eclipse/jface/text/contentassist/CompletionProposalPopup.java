@@ -740,36 +740,36 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param control the control to watch for focus
 	 * @since 3.2
 	 */
-    private void addCommandSupport(final Control control) {
-    	final KeySequence commandSequence= fContentAssistant.getRepeatedInvocationKeySequence();
-    	if (commandSequence != null && !commandSequence.isEmpty() && fContentAssistant.isRepeatedInvocationMode()) {
-    		control.addFocusListener(new FocusListener() {
-    			private CommandKeyListener fCommandKeyListener;
-    			@Override
+	private void addCommandSupport(final Control control) {
+		final KeySequence commandSequence= fContentAssistant.getRepeatedInvocationKeySequence();
+		if (commandSequence != null && !commandSequence.isEmpty() && fContentAssistant.isRepeatedInvocationMode()) {
+			control.addFocusListener(new FocusListener() {
+				private CommandKeyListener fCommandKeyListener;
+				@Override
 				public void focusGained(FocusEvent e) {
-    				if (Helper.okToUse(control)) {
-    					if (fCommandKeyListener == null) {
-    						fCommandKeyListener= new CommandKeyListener(commandSequence);
-    						fProposalTable.addKeyListener(fCommandKeyListener);
-    					}
-    				}
-    			}
-    			@Override
+					if (Helper.okToUse(control)) {
+						if (fCommandKeyListener == null) {
+							fCommandKeyListener= new CommandKeyListener(commandSequence);
+							fProposalTable.addKeyListener(fCommandKeyListener);
+						}
+					}
+				}
+				@Override
 				public void focusLost(FocusEvent e) {
-    				if (fCommandKeyListener != null) {
-    					control.removeKeyListener(fCommandKeyListener);
-    					fCommandKeyListener= null;
-    				}
-    			}
-    		});
-    	}
-    	if (fAdditionalInfoController != null) {
-	    	control.addFocusListener(new FocusListener() {
-	    		private TraverseListener fTraverseListener;
-	    		@Override
+					if (fCommandKeyListener != null) {
+						control.removeKeyListener(fCommandKeyListener);
+						fCommandKeyListener= null;
+					}
+				}
+			});
+		}
+		if (fAdditionalInfoController != null) {
+			control.addFocusListener(new FocusListener() {
+				private TraverseListener fTraverseListener;
+				@Override
 				public void focusGained(FocusEvent e) {
-	    			if (Helper.okToUse(control)) {
-	    				if (fTraverseListener == null) {
+					if (Helper.okToUse(control)) {
+						if (fTraverseListener == null) {
 							fTraverseListener= new TraverseListener() {
 								@Override
 								public void keyTraversed(TraverseEvent event) {
@@ -782,20 +782,20 @@ class CompletionProposalPopup implements IContentAssistListener {
 									}
 								}
 							};
-	    					fProposalTable.addTraverseListener(fTraverseListener);
-	    				}
-	    			}
-	    		}
-	    		@Override
+							fProposalTable.addTraverseListener(fTraverseListener);
+						}
+					}
+				}
+				@Override
 				public void focusLost(FocusEvent e) {
-	    			if (fTraverseListener != null) {
-	    				control.removeTraverseListener(fTraverseListener);
-	    				fTraverseListener= null;
-	    			}
-	    		}
-	    	});
-    	}
-    }
+					if (fTraverseListener != null) {
+						control.removeTraverseListener(fTraverseListener);
+						fTraverseListener= null;
+					}
+				}
+			});
+		}
+	}
 
 	/**
 	 * Returns the background color to use.

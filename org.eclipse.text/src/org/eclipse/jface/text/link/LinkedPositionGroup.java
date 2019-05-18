@@ -321,8 +321,8 @@ public class LinkedPositionGroup {
 
 	void register(LinkedModeModel model) throws BadLocationException {
 		for (LinkedPosition pos : fPositions) {
-            model.register(pos);
-        }
+			model.register(pos);
+		}
 	}
 
 	/**

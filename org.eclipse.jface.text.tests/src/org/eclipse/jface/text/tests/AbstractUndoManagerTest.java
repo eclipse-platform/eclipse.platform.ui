@@ -404,7 +404,7 @@ public abstract class AbstractUndoManagerTest {
 		fUndoManager.beginCompoundChange();
 		fUndoManager.endCompoundChange();
 
-	    // insert the atomic changes
+		// insert the atomic changes
 		doRepeatableChange(document);
 
 		assertTrue(fUndoManager.undoable());

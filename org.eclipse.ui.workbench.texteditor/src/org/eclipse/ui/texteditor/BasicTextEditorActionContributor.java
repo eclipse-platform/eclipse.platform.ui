@@ -292,12 +292,12 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @since 3.2
 	 */
 	private void addOrInsert(IContributionManager menu, IContributionItem item) {
-	    String id= item.getId();
+		String id= item.getId();
 		if (menu.find(id) == null)
-	    	menu.add(item);
-	    else
-	    	menu.insertAfter(id, item);
-    }
+			menu.add(item);
+		else
+			menu.insertAfter(id, item);
+	}
 
 	@Override
 	public void contributeToStatusLine(IStatusLineManager statusLineManager) {

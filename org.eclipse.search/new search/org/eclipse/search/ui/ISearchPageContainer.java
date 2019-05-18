@@ -98,7 +98,7 @@ public interface ISearchPageContainer {
 	 * The scope is WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
 	 * @param scope the newly selected scope
 	 *
- 	 * @since 2.0
+	 * @since 2.0
 	 */
 	public void setSelectedScope(int scope);
 
@@ -106,7 +106,7 @@ public interface ISearchPageContainer {
 	 * Tells whether a valid scope is selected.
 	 *
 	 * @return a <code>true</code> if a valid scope is selected in this search page container
- 	 * @since 2.0
+	 * @since 2.0
 	 */
 	public boolean hasValidScope();
 

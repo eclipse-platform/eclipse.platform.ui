@@ -104,8 +104,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @since 3.1
 		 */
 		TextCommand(IUndoContext context) {
-		    super(JFaceTextMessages.getString("DefaultUndoManager.operationLabel")); //$NON-NLS-1$
-		    addContext(context);
+			super(JFaceTextMessages.getString("DefaultUndoManager.operationLabel")); //$NON-NLS-1$
+			addContext(context);
 		}
 
 		/**
@@ -133,7 +133,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 		@Override
 		public void dispose() {
-		    reinitialize();
+			reinitialize();
 		}
 
 		/**
@@ -223,13 +223,13 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 		@Override
 		public boolean canExecute() {
-		    return isConnected();
+			return isConnected();
 		}
 
 		@Override
 		public IStatus execute(IProgressMonitor monitor, IAdaptable uiInfo) {
 			// Text commands execute as they are typed, so executing one has no effect.
-		    return Status.OK_STATUS;
+			return Status.OK_STATUS;
 		}
 
 		/*
@@ -324,7 +324,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				} else {
 					reinitialize();
 				}
- 			} else {
+			} else {
 				updateCommand();
 				fCurrent= createCurrent();
 			}
@@ -368,15 +368,15 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @since 3.1
 		 */
 		protected boolean isValid() {
-		    return fStart > -1 &&
-		    	fEnd > -1 &&
-		    	fText != null;
+			return fStart > -1 &&
+				fEnd > -1 &&
+				fText != null;
 		}
 
 		@Override
 		public String toString() {
 			String delimiter= ", "; //$NON-NLS-1$
-		    StringBuilder text= new StringBuilder(super.toString());
+			StringBuilder text= new StringBuilder(super.toString());
 			text.append("\n"); //$NON-NLS-1$
 			text.append(this.getClass().getName());
 			text.append(" undo modification stamp: "); //$NON-NLS-1$
@@ -386,17 +386,17 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			text.append(" start: "); //$NON-NLS-1$
 			text.append(fStart);
 			text.append(delimiter);
-		    text.append("end: "); //$NON-NLS-1$
-		    text.append(fEnd);
+			text.append("end: "); //$NON-NLS-1$
+			text.append(fEnd);
 			text.append(delimiter);
-		    text.append("text: '"); //$NON-NLS-1$
+			text.append("text: '"); //$NON-NLS-1$
 			text.append(fText);
-		    text.append('\'');
+			text.append('\'');
 			text.append(delimiter);
-		    text.append("preservedText: '"); //$NON-NLS-1$
+			text.append("preservedText: '"); //$NON-NLS-1$
 			text.append(fPreservedText);
-		    text.append('\'');
-		    return text.toString();
+			text.append('\'');
+			return text.toString();
 		}
 
 		/**
@@ -436,7 +436,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @since 3.1
 		 */
 		CompoundTextCommand(IUndoContext context) {
-		    super(context);
+			super(context);
 		}
 
 		/**
@@ -545,7 +545,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		protected boolean isValid() {
 			if (isConnected())
 				return (fStart > -1 || fCommands.size() > 0);
-		    return false;
+			return false;
 		}
 
 		/**
@@ -827,7 +827,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @param undoLevel the length of this manager's history
 	 */
 	public DefaultUndoManager(int undoLevel) {
-	    fHistory= OperationHistoryFactory.getOperationHistory();
+		fHistory= OperationHistoryFactory.getOperationHistory();
 		setMaximalUndoLevel(undoLevel);
 	}
 
@@ -909,8 +909,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 */
 	private void addToCommandStack(TextCommand command){
 		if (!fFoldingIntoCompoundChange || command instanceof CompoundTextCommand) {
-		    fHistory.add(command);
-		    fLastAddedCommand= command;
+			fHistory.add(command);
+			fLastAddedCommand= command;
 		}
 	}
 
@@ -920,7 +920,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @since 3.1
 	 */
 	private void disposeCommandStack() {
-	    fHistory.dispose(fUndoContext, true, true, true);
+		fHistory.dispose(fUndoContext, true, true, true);
 	}
 
 	/**
@@ -929,7 +929,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @since 3.1
 	 */
 	private void initializeCommandStack() {
-	    if (fHistory != null && fUndoContext != null)
+		if (fHistory != null && fUndoContext != null)
 			fHistory.dispose(fUndoContext, true, true, false);
 
 	}
@@ -1193,10 +1193,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fTextViewer= textViewer;
 			fTextBuffer= new StringBuilder();
 			fPreservedTextBuffer= new StringBuilder();
-		    if (fUndoContext == null)
-		        fUndoContext= new ObjectUndoContext(this);
+			if (fUndoContext == null)
+				fUndoContext= new ObjectUndoContext(this);
 
-		    fHistory.setLimit(fUndoContext, fUndoLevel);
+			fHistory.setLimit(fUndoContext, fUndoLevel);
 
 			initializeCommandStack();
 
@@ -1240,12 +1240,12 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 	@Override
 	public boolean redoable() {
-	    return fHistory.canRedo(fUndoContext);
+		return fHistory.canRedo(fUndoContext);
 	}
 
 	@Override
 	public boolean undoable() {
-	    return fHistory.canUndo(fUndoContext);
+		return fHistory.canUndo(fUndoContext);
 	}
 
 	@Override

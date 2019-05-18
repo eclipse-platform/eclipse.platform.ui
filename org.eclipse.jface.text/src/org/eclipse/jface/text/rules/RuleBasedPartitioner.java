@@ -506,7 +506,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		return null;
 	}
 
-    /* zero-length partition support */
+	/* zero-length partition support */
 
 	@Override
 	public String getContentType(int offset, boolean preferOpenPartitions) {
@@ -526,7 +526,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 				return new TypedRegion(offset, 0, IDocument.DEFAULT_CONTENT_TYPE);
 			}
 		}
-        return region;
+		return region;
 	}
 
 	@Override

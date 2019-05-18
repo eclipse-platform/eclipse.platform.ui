@@ -55,19 +55,19 @@ public interface IFindReplaceTarget {
 	 */
 	boolean canPerformFind();
 
- 	/**
- 	 * Searches for a string starting at the given widget offset and using the specified search
- 	 * directives. If a string has been found it is selected and its start offset is
- 	 * returned.
- 	 * <p>
- 	 * Replaced by {@link IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
- 	 *
- 	 * @param widgetOffset the widget offset at which searching starts
- 	 * @param findString the string which should be found
- 	 * @param searchForward <code>true</code> searches forward, <code>false</code> backwards
-  	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
-  	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself
-  	 * @return the position of the specified string, or -1 if the string has not been found
+	/**
+	 * Searches for a string starting at the given widget offset and using the specified search
+	 * directives. If a string has been found it is selected and its start offset is
+	 * returned.
+	 * <p>
+	 * Replaced by {@link IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
+	 *
+	 * @param widgetOffset the widget offset at which searching starts
+	 * @param findString the string which should be found
+	 * @param searchForward <code>true</code> searches forward, <code>false</code> backwards
+	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
+	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself
+	 * @return the position of the specified string, or -1 if the string has not been found
 	 */
 	int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord);
 

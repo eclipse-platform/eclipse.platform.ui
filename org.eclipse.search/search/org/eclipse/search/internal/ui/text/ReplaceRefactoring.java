@@ -476,15 +476,15 @@ public class ReplaceRefactoring extends Refactoring {
 				replacementText= PatternConstructor.interpretReplaceEscapes(replacementText, originalText, lineDelimiter);
 
 				Matcher matcher= pattern.matcher(originalText);
-		        StringBuffer sb = new StringBuffer();
-		        matcher.reset();
-		        if (matcher.find()) {
-		        	matcher.appendReplacement(sb, replacementText);
-		        } else {
-		        	return null;
-		        }
-		        matcher.appendTail(sb);
-		        return sb.toString();
+				StringBuffer sb = new StringBuffer();
+				matcher.reset();
+				if (matcher.find()) {
+					matcher.appendReplacement(sb, replacementText);
+				} else {
+					return null;
+				}
+				matcher.appendTail(sb);
+				return sb.toString();
 			} catch (IndexOutOfBoundsException ex) {
 				throw new PatternSyntaxException(ex.getLocalizedMessage(), replacementText, -1);
 			}

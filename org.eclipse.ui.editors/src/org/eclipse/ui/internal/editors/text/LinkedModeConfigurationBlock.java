@@ -375,12 +375,12 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @param chars the number of characters
 	 * @return the number of pixels
 	 */
-    protected int convertWidthInCharsToPixels(int chars) {
-        // test for failure to initialize for backward compatibility
-        if (fFontMetrics == null)
-            return 0;
-        return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
-    }
+	protected int convertWidthInCharsToPixels(int chars) {
+		// test for failure to initialize for backward compatibility
+		if (fFontMetrics == null)
+			return 0;
+		return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
+	}
 
 	/**
 	 * Returns the number of pixels corresponding to the height of the given number of characters.
@@ -394,12 +394,12 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @param chars the number of characters
 	 * @return the number of pixels
 	 */
-    protected int convertHeightInCharsToPixels(int chars) {
-        // test for failure to initialize for backward compatibility
-        if (fFontMetrics == null)
-            return 0;
-        return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
-    }
+	protected int convertHeightInCharsToPixels(int chars) {
+		// test for failure to initialize for backward compatibility
+		if (fFontMetrics == null)
+			return 0;
+		return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
+	}
 
 	/**
 	 * Initializes the computation of horizontal and vertical dialog units based on the size of
@@ -410,13 +410,13 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 *
 	 * @param testControl a control from which to obtain the current font
 	 */
-    protected void initializeDialogUnits(Control testControl) {
-        // Compute and store a font metric
-        GC gc = new GC(testControl);
-        gc.setFont(JFaceResources.getDialogFont());
-        fFontMetrics = gc.getFontMetrics();
-        gc.dispose();
-    }
+	protected void initializeDialogUnits(Control testControl) {
+		// Compute and store a font metric
+		GC gc = new GC(testControl);
+		gc.setFont(JFaceResources.getDialogFont());
+		fFontMetrics = gc.getFontMetrics();
+		gc.dispose();
+	}
 
 	private void handleAnnotationListSelection() {
 		ListItem item= getSelectedItem();
@@ -545,12 +545,12 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private void initializeFields() {
 
-        // Update slaves
-        Iterator<SelectionListener> iter= fMasterSlaveListeners.iterator();
-        while (iter.hasNext()) {
-            SelectionListener listener= iter.next();
-            listener.widgetSelected(null);
-        }
+		// Update slaves
+		Iterator<SelectionListener> iter= fMasterSlaveListeners.iterator();
+		while (iter.hasNext()) {
+			SelectionListener listener= iter.next();
+			listener.widgetSelected(null);
+		}
 	}
 
 	@Override

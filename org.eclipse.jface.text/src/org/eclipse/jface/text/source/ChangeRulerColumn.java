@@ -494,12 +494,12 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	}
 
 	/**
-     * Returns the revision selection provider.
-     *
-     * @return the revision selection provider
-     * @since 3.2
-     */
-    public ISelectionProvider getRevisionSelectionProvider() {
-    	return fRevisionPainter.getRevisionSelectionProvider();
-    }
+	 * Returns the revision selection provider.
+	 *
+	 * @return the revision selection provider
+	 * @since 3.2
+	 */
+	public ISelectionProvider getRevisionSelectionProvider() {
+		return fRevisionPainter.getRevisionSelectionProvider();
+	}
 }

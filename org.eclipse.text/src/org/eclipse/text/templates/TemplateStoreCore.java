@@ -127,16 +127,16 @@ public class TemplateStoreCore {
 				@Override
 				public void preferenceChange(PreferenceChangeEvent event) {
 					/*
-                     * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
-                     * save operation, and clients may trigger reloading by listening to preference store
-                     * updates.
-                     */
-                    if (!fIgnorePreferenceStoreChanges && fKey.equals(event.getKey()))
-                        try {
-                            load();
-                        } catch (IOException x) {
-                            handleException(x);
-                        }
+					 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
+					 * save operation, and clients may trigger reloading by listening to preference store
+					 * updates.
+					 */
+					if (!fIgnorePreferenceStoreChanges && fKey.equals(event.getKey()))
+						try {
+							load();
+						} catch (IOException x) {
+							handleException(x);
+						}
 				}
 			};
 			fPreferenceStore.addPreferenceChangeListener(fPropertyListener);

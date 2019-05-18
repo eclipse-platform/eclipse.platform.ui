@@ -832,24 +832,24 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		layout.marginWidth= 0;
 		parent.setLayout(layout);
 
-        Composite innerParent= new Composite(parent, SWT.NONE);
-        GridLayout innerLayout= new GridLayout();
-        innerLayout.numColumns= 2;
-        innerLayout.marginHeight= 0;
-        innerLayout.marginWidth= 0;
-        innerParent.setLayout(innerLayout);
-        GridData gd= new GridData(GridData.FILL_BOTH);
-        gd.horizontalSpan= 2;
-        innerParent.setLayoutData(gd);
+		Composite innerParent= new Composite(parent, SWT.NONE);
+		GridLayout innerLayout= new GridLayout();
+		innerLayout.numColumns= 2;
+		innerLayout.marginHeight= 0;
+		innerLayout.marginWidth= 0;
+		innerParent.setLayout(innerLayout);
+		GridData gd= new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan= 2;
+		innerParent.setLayoutData(gd);
 
-        Composite tableComposite= new Composite(innerParent, SWT.NONE);
-        GridData data= new GridData(GridData.FILL_BOTH);
-        data.widthHint= 360;
-        data.heightHint= convertHeightInCharsToPixels(10);
-        tableComposite.setLayoutData(data);
+		Composite tableComposite= new Composite(innerParent, SWT.NONE);
+		GridData data= new GridData(GridData.FILL_BOTH);
+		data.widthHint= 360;
+		data.heightHint= convertHeightInCharsToPixels(10);
+		tableComposite.setLayoutData(data);
 
-        ColumnLayout columnLayout= new ColumnLayout();
-        tableComposite.setLayout(columnLayout);
+		ColumnLayout columnLayout= new ColumnLayout();
+		tableComposite.setLayout(columnLayout);
 		Table table= new Table(tableComposite, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		table.setHeaderVisible(true);
@@ -959,10 +959,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		if (isShowFormatterSetting()) {
 			fFormatButton= new Button(parent, SWT.CHECK);
 			fFormatButton.setText(TemplatesMessages.TemplatePreferencePage_use_code_formatter);
-	        GridData gd1= new GridData();
-	        gd1.horizontalSpan= 2;
-	        fFormatButton.setLayoutData(gd1);
-	        fFormatButton.setSelection(getPreferenceStore().getBoolean(getFormatterPreferenceKey()));
+			GridData gd1= new GridData();
+			gd1.horizontalSpan= 2;
+			fFormatButton.setLayoutData(gd1);
+			fFormatButton.setSelection(getPreferenceStore().getBoolean(getFormatterPreferenceKey()));
 		}
 
 		fTableViewer.setInput(fTemplateStore);

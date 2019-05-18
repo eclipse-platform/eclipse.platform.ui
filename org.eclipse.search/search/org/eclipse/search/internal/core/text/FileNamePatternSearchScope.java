@@ -136,7 +136,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	 * @return returns true if the file name is matching to a file name pattern
 	 */
 	private boolean matchesFileName(String fileName) {
- 		return getFileNameMatcher().reset(fileName).matches();
+		return getFileNameMatcher().reset(fileName).matches();
 	}
 
 	/**

@@ -847,9 +847,9 @@ public class AnnotationPreference {
 	}
 
 	/**
- 	 * Sets the preference key for go to previous navigation enablement.
- 	 *
- 	 * @param isGoToPreviousNavigationTargetKey the preference key
+	 * Sets the preference key for go to previous navigation enablement.
+	 *
+	 * @param isGoToPreviousNavigationTargetKey the preference key
 	 * @since 3.0
 	 */
 	public void setIsGoToPreviousNavigationTargetKey(String isGoToPreviousNavigationTargetKey) {

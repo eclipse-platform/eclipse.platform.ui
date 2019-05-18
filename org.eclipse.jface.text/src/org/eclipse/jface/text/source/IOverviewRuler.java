@@ -124,6 +124,6 @@ public interface IOverviewRuler extends IVerticalRuler {
 	 * top of the text widget and the top of this overview ruler.
 	 *
 	 * @return the header control of this overview ruler.
- 	 */
+	 */
 	Control getHeaderControl();
 }

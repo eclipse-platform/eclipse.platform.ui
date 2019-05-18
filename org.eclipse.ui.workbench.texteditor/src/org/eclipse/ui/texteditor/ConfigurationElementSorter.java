@@ -132,7 +132,7 @@ public abstract class ConfigurationElementSorter {
 			Set<Bundle> fBundleSet= new HashSet<>(length);
 
 			for (int i= 0; i < length; i++) {
-			    IConfigurationElement configElement= getConfigurationElement(elements[i]);
+				IConfigurationElement configElement= getConfigurationElement(elements[i]);
 				Bundle bundle= Platform.getBundle(configElement.getContributor().getName());
 				fDescriptorMapping.put(elements[i], bundle.getSymbolicName());
 				fBundleSet.add(bundle);
@@ -148,18 +148,18 @@ public abstract class ConfigurationElementSorter {
 
 				String requires = bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
 				ManifestElement[] manifestElements;
-                try {
-                    manifestElements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
-                } catch (BundleException e) {
-                	String uid= getExtensionPointUniqueIdentifier(bundle);
-                	String message= "ConfigurationElementSorter for '" + uid + "': getting required plug-ins for '" + bundle.getSymbolicName() + "' failed"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, e);
-    				TextEditorPlugin.getDefault().getLog().log(status);
-                    continue;
-                }
+				try {
+					manifestElements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
+				} catch (BundleException e) {
+					String uid= getExtensionPointUniqueIdentifier(bundle);
+					String message= "ConfigurationElementSorter for '" + uid + "': getting required plug-ins for '" + bundle.getSymbolicName() + "' failed"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, e);
+					TextEditorPlugin.getDefault().getLog().log(status);
+					continue;
+				}
 
-                if (manifestElements == null)
-                	continue;
+				if (manifestElements == null)
+					continue;
 
 				int i= 0;
 				while (i < manifestElements.length && !toTest.isEmpty()) {
@@ -194,7 +194,7 @@ public abstract class ConfigurationElementSorter {
 					while (iter.hasNext()) {
 						Entry<Object, String> entry= iter.next();
 						if (bundleName.equals(entry.getValue())) {
-						    IExtension extension = getConfigurationElement(entry.getKey()).getDeclaringExtension();
+							IExtension extension = getConfigurationElement(entry.getKey()).getDeclaringExtension();
 							return extension.getExtensionPointUniqueIdentifier();
 						}
 					}

@@ -141,7 +141,7 @@ public class TemplateVariable {
 	 * @return the type name of the variable
 	 */
 	public String getType() {
-	    return fType.getName();
+		return fType.getName();
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class TemplateVariable {
 	 * @return the name of the variable
 	 */
 	public String getName() {
-	    return fName;
+		return fName;
 	}
 
 	/**
@@ -251,9 +251,9 @@ public class TemplateVariable {
 	 * @param unambiguous the new unambiguous state of the variable
 	 */
 	public void setUnambiguous(boolean unambiguous) {
-	    fIsUnambiguous= unambiguous;
-	    if (unambiguous)
-	    	setResolved(true);
+		fIsUnambiguous= unambiguous;
+		if (unambiguous)
+			setResolved(true);
 	}
 
 	/**

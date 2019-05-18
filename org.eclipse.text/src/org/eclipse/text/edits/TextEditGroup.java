@@ -110,7 +110,7 @@ public class TextEditGroup {
 	 * @since 3.3
 	 */
 	public boolean removeTextEdit(TextEdit edit) {
-	  return fEdits.remove(edit);
+		return fEdits.remove(edit);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class TextEditGroup {
 	 * @since 3.3
 	 */
 	public void clearTextEdits() {
-	  fEdits.clear();
+		fEdits.clear();
 	}
 
 

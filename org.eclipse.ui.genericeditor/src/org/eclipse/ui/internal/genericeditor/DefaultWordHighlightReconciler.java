@@ -22,9 +22,9 @@ public class DefaultWordHighlightReconciler extends Reconciler {
 	private DefaultWordHighlightStrategy fStrategy;
 
 	public DefaultWordHighlightReconciler() {
-        fStrategy = new DefaultWordHighlightStrategy();
-        this.setReconcilingStrategy(fStrategy, IDocument.DEFAULT_CONTENT_TYPE);
-    }
+		fStrategy = new DefaultWordHighlightStrategy();
+		this.setReconcilingStrategy(fStrategy, IDocument.DEFAULT_CONTENT_TYPE);
+	}
 
 	@Override
 	public void install(ITextViewer textViewer) {

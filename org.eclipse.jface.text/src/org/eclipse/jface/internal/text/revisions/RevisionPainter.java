@@ -285,7 +285,7 @@ public final class RevisionPainter {
 				updateFocusRevision(null); // kill any focus as the ctx menu is going to show
 			if (e.button == 1) {
 				fMouseDownRegion= fFocusRange;
-		    	postRedraw();
+				postRedraw();
 			}
 		}
 
@@ -351,41 +351,41 @@ public final class RevisionPainter {
 		@Override
 		protected IInformationControl doCreateInformationControl(Shell parent) {
 			if (BrowserInformationControl.isAvailable(parent)) {
-	            return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, fIsFocusable) {
-	            	/**
+				return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, fIsFocusable) {
+					/**
 					 * {@inheritDoc}
 					 *
 					 * @deprecated use {@link #setInput(Object)}
 					 */
-	            	@Deprecated
+					@Deprecated
 					@Override
 					public void setInformation(String content) {
-        				content= addCSSToHTMLFragment(content);
-	            		super.setInformation(content);
-	            	}
+						content= addCSSToHTMLFragment(content);
+						super.setInformation(content);
+					}
 
-	        		/**
-	        		 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment (has no
-	        		 * &lt;html&gt; section).
-	        		 *
-	        		 * @param html the html / text produced by a revision
-	        		 * @return modified html
-	        		 */
-	        		private String addCSSToHTMLFragment(String html) {
-	        			int max= Math.min(100, html.length());
-	        			if (html.substring(0, max).indexOf("<html>") != -1) //$NON-NLS-1$
-	        				// there is already a header
-	        				return html;
+					/**
+					 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment (has no
+					 * &lt;html&gt; section).
+					 *
+					 * @param html the html / text produced by a revision
+					 * @return modified html
+					 */
+					private String addCSSToHTMLFragment(String html) {
+						int max= Math.min(100, html.length());
+						if (html.substring(0, max).indexOf("<html>") != -1) //$NON-NLS-1$
+							// there is already a header
+							return html;
 
-	        			StringBuilder info= new StringBuilder(512 + html.length());
-	        			HTMLPrinter.insertPageProlog(info, 0, fgStyleSheet);
-	        			info.append(html);
-	        			HTMLPrinter.addPageEpilog(info);
-	        			return info.toString();
-	        		}
+						StringBuilder info= new StringBuilder(512 + html.length());
+						HTMLPrinter.insertPageProlog(info, 0, fgStyleSheet);
+						info.append(html);
+						HTMLPrinter.addPageEpilog(info);
+						return info.toString();
+					}
 
-	            };
-            }
+				};
+			}
 			return new DefaultInformationControl(parent, fIsFocusable);
 		}
 
@@ -473,7 +473,7 @@ public final class RevisionPainter {
 			return range == null ? null : new LineRange(lineNumber, 1);
 		}
 
-        @Override
+		@Override
 		public IInformationControlCreator getInformationPresenterControlCreator() {
 			RevisionInformation revisionInfo= fRevisionInfo;
 			if (revisionInfo != null) {
@@ -482,7 +482,7 @@ public final class RevisionPainter {
 					return creator;
 			}
 			return new HoverInformationControlCreator(true);
-        }
+		}
 	}
 
 	/* Listeners and helpers. */
@@ -1156,8 +1156,8 @@ public final class RevisionPainter {
 	/**
 	 * Handles the selection of a revision id and informs listeners
 	 *
-     * @param id the selected revision id
-     */
+	 * @param id the selected revision id
+	 */
 	void handleRevisionSelected(String id) {
 		Assert.isLegal(id != null);
 		if (fRevisionInfo == null)
@@ -1174,14 +1174,14 @@ public final class RevisionPainter {
 		handleRevisionSelected((Revision) null);
 	}
 
-    /**
-     * Returns the selection provider.
-     *
-     * @return the selection provider
-     */
-    public RevisionSelectionProvider getRevisionSelectionProvider() {
+	/**
+	 * Returns the selection provider.
+	 *
+	 * @return the selection provider
+	 */
+	public RevisionSelectionProvider getRevisionSelectionProvider() {
 		return fRevisionSelectionProvider;
-    }
+	}
 
 	/**
 	 * Updates the focus line with a new line.
@@ -1232,9 +1232,9 @@ public final class RevisionPainter {
 	}
 
 	private void updateFocusRevision(Revision revision) {
-	    if (fFocusRevision != revision)
+		if (fFocusRevision != revision)
 			onFocusRevisionChanged(fFocusRevision, revision);
-    }
+	}
 
 	/**
 	 * Handles a changing focus revision.
@@ -1423,30 +1423,30 @@ public final class RevisionPainter {
 	 * @param offset the document offset
 	 * @return the revision at offset, or <code>null</code> for none
 	 */
-    Revision getRevision(int offset) {
-    	IDocument document= fViewer.getDocument();
-    	int line;
-        try {
-	        line= document.getLineOfOffset(offset);
-        } catch (BadLocationException x) {
-        	return null;
-        }
-    	if (line != -1) {
-    		RevisionRange range= getRange(line);
-    		if (range != null)
-    			return range.getRevision();
-    	}
-    	return null;
-    }
+	Revision getRevision(int offset) {
+		IDocument document= fViewer.getDocument();
+		int line;
+		try {
+			line= document.getLineOfOffset(offset);
+		} catch (BadLocationException x) {
+			return null;
+		}
+		if (line != -1) {
+			RevisionRange range= getRange(line);
+			if (range != null)
+				return range.getRevision();
+		}
+		return null;
+	}
 
 	/**
 	 * Returns <code>true</code> if a revision model has been set, <code>false</code> otherwise.
 	 *
-     * @return <code>true</code> if a revision model has been set, <code>false</code> otherwise
-     */
-    public boolean hasInformation() {
-	    return fRevisionInfo != null;
-    }
+	 * @return <code>true</code> if a revision model has been set, <code>false</code> otherwise
+	 */
+	public boolean hasInformation() {
+		return fRevisionInfo != null;
+	}
 
 	/**
 	 * Returns the width in chars required to display information.

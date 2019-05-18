@@ -281,7 +281,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 	private int getCaretOffset(TemplateBuffer buffer) {
 
-	    TemplateVariable[] variables= buffer.getVariables();
+		TemplateVariable[] variables= buffer.getVariables();
 		for (int i= 0; i != variables.length; i++) {
 			TemplateVariable variable= variables[i];
 			if (variable.getType().equals(GlobalTemplateVariables.Cursor.NAME))
@@ -336,8 +336,8 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 	@Override
 	public String getAdditionalProposalInfo() {
-	    try {
-		    fContext.setReadOnly(true);
+		try {
+			fContext.setReadOnly(true);
 			TemplateBuffer templateBuffer;
 			try {
 				templateBuffer= fContext.evaluate(fTemplate);
@@ -347,7 +347,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 			return templateBuffer.getString();
 
-	    } catch (BadLocationException e) {
+		} catch (BadLocationException e) {
 			return null;
 		}
 	}

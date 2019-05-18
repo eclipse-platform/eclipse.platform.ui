@@ -121,7 +121,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	/**
 	 * Additional styles to use for the text control.
 	 * @since 3.4, previously called <code>fTextStyle</code>
-     */
+	 */
 	private final int fAdditionalTextStyles;
 
 	/**

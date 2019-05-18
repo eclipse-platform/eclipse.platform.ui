@@ -434,7 +434,7 @@ public class TextSearchVisitor {
 				System.out.println(Messages.format(
 						"[TextSearch] Search duration for {0} files in {1} jobs using {2} threads: {3}ms", args)); //$NON-NLS-1$
 			}
-	   }
+		}
 	}
 
 	public IStatus search(TextSearchScope scope, IProgressMonitor monitor) {

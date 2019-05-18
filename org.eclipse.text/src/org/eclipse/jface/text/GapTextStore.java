@@ -330,8 +330,8 @@ public class GapTextStore implements ITextStore {
 	 * @since 3.3
 	 */
 	private char[] allocate(int size) {
-	    return new char[size];
-    }
+		return new char[size];
+	}
 
 	/*
 	 * Executes System.arraycopy if length != 0. A length < 0 cannot happen -> don't hide coding

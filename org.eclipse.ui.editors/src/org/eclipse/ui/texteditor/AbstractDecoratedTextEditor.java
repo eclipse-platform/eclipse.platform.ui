@@ -1185,10 +1185,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION, action);
 
 		IAction action2= new CompositeRevertAction(this, new IAction[] {
-		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION),
-		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK),
-										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION),
-										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE)});
+												getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION),
+												getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK),
+												getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION),
+												getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE)});
 		action2.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_REVERT);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERT, action2);
 
@@ -1310,7 +1310,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		IAnnotationHover hover= fLineColumn.getHover();
 		showFocusedRulerHover(hover, sourceViewer, caretOffset);
-    }
+	}
 
 	/**
 	 * Opens a sticky annotation ruler hover for the caret line. Does nothing if no annotation hover
@@ -1528,14 +1528,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			// Check whether file exists and if so, confirm overwrite
 			final File localFile= new File(path);
 			if (localFile.exists()) {
-		        MessageDialog overwriteDialog= new MessageDialog(
-		        		shell,
-		        		TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_title,
-		        		null,
-		        		NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_message, path),
-		        		MessageDialog.WARNING,
-		        		new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL },
-		        		1); // 'No' is the default
+				MessageDialog overwriteDialog= new MessageDialog(
+						shell,
+						TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_title,
+						null,
+						NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_message, path),
+						MessageDialog.WARNING,
+						new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL },
+						1); // 'No' is the default
 				if (overwriteDialog.open() != Window.OK) {
 					if (progressMonitor != null) {
 						progressMonitor.setCanceled(true);

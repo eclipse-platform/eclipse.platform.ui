@@ -1416,9 +1416,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			fRightDocument= document;
 			fRightDocument.addDocumentListener(this);
 			if (document instanceof IDocumentExtension4) {
-	            IDocumentExtension4 ext= (IDocumentExtension4) document;
-	            ext.addDocumentRewriteSessionListener(fSessionListener);
-            }
+				IDocumentExtension4 ext= (IDocumentExtension4) document;
+				ext.addDocumentRewriteSessionListener(fSessionListener);
+			}
 			initialize();
 		}
 	}
@@ -1454,9 +1454,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			if (fRightDocument != null) {
 				fRightDocument.removeDocumentListener(this);
 				if (fRightDocument instanceof IDocumentExtension4) {
-		            IDocumentExtension4 ext= (IDocumentExtension4) fRightDocument;
-		            ext.removeDocumentRewriteSessionListener(fSessionListener);
-	            }
+					IDocumentExtension4 ext= (IDocumentExtension4) fRightDocument;
+					ext.removeDocumentRewriteSessionListener(fSessionListener);
+				}
 			}
 			fRightDocument= null;
 			fRightEquivalent= null;
@@ -1486,7 +1486,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		List<QuickDiffRangeDifference> differences= fDifferences; // atomic
 		synchronized (differences) {
 			copy= new ArrayList<>(differences);
-        }
+		}
 		final Iterator<QuickDiffRangeDifference> iter= copy.iterator();
 		return new Iterator<Annotation>() {
 

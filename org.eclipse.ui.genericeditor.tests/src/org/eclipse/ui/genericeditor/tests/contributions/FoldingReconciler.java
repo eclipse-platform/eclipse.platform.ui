@@ -23,14 +23,14 @@ public class FoldingReconciler extends Reconciler {
 	private FoldingStrategy fStrategy;
 
 	public FoldingReconciler() {
-        fStrategy = new FoldingStrategy();
-        this.setReconcilingStrategy(fStrategy, IDocument.DEFAULT_CONTENT_TYPE);
-    }
+		fStrategy = new FoldingStrategy();
+		this.setReconcilingStrategy(fStrategy, IDocument.DEFAULT_CONTENT_TYPE);
+	}
 
-    @Override
-    public void install(ITextViewer textViewer) {
-    	super.install(textViewer);
-    	ProjectionViewer pViewer =(ProjectionViewer)textViewer;
-    	fStrategy.setProjectionViewer(pViewer);
-    }
+	@Override
+	public void install(ITextViewer textViewer) {
+		super.install(textViewer);
+		ProjectionViewer pViewer =(ProjectionViewer)textViewer;
+		fStrategy.setProjectionViewer(pViewer);
+	}
 }

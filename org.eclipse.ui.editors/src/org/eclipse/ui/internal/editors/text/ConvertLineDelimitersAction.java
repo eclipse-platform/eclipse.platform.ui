@@ -90,7 +90,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 			return filterUnacceptableFiles(files);
 		}
 
-    	final IFilter filter= new IFilter() {
+		final IFilter filter= new IFilter() {
 			@Override
 			public boolean accept(IResource resource) {
 				return resource != null && isAcceptableLocation(resource.getFullPath());

@@ -47,9 +47,9 @@ import org.eclipse.swt.graphics.Point;
  */
 public interface ITextViewerExtension2 {
 
-	 /**
-	  * The state mask of the default hover (value <code>0xff</code>).
-	  */
+	/**
+	 * The state mask of the default hover (value <code>0xff</code>).
+	 */
 	 final int DEFAULT_HOVER_STATE_MASK= 0xff;
 
 	/**

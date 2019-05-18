@@ -157,12 +157,12 @@ public class AdaptiveGapTextTest extends AbstractGapTextTest {
 	
 	@Test
 	public void testRemoveReallocateBeforeGap() throws Exception {
-	    fText.replace(0, 0, "yyyyyzzzzz");
-	    assertGap(10, 15);
-	    assertContents("yyyyyzzzzzxxxxx");
+		fText.replace(0, 0, "yyyyyzzzzz");
+		assertGap(10, 15);
+		assertContents("yyyyyzzzzzxxxxx");
 
-	    fText.replace(2, 6, null);
-	    assertGap(2, 5);
-	    assertContents("yyzzxxxxx");
-    }
+		fText.replace(2, 6, null);
+		assertGap(2, 5);
+		assertContents("yyzzxxxxx");
+	}
 }

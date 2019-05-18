@@ -32,7 +32,7 @@ public final class LocationKind {
 	 * connected using a file store will not be found.
 	 * </p>
 	 *
- 	 * @see IFileBufferManager#connectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see IFileBufferManager#connectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public static final LocationKind LOCATION= new LocationKind("location"); //$NON-NLS-1$
 

@@ -612,7 +612,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
 
 		fCanvas= new Canvas(parentControl, SWT.NO_FOCUS ) {
- 			@Override
+			@Override
 			public void addMouseListener(MouseListener listener) {
 				// see bug 40889, bug 230073 and AnnotationRulerColumn#isPropagatingMouseListener()
 				if (listener == fMouseHandler)

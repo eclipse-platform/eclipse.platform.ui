@@ -2216,13 +2216,13 @@ public class TextViewer extends Viewer implements
 					return true;
 				}
 
-		   } else {
-			   fWidgetTokenKeeper= requester;
-			   return true;
-		   }
-	   }
-	   return false;
-   }
+			} else {
+				fWidgetTokenKeeper= requester;
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public void releaseWidgetToken(IWidgetTokenKeeper tokenKeeper) {
@@ -2843,7 +2843,7 @@ public class TextViewer extends Viewer implements
 	 * @return <code>true</code> if the slave has been adapted successfully
 	 * @throws BadLocationException in case the specified range is not valid in the master document
 	 * @since 2.1
- 	 * @deprecated use <code>updateSlaveDocument</code> instead
+	 * @deprecated use <code>updateSlaveDocument</code> instead
 	 */
 	@Deprecated
 	protected boolean updateVisibleDocument(IDocument visibleDocument, int visibleRegionOffset, int visibleRegionLength) throws BadLocationException {
@@ -4412,7 +4412,7 @@ public class TextViewer extends Viewer implements
 		options.printTextFontStyle= true;
 		options.printTextForeground= true;
 		print(options);
-    }
+	}
 
 	//------ find support
 

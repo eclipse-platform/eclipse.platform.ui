@@ -23,9 +23,9 @@ import org.eclipse.ui.texteditor.AnnotationPreference;
  */
 public class PreviousPulldownActionDelegate extends NextPreviousPulldownActionDelegate {
 
-   @Override
+	@Override
 public String getPreferenceKey(AnnotationPreference annotationPreference) {
-	   return annotationPreference.getIsGoToPreviousNavigationTargetKey();
-   }
+		return annotationPreference.getIsGoToPreviousNavigationTargetKey();
+	}
 
 }

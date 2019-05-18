@@ -48,9 +48,9 @@ public interface IDocumentPartitionerExtension2 {
 	String[] getManagingPositionCategories();
 
 
-    /* zero-length partition support */
+	/* zero-length partition support */
 
-    /**
+	/**
 	 * Returns the content type of the partition containing the given offset in
 	 * the connected document. There must be a document connected to this
 	 * partitioner.
@@ -71,9 +71,9 @@ public interface IDocumentPartitionerExtension2 {
 	 *            a delimited partition starting at <code>offset</code>
 	 * @return the content type of the offset's partition
 	 */
-    String getContentType(int offset, boolean preferOpenPartitions);
+	String getContentType(int offset, boolean preferOpenPartitions);
 
-    /**
+	/**
 	 * Returns the partition containing the given offset of the connected
 	 * document. There must be a document connected to this partitioner.
 	 * <p>
@@ -93,9 +93,9 @@ public interface IDocumentPartitionerExtension2 {
 	 *            a delimited partition starting at <code>offset</code>
 	 * @return the partition containing the offset
 	 */
-    ITypedRegion getPartition(int offset, boolean preferOpenPartitions);
+	ITypedRegion getPartition(int offset, boolean preferOpenPartitions);
 
-    /**
+	/**
 	 * Returns the partitioning of the given range of the connected document.
 	 * There must be a document connected to this partitioner.
 	 * <p>
@@ -118,5 +118,5 @@ public interface IDocumentPartitionerExtension2 {
 	 *            partitioning
 	 * @return the partitioning of the range
 	 */
-    ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions);
+	ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions);
 }

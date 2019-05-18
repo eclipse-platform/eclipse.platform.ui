@@ -364,18 +364,18 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 				thumbHeight= verticalBar != null ? Math.max(Math.min(bounds.height, verticalBar.getThumbBounds().height), 0) : 0;
 			}
 
-	        int partialTopIndex= JFaceTextUtil.getPartialTopIndex(textWidget);
-	        int topLineHeight= textWidget.getLineHeight(textWidget.getOffsetAtLine(partialTopIndex));
-	        int topLinePixel= textWidget.getLinePixel(partialTopIndex);
-	        double topIndex= partialTopIndex - (double) topLinePixel / topLineHeight;
+			int partialTopIndex= JFaceTextUtil.getPartialTopIndex(textWidget);
+			int topLineHeight= textWidget.getLineHeight(textWidget.getOffsetAtLine(partialTopIndex));
+			int topLinePixel= textWidget.getLinePixel(partialTopIndex);
+			double topIndex= partialTopIndex - (double) topLinePixel / topLineHeight;
 
-	        int partialBottomIndex= JFaceTextUtil.getPartialBottomIndex(textWidget);
-	        int bottomLineHeight= textWidget.getLineHeight(textWidget.getOffsetAtLine(partialBottomIndex));
-	        int bottomLinePixel= textWidget.getLinePixel(partialBottomIndex);
-	        double bottomIndex= partialBottomIndex - ((double) bottomLinePixel - textWidget.getClientArea().height) / bottomLineHeight;
+			int partialBottomIndex= JFaceTextUtil.getPartialBottomIndex(textWidget);
+			int bottomLineHeight= textWidget.getLineHeight(textWidget.getOffsetAtLine(partialBottomIndex));
+			int bottomLinePixel= textWidget.getLinePixel(partialBottomIndex);
+			double bottomIndex= partialBottomIndex - ((double) bottomLinePixel - textWidget.getClientArea().height) / bottomLineHeight;
 
-	        visibleLines= bottomIndex - topIndex;
-	        invisibleLines= maxLines - visibleLines;
+			visibleLines= bottomIndex - topIndex;
+			invisibleLines= maxLines - visibleLines;
 		}
 	}
 

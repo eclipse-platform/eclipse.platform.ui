@@ -243,7 +243,7 @@ public class FastPartitionerTest {
 		int[] offsets= new int[] { 0, 1 };
 		assertComputePartitioning_InterleavingPartitions(offsets);
 
-    }
+	}
 
 	@Test
 	public void testBug368219_1() throws Exception {

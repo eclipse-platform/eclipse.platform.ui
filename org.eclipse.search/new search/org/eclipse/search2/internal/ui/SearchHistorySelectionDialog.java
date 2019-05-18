@@ -321,14 +321,14 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		table.setLayoutData(gd);
 
 
-        fRemoveButton= new Button(parent, SWT.PUSH);
-        fRemoveButton.setText(SearchMessages.SearchesDialog_remove_label);
-        fRemoveButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+		fRemoveButton= new Button(parent, SWT.PUSH);
+		fRemoveButton.setText(SearchMessages.SearchesDialog_remove_label);
+		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
-                buttonPressed(REMOVE_ID);
-            }
-        });
+				buttonPressed(REMOVE_ID);
+			}
+		});
 		fRemoveButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 

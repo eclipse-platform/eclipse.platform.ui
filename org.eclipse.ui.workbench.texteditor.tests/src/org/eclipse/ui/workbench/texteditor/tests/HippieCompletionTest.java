@@ -161,7 +161,7 @@ public class HippieCompletionTest {
 			list= fEngine.getCompletionsBackwards(documents[0],
 					"pri", documents[0].get().indexOf("println") + 1);
 			assertEquals(list.size(), 1);
-            assertEquals(list.get(0), "nt");
+			assertEquals(list.get(0), "nt");
 
 			list= fEngine.getCompletionsBackwards(documents[0],
 					"pa", 2);
@@ -192,22 +192,22 @@ public class HippieCompletionTest {
 	}
 
 	@Test
-    public void testSearchBackwards3() {
-        try {
-        	List<String> list= fEngine.getCompletionsBackwards(documents[1],
-                    "test", documents[1].getLength());
-            assertEquals("Number of backwards suggestions does not match", 2, list.size());
-            list= fEngine.getCompletionsBackwards(documents[1],
-                    "tests", documents[1].getLength());
-            assertEquals("Number of backwards suggestions does not match", 1, list.size());
+	public void testSearchBackwards3() {
+		try {
+			List<String> list= fEngine.getCompletionsBackwards(documents[1],
+					"test", documents[1].getLength());
+			assertEquals("Number of backwards suggestions does not match", 2, list.size());
+			list= fEngine.getCompletionsBackwards(documents[1],
+					"tests", documents[1].getLength());
+			assertEquals("Number of backwards suggestions does not match", 1, list.size());
 
-            list= fEngine.getCompletionsBackwards(documents[1],
-                    "test", documents[1].getLength() - 1);
-            assertEquals("Number of backwards suggestions does not match", 1, list.size());
-        } catch (BadLocationException e) {
-            assertTrue("Got out of document bounds", false);
-        }
-    }
+			list= fEngine.getCompletionsBackwards(documents[1],
+					"test", documents[1].getLength() - 1);
+			assertEquals("Number of backwards suggestions does not match", 1, list.size());
+		} catch (BadLocationException e) {
+			assertTrue("Got out of document bounds", false);
+		}
+	}
 
 	@Test
 	public void testSearch() {

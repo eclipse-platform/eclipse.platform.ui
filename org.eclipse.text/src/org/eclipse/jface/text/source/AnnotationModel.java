@@ -330,33 +330,33 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return (IAnnotationMap) fAnnotations;
 	}
 
-    @Override
+	@Override
 	public Object getLockObject() {
-        return getAnnotationMap().getLockObject();
-    }
+		return getAnnotationMap().getLockObject();
+	}
 
-    @Override
+	@Override
 	public void setLockObject(Object lockObject) {
-        getAnnotationMap().setLockObject(lockObject);
-    }
+		getAnnotationMap().setLockObject(lockObject);
+	}
 
-    /**
-     * Returns the current annotation model event. This is the event that will be sent out
-     * when calling <code>fireModelChanged</code>.
-     *
-     * @return the current annotation model event
-     * @since 3.0
-     */
-    protected final AnnotationModelEvent getAnnotationModelEvent() {
-    	synchronized (getLockObject()) {
-    		if (fModelEvent == null) {
-    			fModelEvent= createAnnotationModelEvent();
-    			fModelEvent.markWorldChange(false);
-    			fModificationStamp= new Object();
-    		}
-    		return fModelEvent;
-    	}
-    }
+	/**
+	 * Returns the current annotation model event. This is the event that will be sent out
+	 * when calling <code>fireModelChanged</code>.
+	 *
+	 * @return the current annotation model event
+	 * @since 3.0
+	 */
+	protected final AnnotationModelEvent getAnnotationModelEvent() {
+		synchronized (getLockObject()) {
+			if (fModelEvent == null) {
+				fModelEvent= createAnnotationModelEvent();
+				fModelEvent.markWorldChange(false);
+				fModificationStamp= new Object();
+			}
+			return fModelEvent;
+		}
+	}
 
 	@Override
 	public void addAnnotation(Annotation annotation, Position position) {
@@ -442,9 +442,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				IAnnotationModelListenerExtension extension= (IAnnotationModelListenerExtension) listener;
 				AnnotationModelEvent event= createAnnotationModelEvent();
 				event.markSealed();
-			    extension.modelChanged(event);
+				extension.modelChanged(event);
 			} else
-			    listener.modelChanged(this);
+				listener.modelChanged(this);
 		}
 	}
 

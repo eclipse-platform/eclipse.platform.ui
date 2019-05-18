@@ -50,6 +50,6 @@ public abstract class AbstractLineTrackerTest {
 	protected final void set(String string) {
 		fText.set(string);
 		fTracker.set(string);
-    }
+	}
 
 }

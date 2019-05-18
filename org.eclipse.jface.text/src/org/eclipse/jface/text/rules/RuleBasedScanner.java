@@ -195,7 +195,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 
 	@Override
 	public void unread() {
-    	--fOffset;
+		--fOffset;
 		fColumn= UNDEFINED;
 	}
 }

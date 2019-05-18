@@ -69,9 +69,9 @@ class TemplatesTransfer extends ByteArrayTransfer {
 
 	@Override
 	protected Object nativeToJava(TransferData transferData) {
-        Object result= super.nativeToJava(transferData);
-        if (!(result instanceof byte[]) || !TYPE_NAME.equals(new String((byte[]) result)))
-        	return null ;
+		Object result= super.nativeToJava(transferData);
+		if (!(result instanceof byte[]) || !TYPE_NAME.equals(new String((byte[]) result)))
+			return null ;
 		return fObject ;
 	}
 }

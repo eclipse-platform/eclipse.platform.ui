@@ -132,10 +132,10 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		item.fill(parent, -1);
 	}
 
-    @Override
+	@Override
 	public void run() {
 		// nothing to do
-	    }
+	}
 
 	private SorterDescriptor findSorter(String pageId) {
 		Iterator<SorterDescriptor> iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();

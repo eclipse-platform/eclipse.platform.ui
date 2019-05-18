@@ -18,6 +18,6 @@ import org.eclipse.jface.text.reconciler.Reconciler;
 
 public class TheReconcilerSecond extends Reconciler{
 	public TheReconcilerSecond() {
-        this.setReconcilingStrategy(new ReconcilerStrategySecond(), IDocument.DEFAULT_CONTENT_TYPE);
+		this.setReconcilingStrategy(new ReconcilerStrategySecond(), IDocument.DEFAULT_CONTENT_TYPE);
 	}
 }

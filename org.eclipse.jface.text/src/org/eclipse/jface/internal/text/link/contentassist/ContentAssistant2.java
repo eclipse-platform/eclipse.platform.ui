@@ -1541,7 +1541,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * @since 3.4
 	 */
 	boolean isColoredLabelsSupportEnabled() {
-	    return fIsColoredLabelsSupportEnabled;
+		return fIsColoredLabelsSupportEnabled;
 	}
 
 	/**

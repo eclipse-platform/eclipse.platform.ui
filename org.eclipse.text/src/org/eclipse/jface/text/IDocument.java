@@ -628,10 +628,10 @@ public interface IDocument {
 
 	/**
 	 * Returns the line delimiter of that line or <code>null</code> if the
-     * line is not closed with a line delimiter.
+	 * line is not closed with a line delimiter.
 	 *
 	 * @param line the line of interest
-     * @return the line's delimiter or <code>null</code> if line does not have a delimiter
+	 * @return the line's delimiter or <code>null</code> if line does not have a delimiter
 	 * @exception BadLocationException if the line number is invalid in this document
 	 */
 	String getLineDelimiter(int line) throws BadLocationException;

@@ -23,9 +23,9 @@ public final class SearchMessages extends NLS {
 		// Do not instantiate
 	}
 
-    static {
-        NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
-    }
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
+	}
 
 	public static String AbstractTextSearchViewPage_update_job_name;
 	public static String MatchFilterSelectionAction_label;
@@ -92,11 +92,11 @@ public final class SearchMessages extends NLS {
 	public static String PinSearchViewAction_label;
 	public static String PinSearchViewAction_tooltip;
 	public static String SearchPageRegistry_error_creating_extensionpoint;
-    public static String TextSearchGroup_submenu_text;
-    public static String FindInWorkspaceActionDelegate_text;
-    public static String FindInProjectActionDelegate_text;
-    public static String FindInWorkingSetActionDelegate_text;
-    public static String FindInFileActionDelegate_text;
+	public static String TextSearchGroup_submenu_text;
+	public static String FindInWorkspaceActionDelegate_text;
+	public static String FindInProjectActionDelegate_text;
+	public static String FindInWorkingSetActionDelegate_text;
+	public static String FindInFileActionDelegate_text;
 	public static String TextSearchQueryProviderRegistry_defaultProviderLabel;
 	public static String RetrieverAction_dialog_title;
 	public static String RetrieverAction_empty_selection;

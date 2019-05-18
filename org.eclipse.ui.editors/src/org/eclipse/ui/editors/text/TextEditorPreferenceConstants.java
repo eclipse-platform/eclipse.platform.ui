@@ -24,7 +24,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
  * @since 2.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
-  */
+ */
 public class TextEditorPreferenceConstants {
 
 	/**
@@ -60,7 +60,7 @@ public class TextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that controls whether the print margin is turned on or off
- 	 * (value <code>"printMargin"</code>).
+	 * (value <code>"printMargin"</code>).
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
@@ -125,7 +125,7 @@ public class TextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that controls whether the overview ruler shows unknown indicators
- 	 * (value <code>"othersIndicationInOverviewRuler"</code>).
+	 * (value <code>"othersIndicationInOverviewRuler"</code>).
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
@@ -137,7 +137,7 @@ public class TextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that controls if the overview ruler is shown in the UI
- 	 * (value <code>"overviewRuler"</code>).
+	 * (value <code>"overviewRuler"</code>).
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
@@ -281,10 +281,10 @@ public class TextEditorPreferenceConstants {
 	public final static String EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER= "searchResultIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**
-  	* Initializes the given preference store with the default values.
+	* Initializes the given preference store with the default values.
 	 *
-  	* @param store the preference store to be initialized
-  	*/
+	* @param store the preference store to be initialized
+	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
 
 		// set defaults from AbstractDecoratedTextEditor

@@ -149,7 +149,7 @@ public class InfoForm {
 		fText.setText(info);
 	}
 
-    /**
+	/**
 	 * Handles the property change.
 	 *
 	 * @param event the property change event object describing which property changed and how

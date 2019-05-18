@@ -150,7 +150,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				}
 			}
 
-            reconcilerReset();
+			reconcilerReset();
 		}
 
 		/**
@@ -482,12 +482,12 @@ abstract public class AbstractReconciler implements IReconciler {
 			}
 			fListener= null;
 
-            synchronized (this) {
-                // http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
-    			BackgroundThread bt= fThread;
-    			fThread= null;
-    			bt.cancel();
-            }
+			synchronized (this) {
+				// http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
+				BackgroundThread bt= fThread;
+				fThread= null;
+				bt.cancel();
+			}
 		}
 	}
 
@@ -578,13 +578,13 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 	}
 
-    /**
-     * Hook that is called after the reconciler thread has been reset.
-     */
-    protected void reconcilerReset() {
-    }
+	/**
+	 * Hook that is called after the reconciler thread has been reset.
+	 */
+	protected void reconcilerReset() {
+	}
 
-    /**
+	/**
 	 * Tells whether the code is running in this reconciler's
 	 * background thread.
 	 *

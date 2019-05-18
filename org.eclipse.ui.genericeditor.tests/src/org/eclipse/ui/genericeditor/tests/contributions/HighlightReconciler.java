@@ -22,9 +22,9 @@ public class HighlightReconciler extends Reconciler {
 	private HighlightStrategy fStrategy;
 
 	public HighlightReconciler() {
-        fStrategy = new HighlightStrategy();
-        this.setReconcilingStrategy(fStrategy, IDocument.DEFAULT_CONTENT_TYPE);
-    }
+		fStrategy = new HighlightStrategy();
+		this.setReconcilingStrategy(fStrategy, IDocument.DEFAULT_CONTENT_TYPE);
+	}
 
 	@Override
 	public void install(ITextViewer textViewer) {

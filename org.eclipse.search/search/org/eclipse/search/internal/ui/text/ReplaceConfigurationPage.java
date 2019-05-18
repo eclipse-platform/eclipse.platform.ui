@@ -63,12 +63,12 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 	public ReplaceConfigurationPage(ReplaceRefactoring refactoring) {
 		super("ReplaceConfigurationPage"); //$NON-NLS-1$
 		fReplaceRefactoring= refactoring;
-    }
+	}
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
-    	Composite result= new Composite(parent, SWT.NONE);
-    	GridLayout layout= new GridLayout(2, false);
+		Composite result= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout(2, false);
 		result.setLayout(layout);
 
 		Label description= new Label(result, SWT.NONE);
@@ -153,7 +153,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		Dialog.applyDialogFont(result);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ISearchHelpContextIds.REPLACE_DIALOG);
-    }
+	}
 
 	final void updateOKStatus() {
 		RefactoringStatus status= new RefactoringStatus();
@@ -176,7 +176,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		fTextFieldContentAssist.setEnabled(enable);
 	}
 
-    @Override
+	@Override
 	protected boolean performFinish() {
 		initializeRefactoring();
 		storeSettings();
@@ -204,10 +204,10 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_GROUP);
 		settings.put(SETTINGS_REPLACE_WITH, history.toArray(new String[history.size()]));
 
-    }
+	}
 
 	private void initializeRefactoring() {
 		fReplaceRefactoring.setReplaceString(fTextField.getText());
-    }
+	}
 
 }

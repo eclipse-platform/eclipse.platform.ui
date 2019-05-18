@@ -172,34 +172,34 @@ abstract class TreeLineTracker implements ILineTracker {
 	 *
 	 * @param tracker the list line tracker
 	 */
-    TreeLineTracker(ListLineTracker tracker) {
-    	final List<Line> lines= tracker.getLines();
-    	final int n= lines.size();
-    	if (n == 0)
-    		return;
+	TreeLineTracker(ListLineTracker tracker) {
+		final List<Line> lines= tracker.getLines();
+		final int n= lines.size();
+		if (n == 0)
+			return;
 
-    	Line line= lines.get(0);
-    	String delim= line.delimiter;
-    	if (delim == null)
-    		delim= NO_DELIM;
-    	int length= line.length;
-    	fRoot= new Node(length, delim);
-    	Node node= fRoot;
+		Line line= lines.get(0);
+		String delim= line.delimiter;
+		if (delim == null)
+			delim= NO_DELIM;
+		int length= line.length;
+		fRoot= new Node(length, delim);
+		Node node= fRoot;
 
 		for (int i= 1; i < n; i++) {
-	        line= lines.get(i);
-	        delim= line.delimiter;
-	        if (delim == null)
-	        	delim= NO_DELIM;
-	        length= line.length;
+			line= lines.get(i);
+			delim= line.delimiter;
+			if (delim == null)
+				delim= NO_DELIM;
+			length= line.length;
 			node= insertAfter(node, length, delim);
-        }
+		}
 
 		if (node.delimiter != NO_DELIM)
 			insertAfter(node, 0, NO_DELIM);
 
 		if (ASSERT) checkTree();
-    }
+	}
 
 	/**
 	 * Returns the node (line) including a certain offset. If the offset is between two
