@@ -382,9 +382,9 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			String tag = localName.trim();
 
 			if (tag.equalsIgnoreCase(CFG)) {
-				 // This is a bit of a hack.
-				 // When no features were added to the site, but the site is initialized from platform.xml 
-				 // we need to set the feature set to empty, so we don't try to detect them.
+				// This is a bit of a hack.
+				// When no features were added to the site, but the site is initialized from platform.xml 
+				// we need to set the feature set to empty, so we don't try to detect them.
 				SiteEntry[] sites = config.getSites();
 				for (int i=0; i<sites.length; i++)
 					sites[i].initialized();

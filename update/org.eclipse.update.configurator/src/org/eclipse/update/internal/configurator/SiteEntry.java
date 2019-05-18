@@ -435,7 +435,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		} catch (SAXException e) {
 			String pluginFileString = pluginFile.getAbsolutePath();
 			Utils.log(NLS.bind(Messages.InstalledSiteParser_ErrorParsingFile, (new String[] { pluginFileString })));
-        }
+		}
 	}
 
 	/**

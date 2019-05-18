@@ -338,7 +338,7 @@ public class FeatureEntry
 	}
 	
 	public boolean hasBranding() {
-        String bundleId = getFeaturePluginIdentifier();
+		String bundleId = getFeaturePluginIdentifier();
 		return bundleId != null && Utils.getBundle(bundleId) != null;
 	}
 }

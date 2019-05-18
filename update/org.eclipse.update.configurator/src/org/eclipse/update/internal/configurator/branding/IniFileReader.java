@@ -239,7 +239,7 @@ public class IniFileReader {
 	 * @param runtimeMappings runtime mappings or <code>null</code>
 	 * @return the resource string
 	 */
-	 public String getResourceString(String value, Hashtable<String, String> runtimeMappings) {
+	public String getResourceString(String value, Hashtable<String, String> runtimeMappings) {
 		
 		if (value == null)
 			return null;

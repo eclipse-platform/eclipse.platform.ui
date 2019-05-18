@@ -49,13 +49,13 @@ import org.xml.sax.SAXException;
 public class TaskXMLFileMerger {
 
 	//Definitions for the HTML Generated XML File
-    public static String HTML_TASKS_DESCRIPTION_XML_FILE_NAME = "/tasks.xml"; //$NON-NLS-1$
-    public static String HTML_XML_TAG_TASKS = "TASKS"; //$NON-NLS-1$
-    public static String HTML_XML_TAG_TASK = "TASK"; //$NON-NLS-1$
-    public static String HTML_XML_TAG_ATTRIBUTE = "ATTRIBUTE"; //$NON-NLS-1$
-    //public static String HTML_XML_TAG_DESCRIPTION = "DESCRIPTION";
-    public static String HTML_XML_ATTRIBUTE_NAME = "NAME"; //$NON-NLS-1$
-    public static String HTML_XML_ATTRIBUTE_REQUIRED = "REQUIRED"; //$NON-NLS-1$
+	public static String HTML_TASKS_DESCRIPTION_XML_FILE_NAME = "/tasks.xml"; //$NON-NLS-1$
+	public static String HTML_XML_TAG_TASKS = "TASKS"; //$NON-NLS-1$
+	public static String HTML_XML_TAG_TASK = "TASK"; //$NON-NLS-1$
+	public static String HTML_XML_TAG_ATTRIBUTE = "ATTRIBUTE"; //$NON-NLS-1$
+	//public static String HTML_XML_TAG_DESCRIPTION = "DESCRIPTION";
+	public static String HTML_XML_ATTRIBUTE_NAME = "NAME"; //$NON-NLS-1$
+	public static String HTML_XML_ATTRIBUTE_REQUIRED = "REQUIRED"; //$NON-NLS-1$
 
 	//Definitions for the XDoclet Genereated XML File
 	public static String XDOC_TASKS_DESCRIPTION_XML_FILE_NAME = "/XDOCtasks.xml"; //$NON-NLS-1$
@@ -70,56 +70,56 @@ public class TaskXMLFileMerger {
 	public static String XDOC_XML_TAG_REQUIRED = "required"; //$NON-NLS-1$
 	
 
-    protected NodeList taskNodes_HTML = null;
+	protected NodeList taskNodes_HTML = null;
 	protected NodeList taskNodes_XDOC = null;
 	public Document xdocXMLDocument = null;
 
-    /**
-     * Creates an initialized instance.
-     */
-    public TaskXMLFileMerger() {
-        initialize();
-    }
+	/**
+	 * Creates an initialized instance.
+	 */
+	public TaskXMLFileMerger() {
+		initialize();
+	}
 
-    
-    /**
-     * Parses the task description xml files and stores the information.
-     */
+	
+	/**
+	 * Parses the task description xml files and stores the information.
+	 */
 	private void initialize() {
-    	
-    	Document tmpDocument = null;
-    	
-    	//Get All the Tasks in the HTML XML Generated file and store in the taskNodes_HTML
-    	tmpDocument = parseFile(HTML_TASKS_DESCRIPTION_XML_FILE_NAME);
-    	taskNodes_HTML = tmpDocument.getFirstChild().getChildNodes();
-    	
-    	//Do the same for the XDOC XML Generated file
-    	tmpDocument = parseFile(XDOC_TASKS_DESCRIPTION_XML_FILE_NAME);
-    	taskNodes_XDOC = tmpDocument.getFirstChild().getChildNodes();
-    	xdocXMLDocument = tmpDocument;
-/*   	
-        Document tempDocument = parseFile(aFileName);
-        Node tempRootNode = tempDocument.getDocumentElement();
-        NodeList tempChildNodes = tempRootNode.getChildNodes();
-        for(int i=0; i<tempChildNodes.getLength(); i++) {
-            Node tempNode = tempChildNodes.item(i);
-            if(tempNode.getNodeType() == Node.ELEMENT_NODE) {
-                String tempTagName = tempNode.getNodeName();
-                if(tempTagName.equals(anXML_TAG_TASK)) {
-                    NamedNodeMap tempAttributes = tempNode.getAttributes();
-                    Node tempAttributeNode = tempAttributes.getNamedItem(anXML_ATTRIBUTE_NAME);
-                    if(tempAttributeNode != null) {
-                        String tempTaskName = tempAttributeNode.getNodeValue();
-                        if(tempTaskName != null) {
-                           aHashMap.put(tempTaskName, tempNode);
-                        }
-                    }
-                }
-            }
-        }
+		
+		Document tmpDocument = null;
+		
+		//Get All the Tasks in the HTML XML Generated file and store in the taskNodes_HTML
+		tmpDocument = parseFile(HTML_TASKS_DESCRIPTION_XML_FILE_NAME);
+		taskNodes_HTML = tmpDocument.getFirstChild().getChildNodes();
+		
+		//Do the same for the XDOC XML Generated file
+		tmpDocument = parseFile(XDOC_TASKS_DESCRIPTION_XML_FILE_NAME);
+		taskNodes_XDOC = tmpDocument.getFirstChild().getChildNodes();
+		xdocXMLDocument = tmpDocument;
+/*
+		Document tempDocument = parseFile(aFileName);
+		Node tempRootNode = tempDocument.getDocumentElement();
+		NodeList tempChildNodes = tempRootNode.getChildNodes();
+		for(int i=0; i<tempChildNodes.getLength(); i++) {
+			Node tempNode = tempChildNodes.item(i);
+			if(tempNode.getNodeType() == Node.ELEMENT_NODE) {
+				String tempTagName = tempNode.getNodeName();
+				if(tempTagName.equals(anXML_TAG_TASK)) {
+					NamedNodeMap tempAttributes = tempNode.getAttributes();
+					Node tempAttributeNode = tempAttributes.getNamedItem(anXML_ATTRIBUTE_NAME);
+					if(tempAttributeNode != null) {
+						String tempTaskName = tempAttributeNode.getNodeValue();
+						if(tempTaskName != null) {
+							aHashMap.put(tempTaskName, tempNode);
+						}
+					}
+				}
+			}
+		}
 */
-    }
-    
+	}
+	
 
 	/**
 	 * This is the function that does all the work. Calling this
@@ -168,13 +168,13 @@ public class TaskXMLFileMerger {
 			Node tmpTaskNode = taskNodes_HTML.item(i);
 			if(tmpTaskNode.getNodeType() == Node.ELEMENT_NODE ) {
 				String tmpTagName = tmpTaskNode.getNodeName();
-                if(tmpTagName.equals(HTML_XML_TAG_TASK)) {
-                	NamedNodeMap tmpMap = tmpTaskNode.getAttributes();
-                	Node tmpNameNode = tmpMap.getNamedItem(HTML_XML_ATTRIBUTE_NAME);
-                	if( aTaskName.equals(tmpNameNode.getNodeValue()) ) {
-                		return tmpTaskNode;
-                	}
-                }
+				if(tmpTagName.equals(HTML_XML_TAG_TASK)) {
+					NamedNodeMap tmpMap = tmpTaskNode.getAttributes();
+					Node tmpNameNode = tmpMap.getNamedItem(HTML_XML_ATTRIBUTE_NAME);
+					if( aTaskName.equals(tmpNameNode.getNodeValue()) ) {
+						return tmpTaskNode;
+					}
+				}
 			}
 		}
 		//Not found
@@ -182,16 +182,16 @@ public class TaskXMLFileMerger {
 	}
 	
 	private void replaceAttributeRequiredInXMLTaskNodeWithAttributeRequiredInHTMLNode(Node aTargetTaskNode,
-																						  Node aSourceTaskNode) {
+																						Node aSourceTaskNode) {
 		
 			Node tmpStructureNode = getChildNodeNamedWithTypeFromNode( XDOC_XML_TAG_STRUCTURE,
-															  			Node.ELEMENT_NODE,
-															  			aTargetTaskNode );
-															  
+																		Node.ELEMENT_NODE,
+																		aTargetTaskNode );
+															
 			if(tmpStructureNode != null ) {
 				Node tmpTargetAttributesNode = getChildNodeNamedWithTypeFromNode(XDOC_XML_TAG_ATTRIBUTES,
-															  					  Node.ELEMENT_NODE,
-															  					  tmpStructureNode);
+																					Node.ELEMENT_NODE,
+																					tmpStructureNode);
 				if(tmpTargetAttributesNode != null ) {
 					Vector tmpTargetAttributesVector = getAttributeNodesFromXMLAttributesNode(tmpTargetAttributesNode);
 					Vector tmpSourceAttributesVector = getAttributeNodesFromHTMLTaskNode(aSourceTaskNode);
@@ -258,16 +258,16 @@ public class TaskXMLFileMerger {
 	}
 	
 	/**
-     * Returns the ChildNode of the node defined by the Arguments. The
-     * first child found matching the criterias is returned.
-     * 
-     * @param aNodeName The Name of the Node to return.
-     * @param aType The Type of the node @see Node
-     * @param aParentNode The Node to get the child from
-     * 
-     * @return The First Child Node found matching the criterias,
-     * or null if none is found.
-     */																		  			
+	 * Returns the ChildNode of the node defined by the Arguments. The
+	 * first child found matching the criterias is returned.
+	 * 
+	 * @param aNodeName The Name of the Node to return.
+	 * @param aType The Type of the node @see Node
+	 * @param aParentNode The Node to get the child from
+	 * 
+	 * @return The First Child Node found matching the criterias,
+	 * or null if none is found.
+	 */	
 	private Node getChildNodeNamedWithTypeFromNode(String aName, short aNodeType, Node aNode ) {
 		
 		NodeList tmpNodeList = aNode.getChildNodes();
@@ -282,45 +282,45 @@ public class TaskXMLFileMerger {
 	} 
 			
 		
-    /**
-     * Returns the (DOM) document as a result of parsing the file with the 
-     * specified file name.
-     * <P>
-     * The file will be loaded as resource, thus must begin with '/' and must
-     * be relative to the classpath.
-     */
+	/**
+	 * Returns the (DOM) document as a result of parsing the file with the 
+	 * specified file name.
+	 * <P>
+	 * The file will be loaded as resource, thus must begin with '/' and must
+	 * be relative to the classpath.
+	 */
 	private Document parseFile(String aFileName) {
-        Document tempDocument = null;
+		Document tempDocument = null;
 
-        DocumentBuilderFactory tempFactory = DocumentBuilderFactory.newInstance();
-        tempFactory.setIgnoringComments(true);
-        tempFactory.setIgnoringElementContentWhitespace(true);
-        tempFactory.setCoalescing(true);
+		DocumentBuilderFactory tempFactory = DocumentBuilderFactory.newInstance();
+		tempFactory.setIgnoringComments(true);
+		tempFactory.setIgnoringElementContentWhitespace(true);
+		tempFactory.setCoalescing(true);
 
-        try {
-            DocumentBuilder tempDocBuilder = tempFactory.newDocumentBuilder();
-            URL tempURL = getClass().getResource(aFileName);
-            InputSource tempInputSource = new InputSource(tempURL.toExternalForm());
-            tempDocument = tempDocBuilder.parse(tempInputSource);
-        } catch (ParserConfigurationException e) {
+		try {
+			DocumentBuilder tempDocBuilder = tempFactory.newDocumentBuilder();
+			URL tempURL = getClass().getResource(aFileName);
+			InputSource tempInputSource = new InputSource(tempURL.toExternalForm());
+			tempDocument = tempDocBuilder.parse(tempInputSource);
+		} catch (ParserConfigurationException e) {
 			AntUIPlugin.log(e);
-        }
-        catch (IOException ioException) {
+		}
+		catch (IOException ioException) {
 			AntUIPlugin.log(ioException);
-        }
-        catch (SAXException saxException) {
+		}
+		catch (SAXException saxException) {
 			AntUIPlugin.log(saxException);
-        }
+		}
 
-        return tempDocument;
-    }
-    
-    /**
-     * This function writes the XMLDocument to the specified file.
-     * @param aFileName The filename to which the XMLDocument should be written.
-     */
-    public void writeXMLDocumentToFile(String aFileName) {
-    	
+		return tempDocument;
+	}
+	
+	/**
+	 * This function writes the XMLDocument to the specified file.
+	 * @param aFileName The filename to which the XMLDocument should be written.
+	 */
+	public void writeXMLDocumentToFile(String aFileName) {
+		
 //    	try {	
 //    		XmlDocument xmlDocument = (XmlDocument)xdocXMLDocument;
 //    		xmlDocument.write(new FileWriter(aFileName), "UTF-8"); //$NON-NLS-1$
@@ -328,7 +328,7 @@ public class TaskXMLFileMerger {
 //    	catch(IOException ioe) {
 //    		System.out.println(MessageFormat.format(AntEditorToolsMessages.getString("TaskXMLFileMerger.Could_not_print"), new String[]{ioe.toString()})); //$NON-NLS-1$
 //    	} 
-    }
+	}
 	
 	public static void main(String[] args) {
 		

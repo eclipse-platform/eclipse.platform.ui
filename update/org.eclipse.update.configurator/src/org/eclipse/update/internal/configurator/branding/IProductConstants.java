@@ -44,11 +44,11 @@ public interface IProductConstants {
 	 * product. Products designed to run "headless" typically would not 
 	 * have such an image.
 	 * <p>
-     * A full-sized product image (no larger than 500x330 pixels) is
-     * shown without the "aboutText" blurb.  A half-sized product image
-     * (no larger than 250x330 pixels) is shown with the "aboutText"
-     * blurb beside it.
-     */
+	 * A full-sized product image (no larger than 500x330 pixels) is
+	 * shown without the "aboutText" blurb.  A half-sized product image
+	 * (no larger than 250x330 pixels) is shown with the "aboutText"
+	 * blurb beside it.
+	 */
 	public static final String ABOUT_IMAGE = "aboutImage"; //$NON-NLS-1$
 
 	/**

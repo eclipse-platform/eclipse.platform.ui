@@ -484,15 +484,15 @@ public class Utils {
 			return url;
 		try {
 			String path = new URL(url).getPath();			
-	        // normalize to not have leading / so we can check the form
-	        File file = new File(path);
-	        path = file.toString().replace('\\', '/');
-            if (Character.isUpperCase(path.charAt(0))) {
-                char[] chars = path.toCharArray();
-                chars[0] = Character.toLowerCase(chars[0]);
-                path = new String(chars);
-                return new File(path).toURL().toExternalForm();
-            }
+			// normalize to not have leading / so we can check the form
+			File file = new File(path);
+			path = file.toString().replace('\\', '/');
+			if (Character.isUpperCase(path.charAt(0))) {
+				char[] chars = path.toCharArray();
+				chars[0] = Character.toLowerCase(chars[0]);
+				path = new String(chars);
+				return new File(path).toURL().toExternalForm();
+			}
 		} catch (MalformedURLException e) {
 			// default to original url
 		}		
