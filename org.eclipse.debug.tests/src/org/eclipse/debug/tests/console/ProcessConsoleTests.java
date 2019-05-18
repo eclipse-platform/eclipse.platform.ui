@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
@@ -117,9 +118,11 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 		final String input = prefix + String.join("", Collections.nCopies(numTwoByteCharacters, "\u00F8"));
 		final MockProcess mockProcess = new MockProcess(input.getBytes(StandardCharsets.UTF_8).length, testTimeout);
 		try {
-			final IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), mockProcess, "testUtf8Input");
+			final ILaunch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
+			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, StandardCharsets.UTF_8.toString());
+			final IProcess process = DebugPlugin.newProcess(launch, mockProcess, "testUtf8Input");
 			@SuppressWarnings("restriction")
-			final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider());
+			final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider(), StandardCharsets.UTF_8.toString());
 			try {
 				console.initialize();
 				console.getInputStream().appendData(input);
