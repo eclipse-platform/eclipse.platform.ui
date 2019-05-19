@@ -79,9 +79,9 @@ public class IndexSee extends UAElement implements IIndexSee, Comparable<Object>
 				if (i >= targetPath.length) {
 					return 1;
 				}
-                if (getCategory(path[i]) != getCategory(targetPath[i])) {
-                	return getCategory(path[i]) - getCategory(targetPath[i]);
-                }
+				if (getCategory(path[i]) != getCategory(targetPath[i])) {
+					return getCategory(path[i]) - getCategory(targetPath[i]);
+				}
 				int result = collator.compare(path[i], targetPath[i]);
 				if (result != 0) {
 					return result;
@@ -105,7 +105,7 @@ public class IndexSee extends UAElement implements IIndexSee, Comparable<Object>
 			result += subpaths[i].getKeyword().hashCode();
 		}
 		return result;
-    }
+	}
 
 	@Override
 	public boolean isSeeAlso() {

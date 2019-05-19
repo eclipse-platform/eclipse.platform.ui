@@ -24,25 +24,25 @@ import org.w3c.dom.Element;
  */
 public class IntroInjectedIFrame extends AbstractIntroIdElement {
 
-    private String url;
+	private String url;
 
-    IntroInjectedIFrame(Element element, Bundle bundle) {
-        super(element, bundle);
-    }
+	IntroInjectedIFrame(Element element, Bundle bundle) {
+		super(element, bundle);
+	}
 
-    public void setIFrameURL(String url) {
-        this.url = url;
-    }
+	public void setIFrameURL(String url) {
+		this.url = url;
+	}
 
-    public String getIFrameURL() {
-        return this.url;
-    }
+	public String getIFrameURL() {
+		return this.url;
+	}
 
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.INJECTED_IFRAME;
-    }
+		return AbstractIntroElement.INJECTED_IFRAME;
+	}
 
 
 }

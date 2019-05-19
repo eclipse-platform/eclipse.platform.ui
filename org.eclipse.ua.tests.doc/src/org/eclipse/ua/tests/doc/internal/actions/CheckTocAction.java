@@ -32,11 +32,11 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
 	public static List<BrokenLink> errors = new ArrayList<>();
 
-    public static void showErrors() {
-    	if (errors.size() == 0) {
-    		reportStatus("No errors detected in load");
-    	}
-    	for (int i = 0; i < errors.size(); i++) {
+	public static void showErrors() {
+		if (errors.size() == 0) {
+			reportStatus("No errors detected in load");
+		}
+		for (int i = 0; i < errors.size(); i++) {
 			BrokenLink link = errors.get(i);
 			reportStatus("Invalid link in \"" + link.getTocID() + "\": " + link.getHref());
 		}
@@ -67,7 +67,7 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 			return;
 		}
 		Toc[] tocsToCheck = dlg.getTocsToCheck();
-	    checkTocFilesExist(tocsToCheck);
+		checkTocFilesExist(tocsToCheck);
 
 	}
 

@@ -39,10 +39,10 @@ public class ConcurrentTocAccess {
 			this.dimensions = dimensions;
 			result = new StringBuilder();
 			result.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            result.append("<?NLS TYPE=\"org.eclipse.help.toc\"?>\n");
-            result.append("<toc label=\"Test Toc\" >\n");
-	        generateTopics(0);
-            result.append("</toc>");
+			result.append("<?NLS TYPE=\"org.eclipse.help.toc\"?>\n");
+			result.append("<toc label=\"Test Toc\" >\n");
+			generateTopics(0);
+			result.append("</toc>");
 			return result.toString();
 		}
 
@@ -73,12 +73,12 @@ public class ConcurrentTocAccess {
 
 		@Override
 		public void run() {
-            try {
+			try {
 				int result = traverseToc(toc);
 				setLeafCount(result);
 			} catch (Exception e) {
-                setLeafCount(-1);
-                this.exception = e;
+				setLeafCount(-1);
+				this.exception = e;
 			}
 		}
 
@@ -119,8 +119,8 @@ public class ConcurrentTocAccess {
 			}
 			for (int i = 0; i < numberOfThreads; i++) {
 				if (visitors[i].isAlive()) {
-				    complete = false;
-				    try {
+					complete = false;
+					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						fail("Interrupted Exception");
@@ -183,7 +183,7 @@ public class ConcurrentTocAccess {
 		Toc toc;
 		Document doc;
 		try {
-		    doc = DocumentCreator.createDocument(tocSource);
+			doc = DocumentCreator.createDocument(tocSource);
 		} catch (Exception e) {
 			fail("Exception creating TOC");
 			doc = null;

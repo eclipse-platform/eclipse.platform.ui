@@ -186,13 +186,13 @@ public class FilterTest {
 	@Test
 	public void testCharsetUtf8Upper() {
 		InputStream is = new ByteArrayInputStream(CONTENT_TYPE_UTF8UC.getBytes());
-	    assertEquals("UTF-8", HTMLDocParser.getCharsetFromHTML(is));
+		assertEquals("UTF-8", HTMLDocParser.getCharsetFromHTML(is));
 	}
 
 	@Test
 	public void testCharsetISO_8859_UCUpper() {
 		InputStream is = new ByteArrayInputStream(CONTENT_TYPE_ISO_8859_1_UC.getBytes());
-	    assertEquals("ISO-8859-1", HTMLDocParser.getCharsetFromHTML(is));
+		assertEquals("ISO-8859-1", HTMLDocParser.getCharsetFromHTML(is));
 	}
 
 }

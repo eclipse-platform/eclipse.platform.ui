@@ -47,5 +47,5 @@ public class TocFileParser extends DefaultHandler {
 				throw new FileNotFoundException();
 			}
 		}
-    }
+	}
 }

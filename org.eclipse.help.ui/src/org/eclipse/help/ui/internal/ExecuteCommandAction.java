@@ -131,10 +131,10 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
 			Object serviceObject = wb.getAdapter(IHandlerService.class);
-		    if (serviceObject != null) {
-			    IHandlerService service = (IHandlerService)serviceObject;
-			    return service;
-		    }
+			if (serviceObject != null) {
+				IHandlerService service = (IHandlerService)serviceObject;
+				return service;
+			}
 		}
 		return null;
 	}

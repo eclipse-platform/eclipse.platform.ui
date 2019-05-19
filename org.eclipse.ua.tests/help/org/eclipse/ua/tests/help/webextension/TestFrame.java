@@ -43,7 +43,7 @@ public class TestFrame extends AbstractFrame {
 	@Override
 	public boolean isVisible() {
 		return Platform.getPreferencesService().getBoolean
-	    (UserAssistanceTestPlugin.getPluginId(), "extraFrame", false, null);
+		(UserAssistanceTestPlugin.getPluginId(), "extraFrame", false, null);
 	}
 
 }

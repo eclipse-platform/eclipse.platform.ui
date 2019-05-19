@@ -29,13 +29,13 @@ import org.eclipse.ui.intro.IIntroSite;
  */
 public interface IIntroAction {
 
-    /**
-     * Called to run this intro command. The properties represents the key=value
-     * pairs extracted from the intro URL query.
-     *
-     * @param site The part to execute the command on.
-     * @param params Parameters for the command as extracted from the URL.
-     */
-    public void run(IIntroSite site, Properties params);
+	/**
+	 * Called to run this intro command. The properties represents the key=value
+	 * pairs extracted from the intro URL query.
+	 *
+	 * @param site The part to execute the command on.
+	 * @param params Parameters for the command as extracted from the URL.
+	 */
+	public void run(IIntroSite site, Properties params);
 
 }

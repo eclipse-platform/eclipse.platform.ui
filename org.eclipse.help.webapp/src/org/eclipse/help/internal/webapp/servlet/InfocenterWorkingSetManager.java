@@ -180,7 +180,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 					if (suffixStart > 0) {
 						previousToc = decodedName.substring(0, suffixStart);
 					} else if (suffixStart == 0) {
-					    decodedName = previousToc + decodedName;
+						decodedName = previousToc + decodedName;
 					}
 					elements[e] = getAdaptableTopic(decodedName);
 				}
@@ -211,14 +211,14 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				continue;
 			}
 			String name = URLCoder.decode(nameAndCriteria[0]);
-		    List<CriterionResource> criteriaResource = new ArrayList<>();
+			List<CriterionResource> criteriaResource = new ArrayList<>();
 			for (int j = 1; j < nameAndCriteria.length; ++j) {
 				String criterion = nameAndCriteria[j];
 				String[] keyAndValue = criterion.split("#", -1); //$NON-NLS-1$
 				if(keyAndValue.length != 2)
 					continue;
 				String key = URLCoder.decode(keyAndValue[0]);
-			    String value = URLCoder.decode(keyAndValue[1]);
+				String value = URLCoder.decode(keyAndValue[1]);
 				String[] criterionValues = value.split(",", -1); //$NON-NLS-1$
 				if(criterionValues.length < 1)
 					continue;

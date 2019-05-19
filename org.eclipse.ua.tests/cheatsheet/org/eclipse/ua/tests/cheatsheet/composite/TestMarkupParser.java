@@ -35,7 +35,7 @@ public class TestMarkupParser {
 		StringReader reader = new StringReader(input);
 		InputSource source = new InputSource(reader);
 
-	    DocumentBuilder documentBuilder = CheatSheetPlugin.getPlugin()
+		DocumentBuilder documentBuilder = CheatSheetPlugin.getPlugin()
 					.getDocumentBuilder();
 		try {
 			return documentBuilder.parse(source);
@@ -84,7 +84,7 @@ public class TestMarkupParser {
 	@Test
 	public void testAttributes() {
 		assertEquals("a<b attr1 = \"true\" attr2 = \"false\">c</b>d<b>e</b>",
-			   parse("<root>a<b attr1 = \"true\" attr2=\"false\">c</b>d<b>e</b></root>"));
+				parse("<root>a<b attr1 = \"true\" attr2=\"false\">c</b>d<b>e</b></root>"));
 	}
 
 	@Test

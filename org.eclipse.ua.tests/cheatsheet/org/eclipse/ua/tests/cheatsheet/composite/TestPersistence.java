@@ -78,83 +78,83 @@ public class TestPersistence {
 	 * mementos to different files and keep the contents distinct.
 	 */
 	@Test
-    public void testMementoSaveMultipleFiles() {
-    	XMLMemento memento = XMLMemento.createWriteRoot(MEMENTO_TAG);
-    	memento.putString(KEY, DATA1);
-    	CheatSheetPlugin cheatSheetPlugin = CheatSheetPlugin.getPlugin();
+	public void testMementoSaveMultipleFiles() {
+		XMLMemento memento = XMLMemento.createWriteRoot(MEMENTO_TAG);
+		memento.putString(KEY, DATA1);
+		CheatSheetPlugin cheatSheetPlugin = CheatSheetPlugin.getPlugin();
 		IStatus status = cheatSheetPlugin.saveMemento(memento, PATH1);
-    	assertTrue(status.isOK());
-    	memento = XMLMemento.createWriteRoot(MEMENTO_TAG);
-    	memento.putString(KEY, DATA2);
-    	status = cheatSheetPlugin.saveMemento(memento, PATH2);
-    	assertTrue(status.isOK());
-    	memento = cheatSheetPlugin.readMemento(PATH1);
-    	assertEquals(DATA1, memento.getString(KEY));
-    	memento = cheatSheetPlugin.readMemento(PATH2);
-    	assertEquals(DATA2, memento.getString(KEY));
-    }
+		assertTrue(status.isOK());
+		memento = XMLMemento.createWriteRoot(MEMENTO_TAG);
+		memento.putString(KEY, DATA2);
+		status = cheatSheetPlugin.saveMemento(memento, PATH2);
+		assertTrue(status.isOK());
+		memento = cheatSheetPlugin.readMemento(PATH1);
+		assertEquals(DATA1, memento.getString(KEY));
+		memento = cheatSheetPlugin.readMemento(PATH2);
+		assertEquals(DATA2, memento.getString(KEY));
+	}
 
 	@Test
-    public void testSaveTaskState() {
-    	createCompositeCheatSheet();
-    	task1.setState(ICompositeCheatSheetTask.IN_PROGRESS);
-    	task2.setState(ICompositeCheatSheetTask.COMPLETED);
-    	helper.saveCompositeState(model, null);
+	public void testSaveTaskState() {
+		createCompositeCheatSheet();
+		task1.setState(ICompositeCheatSheetTask.IN_PROGRESS);
+		task2.setState(ICompositeCheatSheetTask.COMPLETED);
+		helper.saveCompositeState(model, null);
 
-    	createCompositeCheatSheet();
-    	model.loadState(new Hashtable<String, String>());
-    	assertEquals(ICompositeCheatSheetTask.IN_PROGRESS, task1.getState());
-    	assertEquals(ICompositeCheatSheetTask.COMPLETED, task2.getState());
-    }
+		createCompositeCheatSheet();
+		model.loadState(new Hashtable<String, String>());
+		assertEquals(ICompositeCheatSheetTask.IN_PROGRESS, task1.getState());
+		assertEquals(ICompositeCheatSheetTask.COMPLETED, task2.getState());
+	}
 
-    /**
-     * Test that each task can save its state in a memento and that state
-     * can be restored.
-     */
+	/**
+	 * Test that each task can save its state in a memento and that state
+	 * can be restored.
+	 */
 	@Test
-    public void testSaveTaskMemento() {
-    	final String value1 = "13579";
-    	final String value2 = "AB24";
-    	createCompositeCheatSheet();
-    	// Start tasks with no memento
-    	task1.setState(ICompositeCheatSheetTask.COMPLETED);
-    	task2.setState(ICompositeCheatSheetTask.IN_PROGRESS);
-    	editor1.setInput(task1, null);
-    	editor2.setInput(task2, null);
-    	assertEquals(MockTaskEditor.NO_MEMENTO, editor1.getValue());
-    	assertEquals(MockTaskEditor.NO_MEMENTO, editor2.getValue());
+	public void testSaveTaskMemento() {
+		final String value1 = "13579";
+		final String value2 = "AB24";
+		createCompositeCheatSheet();
+		// Start tasks with no memento
+		task1.setState(ICompositeCheatSheetTask.COMPLETED);
+		task2.setState(ICompositeCheatSheetTask.IN_PROGRESS);
+		editor1.setInput(task1, null);
+		editor2.setInput(task2, null);
+		assertEquals(MockTaskEditor.NO_MEMENTO, editor1.getValue());
+		assertEquals(MockTaskEditor.NO_MEMENTO, editor2.getValue());
 
-    	// Set the values to save in the memento
-    	editor1.setValue(value1);
-    	editor2.setValue(value2);
-    	task1.setState(ICompositeCheatSheetTask.COMPLETED);
-    	task2.setState(ICompositeCheatSheetTask.IN_PROGRESS);
-    	helper.saveCompositeState(model, null);
+		// Set the values to save in the memento
+		editor1.setValue(value1);
+		editor2.setValue(value2);
+		task1.setState(ICompositeCheatSheetTask.COMPLETED);
+		task2.setState(ICompositeCheatSheetTask.IN_PROGRESS);
+		helper.saveCompositeState(model, null);
 
-    	createCompositeCheatSheet();
-    	model.loadState(new Hashtable<String, String>());
-    	editor1.setInput(task1, model.getTaskMemento(task1.getId()));
-    	editor2.setInput(task2, model.getTaskMemento(task2.getId()));
-    	assertEquals(value1, editor1.getValue());
-    	assertEquals(value2, editor2.getValue());
-    }
+		createCompositeCheatSheet();
+		model.loadState(new Hashtable<String, String>());
+		editor1.setInput(task1, model.getTaskMemento(task1.getId()));
+		editor2.setInput(task2, model.getTaskMemento(task2.getId()));
+		assertEquals(value1, editor1.getValue());
+		assertEquals(value2, editor2.getValue());
+	}
 
-    /**
-     * Test that layout data is restored
-     */
+	/**
+	 * Test that layout data is restored
+	 */
 	@Test
-    public void testSaveLayoutData() {
-    	createCompositeCheatSheet();
+	public void testSaveLayoutData() {
+		createCompositeCheatSheet();
 		Map<String, String> values = new Hashtable<>();
-    	values.put("One", "1");
-    	values.put("Two", "2");
-    	helper.saveCompositeState(model, values);
+		values.put("One", "1");
+		values.put("Two", "2");
+		helper.saveCompositeState(model, values);
 		Map<String, String> restoredValues = new Hashtable<>();
-    	createCompositeCheatSheet();
-    	model.loadState(restoredValues);
-    	assertEquals(2, restoredValues.size());
-    	assertEquals("1", values.get("One"));
-    	assertEquals("2", values.get("Two"));
-    }
+		createCompositeCheatSheet();
+		model.loadState(restoredValues);
+		assertEquals(2, restoredValues.size());
+		assertEquals("1", values.get("One"));
+		assertEquals("2", values.get("Two"));
+	}
 
 }

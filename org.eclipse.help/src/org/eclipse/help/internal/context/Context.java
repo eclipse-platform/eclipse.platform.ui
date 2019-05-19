@@ -49,7 +49,7 @@ public class Context extends UAElement implements IContext3 {
 	}
 
 	public void mergeContext(IContext src) {
-	    String text = src.getText();
+		String text = src.getText();
 		if (getText() == null || getText().length() == 0) {
 			setText(text);
 		}
@@ -149,9 +149,9 @@ public class Context extends UAElement implements IContext3 {
 			node = node.getNextSibling();
 		}
 		if (text != null) {
-		    Document document = getElement().getOwnerDocument();
-		    Node description = getElement().appendChild(document.createElement(ELEMENT_DESCRIPTION));
-		    description.appendChild(document.createTextNode(text));
+			Document document = getElement().getOwnerDocument();
+			Node description = getElement().appendChild(document.createElement(ELEMENT_DESCRIPTION));
+			description.appendChild(document.createTextNode(text));
 		}
 	}
 

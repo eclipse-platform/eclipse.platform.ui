@@ -56,8 +56,8 @@ public class TestCommandExecution {
 	private static final String COMMAND_ID =
 		"org.eclipse.ui.cheatsheets.tests.command1"; //$NON-NLS-1$
 	private static final String SERIALIZED_COMMAND = COMMAND_ID + '('
-	    + PARAM1_ID + '=' + PARAM1_VALUE + ','
-	    + PARAM2_ID + '=' + PARAM2_VALUE + ')';
+		+ PARAM1_ID + '=' + PARAM1_VALUE + ','
+		+ PARAM2_ID + '=' + PARAM2_VALUE + ')';
 	private static final String RETURN_STORE = "retData";
 	private static final String PARENT_RETURN_STORE = "parent.retData";
 
@@ -86,10 +86,10 @@ public class TestCommandExecution {
 		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
 			Object serviceObject = wb.getAdapter(IHandlerService.class);
-		    if (serviceObject != null) {
-			    IHandlerService service = (IHandlerService)serviceObject;
-			    return service;
-		    }
+			if (serviceObject != null) {
+				IHandlerService service = (IHandlerService)serviceObject;
+				return service;
+			}
 		}
 		return null;
 	}

@@ -43,157 +43,157 @@ import org.xml.sax.SAXParseException;
  */
 public class IntroContentParser {
 
-    private static String TAG_INTRO_CONTENT = "introContent"; //$NON-NLS-1$
-    private static String TAG_HTML = "html"; //$NON-NLS-1$
+	private static String TAG_INTRO_CONTENT = "introContent"; //$NON-NLS-1$
+	private static String TAG_HTML = "html"; //$NON-NLS-1$
 
-    private Document document;
-    private boolean hasXHTMLContent;
+	private Document document;
+	private boolean hasXHTMLContent;
 
-    /**
-     * Creates a config parser assuming that the passed content represents a URL
-     * to the content file.
-     */
-    public IntroContentParser(String content) {
-        try {
-            document = parse(content);
-            if (document != null) {
-                // xml file is loaded. It can be either XHTML or intro XML.
-                Element rootElement = document.getDocumentElement();
-                // DocumentType docType = document.getDoctype();
-                if (rootElement.getTagName().equals(TAG_INTRO_CONTENT)) {
-                    // intro xml file.
-                    hasXHTMLContent = false;
-                } else if (rootElement.getTagName().equals(TAG_HTML)) {
-                    // rely on root element to detect if we have an XHTML file
-                    // and not on doctype. We need to support xhtml files with
-                    // no doctype.
-                    hasXHTMLContent = true;
-                } else
-                    // not intro XML nor XHTML.
-                    document = null;
-            }
-        } catch (Exception e) {
-            Log.error("Could not load Intro content file: " + content, e); //$NON-NLS-1$
-        }
-    }
+	/**
+	 * Creates a config parser assuming that the passed content represents a URL
+	 * to the content file.
+	 */
+	public IntroContentParser(String content) {
+		try {
+			document = parse(content);
+			if (document != null) {
+				// xml file is loaded. It can be either XHTML or intro XML.
+				Element rootElement = document.getDocumentElement();
+				// DocumentType docType = document.getDoctype();
+				if (rootElement.getTagName().equals(TAG_INTRO_CONTENT)) {
+					// intro xml file.
+					hasXHTMLContent = false;
+				} else if (rootElement.getTagName().equals(TAG_HTML)) {
+					// rely on root element to detect if we have an XHTML file
+					// and not on doctype. We need to support xhtml files with
+					// no doctype.
+					hasXHTMLContent = true;
+				} else
+					// not intro XML nor XHTML.
+					document = null;
+			}
+		} catch (Exception e) {
+			Log.error("Could not load Intro content file: " + content, e); //$NON-NLS-1$
+		}
+	}
 
 
-    private Document parse(String fileURI) {
-        Document document = null;
-        try {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory
-                .newInstance();
-            docFactory.setValidating(false);
-            // if this is not set, Document.getElementsByTagNameNS() will fail.
-            docFactory.setNamespaceAware(true);
-            docFactory.setExpandEntityReferences(false);
-            DocumentBuilder parser = docFactory.newDocumentBuilder();
+	private Document parse(String fileURI) {
+		Document document = null;
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory
+				.newInstance();
+			docFactory.setValidating(false);
+			// if this is not set, Document.getElementsByTagNameNS() will fail.
+			docFactory.setNamespaceAware(true);
+			docFactory.setExpandEntityReferences(false);
+			DocumentBuilder parser = docFactory.newDocumentBuilder();
 			parser.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader(""))); //$NON-NLS-1$
-            document = parser.parse(fileURI);
-            return document;
+			document = parser.parse(fileURI);
+			return document;
 
-        } catch (SAXParseException spe) {
-            StringBuilder buffer = new StringBuilder("IntroParser error in line "); //$NON-NLS-1$
-            buffer.append(spe.getLineNumber());
-            buffer.append(", uri "); //$NON-NLS-1$
-            buffer.append(spe.getSystemId());
-            buffer.append("\n"); //$NON-NLS-1$
-            buffer.append(spe.getMessage());
+		} catch (SAXParseException spe) {
+			StringBuilder buffer = new StringBuilder("IntroParser error in line "); //$NON-NLS-1$
+			buffer.append(spe.getLineNumber());
+			buffer.append(", uri "); //$NON-NLS-1$
+			buffer.append(spe.getSystemId());
+			buffer.append("\n"); //$NON-NLS-1$
+			buffer.append(spe.getMessage());
 
-            // Use the contained exception.
-            Exception x = spe;
-            if (spe.getException() != null)
-                x = spe.getException();
-            Log.error(buffer.toString(), x);
+			// Use the contained exception.
+			Exception x = spe;
+			if (spe.getException() != null)
+				x = spe.getException();
+			Log.error(buffer.toString(), x);
 
-        } catch (SAXException sxe) {
-            Exception x = sxe;
-            if (sxe.getException() != null)
-                x = sxe.getException();
-            Log.error(x.getMessage(), x);
+		} catch (SAXException sxe) {
+			Exception x = sxe;
+			if (sxe.getException() != null)
+				x = sxe.getException();
+			Log.error(x.getMessage(), x);
 
-        } catch (ParserConfigurationException pce) {
-            // Parser with specified options can't be built
-            Log.error(pce.getMessage(), pce);
+		} catch (ParserConfigurationException pce) {
+			// Parser with specified options can't be built
+			Log.error(pce.getMessage(), pce);
 
-        } catch (IOException ioe) {
-            Log.error(ioe.getMessage(), ioe);
-        }
-        return null;
-    }
-
-
-    /**
-     * Returned the DOM representing the intro xml content file. May return null
-     * if parsing the file failed.
-     *
-     * @return Returns the document.
-     */
-    public Document getDocument() {
-        return document;
-    }
-
-    public boolean hasXHTMLContent() {
-        return hasXHTMLContent;
-    }
+		} catch (IOException ioe) {
+			Log.error(ioe.getMessage(), ioe);
+		}
+		return null;
+	}
 
 
-    public static String convertToString(Document document) {
-        try {
-            // identity xslt.
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            Transformer transformer = tFactory.newTransformer();
+	/**
+	 * Returned the DOM representing the intro xml content file. May return null
+	 * if parsing the file failed.
+	 *
+	 * @return Returns the document.
+	 */
+	public Document getDocument() {
+		return document;
+	}
 
-            DOMSource source = new DOMSource(document);
+	public boolean hasXHTMLContent() {
+		return hasXHTMLContent;
+	}
 
-            StringWriter stringWriter = new StringWriter();
-            StreamResult result = new StreamResult(stringWriter);
 
-            // setup properties, for doctype.
-            DocumentType docType = document.getDoctype();
-            if (docType != null) {
-                String value = docType.getSystemId();
-                // transformer.clearParameters();
-                transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, value);
-                value = document.getDoctype().getPublicId();
-                transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, value);
-                transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-                    "yes"); //$NON-NLS-1$
-                // transformer.setOutputProperty(OutputKeys.MEDIA_TYPE,
-                // "text/html");
-                // transformer
-                // .setOutputProperty(OutputKeys.ENCODING, "iso-8859-1");
-            } else
-                Log
-                    .warning("XHTML file used to display this Intro page does not have a Document type defined. " //$NON-NLS-1$
-                            + "XHTML requires document types to be defined."); //$NON-NLS-1$
+	public static String convertToString(Document document) {
+		try {
+			// identity xslt.
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+			Transformer transformer = tFactory.newTransformer();
 
-            transformer.transform(source, result);
-            return stringWriter.toString();
+			DOMSource source = new DOMSource(document);
 
-        } catch (TransformerConfigurationException tce) {
-            // Error generated by the parser
-            Log.error("Transformer Config error: " + tce.getMessage(), null); //$NON-NLS-1$
-            // Use the contained exception, if any
-            Throwable x = tce;
-            if (tce.getException() != null)
-                x = tce.getException();
-            Log.error("Transformer Stack trace: ", x); //$NON-NLS-1$
+			StringWriter stringWriter = new StringWriter();
+			StreamResult result = new StreamResult(stringWriter);
 
-        } catch (TransformerException te) {
-            // Error generated by the parser
-            Log.error("Transformer error: " + te.getMessage(), te); //$NON-NLS-1$
-            // Use the contained exception, if any
-            Throwable x = te;
-            if (te.getException() != null)
-                x = te.getException();
-            Log.error("Transformer Stack trace: ", x); //$NON-NLS-1$
+			// setup properties, for doctype.
+			DocumentType docType = document.getDoctype();
+			if (docType != null) {
+				String value = docType.getSystemId();
+				// transformer.clearParameters();
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, value);
+				value = document.getDoctype().getPublicId();
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, value);
+				transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+					"yes"); //$NON-NLS-1$
+				// transformer.setOutputProperty(OutputKeys.MEDIA_TYPE,
+				// "text/html");
+				// transformer
+				// .setOutputProperty(OutputKeys.ENCODING, "iso-8859-1");
+			} else
+				Log
+					.warning("XHTML file used to display this Intro page does not have a Document type defined. " //$NON-NLS-1$
+							+ "XHTML requires document types to be defined."); //$NON-NLS-1$
 
-        }
-        return null;
+			transformer.transform(source, result);
+			return stringWriter.toString();
 
-    }
+		} catch (TransformerConfigurationException tce) {
+			// Error generated by the parser
+			Log.error("Transformer Config error: " + tce.getMessage(), null); //$NON-NLS-1$
+			// Use the contained exception, if any
+			Throwable x = tce;
+			if (tce.getException() != null)
+				x = tce.getException();
+			Log.error("Transformer Stack trace: ", x); //$NON-NLS-1$
+
+		} catch (TransformerException te) {
+			// Error generated by the parser
+			Log.error("Transformer error: " + te.getMessage(), te); //$NON-NLS-1$
+			// Use the contained exception, if any
+			Throwable x = te;
+			if (te.getException() != null)
+				x = te.getException();
+			Log.error("Transformer Stack trace: ", x); //$NON-NLS-1$
+
+		}
+		return null;
+
+	}
 
 
 

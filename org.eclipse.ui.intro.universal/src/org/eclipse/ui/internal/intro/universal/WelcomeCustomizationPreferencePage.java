@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class WelcomeCustomizationPreferencePage extends PreferencePage implements IWorkbenchPreferencePage,
 		IExecutableExtension {
 
-    private CustomizationContentsArea contentsArea;
+	private CustomizationContentsArea contentsArea;
 
 	public WelcomeCustomizationPreferencePage() {
 	}

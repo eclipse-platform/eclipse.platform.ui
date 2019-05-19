@@ -53,22 +53,22 @@ public class FindSupport {
 		return find(bundle, path, null);
 	}
 
-    /**
-     * Proposed API for Platform in Eclispe 3.2.
-     * Same as @link #find(Bundle, IPath) except multiple entries can be
-     * returned if more than one entry matches the path in the host and
-     * any of its fragments.
-     *
-     * @param bundle
-     * @param path
-     * @return an array of entries which match the given path.  An empty
-     * array is returned if no matches are found.
-     */
-    public static URL[] findEntries(Bundle bundle, IPath path) {
-        return findEntries(bundle, path, null);
-    }
+	/**
+	 * Proposed API for Platform in Eclispe 3.2.
+	 * Same as @link #find(Bundle, IPath) except multiple entries can be
+	 * returned if more than one entry matches the path in the host and
+	 * any of its fragments.
+	 *
+	 * @param bundle
+	 * @param path
+	 * @return an array of entries which match the given path.  An empty
+	 * array is returned if no matches are found.
+	 */
+	public static URL[] findEntries(Bundle bundle, IPath path) {
+		return findEntries(bundle, path, null);
+	}
 
-    /**
+	/**
 	 * Proposed API for Platform in Eclipse 3.2. Same as @link #find(Bundle, IPath) except multiple
 	 * entries can be returned if more than one entry matches the path in the host and any of its
 	 * fragments.
@@ -81,16 +81,16 @@ public class FindSupport {
 	 */
 	public static URL[] findEntries(Bundle bundle, IPath path, Map<String, String> override) {
 		List<URL> results = new ArrayList<>(1);
-        find(bundle, path, override, results);
-        return results.toArray(new URL[results.size()]);
-    }
+		find(bundle, path, override, results);
+		return results.toArray(new URL[results.size()]);
+	}
 
 	/**
 	 * See doc on @link Platform#find(Bundle, IPath, Map) Platform#find(Bundle, IPath, Map)
 	 */
 	public static URL find(Bundle b, IPath path, Map<String, String> override) {
-        return find(b, path, override, null);
-    }
+		return find(b, path, override, null);
+	}
 
 	private static URL find(Bundle b, IPath path, Map<String, String> override, List<URL> multiple) {
 		if (path == null)
@@ -106,7 +106,7 @@ public class FindSupport {
 			result = findInPlugin(b, Path.EMPTY, multiple);
 			if (result == null || multiple != null)
 				result = findInFragments(b, Path.EMPTY, multiple);
-            return result;
+			return result;
 		}
 
 		// Now check for paths without variable substitution
@@ -115,7 +115,7 @@ public class FindSupport {
 			result = findInPlugin(b, path, multiple);
 			if (result == null || multiple != null)
 				result = findInFragments(b, path, multiple);
-            return result;
+			return result;
 		}
 
 		// Worry about variable substitution
@@ -230,9 +230,9 @@ public class FindSupport {
 
 	private static URL findInPlugin(Bundle b, IPath filePath, List<URL> multiple) {
 		URL result = b.getEntry(filePath.toString());
-        if (result != null && multiple != null)
-            multiple.add(result);
-        return result;
+		if (result != null && multiple != null)
+			multiple.add(result);
+		return result;
 	}
 
 	private static URL findInFragments(Bundle b, IPath filePath, List<URL> multiple) {
@@ -245,10 +245,10 @@ public class FindSupport {
 		int i = 0;
 		while (i < fragments.length && fileURL == null) {
 			fileURL = fragments[i].getEntry(filePath.toString());
-            if (fileURL != null && multiple != null) {
-                multiple.add(fileURL);
-                fileURL = null;
-            }
+			if (fileURL != null && multiple != null) {
+				multiple.add(fileURL);
+				fileURL = null;
+			}
 			i++;
 		}
 		return fileURL;

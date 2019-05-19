@@ -27,15 +27,15 @@ public class WebappManager {
 	private static final String SERVER_EXTENSION_ID = "org.eclipse.help.base.server"; //$NON-NLS-1$
 	private static final String SERVER_CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
 
-    private static HelpServer getHelpServer() {
-    	if (server == null) {
-    		createWebappServer();
-    	}
-    	if (server == null) {
-    		server = new JettyHelpServer();
-    	}
-    	return server;
-    }
+	private static HelpServer getHelpServer() {
+		if (server == null) {
+			createWebappServer();
+		}
+		if (server == null) {
+			server = new JettyHelpServer();
+		}
+		return server;
+	}
 
 	public static void start(String webappName) throws Exception {
 		getHelpServer().start(webappName);
@@ -50,7 +50,7 @@ public class WebappManager {
 	}
 
 	public static String getHost() {
-        return getHelpServer().getHost();
+		return getHelpServer().getHost();
 	}
 
 	private static void createWebappServer() {

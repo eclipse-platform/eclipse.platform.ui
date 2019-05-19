@@ -36,16 +36,16 @@ import org.w3c.dom.Element;
 public class ContextTest {
 
 	private static final String ENABLEMENT_CHEATSHEETS = "<enablement><with variable=\"platform\">" +
-    "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/>" +
+	"<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/>" +
 	 "</with></enablement>";
 	private static final String ENABLEMENT_INVALID = "<enablement><with variable=\"platform\">" +
-	    "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.invalid\"/>" +
+		"<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.invalid\"/>" +
 		 "</with></enablement>";
 	private static final String FILTER_OUT = "<filter name = \"plugin\" value = \"org.eclipse.ua.invalid\"/>";
 	private static final String TOPIC_END = "</topic>";
 	private static final String TOPIC_HEAD_ECLIPSE = "<topic href=\"http://www.eclipse.org\" label=\"enabled\">";
 	private final String TOPIC_OLD_FILTER_DISABLED = "<topic filter=\"plugin=org.eclipse.ua.invalid\" href=\"www.eclipse.org\""
-	    + " label=\"Transformations and transformation configurations\"/>";
+		+ " label=\"Transformations and transformation configurations\"/>";
 	private static final String CONTEXT_DESCRIPTION = "<description>Context Description</description>";
 	private static final String EMPTY_DESCRIPTION = "<description></description>";
 	private static final String CONTEXT_HEAD = "<context id=\"viewer\" title=\"Sample View\">";
@@ -54,7 +54,7 @@ public class ContextTest {
 	private final String TOPIC_WITH_ENABLEMENT = TOPIC_HEAD_ECLIPSE + ENABLEMENT_CHEATSHEETS + TOPIC_END;
 	private final String TOPIC_DISABLED = TOPIC_HEAD_ECLIPSE + ENABLEMENT_INVALID + TOPIC_END;
 	private final String TOPIC_FILTER_OUT = TOPIC_HEAD_ECLIPSE + FILTER_OUT + TOPIC_END;
-    private final String END_CONTEXT = "</context>";
+	private final String END_CONTEXT = "</context>";
 
 	@Before
 	public void setUp() throws Exception {
@@ -66,7 +66,7 @@ public class ContextTest {
 		Context context;
 		Document doc;
 		try {
-		    doc = DocumentCreator.createDocument(contextSource);
+			doc = DocumentCreator.createDocument(contextSource);
 		} catch (Exception e) {
 			fail("Caught Exception");
 			doc = null;
@@ -78,9 +78,9 @@ public class ContextTest {
 	@Test
 	public void testSimpleContext() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_ECLIPSE +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_ECLIPSE +
+			END_CONTEXT;
 		Context context;
 		context = createContext(contextSource);
 		assertEquals("Sample View", context.getTitle());
@@ -93,9 +93,9 @@ public class ContextTest {
 	@Test
 	public void testContextWithEnablement() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			END_CONTEXT;
 		Context context;
 		context = createContext(contextSource);
 		assertEquals("Sample View", context.getTitle());
@@ -113,9 +113,9 @@ public class ContextTest {
 	@Test
 	public void testCopyContext() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			END_CONTEXT;
 		Context context  = createContext(contextSource);
 		Context context2 = new Context(context, "new id");
 		Context context3 = new Context(context2, "new id2");
@@ -152,11 +152,11 @@ public class ContextTest {
 	@Test
 	public void testEnablement() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-		   TOPIC_DISABLED +
-		   TOPIC_OLD_FILTER_DISABLED +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			TOPIC_DISABLED +
+			TOPIC_OLD_FILTER_DISABLED +
+			END_CONTEXT;
 		Context context  = createContext(contextSource);
 		IHelpResource[] related = context.getRelatedTopics();
 		assertEquals(3, related.length);
@@ -168,10 +168,10 @@ public class ContextTest {
 	@Test
 	public void testOldStyleFilteringOfCopies() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-		   TOPIC_OLD_FILTER_DISABLED +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			TOPIC_OLD_FILTER_DISABLED +
+			END_CONTEXT;
 		Context context1  = createContext(contextSource);
 		Context context2 = new Context(context1, "id");
 		Context context3 = new Context(context2, "id2");
@@ -195,10 +195,10 @@ public class ContextTest {
 	@Test
 	public void testOldStyleFilteringOfCopies2() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-		   TOPIC_OLD_FILTER_DISABLED +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			TOPIC_OLD_FILTER_DISABLED +
+			END_CONTEXT;
 		Context context1  = createContext(contextSource);
 		Context context2 = new Context(context1, "id");
 		Context context3 = new Context(context1, "id2");
@@ -222,10 +222,10 @@ public class ContextTest {
 	@Test
 	public void testFilteringOfCopies() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-		   TOPIC_FILTER_OUT +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			TOPIC_FILTER_OUT +
+			END_CONTEXT;
 		Context context1  = createContext(contextSource);
 		Context context2 = new Context(context1, "id");
 		Context context3 = new Context(context2, "id2");
@@ -248,10 +248,10 @@ public class ContextTest {
 	@Test
 	public void testFilteringOfCopies2() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-		   TOPIC_FILTER_OUT +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			TOPIC_FILTER_OUT +
+			END_CONTEXT;
 		Context context1  = createContext(contextSource);
 		Context context2 = new Context(context1, "id");
 		Context context3 = new Context(context1, "id2");
@@ -275,10 +275,10 @@ public class ContextTest {
 	@Test
 	public void testEnablementOfCopies() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-		   TOPIC_DISABLED +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			TOPIC_DISABLED +
+			END_CONTEXT;
 		Context context1  = createContext(contextSource);
 		Context context2 = new Context(context1, "id");
 		Context context3 = new Context(context2, "id2");
@@ -301,10 +301,10 @@ public class ContextTest {
 	@Test
 	public void testEnablementOfCopies2() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-		   TOPIC_DISABLED +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			TOPIC_DISABLED +
+			END_CONTEXT;
 		Context context1  = createContext(contextSource);
 		Context context2 = new Context(context1, "id");
 		Context context3 = new Context(context1, "id2");
@@ -328,10 +328,10 @@ public class ContextTest {
 	@Test
 	public void testEnablementOfCopies3() {
 		final String contextSource = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_WITH_ENABLEMENT +
-		   TOPIC_DISABLED +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_WITH_ENABLEMENT +
+			TOPIC_DISABLED +
+			END_CONTEXT;
 		Context context1  = createContext(contextSource);
 		Context context2 = new Context(context1, "id");
 		Context context3 = new Context(context1, "id2");
@@ -360,9 +360,9 @@ public class ContextTest {
 	@Test
 	public void testContextWithAttribute() {
 		final String contextSource = CONTEXT_HEAD_WITH_ATTRIBUTE +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_ECLIPSE +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_ECLIPSE +
+			END_CONTEXT;
 		Context context;
 		context = createContext(contextSource);
 		assertEquals("abc", context.getAttribute("att"));
@@ -371,8 +371,8 @@ public class ContextTest {
 	@Test
 	public void testContextWithoutDescription() {
 		final String contextSource = CONTEXT_HEAD +
-		   TOPIC_ECLIPSE +
-	       END_CONTEXT;
+			TOPIC_ECLIPSE +
+			END_CONTEXT;
 		Context context;
 		context = createContext(contextSource);
 		assertNull(context.getText());
@@ -381,9 +381,9 @@ public class ContextTest {
 	@Test
 	public void testContextWithEmptyDescription() {
 		final String contextSource = CONTEXT_HEAD +
-		   EMPTY_DESCRIPTION +
-		   TOPIC_ECLIPSE +
-	       END_CONTEXT;
+			EMPTY_DESCRIPTION +
+			TOPIC_ECLIPSE +
+			END_CONTEXT;
 		Context context;
 		context = createContext(contextSource);
 		assertEquals("", context.getText());
@@ -392,8 +392,8 @@ public class ContextTest {
 	@Test
 	public void testContextWithoutDescriptionSelfCatenation() {
 		final String contextSource = CONTEXT_HEAD +
-		   TOPIC_ECLIPSE +
-	       END_CONTEXT;
+			TOPIC_ECLIPSE +
+			END_CONTEXT;
 		Context context1 = createContext(contextSource);
 		Context context2 = createContext(contextSource);
 		context1.mergeContext(context2);
@@ -403,12 +403,12 @@ public class ContextTest {
 	@Test
 	public void testContextWithoutDescriptionMixedCatenation() {
 		final String contextSourceEmpty = CONTEXT_HEAD +
-		   TOPIC_ECLIPSE +
-	       END_CONTEXT;
+			TOPIC_ECLIPSE +
+			END_CONTEXT;
 		final String contextSourceWithDesc = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_ECLIPSE +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_ECLIPSE +
+			END_CONTEXT;
 		Context context1 = createContext(contextSourceEmpty);
 		Context context2 = createContext(contextSourceWithDesc);
 		context1.mergeContext(context2);
@@ -422,9 +422,9 @@ public class ContextTest {
 	/*
 	public void testCopyContextWithAttribute() {
 		final String contextSource = CONTEXT_HEAD_WITH_ATTRIBUTE +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_ECLIPSE +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_ECLIPSE +
+			END_CONTEXT;
 		Context context1;
 		context1 = createContext(contextSource);
 		Context context2 = new Context(context1, "id");

@@ -42,7 +42,7 @@ public class UATestContentProducer implements IHelpContentProducer {
 		String result = "<head><title>";
 		result += filterNonAlpha(URLCoder.decode(title));
 		result += "</title></head><body>";
-        result +=filterNonAlpha(URLCoder.decode(body));
+		result +=filterNonAlpha(URLCoder.decode(body));
 		result += "</body>";
 		return new ByteArrayInputStream(result.getBytes());
 	}

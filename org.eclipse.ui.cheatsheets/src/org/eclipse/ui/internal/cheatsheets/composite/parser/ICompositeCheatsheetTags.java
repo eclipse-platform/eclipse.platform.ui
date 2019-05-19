@@ -36,13 +36,13 @@ public interface ICompositeCheatsheetTags {
 	// Attribute values
 	public static final String TREE = "tree"; //$NON-NLS-1$
 
-    // Cheatsheet task parameters
+	// Cheatsheet task parameters
 	public static final String CHEATSHEET_TASK_KIND = "cheatsheet"; //$NON-NLS-1$
 	public static final String CHEATSHEET_TASK_ID = "id"; //$NON-NLS-1$
 	public static final String CHEATSHEET_TASK_PATH = "path"; //$NON-NLS-1$
 	public static final String CHEATSHEET_TASK_SHOW_INTRO = "showIntro"; //$NON-NLS-1$
 
-    // Tags used in Memento
+	// Tags used in Memento
 	public static final String TASK_DATA = "taskData"; //$NON-NLS-1$
 	public static final String CHEAT_SHEET_MANAGER = "cheatSheetManager"; //$NON-NLS-1$
 	public static final String KEY = "key"; //$NON-NLS-1$

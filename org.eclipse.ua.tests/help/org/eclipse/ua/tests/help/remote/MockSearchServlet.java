@@ -46,8 +46,8 @@ public class MockSearchServlet extends HttpServlet {
 					0, null, null, null, false);
 			results.add(hit);
 		}
-	    String response = SearchServlet.serialize(results);
-	    resp.getWriter().write(response);
+		String response = SearchServlet.serialize(results);
+		resp.getWriter().write(response);
 	}
 
 	private boolean isSearchHit(String phrase, String locale) {

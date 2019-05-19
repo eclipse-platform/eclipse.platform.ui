@@ -39,7 +39,7 @@ public class ActionWithParameters extends Action implements ICheatSheetAction {
 	@Override
 	public void run(String[] params, ICheatSheetManager manager) {
 		ActionEnvironment.setParams(params);
-        ActionEnvironment.actionCompleted();
+		ActionEnvironment.actionCompleted();
 	}
 
 }

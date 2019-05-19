@@ -61,10 +61,10 @@ public class HttpsUtility {
 		try {
 			URL url = new URL(thisProtocol, thisHost, Integer.valueOf(thisPort) .intValue(),
 					thisPath + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
-	        return getHttpsStream(url);
+			return getHttpsStream(url);
 		} catch (Exception e) {
 			e.printStackTrace();
-	        return null;
+			return null;
 		}
 	}
 

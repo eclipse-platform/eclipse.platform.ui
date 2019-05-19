@@ -29,7 +29,7 @@ public class LimitedSizeCharArrayWriter extends CharArrayWriter {
 
 	@Override
 	public void write(char[] c, int off, int len) {
-        size += len;
+		size += len;
 		super.write(c, off, len);
 	}
 
@@ -37,23 +37,23 @@ public class LimitedSizeCharArrayWriter extends CharArrayWriter {
 	public void write(char[] cbuf) throws IOException {
 		size += cbuf.length;
 		if (size < maxSize) {
-		    super.write(cbuf);
+			super.write(cbuf);
 		}
 	}
 
 	@Override
 	public void write(String str, int off, int len) {
-        size += len;
-        if (size < maxSize) {
-		    super.write(str, off, len);
-        }
+		size += len;
+		if (size < maxSize) {
+			super.write(str, off, len);
+		}
 	}
 
 	@Override
 	public void write(int c) {
 		size += 1;
 		if (size < maxSize) {
-		    super.write(c);
+			super.write(c);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class LimitedSizeCharArrayWriter extends CharArrayWriter {
 	public void write(String str) throws IOException {
 		size += str.length();
 		if (size < maxSize) {
-		    super.write(str);
+			super.write(str);
 		}
 	}
 

@@ -33,20 +33,20 @@ public class LocalEntityResolver implements EntityResolver {
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
 		int index = systemId.lastIndexOf("/"); //$NON-NLS-1$
 		if (index >= 0) {
-		    Bundle helpBundle = HelpPlugin.getDefault().getBundle();
-		    String dtdPath = "dtds/internal" + systemId.substring(index); //$NON-NLS-1$
-		    URL dtdURL = FileLocator.find(helpBundle, new Path(dtdPath), null);
-		    if (dtdURL != null) {
-		    	InputStream stream = dtdURL.openStream();
-		    	if (stream != null) {
+			Bundle helpBundle = HelpPlugin.getDefault().getBundle();
+			String dtdPath = "dtds/internal" + systemId.substring(index); //$NON-NLS-1$
+			URL dtdURL = FileLocator.find(helpBundle, new Path(dtdPath), null);
+			if (dtdURL != null) {
+				InputStream stream = dtdURL.openStream();
+				if (stream != null) {
 					InputSource is = new InputSource(stream);
-		        	is.setSystemId(systemId);
-		        	is.setPublicId(publicId);
+					is.setSystemId(systemId);
+					is.setPublicId(publicId);
 					return is;
 				}
-		    }
+			}
 		}
-	    return new InputSource(new StringReader("")); //$NON-NLS-1$
+		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
 
 }

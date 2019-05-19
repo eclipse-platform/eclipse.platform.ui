@@ -52,13 +52,13 @@ public class UAElement implements IUAElement {
 	protected List<UAElement> children;
 	private Filter[] filters;
 	private Expression enablementExpression;
-    private IUAElement src;
+	private IUAElement src;
 
 	private class Filter {
 		public Filter(String name, String value, boolean isNegated) {
-            this.name = name;
-            this.value = value;
-            this.isNegated = isNegated;
+			this.name = name;
+			this.value = value;
+			this.isNegated = isNegated;
 		}
 		String name;
 		String value;
@@ -76,9 +76,9 @@ public class UAElement implements IUAElement {
 	public UAElement(String name, IUAElement src) {
 		this(name);
 		if (src instanceof UAElement) {
-		    copyFilters(src);
+			copyFilters(src);
 		} else {
-		    this.src = src;
+			this.src = src;
 		}
 	}
 
@@ -86,11 +86,11 @@ public class UAElement implements IUAElement {
 		UAElement sourceElement = (UAElement)src;
 		String filter = sourceElement.getAttribute(ATTRIBUTE_FILTER);
 		if (filter != null && filter.length() > 0) {
-		    this.setAttribute(ATTRIBUTE_FILTER, filter);
+			this.setAttribute(ATTRIBUTE_FILTER, filter);
 		}
 		filters = sourceElement.getFilterElements();
 		this.enablementExpression = sourceElement.enablementExpression;
-	    this.src = sourceElement.src;
+		this.src = sourceElement.src;
 	}
 
 	private Filter[] getFilterElements() {
@@ -237,7 +237,7 @@ public class UAElement implements IUAElement {
 		importElement(newChild);
 		element.insertBefore(newChild.element, refChild.element);
 		newChild.parent = this;
-        getChildren();
+		getChildren();
 		if (children != null) {
 			int index = children.indexOf(refChild);
 			if (index < 0) {
@@ -267,19 +267,19 @@ public class UAElement implements IUAElement {
 				return false;
 			}
 		}
-        if (enablementExpression != null) {
-		    try {
+		if (enablementExpression != null) {
+			try {
 				return enablementExpression.evaluate(context) == EvaluationResult.TRUE;
 			} catch (CoreException e) {
 				return false;
 			}
-        }
+		}
 		return true;
 	}
 
 	public void removeChild(UAElement elementToRemove) {
 
-	    element.removeChild(elementToRemove.element);
+		element.removeChild(elementToRemove.element);
 		elementToRemove.parent = null;
 
 		if (children != null) {
@@ -299,11 +299,11 @@ public class UAElement implements IUAElement {
 		Document ownerDocument = element.getOwnerDocument();
 		if (!ownerDocument.equals(elementToImport.getOwnerDocument()) ) {
 			elementToImport = (Element)ownerDocument.importNode(elementToImport, true);
-		    uaElementToImport.children = null;
+			uaElementToImport.children = null;
 		}  else {
 			if (elementToImport.getParentNode() != null) {
 				elementToImport = (Element)ownerDocument.importNode(elementToImport, true);
-			    uaElementToImport.children = null;
+				uaElementToImport.children = null;
 			} else {
 			}
 		}

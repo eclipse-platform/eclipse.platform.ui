@@ -76,7 +76,7 @@ public class MissingContentManager {
 
 	private static MissingContentManager instance;
 	private List<Placeholder> placeholders;
-    private Set<String> bundlesToIgnore; // A set of bundles the user does not want to see reference to
+	private Set<String> bundlesToIgnore; // A set of bundles the user does not want to see reference to
 
 	public static MissingContentManager getInstance() {
 		if ( instance == null ) {
@@ -89,13 +89,13 @@ public class MissingContentManager {
 	 * Read the extension registry
 	 */
 	private MissingContentManager() {
-        IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		placeholders = new ArrayList<>();
 		bundlesToIgnore = new HashSet<>();
-        if ( BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER ) {
-        	return; // Placeholders are not shown for infocenters
-        }
-        // Read the placeholders from the extension registry
+		if ( BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER ) {
+			return; // Placeholders are not shown for infocenters
+		}
+		// Read the placeholders from the extension registry
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(EXTENSION_POINT_ID_TOC);
 		for (int i = 0; i < elements.length; ++i) {
@@ -127,7 +127,7 @@ public class MissingContentManager {
 	}
 
 	/**
-     * Called when a page cannot be found
+	 * Called when a page cannot be found
 	 * @param path the path of the page that could not be loaded
 	 * @return a place holder page if defined, otherwise an error page
 	 */
@@ -136,9 +136,9 @@ public class MissingContentManager {
 			Placeholder placeholder = iter.next();
 			if (path.startsWith(placeholder.path) && Platform.getBundle(placeholder.bundle) == null) {
 				if ( showPlaceholderPage) {
-				    return placeholder.placeholderPage;
+					return placeholder.placeholderPage;
 				} else {
-				    return "/org.eclipse.help.webapp/" + MISSING_TOPIC_PATH + path.substring(HELP_PROTOCOL.length()); //$NON-NLS-1$
+					return "/org.eclipse.help.webapp/" + MISSING_TOPIC_PATH + path.substring(HELP_PROTOCOL.length()); //$NON-NLS-1$
 				}
 			}
 		}
@@ -166,10 +166,10 @@ public class MissingContentManager {
 	public String getHelpMissingPage(boolean isHelpView) {
 		Placeholder[] unresolvedPlaceHolders = getUnresolvedPlaceholders();
 		if (unresolvedPlaceHolders.length == 0) {
-		    	return null;
+				return null;
 		} else {
-			    String suffix = isHelpView ? MISSING_BOOKS_HELP_VIEW_HREF : MISSING_BOOKS_HREF;
-		    	return "/org.eclipse.help.webapp" + '/'+ suffix; //$NON-NLS-1$
+				String suffix = isHelpView ? MISSING_BOOKS_HELP_VIEW_HREF : MISSING_BOOKS_HREF;
+				return "/org.eclipse.help.webapp" + '/'+ suffix; //$NON-NLS-1$
 		}
 	}
 
@@ -178,7 +178,7 @@ public class MissingContentManager {
 	 */
 	public String getRemoteHelpUnavailablePage(boolean isHelpView) {
 		if ( BaseHelpSystem.getMode()!=BaseHelpSystem.MODE_INFOCENTER ) {
-		    String suffix = isHelpView ? REMOTE_STATUS_HELP_VIEW_HREF : REMOTE_STATUS_HREF;
+			String suffix = isHelpView ? REMOTE_STATUS_HELP_VIEW_HREF : REMOTE_STATUS_HREF;
 			return "/org.eclipse.help.webapp/" + suffix; //$NON-NLS-1$
 		}
 		return null;
@@ -191,9 +191,9 @@ public class MissingContentManager {
 			Placeholder ph = iter.next();
 			String bundle = ph.bundle;
 			if (bundle != null && !bundlesToIgnore.contains(bundle) ) {
-			    if (Platform.getBundle(bundle) == null ) {
-			    	unresolved.add(ph);
-			    }
+				if (Platform.getBundle(bundle) == null ) {
+					unresolved.add(ph);
+				}
 			}
 		}
 		return unresolved.toArray(new Placeholder[unresolved.size()]);

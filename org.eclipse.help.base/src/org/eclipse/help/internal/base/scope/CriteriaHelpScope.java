@@ -106,7 +106,7 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 	private Map<String, Set<String>> getCriteriaInfo(ICriteria[] criteria) {
 		Map<String, Set<String>> criteriaMap = new HashMap<>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
-	    return criteriaMap;
+		return criteriaMap;
 	}
 
 	@Override

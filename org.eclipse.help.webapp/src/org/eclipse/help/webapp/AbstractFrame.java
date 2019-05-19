@@ -38,47 +38,47 @@ public abstract class AbstractFrame implements Comparable<AbstractFrame> {
 	 *
 	 * @return a non translated name which is the name of this frame
 	 */
-    public abstract String getName();
+	public abstract String getName();
 
-    /**
-     * @return a URL path, relative to /help which is the
-     * location of the jsp files in the advanced presentation
-     */
-    public abstract String getURL();
+	/**
+	 * @return a URL path, relative to /help which is the
+	 * location of the jsp files in the advanced presentation
+	 */
+	public abstract String getURL();
 
-    /**
-     * @return a string which will be used in the rows or cols attribute of a
-     * frameset in the html
-     */
-    public String getSize() {
-    	return "*"; //$NON-NLS-1$
-    }
+	/**
+	 * @return a string which will be used in the rows or cols attribute of a
+	 * frameset in the html
+	 */
+	public String getSize() {
+		return "*"; //$NON-NLS-1$
+	}
 
-    /**
-     * @return true if the frame should be shown in the advanced presentation
-     */
-    public boolean isVisible() {
-        return true;
-    }
+	/**
+	 * @return true if the frame should be shown in the advanced presentation
+	 */
+	public boolean isVisible() {
+		return true;
+	}
 
-    /**
-     * allows the attributes of this frame other than name and src to be specified
-     * @return a list of attributes
-     */
-    public String getFrameAttributes() {
-    	return "\"marginwidth=\"1\" marginheight=\"1\" frameborder=\"1\" scrolling=\"no\""; //$NON-NLS-1$
-    }
+	/**
+	 * allows the attributes of this frame other than name and src to be specified
+	 * @return a list of attributes
+	 */
+	public String getFrameAttributes() {
+		return "\"marginwidth=\"1\" marginheight=\"1\" frameborder=\"1\" scrolling=\"no\""; //$NON-NLS-1$
+	}
 
-    /**
+	/**
 	 * @since 3.7
 	 */
-    @Override
+	@Override
 	final public int compareTo(AbstractFrame o) {
-    	if (o != null) {
-    		String objectName = o.getName();
+		if (o != null) {
+			String objectName = o.getName();
 			return (getName().compareTo(objectName));
-    	}
-    	return 0;
-    }
+		}
+		return 0;
+	}
 
 }

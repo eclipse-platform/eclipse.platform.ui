@@ -28,91 +28,91 @@ import org.eclipse.ui.internal.intro.impl.util.Log;
 
 public class ExtensionPointManager extends BaseExtensionPointManager {
 
-    // singleton instance. Can be retrieved from here or from the Intro Plugin.
-    private static ExtensionPointManager inst = new ExtensionPointManager();
+	// singleton instance. Can be retrieved from here or from the Intro Plugin.
+	private static ExtensionPointManager inst = new ExtensionPointManager();
 
-    // The root model class that represents a full/combined OOBBE config. This
-    // model is loaded based on an introId when the customizableIntroPart tries
-    // to load a model based on introId. This is different when includes and
-    // extension aer resolved because in tnose cases models are being loaded
-    // given an id and not an introId.
-    private IntroModelRoot currentModel;
+	// The root model class that represents a full/combined OOBBE config. This
+	// model is loaded based on an introId when the customizableIntroPart tries
+	// to load a model based on introId. This is different when includes and
+	// extension aer resolved because in tnose cases models are being loaded
+	// given an id and not an introId.
+	private IntroModelRoot currentModel;
 
-    // the id of the intro part contribution who's model (config) we are trying
-    // to load. The customizableIntroPart loads this id and loads the model that
-    // is bound to this intro id (ie: has this id as an introId).
-    private String introId;
+	// the id of the intro part contribution who's model (config) we are trying
+	// to load. The customizableIntroPart loads this id and loads the model that
+	// is bound to this intro id (ie: has this id as an introId).
+	private String introId;
 
-    /*
-     * Prevent creation.
-     */
-    private ExtensionPointManager() {
-        super();
-    }
+	/*
+	 * Prevent creation.
+	 */
+	private ExtensionPointManager() {
+		super();
+	}
 
-    /**
-     * @return Returns the inst.
-     */
-    public static ExtensionPointManager getInst() {
-        return inst;
-    }
+	/**
+	 * @return Returns the inst.
+	 */
+	public static ExtensionPointManager getInst() {
+		return inst;
+	}
 
-    /**
-     * Load the intro model given the current intro id.
-     */
-    private void loadCurrentModel() {
-        currentModel = loadModel(ATT_CONFIG_INTRO_ID, this.introId);
-    }
+	/**
+	 * Load the intro model given the current intro id.
+	 */
+	private void loadCurrentModel() {
+		currentModel = loadModel(ATT_CONFIG_INTRO_ID, this.introId);
+	}
 
-    /**
-     * @return Returns the Intro Model root. Note: Prefereed way of getting to
-     *         the intro model root is throught the intro plugin.
-     */
-    public IntroModelRoot getCurrentModel() {
-        if (currentModel == null)
-            // we never loaded this model before, or we tried before and we
-            // failed. Load it. Get the correct config element based on
-            // config introId, and log any extra contributions.
-            loadCurrentModel();
-        return currentModel;
-    }
+	/**
+	 * @return Returns the Intro Model root. Note: Prefereed way of getting to
+	 *         the intro model root is throught the intro plugin.
+	 */
+	public IntroModelRoot getCurrentModel() {
+		if (currentModel == null)
+			// we never loaded this model before, or we tried before and we
+			// failed. Load it. Get the correct config element based on
+			// config introId, and log any extra contributions.
+			loadCurrentModel();
+		return currentModel;
+	}
 
-    /**
-     * Load an intro model given a config id.
-     *
-     * @param configId
-     * @return
-     */
-    public IntroModelRoot getModel(String configId) {
-        IntroModelRoot model = getCachedModel(configId);
-        if (model == null) {
-            // we never loaded this model before, or we tried before and we
-            // failed. Load it. Get the correct config element based on
-            // config id, and log any extra contributions.
-            model = loadModel(ATT_ID, configId);
-        }
-        return model;
-    }
+	/**
+	 * Load an intro model given a config id.
+	 *
+	 * @param configId
+	 * @return
+	 */
+	public IntroModelRoot getModel(String configId) {
+		IntroModelRoot model = getCachedModel(configId);
+		if (model == null) {
+			// we never loaded this model before, or we tried before and we
+			// failed. Load it. Get the correct config element based on
+			// config id, and log any extra contributions.
+			model = loadModel(ATT_ID, configId);
+		}
+		return model;
+	}
 
-    /**
-     * @param introPartId
-     *            The introPartId to set.
-     */
-    public void setIntroId(String introId) {
-        this.introId = introId;
-        // we do not have to clean model here. remove cached model, if it
-        // exists.
-        this.currentModel = null;
-    }
+	/**
+	 * @param introPartId
+	 *            The introPartId to set.
+	 */
+	public void setIntroId(String introId) {
+		this.introId = introId;
+		// we do not have to clean model here. remove cached model, if it
+		// exists.
+		this.currentModel = null;
+	}
 
-    public void clear() {
-        currentModel = null;
-        sharedConfigExtensionsManager = null;
-        introModels.clear();
-        ExtensionMap.getInstance().clear();
-        if (Log.logInfo)
-            Log.info("Cleared Intro model"); //$NON-NLS-1$
-    }
+	public void clear() {
+		currentModel = null;
+		sharedConfigExtensionsManager = null;
+		introModels.clear();
+		ExtensionMap.getInstance().clear();
+		if (Log.logInfo)
+			Log.info("Cleared Intro model"); //$NON-NLS-1$
+	}
 
 
 }

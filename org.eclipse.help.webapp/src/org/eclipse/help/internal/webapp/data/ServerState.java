@@ -27,9 +27,9 @@ public class ServerState {
 	 * situation where the Webapp is run without being launched on the built in server
 	 * in which case we set the mode to infocenter.
 	 */
-    public static void webappStarted(ServletContext context, HttpServletRequest request,
+	public static void webappStarted(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
-    	    BaseHelpSystem.checkMode();
-    }
+			BaseHelpSystem.checkMode();
+	}
 
 }

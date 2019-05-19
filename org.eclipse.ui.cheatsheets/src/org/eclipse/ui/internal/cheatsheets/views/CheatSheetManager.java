@@ -55,7 +55,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	public void fireEvent(int eventType) {
 		// Send an event to every listener
 		for (CheatSheetListener listener : listeners) {
-		    ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
+			ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
 			listener.cheatSheetEvent(event);
 		}
 	}
@@ -105,13 +105,13 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return result;
 	}
 
-    /**
-     * Substitute occurences of ${data} with values from the cheatsheetmanager.
-     * @param input The input string
-     * @param csm The cheatsheet manager
-     * @return The input string with substitutions made for any cheatsheet
-     * variables encountered.
-     */
+	/**
+	 * Substitute occurences of ${data} with values from the cheatsheetmanager.
+	 * @param input The input string
+	 * @param csm The cheatsheet manager
+	 * @return The input string with substitutions made for any cheatsheet
+	 * variables encountered.
+	 */
 	public String performVariableSubstitution(String input)
 	{
 		String remaining = input;
@@ -123,14 +123,14 @@ public class CheatSheetManager implements ICheatSheetManager {
 				output += remaining;
 				remaining = ""; //$NON-NLS-1$
 			} else {
-                String varName = remaining.substring(varIndex + VARIABLE_BEGIN.length(),
-                		                         endIndex);
-                String value = getDataQualified(varName);
-                output += remaining.substring(0, varIndex);
-                if (value != null) {
-                	output += value;
-                }
-                remaining = remaining.substring(endIndex + VARIABLE_END.length());
+				String varName = remaining.substring(varIndex + VARIABLE_BEGIN.length(),
+												 endIndex);
+				String value = getDataQualified(varName);
+				output += remaining.substring(0, varIndex);
+				if (value != null) {
+					output += value;
+				}
+				remaining = remaining.substring(endIndex + VARIABLE_END.length());
 			}
 		}
 		return output;
@@ -181,7 +181,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	 */
 	public void addListener(CheatSheetListener listener) {
 		if (listener != null) {
-		    listeners.add(listener);
+			listeners.add(listener);
 		}
 	}
 
@@ -199,7 +199,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 		if (dataTable == null) {
 			return new HashSet<>();
 		} else {
-		    return dataTable.keySet();
+			return dataTable.keySet();
 		}
 	}
 }

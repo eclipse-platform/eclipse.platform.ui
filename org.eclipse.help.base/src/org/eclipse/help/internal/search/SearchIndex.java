@@ -1045,7 +1045,7 @@ public class SearchIndex implements IHelpSearchIndex {
 		}
 		if (raf != null ) {
 			try {
-			    raf.close();
+				raf.close();
 			} catch (IOException ioe) {
 			}
 			raf = null;

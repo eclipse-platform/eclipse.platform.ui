@@ -67,9 +67,9 @@ public class EclipseConnector {
 	private ServletContext context;
 	private static INotFoundCallout notFoundCallout = null; // For JUnit Testing
 
- 	public EclipseConnector(ServletContext context) {
+	public EclipseConnector(ServletContext context) {
 		this.context= context;
- 	}
+	}
 
 
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
@@ -86,7 +86,7 @@ public class EclipseConnector {
 
 		try {
 
-		    //System.out.println("Transfer " + url); //$NON-NLS-1$
+			//System.out.println("Transfer " + url); //$NON-NLS-1$
 			// Redirect if the request includes PLUGINS_ROOT and is not a content request
 			int index = url.lastIndexOf(HelpURLConnection.PLUGINS_ROOT);
 			if (index!= -1 && !url.contains("content/" + HelpURLConnection.PLUGINS_ROOT)) {  //$NON-NLS-1$
@@ -125,39 +125,39 @@ public class EclipseConnector {
 			try {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
-			    pageNotFound = true;
-			    if (notFoundCallout != null) {
-			    	notFoundCallout.notFound(url);
-			    }
+				pageNotFound = true;
+				if (notFoundCallout != null) {
+					notFoundCallout.notFound(url);
+				}
 
-			    boolean isRTopicPath = isRTopicPath(req.getServletPath());
+				boolean isRTopicPath = isRTopicPath(req.getServletPath());
 
-			    if (requiresErrorPage(lowerCaseuRL) && !isRTopicPath) {
+				if (requiresErrorPage(lowerCaseuRL) && !isRTopicPath) {
 
-			    	String errorPage = null;
-			    	if (RemoteStatusData.isAnyRemoteHelpUnavailable()) {
-			            errorPage = '/'+HelpWebappPlugin.PLUGIN_ID+'/'+ MissingContentManager.MISSING_TOPIC_HREF;
-			    	} else {
-				        errorPage = MissingContentManager.getInstance().getPageNotFoundPage(url, false);
-			    	}
-			        if (errorPage != null && errorPage.length() > 0) {
+					String errorPage = null;
+					if (RemoteStatusData.isAnyRemoteHelpUnavailable()) {
+						errorPage = '/'+HelpWebappPlugin.PLUGIN_ID+'/'+ MissingContentManager.MISSING_TOPIC_HREF;
+					} else {
+						errorPage = MissingContentManager.getInstance().getPageNotFoundPage(url, false);
+					}
+					if (errorPage != null && errorPage.length() > 0) {
 						con = createConnection(req, resp, "help:" + errorPage); //$NON-NLS-1$
 						resp.setContentType("text/html"); //$NON-NLS-1$
 						try {
-						    is = con.getInputStream();
+							is = con.getInputStream();
 						} catch (IOException ioe2) {
 							// Cannot open error page
-						    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+							resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						}
 					} else {
 						// Error page not defined
-					    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+						resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
 				} else {
 					// Non HTML file
-				    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
 			}
@@ -202,7 +202,7 @@ public class EclipseConnector {
 
 			transferContent(is, out);
 			try {
-			    out.close();
+				out.close();
 			} catch (IOException ioe) {
 				//  Bug 314324 - do not report an error
 			}
@@ -229,7 +229,7 @@ public class EclipseConnector {
 		}
 		if (!contentType.startsWith("text")) {  //$NON-NLS-1$
 				return false;
-	    }
+		}
 		if (contentType.equals("text/css")) { //$NON-NLS-1$
 			return false;
 		}
@@ -273,12 +273,12 @@ public class EclipseConnector {
 
 	private boolean useMimeType(HttpServletRequest req, String mimeType) {
 		if  ( mimeType == null ) {
-	        return false;
-        }
-        if (mimeType.equals("application/xhtml+xml") && !UrlUtil.isMozilla(req)) { //$NON-NLS-1$
-        	return false;
-        }
-        return true;
+			return false;
+		}
+		if (mimeType.equals("application/xhtml+xml") && !UrlUtil.isMozilla(req)) { //$NON-NLS-1$
+			return false;
+		}
+		return true;
 	}
 
 	/**

@@ -47,10 +47,10 @@ public class ContentExtensionFileParser extends DefaultHandler {
 	/*
 	 * Parses the specified content extension XML file into model elements.
 	 */
-    public ContentExtension[] parse(Bundle bundle, String path) throws IOException, SAXException, ParserConfigurationException {
-    	if (reader == null) {
-    		reader = new DocumentReader();
-    	}
+	public ContentExtension[] parse(Bundle bundle, String path) throws IOException, SAXException, ParserConfigurationException {
+		if (reader == null) {
+			reader = new DocumentReader();
+		}
 		URL url= FileLocator.find(bundle, new Path(path), null);
 		if (url != null) {
 			InputStream in = url.openStream();
@@ -64,12 +64,12 @@ public class ContentExtensionFileParser extends DefaultHandler {
 			IUAElement[] children = extension.getChildren();
 			ContentExtension[] result = new ContentExtension[children.length];
 			System.arraycopy(children, 0, result, 0, children.length);
-	    	return result;
+			return result;
 		}
 		else {
 			throw new FileNotFoundException();
 		}
-    }
+	}
 
 	private Map<String, String[]> getRequiredAttributes() {
 		if (requiredAttributes == null) {

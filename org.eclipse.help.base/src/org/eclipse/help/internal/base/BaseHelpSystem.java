@@ -173,9 +173,9 @@ public final class BaseHelpSystem {
 		}
 
 		/*
-         * Assigns the provider responsible for providing help
-         * document content.
-         */
+		 * Assigns the provider responsible for providing help
+		 * document content.
+		 */
 		HelpPlugin.getDefault().setHelpProvider(new HelpProvider());
 	}
 
@@ -197,7 +197,7 @@ public final class BaseHelpSystem {
 	public static URL resolve(String href, boolean documentOnly) {
 		String url = null;
 		if (href == null || href.contains("://") //$NON-NLS-1$
-				   || isFileProtocol(href))
+					|| isFileProtocol(href))
 			url = href;
 		else {
 			BaseHelpSystem.ensureWebappRunning();
@@ -217,7 +217,7 @@ public final class BaseHelpSystem {
 	public static URL resolve(String href, String servlet) {
 		String url = null;
 		if (href == null || href.contains("://") //$NON-NLS-1$
-		   || isFileProtocol(href)) {
+			|| isFileProtocol(href)) {
 			url = href;
 		}
 		else {

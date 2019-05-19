@@ -58,7 +58,7 @@ public final class Analyzer_en extends Analyzer {
 		if ( stopWords == null ) {
 			stopWords = new HashSet<>();
 			for (int i = 0; i < STOP_WORDS.length; i++) {
-			    stopWords.add(STOP_WORDS[i]);
+				stopWords.add(STOP_WORDS[i]);
 			}
 		}
 		return stopWords;

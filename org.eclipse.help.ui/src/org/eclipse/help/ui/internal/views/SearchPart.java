@@ -237,7 +237,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				if (e.character == '\r') {
 					if (goButton.isEnabled())  {
 						doSearch(searchWordCombo.getText());
-				    }
+					}
 				}
 			}
 		});

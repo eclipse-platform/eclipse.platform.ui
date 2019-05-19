@@ -26,17 +26,17 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Creates the scope for local search using the help working sets
  */
 public class LocalSearchScopeFactory implements ISearchScopeFactory {
-    public final static String P_WORKING_SET = "workingSet"; //$NON-NLS-1$
-    public final static String P_CAPABILITY_FILTERING = "capabilityFiltering";  //$NON-NLS-1$
+	public final static String P_WORKING_SET = "workingSet"; //$NON-NLS-1$
+	public final static String P_CAPABILITY_FILTERING = "capabilityFiltering";  //$NON-NLS-1$
 
 	@Override
 	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
-        String name = store.getString(engineId+"."+P_WORKING_SET); //$NON-NLS-1$
-        WorkingSet workingSet = null;
-        if (name != null)
-            workingSet = BaseHelpSystem.getWorkingSetManager().getWorkingSet(name);
-        boolean capabilityFiltering = store.getBoolean(engineId+"."+P_CAPABILITY_FILTERING); //$NON-NLS-1$
-        return new LocalHelpScope(workingSet, capabilityFiltering);
-    }
+		String name = store.getString(engineId+"."+P_WORKING_SET); //$NON-NLS-1$
+		WorkingSet workingSet = null;
+		if (name != null)
+			workingSet = BaseHelpSystem.getWorkingSetManager().getWorkingSet(name);
+		boolean capabilityFiltering = store.getBoolean(engineId+"."+P_CAPABILITY_FILTERING); //$NON-NLS-1$
+		return new LocalHelpScope(workingSet, capabilityFiltering);
+	}
 }

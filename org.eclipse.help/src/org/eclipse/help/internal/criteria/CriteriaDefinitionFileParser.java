@@ -26,7 +26,7 @@ public class CriteriaDefinitionFileParser {
 
 	private DocumentReader reader;
 
-    public CriteriaDefinitionContribution parse(CriteriaDefinitionFile criteriaDefinitionFile) throws IOException, SAXException, ParserConfigurationException {
+	public CriteriaDefinitionContribution parse(CriteriaDefinitionFile criteriaDefinitionFile) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
 			reader = new CriteriaDefinitionDocumentReader();
 		}
@@ -34,13 +34,13 @@ public class CriteriaDefinitionFileParser {
 		if (in != null) {
 			CriteriaDefinition criteria = (CriteriaDefinition)reader.read(in);
 			CriteriaDefinitionContribution contrib = new CriteriaDefinitionContribution();
-	    	contrib.setId('/' + criteriaDefinitionFile.getPluginId() + '/' + criteriaDefinitionFile.getFile());
+			contrib.setId('/' + criteriaDefinitionFile.getPluginId() + '/' + criteriaDefinitionFile.getFile());
 			contrib.setCriteriaDefinition(criteria);
 			contrib.setLocale(criteriaDefinitionFile.getLocale());
 			return contrib;
 		}
-    	else {
-    		throw new FileNotFoundException();
-    	}
-    }
+		else {
+			throw new FileNotFoundException();
+		}
+	}
 }

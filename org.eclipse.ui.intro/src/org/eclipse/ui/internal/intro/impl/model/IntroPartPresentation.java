@@ -400,7 +400,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 		try {
 			if (implementationType.equals(BROWSER_IMPL_KIND))
 				implementation = //null;
-			      new BrowserIntroPartImplementation();
+				  new BrowserIntroPartImplementation();
 			else if (implementationType.equals(FORMS_IMPL_KIND))
 				implementation = new FormIntroPartImplementation();
 			else

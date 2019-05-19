@@ -173,13 +173,13 @@ public class TaskDependencies {
 					lastTask = thisTask;
 					thisTask = task.getName();
 					if (lastTask != null) {
-					    String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {lastTask, thisTask}));
-					    status.addStatus(IStatus.ERROR, message, null);
+						String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {lastTask, thisTask}));
+						status.addStatus(IStatus.ERROR, message, null);
 					}
 				}
 			}
 			String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {thisTask, firstTask}));
-		    status.addStatus(IStatus.ERROR, message, null);
+			status.addStatus(IStatus.ERROR, message, null);
 		}
 	}
 

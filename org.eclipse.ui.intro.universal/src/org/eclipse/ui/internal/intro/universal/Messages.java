@@ -16,14 +16,14 @@ package org.eclipse.ui.internal.intro.universal;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.universal.Messages"; //$NON-NLS-1$
+	private static final String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.universal.Messages"; //$NON-NLS-1$
 
-    static {
-        initializeMessages(INTRO_RESOURCE_BUNDLE, Messages.class);
-    }
+	static {
+		initializeMessages(INTRO_RESOURCE_BUNDLE, Messages.class);
+	}
 
-    // Misc
-    // -------
+	// Misc
+	// -------
 	public static String SharedIntroConfigurer_overview_name;
 	public static String SharedIntroConfigurer_overview_alt;
 	public static String SharedIntroConfigurer_overview_tooltip;

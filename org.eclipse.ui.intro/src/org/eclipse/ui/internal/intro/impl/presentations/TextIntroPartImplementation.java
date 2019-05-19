@@ -28,55 +28,55 @@ import org.eclipse.ui.intro.config.IIntroContentProvider;
  * model and prints the content of pages. It is used for debugging.
  */
 public class TextIntroPartImplementation extends
-        AbstractIntroPartImplementation {
+		AbstractIntroPartImplementation {
 
 
-    @Override
+	@Override
 	public void doStandbyStateChanged(boolean standby,
-            boolean isStandbyPartNeeded) {
-        // no-op
-    }
+			boolean isStandbyPartNeeded) {
+		// no-op
+	}
 
-    @Override
+	@Override
 	public void createPartControl(Composite container) {
-        Text text = new Text(container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        IntroModelRoot model = IntroPlugin.getDefault().getIntroModelRoot();
-        IntroModelSerializer serializer = new IntroModelSerializer(model);
-        text.setText(serializer.toString());
-        addToolBarActions();
-    }
+		Text text = new Text(container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		IntroModelRoot model = IntroPlugin.getDefault().getIntroModelRoot();
+		IntroModelSerializer serializer = new IntroModelSerializer(model);
+		text.setText(serializer.toString());
+		addToolBarActions();
+	}
 
-    @Override
+	@Override
 	protected void updateNavigationActionsState() {
-        // no-op
-    }
+		// no-op
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
-        // no-op
-    }
+		// no-op
+	}
 
-    @Override
+	@Override
 	public boolean navigateBackward() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean navigateForward() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	protected void handleRegistryChanged(IRegistryChangeEvent event) {
-        // no-op
-    }
+		// no-op
+	}
 
-    @Override
+	@Override
 	public boolean navigateHome() {
-        return false;
-    }
+		return false;
+	}
 
-    public void reflow(IIntroContentProvider provider, boolean incremental) {
-        // no-op
-    }
+	public void reflow(IIntroContentProvider provider, boolean incremental) {
+		// no-op
+	}
 }

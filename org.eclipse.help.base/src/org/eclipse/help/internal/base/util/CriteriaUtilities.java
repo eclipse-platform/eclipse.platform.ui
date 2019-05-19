@@ -25,22 +25,22 @@ import org.eclipse.help.internal.criteria.CriterionResource;
 
 public class CriteriaUtilities {
 
-    public static List<String> getCriteriaValues(String rawValues) {
+	public static List<String> getCriteriaValues(String rawValues) {
 		List<String> result = new ArrayList<>();
-    	if (rawValues != null) {
-    		String[] values = rawValues.split(","); //$NON-NLS-1$
-    		for(int j = 0; j < values.length; ++j){
-    			String value = values[j].trim();
-    			if (value.length() > 0) {
-    				result.add(value);
-    			}
-    		}
-    	}
+		if (rawValues != null) {
+			String[] values = rawValues.split(","); //$NON-NLS-1$
+			for(int j = 0; j < values.length; ++j){
+				String value = values[j].trim();
+				if (value.length() > 0) {
+					result.add(value);
+				}
+			}
+		}
 		return result;
-    }
+	}
 
-    public static void addCriteriaToMap(Map<String, Set<String>> map, ICriteria[] criteria) {
-    	for (int i = 0; i < criteria.length; ++i) {
+	public static void addCriteriaToMap(Map<String, Set<String>> map, ICriteria[] criteria) {
+		for (int i = 0; i < criteria.length; ++i) {
 			ICriteria criterion = criteria[i];
 			String name = criterion.getName();
 			List<String> values = CriteriaUtilities.getCriteriaValues(criterion.getValue());
@@ -54,10 +54,10 @@ public class CriteriaUtilities {
 				map.put(name, existingValueSet);
 			}
 		}
-    }
+	}
 
-    public static void addCriteriaToMap(Map<String, Set<String>> map, CriterionResource[] criteria) {
-    	for(int i = 0; i < criteria.length; ++ i){
+	public static void addCriteriaToMap(Map<String, Set<String>> map, CriterionResource[] criteria) {
+		for(int i = 0; i < criteria.length; ++ i){
 			CriterionResource criterion = criteria[i];
 			String criterionName = criterion.getCriterionName();
 			List<String> criterionValues = criterion.getCriterionValues();
@@ -68,6 +68,6 @@ public class CriteriaUtilities {
 			existedValueSet.addAll(criterionValues);
 			map.put(criterionName, existedValueSet);
 		}
-    }
+	}
 
 }

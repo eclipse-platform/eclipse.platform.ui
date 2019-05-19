@@ -25,7 +25,7 @@ public class MarkupParser {
 	}
 
 	private static String parseMarkup(Node parentNode) {
-	    NodeList children = parentNode.getChildNodes();
+		NodeList children = parentNode.getChildNodes();
 		StringBuilder text = new StringBuilder();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node childNode = children.item(i);

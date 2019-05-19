@@ -40,7 +40,7 @@ public class TaskStateUtilities {
 		if (parent == null) {
 			return null;
 		}
-        if (!parent.requiredTasksCompleted()) {
+		if (!parent.requiredTasksCompleted()) {
 			return parent;
 		}
 		return findBlockedAncestor(parent);
@@ -56,7 +56,7 @@ public class TaskStateUtilities {
 		if (parent == null) {
 			return null;
 		}
-        if (parent.getState() == ICompositeCheatSheetTask.SKIPPED) {
+		if (parent.getState() == ICompositeCheatSheetTask.SKIPPED) {
 			return parent;
 		}
 		return findSkippedAncestor(parent);
@@ -72,7 +72,7 @@ public class TaskStateUtilities {
 		if (parent == null) {
 			return null;
 		}
-        if (parent.getState() == ICompositeCheatSheetTask.COMPLETED) {
+		if (parent.getState() == ICompositeCheatSheetTask.COMPLETED) {
 			return parent;
 		}
 		return findCompletedAncestor(parent);
@@ -116,11 +116,11 @@ public class TaskStateUtilities {
 	 */
 	private static boolean isStartable(ICompositeCheatSheetTask task) {
 		if (task.getState() != ICompositeCheatSheetTask.NOT_STARTED) return false;
-	    if (findSkippedAncestor(task) != null) return false;
-	    if (findCompletedAncestor(task) != null) return false;
-	    if (!task.requiredTasksCompleted()) return false;
-	    if (findBlockedAncestor(task) != null) return false;
-        return true;
+		if (findSkippedAncestor(task) != null) return false;
+		if (findCompletedAncestor(task) != null) return false;
+		if (!task.requiredTasksCompleted()) return false;
+		if (findBlockedAncestor(task) != null) return false;
+		return true;
 	}
 
 	/**

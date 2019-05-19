@@ -64,7 +64,7 @@ public class EnabledTopicUtils {
 	 */
 	public static boolean isEnabled(IToc toc) {
 		if (!HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref()) ||
-		    UAContentFilter.isFiltered(toc, HelpEvaluationContext.getContext())) {
+			UAContentFilter.isFiltered(toc, HelpEvaluationContext.getContext())) {
 			return false;
 		}
 		// A toc is enabled only if at least one subtopic is enabled

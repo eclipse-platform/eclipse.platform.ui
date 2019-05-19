@@ -47,17 +47,17 @@ public class PreferenceFileHandler {
 		// TODO: Decide if comma is a good delimiter, or if we should use a different delimiter.
 
 		namePreference = Platform.getPreferencesService().getString
-		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, "", null); //$NON-NLS-1$
+			(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, "", null); //$NON-NLS-1$
 		hostPreference = Platform.getPreferencesService().getString
-		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, "", null); //$NON-NLS-1$
+			(HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, "", null); //$NON-NLS-1$
 		pathPreference = Platform.getPreferencesService().getString
-		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, "", null); //$NON-NLS-1$
+			(HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, "", null); //$NON-NLS-1$
 		protocolPreference = Platform.getPreferencesService().getString
-	    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL, "", null); //$NON-NLS-1$
+		(HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL, "", null); //$NON-NLS-1$
 		portPreference = Platform.getPreferencesService().getString
-		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, "", null); //$NON-NLS-1$
+			(HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, "", null); //$NON-NLS-1$
 		icEnabledPreference =Platform.getPreferencesService().getString
-		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, "", null); //$NON-NLS-1$
+			(HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, "", null); //$NON-NLS-1$
 
 		//Get host array first, and initialize values
 		if(hostPreference.length()==0)
@@ -230,10 +230,10 @@ public class PreferenceFileHandler {
 
 	public static int getEmbeddedHelpOption() {
 		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
-	    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
+		(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 
 		boolean isRemotePreferred = Platform.getPreferencesService().getBoolean
-	    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
+		(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
 
 		if(!isRemoteOn)
 		{

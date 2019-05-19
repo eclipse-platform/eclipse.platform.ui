@@ -56,7 +56,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private final static String QUERY = "BrowserPartQuery:"; //$NON-NLS-1$
 	private final static String HIGHLIGHT_ON = "highlight-on"; //$NON-NLS-1$
 	private final static String HELP_VIEW_SCALE = "help_view_scale"; //$NON-NLS-1$
-    private final static String EMPTY_PAGE = "<html><head></head><body></body></html>"; //$NON-NLS-1$
+	private final static String EMPTY_PAGE = "<html><head></head><body></body></html>"; //$NON-NLS-1$
 
 	private ReusableHelpPart parent;
 
@@ -160,7 +160,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				}
 				lastProgress = -1;
 				if (fontScalePercentage != 100) {
-				    rescale();
+					rescale();
 				}
 				String value = executeQuery("document.title"); //$NON-NLS-1$
 				BrowserPart.this.title = value != null ? value : "N/A"; //$NON-NLS-1$
@@ -286,7 +286,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			fontScalePercentage = Platform.getPreferencesService().getInt(HelpBasePlugin.PLUGIN_ID,
 					HELP_VIEW_SCALE, 100, null);
 			if (menuManager != null) {
-			    addMenuActions(menuManager);
+				addMenuActions(menuManager);
 			}
 		}
 	}
@@ -462,8 +462,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 
 	private void enableButtons() {
 		if (magnifyAction != null) {
-		    magnifyAction.setEnabled(fontScalePercentage < SCALE_MAX);
-	        reduceAction.setEnabled(fontScalePercentage > SCALE_MIN);
+			magnifyAction.setEnabled(fontScalePercentage < SCALE_MAX);
+			reduceAction.setEnabled(fontScalePercentage > SCALE_MIN);
 		}
 	}
 

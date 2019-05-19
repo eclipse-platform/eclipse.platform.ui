@@ -286,7 +286,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
-	    refilter();
+		refilter();
 	}
 
 	@Override
@@ -404,7 +404,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		for (int i = 0; i < engineDescriptors.length; i++) {
 			final EngineDescriptor ed = engineDescriptors[i];
 			if (ed.getEngineTypeId().equals("org.eclipse.help.ui.localSearch") //$NON-NLS-1$
-				  && ed.getEngine() != null) {
+					&& ed.getEngine() != null) {
 				scope = ed.createSearchScope(set.getPreferenceStore());
 			}
 		}
@@ -414,7 +414,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		treeViewer.resetFilters();
 		if (workingSet != null) {
 			WorkingSetScope helpScope = new WorkingSetScope(workingSet, set.getName());
-		    treeViewer.addFilter(new ScopeFilter(helpScope));
+			treeViewer.addFilter(new ScopeFilter(helpScope));
 		}
 		treeViewer.refresh();
 	}

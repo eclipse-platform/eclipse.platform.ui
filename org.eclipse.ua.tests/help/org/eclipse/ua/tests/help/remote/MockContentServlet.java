@@ -46,8 +46,8 @@ public class MockContentServlet extends HttpServlet {
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		} else {
 			int port = req.getLocalPort();
-		    String response = RemoteTestUtils.createMockContent(plugin, file, locale, port);
-		    resp.getWriter().write(response);
+			String response = RemoteTestUtils.createMockContent(plugin, file, locale, port);
+			resp.getWriter().write(response);
 		}
 		callcount++;
 	}

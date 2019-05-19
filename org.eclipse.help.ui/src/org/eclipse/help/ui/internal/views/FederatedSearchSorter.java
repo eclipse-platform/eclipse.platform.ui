@@ -35,17 +35,17 @@ public class FederatedSearchSorter extends ViewerComparator {
 				return 5;
 			}
 		}
-        return super.category(element);
-    }
+		return super.category(element);
+	}
 
 
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-	    int cat1 = category(e1);
-	    int cat2 = category(e2);
+		int cat1 = category(e1);
+		int cat2 = category(e2);
 
-	    if (cat1 != cat2)
-	    	return cat1 - cat2;
+		if (cat1 != cat2)
+			return cat1 - cat2;
 		try {
 			ISearchEngineResult r1 = (ISearchEngineResult) e1;
 			ISearchEngineResult r2 = (ISearchEngineResult) e2;

@@ -164,13 +164,13 @@ public class IntroSearchParticipant extends SearchParticipant {
 			TitleAndSummary titleSummary = new TitleAndSummary();
 			addChildren(children, buf, doc, titleSummary);
 			String contents = buf.toString();
-            if (titleSummary.title != null) {
-			     addTitle(titleSummary.title, doc);
-            }
-            if (titleSummary.summary != null) {
-            	doc.setSummary(titleSummary.summary);
-            }
-            doc.addContents(contents);
+			if (titleSummary.title != null) {
+				 addTitle(titleSummary.title, doc);
+			}
+			if (titleSummary.summary != null) {
+				doc.setSummary(titleSummary.summary);
+			}
+			doc.addContents(contents);
 			return Status.OK_STATUS;
 		}
 		// delegate to the help system
@@ -203,12 +203,12 @@ public class IntroSearchParticipant extends SearchParticipant {
 					titleSummary.summary = childIntroText.getText();
 				}
 			}
-            if (child instanceof AbstractIntroContainer) {
+			if (child instanceof AbstractIntroContainer) {
 				AbstractIntroContainer container = (AbstractIntroContainer) child;
 				if (!"navigation-links".equals(container.getId())) { //$NON-NLS-1$
-				    AbstractIntroElement[] cc = container.getChildren();
-				    addChildren(cc, buf, doc, titleSummary);
-                }
+					AbstractIntroElement[] cc = container.getChildren();
+					addChildren(cc, buf, doc, titleSummary);
+				}
 			}
 		}
 	}

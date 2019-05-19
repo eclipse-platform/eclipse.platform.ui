@@ -37,7 +37,7 @@ public class SkipAction extends Action {
 
 	@Override
 	public void run() {
-	    task.setState(ICompositeCheatSheetTask.SKIPPED);
+		task.setState(ICompositeCheatSheetTask.SKIPPED);
 	}
 
 }

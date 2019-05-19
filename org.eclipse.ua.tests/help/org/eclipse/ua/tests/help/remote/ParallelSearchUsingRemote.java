@@ -44,8 +44,8 @@ public class ParallelSearchUsingRemote {
 
 	@Before
 	public void setUp() throws Exception {
-        RemotePreferenceStore.savePreferences();
-        mode = BaseHelpSystem.getMode();
+		RemotePreferenceStore.savePreferences();
+		mode = BaseHelpSystem.getMode();
 	}
 
 	@After
@@ -59,7 +59,7 @@ public class ParallelSearchUsingRemote {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		RemotePreferenceStore.setMockRemoteServer();
 		ParallelTestSupport.testSingleCase(new Searcher(), 100);
-	    RemotePreferenceStore.disableRemoteHelp();
+		RemotePreferenceStore.disableRemoteHelp();
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class ParallelSearchUsingRemote {
 			testCases[i] = new Searcher();
 		}
 		ParallelTestSupport.testInParallel(testCases, 100);
-	    RemotePreferenceStore.disableRemoteHelp();
+		RemotePreferenceStore.disableRemoteHelp();
 	}
 
 }

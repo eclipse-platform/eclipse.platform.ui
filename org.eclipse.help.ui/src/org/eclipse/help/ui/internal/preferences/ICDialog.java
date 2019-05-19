@@ -250,7 +250,7 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 
 	@Override
 	public void handleEvent(Event event) {
-		  updateValidity();
+		updateValidity();
 	}
 
 	@Override

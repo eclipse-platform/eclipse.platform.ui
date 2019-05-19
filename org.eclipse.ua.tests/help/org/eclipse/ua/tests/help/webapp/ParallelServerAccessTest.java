@@ -65,8 +65,8 @@ public class ParallelServerAccessTest {
 			}
 			for (int i = 0; i < numberOfThreads && complete; i++) {
 				if (readers[i].isAlive()) {
-				    complete = false;
-				    try {
+					complete = false;
+					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						fail("Interrupted Exception");
@@ -140,9 +140,9 @@ public class ParallelServerAccessTest {
 				}
 			} while (nextChar != '$');
 		}
-        if (uniqueId != value) {
-        	throw new UnexpectedValueException(uniqueId, value);
-        }
+		if (uniqueId != value) {
+			throw new UnexpectedValueException(uniqueId, value);
+		}
 	}
 
 	private synchronized long getReadOperations() {

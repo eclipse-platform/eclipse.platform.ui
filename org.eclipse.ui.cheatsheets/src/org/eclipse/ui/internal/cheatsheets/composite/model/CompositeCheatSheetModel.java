@@ -47,9 +47,9 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 
 	public CompositeCheatSheetModel(String name, String description, String explorerId) {
 		this.name = name;
-	    this.description = description;
-	    this.explorerId = explorerId;
-	    this.dependencies = new TaskDependencies();
+		this.description = description;
+		this.explorerId = explorerId;
+		this.dependencies = new TaskDependencies();
 	}
 
 	public String getName() {
@@ -150,32 +150,32 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	 */
 	private void resetTask(ICompositeCheatSheetTask task) {
 		if (task instanceof EditableTask) {
-		    EditableTask editable = (EditableTask)task;
+			EditableTask editable = (EditableTask)task;
 			editable.reset();
 			if (saveHelper != null) {
-			    saveHelper.clearTaskMemento(task.getId());
+				saveHelper.clearTaskMemento(task.getId());
 			}
 		} else if (task instanceof TaskGroup) {
 			TaskGroup group = (TaskGroup)task;
-		    ICompositeCheatSheetTask[] subtasks = group.getSubtasks();
+			ICompositeCheatSheetTask[] subtasks = group.getSubtasks();
 			for (ICompositeCheatSheetTask subtask : subtasks) {
 				resetTask(subtask);
-		    }
-		   group.setStateNoNotify(ICompositeCheatSheetTask.NOT_STARTED);
+			}
+			group.setStateNoNotify(ICompositeCheatSheetTask.NOT_STARTED);
 		}
 	}
 
 	public void resetAllTasks(Map<String, String> cheatSheetData) {
-        if (manager != null) {
-    		if (cheatSheetData == null) {
+		if (manager != null) {
+			if (cheatSheetData == null) {
 				manager.setData(new Hashtable<>());
-    		} else {
-    			manager.setData(cheatSheetData);
-    		}
-        }
-        saveHelper.clearTaskMementos();
-	    resetTask(getRootTask());
-	    sendTaskChangeEvents();
+			} else {
+				manager.setData(cheatSheetData);
+			}
+		}
+		saveHelper.clearTaskMementos();
+		resetTask(getRootTask());
+		sendTaskChangeEvents();
 	}
 
 	/**

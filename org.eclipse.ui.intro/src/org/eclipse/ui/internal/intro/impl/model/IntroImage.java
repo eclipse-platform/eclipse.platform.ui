@@ -23,55 +23,55 @@ import org.w3c.dom.Element;
  */
 public class IntroImage extends AbstractBaseIntroElement {
 
-    protected static final String TAG_IMAGE = "img"; //$NON-NLS-1$
+	protected static final String TAG_IMAGE = "img"; //$NON-NLS-1$
 
-    private static final String ATT_SRC = "src"; //$NON-NLS-1$
-    private static final String ATT_ALT = "alt"; //$NON-NLS-1$
-    private static final String ATT_TITLE = "title"; //$NON-NLS-1$
+	private static final String ATT_SRC = "src"; //$NON-NLS-1$
+	private static final String ATT_ALT = "alt"; //$NON-NLS-1$
+	private static final String ATT_TITLE = "title"; //$NON-NLS-1$
 
-    private Element element;
-    private String src;
-    private String base;
+	private Element element;
+	private String src;
+	private String base;
 
-    IntroImage(Element element, Bundle bundle, String base) {
-        super(element, bundle);
-        this.element = element;
-        this.base = base;
-    }
+	IntroImage(Element element, Bundle bundle, String base) {
+		super(element, bundle);
+		this.element = element;
+		this.base = base;
+	}
 
-    /**
-     * @return Returns the alt.
-     */
-    public String getAlt() {
-        return getAttribute(element, ATT_ALT);
-    }
+	/**
+	 * @return Returns the alt.
+	 */
+	public String getAlt() {
+		return getAttribute(element, ATT_ALT);
+	}
 
-    /**
-     * @return Returns the title.
-     */
-    public String getTitle() {
-        return getAttribute(element, ATT_TITLE);
-    }
+	/**
+	 * @return Returns the title.
+	 */
+	public String getTitle() {
+		return getAttribute(element, ATT_TITLE);
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.IMAGE;
-    }
+		return AbstractIntroElement.IMAGE;
+	}
 
-    /**
-     * @return Returns the src value, already resolved as a local url.
-     */
-    public String getSrc() {
-    	if (src==null)// Resolve src.
-    		src = BundleUtil.getResolvedResourceLocation(base, getSrcAsIs(), getBundle());
-        return src;
-    }
+	/**
+	 * @return Returns the src value, already resolved as a local url.
+	 */
+	public String getSrc() {
+		if (src==null)// Resolve src.
+			src = BundleUtil.getResolvedResourceLocation(base, getSrcAsIs(), getBundle());
+		return src;
+	}
 
-    /**
-     * @return Returns the src value, as is, without resolving it as a local
-     *         url. The src value is relative to the parent plugin.
-     */
-    public String getSrcAsIs() {
-        return getAttribute(element, ATT_SRC);
-    }
+	/**
+	 * @return Returns the src value, as is, without resolving it as a local
+	 *         url. The src value is relative to the parent plugin.
+	 */
+	public String getSrcAsIs() {
+		return getAttribute(element, ATT_SRC);
+	}
 }

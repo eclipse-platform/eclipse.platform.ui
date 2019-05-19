@@ -55,14 +55,14 @@ public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 		for (int i=0; i < 10; ++i) {
 			boolean warmup = i == 0;
 			if (!warmup) {
-			    startMeasuring();
+				startMeasuring();
 			}
 
 			assembleIndex();
 
 			if (!warmup) {
-			    stopMeasuring();
-		    }
+				stopMeasuring();
+			}
 		}
 
 		commitMeasurements();

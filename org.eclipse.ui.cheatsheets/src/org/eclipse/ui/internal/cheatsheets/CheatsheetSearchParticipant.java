@@ -76,7 +76,7 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 		HashSet<String> set = new HashSet<>();
 		for (IConfigurationElement element : elements) {
 			if (element.getName().equals(CheatSheetRegistryReader.TAG_CHEATSHEET)) {
-			    set.add(element.getContributor().getName());
+				set.add(element.getContributor().getName());
 			}
 		}
 		return set;
@@ -93,12 +93,12 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 			data.setTitle(attributes.getValue(ICompositeCheatsheetTags.NAME));
 		} else if (name.equals(IParserTags.ITEM)) {
 			data.addText(attributes.getValue(IParserTags.TITLE));
-	    } else if (name.equals(IParserTags.SUBITEM)) {
-		    data.addText(attributes.getValue(IParserTags.LABEL));
-	    } else if (name.equals(ICompositeCheatsheetTags.TASK )
-	    		|| name.equals(ICompositeCheatsheetTags.TASK_GROUP)) {
-		    data.addText(attributes.getValue(ICompositeCheatsheetTags.NAME));
-	    }
+		} else if (name.equals(IParserTags.SUBITEM)) {
+			data.addText(attributes.getValue(IParserTags.LABEL));
+		} else if (name.equals(ICompositeCheatsheetTags.TASK )
+				|| name.equals(ICompositeCheatsheetTags.TASK_GROUP)) {
+			data.addText(attributes.getValue(ICompositeCheatsheetTags.NAME));
+		}
 	}
 
 	@Override

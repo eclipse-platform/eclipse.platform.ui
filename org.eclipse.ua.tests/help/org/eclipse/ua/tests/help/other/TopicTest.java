@@ -39,7 +39,7 @@ public class TopicTest {
 	private static final String INVALID_INSTALLED = "<with variable=\"platform\">" +
 	"<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.invalid\"/></with>";
 	private static final String CS_INSTALLED = "<with variable=\"platform\">" +
-	    "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/></with>";
+		"<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/></with>";
 	private static final String ENABLEMENT_CHEATSHEETS = "<enablement>" + CS_INSTALLED + "</enablement>";
 	private static final String ENABLEMENT_INVALID = "<enablement>" +  INVALID_INSTALLED  + "</enablement>";
 	private static final String FILTER_IN = "<filter name = \"plugin\" value = \"org.eclipse.ua.tests\"/>";
@@ -57,13 +57,13 @@ public class TopicTest {
 	private final String TOPIC_FILTER_OUT = TOPIC_HEAD_ECLIPSE + FILTER_OUT + TOPIC_END;
 	private final String TOPIC_FILTER_MIXED = TOPIC_HEAD_ECLIPSE + FILTER_IN + FILTER_OUT + TOPIC_END;
 	private final String TOPIC_OLD_FILTER = "<topic filter=\"plugin=org.eclipse.ua.tests\" href=\"www.eclipse.org\""
-	    + " label=\"Transformations and transformation configurations\"/>";
+		+ " label=\"Transformations and transformation configurations\"/>";
 	private final String TOPIC_OLD_FILTER_DISABLED = "<topic filter=\"plugin=org.eclipse.ua.invalid\" href=\"www.eclipse.org\""
-	    + " label=\"Transformations and transformation configurations\"/>";
+		+ " label=\"Transformations and transformation configurations\"/>";
 	private final String TOPIC_OLD_FILTER_IN__NEGATED = "<topic filter=\"plugin!=org.eclipse.ua.tests\" href=\"www.eclipse.org\""
-	    + " label=\"Transformations and transformation configurations\"/>";
+		+ " label=\"Transformations and transformation configurations\"/>";
 	private final String TOPIC_OLD_FILTER_OUT_NEGATED = "<topic filter=\"plugin!=org.eclipse.ua.invalid\" href=\"www.eclipse.org\""
-	    + " label=\"Transformations and transformation configurations\"/>";
+		+ " label=\"Transformations and transformation configurations\"/>";
 	private final String TOPIC_WITH_CHILD = TOPIC_HEAD_ECLIPSE + TOPIC_BUGZILLA + TOPIC_END;
 
 	private int mode;
@@ -84,7 +84,7 @@ public class TopicTest {
 		Topic topic;
 		Document doc;
 		try {
-		    doc = DocumentCreator.createDocument(topicSource);
+			doc = DocumentCreator.createDocument(topicSource);
 		} catch (Exception e) {
 			fail("Caught Exception");
 			doc = null;

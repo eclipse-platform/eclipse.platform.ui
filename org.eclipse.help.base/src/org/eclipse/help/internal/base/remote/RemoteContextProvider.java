@@ -52,7 +52,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 		if (RemoteHelp.isEnabled()) {
 
 			int numICs = host.length; // Total number of hosts
-		    //Loop through remote InfoCenters and return first CSH match found
+			//Loop through remote InfoCenters and return first CSH match found
 			URL url=null;
 			for (int i = 0; i < numICs; i++) {
 

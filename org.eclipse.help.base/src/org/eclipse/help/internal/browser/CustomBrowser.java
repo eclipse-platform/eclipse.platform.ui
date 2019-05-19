@@ -37,7 +37,7 @@ public class CustomBrowser implements IBrowser {
 	@Override
 	public void displayURL(String url) throws Exception {
 		String path =  Platform.getPreferencesService().getString
-		   (HelpBasePlugin.PLUGIN_ID, CustomBrowser.CUSTOM_BROWSER_PATH_KEY, "", null); //$NON-NLS-1$
+			(HelpBasePlugin.PLUGIN_ID, CustomBrowser.CUSTOM_BROWSER_PATH_KEY, "", null); //$NON-NLS-1$
 		String[] command = prepareCommand(path, url);
 
 		try {

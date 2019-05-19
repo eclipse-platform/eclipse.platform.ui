@@ -43,18 +43,18 @@ public class SuccesorTaskFinder {
 	 * @param task The task which was just completed
 	 * @return An array of tasks which can be started
 	 */
-    public ICompositeCheatSheetTask[] getRecommendedSuccessors()
-    {
-    	// TODO this code could be moved to TaskGroup
-    	if (ITaskGroup.CHOICE.equals(currentTask.getKind())) {
-    		// For a choice if more than one child is runnable return it
+	public ICompositeCheatSheetTask[] getRecommendedSuccessors()
+	{
+		// TODO this code could be moved to TaskGroup
+		if (ITaskGroup.CHOICE.equals(currentTask.getKind())) {
+			// For a choice if more than one child is runnable return it
 			List<ICompositeCheatSheetTask> runnableChoices = findRunnableChoices();
-    		if (runnableChoices.size() != 0) {
+			if (runnableChoices.size() != 0) {
 				return runnableChoices.toArray(new ICompositeCheatSheetTask[runnableChoices.size()]);
-    		}
-    	}
-    	return getBestSuccessor();
-    }
+			}
+		}
+		return getBestSuccessor();
+	}
 
 	private List<ICompositeCheatSheetTask> findRunnableChoices() {
 		List<ICompositeCheatSheetTask> result = new ArrayList<>();
@@ -72,14 +72,14 @@ public class SuccesorTaskFinder {
 	private boolean isStartable(ICompositeCheatSheetTask task) {
 		int state = task.getState();
 		return (state != ICompositeCheatSheetTask.COMPLETED &&
-			    state != ICompositeCheatSheetTask.SKIPPED &&
-			    task.requiredTasksCompleted());
+				state != ICompositeCheatSheetTask.SKIPPED &&
+				task.requiredTasksCompleted());
 	}
 
 	private ICompositeCheatSheetTask[] getBestSuccessor() {
 		bestLaterTask = null;
-    	bestEarlierTask = null;
-    	seenThisTask = false;
+		bestEarlierTask = null;
+		seenThisTask = false;
 		searchRunnableChildren(currentTask.getCompositeCheatSheet().getRootTask());
 		// If there is a task which is found later in the tree return
 		// that, otherwise an earlier task.

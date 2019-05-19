@@ -136,41 +136,41 @@ public class EnabledTopicTest {
 
 	@Test
 	public void testEnabledTopicsEmptyArray() throws Exception {
-         ITopic[] enabled = EnabledTopicUtils.getEnabled(new ITopic[0]);
-         assertTrue(enabled.length == 0);
+		ITopic[] enabled = EnabledTopicUtils.getEnabled(new ITopic[0]);
+		assertTrue(enabled.length == 0);
 	}
 
 	@Test
 	public void testEnabledTopicsAllEnabled() throws Exception {
-        ITopic[] topics = new ITopic[2];
-        topics[0] = new ETopic("T1", true);
-        topics[1] = new ETopic("T2", true);
+		ITopic[] topics = new ITopic[2];
+		topics[0] = new ETopic("T1", true);
+		topics[1] = new ETopic("T2", true);
 		ITopic[] enabled = EnabledTopicUtils.getEnabled(topics);
-        assertTrue(enabled.length == 2);
-        assertTrue(topics[0].getLabel().equals("T1"));
-        assertTrue(topics[1].getLabel().equals("T2"));
+		assertTrue(enabled.length == 2);
+		assertTrue(topics[0].getLabel().equals("T1"));
+		assertTrue(topics[1].getLabel().equals("T2"));
 	}
 
 	@Test
 	public void testEnabledTopicsAllDisabled() throws Exception {
 		ITopic[] topics = new ITopic[2];
-	    topics[0] = new ETopic("T1", false);
-	    topics[1] = new ETopic("T2", false);
+		topics[0] = new ETopic("T1", false);
+		topics[1] = new ETopic("T2", false);
 		ITopic[] enabled = EnabledTopicUtils.getEnabled(topics);
-	    assertTrue(enabled.length == 0);
+		assertTrue(enabled.length == 0);
 	}
 
 	@Test
 	public void testEnabledTopicsMix() throws Exception {
 		ITopic[] topics = new ITopic[4];
-        topics[0] = new ETopic("T1", true);
-        topics[1] = new ETopic("T2", false);
-        topics[2] = new ETopic("T3", true);
-        topics[3] = new ETopic("T4", false);
+		topics[0] = new ETopic("T1", true);
+		topics[1] = new ETopic("T2", false);
+		topics[2] = new ETopic("T3", true);
+		topics[3] = new ETopic("T4", false);
 		ITopic[] enabled = EnabledTopicUtils.getEnabled(topics);
-        assertEquals(2, enabled.length);
-        assertEquals("T1", enabled[0].getLabel());
-        assertEquals("T3", enabled[1].getLabel());
+		assertEquals(2, enabled.length);
+		assertEquals("T1", enabled[0].getLabel());
+		assertEquals("T3", enabled[1].getLabel());
 	}
 
 	@Test

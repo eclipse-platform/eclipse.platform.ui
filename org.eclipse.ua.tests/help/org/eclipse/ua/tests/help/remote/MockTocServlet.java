@@ -46,10 +46,10 @@ public class MockTocServlet extends TocServlet {
 		UserTopic topic2 = new UserTopic("Topic_" + locale, "http://www.eclipse.org", true);
 		toc2.addTopic(topic2);
 		TocContribution contribution2 = createToc(toc2, "mock.toc", locale);
-	    String response;
+		String response;
 		try {
 			response = serialize(new TocContribution[] { contribution1, contribution2 }, locale);
-		    resp.getWriter().write(response);
+			resp.getWriter().write(response);
 		} catch (TransformerException e) {
 			resp.sendError(400);
 		}
@@ -62,10 +62,10 @@ public class MockTocServlet extends TocServlet {
 		contribution.setContributorId(id);
 		contribution.setExtraDocuments(new String[0]);
 		contribution.setLocale(locale);
-	    contribution.setPrimary(true);
-	    contribution.setSubToc(false);
+		contribution.setPrimary(true);
+		contribution.setSubToc(false);
 		contribution.setId(id);
-	    contribution.setToc(new Toc(toc));
+		contribution.setToc(new Toc(toc));
 		return contribution;
 	}
 

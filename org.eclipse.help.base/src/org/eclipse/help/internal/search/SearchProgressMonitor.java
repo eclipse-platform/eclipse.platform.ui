@@ -51,7 +51,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 			@Override
 			public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {
-                throw exception;
+				throw exception;
 			}
 		};
 	}

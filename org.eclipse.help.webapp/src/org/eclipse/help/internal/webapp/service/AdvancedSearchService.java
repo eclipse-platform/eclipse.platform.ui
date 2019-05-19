@@ -127,7 +127,7 @@ public class AdvancedSearchService extends HttpServlet {
 			}
 		}
 
-        // Call after the catch.
+		// Call after the catch.
 		// An empty JSON is created if any Exception is thrown
 		// Else returns the complete JSON
 		return searchParser.toJSON();

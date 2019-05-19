@@ -65,52 +65,52 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * @since 3.0.1
  */
 public interface IIntroContentProvider {
-    /**
-     * Initializes the content provider. An IIntroContentProviderSite is passed,
-     * which will be called on to recompute or layout the content when the
-     * content becomes stale.
-     *
-     * @param site
-     *            the site of this IIntroContentProvider
-     */
-    public void init(IIntroContentProviderSite site);
+	/**
+	 * Initializes the content provider. An IIntroContentProviderSite is passed,
+	 * which will be called on to recompute or layout the content when the
+	 * content becomes stale.
+	 *
+	 * @param site
+	 *            the site of this IIntroContentProvider
+	 */
+	public void init(IIntroContentProviderSite site);
 
 
-    /**
-     * Creates HTML content in the provided PrintWriter. This content will be
-     * included in the generated HTML page when embedded HTML widget is used to
-     * render intro content.
-     *
-     * @param id
-     *            the unique identifier of the content element. The same content
-     *            provider class can be reused for several elements and the id
-     *            can be used to tell them apart.
-     * @param out
-     *            the output print writer to generate HTML content into
-     */
-    public void createContent(String id, PrintWriter out);
+	/**
+	 * Creates HTML content in the provided PrintWriter. This content will be
+	 * included in the generated HTML page when embedded HTML widget is used to
+	 * render intro content.
+	 *
+	 * @param id
+	 *            the unique identifier of the content element. The same content
+	 *            provider class can be reused for several elements and the id
+	 *            can be used to tell them apart.
+	 * @param out
+	 *            the output print writer to generate HTML content into
+	 */
+	public void createContent(String id, PrintWriter out);
 
-    /**
-     * Creates SWT content in the provided Composite. This method is called when
-     * Eclipse Forms are used to render intro content.
-     *
-     * @param id
-     *            the unique identifier of the content element
-     * @param parent
-     *            the parent composite that should be used when creating SWT
-     *            widgets
-     * @param toolkit
-     *            the form toolkit that should be used when creating new widgets
-     */
-    public void createContent(String id, Composite parent, FormToolkit toolkit);
+	/**
+	 * Creates SWT content in the provided Composite. This method is called when
+	 * Eclipse Forms are used to render intro content.
+	 *
+	 * @param id
+	 *            the unique identifier of the content element
+	 * @param parent
+	 *            the parent composite that should be used when creating SWT
+	 *            widgets
+	 * @param toolkit
+	 *            the form toolkit that should be used when creating new widgets
+	 */
+	public void createContent(String id, Composite parent, FormToolkit toolkit);
 
 
-    /**
-     * Dispose of the ContentProvider. This will only be called when the Intro
-     * view is closed. In other words, the content provider will not be disposed
-     * of until the last possible minute. This gives the implementor the chance
-     * to cache content and avoid regenerating content on every page switch.
-     */
-    public void dispose();
+	/**
+	 * Dispose of the ContentProvider. This will only be called when the Intro
+	 * view is closed. In other words, the content provider will not be disposed
+	 * of until the last possible minute. This gives the implementor the chance
+	 * to cache content and avoid regenerating content on every page switch.
+	 */
+	public void dispose();
 
 }

@@ -195,7 +195,7 @@ public class WorkingSetData extends RequestData {
 				return name;
 			}
 		}
-	    return ""; //$NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	public boolean isCriteriaScopeEnabled(){

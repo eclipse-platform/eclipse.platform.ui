@@ -24,33 +24,33 @@ public class HelpData {
 	@Test
 	public void testHelpDataInPlugin() {
 		List<String> result = ProductPreferences.getTocOrdering("org.eclipse.ua.tests", "data/help/toc/helpData.xml", "");
-	    assertEquals(2, result.size());
-	    assertEquals("/org.eclipse.platform.doc.user/toc.xml", result.get(0));
-	    assertEquals("/org.eclipse.platform.doc.isv/toc.xml", result.get(1));
+		assertEquals(2, result.size());
+		assertEquals("/org.eclipse.platform.doc.user/toc.xml", result.get(0));
+		assertEquals("/org.eclipse.platform.doc.isv/toc.xml", result.get(1));
 	}
 
 	@Test
 	public void testPluginsRoot() {
 		List<String> result = ProductPreferences.getTocOrdering("org.eclipse.sdk", "PLUGINS_ROOT/org.eclipse.ua.tests/data/help/toc/helpData.xml", "");
-	    assertEquals(2, result.size());
-	    assertEquals("/org.eclipse.platform.doc.user/toc.xml", result.get(0));
-	    assertEquals("/org.eclipse.platform.doc.isv/toc.xml", result.get(1));
+		assertEquals(2, result.size());
+		assertEquals("/org.eclipse.platform.doc.user/toc.xml", result.get(0));
+		assertEquals("/org.eclipse.platform.doc.isv/toc.xml", result.get(1));
 	}
 
 	@Test
 	public void testHelpDataOverridesBaseTocs() {
 		List<String> result = ProductPreferences.getTocOrdering("org.eclipse.ua.tests", "data/help/toc/helpData.xml", "org.eclipse.help");
-	    assertEquals(2, result.size());
-	    assertEquals("/org.eclipse.platform.doc.user/toc.xml", result.get(0));
-	    assertEquals("/org.eclipse.platform.doc.isv/toc.xml", result.get(1));
+		assertEquals(2, result.size());
+		assertEquals("/org.eclipse.platform.doc.user/toc.xml", result.get(0));
+		assertEquals("/org.eclipse.platform.doc.isv/toc.xml", result.get(1));
 	}
 
 	@Test
 	public void testBaseTocs() {
 		List<String> result = ProductPreferences.getTocOrdering("", "", "/org.eclipse.help/toc.xml,/org.eclipse.test/toc.xml");
-	    assertEquals(2, result.size());
-	    assertEquals("/org.eclipse.help/toc.xml", result.get(0));
-	    assertEquals("/org.eclipse.test/toc.xml", result.get(1));
+		assertEquals(2, result.size());
+		assertEquals("/org.eclipse.help/toc.xml", result.get(0));
+		assertEquals("/org.eclipse.test/toc.xml", result.get(1));
 	}
 
 }

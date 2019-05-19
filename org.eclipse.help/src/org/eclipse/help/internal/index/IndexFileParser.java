@@ -29,7 +29,7 @@ public class IndexFileParser {
 
 	private DocumentReader reader;
 
-    public IndexContribution parse(IndexFile indexFile) throws IOException, SAXException, ParserConfigurationException {
+	public IndexContribution parse(IndexFile indexFile) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
 			reader = new IndexDocumentReader();
 		}
@@ -45,5 +45,5 @@ public class IndexFileParser {
 				throw new FileNotFoundException();
 			}
 		}
-    }
+	}
 }

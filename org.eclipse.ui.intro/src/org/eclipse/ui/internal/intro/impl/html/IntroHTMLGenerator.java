@@ -510,8 +510,8 @@ public class IntroHTMLGenerator {
 		int indentBase = indentLevel;
 		if (useTable) {
 			indentBase = indentLevel + 1;
-		    anchor2 = generateAnchorElement(element, indentLevel + 1);
-		    labelAnchor = anchor2;
+			anchor2 = generateAnchorElement(element, indentLevel + 1);
+			labelAnchor = anchor2;
 		}
 		// add <IMG src="blank.gif">
 		String blankImageURL = BundleUtil.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
@@ -828,8 +828,8 @@ public class IntroHTMLGenerator {
 		IntroTheme theme = introPage.getModelRoot().getTheme();
 		if (theme != null && theme.isScalable()
 				&& FontSelection.FONT_RELATIVE.equals(FontSelection.getFontStyle())) {
-		    String sizeStyle = FontSelection.generatePageFontStyle();
-            style.addContent(sizeStyle);
+			String sizeStyle = FontSelection.generatePageFontStyle();
+			style.addContent(sizeStyle);
 		}
 		return style;
 	}

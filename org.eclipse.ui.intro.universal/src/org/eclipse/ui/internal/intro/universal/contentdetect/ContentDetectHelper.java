@@ -47,16 +47,16 @@ public class ContentDetectHelper {
 
 	private File getConfigurationLocation() {
 		if (configurationDirectory == null) {
-		    Location location = Platform.getConfigurationLocation();
-		    if (location != null) {
-			    URL configURL = location.getURL();
-			    if (configURL != null && configURL.getProtocol().startsWith("file")) { //$NON-NLS-1$
-				    configurationDirectory = new File(configURL.getFile(), PLUGIN_ID);
+			Location location = Platform.getConfigurationLocation();
+			if (location != null) {
+				URL configURL = location.getURL();
+				if (configURL != null && configURL.getProtocol().startsWith("file")) { //$NON-NLS-1$
+					configurationDirectory = new File(configURL.getFile(), PLUGIN_ID);
 					if (configurationDirectory != null && !configurationDirectory.exists()) {
 						configurationDirectory.mkdirs();
 					}
-			    }
-		    }
+				}
+			}
 		}
 		return configurationDirectory;
 	}
@@ -119,7 +119,7 @@ public class ContentDetectHelper {
 			memento = null;
 			// Do nothing, the file will not exist the first time the workbench in used.
 		} catch (Exception e) {
-            // TODO should we log an error?
+			// TODO should we log an error?
 			memento = null;
 		} finally {
 			try {

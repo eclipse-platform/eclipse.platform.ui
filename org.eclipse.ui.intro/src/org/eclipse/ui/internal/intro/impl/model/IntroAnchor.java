@@ -22,19 +22,19 @@ import org.w3c.dom.Element;
  */
 public class IntroAnchor extends AbstractIntroIdElement {
 
-    protected static final String TAG_ANCHOR = "anchor"; //$NON-NLS-1$
+	protected static final String TAG_ANCHOR = "anchor"; //$NON-NLS-1$
 
-    /**
-     * @param element
-     */
-    IntroAnchor(Element element, Bundle bundle) {
-        super(element, bundle);
-    }
+	/**
+	 * @param element
+	 */
+	IntroAnchor(Element element, Bundle bundle) {
+		super(element, bundle);
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.ANCHOR;
-    }
+		return AbstractIntroElement.ANCHOR;
+	}
 
 
 }

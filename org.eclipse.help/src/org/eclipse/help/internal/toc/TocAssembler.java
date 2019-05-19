@@ -104,15 +104,15 @@ public class TocAssembler {
 			boolean isLinkedId = linkedContributionIds.containsKey(contrib.getId());
 			if (!isValidLinkTo && !isLinkedId) {
 				if (contrib.isPrimary()) {
-				    books.add(contrib);
-				    if (HelpPlugin.DEBUG_TOC) {
+					books.add(contrib);
+					if (HelpPlugin.DEBUG_TOC) {
 						String msg = "Primary Toc Found: " + contrib.getId(); //$NON-NLS-1$
 						String linkTo = contrib.getLinkTo();
 						if (linkTo != null) {
 							msg += " - cannot find link to: "; //$NON-NLS-1$
 							msg += linkTo;
 						}
-					    System.out.println(msg);
+						System.out.println(msg);
 					}
 				} else {
 					if (HelpPlugin.DEBUG_TOC) {
@@ -171,7 +171,7 @@ public class TocAssembler {
 			try {
 				String id = contrib.getId();
 				if (!tocsToFilter.contains(id)) {
-				    processor.process((Toc)contrib.getToc(), id);
+					processor.process((Toc)contrib.getToc(), id);
 				}
 			}
 			catch (Throwable t) {
@@ -389,7 +389,7 @@ public class TocAssembler {
 			if (element instanceof Anchor) {
 				if (tocsToFilter.contains(id)) {
 					return UNHANDLED;
-			    }
+				}
 				Anchor anchor = (Anchor)element;
 				UAElement parent = anchor.getParentElement();
 				if (parent != null) {

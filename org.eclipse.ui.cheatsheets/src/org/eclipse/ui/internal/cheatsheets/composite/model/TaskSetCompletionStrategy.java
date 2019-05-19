@@ -32,17 +32,17 @@ public class TaskSetCompletionStrategy implements TaskGroup.CompletionStrategy {
 		ICompositeCheatSheetTask[] children = taskGroup.getSubtasks();
 		for (ICompositeCheatSheetTask element : children) {
 			switch (element.getState()) {
-			   case ICompositeCheatSheetTask.NOT_STARTED:
-				   allChildrenCompleted = false;
-				   break;
-			   case ICompositeCheatSheetTask.IN_PROGRESS:
-				   noChildrenStarted = false;
-				   allChildrenCompleted = false;
-				   break;
-			   case ICompositeCheatSheetTask.COMPLETED:
-			   case ICompositeCheatSheetTask.SKIPPED:
-				   noChildrenStarted = false;
-				   break;
+				case ICompositeCheatSheetTask.NOT_STARTED:
+					allChildrenCompleted = false;
+					break;
+				case ICompositeCheatSheetTask.IN_PROGRESS:
+					noChildrenStarted = false;
+					allChildrenCompleted = false;
+					break;
+				case ICompositeCheatSheetTask.COMPLETED:
+				case ICompositeCheatSheetTask.SKIPPED:
+					noChildrenStarted = false;
+					break;
 			}
 		}
 		if (allChildrenCompleted) {

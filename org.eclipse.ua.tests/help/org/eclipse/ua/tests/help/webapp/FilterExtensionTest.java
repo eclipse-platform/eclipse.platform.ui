@@ -32,7 +32,7 @@ public class FilterExtensionTest {
 
 	@After
 	public void tearDown() throws Exception {
-        ExtraFilters.setFilters(new PrioritizedFilter[0]);
+		ExtraFilters.setFilters(new PrioritizedFilter[0]);
 	}
 
 	@Test

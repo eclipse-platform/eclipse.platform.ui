@@ -133,7 +133,7 @@ public class ProductPreferences {
 				int nextSlash = helpDataFile.indexOf('/', PLUGINS_ROOT_SLASH.length());
 				if (nextSlash > 0) {
 					helpDataPluginId = helpDataFile.substring(PLUGINS_ROOT_SLASH.length(), nextSlash);
-				    helpDataPath = helpDataFile.substring(nextSlash + 1);
+					helpDataPath = helpDataFile.substring(nextSlash + 1);
 				}
 			}
 			Bundle bundle = null;
@@ -141,9 +141,9 @@ public class ProductPreferences {
 				bundle = Platform.getBundle(helpDataPluginId);
 			}
 			if (bundle != null) {
-			    URL helpDataUrl = bundle.getEntry(helpDataPath);
-			    HelpData helpData = new HelpData(helpDataUrl);
-			    return helpData.getTocOrder();
+				URL helpDataUrl = bundle.getEntry(helpDataPath);
+				HelpData helpData = new HelpData(helpDataUrl);
+				return helpData.getTocOrder();
 			}
 		}
 		else {

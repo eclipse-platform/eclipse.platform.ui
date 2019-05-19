@@ -301,13 +301,13 @@ public class HelpDisplay {
 	}
 
 	private static AbstractHelpDisplay getHelpDisplay() {
-    	if (helpDisplay == null) {
-    		createHelpDisplay();
-    	}
-    	if (helpDisplay == null) {
-    		helpDisplay = new DefaultDisplay();
-    	}
-    	return helpDisplay;
-    }
+		if (helpDisplay == null) {
+			createHelpDisplay();
+		}
+		if (helpDisplay == null) {
+			helpDisplay = new DefaultDisplay();
+		}
+		return helpDisplay;
+	}
 
 }

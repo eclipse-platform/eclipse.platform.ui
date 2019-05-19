@@ -228,7 +228,7 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		IHelpResource[] topics = entry.getTopics();
 		IIndexEntry[] subentries = entry.getSubentries();
 		IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() :
-			               new IIndexSee[0];
+						   new IIndexSee[0];
 
 		if (topics.length <= 1 && subentries.length == 0 && sees.length == 0) {
 			// Entries with only one topic do not show children

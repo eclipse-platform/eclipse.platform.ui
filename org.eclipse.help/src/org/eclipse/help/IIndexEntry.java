@@ -22,24 +22,24 @@ package org.eclipse.help;
  */
 public interface IIndexEntry extends IUAElement {
 
-    /**
-     * Returns the keyword that this entry is associated with
-     *
-     * @return the keyword
-     */
-    public String getKeyword();
+	/**
+	 * Returns the keyword that this entry is associated with
+	 *
+	 * @return the keyword
+	 */
+	public String getKeyword();
 
-    /**
-     * Obtains topics assosiated with this index entry (i.e. keyword).
-     *
-     * @return array of ITopic
-     */
-    public ITopic[] getTopics();
+	/**
+	 * Obtains topics assosiated with this index entry (i.e. keyword).
+	 *
+	 * @return array of ITopic
+	 */
+	public ITopic[] getTopics();
 
-    /**
-     * Obtains the index subentries contained in the entry.
-     *
-     * @return the index subentries
-     */
-    public IIndexEntry[] getSubentries();
+	/**
+	 * Obtains the index subentries contained in the entry.
+	 *
+	 * @return the index subentries
+	 */
+	public IIndexEntry[] getSubentries();
 }

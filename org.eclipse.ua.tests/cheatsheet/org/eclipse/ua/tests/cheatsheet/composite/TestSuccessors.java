@@ -71,7 +71,7 @@ public class TestSuccessors {
 		SuccesorTaskFinder finder = new SuccesorTaskFinder(task);
 		ICompositeCheatSheetTask[] successors = finder.getRecommendedSuccessors();
 		assertEquals(1, successors.length);
-	    assertEquals(expectedSuccessor, successors[0]);
+		assertEquals(expectedSuccessor, successors[0]);
 	}
 
 	private void assertNoSuccessors(ICompositeCheatSheetTask task) {

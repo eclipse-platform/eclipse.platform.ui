@@ -33,14 +33,14 @@ public interface ICheatSheetEvent {
 	/**
 	 * Event type constant (value {@value}) indicating that
 	 * the cheat sheet was opened. This is the first event
-     * in the life of a running cheat sheet.
+	 * in the life of a running cheat sheet.
 	 */
 	public static final int CHEATSHEET_OPENED = 0;
 
 	/**
 	 * Event type constant (value {@value}) indicating that
 	 * the cheat sheet was closed. This is the last event
-     * in the life of a running cheat sheet.
+	 * in the life of a running cheat sheet.
 	 */
 	public static final int CHEATSHEET_CLOSED = 1;
 

@@ -34,9 +34,9 @@ public class TocObjectTest {
 
 	@Test
 	public void testLookupUnanchoredHref() {
-	    UserToc	utoc = new UserToc(TITLE_1, null, true);
-	    UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH, true);
-	    utoc.addTopic(utopic);
+		UserToc	utoc = new UserToc(TITLE_1, null, true);
+		UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH, true);
+		utoc.addTopic(utopic);
 		Toc toc = new Toc(utoc);
 		ITopic topic = toc.getTopic(PATH);
 		assertNotNull(topic);
@@ -45,9 +45,9 @@ public class TocObjectTest {
 
 	@Test
 	public void testLookupAnchoredHrefByAnchor() {
-	    UserToc	utoc = new UserToc(TITLE_1, null, true);
-	    UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
-	    utoc.addTopic(utopic);
+		UserToc	utoc = new UserToc(TITLE_1, null, true);
+		UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
+		utoc.addTopic(utopic);
 		Toc toc = new Toc(utoc);
 		ITopic topic = toc.getTopic(PATH + ANCHOR1);
 		assertNotNull(topic);
@@ -56,9 +56,9 @@ public class TocObjectTest {
 
 	@Test
 	public void testLookupAnchoredHref() {
-	    UserToc	utoc = new UserToc(TITLE_1, null, true);
-	    UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
-	    utoc.addTopic(utopic);
+		UserToc	utoc = new UserToc(TITLE_1, null, true);
+		UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
+		utoc.addTopic(utopic);
 		Toc toc = new Toc(utoc);
 		ITopic topic = toc.getTopic(PATH);
 		assertNotNull(topic);
@@ -67,13 +67,13 @@ public class TocObjectTest {
 
 	@Test
 	public void testUnanchoredFoundFirst() {
-	    UserToc	utoc = new UserToc(TITLE_1, null, true);
-	    UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
-	    utoc.addTopic(utopic);
-	    utopic = new UserTopic(TOPIC_LABEL_2, PATH, true);
-	    utoc.addTopic(utopic);
-	    utopic = new UserTopic(TOPIC_LABEL_3, PATH + ANCHOR2, true);
-	    utoc.addTopic(utopic);
+		UserToc	utoc = new UserToc(TITLE_1, null, true);
+		UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
+		utoc.addTopic(utopic);
+		utopic = new UserTopic(TOPIC_LABEL_2, PATH, true);
+		utoc.addTopic(utopic);
+		utopic = new UserTopic(TOPIC_LABEL_3, PATH + ANCHOR2, true);
+		utoc.addTopic(utopic);
 		Toc toc = new Toc(utoc);
 		ITopic topic = toc.getTopic(PATH);
 		assertNotNull(topic);

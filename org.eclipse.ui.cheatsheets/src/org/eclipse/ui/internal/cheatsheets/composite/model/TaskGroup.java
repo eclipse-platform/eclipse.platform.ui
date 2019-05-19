@@ -81,8 +81,8 @@ public class TaskGroup extends AbstractTask implements ITaskGroup {
 
 	/**
 	 * Determine the state based on the state of the children, which
-     * will use a different computation depending on whether this is a set,
-     * sequence or choice.
+	 * will use a different computation depending on whether this is a set,
+	 * sequence or choice.
 	 */
 	public int computeState() {
 		return completionStrategy.computeState(this);

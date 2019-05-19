@@ -36,7 +36,7 @@ public class ContextHelpSorter extends ViewerComparator {
 			IHelpResource r1 = (IHelpResource) elements[i];
 			String c1 = context.getCategory(r1);
 			if (!list.contains(c1)) {
-			    list.add(c1);
+				list.add(c1);
 			}
 		}
 		super.sort(viewer, elements);
@@ -50,8 +50,8 @@ public class ContextHelpSorter extends ViewerComparator {
 		if (!(e1 instanceof IHelpResource)) {
 			return 1;
 		}
-	    IHelpResource r1 = (IHelpResource) e1;
-	    IHelpResource r2 = (IHelpResource) e2;
+		IHelpResource r1 = (IHelpResource) e1;
+		IHelpResource r2 = (IHelpResource) e2;
 		String c1 = context.getCategory(r1);
 		String c2 = context.getCategory(r2);
 		int i1 = list.indexOf(c1);

@@ -40,7 +40,7 @@ public class LoadTestServlet extends HttpServlet {
 		String repeatParam = req.getParameter("repeat");
 		int repetitions = 200;
 
-	    try {
+		try {
 			repetitions = Integer.parseInt(repeatParam);
 		} catch (NumberFormatException e) {
 		}

@@ -26,8 +26,8 @@ public class SearchUsingRemoteHelp {
 
 	@Before
 	public void setUp() throws Exception {
-        RemotePreferenceStore.savePreferences();
-        mode = BaseHelpSystem.getMode();
+		RemotePreferenceStore.savePreferences();
+		mode = BaseHelpSystem.getMode();
 	}
 
 	@After
@@ -42,8 +42,8 @@ public class SearchUsingRemoteHelp {
 		RemotePreferenceStore.setMockRemoteServer();
 		SearchTestUtils.searchOneLocale("endfdsadsads", new String[] { "http://www.eclipse.org" },
 				"en");
-	    RemotePreferenceStore.disableRemoteHelp();
-	    SearchTestUtils.searchOneLocale("endfdsadsads", new String[0], "en");
+		RemotePreferenceStore.disableRemoteHelp();
+		SearchTestUtils.searchOneLocale("endfdsadsads", new String[0], "en");
 	}
 
 	@Test
@@ -52,8 +52,8 @@ public class SearchUsingRemoteHelp {
 		RemotePreferenceStore.setTwoMockRemoteServers();
 		SearchTestUtils.searchOneLocale("endfdsadsads", new String[] { "http://www.eclipse.org" },
 				"en");
-	    RemotePreferenceStore.disableRemoteHelp();
-	    SearchTestUtils.searchOneLocale("endfdsadsads", new String[0], "en");
+		RemotePreferenceStore.disableRemoteHelp();
+		SearchTestUtils.searchOneLocale("endfdsadsads", new String[0], "en");
 	}
 
 	@Test
@@ -61,24 +61,24 @@ public class SearchUsingRemoteHelp {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		RemotePreferenceStore.setMockRemoteServer();
 		SearchTestUtils.searchOneLocale("dedfdsadsads", new String[] { "http://www.eclipse.org" }, "de");
-	    RemotePreferenceStore.disableRemoteHelp();
-	    SearchTestUtils.searchOneLocale("dedfdsadsads", new String[0], "de");
+		RemotePreferenceStore.disableRemoteHelp();
+		SearchTestUtils.searchOneLocale("dedfdsadsads", new String[0], "de");
 	}
 
 	@Test
 	public void testSearchEnWordInDeLocale() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		RemotePreferenceStore.setMockRemoteServer();
-	    SearchTestUtils.searchOneLocale("endfdsadsads", new String[0], "de");
-	    RemotePreferenceStore.disableRemoteHelp();
+		SearchTestUtils.searchOneLocale("endfdsadsads", new String[0], "de");
+		RemotePreferenceStore.disableRemoteHelp();
 	}
 
 	@Test
 	public void testSearchDeWordInEnLocale() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		RemotePreferenceStore.setMockRemoteServer();
-	    SearchTestUtils.searchOneLocale("dedfdsadsads", new String[0], "en");
-	    RemotePreferenceStore.disableRemoteHelp();
+		SearchTestUtils.searchOneLocale("dedfdsadsads", new String[0], "en");
+		RemotePreferenceStore.disableRemoteHelp();
 	}
 
 }

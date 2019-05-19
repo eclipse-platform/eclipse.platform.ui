@@ -72,7 +72,7 @@ public class TreeLabelProvider extends LabelProvider {
 		if (obj instanceof ICompositeCheatSheetTask) {
 			result =  ((ICompositeCheatSheetTask) obj).getName();
 		} else {
-		    result =  obj.toString();
+			result =  obj.toString();
 		}
 		if (result == null) {
 			result = ""; //$NON-NLS-1$
@@ -98,7 +98,7 @@ public class TreeLabelProvider extends LabelProvider {
 		if (isBlocked) {
 			return images.getImage(BLOCKED);
 		}
-	    return images.getImage(state);
+		return images.getImage(state);
 	}
 
 	/**
@@ -109,28 +109,28 @@ public class TreeLabelProvider extends LabelProvider {
 	private ImageSet createImages(String kind) {
 		ImageSet images = new ImageSet();
 		ImageDescriptor desc = getPredefinedImageDescriptor(kind, true);
-        if (desc == null) {
-		    desc = TaskEditorManager.getInstance().getImageDescriptor(kind);
-        }
+		if (desc == null) {
+			desc = TaskEditorManager.getInstance().getImageDescriptor(kind);
+		}
 		if (desc != null) {
 			Image baseImage = desc.createImage();
 			images.put(ICompositeCheatSheetTask.NOT_STARTED, baseImage);
 
 			createImageWithOverlay(ICompositeCheatSheetTask.IN_PROGRESS,
 					"$nl$/icons/ovr16/task_in_progress.png", //$NON-NLS-1$
-		               images,
-		               desc);
+					images,
+					desc);
 			createImageWithOverlay(ICompositeCheatSheetTask.SKIPPED,
 					"$nl$/icons/ovr16/task_skipped.png", //$NON-NLS-1$
-		               images,
-		               desc);
+					images,
+					desc);
 			createDisabledImage(kind, BLOCKED,
-		               images,
-		               baseImage);
+					images,
+					baseImage);
 			createImageWithOverlay(ICompositeCheatSheetTask.COMPLETED,
 					"$nl$/icons/ovr16/task_complete.png", //$NON-NLS-1$
-		               images,
-		               desc);
+					images,
+					desc);
 
 		}
 		return images;
@@ -177,7 +177,7 @@ public class TreeLabelProvider extends LabelProvider {
 		if (desc != null) {
 			disabledImage = desc.createImage();
 		} else {
-		    disabledImage = createGrayedImage(baseImage);
+			disabledImage = createGrayedImage(baseImage);
 		}
 		images.put(state, disabledImage);
 	}

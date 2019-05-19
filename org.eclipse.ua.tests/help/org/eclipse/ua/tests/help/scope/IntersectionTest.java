@@ -26,7 +26,7 @@ public class IntersectionTest {
 	private AbstractHelpScope createScope(char char1, char char2) {
 		AbstractHelpScope result = new IntersectionScope(
 				new AbstractHelpScope[]{new MockScope(char1, true),
-		        new MockScope(char2, true)});
+				new MockScope(char2, true)});
 		return result;
 	}
 

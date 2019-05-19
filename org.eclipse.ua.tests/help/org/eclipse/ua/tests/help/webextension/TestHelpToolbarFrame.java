@@ -40,15 +40,15 @@ public class TestHelpToolbarFrame extends AbstractFrame {
 		return "*";
 	}
 
-    @Override
+	@Override
 	public String getFrameAttributes() {
-    	return "\"marginwidth=\"0\" marginheight=\"0\" frameborder=\"0\" scrolling=\"no\""; //$NON-NLS-1$
-    }
+		return "\"marginwidth=\"0\" marginheight=\"0\" frameborder=\"0\" scrolling=\"no\""; //$NON-NLS-1$
+	}
 
 	@Override
 	public boolean isVisible() {
 		return Platform.getPreferencesService().getBoolean
-	    (UserAssistanceTestPlugin.getPluginId(), "extraFrame", false, null);
+		(UserAssistanceTestPlugin.getPluginId(), "extraFrame", false, null);
 	}
 
 }

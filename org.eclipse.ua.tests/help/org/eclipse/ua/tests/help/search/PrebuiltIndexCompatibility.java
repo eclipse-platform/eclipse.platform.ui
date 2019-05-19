@@ -223,9 +223,9 @@ public class PrebuiltIndexCompatibility {
 		assertFalse(index1.equals(index2));
 	}
 
-    /*
-     * Verifies that a prebuilt index can be searched
-     */
+	/*
+	 * Verifies that a prebuilt index can be searched
+	 */
 	private void checkReadable(String indexPath) throws IOException,
 			CorruptIndexException {
 		Path path = new Path(indexPath);

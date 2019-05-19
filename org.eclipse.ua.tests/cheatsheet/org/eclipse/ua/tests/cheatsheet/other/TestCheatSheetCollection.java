@@ -51,14 +51,14 @@ public class TestCheatSheetCollection {
 		c2 = new CheatSheetCollectionElement("p2", "c2Id", "c2", root);
 		c11 = new CheatSheetCollectionElement("p11", "c11Id", "c11", c1);
 		c12 = new CheatSheetCollectionElement("p12", "c12Id", "c12", c1);
-	    root.add(c1);
-	    root.add(csA);
-	    root.add(csB);
-	    root.add(c2);
-	    c1.add(c11);
-	    c1.add(c12);
-	    c2.add(cs2A);
-	    c12.add(cs12A);
+		root.add(c1);
+		root.add(csA);
+		root.add(csB);
+		root.add(c2);
+		c1.add(c11);
+		c1.add(c12);
+		c2.add(cs2A);
+		c12.add(cs12A);
 	}
 
 	@Test

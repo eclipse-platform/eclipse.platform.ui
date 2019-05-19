@@ -55,13 +55,13 @@ public class EditableTaskParseStrategy implements ITaskParseStrategy {
 			String message = NLS.bind(
 					Messages.ERROR_PARSING_TASK_NO_KIND,
 					(new Object[] { parentTask.getName()}));
-		    status.addStatus(IStatus.ERROR, message, null);
+			status.addStatus(IStatus.ERROR, message, null);
 		} else if (CheatSheetRegistryReader.getInstance().
 				findTaskEditor(parentTask.getKind()) == null) {
 			String message = NLS.bind(
 					Messages.ERROR_PARSING_TASK_INVALID_KIND,
 					(new Object[] { parentTask.getKind(), ICompositeCheatsheetTags.TASK, parentTask.getName()}));
-		    status.addStatus(IStatus.ERROR, message, null);
+			status.addStatus(IStatus.ERROR, message, null);
 		}
 	}
 

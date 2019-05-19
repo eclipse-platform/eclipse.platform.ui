@@ -36,12 +36,12 @@ public class InvalidCheatsheet {
 
 	@Before
 	public void setUp() throws Exception {
-	    parser = new CheatSheetParser();
+		parser = new CheatSheetParser();
 	}
 
 	private ICheatSheet parseTestFile(String path) {
 		URL testURL = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(),
-					       INVALID_CHEATSHEET_FOLDER + path);
+							INVALID_CHEATSHEET_FOLDER + path);
 		return parser.parse(testURL, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.SIMPLE_ONLY);
 	}
 

@@ -295,7 +295,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 			}
 		});
 
-        // Create radio button for select from file
+		// Create radio button for select from file
 		selectFileRadio = new Button(outerContainer, SWT.RADIO);
 		selectFileRadio.setText(Messages.SELECTION_DIALOG_OPEN_FROM_FILE);
 
@@ -582,26 +582,26 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		String id = filePath.lastSegment();
 		int extensionIndex = id.indexOf('.');
 		if (extensionIndex > 0) {
-		    id = id.substring(0, extensionIndex);
+			id = id.substring(0, extensionIndex);
 		}
 		// Use the id as the name
 		URL url = null;
 		boolean opened = false;
 
 		try {
-		    File contentFile = new File(selectFileCombo.getText());
-		    url = contentFile.toURI().toURL();
-		    new OpenCheatSheetAction(id, id ,url).run();
-		    opened = true;
-	    } catch (MalformedURLException e) {
-		    opened = false;
-	    }
-	    if (!opened) {
-	    	String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {selectFileCombo.getText()}));
-	    	status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, ParserStatusUtility.PARSER_ERROR, message, null);
-	    	CheatSheetView view = ViewUtilities.showCheatSheetView();
-	    	view.getCheatSheetViewer().showError(message);
-	    }
+			File contentFile = new File(selectFileCombo.getText());
+			url = contentFile.toURI().toURL();
+			new OpenCheatSheetAction(id, id ,url).run();
+			opened = true;
+		} catch (MalformedURLException e) {
+			opened = false;
+		}
+		if (!opened) {
+			String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {selectFileCombo.getText()}));
+			status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, ParserStatusUtility.PARSER_ERROR, message, null);
+			CheatSheetView view = ViewUtilities.showCheatSheetView();
+			view.getCheatSheetViewer().showError(message);
+		}
 	}
 
 	private void setResultFromUrl() {
@@ -613,7 +613,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		}
 		int extensionIndex = id.indexOf('.');
 		if (extensionIndex > 0) {
-		    id = id.substring(0, extensionIndex);
+			id = id.substring(0, extensionIndex);
 		}
 		// Use the id as the name
 		URL url = null;
@@ -625,15 +625,15 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		try {
 			url = new URL(selectUrlCombo.getText());
 			view.getCheatSheetViewer().setInput(id, id, url, new DefaultStateManager(), true);
-		    opened = true;
-	    } catch (MalformedURLException e) {
-		    opened = false;
-	    }
-	    if (!opened) {
-	    	String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {selectUrlCombo.getText()}));
-	    	status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, ParserStatusUtility.PARSER_ERROR, message, null);
-	    	view.getCheatSheetViewer().showError(message);
-	    }
+			opened = true;
+		} catch (MalformedURLException e) {
+			opened = false;
+		}
+		if (!opened) {
+			String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {selectUrlCombo.getText()}));
+			status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, ParserStatusUtility.PARSER_ERROR, message, null);
+			view.getCheatSheetViewer().showError(message);
+		}
 	}
 
 	/**
@@ -657,7 +657,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	private void restoreFileSettings() {
 		int radioSetting = RADIO_REGISTERED;
 		try {
-		     radioSetting = settings.getInt(STORE_RADIO_SETTING);
+			radioSetting = settings.getInt(STORE_RADIO_SETTING);
 		}
 		catch(NumberFormatException n) {
 		}
@@ -688,12 +688,12 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 
 	private void saveMRU(List<String> mostRecentList, String key, String selection) {
 		if (selection.length() > 0 && !mostRecentList.contains(selection)) {
-		    mostRecentList.add(0, selection);
+			mostRecentList.add(0, selection);
 		}
 		for (int i = 0; i < MOST_RECENT_LENGTH & i < mostRecentList.size(); i++) {
 			String name = mostRecentList.get(i);
 			if (name.length() > 0) {
-			    settings.put(key + i, name);
+				settings.put(key + i, name);
 			}
 		}
 	}
@@ -796,12 +796,12 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-        IDialogSettings settings = CheatSheetPlugin.getPlugin().getDialogSettings();
-        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-        if (section == null) {
-            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-        }
-        return section;
+		IDialogSettings settings = CheatSheetPlugin.getPlugin().getDialogSettings();
+		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null) {
+			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+		}
+		return section;
 	}
 
 	private Label createMessageArea(Composite composite) {

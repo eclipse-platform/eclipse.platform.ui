@@ -61,7 +61,7 @@ public class WorkingSetManagerTest {
 			manager.removeWorkingSet(element);
 		}
 		for (WorkingSet workingSet : workingSets) {
-		    manager.addWorkingSet(workingSet);
+			manager.addWorkingSet(workingSet);
 		}
 		manager.saveState();
 	}
@@ -114,7 +114,7 @@ public class WorkingSetManagerTest {
 		mgr.addWorkingSet(wset);
 		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
 		for (int i = 1; i < tocs.length; i++) {
-		    assertFalse(scope.inScope(tocs[i]));
+			assertFalse(scope.inScope(tocs[i]));
 		}
 	}
 
@@ -130,9 +130,9 @@ public class WorkingSetManagerTest {
 		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
 		for (int i = 1; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();
-		    for (ITopic topic : topics) {
-			    assertFalse(scope.inScope(topic));
-		    }
+			for (ITopic topic : topics) {
+				assertFalse(scope.inScope(topic));
+			}
 		}
 	}
 
@@ -190,7 +190,7 @@ public class WorkingSetManagerTest {
 		WorkingSetScope scope = new WorkingSetScope("test1", mgr, "scope");
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
 		for (Toc toc : tocs) {
-		    assertTrue(scope.inScope(toc));
+			assertTrue(scope.inScope(toc));
 		}
 	}
 
@@ -203,7 +203,7 @@ public class WorkingSetManagerTest {
 		for (Toc toc : tocs) {;
 			ITopic[] topics = toc.getTopics();
 			for (ITopic topic : topics) {
-		         assertTrue(scope.inScope(topic));
+				assertTrue(scope.inScope(topic));
 			}
 		}
 	}
@@ -219,7 +219,7 @@ public class WorkingSetManagerTest {
 			for (ITopic topic : topics) {
 				ITopic[] subtopics = topic.getSubtopics();
 				for (ITopic subtopic : subtopics) {
-		            assertTrue(scope.inScope(subtopic));
+					assertTrue(scope.inScope(subtopic));
 				}
 			}
 		}
@@ -402,7 +402,7 @@ public class WorkingSetManagerTest {
 		CriterionResource[] criteria = createResourceWithTwoCriteria();
 		wset.setCriteria(criteria);
 		mgr.addWorkingSet(wset);
-        mgr.saveState();
+		mgr.saveState();
 
 		WorkingSetManager mgr2 = new WorkingSetManager();
 		WorkingSet[] readWsets = mgr2.getWorkingSets();

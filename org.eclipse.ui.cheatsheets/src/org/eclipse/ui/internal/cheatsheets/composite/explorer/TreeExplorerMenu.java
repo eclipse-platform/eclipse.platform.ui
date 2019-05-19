@@ -53,13 +53,13 @@ public class TreeExplorerMenu {
 		if (selectedTask == null) return;
 
 		// Start
-	    StartAction startAction = new StartAction(selectedTask);
-	    startAction.setEnabled(TaskStateUtilities.isStartEnabled(selectedTask));
+		StartAction startAction = new StartAction(selectedTask);
+		startAction.setEnabled(TaskStateUtilities.isStartEnabled(selectedTask));
 		manager.add(startAction);
 
 		// Skip
-	    SkipAction skipAction = new SkipAction(selectedTask);
-	    skipAction.setEnabled(TaskStateUtilities.isSkipEnabled(selectedTask));
+		SkipAction skipAction = new SkipAction(selectedTask);
+		skipAction.setEnabled(TaskStateUtilities.isSkipEnabled(selectedTask));
 		manager.add(skipAction);
 
 		// Restart

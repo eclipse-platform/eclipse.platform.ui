@@ -164,7 +164,7 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	 * @param state
 	 */
 	public void setState(int state) {
-	    setStateNoNotify(state);
+		setStateNoNotify(state);
 		model.sendTaskChangeEvents();
 	}
 
@@ -177,7 +177,7 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	public void setStateNoNotify(int state) {
 		this.state = state;
 		if (parent != null) {
-		    parent.checkState();
+			parent.checkState();
 		}
 		model.stateChanged(this);
 	}

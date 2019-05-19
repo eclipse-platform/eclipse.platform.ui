@@ -26,7 +26,7 @@ public class UnionTest {
 	private AbstractHelpScope createScope(char char1, char char2) {
 		AbstractHelpScope result = new UnionScope(
 				new AbstractHelpScope[]{new MockScope(char1, true),
-		        new MockScope(char2, true)});
+				new MockScope(char2, true)});
 		return result;
 	}
 

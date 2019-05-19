@@ -32,66 +32,66 @@ import org.eclipse.ui.intro.config.IStandbyContentPart;
 
 public class EmptyStandbyContentPart implements IStandbyContentPart {
 
-    private Composite contentComposite;
-    private Text contentText;
+	private Composite contentComposite;
+	private Text contentText;
 
-    @Override
+	@Override
 	public void createPartControl(Composite parent, FormToolkit toolkit) {
-        contentComposite = toolkit.createComposite(parent);
-        contentComposite.setLayout(new GridLayout());
-        // Util.highlight(contentComposite, SWT.COLOR_YELLOW);
+		contentComposite = toolkit.createComposite(parent);
+		contentComposite.setLayout(new GridLayout());
+		// Util.highlight(contentComposite, SWT.COLOR_YELLOW);
 
-        String text = Messages.EmptyStandbyContentPart_text;
-        Label label = toolkit.createLabel(contentComposite, text, SWT.WRAP);
-        label.setFont(PageStyleManager.getBannerFont());
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        label.setLayoutData(gd);
+		String text = Messages.EmptyStandbyContentPart_text;
+		Label label = toolkit.createLabel(contentComposite, text, SWT.WRAP);
+		label.setFont(PageStyleManager.getBannerFont());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(gd);
 
-        contentText = toolkit.createText(contentComposite, " ", SWT.MULTI //$NON-NLS-1$
-                | SWT.WRAP);
-        GridData textGd = new GridData(GridData.FILL_BOTH);
-        contentText.setLayoutData(textGd);
-    }
+		contentText = toolkit.createText(contentComposite, " ", SWT.MULTI //$NON-NLS-1$
+				| SWT.WRAP);
+		GridData textGd = new GridData(GridData.FILL_BOTH);
+		contentText.setLayoutData(textGd);
+	}
 
-    @Override
+	@Override
 	public Control getControl() {
-        return contentComposite;
-    }
+		return contentComposite;
+	}
 
 
-    public void setMessage(String message) {
-        if (message != null) {
-            contentText.setText(message);
-            contentComposite.layout();
-        }
-    }
+	public void setMessage(String message) {
+		if (message != null) {
+			contentText.setText(message);
+			contentComposite.layout();
+		}
+	}
 
-    @Override
+	@Override
 	public void init(IIntroPart introPart, IMemento memento) {
-        // no-op
-    }
+		// no-op
+	}
 
-    @Override
+	@Override
 	public void setInput(Object input) {
-        if (input != null)
-            setMessage((String) input);
-        else
-            setMessage(""); //$NON-NLS-1$
-    }
+		if (input != null)
+			setMessage((String) input);
+		else
+			setMessage(""); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public void setFocus() {
-        // no-op
-    }
+		// no-op
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        // no-op
-    }
+		// no-op
+	}
 
-    @Override
+	@Override
 	public void saveState(IMemento memento) {
-        // no-op
-    }
+		// no-op
+	}
 
 }

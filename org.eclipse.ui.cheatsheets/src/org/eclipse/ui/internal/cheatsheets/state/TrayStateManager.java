@@ -39,7 +39,7 @@ public class TrayStateManager implements ICheatSheetStateManager {
 
 	@Override
 	public void setElement(CheatSheetElement element) {
-        // element not used
+		// element not used
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class TrayStateManager implements ICheatSheetStateManager {
 	 */
 	@Override
 	public IStatus saveState(Properties properties, CheatSheetManager manager) {
-        this.properties = properties;
+		this.properties = properties;
 		this.manager = manager;
 		return Status.OK_STATUS;
 	}

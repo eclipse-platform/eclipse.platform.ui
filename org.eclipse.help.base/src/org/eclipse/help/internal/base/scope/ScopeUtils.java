@@ -87,7 +87,7 @@ public class ScopeUtils {
 			}
 		}
 		return false;
-    }
+	}
 
 	/*
 	 * Returns true if one of the children meets the conditions
@@ -101,7 +101,7 @@ public class ScopeUtils {
 			}
 		}
 		return false;
-    }
+	}
 
 	/*
 	 * Returns true if one of the children meets the conditions
@@ -118,7 +118,7 @@ public class ScopeUtils {
 		IIndexEntry[] entries = entry.getSubentries();
 		for (int e = 0; e < entries.length; e++) {
 			if (showInTree(entries[e], scope)) {
-                return true;
+				return true;
 			}
 		}
 		if (entry instanceof IIndexEntry2) {

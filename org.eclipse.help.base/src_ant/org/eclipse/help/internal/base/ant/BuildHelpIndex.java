@@ -59,8 +59,8 @@ public class BuildHelpIndex extends Task {
 		builder.setDestination(target);
 		IProgressMonitor monitor = (IProgressMonitor) getProject()
 				.getReferences().get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
-        if (monitor == null)
-            monitor = new NullProgressMonitor();
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
 		try {
 			builder.execute(monitor);
 		} catch (CoreException e) {

@@ -58,13 +58,13 @@ public class TitleSearchView extends AbstractView {
 	@Override
 	public boolean isVisible() {
 		return Platform.getPreferencesService().getBoolean
-		    (UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
+			(UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
 	}
 
 	@Override
 	public boolean isVisibleBasic() {
 		return Platform.getPreferencesService().getBoolean
-	        (UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
+			(UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
 	}
 
 }

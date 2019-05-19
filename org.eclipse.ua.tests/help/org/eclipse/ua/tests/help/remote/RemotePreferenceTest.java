@@ -35,7 +35,7 @@ public class RemotePreferenceTest {
 
 	@Before
 	public void setUp() throws Exception {
-        RemotePreferenceStore.savePreferences();
+		RemotePreferenceStore.savePreferences();
 	}
 
 	@After

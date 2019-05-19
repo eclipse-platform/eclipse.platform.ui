@@ -36,52 +36,52 @@ import org.junit.Test;
 public class PluginsRootReplacement {
 	@Test
 	public void testEmpty() {
-	    final String input = "";
+		final String input = "";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testNoMatch() {
-	    final String input = "<HEAD><HEAD/>";
+		final String input = "<HEAD><HEAD/>";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testPartialMatch() {
-	    final String input = "<A href = \"PLUGINS\">";
+		final String input = "<A href = \"PLUGINS\">";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testEndsUnmatched() {
-	    final String input = "<A href = \"PLUGIN";
+		final String input = "<A href = \"PLUGIN";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testNotAtStart() {
-	    final String input = "<A href = \"../PLUGINS_ROOT/plugin/a.html\">";
+		final String input = "<A href = \"../PLUGINS_ROOT/plugin/a.html\">";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testAtStart() {
-	    final String input = "<A href = \"PLUGINS_ROOT/plugin/a.html\">";
-	    final String expected = "<A href = \"../plugin/a.html\">";
+		final String input = "<A href = \"PLUGINS_ROOT/plugin/a.html\">";
+		final String expected = "<A href = \"../plugin/a.html\">";
 		checkFilter(input, expected);
 	}
 
 	@Test
 	public void testSecondArg() {
-	    final String input = "<A alt=\"alt\" href = \"PLUGINS_ROOT/plugin/a.html\">";
-	    final String expected = "<A alt=\"alt\" href = \"../plugin/a.html\">";
+		final String input = "<A alt=\"alt\" href = \"PLUGINS_ROOT/plugin/a.html\">";
+		final String expected = "<A alt=\"alt\" href = \"../plugin/a.html\">";
 		checkFilter(input, expected);
 	}
 
 	@Test
 	public void testMultipleMatches() {
-	    final String input = "<A href = \"PLUGINS_ROOT/plugin/a.html\"><A href = \"PLUGINS_ROOT/plugin/b.html\">";
-	    final String expected = "<A href = \"../plugin/a.html\"><A href = \"../plugin/b.html\">";
+		final String input = "<A href = \"PLUGINS_ROOT/plugin/a.html\"><A href = \"PLUGINS_ROOT/plugin/b.html\">";
+		final String expected = "<A href = \"../plugin/a.html\"><A href = \"../plugin/b.html\">";
 		checkFilter(input, expected);
 	}
 

@@ -47,11 +47,11 @@ public class ChildLinkInserter {
 
 	public void addContents(String encoding) throws IOException {
 		String path = req.getParameter(TocData.COMPLETE_PATH_PARAM);
-	    ITopic[] subtopics = getSubtopics();
-	    if (subtopics.length == 0) {
-	    	return;
-	    }
-	    StringBuilder links = new StringBuilder("\n<ul class=\"childlinks\">\n"); //$NON-NLS-1$
+		ITopic[] subtopics = getSubtopics();
+		if (subtopics.length == 0) {
+			return;
+		}
+		StringBuilder links = new StringBuilder("\n<ul class=\"childlinks\">\n"); //$NON-NLS-1$
 		for (int i=0;i<subtopics.length;++i) {
 			if (ScopeUtils.showInTree(subtopics[i], scope)) {
 				links.append("\n<li><a href=\""); //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class ChildLinkInserter {
 				else {
 					href = XMLGenerator.xmlEscape(href);
 					if (path != null && path.length() > 0) {
-					    href = TocFragmentServlet.fixupHref(href, path + '_' + i);
+						href = TocFragmentServlet.fixupHref(href, path + '_' + i);
 					}
 				}
 				links.append(getBackpath(req.getPathInfo()));
@@ -78,9 +78,9 @@ public class ChildLinkInserter {
 		String linkString = links.toString();
 		try {
 			if (encoding != null) {
-			    out.write(linkString.getBytes(encoding));
+				out.write(linkString.getBytes(encoding));
 			} else {
-			    out.write(linkString.getBytes(StandardCharsets.UTF_8));
+				out.write(linkString.getBytes(StandardCharsets.UTF_8));
 			}
 		} catch (UnsupportedEncodingException e) {
 			out.write(linkString.getBytes());

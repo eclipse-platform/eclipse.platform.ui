@@ -72,7 +72,7 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 			createHelpMissingLink(container, toolkit, Dialog.DLG_IMG_MESSAGE_WARNING, Messages.remoteHelpUnavailable,
 			        MissingContentManager.getInstance().getRemoteHelpUnavailablePage(true), true);
 		} else if ( isUnresolvedPlaceholders) {
-		    createHelpMissingLink(container, toolkit, Dialog.DLG_IMG_MESSAGE_INFO, Messages.ReusableHelpPart_missingContent,
+			createHelpMissingLink(container, toolkit, Dialog.DLG_IMG_MESSAGE_INFO, Messages.ReusableHelpPart_missingContent,
 					MissingContentManager.getInstance().getHelpMissingPage(true), false);
 		}
 		toolkit.dispose();
@@ -86,7 +86,7 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 		paddingData.heightHint = 2;
 		padding.setLayoutData(paddingData);
 		toolkit.adapt(padding);
-        Image warningImage = JFaceResources.getImage(imageKey);
+		Image warningImage = JFaceResources.getImage(imageKey);
 		statusLink = toolkit.createImageHyperlink(container, SWT.NULL);
 		statusLink.setText(linkText);
 		statusLink.setImage(warningImage);
@@ -96,9 +96,9 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 			public void linkActivated(HyperlinkEvent e) {
 				helpPart.showURL(target);
 				if ( isRemote ) {
-				    helpPart.checkRemoteStatus();
+					helpPart.checkRemoteStatus();
 				} else {
-				    helpPart.checkPlaceholderStatus();
+					helpPart.checkPlaceholderStatus();
 				}
 			}
 		});
@@ -108,7 +108,7 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 
 	private void disposeLink() {
 		if (statusLink != null) {
-		    statusLink.dispose();
+			statusLink.dispose();
 		}
 		statusLink = null;
 	}
@@ -140,7 +140,7 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 	@Override
 	public void setVisible(boolean visible) {
 		if (container != null) {
-		    container.setVisible(visible);
+			container.setVisible(visible);
 		}
 	}
 

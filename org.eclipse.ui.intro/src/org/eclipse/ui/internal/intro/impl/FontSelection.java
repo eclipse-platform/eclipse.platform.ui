@@ -39,14 +39,14 @@ public class FontSelection {
 	 * Returns the height in points of the default SWT font
 	 */
 	private static int getDefaultFontHeight() {
-       Font defaultFont = JFaceResources.getDefaultFont();
-       FontData[] fontData = defaultFont.getFontData();
-       int height = MIN_HEIGHT;
+		Font defaultFont = JFaceResources.getDefaultFont();
+		FontData[] fontData = defaultFont.getFontData();
+		int height = MIN_HEIGHT;
 		for (int i=0; i< fontData.length; i++) {
 			FontData data = fontData[i];
 			height = Math.max(height, data.getHeight());
 		}
-       return Math.min(height, MAX_HEIGHT);
+		return Math.min(height, MAX_HEIGHT);
 	}
 
 	public static String generatePageFontStyle() {
@@ -93,19 +93,19 @@ public class FontSelection {
 	public static String getFontStyle() {
 		IProduct product = Platform.getProduct();
 		if (product != null) {
-		    String pid = product.getId();
-	    	String style = Platform.getPreferencesService().getString
-	    	    (IntroPlugin.PLUGIN_ID,  pid + "_" +FontSelection.VAR_FONT_STYLE, "", null); //$NON-NLS-1$ //$NON-NLS-2$
-	    	if (style.length() > 0) {
-	    		return style;
-	    	}
-	    	style = Platform.getPreferencesService().getString
-	    	    (IntroPlugin.PLUGIN_ID,  (FontSelection.VAR_FONT_STYLE), "", null); //$NON-NLS-1$
-	    	if (style.length() > 0) {
-	    		return style;
-	    	}
+			String pid = product.getId();
+			String style = Platform.getPreferencesService().getString
+				(IntroPlugin.PLUGIN_ID,  pid + "_" +FontSelection.VAR_FONT_STYLE, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+			if (style.length() > 0) {
+				return style;
+			}
+			style = Platform.getPreferencesService().getString
+				(IntroPlugin.PLUGIN_ID,  (FontSelection.VAR_FONT_STYLE), "", null); //$NON-NLS-1$
+			if (style.length() > 0) {
+				return style;
+			}
 		}
 		// Use default for font style if not specified
-	    return FontSelection.FONT_RELATIVE;
+		return FontSelection.FONT_RELATIVE;
 	}
 }

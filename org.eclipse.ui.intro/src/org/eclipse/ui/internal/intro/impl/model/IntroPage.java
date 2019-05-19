@@ -22,16 +22,16 @@ import org.w3c.dom.Element;
  */
 public class IntroPage extends AbstractIntroPage {
 
-    /**
-     * An Intro Part page.
-     */
-    IntroPage(Element element, Bundle bundle, String base) {
-        super(element, bundle, base);
-    }
+	/**
+	 * An Intro Part page.
+	 */
+	IntroPage(Element element, Bundle bundle, String base) {
+		super(element, bundle, base);
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.PAGE;
-    }
+		return AbstractIntroElement.PAGE;
+	}
 
 }

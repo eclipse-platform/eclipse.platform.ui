@@ -80,8 +80,8 @@ public class InjectionFilter implements IFilter {
 		}
 
 		boolean enabled = isUnfiltered || isNav
-		    || HelpBasePlugin.getActivitySupport().isRoleEnabled(pathInfo)
-		    || isRemote;
+			|| HelpBasePlugin.getActivitySupport().isRoleEnabled(pathInfo)
+			|| isRemote;
 		if ("/ntopic".equals(req.getServletPath())) { //$NON-NLS-1$
 			addNarrow = true;
 			CssUtil.addCssFiles(NARROW_CSS, cssIncludes);

@@ -54,7 +54,7 @@ public class TocValidator {
 	}
 
 	public static abstract class Filter {
-	     abstract public boolean isIncluded(String href);
+		abstract public boolean isIncluded(String href);
 	}
 
 	public static class PassThroughFilter extends Filter {

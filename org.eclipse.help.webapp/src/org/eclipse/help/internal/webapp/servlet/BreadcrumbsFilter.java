@@ -73,7 +73,7 @@ public class BreadcrumbsFilter implements IFilter {
 		if (pathParam != null && pathParam.length() > 0) {
 			breadcrumbPath = "/nav/" + pathParam; //$NON-NLS-1$
 		} else {
-		    breadcrumbPath= servletPath + pathInfo;
+			breadcrumbPath= servletPath + pathInfo;
 		}
 		int[] path = UrlUtil.getTopicPath(breadcrumbPath, locale );
 		if (path != null && path.length > 1) {
@@ -83,7 +83,7 @@ public class BreadcrumbsFilter implements IFilter {
 				String bodyContent = getBodyContent(path,
 						backpath, isNarrow, locale);
 				String headContent = HEAD_CONTENT1 + backpath + HEAD_CONTENT2 + backpath +
-				    HEAD_CONTENT3;
+					HEAD_CONTENT3;
 				return new FilterHTMLHeadAndBodyOutputStream(out, headContent
 						.getBytes(StandardCharsets.US_ASCII), bodyContent);
 			}

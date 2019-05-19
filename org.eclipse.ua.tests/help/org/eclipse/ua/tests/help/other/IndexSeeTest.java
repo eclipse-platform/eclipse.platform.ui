@@ -36,7 +36,7 @@ public class IndexSeeTest {
 	private static final String ECLIPSE = "eclipse";
 	private static final String SDK = "sdk";
 	private static final String VIEWS = "views";
-    private static final String SEE_END = "</see>";
+	private static final String SEE_END = "</see>";
 	private static final String SEE_HEAD_ECLIPSE = "<see keyword=\"eclipse\">";
 	private static final String SEE_ECLIPSE = "<see keyword=\"eclipse\"/>";
 	private static final String SEE_SDK = "<see keyword=\"sdk\"/>";
@@ -44,11 +44,11 @@ public class IndexSeeTest {
 	private static final String SUBPATH_VIEWS = "<subpath keyword=\"views\">";
 	private static final String SUBPATH_END = "</subpath>";
 	private static final String SEE_ECLIPSE_SDK = SEE_HEAD_ECLIPSE +
-    SUBPATH_SDK + SUBPATH_END + SEE_END;
+	SUBPATH_SDK + SUBPATH_END + SEE_END;
 	private static final String SEE_ECLIPSE_VIEWS = SEE_HEAD_ECLIPSE +
-    SUBPATH_SDK + SUBPATH_END + SUBPATH_VIEWS + SUBPATH_END + SEE_END;
+	SUBPATH_SDK + SUBPATH_END + SUBPATH_VIEWS + SUBPATH_END + SEE_END;
 	private static final String SEE_ECLIPSE_SDK_VIEWS = SEE_HEAD_ECLIPSE +
-    SUBPATH_SDK + SUBPATH_END + SUBPATH_VIEWS + SUBPATH_END + SEE_END;
+	SUBPATH_SDK + SUBPATH_END + SUBPATH_VIEWS + SUBPATH_END + SEE_END;
 
 	@Before
 	public void setUp() throws Exception {
@@ -59,7 +59,7 @@ public class IndexSeeTest {
 		IndexSee element;
 		Document doc;
 		try {
-		    doc = DocumentCreator.createDocument(elementSource);
+			doc = DocumentCreator.createDocument(elementSource);
 		} catch (Exception e) {
 			fail("Caught Exception");
 			doc = null;
@@ -73,7 +73,7 @@ public class IndexSeeTest {
 		Document doc;
 		String elementSource = "<see keyword=\"" + keyword + "\" />";
 		try {
-		    doc = DocumentCreator.createDocument(elementSource);
+			doc = DocumentCreator.createDocument(elementSource);
 		} catch (Exception e) {
 			fail("Caught Exception");
 			doc = null;
@@ -96,11 +96,11 @@ public class IndexSeeTest {
 		see1 = createSee(SEE_ECLIPSE);
 		IndexSee see2 = new IndexSee(see1);
 		assertEquals(ECLIPSE, see1.getKeyword());
-        assertEquals(0, see1.getSubpathElements().length);
+		assertEquals(0, see1.getSubpathElements().length);
 		assertEquals(ECLIPSE, see1.getKeyword());
 
 		assertEquals(ECLIPSE, see2.getKeyword());
-        assertEquals(0, see2.getSubpathElements().length);
+		assertEquals(0, see2.getSubpathElements().length);
 		assertEquals(ECLIPSE, see2.getKeyword());
 	}
 
@@ -231,30 +231,30 @@ public class IndexSeeTest {
 
 	@Test
 	public void testUserSee() {
-	     UserIndexSee u1;
-	     u1 = createUserSee();
-	     IndexSee see = new IndexSee(u1);
-	     checkCreatedSee(see);
+		UserIndexSee u1;
+		u1 = createUserSee();
+		IndexSee see = new IndexSee(u1);
+		checkCreatedSee(see);
 	}
 
 	@Test
 	public void testCopyUserSee() {
-	     UserIndexSee u1;
-	     u1 = createUserSee();
-	     IndexSee see = new IndexSee(u1);
-	     IndexSee see2 = new IndexSee(see);
-	     checkCreatedSee(see);
-	     checkCreatedSee(see2);
+		UserIndexSee u1;
+		u1 = createUserSee();
+		IndexSee see = new IndexSee(u1);
+		IndexSee see2 = new IndexSee(see);
+		checkCreatedSee(see);
+		checkCreatedSee(see2);
 	}
 
 	@Test
 	public void testCreateTwiceUserSee() {
-	     UserIndexSee u1;
-	     u1 = createUserSee();
-	     IndexSee see = new IndexSee(u1);
-	     IndexSee see2 = new IndexSee(u1);
-	     checkCreatedSee(see);
-	     checkCreatedSee(see2);
+		UserIndexSee u1;
+		u1 = createUserSee();
+		IndexSee see = new IndexSee(u1);
+		IndexSee see2 = new IndexSee(u1);
+		checkCreatedSee(see);
+		checkCreatedSee(see2);
 	}
 
 	@Test
@@ -299,19 +299,19 @@ public class IndexSeeTest {
 	private UserIndexSee createUserSee() {
 		UserIndexSee u1;
 		u1 = new UserIndexSee("eclipse", false);
-	     UserIndexSubpath u2 = new UserIndexSubpath("platform");
-	     UserIndexSubpath u3 = new UserIndexSubpath("ui");
-	     u1.addSubpath(u2);
-	     u1.addSubpath(u3);
+		UserIndexSubpath u2 = new UserIndexSubpath("platform");
+		UserIndexSubpath u3 = new UserIndexSubpath("ui");
+		u1.addSubpath(u2);
+		u1.addSubpath(u3);
 		return u1;
 	}
 
 	private void checkCreatedSee(IndexSee see) {
 		assertEquals("eclipse", see.getKeyword());
-	     IIndexSubpath[] subpath = see.getSubpathElements();
-	     assertEquals(2, subpath.length);
-	     assertEquals("platform", subpath[0].getKeyword());
-	     assertEquals("ui", subpath[1].getKeyword());
+		IIndexSubpath[] subpath = see.getSubpathElements();
+		assertEquals(2, subpath.length);
+		assertEquals("platform", subpath[0].getKeyword());
+		assertEquals("ui", subpath[1].getKeyword());
 	}
 
 }

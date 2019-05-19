@@ -192,7 +192,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 				}
 				if (status.getSeverity() != IStatus.ERROR) {
 					compositeCS.setContentUrl(url);
-				    return compositeCS;
+					return compositeCS;
 				}
 			}
 			return null;
@@ -209,12 +209,12 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			Node nextNode = childNodes.item(index);
 			if (isAbstractTask(nextNode.getNodeName()) ) {
 				AbstractTask task = parseAbstractTask(nextNode, model);
-			    if (model.getRootTask() == null ) {
+				if (model.getRootTask() == null ) {
 					model.setRootTask(task);
 					parseTaskChildren(nextNode, task, model);
-			    } else {
-				    addStatus(IStatus.ERROR, Messages.ERROR_PARSING_MULTIPLE_ROOT, null);
-			    }
+				} else {
+					addStatus(IStatus.ERROR, Messages.ERROR_PARSING_MULTIPLE_ROOT, null);
+				}
 			}
 		}
 	}
@@ -242,18 +242,18 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 					parseDependency(childNode, parentTask, model);
 				} else if (CompositeCheatSheetParser.isAbstractTask(nodeName)) {
 					if (parentTask instanceof TaskGroup) {
-					    AbstractTask task = parseAbstractTask(childNode, model);
-					    ((TaskGroup)parentTask).addSubtask(task);
-					    parseTaskChildren(childNode, task, model);
+						AbstractTask task = parseAbstractTask(childNode, model);
+						((TaskGroup)parentTask).addSubtask(task);
+						parseTaskChildren(childNode, task, model);
 					}
-			    } else {
+				} else {
 					if (!strategy.parseElementNode(childNode, parentNode, parentTask, this)) {
 						String message = NLS
 						.bind(
 								Messages.WARNING_PARSING_UNKNOWN_ELEMENT,
 								(new Object[] { nodeName,
 										parentNode.getNodeName() }));
-				        addStatus(IStatus.WARNING, message, null);
+						addStatus(IStatus.WARNING, message, null);
 					}
 				}
 			}
@@ -265,13 +265,13 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 	private void parseDependency(Node taskNode, AbstractTask task, CompositeCheatSheetModel model) {
 		NamedNodeMap attributes = taskNode.getAttributes();
 		if (attributes != null) {
-		     Node taskAttribute = attributes.getNamedItem(ICompositeCheatsheetTags.TASK);
-		     if (taskAttribute != null) {
-		    	 String requiredTaskId = taskAttribute.getNodeValue();
-		    	 model.getDependencies().addDependency(task, requiredTaskId);
-		     } else {
-		    	 addStatus(IStatus.ERROR, Messages.ERROR_PARSING_NO_ID, null);
-		     }
+			Node taskAttribute = attributes.getNamedItem(ICompositeCheatsheetTags.TASK);
+			if (taskAttribute != null) {
+				String requiredTaskId = taskAttribute.getNodeValue();
+				model.getDependencies().addDependency(task, requiredTaskId);
+			} else {
+				addStatus(IStatus.ERROR, Messages.ERROR_PARSING_NO_ID, null);
+			}
 		}
 	}
 
@@ -348,7 +348,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			String message = NLS.bind(Messages.ERROR_PARSING_DUPLICATE_TASK_ID, (new Object[] {id, }));
 			addStatus(IStatus.ERROR, message, null);
 		} else {
-		    model.getDependencies().saveId(task);
+			model.getDependencies().saveId(task);
 		}
 
 		return task;

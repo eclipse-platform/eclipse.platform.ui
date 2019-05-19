@@ -85,7 +85,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 			if (isCurrentPage) {
 				link.setFont(JFaceResources.getBannerFont());
 			} else {
-	            link.setFont(JFaceResources.getDefaultFont());
+				link.setFont(JFaceResources.getDefaultFont());
 			}
 			data.exclude = false;
 			link.setVisible(!data.exclude);

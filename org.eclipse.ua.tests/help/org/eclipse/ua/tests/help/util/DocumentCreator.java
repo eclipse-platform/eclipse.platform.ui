@@ -30,10 +30,10 @@ public class DocumentCreator {
 		StringReader reader = new StringReader(input);
 		InputSource source = new InputSource(reader);
 
-	    DocumentBuilder documentBuilder = CheatSheetPlugin.getPlugin()
+		DocumentBuilder documentBuilder = CheatSheetPlugin.getPlugin()
 					.getDocumentBuilder();
 
-	    return documentBuilder.parse(source);
+		return documentBuilder.parse(source);
 	}
 
 }

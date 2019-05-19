@@ -233,7 +233,7 @@ public class TocData extends ActivitiesData {
 			TopicFinder finder = new TopicFinder("/nav/" + completePath, tocs, scope); //$NON-NLS-1$
 			topicPath = finder.getTopicPath();
 			selectedToc = finder.getSelectedToc();
-		    numericPath = finder.getNumericPath();
+			numericPath = finder.getNumericPath();
 		} else {
 			// toc not specified as parameter
 			// try obtaining the TOC from the topic
@@ -258,7 +258,7 @@ public class TocData extends ActivitiesData {
 				}
 			}
 			if (selectedToc != -1) {
-		        topicPath = decodePath(path, tocs[selectedToc], scope);
+				topicPath = decodePath(path, tocs[selectedToc], scope);
 			}
 		} else {
 			selectedToc = -1;
@@ -336,49 +336,49 @@ public class TocData extends ActivitiesData {
 		return childTopics;
 	}
 	private void generateTopicLinks(ITopic topic, Writer w, int indent) {
-        String topicHref = topic.getHref();
-        try {
-            if (indent == 0)
-                w.write("<b>"); //$NON-NLS-1$
-            for (int tab = 0; tab < indent; tab++) {
-                w.write("&nbsp;&nbsp;"); //$NON-NLS-1$
-            }
-            if (topicHref != null && topicHref.length() > 0) {
-                w.write("<a href=\""); //$NON-NLS-1$
-                if ('/' == topicHref.charAt(0)) {
-                    w.write("topic"); //$NON-NLS-1$
-                }
-                w.write(topicHref);
-                w.write("\">"); //$NON-NLS-1$
-                w.write(UrlUtil.htmlEncode(topic.getLabel()));
-                w.write("</a>"); //$NON-NLS-1$
-            } else {
-                w.write(UrlUtil.htmlEncode(topic.getLabel()));
-            }
-            w.write("<br>\n"); //$NON-NLS-1$
-            if (indent == 0)
-                w.write("</b>"); //$NON-NLS-1$
-        } catch (IOException ioe) {
-        }
-        ITopic[] topics = topic.getSubtopics();
-        for (ITopic topic2 : topics) {
-            generateTopicLinks(topic2, w, indent + 1);
-        }
-    }
+		String topicHref = topic.getHref();
+		try {
+			if (indent == 0)
+				w.write("<b>"); //$NON-NLS-1$
+			for (int tab = 0; tab < indent; tab++) {
+				w.write("&nbsp;&nbsp;"); //$NON-NLS-1$
+			}
+			if (topicHref != null && topicHref.length() > 0) {
+				w.write("<a href=\""); //$NON-NLS-1$
+				if ('/' == topicHref.charAt(0)) {
+					w.write("topic"); //$NON-NLS-1$
+				}
+				w.write(topicHref);
+				w.write("\">"); //$NON-NLS-1$
+				w.write(UrlUtil.htmlEncode(topic.getLabel()));
+				w.write("</a>"); //$NON-NLS-1$
+			} else {
+				w.write(UrlUtil.htmlEncode(topic.getLabel()));
+			}
+			w.write("<br>\n"); //$NON-NLS-1$
+			if (indent == 0)
+				w.write("</b>"); //$NON-NLS-1$
+		} catch (IOException ioe) {
+		}
+		ITopic[] topics = topic.getSubtopics();
+		for (ITopic topic2 : topics) {
+			generateTopicLinks(topic2, w, indent + 1);
+		}
+	}
 
-    public void generateLinks(Writer out) {
-        for (IToc toc : tocs) {
-            ITopic tocTopic = toc.getTopic(null);
-            generateTopicLinks(tocTopic, out, 0);
-            ITopic[] topics = toc.getTopics();
-            for (ITopic topic : topics) {
-                generateTopicLinks(topic, out, 1);
-            }
-        }
+	public void generateLinks(Writer out) {
+		for (IToc toc : tocs) {
+			ITopic tocTopic = toc.getTopic(null);
+			generateTopicLinks(tocTopic, out, 0);
+			ITopic[] topics = toc.getTopics();
+			for (ITopic topic : topics) {
+				generateTopicLinks(topic, out, 1);
+			}
+		}
 
-    }
+	}
 
-    public ITopic[] getTopicPathFromRootPath(IToc toc) {
+	public ITopic[] getTopicPathFromRootPath(IToc toc) {
 		ITopic[] topicPath;
 		// Determine the topicPath from the path passed in as a parameter
 		int[] rootPath = getRootPath();
@@ -400,23 +400,23 @@ public class TocData extends ActivitiesData {
 		return topicPath;
 	}
 
-    public ITopic[] getTopicPath() {
-    	return topicPath;
-    }
+	public ITopic[] getTopicPath() {
+		return topicPath;
+	}
 
-    public int[] getRootPath() {
-    	return rootPath;
-    }
+	public int[] getRootPath() {
+		return rootPath;
+	}
 
-    public String getTopicHref() {
-    	return topicHref;
-    }
+	public String getTopicHref() {
+		return topicHref;
+	}
 
-    public String getNumericPath() {
-    	return numericPath;
-    }
+	public String getNumericPath() {
+		return numericPath;
+	}
 
-    public boolean isExpandPath() {
-        return expandPathParam != null;
-    }
+	public boolean isExpandPath() {
+		return expandPathParam != null;
+	}
 }

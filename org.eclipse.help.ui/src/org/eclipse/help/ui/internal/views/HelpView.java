@@ -75,7 +75,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText);
 		reusableHelpPart.showPage(getFirstPage());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-	         "org.eclipse.help.ui.helpView"); //$NON-NLS-1$
+			 "org.eclipse.help.ui.helpView"); //$NON-NLS-1$
 		IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
 		if (window == null)
 			return;
@@ -124,13 +124,13 @@ public class HelpView extends ViewPart implements IPartListener2,
 
 	@Override
 	public void saveState(IMemento memento) {
-    	if (reusableHelpPart!=null && memento!=null) {
-    		String pageId = reusableHelpPart.getCurrentPageId();
-    		if (pageId!=null)
-    			memento.putString("pageId", pageId); //$NON-NLS-1$
-    		reusableHelpPart.saveState(memento);
-    	}
-    }
+		if (reusableHelpPart!=null && memento!=null) {
+			String pageId = reusableHelpPart.getCurrentPageId();
+			if (pageId!=null)
+				memento.putString("pageId", pageId); //$NON-NLS-1$
+			reusableHelpPart.saveState(memento);
+		}
+	}
 
 	private void handlePartActivation(IWorkbenchPartReference ref) {
 		if (reusableHelpPart == null)
@@ -157,12 +157,12 @@ public class HelpView extends ViewPart implements IPartListener2,
 		} else {
 			if (HelpPlugin.DEBUG_CONTEXT) {
 				if (c == null) {
-				    System.out.println("Context: focus control is null " ); //$NON-NLS-1$
+					System.out.println("Context: focus control is null " ); //$NON-NLS-1$
 				}
 				if (!c.isVisible()) {
-				    System.out.println("Context: focus control not visible " ); //$NON-NLS-1$
+					System.out.println("Context: focus control not visible " ); //$NON-NLS-1$
 				}
-		    }
+			}
 		}
 	}
 
@@ -238,8 +238,8 @@ public class HelpView extends ViewPart implements IPartListener2,
 			selectionChanged(null);
 		} else {
 			if (HelpPlugin.DEBUG_CONTEXT) {
-			    System.out.println("Help View: activation of " + partRef.getPartName() + " part"); //$NON-NLS-1$ //$NON-NLS-2$
-		    }
+				System.out.println("Help View: activation of " + partRef.getPartName() + " part"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			handlePartActivation(partRef);
 		}
 	}

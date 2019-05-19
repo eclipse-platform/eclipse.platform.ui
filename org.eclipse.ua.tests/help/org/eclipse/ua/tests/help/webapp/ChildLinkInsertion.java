@@ -52,120 +52,120 @@ public class ChildLinkInsertion {
 
 	@Test
 	public void testEmpty() {
-	    final String input = "";
+		final String input = "";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testNoMatch() {
-	    final String input = "<HEAD><HEAD/>";
+		final String input = "<HEAD><HEAD/>";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testPartialMatch1() {
-	    final String input = "<A href = \"PLUGINS\"><!--INSTRUCT-->";
+		final String input = "<A href = \"PLUGINS\"><!--INSTRUCT-->";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testPartialMatch2() {
-	    final String input = "<A href = \"PLUGINS\"><!A -->";
+		final String input = "<A href = \"PLUGINS\"><!A -->";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testPartialMatch3() {
-	    final String input = "<A href = \"PLUGINS\"><!-A -->";
+		final String input = "<A href = \"PLUGINS\"><!-A -->";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testPartialMatch4() {
-	    final String input = "<A href = \"PLUGINS\"><!--A-->";
+		final String input = "<A href = \"PLUGINS\"><!--A-->";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testEndsUnmatched() {
-	    final String input = "<A><!--INSTR";
+		final String input = "<A><!--INSTR";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testNotAtStart() {
-	    final String input = "<A><!-- INSERT_CHILD_LINKS-->";
+		final String input = "<A><!-- INSERT_CHILD_LINKS-->";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testSpaceBeforeEnd() {
-	    final String input = "<A><!-- INSERT_CHILD_LINKS -->";
+		final String input = "<A><!-- INSERT_CHILD_LINKS -->";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testTooManyCharacters_1() {
-	    final String input = "<A><!--INSERT_CHILD_LINKSS-->";
+		final String input = "<A><!--INSERT_CHILD_LINKSS-->";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testTooManyCharacters_2() {
-	    final String input = "<A><!--INSERT_CHILD_LINKS_STYLES-->";
+		final String input = "<A><!--INSERT_CHILD_LINKS_STYLES-->";
 		checkFilter(input, input);
 	}
 
 	@Test
 	public void testAtStart() {
-	    final String input = "<!--INSERT_CHILD_LINKS--><A>";
-	    final String expected = "<LINKS><A>";
+		final String input = "<!--INSERT_CHILD_LINKS--><A>";
+		final String expected = "<LINKS><A>";
 		checkFilter(input, expected);
 	}
 
 	@Test
 	public void testChildStyle() {
-	    final String input = "<!--INSERT_CHILD_LINK_STYLE--><A>";
-	    final String expected = "<STYLE><A>";
+		final String input = "<!--INSERT_CHILD_LINK_STYLE--><A>";
+		final String expected = "<STYLE><A>";
 		checkFilter(input, expected);
 	}
 
 	@Test
 	public void testDefaultEncoding() {
-	    final String input = "";
+		final String input = "";
 		checkEncoding(input, null);
 	}
 
 	@Test
 	public void testEncodingUtf8() {
-	    final String input =
-	    	"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+		final String input =
+			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
 		checkEncoding(input, "utf-8");
 	}
 
 	@Test
 	public void testMetaNoEncoding() {
-	    final String input =
-	    	"<meta http-equiv=\"Content-Type\" content=\"text/html\">";
+		final String input =
+			"<meta http-equiv=\"Content-Type\" content=\"text/html\">";
 		checkEncoding(input, null);
 	}
 
 	@Test
 	public void testMultiMeta() {
-	    final String input =
-	    	"<meta name=\"test\" content=\"test\">" +
-	    	"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
-	    	"<meta name=\"test\" content=\"test\">";
+		final String input =
+			"<meta name=\"test\" content=\"test\">" +
+			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+			"<meta name=\"test\" content=\"test\">";
 		checkEncoding(input, "utf-8");
 	}
 
 	@Test
 	public void testMetaAndInsert() {
-	    final String metaInfo = "<meta name=\"test\" content=\"test\">" +
-			    	"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+		final String metaInfo = "<meta name=\"test\" content=\"test\">" +
+					"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
 		final String input =
-	    	metaInfo + "<!--INSERT_CHILD_LINK_STYLE--><A>";
-		    final String expected = metaInfo + "<STYLE><A>";
+			metaInfo + "<!--INSERT_CHILD_LINK_STYLE--><A>";
+			final String expected = metaInfo + "<STYLE><A>";
 		checkFilter(input, expected);
 		checkEncoding(input, "utf-8");
 	}

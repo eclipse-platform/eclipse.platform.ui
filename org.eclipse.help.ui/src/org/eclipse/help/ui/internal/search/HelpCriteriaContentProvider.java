@@ -120,7 +120,7 @@ public class HelpCriteriaContentProvider implements ITreeContentProvider {
 			CriterionName parentCriterion = (CriterionName) parentElement;
 
 			String[] values = BaseHelpSystem.getWorkingSetManager().getCriterionValueIds(parentCriterion.getId());
-		    CriterionValue[] criterionValues = new CriterionValue[values.length];
+			CriterionValue[] criterionValues = new CriterionValue[values.length];
 			for (int i = 0; i < values.length; i++) {
 				criterionValues[i] = new CriterionValue(values[i], parentElement);
 			}

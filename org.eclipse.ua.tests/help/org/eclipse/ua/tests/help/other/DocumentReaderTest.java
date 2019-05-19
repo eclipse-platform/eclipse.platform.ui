@@ -42,7 +42,7 @@ public class DocumentReaderTest {
 
 	@Test
 	public void testDocumentReader() throws IOException, SAXException, ParserConfigurationException {
-        DocumentReader docReader = new DocumentReader();
+		DocumentReader docReader = new DocumentReader();
 		ResourceReader[] resReaders = new ResourceReader[3];
 		resReaders[0] = new ResourceReader(docReader,"data/help/index/assembler/a.xml");
 		resReaders[1] = new ResourceReader(docReader,"data/help/index/assembler/b.xml");
@@ -79,7 +79,7 @@ public class DocumentReaderTest {
 		public void run() {
 			try {
 				for (int i = 0; i < 10; i++) {
-				    readFile(reader, file);
+					readFile(reader, file);
 				}
 				status = SUCCESS;
 			} catch (Exception e) {

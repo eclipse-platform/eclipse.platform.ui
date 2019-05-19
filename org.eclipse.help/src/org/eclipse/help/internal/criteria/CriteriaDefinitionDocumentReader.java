@@ -46,7 +46,7 @@ public class CriteriaDefinitionDocumentReader extends DocumentReader {
 					fixCriterionId((Element)node);
 				}
 				prune(node);
-			    node = node.getNextSibling();
+				node = node.getNextSibling();
 			} else {
 				node = node.getNextSibling();
 			}

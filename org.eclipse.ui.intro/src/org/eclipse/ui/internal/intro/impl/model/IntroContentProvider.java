@@ -29,42 +29,42 @@ import org.w3c.dom.Element;
  * schema.
  */
 public class IntroContentProvider extends AbstractTextElement {
-    public static final String TAG_CONTENT_PROVIDER = "contentProvider"; //$NON-NLS-1$
+	public static final String TAG_CONTENT_PROVIDER = "contentProvider"; //$NON-NLS-1$
 
-    private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
-    private static final String ATT_CLASS = "class"; //$NON-NLS-1$
+	private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
-    private String contentProvider;
-    private String pluginId;
+	private String contentProvider;
+	private String pluginId;
 
 
-    public IntroContentProvider(Element element, Bundle bundle) {
-        super(element, bundle);
-        contentProvider = getAttribute(element, ATT_CLASS);
-        pluginId = getAttribute(element, ATT_PLUGIN_ID);
-    }
+	public IntroContentProvider(Element element, Bundle bundle) {
+		super(element, bundle);
+		contentProvider = getAttribute(element, ATT_CLASS);
+		pluginId = getAttribute(element, ATT_PLUGIN_ID);
+	}
 
-    /**
-     * Returns the content provider, which should implement
-     * IIntroContentProvider
-     *
-     * @return Returns the contentProvider.
-     */
-    public String getClassName() {
-        return contentProvider;
-    }
+	/**
+	 * Returns the content provider, which should implement
+	 * IIntroContentProvider
+	 *
+	 * @return Returns the contentProvider.
+	 */
+	public String getClassName() {
+		return contentProvider;
+	}
 
-    /**
-     * Returns the id of the plugin that contains the content provider class
-     *
-     * @return Returns the pluginId.
-     */
-    public String getPluginId() {
-        return pluginId;
-    }
+	/**
+	 * Returns the id of the plugin that contains the content provider class
+	 *
+	 * @return Returns the pluginId.
+	 */
+	public String getPluginId() {
+		return pluginId;
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.CONTENT_PROVIDER;
-    }
+		return AbstractIntroElement.CONTENT_PROVIDER;
+	}
 }

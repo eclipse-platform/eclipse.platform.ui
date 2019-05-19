@@ -28,7 +28,7 @@ public class OnLoadFilter implements IFilter {
 
 	private static long uniqueId = 0;
 
-    private class OutFilter extends OutputStream {
+	private class OutFilter extends OutputStream {
 
 		private OutputStream out;
 
@@ -45,41 +45,41 @@ public class OnLoadFilter implements IFilter {
 				state = 3;
 			} else if (state == 3 && (b == 'd' || b == 'D')) {
 				state = 4;
-		    } else if (state == 4 && (b == 'y' || b == 'Y')) {
-			   state = 20;
-			   out.write(b);
-			   if (linkProvider.hasNext()) {
-			       String location = linkProvider.next();
-			       String onload = getOnloadText(pathPrefix + location, testKind);
-				   out.write(onload.getBytes());
-				   //System.out.println("Onload = " + onload);
-			   } else {
-				   linkProvider = null;
-				   String announceComplete = getCompletionText(testKind);
-				   out.write(announceComplete.getBytes());
-				   //System.out.println("announceComplete = " + announceComplete);
-			   }
-		    } else if (state == 20 && b == '>') {
-			   state = 21;
-		    } else if (state == 1 && (b == 'h' || b == 'H')) {
-				state = 11;
-		    } else if (state == 11 && (b == 'e' || b == 'e')) {
-				state = 12;
-		    } else if (state == 12 && (b == 'a' || b == 'a')) {
-				state = 13;
-		    } else if (state == 13 && (b == 'm' || b == 'M')) {
-				state = 14;
-		    } else if (state == 14 && (b == 'e' || b == 'E')) {
-				state = 15;
-		    } else if (state == 15 && (b == 's' || b == 'S')) {
-				state = 16;
-		    } else if (state == 16 && (b == 'e' || b == 'E')) {
-				state = 17;
-		    } else if (state == 17 && (b == 't' || b == 'T')) {
+			} else if (state == 4 && (b == 'y' || b == 'Y')) {
 				state = 20;
-		    } else if (state > 0 && state < 20) {
-		    	state = 0;
-		    }
+				out.write(b);
+				if (linkProvider.hasNext()) {
+					String location = linkProvider.next();
+					String onload = getOnloadText(pathPrefix + location, testKind);
+					out.write(onload.getBytes());
+					//System.out.println("Onload = " + onload);
+				} else {
+					linkProvider = null;
+					String announceComplete = getCompletionText(testKind);
+					out.write(announceComplete.getBytes());
+					//System.out.println("announceComplete = " + announceComplete);
+				}
+			} else if (state == 20 && b == '>') {
+				state = 21;
+			} else if (state == 1 && (b == 'h' || b == 'H')) {
+				state = 11;
+			} else if (state == 11 && (b == 'e' || b == 'e')) {
+				state = 12;
+			} else if (state == 12 && (b == 'a' || b == 'a')) {
+				state = 13;
+			} else if (state == 13 && (b == 'm' || b == 'M')) {
+				state = 14;
+			} else if (state == 14 && (b == 'e' || b == 'E')) {
+				state = 15;
+			} else if (state == 15 && (b == 's' || b == 'S')) {
+				state = 16;
+			} else if (state == 16 && (b == 'e' || b == 'E')) {
+				state = 17;
+			} else if (state == 17 && (b == 't' || b == 'T')) {
+				state = 20;
+			} else if (state > 0 && state < 20) {
+				state = 0;
+			}
 		}
 
 		private String getOnloadText(String location, int testKind) {
@@ -102,7 +102,7 @@ public class OnLoadFilter implements IFilter {
 
 		private String getCompletionText(int testKind) {
 			if (testKind == SelectTocDialog.FOLLOW_LINKS) {
-                return " onload = \"ua_test_doc_check_links();\" ";
+				return " onload = \"ua_test_doc_check_links();\" ";
 			} else {
 				return " onload = \"ua_test_doc_complete();\" ";
 			}
@@ -117,7 +117,7 @@ public class OnLoadFilter implements IFilter {
 		public void write(int b) throws IOException {
 			updateState(b);
 			if (state != 20) {
-			    out.write(b);
+				out.write(b);
 			}
 		}
 
@@ -130,11 +130,11 @@ public class OnLoadFilter implements IFilter {
 
 	private int testKind;
 
-    public OnLoadFilter(int testKind) {
-    	this.testKind = testKind;
-    }
+	public OnLoadFilter(int testKind) {
+		this.testKind = testKind;
+	}
 
-    private static Iterator<String> linkProvider;
+	private static Iterator<String> linkProvider;
 
 	protected String getCommentText() {
 		return "comment";
@@ -147,7 +147,7 @@ public class OnLoadFilter implements IFilter {
 		}
 		String pathPrefix = FilterUtils.getRelativePathPrefix(req);
 		if (pathPrefix.length() >= 4) {
-		    return new OutFilter(out, pathPrefix.substring(0, pathPrefix.length() - 4));
+			return new OutFilter(out, pathPrefix.substring(0, pathPrefix.length() - 4));
 		}
 		return new OutFilter(out, "PLUGINS_ROOT");
 	}

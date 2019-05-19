@@ -70,7 +70,7 @@ public class CheatsheetTaskEditor extends TaskEditor {
 					id = task.getId();
 				}
 				if (url != null) {
-				    viewer.setInput(id, task.getName(), url, stateManager, false);
+					viewer.setInput(id, task.getName(), url, stateManager, false);
 				} else {
 					errorBadUrl(path);
 				}
@@ -78,7 +78,7 @@ public class CheatsheetTaskEditor extends TaskEditor {
 				errorBadUrl(path);
 			}
 		} else if (id != null){
-		    viewer.setInput(id, stateManager);
+			viewer.setInput(id, stateManager);
 		} else {
 			viewer.showError(Messages.CHEATSHEET_TASK_NO_ID);
 		}

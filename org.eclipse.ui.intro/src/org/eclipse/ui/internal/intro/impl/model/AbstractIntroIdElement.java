@@ -26,29 +26,29 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractIntroIdElement extends AbstractIntroElement {
 
-    public static final String ATT_ID = "id"; //$NON-NLS-1$
+	public static final String ATT_ID = "id"; //$NON-NLS-1$
 
-    protected String id;
+	protected String id;
 
-    AbstractIntroIdElement(IConfigurationElement element) {
-        super(element);
-        id = element.getAttribute(ATT_ID);
-    }
+	AbstractIntroIdElement(IConfigurationElement element) {
+		super(element);
+		id = element.getAttribute(ATT_ID);
+	}
 
-    AbstractIntroIdElement(Element element, Bundle bundle) {
-        super(element, bundle);
-        id = getAttribute(element, ATT_ID);
-    }
+	AbstractIntroIdElement(Element element, Bundle bundle) {
+		super(element, bundle);
+		id = getAttribute(element, ATT_ID);
+	}
 
-    AbstractIntroIdElement(Element element, Bundle bundle, String base) {
-        super(element, bundle, base);
-        id = getAttribute(element, ATT_ID);
-    }
+	AbstractIntroIdElement(Element element, Bundle bundle, String base) {
+		super(element, bundle, base);
+		id = getAttribute(element, ATT_ID);
+	}
 
-    /**
-     * @return Returns the id.
-     */
-    public String getId() {
-        return id;
-    }
+	/**
+	 * @return Returns the id.
+	 */
+	public String getId() {
+		return id;
+	}
 }

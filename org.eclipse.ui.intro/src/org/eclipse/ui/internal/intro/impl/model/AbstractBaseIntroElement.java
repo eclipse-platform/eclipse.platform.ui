@@ -33,74 +33,74 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
 
-    protected static final String ATT_STYLE_ID = "style-id"; //$NON-NLS-1$
-    protected static final String ATT_FILTERED_FROM = "filteredFrom"; //$NON-NLS-1$
+	protected static final String ATT_STYLE_ID = "style-id"; //$NON-NLS-1$
+	protected static final String ATT_FILTERED_FROM = "filteredFrom"; //$NON-NLS-1$
 
-    protected String style_id;
-    protected String filteredFrom;
-    private boolean isFiltered;
+	protected String style_id;
+	protected String filteredFrom;
+	private boolean isFiltered;
 
-    AbstractBaseIntroElement(IConfigurationElement element) {
-        super(element);
-        style_id = element.getAttribute(ATT_STYLE_ID);
-        filteredFrom = element.getAttribute(ATT_FILTERED_FROM);
-    }
+	AbstractBaseIntroElement(IConfigurationElement element) {
+		super(element);
+		style_id = element.getAttribute(ATT_STYLE_ID);
+		filteredFrom = element.getAttribute(ATT_FILTERED_FROM);
+	}
 
-    AbstractBaseIntroElement(Element element, Bundle bundle) {
-        super(element, bundle);
-        style_id = getAttribute(element, ATT_STYLE_ID);
-        filteredFrom = getAttribute(element, ATT_FILTERED_FROM);
-    }
+	AbstractBaseIntroElement(Element element, Bundle bundle) {
+		super(element, bundle);
+		style_id = getAttribute(element, ATT_STYLE_ID);
+		filteredFrom = getAttribute(element, ATT_FILTERED_FROM);
+	}
 
-    /**
-     * Filter this element out based on the presentation kind.
-     *
-     */
-    private boolean checkFilterState() {
-        if (this.isOfType(AbstractIntroElement.MODEL_ROOT))
-            // root element is not filtered.
-            return false;
-        IntroModelRoot root = (IntroModelRoot) getParentPage().getParent();
-        return root.getPresentation().getImplementationKind().equals(
-            filteredFrom) ? true : false;
-    }
+	/**
+	 * Filter this element out based on the presentation kind.
+	 *
+	 */
+	private boolean checkFilterState() {
+		if (this.isOfType(AbstractIntroElement.MODEL_ROOT))
+			// root element is not filtered.
+			return false;
+		IntroModelRoot root = (IntroModelRoot) getParentPage().getParent();
+		return root.getPresentation().getImplementationKind().equals(
+			filteredFrom) ? true : false;
+	}
 
 
-    /**
-     * @return Returns the class id.
-     */
-    public String getStyleId() {
-        return style_id;
-    }
+	/**
+	 * @return Returns the class id.
+	 */
+	public String getStyleId() {
+		return style_id;
+	}
 
-    @Override
+	@Override
 	protected void loadFromParent() {
-        style_id = getAttribute(getElement(), ATT_STYLE_ID);
-        filteredFrom = getAttribute(getElement(), ATT_FILTERED_FROM);
-    }
+		style_id = getAttribute(getElement(), ATT_STYLE_ID);
+		filteredFrom = getAttribute(getElement(), ATT_FILTERED_FROM);
+	}
 
-    /**
-     * @return Returns the filter_kind.
-     */
-    public String getFilteredFrom() {
-        return filteredFrom;
-    }
+	/**
+	 * @return Returns the filter_kind.
+	 */
+	public String getFilteredFrom() {
+		return filteredFrom;
+	}
 
-    /**
-     * Return the filter state of this intro element. We need to do this when
-     * this element has been added to the model, and it has a parent. Also, this
-     * method will not be valid if the UI has not been loaded yet because it it
-     * the creation of the UI that determines the presentation details.
-     *
-     * @return Returns the isFiltered.
-     */
-    public boolean isFiltered() {
-        return checkFilterState() || isFiltered;
-    }
+	/**
+	 * Return the filter state of this intro element. We need to do this when
+	 * this element has been added to the model, and it has a parent. Also, this
+	 * method will not be valid if the UI has not been loaded yet because it it
+	 * the creation of the UI that determines the presentation details.
+	 *
+	 * @return Returns the isFiltered.
+	 */
+	public boolean isFiltered() {
+		return checkFilterState() || isFiltered;
+	}
 
-    public void setFilterState(boolean state) {
-        isFiltered = state;
-    }
+	public void setFilterState(boolean state) {
+		isFiltered = state;
+	}
 
 
 

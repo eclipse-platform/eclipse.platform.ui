@@ -21,14 +21,14 @@ import org.w3c.dom.Element;
  * A horizontal ruler element.
  */
 public class IntroSeparator extends AbstractBaseIntroElement {
-    protected static final String TAG_HR = "hr"; //$NON-NLS-1$
+	protected static final String TAG_HR = "hr"; //$NON-NLS-1$
 
-    IntroSeparator(Element element, Bundle bundle, String base) {
-        super(element, bundle);
-    }
+	IntroSeparator(Element element, Bundle bundle, String base) {
+		super(element, bundle);
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.HR;
-    }
+		return AbstractIntroElement.HR;
+	}
 }

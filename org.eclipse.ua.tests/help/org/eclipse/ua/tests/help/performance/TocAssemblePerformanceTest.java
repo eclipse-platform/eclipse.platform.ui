@@ -85,14 +85,14 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 		for (int i=0; i < 100; ++i) {
 			boolean warmup = i < 2;
 			if (!warmup) {
-			    startMeasuring();
+				startMeasuring();
 			}
 			for (int j = 0; j < 20; j++) {
-			    assembleToc();
+				assembleToc();
 			}
 			if (!warmup) {
-			    stopMeasuring();
-		    }
+				stopMeasuring();
+			}
 		}
 
 		commitMeasurements();

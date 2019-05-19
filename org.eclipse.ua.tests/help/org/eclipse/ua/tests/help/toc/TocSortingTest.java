@@ -61,7 +61,7 @@ public class TocSortingTest {
 
 		@Override
 		public ITopic[] getTopics() {
-            return new ITopic[0];
+			return new ITopic[0];
 		}
 
 		@Override
@@ -142,9 +142,9 @@ public class TocSortingTest {
 	@Before
 	public void setUp() throws Exception {
 		helpDataPreference = Platform.getPreferencesService().getString
-	       (HelpPlugin.HELP_DATA_KEY, HelpPlugin.HELP_DATA_KEY, "", null);
+			(HelpPlugin.HELP_DATA_KEY, HelpPlugin.HELP_DATA_KEY, "", null);
 		baseTocsPreference = Platform.getPreferencesService().getString
-	       (HelpPlugin.HELP_DATA_KEY, BASE_TOCS, "", null);
+			(HelpPlugin.HELP_DATA_KEY, BASE_TOCS, "", null);
 		HelpData.clearProductHelpData();
 		ProductPreferences.resetPrimaryTocOrdering();
 		setHelpData(EMPTY_XML);
@@ -165,8 +165,8 @@ public class TocSortingTest {
 	}
 
 	private void setBaseTocs(String value) {
-	    IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpPlugin.PLUGIN_ID);
-	    prefs.put(BASE_TOCS, value);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpPlugin.PLUGIN_ID);
+		prefs.put(BASE_TOCS, value);
 	}
 
 	private String toString(ITocContribution[] tocs) {

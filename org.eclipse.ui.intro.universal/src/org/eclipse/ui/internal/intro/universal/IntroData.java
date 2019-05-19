@@ -103,44 +103,44 @@ public class IntroData {
 		if (bundle==null)
 			return;
 		String content = BundleUtil.getResolvedResourceLocation("", fileName, //$NON-NLS-1$
-	                bundle);
-	    IntroContentParser parser = new IntroContentParser(content);
-	    Document dom = parser.getDocument();
-	    // dom can be null if the content file cannot be found
-	    if (dom==null)
-	    	return;
-	    Element root = dom.getDocumentElement();
-	    Element extension = null;
-	    NodeList children = root.getChildNodes();
-	    for (int i=0; i<children.getLength(); i++) {
-	       	Node child = children.item(i);
-	       	if (child.getNodeType()==Node.ELEMENT_NODE) {
-	       		Element el = (Element)child;
-	       		if (el.getNodeName().equalsIgnoreCase("extensionContent")) { //$NON-NLS-1$
-	       			extension = el;
-	       			break;
-	       		}
-	       	}
-	    }
-	    if (extension==null)
-	       	return;
-	    String id = extension.getAttribute("id"); //$NON-NLS-1$
-	    String name = extension.getAttribute("name"); //$NON-NLS-1$
-	    String path = extension.getAttribute("path"); //$NON-NLS-1$
-	    if (id==null || path==null)
-	       	return;
-	    int at = path.lastIndexOf("/@"); //$NON-NLS-1$
-	    if (at == -1)
-	       	return;
-	    if (path.charAt(path.length()-1)!='@')
-	    	return;
-	    String pageId = path.substring(0, at);
-	    PageData pd = pages.get(pageId);
-	    if (pd==null) {
-	    	pd = new PageData(pageId);
-	    	pages.put(pageId, pd);
-	    }
-	    pd.addImplicitExtension(id, name);
+					bundle);
+		IntroContentParser parser = new IntroContentParser(content);
+		Document dom = parser.getDocument();
+		// dom can be null if the content file cannot be found
+		if (dom==null)
+			return;
+		Element root = dom.getDocumentElement();
+		Element extension = null;
+		NodeList children = root.getChildNodes();
+		for (int i=0; i<children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType()==Node.ELEMENT_NODE) {
+				Element el = (Element)child;
+				if (el.getNodeName().equalsIgnoreCase("extensionContent")) { //$NON-NLS-1$
+					extension = el;
+					break;
+				}
+			}
+		}
+		if (extension==null)
+			return;
+		String id = extension.getAttribute("id"); //$NON-NLS-1$
+		String name = extension.getAttribute("name"); //$NON-NLS-1$
+		String path = extension.getAttribute("path"); //$NON-NLS-1$
+		if (id==null || path==null)
+			return;
+		int at = path.lastIndexOf("/@"); //$NON-NLS-1$
+		if (at == -1)
+			return;
+		if (path.charAt(path.length()-1)!='@')
+			return;
+		String pageId = path.substring(0, at);
+		PageData pd = pages.get(pageId);
+		if (pd==null) {
+			pd = new PageData(pageId);
+			pages.put(pageId, pd);
+		}
+		pd.addImplicitExtension(id, name);
 	}
 
 	private Document parse(String fileNameOrData) {

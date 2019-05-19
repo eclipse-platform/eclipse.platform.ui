@@ -232,7 +232,7 @@ public class JettyHelpServer extends HelpServer {
 			return true;
 		}
 		String host = HelpBasePlugin.getBundleContext().getProperty("server_host"); //$NON-NLS-1$
-        return host != null && host.trim().length() > 0;
+		return host != null && host.trim().length() > 0;
 	}
 
 }

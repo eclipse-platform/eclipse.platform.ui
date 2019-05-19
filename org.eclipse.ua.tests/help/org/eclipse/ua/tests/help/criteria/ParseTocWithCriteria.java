@@ -63,18 +63,18 @@ public class ParseTocWithCriteria {
 		IToc2 toc = parseToc("data/help/criteria/c1.xml");
 		Map<String, Set<String>> criteria = new HashMap<>();
 		CriteriaUtilities.addCriteriaToMap(criteria, toc.getCriteria());
-	    assertEquals(2, criteria.size());
-	    Set<String> versions = criteria.get("version");
-	    assertNotNull(versions);
-	    assertEquals(2, versions.size());
-	    assertTrue(versions.contains("1.0"));
-	    assertTrue(versions.contains("2.0"));
+		assertEquals(2, criteria.size());
+		Set<String> versions = criteria.get("version");
+		assertNotNull(versions);
+		assertEquals(2, versions.size());
+		assertTrue(versions.contains("1.0"));
+		assertTrue(versions.contains("2.0"));
 
-	    Set<String> platforms = criteria.get("platform");
-	    assertNotNull(platforms);
-	    assertEquals(2, platforms.size());
-	    assertTrue(platforms.contains("linux"));
-	    assertTrue(platforms.contains("win32"));
+		Set<String> platforms = criteria.get("platform");
+		assertNotNull(platforms);
+		assertEquals(2, platforms.size());
+		assertTrue(platforms.contains("linux"));
+		assertTrue(platforms.contains("win32"));
 	}
 
 	@Test
@@ -83,18 +83,18 @@ public class ParseTocWithCriteria {
 		Toc toc = new Toc(toc0);
 		Map<String, Set<String>> criteria = new HashMap<>();
 		CriteriaUtilities.addCriteriaToMap(criteria, toc.getCriteria());
-	    assertEquals(2, criteria.size());
-	    Set<String> versions = criteria.get("version");
-	    assertNotNull(versions);
-	    assertEquals(2, versions.size());
-	    assertTrue(versions.contains("1.0"));
-	    assertTrue(versions.contains("2.0"));
+		assertEquals(2, criteria.size());
+		Set<String> versions = criteria.get("version");
+		assertNotNull(versions);
+		assertEquals(2, versions.size());
+		assertTrue(versions.contains("1.0"));
+		assertTrue(versions.contains("2.0"));
 
-	    Set<String> platforms = criteria.get("platform");
-	    assertNotNull(platforms);
-	    assertEquals(2, platforms.size());
-	    assertTrue(platforms.contains("linux"));
-	    assertTrue(platforms.contains("win32"));
+		Set<String> platforms = criteria.get("platform");
+		assertNotNull(platforms);
+		assertEquals(2, platforms.size());
+		assertTrue(platforms.contains("linux"));
+		assertTrue(platforms.contains("win32"));
 	}
 
 	@Test
@@ -106,23 +106,23 @@ public class ParseTocWithCriteria {
 		Map<String, Set<String>> criteria = new HashMap<>();
 		assertTrue(topics[0] instanceof ITopic2);
 		CriteriaUtilities.addCriteriaToMap(criteria, ((ITopic2)topics[0]).getCriteria());
-	    assertEquals(2, criteria.size());
-	    Set<String> versions = criteria.get("version");
-	    assertNotNull(versions);
-	    assertEquals(1, versions.size());
-	    assertTrue(versions.contains("1.0"));
-	    assertFalse(versions.contains("2.0"));
+		assertEquals(2, criteria.size());
+		Set<String> versions = criteria.get("version");
+		assertNotNull(versions);
+		assertEquals(1, versions.size());
+		assertTrue(versions.contains("1.0"));
+		assertFalse(versions.contains("2.0"));
 
 		// Second topic
 
 		criteria = new HashMap<>();
 		assertTrue(topics[1] instanceof ITopic2);
 		CriteriaUtilities.addCriteriaToMap(criteria, ((ITopic2)topics[1]).getCriteria());
-	    versions = criteria.get("version");
-	    assertNotNull(versions);
-	    assertEquals(1, versions.size());
-	    assertTrue(versions.contains("2.0"));
-	    assertFalse(versions.contains("1.0"));
+		versions = criteria.get("version");
+		assertNotNull(versions);
+		assertEquals(1, versions.size());
+		assertTrue(versions.contains("2.0"));
+		assertFalse(versions.contains("1.0"));
 	}
 
 	@Test
@@ -194,11 +194,11 @@ public class ParseTocWithCriteria {
 		toc.addCriterion(criterion2);
 
 		ICriteria[] criteria = toc.getCriteria();
-	    assertEquals(2, criteria.length);
-	    assertEquals("version", criteria[0].getName());
-	    assertEquals("1.0", criteria[0].getValue());
-	    assertEquals("version", criteria[1].getName());
-	    assertEquals("2.0", criteria[1].getValue());
+		assertEquals(2, criteria.length);
+		assertEquals("version", criteria[0].getName());
+		assertEquals("1.0", criteria[0].getValue());
+		assertEquals("version", criteria[1].getName());
+		assertEquals("2.0", criteria[1].getValue());
 	}
 
 	@Test
@@ -212,11 +212,11 @@ public class ParseTocWithCriteria {
 		Toc copy = new Toc(toc);
 
 		ICriteria[] criteria = copy.getCriteria();
-	    assertEquals(2, criteria.length);
-	    assertEquals("version", criteria[0].getName());
-	    assertEquals("1.0", criteria[0].getValue());
-	    assertEquals("version", criteria[1].getName());
-	    assertEquals("2.0", criteria[1].getValue());
+		assertEquals(2, criteria.length);
+		assertEquals("version", criteria[0].getName());
+		assertEquals("1.0", criteria[0].getValue());
+		assertEquals("version", criteria[1].getName());
+		assertEquals("2.0", criteria[1].getValue());
 	}
 
 	@Test
@@ -230,11 +230,11 @@ public class ParseTocWithCriteria {
 		Topic copy = new Topic(topic);
 
 		ICriteria[] criteria = copy.getCriteria();
-	    assertEquals(2, criteria.length);
-	    assertEquals("version", criteria[0].getName());
-	    assertEquals("1.0", criteria[0].getValue());
-	    assertEquals("version", criteria[1].getName());
-	    assertEquals("2.0", criteria[1].getValue());
+		assertEquals(2, criteria.length);
+		assertEquals("version", criteria[0].getName());
+		assertEquals("1.0", criteria[0].getValue());
+		assertEquals("version", criteria[1].getName());
+		assertEquals("2.0", criteria[1].getValue());
 	}
 
 	@Test
@@ -245,11 +245,11 @@ public class ParseTocWithCriteria {
 		topic.addCriterion(criterion1);
 		topic.addCriterion(criterion2);
 		ICriteria[] criteria = topic.getCriteria();
-	    assertEquals(2, criteria.length);
-	    assertEquals("version", criteria[0].getName());
-	    assertEquals("1.0", criteria[0].getValue());
-	    assertEquals("version", criteria[1].getName());
-	    assertEquals("2.0", criteria[1].getValue());
+		assertEquals(2, criteria.length);
+		assertEquals("version", criteria[0].getName());
+		assertEquals("1.0", criteria[0].getValue());
+		assertEquals("version", criteria[1].getName());
+		assertEquals("2.0", criteria[1].getValue());
 	}
 
 	@Test

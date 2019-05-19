@@ -19,8 +19,8 @@ package org.eclipse.ua.tests.help.webapp;
  */
 
 public class CommentFilterOne extends CommentFilter {
-    @Override
+	@Override
 	protected String getCommentText() {
-    	return "1";
-    }
+		return "1";
+	}
 }

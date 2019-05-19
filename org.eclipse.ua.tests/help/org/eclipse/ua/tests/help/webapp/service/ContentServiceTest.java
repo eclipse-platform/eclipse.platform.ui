@@ -31,7 +31,7 @@ public class ContentServiceTest extends ContentServletTest {
 		final String path = "/data/help/index/topic1.html";
 		String remoteContent = ServicesTestUtils.getRemoteContent(UA_TESTS, path, "en");
 		String localContent = ServicesTestUtils.getLocalContent(UA_TESTS, path);
-	    assertEquals(remoteContent, localContent);
+		assertEquals(remoteContent, localContent);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class ContentServiceTest extends ContentServletTest {
 		final String path = "/data/help/manual/filter.xhtml";
 		String remoteContent = ServicesTestUtils.getRemoteContent(UA_TESTS, path, "en");
 		String localContent = ServicesTestUtils.getLocalContent(UA_TESTS, path);
-	    assertEquals(remoteContent, localContent);
+		assertEquals(remoteContent, localContent);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class ContentServiceTest extends ContentServletTest {
 		final String path = "/data/help/search/testnl1.xhtml";
 		String remoteContent = ServicesTestUtils.getRemoteContent(UA_TESTS, path, "en");
 		String localContent = ServicesTestUtils.getLocalContent(UA_TESTS, path);
-	    assertEquals(remoteContent, localContent);
+		assertEquals(remoteContent, localContent);
 	}
 
 	@Override
@@ -59,8 +59,8 @@ public class ContentServiceTest extends ContentServletTest {
 		String remoteContent = ServicesTestUtils.getRemoteContent(UA_TESTS, path, "de");
 		String enLocalContent = ServicesTestUtils.getLocalContent(UA_TESTS, path);
 		String deLocalContent = ServicesTestUtils.getLocalContent(UA_TESTS, "/nl/de" + path);
-	    assertEquals(remoteContent, deLocalContent);
-	    assertFalse(remoteContent.equals(enLocalContent));
+		assertEquals(remoteContent, deLocalContent);
+		assertFalse(remoteContent.equals(enLocalContent));
 	}
 
 	@Override

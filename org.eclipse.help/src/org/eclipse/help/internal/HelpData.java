@@ -72,19 +72,19 @@ public class HelpData {
 			}
 			String helpDataFile = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.HELP_DATA_KEY, "", null); //$NON-NLS-1$
 			if (helpDataFile.length() > 0) {
-			    if (helpDataFile.startsWith(PLUGINS_ROOT_SLASH)) {
-				    int nextSlash = helpDataFile.indexOf('/', PLUGINS_ROOT_SLASH.length());
-				    if (nextSlash > 0) {
-					    pluginId = helpDataFile.substring(PLUGINS_ROOT_SLASH.length(), nextSlash);
-				        helpDataFile = helpDataFile.substring(nextSlash + 1);
-				    }
+				if (helpDataFile.startsWith(PLUGINS_ROOT_SLASH)) {
+					int nextSlash = helpDataFile.indexOf('/', PLUGINS_ROOT_SLASH.length());
+					if (nextSlash > 0) {
+						pluginId = helpDataFile.substring(PLUGINS_ROOT_SLASH.length(), nextSlash);
+						helpDataFile = helpDataFile.substring(nextSlash + 1);
+					}
 				}
 			}
 			if (helpDataFile.length() > 0 && pluginId != null) {
 				Bundle bundle = Platform.getBundle(pluginId);
 				if (bundle != null) {
-				    URL helpDataUrl = bundle.getEntry(helpDataFile);
-				    productHelpData = new HelpData(helpDataUrl);
+					URL helpDataUrl = bundle.getEntry(helpDataFile);
+					productHelpData = new HelpData(helpDataUrl);
 				}
 			}
 			if (productHelpData == null) {

@@ -16,10 +16,10 @@ package org.eclipse.ui.internal.intro.universal.util;
 public class StringUtil {
 
 	public static String concat(String... strings) {
-    	StringBuilder buffer = new StringBuilder();
-    	for (String string : strings) {
+		StringBuilder buffer = new StringBuilder();
+		for (String string : strings) {
 			buffer.append(string);
 		}
-    	return buffer.toString();
-    }
+		return buffer.toString();
+	}
 }

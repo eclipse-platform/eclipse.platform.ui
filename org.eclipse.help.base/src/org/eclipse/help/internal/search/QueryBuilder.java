@@ -400,7 +400,7 @@ public class QueryBuilder {
 			}
 		} else {
 			fields = new String[fieldNames.size() + 2];
-	        boosts = new float[fieldNames.size() + 2];
+			boosts = new float[fieldNames.size() + 2];
 			Iterator<String> fieldNamesIt = fieldNames.iterator();
 			for (int i = 0; i < fieldNames.size(); i++) {
 				fields[i] = fieldNamesIt.next();
@@ -408,8 +408,8 @@ public class QueryBuilder {
 			}
 			fields[fieldNames.size()] = "contents"; //$NON-NLS-1$
 			boosts[fieldNames.size()] = 1.0f;
-            fields[fieldNames.size()+1] = "title"; //$NON-NLS-1$
-	        boosts[fieldNames.size()+1] = 1.0f;
+			fields[fieldNames.size()+1] = "title"; //$NON-NLS-1$
+			boosts[fieldNames.size()+1] = 1.0f;
 		}
 		Query query = getLuceneQuery(fields, boosts);
 		query = improveRankingForUnqotedPhrase(query, fields, boosts);

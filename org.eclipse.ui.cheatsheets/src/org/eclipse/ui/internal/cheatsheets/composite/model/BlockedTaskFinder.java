@@ -35,8 +35,8 @@ public class BlockedTaskFinder {
 	 *
 	 * This takes several steps.
 	 * <li> If a  group is completed, skipped or reset add any non-started children.
-     * <li> Determine all successors of tasks whose state has changed that are not in the change set
-     * <li> Add the successor and its children to the list if not started
+	 * <li> Determine all successors of tasks whose state has changed that are not in the change set
+	 * <li> Add the successor and its children to the list if not started
 	 */
 
 	public Set<ICompositeCheatSheetTask> findBlockedTaskChanges(Set<ICompositeCheatSheetTask> stateChangedTasks) {
@@ -50,7 +50,7 @@ public class BlockedTaskFinder {
 	private void visitChangedTasks() {
 		for (ICompositeCheatSheetTask nextTask : stateChangedTasks) {
 			if (nextTask.getState() != ICompositeCheatSheetTask.IN_PROGRESS) {
-			    findUnstartedChildren(nextTask);
+				findUnstartedChildren(nextTask);
 			}
 		}
 	}
@@ -64,10 +64,10 @@ public class BlockedTaskFinder {
 		for (ICompositeCheatSheetTask nextChild : children) {
 			// Ignore if this task has been seen before
 			if ((!stateChangedTasks.contains(nextChild)) && !impactedTasks.contains(nextChild)) {
-			    if (nextChild.getState() == ICompositeCheatSheetTask.NOT_STARTED) {
-				   impactedTasks.add(nextChild);
-			    }
-			    findUnstartedChildren(nextChild);
+				if (nextChild.getState() == ICompositeCheatSheetTask.NOT_STARTED) {
+					impactedTasks.add(nextChild);
+				}
+				findUnstartedChildren(nextChild);
 			}
 		}
 	}
@@ -80,7 +80,7 @@ public class BlockedTaskFinder {
 				if (nextSuccessor.getState() == ICompositeCheatSheetTask.NOT_STARTED) {
 					impactedTasks.add(nextSuccessor);
 				}
-			    findUnstartedChildren(nextSuccessor);
+				findUnstartedChildren(nextSuccessor);
 			}
 		}
 	}

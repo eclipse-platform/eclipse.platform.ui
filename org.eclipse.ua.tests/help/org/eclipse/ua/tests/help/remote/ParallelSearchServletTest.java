@@ -89,24 +89,24 @@ public class ParallelSearchServletTest {
 	@Test
 	public void testNotFoundInParallel() {
 		ParallelTestSupport.testInParallel(new SearchServletTester[]
-		     { new SearchServletTester("duernfryehd", 0),
-		       new SearchServletTester("duernfryehd", 0)}, 100);
+			 { new SearchServletTester("duernfryehd", 0),
+			   new SearchServletTester("duernfryehd", 0)}, 100);
 	}
 
 	@Test
 	public void testFoundInParallel() {
 		ParallelTestSupport.testInParallel(new SearchServletTester[]
-		     { new SearchServletTester("jehcyqpfjs", 1),
-		       new SearchServletTester("jehcyqpfjs", 1)}, 100);
+			 { new SearchServletTester("jehcyqpfjs", 1),
+			   new SearchServletTester("jehcyqpfjs", 1)}, 100);
 	}
 
 	@Test
 	public void testMixedParallelSearches() {
 		ParallelTestSupport.testInParallel(new SearchServletTester[]
-		     { new SearchServletTester("jehcyqpfjs", 1),
+			 { new SearchServletTester("jehcyqpfjs", 1),
 			   new SearchServletTester("duernfryehd", 0),
-		       new SearchServletTester("jehcyqpfjs", 1),
-               new SearchServletTester("duernfryehd", 0)}, 100);
+			   new SearchServletTester("jehcyqpfjs", 1),
+			   new SearchServletTester("duernfryehd", 0)}, 100);
 	}
 
 	private Node[] getSearchHitsFromServlet(String phrase)

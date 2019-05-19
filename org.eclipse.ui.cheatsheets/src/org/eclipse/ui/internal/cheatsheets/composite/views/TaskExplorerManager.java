@@ -89,7 +89,7 @@ private static TaskExplorerManager instance;
 		if (explorerInfo == null) {
 			return null;
 		}
-	    String iconPath = explorerInfo.getIconPath();
+		String iconPath = explorerInfo.getIconPath();
 		if (iconPath == null) {
 			return null;
 		}

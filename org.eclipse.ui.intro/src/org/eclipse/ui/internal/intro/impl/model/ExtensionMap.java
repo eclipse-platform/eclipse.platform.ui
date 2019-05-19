@@ -51,7 +51,7 @@ public class ExtensionMap {
 	 */
 	public void putPluginId(String anchorId, String pluginId) {
 		if (anchorId != null) {
-		    extensions.put(anchorId, pluginId);
+			extensions.put(anchorId, pluginId);
 		}
 	}
 

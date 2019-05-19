@@ -47,7 +47,7 @@ public class URLCoder {
 
 	private static boolean isAlphaNumericOrDot(byte b) {
 		return (b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || ( b >= 'A' && b <= 'Z')
-		   || b == '.';
+			|| b == '.';
 	}
 
 	private static byte[] urlDecode(String encodedURL) {

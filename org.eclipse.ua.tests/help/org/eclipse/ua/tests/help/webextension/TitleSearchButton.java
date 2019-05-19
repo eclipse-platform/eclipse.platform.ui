@@ -53,7 +53,7 @@ public class TitleSearchButton extends AbstractButton {
 	@Override
 	public boolean isAddedToToolbar(String toolbarName) {
 		boolean addButton = Platform.getPreferencesService().getBoolean
-	    (UserAssistanceTestPlugin.getPluginId(), "extraButton", false, null);
+		(UserAssistanceTestPlugin.getPluginId(), "extraButton", false, null);
 		return (addButton & toolbarName.equals(AbstractButton.CONTENT_TOOLBAR));
 	}
 

@@ -34,36 +34,36 @@ public class RemotePreferenceStore {
 	private static String pageNotFound;
 
 	public static void savePreferences() throws Exception {
-	    namePreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME,
-			      "", null);
-	     hostPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST,
-			      "", null);
+		namePreference = Platform.getPreferencesService().getString
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME,
+					"", null);
+		hostPreference = Platform.getPreferencesService().getString
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST,
+					"", null);
 		pathPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH,
-			      "", null);
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH,
+					"", null);
 		protocolPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL,
-			      "", null);
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL,
+					"", null);
 		portPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT,
-			      "", null);
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT,
+					"", null);
 		icEnabledPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled,
-			      "", null);
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled,
+					"", null);
 		defaultPort = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT,
-			      "", null);
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT,
+					"", null);
 		helpOn = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON,
-			      "", null);
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON,
+					"", null);
 		remoteHelpPreferred = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED,
-			      "", null);
+		 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED,
+					"", null);
 		pageNotFound = Platform.getPreferencesService().getString
-				     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_PAGE_NOT_FOUND,
-						      "", null);
+					 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_PAGE_NOT_FOUND,
+								"", null);
 	}
 
 	public static void restorePreferences() throws Exception {
@@ -81,7 +81,7 @@ public class RemotePreferenceStore {
 	}
 
 	public static void setMockRemoteServer() throws Exception {
-        TestServerManager.start("ua.test", 0);
+		TestServerManager.start("ua.test", 0);
 		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
 		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost");
 		RemotePreferenceTest.setPreference("remoteHelpPath", "/help");
@@ -94,8 +94,8 @@ public class RemotePreferenceStore {
 	}
 
 	public static void setTwoMockRemoteServers() throws Exception {
-        TestServerManager.start("ua.test", 0);
-        TestServerManager.start("ua.test2", 1);
+		TestServerManager.start("ua.test", 0);
+		TestServerManager.start("ua.test2", 1);
 		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
 		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost,localhost");
 		RemotePreferenceTest.setPreference("remoteHelpPath", "/help,/help");
@@ -108,8 +108,8 @@ public class RemotePreferenceStore {
 		RemotePreferenceTest.setPreference("remoteHelpICContributed", "false,false");
 	}
 	public static void setTwoMockRemoteServersReversePriority() throws Exception {
-        TestServerManager.start("ua.test", 0);
-        TestServerManager.start("ua.test2", 1);
+		TestServerManager.start("ua.test", 0);
+		TestServerManager.start("ua.test2", 1);
 		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
 		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost,localhost");
 		RemotePreferenceTest.setPreference("remoteHelpPath", "/help,/help");

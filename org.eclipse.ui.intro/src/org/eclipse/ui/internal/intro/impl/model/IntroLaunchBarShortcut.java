@@ -28,80 +28,80 @@ import org.eclipse.ui.intro.config.IntroElement;
  */
 public class IntroLaunchBarShortcut extends AbstractIntroElement {
 
-    protected static final String TAG_SHORTCUT = "shortcut"; //$NON-NLS-1$
+	protected static final String TAG_SHORTCUT = "shortcut"; //$NON-NLS-1$
 
-    private static final String ATT_TOOLTIP = "tooltip"; //$NON-NLS-1$
-    private static final String ATT_ICON = "icon"; //$NON-NLS-1$
-    private static final String ATT_URL = "url"; //$NON-NLS-1$
+	private static final String ATT_TOOLTIP = "tooltip"; //$NON-NLS-1$
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATT_URL = "url"; //$NON-NLS-1$
 
-    private IntroElement ielement;
+	private IntroElement ielement;
 
-    IntroLaunchBarShortcut(IConfigurationElement element, IntroElement ielement) {
-    	super(element);
-    	this.ielement = ielement;
-    }
+	IntroLaunchBarShortcut(IConfigurationElement element, IntroElement ielement) {
+		super(element);
+		this.ielement = ielement;
+	}
 
-    IntroLaunchBarShortcut(IConfigurationElement element) {
-        super(element);
-    }
+	IntroLaunchBarShortcut(IConfigurationElement element) {
+		super(element);
+	}
 
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.LAUNCH_BAR_SHORTCUT;
-    }
+		return AbstractIntroElement.LAUNCH_BAR_SHORTCUT;
+	}
 
-    private String getAttribute(String name) {
-    	if (ielement!=null)
-    		return ielement.getAttribute(name);
-    	return getCfgElement().getAttribute(name);
-    }
+	private String getAttribute(String name) {
+		if (ielement!=null)
+			return ielement.getAttribute(name);
+		return getCfgElement().getAttribute(name);
+	}
 
-    /**
-     * Returns the URL of this shortcut.
-     *
-     * @return
-     */
-    public String getURL() {
-    	return getAttribute(ATT_URL);
-    }
+	/**
+	 * Returns the URL of this shortcut.
+	 *
+	 * @return
+	 */
+	public String getURL() {
+		return getAttribute(ATT_URL);
+	}
 
-    /**
-     * Returns the tooltip of this shortcut.
-     *
-     * @return
-     */
-    public String getToolTip() {
-        return getAttribute(ATT_TOOLTIP);
-    }
+	/**
+	 * Returns the tooltip of this shortcut.
+	 *
+	 * @return
+	 */
+	public String getToolTip() {
+		return getAttribute(ATT_TOOLTIP);
+	}
 
-    /**
-     * Returns the relative icon path of this shortcut.
-     *
-     * @return
-     */
-    private String getIcon() {
-        return getAttribute(ATT_ICON);
-    }
+	/**
+	 * Returns the relative icon path of this shortcut.
+	 *
+	 * @return
+	 */
+	private String getIcon() {
+		return getAttribute(ATT_ICON);
+	}
 
-    /**
-     * Returns the icon image of this shortcut, or <code>null</code> if not
-     * found.
-     *
-     * @return
-     */
-    public ImageDescriptor getImageDescriptor() {
-    	String icon = getIcon();
-    	if (icon!=null) {
-    		try {
-    			URL imageUrl = new URL(icon);
-                ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
-                return desc;
-    		}
-    		catch (MalformedURLException e) {
-    			// not a full url
-    		}
-    	}
-        return ImageUtil.createImageDescriptor(getBundle(), getIcon());
-    }
+	/**
+	 * Returns the icon image of this shortcut, or <code>null</code> if not
+	 * found.
+	 *
+	 * @return
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		String icon = getIcon();
+		if (icon!=null) {
+			try {
+				URL imageUrl = new URL(icon);
+				ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
+				return desc;
+			}
+			catch (MalformedURLException e) {
+				// not a full url
+			}
+		}
+		return ImageUtil.createImageDescriptor(getBundle(), getIcon());
+	}
 }

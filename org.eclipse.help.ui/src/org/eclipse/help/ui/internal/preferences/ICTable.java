@@ -96,29 +96,29 @@ public class ICTable {
 
 
 		ColumnLayoutData[] fTableColumnLayouts= {
-		        new ColumnWeightData(85),
-		        new ColumnWeightData(165),
-		        new ColumnWeightData(60)
+				new ColumnWeightData(85),
+				new ColumnWeightData(165),
+				new ColumnWeightData(60)
 		};
 
 		TableColumn column;
 
 		tableLayout.addColumnData(fTableColumnLayouts[0]);
-	    column = new TableColumn(table, SWT.NONE, 0);
-	    column.setResizable(fTableColumnLayouts[0].resizable);
-	    column.setText(NAME_COLUMN);
+		column = new TableColumn(table, SWT.NONE, 0);
+		column.setResizable(fTableColumnLayouts[0].resizable);
+		column.setText(NAME_COLUMN);
 
-	    tableLayout.addColumnData(fTableColumnLayouts[1]);
-	    column = new TableColumn(table, SWT.NONE, 1);
-	    column.setResizable(fTableColumnLayouts[1].resizable);
-	    column.setText(LOCATION_COLUMN);
+		tableLayout.addColumnData(fTableColumnLayouts[1]);
+		column = new TableColumn(table, SWT.NONE, 1);
+		column.setResizable(fTableColumnLayouts[1].resizable);
+		column.setText(LOCATION_COLUMN);
 
-	    tableLayout.addColumnData(fTableColumnLayouts[2]);
-	    column = new TableColumn(table, SWT.NONE, 2);
-	    column.setResizable(fTableColumnLayouts[2].resizable);
-	    column.setText(STATUS_COLUMN);
+		tableLayout.addColumnData(fTableColumnLayouts[2]);
+		column = new TableColumn(table, SWT.NONE, 2);
+		column.setResizable(fTableColumnLayouts[2].resizable);
+		column.setText(STATUS_COLUMN);
 
-	    return table;
+		return table;
 	}
 
 	/**

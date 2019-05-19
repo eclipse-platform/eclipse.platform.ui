@@ -51,7 +51,7 @@ public class HelpServerTest extends PerformanceTestCase {
 		for (int i=0; i < 100; ++i) {
 			boolean warmup = i < 2;
 			if (!warmup) {
-			    startMeasuring();
+				startMeasuring();
 			}
 
 			for (int j = 0; j <= 100; j++) {
@@ -59,8 +59,8 @@ public class HelpServerTest extends PerformanceTestCase {
 			}
 
 			if (!warmup) {
-			    stopMeasuring();
-		    }
+				stopMeasuring();
+			}
 		}
 
 		commitMeasurements();
@@ -75,14 +75,14 @@ public class HelpServerTest extends PerformanceTestCase {
 			boolean warmup = i < 2;
 			LoadServletUtil.stopServer();
 			if (!warmup) {
-			    startMeasuring();
+				startMeasuring();
 			}
 
 			LoadServletUtil.startServer();
 
 			if (!warmup) {
-			    stopMeasuring();
-		    }
+				stopMeasuring();
+			}
 		}
 
 		commitMeasurements();

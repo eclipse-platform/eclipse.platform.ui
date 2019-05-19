@@ -154,10 +154,10 @@ public class ICButtons implements SelectionListener{
 		}
 
 		boolean shouldRemove =
-	          MessageDialog.openQuestion(
-	        	page.getShell(),
-	            NLS.bind(Messages.HelpContentBlock_rmvTitle ,""), //$NON-NLS-1$
-	            NLS.bind(Messages.HelpContentBlock_rmvLabel ,remove));
+			  MessageDialog.openQuestion(
+				page.getShell(),
+				NLS.bind(Messages.HelpContentBlock_rmvTitle ,""), //$NON-NLS-1$
+				NLS.bind(Messages.HelpContentBlock_rmvLabel ,remove));
 
 		if (shouldRemove)
 		{

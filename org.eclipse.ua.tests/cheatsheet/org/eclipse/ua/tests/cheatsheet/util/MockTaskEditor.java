@@ -43,7 +43,7 @@ public class MockTaskEditor extends TaskEditor {
 			setValue(NO_MEMENTO);
 		} else {
 			setValue(memento.getString(KEY));
-	    }
+		}
 	}
 
 	@Override

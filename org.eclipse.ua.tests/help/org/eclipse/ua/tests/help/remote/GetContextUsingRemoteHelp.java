@@ -33,8 +33,8 @@ public class GetContextUsingRemoteHelp {
 
 	@Before
 	public void setUp() throws Exception {
-        RemotePreferenceStore.savePreferences();
-        mode = BaseHelpSystem.getMode();
+		RemotePreferenceStore.savePreferences();
+		mode = BaseHelpSystem.getMode();
 		RemotePreferenceStore.setMockRemoteServer();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
@@ -57,7 +57,7 @@ public class GetContextUsingRemoteHelp {
 		assertEquals("context_one_en", title);
 		RemotePreferenceStore.disableRemoteHelp();
 		context = HelpPlugin.getContextManager().getContext("org.eclipse.ua.tests.test_one", "en");
-        assertNull(context);
+		assertNull(context);
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class GetContextUsingRemoteHelp {
 	@Test
 	public void testContextNotFound() throws Exception {
 		IContext context = HelpPlugin.getContextManager().getContext("org.eclipse.ua.tests.no_such_ctx", "en");
-        assertNull(context);
+		assertNull(context);
 	}
 
 }

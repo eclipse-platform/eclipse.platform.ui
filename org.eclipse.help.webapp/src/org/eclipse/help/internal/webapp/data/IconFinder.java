@@ -84,10 +84,10 @@ public class IconFinder {
 		String suffix;
 
 		switch(type){
-		  case 0:suffix = OPEN;break;
-		  case 1:suffix = CLOSED;break;
-		  case 2:suffix = LEAF;break;
-		  default: suffix = OPEN; break;
+			case 0:suffix = OPEN;break;
+			case 1:suffix = CLOSED;break;
+			case 2:suffix = LEAF;break;
+			default: suffix = OPEN; break;
 		}
 		String result = lookupImagePath(iconId + suffix);
 		if (result != null) {

@@ -78,7 +78,7 @@ public class HelpServerInterrupt {
 				fail("Test did not complete within 10 seconds");
 			}
 			Thread.sleep(sleepTime);
-        } while (starter.isAlive());
+		} while (starter.isAlive());
 		Exception exception = starter.getException();
 		if (exception != null) {
 			throw exception;
@@ -97,7 +97,7 @@ public class HelpServerInterrupt {
 			}
 			starter.interrupt();
 			Thread.sleep(sleepTime);
-        } while (starter.isAlive());
+		} while (starter.isAlive());
 		Exception exception = starter.getException();
 		if (exception != null) {
 			throw exception;

@@ -42,7 +42,7 @@ public class IndexEntryTest {
 	private static final String INVALID_INSTALLED = "<with variable=\"platform\">" +
 	"<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.invalid\"/></with>";
 	private static final String CS_INSTALLED = "<with variable=\"platform\">" +
-	    "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/></with>";
+		"<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/></with>";
 	private static final String ENABLEMENT_CHEATSHEETS = "<enablement>" + CS_INSTALLED + "</enablement>";
 	private static final String ENABLEMENT_INVALID = "<enablement>" +  INVALID_INSTALLED  + "</enablement>";
 	private static final String FILTER_IN = "<filter name = \"plugin\" value = \"org.eclipse.ua.tests\"/>";
@@ -62,13 +62,13 @@ public class IndexEntryTest {
 	private final String ENTRY_FILTER_OUT = ENTRY_HEAD_ECLIPSE + FILTER_OUT + ENTRY_END;
 	private final String ENTRY_FILTER_MIXED = ENTRY_HEAD_ECLIPSE + FILTER_IN + FILTER_OUT + ENTRY_END;
 	private final String ENTRY_OLD_FILTER = "<entry filter=\"plugin=org.eclipse.ua.tests\" "
-	    + " keyword=\"Transformations and transformation configurations\"/>";
+		+ " keyword=\"Transformations and transformation configurations\"/>";
 	private final String ENTRY_OLD_FILTER_DISABLED = "<entry filter=\"plugin=org.eclipse.ua.invalid\" "
-	    + " keyword=\"Transformations and transformation configurations\"/>";
+		+ " keyword=\"Transformations and transformation configurations\"/>";
 	private final String ENTRY_OLD_FILTER_IN__NEGATED = "<entry filter=\"plugin!=org.eclipse.ua.tests\" "
-	    + " keyword=\"Transformations and transformation configurations\"/>";
+		+ " keyword=\"Transformations and transformation configurations\"/>";
 	private final String ENTRY_OLD_FILTER_OUT_NEGATED = "<entry filter=\"plugin!=org.eclipse.ua.invalid\" "
-	    + " keyword=\"Transformations and transformation configurations\"/>";
+		+ " keyword=\"Transformations and transformation configurations\"/>";
 	private final String ENTRY_WITH_CHILD = ENTRY_HEAD_ECLIPSE + ENTRY_BUGZILLA + ENTRY_END;
 	private final String ENTRY_WITH_TOPIC = ENTRY_HEAD_ECLIPSE + TOPIC_BUGZILLA + ENTRY_END;
 	private final String ENTRY_WITH_SEE = ENTRY_HEAD_ECLIPSE + SEE_ALSO_SDK + ENTRY_END;
@@ -82,7 +82,7 @@ public class IndexEntryTest {
 		IndexEntry element;
 		Document doc;
 		try {
-		    doc = DocumentCreator.createDocument(elementSource);
+			doc = DocumentCreator.createDocument(elementSource);
 		} catch (Exception e) {
 			fail("Caught Exception");
 			doc = null;
@@ -315,15 +315,15 @@ public class IndexEntryTest {
 		assertEquals(2, subentries.length);
 		assertEquals(1, sees.length);
 		assertEquals(3,topics.length);
-	    assertEquals("jdt", subentries[0].getKeyword());
-	    assertEquals("compiler", subentries[1].getKeyword());
-	    assertEquals("label1", topics[0].getLabel());
-	    assertEquals("label2", topics[1].getLabel());
-	    assertEquals("label3", topics[2].getLabel());
-	    assertEquals("href1", topics[0].getHref());
-	    assertEquals("href2", topics[1].getHref());
-	    assertEquals("href3", topics[2].getHref());
-	    assertEquals("beans", sees[0].getKeyword());
+		assertEquals("jdt", subentries[0].getKeyword());
+		assertEquals("compiler", subentries[1].getKeyword());
+		assertEquals("label1", topics[0].getLabel());
+		assertEquals("label2", topics[1].getLabel());
+		assertEquals("label3", topics[2].getLabel());
+		assertEquals("href1", topics[0].getHref());
+		assertEquals("href2", topics[1].getHref());
+		assertEquals("href3", topics[2].getHref());
+		assertEquals("beans", sees[0].getKeyword());
 	}
 
 	private void checkEntryChildEnablement(IIndexEntry2 entry) {
@@ -333,12 +333,12 @@ public class IndexEntryTest {
 		assertEquals(2, subentries.length);
 		assertEquals(1, sees.length);
 		assertEquals(3,topics.length);
-	    assertTrue(subentries[0].isEnabled(HelpEvaluationContext.getContext()));
-	    assertFalse(subentries[1].isEnabled(HelpEvaluationContext.getContext()));
-	    assertTrue(topics[0].isEnabled(HelpEvaluationContext.getContext()));
-	    assertFalse(topics[1].isEnabled(HelpEvaluationContext.getContext()));
-	    assertTrue(topics[2].isEnabled(HelpEvaluationContext.getContext()));
-	    assertTrue(sees[0].isEnabled(HelpEvaluationContext.getContext()));
+		assertTrue(subentries[0].isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(subentries[1].isEnabled(HelpEvaluationContext.getContext()));
+		assertTrue(topics[0].isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(topics[1].isEnabled(HelpEvaluationContext.getContext()));
+		assertTrue(topics[2].isEnabled(HelpEvaluationContext.getContext()));
+		assertTrue(sees[0].isEnabled(HelpEvaluationContext.getContext()));
 	}
 
 	private UserIndexEntry createUserEntry() {

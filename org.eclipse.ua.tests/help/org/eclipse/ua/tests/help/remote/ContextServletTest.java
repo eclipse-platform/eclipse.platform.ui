@@ -67,7 +67,7 @@ public class ContextServletTest {
 	@Test
 	public void testRemoteContextFoundDe() throws Exception {
 		Element[] topics = getContextsUsingLocale
-		    ("org.eclipse.ua.tests.test_cheatsheets", "de");
+			("org.eclipse.ua.tests.test_cheatsheets", "de");
 		assertEquals(1, topics.length);
 		assertEquals("German Context", topics[0].getAttribute("label"));
 	}

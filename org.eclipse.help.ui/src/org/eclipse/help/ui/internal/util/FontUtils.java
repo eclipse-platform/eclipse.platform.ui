@@ -44,7 +44,7 @@ public class FontUtils {
 		String scaleString = percent/100 + "." + (percent % 100) / 10; //$NON-NLS-1$
 		String os = Platform.getOS();
 		if (Constants.WS_WIN32.equalsIgnoreCase(os) ||
-		    Constants.OS_MACOSX.equalsIgnoreCase(os)) {
+			Constants.OS_MACOSX.equalsIgnoreCase(os)) {
 			return "document.body.style.zoom = " + scaleString; //$NON-NLS-1$
 		}
 		return null;  // No rescale in Mozilla browsers

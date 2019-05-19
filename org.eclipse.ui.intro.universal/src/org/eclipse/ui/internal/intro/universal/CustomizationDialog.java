@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.intro.universal.util.ImageUtil;
 
 public class CustomizationDialog extends TrayDialog {
 
-    private CustomizationContentsArea contentsArea;
+	private CustomizationContentsArea contentsArea;
 	private String pageId;
 
 	private CustomizationContentsArea getContentsArea() {
@@ -53,22 +53,22 @@ public class CustomizationDialog extends TrayDialog {
 	@Override
 	protected void okPressed() {
 		if (getContentsArea().performOk()) {
-		    getContentsArea().dispose();
+			getContentsArea().dispose();
 		}
 		super.okPressed();
 	}
 
 	@Override
 	protected void cancelPressed() {
-	    getContentsArea().dispose();
-	    super.cancelPressed();
+		getContentsArea().dispose();
+		super.cancelPressed();
 	}
 
-    @Override
+	@Override
 	protected void configureShell(Shell newShell) {
-	    super.configureShell(newShell);
+		super.configureShell(newShell);
 		newShell.setText(Messages.WelcomeCustomizationPreferencePage_Customize);
-	    newShell.setImage(ImageUtil.createImage("full/elcl16/configure.png")); //$NON-NLS-1$);
-    }
+		newShell.setImage(ImageUtil.createImage("full/elcl16/configure.png")); //$NON-NLS-1$);
+	}
 
 }

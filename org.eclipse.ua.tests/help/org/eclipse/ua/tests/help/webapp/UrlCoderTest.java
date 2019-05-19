@@ -43,7 +43,7 @@ public class UrlCoderTest {
 	private boolean compactEncodingIsShorter(String value) {
 		String compactEncoded = URLCoder.compactEncode(value);
 		String encoded = URLCoder.encode(value);
-        return compactEncoded.length() < encoded.length();
+		return compactEncoded.length() < encoded.length();
 	}
 
 	@Test

@@ -53,7 +53,7 @@ public class IndexManager {
 			HelpPlugin.getTocManager().getTocs(locale);  // Ensure Tocs and index not built simultaneously
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_INDEX) {
-			    System.out.println("Start to update keyword index for locale " + locale); //$NON-NLS-1$
+				System.out.println("Start to update keyword index for locale " + locale); //$NON-NLS-1$
 			}
 			List<IndexContribution> contributions = new ArrayList<>(Arrays.asList(readIndexContributions(locale)));
 			filterIndexContributions(contributions);
@@ -62,7 +62,7 @@ public class IndexManager {
 			indexesByLocale.put(locale, index);
 			long stop = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_INDEX) {
-			    System.out.println("Milliseconds to update keyword index for locale " + locale +  " = " + (stop - start)); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Milliseconds to update keyword index for locale " + locale +  " = " + (stop - start)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return index;

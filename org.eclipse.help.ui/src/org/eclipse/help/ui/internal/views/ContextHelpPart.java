@@ -153,7 +153,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				if (href.startsWith(MORE_HREF)) {
 					doMore(href.substring(MORE_HREF.length()));
 				}  else {
-				   doOpenLink(e.getHref());
+					doOpenLink(e.getHref());
 				}
 			}
 
@@ -172,12 +172,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 			@Override
 			public void getName(AccessibleEvent e) {
-		        if (e.childID == ACC.CHILDID_SELF) {
-		            String currentName = e.result;
-		            e.result = Messages.ReusableHelpPart_contextHelpPage_name
-		              + ' ' + getSection().getText()+ ' ' +currentName;
-		        }
-		    }
+				if (e.childID == ACC.CHILDID_SELF) {
+					String currentName = e.result;
+					e.result = Messages.ReusableHelpPart_contextHelpPage_name
+					  + ' ' + getSection().getText()+ ' ' +currentName;
+				}
+			}
 		});
 
 	}
@@ -279,10 +279,10 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (lastProvider != null) {
 			String providerSearchExpression = lastProvider.getSearchExpression(lastControl);
 				if (providerSearchExpression != null) {
-				    updateSearchExpression(providerSearchExpression, lastControl);
-			        return;
+					updateSearchExpression(providerSearchExpression, lastControl);
+					return;
 				}
-	    }
+		}
 		if (lastContext instanceof IContext2) {
 			String title = ((IContext2)lastContext).getTitle();
 			if (title!=null) {
@@ -312,8 +312,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		lastPart = part;
 		if (provider!= null && (context==null || ((context instanceof Context) && IWorkbenchHelpContextIds.MISSING.equals(((Context)context).getId())))) {
 			if (HelpPlugin.DEBUG_CONTEXT) {
-			    System.out.println("Getting context from provider"); //$NON-NLS-1$
-		    }
+				System.out.println("Getting context from provider"); //$NON-NLS-1$
+			}
 			lastContext = provider.getContext(c);
 		}
 		updateSearchExpression();
@@ -322,18 +322,18 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (lastContext!=null) {
 			helpText = formatHelpContext(lastContext);
 			if (HelpPlugin.DEBUG_CONTEXT) {
-			    System.out.println("Context Activation, context =  " + lastContext.getText()); //$NON-NLS-1$
-		    }
+				System.out.println("Context Activation, context =  " + lastContext.getText()); //$NON-NLS-1$
+			}
 		} else {
 			if (HelpPlugin.DEBUG_CONTEXT) {
-			    System.out.println("Context Activation on control"); //$NON-NLS-1$
-		    }
+				System.out.println("Context Activation on control"); //$NON-NLS-1$
+			}
 			helpText = createContextHelp(c);
 		}
 		updateTitle(c);
 		updateDescription(helpText);
 		if (RelatedTopicsPart.isUseDynamicHelp()) {
-		    updateDynamicHelp();
+			updateDynamicHelp();
 		}
 	}
 
@@ -394,7 +394,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (expression == null) {
 			searchTerms = computeSearchTerms(c);
 		} else {
-		    searchTerms = new String[] { expression };
+			searchTerms = new String[] { expression };
 		}
 	}
 
@@ -404,8 +404,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (part != null) {
 			if (searchTerms != null) {
 				if (HelpPlugin.DEBUG_CONTEXT) {
-				    System.out.println("Dynamic help - search for " + searchTerms); //$NON-NLS-1$
-			    }
+					System.out.println("Dynamic help - search for " + searchTerms); //$NON-NLS-1$
+				}
 				part.startSearch(buildSearchExpression(searchTerms), lastContext);
 			}
 		}
@@ -469,12 +469,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 											.getSite().getRegisteredName()));
 						} else if (part instanceof IEditorPart) {
 							if (part.getSite() != null && part.getSite().getRegisteredName() != null) {
-							    searchTerms.add(part.getSite().getRegisteredName());
+								searchTerms.add(part.getSite().getRegisteredName());
 							}
 						}
 					}
 					/*
-                    // Searching by perspective seems counterproductive - CG
+					// Searching by perspective seems counterproductive - CG
 					IPerspectiveDescriptor persp = page.getPerspective();
 					if (persp != null) {
 						searchTerms.add(NLS.bind(

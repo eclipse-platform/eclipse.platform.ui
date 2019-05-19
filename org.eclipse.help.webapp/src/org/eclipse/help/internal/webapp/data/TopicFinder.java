@@ -62,10 +62,10 @@ public class TopicFinder {
 				}
 				// if there was an anchor, search again without it
 			} while (foundTopicPath == null && index != -1);
-	    } else {
-	    	selectedToc = -1;
+		} else {
+			selectedToc = -1;
 			foundTopicPath = null;
-	    }
+		}
 	}
 
 	public ITopic[] getTopicPathFromNav(String nav) {
@@ -90,22 +90,22 @@ public class TopicFinder {
 		}
 	}
 
-    public ITopic[] getTopicPath() {
+	public ITopic[] getTopicPath() {
 		return foundTopicPath;
 	}
 
-    public int getSelectedToc() {
-    	return selectedToc;
-    }
+	public int getSelectedToc() {
+		return selectedToc;
+	}
 
-    public String getNumericPath() {
-    	return numericPath;
-    }
+	public String getNumericPath() {
+		return numericPath;
+	}
 
 	/*
-     * Finds a path of ITopics in the given IToc to the given topic. If the
-     * toc doesn't contain the topic, returns null.
-     */
+	 * Finds a path of ITopics in the given IToc to the given topic. If the
+	 * toc doesn't contain the topic, returns null.
+	 */
 	private ITopic[] getTopicPathInToc(ITopic topicToFind, IToc toc) {
 		if (topicToFind.getLabel().equals(toc.getLabel())) {
 			return new ITopic[0];

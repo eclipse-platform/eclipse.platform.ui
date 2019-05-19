@@ -144,7 +144,7 @@ public class RequestScope {
 			}
 		} else {
 			IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
-		    pref.put(IHelpBaseConstants.P_KEY_HELP_SCOPE, scope);
+			pref.put(IHelpBaseConstants.P_KEY_HELP_SCOPE, scope);
 			try {
 				pref.flush();
 			} catch (BackingStoreException e) {
@@ -171,12 +171,12 @@ public class RequestScope {
 
 	private static String getScopeFromPreferences() {
 		String scope = Platform.getPreferencesService().getString
-	         (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_HELP_SCOPE, null, null);
+			 (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_HELP_SCOPE, null, null);
 		return scope;
 	}
 
 	public static boolean filterBySearchScope(HttpServletRequest request) {
-        return true;
+		return true;
 	}
 
 	public static boolean getFlag(HttpServletRequest request, String flagName ) {
@@ -185,26 +185,26 @@ public class RequestScope {
 			value = getValueFromCookies(request, flagName);
 		} else {
 			value = Platform.getPreferencesService().getString
-				    (HelpBasePlugin.PLUGIN_ID, flagName + "Webapp", null, null); //$NON-NLS-1$
+					(HelpBasePlugin.PLUGIN_ID, flagName + "Webapp", null, null); //$NON-NLS-1$
 		}
 		if (value == null) {
 			return Platform.getPreferencesService().getBoolean
-				    (HelpBasePlugin.PLUGIN_ID, flagName, false, null);
+					(HelpBasePlugin.PLUGIN_ID, flagName, false, null);
 		}
 		return "true".equalsIgnoreCase(value); //$NON-NLS-1$
 	}
 
 	public static void setFlag(HttpServletRequest request,
-			                   HttpServletResponse response,
-			                   String flagName,
-			                   boolean value)
+							   HttpServletResponse response,
+							   String flagName,
+							   boolean value)
 	{
 		if (HelpSystem.isShared()) {
-		  CookieUtil.setCookieValueWithoutPath(flagName, Boolean.toString(value), request, response);
+			CookieUtil.setCookieValueWithoutPath(flagName, Boolean.toString(value), request, response);
 		} else {
 			IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
-		    pref.putBoolean(flagName  + "Webapp", value ); //$NON-NLS-1$
-		    try {
+			pref.putBoolean(flagName  + "Webapp", value ); //$NON-NLS-1$
+			try {
 				pref.flush();
 			} catch (BackingStoreException e) {
 			}

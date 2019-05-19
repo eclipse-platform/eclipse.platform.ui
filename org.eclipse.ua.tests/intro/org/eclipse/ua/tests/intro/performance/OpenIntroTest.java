@@ -41,8 +41,8 @@ public class OpenIntroTest extends PerformanceTestCase {
 		super.setUp();
 		closeIntro();
 		// test extensions filter by this system property
-        System.setProperty("org.eclipse.ua.tests.property.isTesting", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-        ExtensionPointManager.getInst().setExtensionFilter(UserAssistanceTestPlugin.getPluginId());
+		System.setProperty("org.eclipse.ua.tests.property.isTesting", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		ExtensionPointManager.getInst().setExtensionFilter(UserAssistanceTestPlugin.getPluginId());
 	}
 
 	@Override
@@ -50,8 +50,8 @@ public class OpenIntroTest extends PerformanceTestCase {
 		super.tearDown();
 		closeIntro();
 		// test extensions filter by this system property
-        System.setProperty("org.eclipse.ua.tests.property.isTesting", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-        ExtensionPointManager.getInst().setExtensionFilter(null);
+		System.setProperty("org.eclipse.ua.tests.property.isTesting", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		ExtensionPointManager.getInst().setExtensionFilter(null);
 	}
 
 	public void testOpenIntro() throws Exception {

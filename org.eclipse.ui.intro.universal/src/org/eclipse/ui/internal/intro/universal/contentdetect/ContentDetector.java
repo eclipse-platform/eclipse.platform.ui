@@ -71,9 +71,9 @@ public class ContentDetector extends IntroContentDetector {
 	 */
 	public static Set<String> getNewContributors() {
 		if (!detectorCalled) {
-		    detectorCalled = true;
-		    new ContentDetector().isNewContentAvailable();
-	    }
+			detectorCalled = true;
+			new ContentDetector().isNewContentAvailable();
+		}
 		return newContributors;
 	}
 

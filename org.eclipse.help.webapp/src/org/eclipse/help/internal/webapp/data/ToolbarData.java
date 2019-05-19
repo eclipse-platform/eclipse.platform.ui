@@ -131,7 +131,7 @@ public class ToolbarData extends RequestData {
 					toolbarName = request.getParameter("toolbar"); //$NON-NLS-1$
 				}
 				if (button.isAddedToToolbar(toolbarName)) {
-				    extensionButtons.add(button);
+					extensionButtons.add(button);
 				}
 			}
 		}

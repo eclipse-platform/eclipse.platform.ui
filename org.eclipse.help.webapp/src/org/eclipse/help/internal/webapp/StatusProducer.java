@@ -107,11 +107,11 @@ public class StatusProducer implements IHelpContentProducer {
 		// check to see if a predefined error page exists
 		// in the preferences
 		if (href.equalsIgnoreCase(MissingContentManager.MISSING_TOPIC_HREF)){
-            String errorPage = Platform.getPreferencesService().getString(
-            		HelpBasePlugin.PLUGIN_ID,
-            		"page_not_found",  //$NON-NLS-1$
-            		null,
-            		null);
+			String errorPage = Platform.getPreferencesService().getString(
+					HelpBasePlugin.PLUGIN_ID,
+					"page_not_found",  //$NON-NLS-1$
+					null,
+					null);
 			if (errorPage != null && errorPage.length() > 0) {
 
 				URL helpURL;
@@ -302,7 +302,7 @@ public class StatusProducer implements IHelpContentProducer {
 		}
 		pageBuffer.append(tab(3)+ "</ul>\n"); //$NON-NLS-1$
 		if (isHelpView) {
-            pageBuffer.append(tab(3)+"<br/><p>\n"); //$NON-NLS-1$
+			pageBuffer.append(tab(3)+"<br/><p>\n"); //$NON-NLS-1$
 			pageBuffer.append(tab(4)+ "<a href=helpview:ignoreMissingBooks>"+ //$NON-NLS-1$
 					WebappResources.getString("ignoreMissingBooks", locale) + "</a>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			pageBuffer.append(tab(3)+ "</p>\n"); //$NON-NLS-1$
@@ -310,8 +310,8 @@ public class StatusProducer implements IHelpContentProducer {
 			pageBuffer.append(tab(3)+"<br/><p>\n"); //$NON-NLS-1$
 			//pageBuffer.append("<img src=\"PLUGINS_ROOT/org.eclipse.help/command_link.png\"/>");  //$NON-NLS-1$
 			pageBuffer.append("<a class=\"command-link\""  //$NON-NLS-1$
-			   + " href='javascript:executeCommand(\"org.eclipse.help.ui.ignoreMissingPlaceholders\")'>" //$NON-NLS-1$
-			   +  WebappResources.getString("ignoreMissingBooks", locale)+"</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+				+ " href='javascript:executeCommand(\"org.eclipse.help.ui.ignoreMissingPlaceholders\")'>" //$NON-NLS-1$
+				+  WebappResources.getString("ignoreMissingBooks", locale)+"</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 			pageBuffer.append(tab(3)+ "</p>\n"); //$NON-NLS-1$
 		}
 		pageBuffer.append(END_BODY_HTML);

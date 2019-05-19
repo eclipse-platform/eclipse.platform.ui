@@ -24,8 +24,8 @@ public class BasicTest {
 	// appears in both filtered and unfiltered parts of test1.xhtml
 	@Test
 	public void testSearchFilteredAndUnfiltered() {
-	    SearchTestUtils.searchAllLocales ("vkrhjewiwh", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml"});
-    }
+		SearchTestUtils.searchAllLocales ("vkrhjewiwh", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml"});
+	}
 
 	// try OR'ing with a word that does't exist.. should find same result
 	@Test
@@ -60,70 +60,70 @@ public class BasicTest {
 	// word is in test3.xhtml and also included by test4.xhtml, contributed
 	// into test5.xhtml as an extension, and replaces a paragraph in test6.xhtml.
 	@Test
-    public void testSearchInclusionAndExtension() {
+	public void testSearchInclusionAndExtension() {
 		SearchTestUtils.searchAllLocales("fuejnghqjs", new String[] {"/org.eclipse.ua.tests/data/help/search/test3.xhtml", "/org.eclipse.ua.tests/data/help/search/test4.xhtml", "/org.eclipse.ua.tests/data/help/search/test5.xhtml", "/org.eclipse.ua.tests/data/help/search/test6.xhtml" });
 	}
 
 	// only exists in paragraph in test6.xhtml that's replaced by another one
 	@Test
-    public void testSearchInReplacedOut() {
+	public void testSearchInReplacedOut() {
 		SearchTestUtils.searchAllLocales("bheufnjefa", new String[0] /* no hits*/ );
 	}
 
-    // Test replacement using ExtensionProvider
+	// Test replacement using ExtensionProvider
 	@Test
-    public void testSearchInReplaceOutUsingProvider() {
-    	SearchTestUtils.searchAllLocales("ausjduehf", new String[] {"/org.eclipse.ua.tests/data/help/search/test6.xhtml" }  );
-    }
+	public void testSearchInReplaceOutUsingProvider() {
+		SearchTestUtils.searchAllLocales("ausjduehf", new String[] {"/org.eclipse.ua.tests/data/help/search/test6.xhtml" }  );
+	}
 
-    // Test replacement using ExtensionProvider
+	// Test replacement using ExtensionProvider
 	@Test
-    public void testSearchInReplacemenTextUsingProvider() {
-    	SearchTestUtils.searchAllLocales("bheufnjefb", new String[0] /* no hits*/ );
-    }
+	public void testSearchInReplacemenTextUsingProvider() {
+		SearchTestUtils.searchAllLocales("bheufnjefb", new String[0] /* no hits*/ );
+	}
 
 	// sanity test to make sure it finds things in XHTML content in .html file
 	@Test
-    public void testSearchXhtmlInHtml() {
+	public void testSearchXhtmlInHtml() {
 		SearchTestUtils.searchAllLocales("kejehrgaqm", new String[] {"/org.eclipse.ua.tests/data/help/search/test7.html" });
-    }
+	}
 
 	// same as above, but in a section that should never be filtered
 	@Test
-    public void testSearchXhtmlNeverFiltered() {
+	public void testSearchXhtmlNeverFiltered() {
 		SearchTestUtils.searchAllLocales("opqmenhfjs", new String[] {"/org.eclipse.ua.tests/data/help/search/test7.html" });
-    }
+	}
 
 	// only exists in a paragraph in test7.html that should be filtered out
 	// make sure this works for XHTML content inside .html file
 	@Test
-    public void testSearchFilteredXhtmlInHtml() {
+	public void testSearchFilteredXhtmlInHtml() {
 		SearchTestUtils.searchAllLocales("hugftnhdtg", new String[] {"/org.eclipse.ua.tests/data/help/search/test7.html" });
-    }
+	}
 
 	// this doc is listed in TOC several times, using slightly different paths
 	@Test
-    public void testSearchMultipleTocReference() {
+	public void testSearchMultipleTocReference() {
 		SearchTestUtils.searchAllLocales("rqfedajhtg", new String[] {"/org.eclipse.ua.tests/data/help/search/test9.htm" });
-    }
+	}
 
 	@Test
-    public void testSearchMultipleNonadjacentWords() {
-    	SearchTestUtils.searchAllLocales("gsdduvfqnh riehguanil", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" } );
-    }
+	public void testSearchMultipleNonadjacentWords() {
+		SearchTestUtils.searchAllLocales("gsdduvfqnh riehguanil", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" } );
+	}
 
 	@Test
-    public void testSearchMultipleNonadjacentExactMatch() {
-    	SearchTestUtils.searchAllLocales("\"gsdduvfqnh riehguanil\"", new String[0]);
-    }
+	public void testSearchMultipleNonadjacentExactMatch() {
+		SearchTestUtils.searchAllLocales("\"gsdduvfqnh riehguanil\"", new String[0]);
+	}
 
 	@Test
-    public void testSearchMultipleAdjacentExactMatch() {
-    	SearchTestUtils.searchAllLocales("\"vkrhjewiwh riehguanil\"", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml"});
-    }
+	public void testSearchMultipleAdjacentExactMatch() {
+		SearchTestUtils.searchAllLocales("\"vkrhjewiwh riehguanil\"", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml"});
+	}
 
 	@Test
-    public void testSearchContentProducer() {
-    	SearchTestUtils.searchAllLocales("egrology", new String[] { "/org.eclipse.ua.tests/generated/Generated+Parent/Parent+page+with+searchable+word+egrology+.html"});
-    }
+	public void testSearchContentProducer() {
+		SearchTestUtils.searchAllLocales("egrology", new String[] { "/org.eclipse.ua.tests/generated/Generated+Parent/Parent+page+with+searchable+word+egrology+.html"});
+	}
 }

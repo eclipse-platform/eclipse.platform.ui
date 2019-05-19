@@ -23,42 +23,42 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class IntroURLAction extends AbstractIntroElement {
 
-    public static final String TAG_ACTION = "action"; //$NON-NLS-1$
+	public static final String TAG_ACTION = "action"; //$NON-NLS-1$
 
-    private static final String ATT_NAME = "name"; //$NON-NLS-1$
-    private static final String ATT_REPLACES = "replaces"; //$NON-NLS-1$
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$
+	private static final String ATT_REPLACES = "replaces"; //$NON-NLS-1$
 
-    private String name;
-    private String replaces;
+	private String name;
+	private String replaces;
 
 
-    /**
-     * Note: model class with public constructor because it is not instantiated
-     * by the model root.
-     */
-    public IntroURLAction(IConfigurationElement element) {
-        super(element);
-        name = element.getAttribute(ATT_NAME);
-        replaces = element.getAttribute(ATT_REPLACES);
-    }
+	/**
+	 * Note: model class with public constructor because it is not instantiated
+	 * by the model root.
+	 */
+	public IntroURLAction(IConfigurationElement element) {
+		super(element);
+		name = element.getAttribute(ATT_NAME);
+		replaces = element.getAttribute(ATT_REPLACES);
+	}
 
-    /**
-     * @return Returns the className.
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return Returns the className.
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * @return Returns the pluginId.
-     */
-    public String getReplaceValue() {
-        return replaces;
-    }
+	/**
+	 * @return Returns the pluginId.
+	 */
+	public String getReplaceValue() {
+		return replaces;
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        // this model class does not need a type so far.
-        return 0;
-    }
+		// this model class does not need a type so far.
+		return 0;
+	}
 }

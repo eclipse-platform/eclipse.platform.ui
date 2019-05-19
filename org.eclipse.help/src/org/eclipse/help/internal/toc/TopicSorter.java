@@ -35,7 +35,7 @@ public class TopicSorter {
 		}
 		if (toc.isSorted()) {
 			sort(toc, toc.getTopics());
-	    }
+		}
 		ITopic[] childTopics = toc.getTopics();
 		for (int i = 0; i < childTopics.length; i++) {
 			sortChildren((Topic)childTopics[i]);
@@ -45,7 +45,7 @@ public class TopicSorter {
 	private void sortChildren(Topic topic) {
 		if (topic.isSorted()) {
 			sort(topic, topic.getSubtopics());
-	    }
+		}
 		ITopic[] childTopics = topic.getSubtopics();
 		for (int i = 0; i < childTopics.length; i++) {
 			sortChildren((Topic)childTopics[i]);

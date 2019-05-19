@@ -48,7 +48,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	private static List<String> errors = new ArrayList<>();
 	private String lastPage;
 
-    private class MonitorThread extends Thread {
+	private class MonitorThread extends Thread {
 		String lastHref;
 		int timesSame = 0;
 		boolean isComplete = false;
@@ -77,7 +77,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
-    public static void showErrors() {
+	public static void showErrors() {
 		if (errors == null) return;
 		if (errors.size() == 0) {
 			reportStatus("Testing complete, no errors found");
@@ -101,7 +101,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		@Override
 		public void notFound(String url) {
 			if (errors != null) {
-			    errors.add("Error opening " + lastPage + "\n   cannot load " + url);
+				errors.add("Error opening " + lastPage + "\n   cannot load " + url);
 			}
 		}
 	}
@@ -183,9 +183,9 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		firstHref = null;
 		topicList = new ArrayList<>();
 		for (Toc toc : tocsToCheck) {
-		    reportStatus("Test level = " + testKind + " testing " + toc.getTocContribution().getId());
-		    ITopic[] topics = toc.getTopics();
-		    addTopics(topics);
+			reportStatus("Test level = " + testKind + " testing " + toc.getTocContribution().getId());
+			ITopic[] topics = toc.getTopics();
+			addTopics(topics);
 		}
 		lastPage = "No pages read";
 		LinkProvider linkProvider = new LinkProvider(topicList);
@@ -194,7 +194,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		errors = new ArrayList<>();
 		if (linkProvider.hasNext()) {
 			firstHref = linkProvider.next();
-		    PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(firstHref);
+			PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(firstHref);
 			new MonitorThread().start();
 		} else {
 			reportStatus("No pages to check");
@@ -210,10 +210,10 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	private void addTopic(ITopic nextTopic) {
 		String href = nextTopic.getHref();
 		if (href != null && !isFiltered(href)) {
-		    if (firstHref == null) {
-		    	firstHref = href;
-		    }
-		    topicList.add(href);
+			if (firstHref == null) {
+				firstHref = href;
+			}
+			topicList.add(href);
 		}
 		addTopics(nextTopic.getSubtopics());
 	}

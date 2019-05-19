@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 public class ContextMergeTest {
 
 	private static final String ENABLEMENT_CHEATSHEETS = "<enablement><with variable=\"platform\">" +
-    "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/>" +
+	"<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/>" +
 	 "</with></enablement>";
 	private static final String TOPIC_END = "</topic>";
 	private static final String TOPIC_HEAD_ECLIPSE = "<topic href=\"http://www.eclipse.org\" label=\"enabled\">";
@@ -44,7 +44,7 @@ public class ContextMergeTest {
 		Context context;
 		Document doc;
 		try {
-		    doc = DocumentCreator.createDocument(contextSource);
+			doc = DocumentCreator.createDocument(contextSource);
 		} catch (Exception e) {
 			fail("Caught Exception");
 			doc = null;
@@ -56,14 +56,14 @@ public class ContextMergeTest {
 	@Test
 	public void testContextMerge() {
 		final String contextSource1 = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_ECLIPSE +
-		   TOPIC_WITH_ENABLEMENT +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_ECLIPSE +
+			TOPIC_WITH_ENABLEMENT +
+			END_CONTEXT;
 		final String contextSource2 = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_BUGZILLA +
-	       END_CONTEXT;
+			CONTEXT_DESCRIPTION +
+			TOPIC_BUGZILLA +
+			END_CONTEXT;
 		Context context1;
 		Context context2;
 		context1 = createContext(contextSource1);

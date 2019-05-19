@@ -99,7 +99,7 @@ public class LocalHelpPage extends RootScopePage {
 			public void widgetSelected(SelectionEvent e) {
 				contentTree.getTree().setEnabled(false);
 				if (criteriaTree != null) {
-				    criteriaTree.getTree().setEnabled(false);
+					criteriaTree.getTree().setEnabled(false);
 				}
 			}
 		});
@@ -115,7 +115,7 @@ public class LocalHelpPage extends RootScopePage {
 			public void widgetSelected(SelectionEvent e) {
 				contentTree.getTree().setEnabled(true);
 				if (criteriaTree != null) {
-				    criteriaTree.getTree().setEnabled(true);
+					criteriaTree.getTree().setEnabled(true);
 
 				}
 			}
@@ -146,7 +146,7 @@ public class LocalHelpPage extends RootScopePage {
 					| GridData.VERTICAL_ALIGN_CENTER);
 			gd.horizontalSpan = 2;
 			criteriaLabel.setLayoutData(gd);
-		    createCriteriaTree(parent, font);
+			createCriteriaTree(parent, font);
 		}
 
 		initializeCheckedState();
@@ -265,7 +265,7 @@ public class LocalHelpPage extends RootScopePage {
 	}
 
 	void updateParentState(Object child, boolean baseChildState,
-			               CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
+						   CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		if (child == null)
 			return;
 
@@ -293,7 +293,7 @@ public class LocalHelpPage extends RootScopePage {
 
 	void setSubtreeChecked(Object parent, boolean state,
 			boolean checkExpandedState,
-            CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
+			CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 
 		Object[] children = contentProvider.getChildren(parent);
 		for (int i = children.length - 1; i >= 0; i--) {
@@ -310,7 +310,7 @@ public class LocalHelpPage extends RootScopePage {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void findCheckedElements(java.util.List checkedResources, Object parent,
-            CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
+			CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		Object[] children = contentProvider.getChildren(parent);
 		for (int i = 0; i < children.length; i++) {
 			if (tree.getGrayed(children[i]))
@@ -321,7 +321,7 @@ public class LocalHelpPage extends RootScopePage {
 	}
 
 	private CriterionResource[] findCheckedCriteria(Object parent,
-            CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
+			CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		Object[] children = contentProvider.getChildren(parent);
 		List<CriterionResource> resources = new ArrayList<>();
 		for (int i = 0; i < children.length; i++) {
@@ -331,8 +331,8 @@ public class LocalHelpPage extends RootScopePage {
 			Object[] grandChildren = contentProvider.getChildren(name);
 			for (int j = 0; j < grandChildren.length; j++) {
 				if (tree.getChecked(grandChildren[j])) {
-				    CriterionValue value = (CriterionValue) grandChildren[j];
-				    resource.addCriterionValue(value.getId());
+					CriterionValue value = (CriterionValue) grandChildren[j];
+					resource.addCriterionValue(value.getId());
 				}
 			}
 			if (resource.getCriterionValues().size() > 0) {
@@ -343,7 +343,7 @@ public class LocalHelpPage extends RootScopePage {
 	}
 
 	void handleCheckStateChange(final CheckStateChangedEvent event,
-            final CheckboxTreeViewer tree, final ITreeContentProvider contentProvider) {
+			final CheckboxTreeViewer tree, final ITreeContentProvider contentProvider) {
 		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
 			Object element = event.getElement();
 			boolean state = event.getChecked();
@@ -424,7 +424,7 @@ public class LocalHelpPage extends RootScopePage {
 			for (Iterator<String> iter = values.iterator(); iter.hasNext();) {
 				String valueString = iter.next();
 				CriterionValue value = new CriterionValue(valueString, name);
-			    criteriaTree.setChecked(value, true);
+				criteriaTree.setChecked(value, true);
 				updateParentState(value, true, criteriaTree, criteriaTreeContentProvider);
 			}
 		}
@@ -436,7 +436,7 @@ public class LocalHelpPage extends RootScopePage {
 		searchSelected.setSelection(false);
 		contentTree.setCheckedElements(new Object[0]);
 		if (criteriaTree != null) {
-		    criteriaTree.setCheckedElements(new Object[0]);
+			criteriaTree.setCheckedElements(new Object[0]);
 		}
 		super.performDefaults();
 	}

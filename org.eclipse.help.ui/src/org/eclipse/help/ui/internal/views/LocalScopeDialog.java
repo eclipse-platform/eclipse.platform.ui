@@ -55,11 +55,11 @@ public class LocalScopeDialog extends TrayDialog {
 		}
 		String id = localSearchDesc.getEngineTypeId();
 		localHelpPage = localSearchDesc.createRootPage(scopeSet.getName());
-    	localHelpPage.setTitle(localSearchDesc.getLabel() + '_' + id);
-    	localHelpPage.setImageDescriptor(localSearchDesc.getImageDescriptor());
-    	localHelpPage.setDescription(localSearchDesc.getDescription());
-    	localHelpPage.setPreferenceStore(preferenceStore);
-    	localHelpPage.createControl(parent);
+		localHelpPage.setTitle(localSearchDesc.getLabel() + '_' + id);
+		localHelpPage.setImageDescriptor(localSearchDesc.getImageDescriptor());
+		localHelpPage.setDescription(localSearchDesc.getDescription());
+		localHelpPage.setPreferenceStore(preferenceStore);
+		localHelpPage.createControl(parent);
 		Control helpPageControl = localHelpPage.getControl();
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		helpPageControl.setLayoutData(layoutData);

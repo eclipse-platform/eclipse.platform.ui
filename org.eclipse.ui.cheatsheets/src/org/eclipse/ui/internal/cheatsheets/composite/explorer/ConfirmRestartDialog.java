@@ -79,7 +79,7 @@ public class ConfirmRestartDialog extends Dialog {
 	private TreeLabelProvider treeLabelProvider;
 
 	protected ConfirmRestartDialog(Shell parentShell, AbstractTask[] restartTasks,
-			                       TreeLabelProvider treeLabelProvider) {
+								   TreeLabelProvider treeLabelProvider) {
 		super(parentShell);
 		this.tasks = restartTasks;
 		this.treeLabelProvider = treeLabelProvider;

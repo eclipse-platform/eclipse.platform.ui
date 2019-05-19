@@ -49,17 +49,17 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 				StringBuilder buffer = new StringBuilder(ERROR_READING_HELP_CRITERIA_DEFINITION_FILE);
 				buffer.append(getCriteriaDefinitionFilePath(criteriaDefinitionFile));
 				buffer.append("\" at line "); //$NON-NLS-1$
-			    buffer.append(spe.getLineNumber());
-			    buffer.append(". "); //$NON-NLS-1$
-	            buffer.append(spe.getMessage());
+				buffer.append(spe.getLineNumber());
+				buffer.append(". "); //$NON-NLS-1$
+				buffer.append(spe.getMessage());
 
-	            // Use the contained exception.
-	            Exception x = spe;
-	            if (spe.getException() != null)
-	                x = spe.getException();
-	            HelpPlugin.logError(buffer.toString(), x);
+				// Use the contained exception.
+				Exception x = spe;
+				if (spe.getException() != null)
+					x = spe.getException();
+				HelpPlugin.logError(buffer.toString(), x);
 
-	        }
+			}
 			catch (Throwable t) {
 				String msg = ERROR_READING_HELP_CRITERIA_DEFINITION_FILE + getCriteriaDefinitionFilePath(criteriaDefinitionFile) + "\" (skipping file)"; //$NON-NLS-1$
 				HelpPlugin.logError(msg, t);

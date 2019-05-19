@@ -29,8 +29,8 @@ public class LoadTocUsingRemoteHelp {
 
 	@Before
 	public void setUp() throws Exception {
-        RemotePreferenceStore.savePreferences();
-        mode = BaseHelpSystem.getMode();
+		RemotePreferenceStore.savePreferences();
+		mode = BaseHelpSystem.getMode();
 	}
 
 	@After
@@ -53,7 +53,7 @@ public class LoadTocUsingRemoteHelp {
 		assertEquals(0, deTocs);
 		deTocs = matchingTocs(tocs, "Mock Toc 2 de");
 		assertEquals(0, deTocs);
-	    RemotePreferenceStore.disableRemoteHelp();
+		RemotePreferenceStore.disableRemoteHelp();
 	}
 
 	@Test
@@ -70,7 +70,7 @@ public class LoadTocUsingRemoteHelp {
 		assertEquals(1, deTocs);
 		deTocs = matchingTocs(tocs, "Mock Toc 2 de");
 		assertEquals(1, deTocs);
-	    RemotePreferenceStore.disableRemoteHelp();
+		RemotePreferenceStore.disableRemoteHelp();
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class LoadTocUsingRemoteHelp {
 		assertEquals(1, enTocs);
 		int deTocs = matchingTocs(tocs, "Mock Toc de");
 		assertEquals(0, deTocs);
-	    RemotePreferenceStore.disableRemoteHelp();
+		RemotePreferenceStore.disableRemoteHelp();
 	}
 
 	/*

@@ -359,14 +359,14 @@ public abstract class ViewItem {
 	}
 
 	public boolean isCompletionMessageExpanded() {
-	    return completionMessageExpanded;
-    }
+		return completionMessageExpanded;
+	}
 
 	/**
-     * Returns whether or not cheat sheet viewer containing this item is in
-     * a modal dialog.
-     *
-     * @return whether the cheat sheet viewer is in a modal dialog
+	 * Returns whether or not cheat sheet viewer containing this item is in
+	 * a modal dialog.
+	 *
+	 * @return whether the cheat sheet viewer is in a modal dialog
 	 */
 	public boolean isInDialogMode() {
 		return viewer.isInDialogMode();
@@ -403,7 +403,7 @@ public abstract class ViewItem {
 			Point point = widget.getDisplay().getCursorLocation();
 			point = new Point(point.x + 15, point.y);
 			// display the help
-            PlatformUI.getWorkbench().getHelpSystem().displayContext(context, point.x, point.y);
+			PlatformUI.getWorkbench().getHelpSystem().displayContext(context, point.x, point.y);
 		}
 	}
 
@@ -618,6 +618,6 @@ public abstract class ViewItem {
 			bodyText.copy();
 	}
 
-   abstract boolean hasCompletionMessage();
+	abstract boolean hasCompletionMessage();
 
 }

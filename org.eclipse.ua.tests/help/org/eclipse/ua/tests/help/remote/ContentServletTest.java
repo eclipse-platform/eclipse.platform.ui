@@ -45,7 +45,7 @@ public class ContentServletTest {
 		final String path = "/data/help/index/topic1.html";
 		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
 		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);
-	    assertEquals(remoteContent, localContent);
+		assertEquals(remoteContent, localContent);
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class ContentServletTest {
 		final String path = "/data/help/manual/filter.xhtml";
 		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
 		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);
-	    assertEquals(remoteContent, localContent);
+		assertEquals(remoteContent, localContent);
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class ContentServletTest {
 		final String path = "/data/help/search/testnl1.xhtml";
 		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
 		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);
-	    assertEquals(remoteContent, localContent);
+		assertEquals(remoteContent, localContent);
 	}
 
 	@Test
@@ -70,8 +70,8 @@ public class ContentServletTest {
 		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "de");
 		String enLocalContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);
 		String deLocalContent = RemoteTestUtils.getLocalContent(UA_TESTS, "/nl/de" + path);
-	    assertEquals(remoteContent, deLocalContent);
-	    assertFalse(remoteContent.equals(enLocalContent));
+		assertEquals(remoteContent, deLocalContent);
+		assertFalse(remoteContent.equals(enLocalContent));
 	}
 
 	@Test(expected = IOException.class)

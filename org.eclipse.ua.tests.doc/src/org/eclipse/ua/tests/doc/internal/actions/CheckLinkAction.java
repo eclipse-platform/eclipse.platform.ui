@@ -84,17 +84,17 @@ public class CheckLinkAction implements ILiveHelpAction {
 			if (!opened) {
 				String containingPage = links.get(next);
 				System.out.println("Cannot open link from " + trimPath(containingPage)
-				       + " to " + trimPath(next));
+						+ " to " + trimPath(next));
 			}
 		}
 		//EclipseConnector.setNotFoundCallout(null);
-	    setPageNotFoundPreference(errorPage);
+		setPageNotFoundPreference(errorPage);
 		links = new HashMap<>();
 		System.out.println("End check links");
 	}
 
 	private String trimPath(String next) {
-        String result = next;
+		String result = next;
 		int htIndex = result.indexOf(HELP_TOPIC);
 		if (htIndex >  0) {
 			result = result.substring(htIndex + HELP_TOPIC.length());

@@ -23,44 +23,44 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class IntroStandbyContentPart extends AbstractIntroIdElement {
 
-    public static final String TAG_STANDBY_CONTENT_PART = "standbyContentPart"; //$NON-NLS-1$
+	public static final String TAG_STANDBY_CONTENT_PART = "standbyContentPart"; //$NON-NLS-1$
 
-    private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
-    private static final String ATT_CLASS = "class"; //$NON-NLS-1$
+	private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
-    private String pluginId;
-    private String className;
+	private String pluginId;
+	private String className;
 
-    /**
-     * Note: model class with public constructor because it is not instantiated
-     * by the model root.
-     *
-     * @param element
-     */
-    public IntroStandbyContentPart(IConfigurationElement element) {
-        super(element);
-        pluginId = element.getAttribute(ATT_PLUGIN_ID);
-        className = element.getAttribute(ATT_CLASS);
-    }
+	/**
+	 * Note: model class with public constructor because it is not instantiated
+	 * by the model root.
+	 *
+	 * @param element
+	 */
+	public IntroStandbyContentPart(IConfigurationElement element) {
+		super(element);
+		pluginId = element.getAttribute(ATT_PLUGIN_ID);
+		className = element.getAttribute(ATT_CLASS);
+	}
 
 
-    /**
-     * @return Returns the className.
-     */
-    public String getClassName() {
-        return className;
-    }
+	/**
+	 * @return Returns the className.
+	 */
+	public String getClassName() {
+		return className;
+	}
 
-    /**
-     * @return Returns the pluginId.
-     */
-    public String getPluginId() {
-        return pluginId;
-    }
+	/**
+	 * @return Returns the pluginId.
+	 */
+	public String getPluginId() {
+		return pluginId;
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        // this model class does not need a type so far.
-        return 0;
-    }
+		// this model class does not need a type so far.
+		return 0;
+	}
 }

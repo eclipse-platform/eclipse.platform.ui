@@ -39,17 +39,17 @@ public class DocumentWriter {
 	}
 
 	public String writeString(Element element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
-        byte[] bytes = writeBytes(element, xmlDecl);
-        String encoding = transformer.getOutputProperty(OutputKeys.ENCODING);
-        if (encoding == null) {
-        	encoding = "UTF-8"; //$NON-NLS-1$
-        }
-        try {
-        	return new String(bytes, encoding);
-        }
-        catch (UnsupportedEncodingException e) {
-        	return new String(bytes);
-        }
+		byte[] bytes = writeBytes(element, xmlDecl);
+		String encoding = transformer.getOutputProperty(OutputKeys.ENCODING);
+		if (encoding == null) {
+			encoding = "UTF-8"; //$NON-NLS-1$
+		}
+		try {
+			return new String(bytes, encoding);
+		}
+		catch (UnsupportedEncodingException e) {
+			return new String(bytes);
+		}
 	}
 
 	public byte[] writeBytes(UAElement element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
@@ -59,8 +59,8 @@ public class DocumentWriter {
 	public byte[] writeBytes(Element element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
 		Document document = element.getOwnerDocument();
 		if (transformer == null) {
-	        TransformerFactory factory = TransformerFactory.newInstance();
-	        transformer = factory.newTransformer();
+			TransformerFactory factory = TransformerFactory.newInstance();
+			transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 		}
 		DocumentType docType = document.getDoctype();
@@ -77,9 +77,9 @@ public class DocumentWriter {
 		transformer.setOutputProperties(props);
 
 		DOMSource source = new DOMSource(element);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        StreamResult result = new StreamResult(out);
-        transformer.transform(source, result);
-        return out.toByteArray();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		StreamResult result = new StreamResult(out);
+		transformer.transform(source, result);
+		return out.toByteArray();
 	}
 }

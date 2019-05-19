@@ -217,7 +217,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	 */
 	public String getRestorePath() {
 		if (!registered) {
-		    return contentFile;
+			return contentFile;
 		}
 		return null;
 	}

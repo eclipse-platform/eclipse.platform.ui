@@ -392,7 +392,7 @@ public class EmbeddedBrowser {
 	private static String getWindowTitle() {
 		if (Platform.getPreferencesService().getBoolean(HelpUIPlugin.PLUGIN_ID, "windowTitlePrefix", false, null)) { //$NON-NLS-1$
 			return NLS.bind(Messages.browserTitle, BaseHelpSystem
-            .getProductName());
+			.getProductName());
 		}
 		return BaseHelpSystem.getProductName();
 	}

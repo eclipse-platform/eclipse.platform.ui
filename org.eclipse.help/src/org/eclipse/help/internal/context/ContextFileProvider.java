@@ -103,10 +103,10 @@ public class ContextFileProvider extends AbstractContextProvider {
 		default:
 			// Merge the contexts - this is the least common case
 			Context newContext = new Context(matches.get(0), shortContextId);
-		    for (int i = 1; i < matches.size(); i++) {
-		    	newContext.mergeContext(matches.get(i));
-		    }
-		    return newContext;
+			for (int i = 1; i < matches.size(); i++) {
+				newContext.mergeContext(matches.get(i));
+			}
+			return newContext;
 		}
 	}
 
@@ -197,11 +197,11 @@ public class ContextFileProvider extends AbstractContextProvider {
 	private Map<String, Context> loadContexts(ContextFile descriptor, String locale) {
 		// load the file
 		try (InputStream in = ResourceLocator.openFromPlugin(descriptor.getBundleId(), descriptor.getFile(), locale)) {
-	    	if (in != null) {
+			if (in != null) {
 				return loadContextsFromInputStream(descriptor, locale, in);
 			} else {
-	    		throw new FileNotFoundException();
-	    	}
+				throw new FileNotFoundException();
+			}
 		} catch (Throwable t) {
 			String msg = "Error reading context-sensitive help file /\"" + getErrorPath(descriptor, locale) + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
 			HelpPlugin.logError(msg, t);
@@ -238,7 +238,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 					if (id != null) {
 						Object existingContext =  contexts.get(id);
 						if (existingContext==null)
-						    contexts.put(id, context);
+							contexts.put(id, context);
 						else
 						{
 							((Context)existingContext).mergeContext(context);

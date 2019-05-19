@@ -42,7 +42,7 @@ public class IndexDocumentReader extends DocumentReader {
 					fixTopicAttributes((Element)node);
 				}
 				prune(node);
-			    node = node.getNextSibling();
+				node = node.getNextSibling();
 			} else {
 				node = node.getNextSibling();
 			}

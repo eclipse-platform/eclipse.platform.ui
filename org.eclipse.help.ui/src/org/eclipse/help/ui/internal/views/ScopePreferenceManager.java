@@ -35,16 +35,16 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 
 		@Override
 		public void createPage() {
-	    	try {
-	    		Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_CLASS);
-	    		IPreferencePage page = (IPreferencePage)obj;
-	    		setPage(page);
-	    		page.setTitle(getLabelText());
-	    	}
-	    	catch (CoreException e) {
-	    		HelpUIPlugin.logError("Unable to create executable extension", e); //$NON-NLS-1$
-	    	}
-	    }
+			try {
+				Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_CLASS);
+				IPreferencePage page = (IPreferencePage)obj;
+				setPage(page);
+				page.setTitle(getLabelText());
+			}
+			catch (CoreException e) {
+				HelpUIPlugin.logError("Unable to create executable extension", e); //$NON-NLS-1$
+			}
+		}
 	}
 	class EnginePreferenceNode extends PreferenceNode {
 		private EngineDescriptor desc;
@@ -59,12 +59,12 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 
 		@Override
 		public void createPage() {
-	    	IPreferencePage page = desc.createRootPage(set.getName());
-	    	setPage(page);
-	    	page.setTitle(desc.getLabel());
-	    	page.setImageDescriptor(desc.getImageDescriptor());
-	    	page.setDescription(desc.getDescription());
-	    }
+			IPreferencePage page = desc.createRootPage(set.getName());
+			setPage(page);
+			page.setTitle(desc.getLabel());
+			page.setImageDescriptor(desc.getImageDescriptor());
+			page.setDescription(desc.getDescription());
+		}
 	}
 	/**
 	 *

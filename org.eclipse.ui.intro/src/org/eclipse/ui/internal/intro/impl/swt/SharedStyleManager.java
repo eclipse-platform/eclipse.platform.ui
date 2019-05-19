@@ -31,205 +31,205 @@ import org.osgi.framework.Bundle;
 
 public class SharedStyleManager {
 
-    protected Properties properties;
-    protected StyleContext context;
+	protected Properties properties;
+	protected StyleContext context;
 
-    class StyleContext {
-    	IPath path;
-    	Bundle bundle;
-    	boolean inTheme;
-    }
+	class StyleContext {
+		IPath path;
+		Bundle bundle;
+		boolean inTheme;
+	}
 
-    SharedStyleManager() {
-        // no-op
-    }
+	SharedStyleManager() {
+		// no-op
+	}
 
-    /**
-     * Constructor used when shared styles need to be loaded. The bundle is
-     * retrieved from the model root.
-     *
-     * @param modelRoot
-     */
-    public SharedStyleManager(IntroModelRoot modelRoot) {
-    	context = new StyleContext();
-        context.bundle = modelRoot.getBundle();
-        properties = new Properties();
-        String [] sharedStyles = modelRoot.getPresentation()
-            .getImplementationStyles();
-        if (sharedStyles != null) {
-        	for (int i=0; i<sharedStyles.length; i++)
-        	load(properties, sharedStyles[i], context);
-        }
-    }
+	/**
+	 * Constructor used when shared styles need to be loaded. The bundle is
+	 * retrieved from the model root.
+	 *
+	 * @param modelRoot
+	 */
+	public SharedStyleManager(IntroModelRoot modelRoot) {
+		context = new StyleContext();
+		context.bundle = modelRoot.getBundle();
+		properties = new Properties();
+		String [] sharedStyles = modelRoot.getPresentation()
+			.getImplementationStyles();
+		if (sharedStyles != null) {
+			for (int i=0; i<sharedStyles.length; i++)
+			load(properties, sharedStyles[i], context);
+		}
+	}
 
-    protected void load(Properties properties, String style, StyleContext context) {
-        if (style == null)
-            return;
-        try {
-            URL styleURL = new URL(style);
-            try (InputStream is = styleURL.openStream()) {
-            	properties.load(is);
-            }
-           	context.path = new Path(style).removeLastSegments(1);
-            String t = (String)properties.get("theme"); //$NON-NLS-1$
-            if (t!=null && t.trim().equalsIgnoreCase("true")) //$NON-NLS-1$
-            	context.inTheme = true;
-        } catch (Exception e) {
-            Log.error("Could not load SWT style: " + style, e); //$NON-NLS-1$
-        }
-    }
-
-
-    /**
-     * Get the property from the shared properties.
-     *
-     * @param key
-     * @return
-     */
-    public String getProperty(String key) {
-        return doGetProperty(properties, key);
-    }
-
-    /*
-     * Utility method to trim properties retrieval.
-     */
-    protected String doGetProperty(Properties aProperties, String key) {
-        String value = aProperties.getProperty(key);
-        if (value != null)
-            // trim the properties as trailing balnnks cause problems.
-            value = value.trim();
-        return value;
-    }
+	protected void load(Properties properties, String style, StyleContext context) {
+		if (style == null)
+			return;
+		try {
+			URL styleURL = new URL(style);
+			try (InputStream is = styleURL.openStream()) {
+				properties.load(is);
+			}
+			context.path = new Path(style).removeLastSegments(1);
+			String t = (String)properties.get("theme"); //$NON-NLS-1$
+			if (t!=null && t.trim().equalsIgnoreCase("true")) //$NON-NLS-1$
+				context.inTheme = true;
+		} catch (Exception e) {
+			Log.error("Could not load SWT style: " + style, e); //$NON-NLS-1$
+		}
+	}
 
 
-    protected RGB getRGB(String key) {
-        String value = getProperty(key);
-        if (value == null)
-            return null;
-        return parseRGB(value);
-    }
+	/**
+	 * Get the property from the shared properties.
+	 *
+	 * @param key
+	 * @return
+	 */
+	public String getProperty(String key) {
+		return doGetProperty(properties, key);
+	}
 
-    /**
-     * A utility method that creates RGB object from a value encoded in the
-     * following format: #rrggbb, where r, g and b are hex color values in the
-     * range from 00 to ff.
-     *
-     * @param value
-     * @return
-     */
-
-    public static RGB parseRGB(String value) {
-        if (value.charAt(0) == '#') {
-            // HEX
-            try {
-                int r = Integer.parseInt(value.substring(1, 3), 16);
-                int g = Integer.parseInt(value.substring(3, 5), 16);
-                int b = Integer.parseInt(value.substring(5, 7), 16);
-                return new RGB(r, g, b);
-            } catch (NumberFormatException e) {
-                Log.error("Failed to parser: " + value + " as an integer", e); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-        }
-        return null;
-    }
+	/*
+	 * Utility method to trim properties retrieval.
+	 */
+	protected String doGetProperty(Properties aProperties, String key) {
+		String value = aProperties.getProperty(key);
+		if (value != null)
+			// trim the properties as trailing balnnks cause problems.
+			value = value.trim();
+		return value;
+	}
 
 
+	protected RGB getRGB(String key) {
+		String value = getProperty(key);
+		if (value == null)
+			return null;
+		return parseRGB(value);
+	}
 
-    /**
-     * Finds the bundle from which this key was loaded. This is the bundle from
-     * which shared styles where loaded.
-     *
-     * @param key
-     * @return
-     */
-    protected Bundle getAssociatedBundle(String key) {
-        return context.bundle;
-    }
+	/**
+	 * A utility method that creates RGB object from a value encoded in the
+	 * following format: #rrggbb, where r, g and b are hex color values in the
+	 * range from 00 to ff.
+	 *
+	 * @param value
+	 * @return
+	 */
 
-    protected StyleContext getAssociatedContext(String key) {
-    	return context;
-    }
+	public static RGB parseRGB(String value) {
+		if (value.charAt(0) == '#') {
+			// HEX
+			try {
+				int r = Integer.parseInt(value.substring(1, 3), 16);
+				int g = Integer.parseInt(value.substring(3, 5), 16);
+				int b = Integer.parseInt(value.substring(5, 7), 16);
+				return new RGB(r, g, b);
+			} catch (NumberFormatException e) {
+				Log.error("Failed to parser: " + value + " as an integer", e); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return null;
+	}
 
 
 
-    /**
-     * @return Returns the properties.
-     */
-    public Properties getProperties() {
-        return properties;
-    }
+	/**
+	 * Finds the bundle from which this key was loaded. This is the bundle from
+	 * which shared styles where loaded.
+	 *
+	 * @param key
+	 * @return
+	 */
+	protected Bundle getAssociatedBundle(String key) {
+		return context.bundle;
+	}
 
-
-    /**
-     *
-     *
-     * @param toolkit
-     * @param key
-     * @return color. May return null.
-     */
-    public Color getColor(FormToolkit toolkit, String key) {
-        FormColors colors = toolkit.getColors();
-        Color color = colors.getColor(key);
-        if (color == null) {
-            RGB rgb = getRGB(key);
-            if (rgb != null)
-                color = colors.createColor(key, rgb);
-        }
-        return color;
-    }
+	protected StyleContext getAssociatedContext(String key) {
+		return context;
+	}
 
 
 
-    /**
-     * Retrieve an image from this page's properties, given a key.
-     *
-     * @param key
-     * @param defaultPageKey
-     * @param defaultKey
-     * @return
-     */
-    public Image getImage(String key, String defaultPageKey, String defaultKey) {
-        String currentKey = key;
-        String value = getProperty(currentKey);
-        if (value == null && defaultPageKey != null) {
-            currentKey = defaultPageKey;
-            value = getProperty(defaultPageKey);
-        }
-        if (value != null) {
-            if (ImageUtil.hasImage(currentKey))
-                return ImageUtil.getImage(currentKey);
-            // try to register the image.
-            StyleContext ccontext = getAssociatedContext(currentKey);
-            if (ccontext.inTheme) {
-            	// if 'theme' key is set, load image
-            	// relative to the file, not relative to the bundle
-            	ImageUtil.registerImage(currentKey, ccontext.path, value);
-            }
-            else {
-            	Bundle bundle = ccontext.bundle;
-            	if (bundle == null)
-            		// it means that we are getting a key defined in this page's
-            		// styles. (ie: not an inherited style).
-            		bundle = this.context.bundle;
-            	ImageUtil.registerImage(currentKey, bundle, value);
-            }
-            Image image = ImageUtil.getImage(currentKey);
-            if (image != null)
-                return image;
-        }
-        // try default. We know default is already registered,
-        if (defaultKey != null)
-            return ImageUtil.getImage(defaultKey);
-        return null;
-    }
+	/**
+	 * @return Returns the properties.
+	 */
+	public Properties getProperties() {
+		return properties;
+	}
 
 
-    public boolean useCustomHomePagelayout() {
-        String key = "home-page-custom-layout"; //$NON-NLS-1$
-        String value = getProperty(key);
-        if (value == null)
-            value = "true"; //$NON-NLS-1$
-        return value.equalsIgnoreCase("true"); //$NON-NLS-1$
-    }
+	/**
+	 *
+	 *
+	 * @param toolkit
+	 * @param key
+	 * @return color. May return null.
+	 */
+	public Color getColor(FormToolkit toolkit, String key) {
+		FormColors colors = toolkit.getColors();
+		Color color = colors.getColor(key);
+		if (color == null) {
+			RGB rgb = getRGB(key);
+			if (rgb != null)
+				color = colors.createColor(key, rgb);
+		}
+		return color;
+	}
+
+
+
+	/**
+	 * Retrieve an image from this page's properties, given a key.
+	 *
+	 * @param key
+	 * @param defaultPageKey
+	 * @param defaultKey
+	 * @return
+	 */
+	public Image getImage(String key, String defaultPageKey, String defaultKey) {
+		String currentKey = key;
+		String value = getProperty(currentKey);
+		if (value == null && defaultPageKey != null) {
+			currentKey = defaultPageKey;
+			value = getProperty(defaultPageKey);
+		}
+		if (value != null) {
+			if (ImageUtil.hasImage(currentKey))
+				return ImageUtil.getImage(currentKey);
+			// try to register the image.
+			StyleContext ccontext = getAssociatedContext(currentKey);
+			if (ccontext.inTheme) {
+				// if 'theme' key is set, load image
+				// relative to the file, not relative to the bundle
+				ImageUtil.registerImage(currentKey, ccontext.path, value);
+			}
+			else {
+				Bundle bundle = ccontext.bundle;
+				if (bundle == null)
+					// it means that we are getting a key defined in this page's
+					// styles. (ie: not an inherited style).
+					bundle = this.context.bundle;
+				ImageUtil.registerImage(currentKey, bundle, value);
+			}
+			Image image = ImageUtil.getImage(currentKey);
+			if (image != null)
+				return image;
+		}
+		// try default. We know default is already registered,
+		if (defaultKey != null)
+			return ImageUtil.getImage(defaultKey);
+		return null;
+	}
+
+
+	public boolean useCustomHomePagelayout() {
+		String key = "home-page-custom-layout"; //$NON-NLS-1$
+		String value = getProperty(key);
+		if (value == null)
+			value = "true"; //$NON-NLS-1$
+		return value.equalsIgnoreCase("true"); //$NON-NLS-1$
+	}
 
 }

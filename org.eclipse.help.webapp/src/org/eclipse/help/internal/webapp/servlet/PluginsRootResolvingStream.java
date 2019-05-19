@@ -48,7 +48,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 	private String pathPrefix;
 	private StringBuilder tag;
 	private ByteArrayOutputStream metaTagBuffer;
-    private boolean tagRead;
+	private boolean tagRead;
 	private HttpServletRequest req;
 	private String charset;
 
@@ -61,17 +61,17 @@ public class PluginsRootResolvingStream extends OutputStream {
 	@Override
 	public void write(int b) throws IOException {
 		switch(state) {
-	    case INITIAL_STATE:
-	    	if (b == '<') {
-	    		state = IN_TAG;
-	    		charsMatched = 0;
-	    		tag = new StringBuilder();
-	    		tagRead = false;
-	    	} else {
-	    	    out.write(b);
-	    	}
-	    	break;
-	    case IN_TAG:
+		case INITIAL_STATE:
+			if (b == '<') {
+				state = IN_TAG;
+				charsMatched = 0;
+				tag = new StringBuilder();
+				tagRead = false;
+			} else {
+				out.write(b);
+			}
+			break;
+		case IN_TAG:
 			if (charsMatched == 0) {
 				if (b == '!') {
 					state = MAY_BE_INCLUDE;
@@ -86,96 +86,96 @@ public class PluginsRootResolvingStream extends OutputStream {
 					out.write('<');
 				}
 			}
-	    	if (b == '>') {
-	    		state = INITIAL_STATE;
-	    	} else if (b == '"') {
-	    		state = IN_QUOTE;
-	    		charsMatched = 0;
-	    	} else {
-	    		charsMatched++;
-	    		if (!tagRead) {
-	    			if (b >= 0 && b < 128 && tag.length() < 20) {
-	    				// ASCII
-	    				char c = (char)b;
-	    				if (Character.isLetter(c)) {
-	    					tag.append(c);
-	    				} else if (Character.isWhitespace(c)) {
-	    					tagRead = true;
-	    					if (tag.toString().equalsIgnoreCase("meta")) { //$NON-NLS-1$
-	    						state = IN_METATAG;
-	    						metaTagBuffer = new ByteArrayOutputStream(7);
-	    						metaTagBuffer.write("<meta ".getBytes()); //$NON-NLS-1$
-	    					}
-	    				} else  {
-	    					tag.append(c);
-	    				}
-	    			}
-	    		}
-	    	}
-	    	out.write(b);
-	    	break;
-	    case IN_QUOTE_NOT_PLUGINS_ROOT:
-	    	if (b == '>') {
-	    		state = INITIAL_STATE;
-	    	} else if (b == '"') {
-	    		state = IN_TAG;
-	    		charsMatched = 1;
-	    	}
-	    	out.write(b);
-	    	break;
-	    case IN_QUOTE:
-	    	// In a quote which may start with PLUGINS_ROOT
-	    	if (b == PLUGINS_ROOT.charAt(charsMatched)) {
-	    		charsMatched++;
-	    		if (charsMatched == PLUGINS_ROOT.length()) {
-	    			out.write(pathPrefix.getBytes());
-	    			state = IN_QUOTE_NOT_PLUGINS_ROOT;
-	    		}
-	    	} else {
-	    		// We just discovered that this is not "PLUGINS_ROOT/
-	    		// flush out the characters
-	    		state = IN_QUOTE_NOT_PLUGINS_ROOT;
-	    		flushPluginsRootCharacters();
-	    		out.write(b);
-	    	}
-	    	break;
-	    case MAY_BE_INCLUDE:
-	    	// Compare against all possible keywords
-	    	boolean canStillMatch = false;
-	    	int perfectMatch = -1;
-	    	for (int i = 0; i < keywords.length; i++) {
-	    		if (possibleKeywordMatches[i]) {
-	    			if (keywords[i].charAt(charsMatched) == b) {
-	    				canStillMatch = true;
-	    				lastKeywordMatch = i;
-	    				if (keywords[i].length() == charsMatched + 1) {
-	    					perfectMatch = i;
-	    				}
-	    			} else {
-	    				possibleKeywordMatches[i] = false;
-	    			}
-	    		}
-	    	}
-	    	if (perfectMatch != -1) {
-	    		insertBasedOnKeyword(perfectMatch);
-	    		state=INITIAL_STATE;
-	    	} else if (canStillMatch) {
-		    	charsMatched++;
-	    	} else {
-	    		state = INITIAL_STATE;
-	    		flushKeywordCharacters();
-	            out.write(b);
-	    	}
-	    	break;
-	    case IN_METATAG:
-	    	out.write(b);
-	    	metaTagBuffer.write(b);
+			if (b == '>') {
+				state = INITIAL_STATE;
+			} else if (b == '"') {
+				state = IN_QUOTE;
+				charsMatched = 0;
+			} else {
+				charsMatched++;
+				if (!tagRead) {
+					if (b >= 0 && b < 128 && tag.length() < 20) {
+						// ASCII
+						char c = (char)b;
+						if (Character.isLetter(c)) {
+							tag.append(c);
+						} else if (Character.isWhitespace(c)) {
+							tagRead = true;
+							if (tag.toString().equalsIgnoreCase("meta")) { //$NON-NLS-1$
+								state = IN_METATAG;
+								metaTagBuffer = new ByteArrayOutputStream(7);
+								metaTagBuffer.write("<meta ".getBytes()); //$NON-NLS-1$
+							}
+						} else  {
+							tag.append(c);
+						}
+					}
+				}
+			}
+			out.write(b);
+			break;
+		case IN_QUOTE_NOT_PLUGINS_ROOT:
+			if (b == '>') {
+				state = INITIAL_STATE;
+			} else if (b == '"') {
+				state = IN_TAG;
+				charsMatched = 1;
+			}
+			out.write(b);
+			break;
+		case IN_QUOTE:
+			// In a quote which may start with PLUGINS_ROOT
+			if (b == PLUGINS_ROOT.charAt(charsMatched)) {
+				charsMatched++;
+				if (charsMatched == PLUGINS_ROOT.length()) {
+					out.write(pathPrefix.getBytes());
+					state = IN_QUOTE_NOT_PLUGINS_ROOT;
+				}
+			} else {
+				// We just discovered that this is not "PLUGINS_ROOT/
+				// flush out the characters
+				state = IN_QUOTE_NOT_PLUGINS_ROOT;
+				flushPluginsRootCharacters();
+				out.write(b);
+			}
+			break;
+		case MAY_BE_INCLUDE:
+			// Compare against all possible keywords
+			boolean canStillMatch = false;
+			int perfectMatch = -1;
+			for (int i = 0; i < keywords.length; i++) {
+				if (possibleKeywordMatches[i]) {
+					if (keywords[i].charAt(charsMatched) == b) {
+						canStillMatch = true;
+						lastKeywordMatch = i;
+						if (keywords[i].length() == charsMatched + 1) {
+							perfectMatch = i;
+						}
+					} else {
+						possibleKeywordMatches[i] = false;
+					}
+				}
+			}
+			if (perfectMatch != -1) {
+				insertBasedOnKeyword(perfectMatch);
+				state=INITIAL_STATE;
+			} else if (canStillMatch) {
+				charsMatched++;
+			} else {
+				state = INITIAL_STATE;
+				flushKeywordCharacters();
+				out.write(b);
+			}
+			break;
+		case IN_METATAG:
+			out.write(b);
+			metaTagBuffer.write(b);
 			if (b=='>') {
 				parseMetaTag(metaTagBuffer);
 				metaTagBuffer = null;
 				state = INITIAL_STATE;
 			}
-	    	break;
+			break;
 		default:
 			out.write(b);
 		}

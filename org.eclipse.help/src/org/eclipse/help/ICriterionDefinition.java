@@ -22,24 +22,24 @@ package org.eclipse.help;
  */
 public interface ICriterionDefinition extends IUAElement{
 
-    /**
-     * Returns the id that this criterion definition is associated with
-     *
-     * @return the id
-     */
-    public String getId();
+	/**
+	 * Returns the id that this criterion definition is associated with
+	 *
+	 * @return the id
+	 */
+	public String getId();
 
-    /**
-     * Obtains the display name associated with this criterion definition.
-     *
-     * @return the name
-     */
-    public String getName();
+	/**
+	 * Obtains the display name associated with this criterion definition.
+	 *
+	 * @return the name
+	 */
+	public String getName();
 
-    /**
-     * Obtains the criterion value definitions contained in the criterion.
-     *
-     * @return array of ICriterionValueDefinition
-     */
-    public ICriterionValueDefinition[] getCriterionValueDefinitions();
+	/**
+	 * Obtains the criterion value definitions contained in the criterion.
+	 *
+	 * @return array of ICriterionValueDefinition
+	 */
+	public ICriterionValueDefinition[] getCriterionValueDefinitions();
 }

@@ -126,7 +126,7 @@ public class EngineTypeDescriptor {
 					}
 				}
 				catch (CoreException e) {
-                    HelpUIPlugin.logError("Scope factory " + fclass + " cannot be instantiated", null); //$NON-NLS-1$ //$NON-NLS-2$
+					HelpUIPlugin.logError("Scope factory " + fclass + " cannot be instantiated", null); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}

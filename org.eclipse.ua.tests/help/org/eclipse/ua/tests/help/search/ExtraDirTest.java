@@ -47,8 +47,8 @@ public class ExtraDirTest {
 	@Test
 	public void testContainingScope()
 	{
-	    performSearch("iusazemhdv", "/org.eclipse.ua.tests/data/help/toc/root.xml", "/org.eclipse.ua.tests/data/help/search/test8.htm" );
-    }
+		performSearch("iusazemhdv", "/org.eclipse.ua.tests/data/help/toc/root.xml", "/org.eclipse.ua.tests/data/help/search/test8.htm" );
+	}
 
 	// try with another toc's search scope; shouldn't find it
 	@Test

@@ -35,7 +35,7 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 	@Override
 	public boolean parseElementNode(Node childNode, Node parentNode,
 			AbstractTask parentTask, IStatusContainer status)
-    {
+	{
 		// Task children are handled by CompositeCheatSheetParser
 		return false;
 	}
@@ -64,7 +64,7 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 			String message = NLS.bind(
 					Messages.ERROR_PARSING_TASK_INVALID_KIND,
 					(new Object[] { parentTask.getKind(), ICompositeCheatsheetTags.TASK_GROUP, parentTask.getName()}));
-		    status.addStatus(IStatus.ERROR, message, null);
+			status.addStatus(IStatus.ERROR, message, null);
 		}
 	}
 
@@ -73,7 +73,7 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 			String message = NLS.bind(
 					Messages.ERROR_PARSING_CHILDLESS_TASK_GROUP,
 					(new Object[] { parentTask.getName()}));
-		    status.addStatus(IStatus.ERROR, message, null);
+			status.addStatus(IStatus.ERROR, message, null);
 		}
 	}
 

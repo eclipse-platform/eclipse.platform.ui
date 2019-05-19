@@ -205,20 +205,20 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 	}
 
 	private void computeReverseVideoColors(Display display) {
-        Color background = toolkit.getColors().getBackground();
+		Color background = toolkit.getColors().getBackground();
 		RGB white = new RGB(255, 255, 255);
-        // Create new colors, they will get disposed
-        RGB rgb = background.getRGB();
+		// Create new colors, they will get disposed
+		RGB rgb = background.getRGB();
 		activeColor = new Color(display, rgb );
 		rgb = FormColors.blend(rgb, white, 85);
 		inactiveColor1 = new Color(display, rgb);
 		rgb = FormColors.blend(rgb, white, 85);
 		inactiveColor2 = new Color(display, rgb );
-        introColor = new Color(display, rgb );
+		introColor = new Color(display, rgb );
 	}
 
 	private boolean isReverseVideo() {
-        Color bg = toolkit.getColors().getBackground();
+		Color bg = toolkit.getColors().getBackground();
 		return ((bg.getBlue() + bg.getRed() + bg.getGreen()) < 380);
 	}
 

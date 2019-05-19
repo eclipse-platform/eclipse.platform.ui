@@ -21,23 +21,23 @@ import org.eclipse.ui.PlatformUI;
 
 public class DynamicHelpAction implements IWorkbenchWindowActionDelegate {
 
-    public DynamicHelpAction() {
-    }
+	public DynamicHelpAction() {
+	}
 
 	@Override
 	public void dispose() {
-    }
+	}
 
 	@Override
 	public void init(IWorkbenchWindow window) {
-    }
+	}
 
 	@Override
 	public void run(IAction action) {
-        PlatformUI.getWorkbench().getHelpSystem().displayDynamicHelp();
-    }
+		PlatformUI.getWorkbench().getHelpSystem().displayDynamicHelp();
+	}
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-    }
+	}
 }

@@ -115,20 +115,20 @@ public class ErrorPage extends Page {
 	}
 
 	/**
-     * Return the image for a status message
-     *
-     * @return
-     */
-    private Image getImage(int severity) {
-        switch(severity) {
-        case IStatus.ERROR:
-            return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.ERROR);
-        case IStatus.WARNING:
-            return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.WARNING);
-        default:
-            return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.INFORMATION);
-        }
-    }
+	 * Return the image for a status message
+	 *
+	 * @return
+	 */
+	private Image getImage(int severity) {
+		switch(severity) {
+		case IStatus.ERROR:
+			return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.ERROR);
+		case IStatus.WARNING:
+			return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.WARNING);
+		default:
+			return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.INFORMATION);
+		}
+	}
 
 	/**
 	 * Creates the cheatsheet's title areawhich will consists

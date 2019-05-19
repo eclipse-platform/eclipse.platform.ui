@@ -49,7 +49,7 @@ public class IndexUtils {
 				String entryKeyword = indexEntry.getKeyword();
 				if (path[depth].equals(entryKeyword)) {
 					if (path.length == depth + 1) {
-					    return new IIndexEntry[] { indexEntry };
+						return new IIndexEntry[] { indexEntry };
 					}
 					IIndexEntry[] targets = findSeeTargets(indexEntry, see, depth + 1);
 					IIndexEntry[] result = new IIndexEntry[targets.length + 1];

@@ -89,7 +89,7 @@ public class IndexFragmentServlet extends HttpServlet {
 		sizeParameter = req.getParameter(SIZE);
 		if (sizeParameter != null) {
 			try {
-			    size = Integer.parseInt(sizeParameter);
+				size = Integer.parseInt(sizeParameter);
 			} catch (NumberFormatException n) {
 			}
 		}
@@ -98,7 +98,7 @@ public class IndexFragmentServlet extends HttpServlet {
 		entryParameter = req.getParameter(ENTRY);
 		if (entryParameter != null) {
 			try {
-			    entry = Integer.parseInt(entryParameter);
+				entry = Integer.parseInt(entryParameter);
 			} catch (NumberFormatException n) {
 			}
 		}
@@ -226,10 +226,10 @@ public class IndexFragmentServlet extends HttpServlet {
 			}
 			int nextEntry = 0;
 			while (nextEntry < entries.length) {
-			    String keyword = entries[nextEntry].getKeyword().toLowerCase();
+				String keyword = entries[nextEntry].getKeyword().toLowerCase();
 				if (keyword != null) {
 					if (compare(startParameter, keyword) <= 0) {
-				        break;
+						break;
 					}
 				}
 				nextEntry++;
@@ -241,9 +241,9 @@ public class IndexFragmentServlet extends HttpServlet {
 			while (nextEntry < entries.length) {
 				int entrySize = enabledEntryCount(entries[nextEntry]);
 				if (remaining == size || remaining > entrySize) {
-                    entryList.add(Integer.valueOf(nextEntry));
-                    setFlags(nextEntry);
-                    remaining -= entrySize;
+					entryList.add(Integer.valueOf(nextEntry));
+					setFlags(nextEntry);
+					remaining -= entrySize;
 				} else {
 					break;
 				}
@@ -257,10 +257,10 @@ public class IndexFragmentServlet extends HttpServlet {
 			while (nextEntry >= 0) {
 				int entrySize = enabledEntryCount(entries[nextEntry]);
 				if (remaining == size || remaining > entrySize) {
-                    entryList.add(0, Integer.valueOf(nextEntry));
+					entryList.add(0, Integer.valueOf(nextEntry));
 
-                    setFlags(nextEntry);
-                    remaining -= entrySize;
+					setFlags(nextEntry);
+					remaining -= entrySize;
 				} else {
 					break;
 				}
@@ -284,10 +284,10 @@ public class IndexFragmentServlet extends HttpServlet {
 				return 0;
 			}
 			int count = 1;
-		    int topicCount = enabledTopicCount(entry);
+			int topicCount = enabledTopicCount(entry);
 
 			IIndexEntry[] subentries = entry.getSubentries();
-		    int subentryCount = 0;
+			int subentryCount = 0;
 			for (IIndexEntry subentrie : subentries) {
 				count += enabledEntryCount(subentrie);
 			}
@@ -305,17 +305,17 @@ public class IndexFragmentServlet extends HttpServlet {
 			}
 			count += subentryCount;
 			count += seeCount;
-            return count;
+			return count;
 		}
 
 		private int enabledTopicCount(IIndexEntry entry) {
 			int topicCount = 0;
-		    ITopic[] topics = entry.getTopics();
-		    for (ITopic topic : topics) {
-		    	if (scope.inScope(topic)) {
-		    		topicCount++;
-		    	}
-		    }
+			ITopic[] topics = entry.getTopics();
+			for (ITopic topic : topics) {
+				if (scope.inScope(topic)) {
+					topicCount++;
+				}
+			}
 			return topicCount;
 		}
 
@@ -353,8 +353,8 @@ public class IndexFragmentServlet extends HttpServlet {
 				String href;
 				if (singleTopic) {
 					href = UrlUtil.getHelpURL((topics[0]).getHref());
-				    buf.append('\n' + "      href=\"" +  //$NON-NLS-1$
-				    	XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
+					buf.append('\n' + "      href=\"" +  //$NON-NLS-1$
+						XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
 				}
 				buf.append(">\n"); //$NON-NLS-1$
 
@@ -403,8 +403,8 @@ public class IndexFragmentServlet extends HttpServlet {
 		}
 
 		private void generateSees(IIndexSee[] sees) {
-	        for (IIndexSee see : sees) {
-	        	if (ScopeUtils.showInTree(see, scope)) {
+			for (IIndexSee see : sees) {
+				if (ScopeUtils.showInTree(see, scope)) {
 					//
 					String key = see.isSeeAlso() ? "SeeAlso" : "See"; //$NON-NLS-1$ //$NON-NLS-2$
 					String seePrefix = WebappResources.getString(key, UrlUtil
@@ -428,8 +428,8 @@ public class IndexFragmentServlet extends HttpServlet {
 							+ XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
 					buf.append(">\n"); //$NON-NLS-1$
 					buf.append("</node>\n"); //$NON-NLS-1$
-	        	}
-	        }
+				}
+			}
 		}
 	}
 

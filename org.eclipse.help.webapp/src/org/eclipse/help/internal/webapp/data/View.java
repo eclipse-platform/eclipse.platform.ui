@@ -19,7 +19,7 @@ import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.webapp.AbstractView ;
 
 public class View extends AbstractView {
-    public static char NO_SHORTCUT = (char)0;
+	public static char NO_SHORTCUT = (char)0;
 	private String name;
 	private String url;
 	private String imageURL;

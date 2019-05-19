@@ -22,17 +22,17 @@ package org.eclipse.help;
  */
 public interface ICriterionValueDefinition extends IUAElement {
 
-    /**
-     * Returns the id that this criterion value
-     *
-     * @return the id
-     */
-    public String getId();
+	/**
+	 * Returns the id that this criterion value
+	 *
+	 * @return the id
+	 */
+	public String getId();
 
-    /**
-     * Obtains the display name associated with this criterion value.
-     *
-     * @return the name
-     */
-    public String getName();
+	/**
+	 * Obtains the display name associated with this criterion value.
+	 *
+	 * @return the name
+	 */
+	public String getName();
 }

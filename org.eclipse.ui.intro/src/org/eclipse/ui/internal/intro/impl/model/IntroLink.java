@@ -27,94 +27,94 @@ import org.w3c.dom.NodeList;
  */
 public class IntroLink extends AbstractTextElement {
 
-    protected static final String TAG_LINK = "link"; //$NON-NLS-1$
+	protected static final String TAG_LINK = "link"; //$NON-NLS-1$
 
-    private static final String ATT_LABEL = "label"; //$NON-NLS-1$
-    private static final String ATT_URL = "url"; //$NON-NLS-1$
-    private static final String TAG_IMG = "img"; //$NON-NLS-1$
+	private static final String ATT_LABEL = "label"; //$NON-NLS-1$
+	private static final String ATT_URL = "url"; //$NON-NLS-1$
+	private static final String TAG_IMG = "img"; //$NON-NLS-1$
 
-    private String label;
-    private String url;
-    private IntroImage img;
-    private IntroURL introURL;
+	private String label;
+	private String url;
+	private IntroImage img;
+	private IntroURL introURL;
 
-    /**
-     * @param element
-     */
-    IntroLink(Element element, Bundle bundle, String base) {
-        super(element, bundle);
-        url = getAttribute(element, ATT_URL);
-        label = getAttribute(element, ATT_LABEL);
+	/**
+	 * @param element
+	 */
+	IntroLink(Element element, Bundle bundle, String base) {
+		super(element, bundle);
+		url = getAttribute(element, ATT_URL);
+		label = getAttribute(element, ATT_LABEL);
 
-        url = ModelUtil.resolveURL(base, url, bundle);
-        if (url != null) {
-            // check the URL.
-            IntroURLParser parser = new IntroURLParser(url);
-            if (parser.hasIntroUrl())
-                introURL = parser.getIntroURL();
-        }
+		url = ModelUtil.resolveURL(base, url, bundle);
+		if (url != null) {
+			// check the URL.
+			IntroURLParser parser = new IntroURLParser(url);
+			if (parser.hasIntroUrl())
+				introURL = parser.getIntroURL();
+		}
 
-        // There should be at most one img element.
-        NodeList imgElements = element.getElementsByTagName(TAG_IMG);
-        if (imgElements.getLength() > 0) {
-            img = new IntroImage((Element) imgElements.item(0), getBundle(),
-                base);
-            img.setParent(this);
-        }
-    }
+		// There should be at most one img element.
+		NodeList imgElements = element.getElementsByTagName(TAG_IMG);
+		if (imgElements.getLength() > 0) {
+			img = new IntroImage((Element) imgElements.item(0), getBundle(),
+				base);
+			img.setParent(this);
+		}
+	}
 
-    /**
-     * @return Returns the label.
-     */
-    public String getLabel() {
-    	IntroModelRoot root = getModelRoot();
-    	 if (root!=null) {
-    	     return root.resolveVariables(label);
-    	 }
-    	 return label;
-    }
+	/**
+	 * @return Returns the label.
+	 */
+	public String getLabel() {
+		IntroModelRoot root = getModelRoot();
+		 if (root!=null) {
+			 return root.resolveVariables(label);
+		 }
+		 return label;
+	}
 
-    /**
-     * @return Returns the url.
-     */
-    public String getUrl() {
-        return url;
-    }
+	/**
+	 * @return Returns the url.
+	 */
+	public String getUrl() {
+		return url;
+	}
 
-    /**
-     * Retruns an IntroURL instance if link has a valid intro url. Returns null
-     * otherwise.
-     *
-     * @return Returns the introURL.
-     */
-    public IntroURL getIntroURL() {
-        return introURL;
-    }
+	/**
+	 * Retruns an IntroURL instance if link has a valid intro url. Returns null
+	 * otherwise.
+	 *
+	 * @return Returns the introURL.
+	 */
+	public IntroURL getIntroURL() {
+		return introURL;
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.LINK;
-    }
+		return AbstractIntroElement.LINK;
+	}
 
-    /**
-     * @return Returns the img.
-     */
-    public IntroImage getImg() {
-        return img;
-    }
+	/**
+	 * @return Returns the img.
+	 */
+	public IntroImage getImg() {
+		return img;
+	}
 
-    /**
-     * Deep copy since class has mutable objects.
-     */
-    @Override
+	/**
+	 * Deep copy since class has mutable objects.
+	 */
+	@Override
 	public Object clone() throws CloneNotSupportedException {
-        IntroLink clone = (IntroLink) super.clone();
-        if (img != null) {
-            IntroImage cloneIntroImage = (IntroImage) img.clone();
-            cloneIntroImage.setParent(clone);
-            clone.img = cloneIntroImage;
-        }
-        // no need to clobe IntroURL.
-        return clone;
-    }
+		IntroLink clone = (IntroLink) super.clone();
+		if (img != null) {
+			IntroImage cloneIntroImage = (IntroImage) img.clone();
+			cloneIntroImage.setParent(clone);
+			clone.img = cloneIntroImage;
+		}
+		// no need to clobe IntroURL.
+		return clone;
+	}
 }

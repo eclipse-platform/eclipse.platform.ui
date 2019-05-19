@@ -21,23 +21,23 @@ import org.eclipse.ui.PlatformUI;
 
 public class SearchAction implements IWorkbenchWindowActionDelegate {
 
-    public SearchAction() {
-    }
+	public SearchAction() {
+	}
 
 	@Override
 	public void dispose() {
-    }
+	}
 
 	@Override
 	public void init(IWorkbenchWindow window) {
-    }
+	}
 
 	@Override
 	public void run(IAction action) {
-        PlatformUI.getWorkbench().getHelpSystem().displaySearch();
-    }
+		PlatformUI.getWorkbench().getHelpSystem().displaySearch();
+	}
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-    }
+	}
 }

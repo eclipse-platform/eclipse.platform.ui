@@ -36,7 +36,7 @@ public class ExtraFilters implements IFilter {
 
 	public ExtraFilters() {
 		if (filters == null) {
-		    readFilters();
+			readFilters();
 		}
 	}
 

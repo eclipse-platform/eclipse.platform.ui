@@ -286,7 +286,7 @@ public class TestTaskEvents {
 		assertEquals(1, taskMap.getEventCount(task1B));
 		assertEquals(1, taskMap.getEventCount(group1));
 		assertEquals(4, taskMap.getTotalEventCount());
-    }
+	}
 
 	@Test
 	public void testCompleteChoice() {

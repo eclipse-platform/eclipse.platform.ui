@@ -39,7 +39,7 @@ public class InfocenterWorkingSetManagerTest {
 	@Test
 	public void testIWSMWithToc() throws IOException {
 		InfocenterWorkingSetManager mgr = new InfocenterWorkingSetManager
-		    (new MockServletRequest(), new MockServletResponse(), "en");
+			(new MockServletRequest(), new MockServletResponse(), "en");
 		WorkingSet wset = new WorkingSet("test");
 		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertNotNull(toc);
@@ -90,7 +90,7 @@ public class InfocenterWorkingSetManagerTest {
 		assertEquals(1, resources.length);
 		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
-        assertTrue(topics.contains(resources[0]));
+		assertTrue(topics.contains(resources[0]));
 		checkCookies(resp);
 	}
 
@@ -113,8 +113,8 @@ public class InfocenterWorkingSetManagerTest {
 		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
 		topics.add(topic3);
-        assertTrue(topics.contains(resources[0]));
-        assertTrue(topics.contains(resources[1]));
+		assertTrue(topics.contains(resources[0]));
+		assertTrue(topics.contains(resources[1]));
 		checkCookies(resp);
 	}
 
@@ -141,9 +141,9 @@ public class InfocenterWorkingSetManagerTest {
 		topics.add(topic1);
 		topics.add(topic3);
 		topics.add(topic5);
-        assertTrue(topics.contains(resources[0]));
-        assertTrue(topics.contains(resources[1]));
-        assertTrue(topics.contains(resources[2]));
+		assertTrue(topics.contains(resources[0]));
+		assertTrue(topics.contains(resources[1]));
+		assertTrue(topics.contains(resources[2]));
 		checkCookies(resp);
 	}
 
@@ -169,7 +169,7 @@ public class InfocenterWorkingSetManagerTest {
 		assertEquals(1, resources.length);
 		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
-        assertTrue(topics.contains(resources[0]));
+		assertTrue(topics.contains(resources[0]));
 		checkCookies(resp);
 		checkCookies(resp2);
 	}
@@ -198,8 +198,8 @@ public class InfocenterWorkingSetManagerTest {
 		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
 		topics.add(topic3);
-        assertTrue(topics.contains(resources[0]));
-        assertTrue(topics.contains(resources[1]));
+		assertTrue(topics.contains(resources[0]));
+		assertTrue(topics.contains(resources[1]));
 		checkCookies(resp);
 		checkCookies(resp2);
 	}
@@ -231,9 +231,9 @@ public class InfocenterWorkingSetManagerTest {
 		topics.add(topic1);
 		topics.add(topic3);
 		topics.add(topic5);
-        assertTrue(topics.contains(resources[0]));
-        assertTrue(topics.contains(resources[1]));
-        assertTrue(topics.contains(resources[2]));
+		assertTrue(topics.contains(resources[0]));
+		assertTrue(topics.contains(resources[1]));
+		assertTrue(topics.contains(resources[2]));
 		checkCookies(resp);
 		checkCookies(resp2);
 	}
@@ -287,7 +287,7 @@ public class InfocenterWorkingSetManagerTest {
 
 		int length1 = cookieLength(resp1.getCookies());
 		int length2 = cookieLength(resp2.getCookies());
-        assertEquals(length1 + 4, length2);
+		assertEquals(length1 + 4, length2);
 		checkCookies(resp1);
 		checkCookies(resp2);
 	}
@@ -414,7 +414,7 @@ public class InfocenterWorkingSetManagerTest {
 		CriterionResource[] criteria = createResourceWithTwoCriteria();
 		wset.setCriteria(criteria);
 		mgr.addWorkingSet(wset);
-        MockServletRequest req2 = new MockServletRequest();
+		MockServletRequest req2 = new MockServletRequest();
 		MockServletResponse resp2 = new MockServletResponse();
 		req2.setCookies(resp.getCookies());
 		InfocenterWorkingSetManager mgr2 = new InfocenterWorkingSetManager(req2, resp2, "en");
@@ -462,7 +462,7 @@ public class InfocenterWorkingSetManagerTest {
 		String illegalChars = resp.getIllegalCharatersFound();
 		if (illegalChars.equals("") || illegalChars.equals("<")) {
 			return;
-	    }
+		}
 		fail("Cookie contains these illegal characters " + illegalChars + '"');
 	}
 

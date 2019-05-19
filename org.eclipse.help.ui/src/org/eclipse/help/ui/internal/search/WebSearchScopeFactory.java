@@ -29,16 +29,16 @@ public class WebSearchScopeFactory implements ISearchScopeFactory {
 	@Override
 	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
-        String urlTemplate = getProperty(store, engineId, parameters);
-        return new WebSearch.Scope(urlTemplate);
-    }
+		String urlTemplate = getProperty(store, engineId, parameters);
+		return new WebSearch.Scope(urlTemplate);
+	}
 
 	private String getProperty(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
-    	// try the store first
-    	String value = store.getString(engineId+"."+P_URL); //$NON-NLS-1$
-    	if (value!=null && value.length()>0) return value;
-    	// try the parameters
-    	return (String)parameters.get(P_URL);
-    }
+		// try the store first
+		String value = store.getString(engineId+"."+P_URL); //$NON-NLS-1$
+		if (value!=null && value.length()>0) return value;
+		// try the parameters
+		return (String)parameters.get(P_URL);
+	}
 }

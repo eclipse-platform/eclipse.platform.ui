@@ -57,7 +57,7 @@ public class ExtensionServiceTest {
 		Node root = getContentExtensions("en");
 		Element[] UARoot = findContributionByContent(root,
 				"/org.eclipse.ua.tests/data/help/dynamic/shared/doc2.xml#element.1");
-	    assertEquals(1, UARoot.length);
+		assertEquals(1, UARoot.length);
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class ExtensionServiceTest {
 		Node root = getContentExtensions("en");
 		Element[] UARoot = findContributionByContent(root,
 				"/org.eclipse.ua.tests/data/help/dynamic/shared/doc2.xml#element.3");
-	    assertEquals(1, UARoot.length);
+		assertEquals(1, UARoot.length);
 	}
 
 	@Test
@@ -73,7 +73,7 @@ public class ExtensionServiceTest {
 		Node root = getContentExtensions("en");
 		Element[] UARoot = findContributionByContent(root,
 				"/org.eclipse.ua.tests/data/help/dynamic/shared/doc2.xml#element.4");
-	    assertEquals(0, UARoot.length);
+		assertEquals(0, UARoot.length);
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class ExtensionServiceTest {
 		Node root = getContentExtensions("en");
 		Element[] UARoot = findReplacementByContent(root,
 				"/org.eclipse.ua.tests/data/help/dynamic/shared/doc2.xml#element.1");
-	    assertEquals(1, UARoot.length);
+		assertEquals(1, UARoot.length);
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class ExtensionServiceTest {
 				Element nextElement = (Element)next;
 				if ( childKind.equals(nextElement.getTagName()) && attributeValue.equals(nextElement.getAttribute(attributeName))) {
 
-				    results.add(next);
+					results.add(next);
 				}
 			}
 		}

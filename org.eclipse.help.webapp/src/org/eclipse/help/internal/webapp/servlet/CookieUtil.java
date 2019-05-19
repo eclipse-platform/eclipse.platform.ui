@@ -103,8 +103,8 @@ public class CookieUtil {
 		Cookie cookie = new Cookie(name, ""); //$NON-NLS-1$
 		String requestURI = request.getRequestURI();
 		if (!(requestURI.startsWith(cookiePath) && requestURI.indexOf('/', cookiePath.length() + 1) == -1)) {
-		     cookie.setPath(cookiePath);
-	    }
+			cookie.setPath(cookiePath);
+		}
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 	}
@@ -115,11 +115,11 @@ public class CookieUtil {
 		HashSet<String> cookiesToDelete = new HashSet<>();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				    String name = cookie.getName();
-				    if (isObsoleteCookie(name) || cookiesToKeep.contains(name)) {
-				    	cookiesToDelete.add(name);
-				    }
-					cookiesToKeep.add(name);
+				String name = cookie.getName();
+				if (isObsoleteCookie(name) || cookiesToKeep.contains(name)) {
+					cookiesToDelete.add(name);
+				}
+				cookiesToKeep.add(name);
 			}
 
 			for (String name : cookiesToDelete) {

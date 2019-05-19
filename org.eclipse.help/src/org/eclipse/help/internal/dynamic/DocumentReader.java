@@ -73,7 +73,7 @@ public class DocumentReader {
 			cachedBuilder = createManagedBuilder();
 		}
 		cachedBuilder.inUse = true;
-        return cachedBuilder;
+		return cachedBuilder;
 	}
 
 	private ManagedBuilder createManagedBuilder() throws FactoryConfigurationError, ParserConfigurationException {

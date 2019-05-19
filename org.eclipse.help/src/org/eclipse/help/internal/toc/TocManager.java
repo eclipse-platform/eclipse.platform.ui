@@ -65,7 +65,7 @@ public class TocManager {
 		if (tocs == null) {
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_TOC) {
-			    System.out.println("Start to build toc for locale " + locale); //$NON-NLS-1$
+				System.out.println("Start to build toc for locale " + locale); //$NON-NLS-1$
 			}
 			Set<String> tocsToFilter = getIgnoredTocContributions();
 			TocContribution[] raw = getRootTocContributions(locale, tocsToFilter);
@@ -92,7 +92,7 @@ public class TocManager {
 			tocsByLocale.put(locale, tocs);
 			long stop = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_TOC) {
-			    System.out.println("Milliseconds to update toc for locale " + locale +  " = " + (stop - start)); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Milliseconds to update toc for locale " + locale +  " = " + (stop - start)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return tocs;

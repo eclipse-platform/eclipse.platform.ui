@@ -221,7 +221,7 @@ public class LayoutData extends RequestData {
 				BundleContext bundleContext = HelpWebappPlugin.getContext();
 				ServiceReference<?> ref = bundleContext.getServiceReference(BundleLocalization.class.getName());
 				BundleLocalization localization = (BundleLocalization) bundleContext.getService(ref);
-                return localization.getLocalization(bundle, locale).getString(resource);
+				return localization.getLocalization(bundle, locale).getString(resource);
 			} catch (Exception e) {
 				// Fall through
 			}

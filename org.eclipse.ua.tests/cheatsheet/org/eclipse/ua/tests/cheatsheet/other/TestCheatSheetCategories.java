@@ -42,7 +42,7 @@ public class TestCheatSheetCategories {
 			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
 		assertNotNull("Cannot find category org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat",
-					       testCat);
+							testCat);
 	}
 
 	@Test

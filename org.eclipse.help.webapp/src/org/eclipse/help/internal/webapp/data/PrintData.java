@@ -164,10 +164,10 @@ public class PrintData extends RequestData {
 	public void generateResources(Writer out) throws IOException, ServletException {
 		// check resource allocation
 		if (!getConnection()) {
-            RequestDispatcher rd = context.getRequestDispatcher("/advanced/printError.jsp"); //$NON-NLS-1$
-            request.setAttribute("msg", "noConnection"); //$NON-NLS-1$ //$NON-NLS-2$
-            rd.forward(request, response);
-            return;
+			RequestDispatcher rd = context.getRequestDispatcher("/advanced/printError.jsp"); //$NON-NLS-1$
+			request.setAttribute("msg", "noConnection"); //$NON-NLS-1$ //$NON-NLS-2$
+			rd.forward(request, response);
+			return;
 		}
 
 
@@ -196,17 +196,17 @@ public class PrintData extends RequestData {
 		}
 	}
 
-    private static synchronized boolean getConnection() {
-        if (allowedConnections > 0) {
-            allowedConnections--;
-            return true;
-        }
-        return false;
-    }
+	private static synchronized boolean getConnection() {
+		if (allowedConnections > 0) {
+			allowedConnections--;
+			return true;
+		}
+		return false;
+	}
 
-    private static synchronized void releaseConnection() {
-    	allowedConnections++;
-    }
+	private static synchronized void releaseConnection() {
+		allowedConnections++;
+	}
 
 	/*
 	 * Calculate the amount of topics to print in one request

@@ -40,12 +40,12 @@ public class NoError {
 
 	@Before
 	public void setUp() throws Exception {
-	    parser = new CheatSheetParser();
+		parser = new CheatSheetParser();
 	}
 
 	private ICheatSheet parseTestFile(String path) {
 		URL testURL = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(),
-					       path);
+							path);
 		return parser.parse(testURL, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.SIMPLE_ONLY);
 	}
 

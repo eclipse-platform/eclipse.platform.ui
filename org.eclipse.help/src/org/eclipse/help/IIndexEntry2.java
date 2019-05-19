@@ -20,11 +20,11 @@ package org.eclipse.help;
  */
 public interface IIndexEntry2 extends IIndexEntry {
 
-    /**
-     * Obtains see references for this entry
-     *
-     * @return array of ITopic
-     */
-    public IIndexSee[] getSees();
+	/**
+	 * Obtains see references for this entry
+	 *
+	 * @return array of ITopic
+	 */
+	public IIndexSee[] getSees();
 
 }

@@ -31,44 +31,44 @@ import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
  */
 public final class IntroURLFactory {
 
-    /**
-     * Non-instantiable.
-     */
-    private IntroURLFactory() {
-        // do nothing
-    }
+	/**
+	 * Non-instantiable.
+	 */
+	private IntroURLFactory() {
+		// do nothing
+	}
 
 
-    /**
-     * Parses the given string, and returns an IntroURL if the string is a valid
-     * Intro URL. Returns null in all other cases. Example usage:
-     *
-     * <pre>
-     * StringBuilder url = new StringBuilder();
-     * url.append(&quot;http://org.eclipse.ui.intro/showStandby?&quot;);
-     * url.append(&quot;pluginId=org.eclipse.pde.ui&quot;);
-     * url.append(&quot;&amp;&quot;);
-     * url.append(&quot;partId=org.eclipse.pde.ui.sampleStandbyPart&quot;);
-     * url.append(&quot;&amp;&quot;);
-     * url.append(&quot;input=&quot;);
-     * url.append(sampleId);
-     * IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
-     * if (introURL != null) {
-     *     introURL.execute();
-     * }
-     * </pre>
-     *
-     * @param url
-     *            the url to construct an IntroURL from
-     * @return an IntroURL, or <code>null</code> if the url is invalid
-     */
-    public static IIntroURL createIntroURL(String url) {
-        IntroURLParser parser = new IntroURLParser(url);
-        if (parser.hasIntroUrl()) {
-            IntroURL introURL = parser.getIntroURL();
-            return introURL;
-        }
-        return null;
-    }
+	/**
+	 * Parses the given string, and returns an IntroURL if the string is a valid
+	 * Intro URL. Returns null in all other cases. Example usage:
+	 *
+	 * <pre>
+	 * StringBuilder url = new StringBuilder();
+	 * url.append(&quot;http://org.eclipse.ui.intro/showStandby?&quot;);
+	 * url.append(&quot;pluginId=org.eclipse.pde.ui&quot;);
+	 * url.append(&quot;&amp;&quot;);
+	 * url.append(&quot;partId=org.eclipse.pde.ui.sampleStandbyPart&quot;);
+	 * url.append(&quot;&amp;&quot;);
+	 * url.append(&quot;input=&quot;);
+	 * url.append(sampleId);
+	 * IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
+	 * if (introURL != null) {
+	 *     introURL.execute();
+	 * }
+	 * </pre>
+	 *
+	 * @param url
+	 *            the url to construct an IntroURL from
+	 * @return an IntroURL, or <code>null</code> if the url is invalid
+	 */
+	public static IIntroURL createIntroURL(String url) {
+		IntroURLParser parser = new IntroURLParser(url);
+		if (parser.hasIntroUrl()) {
+			IntroURL introURL = parser.getIntroURL();
+			return introURL;
+		}
+		return null;
+	}
 
 }

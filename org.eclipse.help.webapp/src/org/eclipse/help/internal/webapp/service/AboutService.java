@@ -187,17 +187,17 @@ public class AboutService extends AboutServlet {
 
 		Bundle[] bundles = HelpWebappPlugin.getContext().getBundles();
 		for (Bundle bundle : bundles) {
-         	plugins.add(pluginDetails(bundle));
-        }
+			plugins.add(pluginDetails(bundle));
+		}
 
-        Comparator<PluginDetails> pluginComparator = new PluginComparator(sortColumn);
+		Comparator<PluginDetails> pluginComparator = new PluginComparator(sortColumn);
 		Collections.sort(plugins, pluginComparator );
 
 		String[] headerColumns = new String[]{
-		    "provider", //$NON-NLS-1$
-		    "pluginName", //$NON-NLS-1$
-		    "version", //$NON-NLS-1$
-		    "pluginId" //$NON-NLS-1$
+			"provider", //$NON-NLS-1$
+			"pluginName", //$NON-NLS-1$
+			"version", //$NON-NLS-1$
+			"pluginId" //$NON-NLS-1$
 		};
 
 		for (String headerColumn : headerColumns) {

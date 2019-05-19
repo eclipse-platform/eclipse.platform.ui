@@ -40,8 +40,8 @@ public class RestrictedTopicParameter {
 	@Before
 	public void setUp() throws Exception {
 		restrictTopic = Platform.getPreferencesService().getBoolean
-	     (HelpBasePlugin.PLUGIN_ID, RESTRICT_TOPIC,
-			      false, null);
+		 (HelpBasePlugin.PLUGIN_ID, RESTRICT_TOPIC,
+				  false, null);
 		helpMode = BaseHelpSystem.getMode();
 	}
 

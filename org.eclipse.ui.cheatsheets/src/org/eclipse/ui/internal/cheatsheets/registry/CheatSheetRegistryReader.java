@@ -62,7 +62,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	}
 
 	/**
-     * Represents a taskEditor entry in the registry
+	 * Represents a taskEditor entry in the registry
 	 */
 	public class TaskEditorNode {
 		private String className;
@@ -96,7 +96,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	}
 
 	/**
-     * Represents a taskExplorer entry in the registry
+	 * Represents a taskExplorer entry in the registry
 	 */
 	public class TaskExplorerNode {
 		private String className;
@@ -156,9 +156,9 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	protected final static String trueString = "TRUE"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY = "org.eclipse.ui.Other"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY_LABEL = Messages.CHEAT_SHEET_OTHER_CATEGORY;
-    public final static String CHEAT_SHEET_CONTENT = "cheatSheetContent"; //$NON-NLS-1$
+	public final static String CHEAT_SHEET_CONTENT = "cheatSheetContent"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * Returns a list of cheatsheets, project and not.
 	 *
 	 * The return value for this method is cached since computing its value
@@ -294,7 +294,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 */
 	public TaskEditorNode findTaskEditor(String id) {
 		if (cheatsheets == null) {
-		    readCheatSheets(); // Ensure that the registry has been read
+			readCheatSheets(); // Ensure that the registry has been read
 		}
 		return taskEditors.get(id);
 	}
@@ -305,7 +305,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 */
 	public TaskExplorerNode findTaskExplorer(String id) {
 		if (cheatsheets == null) {
-		    readCheatSheets(); // Ensure that the registry has been read
+			readCheatSheets(); // Ensure that the registry has been read
 		}
 		return taskExplorers.get(id);
 	}
@@ -316,7 +316,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 */
 	public String[] getExplorerIds() {
 		if (cheatsheets == null) {
-		    readCheatSheets(); // Ensure that the registry has been read
+			readCheatSheets(); // Ensure that the registry has been read
 		}
 		Set<String> keys = taskExplorers.keySet();
 		return keys.toArray(new String[keys.size()]);
@@ -430,7 +430,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 				currentCollectionElement = (CheatSheetCollectionElement) nestedCategoryIds.get(category);
 				currentCollectionElement.add(element);
 			} else {
-			    moveElementToUncategorizedCategory(currentResult, element);
+				moveElementToUncategorizedCategory(currentResult, element);
 			}
 		} else {
 			currentCollectionElement.add(element);
@@ -636,7 +636,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		String pluginId = element.getContributor().getName();
 		if (id != null && className != null && name != null ) {
 			TaskExplorerNode node = new TaskExplorerNode();
-            node.setId(id);
+			node.setId(id);
 			node.setIconPath(icon);
 			node.setClassName(className);
 			node.setName(name);
@@ -652,7 +652,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		String pluginId = element.getContributor().getName();
 		if (id != null && className != null && icon != null ) {
 			TaskEditorNode node = new TaskEditorNode();
-            node.setId(id);
+			node.setId(id);
 			node.setIconPath(icon);
 			node.setClassName(className);
 			node.setPluginId(pluginId);

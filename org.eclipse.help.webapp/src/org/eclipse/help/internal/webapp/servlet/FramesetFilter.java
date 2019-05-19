@@ -29,8 +29,8 @@ import org.eclipse.help.webapp.IFilter;
  */
 public class FramesetFilter implements IFilter {
 	private static final String scriptPart1 = "<script type=\"text/javascript\">\nif( self == top ){" //$NON-NLS-1$
-		    + "\n  var  anchorParam = location.hash.length > 0 ? '"  //$NON-NLS-1$
-		    + UrlUtil.JavaScriptEncode("&") + "anchor=' + location.hash.substr(1) : '';" //$NON-NLS-1$ //$NON-NLS-2$
+			+ "\n  var  anchorParam = location.hash.length > 0 ? '"  //$NON-NLS-1$
+			+ UrlUtil.JavaScriptEncode("&") + "anchor=' + location.hash.substr(1) : '';" //$NON-NLS-1$ //$NON-NLS-2$
 			+ "\n  window.location.replace( \""; //$NON-NLS-1$
 	private static final String scriptPart3 = "\" + anchorParam);\n}\n</script>"; //$NON-NLS-1$
 

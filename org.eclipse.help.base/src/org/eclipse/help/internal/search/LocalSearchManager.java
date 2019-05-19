@@ -365,7 +365,7 @@ public class LocalSearchManager {
 		HashSet<String> set = new HashSet<>();
 		addSearchBindings(set);
 		// must ask global search participants directly
-	    SearchParticipant[] gps = getGlobalParticipants();
+		SearchParticipant[] gps = getGlobalParticipants();
 		for (int i = 0; i < gps.length; i++) {
 			Set<String> ids;
 			try {

@@ -17,54 +17,54 @@ import org.junit.Test;
 
 public class WildcardTest {
 	@Test
-    public void testSearchWithStar() {
-    	SearchTestUtils.searchAllLocales("jehc*qpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
-    }
+	public void testSearchWithStar() {
+		SearchTestUtils.searchAllLocales("jehc*qpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
+	}
 
 	@Test
-    public void testSearchWithTwoStars() {
-    	SearchTestUtils.searchAllLocales("jehc*qp*js", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
-    }
+	public void testSearchWithTwoStars() {
+		SearchTestUtils.searchAllLocales("jehc*qp*js", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
+	}
 
 	@Test
-    public void testSearchWithStarReplacingThreeChars() {
-    	SearchTestUtils.searchAllLocales("jehc*fjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
-    }
+	public void testSearchWithStarReplacingThreeChars() {
+		SearchTestUtils.searchAllLocales("jehc*fjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
+	}
 
-    // Test that a star does not match spaces
+	// Test that a star does not match spaces
 	@Test
-    public void testSearchWithStarReplacingSpace() {
-    	SearchTestUtils.searchAllLocales("jehcyqpfjs*vkrhjewiwh", new String[0]);
-    }
-
-	@Test
-    public void testSearchWithQuestionMark() {
-    	SearchTestUtils.searchAllLocales("jehc?qpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
-    }
+	public void testSearchWithStarReplacingSpace() {
+		SearchTestUtils.searchAllLocales("jehcyqpfjs*vkrhjewiwh", new String[0]);
+	}
 
 	@Test
-    public void testSearchWithTwoQuestionMarks() {
-    	SearchTestUtils.searchAllLocales("j?hc?qpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
-    }
+	public void testSearchWithQuestionMark() {
+		SearchTestUtils.searchAllLocales("jehc?qpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
+	}
 
 	@Test
-    public void testSearchQuestionMarkCannotReplaceTwoChars() {
-    	SearchTestUtils.searchAllLocales("jehc?pfjs", new String[0] );
-    }
+	public void testSearchWithTwoQuestionMarks() {
+		SearchTestUtils.searchAllLocales("j?hc?qpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
+	}
 
 	@Test
-    public void testSearchSuccessiveQuestionMarks() {
-    	SearchTestUtils.searchAllLocales("jehc??pfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" } );
-    }
+	public void testSearchQuestionMarkCannotReplaceTwoChars() {
+		SearchTestUtils.searchAllLocales("jehc?pfjs", new String[0] );
+	}
 
 	@Test
-    public void testSearchLeadingStar() {
-    	SearchTestUtils.searchAllLocales("*hcyqpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
-    }
+	public void testSearchSuccessiveQuestionMarks() {
+		SearchTestUtils.searchAllLocales("jehc??pfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" } );
+	}
 
 	@Test
-    public void testSearchLeadingQuestionMark() {
-    	SearchTestUtils.searchAllLocales("?ehcyqpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
-    }
+	public void testSearchLeadingStar() {
+		SearchTestUtils.searchAllLocales("*hcyqpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
+	}
+
+	@Test
+	public void testSearchLeadingQuestionMark() {
+		SearchTestUtils.searchAllLocales("?ehcyqpfjs", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" });
+	}
 
 }

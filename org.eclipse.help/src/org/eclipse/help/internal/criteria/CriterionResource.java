@@ -86,8 +86,8 @@ public class CriterionResource {
 							continue outer;
 						}
 					}
-				    CriterionResource criterionResource = new CriterionResource(elementName, values);
-				    criteriaList.add(criterionResource);
+					CriterionResource criterionResource = new CriterionResource(elementName, values);
+					criteriaList.add(criterionResource);
 				}
 			}
 		}

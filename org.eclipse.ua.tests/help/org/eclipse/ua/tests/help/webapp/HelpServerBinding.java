@@ -52,14 +52,14 @@ public class HelpServerBinding {
 	}
 
 	private String getHostIP() throws UnknownHostException {
-	    InetAddress host = InetAddress.getLocalHost();
-	    byte[] ipAddr = host.getAddress();
-        String result = "" + ipAddr[0];
-        for (int i = 1; i < ipAddr.length; i++) {
-        	result += '.';
-        	result += ipAddr[i];
-        }
-        return result;
+		InetAddress host = InetAddress.getLocalHost();
+		byte[] ipAddr = host.getAddress();
+		String result = "" + ipAddr[0];
+		for (int i = 1; i < ipAddr.length; i++) {
+			result += '.';
+			result += ipAddr[i];
+		}
+		return result;
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class HelpServerBinding {
 		WebappManager.start("help");
 		assertTrue(canAccessServer("127.0.0.1"));
 		if (testUsingIP) {
-		    assertFalse(canAccessServer(getHostIP()));
+			assertFalse(canAccessServer(getHostIP()));
 		}
 	}
 
@@ -91,7 +91,7 @@ public class HelpServerBinding {
 		WebappManager.start("help");
 		assertTrue(canAccessServer("127.0.0.1"));
 		if (testUsingIP) {
-		    assertTrue(canAccessServer(getHostIP()));
+			assertTrue(canAccessServer(getHostIP()));
 		}
 	}
 

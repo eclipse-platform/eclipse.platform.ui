@@ -44,16 +44,16 @@ public class TestStatePersistence {
 	private static final String PATH = "ContentPath";
 
 	private class PropertySet {
-	    public String id;
-	    public int currentItem;
-	    public int button;
-	    public String contentPath;
-	    public List<String> completed;
-	    public List<String> expanded;
-	    public List<String> expandRestore;
-	    public Hashtable<String, String> subItemCompleted;
-	    public Hashtable<String, String> subItemSkipped;
-	    public CheatSheetManager manager;
+		public String id;
+		public int currentItem;
+		public int button;
+		public String contentPath;
+		public List<String> completed;
+		public List<String> expanded;
+		public List<String> expandRestore;
+		public Hashtable<String, String> subItemCompleted;
+		public Hashtable<String, String> subItemSkipped;
+		public CheatSheetManager manager;
 	}
 
 	private PropertySet propsToSave;
@@ -92,10 +92,10 @@ public class TestStatePersistence {
 			propertiesToSave.put(IParserTags.CONTENT_URL, propsToSave.contentPath);
 		}
 		if (propsToSave.subItemCompleted.size() > 0) {
-		    propertiesToSave.put(IParserTags.SUBITEMCOMPLETED, propsToSave.subItemCompleted);
+			propertiesToSave.put(IParserTags.SUBITEMCOMPLETED, propsToSave.subItemCompleted);
 		}
 		if (propsToSave.subItemSkipped.size() > 0) {
-		    propertiesToSave.put(IParserTags.SUBITEMSKIPPED, propsToSave.subItemSkipped);
+			propertiesToSave.put(IParserTags.SUBITEMSKIPPED, propsToSave.subItemSkipped);
 		}
 		helper.saveState(propertiesToSave, propsToSave.manager);
 	}
@@ -109,14 +109,14 @@ public class TestStatePersistence {
 		result.currentItem = Integer.parseInt(restored.getProperty(IParserTags.CURRENT));
 		result.completed = (ArrayList<String>) restored.get(IParserTags.COMPLETED);
 		result.contentPath = (String) restored.get(IParserTags.CONTENT_URL);
-        result.expanded = (ArrayList<String>) restored.get(IParserTags.EXPANDED);
-        result.expandRestore = (ArrayList<String>) restored.get(IParserTags.EXPANDRESTORE);
-        result.subItemCompleted = (Hashtable<String, String>) restored.get(IParserTags.SUBITEMCOMPLETED);
-        result.subItemSkipped = (Hashtable<String, String>) restored.get(IParserTags.SUBITEMSKIPPED);
-        Hashtable<String, String> managerData = (Hashtable<String, String>) restored.get(IParserTags.MANAGERDATA);
+		result.expanded = (ArrayList<String>) restored.get(IParserTags.EXPANDED);
+		result.expandRestore = (ArrayList<String>) restored.get(IParserTags.EXPANDRESTORE);
+		result.subItemCompleted = (Hashtable<String, String>) restored.get(IParserTags.SUBITEMCOMPLETED);
+		result.subItemSkipped = (Hashtable<String, String>) restored.get(IParserTags.SUBITEMSKIPPED);
+		Hashtable<String, String> managerData = (Hashtable<String, String>) restored.get(IParserTags.MANAGERDATA);
 		CheatSheetElement csElement = new CheatSheetElement(id);
-        result.manager = new CheatSheetManager(csElement);
-        result.manager.setData(managerData);
+		result.manager = new CheatSheetManager(csElement);
+		result.manager.setData(managerData);
 		return result;
 	}
 
@@ -147,7 +147,7 @@ public class TestStatePersistence {
 		propsToSave.manager.setData(KEY1, VALUE1);
 		propsToSave.manager.setData(KEY2, VALUE2);
 		save();
-        restore();
+		restore();
 		assertEquals(VALUE1, restored.manager.getData(KEY1));
 		assertEquals(VALUE2, restored.manager.getData(KEY2));
 	}

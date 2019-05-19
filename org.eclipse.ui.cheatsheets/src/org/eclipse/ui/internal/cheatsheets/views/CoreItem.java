@@ -255,10 +255,10 @@ public class CoreItem extends ViewItem {
 		separatorData.valign = TableWrapData.MIDDLE;
 		separator.setLayoutData(separatorData);
 		for (int i = 3; i <= SUBITEM_COLUMNS; i++) {
-		    Label filler = page.getToolkit().createLabel(buttonComposite, null);
-		    TableWrapData fillerData = new TableWrapData();
-		    fillerData.maxWidth = 0;
-		    filler.setLayoutData(fillerData);
+			Label filler = page.getToolkit().createLabel(buttonComposite, null);
+			TableWrapData fillerData = new TableWrapData();
+			fillerData.maxWidth = 0;
+			filler.setLayoutData(fillerData);
 		}
 	}
 
@@ -531,7 +531,7 @@ public class CoreItem extends ViewItem {
 						}
 						if ( status.getSeverity() == IStatus.ERROR) {
 							CheatSheetPlugin.getPlugin().getLog().log(status);
-						    org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
+							org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
 						}
 						return VIEWITEM_DONOT_ADVANCE;
 					} finally {
@@ -574,7 +574,7 @@ public class CoreItem extends ViewItem {
 		if (startButton != null) {
 			startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
 			startButton.setText(Messages.RESTART_TASK_TOOLTIP);
-		    startButton.setToolTipText(Messages.RESTART_TASK_TOOLTIP);
+			startButton.setToolTipText(Messages.RESTART_TASK_TOOLTIP);
 		}
 	}
 
@@ -584,9 +584,9 @@ public class CoreItem extends ViewItem {
 		if (startButton != null) {
 			startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));
 			if (startButton.getText() != null) {
-			    startButton.setText(Messages.PERFORM_TASK_TOOLTIP);
+				startButton.setText(Messages.PERFORM_TASK_TOOLTIP);
 			}
-		    startButton.setToolTipText(Messages.PERFORM_TASK_TOOLTIP);
+			startButton.setToolTipText(Messages.PERFORM_TASK_TOOLTIP);
 		}
 	}
 
@@ -599,7 +599,7 @@ public class CoreItem extends ViewItem {
 	@Override
 	void createCompletionComposite(boolean isFinalItem) {
 		String completionMessage = viewer.getManager().performVariableSubstitution
-		    (item.getCompletionMessage());
+			(item.getCompletionMessage());
 		if (completionMessage != null) {
 			Color backgroundColor = bodyWrapperComposite.getBackground();
 			completionComposite = page.getToolkit().createComposite(
@@ -673,25 +673,25 @@ public class CoreItem extends ViewItem {
 		ArrayList<SubItemCompositeHolder> list = getListOfSubItemCompositeHolders();
 		Control subitemLabel = null;
 		SubItemCompositeHolder holder = null;
-        if (list != null) {
+		if (list != null) {
 			for (Iterator<SubItemCompositeHolder> iter = list.iterator(); iter.hasNext() && subitemLabel == null;) {
 				holder = iter.next();
-        		if (!holder.isCompleted() && !holder.isSkipped()) {
-        			subitemLabel = holder.getSubitemLabel();
-        		}
-        	}
-        }
-        if (subitemLabel != null) {
-    		FormToolkit.ensureVisible(subitemLabel);
-    		if (holder.getStartButton() != null) {
-    			holder.getStartButton().setFocus();
-    		} else if (holder.getCompleteButton() != null) {
-    			holder.getCompleteButton().setFocus();
-    		}
-        } else {
-    		FormToolkit.ensureVisible(getMainItemComposite());
-    		super.setFocus();
-        }
+				if (!holder.isCompleted() && !holder.isSkipped()) {
+					subitemLabel = holder.getSubitemLabel();
+				}
+			}
+		}
+		if (subitemLabel != null) {
+			FormToolkit.ensureVisible(subitemLabel);
+			if (holder.getStartButton() != null) {
+				holder.getStartButton().setFocus();
+			} else if (holder.getCompleteButton() != null) {
+				holder.getCompleteButton().setFocus();
+			}
+		} else {
+			FormToolkit.ensureVisible(getMainItemComposite());
+			super.setFocus();
+		}
 	}
 
 }

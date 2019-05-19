@@ -36,16 +36,16 @@ public class CookiesData extends RequestData {
 	public boolean isSynchToc() {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
-        		for (Cookie cookie : cookies) {
-        			if ("synchToc".equals(cookie.getName())) { //$NON-NLS-1$
-        				return String.valueOf(true).equals(cookie.getValue());
-        			}
-        		}
+				for (Cookie cookie : cookies) {
+					if ("synchToc".equals(cookie.getName())) { //$NON-NLS-1$
+						return String.valueOf(true).equals(cookie.getValue());
+					}
+				}
 		}
 		boolean isSynchToc = Platform.getPreferencesService().getBoolean
-		    (HelpBasePlugin.PLUGIN_ID, "advanced.syncDefault", false, null); //$NON-NLS-1$
+			(HelpBasePlugin.PLUGIN_ID, "advanced.syncDefault", false, null); //$NON-NLS-1$
 		CookieUtil.setCookieValue("synchToc", Boolean.toString(isSynchToc), request, response); //$NON-NLS-1$
 		return isSynchToc;
-    }
+	}
 
 }

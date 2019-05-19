@@ -34,10 +34,10 @@ public class ShowIndexHandler extends AbstractHandler {
 	 * Currently returns true, could be controlled by a preference
 	 * in the future
 	 */
-    private boolean isOpenInHelpView() {
-    	boolean searchFromBrowser =
-    		Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, false, null);
-	    return !searchFromBrowser;
+	private boolean isOpenInHelpView() {
+		boolean searchFromBrowser =
+			Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, false, null);
+		return !searchFromBrowser;
 	}
 
 	@Override

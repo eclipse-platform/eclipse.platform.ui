@@ -83,8 +83,8 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 		{
 			out.print(" checked=\"checked\""); //$NON-NLS-1$
 
-	        PlatformUI.getPreferenceStore().setValue(
-	        		IWorkbenchPreferenceConstants.SHOW_INTRO, alwaysShowIntro);
+			PlatformUI.getPreferenceStore().setValue(
+					IWorkbenchPreferenceConstants.SHOW_INTRO, alwaysShowIntro);
 		}
 
 		out.println("/><label for=\"run-action-" + id + "\">"+getText()+"</label></div>");  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
@@ -96,7 +96,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 		if (disposed)
 			return;
 
-        boolean alwaysShowIntro = getAlwaysShowIntroPref();
+		boolean alwaysShowIntro = getAlwaysShowIntroPref();
 
 		Button checkBox = new Button(parent,SWT.CHECK);
 		toolkit.adapt(checkBox,false,false);
@@ -112,7 +112,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 
 		if (alwaysShowIntro)
 			PlatformUI.getPreferenceStore().setValue(
-        		IWorkbenchPreferenceConstants.SHOW_INTRO, alwaysShowIntro);
+				IWorkbenchPreferenceConstants.SHOW_INTRO, alwaysShowIntro);
 	}
 
 	@Override
@@ -141,14 +141,14 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 	{
 		// Retrieve current state of IUniversalIntroConst.ALWAYS_SHOW_INTRO, change it, and save it back
 		// to both ALWAYS_SHOW_INTRO and SHOW_INTRO
-        boolean alwaysShowIntro = !getAlwaysShowIntroPref();
+		boolean alwaysShowIntro = !getAlwaysShowIntroPref();
 
-        // local preference store
-        setAlwaysShowIntroPref(alwaysShowIntro);
+		// local preference store
+		setAlwaysShowIntroPref(alwaysShowIntro);
 
-        // workbench preference store
-        PlatformUI.getPreferenceStore().setValue(
-        		IWorkbenchPreferenceConstants.SHOW_INTRO, alwaysShowIntro);
+		// workbench preference store
+		PlatformUI.getPreferenceStore().setValue(
+				IWorkbenchPreferenceConstants.SHOW_INTRO, alwaysShowIntro);
 
 	}
 

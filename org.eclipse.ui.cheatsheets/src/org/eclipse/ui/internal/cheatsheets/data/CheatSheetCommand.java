@@ -57,9 +57,9 @@ public class CheatSheetCommand extends AbstractExecutable {
 	@Override
 	public boolean handleAttribute(Node attribute) {
 		if (IParserTags.SERIALIZATION.equals(attribute.getNodeName())) {
-		    setSerialization(attribute.getNodeValue());
-		    serializationFound = true;
-		    return true;
+			setSerialization(attribute.getNodeValue());
+			serializationFound = true;
+			return true;
 		} else if (IParserTags.RETURNS.equals(attribute.getNodeName())) {
 			setReturns(attribute.getNodeValue());
 			return true;

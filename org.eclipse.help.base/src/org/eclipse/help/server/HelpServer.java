@@ -44,13 +44,13 @@ public abstract class HelpServer {
 	 * @param webappName the name of a running web application
 	 * @throws CoreException If there was any error during stopping.
 	 */
-    public abstract void stop(String webappName) throws CoreException ;
+	public abstract void stop(String webappName) throws CoreException ;
 
 	/**
 	* Returns the port number the app server listens on
 	* @return integer port number, 0 if server not started
 	*/
-    public abstract int getPort();
+	public abstract int getPort();
 
 
 	/**
@@ -59,5 +59,5 @@ public abstract class HelpServer {
 	* @return String representation of host name of IP, null if server not
 	*         started yet
 	*/
-    public abstract String getHost();
+	public abstract String getHost();
 }

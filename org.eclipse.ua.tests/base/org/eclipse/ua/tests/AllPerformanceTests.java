@@ -36,7 +36,7 @@ public class AllPerformanceTests extends TestSuite {
 	 */
 	public AllPerformanceTests() {
 		addTest(AllCheatSheetPerformanceTests.suite());
-        addTest(AllHelpPerformanceTests.suite());
+		addTest(AllHelpPerformanceTests.suite());
 
 		/*
 		 * Disabled due to inability to backport test to 3.2. Internal

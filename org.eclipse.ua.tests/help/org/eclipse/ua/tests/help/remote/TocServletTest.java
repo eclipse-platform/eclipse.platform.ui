@@ -56,51 +56,51 @@ public class TocServletTest {
 	public void testTocServletContainsUAToc() throws Exception {
 		Node root = getTocContributions("en");
 		Element[] UARoot = findContributionById(root, "/org.eclipse.ua.tests/data/help/toc/root.xml");
-	    assertEquals(1, UARoot.length);
+		assertEquals(1, UARoot.length);
 	}
 
 	@Test
 	public void testTocServletContainsFilteredToc() throws Exception {
 		Node root = getTocContributions("en");
 		Element[] UARoot = findContributionById(root, "/org.eclipse.ua.tests/data/help/toc/filteredToc/toc.xml");
-	    assertEquals(1, UARoot.length);
+		assertEquals(1, UARoot.length);
 	}
 
 	@Test
 	public void testTocServletContainsUnlinkedToc() throws Exception {
 		Node root = getTocContributions("en");
 		Element[] UARoot = findContributionById(root, "/org.eclipse.ua.tests/data/help/toc/filteredToc/nonPrimaryToc.xml");
-	    assertEquals(1, UARoot.length);
+		assertEquals(1, UARoot.length);
 	}
 
 	@Test
 	public void testReadEnToc() throws Exception {
 		Node root = getTocContributions("en");
 		Element[] uaRoot = findContributionById(root, "/org.eclipse.ua.tests/data/help/search/toc.xml");
-	    assertEquals(1, uaRoot.length);
-	    Element[] toc = findChildren(uaRoot[0], "toc", "label", "search");
-	    assertEquals(1, toc.length);
-	    Element[] topicSearch = findChildren(toc[0], "topic", "label", "search");
-	    assertEquals(1, topicSearch.length);
-	    Element[] topicEn = findChildren(topicSearch[0], "topic", "label", "testen.html");
-	    assertEquals(1, topicEn.length);
-	    Element[] topicDe = findChildren(topicSearch[0], "topic", "label", "testde.html");
-	    assertEquals(0, topicDe.length);
+		assertEquals(1, uaRoot.length);
+		Element[] toc = findChildren(uaRoot[0], "toc", "label", "search");
+		assertEquals(1, toc.length);
+		Element[] topicSearch = findChildren(toc[0], "topic", "label", "search");
+		assertEquals(1, topicSearch.length);
+		Element[] topicEn = findChildren(topicSearch[0], "topic", "label", "testen.html");
+		assertEquals(1, topicEn.length);
+		Element[] topicDe = findChildren(topicSearch[0], "topic", "label", "testde.html");
+		assertEquals(0, topicDe.length);
 	}
 
 	@Test
 	public void testReadDeToc() throws Exception {
 		Node root = getTocContributions("de");
 		Element[] uaRoot = findContributionById(root, "/org.eclipse.ua.tests/data/help/search/toc.xml");
-	    assertEquals(1, uaRoot.length);
-	    Element[] toc = findChildren(uaRoot[0], "toc", "label", "search");
-	    assertEquals(1, toc.length);
-	    Element[] topicSearch = findChildren(toc[0], "topic", "label", "search");
-	    assertEquals(1, topicSearch.length);
-	    Element[] topicEn = findChildren(topicSearch[0], "topic", "label", "testen.html");
-	    assertEquals(0, topicEn.length);
-	    Element[] topicDe = findChildren(topicSearch[0], "topic", "label", "testde.html");
-	    assertEquals(1, topicDe.length);
+		assertEquals(1, uaRoot.length);
+		Element[] toc = findChildren(uaRoot[0], "toc", "label", "search");
+		assertEquals(1, toc.length);
+		Element[] topicSearch = findChildren(toc[0], "topic", "label", "search");
+		assertEquals(1, topicSearch.length);
+		Element[] topicEn = findChildren(topicSearch[0], "topic", "label", "testen.html");
+		assertEquals(0, topicEn.length);
+		Element[] topicDe = findChildren(topicSearch[0], "topic", "label", "testde.html");
+		assertEquals(1, topicDe.length);
 	}
 
 	private Element[] findContributionById(Node root, String id) {
@@ -116,7 +116,7 @@ public class TocServletTest {
 				Element nextElement = (Element)next;
 				if ( childKind.equals(nextElement.getTagName()) && attributeValue.equals(nextElement.getAttribute(attributeName))) {
 
-				    results.add(next);
+					results.add(next);
 				}
 			}
 		}

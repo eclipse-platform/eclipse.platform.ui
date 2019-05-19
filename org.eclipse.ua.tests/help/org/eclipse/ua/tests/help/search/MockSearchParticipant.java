@@ -45,7 +45,7 @@ public class MockSearchParticipant extends SearchParticipant {
 		String summary = isDoc1? "Summary1" : "Summary2";
 		String contents = isDoc1? "jkijkijkk frgeded" : "olhoykk lgktihku";
 		doc.setTitle(title);
-        doc.setSummary(summary);
+		doc.setSummary(summary);
 		doc.addContents(contents);
 		return Status.OK_STATUS;
 	}

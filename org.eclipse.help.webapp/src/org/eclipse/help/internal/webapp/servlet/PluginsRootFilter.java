@@ -27,11 +27,11 @@ import org.eclipse.help.webapp.IFilter;
  */
 public class PluginsRootFilter implements IFilter {
 
-    @Override
+	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String pathPrefix = FilterUtils.getRelativePathPrefix(req);
 		if (pathPrefix.length() >= 3) {
-		    return new PluginsRootResolvingStream(out, req, pathPrefix.substring(0, pathPrefix.length() - 3));
+			return new PluginsRootResolvingStream(out, req, pathPrefix.substring(0, pathPrefix.length() - 3));
 		}
 		return out;
 	}

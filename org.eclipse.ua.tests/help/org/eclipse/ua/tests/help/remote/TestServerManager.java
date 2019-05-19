@@ -41,8 +41,8 @@ public class TestServerManager {
 
 	public static void stop(String webappName, int index) throws CoreException {
 		if (serverRunning[index]) {
-		    getHelpServer(index).stop(webappName);
-		    serverRunning[index] = false;
+			getHelpServer(index).stop(webappName);
+			serverRunning[index] = false;
 		}
 	}
 
@@ -51,7 +51,7 @@ public class TestServerManager {
 	}
 
 	public static String getHost(int index) {
-        return getHelpServer(index).getHost();
+		return getHelpServer(index).getHost();
 	}
 
 }

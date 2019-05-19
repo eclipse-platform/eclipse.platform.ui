@@ -43,11 +43,11 @@ public class UAElementTest {
 		Object topicChildren = element.getChildren(Topic.class);
 		assertTrue(topicChildren instanceof Topic[]);
 		assertTrue(((Topic[])topicChildren).length == 0);
-        assertNull(element.getParentElement());
-        assertNull(element.getAttribute("a1"));
-        assertTrue(element.equals(element));
-        assertFalse(element.equals(null));
-        assertFalse(element.equals("A string"));
+		assertNull(element.getParentElement());
+		assertNull(element.getAttribute("a1"));
+		assertTrue(element.equals(element));
+		assertFalse(element.equals(null));
+		assertFalse(element.equals("A string"));
 	}
 
 	@Test

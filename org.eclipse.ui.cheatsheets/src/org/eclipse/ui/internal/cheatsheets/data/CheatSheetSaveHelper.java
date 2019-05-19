@@ -206,10 +206,10 @@ public class CheatSheetSaveHelper {
 	public IStatus saveState(Properties properties, CheatSheetManager csm) {
 		String csID = (String) properties.get(IParserTags.ID);
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(IParserTags.CHEATSHEET_STATE);
-        IStatus status = saveToMemento(properties, csm, writeMemento);
-        if (!status.isOK()) {
-        	return status;
-        }
+		IStatus status = saveToMemento(properties, csm, writeMemento);
+		if (!status.isOK()) {
+			return status;
+		}
 		return CheatSheetPlugin.getPlugin().saveMemento(writeMemento, csID + DOT_XML);
 	}
 
@@ -223,7 +223,7 @@ public class CheatSheetSaveHelper {
 			writeMemento.putString(IParserTags.ID, (String)properties.get(IParserTags.ID));
 			String contentPath = (String)properties.get(IParserTags.CONTENT_URL);
 			if (contentPath != null) {
-			    writeMemento.putString(IParserTags.CONTENT_URL, contentPath);
+				writeMemento.putString(IParserTags.CONTENT_URL, contentPath);
 			}
 
 			addListOfStringsToMemento(writeMemento,  properties, IParserTags.COMPLETED);
@@ -267,7 +267,7 @@ public class CheatSheetSaveHelper {
 		properties.put(IParserTags.ID, memento.getString(IParserTags.ID));
 		String contentURL = memento.getString(IParserTags.CONTENT_URL);
 		if (contentURL != null) {
-		    properties.put(IParserTags.CONTENT_URL, contentURL);
+			properties.put(IParserTags.CONTENT_URL, contentURL);
 		}
 
 		getListOfStringsFromMemento(memento,  properties, IParserTags.COMPLETED);

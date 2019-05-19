@@ -45,7 +45,7 @@ public class UserCriterionValueDefinition implements ICriterionValueDefinition {
 
 	@Override
 	public IUAElement[] getChildren() {
-        return new IUAElement[0];
+		return new IUAElement[0];
 	}
 
 }

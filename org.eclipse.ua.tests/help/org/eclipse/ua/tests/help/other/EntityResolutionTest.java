@@ -53,39 +53,39 @@ public class EntityResolutionTest {
 	}
 
 	@Test
-    public void testFramset() throws Exception {
-	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd", true);
-    }
+	public void testFramset() throws Exception {
+		resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd", true);
+	}
 
 	@Test
-    public void testFlat() throws Exception {
-	    resolve("http://www.w3.org/TR/xhtml11/DTD/xhtml11-flat.dtd", true);
-    }
+	public void testFlat() throws Exception {
+		resolve("http://www.w3.org/TR/xhtml11/DTD/xhtml11-flat.dtd", true);
+	}
 
 	@Test
-    public void testStrict() throws Exception {
-	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd", true);
-    }
+	public void testStrict() throws Exception {
+		resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd", true);
+	}
 
 	@Test
-    public void testTransitional() throws Exception {
-	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", true);
-    }
+	public void testTransitional() throws Exception {
+		resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", true);
+	}
 
 	@Test
-    public void testLat1() throws Exception {
-	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent", true);
-    }
+	public void testLat1() throws Exception {
+		resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent", true);
+	}
 
 	@Test
-    public void testSpecial() throws Exception {
-	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent", true);
-    }
+	public void testSpecial() throws Exception {
+		resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent", true);
+	}
 
 	@Test
-    public void testResolveSymbol() throws Exception {
-	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent", true);
-    }
+	public void testResolveSymbol() throws Exception {
+		resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent", true);
+	}
 
 	@Test
 	public void testUnsupportedDtds() throws Exception {

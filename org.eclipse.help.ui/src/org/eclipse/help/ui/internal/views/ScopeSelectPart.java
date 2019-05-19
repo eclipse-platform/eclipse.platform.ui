@@ -64,7 +64,7 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-			    doChangeScopeSet();
+				doChangeScopeSet();
 			}
 		});
 		toolkit.adapt(scopeSetLink, true, true);
@@ -177,7 +177,7 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 	@Override
 	public void dispose() {
 		if (scopeObserver != null) {
-		    ScopeState.getInstance().getScopeSetManager().deleteObserver(scopeObserver);
+			ScopeState.getInstance().getScopeSetManager().deleteObserver(scopeObserver);
 		}
 		super.dispose();
 	}

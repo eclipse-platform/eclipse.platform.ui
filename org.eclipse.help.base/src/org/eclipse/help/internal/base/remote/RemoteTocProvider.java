@@ -116,9 +116,9 @@ public class RemoteTocProvider extends AbstractTocProvider {
 									currentContributions.length);
 						}
 					} catch (Throwable t) {
-				        String msg = "Internal error while reading TOC contents from remote server"; //$NON-NLS-1$
-				        HelpBasePlugin.logError(msg, t);
-				        RemoteHelp.setError(t);
+						String msg = "Internal error while reading TOC contents from remote server"; //$NON-NLS-1$
+						HelpBasePlugin.logError(msg, t);
+						RemoteHelp.setError(t);
 					} finally {
 						if (in != null) {
 							try {

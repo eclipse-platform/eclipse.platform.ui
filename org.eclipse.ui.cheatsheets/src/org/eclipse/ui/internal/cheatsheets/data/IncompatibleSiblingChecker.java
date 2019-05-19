@@ -26,15 +26,15 @@ import org.w3c.dom.Node;
 
 public class IncompatibleSiblingChecker {
 
-    private IStatusContainer statusContainer;
+	private IStatusContainer statusContainer;
 	private Node parentNode;
 	private String existingChild;
 	private boolean errorReported = false;
 
 	public IncompatibleSiblingChecker(IStatusContainer statusContainer, Node parentNode) {
-    	this.statusContainer = statusContainer;
-    	this.parentNode = parentNode;
-    }
+		this.statusContainer = statusContainer;
+		this.parentNode = parentNode;
+	}
 
 	/**
 	 * Check to see that adding this new element does not create an error based on
@@ -59,14 +59,14 @@ public class IncompatibleSiblingChecker {
 
 	private boolean isSubitem(String elementKind) {
 		return IParserTags.SUBITEM.equals(elementKind)
-	    || IParserTags.CONDITIONALSUBITEM.equals(elementKind)
-	    || IParserTags.REPEATEDSUBITM.equals(elementKind);
+		|| IParserTags.CONDITIONALSUBITEM.equals(elementKind)
+		|| IParserTags.REPEATEDSUBITM.equals(elementKind);
 	}
 
 	private boolean isExecutable(String elementKind) {
 		return IParserTags.ACTION.equals(elementKind)
-	    || IParserTags.COMMAND.equals(elementKind)
-	    || IParserTags.PERFORMWHEN.equals(elementKind);
+		|| IParserTags.COMMAND.equals(elementKind)
+		|| IParserTags.PERFORMWHEN.equals(elementKind);
 	}
 
 	private void reportIncompatible(String elementKind) {
@@ -75,11 +75,11 @@ public class IncompatibleSiblingChecker {
 		}
 		errorReported = true;
 		String message;
-        if (elementKind.equals(existingChild)) {
-		     message = NLS.bind(Messages.ERROR_PARSING_DUPLICATE_CHILD, (new Object[] {parentNode.getNodeName(), elementKind}));
-        } else {
-		     message = NLS.bind(Messages.ERROR_PARSING_INCOMPATIBLE_CHILDREN, (new Object[] {parentNode.getNodeName(), existingChild, elementKind}));
-        }
-	    statusContainer.addStatus(IStatus.ERROR, message, null);
+		if (elementKind.equals(existingChild)) {
+			message = NLS.bind(Messages.ERROR_PARSING_DUPLICATE_CHILD, (new Object[] {parentNode.getNodeName(), elementKind}));
+		} else {
+			message = NLS.bind(Messages.ERROR_PARSING_INCOMPATIBLE_CHILDREN, (new Object[] {parentNode.getNodeName(), existingChild, elementKind}));
+		}
+		statusContainer.addStatus(IStatus.ERROR, message, null);
 	}
 }

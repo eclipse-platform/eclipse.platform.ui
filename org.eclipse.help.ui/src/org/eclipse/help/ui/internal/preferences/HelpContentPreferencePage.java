@@ -122,7 +122,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		List<IC> ics = table.getICs();
 		ICPreferences.setICs(ics);
 
-    	RemoteHelp.notifyPreferenceChange();
+		RemoteHelp.notifyPreferenceChange();
 		return super.performOk();
 	}
 
@@ -137,7 +137,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		searchLocalHelpOnly.addListener(SWT.Selection, changeListener);
 
 		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
-		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
+			(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 
 		searchLocalHelpOnly.setSelection(!isRemoteOn);
 		Dialog.applyDialogFont(searchLocalHelpOnly);
@@ -149,9 +149,9 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		searchLocalHelpFirst.addListener(SWT.Selection, changeListener);
 
 		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
-	    	(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
+			(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 		boolean isRemotePreferred = Platform.getPreferencesService().getBoolean
-	    	(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
+			(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
 
 		searchLocalHelpFirst.setSelection(isRemoteOn && !isRemotePreferred);
 		Dialog.applyDialogFont(searchLocalHelpFirst);

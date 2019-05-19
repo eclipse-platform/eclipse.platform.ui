@@ -37,8 +37,8 @@ public class SearchIndexCreation {
 	@Before
 	public void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
-        mode = BaseHelpSystem.getMode();
-        RemotePreferenceStore.savePreferences();
+		mode = BaseHelpSystem.getMode();
+		RemotePreferenceStore.savePreferences();
 		RemotePreferenceStore.setMockRemoteServer();
 		RemotePreferenceStore.disableErrorPage();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
@@ -103,7 +103,7 @@ public class SearchIndexCreation {
 			if (status.getException() != null) {
 				throw status.getException();
 			}
-		    fail(doc + " status = " + status.getMessage());
+			fail(doc + " status = " + status.getMessage());
 		}
 	}
 

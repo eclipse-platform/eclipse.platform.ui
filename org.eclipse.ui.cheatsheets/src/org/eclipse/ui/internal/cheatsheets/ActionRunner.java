@@ -97,8 +97,8 @@ public class ActionRunner {
 
 		if (status.isOK() && listenerFired[0]) {
 			if (!listenerResult[0]) {
-			    status =new Status(IStatus.WARNING, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ACTION_FAILED, null);
-		    }
+				status =new Status(IStatus.WARNING, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ACTION_FAILED, null);
+			}
 		}
 
 		return status;

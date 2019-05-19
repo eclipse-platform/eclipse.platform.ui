@@ -80,7 +80,7 @@ public class TocSorter {
 			}
 			map.put(key, toc.getToc().getLabel());
 		}
-	    return map;
+		return map;
 	}
 
 	/*

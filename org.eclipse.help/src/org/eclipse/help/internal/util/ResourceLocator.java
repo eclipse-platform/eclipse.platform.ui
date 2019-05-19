@@ -152,7 +152,7 @@ public class ResourceLocator {
 			return null;
 		}
 
-	    checkForDuplicateExtensionElements(elements);
+		checkForDuplicateExtensionElements(elements);
 
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];

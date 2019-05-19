@@ -25,56 +25,56 @@ import org.w3c.dom.Element;
  */
 public class IntroHead extends AbstractIntroElement {
 
-    protected static final String TAG_HEAD = "head"; //$NON-NLS-1$
+	protected static final String TAG_HEAD = "head"; //$NON-NLS-1$
 
-    private static final String ATT_SRC = "src"; //$NON-NLS-1$
-    // default encoding is UTF-8
-    private static final String ATT_ENCODING = "encoding"; //$NON-NLS-1$
+	private static final String ATT_SRC = "src"; //$NON-NLS-1$
+	// default encoding is UTF-8
+	private static final String ATT_ENCODING = "encoding"; //$NON-NLS-1$
 
-    private String src;
-    private String encoding;
+	private String src;
+	private String encoding;
 
-    IntroHead(IConfigurationElement element) {
-        super(element);
-        src = element.getAttribute(ATT_SRC);
-        encoding = element.getAttribute(ATT_ENCODING);
-        if (encoding == null)
-            encoding = "UTF-8"; //$NON-NLS-1$
+	IntroHead(IConfigurationElement element) {
+		super(element);
+		src = element.getAttribute(ATT_SRC);
+		encoding = element.getAttribute(ATT_ENCODING);
+		if (encoding == null)
+			encoding = "UTF-8"; //$NON-NLS-1$
 
-        // Resolve.
-        src = BundleUtil.getResourceLocation(src, element);
-    }
-
-
-    IntroHead(Element element, Bundle bundle, String base) {
-        super(element, bundle);
-        src = getAttribute(element, ATT_SRC);
-        encoding = getAttribute(element, ATT_ENCODING);
-        if (encoding == null)
-            encoding = "UTF-8"; //$NON-NLS-1$
-
-        // Resolve.
-        src = BundleUtil.getResolvedResourceLocation(base, src, bundle);
-    }
+		// Resolve.
+		src = BundleUtil.getResourceLocation(src, element);
+	}
 
 
-    /**
-     * @return Returns the src.
-     */
-    public String getSrc() {
-        return src;
-    }
+	IntroHead(Element element, Bundle bundle, String base) {
+		super(element, bundle);
+		src = getAttribute(element, ATT_SRC);
+		encoding = getAttribute(element, ATT_ENCODING);
+		if (encoding == null)
+			encoding = "UTF-8"; //$NON-NLS-1$
 
-    /**
-     * @return Returns the encoding of the inlined file. Default is UTF-8.
-     */
-    public String getInlineEncoding() {
-        return encoding;
-    }
+		// Resolve.
+		src = BundleUtil.getResolvedResourceLocation(base, src, bundle);
+	}
 
-    @Override
+
+	/**
+	 * @return Returns the src.
+	 */
+	public String getSrc() {
+		return src;
+	}
+
+	/**
+	 * @return Returns the encoding of the inlined file. Default is UTF-8.
+	 */
+	public String getInlineEncoding() {
+		return encoding;
+	}
+
+	@Override
 	public int getType() {
-        return AbstractIntroElement.HEAD;
-    }
+		return AbstractIntroElement.HEAD;
+	}
 
 }

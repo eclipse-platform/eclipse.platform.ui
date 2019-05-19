@@ -221,7 +221,7 @@ public class IndexAssembler {
 				}
 				String title = element.getAttribute("title"); //$NON-NLS-1$
 				if (title != null) {
-			        topic.setLabel(title);
+					topic.setLabel(title);
 				}
 			}
 			return UNHANDLED;
@@ -240,9 +240,9 @@ public class IndexAssembler {
 			int c1 = getCategory(o1);
 			int c2 = getCategory(o2);
 			if (c1 == c2) {
-                if (o1 instanceof IndexSee) {
-                	return ((IndexSee)o1).compareTo(o2);
-                }
+				if (o1 instanceof IndexSee) {
+					return ((IndexSee)o1).compareTo(o2);
+				}
 				// same type of object; compare alphabetically
 				String s1 = getLabel(o1);
 				String s2 = getLabel(o2);

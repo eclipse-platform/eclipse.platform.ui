@@ -21,63 +21,63 @@ import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 
 public class IntroModelContentProvider implements ITreeContentProvider {
 
-    @Override
+	@Override
 	public Object[] getChildren(Object element) {
 
-        AbstractIntroElement introElement = null;
-        if (element instanceof AbstractIntroElement)
-            // synch the resource first.
-            introElement = (AbstractIntroElement) element;
+		AbstractIntroElement introElement = null;
+		if (element instanceof AbstractIntroElement)
+			// synch the resource first.
+			introElement = (AbstractIntroElement) element;
 
-        if (introElement != null
-                && introElement
-                    .isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
-            return ((AbstractIntroContainer) introElement).getChildren();
+		if (introElement != null
+				&& introElement
+					.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
+			return ((AbstractIntroContainer) introElement).getChildren();
 
-        return new Object[0];
-    }
+		return new Object[0];
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {
-        AbstractIntroElement introElement = null;
-        if (element instanceof AbstractIntroElement) {
-            // synch the resource first.
-            introElement = (AbstractIntroElement) element;
-            return introElement.getParent();
-        }
-        return null;
-    }
+		AbstractIntroElement introElement = null;
+		if (element instanceof AbstractIntroElement) {
+			// synch the resource first.
+			introElement = (AbstractIntroElement) element;
+			return introElement.getParent();
+		}
+		return null;
+	}
 
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        AbstractIntroElement introElement = null;
-        if (element instanceof AbstractIntroElement)
-            // synch the resource first.
-            introElement = (AbstractIntroElement) element;
-        if (introElement != null
-                && introElement
-                    .isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
-            return true;
-        return false;
-    }
+		AbstractIntroElement introElement = null;
+		if (element instanceof AbstractIntroElement)
+			// synch the resource first.
+			introElement = (AbstractIntroElement) element;
+		if (introElement != null
+				&& introElement
+					.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
+			return true;
+		return false;
+	}
 
 
-    @Override
+	@Override
 	public Object[] getElements(Object element) {
-        return getChildren(element);
-    }
+		return getChildren(element);
+	}
 
 
-    @Override
+	@Override
 	public void dispose() {
-        // nothing to dispose
-    }
+		// nothing to dispose
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        // do nothing
+		// do nothing
 
-    }
+	}
 
 }

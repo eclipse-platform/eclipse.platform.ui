@@ -60,7 +60,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 					hHint, flushCache);
 
 			Point botSize = dynamicHelpPart == null ? new Point(0, 0) :
-			    dynamicHelpPart.getControl().computeSize(wHint,
+				dynamicHelpPart.getControl().computeSize(wHint,
 					hHint, flushCache);
 			Point size = new Point(0, 0);
 			size.x = Math.max(topSize.x, botSize.x);
@@ -74,13 +74,13 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 			Point topSize = contextHelpPart.getControl().computeSize(
 					carea.width, SWT.DEFAULT, flushCache);
 			Point botSize = dynamicHelpPart == null ? new Point(0, 0) :
-			    dynamicHelpPart.getControl().computeSize(
+				dynamicHelpPart.getControl().computeSize(
 					carea.width, SWT.DEFAULT, flushCache);
 			int y = VSPACE;
 			contextHelpPart.getControl().setBounds(0, y, carea.width, topSize.y);
 			y += topSize.y + VSPACE;
 			if (dynamicHelpPart != null) {
-			    dynamicHelpPart.getControl().setBounds(0, y, carea.width, botSize.y);
+				dynamicHelpPart.getControl().setBounds(0, y, carea.width, botSize.y);
 			}
 		}
 
@@ -116,7 +116,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		contextHelpPart = new ContextHelpPart(form.getBody(), toolkit);
 		if (isUseDynamicHelp()) {
 		     dynamicHelpPart = new DynamicHelpPart(form.getBody(), toolkit);
-	    }
+		}
 	}
 
 	@Override
@@ -126,8 +126,8 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		contextHelpPart.init(parent, IHelpUIConstants.HV_CONTEXT_HELP, memento);
 		mform.addPart(contextHelpPart);
 		if (isUseDynamicHelp()) {
-		    dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT, memento);
-		    mform.addPart(dynamicHelpPart);
+			dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT, memento);
+			mform.addPart(dynamicHelpPart);
 		}
 		mform.initialize();
 	}
@@ -184,7 +184,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	public void stop() {
 		contextHelpPart.stop();
 		if (dynamicHelpPart != null) {
-		    dynamicHelpPart.stop();
+			dynamicHelpPart.stop();
 		}
 	}
 
@@ -225,14 +225,14 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	public static boolean isUseDynamicHelp() {
-	    if (!dynamicHelpPreferenceRead) {
-	    	dynamicHelpPreferenceRead = true;
-	    	// Preference created in case anyone complains about the removal of
-	    	// the dynamic help section. This is not API, not documented and may
-	    	// be removed in a future release.
-	    	useDynamicHelp =
-	    		Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, "show_dynamic_help", false, null); //$NON-NLS-1$
-	    }
+		if (!dynamicHelpPreferenceRead) {
+			dynamicHelpPreferenceRead = true;
+			// Preference created in case anyone complains about the removal of
+			// the dynamic help section. This is not API, not documented and may
+			// be removed in a future release.
+			useDynamicHelp =
+				Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, "show_dynamic_help", false, null); //$NON-NLS-1$
+		}
 		return useDynamicHelp;
 	}
 }

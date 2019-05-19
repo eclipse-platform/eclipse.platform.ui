@@ -22,22 +22,22 @@ import org.w3c.dom.Element;
  */
 public class IntroPageTitle extends IntroText {
 
-    protected static final String TAG_TITLE = "title"; //$NON-NLS-1$
+	protected static final String TAG_TITLE = "title"; //$NON-NLS-1$
 
-    IntroPageTitle(Element element, Bundle bundle) {
-        super(element, bundle);
-    }
+	IntroPageTitle(Element element, Bundle bundle) {
+		super(element, bundle);
+	}
 
-    /**
-     * @return Returns the Title text.
-     */
-    public String getTitle() {
-        return getText();
-    }
+	/**
+	 * @return Returns the Title text.
+	 */
+	public String getTitle() {
+		return getText();
+	}
 
-    @Override
+	@Override
 	public int getType() {
-        return AbstractIntroElement.PAGE_TITLE;
-    }
+		return AbstractIntroElement.PAGE_TITLE;
+	}
 
 }

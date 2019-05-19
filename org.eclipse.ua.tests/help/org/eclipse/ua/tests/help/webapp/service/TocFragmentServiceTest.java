@@ -63,7 +63,7 @@ public class TocFragmentServiceTest {
 		Node root = getTreeData(url);
 		Element[] UARoot = findNodeById(root,
 				"/org.eclipse.ua.tests/data/help/toc/root.xml");
-	    assertEquals(1, UARoot.length);
+		assertEquals(1, UARoot.length);
 	}
 
 	@Test
@@ -161,7 +161,7 @@ public class TocFragmentServiceTest {
 				if ( childKind.equals(nextElement.getTagName())
 						&& attributeValue.equals(nextElement.getAttribute(attributeName))) {
 
-				    results.add(next);
+					results.add(next);
 				}
 			}
 		}
@@ -182,13 +182,13 @@ public class TocFragmentServiceTest {
 				if ( childKind.equals(nextElement.getTagName()) ) {
 					String href = nextElement.getAttribute("href");
 					if (href != null) {
-                        int query = href.indexOf('?');
-                        if (query >= 0) {
-                        	href = href.substring(0, query);
-                        }
-	                    if (href.equals (attributeValue)) {
-					        results.add(next);
-	                    }
+						int query = href.indexOf('?');
+						if (query >= 0) {
+							href = href.substring(0, query);
+						}
+						if (href.equals (attributeValue)) {
+							results.add(next);
+						}
 					}
 				}
 			}

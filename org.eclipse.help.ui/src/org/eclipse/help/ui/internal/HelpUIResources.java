@@ -153,10 +153,10 @@ public class HelpUIResources {
 
 			IConfigurationElement[] configElements = extensionsFound[i].getConfigurationElements();
 			for(int j=0; j < configElements.length; j++){
-           	  if (configElements[j].getName().equals(TOC_ICON_ELEMENT)){
-           		   IConfigurationElement iconElem = configElements[j];
-           		   String attrs[] = iconElem.getAttributeNames();
-           		   String contributorID = iconElem.getContributor().getName();
+				if (configElements[j].getName().equals(TOC_ICON_ELEMENT)){
+					IConfigurationElement iconElem = configElements[j];
+					String attrs[] = iconElem.getAttributeNames();
+					String contributorID = iconElem.getContributor().getName();
 
 					for (int k=0; k < attrs.length; k++){
 						if(attrs[k].equals(OPEN_ICON_PATH))

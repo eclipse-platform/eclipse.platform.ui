@@ -33,8 +33,8 @@ public class LoadIndexUsingRemoteHelp {
 
 	@Before
 	public void setUp() throws Exception {
-        RemotePreferenceStore.savePreferences();
-        mode = BaseHelpSystem.getMode();
+		RemotePreferenceStore.savePreferences();
+		mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
 
@@ -71,7 +71,7 @@ public class LoadIndexUsingRemoteHelp {
 		HelpPlugin.getIndexManager().clearCache();
 		index = HelpPlugin.getIndexManager().getIndex(locale);
 		// Entry 1 has the same child on each remote server, Entry 2 has different children
-        entry1 = matchingEntries(index, "entry1_" + locale);
+		entry1 = matchingEntries(index, "entry1_" + locale);
 		entry2 = matchingEntries(index, "entry2_" + locale);
 		assertEquals(1, entry1.length);
 		assertEquals(1, entry1[0].getTopics().length);

@@ -49,17 +49,17 @@ public class IndexFileProvider extends AbstractIndexProvider {
 				StringBuilder buffer = new StringBuilder(ERROR_READING_HELP_KEYWORD_INDEX_FILE);
 				buffer.append(getIndexFilePath(indexFile));
 				buffer.append("\" at line "); //$NON-NLS-1$
-			    buffer.append(spe.getLineNumber());
-			    buffer.append(". "); //$NON-NLS-1$
-	            buffer.append(spe.getMessage());
+				buffer.append(spe.getLineNumber());
+				buffer.append(". "); //$NON-NLS-1$
+				buffer.append(spe.getMessage());
 
-	            // Use the contained exception.
-	            Exception x = spe;
-	            if (spe.getException() != null)
-	                x = spe.getException();
-	            HelpPlugin.logError(buffer.toString(), x);
+				// Use the contained exception.
+				Exception x = spe;
+				if (spe.getException() != null)
+					x = spe.getException();
+				HelpPlugin.logError(buffer.toString(), x);
 
-	        }
+			}
 			catch (Throwable t) {
 				String msg = ERROR_READING_HELP_KEYWORD_INDEX_FILE + getIndexFilePath(indexFile) + "\" (skipping file)"; //$NON-NLS-1$
 				HelpPlugin.logError(msg, t);

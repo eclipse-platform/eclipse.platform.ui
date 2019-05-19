@@ -27,7 +27,7 @@ public class ScopeSavingSearchData extends SearchData {
 
 	@Override
 	protected boolean canSaveScope() {
-        return true;
+		return true;
 	}
 
 }

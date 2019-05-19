@@ -99,7 +99,7 @@ public class SelectTocDialog extends Dialog {
 	public Toc[] getTocsToCheck() {
 		ArrayList<Toc> selected = new ArrayList<>();
 		for (int selectedToc : selectedTocs) {
-		    selected.add(tocs[selectedToc]);
+			selected.add(tocs[selectedToc]);
 		}
 		Toc[] tocsToCheck = selected.toArray(new Toc[0]) ;
 		return tocsToCheck;

@@ -21,32 +21,32 @@ import org.eclipse.help.internal.util.ResourceLocator;
 
 public class CriteriaDefinitionFile {
 
-    private String pluginId;
-    private String file;
-    private String locale;
+	private String pluginId;
+	private String file;
+	private String locale;
 
-    public CriteriaDefinitionFile(String pluginId, String file, String locale) {
-        this.pluginId = pluginId;
-        this.file = file;
-        this.locale = locale;
-    }
+	public CriteriaDefinitionFile(String pluginId, String file, String locale) {
+		this.pluginId = pluginId;
+		this.file = file;
+		this.locale = locale;
+	}
 
-    public String getFile() {
-        return file;
-    }
+	public String getFile() {
+		return file;
+	}
 
-    public String getLocale() {
-        return locale;
-    }
+	public String getLocale() {
+		return locale;
+	}
 
-    public String getPluginId() {
-        return pluginId;
-    }
+	public String getPluginId() {
+		return pluginId;
+	}
 
-    public InputStream getInputStream() throws IOException {
-        if (pluginId != null)
-            return ResourceLocator.openFromPlugin(pluginId, file, locale);
-        else
-        	return new FileInputStream(file);
-    }
+	public InputStream getInputStream() throws IOException {
+		if (pluginId != null)
+			return ResourceLocator.openFromPlugin(pluginId, file, locale);
+		else
+			return new FileInputStream(file);
+	}
 }

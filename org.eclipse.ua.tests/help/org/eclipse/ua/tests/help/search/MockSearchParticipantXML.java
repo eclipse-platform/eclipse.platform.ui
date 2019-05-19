@@ -48,7 +48,7 @@ public class MockSearchParticipantXML extends SearchParticipantXML {
 		}
 		String summary = attributes.getValue("summary");
 		if (summary != null) {
-		    data.addToSummary(summary);
+			data.addToSummary(summary);
 		}
 	}
 

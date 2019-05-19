@@ -331,8 +331,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					subMenuManager = new SubMenuManager(
 						ReusableHelpPart.this.menuManager);
 				} else {
-			        subMenuManager = null;
-			    }
+					subMenuManager = null;
+				}
 			}
 		}
 
@@ -352,7 +352,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				try {
 					((SubToolBarManager) subToolBarManager).disposeManager();
 					if (subMenuManager != null) {
-					    ((SubMenuManager)subMenuManager).disposeManager();
+						((SubMenuManager)subMenuManager).disposeManager();
 					}
 				} catch (RuntimeException e) {
 					// Bug 218079
@@ -535,7 +535,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			} else {
 				((SubToolBarManager) subToolBarManager).setVisible(visible);
 				if (subMenuManager != null) {
-				    ((SubMenuManager)subMenuManager).setVisible(visible);
+					((SubMenuManager)subMenuManager).setVisible(visible);
 				}
 				ReusableHelpPart.this.toolBarManager.update(true);
 				getControl().getParent().layout();
@@ -574,8 +574,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				PartRec rec = partRecs.get(focusPart);
 				String partId = rec.part.getId();
 				if ( partId != IHelpUIConstants.HV_SEE_ALSO && partId != IHelpUIConstants.HV_MISSING_CONTENT) {
-				    rec.part.setFocus();
-				    return;
+					rec.part.setFocus();
+					return;
 				}
 			}
 		}
@@ -1331,9 +1331,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				if (aurl.endsWith("&noframes=true") || aurl.endsWith("?noframes=true")) //$NON-NLS-1$ //$NON-NLS-2$
 					aurl = aurl.substring(0, aurl.length() - 14);
 				DefaultHelpUI.showInWorkbenchBrowser(aurl, false);
-                */
+				*/
 
-			    PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(aurl);
+				PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(aurl);
 
 			} catch (Exception e) {
 				HelpUIPlugin.logError("Error opening browser", e); //$NON-NLS-1$

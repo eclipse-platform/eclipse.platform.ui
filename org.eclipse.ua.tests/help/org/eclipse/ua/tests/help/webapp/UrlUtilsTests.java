@@ -58,7 +58,7 @@ public class UrlUtilsTests {
 		assertEquals(23, path[0]);
 		assertEquals(4, path[1]);
 		assertEquals(5, path[2]);
-    }
+	}
 
 	@Test
 	public void testRelativePathUnrelated() {

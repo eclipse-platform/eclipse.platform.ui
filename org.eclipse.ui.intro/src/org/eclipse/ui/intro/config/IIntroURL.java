@@ -45,26 +45,26 @@ package org.eclipse.ui.intro.config;
  */
 public interface IIntroURL {
 
-    /**
-     * Executes whatever valid Intro command is embedded in this Intro URL.
-     * Returns true if action succeeded, and false otherwise.
-     *
-     */
-    public boolean execute();
+	/**
+	 * Executes whatever valid Intro command is embedded in this Intro URL.
+	 * Returns true if action succeeded, and false otherwise.
+	 *
+	 */
+	public boolean execute();
 
-    /**
-     * @return Returns the command imbedded in this URL.
-     */
-    public String getAction();
+	/**
+	 * @return Returns the command imbedded in this URL.
+	 */
+	public String getAction();
 
-    /**
-     * Return a parameter defined in the Intro URL. Returns null if the
-     * parameter is not defined.
-     *
-     * @param parameterId
-     *            the id of the parameter being requested
-     * @return the value of the parameter, or <code>null</code> if the
-     *         parameter is not defined
-     */
-    public String getParameter(String parameterId);
+	/**
+	 * Return a parameter defined in the Intro URL. Returns null if the
+	 * parameter is not defined.
+	 *
+	 * @param parameterId
+	 *            the id of the parameter being requested
+	 * @return the value of the parameter, or <code>null</code> if the
+	 *         parameter is not defined
+	 */
+	public String getParameter(String parameterId);
 }

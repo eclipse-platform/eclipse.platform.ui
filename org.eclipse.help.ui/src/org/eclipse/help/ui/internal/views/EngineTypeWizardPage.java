@@ -86,7 +86,7 @@ public class EngineTypeWizardPage extends WizardPage {
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-	     "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
+		 "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);

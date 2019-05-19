@@ -34,15 +34,15 @@ public class CachedEntityResolver implements EntityResolver {
 
 	@Override
 	public InputSource resolveEntity(String publicId, String systemId) {
-        int index = systemId.lastIndexOf("/"); //$NON-NLS-1$
-        File cachedCopy = null;
-        if (index != -1) {
-        	cachedCopy = new File(HelpPlugin.getConfigurationDirectory(), "/DTDs"); //$NON-NLS-1$
-        	cachedCopy.mkdirs();
-        	cachedCopy = new File(cachedCopy, systemId.substring(index));
-        }
-        if (cachedCopy != null) {
-        	if (!cachedCopy.exists()) {
+		int index = systemId.lastIndexOf("/"); //$NON-NLS-1$
+		File cachedCopy = null;
+		if (index != -1) {
+			cachedCopy = new File(HelpPlugin.getConfigurationDirectory(), "/DTDs"); //$NON-NLS-1$
+			cachedCopy.mkdirs();
+			cachedCopy = new File(cachedCopy, systemId.substring(index));
+		}
+		if (cachedCopy != null) {
+			if (!cachedCopy.exists()) {
 				try {
 					URL system = new URL(systemId);
 					URLConnection sc = system.openConnection();
@@ -57,15 +57,15 @@ public class CachedEntityResolver implements EntityResolver {
 					}
 				} catch (IOException e) {
 				}
-        	}
-	        try {
-	        	InputSource is = new InputSource(new FileReader(cachedCopy));
-	        	is.setSystemId(systemId);
-	        	is.setPublicId(publicId);
-	        	return is;
-	        } catch (FileNotFoundException e) {}
-        }
-    	return new InputSource(new StringReader("")); //$NON-NLS-1$
+			}
+			try {
+				InputSource is = new InputSource(new FileReader(cachedCopy));
+				is.setSystemId(systemId);
+				is.setPublicId(publicId);
+				return is;
+			} catch (FileNotFoundException e) {}
+		}
+		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
 
 }

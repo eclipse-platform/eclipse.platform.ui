@@ -85,8 +85,8 @@ public abstract class RootScopePage extends PreferencePage implements
 	@Override
 	protected final Control createContents(Composite parent) {
 		initializeDefaults(getPreferenceStore());
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-	     "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+		 "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
 		contentContainer = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		GridData gd;

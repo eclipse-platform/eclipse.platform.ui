@@ -47,7 +47,7 @@ public class CriteriaDefinitionManager {
 			HelpPlugin.getTocManager().getTocs(locale);
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_CRITERIA) {
-			    System.out.println("Start to update criteria definition for locale " + locale); //$NON-NLS-1$
+				System.out.println("Start to update criteria definition for locale " + locale); //$NON-NLS-1$
 			}
 			List<CriteriaDefinitionContribution> contributions = new ArrayList<>(
 					Arrays.asList(readCriteriaDefinitionContributions(locale)));
@@ -56,7 +56,7 @@ public class CriteriaDefinitionManager {
 			criteriaDefinitionsByLocale.put(locale, criteriaDefinition);
 			long stop = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_CRITERIA) {
-			    System.out.println("Milliseconds to update criteria definition for locale " + locale +  " = " + (stop - start)); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Milliseconds to update criteria definition for locale " + locale +  " = " + (stop - start)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return criteriaDefinition;

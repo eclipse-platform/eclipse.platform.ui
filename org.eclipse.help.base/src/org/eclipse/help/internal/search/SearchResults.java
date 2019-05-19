@@ -193,8 +193,8 @@ public class SearchResults implements ISearchHitCollector {
 		if (scope == null) {
 			return null;
 		}
-        String href = scope.getHref();
-        IToc toc=scope.getAdapter(IToc.class);
+		String href = scope.getHref();
+		IToc toc=scope.getAdapter(IToc.class);
 		if (toc != null){
 			href=toc.getTopic(null).getHref();
 		}
@@ -245,7 +245,7 @@ public class SearchResults implements ISearchHitCollector {
 			if (toc != null) {
 				foundInToc = true;
 				if (filter == null || filter.inScope(toc)) {
-				    return toc;
+					return toc;
 				}
 			}
 		}

@@ -130,17 +130,17 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		 */
 
 		boolean descOn = Platform.getPreferencesService().getBoolean
-			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, false, null);
+				(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, false, null);
 		boolean showCategories = Platform.getPreferencesService().getBoolean
-			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, false, null);
+				(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, false, null);
 		showCategoriesAction = new Action() {
 
 			@Override
 			public void run() {
 				updateResultSections();
-			    IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
-			    pref.putBoolean(IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, showCategoriesAction.isChecked());
-			    try {
+				IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
+				pref.putBoolean(IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, showCategoriesAction.isChecked());
+				try {
 					pref.flush();
 				} catch (BackingStoreException e) {
 				}
@@ -159,8 +159,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			public void run() {
 				updateResultSections();
 				IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
-			    pref.putBoolean(IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, showDescriptionAction.isChecked());
-			    try {
+				pref.putBoolean(IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, showDescriptionAction.isChecked());
+				try {
 					pref.flush();
 				} catch (BackingStoreException e) {
 				}

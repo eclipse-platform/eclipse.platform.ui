@@ -138,8 +138,8 @@ public class ServletResources {
 		}
 		int amp = property.indexOf('&');
 		if (amp <0 || amp >= property.length() - 1) {
-            return null;
-        }
+			return null;
+		}
 		return ("" + property.charAt(amp +1)).toLowerCase(Locale.ENGLISH); //$NON-NLS-1$
 	}
 

@@ -115,8 +115,8 @@ public class DynamicXHTMLProcessorTest {
 
 	@Test
 	public void testValidXML() throws Exception {
-	    String processed = process("data/help/dynamic/xhtml/emptyAnchor.xhtml");
-	    XMLUtil.assertParseableXML(processed);
+		String processed = process("data/help/dynamic/xhtml/emptyAnchor.xhtml");
+		XMLUtil.assertParseableXML(processed);
 	}
 
 }

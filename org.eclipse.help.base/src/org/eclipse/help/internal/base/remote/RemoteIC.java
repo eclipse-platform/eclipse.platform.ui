@@ -31,22 +31,22 @@ public class RemoteIC {
 
 	public RemoteIC(boolean enabled, String name, String host, String path, String port){
 
-    	this.enabled = enabled;
-	    this.name    = name;
-	    this.host    = host;
-	    this.path    = path;
-	    this.port    = port;
-	    this.protocol    = PROTOCOL_HTTP;
+		this.enabled = enabled;
+		this.name    = name;
+		this.host    = host;
+		this.path    = path;
+		this.port    = port;
+		this.protocol    = PROTOCOL_HTTP;
 	}
 
 	public RemoteIC(boolean enabled, String name, String host, String path, String protocol, String port){
 
-    	this.enabled = enabled;
-	    this.name    = name;
-	    this.host    = host;
-	    this.path    = path;
-	    this.protocol = protocol;
-	    this.port    = port;
+		this.enabled = enabled;
+		this.name    = name;
+		this.host    = host;
+		this.path    = path;
+		this.protocol = protocol;
+		this.port    = port;
 
 	}
 	public String getHost() {
@@ -100,24 +100,24 @@ public class RemoteIC {
 
 	//I added this method, which overrides the original "equal" method in the class Object
 
-   @Override
+	@Override
 public boolean equals(Object anotherObject)throws ClassCastException {
-        if (!(anotherObject instanceof RemoteIC))
-            return false;
-        if ( !(((RemoteIC) anotherObject).getName().equals(this.getName())))
-            return false;
-        if ( !(((RemoteIC) anotherObject).getHost().equals(this.getHost())))
-        	return false;
-        if ( !(((RemoteIC) anotherObject).getPath().equals(this.getPath())))
-        	return false;
-        if ( !(((RemoteIC) anotherObject).getProtocol().equals(this.getProtocol())))
-        	return false;
-        if ( !(((RemoteIC) anotherObject).getPort().equals(this.getPort())))
-            return false;
-        if ( !(((RemoteIC) anotherObject).isEnabled()==this.isEnabled()))
-        	return false;
+		if (!(anotherObject instanceof RemoteIC))
+			return false;
+		if ( !(((RemoteIC) anotherObject).getName().equals(this.getName())))
+			return false;
+		if ( !(((RemoteIC) anotherObject).getHost().equals(this.getHost())))
+			return false;
+		if ( !(((RemoteIC) anotherObject).getPath().equals(this.getPath())))
+			return false;
+		if ( !(((RemoteIC) anotherObject).getProtocol().equals(this.getProtocol())))
+			return false;
+		if ( !(((RemoteIC) anotherObject).getPort().equals(this.getPort())))
+			return false;
+		if ( !(((RemoteIC) anotherObject).isEnabled()==this.isEnabled()))
+			return false;
 
-        //if we made it here, the the objects are the same
-          return true;
-   }
+		//if we made it here, the the objects are the same
+		return true;
+	}
 }

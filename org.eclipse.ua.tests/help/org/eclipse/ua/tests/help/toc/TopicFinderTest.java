@@ -158,7 +158,7 @@ public class TopicFinderTest {
 		TopicFinder finder = new TopicFinder(topic, tocs, new UniversalScope());
 		int selectedToc = finder.getSelectedToc();
 		String navPath = "http://127.0.0.1:1936/help/nav/" + selectedToc +
-           '_' + index1 + '_' + index2;
+			'_' + index1 + '_' + index2;
 		TopicFinder finder2 = new TopicFinder(navPath, tocs, new UniversalScope());
 		assertEquals(selectedToc, finder2.getSelectedToc());
 		ITopic[] topicPath = finder2.getTopicPath();

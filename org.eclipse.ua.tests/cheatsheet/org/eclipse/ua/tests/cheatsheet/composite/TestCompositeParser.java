@@ -43,12 +43,12 @@ public class TestCompositeParser {
 
 	@Before
 	public void setUp() throws Exception {
-	    parser = new CompositeCheatSheetParser();
+		parser = new CompositeCheatSheetParser();
 	}
 
 	private CompositeCheatSheetModel parseTestFile(String path) {
 		URL testURL = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(),
-					       COMPOSITES_FOLDER + path);
+							COMPOSITES_FOLDER + path);
 		return parser.parseGuide(testURL);
 	}
 
