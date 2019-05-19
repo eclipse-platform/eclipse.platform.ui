@@ -183,7 +183,7 @@ public class StringConverter {
 	 */
 	public static double asDouble(String value) throws DataFormatException {
 		try {
-			return (Double.valueOf(value)).doubleValue();
+			return Double.parseDouble(value);
 		} catch (NumberFormatException e) {
 			throw new DataFormatException(e.getMessage());
 		}
@@ -217,7 +217,7 @@ public class StringConverter {
 	 */
 	public static float asFloat(String value) throws DataFormatException {
 		try {
-			return (Float.valueOf(value)).floatValue();
+			return Float.parseFloat(value);
 		} catch (NumberFormatException e) {
 			throw new DataFormatException(e.getMessage());
 		}

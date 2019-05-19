@@ -1497,7 +1497,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	public static boolean getRetarget(IConfigurationElement element) {
 		String r = element.getAttribute(IWorkbenchRegistryConstants.ATT_RETARGET);
-		return Boolean.valueOf(r);
+		return Boolean.parseBoolean(r);
 	}
 
 	/**

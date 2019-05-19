@@ -89,7 +89,7 @@ public class IntegerFieldEditor extends StringFieldEditor {
 
 		String numberString = text.getText();
 		try {
-			int number = Integer.valueOf(numberString).intValue();
+			int number = Integer.parseInt(numberString);
 			if (number >= minValidValue && number <= maxValidValue) {
 				clearErrorMessage();
 				return true;

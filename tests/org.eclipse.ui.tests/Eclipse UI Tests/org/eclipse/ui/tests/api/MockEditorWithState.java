@@ -174,15 +174,15 @@ public class MockEditorWithState extends MockWorkbenchPart implements
 		callTrace.add("restoreState");
 		String val = memento.getString("saveNeeded");
 		if (val != null) {
-			saveNeeded = Boolean.valueOf(val).booleanValue();
+			saveNeeded = Boolean.parseBoolean(val);
 		}
 		val = memento.getString("saveAsAllowed");
 		if (val != null) {
-			saveAsAllowed = Boolean.valueOf(val).booleanValue();
+			saveAsAllowed = Boolean.parseBoolean(val);
 		}
 		val = memento.getString("dirty");
 		if (val != null) {
-			dirty = Boolean.valueOf(val).booleanValue();
+			dirty = Boolean.parseBoolean(val);
 		}
 	}
 
