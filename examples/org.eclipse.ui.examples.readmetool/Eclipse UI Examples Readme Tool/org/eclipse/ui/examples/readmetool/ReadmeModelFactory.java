@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,13 +14,15 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.readmetool;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -145,11 +147,10 @@ public class ReadmeModelFactory {
 				if (i == extensions.length - 1) {
 					IConfigurationElement[] configElements = currentExtension.getConfigurationElements();
 					for (IConfigurationElement configElement : configElements) {
-						IConfigurationElement config = configElements[i];
-						if (config.getName()
+						if (configElement.getName()
 								.equals(IReadmeConstants.TAG_PARSER)) {
 							// process the first 'parser' element and stop
-							processParserElement(config);
+							processParserElement(configElement);
 							break;
 						}
 					}
