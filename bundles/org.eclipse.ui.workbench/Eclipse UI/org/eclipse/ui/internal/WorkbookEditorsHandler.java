@@ -164,17 +164,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		ColumnViewerToolTipSupport.enableFor(tableViewerColumn.getViewer());
 	}
 
-	/** Extends generated label adding the resource path for duplicates */
-	@Override
-	protected String getWorkbenchPartReferenceText(WorkbenchPartReference ref) {
-		StringBuilder str = new StringBuilder(super.getWorkbenchPartReferenceText(ref));
-		if (ref instanceof EditorReference) {
-			str.append(" - "); //$NON-NLS-1$
-			str.append(ref.getTitleToolTip());
-		}
-		return str.toString();
-	}
-
 	/** True if the given model represents the active editor */
 	protected boolean isActiveEditor(MPart model) {
 		if (model == null || model.getTags() == null) {
