@@ -290,7 +290,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 		 * this fails.
 		 */
 		try {
-			return new Image(device, this::getImageData);
+			return new Image(device, (ImageDataProvider) this::getImageData);
 		} catch (IllegalArgumentException | SWTException e) {
 			if (returnMissingImageOnError) {
 				try {
