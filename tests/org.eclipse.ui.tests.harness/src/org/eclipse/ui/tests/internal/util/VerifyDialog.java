@@ -290,6 +290,10 @@ public class VerifyDialog extends TitleAreaDialog {
 	 * The test dialog failed, open the failure dialog.
 	 */
 	private void handleFailure() {
+		if (_testDialog == null) {
+			close();
+			return;
+		}
 		IDialogTestPass test = _dialogTests[TEST_TYPE];
 		StringBuilder text = new StringBuilder();
 		String label = test.label();

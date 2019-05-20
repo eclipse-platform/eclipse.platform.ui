@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.internal.quickaccess;
 
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,10 +25,10 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 class PreviousPicksProvider extends QuickAccessProvider {
 
-	private List<QuickAccessElement> previousPicksList;
+	final LinkedList<QuickAccessElement> elements;
 
-	PreviousPicksProvider(List<QuickAccessElement> previousPicksList) {
-		this.previousPicksList = previousPicksList;
+	PreviousPicksProvider() {
+		this.elements = new LinkedList<>();
 	}
 
 	@Override
@@ -39,7 +39,7 @@ class PreviousPicksProvider extends QuickAccessProvider {
 	@Override
 	public QuickAccessElement[] getElements() {
 		// If the list is being restored, it may contain null elements
-		return previousPicksList.stream().filter(Objects::nonNull).collect(Collectors.toList())
+		return elements.stream().filter(Objects::nonNull).collect(Collectors.toList())
 				.toArray(new QuickAccessElement[0]);
 	}
 
@@ -72,4 +72,5 @@ class PreviousPicksProvider extends QuickAccessProvider {
 	public boolean isAlwaysPresent() {
 		return true;
 	}
+
 }

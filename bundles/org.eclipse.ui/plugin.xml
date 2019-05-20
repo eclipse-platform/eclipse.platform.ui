@@ -1521,6 +1521,10 @@
             commandId="org.eclipse.ui.help.helpSearch"
             icon="$nl$/icons/full/etool16/help_search.png">
       </image>
+      <image
+            commandId="org.eclipse.ui.window.quickAccess"
+            icon="$nl$/icons/full/etool16/help_search.png">
+      </image>
    </extension>
    
    <extension

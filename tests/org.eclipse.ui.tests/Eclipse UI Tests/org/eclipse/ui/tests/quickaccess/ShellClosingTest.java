@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestWatcher;
@@ -24,7 +25,12 @@ import org.junit.rules.TestWatcher;
 /**
  * @since 3.5
  */
-public class ShellClosingTest {
+public class ShellClosingTest extends UITestCase {
+
+	public ShellClosingTest() {
+		super(ShellClosingTest.class.getName());
+	}
+
 	@Rule
 	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 

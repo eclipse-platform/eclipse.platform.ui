@@ -20,14 +20,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.quickaccess.SearchField;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.quickaccess.QuickAccessContents;
+import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.hamcrest.Matchers;
 
@@ -38,7 +35,8 @@ import org.hamcrest.Matchers;
  */
 public class ContentMatchesTest extends UITestCase {
 
-	private SearchField searchField;
+	private QuickAccessDialog dialog;
+	private QuickAccessContents quickAccessContents;
 
 	/**
 	 * @param testName
@@ -50,73 +48,54 @@ public class ContentMatchesTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		openTestWindow();
-		WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWorkbench()
-				.getActiveWorkbenchWindow();
-		MWindow window = workbenchWindow.getModel();
-		EModelService modelService = window.getContext().get(
-				EModelService.class);
-		MToolControl control = (MToolControl) modelService.find(
-				"SearchField", window); //$NON-NLS-1$
-		searchField = (SearchField) control.getObject();
-		assertNotNull("Search Field must exist", searchField);
+		IWorkbenchWindow window = openTestWindow();
+		dialog = new QuickAccessDialog(window, null);
+		quickAccessContents = dialog.getQuickAccessContents();
+		dialog.open();
 	}
 
 	@Override
 	protected void doTearDown() throws Exception {
-		Text text = searchField.getQuickAccessSearchText();
-		if (text != null){
-			text.setText("");
-		}
-		Shell shell = searchField.getQuickAccessShell();
-		if (shell != null){
-			shell.setVisible(false);
-		}
+		dialog.close();
 	}
 
 	public void testFindPreferenceByKeyword() throws Exception {
-		Shell shell = searchField.getQuickAccessShell();
-		assertFalse("Quick access dialog should not be visible yet", shell.isVisible());
-		Text text = searchField.getQuickAccessSearchText();
+		Text text = quickAccessContents.getFilterText();
 		text.setText("whitespace");
-		final Table table = searchField.getQuickAccessTable();
+		final Table table = quickAccessContents.getTable();
 		processEventsUntil(() -> table.getItemCount() > 1, 200);
 		List<String> allEntries = getAllEntries(table);
 		assertTrue(Matchers.hasItems(Matchers.containsString("Text Editors")).matches(allEntries));
 	}
 
 	public void testRequestWithWhitespace() throws Exception {
-		Shell shell = searchField.getQuickAccessShell();
-		assertFalse("Quick access dialog should not be visible yet", shell.isVisible());
-		Text text = searchField.getQuickAccessSearchText();
+		Text text = quickAccessContents.getFilterText();
 		text.setText("text white");
-		final Table table = searchField.getQuickAccessTable();
+		final Table table = quickAccessContents.getTable();
 		processEventsUntil(() -> table.getItemCount() > 1, 200);
 		List<String> allEntries = getAllEntries(table);
 		assertTrue(Matchers.hasItems(Matchers.containsString("Text Editors")).matches(allEntries));
 	}
 
 	public void testFindCommandByDescription() throws Exception {
-		Shell shell = searchField.getQuickAccessShell();
-		assertFalse("Quick access dialog should not be visible yet", shell.isVisible());
-		Text text = searchField.getQuickAccessSearchText();
+		Text text = quickAccessContents.getFilterText();
 		text.setText("rename ltk");
-		final Table table = searchField.getQuickAccessTable();
+		final Table table = quickAccessContents.getTable();
 		processEventsUntil(() -> table.getItemCount() > 1, 200);
 		List<String> allEntries = getAllEntries(table);
 		assertThat(allEntries, Matchers
 				.hasItems(Matchers.containsString("Rename the selected resource and notify LTK participants.")));
 	}
 
-	private List<String> getAllEntries(Table table) {
+	static List<String> getAllEntries(Table table) {
 		final int nbColumns = table.getColumnCount();
 		return Arrays.stream(table.getItems()).map(item -> {
-			String res = "";
+			StringBuilder res = new StringBuilder("");
 			for (int i = 0; i < nbColumns; i++) {
-				res += item.getText(i);
-				res += " | ";
+				res.append(item.getText(i));
+				res.append(" | ");
 			}
-			return res;
+			return res.toString();
 		}).collect(Collectors.toList());
 	}
 

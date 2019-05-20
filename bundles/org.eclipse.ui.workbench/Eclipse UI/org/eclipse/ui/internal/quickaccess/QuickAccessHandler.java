@@ -14,17 +14,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
+import java.util.Arrays;
+import java.util.Optional;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.dialogs.PopupDialog;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * Handler for quick access pop-up dialog, showing UI elements such as editors,
@@ -40,26 +38,19 @@ public class QuickAccessHandler extends AbstractHandler {
 			return null;
 		}
 
-		MWindow mWindow = ((WorkbenchWindow) window).getModel();
-		EModelService modelService = mWindow.getContext().get(EModelService.class);
-		MToolControl searchField = (MToolControl) modelService.find("SearchField", mWindow); //$NON-NLS-1$
-		if (searchField != null && searchField.isVisible()) {
-			Control control = (Control) searchField.getWidget();
-			// the workbench configurer may override visibility; if so,
-			// focus should not change
-			if (control != null && control.isVisible()) {
-				Control previousFocusControl = control.getDisplay().getFocusControl();
-				control.setFocus();
-				SearchField field = (SearchField) searchField.getObject();
-				field.activate(previousFocusControl);
-				return null;
-			}
+		Optional<QuickAccessContents> existingContents = Arrays.stream(window.getShell().getDisplay().getShells()) //
+				.filter(Shell::isVisible) //
+				.map(Shell::getData) //
+				.filter(QuickAccessDialog.class::isInstance) //
+				.map(QuickAccessDialog.class::cast) //
+				.map(QuickAccessDialog::getQuickAccessContents) //
+				.findAny();
+		if (existingContents.isPresent()) {
+			QuickAccessContents contents = existingContents.get();
+			contents.setShowAllMatches(!contents.getShowAllMatches());
+		} else {
+			displayQuickAccessDialog(window, executionEvent.getCommand());
 		}
-
-		// open the original/legacy QuickAccess Dialog if the toolbars are
-		// hidden or if the search field isn't available (maybe because the
-		// dialog is explicitly wanted)
-		displayQuickAccessDialog(window, executionEvent.getCommand());
 		return null;
 	}
 

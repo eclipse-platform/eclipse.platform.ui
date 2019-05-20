@@ -726,14 +726,14 @@ public abstract class QuickAccessContents {
 	}
 
 	/** Hide the hint text */
-	void hideHintText() {
+	private void hideHintText() {
 		if (displayHintText) {
 			setHintTextToDisplay(false);
 		}
 	}
 
 	/** Show the hint text with the given color */
-	void showHintText(String text, Color color) {
+	private void showHintText(String text, Color color) {
 		if (hintText == null) {
 			// toolbar hidden
 			return;
@@ -924,12 +924,6 @@ public abstract class QuickAccessContents {
 		return infoLabel;
 	}
 
-	public void resetProviders() {
-		for (QuickAccessProvider provider : providers) {
-			provider.reset();
-		}
-	}
-
 	QuickAccessProvider getProvider(String providerId) {
 		if (providers == null || providers.length == 0) {
 			return null;
@@ -959,4 +953,11 @@ public abstract class QuickAccessContents {
 		elementsToProviders.put(quickAccessElement, quickAccessProvider);
 	}
 
+	public Text getFilterText() {
+		return filterText;
+	}
+
+	public Table getTable() {
+		return table;
+	}
 }
