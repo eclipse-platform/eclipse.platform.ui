@@ -29,8 +29,8 @@ public class OptionTests extends AbstractAntTest {
 
 	protected static final String UNKNOWN_ARG = "Unknown argument: "; //$NON-NLS-1$
 	protected static final String START_OF_HELP = "ant [options] [target [target2 [target3] ...]]"; //$NON-NLS-1$
-	protected static final String VERSION = "Apache Ant(TM) version 1.10.5"; //$NON-NLS-1$
-	protected static final String PLUGIN_VERSION = "org.apache.ant_1.10.5"; //$NON-NLS-1$
+	protected static final String VERSION = "Apache Ant(TM) version 1.10.6"; //$NON-NLS-1$
+	protected static final String PLUGIN_VERSION = "org.apache.ant_1.10.6"; //$NON-NLS-1$
 
 	public OptionTests(String name) {
 		super(name);
@@ -41,7 +41,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testHelp() throws CoreException {
 		run("TestForEcho.xml", new String[] { "-help" }); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("incorrect message number logged", 34, AntTestChecker.getDefault().getMessagesLoggedCount()); //$NON-NLS-1$
+		assertEquals("incorrect message number logged", 36, AntTestChecker.getDefault().getMessagesLoggedCount()); //$NON-NLS-1$
 		assertTrue("Help is incorrect", getLastMessageLogged() != null && AntTestChecker.getDefault().getMessages().get(0).startsWith(START_OF_HELP)); //$NON-NLS-1$
 	}
 
@@ -50,7 +50,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testMinusH() throws CoreException {
 		run("TestForEcho.xml", new String[] { "-h" }); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("incorrect message number logged", 34, AntTestChecker.getDefault().getMessagesLoggedCount()); //$NON-NLS-1$
+		assertEquals("incorrect message number logged", 36, AntTestChecker.getDefault().getMessagesLoggedCount()); //$NON-NLS-1$
 		assertTrue("Help is incorrect", getLastMessageLogged() != null && AntTestChecker.getDefault().getMessages().get(0).startsWith(START_OF_HELP)); //$NON-NLS-1$
 	}
 
