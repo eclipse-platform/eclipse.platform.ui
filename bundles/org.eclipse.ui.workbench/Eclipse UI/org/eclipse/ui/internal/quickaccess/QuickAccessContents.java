@@ -702,12 +702,12 @@ public abstract class QuickAccessContents {
 		});
 	}
 
-	private Text hintText;
+	private Label hintText;
 	private boolean displayHintText;
 
 	/** Create HintText as child of the given parent composite */
-	Text createHintText(Composite composite, int defaultOrientation) {
-		hintText = new Text(composite, SWT.FILL);
+	Label createHintText(Composite composite, int defaultOrientation) {
+		hintText = new Label(composite, SWT.FILL);
 		hintText.setOrientation(defaultOrientation);
 		displayHintText = true;
 		return hintText;

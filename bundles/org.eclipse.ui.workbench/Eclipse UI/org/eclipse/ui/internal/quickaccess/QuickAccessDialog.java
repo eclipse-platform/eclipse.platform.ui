@@ -45,9 +45,12 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -96,7 +99,8 @@ public class QuickAccessDialog extends PopupDialog {
 		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true, // persist
 																				// size
 				false, // but not location
-				true, true, null, QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
+				true, true, QuickAccessMessages.QuickAccessContents_QuickAccess,
+				QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
 		this.window = window;
 		this.display = window.getShell() != null ? window.getShell().getDisplay() : null;
 		WorkbenchWindow workbenchWindow = (WorkbenchWindow) window;
@@ -257,6 +261,7 @@ public class QuickAccessDialog extends PopupDialog {
 
 	@Override
 	protected Control createTitleControl(Composite parent) {
+		parent.getShell().setText(QuickAccessMessages.QuickAccessContents_QuickAccess);
 		filterText = new Text(parent, SWT.NONE);
 
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(filterText);
@@ -272,6 +277,9 @@ public class QuickAccessDialog extends PopupDialog {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		boolean isWin32 = Util.isWindows();
 		GridLayoutFactory.fillDefaults().extendedMargins(isWin32 ? 0 : 3, 3, 2, 2).applyTo(composite);
+		Label hintText = contents.createHintText(composite, SWT.DEFAULT);
+		hintText.setLayoutData(
+				new GridData(SWT.FILL, SWT.DEFAULT, true, false, ((GridLayout) composite.getLayout()).numColumns, 1));
 
 		Table table = contents.createTable(composite, getDefaultOrientation());
 		table.addKeyListener(getKeyAdapter());
