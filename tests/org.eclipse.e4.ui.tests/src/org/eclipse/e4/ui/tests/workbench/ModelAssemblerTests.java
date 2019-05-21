@@ -68,9 +68,9 @@ import org.junit.Test;
 
 @SuppressWarnings("nls")
 public class ModelAssemblerTests {
-	final private static String EXTENSION_POINT_ID = "org.eclipse.e4.workbench.model";
-	final private static String BUNDLE_SYMBOLIC_NAME = "org.eclipse.e4.ui.tests";
-	final private static String APPLICATION_ID = "org.eclipse.e4.ui.tests.modelassembler.app";
+	private static final String EXTENSION_POINT_ID = "org.eclipse.e4.workbench.model";
+	private static final String BUNDLE_SYMBOLIC_NAME = "org.eclipse.e4.ui.tests";
+	private static final String APPLICATION_ID = "org.eclipse.e4.ui.tests.modelassembler.app";
 	private IEclipseContext appContext;
 	private MApplication application;
 	private E4XMIResourceFactory factory;
