@@ -160,8 +160,6 @@ public abstract class DynamicTestCase extends UITestCase implements
 			return;
 		}
 
-		setName("testClass() for " + getClass().getName());
-
 		Bundle bundle = getBundle();
 
 		Class<?> clazz = bundle.loadClass(className);

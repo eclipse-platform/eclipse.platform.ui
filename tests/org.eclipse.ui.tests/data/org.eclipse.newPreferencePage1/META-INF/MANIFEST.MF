@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: NewPreferencePage One Plug-in
+Bundle-SymbolicName: newPreferencePage1; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: preferencePage.jar
+Bundle-Localization: plugin
+Export-Package: .,
+ org.eclipse.ui.dynamic
+Require-Bundle: org.eclipse.ui
+Eclipse-LazyStart: true

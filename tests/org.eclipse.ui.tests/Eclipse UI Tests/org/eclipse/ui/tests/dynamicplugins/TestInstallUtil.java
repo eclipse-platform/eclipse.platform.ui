@@ -15,6 +15,8 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import static java.util.Arrays.asList;
 
+import java.util.List;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -40,7 +42,7 @@ public class TestInstallUtil extends TestCase {
 			throw new IllegalStateException("Bundle " + target
 					+ " is in a wrong state: " + state);
 		}
-		refreshPackages(new Bundle[] { target });
+		refreshPackages(asList(target));
 		return target;
 	}
 
@@ -49,7 +51,7 @@ public class TestInstallUtil extends TestCase {
 		refreshPackages(null);
 	}
 
-	public static void refreshPackages(Bundle[] bundles) {
+	public static void refreshPackages(List<Bundle> bundles) {
 		FrameworkWiring wiring = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).adapt(FrameworkWiring.class);
 
 		final boolean[] flag = new boolean[] { false };
@@ -62,7 +64,7 @@ public class TestInstallUtil extends TestCase {
 			}
 		};
 
-		wiring.refreshBundles(asList(bundles), listener);
+		wiring.refreshBundles(bundles, listener);
 
 		synchronized (flag) {
 			while (!flag[0]) {

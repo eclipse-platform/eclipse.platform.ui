@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Handlers Extension Dynamic Test Plug-in
+Bundle-SymbolicName: handlersExtensionDynamicTest; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: handlers.jar
+Bundle-Localization: plugin
+Export-Package: .,
+ org.eclipse.ui.dynamic.handlers
+Require-Bundle: org.eclipse.ui
+Eclipse-LazyStart: true

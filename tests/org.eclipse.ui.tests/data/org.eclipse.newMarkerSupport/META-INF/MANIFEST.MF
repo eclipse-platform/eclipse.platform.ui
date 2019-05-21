@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: newProblemFilter Plug-in
+Bundle-SymbolicName: newMarkerSupport; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: markerSupport.jar
+Bundle-Localization: plugin
+Export-Package: .,
+ org.eclipse.ui.dynamic.markerSupport
+Require-Bundle: org.eclipse.ui.ide
+Eclipse-LazyStart: true

@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="newActionSet1"
-   name="newActionSet1 Plug-in"
-   version="1.0.0">
+<plugin>
 
-   <runtime>
-      <library name="newActionSet1.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-   </requires>
-   <extension
+     <extension
          point="org.eclipse.ui.actionSets" id="testDynamicActionSetAddition">
       <actionSet
             label="A New ActionSet from ActionSet1"

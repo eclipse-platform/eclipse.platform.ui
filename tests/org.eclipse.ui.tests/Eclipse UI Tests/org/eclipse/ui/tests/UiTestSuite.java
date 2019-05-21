@@ -91,7 +91,7 @@ public class UiTestSuite {
 
 	// Not enabled tests:
 	// ZoomTestSuite.class,
-	// DynamicPluginsTestSuite.class,
+	// DynamicPluginsTestSuite.class, // FIXME See Bug 405296
 	// CommandsTestSuite.class,
 	// DragTestSuite.class,
 	// IntroTestSuite.class,

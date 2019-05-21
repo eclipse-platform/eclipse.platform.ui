@@ -24,6 +24,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkingSet;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
+import org.junit.runner.RunWith;
+import org.junit.runners.AllTests;
 import org.osgi.framework.Bundle;
 
 import junit.framework.TestSuite;
@@ -31,6 +33,7 @@ import junit.framework.TestSuite;
 /**
  * @since 3.3
  */
+@RunWith(AllTests.class)
 public class WorkingSetTests extends DynamicTestCase {
 
 	public static TestSuite suite() {

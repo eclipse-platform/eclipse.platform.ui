@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: newActionSet1 Plug-in
+Bundle-SymbolicName: newActionSet1; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: newActionSet1.jar
+Bundle-Localization: plugin
+Export-Package: .
+Require-Bundle: org.eclipse.ui
+Eclipse-LazyStart: true

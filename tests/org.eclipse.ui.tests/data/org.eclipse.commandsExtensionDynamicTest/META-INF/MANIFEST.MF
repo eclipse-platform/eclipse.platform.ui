@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Commands Extension Dynamic Test Plug-in
+Bundle-SymbolicName: commandsExtensionDynamicTest; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: commands.jar
+Bundle-Localization: plugin
+Export-Package: .,
+ org.eclipse.ui.dynamic.commands
+Require-Bundle: org.eclipse.ui
+Eclipse-LazyStart: true

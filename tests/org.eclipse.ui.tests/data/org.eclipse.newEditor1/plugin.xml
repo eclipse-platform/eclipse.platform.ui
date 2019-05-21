@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="newEditor1"
-   name="newEditor1 Plug-in"
-   version="1.0.0">
+<plugin>
 
-   <runtime>
-      <library name="editor.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-   </requires>
-   <extension
+     <extension
          id="testDynamicEditorAddition"
          point="org.eclipse.ui.editors">
       <editor

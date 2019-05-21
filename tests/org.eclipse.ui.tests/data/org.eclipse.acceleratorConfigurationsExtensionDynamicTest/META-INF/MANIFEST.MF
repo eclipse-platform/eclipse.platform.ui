@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Accelerator Configurations Extension Dynamic Test Plug-in
+Bundle-SymbolicName: acceleratorConfigurationsExtensionDynamicTest; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui
+Eclipse-LazyStart: true

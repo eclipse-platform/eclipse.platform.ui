@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: New StatusHandler One Plug-In
+Bundle-SymbolicName: newStatusHandler1; singleton:=true
+Bundle-Version: 3.0.0
+Bundle-ClassPath: statusHandler.jar
+Bundle-Localization: plugin
+Export-Package: .,
+ org.eclipse.ui.dynamic
+Require-Bundle: org.eclipse.ui
+Eclipse-LazyStart: true

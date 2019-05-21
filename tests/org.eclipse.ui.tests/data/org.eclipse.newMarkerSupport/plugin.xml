@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
-<plugin
-   id="newMarkerSupport"
-   name="newProblemFilter Plug-in"
-   version="1.0.0">
-   <requires>
-      <import plugin="org.eclipse.ui.ide"/>
-   </requires>
-    <runtime>
-      <library name="markerSupport.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <extension
+<plugin>
+     <extension
          id="dynamicTestMarker"
          name="Dynamic Test Marker"
          point="org.eclipse.core.resources.markers">
