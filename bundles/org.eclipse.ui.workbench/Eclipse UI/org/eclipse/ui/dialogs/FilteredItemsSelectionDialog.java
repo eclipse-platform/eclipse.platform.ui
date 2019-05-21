@@ -801,9 +801,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			Object item = null;
 			IStatus tempStatus = null;
 
-			for (Iterator<?> it = items.iterator(); it.hasNext();) {
-				Object o = it.next();
-
+			for (Object o : items) {
 				if (o instanceof ItemsListSeparator) {
 					continue;
 				}
@@ -1111,8 +1109,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * @param items items to be removed
 	 */
 	private void removeSelectedItems(List<?> items) {
-		for (Iterator<?> iter = items.iterator(); iter.hasNext();) {
-			Object item = iter.next();
+		for (Object item : items) {
 			removeHistoryItem(item);
 		}
 		refreshWithLastSelection = false;
@@ -2680,9 +2677,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			// filter the elements using provided ViewerFilters
 			if (filters != null && filteredElements != null) {
-				for (Iterator<?> iter = filters.iterator(); iter.hasNext();) {
-					ViewerFilter f = (ViewerFilter) iter.next();
-					filteredElements = f.filter(list, parent, filteredElements);
+				for (Object f : filters) {
+					filteredElements = ((ViewerFilter) f).filter(list, parent, filteredElements);
 					monitor.worked(ticks);
 				}
 			}

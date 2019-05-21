@@ -511,9 +511,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		String description = ""; //$NON-NLS-1$
 		if (theme != null) {
 			IThemeDescriptor[] descs = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
-			for (int i = 0; i < descs.length; i++) {
-				if (descs[i].getId().equals(theme.getId()) && descs[i].getDescription() != null) {
-					description = descs[i].getDescription();
+			for (IThemeDescriptor desc : descs) {
+				if (desc.getId().equals(theme.getId()) && desc.getDescription() != null) {
+					description = desc.getDescription();
 					break;
 				}
 			}

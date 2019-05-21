@@ -245,8 +245,8 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 				System.arraycopy(selectedElements, 0, adaptables, 0, selectedElements.length);
 				adaptables = set.adaptElements(adaptables);
 				if (adaptables.length > 0 && add) {
-					for (int k = 0; k < adaptables.length; k++) {
-						if (!existingElements.contains(adaptables[k])) {
+					for (IAdaptable adaptable : adaptables) {
+						if (!existingElements.contains(adaptable)) {
 							// show if any element is not present in
 							// addition
 							visible = true;

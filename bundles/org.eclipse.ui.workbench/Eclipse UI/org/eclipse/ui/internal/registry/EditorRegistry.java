@@ -1454,12 +1454,12 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		if (type != null) {
 			// now add any objects directly related to the content type
 			IEditorDescriptor[] related = registry.getRelatedObjects(type);
-			for (int i = 0; i < related.length; i++) {
+			for (IEditorDescriptor r : related) {
 				// we don't want to return duplicates
-				if (!allRelated.contains(related[i])) {
+				if (!allRelated.contains(r)) {
 					// if it's not filtered, add it to the list
-					if (!WorkbenchActivityHelper.filterItem(related[i])) {
-						allRelated.add(related[i]);
+					if (!WorkbenchActivityHelper.filterItem(r)) {
+						allRelated.add(r);
 					}
 				}
 			}
@@ -1470,12 +1470,12 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			// now add any indirectly related objects, walking up the content type hierarchy
 			while ((type = type.getBaseType()) != null) {
 				IEditorDescriptor[] related = registry.getRelatedObjects(type);
-				for (int i = 0; i < related.length; i++) {
+				for (IEditorDescriptor r : related) {
 					// we don't want to return duplicates
-					if (!allRelated.contains(related[i])) {
+					if (!allRelated.contains(r)) {
 						// if it's not filtered, add it to the list
-						if (!WorkbenchActivityHelper.filterItem(related[i])) {
-							allRelated.add(related[i]);
+						if (!WorkbenchActivityHelper.filterItem(r)) {
+							allRelated.add(r);
 						}
 					}
 				}
@@ -1508,26 +1508,25 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		}
 
 		IEditorDescriptor[] related = relatedRegistry.getRelatedObjects(type);
-		for (int i = 0; i < related.length; i++) {
+		for (IEditorDescriptor r : related) {
 			// we don't want to return duplicates
-			if (!allRelated.contains(related[i])) {
+			if (!allRelated.contains(r)) {
 				// if it's not filtered, add it to the list
-				if (!WorkbenchActivityHelper.filterItem(related[i])) {
-					allRelated.add(related[i]);
+				if (!WorkbenchActivityHelper.filterItem(r)) {
+					allRelated.add(r);
 				}
-
 			}
 		}
 
 		// now add any indirectly related objects, walking up the content type hierarchy
 		while ((type = type.getBaseType()) != null) {
 			related = relatedRegistry.getRelatedObjects(type);
-			for (int i = 0; i < related.length; i++) {
+			for (IEditorDescriptor r : related) {
 				// we don't want to return duplicates
-				if (!allRelated.contains(related[i])) {
+				if (!allRelated.contains(r)) {
 					// if it's not filtered, add it to the list
-					if (!WorkbenchActivityHelper.filterItem(related[i])) {
-						allRelated.add(related[i]);
+					if (!WorkbenchActivityHelper.filterItem(r)) {
+						allRelated.add(r);
 					}
 				}
 			}

@@ -222,10 +222,11 @@ public class BundleSigningInfo {
 
 	private Properties[] parseCerts(Certificate[] chain) {
 		List<Properties> certs = new ArrayList<>(chain.length);
-		for (int i = 0; i < chain.length; i++) {
-			if (!(chain[i] instanceof X509Certificate))
+		for (Certificate e : chain) {
+			if (!(e instanceof X509Certificate)) {
 				continue;
-			Properties cert = parseCert(((X509Certificate) chain[i]).getSubjectDN().getName());
+			}
+			Properties cert = parseCert(((X509Certificate) e).getSubjectDN().getName());
 			if (cert != null)
 				certs.add(cert);
 		}

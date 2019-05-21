@@ -182,34 +182,33 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 			{
 				ColorDefinition[] colorDefinitions = themeRegistry.getColorsFor(currentTheme.getId());
-				for (int i = 0; i < colorDefinitions.length; i++) {
-					if (!colorDefinitions[i].isEditable()) {
+				for (ColorDefinition colorDefinition : colorDefinitions) {
+					if (!colorDefinition.isEditable()) {
 						continue;
 					}
-					String catId = colorDefinitions[i].getCategoryId();
+					String catId = colorDefinition.getCategoryId();
 					if ((catId == null && categoryId == null)
 							|| (catId != null && categoryId != null && categoryId.equals(catId))) {
-						if (colorDefinitions[i].getDefaultsTo() != null
-								&& parentIsInSameCategory(colorDefinitions[i])) {
+						if (colorDefinition.getDefaultsTo() != null && parentIsInSameCategory(colorDefinition)) {
 							continue;
 						}
-						list.add(colorDefinitions[i]);
+						list.add(colorDefinition);
 					}
 				}
 			}
 			{
 				FontDefinition[] fontDefinitions = themeRegistry.getFontsFor(currentTheme.getId());
-				for (int i = 0; i < fontDefinitions.length; i++) {
-					if (!fontDefinitions[i].isEditable()) {
+				for (FontDefinition fontDefinition : fontDefinitions) {
+					if (!fontDefinition.isEditable()) {
 						continue;
 					}
-					String catId = fontDefinitions[i].getCategoryId();
+					String catId = fontDefinition.getCategoryId();
 					if ((catId == null && categoryId == null)
 							|| (catId != null && categoryId != null && categoryId.equals(catId))) {
-						if (fontDefinitions[i].getDefaultsTo() != null && parentIsInSameCategory(fontDefinitions[i])) {
+						if (fontDefinition.getDefaultsTo() != null && parentIsInSameCategory(fontDefinition)) {
 							continue;
 						}
-						list.add(fontDefinitions[i]);
+						list.add(fontDefinition);
 					}
 				}
 			}

@@ -70,8 +70,7 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 	protected Object getInput(WorkbenchPage page) {
 		List<FilteredTableItem> rows = new ArrayList<>();
 
-		for (int i = 0; i < pageSwitcher.getPages().length; i++) {
-			Object viewPage = pageSwitcher.getPages()[i];
+		for (Object viewPage : pageSwitcher.getPages()) {
 			FilteredTableItem item = new FilteredTableItem();
 			ImageDescriptor imageDescriptor = pageSwitcher.getImageDescriptor(viewPage);
 			if (imageDescriptor != null) {

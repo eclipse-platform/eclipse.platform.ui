@@ -287,8 +287,8 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 		if (localComponents == null || localComponents.length == 0) {
 			return false;
 		}
-		for (int i = 0; i < localComponents.length; i++) {
-			if (!localComponents[i].isSelfUpdating()) {
+		for (IWorkingSet localComponent : localComponents) {
+			if (!localComponent.isSelfUpdating()) {
 				return false;
 			}
 		}

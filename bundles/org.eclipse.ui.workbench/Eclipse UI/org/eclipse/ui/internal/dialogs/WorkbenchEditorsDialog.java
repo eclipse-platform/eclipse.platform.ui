@@ -478,13 +478,13 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			return allItems;
 		}
 		ArrayList invertedSelection = new ArrayList(allItems.length - selectedItems.length);
-		outerLoop: for (int i = 0; i < allItems.length; i++) {
-			for (int j = 0; j < selectedItems.length; j++) {
-				if (allItems[i] == selectedItems[j]) {
+		outerLoop: for (TableItem allItem : allItems) {
+			for (TableItem selectedItem : selectedItems) {
+				if (allItem == selectedItem) {
 					continue outerLoop;
 				}
 			}
-			invertedSelection.add(allItems[i]);
+			invertedSelection.add(allItem);
 		}
 		TableItem result[] = new TableItem[invertedSelection.size()];
 		invertedSelection.toArray(result);

@@ -20,7 +20,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -371,9 +370,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 	 */
 	protected void removeSelectedWorkingSets(List<IWorkingSet> selection) {
 		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-		Iterator iter = selection.iterator();
-		while (iter.hasNext()) {
-			IWorkingSet workingSet = (IWorkingSet) iter.next();
+		for (IWorkingSet workingSet : selection) {
 			if (getAddedWorkingSets().contains(workingSet)) {
 				getAddedWorkingSets().remove(workingSet);
 			} else {

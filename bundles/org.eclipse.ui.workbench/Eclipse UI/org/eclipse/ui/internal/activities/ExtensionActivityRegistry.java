@@ -166,8 +166,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 		// merge enablement overrides from plugin_customization.ini
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		for (Iterator<ActivityDefinition> i = activityDefinitions.iterator(); i.hasNext();) {
-			ActivityDefinition activityDef = i.next();
+		for (ActivityDefinition activityDef : activityDefinitions) {
 			String id = activityDef.getId();
 			String preferenceKey = createPreferenceKey(id);
 			if ("".equals(store.getDefaultString(preferenceKey))) //$NON-NLS-1$

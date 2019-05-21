@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -201,12 +200,12 @@ public class ActivityEnabler {
 			// activities
 			if (checked.contains(element)) {
 				requiredActivities = provider.getChildRequiredActivities(((CategorizedActivity) element).getId());
-				for (int index = 0; index < requiredActivities.length; index++) {
+				for (Object activity : requiredActivities) {
 					// We want to check the element if it is unchecked
-					if (!checked.contains(requiredActivities[index])) {
-						dualViewer.setChecked(requiredActivities[index], true);
+					if (!checked.contains(activity)) {
+						dualViewer.setChecked(activity, true);
 						handleActivityCheck(new HashSet<>(Arrays.asList(dualViewer.getCheckedElements())),
-								requiredActivities[index]);
+								activity);
 					}
 				}
 			}
@@ -402,8 +401,7 @@ public class ActivityEnabler {
 	public void restoreDefaults() {
 		Set<String> defaultEnabled = new HashSet<>();
 		Set<String> activityIds = activitySupport.getDefinedActivityIds();
-		for (Iterator<String> i = activityIds.iterator(); i.hasNext();) {
-			String activityId = i.next();
+		for (String activityId : activityIds) {
 			IActivity activity = activitySupport.getActivity(activityId);
 			try {
 				if (activity.isDefaultEnabled()) {

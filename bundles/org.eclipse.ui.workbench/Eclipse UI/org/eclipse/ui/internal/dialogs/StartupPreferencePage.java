@@ -121,9 +121,9 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 	public boolean performOk() {
 		StringBuilder preference = new StringBuilder();
 		TableItem[] items = pluginsList.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (!items[i].getChecked()) {
-				preference.append(((ContributionInfo) items[i].getData()).getBundleId());
+		for (TableItem item : items) {
+			if (!item.getChecked()) {
+				preference.append(((ContributionInfo) item.getData()).getBundleId());
 				preference.append(IPreferenceConstants.SEPARATOR);
 			}
 		}

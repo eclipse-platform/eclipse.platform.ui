@@ -528,12 +528,8 @@ public abstract class AbstractWorkingSetManager extends EventManager
 	 * @param memento the persistence store
 	 */
 	protected void saveMruList(IMemento memento) {
-		Iterator iterator = recentWorkingSets.iterator();
-
-		while (iterator.hasNext()) {
-			IWorkingSet workingSet = (IWorkingSet) iterator.next();
+		for (IWorkingSet workingSet : recentWorkingSets) {
 			IMemento mruMemento = memento.createChild(IWorkbenchConstants.TAG_MRU_LIST);
-
 			mruMemento.putString(IWorkbenchConstants.TAG_NAME, workingSet.getName());
 		}
 	}

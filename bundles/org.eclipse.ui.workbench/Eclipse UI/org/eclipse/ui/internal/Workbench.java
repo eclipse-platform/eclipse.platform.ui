@@ -2354,11 +2354,11 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			public void runWithException() {
 				// this currently instantiates all players ... sigh
 				sourceProviderService.readRegistry();
-				ISourceProvider[] sp = sourceProviderService.getSourceProviders();
-				for (int i = 0; i < sp.length; i++) {
-					evaluationService.addSourceProvider(sp[i]);
-					if (!(sp[i] instanceof ActiveContextSourceProvider)) {
-						contextService.addSourceProvider(sp[i]);
+				ISourceProvider[] sourceproviders = sourceProviderService.getSourceProviders();
+				for (ISourceProvider sp : sourceproviders) {
+					evaluationService.addSourceProvider(sp);
+					if (!(sp instanceof ActiveContextSourceProvider)) {
+						contextService.addSourceProvider(sp);
 					}
 				}
 			}

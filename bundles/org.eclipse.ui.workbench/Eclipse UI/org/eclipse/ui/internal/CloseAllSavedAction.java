@@ -113,8 +113,8 @@ public class CloseAllSavedAction extends PageEventAction implements IPropertyLis
 			return;
 		}
 		IEditorReference editors[] = page.getEditorReferences();
-		for (int i = 0; i < editors.length; i++) {
-			if (!editors[i].isDirty()) {
+		for (IEditorReference editor : editors) {
+			if (!editor.isDirty()) {
 				setEnabled(true);
 				return;
 			}

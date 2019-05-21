@@ -635,8 +635,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 			return false;
 		}
 
-		for (int i = 0; i < items.length; i++) {
-			if (!isEditorRemovable(items[i])) {
+		for (TableItem item : items) {
+			if (!isEditorRemovable(item)) {
 				return false;
 			}
 		}

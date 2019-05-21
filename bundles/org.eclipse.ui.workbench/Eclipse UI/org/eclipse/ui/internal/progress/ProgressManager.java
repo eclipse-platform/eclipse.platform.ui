@@ -1013,9 +1013,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		Shell[] shells = workbench.getDisplay().getShells();
 		if (active) {
-			for (int i = 0; i < shells.length; i++) {
-				if (!shells[i].isDisposed()) {
-					shells[i].setEnabled(active);
+			for (Shell shell : shells) {
+				if (!shell.isDisposed()) {
+					shell.setEnabled(active);
 				}
 			}
 		} else {

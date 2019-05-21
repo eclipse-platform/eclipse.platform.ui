@@ -376,10 +376,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	 * Rolls back changes to working sets.
 	 */
 	private void restoreChangedWorkingSets() {
-		Iterator iterator = getEditedWorkingSets().keySet().iterator();
-
-		while (iterator.hasNext()) {
-			IWorkingSet editedWorkingSet = (IWorkingSet) iterator.next();
+		for (IWorkingSet editedWorkingSet : getEditedWorkingSets().keySet()) {
 			IWorkingSet originalWorkingSet = getEditedWorkingSets().get(editedWorkingSet);
 
 			if (editedWorkingSet.getName().equals(originalWorkingSet.getName()) == false) {

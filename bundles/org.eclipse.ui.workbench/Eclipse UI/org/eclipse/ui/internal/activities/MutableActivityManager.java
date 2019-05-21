@@ -201,18 +201,13 @@ public final class MutableActivityManager extends AbstractActivityManager
 	}
 
 	private void getRequiredActivityIds(Set<String> activityIds, Set<String> requiredActivityIds) {
-		for (Iterator<String> iterator = activityIds.iterator(); iterator.hasNext();) {
-			String activityId = iterator.next();
+		for (String activityId : activityIds) {
 			IActivity activity = getActivity(activityId);
 			Set<String> childActivityIds = new HashSet<>();
 			Set<IActivityRequirementBinding> activityRequirementBindings = activity.getActivityRequirementBindings();
-
-			for (Iterator<IActivityRequirementBinding> iterator2 = activityRequirementBindings.iterator(); iterator2
-					.hasNext();) {
-				IActivityRequirementBinding activityRequirementBinding = iterator2.next();
+			for (IActivityRequirementBinding activityRequirementBinding : activityRequirementBindings) {
 				childActivityIds.add(activityRequirementBinding.getRequiredActivityId());
 			}
-
 			childActivityIds.removeAll(requiredActivityIds);
 			requiredActivityIds.addAll(childActivityIds);
 			getRequiredActivityIds(childActivityIds, requiredActivityIds);
@@ -220,9 +215,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 	}
 
 	private void notifyActivities(Map<String, ActivityEvent> activityEventsByActivityId) {
-		for (Iterator<Map.Entry<String, ActivityEvent>> iterator = activityEventsByActivityId.entrySet()
-				.iterator(); iterator.hasNext();) {
-			Entry<String, ActivityEvent> entry = iterator.next();
+		for (Entry<String, ActivityEvent> entry : activityEventsByActivityId.entrySet()) {
 			String activityId = entry.getKey();
 			ActivityEvent activityEvent = entry.getValue();
 			Activity activity = activitiesById.get(activityId);
@@ -234,9 +227,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 	}
 
 	private void notifyCategories(Map<String, CategoryEvent> categoryEventsByCategoryId) {
-		for (Iterator<Entry<String, CategoryEvent>> iterator = categoryEventsByCategoryId.entrySet()
-				.iterator(); iterator.hasNext();) {
-			Entry<String, CategoryEvent> entry = iterator.next();
+		for (Entry<String, CategoryEvent> entry : categoryEventsByCategoryId.entrySet()) {
 			String categoryId = entry.getKey();
 			CategoryEvent categoryEvent = entry.getValue();
 			Category category = categoriesById.get(categoryId);
@@ -248,9 +239,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 	}
 
 	private void notifyIdentifiers(Map<String, IdentifierEvent> identifierEventsByIdentifierId) {
-		for (Iterator<Entry<String, IdentifierEvent>> iterator = identifierEventsByIdentifierId.entrySet()
-				.iterator(); iterator.hasNext();) {
-			Entry<String, IdentifierEvent> entry = iterator.next();
+		for (Entry<String, IdentifierEvent> entry : identifierEventsByIdentifierId.entrySet()) {
 			String identifierId = entry.getKey();
 			IdentifierEvent identifierEvent = entry.getValue();
 			Identifier identifier = identifiersById.get(identifierId);
@@ -296,19 +285,14 @@ public final class MutableActivityManager extends AbstractActivityManager
 						activityRegistry.getActivityRequirementBindingDefinitions());
 		Map<String, Set<IActivityRequirementBinding>> activityRequirementBindingsByActivityId = new HashMap<>();
 
-		for (Iterator<Entry<String, Collection<ActivityRequirementBindingDefinition>>> iterator = activityRequirementBindingDefinitionsByActivityId
-				.entrySet().iterator(); iterator.hasNext();) {
-			Entry<String, Collection<ActivityRequirementBindingDefinition>> entry = iterator.next();
+		for (Entry<String, Collection<ActivityRequirementBindingDefinition>> entry : activityRequirementBindingDefinitionsByActivityId
+				.entrySet()) {
 			String parentActivityId = entry.getKey();
-
 			if (activityDefinitionsById.containsKey(parentActivityId)) {
 				Collection<ActivityRequirementBindingDefinition> activityRequirementBindingDefinitions = entry
 						.getValue();
-
 				if (activityRequirementBindingDefinitions != null) {
-					for (Iterator<ActivityRequirementBindingDefinition> iterator2 = activityRequirementBindingDefinitions
-							.iterator(); iterator2.hasNext();) {
-						ActivityRequirementBindingDefinition activityRequirementBindingDefinition = iterator2.next();
+					for (ActivityRequirementBindingDefinition activityRequirementBindingDefinition : activityRequirementBindingDefinitions) {
 						String childActivityId = activityRequirementBindingDefinition.getRequiredActivityId();
 
 						if (activityDefinitionsById.containsKey(childActivityId)) {
@@ -334,18 +318,13 @@ public final class MutableActivityManager extends AbstractActivityManager
 				.activityPatternBindingDefinitionsByActivityId(activityRegistry.getActivityPatternBindingDefinitions());
 		Map<String, Set<IActivityPatternBinding>> activityPatternBindingsByActivityId = new HashMap<>();
 
-		for (Iterator<Entry<String, Collection<ActivityPatternBindingDefinition>>> iterator = activityPatternBindingDefinitionsByActivityId
-				.entrySet().iterator(); iterator.hasNext();) {
-			Entry<String, Collection<ActivityPatternBindingDefinition>> entry = iterator.next();
+		for (Entry<String, Collection<ActivityPatternBindingDefinition>> entry : activityPatternBindingDefinitionsByActivityId
+				.entrySet()) {
 			String activityId = entry.getKey();
-
 			if (activityDefinitionsById.containsKey(activityId)) {
 				Collection<ActivityPatternBindingDefinition> activityPatternBindingDefinitions = entry.getValue();
-
 				if (activityPatternBindingDefinitions != null) {
-					for (Iterator<ActivityPatternBindingDefinition> iterator2 = activityPatternBindingDefinitions
-							.iterator(); iterator2.hasNext();) {
-						ActivityPatternBindingDefinition activityPatternBindingDefinition = iterator2.next();
+					for (ActivityPatternBindingDefinition activityPatternBindingDefinition : activityPatternBindingDefinitions) {
 						String pattern = activityPatternBindingDefinition.getPattern();
 
 						if (pattern != null && pattern.length() != 0) {
@@ -371,18 +350,13 @@ public final class MutableActivityManager extends AbstractActivityManager
 						activityRegistry.getCategoryActivityBindingDefinitions());
 		Map<String, Set<ICategoryActivityBinding>> categoryActivityBindingsByCategoryId = new HashMap<>();
 
-		for (Iterator<Entry<String, Collection<CategoryActivityBindingDefinition>>> iterator = categoryActivityBindingDefinitionsByCategoryId
-				.entrySet().iterator(); iterator.hasNext();) {
-			Entry<String, Collection<CategoryActivityBindingDefinition>> entry = iterator.next();
+		for (Entry<String, Collection<CategoryActivityBindingDefinition>> entry : categoryActivityBindingDefinitionsByCategoryId
+				.entrySet()) {
 			String categoryId = entry.getKey();
-
 			if (categoryDefinitionsById.containsKey(categoryId)) {
 				Collection<CategoryActivityBindingDefinition> categoryActivityBindingDefinitions = entry.getValue();
-
 				if (categoryActivityBindingDefinitions != null) {
-					for (Iterator<CategoryActivityBindingDefinition> iterator2 = categoryActivityBindingDefinitions
-							.iterator(); iterator2.hasNext();) {
-						CategoryActivityBindingDefinition categoryActivityBindingDefinition = iterator2.next();
+					for (CategoryActivityBindingDefinition categoryActivityBindingDefinition : categoryActivityBindingDefinitions) {
 						String activityId = categoryActivityBindingDefinition.getActivityId();
 
 						if (activityDefinitionsById.containsKey(activityId)) {
@@ -606,8 +580,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 	private Map<String, ActivityEvent> updateActivities(Collection<String> activityIds) {
 		Map<String, ActivityEvent> activityEventsByActivityId = new TreeMap<>();
 
-		for (Iterator<String> iterator = activityIds.iterator(); iterator.hasNext();) {
-			String activityId = iterator.next();
+		for (String activityId : activityIds) {
 			Activity activity = activitiesById.get(activityId);
 
 			if (activity != null) {
@@ -704,8 +677,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 	private Map<String, CategoryEvent> updateCategories(Collection<String> categoryIds) {
 		Map<String, CategoryEvent> categoryEventsByCategoryId = new TreeMap<>();
 
-		for (Iterator<String> iterator = categoryIds.iterator(); iterator.hasNext();) {
-			String categoryId = iterator.next();
+		for (String categoryId : categoryIds) {
 			Category category = categoriesById.get(categoryId);
 
 			if (category != null) {
@@ -770,8 +742,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 			if (identifier.getActivityIds() != null) {
 				activityIdsToUpdate.addAll(identifier.getActivityIds());
 			}
-			for (Iterator<String> iterator = activityIdsToUpdate.iterator(); iterator.hasNext();) {
-				String activityId = iterator.next();
+			for (String activityId : activityIdsToUpdate) {
 				Activity activity = (Activity) getActivity(activityId);
 
 				if (activity.isMatch(id)) {
@@ -801,8 +772,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 			Set<String> changedActivityIds) {
 		Map<String, IdentifierEvent> identifierEventsByIdentifierId = new TreeMap<>();
 
-		for (Iterator<String> iterator = identifierIds.iterator(); iterator.hasNext();) {
-			String identifierId = iterator.next();
+		for (String identifierId : identifierIds) {
 			Identifier identifier = identifiersById.get(identifierId);
 
 			if (identifier != null) {
@@ -847,8 +817,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 				while (!deferredIdentifiers.isEmpty()) {
 					Identifier identifier = deferredIdentifiers.remove(0);
 					Set<String> activityIds = new HashSet<>();
-					for (Iterator<String> iterator = definedActivityIds.iterator(); iterator.hasNext();) {
-						String activityId = iterator.next();
+					for (String activityId : definedActivityIds) {
 						Activity activity = (Activity) getActivity(activityId);
 
 						if (activity.isMatch(identifier.getId())) {
