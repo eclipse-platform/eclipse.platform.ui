@@ -307,7 +307,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	public WizardDialog(Shell parentShell, IWizard newWizard) {
 		super(parentShell);
 		boolean modal = !"true".equals(System.getProperty("jface.allWizardsNonModal", "false")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		setShellStyle(SWT.CLOSE | SWT.MAX | SWT.TITLE | SWT.BORDER | SWT.ON_TOP | SWT.RESIZE | getShellModality(modal)
+		setShellStyle(SWT.CLOSE | SWT.MAX | SWT.TITLE | SWT.BORDER | SWT.RESIZE | getShellModality(modal)
 				| getDefaultOrientation());
 		setWizard(newWizard);
 		// since VAJava can't initialize an instance var with an anonymous
@@ -319,11 +319,11 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * Sets the shell style of the wizard dialog.
 	 * <p>
 	 * Examples:<br>
-	 * To use the default style without the SWT.APPLICATION_MODAL bit:<br/>
-	 * <code>setShellStyle(getDefaultShellStyle() & ~SWT.APPLICATION_MODAL</code>
+	 * To use the default style without the SWT.APPLICATION_MODAL bit:<br>
+	 * <code>setShellStyle(getShellStyle() & ~SWT.APPLICATION_MODAL)</code>
 	 * <p>
-	 * To use the default style without the SWT.RESIZE bit:<br/>
-	 * <code>setShellStyle(getDefaultShellStyle() & ~SWT.RESIZE)</code>
+	 * To use the default style without the SWT.RESIZE bit:<br>
+	 * <code>setShellStyle(getShellStyle() & ~SWT.RESIZE)</code>
 	 *
 	 * <p>
 	 * {@inheritDoc}
