@@ -23,10 +23,6 @@
     </children>
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="org.eclipse.ui.contexts.dialog" name="%bindingcontext.name.dialogs"/>
   </rootContext>
-  <menuContributions xmi:id="_KlNcwOHYEeWNzIY-Dznncg" elementId="org.eclipse.ui.window.customizePerspective" positionInParent="popup:toolbar">
-    <children xsi:type="menu:HandledMenuItem" xmi:id="_LL1-8OHYEeWNzIY-Dznncg" elementId="org.eclipse.ui.window.customizePerspective" label="%command.name.customize" command="_86A4EOHXEeWNzIY-Dznncg"/>
-  </menuContributions>
-  <commands xmi:id="_86A4EOHXEeWNzIY-Dznncg" elementId="org.eclipse.ui.window.customizePerspective"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
