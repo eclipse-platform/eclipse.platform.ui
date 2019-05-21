@@ -702,7 +702,7 @@ public abstract class QuickAccessContents {
 		});
 	}
 
-	private Label hintText;
+	Label hintText;
 	private boolean displayHintText;
 
 	/** Create HintText as child of the given parent composite */

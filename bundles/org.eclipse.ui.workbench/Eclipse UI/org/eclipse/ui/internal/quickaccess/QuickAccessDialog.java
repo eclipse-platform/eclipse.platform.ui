@@ -31,6 +31,7 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -136,16 +137,12 @@ public class QuickAccessDialog extends PopupDialog {
 					providers.toArray(new QuickAccessProvider[providers.size()])) {
 				@Override
 				protected void updateFeedback(boolean filterTextEmpty, boolean showAllMatches) {
-					if (filterTextEmpty) {
-						setInfoText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
+					TriggerSequence[] sequences = getInvokingCommandKeySequences();
+					if (showAllMatches || sequences == null || sequences.length == 0) {
+						setInfoText(""); //$NON-NLS-1$
 					} else {
-						TriggerSequence[] sequences = getInvokingCommandKeySequences();
-						if (showAllMatches || sequences == null || sequences.length == 0) {
-							setInfoText(""); //$NON-NLS-1$
-						} else {
-							setInfoText(NLS.bind(QuickAccessMessages.QuickAccess_PressKeyToShowAllMatches,
-									sequences[0].format()));
-						}
+						setInfoText(NLS.bind(QuickAccessMessages.QuickAccess_PressKeyToShowAllMatches,
+								sequences[0].format()));
 					}
 				}
 
@@ -278,8 +275,10 @@ public class QuickAccessDialog extends PopupDialog {
 		boolean isWin32 = Util.isWindows();
 		GridLayoutFactory.fillDefaults().extendedMargins(isWin32 ? 0 : 3, 3, 2, 2).applyTo(composite);
 		Label hintText = contents.createHintText(composite, SWT.DEFAULT);
-		hintText.setLayoutData(
-				new GridData(SWT.FILL, SWT.DEFAULT, true, false, ((GridLayout) composite.getLayout()).numColumns, 1));
+		GridData gridData = new GridData(SWT.FILL, SWT.DEFAULT, true, false,
+				((GridLayout) composite.getLayout()).numColumns, 1);
+		gridData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
+		hintText.setLayoutData(gridData);
 
 		Table table = contents.createTable(composite, getDefaultOrientation());
 		table.addKeyListener(getKeyAdapter());
