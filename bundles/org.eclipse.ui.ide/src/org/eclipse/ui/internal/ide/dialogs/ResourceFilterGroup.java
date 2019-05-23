@@ -1180,9 +1180,7 @@ public class ResourceFilterGroup {
 	public UIResourceFilterDescription[] getFilters() {
 		FilterCopy[] newFilters = filters.getChildren();
 		UIResourceFilterDescription[] result = new UIResourceFilterDescription[newFilters.length];
-		for (int i = 0; i < newFilters.length; i++) {
-			result[i] = newFilters[i];
-		}
+		System.arraycopy(newFilters, 0, result, 0, newFilters.length);
 		return result;
 	}
 

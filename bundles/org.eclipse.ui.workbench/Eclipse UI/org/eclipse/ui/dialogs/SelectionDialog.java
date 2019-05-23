@@ -14,6 +14,7 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -160,9 +161,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	 */
 	public void setInitialSelections(Object... selectedElements) {
 		initialSelections = new ArrayList(selectedElements.length);
-		for (Object selectedElement : selectedElements) {
-			initialSelections.add(selectedElement);
-		}
+		initialSelections.addAll(Arrays.asList(selectedElements));
 	}
 
 	/**

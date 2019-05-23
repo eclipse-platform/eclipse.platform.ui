@@ -264,8 +264,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		/* If so, update */
 		if (updateFilterActivation) {
 			if (nonUiVisible != null) {
-				for (String filterIdToActivate : filterIdsToActivate)
-					nonUiVisible.add(filterIdToActivate);
+				nonUiVisible.addAll(Arrays.asList(filterIdsToActivate));
 				filterIdsToActivate = nonUiVisible.toArray(new String[]{});
 			}
 

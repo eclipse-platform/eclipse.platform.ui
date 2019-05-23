@@ -16,6 +16,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -145,9 +146,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 		Assert.isNotNull(newElements, "Working set elements array must not be null"); //$NON-NLS-1$
 
 		elements = new ArrayList(newElements.length);
-		for (IAdaptable newElement : newElements) {
-			elements.add(newElement);
-		}
+		elements.addAll(Arrays.asList(newElements));
 	}
 
 	@Override

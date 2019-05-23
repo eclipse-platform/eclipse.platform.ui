@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.preferences;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @since 3.1
@@ -83,9 +84,7 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
 
 	protected final void firePropertyChange(String[] prefIds) {
 		if (ignoreCount > 0) {
-			for (String prefId : prefIds) {
-				queuedEvents.add(prefId);
-			}
+			queuedEvents.addAll(Arrays.asList(prefIds));
 			return;
 		}
 

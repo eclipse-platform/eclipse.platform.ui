@@ -783,16 +783,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (part != null) {
 				IActionSetDescriptor[] partActionSets = WorkbenchPlugin.getDefault().getActionSetRegistry()
 						.getActionSetsFor(part.getSite().getId());
-				for (IActionSetDescriptor partActionSetDescriptor : partActionSets) {
-					newActionSets.add(partActionSetDescriptor);
-				}
+				newActionSets.addAll(Arrays.asList(partActionSets));
 			}
 			if (editor != null && editor != part) {
 				IActionSetDescriptor[] editorActionSets = WorkbenchPlugin.getDefault().getActionSetRegistry()
 						.getActionSetsFor(editor.getSite().getId());
-				for (IActionSetDescriptor editorActionSetDescriptor : editorActionSets) {
-					newActionSets.add(editorActionSetDescriptor);
-				}
+				newActionSets.addAll(Arrays.asList(editorActionSets));
 			}
 			return newActionSets;
 		}
@@ -3601,9 +3597,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		// saveAll below expects a mutable list
 		List<IWorkbenchPart> dirtyParts = new ArrayList<>(parts.length);
-		for (IWorkbenchPart part : parts) {
-			dirtyParts.add(part);
-		}
+		dirtyParts.addAll(Arrays.asList(parts));
 
 		// If confirmation is required ..
 		return saveAll(dirtyParts, confirm, closing, addNonPartSources, legacyWindow, legacyWindow);

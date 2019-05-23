@@ -15,6 +15,7 @@
 package org.eclipse.ui.internal.ide;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,9 +72,7 @@ public class IDESelectionConversionService implements
 					for (ResourceTraversal traversal : traversals) {
 						resources = traversal.getResources();
 						if (resources != null) {
-							for (IResource traversalResource : resources) {
-								result.add(traversalResource);
-							}
+							result.addAll(Arrays.asList(resources));
 						}
 					}
 				}

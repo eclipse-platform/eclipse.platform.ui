@@ -15,6 +15,7 @@ package org.eclipse.ui.model;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.core.runtime.Assert;
@@ -61,9 +62,7 @@ public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
 	 */
 	public AdaptableList(IAdaptable[] newChildren) {
 		this(newChildren.length);
-		for (IAdaptable adaptable : newChildren) {
-			children.add(adaptable);
-		}
+		children.addAll(Arrays.asList(newChildren));
 	}
 
 	/**

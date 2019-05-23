@@ -195,9 +195,7 @@ public class MarkerContentGenerator {
 		MarkerField[] visible = getVisibleFields();
 
 		Collection<MarkerField> hidden = new HashSet<>();
-		for (MarkerField element : all) {
-			hidden.add(element);
-		}
+		hidden.addAll(Arrays.asList(all));
 		for (MarkerField element : visible) {
 			hidden.remove(element);
 		}

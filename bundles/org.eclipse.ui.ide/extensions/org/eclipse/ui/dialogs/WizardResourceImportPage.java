@@ -17,6 +17,7 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
@@ -418,9 +419,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 		Object[] newSelectedTypes = dialog.getResult();
 		if (newSelectedTypes != null) { // ie.- did not press Cancel
 			this.selectedTypes = new ArrayList(newSelectedTypes.length);
-			for (Object newSelectedType : newSelectedTypes) {
-				this.selectedTypes.add(newSelectedType);
-			}
+			this.selectedTypes.addAll(Arrays.asList(newSelectedTypes));
 
 			setupSelectionsBasedOnSelectedTypes();
 		}

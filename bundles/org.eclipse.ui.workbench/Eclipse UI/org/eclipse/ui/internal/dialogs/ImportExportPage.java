@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -128,9 +129,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 
 			if (wizardCategories != null) {
 				if (wizardCategories.getParent() == null) {
-					for (IWizardCategory wizardCategory : wizardCategories.getCategories()) {
-						inputArray.add(wizardCategory);
-					}
+					inputArray.addAll(Arrays.asList(wizardCategories.getCategories()));
 				} else {
 					expandTop = true;
 					inputArray.add(wizardCategories);

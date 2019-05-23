@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.actions;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -61,9 +62,7 @@ public class BuildUtilities {
 				ResourceMapping mapping = ResourceUtil.getResourceMapping(currentSelection);
 				if (mapping != null) {
 					IProject[] theProjects = mapping.getProjects();
-					for (IProject theProject : theProjects) {
-						projects.add(theProject);
-					}
+					projects.addAll(Arrays.asList(theProjects));
 				} else {
 					IMarker marker = Adapters.adapt(currentSelection, IMarker.class, false);
 					if (marker != null) {

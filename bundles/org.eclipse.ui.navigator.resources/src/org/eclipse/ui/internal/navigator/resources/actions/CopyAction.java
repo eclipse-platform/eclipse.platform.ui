@@ -126,9 +126,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 		if (actualLength < length) {
 			String[] tempFileNames = fileNames;
 			fileNames = new String[actualLength];
-			for (int i = 0; i < actualLength; i++) {
-				fileNames[i] = tempFileNames[i];
-			}
+			System.arraycopy(tempFileNames, 0, fileNames, 0, actualLength);
 		}
 		setClipboard(resources, fileNames, buf.toString());
 

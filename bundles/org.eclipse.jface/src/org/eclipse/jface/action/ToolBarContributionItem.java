@@ -250,9 +250,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
 			if (wraps[0] != 0) {
 				adjustedWrapIndices = new int[wraps.length + 1];
 				adjustedWrapIndices[0] = 0;
-				for (int i = 0; i < wraps.length; i++) {
-					adjustedWrapIndices[i + 1] = wraps[i];
-				}
+				System.arraycopy(wraps, 0, adjustedWrapIndices, 1, wraps.length);
 			} else {
 				adjustedWrapIndices = wraps;
 			}

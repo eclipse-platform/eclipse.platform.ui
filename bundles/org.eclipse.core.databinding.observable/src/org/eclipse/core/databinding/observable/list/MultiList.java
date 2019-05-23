@@ -17,6 +17,7 @@
 package org.eclipse.core.databinding.observable.list;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -124,9 +125,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	public MultiList(Realm realm, IObservableList<E>[] lists, Object elementType) {
 		super(realm);
 		this.lists = new ArrayList<IObservableList<E>>(lists.length);
-		for (IObservableList<E> list : lists) {
-			this.lists.add(list);
-		}
+		this.lists.addAll(Arrays.asList(lists));
 		this.elementType = elementType;
 
 		for (IObservableList<E> list : lists) {

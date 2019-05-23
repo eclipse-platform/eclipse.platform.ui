@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -33,9 +34,7 @@ public class PreferenceNodeFilter extends ViewerFilter {
 	 */
 	public PreferenceNodeFilter(String[] filteredIds) {
 		super();
-		for (String filteredId : filteredIds) {
-			ids.add(filteredId);
-		}
+		ids.addAll(Arrays.asList(filteredIds));
 	}
 
 	@Override

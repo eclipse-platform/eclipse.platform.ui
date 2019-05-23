@@ -72,9 +72,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 		public void addMember(String person){
 			TeamMember newMember = new TeamMember(person, this);
 			TeamMember[] newMembers = new TeamMember[members.length + 1];
-			for (int i = 0; i < members.length; i++){
-				newMembers[i] = members[i];
-			}
+			System.arraycopy(members, 0, newMembers, 0, members.length);
 			newMembers[newMembers.length - 1] = newMember;
 			members = null;
 			members = newMembers;

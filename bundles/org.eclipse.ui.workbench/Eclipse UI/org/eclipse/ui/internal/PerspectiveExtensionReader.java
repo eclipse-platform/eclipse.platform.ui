@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -358,8 +359,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	 */
 	public void setIncludeOnlyTags(String[] tags) {
 		includeOnlyTags = new HashSet<>();
-		for (String tag : tags) {
-			includeOnlyTags.add(tag);
-		}
+		includeOnlyTags.addAll(Arrays.asList(tags));
 	}
 }

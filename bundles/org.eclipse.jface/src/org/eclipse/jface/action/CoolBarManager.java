@@ -14,6 +14,7 @@
 package org.eclipse.jface.action;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -327,9 +328,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 			if (wraps[0] != 0) {
 				adjustedWrapIndices = new int[wraps.length + 1];
 				adjustedWrapIndices[0] = 0;
-				for (int i = 0; i < wraps.length; i++) {
-					adjustedWrapIndices[i + 1] = wraps[i];
-				}
+				System.arraycopy(wraps, 0, adjustedWrapIndices, 1, wraps.length);
 			} else {
 				adjustedWrapIndices = wraps;
 			}
@@ -376,9 +375,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	private ArrayList<IContributionItem> getItemList() {
 		IContributionItem[] cbItems = getItems();
 		ArrayList<IContributionItem> list = new ArrayList<>(cbItems.length);
-		for (IContributionItem cbItem : cbItems) {
-			list.add(cbItem);
-		}
+		list.addAll(Arrays.asList(cbItems));
 		return list;
 	}
 

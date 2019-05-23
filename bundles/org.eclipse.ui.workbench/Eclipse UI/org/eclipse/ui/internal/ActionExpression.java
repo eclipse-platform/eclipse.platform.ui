@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -175,9 +176,7 @@ public class ActionExpression {
 					if (classNames == null) {
 						classNames = new ArrayList();
 					}
-					for (String objectClass : objectClasses) {
-						classNames.add(objectClass);
-					}
+					classNames.addAll(Arrays.asList(objectClasses));
 				}
 			}
 			if (classNames == null) {

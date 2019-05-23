@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.datatransfer;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -129,9 +130,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 	public void testExportResources() throws Exception {
 		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
-		for (IResource member : members) {
-			resources.add(member);
-		}
+		resources.addAll(Arrays.asList(members));
 		FileSystemExportOperation operation =
 			new FileSystemExportOperation(
 					null, resources, localDirectory, this);

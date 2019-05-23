@@ -1090,9 +1090,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	private void sortInternalEditors() {
 		IEditorDescriptor[] array = sortEditors(sortedEditorsFromPlugins);
 		sortedEditorsFromPlugins = new ArrayList<>();
-		for (IEditorDescriptor element : array) {
-			sortedEditorsFromPlugins.add(element);
-		}
+		sortedEditorsFromPlugins.addAll(Arrays.asList(array));
 	}
 
 	/**

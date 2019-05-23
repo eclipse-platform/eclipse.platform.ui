@@ -15,6 +15,7 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Class used to capture the SWT structure expected when rendering a partuclar
@@ -29,9 +30,7 @@ public class SWTResult {
 		clazz = theClass;
 		text = theText;
 		if (children != null) {
-			for (SWTResult result : children) {
-				kids.add(result);
-			}
+			kids.addAll(Arrays.asList(children));
 		}
 	}
 }

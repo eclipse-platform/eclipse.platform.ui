@@ -14,6 +14,7 @@
 package org.eclipse.ui.examples.readmetool;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,9 +43,7 @@ public class AdaptableList implements IWorkbenchAdapter, IAdaptable {
 	 * Creates a new adaptable list with the given children.
 	 */
 	public AdaptableList(IAdaptable[] newChildren) {
-		for (int i = 0; i < newChildren.length; i++) {
-			children.add(newChildren[i]);
-		}
+		children.addAll(Arrays.asList(newChildren));
 	}
 
 	/**

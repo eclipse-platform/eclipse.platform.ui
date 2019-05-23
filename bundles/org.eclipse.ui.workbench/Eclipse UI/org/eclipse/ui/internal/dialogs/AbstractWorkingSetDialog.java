@@ -18,6 +18,7 @@ package org.eclipse.ui.internal.dialogs;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -86,9 +87,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 		super(parentShell);
 		if (workingSetIds != null) {
 			this.workingSetIds = new HashSet<>();
-			for (String workingSetId : workingSetIds) {
-				this.workingSetIds.add(workingSetId);
-			}
+			this.workingSetIds.addAll(Arrays.asList(workingSetIds));
 		}
 		this.canEdit = canEdit;
 	}

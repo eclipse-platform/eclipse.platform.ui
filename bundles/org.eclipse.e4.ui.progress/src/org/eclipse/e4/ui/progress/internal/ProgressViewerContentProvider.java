@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -144,9 +145,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 
 		Set<Object> all = new HashSet<>();
 
-		for (Object element : elements) {
-			all.add(element);
-		}
+		all.addAll(Arrays.asList(elements));
 
 		Iterator<JobTreeElement> keptIterator = kept.iterator();
 		while (keptIterator.hasNext()) {

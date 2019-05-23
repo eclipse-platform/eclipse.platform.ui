@@ -248,9 +248,7 @@ class MarkerResourceUtil {
 		}
 		case MarkerFieldFilterGroup.ON_SELECTED_ONLY:
 		case MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN: {
-			for (IResource selectedResource : selectedResources) {
-				resourceSet.add(selectedResource);
-			}
+			resourceSet.addAll(Arrays.asList(selectedResources));
 			break;
 		}
 		case MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER: {
@@ -261,9 +259,7 @@ class MarkerResourceUtil {
 		}
 		case MarkerFieldFilterGroup.ON_WORKING_SET: {
 			group.refresh();
-			for (IResource resource : group.getResourcesInWorkingSet()) {
-				resourceSet.add(resource);
-			}
+			resourceSet.addAll(Arrays.asList(group.getResourcesInWorkingSet()));
 			break;
 		}
 		}
@@ -388,9 +384,7 @@ class MarkerResourceUtil {
 		for (String typeId : typeIds) {
 			MarkerType type = typesModel.getType(typeId);
 			set.add(type);
-			for (MarkerType sub : type.getAllSubTypes()) {
-				set.add(sub);
-			}
+			set.addAll(Arrays.asList(type.getAllSubTypes()));
 		}
 		return set;
 	}

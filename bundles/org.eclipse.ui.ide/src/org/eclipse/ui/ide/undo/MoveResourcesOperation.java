@@ -15,6 +15,7 @@
 package org.eclipse.ui.ide.undo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -137,9 +138,7 @@ public class MoveResourcesOperation extends
 					resourcesAtDestination, undoDestinationPaths, subMonitor.split(1), uiInfo, true);
 
 			// Accumulate the overwrites into the full list
-			for (ResourceDescription overwrite : overwrites) {
-				overwrittenResources.add(overwrite);
-			}
+			overwrittenResources.addAll(Arrays.asList(overwrites));
 		}
 
 		// Are there any previously overwritten resources to restore now?

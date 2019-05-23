@@ -51,9 +51,7 @@ public class Diffs {
 			ListDiffEntry<? extends E>[] original = toWrap.getDifferences();
 			ListDiffEntry<?>[] result = new ListDiffEntry<?>[original.length];
 
-			for (int idx = 0; idx < original.length; idx++) {
-				result[idx] = original[idx];
-			}
+			System.arraycopy(original, 0, result, 0, original.length);
 			return (ListDiffEntry<E>[]) result;
 		}
 	}

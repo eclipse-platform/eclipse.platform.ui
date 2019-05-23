@@ -18,6 +18,7 @@ package org.eclipse.ui.internal.browser;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
@@ -89,9 +90,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 				reportNonZeroExitValue[0] = true;
 			}
 
-			for (String param : params) {
-				cmdOptions.add(param);
-			}
+			cmdOptions.addAll(Arrays.asList(params));
 			String[] cmd = cmdOptions.toArray(new String[cmdOptions.size()]);
 			Trace.trace(Trace.FINEST, "Launching " + join(" ", cmd)); //$NON-NLS-1$//$NON-NLS-2$
 

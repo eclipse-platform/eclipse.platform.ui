@@ -15,6 +15,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -138,9 +139,7 @@ public class ContentGeneratorDescriptor {
 		while (extensions.hasNext()) {
 			IConfigurationElement extension = extensions.next();
 			IConfigurationElement[] extensionFilters = extension.getChildren(ELEMENT_MARKER_FIELD_CONFIGURATION);
-			for (IConfigurationElement extensionFilter : extensionFilters) {
-				extendedElements.add(extensionFilter);
-			}
+			extendedElements.addAll(Arrays.asList(extensionFilters));
 		}
 		if (extendedElements.size() > 0) {
 			IConfigurationElement[] allGroups = new IConfigurationElement[filterGroups.length + extendedElements.size()];
@@ -205,16 +204,12 @@ public class ContentGeneratorDescriptor {
 			for (IConfigurationElement configElement : markerTypeElements) {
 				String elementName = configElement.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 				MarkerType[] types = MarkerTypesModel.getInstance().getType(elementName).getAllSubTypes();
-				for (MarkerType type : types) {
-					markerTypes.add(type);
-				}
+				markerTypes.addAll(Arrays.asList(types));
 				markerTypes.add(MarkerTypesModel.getInstance().getType(elementName));
 			}
 			if (markerTypes.isEmpty()) {
 				MarkerType[] types = MarkerTypesModel.getInstance().getType(IMarker.PROBLEM).getAllSubTypes();
-				for (MarkerType type : types) {
-					markerTypes.add(type);
-				}
+				markerTypes.addAll(Arrays.asList(types));
 			}
 		}
 		return markerTypes;

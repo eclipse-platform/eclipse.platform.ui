@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers.deferred;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -48,9 +49,7 @@ public class SetModel extends AbstractConcurrentModel {
 	public void set(Object[] newContents) {
 		Assert.isNotNull(newContents);
 		data.clear();
-		for (Object object : newContents) {
-			data.add(object);
-		}
+		data.addAll(Arrays.asList(newContents));
 
 		IConcurrentModelListener[] listeners = getListeners();
 		for (IConcurrentModelListener listener : listeners) {
@@ -74,9 +73,7 @@ public class SetModel extends AbstractConcurrentModel {
 	 */
 	public void addAll(Object[] toAdd) {
 		Assert.isNotNull(toAdd);
-		for (Object object : toAdd) {
-			data.add(object);
-		}
+		data.addAll(Arrays.asList(toAdd));
 
 		fireAdd(toAdd);
 	}

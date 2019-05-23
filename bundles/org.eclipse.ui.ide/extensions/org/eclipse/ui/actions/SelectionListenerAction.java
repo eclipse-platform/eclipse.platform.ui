@@ -16,6 +16,7 @@
 package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -143,9 +144,7 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 						IResource[] traversalResources = traversal.getResources();
 						if (traversalResources != null) {
 							resourcesFoundForThisSelection = true;
-							for (IResource traversalResource : traversalResources) {
-								resourcesTmp.add(traversalResource);
-							}
+							resourcesTmp.addAll(Arrays.asList(traversalResources));
 						}
 					}
 				}

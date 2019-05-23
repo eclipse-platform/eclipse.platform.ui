@@ -425,9 +425,7 @@ public class NavigatorContentDescriptorManager {
 		NavigatorContentDescriptor[] descs = getAllContentDescriptors();
 
 		LinkedList<NavigatorContentDescriptor> list = new LinkedList<NavigatorContentDescriptor>();
-		for (NavigatorContentDescriptor desc : descs) {
-			list.add(desc);
-		}
+		list.addAll(Arrays.asList(descs));
 
 		boolean changed = true;
 		while (changed) {

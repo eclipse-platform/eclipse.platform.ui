@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 public class TestElement implements Cloneable {
@@ -75,9 +76,7 @@ public class TestElement implements Cloneable {
 	}
 
 	public void addChildren(TestElement[] elements, TestModelChange change) {
-		for (TestElement element : elements) {
-			fChildren.add(element);
-		}
+		fChildren.addAll(Arrays.asList(elements));
 		fModel.fireModelChanged(change);
 	}
 

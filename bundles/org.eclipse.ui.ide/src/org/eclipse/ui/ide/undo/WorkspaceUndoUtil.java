@@ -341,9 +341,7 @@ public class WorkspaceUndoUtil {
 							createVirtual, createLinks, relativeToVariable);
 					// We don't record the copy since this recursive call will
 					// do so. Just record the overwrites.
-					for (ResourceDescription resourceDesc : overwritten) {
-						overwrittenResources.add(resourceDesc);
-					}
+					overwrittenResources.addAll(Arrays.asList(overwritten));
 				} else {
 					// delete the destination folder, copying a linked folder
 					// over an unlinked one or vice versa. Fixes bug 28772.
@@ -369,9 +367,7 @@ public class WorkspaceUndoUtil {
 						source.copy(destinationPath, IResource.SHALLOW, iterationProgress.split(100));
 					// Record the copy
 					resourcesAtDestination.add(getWorkspace().getRoot().findMember(destinationPath));
-					for (ResourceDescription resourceDes : deleted) {
-						overwrittenResources.add(resourceDes);
-					}
+					overwrittenResources.addAll(Arrays.asList(deleted));
 				}
 			} else {
 				if (existing != null) {
@@ -408,9 +404,7 @@ public class WorkspaceUndoUtil {
 						}
 						resourcesAtDestination.add(getWorkspace().getRoot()
 								.findMember(destinationPath));
-						for (ResourceDescription resourceDesc : deleted) {
-							overwrittenResources.add(resourceDesc);
-						}
+						overwrittenResources.addAll(Arrays.asList(deleted));
 					} else {
 						if (source.isLinked() == existing.isLinked()) {
 							overwrittenResources.add(copyOverExistingResource(source, existing,
@@ -429,9 +423,7 @@ public class WorkspaceUndoUtil {
 							// Record the copy
 							resourcesAtDestination.add(getWorkspace().getRoot()
 									.findMember(destinationPath));
-							for (ResourceDescription resourceDesc : deleted) {
-								overwrittenResources.add(resourceDesc);
-							}
+							overwrittenResources.addAll(Arrays.asList(deleted));
 						}
 					}
 				} else {
@@ -567,9 +559,7 @@ public class WorkspaceUndoUtil {
 							reverseDestinations, iterationProgress.split(90), uiInfo, false);
 					// We don't record the moved resources since the recursive
 					// call has done so. Just record the overwrites.
-					for (ResourceDescription resourceDesc : overwritten) {
-						overwrittenResources.add(resourceDesc);
-					}
+					overwrittenResources.addAll(Arrays.asList(overwritten));
 					// Delete the source. No need to record it since it
 					// will get moved back.
 					delete(resource, iterationProgress.split(10), uiInfo, false, false);
@@ -584,9 +574,7 @@ public class WorkspaceUndoUtil {
 							iterationProgress.split(90));
 					// Record the resource at its destination
 					resourcesAtDestination.add(getWorkspace().getRoot().findMember(destinationPath));
-					for (ResourceDescription resourceDesc : deleted) {
-						overwrittenResources.add(resourceDesc);
-					}
+					overwrittenResources.addAll(Arrays.asList(deleted));
 				}
 			} else {
 				if (existing != null) {
@@ -610,9 +598,7 @@ public class WorkspaceUndoUtil {
 						// Record the resource at its destination
 						resourcesAtDestination.add(getWorkspace().getRoot()
 								.findMember(destinationPath));
-						for (ResourceDescription resourceDesc : deleted) {
-							overwrittenResources.add(resourceDesc);
-						}
+						overwrittenResources.addAll(Arrays.asList(deleted));
 					}
 				} else {
 					// No resources are being overwritten.

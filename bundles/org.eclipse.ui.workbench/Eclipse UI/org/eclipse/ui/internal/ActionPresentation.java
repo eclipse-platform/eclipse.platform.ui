@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -98,9 +99,7 @@ public class ActionPresentation {
 		// Convert array to list.
 		HashSet newList = new HashSet();
 
-		for (IActionSetDescriptor descriptor : newArray) {
-			newList.add(descriptor);
-		}
+		newList.addAll(Arrays.asList(newArray));
 		List oldList = new ArrayList(mapDescToRec.keySet());
 
 		// Remove obsolete actions.

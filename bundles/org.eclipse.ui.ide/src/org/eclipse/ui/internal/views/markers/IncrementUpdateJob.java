@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -106,9 +107,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		synchronized (clone) {
 			clone = clone.getClone();
 		}
-		for (MarkerEntry entry : clone.getMarkerEntryArray()) {
-			markerEntries.add(entry);
-		}
+		markerEntries.addAll(Arrays.asList(clone.getMarkerEntryArray()));
 		return true;
 	}
 

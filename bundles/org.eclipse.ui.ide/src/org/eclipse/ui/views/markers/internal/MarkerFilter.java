@@ -15,6 +15,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -266,9 +267,7 @@ public class MarkerFilter implements Cloneable {
 			} else {
 				IProject[] mappingProjects = (((ResourceMapping) element)
 						.getProjects());
-				for (IProject mappingProject : mappingProjects) {
-					projects.add(mappingProject);
-				}
+				projects.addAll(Arrays.asList(mappingProjects));
 			}
 		}
 		return projects;

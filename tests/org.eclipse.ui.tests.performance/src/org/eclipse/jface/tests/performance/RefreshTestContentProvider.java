@@ -57,9 +57,7 @@ public class RefreshTestContentProvider implements IStructuredContentProvider {
 	public void setSize(int size) {
 
 		currentElements = new TestElement[size];
-		for (int i = 0; i < currentElements.length; i++) {
-			currentElements[i] = allElements[i];
-		}
+		System.arraycopy(allElements, 0, currentElements, 0, currentElements.length);
 
 	}
 

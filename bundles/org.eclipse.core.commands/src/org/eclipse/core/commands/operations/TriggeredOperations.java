@@ -282,9 +282,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 		ArrayList<IUndoContext> allContexts = new ArrayList<>();
 		if (triggeringOperation != null) {
 			IUndoContext[] contexts = triggeringOperation.getContexts();
-			for (IUndoContext context : contexts) {
-				allContexts.add(context);
-			}
+			allContexts.addAll(Arrays.asList(contexts));
 		}
 		for (int i = 0; i < children.size(); i++) {
 			IUndoContext[] contexts = children.get(i).getContexts();

@@ -519,9 +519,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 			result.add(clazz);
 			// add all the interfaces it implements
 			Class[] interfaces = clazz.getInterfaces();
-			for (Class currentInterface : interfaces) {
-				result.add(currentInterface);
-			}
+			result.addAll(Arrays.asList(interfaces));
 			// get the superclass
 			clazz = clazz.getSuperclass();
 		}

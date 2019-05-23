@@ -306,17 +306,13 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 		ArrayList inputArray = new ArrayList();
 
-		for (IWizardDescriptor primaryWizard : primaryWizards) {
-			inputArray.add(primaryWizard);
-		}
+		inputArray.addAll(Arrays.asList(primaryWizards));
 
 		boolean expandTop = false;
 
 		if (wizardCategories != null) {
 			if (wizardCategories.getParent() == null) {
-				for (IWizardCategory wizardCategory : wizardCategories.getCategories()) {
-					inputArray.add(wizardCategory);
-				}
+				inputArray.addAll(Arrays.asList(wizardCategories.getCategories()));
 			} else {
 				expandTop = true;
 				inputArray.add(wizardCategories);

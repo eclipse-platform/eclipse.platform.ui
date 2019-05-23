@@ -16,6 +16,7 @@
 package org.eclipse.core.commands.operations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1058,9 +1059,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				ArrayList<IUndoContext> allContexts = new ArrayList<>(replacements.length);
 				for (IUndoableOperation replacement : replacements) {
 					IUndoContext[] opContexts = replacement.getContexts();
-					for (IUndoContext opContext : opContexts) {
-						allContexts.add(opContext);
-					}
+					allContexts.addAll(Arrays.asList(opContexts));
 					undoList.add(index, replacement);
 					// notify listeners after the lock on the history is
 					// released
@@ -1094,9 +1093,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			// notify listeners after we release the lock on redoList
 			for (IUndoableOperation replacement : replacements) {
 				IUndoContext[] opContexts = replacement.getContexts();
-				for (IUndoContext opContext : opContexts) {
-					allContexts.add(opContext);
-				}
+				allContexts.addAll(Arrays.asList(opContexts));
 				redoList.add(index, replacement);
 				// notify listeners after we release the lock on redoList
 			}

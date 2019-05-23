@@ -15,6 +15,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -467,9 +468,7 @@ public class MarkerGroup {
 		MarkerType type = model.getType(markerType);
 		if (type != null) {
 			types.add(type);
-			for (MarkerType sub : type.getAllSubTypes()) {
-				types.add(sub);
-			}
+			types.addAll(Arrays.asList(type.getAllSubTypes()));
 		}
 
 		if (types.isEmpty()) {

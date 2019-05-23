@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.navigator;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
@@ -53,8 +54,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	 */
 	public ContributorTrackingSet(NavigatorContentService aContentService, Object[] elements) {
 
-		for (Object element : elements)
-			super.add(element);
+		super.addAll(Arrays.asList(elements));
 
 		contentService = aContentService;
 	}
@@ -114,8 +114,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	public void setContents(Object[] contents) {
 		super.clear();
 		if(contents != null)
-			for (Object content : contents)
-				add(content);
+			addAll(Arrays.asList(contents));
 
 	}
 
