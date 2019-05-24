@@ -57,7 +57,7 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 			return NO_MARKER_DELTAS;
 		//Map of IPath -> MarkerSet containing MarkerDelta objects
 		Map<IPath, MarkerSet> markerDeltas = info.getMarkerDeltas();
-		if (markerDeltas == null || markerDeltas.size() == 0)
+		if (markerDeltas == null || markerDeltas.isEmpty())
 			return NO_MARKER_DELTAS;
 		ArrayList<IMarkerDelta> matching = new ArrayList<>();
 		Iterator<MarkerSet> deltaSets = markerDeltas.values().iterator();

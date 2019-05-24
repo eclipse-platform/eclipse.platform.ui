@@ -275,7 +275,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			@SuppressWarnings("unchecked")
 			ArrayList<IResource> list = (ArrayList<IResource>) oldValue;
 			boolean wasRemoved = list.remove(resource);
-			if (list.size() == 0)
+			if (list.isEmpty())
 				map.remove(location);
 			return wasRemoved;
 		}
@@ -712,7 +712,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			internalComputeAliases(resource, location);
 		else
 			computeDeepAliases(resource, location);
-		if (aliases.size() == 0)
+		if (aliases.isEmpty())
 			return;
 		FileSystemResourceManager localManager = workspace.getFileSystemManager();
 		HashSet<IResource> aliasesCopy = (HashSet<IResource>) aliases.clone();

@@ -68,7 +68,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		// First, try the canonical version of the inputLocation.
 		// If the inputLocation is different from the canonical version, it will be tried second
 		ArrayList<IPath> results = allPathsForLocationNonCanonical(canonicalLocation);
-		if (results.size() == 0 && canonicalLocation != inputLocation) {
+		if (results.isEmpty() && canonicalLocation != inputLocation) {
 			results = allPathsForLocationNonCanonical(inputLocation);
 		}
 		return results;

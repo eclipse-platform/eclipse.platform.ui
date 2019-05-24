@@ -59,7 +59,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	 * @param delta
 	 */
 	protected void add(ProposedResourceDelta delta) {
-		if (children.size() == 0 && status == 0)
+		if (children.isEmpty() && status == 0)
 			setKind(IResourceDelta.CHANGED);
 		children.put(delta.getResource().getName(), delta);
 	}

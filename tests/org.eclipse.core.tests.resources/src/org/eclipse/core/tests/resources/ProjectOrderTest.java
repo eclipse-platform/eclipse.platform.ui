@@ -133,14 +133,14 @@ public class ProjectOrderTest extends ResourceTest {
 		IProject[][] oldOrder = ws.computePrerequisiteOrder(projects);
 		List<IProject> x = Arrays.asList(oldOrder[0]);
 		assertTrue("1.1", oldOrder[1].length == 0);
-		assertTrue("1.2", x.size() == 0);
+		assertTrue("1.2", x.isEmpty());
 
 		// no projects
 		IWorkspace.ProjectOrder order = ws.computeProjectOrder(projects);
 		x = Arrays.asList(order.projects);
 		assertTrue("1.3", !order.hasCycles);
 		assertTrue("1.4", order.knots.length == 0);
-		assertTrue("1.5", x.size() == 0);
+		assertTrue("1.5", x.isEmpty());
 
 		// 1 project
 		try {
@@ -167,26 +167,26 @@ public class ProjectOrderTest extends ResourceTest {
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			assertTrue("1.6,8", oldOrder[1].length == 0);
-			assertTrue("1.6.9", x.size() == 0);
+			assertTrue("1.6.9", x.isEmpty());
 
 			order = ws.computeProjectOrder(projects);
 			x = Arrays.asList(order.projects);
 			assertTrue("1.6.10", !order.hasCycles);
 			assertTrue("1.6.11", order.knots.length == 0);
-			assertTrue("1.6.12", x.size() == 0);
+			assertTrue("1.6.12", x.isEmpty());
 
 			// non-existent projects do not show up either
 			projects = new IProject[] {p0, p1};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
 			assertTrue("1.6.13", oldOrder[1].length == 0);
-			assertTrue("1.6.14", x.size() == 0);
+			assertTrue("1.6.14", x.isEmpty());
 
 			order = ws.computeProjectOrder(projects);
 			x = Arrays.asList(order.projects);
 			assertTrue("1.6.15", !order.hasCycles);
 			assertTrue("1.6.16", order.knots.length == 0);
-			assertTrue("1.6.17", x.size() == 0);
+			assertTrue("1.6.17", x.isEmpty());
 
 			p0.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, null);
 		} catch (CoreException e) {
@@ -338,7 +338,7 @@ public class ProjectOrderTest extends ResourceTest {
 			x = Arrays.asList(oldOrder[0]);
 			List<IProject> unordered = Arrays.asList(oldOrder[1]);
 			assertTrue("1.10.1", oldOrder[1].length == 2);
-			assertTrue("1.10.2", x.size() == 0);
+			assertTrue("1.10.2", x.isEmpty());
 			assertTrue("1.10.3", unordered.size() == 2);
 			assertTrue("1.10.4", unordered.indexOf(p0) >= 0);
 			assertTrue("1.10.5", unordered.indexOf(p1) >= 0);
@@ -392,7 +392,7 @@ public class ProjectOrderTest extends ResourceTest {
 			x = Arrays.asList(oldOrder[0]);
 			unordered = Arrays.asList(oldOrder[1]);
 			assertTrue("1.10.28", oldOrder[1].length == 2);
-			assertTrue("1.10.29", x.size() == 0);
+			assertTrue("1.10.29", x.isEmpty());
 			assertTrue("1.10.30", unordered.size() == 2);
 			assertTrue("1.10.31", unordered.indexOf(p0) >= 0);
 			assertTrue("1.10.32", unordered.indexOf(p1) >= 0);

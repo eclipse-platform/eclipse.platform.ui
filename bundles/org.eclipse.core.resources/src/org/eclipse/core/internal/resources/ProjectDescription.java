@@ -724,7 +724,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				//not actually changed anything
 				return false;
 			}
-			linkDescriptions = newMap.size() == 0 ? null : newMap;
+			linkDescriptions = newMap.isEmpty() ? null : newMap;
 		}
 		return true;
 	}
@@ -754,9 +754,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			LinkedList<FilterDescription> descList = filterDescriptions.get(path);
 			if (descList != null) {
 				descList.remove(description);
-				if (descList.size() == 0) {
+				if (descList.isEmpty()) {
 					filterDescriptions.remove(path);
-					if (filterDescriptions.size() == 0)
+					if (filterDescriptions.isEmpty())
 						filterDescriptions = null;
 				}
 			}
@@ -797,7 +797,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				//not actually changed anything
 				return false;
 			}
-			variableDescriptions = newMap.size() == 0 ? null : newMap;
+			variableDescriptions = newMap.isEmpty() ? null : newMap;
 		}
 		return true;
 	}
@@ -828,7 +828,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				//not actually changed anything
 				return false;
 			}
-			if (filterDescriptions.size() == 0)
+			if (filterDescriptions.isEmpty())
 				filterDescriptions = null;
 		}
 		return true;

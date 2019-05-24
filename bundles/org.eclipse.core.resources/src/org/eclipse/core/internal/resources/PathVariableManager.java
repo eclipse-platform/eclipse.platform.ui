@@ -104,7 +104,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	private void fireVariableChangeEvent(Collection<IPathVariableChangeListener> list, String name, IPath value, int type) {
-		if (list.size() == 0)
+		if (list.isEmpty())
 			return;
 		// use a separate collection to avoid interference of simultaneous additions/removals
 		IPathVariableChangeListener[] listenerArray = list.toArray(new IPathVariableChangeListener[list.size()]);

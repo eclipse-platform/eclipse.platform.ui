@@ -269,7 +269,7 @@ public class MarkerManager implements IManager {
 	public IMarker[] findMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) {
 		ArrayList<IMarker> result = new ArrayList<>();
 		doFindMarkers(target, result, type, includeSubtypes, depth);
-		if (result.size() == 0)
+		if (result.isEmpty())
 			return NO_MARKERS;
 		return result.toArray(new IMarker[result.size()]);
 	}

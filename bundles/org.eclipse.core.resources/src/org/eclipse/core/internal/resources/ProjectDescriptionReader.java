@@ -794,7 +794,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Pop the array list of natures off the stack
 			ArrayList<String> natures = (ArrayList<String>) objectStack.pop();
 			state = S_PROJECT_DESC;
-			if (natures.size() == 0)
+			if (natures.isEmpty())
 				return;
 			String[] natureNames = natures.toArray(new String[natures.size()]);
 			projectDescription.setNatureIds(natureNames);
@@ -807,7 +807,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	private void endProjectsElement(String elementName) {
 		// Pop the array list that contains all the referenced project names
 		ArrayList<String> referencedProjects = (ArrayList<String>) objectStack.pop();
-		if (referencedProjects.size() == 0)
+		if (referencedProjects.isEmpty())
 			// Don't bother adding an empty group of referenced projects to the
 			// project descriptor.
 			return;
