@@ -373,7 +373,7 @@ public final class RevisionPainter {
 					 */
 					private String addCSSToHTMLFragment(String html) {
 						int max= Math.min(100, html.length());
-						if (html.substring(0, max).indexOf("<html>") != -1) //$NON-NLS-1$
+						if (html.substring(0, max).contains("<html>")) //$NON-NLS-1$
 							// there is already a header
 							return html;
 

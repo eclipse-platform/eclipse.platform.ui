@@ -186,7 +186,7 @@ public class ScreenshotTest {
 	}
 
 	public static boolean isRunByGerritHudsonJob() {
-		return System.getProperty("user.dir").indexOf("eclipse.platform.text-Gerrit") != -1;
+		return System.getProperty("user.dir").contains("eclipse.platform.text-Gerrit");
 	}
 
 	private static void runEventQueue() {

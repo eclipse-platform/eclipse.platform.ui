@@ -484,7 +484,7 @@ public class FindReplaceDocumentAdapterTest {
 	public void testRegexFindStackOverflow_fail() throws Exception {
 		// test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=102699
 		
-		if (BUG_392594 && System.getProperty("os.name").indexOf("Mac") != -1)
+		if (BUG_392594 && System.getProperty("os.name").contains("Mac"))
 			return; // VM crash on the Mac, see https://bugs.eclipse.org/392594
 		
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
