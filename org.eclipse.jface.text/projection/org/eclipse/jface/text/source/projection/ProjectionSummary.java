@@ -127,7 +127,7 @@ class ProjectionSummary {
 		synchronized (fLock) {
 			if (fConfiguredAnnotationTypes != null) {
 				fConfiguredAnnotationTypes.remove(annotationType);
-				if (fConfiguredAnnotationTypes.size() == 0)
+				if (fConfiguredAnnotationTypes.isEmpty())
 					fConfiguredAnnotationTypes= null;
 			}
 		}

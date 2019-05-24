@@ -391,7 +391,7 @@ public class DocumentCommand {
 	 */
 	void execute(IDocument document) throws BadLocationException {
 
-		if (length == 0 && text == null && fCommands.size() == 0)
+		if (length == 0 && text == null && fCommands.isEmpty())
 			return;
 
 		DefaultPositionUpdater updater= new DefaultPositionUpdater(getCategory());

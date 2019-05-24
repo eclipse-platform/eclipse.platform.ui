@@ -98,7 +98,7 @@ class DirtyRegionQueue {
 	 * @return the next dirty region on the queue
 	 */
 	public DirtyRegion removeNextDirtyRegion() {
-		if (fDirtyRegions.size() == 0)
+		if (fDirtyRegions.isEmpty())
 			return null;
 		DirtyRegion dr= fDirtyRegions.get(0);
 		fDirtyRegions.remove(0);

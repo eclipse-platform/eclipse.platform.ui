@@ -181,7 +181,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		Set<Match> matches= fFileBuffersToMatches.get(fb);
 		if (matches != null) {
 			matches.remove(match);
-			if (matches.size() == 0)
+			if (matches.isEmpty())
 				fFileBuffersToMatches.remove(fb);
 		}
 	}

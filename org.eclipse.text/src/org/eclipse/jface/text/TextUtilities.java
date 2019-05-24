@@ -188,7 +188,7 @@ public class TextUtilities {
 	 */
 	public static DocumentEvent mergeUnprocessedDocumentEvents(IDocument unprocessedDocument, List<? extends DocumentEvent> documentEvents) throws BadLocationException {
 
-		if (documentEvents.size() == 0)
+		if (documentEvents.isEmpty())
 			return null;
 
 		final Iterator<? extends DocumentEvent> iterator= documentEvents.iterator();
@@ -253,7 +253,7 @@ public class TextUtilities {
 	 */
 	public static DocumentEvent mergeProcessedDocumentEvents(List<? extends DocumentEvent> documentEvents) throws BadLocationException {
 
-		if (documentEvents.size() == 0)
+		if (documentEvents.isEmpty())
 			return null;
 
 		final ListIterator<? extends DocumentEvent> iterator= documentEvents.listIterator(documentEvents.size());

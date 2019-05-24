@@ -441,7 +441,7 @@ public class InlinedAnnotationSupport {
 			for (AbstractInlinedAnnotation ann : annotations) {
 				ann.setSupport(this);
 			}
-			if (annotationsToAdd.size() == 0 && annotationsToRemove.size() == 0) {
+			if (annotationsToAdd.isEmpty() && annotationsToRemove.isEmpty()) {
 				// None change, do nothing. Here the user could change position of codemining
 				// range
 				// (ex: user key press

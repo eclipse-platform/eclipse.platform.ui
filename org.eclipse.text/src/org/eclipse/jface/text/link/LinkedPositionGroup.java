@@ -393,7 +393,7 @@ public class LinkedPositionGroup {
 	 * @since 3.1
 	 */
 	public boolean isEmpty() {
-		return fPositions.size() == 0;
+		return fPositions.isEmpty();
 	}
 
 	/**

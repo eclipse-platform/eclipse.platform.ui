@@ -77,7 +77,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		List<ProjectionDocument> list= fProjectionRegistry.get(master);
 		if (list != null) {
 			list.remove(projection);
-			if (list.size() == 0)
+			if (list.isEmpty())
 				fProjectionRegistry.remove(master);
 		}
 	}

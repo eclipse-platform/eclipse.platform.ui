@@ -119,7 +119,7 @@ public class CodeMiningManager implements Runnable {
 	@Override
 	public void run() {
 		if (fViewer == null || fInlinedAnnotationSupport == null || fCodeMiningProviders == null
-				|| fCodeMiningProviders.size() == 0 || fViewer.getAnnotationModel() == null) {
+				|| fCodeMiningProviders.isEmpty() || fViewer.getAnnotationModel() == null) {
 			return;
 		}
 		// Cancel the last progress monitor to cancel last resolve and render of code

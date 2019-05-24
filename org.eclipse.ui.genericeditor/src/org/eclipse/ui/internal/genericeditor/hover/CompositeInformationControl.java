@@ -95,7 +95,7 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 			if (informationControl instanceof AbstractInformationControl) {
 				List<Control> children = Arrays.asList(((AbstractInformationControl)informationControl).getShell().getChildren());
 				children.remove(parent);
-				if (children.size() == 0 ) {
+				if (children.isEmpty() ) {
 					continue;
 				}
 				for (Control control : children) {

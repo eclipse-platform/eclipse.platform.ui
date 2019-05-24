@@ -173,7 +173,7 @@ public final class RevisionPainter {
 			float scale;
 			if (fRenderingMode == IRevisionRulerColumnExtension.AGE) {
 				int index= computeAgeIndex(revision);
-				if (index == -1 || fRevisions.size() == 0) {
+				if (index == -1 || fRevisions.isEmpty()) {
 					rgb= getBackground().getRGB();
 				} else {
 					// gradient from intense red for most recent to faint yellow for oldest

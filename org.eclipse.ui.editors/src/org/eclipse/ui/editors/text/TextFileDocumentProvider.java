@@ -981,7 +981,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	public void removeElementStateListener(IElementStateListener listener) {
 		Assert.isNotNull(listener);
 		fElementStateListeners.remove(listener);
-		if (fElementStateListeners.size() == 0) {
+		if (fElementStateListeners.isEmpty()) {
 			IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 			manager.removeFileBufferListener(fFileBufferListener);
 		}

@@ -432,7 +432,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			removeUnchangedElementListeners(element, info);
 			disposeElementInfo(element, info);
 
-			if (fElementInfoMap.size() == 0)
+			if (fElementInfoMap.isEmpty())
 				disconnected();
 
 		} else

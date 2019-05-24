@@ -458,7 +458,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		if (fProjectionListeners != null) {
 			fProjectionListeners.remove(listener);
-			if (fProjectionListeners.size() == 0)
+			if (fProjectionListeners.isEmpty())
 				fProjectionListeners= null;
 		}
 	}
@@ -882,7 +882,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 								while (true) {
 									AnnotationModelEvent ame= null;
 									synchronized (fLock) {
-										if (fPendingRequests.size() == 0)
+										if (fPendingRequests.isEmpty())
 											return;
 										ame= fPendingRequests.remove(0);
 									}

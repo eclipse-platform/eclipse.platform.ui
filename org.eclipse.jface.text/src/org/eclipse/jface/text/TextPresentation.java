@@ -270,7 +270,7 @@ public class TextPresentation {
 		int length= range.length;
 		int end= start + length;
 
-		if (fRanges.size() == 0) {
+		if (fRanges.isEmpty()) {
 			StyleRange defaultRange= getDefaultStyleRange();
 			if (defaultRange == null)
 				defaultRange= range;

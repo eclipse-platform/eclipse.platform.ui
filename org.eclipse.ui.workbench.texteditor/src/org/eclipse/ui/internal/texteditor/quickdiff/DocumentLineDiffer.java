@@ -631,7 +631,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 						synchronized (DocumentLineDiffer.this) {
 							if (isCanceled(monitor))
 								return Status.CANCEL_STATUS;
-							if (fStoredEvents.size() == 0 && actual != null)
+							if (fStoredEvents.isEmpty() && actual != null)
 								break;
 						}
 					} while (true);
@@ -1026,7 +1026,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		// compare
 		List<QuickDiffRangeDifference> diffs= asQuickDiffRangeDifference(RangeDifferencer.findRanges(fRangeDiffFactory, null, reference, change));
-		if (diffs.size() == 0) {
+		if (diffs.isEmpty()) {
 			diffs.add(new QuickDiffRangeDifference(RangeDifference.CHANGE, 0, 0, 0, 0));
 		}
 

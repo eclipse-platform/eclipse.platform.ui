@@ -55,7 +55,7 @@ abstract class ListLineTracker implements ILineTracker {
 	 */
 	private int findLine(int offset) {
 
-		if (fLines.size() == 0)
+		if (fLines.isEmpty())
 			return -1;
 
 		int left= 0;

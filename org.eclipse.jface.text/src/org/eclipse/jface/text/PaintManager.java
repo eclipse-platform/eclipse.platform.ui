@@ -220,7 +220,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 			painter.deactivate(true);
 			painter.setPositionManager(null);
 		}
-		if (fPainters.size() == 0)
+		if (fPainters.isEmpty())
 			dispose();
 	}
 

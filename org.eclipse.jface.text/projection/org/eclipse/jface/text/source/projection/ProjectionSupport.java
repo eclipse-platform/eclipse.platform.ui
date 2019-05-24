@@ -208,7 +208,7 @@ public class ProjectionSupport {
 	public void removeSummarizableAnnotationType(String annotationType) {
 		if (fSummarizableTypes != null) {
 			fSummarizableTypes.remove(annotationType);
-			if (fSummarizableTypes.size() == 0)
+			if (fSummarizableTypes.isEmpty())
 				fSummarizableTypes= null;
 		}
 	}

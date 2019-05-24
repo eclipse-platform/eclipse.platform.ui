@@ -79,7 +79,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		if (text == null)
 			text= ""; //$NON-NLS-1$
 
-		if (fReplaceList.size() == 0) {
+		if (fReplaceList.isEmpty()) {
 			fReplaceList.add(new Replace(offset, offset, length, text));
 
 		} else {

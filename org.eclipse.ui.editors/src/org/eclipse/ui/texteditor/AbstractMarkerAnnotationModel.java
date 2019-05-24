@@ -617,7 +617,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 		IAnnotationMap annotationMap= getAnnotationMap();
 
-		if (annotationMap.size() == 0 && fDeletedAnnotations.size() == 0)
+		if (annotationMap.size() == 0 && fDeletedAnnotations.isEmpty())
 			return;
 
 		if (fMarkerUpdaterSpecifications == null)

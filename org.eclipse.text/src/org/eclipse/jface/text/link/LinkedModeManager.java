@@ -113,7 +113,7 @@ class LinkedModeManager {
 				return null;
 			}
 
-		if (mgrs.size() == 0)
+		if (mgrs.isEmpty())
 			mgr= new LinkedModeManager();
 
 		for (IDocument document : documents)

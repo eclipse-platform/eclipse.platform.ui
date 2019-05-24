@@ -452,7 +452,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.4
 	 */
 	protected int computeIndexInPositionList(List<? extends Position> positions, int offset, boolean orderedByOffset) {
-		if (positions.size() == 0)
+		if (positions.isEmpty())
 			return 0;
 
 		int left= 0;
@@ -1406,7 +1406,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		if (partitioner == null) {
 			if (fDocumentPartitioners != null) {
 				fDocumentPartitioners.remove(partitioning);
-				if (fDocumentPartitioners.size() == 0)
+				if (fDocumentPartitioners.isEmpty())
 					fDocumentPartitioners= null;
 			}
 		} else {
