@@ -197,7 +197,7 @@ class DeadlockDetector {
 			if (graph[index][j] > NO_STATE)
 				ownedLocks.add(locks.get(j));
 		}
-		if (ownedLocks.size() == 0)
+		if (ownedLocks.isEmpty())
 			Assert.isLegal(false, "A thread with no locks is part of a deadlock."); //$NON-NLS-1$
 		return ownedLocks.toArray();
 	}
@@ -229,7 +229,7 @@ class DeadlockDetector {
 			if (graph[i][lockIndex] > NO_STATE)
 				blocking.add(lockThreads.get(i));
 		}
-		if ((blocking.size() == 0) && (JobManager.DEBUG_LOCKS))
+		if ((blocking.isEmpty()) && (JobManager.DEBUG_LOCKS))
 			System.out.println("Lock " + rule + " is involved in deadlock but is not owned by any thread."); //$NON-NLS-1$ //$NON-NLS-2$
 		if ((blocking.size() > 1) && (rule instanceof ILock) && (JobManager.DEBUG_LOCKS))
 			System.out.println("Lock " + rule + " is owned by more than 1 thread, but it is not a rule."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -282,7 +282,7 @@ class DeadlockDetector {
 	 * Returns true IFF the adjacency matrix is empty.
 	 */
 	boolean isEmpty() {
-		return (locks.size() == 0) && (lockThreads.size() == 0) && (graph.length == 0);
+		return (locks.isEmpty()) && (lockThreads.isEmpty()) && (graph.length == 0);
 	}
 
 	/**
@@ -500,7 +500,7 @@ class DeadlockDetector {
 			if ((graph[threadIndex][j] > NO_STATE) && (locks.get(j) instanceof ILock))
 				ownedLocks.add(locks.get(j));
 		}
-		if (ownedLocks.size() == 0)
+		if (ownedLocks.isEmpty())
 			Assert.isLegal(false, "A thread with no real locks was chosen to resolve deadlock."); //$NON-NLS-1$
 		return ownedLocks.toArray(new ISchedulingRule[ownedLocks.size()]);
 	}

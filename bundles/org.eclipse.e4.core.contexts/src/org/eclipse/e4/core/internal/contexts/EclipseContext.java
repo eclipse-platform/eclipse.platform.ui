@@ -132,7 +132,7 @@ public class EclipseContext implements IEclipseContext {
 	public Set<EclipseContext> getChildren() {
 		Set<EclipseContext> result;
 		synchronized (children) {
-			if (children.size() == 0)
+			if (children.isEmpty())
 				return noChildren;
 			result = new HashSet<>(children.size());
 			for (Iterator<WeakReference<EclipseContext>> i = children.iterator(); i.hasNext();) {

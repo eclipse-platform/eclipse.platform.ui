@@ -175,7 +175,7 @@ class ImplicitJobs {
 	 * @GuardedBy("this")
 	 */
 	private boolean isSuspended(ISchedulingRule rule) {
-		if (suspendedRules.size() == 0)
+		if (suspendedRules.isEmpty())
 			return false;
 		for (ISchedulingRule iSchedulingRule : suspendedRules)
 			if (iSchedulingRule.contains(rule))
