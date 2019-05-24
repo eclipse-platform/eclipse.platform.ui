@@ -145,7 +145,7 @@ public class CopyOnWriteTextStoreTest {
 
 	private void checkReplace(int offset, int length, String text) {
 
-		StringBuffer buf= new StringBuffer(fText.get());
+		StringBuilder buf= new StringBuilder(fText.get());
 		buf.replace(offset, offset + length, text);
 		fText.replace(offset, length, text);
 		assertEquals(buf.toString(), fText.get());

@@ -50,7 +50,7 @@ public class TemplateVariablesWordSelectionTest  {
 		TemplateBuffer buffer= fTranslator.translate("Selected word is ${word_selection}!");
 		fType.resolve(buffer, fContext);
 
-		StringBuffer expected= new StringBuffer();
+		StringBuilder expected= new StringBuilder();
 		expected.append("Selected word is !");
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
@@ -60,7 +60,7 @@ public class TemplateVariablesWordSelectionTest  {
 		TemplateBuffer buffer= fTranslator.translate("No selection results in the ${w:word_selection('default')} text.");
 		fType.resolve(buffer, fContext);
 
-		StringBuffer expected= new StringBuffer();
+		StringBuilder expected= new StringBuilder();
 		expected.append("No selection results in the default text.");
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}

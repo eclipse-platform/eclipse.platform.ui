@@ -2976,7 +2976,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 				private void triggerAction(String actionID, MouseEvent e) {
 					// ActionId can be prefixed with modifiers
-					StringBuffer newActionId = new StringBuffer(""); //$NON-NLS-1$
+					StringBuilder newActionId = new StringBuilder(""); //$NON-NLS-1$
 					if ((e.stateMask & SWT.MOD1) > 0) {
 						newActionId.append("M1+"); //$NON-NLS-1$
 					}

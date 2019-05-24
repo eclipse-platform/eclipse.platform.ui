@@ -56,7 +56,7 @@ public class ProjectionMappingTest {
 	}
 
 	private String getOriginalSlaveContent() {
-		StringBuffer buffer= new StringBuffer(getOriginalMasterContent());
+		StringBuilder buffer= new StringBuilder(getOriginalMasterContent());
 		buffer.delete(80, 180);
 		buffer.delete(40, 60);
 		buffer.delete(0, 20);
@@ -64,7 +64,7 @@ public class ProjectionMappingTest {
 	}
 
 	private String getLineWrappingSlaveContent() {
-		StringBuffer buffer= new StringBuffer(getOriginalMasterContent());
+		StringBuilder buffer= new StringBuilder(getOriginalMasterContent());
 		buffer.delete(80, 180);
 		buffer.delete(50, 70); // ...333444...
 		buffer.delete(10, 30); // ...111222...

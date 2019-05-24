@@ -87,7 +87,7 @@ public class SegmentedModeTest {
 						int caret= styledText.getCaretOffset();
 						styledText.replaceTextRange(caret, 0, "really ");
 
-						StringBuffer buffer= new StringBuffer(getOriginalContent());
+						StringBuilder buffer= new StringBuilder(getOriginalContent());
 						buffer.insert(5, "really ");
 						IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 						assertEquals(buffer.toString(), document.get());

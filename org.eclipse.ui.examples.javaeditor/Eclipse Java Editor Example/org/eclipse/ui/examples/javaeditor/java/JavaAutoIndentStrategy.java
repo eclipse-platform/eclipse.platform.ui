@@ -221,7 +221,7 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			int p= (command.offset == docLength ? command.offset - 1 : command.offset);
 			int line= document.getLineOfOffset(p);
 
-			StringBuffer buf= new StringBuffer(command.text);
+			StringBuilder buf= new StringBuilder(command.text);
 			if (command.offset < docLength && document.getChar(command.offset) == '}') {
 				int indLine= findMatchingOpenBracket(document, line, command.offset, 0);
 				if (indLine == -1) {
@@ -264,7 +264,7 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				int indLine= findMatchingOpenBracket(document, line, command.offset, 1);
 				if (indLine != -1 && indLine != line) {
 					// take the indent of the found line
-					StringBuffer replaceText= new StringBuffer(getIndentOfLine(document, indLine));
+					StringBuilder replaceText= new StringBuilder(getIndentOfLine(document, indLine));
 					// add the rest of the current line including the just added close bracket
 					replaceText.append(document.get(whiteend, command.offset - whiteend));
 					replaceText.append(command.text);

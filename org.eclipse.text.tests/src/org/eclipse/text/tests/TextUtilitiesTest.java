@@ -151,7 +151,7 @@ public class TextUtilitiesTest {
 		int length= Math.max(index0, index1) - offset;
 
 		int stringLength=  (int) (Math.random() * 10);
-		StringBuffer buffer= new StringBuffer(stringLength);
+		StringBuilder buffer= new StringBuilder(stringLength);
 		for (int i= 0; i < stringLength; ++i)
 			buffer.append(character);
 

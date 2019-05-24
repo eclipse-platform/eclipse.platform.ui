@@ -558,7 +558,7 @@ final class DisplayWaiter {
 	 * @return a string representation of the states
 	 */
 	private String name(int states) {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		boolean comma= false;
 		if ((states & RUNNING) == RUNNING) {
 			buf.append("RUNNING");

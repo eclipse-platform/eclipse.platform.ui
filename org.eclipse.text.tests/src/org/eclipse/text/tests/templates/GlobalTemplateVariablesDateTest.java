@@ -55,7 +55,7 @@ public class GlobalTemplateVariablesDateTest  {
 		TemplateBuffer buffer= fTranslator.translate("Today is ${date}!");
 		fType.resolve(buffer, fContext);
 
-		StringBuffer expected= new StringBuffer();
+		StringBuilder expected= new StringBuilder();
 		expected.append("Today is ");
 		expected.append(DateFormat.getDateInstance().format(new java.util.Date()));
 		expected.append("!");
@@ -67,7 +67,7 @@ public class GlobalTemplateVariablesDateTest  {
 		TemplateBuffer buffer= fTranslator.translate("This format ${d:date('dd MMM YYYY')} and not ${p:date('YYYY-MM-dd')}");
 		fType.resolve(buffer, fContext);
 
-		StringBuffer expected= new StringBuffer();
+		StringBuilder expected= new StringBuilder();
 		expected.append("This format ");
 		expected.append(new SimpleDateFormat("dd MMM YYYY").format(new java.util.Date()));
 		expected.append(" and not ");
@@ -80,7 +80,7 @@ public class GlobalTemplateVariablesDateTest  {
 		TemplateBuffer buffer= fTranslator.translate("From ${d:date('dd MMM YYYY', 'fr')} to ${d}");
 		fType.resolve(buffer, fContext);
 
-		StringBuffer expected= new StringBuffer();
+		StringBuilder expected= new StringBuilder();
 		expected.append("From ");
 		expected.append(new SimpleDateFormat("dd MMM YYYY", ULocale.FRENCH).format(new java.util.Date()));
 		expected.append(" to ");
@@ -93,7 +93,7 @@ public class GlobalTemplateVariablesDateTest  {
 		TemplateBuffer buffer= fTranslator.translate("France ${d:date('EEEE dd MMMM YYYY', 'fr_FR')} and Germany ${p:date('EEEE dd. MMMM YYYY', 'de_DE')}");
 		fType.resolve(buffer, fContext);
 
-		StringBuffer expected= new StringBuffer();
+		StringBuilder expected= new StringBuilder();
 		expected.append("France ");
 		expected.append(new SimpleDateFormat("EEEE dd MMMM YYYY", ULocale.FRANCE).format(new java.util.Date()));
 		expected.append(" and Germany ");
@@ -106,7 +106,7 @@ public class GlobalTemplateVariablesDateTest  {
 		TemplateBuffer buffer= fTranslator.translate("Today is ${d:date('invalid')}!");
 		fType.resolve(buffer, fContext);
 
-		StringBuffer expected= new StringBuffer();
+		StringBuilder expected= new StringBuilder();
 		expected.append("Today is ");
 		expected.append(DateFormat.getDateInstance().format(new java.util.Date()));
 		expected.append("!");
@@ -118,7 +118,7 @@ public class GlobalTemplateVariablesDateTest  {
 		TemplateBuffer buffer= fTranslator.translate("Today is ${d:date('YYYY-MM-dd', 'this_invalid_locale')}!");
 		fType.resolve(buffer, fContext);
 
-		StringBuffer expected= new StringBuffer();
+		StringBuilder expected= new StringBuilder();
 		expected.append("Today is ");
 		expected.append(new SimpleDateFormat("YYYY-MM-dd", new ULocale("this_invalid_locale")).format(new java.util.Date()));
 		expected.append("!");
