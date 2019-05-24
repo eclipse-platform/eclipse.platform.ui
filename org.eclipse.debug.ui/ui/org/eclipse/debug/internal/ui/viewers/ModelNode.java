@@ -199,7 +199,7 @@ public class ModelNode {
 
     @Override
 	public String toString() {
-    	StringBuffer buf = new StringBuffer();
+    	StringBuilder buf = new StringBuilder();
     	if (isDisposed()) {
     		buf.append("[DISPOSED] "); //$NON-NLS-1$
     	}

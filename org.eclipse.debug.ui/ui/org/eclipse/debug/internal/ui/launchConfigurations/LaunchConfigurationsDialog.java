@@ -1538,7 +1538,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * <code>IDialogConstants</code>.
 	 */
 	private int showDiscardChangesDialog() {
-		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___35, new Object[] { fTabViewer.getWorkingCopy().getName() }));
+		StringBuilder buffer = new StringBuilder(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___35, new Object[] { fTabViewer.getWorkingCopy().getName() }));
 		buffer.append(fTabViewer.getErrorMesssage());
 		buffer.append(LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_discard_changes_37);
 		MessageDialog dialog = new MessageDialog(getShell(),

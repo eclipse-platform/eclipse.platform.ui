@@ -119,7 +119,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		Object[] selected = getResult();
 		if (selected != null && selected.length == 1) {
 			IStringVariable variable = (IStringVariable)selected[0];
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("${"); //$NON-NLS-1$
 			buffer.append(variable.getName());
 			if (fArgumentValue != null && fArgumentValue.length() > 0) {

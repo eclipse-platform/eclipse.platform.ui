@@ -146,7 +146,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * @param accelerator the number that should appear as an accelerator
 	 */
 	protected void addToMenu(Menu menu, IAction action, int accelerator) {
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		if (accelerator >= 0 && accelerator < 10) {
 			//add the numerical accelerator
 			label.append('&');

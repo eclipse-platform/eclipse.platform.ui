@@ -65,7 +65,7 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 				if (rendering.getSelectedAddress() != null)
 				{
 					String selectedAddress = "0x" + rendering.getSelectedAddress().toString(16).toUpperCase(); //$NON-NLS-1$
-					StringBuffer content = new StringBuffer(selectedAddress);
+					StringBuilder content = new StringBuilder(selectedAddress);
 					addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_2, content.toString());
 				}
 

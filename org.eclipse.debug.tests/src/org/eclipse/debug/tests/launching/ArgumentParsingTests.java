@@ -178,7 +178,7 @@ public class ArgumentParsingTests extends AbstractDebugTest {
 	}
 
 	public void test100arg() throws Exception {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < 100; i++) {
 			buf.append("a "); //$NON-NLS-1$
 		}

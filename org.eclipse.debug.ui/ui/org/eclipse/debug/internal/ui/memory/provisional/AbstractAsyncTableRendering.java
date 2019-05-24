@@ -568,7 +568,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @param parent the parent composite
 	 */
 	private void createTableViewer(final Composite parent) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(getRenderingId());
 		buffer.append(type.getLabel());
 		buffer.append(": "); //$NON-NLS-1$
@@ -887,7 +887,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 		if (!validated) {
 			// pop up dialog to ask user for default values
-			StringBuffer msgBuffer = new StringBuffer(DebugUIMessages.AbstractTableRendering_20);
+			StringBuilder msgBuffer = new StringBuilder(DebugUIMessages.AbstractTableRendering_20);
 			msgBuffer.append(" "); //$NON-NLS-1$
 			msgBuffer.append(this.getLabel());
 			msgBuffer.append("\n\n"); //$NON-NLS-1$
@@ -2858,7 +2858,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @since 3.2
 	 */
 	protected String getToolTipText(BigInteger address, MemoryByte[] bytes) {
-		StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("0x"); //$NON-NLS-1$
 		buf.append(address.toString(16).toUpperCase());
 
 		return buf.toString();

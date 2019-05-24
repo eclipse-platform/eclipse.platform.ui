@@ -250,7 +250,7 @@ public class TableRenderingCellModifier implements ICellModifier {
      * @return padded string
      */
     public String getPaddedString(int start, int end) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
         for (int i = start; i < end; i++) {
             buf.append(paddedStr);

@@ -592,7 +592,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * key in the mapping and the values are the associated String value in the mapping.
      */
     private void storePreferredTargets() {
-        StringBuffer buffer= new StringBuffer();
+        StringBuilder buffer= new StringBuilder();
 		for (Entry<Set<String>, String> entry : fPreferredTargets.entrySet()) {
 			for (String currentID : entry.getKey()) {
                 buffer.append(currentID);

@@ -497,7 +497,7 @@ public class DetailPaneManager {
      * key in the mapping and the values are the associated String value in the mapping.
      */
     private void storePreferredDetailsAreas() {
-        StringBuffer buffer= new StringBuffer();
+        StringBuilder buffer= new StringBuilder();
 		for (Entry<Set<String>, String> entry : fPreferredDetailPanes.entrySet()) {
 			for (String currentID : entry.getKey()) {
 				buffer.append(currentID);

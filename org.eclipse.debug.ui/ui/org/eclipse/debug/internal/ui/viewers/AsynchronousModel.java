@@ -104,7 +104,7 @@ public abstract class AsynchronousModel {
 	public AsynchronousModel(AsynchronousViewer viewer) {
 		fViewer = viewer;
 		if (DebugUIPlugin.DEBUG_MODEL) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("MODEL CREATED for: "); //$NON-NLS-1$
 			buffer.append(fViewer);
 			buffer.append(" ("); //$NON-NLS-1$
@@ -135,7 +135,7 @@ public abstract class AsynchronousModel {
 	 */
 	public synchronized void dispose() {
 		if (DebugUIPlugin.DEBUG_MODEL) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("MODEL DISPOSED for: "); //$NON-NLS-1$
 			buffer.append(fViewer);
 			buffer.append(" ("); //$NON-NLS-1$

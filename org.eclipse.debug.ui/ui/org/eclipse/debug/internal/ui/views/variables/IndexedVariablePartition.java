@@ -73,7 +73,7 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 	@Override
 	public String getName() {
 		if (fName == null) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append("["); //$NON-NLS-1$
 			buf.append(fOffset);
 			buf.append("..."); //$NON-NLS-1$

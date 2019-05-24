@@ -102,7 +102,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	}
 
 	private void createAction(Menu parent, IAction action, int count) {
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		//add the numerical accelerator
 		if (count < 10) {
 			label.append('&');

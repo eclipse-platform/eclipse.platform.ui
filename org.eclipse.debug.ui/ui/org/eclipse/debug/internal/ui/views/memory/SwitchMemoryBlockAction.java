@@ -174,7 +174,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		}
 
 		private void getLabels(final IMemoryBlock memBlk) {
-			StringBuffer text = new StringBuffer(IInternalDebugCoreConstants.EMPTY_STRING);
+			StringBuilder text = new StringBuilder(IInternalDebugCoreConstants.EMPTY_STRING);
 			String label = new String(IInternalDebugCoreConstants.EMPTY_STRING);
 			if (memBlk instanceof IMemoryBlockExtension) {
 				String expression = ((IMemoryBlockExtension) memBlk).getExpression();

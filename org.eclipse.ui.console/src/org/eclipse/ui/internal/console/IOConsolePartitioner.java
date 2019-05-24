@@ -365,7 +365,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 					}
 				}
 				if (lastLineDelimiter != -1) {
-					StringBuffer input = new StringBuffer();
+					StringBuilder input = new StringBuilder();
 					Iterator<IOConsolePartition> it = inputPartitions.iterator();
 					while (it.hasNext()) {
 						IOConsolePartition partition = it.next();

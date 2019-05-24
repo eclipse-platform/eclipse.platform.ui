@@ -193,7 +193,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		    getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES,
 		                                  IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
 		} else {
-		    StringBuffer buffer= new StringBuffer();
+		    StringBuilder buffer= new StringBuilder();
 			for (Iterator<String> itr = perspectives.iterator(); itr.hasNext();) {
                 buffer.append(itr.next()).append(',');
     		}

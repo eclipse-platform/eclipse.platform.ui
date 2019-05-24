@@ -1126,7 +1126,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @since 3.4.0
 	 */
 	public ILaunchGroup getLaunchGroup(ILaunchConfigurationType type, Set<String> modeset) {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		for (Iterator<String> iter = modeset.iterator(); iter.hasNext();) {
 			buff.append(iter.next());
 			if (iter.hasNext()) {

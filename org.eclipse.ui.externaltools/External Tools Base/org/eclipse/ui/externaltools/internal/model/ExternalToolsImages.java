@@ -176,7 +176,7 @@ public class ExternalToolsImages {
 			throw new MalformedURLException();
 		}
 
-		StringBuffer buffer= new StringBuffer(prefix);
+		StringBuilder buffer= new StringBuilder(prefix);
 		buffer.append('/');
 		buffer.append(name);
 		return new URL(ICON_BASE_URL, buffer.toString());

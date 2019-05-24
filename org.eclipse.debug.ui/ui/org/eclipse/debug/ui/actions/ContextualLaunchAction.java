@@ -298,7 +298,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		if (helpContextId != null) {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, helpContextId);
 		}
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		if (accelerator >= 0 && accelerator < 10) {
 			//add the numerical accelerator
 			label.append('&');

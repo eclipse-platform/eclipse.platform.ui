@@ -1313,7 +1313,7 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 			message = tab.getErrorMessage();
 			if (message != null) {
-				StringBuffer temp= new StringBuffer();
+				StringBuilder temp= new StringBuilder();
 				temp.append('[');
 				temp.append(DebugUIPlugin.removeAccelerators(tab.getName()));
 				temp.append("]: "); //$NON-NLS-1$

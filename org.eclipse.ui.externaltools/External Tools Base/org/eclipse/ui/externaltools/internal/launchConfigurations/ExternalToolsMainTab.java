@@ -624,7 +624,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	public void addControlAccessibleListener(Control control, String controlName) {
 		//strip mnemonic (&)
 		String[] strs = controlName.split("&"); //$NON-NLS-1$
-		StringBuffer stripped = new StringBuffer();
+		StringBuilder stripped = new StringBuilder();
 		for (int i = 0; i < strs.length; i++) {
 			stripped.append(strs[i]);
 		}

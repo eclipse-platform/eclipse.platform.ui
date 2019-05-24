@@ -84,7 +84,7 @@ public class DebugTextHover implements ITextHover, ITextHoverExtension, ITextHov
 	 * values containing reserved characters are correctly displayed.
      */
     private static String replaceHTMLChars(String variableText) {
-        StringBuffer buffer= new StringBuffer(variableText.length());
+        StringBuilder buffer= new StringBuilder(variableText.length());
         char[] characters = variableText.toCharArray();
         for (int i = 0; i < characters.length; i++) {
             char character= characters[i];

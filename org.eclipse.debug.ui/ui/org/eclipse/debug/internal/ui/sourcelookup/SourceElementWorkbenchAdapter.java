@@ -50,7 +50,7 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 		}
 		if (o instanceof ZipEntryStorage) {
 			ZipEntryStorage storage = (ZipEntryStorage)o;
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(storage.getZipEntry().getName());
 			buffer.append(" - "); //$NON-NLS-1$
 			buffer.append(storage.getArchive().getName());
@@ -64,7 +64,7 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 	}
 
 	public static String getQualifiedName(IPath path) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String[] segments = path.segments();
 		if (segments.length > 0) {
 			buffer.append(path.lastSegment());

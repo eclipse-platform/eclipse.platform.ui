@@ -304,7 +304,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			if (!isValid(rowSize, colSize))
 			{
 				Label label = new Label(parent, SWT.NONE);
-				StringBuffer errorMsg = new StringBuffer();
+				StringBuilder errorMsg = new StringBuilder();
 				errorMsg.append(DebugUIMessages.FormatTableRenderingAction_9);
 				errorMsg.append("\n"); //$NON-NLS-1$
 				errorMsg.append(DebugUIMessages.FormatTableRenderingAction_11);
@@ -333,7 +333,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 				columns[i] = new TableColumn(table, SWT.NONE);
 			}
 
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			for (int j=0; j<colSize; j++)
 			{
 				buf.append("X"); //$NON-NLS-1$

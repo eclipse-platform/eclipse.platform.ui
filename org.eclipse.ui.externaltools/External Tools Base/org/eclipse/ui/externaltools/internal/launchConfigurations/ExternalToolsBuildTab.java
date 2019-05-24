@@ -353,7 +353,7 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	 * @return an equivalent refresh attribute
 	 */
 	public static String getBuildScopeAttribute(List<IProject> projects) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("${projects:"); //$NON-NLS-1$
 		Iterator<IProject> iterator = projects.iterator();
 		while (iterator.hasNext()) {

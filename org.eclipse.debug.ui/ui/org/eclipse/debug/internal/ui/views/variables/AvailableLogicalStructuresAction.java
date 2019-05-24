@@ -101,7 +101,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
                 ILogicalStructureType type= types[i];
 				Action action = new SelectLogicalStructureAction(getView(), type, getValue(), types);
 				action.setChecked((enabledType == type) && getView().isShowLogicalStructure());
-                StringBuffer label= new StringBuffer();
+                StringBuilder label= new StringBuilder();
                 //add the numerical accelerator
                 if (i < 9) {
                     label.append('&');

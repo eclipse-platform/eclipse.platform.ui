@@ -680,7 +680,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }
 
     public String getElementString(TestElement element, String indent) {
-        StringBuffer builder = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         builder.append(indent);
         builder.append(element.toString());
         builder.append('\n');

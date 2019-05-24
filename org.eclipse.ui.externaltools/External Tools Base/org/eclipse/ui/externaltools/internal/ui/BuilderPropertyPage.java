@@ -589,7 +589,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			String name= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(ExternalToolsUIMessages.BuilderPropertyPage_New_Builder_7);
 			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);
 
-			StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
+			StringBuilder buffer= new StringBuilder(IExternalToolConstants.BUILD_TYPE_FULL);
 			buffer.append(',');
 			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
 			buffer.append(',');

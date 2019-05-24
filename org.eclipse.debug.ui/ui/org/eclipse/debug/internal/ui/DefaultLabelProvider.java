@@ -203,7 +203,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public String getText(Object element) {
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		try {
 			// Group elements into debug elements and non-debug elements
 			// to reduce the number of instanceof checks performed
@@ -285,7 +285,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 */
 	private String getBreakpointText(IBreakpoint breakpoint) {
 		IResource resource = breakpoint.getMarker().getResource();
-		StringBuffer label = new StringBuffer();
+		StringBuilder label = new StringBuilder();
 		if (resource != null) {
 			label.append(resource.getName());
 		}
@@ -318,7 +318,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		}
 		// new launch configuration
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
-		StringBuffer buff= new StringBuffer(config.getName());
+		StringBuilder buff= new StringBuilder(config.getName());
 		buff.append(" ["); //$NON-NLS-1$
 		try {
 			buff.append(config.getType().getName());
@@ -333,7 +333,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (expression instanceof IWatchExpression) {
 			return getWatchExpressionText((IWatchExpression) expression);
 		}
-		StringBuffer buffer= new StringBuffer(expression.getExpressionText());
+		StringBuilder buffer= new StringBuilder(expression.getExpressionText());
 		String valueString= null;
 		IValue value= expression.getValue();
 		if (value != null) {
@@ -355,10 +355,10 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 * @return
 	 */
 	protected String getWatchExpressionText(IWatchExpression expression) {
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 
 		String snippet = expression.getExpressionText().trim();
-		StringBuffer snippetBuffer = new StringBuffer();
+		StringBuilder snippetBuffer = new StringBuilder();
 		if (snippet.length() > 30){
 			snippetBuffer.append(snippet.substring(0, 15));
 			snippetBuffer.append(DebugUIMessages.DefaultLabelProvider_0);
@@ -392,7 +392,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	}
 
 	protected String getVariableText(IVariable variable) {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		try {
 			IValue value = variable.getValue();
 			buffer.append(variable.getName());
@@ -405,7 +405,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	}
 
 	protected String getRegisterGroupText(IRegisterGroup registerGroup) {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		try {
 			buffer.append(registerGroup.getName());
 		} catch (DebugException de) {
@@ -521,7 +521,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (string == null) {
 			return null;
 		}
-		StringBuffer escaped = new StringBuffer();
+		StringBuilder escaped = new StringBuilder();
 		for (int i = 0; i < string.length(); i++) {
 			char c = string.charAt(i);
 			switch (c) {
@@ -562,7 +562,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (string == null) {
 			return null;
 		}
-		StringBuffer encoded = new StringBuffer();
+		StringBuilder encoded = new StringBuilder();
 		if (string.length() == 1) {
 			return string;
 		}

@@ -150,7 +150,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("IChildrenCountUpdate: "); //$NON-NLS-1$
 		buf.append(getElement());
 		return buf.toString();

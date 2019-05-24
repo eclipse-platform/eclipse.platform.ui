@@ -47,7 +47,7 @@ public class TreePathWrapper {
             return "TreePath:EMPTY"; //$NON-NLS-1$
         }
 
-        StringBuffer buf = new StringBuffer("TreePath:["); //$NON-NLS-1$
+        StringBuilder buf = new StringBuilder("TreePath:["); //$NON-NLS-1$
 
         for (int i = 0; i < fPath.getSegmentCount(); i++) {
             if (i != 0) {

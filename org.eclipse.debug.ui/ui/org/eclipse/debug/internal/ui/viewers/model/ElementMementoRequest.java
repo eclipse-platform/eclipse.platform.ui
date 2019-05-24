@@ -76,7 +76,7 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 
 	@Override
 	public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("IElementMementoRequest: "); //$NON-NLS-1$
         buf.append(getElement());
         return buf.toString();

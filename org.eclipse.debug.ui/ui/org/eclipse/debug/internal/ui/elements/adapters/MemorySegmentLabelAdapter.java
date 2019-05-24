@@ -94,7 +94,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 
 			int addressSize = descriptor.getAddressSize();
 			int prefillLength = addressSize * 2 - columnLabel.length();
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			if (prefillLength > 0)
 			{
 				for (int i=0; i<prefillLength; i++)

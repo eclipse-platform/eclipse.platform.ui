@@ -118,7 +118,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 
 	private void addActionToMenu(Menu parent, Action action, int accelerator) {
 		if (accelerator < 10) {
-			StringBuffer label= new StringBuffer();
+			StringBuilder label= new StringBuilder();
 			//add the numerical accelerator
 			label.append('&');
 			label.append(accelerator);

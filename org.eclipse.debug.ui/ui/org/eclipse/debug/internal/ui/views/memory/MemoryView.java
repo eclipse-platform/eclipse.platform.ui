@@ -638,7 +638,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 	private void storeViewPaneVisibility() {
 		fVisibleViewPanes.clear();
-		StringBuffer visibleViewPanes = new StringBuffer();
+		StringBuilder visibleViewPanes = new StringBuilder();
 
 		Enumeration<String> enumeration = fViewPaneControls.keys();
 

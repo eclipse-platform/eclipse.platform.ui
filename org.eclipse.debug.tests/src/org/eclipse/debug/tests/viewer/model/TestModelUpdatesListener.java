@@ -772,7 +772,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 	}
 
 	private String toString(int flags) {
-		StringBuffer buf = new StringBuffer("Viewer Update Listener"); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("Viewer Update Listener"); //$NON-NLS-1$
 
 		if (fJobError != null) {
 			buf.append("\n\t"); //$NON-NLS-1$
@@ -901,7 +901,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 		if (set.isEmpty()) {
 			return "(EMPTY)"; //$NON-NLS-1$
 		}
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (Iterator<TreePath> itr = set.iterator(); itr.hasNext();) {
 			buf.append("\n\t\t"); //$NON-NLS-1$
 			buf.append(toString(itr.next()));
@@ -913,7 +913,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 		if (map.isEmpty()) {
 			return "(EMPTY)"; //$NON-NLS-1$
 		}
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (Iterator<TreePath> itr = map.keySet().iterator(); itr.hasNext();) {
 			buf.append("\n\t\t"); //$NON-NLS-1$
 			TreePath path = itr.next();
@@ -929,7 +929,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 		if (path.getSegmentCount() == 0) {
 			return "/"; //$NON-NLS-1$
 		}
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < path.getSegmentCount(); i++) {
 			buf.append("/"); //$NON-NLS-1$
 			buf.append(path.getSegment(i));

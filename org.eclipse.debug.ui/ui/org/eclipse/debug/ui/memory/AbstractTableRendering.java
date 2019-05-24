@@ -954,7 +954,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		if (!validated)
 		{
 			// pop up dialog to ask user for default values
-			StringBuffer msgBuffer = new StringBuffer(DebugUIMessages.AbstractTableRendering_20);
+			StringBuilder msgBuffer = new StringBuilder(DebugUIMessages.AbstractTableRendering_20);
 			msgBuffer.append(" "); //$NON-NLS-1$
 			msgBuffer.append(this.getLabel());
 			msgBuffer.append("\n\n"); //$NON-NLS-1$
@@ -3796,7 +3796,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	protected String getToolTipText(BigInteger address, MemoryByte[] bytes)
 	{
-		StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("0x"); //$NON-NLS-1$
 		buf.append(address.toString(16).toUpperCase());
 
 		return buf.toString();

@@ -25,7 +25,7 @@ public class VariablesViewModelPresentation extends DelegatingModelPresentation 
 	 */
 	@Override
 	public String getText(Object element) {
-		StringBuffer string= new StringBuffer();
+		StringBuilder string= new StringBuilder();
 		StringTokenizer tokenizer= new StringTokenizer(super.getText(element), "\b\f\n\r\t\\", true); //$NON-NLS-1$
 		String token;
 		while (tokenizer.hasMoreTokens()) {

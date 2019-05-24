@@ -52,7 +52,7 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
 
     @Override
 	public String getLabel(Object o) {
-        StringBuffer name = new StringBuffer(fWorkingSet.getName());
+        StringBuilder name = new StringBuilder(fWorkingSet.getName());
         if (isDefault()) {
             name.append(DebugUIViewsMessages.WorkingSetCategory_0);
         }

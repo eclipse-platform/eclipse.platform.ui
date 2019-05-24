@@ -224,7 +224,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 			return IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 
-		StringBuffer label = new StringBuffer(IInternalDebugCoreConstants.EMPTY_STRING);
+		StringBuilder label = new StringBuilder(IInternalDebugCoreConstants.EMPTY_STRING);
 
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{

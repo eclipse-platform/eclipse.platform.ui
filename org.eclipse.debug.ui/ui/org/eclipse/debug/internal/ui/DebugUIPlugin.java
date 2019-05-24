@@ -1193,7 +1193,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 				monitor.beginTask(DebugUIMessages.DebugUITools_3, 100);
 				try {
 					if(waitInJob) {
-						StringBuffer buffer = new StringBuffer(configuration.getName());
+						StringBuilder buffer = new StringBuilder(configuration.getName());
 						buffer.append(DebugUIMessages.DebugUIPlugin_0);
 						ILaunchConfigurationWorkingCopy workingCopy = configuration.copy(buffer.toString());
 						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());

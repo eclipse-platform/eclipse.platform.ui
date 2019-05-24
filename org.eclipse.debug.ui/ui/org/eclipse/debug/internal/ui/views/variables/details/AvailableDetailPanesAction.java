@@ -107,7 +107,7 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 		fMenu= new Menu(parent);
 		int i = 0;
 		for (String currentID : fAvailableIDs) {
-			StringBuffer name = new StringBuffer();
+			StringBuilder name = new StringBuilder();
 			//add the numerical accelerator
             i++;
 			if (i < 9) {

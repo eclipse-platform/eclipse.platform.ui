@@ -168,7 +168,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	private String getWorkingSetsAttribute(IBreakpoint breakpoint) {
 		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		IWorkingSet[] sets = mgr.getWorkingSets();
 		for (int i = 0; i < sets.length; i++) {
 			if(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(sets[i].getId()) &&

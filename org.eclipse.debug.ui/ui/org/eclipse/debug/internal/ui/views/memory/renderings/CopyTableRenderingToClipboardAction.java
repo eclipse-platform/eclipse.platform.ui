@@ -65,7 +65,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 			return null;
 		}
 
-		StringBuffer tableContents = new StringBuffer();
+		StringBuilder tableContents = new StringBuilder();
 
 		Table table = (Table)fViewer.getControl();
 		int numColumns = table.getColumnCount();

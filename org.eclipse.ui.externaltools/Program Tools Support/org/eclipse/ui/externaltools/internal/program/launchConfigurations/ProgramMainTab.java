@@ -41,7 +41,7 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 		}
 		Object file= result.getFirstElement();
 		if (file instanceof IFile) {
-			StringBuffer expression = new StringBuffer();
+			StringBuilder expression = new StringBuilder();
 			expression.append("${workspace_loc:"); //$NON-NLS-1$
 			expression.append(((IFile)file).getFullPath().toString());
 			expression.append("}"); //$NON-NLS-1$

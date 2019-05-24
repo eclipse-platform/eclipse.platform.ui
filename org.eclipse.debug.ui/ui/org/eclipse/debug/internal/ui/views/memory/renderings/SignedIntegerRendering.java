@@ -155,7 +155,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 
 		if (invalid)
 		{
-			StringBuffer strBuf = new StringBuffer();
+			StringBuilder strBuf = new StringBuilder();
 			for (int i=0; i<data.length; i++)
 			{
 				strBuf.append(paddedStr);
@@ -181,7 +181,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 		// if endianess is unknown, do not render, just return padded string
 		if (RenderingsUtil.ENDIANESS_UNKNOWN == endianess)
 		{
-			StringBuffer strBuf = new StringBuffer();
+			StringBuilder strBuf = new StringBuilder();
 			for (int i=0; i<byteArray.length; i++)
 			{
 				strBuf.append(paddedStr);

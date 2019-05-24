@@ -34,7 +34,7 @@ public class HexRendering extends AbstractAsyncTableRendering {
 	@Override
 	public String getString(String dataType, BigInteger address,
 			MemoryByte[] data) {
-		StringBuffer strBuffer = new StringBuffer();
+		StringBuilder strBuffer = new StringBuilder();
 
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 

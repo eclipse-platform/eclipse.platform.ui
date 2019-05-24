@@ -506,7 +506,7 @@ public class RenderingsUtil {
 	 */
 	static public String convertByteArrayToHexString(byte[] byteArray)
 	{
-		StringBuffer strBuffer = new StringBuffer();
+		StringBuilder strBuffer = new StringBuilder();
 		char charArray[];
 
 		for (int i=0; i<byteArray.length;i ++)
@@ -542,7 +542,7 @@ public class RenderingsUtil {
 	    if (str.length() == 0)
 	        return null;
 
-		StringBuffer buf = new StringBuffer(str);
+		StringBuilder buf = new StringBuilder(str);
 
 	    // pad string with zeros
 	    int requiredPadding =  numBytes * numCharsPerByte - str.length();

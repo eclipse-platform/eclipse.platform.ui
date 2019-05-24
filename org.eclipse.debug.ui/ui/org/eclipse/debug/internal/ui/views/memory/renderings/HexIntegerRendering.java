@@ -33,7 +33,7 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 	@Override
 	public String getString(String dataType, BigInteger address,
 			MemoryByte[] data) {
-		StringBuffer strBuffer = new StringBuffer();
+		StringBuilder strBuffer = new StringBuilder();
 		int endianess = getEndianness(data);
 
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);

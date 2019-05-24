@@ -149,7 +149,7 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("ILabelUpdate: "); //$NON-NLS-1$
 		buf.append(getElement());
 		return buf.toString();

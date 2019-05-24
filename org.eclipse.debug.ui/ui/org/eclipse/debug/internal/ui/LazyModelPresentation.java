@@ -194,7 +194,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         if (showVariableTypeNames()) {
             try {
                 if (element instanceof IExpression) {
-                    StringBuffer buf = new StringBuffer();
+                    StringBuilder buf = new StringBuilder();
                     IValue value = ((IExpression)element).getValue();
                     if (value != null) {
                         String type = value.getReferenceTypeName();

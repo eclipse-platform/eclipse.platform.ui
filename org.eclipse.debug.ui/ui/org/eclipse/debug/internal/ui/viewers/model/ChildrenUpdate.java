@@ -169,7 +169,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("IChildrenUpdate: "); //$NON-NLS-1$
 		buf.append(getElement());
 		buf.append(" {"); //$NON-NLS-1$

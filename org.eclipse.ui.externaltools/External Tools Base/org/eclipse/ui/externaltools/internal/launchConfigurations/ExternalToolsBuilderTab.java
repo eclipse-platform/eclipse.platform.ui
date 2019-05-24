@@ -311,7 +311,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
+		StringBuilder buffer= new StringBuilder(IExternalToolConstants.BUILD_TYPE_FULL);
 		buffer.append(',');
 		buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
 		buffer.append(',');
@@ -410,7 +410,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
         if (fCreateBuildScheduleComponent) {
-        	StringBuffer buffer= new StringBuffer();
+        	StringBuilder buffer= new StringBuilder();
     		if (afterClean.getSelection()) {
     			buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
     		}

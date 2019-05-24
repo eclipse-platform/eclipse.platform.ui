@@ -99,7 +99,7 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 			}
 
 			if (hasInvalid) {
-				StringBuffer strBuf = new StringBuffer();
+				StringBuilder strBuf = new StringBuilder();
 				for (int i = 0; i < data.length; i++) {
 					if (invalid[i]) {
 						strBuf.append(paddedStr);

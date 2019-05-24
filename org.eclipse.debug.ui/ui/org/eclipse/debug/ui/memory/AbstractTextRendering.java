@@ -107,7 +107,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 
 			if (hasInvalid)
 			{
-				StringBuffer strBuf = new StringBuffer();
+				StringBuilder strBuf = new StringBuilder();
 				for (int i=0; i<data.length; i++)
 				{
 					if (invalid[i]) {

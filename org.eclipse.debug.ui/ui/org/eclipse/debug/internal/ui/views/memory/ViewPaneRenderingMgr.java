@@ -267,7 +267,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 		// constructs id based on memory view's secondary id + the rendering
 		// view pane id
 		// format: secondaryId:viewPaneId
-		StringBuffer id = new StringBuffer();
+		StringBuilder id = new StringBuilder();
 		IMemoryRenderingSite renderingSite = fViewPane.getMemoryRenderingSite();
 		IWorkbenchPartSite ps = renderingSite.getSite();
 		if (ps instanceof IViewSite) {

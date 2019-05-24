@@ -278,7 +278,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                         type = config.getType().getName();
                     } catch (CoreException e) {
                     }
-                    StringBuffer buffer = new StringBuffer();
+                    StringBuilder buffer = new StringBuilder();
                     buffer.append(config.getName());
                     if (type != null) {
                         buffer.append(" ["); //$NON-NLS-1$
@@ -793,7 +793,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
 
     	private String escape(String path) {
-    		StringBuffer buffer = new StringBuffer(path);
+    		StringBuilder buffer = new StringBuilder(path);
     		int index = buffer.indexOf("\\"); //$NON-NLS-1$
     		while (index >= 0) {
     			buffer.insert(index, '\\');

@@ -385,7 +385,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 
 	@Override
 	public void saveViewerState(IMemento memento) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
         if (fOrganizers != null) {
             for (int i = 0; i < fOrganizers.length; i++) {
                 IBreakpointOrganizer organizer = fOrganizers[i];

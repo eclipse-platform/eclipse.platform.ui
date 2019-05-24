@@ -134,7 +134,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
     }
 
     private void addAccel(int accel, IAction action, String label) {
-        StringBuffer actionLabel= new StringBuffer();
+        StringBuilder actionLabel= new StringBuilder();
         if (accel != 10) {
             if (accel < 10) {
                 // add the numerical accelerators 1 through 9

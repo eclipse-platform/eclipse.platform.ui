@@ -235,7 +235,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		if (helpContextId != null) {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, helpContextId);
 		}
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		if (accelerator >= 0 && accelerator < 10) {
 			//add the numerical accelerator
 			label.append('&');

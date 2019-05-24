@@ -373,7 +373,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	private void handleRemoveButtonPressed() {
 		IStructuredSelection selection = variableTable.getStructuredSelection();
 		List<VariableWrapper> variablesToRemove = selection.toList();
-		StringBuffer contributedVariablesToRemove= new StringBuffer();
+		StringBuilder contributedVariablesToRemove= new StringBuilder();
 		Iterator<VariableWrapper> iter = variablesToRemove.iterator();
 		while (iter.hasNext()) {
 			VariableWrapper variable = iter.next();
@@ -445,7 +445,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	}
 
 	public void saveColumnWidths() {
-		StringBuffer widthPreference = new StringBuffer();
+		StringBuilder widthPreference = new StringBuilder();
 		for (int i = 0; i < variableTable.getTable().getColumnCount(); i++) {
 			widthPreference.append(variableTable.getTable().getColumn(i).getWidth());
 			widthPreference.append(',');
@@ -675,12 +675,13 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 				VariableWrapper variable= (VariableWrapper) element;
 				switch (columnIndex) {
 					case 0 :
-						StringBuffer name = new StringBuffer();
+						StringBuilder name = new StringBuilder();
 						name.append(variable.getName());
 						if (variable.isReadOnly()){
 							name.append(DebugPreferencesMessages.StringVariablePreferencePage_26);
 						}
 						return name.toString();
+
 					case 1:
 						String value= variable.getValue();
 						if (value == null) {

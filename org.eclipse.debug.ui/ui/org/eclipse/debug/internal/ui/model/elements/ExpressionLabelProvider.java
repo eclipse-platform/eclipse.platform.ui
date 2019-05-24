@@ -108,10 +108,10 @@ protected String getLabel(TreePath elementPath, IPresentationContext context, St
      * @since 3.6
      */
     private String getWatchExpressionName(IWatchExpression expression, IPresentationContext context) {
-        StringBuffer result= new StringBuffer();
+        StringBuilder result= new StringBuilder();
 
         String snippet = expression.getExpressionText().trim();
-        StringBuffer snippetBuffer = new StringBuffer();
+        StringBuilder snippetBuffer = new StringBuilder();
 		if (snippet.length() > 254) {
 			snippetBuffer.append(snippet.substring(0, 127));
             snippetBuffer.append(DebugUIMessages.DefaultLabelProvider_0);
@@ -143,7 +143,7 @@ protected String getLabel(TreePath elementPath, IPresentationContext context, St
     protected String getExpressionValueText(IExpression expression, IValue value, IPresentationContext context) throws CoreException {
         if (expression instanceof IWatchExpression) {
             IWatchExpression watchExpression = (IWatchExpression)expression;
-            StringBuffer result = new StringBuffer();
+            StringBuilder result = new StringBuilder();
 
 			if (watchExpression.isPending() && value == null) {
                 result.append(DebugUIMessages.DefaultLabelProvider_12);

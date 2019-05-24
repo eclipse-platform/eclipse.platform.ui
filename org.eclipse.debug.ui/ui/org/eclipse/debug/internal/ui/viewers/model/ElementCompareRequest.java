@@ -123,7 +123,7 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 
     @Override
 	public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("IElementCompareRequest: "); //$NON-NLS-1$
         buf.append(getElement());
         return buf.toString();

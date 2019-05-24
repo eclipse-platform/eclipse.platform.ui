@@ -70,7 +70,7 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("IHasChildrenUpdate: "); //$NON-NLS-1$
 		buf.append(getElement());
 		return buf.toString();

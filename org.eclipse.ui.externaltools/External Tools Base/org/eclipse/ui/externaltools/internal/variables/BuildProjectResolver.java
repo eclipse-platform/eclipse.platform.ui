@@ -62,7 +62,7 @@ public class BuildProjectResolver implements IDynamicVariableResolver {
 	 * @return vraiable reference expression
 	 */
 	protected String getReferenceExpression(IDynamicVariable variable, String argument) {
-		StringBuffer reference = new StringBuffer();
+		StringBuilder reference = new StringBuilder();
 		reference.append("${"); //$NON-NLS-1$
 		reference.append(variable.getName());
 		if (argument != null) {
