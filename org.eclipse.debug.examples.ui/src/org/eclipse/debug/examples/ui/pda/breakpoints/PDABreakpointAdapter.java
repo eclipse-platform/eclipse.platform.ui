@@ -191,7 +191,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
                 String lineText = document.get(information.getOffset(), information.getLength());
 				if (lineText.startsWith(":")) { //$NON-NLS-1$
                     String label = lineText.substring(1);
-					if (source.indexOf("call " + label) >= 0) { //$NON-NLS-1$
+					if (source.contains("call " + label)) { //$NON-NLS-1$
                         return label;
                     }
                 }

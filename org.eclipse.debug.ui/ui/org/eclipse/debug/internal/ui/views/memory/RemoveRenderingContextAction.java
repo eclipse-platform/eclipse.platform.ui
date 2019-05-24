@@ -70,7 +70,7 @@ public class RemoveRenderingContextAction implements IViewActionDelegate {
 		IMemoryRenderingContainer selectedPane = null;
 
 		for (int i = 0; i < viewPanes.length; i++) {
-			if (actionId.indexOf(viewPanes[i].getId()) != -1) {
+			if (actionId.contains(viewPanes[i].getId())) {
 				selectedPane = viewPanes[i];
 				break;
 			}

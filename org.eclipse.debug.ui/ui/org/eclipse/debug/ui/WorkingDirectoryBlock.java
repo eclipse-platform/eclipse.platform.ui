@@ -330,7 +330,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 		setMessage(null);
 		// if variables are present, we cannot resolve the directory
 		String workingDirPath = getWorkingDirectoryText();
-		if (workingDirPath.indexOf("${") >= 0) { //$NON-NLS-1$
+		if (workingDirPath.contains("${")) { //$NON-NLS-1$
 			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 			try {
 				manager.validateStringVariables(workingDirPath);

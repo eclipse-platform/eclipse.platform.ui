@@ -557,7 +557,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		String value= var.getValue();
 		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_11);
 		dialog.addTextField(NAME_LABEL, originalName, false);
-		if(value != null && value.indexOf(System.getProperty("line.separator")) > -1) { //$NON-NLS-1$
+		if(value != null && value.contains(System.getProperty("line.separator"))) { //$NON-NLS-1$
 			dialog.addMultilinedVariablesField(VALUE_LABEL, value, true);
 		}
 		else {
