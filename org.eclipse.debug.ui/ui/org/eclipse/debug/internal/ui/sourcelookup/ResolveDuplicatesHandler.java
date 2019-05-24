@@ -42,7 +42,7 @@ public class ResolveDuplicatesHandler implements IStatusHandler {
 		sources = removeSourceNotFoundEditors(sources);
 		if(sources.size() == 1) {
 			return sources.get(0);
-		} else if(sources.size() == 0) {
+		} else if(sources.isEmpty()) {
 			return null;
 		}
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(DebugUIPlugin.getShell(), new SourceElementLabelProvider());

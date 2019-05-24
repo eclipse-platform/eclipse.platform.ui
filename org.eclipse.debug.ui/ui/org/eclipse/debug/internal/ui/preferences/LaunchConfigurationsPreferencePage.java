@@ -290,7 +290,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 					pub.add(configurations[i]);
 				}
 			}
-			if(pub.size() == 0) {
+			if(pub.isEmpty()) {
 				MessageDialog.openInformation(getShell(), DebugPreferencesMessages.LaunchingPreferencePage_29, DebugPreferencesMessages.LaunchingPreferencePage_30);
 				return;
 			}

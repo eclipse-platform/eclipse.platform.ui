@@ -561,7 +561,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 			}
 		}
 		if ((flags & MODEL_PROXIES_INSTALLED) != 0) {
-			if (fProxyModels.size() != 0) {
+			if (!fProxyModels.isEmpty()) {
 				return false;
 			}
 		}

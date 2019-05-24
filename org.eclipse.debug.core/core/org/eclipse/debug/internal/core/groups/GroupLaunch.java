@@ -98,7 +98,7 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 		}
 
 		synchronized (subLaunches) {
-			if (subLaunches.size() == 0) {
+			if (subLaunches.isEmpty()) {
 				return fLaunched; // in case we're done launching and there is
 									// nobody -> terminated
 			}
@@ -123,7 +123,7 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 	@Override
 	public boolean canTerminate() {
 		synchronized (subLaunches) {
-			if (subLaunches.size() == 0) {
+			if (subLaunches.isEmpty()) {
 				return false;
 			}
 
@@ -190,7 +190,7 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 			// accessible
 			if (subLaunches.remove(launch) != null) {
 				// terminate ourselves if this is the last sub launch
-				if (subLaunches.size() == 0 && fLaunched) {
+				if (subLaunches.isEmpty() && fLaunched) {
 					fTerminated = true;
 					fireTerminate();
 				}

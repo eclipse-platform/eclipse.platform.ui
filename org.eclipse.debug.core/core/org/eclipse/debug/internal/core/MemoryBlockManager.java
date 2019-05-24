@@ -147,7 +147,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			for (int i=0; i<memBlocks.length; i++) {
 				memoryBlocks.remove(memBlocks[i]);
 				// remove listener after the last memory block has been removed
-				if (memoryBlocks.size() == 0) {
+				if (memoryBlocks.isEmpty()) {
 					DebugPlugin.getDefault().removeDebugEventListener(this);
 				}
 				if (memBlocks[i] instanceof IMemoryBlockExtension) {

@@ -473,7 +473,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     		delta = delta.addNode(container, IModelDelta.UNINSTALL|IModelDelta.REMOVED);
     	}
 
-    	if (container.fChildContainers.size() == 0) {
+    	if (container.fChildContainers.isEmpty()) {
 			List<IBreakpoint> breakpoints = new ArrayList<>();
 			Iterator<IBreakpoint> iterator = container.fBreakpoints.iterator();
     		while (iterator.hasNext()) {

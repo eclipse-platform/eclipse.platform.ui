@@ -857,7 +857,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * @return true if breakpoint contains in the list of targets.
      */
 	protected boolean supportsBreakpoint(List<IDebugTarget> targets, IBreakpoint breakpoint) {
-        boolean exist = targets.size() == 0 ? true : false;
+        boolean exist = targets.isEmpty() ? true : false;
         for (int i = 0; !exist && i < targets.size(); ++i) {
             IDebugTarget target = targets.get(i);
             exist |= target.supportsBreakpoint(breakpoint);

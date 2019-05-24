@@ -82,7 +82,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 			fRenderings.remove(toRemove[i]);
 
 			// remove listener after the last memory block has been removed
-			if (fRenderings.size() == 0) {
+			if (fRenderings.isEmpty()) {
 				DebugPlugin.getDefault().removeDebugEventListener(this);
 			}
 		}
@@ -119,7 +119,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 		fRenderings.remove(rendering);
 
 		// remove listener after the last memory block has been removed
-		if (fRenderings.size() == 0) {
+		if (fRenderings.isEmpty()) {
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
 

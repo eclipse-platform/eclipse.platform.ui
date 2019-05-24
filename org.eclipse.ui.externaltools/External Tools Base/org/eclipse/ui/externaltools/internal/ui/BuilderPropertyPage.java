@@ -1089,7 +1089,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			arguments.remove(COMMAND_ENABLED);
 		}
 		List<ILaunchConfigurationType> externalToolTypes = getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
-		if (externalToolTypes.size() == 0) {
+		if (externalToolTypes.isEmpty()) {
 			return null;
 		}
 		ILaunchConfigurationType type= externalToolTypes.get(0);

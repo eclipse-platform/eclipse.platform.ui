@@ -274,7 +274,7 @@ public class LaunchConfigurationPresentationManager {
 					//otherwise filter based on the collection of delegates for the modes
 					ILaunchDelegate[] delegates = config.getType().getDelegates(modes);
 					for(int j = 0; j < delegates.length; j++) {
-						if(delegateSet.size() == 0 || delegateSet.contains(delegates[j].getId())) {
+						if(delegateSet.isEmpty() || delegateSet.contains(delegates[j].getId())) {
 							//associated with all modes and tab groups or only specific ones if indicated
 							set.add(tabs[i]);
 						}

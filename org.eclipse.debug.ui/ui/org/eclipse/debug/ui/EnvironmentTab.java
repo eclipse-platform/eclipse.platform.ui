@@ -706,7 +706,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 			map.put(var.getName(), var.getValue());
 		}
-		if (map.size() == 0) {
+		if (map.isEmpty()) {
 			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, (Map<String, String>) null);
 		} else {
 			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);

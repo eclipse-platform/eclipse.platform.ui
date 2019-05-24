@@ -534,7 +534,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @return true if it is already in the list, false if it is a new object
 	 */
 	private boolean checkDuplicate(Object sourceToAdd, List<Object> sources) {
-		if(sources.size() == 0) {
+		if(sources.isEmpty()) {
 			return false;
 		}
 		for (Object obj : sources) {

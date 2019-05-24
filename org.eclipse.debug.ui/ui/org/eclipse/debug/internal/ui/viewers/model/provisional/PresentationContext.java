@@ -235,7 +235,7 @@ public class PresentationContext implements IPresentationContext {
 	 * @param memento Memento to save to.
 	 */
 	public void saveProperites(IMemento memento) {
-	    if (fProperties.size() == 0) {
+	    if (fProperties.isEmpty()) {
 	        return;
 	    }
         IMemento properties = memento.createChild(PRESENTATION_CONTEXT_PROPERTIES, getId());

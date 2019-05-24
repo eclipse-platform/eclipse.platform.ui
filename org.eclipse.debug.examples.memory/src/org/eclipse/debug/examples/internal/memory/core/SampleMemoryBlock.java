@@ -140,7 +140,7 @@ public class SampleMemoryBlock extends DebugElement implements IMemoryBlockExten
 			fConnections.remove(object);
 		}
 
-		if (fConnections.size() == 0) {
+		if (fConnections.isEmpty()) {
 			disable();
 		}
 	}

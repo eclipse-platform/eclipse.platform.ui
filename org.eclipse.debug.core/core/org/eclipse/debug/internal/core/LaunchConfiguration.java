@@ -538,7 +538,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	@Override
 	public IResource[] getMappedResources() throws CoreException {
 		List<String> paths = getAttribute(ATTR_MAPPED_RESOURCE_PATHS, (List<String>) null);
-		if (paths == null || paths.size() == 0) {
+		if (paths == null || paths.isEmpty()) {
 			return null;
 		}
 		List<String> types = getAttribute(ATTR_MAPPED_RESOURCE_TYPES, (List<String>) null);
