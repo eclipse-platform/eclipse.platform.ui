@@ -114,7 +114,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	public URI getURIValue(String varName) {
 		String value = internalGetValue(varName);
 		if (value != null) {
-			if (value.indexOf("..") != -1) { //$NON-NLS-1$
+			if (value.contains("..")) { //$NON-NLS-1$
 				// if the path is 'reducible', lets resolve it first.
 				int index = value.indexOf(IPath.SEPARATOR);
 				if (index > 0) { // if its the first character, its an
