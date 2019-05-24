@@ -30,7 +30,7 @@ public class FussyProgressProvider extends ProgressProvider {
 	public IProgressMonitor createMonitor(Job job) {
 		//only give a fussy monitor to jobs from runtime tests
 		String name = job == null ? "" : job.getClass().getName();
-		if (name.indexOf("core.tests.runtime") == -1 && name.indexOf("core.tests.internal.runtime") == -1 && name.indexOf("core.tests.harness") == -1)
+		if (!name.contains("core.tests.runtime") && !name.contains("core.tests.internal.runtime") && !name.contains("core.tests.harness"))
 			return new NullProgressMonitor();
 		FussyProgressMonitor result = new FussyProgressMonitor(job);
 		monitors.add(result);

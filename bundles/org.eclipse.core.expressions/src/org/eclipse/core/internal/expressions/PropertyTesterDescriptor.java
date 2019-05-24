@@ -80,7 +80,7 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 
 	@Override
 	public boolean handles(String namespace, String property) {
-		return fNamespace.equals(namespace) && fProperties.indexOf("," + property + ",") != -1;  //$NON-NLS-1$//$NON-NLS-2$
+		return fNamespace.equals(namespace) && fProperties.contains("," + property + ",");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	@Override

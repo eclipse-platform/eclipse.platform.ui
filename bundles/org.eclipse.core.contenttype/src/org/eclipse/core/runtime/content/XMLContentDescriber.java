@@ -179,7 +179,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		StringBuilder stringBuilder = new StringBuilder(100);
 		while (stringBuilder.length() < 100 && ((line = reader.readLine()) != null)) {
 			stringBuilder.append(line);
-			if (line.indexOf(XML_DECL_END) != -1) {
+			if (line.contains(XML_DECL_END)) {
 				String resultString = stringBuilder.toString();
 				return resultString.substring(0, resultString.indexOf(XML_DECL_END) + XML_DECL_END.length());
 			}
