@@ -780,9 +780,9 @@ public class IPathVariableTest extends ResourceTest {
 			info.clear(ICoreConstants.M_USED);
 			String dotProjectPath = existingProject.getLocation().append(".project").toOSString();
 			FileWriter fstream = new FileWriter(dotProjectPath);
-			BufferedWriter out = new BufferedWriter(fstream);
-			out.write(dorProjectContent);
-			out.close();
+			try (BufferedWriter out = new BufferedWriter(fstream)) {
+				out.write(dorProjectContent);
+			}
 			existingProject.open(getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);

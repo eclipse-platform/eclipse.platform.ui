@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -17,9 +17,6 @@ import java.io.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.CoreException;
 
-/**
- *
- */
 public class OpenOutputStreamTest extends FileSystemTest {
 	public OpenOutputStreamTest() {
 		super();
@@ -37,33 +34,26 @@ public class OpenOutputStreamTest extends FileSystemTest {
 		final int BYTE_TWO = 2;
 		final int EOF = -1;
 
-		OutputStream out = null;
-		try {
-			out = file.openOutputStream(EFS.APPEND, getMonitor());
+		try (OutputStream out = file.openOutputStream(EFS.APPEND, getMonitor())){
 			out.write(BYTE_ONE);
-			out.close();
 		} catch (CoreException e) {
 			fail("1.99", e);
 		} catch (IOException e) {
 			fail("2.99", e);
 		}
 		//append some more content
-		try {
-			out = file.openOutputStream(EFS.APPEND, getMonitor());
+		try (OutputStream out = file.openOutputStream(EFS.APPEND, getMonitor())) {
 			out.write(BYTE_TWO);
-			out.close();
 		} catch (CoreException e) {
 			fail("3.99", e);
 		} catch (IOException e) {
 			fail("4.99", e);
 		}
 		//file should contain two bytes
-		try {
-			InputStream in = file.openInputStream(EFS.NONE, getMonitor());
+		try (InputStream in = file.openInputStream(EFS.NONE, getMonitor())) {
 			assertEquals("1.0", BYTE_ONE, in.read());
 			assertEquals("1.1", BYTE_TWO, in.read());
 			assertEquals("1.2", EOF, in.read());
-			in.close();
 		} catch (CoreException e) {
 			fail("4.99", e);
 		} catch (IOException e) {
@@ -76,11 +66,8 @@ public class OpenOutputStreamTest extends FileSystemTest {
 		IFileStore file = baseStore.getChild("file");
 		ensureDoesNotExist(file);
 
-		OutputStream out = null;
-		try {
-			out = file.openOutputStream(EFS.NONE, getMonitor());
+		try (OutputStream out = file.openOutputStream(EFS.NONE, getMonitor())) {
 			out.write(1);
-			out.close();
 		} catch (CoreException e) {
 			fail("1.99", e);
 		} catch (IOException e) {

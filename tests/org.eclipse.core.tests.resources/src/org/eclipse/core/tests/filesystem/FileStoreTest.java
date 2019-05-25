@@ -340,10 +340,10 @@ public class FileStoreTest extends LocalStoreTest {
 			target.openOutputStream(EFS.NONE, null).close();
 			assertEquals("1.0", 0, target.fetchInfo().getLength());
 
-			// add a byte
-			OutputStream out = target.openOutputStream(EFS.NONE, null);
-			out.write(5);
-			out.close();
+			try ( // add a byte
+					OutputStream out = target.openOutputStream(EFS.NONE, null)) {
+				out.write(5);
+			}
 			assertEquals("1.0", 1, target.fetchInfo().getLength());
 		} finally {
 			/* remove trash */

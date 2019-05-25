@@ -821,9 +821,10 @@ public class IFileTest extends ResourceTest {
 			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile file = (IFile) args[0];
-				InputStream contents = (InputStream) result;
-				boolean returnVal = file.exists() && contents != null;
-				contents.close();
+				boolean returnVal;
+				try (InputStream contents = (InputStream) result) {
+					returnVal = file.exists() && contents != null;
+				}
 				return returnVal;
 			}
 		}.performTest(inputs);

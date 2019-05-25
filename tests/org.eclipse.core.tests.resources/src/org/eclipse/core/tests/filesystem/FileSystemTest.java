@@ -79,9 +79,9 @@ public abstract class FileSystemTest extends CoreTest {
 				assertTrue("1.0", info.exists());
 				assertTrue("1.1", info.isDirectory());
 			} else {
-				OutputStream out = store.openOutputStream(EFS.NONE, getMonitor());
-				out.write(5);
-				out.close();
+				try (OutputStream out = store.openOutputStream(EFS.NONE, getMonitor())) {
+					out.write(5);
+				}
 				final IFileInfo info = store.fetchInfo();
 				assertTrue("1.5", info.exists());
 				assertTrue("1.6", !info.isDirectory());

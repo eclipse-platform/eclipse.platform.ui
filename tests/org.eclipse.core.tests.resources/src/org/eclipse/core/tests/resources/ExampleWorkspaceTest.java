@@ -139,12 +139,8 @@ public class ExampleWorkspaceTest extends ResourceTest {
 		IFile target = getTestProject().getFile("testFile");
 		String testString = getRandomString();
 		target.setContents(getContents(testString), true, false, getMonitor());
-		InputStream content = null;
-		try {
-			content = target.getContents();
+		try (InputStream content = target.getContents()) {
 			assertTrue("get not equal set", compareContent(content, getContents(testString)));
-		} finally {
-			content.close();
 		}
 	}
 }

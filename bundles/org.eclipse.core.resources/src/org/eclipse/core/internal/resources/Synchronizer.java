@@ -44,7 +44,8 @@ public class Synchronizer implements ISynchronizer {
 	 * @see ISynchronizer#accept(QualifiedName, IResource, IResourceVisitor, int)
 	 */
 	@Override
-	public void accept(QualifiedName partner, IResource resource, IResourceVisitor visitor, int depth) throws CoreException {
+	public void accept(QualifiedName partner, IResource resource, IResourceVisitor visitor, int depth)
+			throws CoreException {
 		Assert.isLegal(partner != null);
 		Assert.isLegal(resource != null);
 		Assert.isLegal(visitor != null);
@@ -87,7 +88,7 @@ public class Synchronizer implements ISynchronizer {
 
 		ICoreRunnable body = monitor -> {
 			IResourceVisitor visitor = resource -> {
-				//only need to flush sync info if there is sync info
+				// only need to flush sync info if there is sync info
 				if (getSyncInfo(partner, resource) != null)
 					setSyncInfo(partner, resource, null);
 				return true;
@@ -155,14 +156,13 @@ public class Synchronizer implements ISynchronizer {
 		if (!sourceLocation.toFile().exists() && !tempLocation.toFile().exists())
 			return;
 		try {
-			try (
-				DataInputStream input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
-			) {
+			try (DataInputStream input = new DataInputStream(
+					new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));) {
 				SyncInfoReader reader = new SyncInfoReader(workspace, this);
 				reader.readSyncInfo(input);
 			}
 		} catch (Exception e) {
-			//don't let runtime exceptions such as ArrayIndexOutOfBounds prevent startup
+			// don't let runtime exceptions such as ArrayIndexOutOfBounds prevent startup
 			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 		}
@@ -172,17 +172,12 @@ public class Synchronizer implements ISynchronizer {
 		IPath sourceLocation = workspace.getMetaArea().getSyncInfoSnapshotLocationFor(resource);
 		if (!sourceLocation.toFile().exists())
 			return;
-		try {
-			DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toFile()));
-			try {
-				SyncInfoSnapReader reader = new SyncInfoSnapReader(workspace, this);
-				while (true)
-					reader.readSyncInfo(input);
-			} catch (EOFException eof) {
-				// ignore end of file -- proceed with what we successfully read
-			} finally {
-				input.close();
-			}
+		try (DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toFile()))) {
+			SyncInfoSnapReader reader = new SyncInfoSnapReader(workspace, this);
+			while (true)
+				reader.readSyncInfo(input);
+		} catch (EOFException eof) {
+			// ignore end of file -- proceed with what we successfully read
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
 			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
@@ -212,7 +207,8 @@ public class Synchronizer implements ISynchronizer {
 		writer.savePartners(output);
 	}
 
-	public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List<QualifiedName> writtenPartners) throws IOException {
+	public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output,
+			List<QualifiedName> writtenPartners) throws IOException {
 		writer.saveSyncInfo(info, requestor, output, writtenPartners);
 	}
 
@@ -237,14 +233,15 @@ public class Synchronizer implements ISynchronizer {
 			// we do not store sync info on the workspace root
 			if (resource.getType() == IResource.ROOT)
 				return;
-			// if the resource doesn't yet exist then create a phantom so we can set the sync info on it
+			// if the resource doesn't yet exist then create a phantom so we can set the
+			// sync info on it
 			Resource target = (Resource) resource;
 			ResourceInfo resourceInfo = workspace.getResourceInfo(target.getFullPath(), true, false);
 			int flags = target.getFlags(resourceInfo);
 			if (!target.exists(flags, false)) {
 				if (info == null)
 					return;
-				//ensure it is possible to create this resource
+				// ensure it is possible to create this resource
 				target.checkValidPath(target.getFullPath(), target.getType(), false);
 				Container parent = (Container) target.getParent();
 				parent.checkAccessible(parent.getFlags(parent.getResourceInfo(true, false)));
@@ -256,7 +253,8 @@ public class Synchronizer implements ISynchronizer {
 			resourceInfo.set(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 			flags = target.getFlags(resourceInfo);
 			if (target.isPhantom(flags) && resourceInfo.getSyncInfo(false) == null) {
-				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.resources_deleteProblem, null);
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR,
+						Messages.resources_deleteProblem, null);
 				((Resource) resource).deleteResource(false, status);
 				if (!status.isOK())
 					throw new ResourceException(status);

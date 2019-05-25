@@ -160,13 +160,9 @@ public class Bug_265810 extends ResourceTest {
 		int bytesRead = 0;
 		byte[] doProject = new byte[0];
 
-		try {
-			InputStream iS = project.getFile(".project").getContents();
+		try (InputStream iS = project.getFile(".project").getContents()) {
 			bytesRead = iS.read(buffer);
-			iS.close();
-		} catch (IOException e) {
-			fail("storing dotProject failed", e);
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			fail("storing dotProject failed", e);
 		}
 

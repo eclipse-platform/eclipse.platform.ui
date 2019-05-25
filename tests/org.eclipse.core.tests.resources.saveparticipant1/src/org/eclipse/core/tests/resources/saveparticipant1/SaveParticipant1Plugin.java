@@ -102,13 +102,8 @@ public class SaveParticipant1Plugin extends Plugin implements ISaveParticipant {
 	 */
 	private void readExpectedSavedNumber() {
 		IPath location = getStateLocation().append(SAVE_NUMBER_LOCATION);
-		try {
-			DataInputStream input = new DataInputStream(new FileInputStream(location.toOSString()));
-			try {
-				expectedPreviousSaveNumber = input.readInt();
-			} finally {
-				input.close();
-			}
+		try (DataInputStream input = new DataInputStream(new FileInputStream(location.toOSString()))) {
+			expectedPreviousSaveNumber = input.readInt();
 		} catch (IOException e) {
 			expectedPreviousSaveNumber = 0;
 		}
@@ -193,11 +188,8 @@ public class SaveParticipant1Plugin extends Plugin implements ISaveParticipant {
 	 */
 	private void writeExpectedSaveNumber(int saveNumber) throws IOException {
 		IPath location = getStateLocation().append(SAVE_NUMBER_LOCATION);
-		DataOutputStream output = new DataOutputStream(new FileOutputStream(location.toOSString()));
-		try {
+		try (DataOutputStream output = new DataOutputStream(new FileOutputStream(location.toOSString()))) {
 			output.writeInt(saveNumber);
-		} finally {
-			output.close();
 		}
 	}
 

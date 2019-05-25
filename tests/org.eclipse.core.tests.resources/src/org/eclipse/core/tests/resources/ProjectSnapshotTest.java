@@ -333,11 +333,11 @@ public class ProjectSnapshotTest extends ResourceTest {
 		EFS.getStore(project.getLocationURI()).getChild(".project").copy(newProjectStore.getChild(".project"), EFS.NONE, null);
 		project.close(null);
 		project.delete(true, false, null);
-
-		// import the project from new location and using a different name; must auto-load snapshot
-		InputStream is = newProjectStore.getChild(".project").openInputStream(EFS.NONE, null);
-		description = getWorkspace().loadProjectDescription(is);
-		is.close();
+		// import the project from new location and using a different name; must
+		// auto-load snapshot
+		try (InputStream is = newProjectStore.getChild(".project").openInputStream(EFS.NONE, null)) {
+			description = getWorkspace().loadProjectDescription(is);
+		}
 		description.setLocationURI(newProjectStore.toURI());
 		project = getWorkspace().getRoot().getProject(description.getName() + "-mybranch");
 		project.create(description, null);

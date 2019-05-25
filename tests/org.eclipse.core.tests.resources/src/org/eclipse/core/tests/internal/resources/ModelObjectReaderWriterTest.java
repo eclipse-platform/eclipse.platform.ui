@@ -430,10 +430,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		IPath location = root.append("ModelObjectWriterTest2.pbs");
 
 		/* write the bogus description */
-		try {
-			FileWriter writer = new FileWriter(location.toFile());
+		try (FileWriter writer = new FileWriter(location.toFile())) {
 			writer.write(getInvalidWorkspaceDescription());
-			writer.close();
 		} catch (IOException e) {
 			fail("1.91", e);
 		}
@@ -628,9 +626,9 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		refProjects[2] = ResourcesPlugin.getWorkspace().getRoot().getProject("org.eclipse.core.resources");
 		description.setReferencedProjects(refProjects);
 
-		OutputStream output = tempStore.openOutputStream(EFS.NONE, getMonitor());
-		writer.write(description, output, System.getProperty("line.separator"));
-		output.close();
+		try (OutputStream output = tempStore.openOutputStream(EFS.NONE, getMonitor())) {
+			writer.write(description, output, System.getProperty("line.separator"));
+		}
 
 		/* test read */
 		InputStream input = tempStore.openInputStream(EFS.NONE, getMonitor());
