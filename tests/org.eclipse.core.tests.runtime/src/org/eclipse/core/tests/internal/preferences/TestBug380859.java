@@ -35,18 +35,18 @@ public class TestBug380859 extends TestCase {
 		try {
 			// create plugin_customization.ini file
 			File file = new File(FILE_NAME);
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a=v1\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "//b=v2\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "///c=v3\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "////d=v4\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a/b=v5\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/c//d=v6\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "//e//f=v7\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a/b/c=v8\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a/b//c/d=v9\n");
-			writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a/b//c//d=v10\n");
-			writer.close();
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a=v1\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "//b=v2\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "///c=v3\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "////d=v4\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a/b=v5\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/c//d=v6\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "//e//f=v7\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a/b/c=v8\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a/b//c/d=v9\n");
+				writer.write(RuntimeTestsPlugin.PI_RUNTIME_TESTS + "/a/b//c//d=v10\n");
+			}
 
 			// add pluginCustomization argument
 			Setup setup = suite.getSetup();

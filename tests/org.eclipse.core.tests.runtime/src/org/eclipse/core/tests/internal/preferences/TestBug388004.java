@@ -39,9 +39,9 @@ public class TestBug388004 extends TestCase {
 		try {
 			// create plugin_customization.ini file
 			File file = new File(FILE_NAME);
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			writer.write("org.eclipse.core.tests.runtime/dummy_node/key=value");
-			writer.close();
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+				writer.write("org.eclipse.core.tests.runtime/dummy_node/key=value");
+			}
 
 			// add pluginCustomization argument
 			Setup setup = suite.getSetup();

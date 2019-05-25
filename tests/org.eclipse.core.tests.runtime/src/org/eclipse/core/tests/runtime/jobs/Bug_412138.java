@@ -88,9 +88,9 @@ public class Bug_412138 extends TestCase {
 			// from reporting test results; serialize the error to a helper file and
 			// exit JVM to "resolve" deadlock
 			try {
-				ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(FILE_NAME));
-				stream.writeObject(e);
-				stream.close();
+				try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+					stream.writeObject(e);
+				}
 			} catch (IOException e1) {
 				// we can't do anything if saving the error failed
 				// print the original error, so that there is at least some trace
@@ -108,9 +108,10 @@ public class Bug_412138 extends TestCase {
 		// if the file does not exist, there was no deadlock so the whole test pass
 		if (file.exists()) {
 			try {
-				ObjectInputStream stream = new ObjectInputStream(new FileInputStream(FILE_NAME));
-				AssertionFailedError e = (AssertionFailedError) stream.readObject();
-				stream.close();
+				AssertionFailedError e;
+				try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+					e = (AssertionFailedError) stream.readObject();
+				}
 				throw e;
 			} catch (IOException | ClassNotFoundException e) {
 				// re-throw since file existence already says the test failed
