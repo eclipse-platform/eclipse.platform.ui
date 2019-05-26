@@ -2338,17 +2338,17 @@ public class IResourceTest extends ResourceTest {
 		//illegal values
 		IResource[] resources = buildInterestingResources();
 		long[] illegal = new long[] {-1, -10, -100};
-		for (int i = 0; i < resources.length; i++) {
-			if (!resources[i].isAccessible()) {
+		for (IResource resource : resources) {
+			if (!resource.isAccessible()) {
 				continue;
 			}
 			for (int j = 0; j < illegal.length; j++) {
 				try {
-					resources[i].revertModificationStamp(illegal[j]);
-					fail("2." + j + "." + resources[i].getFullPath());
-				} catch (RuntimeException e) {
+					resource.revertModificationStamp(illegal[j]);
+					fail("2." + j + "." + resource.getFullPath());
+				}catch (RuntimeException e) {
 					//should fail
-				} catch (CoreException e) {
+				}catch (CoreException e) {
 					//should get runtime exception, not CoreException
 					fail("2.99", e);
 				}

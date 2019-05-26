@@ -865,9 +865,10 @@ class ResourceTree implements IResourceTree {
 				try {
 					IFileStore projectStore = localManager.getStore(project);
 					IFileStore members[] = projectStore.childStores(EFS.NONE, null);
-					for (int i = 0; i < members.length; i++) {
-						if (!IProjectDescription.DESCRIPTION_FILE_NAME.equals(members[i].getName()))
-							members[i].delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8 / members.length));
+					for (IFileStore member : members) {
+						if (!IProjectDescription.DESCRIPTION_FILE_NAME.equals(member.getName())) {
+							member.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8 / members.length));
+						}
 					}
 					projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8 / (members.length > 0 ? members.length : 1)));
 				} catch (OperationCanceledException oce) {

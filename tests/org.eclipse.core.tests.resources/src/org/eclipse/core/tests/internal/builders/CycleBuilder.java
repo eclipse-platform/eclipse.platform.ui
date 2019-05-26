@@ -53,8 +53,8 @@ public class CycleBuilder extends TestBuilder {
 			}
 		}
 		if (afterProjects != null) {
-			for (int i = 0; i < afterProjects.length; i++) {
-				Assert.assertTrue("Missing after project: " + afterProjects[i], !hasBeenBuilt(afterProjects[i]));
+			for (IProject afterProject : afterProjects) {
+				Assert.assertTrue("Missing after project: " + afterProject, !hasBeenBuilt(afterProject));
 			}
 		}
 		if (rebuildsToRequest > buildCount) {

@@ -203,8 +203,8 @@ public abstract class LocalStoreTest extends ResourceTest {
 	}
 
 	protected boolean verifyTree(IFileStore[] tree) {
-		for (int i = 0; i < tree.length; i++) {
-			if (!verifyNode(tree[i])) {
+		for (IFileStore t : tree) {
+			if (!verifyNode(t)) {
 				return false;
 			}
 		}

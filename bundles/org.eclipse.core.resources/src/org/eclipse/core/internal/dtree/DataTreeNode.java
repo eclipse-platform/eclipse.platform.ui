@@ -73,8 +73,8 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		}
 
 		int nextChild = 0;
-		for (int i = 0; i < children.length; i++) {
-			AbstractDataTreeNode child = children[i].asReverseComparisonNode(comparator);
+		for (AbstractDataTreeNode c : children) {
+			AbstractDataTreeNode child = c.asReverseComparisonNode(comparator);
 			if (child != null) {
 				children[nextChild++] = child;
 			}

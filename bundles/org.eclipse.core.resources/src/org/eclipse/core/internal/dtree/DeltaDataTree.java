@@ -103,8 +103,8 @@ public class DeltaDataTree extends AbstractDataTree {
 		if (rootNode.getName() == null) {
 			AbstractDataTreeNode[] children = rootNode.getChildren();
 			int nextChild = 0;
-			for (int i = 0; i < children.length; i++) {
-				AbstractDataTreeNode newChild = children[i].asReverseComparisonNode(comparator);
+			for (AbstractDataTreeNode c : children) {
+				AbstractDataTreeNode newChild = c.asReverseComparisonNode(comparator);
 				if (newChild != null) {
 					children[nextChild++] = newChild;
 				}

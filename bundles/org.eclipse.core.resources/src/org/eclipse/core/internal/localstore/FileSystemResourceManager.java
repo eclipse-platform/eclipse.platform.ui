@@ -711,9 +711,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				//check sync on child projects.
 				depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
 				IProject[] projects = ((IWorkspaceRoot) target).getProjects(IContainer.INCLUDE_HIDDEN);
-				for (int i = 0; i < projects.length; i++) {
-					if (!isSynchronized(projects[i], depth))
+				for (IProject project : projects) {
+					if (!isSynchronized(project, depth)) {
 						return false;
+					}
 				}
 				return true;
 			case IResource.PROJECT :

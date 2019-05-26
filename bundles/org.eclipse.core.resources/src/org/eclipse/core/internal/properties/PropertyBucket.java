@@ -146,9 +146,11 @@ public class PropertyBucket extends Bucket {
 			if (!isDirty())
 				return;
 			int occurrences = 0;
-			for (int i = 0; i < value.length; i++)
-				if (value[i] != null)
-					value[occurrences++] = value[i];
+			for (String[] s : value) {
+				if (s != null) {
+					value[occurrences++] = s;
+				}
+			}
 			if (occurrences == value.length)
 				// no states deleted
 				return;
@@ -266,16 +268,16 @@ public class PropertyBucket extends Bucket {
 	protected Object readEntryValue(DataInputStream source) throws IOException, CoreException {
 		int length = source.readUnsignedShort();
 		String[][] properties = new String[length][3];
-		for (int j = 0; j < properties.length; j++) {
+		for (String[] propertie : properties) {
 			// qualifier
 			byte constant = source.readByte();
 			switch (constant) {
-				case QNAME :
-					properties[j][0] = source.readUTF();
-					qualifierIndex.add(properties[j][0]);
+				case QNAME:
+					propertie[0] = source.readUTF();
+					qualifierIndex.add(propertie[0]);
 					break;
-				case INDEX :
-					properties[j][0] = qualifierIndex.get(source.readInt());
+				case INDEX:
+					propertie[0] = qualifierIndex.get(source.readInt());
 					break;
 				default :
 					//if we get here the properties file is corrupt
@@ -284,9 +286,9 @@ public class PropertyBucket extends Bucket {
 					throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 			}
 			// localName
-			properties[j][1] = source.readUTF();
+			propertie[1] = source.readUTF();
 			// propertyValue
-			properties[j][2] = source.readUTF();
+			propertie[2] = source.readUTF();
 		}
 		return properties;
 	}

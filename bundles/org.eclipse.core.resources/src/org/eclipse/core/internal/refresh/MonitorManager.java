@@ -101,17 +101,18 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	private List<IResource> getResourcesToMonitor() {
 		final List<IResource> resourcesToMonitor = new ArrayList<>(10);
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++) {
-			if (!projects[i].isAccessible())
+		for (IProject project : projects) {
+			if (!project.isAccessible()) {
 				continue;
-			resourcesToMonitor.add(projects[i]);
+			}
+			resourcesToMonitor.add(project);
 			try {
-				IResource[] members = projects[i].members();
+				IResource[] members = project.members();
 				for (IResource member : members) {
 					if (member.isLinked())
 						resourcesToMonitor.add(member);
 				}
-			} catch (CoreException e) {
+			}catch (CoreException e) {
 				Policy.log(IStatus.WARNING, Messages.refresh_refreshErr, e);
 			}
 		}

@@ -485,9 +485,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (rule instanceof MultiRule) {
 			MultiRule multi = (MultiRule) rule;
 			ISchedulingRule[] children = multi.getChildren();
-			for (int i = 0; i < children.length; i++)
-				if (!contains(children[i]))
+			for (ISchedulingRule c : children) {
+				if (!contains(c)) {
 					return false;
+				}
+			}
 			return true;
 		}
 		if (!(rule instanceof IResource))

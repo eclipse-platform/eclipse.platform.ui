@@ -153,8 +153,8 @@ public class IResourceChangeListenerTest extends ResourceTest {
 	void assertNotDeltaIncludes(String message, IResourceDelta delta, IResource[] resources) {
 		try {
 			IResource deltaResource = delta.getResource();
-			for (int i = 0; i < resources.length; i++) {
-				assertTrue(message, !deltaResource.equals(resources[i]));
+			for (IResource resource : resources) {
+				assertTrue(message, !deltaResource.equals(resource));
 			}
 			IResourceDelta[] children = delta.getAffectedChildren();
 			for (IResourceDelta element : children) {
@@ -173,8 +173,8 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		try {
 			delta.accept(delta2 -> {
 				IResource deltaResource = delta2.getResource();
-				for (int i = 0; i < resources.length; i++) {
-					assertTrue(message, !deltaResource.equals(resources[i]));
+				for (IResource resource : resources) {
+					assertTrue(message, !deltaResource.equals(resource));
 				}
 				return true;
 			});

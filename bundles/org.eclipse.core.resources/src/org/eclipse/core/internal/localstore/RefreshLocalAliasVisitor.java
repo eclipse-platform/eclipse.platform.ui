@@ -37,9 +37,10 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
-			for (int i = 0; i < aliases.length; i++) {
-				if (aliases[i].getProject().isOpen() && !((Resource) aliases[i]).isFiltered())
-					super.createResource(node, (Resource) aliases[i]);
+			for (IResource alias : aliases) {
+				if (alias.getProject().isOpen() && !((Resource) alias).isFiltered()) {
+					super.createResource(node, (Resource) alias);
+				}
 			}
 	}
 

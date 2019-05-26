@@ -162,9 +162,11 @@ public class HistoryBucket extends Bucket {
 			if (!isDirty())
 				return;
 			int occurrences = 0;
-			for (int i = 0; i < data.length; i++)
-				if (data[i] != null)
-					data[occurrences++] = data[i];
+			for (byte[] d : data) {
+				if (d != null) {
+					data[occurrences++] = d;
+				}
+			}
 			if (occurrences == data.length)
 				// no states deleted
 				return;

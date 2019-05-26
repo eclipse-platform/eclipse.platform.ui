@@ -133,8 +133,8 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 	 * Asserts that the given tree doesn not contain all of the given paths
 	 */
 	static protected void assertNoPaths(ElementTree tree, IPath[] paths) {
-		for (int i = 0; i < paths.length; i++) {
-			assertTrue("assertNoPaths: " + paths[i], !tree.includes(paths[i]));
+		for (IPath path : paths) {
+			assertTrue("assertNoPaths: " + path, !tree.includes(path));
 		}
 	}
 

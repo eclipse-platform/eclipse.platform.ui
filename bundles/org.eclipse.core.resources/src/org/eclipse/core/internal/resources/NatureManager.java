@@ -96,8 +96,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 		for (String id : orderedCandidates) {
 			IProjectNatureDescriptor desc = getNatureDescriptor(id);
 			String[] required = desc.getRequiredNatureIds();
-			for (int j = 0; j < required.length; j++) {
-				if (!candidates.contains(required[j])) {
+			for (String t : required) {
+				if (!candidates.contains(t)) {
 					candidates.remove(id);
 					break;
 				}
@@ -521,9 +521,9 @@ public class NatureManager implements ILifecycleListener, IManager {
 			}
 			// check for adding a nature that has a missing prerequisite.
 			String[] required = desc.getRequiredNatureIds();
-			for (int i = 0; i < required.length; i++) {
-				if (!newNatures.contains(required[i])) {
-					return failure(NLS.bind(Messages.natures_missingPrerequisite, id, required[i]));
+			for (String r : required) {
+				if (!newNatures.contains(r)) {
+					return failure(NLS.bind(Messages.natures_missingPrerequisite, id, r));
 				}
 			}
 			// check for adding a nature that creates a duplicated set member.
@@ -619,9 +619,10 @@ public class NatureManager implements ILifecycleListener, IManager {
 				result.add(failure(NLS.bind(Messages.natures_duplicateNature, id)));
 			//validate nature set one-of constraint
 			String[] setIds = desc.getNatureSetIds();
-			for (int j = 0; j < setIds.length; j++) {
-				if (!sets.add(setIds[j]))
-					result.add(failure(NLS.bind(Messages.natures_multipleSetMembers, setIds[j])));
+			for (String setId : setIds) {
+				if (!sets.add(setId)) {
+					result.add(failure(NLS.bind(Messages.natures_multipleSetMembers, setId)));
+				}
 			}
 		}
 		//now walk over the set and ensure all pre-requisite natures are present
@@ -630,9 +631,11 @@ public class NatureManager implements ILifecycleListener, IManager {
 			if (desc == null)
 				continue;
 			String[] required = desc.getRequiredNatureIds();
-			for (int j = 0; j < required.length; j++)
-				if (!natures.contains(required[j]))
-					result.add(failure(NLS.bind(Messages.natures_missingPrerequisite, natureIds[i], required[j])));
+			for (String r : required) {
+				if (!natures.contains(r)) {
+					result.add(failure(NLS.bind(Messages.natures_missingPrerequisite, natureIds[i], r)));
+				}
+			}
 		}
 		//if there are no problems we must return a status whose code is OK
 		return result.isOK() ? Status.OK_STATUS : (IStatus) result;

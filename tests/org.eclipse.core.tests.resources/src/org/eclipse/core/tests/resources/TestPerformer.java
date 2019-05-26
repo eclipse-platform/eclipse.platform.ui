@@ -64,8 +64,8 @@ abstract public class TestPerformer {
 	 * with incremented nth.
 	 */
 	private void performTestRecursiveLoop(Object[][] inputs, Object[] args, int nth) {
-		for (int i = 0; i < inputs[nth].length; i++) {
-			args[nth] = inputs[nth][i];
+		for (Object input : inputs[nth]) {
+			args[nth] = input;
 			if (nth == inputs.length - 1) {
 				// breakpoint goes here, may be conditional on name and count, e.g.:
 				// name.equals("IResourceTest.testMove") && count==2886

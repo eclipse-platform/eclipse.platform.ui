@@ -165,8 +165,8 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		if (children == null)
 			return;
 		// copy children
-		for (int i = 0; i < children.length; i++) {
-			children[i].copy(destination.getChild(children[i].getName()), options, subMonitor.newChild(1));
+		for (IFileStore c : children) {
+			c.copy(destination.getChild(c.getName()), options, subMonitor.newChild(1));
 		}
 	}
 

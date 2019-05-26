@@ -152,8 +152,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	private IProject[] copyAndRemoveDuplicates(IProject[] projects) {
 		IProject[] result = new IProject[projects.length];
 		int count = 0;
-		next: for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		next: for (IProject project : projects) {
 			// scan to see if there are any other projects by the same name
 			for (int j = 0; j < count; j++)
 				if (project.equals(result[j]))

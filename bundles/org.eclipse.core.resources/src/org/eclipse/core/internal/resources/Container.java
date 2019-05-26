@@ -217,9 +217,11 @@ public abstract class Container extends Resource implements IContainer {
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
 		IResource[] children = getChildren(IResource.NONE);
-		for (int i = 0; i < children.length; i++)
-			if (!children[i].isLocal(depth))
+		for (IResource c : children) {
+			if (!c.isLocal(depth)) {
 				return false;
+			}
+		}
 		return true;
 	}
 

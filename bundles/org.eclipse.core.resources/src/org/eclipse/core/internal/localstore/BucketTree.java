@@ -105,10 +105,13 @@ public class BucketTree {
 		File[] subDirs = bucketDir.listFiles();
 		if (subDirs == null)
 			return true;
-		for (int i = 0; i < subDirs.length; i++)
-			if (subDirs[i].isDirectory())
-				if (!internalAccept(visitor, base, subDirs[i], depthRequested, currentDepth + 1))
+		for (File subDir : subDirs) {
+			if (subDir.isDirectory()) {
+				if (!internalAccept(visitor, base, subDir, depthRequested, currentDepth + 1)) {
 					return false;
+				}
+			}
+		}
 		return true;
 	}
 
