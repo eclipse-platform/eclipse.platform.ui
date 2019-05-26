@@ -440,10 +440,12 @@ public final class ContentTypeCatalog {
 		if (children == null)
 			// this content type has no sub-types - keep traversing the tree
 			return true;
-		for (int i = 0; i < children.length; i++)
-			if (!internalAccept(visitor, children[i]))
+		for (ContentType c : children) {
+			if (!internalAccept(visitor, c)) {
 				// stop the traversal
 				return false;
+			}
+		}
 		return true;
 	}
 

@@ -539,9 +539,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 		String actual;
 
 		// nodes shouldn't exist
-		for (int i = 0; i < qualifiers.length; i++) {
+		for (String qualifier : qualifiers) {
 			try {
-				assertTrue("1.0", !node.nodeExists(qualifiers[i]));
+				assertTrue("1.0", !node.nodeExists(qualifier));
 			} catch (BackingStoreException e) {
 				fail("1.99", e);
 			}

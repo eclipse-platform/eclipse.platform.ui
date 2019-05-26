@@ -336,10 +336,10 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		assertEquals("1.3", s1, s2);
 
 		// setting to default does remove name from set
-		for (int i = 0; i < keys.length; i++) {
-			ps.setToDefault(keys[i]);
+		for (String key : keys) {
+			ps.setToDefault(key);
 			Set<String> s = new HashSet<>(Arrays.asList(ps.propertyNames()));
-			assertTrue("1.4", !s.contains(keys[i]));
+			assertTrue("1.4", !s.contains(key));
 		}
 		assertEquals("1.5", 0, ps.propertyNames().length);
 	}

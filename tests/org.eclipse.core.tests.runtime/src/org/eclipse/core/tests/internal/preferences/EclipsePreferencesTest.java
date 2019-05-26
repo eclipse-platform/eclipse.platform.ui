@@ -860,11 +860,11 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		}
 
 		// remove children and check
-		for (int i = 0; i < nodes.length; i++) {
+		for (Preferences n : nodes) {
 			try {
-				nodes[i].removeNode();
-				assertTrue("5.1", !parent.nodeExists(nodes[i].name()));
-				assertTrue("5.2", !nodes[i].nodeExists(""));
+				n.removeNode();
+				assertTrue("5.1", !parent.nodeExists(n.name()));
+				assertTrue("5.2", !n.nodeExists(""));
 			} catch (BackingStoreException e) {
 				fail("5.99", e);
 			}

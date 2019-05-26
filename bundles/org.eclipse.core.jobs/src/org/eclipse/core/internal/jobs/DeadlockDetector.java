@@ -167,18 +167,20 @@ class DeadlockDetector {
 		//fill in the entries for the new rule from rules it conflicts with
 		for (int j = 0; j < locks.size(); j++) {
 			if ((j != lockIndex) && (newLock.isConflicting(locks.get(j)))) {
-				for (int i = 0; i < graph.length; i++) {
-					if ((graph[i][j] > NO_STATE) && (graph[i][lockIndex] == NO_STATE))
-						graph[i][lockIndex] = graph[i][j];
+				for (int[] g : graph) {
+					if ((g[j] > NO_STATE) && (g[lockIndex] == NO_STATE)) {
+						g[lockIndex] = g[j];
+					}
 				}
 			}
 		}
 		//now back fill the entries for rules the current rule conflicts with
 		for (int j = 0; j < locks.size(); j++) {
 			if ((j != lockIndex) && (newLock.isConflicting(locks.get(j)))) {
-				for (int i = 0; i < graph.length; i++) {
-					if ((graph[i][lockIndex] > NO_STATE) && (graph[i][j] == NO_STATE))
-						graph[i][j] = graph[i][lockIndex];
+				for (int[] g : graph) {
+					if ((g[lockIndex] > NO_STATE) && (g[j] == NO_STATE)) {
+						g[j] = g[lockIndex];
+					}
 				}
 			}
 		}
@@ -647,9 +649,10 @@ class DeadlockDetector {
 	 */
 	private Thread resolutionCandidate(Thread[] candidates) {
 		//first look for a candidate that has no scheduling rules
-		for (int i = 0; i < candidates.length; i++) {
-			if (!ownsRuleLocks(candidates[i]))
-				return candidates[i];
+		for (Thread candidate : candidates) {
+			if (!ownsRuleLocks(candidate)) {
+				return candidate;
+			}
 		}
 		//next look for any candidate with a real lock (a lock that can be suspended)
 		for (Thread candidate : candidates) {

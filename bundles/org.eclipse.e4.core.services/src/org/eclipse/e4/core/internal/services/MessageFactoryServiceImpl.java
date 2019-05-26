@@ -217,14 +217,12 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 			instance = messages.newInstance();
 			Field[] fields = messages.getDeclaredFields();
 
-			for (int i = 0; i < fields.length; i++) {
-				if (!fields[i].isAccessible()) {
-					fields[i].setAccessible(true);
+			for (Field field : fields) {
+				if (!field.isAccessible()) {
+					field.setAccessible(true);
 				}
-
-				if (fields[i].getType().isAssignableFrom(String.class)) {
-					fields[i].set(instance,
-							provider.translate(fields[i].getName()));
+				if (field.getType().isAssignableFrom(String.class)) {
+					field.set(instance, provider.translate(field.getName()));
 				}
 			}
 		} catch (InstantiationException e) {
