@@ -804,10 +804,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		@Override
 		public void verifyKey(VerifyEvent e) {
 			IContentAssistListener[] listeners= fListeners.clone();
-			for (int i= 0; i < listeners.length; i++) {
-				if (listeners[i] != null) {
-					if (!listeners[i].verifyKey(e) || !e.doit)
+			for (IContentAssistListener listener : listeners) {
+				if (listener != null) {
+					if (!listener.verifyKey(e) || !e.doit) {
 						break;
+					}
 				}
 			}
 			if (fAutoAssistListener != null)

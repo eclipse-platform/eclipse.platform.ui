@@ -60,8 +60,7 @@ public final class RulerColumnPlacement {
 
 	private Set<RulerColumnPlacementConstraint> readIds(IConfigurationElement[] children) throws CoreException {
 		Set<RulerColumnPlacementConstraint> constraints= new LinkedHashSet<>((int) (children.length / 0.75) + 1, 0.75f);
-		for (int i= 0; i < children.length; i++) {
-			IConfigurationElement child= children[i];
+		for (IConfigurationElement child : children) {
 			String name= child.getName();
 			ExtensionPointHelper childHelper= new ExtensionPointHelper(child);
 			boolean before;

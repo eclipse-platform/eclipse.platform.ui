@@ -78,9 +78,9 @@ public class SearchResultPageTest {
 		if (viewer instanceof AbstractTreeViewer)
 			((AbstractTreeViewer)viewer).expandAll();
 		Object[] elements= result.getElements();
-		for (int i= 0; i < elements.length; i++) {
+		for (Object element : elements) {
 			// make sure all elements in the test result are present in the viewer and have the proper count displayed
-			checkElementDisplay(viewer, result, elements[i]);
+			checkElementDisplay(viewer, result, element);
 		}
 	}
 
@@ -98,12 +98,12 @@ public class SearchResultPageTest {
 		viewer.expandAll();
 		Object[] elements= result.getElements();
 		//page.setUpdateTracing(true);
-		for (int i= 0; i < elements.length; i++) {
-			Match[] matches= result.getMatches(elements[i]);
-			viewer.reveal(elements[i]);
-			for (int j= 0; j < matches.length; j++) {
-				checkElementDisplay(viewer, result, elements[i]);
-				result.removeMatch(matches[j]);
+		for (Object element : elements) {
+			Match[] matches = result.getMatches(element);
+			viewer.reveal(element);
+			for (Match matche : matches) {
+				checkElementDisplay(viewer, result, element);
+				result.removeMatch(matche);
 				consumeEvents(page);
 			}
 		}

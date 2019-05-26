@@ -135,9 +135,9 @@ public class DocumentProviderRegistry {
 		}
 
 		IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
-		for (int i= 0; i < elements.length; i++) {
-			read(fExtensionMapping, elements[i], "extensions"); //$NON-NLS-1$
-			read(fInputTypeMapping, elements[i], "inputTypes"); //$NON-NLS-1$
+		for (IConfigurationElement element : elements) {
+			read(fExtensionMapping, element, "extensions"); //$NON-NLS-1$
+			read(fInputTypeMapping, element, "inputTypes"); //$NON-NLS-1$
 		}
 	}
 
@@ -245,8 +245,7 @@ public class DocumentProviderRegistry {
 
 		List<Class<?>> toBeVisited= new ArrayList<>(interfaces.length);
 
-		for (int i= 0; i < interfaces.length; i++) {
-			Class<?> iface= interfaces[i];
+		for (Class<?> iface : interfaces) {
 			if (visited.get(iface) == null) {
 				visited.put(iface, iface);
 				result.add(iface);

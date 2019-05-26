@@ -29,9 +29,10 @@ class RemoveAllSearchesAction extends Action {
 	@Override
 	public void run() {
 		ISearchQuery[] queries= NewSearchUI.getQueries();
-		for (int i = 0; i < queries.length; i++) {
-			if (!NewSearchUI.isQueryRunning(queries[i]))
-				InternalSearchUI.getInstance().removeQuery(queries[i]);
+		for (ISearchQuery querie : queries) {
+			if (!NewSearchUI.isQueryRunning(querie)) {
+				InternalSearchUI.getInstance().removeQuery(querie);
+			}
 		}
 	}
 }

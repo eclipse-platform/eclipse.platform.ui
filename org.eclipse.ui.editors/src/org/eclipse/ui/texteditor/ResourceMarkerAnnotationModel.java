@@ -123,8 +123,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		HashSet<IMarker> removedMarkers= new HashSet<>(markerDeltas.length);
 		HashSet<IMarker> modifiedMarkers= new HashSet<>(markerDeltas.length);
 
-		for (int i= 0; i < markerDeltas.length; i++) {
-			IMarkerDelta delta= markerDeltas[i];
+		for (IMarkerDelta delta : markerDeltas) {
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED:
 					addMarkerAnnotation(delta.getMarker());

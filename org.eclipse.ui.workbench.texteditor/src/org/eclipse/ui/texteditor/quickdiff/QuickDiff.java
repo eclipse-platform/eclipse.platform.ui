@@ -14,7 +14,6 @@
 package org.eclipse.ui.texteditor.quickdiff;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -96,8 +95,7 @@ public class QuickDiff {
 
 		List<ReferenceProviderDescriptor> descs= getReferenceProviderDescriptors();
 		// try to fetch preferred provider; load if needed
-		for (Iterator<ReferenceProviderDescriptor> iter= descs.iterator(); iter.hasNext();) {
-			ReferenceProviderDescriptor desc= iter.next();
+		for (ReferenceProviderDescriptor desc : descs) {
 			if (desc.getId().equals(id)) {
 				IQuickDiffReferenceProvider provider= desc.createProvider();
 				if (provider != null) {

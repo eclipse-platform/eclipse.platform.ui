@@ -66,8 +66,9 @@ public class TextPresentationTest {
 	private void setUpTextPresentation() {
 		fTextPresentation= new TextPresentation();
 		fTextPresentation.setDefaultStyleRange(createStyleRange(0, 140, NORMAL));
-		for (int i= 0; i < fAllRanges.length; i++)
-			fTextPresentation.addStyleRange(fAllRanges[i]);
+		for (StyleRange fAllRange : fAllRanges) {
+			fTextPresentation.addStyleRange(fAllRange);
+		}
 	}
 
 	private StyleRange createStyleRange(int start, int end, int style) {
@@ -100,16 +101,16 @@ public class TextPresentationTest {
 
 	private void checkRegions(StyleRange[] expectedAllRanges, StyleRange[] expectedNonDefaultRanges) {
 		Iterator<StyleRange> e= fTextPresentation.getAllStyleRangeIterator();
-		for (int i= 0; i < expectedAllRanges.length; i++) {
+		for (StyleRange expectedAllRange : expectedAllRanges) {
 			assertTrue(e.hasNext());
-			assertEquals(expectedAllRanges[i], e.next());
+			assertEquals(expectedAllRange, e.next());
 		}
 		assertTrue(!e.hasNext());
 
 		e= fTextPresentation.getNonDefaultStyleRangeIterator();
-		for (int i= 0; i < expectedNonDefaultRanges.length; i++) {
+		for (StyleRange expectedNonDefaultRange : expectedNonDefaultRanges) {
 			assertTrue(e.hasNext());
-			assertEquals(expectedNonDefaultRanges[i], e.next());
+			assertEquals(expectedNonDefaultRange, e.next());
 		}
 		assertTrue(!e.hasNext());
 	}

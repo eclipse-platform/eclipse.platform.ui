@@ -32,9 +32,10 @@ public class QueryManagerTest {
 		InternalSearchUI.getInstance().addQuery(query);
 		InternalSearchUI.getInstance().removeQuery(query);
 		ISearchQuery[] all= InternalSearchUI.getInstance().getQueries();
-		for (int i= 0; i < all.length; i++) {
-			if (query == all[i])
+		for (ISearchQuery a : all) {
+			if (query == a) {
 				assertTrue(false);
+			}
 		}
 	}
 
@@ -43,9 +44,10 @@ public class QueryManagerTest {
 		ISearchQuery query= new NullQuery();
 		InternalSearchUI.getInstance().addQuery(query);
 		ISearchQuery[] all= NewSearchUI.getQueries();
-		for (int i= 0; i < all.length; i++) {
-			if (query == all[i])
+		for (ISearchQuery a : all) {
+			if (query == a) {
 				return;
+			}
 		}
 		assertTrue(false);
 	}

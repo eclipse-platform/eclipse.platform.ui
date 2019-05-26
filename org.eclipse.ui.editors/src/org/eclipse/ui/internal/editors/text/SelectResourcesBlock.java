@@ -345,8 +345,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		}
 
 		Object[] treeChildren= treeContentProvider.getChildren(treeElement);
-		for (int i= 0; i < treeChildren.length; i++) {
-			Object child= treeChildren[i];
+		for (Object child : treeChildren) {
 			if (addAll)
 				findAllSelectedListElements(child, fullLabel, true, filter);
 			else { //Only continue for those with checked state
@@ -417,8 +416,8 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 			@Override
 			public void filterElements(Object[] elements) throws InterruptedException {
-				for (int i= 0; i < elements.length; i++) {
-					returnValue.add(elements[i]);
+				for (Object element : elements) {
+					returnValue.add(element);
 				}
 			}
 		};

@@ -140,8 +140,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	 * @since 3.2
 	 */
 	private boolean containsOnlyFiles(IResource[] resources) {
-		for (int i= 0; i < resources.length; i++) {
-			IResource resource= resources[i];
+		for (IResource resource : resources) {
 			if ((IResource.FILE & resource.getType()) == 0)
 				return false;
 		}
@@ -158,8 +157,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	private IFile[] filterUnacceptableFiles(IFile[] files) {
 		boolean askForBinary= true;
 		Set<IFile> filtered= new HashSet<>();
-		for (int i= 0; i < files.length; i++) {
-			IFile file= files[i];
+		for (IFile file : files) {
 			if (isAcceptableLocation(file.getFullPath())) {
 				filtered.add(file);
 			} else if (askForBinary) {

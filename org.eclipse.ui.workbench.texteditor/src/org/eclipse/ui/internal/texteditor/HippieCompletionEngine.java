@@ -217,8 +217,7 @@ public final class HippieCompletionEngine {
 		HashSet<String> seenAlready= new HashSet<>();
 		ArrayList<String> uniqueSuggestions= new ArrayList<>();
 
-		for (Iterator<String> i= suggestions.iterator(); i.hasNext();) {
-			String suggestion= i.next();
+		for (String suggestion : suggestions) {
 			if (!seenAlready.contains(suggestion)) {
 				seenAlready.add(suggestion);
 				uniqueSuggestions.add(suggestion);
@@ -259,8 +258,8 @@ public final class HippieCompletionEngine {
 		IWorkbenchWindow window= currentTextEditor.getSite().getWorkbenchWindow();
 		IEditorReference editorsArray[]= window.getActivePage().getEditorReferences();
 
-		for (int i= 0; i < editorsArray.length; i++) {
-			IEditorPart realEditor= editorsArray[i].getEditor(false);
+		for (IEditorReference editor : editorsArray) {
+			IEditorPart realEditor = editor.getEditor(false);
 			if (realEditor instanceof ITextEditor && !realEditor.equals(currentTextEditor)) {
 				ITextEditor textEditor= (ITextEditor)realEditor;
 				provider= textEditor.getDocumentProvider();

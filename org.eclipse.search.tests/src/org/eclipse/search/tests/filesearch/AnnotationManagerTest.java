@@ -85,8 +85,8 @@ public class AnnotationManagerTest {
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] files= result.getElements();
 		try {
-			for (int i= 0; i < files.length; i++) {
-				IFile file= (IFile)files[i];
+			for (Object f : files) {
+				IFile file = (IFile) f;
 				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				annotationModel.getAnnotationIterator();
@@ -128,8 +128,8 @@ public class AnnotationManagerTest {
 		InternalSearchUI.getInstance().removeQuery(fQuery1);
 
 		try {
-			for (int i= 0; i < files.length; i++) {
-				IFile file= (IFile)files[i];
+			for (Object f : files) {
+				IFile file = (IFile) f;
 				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				int annotationCount= 0;
@@ -153,8 +153,8 @@ public class AnnotationManagerTest {
 		Object[] files= result.getElements();
 		NewSearchUI.runQueryInForeground(null, fQuery2);
 		try {
-			for (int i= 0; i < files.length; i++) {
-				IFile file= (IFile)files[i];
+			for (Object f : files) {
+				IFile file = (IFile) f;
 				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				int annotationCount= 0;
@@ -182,8 +182,8 @@ public class AnnotationManagerTest {
 		NewSearchUI.runQueryInForeground(null, fQuery2);
 		SearchTestPlugin.getDefault().getSearchView().showSearchResult(result);
 		try {
-			for (int i= 0; i < files.length; i++) {
-				IFile file= (IFile)files[i];
+			for (Object f : files) {
+				IFile file = (IFile) f;
 				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				int annotationCount= 0;

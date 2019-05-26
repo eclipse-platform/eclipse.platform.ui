@@ -723,13 +723,13 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
 
 		HyperlinkDetectorDescriptor[] descriptors= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
-		for (int i= 0; i < descriptors.length; i++) {
-			int stateMask= computeStateMask(descriptors[i].getModifierKeys());
+		for (HyperlinkDetectorDescriptor descriptor : descriptors) {
+			int stateMask = computeStateMask(descriptor.getModifierKeys());
 			if (stateMask == SWT.SHIFT) {
-				EditorsPlugin.logErrorMessage("The '" + descriptors[i].getId() + "' hyperlink detector specifies 'Shift' as modifier. This is not allowed and hence replaced with the default modifier."); //$NON-NLS-1$ //$NON-NLS-2$
+				EditorsPlugin.logErrorMessage("The '" + descriptor.getId() + "' hyperlink detector specifies 'Shift' as modifier. This is not allowed and hence replaced with the default modifier."); //$NON-NLS-1$ //$NON-NLS-2$
 				stateMask= -1;
 			}
-			store.setDefault(descriptors[i].getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
+			store.setDefault(descriptor.getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
 		}
 
 		boolean isInstalled= EditorsUI.getSpellingService().getSpellingEngineDescriptors().length > 0;

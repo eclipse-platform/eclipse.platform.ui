@@ -81,8 +81,8 @@ public class LineAnnotationManagerTest {
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fLineQuery.getSearchResult();
 		Object[] files= result.getElements();
 		try {
-			for (int i= 0; i < files.length; i++) {
-				IFile file= (IFile) files[0];
+			for (Object f : files) {
+				IFile file= (IFile) f;
 				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());

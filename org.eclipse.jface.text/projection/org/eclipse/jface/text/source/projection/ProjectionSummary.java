@@ -290,8 +290,7 @@ class ProjectionSummary {
 	}
 
 	private boolean includes(IRegion[] regions, Position position) {
-		for (int i= 0; i < regions.length; i++) {
-			IRegion region= regions[i];
+		for (IRegion region : regions) {
 			if (position != null && !position.isDeleted()
 					&& region.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= region.getOffset() + region.getLength())
 				return true;

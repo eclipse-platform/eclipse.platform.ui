@@ -466,8 +466,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			// set selection
 			if (selection == null) {
 				String val= getPreferenceStore().getString(item.textStyleKey);
-				for (Iterator<String[]> iter= list.iterator(); iter.hasNext();) {
-					String[] elem= iter.next();
+				for (String[] elem : list) {
 					if (elem[1].equals(val)) {
 						selection= elem;
 						break;
@@ -527,8 +526,8 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
-				for (int i= 0; i < slaves.length; i++) {
-					slaves[i].setEnabled(state);
+				for (Control slave : slaves) {
+					slave.setEnabled(state);
 				}
 			}
 

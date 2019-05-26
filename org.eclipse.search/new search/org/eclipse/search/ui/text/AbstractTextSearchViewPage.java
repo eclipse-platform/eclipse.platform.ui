@@ -1099,9 +1099,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 		int count= 0;
 		Match[] matches= result.getMatches(element);
-		for (int i= 0; i < matches.length; i++) {
-			if (!matches[i].isFiltered())
+		for (Match match : matches) {
+			if (!match.isFiltered()) {
 				count++;
+			}
 		}
 		return count;
 	}

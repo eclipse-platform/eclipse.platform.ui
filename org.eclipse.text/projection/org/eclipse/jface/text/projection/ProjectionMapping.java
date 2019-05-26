@@ -548,8 +548,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	public int getImageLength() {
 		Position[] segments= getSegments();
 		int length= 0;
-		for (int i= 0; i < segments.length; i++)
-			length += segments[i].length;
+		for (Position segment : segments) {
+			length += segment.length;
+		}
 		return length;
 	}
 

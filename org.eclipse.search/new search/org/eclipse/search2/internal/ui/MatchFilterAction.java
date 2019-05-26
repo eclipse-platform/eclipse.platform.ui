@@ -50,9 +50,9 @@ public class MatchFilterAction extends Action implements IUpdate {
 			return;
 		}
 
-		for (int i= 0; i < activeMatchFilters.length; i++) {
-			if (!activeMatchFilters[i].equals(fFilter)) {
-				newFilters.add(activeMatchFilters[i]);
+		for (MatchFilter activeMatchFilter : activeMatchFilters) {
+			if (!activeMatchFilter.equals(fFilter)) {
+				newFilters.add(activeMatchFilter);
 			}
 		}
 		boolean newState= isChecked();

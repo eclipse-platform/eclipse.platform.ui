@@ -174,8 +174,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	 */
 	protected IFile[] collectFiles(IResource[] resources) {
 		Set<IResource> files= new HashSet<>();
-		for (int i= 0; i < resources.length; i++) {
-			IResource resource= resources[i];
+		for (IResource resource : resources) {
 			if ((IResource.FILE & resource.getType()) > 0)
 				files.add(resource);
 		}
@@ -246,8 +245,8 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationHandler_collectionFiles_label, files.length);
 		try {
 			Set<IPath> locations= new HashSet<>();
-			for (int i= 0; i < files.length; i++) {
-				IPath fullPath= files[i].getFullPath();
+			for (IFile file : files) {
+				IPath fullPath = file.getFullPath();
 				if (isAcceptableLocation(fullPath))
 					locations.add(fullPath);
 				progressMonitor.worked(1);

@@ -556,8 +556,7 @@ public class LinkedModeModelTest {
 
 	private void assertEquals(LinkedPositionGroup group, String expected) throws BadLocationException {
 		LinkedPosition[] positions= group.getPositions();
-		for (int i= 0; i < positions.length; i++) {
-			LinkedPosition pos= positions[i];
+		for (LinkedPosition pos : positions) {
 			if (!pos.isDeleted())
 				Assert.assertEquals(expected, pos.getContent());
 		}
@@ -647,8 +646,7 @@ public class LinkedModeModelTest {
 	}
 
 	private IDocument getOriginal(IDocument doc) {
-		for (Iterator<IDocument[]> it = fDocumentMap.iterator(); it.hasNext(); ) {
-			IDocument[] docs = it.next();
+		for (IDocument[] docs : fDocumentMap) {
 			if (docs[0] == doc)
 				return docs[1];
 		}

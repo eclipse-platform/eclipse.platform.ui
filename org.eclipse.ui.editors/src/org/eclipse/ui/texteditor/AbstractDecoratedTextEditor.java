@@ -880,8 +880,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			if (sourceViewer instanceof ITextViewerExtension6) {
 				HyperlinkDetectorDescriptor[] descriptor= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
-				for (int i= 0; i < descriptor.length; i++) {
-					if (descriptor[i].getId().equals(property) || (descriptor[i].getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX).equals(property)) {
+				for (HyperlinkDetectorDescriptor d : descriptor) {
+					if (d.getId().equals(property) || (d.getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX).equals(property)) {
 						IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(sourceViewer);
 						int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(sourceViewer);
 						ITextViewerExtension6 textViewer6= (ITextViewerExtension6)sourceViewer;
@@ -1113,9 +1113,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			return !isReadOnlyLocalStatus(status);
 
 		IStatus[] childrenStatus= status.getChildren();
-		for (int i= 0; i < childrenStatus.length; i++) {
-			if (childrenStatus[i].getSeverity() == IStatus.ERROR && !isReadOnlyLocalStatus(childrenStatus[i]))
+		for (IStatus childrenStatu : childrenStatus) {
+			if (childrenStatu.getSeverity() == IStatus.ERROR && !isReadOnlyLocalStatus(childrenStatu)) {
 				return true;
+			}
 		}
 
 		return false;

@@ -233,8 +233,8 @@ public class ProjectionDocument extends AbstractDocument {
 
 			int offset= 0;
 			Position[] fragments= getFragments();
-			for (int i= 0; i < fragments.length; i++) {
-				Fragment fragment= (Fragment) fragments[i];
+			for (Position f : fragments) {
+				Fragment fragment = (Fragment) f;
 				Segment segment= new Segment(offset, fragment.getLength());
 				segment.fragment= fragment;
 				addPosition(fSegmentsCategory, segment);
@@ -369,8 +369,8 @@ public class ProjectionDocument extends AbstractDocument {
 	 */
 	private Fragment findFragment(int offsetInMaster, int lengthInMaster) {
 		Position[] fragments= getFragments();
-		for (int i= 0; i < fragments.length; i++) {
-			Fragment f= (Fragment) fragments[i];
+		for (Position fragment : fragments) {
+			Fragment f = (Fragment) fragment;
 			if (f.getOffset() <= offsetInMaster && offsetInMaster + lengthInMaster <= f.getOffset() + f.getLength())
 				return f;
 		}
@@ -589,8 +589,7 @@ public class ProjectionDocument extends AbstractDocument {
 		if (fragments == null || fragments.length == 0)
 			return;
 
-		for (int i= 0; i < fragments.length; i++) {
-			IRegion fragment= fragments[i];
+		for (IRegion fragment : fragments) {
 			internalRemoveMasterDocumentRange(fragment.getOffset(), fragment.getLength());
 		}
 	}
@@ -870,8 +869,8 @@ public class ProjectionDocument extends AbstractDocument {
 			super.fireDocumentAboutToBeChanged(event);
 
 			Position[] fragments= getFragments();
-			for (int i= 0; i < fragments.length; i++) {
-				Fragment fragment= (Fragment) fragments[i];
+			for (Position fragment1 : fragments) {
+				Fragment fragment = (Fragment) fragment1;
 				fMasterDocument.removePosition(fFragmentsCategory, fragment);
 				removePosition(fSegmentsCategory, fragment.segment);
 			}

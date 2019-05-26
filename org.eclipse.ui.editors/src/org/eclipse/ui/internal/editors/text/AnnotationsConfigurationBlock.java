@@ -438,8 +438,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		if (!(data instanceof String))
 			return;
 
-		for (int i= 0; i < fListModel.length; i++) {
-			final ListItem element= fListModel[i];
+		for (ListItem element : fListModel) {
 			if (data.equals(element.label)) {
 				final Control control= fAnnotationTypeViewer.getControl();
 				control.getDisplay().asyncExec(() -> {
@@ -646,8 +645,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	public void dispose() {
 		ImageRegistry registry= EditorsPlugin.getDefault().getImageRegistry();
 
-		for (Iterator<String> it= fImageKeys.iterator(); it.hasNext();) {
-			String string= it.next();
+		for (String string : fImageKeys) {
 			registry.remove(string);
 		}
 
@@ -690,8 +688,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			// set selection
 			if (selection == null) {
 				String val= item.textStyleKey == null ? SQUIGGLES[1] : fStore.getString(item.textStyleKey);
-				for (Iterator<String[]> iter= list.iterator(); iter.hasNext();) {
-					String[] elem= iter.next();
+				for (String[] elem : list) {
 					if (elem[1].equals(val)) {
 						selection= elem;
 						break;

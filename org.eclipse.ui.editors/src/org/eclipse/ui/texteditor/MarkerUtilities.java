@@ -89,8 +89,7 @@ public final class MarkerUtilities {
 		private <T> void appendAll(List<T> list, T[] objects) {
 			if (objects == null)
 				return;
-			for (int i= 0; i < objects.length; i++) {
-				T o= objects[i];
+			for (T o : objects) {
 				if (!list.contains(o))
 					list.add(o);
 			}
@@ -107,8 +106,7 @@ public final class MarkerUtilities {
 			IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
-				for (int i= 0; i < extensions.length; i++) {
-					IExtension extension= extensions[i];
+				for (IExtension extension : extensions) {
 					ArrayList<String> types= new ArrayList<>();
 					IConfigurationElement[] configElements= extension.getConfigurationElements();
 					for (int j= 0; j < configElements.length; ++j) {

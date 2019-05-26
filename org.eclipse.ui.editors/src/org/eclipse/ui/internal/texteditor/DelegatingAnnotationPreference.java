@@ -53,8 +53,8 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 			return p;
 
 		String[] superTypes= fType.getSuperTypes();
-		for (int i= 0; i < superTypes.length; i++) {
-			p= fLookup.getAnnotationPreferenceFragment(superTypes[i]);
+		for (String superType : superTypes) {
+			p = fLookup.getAnnotationPreferenceFragment(superType);
 			if (p != null && p.hasValue(attribute))
 				return p;
 		}

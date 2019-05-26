@@ -634,8 +634,8 @@ public class InlinedAnnotationSupport {
 	 */
 	FontData[] getFontData(int style) {
 		FontData[] fontDatas= regularFont.getFontData();
-		for (int i= 0; i < fontDatas.length; i++) {
-			fontDatas[i].setStyle(style);
+		for (FontData fontData : fontDatas) {
+			fontData.setStyle(style);
 		}
 		return fontDatas;
 	}

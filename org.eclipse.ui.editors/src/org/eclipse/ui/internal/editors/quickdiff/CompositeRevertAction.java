@@ -47,8 +47,9 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 	 */
 	public CompositeRevertAction(ITextEditor editor, IAction[] actions) {
 		fActions= new IAction[actions.length];
-		for (int i= 0; i < actions.length; i++)
-			Assert.isNotNull(actions[i]);
+		for (IAction action : actions) {
+			Assert.isNotNull(action);
+		}
 
 		System.arraycopy(actions, 0, fActions, 0, actions.length);
 
@@ -61,9 +62,10 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 
 	@Override
 	public void update() {
-		for (int i= 0; i < fActions.length; i++) {
-			if (fActions[i] instanceof IUpdate)
-				((IUpdate) fActions[i]).update();
+		for (IAction fAction : fActions) {
+			if (fAction instanceof IUpdate) {
+				((IUpdate) fAction).update();
+			}
 		}
 		IAction action= getEnabledAction();
 		setEnabled(getEnabledAction() != null);
@@ -93,9 +95,10 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 	 *         enabled
 	 */
 	private IAction getEnabledAction() {
-		for (int i= 0; i < fActions.length; i++) {
-			if (fActions[i].isEnabled())
-				return fActions[i];
+		for (IAction fAction : fActions) {
+			if (fAction.isEnabled()) {
+				return fAction;
+			}
 		}
 		return null;
 	}

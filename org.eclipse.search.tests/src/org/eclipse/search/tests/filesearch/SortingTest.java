@@ -53,10 +53,10 @@ public class SortingTest {
 
 		// first, collect all matches
 		Object[] elements= result.getElements();
-		for (int i= 0; i < elements.length; i++) {
-			Match[] matches= result.getMatches(elements[i]);
-			for (int j= 0; j < matches.length; j++) {
-				allMatches.add(matches[j]);
+		for (Object element : elements) {
+			Match[] matches = result.getMatches(element);
+			for (Match matche : matches) {
+				allMatches.add(matche);
 			}
 		}
 		// now remove them and readd them in reverse order
@@ -70,8 +70,8 @@ public class SortingTest {
 		assertEquals("Test that all matches have been added again", result.getMatchCount(), originalMatchCount);
 
 		// now check that they're ordered by position.
-		for (int i= 0; i < elements.length; i++) {
-			Match[] matches= result.getMatches(elements[i]);
+		for (Object element : elements) {
+			Match[] matches = result.getMatches(element);
 			assertTrue("has matches", matches.length > 0);
 			for (int j= 1; j < matches.length; j++) {
 				assertTrue("order problem", isLessOrEqual(matches[j-1], matches[j]));

@@ -97,9 +97,10 @@ public final class CompoundEditExitStrategy {
 		@Override
 		public void preExecute(String commandId, ExecutionEvent event) {
 			// any command other than the known ones end the compound change
-			for (int i= 0; i < fCommandIds.length; i++) {
-				if (commandId.equals(fCommandIds[i]))
+			for (String fCommandId : fCommandIds) {
+				if (commandId.equals(fCommandId)) {
 					return;
+				}
 			}
 			fireEndCompoundEdit();
 		}

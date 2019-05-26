@@ -823,11 +823,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			// collapse contained regions
 			ProjectionAnnotation[] collapsed= computeCollapsedNestedAnnotations(offset, length);
 			if (collapsed != null) {
-				for (int i= 0; i < collapsed.length; i++) {
-					IRegion[] regions= computeCollapsedRegions(fProjectionAnnotationModel.getPosition(collapsed[i]));
-					if (regions != null)
-						for (int j= 0; j < regions.length; j++)
-							removeMasterDocumentRange(projection, regions[j].getOffset(), regions[j].getLength());
+				for (ProjectionAnnotation c : collapsed) {
+					IRegion[] regions = computeCollapsedRegions(fProjectionAnnotationModel.getPosition(c));
+					if (regions != null) {
+						for (IRegion region : regions) {
+							removeMasterDocumentRange(projection, region.getOffset(), region.getLength());
+						}
+					}
 				}
 			}
 
@@ -1047,8 +1049,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * We pass the removed annotation into this method for performance reasons only. Otherwise, they could be fetch from the event.
 	 */
 	private void processDeletions(AnnotationModelEvent event, Annotation[] removedAnnotations, boolean fireRedraw) throws BadLocationException {
-		for (int i= 0; i < removedAnnotations.length; i++) {
-			ProjectionAnnotation annotation= (ProjectionAnnotation) removedAnnotations[i];
+		for (Annotation removedAnnotation : removedAnnotations) {
+			ProjectionAnnotation annotation = (ProjectionAnnotation) removedAnnotation;
 			if (annotation.isCollapsed()) {
 				Position expanded= event.getPositionOfRemovedAnnotation(annotation);
 				expand(expanded.getOffset(), expanded.getLength(), fireRedraw);
@@ -1141,8 +1143,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 
 	private void processChanges(Annotation[] annotations, boolean fireRedraw, List<Position> coverage) throws BadLocationException {
-		for (int i= 0; i < annotations.length; i++) {
-			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
+		for (Annotation a : annotations) {
+			ProjectionAnnotation annotation = (ProjectionAnnotation) a;
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
 
 			if (position == null)
@@ -1152,9 +1154,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (annotation.isCollapsed()) {
 					coverage.add(position);
 					IRegion[] regions= computeCollapsedRegions(position);
-					if (regions != null)
-						for (int j= 0; j < regions.length; j++)
-							collapse(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
+					if (regions != null) {
+						for (IRegion region : regions) {
+							collapse(region.getOffset(), region.getLength(), fireRedraw);
+						}
+					}
 				} else {
 					expand(position.getOffset(), position.getLength(), fireRedraw);
 				}
@@ -1203,8 +1207,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					if (position != null) {
 						IRegion[] regions= computeCollapsedRegions(position);
 						if (regions != null)
-							for (int i= 0; i < regions.length; i++)
-								removeMasterDocumentRange(projection, regions[i].getOffset(), regions[i].getLength());
+							for (IRegion region : regions) {
+								removeMasterDocumentRange(projection, region.getOffset(), region.getLength());
+						}
 					}
 				}
 			}
@@ -1615,12 +1620,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		int widgetSelectionExclusiveEnd= widgetSelection.x + widgetSelection.y;
 		Position[] annotationPositions= computeOverlappingAnnotationPositions(modelSelection);
-		for (int i= 0; i < annotationPositions.length; i++) {
-			IRegion[] regions= computeCollapsedRegions(annotationPositions[i]);
+		for (Position annotationPosition : annotationPositions) {
+			IRegion[] regions = computeCollapsedRegions(annotationPosition);
 			if (regions == null)
 				continue;
-			for (int j= 0; j < regions.length; j++) {
-				IRegion modelRange= regions[j];
+			for (IRegion modelRange : regions) {
 				IRegion widgetRange= modelRange2ClosestWidgetRange(modelRange);
 				// only take collapsed ranges, i.e. widget length is 0
 				if (widgetRange != null && widgetRange.getLength() == 0) {

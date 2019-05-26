@@ -98,8 +98,8 @@ public class SpellingEngineRegistry {
 		fDescriptorsMap= new HashMap<>();
 		fDefaultDescriptor= null;
 		IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, SPELLING_ENGINE_EXTENSION_POINT);
-		for (int i= 0; i < elements.length; i++) {
-			SpellingEngineDescriptor descriptor= new SpellingEngineDescriptor(elements[i]);
+		for (IConfigurationElement element : elements) {
+			SpellingEngineDescriptor descriptor = new SpellingEngineDescriptor(element);
 			descriptors.add(descriptor);
 			fDescriptorsMap.put(descriptor.getId(), descriptor);
 			if (fDefaultDescriptor == null && descriptor.isDefault())

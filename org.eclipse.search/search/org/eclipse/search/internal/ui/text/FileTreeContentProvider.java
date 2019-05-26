@@ -194,16 +194,17 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {
-		for (int i= 0; i < updatedElements.length; i++) {
-			if (!(updatedElements[i] instanceof LineElement)) {
+		for (Object updatedElement : updatedElements) {
+			if (!(updatedElement instanceof LineElement)) {
 				// change events to elements are reported in file search
-				if (fResult.getMatchCount(updatedElements[i]) > 0)
-					insert(updatedElements[i], true);
-				else
-					remove(updatedElements[i], true);
+				if (fResult.getMatchCount(updatedElement) > 0) {
+					insert(updatedElement, true);
+				} else {
+					remove(updatedElement, true);
+				}
 			} else {
 				// change events to line elements are reported in text search
-				LineElement lineElement= (LineElement) updatedElements[i];
+				LineElement lineElement = (LineElement) updatedElement;
 				int nMatches= lineElement.getNumberOfMatches(fResult);
 				if (nMatches > 0) {
 					if (hasChild(lineElement.getParent(), lineElement)) {

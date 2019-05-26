@@ -90,14 +90,15 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 
 		IConfigurationElement[] extensions= getTemplateExtensions();
 
-		for (int i= 0; i < extensions.length; i++) {
-			if (extensions[i].getName().equals(REGISTRY)) {
-				String id= extensions[i].getAttribute(ID);
+		for (IConfigurationElement extension : extensions) {
+			if (extension.getName().equals(REGISTRY)) {
+				String id = extension.getAttribute(ID);
 				if (registryId.equals(id)) {
-					for (int j= 0; j < extensions.length; j++) {
-						if (extensions[j].getName().equals(CONTEXT_TYPE)) {
-							if (registryId.equals(extensions[j].getAttribute(REGISTRY_ID)))
-								addContextType(extensions[j].getAttribute(ID));
+					for (IConfigurationElement extension2 : extensions) {
+						if (extension2.getName().equals(CONTEXT_TYPE)) {
+							if (registryId.equals(extension2.getAttribute(REGISTRY_ID))) {
+								addContextType(extension2.getAttribute(ID));
+							}
 						}
 					}
 					return;
@@ -150,8 +151,9 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 			type= createContextType(extensions, id);
 			if (type != null) {
 				TemplateVariableResolver[] resolvers= createResolvers(extensions, id);
-				for (int i= 0; i < resolvers.length; i++)
-					type.addResolver(resolvers[i]);
+				for (TemplateVariableResolver resolver : resolvers) {
+					type.addResolver(resolver);
+				}
 			}
 		} catch (CoreException e) {
 			EditorsPlugin.log(e);
@@ -162,12 +164,13 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	}
 
 	private static TemplateContextType createContextType(IConfigurationElement[] extensions, String contextTypeId) throws CoreException {
-		for (int i= 0; i < extensions.length; i++) {
+		for (IConfigurationElement extension : extensions) {
 			// TODO create half-order over contributions
-			if (extensions[i].getName().equals(CONTEXT_TYPE)) {
-				String id= extensions[i].getAttribute(ID);
-				if (contextTypeId.equals(id))
-					return createContextType(extensions[i]);
+			if (extension.getName().equals(CONTEXT_TYPE)) {
+				String id = extension.getAttribute(ID);
+				if (contextTypeId.equals(id)) {
+					return createContextType(extension);
+				}
 			}
 		}
 
@@ -186,12 +189,12 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	 */
 	private static TemplateVariableResolver[] createResolvers(IConfigurationElement[] extensions, String contextTypeId) {
 		List<TemplateVariableResolver> resolvers= new ArrayList<>();
-		for (int i= 0; i < extensions.length; i++) {
-			if (extensions[i].getName().equals(RESOLVER)) {
-				String declaredId= extensions[i].getAttribute(CONTEXT_TYPE_ID);
+		for (IConfigurationElement extension : extensions) {
+			if (extension.getName().equals(RESOLVER)) {
+				String declaredId = extension.getAttribute(CONTEXT_TYPE_ID);
 				if (contextTypeId.equals(declaredId)) {
 					try {
-						TemplateVariableResolver resolver= createResolver(extensions[i]);
+						TemplateVariableResolver resolver = createResolver(extension);
 						if (resolver != null)
 							resolvers.add(resolver);
 					} catch (CoreException e) {

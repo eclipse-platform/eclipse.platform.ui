@@ -85,8 +85,8 @@ public class QuickDiffExtensionsRegistry {
 		List<ReferenceProviderDescriptor> list= new ArrayList<>();
 
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, TextEditorPlugin.REFERENCE_PROVIDER_EXTENSION_POINT);
-		for (int i= 0; i < elements.length; i++) {
-			ReferenceProviderDescriptor desc= new ReferenceProviderDescriptor(elements[i]);
+		for (IConfigurationElement element : elements) {
+			ReferenceProviderDescriptor desc = new ReferenceProviderDescriptor(element);
 			if (desc.getId().equals("org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider")) //$NON-NLS-1$
 				fDefaultDescriptor= desc;
 			list.add(desc);

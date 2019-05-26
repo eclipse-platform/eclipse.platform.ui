@@ -880,16 +880,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// inform listeners about change
 		if (fUpdateNeeded) {
 			AnnotationModelEvent ame= new AnnotationModelEvent(this, false);
-			for (Iterator<QuickDiffRangeDifference> it= fAdded.iterator(); it.hasNext(); ) {
-				QuickDiffRangeDifference rd= it.next();
+			for (QuickDiffRangeDifference rd : fAdded) {
 				ame.annotationAdded(rd.getDiffRegion(fDifferences, fLeftDocument));
 			}
-			for (Iterator<QuickDiffRangeDifference> it= fRemoved.iterator(); it.hasNext(); ) {
-				QuickDiffRangeDifference rd= it.next();
+			for (QuickDiffRangeDifference rd : fRemoved) {
 				ame.annotationRemoved(rd.getDiffRegion(fDifferences, fLeftDocument));
 			}
-			for (Iterator<QuickDiffRangeDifference> it= fChanged.iterator(); it.hasNext(); ) {
-				QuickDiffRangeDifference rd= it.next();
+			for (QuickDiffRangeDifference rd : fChanged) {
 				ame.annotationChanged(rd.getDiffRegion(fDifferences, fLeftDocument));
 			}
 			fireModelChanged(ame);
@@ -1032,8 +1029,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 
 		// shift the partial diffs to the absolute document positions
-		for (Iterator<QuickDiffRangeDifference> it= diffs.iterator(); it.hasNext();) {
-			QuickDiffRangeDifference d= it.next();
+		for (QuickDiffRangeDifference d : diffs) {
 			d.shiftLeft(leftStartLine);
 			d.shiftRight(rightStartLine);
 		}
@@ -1369,8 +1365,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @return the corresponding RangeDifference, or <code>null</code>
 	 */
 	private QuickDiffRangeDifference getRangeDifferenceForLeftLine(int leftLine) {
-		for (Iterator<QuickDiffRangeDifference> it= fDifferences.iterator(); it.hasNext();) {
-			QuickDiffRangeDifference d= it.next();
+		for (QuickDiffRangeDifference d : fDifferences) {
 			if (leftLine >= d.leftStart() && leftLine < d.leftEnd()) {
 				return d;
 			}
@@ -1387,8 +1382,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	private QuickDiffRangeDifference getRangeDifferenceForRightLine(int rightLine) {
 		final List<QuickDiffRangeDifference> differences= fDifferences;
 		synchronized (differences) {
-			for (Iterator<QuickDiffRangeDifference> it= differences.iterator(); it.hasNext();) {
-				QuickDiffRangeDifference d= it.next();
+			for (QuickDiffRangeDifference d : differences) {
 				if (rightLine >= d.rightStart() && rightLine < d.rightEnd()) {
 					return d;
 				}

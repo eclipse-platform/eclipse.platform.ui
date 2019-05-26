@@ -136,12 +136,12 @@ public class AnnotationModelExtension2Test {
 
 	private void assertEquals(Annotation[] expected, Annotation[] actual, IAnnotationModel insideModel, IAnnotationModel beforeModel, IAnnotationModel afterModel) {
 		HashSet<Annotation> expectedSet= new HashSet<>(Arrays.asList(expected));
-		for (int i= 0; i < actual.length; i++) {
-			if (!expectedSet.contains(actual[i])) {
-				String message= "Unexpected annotation " + getName(actual[i]) + " in result with models [" + getAnnotationModelNames(insideModel, beforeModel, afterModel) + "]";
+		for (Annotation a : actual) {
+			if (!expectedSet.contains(a)) {
+				String message = "Unexpected annotation " + getName(a) + " in result with models [" + getAnnotationModelNames(insideModel, beforeModel, afterModel) + "]";
 				assertTrue(message, false);
 			}
-			expectedSet.remove(actual[i]);
+			expectedSet.remove(a);
 		}
 
 		if (!expectedSet.isEmpty()) {

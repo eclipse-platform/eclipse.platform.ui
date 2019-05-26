@@ -119,18 +119,15 @@ public final class RulerColumnDescriptor {
 			fTarget= null; // dummy
 		} else {
 			RulerColumnTarget combined= null;
-			for (int i= 0; i < targetEditors.length; i++) {
-				IConfigurationElement targetEditor= targetEditors[i];
+			for (IConfigurationElement targetEditor : targetEditors) {
 				RulerColumnTarget target= RulerColumnTarget.createEditorIdTarget(new ExtensionPointHelper(targetEditor).getNonNullAttribute(ID));
 				combined= RulerColumnTarget.createOrTarget(combined, target);
 			}
-			for (int i= 0; i < targetContentTypes.length; i++) {
-				IConfigurationElement targetContentType= targetContentTypes[i];
+			for (IConfigurationElement targetContentType : targetContentTypes) {
 				RulerColumnTarget target= RulerColumnTarget.createContentTypeTarget(new ExtensionPointHelper(targetContentType).getNonNullAttribute(ID));
 				combined= RulerColumnTarget.createOrTarget(combined, target);
 			}
-			for (int i= 0; i < targetClasses.length; i++) {
-				IConfigurationElement targetClass= targetClasses[i];
+			for (IConfigurationElement targetClass : targetClasses) {
 				RulerColumnTarget target= RulerColumnTarget.createClassTarget(new ExtensionPointHelper(targetClass).getNonNullAttribute(CLASS));
 				combined= RulerColumnTarget.createOrTarget(combined, target);
 			}

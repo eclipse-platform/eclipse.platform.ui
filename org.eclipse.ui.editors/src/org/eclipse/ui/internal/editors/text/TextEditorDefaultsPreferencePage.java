@@ -270,8 +270,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		public int getIndex(EnumValue enumValue) {
 			int i= 0;
-			for (Iterator<EnumValue> it= fItems.iterator(); it.hasNext();) {
-				EnumValue ev= it.next();
+			for (EnumValue ev : fItems) {
 				if (ev.equals(enumValue))
 					return i;
 				i++;
@@ -286,8 +285,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 
 		public EnumValue getValueByInteger(int intValue) {
-			for (Iterator<EnumValue> it= fItems.iterator(); it.hasNext();) {
-				EnumValue e= it.next();
+			for (EnumValue e : fItems) {
 				if (e.getIntValue() == intValue)
 					return e;
 			}
@@ -449,8 +447,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 
 		private void initializeShowWhitespaceCharactersPreferences() {
-			for (Iterator<Initializer> it= fDialogInitializers.iterator(); it.hasNext();) {
-				Initializer initializer= it.next();
+			for (Initializer initializer : fDialogInitializers) {
 				initializer.initialize();
 			}
 		}
@@ -1039,8 +1036,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		initializeFields();
 
-		for (int i= 0; i < fAppearanceColorListModel.length; i++)
-			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
+		for (String[] fAppearanceColor : fAppearanceColorListModel) {
+			fAppearanceColorList.add(fAppearanceColor[0]);
+		}
 		fAppearanceColorList.getDisplay().asyncExec(() -> {
 			if (fAppearanceColorList != null && !fAppearanceColorList.isDisposed()) {
 				fAppearanceColorList.select(0);
@@ -1050,8 +1048,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private void initializeFields() {
-		for (Iterator<Initializer> it= fInitializers.iterator(); it.hasNext();) {
-			Initializer initializer= it.next();
+		for (Initializer initializer : fInitializers) {
 			initializer.initialize();
 		}
 
@@ -1212,8 +1209,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		combo.setLayoutData(gd);
 		combo.setToolTipText(preference.getDescription());
-		for (Iterator<EnumValue> it= domain.fItems.iterator(); it.hasNext();) {
-			EnumValue value= it.next();
+		for (EnumValue value : domain.fItems) {
 			combo.add(value.getLabel());
 		}
 
@@ -1315,16 +1311,16 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		indent(slaves[0]);
 
 		boolean masterState= fOverlayStore.getBoolean(preference.getKey());
-		for (int i= 0; i < slaves.length; i++) {
-			slaves[i].setEnabled(masterState);
+		for (Control slave : slaves) {
+			slave.setEnabled(masterState);
 		}
 
 		SelectionListener listener= new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
-				for (int i= 0; i < slaves.length; i++) {
-					slaves[i].setEnabled(state);
+				for (Control slave : slaves) {
+					slave.setEnabled(state);
 				}
 			}
 

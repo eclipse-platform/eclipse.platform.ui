@@ -280,16 +280,18 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			}
 			//start sorting based on required-updater definition
 			HashMap<String, ArrayList<String>> markerUpdaterRequiredByOrderMap= new HashMap<>(2);
-			for (int i= 0; i < elements.length; i++) {
+			for (IConfigurationElement element : elements) {
 				// Required marker should execute before other updater markers
-				IConfigurationElement[] requiredUpdaters= elements[i].getChildren("required-updater"); //$NON-NLS-1$
+				IConfigurationElement[] requiredUpdaters = element.getChildren("required-updater"); //$NON-NLS-1$
 				if (requiredUpdaters.length > 0) {
 					//ArrayList requiredUpdaters= new ArrayList(2);
-					for (int j= 0; j < requiredUpdaters.length; j++) { // If required updaters have been defined
-						String requiredID= requiredUpdaters[j].getAttribute(ID);
+					for (IConfigurationElement requiredUpdater : requiredUpdaters) {
+						// If required updaters have been defined
+						String requiredID = requiredUpdater.getAttribute(ID);
 						// If required ID is not a valid id
-						if (requiredID == null || (markerUpdaterOrderMap.get(requiredID) == null)) { // ID missing or invalid - log the message and move to next contribution
-							String msg= NLSUtility.format(TextEditorMessages.AbstractMarkerAnnotationModel_updaterInvalidDefinition, new Object[] { elements[i].getAttribute(ID), requiredID });
+						if (requiredID == null || (markerUpdaterOrderMap.get(requiredID) == null)) {
+							// ID missing or invalid - log the message and move to next contribution
+							String msg = NLSUtility.format(TextEditorMessages.AbstractMarkerAnnotationModel_updaterInvalidDefinition, new Object[]{element.getAttribute(ID), requiredID});
 							EditorsPlugin.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, msg));
 							continue;
 						}
@@ -304,26 +306,27 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 							requiredByUpdaters= markerUpdaterRequiredByOrderMap.get(requiredID);
 						}
 						// Build up extended required id list to identify Case 2
-						if (markerUpdaterRequiredByOrderMap.get(elements[i].getAttribute(ID)) != null) {
-							ArrayList<String> requiredByList= markerUpdaterRequiredByOrderMap.get(elements[i].getAttribute(ID));
+						if (markerUpdaterRequiredByOrderMap.get(element.getAttribute(ID)) != null) {
+							ArrayList<String> requiredByList = markerUpdaterRequiredByOrderMap.get(element.getAttribute(ID));
 							requiredByUpdaters.addAll(requiredByList);
 						}
-						if (requiredByUpdaters.contains(requiredID)) { //log error if marker ID is in the required list of required ID
-							String msg= NLSUtility.format(TextEditorMessages.AbstractMarkerAnnotationModel_markerUpdaterCyclicDefinition, new Object[] { elements[i].getAttribute(ID), requiredID });
+						if (requiredByUpdaters.contains(requiredID)) {
+							//log error if marker ID is in the required list of required ID
+							String msg = NLSUtility.format(TextEditorMessages.AbstractMarkerAnnotationModel_markerUpdaterCyclicDefinition, new Object[]{element.getAttribute(ID), requiredID});
 							EditorsPlugin.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, msg));
 							continue;
 						}
-						requiredByUpdaters.add(elements[i].getAttribute(ID));
+						requiredByUpdaters.add(element.getAttribute(ID));
 						markerUpdaterRequiredByOrderMap.put(requiredID, requiredByUpdaters);
 
 						Integer requiredLocation= markerUpdaterOrderMap.get(requiredID);
-						if (requiredLocation.intValue() > markerUpdaterOrderMap.get(elements[i].getAttribute(ID)).intValue()) { // If required marker is not ordered before
-							int newLocation= (markerUpdaterOrderMap.get(elements[i].getAttribute(ID)).intValue() == 0) ? 0 : (markerUpdaterOrderMap.get(elements[i]
-									.getAttribute(ID)).intValue() - 1);
+						if (requiredLocation.intValue() > markerUpdaterOrderMap.get(element.getAttribute(ID)).intValue()) {
+							// If required marker is not ordered before
+							int newLocation = (markerUpdaterOrderMap.get(element.getAttribute(ID)).intValue() == 0) ? 0 : (markerUpdaterOrderMap.get(element.getAttribute(ID)).intValue() - 1);
 							IConfigurationElement requiredMarker= markerUpdaterSpecificationsLinkedList.remove(requiredLocation.intValue());
 							markerUpdaterSpecificationsLinkedList.add(newLocation, requiredMarker); // Put the required location before the marker
 							markerUpdaterOrderMap.put(requiredID, Integer.valueOf(newLocation));
-							markerUpdaterOrderMap.put(elements[i].getAttribute(ID), Integer.valueOf(newLocation + 1));
+							markerUpdaterOrderMap.put(element.getAttribute(ID), Integer.valueOf(newLocation + 1));
 						}
 					}
 				}
@@ -398,8 +401,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		if (annotations != null && annotations.size() > 0) {
 
 			List<Annotation> markerAnnotations= new ArrayList<>();
-			for (Iterator<? extends Annotation> e= annotations.iterator(); e.hasNext();) {
-				Annotation a= e.next();
+			for (Annotation a : annotations) {
 				if (a instanceof MarkerAnnotation)
 					markerAnnotations.add(a);
 
@@ -467,8 +469,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 		IMarker[] markers= retrieveMarkers();
 		if (markers != null) {
-			for (int i= 0; i < markers.length; i++)
-				addMarkerAnnotation(markers[i]);
+			for (IMarker marker : markers) {
+				addMarkerAnnotation(marker);
+			}
 		}
 	}
 

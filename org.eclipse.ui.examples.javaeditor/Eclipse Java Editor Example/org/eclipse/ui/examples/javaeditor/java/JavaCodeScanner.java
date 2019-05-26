@@ -69,12 +69,15 @@ public class JavaCodeScanner extends RuleBasedScanner {
 
 		// Add word rule for keywords, types, and constants.
 		WordRule wordRule= new WordRule(new JavaWordDetector(), other);
-		for (int i= 0; i < fgKeywords.length; i++)
-			wordRule.addWord(fgKeywords[i], keyword);
-		for (int i= 0; i < fgTypes.length; i++)
-			wordRule.addWord(fgTypes[i], type);
-		for (int i= 0; i < fgConstants.length; i++)
-			wordRule.addWord(fgConstants[i], type);
+		for (String fgKeyword : fgKeywords) {
+			wordRule.addWord(fgKeyword, keyword);
+		}
+		for (String fgType : fgTypes) {
+			wordRule.addWord(fgType, type);
+		}
+		for (String fgConstant : fgConstants) {
+			wordRule.addWord(fgConstant, type);
+		}
 		rules.add(wordRule);
 
 		IRule[] result= new IRule[rules.size()];

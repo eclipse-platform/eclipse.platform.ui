@@ -207,19 +207,15 @@ public final class RulerColumnRegistry {
 		sorter.sort(array);
 
 		Map<String, RulerColumnDescriptor> descriptorsById= new HashMap<>();
-		for (int i= 0; i < array.length; i++) {
-			RulerColumnDescriptor desc= array[i];
+		for (RulerColumnDescriptor desc : array) {
 			descriptorsById.put(desc.getId(), desc);
 		}
 
 		DAG<RulerColumnDescriptor> dag= new DAG<>();
-		for (int i= 0; i < array.length; i++) {
-			RulerColumnDescriptor desc= array[i];
+		for (RulerColumnDescriptor desc : array) {
 			dag.addVertex(desc);
-
 			Set<RulerColumnPlacementConstraint> before= desc.getPlacement().getConstraints();
-			for (Iterator<RulerColumnPlacementConstraint> it= before.iterator(); it.hasNext();) {
-				RulerColumnPlacementConstraint constraint= it.next();
+			for (RulerColumnPlacementConstraint constraint : before) {
 				String id= constraint.getId();
 				RulerColumnDescriptor target= descriptorsById.get(id);
 				if (target == null) {

@@ -347,9 +347,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		private TemplatePersistenceData[] getTemplates(String contextId) {
 			List<TemplatePersistenceData> templateList= new ArrayList<>();
 			TemplatePersistenceData[] datas= getTemplateStore().getTemplateData(false);
-			for (int i= 0; i < datas.length; i++) {
-				if (datas[i].isEnabled() && datas[i].getTemplate().getContextTypeId().equals(contextId))
-					templateList.add(datas[i]);
+			for (TemplatePersistenceData data : datas) {
+				if (data.isEnabled() && data.getTemplate().getContextTypeId().equals(contextId)) {
+					templateList.add(data);
+				}
 			}
 			return templateList
 					.toArray(new TemplatePersistenceData[templateList.size()]);
@@ -376,9 +377,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				if (datas.length <= 0)
 					return false;
 
-				for (int i= 0; i < datas.length; i++) {
-					if (datas[i].isEnabled() && datas[i].getTemplate().getContextTypeId().equals(contextId))
+				for (TemplatePersistenceData data : datas) {
+					if (data.isEnabled() && data.getTemplate().getContextTypeId().equals(contextId)) {
 						return true;
+					}
 				}
 				return false;
 			}
@@ -1327,9 +1329,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 *
 	 */
 	private void moveTemplates(TemplatePersistenceData[] templates, String contextId) {
-		for (int i= 0; i < templates.length; i++) {
-			Template t= templates[i].getTemplate();
-			templates[i].setTemplate(new Template(t.getName(), t.getDescription(), contextId, t
+		for (TemplatePersistenceData template : templates) {
+			Template t = template.getTemplate();
+			template.setTemplate(new Template(t.getName(), t.getDescription(), contextId, t
 					.getPattern(), t.isAutoInsertable()));
 		}
 		saveTemplateStore();
@@ -1374,8 +1376,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 					new Object[] { Integer.valueOf(selectedTemplates.length) });
 		if (!MessageDialog.openQuestion(getShell(), title, message))
 			return;
-		for (int i= 0; i < selectedTemplates.length; i++) {
-			getTemplateStore().delete(selectedTemplates[i]);
+		for (TemplatePersistenceData selectedTemplate : selectedTemplates) {
+			getTemplateStore().delete(selectedTemplate);
 		}
 		saveTemplateStore();
 		fTreeViewer.setSelection(new StructuredSelection(new Object[] {}), true);
@@ -1499,9 +1501,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private void storeCollapseState() {
 		TreeItem[] items= fTreeViewer.getTree().getItems();
-		for (int i= 0; i < items.length; i++) {
-			fPreferenceStore.setValue(CONTEXT_COLLAPSE_PREF_ID
-					+ ((TemplateContextType) items[i].getData()).getId(), !items[i].getExpanded());
+		for (TreeItem item : items) {
+			fPreferenceStore.setValue(CONTEXT_COLLAPSE_PREF_ID + ((TemplateContextType) item.getData()).getId(), !item.getExpanded());
 		}
 	}
 
@@ -1514,13 +1515,13 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		try {
 			fTreeViewer.refresh();
 			TreeItem[] items= fTreeViewer.getTree().getItems();
-			for (int i= 0; i < items.length; i++) {
-				boolean isExpanded= !fPreferenceStore.getBoolean(CONTEXT_COLLAPSE_PREF_ID
-						+ ((TemplateContextType) items[i].getData()).getId());
-				if (isExpanded)
-					fTreeViewer.expandToLevel(items[i].getData(), AbstractTreeViewer.ALL_LEVELS);
-				else
-					fTreeViewer.collapseToLevel(items[i].getData(), AbstractTreeViewer.ALL_LEVELS);
+			for (TreeItem item : items) {
+				boolean isExpanded = !fPreferenceStore.getBoolean(CONTEXT_COLLAPSE_PREF_ID + ((TemplateContextType) item.getData()).getId());
+				if (isExpanded) {
+					fTreeViewer.expandToLevel(item.getData(), AbstractTreeViewer.ALL_LEVELS);
+				} else {
+					fTreeViewer.collapseToLevel(item.getData(), AbstractTreeViewer.ALL_LEVELS);
+				}
 			}
 		} finally {
 			fTreeViewer.getTree().setRedraw(true);

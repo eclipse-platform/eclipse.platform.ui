@@ -290,8 +290,8 @@ public class MarkerAnnotationPreferences {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerAnnotationSpecification"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
-			for (int i= 0; i < elements.length; i++) {
-				AnnotationPreference spec= createSpec(elements[i]);
+			for (IConfigurationElement element : elements) {
+				AnnotationPreference spec = createSpec(element);
 				if (spec != null)
 					fFragments.add(spec);
 				if (isComplete(spec))

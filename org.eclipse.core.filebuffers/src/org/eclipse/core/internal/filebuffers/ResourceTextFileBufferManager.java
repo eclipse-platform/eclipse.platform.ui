@@ -251,9 +251,10 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 	private IFileBuffer[] findFileBuffersToValidate(IFileBuffer[] fileBuffers) {
 		ArrayList<IFileBuffer> list= new ArrayList<>();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (!fileBuffers[i].isStateValidated())
-				list.add(fileBuffers[i]);
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			if (!fileBuffer.isStateValidated()) {
+				list.add(fileBuffer);
+			}
 		}
 		return list.toArray(new IFileBuffer[list.size()]);
 	}

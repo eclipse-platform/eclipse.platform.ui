@@ -80,8 +80,9 @@ public class JavaDocScanner extends RuleBasedScanner {
 
 		// Add word rule for keywords.
 		WordRule wordRule= new WordRule(new JavaDocWordDetector());
-		for (int i= 0; i < fgKeywords.length; i++)
-			wordRule.addWord(fgKeywords[i], keyword);
+		for (String fgKeyword : fgKeywords) {
+			wordRule.addWord(fgKeyword, keyword);
+		}
 		list.add(wordRule);
 
 		IRule[] result= new IRule[list.size()];

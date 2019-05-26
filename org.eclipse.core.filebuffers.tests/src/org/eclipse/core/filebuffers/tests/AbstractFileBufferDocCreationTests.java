@@ -121,8 +121,8 @@ public abstract class AbstractFileBufferDocCreationTests {
 
 	private void assertParticipantsInvoked(String path, Class<?>[] expectedDSPsArray) {
 		LocationKind[] lks= getSupportLocationKinds();
-		for(int i=0; i<lks.length; i++) {
-			IDocument document= fManager.createEmptyDocument(new Path(path), lks[i]);
+		for (LocationKind lk : lks) {
+			IDocument document = fManager.createEmptyDocument(new Path(path), lk);
 			String content= document.get();
 			Set<String> expectedDSPs= new HashSet<>(Arrays.asList(toString(expectedDSPsArray)));
 			Set<String> actualDSPs= new HashSet<>(Arrays.asList(content.split("\n")));

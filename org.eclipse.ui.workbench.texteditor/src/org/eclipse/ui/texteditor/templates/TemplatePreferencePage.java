@@ -329,8 +329,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				createLabel(composite, TemplatesMessages.EditTemplateDialog_context);
 				fContextCombo= new Combo(composite, SWT.READ_ONLY);
 
-				for (int i= 0; i < fContextTypes.length; i++) {
-					fContextCombo.add(fContextTypes[i][1]);
+				for (String[] fContextType : fContextTypes) {
+					fContextCombo.add(fContextType[1]);
 				}
 
 				fContextCombo.addModifyListener(listener);
@@ -406,9 +406,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		private String getContextId() {
 			if (fContextCombo != null && !fContextCombo.isDisposed()) {
 				String name= fContextCombo.getText();
-				for (int i= 0; i < fContextTypes.length; i++) {
-					if (name.equals(fContextTypes[i][1])) {
-						return fContextTypes[i][0];
+				for (String[] fContextType : fContextTypes) {
+					if (name.equals(fContextType[1])) {
+						return fContextType[0];
 					}
 				}
 			}
@@ -1027,9 +1027,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	private TemplatePersistenceData[] getEnabledTemplates() {
 		List<TemplatePersistenceData> enabled= new ArrayList<>();
 		TemplatePersistenceData[] datas= fTemplateStore.getTemplateData(false);
-		for (int i= 0; i < datas.length; i++) {
-			if (datas[i].isEnabled())
-				enabled.add(datas[i]);
+		for (TemplatePersistenceData data : datas) {
+			if (data.isEnabled()) {
+				enabled.add(data);
+			}
 		}
 		return enabled.toArray(new TemplatePersistenceData[enabled.size()]);
 	}
@@ -1235,8 +1236,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			if (file.exists()) {
 				try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
 					TemplatePersistenceData[] datas= reader.read(input, null);
-					for (int i= 0; i < datas.length; i++) {
-						TemplatePersistenceData data= datas[i];
+					for (TemplatePersistenceData data : datas) {
 						fTemplateStore.add(data);
 						String id= data.getId();
 						if (id == null) {

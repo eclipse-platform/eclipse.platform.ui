@@ -350,9 +350,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			try {
 				IMarker[] allMarkers= resource.findMarkers(fMarkerType, true, IResource.DEPTH_ZERO);
 				if (allMarkers != null) {
-					for (int i= 0; i < allMarkers.length; i++) {
-						if (includesRulerLine(model.getMarkerPosition(allMarkers[i]), document)) {
-							markers.add(allMarkers[i]);
+					for (IMarker allMarker : allMarkers) {
+						if (includesRulerLine(model.getMarkerPosition(allMarker), document)) {
+							markers.add(allMarker);
 						}
 					}
 				}

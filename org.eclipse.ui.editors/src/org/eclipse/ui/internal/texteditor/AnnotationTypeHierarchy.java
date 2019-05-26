@@ -92,9 +92,7 @@ public final class AnnotationTypeHierarchy {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "annotationTypes"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
-			for (int i= 0; i < elements.length; i++) {
-				IConfigurationElement element= elements[i];
-
+			for (IConfigurationElement element : elements) {
 				String name= element.getAttribute("name");  //$NON-NLS-1$
 				if (name == null || name.trim().length() == 0)
 					continue;

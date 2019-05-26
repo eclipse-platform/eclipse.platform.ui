@@ -118,11 +118,11 @@ public class ContributionTemplateStore extends TemplateStore {
 
 	private Collection<TemplatePersistenceData> readContributedTemplates(IConfigurationElement[] extensions) throws IOException {
 		Collection<TemplatePersistenceData> templates= new ArrayList<>();
-		for (int i= 0; i < extensions.length; i++) {
-			if (extensions[i].getName().equals(TEMPLATE))
-				createTemplate(templates, extensions[i]);
-			else if (extensions[i].getName().equals(INCLUDE)) {
-				readIncludedTemplates(templates, extensions[i]);
+		for (IConfigurationElement extension : extensions) {
+			if (extension.getName().equals(TEMPLATE)) {
+				createTemplate(templates, extension);
+			} else if (extension.getName().equals(INCLUDE)) {
+				readIncludedTemplates(templates, extension);
 			}
 		}
 
@@ -149,8 +149,7 @@ public class ContributionTemplateStore extends TemplateStore {
 				try (InputStream stream= new BufferedInputStream(url.openStream())) {
 					TemplateReaderWriter reader= new TemplateReaderWriter();
 					TemplatePersistenceData[] datas= reader.read(stream, bundle);
-					for (int i= 0; i < datas.length; i++) {
-						TemplatePersistenceData data= datas[i];
+					for (TemplatePersistenceData data : datas) {
 						if (data.isCustom()) {
 							if (data.getId() == null)
 								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_no_id, data.getTemplate().getName()));

@@ -399,9 +399,9 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		if (column instanceof IRevisionRulerColumnExtension) {
 			String option= store.getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
 			RenderingMode[] modes= { IRevisionRulerColumnExtension.AUTHOR, IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.AUTHOR_SHADED_BY_AGE };
-			for (int i= 0; i < modes.length; i++) {
-				if (modes[i].name().equals(option)) {
-					((IRevisionRulerColumnExtension) column).setRevisionRenderingMode(modes[i]);
+			for (RenderingMode mode : modes) {
+				if (mode.name().equals(option)) {
+					((IRevisionRulerColumnExtension) column).setRevisionRenderingMode(mode);
 					return;
 				}
 			}

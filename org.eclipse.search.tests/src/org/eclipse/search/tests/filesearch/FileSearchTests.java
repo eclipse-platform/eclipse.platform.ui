@@ -516,8 +516,7 @@ public class FileSearchTests {
 
 	private void assertMatches(TestResult[] results, int expectedCount, IFile file, String fileContent, String string) {
 		int k= 0;
-		for (int i= 0; i < results.length; i++) {
-			TestResult curr= results[i];
+		for (TestResult curr : results) {
 			if (file.equals(curr.resource)) {
 				k++;
 				assertEquals("Wrong positions", string, fileContent.substring(curr.offset, curr.offset + curr.length));

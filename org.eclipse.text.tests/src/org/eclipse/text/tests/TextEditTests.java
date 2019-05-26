@@ -319,8 +319,8 @@ public class TextEditTests {
 	private static void flatten(List<TextEdit> result, TextEdit edit) {
 		result.add(edit);
 		TextEdit[] children= edit.getChildren();
-		for (int i= 0; i < children.length; i++) {
-			flatten(result, children[i]);
+		for (TextEdit c : children) {
+			flatten(result, c);
 		}
 	}
 

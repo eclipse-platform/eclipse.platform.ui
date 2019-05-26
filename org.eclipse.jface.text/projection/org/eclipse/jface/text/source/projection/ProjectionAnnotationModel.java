@@ -179,8 +179,9 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 		try {
 			replaceAnnotations(deletions, additions, false);
 			if (modifications != null) {
-				for (int i= 0; i < modifications.length; i++)
-					modifyAnnotation(modifications[i], false);
+				for (Annotation modification : modifications) {
+					modifyAnnotation(modification, false);
+				}
 			}
 		} catch (BadLocationException x) {
 		}

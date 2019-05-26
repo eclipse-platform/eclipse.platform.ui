@@ -176,9 +176,10 @@ public class GenericFileBufferOperationRunner {
 
 	private IFileBuffer[] findUnsynchronizedFileBuffers(IFileBuffer[] fileBuffers) {
 		ArrayList<IFileBuffer> list= new ArrayList<>();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (!fileBuffers[i].isSynchronizationContextRequested())
-				list.add(fileBuffers[i]);
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			if (!fileBuffer.isSynchronizationContextRequested()) {
+				list.add(fileBuffer);
+			}
 		}
 		return list.toArray(new IFileBuffer[list.size()]);
 	}
@@ -231,9 +232,10 @@ public class GenericFileBufferOperationRunner {
 	}
 
 	private boolean isCommitable(IFileBuffer[] fileBuffers) {
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (!fileBuffers[i].isCommitable())
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			if (!fileBuffer.isCommitable()) {
 				return false;
+			}
 		}
 		return true;
 	}

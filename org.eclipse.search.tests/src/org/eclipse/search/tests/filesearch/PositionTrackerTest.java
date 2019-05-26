@@ -64,8 +64,8 @@ public class PositionTrackerTest {
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] elements= result.getElements();
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				checkInsertAtZero(result, (IFile) elements[i]);
+			for (Object element : elements) {
+				checkInsertAtZero(result, (IFile) element);
 			}
 		} finally {
 			SearchPlugin.getActivePage().closeAllEditors(false);
@@ -78,8 +78,8 @@ public class PositionTrackerTest {
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		Object[] elements= result.getElements();
 		try {
-			for (int i = 0; i < elements.length; i++) {
-				checkInsertInsideMatch(result, (IFile) elements[i]);
+			for (Object element : elements) {
+				checkInsertInsideMatch(result, (IFile) element);
 			}
 		} finally {
 			SearchPlugin.getActivePage().closeAllEditors(false);
@@ -94,14 +94,13 @@ public class PositionTrackerTest {
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 			IDocument doc= fb.getDocument();
 
-			for (int i= 0; i < matches.length; i++) {
-				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
+			for (Match matche : matches) {
+				Position currentPosition = InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matche);
 				assertNotNull(currentPosition);
 				doc.replace(currentPosition.offset + 1, 0, "Test");
 			}
-
-			for (int i= 0; i < matches.length; i++) {
-				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
+			for (Match matche : matches) {
+				Position currentPosition = InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matche);
 				assertNotNull(currentPosition);
 				String text= doc.get(currentPosition.offset, currentPosition.length);
 				StringBuilder buf= new StringBuilder();

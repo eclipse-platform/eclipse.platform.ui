@@ -14,7 +14,6 @@
 
 package org.eclipse.ui.texteditor.quickdiff;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
@@ -100,8 +99,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 				// create quickdiff menu
 				menu= new MenuManager(QuickDiffMessages.quickdiff_menu_label, MENU_ID);
 				List<ReferenceProviderDescriptor> descriptors= new QuickDiff().getReferenceProviderDescriptors();
-				for (Iterator<ReferenceProviderDescriptor> it= descriptors.iterator(); it.hasNext();) {
-					ReferenceProviderDescriptor desc= it.next();
+				for (ReferenceProviderDescriptor desc : descriptors) {
 					ReferenceSelectionAction action= new ReferenceSelectionAction(desc, fEditor);
 					if (action.isEnabled())
 						menu.add(action);
@@ -110,8 +108,8 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 
 				// create restore menu if this action is enabled
 				if (isConnected()) {
-					for (int i= 0; i < fRestoreActions.length; i++) {
-						fRestoreActions[i].update();
+					for (QuickDiffRestoreAction fRestoreAction : fRestoreActions) {
+						fRestoreAction.update();
 					}
 					// only add block action if selection action is not enabled
 					if (fRestoreActions[0].isEnabled())
@@ -135,8 +133,8 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 			fEditor= (ITextEditor)targetEditor;
 		} else
 			fEditor= null;
-		for (int i= 0; i < fRestoreActions.length; i++) {
-			fRestoreActions[i].setEditor(fEditor);
+		for (QuickDiffRestoreAction fRestoreAction : fRestoreActions) {
+			fRestoreAction.setEditor(fEditor);
 		}
 		setPopupMenu();
 	}

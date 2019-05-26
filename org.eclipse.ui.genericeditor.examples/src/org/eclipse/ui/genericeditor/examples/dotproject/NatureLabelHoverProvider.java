@@ -39,9 +39,10 @@ public class NatureLabelHoverProvider implements ITextHover {
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProjectNatureDescriptor[] natureDescriptors= workspace.getNatureDescriptors();
-		for (int i= 0; i < natureDescriptors.length; i++) {
-			if (natureDescriptors[i].getNatureId().equals(selection))
-				return natureDescriptors[i].getLabel();
+		for (IProjectNatureDescriptor natureDescriptor : natureDescriptors) {
+			if (natureDescriptor.getNatureId().equals(selection)) {
+				return natureDescriptor.getLabel();
+			}
 		}
 		return null;
 	}

@@ -77,9 +77,10 @@ public class MarkerAnnotationOrderTest {
 		// remove the marker updater extension point
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IExtension[] extensions = registry.getExtensions(pointContributor);
-		for (int i= 0; i < extensions.length; i++) {
-			if ("org.eclipse.ui.editors.markerUpdaters".equals(extensions[i].getExtensionPointUniqueIdentifier()))
-				registry.removeExtension(extensions[i], masterToken);
+		for (IExtension extension : extensions) {
+			if ("org.eclipse.ui.editors.markerUpdaters".equals(extension.getExtensionPointUniqueIdentifier())) {
+				registry.removeExtension(extension, masterToken);
+			}
 		}
 		TestUtil.cleanUp();
 	}

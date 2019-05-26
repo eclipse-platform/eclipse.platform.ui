@@ -259,8 +259,8 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		fQuickDiffOverviewRulerCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (int i= 0; i < fQuickDiffModel.length; i++) {
-					fStore.setValue(fQuickDiffModel[i][1], fQuickDiffOverviewRulerCheckBox.getSelection());
+				for (String[] fQuickDiff : fQuickDiffModel) {
+					fStore.setValue(fQuickDiff[1], fQuickDiffOverviewRulerCheckBox.getSelection());
 				}
 			}
 
@@ -378,12 +378,13 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		final boolean enabled= fEnablementCheckbox.getSelection();
 		fQuickDiffOverviewRulerCheckBox.setEnabled(enabled);
 		fQuickDiffProviderCombo.setEnabled(enabled);
-		for (int i= 0; i < fQuickDiffColorEditors.length; i++)
-			fQuickDiffColorEditors[i].setEnabled(enabled);
+		for (ColorSelector fQuickDiffColorEditor : fQuickDiffColorEditors) {
+			fQuickDiffColorEditor.setEnabled(enabled);
+		}
 		fQuickDiffProviderNote.setEnabled(enabled);
 		Control[] quickDiffProviderNoteChildren= fQuickDiffProviderNote.getChildren();
-		for (int i= 0; i < quickDiffProviderNoteChildren.length; i++) {
-			quickDiffProviderNoteChildren[i].setEnabled(enabled);
+		for (Control child : quickDiffProviderNoteChildren) {
+			child.setEnabled(enabled);
 		}
 	}
 
@@ -400,8 +401,8 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	@Override
 	public void initialize() {
 
-		for (int i= 0; i < fQuickDiffProviderListModel.length; i++) {
-			String label= fQuickDiffProviderListModel[i][1];
+		for (String[] fQuickDiffProvider : fQuickDiffProviderListModel) {
+			String label = fQuickDiffProvider[1];
 			fQuickDiffProviderCombo.add(label);
 		}
 		fQuickDiffProviderCombo.getDisplay().asyncExec(() -> updateProviderList());

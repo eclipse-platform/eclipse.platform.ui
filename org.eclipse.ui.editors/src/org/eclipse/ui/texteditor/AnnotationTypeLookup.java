@@ -93,8 +93,8 @@ public final class AnnotationTypeLookup {
 		if (annotationType != null)
 			return annotationType;
 		String[] superTypes= MarkerUtilities.getSuperTypes(markerType);
-		for (int i= 0; i < superTypes.length; i++) {
-			annotationType= lookupAnnotationType(superTypes[i], markerSeverity);
+		for (String superType : superTypes) {
+			annotationType = lookupAnnotationType(superType, markerSeverity);
 			if (annotationType != null)
 				return annotationType;
 		}
@@ -180,8 +180,8 @@ public final class AnnotationTypeLookup {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, extensionPointName);
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
-			for (int i= 0; i < elements.length; i++) {
-				AnnotationTypeMapping mapping= createMapping(elements[i], typeAttributeName);
+			for (IConfigurationElement element : elements) {
+				AnnotationTypeMapping mapping = createMapping(element, typeAttributeName);
 				if (mapping != null)
 					annotationTypeMappings.add(mapping);
 			}

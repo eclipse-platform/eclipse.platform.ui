@@ -144,8 +144,8 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	private void fillMenu(Menu menu) {
 		IAction[] actions= getActionsFromDescriptors();
 
-		for (int i= 0; i < actions.length; i++) {
-			ActionContributionItem item= new ActionContributionItem(actions[i]);
+		for (IAction action : actions) {
+			ActionContributionItem item = new ActionContributionItem(action);
 			item.fill(menu, -1);
 		}
 	}

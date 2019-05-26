@@ -376,8 +376,8 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		}
 
 		while ((pos1 >= lowerBoundary && !lowerFound) || (pos2 < upperBoundary && !upperFound)) {
-			for (int i= 0; i < counts.length; i++) {
-				counts[i][0]= counts[i][1]= 0;
+			for (int[] count : counts) {
+				count[0] = count[1] = 0;
 			}
 
 			outer1: while (pos1 >= lowerBoundary && !lowerFound) {
@@ -389,8 +389,8 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 					} else {
 						counts[i / 2][0]++; //end
 					}
-					for (int j= 0; j < counts.length; j++) {
-						if (counts[j][0] == -1) {
+					for (int[] count : counts) {
+						if (count[0] == -1) {
 							lowerFound= true;
 							break outer1;
 						}
@@ -408,8 +408,8 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 					} else {
 						counts[i / 2][1]--; //end
 					}
-					for (int j= 0; j < counts.length; j++) {
-						if (counts[j][1] == -1 && counts[j][0] == -1) {
+					for (int[] count : counts) {
+						if (count[1] == -1 && count[0] == -1) {
 							upperFound= true;
 							break outer2;
 						}

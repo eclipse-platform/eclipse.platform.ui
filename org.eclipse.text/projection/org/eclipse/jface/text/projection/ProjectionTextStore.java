@@ -132,8 +132,7 @@ class ProjectionTextStore implements ITextStore {
 		try {
 			IRegion[] fragments= fMapping.toExactOriginRegions(new Region(offset, length));
 			StringBuilder buffer= new StringBuilder();
-			for (int i= 0; i < fragments.length; i++) {
-				IRegion fragment= fragments[i];
+			for (IRegion fragment : fragments) {
 				buffer.append(fMasterDocument.get(fragment.getOffset(), fragment.getLength()));
 			}
 			return buffer.toString();

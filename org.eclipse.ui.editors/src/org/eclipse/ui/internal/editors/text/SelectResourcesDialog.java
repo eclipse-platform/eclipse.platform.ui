@@ -136,8 +136,8 @@ class SelectResourcesDialog extends Dialog {
 			public Object[] getChildren(Object o) {
 				if (o instanceof IWorkspaceRoot) {
 					HashSet<IResource> projects= new HashSet<>();
-					for (int i= 0; i < fInput.length; i++) {
-						IResource project= fInput[i].getProject();
+					for (IResource f : fInput) {
+						IResource project = f.getProject();
 						if ((project.getType() & resourceType) > 0)
 							projects.add(project);
 					}
@@ -155,10 +155,10 @@ class SelectResourcesDialog extends Dialog {
 
 					//filter out the desired resource types
 					ArrayList<IResource> results = new ArrayList<>();
-					for (int i = 0; i < members.length; i++) {
+					for (IResource member : members) {
 						//And the test bits with the resource types to see if they are what we want
-						if ((members[i].getType() & resourceType) > 0 && (resourceType != IResource.FILE || fAcceptableLocationsFilter == null || fAcceptableLocationsFilter.accept(members[i]))) {
-							results.add(members[i]);
+						if ((member.getType() & resourceType) > 0 && (resourceType != IResource.FILE || fAcceptableLocationsFilter == null || fAcceptableLocationsFilter.accept(member))) {
+							results.add(member);
 						}
 					}
 					return results.toArray();
@@ -278,8 +278,7 @@ class SelectResourcesDialog extends Dialog {
 
 	protected void setSelection(IResource[] input, IFilter filter) {
 		Map<IContainer, List<Object>> selectionMap= new Hashtable<>();
-		for (int i= 0; i < input.length; i++) {
-			IResource resource= input[i];
+		for (IResource resource : input) {
 			if ((resource.getType() & IResource.FILE) > 0) {
 				if (filter.accept(resource)) {
 					List<Object> files= null;
@@ -305,8 +304,7 @@ class SelectResourcesDialog extends Dialog {
 			IResource[] resources= parent.members();
 			List<Object> selections= new ArrayList<>();
 
-			for (int i= 0; i < resources.length; i++) {
-				IResource resource= resources[i];
+			for (IResource resource : resources) {
 				if ((resource.getType() & IResource.FILE) > 0) {
 					if (filter.accept(resource))
 						selections.add(resource);

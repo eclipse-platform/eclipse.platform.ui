@@ -411,11 +411,11 @@ public class EncodingActionGroup extends ActionGroup {
 			editor.setAction(IEncodingActionsConstants.SYSTEM, a);
 		}
 
-		for (int i= 0; i < ENCODINGS.length; i++) {
-			a= new PredefinedEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], editor); //$NON-NLS-1$ //$NON-NLS-2$
-			a.setHelpContextId( ENCODINGS[i][1]);
-			a.setActionDefinitionId( ENCODINGS[i][2]);
-			editor.setAction(ENCODINGS[i][0], a);
+		for (String[] e : ENCODINGS) {
+			a = new PredefinedEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + e[0] + ".", e[0], editor); //$NON-NLS-1$ //$NON-NLS-2$
+			a.setHelpContextId(e[1]);
+			a.setActionDefinitionId(e[2]);
+			editor.setAction(e[0], a);
 		}
 
 		a= new CustomEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + IEncodingActionsConstants.CUSTOM + ".", editor); //$NON-NLS-1$ //$NON-NLS-2$
@@ -435,8 +435,8 @@ public class EncodingActionGroup extends ActionGroup {
 		if (a instanceof IUpdate)
 			((IUpdate) a).update();
 
-		for (int i= 0; i < ENCODINGS.length; i++) {
-			a= fTextEditor.getAction(ENCODINGS[i][0]);
+		for (String[] e : ENCODINGS) {
+			a = fTextEditor.getAction(e[0]);
 			if (a instanceof IUpdate)
 				((IUpdate) a).update();
 		}
@@ -450,8 +450,9 @@ public class EncodingActionGroup extends ActionGroup {
 	public void dispose() {
 		if (fTextEditor != null) {
 			fTextEditor.setAction(IEncodingActionsConstants.SYSTEM, null);
-			for (int i= 0; i < ENCODINGS.length; i++)
-				fTextEditor.setAction(ENCODINGS[i][0], null);
+			for (String[] e : ENCODINGS) {
+				fTextEditor.setAction(e[0], null);
+			}
 			fTextEditor.setAction(IEncodingActionsConstants.CUSTOM, null);
 
 			fTextEditor= null;

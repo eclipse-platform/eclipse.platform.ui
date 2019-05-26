@@ -72,8 +72,7 @@ public class CodeMiningProviderRegistry {
 		List<CodeMiningProviderDescriptor> descriptors = new ArrayList<>();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, CODEMINING_PROVIDERS_EXTENSION_POINT);
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			try {
 				CodeMiningProviderDescriptor descriptor = new CodeMiningProviderDescriptor(element);
 				descriptors.add(descriptor);

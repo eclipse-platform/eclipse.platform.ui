@@ -93,8 +93,9 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 
 	private List<ICompletionProposal> computeProposals(IQuickAssistInvocationContext context, SpellingProblem[] spellingProblems) {
 		List<ICompletionProposal> proposals= new ArrayList<>();
-		for (int i= 0; i < spellingProblems.length; i++)
-			proposals.addAll(Arrays.asList(spellingProblems[i].getProposals(context)));
+		for (SpellingProblem spellingProblem : spellingProblems) {
+			proposals.addAll(Arrays.asList(spellingProblem.getProposals(context)));
+		}
 
 		return proposals;
 	}

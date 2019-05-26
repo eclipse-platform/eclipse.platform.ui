@@ -275,9 +275,10 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		 */
 		private void addListener(Class<? extends EventListener> clazz, EventListener listener) {
 			Control[] children= getChildren();
-			for (int i= 0; i < children.length; i++) {
-				if (children[i] != null && !children[i].isDisposed())
-					addListener(clazz, children[i], listener);
+			for (Control c : children) {
+				if (c != null && !c.isDisposed()) {
+					addListener(clazz, c, listener);
+				}
 			}
 
 			ListenerInfo info= new ListenerInfo();
@@ -309,9 +310,10 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 				}
 			}
 
-			for (int i= 0; i < children.length; i++) {
-				if (children[i] != null && !children[i].isDisposed())
-					removeListener(clazz, children[i], listener);
+			for (Control c : children) {
+				if (c != null && !c.isDisposed()) {
+					removeListener(clazz, c, listener);
+				}
 			}
 		}
 
