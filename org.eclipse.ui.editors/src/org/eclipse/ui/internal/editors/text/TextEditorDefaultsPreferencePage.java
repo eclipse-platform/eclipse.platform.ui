@@ -74,6 +74,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.editors.text.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
+import org.eclipse.ui.internal.editors.text.codemining.annotation.AnnotationCodeMiningPreferenceConstants;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -771,6 +772,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HOVER_ENRICH_MODE));
 
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_MAX));
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_SPACES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_SPACES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_SPACES));
@@ -940,6 +944,39 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_smartHomeEnd;
 		Preference smartHomeEnd= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END, label, null);
 		addCheckBox(appearanceComposite, smartHomeEnd, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_show;
+		String description= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_description;
+		Preference showCodeMinings= new Preference(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL, label, description);
+		EnumeratedDomain codeMiningsDomain= new EnumeratedDomain();
+		codeMiningsDomain.addValue(new EnumValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__NONE, TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_none));
+		codeMiningsDomain.addValue(new EnumValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR, TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_error));
+		codeMiningsDomain.addValue(new EnumValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING,
+				TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_ErrorWarnings));
+		codeMiningsDomain.addValue(new EnumValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING_INFO,
+				TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_ErrowWarningsInfo));
+		final Control[] showCodeMiningsControls= addCombo(appearanceComposite, showCodeMinings, codeMiningsDomain, 0);
+
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_max;
+		description= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_max_description;
+		Preference maxCodeMinings= new Preference(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_MAX, label, description);
+		IntegerDomain maxCodeMiningsDomain= new IntegerDomain(0, 99999);
+		Control[] maxCodeMiningsControls= addTextField(appearanceComposite, maxCodeMinings, maxCodeMiningsDomain, 15, 20);
+		
+		final SelectionListener codeMiningsListener= new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				final int showCodeMiningsSetting= fOverlayStore.getInt(showCodeMinings.getKey());
+				boolean enabled= showCodeMiningsSetting != AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__NONE;
+				for (Control control : maxCodeMiningsControls) {
+					control.setEnabled(enabled);
+				}
+			}
+		};
+
+		((Combo) showCodeMiningsControls[1]).addSelectionListener(codeMiningsListener);
+		fMasterSlaveListeners.add(codeMiningsListener);
+
 
 		addFiller(appearanceComposite, 2);
 

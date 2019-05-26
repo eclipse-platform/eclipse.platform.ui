@@ -137,6 +137,14 @@ final class TextEditorMessages extends NLS {
 
 	public static String TextEditorDefaultsPreferencePage_carriageReturn;
 	public static String TextEditorDefaultsPreferencePage_transparencyLevel;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_description;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_error;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_ErrorWarnings;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_ErrowWarningsInfo;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_max;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_max_description;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_none;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_show;
 	public static String TextEditorDefaultsPreferencePage_configureWhitespaceCharacterPainterProperties;
 	public static String TextEditorDefaultsPreferencePage_deleteSpacesAsTabs;
 	public static String TextEditorDefaultsPreferencePage_enclosed;

@@ -22,6 +22,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.codemining.annotation.AnnotationCodeMiningPreferenceConstants;
 import org.eclipse.ui.internal.texteditor.ITextEditorThemeConstants;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
@@ -42,6 +43,7 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 		IPreferenceStore store= EditorsPlugin.getDefault().getPreferenceStore();
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
 		migrateOverviewRulerPreference(store);
+		AnnotationCodeMiningPreferenceConstants.initializeDefaultValues(store);
 	}
 
 	public static void setThemeBasedPreferences(IPreferenceStore store, boolean fireEvent) {

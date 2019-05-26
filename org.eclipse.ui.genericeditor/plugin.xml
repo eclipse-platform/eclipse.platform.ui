@@ -231,4 +231,11 @@
             class="org.eclipse.ui.internal.genericeditor.GenericEditorWithIconAssociationOverride"
             id="org.eclipse.ui.internal.genericeditor.GenericEditorAssociationOverride"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.reconcilers">
+      <reconciler
+            class="org.eclipse.jface.text.codemining.CodeMiningReconciler"
+            contentType="org.eclipse.core.runtime.text">
+      </reconciler>
+   </extension>
 </plugin>

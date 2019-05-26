@@ -1063,4 +1063,24 @@
 
    </extension>
 
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.codeMiningProviders">
+      <codeMiningProvider
+            class="org.eclipse.ui.internal.editors.text.codemining.annotation.AnnotationCodeMiningProvider"
+            id="org.eclipse.ui.internal.editors.annotationCodeMiningProvider">
+         <enabledWhen>
+            <with
+                  variable="editorInput">
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+                  <test
+                        property="org.eclipse.core.resources.contentTypeId"
+                        value="org.eclipse.core.runtime.text"
+                        args="kindOf">
+                  </test>
+               </adapt>
+            </with>
+         </enabledWhen>
+      </codeMiningProvider>
+   </extension>
 </plugin>
