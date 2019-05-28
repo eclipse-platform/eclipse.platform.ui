@@ -15,6 +15,7 @@ package org.eclipse.jface.tests.layout;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 
 import junit.framework.TestCase;
 
@@ -97,6 +98,13 @@ public class GridDataFactoryTest extends TestCase {
 		assertEquals(
 				"GridDataFactory.fillDefaults()\n",
 				factory.toString());
+	}
+
+	public void testGridDataCreate() {
+		GridData actual = GridDataFactory.create(GridData.FILL_HORIZONTAL).create();
+		GridData expected = new GridData(GridData.FILL_HORIZONTAL);
+		// equals is not implemented in GridData. Use toString() to compare both
+		assertEquals(expected.toString(), actual.toString());
 	}
 }
 

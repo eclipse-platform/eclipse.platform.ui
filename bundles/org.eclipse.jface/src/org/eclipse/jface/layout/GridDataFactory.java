@@ -198,6 +198,20 @@ public final class GridDataFactory {
 	}
 
 	/**
+	 * Creates a new GridDataFactory initialized with given style. This factory will
+	 * generate GridData that is equivalent to "new GridData(style)".
+	 *
+	 * @param style the style to be applied. Refer to {@link GridData#GridData(int)}
+	 *              for possible values.
+	 *
+	 * @return a new GridDataFactory instance
+	 * @since 3.17
+	 */
+	public static GridDataFactory create(int style) {
+		return new GridDataFactory(new GridData(style));
+	}
+
+	/**
 	 * Returns a GridDataFactory initialized with heuristicly generated defaults for the given control.
 	 * To be precise, this method picks the default values that GridLayoutFactory.generateLayout
 	 * would have assigned to the control. Does not attach GridData to the control. Callers must
