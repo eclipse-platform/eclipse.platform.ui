@@ -1133,7 +1133,7 @@ public class ExpressionTests {
 		long instanceDelta= System.currentTimeMillis() - instanceStart;
 
 		assertTrue("cachedDelta: " + cachedDelta + ", instanceDelta: " + instanceDelta,
-				cachedDelta * 1.5 < instanceDelta);
+				cachedDelta < instanceDelta);
 	}
 
 }
