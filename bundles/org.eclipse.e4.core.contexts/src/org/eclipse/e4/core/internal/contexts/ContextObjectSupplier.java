@@ -76,22 +76,24 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 				return true;
 			}
 
-			if (eventType == ContextChangeEvent.DISPOSE) {
+			switch (eventType) {
+			case ContextChangeEvent.DISPOSE:
 				if (eventsContext == context) {
 					ContextObjectSupplier originatingSupplier = eventsContext.getLocal(ContextObjectSupplier.class);
 					requestor.disposed(originatingSupplier);
 					return false;
-				}
-			} else if (eventType == ContextChangeEvent.UNINJECTED) {
+				}	break;
+			case ContextChangeEvent.UNINJECTED:
 				if (eventsContext == context) {
 					ContextObjectSupplier originatingSupplier = eventsContext.getLocal(ContextObjectSupplier.class);
 					return requestor.uninject(extraArguments[0], originatingSupplier);
-				}
-			} else {
+				}	break;
+			default:
 				if (!requestor.isValid())
 					return false; // remove this listener
 				requestor.resolveArguments(false);
 				requestor.execute();
+				break;
 			}
 			return true;
 		}

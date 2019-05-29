@@ -120,19 +120,25 @@ public class Util {
 	 */
 	public static byte[] getByteOrderMark(InputStream input) throws IOException {
 		int first = input.read();
-		if (first == 0xEF) {
+		switch (first) {
+		case 0xEF:
 			//look for the UTF-8 Byte Order Mark (BOM)
 			int second = input.read();
 			int third = input.read();
 			if (second == 0xBB && third == 0xBF)
 				return IContentDescription.BOM_UTF_8;
-		} else if (first == 0xFE) {
+			break;
+		case 0xFE:
 			//look for the UTF-16 BOM
 			if (input.read() == 0xFF)
 				return IContentDescription.BOM_UTF_16BE;
-		} else if (first == 0xFF) {
+			break;
+		case 0xFF:
 			if (input.read() == 0xFE)
 				return IContentDescription.BOM_UTF_16LE;
+			break;
+		default:
+			break;
 		}
 		return null;
 	}

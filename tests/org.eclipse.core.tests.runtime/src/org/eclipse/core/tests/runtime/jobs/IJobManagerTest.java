@@ -649,17 +649,23 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign four jobs to each family
-			if (i % 5 == 0) {
+			switch (i % 5) {
+			case 0:
 				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
-			} else if (i % 5 == 1) {
+				break;
+			case 1:
 				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
-			} else if (i % 5 == 2) {
+				break;
+			case 2:
 				jobs[i] = new FamilyTestJob("TestThirdFamily", 1000000, 10, TestJobFamily.TYPE_THREE);
-			} else if (i % 5 == 3) {
+				break;
+			case 3:
 				jobs[i] = new FamilyTestJob("TestFourthFamily", 1000000, 10, TestJobFamily.TYPE_FOUR);
-			} else {
+				break;
+			default:
 				/*if(i%5 == 4)*/
 				jobs[i] = new FamilyTestJob("TestFifthFamily", 1000000, 10, TestJobFamily.TYPE_FIVE);
+				break;
 			}
 
 			jobs[i].setRule(rule);

@@ -264,21 +264,27 @@ public class JobGroupTest extends AbstractJobTest {
 		final JobGroup fifthJobGroup = new JobGroup("FifthJobGroup", 1, JOBS_PER_GROUP);
 
 		for (int i = 0; i < NUM_JOBS; i++) {
-			if (i % 5 == 0) {
+			switch (i % 5) {
+			case 0:
 				jobs[i] = new TestJob("TestFirstJobGroup", 1000000, 10);
 				jobs[i].setJobGroup(firstJobGroup);
-			} else if (i % 5 == 1) {
+				break;
+			case 1:
 				jobs[i] = new TestJob("TestSecondJobGroup", 1000000, 10);
 				jobs[i].setJobGroup(secondJobGroup);
-			} else if (i % 5 == 2) {
+				break;
+			case 2:
 				jobs[i] = new TestJob("TestThirdJobGroup", 1000000, 10);
 				jobs[i].setJobGroup(thirdJobGroup);
-			} else if (i % 5 == 3) {
+				break;
+			case 3:
 				jobs[i] = new TestJob("TestFourthJobGroup", 1000000, 10);
 				jobs[i].setJobGroup(fourthJobGroup);
-			} else {
+				break;
+			default:
 				jobs[i] = new TestJob("TestFifthJobGroup", 1000000, 10);
 				jobs[i].setJobGroup(fifthJobGroup);
+				break;
 			}
 			jobs[i].schedule();
 		}
