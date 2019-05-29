@@ -155,15 +155,19 @@ public class ResourcePropertyTester extends PropertyTester {
 			return false;
 		String propertyName;
 		String expectedVal;
-		if (args.length == 0) {
-			propertyName = toString(expectedValue);
-			expectedVal = null;
-		} else if (args.length == 1) {
-			propertyName = toString(args[0]);
-			expectedVal = null;
-		} else {
-			propertyName = toString(args[0]);
-			expectedVal = toString(args[1]);
+		switch (args.length) {
+			case 0:
+				propertyName = toString(expectedValue);
+				expectedVal = null;
+				break;
+			case 1:
+				propertyName = toString(args[0]);
+				expectedVal = null;
+				break;
+			default:
+				propertyName = toString(args[0]);
+				expectedVal = toString(args[1]);
+				break;
 		}
 		try {
 			QualifiedName key = toQualifedName(propertyName);

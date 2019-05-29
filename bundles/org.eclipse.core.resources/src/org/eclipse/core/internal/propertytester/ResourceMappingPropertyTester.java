@@ -37,15 +37,19 @@ public class ResourceMappingPropertyTester extends ResourcePropertyTester {
 			return false;
 		String propertyName;
 		String expectedVal;
-		if (args.length == 0) {
-			propertyName = toString(expectedValue);
-			expectedVal = null;//any value will do
-		} else if (args.length == 1) {
-			propertyName = toString(args[0]);
-			expectedVal = null;//any value will do
-		} else {
-			propertyName = toString(args[0]);
-			expectedVal = toString(args[1]);
+		switch (args.length) {
+			case 0:
+				propertyName = toString(expectedValue);
+				expectedVal = null;//any value will do
+				break;
+			case 1:
+				propertyName = toString(args[0]);
+				expectedVal = null;//any value will do
+				break;
+			default:
+				propertyName = toString(args[0]);
+				expectedVal = toString(args[1]);
+				break;
 		}
 		QualifiedName key = toQualifedName(propertyName);
 		boolean found = false;
