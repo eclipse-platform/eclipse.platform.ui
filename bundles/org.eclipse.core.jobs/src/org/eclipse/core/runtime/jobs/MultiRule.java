@@ -14,6 +14,7 @@
 package org.eclipse.core.runtime.jobs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A MultiRule is a compound scheduling rule that represents a fixed group of child
@@ -94,8 +95,7 @@ public class MultiRule implements ISchedulingRule {
 		for (ISchedulingRule nestedRule : nestedRules) {
 			if (nestedRule instanceof MultiRule) {
 				ISchedulingRule[] children = ((MultiRule) nestedRule).getChildren();
-				for (ISchedulingRule element : children)
-					myRules.add(element);
+				myRules.addAll(Arrays.asList(children));
 			} else {
 				myRules.add(nestedRule);
 			}

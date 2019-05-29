@@ -29,9 +29,7 @@ public class RandomTestRunnable extends Thread {
 	public RandomTestRunnable(ILock[] locks, String name, boolean addRandomness) {
 		super(name);
 		this.locks = new ILock[locks.length];
-		for (int i = 0; i < locks.length; i++) {
-			this.locks[i] = locks[i];
-		}
+		System.arraycopy(locks, 0, this.locks, 0, locks.length);
 		this.alive = true;
 		this.needRandomization = addRandomness;
 	}

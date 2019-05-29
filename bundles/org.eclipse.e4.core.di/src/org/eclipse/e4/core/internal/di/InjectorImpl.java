@@ -382,8 +382,7 @@ public class InjectorImpl implements IInjector {
 			Constructor<?>[] constructors = getDeclaredConstructors(clazz);
 			// Sort the constructors by descending number of constructor arguments
 			ArrayList<Constructor<?>> sortedConstructors = new ArrayList<>(constructors.length);
-			for (Constructor<?> constructor : constructors)
-				sortedConstructors.add(constructor);
+			sortedConstructors.addAll(Arrays.asList(constructors));
 			Collections.sort(sortedConstructors, (c1, c2) -> {
 				int l1 = c1.getParameterTypes().length;
 				int l2 = c2.getParameterTypes().length;
