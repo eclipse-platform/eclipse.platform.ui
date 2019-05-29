@@ -106,14 +106,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		if (System.getSecurityManager() == null) {
 			instance = createInstance(locale, messages, annotation, provider);
 		} else {
-			instance = AccessController.doPrivileged(new PrivilegedAction<M>() {
-
-				@Override
-				public M run() {
-					return createInstance(locale, messages, annotation, provider);
-				}
-
-			});
+			instance = AccessController.doPrivileged((PrivilegedAction<M>) () -> createInstance(locale, messages, annotation, provider));
 		}
 
 		if (cache != null) {

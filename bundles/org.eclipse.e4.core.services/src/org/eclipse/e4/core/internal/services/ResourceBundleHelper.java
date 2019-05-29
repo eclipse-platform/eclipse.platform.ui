@@ -702,22 +702,19 @@ public class ResourceBundleHelper {
 				InputStream stream = null;
 				try {
 					stream = AccessController
-							.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
-								@Override
-								public InputStream run() throws IOException {
-									InputStream is = null;
-									URL url = osgiBundle.getEntry(resourceName);
-									if (url != null) {
-										URLConnection connection = url.openConnection();
-										if (connection != null) {
-											// Disable caches to get fresh data for
-											// reloading.
-											connection.setUseCaches(false);
-											is = connection.getInputStream();
-										}
+							.doPrivileged((PrivilegedExceptionAction<InputStream>) () -> {
+								InputStream is = null;
+								URL url = osgiBundle.getEntry(resourceName);
+								if (url != null) {
+									URLConnection connection = url.openConnection();
+									if (connection != null) {
+										// Disable caches to get fresh data for
+										// reloading.
+										connection.setUseCaches(false);
+										is = connection.getInputStream();
 									}
-									return is;
 								}
+								return is;
 							});
 				} catch (PrivilegedActionException e) {
 					throw (IOException) e.getException();

@@ -112,13 +112,7 @@ public class BaseMessageRegistry<M> {
 	 *            The function that supplies the message.
 	 */
 	public void register(MessageConsumer consumer, final MessageFunction<M> function) {
-		register(consumer, new MessageSupplier() {
-
-			@Override
-			public String get() {
-				return function.apply(messages);
-			}
-		});
+		register(consumer, () -> function.apply(messages));
 	}
 
 	/**
@@ -261,28 +255,23 @@ public class BaseMessageRegistry<M> {
 					m.setAccessible(true);
 					m.invoke(control, value);
 				} else {
-					AccessController.doPrivileged(new PrivilegedAction<Object>() {
-
-						@Override
-						public Object run() {
-							m.setAccessible(true);
-							try {
-								m.invoke(control, value);
-							} catch (Exception e) {
-								// if anything fails on invoke we unregister the
-								// binding to avoid further issues e.g. this can
-								// happen in case of disposed SWT controls
-								bindings.remove(MessageConsumerImplementation.this);
-								Logger log = consumerLogger;
-								if (log != null) {
-									log.info(
-											"Error on invoke '{}' on '{}' with error message '{}'. Binding is removed.",
-											m.getName(), control.getClass(), e.getMessage());
-								}
+					AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+						m.setAccessible(true);
+						try {
+							m.invoke(control, value);
+						} catch (Exception e) {
+							// if anything fails on invoke we unregister the
+							// binding to avoid further issues e.g. this can
+							// happen in case of disposed SWT controls
+							bindings.remove(MessageConsumerImplementation.this);
+							Logger log = consumerLogger;
+							if (log != null) {
+								log.info(
+										"Error on invoke '{}' on '{}' with error message '{}'. Binding is removed.",
+										m.getName(), control.getClass(), e.getMessage());
 							}
-							return null;
 						}
-
+						return null;
 					});
 				}
 			} catch (Exception e) {

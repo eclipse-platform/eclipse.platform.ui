@@ -44,95 +44,80 @@ public final class ContentTypeCatalog {
 	 * A sorting policy where the more generic content type wins. Lexicographical comparison is done
 	 * as a last resort when all other criteria fail.
 	 */
-	private final Comparator<IContentType> policyConstantGeneralIsBetter = new Comparator<IContentType>() {
-		@Override
-		public int compare(IContentType o1, IContentType o2) {
-			ContentType type1 = (ContentType) o1;
-			ContentType type2 = (ContentType) o2;
-			// first criteria: depth - the lower, the better
-			int depthCriteria = type1.getDepth() - type2.getDepth();
-			if (depthCriteria != 0)
-				return depthCriteria;
-			// second criteria: priority - the higher, the better
-			int priorityCriteria = type1.getPriority() - type2.getPriority();
-			if (priorityCriteria != 0)
-				return -priorityCriteria;
-			// they have same depth and priority - choose one arbitrarily (stability is important)
-			return type1.getId().compareTo(type2.getId());
-		}
+	private final Comparator<IContentType> policyConstantGeneralIsBetter = (IContentType o1, IContentType o2) -> {
+		ContentType type1 = (ContentType) o1;
+		ContentType type2 = (ContentType) o2;
+		// first criteria: depth - the lower, the better
+		int depthCriteria = type1.getDepth() - type2.getDepth();
+		if (depthCriteria != 0)
+			return depthCriteria;
+		// second criteria: priority - the higher, the better
+		int priorityCriteria = type1.getPriority() - type2.getPriority();
+		if (priorityCriteria != 0)
+			return -priorityCriteria;
+		// they have same depth and priority - choose one arbitrarily (stability is important)
+		return type1.getId().compareTo(type2.getId());
 	};
 
 	/**
 	 * A sorting policy where the more specific content type wins. Lexicographical comparison is done
 	 * as a last resort when all other criteria fail.
 	 */
-	private Comparator<IContentType> policyConstantSpecificIsBetter = new Comparator<IContentType>() {
-		@Override
-		public int compare(IContentType o1, IContentType o2) {
-			ContentType type1 = (ContentType) o1;
-			ContentType type2 = (ContentType) o2;
-			// first criteria: depth - the higher, the better
-			int depthCriteria = type1.getDepth() - type2.getDepth();
-			if (depthCriteria != 0)
-				return -depthCriteria;
-			// second criteria: priority - the higher, the better
-			int priorityCriteria = type1.getPriority() - type2.getPriority();
-			if (priorityCriteria != 0)
-				return -priorityCriteria;
-			// they have same depth and priority - choose one arbitrarily (stability is important)
-			return type1.getId().compareTo(type2.getId());
-		}
+	private Comparator<IContentType> policyConstantSpecificIsBetter = (IContentType o1, IContentType o2) -> {
+		ContentType type1 = (ContentType) o1;
+		ContentType type2 = (ContentType) o2;
+		// first criteria: depth - the higher, the better
+		int depthCriteria = type1.getDepth() - type2.getDepth();
+		if (depthCriteria != 0)
+			return -depthCriteria;
+		// second criteria: priority - the higher, the better
+		int priorityCriteria = type1.getPriority() - type2.getPriority();
+		if (priorityCriteria != 0)
+			return -priorityCriteria;
+		// they have same depth and priority - choose one arbitrarily (stability is important)
+		return type1.getId().compareTo(type2.getId());
 	};
 
 	/**
 	 * A sorting policy where the more general content type wins.
 	 */
-	private Comparator<IContentType> policyGeneralIsBetter = new Comparator<IContentType>() {
-		@Override
-		public int compare(IContentType o1, IContentType o2) {
-			ContentType type1 = (ContentType) o1;
-			ContentType type2 = (ContentType) o2;
-			// first criteria: depth - the lower, the better
-			int depthCriteria = type1.getDepth() - type2.getDepth();
-			if (depthCriteria != 0)
-				return depthCriteria;
-			// second criteria: priority - the higher, the better
-			int priorityCriteria = type1.getPriority() - type2.getPriority();
-			if (priorityCriteria != 0)
-				return -priorityCriteria;
-			return 0;
-		}
+	private Comparator<IContentType> policyGeneralIsBetter = (IContentType o1, IContentType o2) -> {
+		ContentType type1 = (ContentType) o1;
+		ContentType type2 = (ContentType) o2;
+		// first criteria: depth - the lower, the better
+		int depthCriteria = type1.getDepth() - type2.getDepth();
+		if (depthCriteria != 0)
+			return depthCriteria;
+		// second criteria: priority - the higher, the better
+		int priorityCriteria = type1.getPriority() - type2.getPriority();
+		if (priorityCriteria != 0)
+			return -priorityCriteria;
+		return 0;
 	};
 
 	/**
 	 * A sorting policy where content types are sorted by id.
 	 */
-	private Comparator<IContentType> policyLexicographical = new Comparator<IContentType>() {
-		@Override
-		public int compare(IContentType o1, IContentType o2) {
-			ContentType type1 = (ContentType) o1;
-			ContentType type2 = (ContentType) o2;
-			return type1.getId().compareTo(type2.getId());
-		}
+	private Comparator<IContentType> policyLexicographical = (IContentType o1, IContentType o2) -> {
+		ContentType type1 = (ContentType) o1;
+		ContentType type2 = (ContentType) o2;
+		return type1.getId().compareTo(type2.getId());
 	};
 	/**
 	 * A sorting policy where the more specific content type wins.
 	 */
-	private Comparator<IContentType> policySpecificIsBetter = new Comparator<IContentType>() {
-		@Override
-		public int compare(IContentType o1, IContentType o2) {
-			ContentType type1 = (ContentType) o1;
-			ContentType type2 = (ContentType) o2;
-			// first criteria: depth - the higher, the better
-			int depthCriteria = type1.getDepth() - type2.getDepth();
-			if (depthCriteria != 0)
-				return -depthCriteria;
-			// second criteria: priority - the higher, the better
-			int priorityCriteria = type1.getPriority() - type2.getPriority();
-			if (priorityCriteria != 0)
-				return -priorityCriteria;
-			return 0;
-		}
+	private Comparator<IContentType> policySpecificIsBetter = (IContentType o1, IContentType o2) -> {
+		ContentType type1 = (ContentType) o1;
+		ContentType type2 = (ContentType) o2;
+		// first criteria: depth - the higher, the better
+		int depthCriteria = type1.getDepth() - type2.getDepth();
+		if (depthCriteria != 0)
+			return -depthCriteria;
+		// second criteria: priority - the higher, the better
+		int priorityCriteria = type1.getPriority() - type2.getPriority();
+		if (priorityCriteria != 0)
+			return -priorityCriteria;
+		return 0;
 	};
 
 	private static IContentType[] concat(IContentType[][] types) {

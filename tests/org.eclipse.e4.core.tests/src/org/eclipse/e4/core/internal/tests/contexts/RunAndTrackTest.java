@@ -308,13 +308,8 @@ public class RunAndTrackTest {
 	 * @see #doHiddenValueChangeTest(ITestAction, Object, int)
 	 */
 	void doHiddenValueChangeTest(final String newRootValue) {
-		doHiddenValueChangeTest(new ITestAction() {
-
-			@Override
-			public void execute(IEclipseContext root, String var) {
-				root.set(var, newRootValue);
-
-			}
+		doHiddenValueChangeTest((IEclipseContext root, String var) -> {
+			root.set(var, newRootValue);
 		}, "child", 0);
 	}
 
@@ -363,13 +358,8 @@ public class RunAndTrackTest {
 	 */
 	@Test
 	public void testRemoveHiddenVariable() {
-		doHiddenValueChangeTest(new ITestAction() {
-
-			@Override
-			public void execute(IEclipseContext root, String var) {
-				root.remove(var);;
-
-			}
+		doHiddenValueChangeTest((IEclipseContext root, String var) -> {
+			root.remove(var);;
 		}, "child", 0);
 	}
 
@@ -379,11 +369,8 @@ public class RunAndTrackTest {
 	 */
 	@Test
 	public void testSetContextVarToSameObject() {
-		doSingleContextChangeTest(new ITestAction() {
-			@Override
-			public void execute(IEclipseContext root, String var) {
-				root.set(var, "root");
-			}
+		doSingleContextChangeTest((IEclipseContext root, String var) -> {
+			root.set(var, "root");
 		}, "root", 0);
 	}
 
@@ -393,11 +380,8 @@ public class RunAndTrackTest {
 	 */
 	@Test
 	public void testSetContextVarToEqualObject() {
-		doSingleContextChangeTest(new ITestAction() {
-			@Override
-			public void execute(IEclipseContext root, String var) {
-				root.set(var, new String("root"));
-			}
+		doSingleContextChangeTest((IEclipseContext root, String var) -> {
+			root.set(var, new String("root"));
 		}, "root", 1);
 	}
 
@@ -407,11 +391,8 @@ public class RunAndTrackTest {
 	 */
 	@Test
 	public void testSetContextVarToOtherObject() {
-		doSingleContextChangeTest(new ITestAction() {
-			@Override
-			public void execute(IEclipseContext root, String var) {
-				root.set(var, "other");
-			}
+		doSingleContextChangeTest((IEclipseContext root, String var) -> {
+			root.set(var, "other");
 		}, "other", 1);
 	}
 
