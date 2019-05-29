@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 EclipseSource Muenchen GmbH and others.
+ * Copyright (c) 2016 EclipseSource Muenchen GmbH and others.
  *
  *
  * This program and the accompanying materials
@@ -11,14 +11,10 @@
  *
  * Contributors:
  * Alexandra Buzila - initial API and implementation
- * Stefan Noebauer - Bug 546777
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -51,8 +47,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
@@ -67,6 +61,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 @SuppressWarnings("nls")
@@ -146,7 +141,8 @@ public class ModelAssemblerTests {
 		// create fragment
 		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
 		fragment.setFeaturename("children");
-		fragment.setParentElementId(APPLICATION_ID);
+		final String fragmentParentId = "org.eclipse.e4.ui.tests.modelassembler.app";
+		fragment.setParentElementId(fragmentParentId);
 		fragment.getElements().add(window);
 		// add fragment to resource
 		Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri"));
@@ -164,7 +160,7 @@ public class ModelAssemblerTests {
 		assertTrue(elements.contains(window));
 		MUIElement found = modelService.find(contributedElementId, application);
 		assertEquals(window, found);
-		assertEquals(APPLICATION_ID, found.getParent().getElementId());
+		assertEquals(fragmentParentId, found.getParent().getElementId());
 
 		verifyZeroInteractions(logger);
 
@@ -172,12 +168,12 @@ public class ModelAssemblerTests {
 	}
 
 	@Test
-//	@Ignore // currently ignored due to bug 487748
+	@Ignore // currently ignored due to bug 487748
 	public void testFragments_existingXMIID_checkExists() throws Exception {
 		// create fragment
 		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
 		fragment.setFeaturename("children");
-		fragment.setParentElementId(APPLICATION_ID);
+		fragment.setParentElementId("org.eclipse.e4.ui.tests.modelassembler.app");
 		// create fragment resource
 		E4XMIResource fragmentResource = (E4XMIResource) factory.createResource(URI.createURI("fragmentvirtualuri"));
 		resourceSet.getResources().add(fragmentResource);
@@ -225,7 +221,7 @@ public class ModelAssemblerTests {
 		// create fragment
 		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
 		fragment.setFeaturename("children");
-		fragment.setParentElementId(APPLICATION_ID);
+		fragment.setParentElementId("org.eclipse.e4.ui.tests.modelassembler.app");
 		// create fragment resource
 		E4XMIResource fragmentResource = (E4XMIResource) factory.createResource(URI.createURI("fragmentvirtualuri"));
 		resourceSet.getResources().add(fragmentResource);
@@ -511,121 +507,7 @@ public class ModelAssemblerTests {
 		assertEquals("simpleprocessor.post", application.getDescriptors().get(0).getElementId());
 	}
 
-	@Test
-	public void testNotExistsNonInitialFragmentApply() throws IOException {
-		// ### arrange
-
-		// In this test case we assume that the given application comes from a persisted
-		// model (workbench.xmi file) where part 2 has been moved to the partStackTop.
-		// But the fragment contributes part 2 to the partStackBottom.
-		// By using apply=notexists part 2 from the fragment will not be applied since
-		// it is already present in the model
-		IExtension[] createExtensions = createExtensions(
-				"org.eclipse.e4.ui.tests/data/ModelAssembler/fragment_notexists.xml");
-		MWindow mainWindow = modelService.createModelElement(MWindow.class);
-		mainWindow.setElementId("mainWindow");
-
-		MPartSashContainer partSashContainer = modelService.createModelElement(MPartSashContainer.class);
-		MPartStack partStackTop = modelService.createModelElement(MPartStack.class);
-		partStackTop.setElementId("partStackTop");
-		MPartStack partStackBottom = modelService.createModelElement(MPartStack.class);
-		partStackBottom.setElementId("partStackBottom");
-
-		MPart part1 = modelService.createModelElement(MPart.class);
-		part1.setElementId("part1Id");
-		MPart part2 = modelService.createModelElement(MPart.class);
-		part2.setElementId("part2Id");
-		part2.getPersistedState().put("id", "kgu");
-
-		// initially add both parts to top stack, while contributing fragment
-		// contributes part 2 to the partStackBottom
-		partStackTop.getChildren().add(part1);
-		partStackTop.getChildren().add(part2);
-
-		partSashContainer.getChildren().add(partStackTop);
-		partSashContainer.getChildren().add(partStackBottom);
-
-		mainWindow.getChildren().add(partSashContainer);
-		application.getChildren().add(mainWindow);
-
-		// set same id from fragment file
-		EObject ePart2 = (EObject) part2;
-		E4XMIResource r = (E4XMIResource) ePart2.eResource();
-		r.setID(ePart2, "_gXKowH1YEemug7TLPAdneg");
-
-		// ### act
-		assembler.processFragments(createExtensions, false);
-
-		// ### assert
-		List<MPart> findElements = modelService.findElements(application, "part2Id", MPart.class);
-		// due to apply=notexists the part from the fragment should not have been merged
-		// into the model, because the part from the fragment is already part of
-		// the model
-		assertThat(findElements, hasSize(1));
-		MPart mPart = findElements.get(0);
-		assertThat(mPart.getPersistedState(), hasEntry("id", "kgu"));
-
-		// part 3 is not part of the persisted application yet and is therefore added by
-		// the fragment merge
-		List<MPart> findPart3 = modelService.findElements(application, "part3Id", MPart.class);
-		assertThat(findPart3, hasSize(1));
-
-		// --> part 2 will not be merged due to apply=notexists, but part 3 is added,
-		// because it does not exist yet.
-	}
-
-	@Test
-	public void testInitialApplyButNonInitialStartupFragment() throws IOException {
-		// arrange
-		IExtension[] createExtensions = createExtensions(
-				"org.eclipse.e4.ui.tests/data/ModelAssembler/fragment_initial.xml");
-		MWindow mainWindow = modelService.createModelElement(MWindow.class);
-		mainWindow.setElementId("mainWindow");
-
-		MPartSashContainer partSashContainer = modelService.createModelElement(MPartSashContainer.class);
-		MPartStack partStackTop = modelService.createModelElement(MPartStack.class);
-		partStackTop.setElementId("partStackTop");
-		MPartStack partStackBottom = modelService.createModelElement(MPartStack.class);
-		partStackBottom.setElementId("partStackBottom");
-
-		MPart part1 = modelService.createModelElement(MPart.class);
-		part1.setElementId("part1Id");
-		MPart part2 = modelService.createModelElement(MPart.class);
-		part2.setElementId("part2Id");
-
-		// initially add both parts to top stack, while contributing fragment
-		// contributes part 2 to the partStackBottom
-		partStackTop.getChildren().add(part1);
-		partStackTop.getChildren().add(part2);
-
-		partSashContainer.getChildren().add(partStackTop);
-		partSashContainer.getChildren().add(partStackBottom);
-
-		mainWindow.getChildren().add(partSashContainer);
-		application.getChildren().add(mainWindow);
-
-		// act
-		assembler.processFragments(createExtensions, false);
-
-		// assert
-		List<MPart> findElements = modelService.findElements(application, "part2Id", MPart.class);
-
-		// due to apply=initial the part from the fragment should not have been merged
-		// into the application, because the fragment is not being processed
-		assertThat(findElements, hasSize(1));
-	}
-
 	private void testProcessor(String filePath, boolean initial, boolean afterFragments) throws Exception {
-		IExtension[] extensions = createExtensions(filePath);
-		assembler.runProcessors(extensions, initial, afterFragments);
-	}
-
-	/**
-	 * @param filePath
-	 * @return
-	 * @throws IOException
-	 */
-	private IExtension[] createExtensions(String filePath) throws IOException {
 		IContributor contributor = ContributorFactorySimple.createContributor(BUNDLE_SYMBOLIC_NAME);
 		IExtensionRegistry registry = createTestExtensionRegistry();
 		assertEquals(0, registry.getConfigurationElementsFor(EXTENSION_POINT_ID).length);
@@ -633,7 +515,7 @@ public class ModelAssemblerTests {
 		IExtensionPoint extPoint = registry.getExtensionPoint(EXTENSION_POINT_ID);
 		IExtension[] extensions = new ExtensionsSort().sort(extPoint.getExtensions());
 		assertEquals(0, application.getDescriptors().size());
-		return extensions;
+		assembler.runProcessors(extensions, initial, afterFragments);
 	}
 
 	private IExtensionRegistry createTestExtensionRegistry() {

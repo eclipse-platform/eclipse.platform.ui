@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_hpfZ0NsLEeWEUpR9iKVK6Q">
-  <imports xsi:type="basic:PartStack" xmi:id="_Y0PC0H1YEemug7TLPAdneg" elementId="partStackBottom"/>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_OETVYH1YEemug7TLPAdneg" featurename="children" parentElementId="partStackBottom">
-    <elements xsi:type="basic:Part" xmi:id="_gXKowH1YEemug7TLPAdneg" elementId="part2Id"/>
-    <elements xsi:type="basic:Part" xmi:id="_KjQaEH1kEemug7TLPAdneg" elementId="part3Id"/>
-  </fragments>
-</fragment:ModelFragments>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 BestSolution.at and others.
+ * Copyright (c) 2010, 2018 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
  *     René Brandstetter - Bug 419749
  *     Brian de Alwis (MTI) - Bug 433053
  *     Alexandra Buzila - Refactoring, Bug 475934
- *     Stefan Noebauer - Bug 546777
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -122,7 +121,7 @@ public class ModelAssembler {
 	 * @param initial    <code>true</code> if running from a non-persisted state
 	 *
 	 */
-	public void processFragments(IExtension[] extensions, boolean initial) {
+	private void processFragments(IExtension[] extensions, boolean initial) {
 		List<ModelFragmentWrapper> wrappers = new ArrayList<>();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
@@ -335,15 +334,12 @@ public class ModelAssembler {
 			return new ArrayList<>();
 		}
 
-		List<MApplicationElement> existingElements = new ArrayList<>();
-
 		for (MApplicationElement el : elements) {
 			EObject o = (EObject) el;
 
 			E4XMIResource r = (E4XMIResource) o.eResource();
 
 			if (checkExist && applicationResource.getIDToEObjectMap().containsKey(r.getID(o))) {
-				existingElements.add(el);
 				continue;
 			}
 
@@ -364,8 +360,6 @@ public class ModelAssembler {
 				applicationResource.setID(eObj, r.getInternalId(eObj));
 			}
 		}
-		// remove all existing Elements including all children.
-		fragment.getElements().removeAll(existingElements);
 
 		return fragment.merge(application);
 	}

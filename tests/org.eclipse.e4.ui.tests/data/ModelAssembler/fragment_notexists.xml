@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin>
-	<extension id="id1" point="org.eclipse.e4.workbench.model">
-		<fragment apply="notexists"
-			uri="data/ModelAssembler/NotExistsNonInitalFragmet.e4xmi">
-		</fragment>
-	</extension>
-</plugin>
