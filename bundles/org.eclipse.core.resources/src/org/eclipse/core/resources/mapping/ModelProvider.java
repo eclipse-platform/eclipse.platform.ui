@@ -165,8 +165,7 @@ public abstract class ModelProvider extends PlatformObject {
 		Set<ResourceMapping> result = new HashSet<>();
 		for (ResourceTraversal traversal : traversals) {
 			ResourceMapping[] mappings = getMappings(traversal.getResources(), context, monitor);
-			for (ResourceMapping mapping : mappings)
-				result.add(mapping);
+			result.addAll(Arrays.asList(mappings));
 		}
 		return result.toArray(new ResourceMapping[result.size()]);
 	}

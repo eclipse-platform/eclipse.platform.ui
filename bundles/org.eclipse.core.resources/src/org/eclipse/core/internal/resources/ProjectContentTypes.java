@@ -147,9 +147,7 @@ public class ProjectContentTypes {
 				// no descriptor found for the nature, skip it
 				continue;
 			String[] natureContentTypes = descriptor.getContentTypeIds();
-			for (String natureContentType : natureContentTypes)
-				// collect associate content types
-				related.add(natureContentType);
+			related.addAll(Arrays.asList(natureContentTypes)); // collect associate content types
 		}
 		return related;
 	}

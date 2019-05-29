@@ -258,8 +258,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 
 	protected void setNode(byte[] bytes) {
 
-		for (int index = 0; index < NODE_ADDRESS_BYTE_SIZE; index++)
-			fBits[index + NODE_ADDRESS_START] = bytes[index];
+		System.arraycopy(bytes, 0, fBits, NODE_ADDRESS_START, NODE_ADDRESS_BYTE_SIZE);
 	}
 
 	private void setTimestamp(BigInteger timestamp) {

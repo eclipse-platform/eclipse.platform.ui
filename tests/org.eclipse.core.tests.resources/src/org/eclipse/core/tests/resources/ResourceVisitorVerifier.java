@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.resources.IResource;
@@ -36,9 +37,7 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 	}
 
 	public void addExpected(IResource[] resources) {
-		for (IResource resource : resources) {
-			expected.add(resource);
-		}
+		expected.addAll(Arrays.asList(resources));
 	}
 
 	@Override

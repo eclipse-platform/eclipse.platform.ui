@@ -505,8 +505,7 @@ public final class ResourcesPlugin extends Plugin {
 		List<String> newOrder = new ArrayList<>();
 		// put the project scope first on the list
 		newOrder.add(ProjectScope.SCOPE);
-		for (String entry : original)
-			newOrder.add(entry);
+		newOrder.addAll(Arrays.asList(original));
 		service.setDefaultDefaultLookupOrder(newOrder.toArray(new String[newOrder.size()]));
 	}
 }

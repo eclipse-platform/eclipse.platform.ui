@@ -190,9 +190,7 @@ public class IResourceTest extends ResourceTest {
 
 		IResource[] deleted = buildResources(root, new String[] {"1/1/2/1/", "1/2/3/1"});
 		ensureDoesNotExistInWorkspace(deleted);
-		for (IResource element : deleted) {
-			nonExistingResources.add(element);
-		}
+		nonExistingResources.addAll(Arrays.asList(deleted));
 		//out of sync
 		IResource[] unsynchronized = buildResources(root, new String[] {"1/2/3/3"});
 		ensureOutOfSync((IFile) unsynchronized[0]);

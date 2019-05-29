@@ -47,12 +47,8 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 
 	protected byte[] merge(byte[] b1, byte[] b2) {
 		byte[] result = new byte[b1.length + b2.length];
-		for (int i = 0; i < b1.length; i++) {
-			result[i] = b1[i];
-		}
-		for (int i = 0; i < b2.length; i++) {
-			result[b1.length + i] = b2[i];
-		}
+		System.arraycopy(b1, 0, result, 0, b1.length);
+		System.arraycopy(b2, 0, result, b1.length, b2.length);
 		return result;
 	}
 

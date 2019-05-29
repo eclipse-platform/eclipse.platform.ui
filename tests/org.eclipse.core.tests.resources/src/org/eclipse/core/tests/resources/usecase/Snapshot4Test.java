@@ -15,6 +15,7 @@
 package org.eclipse.core.tests.resources.usecase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -35,9 +36,7 @@ public class Snapshot4Test extends SnapshotTest {
 	protected static String[] defineHierarchy1() {
 		List<String> result = new ArrayList<>();
 		String[] old = Snapshot3Test.defineHierarchy1();
-		for (String element : old) {
-			result.add(element);
-		}
+		result.addAll(Arrays.asList(old));
 		result.remove(new Path(PROJECT_1).append("added file").toString());
 		result.remove(new Path(PROJECT_1).append("yet another file").toString());
 		result.remove(new Path(PROJECT_1).append("a folder").addTrailingSeparator().toString());

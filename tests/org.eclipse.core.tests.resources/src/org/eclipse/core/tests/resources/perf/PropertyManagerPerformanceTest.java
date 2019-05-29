@@ -15,6 +15,7 @@
 package org.eclipse.core.tests.resources.perf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -57,9 +58,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		folders[3] = folders[2].getFolder("folder4");
 		folders[4] = folders[3].getFolder("folder5");
 		List<IResource> resources = new ArrayList<>(filesPerFolder * folders.length);
-		for (IFolder folder : folders) {
-			resources.add(folder);
-		}
+		resources.addAll(Arrays.asList(folders));
 		ensureExistsInWorkspace(folders, true);
 		for (IFolder folder : folders) {
 			for (int j = 0; j < filesPerFolder; j++) {

@@ -16,6 +16,7 @@
 package org.eclipse.core.internal.refresh;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
@@ -170,8 +171,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 			//this will cause the job to never run again once it has exhausted
 			//the set of roots to refresh
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-			for (IProject project : projects)
-				toRefresh.add(project);
+			toRefresh.addAll(Arrays.asList(projects));
 		}
 		schedule(MIN_FREQUENCY);
 	}
