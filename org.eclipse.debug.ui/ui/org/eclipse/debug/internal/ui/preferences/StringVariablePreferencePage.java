@@ -320,14 +320,15 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 								IDialogConstants.NO_LABEL,
 								IDialogConstants.CANCEL_LABEL }, 0);
 						int overWrite= dialog.open();
-						if (overWrite == 0) {
+						switch (overWrite) {
+						case 0:
 							currentVariable.setValue(value);
 							currentVariable.setDescription(description);
 							variableTable.update(currentVariable, null);
 							return true;
-						} else if(overWrite == 1){
+						case 1:
 							return false;
-						} else {
+						default:
 							return true;  // Cancel was pressed, return true so operation is ended
 						}
 					}

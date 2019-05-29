@@ -42,31 +42,29 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 		String ret;
 		long result = 0;
 
-		if (columnSize == 1)
-		{
+		switch (columnSize) {
+		case 1:
 			result = byteArray[0];
-		}
-		else if (columnSize == 2)
-		{
+			break;
+		case 2:
 			result = RenderingsUtil.convertByteArrayToShort(byteArray, endianess);
-		}
-		else if (columnSize == 4)
-		{
+			break;
+		case 4:
 			result = RenderingsUtil.convertByteArrayToInt(byteArray, endianess);
-		}
-		else if (columnSize == 8)
-		{
+			break;
+		case 8:
 			result = RenderingsUtil.convertByteArrayToLong(byteArray, endianess);
-		}
-		else if (columnSize == 16)
+			break;
+		case 16:
 		{
 			BigInteger bigRet = RenderingsUtil.convertByteArrayToSignedBigInt(byteArray, endianess);
 			return bigRet.toString();
 		}
-		else
+		default:
 		{
 			BigInteger bigRet = RenderingsUtil.convertByteArrayToSignedBigInt(byteArray, endianess, columnSize);
 			return bigRet.toString();
+		}
 		}
 
 		ret = Long.valueOf(result).toString();
@@ -78,28 +76,31 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 	{
 		try {
 			byte[] bytes;
-			if (colSize == 1)
-			{
+			switch (colSize) {
+			case 1:
 				byte x = Byte.parseByte(newValue);
 				bytes = new byte[1];
 				bytes[0] = x;
-			}
-			else if (colSize == 2)
+				break;
+			case 2:
 			{
 				short i = Short.parseShort(newValue);
 				bytes = RenderingsUtil.convertShortToByteArray(i, endianess);
+				break;
 			}
-			else if (colSize == 4)
+			case 4:
 			{
 				int i = Integer.parseInt(newValue);
 				bytes = RenderingsUtil.convertIntToByteArray(i, endianess);
+				break;
 			}
-			else if (colSize == 8)
+			case 8:
 			{
 				long i = Long.parseLong(newValue);
 				bytes = RenderingsUtil.convertLongToByteArray(i, endianess);
+				break;
 			}
-			else if (colSize == 16)
+			case 16:
 			{
 				// special case for colSize == 16
 				// need to represent number in Big Integer
@@ -108,7 +109,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 
 				return bytes;
 			}
-			else
+			default:
 			{
 				BigInteger i = new BigInteger(newValue);
 
@@ -129,6 +130,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 
 				bytes = RenderingsUtil.convertSignedBigIntToByteArray(i, endianess, colSize);
 				return bytes;
+			}
 			}
 
 			return bytes;

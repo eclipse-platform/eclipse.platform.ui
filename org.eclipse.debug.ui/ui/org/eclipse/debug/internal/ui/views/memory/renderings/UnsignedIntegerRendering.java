@@ -37,33 +37,30 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 		String ret;
 		long result = 0;
 
-		if (columnSize == 1)
-		{
+		switch (columnSize) {
+		case 1:
 			result = byteArray[0];
 			result &= 0xff;
-		}
-		else if (columnSize == 2)
-		{
+			break;
+		case 2:
 			result = RenderingsUtil.convertByteArrayToInt(byteArray, endianess);
-		}
-		else if (columnSize == 4)
-		{
+			break;
+		case 4:
 			result = RenderingsUtil.convertByteArrayToLong(byteArray, endianess);
-		}
-		else if (columnSize == 8)
-		{
+			break;
+		case 8:
 			BigInteger value = RenderingsUtil.convertByteArrayToUnsignedLong(byteArray, endianess);
 			return value.toString();
-		}
-		else if (columnSize == 16)
+		case 16:
 		{
 			BigInteger bigRet = RenderingsUtil.convertByteArrayToUnsignedBigInt(byteArray, endianess);
 			return bigRet.toString();
 		}
-		else
+		default:
 		{
 			BigInteger bigRet = RenderingsUtil.convertByteArrayToUnsignedBigInt(byteArray, endianess, columnSize);
 			return bigRet.toString();
+		}
 		}
 
 		ret = Long.valueOf(result).toString();
@@ -75,32 +72,37 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 	{
 		try {
 			byte[] bytes;
-			if (colSize == 1)
+			switch (colSize) {
+			case 1:
 			{
 				short i = Short.parseShort(newValue);
 				bytes = RenderingsUtil.convertShortToByteArray(i, endianess);
 				bytes = extractBytes(bytes, endianess, colSize);
+				break;
 			}
 			// unsigned integer
-			else if (colSize == 2)
+			case 2:
 			{
 				int i = Integer.parseInt(newValue);
 				bytes = RenderingsUtil.convertIntToByteArray(i, endianess);
 				bytes = extractBytes(bytes, endianess, colSize);
+				break;
 			}
-			else if (colSize == 4)
+			case 4:
 			{
 				long i = Long.parseLong(newValue);
 				bytes = RenderingsUtil.convertLongToByteArray(i, endianess);
 				bytes = extractBytes(bytes, endianess, colSize);
+				break;
 			}
-			else if (colSize == 8)
+			case 8:
 			{
 				BigInteger i = new BigInteger(newValue);
 				bytes = RenderingsUtil.convertBigIntegerToByteArray(i, endianess);
 				bytes = extractBytes(bytes, endianess, colSize);
+				break;
 			}
-			else if (colSize == 16)
+			case 16:
 			{
 				BigInteger i = new BigInteger(newValue);
 				bytes = RenderingsUtil.convertUnsignedBigIntegerToByteArray(i, endianess);
@@ -108,12 +110,13 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 
 				return bytes;
 			}
-			else
+			default:
 			{
 				BigInteger i = new BigInteger(newValue);
 				bytes = RenderingsUtil.convertUnsignedBigIntToByteArray(i, endianess, colSize);
 				bytes = extractBytes(bytes, endianess, colSize);
 				return bytes;
+			}
 			}
 
 			return bytes;

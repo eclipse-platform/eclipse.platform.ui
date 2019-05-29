@@ -172,13 +172,16 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
     @Override
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
         if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
-        	if (fDropType == DROP_TYPE_EXPRESSION){
+        	switch (fDropType) {
+        	case DROP_TYPE_EXPRESSION:
         		return validateExpressionDrop(target);
-        	} else if (fDropType == DROP_TYPE_VARIABLE){
+        	case DROP_TYPE_VARIABLE:
         		return validateVariableDrop(target);
-            } else if (fDropType == DROP_TYPE_WATCH_ADAPTABLE_ELEMENT){
-                return validateWatchAdaptableDrop(target);
-            }
+        	case DROP_TYPE_WATCH_ADAPTABLE_ELEMENT:
+        		return validateWatchAdaptableDrop(target);
+        	default:
+        		break;
+        	}
         } else if (TextTransfer.getInstance().isSupportedType(transferType)) {
             return validateTextDrop(target);
         }

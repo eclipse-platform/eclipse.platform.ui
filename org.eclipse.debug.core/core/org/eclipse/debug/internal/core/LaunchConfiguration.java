@@ -734,51 +734,58 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
     	try {
 			// bug 28245 - force the delegate to load in case it is interested in launch notifications
 			Set<String> modes = getModes();
-	    	modes.add(mode);
-	    	ILaunchDelegate[] delegates = getType().getDelegates(modes);
-	    	ILaunchConfigurationDelegate delegate = null;
-	    	if (delegates.length == 1) {
-	    		delegate = delegates[0].getDelegate();
-	    	} else if (delegates.length == 0) {
-	    		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-	    		if (handler != null) {
-	    			handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
-	    		}
-	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_11, null);
-	    		throw new CoreException(status);
-	    	} else {
-	    		ILaunchDelegate del = getPreferredDelegate(modes);
-	    		if(del == null) {
-	    			del = getType().getPreferredDelegate(modes);
-	    		}
-	    		if(del == null) {
-	    			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-	    			IStatus status = null;
-	    			if (handler != null) {
-	    				status = (IStatus) handler.handleStatus(duplicateDelegates, new Object[] {this, mode});
-	    			}
-					if(status != null && status.isOK()) {
-						del = getPreferredDelegate(modes);
-						if(del == null) {
-							del = getType().getPreferredDelegate(modes);
+			modes.add(mode);
+			ILaunchDelegate[] delegates = getType().getDelegates(modes);
+			ILaunchConfigurationDelegate delegate = null;
+			switch (delegates.length) {
+				case 1:
+					delegate = delegates[0].getDelegate();
+					break;
+				case 0:
+				{
+					IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+					if (handler != null) {
+						handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
+					}
+					IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_11, null);
+					throw new CoreException(status);
+				}
+				default:
+				{
+					ILaunchDelegate del = getPreferredDelegate(modes);
+					if(del == null) {
+						del = getType().getPreferredDelegate(modes);
+					}	
+					if(del == null) {
+						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+						IStatus status = null;
+						if (handler != null) {
+							status = (IStatus) handler.handleStatus(duplicateDelegates, new Object[] {this, mode});
 						}
-						if(del != null) {
-							delegate = del.getDelegate();
+						if(status != null && status.isOK()) {
+							del = getPreferredDelegate(modes);
+							if(del == null) {
+								del = getType().getPreferredDelegate(modes);
+							}
+							if(del != null) {
+								delegate = del.getDelegate();
+							}
+							else {
+								status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null);
+								throw new CoreException(status);
+							}
 						}
 						else {
 							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null);
-				    		throw new CoreException(status);
+							throw new CoreException(status);
 						}
 					}
 					else {
-						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null);
-			    		throw new CoreException(status);
+						delegate = del.getDelegate();
 					}
-	    		}
-	    		else {
-	    			delegate = del.getDelegate();
-	    		}
-	    	}
+					break;
+				}
+			}
 
 			ILaunchConfigurationDelegate2 delegate2 = null;
 			if (delegate instanceof ILaunchConfigurationDelegate2) {

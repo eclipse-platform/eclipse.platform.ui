@@ -122,12 +122,17 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 				String dataEndian = DebugUIMessages.TableRenderingPropertiesPage_12;
 				if (endianessKnown)
 				{
-					if (endianess == RenderingsUtil.BIG_ENDIAN)
+					switch (endianess) {
+					case RenderingsUtil.BIG_ENDIAN:
 						dataEndian = DebugUIMessages.TableRenderingPropertiesPage_13;
-					else if (endianess == RenderingsUtil.LITTLE_ENDIAN)
+						break;
+					case RenderingsUtil.LITTLE_ENDIAN:
 						dataEndian = DebugUIMessages.TableRenderingPropertiesPage_14;
-					else
+						break;
+					default:
 						dataEndian = DebugUIMessages.TableRenderingPropertiesPage_15;
+						break;
+					}
 				}
 				addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_16, dataEndian);
 
@@ -139,16 +144,19 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 					String displayEndian = DebugUIMessages.TableRenderingPropertiesPage_17;
 					endianess = intRendering.getDisplayEndianess();
 
-					if (endianess == RenderingsUtil.BIG_ENDIAN)
+					switch (endianess) {
+					case RenderingsUtil.BIG_ENDIAN:
 						displayEndian = DebugUIMessages.TableRenderingPropertiesPage_18;
-					else if (endianess == RenderingsUtil.LITTLE_ENDIAN)
+						break;
+					case RenderingsUtil.LITTLE_ENDIAN:
 						displayEndian = DebugUIMessages.TableRenderingPropertiesPage_19;
-					else
-					{
+						break;
+					default:
 						if (endianessKnown)
 							displayEndian = dataEndian;
 						else
 							displayEndian = DebugUIMessages.TableRenderingPropertiesPage_20;
+						break;
 					}
 					addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_21, displayEndian);
 				}
