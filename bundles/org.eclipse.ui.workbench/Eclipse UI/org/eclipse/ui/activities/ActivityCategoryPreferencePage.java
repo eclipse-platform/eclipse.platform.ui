@@ -414,7 +414,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		System.arraycopy(partiallyEnabledCategories, 0, allChecked, enabledCategories.length,
 				partiallyEnabledCategories.length);
 		categoryViewer.setCheckedElements(allChecked);
-		categoryViewer.setGrayedElements(partiallyEnabledCategories);
+		categoryViewer.setGrayedElements((Object[]) partiallyEnabledCategories);
 	}
 
 	private ICategory[] getPartialCategories() {

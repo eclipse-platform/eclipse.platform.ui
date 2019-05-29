@@ -527,7 +527,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @param elements
 	 *            the array to check
 	 */
-	protected void assertElementsNotNull(Object[] elements) {
+	protected void assertElementsNotNull(Object... elements) {
 		Assert.isNotNull(elements);
 		for (Object element : elements) {
 			Assert.isNotNull(element);

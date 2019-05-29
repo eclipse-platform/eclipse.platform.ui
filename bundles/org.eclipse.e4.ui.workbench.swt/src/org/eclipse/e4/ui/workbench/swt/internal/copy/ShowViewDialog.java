@@ -305,7 +305,7 @@ public class ShowViewDialog extends Dialog implements
 			return;
 
 		if (expandedCategoryIds.length > 0)
-			filteredTree.getViewer().setExpandedElements(expandedCategoryIds);
+			filteredTree.getViewer().setExpandedElements((Object[]) expandedCategoryIds);
 
 		String selectedPartId = settings.get(STORE_SELECTED_VIEW_ID);
 		if (selectedPartId != null) {

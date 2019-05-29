@@ -314,7 +314,7 @@ public class CommonViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
 	 */
 	@Override
-	public void remove(Object[] elements) {
+	public void remove(Object... elements) {
 		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
 				.getPipelineService();
 

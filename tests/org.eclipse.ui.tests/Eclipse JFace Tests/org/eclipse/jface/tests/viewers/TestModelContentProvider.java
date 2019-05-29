@@ -44,10 +44,10 @@ public class TestModelContentProvider implements ITestModelListener,
 				((TableViewer) fViewer).add(change.getChildren());
 			}
 		} else if (fViewer instanceof AbstractTreeViewer) {
-			((AbstractTreeViewer) fViewer).add(change.getParent(), change
+			((AbstractTreeViewer) fViewer).add(change.getParent(), (Object[]) change
 					.getChildren());
 		} else if (fViewer instanceof ComboViewer) {
-			((ComboViewer) fViewer).add(change.getChildren());
+			((ComboViewer) fViewer).add((Object[]) change.getChildren());
 		} else {
 			Assert.isTrue(false, "Unknown kind of viewer");
 		}
@@ -64,13 +64,13 @@ public class TestModelContentProvider implements ITestModelListener,
 
 	protected void doRemove(TestModelChange change) {
 		if (fViewer instanceof ListViewer) {
-			((ListViewer) fViewer).remove(change.getChildren());
+			((ListViewer) fViewer).remove((Object[]) change.getChildren());
 		} else if (fViewer instanceof TableViewer) {
 			((TableViewer) fViewer).remove(change.getChildren());
 		} else if (fViewer instanceof AbstractTreeViewer) {
-			((AbstractTreeViewer) fViewer).remove(change.getChildren());
+			((AbstractTreeViewer) fViewer).remove((Object[]) change.getChildren());
 		} else if (fViewer instanceof ComboViewer) {
-			((ComboViewer) fViewer).remove(change.getChildren());
+			((ComboViewer) fViewer).remove((Object[]) change.getChildren());
 		} else {
 			Assert.isTrue(false, "Unknown kind of viewer");
 		}

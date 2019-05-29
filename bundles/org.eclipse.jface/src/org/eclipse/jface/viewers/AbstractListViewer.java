@@ -132,7 +132,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
 	 *
 	 * @param elements the elements to add
 	 */
-	public void add(Object[] elements) {
+	public void add(Object... elements) {
 		assertElementsNotNull(elements);
 		Object[] filtered = filter(elements);
 		ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
@@ -434,7 +434,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
 	 *
 	 * @param elements the elements to remove
 	 */
-	public void remove(final Object[] elements) {
+	public void remove(final Object... elements) {
 		assertElementsNotNull(elements);
 		if (elements.length == 0) {
 			return;

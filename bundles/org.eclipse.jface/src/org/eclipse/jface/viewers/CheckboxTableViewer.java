@@ -468,7 +468,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 	 *
 	 * @see #getGrayedElements
 	 */
-	public void setGrayedElements(Object[] elements) {
+	public void setGrayedElements(Object... elements) {
 		assertElementsNotNull(elements);
 		CustomHashtable set = newHashtable(elements.length * 2 + 1);
 		for (Object element : elements) {

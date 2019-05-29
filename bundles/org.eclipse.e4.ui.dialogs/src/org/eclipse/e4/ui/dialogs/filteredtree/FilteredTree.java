@@ -980,7 +980,7 @@ public class FilteredTree extends Composite {
 		}
 
 		@Override
-		public void add(Object parentElementOrTreePath, Object[] childElements) {
+		public void add(Object parentElementOrTreePath, Object... childElements) {
 			getPatternFilter().clearCaches();
 			super.add(parentElementOrTreePath, childElements);
 		}
@@ -1028,13 +1028,13 @@ public class FilteredTree extends Composite {
 		}
 
 		@Override
-		public void remove(Object parent, Object[] elements) {
+		public void remove(Object parent, Object... elements) {
 			getPatternFilter().clearCaches();
 			super.remove(parent, elements);
 		}
 
 		@Override
-		public void remove(Object[] elementsOrTreePaths) {
+		public void remove(Object... elementsOrTreePaths) {
 			getPatternFilter().clearCaches();
 			super.remove(elementsOrTreePaths);
 		}

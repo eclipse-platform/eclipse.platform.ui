@@ -527,7 +527,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	 *
 	 * @see #getGrayedElements
 	 */
-	public void setGrayedElements(Object[] elements) {
+	public void setGrayedElements(Object... elements) {
 		assertElementsNotNull(elements);
 		CustomHashtable grayedElements = newHashtable(elements.length * 2 + 1);
 		for (Object element : elements) {

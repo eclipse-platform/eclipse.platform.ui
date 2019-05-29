@@ -147,7 +147,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param childElements
 	 *            the child elements to add
 	 */
-	public void add(Object parentElementOrTreePath, Object[] childElements) {
+	public void add(Object parentElementOrTreePath, Object... childElements) {
 		Assert.isNotNull(parentElementOrTreePath);
 		assertElementsNotNull(childElements);
 		if (checkBusy())
@@ -2225,10 +2225,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
 	 *
-	 * @param elementsOrTreePaths
-	 *            the elements to remove
+	 * @param elementsOrTreePaths the elements to remove
 	 */
-	public void remove(final Object[] elementsOrTreePaths) {
+	public void remove(final Object... elementsOrTreePaths) {
 		assertElementsNotNull(elementsOrTreePaths);
 		if (elementsOrTreePaths.length == 0) {
 			return;
@@ -2256,7 +2255,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *
 	 * @since 3.2
 	 */
-	public void remove(final Object parent, final Object[] elements) {
+	public void remove(final Object parent, final Object... elements) {
 		assertElementsNotNull(elements);
 		if (elements.length == 0) {
 			return;
@@ -2423,7 +2422,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the array of expanded elements
 	 * @see #getExpandedElements
 	 */
-	public void setExpandedElements(Object[] elements) {
+	public void setExpandedElements(Object... elements) {
 		assertElementsNotNull(elements);
 		if (checkBusy()) {
 			return;
@@ -2459,8 +2458,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *
 	 * @since 3.2
 	 */
-	public void setExpandedTreePaths(TreePath[] treePaths) {
-		assertElementsNotNull(treePaths);
+	public void setExpandedTreePaths(TreePath... treePaths) {
+		assertElementsNotNull((Object[]) treePaths);
 		if (checkBusy())
 			return;
 		final IElementComparer comparer = getComparer();
@@ -2470,6 +2469,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			public boolean equals(Object a, Object b) {
 				return ((TreePath) a).equals(((TreePath) b), comparer);
 			}
+
 
 			@Override
 			public int hashCode(Object element) {
