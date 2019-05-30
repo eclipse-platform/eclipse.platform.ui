@@ -35,8 +35,7 @@ import org.eclipse.core.runtime.Assert;
  * {@link #set(int, Object)} method. All other mutator methods (addition methods
  * and {@link #move(int, int)}) throw an {@link UnsupportedOperationException}.
  *
- * @param <E>
- *            the type of the elements in the list
+ * @param <E> the type of the elements in the list
  *
  * @since 1.2
  */
@@ -64,8 +63,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	 * Constructs a MultiList in the default realm, and backed by the given
 	 * observable lists.
 	 *
-	 * @param lists
-	 *            the array of observable lists backing this MultiList.
+	 * @param lists the array of observable lists backing this MultiList.
 	 * @since 1.6
 	 */
 	public MultiList(List<IObservableList<E>> lists) {
@@ -86,13 +84,11 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	/**
-	 * Constructs a MultiList in the default realm backed by the given
-	 * observable lists.
+	 * Constructs a MultiList in the default realm backed by the given observable
+	 * lists.
 	 *
-	 * @param lists
-	 *            the array of observable lists backing this MultiList.
-	 * @param elementType
-	 *            element type of the constructed list.
+	 * @param lists       the array of observable lists backing this MultiList.
+	 * @param elementType element type of the constructed list.
 	 * @since 1.6
 	 */
 	public MultiList(List<IObservableList<E>> lists, Object elementType) {
@@ -100,13 +96,11 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	/**
-	 * Constructs a MultiList belonging to the given realm, and backed by the
-	 * given observable lists.
+	 * Constructs a MultiList belonging to the given realm, and backed by the given
+	 * observable lists.
 	 *
-	 * @param realm
-	 *            the observable's realm
-	 * @param lists
-	 *            the array of observable lists backing this MultiList
+	 * @param realm the observable's realm
+	 * @param lists the array of observable lists backing this MultiList
 	 */
 	public MultiList(Realm realm, IObservableList<E>[] lists) {
 		this(realm, lists, null);
@@ -135,15 +129,12 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	/**
-	 * Constructs a MultiList belonging to the given realm, and backed by the
-	 * given observable lists.
+	 * Constructs a MultiList belonging to the given realm, and backed by the given
+	 * observable lists.
 	 *
-	 * @param realm
-	 *            the observable's realm
-	 * @param lists
-	 *            the array of observable lists backing this MultiList
-	 * @param elementType
-	 *            element type of the constructed list.
+	 * @param realm       the observable's realm
+	 * @param lists       the array of observable lists backing this MultiList
+	 * @param elementType element type of the constructed list.
 	 * @since 1.6
 	 */
 	public MultiList(Realm realm, List<IObservableList<E>> lists, Object elementType) {
@@ -163,8 +154,9 @@ public class MultiList<E> extends AbstractObservableList<E> {
 			listChangeListener = event -> getRealm().exec(() -> {
 				stale = null;
 				listChanged(event);
-				if (isStale())
+				if (isStale()) {
 					fireStale();
+				}
 			});
 		}
 		if (staleListener == null) {
@@ -174,11 +166,10 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		for (IObservableList<E> list : lists) {
 			list.addListChangeListener(listChangeListener);
 			list.addStaleListener(staleListener);
-
 			// Determining staleness at this time prevents firing redundant
-			// stale events if MultiList happens to be stale now, and a sublist
+			// stale events if list happens to be stale now, and a sublist
 			// fires a stale event later.
-			this.stale = computeStaleness() ? Boolean.TRUE : Boolean.FALSE;
+			this.stale = computeStaleness();
 		}
 	}
 
@@ -200,34 +191,37 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	private void makeStale() {
-		if (stale == null || stale.booleanValue() == false) {
-			stale = Boolean.TRUE;
+		if (stale == null || !stale) {
+			stale = true;
 			fireStale();
 		}
 	}
 
 	private void listChanged(ListChangeEvent<? extends E> event) {
 		IObservableList<? extends E> source = event.getObservableList();
+		fireListChange(offsetListDiff(computeOffset(source), event.diff));
+	}
+
+	private int computeOffset(List<? extends E> chanedList) {
 		int offset = 0;
 		for (IObservableList<E> list : lists) {
-			if (source == list) {
-				fireListChange(offsetListDiff(offset, event.diff));
-				return;
+			if (chanedList == list) {
+				return offset;
 			}
 			offset += list.size();
 		}
-		Assert.isLegal(
-				false,
+
+		throw new IllegalArgumentException(
 				"MultiList received a ListChangeEvent from an observable list that is not one of its sources."); //$NON-NLS-1$
 	}
+
 
 	private ListDiff<E> offsetListDiff(int offset, ListDiff<? extends E> diff) {
 		List<ListDiffEntry<E>> differences = offsetListDiffEntries(offset, diff.getDifferences());
 		return Diffs.createListDiff(differences);
 	}
 
-	private List<ListDiffEntry<E>> offsetListDiffEntries(int offset,
-			ListDiffEntry<? extends E>[] entries) {
+	private List<ListDiffEntry<E>> offsetListDiffEntries(int offset, ListDiffEntry<? extends E>[] entries) {
 		List<ListDiffEntry<E>> offsetEntries = new ArrayList<>(entries.length);
 		for (ListDiffEntry<? extends E> entry : entries) {
 			offsetEntries.add(offsetListDiffEntry(offset, entry));
@@ -236,7 +230,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	private ListDiffEntry<E> offsetListDiffEntry(int offset, ListDiffEntry<? extends E> entry) {
-		return Diffs.<E>createListDiffEntry(offset + entry.getPosition(), entry.isAddition(), entry.getElement());
+		return Diffs.createListDiffEntry(offset + entry.getPosition(), entry.isAddition(), entry.getElement());
 	}
 
 	@Override
@@ -307,15 +301,11 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	@Override
 	public boolean equals(Object o) {
 		getterCalled();
-		if (o == this)
-			return true;
-		if (o == null)
-			return false;
-		if (!(o instanceof List))
-			return false;
+		if (o == this) return true;
+		if (o == null) return false;
+		if (!(o instanceof List)) return false;
 		List<?> that = (List<?>) o;
-		if (doGetSize() != that.size())
-			return false;
+		if (doGetSize() != that.size()) return false;
 
 		int subListIndex = 0;
 		for (IObservableList<E> list : lists) {
@@ -371,8 +361,9 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		for (IObservableList<E> list : lists) {
 			offset -= list.size();
 			int index = list.indexOf(o);
-			if (index != -1)
+			if (index != -1) {
 				return offset + index;
+			}
 		}
 		return -1;
 	}
@@ -439,20 +430,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 			}
 			offset += list.size();
 		}
-		throw new IndexOutOfBoundsException("index: " + index + ", size: " //$NON-NLS-1$ //$NON-NLS-2$
-				+ offset);
-	}
-
-	@Override
-	public Object[] toArray() {
-		getterCalled();
-		return toArray(new Object[doGetSize()]);
-	}
-
-	@Override
-	public <T> T[] toArray(T[] a) {
-		getterCalled();
-		return super.toArray(a);
+		throw new IndexOutOfBoundsException("index: " + index + ", size: " + offset); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -467,10 +445,10 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		}
 
 		if (stale == null) {
-			this.stale = computeStaleness() ? Boolean.TRUE : Boolean.FALSE;
+			this.stale = computeStaleness();
 		}
 
-		return stale.booleanValue();
+		return stale;
 	}
 
 	private boolean computeStaleness() {
@@ -511,10 +489,10 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	private final class MultiListItr implements Iterator<E> {
-		List<Iterator<E>> iters;
-		int iterIndex = 0;
+		private List<Iterator<E>> iters;
+		private int iterIndex = 0;
 
-		MultiListItr() {
+		private MultiListItr() {
 			iters = new ArrayList<Iterator<E>>(lists.size());
 			for (IObservableList<E> list : lists) {
 				iters.add(list.iterator());
@@ -524,16 +502,18 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		@Override
 		public boolean hasNext() {
 			for (int i = iterIndex; i < iters.size(); i++) {
-				if (iters.get(i).hasNext())
+				if (iters.get(i).hasNext()) {
 					return true;
+				}
 			}
 			return false;
 		}
 
 		@Override
 		public E next() {
-			while (iterIndex < iters.size() && !iters.get(iterIndex).hasNext())
+			while (iterIndex < iters.size() && !iters.get(iterIndex).hasNext()) {
 				iterIndex++;
+			}
 			return iters.get(iterIndex).next();
 		}
 
@@ -543,9 +523,9 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		}
 	}
 
-	private class MultiListListItr implements ListIterator<E> {
-		List<ListIterator<E>> iters;
-		int iterIndex;
+	private final class MultiListListItr implements ListIterator<E> {
+		private List<ListIterator<E>> iters;
+		private int iterIndex;
 
 		private MultiListListItr(int initialIndex) {
 			iters = new ArrayList<ListIterator<E>>(lists.size());
@@ -577,8 +557,9 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		@Override
 		public boolean hasNext() {
 			for (int i = iterIndex; i < iters.size(); i++) {
-				if (iters.get(i).hasNext())
+				if (iters.get(i).hasNext()) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -586,39 +567,44 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		@Override
 		public boolean hasPrevious() {
 			for (int i = iterIndex; i >= 0; i--) {
-				if (iters.get(i).hasPrevious())
+				if (iters.get(i).hasPrevious())  {
 					return true;
+				}
 			}
 			return false;
 		}
 
 		@Override
 		public E next() {
-			while (iterIndex < iters.size() && !iters.get(iterIndex).hasNext())
+			while (iterIndex < iters.size() && !iters.get(iterIndex).hasNext())  {
 				iterIndex++;
+			}
 			return iters.get(iterIndex).next();
 		}
 
 		@Override
 		public int nextIndex() {
 			int offset = 0;
-			for (int i = 0; i < iterIndex; i++)
+			for (int i = 0; i < iterIndex; i++)  {
 				offset += iters.get(i).nextIndex();
+			}
 			return offset + iters.get(iterIndex).nextIndex();
 		}
 
 		@Override
 		public E previous() {
-			while (iterIndex >= 0 && !iters.get(iterIndex).hasPrevious())
+			while (iterIndex >= 0 && !iters.get(iterIndex).hasPrevious()) {
 				iterIndex--;
+			}
 			return iters.get(iterIndex).previous();
 		}
 
 		@Override
 		public int previousIndex() {
 			int offset = 0;
-			for (int i = 0; i < iterIndex; i++)
+			for (int i = 0; i < iterIndex; i++) {
 				offset += iters.get(i).nextIndex();
+			}
 			return offset + iters.get(iterIndex).previousIndex();
 		}
 
