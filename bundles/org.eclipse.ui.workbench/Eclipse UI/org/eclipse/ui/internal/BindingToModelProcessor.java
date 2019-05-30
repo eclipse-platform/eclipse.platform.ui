@@ -86,7 +86,7 @@ public class BindingToModelProcessor {
 
 	private void gatherTables(List<MBindingTable> bindingTables) {
 		for (MBindingTable table : bindingTables) {
-			tables.put(table.getBindingContext().getElementId(), table);
+			tables.put(table.getElementId(), table);
 			keys.addAll(table.getBindings());
 		}
 	}
@@ -151,7 +151,7 @@ public class BindingToModelProcessor {
 		table.setBindingContext(getBindingContext(application, contextId));
 		table.setElementId(contextId);
 		application.getBindingTables().add(table);
-		tables.put(table.getBindingContext().getElementId(), table);
+		tables.put(contextId, table);
 		return table;
 	}
 
