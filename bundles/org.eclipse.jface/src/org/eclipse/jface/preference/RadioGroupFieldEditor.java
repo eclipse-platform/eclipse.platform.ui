@@ -152,18 +152,17 @@ public class RadioGroupFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Checks whether given <code>String[][]</code> is of "type"
-	 * <code>String[][2]</code>.
+	 * Checks whether given <code>String[][]</code> contains sub arrays with minimum size 2
 	 * @param table
 	 *
 	 * @return <code>true</code> if it is ok, and <code>false</code> otherwise
 	 */
-	private boolean checkArray(String[][] table) {
+	private static boolean checkArray(String[][] table) {
 		if (table == null) {
 			return false;
 		}
 		for (String[] array : table) {
-			if (array == null || array.length != 2) {
+			if (array == null || array.length < 2) {
 				return false;
 			}
 		}
