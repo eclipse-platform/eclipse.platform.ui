@@ -42,7 +42,7 @@
 
           <property
         		name="startupForegroundColor"
-				value="c1bc1f"/>
+				value="ffffff"/>
           <property
                 name="startupMessageRect"
                 value="7,265,320,20"/>
@@ -51,7 +51,7 @@
                 value="2,290,450,10"/>
           <property
                 name="buildIdLocation"
-                value="125,245">
+                value="50,220">
           </property>
           <property
                 name="buildIdSize"
