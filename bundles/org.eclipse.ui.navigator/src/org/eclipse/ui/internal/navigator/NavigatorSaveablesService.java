@@ -435,6 +435,8 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private SaveablesProvider[] getSaveablesProviders() {
 		// TODO optimize this
 		if (saveablesProviders == null) {
+			if (isDisposed())
+				return null;
 			inactivePluginsWithSaveablesProviders = new HashMap<String, List>();
 			saveablesProviderMap = new TreeMap<NavigatorContentDescriptor, SaveablesProvider>(ExtensionSequenceNumberComparator.INSTANCE);
 			INavigatorContentDescriptor[] descriptors = contentService
@@ -582,4 +584,8 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 	}
 
+	@Override
+	public boolean hasSaveablesProvider() {
+		return !isDisposed() && getSaveablesProviders() != null && getSaveablesProviders().length > 0;
+	}
 }

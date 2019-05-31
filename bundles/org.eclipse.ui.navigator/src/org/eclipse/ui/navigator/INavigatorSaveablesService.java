@@ -69,4 +69,14 @@ public interface INavigatorSaveablesService {
 	 */
 	public Saveable[] getActiveSaveables();
 
+	/**
+	 * Check if any SaveablesProviders are contributed.
+	 *
+	 * @return True if and only if any SaveablesProviders are contributed for this
+	 *         service.
+	 *
+	 * @since 3.9
+	 */
+	boolean hasSaveablesProvider();
+
 }

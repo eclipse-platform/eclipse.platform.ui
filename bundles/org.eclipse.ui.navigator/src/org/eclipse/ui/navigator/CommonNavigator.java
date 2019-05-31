@@ -643,6 +643,13 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		return getNavigatorContentService().getSaveablesService().getActiveSaveables();
 	}
 
+	/**
+	 * @since 3.9
+	 */
+	protected boolean hasSaveablesProvider() {
+		return getNavigatorContentService().getSaveablesService().hasSaveablesProvider();
+	}
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// Ignore. This method is not called because CommonNavigator implements

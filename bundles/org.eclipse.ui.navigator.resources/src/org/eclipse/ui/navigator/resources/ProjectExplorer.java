@@ -33,8 +33,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IAggregateWorkingSet;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -43,7 +45,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.DefaultSaveable;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.filters.UserFilter;
 import org.eclipse.ui.internal.navigator.framelist.Frame;
@@ -322,4 +326,32 @@ public final class ProjectExplorer extends CommonNavigator {
 		return viewer;
 	}
 
+	@Override
+	public Saveable[] getSaveables() {
+		if (!hasSaveablesProvider()) {
+			IEditorPart saveablePart = getActiveEditor();
+			return saveablePart != null
+					? saveablePart instanceof ISaveablesSource ? ((ISaveablesSource) saveablePart).getSaveables()
+							: new Saveable[] { new DefaultSaveable(saveablePart) }
+					: new Saveable[] {};
+		}
+		return super.getSaveables();
+	}
+
+	@Override
+	public Saveable[] getActiveSaveables() {
+		if (!hasSaveablesProvider()) {
+			IEditorPart saveablePart = getActiveEditor();
+			return saveablePart != null
+					? saveablePart instanceof ISaveablesSource ? ((ISaveablesSource) saveablePart).getActiveSaveables()
+							: new Saveable[] { new DefaultSaveable(saveablePart) }
+					: new Saveable[] {};
+		}
+		return super.getActiveSaveables();
+	}
+
+	private IEditorPart getActiveEditor() {
+		IWorkbenchPage page = getSite().getPage();
+		return page != null ? page.getActiveEditor() : null;
+	}
 }
