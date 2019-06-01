@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     SAP SE, christian.georgi@sap.com - Bug 487357: Make find dialog content scrollable
+ *     Pierre-Yves B., pyvesdev@gmail.com - Bug 121634: [find/replace] status bar must show the string being searched when "String Not Found"
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -976,7 +977,8 @@ class FindReplaceDialog extends Dialog {
 		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch, beep);
 
 		if (index == -1) {
-			statusMessage(EditorMessages.FindReplace_Status_noMatch_label);
+			String msg= NLSUtility.format(EditorMessages.FindReplace_Status_noMatchWithValue_label, findString);
+			statusMessage(false, EditorMessages.FindReplace_Status_noMatch_label, msg);
 			return false;
 		}
 
@@ -1316,10 +1318,11 @@ class FindReplaceDialog extends Dialog {
 	 * Sets the given status message in the status line.
 	 *
 	 * @param error <code>true</code> if it is an error
-	 * @param message the error message
+	 * @param dialogMessage the message to display in the dialog's status line
+	 * @param editorMessage the message to display in the editor's status line
 	 */
-	private void statusMessage(boolean error, String message) {
-		fStatusLabel.setText(message);
+	private void statusMessage(boolean error, String dialogMessage, String editorMessage) {
+		fStatusLabel.setText(dialogMessage);
 
 		if (error)
 			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
@@ -1328,7 +1331,7 @@ class FindReplaceDialog extends Dialog {
 
 		IEditorStatusLine statusLine= getStatusLineManager();
 		if (statusLine != null)
-			statusLine.setMessage(error, message, null);
+			statusLine.setMessage(error, editorMessage, null);
 
 		if (error)
 			getShell().getDisplay().beep();
@@ -1339,7 +1342,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param message the message
 	 */
 	private void statusError(String message) {
-		statusMessage(true, message);
+		statusMessage(true, message, message);
 	}
 
 	/**
@@ -1347,7 +1350,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param message the message
 	 */
 	private void statusMessage(String message) {
-		statusMessage(false, message);
+		statusMessage(false, message, message);
 	}
 
 	/**
@@ -1385,7 +1388,8 @@ class FindReplaceDialog extends Dialog {
 						statusMessage(msg);
 					}
 				} else {
-					statusMessage(EditorMessages.FindReplace_Status_noMatch_label);
+					String msg= NLSUtility.format(EditorMessages.FindReplace_Status_noMatchWithValue_label, findString);
+					statusMessage(false, EditorMessages.FindReplace_Status_noMatch_label, msg);
 				}
 			} catch (PatternSyntaxException ex) {
 				statusError(ex.getLocalizedMessage());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - initial API and implementation.
+ *     Pierre-Yves B., pyvesdev@gmail.com - Bug 121634: [find/replace] status bar must show the string being searched when "String Not Found"
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -116,6 +117,7 @@ final class EditorMessages extends NLS {
 	public static String FindReplace_ReplaceAllButton_label;
 	public static String FindReplace_CloseButton_label;
 	public static String FindReplace_Status_noMatch_label;
+	public static String FindReplace_Status_noMatchWithValue_label;
 	public static String FindReplace_Status_replacement_label;
 	public static String FindReplace_Status_replacements_label;
 	public static String FindReplace_Status_wrapped_label;

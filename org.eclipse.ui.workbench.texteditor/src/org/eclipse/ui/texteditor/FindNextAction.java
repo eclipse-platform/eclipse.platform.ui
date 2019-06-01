@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pierre-Yves B., pyvesdev@gmail.com - Bug 121634: [find/replace] status bar must show the string being searched when "String Not Found"
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -35,6 +36,7 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
@@ -165,7 +167,8 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		if (manager == null)
 			return;
 
-		manager.setMessage(EditorMessages.FindNext_Status_noMatch_label);
+		String msg= NLSUtility.format(EditorMessages.FindNext_Status_noMatch_label, fFindString);
+		manager.setMessage(msg);
 	}
 
 	/**
