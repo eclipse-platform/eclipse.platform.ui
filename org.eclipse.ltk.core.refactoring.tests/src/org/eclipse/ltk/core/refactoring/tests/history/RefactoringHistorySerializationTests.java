@@ -84,7 +84,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 	}
 
 	private static String concatenate(String[] lines, String delimiter) {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		for (int i= 0; i < lines.length; i++) {
 			if (i > 0)
 				buffer.append(delimiter);

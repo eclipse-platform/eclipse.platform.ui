@@ -450,7 +450,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		if (is == null)
 			return null;
 		try (BufferedReader reader= new BufferedReader(new InputStreamReader(is, encoding))) {
-			StringBuffer buffer= new StringBuffer();
+			StringBuilder buffer= new StringBuilder();
 			char[] part= new char[2048];
 			int read= 0;
 

@@ -114,7 +114,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		final int finalLength = MAX_LENGTH + patternLength;
 		if (text.length() <= finalLength)
 			return text;
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 		int mid= finalLength / 2;
 		result.append(text.substring(0, mid));
 		result.append("..."); //$NON-NLS-1$

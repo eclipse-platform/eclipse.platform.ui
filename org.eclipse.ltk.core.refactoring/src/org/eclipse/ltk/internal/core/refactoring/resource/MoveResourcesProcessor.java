@@ -193,7 +193,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		if (fResourcesToMove.length <= 1) {
 			descriptor.setComment(descriptor.getDescription());
 		} else {
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			for (int i= 0; i < fResourcesToMove.length; i++) {
 				if (i > 0)
 					buf.append(", "); //$NON-NLS-1$

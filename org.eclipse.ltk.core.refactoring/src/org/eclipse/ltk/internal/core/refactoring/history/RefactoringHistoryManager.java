@@ -635,7 +635,7 @@ public final class RefactoringHistoryManager {
 		}
 
 		private void startTag(Element element, boolean hasChildren) {
-			StringBuffer sb= new StringBuffer();
+			StringBuilder sb= new StringBuilder();
 			sb.append("<"); //$NON-NLS-1$
 			sb.append(element.getTagName());
 			NamedNodeMap attributes= element.getAttributes();
@@ -652,7 +652,7 @@ public final class RefactoringHistoryManager {
 		}
 
 		private void endTag(Element element) {
-			StringBuffer sb= new StringBuffer();
+			StringBuilder sb= new StringBuilder();
 			sb.append("</"); //$NON-NLS-1$
 			sb.append(element.getNodeName());
 			sb.append(">"); //$NON-NLS-1$

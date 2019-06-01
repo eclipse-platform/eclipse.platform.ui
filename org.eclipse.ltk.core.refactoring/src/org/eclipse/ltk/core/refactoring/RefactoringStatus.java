@@ -672,7 +672,7 @@ public class RefactoringStatus {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buff= new StringBuffer();
+		StringBuilder buff= new StringBuilder();
 		buff.append("<") //$NON-NLS-1$
 			.append(getSeverityString(fSeverity)).append("\n"); //$NON-NLS-1$
 		if (!isOK()) {

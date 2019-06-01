@@ -65,7 +65,7 @@ public class SimpleTestProject {
 	}
 
 	public String getContent(IFile file) throws CoreException, IOException {
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 		try (InputStreamReader reader= new InputStreamReader(file.getContents())) {
 			char[] buffer= new char[1024];
 			int amount;

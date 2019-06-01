@@ -133,7 +133,7 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			fImage.setImage(image);
 		}
 		private String escapeAmpersands(String message) {
-			StringBuffer result= new StringBuffer();
+			StringBuilder result= new StringBuilder();
 			for (int i= 0; i < message.length(); i++) {
 				char ch= message.charAt(i);
 				if (ch == '&') {

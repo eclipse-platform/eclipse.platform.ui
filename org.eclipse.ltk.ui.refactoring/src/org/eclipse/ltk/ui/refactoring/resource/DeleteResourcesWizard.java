@@ -235,7 +235,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 		private void updateListOfProjects() {
 			IResource[] initialResources = fRefactoringProcessor.getResourcesToDelete();
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			for (int i= 0; i < initialResources.length; i++) {
 				String location= getLocation(initialResources[i]);
 				if (location != null) {

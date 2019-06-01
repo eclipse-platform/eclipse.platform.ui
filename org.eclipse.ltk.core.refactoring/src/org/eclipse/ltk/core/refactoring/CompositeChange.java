@@ -504,7 +504,7 @@ public class CompositeChange extends Change {
 
 	@Override
 	public String toString() {
-		StringBuffer buff= new StringBuffer();
+		StringBuilder buff= new StringBuilder();
 		buff.append(getName());
 		buff.append("\n"); //$NON-NLS-1$
 		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
