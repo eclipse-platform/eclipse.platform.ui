@@ -655,7 +655,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 						ComposableEditPosition position= new ComposableEditPosition();
 						if (cachedGroups.contains(edit.getGroup())) {
 
-							if (text == null || text.equals("")) { //$NON-NLS-1$
+							if (text == null || text.isEmpty()) {
 								position.offset= offset;
 								if (length != 0) {
 									// Undo is a delete, create final insert
