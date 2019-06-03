@@ -275,7 +275,7 @@ public class TemplateTranslatorTest {
 	public void testIllegallyParameterizedTypeTemplate1() throws Exception {
 		fTranslator.translate("foo ${var:type(param)} bar ${var:type(other)} end");
 	}
-	
+
 	@Test(expected=TemplateException.class)
 	public void testIllegallyParameterizedTypeTemplate2() throws Exception {
 		fTranslator.translate("foo ${var:type(param)} bar ${var:type} end");

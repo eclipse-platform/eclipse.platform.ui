@@ -61,21 +61,21 @@ public class TextEditTests {
 		fRoot= null;
 		fRoot= null;
 	}
-	
+
 	@Test
 	public void testCovers1() throws Exception {
 		InsertEdit insert= new InsertEdit(1, "");
 		DeleteEdit delete= new DeleteEdit(2, 2);
 		Assert.assertFalse(insert.covers(delete));
 	}
-	
+
 	@Test
 	public void testCovers2() throws Exception {
 		MultiTextEdit multi= new MultiTextEdit(0,0);
 		MultiTextEdit child= new MultiTextEdit(0,0);
 		Assert.assertTrue(multi.covers(child));
 	}
-	
+
 	@Test
 	public void testOverlap1() throws Exception {
 		// [ [ ] ]
@@ -88,7 +88,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testOverlap2() throws Exception {
 		// [[ ] ]
@@ -101,7 +101,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testOverlap3() throws Exception {
 		// [ [ ]]
@@ -114,7 +114,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testOverlap4() throws Exception {
 		// [ [ ] ]
@@ -127,7 +127,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testOverlap5() throws Exception {
 		// [ []  ]
@@ -140,7 +140,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testOverlap6() throws Exception {
 		// [  [] ]
@@ -153,7 +153,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testOverlap7() throws Exception {
 		MoveSourceEdit source= new MoveSourceEdit(2, 5);
@@ -167,7 +167,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testOverlap8() throws Exception {
 		MoveSourceEdit source= new MoveSourceEdit(2, 5);
@@ -181,7 +181,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testOverlap9() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(3, 1);
@@ -199,7 +199,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testUndefinedMultiEdit1() throws Exception {
 		MultiTextEdit m1= new MultiTextEdit();
@@ -210,7 +210,7 @@ public class TextEditTests {
 		m2.addChild(new InsertEdit(2, ""));
 		fRoot.addChild(m2);
 	}
-	
+
 	@Test
 	public void testUndefinedMultiEdit2() throws Exception {
 		MultiTextEdit m1= new MultiTextEdit();
@@ -218,7 +218,7 @@ public class TextEditTests {
 		assertTrue(m1.covers(m2));
 		assertTrue(m2.covers(m1));
 	}
-	
+
 	@Test
 	public void testUndefinedMultiEdit3() throws Exception {
 		MultiTextEdit m2= new MultiTextEdit();
@@ -228,7 +228,7 @@ public class TextEditTests {
 		Assert.assertEquals(1, m2.getOffset());
 		Assert.assertEquals(3, m2.getLength());
 	}
-	
+
 	@Test
 	public void testUndefinedMultiEdit4() throws Exception {
 		MultiTextEdit m2= new MultiTextEdit();
@@ -237,7 +237,7 @@ public class TextEditTests {
 		Assert.assertEquals(1, m2.getOffset());
 		Assert.assertEquals(5, m2.getLength());
 	}
-	
+
 	@Test
 	public void testUndefinedMultiEdit5() throws Exception {
 		MultiTextEdit m2= new MultiTextEdit();
@@ -246,14 +246,14 @@ public class TextEditTests {
 		Assert.assertEquals(1, m2.getOffset());
 		Assert.assertEquals(5, m2.getLength());
 	}
-	
+
 	@Test
 	public void testUndefinedMultiEdit6() throws Exception {
 		DeleteEdit d1= new DeleteEdit(1,3);
 		MultiTextEdit m2= new MultiTextEdit();
 		assertTrue(d1.covers(m2));
 	}
-	
+
 	@Test
 	public void testUnconnected1() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(3, 1);
@@ -266,7 +266,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testBufferLength() throws Exception {
 		MultiTextEdit edit= new MultiTextEdit(0, fDocument.getLength() + 1);
@@ -279,7 +279,7 @@ public class TextEditTests {
 			assertTrue(exception);
 		}
 	}
-	
+
 	@Test
 	public void testCopy1() throws Exception {
 		MultiTextEdit root= new MultiTextEdit();
@@ -292,7 +292,7 @@ public class TextEditTests {
 		List<TextEdit> copy= flatten(copier.perform());
 		compare(org, copy);
 	}
-	
+
 	@Test
 	public void testCopy2() throws Exception {
 		MultiTextEdit root= new MultiTextEdit();
@@ -348,7 +348,7 @@ public class TextEditTests {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testInsert1() throws Exception {
 		// [][  ]
@@ -363,7 +363,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "01yy345656789", fDocument.get());
 		doUndoRedo(undo, "01yy345656789");
 	}
-	
+
 	@Test
 	public void testInsert2() throws Exception {
 		// [][]
@@ -378,7 +378,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "01yyxx23456789", fDocument.get());
 		doUndoRedo(undo, "01yyxx23456789");
 	}
-	
+
 	@Test
 	public void testInsert3() throws Exception {
 		// [  ][][  ]
@@ -396,7 +396,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "011xx2456789", fDocument.get());
 		doUndoRedo(undo, "011xx2456789");
 	}
-	
+
 	@Test
 	public void testInsert4() throws Exception {
 		TextEdit e1= new InsertEdit(0, "xx");
@@ -408,7 +408,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "xx0123456789", fDocument.get());
 		doUndoRedo(undo, "xx0123456789");
 	}
-	
+
 	@Test
 	public void testInsert5() throws Exception {
 		TextEdit e1= new InsertEdit(10, "xx");
@@ -420,7 +420,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "0123456789xx", fDocument.get());
 		doUndoRedo(undo, "0123456789xx");
 	}
-	
+
 	@Test
 	public void testInsertReplace1() throws Exception {
 		TextEdit e1= new ReplaceEdit(2, 1, "y");
@@ -434,7 +434,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "01xxy3456789", fDocument.get());
 		doUndoRedo(undo, "01xxy3456789");
 	}
-	
+
 	@Test
 	public void testDelete1() throws Exception {
 		TextEdit e1= new DeleteEdit(3, 1);
@@ -445,7 +445,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "012456789", fDocument.get());
 		doUndoRedo(undo, "012456789");
 	}
-	
+
 	@Test
 	public void testDelete2() throws Exception {
 		TextEdit e1= new DeleteEdit(4, 1);
@@ -462,7 +462,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "0126789", fDocument.get());
 		doUndoRedo(undo, "0126789");
 	}
-	
+
 	@Test
 	public void testDelete3() throws Exception {
 		TextEdit e1= new InsertEdit(3, "x");
@@ -476,7 +476,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "012x456789", fDocument.get());
 		doUndoRedo(undo, "012x456789");
 	}
-	
+
 	@Test
 	public void testDeleteWithChildren() throws Exception {
 		TextEdit e1= new DeleteEdit(2, 6);
@@ -496,7 +496,7 @@ public class TextEditTests {
 		assertTrue(e4.isDeleted());
 		doUndoRedo(undo, "0189");
 	}
-	
+
 	@Test
 	public void testTreeUpdate1() throws Exception {
 		MultiTextEdit m1= new MultiTextEdit();
@@ -524,7 +524,7 @@ public class TextEditTests {
 		assertEquals(fRoot, 2, 14);
 		doUndoRedo(undo, "01aa23bb45cc67dd89");
 	}
-	
+
 	@Test
 	public void testMove1() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 2);
@@ -537,7 +537,7 @@ public class TextEditTests {
 		assertEquals(t1, 3, 2);
 		doUndoRedo(undo, "0142356789");
 	}
-	
+
 	@Test
 	public void testMove2() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(5, 2);
@@ -550,7 +550,7 @@ public class TextEditTests {
 		assertEquals(t1, 2, 2);
 		doUndoRedo(undo, "0156234789");
 	}
-	
+
 	@Test
 	public void testMove3() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 2);
@@ -566,7 +566,7 @@ public class TextEditTests {
 		assertEquals(e2, 2, 1);
 		doUndoRedo(undo, "01x5623789");
 	}
-	
+
 	@Test
 	public void testMove4() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(7, 2);
@@ -582,7 +582,7 @@ public class TextEditTests {
 		assertEquals(e2, 7, 1);
 		doUndoRedo(undo, "0178234x69");
 	}
-	
+
 	@Test
 	public void testMove5() throws Exception {
 		// Move onto itself
@@ -599,7 +599,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "01x3456789", fDocument.get());
 		doUndoRedo(undo, "01x3456789");
 	}
-	
+
 	@Test
 	public void testMove6() throws Exception {
 		// Move onto itself
@@ -616,7 +616,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "01x3456789", fDocument.get());
 		doUndoRedo(undo,"01x3456789");
 	}
-	
+
 	@Test
 	public void testMove7() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 3);
@@ -632,7 +632,7 @@ public class TextEditTests {
 		assertEquals(e2, 5, 1);
 		doUndoRedo(undo, "01562x4789");
 	}
-	
+
 	@Test
 	public void testMove8() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(5, 3);
@@ -648,7 +648,7 @@ public class TextEditTests {
 		assertEquals(e2, 2, 1);
 		doUndoRedo(undo, "05x7123489");
 	}
-	
+
 	@Test
 	public void testMove9() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(1, 3);
@@ -670,7 +670,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "0421356789", fDocument.get());
 		doUndoRedo(undo, "0421356789");
 	}
-	
+
 	@Test
 	public void testMove10() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 2);
@@ -691,7 +691,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", "0561472389", fDocument.get());
 		doUndoRedo(undo, "0561472389");
 	}
-	
+
 	@Test
 	public void testMoveWithRangeMarker() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 2);
@@ -710,7 +710,7 @@ public class TextEditTests {
 		assertEquals(marker, 3, 2);
 		doUndoRedo(undo, "0142356789");
 	}
-	
+
 	@Test
 	public void testMoveWithTargetDelete() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 3);
@@ -726,7 +726,7 @@ public class TextEditTests {
 		assertEquals(e2, 3, 0);
 		doUndoRedo(undo, "01589");
 	}
-	
+
 	@Test
 	public void testMoveUpWithSourceDelete() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(5, 2);
@@ -749,7 +749,7 @@ public class TextEditTests {
 		assertEquals(d1, 7, 0);
 		doUndoRedo(undo, "0156234789");
 	}
-	
+
 	@Test
 	public void testMoveDown() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 2);
@@ -774,7 +774,7 @@ public class TextEditTests {
 		assertEquals(d1, 10, 0);
 		doUndoRedo(undo, "014x562378");
 	}
-	
+
 	@Test
 	public void testMoveUp() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(7, 2);
@@ -799,7 +799,7 @@ public class TextEditTests {
 		assertEquals(d1, 10, 0);
 		doUndoRedo(undo, "0178234x56");
 	}
-	
+
 	@Test
 	public void testMoveDownWithSourceDelete() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 2);
@@ -822,7 +822,7 @@ public class TextEditTests {
 		assertEquals(m1, 5, 2);
 		doUndoRedo(undo, "0145623789");
 	}
-	
+
 	@Test
 	public void testMoveUpWithInnerMark() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(7, 2);
@@ -838,7 +838,7 @@ public class TextEditTests {
 		assertEquals(m, 6, 2);
 		doUndoRedo(undo, "017823yy569");
 	}
-	
+
 	@Test
 	public void testMoveDownWithInnerMark() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(2, 2);
@@ -854,7 +854,7 @@ public class TextEditTests {
 		assertEquals(m, 2, 2);
 		doUndoRedo(undo, "01yy5623789");
 	}
-	
+
 	@Test
 	public void testMoveUpWithParentMark() throws Exception {
 		RangeMarker m= new RangeMarker(2, 6);
@@ -870,7 +870,7 @@ public class TextEditTests {
 		assertEquals(s1, 6, 0);
 		doUndoRedo(undo, "0124536789");
 	}
-	
+
 	@Test
 	public void testMoveDownWithParentMark() throws Exception {
 		RangeMarker m= new RangeMarker(2, 6);
@@ -886,7 +886,7 @@ public class TextEditTests {
 		assertEquals(s1, 2, 0);
 		doUndoRedo(undo, "0142356789");
 	}
-	
+
 	@Test
 	public void testNestedMoveSource() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(1, 5);
@@ -912,7 +912,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testNestedMoveSourceWithInsert() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(1, 5);
@@ -941,7 +941,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testNestedMoveTarget() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(1, 2);
@@ -961,7 +961,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testCopyDown() throws Exception {
 		CopySourceEdit s1= new CopySourceEdit(2, 3);
@@ -976,7 +976,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testCopyUp() throws Exception {
 		CopySourceEdit s1= new CopySourceEdit(7, 2);
@@ -991,7 +991,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testDoubleCopy() throws Exception {
 		CopySourceEdit s1= new CopySourceEdit(5, 2);
@@ -1012,7 +1012,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testNestedCopySource() throws Exception {
 		CopySourceEdit s1= new CopySourceEdit(1, 5);
@@ -1038,7 +1038,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testNestedCopySourceWithInsert() throws Exception {
 		CopySourceEdit s1= new CopySourceEdit(1, 5);
@@ -1067,7 +1067,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testNestedCopyTarget() throws Exception {
 		CopySourceEdit s1= new CopySourceEdit(1, 2);
@@ -1087,7 +1087,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		doUndoRedo(undo, result);
 	}
-	
+
 	@Test
 	public void testSwap1() throws Exception {
 		IDocument document= new Document("foo(1, 2), 3");
@@ -1116,7 +1116,7 @@ public class TextEditTests {
 		String result= "3, foo(1, 2)";
 		Assert.assertEquals("Buffer content", result, document.get());
 	}
-	
+
 	@Test
 	public void testSwap2() throws Exception {
 		IDocument document= new Document("foo(1, 2), 3");
@@ -1144,7 +1144,7 @@ public class TextEditTests {
 		String result= "foo(2, 1), 3";
 		Assert.assertEquals("Buffer content", result, document.get());
 	}
-	
+
 	@Test
 	public void testSwap2InSwap1() throws Exception {
 		IDocument document= new Document("foo(1, 2), 3");
@@ -1188,7 +1188,7 @@ public class TextEditTests {
 		String result= "3, foo(2, 1)";
 		Assert.assertEquals("Buffer content", result, document.get());
 	}
-	
+
 	@Test
 	public void testMoveTree1() {
 		TextEdit root= new MultiTextEdit();
@@ -1204,7 +1204,7 @@ public class TextEditTests {
 		Assert.assertEquals(5, e2.getOffset());
 		Assert.assertEquals(2, e2.getLength());
 	}
-	
+
 	@Test
 	public void testMoveTree2() {
 		TextEdit root= new MultiTextEdit();
@@ -1220,7 +1220,7 @@ public class TextEditTests {
 		Assert.assertEquals(2, e2.getOffset());
 		Assert.assertEquals(2, e2.getLength());
 	}
-	
+
 	@Test
 	public void testMoveTree3() {
 		boolean exception= false;
@@ -1232,7 +1232,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testMoveTree4() {
 		boolean exception= false;
@@ -1246,7 +1246,7 @@ public class TextEditTests {
 		}
 		assertTrue(exception);
 	}
-	
+
 	@Test
 	public void testComparator() throws Exception {
 		DeleteEdit d1= new DeleteEdit(1,3);
@@ -1265,7 +1265,7 @@ public class TextEditTests {
 		assertTrue(comparator.compare(edit1, edit3) == -comparator.compare(edit3, edit1));
 
 	}
-	
+
 	@Test
 	public void testSourceTransformationIncludes() throws Exception {
 		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
@@ -1290,7 +1290,7 @@ public class TextEditTests {
 		assertEquals(r1, 6, 3);
 	}
 
-	// Regression test for 108672 [quick fix] Exception when applying Convert to enhanced for loop	
+	// Regression test for 108672 [quick fix] Exception when applying Convert to enhanced for loop
 	@Test
 	public void testSourceTranformationMultipleCovers() throws Exception {
 		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
@@ -1320,7 +1320,7 @@ public class TextEditTests {
 		assertTrue(r2.isDeleted());
 		assertEquals(r3, 7, 2);
 	}
-	
+
 	@Test
 	public void testSourceTranformationSplit1() throws Exception {
 		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
@@ -1344,7 +1344,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		assertEquals(r1, 7, 1);
 	}
-	
+
 	@Test
 	public void testSourceTranformationSplit2() throws Exception {
 		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
@@ -1368,7 +1368,7 @@ public class TextEditTests {
 		Assert.assertEquals("Buffer content", result, fDocument.get());
 		assertEquals(r1, 6, 3);
 	}
-	
+
 	@Test
 	public void testIntersect() throws Exception {
 		IRegion result= MoveSourceEdit.intersect(new RangeMarker(0,1), new RangeMarker(2,1));

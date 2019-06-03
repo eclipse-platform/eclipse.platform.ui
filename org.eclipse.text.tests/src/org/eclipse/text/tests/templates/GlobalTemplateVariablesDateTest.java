@@ -49,7 +49,7 @@ public class GlobalTemplateVariablesDateTest  {
 
 		fContext= new DocumentTemplateContext(fType, new Document(), 0, 0);
 	}
-	
+
 	@Test
 	public void testWithoutParameter() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("Today is ${date}!");
@@ -61,7 +61,7 @@ public class GlobalTemplateVariablesDateTest  {
 		expected.append("!");
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
-	
+
 	@Test
 	public void testOneParameter() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("This format ${d:date('dd MMM YYYY')} and not ${p:date('YYYY-MM-dd')}");
@@ -128,7 +128,7 @@ public class GlobalTemplateVariablesDateTest  {
 	/**
 	 * Ensures that {@link TemplateBuffer#getString()} equals the expected String and that all
 	 * {@link TemplateBuffer#getVariables()} are resolved and unambiguous.
-	 * 
+	 *
 	 * @param expected expected result
 	 * @param buffer the template buffer
 	 */

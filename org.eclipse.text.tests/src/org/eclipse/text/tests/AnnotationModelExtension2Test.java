@@ -252,25 +252,25 @@ public class AnnotationModelExtension2Test {
 		}
 		return null;
 	}
-	
+
 	@Test
 	public void testInside() throws Exception {
 		Annotation[] expected= new Annotation[] { fInside, fInsideIn };
 		assertPermutations(false, false, expected);
 	}
-	
+
 	@Test
 	public void testAhead() throws Exception {
 		Annotation[] expected= new Annotation[] { fInside, fInsideIn, fBefore, fBeforeIn };
 		assertPermutations(true, false, expected);
 	}
-	
+
 	@Test
 	public void testBehind() throws Exception {
 		Annotation[] expected= new Annotation[] { fInside, fInsideIn, fAfter, fAfterIn };
 		assertPermutations(false, true, expected);
 	}
-	
+
 	@Test
 	public void testAheadBehind() throws Exception {
 		Annotation[] expected= new Annotation[] { fInside, fInsideIn, fInsideOut, fAfter, fAfterIn, fBefore, fBeforeIn };

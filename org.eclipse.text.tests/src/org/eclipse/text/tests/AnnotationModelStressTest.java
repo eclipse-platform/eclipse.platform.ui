@@ -1234,7 +1234,7 @@ public class AnnotationModelStressTest {
 	@After
 	public void tearDown() throws Exception {
 		fAnnotationModel.disconnect(fDocument);
-		
+
 		fDocument= null;
 		fAnnotationModel= null;
 		fInnerModel1= null;
@@ -1348,7 +1348,7 @@ public class AnnotationModelStressTest {
 
 		return result;
 	}
-	
+
 	@Test
 	public void testStressTestPlainOld() throws Exception {
 		ArrayList<AnnotationData> added= new ArrayList<>();
@@ -1379,7 +1379,7 @@ public class AnnotationModelStressTest {
 			assertExist(added);
 		}
 	}
-	
+
 	@Test
 	public void testStressTestPlainNew() throws Exception {
 		ArrayList<AnnotationData> added= new ArrayList<>();
@@ -1410,7 +1410,7 @@ public class AnnotationModelStressTest {
 			assertExistNew(added);
 		}
 	}
-	
+
 	@Test
 	public void testStressTestMoveOld() throws Exception {
 		ArrayList<AnnotationData> added= new ArrayList<>();
@@ -1445,7 +1445,7 @@ public class AnnotationModelStressTest {
 			assertExist(added);
 		}
 	}
-	
+
 	@Test
 	public void testStressTestMoveNew() throws Exception {
 		ArrayList<AnnotationData> added= new ArrayList<>();

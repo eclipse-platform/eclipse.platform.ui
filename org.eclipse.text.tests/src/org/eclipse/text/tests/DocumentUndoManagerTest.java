@@ -31,7 +31,7 @@ import org.eclipse.jface.text.Position;
 
 /**
  * Tests for DefaultUndoManager.
- * 
+ *
  * @since 3.5
  */
 public class DocumentUndoManagerTest extends TestCase {
@@ -76,7 +76,7 @@ public class DocumentUndoManagerTest extends TestCase {
 
 	/**
 	 * Test for line delimiter conversion.
-	 * 
+	 *
 	 * @throws ExecutionException if undo fails
 	 */
 	public void testConvertLineDelimiters() throws ExecutionException {
@@ -110,7 +110,7 @@ public class DocumentUndoManagerTest extends TestCase {
 
 	/**
 	 * Randomly applies document changes.
-	 * 
+	 *
 	 * @throws ExecutionException if undo fails
 	 */
 	public void testRandomAccess() throws ExecutionException {
@@ -252,7 +252,7 @@ public class DocumentUndoManagerTest extends TestCase {
 
 	/**
 	 * Test case for https://bugs.eclipse.org/bugs/show_bug.cgi?id=88172
-	 * 
+	 *
 	 * @throws ExecutionException if undo fails
 	 */
 	public void testRandomAccessAsUnclosedCompound() throws ExecutionException {
@@ -458,7 +458,7 @@ public class DocumentUndoManagerTest extends TestCase {
 
 	/**
 	 * Returns the faculty of k.
-	 * 
+	 *
 	 * @param k the <code>int</code> for which to get the faculty
 	 * @return the faculty
 	 */

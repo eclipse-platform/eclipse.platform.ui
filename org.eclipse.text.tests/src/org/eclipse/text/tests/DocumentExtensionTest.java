@@ -182,7 +182,7 @@ public class DocumentExtensionTest {
 
 		assertTrue("axbxcx".equals(document.get()));
 	}
-	
+
 	@Test
 	public void testRemove() {
 		Listener listener= new Listener() {
@@ -213,7 +213,7 @@ public class DocumentExtensionTest {
 
 		assertTrue("yyy".equals(document.get()));
 	}
-	
+
 	@Test
 	public void testRepeatedAppend() {
 		Listener listener= new Listener() {
@@ -319,12 +319,12 @@ public class DocumentExtensionTest {
 			assertTrue(false);
 		}
 	}
-	
+
 	@Test
 	public void testChildDocumentPP() {
 		internalTestChildDocument(true, true, 1);
 	}
-	
+
 	@Test
 	public void testChildDocumentCC() {
 		try {
@@ -333,12 +333,12 @@ public class DocumentExtensionTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testChildDocumentRepeatedPP() {
 		internalTestChildDocument(true, true, 5);
 	}
-	
+
 	@Test
 	public void testChildDocumentRepeatedCC() {
 		try {
@@ -358,7 +358,7 @@ public class DocumentExtensionTest {
 		} catch (UnsupportedOperationException x) {
 		}
 	}
-	
+
 	@Test
 	public void testChildDocumentCP() {
 		internalTestChildDocument(false, true, 1);
@@ -366,7 +366,7 @@ public class DocumentExtensionTest {
 
 	/**
 	 * Tests that this is not supported.
-	 */	
+	 */
 	@Test
 	public void testChildDocumentRepeatedPC() {
 		try {
@@ -375,7 +375,7 @@ public class DocumentExtensionTest {
 		} catch (UnsupportedOperationException x) {
 		}
 	}
-	
+
 	@Test
 	public void testChildDocumentRepeatedCP() {
 		internalTestChildDocument(false, true, 5);

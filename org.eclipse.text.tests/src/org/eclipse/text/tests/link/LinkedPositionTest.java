@@ -36,13 +36,13 @@ public class LinkedPositionTest {
 		fDoc= new Document(GARTEN1);
 		fPos= new LinkedPosition(fDoc, 3, 10);
 	}
-	
+
 	@Test
 	public void testCreate() {
 		new LinkedPosition(fDoc, 1, 9);
 		new LinkedPosition(new Document(), 123, 234);
 	}
-	
+
 	@Test(expected=Throwable.class)
 	public void testNullCreate() {
 		new LinkedPosition(null, 1, 9);
@@ -50,7 +50,7 @@ public class LinkedPositionTest {
 
 	/*
 	 * Class to test for boolean includes(int)
-	 */	
+	 */
 	@Test
 	public void testIncludesint() {
 		assertTrue(fPos.includes(3));
@@ -59,7 +59,7 @@ public class LinkedPositionTest {
 		assertFalse(fPos.includes(2));
 		assertFalse(fPos.includes(15));
 	}
-	
+
 	@Test
 	public void testGetDocument() {
 		assertEquals(fDoc, fPos.getDocument());
@@ -67,7 +67,7 @@ public class LinkedPositionTest {
 
 	/*
 	 * Class to test for boolean overlapsWith(LinkedPosition)
-	 */	
+	 */
 	@Test
 	public void testOverlapsWithLinkedPosition() {
 		LinkedPosition pos= new LinkedPosition(fDoc, 0, 2);
@@ -100,7 +100,7 @@ public class LinkedPositionTest {
 
 	/*
 	 * Class to test for boolean includes(DocumentEvent)
-	 */	
+	 */
 	@Test
 	public void testIncludesDocumentEvent() {
 		DocumentEvent de= new DocumentEvent(fDoc, 0, 2, "ignore");
@@ -133,7 +133,7 @@ public class LinkedPositionTest {
 
 	/*
 	 * Class to test for boolean includes(LinkedPosition)
-	 */	
+	 */
 	@Test
 	public void testIncludesLinkedPosition() {
 		LinkedPosition pos= new LinkedPosition(fDoc, 0, 2);
@@ -163,7 +163,7 @@ public class LinkedPositionTest {
 		pos= new LinkedPosition(fDoc, 14, 4);
 		assertFalse(fPos.includes(pos));
 	}
-	
+
 	@Test
 	public void testGetContent() throws BadLocationException {
 		LinkedPosition p= new LinkedPosition(fDoc, 1, 9);
@@ -178,7 +178,7 @@ public class LinkedPositionTest {
 		fDoc.set(GARTEN1);
 		assertEquals("FAUST", p.getContent());
 	}
-	
+
 	@Test(expected= BadLocationException.class)
 	public void testBadLocationContentNull() throws BadLocationException {
 		LinkedPosition p= new LinkedPosition(new Document(), 23, 3);
@@ -191,7 +191,7 @@ public class LinkedPositionTest {
 		fDoc.set("");
 		p.getContent();
 	}
-	
+
 	@Test
 	public void testGetSequenceNumber() {
 		LinkedPosition p= new LinkedPosition(fDoc, 1, 9);
@@ -200,13 +200,13 @@ public class LinkedPositionTest {
 		p= new LinkedPosition(fDoc, 1, 9, 18);
 		assertEquals(18, p.getSequenceNumber());
 	}
-	
+
 	@Test
 	public void testSetSequenceNumber() {
 		fPos.setSequenceNumber(28);
 		assertEquals(28, fPos.getSequenceNumber());
 	}
-	
+
 	@Test
 	public void testEquals() {
 		LinkedPosition p1= new LinkedPosition(fDoc, 1, 9);
@@ -214,7 +214,7 @@ public class LinkedPositionTest {
 
 		assertEquals(p1, p2);
 	}
-	
+
 	@Test
 	public void testNotEquals() {
 		LinkedPosition p1= new LinkedPosition(fDoc, 1, 9);
@@ -222,7 +222,7 @@ public class LinkedPositionTest {
 
 		assertFalse(p1.equals(p2));
 	}
-	
+
 	@Test
 	public void testNotEqualsPosition() {
 		LinkedPosition p1= new LinkedPosition(fDoc, 1, 9);
@@ -230,7 +230,7 @@ public class LinkedPositionTest {
 
 		assertFalse(p1.equals(p2));
 	}
-	
+
 	@Test
 	public void testNotEqualsDifferentDoc() {
 		LinkedPosition p1= new LinkedPosition(fDoc, 1, 9);

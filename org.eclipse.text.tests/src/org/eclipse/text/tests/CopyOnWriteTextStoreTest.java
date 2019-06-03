@@ -58,7 +58,7 @@ public class CopyOnWriteTextStoreTest {
 	public void tearDown () {
 		fText= null;
 	}
-	
+
 	@Test
 	public void testInitialContent() {
 
@@ -73,7 +73,7 @@ public class CopyOnWriteTextStoreTest {
 		assertTrue(failed);
 
 	}
-	
+
 	@Test
 	public void testFirstModification() {
 
@@ -81,7 +81,7 @@ public class CopyOnWriteTextStoreTest {
 		assertEquals(GapTextStore.class, fText.getStore().getClass());
 
 	}
-	
+
 	@Test
 	public void testSet() {
 
@@ -97,7 +97,7 @@ public class CopyOnWriteTextStoreTest {
 		}
 		assertTrue(failed);
 	}
-	
+
 	@Test
 	public void testInsert1() {
 
@@ -106,7 +106,7 @@ public class CopyOnWriteTextStoreTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testInsert2() {
 
@@ -115,7 +115,7 @@ public class CopyOnWriteTextStoreTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testDelete1() {
 
@@ -124,7 +124,7 @@ public class CopyOnWriteTextStoreTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testDelete2() {
 
@@ -133,7 +133,7 @@ public class CopyOnWriteTextStoreTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testAppend() {
 

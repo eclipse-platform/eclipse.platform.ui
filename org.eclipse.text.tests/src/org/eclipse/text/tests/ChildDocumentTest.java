@@ -141,7 +141,7 @@ public class ChildDocumentTest {
 	public void tearDown () {
 		fDocument= null;
 	}
-	
+
 	@Test
 	public void testDelete1() {
 
@@ -165,7 +165,7 @@ public class ChildDocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testEditScript1() {
 
@@ -202,7 +202,7 @@ public class ChildDocumentTest {
 		checkPositions(positions);
 
 	}
-	
+
 	@Test
 	public void testFindPositions() {
 
@@ -243,7 +243,7 @@ public class ChildDocumentTest {
 		checkPositions(positions);
 
 	}
-	
+
 	@Test
 	public void testInsert1() {
 
@@ -267,7 +267,7 @@ public class ChildDocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testInsert2() {
 
@@ -291,7 +291,7 @@ public class ChildDocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testInsert3() {
 
@@ -315,7 +315,7 @@ public class ChildDocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testInsert4() {
 
@@ -341,7 +341,7 @@ public class ChildDocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testReplace1() {
 
@@ -365,7 +365,7 @@ public class ChildDocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testReplace2() {
 
@@ -389,7 +389,7 @@ public class ChildDocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testReplace3() {
 
@@ -418,7 +418,7 @@ public class ChildDocumentTest {
 	 *
 	 * [formatting] IllegalArgumentException when formatting comment code snippet in segmented mode
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=51594
-	 */	
+	 */
 	@Test
 	public void testReplace4() {
 		try {
@@ -432,7 +432,7 @@ public class ChildDocumentTest {
 			assertTrue("BadLocationException thrown", false);
 		}
 	}
-	
+
 	@Test
 	public void testAppend() {
 
@@ -482,7 +482,7 @@ public class ChildDocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testShiftRight() {
 

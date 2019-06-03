@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class AdaptiveGapTextTest extends AbstractGapTextTest {
-	
+
 	@Before
 	public void setUp() {
 		fText= new GapText(2, 10, 0.5f);
@@ -92,7 +92,7 @@ public class AdaptiveGapTextTest extends AbstractGapTextTest {
 		fText.replace(1, 2, null);
 		assertGap(1, 3);
 	}
-	
+
 	@Test
 	public void testRemoveGapOverlapping2() {
 		fText.replace(0, 0, "aaaaazzzzzyyyyy");
@@ -104,7 +104,7 @@ public class AdaptiveGapTextTest extends AbstractGapTextTest {
 		assertGap(5, 7);
 		assertContents("aaaaaxxx");
 	}
-	
+
 	@Test
 	public void testRemoveRemoteFromGap() {
 		fText.replace(0, 0, "aaaaazzzzzyyyyy");
@@ -132,7 +132,7 @@ public class AdaptiveGapTextTest extends AbstractGapTextTest {
 		fText.replace(6, 1, null);
 		assertGap(6, 8);
 	}
-	
+
 	@Test
 	public void testRemoveAtRightGapEdge() {
 		fText.replace(4, 0, "xxx");
@@ -142,7 +142,7 @@ public class AdaptiveGapTextTest extends AbstractGapTextTest {
 		fText.replace(7, 1, null);
 		assertGap(7, 9);
 	}
-	
+
 	@Test
 	public void testReplace() {
 		fText.replace(2, 2, "yy");
@@ -154,7 +154,7 @@ public class AdaptiveGapTextTest extends AbstractGapTextTest {
 		fText.replace(14, 0, "yyy");
 		assertGap(17, 19);
 	}
-	
+
 	@Test
 	public void testRemoveReallocateBeforeGap() throws Exception {
 		fText.replace(0, 0, "yyyyyzzzzz");

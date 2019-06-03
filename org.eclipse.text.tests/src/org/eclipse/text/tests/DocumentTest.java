@@ -64,7 +64,7 @@ public class DocumentTest {
 		"/*\n" +                              // 24
 		"* comment\n" +                       // 34
 		"*/\n" +                              // 37
-		"	public class Class {\n" +         // 59 
+		"	public class Class {\n" +         // 59
 		"		// comment1\n" +              // 73
 		"		public void method1() {\n" +  // 99
 		"		}\n" +                        //103
@@ -94,14 +94,14 @@ public class DocumentTest {
 	public void tearDown () {
 		fDocument= null;
 	}
-	
+
 	@Test
 	public void testEmptyDocument() {
 		IDocument document= new Document();
 		int lines= document.getNumberOfLines();
 		assertEquals(1, lines);
 	}
-	
+
 	@Test
 	public void testDelete1() {
 
@@ -251,7 +251,7 @@ public class DocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testInsert3() {
 
@@ -275,7 +275,7 @@ public class DocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testInsert4() {
 
@@ -301,7 +301,7 @@ public class DocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testReplace1() {
 
@@ -325,7 +325,7 @@ public class DocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testReplace2() {
 
@@ -349,7 +349,7 @@ public class DocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testReplace3() {
 
@@ -372,7 +372,7 @@ public class DocumentTest {
 
 		checkPositions(expected, actual);
 	}
-	
+
 	@Test
 	public void testReplace4() {
 
@@ -396,7 +396,7 @@ public class DocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testAppend() {
 
@@ -446,7 +446,7 @@ public class DocumentTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testShiftRight() {
 

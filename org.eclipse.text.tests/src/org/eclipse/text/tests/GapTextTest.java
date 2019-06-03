@@ -32,12 +32,12 @@ public class GapTextTest extends AbstractGapTextTest {
 	public void tearDown () {
 		fText= null;
 	}
-	
+
 	@Test
 	public void testSet() {
 		assertGap(5, 10);
 	}
-	
+
 	@Test
 	public void testGetText1() {
 		String[] expected= {
@@ -54,7 +54,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testGetText2() {
 		String[] expected= {
@@ -71,7 +71,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testInsert() {
 		fText.replace(2, 0, "y");
@@ -86,7 +86,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		fText.replace(7, 0, "y");
 		assertGap(8, 13);
 	}
-	
+
 	@Test
 	public void testRemoveGapOverlapping() {
 		fText.replace(2, 2, null);
@@ -95,7 +95,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		fText.replace(1, 2, null);
 		assertGap(1, 10);
 	}
-	
+
 	@Test
 	public void testRemoveGapOverlapping2() {
 		fText.replace(0, 0, "aaaaazzzzzyyyyy");
@@ -107,7 +107,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		assertGap(5, 10);
 		assertContents("aaaaaxxx");
 	}
-	
+
 	@Test
 	public void testRemoveRemoteFromGap() {
 		fText.replace(0, 0, "aaaaazzzzzyyyyy");
@@ -125,7 +125,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		assertContents("aaaaazzx");
 
 	}
-	
+
 	@Test
 	public void testRemoveAtLeftGapEdge() {
 		fText.replace(4, 0, "xxx");
@@ -135,7 +135,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		fText.replace(6, 1, null);
 		assertGap(6, 8);
 	}
-	
+
 	@Test
 	public void testRemoveAtRightGapEdge() {
 		fText.replace(4, 0, "xxx");
@@ -145,7 +145,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		fText.replace(7, 1, null);
 		assertGap(7, 9);
 	}
-	
+
 	@Test
 	public void testReplace() {
 		fText.replace(2, 2, "yy");
@@ -157,7 +157,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		fText.replace(14, 0, "yyy");
 		assertGap(17, 19);
 	}
-	
+
 	@Test
 	public void testRemoveReallocateBeforeGap() throws Exception {
 		fText.replace(0, 0, "yyyyyzzzzz");

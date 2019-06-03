@@ -47,7 +47,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			offset += (lines[i] + 1);
 		return offset;
 	}
-	
+
 	@Test
 	public void testEditScript1() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -67,7 +67,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		replace(4, 0, "x");
 		checkLines(new int[] { 3, 1 });
 	}
-	
+
 	@Test
 	public void testEmptyLines() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -83,7 +83,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			assertTrue("invalid line number " + no + " reported instead of " + i, no == i);
 		}
 	}
-	
+
 	@Test
 	public void testInsert1() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -100,7 +100,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		replace(13, 0, "y");
 		checkLines(new int[] { 1, 5, 2, 1, 1, 1, 1, 0 });
 	}
-	
+
 	@Test
 	public void testInsert2() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -111,7 +111,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		replace(9, 0, "y\ny\ny");
 		checkLines(new int[] { 1, 5, 2, 1, 1, 1, 1, 0 });
 	}
-	
+
 	@Test
 	public void testLinesNumbers() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -128,7 +128,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			offset+= (i + 1);
 		}
 	}
-	
+
 	@Test
 	public void testOffsets() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -152,7 +152,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			assertTrue("invalid line number " + line + " for position " + i + " should be " + l, l == line);
 		}
 	}
-	
+
 	@Test
 	public void testRemove() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -169,7 +169,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		replace(0, 3, null);
 		checkLines(new int[] { 0 });
 	}
-	
+
 	@Test
 	public void testReplace() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -178,7 +178,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 
 		checkLines(new int[] { 2, 2, 2, 2, 2, 0 });
 	}
-	
+
 	@Test
 	public void testReplace2() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -191,7 +191,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 
 		checkLines(new int[] { 1, 1, 1, 0 });
 	}
-	
+
 	@Test
 	public void testReplace3() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -200,7 +200,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 	}
-	
+
 	@Test
 	public void testReplace4() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -215,7 +215,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			previous= fTracker.getLineInformation(i);
 		}
 	}
-	
+
 	@Test
 	public void testShiftLeft() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -231,7 +231,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		String txt= fText.get(0, fText.getLength());
 		assertEquals("invalid text", "x\nx\nx\nx\nx\n", txt);
 	}
-	
+
 	@Test
 	public void testShiftRight() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
@@ -246,7 +246,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		String txt= fText.get(0, fText.getLength());
 		assertEquals("invalid text", "\tx\n\tx\n\tx\n\tx\n\tx\n", txt);
 	}
-	
+
 	@Test
 	public void testMultipleNewlines() throws Exception {
 		fText= new GapTextStore();
@@ -268,7 +268,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
 
 	}
-	
+
 	@Test
 	public void testDeleteLinesFromEnd() throws Exception {
 		set("x\nx\n\nx\n\n");
@@ -279,7 +279,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
 
 	}
-	
+
 	@Test
 	public void testDeleteLines() throws Exception {
 		String content= "";
@@ -299,7 +299,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 				fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
 		}
 	}
-	
+
 	@Test
 	public void testSet() throws Exception {
 		String content= "";
@@ -316,7 +316,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			content += "\n";
 		}
 	}
-	
+
 	@Test
 	public void testFunnyLastLineCompatibility() throws Exception {
 		/* empty last line */
@@ -379,7 +379,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testNoDelimiterLine() throws Exception {
 		set("abcef");
@@ -388,7 +388,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		replace(0, 0, ""); // switch to TreeLineTracker
 		checkLines(new int[] { 5 });
 	}
-	
+
 	@Test
 	public void testFunnyLastLineCompatibility2() throws Exception {
 		/* empty last line */
@@ -453,7 +453,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testNegativeOffset() throws Exception {
 		try {
@@ -548,7 +548,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 	/**
 	 * Test for Bug 545565. Some ListLineTracker methods yield wrong results after tracker content
 	 * was set to <code>null</code>.
-	 * 
+	 *
 	 * @throws BadLocationException if test failed
 	 */
 	@Test
@@ -592,7 +592,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 	/**
 	 * Check if ListLineTracker and TreeLineTracker return same result for same input in context of
 	 * Bug 545565.
-	 * 
+	 *
 	 * @throws BadLocationException if test fails
 	 */
 	@Test

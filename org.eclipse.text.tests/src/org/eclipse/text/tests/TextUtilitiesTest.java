@@ -139,7 +139,7 @@ public class TextUtilitiesTest {
 
 	/**
 	 * Constructor for UtilitiesTest.
-	 * 
+	 *
 	 * @param name the name
 	 */
 	private static DocumentEvent createRandomEvent(IDocument document, int maxLength, char character) {
@@ -157,7 +157,7 @@ public class TextUtilitiesTest {
 
 		return new DocumentEvent(document, offset, length, buffer.toString());
 	}
-	
+
 	@Test
 	public void testMergeEvents1() {
 		IDocument reference= new Document();
@@ -175,7 +175,7 @@ public class TextUtilitiesTest {
 			Assert.fail("bad location exception");
 		}
 	}
-	
+
 	@Test
 	public void testMergeEvents() {
 		IDocument reference= new Document();
@@ -228,7 +228,7 @@ public class TextUtilitiesTest {
 			Assert.fail("bad location exception");
 		}
 	}
-	
+
 	@Test
 	public void testMergeEvents2() {
 		IDocument reference= new Document();
@@ -278,7 +278,7 @@ public class TextUtilitiesTest {
 	private static void check(IDocument reference, IDocument testee) {
 		Assert.assertEquals(reference.get(), testee.get());
 	}
-	
+
 	@Test
 	public void testIndexOf() {
 		int[] result;

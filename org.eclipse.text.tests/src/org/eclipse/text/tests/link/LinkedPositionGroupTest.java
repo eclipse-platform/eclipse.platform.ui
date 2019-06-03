@@ -29,20 +29,20 @@ import org.eclipse.jface.text.link.LinkedPositionGroup;
 
 
 public class LinkedPositionGroupTest {
-	
+
 	@Test
 	public void testIsEmpty() {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		assertTrue(group.isEmpty());
 	}
-	
+
 	@Test
 	public void testIsNotEmtpy() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		group.addPosition(new LinkedPosition(new Document(), 0, 0));
 		assertFalse(group.isEmpty());
 	}
-	
+
 	@Test
 	public void testGetPositions() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
@@ -50,7 +50,7 @@ public class LinkedPositionGroupTest {
 		group.addPosition(new LinkedPosition(new Document(), 0, 0));
 		assertEquals(2, group.getPositions().length);
 	}
-	
+
 	@Test
 	public void testAddPosition() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
@@ -58,7 +58,7 @@ public class LinkedPositionGroupTest {
 		group.addPosition(p);
 		assertSame(p, group.getPositions()[0]);
 	}
-	
+
 	@Test
 	public void testAddIllegalState() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
@@ -74,7 +74,7 @@ public class LinkedPositionGroupTest {
 
 		assertFalse(true);
 	}
-	
+
 	@Test
 	public void testAddBadLocation() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
@@ -88,7 +88,7 @@ public class LinkedPositionGroupTest {
 
 		assertFalse(true);
 	}
-	
+
 	@Test
 	public void testAddEqualContent() {
 		LinkedPositionGroup group= new LinkedPositionGroup();
@@ -100,7 +100,7 @@ public class LinkedPositionGroupTest {
 			assertFalse(true);
 		}
 	}
-	
+
 	@Test
 	public void testAddNotEqualContent() {
 		LinkedPositionGroup group= new LinkedPositionGroup();

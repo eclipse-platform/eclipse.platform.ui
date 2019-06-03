@@ -54,7 +54,7 @@ public class PositionUpdatingCornerCasesTest {
 		fDocument.addPosition(new Position(0, 1));
 		fDocument.addPosition(new Position(5, 0));
 		fDocument.addPosition(new Position(5, 3));
-		
+
 		fDocument.replace(0, 0, "yy");
 
 		Position[] positions= new Position[] {
@@ -66,7 +66,7 @@ public class PositionUpdatingCornerCasesTest {
 
 		checkPositions(positions);
 	}
-	
+
 	@Test
 	public void testInsert2() throws Exception {
 		fDocument= new Document("x-x-x-x-x-x-x-x-x-x-x");
@@ -77,9 +77,9 @@ public class PositionUpdatingCornerCasesTest {
 		fDocument.addPosition(new Position(5, 3));
 		fDocument.addPosition(new Position(10, 0));
 		fDocument.addPosition(new Position(10, 2));
-		
+
 		fDocument.replace(5, 0, "yy");
-		
+
 		Position[] positions= new Position[] {
 				new Position(0, 1),
 				new Position(0, 0),
@@ -89,8 +89,8 @@ public class PositionUpdatingCornerCasesTest {
 				new Position(12, 2),
 				new Position(12, 0),
 		};
-		
+
 		checkPositions(positions);
-		
+
 	}
 }
