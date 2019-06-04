@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -118,6 +118,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
 	 */
 	public void testColor() throws BadLocationException, CoreException {
 		launch("echoing"); //$NON-NLS-1$
+		ConsoleLineTracker.waitForConsole();
 		int offset = 15; // buildfile
 		Color color = getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color); //$NON-NLS-1$
