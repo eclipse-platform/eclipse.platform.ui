@@ -228,6 +228,9 @@ public final class EmptyWorkspaceHelper {
 	}
 
 	private void readProjectWizardActions() {
+		if (projectWizardActions == null) {
+			return;
+		}
 		IWorkbench wb = PlatformUI.getWorkbench();
 		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
 		IWorkbenchPage page = win.getActivePage();
@@ -344,7 +347,6 @@ public final class EmptyWorkspaceHelper {
 		 */
 		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-			readProjectWizardActions();
 			if (emptyArea != null) {
 				recreateEmptyArea();
 				switchTopControlRunnable.run();
