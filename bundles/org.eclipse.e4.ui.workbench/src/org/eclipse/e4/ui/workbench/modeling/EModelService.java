@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Manumitting Technologies Inc - Bug 380609
+ *     Stefan Nöbauer - Bug 547997
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.modeling;
@@ -87,6 +88,13 @@ public interface EModelService {
 	 */
 	int IN_PART = 0x40;
 
+	/**
+	 * Returned Location if the element is in SharedElements
+	 *
+	 * @since 1.11
+	 */
+	int IN_SHARED_ELEMENTS = 0x80;
+
 	// 'Standard' searches
 
 	/** Searches for elements in the UI that the user is currently seeing (excluding trim) */
@@ -147,6 +155,41 @@ public interface EModelService {
 	 * {@link ElementMatcher} and forwards the call on to the base API
 	 * {@link EModelService#findElements(MApplicationElement, Class, int, Selector)}.
 	 *
+	 * @param searchRoot  The element at which to start the search. This element
+	 *                    must be non-null and is included in the search.
+	 * @param id          The id of the element search for, can be null
+	 * @param clazz       The type of element to be searched for. If non-null this
+	 *                    also defines the return type of the List.
+	 * @param tagsToMatch List of tags that needs to match.
+	 * @param searchFlags A bitwise combination of the following constants:
+	 *                    <ul>
+	 *                    <li><b>OUTSIDE_PERSPECTIVE</b> Include the elements in the
+	 *                    window's model that are not in a perspective</li>
+	 *                    <li><b>IN_ANY_PERSPECTIVE</b> Include the elements in all
+	 *                    perspectives</li>
+	 *                    <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in
+	 *                    the currently active perspective only</li>
+	 *                    <li><b>IN_MAIN_MENU</b> Include elements in an MWindow's
+	 *                    main menu</li>
+	 *                    <li><b>IN_PART</b> Include MMenu and MToolbar elements
+	 *                    owned by parts</li>
+	 *                    <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in
+	 *                    the currently active perspective only</li>
+	 *                    <li><b>IN_SHARED_AREA</b> Include the elements in the
+	 *                    shared area</li>
+	 *                    <li><b>IN_TRIM</b> Include the elements in the window's
+	 *                    trim</li>
+	 *                    <li><b>IN_SHARED_ELEMENTS</b> Include the elements in the
+	 *                    window's Shared Elements</li>
+	 *                    </ul>
+	 *                    Note that you may omit both perspective flags but still
+	 *                    define <b>IN_SHARED_AREA</b>; the flags
+	 *                    <b>OUTSIDE_PERSPECTIVE | IN_SHARED_AREA</b> for example
+	 *                    will search the presentation <i>excluding</i> the elements
+	 *                    in perspective stacks.
+	 *
+	 * @return The generically typed list of matching elements.
+	 *
 	 * @see EModelService#findElements(MApplicationElement, Class, int, Selector)
 	 */
 	<T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
@@ -154,9 +197,17 @@ public interface EModelService {
 
 	/**
 	 * This is a convenience method that forwards the parameters on to
-	 * {@link EModelService#findElements(MUIElement, String, Class, List, int)}, passing
-	 * {@link EModelService#ANYWHERE} as the 'searchFlags'.
+	 * {@link EModelService#findElements(MUIElement, String, Class, List, int)},
+	 * passing {@link EModelService#ANYWHERE} as the 'searchFlags'.
 	 *
+	 * @param searchRoot  The element at which to start the search. This element
+	 *                    must be non-null and is included in the search.
+	 * @param id          The id of the element search for, can be null
+	 * @param clazz       The type of element to be searched for. If non-null this
+	 *                    also defines the return type of the List.
+	 * @param tagsToMatch List of tags that needs to match.
+	 *
+	 * @return The generically typed list of matching elements.
 	 */
 	<T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch);
@@ -212,6 +263,8 @@ public interface EModelService {
 	 *                    shared area</li>
 	 *                    <li><b>IN_TRIM</b> Include the elements in the window's
 	 *                    trim</li>
+	 *                    <li><b>IN_SHARED_ELEMENTS</b> Include the elements in the
+	 *                    window's Shared Elements</li>
 	 *                    </ul>
 	 *                    Note that you may omit both perspective flags but still
 	 *                    define <b>IN_SHARED_AREA</b>; the flags

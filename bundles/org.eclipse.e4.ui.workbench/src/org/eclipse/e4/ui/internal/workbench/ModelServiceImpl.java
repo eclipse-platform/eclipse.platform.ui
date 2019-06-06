@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 434611, 472654
  *     Manumitting Technologies Inc - Bug 380609
+ *     Stefan Nöbauer - Bug 547997
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -238,9 +239,18 @@ public class ModelServiceImpl implements EModelService {
 			 */
 			MElementContainer<?> searchContainer = (MElementContainer<?>) searchRoot;
 			MPerspectiveStack primaryStack = null;
-			if (searchRoot instanceof MWindow && (searchFlags & OUTSIDE_PERSPECTIVE) == 0
+			if (searchRoot instanceof MWindow ) {
+				if((searchFlags & IN_SHARED_ELEMENTS) != 0) {
+					List<MUIElement> sharedElements = ((MWindow) searchRoot).getSharedElements();
+					for (MUIElement muiElement : sharedElements) {
+						findElementsRecursive(muiElement, clazz, matcher, elements, searchFlags);
+					}
+				}
+
+				if( (searchFlags & OUTSIDE_PERSPECTIVE) == 0
 					&& (primaryStack = getPrimaryPerspectiveStack((MWindow) searchRoot)) != null) {
 				searchContainer = primaryStack;
+				}
 			}
 			if (searchContainer instanceof MPerspectiveStack) {
 				if ((searchFlags & IN_ANY_PERSPECTIVE) != 0) {

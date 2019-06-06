@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 483362, 486804
+ *     Stefan Nöbauer - Bug 547997
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests;
@@ -42,6 +43,7 @@ import org.eclipse.e4.ui.tests.workbench.MToolItemTest;
 import org.eclipse.e4.ui.tests.workbench.MWindowTest;
 import org.eclipse.e4.ui.tests.workbench.ModelAssemblerFragmentOrderingTests;
 import org.eclipse.e4.ui.tests.workbench.ModelAssemblerTests;
+import org.eclipse.e4.ui.tests.workbench.ModelServiceImplTest;
 import org.eclipse.e4.ui.tests.workbench.PartOnTopManagerTest;
 import org.eclipse.e4.ui.tests.workbench.PartRenderingEngineTests;
 import org.eclipse.e4.ui.tests.workbench.SashRendererTest;
@@ -93,8 +95,9 @@ import org.junit.runners.Suite;
 		ExtensionsSortTests.class,
 		HandlerActivationTest.class,
 		ModelAssemblerTests.class,
-		ModelAssemblerFragmentOrderingTests.class, E4ResourceTest.class, AreaRendererTest.class
+		ModelAssemblerFragmentOrderingTests.class, E4ResourceTest.class, AreaRendererTest.class,
 		// SWTPartRendererTest.class,
+		ModelServiceImplTest.class
 })
 public class UIAllTests {
 }
