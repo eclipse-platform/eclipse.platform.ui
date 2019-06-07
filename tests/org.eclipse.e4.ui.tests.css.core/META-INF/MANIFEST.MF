@@ -18,5 +18,5 @@ Export-Package: org.eclipse.e4.ui.tests.css.core;x-internal:=true,
  org.eclipse.e4.ui.tests.css.core.parser;x-internal:=true,
  org.eclipse.e4.ui.tests.css.core.util;x-internal:=true
 Automatic-Module-Name: org.eclipse.e4.ui.tests.css.core
-Import-Package: org.junit.runner;version="4.12.0"
+Import-Package: org.junit.runner;version="4.13.0"
 
