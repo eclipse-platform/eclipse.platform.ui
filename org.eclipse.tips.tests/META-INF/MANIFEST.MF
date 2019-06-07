@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.tips.tests
 Bundle-Version: 1.0.200.qualifier
 Bundle-Vendor: Eclipse
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.junit;bundle-version="4.12.0",
+Require-Bundle: org.junit;bundle-version="4.13.0",
  org.eclipse.tips.examples;bundle-version="0.1.0",
  org.eclipse.tips.ide;bundle-version="0.1.0",
  org.eclipse.core.runtime;bundle-version="3.12.0",
