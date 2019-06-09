@@ -559,8 +559,10 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 		if (rootEntry instanceof PropertySheetEntry) {
 			((PropertySheetEntry) rootEntry)
 					.setPropertySourceProvider(provider);
-			// the following will trigger an update
-			viewer.setRootEntry(rootEntry);
+			if (viewer != null) {
+				// the following will trigger an update
+				viewer.setRootEntry(rootEntry);
+			}
 		}
 	}
 
