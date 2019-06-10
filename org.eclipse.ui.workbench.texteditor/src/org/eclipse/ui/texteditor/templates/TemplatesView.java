@@ -26,6 +26,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
@@ -165,6 +166,14 @@ public final class TemplatesView extends PageBookView {
 	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 		partActivated(part);
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> key) {
+		if (key == IContributedContentsView.class) {
+			return key.cast((IContributedContentsView) () -> getCurrentContributingPart());
+		}
+		return super.getAdapter(key);
 	}
 
 	/**
