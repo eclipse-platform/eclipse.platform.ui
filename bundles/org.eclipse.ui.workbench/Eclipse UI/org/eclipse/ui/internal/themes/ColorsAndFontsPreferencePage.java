@@ -945,30 +945,30 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 
 			private String getText(Object element) {
-				String text = EMPTY;
+				StringBuilder text = new StringBuilder(EMPTY);
 				if (element instanceof ICategorizedThemeElementDefinition) {
-					text += ((ICategorizedThemeElementDefinition) element).getDescription();
+					text.append(((ICategorizedThemeElementDefinition) element).getDescription());
 				}
 				if (element instanceof FontDefinition) {
 					Font font = fontRegistry.get(((FontDefinition) element).getId());
 					if (font != null) {
 						for (FontData data : font.getFontData()) {
-							text += SPACE;
-							text += data.getName() + SPACE;
-							text += data.getHeight() + SPACE;
-							text += data.getStyle() == SWT.NORMAL ? RESOURCE_BUNDLE.getString("normalFont") + SPACE //$NON-NLS-1$
-									: EMPTY;
-							text += (data.getStyle() & SWT.BOLD) == SWT.BOLD
+							text.append(SPACE);
+							text.append(data.getName() + SPACE);
+							text.append(data.getHeight() + SPACE);
+							text.append(data.getStyle() == SWT.NORMAL ? RESOURCE_BUNDLE.getString("normalFont") + SPACE //$NON-NLS-1$
+									: EMPTY);
+							text.append((data.getStyle() & SWT.BOLD) == SWT.BOLD
 									? RESOURCE_BUNDLE.getString("boldFont") + SPACE //$NON-NLS-1$
-									: EMPTY;
-							text += (data.getStyle() & SWT.ITALIC) == SWT.ITALIC
+									: EMPTY);
+							text.append((data.getStyle() & SWT.ITALIC) == SWT.ITALIC
 									? RESOURCE_BUNDLE.getString("italicFont") + SPACE //$NON-NLS-1$
-									: EMPTY;
+									: EMPTY);
 							break;
 						}
 					}
 				}
-				return text;
+				return text.toString();
 			}
 		};
 		filter.setIncludeLeadingWildcard(true);

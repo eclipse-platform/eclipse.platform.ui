@@ -1029,21 +1029,21 @@ public class ResourceInfoPage extends PropertyPage {
 						IDEWorkbenchMessages.ResourceInfo_write,
 						IDEWorkbenchMessages.ResourceInfo_execute };
 
-				String message = ""; //$NON-NLS-1$
+				StringBuilder message = new StringBuilder(""); //$NON-NLS-1$
 				if ((changedPermissions & EFS.ATTRIBUTE_IMMUTABLE) != 0)
-					message += getSimpleChangeName(
+					message.append(getSimpleChangeName(
 							(finalPermissions & EFS.ATTRIBUTE_IMMUTABLE) != 0,
-							IDEWorkbenchMessages.ResourceInfo_locked);
+							IDEWorkbenchMessages.ResourceInfo_locked));
 
 				for (int j = 0; j < 3; j++) {
 					for (int i = 0; i < 3; i++) {
 						if ((changedPermissions & permissionMasks[j][i]) != 0)
-							message += getSimpleChangeName(
+							message.append(getSimpleChangeName(
 									(finalPermissions & permissionMasks[j][i]) != 0,
-									groupNames[j] + " " + permissionNames[i]); //$NON-NLS-1$
+									groupNames[j] + " " + permissionNames[i])); //$NON-NLS-1$
 					}
 				}
-				return message;
+				return message.toString();
 			}
 
 			@Override
