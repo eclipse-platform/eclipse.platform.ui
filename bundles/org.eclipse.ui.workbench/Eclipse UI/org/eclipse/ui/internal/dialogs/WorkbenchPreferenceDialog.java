@@ -154,11 +154,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	}
 
 	@Override
-	protected void okPressed() {
-		super.okPressed();
-	}
-
-	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
