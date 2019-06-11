@@ -16,26 +16,18 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import static org.eclipse.swt.events.SelectionListener.widgetDefaultSelectedAdapter;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleControlAdapter;
-import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -43,25 +35,19 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -81,21 +67,15 @@ public class FilteredTree extends Composite {
 	protected Text filterText;
 
 	/**
-	 * The control representing the clear button for the filter text entry. This
-	 * value may be <code>null</code> if no such button exists, or if the controls
-	 * have not yet been created.
 	 * <p>
-	 * <strong>Note:</strong> As of 3.5, this is not used if the new look is chosen.
+	 * <strong>Note:</strong> As of 4.13 not used anymore
 	 * </p>
 	 */
 	protected ToolBarManager filterToolBar;
 
 	/**
-	 * The control representing the clear button for the filter text entry. This
-	 * value may be <code>null</code> if no such button exists, or if the controls
-	 * have not yet been created.
 	 * <p>
-	 * <strong>Note:</strong> This is only used if the new look is chosen.
+	 * <strong>Note:</strong> As of 4.13 not used anymore
 	 * </p>
 	 *
 	 * @since 3.5
@@ -153,13 +133,6 @@ public class FilteredTree extends Composite {
 	protected Composite treeComposite;
 
 	/**
-	 * Tells whether to use the pre 3.5 or the new look.
-	 *
-	 * @since 3.5
-	 */
-	private boolean useNewLook = false;
-
-	/**
 	 * Tells whether this filtetered tree is used to make quick selections. In this
 	 * mode the first match in the tree is automatically selected while filtering
 	 * and the 'Enter' key is not used to move the focus to the tree.
@@ -169,36 +142,10 @@ public class FilteredTree extends Composite {
 	private boolean quickSelectionMode = false;
 
 	/**
-	 * Image descriptor for enabled clear button.
-	 */
-	private static final String CLEAR_ICON = "org.eclipse.ui.internal.dialogs.CLEAR_ICON"; //$NON-NLS-1$
-
-	/**
-	 * Image descriptor for disabled clear button.
-	 */
-	private static final String DISABLED_CLEAR_ICON = "org.eclipse.ui.internal.dialogs.DCLEAR_ICON"; //$NON-NLS-1$
-
-	/**
 	 * Maximum time spent expanding the tree after the filter text has been updated
 	 * (this is only used if we were able to at least expand the visible nodes)
 	 */
 	private static final long SOFT_MAX_EXPAND_TIME = 200;
-
-	/**
-	 * Get image descriptors for the clear button.
-	 */
-	static {
-		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID,
-				"$nl$/icons/full/etool16/clear_co.png"); //$NON-NLS-1$
-		if (descriptor != null) {
-			JFaceResources.getImageRegistry().put(CLEAR_ICON, descriptor);
-		}
-		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID,
-				"$nl$/icons/full/dtool16/clear_co.png"); //$NON-NLS-1$
-		if (descriptor != null) {
-			JFaceResources.getImageRegistry().put(DISABLED_CLEAR_ICON, descriptor);
-		}
-	}
 
 	/**
 	 * Create a new instance of the receiver.
@@ -224,13 +171,12 @@ public class FilteredTree extends Composite {
 	 * @param parent     the parent <code>Composite</code>
 	 * @param treeStyle  the style bits for the <code>Tree</code>
 	 * @param filter     the filter to be used
-	 * @param useNewLook <code>true</code> if the new 3.5 look should be used
+	 * @param useNewLook ignored, look introduced in 3.5 is always used
 	 * @since 3.5
 	 */
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook) {
 		super(parent, SWT.NONE);
 		this.parent = parent;
-		this.useNewLook = useNewLook;
 		init(treeStyle, filter);
 	}
 
@@ -260,7 +206,7 @@ public class FilteredTree extends Composite {
 	 * overriding constructor.
 	 *
 	 * @param parent     the parent <code>Composite</code>
-	 * @param useNewLook <code>true</code> if the new 3.5 look should be used
+	 * @param useNewLook ignored, look introduced in 3.5 is always used
 	 * @see #init(int, PatternFilter)
 	 *
 	 * @since 3.5
@@ -268,7 +214,6 @@ public class FilteredTree extends Composite {
 	protected FilteredTree(Composite parent, boolean useNewLook) {
 		super(parent, SWT.NONE);
 		this.parent = parent;
-		this.useNewLook = useNewLook;
 	}
 
 	/**
@@ -281,8 +226,7 @@ public class FilteredTree extends Composite {
 	 */
 	protected void init(int treeStyle, PatternFilter filter) {
 		patternFilter = filter;
-		showFilterControls = PlatformUI.getPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
+		showFilterControls = PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
 		createControl(parent, treeStyle);
 		createRefreshJob();
 		setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
@@ -307,13 +251,8 @@ public class FilteredTree extends Composite {
 		}
 
 		if (showFilterControls) {
-			if (!useNewLook || useNativeSearchField(parent)) {
-				filterComposite = new Composite(this, SWT.NONE);
-			} else {
-				filterComposite = new Composite(this, SWT.BORDER);
-				filterComposite.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-			}
-			GridLayout filterLayout = new GridLayout(2, false);
+			filterComposite = new Composite(this, SWT.NONE);
+			GridLayout filterLayout = new GridLayout();
 			filterLayout.marginHeight = 0;
 			filterLayout.marginWidth = 0;
 			filterComposite.setLayout(filterLayout);
@@ -333,25 +272,6 @@ public class FilteredTree extends Composite {
 		createTreeControl(treeComposite, treeStyle);
 	}
 
-	private static Boolean useNativeSearchField;
-
-	private static boolean useNativeSearchField(Composite composite) {
-		if (useNativeSearchField == null) {
-			useNativeSearchField = Boolean.FALSE;
-			Text testText = null;
-			try {
-				testText = new Text(composite, SWT.SEARCH | SWT.ICON_CANCEL);
-				useNativeSearchField = Boolean.valueOf((testText.getStyle() & SWT.ICON_CANCEL) != 0);
-			} finally {
-				if (testText != null) {
-					testText.dispose();
-				}
-			}
-
-		}
-		return useNativeSearchField.booleanValue();
-	}
-
 	/**
 	 * Create the filter controls. By default, a text and corresponding tool bar
 	 * button that clears the contents of the text is created. Subclasses may
@@ -362,19 +282,6 @@ public class FilteredTree extends Composite {
 	 */
 	protected Composite createFilterControls(Composite parent) {
 		createFilterText(parent);
-		if (useNewLook)
-			createClearTextNew(parent);
-		else
-			createClearTextOld(parent);
-		if (clearButtonControl != null) {
-			// initially there is no text to clear
-			clearButtonControl.setVisible(false);
-		}
-		if (filterToolBar != null) {
-			filterToolBar.update(false);
-			// initially there is no text to clear
-			filterToolBar.getControl().setVisible(false);
-		}
 		return parent;
 	}
 
@@ -498,23 +405,10 @@ public class FilteredTree extends Composite {
 						int treeHeight = getViewer().getTree().getBounds().height;
 						int numVisibleItems = treeHeight / getViewer().getTree().getItemHeight();
 						long stopTime = SOFT_MAX_EXPAND_TIME + System.currentTimeMillis();
-						boolean cancel = false;
 						if (items.length > 0
 								&& recursiveExpand(items, monitor, stopTime, new int[] { numVisibleItems })) {
-							cancel = true;
-						}
-
-						// enabled toolbar - there is text to clear
-						// and the list is currently being filtered
-						updateToolbar(true);
-
-						if (cancel) {
 							return Status.CANCEL_STATUS;
 						}
-					} else {
-						// disabled toolbar - there is no text to clear
-						// and the list is currently not filtered
-						updateToolbar(false);
 					}
 				} finally {
 					// done updating the tree - set redraw back to true
@@ -569,12 +463,7 @@ public class FilteredTree extends Composite {
 	}
 
 	protected void updateToolbar(boolean visible) {
-		if (clearButtonControl != null) {
-			clearButtonControl.setVisible(visible);
-		}
-		if (filterToolBar != null) {
-			filterToolBar.getControl().setVisible(visible);
-		}
+		// nothing to do
 	}
 
 	/**
@@ -634,28 +523,22 @@ public class FilteredTree extends Composite {
 		filterText.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				if (!useNewLook) {
-					/*
-					 * Running in an asyncExec because the selectAll() does not appear to work when
-					 * using mouse to give focus to text.
-					 */
-					Display display = filterText.getDisplay();
-					display.asyncExec(() -> {
-						if (!filterText.isDisposed()) {
-							if (getInitialText().equals(filterText.getText().trim())) {
-								filterText.selectAll();
-							}
+				/*
+				 * Running in an asyncExec because the selectAll() does not appear to work when
+				 * using mouse to give focus to text.
+				 */
+				Display display = filterText.getDisplay();
+				display.asyncExec(() -> {
+					if (!filterText.isDisposed()) {
+						if (getInitialText().equals(filterText.getText().trim())) {
+							filterText.selectAll();
 						}
-					});
-					return;
-				}
+					}
+				});
 			}
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				if (!useNewLook) {
-					return;
-				}
 				if (filterText.getText().equals(initialText)) {
 					setFilterText(""); //$NON-NLS-1$
 					textChanged();
@@ -663,19 +546,17 @@ public class FilteredTree extends Composite {
 			}
 		});
 
-		if (useNewLook) {
-			filterText.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseDown(MouseEvent e) {
-					if (filterText.getText().equals(initialText)) {
-						// XXX: We cannot call clearText() due to
-						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=260664
-						setFilterText(""); //$NON-NLS-1$
-						textChanged();
-					}
+		filterText.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				if (filterText.getText().equals(initialText)) {
+					// XXX: We cannot call clearText() due to
+					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=260664
+					setFilterText(""); //$NON-NLS-1$
+					textChanged();
 				}
-			});
-		}
+			}
+		});
 
 		filterText.addKeyListener(new KeyAdapter() {
 			@Override
@@ -702,21 +583,7 @@ public class FilteredTree extends Composite {
 
 		filterText.addModifyListener(e -> textChanged());
 
-		// if we're using a field with built in cancel we need to listen for
-		// default selection changes (which tell us the cancel button has been
-		// pressed)
-		if ((filterText.getStyle() & SWT.ICON_CANCEL) != 0) {
-			filterText.addSelectionListener(widgetDefaultSelectedAdapter(e -> {
-				if (e.detail == SWT.ICON_CANCEL)
-					clearText();
-			}));
-		}
-
 		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		// if the text widget supported cancel then it will have it's own
-		// integrated button. We can take all of the space.
-		if ((filterText.getStyle() & SWT.ICON_CANCEL) != 0)
-			gridData.horizontalSpan = 2;
 		filterText.setLayoutData(gridData);
 	}
 
@@ -762,10 +629,7 @@ public class FilteredTree extends Composite {
 	 * @since 3.3
 	 */
 	protected Text doCreateFilterText(Composite parent) {
-		if (!useNewLook || useNativeSearchField(parent)) {
-			return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
-		}
-		return new Text(parent, SWT.SINGLE);
+		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
 	}
 
 	private String previousFilterText;
@@ -805,135 +669,6 @@ public class FilteredTree extends Composite {
 	@Override
 	public void setBackground(Color background) {
 		super.setBackground(background);
-		if (filterComposite != null && (!useNewLook || useNativeSearchField(filterComposite))) {
-			filterComposite.setBackground(background);
-		}
-		if (filterToolBar != null && filterToolBar.getControl() != null) {
-			filterToolBar.getControl().setBackground(background);
-		}
-	}
-
-	/**
-	 * Create the button that clears the text.
-	 *
-	 * @param parent parent <code>Composite</code> of toolbar button
-	 */
-	private void createClearTextOld(Composite parent) {
-		// only create the button if the text widget doesn't support one
-		// natively
-		if ((filterText.getStyle() & SWT.ICON_CANCEL) == 0) {
-			filterToolBar = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL);
-			filterToolBar.createControl(parent);
-
-			IAction clearTextAction = new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
-				@Override
-				public void run() {
-					clearText();
-				}
-			};
-
-			clearTextAction.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
-			clearTextAction.setImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(CLEAR_ICON));
-			clearTextAction
-					.setDisabledImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(DISABLED_CLEAR_ICON));
-
-			filterToolBar.add(clearTextAction);
-		}
-	}
-
-	/**
-	 * Create the button that clears the text.
-	 *
-	 * @param parent parent <code>Composite</code> of toolbar button
-	 */
-	private void createClearTextNew(Composite parent) {
-		// only create the button if the text widget doesn't support one
-		// natively
-		if ((filterText.getStyle() & SWT.ICON_CANCEL) == 0) {
-			final Image inactiveImage = JFaceResources.getImageRegistry().getDescriptor(DISABLED_CLEAR_ICON)
-					.createImage();
-			final Image activeImage = JFaceResources.getImageRegistry().getDescriptor(CLEAR_ICON).createImage();
-			final Image pressedImage = new Image(getDisplay(), activeImage, SWT.IMAGE_GRAY);
-
-			final Label clearButton = new Label(parent, SWT.NONE);
-			clearButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-			clearButton.setImage(inactiveImage);
-			clearButton.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-			clearButton.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
-			clearButton.addMouseListener(new MouseAdapter() {
-				private MouseMoveListener fMoveListener;
-
-				@Override
-				public void mouseDown(MouseEvent e) {
-					clearButton.setImage(pressedImage);
-					fMoveListener = new MouseMoveListener() {
-						private boolean fMouseInButton = true;
-
-						@Override
-						public void mouseMove(MouseEvent e) {
-							boolean mouseInButton = isMouseInButton(e);
-							if (mouseInButton != fMouseInButton) {
-								fMouseInButton = mouseInButton;
-								clearButton.setImage(mouseInButton ? pressedImage : inactiveImage);
-							}
-						}
-					};
-					clearButton.addMouseMoveListener(fMoveListener);
-				}
-
-				@Override
-				public void mouseUp(MouseEvent e) {
-					if (fMoveListener != null) {
-						clearButton.removeMouseMoveListener(fMoveListener);
-						fMoveListener = null;
-						boolean mouseInButton = isMouseInButton(e);
-						clearButton.setImage(mouseInButton ? activeImage : inactiveImage);
-						if (mouseInButton) {
-							clearText();
-							filterText.setFocus();
-						}
-					}
-				}
-
-				private boolean isMouseInButton(MouseEvent e) {
-					Point buttonSize = clearButton.getSize();
-					return 0 <= e.x && e.x < buttonSize.x && 0 <= e.y && e.y < buttonSize.y;
-				}
-			});
-			clearButton.addMouseTrackListener(new MouseTrackListener() {
-				@Override
-				public void mouseEnter(MouseEvent e) {
-					clearButton.setImage(activeImage);
-				}
-
-				@Override
-				public void mouseExit(MouseEvent e) {
-					clearButton.setImage(inactiveImage);
-				}
-
-				@Override
-				public void mouseHover(MouseEvent e) {
-				}
-			});
-			clearButton.addDisposeListener(e -> {
-				inactiveImage.dispose();
-				activeImage.dispose();
-				pressedImage.dispose();
-			});
-			clearButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-				@Override
-				public void getName(AccessibleEvent e) {
-					e.result = WorkbenchMessages.FilteredTree_AccessibleListenerClearButton;
-				}
-			});
-			clearButton.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
-				@Override
-				public void getRole(AccessibleControlEvent e) {
-					e.detail = ACC.ROLE_PUSHBUTTON;
-				}
-			});
-			this.clearButtonControl = clearButton;
-		}
 	}
 
 	/**
@@ -1003,7 +738,7 @@ public class FilteredTree extends Composite {
 	 */
 	public void setInitialText(String text) {
 		initialText = text;
-		if (useNewLook && filterText != null) {
+		if (filterText != null) {
 			filterText.setMessage(text);
 			if (filterText.isFocusControl()) {
 				setFilterText(initialText);

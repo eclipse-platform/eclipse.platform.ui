@@ -145,11 +145,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		}
 
 		@Override
-		protected void updateToolbar(boolean visible) {
-			super.updateToolbar(viewerFilter != null || visible);
-		}
-
-		@Override
 		protected void clearText() {
 			setFilterText(""); //$NON-NLS-1$
 			// remove the filter if text is cleared
