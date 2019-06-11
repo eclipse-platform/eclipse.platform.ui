@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.debug.examples.memory;singleton:=true
-Bundle-Version: 1.102.100.qualifier
+Bundle-Version: 1.102.200.qualifier
 Bundle-ClassPath: bin/
 Bundle-Activator: org.eclipse.debug.examples.internal.memory.MemoryViewSamplePlugin
 Bundle-Vendor: %Bundle-Vendor
