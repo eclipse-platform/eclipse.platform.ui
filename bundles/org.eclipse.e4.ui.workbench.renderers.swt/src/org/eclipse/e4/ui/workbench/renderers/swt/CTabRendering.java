@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Display;
 public class CTabRendering extends CTabFolderRenderer implements ICTabRendering {
 
 	// Constants for circle drawing
-	static enum CirclePart {
+	enum CirclePart {
 		LEFT_TOP, LEFT_BOTTOM, RIGHT_TOP, RIGHT_BOTTOM;
 
 		static CirclePart left(boolean onBottom) {

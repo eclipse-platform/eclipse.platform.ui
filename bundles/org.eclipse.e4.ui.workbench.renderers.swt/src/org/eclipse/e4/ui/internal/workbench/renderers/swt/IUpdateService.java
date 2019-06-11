@@ -26,7 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MItem;
  */
 public interface IUpdateService {
 
-	public Runnable registerElementForUpdate(
+	Runnable registerElementForUpdate(
 			ParameterizedCommand parameterizedCommand, MItem item);
 
 }
