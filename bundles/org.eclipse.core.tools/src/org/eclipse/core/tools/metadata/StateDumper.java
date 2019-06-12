@@ -20,7 +20,8 @@ import org.eclipse.osgi.service.resolver.*;
 public class StateDumper extends AbstractDumper {
 
 	@Override
-	protected void dumpContents(PushbackInputStream input, StringBuilder contents) throws IOException, Exception, DumpException {
+	protected void dumpContents(PushbackInputStream input, StringBuilder contents)
+			throws IOException, Exception, DumpException {
 		PlatformAdmin admin = Platform.getPlatformAdmin();
 		// use the deprecated API to support running against a 3.0 Eclipse
 		State state = admin.getFactory().readState(new DataInputStream(input));

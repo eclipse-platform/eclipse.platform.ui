@@ -68,7 +68,7 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 
 		// constructs a list with the selected elements
 		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-		final List selectedElements = new ArrayList(structuredSelection.toList());
+		final List selectedElements = new ArrayList<>(structuredSelection.toList());
 
 		// tries to find a TreeContentProviderNode between the selected elements
 		TreeContentProviderNode anyNode = findNodeElement(selectedElements);
@@ -79,7 +79,7 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 
 		// otherwise, we will move the elements to a new list in the same order
 		// we find them in the tree.
-		final List orderedElements = new LinkedList();
+		final List orderedElements = new LinkedList<>();
 
 		// uses a visitor to traverse the whole tree
 		// when a visited node is the selected list, it is moved to the ordered list

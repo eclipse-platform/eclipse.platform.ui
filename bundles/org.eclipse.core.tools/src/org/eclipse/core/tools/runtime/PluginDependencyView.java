@@ -40,9 +40,6 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 	/** The id by which this view is known in the plug-in registry */
 	public static final String VIEW_ID = PluginDependencyView.class.getName();
 
-	/**
-	 * @see IWorkbenchPart#createPartControl
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | SWT.READ_ONLY);
@@ -83,9 +80,6 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 		getViewSite().getPage().addSelectionListener(this);
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		getViewSite().getPage().removeSelectionListener(this);
@@ -138,9 +132,6 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 		return dependencyGraph;
 	}
 
-	/**
-	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
-	 */
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (!(selection instanceof IStructuredSelection))

@@ -108,9 +108,6 @@ public class PluginDependencyGraphNode {
 		buffer.append('\n');
 	}
 
-	/**
-	 * @see java.lang.Object#equals(Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null)

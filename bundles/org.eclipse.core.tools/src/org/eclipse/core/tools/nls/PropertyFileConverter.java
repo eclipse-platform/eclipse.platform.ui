@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -123,10 +123,10 @@ public class PropertyFileConverter {
 	public Change trim(IFile propertiesFile, List<String> toDelete) throws IOException, CoreException {
 		if (toDelete == null || toDelete.isEmpty())
 			return null;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(propertiesFile.getContents()));
+
 		StringBuilder bundle = new StringBuilder();
 
-		try {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(propertiesFile.getContents()))) {
 			String line;
 			boolean isContinued = false;
 			boolean wasDeleted = false;
@@ -166,9 +166,6 @@ public class PropertyFileConverter {
 				}
 
 			}
-		} finally {
-			if (reader != null)
-				reader.close();
 		}
 		NLSFileChange pChange = new NLSFileChange(propertiesFile);
 		pChange.setContents(bundle.toString());
@@ -183,7 +180,7 @@ public class PropertyFileConverter {
 		String pkgName = accessorType.getPackageFragment().getElementName();
 		IFile accessorFile = (IFile) accessorType.getCompilationUnit().getCorrespondingResource();
 		String typeName = accessorFile.getFullPath().removeFileExtension().lastSegment();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(propertiesFile.getContents()));
+
 		String bundleName = propertiesFile.getName();
 		StringBuilder clazz = new StringBuilder();
 		// convert the bundle resource (messages.properties) to the simple name (messages)
@@ -191,7 +188,7 @@ public class PropertyFileConverter {
 		appendPreText(clazz, pkgName, simpleBundleName, typeName);
 		StringBuilder bundle = new StringBuilder();
 		int savings = 0;
-		try {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(propertiesFile.getContents()))) {
 			String line;
 			boolean isContinued = false;
 			while ((line = reader.readLine()) != null) {
@@ -216,9 +213,6 @@ public class PropertyFileConverter {
 				bundle.append(line);
 				bundle.append("\r\n"); //$NON-NLS-1$
 			}
-		} finally {
-			if (reader != null)
-				reader.close();
 		}
 		System.out.println("Memory saved by converting to field-based keys: " + savings);
 		appendPostText(clazz, pkgName + '.' + bundleName, typeName);

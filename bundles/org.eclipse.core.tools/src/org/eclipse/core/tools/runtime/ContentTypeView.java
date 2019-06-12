@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ package org.eclipse.core.tools.runtime;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.internal.content.ContentTypeManager;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.viewers.*;
@@ -29,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
  * the content type registry .
  *
  */
-public class ContentTypeView extends SpyView implements IAdaptable {
+public class ContentTypeView extends SpyView {
 
 	private static class ContentTypeContentProvider extends AbstractTreeContentProvider {
 

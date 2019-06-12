@@ -67,7 +67,7 @@ public class EventsSorter extends ViewerComparator implements ISorter {
 
 	@Override
 	public void sort(final Viewer viewer, Object[] elements) {
-		Comparator comparator = new Comparator() {
+		Comparator comparator = new Comparator<PerformanceStats>() {
 			Collator c = Collator.getInstance();
 
 			/**
@@ -75,9 +75,7 @@ public class EventsSorter extends ViewerComparator implements ISorter {
 			 * then by subsequent columns, depending on the column sort order.
 			 */
 			@Override
-			public int compare(Object o1, Object o2) {
-				PerformanceStats s1 = (PerformanceStats) o1;
-				PerformanceStats s2 = (PerformanceStats) o2;
+			public int compare(PerformanceStats s1, PerformanceStats s2) {
 				//always sort failures above non-failures
 				if (s1.isFailure() && !s2.isFailure())
 					return -1;

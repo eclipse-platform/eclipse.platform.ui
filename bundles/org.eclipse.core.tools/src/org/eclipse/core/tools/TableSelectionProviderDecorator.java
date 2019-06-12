@@ -99,17 +99,11 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 		return retString;
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.removeSelectionChangedListener(listener);
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void setSelection(ISelection selection) {
 		selectionProvider.setSelection(selection);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,13 +39,10 @@ public class StackTraceView extends BaseTextView {
 
 		try {
 			byte[] chars = new byte[0];
-			FileInputStream fis = new FileInputStream(stackFileName);
-			try {
+			try (FileInputStream fis = new FileInputStream(stackFileName)) {
 				fis.skip(begin);
 				chars = new byte[(int) (end - begin)];
 				fis.read(chars);
-			} finally {
-				fis.close();
 			}
 			viewer.getDocument().set(new String(chars));
 			viewer.refresh();

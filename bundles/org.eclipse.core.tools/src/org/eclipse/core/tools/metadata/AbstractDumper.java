@@ -79,7 +79,8 @@ public abstract class AbstractDumper implements IDumper {
 	 * @throws Exception
 	 * @throws DumpException
 	 */
-	protected abstract void dumpContents(PushbackInputStream input, StringBuilder contents) throws IOException, Exception, DumpException;
+	protected abstract void dumpContents(PushbackInputStream input, StringBuilder contents)
+			throws IOException, Exception, DumpException;
 
 	/**
 	 * Opens an input stream connected to the file object provided. Provides an

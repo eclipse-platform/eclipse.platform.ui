@@ -24,17 +24,11 @@ public class TreeTextOperationTarget implements ITextOperationTarget {
 		this.tree = tree;
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
-	 */
 	@Override
 	public boolean canDoOperation(int operation) {
 		return true;
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
-	 */
 	@Override
 	public void doOperation(int operation) {
 		//TODO: add support to other operations

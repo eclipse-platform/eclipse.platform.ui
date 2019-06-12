@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,13 +22,12 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.text.*;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IShowInTargetList;
 
-public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage implements ISearchResultPage, IAdaptable {
+public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage implements IAdaptable {
 
 	public class DecoratorIgnoringViewerSorter extends ViewerComparator {
 

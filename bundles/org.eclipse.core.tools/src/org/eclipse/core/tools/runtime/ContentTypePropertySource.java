@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2004 Geoff Longman and others.
+ * Copyright (c) 2003, 20019 Geoff Longman and others.
  *
  *   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,25 +37,16 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 		this.type = type;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
-	 */
 	@Override
 	public Object getEditableValue() {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
-	 */
 	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return PROPERTY_DESCRIPTORS;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyValue(Object)
-	 */
 	@Override
 	public Object getPropertyValue(Object id) {
 		if (id.equals(UNIQUE_ID.getId()))
@@ -87,25 +78,16 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 		return result.toString();
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#isPropertySet(Object)
-	 */
 	@Override
 	public boolean isPropertySet(Object id) {
 		return true;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#resetPropertyValue(Object)
-	 */
 	@Override
 	public void resetPropertyValue(Object id) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#setPropertyValue(Object, Object)
-	 */
 	@Override
 	public void setPropertyValue(Object id, Object value) {
 		// do nothing

@@ -37,9 +37,6 @@ public class SelectAllAction extends GlobalAction {
 		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), this);
 	}
 
-	/**
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		target.doOperation(ITextOperationTarget.SELECT_ALL);

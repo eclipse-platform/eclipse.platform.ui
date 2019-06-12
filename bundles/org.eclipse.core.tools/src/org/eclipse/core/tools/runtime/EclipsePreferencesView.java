@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,7 @@ public class EclipsePreferencesView extends ViewPart {
 	private TreeViewer viewer;
 	private IAction collapseAllAction;
 
-	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+	class ViewContentProvider implements ITreeContentProvider {
 
 		private IEclipsePreferences invisibleRoot;
 

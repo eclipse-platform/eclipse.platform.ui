@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.core.tools.nls;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.internal.ui.actions.WorkbenchRunnableAdapter;
 import org.eclipse.jface.action.IAction;
@@ -43,12 +42,7 @@ public class RemoveUnusedMessagesAction implements IObjectActionDelegate {
 			return;
 		try {
 			final GotoResourceAction pAction = new GotoResourceAction(fPart);
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					pAction.run();
-				}
-			};
+			IRunnableWithProgress runnable = monitor -> pAction.run();
 			PlatformUI.getWorkbench().getProgressService().run(false, false, runnable);
 			IFile propertiesFile = (IFile) pAction.getResource();
 			if (propertiesFile == null)
@@ -56,11 +50,7 @@ public class RemoveUnusedMessagesAction implements IObjectActionDelegate {
 			RemoveUnusedMessages refactoring = new RemoveUnusedMessages(fAccessorUnit.getTypes()[0], propertiesFile);
 			PerformRefactoringOperation op = new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 			PlatformUI.getWorkbench().getProgressService().run(false, true, new WorkbenchRunnableAdapter(op));
-		} catch (CoreException e) {
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
+		} catch (CoreException | InterruptedException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 

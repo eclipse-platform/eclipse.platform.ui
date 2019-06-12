@@ -49,25 +49,16 @@ public class Dump implements IDump {
 		super();
 	}
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.IDump#getFile()
-	 */
 	@Override
 	public File getFile() {
 		return file;
 	}
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.IDump#isFailed()
-	 */
 	@Override
 	public boolean isFailed() {
 		return failed || this.failureReason != null;
 	}
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.IDump#getFailureReason()
-	 */
 	@Override
 	public Exception getFailureReason() {
 		return failureReason;
@@ -91,9 +82,6 @@ public class Dump implements IDump {
 		this.file = file;
 	}
 
-	/**
-	 * @see IDump#getContents()
-	 */
 	@Override
 	public Object getContents() {
 		return contents;
@@ -117,9 +105,6 @@ public class Dump implements IDump {
 		this.offset = offset;
 	}
 
-	/**
-	 * @see IDump#getOffset()
-	 */
 	@Override
 	public long getOffset() {
 		return offset;
