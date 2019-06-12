@@ -342,13 +342,16 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		private final StringMatcher matcherGif;
 		private final StringMatcher matcherJpg;
 		private final StringMatcher matcherPng;
+		private final StringMatcher matcherBinFolder;
 		private final Filter filter;
 		private boolean includeNonBundles;
+
 
 		public SearchThread(IconMatchCallback callback, Filter filter) {
 			matcherGif = new StringMatcher("*" + filter.namePattern + "*.gif", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			matcherJpg = new StringMatcher("*" + filter.namePattern + "*.jpg", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			matcherPng = new StringMatcher("*" + filter.namePattern + "*.png", true, false); //$NON-NLS-1$//$NON-NLS-2$
+			matcherBinFolder = new StringMatcher("bin/*", true, false); //$NON-NLS-1$
 			this.callback = callback;
 			this.filter = filter;
 		}
@@ -395,7 +398,8 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 							return true;
 						} else if (resource.getType() == IResource.FILE && !resource.isLinked()) {
 							final String path = resource.getProjectRelativePath().toString();
-							if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
+							if (!matcherBinFolder.match(path)
+									&& (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path))) {
 								if (E.notEmpty(filter.getPackages())) {
 									if (!filter.getPackages().contains(
 											resource.getProjectRelativePath().removeLastSegments(1).toOSString())) {
