@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
  * @since 3.1
  */
 public class PreferenceTransferRegistryReader extends RegistryReader {
-	private List preferenceTransfers;
+	private List<PreferenceTransferElement> preferenceTransfers;
 
 	private String pluginPoint;
 
@@ -81,8 +81,8 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 		readPreferenceTransfers();
 		PreferenceTransferElement[] transfers = new PreferenceTransferElement[preferenceTransfers.size()];
 		Collections.sort(preferenceTransfers, (o1, o2) -> {
-			String name1 = ((PreferenceTransferElement) o1).getName();
-			String name2 = ((PreferenceTransferElement) o2).getName();
+			String name1 = o1.getName();
+			String name2 = o2.getName();
 
 			return Collator.getInstance().compare(name1, name2);
 		});
@@ -109,7 +109,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	 * Reads the wizards in a registry.
 	 */
 	protected void readPreferenceTransfers() {
-		preferenceTransfers = new ArrayList();
+		preferenceTransfers = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		readRegistry(registry, WorkbenchPlugin.PI_WORKBENCH, pluginPoint);
 	}
@@ -142,12 +142,12 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	 * @return a map that maps nodes to keys for this element or <code>null</code>
 	 *         for all nodes
 	 */
-	public static Map getEntry(IConfigurationElement element) {
+	public static Map<String, PreferenceFilterEntry[]> getEntry(IConfigurationElement element) {
 		IConfigurationElement[] entries = element.getChildren(IWorkbenchRegistryConstants.TAG_ENTRY);
 		if (entries.length == 0) {
 			return null;
 		}
-		Map map = new HashMap(entries.length);
+		Map<String, PreferenceFilterEntry[]> map = new HashMap<>(entries.length);
 		for (IConfigurationElement entry : entries) {
 			IConfigurationElement[] keys = entry.getChildren(IWorkbenchRegistryConstants.ATT_KEY);
 			PreferenceFilterEntry[] prefFilters = null;

@@ -20,6 +20,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
+import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -71,31 +72,31 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements IPlug
 			IConfigurationElement[] mappingConfigurations = PreferenceTransferRegistryReader
 					.getMappings(configurationElement);
 			int size = mappingConfigurations.length;
-			Set scopes = new HashSet(size);
-			Map mappingsMap = new HashMap(size);
+			Set<String> scopes = new HashSet<>(size);
+			Map<String, Map<String, PreferenceFilterEntry[]>> mappingsMap = new HashMap<>(size);
 			for (int i = 0; i < size; i++) {
 				String scope = PreferenceTransferRegistryReader.getScope(mappingConfigurations[i]);
 				scopes.add(scope);
 
-				Map mappings;
+				Map<String, PreferenceFilterEntry[]> mappings;
 				if (!mappingsMap.containsKey(scope)) {
-					mappings = new HashMap(size);
+					mappings = new HashMap<>(size);
 					mappingsMap.put(scope, mappings);
 				} else {
-					mappings = (Map) mappingsMap.get(scope);
+					mappings = mappingsMap.get(scope);
 					if (mappings == null) {
 						continue;
 					}
 				}
 
-				Map entries = PreferenceTransferRegistryReader.getEntry(mappingConfigurations[i]);
+				Map<String, PreferenceFilterEntry[]> entries = PreferenceTransferRegistryReader.getEntry(mappingConfigurations[i]);
 				if (entries == null) {
 					mappingsMap.put(scope, null);
 				} else {
 					mappings.putAll(entries);
 				}
 			}
-			filter = new PreferenceFilter((String[]) scopes.toArray(new String[scopes.size()]), mappingsMap);
+			filter = new PreferenceFilter(scopes.toArray(new String[scopes.size()]), mappingsMap);
 		}
 		return filter;
 	}
@@ -140,9 +141,9 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements IPlug
 	static class PreferenceFilter implements IPreferenceFilter {
 
 		private String[] scopes;
-		private Map mappings;
+		private Map<String, Map<String, PreferenceFilterEntry[]>> mappings;
 
-		public PreferenceFilter(String[] scopes, Map mappings) {
+		public PreferenceFilter(String[] scopes, Map<String, Map<String, PreferenceFilterEntry[]>> mappings) {
 			this.scopes = scopes;
 			this.mappings = mappings;
 		}
@@ -153,8 +154,8 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements IPlug
 		}
 
 		@Override
-		public Map getMapping(String scope) {
-			return (Map) mappings.get(scope);
+		public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
+			return mappings.get(scope);
 		}
 
 	}
