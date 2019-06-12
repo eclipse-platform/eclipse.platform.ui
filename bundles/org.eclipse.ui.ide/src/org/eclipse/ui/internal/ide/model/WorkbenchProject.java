@@ -29,9 +29,9 @@ import org.eclipse.ui.internal.ide.misc.OverlayIcon;
 /**
  * An IWorkbenchAdapter that represents IProject.
  */
-public class WorkbenchProject extends WorkbenchResource implements
-		IProjectActionFilter {
-	HashMap imageCache = new HashMap(11);
+public class WorkbenchProject extends WorkbenchResource implements IProjectActionFilter {
+
+	HashMap<String, ImageDescriptor> imageCache = new HashMap<>(11);
 
 	/**
 	 *	Answer the appropriate base image to use for the passed resource, optionally
@@ -51,7 +51,7 @@ public class WorkbenchProject extends WorkbenchResource implements
 					// its own equality criteria,
 					// so WorkbenchLabelProvider would always create a new image
 					// otherwise.
-					ImageDescriptor overlayImage = (ImageDescriptor) imageCache.get(imageKey);
+					ImageDescriptor overlayImage = imageCache.get(imageKey);
 					if (overlayImage != null) {
 						return overlayImage;
 					}
