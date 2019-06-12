@@ -91,14 +91,14 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 	 */
 	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
-		List adaptedElements = new ArrayList();
+		List<IAdaptable> adaptedElements = new ArrayList<>();
 		for (IAdaptable element : elements) {
 			IAdaptable adaptable = adapt(element);
 			if (adaptable != null)
 				adaptedElements.add(adaptable);
 		}
 
-		return (IAdaptable[]) adaptedElements.toArray(new IAdaptable[adaptedElements.size()]);
+		return adaptedElements.toArray(new IAdaptable[adaptedElements.size()]);
 	}
 
 	/**
@@ -180,14 +180,14 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 
 		if (data instanceof String) {
-			List preferredTypes = new ArrayList(0);
+			List<Type> preferredTypes = new ArrayList<>(0);
 			for (StringTokenizer toker = new StringTokenizer((String) data, ","); toker.hasMoreTokens();) {//$NON-NLS-1$
 				String classNameAndOptions = toker.nextToken();
 				Type record = new Type();
 				parseOptions(classNameAndOptions, record);
 				preferredTypes.add(record);
 			}
-			this.preferredTypes = (Type[]) preferredTypes.toArray(new Type[preferredTypes.size()]);
+			this.preferredTypes = preferredTypes.toArray(new Type[preferredTypes.size()]);
 		}
 	}
 
