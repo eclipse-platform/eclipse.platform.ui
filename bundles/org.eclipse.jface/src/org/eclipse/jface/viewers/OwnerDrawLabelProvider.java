@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Listener;
 public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 
 	static class OwnerDrawListener implements Listener {
-		Set enabledColumns = new HashSet();
+		Set<ViewerColumn> enabledColumns = new HashSet<>();
 		int enabledGlobally = 0;
 		private ColumnViewer viewer;
 
