@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.internal.menus;
 
-import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -33,14 +33,14 @@ public class ViewAction extends ActionSet {
 
 	public ViewAction(MApplication application, IEclipseContext appContext, IConfigurationElement parent,
 			IConfigurationElement element, boolean isMenu) {
-		super(application, appContext, element);
+		super(application, element);
 		this.parent = parent;
 		this.isMenu = isMenu;
 	}
 
 	@Override
-	public void addToModel(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions, ArrayList<MTrimContribution> trimContributions) {
+	public void addToModel(List<MMenuContribution> menuContributions, List<MToolBarContribution> toolBarContributions,
+			List<MTrimContribution> trimContributions) {
 		String idContrib = MenuHelper.getId(configElement);
 		visibleWhen = createExpression(configElement);
 
