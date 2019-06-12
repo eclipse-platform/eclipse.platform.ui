@@ -18,6 +18,6 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui.genericeditor.examples</artifactId>
-  <version>1.1.300-SNAPSHOT</version>
+  <version>1.1.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
