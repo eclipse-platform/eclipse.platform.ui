@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,7 +59,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	public MetadataTreeContentProvider(String[] registeredFileNames) {
 		super(true);
 		this.fileFilter = new MetadataFileFilter(registeredFileNames);
-		this.directoryFilter = new DirectoryFilter();
+		this.directoryFilter = file -> file.isDirectory();
 		this.treeRebuilder = new MetadataTreeRebuilder();
 	}
 
@@ -109,12 +109,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 			} finally {
 				final Viewer tmpViewer = viewer;
 				if (!tmpViewer.getControl().isDisposed())
-					tmpViewer.getControl().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							tmpViewer.refresh();
-						}
-					});
+					tmpViewer.getControl().getDisplay().asyncExec(() -> tmpViewer.refresh());
 			}
 		}
 
@@ -194,20 +189,4 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 			}
 		};
 	}
-
-	/**
-	 * Filters directories entries.
-	 *
-	 * @see java.io.FileFilter
-	 */
-	private class DirectoryFilter implements FileFilter {
-		/**
-		 * @see java.io.FileFilter#accept(java.io.File)
-		 */
-		@Override
-		public boolean accept(File file) {
-			return file.isDirectory();
-		}
-	}
-
 }
