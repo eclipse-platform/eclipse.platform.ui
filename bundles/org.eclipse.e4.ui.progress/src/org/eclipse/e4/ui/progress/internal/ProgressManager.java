@@ -850,7 +850,6 @@ public class ProgressManager extends ProgressProvider {
 	 * @param job
 	 * @return Collection of IJobBusyListener
 	 */
-	@SuppressWarnings("unchecked")
 	private Collection<IJobBusyListener> busyListenersForJob(Job job) {
 		if (job.isSystem()) {
 			return Collections.emptyList();
