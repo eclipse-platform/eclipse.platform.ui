@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -97,7 +97,8 @@ public class MessageBundleRefactoring extends Refactoring {
 
 	private void processCompilationUnit(RefactoringStatus result, ICompilationUnit unit, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 2);
-		CompilationUnit root = new RefactoringASTParser(AST.JLS3).parse(unit, true, new SubProgressMonitor(monitor, 1));
+		CompilationUnit root = new RefactoringASTParser(AST.JLS12).parse(unit, true,
+				new SubProgressMonitor(monitor, 1));
 		ASTRewrite rewriter = ASTRewrite.create(root.getAST());
 
 		processAST(result, root, rewriter, new SubProgressMonitor(monitor, 1));
@@ -183,7 +184,7 @@ public class MessageBundleRefactoring extends Refactoring {
 	}
 
 	private ITypeBinding computeAccessorClassBinding(IProgressMonitor monitor) {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		ASTParser parser = ASTParser.newParser(AST.JLS12);
 		parser.setProject(fAccessorClass.getJavaProject());
 		return (ITypeBinding) parser.createBindings(new IJavaElement[] {fAccessorClass}, monitor)[0];
 	}
