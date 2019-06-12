@@ -1173,12 +1173,13 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 */
 	@SuppressWarnings("unchecked")
 	public void removeDynamicMenuContributions(MenuManager menuManager, MMenu menuModel) {
-		for (MMenuElement menuElement : new HashSet<>(modelToContribution.keySet())) {
+		for (Entry<MMenuElement, IContributionItem> entry : modelToContribution.entrySet()) {
+			MMenuElement menuElement = entry.getKey();
 			if (menuElement instanceof MDynamicMenuContribution) {
 				//
 				// Find Dynamic MMenuElements for the MenuManager specified.
 				//
-				final IContributionItem contributionItem = modelToContribution.get(menuElement);
+				final IContributionItem contributionItem = entry.getValue();
 
 				if (contributionItem instanceof DynamicContributionContributionItem) {
 					final DynamicContributionContributionItem dynamicContributionItem = (DynamicContributionContributionItem) contributionItem;
