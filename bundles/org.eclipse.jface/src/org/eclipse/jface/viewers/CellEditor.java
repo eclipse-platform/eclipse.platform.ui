@@ -85,12 +85,12 @@ public abstract class CellEditor {
 	/**
 	 * Default cell editor style
 	 */
-	private static final int defaultStyle = SWT.NONE;
+	private static final int DEFAULTSTYLE = SWT.NONE;
 
 	/**
 	 * This cell editor's style
 	 */
-	private int style = defaultStyle;
+	private int style = DEFAULTSTYLE;
 
 	/**
 	 * Struct-like layout data for cell editors, with reasonable defaults for
@@ -186,7 +186,7 @@ public abstract class CellEditor {
 	 *            the parent control
 	 */
 	protected CellEditor(Composite parent) {
-		this(parent, defaultStyle);
+		this(parent, DEFAULTSTYLE);
 	}
 
 	/**
@@ -448,10 +448,9 @@ public abstract class CellEditor {
 	 */
 	public LayoutData getLayoutData() {
 		LayoutData result = new LayoutData();
-		Control control = getControl();
-		if (control != null) {
-			result.minimumWidth = control.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-					true).x;
+		Control ctrl = getControl();
+		if (ctrl != null) {
+			result.minimumWidth = ctrl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 		}
 		return result;
 	}
