@@ -69,7 +69,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = getPreferences();
-		node.putInt(PREF_STARTUP_BEHAVIOR, TipManager.START_BACKGROUND);
+		node.putInt(PREF_STARTUP_BEHAVIOR, getDefaultStartupBehavior());
 		node.putBoolean(PREF_SERVE_READ_TIPS, false);
 		try {
 			node.flush();
@@ -191,7 +191,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	}
 
 	private static int getDefaultStartupBehavior() {
-		String startupBehavior = System.getProperty("org.eclipse.tips.startup");
+		String startupBehavior = System.getProperty("org.eclipse.tips.startup.default");
 		if ("dialog".equals(startupBehavior)) {
 			return TipManager.START_DIALOG;
 		} else if ("background".equals(startupBehavior)) {
