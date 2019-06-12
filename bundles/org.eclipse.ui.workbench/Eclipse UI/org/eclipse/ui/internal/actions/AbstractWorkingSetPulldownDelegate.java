@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MenuAdapter;
@@ -122,7 +121,7 @@ public abstract class AbstractWorkingSetPulldownDelegate
 	protected IWorkingSet[][] splitSets() {
 		IWorkingSet[] allSets = getWindow().getWorkbench().getWorkingSetManager().getWorkingSets();
 
-		Map map = new HashMap();
+		Map<String, List<IWorkingSet>> map = new HashMap<>();
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 
 		for (IWorkingSet allSet : allSets) {
@@ -130,9 +129,9 @@ public abstract class AbstractWorkingSetPulldownDelegate
 			if (WorkbenchActivityHelper.filterItem(registry.getWorkingSetDescriptor(setType))) {
 				continue;
 			}
-			List setsOfType = (List) map.get(setType);
+			List<IWorkingSet> setsOfType = map.get(setType);
 			if (setsOfType == null) {
-				setsOfType = new ArrayList();
+				setsOfType = new ArrayList<>();
 				map.put(setType, setsOfType);
 			}
 			setsOfType.add(allSet);
@@ -140,8 +139,8 @@ public abstract class AbstractWorkingSetPulldownDelegate
 
 		IWorkingSet[][] typedSets = new IWorkingSet[map.keySet().size()][];
 		int i = 0;
-		for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-			List setsOfType = (List) map.get(iter.next());
+		for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
+			List<IWorkingSet> setsOfType = map.get(iter.next());
 			typedSets[i] = new IWorkingSet[setsOfType.size()];
 			setsOfType.toArray(typedSets[i++]);
 		}
