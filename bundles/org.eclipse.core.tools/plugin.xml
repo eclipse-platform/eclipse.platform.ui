@@ -2,6 +2,21 @@
 <?eclipse version="3.0"?>
 <plugin>
 
+   <extension-point id="metadataDumpers" name="Metadata Dumpers"/>
+   
+<!-- Metadata dumpers -->
+   <extension point="org.eclipse.core.tools.metadataDumpers">
+      <dumper file-name=".state" class="org.eclipse.core.tools.metadata.StateDumper"/>
+   </extension>
+   
+<!-- The DumpTool headless application -->
+   <extension point="org.eclipse.core.runtime.applications" id="dumptool">
+    <application> 
+      <run class="org.eclipse.core.tools.metadata.DumpTool"/>
+    </application>
+   </extension>   
+   
+
 <!--  Perspectives -->
    <extension
          point="org.eclipse.ui.perspectives">
@@ -12,6 +27,54 @@
             id="org.eclipse.core.tools.runtime.PluginDependencyPerspective">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Runtime Spy"
+            icon="icons/zoom.gif"
+            class="org.eclipse.core.tools.runtime.RuntimeSpyPerspective"
+            id="org.eclipse.core.tools.runtime.RuntimeSpyPerspective">
+      </perspective>
+   </extension>
+<!--  Metadata Perspective -->
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Metadata"
+            icon="icons/spy.gif"
+            class="org.eclipse.core.tools.metadata.MetadataPerspective"
+            id="org.eclipse.core.tools.metadata.MetadataPerspective">
+      </perspective>
+   </extension>
+<!-- Metadata Views  -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Metadata Tools"
+            id="org.eclipse.core.tools.metadata">
+      </category>
+      <view
+            name="Dump Contents"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.metadata"
+            class="org.eclipse.core.tools.metadata.DumpContentsView"
+            id="org.eclipse.core.tools.metadata.DumpContentsView">
+      </view>
+      <view
+            name="Dump Summary"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.metadata"
+            class="org.eclipse.core.tools.metadata.DumpSummaryView"
+            id="org.eclipse.core.tools.metadata.DumpSummaryView">
+      </view>
+      <view
+            name="Metadata Spy"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.metadata"
+            class="org.eclipse.core.tools.metadata.MetadataTreeView"
+            id="org.eclipse.core.tools.metadata.MetadataTreeView">
+      </view>
+   </extension>   
 <!-- Runtime Views -->
    <extension point="org.eclipse.ui.views">
       <category name="Runtime Tools" id="org.eclipse.core.tools.runtime"/>
