@@ -44,7 +44,7 @@ public class FrameList extends EventManager {
 
 	private IFrameSource source;
 
-	private List frames;
+	private List<Frame> frames;
 
 	private int current;
 
@@ -135,7 +135,7 @@ public class FrameList extends EventManager {
 		if (index < 0 || index >= frames.size()) {
 			return null;
 		}
-		return (Frame) frames.get(index);
+		return frames.get(index);
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class FrameList extends EventManager {
 		Frame frame = source.getFrame(IFrameSource.CURRENT_FRAME, 0);
 		frame.setParent(this);
 		frame.setIndex(0);
-		frames = new ArrayList();
+		frames = new ArrayList<>();
 		frames.add(frame);
 		current = 0;
 	}
