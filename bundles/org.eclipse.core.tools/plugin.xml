@@ -12,24 +12,9 @@
             id="org.eclipse.core.tools.runtime.PluginDependencyPerspective">
       </perspective>
    </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="Runtime Spy"
-            icon="icons/zoom.gif"
-            class="org.eclipse.core.tools.runtime.RuntimeSpyPerspective"
-            id="org.eclipse.core.tools.runtime.RuntimeSpyPerspective">
-      </perspective>
-   </extension>
 <!-- Runtime Views -->
    <extension point="org.eclipse.ui.views">
       <category name="Runtime Tools" id="org.eclipse.core.tools.runtime"/>
-      <view
-            name="Stack Trace"
-            icon="icons/trace.gif"
-            category="org.eclipse.core.tools.runtime"
-            class="org.eclipse.core.tools.runtime.StackTraceView"
-            id="org.eclipse.core.tools.runtime.StackTraceView"/>
       <view
             name="Plug-in Dependency Spy"
             icon="icons/spy.gif"
