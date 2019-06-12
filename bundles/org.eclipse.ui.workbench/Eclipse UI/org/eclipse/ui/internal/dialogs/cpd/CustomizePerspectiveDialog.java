@@ -230,7 +230,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	private IEclipseContext context;
 
 	/**
-	 * Represents a menu item or a tool bar item.
+	 * Represents a menu item or a toolbar item.
 	 *
 	 * @since 3.5
 	 */
@@ -442,7 +442,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	/**
 	 * Represents an action set, under which ContributionItems exist. There is no
 	 * inherent hierarchy in action sets - they exist independent of one another,
-	 * simply contribution menu items and tool bar items.
+	 * simply contribution menu items and toolbar items.
 	 *
 	 * @since 3.5
 	 */
@@ -554,7 +554,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		gd.heightHint = convertVerticalDLUsToPixels(TAB_HEIGHT_IN_DLUS);
 		tabFolder.setLayoutData(gd);
 
-		// Tool Bar Item Hiding Page
+		// Toolbar Item Hiding Page
 		TabItem tab = new TabItem(tabFolder, SWT.NONE);
 		tab.setText(WorkbenchMessages.HideToolBarItems_toolBarItemsTab);
 		tab.setControl(createToolBarVisibilityPage(tabFolder));
@@ -1281,7 +1281,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	/**
 	 * @param item
-	 * @return true iff the item will show up in a menu or tool bar structure - i.e.
+	 * @return true iff the item will show up in a menu or toolbar structure - i.e.
 	 *         it is available, or has a child which is available thus must be
 	 *         displayed in order to display the child
 	 */

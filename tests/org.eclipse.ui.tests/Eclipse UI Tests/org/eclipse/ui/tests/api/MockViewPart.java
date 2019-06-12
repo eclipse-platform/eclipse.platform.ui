@@ -124,7 +124,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 		super.createPartControl(parent);
 
 		Button addAction = new Button(parent, SWT.PUSH);
-		addAction.setText("Add Action to Tool Bar");
+		addAction.setText("Add Action to Toolbar");
 		addAction.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -135,7 +135,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 		});
 
 		Button removeAction = new Button(parent, SWT.PUSH);
-		removeAction.setText("Remove Action from Tool Bar");
+		removeAction.setText("Remove Action from Toolbar");
 		removeAction.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
