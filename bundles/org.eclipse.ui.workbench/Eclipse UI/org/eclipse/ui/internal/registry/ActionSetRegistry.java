@@ -53,11 +53,11 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 		String actionSetId;
 	}
 
-	private ArrayList children = new ArrayList();
+	private ArrayList<ActionSetDescriptor> children = new ArrayList<>();
 
-	private Map mapPartToActionSetIds = new HashMap();
+	private Map<String, ArrayList<String>> mapPartToActionSetIds = new HashMap<>();
 
-	private Map mapPartToActionSets = new HashMap();
+	private Map<String, ArrayList<IActionSetDescriptor>> mapPartToActionSets = new HashMap<>();
 
 	private IContextService contextService;
 
@@ -96,7 +96,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Adds an action set.
-	 * 
+	 *
 	 * @param desc
 	 */
 	private void addActionSet(ActionSetDescriptor desc) {
@@ -125,9 +125,9 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 	 */
 	private Object addAssociation(String actionSetId, String partId) {
 		// get the action set ids for this part
-		ArrayList actionSets = (ArrayList) mapPartToActionSetIds.get(partId);
+		ArrayList<String> actionSets = mapPartToActionSetIds.get(partId);
 		if (actionSets == null) {
-			actionSets = new ArrayList();
+			actionSets = new ArrayList<>();
 			mapPartToActionSetIds.put(partId, actionSets);
 		}
 		actionSets.add(actionSetId);
@@ -144,9 +144,8 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 	 * @see IActionSetDescriptor#getId
 	 */
 	public IActionSetDescriptor findActionSet(String id) {
-		Iterator i = children.iterator();
-		while (i.hasNext()) {
-			IActionSetDescriptor desc = (IActionSetDescriptor) i.next();
+
+		for (IActionSetDescriptor desc : children) {
 			if (desc.getId().equals(id)) {
 				return desc;
 			}
@@ -160,7 +159,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 	 * @return a list of action sets
 	 */
 	public IActionSetDescriptor[] getActionSets() {
-		return (IActionSetDescriptor[]) children.toArray(new IActionSetDescriptor[children.size()]);
+		return children.toArray(new IActionSetDescriptor[children.size()]);
 	}
 
 	/**
@@ -171,21 +170,22 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 	 */
 	public IActionSetDescriptor[] getActionSetsFor(String partId) {
 		// check the resolved map first
-		ArrayList actionSets = (ArrayList) mapPartToActionSets.get(partId);
+		ArrayList<IActionSetDescriptor> actionSets = mapPartToActionSets.get(partId);
 		if (actionSets != null) {
-			return (IActionSetDescriptor[]) actionSets.toArray(new IActionSetDescriptor[actionSets.size()]);
+			return actionSets.toArray(new IActionSetDescriptor[actionSets.size()]);
 		}
 
 		// get the action set ids for this part
-		ArrayList actionSetIds = (ArrayList) mapPartToActionSetIds.get(partId);
+		ArrayList<String> actionSetIds = mapPartToActionSetIds.get(partId);
 		if (actionSetIds == null) {
 			return new IActionSetDescriptor[0];
 		}
 
 		// resolve to action sets
-		actionSets = new ArrayList(actionSetIds.size());
-		for (Iterator i = actionSetIds.iterator(); i.hasNext();) {
-			String actionSetId = (String) i.next();
+		actionSets = new ArrayList<>(actionSetIds.size());
+
+		for (String actionSetId : actionSetIds) {
+
 			IActionSetDescriptor actionSet = findActionSet(actionSetId);
 			if (actionSet != null) {
 				actionSets.add(actionSet);
@@ -197,7 +197,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
 		mapPartToActionSets.put(partId, actionSets);
 
-		return (IActionSetDescriptor[]) actionSets.toArray(new IActionSetDescriptor[actionSets.size()]);
+		return actionSets.toArray(new IActionSetDescriptor[actionSets.size()]);
 	}
 
 	/**
@@ -298,7 +298,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 			if (object instanceof ActionSetPartAssociation) {
 				ActionSetPartAssociation association = (ActionSetPartAssociation) object;
 				String actionSetId = association.actionSetId;
-				ArrayList actionSets = (ArrayList) mapPartToActionSetIds.get(association.partId);
+				ArrayList<String> actionSets = mapPartToActionSetIds.get(association.partId);
 				if (actionSets == null) {
 					return;
 				}
@@ -326,8 +326,8 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 				// TODO: this is expensive. We should consider another map from
 				// actionsets
 				// to parts.
-				for (Iterator j = mapPartToActionSetIds.values().iterator(); j.hasNext();) {
-					ArrayList list = (ArrayList) j.next();
+				for (Iterator<ArrayList<String>> j = mapPartToActionSetIds.values().iterator(); j.hasNext();) {
+					ArrayList<String> list = j.next();
 					list.remove(desc.getId());
 					if (list.isEmpty()) {
 						j.remove();
