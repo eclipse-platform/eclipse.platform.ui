@@ -111,9 +111,6 @@ public class MenuAdditionCacheEntry {
 		return location.getScheme().startsWith("toolbar"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return <code>true</code> if this is a toolbar contribution
-	 */
 	public void mergeIntoModel(ArrayList<MMenuContribution> menuContributions,
 			ArrayList<MToolBarContribution> toolBarContributions, ArrayList<MTrimContribution> trimContributions) {
 		boolean hasAdditions = false;

@@ -449,8 +449,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param viewId                The view to which this handler is associated.
 	 *                              This value is required if this is a view action;
 	 *                              otherwise it can be <code>null</code>.
-	 * @return References to the created menu elements; may be <code>null</code>,
-	 *         and may be empty.
 	 */
 	private void readActions(final String primaryId, final IConfigurationElement[] elements, final List warningsToLog,
 			final Expression visibleWhenExpression, final String viewId) {
@@ -494,9 +492,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param viewId                The view to which this handler is associated.
 	 *                              This value is required if this is a view action;
 	 *                              otherwise it can be <code>null</code>.
-	 * @return An array of references to the created menu elements. This value may
-	 *         be <code>null</code> if there was a problem parsing the configuration
-	 *         element.
 	 */
 	private void readActionsAndMenus(final IConfigurationElement element, final String id, final List warningsToLog,
 			final Expression visibleWhenExpression, final String viewId) {

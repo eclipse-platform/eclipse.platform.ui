@@ -817,7 +817,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 * can override this method to style the table, using a StyledCellLabelProvider.
 	 *
 	 * @param tableViewerColumn
-	 * @return
 	 */
 	protected void setLabelProvider(TableViewerColumn tableViewerColumn) {
 		tableViewerColumn.setLabelProvider(getColumnLabelProvider());
