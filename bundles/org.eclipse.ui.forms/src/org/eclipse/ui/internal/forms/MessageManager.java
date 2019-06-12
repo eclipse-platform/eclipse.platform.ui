@@ -449,7 +449,7 @@ public class MessageManager implements IMessageManager {
 		if (form.isDisposed()) {
 			return;
 		}
-		if (form.getHead().getBounds().height == 0 || mergedList.isEmpty() || mergedList == null) {
+		if (form.getHead().getBounds().height == 0 || mergedList == null || mergedList.isEmpty()) {
 			form.setMessage(null, IMessageProvider.NONE);
 			return;
 		}
