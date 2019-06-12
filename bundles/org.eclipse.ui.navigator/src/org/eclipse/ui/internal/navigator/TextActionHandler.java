@@ -37,13 +37,13 @@ import org.eclipse.ui.actions.ActionFactory;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p><p>
  * Example usage:
+ * </p>
  * <pre>
  * textActionHandler = new TextActionHandler(this.getViewSite().getActionBars());
  * textActionHandler.addText((Text)textCellEditor1.getControl());
  * textActionHandler.addText((Text)textCellEditor2.getControl());
  * textActionHandler.setSelectAllAction(selectAllAction);
  * </pre>
- * </p>
  */
 public class TextActionHandler {
 	private DeleteActionHandler textDeleteAction = new DeleteActionHandler();

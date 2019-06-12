@@ -192,14 +192,15 @@ public class TextControlScenario extends ScenariosTestCase {
 //        assertEquals(newName, adventure.getName());
 //    }
 
-	/**
-	 * @Test
-	public void testScenario05(){ // Show that nesting of properties works.
-	 * Adventure has defaultLodging and Lodging has name getDbc().bind(text,new
-	 * Property(adventure,"defaultLodging.name"),null); // Verify the GUI is
-	 * showing the model value
-	 * assertEquals(text.getText(),adventure.getDefaultLodging().getName()); }
-	 */
+//	@Test
+//	public void testScenario05() {
+//		// Show that nesting of properties works.
+//		// Adventure has defaultLodging and Lodging has name
+//		getDbc().bind(text, new Property(adventure, "defaultLodging.name"), null);
+//		// Verify the GUI is showing the model value
+//		assertEquals(text.getText(), adventure.getDefaultLodging().getName());
+//	}
+
 	@Test
 	public void testScenario06() {
 		// // Show that partial validation works for TIME_EARLY

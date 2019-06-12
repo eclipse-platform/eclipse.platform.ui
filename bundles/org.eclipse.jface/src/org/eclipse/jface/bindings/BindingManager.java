@@ -90,7 +90,7 @@ public final class BindingManager extends HandleObjectManager implements
 	private Map currentConflicts = null;
 
 	/**
-	 * </p>
+	 * <p>
 	 * A utility method for adding entries to a map. The map is checked for
 	 * entries at the key. If such an entry exists, it is expected to be a
 	 * <code>Collection</code>. The value is then appended to the collection.
@@ -266,7 +266,7 @@ public final class BindingManager extends HandleObjectManager implements
 	/**
 	 * The array of platforms, starting with the active platform and moving up
 	 * through less specific representations of the platform. For example,
-	 * ["gtk", "", null]. This value will never be <code>null,/code>.
+	 * ["gtk", "", null]. This value will never be <code>null</code>.
 	 */
 	private String[] platforms = expand(platform, Util.ZERO_LENGTH_STRING);
 

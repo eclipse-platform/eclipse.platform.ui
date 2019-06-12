@@ -30,7 +30,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS Value converter to convert :
  * <ul>
- * <li>CSS Value to {@link FontData}</li>.
+ * <li>CSS Value to {@link FontData}</li>
  * <li>{@link FontData} to String CSS Value</li>
  * </ul>
  */

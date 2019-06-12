@@ -38,6 +38,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * </p>
  * <p>
  * Example:
+ * </p>
  * 
  * <pre>
  * IWizard wizard = new PreferencesImportWizard();
@@ -45,7 +46,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
- * 
+ * <p>
  * During the call to <code>open</code>, the wizard dialog is presented to the
  * user. When the user hits Finish, the user-selected files are imported into
  * the workspace, the dialog closes, and the call to <code>open</code> returns.

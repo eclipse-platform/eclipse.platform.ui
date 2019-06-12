@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Spinner;
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
  * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via
- * https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform, but
- * be aware that it might change.
+ * remain the same. Feel free to use it and give feedback via <a href=
+ * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
+ * but be aware that it might change.
  * </p>
  *
  * This class provides a convenient shorthand for creating and initializing

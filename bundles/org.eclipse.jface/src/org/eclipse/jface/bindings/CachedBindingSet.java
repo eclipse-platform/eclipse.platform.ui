@@ -176,7 +176,7 @@ final class CachedBindingSet {
 	 * @param schemeIds
 	 *            The scheme that was active when this binding set was
 	 *            calculated, followed by its ancestors. This may be
-	 *            <code>null</code or empty. The
+	 *            <code>null</code> or empty. The
 	 *            elements cannot be <code>null</code>.
 	 */
 	CachedBindingSet(final Map activeContextTree, final String[] locales,

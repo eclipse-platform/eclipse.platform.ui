@@ -30,7 +30,7 @@ public class CSSFontFaceRuleImpl extends CSSRuleImpl implements CSSFontFaceRule 
 	}
 
 	/**
-	 * @see org.w3c.dom.css.CSSRule.getType()
+	 * @see org.w3c.dom.css.CSSRule#getType()
 	 */
 	@Override
 	public short getType() {
@@ -40,7 +40,7 @@ public class CSSFontFaceRuleImpl extends CSSRuleImpl implements CSSFontFaceRule 
 	// W3C CSSFontFaceRule API methods
 
 	/**
-	 * @see org.w3c.dom.css.CSSFontFaceRule.getStyle()
+	 * @see org.w3c.dom.css.CSSFontFaceRule#getStyle()
 	 */
 	@Override
 	public CSSStyleDeclaration getStyle() {

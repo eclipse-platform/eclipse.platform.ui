@@ -27,7 +27,7 @@ import org.w3c.dom.css.RGBColor;
 /**
  * CSS Value converter to convert :
  * <ul>
- * <li>CSS Value to {@link RGB}</li>.
+ * <li>CSS Value to {@link RGB}</li>
  * <li>{@link RGB} to String CSS Value</li>
  * </ul>
  *

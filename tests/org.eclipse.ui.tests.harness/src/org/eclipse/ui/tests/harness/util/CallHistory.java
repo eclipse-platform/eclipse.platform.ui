@@ -24,6 +24,7 @@ import java.util.List;
  * lifecycle testing for an object.
  * <p>
  * To use <code>CallHistory</code> ..
+ * </p>
  * <ol>
  * <li>Create a CallHistory in the target or pass one in.</li>
  * <li>Invoke some test scenario.  </li>
@@ -32,7 +33,7 @@ import java.util.List;
  * <li>Verify the call history after the test scenario is
  * 	complete.</li>
  * </ol>
- * </p><p>
+ * <p>
  * Each <code>CallHistory</code> has a target which is used to
  * verify the method names passed to the history.  If an invalid
  * name is passed an <code>IllegalArgumentException</code> will

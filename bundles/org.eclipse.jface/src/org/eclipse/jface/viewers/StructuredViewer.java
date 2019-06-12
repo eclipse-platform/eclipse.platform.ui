@@ -1358,6 +1358,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * false, or to reveal the selection if <code>reveal</code> is true.
 	 * <p>
 	 * The default implementation of this method:
+	 * </p>
 	 * <ul>
 	 * <li>discovers the old selection (via <code>getSelection</code>)</li>
 	 * <li>runs the given runnable</li>
@@ -1367,7 +1368,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * <li>calls <code>handleInvalidSelection</code> if the selection did not
 	 * take</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param updateCode
 	 *            the code to run

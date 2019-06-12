@@ -647,6 +647,7 @@ public class WelcomeEditor extends EditorPart {
 	 * </p>
 	 * <p>
 	 * For implementors this is a multi-step process:
+	 * </p>
 	 * <ol>
 	 *   <li>Create one or more controls within the parent.</li>
 	 *   <li>Set the parent layout as needed.</li>
@@ -655,7 +656,6 @@ public class WelcomeEditor extends EditorPart {
 	 *   <li>Register a selection provider with the <code>ISelectionService</code>
 	 *     (optional). </li>
 	 * </ol>
-	 * </p>
 	 *
 	 * @param parent the parent control
 	 */

@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.eclipse.core.commands.IParameterValues;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -32,7 +31,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * To disambiguate preference pages with the same local label, names are
  * constructed incorporating the full path of preference page labels. For
  * instance names like <code>General > Appearance</code> and
- * <code>Java > Appearance</code> avoid the problem of trying to put two
+ * <code>Java &gt; Appearance</code> avoid the problem of trying to put two
  * <code>Appearance</code> keys into the parameter values map.
  * </p>
  * <p>

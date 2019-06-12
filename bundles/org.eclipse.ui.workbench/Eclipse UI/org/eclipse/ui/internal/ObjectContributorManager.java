@@ -42,15 +42,19 @@ import org.eclipse.ui.PlatformUI;
  * <code>IObjectContributorManager</code>. It provides fast merging of
  * contributions with the following semantics:
  * <ul>
- * <li>All of the matching contributors will be invoked per property lookup
+ * <li>All of the matching contributors will be invoked per property lookup</li>
  * <li>The search order from a class with the definition<br>
  * <code>class X extends Y implements A, B</code><br>
- * is as follows: <il>
- * <li>the target's class: X
- * <li>X's superclasses in order to <code>Object</code>
- * <li>a depth-first traversal of the target class's interaces in the order
+ * is as follows:</li>
+ * <li>
+ * <ul>
+ * <li>the target's class: X</li>
+ * <li>X's superclasses in order to <code>Object</code></li>
+ * <li>a depth-first traversal of the target class's interfaces in the order
  * returned by <code>getInterfaces()</code> (in the example, A and its
- * superinterfaces then B and its superinterfaces) </il>
+ * superinterfaces then B and its superinterfaces)</li>
+ * </ul>
+ * </li>
  * </ul>
  *
  * @see IObjectContributor
@@ -491,7 +495,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	/**
 	 * Prunes from the list of adapters type names that are in the class search
 	 * order of every class in <code>results</code>.
-	 * 
+	 *
 	 * @param adapters
 	 * @param results
 	 * @since 3.1
@@ -565,7 +569,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	/**
 	 * Returns the list of contributors that are interested in the given list of
 	 * model elements.
-	 * 
+	 *
 	 * @param elements a list of model elements (<code>Object</code>)
 	 * @return the list of interested contributors (<code>IObjectContributor</code>)
 	 */

@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Example of showing how easy cell-navigation with hidden cells is in 3.4
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  */
 public class Snippet057TableViewerSkipHiddenCells {
 

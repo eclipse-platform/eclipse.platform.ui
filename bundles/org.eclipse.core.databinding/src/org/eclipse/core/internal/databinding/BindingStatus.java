@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.MultiStatus;
 
 /**
  * A <code>MultiStatus</code> implementation that copies that state of the
- * added status to this instance if it is >= the current severity.
+ * added status to this instance if it is &gt;= the current severity.
  *
  * @since 1.0
  */
@@ -42,7 +42,7 @@ public class BindingStatus extends MultiStatus {
 
 	/**
 	 * Adds the status to the multi status. The details of the status will be
-	 * copied to the multi status if the severity is >= the current severity.
+	 * copied to the multi status if the severity is &gt;= the current severity.
 	 *
 	 * @see org.eclipse.core.runtime.MultiStatus#add(org.eclipse.core.runtime.IStatus)
 	 */

@@ -722,13 +722,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * {@inheritDoc}
 	 * <p>
 	 * Everything else except the following string patterns is ignored:
+	 * </p>
 	 * <ul>
 	 * <li><strong>selectCategory:</strong>ID - selects and expands the category
 	 * with the given ID</li>
 	 * <li><strong>selectFont:</strong>ID - selects the font with the given ID</li>
-	 * <li><strong>selectColor:</strong>ID - selects the color with the given ID
-	 * </li>
-	 * </p>
+	 * <li><strong>selectColor:</strong>ID - selects the color with the given
+	 * ID</li>
+	 * </ul>
 	 *
 	 * @param data the data to be applied
 	 */

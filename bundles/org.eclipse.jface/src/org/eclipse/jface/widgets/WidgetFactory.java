@@ -28,9 +28,9 @@ import org.eclipse.swt.widgets.TreeColumn;
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
  * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via
- * https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform, but
- * be aware that it might change.
+ * remain the same. Feel free to use it and give feedback via <a href=
+ * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
+ * but be aware that it might change.
  * </p>
  *
  * This class provides a convenient shorthand for creating and initializing
@@ -49,18 +49,18 @@ import org.eclipse.swt.widgets.TreeColumn;
  * <pre>
  * Button button = WidgetFactory.button(SWT.PUSH) //
  * 		.text("Click me!") //
- * 		.onSelect(event -> buttonClicked(event)) //
+ * 		.onSelect(event -&gt; buttonClicked(event)) //
  * 		.layoutData(gridData) //
  * 		.create(parent);
  * </pre>
  * <p>
  * The above example creates a push button with a text, registers a
  * SelectionListener and finally creates the button in "parent".
- * <p>
+ * </p>
  *
  * <pre>
  * GridDataFactory gridDataFactory = GridDataFactory.swtDefaults();
- * ButtonFactory buttonFactory = WidgetFactory.button(SWT.PUSH).onSelect(event -> buttonClicked(event))
+ * ButtonFactory buttonFactory = WidgetFactory.button(SWT.PUSH).onSelect(event -&gt; buttonClicked(event))
  * 		.layout(gridDataFactory::create);
  * buttonFactory.text("Button 1").create(parent);
  * buttonFactory.text("Button 2").create(parent);
@@ -70,7 +70,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  * The above example creates three buttons using the same instance of
  * ButtonFactory. Note the layout method. A Supplier is used to create unique
  * GridData for every single button.
- * <p>
+ * </p>
  */
 public final class WidgetFactory {
 	private WidgetFactory() {

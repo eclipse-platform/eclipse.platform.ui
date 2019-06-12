@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * Example how to fill a {@link TableViewer} from the background without
  * blocking the UI
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  *
  */
 public class Snippet045TableViewerFillFromBackgroundThread {

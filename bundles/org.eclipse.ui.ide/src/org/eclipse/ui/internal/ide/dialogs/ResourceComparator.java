@@ -63,13 +63,11 @@ public class ResourceComparator extends ViewerComparator {
 	/**
 	 * Returns an integer value representing the relative sort priority of the
 	 * given element based on its class.
-	 * <p>
 	 * <ul>
 	 *   <li>resources (<code>IResource</code>) - 2</li>
 	 *   <li>project references (<code>ProjectReference</code>) - 1</li>
 	 *   <li>everything else - 0</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param element the element
 	 * @return the sort priority (larger numbers means more important)

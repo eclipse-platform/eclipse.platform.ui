@@ -26,9 +26,9 @@ import org.eclipse.ui.internal.util.Util;
  * "[scheme]:[path]?[query]"
  * </p>
  * <p>
- * with the 'query' format being "[id1]=[val1]&[id2]=[val2]..."
+ * with the 'query' format being "[id1]=[val1]&amp;[id2]=[val2]..."
  * </p>
- * 
+ *
  * @since 3.3
  *
  */

@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * </p>
  * <p>
  * Example:
+ * </p>
  * 
  * <pre>
  * IWizard wizard = new PreferencesExportWizard();
@@ -39,7 +40,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
- * 
+ * <p>
  * During the call to <code>open</code>, the wizard dialog is presented to the
  * user. When the user hits Finish, the user-selected workspace preferences are
  * exported to the user-specified location in the local file system, the dialog

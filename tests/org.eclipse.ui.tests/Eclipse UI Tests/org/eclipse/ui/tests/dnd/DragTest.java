@@ -33,8 +33,7 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
 /**
  * Tests a single drag-drop scenario, given a dragSource capable of initiating the drag and
  * a dropTarget that can locate the drop location. DragTestSuite will create a large number
- * of DragTests by matching combintations of drag sources with drop targets.
- *<p></p>
+ * of DragTests by matching combinations of drag sources with drop targets.
  * <p>
  * <b>TEST NAMES:</b>
  * </p>
@@ -43,26 +42,20 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * test "drag Navigator to right of editor area" drags the Navigator view over
  * the editor area, dropping it near the right edge. Drag sources are described as follows:
  * </p>
- * <p></p>
  * <p>
  * [maximized] viewname [folder]
  * </p>
- * <p></p>
  * <p>Drag sources prefixed by "maximized" were maximized at the time the drag started.
  * The word [folder] indicates that folder containing the given editor or view was being dragged.
  * Otherwise, the view itself was being dragged.</p>
- * <p></p>
  * <p>Drop targets are described as follows:</p>
- * <p></p>
  * <p>
  * [left|right|top|bottom|center] of targetname
  * </p>
- * <p></p>
  * <p>Drop targets are always on top of the target. That is, "right of Navigator" means "on top of
  * the navigator view near its right edge" -- NOT "to the right of the Navigator view". When the
  * drop target is on an edge, it is always located 1 pixel away from the middle of that edge.</p>
  *
- *<p></p>
  * <p>
  * <b>WHAT TO DO IF THIS TEST FAILS:</b>
  * </p>
@@ -70,18 +63,15 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * If a drag operation did not have the intended effect, the test will fail with
  * a result like:
  * </p>
- * <p></p>
  * <p>
  * Expecting 'layout ((((*Navigator)-active (*Problems))|layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2)))-(*Outline, Properties))' and found 'layout ((layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2))-(*Outline, Problems, Properties))-active (*Navigator))'
  * </p>
- * <p></p>
  * <p>
  * The expected and actual results are ASCII pictures of the layout. A stack of views or editors
  * is shown as a list enclosed in brackets, with an asterisk indicating the selected pane. The stack
  * may be prefixed by the words "active" or "active_nofocus" if they currently have the active or
  * active_nofocus appearance. Inactive stacks have no prefix.
  * </p>
- * <p></p>
  * <p>
  * For example, (Problems, *Console, Properties) indicates a stack containing the Problems, Console, and Properties views,
  * where the Console view was currently selected. The root layout and editor areas are shown as "layout (...)". A vertical sash is shown as a
@@ -91,21 +81,17 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * <p>
  * The initial layout is:
  * </p>
- * <p></p>
  * <p>
  * layout (((*Navigator)|layout ((Mock Editor 1, *Mock Editor 2)|active (*Mock Editor 2)))-(*Outline, Problems, Properties))
  * </p>
- * <p></p>
  * <p>
  * Where editor 0 is "Mock Editor 1", and editors 1 and 2 are shown as "Mock Editor 2".
  * </p>
- * <p></p>
  * <p>
  * If you see a message like "dragtests.xml is out of date", this indicates that new tests
  * were added without describing their intended behavior in dragtests.xml. In that case, ensure that
  * there are currently no failures and regenerate dragtests.xml as described below.
  * </p>
- * <p></p>
  * <p>
  * <b>WHAT TO DO IF THE INTENTED BEHAVIOR CHANGES:</b>
  * </p>
@@ -114,7 +100,7 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * be necessary to update dragtests.xml. Do this as follows:</p>
  * <ul>
  * <li>include org.eclipse.ui.tests with your other plugins and launch an inner workspace</li>
- * <li>Go to customize perspective... -> commands -> Drag Test. This will add the "Drag-Drop Snapshot" item to your menubar.</li>
+ * <li>Go to customize perspective... -&gt; commands -&gt; Drag Test. This will add the "Drag-Drop Snapshot" item to your menubar.</li>
  * <li>Select "Drag-Drop Snapshot"</li>
  * <li>Select a file where the new shapshot will be saved, and click Okay</li>
  * <li>DO NOT use the mouse while generating dragtests.xml. This

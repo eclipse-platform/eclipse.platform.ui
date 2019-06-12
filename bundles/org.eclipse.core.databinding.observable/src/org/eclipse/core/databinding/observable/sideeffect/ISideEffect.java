@@ -352,17 +352,17 @@ public interface ISideEffect {
 	 * The resulting ISideEffect will be dirty and resumed, so the first
 	 * invocation of the supplier will be asynchronous. If the caller needs it
 	 * to be invoked synchronously, they can call {@link #runIfDirty()}
-	 * <p>
+	 * </p><p>
 	 * Unlike {@link #create(Supplier, Consumer)}, the consumer does not need to
 	 * be idempotent.
-	 * <p>
+	 * </p><p>
 	 * This method is used for gathering asynchronous data before opening an
 	 * editor, saving to disk, opening a dialog box, or doing some other
 	 * operation which should only be performed once.
-	 * <p>
+	 * </p><p>
 	 * Consider the following example, which displays the content of a text file
 	 * in a message box without doing any file I/O on the UI thread.
-	 * <p>
+	 * </p>
 	 *
 	 * <pre>
 	 * IObservableValue&lt;String&gt; loadFileAsString(String filename) {

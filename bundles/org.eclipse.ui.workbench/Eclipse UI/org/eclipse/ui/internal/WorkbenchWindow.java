@@ -368,12 +368,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 *
 	 * <p>
 	 * Element IDs which belong to QuickAccess:
+	 * </p>
 	 * <ul>
 	 * <li><code>Spacer Glue</code></li>
 	 * <li><code>SearchField</code></li>
 	 * <li><code>Search-PS Glue</code></li>
 	 * </ul>
-	 * </p>
 	 */
 	private static final List<String> QUICK_ACCESS_ELEMENT_IDS = Collections
 			.unmodifiableList(Arrays.asList("Spacer Glue", "SearchField", "Search-PS Glue")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

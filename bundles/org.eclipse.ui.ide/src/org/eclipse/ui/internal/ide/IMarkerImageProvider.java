@@ -24,14 +24,16 @@ import org.eclipse.core.resources.IMarker;
  * to the workbench's maker image provider extension point
  * (named <code>"org.eclipse.ui.makerImageProvider"</code>).
  * For example, the plug-in's XML markup might contain:
+ * </p>
  * <pre>
- * &LT;extension point="org.eclipse.ui.makerImageProvider"&GT;
- *      &LT;imageprovider
+ * &lt;extension point="org.eclipse.ui.makerImageProvider"&gt;
+ *      &lt;imageprovider
  *		   id="com.example.myplugin.myprofiderID"
  *         makertype="com.example.myMarkerType"
- *         icon="icons/basic/view16/myimage.png"/&GT;
- * &LT;/extension&GT;
+ *         icon="icons/basic/view16/myimage.png"/&gt;
+ * &lt;/extension&gt;
  * </pre>
+ * <p>
  * It can also define the image provider using the tag <code>class</code>
  * instead of icon.
  * </p>

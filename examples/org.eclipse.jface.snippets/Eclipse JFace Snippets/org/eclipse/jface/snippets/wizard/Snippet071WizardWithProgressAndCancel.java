@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Example Wizard with Progress Monitor and Cancel
  *
- * @author Wim Jongman <wim.jongman@remainsoftware.com>
+ * @author Wim Jongman &lt;wim.jongman@remainsoftware.com&gt;
  */
 public class Snippet071WizardWithProgressAndCancel {
 

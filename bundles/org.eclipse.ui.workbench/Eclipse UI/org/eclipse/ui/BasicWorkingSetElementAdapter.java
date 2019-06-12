@@ -193,7 +193,7 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 
 	/**
 	 * Parse classname/option strings in the form:<br/>
-	 * <code>some.package.Class[:option1=value1][:option2=value2]...
+	 * <code>some.package.Class[:option1=value1][:option2=value2]...</code>
 	 *
 	 * @param classNameAndOptions the class name and possibly options to parse
 	 * @param record              the record to fill

@@ -1226,6 +1226,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * items.
 	 * <p>
 	 * Standard invocation scenario:
+	 * </p>
 	 * <ol>
 	 * <li>filtering job (<code>FilterJob</code> class extending <code>Job</code>
 	 * class)</li>
@@ -1233,7 +1234,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * (<code>RefreshCacheJob</code> class extending <code>Job</code> class)</li>
 	 * <li>UI refresh (<code>RefreshJob</code> class extending <code>UIJob</code>
 	 * class)</li>
-	 * <li>cache refresh with checking for duplicates (<cod>CacheRefreshJob</code>
+	 * <li>cache refresh with checking for duplicates (<code>CacheRefreshJob</code>
 	 * class extending <code>Job</code> class)</li>
 	 * <li>UI refresh (<code>RefreshJob</code> class extending <code>UIJob</code>
 	 * class)</li>
@@ -1941,6 +1942,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * <code>accessed(Object)</code>.
 	 * <p>
 	 * The history can be stored to/loaded from an XML file.
+	 * </p>
 	 */
 	protected static abstract class SelectionHistory {
 

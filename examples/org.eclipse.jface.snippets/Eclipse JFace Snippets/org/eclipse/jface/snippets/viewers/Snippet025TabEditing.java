@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * Edit cell values in a table
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  *
  */
 public class Snippet025TabEditing {

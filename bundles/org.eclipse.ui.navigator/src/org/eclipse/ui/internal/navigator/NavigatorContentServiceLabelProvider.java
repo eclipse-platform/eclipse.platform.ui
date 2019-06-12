@@ -47,8 +47,8 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * <p>
  * Provides relevant labels based on the associated
  * {@link INavigatorContentService}for the contents of a
- * TreeViewer .
- * <p>
+ * TreeViewer.
+ * </p>
  *
  * <p>
  * Except for the dependency on
@@ -58,7 +58,6 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * pieces of functionality (filters, sorting, etc) may choose to use this class, in effect using an
  * extensible label provider.
  * </p>
- * <p>
  *
  * @since 3.2
  *

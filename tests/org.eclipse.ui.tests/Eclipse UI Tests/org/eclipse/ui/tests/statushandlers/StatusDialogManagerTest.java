@@ -445,7 +445,7 @@ public class StatusDialogManagerTest extends TestCase {
 
 	/**
 	 * Tests if status dialog passes status adapter to the support provider
-	 * tests if status dialog extends its height & width
+	 * tests if status dialog extends its height &amp; width
 	 */
 	public void testSupport1() {
 		StatusAdapter statusAdapter = createStatusAdapter(MESSAGE_1);

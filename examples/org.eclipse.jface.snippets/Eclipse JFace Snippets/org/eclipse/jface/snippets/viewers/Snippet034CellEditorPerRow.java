@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Table;
  * Snippet to present editor different CellEditors within one column in 3.2
  * for 3.3 and above please use the new EditingSupport class
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  *
  */
 public class Snippet034CellEditorPerRow {

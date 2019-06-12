@@ -91,6 +91,7 @@ public class AnimationEngineTest extends UITestCase {
 	 * <li>The feedback's initialize gets called on creation of the engine</li>
 	 * <li>The feedback's renderStep gets called at least once</li>
 	 * <li>The feedback's dispose gets called at least once (after a render)</li>
+	 * </ol>
 	 * @throws InterruptedException
 	 */
 	public void testAnimationEngine() throws InterruptedException {

@@ -166,7 +166,7 @@ public class Address implements IPropertySource {
 	 * @param city the city
 	 * @param province the province
 	 * @param postalCode has the form XYXYXY: where X is a letter and Y is a digit
-	 * @exception IllegalArgumentException, if postalcode not in above form
+	 * @exception IllegalArgumentException if postalcode not in above form
 	 */
 	public Address(StreetAddress street, String city, Integer province,
 			String postalCode) {

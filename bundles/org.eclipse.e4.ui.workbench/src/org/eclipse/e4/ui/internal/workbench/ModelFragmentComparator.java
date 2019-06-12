@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.internal.PositionInfo;
  * order the fragments in the logical way in which they should be merged, based
  * on their defined {@link MStringModelFragment#getPositionInList()
  * positionInList} , as follows:
+ * <ul>
  * <li><b>Index</b> - all elements with an index are merged first. Lowest to
  * highest index.
  * <li><b>No position defined</b> - all contributions without any information
@@ -40,7 +41,7 @@ import org.eclipse.e4.ui.model.internal.PositionInfo;
  * considering potential dependencies between fragments. If the dependency is
  * not resolvable eg points to the application model the element is sorted to
  * the front of the after/before list.
- *
+ * </ul>
  */
 public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper> {
 

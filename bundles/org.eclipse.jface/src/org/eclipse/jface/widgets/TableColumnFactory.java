@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.TableColumn;
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
  * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via
- * https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform, but
- * be aware that it might change.
+ * remain the same. Feel free to use it and give feedback via <a href=
+ * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
+ * but be aware that it might change.
  * </p>
  *
  * This class provides a convenient shorthand for creating and initializing
@@ -47,16 +47,16 @@ import org.eclipse.swt.widgets.TableColumn;
  * <pre>
  * TableColumn column = TableColumnFactory.newTableColumn(SWT.CENTER) //
  * 		.text("Table Column") //
- * 		.onSelect(event -> columnClicked(event)) //
+ * 		.onSelect(event -&gt; columnClicked(event)) //
  * 		.create(table);
  * </pre>
  * <p>
  * The above example creates a table column, sets text, registers a
  * SelectionListener and finally creates the table column in "table".
- * <p>
+ * </p>
  *
  * <pre>
- * TableColumnFactory factory = TableColumnFactory.newTableColumn(SWT.CENTER).onSelect(event -> columnClicked(event));
+ * TableColumnFactory factory = TableColumnFactory.newTableColumn(SWT.CENTER).onSelect(event -&gt; columnClicked(event));
  * factory.text("Column 1").create(table);
  * factory.text("Column 2").create(table);
  * factory.text("Column 3").create(table);
@@ -64,7 +64,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * <p>
  * The above example creates three table columns using the same instance of
  * factory.
- * <p>
+ * </p>
  *
  */
 public class TableColumnFactory extends AbstractItemFactory<TableColumnFactory, TableColumn, Table> {

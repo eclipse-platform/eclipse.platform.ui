@@ -28,7 +28,7 @@ public interface IField {
 	String getDescription();
 
 	/**
-	 * @return the image associated with the description of the field or <code>null<code>.
+	 * @return the image associated with the description of the field or <code>null</code>.
 	 */
 	Image getDescriptionImage();
 
@@ -38,7 +38,7 @@ public interface IField {
 	String getColumnHeaderText();
 
 	/**
-	 * @return The image to be displayed in the column header for this field or <code>null<code>.
+	 * @return The image to be displayed in the column header for this field or <code>null</code>.
 	 */
 	Image getColumnHeaderImage();
 
@@ -51,7 +51,7 @@ public interface IField {
 	/**
 	 * @param obj
 	 * @return The image value of the object for this particular field to be displayed to the user
-	 * or <code>null<code>.
+	 * or <code>null</code>.
 	 */
 	Image getImage(Object obj);
 
@@ -59,9 +59,11 @@ public interface IField {
 	 * @param obj1
 	 * @param obj2
 	 * @return Either:
-	 * 	<li>a negative number if the value of obj1 is less than the value of obj2 for this field.
+	 * <ul>
+	 *  <li>a negative number if the value of obj1 is less than the value of obj2 for this field.
 	 *  <li><code>0</code> if the value of obj1 and the value of obj2 are equal for this field.
 	 *  <li>a positive number if the value of obj1 is greater than the value of obj2 for this field.
+	 * </ul>
 	 */
 	int compare(Object obj1, Object obj2);
 

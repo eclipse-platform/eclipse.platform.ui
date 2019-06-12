@@ -28,7 +28,7 @@ import org.eclipse.ui.monitoring.UiFreezeEvent;
 /**
  * Checks if the {@link UiFreezeEvent} matches any defined filters.
  * <p>
- * <strong>This class is not thread safe.<strong>
+ * <strong>This class is not thread safe.</strong>
  * </p>
  */
 public class FilterHandler {

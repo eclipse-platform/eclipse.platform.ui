@@ -419,7 +419,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * the 'Properties' view is opened is opened in one perspective and the page
 	 * then switches to another perspective where the contributing view is there
 	 * but not the 'Properties' view, an NPE is thrown.
-	 * <p>
+	 *
 	 * <ol>
 	 * <li>close all perspectives</li>
 	 * <li>open perspective A</li>
@@ -432,7 +432,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * <li>switch back to perspective A</li>
 	 * <li>NPE is thrown</li>
 	 * </ol>
-	 * </p>
 	 *
 	 * @param viewId the id of the contributing view
 	 * @param standardPage <code>true</code> if the contributing view contributes properties without specifying a custom page, <code>false</code> otherwise

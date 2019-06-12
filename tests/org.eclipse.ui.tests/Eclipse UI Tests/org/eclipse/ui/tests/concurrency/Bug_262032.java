@@ -53,21 +53,21 @@ public class Bug_262032 extends TestCase {
 	/**
 	 * Threads: UI(+asyncExec), j
 	 * Locks: lock, IDRule
-	 *
+	 * <p>
 	 * j holds identity Rule
-	 * ui tries to acquire rule => block and performs asyncMessages
+	 * ui tries to acquire rule =&gt; block and performs asyncMessages
 	 * asyncExec run and acquire()s lock
 	 * j then attempts to acquire lock.
-	 *
+	 * <p>
 	 * Deadlock manager believes that UI is waiting for IDrule while holding
 	 * lock, and Job holds IDRule while attempting lock.  Scheduling rules
 	 * are never released by the Deadlock detector, so the lock is yielded!
-	 *
+	 * <p>
 	 * The expectation is that when threads are 'waiting' they're sat
 	 * in the ordered lock acquire which can give the locks safely to whoever
 	 * is deemed to need it.  In this case that's not true as the UI
 	 * is running an async exec.
-	 *
+	 * <p>
 	 * The result is concurrent running in a locked region.
 	 */
 	public void testBug262032() {

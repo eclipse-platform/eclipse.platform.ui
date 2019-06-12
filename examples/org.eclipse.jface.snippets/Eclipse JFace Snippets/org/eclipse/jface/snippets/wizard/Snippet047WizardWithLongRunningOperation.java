@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Example how to load data from a background thread into a TableViewer
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  * @since 1.0
  */
 public class Snippet047WizardWithLongRunningOperation {

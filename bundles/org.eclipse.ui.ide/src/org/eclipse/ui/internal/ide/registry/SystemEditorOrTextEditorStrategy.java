@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * <li>The operating system is consulted to determine if an external editor is
  * available.</li>
  * <li>The workbench editor registry is consulted to determine if the default
- * text editor is available.</li></li>
+ * text editor is available.</li>
  * </ol>
  * This is the default strategy, as it mimics the legacy behavior of IDE before
  * {@link IUnassociatedEditorStrategy} got introduced.

@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Shell;
  * Demonstrate how to work-around 3.3.1 limitation when it comes to TAB-Traversal and
  * checkbox editors. 3.4 will hopefully provide provide an out-of-the-box fix see bug 198502
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  *
  */
 public class Snippet048TreeViewerTabWithCheckboxFor3_3 {

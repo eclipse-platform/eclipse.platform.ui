@@ -15,7 +15,7 @@
 package org.eclipse.ui.internal.services;
 
 /**
- * </p>
+ * <p>
  * A service which can appear on a component which is wholly contained with
  * another component. The component on which it appears can be active or
  * inactive -- depending on the state of the application. For example, a

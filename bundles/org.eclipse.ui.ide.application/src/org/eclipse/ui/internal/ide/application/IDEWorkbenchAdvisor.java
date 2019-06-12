@@ -585,11 +585,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	/**
-	 * Returns the ordered map of versioned feature ids -> AboutInfo that are
+	 * Returns the ordered map of versioned feature ids -&gt; AboutInfo that are
 	 * new for this session.
 	 *
 	 * @return ordered map of versioned feature ids (key type:
-	 *         <code>String</code>) -> infos (value type:
+	 *         <code>String</code>) -&gt; infos (value type:
 	 *         <code>AboutInfo</code>).
 	 */
 	public Map<String, AboutInfo> getNewlyAddedBundleGroups() {

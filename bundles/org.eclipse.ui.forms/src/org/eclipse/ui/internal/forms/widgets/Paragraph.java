@@ -27,7 +27,6 @@ import org.eclipse.ui.forms.HyperlinkSettings;
 
 /**
  * @version 1.0
- * @author
  */
 public class Paragraph {
 	public static final String[] PROTOCOLS = {"http://", "https://", "ftp://"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

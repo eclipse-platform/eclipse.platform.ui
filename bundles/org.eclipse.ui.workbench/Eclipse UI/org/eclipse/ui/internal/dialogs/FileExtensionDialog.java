@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * This class is used to prompt the user for a file name & extension.
+ * This class is used to prompt the user for a file name &amp; extension.
  */
 public class FileExtensionDialog extends TitleAreaDialog {
 
@@ -60,7 +60,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
 
 	/**
 	 * Constructs a new file extension dialog.
-	 * 
+	 *
 	 * @param parentShell the parent shell
 	 */
 	public FileExtensionDialog(Shell parentShell) {

@@ -54,7 +54,7 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	 * Create a new instance of the receiver categorised by categoryField
 	 *
 	 * @param categoryField
-	 *            May be <code>null/<code>
+	 *            May be <code>null</code>
 	 * @param mainFields in order of compare significance
 	 */
 	public MarkerComparator(MarkerField categoryField, MarkerField[] mainFields) {

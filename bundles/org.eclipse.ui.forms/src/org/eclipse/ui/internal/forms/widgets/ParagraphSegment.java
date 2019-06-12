@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * @version 	1.0
- * @author
  */
 public abstract class ParagraphSegment {
 	/**

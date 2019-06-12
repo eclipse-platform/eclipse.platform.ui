@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Display;
  * All methods declared on this class are static. This
  * class cannot be instantiated.
  * </p>
- * <p>
- * </p>
  */
 public class FormsResources {
 

@@ -829,10 +829,9 @@ public final class IDE {
 	 * <li>The operating system is consulted to determine if an external editor
 	 * is available.</li>
 	 * <li>The workbench editor registry is consulted to determine if the
-	 * default text editor is available.</li></li>
+	 * default text editor is available.</li>
+	 * </ol></li>
 	 * </ol>
-	 * </ol>
-	 * </p>
 	 *
 	 * @param fileStore
 	 *            the file store

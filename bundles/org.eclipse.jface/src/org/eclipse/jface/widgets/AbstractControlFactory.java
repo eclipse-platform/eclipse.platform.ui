@@ -66,22 +66,16 @@ public abstract class AbstractControlFactory<F extends AbstractControlFactory<?,
 	 * layoutData in order to make this factory reusable, because each and every
 	 * control needs its own unique layoutData.
 	 *
-	 * <p>
-	 *
 	 * <pre>
 	 * GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
 	 * ButtonFactory.newButton(SWT.PUSH).layoutData(gridDataFactory::create);
 	 * </pre>
-	 * </p>
 	 *
 	 * or without GridDataFactory:
 	 *
-	 * <p>
-	 *
 	 * <pre>
-	 * ButtonFactory.newButton(SWT.PUSH).layoutData(() -> new GridData());
+	 * ButtonFactory.newButton(SWT.PUSH).layoutData(() -&gt; new GridData());
 	 * </pre>
-	 * </p>
 	 *
 	 * @param layoutDataSupplier {@link Supplier} creating a new layout data
 	 *                           instance
@@ -95,14 +89,10 @@ public abstract class AbstractControlFactory<F extends AbstractControlFactory<?,
 	/**
 	 * Sets a layout object, which is used for the setLayout method of the control.
 	 *
-	 * <p>
-	 *
 	 * <pre>
 	 * GridData gd = new GridData(GridData.FILL_BOTH);
 	 * ButtonFactory.newButton(SWT.PUSH).layoutData(gd);
 	 * </pre>
-	 * </p>
-	 * </p>
 	 *
 	 * @param layoutData
 	 * @return this

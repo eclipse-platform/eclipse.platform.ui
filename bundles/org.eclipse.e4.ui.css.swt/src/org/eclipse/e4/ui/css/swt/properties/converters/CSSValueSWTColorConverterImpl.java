@@ -30,7 +30,7 @@ import org.w3c.dom.css.RGBColor;
 /**
  * CSS Value converter to convert :
  * <ul>
- * <li>CSS Value to {@link Color}</li>.
+ * <li>CSS Value to {@link Color}</li>
  * <li>{@link Color} to String CSS Value</li>
  * </ul>
  */

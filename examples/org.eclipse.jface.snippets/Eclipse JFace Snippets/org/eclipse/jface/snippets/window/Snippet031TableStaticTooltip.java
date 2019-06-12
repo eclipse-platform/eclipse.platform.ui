@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * Example how one can create a tooltip which is not recreated for every table
  * cell
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  *
  */
 public class Snippet031TableStaticTooltip {

@@ -19,7 +19,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * This class defines internal constants for images that intended to be
  * available only within the IDE UI proper. Use
- * <code>IDEInternalWorkbenchImages.getImageDescriptor} to retrieve image
+ * <code>IDEInternalWorkbenchImages.getImageDescriptor</code> to retrieve image
  * descriptors for any of the images named in this class.
  * <p>
  * <b>Note:</b> The existence of these images is not made publically available

@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Layout;
  * Composite should extend this factory to handle the properties of Composite
  * itself, like layout.
  *
- * @param <F>
- * @param <C>
+ * @param <F> factory
+ * @param <C> control
  *
  */
 public abstract class AbstractCompositeFactory<F extends AbstractCompositeFactory<?, ?>, C extends Composite>

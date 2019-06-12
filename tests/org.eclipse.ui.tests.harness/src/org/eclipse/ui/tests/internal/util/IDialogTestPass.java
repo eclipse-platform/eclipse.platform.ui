@@ -32,13 +32,13 @@ public interface IDialogTestPass {
 
 	/**
 	 * @return String The label of the test pass to be used in a selection list.
-	 *         The return includes an '&' if a mnemonic is desired.
+	 *         The return includes an '&amp;' if a mnemonic is desired.
 	 */
 	public String label();
 
 	/**
 	 * @return A list of items to appear in a checklist. The items in the list
-	 *         must be Strings and should include an '&' if a mnemonic is
+	 *         must be Strings and should include an '&amp;' if a mnemonic is
 	 *         desired.
 	 */
 	public List<String> checkListTexts();

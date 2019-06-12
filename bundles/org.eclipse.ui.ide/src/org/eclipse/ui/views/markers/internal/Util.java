@@ -307,8 +307,7 @@ public final class Util {
 	 * Return whether or not the selection has one element that is concrete.
 	 *
 	 * @param selection
-	 * @return <true>code</true> if the selection has one element that is
-	 *         concrete.
+	 * @return <code>true</code> if the selection has one element that is concrete.
 	 */
 	static boolean isSingleConcreteSelection(IStructuredSelection selection) {
 		if (selection != null && selection.size() == 1) {
@@ -324,7 +323,7 @@ public final class Util {
 	 * Return whether or not all of the elements in the selection are concrete.
 	 *
 	 * @param selection
-	 * @return <true>code</true> if all of the elements are concrete.
+	 * @return <code>true</code> if all of the elements are concrete.
 	 */
 	public static boolean allConcreteSelection(IStructuredSelection selection) {
 		if (selection != null && selection.size() > 0) {

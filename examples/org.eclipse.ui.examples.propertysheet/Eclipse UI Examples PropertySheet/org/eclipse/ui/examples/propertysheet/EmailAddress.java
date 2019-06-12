@@ -69,7 +69,7 @@ public class EmailAddress implements IPropertySource {
 	 * Convience EmailAddress constructor.
 	 * Calls setEmailAddress() to parse emailAddress
 	 * @param emailAddress java.lang.String, in the form userid@domain
-	 * @throws java.lang.IllegalArgumentException, if does not subscribe to form
+	 * @throws java.lang.IllegalArgumentException if does not subscribe to form
 	 */
 	public EmailAddress(String emailAddress) throws IllegalArgumentException {
 		super();

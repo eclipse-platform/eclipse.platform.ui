@@ -33,8 +33,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.swt.WidgetSideEffects;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * <p>
  * This snippet shows how to migrate from the usage of the
- * {@link DataBindingContext} to the {@link ISideEffect} approach.<br/>
+ * {@link DataBindingContext} to the {@link ISideEffect} approach.
  * </p>
  * <p>
  * So basically two logically equal applications are implemented with the two

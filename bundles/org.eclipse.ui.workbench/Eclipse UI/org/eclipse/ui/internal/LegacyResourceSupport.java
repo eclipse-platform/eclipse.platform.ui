@@ -43,7 +43,7 @@ public final class LegacyResourceSupport {
 	 * Cached value of
 	 * <code>Class.forName("org.eclipse.core.resources.IResource")</code>;
 	 * <code>null</code> if not initialized or not present.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static Class iresourceClass = null;
@@ -52,7 +52,7 @@ public final class LegacyResourceSupport {
 	 * Cached value of
 	 * <code>Class.forName("org.eclipse.core.resources.IFile")</code>;
 	 * <code>null</code> if not initialized or not present.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static Class ifileClass;
@@ -61,13 +61,13 @@ public final class LegacyResourceSupport {
 	 * Cached value of
 	 * <code>Class.forName("org.eclipse.ui.IContributorResourceAdapter")</code>;
 	 * <code>null</code> if not initialized or not present.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static Class icontributorResourceAdapterClass = null;
 
 	/**
-	 * Cached value of </code>
+	 * Cached value of <code>
 	 * org.eclipse.ui.IContributorResourceAdapter.getAdaptedResource(IAdaptable)
 	 * </code> <code>null</code> if not initialized or not present.
 	 *
@@ -76,7 +76,7 @@ public final class LegacyResourceSupport {
 	private static Method getAdaptedResourceMethod = null;
 
 	/**
-	 * Cached value of </code>
+	 * Cached value of <code>
 	 * org.eclipse.ui.IContributorResourceAdapter2.getAdaptedResourceMapping(IAdaptable)
 	 * </code> <code>null</code> if not initialized or not present.
 	 *
@@ -88,7 +88,7 @@ public final class LegacyResourceSupport {
 	 * Cached value of
 	 * <code>Class.forName("org.eclipse.ui.ide.IContributorResourceAdapter2")</code>;
 	 * <code>null</code> if not initialized or not present.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static Class icontributorResourceAdapter2Class = null;
@@ -97,7 +97,7 @@ public final class LegacyResourceSupport {
 	 * Cached value of
 	 * <code>Class.forName("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter")</code>;
 	 * <code>null</code> if not initialized or not present.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static Class defaultContributorResourceAdapterClass = null;
@@ -115,7 +115,7 @@ public final class LegacyResourceSupport {
 	 * Cached value of
 	 * <code>Class.forName("org.eclipse.core.resources.mapping.ResourceMappingr")</code>;
 	 * <code>null</code> if not initialized or not present.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static Class resourceMappingClass = null;
@@ -339,7 +339,7 @@ public final class LegacyResourceSupport {
 	/**
 	 * Returns <code>true</code> if the provided type name is an
 	 * <code>IResource</code>, and <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param objectClassName
 	 * @return <code>true</code> if the provided type name is an
 	 *         <code>IResource</code>, and <code>false</code> otherwise.
@@ -359,7 +359,7 @@ public final class LegacyResourceSupport {
 	 * Returns <code>true</code> if the provided type name is an
 	 * <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>, and
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param objectClassName
 	 * @return <code>true</code> if the provided type name is an
 	 *         <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>,
@@ -583,7 +583,7 @@ public final class LegacyResourceSupport {
 	 * <p>
 	 * The returned selection will only contain elements successfully adapted.
 	 * </p>
-	 * 
+	 *
 	 * @param selection   the selection to adapt
 	 * @param objectClass the class name to adapt the selection to
 	 * @return an adapted selection
@@ -611,7 +611,7 @@ public final class LegacyResourceSupport {
 	 * The returned selection will be of the same size as the original, and elements
 	 * that could not be adapted are added to the returned selection as is.
 	 * </p>
-	 * 
+	 *
 	 * @param element     the element to adapt
 	 * @param objectClass the class name to adapt the selection to
 	 * @return an adapted element or <code>null</code> if the element could not be

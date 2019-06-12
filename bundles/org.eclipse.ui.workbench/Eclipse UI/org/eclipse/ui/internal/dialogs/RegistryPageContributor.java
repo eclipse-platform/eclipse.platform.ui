@@ -206,7 +206,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 * Checks:
 	 * <ul>
 	 * <li>multiSelect</li>
-	 * <li>enabledWhen enablement expression/li>
+	 * <li>enabledWhen enablement expression</li>
 	 * <li>nameFilter</li>
 	 * <li>custom Filter</li>
 	 * <li>checks legacy resource support</li>
@@ -269,7 +269,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 * Return whether or not object fails the enabledWhen enablement criterea. For
 	 * multi-select pages, evaluate the enabledWhen expression using the structured
 	 * selection as a Collection (which should be iterated over).
-	 * 
+	 *
 	 * @return boolean <code>true</code> if it fails the enablement test
 	 */
 	private boolean failsEnablement(Object[] objs) {

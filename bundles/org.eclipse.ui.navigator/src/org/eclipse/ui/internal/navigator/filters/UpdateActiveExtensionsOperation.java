@@ -51,7 +51,7 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 	/**
 	 * Create an operation to activate extensions and refresh the viewer.
 	 *
-	 * p> To use only one part of this operation (either "activate" or
+	 * <p> To use only one part of this operation (either "activate" or
 	 * "deactivate", but not both), then supply <b>null</b> for the array state
 	 * you are not concerned with.
 	 * </p>

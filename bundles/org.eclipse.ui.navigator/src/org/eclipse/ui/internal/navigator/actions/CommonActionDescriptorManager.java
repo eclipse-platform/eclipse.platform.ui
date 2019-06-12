@@ -134,7 +134,7 @@ public class CommonActionDescriptorManager {
 
 	/**
 	 * Orders the set of available descriptors based on the order defined by the
-	 * <i>dependsOn</i> attribute from the <actionProvider /> element in
+	 * <i>dependsOn</i> attribute from the &lt;actionProvider /&gt; element in
 	 * <b>org.eclipse.ui.navigator.navigatorContent</b>
 	 *
 	 */

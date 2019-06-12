@@ -296,13 +296,16 @@ public class MarkerSortUtil {
 	}
 
 	/**
-	 * Sorts [from,first+k-1] in the array of [from,to] using a variant of
-	 * modified heapsort, such that
-	 * array[from]<array[from+1]<...<array[from+k-1] and
-	 * array[from+k-1]<arra[from+k||from+k+1||from+k+2|| ....to]
+	 * Sorts <code>[from,first+k-1]</code> in the array of <code>[from,to]</code>
+	 * using a variant of modified heapsort, such that
 	 *
-	 * Note: if k is greater than a number,the sorting happens in batches of
-	 * that number, this for performance reasons.
+	 * <pre>
+	 * array[from]&lt;array[from+1]&lt;...&lt;array[from+k-1] and
+	 * array[from+k-1]&lt;array[from+k||from+k+1||from+k+2|| ....to]
+	 * </pre>
+	 *
+	 * Note: if k is greater than a number,the sorting happens in batches of that
+	 * number, this for performance reasons.
 	 *
 	 * @param entries
 	 * @param comparator
@@ -375,14 +378,18 @@ public class MarkerSortUtil {
 			int k, int limit) {
 		sortStartingKElement(fArray1, comparator, from, k, limit,new NullProgressMonitor());
 	}
+
 	/**
-	 * Sorts [0,k-1] in the array of [0,entries.length-1] using a variant of
-	 * modified heapsort, such that
-	 * array[0]<array[1]<...<array[k-1] and
-	 * array[k-1]<arra[k||k+1||k+2|| ....entries.length-1]
+	 * Sorts <code>[0,k-1]</code> in the array of <code>[0,entries.length-1]</code>
+	 * using a variant of modified heapsort, such that
 	 *
-	 * Note: if k is greater than a number,the sorting happens in batches of
-	 * that number, this for performance reasons.
+	 * <pre>
+	 * array[0]&lt;array[1]&lt;...&lt;array[k-1] and
+	 * array[k-1]&lt;array[k||k+1||k+2|| ....entries.length-1]
+	 * </pre>
+	 *
+	 * Note: if k is greater than a number,the sorting happens in batches of that
+	 * number, this for performance reasons.
 	 *
 	 * @param entries
 	 * @param comparator

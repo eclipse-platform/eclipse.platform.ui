@@ -70,7 +70,7 @@ public class GroupElement extends OrganizationElement {
 
 	/**
 	 * Creates a new <code>GroupElement</code>
-	 * nested in this <code>GroupElement<code>
+	 * nested in this <code>GroupElement</code>
 	 *
 	 * @param name the name of the sub group
 	 */

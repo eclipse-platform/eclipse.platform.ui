@@ -23,18 +23,19 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test the lifecycle of an action filter.
- *
+ * <p>
  * From Javadoc: "An IActionFilter returns whether the specific attribute
  * 		matches the state of the target object."
- *
+ * </p>
  * Setup: The plugin.xml contains a number of popup menu action
  * targetted to ListElements
- *
- * 		redAction -> (name = red)
- * 		blueAction -> (name = blue)
- * 		trueAction -> (flag = true)
- * 		falseAction -> (flag = false)
- * 		redTrueAction -> (name = red) (flag = true)
+ * <pre>
+ * 		redAction -&gt; (name = red)
+ * 		blueAction -&gt; (name = blue)
+ * 		trueAction -&gt; (flag = true)
+ * 		falseAction -&gt; (flag = false)
+ * 		redTrueAction -&gt; (name = red) (flag = true)
+ * </pre>
  */
 public class IActionFilterTest extends UITestCase {
 

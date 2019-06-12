@@ -142,9 +142,11 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	 *
 	 * Now the IMememnto creates a self reference:
 	 *
-	 * <workingSet name="testCycle" label="testCycle" aggregate="true">
-	 * 	<workingSet IMemento.internal.id="testCycle" />
-	 * </workingSet>
+	 * <pre>
+	 * &lt;workingSet name="testCycle" label="testCycle" aggregate="true"&gt;
+	 * 	&lt;workingSet IMemento.internal.id="testCycle" /&gt;
+	 * &lt;/workingSet&gt;
+	 * </pre>
 	 *
 	 * All we have to do to emulate stack overflow is to create a working set based on this IMemento.
 	 *

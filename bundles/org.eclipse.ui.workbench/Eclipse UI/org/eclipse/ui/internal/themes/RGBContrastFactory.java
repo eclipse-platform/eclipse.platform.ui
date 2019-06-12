@@ -26,24 +26,25 @@ import org.eclipse.ui.themes.IColorFactory;
  * higher contrast. The colors to blend are specified as per method number two
  * in {@link org.eclipse.core.runtime.IExecutableExtension}.
  * <p>
- * Example usage: <br/>
- * <code>
+ * Example usage:
+ * </p>
+ *
+ * <pre>
  * &lt;colorDefinition
  *     label="Red/Blue Contrast"
  *     id="example.redblueblend"&gt;
  *     &lt;colorFactory
- * 				plugin="org.eclipse.ui"
- * 				class="org.eclipse.ui.internal.themes.RGBContrastFactory"&gt;
- *      	&lt;parameter name="foreground" value="0,0,0" /&gt;
- *  		&lt;parameter name="background1" value="COLOR_RED" /&gt;
+ *              plugin="org.eclipse.ui"
+ *              class="org.eclipse.ui.internal.themes.RGBContrastFactory"&gt;
+ *          &lt;parameter name="foreground" value="0,0,0" /&gt;
+ *          &lt;parameter name="background1" value="COLOR_RED" /&gt;
  *          &lt;parameter name="background2" value="COLOR_BLUE" /&gt;
  *     &lt;/colorFactory&gt;
  * &lt;/colorDefinition&gt;
- * </code>
- * </p>
+ * </pre>
  *
  * <p>
- * This will select whichever of Red or Blue has a higher contrst with black.
+ * This will select whichever of Red or Blue has a higher contrast with black.
  * The color values may be specified as RGB triples or as SWT constants.
  * </p>
  *
@@ -75,7 +76,7 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
 	}
 
 	/**
-	 * Returns a measure of the lightness in the perceptual colourspace IPT.
+	 * Returns a measure of the lightness in the perceptual colour space IPT.
 	 *
 	 * @param color The colour in sRGB
 	 * @return Lightness in IPT space.

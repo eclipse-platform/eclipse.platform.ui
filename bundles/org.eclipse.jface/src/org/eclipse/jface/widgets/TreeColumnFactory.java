@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.TreeColumn;
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
  * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via
- * https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform, but
- * be aware that it might change.
+ * remain the same. Feel free to use it and give feedback via <a href=
+ * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
+ * but be aware that it might change.
  * </p>
  *
  * This class provides a convenient shorthand for creating and initializing
@@ -47,16 +47,16 @@ import org.eclipse.swt.widgets.TreeColumn;
  * <pre>
  * TreeColumn column = TreeColumnFactory.newTreeColumn(SWT.CENTER) //
  * 		.text("Tree Column") //
- * 		.onSelect(event -> columnClicked(event)) //
+ * 		.onSelect(event -&gt; columnClicked(event)) //
  * 		.create(tree);
  * </pre>
  * <p>
  * The above example creates a tree column, sets text, registers a
  * SelectionListener and finally creates the tree column in "tree".
- * <p>
+ * </p>
  *
  * <pre>
- * TreeColumnFactory factory = TreeColumnFactory.newTreeColumn(SWT.CENTER).onSelect(event -> columnClicked(event));
+ * TreeColumnFactory factory = TreeColumnFactory.newTreeColumn(SWT.CENTER).onSelect(event -&gt; columnClicked(event));
  * factory.text("Column 1").create(tree);
  * factory.text("Column 2").create(tree);
  * factory.text("Column 3").create(tree);
@@ -64,7 +64,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  * <p>
  * The above example creates three tree columns using the same instance of
  * factory.
- * <p>
+ * </p>
  *
  */
 public class TreeColumnFactory extends AbstractItemFactory<TreeColumnFactory, TreeColumn, Tree> {

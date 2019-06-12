@@ -134,7 +134,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	}
 
 	/**
-	 * Tests that the highlighting matches searches using '<' and ' '
+	 * Tests that the highlighting matches searches using '&gt;' and ' '
 	 *
 	 * @throws Exception
 	 */

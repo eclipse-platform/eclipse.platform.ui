@@ -24,7 +24,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * service locator for the new component. For use with the component framework.
  * <p>
  * <b>Note:</b> Must not be implemented or extended by clients.
- * <p>
+ * </p>
  * <p>
  * <strong>PROVISIONAL</strong>. This class or interface has been added as part
  * of a work in progress. There is a guarantee neither that this API will work

@@ -27,7 +27,7 @@ import org.eclipse.ui.themes.IColorFactory;
  *
  * This provides colors that are easily readable across different platforms.
  * <br>
- * Win32 & Cocoa: Yellow background & black text. (COLOR_INFO_*) <br>
+ * Win32 &amp; Cocoa: Yellow background &amp; black text. (COLOR_INFO_*) <br>
  * GTK: White background and black text. (COLOR_LIST_*)
  */
 public class RGBInfoColorFactory implements IColorFactory, IExecutableExtension {

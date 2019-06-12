@@ -91,7 +91,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * This class represents the TOP of the workbench UI world A plugin class is
- * effectively an application wrapper for a plugin & its classes. This class
+ * effectively an application wrapper for a plugin &amp; its classes. This class
  * should be thought of as the workbench UI's application class.
  *
  * This class is responsible for tracking various registries font, preference,
@@ -466,7 +466,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Answer the element factory for an id, or <code>null</code. if not found.
+	 * Answer the element factory for an id, or <code>null</code>. if not found.
 	 *
 	 * @param targetID
 	 * @return IElementFactory

@@ -46,7 +46,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 	 * characters set will not have its proposals disappear when a user invokes
 	 * content assist and then subsequently inserts a character that matches the
 	 * first character of a suggested proposal.
-	 * <p>
+	 *
 	 * <ol>
 	 * <li>User invokes content assist</li>
 	 * <li>"one", "two", "three"...shows up</li>
@@ -70,7 +70,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 	 * Tests that a ContentAssistCommandAdapter that has no autoactivation
 	 * characters set will not have its proposals appear when a user inserts a
 	 * character that matches the first character of a suggested proposal.
-	 * <p>
+	 *
 	 * <ol>
 	 * <li>User hits the 'O' key</li>
 	 * <li>While "one" matches, the proposals should not appear as no
@@ -90,7 +90,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 	 * Tests that a ContentAssistCommandAdapter that has no autoactivation
 	 * characters set will stay open if the user backspaces over a narrowing
 	 * proposal character.
-	 * <p>
+	 *
 	 * <ol>
 	 * <li>User invokes content assist</li>
 	 * <li>"one", "two", "three"...shows up</li>

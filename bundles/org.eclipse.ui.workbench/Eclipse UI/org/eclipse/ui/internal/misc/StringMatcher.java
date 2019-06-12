@@ -283,7 +283,7 @@ public class StringMatcher {
 
 	/**
 	 * match the given <code>text</code> with the pattern
-	 * 
+	 *
 	 * @return true if matched otherwise false
 	 * @param text a String object
 	 */
@@ -297,7 +297,7 @@ public class StringMatcher {
 	/**
 	 * Given the starting (inclusive) and the ending (exclusive) positions in the
 	 * <code>text</code>, determine if the given substring matches with aPattern
-	 * 
+	 *
 	 * @return true if the specified portion of the text matches the pattern
 	 * @param text  a String object that contains the substring to match
 	 * @param start marks the starting position (inclusive) of the substring
@@ -414,10 +414,10 @@ public class StringMatcher {
 	 * @return boolean
 	 * @param text       a String to match
 	 * @param start      int that indicates the starting index of match, inclusive
-	 * @param end</code> int that indicates the ending index of match, exclusive
+	 * @param end        int that indicates the ending index of match, exclusive
 	 * @param p          String, String, a simple regular expression that may
 	 *                   contain '?'
-	 * @param ignoreCase boolean indicating whether code>p</code> is case sensitive
+	 * @param ignoreCase boolean indicating whether <code>p</code> is case sensitive
 	 */
 	protected boolean regExpRegionMatches(String text, int tStart, String p, int pStart, int plen) {
 		while (plen-- > 0) {

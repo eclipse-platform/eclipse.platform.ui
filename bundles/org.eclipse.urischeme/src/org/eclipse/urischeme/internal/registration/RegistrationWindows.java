@@ -69,7 +69,7 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	 * Takes the given schemes,converts them to schemeInformation type by adding all
 	 * the properties like schemeName,schemeDescription, handled(is handled by
 	 * current instance) and handlerPath. If there is no handlerPath defined it is
-	 * set to "<none>"
+	 * set to empty string
 	 *
 	 * @param schemes The schemes that should be checked for registrations.
 	 * @return the registered schemes.

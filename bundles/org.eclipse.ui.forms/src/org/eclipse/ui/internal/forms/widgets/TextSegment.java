@@ -31,7 +31,6 @@ import com.ibm.icu.text.BreakIterator;
 
 /**
  * @version 1.0
- * @author
  */
 public class TextSegment extends ParagraphSegment {
 	private String colorId;

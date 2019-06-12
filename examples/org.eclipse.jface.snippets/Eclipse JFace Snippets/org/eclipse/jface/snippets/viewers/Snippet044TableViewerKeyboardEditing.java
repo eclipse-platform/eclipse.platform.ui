@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Table;
 /**
  * Demonstrates how to use keyboard-editing support in a TableViewer
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  *
  */
 public class Snippet044TableViewerKeyboardEditing {

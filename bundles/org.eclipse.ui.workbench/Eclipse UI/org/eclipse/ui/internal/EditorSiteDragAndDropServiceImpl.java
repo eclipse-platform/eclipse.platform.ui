@@ -29,6 +29,7 @@ import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.services.IDisposable;
 
 /**
+ * <p>
  * Implementation for the <code>IDragAndDropService</code> to be used from
  * <code>EditorSite</code>'s.
  * </p>
@@ -45,7 +46,7 @@ import org.eclipse.ui.services.IDisposable;
  * Targets but the hooks are put into place to maintain the consistency of the
  * implementation pattern.
  * </p>
- * 
+ *
  * @since 3.3
  *
  */
@@ -59,11 +60,10 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	 * <code>primaryListener</code> if the event's <code>currentDataType</code> can
 	 * be handled by it; otherwise the event is forwarded on to the listener
 	 * specified by <code>secondaryListener</code>.
-	 * </p>
 	 * <p>
 	 * NOTE: we should perhaps refactor this out into an external class
 	 * </p>
-	 * 
+	 *
 	 * @since 3.3
 	 *
 	 */

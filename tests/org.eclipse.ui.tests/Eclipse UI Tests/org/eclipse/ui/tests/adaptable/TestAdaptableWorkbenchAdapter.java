@@ -22,7 +22,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * @version 	1.0
- * @author
  */
 public class TestAdaptableWorkbenchAdapter extends LabelProvider implements
 		IWorkbenchAdapter {

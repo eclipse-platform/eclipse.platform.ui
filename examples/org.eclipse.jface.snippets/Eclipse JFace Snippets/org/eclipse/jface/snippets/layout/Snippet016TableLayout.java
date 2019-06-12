@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * A simple TableViewer to demonstrate usage of the {@link TableColumnLayout}.
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  */
 public class Snippet016TableLayout {
 

@@ -305,7 +305,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	/**
 	 * Return an id for the new descriptor.
 	 *
-	 * The id must encode the original id. id is of the form <originalId>.label
+	 * The id must encode the original id. id is of the form &lt;originalId&gt;.label
 	 *
 	 * @param label
 	 * @param originalDescriptor

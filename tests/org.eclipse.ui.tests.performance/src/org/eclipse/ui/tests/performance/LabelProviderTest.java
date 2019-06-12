@@ -18,6 +18,7 @@ import org.eclipse.jface.tests.performance.JFacePerformanceSuite;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorDecorator;
 import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -31,7 +32,6 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -153,7 +153,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 	private boolean colors;
 
 	/**
-	 * @param styled <code>true</code to use DecoratingStyledCellLabelProvider
+	 * @param styled <code>true</code> to use DecoratingStyledCellLabelProvider
 	 * @param colors Run test with color on or off
 	 */
 	public LabelProviderTest(String testName, boolean styled, boolean colors) {

@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
  * Explore the new API added in 3.3 and see how easily you can create reusable
  * components
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  * @since 3.2
  */
 public class Snippet019TableViewerAddRemoveColumnsWithEditing {

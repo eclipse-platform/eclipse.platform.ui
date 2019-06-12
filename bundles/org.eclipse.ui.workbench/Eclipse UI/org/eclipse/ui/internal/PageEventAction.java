@@ -27,13 +27,14 @@ import org.eclipse.ui.actions.PartEventAction;
  * lifecycle events that could affect the availability of the action.
  * <p>
  * Subclasses must implement the following <code>IAction</code> method:
+ * </p>
  * <ul>
  * <li><code>run</code> - to do the action's work</li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may extend any of the <code>IPartListener</code> methods if the
  * action availablity needs to be recalculated:
+ * </p>
  * <ul>
  * <li><code>partActivated</code></li>
  * <li><code>partDeactivated</code></li>
@@ -41,16 +42,15 @@ import org.eclipse.ui.actions.PartEventAction;
  * <li><code>partClosed</code></li>
  * <li><code>partBroughtToTop</code></li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may extend any of the <code>IPageListener</code> methods if the
- * action availablity needs to be recalculated:
+ * action availability needs to be recalculated:
+ * </p>
  * <ul>
  * <li><code>pageActivated</code></li>
  * <li><code>pageClosed</code></li>
  * <li><code>pageOpened</code></li>
  * </ul>
- * </p>
  * <p>
  * This method implements the <code>IPartListener</code> and
  * <code>IPageListener</code>interfaces, and automatically registers listeners

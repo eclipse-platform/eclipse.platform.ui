@@ -38,9 +38,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Demonstrate alternating row colors using new Jace 3.3 API
+ * Demonstrate alternating row colors using new JFace 3.3 API
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  *
  */
 public class Snippet041TableViewerAlternatingColors {

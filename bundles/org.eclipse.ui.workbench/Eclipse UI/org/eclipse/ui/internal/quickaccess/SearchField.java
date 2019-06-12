@@ -607,7 +607,7 @@ public class SearchField {
 	}
 
 	/**
-	 * Notifies <code>org.eclipse.swt.accessibility.Accessible<code> object that
+	 * Notifies <code>org.eclipse.swt.accessibility.Accessible</code> object that
 	 * selected item has been changed.
 	 */
 	private void notifyAccessibleTextChanged() {

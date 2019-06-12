@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Tree;
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
  * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via
- * https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform, but
- * be aware that it might change.
+ * remain the same. Feel free to use it and give feedback via <a href=
+ * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
+ * but be aware that it might change.
  * </p>
  *
  * This class provides a convenient shorthand for creating and initializing
@@ -53,15 +53,15 @@ import org.eclipse.swt.widgets.Tree;
  * Tree tree = TreeFactory.newTree(SWT.CHECK) //
  * 		.headerVisible(true) //
  * 		.linesVisible(true) //
- * 		.onSelect(e -> treeClicked(e)) //
- * 		.onExpand(e -> treeExpanded(e)) //
+ * 		.onSelect(e -&gt; treeClicked(e)) //
+ * 		.onExpand(e -&gt; treeExpanded(e)) //
  * 		.create(parent);
  * </pre>
  * <p>
  * The above example creates a tree, sets some properties, registers a
  * SelectionListener and a TreeListener for expansion and finally creates the
  * tree in "parent".
- * <p>
+ * </p>
  *
  */
 public class TreeFactory extends AbstractCompositeFactory<TreeFactory, Tree> {

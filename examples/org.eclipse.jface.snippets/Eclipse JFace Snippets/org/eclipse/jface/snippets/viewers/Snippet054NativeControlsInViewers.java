@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.TableItem;
  * because has the potential to eat up all your handles you should think about
  * alternate approaches e.g. taking a screenshot of the control
  *
- * @author Tom Schindl <tom.schindl@bestsolution.at>
+ * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
  *
  */
 public class Snippet054NativeControlsInViewers {

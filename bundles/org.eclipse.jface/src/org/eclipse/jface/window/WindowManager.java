@@ -85,7 +85,7 @@ public class WindowManager {
 	/**
 	 * Adds the given window manager to the list of
 	 * window managers that have this one as a parent.
-	 * </p>
+	 *
 	 * @param wm the child window manager
 	 */
 	private void addWindowManager(WindowManager wm) {
@@ -101,7 +101,7 @@ public class WindowManager {
 	 * Attempts to close all windows managed by this window manager,
 	 * as well as windows managed by any descendent window managers.
 	 *
-	 * @return <code>true</code> if all windows were sucessfully closed,
+	 * @return <code>true</code> if all windows were successfully closed,
 	 * and <code>false</code> if any window refused to close
 	 */
 	public boolean close() {

@@ -30,7 +30,7 @@ import org.w3c.dom.css.CSSValueList;
 /**
  * CSS Value converter to convert :
  * <ul>
- * <li>CSS Value to {@link Gradient}</li>.
+ * <li>CSS Value to {@link Gradient}</li>
  * <li>{@link Gradient} to String CSS Value</li>
  * </ul>
  */

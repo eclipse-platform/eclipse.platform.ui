@@ -41,7 +41,8 @@ public class FileStoreEditorInputFactory implements IElementFactory {
 	 * This factory's ID.
 	 * <p>
 	 * The editor plug-in registers a factory by this name with
-	 * the <code>"org.eclipse.ui.elementFactories"<code> extension point.
+	 * the <code>"org.eclipse.ui.elementFactories"</code> extension point.
+	 * </p>
 	 */
 	static final String ID = "org.eclipse.ui.ide.FileStoreEditorInputFactory"; //$NON-NLS-1$
 

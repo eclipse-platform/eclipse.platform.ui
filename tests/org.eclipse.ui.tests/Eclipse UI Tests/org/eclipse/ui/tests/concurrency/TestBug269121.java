@@ -42,7 +42,7 @@ import junit.framework.TestSuite;
  * with the rule used for the job.
  * <li>The job is scheduled.</li>
  * <li>The operation is run in the UI thread by ProgressMonitorDialog using
- * dialog.run(false, true, operation) call</li>.
+ * dialog.run(false, true, operation) call.</li>
  * </ol>
  * Deadlock occurred because the operation run in the UI thread was waiting for
  * the rule already acquired by the job and asyncExec registered by the job

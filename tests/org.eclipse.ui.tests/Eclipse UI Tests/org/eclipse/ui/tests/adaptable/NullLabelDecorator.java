@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * @version 	1.0
- * @author
  */
 public class NullLabelDecorator implements ILabelDecorator {
 

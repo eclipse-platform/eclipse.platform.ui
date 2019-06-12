@@ -66,7 +66,7 @@ public class DialogUtil {
 	}
 
 	/**
-	 * Removes the '&' accelerator indicator from a label, if any. Also removes the
+	 * Removes the '&amp;' accelerator indicator from a label, if any. Also removes the
 	 * () accelerators which are used in Asian languages.
 	 */
 	public static String removeAccel(String label) {

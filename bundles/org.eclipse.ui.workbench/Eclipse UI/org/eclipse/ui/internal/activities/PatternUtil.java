@@ -25,12 +25,15 @@ public class PatternUtil {
 
 	/**
 	 * Quotes a string pattern as non-regular expression string. That means: no
-	 * regular expresion instructions in the given string won't be taken into
+	 * regular expression instructions in the given string won't be taken into
 	 * account.<br/>
-	 * Example: <code>String searchString = "xy[^a]";<br/>
-	 * Pattern.compile(quotePattern(searchString)).matcher(searchString)
-	 * 		.matches();
-	 * <br/> </code> will return true.
+	 * Example:
+	 * <pre>
+	 *     String searchString = "xy[^a]";
+	 *     Pattern.compile(quotePattern(searchString)).matcher(searchString)
+	 *            .matches();
+	 * </pre>
+	 * will return <code>true</code>.
 	 * 
 	 * @param pattern pattern to quote
 	 * @return the quoted pattern

@@ -407,10 +407,9 @@ public class RenameResourceAction extends WorkspaceAction {
 	}
 
 	/**
-	 * Return the new name to be given to the target resource or
-	 * <code>null<code>
-	 * if the query was canceled. Rename the currently selected resource using the table editor.
-	 * Continue the action when the user is done.
+	 * Return the new name to be given to the target resource or <code>null</code>
+	 * if the query was canceled. Rename the currently selected resource using the
+	 * table editor. Continue the action when the user is done.
 	 *
 	 * @param resource the resource to rename
 	 */

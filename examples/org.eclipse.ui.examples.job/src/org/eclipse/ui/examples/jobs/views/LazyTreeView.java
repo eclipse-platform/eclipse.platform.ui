@@ -33,7 +33,7 @@ import org.eclipse.ui.part.ViewPart;
  * different labels and icons, if needed. Alternatively, a single label
  * provider can be shared between views in order to ensure that objects of the
  * same type are presented in the same way everywhere.
- * <p>
+ * </p>
  */
 public class LazyTreeView extends ViewPart {
 	protected TreeViewer viewer;

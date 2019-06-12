@@ -266,8 +266,8 @@ public final class CellData {
 	/**
 	 * Sets the number of rows and columns spanned by this control.
 	 *
-	 * @param horizontalSpan number of columns spanned by the control (> 0)
-	 * @param verticalSpan   number of rows spanned by the control (> 0)
+	 * @param horizontalSpan number of columns spanned by the control (&gt; 0)
+	 * @param verticalSpan   number of rows spanned by the control (&gt; 0)
 	 * @return this
 	 */
 	public CellData span(int horizontalSpan, int verticalSpan) {

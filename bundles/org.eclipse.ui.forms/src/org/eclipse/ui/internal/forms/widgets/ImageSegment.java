@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * @version 1.0
- * @author
  */
 public class ImageSegment extends ObjectSegment {
 	public static final String SEL_IMAGE_PREFIX = "isel."; //$NON-NLS-1$

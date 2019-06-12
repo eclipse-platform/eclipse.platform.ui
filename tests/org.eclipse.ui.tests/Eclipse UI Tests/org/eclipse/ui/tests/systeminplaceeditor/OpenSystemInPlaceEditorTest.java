@@ -38,7 +38,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests opening the
- * <code>org.eclipse.ui.internal.editorsupport.win32.OleEditor<code>.
+ * <code>org.eclipse.ui.internal.editorsupport.win32.OleEditor</code>.
  * <p>
  * <strong>Note:</strong> The tests pass on all platforms but
  * only perform for real when a system in-place editor is

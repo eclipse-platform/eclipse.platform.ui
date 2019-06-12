@@ -25,7 +25,7 @@ import org.eclipse.core.internal.databinding.observable.sideeffect.SideEffectFac
  * A factory to create {@link ISideEffect} objects, which are applied to the
  * given {@link Consumer} in {@link ISideEffectFactory#createFactory(Consumer)}.
  * </p>
- * Callers who provide the Consumer<ISideEffect> for the creation of an
+ * Callers who provide the Consumer&lt;ISideEffect&gt; for the creation of an
  * {@link ISideEffectFactory}, are supposed to manage the lifecycle of the
  * aggregated {@link ISideEffect} instances, which are created by this factory.
  *
@@ -227,17 +227,17 @@ public interface ISideEffectFactory {
 	 * invocation of the supplier will be asynchronous. If the caller needs it
 	 * to be invoked synchronously, they can call
 	 * {@link ISideEffect#runIfDirty()}
-	 * <p>
+	 * </p><p>
 	 * Unlike {@link #create(Supplier, Consumer)}, the consumer does not need to
 	 * be idempotent.
-	 * <p>
+	 * </p><p>
 	 * This method is used for gathering asynchronous data before opening an
 	 * editor, saving to disk, opening a dialog box, or doing some other
 	 * operation which should only be performed once.
-	 * <p>
+	 * </p><p>
 	 * Consider the following example, which displays the content of a text file
 	 * in a message box without doing any file I/O on the UI thread.
-	 * <p>
+	 * </p>
 	 *
 	 * <pre>
 	 * IObservableValue&lt;String&gt; loadFileAsString(String filename) {

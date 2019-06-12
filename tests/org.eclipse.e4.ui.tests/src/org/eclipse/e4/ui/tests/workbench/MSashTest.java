@@ -33,10 +33,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * This test validates the UI Model <-> SWT Widget interactions specifically
+ * This test validates the UI Model &lt;-&gt; SWT Widget interactions specifically
  * applicable to the <code>MSashForm</code> model element.
  * <p>
  * The rules being tested are:
+ * </p>
  * <ol>
  * <li>The SWT SashForm's weight count matches the number of modeled children</li>
  * <li>The MSashForm's weights are equal if not specified in the model</li>
@@ -45,8 +46,7 @@ import org.junit.Test;
  * <li>Changing the MSashForm's weights cause the SWT SashForm to update its
  * weights to match*</li>
  * </ol>
- * </p>
- * <Strong>* NOTE:</strong> The SWT SashForm reports its weights based on the
+ * <strong>* NOTE:</strong> The SWT SashForm reports its weights based on the
  * actual bounds of the widgets it's hosting. This means that setting the
  * model's weights to 75,25 does <b>not</b> result in the SashForm's weights
  * being 75,25. This means that the tests have to perform 'fuzzy' comparisons,

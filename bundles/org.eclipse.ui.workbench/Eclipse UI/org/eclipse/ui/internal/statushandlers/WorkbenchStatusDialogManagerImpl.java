@@ -166,12 +166,12 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 * If the dialog is already visible, the status adapter will be shown
 	 * immediately. Otherwise, the dialog with the added status adapter will show
 	 * up, if all conditions below are false.
+	 * </p>
 	 * <ul>
 	 * <li>the status adapter has
 	 * {@link IProgressConstants#NO_IMMEDIATE_ERROR_PROMPT_PROPERTY} set to
 	 * true</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * All not shown status adapters will be displayed as soon as the dialog shows
 	 * up.

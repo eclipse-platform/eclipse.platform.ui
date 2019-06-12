@@ -30,6 +30,7 @@ import junit.framework.TestSuite;
  * where both test_class_name and test_name can be a regular expression.
  * <p>
  * For instance:
+ * </p>
  * <pre>
  * 		OpenCloseEditorTest#testOpenAndCloseEditors:perf_outline()
  * </pre>
@@ -41,7 +42,6 @@ import junit.framework.TestSuite;
  * <pre>
  * 		"-Dorg.eclipse.ui.tests.filter=OpenCloseEditorTest#testOpenAndCloseEditors.*"
  * </pre>
- * </p>
  * @since 3.5
  */
 public class FilteredTestSuite extends TestSuite {

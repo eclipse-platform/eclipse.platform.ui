@@ -170,11 +170,11 @@ public class Bug42035Test extends UITestCase {
 	}
 
 	/**
-	 * Tests that "Ctrl+Shift+7" generates "Ctrl+Shift+7", "Ctrl+&" and
-	 * "Ctrl+Shift+&". This simulates a US keyboard layout.
+	 * Tests that "Ctrl+Shift+7" generates "Ctrl+Shift+7", "Ctrl+&amp;" and
+	 * "Ctrl+Shift+&amp;". This simulates a US keyboard layout.
 	 *
 	 * @throws ParseException
-	 *             If "CTRL+SHIFT+7", "CTRL+&" or "CTRL+SHIFT+&" cannot be
+	 *             If "CTRL+SHIFT+7", "CTRL+&amp;" or "CTRL+SHIFT+&amp;" cannot be
 	 *             processed.
 	 */
 	public void testCtrlShift7_US() throws ParseException {

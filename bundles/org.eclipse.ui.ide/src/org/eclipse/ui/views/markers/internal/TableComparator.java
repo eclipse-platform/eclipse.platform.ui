@@ -342,7 +342,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 
 	/**
 	 * Sorts the given elements in-place, modifying the given array from index
-	 * start to index end. <
+	 * start to index end.
 	 *
 	 * @param viewer
 	 * @param elements
