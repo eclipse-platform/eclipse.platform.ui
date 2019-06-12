@@ -39,7 +39,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 
 	private String actionSetId;
 
-	private ArrayList adjunctContributions = new ArrayList();
+	private ArrayList<IContributionItem> adjunctContributions = new ArrayList<>();
 
 	private IToolBarManager coolItemToolBarMgr = null;
 
@@ -47,6 +47,11 @@ public class ActionSetActionBars extends SubActionBars2 {
 
 	/**
 	 * Constructs a new action bars object
+	 *
+	 * @param parent              the parent
+	 * @param serviceLocator      the serviceLocator
+	 * @param actionBarConfigurer the actionBarConfigurer
+	 * @param actionSetId         actionSetId
 	 */
 	public ActionSetActionBars(IActionBars2 parent, IServiceLocator serviceLocator,
 			IActionBarConfigurer2 actionBarConfigurer, String actionSetId) {
@@ -114,7 +119,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 		}
 		toolBarContributionItem = null;
 		coolItemToolBarMgr = null;
-		adjunctContributions = new ArrayList();
+		adjunctContributions = new ArrayList<>();
 		super.dispose();
 	}
 
@@ -187,7 +192,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 	 * Returns the correct tool bar for the given action id. If this action is an
 	 * adjunct type the it returns the toolbar manager from the cool bar manager.
 	 *
-	 * @param id the id of the action
+	 * @param actionId the id of the action
 	 * @return the tool bar manager
 	 */
 	public IToolBarManager getToolBarManager(String actionId) {
@@ -298,8 +303,8 @@ public class ActionSetActionBars extends SubActionBars2 {
 
 		// 2. Need to set visibility for all adjunct actions
 		if (adjunctContributions.size() > 0) {
-			for (Iterator i = adjunctContributions.iterator(); i.hasNext();) {
-				IContributionItem item = (IContributionItem) i.next();
+			for (Iterator<IContributionItem> i = adjunctContributions.iterator(); i.hasNext();) {
+				IContributionItem item = i.next();
 				if (item instanceof ContributionItem) {
 					item.setVisible(set);
 					IContributionManager manager = ((ContributionItem) item).getParent();
