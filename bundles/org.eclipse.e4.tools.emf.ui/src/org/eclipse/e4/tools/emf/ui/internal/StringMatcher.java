@@ -306,7 +306,7 @@ public class StringMatcher {
 		final Vector<String> temp = new Vector<>();
 
 		int pos = 0;
-		final StringBuffer buf = new StringBuffer();
+		final StringBuilder buf = new StringBuilder();
 		while (pos < fLength) {
 			final char c = fPattern.charAt(pos++);
 			switch (c) {
