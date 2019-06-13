@@ -6,7 +6,7 @@
 	<property name="eclipse-home" value="${basedir}/../.." />
 
 	<!-- sets the properties eclipse-home, and library-file -->
-	<property name="plugin-name" value="org.eclipse.tests.jface" />
+	<property name="plugin-name" value="org.eclipse.jface.tests" />
 	<property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml" />
 
 	<!-- This target holds all initialization code that needs to be done for -->
@@ -21,7 +21,7 @@
 
 	<!-- This target defines the tests that need to be run. -->
 	<target name="suite">
-		<property name="sniff-folder" value="${eclipse-home}/databinding_sniff_folder" />
+		<property name="sniff-folder" value="${eclipse-home}/jface_sniff_folder" />
 		<delete dir="${sniff-folder}" quiet="true" />
 		<ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
 			<property name="data-dir" value="${sniff-folder}" />
