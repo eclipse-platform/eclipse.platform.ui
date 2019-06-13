@@ -15,6 +15,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.action.AbstractGroupMarker;
@@ -201,7 +202,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
 	/**
 	 */
-	/* package */static void processActionSets(ArrayList pluginActionSets, WorkbenchWindow window) {
+	/* package */static void processActionSets(List<PluginActionSet> pluginActionSets, WorkbenchWindow window) {
 		// Process the action sets in two passes. On the first pass the
 		// pluginActionSetBuilder
 		// will process base contributions and cache adjunct contributions. On the
@@ -209,7 +210,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		// pass the adjunct contributions will be processed.
 		PluginActionSetBuilder[] builders = new PluginActionSetBuilder[pluginActionSets.size()];
 		for (int i = 0; i < pluginActionSets.size(); i++) {
-			PluginActionSet set = (PluginActionSet) pluginActionSets.get(i);
+			PluginActionSet set = pluginActionSets.get(i);
 			PluginActionSetBuilder builder = new PluginActionSetBuilder();
 			builder.readActionExtensions(set, window);
 			builders[i] = builder;

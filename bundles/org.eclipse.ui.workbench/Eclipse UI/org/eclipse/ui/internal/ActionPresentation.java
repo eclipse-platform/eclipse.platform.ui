@@ -20,8 +20,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.registry.IActionSet;
@@ -33,9 +36,9 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 public class ActionPresentation {
 	private WorkbenchWindow window;
 
-	private HashMap mapDescToRec = new HashMap(3);
+	private Map<IActionSetDescriptor, SetRec> mapDescToRec = new HashMap<>(3);
 
-	private HashMap invisibleBars = new HashMap(3);
+	private Map<IActionSetDescriptor, SetRec> invisibleBars = new HashMap<>(3);
 
 	private static class SetRec {
 		public SetRec(IActionSet set, SubActionBars bars) {
@@ -50,6 +53,8 @@ public class ActionPresentation {
 
 	/**
 	 * ActionPresentation constructor comment.
+	 *
+	 * @param window the workbench window to manage actions for
 	 */
 	public ActionPresentation(WorkbenchWindow window) {
 		super();
@@ -61,24 +66,26 @@ public class ActionPresentation {
 	 */
 	public void clearActionSets() {
 		// Get all of the action sets -- both visible and invisible.
-		final List oldList = new ArrayList();
+		final List<IActionSetDescriptor> oldList = new ArrayList<>();
 		oldList.addAll(mapDescToRec.keySet());
 		oldList.addAll(invisibleBars.keySet());
 
-		Iterator iter = oldList.iterator();
+		Iterator<IActionSetDescriptor> iter = oldList.iterator();
 		while (iter.hasNext()) {
-			IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
+			IActionSetDescriptor desc = iter.next();
 			removeActionSet(desc);
 		}
 	}
 
 	/**
 	 * Destroy an action set.
+	 *
+	 * @param desc an actions set to destroy
 	 */
 	public void removeActionSet(IActionSetDescriptor desc) {
-		SetRec rec = (SetRec) mapDescToRec.remove(desc);
+		SetRec rec = mapDescToRec.remove(desc);
 		if (rec == null) {
-			rec = (SetRec) invisibleBars.remove(desc);
+			rec = invisibleBars.remove(desc);
 		}
 		if (rec != null) {
 			IActionSet set = rec.set;
@@ -94,20 +101,22 @@ public class ActionPresentation {
 
 	/**
 	 * Sets the list of visible action set.
+	 *
+	 * @param newArray the list of visible action set
 	 */
 	public void setActionSets(IActionSetDescriptor[] newArray) {
 		// Convert array to list.
-		HashSet newList = new HashSet();
+		Set<IActionSetDescriptor> newList = new HashSet<>();
 
 		newList.addAll(Arrays.asList(newArray));
-		List oldList = new ArrayList(mapDescToRec.keySet());
+		List<IActionSetDescriptor> oldList = new ArrayList<>(mapDescToRec.keySet());
 
 		// Remove obsolete actions.
-		Iterator iter = oldList.iterator();
+		Iterator<IActionSetDescriptor> iter = oldList.iterator();
 		while (iter.hasNext()) {
-			IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
+			IActionSetDescriptor desc = iter.next();
 			if (!newList.contains(desc)) {
-				SetRec rec = (SetRec) mapDescToRec.get(desc);
+				SetRec rec = mapDescToRec.get(desc);
 				if (rec != null) {
 					mapDescToRec.remove(desc);
 					IActionSet set = rec.set;
@@ -122,7 +131,7 @@ public class ActionPresentation {
 		}
 
 		// Add new actions.
-		ArrayList sets = new ArrayList();
+		List<PluginActionSet> sets = new ArrayList<>();
 
 		for (IActionSetDescriptor desc : newArray) {
 			if (!mapDescToRec.containsKey(desc)) {
@@ -132,7 +141,7 @@ public class ActionPresentation {
 					// then
 					// reuse those action sets
 					if (invisibleBars.containsKey(desc)) {
-						rec = (SetRec) invisibleBars.get(desc);
+						rec = invisibleBars.get(desc);
 						if (rec.bars != null) {
 							rec.bars.activate();
 						}
@@ -144,7 +153,14 @@ public class ActionPresentation {
 								desc.getId());
 						rec = new SetRec(set, bars);
 						set.init(window, bars);
-						sets.add(set);
+						if (set instanceof PluginActionSet) {
+							PluginActionSet pluginActionSet = (PluginActionSet) set;
+							sets.add(pluginActionSet);
+						} else {
+							String pattern = "Ignored unexpected IActionSet implementation for descriptor {0}: {1}"; //$NON-NLS-1$
+							WorkbenchPlugin.log(NLS.bind(pattern, desc.getId(), set));
+						}
+
 
 						// only register against the tracker once - check for
 						// other registrations against the provided extension
@@ -173,9 +189,9 @@ public class ActionPresentation {
 		// necessary in order to maintain group order within a coolitem.
 		PluginActionSetBuilder.processActionSets(sets, window);
 
-		iter = sets.iterator();
-		while (iter.hasNext()) {
-			PluginActionSet set = (PluginActionSet) iter.next();
+		Iterator<PluginActionSet> setIterator = sets.iterator();
+		while (setIterator.hasNext()) {
+			PluginActionSet set = setIterator.next();
 			set.getBars().activate();
 		}
 	}
@@ -198,13 +214,14 @@ public class ActionPresentation {
 	}
 
 	/**
+	 * @return the list of visible action set
 	 */
 	public IActionSet[] getActionSets() {
-		Collection setRecCollection = mapDescToRec.values();
+		Collection<SetRec> setRecCollection = mapDescToRec.values();
 		IActionSet result[] = new IActionSet[setRecCollection.size()];
 		int i = 0;
-		for (Iterator iterator = setRecCollection.iterator(); iterator.hasNext(); i++) {
-			result[i] = ((SetRec) iterator.next()).set;
+		for (Iterator<SetRec> iterator = setRecCollection.iterator(); iterator.hasNext(); i++) {
+			result[i] = (iterator.next()).set;
 		}
 		return result;
 	}
