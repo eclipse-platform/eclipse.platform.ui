@@ -7,13 +7,6 @@
                 <message_argument value="IBeanListProperty&lt;S, E&gt;"/>
             </message_arguments>
         </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574668824">
-            <message_arguments>
-                <message_argument value="IBeanProperty"/>
-                <message_argument value="IBeanListProperty&lt;S, E&gt;"/>
-                <message_argument value="IProperty"/>
-            </message_arguments>
-        </filter>
         <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
             <message_arguments>
                 <message_argument value="IBeanProperty"/>
@@ -28,13 +21,6 @@
                 <message_argument value="IBeanMapProperty&lt;S, K, V&gt;"/>
             </message_arguments>
         </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574668824">
-            <message_arguments>
-                <message_argument value="IBeanProperty"/>
-                <message_argument value="IBeanMapProperty&lt;S, K, V&gt;"/>
-                <message_argument value="IProperty"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/beans/IBeanSetProperty.java" type="org.eclipse.core.databinding.beans.IBeanSetProperty">
         <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
@@ -43,26 +29,12 @@
                 <message_argument value="IBeanSetProperty&lt;S, E&gt;"/>
             </message_arguments>
         </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574668824">
-            <message_arguments>
-                <message_argument value="IBeanProperty"/>
-                <message_argument value="IBeanSetProperty&lt;S, E&gt;"/>
-                <message_argument value="IProperty"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eclipse/core/databinding/beans/IBeanValueProperty.java" type="org.eclipse.core.databinding.beans.IBeanValueProperty">
         <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574619656">
             <message_arguments>
                 <message_argument value="IValueProperty&lt;S, T&gt;"/>
                 <message_argument value="IBeanValueProperty&lt;S, T&gt;"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="574668824">
-            <message_arguments>
-                <message_argument value="IBeanProperty"/>
-                <message_argument value="IBeanValueProperty&lt;S, T&gt;"/>
-                <message_argument value="IProperty"/>
             </message_arguments>
         </filter>
     </resource>
