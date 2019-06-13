@@ -244,7 +244,6 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
-		gd.horizontalIndent= 20;
 		fShowInVerticalRulerCheckBox.setLayoutData(gd);
 
 		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
@@ -252,14 +251,12 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
-		gd.horizontalIndent= 20;
 		fShowInOverviewRulerCheckBox.setLayoutData(gd);
 
 		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
 		fShowInTextCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInText);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalIndent= 20;
 		fShowInTextCheckBox.setLayoutData(gd);
 
 
@@ -278,7 +275,6 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_color);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalIndent= 20;
 		label.setLayoutData(gd);
 
 		fAnnotationForegroundColorEditor= new ColorSelector(optionsComposite);
