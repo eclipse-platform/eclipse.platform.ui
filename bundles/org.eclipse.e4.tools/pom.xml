@@ -10,7 +10,7 @@
 
   <groupId>eclipse.platform.ui.tool</groupId>
   <artifactId>org.eclipse.e4.tools</artifactId>
-  <version>4.8.300-SNAPSHOT</version>
+  <version>4.8.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
 </project>
