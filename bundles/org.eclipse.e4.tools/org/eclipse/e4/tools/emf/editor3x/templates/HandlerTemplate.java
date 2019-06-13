@@ -26,7 +26,7 @@ public class HandlerTemplate
 
   public String generate(Object argument)
   {
-    final StringBuffer stringBuffer = new StringBuffer();
+    final StringBuilder stringBuffer = new StringBuilder();
      HandlerClass domainClass = (HandlerClass)argument; 
     stringBuffer.append(TEXT_1);
     stringBuffer.append( domainClass.getPackageFragment().getElementName() );

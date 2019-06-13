@@ -28,7 +28,7 @@ public class DynamicMenuContributionTemplate
 
   public String generate(Object argument)
   {
-    final StringBuffer stringBuffer = new StringBuffer();
+    final StringBuilder stringBuffer = new StringBuilder();
      DynamicMenuContributionClass domainClass = (DynamicMenuContributionClass)argument; 
     stringBuffer.append(TEXT_1);
      if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) { 

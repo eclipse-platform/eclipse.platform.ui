@@ -27,7 +27,7 @@ public class ToolControlTemplate
 
   public String generate(Object argument)
   {
-    final StringBuffer stringBuffer = new StringBuffer();
+    final StringBuilder stringBuffer = new StringBuilder();
      ToolControlClass domainClass = (ToolControlClass)argument; 
      if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) { 
     stringBuffer.append(TEXT_1);

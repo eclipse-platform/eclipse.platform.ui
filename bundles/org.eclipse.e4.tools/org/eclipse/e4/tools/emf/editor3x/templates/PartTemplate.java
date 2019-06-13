@@ -38,7 +38,7 @@ public class PartTemplate
 
   public String generate(Object argument)
   {
-    final StringBuffer stringBuffer = new StringBuffer();
+    final StringBuilder stringBuffer = new StringBuilder();
      PartClass domainClass = (PartClass)argument; 
     stringBuffer.append(TEXT_1);
     stringBuffer.append( domainClass.getPackageFragment().getElementName() );
