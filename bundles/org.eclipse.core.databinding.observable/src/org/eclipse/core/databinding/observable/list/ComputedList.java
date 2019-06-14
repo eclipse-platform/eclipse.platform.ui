@@ -81,7 +81,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  * @since 1.1
  */
 public abstract class ComputedList<E> extends AbstractObservableList<E> {
-	private List<E> cachedList = new ArrayList<E>();
+	private List<E> cachedList = new ArrayList<>();
 
 	private boolean dirty = true;
 	private boolean stale = false;
@@ -254,7 +254,7 @@ public abstract class ComputedList<E> extends AbstractObservableList<E> {
 			stopListening();
 
 			// copy the old list
-			final List<E> oldList = new ArrayList<E>(cachedList);
+			final List<E> oldList = new ArrayList<>(cachedList);
 			// Fire the "dirty" event. This implementation recomputes the new
 			// list lazily.
 			fireListChange(new ListDiff<E>() {

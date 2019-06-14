@@ -104,7 +104,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		getterCalled();
-		Set<E> additions = new HashSet<E>();
+		Set<E> additions = new HashSet<>();
 		Iterator<? extends E> it = c.iterator();
 		while (it.hasNext()) {
 			E element = it.next();
@@ -137,7 +137,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		getterCalled();
-		Set<E> removes = new HashSet<E>();
+		Set<E> removes = new HashSet<>();
 		Iterator<?> it = c.iterator();
 		while (it.hasNext()) {
 			Object element = it.next();
@@ -156,7 +156,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		getterCalled();
-		Set<E> removes = new HashSet<E>();
+		Set<E> removes = new HashSet<>();
 		Iterator<E> it = wrappedSet.iterator();
 		while (it.hasNext()) {
 			E element = it.next();
@@ -176,7 +176,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	@Override
 	public void clear() {
 		getterCalled();
-		Set<E> removes = new HashSet<E>(wrappedSet);
+		Set<E> removes = new HashSet<>(wrappedSet);
 		Set<E> additions = Collections.emptySet();
 		wrappedSet.clear();
 		fireSetChange(Diffs.createSetDiff(additions, removes));
@@ -188,6 +188,6 @@ public class WritableSet<E> extends ObservableSet<E> {
 	 * @return new instance with the default realm
 	 */
 	public static <E> WritableSet<E> withElementType(Object elementType) {
-		return new WritableSet<E>(Realm.getDefault(), new HashSet<E>(), elementType);
+		return new WritableSet<>(Realm.getDefault(), new HashSet<E>(), elementType);
 	}
 }

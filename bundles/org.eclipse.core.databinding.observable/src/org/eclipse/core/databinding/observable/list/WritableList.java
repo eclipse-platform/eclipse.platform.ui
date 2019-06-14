@@ -241,7 +241,7 @@ public class WritableList<E> extends ObservableList<E> {
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		checkRealm();
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>();
+		List<ListDiffEntry<E>> entries = new ArrayList<>();
 		for (Object element : c) {
 			int removeIndex = wrappedList.indexOf(element);
 			if (removeIndex != -1) {
@@ -259,7 +259,7 @@ public class WritableList<E> extends ObservableList<E> {
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		checkRealm();
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>();
+		List<ListDiffEntry<E>> entries = new ArrayList<>();
 		int removeIndex = 0;
 		for (Iterator<E> it = wrappedList.iterator(); it.hasNext();) {
 			E element = it.next();

@@ -450,10 +450,10 @@ public class Diffs {
 		// starts out with all keys from the new map, we will remove keys from
 		// the old map as we go
 		final Set<K> addedKeys = new HashSet<K>(newMap.keySet());
-		final Set<K> removedKeys = new HashSet<K>();
-		final Set<K> changedKeys = new HashSet<K>();
-		final Map<K, V> oldValues = new HashMap<K, V>();
-		final Map<K, V> newValues = new HashMap<K, V>();
+		final Set<K> removedKeys = new HashSet<>();
+		final Set<K> changedKeys = new HashSet<>();
+		final Map<K, V> oldValues = new HashMap<>();
+		final Map<K, V> newValues = new HashMap<>();
 		for (Entry<? extends K, ? extends V> oldEntry : oldMap.entrySet()) {
 			K oldKey = oldEntry.getKey();
 			if (addedKeys.remove(oldKey)) {

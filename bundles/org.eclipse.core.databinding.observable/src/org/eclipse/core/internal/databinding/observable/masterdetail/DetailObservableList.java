@@ -94,7 +94,7 @@ public class DetailObservableList<M, E> extends ObservableList<E>implements IObs
 			return;
 		ObservableTracker.setIgnore(true);
 		try {
-			List<E> oldList = new ArrayList<E>(wrappedList);
+			List<E> oldList = new ArrayList<>(wrappedList);
 			updateInnerObservableList();
 			fireListChange(Diffs.computeListDiff(oldList, wrappedList));
 		} finally {

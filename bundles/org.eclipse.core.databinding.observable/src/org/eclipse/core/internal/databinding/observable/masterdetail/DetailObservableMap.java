@@ -59,7 +59,7 @@ public class DetailObservableMap<M, K, V> extends ObservableMap<K, V>implements 
 			return;
 		ObservableTracker.setIgnore(true);
 		try {
-			Map<K, V> oldMap = new HashMap<K, V>(wrappedMap);
+			Map<K, V> oldMap = new HashMap<>(wrappedMap);
 			updateDetailMap();
 			fireMapChange(Diffs.computeMapDiff(oldMap, wrappedMap));
 		} finally {
