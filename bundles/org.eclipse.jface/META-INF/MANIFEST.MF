@@ -30,7 +30,7 @@ Export-Package: org.eclipse.jface,
  org.eclipse.jface.util,
  org.eclipse.jface.viewers,
  org.eclipse.jface.viewers.deferred,
- org.eclipse.jface.widgets;x-internal:=true,
+ org.eclipse.jface.widgets;x-friends:="org.eclipse.jface.tests",
  org.eclipse.jface.window,
  org.eclipse.jface.wizard,
  org.eclipse.jface.wizard.images
