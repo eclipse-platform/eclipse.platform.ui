@@ -73,5 +73,33 @@
                 <message_argument value="getFrameList()"/>
             </message_arguments>
         </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="getRootMode()"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="getWorkingSetLabel()"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="setRootMode(int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="setWorkingSetLabel(String)"/>
+            </message_arguments>
+        </filter>
     </resource>
 </component>
