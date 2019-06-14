@@ -447,7 +447,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 			String folderPath = entryName.substring(0, idx);
 			String fileName = entryName.substring(idx+1, entryName.length());
 			// we get empty strings for folder entries, don't add them as a file name
-			if (fileName.length() != 0) {
+			if (!fileName.isEmpty()) {
 				files.add(fileName);
 			}
 			int idx2 = folderPath.lastIndexOf('/');

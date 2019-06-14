@@ -479,7 +479,7 @@ public class MultiEditorTest extends UITestCase {
 			// assertFalse("The editor never actualized",
 			// editorPart instanceof ErrorEditorPart);
 
-			if (fErrorListener.messages.size() > 0) {
+			if (!fErrorListener.messages.isEmpty()) {
 				String[] msgs = fErrorListener.messages
 						.toArray(new String[fErrorListener.messages.size()]);
 				for (String msg : msgs) {

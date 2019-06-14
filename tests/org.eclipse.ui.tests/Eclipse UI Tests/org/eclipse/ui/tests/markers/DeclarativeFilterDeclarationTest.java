@@ -100,8 +100,8 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 		ProblemFilter filter = getFilter(filterName);
 		assertTrue(filterName + " not found ", filter != null);
 		assertTrue(filterName + " is enabled ", !filter.isEnabled());
-		assertTrue(filterName + "does not have description", filter
-				.getDescription().length() > 0);
+		assertTrue(filterName + "does not have description", !filter
+				.getDescription().isEmpty());
 		assertTrue(filterName + "not checking contains", filter.getContains());
 	}
 
@@ -113,8 +113,8 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 		ProblemFilter filter = getFilter(filterName);
 		assertTrue(filterName + " not found ", filter != null);
 		assertTrue(filterName + " is enabled ", !filter.isEnabled());
-		assertTrue(filterName + "does not have description", filter
-				.getDescription().length() > 0);
+		assertTrue(filterName + "does not have description", !filter
+				.getDescription().isEmpty());
 		assertFalse(filterName + "checking contains", filter.getContains());
 	}
 

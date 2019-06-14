@@ -55,7 +55,7 @@ public class DependencyInjectionViewTest extends UITestCase {
 
 		// check if focus is correctly called
 		assertTrue(view.focusParameterAvailable);
-		assertTrue(view.creationCallOrder.size() > 0);
+		assertTrue(!view.creationCallOrder.isEmpty());
 		assertEquals(expectedCreationCallOrder, view.creationCallOrder);
 
 		page.hideView(v);

@@ -105,7 +105,7 @@ public class Bug203657TreeViewerTest extends ViewerTestCase {
 
 			@Override
 			public boolean hasChildren(Object element) {
-				return ((MyModel) element).child.size() > 0;
+				return !((MyModel) element).child.isEmpty();
 			}
 		});
 

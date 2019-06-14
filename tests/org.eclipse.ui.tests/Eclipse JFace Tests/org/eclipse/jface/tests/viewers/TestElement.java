@@ -186,7 +186,7 @@ public class TestElement implements Cloneable {
 	}
 
 	public TestElement getFirstChild() {
-		if (fChildren.size() > 0) {
+		if (!fChildren.isEmpty()) {
 			return fChildren.elementAt(0);
 		}
 		return null;

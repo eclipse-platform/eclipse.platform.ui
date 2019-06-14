@@ -93,7 +93,7 @@ public class Bug287765Test extends TestCase {
 		@Override
 		public boolean hasChildren(Object element) {
 			Node node = (Node) element;
-			return node.children.size() > 0;
+			return !node.children.isEmpty();
 		}
 
 		@Override

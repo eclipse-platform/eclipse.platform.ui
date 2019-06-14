@@ -40,7 +40,7 @@ public class IPerspectiveDescriptorTest extends TestCase {
 		for (IPerspectiveDescriptor fPerspective : fPerspectives) {
 			String id = fPerspective.getId();
 			assertNotNull(id);
-			assertTrue(id.length() > 0);
+			assertTrue(!id.isEmpty());
 		}
 	}
 
@@ -51,7 +51,7 @@ public class IPerspectiveDescriptorTest extends TestCase {
 		for (IPerspectiveDescriptor fPerspective : fPerspectives) {
 			String label = fPerspective.getLabel();
 			assertNotNull(label);
-			assertTrue(label.length() > 0);
+			assertTrue(!label.isEmpty());
 		}
 	}
 

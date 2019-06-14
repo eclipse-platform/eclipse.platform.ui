@@ -225,7 +225,7 @@ public class DialogCheck {
 		String widget = label.toString();
 		Point size = label.getSize();
 		String labelText = label.getText();
-		if (labelText == null || labelText.length() == 0)
+		if (labelText == null || labelText.isEmpty())
 			return;
 		//compute the size with no line wrapping
 		Point preferred = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);

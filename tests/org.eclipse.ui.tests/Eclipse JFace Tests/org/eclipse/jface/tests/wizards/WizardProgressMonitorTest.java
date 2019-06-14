@@ -85,7 +85,7 @@ public class WizardProgressMonitorTest extends TestCase {
 				"", dialog.getProgressMonitorLabelText()); //$NON-NLS-1$
 
 		String subTask = dialog.getProgressMonitorSubTaskText();
-		if(subTask !=null && subTask.length() != 0)
+		if(subTask !=null && !subTask.isEmpty())
 		 {
 			fail("The progress monitor's subtask should have been cleared"); //$NON-NLS-1$
 		}
@@ -101,7 +101,7 @@ public class WizardProgressMonitorTest extends TestCase {
 
 			// check the subtask as well
 			String subTask = dialog.getProgressMonitorSubTaskText();
-			if (subTask != null && subTask.length() != 0) {
+			if (subTask != null && !subTask.isEmpty()) {
 				fail("The progress monitor's subtask is not initially empty"); //$NON-NLS-1$
 			}
 
