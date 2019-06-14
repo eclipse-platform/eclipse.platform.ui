@@ -86,9 +86,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 		this.configElement = input.configElement;
 		this.wizards = wizards;
 
-		for (Object child : input.children) {
-			children.add(child);
-		}
+		children.addAll(input.children);
 	}
 
 	/**

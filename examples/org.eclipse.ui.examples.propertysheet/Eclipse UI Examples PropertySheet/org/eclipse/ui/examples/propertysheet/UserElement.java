@@ -242,9 +242,7 @@ public class UserElement extends OrganizationElement {
 
 		//gets descriptors from parent, warning name-space collision may occur
 		ArrayList<PropertyDescriptor> parentDescriptors = OrganizationElement.getDescriptors();
-		for (int i = 0; i < parentDescriptors.size(); i++) {
-			descriptors.add(parentDescriptors.get(i));
-		}
+		descriptors.addAll(parentDescriptors);
 	}
 
 	/**

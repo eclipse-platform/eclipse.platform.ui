@@ -43,9 +43,7 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
 	public Set keySet() {
 		Set result = new HashSet();
 
-		for (String name : store.propertyNames()) {
-			result.add(name);
-		}
+		java.util.Collections.addAll(result, store.propertyNames());
 
 		return result;
 	}

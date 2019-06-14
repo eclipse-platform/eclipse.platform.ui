@@ -60,9 +60,7 @@ public class WorkingSetResourceMapping extends ResourceMapping {
 	public IProject[] getProjects() {
 		Set<IProject> result = new HashSet<>();
 		for (ResourceMapping mapping : getMappings()) {
-			for (IProject project : mapping.getProjects()) {
-				result.add(project);
-			}
+			java.util.Collections.addAll(result, mapping.getProjects());
 		}
 		return result.toArray(new IProject[result.size()]);
 	}

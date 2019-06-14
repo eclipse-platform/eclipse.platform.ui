@@ -202,9 +202,7 @@ public class ModelAssembler {
 
 	private void addAllBucketFragmentWrapper(Bucket bucket, List<ModelFragmentWrapper> fragmentList,
 			Set<String> checkedElementIds) {
-		for (ModelFragmentWrapper wrapper : bucket.wrapper) {
-			fragmentList.add(wrapper);
-		}
+		fragmentList.addAll(bucket.wrapper);
 		checkedElementIds.addAll(bucket.containedElementIds);
 		for (Bucket child : bucket.dependencies) {
 			addAllBucketFragmentWrapper(child, fragmentList, checkedElementIds);

@@ -573,9 +573,7 @@ public class MarkerFilter implements Cloneable {
 			// any types we know about that weren't either true or
 			// false in the selection attribute are new. By default,
 			// new marker types will be selected=true
-			for (int i = 0; i < newTypes.size(); ++i) {
-				selectedTypes.add(newTypes.get(i));
-			}
+			selectedTypes.addAll(newTypes);
 		} else {
 			// the settings didn't contain the new selection attribute
 			// so check for the old selection attribute.
@@ -672,9 +670,7 @@ public class MarkerFilter implements Cloneable {
 			// any types we know about that weren't either true or
 			// false in the selection attribute are new. By default,
 			// new marker types will be selected=true
-			for (int i = 0; i < newTypes.size(); ++i) {
-				selectedTypes.add(newTypes.get(i));
-			}
+			selectedTypes.addAll(newTypes);
 		} else {
 			// the settings didn't contain the new selection attribute
 			// so check for the old selection attribute.

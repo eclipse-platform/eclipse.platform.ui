@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -657,11 +658,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 		}
 
 		if (state) {
-			List listItemsChecked = new ArrayList();
-			for (Object listItem : listContentProvider.getElements(treeElement)) {
-				listItemsChecked.add(listItem);
-			}
-
+			List listItemsChecked = new ArrayList(Arrays.asList(listContentProvider.getElements(treeElement)));
 			checkedStateStore.put(treeElement, listItemsChecked);
 		} else {
 			checkedStateStore.remove(treeElement);

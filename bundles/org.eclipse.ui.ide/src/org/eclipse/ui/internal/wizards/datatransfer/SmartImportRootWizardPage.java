@@ -775,10 +775,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 		this.workingSets = new HashSet<>();
 		// workingSetsGroup doesn't support listeners...
 		Runnable workingSetsRetriever = () -> {
-			for (IWorkingSet workingSet : SmartImportRootWizardPage.this.workingSetsGroup
-					.getSelectedWorkingSets()) {
-				SmartImportRootWizardPage.this.workingSets.add(workingSet);
-			}
+			java.util.Collections.addAll(SmartImportRootWizardPage.this.workingSets, SmartImportRootWizardPage.this.workingSetsGroup
+					.getSelectedWorkingSets());
 		};
 		if (Display.getCurrent() == null) {
 			getContainer().getShell().getDisplay().syncExec(workingSetsRetriever);

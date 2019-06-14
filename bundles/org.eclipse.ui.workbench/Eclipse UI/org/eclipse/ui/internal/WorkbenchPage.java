@@ -3805,9 +3805,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				}
 			}
 		}
-		for (IWorkbenchPart part : closingPartsWithSameModel) {
-			pagePartsWithSameModels.remove(part);
-		}
+		pagePartsWithSameModels.removeAll(closingPartsWithSameModel);
 		return pagePartsWithSameModels.isEmpty();
 	}
 

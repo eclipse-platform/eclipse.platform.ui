@@ -903,10 +903,7 @@ public class ResourceTreeAndListGroup extends EventManager {
 	 * @param treeElement the element being updated
 	 */
 	private void setListForWhiteSelection(Object treeElement) {
-		List listItemsChecked = new ArrayList();
-		for (Object listItem : listContentProvider.getElements(treeElement)) {
-			listItemsChecked.add(listItem);
-		}
+		List listItemsChecked = new ArrayList(Arrays.asList(listContentProvider.getElements(treeElement)));
 		checkedStateStore.put(treeElement, listItemsChecked);
 	}
 

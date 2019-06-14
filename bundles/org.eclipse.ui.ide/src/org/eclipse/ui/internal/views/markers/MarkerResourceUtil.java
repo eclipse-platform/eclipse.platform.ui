@@ -252,9 +252,7 @@ class MarkerResourceUtil {
 			break;
 		}
 		case MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER: {
-			for (IResource resource : getProjects(selectedResources)) {
-				resourceSet.add(resource);
-			}
+			java.util.Collections.addAll(resourceSet, getProjects(selectedResources));
 			break;
 		}
 		case MarkerFieldFilterGroup.ON_WORKING_SET: {
@@ -295,9 +293,7 @@ class MarkerResourceUtil {
 			if (element instanceof IResource) {
 				projects.add(((IResource) element).getProject());
 			} else {
-				for (IProject mappingProject : ((ResourceMapping) element).getProjects()) {
-					projects.add(mappingProject);
-				}
+				java.util.Collections.addAll(projects, ((ResourceMapping) element).getProjects());
 			}
 		}
 		return projects;
@@ -315,9 +311,7 @@ class MarkerResourceUtil {
 					ResourceMappingContext.LOCAL_CONTEXT,
 					new NullProgressMonitor());
 			for (ResourceTraversal traversal : traversals) {
-				for (IResource resource : traversal.getResources()) {
-					resourceCollection.add(resource);
-				}
+				java.util.Collections.addAll(resourceCollection, traversal.getResources());
 			}
 		} catch (CoreException e) {
 			Policy.handle(e);
