@@ -39,7 +39,7 @@ public class InstanceofExpression extends Expression {
 
 	public InstanceofExpression(Element element) throws CoreException {
 		fTypeName= element.getAttribute(ATT_VALUE);
-		Expressions.checkAttribute(ATT_VALUE, fTypeName.length() > 0 ? fTypeName : null);
+		Expressions.checkAttribute(ATT_VALUE, !fTypeName.isEmpty() ? fTypeName : null);
 	}
 
 	public InstanceofExpression(String typeName) {

@@ -110,9 +110,9 @@ public class IterateExpression extends CompositeExpression {
 
 	public IterateExpression(Element element) throws CoreException {
 		String opValue= element.getAttribute(ATT_OPERATOR);
-		initializeOperatorValue(opValue.length() > 0 ? opValue : null);
+		initializeOperatorValue(!opValue.isEmpty() ? opValue : null);
 		String ifEmpty= element.getAttribute(ATT_IF_EMPTY);
-		initializeEmptyResultValue(ifEmpty.length() > 0 ? ifEmpty : null);
+		initializeEmptyResultValue(!ifEmpty.isEmpty() ? ifEmpty : null);
 	}
 
 	public IterateExpression(String opValue) throws CoreException {

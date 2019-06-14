@@ -232,7 +232,7 @@ public class PropertyFileConverter {
 	 */
 	private String convertToComment(String line) {
 		StringBuilder comment = new StringBuilder();
-		if (line.trim().length() > 0) {
+		if (!line.trim().isEmpty()) {
 			comment.append("\t//"); //$NON-NLS-1$
 		}
 		int offset = 0;
@@ -325,7 +325,7 @@ public class PropertyFileConverter {
 	 * Returns whether the given line contains a key that needs to be converted.
 	 */
 	private boolean skipLine(String line) {
-		if (line.length() == 0)
+		if (line.isEmpty())
 			return true;
 		char first = line.charAt(0);
 		return first == '#' || first == '!';

@@ -76,7 +76,7 @@ public class PluginDependencyGraphNode {
 		writeln(buffer, 0, NLS.bind(Messages.stats_pluginid, descriptor.getSymbolicName()));
 
 		// write ancestors
-		if (ancestors.size() == 0) {
+		if (ancestors.isEmpty()) {
 			writeln(buffer, 1, Messages.depend_noParentPlugins);
 		} else {
 			writeln(buffer, 1, Messages.depend_requiredBy);
@@ -86,7 +86,7 @@ public class PluginDependencyGraphNode {
 		}
 
 		// write children
-		if (children.size() == 0) {
+		if (children.isEmpty()) {
 			writeln(buffer, 1, Messages.depend_noChildrenPlugins);
 		} else {
 			writeln(buffer, 1, Messages.depend_requires);

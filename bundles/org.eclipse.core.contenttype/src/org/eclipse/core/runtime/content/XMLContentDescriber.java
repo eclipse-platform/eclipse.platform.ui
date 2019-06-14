@@ -231,7 +231,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	}
 
 	private boolean isCharsetValid(String charset) {
-		if (charset.length() == 0)
+		if (charset.isEmpty())
 			return false;
 
 		char c = charset.charAt(0);

@@ -271,7 +271,7 @@ public class Expressions {
 
 	public static boolean getOptionalBooleanAttribute(Element element, String attributeName) {
 		String value= element.getAttribute(attributeName);
-		if (value.length() == 0)
+		if (value.isEmpty())
 			return false;
 		return Boolean.valueOf(value).booleanValue();
 	}
@@ -291,7 +291,7 @@ public class Expressions {
 
 	public static Object[] getArguments(Element element, String attributeName) throws CoreException {
 		String args= element.getAttribute(attributeName);
-		if (args.length() > 0) {
+		if (!args.isEmpty()) {
 			return parseArguments(args);
 		} else {
 			return EMPTY_ARGS;
@@ -341,7 +341,7 @@ public class Expressions {
 	public static Object convertArgument(String arg) throws CoreException {
 		if (arg == null) {
 			return null;
-		} else if (arg.length() == 0) {
+		} else if (arg.isEmpty()) {
 			return arg;
 		} else if (arg.charAt(0) == '\'' && arg.charAt(arg.length() - 1) == '\'') {
 			return unEscapeString(arg.substring(1, arg.length() - 1));

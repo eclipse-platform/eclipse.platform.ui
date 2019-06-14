@@ -150,7 +150,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier implements Event
 		if (descriptor == null)
 			return null;
 		String topic = getTopic(descriptor);
-		if (topic == null || eventAdmin == null || topic.length() == 0)
+		if (topic == null || eventAdmin == null || topic.isEmpty())
 			return IInjector.NOT_A_VALUE;
 
 		if (track)

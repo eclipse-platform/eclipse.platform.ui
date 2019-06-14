@@ -54,7 +54,7 @@ public class CountExpression extends Expression {
 
 	public CountExpression(Element element) {
 		String size = element.getAttribute(ATT_VALUE);
-		initializeSize(size.length() > 0 ? size : null);
+		initializeSize(!size.isEmpty() ? size : null);
 	}
 
 	public CountExpression(String size) {

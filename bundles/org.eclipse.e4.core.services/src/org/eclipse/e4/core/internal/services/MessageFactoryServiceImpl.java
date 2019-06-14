@@ -170,10 +170,10 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 
 		ResourceBundle resourceBundle = null;
 		if (annotation != null) {
-			if (annotation.contributionURI().length() > 0) {
+			if (!annotation.contributionURI().isEmpty()) {
 				resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
 						annotation.contributionURI(), locale, rbProvider);
-			} else if (annotation.contributorURI().length() > 0) {
+			} else if (!annotation.contributorURI().isEmpty()) {
 				Logger log = this.logger;
 				if (log != null) {
 					log.warn(

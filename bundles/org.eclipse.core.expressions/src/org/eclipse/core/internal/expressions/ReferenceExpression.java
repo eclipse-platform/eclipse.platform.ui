@@ -65,7 +65,7 @@ public class ReferenceExpression extends Expression {
 
 	public ReferenceExpression(Element element) throws CoreException {
 		fDefinitionId= element.getAttribute(ATT_DEFINITION_ID);
-		Expressions.checkAttribute(ATT_DEFINITION_ID, fDefinitionId.length() > 0 ? fDefinitionId : null);
+		Expressions.checkAttribute(ATT_DEFINITION_ID, !fDefinitionId.isEmpty() ? fDefinitionId : null);
 	}
 
 	@Override

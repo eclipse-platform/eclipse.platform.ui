@@ -272,7 +272,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		// Add preferences for this content type.
 		String currentUserDefined = getContext().getNode(ContentType.PREF_USER_DEFINED)
 				.get(ContentType.PREF_USER_DEFINED, ContentType.EMPTY_STRING);
-		if (currentUserDefined.length() > 0) {
+		if (!currentUserDefined.isEmpty()) {
 			currentUserDefined += ContentType.PREF_USER_DEFINED__SEPARATOR;
 		}
 		getContext().getNode(ContentType.PREF_USER_DEFINED).put(ContentType.PREF_USER_DEFINED, currentUserDefined + id);

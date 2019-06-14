@@ -102,7 +102,7 @@ public class EclipsePreferencesView extends ViewPart {
 			if (obj instanceof IEclipsePreferences) {
 				IEclipsePreferences node = (IEclipsePreferences) obj;
 				result = node.name();
-				if (result.length() == 0)
+				if (result.isEmpty())
 					result = "<root>"; //$NON-NLS-1$
 			}
 			return result;

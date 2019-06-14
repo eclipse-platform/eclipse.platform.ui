@@ -301,7 +301,7 @@ public class EclipseContext implements IEclipseContext {
 			computation.handleInvalid(event, scheduled);
 		}
 		Set<Computation> namedComputations = weakListeners.getListeners(name);
-		if (namedComputations != null && namedComputations.size() > 0) {
+		if (namedComputations != null && !namedComputations.isEmpty()) {
 			if (event == null) {
 				event = new ContextChangeEvent(this, eventType, null, name, oldValue);
 			}

@@ -111,7 +111,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier implements
 		}
 
 		String key = getKey(descriptor);
-		if (key == null || nodePath == null || key.length() == 0 || nodePath.length() == 0)
+		if (key == null || nodePath == null || key.isEmpty() || nodePath.isEmpty())
 			return IInjector.NOT_A_VALUE;
 		if (track)
 			addListener(nodePath, key, requestor);
@@ -169,7 +169,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier implements
 		Preference qualifier = descriptor.getQualifier(Preference.class);
 		String nodePath = qualifier.nodePath();
 
-		if (nodePath == null || nodePath.length() == 0) {
+		if (nodePath == null || nodePath.isEmpty()) {
 			if (requestingObject == null)
 				return null;
 			nodePath = FrameworkUtil.getBundle(requestingObject).getSymbolicName();

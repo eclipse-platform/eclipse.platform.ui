@@ -247,7 +247,7 @@ public class Setup implements Cloneable {
 	private void fillEclipseArgs(List<String> params) {
 		for (Entry<String, String> entry : eclipseArguments.entrySet()) {
 			params.add('-' + entry.getKey());
-			if (entry.getValue() != null && entry.getValue().length() > 0) {
+			if (entry.getValue() != null && !entry.getValue().isEmpty()) {
 				params.add(entry.getValue());
 			}
 		}
@@ -261,7 +261,7 @@ public class Setup implements Cloneable {
 			}
 			StringBuilder property = new StringBuilder("-D");
 			property.append(entry.getKey());
-			if (entry.getValue().length() > 0) {
+			if (!entry.getValue().isEmpty()) {
 				property.append('=');
 				property.append(entry.getValue());
 			}
@@ -272,7 +272,7 @@ public class Setup implements Cloneable {
 	private void fillVMArgs(List<String> params) {
 		for (Entry<String, String> entry : vmArguments.entrySet()) {
 			params.add('-' + entry.getKey());
-			if (entry.getValue() != null && entry.getValue().length() > 0) {
+			if (entry.getValue() != null && !entry.getValue().isEmpty()) {
 				params.add(entry.getValue());
 			}
 		}

@@ -674,7 +674,7 @@ public class JobGroupTest extends AbstractJobTest {
 		// The first job in the first group should still be running.
 		assertState("2.2", jobs[0], Job.RUNNING);
 		assertEquals("2.3", TestBarrier.STATUS_DONE, status[0]);
-		assertTrue("2.4", firstJobGroup.getActiveJobs().size() > 0);
+		assertTrue("2.4", !firstJobGroup.getActiveJobs().isEmpty());
 
 		// Cancel both job groups.
 		secondJobGroup.cancel();

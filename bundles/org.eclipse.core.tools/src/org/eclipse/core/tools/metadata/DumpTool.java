@@ -120,7 +120,7 @@ public class DumpTool implements IApplication {
 		extractInfo(new File(directory), fileNames, new NullProgressMonitor());
 
 		String[] result = new String[fileNames.size()];
-		if (fileNames.size()>0){
+		if (!fileNames.isEmpty()){
 			result = fileNames.toArray(new String[fileNames.size()]);
 		}
 		return result;

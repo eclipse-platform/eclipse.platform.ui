@@ -48,7 +48,7 @@ public class AdaptExpression extends CompositeExpression {
 
 	public AdaptExpression(Element element) throws CoreException {
 		fTypeName= element.getAttribute(ATT_TYPE);
-		Expressions.checkAttribute(ATT_TYPE, fTypeName.length() > 0 ? fTypeName : null);
+		Expressions.checkAttribute(ATT_TYPE, !fTypeName.isEmpty() ? fTypeName : null);
 	}
 
 	public AdaptExpression(String typeName) {

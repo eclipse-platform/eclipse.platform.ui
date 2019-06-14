@@ -102,7 +102,7 @@ public class SessionTestRunner {
 		}
 
 		private String parseTestId(String message) {
-			if (message.length() == 0 || message.charAt(0) != '%') {
+			if (message.isEmpty() || message.charAt(0) != '%') {
 				return null;
 			}
 			int firstComma = message.indexOf(',');
