@@ -242,7 +242,7 @@ public class ContributionTemplateStore extends TemplateStore {
 	}
 
 	private static boolean isValidTemplateId(String id) {
-		return id != null && id.trim().length() != 0; // TODO test validity?
+		return id != null && !id.trim().isEmpty(); // TODO test validity?
 	}
 
 	@Override

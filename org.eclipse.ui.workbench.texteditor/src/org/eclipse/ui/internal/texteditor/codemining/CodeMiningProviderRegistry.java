@@ -114,6 +114,6 @@ public class CodeMiningProviderRegistry {
 				}
 			}
 		}
-		return providers.size() > 0 ? providers.toArray(new ICodeMiningProvider[providers.size()]) : null;
+		return !providers.isEmpty() ? providers.toArray(new ICodeMiningProvider[providers.size()]) : null;
 	}
 }

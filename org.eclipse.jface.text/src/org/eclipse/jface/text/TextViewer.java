@@ -4315,7 +4315,7 @@ public class TextViewer extends Viewer implements
 					if (ignoreWhitespace) {
 						String s= d.get(line.getOffset(), found[0]);
 						s= s.trim();
-						if (s.length() == 0)
+						if (s.isEmpty())
 							index= line.getOffset() + found[0];
 					} else if (found[0] == 0)
 						index= line.getOffset();

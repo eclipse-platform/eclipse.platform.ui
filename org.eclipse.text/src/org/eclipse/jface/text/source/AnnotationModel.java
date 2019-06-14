@@ -604,7 +604,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @param modelInitiated indicates whether this changes has been initiated by this model
 	 */
 	protected void removeAnnotations(List<? extends Annotation> annotations, boolean fireModelChanged, boolean modelInitiated) {
-		if (annotations.size() > 0) {
+		if (!annotations.isEmpty()) {
 			Iterator<? extends Annotation> e= annotations.iterator();
 			while (e.hasNext())
 				removeAnnotation(e.next(), false);

@@ -211,7 +211,7 @@ class LinkedModeManager {
 			}
 		} finally {
 			// if we remove any, make sure the new one got inserted
-			Assert.isTrue(fEnvironments.size() > 0);
+			Assert.isTrue(!fEnvironments.isEmpty());
 		}
 	}
 

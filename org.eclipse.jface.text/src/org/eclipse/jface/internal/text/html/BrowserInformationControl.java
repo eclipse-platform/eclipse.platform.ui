@@ -280,7 +280,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		if (fInput != null)
 			content= fInput.getHtml();
 
-		fBrowserHasContent= content != null && content.length() > 0;
+		fBrowserHasContent= content != null && !content.isEmpty();
 
 		if (!fBrowserHasContent)
 			content= "<html><body ></html>"; //$NON-NLS-1$

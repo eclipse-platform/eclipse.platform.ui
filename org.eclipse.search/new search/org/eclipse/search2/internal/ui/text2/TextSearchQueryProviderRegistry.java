@@ -55,7 +55,7 @@ public class TextSearchQueryProviderRegistry {
 	private void updateProvider(String preferredId) {
 		fPreferredProviderId= preferredId;
 		fPreferredProvider= null;
-		if (preferredId.length() != 0) { // empty string: default engine
+		if (!preferredId.isEmpty()) { // empty string: default engine
 			fPreferredProvider= createFromExtension(preferredId);
 		}
 		if (fPreferredProvider == null) {

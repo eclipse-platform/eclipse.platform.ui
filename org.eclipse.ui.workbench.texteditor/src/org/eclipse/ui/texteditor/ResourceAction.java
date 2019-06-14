@@ -140,7 +140,7 @@ public abstract class ResourceAction extends Action {
 		String imageKey= "image"; //$NON-NLS-1$
 		String descriptionKey= "description"; //$NON-NLS-1$
 
-		if (prefix != null && prefix.length() > 0) {
+		if (prefix != null && !prefix.isEmpty()) {
 			labelKey= prefix + labelKey;
 			tooltipKey= prefix + tooltipKey;
 			imageKey= prefix + imageKey;
@@ -152,7 +152,7 @@ public abstract class ResourceAction extends Action {
 		setDescription(getString(bundle, descriptionKey, null));
 
 		String file= getString(bundle, imageKey, null);
-		if (file != null && file.trim().length() > 0)
+		if (file != null && !file.trim().isEmpty())
 			setImageDescriptor(ImageDescriptor.createFromFile(getClass(), file));
 	}
 }

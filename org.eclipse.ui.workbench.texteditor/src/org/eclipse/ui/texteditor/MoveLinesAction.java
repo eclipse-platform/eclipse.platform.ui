@@ -272,7 +272,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * <code>null</code>, <code>false</code> otherwise
 	 */
 	private boolean isWhitespace(String string) {
-		return string == null ? true : string.trim().length() == 0;
+		return string == null ? true : string.trim().isEmpty();
 	}
 
 	/*

@@ -250,7 +250,7 @@ public class CodeMiningManager implements Runnable {
 
 			Position pos= new Position(g.getKey().offset, g.getKey().length);
 			List<ICodeMining> minings= g.getValue();
-			boolean inLineHeader= minings.size() > 0 ? (minings.get(0) instanceof LineHeaderCodeMining) : true;
+			boolean inLineHeader= !minings.isEmpty() ? (minings.get(0) instanceof LineHeaderCodeMining) : true;
 			// Try to find existing annotation
 			AbstractInlinedAnnotation ann= fInlinedAnnotationSupport.findExistingAnnotation(pos);
 			if (ann == null) {

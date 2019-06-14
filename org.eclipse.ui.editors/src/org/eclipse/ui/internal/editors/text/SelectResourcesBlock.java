@@ -549,7 +549,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		}
 
 		//Update the list with the selections if there are any
-		if (checkedListItems.size() > 0)
+		if (!checkedListItems.isEmpty())
 			checkedStateStore.put(currentTreeSelection, checkedListItems);
 		if (updatingFromSelection)
 			grayUpdateHierarchy(currentTreeSelection);

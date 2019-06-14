@@ -132,9 +132,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private String getFindString() {
 		String fullSelection= fTarget.getSelectionText();
 		String firstLine= getFirstLine(fullSelection);
-		if ((firstLine.length() == 0 || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty())
+		if ((firstLine.isEmpty() || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty())
 			return fFindHistory.get(0);
-		else if (fRegExSearch && fullSelection.length() > 0)
+		else if (fRegExSearch && !fullSelection.isEmpty())
 			return FindReplaceDocumentAdapter.escapeForRegExPattern(fullSelection);
 		else
 			return firstLine;
@@ -208,7 +208,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @since 3.2
 	 */
 	private boolean isWord(String str) {
-		if (str == null || str.length() == 0)
+		if (str == null || str.isEmpty())
 			return false;
 
 		for (int i= 0; i < str.length(); i++) {
@@ -394,7 +394,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @return the first line of the selection
 	 */
 	private String getFirstLine(String selection) {
-		if (selection.length() > 0) {
+		if (!selection.isEmpty()) {
 			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
 				return selection.substring(0, info[0]);

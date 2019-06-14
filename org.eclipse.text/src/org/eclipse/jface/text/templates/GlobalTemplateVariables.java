@@ -81,7 +81,7 @@ public class GlobalTemplateVariables {
 		@Override
 		public void resolve(TemplateVariable variable, TemplateContext context) {
 			List<String> params= variable.getVariableType().getParams();
-			if (params.size() >= 1 && params.get(0) != null) {
+			if (!params.isEmpty() && params.get(0) != null) {
 				resolveWithParams(variable, context, params);
 			} else {
 				// No parameter, use default:
@@ -166,7 +166,7 @@ public class GlobalTemplateVariables {
 		@Override
 		public void resolve(TemplateVariable variable, TemplateContext context) {
 			List<String> params= variable.getVariableType().getParams();
-			if (params.size() >= 1 && params.get(0) != null) {
+			if (!params.isEmpty() && params.get(0) != null) {
 				resolveWithParams(variable, context, params);
 			} else {
 				// No parameter, use default format:

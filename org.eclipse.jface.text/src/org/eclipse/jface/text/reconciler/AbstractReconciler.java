@@ -502,7 +502,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				// Insert
 				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
 
-			} else if (e.getText() == null || e.getText().length() == 0) {
+			} else if (e.getText() == null || e.getText().isEmpty()) {
 				// Remove
 				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
 

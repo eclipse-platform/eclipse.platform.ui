@@ -140,7 +140,7 @@ public class LinkedPositionGroup {
 	 * @throws BadLocationException if the position is invalid
 	 */
 	private void checkContent(LinkedPosition position) throws BadLocationException {
-		if (fPositions.size() > 0) {
+		if (!fPositions.isEmpty()) {
 			LinkedPosition groupPosition= fPositions.get(0);
 			String groupContent= groupPosition.getContent();
 			String positionContent= position.getContent();
@@ -304,7 +304,7 @@ public class LinkedPositionGroup {
 		Assert.isTrue(!fIsSealed);
 		fIsSealed= true;
 
-		if (fHasCustomIteration == false && fPositions.size() > 0) {
+		if (fHasCustomIteration == false && !fPositions.isEmpty()) {
 			fPositions.get(0).setSequenceNumber(0);
 		}
 	}

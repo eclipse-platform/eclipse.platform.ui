@@ -124,7 +124,7 @@ public class ScopePart {
 	}
 
 	private IWorkingSet getWorkingSet(IWorkingSetManager workingSetManager, String storedName) {
-		if (storedName.length() == 0) {
+		if (storedName.isEmpty()) {
 			IWorkbenchPage page= fSearchDialog.getWorkbenchWindow().getActivePage();
 			if (page != null) {
 				return page.getAggregateWorkingSet();

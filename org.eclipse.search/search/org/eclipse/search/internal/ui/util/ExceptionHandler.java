@@ -116,7 +116,7 @@ public class ExceptionHandler {
 			perform((CoreException)target, shell, title, message);
 		} else {
 			SearchPlugin.log(e);
-			if (e.getMessage() != null && e.getMessage().length() > 0) {
+			if (e.getMessage() != null && !e.getMessage().isEmpty()) {
 				displayMessageDialog(e.getMessage(), shell, title, message);
 			} else {
 				displayMessageDialog(target.getMessage(), shell, title, message);
@@ -140,7 +140,7 @@ public class ExceptionHandler {
 			msg.write(message);
 			msg.write("\n\n"); //$NON-NLS-1$
 		}
-		if (exceptionMessage == null || exceptionMessage.length() == 0)
+		if (exceptionMessage == null || exceptionMessage.isEmpty())
 			msg.write(SearchMessages.ExceptionDialog_seeErrorLogMessage);
 		else
 			msg.write(exceptionMessage);

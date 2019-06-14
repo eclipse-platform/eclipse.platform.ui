@@ -250,7 +250,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 				if (negativeMatcher) {
 					pattern= pattern.substring(FileTypeEditor.FILE_PATTERN_NEGATOR.length()).trim();
 				}
-				if (pattern.length() > 0) {
+				if (!pattern.isEmpty()) {
 					patterns.add(pattern);
 				}
 			}

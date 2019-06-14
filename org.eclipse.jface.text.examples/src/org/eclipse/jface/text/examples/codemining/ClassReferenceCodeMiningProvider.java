@@ -44,7 +44,7 @@ public class ClassReferenceCodeMiningProvider extends AbstractCodeMiningProvider
 				int index = line.indexOf("class ");
 				if (index == 0) {
 					String className = line.substring(index + "class ".length(), line.length()).trim();
-					if (className.length() > 0) {
+					if (!className.isEmpty()) {
 						try {
 							lenses.add(new ClassReferenceCodeMining(className, i, document, this));
 						} catch (BadLocationException e) {

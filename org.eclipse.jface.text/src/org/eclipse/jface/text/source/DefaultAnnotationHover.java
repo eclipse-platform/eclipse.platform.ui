@@ -69,7 +69,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 				// optimization
 				Annotation annotation= javaAnnotations.get(0);
 				String message= annotation.getText();
-				if (message != null && message.trim().length() > 0)
+				if (message != null && !message.trim().isEmpty())
 					return formatSingleMessage(message);
 
 			} else {
@@ -80,7 +80,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 				while (e.hasNext()) {
 					Annotation annotation= e.next();
 					String message= annotation.getText();
-					if (message != null && message.trim().length() > 0)
+					if (message != null && !message.trim().isEmpty())
 						messages.add(message.trim());
 				}
 

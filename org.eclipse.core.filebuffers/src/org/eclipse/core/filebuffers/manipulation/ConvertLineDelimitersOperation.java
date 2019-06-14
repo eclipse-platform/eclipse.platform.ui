@@ -64,7 +64,7 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 
 			for (int i= 0; i < lineCount; i++) {
 				final String delimiter= document.getLineDelimiter(i);
-				if (delimiter != null && delimiter.length() > 0 && !delimiter.equals(fLineDelimiter)) {
+				if (delimiter != null && !delimiter.isEmpty() && !delimiter.equals(fLineDelimiter)) {
 					IRegion region= document.getLineInformation(i);
 					multiEdit.addChild(new ReplaceEdit(region.getOffset() + region.getLength(), delimiter.length(), fLineDelimiter));
 				}

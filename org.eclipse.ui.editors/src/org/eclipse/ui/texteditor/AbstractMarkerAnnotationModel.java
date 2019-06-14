@@ -398,7 +398,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 	@Override
 	protected void removeAnnotations(List<? extends Annotation> annotations, boolean fireModelChanged, boolean modelInitiated) {
-		if (annotations != null && annotations.size() > 0) {
+		if (annotations != null && !annotations.isEmpty()) {
 
 			List<Annotation> markerAnnotations= new ArrayList<>();
 			for (Annotation a : annotations) {
@@ -409,7 +409,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 				removeAnnotation(a, false);
 			}
 
-			if (markerAnnotations.size() > 0) {
+			if (!markerAnnotations.isEmpty()) {
 
 				if (modelInitiated) {
 					// if model initiated also remove it from the marker manager
@@ -620,7 +620,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 		IAnnotationMap annotationMap= getAnnotationMap();
 
-		if (annotationMap.size() == 0 && fDeletedAnnotations.isEmpty())
+		if (annotationMap.isEmpty() && fDeletedAnnotations.isEmpty())
 			return;
 
 		if (fMarkerUpdaterSpecifications == null)

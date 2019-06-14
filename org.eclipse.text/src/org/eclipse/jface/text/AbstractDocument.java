@@ -682,7 +682,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			}
 		}
 
-		if (fPositions.size() > 0)
+		if (!fPositions.isEmpty())
 			updatePositions(event);
 	}
 
@@ -1117,7 +1117,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	@Override
 	public void replace(int pos, int length, String text) throws BadLocationException {
-		if (length == 0 && (text == null || text.length() == 0))
+		if (length == 0 && (text == null || text.isEmpty()))
 			replace(pos, length, text, getModificationStamp());
 		else
 			replace(pos, length, text, getNextModificationStamp());
@@ -1431,7 +1431,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.1
 	 */
 	protected void fireRewriteSessionChanged(DocumentRewriteSessionEvent event) {
-		if (fDocumentRewriteSessionListeners.size() > 0) {
+		if (!fDocumentRewriteSessionListeners.isEmpty()) {
 			List<IDocumentRewriteSessionListener> list= new ArrayList<>(fDocumentRewriteSessionListeners);
 			Iterator<IDocumentRewriteSessionListener> e= list.iterator();
 			while (e.hasNext()) {

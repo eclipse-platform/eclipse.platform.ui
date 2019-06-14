@@ -544,7 +544,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		@Override
 		protected boolean isValid() {
 			if (isConnected())
-				return (fStart > -1 || fCommands.size() > 0);
+				return (fStart > -1 || !fCommands.isEmpty());
 			return false;
 		}
 
@@ -558,7 +558,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		protected long getUndoModificationStamp() {
 			if (fStart > -1)
 				return super.getUndoModificationStamp();
-			else if (fCommands.size() > 0)
+			else if (!fCommands.isEmpty())
 				return fCommands.get(0).getUndoModificationStamp();
 
 			return fUndoModificationStamp;
@@ -574,7 +574,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		protected long getRedoModificationStamp() {
 			if (fStart > -1)
 				return super.getRedoModificationStamp();
-			else if (fCommands.size() > 0)
+			else if (!fCommands.isEmpty())
 				return fCommands.get(fCommands.size()-1).getRedoModificationStamp();
 
 			return fRedoModificationStamp;
@@ -988,7 +988,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 */
 	private boolean isWhitespaceText(String text) {
 
-		if (text == null || text.length() == 0)
+		if (text == null || text.isEmpty())
 			return false;
 
 		String[] delimiters= fTextViewer.getDocument().getLegalLineDelimiters();

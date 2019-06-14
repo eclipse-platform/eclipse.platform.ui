@@ -158,7 +158,7 @@ public class DocumentExtensionTest {
 			@Override
 			protected Replace getReplace(DocumentEvent e) {
 				String t= e.getText();
-				if (t != null && t.length() > 0) {
+				if (t != null && !t.isEmpty()) {
 					Replace r= new Replace();
 					r.fOffset= (e.getOffset() + t.length());
 					r.fLength= 0;
@@ -189,7 +189,7 @@ public class DocumentExtensionTest {
 			@Override
 			protected Replace getReplace(DocumentEvent e) {
 				String t= e.getText();
-				if (t == null || t.length() == 0) {
+				if (t == null || t.isEmpty()) {
 					Replace r= new Replace();
 					r.fOffset= e.getOffset();
 					r.fLength= 0;
@@ -220,7 +220,7 @@ public class DocumentExtensionTest {
 			@Override
 			protected Replace getReplace(DocumentEvent e) {
 				String t= e.getText();
-				if (t != null && t.length() > 0) {
+				if (t != null && !t.isEmpty()) {
 					Replace r= new Replace();
 					r.fOffset= (e.getOffset() + t.length());
 					r.fLength= 0;
@@ -288,7 +288,7 @@ public class DocumentExtensionTest {
 			@Override
 			protected Replace getReplace(DocumentEvent e) {
 				String t= e.getText();
-				if (t != null && t.length() > 0) {
+				if (t != null && !t.isEmpty()) {
 					Replace r= new Replace();
 					r.fOffset= (e.getOffset() + t.length());
 					r.fLength= 0;

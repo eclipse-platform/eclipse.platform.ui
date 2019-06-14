@@ -329,7 +329,7 @@ public final class MoveSourceEdit extends TextEdit {
 	}
 
 	private void insertEdits(TextEdit root, List<ReplaceEdit> edits) {
-		while(edits.size() > 0) {
+		while(!edits.isEmpty()) {
 			ReplaceEdit edit= edits.remove(0);
 			insert(root, edit, edits);
 		}

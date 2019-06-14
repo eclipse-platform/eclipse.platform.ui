@@ -270,7 +270,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		fActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
 		fActionGroup.fillContextMenu(mgr);
 		FileSearchQuery query= (FileSearchQuery) getInput().getQuery();
-		if (query.getSearchString().length() > 0) {
+		if (!query.getSearchString().isEmpty()) {
 			IStructuredSelection selection = getViewer().getStructuredSelection();
 			if (!selection.isEmpty()) {
 				ReplaceAction replaceSelection= new ReplaceAction(getSite().getShell(), (FileSearchResult)getInput(), selection.toArray());

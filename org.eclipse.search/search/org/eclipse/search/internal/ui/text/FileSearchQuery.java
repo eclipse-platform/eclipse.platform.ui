@@ -282,7 +282,7 @@ public class FileSearchQuery implements ISearchQuery {
 
 	public String getResultLabel(int nMatches) {
 		String searchString= getSearchString();
-		if (searchString.length() > 0) {
+		if (!searchString.isEmpty()) {
 			// text search
 			if (isScopeAllFileTypes()) {
 				// search all file extensions
@@ -330,7 +330,7 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 
 	public boolean isFileNameSearch() {
-		return fSearchText.length() == 0;
+		return fSearchText.isEmpty();
 	}
 
 	public boolean isRegexSearch() {

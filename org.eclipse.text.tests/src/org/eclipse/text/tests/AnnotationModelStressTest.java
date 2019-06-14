@@ -1374,7 +1374,7 @@ public class AnnotationModelStressTest {
 			i++;
 		}
 
-		while (added.size() > 0) {
+		while (!added.isEmpty()) {
 			assertRemove(added);
 			assertExist(added);
 		}
@@ -1405,7 +1405,7 @@ public class AnnotationModelStressTest {
 			i++;
 		}
 
-		while (added.size() > 0) {
+		while (!added.isEmpty()) {
 			assertRemove(added);
 			assertExistNew(added);
 		}
@@ -1440,7 +1440,7 @@ public class AnnotationModelStressTest {
 			i++;
 		}
 
-		while (added.size() > 0) {
+		while (!added.isEmpty()) {
 			assertRemove(added);
 			assertExist(added);
 		}
@@ -1475,7 +1475,7 @@ public class AnnotationModelStressTest {
 			i++;
 		}
 
-		while (added.size() > 0) {
+		while (!added.isEmpty()) {
 			assertRemove(added);
 			assertExist(added);
 		}

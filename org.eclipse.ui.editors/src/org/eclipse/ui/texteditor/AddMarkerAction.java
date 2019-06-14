@@ -182,7 +182,7 @@ public class AddMarkerAction extends TextEditorAction {
 		IInputValidator inputValidator= new IInputValidator() {
 			@Override
 			public String isValid(String newText) {
-				return  (newText == null || newText.trim().length() == 0) ? " " : null;  //$NON-NLS-1$
+				return  (newText == null || newText.trim().isEmpty()) ? " " : null;  //$NON-NLS-1$
 			}
 		};
 		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, proposal, inputValidator);
@@ -195,7 +195,7 @@ public class AddMarkerAction extends TextEditorAction {
 			return false;
 
 		label= label.trim();
-		if (label.length() == 0)
+		if (label.isEmpty())
 			return false;
 
 		attributes.put("message", label); //$NON-NLS-1$

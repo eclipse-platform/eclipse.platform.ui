@@ -90,7 +90,7 @@ public class CopyToClipboardAction extends Action {
 				sel= text.getSelectionText();
 			}
 			if (sel != null) {
-				if (sel.length() > 0) {
+				if (!sel.isEmpty()) {
 					copyToClipboard(sel, shell);
 				}
 				return;

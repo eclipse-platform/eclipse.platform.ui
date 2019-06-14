@@ -111,7 +111,7 @@ class EditorStatusLine implements IEditorStatusLine {
 	 * @return <code>true</code> if the string is <code>null</code>, has 0 length or only white space characters.
 	 */
 	private static boolean isMessageEmpty(String message) {
-		return message == null || message.trim().length() == 0;
+		return message == null || message.trim().isEmpty();
 	}
 
 	/**

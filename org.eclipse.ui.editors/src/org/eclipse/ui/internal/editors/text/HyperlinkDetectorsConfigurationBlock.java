@@ -590,7 +590,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		if (modifiers == null)
 			return -1;
 
-		if (modifiers.length() == 0)
+		if (modifiers.isEmpty())
 			return SWT.NONE;
 
 		int stateMask= 0;
@@ -663,7 +663,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		if (modifierString == null)
 			modifierString= ""; //$NON-NLS-1$
 		String newModifierString= Action.findModifierString(modifier);
-		if (modifierString.length() == 0)
+		if (modifierString.isEmpty())
 			return newModifierString;
 		return NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_concatModifierStrings, new String[] {modifierString, newModifierString});
 	}
@@ -689,7 +689,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 				fPreferencePage.setErrorMessage(null);
 				break;
 			default:
-				if (message.length() == 0) {
+				if (message.isEmpty()) {
 					message= null;
 				}
 				fPreferencePage.setMessage(null);

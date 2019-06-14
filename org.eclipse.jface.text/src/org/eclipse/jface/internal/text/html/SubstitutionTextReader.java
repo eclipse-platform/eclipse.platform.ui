@@ -118,7 +118,7 @@ public abstract class SubstitutionTextReader extends SingleCharReader {
 				String s= computeSubstitution(c);
 				if (s == null)
 					break;
-				if (s.length() > 0)
+				if (!s.isEmpty())
 					fBuffer.insert(0, s);
 				c= nextChar();
 			}

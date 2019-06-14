@@ -369,7 +369,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 			fFilterOffset= offset;
 
-			if (proposals != null && proposals.size() > 0)
+			if (proposals != null && !proposals.isEmpty())
 				setProposals(proposals, fIsFilteredSubset);
 			else {
 				hide();

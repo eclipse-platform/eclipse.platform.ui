@@ -195,7 +195,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 
 	private String html2Text(String html) {
 
-		if (html == null || html.length() == 0)
+		if (html == null || html.isEmpty())
 			return EMPTY_STRING;
 
 		html= html.toLowerCase();

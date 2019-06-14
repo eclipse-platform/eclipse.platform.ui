@@ -1112,7 +1112,7 @@ abstract public class AbstractInformationControlManager {
 	protected void presentInformation() {
 		boolean hasContents= false;
 		if (fInformation instanceof String)
-			hasContents= ((String)fInformation).trim().length() > 0;
+			hasContents= !((String)fInformation).trim().isEmpty();
 		else
 			hasContents= (fInformation != null);
 

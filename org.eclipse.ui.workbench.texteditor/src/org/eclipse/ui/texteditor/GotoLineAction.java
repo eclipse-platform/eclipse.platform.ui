@@ -73,7 +73,7 @@ public class GotoLineAction extends TextEditorAction {
 		@Override
 		public String isValid(String input) {
 
-			if (input == null || input.length() == 0)
+			if (input == null || input.isEmpty())
 				return " "; //$NON-NLS-1$
 
 			try {

@@ -1028,7 +1028,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 
-		if (annotations.size() > 0) {
+		if (!annotations.isEmpty()) {
 			ProjectionAnnotation[] result= new ProjectionAnnotation[annotations.size()];
 			annotations.toArray(result);
 			return result;

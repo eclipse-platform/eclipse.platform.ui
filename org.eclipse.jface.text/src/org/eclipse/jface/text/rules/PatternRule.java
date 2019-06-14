@@ -95,7 +95,7 @@ public class PatternRule implements IPredicateRule {
 	 * @param breaksOnEOL indicates whether the end of the line also terminates the pattern
 	 */
 	public PatternRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOL) {
-		Assert.isTrue(startSequence != null && startSequence.length() > 0);
+		Assert.isTrue(startSequence != null && !startSequence.isEmpty());
 		Assert.isTrue(endSequence != null || breaksOnEOL);
 		Assert.isNotNull(token);
 

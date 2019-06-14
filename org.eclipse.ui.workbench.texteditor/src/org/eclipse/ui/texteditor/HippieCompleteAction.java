@@ -364,7 +364,7 @@ final class HippieCompleteAction extends TextEditorAction {
 
 		List<IDocument> documents= HippieCompletionEngine.computeDocuments(getTextEditor());
 
-		if (documents.size() > 0) {
+		if (!documents.isEmpty()) {
 			fDocument= documents.remove(0);
 
 			Iterator<String> suggestions;

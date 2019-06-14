@@ -319,7 +319,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 
 		TextChangedEvent event= new TextChangedEvent(this);
 
-		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
+		if (fTextChangeListeners != null && !fTextChangeListeners.isEmpty()) {
 			Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
 			while (e.hasNext())
 				e.next().textChanged(event);
@@ -336,7 +336,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 
 		TextChangedEvent event = new TextChangedEvent(this);
 
-		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
+		if (fTextChangeListeners != null && !fTextChangeListeners.isEmpty()) {
 			Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
 			while (e.hasNext())
 				e.next().textSet(event);
@@ -364,7 +364,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 			event.newCharCount= (fEvent.fText == null ? 0 : fEvent.fText.length());
 			event.newLineCount= (fEvent.fText == null ? 0 : document.computeNumberOfLines(fEvent.fText));
 
-			if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
+			if (fTextChangeListeners != null && !fTextChangeListeners.isEmpty()) {
 				Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
 				while (e.hasNext())
 					 e.next().textChanging(event);

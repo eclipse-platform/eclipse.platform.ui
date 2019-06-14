@@ -859,7 +859,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @param e the verify event describing the key stroke
 	 */
 	private void contextInfoPopupProcessEvent(VerifyEvent e) {
-		if (e.start != e.end && (e.text == null || e.text.length() == 0))
+		if (e.start != e.end && (e.text == null || e.text.isEmpty()))
 			validateContextInformation();
 	}
 

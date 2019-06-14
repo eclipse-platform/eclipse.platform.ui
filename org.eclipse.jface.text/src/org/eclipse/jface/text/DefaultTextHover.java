@@ -61,7 +61,7 @@ public class DefaultTextHover implements ITextHover {
 				Position p= model.getPosition(a);
 				if (p != null && p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
 					String msg= a.getText();
-					if (msg != null && msg.trim().length() > 0)
+					if (msg != null && !msg.trim().isEmpty())
 						return msg;
 				}
 			}

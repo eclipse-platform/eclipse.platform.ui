@@ -87,7 +87,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 
 		String key= "dialog.title"; //$NON-NLS-1$;
-		if (prefix != null && prefix.length() > 0)
+		if (prefix != null && !prefix.isEmpty())
 			key= prefix + key;
 
 		fDialogTitle= getString(bundle, key, null);
@@ -161,7 +161,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 					fEncodingEditor.setPage(page);
 					fEncodingEditor.load();
 
-					if (encoding == null || encoding.equals(defaultEncoding) || encoding.length() == 0)
+					if (encoding == null || encoding.equals(defaultEncoding) || encoding.isEmpty())
 						fEncodingEditor.loadDefault();
 				}
 

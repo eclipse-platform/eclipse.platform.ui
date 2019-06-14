@@ -201,15 +201,15 @@ public final class AnnotationTypeLookup {
 		AnnotationTypeMapping mapping= new AnnotationTypeMapping();
 
 		String s= element.getAttribute(typeAttributeName);
-		if (s == null || s.trim().length() == 0) return null;
+		if (s == null || s.trim().isEmpty()) return null;
 		mapping.fAnnotationType= s;
 
 		s= element.getAttribute("markerType");  //$NON-NLS-1$
-		if (s == null || s.trim().length() == 0) return null;
+		if (s == null || s.trim().isEmpty()) return null;
 		mapping.fMarkerType= s;
 
 		s= element.getAttribute("markerSeverity");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			mapping.fMarkerSeverity= StringConverter.asInt(s, AnnotationTypeMapping.UNDEFINED);
 
 		return mapping;

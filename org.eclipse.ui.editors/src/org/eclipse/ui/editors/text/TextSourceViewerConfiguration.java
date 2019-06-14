@@ -322,7 +322,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		if (modifiers == null)
 			return -1;
 
-		if (modifiers.length() == 0)
+		if (modifiers.isEmpty())
 			return SWT.NONE;
 
 		int stateMask= 0;

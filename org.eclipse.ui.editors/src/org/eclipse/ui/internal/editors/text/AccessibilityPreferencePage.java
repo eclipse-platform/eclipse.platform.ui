@@ -161,7 +161,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
-			if (value instanceof String && ((String)value).length() == 0) {
+			if (value instanceof String && ((String)value).isEmpty()) {
 				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
@@ -258,7 +258,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
-			if (value instanceof String && ((String)value).length() == 0) {
+			if (value instanceof String && ((String)value).isEmpty()) {
 				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
@@ -286,7 +286,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
-			if (value instanceof String && ((String)value).length() == 0) {
+			if (value instanceof String && ((String)value).isEmpty()) {
 				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
@@ -570,7 +570,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				page.setErrorMessage(null);
 				break;
 			default:
-				if (message.length() == 0) {
+				if (message.isEmpty()) {
 					message= null;
 				}
 				page.setMessage(null);

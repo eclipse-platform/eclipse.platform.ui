@@ -71,7 +71,7 @@ abstract public class RetrieverAction extends Action {
 		}
 		TextSearchQueryProvider provider= TextSearchQueryProvider.getPreferred();
 		String searchForString= getSearchForString(page);
-		if (searchForString.length() == 0) {
+		if (searchForString.isEmpty()) {
 			MessageDialog.openInformation(getShell(), SearchMessages.RetrieverAction_dialog_title, SearchMessages.RetrieverAction_empty_selection);
 			return;
 		}
@@ -310,7 +310,7 @@ abstract public class RetrieverAction extends Action {
 
 	protected String getSearchForString(IWorkbenchPage page) {
 		String searchFor= extractSearchTextFromSelection(page.getSelection());
-		if (searchFor == null || searchFor.length() == 0) {
+		if (searchFor == null || searchFor.isEmpty()) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart instanceof IEditorPart) {
 				searchFor= extractSearchTextFromEditor((IEditorPart) activePart);

@@ -460,7 +460,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			label= LegacyActionTools.escapeMnemonics(page.getLabel());
 		}
 		if (!fPageContent.isDisposed()) {
-			if (label.length() == 0) {
+			if (label.isEmpty()) {
 				if (fDescriptionComposite != null) {
 					fDescriptionComposite.dispose();
 					fDescriptionComposite= null;

@@ -275,7 +275,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		public void create() {
 			super.create();
 			// update initial OK button to be disabled for new templates
-			boolean valid= fNameText == null || fNameText.getText().trim().length() != 0;
+			boolean valid= fNameText == null || !fNameText.getText().trim().isEmpty();
 			if (!valid) {
 				StatusInfo status = new StatusInfo();
 				status.setError(TemplatesMessages.EditTemplateDialog_error_noname);
@@ -636,7 +636,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		private void updateButtons() {
 			StatusInfo status;
 
-			boolean valid= fNameText == null || fNameText.getText().trim().length() != 0;
+			boolean valid= fNameText == null || !fNameText.getText().trim().isEmpty();
 			if (!valid) {
 				status = new StatusInfo();
 				if (!fSuppressError)

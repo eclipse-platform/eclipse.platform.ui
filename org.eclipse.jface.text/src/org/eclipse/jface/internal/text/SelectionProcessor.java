@@ -432,7 +432,7 @@ public final class SelectionProcessor {
 			for (int offset= 0; offset < lineLength; offset++) {
 				if (startColumn == -1) {
 					if (visual == visualStartColumn)
-						if (!delete && isWider(content.charAt(offset), visual) && replacement.length() == 0)
+						if (!delete && isWider(content.charAt(offset), visual) && replacement.isEmpty())
 							startColumn= offset - 1;
 						else
 							startColumn= offset;
@@ -458,7 +458,7 @@ public final class SelectionProcessor {
 				visual+= visualSizeIncrement(content.charAt(offset), visual);
 			}
 			if (startColumn == -1) {
-				boolean materializeVirtualSpace= replacement.length() != 0;
+				boolean materializeVirtualSpace= !replacement.isEmpty();
 				if (materializeVirtualSpace) {
 					int spaces= Math.max(0, visualStartColumn - visual);
 					char[] array= new char[spaces];
@@ -469,7 +469,7 @@ public final class SelectionProcessor {
 			}
 			if (endColumn == -1)
 				endColumn= lineLength;
-			if (replacement.length() == 0)
+			if (replacement.isEmpty())
 				return new DeleteEdit(info.getOffset() + startColumn, endColumn - startColumn);
 			return new ReplaceEdit(info.getOffset() + startColumn, endColumn - startColumn, replacement);
 		}

@@ -208,7 +208,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
-			if (value instanceof String && ((String)value).length() == 0) {
+			if (value instanceof String && ((String)value).isEmpty()) {
 				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
@@ -304,7 +304,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
-			if (value instanceof String && ((String)value).length() == 0) {
+			if (value instanceof String && ((String)value).isEmpty()) {
 				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
@@ -339,7 +339,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
-			if (value instanceof String && ((String)value).length() == 0) {
+			if (value instanceof String && ((String)value).isEmpty()) {
 				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
@@ -571,7 +571,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public void setErrorMessage(String errorMessage) {
 			if (errorMessageText != null && !errorMessageText.isDisposed()) {
 				errorMessageText.setText(errorMessage == null ? "  " : errorMessage); //$NON-NLS-1$
-				boolean hasError= errorMessage != null && (StringConverter.removeWhiteSpaces(errorMessage)).length() > 0;
+				boolean hasError= errorMessage != null && !(StringConverter.removeWhiteSpaces(errorMessage)).isEmpty();
 				errorMessageText.setEnabled(hasError);
 				errorMessageText.setVisible(hasError);
 				errorMessageText.getParent().update();
@@ -1396,7 +1396,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				page.setErrorMessage(null);
 				break;
 			default:
-				if (message.length() == 0) {
+				if (message.isEmpty()) {
 					message= null;
 				}
 				page.setMessage(null);

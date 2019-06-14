@@ -241,7 +241,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	private void updateMessageLabel() {
 		if (fLabel != null && !fLabel.isDisposed()) {
 			Display display= fLabel.getDisplay();
-			if ((fErrorText != null && fErrorText.length() > 0) || fErrorImage != null) {
+			if ((fErrorText != null && !fErrorText.isEmpty()) || fErrorImage != null) {
 				String escapedErrorText= escape(fErrorText);
 				fLabel.setForeground(JFaceColors.getErrorText(display));
 				fLabel.setText(escapedErrorText);

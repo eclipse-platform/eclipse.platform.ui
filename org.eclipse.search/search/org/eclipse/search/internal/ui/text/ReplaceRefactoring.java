@@ -206,7 +206,7 @@ public class ReplaceRefactoring extends Refactoring {
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		String searchString= getQuery().getSearchString();
-		if (searchString.length() == 0) {
+		if (searchString.isEmpty()) {
 			return RefactoringStatus.createFatalErrorStatus(SearchMessages.ReplaceRefactoring_error_illegal_search_string);
 		}
 		fMatches.clear();

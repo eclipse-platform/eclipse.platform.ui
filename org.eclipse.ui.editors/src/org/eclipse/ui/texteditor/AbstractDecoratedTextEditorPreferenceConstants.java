@@ -782,7 +782,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		if (modifiers == null)
 			return -1;
 
-		if (modifiers.length() == 0)
+		if (modifiers.isEmpty())
 			return SWT.NONE;
 
 		int stateMask= 0;

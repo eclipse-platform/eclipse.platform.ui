@@ -1245,7 +1245,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private synchronized boolean hasMoreUpdates() {
-		return fBatchedClearAll || fBatchedUpdates.size() > 0;
+		return fBatchedClearAll || !fBatchedUpdates.isEmpty();
 	}
 
 	private boolean isQueryRunning() {

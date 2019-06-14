@@ -186,7 +186,7 @@ class ProjectionSummary {
 				return;
 		}
 
-		if (bags != null && bags.size() > 0) {
+		if (bags != null && !bags.isEmpty()) {
 			Annotation[] deletions= new Annotation[bags.size()];
 			bags.toArray(deletions);
 			if (!isCanceled(monitor))
@@ -220,7 +220,7 @@ class ProjectionSummary {
 				return;
 		}
 
-		if (additions.size() > 0) {
+		if (!additions.isEmpty()) {
 			if (visualAnnotationModel instanceof IAnnotationModelExtension) {
 				IAnnotationModelExtension extension= (IAnnotationModelExtension)visualAnnotationModel;
 				if (!isCanceled(monitor))

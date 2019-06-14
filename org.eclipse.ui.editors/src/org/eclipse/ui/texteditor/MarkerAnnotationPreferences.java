@@ -368,137 +368,137 @@ public class MarkerAnnotationPreferences {
 		ReadOnlyAnnotationPreference info= new ReadOnlyAnnotationPreference();
 
 		s= element.getAttribute("annotationType");  //$NON-NLS-1$
-		if (s == null || s.trim().length() == 0) return null;
+		if (s == null || s.trim().isEmpty()) return null;
 		info.setAnnotationType(s);
 
 		s= element.getAttribute("label");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setPreferenceLabel(s);
 
 		s= element.getAttribute("markerType");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setMarkerType(s);
 
 		s= element.getAttribute("markerSeverity");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			i= StringConverter.asInt(s, IMarker.SEVERITY_INFO);
 			info.setSeverity(i);
 		}
 
 		s= element.getAttribute("textPreferenceKey");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setTextPreferenceKey(s);
 
 		s= element.getAttribute("textPreferenceValue");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			b= StringConverter.asBoolean(s, false);
 			info.setTextPreferenceValue(b);
 		}
 
 		s= element.getAttribute("highlightPreferenceKey");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setHighlightPreferenceKey(s);
 
 		s= element.getAttribute("highlightPreferenceValue");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			b= StringConverter.asBoolean(s, false);
 			info.setHighlightPreferenceValue(b);
 		}
 
 		s= element.getAttribute("overviewRulerPreferenceKey");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setOverviewRulerPreferenceKey(s);
 
 		s= element.getAttribute("overviewRulerPreferenceValue");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			b= StringConverter.asBoolean(s, false);
 			info.setOverviewRulerPreferenceValue(b);
 		}
 
 		s= element.getAttribute("verticalRulerPreferenceKey");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setVerticalRulerPreferenceKey(s);
 
 		s= element.getAttribute("verticalRulerPreferenceValue");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			b= StringConverter.asBoolean(s, true);
 			info.setVerticalRulerPreferenceValue(b);
 		}
 
 		s= element.getAttribute("colorPreferenceKey");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setColorPreferenceKey(s);
 
 		s= element.getAttribute("colorPreferenceValue");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			RGB rgb= StringConverter.asRGB(s);
 			info.setColorPreferenceValue(rgb == null ? new RGB(0,0,0) : rgb);
 		}
 
 		s= element.getAttribute("presentationLayer");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			i= StringConverter.asInt(s, 0);
 			info.setPresentationLayer(i);
 		}
 
 		s= element.getAttribute("contributesToHeader");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			b= StringConverter.asBoolean(s, false);
 			info.setContributesToHeader(b);
 		}
 
 		s= element.getAttribute("showInNextPrevDropdownToolbarActionKey");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setShowInNextPrevDropdownToolbarActionKey(s);
 
 		s= element.getAttribute("showInNextPrevDropdownToolbarAction");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			b= StringConverter.asBoolean(s, false);
 			info.setShowInNextPrevDropdownToolbarAction(b);
 		}
 
 		s= element.getAttribute("isGoToNextNavigationTargetKey");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setIsGoToNextNavigationTargetKey(s);
 
 		s= element.getAttribute("isGoToNextNavigationTarget");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			b= StringConverter.asBoolean(s, false);
 			info.setIsGoToNextNavigationTarget(b);
 		}
 
 		s= element.getAttribute("isGoToPreviousNavigationTargetKey");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setIsGoToPreviousNavigationTargetKey(s);
 
 		s= element.getAttribute("isGoToPreviousNavigationTarget");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 			b= StringConverter.asBoolean(s, false);
 			info.setIsGoToPreviousNavigationTarget(b);
 		}
 
 		s= element.getAttribute("symbolicIcon");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setSymbolicImageName(s);
 
 		s= element.getAttribute("icon");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setImageDescriptor(getImageDescriptor(s, element));
 
 		s= element.getAttribute("quickFixIcon");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setQuickFixImageDescriptor(getImageDescriptor(s, element));
 
 		s= element.getAttribute("annotationImageProvider"); //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setAnnotationImageProviderData(element, "annotationImageProvider"); //$NON-NLS-1$
 
 		s= element.getAttribute("textStylePreferenceKey"); //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0)
+		if (s != null && !s.trim().isEmpty())
 			info.setTextStylePreferenceKey(s);
 
 		s= element.getAttribute("textStylePreferenceValue");  //$NON-NLS-1$
-		if (s != null && s.trim().length() > 0) {
+		if (s != null && !s.trim().isEmpty()) {
 
 			if (AnnotationPreference.STYLE_BOX.equals(s)
 					|| AnnotationPreference.STYLE_DASHED_BOX.equals(s)

@@ -211,7 +211,7 @@ public class TemplateStore extends TemplateStoreCore {
 
 	private void loadCustomTemplates() throws IOException {
 		String pref= fPreferenceStore.getString(getKey());
-		if (pref != null && pref.trim().length() > 0) {
+		if (pref != null && !pref.trim().isEmpty()) {
 			Reader input= new StringReader(pref);
 			TemplateReaderWriter reader= new TemplateReaderWriter();
 			TemplatePersistenceData[] datas= reader.read(input);

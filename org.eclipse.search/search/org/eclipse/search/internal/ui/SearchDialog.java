@@ -492,7 +492,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		fReplaceButton= createActionButton(composite, REPLACE_ID, SearchMessages.SearchDialog_replaceAction, true);
 		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
 		Button searchButton= createActionButton(composite, SEARCH_ID, SearchMessages.SearchDialog_searchAction, true);
-		searchButton.setEnabled(fDescriptors.size() > 0);
+		searchButton.setEnabled(!fDescriptors.isEmpty());
 		super.createButtonsForButtonBar(composite);  // cancel button
 
 		return composite;

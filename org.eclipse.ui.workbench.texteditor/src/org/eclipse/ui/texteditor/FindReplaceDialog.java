@@ -1044,7 +1044,7 @@ class FindReplaceDialog extends Dialog {
 	 * @return the first line of the selection
 	 */
 	private String getFirstLine(String selection) {
-		if (selection.length() > 0) {
+		if (!selection.isEmpty()) {
 			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
 				return selection.substring(0, info[0]);
@@ -1130,7 +1130,7 @@ class FindReplaceDialog extends Dialog {
 			String fullSelection= fTarget.getSelectionText();
 			boolean isRegEx= isRegExSearchAvailableAndChecked();
 			fFindField.removeModifyListener(fFindModifyListener);
-			if (fullSelection.length() > 0) {
+			if (!fullSelection.isEmpty()) {
 				String firstLine= getFirstLine(fullSelection);
 				String pattern= isRegEx ? FindReplaceDocumentAdapter.escapeForRegExPattern(fullSelection) : firstLine;
 				fFindField.setText(pattern);
@@ -1143,7 +1143,7 @@ class FindReplaceDialog extends Dialog {
 				}
 			} else {
 				if ("".equals(fFindField.getText())) { //$NON-NLS-1$
-					if (fFindHistory.size() > 0)
+					if (!fFindHistory.isEmpty())
 						fFindField.setText(fFindHistory.get(0));
 					else
 						fFindField.setText(""); //$NON-NLS-1$
@@ -1360,7 +1360,7 @@ class FindReplaceDialog extends Dialog {
 		final String replaceString= getReplaceString();
 		final String findString= getFindString();
 
-		if (findString != null && findString.length() > 0) {
+		if (findString != null && !findString.isEmpty()) {
 
 			class ReplaceAllRunnable implements Runnable {
 				public int numberOfOccurrences;
@@ -1477,7 +1477,7 @@ class FindReplaceDialog extends Dialog {
 		String findString= getFindString();
 		boolean somethingFound= false;
 
-		if (findString != null && findString.length() > 0) {
+		if (findString != null && !findString.isEmpty()) {
 
 			try {
 					somethingFound= findNext(findString, forwardSearch, isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked(), beep);
@@ -1604,11 +1604,11 @@ class FindReplaceDialog extends Dialog {
 
 			boolean selection= false;
 			if (fTarget != null)
-				selection= fTarget.getSelectionText().length() > 0;
+				selection= !fTarget.getSelectionText().isEmpty();
 
 			boolean enable= fTarget != null && (fActiveShell == fParentShell || fActiveShell == getShell());
 			String str= getFindString();
-			boolean findString= str != null && str.length() > 0;
+			boolean findString= str != null && !str.isEmpty();
 
 			fWholeWordCheckBox.setEnabled(isWord(str) && !isRegExSearchAvailableAndChecked());
 
@@ -1627,7 +1627,7 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private boolean isWord(String str) {
-		if (str == null || str.length() == 0)
+		if (str == null || str.isEmpty())
 			return false;
 
 		for (int i= 0; i < str.length(); i++) {
@@ -1855,13 +1855,13 @@ class FindReplaceDialog extends Dialog {
 
 		List<String> history= getFindHistory();
 		String findString= getFindString();
-		if (findString.length() > 0)
+		if (!findString.isEmpty())
 			history.add(0, findString);
 		writeHistory(history, s, "findhistory"); //$NON-NLS-1$
 
 		history= getReplaceHistory();
 		String replaceString= getReplaceString();
-		if (replaceString.length() > 0)
+		if (!replaceString.isEmpty())
 			history.add(0, replaceString);
 		writeHistory(history, s, "replacehistory"); //$NON-NLS-1$
 	}

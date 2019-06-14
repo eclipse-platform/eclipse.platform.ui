@@ -532,14 +532,14 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		@Override
 		protected boolean isValid() {
-			return fStart > -1 || fChanges.size() > 0;
+			return fStart > -1 || !fChanges.isEmpty();
 		}
 
 		@Override
 		protected long getUndoModificationStamp() {
 			if (fStart > -1) {
 				return super.getUndoModificationStamp();
-			} else if (fChanges.size() > 0) {
+			} else if (!fChanges.isEmpty()) {
 				return fChanges.get(0)
 						.getUndoModificationStamp();
 			}
@@ -551,7 +551,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		protected long getRedoModificationStamp() {
 			if (fStart > -1) {
 				return super.getRedoModificationStamp();
-			} else if (fChanges.size() > 0) {
+			} else if (!fChanges.isEmpty()) {
 				return fChanges.get(fChanges.size() - 1)
 						.getRedoModificationStamp();
 			}
@@ -953,7 +953,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 */
 	private boolean isWhitespaceText(String text) {
 
-		if (text == null || text.length() == 0) {
+		if (text == null || text.isEmpty()) {
 			return false;
 		}
 

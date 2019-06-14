@@ -1630,8 +1630,8 @@ public class ProjectionDocumentTest {
 		assertSame(expected.getDocument(), received.getDocument());
 		Assert.assertEquals(expected.getOffset(), received.getOffset());
 		Assert.assertEquals(expected.getLength(), received.getLength());
-		if (expected.getText() == null || expected.getText().length() == 0)
-			assertTrue(received.getText() == null || received.getText().length() == 0);
+		if (expected.getText() == null || expected.getText().isEmpty())
+			assertTrue(received.getText() == null || received.getText().isEmpty());
 		else
 			Assert.assertEquals(expected.getText(), received.getText());
 	}

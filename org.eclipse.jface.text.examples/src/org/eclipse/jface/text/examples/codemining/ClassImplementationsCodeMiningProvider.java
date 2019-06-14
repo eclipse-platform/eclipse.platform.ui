@@ -56,7 +56,7 @@ public class ClassImplementationsCodeMiningProvider extends AbstractCodeMiningPr
 			if (index != -1) {
 				className = className.substring(0, index);
 			}
-			if (className.length() > 0) {
+			if (!className.isEmpty()) {
 				try {
 					lenses.add(new ClassImplementationCodeMining(className, lineIndex, document, this));
 				} catch (BadLocationException e) {

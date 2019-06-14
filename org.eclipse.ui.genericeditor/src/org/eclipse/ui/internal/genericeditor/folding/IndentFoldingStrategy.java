@@ -266,7 +266,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 
 			// be sure projection has not been disabled
 			if (projectionAnnotationModel != null) {
-				if (existing.size() > 0) {
+				if (!existing.isEmpty()) {
 					deletions.addAll(existing);
 				}
 				// send the calculated updates to the annotations to the
@@ -305,7 +305,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 			// The line starts with the given keyword (ex: starts with "import")
 			return LineState.StartWithKeyWord;
 		}
-		if (lastLineForKeyword != null && (lineContent == null || lineContent.trim().length() == 0)) {
+		if (lastLineForKeyword != null && (lineContent == null || lineContent.trim().isEmpty())) {
 			// a last line for keyword was defined, line is empty
 			return LineState.EmptyLine;
 		}
@@ -377,7 +377,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		int startOffset = document.getLineOffset(line);
 		int endOffset = document.getLineOffset(endLineNumber) + document.getLineLength(endLineNumber);
 		Position newPos = new Position(startOffset, endOffset - startOffset);
-		if (existing.size() > 0) {
+		if (!existing.isEmpty()) {
 			FoldingAnnotation existingAnnotation = existing.remove(existing.size() - 1);
 			updateAnnotations(existingAnnotation, newPos, modifications, deletions);
 		} else {

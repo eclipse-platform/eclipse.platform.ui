@@ -412,7 +412,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			String pattern= EditorMessages.Editor_FindIncremental_not_found_pattern;
 			statusError(NLSUtility.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 
-		} else if (string.length() == 0) {
+		} else if (string.isEmpty()) {
 			if (fForward)
 				statusMessage(FIELD_NAME);
 			else
@@ -511,7 +511,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		}
 
 		String string= fFindString.toString();
-		if (string.length() == 0) {
+		if (string.isEmpty()) {
 			fFound= true;
 			return true;
 		}

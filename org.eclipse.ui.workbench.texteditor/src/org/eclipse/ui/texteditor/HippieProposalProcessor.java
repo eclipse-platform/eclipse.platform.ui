@@ -207,7 +207,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
 			String prefix= getPrefix(viewer, offset);
-			if (prefix == null || prefix.length() == 0)
+			if (prefix == null || prefix.isEmpty())
 				return NO_PROPOSALS;
 
 			List<String> suggestions= getSuggestions(viewer, offset, prefix);
@@ -215,7 +215,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 			List<ICompletionProposal> result= new ArrayList<>();
 			for (Iterator<String> it= suggestions.iterator(); it.hasNext();) {
 				String string= it.next();
-				if (string.length() > 0)
+				if (!string.isEmpty())
 					result.add(createProposal(string, prefix, offset));
 			}
 

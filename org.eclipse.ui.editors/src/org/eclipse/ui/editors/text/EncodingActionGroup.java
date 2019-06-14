@@ -268,7 +268,7 @@ public class EncodingActionGroup extends ActionGroup {
 			IInputValidator inputValidator = new IInputValidator() {
 				@Override
 				public String isValid(String newText) {
-					return (newText == null || newText.length() == 0) ? " " : null; //$NON-NLS-1$
+					return (newText == null || newText.isEmpty()) ? " " : null; //$NON-NLS-1$
 				}
 			};
 
@@ -354,7 +354,7 @@ public class EncodingActionGroup extends ActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 		IMenuManager menuManager= actionBars.getMenuManager();
 		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		if (editMenu != null && fRetargetActions.size() > 0) {
+		if (editMenu != null && !fRetargetActions.isEmpty()) {
 			MenuManager subMenu= new MenuManager(TextEditorMessages.Editor_ConvertEncoding_submenu_label);
 			subMenu.addMenuListener(new IMenuListener() {
 				@Override

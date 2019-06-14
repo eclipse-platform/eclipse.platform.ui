@@ -53,7 +53,7 @@ public class TextSearchEngineRegistry {
 	}
 
 	private void updateEngine(String preferredId) {
-		if (preferredId.length() != 0) { // empty string: default engine
+		if (!preferredId.isEmpty()) { // empty string: default engine
 			TextSearchEngine engine= createFromExtension(preferredId);
 			if (engine != null) {
 				fPreferredEngineId= preferredId;

@@ -48,7 +48,7 @@ public class ProjectReferencesCodeMiningProvider extends AbstractCodeMiningProvi
 					if (endIndex > startIndex) {
 						// Check if parent element is projectDescription
 						String projectName = line.substring(startIndex, endIndex);
-						if (projectName.length() > 0) {
+						if (!projectName.isEmpty()) {
 							try {
 								minings.add(new ProjectReferenceCodeMining(projectName, i, document, this));
 							} catch (BadLocationException e) {

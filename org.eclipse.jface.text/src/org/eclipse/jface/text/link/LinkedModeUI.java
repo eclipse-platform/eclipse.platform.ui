@@ -677,7 +677,7 @@ public class LinkedModeUI {
 		Assert.isNotNull(model);
 		Assert.isNotNull(targets);
 		Assert.isTrue(targets.length > 0);
-		Assert.isTrue(model.getTabStopSequence().size() > 0);
+		Assert.isTrue(!model.getTabStopSequence().isEmpty());
 
 		fModel= model;
 		fTargets= targets;
