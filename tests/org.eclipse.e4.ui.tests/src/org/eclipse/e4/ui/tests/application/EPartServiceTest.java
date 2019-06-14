@@ -9987,11 +9987,11 @@ public class EPartServiceTest extends UITest {
 
 	class PartListener implements IPartListener {
 
-		private List<MPart> activatedParts = new ArrayList<MPart>();
-		private List<MPart> deactivatedParts = new ArrayList<MPart>();
-		private List<MPart> hiddenParts = new ArrayList<MPart>();
-		private List<MPart> visibleParts = new ArrayList<MPart>();
-		private List<MPart> broughtToTopParts = new ArrayList<MPart>();
+		private List<MPart> activatedParts = new ArrayList<>();
+		private List<MPart> deactivatedParts = new ArrayList<>();
+		private List<MPart> hiddenParts = new ArrayList<>();
+		private List<MPart> visibleParts = new ArrayList<>();
+		private List<MPart> broughtToTopParts = new ArrayList<>();
 
 		private int activated = 0;
 		private int deactivated = 0;

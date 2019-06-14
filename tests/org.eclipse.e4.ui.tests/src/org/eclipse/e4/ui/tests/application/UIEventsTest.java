@@ -114,7 +114,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 
 		public String[] getAttIds(boolean fired) {
-			List<String> atts = new ArrayList<String>();
+			List<String> atts = new ArrayList<>();
 			for (int i = 0; i < hasFired.length; i++) {
 				if (hasFired[i] == fired)
 					atts.add(attIds[i]);
@@ -382,7 +382,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	 * @param tester
 	 */
 	private void ensureNoCrossTalk(EventTester[] allTesters, EventTester skipMe) {
-		List<EventTester> badTesters = new ArrayList<EventTester>();
+		List<EventTester> badTesters = new ArrayList<>();
 		for (EventTester t : allTesters) {
 			if (t.equals(skipMe))
 				continue;

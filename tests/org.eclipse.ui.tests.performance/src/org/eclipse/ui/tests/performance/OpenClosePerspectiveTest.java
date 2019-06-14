@@ -116,7 +116,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 		Command command = commandService
 				.getCommand("org.eclipse.ui.window.closePerspective");
 
-		HashMap<String, String> parameters = new HashMap<String, String>();
+		HashMap<String, String> parameters = new HashMap<>();
 		parameters.put(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID,
 				persp.getId());
 

@@ -307,7 +307,7 @@ public class TabStateHandlerTest {
 	}
 
 	private Event event(EventParam... params) {
-		HashMap<String, Object> paramsMap = new HashMap<String, Object>();
+		HashMap<String, Object> paramsMap = new HashMap<>();
 		for (EventParam param : params) {
 			paramsMap.put(param.getKey(), param.getValue());
 		}

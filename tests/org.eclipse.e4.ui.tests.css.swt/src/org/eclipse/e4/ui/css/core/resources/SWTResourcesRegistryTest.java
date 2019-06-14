@@ -39,7 +39,7 @@ public class SWTResourcesRegistryTest {
 		final Object resource3 = new Object();
 		final Resource resource4 = mock(Resource.class);
 
-		Map<Object, Object> resources = new LinkedHashMap<Object, Object>();
+		Map<Object, Object> resources = new LinkedHashMap<>();
 		resources.put("key1", resource1);
 		resources.put(new ResourceByDefinitionKey("key2"), resource2);
 		resources.put(new ResourceByDefinitionKey("key3"), resource3);

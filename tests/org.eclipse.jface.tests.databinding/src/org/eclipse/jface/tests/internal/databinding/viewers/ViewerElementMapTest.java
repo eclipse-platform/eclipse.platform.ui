@@ -72,7 +72,7 @@ public class ViewerElementMapTest {
 
 	@Test
 	public void testConstructorWithCollection_ContainsAllEntries() {
-		Map<Object, Object> toCopy = new HashMap<Object, Object>();
+		Map<Object, Object> toCopy = new HashMap<>();
 		toCopy.put(new Object(), new Object());
 		map = new ViewerElementMap(toCopy, new IdentityElementComparer());
 		assertEquals(toCopy, map);
@@ -126,7 +126,7 @@ public class ViewerElementMapTest {
 
 	@Test
 	public void testPutAll() {
-		Map<Object, Object> other = new HashMap<Object, Object>();
+		Map<Object, Object> other = new HashMap<>();
 		other.put(key, value);
 
 		assertTrue(map.isEmpty());

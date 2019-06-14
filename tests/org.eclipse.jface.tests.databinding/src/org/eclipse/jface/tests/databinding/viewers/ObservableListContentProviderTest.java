@@ -81,7 +81,7 @@ public class ObservableListContentProviderTest extends AbstractDefaultRealmTestC
 	@Test
 	public void testKnownElementsAfterSetInput() {
 		assertEquals(0, contentProvider.getKnownElements().size());
-		Set<String> newElements = new HashSet<String>(Arrays.asList(new String[] { "one", "two", "three" }));
+		Set<String> newElements = new HashSet<>(Arrays.asList(new String[] { "one", "two", "three" }));
 		WritableList<Object> newInput = new WritableList<>();
 		newInput.addAll(newElements);
 		viewer.setInput(newInput);

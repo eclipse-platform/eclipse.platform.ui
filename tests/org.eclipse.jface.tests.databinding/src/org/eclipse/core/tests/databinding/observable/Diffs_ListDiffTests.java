@@ -289,7 +289,7 @@ public class Diffs_ListDiffTests {
 	private static void checkComputedListDiff(List<Object> oldList, List<Object> newList) {
 		ListDiff diff = Diffs.computeListDiff(oldList, newList);
 
-		final List<Object> list = new ArrayList<Object>(oldList);
+		final List<Object> list = new ArrayList<>(oldList);
 		diff.accept(new ListDiffVisitor() {
 			@Override
 			public void handleAdd(int index, Object element) {

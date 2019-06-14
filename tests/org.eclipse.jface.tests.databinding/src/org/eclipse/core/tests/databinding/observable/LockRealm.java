@@ -35,7 +35,7 @@ public class LockRealm extends Realm {
 	private boolean lockAcquired;
 
 	public LockRealm() {
-		queue = new LinkedList<Runnable>();
+		queue = new LinkedList<>();
 		lock = Job.getJobManager().newLock();
 		job = new Job("Lock Realm Job") {
 			@Override

@@ -118,7 +118,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testSetIgnore_Nested_RunAndCollect() throws Exception {
-		final List<ObservableStub> list = new ArrayList<ObservableStub>();
+		final List<ObservableStub> list = new ArrayList<>();
 
 		Set collected = new IdentitySet(Arrays.asList(ObservableTracker.runAndCollect(() -> {
 			list.add(new ObservableStub()); // list[0] collected
@@ -167,7 +167,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testSetIgnore_RunAndMonitor_UnmatchedIgnore_LogsError() {
-		final List<IStatus> log = new ArrayList<IStatus>();
+		final List<IStatus> log = new ArrayList<>();
 		Policy.setLog(status -> log.add(status));
 
 		ObservableTracker.runAndMonitor(() -> ObservableTracker.setIgnore(true), null, null);
@@ -180,7 +180,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testSetIgnore_RunAndCollect_UnmatchedIgnore_LogsError() {
-		final List<IStatus> log = new ArrayList<IStatus>();
+		final List<IStatus> log = new ArrayList<>();
 		Policy.setLog(status -> log.add(status));
 
 		ObservableTracker.runAndCollect(() -> ObservableTracker.setIgnore(true));

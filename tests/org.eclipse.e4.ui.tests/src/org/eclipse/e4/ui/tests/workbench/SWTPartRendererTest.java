@@ -53,7 +53,7 @@ public class SWTPartRendererTest {
 		};
 
 		shell = Display.getDefault().getActiveShell();
-		stylingEngineExecutedMethods = new HashMap<String, Object[]>();
+		stylingEngineExecutedMethods = new HashMap<>();
 
 		context = EclipseContextFactory.create();
 		context.set(IStylingEngine.class, (IStylingEngine) Proxy.newProxyInstance(getClass().getClassLoader(),

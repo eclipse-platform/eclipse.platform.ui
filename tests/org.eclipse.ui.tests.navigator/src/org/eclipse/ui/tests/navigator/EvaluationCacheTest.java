@@ -73,7 +73,7 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 		// Should find it under the original key.
 		cache.setDescriptors(key, value, toComputeOverrides);
 		// Equal thing but different instance should still be equal.
-		java.util.List key2 = new ArrayList<String>(key);
+		java.util.List key2 = new ArrayList<>(key);
 		// Should also find it under this new, equal key.
 		Assert.assertSame(value, cache.getDescriptors(key2, toComputeOverrides));
 		// The other "half" of the cache should not have this for either key.

@@ -256,8 +256,8 @@ public class ModelAssemblerTests {
 	/** Tests that correctly configured imports are correctly handled. */
 	@Test
 	public void testImports() {
-		List<MApplicationElement> imports = new ArrayList<MApplicationElement>();
-		List<MApplicationElement> addedElements = new ArrayList<MApplicationElement>();
+		List<MApplicationElement> imports = new ArrayList<>();
+		List<MApplicationElement> addedElements = new ArrayList<>();
 
 		final String windowElementId = "testImports_emptyList_window1";
 		MTrimmedWindow importWindow1 = modelService.createModelElement(MTrimmedWindow.class);
@@ -282,8 +282,8 @@ public class ModelAssemblerTests {
 	/** Tests the processing of an import with a null/incorrect element id. */
 	@Test
 	public void testImports_noImportElementId() {
-		List<MApplicationElement> imports = new ArrayList<MApplicationElement>();
-		List<MApplicationElement> addedElements = new ArrayList<MApplicationElement>();
+		List<MApplicationElement> imports = new ArrayList<>();
+		List<MApplicationElement> addedElements = new ArrayList<>();
 
 		MTrimmedWindow importWindow1 = modelService.createModelElement(MTrimmedWindow.class);
 		importWindow1.setElementId(null);

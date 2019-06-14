@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Assert;
 public class ThreadRealm extends Realm {
 	private Thread thread;
 
-	private final LinkedList<Runnable> queue = new LinkedList<Runnable>();
+	private final LinkedList<Runnable> queue = new LinkedList<>();
 
 	private volatile boolean block;
 

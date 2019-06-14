@@ -242,7 +242,7 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 		WritableValue<Object> source = WritableValue.withValueType(fromType);
 		WritableValue<Object> destination = WritableValue.withValueType(toType);
 
-		UpdateValueStrategyStub<Object, Object> strategy = new UpdateValueStrategyStub<Object, Object>();
+		UpdateValueStrategyStub<Object, Object> strategy = new UpdateValueStrategyStub<>();
 		strategy.fillDefaults(source, destination);
 
 		IValidator<?> validator = strategy.validator;

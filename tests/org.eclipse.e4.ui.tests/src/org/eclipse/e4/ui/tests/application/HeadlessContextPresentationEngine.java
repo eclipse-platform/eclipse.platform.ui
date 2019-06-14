@@ -63,7 +63,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	private EventHandler activeChildHandler;
 	private EventHandler toBeRenderedHandler;
 
-	private Map<MUIElement, List<MPlaceholder>> renderedPlaceholders = new HashMap<MUIElement, List<MPlaceholder>>();
+	private Map<MUIElement, List<MPlaceholder>> renderedPlaceholders = new HashMap<>();
 
 	private boolean createContributions = true;
 
@@ -333,7 +333,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 				List<MPlaceholder> placeholders = renderedPlaceholders.get(ref);
 				if (placeholders == null) {
-					placeholders = new ArrayList<MPlaceholder>();
+					placeholders = new ArrayList<>();
 					renderedPlaceholders.put(ref, placeholders);
 				} else if (placeholders.contains(placeholder)) {
 					return null;

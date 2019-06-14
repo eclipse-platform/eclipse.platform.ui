@@ -78,7 +78,7 @@ public class ObservableValueContractTest extends ObservableContractTest {
 	}
 
 	public void testChange_OrderOfNotifications() throws Exception {
-		final List<IObservablesListener> listeners = new ArrayList<IObservablesListener>();
+		final List<IObservablesListener> listeners = new ArrayList<>();
 		IChangeListener changeListener = new IChangeListener() {
 			@Override
 			public void handleChange(ChangeEvent event) {

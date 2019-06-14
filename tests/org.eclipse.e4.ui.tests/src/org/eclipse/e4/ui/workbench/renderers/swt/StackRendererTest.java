@@ -85,7 +85,7 @@ public class StackRendererTest {
 	public void testTabStateHandlerWhenOneOfSupportedTagChangeEvents()
 			throws Exception {
 		// given
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		HashMap<String, Object> params = new HashMap<>();
 		params.put(UIEvents.EventTags.ELEMENT, part);
 		params.put(UIEvents.EventTags.NEW_VALUE, CSSConstants.CSS_BUSY_CLASS);
 		params.put(UIEvents.EventTags.OLD_VALUE, null);
@@ -108,7 +108,7 @@ public class StackRendererTest {
 		MPlaceholder placeHolder = ems.createModelElement(MPlaceholder.class);
 		placeHolder.setRef(part);
 
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		HashMap<String, Object> params = new HashMap<>();
 		params.put(UIEvents.EventTags.ELEMENT, partStack);
 		params.put(UIEvents.EventTags.NEW_VALUE, placeHolder);
 		params.put(UIEvents.EventTags.OLD_VALUE, null);
@@ -133,7 +133,7 @@ public class StackRendererTest {
 
 		public CTabItemStylingMethodsListener(MPart part) {
 			this.part = part;
-			methods = new ArrayList<String>();
+			methods = new ArrayList<>();
 		}
 
 		@Override

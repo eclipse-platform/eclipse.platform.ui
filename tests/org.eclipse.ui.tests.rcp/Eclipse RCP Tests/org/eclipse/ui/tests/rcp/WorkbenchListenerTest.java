@@ -63,7 +63,7 @@ public class WorkbenchListenerTest {
 	@Test
 	public void testPreAndPostShutdown() {
 		final boolean[] proceed = new boolean[1];
-		final List<String> operations = new ArrayList<String>();
+		final List<String> operations = new ArrayList<>();
 		WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 			@Override
 			public void postStartup() {

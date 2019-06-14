@@ -76,7 +76,7 @@ public class ChangeSupportTest extends AbstractDefaultRealmTestCase {
 	private static final String REMOVE_LAST = "lastListenerRemoved";
 
 	private static class ChangeSupportStub extends ChangeSupport {
-		List<String> log = new ArrayList<String>();
+		List<String> log = new ArrayList<>();
 
 		ChangeSupportStub(Realm realm) {
 			super(realm);

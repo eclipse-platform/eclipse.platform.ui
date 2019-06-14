@@ -29,7 +29,7 @@ public class ModelElementTest {
 
 	@Test
 	public void testForMApplicationInterface() {
-		List<EClass> failedClasses = new ArrayList<EClass>();
+		List<EClass> failedClasses = new ArrayList<>();
 		checkPackageForMApplicationInterface(failedClasses,
 				ApplicationPackageImpl.eINSTANCE);
 		if (failedClasses.size() > 0) {
@@ -65,7 +65,7 @@ public class ModelElementTest {
 
 	@Test
 	public void testForOptimalBaseClass() {
-		List<EClass> failedClasses = new ArrayList<EClass>();
+		List<EClass> failedClasses = new ArrayList<>();
 		checkPackageForOptimalBaseClass(failedClasses,
 				ApplicationPackageImpl.eINSTANCE);
 		if (failedClasses.size() > 0) {

@@ -69,7 +69,7 @@ public class ThemeTest extends CSSSWTTestCase {
 
 		final boolean success[] = new boolean[] { false };
 
-		Dictionary<String, String> properties = new Hashtable<String, String>();
+		Dictionary<String, String> properties = new Hashtable<>();
 		properties.put(EventConstants.EVENT_TOPIC,
 				IThemeEngine.Events.THEME_CHANGED);
 		themeListenerRegistration = context.registerService(EventHandler.class, event -> {

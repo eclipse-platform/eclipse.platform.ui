@@ -221,7 +221,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testErrorDuringConversionIsLogged() {
-		UpdateListStrategy<String, String> modelToTarget = new UpdateListStrategy<String, String>();
+		UpdateListStrategy<String, String> modelToTarget = new UpdateListStrategy<>();
 		modelToTarget.setConverter(new IConverter<String, String>() {
 
 			@Override

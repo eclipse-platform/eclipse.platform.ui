@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 
 public class IDAssigner implements IAdapterFactory {
 	int currentId;
-	Map<Object, String> assignedIds = new HashMap<Object, String>(); // Object->its
+	Map<Object, String> assignedIds = new HashMap<>(); // Object->its
 																		// id
 
 	public IDAssigner() {

@@ -186,7 +186,7 @@ public class WorkbenchWindowConfigurerTest {
 	// tests to ensure that all WorkbenchAdvisor API is called from the UI thread.
 	@Test
 	public void testThreading() {
-		final ArrayList<String> results = new ArrayList<String>();
+		final ArrayList<String> results = new ArrayList<>();
 
 		WorkbenchAdvisor advisor = new RCPTestWorkbenchAdvisor(1) {
 

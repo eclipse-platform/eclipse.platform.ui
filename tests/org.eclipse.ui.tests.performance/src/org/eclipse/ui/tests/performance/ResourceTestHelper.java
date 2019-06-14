@@ -108,7 +108,7 @@ public class ResourceTestHelper {
 	}
 
 	private static List<Integer> identifierPositions(StringBuilder buffer, String identifier) {
-		List<Integer> positions = new ArrayList<Integer>();
+		List<Integer> positions = new ArrayList<>();
 		int i= -1;
 		while (true) {
 			i= buffer.indexOf(identifier, i + 1);

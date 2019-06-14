@@ -88,7 +88,7 @@ public class IdentityMapTest {
 
 	@Test
 	public void testConstructorWithCollection_ContainsAllEntries() {
-		Map<Object, Object> toCopy = new HashMap<Object, Object>();
+		Map<Object, Object> toCopy = new HashMap<>();
 		toCopy.put(new Object(), new Object());
 		map = new IdentityMap<>(toCopy);
 		assertEquals(toCopy, map);
@@ -142,7 +142,7 @@ public class IdentityMapTest {
 
 	@Test
 	public void testPutAll() {
-		Map<Object, Object> other = new HashMap<Object, Object>();
+		Map<Object, Object> other = new HashMap<>();
 		other.put(key, value);
 
 		assertTrue(map.isEmpty());
@@ -536,7 +536,7 @@ public class IdentityMapTest {
 		assertFalse(map.equals(null));
 		assertTrue(map.equals(map));
 
-		Map<Object, Object> other = new HashMap<Object, Object>();
+		Map<Object, Object> other = new HashMap<>();
 		other.put(key, value);
 
 		assertTrue(map.equals(Collections.EMPTY_MAP));

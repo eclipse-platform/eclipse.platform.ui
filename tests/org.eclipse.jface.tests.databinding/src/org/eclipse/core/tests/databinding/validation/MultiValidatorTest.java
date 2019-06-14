@@ -391,7 +391,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		assertEquals(dependency1, dependency2);
 		assertNotSame(dependency1, dependency2);
 
-		final List<DependencyObservable> dependencies = new ArrayList<DependencyObservable>();
+		final List<DependencyObservable> dependencies = new ArrayList<>();
 		dependencies.add(dependency1);
 		validator = new MultiValidator() {
 			@Override

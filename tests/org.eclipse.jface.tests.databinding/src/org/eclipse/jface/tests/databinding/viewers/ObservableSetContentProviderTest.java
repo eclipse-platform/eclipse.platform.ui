@@ -86,7 +86,7 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 	@Test
 	public void testKnownElementsAfterSetInput() {
 		assertEquals(0, contentProvider.getKnownElements().size());
-		Set<String> newElements = new HashSet<String>(Arrays.asList(new String[] { "one", "two", "three" }));
+		Set<String> newElements = new HashSet<>(Arrays.asList(new String[] { "one", "two", "three" }));
 		WritableSet<Object> newInput = new WritableSet<>();
 		newInput.addAll(newElements);
 		viewer.setInput(newInput);

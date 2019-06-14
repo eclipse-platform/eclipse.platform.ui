@@ -57,7 +57,7 @@ public class ThemeDefinitionChangedHandlerTest {
 		application.getChildren().add(MBasicFactory.INSTANCE.createWindow());
 		application.getChildren().add(MBasicFactory.INSTANCE.createWindow());
 
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		HashMap<String, Object> params = new HashMap<>();
 		params.put(IEventBroker.DATA, application);
 
 		Event event = new Event("topic", params);
@@ -71,7 +71,7 @@ public class ThemeDefinitionChangedHandlerTest {
 
 		Object resource3 = new Object();
 
-		List<Object> removedResources = new ArrayList<Object>();
+		List<Object> removedResources = new ArrayList<>();
 		removedResources.add(resource1);
 		removedResources.add(resource2);
 		removedResources.add(resource3);
@@ -108,7 +108,7 @@ public class ThemeDefinitionChangedHandlerTest {
 	@Test
 	public void testHandleEventWhenElementIsNotMApplication() throws Exception {
 		// given
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		HashMap<String, Object> params = new HashMap<>();
 		params.put(IEventBroker.DATA, MBasicFactory.INSTANCE.createWindow());
 
 		Event event = new Event("topic", params);
@@ -139,7 +139,7 @@ public class ThemeDefinitionChangedHandlerTest {
 		application.getChildren().add(window1);
 		application.getChildren().add(window2);
 
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		HashMap<String, Object> params = new HashMap<>();
 		params.put(IEventBroker.DATA, application);
 
 		Event event = new Event("topic", params);

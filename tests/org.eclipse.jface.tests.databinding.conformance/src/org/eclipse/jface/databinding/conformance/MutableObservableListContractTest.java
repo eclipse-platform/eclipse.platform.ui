@@ -377,7 +377,7 @@ public class MutableObservableListContractTest extends
 			String methodName, IObservableList list, List newList) {
 		List oldList = new ArrayList(list);
 
-		List<IObservablesListener> queue = new ArrayList<IObservablesListener>();
+		List<IObservablesListener> queue = new ArrayList<>();
 		ListChangeEventTracker listListener = new ListChangeEventTracker(queue);
 		ChangeEventTracker changeListener = new ChangeEventTracker(queue);
 

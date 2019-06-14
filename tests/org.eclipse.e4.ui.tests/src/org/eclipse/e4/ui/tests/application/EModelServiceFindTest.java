@@ -195,7 +195,7 @@ public class EModelServiceFindTest {
 		EModelService modelService = application.getContext().get(EModelService.class);
 		assertNotNull(modelService);
 
-		List<String> tags = new ArrayList<String>();
+		List<String> tags = new ArrayList<>();
 		tags.add("oneValidTag");
 
 		List<MUIElement> oneTags = modelService.findElements(application, null, null, tags);
@@ -231,7 +231,7 @@ public class EModelServiceFindTest {
 		EModelService modelService = application.getContext().get(EModelService.class);
 		assertNotNull(modelService);
 
-		List<String> tags = new ArrayList<String>();
+		List<String> tags = new ArrayList<>();
 		tags.add("oneValidTag");
 
 		List<MPartSashContainer> idAndType = modelService.findElements(application, "twoValidIds",

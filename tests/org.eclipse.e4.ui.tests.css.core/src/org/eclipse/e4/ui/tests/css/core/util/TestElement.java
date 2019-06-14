@@ -33,7 +33,7 @@ public class TestElement extends ElementAdapter {
 	private final String typeName;
 	private String className;
 	private String id;
-	private Map<String, String> attrs = new HashMap<String, String>();
+	private Map<String, String> attrs = new HashMap<>();
 	private Node parentNode = null;
 	private List<Node> children = null;
 
@@ -124,7 +124,7 @@ public class TestElement extends ElementAdapter {
 	@Override
 	public Node appendChild(Node newChild) throws DOMException {
 		if (children == null) {
-			children = new ArrayList<Node>();
+			children = new ArrayList<>();
 		}
 		children.add(newChild);
 		return newChild;

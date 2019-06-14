@@ -139,7 +139,7 @@ public class WorkbenchConfigurerTest {
 	// tests to ensure that all WorkbenchAdvisor API is called from the UI thread.
 	@Test
 	public void testThreading() {
-		final ArrayList<Exception> results = new ArrayList<Exception>();
+		final ArrayList<Exception> results = new ArrayList<>();
 
 		WorkbenchAdvisor advisor = new RCPTestWorkbenchAdvisor(1) {
 

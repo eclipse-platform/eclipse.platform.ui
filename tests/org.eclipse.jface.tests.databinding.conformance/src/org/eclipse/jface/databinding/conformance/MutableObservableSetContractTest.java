@@ -190,7 +190,7 @@ public class MutableObservableSetContractTest extends
 	 */
 	private void assertSetChangeEventFired(Runnable runnable,
 			String methodName, IObservableSet set) {
-		List<IObservablesListener> queue = new ArrayList<IObservablesListener>();
+		List<IObservablesListener> queue = new ArrayList<>();
 		SetChangeEventTracker setListener = new SetChangeEventTracker(queue);
 		ChangeEventTracker changeListener = new ChangeEventTracker(queue);
 
