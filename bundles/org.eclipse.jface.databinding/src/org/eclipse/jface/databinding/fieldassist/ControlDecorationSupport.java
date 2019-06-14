@@ -384,7 +384,7 @@ public class ControlDecorationSupport {
 		this.targets = targetsToBeDecorated;
 		Assert.isTrue(!this.targets.isDisposed());
 
-		this.targetDecorations = new ArrayList<TargetDecoration>();
+		this.targetDecorations = new ArrayList<>();
 
 		validationStatus.addDisposeListener(disposeListener);
 		validationStatus.addValueChangeListener(statusChangeListener);

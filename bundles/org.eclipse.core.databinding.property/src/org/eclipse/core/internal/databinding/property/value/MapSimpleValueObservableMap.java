@@ -392,7 +392,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 	}
 
 	private Set<K> keysFor(I value) {
-		Set<K> keys = new IdentitySet<K>();
+		Set<K> keys = new IdentitySet<>();
 
 		for (Map.Entry<K, I> entry : masterMap.entrySet()) {
 			if (entry.getValue() == value) {

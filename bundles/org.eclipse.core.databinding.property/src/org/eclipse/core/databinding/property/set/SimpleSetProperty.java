@@ -101,7 +101,7 @@ public abstract class SimpleSetProperty<S, E> extends SetProperty<S, E> {
 
 	@Override
 	protected void doUpdateSet(S source, SetDiff<E> diff) {
-		Set<E> set = new HashSet<E>(doGetSet(source));
+		Set<E> set = new HashSet<>(doGetSet(source));
 		diff.applyTo(set);
 		doSetSet(source, set, diff);
 	}

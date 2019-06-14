@@ -173,7 +173,7 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		getterCalled();
-		HashSet<E> set = new HashSet<E>(wrappedSet);
+		HashSet<E> set = new HashSet<>(wrappedSet);
 		boolean changed = set.addAll(c);
 		if (changed) {
 			SetDiff<E> diff = Diffs.computeSetDiff(wrappedSet, set);
@@ -191,7 +191,7 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 			return;
 		SetDiff<E> diff = Diffs.createSetDiff(Collections.<E> emptySet(),
 				wrappedSet);
-		wrappedSet = new HashSet<E>();
+		wrappedSet = new HashSet<>();
 		updateTargetSet(diff);
 		fireSetChange(diff);
 	}
@@ -242,7 +242,7 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		getterCalled();
-		Set<E> set = new HashSet<E>(wrappedSet);
+		Set<E> set = new HashSet<>(wrappedSet);
 		boolean changed = set.removeAll(c);
 		if (changed) {
 			SetDiff<E> diff = Diffs.computeSetDiff(wrappedSet, set);
@@ -256,7 +256,7 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		getterCalled();
-		Set<E> set = new HashSet<E>(wrappedSet);
+		Set<E> set = new HashSet<>(wrappedSet);
 		boolean changed = set.retainAll(c);
 		if (changed) {
 			SetDiff<E> diff = Diffs.computeSetDiff(wrappedSet, set);

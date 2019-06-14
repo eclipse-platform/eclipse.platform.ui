@@ -195,7 +195,7 @@ import com.ibm.icu.text.NumberFormat;
 			// integer values
 			NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
-			converterMap = new HashMap<Pair, Object>();
+			converterMap = new HashMap<>();
 			// Standard and Boxed Types
 			converterMap
 					.put(

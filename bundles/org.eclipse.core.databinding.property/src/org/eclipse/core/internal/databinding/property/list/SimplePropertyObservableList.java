@@ -219,7 +219,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		getterCalled();
 		return new Iterator<E>() {
 			int expectedModCount = simplePropertyModCount;
-			List<E> list = new ArrayList<E>(getList());
+			List<E> list = new ArrayList<>(getList());
 			ListIterator<E> iterator = list.listIterator();
 
 			E lastElement = null;
@@ -315,7 +315,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		getterCalled();
 		return new ListIterator<E>() {
 			int expectedModCount = simplePropertyModCount;
-			List<E> list = new ArrayList<E>(getList());
+			List<E> list = new ArrayList<>(getList());
 			ListIterator<E> iterator = list.listIterator(index);
 
 			E lastElement = null;
@@ -506,7 +506,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		if (list.isEmpty())
 			return false;
 
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>();
+		List<ListDiffEntry<E>> entries = new ArrayList<>();
 		for (ListIterator<E> it = list.listIterator(); it.hasNext();) {
 			int index = it.nextIndex() - entries.size();
 			E element = it.next();
@@ -537,7 +537,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 			return true;
 		}
 
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>();
+		List<ListDiffEntry<E>> entries = new ArrayList<>();
 		for (ListIterator<E> it = list.listIterator(); it.hasNext();) {
 			int index = it.nextIndex() - entries.size();
 			E element = it.next();
@@ -563,7 +563,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		if (list.isEmpty())
 			return;
 
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>();
+		List<ListDiffEntry<E>> entries = new ArrayList<>();
 		for (ListIterator<E> it = list.listIterator(list.size()); it.hasPrevious();) {
 			// always report 0 as the remove index
 			int index = it.previousIndex();
@@ -578,7 +578,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	private void notifyIfChanged(ListDiff<E> diff) {
 		if (hasListeners()) {
 			List<E> oldList = cachedList;
-			List<E> newList = cachedList = new ArrayList<E>(getList());
+			List<E> newList = cachedList = new ArrayList<>(getList());
 			if (diff == null)
 				diff = Diffs.computeListDiff(oldList, newList);
 			if (!diff.isEmpty() || stale) {

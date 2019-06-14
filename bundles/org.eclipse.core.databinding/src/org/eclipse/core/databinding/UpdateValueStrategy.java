@@ -480,7 +480,7 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 
 	private static class ValidatorRegistry {
 
-		private Map<Pair, IValidator<?>> validators = new HashMap<Pair, IValidator<?>>();
+		private Map<Pair, IValidator<?>> validators = new HashMap<>();
 
 		/**
 		 * Adds the system-provided validators to the current validator

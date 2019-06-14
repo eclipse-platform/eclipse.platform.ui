@@ -255,10 +255,10 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 
 		Map<K, V> map = getMap();
 
-		Map<K, V> oldValues = new HashMap<K, V>();
-		Map<K, V> newValues = new HashMap<K, V>();
-		Set<K> changedKeys = new HashSet<K>();
-		Set<K> addedKeys = new HashSet<K>();
+		Map<K, V> oldValues = new HashMap<>();
+		Map<K, V> newValues = new HashMap<>();
+		Set<K> changedKeys = new HashSet<>();
+		Set<K> addedKeys = new HashSet<>();
 		for (Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
 			K key = entry.getKey();
 			V newValue = entry.getValue();
@@ -318,7 +318,7 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	private void notifyIfChanged(MapDiff<K, V> diff) {
 		if (hasListeners()) {
 			Map<K, V> oldMap = cachedMap;
-			Map<K, V> newMap = cachedMap = new HashMap<K, V>(getMap());
+			Map<K, V> newMap = cachedMap = new HashMap<>(getMap());
 			if (diff == null)
 				diff = Diffs.computeMapDiff(oldMap, newMap);
 			if (!diff.isEmpty() || stale) {

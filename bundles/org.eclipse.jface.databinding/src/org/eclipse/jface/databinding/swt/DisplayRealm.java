@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class DisplayRealm extends Realm {
 
-	private static List<DisplayRealm> realms = new ArrayList<DisplayRealm>();
+	private static List<DisplayRealm> realms = new ArrayList<>();
 
 	/**
 	 * Returns the realm representing the UI thread for the given display.
