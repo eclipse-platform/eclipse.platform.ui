@@ -12,3 +12,4 @@ Snap.*
 # maven
 /*/*/target/
 /bundles/org.eclipse.core.filesystem/fragments/*/target/
+/target/

@@ -21,6 +21,7 @@
   <properties>
     <!-- This tests aren't run by legacy build -->
     <skipTests>true</skipTests>
+    <skipAPIAnalysis>true</skipAPIAnalysis>
   </properties>
 
   <groupId>org.eclipse.core</groupId>
