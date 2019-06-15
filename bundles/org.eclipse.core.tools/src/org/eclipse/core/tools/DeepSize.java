@@ -138,8 +138,9 @@ public class DeepSize {
 	 */
 	public void printSizeReport() {
 		System.out.println("*** Begin DeepSize report ***"); //$NON-NLS-1$
-		for (Object clazz : sizes.keySet()) {
-			int size = sizes.get(clazz).intValue();
+		for (java.util.Map.Entry<Object, Integer> entry : sizes.entrySet()) {
+			Object clazz = entry.getKey();
+			int size = entry.getValue().intValue();
 			System.out.println('\t' + clazz.getClass().getName() + " size: " + size); //$NON-NLS-1$
 			System.out.println("Total size of all objects: " + getSize()); //$NON-NLS-1$
 		}
