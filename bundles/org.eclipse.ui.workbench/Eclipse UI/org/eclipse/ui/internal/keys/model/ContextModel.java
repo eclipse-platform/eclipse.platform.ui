@@ -131,7 +131,7 @@ public class ContextModel extends CommonModel {
 
 			if (removeContext) {
 				contextIdToFilteredContexts.put(contextElement.getId(), contextElement);
-				contextIdToElement.remove(contextElement);
+				contextIdToElement.remove(contextElement.getId());
 			}
 		}
 
