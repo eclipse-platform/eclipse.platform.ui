@@ -315,7 +315,11 @@ public class PropertySheet extends PageBookView
 	}
 
 	/**
-	 * TODO some documentation
+	 * Creates and returns a default properties page for this view. This page is
+	 * used when a part does not provide a IPropertySheetPage
+	 *
+	 * @param book the pagebook control
+	 * @return A default properties page
 	 *
 	 * @since 3.10
 	 */
@@ -466,18 +470,21 @@ public class PropertySheet extends PageBookView
 			return;
 		}
 
+		if (!isImportant(part)) {
+			return;
+		}
+
 		IContributedContentsView view = Adapters.adapt(part, IContributedContentsView.class);
 		IWorkbenchPart source = null;
 		if (view != null) {
 			source = view.getContributingPart();
 		}
-		if (source == null) {
+
+		if (source != null && !isImportant(source)) {
+			return;
+		} else if (source == null) {
 			source = part;
 		}
-
-//		if (!isImportant(source)) {
-//			return;
-//		}
 
 		if (wasHidden) {
 			IWorkbenchPartSite site = getSite();
