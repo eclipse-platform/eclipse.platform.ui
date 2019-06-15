@@ -1570,11 +1570,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		Throwable t;
 		try {
 			return job.shouldRun();
-		} catch (Exception e) {
-			t = e;
-		} catch (LinkageError e) {
-			t = e;
-		} catch (AssertionError e) {
+		} catch (Exception | LinkageError | AssertionError e) {
 			t = e;
 		}
 		RuntimeLog.log(new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, "Error invoking shouldRun() method on: " + job, t)); //$NON-NLS-1$

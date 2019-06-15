@@ -90,9 +90,7 @@ public class LockManager {
 			return;
 		try {
 			lockListener.aboutToRelease();
-		} catch (Exception e) {
-			handleException(e);
-		} catch (LinkageError e) {
+		} catch (Exception | LinkageError e) {
 			handleException(e);
 		}
 	}
@@ -102,9 +100,7 @@ public class LockManager {
 			return true;
 		try {
 			return lockListener.canBlock();
-		} catch (Exception e) {
-			handleException(e);
-		} catch (LinkageError e) {
+		} catch (Exception | LinkageError e) {
 			handleException(e);
 		}
 		return false;
@@ -115,9 +111,7 @@ public class LockManager {
 			return false;
 		try {
 			return lockListener.aboutToWait(lockOwner);
-		} catch (Exception e) {
-			handleException(e);
-		} catch (LinkageError e) {
+		} catch (Exception | LinkageError e) {
 			handleException(e);
 		}
 		return false;

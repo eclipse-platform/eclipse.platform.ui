@@ -51,10 +51,7 @@ public class ClassRequestor extends Requestor<Class<?>> {
 			Field field = null;
 			try {
 				field = ClassRequestor.class.getField("pseudoVariable"); //$NON-NLS-1$
-			} catch (SecurityException e) {
-				e.printStackTrace(); // tested - not going to happen
-				return null;
-			} catch (NoSuchFieldException e) {
+			} catch (SecurityException | NoSuchFieldException e) {
 				e.printStackTrace(); // tested - not going to happen
 				return null;
 			}

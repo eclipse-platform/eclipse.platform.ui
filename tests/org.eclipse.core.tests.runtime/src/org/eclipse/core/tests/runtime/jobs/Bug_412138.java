@@ -112,10 +112,7 @@ public class Bug_412138 extends TestCase {
 				AssertionFailedError e = (AssertionFailedError) stream.readObject();
 				stream.close();
 				throw e;
-			} catch (IOException e) {
-				// re-throw since file existence already says the test failed
-				throw e;
-			} catch (ClassNotFoundException e) {
+			} catch (IOException | ClassNotFoundException e) {
 				// re-throw since file existence already says the test failed
 				throw e;
 			} finally {

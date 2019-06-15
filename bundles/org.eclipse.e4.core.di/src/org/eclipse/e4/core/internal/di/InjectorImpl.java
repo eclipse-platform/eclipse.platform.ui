@@ -223,9 +223,7 @@ public class InjectorImpl implements IInjector {
 					}
 				}
 			}
-		} catch (NoClassDefFoundError e) {
-			throw new InjectionException(e);
-		} catch (NoSuchMethodError e) {
+		} catch (NoClassDefFoundError | NoSuchMethodError e) {
 			throw new InjectionException(e);
 		}
 	}

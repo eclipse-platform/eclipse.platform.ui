@@ -237,9 +237,7 @@ public class CoreTest extends TestCase {
 				String result = new BufferedReader(new InputStreamReader(p.getErrorStream())).readLine();
 				assertEquals("createSymLink: " + result + ", exitcode", 0, exitcode);
 			}
-		} catch (IOException e) {
-			fail("createSymLink", e);
-		} catch (InterruptedException e) {
+		} catch (IOException | InterruptedException e) {
 			fail("createSymLink", e);
 		}
 	}

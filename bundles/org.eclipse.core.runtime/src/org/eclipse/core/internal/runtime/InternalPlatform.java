@@ -438,8 +438,6 @@ public final class InternalPlatform {
 			try {
 				URL url = new URL("platform:/base/" + PLUGIN_PATH); //$NON-NLS-1$
 				input = url.openStream();
-			} catch (MalformedURLException e) {
-				//fall through
 			} catch (IOException e) {
 				//fall through
 			}

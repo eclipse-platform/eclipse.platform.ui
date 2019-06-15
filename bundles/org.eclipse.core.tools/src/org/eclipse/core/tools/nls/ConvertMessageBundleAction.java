@@ -56,11 +56,7 @@ public class ConvertMessageBundleAction implements IObjectActionDelegate {
 			MessageBundleRefactoring refactoring = new MessageBundleRefactoring(fAccessorUnit.getTypes()[0], propertiesFile);
 			PerformRefactoringOperation op = new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 			PlatformUI.getWorkbench().getProgressService().run(false, false, new WorkbenchRunnableAdapter(op));
-		} catch (CoreException e) {
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
+		} catch (CoreException | InterruptedException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 

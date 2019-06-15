@@ -133,9 +133,7 @@ public class PropertyTesterTests extends TestCase {
 			boolean exception= false;
 			try {
 				p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (CoreException e) {
-				exception= true;
-			} catch (InvalidRegistryObjectException e) {
+			} catch (CoreException | InvalidRegistryObjectException e) {
 				// The uninstall events are sent out in a separate thread.
 				// So the type extension registry might not be flushed even
 				// though the bundle has already been uninstalled.

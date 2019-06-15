@@ -46,9 +46,7 @@ public class TestBug388004 extends TestCase {
 			// add pluginCustomization argument
 			Setup setup = suite.getSetup();
 			setup.setEclipseArgument("pluginCustomization", file.toString());
-		} catch (IOException e) {
-			// ignore, the test will fail for us
-		} catch (SetupException e) {
+		} catch (IOException | SetupException e) {
 			// ignore, the test will fail for us
 		}
 		suite.addTest(new TestBug388004("testBug"));

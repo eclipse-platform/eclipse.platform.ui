@@ -63,13 +63,11 @@ public class Worker extends Thread {
 					result = currentJob.run(monitor);
 				} catch (OperationCanceledException e) {
 					result = Status.CANCEL_STATUS;
-				} catch (Exception e) {
-					result = handleException(currentJob, e);
 				} catch (ThreadDeath e) {
 					// must not consume thread death
 					result = handleException(currentJob, e);
 					throw e;
-				} catch (Error e) {
+				} catch (Exception | Error e) {
 					result = handleException(currentJob, e);
 				} finally {
 					if (result != Job.ASYNC_FINISH && monitor != null) {

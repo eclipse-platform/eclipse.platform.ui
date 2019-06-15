@@ -157,10 +157,7 @@ public class ProcessController {
 						}
 					}
 					out.flush();
-				} catch (IOException ioe) {
-					//TODO only log/show if debug is on
-					ioe.printStackTrace();
-				} catch (InterruptedException e) {
+				} catch (IOException | InterruptedException e) {
 					//TODO only log/show if debug is on
 					e.printStackTrace();
 				}

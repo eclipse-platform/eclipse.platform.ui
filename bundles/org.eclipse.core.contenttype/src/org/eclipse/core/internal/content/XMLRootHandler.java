@@ -111,9 +111,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 			//	be sure validation is "off" or the feature to ignore DTD's will not apply
 			reader.setFeature("http://xml.org/sax/features/validation", false); //$NON-NLS-1$
 			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
-		} catch (SAXNotRecognizedException e) {
-			// not a big deal if the parser does not recognize the features
-		} catch (SAXNotSupportedException e) {
+		} catch (SAXNotRecognizedException | SAXNotSupportedException e) {
 			// not a big deal if the parser does not support the features
 		}
 		return parser;

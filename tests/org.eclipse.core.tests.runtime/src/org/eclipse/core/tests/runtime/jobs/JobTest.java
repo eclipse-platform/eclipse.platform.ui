@@ -505,9 +505,7 @@ public class JobTest extends AbstractJobTest {
 		try {
 			Thread.sleep(1000);
 			Job.getJobManager().join(this, null);
-		} catch (OperationCanceledException e) {
-			fail("4.99", e);
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			fail("4.99", e);
 		}
 		assertNull(failure[0], failure[0]);
@@ -639,9 +637,7 @@ public class JobTest extends AbstractJobTest {
 			}
 			try {
 				Job.getJobManager().join(this, null);
-			} catch (OperationCanceledException e) {
-				fail("4.99", e);
-			} catch (InterruptedException e) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				fail("4.99", e);
 			}
 			assertFalse("1.0", failure[0]);
@@ -1033,9 +1029,7 @@ public class JobTest extends AbstractJobTest {
 		try {
 			Job.getJobManager().setLockListener(lockListener);
 			testJob.join();
-		} catch (OperationCanceledException e) {
-			fail("4.99", e);
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			fail("4.99", e);
 		} finally {
 			Job.getJobManager().setLockListener(null);
@@ -1084,9 +1078,7 @@ public class JobTest extends AbstractJobTest {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					this.join();
-				} catch (RuntimeException e) {
-					failure[0] = e;
-				} catch (InterruptedException e) {
+				} catch (RuntimeException | InterruptedException e) {
 					failure[0] = e;
 				}
 				return Status.OK_STATUS;
