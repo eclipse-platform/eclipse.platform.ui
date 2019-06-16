@@ -45,7 +45,7 @@ public class SizeCacheTest {
 			;
 	private Font font;
 	// change this to true if you want to see test is slow motion
-	private boolean humanWatching = Boolean.valueOf(System.getProperty("junit.human.watching"));
+	private boolean humanWatching = Boolean.parseBoolean(System.getProperty("junit.human.watching"));
 	private SizeCache sizeCache;
 	private Control control;
 	private Point expectedSize;

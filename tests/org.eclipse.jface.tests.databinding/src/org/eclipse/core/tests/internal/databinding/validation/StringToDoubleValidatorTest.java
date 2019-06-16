@@ -30,7 +30,7 @@ public class StringToDoubleValidatorTest extends
 
 	@Override
 	protected Number getInRangeNumber() {
-		return new Double(1);
+		return Double.valueOf(1);
 	}
 
 	@Override

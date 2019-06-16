@@ -30,12 +30,12 @@ public class StringToNumberParserFloatTest extends
 
 	@Override
 	protected Number getValidMax() {
-		return new Float(Float.MAX_VALUE);
+		return Float.valueOf(Float.MAX_VALUE);
 	}
 
 	@Override
 	protected Number getValidMin() {
-		return new Float(-Float.MAX_VALUE);
+		return Float.valueOf(-Float.MAX_VALUE);
 	}
 
 }

@@ -79,7 +79,7 @@ public class Adventure extends ModelObject {
 	public void setPrice(double d) {
 		double oldValue = price;
 		price = d;
-		firePropertyChange("price", new Double(oldValue), new Double(price));
+		firePropertyChange("price", Double.valueOf(oldValue), Double.valueOf(price));
 	}
 
 	public double getPrice() {

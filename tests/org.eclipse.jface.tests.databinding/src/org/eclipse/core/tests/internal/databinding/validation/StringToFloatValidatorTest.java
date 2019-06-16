@@ -28,7 +28,7 @@ public class StringToFloatValidatorTest extends
 
 	@Override
 	protected Number getInRangeNumber() {
-		return new Float(1);
+		return Float.valueOf(1);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class StringToFloatValidatorTest extends
 
 	@Override
 	protected Number getOutOfRangeNumber() {
-		return new Double(Double.MAX_VALUE);
+		return Double.valueOf(Double.MAX_VALUE);
 	}
 
 	@Override

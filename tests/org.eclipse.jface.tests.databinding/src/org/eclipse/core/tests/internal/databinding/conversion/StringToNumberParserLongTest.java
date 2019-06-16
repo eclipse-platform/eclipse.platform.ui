@@ -30,11 +30,11 @@ public class StringToNumberParserLongTest extends
 
 	@Override
 	protected Number getValidMax() {
-		return new Long(Long.MAX_VALUE);
+		return Long.valueOf(Long.MAX_VALUE);
 	}
 
 	@Override
 	protected Number getValidMin() {
-		return new Long(Long.MIN_VALUE);
+		return Long.valueOf(Long.MIN_VALUE);
 	}
 }

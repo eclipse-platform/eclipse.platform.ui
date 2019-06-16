@@ -48,6 +48,6 @@ public class StringToIntegerValidatorTest extends
 
 	@Override
 	protected Number getOutOfRangeNumber() {
-		return new Double(Double.MAX_VALUE);
+		return Double.valueOf(Double.MAX_VALUE);
 	}
 }

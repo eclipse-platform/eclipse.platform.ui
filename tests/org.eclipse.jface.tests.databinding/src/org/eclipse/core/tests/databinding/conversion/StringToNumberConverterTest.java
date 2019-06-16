@@ -144,7 +144,7 @@ public class StringToNumberConverterTest {
 
 	@Test
 	public void testConvertsToDouble() throws Exception {
-		Double input = new Double(1000);
+		Double input = Double.valueOf(1000);
 
 		StringToNumberConverter<Double> converter = StringToNumberConverter.toDouble(false);
 		Double result = converter.convert(numberFormat.format(input.doubleValue()));
@@ -154,7 +154,7 @@ public class StringToNumberConverterTest {
 
 	@Test
 	public void testConvertsToLong() throws Exception {
-		Long input = new Long(1000);
+		Long input = Long.valueOf(1000);
 
 		StringToNumberConverter<Long> converter = StringToNumberConverter.toLong(false);
 		Long result = converter.convert(numberIntegerFormat.format(input.longValue()));
@@ -164,7 +164,7 @@ public class StringToNumberConverterTest {
 
 	@Test
 	public void testConvertsToFloat() throws Exception {
-		Float input = new Float(1000);
+		Float input = Float.valueOf(1000);
 
 		StringToNumberConverter<Float> converter = StringToNumberConverter.toFloat(false);
 		Float result = converter.convert(numberFormat.format(input.floatValue()));
@@ -183,7 +183,7 @@ public class StringToNumberConverterTest {
 
 	@Test
 	public void testConvertsToDoublePrimitive() throws Exception {
-		Double input = new Double(1000);
+		Double input = Double.valueOf(1000);
 
 		StringToNumberConverter<Double> converter = StringToNumberConverter.toDouble(true);
 		Double result = converter.convert(numberFormat.format(input.doubleValue()));
@@ -193,7 +193,7 @@ public class StringToNumberConverterTest {
 
 	@Test
 	public void testConvertsToLongPrimitive() throws Exception {
-		Long input = new Long(1000);
+		Long input = Long.valueOf(1000);
 
 		StringToNumberConverter<Long> converter = StringToNumberConverter.toLong(true);
 		Long result = converter.convert(numberIntegerFormat.format(input.longValue()));
@@ -203,7 +203,7 @@ public class StringToNumberConverterTest {
 
 	@Test
 	public void testConvertsToFloatPrimitive() throws Exception {
-		Float input = new Float(1000);
+		Float input = Float.valueOf(1000);
 
 		StringToNumberConverter<Float> converter = StringToNumberConverter.toFloat(true);
 		Float result = converter.convert(numberFormat.format(input.floatValue()));

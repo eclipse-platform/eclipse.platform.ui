@@ -117,7 +117,7 @@ public class TestMemento implements IMemento {
 
 	@Override
 	public void putFloat(String key, float value) {
-		values.put(key,new Float(value));
+		values.put(key,Float.valueOf(value));
 	}
 
 	@Override

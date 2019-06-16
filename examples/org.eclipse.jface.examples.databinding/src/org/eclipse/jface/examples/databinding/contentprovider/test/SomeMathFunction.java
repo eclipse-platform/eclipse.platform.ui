@@ -106,9 +106,9 @@ public class SomeMathFunction<K> extends ComputedObservableMap<K, Double> {
 		case OP_IDENTITY:
 			return (Double) element;
 		case OP_MULTIPLY:
-			return new Double((((Double) element).doubleValue() * 2.0));
+			return Double.valueOf((((Double) element).doubleValue() * 2.0));
 		case OP_ROUND:
-			return new Double(Math.floor((((Double) element).doubleValue())));
+			return Double.valueOf(Math.floor((((Double) element).doubleValue())));
 		}
 		return (Double) element;
 	}

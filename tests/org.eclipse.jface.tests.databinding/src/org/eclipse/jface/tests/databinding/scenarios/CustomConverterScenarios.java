@@ -80,10 +80,10 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 		// spinEventLoop(1);
 		// Make sure that the selection on the spinner_dollars matches the
 		// dollars of the price
-		assertEquals(spinner_dollars.getSelection(), new Double(skiTrip.getPrice()).intValue());
+		assertEquals(spinner_dollars.getSelection(), Double.valueOf(skiTrip.getPrice()).intValue());
 		// Make sure that the selection on the spinner_cents matches the dollars
 		// of the price
-		Double doublePrice = new Double(skiTrip.getPrice());
+		Double doublePrice = Double.valueOf(skiTrip.getPrice());
 		double cents = 100 * doublePrice.doubleValue() - 100 * doublePrice.intValue();
 		assertEquals(spinner_cents.getSelection(), (int) cents);
 

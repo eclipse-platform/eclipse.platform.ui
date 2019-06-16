@@ -89,25 +89,25 @@ public class IdentityConverterTest {
 	@Test
 	public void testConvert_PrimitiveToBoxed() throws Exception {
 		IdentityConverter p2b = new IdentityConverter(Float.TYPE, Float.class);
-		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
+		assertEquals("4.2", Float.valueOf((float) 4.2), p2b.convert(Float.valueOf((float) 4.2)));
 	}
 
 	@Test
 	public void testConvert_BoxedToPrimitive() throws Exception {
 		IdentityConverter p2b = new IdentityConverter(Float.class, Float.TYPE);
-		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
+		assertEquals("4.2", Float.valueOf((float) 4.2), p2b.convert(Float.valueOf((float) 4.2)));
 	}
 
 	@Test
 	public void testConvert_PrimitiveToPrimitive() throws Exception {
 		IdentityConverter p2b = new IdentityConverter(Float.TYPE, Float.TYPE);
-		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
+		assertEquals("4.2", Float.valueOf((float) 4.2), p2b.convert(Float.valueOf((float) 4.2)));
 	}
 
 	@Test
 	public void testConvert_BoxedToBoxed() throws Exception {
 		IdentityConverter p2b = new IdentityConverter(Float.class, Float.class);
-		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
+		assertEquals("4.2", Float.valueOf((float) 4.2), p2b.convert(Float.valueOf((float) 4.2)));
 	}
 
 	public static class Person {

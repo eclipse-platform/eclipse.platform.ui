@@ -37,7 +37,7 @@ public class Transportation extends ModelObject {
 	public void setPrice(double aPrice) {
 		double oldPrice = price;
 		price = aPrice;
-		firePropertyChange("price",new Double(oldPrice),new Double(price));
+		firePropertyChange("price",Double.valueOf(oldPrice),Double.valueOf(price));
 	}
 
 }

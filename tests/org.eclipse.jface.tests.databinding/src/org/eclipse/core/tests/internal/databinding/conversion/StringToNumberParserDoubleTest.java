@@ -30,11 +30,11 @@ public class StringToNumberParserDoubleTest extends
 
 	@Override
 	protected Number getValidMax() {
-		return new Double(Double.MAX_VALUE);
+		return Double.valueOf(Double.MAX_VALUE);
 	}
 
 	@Override
 	protected Number getValidMin() {
-		return new Double(-Double.MAX_VALUE);
+		return Double.valueOf(-Double.MAX_VALUE);
 	}
 }

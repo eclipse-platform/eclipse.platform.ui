@@ -29,11 +29,11 @@ public class StringToNumberParserShortTest extends StringToNumberParserTestHarne
 
 	@Override
 	protected Number getValidMax() {
-		return new Short(Short.MAX_VALUE);
+		return Short.valueOf(Short.MAX_VALUE);
 	}
 
 	@Override
 	protected Number getValidMin() {
-		return new Short(Short.MIN_VALUE);
+		return Short.valueOf(Short.MIN_VALUE);
 	}
 }

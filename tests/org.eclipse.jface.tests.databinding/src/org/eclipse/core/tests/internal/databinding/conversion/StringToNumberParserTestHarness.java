@@ -98,48 +98,44 @@ public abstract class StringToNumberParserTestHarness {
 		}
 
 		// test floats
-		assertTrue("valid float", assertValid(new Float(1)));
-		result = assertValid(new Float(-Float.MAX_VALUE));
+		assertTrue("valid float", assertValid(Float.valueOf(1)));
+		result = assertValid(Float.valueOf(-Float.MAX_VALUE));
 		if (minDouble > -Float.MAX_VALUE) {
 			assertFalse("invalid float min", result);
 		} else {
 			assertTrue("valid float min", result);
 		}
 
-		result = assertValid(new Float(Float.MAX_VALUE));
+		result = assertValid(Float.valueOf(Float.MAX_VALUE));
 		if (maxDouble < Float.MAX_VALUE) {
 			assertFalse("invalid float max", result);
 		} else {
 			assertTrue("valid float max", result);
 		}
 
-		assertFalse("invalid negative float infinity", assertValid(new Float(
-				Float.NEGATIVE_INFINITY)));
-		assertFalse("invalid positive float infinity", assertValid(new Float(
-				Float.POSITIVE_INFINITY)));
-		assertFalse("invalid float NaN", assertValid(new Float(Float.NaN)));
+		assertFalse("invalid negative float infinity", assertValid(Float.valueOf(Float.NEGATIVE_INFINITY)));
+		assertFalse("invalid positive float infinity", assertValid(Float.valueOf(Float.POSITIVE_INFINITY)));
+		assertFalse("invalid float NaN", assertValid(Float.valueOf(Float.NaN)));
 
 		// test doubles
-		assertTrue("valid double", assertValid(new Double(1)));
-		result = assertValid(new Double(-Double.MAX_VALUE));
+		assertTrue("valid double", assertValid(Double.valueOf(1)));
+		result = assertValid(Double.valueOf(-Double.MAX_VALUE));
 		if (minDouble > -Double.MAX_VALUE) {
 			assertFalse("invalid double min", result);
 		} else {
 			assertTrue("valid double min", result);
 		}
 
-		result = assertValid(new Double(Double.MAX_VALUE));
+		result = assertValid(Double.valueOf(Double.MAX_VALUE));
 		if (maxDouble < Double.MAX_VALUE) {
 			assertFalse("invalid float max", result);
 		} else {
 			assertTrue("valid float max", result);
 		}
 
-		assertFalse("invalid negative double infinity", assertValid(new Double(
-				Double.NEGATIVE_INFINITY)));
-		assertFalse("invalid positive double infinity", assertValid(new Double(
-				Double.POSITIVE_INFINITY)));
-		assertFalse("invalid double NaN", assertValid(new Double(Double.NaN)));
+		assertFalse("invalid negative double infinity", assertValid(Double.valueOf(Double.NEGATIVE_INFINITY)));
+		assertFalse("invalid positive double infinity", assertValid(Double.valueOf(Double.POSITIVE_INFINITY)));
+		assertFalse("invalid double NaN", assertValid(Double.valueOf(Double.NaN)));
 
 		// test BigIntegers
 		assertTrue("valid BigInteger", assertValid(BigInteger.valueOf(1)));

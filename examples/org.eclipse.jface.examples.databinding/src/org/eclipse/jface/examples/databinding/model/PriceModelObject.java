@@ -30,7 +30,7 @@ public class PriceModelObject extends ModelObject {
 		price = aPrice;
 		firePropertyChange("dollars",oldDollars,getDollars());
 		firePropertyChange("cents",oldCents,getCents());
-		firePropertyChange("price",new Double(oldValue), new Double(price));
+		firePropertyChange("price",Double.valueOf(oldValue), Double.valueOf(price));
 	}
 
 	public double getPrice(){
@@ -46,11 +46,11 @@ public class PriceModelObject extends ModelObject {
 		int oldCents = getCents();
 		price = getDollars() + cents *.01;
 		firePropertyChange("cents",oldCents,getCents());
-		firePropertyChange("price", new Double(oldPrice), new Double(price));
+		firePropertyChange("price", Double.valueOf(oldPrice), Double.valueOf(price));
 	}
 
 	public int getDollars(){
-		return new Double(price).intValue();
+		return Double.valueOf(price).intValue();
 	}
 
 	public void setDollars(int dollars){
@@ -58,7 +58,7 @@ public class PriceModelObject extends ModelObject {
 		int oldDollars = getDollars();
 		price = dollars + getCents() *.01;
 		firePropertyChange("dollars",oldDollars,getDollars());
-		firePropertyChange("price", new Double(oldPrice), new Double(price));
+		firePropertyChange("price", Double.valueOf(oldPrice), Double.valueOf(price));
 	}
 
 }

@@ -309,11 +309,11 @@ public class XMLMementoTest extends TestCase {
 	public void testPutAndGetFloat() throws WorkbenchException, IOException {
 		final String key = "key";
 
-		final Float[] values = new Float[] { new Float(-3.1415), new Float(1),
-				new Float(0), new Float(4554.45235),
-				new Float(Float.MAX_VALUE), new Float(Float.MIN_VALUE),
-				new Float(Float.NaN), new Float(Float.POSITIVE_INFINITY),
-				new Float(Float.NEGATIVE_INFINITY) };
+		final Float[] values = new Float[] { Float.valueOf((float) -3.1415), Float.valueOf(1),
+				Float.valueOf(0), Float.valueOf((float) 4554.45235),
+				Float.valueOf(Float.MAX_VALUE), Float.valueOf(Float.MIN_VALUE),
+				Float.valueOf(Float.NaN), Float.valueOf(Float.POSITIVE_INFINITY),
+				Float.valueOf(Float.NEGATIVE_INFINITY) };
 
 		for (final Float value : values) {
 			testPutAndGet(new MementoChecker() {

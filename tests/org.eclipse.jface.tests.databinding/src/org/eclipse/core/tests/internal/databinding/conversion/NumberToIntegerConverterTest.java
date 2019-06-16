@@ -33,7 +33,7 @@ public class NumberToIntegerConverterTest extends NumberToNumberTestHarness {
 
 	@Override
 	protected Number doGetOutOfRangeNumber() {
-		return new Long((long) Integer.MAX_VALUE + 1);
+		return Long.valueOf((long) Integer.MAX_VALUE + 1);
 	}
 
 	@Override

@@ -86,7 +86,7 @@ public class NumberToStringConverterTest {
 
 	@Test
 	public void testConvertDoubleToString() throws Exception {
-		Double input = new Double(1000.1d);
+		Double input = Double.valueOf(1000.1d);
 		String expected = numberFormat.format(input.doubleValue());
 
 		NumberToStringConverter converter = NumberToStringConverter
@@ -97,7 +97,7 @@ public class NumberToStringConverterTest {
 
 	@Test
 	public void testConvertFloatToString() throws Exception {
-		Float input = new Float(1000.1f);
+		Float input = Float.valueOf(1000.1f);
 		String expected = numberFormat.format(input.floatValue());
 
 		NumberToStringConverter converter = NumberToStringConverter
@@ -108,7 +108,7 @@ public class NumberToStringConverterTest {
 
 	@Test
 	public void testConvertLongToString() throws Exception {
-		Long input = new Long(1000l);
+		Long input = Long.valueOf(1000l);
 		String expected = integerFormat.format(input.longValue());
 
 		NumberToStringConverter converter = NumberToStringConverter

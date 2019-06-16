@@ -28,7 +28,7 @@ public class StringToShortValidatorTest extends
 
 	@Override
 	protected Number getInRangeNumber() {
-		return new Short(Short.MAX_VALUE);
+		return Short.valueOf(Short.MAX_VALUE);
 	}
 
 	@Override

@@ -176,7 +176,7 @@ public class PropertySheetAuto extends UITestCase {
 				model = (String) value;
 			}
 			if (id.equals(ENGINE_SIZE)) {
-				engineSize = new Double((String) value).doubleValue();
+				engineSize = Double.parseDouble((String) value);
 			}
 		}
 

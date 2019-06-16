@@ -390,11 +390,11 @@ public class PropertyScenarios extends ScenariosTestCase {
 			@Override
 			public Object convert(Object fromObject) {
 				try {
-					return new Double(currencyFormat.parse((String) fromObject).doubleValue());
+					return Double.valueOf(currencyFormat.parse((String) fromObject).doubleValue());
 				} catch (ParseException e) {
 					// TODO throw something like
 					// IllegalConversionException?
-					return new Double(0);
+					return Double.valueOf(0);
 				}
 			}
 		};
