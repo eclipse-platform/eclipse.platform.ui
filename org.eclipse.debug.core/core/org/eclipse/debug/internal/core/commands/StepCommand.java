@@ -35,8 +35,8 @@ public abstract class StepCommand extends AbstractDebugCommand {
 
 	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-		for (int i = 0; i < targets.length; i++) {
-			step(targets[i]);
+		for (Object target : targets) {
+			step(target);
 		}
 	}
 
@@ -45,8 +45,8 @@ public abstract class StepCommand extends AbstractDebugCommand {
 	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest collector) throws CoreException {
 		if (isThreadCompatible(targets)) {
-			for (int i = 0; i < targets.length; i++) {
-				if (!isSteppable(targets[i])) {
+			for (Object target : targets) {
+				if (!isSteppable(target)) {
 					return false;
 				}
 			}
@@ -64,8 +64,7 @@ public abstract class StepCommand extends AbstractDebugCommand {
 		}
 		// check if frames from same thread
 		Set<IThread> threads = new HashSet<>(targets.length);
-		for (int i = 0; i < targets.length; i++) {
-			Object object = targets[i];
+		for (Object object : targets) {
 			IStackFrame frame = null;
 			if (object instanceof IStackFrame) {
 				frame = (IStackFrame) object;

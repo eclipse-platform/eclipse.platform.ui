@@ -72,8 +72,7 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 			return;
 		}
 		IStepFilters[] filters = (IStepFilters[]) target;
-		for (int i = 0; i < filters.length; i++) {
-			IStepFilters filter = filters[i];
+		for (IStepFilters filter : filters) {
 			filter.setStepFiltersEnabled(DebugPlugin.isUseStepFilters());
 		}
 	}
@@ -81,8 +80,7 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 	@Override
 	protected boolean isExecutable(Object target) {
 		IStepFilters[] filters = (IStepFilters[]) target;
-		for (int i = 0; i < filters.length; i++) {
-			IStepFilters filter = filters[i];
+		for (IStepFilters filter : filters) {
 			if (filter == null || !filter.supportsStepFilters()) {
 				return false;
 			}

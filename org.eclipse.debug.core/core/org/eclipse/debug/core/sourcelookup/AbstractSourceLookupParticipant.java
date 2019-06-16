@@ -58,9 +58,9 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 		String name = getSourceName(object);
 		if (name != null) {
 			ISourceContainer[] containers = getSourceContainers();
-			for (int i = 0; i < containers.length; i++) {
+			for (ISourceContainer c : containers) {
 				try {
-					ISourceContainer container = getDelegateContainer(containers[i]);
+					ISourceContainer container = getDelegateContainer(c);
 					if (container != null) {
 						Object[] objects = container.findSourceElements(name);
 						if (objects.length > 0) {

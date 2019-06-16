@@ -83,11 +83,11 @@ public class ConsolePatternMatcher implements IDocumentListener {
 				synchronized (fPatterns) {
 					patterns = fPatterns.toArray();
 				}
-				for (int i = 0; i < patterns.length; i++) {
+				for (Object pattern : patterns) {
 					if (monitor.isCanceled()) {
 						break;
 					}
-					CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns[i];
+					CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) pattern;
 					int baseOffset = notifier.end;
 					int lengthToSearch = endOfSearch - baseOffset;
 					if (lengthToSearch > 0) {

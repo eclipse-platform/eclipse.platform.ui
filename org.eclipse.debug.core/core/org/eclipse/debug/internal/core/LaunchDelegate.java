@@ -130,8 +130,8 @@ public final class LaunchDelegate implements ILaunchDelegate {
 		String modes = element.getAttribute(IConfigurationElementConstants.MODES);
 		if (modes != null) {
 			String[] strings = modes.split(","); //$NON-NLS-1$
-			for (int i = 0; i < strings.length; i++) {
-				set.add(strings[i].trim());
+			for (String string : strings) {
+				set.add(string.trim());
 			}
 		}
 		return set;
@@ -144,10 +144,10 @@ public final class LaunchDelegate implements ILaunchDelegate {
 			fPerspectiveIds = new HashMap<>();
 			IConfigurationElement[] children = fElement.getChildren(IConfigurationElementConstants.MODE_COMBINATION);
 			Set<String> modeset = null;
-			for (int i = 0; i < children.length; i++) {
-				modeset = parseModes(children[i]);
+			for (IConfigurationElement child : children) {
+				modeset = parseModes(child);
 				fLaunchModes.add(modeset);
-				fPerspectiveIds.put(modeset, children[i].getAttribute(IConfigurationElementConstants.PERSPECTIVE));
+				fPerspectiveIds.put(modeset, child.getAttribute(IConfigurationElementConstants.PERSPECTIVE));
 			}
 			//try to get the modes from the old definition and make each one
 			//a separate set of one element
@@ -155,9 +155,9 @@ public final class LaunchDelegate implements ILaunchDelegate {
 			String modes = fElement.getAttribute(IConfigurationElementConstants.MODES);
 			if (modes != null) {
 				String[] strings = modes.split(","); //$NON-NLS-1$
-				for (int i = 0; i < strings.length; i++) {
+				for (String string : strings) {
 					modeset = new HashSet<>();
-					modeset.add(strings[i].trim());
+					modeset.add(string.trim());
 					fLaunchModes.add(modeset);
 				}
 			}

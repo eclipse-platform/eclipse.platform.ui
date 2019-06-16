@@ -107,8 +107,7 @@ public class ConsoleManager implements IConsoleManager {
 				}
 
 				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
-				for (int i = 0; i < workbenchWindows.length; i++) {
-					IWorkbenchWindow window = workbenchWindows[i];
+				for (IWorkbenchWindow window : workbenchWindows) {
 					if (window != null) {
 						IWorkbenchPage page = window.getActivePage();
 						if (page != null) {
@@ -204,8 +203,7 @@ public class ConsoleManager implements IConsoleManager {
 	public void addConsoles(IConsole[] consoles) {
 		List<IConsole> added = new ArrayList<>(consoles.length);
 		synchronized (fConsoles) {
-			for (int i = 0; i < consoles.length; i++) {
-				IConsole console = consoles[i];
+			for (IConsole console : consoles) {
 				if(console instanceof TextConsole) {
 					TextConsole ioconsole = (TextConsole)console;
 					createPatternMatchListeners(ioconsole);
@@ -225,8 +223,7 @@ public class ConsoleManager implements IConsoleManager {
 	public void removeConsoles(IConsole[] consoles) {
 		List<IConsole> removed = new ArrayList<>(consoles.length);
 		synchronized (fConsoles) {
-			for (int i = 0; i < consoles.length; i++) {
-				IConsole console = consoles[i];
+			for (IConsole console : consoles) {
 				if (fConsoles.remove(console)) {
 					removed.add(console);
 				}
@@ -390,8 +387,7 @@ public class ConsoleManager implements IConsoleManager {
 			fPatternMatchListeners = new ArrayList<>();
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-			for (int i = 0; i < elements.length; i++) {
-				IConfigurationElement config = elements[i];
+			for (IConfigurationElement config : elements) {
 				PatternMatchListenerExtension extension = new PatternMatchListenerExtension(config);
 				fPatternMatchListeners.add(extension);
 			}
@@ -433,15 +429,13 @@ public class ConsoleManager implements IConsoleManager {
 			fPageParticipants = new ArrayList<>();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-			for(int i = 0; i < elements.length; i++) {
-				IConfigurationElement config = elements[i];
+			for (IConfigurationElement config : elements) {
 				ConsolePageParticipantExtension extension = new ConsolePageParticipantExtension(config);
 				fPageParticipants.add(extension);
 			}
 		}
 		ArrayList<IConsolePageParticipant> list = new ArrayList<>();
-		for (Iterator<ConsolePageParticipantExtension> i = fPageParticipants.iterator(); i.hasNext();) {
-			ConsolePageParticipantExtension extension = i.next();
+		for (ConsolePageParticipantExtension extension : fPageParticipants) {
 			try {
 				if (extension.isEnabledFor(console)) {
 					list.add(extension.createDelegate());
@@ -461,8 +455,8 @@ public class ConsoleManager implements IConsoleManager {
 			fConsoleFactoryExtensions = new ArrayList<>();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_FACTORIES);
 			IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-			for (int i = 0; i < configurationElements.length; i++) {
-				fConsoleFactoryExtensions.add(new ConsoleFactoryExtension(configurationElements[i]));
+			for (IConfigurationElement configurationElement : configurationElements) {
+				fConsoleFactoryExtensions.add(new ConsoleFactoryExtension(configurationElement));
 			}
 		}
 		return fConsoleFactoryExtensions.toArray(new ConsoleFactoryExtension[0]);

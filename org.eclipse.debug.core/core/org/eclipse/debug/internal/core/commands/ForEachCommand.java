@@ -28,8 +28,8 @@ public abstract class ForEachCommand extends AbstractDebugCommand {
 
 	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-		for (int i = 0; i < targets.length; i++) {
-			execute(targets[i]);
+		for (Object target : targets) {
+			execute(target);
 			monitor.worked(1);
 		}
 	}
@@ -38,8 +38,8 @@ public abstract class ForEachCommand extends AbstractDebugCommand {
 
 	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException {
-		for (int i = 0; i < targets.length; i++) {
-			if (!isExecutable(targets[i])) {
+		for (Object target : targets) {
+			if (!isExecutable(target)) {
 				return false;
 			}
 			monitor.worked(1);

@@ -969,8 +969,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public Collection<ILaunchConfiguration> getPrototypeChildren() throws CoreException {
 		ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(getType());
 		List<ILaunchConfiguration> proteges = new ArrayList<>();
-		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration config = configurations[i];
+		for (ILaunchConfiguration config : configurations) {
 			if (this.equals(config.getPrototype())) {
 				proteges.add(config);
 			}

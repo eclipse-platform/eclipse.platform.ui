@@ -235,8 +235,8 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			LaunchDelegate delegate = null;
 			List<Set<String>> modelist = null;
 			Set<ILaunchDelegate> tmp = null;
-			for (int i = 0; i < launchDelegates.length; i++) {
-				delegate = launchDelegates[i];
+			for (LaunchDelegate launchDelegate : launchDelegates) {
+				delegate = launchDelegate;
 				modelist = delegate.getModes();
 				for (Set<String> modes : modelist) {
 					tmp = fDelegates.get(modes);
@@ -286,10 +286,10 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			//so it can be reused to try and find the source path computer
 			if(fSourceLocator == null) {
 				LaunchDelegate[] delegates = getLaunchDelegateExtensions();
-				for(int i = 0; i < delegates.length; i++) {
-					fSourceLocator = delegates[i].getSourceLocatorId();
-					if(fSourceLocator != null) {
-						fSourceProvider = delegates[i];
+				for (LaunchDelegate delegate : delegates) {
+					fSourceLocator = delegate.getSourceLocatorId();
+					if (fSourceLocator != null) {
+						fSourceProvider = delegate;
 						return fSourceLocator;
 					}
 				}
@@ -315,10 +315,10 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			//if not provided check all the applicable delegates for one and record the delegate if found,
 			//so it can be reused to try and find the source path computer
 				LaunchDelegate[] delegates = getLaunchDelegateExtensions();
-				for(int i = 0; i < delegates.length; i++) {
-					id = delegates[i].getSourcePathComputerId();
-					if(id != null) {
-						fSourceProvider = delegates[i];
+				for (LaunchDelegate delegate : delegates) {
+					id = delegate.getSourcePathComputerId();
+					if (id != null) {
+						fSourceProvider = delegate;
 						fSourcePathComputer = DebugPlugin.getDefault().getLaunchManager().getSourcePathComputer(id);
 						if(fSourcePathComputer != null) {
 							return fSourcePathComputer;
@@ -338,8 +338,8 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			fModes = new HashSet<>();
 			LaunchDelegate[] delegates = getLaunchDelegateExtensions();
 			List<Set<String>> modesets = null;
-			for(int i= 0; i < delegates.length; i++) {
-				modesets = delegates[i].getModes();
+			for (LaunchDelegate delegate : delegates) {
+				modesets = delegate.getModes();
 				for (Set<String> modes : modesets) {
 					fModes.addAll(modes);
 				}

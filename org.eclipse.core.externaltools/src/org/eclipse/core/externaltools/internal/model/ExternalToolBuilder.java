@@ -258,13 +258,13 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	private boolean buildScopeIndicatesBuild(IResource[] resources) {
-		for (int i = 0; i < resources.length; i++) {
-			IResourceDelta delta = getDelta(resources[i].getProject());
+		for (IResource resource : resources) {
+			IResourceDelta delta = getDelta(resource.getProject());
 			if (delta == null) {
 				//project just added to the workspace..no previous build tree
 				return true;
 			}
-			IPath path= resources[i].getProjectRelativePath();
+			IPath path = resource.getProjectRelativePath();
 			IResourceDelta change= delta.findMember(path);
 			if (change != null) {
 				final boolean[] trueChange= new boolean[1];

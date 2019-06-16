@@ -36,8 +36,8 @@ public class PreferredDelegateModifyListener extends PreferenceModifyListener {
 				LaunchManager manager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
 				manager.resetPreferredDelegates();
 				ILaunchConfigurationType[] types = manager.getLaunchConfigurationTypes();
-				for (int i = 0; i < types.length; i++) {
-					((LaunchConfigurationType) types[i]).resetPreferredDelegates();
+				for (ILaunchConfigurationType type : types) {
+					((LaunchConfigurationType) type).resetPreferredDelegates();
 				}
 				return false;
 			}

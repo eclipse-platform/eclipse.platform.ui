@@ -222,8 +222,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	private void loadDynamicVariables() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(VariablesPlugin.PI_CORE_VARIABLES, EXTENSION_POINT_DYNAMIC_VARIABLES);
 		IConfigurationElement elements[]= point.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			String name= element.getAttribute(ATTR_NAME);
 			if (name == null) {
 				VariablesPlugin.logMessage(NLS.bind("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
@@ -236,7 +235,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 				DynamicVariable oldVariable = (DynamicVariable)old;
 				VariablesPlugin.logMessage(NLS.bind("Dynamic variable extension from bundle ''{0}'' overrides existing extension variable ''{1}'' from bundle ''{2}''", //$NON-NLS-1$
 						new String[] {element.getDeclaringExtension().getContributor().getName(),oldVariable.getName(),
-						oldVariable.getConfigurationElement().getDeclaringExtension().getContributor().getName()}), null);
+							oldVariable.getConfigurationElement().getDeclaringExtension().getContributor().getName()}), null);
 			}
 		}
 	}
@@ -247,8 +246,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	private void loadContributedValueVariables() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(VariablesPlugin.PI_CORE_VARIABLES, EXTENSION_POINT_VALUE_VARIABLES);
 		IConfigurationElement elements[]= point.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			String name= element.getAttribute(ATTR_NAME);
 			if (name == null) {
 				VariablesPlugin.logMessage(NLS.bind("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
@@ -263,7 +261,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 				StringVariable oldVariable = (StringVariable)old;
 				VariablesPlugin.logMessage(NLS.bind("Contributed variable extension from bundle ''{0}'' overrides existing extension variable ''{1}'' from  bundle ''{2}''", //$NON-NLS-1$
 						new String[] {element.getDeclaringExtension().getContributor().getName(),oldVariable.getName(),
-						oldVariable.getConfigurationElement().getDeclaringExtension().getContributor().getName()}), null);
+							oldVariable.getConfigurationElement().getDeclaringExtension().getContributor().getName()}), null);
 			}
 		}
 	}
@@ -363,15 +361,13 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	public synchronized void addVariables(IValueVariable[] variables) throws CoreException {
 		initialize();
 		MultiStatus status = new MultiStatus(VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, VariablesMessages.StringVariableManager_26, null);
-		for (int i = 0; i < variables.length; i++) {
-			IValueVariable variable = variables[i];
+		for (IValueVariable variable : variables) {
 			if (getValueVariable(variable.getName()) != null) {
 				status.add(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringVariableManager_27, new String[]{variable.getName()}), null));
 			}
 		}
 		if (status.isOK()) {
-			for (int i = 0; i < variables.length; i++) {
-				IValueVariable variable = variables[i];
+			for (IValueVariable variable : variables) {
 				fValueVariables.put(variable.getName(), variable);
 			}
 			IValueVariable[] copy = new IValueVariable[variables.length];
@@ -386,8 +382,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	public synchronized void removeVariables(IValueVariable[] variables) {
 		initialize();
 		List<IValueVariable> removed = new ArrayList<>(variables.length);
-		for (int i = 0; i < variables.length; i++) {
-			IValueVariable variable = variables[i];
+		for (IValueVariable variable : variables) {
 			if (fValueVariables.remove(variable.getName()) != null) {
 				removed.add(variable);
 			}
@@ -434,8 +429,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		Document document= getDocument();
 		Element rootElement= document.createElement(VALUE_VARIABLES_TAG);
 		document.appendChild(rootElement);
-		for (int i = 0; i < variables.length; i++) {
-			IValueVariable variable = variables[i];
+		for (IValueVariable variable : variables) {
 			if (!variable.isReadOnly()){
 				// don't persist read-only variables or un-initialized contributed variables
 				if (!variable.isContributed() || ((ContributedValueVariable)variable).isInitialized()) {

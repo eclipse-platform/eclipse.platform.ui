@@ -259,8 +259,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		//stop targets first to free up and sockets, etc held by the target
 		// terminate or disconnect debug target if it is still alive
 		IDebugTarget[] targets = getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			IDebugTarget target= targets[i];
+		for (IDebugTarget target : targets) {
 			if (target != null) {
 				if (target.canTerminate()) {
 					try {
@@ -282,8 +281,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		//second kill the underlying process
 		// terminate the system processes
 		IProcess[] processes = getProcesses();
-		for (int i = 0; i < processes.length; i++) {
-			IProcess process = processes[i];
+		for (IProcess process : processes) {
 			if (process.canTerminate()) {
 				try {
 					process.terminate();
@@ -452,8 +450,8 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	protected void addProcesses(IProcess[] processes) {
 		if (processes != null) {
-			for (int i = 0; i < processes.length; i++) {
-				addProcess(processes[i]);
+			for (IProcess process : processes) {
+				addProcess(process);
 				fireChanged();
 			}
 		}
@@ -633,8 +631,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getKind() == DebugEvent.TERMINATE) {
 				Object object = event.getSource();
 				ILaunch launch = null;

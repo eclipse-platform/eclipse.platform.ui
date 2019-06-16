@@ -115,8 +115,7 @@ public class BuilderUtils {
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		String sourceType= config.getType().getIdentifier();
 		String builderType= null;
-		for (int i= 0; i < elements.length; i++) {
-			IConfigurationElement element= elements[i];
+		for (IConfigurationElement element : elements) {
 			if (element.getName().equals(TAG_CONFIGURATION_MAP) && sourceType.equals(element.getAttribute(TAG_SOURCE_TYPE))) {
 				builderType= element.getAttribute(TAG_BUILDER_TYPE);
 				break;

@@ -354,9 +354,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		if (adapter.equals(IDebugTarget.class)) {
 			ILaunch launch = getLaunch();
 			IDebugTarget[] targets = launch.getDebugTargets();
-			for (int i = 0; i < targets.length; i++) {
-				if (this.equals(targets[i].getProcess())) {
-					return (T) targets[i];
+			for (IDebugTarget target : targets) {
+				if (this.equals(target.getProcess())) {
+					return (T) target;
 				}
 			}
 			return null;

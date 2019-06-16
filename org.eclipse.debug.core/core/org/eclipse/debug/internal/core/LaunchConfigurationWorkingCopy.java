@@ -659,8 +659,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		if(resources != null && resources.length > 0) {
 			paths = new ArrayList<>(resources.length);
 			types = new ArrayList<>(resources.length);
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				if(resource != null) {
 					paths.add(resource.getFullPath().toPortableString());
 					types.add(Integer.valueOf(resource.getType()).toString());

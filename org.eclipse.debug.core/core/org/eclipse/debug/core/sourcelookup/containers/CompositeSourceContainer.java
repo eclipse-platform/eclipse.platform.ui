@@ -73,8 +73,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 		if (isFindDuplicates()) {
 			results = new ArrayList<>();
 		}
-		for (int i = 0; i < containers.length; i++) {
-			ISourceContainer container = containers[i];
+		for (ISourceContainer container : containers) {
 			try {
 				Object[] objects = container.findSourceElements(name);
 				if (objects.length > 0) {
@@ -124,8 +123,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	public synchronized ISourceContainer[] getSourceContainers() throws CoreException {
 		if (fContainers == null) {
 			fContainers = createSourceContainers();
-			for (int i = 0; i < fContainers.length; i++) {
-				ISourceContainer container = fContainers[i];
+			for (ISourceContainer container : fContainers) {
 				container.init(getDirector());
 			}
 		}
@@ -136,8 +134,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	public void dispose() {
 		super.dispose();
 		if (fContainers != null) {
-			for (int i = 0; i < fContainers.length; i++) {
-				ISourceContainer container = fContainers[i];
+			for (ISourceContainer container : fContainers) {
 				container.dispose();
 			}
 		}

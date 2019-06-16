@@ -186,8 +186,8 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		}
 		Object[] res = dialog.getResult();
 		fProjects = new ArrayList<>(res.length);
-		for (int i = 0; i < res.length; i++) {
-			fProjects.add((IProject) res[i]);
+		for (Object re : res) {
+			fProjects.add((IProject) re);
 		}
 		updateLaunchConfigurationDialog();
 	}

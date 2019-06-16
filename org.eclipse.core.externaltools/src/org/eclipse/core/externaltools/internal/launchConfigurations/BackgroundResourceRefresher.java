@@ -60,8 +60,7 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener  {
 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getSource() == fProcess && event.getKind() == DebugEvent.TERMINATE) {
 				DebugPlugin.getDefault().removeDebugEventListener(this);
 				refresh();

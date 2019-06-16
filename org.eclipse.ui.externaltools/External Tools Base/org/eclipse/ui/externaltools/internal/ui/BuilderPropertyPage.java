@@ -169,8 +169,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 
 			Display.getDefault().asyncExec(() -> {
 				TableItem[] items = viewer.getTable().getItems();
-				for (int i = 0; i < items.length; i++) {
-					TableItem item = items[i];
+				for (TableItem item : items) {
 					Object data = item.getData();
 					if (data == oldConfig) {
 						// Found the movedFrom config in the tree. Replace it
@@ -216,9 +215,9 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		}
 
 		boolean projectNeedsMigration= false;
-		for (int i = 0; i < commands.length; i++) {
+		for (ICommand command : commands) {
 			String[] version= new String[] {IExternalToolConstants.EMPTY_STRING};
-			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(project, commands[i].getArguments(), version);
+			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(project, command.getArguments(), version);
 			if (BuilderCoreUtils.VERSION_2_1.equals(version[0])) {
 				// Storing the .project file of a project with 2.1 configs, will
 				// edit the file in a way that isn't backwards compatible.
@@ -233,19 +232,19 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					}
 					IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_Exists, new String[]{config.getName()}), null);
 					ErrorDialog.openError(getShell(), ExternalToolsUIMessages.BuilderPropertyPage_errorTitle,
-									NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_External_Tool_Builder__0__Not_Added_2, new String[]{config.getName()}),
-									status);
+							NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_External_Tool_Builder__0__Not_Added_2, new String[]{config.getName()}),
+							status);
 					userHasMadeChanges= true;
 				} else {
 					element= config;
 				}
 			} else {
-				String builderID = commands[i].getBuilderName();
-				if (builderID.equals(ExternalToolBuilder.ID) && commands[i].getArguments().get(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE) != null) {
+				String builderID = command.getBuilderName();
+				if (builderID.equals(ExternalToolBuilder.ID) && command.getArguments().get(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE) != null) {
 					// An invalid external tool entry.
-					element= new ErrorConfig(commands[i]);
+					element = new ErrorConfig(command);
 				} else {
-					element= commands[i];
+					element = command;
 				}
 			}
 			if (element != null) {
@@ -462,8 +461,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			} else {
 				// Replace the config with a working copy
 				TableItem[] items= viewer.getTable().getItems();
-				for (int i = 0; i < items.length; i++) {
-					TableItem item = items[i];
+				for (TableItem item : items) {
 					if (item.getData() == configuration) {
 						workingCopy = configuration.getWorkingCopy();
 						item.setData(workingCopy);
@@ -500,8 +498,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		for (ILaunchConfigurationType type : toolTypes) {
 			try {
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-				for (int i = 0; i < configs.length; i++) {
-					ILaunchConfiguration launchConfiguration = configs[i];
+				for (ILaunchConfiguration launchConfiguration : configs) {
 					if (!DebugUITools.isPrivate(launchConfiguration)) {
 						configurations.add(launchConfiguration);
 					}
@@ -674,8 +671,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private List<ILaunchConfigurationType> getConfigurationTypes(String category) {
 		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
 		List<ILaunchConfigurationType> externalToolTypes = new ArrayList<>();
-		for (int i = 0; i < types.length; i++) {
-			ILaunchConfigurationType configurationType = types[i];
+		for (ILaunchConfigurationType configurationType : types) {
 			if (category.equals(configurationType.getCategory())) {
 				externalToolTypes.add(configurationType);
 			}
@@ -812,8 +808,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				enableUp = indices[0] != 0;
 				enableDown = indices[indices.length - 1] < max - 1;
 			}
-			for (int i = 0; i < items.length; i++) {
-				TableItem item = items[i];
+			for (TableItem item : items) {
 				Object data= item.getData();
 				if (data instanceof ILaunchConfiguration) {
 					ILaunchConfiguration config= (ILaunchConfiguration)data;

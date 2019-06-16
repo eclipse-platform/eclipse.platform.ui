@@ -59,8 +59,7 @@ public abstract class AbstractConsole implements IConsole {
 
 		@Override
 		public void consolesAdded(IConsole[] consoles) {
-			for (int i = 0; i < consoles.length; i++) {
-				IConsole console = consoles[i];
+			for (IConsole console : consoles) {
 				if (console == AbstractConsole.this) {
 					initialize();
 				}
@@ -70,8 +69,7 @@ public abstract class AbstractConsole implements IConsole {
 
 		@Override
 		public void consolesRemoved(IConsole[] consoles) {
-			for (int i = 0; i < consoles.length; i++) {
-				IConsole console = consoles[i];
+			for (IConsole console : consoles) {
 				if (console == AbstractConsole.this) {
 					ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
 					destroy();

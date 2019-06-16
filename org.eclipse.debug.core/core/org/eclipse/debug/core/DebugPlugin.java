@@ -1055,8 +1055,7 @@ public class DebugPlugin extends Plugin {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.PI_DEBUG_CORE, EXTENSION_POINT_STATUS_HANDLERS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fStatusHandlers = new HashMap<>(infos.length);
-		for (int i= 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
+		for (IConfigurationElement configurationElement : infos) {
 			String id = configurationElement.getAttribute("plugin"); //$NON-NLS-1$
 			String code = configurationElement.getAttribute("code"); //$NON-NLS-1$
 
@@ -1083,17 +1082,16 @@ public class DebugPlugin extends Plugin {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.PI_DEBUG_CORE, EXTENSION_POINT_PROCESS_FACTORIES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fProcessFactories = new HashMap<>(infos.length);
-		for (int i= 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
+		for (IConfigurationElement configurationElement : infos) {
 			String id = configurationElement.getAttribute("id"); //$NON-NLS-1$
 			String clss = configurationElement.getAttribute("class"); //$NON-NLS-1$
 			if (id != null && clss != null) {
-					fProcessFactories.put(id, configurationElement);
+				fProcessFactories.put(id, configurationElement);
 			} else {
 				// invalid process factory
-				String badDefiner= infos[i].getContributor().getName();
+				String badDefiner = configurationElement.getContributor().getName();
 				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_4, new Object[] {
-						badDefiner, id }), null));
+					badDefiner, id }), null));
 			}
 		}
 	}
@@ -1221,8 +1219,8 @@ public class DebugPlugin extends Plugin {
 
 			fMode = NOTIFY_EVENTS;
 			if (DebugOptions.DEBUG_EVENTS) {
-				for (int i = 0; i < fEvents.length; i++) {
-					DebugOptions.trace(fEvents[i].toString());
+				for (DebugEvent event : fEvents) {
+					DebugOptions.trace(event.toString());
 				}
 			}
 			for (IDebugEventSetListener iDebugEventSetListener : fEventListeners) {

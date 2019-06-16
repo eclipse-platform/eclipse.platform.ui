@@ -59,9 +59,8 @@ public class PatternMatchListenerExtension implements IPluginContribution {
 			String flags = flagsElement.replaceAll("Pattern.", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			String[] tokens = flags.split("\\s\\|\\s"); //$NON-NLS-1$
 			Class<?> clazz = Class.forName("java.util.regex.Pattern"); //$NON-NLS-1$
-
-			for (int i = 0; i < tokens.length; i++) {
-				Field field = clazz.getDeclaredField(tokens[i]);
+			for (String token : tokens) {
+				Field field = clazz.getDeclaredField(token);
 				val |= field.getInt(null);
 			}
 		} catch (ClassNotFoundException e) {

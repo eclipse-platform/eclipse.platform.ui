@@ -90,9 +90,9 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 			ILaunch launches[] = manager.getLaunches();
 			ILaunchConfigurationType configType;
 			ILaunchConfiguration config;
-			for (int i = 0; i < launches.length; i++) {
+			for (ILaunch launch : launches) {
 				try {
-					config = launches[i].getLaunchConfiguration();
+					config = launch.getLaunchConfiguration();
 					if (config == null) {
 						continue;
 					}
@@ -101,7 +101,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 					continue;
 				}
 				if (configType.equals(programType)) {
-					if (!launches[i].isTerminated()) {
+					if (!launch.isTerminated()) {
 						MessageDialog
 								.openWarning(
 										window.getShell(),

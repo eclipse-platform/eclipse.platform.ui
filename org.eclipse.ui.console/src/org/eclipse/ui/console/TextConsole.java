@@ -571,8 +571,8 @@ public abstract class TextConsole extends AbstractConsole {
 			IDocument doc = getDocument();
 			if (doc != null) {
 				Position[] positions = doc.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-				for (int i = 0; i < positions.length; i++) {
-					ConsoleHyperlinkPosition position = (ConsoleHyperlinkPosition)positions[i];
+				for (Position p : positions) {
+					ConsoleHyperlinkPosition position = (ConsoleHyperlinkPosition) p;
 					if (position.getHyperLink().equals(link)) {
 						return new Region(position.getOffset(), position.getLength());
 					}

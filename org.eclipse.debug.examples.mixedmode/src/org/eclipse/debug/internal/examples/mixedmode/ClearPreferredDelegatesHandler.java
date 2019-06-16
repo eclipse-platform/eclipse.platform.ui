@@ -35,12 +35,12 @@ public class ClearPreferredDelegatesHandler extends AbstractHandler {
 		ILaunchConfigurationType[] types = lm.getLaunchConfigurationTypes();
 		Set<Set<String>> modes = null;
 		Set<String> mode = null;
-		for (int i = 0; i < types.length; i++) {
-			modes = types[i].getSupportedModeCombinations();
+		for (ILaunchConfigurationType type : types) {
+			modes = type.getSupportedModeCombinations();
 			for (Iterator<Set<String>> iter = modes.iterator(); iter.hasNext();) {
 				mode = iter.next();
 				try {
-					types[i].setPreferredDelegate(mode, null);
+					type.setPreferredDelegate(mode, null);
 				} catch (CoreException ce) {
 					// /do nothing
 				}

@@ -149,8 +149,8 @@ public class FileSelectionDialog extends MessageDialog {
 				//Also try and reset the size of the columns as appropriate
 				TableColumn[] columns =
 					selectionGroup.getListTable().getColumns();
-				for (int i = 0; i < columns.length; i++) {
-					columns[i].pack();
+				for (TableColumn column : columns) {
+					column.pack();
 				}
 			}
 		});
@@ -170,8 +170,7 @@ public class FileSelectionDialog extends MessageDialog {
 					try {
 						members = ((IContainer) o).members();
 						List<IResource> accessibleMembers = new ArrayList<>(members.length);
-						for (int i = 0; i < members.length; i++) {
-							IResource resource = members[i];
+						for (IResource resource : members) {
 							if (resource.isAccessible()) {
 								accessibleMembers.add(resource);
 							}
@@ -184,16 +183,14 @@ public class FileSelectionDialog extends MessageDialog {
 
 					//filter out the desired resource types
 					ArrayList<IResource> results = new ArrayList<>();
-					for (int i = 0; i < members.length; i++) {
+					for (IResource member : members) {
 						//And the test bits with the resource types to see if
 						// they are what we want
-						if ((members[i].getType() & resourceType) > 0) {
-							if (members[i].getType() == IResource.FILE
-								&& fPattern != null
-								&& !fPattern.matcher(members[i].getName()).find()) {
+						if ((member.getType() & resourceType) > 0) {
+							if (member.getType() == IResource.FILE && fPattern != null && !fPattern.matcher(member.getName()).find()) {
 								continue;
 							}
-							results.add(members[i]);
+							results.add(member);
 						}
 					}
 					return results.toArray();

@@ -286,10 +286,9 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	protected static ILaunchConfiguration findLaunchConfiguration(String name) throws CoreException {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations();
-		for (int i = 0; i < launchConfigurations.length; i++) {
-			ILaunchConfiguration lConf = launchConfigurations[i];
-			if (lConf.getName().equals(name)) {
-				return lConf;
+		for (ILaunchConfiguration config : launchConfigurations) {
+			if (config.getName().equals(name)) {
+				return config;
 			}
 		}
 		return null;

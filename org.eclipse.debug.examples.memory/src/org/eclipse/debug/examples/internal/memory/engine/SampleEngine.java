@@ -170,9 +170,9 @@ public class SampleEngine {
 
 				MemoryByte[] bytes = unit.getBytes();
 
-				for (int i = 0; i < bytes.length; i++) {
-					bytes[i].setChanged(false);
-					bytes[i].setHistoryKnown(true);
+				for (MemoryByte b : bytes) {
+					b.setChanged(false);
+					b.setHistoryKnown(true);
 				}
 
 				unit.setBytes(bytes);

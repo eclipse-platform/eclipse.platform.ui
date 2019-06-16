@@ -93,9 +93,9 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 				ISourceContainer[] folders = super.createSourceContainers();
 				List<ISourceContainer> all = new ArrayList<>(folders.length + projects.length);
 				Collections.addAll(all, folders);
-				for (int i = 0; i < projects.length; i++) {
+				for (IProject p : projects) {
 					if (project.exists() && project.isOpen()) {
-						ProjectSourceContainer container = new ProjectSourceContainer(projects[i], false);
+						ProjectSourceContainer container = new ProjectSourceContainer(p, false);
 						container.init(getDirector());
 						all.add(container);
 					}
@@ -115,10 +115,10 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 
 	private void getAllReferencedProjects(Set<IProject> all, IProject project) throws CoreException {
 		IProject[] refs = project.getReferencedProjects();
-		for (int i = 0; i < refs.length; i++) {
-			if (!all.contains(refs[i]) && refs[i].exists() && refs[i].isOpen()) {
-				all.add(refs[i]);
-				getAllReferencedProjects(all, refs[i]);
+		for (IProject ref : refs) {
+			if (!all.contains(ref) && ref.exists() && ref.isOpen()) {
+				all.add(ref);
+				getAllReferencedProjects(all, ref);
 			}
 		}
 	}

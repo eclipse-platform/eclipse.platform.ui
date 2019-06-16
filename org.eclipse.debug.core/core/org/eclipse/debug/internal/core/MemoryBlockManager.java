@@ -84,8 +84,8 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			if (listeners != null) {
 				fType = update;
 				Object[] copiedListeners= listeners.toArray(new IMemoryBlockListener[listeners.size()]);
-				for (int i= 0; i < copiedListeners.length; i++) {
-					fListener = (IMemoryBlockListener)copiedListeners[i];
+				for (Object copiedListener : copiedListeners) {
+					fListener = (IMemoryBlockListener) copiedListener;
 					fMemoryBlocks = memBlocks;
 					SafeRunner.run(this);
 				}
@@ -118,11 +118,11 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 
 		if(mem.length > 0) {
 			ArrayList<IMemoryBlock> newMemoryBlocks = new ArrayList<>();
-			for (int i=0; i<mem.length; i++) {
+			for (IMemoryBlock m : mem) {
 				// do not allow duplicates
-				if (!memoryBlocks.contains(mem[i])) {
-					newMemoryBlocks.add(mem[i]);
-					memoryBlocks.add(mem[i]);
+				if (!memoryBlocks.contains(m)) {
+					newMemoryBlocks.add(m);
+					memoryBlocks.add(m);
 					// add listener for the first memory block added
 					if (memoryBlocks.size() == 1) {
 						DebugPlugin.getDefault().addDebugEventListener(this);
@@ -144,16 +144,16 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		}
 
 		if(memBlocks.length > 0) {
-			for (int i=0; i<memBlocks.length; i++) {
-				memoryBlocks.remove(memBlocks[i]);
+			for (IMemoryBlock memBlock : memBlocks) {
+				memoryBlocks.remove(memBlock);
 				// remove listener after the last memory block has been removed
 				if (memoryBlocks.isEmpty()) {
 					DebugPlugin.getDefault().removeDebugEventListener(this);
 				}
-				if (memBlocks[i] instanceof IMemoryBlockExtension) {
+				if (memBlock instanceof IMemoryBlockExtension) {
 					try {
-						((IMemoryBlockExtension)memBlocks[i]).dispose();
-					} catch (DebugException e) {
+						((IMemoryBlockExtension) memBlock).dispose();
+					}catch (DebugException e) {
 						DebugPlugin.log(e);
 					}
 				}
@@ -242,8 +242,8 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i=0; i < events.length; i++) {
-			handleDebugEvent(events[i]);
+		for (DebugEvent event : events) {
+			handleDebugEvent(event);
 		}
 	}
 

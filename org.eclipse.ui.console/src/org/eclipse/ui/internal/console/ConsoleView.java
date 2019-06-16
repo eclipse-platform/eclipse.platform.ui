@@ -329,8 +329,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		// initialize page participants
 		IConsolePageParticipant[] consoleParticipants = ((ConsoleManager)getConsoleManager()).getPageParticipants(console);
 		final ListenerList<IConsolePageParticipant> participants = new ListenerList<>();
-		for (int i = 0; i < consoleParticipants.length; i++) {
-			participants.add(consoleParticipants[i]);
+		for (IConsolePageParticipant consoleParticipant : consoleParticipants) {
+			participants.add(consoleParticipant);
 		}
 		fConsoleToPageParticipants.put(console, participants);
 		for (IConsolePageParticipant iConsolePageParticipant : participants) {
@@ -398,13 +398,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	public void consolesAdded(final IConsole[] consoles) {
 		if (isAvailable()) {
 			Runnable r = () -> {
-				for (int i = 0; i < consoles.length; i++) {
+				for (IConsole console : consoles) {
 					if (isAvailable()) {
-						IConsole console = consoles[i];
 						// ensure it's still registered since this is done asynchronously
 						IConsole[] allConsoles = getConsoleManager().getConsoles();
-						for (int j = 0; j < allConsoles.length; j++) {
-							IConsole registered = allConsoles[j];
+						for (IConsole registered : allConsoles) {
 							if (registered.equals(console)) {
 								ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
 								fConsoleToPart.put(console, part);
@@ -413,7 +411,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 								break;
 							}
 						}
-
 					}
 				}
 			};
@@ -425,9 +422,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	public void consolesRemoved(final IConsole[] consoles) {
 		if (isAvailable()) {
 			Runnable r = () -> {
-				for (int i = 0; i < consoles.length; i++) {
+				for (IConsole console : consoles) {
 					if (isAvailable()) {
-						IConsole console = consoles[i];
 						fStack.remove(console);
 						ConsoleWorkbenchPart part = fConsoleToPart.get(console);
 						if (part != null) {

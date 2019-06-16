@@ -179,9 +179,9 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 			return IExternalToolConstants.EMPTY_STRING;
 		}
 		StringBuilder buf = new StringBuilder();
-		for (int i = 0; i < commandLine.length; i++) {
+		for (String c : commandLine) {
 			buf.append(' ');
-			char[] characters = commandLine[i].toCharArray();
+			char[] characters = c.toCharArray();
 			StringBuilder command = new StringBuilder();
 			boolean containsSpace = false;
 			for (int j = 0; j < characters.length; j++) {

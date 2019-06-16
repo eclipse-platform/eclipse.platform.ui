@@ -197,8 +197,7 @@ public class BuilderCoreUtils {
 			// The goal here is to not change the storage format of old,
 			// unedited builders.
 			ICommand[] commands = project.getDescription().getBuildSpec();
-			for (int i = 0; i < commands.length; i++) {
-				ICommand projectCommand = commands[i];
+			for (ICommand projectCommand : commands) {
 				String name = ExternalToolMigration
 						.getNameFromCommandArgs(projectCommand.getArguments());
 				if (name != null && name.equals(config.getName())) {

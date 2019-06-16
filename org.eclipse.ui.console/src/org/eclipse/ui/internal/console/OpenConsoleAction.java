@@ -101,8 +101,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 
 		fMenu= new Menu(parent);
 		int accel = 1;
-		for (int i = 0; i < fFactoryExtensions.length; i++) {
-			ConsoleFactoryExtension extension = fFactoryExtensions[i];
+		for (ConsoleFactoryExtension extension : fFactoryExtensions) {
 			if (!WorkbenchActivityHelper.filterItem(extension) && extension.isEnabled()) {
 				String label = extension.getLabel();
 				ImageDescriptor image = extension.getImageDescriptor();

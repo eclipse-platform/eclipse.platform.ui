@@ -125,13 +125,13 @@ public class RefreshUtil {
 		}
 		MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, DebugCoreMessages.RefreshingResourcesError, null);
 		try {
-			for (int i = 0; i < resources.length; i++) {
+			for (IResource resource : resources) {
 				if (lmonitor.isCanceled()) {
 					break;
 				}
-				if (resources[i] != null && resources[i].isAccessible()) {
+				if (resource != null && resource.isAccessible()) {
 					try {
-						resources[i].refreshLocal(depth, null);
+						resource.refreshLocal(depth, null);
 					} catch (CoreException e) {
 						status.merge(e.getStatus());
 					}
@@ -206,9 +206,9 @@ public class RefreshUtil {
 	 */
 	public static String toMemento(IResource[] resources) {
 		XMLMemento memento = XMLMemento.createWriteRoot("resources"); //$NON-NLS-1$
-		for (int i = 0; i < resources.length; i++) {
+		for (IResource resource : resources) {
 			final XMLMemento itemMemento = memento.createChild(IMementoConstants.MEMENTO_ITEM);
-			ResourceFactory.saveState(itemMemento, resources[i]);
+			ResourceFactory.saveState(itemMemento, resource);
 		}
 		StringWriter writer = new StringWriter();
 		try {
@@ -248,8 +248,8 @@ public class RefreshUtil {
 		}
 
 		XMLMemento[] mementos = memento.getChildren(IMementoConstants.MEMENTO_ITEM);
-		for (int i = 0; i < mementos.length; i++) {
-			resourcesList.add(ResourceFactory.createElement(mementos[i]));
+		for (XMLMemento m : mementos) {
+			resourcesList.add(ResourceFactory.createElement(m));
 		}
 
 		return resourcesList.toArray(new IResource[resourcesList.size()]);

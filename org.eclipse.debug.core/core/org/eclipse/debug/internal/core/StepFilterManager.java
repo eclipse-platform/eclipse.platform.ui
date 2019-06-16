@@ -84,8 +84,7 @@ public class StepFilterManager implements ILaunchListener {
 	public void setUseStepFilters(boolean useFilters) {
 		Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), PREF_USE_STEP_FILTERS, useFilters, null);
 		ILaunch[] launchs = DebugPlugin.getDefault().getLaunchManager().getLaunches();
-		for (int i = 0; i < launchs.length; i++) {
-			ILaunch launch = launchs[i];
+		for (ILaunch launch : launchs) {
 			launchChanged(launch);
 		}
 	}
