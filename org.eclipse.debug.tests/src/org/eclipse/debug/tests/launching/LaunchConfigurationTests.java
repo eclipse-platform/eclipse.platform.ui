@@ -288,8 +288,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 * array of handles.
 	 */
 	protected boolean existsIn(ILaunchConfiguration[] configs, ILaunchConfiguration config) {
-		for (int i = 0; i < configs.length; i++) {
-			if (configs[i].equals(config)) {
+		for (ILaunchConfiguration c : configs) {
+			if (c.equals(config)) {
 				return true;
 			}
 		}
@@ -830,16 +830,16 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		project.close(null);
 		ILaunchConfiguration[] during = getLaunchManager().getLaunchConfigurations();
 		boolean local = true;
-		for (int i = 0; i < during.length; i++) {
+		for (ILaunchConfiguration d : during) {
 			// must be local, or not from the closed project
-			local = local && (during[i].isLocal() || !during[i].getFile().getProject().equals(project));
+			local = local && (d.isLocal() || !d.getFile().getProject().equals(project));
 		}
 		project.open(null);
 		assertTrue("Should only be local configs when closed", local); //$NON-NLS-1$
 		ILaunchConfiguration[] after = getLaunchManager().getLaunchConfigurations();
 		assertTrue("Should be same number of configs after openning", after.length == before.length); //$NON-NLS-1$
-		for (int i = 0; i < before.length; i++) {
-			assertTrue("Config should exist after openning", existsIn(after, before[i])); //$NON-NLS-1$
+		for (ILaunchConfiguration b : before) {
+			assertTrue("Config should exist after openning", existsIn(after, b)); //$NON-NLS-1$
 		}
 
 		// cleanup

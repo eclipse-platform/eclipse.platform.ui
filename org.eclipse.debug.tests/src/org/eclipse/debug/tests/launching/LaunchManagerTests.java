@@ -243,8 +243,8 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	void hasCancellingLaunches(int count) {
 		ILaunch[] launches = getLaunchManager().getLaunches();
 		int num = 0;
-		for (int i = 0; i < launches.length; i++) {
-			if (launches[i] instanceof CancellingLaunch) {
+		for (ILaunch launche : launches) {
+			if (launche instanceof CancellingLaunch) {
 				num++;
 			}
 		}
@@ -268,8 +268,8 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 			hasCancellingLaunches(0);
 		} finally {
 			ILaunch[] launches = getLaunchManager().getLaunches();
-			for (int i = 0; i < launches.length; i++) {
-				getLaunchManager().removeLaunch(launches[i]);
+			for (ILaunch launche : launches) {
+				getLaunchManager().removeLaunch(launche);
 			}
 			config.delete();
 		}
@@ -292,8 +292,8 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 			hasCancellingLaunches(0);
 		} finally {
 			ILaunch[] launches = getLaunchManager().getLaunches();
-			for (int i = 0; i < launches.length; i++) {
-				getLaunchManager().removeLaunch(launches[i]);
+			for (ILaunch launche : launches) {
+				getLaunchManager().removeLaunch(launche);
 			}
 			config.delete();
 		}
@@ -317,8 +317,8 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 										// launch
 		} finally {
 			ILaunch[] launches = getLaunchManager().getLaunches();
-			for (int i = 0; i < launches.length; i++) {
-				getLaunchManager().removeLaunch(launches[i]);
+			for (ILaunch launche : launches) {
+				getLaunchManager().removeLaunch(launche);
 			}
 			config.delete();
 		}
@@ -350,9 +350,9 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 					for (int i = 0; i < config.length && !stop[0]; i++) {
 						config[i] = getLaunchConfiguration("Name" + i); //$NON-NLS-1$
 					}
-					for (int i = 0; i < config.length; i++) {
-						if (config[i] != null) {
-							config[i].delete();
+					for (ILaunchConfiguration c : config) {
+						if (c != null) {
+							c.delete();
 						}
 					}
 				} catch (CoreException e) {

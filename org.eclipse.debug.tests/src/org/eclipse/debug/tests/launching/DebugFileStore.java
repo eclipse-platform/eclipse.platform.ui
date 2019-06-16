@@ -64,8 +64,7 @@ public class DebugFileStore extends FileStore {
 		URI[] uris = DebugFileSystem.getDefault().getFileURIs();
 		List<String> children = new ArrayList<>();
 		IPath me = getPath();
-		for (int i = 0; i < uris.length; i++) {
-			URI id = uris[i];
+		for (URI id : uris) {
 			Path path = new Path(id.getPath());
 			if (path.segmentCount() > 0) {
 				if (path.removeLastSegments(1).equals(me)) {

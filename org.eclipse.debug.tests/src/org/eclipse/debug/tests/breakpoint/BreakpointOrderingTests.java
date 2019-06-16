@@ -407,8 +407,8 @@ public class BreakpointOrderingTests extends AbstractDebugTest {
 			}
 			assertFalse(failed);
 		} finally {
-			for (int index = 0; index < testBps.length; index++) {
-				testBps[index].delete();
+			for (TestBreakpoint testBp : testBps) {
+				testBp.delete();
 			}
 		}
 	}

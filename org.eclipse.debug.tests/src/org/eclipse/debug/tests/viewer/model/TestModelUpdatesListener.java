@@ -305,8 +305,8 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 			addUpdates(viewer, treePath, (TestElement) treePath.getLastSegment(), 0, STATE_UPDATES);
 		}
 		IModelDelta[] childDeltas = pendingDelta.getChildDeltas();
-		for (int i = 0; i < childDeltas.length; i++) {
-			addStateUpdates(viewer, childDeltas[i], deltaFlags);
+		for (IModelDelta childDelta : childDeltas) {
+			addStateUpdates(viewer, childDelta, deltaFlags);
 		}
 	}
 
@@ -374,8 +374,8 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 	}
 
 	public static boolean isFiltered(Object element, ViewerFilter[] filters) {
-		for (int i = 0; i < filters.length; i++) {
-			if (!filters[i].select(null, null, element)) {
+		for (ViewerFilter filter : filters) {
+			if (!filter.select(null, null, element)) {
 				return true;
 			}
 		}
@@ -416,8 +416,8 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 					fChildrenUpdatesScheduled.put(path, childrenIndexes);
 				}
 
-				for (int i = 0; i < children.length; i++) {
-					addUpdates(viewer, path.createChildPath(children[i]), children[i], filters, levels, flags);
+				for (TestElement child : children) {
+					addUpdates(viewer, path.createChildPath(child), child, filters, levels, flags);
 				}
 			}
 
@@ -430,8 +430,8 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 			fProxyModels.add(element.getModel());
 		}
 		TestElement[] children = element.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			addProxies(children[i]);
+		for (TestElement child : children) {
+			addProxies(child);
 		}
 	}
 
@@ -779,9 +779,9 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 			buf.append("fJobError = " + fJobError); //$NON-NLS-1$
 			if (fJobError.getException() != null) {
 				StackTraceElement[] trace = fJobError.getException().getStackTrace();
-				for (int i = 0; i < trace.length; i++) {
+				for (StackTraceElement t : trace) {
 					buf.append("\n\t\t"); //$NON-NLS-1$
-					buf.append(trace[i]);
+					buf.append(t);
 				}
 			}
 		}

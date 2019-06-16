@@ -65,8 +65,7 @@ public abstract class AbstractLaunchTest extends AbstractDebugTest {
 	protected ILaunchConfiguration getLaunchConfiguration(String name) throws CoreException {
 		ILaunchManager manager = getLaunchManager();
 		ILaunchConfiguration[] configurations = manager.getLaunchConfigurations();
-		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration config = configurations[i];
+		for (ILaunchConfiguration config : configurations) {
 			if (config.getName().equals(name)) {
 				return config;
 			}

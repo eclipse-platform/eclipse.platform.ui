@@ -157,8 +157,8 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		if (size != -1) {
 			assertEquals("Favorites wrong size", size, favorites.length); //$NON-NLS-1$
 		}
-		for (int i = 0; i < favorites.length; i++) {
-			if (configuration.equals(favorites[i])) {
+		for (ILaunchConfiguration favorite : favorites) {
+			if (configuration.equals(favorite)) {
 				return true;
 			}
 		}

@@ -71,8 +71,7 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 		List<ILaunchConfiguration> candiates = new ArrayList<>();
 		try {
 			ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(getLaunchType());
-			for (int i = 0; i < configurations.length; i++) {
-				ILaunchConfiguration configuration = configurations[i];
+			for (ILaunchConfiguration configuration : configurations) {
 				IResource[] resources = configuration.getMappedResources();
 				if (resources != null && resources.length == 1 &&
 						resources[0].equals(file)) {
